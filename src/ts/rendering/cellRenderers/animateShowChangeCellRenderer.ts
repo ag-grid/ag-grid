@@ -13,7 +13,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         '<span class="ag-value-change-value"></span>' +
         '</span>';
 
-    private params: any;
+    // private params: any;
     private lastValue: number;
 
     private eValue: HTMLElement;
@@ -26,7 +26,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
     }
 
     public init(params: any): void {
-        this.params = params;
+        // this.params = params;
 
         this.eValue = this.queryForHtmlElement('.ag-value-change-value');
         this.eDelta = this.queryForHtmlElement('.ag-value-change-delta');
@@ -74,7 +74,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         this.eDelta.innerHTML = '';
     }
 
-    public refresh(params: any): void {
+    public refresh(params: any): boolean {
         let value = params.value;
 
         if (value === this.lastValue) {
@@ -104,5 +104,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         this.setTimerToRemoveDelta();
 
         this.lastValue = value;
+
+        return true;
     }
 }

@@ -1,8 +1,12 @@
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {Column} from "./entities/column";
 import {RowNode} from "./entities/rowNode";
+import {Constants} from "./constants";
+
 let FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 let FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
+
+let AG_GRID_STOP_PROPAGATION = '__ag_Grid_Stop_Propagation';
 
 // util class, only used when debugging, for printing time to console
 export class Timer {
@@ -28,7 +32,6 @@ const HTML_ESCAPES: { [id: string]: string } = {
 
 const reUnescapedHtml = /[&<>"']/g;
 
-
 export class Utils {
 
     // taken from:
@@ -40,6 +43,19 @@ export class Utils {
     private static isEdge: boolean;
     private static isChrome: boolean;
     private static isFirefox: boolean;
+
+    private static isIPad: boolean;
+
+    private static PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\\|<>?:@~{}';
+
+    private static doOnceFlags: {[key: string]: boolean} = {};
+
+    // if the key was passed before, then doesn't execute the func
+    static doOnce(func: ()=>void, key: string ) {
+        if (this.doOnceFlags[key]) { return; }
+        func();
+        this.doOnceFlags[key] = true;
+    }
 
     // returns true if the event is close to the original event by X pixels either vertically or horizontally.
     // we only start dragging after X pixels so this allows us to know if we should start dragging yet.
@@ -225,36 +241,34 @@ export class Utils {
         return Object.keys(allValues);
     }
 
-    static mergeDeep(object: any, source: any): void {
+    static mergeDeep(dest: any, source: any): void {
+
         if (this.exists(source)) {
-            this.iterateObject(source, function (key: string, target: any) {
-                let currentValue: any = object[key];
+            this.iterateObject(source, (key: string, newValue: any) => {
 
-                if (currentValue == null) {
-                    object[key] = target;
-                    return;
-                }
+                let oldValue: any = dest[key];
 
-                if (typeof currentValue === 'object') {
-                    if (target) {
-                        Utils.mergeDeep(currentValue, target);
-                        return;
-                    }
-                }
+                if (oldValue === newValue) { return; }
 
-                if (target) {
-                    object[key] = target;
+                if (typeof oldValue === 'object' && typeof newValue === 'object') {
+                    Utils.mergeDeep(oldValue, newValue);
+                } else {
+                    dest[key] = newValue;
                 }
             });
         }
     }
 
-    static assign(object: any, source: any): void {
-        if (this.exists(source)) {
-            this.iterateObject(source, function (key: string, value: any) {
-                object[key] = value;
-            });
-        }
+    static assign(object: any, ...sources: any[]): any {
+        sources.forEach(source => {
+            if (this.exists(source)) {
+                this.iterateObject(source, function (key: string, value: any) {
+                    object[key] = value;
+                });
+            }
+        });
+
+        return object;
     }
 
     static parseYyyyMmDdToDate(yyyyMmDd: string, separator: string): Date {
@@ -286,6 +300,14 @@ export class Utils {
             return;
         }
         source.forEach(func => target.push(func));
+    }
+
+    static createArrayOfNumbers(first: number, last: number): number[] {
+        let result: number[] = [];
+        for (let i = first; i <= last; i++) {
+            result.push(i);
+        }
+        return result;
     }
 
     static getFunctionParameters(func: any) {
@@ -368,6 +390,28 @@ export class Utils {
         return this.isNode(o) || this.isElement(o);
     }
 
+    static isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
+        let pressedChar = String.fromCharCode(event.charCode);
+
+        // newline is an exception, as it counts as a printable character, but we don't
+        // want to start editing when it is pressed. without this check, if user is in chrome
+        // and editing a cell, and they press ctrl+enter, the cell stops editing, and then
+        // starts editing again with a blank value (two 'key down' events are fired). to
+        // test this, remove the line below, edit a cell in chrome and hit ctrl+enter while editing.
+        // https://ag-grid.atlassian.net/browse/AG-605
+        if (this.isKeyPressed(event, Constants.KEY_NEW_LINE)) { return false; }
+
+        if (_.exists(event.key)) {
+            // modern browser will implement key, so we return if key is length 1, eg if it is 'a' for the
+            // a key, or '2' for the '2' key. non-printable characters have names, eg 'Enter' or 'Backspace'.
+            return event.key.length === 1;
+        } else {
+            // otherwise, for older browsers, we test against a list of characters, which doesn't include
+            // accents for non-English, but don't care much, as most users are on modern browsers
+            return Utils.PRINTABLE_CHARACTERS.indexOf(pressedChar) >= 0
+        }
+    }
+
     //adds all type of change listeners to an element, intended to be a text field
     static addChangeListener(element: HTMLElement, listener: EventListener) {
         element.addEventListener("changed", listener);
@@ -380,8 +424,9 @@ export class Utils {
     }
 
     //if value is undefined, null or blank, returns null, otherwise returns the value
-    static makeNull(value: any) {
-        if (value === null || value === undefined || value === "") {
+    static makeNull<T>(value: T): T {
+        let valueNoType = <any> value;
+        if (value === null || value === undefined || valueNoType === "") {
             return null;
         } else {
             return value;
@@ -406,6 +451,15 @@ export class Utils {
         } else {
             return true;
         }
+    }
+
+    static firstExistingValue<A>(...values: A[]): A {
+        for (let i = 0; i < values.length; i++) {
+            let value: A = values[i];
+            if (_.exists(value)) return value;
+        }
+
+        return null;
     }
 
     static anyExists(values: any[]): boolean {
@@ -455,6 +509,18 @@ export class Utils {
         return <HTMLElement> tempDiv.firstChild;
     }
 
+    static appendHtml(eContainer: HTMLElement, htmlTemplate: string) {
+        if (eContainer.lastChild) {
+            // https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML
+            // we put the items at the start, so new items appear underneath old items,
+            // so when expanding/collapsing groups, the new rows don't go on top of the
+            // rows below that are moving our of the way
+            eContainer.insertAdjacentHTML('afterbegin', htmlTemplate);
+        } else {
+            eContainer.innerHTML = htmlTemplate;
+        }
+    }
+
     static addOrRemoveCssClass(element: HTMLElement, className: string, addOrRemove: boolean) {
         if (addOrRemove) {
             this.addCssClass(element, className);
@@ -478,7 +544,9 @@ export class Utils {
             return;
         }
         if (element.classList) {
-            element.classList.add(className);
+            if (!element.classList.contains(className)) {
+                element.classList.add(className);
+            }
         } else {
             if (element.className && element.className.length > 0) {
                 let cssClasses = element.className.split(' ');
@@ -534,13 +602,25 @@ export class Utils {
         return element && element.clientWidth ? element.clientWidth : 0;
     }
 
+    static sortNumberArray(numberArray: number[]): void {
+        numberArray.sort((a: number, b: number) => a - b);
+    }
+
     static removeCssClass(element: HTMLElement, className: string) {
-        if (element.className && element.className.length > 0) {
-            let cssClasses = element.className.split(' ');
-            let index = cssClasses.indexOf(className);
-            if (index >= 0) {
-                cssClasses.splice(index, 1);
-                element.className = cssClasses.join(' ');
+        if (element.classList) {
+            if (element.classList.contains(className)) {
+                element.classList.remove(className);
+            }
+        } else {
+            if (element.className && element.className.length > 0) {
+                let cssClasses = element.className.split(' ');
+                if (cssClasses.indexOf(className) >= 0) {
+                    // remove all instances of the item, not just the first, in case it's in more than once
+                    while (cssClasses.indexOf(className) >= 0) {
+                        cssClasses.splice(cssClasses.indexOf(className), 1);
+                    }
+                    element.className = cssClasses.join(' ');
+                }
             }
         }
     }
@@ -601,9 +681,20 @@ export class Utils {
         });
     }
 
-    static defaultComparator(valueA: any, valueB: any): number {
+    static defaultComparator(valueA: any, valueB: any, accentedCompare: boolean = false): number {
         let valueAMissing = valueA === null || valueA === undefined;
         let valueBMissing = valueB === null || valueB === undefined;
+
+        // this is for aggregations sum and avg, where the result can be a number that is wrapped.
+        // if we didn't do this, then the toString() value would be used, which would result in
+        // the strings getting used instead of the numbers.
+        if (valueA && valueA.toNumber) {
+            valueA = valueA.toNumber();
+        }
+        if (valueB && valueB.toNumber) {
+            valueB = valueB.toNumber();
+        }
+
         if (valueAMissing && valueBMissing) {
             return 0;
         }
@@ -615,13 +706,19 @@ export class Utils {
         }
 
         if (typeof valueA === "string") {
-            try {
-                // using local compare also allows chinese comparisons
-                return valueA.localeCompare(valueB);
-            } catch (e) {
-                // if something wrong with localeCompare, eg not supported
-                // by browser, then just continue without using it
+            if (!accentedCompare) {
+                return doQuickCompare(valueA, valueB);
+            } else {
+                try {
+                    // using local compare also allows chinese comparisons
+                    return valueA.localeCompare(valueB);
+                } catch (e) {
+                    // if something wrong with localeCompare, eg not supported
+                    // by browser, then just continue with the quick one
+                    return doQuickCompare(valueA, valueB);
+                }
             }
+
         }
 
         if (valueA < valueB) {
@@ -630,6 +727,10 @@ export class Utils {
             return 1;
         } else {
             return 0;
+        }
+
+        function doQuickCompare(a: string, b: string): number {
+            return (a > b ? 1 : (a < b ? -1 : 0));
         }
     }
 
@@ -649,6 +750,71 @@ export class Utils {
             }
         }
         return true;
+    }
+
+    static ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore: HTMLElement): void {
+
+        // if already in right order, do nothing
+        if (eChildBefore && eChildBefore.nextSibling === eChild) {
+            return;
+        }
+
+        if (eChildBefore) {
+            if (eChildBefore.nextSibling) {
+                // insert between the eRowBefore and the row after it
+                eContainer.insertBefore(eChild, eChildBefore.nextSibling);
+            } else {
+                // if nextSibling is missing, means other row is at end, so just append new row at the end
+                eContainer.appendChild(eChild);
+            }
+        } else {
+            // otherwise put at start
+            if (eContainer.firstChild) {
+                // insert it at the first location
+                eContainer.insertBefore(eChild, eContainer.firstChild);
+            }
+        }
+    }
+
+    static insertWithDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore: HTMLElement): void {
+        if (eChildBefore) {
+            if (eChildBefore.nextSibling) {
+                // insert between the eRowBefore and the row after it
+                eContainer.insertBefore(eChild, eChildBefore.nextSibling);
+            } else {
+                // if nextSibling is missing, means other row is at end, so just append new row at the end
+                eContainer.appendChild(eChild);
+            }
+        } else {
+            if (eContainer.firstChild) {
+                // insert it at the first location
+                eContainer.insertBefore(eChild, eContainer.firstChild);
+            } else {
+                // otherwise eContainer is empty, so just append it
+                eContainer.appendChild(eChild);
+            }
+        }
+    }
+
+    static insertTemplateWithDomOrder(eContainer: HTMLElement,
+                                      htmlTemplate: string,
+                                      eChildBefore: HTMLElement): HTMLElement {
+        let res: HTMLElement;
+        if (eChildBefore) {
+            // if previous element exists, just slot in after the previous element
+            eChildBefore.insertAdjacentHTML('afterend', htmlTemplate);
+            res = <HTMLElement> eChildBefore.nextSibling;
+        } else {
+            if (eContainer.firstChild) {
+                // insert it at the first location
+                eContainer.insertAdjacentHTML('afterbegin', htmlTemplate);
+            } else {
+                // otherwise eContainer is empty, so just append it
+                eContainer.innerHTML = htmlTemplate;
+            }
+            res = <HTMLElement> eContainer.firstChild;
+        }
+        return res;
     }
 
     static toStringOrNull(value: any): string {
@@ -703,17 +869,66 @@ export class Utils {
     //     }
     // }
 
-    /**
-     * If icon provided, use this (either a string, or a function callback).
-     * if not, then use the second parameter, which is the svgFactory function
-     */
-    static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc: () => HTMLElement): HTMLElement {
-        let eResult = document.createElement('span');
-        eResult.appendChild(this.createIconNoSpan(iconName, gridOptionsWrapper, column, svgFactoryFunc));
-        return eResult;
+
+    static iconNameClassMap: { [key: string]: string } = {
+        'columnMovePin': 'pin',
+        'columnMoveAdd': 'plus',
+        'columnMoveHide': 'eye-slash',
+        'columnMoveMove': 'arrows',
+        'columnMoveLeft': 'left',
+        'columnMoveRight': 'right',
+        'columnMoveGroup': 'group',
+        'columnMoveValue': 'aggregation',
+        'columnMovePivot': 'pivot',
+        'dropNotAllowed': 'not-allowed',
+        'groupContracted': 'expanded',
+        'groupExpanded': 'contracted',
+        'checkboxChecked': 'checkbox-checked',
+        'checkboxUnchecked': 'checkbox-unchecked',
+        'checkboxIndeterminate': 'checkbox-indeterminate',
+        'checkboxCheckedReadOnly': 'checkbox-checked-readonly',
+        'checkboxUncheckedReadOnly': 'checkbox-unchecked-readonly',
+        'checkboxIndeterminateReadOnly': 'checkbox-indeterminate-readonly',
+        'groupLoading': 'loading',
+        'menu': 'menu',
+        'filter': 'filter',
+        'columns': 'columns',
+        'menuPin': 'pin',
+        'menuValue': 'aggregation',
+        'menuAddRowGroup': 'group',
+        'menuRemoveRowGroup': 'group',
+        'clipboardCopy': 'copy',
+        'clipboardCut': 'cut',
+        'clipboardPaste': 'paste',
+        'pivotPanel': 'pivot',
+        'rowGroupPanel': 'group',
+        'valuePanel': 'aggregation',
+        'columnGroupOpened': 'expanded',
+        'columnGroupClosed': 'contracted',
+        'columnSelectClosed': 'tree-closed',
+        'columnSelectOpen': 'tree-open',
+        // from deprecated header, remove at some point
+        'sortAscending': 'asc',
+        'sortDescending': 'desc',
+        'sortUnSort': 'none'
     }
 
-    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc: () => HTMLElement): HTMLElement {
+    /**
+     * If icon provided, use this (either a string, or a function callback).
+     * if not, then use the default icon from the theme
+     */
+    static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column): HTMLElement {
+        const iconContents = this.createIconNoSpan(iconName, gridOptionsWrapper, column)
+        if (iconContents.className.indexOf('ag-icon') > -1) {
+            return iconContents;
+        } else {
+            let eResult = document.createElement('span');
+            eResult.appendChild(iconContents);
+            return eResult;
+        }
+    }
+
+    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column): HTMLElement {
         let userProvidedIcon: Function | string;
         // check col for icon first
         if (column && column.getColDef().icons) {
@@ -741,12 +956,13 @@ export class Utils {
                 throw 'iconRenderer should return back a string or a dom object';
             }
         } else {
-            // otherwise we use the built in icon
-            if (svgFactoryFunc) {
-                return svgFactoryFunc();
-            } else {
-                return null;
+            const span = document.createElement('span');
+            const cssClass = this.iconNameClassMap[iconName];
+            if (!cssClass) {
+                throw new Error(`${iconName} did not find class`)
             }
+            span.setAttribute("class", "ag-icon ag-icon-" + cssClass);
+            return span;
         }
     }
 
@@ -754,8 +970,9 @@ export class Utils {
         if (!styles) {
             return;
         }
-        Object.keys(styles).forEach(function (key) {
-            eElement.style[key] = styles[key];
+        Object.keys(styles).forEach((key) => {
+            let keyCamelCase = this.hyphenToCamelCase(key);
+            eElement.style[keyCamelCase] = styles[key];
         });
     }
 
@@ -822,7 +1039,7 @@ export class Utils {
     static isBrowserSafari(): boolean {
         if (this.isSafari === undefined) {
             let anyWindow = <any> window;
-            // taken from https://github.com/ceolter/ag-grid/issues/550
+            // taken from https://github.com/ag-grid/ag-grid/issues/550
             this.isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') > 0
                 || (function (p) {
                     return p.toString() === "[object SafariRemoteNotification]";
@@ -844,9 +1061,16 @@ export class Utils {
         if (this.isFirefox === undefined) {
             let anyWindow = <any> window;
             this.isFirefox = typeof anyWindow.InstallTrigger !== 'undefined';
-            ;
         }
         return this.isFirefox;
+    }
+
+    static isUserAgentIPad(): boolean {
+        if (this.isIPad === undefined) {
+            // taken from https://davidwalsh.name/detect-ipad
+            this.isIPad = navigator.userAgent.match(/iPad/i) != null;
+        }
+        return this.isIPad;
     }
 
     // srcElement is only available in IE. In all other browsers it is target
@@ -854,6 +1078,63 @@ export class Utils {
     static getTarget(event: Event): Element {
         let eventNoType = <any> event;
         return eventNoType.target || eventNoType.srcElement;
+    }
+
+    static isElementInEventPath(element: HTMLElement, event: Event): boolean {
+        if (!event || !element) {
+            return false;
+        }
+        let path = _.getEventPath(event);
+        return path.indexOf(element) >= 0;
+    }
+
+    static createEventPath(event: Event): EventTarget[] {
+        let res: EventTarget[] = [];
+        let pointer = _.getTarget(event);
+        while (pointer) {
+            res.push(pointer);
+            pointer = pointer.parentElement;
+        }
+        return res;
+    }
+
+    // firefox doesn't have event.path set, or any alternative to it, so we hack
+    // it in. this is needed as it's to late to work out the path when the item is
+    // removed from the dom. used by MouseEventService, where it works out if a click
+    // was from the current grid, or a detail grid (master / detail).
+    static addAgGridEventPath(event: Event): void {
+        (<any>event).__agGridEventPath = this.getEventPath(event);
+    }
+
+    static getEventPath(event: Event): EventTarget[] {
+        // https://stackoverflow.com/questions/39245488/event-path-undefined-with-firefox-and-vue-js
+        // https://developer.mozilla.org/en-US/docs/Web/API/Event
+
+        let eventNoType = <any> event;
+        if (event.deepPath) {
+            // IE supports deep path
+            return event.deepPath();
+        } else if (eventNoType.path) {
+            // Chrome supports path
+            return eventNoType.path;
+        } else if (eventNoType.composedPath) {
+            // Firefox supports composePath
+            return eventNoType.composedPath();
+        } else if (eventNoType.__agGridEventPath) {
+            // Firefox supports composePath
+            return eventNoType.__agGridEventPath;
+        } else {
+            // and finally, if none of the above worked,
+            // we create the path ourselves
+            return this.createEventPath(event);
+        }
+    }
+
+    static forEachSnapshotFirst(list: any[], callback: (item: any) => void): void {
+        if (list) {
+            let arrayCopy = list.slice(0);
+            arrayCopy.forEach(callback);
+        }
     }
 
     // taken from: http://stackoverflow.com/questions/1038727/how-to-get-browser-width-using-javascript-code
@@ -919,6 +1200,37 @@ export class Utils {
         }
     }
 
+    // from https://gist.github.com/youssman/745578062609e8acac9f
+    static camelCaseToHyphen(str: string): string {
+        if (str === null || str === undefined) {
+            return null;
+        }
+        return str.replace(/([A-Z])/g, (g) => '-' + g[0].toLowerCase());
+    }
+
+    // from https://stackoverflow.com/questions/6660977/convert-hyphens-to-camel-case-camelcase
+    static hyphenToCamelCase(str: string): string {
+        if (str === null || str === undefined) {
+            return null;
+        }
+        return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+    }
+
+    // pas in an object eg: {color: 'black', top: '25px'} and it returns "color: black; top: 25px;" for html
+    static cssStyleObjectToMarkup(stylesToUse: any): string {
+        if (!stylesToUse) {
+            return '';
+        }
+
+        let resParts: string[] = [];
+        this.iterateObject(stylesToUse, (styleKey: string, styleValue: string) => {
+            let styleKeyDashed = this.camelCaseToHyphen(styleKey);
+            resParts.push(`${styleKeyDashed}: ${styleValue};`)
+        });
+
+        return resParts.join(' ');
+    }
+
     /**
      * From http://stackoverflow.com/questions/9716468/is-there-any-function-like-isnumeric-in-javascript-to-validate-numbers
      */
@@ -928,8 +1240,9 @@ export class Utils {
     }
 
     static escape(toEscape: string): string {
-        if (toEscape === null) return null;
-        if (!toEscape.replace) return toEscape;
+        if (toEscape === null || toEscape === undefined || !toEscape.replace) {
+            return toEscape;
+        }
 
         return toEscape.replace(reUnescapedHtml, chr => HTML_ESCAPES[chr])
     }
@@ -1150,11 +1463,133 @@ export class Utils {
         };
     };
 
-    static referenceCompare (left:any, right:any):boolean{
-        if (left == null && right==null) return true;
+    // a user once raised an issue - they said that when you opened a popup (eg context menu)
+    // and then clicked on a selection checkbox, the popup wasn't closed. this is because the
+    // popup listens for clicks on the body, however ag-grid WAS stopping propagation on the
+    // checkbox clicks (so the rows didn't pick them up as row selection selection clicks).
+    // to get around this, we have a pattern to stop propagation for the purposes of ag-Grid,
+    // but we still let the event pass back to teh body.
+    static stopPropagationForAgGrid(event: Event): void {
+        (<any>event)[AG_GRID_STOP_PROPAGATION] = true;
+    }
+
+    static isStopPropagationForAgGrid(event: Event): boolean {
+        return (<any>event)[AG_GRID_STOP_PROPAGATION] === true;
+    }
+
+    static executeInAWhile(funcs: Function[]): void {
+        this.executeAfter(funcs, 400);
+    }
+
+    static executeNextVMTurn(funcs: Function[]): void {
+        this.executeAfter(funcs, 0);
+    }
+
+    static executeAfter(funcs: Function[], millis: number): void {
+        if (funcs.length > 0) {
+            setTimeout(() => {
+                funcs.forEach(func => func());
+            }, millis);
+        }
+    }
+
+    static referenceCompare(left: any, right: any): boolean {
+        if (left == null && right == null) return true;
         if (left == null && right) return false;
         if (left && right == null) return false;
         return left === right;
+    }
+
+
+    static get(source: { [p: string]: any }, expression: string, defaultValue: any): any {
+        if (source == null) return defaultValue;
+
+        if (expression.indexOf('.') > -1) {
+            let fields: string[] = expression.split('.');
+            let thisKey: string = fields[0];
+            let nextValue: any = source[thisKey];
+            if (nextValue != null) {
+                return Utils.get(nextValue, fields.slice(1, fields.length).join('.'), defaultValue);
+            } else {
+                return defaultValue;
+            }
+        } else {
+            let nextValue: any = source[expression];
+            return nextValue != null ? nextValue : defaultValue;
+        }
+    }
+
+    static passiveEvents: string[] = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
+
+    static addSafePassiveEventListener(eElement: HTMLElement, event: string, listener: (event?: any) => void) {
+        eElement.addEventListener(event, listener, <any>(Utils.passiveEvents.indexOf(event) > -1 ? {passive: true} : undefined));
+    }
+
+    static camelCaseToHumanText(camelCase: string): string {
+        if (camelCase == null) return null;
+
+        // Who needs to learn how to code when you have stack overflow!
+        // from: https://stackoverflow.com/questions/15369566/putting-space-in-camel-case-string-using-regular-expression
+        let rex = /([A-Z])([A-Z])([a-z])|([a-z])([A-Z])/g;
+        let words: string[] = camelCase.replace(rex, '$1$4 $2$3$5').replace('.', ' ').split(' ');
+
+        return words.map(word => word.substring(0, 1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length) : '')).join(' ');
+    }
+
+    // displays a message to the browser. this is useful in iPad, where you can't easily see the console.
+    // so the javascript code can use this to give feedback. this is NOT intended to be called in production.
+    // it is intended the ag-Grid developer calls this to troubleshoot, but then takes out the calls before
+    // checking in.
+    static message(msg: string): void {
+        let eMessage = document.createElement('div');
+        eMessage.innerHTML = msg;
+        let eBox = document.querySelector('#__ag__message');
+        if (!eBox) {
+            let template = `<div id="__ag__message" style="display: inline-block; position: absolute; top: 0px; left: 0px; color: white; background-color: black; z-index: 20; padding: 2px; border: 1px solid darkred; height: 200px; overflow-y: auto;"></div>`;
+            eBox = this.loadTemplate(template);
+            if (document.body) {
+                document.body.appendChild(eBox);
+            }
+        }
+        eBox.appendChild(eMessage);
+    }
+
+    // gets called by: a) InMemoryRowNodeManager and b) GroupStage to do sorting.
+    // when in InMemoryRowNodeManager we always have indexes (as this sorts the items the
+    // user provided) but when in GroupStage, the nodes can contain filler nodes that
+    // don't have order id's
+    static sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: { [id: string]: number }): void {
+        if (!rowNodes) {
+            return;
+        }
+        rowNodes.sort((nodeA: RowNode, nodeB: RowNode) => {
+            let positionA = rowNodeOrder[nodeA.id];
+            let positionB = rowNodeOrder[nodeB.id];
+
+            let aHasIndex = positionA !== undefined;
+            let bHasIndex = positionB !== undefined;
+
+            let bothNodesAreUserNodes = aHasIndex && bHasIndex;
+            let bothNodesAreFillerNodes = !aHasIndex && !bHasIndex;
+
+            if (bothNodesAreUserNodes) {
+                // when comparing two nodes the user has provided, they always
+                // have indexes
+                return positionA - positionB;
+            } else if (bothNodesAreFillerNodes) {
+                // when comparing two filler nodes, we have no index to compare them
+                // against, however we want this sorting to be deterministic, so that
+                // the rows don't jump around as the user does delta updates. so we
+                // want the same sort result. so we use the id - which doesn't make sense
+                // from a sorting point of view, but does give consistent behaviour between
+                // calls. otherwise groups jump around as delta updates are done.
+                return nodeA.id > nodeB.id ? 1 : -1;
+            } else if (aHasIndex) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
     }
 }
 
@@ -1184,3 +1619,103 @@ export class NumberSequence {
 }
 
 export let _ = Utils;
+
+export type ResolveAndRejectCallback<T> = (resolve:(value:T)=>void, reject:(params:any)=>void)=>void;
+
+export enum PromiseStatus {
+    IN_PROGRESS, RESOLVED
+}
+
+export interface ExternalPromise<T> {
+    resolve:(value:T)=>void,
+    promise:Promise<T>
+}
+
+export class Promise<T> {
+    private status:PromiseStatus = PromiseStatus.IN_PROGRESS;
+    private resolution:T = null;
+    private listOfWaiters: ((value:T)=>void)[] = [];
+
+
+    static all<T> (toCombine:Promise<T>[]): Promise<T[]>{
+        return new Promise(resolve=>{
+            let combinedValues:T[] = [];
+            let remainingToResolve:number = toCombine.length;
+            toCombine.forEach((source, index)=> {
+                source.then(sourceResolved=>{
+                    remainingToResolve --;
+                    combinedValues[index] = sourceResolved;
+                    if (remainingToResolve == 0){
+                        resolve(combinedValues);
+                    }
+                });
+                combinedValues.push(null);
+            });
+        });
+    }
+
+    static resolve<T> (value:T): Promise<T>{
+        return new Promise<T>(resolve=>resolve(value));
+    }
+
+    static external<T> ():ExternalPromise<T>{
+        let capture: (value:T)=> void;
+        let promise:Promise<T> = new Promise<T>((resolve)=>{
+            capture = resolve
+        });
+        return <ExternalPromise<T>>{
+            promise: promise,
+            resolve: (value:T):void => {
+                capture(value)
+            }
+        };
+    }
+
+    constructor (
+        callback:ResolveAndRejectCallback<T>
+    ){
+        callback(this.onDone.bind(this), this.onReject.bind(this))
+    }
+
+    public then(func: (result: any)=>void) {
+        if (this.status === PromiseStatus.IN_PROGRESS){
+            this.listOfWaiters.push(func);
+        } else {
+            func(this.resolution);
+        }
+    }
+
+    public firstOneOnly(func: (result: any)=>void) {
+        if (this.status === PromiseStatus.IN_PROGRESS){
+            if (this.listOfWaiters.length === 0) {
+                this.listOfWaiters.push(func);
+            }
+        } else {
+            func(this.resolution);
+        }
+    }
+
+    public map<Z> (adapter:(from:T)=>Z):Promise<Z>{
+        return new Promise<Z>((resolve)=>{
+            this.then(unmapped=>{
+                resolve(adapter(unmapped))
+            })
+        });
+    }
+
+    public resolveNow<Z> (ifNotResolvedValue:Z, ifResolved:(current:T)=>Z):Z{
+        if (this.status == PromiseStatus.IN_PROGRESS) return ifNotResolvedValue;
+
+        return ifResolved(this.resolution);
+    }
+
+    private onDone (value:T):void {
+        this.status = PromiseStatus.RESOLVED;
+        this.resolution = value;
+        this.listOfWaiters.forEach(waiter=>waiter(value));
+    }
+
+    private onReject (params:any):void {
+        console.warn('TBI');
+    }
+}

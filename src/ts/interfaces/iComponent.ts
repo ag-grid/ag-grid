@@ -1,9 +1,10 @@
+import {Promise} from "../utils";
+
 export interface IAfterGuiAttachedParams {
-    hidePopup?: (event?: any)=> void
+    hidePopup: () => void;
 }
 
 export interface IComponent<T> {
-
 
     /** Return the DOM element of your editor, this is what the grid puts into the DOM */
     getGui(): HTMLElement;
@@ -22,6 +23,6 @@ export interface IComponent<T> {
     afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 
     /** The init(params) method is called on the filter once. See below for details on the parameters. */
-    init?(params: T): void;
+    init?(params: T): Promise<void> | void;
 
 }

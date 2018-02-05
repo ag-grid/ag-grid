@@ -1,14 +1,26 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var columnGroup_1 = require("./columnGroup");
 var column_1 = require("./column");
 var eventService_1 = require("../eventService");
+var context_1 = require("../context/context");
+var columnApi_1 = require("../columnController/columnApi");
+var gridApi_1 = require("../gridApi");
 var OriginalColumnGroup = (function () {
     function OriginalColumnGroup(colGroupDef, groupId, padding) {
         this.localEventService = new eventService_1.EventService();
@@ -18,12 +30,24 @@ var OriginalColumnGroup = (function () {
         this.expanded = colGroupDef && !!colGroupDef.openByDefault;
         this.padding = padding;
     }
+    OriginalColumnGroup.prototype.isVisible = function () {
+        // return true if at least one child is visible
+        if (this.children) {
+            return this.children.some(function (child) { return child.isVisible(); });
+        }
+        else {
+            return false;
+        }
+    };
     OriginalColumnGroup.prototype.isPadding = function () {
         return this.padding;
     };
     OriginalColumnGroup.prototype.setExpanded = function (expanded) {
         this.expanded = expanded;
-        this.localEventService.dispatchEvent(OriginalColumnGroup.EVENT_EXPANDED_CHANGED);
+        var event = {
+            type: OriginalColumnGroup.EVENT_EXPANDED_CHANGED
+        };
+        this.localEventService.dispatchEvent(event);
     };
     OriginalColumnGroup.prototype.isExpandable = function () {
         return this.expandable;
@@ -52,6 +76,9 @@ var OriginalColumnGroup = (function () {
         return result;
     };
     OriginalColumnGroup.prototype.addLeafColumns = function (leafColumns) {
+        if (!this.children) {
+            return;
+        }
         this.children.forEach(function (child) {
             if (child instanceof column_1.Column) {
                 leafColumns.push(child);
@@ -74,7 +101,13 @@ var OriginalColumnGroup = (function () {
     };
     // need to check that this group has at least one col showing when both expanded and contracted.
     // if not, then we don't allow expanding and contracting on this group
-    OriginalColumnGroup.prototype.calculateExpandable = function () {
+    OriginalColumnGroup.prototype.setupExpandable = function () {
+        var _this = this;
+        this.setExpandable();
+        // note - we should be removing this event listener
+        this.getLeafColumns().forEach(function (col) { return col.addEventListener(column_1.Column.EVENT_VISIBLE_CHANGED, _this.onColumnVisibilityChanged.bind(_this)); });
+    };
+    OriginalColumnGroup.prototype.setExpandable = function () {
         // want to make sure the group doesn't disappear when it's open
         var atLeastOneShowingWhenOpen = false;
         // want to make sure the group doesn't disappear when it's closed
@@ -83,6 +116,9 @@ var OriginalColumnGroup = (function () {
         var atLeastOneChangeable = false;
         for (var i = 0, j = this.children.length; i < j; i++) {
             var abstractColumn = this.children[i];
+            if (!abstractColumn.isVisible()) {
+                continue;
+            }
             // if the abstractColumn is a grid generated group, there will be no colDef
             var headerGroupShow = abstractColumn.getColumnGroupShow();
             if (headerGroupShow === columnGroup_1.ColumnGroup.HEADER_GROUP_SHOW_OPEN) {
@@ -98,7 +134,17 @@ var OriginalColumnGroup = (function () {
                 atLeastOneShowingWhenClosed = true;
             }
         }
-        this.expandable = atLeastOneShowingWhenOpen && atLeastOneShowingWhenClosed && atLeastOneChangeable;
+        var expandable = atLeastOneShowingWhenOpen && atLeastOneShowingWhenClosed && atLeastOneChangeable;
+        if (this.expandable !== expandable) {
+            this.expandable = expandable;
+            var event_1 = {
+                type: OriginalColumnGroup.EVENT_EXPANDABLE_CHANGED
+            };
+            this.localEventService.dispatchEvent(event_1);
+        }
+    };
+    OriginalColumnGroup.prototype.onColumnVisibilityChanged = function () {
+        this.setExpandable();
     };
     OriginalColumnGroup.prototype.addEventListener = function (eventType, listener) {
         this.localEventService.addEventListener(eventType, listener);
@@ -106,7 +152,16 @@ var OriginalColumnGroup = (function () {
     OriginalColumnGroup.prototype.removeEventListener = function (eventType, listener) {
         this.localEventService.removeEventListener(eventType, listener);
     };
+    OriginalColumnGroup.EVENT_EXPANDED_CHANGED = 'expandedChanged';
+    OriginalColumnGroup.EVENT_EXPANDABLE_CHANGED = 'expandableChanged';
+    __decorate([
+        context_1.Autowired('columnApi'),
+        __metadata("design:type", columnApi_1.ColumnApi)
+    ], OriginalColumnGroup.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], OriginalColumnGroup.prototype, "gridApi", void 0);
     return OriginalColumnGroup;
 }());
-OriginalColumnGroup.EVENT_EXPANDED_CHANGED = 'expandedChanged';
 exports.OriginalColumnGroup = OriginalColumnGroup;

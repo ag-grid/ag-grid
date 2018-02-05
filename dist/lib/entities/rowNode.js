@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,11 +19,14 @@ var eventService_1 = require("../eventService");
 var events_1 = require("../events");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var selectionController_1 = require("../selectionController");
-var valueService_1 = require("../valueService");
+var valueService_1 = require("../valueService/valueService");
 var columnController_1 = require("../columnController/columnController");
+var columnApi_1 = require("../columnController/columnApi");
 var context_1 = require("../context/context");
 var constants_1 = require("../constants");
 var utils_1 = require("../utils");
+var valueCache_1 = require("../valueService/valueCache");
+var gridApi_1 = require("../gridApi");
 var RowNode = (function () {
     function RowNode() {
         /** Children mapped by the pivot columns */
@@ -33,8 +36,24 @@ var RowNode = (function () {
     RowNode.prototype.setData = function (data) {
         var oldData = this.data;
         this.data = data;
-        var event = { oldData: oldData, newData: data, update: false };
-        this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
+        this.valueCache.onDataChanged();
+        var event = this.createDataChangedEvent(data, oldData, false);
+        this.dispatchLocalEvent(event);
+    };
+    RowNode.prototype.createDataChangedEvent = function (newData, oldData, update) {
+        return {
+            type: RowNode.EVENT_DATA_CHANGED,
+            node: this,
+            oldData: oldData,
+            newData: newData,
+            update: update
+        };
+    };
+    RowNode.prototype.createLocalRowEvent = function (type) {
+        return {
+            type: type,
+            node: this
+        };
     };
     // similar to setRowData, however it is expected that the data is the same data item. this
     // is intended to be used with Redux type stores, where the whole data can be changed. we are
@@ -44,8 +63,19 @@ var RowNode = (function () {
     RowNode.prototype.updateData = function (data) {
         var oldData = this.data;
         this.data = data;
-        var event = { oldData: oldData, newData: data, update: true };
-        this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
+        var event = this.createDataChangedEvent(data, oldData, true);
+        this.dispatchLocalEvent(event);
+    };
+    RowNode.prototype.getRowIndexString = function () {
+        if (this.rowPinned === constants_1.Constants.PINNED_TOP) {
+            return 't-' + this.rowIndex;
+        }
+        else if (this.rowPinned === constants_1.Constants.PINNED_BOTTOM) {
+            return 'b-' + this.rowIndex;
+        }
+        else {
+            return this.rowIndex.toString();
+        }
     };
     RowNode.prototype.createDaemonNode = function () {
         var oldNode = new RowNode();
@@ -66,8 +96,8 @@ var RowNode = (function () {
         this.data = data;
         this.setId(id);
         this.selectionController.syncInRowNode(this, oldNode);
-        var event = { oldData: oldData, newData: data };
-        this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
+        var event = this.createDataChangedEvent(data, oldData, false);
+        this.dispatchLocalEvent(event);
     };
     RowNode.prototype.setId = function (id) {
         // see if user is providing the id's
@@ -89,9 +119,39 @@ var RowNode = (function () {
             this.id = id;
         }
     };
+    RowNode.prototype.isPixelInRange = function (pixel) {
+        return pixel >= this.rowTop && pixel < (this.rowTop + this.rowHeight);
+    };
     RowNode.prototype.clearRowTop = function () {
         this.oldRowTop = this.rowTop;
         this.setRowTop(null);
+    };
+    RowNode.prototype.setFirstChild = function (firstChild) {
+        if (this.firstChild === firstChild) {
+            return;
+        }
+        this.firstChild = firstChild;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_FIRST_CHILD_CHANGED));
+        }
+    };
+    RowNode.prototype.setLastChild = function (lastChild) {
+        if (this.lastChild === lastChild) {
+            return;
+        }
+        this.lastChild = lastChild;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_LAST_CHILD_CHANGED));
+        }
+    };
+    RowNode.prototype.setChildIndex = function (childIndex) {
+        if (this.childIndex === childIndex) {
+            return;
+        }
+        this.childIndex = childIndex;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_CHILD_INDEX_CHANGED));
+        }
     };
     RowNode.prototype.setRowTop = function (rowTop) {
         if (this.rowTop === rowTop) {
@@ -99,7 +159,16 @@ var RowNode = (function () {
         }
         this.rowTop = rowTop;
         if (this.eventService) {
-            this.eventService.dispatchEvent(RowNode.EVENT_TOP_CHANGED);
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_TOP_CHANGED));
+        }
+    };
+    RowNode.prototype.setDragging = function (dragging) {
+        if (this.dragging === dragging) {
+            return;
+        }
+        this.dragging = dragging;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_DRAGGING_CHANGED));
         }
     };
     RowNode.prototype.setAllChildrenCount = function (allChildrenCount) {
@@ -108,19 +177,19 @@ var RowNode = (function () {
         }
         this.allChildrenCount = allChildrenCount;
         if (this.eventService) {
-            this.eventService.dispatchEvent(RowNode.EVENT_ALL_CHILDREN_COUNT_CELL_CHANGED);
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED));
         }
     };
     RowNode.prototype.setRowHeight = function (rowHeight) {
         this.rowHeight = rowHeight;
         if (this.eventService) {
-            this.eventService.dispatchEvent(RowNode.EVENT_HEIGHT_CHANGED);
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HEIGHT_CHANGED));
         }
     };
     RowNode.prototype.setRowIndex = function (rowIndex) {
         this.rowIndex = rowIndex;
         if (this.eventService) {
-            this.eventService.dispatchEvent(RowNode.EVENT_ROW_INDEX_CHANGED);
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_ROW_INDEX_CHANGED));
         }
     };
     RowNode.prototype.setUiLevel = function (uiLevel) {
@@ -129,7 +198,7 @@ var RowNode = (function () {
         }
         this.uiLevel = uiLevel;
         if (this.eventService) {
-            this.eventService.dispatchEvent(RowNode.EVENT_UI_LEVEL_CHANGED);
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_UI_LEVEL_CHANGED));
         }
     };
     RowNode.prototype.setExpanded = function (expanded) {
@@ -138,14 +207,27 @@ var RowNode = (function () {
         }
         this.expanded = expanded;
         if (this.eventService) {
-            this.eventService.dispatchEvent(RowNode.EVENT_EXPANDED_CHANGED);
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_EXPANDED_CHANGED));
         }
-        var event = { node: this };
-        this.mainEventService.dispatchEvent(events_1.Events.EVENT_ROW_GROUP_OPENED, event);
+        var event = this.createGlobalRowEvent(events_1.Events.EVENT_ROW_GROUP_OPENED);
+        this.mainEventService.dispatchEvent(event);
     };
-    RowNode.prototype.dispatchLocalEvent = function (eventName, event) {
+    RowNode.prototype.createGlobalRowEvent = function (type) {
+        var event = {
+            type: type,
+            node: this,
+            data: this.data,
+            rowIndex: this.rowIndex,
+            rowPinned: this.rowPinned,
+            context: this.gridOptionsWrapper.getContext(),
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi()
+        };
+        return event;
+    };
+    RowNode.prototype.dispatchLocalEvent = function (event) {
         if (this.eventService) {
-            this.eventService.dispatchEvent(eventName, event);
+            this.eventService.dispatchEvent(event);
         }
     };
     // we also allow editing the value via the editors. when it is done via
@@ -154,34 +236,56 @@ var RowNode = (function () {
     // this method is for the client to call, so the cell listens for the change
     // event, and also flashes the cell when the change occurs.
     RowNode.prototype.setDataValue = function (colKey, newValue) {
-        var column = this.columnController.getGridColumn(colKey);
+        var column = this.columnController.getPrimaryColumn(colKey);
         this.valueService.setValue(this, column, newValue);
+        this.dispatchCellChangedEvent(column, newValue);
+    };
+    RowNode.prototype.setGroupValue = function (colKey, newValue) {
+        var column = this.columnController.getGridColumn(colKey);
+        if (utils_1.Utils.missing(this.groupData)) {
+            this.groupData = {};
+        }
+        this.groupData[column.getColId()] = newValue;
         this.dispatchCellChangedEvent(column, newValue);
     };
     // sets the data for an aggregation
     RowNode.prototype.setAggData = function (newAggData) {
         var _this = this;
         // find out all keys that could potentially change
-        var colIds = utils_1.Utils.getAllKeysInObjects([this.data, newAggData]);
-        this.data = newAggData;
+        var colIds = utils_1.Utils.getAllKeysInObjects([this.aggData, newAggData]);
+        this.aggData = newAggData;
         // if no event service, nobody has registered for events, so no need fire event
         if (this.eventService) {
             colIds.forEach(function (colId) {
                 var column = _this.columnController.getGridColumn(colId);
-                var value = _this.data ? _this.data[colId] : undefined;
+                var value = _this.aggData ? _this.aggData[colId] : undefined;
                 _this.dispatchCellChangedEvent(column, value);
             });
         }
     };
+    RowNode.prototype.hasChildren = function () {
+        // we need to return true when this.group=true, as this is used by enterprise row model
+        // (as children are lazy loaded and stored in a cache anyway). otherwise we return true
+        // if children exist.
+        return this.group || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
+    };
+    RowNode.prototype.isEmptyFillerNode = function () {
+        return this.group && utils_1.Utils.missingOrEmpty(this.childrenAfterGroup);
+    };
     RowNode.prototype.dispatchCellChangedEvent = function (column, newValue) {
-        var event = { column: column, newValue: newValue };
-        this.dispatchLocalEvent(RowNode.EVENT_CELL_CHANGED, event);
+        var cellChangedEvent = {
+            type: RowNode.EVENT_CELL_CHANGED,
+            node: this,
+            column: column,
+            newValue: newValue
+        };
+        this.dispatchLocalEvent(cellChangedEvent);
     };
     RowNode.prototype.resetQuickFilterAggregateText = function () {
         this.quickFilterAggregateText = null;
     };
     RowNode.prototype.isExpandable = function () {
-        return this.group || this.canFlower;
+        return this.hasChildren() || this.master;
     };
     RowNode.prototype.isSelected = function () {
         // for footers, we just return what our sibling selected state is, as cannot select a footer
@@ -251,8 +355,8 @@ var RowNode = (function () {
             rangeSelect: false
         });
     };
-    RowNode.prototype.isFloating = function () {
-        return this.floating === constants_1.Constants.FLOATING_TOP || this.floating === constants_1.Constants.FLOATING_BOTTOM;
+    RowNode.prototype.isRowPinned = function () {
+        return this.rowPinned === constants_1.Constants.PINNED_TOP || this.rowPinned === constants_1.Constants.PINNED_BOTTOM;
     };
     // to make calling code more readable, this is the same method as setSelected except it takes names parameters
     RowNode.prototype.setSelectedParams = function (params) {
@@ -267,8 +371,8 @@ var RowNode = (function () {
             console.warn('ag-Grid: cannot select node until id for node is known');
             return 0;
         }
-        if (this.floating) {
-            console.log('ag-Grid: cannot select floating rows');
+        if (this.rowPinned) {
+            console.log('ag-Grid: cannot select pinned rows');
             return 0;
         }
         // if we are a footer, we don't do selection, just pass the info
@@ -278,10 +382,9 @@ var RowNode = (function () {
             return count;
         }
         if (rangeSelect) {
-            var rowModelNormal = this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_NORMAL;
             var newRowClicked = this.selectionController.getLastSelectedNode() !== this;
             var allowMultiSelect = this.gridOptionsWrapper.isRowSelectionMulti();
-            if (rowModelNormal && newRowClicked && allowMultiSelect) {
+            if (newRowClicked && allowMultiSelect) {
                 return this.doRowRangeSelection();
             }
         }
@@ -326,7 +429,12 @@ var RowNode = (function () {
                 // fire events
                 // this is the very end of the 'action node', so we are finished all the updates,
                 // include any parent / child changes that this method caused
-                this.mainEventService.dispatchEvent(events_1.Events.EVENT_SELECTION_CHANGED);
+                var event_1 = {
+                    type: events_1.Events.EVENT_SELECTION_CHANGED,
+                    api: this.gridApi,
+                    columnApi: this.columnApi
+                };
+                this.mainEventService.dispatchEvent(event_1);
             }
             // so if user next does shift-select, we know where to start the selection from
             if (newValue) {
@@ -339,48 +447,28 @@ var RowNode = (function () {
     // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
     // holding down 'shift'.
     RowNode.prototype.doRowRangeSelection = function () {
-        var _this = this;
-        var lastSelectedNode = this.selectionController.getLastSelectedNode();
-        // if lastSelectedNode is missing, we start at the first row
-        var firstRowHit = !lastSelectedNode;
-        var lastRowHit = false;
-        var lastRow;
-        var groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
         var updatedCount = 0;
-        var inMemoryRowModel = this.rowModel;
-        inMemoryRowModel.forEachNodeAfterFilterAndSort(function (rowNode) {
-            var lookingForLastRow = firstRowHit && !lastRowHit;
-            // check if we need to flip the select switch
-            if (!firstRowHit) {
-                if (rowNode === lastSelectedNode || rowNode === _this) {
-                    firstRowHit = true;
-                }
+        var groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
+        var lastSelectedNode = this.selectionController.getLastSelectedNode();
+        var nodesToSelect = this.rowModel.getNodesInRangeForSelection(lastSelectedNode, this);
+        nodesToSelect.forEach(function (rowNode) {
+            if (rowNode.group && groupsSelectChildren) {
+                return;
             }
-            var skipThisGroupNode = rowNode.group && groupsSelectChildren;
-            if (!skipThisGroupNode) {
-                var inRange = firstRowHit && !lastRowHit;
-                var childOfLastRow = rowNode.isParentOfNode(lastRow);
-                var nodeWasSelected = rowNode.selectThisNode(inRange || childOfLastRow);
-                if (nodeWasSelected) {
-                    updatedCount++;
-                }
-            }
-            if (lookingForLastRow) {
-                if (rowNode === lastSelectedNode || rowNode === _this) {
-                    lastRowHit = true;
-                    if (rowNode === lastSelectedNode) {
-                        lastRow = lastSelectedNode;
-                    }
-                    else {
-                        lastRow = _this;
-                    }
-                }
+            var nodeWasSelected = rowNode.selectThisNode(true);
+            if (nodeWasSelected) {
+                updatedCount++;
             }
         });
         if (groupsSelectChildren) {
             this.calculatedSelectedForAllGroupNodes();
         }
-        this.mainEventService.dispatchEvent(events_1.Events.EVENT_SELECTION_CHANGED);
+        var event = {
+            type: events_1.Events.EVENT_SELECTION_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.mainEventService.dispatchEvent(event);
         return updatedCount;
     };
     RowNode.prototype.isParentOfNode = function (potentialParent) {
@@ -414,10 +502,10 @@ var RowNode = (function () {
         }
         this.selected = newValue;
         if (this.eventService) {
-            this.dispatchLocalEvent(RowNode.EVENT_ROW_SELECTED);
+            this.dispatchLocalEvent(this.createLocalRowEvent(RowNode.EVENT_ROW_SELECTED));
         }
-        var event = { node: this };
-        this.mainEventService.dispatchEvent(events_1.Events.EVENT_ROW_SELECTED, event);
+        var event = this.createGlobalRowEvent(events_1.Events.EVENT_ROW_SELECTED);
+        this.mainEventService.dispatchEvent(event);
         return true;
     };
     RowNode.prototype.selectChildNodes = function (newValue, groupSelectsFiltered) {
@@ -445,50 +533,89 @@ var RowNode = (function () {
         this.eventService.removeEventListener(eventType, listener);
     };
     RowNode.prototype.onMouseEnter = function () {
-        this.dispatchLocalEvent(RowNode.EVENT_MOUSE_ENTER);
+        this.dispatchLocalEvent(this.createLocalRowEvent(RowNode.EVENT_MOUSE_ENTER));
     };
     RowNode.prototype.onMouseLeave = function () {
-        this.dispatchLocalEvent(RowNode.EVENT_MOUSE_LEAVE);
+        this.dispatchLocalEvent(this.createLocalRowEvent(RowNode.EVENT_MOUSE_LEAVE));
     };
+    RowNode.prototype.getFirstChildOfFirstChild = function (rowGroupColumn) {
+        var currentRowNode = this;
+        // if we are hiding groups, then if we are the first child, of the first child,
+        // all the way up to the column we are interested in, then we show the group cell.
+        var isCandidate = true;
+        var foundFirstChildPath = false;
+        var nodeToSwapIn;
+        while (isCandidate && !foundFirstChildPath) {
+            var parentRowNode = currentRowNode.parent;
+            var firstChild = utils_1.Utils.exists(parentRowNode) && currentRowNode.firstChild;
+            if (firstChild) {
+                if (parentRowNode.rowGroupColumn === rowGroupColumn) {
+                    foundFirstChildPath = true;
+                    nodeToSwapIn = parentRowNode;
+                }
+            }
+            else {
+                isCandidate = false;
+            }
+            currentRowNode = parentRowNode;
+        }
+        return foundFirstChildPath ? nodeToSwapIn : null;
+    };
+    RowNode.EVENT_ROW_SELECTED = 'rowSelected';
+    RowNode.EVENT_DATA_CHANGED = 'dataChanged';
+    RowNode.EVENT_CELL_CHANGED = 'cellChanged';
+    RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED = 'allChildrenCountChanged';
+    RowNode.EVENT_MOUSE_ENTER = 'mouseEnter';
+    RowNode.EVENT_MOUSE_LEAVE = 'mouseLeave';
+    RowNode.EVENT_HEIGHT_CHANGED = 'heightChanged';
+    RowNode.EVENT_TOP_CHANGED = 'topChanged';
+    RowNode.EVENT_FIRST_CHILD_CHANGED = 'firstChildChanged';
+    RowNode.EVENT_LAST_CHILD_CHANGED = 'lastChildChanged';
+    RowNode.EVENT_CHILD_INDEX_CHANGED = 'childIndexChanged';
+    RowNode.EVENT_ROW_INDEX_CHANGED = 'rowIndexChanged';
+    RowNode.EVENT_EXPANDED_CHANGED = 'expandedChanged';
+    RowNode.EVENT_UI_LEVEL_CHANGED = 'uiLevelChanged';
+    RowNode.EVENT_DRAGGING_CHANGED = 'draggingChanged';
+    __decorate([
+        context_1.Autowired('eventService'),
+        __metadata("design:type", eventService_1.EventService)
+    ], RowNode.prototype, "mainEventService", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], RowNode.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('selectionController'),
+        __metadata("design:type", selectionController_1.SelectionController)
+    ], RowNode.prototype, "selectionController", void 0);
+    __decorate([
+        context_1.Autowired('columnController'),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], RowNode.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('valueService'),
+        __metadata("design:type", valueService_1.ValueService)
+    ], RowNode.prototype, "valueService", void 0);
+    __decorate([
+        context_1.Autowired('rowModel'),
+        __metadata("design:type", Object)
+    ], RowNode.prototype, "rowModel", void 0);
+    __decorate([
+        context_1.Autowired('context'),
+        __metadata("design:type", context_1.Context)
+    ], RowNode.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired('valueCache'),
+        __metadata("design:type", valueCache_1.ValueCache)
+    ], RowNode.prototype, "valueCache", void 0);
+    __decorate([
+        context_1.Autowired('columnApi'),
+        __metadata("design:type", columnApi_1.ColumnApi)
+    ], RowNode.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], RowNode.prototype, "gridApi", void 0);
     return RowNode;
 }());
-RowNode.EVENT_ROW_SELECTED = 'rowSelected';
-RowNode.EVENT_DATA_CHANGED = 'dataChanged';
-RowNode.EVENT_CELL_CHANGED = 'cellChanged';
-RowNode.EVENT_ALL_CHILDREN_COUNT_CELL_CHANGED = 'allChildrenCountChanged';
-RowNode.EVENT_MOUSE_ENTER = 'mouseEnter';
-RowNode.EVENT_MOUSE_LEAVE = 'mouseLeave';
-RowNode.EVENT_HEIGHT_CHANGED = 'heightChanged';
-RowNode.EVENT_TOP_CHANGED = 'topChanged';
-RowNode.EVENT_ROW_INDEX_CHANGED = 'rowIndexChanged';
-RowNode.EVENT_EXPANDED_CHANGED = 'expandedChanged';
-RowNode.EVENT_UI_LEVEL_CHANGED = 'uiLevelChanged';
-__decorate([
-    context_1.Autowired('eventService'),
-    __metadata("design:type", eventService_1.EventService)
-], RowNode.prototype, "mainEventService", void 0);
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], RowNode.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.Autowired('selectionController'),
-    __metadata("design:type", selectionController_1.SelectionController)
-], RowNode.prototype, "selectionController", void 0);
-__decorate([
-    context_1.Autowired('columnController'),
-    __metadata("design:type", columnController_1.ColumnController)
-], RowNode.prototype, "columnController", void 0);
-__decorate([
-    context_1.Autowired('valueService'),
-    __metadata("design:type", valueService_1.ValueService)
-], RowNode.prototype, "valueService", void 0);
-__decorate([
-    context_1.Autowired('rowModel'),
-    __metadata("design:type", Object)
-], RowNode.prototype, "rowModel", void 0);
-__decorate([
-    context_1.Autowired('context'),
-    __metadata("design:type", context_1.Context)
-], RowNode.prototype, "context", void 0);
 exports.RowNode = RowNode;

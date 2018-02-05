@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,6 +19,8 @@ var column_1 = require("./column");
 var eventService_1 = require("../eventService");
 var context_1 = require("../context/context");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var columnApi_1 = require("../columnController/columnApi");
+var gridApi_1 = require("../gridApi");
 var ColumnGroup = (function () {
     function ColumnGroup(originalColumnGroup, groupId, instanceId) {
         // depends on the open/closed state of the group, only displaying columns are stored here
@@ -47,6 +49,22 @@ var ColumnGroup = (function () {
     };
     ColumnGroup.prototype.getUniqueId = function () {
         return ColumnGroup.createUniqueId(this.groupId, this.instanceId);
+    };
+    ColumnGroup.prototype.isEmptyGroup = function () {
+        return this.displayedChildren.length === 0;
+    };
+    ColumnGroup.prototype.isMoving = function () {
+        var allLeafColumns = this.getOriginalColumnGroup().getLeafColumns();
+        if (!allLeafColumns || allLeafColumns.length === 0) {
+            return false;
+        }
+        var allMoving = true;
+        allLeafColumns.forEach(function (col) {
+            if (!col.isMoving()) {
+                allMoving = false;
+            }
+        });
+        return allMoving;
     };
     ColumnGroup.prototype.checkLeft = function () {
         // first get all children to setLeft, as it impacts our decision below
@@ -83,8 +101,13 @@ var ColumnGroup = (function () {
         this.oldLeft = left;
         if (this.left !== left) {
             this.left = left;
-            this.localEventService.dispatchEvent(ColumnGroup.EVENT_LEFT_CHANGED);
+            this.localEventService.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_LEFT_CHANGED));
         }
+    };
+    ColumnGroup.prototype.createAgEvent = function (type) {
+        return {
+            type: type,
+        };
     };
     ColumnGroup.prototype.addEventListener = function (eventType, listener) {
         this.localEventService.addEventListener(eventType, listener);
@@ -92,13 +115,6 @@ var ColumnGroup = (function () {
     ColumnGroup.prototype.removeEventListener = function (eventType, listener) {
         this.localEventService.removeEventListener(eventType, listener);
     };
-    // public setMoving(moving: boolean) {
-    //     this.getDisplayedLeafColumns().forEach( (column)=> column.setMoving(moving) );
-    // }
-    //
-    // public isMoving(): boolean {
-    //     return this.moving;
-    // }
     ColumnGroup.prototype.getGroupId = function () {
         return this.groupId;
     };
@@ -127,6 +143,19 @@ var ColumnGroup = (function () {
             });
         }
         return groupActualWidth;
+    };
+    ColumnGroup.prototype.isResizable = function () {
+        if (!this.displayedChildren) {
+            return false;
+        }
+        // if at least one child is resizable, then the group is resizable
+        var result = false;
+        this.displayedChildren.forEach(function (child) {
+            if (child.isResizable()) {
+                result = true;
+            }
+        });
+        return result;
     };
     ColumnGroup.prototype.getMinWidth = function () {
         var result = 0;
@@ -234,16 +263,24 @@ var ColumnGroup = (function () {
                 }
             });
         }
-        this.localEventService.dispatchEvent(ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED);
+        this.localEventService.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED));
     };
+    ColumnGroup.HEADER_GROUP_SHOW_OPEN = 'open';
+    ColumnGroup.HEADER_GROUP_SHOW_CLOSED = 'closed';
+    ColumnGroup.EVENT_LEFT_CHANGED = 'leftChanged';
+    ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED = 'displayedChildrenChanged';
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], ColumnGroup.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('columnApi'),
+        __metadata("design:type", columnApi_1.ColumnApi)
+    ], ColumnGroup.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], ColumnGroup.prototype, "gridApi", void 0);
     return ColumnGroup;
 }());
-ColumnGroup.HEADER_GROUP_SHOW_OPEN = 'open';
-ColumnGroup.HEADER_GROUP_SHOW_CLOSED = 'closed';
-ColumnGroup.EVENT_LEFT_CHANGED = 'leftChanged';
-ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED = 'leftChanged';
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], ColumnGroup.prototype, "gridOptionsWrapper", void 0);
 exports.ColumnGroup = ColumnGroup;

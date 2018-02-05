@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,6 +18,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("../../utils");
 var constants_1 = require("../../constants");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
+var columnApi_1 = require("../../columnController/columnApi");
 var columnController_1 = require("../../columnController/columnController");
 var filterManager_1 = require("../../filter/filterManager");
 var rowNode_1 = require("../../entities/rowNode");
@@ -26,6 +27,10 @@ var events_1 = require("../../events");
 var context_1 = require("../../context/context");
 var selectionController_1 = require("../../selectionController");
 var inMemoryNodeManager_1 = require("./inMemoryNodeManager");
+var changedPath_1 = require("./changedPath");
+var valueService_1 = require("../../valueService/valueService");
+var valueCache_1 = require("../../valueService/valueCache");
+var gridApi_1 = require("../../gridApi");
 var RecursionType;
 (function (RecursionType) {
     RecursionType[RecursionType["Normal"] = 0] = "Normal";
@@ -38,19 +43,33 @@ var InMemoryRowModel = (function () {
     function InMemoryRowModel() {
     }
     InMemoryRowModel.prototype.init = function () {
-        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshModel.bind(this, { step: constants_1.Constants.STEP_EVERYTHING }));
-        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshModel.bind(this, { step: constants_1.Constants.STEP_EVERYTHING }));
+        var refreshEverythingFunc = this.refreshModel.bind(this, { step: constants_1.Constants.STEP_EVERYTHING });
+        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, refreshEverythingFunc);
+        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, refreshEverythingFunc);
         this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
         this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, { step: constants_1.Constants.STEP_PIVOT }));
         this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
         this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
-        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.refreshModel.bind(this, { step: constants_1.Constants.STEP_PIVOT }));
-        this.gridOptionsWrapper.addEventListener(gridOptionsWrapper_1.GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, this.refreshModel.bind(this, { step: constants_1.Constants.STEP_MAP, keepRenderedRows: true, animate: true }));
+        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, refreshEverythingFunc);
+        var refreshMapFunc = this.refreshModel.bind(this, { step: constants_1.Constants.STEP_MAP, keepRenderedRows: true, animate: true });
+        this.gridOptionsWrapper.addEventListener(gridOptionsWrapper_1.GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, refreshMapFunc);
+        this.gridOptionsWrapper.addEventListener(gridOptionsWrapper_1.GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, refreshMapFunc);
         this.rootNode = new rowNode_1.RowNode();
-        this.nodeManager = new inMemoryNodeManager_1.InMemoryNodeManager(this.rootNode, this.gridOptionsWrapper, this.context, this.eventService);
+        this.nodeManager = new inMemoryNodeManager_1.InMemoryNodeManager(this.rootNode, this.gridOptionsWrapper, this.context, this.eventService, this.columnController);
         this.context.wireBean(this.rootNode);
-        this.setRowData(this.gridOptionsWrapper.getRowData(), this.columnController.isReady());
+    };
+    // returns false if row was moved, otherwise true
+    InMemoryRowModel.prototype.ensureRowAtPixel = function (rowNode, pixel) {
+        var indexAtPixelNow = this.getRowIndexAtPixel(pixel);
+        var rowNodeAtPixelNow = this.getRow(indexAtPixelNow);
+        if (rowNodeAtPixelNow === rowNode) {
+            return false;
+        }
+        utils_1.Utils.removeFromArray(this.rootNode.allLeafChildren, rowNode);
+        utils_1.Utils.insertIntoArray(this.rootNode.allLeafChildren, rowNode, indexAtPixelNow);
+        this.refreshModel({ step: constants_1.Constants.STEP_EVERYTHING, keepRenderedRows: true, animate: true, keepEditingRows: true });
+        return true;
     };
     InMemoryRowModel.prototype.isLastRowFound = function () {
         return true;
@@ -96,7 +115,7 @@ var InMemoryRowModel = (function () {
         this.refreshModel({ step: constants_1.Constants.STEP_SORT, keepRenderedRows: true, animate: animate, keepEditingRows: true });
     };
     InMemoryRowModel.prototype.getType = function () {
-        return constants_1.Constants.ROW_MODEL_TYPE_NORMAL;
+        return constants_1.Constants.ROW_MODEL_TYPE_IN_MEMORY;
     };
     InMemoryRowModel.prototype.onValueChanged = function () {
         if (this.columnController.isPivotActive()) {
@@ -105,6 +124,24 @@ var InMemoryRowModel = (function () {
         else {
             this.refreshModel({ step: constants_1.Constants.STEP_AGGREGATE });
         }
+    };
+    InMemoryRowModel.prototype.createChangePath = function (transaction) {
+        if (!transaction) {
+            return null;
+        }
+        // for updates, if the row is updated at all, then we re-calc all the values
+        // in that row. we could compare each value to each old value, however if we
+        // did this, we would be calling the valueService twice, once on the old value
+        // and once on the new value. so it's less valueGetter calls if we just assume
+        // each column is different. that way the changedPath is used so that only
+        // the impacted parent rows are recalculated, parents who's children have
+        // not changed are not impacted.
+        var valueColumns = this.columnController.getValueColumns();
+        if (!valueColumns || valueColumns.length === 0) {
+            return null;
+        }
+        var changedPath = new changedPath_1.ChangedPath(false);
+        return changedPath;
     };
     InMemoryRowModel.prototype.refreshModel = function (params) {
         // this goes through the pipeline of stages. what's in my head is similar
@@ -118,10 +155,11 @@ var InMemoryRowModel = (function () {
         // step get done
         // let start: number;
         // console.log('======= start =======');
+        var changedPath = this.createChangePath(params.rowNodeTransaction);
         switch (params.step) {
             case constants_1.Constants.STEP_EVERYTHING:
                 // start = new Date().getTime();
-                this.doRowGrouping(params.groupState, params.rowNodeTransaction);
+                this.doRowGrouping(params.groupState, params.rowNodeTransaction, params.rowNodeOrder, changedPath);
             // console.log('rowGrouping = ' + (new Date().getTime() - start));
             case constants_1.Constants.STEP_FILTER:
                 // start = new Date().getTime();
@@ -129,9 +167,9 @@ var InMemoryRowModel = (function () {
             // console.log('filter = ' + (new Date().getTime() - start));
             case constants_1.Constants.STEP_PIVOT:
                 this.doPivot();
-            case constants_1.Constants.STEP_AGGREGATE:
+            case constants_1.Constants.STEP_AGGREGATE:// depends on agg fields
                 // start = new Date().getTime();
-                this.doAggregate();
+                this.doAggregate(changedPath);
             // console.log('aggregation = ' + (new Date().getTime() - start));
             case constants_1.Constants.STEP_SORT:
                 // start = new Date().getTime();
@@ -142,12 +180,15 @@ var InMemoryRowModel = (function () {
                 this.doRowsToDisplay();
         }
         var event = {
+            type: events_1.Events.EVENT_MODEL_UPDATED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
             animate: params.animate,
             keepRenderedRows: params.keepRenderedRows,
             newData: params.newData,
             newPage: false
         };
-        this.eventService.dispatchEvent(events_1.Events.EVENT_MODEL_UPDATED, event);
+        this.eventService.dispatchEvent(event);
         if (this.$scope) {
             setTimeout(function () {
                 _this.$scope.$apply();
@@ -156,8 +197,8 @@ var InMemoryRowModel = (function () {
     };
     InMemoryRowModel.prototype.isEmpty = function () {
         var rowsMissing;
-        var rowsAlreadyGrouped = utils_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
-        if (rowsAlreadyGrouped) {
+        var doingLegacyTreeData = utils_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        if (doingLegacyTreeData) {
             rowsMissing = utils_1.Utils.missing(this.rootNode.childrenAfterGroup) || this.rootNode.childrenAfterGroup.length === 0;
         }
         else {
@@ -168,6 +209,43 @@ var InMemoryRowModel = (function () {
     };
     InMemoryRowModel.prototype.isRowsToRender = function () {
         return utils_1.Utils.exists(this.rowsToDisplay) && this.rowsToDisplay.length > 0;
+    };
+    InMemoryRowModel.prototype.getNodesInRangeForSelection = function (firstInRange, lastInRange) {
+        // if lastSelectedNode is missing, we start at the first row
+        var firstRowHit = !lastInRange;
+        var lastRowHit = false;
+        var lastRow;
+        var result = [];
+        var groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
+        this.forEachNodeAfterFilterAndSort(function (rowNode) {
+            var lookingForLastRow = firstRowHit && !lastRowHit;
+            // check if we need to flip the select switch
+            if (!firstRowHit) {
+                if (rowNode === lastInRange || rowNode === firstInRange) {
+                    firstRowHit = true;
+                }
+            }
+            var skipThisGroupNode = rowNode.group && groupsSelectChildren;
+            if (!skipThisGroupNode) {
+                var inRange = firstRowHit && !lastRowHit;
+                var childOfLastRow = rowNode.isParentOfNode(lastRow);
+                if (inRange || childOfLastRow) {
+                    result.push(rowNode);
+                }
+            }
+            if (lookingForLastRow) {
+                if (rowNode === lastInRange || rowNode === firstInRange) {
+                    lastRowHit = true;
+                    if (rowNode === lastInRange) {
+                        lastRow = lastInRange;
+                    }
+                    else {
+                        lastRow = firstInRange;
+                    }
+                }
+            }
+        });
+        return result;
     };
     InMemoryRowModel.prototype.setDatasource = function (datasource) {
         console.error('ag-Grid: should never call setDatasource on inMemoryRowController');
@@ -274,7 +352,7 @@ var InMemoryRowModel = (function () {
                 var node = nodes[i];
                 callback(node, index++);
                 // go to the next level if it is a group
-                if (node.group) {
+                if (node.hasChildren()) {
                     // depending on the recursion type, we pick a difference set of children
                     var nodeChildren = void 0;
                     switch (recursionType) {
@@ -302,9 +380,9 @@ var InMemoryRowModel = (function () {
     };
     // it's possible to recompute the aggregate without doing the other parts
     // + gridApi.recomputeAggregates()
-    InMemoryRowModel.prototype.doAggregate = function () {
+    InMemoryRowModel.prototype.doAggregate = function (changedPath) {
         if (this.aggregationStage) {
-            this.aggregationStage.execute({ rowNode: this.rootNode });
+            this.aggregationStage.execute({ rowNode: this.rootNode, changedPath: changedPath });
         }
     };
     // + gridApi.expandAll()
@@ -329,15 +407,18 @@ var InMemoryRowModel = (function () {
     InMemoryRowModel.prototype.doSort = function () {
         this.sortStage.execute({ rowNode: this.rootNode });
     };
-    InMemoryRowModel.prototype.doRowGrouping = function (groupState, rowNodeTransaction) {
+    InMemoryRowModel.prototype.doRowGrouping = function (groupState, rowNodeTransaction, rowNodeOrder, changedPath) {
         // grouping is enterprise only, so if service missing, skip the step
-        var rowsAlreadyGrouped = utils_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
-        if (rowsAlreadyGrouped) {
+        var doingLegacyTreeData = utils_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        if (doingLegacyTreeData) {
             return;
         }
         if (this.groupStage) {
             if (rowNodeTransaction) {
-                this.groupStage.execute({ rowNode: this.rootNode, rowNodeTransaction: rowNodeTransaction });
+                this.groupStage.execute({ rowNode: this.rootNode,
+                    rowNodeTransaction: rowNodeTransaction,
+                    rowNodeOrder: rowNodeOrder,
+                    changedPath: changedPath });
             }
             else {
                 // groups are about to get disposed, so need to deselect any that are selected
@@ -390,8 +471,9 @@ var InMemoryRowModel = (function () {
         return this.nodeManager.getRowNode(id);
     };
     // rows: the rows to put into the model
-    // firstId: the first id to use, used for paging, where we are not on the first page
-    InMemoryRowModel.prototype.setRowData = function (rowData, refresh) {
+    InMemoryRowModel.prototype.setRowData = function (rowData) {
+        // no need to invalidate cache, as the cache is stored on the rowNode,
+        // so new rowNodes means the cache is wiped anyway.
         // remember group state, so we can expand groups that should be expanded
         var groupState = this.getGroupState();
         this.nodeManager.setRowData(rowData);
@@ -399,36 +481,39 @@ var InMemoryRowModel = (function () {
         // - clears selection
         // - updates filters
         // - shows 'no rows' overlay if needed
-        this.eventService.dispatchEvent(events_1.Events.EVENT_ROW_DATA_CHANGED);
-        if (refresh) {
-            this.refreshModel({
-                step: constants_1.Constants.STEP_EVERYTHING,
-                groupState: groupState,
-                newData: true
-            });
-        }
+        var rowDataChangedEvent = {
+            type: events_1.Events.EVENT_ROW_DATA_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(rowDataChangedEvent);
+        this.refreshModel({
+            step: constants_1.Constants.STEP_EVERYTHING,
+            groupState: groupState,
+            newData: true
+        });
     };
-    InMemoryRowModel.prototype.updateRowData = function (rowDataTran) {
-        var rowNodeTran = this.nodeManager.updateRowData(rowDataTran);
+    InMemoryRowModel.prototype.updateRowData = function (rowDataTran, rowNodeOrder) {
+        this.valueCache.onDataChanged();
+        var rowNodeTran = this.nodeManager.updateRowData(rowDataTran, rowNodeOrder);
         this.refreshModel({
             step: constants_1.Constants.STEP_EVERYTHING,
             rowNodeTransaction: rowNodeTran,
+            rowNodeOrder: rowNodeOrder,
             keepRenderedRows: true,
             animate: true,
             keepEditingRows: true
         });
-        this.eventService.dispatchEvent(events_1.Events.EVENT_ROW_DATA_UPDATED);
+        var event = {
+            type: events_1.Events.EVENT_ROW_DATA_UPDATED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
+        return rowNodeTran;
     };
     InMemoryRowModel.prototype.doRowsToDisplay = function () {
         this.rowsToDisplay = this.flattenStage.execute({ rowNode: this.rootNode });
-    };
-    InMemoryRowModel.prototype.insertItemsAtIndex = function (index, items, skipRefresh) {
-        // remember group state, so we can expand groups that should be expanded
-        var groupState = this.getGroupState();
-        var newNodes = this.nodeManager.insertItemsAtIndex(index, items);
-        if (!skipRefresh) {
-            this.refreshAndFireEvent(events_1.Events.EVENT_ITEMS_ADDED, newNodes, groupState);
-        }
     };
     InMemoryRowModel.prototype.onRowHeightChanged = function () {
         this.refreshModel({ step: constants_1.Constants.STEP_MAP, keepRenderedRows: true, keepEditingRows: true });
@@ -437,91 +522,83 @@ var InMemoryRowModel = (function () {
         this.forEachNode(function (rowNode) { return rowNode.setRowHeight(null); });
         this.onRowHeightChanged();
     };
-    InMemoryRowModel.prototype.removeItems = function (rowNodes, skipRefresh) {
-        var groupState = this.getGroupState();
-        var removedNodes = this.nodeManager.removeItems(rowNodes);
-        if (!skipRefresh) {
-            this.refreshAndFireEvent(events_1.Events.EVENT_ITEMS_REMOVED, removedNodes, groupState);
-        }
-    };
-    InMemoryRowModel.prototype.addItems = function (items, skipRefresh) {
-        var groupState = this.getGroupState();
-        var newNodes = this.nodeManager.addItems(items);
-        if (!skipRefresh) {
-            this.refreshAndFireEvent(events_1.Events.EVENT_ITEMS_ADDED, newNodes, groupState);
-        }
-        // if (newNodes) {
-        //     this.refreshModel({step: Constants.STEP_EVERYTHING, groupState: groupState, newRowNodes: newNodes});
-        //     this.eventService.dispatchEvent(Events.EVENT_ITEMS_ADDED, {rowNodes: newNodes})
-        // }
-    };
-    InMemoryRowModel.prototype.refreshAndFireEvent = function (eventName, rowNodes, groupState) {
-        if (rowNodes) {
-            this.refreshModel({ step: constants_1.Constants.STEP_EVERYTHING, groupState: groupState });
-            this.eventService.dispatchEvent(eventName, { rowNodes: rowNodes });
-        }
-    };
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], InMemoryRowModel.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('columnController'),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], InMemoryRowModel.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('filterManager'),
+        __metadata("design:type", filterManager_1.FilterManager)
+    ], InMemoryRowModel.prototype, "filterManager", void 0);
+    __decorate([
+        context_1.Autowired('$scope'),
+        __metadata("design:type", Object)
+    ], InMemoryRowModel.prototype, "$scope", void 0);
+    __decorate([
+        context_1.Autowired('selectionController'),
+        __metadata("design:type", selectionController_1.SelectionController)
+    ], InMemoryRowModel.prototype, "selectionController", void 0);
+    __decorate([
+        context_1.Autowired('eventService'),
+        __metadata("design:type", eventService_1.EventService)
+    ], InMemoryRowModel.prototype, "eventService", void 0);
+    __decorate([
+        context_1.Autowired('context'),
+        __metadata("design:type", context_1.Context)
+    ], InMemoryRowModel.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired('valueService'),
+        __metadata("design:type", valueService_1.ValueService)
+    ], InMemoryRowModel.prototype, "valueService", void 0);
+    __decorate([
+        context_1.Autowired('valueCache'),
+        __metadata("design:type", valueCache_1.ValueCache)
+    ], InMemoryRowModel.prototype, "valueCache", void 0);
+    __decorate([
+        context_1.Autowired('columnApi'),
+        __metadata("design:type", columnApi_1.ColumnApi)
+    ], InMemoryRowModel.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], InMemoryRowModel.prototype, "gridApi", void 0);
+    __decorate([
+        context_1.Autowired('filterStage'),
+        __metadata("design:type", Object)
+    ], InMemoryRowModel.prototype, "filterStage", void 0);
+    __decorate([
+        context_1.Autowired('sortStage'),
+        __metadata("design:type", Object)
+    ], InMemoryRowModel.prototype, "sortStage", void 0);
+    __decorate([
+        context_1.Autowired('flattenStage'),
+        __metadata("design:type", Object)
+    ], InMemoryRowModel.prototype, "flattenStage", void 0);
+    __decorate([
+        context_1.Optional('groupStage'),
+        __metadata("design:type", Object)
+    ], InMemoryRowModel.prototype, "groupStage", void 0);
+    __decorate([
+        context_1.Optional('aggregationStage'),
+        __metadata("design:type", Object)
+    ], InMemoryRowModel.prototype, "aggregationStage", void 0);
+    __decorate([
+        context_1.Optional('pivotStage'),
+        __metadata("design:type", Object)
+    ], InMemoryRowModel.prototype, "pivotStage", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], InMemoryRowModel.prototype, "init", null);
+    InMemoryRowModel = __decorate([
+        context_1.Bean('rowModel')
+    ], InMemoryRowModel);
     return InMemoryRowModel;
 }());
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], InMemoryRowModel.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.Autowired('columnController'),
-    __metadata("design:type", columnController_1.ColumnController)
-], InMemoryRowModel.prototype, "columnController", void 0);
-__decorate([
-    context_1.Autowired('filterManager'),
-    __metadata("design:type", filterManager_1.FilterManager)
-], InMemoryRowModel.prototype, "filterManager", void 0);
-__decorate([
-    context_1.Autowired('$scope'),
-    __metadata("design:type", Object)
-], InMemoryRowModel.prototype, "$scope", void 0);
-__decorate([
-    context_1.Autowired('selectionController'),
-    __metadata("design:type", selectionController_1.SelectionController)
-], InMemoryRowModel.prototype, "selectionController", void 0);
-__decorate([
-    context_1.Autowired('eventService'),
-    __metadata("design:type", eventService_1.EventService)
-], InMemoryRowModel.prototype, "eventService", void 0);
-__decorate([
-    context_1.Autowired('context'),
-    __metadata("design:type", context_1.Context)
-], InMemoryRowModel.prototype, "context", void 0);
-__decorate([
-    context_1.Autowired('filterStage'),
-    __metadata("design:type", Object)
-], InMemoryRowModel.prototype, "filterStage", void 0);
-__decorate([
-    context_1.Autowired('sortStage'),
-    __metadata("design:type", Object)
-], InMemoryRowModel.prototype, "sortStage", void 0);
-__decorate([
-    context_1.Autowired('flattenStage'),
-    __metadata("design:type", Object)
-], InMemoryRowModel.prototype, "flattenStage", void 0);
-__decorate([
-    context_1.Optional('groupStage'),
-    __metadata("design:type", Object)
-], InMemoryRowModel.prototype, "groupStage", void 0);
-__decorate([
-    context_1.Optional('aggregationStage'),
-    __metadata("design:type", Object)
-], InMemoryRowModel.prototype, "aggregationStage", void 0);
-__decorate([
-    context_1.Optional('pivotStage'),
-    __metadata("design:type", Object)
-], InMemoryRowModel.prototype, "pivotStage", void 0);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], InMemoryRowModel.prototype, "init", null);
-InMemoryRowModel = __decorate([
-    context_1.Bean('rowModel')
-], InMemoryRowModel);
 exports.InMemoryRowModel = InMemoryRowModel;

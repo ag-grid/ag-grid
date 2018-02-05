@@ -5,13 +5,12 @@ import {Autowired} from "../../context/context";
 import {IMenuFactory} from "../../interfaces/iMenuFactory";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {SortController} from "../../sortController";
-import {TouchListener} from "../../widgets/touchListener";
+import {LongTapEvent, TouchListener} from "../../widgets/touchListener";
 import {IComponent} from "../../interfaces/iComponent";
-import {SvgFactory} from "../../svgFactory";
 import {EventService} from "../../eventService";
 import {RefSelector} from "../../widgets/componentAnnotations";
 import {Events} from "../../events";
-import {ColumnApi} from "../../columnController/columnController";
+import {ColumnApi} from "../../columnController/columnApi";
 import {GridApi} from "../../gridApi";
 
 export interface IHeaderParams {
@@ -24,7 +23,8 @@ export interface IHeaderParams {
     setSort: (sort: string, multiSort?: boolean)=>void;
     columnApi: ColumnApi,
     api: GridApi,
-    context: any
+    context: any,
+    template: string
 }
 
 export interface IHeader {
@@ -35,20 +35,18 @@ export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> {
 
 }
 
-let svgFactory = SvgFactory.getInstance();
-
 export class HeaderComp extends Component implements IHeaderComp {
 
     private static TEMPLATE =
-        '<div class="ag-cell-label-container">' +
-        '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
-        '  <div ref="eLabel" class="ag-header-cell-label">' +
-        '    <span ref="eSortOrder" class="ag-header-icon ag-sort-order"></span>' +
-        '    <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>' +
-        '    <span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>' +
-        '    <span ref="eSortNone" class="ag-header-icon ag-sort-none-icon"></span>' +
-        '    <span ref="eFilter" class="ag-header-icon ag-filter-icon"></span>' +
-        '    <span ref="eText" class="ag-header-cell-text"></span>' +
+        '<div class="ag-cell-label-container" role="presentation">' +
+        '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>' +
+        '  <div ref="eLabel" class="ag-header-cell-label" role="presentation">' +
+        '    <span ref="eText" class="ag-header-cell-text" role="columnheader"></span>' +
+        '    <span ref="eFilter" class="ag-header-icon ag-filter-icon" aria-hidden="true"></span>' +
+        '    <span ref="eSortOrder" class="ag-header-icon ag-sort-order" aria-hidden="true"></span>' +
+        '    <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon" aria-hidden="true"></span>' +
+        '    <span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon" aria-hidden="true"></span>' +
+        '    <span ref="eSortNone" class="ag-header-icon ag-sort-none-icon" aria-hidden="true"></span>' +
         '  </div>' +
         '</div>';
 
@@ -69,11 +67,14 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     private params:IHeaderParams;
 
-    constructor() {
-        super(HeaderComp.TEMPLATE);
-    }
 
     public init(params: IHeaderParams): void {
+        let template:string = _.firstExistingValue(
+            params.template,
+            HeaderComp.TEMPLATE
+        );
+
+        this.setTemplate(template);
         this.params = params;
 
         this.setupTap();
@@ -82,24 +83,26 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.setupSort();
         this.setupFilterIcon();
         this.setupText(params.displayName);
-
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_SORT_CHANGED, this.setMultiSortOrder.bind(this));
     }
 
     private setupText(displayName: string): void {
-        this.eText.innerHTML = displayName;
+        if (this.eText) {
+            this.eText.innerHTML = displayName;
+        }
     }
 
     private setupIcons(column:Column): void {
-        this.addInIcon('sortAscending', this.eSortAsc, column, svgFactory.createArrowUpSvg);
-        this.addInIcon('sortDescending', this.eSortDesc, column, svgFactory.createArrowDownSvg);
-        this.addInIcon('sortUnSort', this.eSortNone, column, svgFactory.createArrowUpDownSvg);
-        this.addInIcon('menu', this.eMenu, column, svgFactory.createMenuSvg);
-        this.addInIcon('filter', this.eFilter, column, svgFactory.createFilterSvg);
+        this.addInIcon('sortAscending', this.eSortAsc, column);
+        this.addInIcon('sortDescending', this.eSortDesc, column);
+        this.addInIcon('sortUnSort', this.eSortNone, column);
+        this.addInIcon('menu', this.eMenu, column);
+        this.addInIcon('filter', this.eFilter, column);
     }
 
-    private addInIcon(iconName: string, eParent: HTMLElement, column: Column, defaultIconFactory: () => HTMLElement): void {
-        let eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column, defaultIconFactory);
+    private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
+        if (eParent == null) return;
+
+        let eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column);
         eParent.appendChild(eIcon);
     }
 
@@ -109,15 +112,15 @@ export class HeaderComp extends Component implements IHeaderComp {
         let touchListener = new TouchListener(this.getGui());
 
         if (this.params.enableMenu) {
-            let longTapListener = (touch: Touch)=> {
-                this.gridOptionsWrapper.getApi().showColumnMenuAfterMouseClick(this.params.column, touch);
+            let longTapListener = (event: LongTapEvent)=> {
+                this.gridOptionsWrapper.getApi().showColumnMenuAfterMouseClick(this.params.column, event.touchStart);
             };
             this.addDestroyableEventListener(touchListener, TouchListener.EVENT_LONG_TAP, longTapListener);
         }
 
         if (this.params.enableSorting) {
             let tapListener = ()=> {
-                this.sortController.progressSort(this.params.column, false);
+                this.sortController.progressSort(this.params.column, false, "uiColumnSorted");
             };
 
             this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, tapListener);
@@ -133,7 +136,11 @@ export class HeaderComp extends Component implements IHeaderComp {
             return;
         }
 
-        if (!this.params.enableMenu) {
+        // we don't show the menu if on an ipad, as the user cannot have a mouse on the ipad, so
+        // makes no sense. instead the user must long-tap if on an ipad.
+        let dontShowMenu = !this.params.enableMenu || _.isUserAgentIPad();
+
+        if (dontShowMenu) {
             _.removeFromParent(this.eMenu);
             return;
         }
@@ -158,26 +165,33 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.menuFactory.showMenuAfterButtonClick(this.params.column, eventSource);
     }
 
+    private removeSortIcons(): void {
+        _.removeFromParent(this.eSortAsc);
+        _.removeFromParent(this.eSortDesc);
+        _.removeFromParent(this.eSortNone);
+        _.removeFromParent(this.eSortOrder);
+    }
+
     public setupSort(): void {
         let enableSorting = this.params.enableSorting;
 
         if (!enableSorting) {
-            _.removeFromParent(this.eSortAsc);
-            _.removeFromParent(this.eSortDesc);
-            _.removeFromParent(this.eSortNone);
-            _.removeFromParent(this.eSortOrder);
+            this.removeSortIcons();
             return;
         }
 
         // add the event on the header, so when clicked, we do sorting
         if (this.eLabel) {
-            this.eLabel.addEventListener('click', (event:MouseEvent) => {
+            this.addDestroyableEventListener(this.eLabel, 'click', (event:MouseEvent) => {
                 this.params.progressSort(event.shiftKey);
             });
         }
 
         this.addDestroyableEventListener(this.params.column, Column.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.onSortChanged();
+
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_SORT_CHANGED, this.setMultiSortOrder.bind(this));
+        this.setMultiSortOrder();
     }
 
     private onSortChanged(): void {

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -60,9 +60,9 @@ var XmlFactory = (function () {
         xmlValue = '"' + xmlValue + '"';
         return " " + key + "=" + xmlValue;
     };
+    XmlFactory = __decorate([
+        context_1.Bean('xmlFactory')
+    ], XmlFactory);
     return XmlFactory;
 }());
-XmlFactory = __decorate([
-    context_1.Bean('xmlFactory')
-], XmlFactory);
 exports.XmlFactory = XmlFactory;

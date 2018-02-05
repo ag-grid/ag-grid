@@ -1,6 +1,6 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v16.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class Constants {
     static STEP_EVERYTHING: number;
     static STEP_FILTER: number;
@@ -10,8 +10,13 @@ export declare class Constants {
     static STEP_PIVOT: number;
     static ROW_BUFFER_SIZE: number;
     static LAYOUT_INTERVAL: number;
+    static EXPORT_TYPE_DRAG_COPY: string;
+    static EXPORT_TYPE_CLIPBOARD: string;
+    static EXPORT_TYPE_EXCEL: string;
+    static EXPORT_TYPE_CSV: string;
     static KEY_BACKSPACE: number;
     static KEY_TAB: number;
+    static KEY_NEW_LINE: number;
     static KEY_ENTER: number;
     static KEY_SHIFT: number;
     static KEY_ESCAPE: number;
@@ -30,36 +35,13 @@ export declare class Constants {
     static KEY_PAGE_DOWN: number;
     static KEY_PAGE_HOME: number;
     static KEY_PAGE_END: number;
-    static KEY_PAGE_UP_NAME: string;
-    static KEY_PAGE_DOWN_NAME: string;
-    static KEY_PAGE_HOME_NAME: string;
-    static KEY_PAGE_END_NAME: string;
-    static KEY_CTRL_UP_NAME: string;
-    static KEY_CTRL_LEFT_NAME: string;
-    static KEY_CTRL_RIGHT_NAME: string;
-    static KEY_CTRL_DOWN_NAME: string;
     static ROW_MODEL_TYPE_INFINITE: string;
     static ROW_MODEL_TYPE_VIEWPORT: string;
-    static ROW_MODEL_TYPE_NORMAL: string;
+    static ROW_MODEL_TYPE_IN_MEMORY: string;
     static ROW_MODEL_TYPE_ENTERPRISE: string;
+    static DEPRECATED_ROW_MODEL_TYPE_NORMAL: string;
     static ALWAYS: string;
     static ONLY_WHEN_GROUPING: string;
-    static FLOATING_TOP: string;
-    static FLOATING_BOTTOM: string;
-    static VERTICAL_SCROLL_KEYS_ID: string;
-    static HORIZONTAL_SCROLL_KEYS_ID: string;
-    static DIAGONAL_SCROLL_KEYS_ID: string;
-    static VERTICAL_SCROLL_KEYS: KeyboardBindingGroup;
-    static HORIZONTAL_SCROLL_KEYS: KeyboardBindingGroup;
-    static DIAGONAL_SCROLL_KEYS: KeyboardBindingGroup;
-}
-export interface KeyboardBinding {
-    id: string;
-    ctlRequired: boolean;
-    altRequired: boolean;
-    keyCode: number;
-}
-export interface KeyboardBindingGroup {
-    id: string;
-    bindings: KeyboardBinding[];
+    static PINNED_TOP: string;
+    static PINNED_BOTTOM: string;
 }

@@ -6,6 +6,9 @@ import {BeanStub} from "../../context/beanStub";
 import {Autowired, PostConstruct} from "../../context/context";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {ColumnAnimationService} from "../columnAnimationService";
+import {EventService} from "../../eventService";
+import {Events} from "../../events";
+import {Beans} from "../beans";
 
 export class SetLeftFeature extends BeanStub {
 
@@ -14,25 +17,42 @@ export class SetLeftFeature extends BeanStub {
 
     private actualLeft: number;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
+    // if we are spanning columns, this tells what columns,
+    // otherwise this is empty
+    private colsSpanning: Column[];
 
-    constructor(columnOrGroup: ColumnGroupChild, eCell: HTMLElement) {
+    private beans: Beans;
+
+    constructor(columnOrGroup: ColumnGroupChild, eCell: HTMLElement, beans: Beans, colsSpanning?: Column[]) {
         super();
         this.columnOrGroup = columnOrGroup;
         this.eCell = eCell;
+        this.colsSpanning = colsSpanning;
+        this.beans = beans;
     }
 
-    @PostConstruct
-    private init(): void {
+    public setColsSpanning(colsSpanning: Column[]): void {
+        this.colsSpanning = colsSpanning;
+        this.onLeftChanged();
+    }
+
+    public getColumnOrGroup(): ColumnGroupChild {
+        if (this.beans.gridOptionsWrapper.isEnableRtl() && this.colsSpanning) {
+            return this.colsSpanning[this.colsSpanning.length-1];
+        } else {
+            return this.columnOrGroup;
+        }
+    }
+
+    public init(): void {
         this.addDestroyableEventListener(this.columnOrGroup, Column.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
         this.setLeftFirstTime();
     }
 
     private setLeftFirstTime(): void {
-        let suppressMoveAnimation = this.gridOptionsWrapper.isSuppressColumnMoveAnimation();
+        let suppressMoveAnimation = this.beans.gridOptionsWrapper.isSuppressColumnMoveAnimation();
         let oldLeftExists = _.exists(this.columnOrGroup.getOldLeft());
-        let animateColumnMove = this.columnAnimationService.isActive() && oldLeftExists && !suppressMoveAnimation;
+        let animateColumnMove = this.beans.columnAnimationService.isActive() && oldLeftExists && !suppressMoveAnimation;
         if (animateColumnMove) {
             this.animateInLeft();
         } else {
@@ -41,8 +61,8 @@ export class SetLeftFeature extends BeanStub {
     }
 
     private animateInLeft(): void {
-        let left = this.columnOrGroup.getLeft();
-        let oldLeft = this.columnOrGroup.getOldLeft();
+        let left = this.getColumnOrGroup().getLeft();
+        let oldLeft = this.getColumnOrGroup().getOldLeft();
         this.setLeft(oldLeft);
 
         // we must keep track of the left we want to set to, as this would otherwise lead to a race
@@ -52,7 +72,7 @@ export class SetLeftFeature extends BeanStub {
         // VM turn, but only one (the correct one) should get applied.
         this.actualLeft = left;
 
-        this.columnAnimationService.executeNextVMTurn( () => {
+        this.beans.columnAnimationService.executeNextVMTurn( () => {
             // test this left value is the latest one to be applied, and if not, do nothing
             if (this.actualLeft===left) {
                 this.setLeft(left);
@@ -61,7 +81,7 @@ export class SetLeftFeature extends BeanStub {
     }
 
     private onLeftChanged(): void {
-        this.actualLeft = this.columnOrGroup.getLeft();
+        this.actualLeft = this.getColumnOrGroup().getLeft();
         this.setLeft(this.actualLeft);
     }
 

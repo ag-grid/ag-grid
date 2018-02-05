@@ -1,0 +1,102 @@
+$ag-style: 'blue' !default;
+$ag-root-font-family: Calibri, 'Segoe UI', Thonburi, Arial, Verdana, sans-serif !default;
+$ag-root-font-size: 10pt !default;
+
+$ag-scrollbar-background: inherit !default;
+$ag-scrollbar-thumb: inherit !default;
+
+$ag-border-1: 1px solid #9bc2e6 !default;
+
+$ag-border-color-1: #000 !default;
+$ag-border-color-2: #808080 !default;
+
+$ag-background-1: #f6f6f6 !default;
+
+$ag-foreground-1: #222 !default;
+
+$ag-header-foreground-1: #fff !default;
+
+$ag-separator-color: #d3d3d3 !default;
+
+$ag-cell-focused-border: 2px solid #217346 !default;
+$ag-cell-no-focus-border-top: 2px solid transparent !default;
+$ag-cell-no-focus-border-bottom: 1px dotted #9bc2e6 !default;
+$ag-cell-ltr-no-focus-border-right: 1px dotted #9bc2e6 !default;
+$ag-cell-ltr-no-focus-border-left: 2px solid transparent !default;
+$ag-cell-rtl-no-focus-border-right: 2px solid transparent !default;
+$ag-cell-rtl-no-focus-border-left: 1px dotted #9bc2e6 !default;
+
+$ag-cell-highlight-border: 1px solid darkgreen !default;
+
+$ag-cell-padding: 2px !default;
+
+$ag-row-selected-background-color: #c7c7c7 !default;
+$ag-row-odd-background-color: #ddebf7 !default;
+$ag-row-even-background-color: #fff !default;
+$ag-row-floating-background-color: #f0f0f0 !default;
+$ag-row-stub-background-color: #f0f0f0 !default;
+
+$ag-value-change-delta-up-color: darkgreen !default;
+$ag-value-change-delta-down-color: darkred !default;
+$ag-value-change-value-highlight-background-color: #cec !default;
+
+$ag-range-selected-color-1: rgba(120, 120, 120, 0.4) !default;
+$ag-range-selected-color-2: rgba(80, 80, 80, 0.4) !default;
+$ag-range-selected-color-3: rgba(40, 40, 40, 0.4) !default;
+$ag-range-selected-color-4: rgba(0, 0, 0, 0.4) !default;
+
+$ag-header-background-1: #5b9bd5 !default;
+$ag-header-select-padding: 5px 0px 0px 3px !default;
+
+$ag-button-background-1: #ddebf7 !default;
+$ag-button-foreground-1: #000 !default;
+$ag-button-border-1: #808080 !default;
+
+$ag-header-font-weight: 600 !default;
+
+$ag-tab-border: 1px solid #d3d3d3 !default;
+$ag-tab-background: #5b9bd5 !default;
+$ag-tab-selected-background: #9bc2e6 !default;
+$ag-tab-padding: 6px 8px 6px 8px !default;
+
+$ag-menu-option-active-color: #c7c7c7 !default;
+
+$ag-select-background: white !default;
+$ag-select-foreground: #222 !default;
+
+$ag-menu-option-padding: 2px 4px 2px 4px !default;
+$ag-menu-option-shortcut-padding: 2px 2px 2px 2px !default;
+
+@import 'theme-common';
+
+.ag-blue {
+    .ag-floating-filter-body {
+        input {
+            background-color: $ag-select-background;
+            color: $ag-foreground-1;
+
+            &[readonly] {
+                background: rgba($ag-select-background, 0.3);
+            }
+        }
+    }
+
+    .ag-header {
+        .ag-icon-asc,
+        .ag-icon-desc,
+        .ag-icon-expanded,
+        .ag-icon-contracted,
+        .ag-icon-menu,
+        .ag-icon-filter {
+            filter: invert(100%);
+        }
+    }
+
+
+    .ag-tab-header .ag-icon {
+        filter: invert(100%);
+    }
+}
+
+//stick in an override
+//.ag-common

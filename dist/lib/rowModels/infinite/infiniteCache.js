@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34,6 +34,8 @@ var events_1 = require("../../events");
 var logger_1 = require("../../logger");
 var infiniteBlock_1 = require("./infiniteBlock");
 var rowNodeCache_1 = require("../cache/rowNodeCache");
+var gridApi_1 = require("../../gridApi");
+var columnApi_1 = require("../../columnController/columnApi");
 var InfiniteCache = (function (_super) {
     __extends(InfiniteCache, _super);
     function InfiniteCache(params) {
@@ -103,7 +105,12 @@ var InfiniteCache = (function (_super) {
             this.hack_setVirtualRowCount(this.getVirtualRowCount() + items.length);
         }
         this.onCacheUpdated();
-        this.eventService.dispatchEvent(events_1.Events.EVENT_ITEMS_ADDED, newNodes);
+        var event = {
+            type: events_1.Events.EVENT_ROW_DATA_UPDATED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
     };
     // the rowRenderer will not pass dontCreatePage, meaning when rendering the grid,
     // it will want new pages in the cache as it asks for rows. only when we are inserting /
@@ -136,26 +143,34 @@ var InfiniteCache = (function (_super) {
         this.forEachBlockInOrder(function (block) { return block.setDirty(); });
         this.checkBlockToLoad();
     };
+    __decorate([
+        context_1.Autowired('eventService'),
+        __metadata("design:type", eventService_1.EventService)
+    ], InfiniteCache.prototype, "eventService", void 0);
+    __decorate([
+        context_1.Autowired('context'),
+        __metadata("design:type", context_1.Context)
+    ], InfiniteCache.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired('columnApi'),
+        __metadata("design:type", columnApi_1.ColumnApi)
+    ], InfiniteCache.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], InfiniteCache.prototype, "gridApi", void 0);
+    __decorate([
+        __param(0, context_1.Qualifier('loggerFactory')),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [logger_1.LoggerFactory]),
+        __metadata("design:returntype", void 0)
+    ], InfiniteCache.prototype, "setBeans", null);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], InfiniteCache.prototype, "init", null);
     return InfiniteCache;
 }(rowNodeCache_1.RowNodeCache));
-__decorate([
-    context_1.Autowired('eventService'),
-    __metadata("design:type", eventService_1.EventService)
-], InfiniteCache.prototype, "eventService", void 0);
-__decorate([
-    context_1.Autowired('context'),
-    __metadata("design:type", context_1.Context)
-], InfiniteCache.prototype, "context", void 0);
-__decorate([
-    __param(0, context_1.Qualifier('loggerFactory')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [logger_1.LoggerFactory]),
-    __metadata("design:returntype", void 0)
-], InfiniteCache.prototype, "setBeans", null);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], InfiniteCache.prototype, "init", null);
 exports.InfiniteCache = InfiniteCache;

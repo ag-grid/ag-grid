@@ -3,7 +3,7 @@ import {Utils as _} from '../utils';
 import {ICellRenderer, ICellRendererFunc} from "./cellRenderers/iCellRenderer";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {EventService} from "../eventService";
-import {ExpressionService} from "../expressionService";
+import {ExpressionService} from "../valueService/expressionService";
 import {AnimateSlideCellRenderer} from "./cellRenderers/animateSlideCellRenderer";
 import {AnimateShowChangeCellRenderer} from "./cellRenderers/animateShowChangeCellRenderer";
 import {GroupCellRenderer} from "./cellRenderers/groupCellRenderer";

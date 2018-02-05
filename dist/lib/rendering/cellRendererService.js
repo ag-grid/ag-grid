@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15,89 +15,138 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = require("../utils");
 var context_1 = require("../context/context");
-var cellRendererFactory_1 = require("./cellRendererFactory");
+var componentRecipes_1 = require("../components/framework/componentRecipes");
+var componentResolver_1 = require("../components/framework/componentResolver");
+var utils_1 = require("../utils");
+var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 /** Class to use a cellRenderer. */
 var CellRendererService = (function () {
     function CellRendererService() {
     }
-    /** Uses a cellRenderer, and returns the cellRenderer object if it is a class implementing ICellRenderer.
-     * @cellRendererKey: The cellRenderer to use. Can be: a) a class that we call 'new' on b) a function we call
-     *                   or c) a string that we use to look up the cellRenderer.
-     * @params: The params to pass to the cell renderer if it's a function or a class.
-     * @eTarget: The DOM element we will put the results of the html element into *
-     * @return: If options a, it returns the created class instance */
-    CellRendererService.prototype.useCellRenderer = function (cellRendererKey, eTarget, params) {
-        var cellRenderer = this.lookUpCellRenderer(cellRendererKey);
-        if (utils_1.Utils.missing(cellRenderer)) {
-            // this is a bug in users config, they specified a cellRenderer that doesn't exist,
-            // the factory already printed to console, so here we just skip
-            return;
+    CellRendererService.prototype.useCellRenderer = function (target, eTarget, params) {
+        var _this = this;
+        var cellRendererPromise = this.componentRecipes.newCellRenderer(target, params);
+        if (cellRendererPromise != null) {
+            cellRendererPromise.then(function (cellRenderer) {
+                if (cellRenderer == null) {
+                    eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+                }
+                else {
+                    _this.bindToHtml(cellRendererPromise, eTarget);
+                }
+            });
         }
-        var resultFromRenderer;
-        var iCellRendererInstance = null;
-        this.checkForDeprecatedItems(cellRenderer);
-        // we check if the class has the 'getGui' method to know if it's a component
-        var rendererIsAComponent = this.doesImplementICellRenderer(cellRenderer);
-        // if it's a component, we create and initialise it
-        if (rendererIsAComponent) {
-            var CellRendererClass = cellRenderer;
-            iCellRendererInstance = new CellRendererClass();
-            this.context.wireBean(iCellRendererInstance);
-            if (iCellRendererInstance.init) {
-                iCellRendererInstance.init(params);
+        else {
+            eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+        }
+        return cellRendererPromise;
+    };
+    CellRendererService.prototype.useFilterCellRenderer = function (target, eTarget, params) {
+        var cellRendererPromise = this.componentRecipes.newCellRenderer(target.filterParams, params);
+        if (cellRendererPromise != null) {
+            this.bindToHtml(cellRendererPromise, eTarget);
+        }
+        else {
+            if (params.valueFormatted == null && params.value == null) {
+                var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+                eTarget.innerText = '(' + localeTextFunc('blanks', 'Blanks') + ')';
             }
-            resultFromRenderer = iCellRendererInstance.getGui();
+            else {
+                eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+            }
+        }
+        return cellRendererPromise;
+    };
+    CellRendererService.prototype.useRichSelectCellRenderer = function (target, eTarget, params) {
+        var cellRendererPromise = this.componentRecipes.newCellRenderer(target.cellEditorParams, params);
+        if (cellRendererPromise != null) {
+            this.bindToHtml(cellRendererPromise, eTarget);
         }
         else {
-            // otherwise it's a function, so we just use it
-            var cellRendererFunc = cellRenderer;
-            resultFromRenderer = cellRendererFunc(params);
+            eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
         }
-        if (resultFromRenderer === null || resultFromRenderer === '') {
-            return;
-        }
-        if (utils_1.Utils.isNodeOrElement(resultFromRenderer)) {
-            // a dom node or element was returned, so add child
-            eTarget.appendChild(resultFromRenderer);
+        return cellRendererPromise;
+    };
+    CellRendererService.prototype.useInnerCellRenderer = function (target, originalColumn, eTarget, params) {
+        var _this = this;
+        var rendererToUsePromise = null;
+        var componentToUse = this.componentResolver.getComponentToUse(target, "innerRenderer", null);
+        if (componentToUse && componentToUse.component != null && componentToUse.source != componentResolver_1.ComponentSource.DEFAULT) {
+            //THERE IS ONE INNER CELL RENDERER HARDCODED IN THE COLDEF FOR THIS GROUP COLUMN
+            rendererToUsePromise = this.componentRecipes.newInnerCellRenderer(target, params);
         }
         else {
-            // otherwise assume it was html, so just insert
-            eTarget.innerHTML = resultFromRenderer;
+            var otherRenderer = this.componentResolver.getComponentToUse(originalColumn, "cellRenderer", null);
+            if (otherRenderer && otherRenderer.source != componentResolver_1.ComponentSource.DEFAULT) {
+                //Only if the original column is using an specific renderer, it it is a using a DEFAULT one
+                //ignore it
+                //THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, WE REUSE ITS RENDERER
+                rendererToUsePromise = this.componentRecipes.newCellRenderer(originalColumn, params);
+            }
+            else if (otherRenderer && otherRenderer.source == componentResolver_1.ComponentSource.DEFAULT && (utils_1._.get(originalColumn, 'cellRendererParams.innerRenderer', null))) {
+                //EDGE CASE - THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, THAT HAS AS RENDERER 'group'
+                //AND HAS A INNER CELL RENDERER
+                rendererToUsePromise = this.componentRecipes.newInnerCellRenderer(originalColumn.cellRendererParams, params);
+            }
+            else {
+                //This forces the retrieval of the default plain cellRenderer that just renders the values.
+                rendererToUsePromise = this.componentRecipes.newCellRenderer({}, params);
+            }
         }
-        return iCellRendererInstance;
-    };
-    CellRendererService.prototype.checkForDeprecatedItems = function (cellRenderer) {
-        if (cellRenderer && cellRenderer.renderer) {
-            console.warn('ag-grid: colDef.cellRenderer should not be an object, it should be a string, function or class. this ' +
-                'changed in v4.1.x, please check the documentation on Cell Rendering, or if you are doing grouping, look at the grouping examples.');
-        }
-    };
-    CellRendererService.prototype.doesImplementICellRenderer = function (cellRenderer) {
-        // see if the class has a prototype that defines a getGui method. this is very rough,
-        // but javascript doesn't have types, so is the only way!
-        return cellRenderer.prototype && 'getGui' in cellRenderer.prototype;
-    };
-    CellRendererService.prototype.lookUpCellRenderer = function (cellRendererKey) {
-        if (typeof cellRendererKey === 'string') {
-            return this.cellRendererFactory.getCellRenderer(cellRendererKey);
+        if (rendererToUsePromise != null) {
+            rendererToUsePromise.then(function (rendererToUse) {
+                if (rendererToUse == null) {
+                    eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+                    return;
+                }
+                _this.bindToHtml(rendererToUsePromise, eTarget);
+            });
         }
         else {
-            return cellRendererKey;
+            eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
         }
+        return rendererToUsePromise;
     };
+    CellRendererService.prototype.useFullWidthGroupRowInnerCellRenderer = function (eTarget, params) {
+        var cellRendererPromise = this.componentRecipes.newFullWidthGroupRowInnerCellRenderer(params);
+        if (cellRendererPromise != null) {
+            this.bindToHtml(cellRendererPromise, eTarget);
+        }
+        else {
+            eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+        }
+        return cellRendererPromise;
+    };
+    CellRendererService.prototype.bindToHtml = function (cellRendererPromise, eTarget) {
+        cellRendererPromise.then(function (cellRenderer) {
+            var gui = cellRenderer.getGui();
+            if (gui != null) {
+                if (typeof gui == 'object') {
+                    eTarget.appendChild(gui);
+                }
+                else {
+                    eTarget.innerHTML = gui;
+                }
+            }
+        });
+        return cellRendererPromise;
+    };
+    __decorate([
+        context_1.Autowired('componentRecipes'),
+        __metadata("design:type", componentRecipes_1.ComponentRecipes)
+    ], CellRendererService.prototype, "componentRecipes", void 0);
+    __decorate([
+        context_1.Autowired('componentResolver'),
+        __metadata("design:type", componentResolver_1.ComponentResolver)
+    ], CellRendererService.prototype, "componentResolver", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], CellRendererService.prototype, "gridOptionsWrapper", void 0);
+    CellRendererService = __decorate([
+        context_1.Bean('cellRendererService')
+    ], CellRendererService);
     return CellRendererService;
 }());
-__decorate([
-    context_1.Autowired('cellRendererFactory'),
-    __metadata("design:type", cellRendererFactory_1.CellRendererFactory)
-], CellRendererService.prototype, "cellRendererFactory", void 0);
-__decorate([
-    context_1.Autowired('context'),
-    __metadata("design:type", context_1.Context)
-], CellRendererService.prototype, "context", void 0);
-CellRendererService = __decorate([
-    context_1.Bean('cellRendererService')
-], CellRendererService);
 exports.CellRendererService = CellRendererService;

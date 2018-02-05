@@ -1,7 +1,14 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v16.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
-import { DropTarget, DraggingEvent } from "../dragAndDrop/dragAndDropService";
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { DraggingEvent, DragSourceType, DropTarget } from "../dragAndDrop/dragAndDropService";
+export interface DropListener {
+    getIconName(): string;
+    onDragEnter(params: DraggingEvent): void;
+    onDragLeave(params: DraggingEvent): void;
+    onDragging(params: DraggingEvent): void;
+    onDragStop(params: DraggingEvent): void;
+}
 export declare class BodyDropTarget implements DropTarget {
     private context;
     private gridPanel;
@@ -10,15 +17,15 @@ export declare class BodyDropTarget implements DropTarget {
     private pinned;
     private eContainer;
     private eSecondaryContainers;
-    private moveColumnController;
-    private bodyDropPivotTarget;
+    private dropListeners;
     private currentDropListener;
     constructor(pinned: string, eContainer: HTMLElement);
+    isInterestedIn(type: DragSourceType): boolean;
     getSecondaryContainers(): HTMLElement[];
     getContainer(): HTMLElement;
     private init();
     getIconName(): string;
-    private isUseBodyDropPivotTarget(draggingEvent);
+    private getDropType(draggingEvent);
     onDragEnter(draggingEvent: DraggingEvent): void;
     onDragLeave(params: DraggingEvent): void;
     onDragging(params: DraggingEvent): void;

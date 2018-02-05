@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -55,8 +55,19 @@ var PaginationComp = (function (_super) {
         this.setTotalLabels();
     };
     PaginationComp.prototype.setCurrentPageLabel = function () {
+        var pagesExist = this.paginationProxy.getTotalPages() > 0;
         var currentPage = this.paginationProxy.getCurrentPage();
-        this.lbCurrent.innerHTML = utils_1._.formatNumberCommas(currentPage + 1);
+        var toDisplay = pagesExist ? currentPage + 1 : 0;
+        this.lbCurrent.innerHTML = this.formatNumber(toDisplay);
+    };
+    PaginationComp.prototype.formatNumber = function (value) {
+        var userFunc = this.gridOptionsWrapper.getPaginationNumberFormatterFunc();
+        if (userFunc) {
+            return userFunc({ value: value });
+        }
+        else {
+            return utils_1._.formatNumberCommas(value);
+        }
     };
     PaginationComp.prototype.getTemplate = function () {
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
@@ -114,8 +125,8 @@ var PaginationComp = (function (_super) {
                 endRow = rowCount;
             }
         }
-        this.lbFirstRowOnPage.innerHTML = utils_1._.formatNumberCommas(startRow);
-        this.lbLastRowOnPage.innerHTML = utils_1._.formatNumberCommas(endRow);
+        this.lbFirstRowOnPage.innerHTML = this.formatNumber(startRow);
+        this.lbLastRowOnPage.innerHTML = this.formatNumber(endRow);
     };
     PaginationComp.prototype.isZeroPagesToDisplay = function () {
         var maxRowFound = this.paginationProxy.isLastPageFound();
@@ -128,8 +139,8 @@ var PaginationComp = (function (_super) {
         var rowCount = this.paginationProxy.isLastPageFound() ?
             this.paginationProxy.getTotalRowCount() : null;
         if (lastPageFound) {
-            this.lbTotal.innerHTML = utils_1._.formatNumberCommas(totalPages);
-            this.lbRecordCount.innerHTML = utils_1._.formatNumberCommas(rowCount);
+            this.lbTotal.innerHTML = this.formatNumber(totalPages);
+            this.lbRecordCount.innerHTML = this.formatNumber(rowCount);
         }
         else {
             var moreText = this.gridOptionsWrapper.getLocaleTextFunc()('more', 'more');
@@ -137,68 +148,68 @@ var PaginationComp = (function (_super) {
             this.lbRecordCount.innerHTML = moreText;
         }
     };
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], PaginationComp.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('eventService'),
+        __metadata("design:type", eventService_1.EventService)
+    ], PaginationComp.prototype, "eventService", void 0);
+    __decorate([
+        context_1.Autowired('paginationProxy'),
+        __metadata("design:type", paginationProxy_1.PaginationProxy)
+    ], PaginationComp.prototype, "paginationProxy", void 0);
+    __decorate([
+        context_1.Autowired('rowRenderer'),
+        __metadata("design:type", rowRenderer_1.RowRenderer)
+    ], PaginationComp.prototype, "rowRenderer", void 0);
+    __decorate([
+        componentAnnotations_1.RefSelector('btFirst'),
+        __metadata("design:type", HTMLButtonElement)
+    ], PaginationComp.prototype, "btFirst", void 0);
+    __decorate([
+        componentAnnotations_1.RefSelector('btPrevious'),
+        __metadata("design:type", HTMLButtonElement)
+    ], PaginationComp.prototype, "btPrevious", void 0);
+    __decorate([
+        componentAnnotations_1.RefSelector('btNext'),
+        __metadata("design:type", HTMLButtonElement)
+    ], PaginationComp.prototype, "btNext", void 0);
+    __decorate([
+        componentAnnotations_1.RefSelector('btLast'),
+        __metadata("design:type", HTMLButtonElement)
+    ], PaginationComp.prototype, "btLast", void 0);
+    __decorate([
+        componentAnnotations_1.RefSelector('lbRecordCount'),
+        __metadata("design:type", Object)
+    ], PaginationComp.prototype, "lbRecordCount", void 0);
+    __decorate([
+        componentAnnotations_1.RefSelector('lbFirstRowOnPage'),
+        __metadata("design:type", Object)
+    ], PaginationComp.prototype, "lbFirstRowOnPage", void 0);
+    __decorate([
+        componentAnnotations_1.RefSelector('lbLastRowOnPage'),
+        __metadata("design:type", Object)
+    ], PaginationComp.prototype, "lbLastRowOnPage", void 0);
+    __decorate([
+        componentAnnotations_1.RefSelector('eSummaryPanel'),
+        __metadata("design:type", Object)
+    ], PaginationComp.prototype, "eSummaryPanel", void 0);
+    __decorate([
+        componentAnnotations_1.RefSelector('lbCurrent'),
+        __metadata("design:type", Object)
+    ], PaginationComp.prototype, "lbCurrent", void 0);
+    __decorate([
+        componentAnnotations_1.RefSelector('lbTotal'),
+        __metadata("design:type", Object)
+    ], PaginationComp.prototype, "lbTotal", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], PaginationComp.prototype, "postConstruct", null);
     return PaginationComp;
 }(component_1.Component));
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], PaginationComp.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.Autowired('eventService'),
-    __metadata("design:type", eventService_1.EventService)
-], PaginationComp.prototype, "eventService", void 0);
-__decorate([
-    context_1.Autowired('paginationProxy'),
-    __metadata("design:type", paginationProxy_1.PaginationProxy)
-], PaginationComp.prototype, "paginationProxy", void 0);
-__decorate([
-    context_1.Autowired('rowRenderer'),
-    __metadata("design:type", rowRenderer_1.RowRenderer)
-], PaginationComp.prototype, "rowRenderer", void 0);
-__decorate([
-    componentAnnotations_1.RefSelector('btFirst'),
-    __metadata("design:type", HTMLButtonElement)
-], PaginationComp.prototype, "btFirst", void 0);
-__decorate([
-    componentAnnotations_1.RefSelector('btPrevious'),
-    __metadata("design:type", HTMLButtonElement)
-], PaginationComp.prototype, "btPrevious", void 0);
-__decorate([
-    componentAnnotations_1.RefSelector('btNext'),
-    __metadata("design:type", HTMLButtonElement)
-], PaginationComp.prototype, "btNext", void 0);
-__decorate([
-    componentAnnotations_1.RefSelector('btLast'),
-    __metadata("design:type", HTMLButtonElement)
-], PaginationComp.prototype, "btLast", void 0);
-__decorate([
-    componentAnnotations_1.RefSelector('lbRecordCount'),
-    __metadata("design:type", Object)
-], PaginationComp.prototype, "lbRecordCount", void 0);
-__decorate([
-    componentAnnotations_1.RefSelector('lbFirstRowOnPage'),
-    __metadata("design:type", Object)
-], PaginationComp.prototype, "lbFirstRowOnPage", void 0);
-__decorate([
-    componentAnnotations_1.RefSelector('lbLastRowOnPage'),
-    __metadata("design:type", Object)
-], PaginationComp.prototype, "lbLastRowOnPage", void 0);
-__decorate([
-    componentAnnotations_1.RefSelector('eSummaryPanel'),
-    __metadata("design:type", Object)
-], PaginationComp.prototype, "eSummaryPanel", void 0);
-__decorate([
-    componentAnnotations_1.RefSelector('lbCurrent'),
-    __metadata("design:type", Object)
-], PaginationComp.prototype, "lbCurrent", void 0);
-__decorate([
-    componentAnnotations_1.RefSelector('lbTotal'),
-    __metadata("design:type", Object)
-], PaginationComp.prototype, "lbTotal", void 0);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], PaginationComp.prototype, "postConstruct", null);
 exports.PaginationComp = PaginationComp;

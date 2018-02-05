@@ -1,7 +1,7 @@
 import {Column} from "../../entities/column";
 import {RowNode} from "../../entities/rowNode";
 import {GridApi} from "../../gridApi";
-import {ColumnApi} from "../../columnController/columnController";
+import {ColumnApi} from "../../columnController/columnApi";
 import {IComponent} from "../../interfaces/iComponent";
 
 
@@ -32,7 +32,7 @@ export interface ICellEditor {
     focusOut?(): void;
 }
 
-export interface ICellEditorComp extends ICellEditor, IComponent<ICellEditorParams>{
+export interface ICellEditorComp extends ICellEditor, IComponent<ICellEditorParams> {
 
 }
 
@@ -66,4 +66,6 @@ export interface ICellEditorParams {
     onKeyDown: (event: KeyboardEvent)=>void;
     stopEditing: ()=>void;
     eGridCell: HTMLElement;
+    parseValue: (value: any) => any;
+    formatValue: (value: any) => any;
 }

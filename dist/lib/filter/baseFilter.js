@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31,6 +31,7 @@ var context_1 = require("../context/context");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var utils_1 = require("../utils");
 var DEFAULT_TRANSLATIONS = {
+    loadingOoo: 'Loading...',
     equals: 'Equals',
     notEqual: 'Not equal',
     lessThan: 'Less than',
@@ -65,7 +66,7 @@ var BaseFilter = (function (_super) {
     BaseFilter.prototype.init = function (params) {
         this.filterParams = params;
         this.defaultFilter = this.filterParams.defaultOption;
-        if (this.filterParams.filterOptions) {
+        if (this.filterParams.filterOptions && !this.defaultFilter) {
             if (this.filterParams.filterOptions.lastIndexOf(BaseFilter.EQUALS) < 0) {
                 this.defaultFilter = this.filterParams.filterOptions[0];
             }
@@ -163,39 +164,46 @@ var BaseFilter = (function (_super) {
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         return translate(toTranslate, DEFAULT_TRANSLATIONS[toTranslate]);
     };
+    BaseFilter.prototype.getDebounceMs = function (filterParams) {
+        if (filterParams.applyButton && filterParams.debounceMs) {
+            console.warn('ag-Grid: debounceMs is ignored when applyButton = true');
+            return 0;
+        }
+        return filterParams.debounceMs != null ? filterParams.debounceMs : 500;
+    };
+    BaseFilter.EQUALS = 'equals';
+    BaseFilter.NOT_EQUAL = 'notEqual';
+    BaseFilter.LESS_THAN = 'lessThan';
+    BaseFilter.LESS_THAN_OR_EQUAL = 'lessThanOrEqual';
+    BaseFilter.GREATER_THAN = 'greaterThan';
+    BaseFilter.GREATER_THAN_OR_EQUAL = 'greaterThanOrEqual';
+    BaseFilter.IN_RANGE = 'inRange';
+    BaseFilter.CONTAINS = 'contains'; //1;
+    BaseFilter.NOT_CONTAINS = 'notContains'; //1;
+    BaseFilter.STARTS_WITH = 'startsWith'; //4;
+    BaseFilter.ENDS_WITH = 'endsWith'; //5;
+    __decorate([
+        componentAnnotations_1.QuerySelector('#applyPanel'),
+        __metadata("design:type", HTMLElement)
+    ], BaseFilter.prototype, "eButtonsPanel", void 0);
+    __decorate([
+        componentAnnotations_1.QuerySelector('#applyButton'),
+        __metadata("design:type", HTMLElement)
+    ], BaseFilter.prototype, "eApplyButton", void 0);
+    __decorate([
+        componentAnnotations_1.QuerySelector('#clearButton'),
+        __metadata("design:type", HTMLElement)
+    ], BaseFilter.prototype, "eClearButton", void 0);
+    __decorate([
+        context_1.Autowired('context'),
+        __metadata("design:type", context_1.Context)
+    ], BaseFilter.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], BaseFilter.prototype, "gridOptionsWrapper", void 0);
     return BaseFilter;
 }(component_1.Component));
-BaseFilter.EQUALS = 'equals';
-BaseFilter.NOT_EQUAL = 'notEqual';
-BaseFilter.LESS_THAN = 'lessThan';
-BaseFilter.LESS_THAN_OR_EQUAL = 'lessThanOrEqual';
-BaseFilter.GREATER_THAN = 'greaterThan';
-BaseFilter.GREATER_THAN_OR_EQUAL = 'greaterThanOrEqual';
-BaseFilter.IN_RANGE = 'inRange';
-BaseFilter.CONTAINS = 'contains'; //1;
-BaseFilter.NOT_CONTAINS = 'notContains'; //1;
-BaseFilter.STARTS_WITH = 'startsWith'; //4;
-BaseFilter.ENDS_WITH = 'endsWith'; //5;
-__decorate([
-    componentAnnotations_1.QuerySelector('#applyPanel'),
-    __metadata("design:type", HTMLElement)
-], BaseFilter.prototype, "eButtonsPanel", void 0);
-__decorate([
-    componentAnnotations_1.QuerySelector('#applyButton'),
-    __metadata("design:type", HTMLElement)
-], BaseFilter.prototype, "eApplyButton", void 0);
-__decorate([
-    componentAnnotations_1.QuerySelector('#clearButton'),
-    __metadata("design:type", HTMLElement)
-], BaseFilter.prototype, "eClearButton", void 0);
-__decorate([
-    context_1.Autowired('context'),
-    __metadata("design:type", context_1.Context)
-], BaseFilter.prototype, "context", void 0);
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], BaseFilter.prototype, "gridOptionsWrapper", void 0);
 exports.BaseFilter = BaseFilter;
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values
@@ -250,12 +258,12 @@ var ComparableBaseFilter = (function (_super) {
         this.filter = filterType;
         this.eTypeSelector.value = filterType;
     };
+    __decorate([
+        componentAnnotations_1.QuerySelector('#filterType'),
+        __metadata("design:type", HTMLSelectElement)
+    ], ComparableBaseFilter.prototype, "eTypeSelector", void 0);
     return ComparableBaseFilter;
 }(BaseFilter));
-__decorate([
-    componentAnnotations_1.QuerySelector('#filterType'),
-    __metadata("design:type", HTMLSelectElement)
-], ComparableBaseFilter.prototype, "eTypeSelector", void 0);
 exports.ComparableBaseFilter = ComparableBaseFilter;
 /**
  * Comparable filter with scalar underlying values (ie numbers and dates. Strings are not scalar so have to extend
@@ -266,12 +274,50 @@ var ScalarBaseFilter = (function (_super) {
     function ScalarBaseFilter() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    ScalarBaseFilter.prototype.nullComparator = function (type) {
+        var _this = this;
+        return function (filterValue, gridValue) {
+            if (gridValue == null) {
+                var nullValue = _this.translateNull(type);
+                if (_this.filter === BaseFilter.EQUALS) {
+                    return nullValue ? 0 : 1;
+                }
+                if (_this.filter === BaseFilter.GREATER_THAN) {
+                    return nullValue ? 1 : -1;
+                }
+                if (_this.filter === BaseFilter.GREATER_THAN_OR_EQUAL) {
+                    return nullValue ? 1 : -1;
+                }
+                if (_this.filter === BaseFilter.LESS_THAN_OR_EQUAL) {
+                    return nullValue ? -1 : 1;
+                }
+                if (_this.filter === BaseFilter.LESS_THAN) {
+                    return nullValue ? -1 : 1;
+                }
+                if (_this.filter === BaseFilter.NOT_EQUAL) {
+                    return nullValue ? 1 : 0;
+                }
+            }
+            var actualComparator = _this.comparator();
+            return actualComparator(filterValue, gridValue);
+        };
+    };
     ScalarBaseFilter.prototype.getDefaultType = function () {
         return BaseFilter.EQUALS;
     };
+    ScalarBaseFilter.prototype.translateNull = function (type) {
+        var reducedType = type.indexOf('greater') > -1 ? 'greaterThan' :
+            type.indexOf('lessThan') > -1 ? 'lessThan' :
+                'equals';
+        if (this.filterParams.nullComparator && this.filterParams.nullComparator[reducedType]) {
+            return this.filterParams.nullComparator[reducedType];
+        }
+        ;
+        return ScalarBaseFilter.DEFAULT_NULL_COMPARATOR[reducedType];
+    };
     ScalarBaseFilter.prototype.doesFilterPass = function (params) {
         var value = this.filterParams.valueGetter(params.node);
-        var comparator = this.comparator();
+        var comparator = this.nullComparator(this.filter);
         var rawFilterValues = this.filterValues();
         var from = Array.isArray(rawFilterValues) ? rawFilterValues[0] : rawFilterValues;
         if (from == null)
@@ -284,10 +330,10 @@ var ScalarBaseFilter = (function (_super) {
             return compareResult > 0;
         }
         if (this.filter === BaseFilter.GREATER_THAN_OR_EQUAL) {
-            return compareResult >= 0 && (value != null);
+            return compareResult >= 0;
         }
         if (this.filter === BaseFilter.LESS_THAN_OR_EQUAL) {
-            return compareResult <= 0 && (value != null);
+            return compareResult <= 0;
         }
         if (this.filter === BaseFilter.LESS_THAN) {
             return compareResult < 0;
@@ -306,6 +352,11 @@ var ScalarBaseFilter = (function (_super) {
             }
         }
         throw new Error('Unexpected type of date filter!: ' + this.filter);
+    };
+    ScalarBaseFilter.DEFAULT_NULL_COMPARATOR = {
+        equals: false,
+        lessThan: false,
+        greaterThan: false
     };
     return ScalarBaseFilter;
 }(ComparableBaseFilter));

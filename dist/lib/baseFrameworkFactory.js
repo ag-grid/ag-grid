@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14,7 +14,7 @@ var BaseFrameworkFactory = (function () {
         return gridOptions.dateComponent;
     };
     BaseFrameworkFactory.prototype.colDefFloatingCellRenderer = function (colDef) {
-        return colDef.floatingCellRenderer;
+        return colDef.pinnedRowCellRenderer;
     };
     BaseFrameworkFactory.prototype.colDefCellRenderer = function (colDef) {
         return colDef.cellRenderer;

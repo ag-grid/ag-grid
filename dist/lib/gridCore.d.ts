@@ -1,6 +1,6 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v16.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { LoggerFactory } from "./logger";
 export declare class GridCore {
     private gridOptions;
@@ -18,6 +18,8 @@ export declare class GridCore {
     private popupService;
     private focusedCellController;
     private context;
+    private columnApi;
+    private gridApi;
     private rowGroupCompFactory;
     private pivotCompFactory;
     private toolPanel;
@@ -43,6 +45,6 @@ export declare class GridCore {
     showToolPanel(show: any): void;
     isToolPanelShowing(): boolean;
     private destroy();
-    ensureNodeVisible(comparator: any): void;
+    ensureNodeVisible(comparator: any, position?: string): void;
     doLayout(): void;
 }

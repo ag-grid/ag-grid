@@ -1,11 +1,11 @@
-import {Utils as _, NumberSequence} from "../../utils";
+import {NumberSequence, Utils as _} from "../../utils";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {RowNode} from "../../entities/rowNode";
-import {Bean, Context, Autowired, PostConstruct, PreDestroy} from "../../context/context";
+import {Autowired, Bean, Context, PostConstruct, PreDestroy} from "../../context/context";
 import {EventService} from "../../eventService";
 import {SelectionController} from "../../selectionController";
-import {IRowModel} from "../../interfaces/iRowModel";
-import {Events} from "../../events";
+import {IRowModel, RowBounds} from "../../interfaces/iRowModel";
+import {Events, ModelUpdatedEvent} from "../../events";
 import {SortController} from "../../sortController";
 import {FilterManager} from "../../filter/filterManager";
 import {Constants} from "../../constants";
@@ -15,6 +15,8 @@ import {BeanStub} from "../../context/beanStub";
 import {RowNodeCache} from "../cache/rowNodeCache";
 import {RowNodeBlockLoader} from "../cache/rowNodeBlockLoader";
 import {RowDataTransaction} from "../inMemory/inMemoryRowModel";
+import {GridApi} from "../../gridApi";
+import {ColumnApi} from "../../columnController/columnApi";
 
 @Bean('rowModel')
 export class InfiniteRowModel extends BeanStub implements IRowModel {
@@ -25,6 +27,8 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
+    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('columnApi') private columnApi: ColumnApi;
 
     private infiniteCache: InfiniteCache;
     private rowNodeBlockLoader: RowNodeBlockLoader;
@@ -33,7 +37,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
 
     private rowHeight: number;
 
-    public getRowBounds(index: number): {rowTop: number, rowHeight: number} {
+    public getRowBounds(index: number): RowBounds {
         return {
             rowHeight: this.rowHeight,
             rowTop: this.rowHeight * index
@@ -59,6 +63,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
     private addEventListeners(): void {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverything.bind(this));
     }
 
     private onFilterChanged(): void {
@@ -68,6 +73,13 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
     }
 
     private onSortChanged(): void {
+        if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
+            this.reset();
+        }
+    }
+
+    private onColumnEverything(): void {
+        // if the columns get reset, then this means the sort order could be impacted
         if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
             this.reset();
         }
@@ -120,6 +132,10 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
         return _.exists(this.infiniteCache);
     }
 
+    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
+        return this.infiniteCache.getRowNodesInRange(firstInRange, lastInRange);
+    }
+
     private reset() {
         // important to return here, as the user could be setting filter or sort before
         // data-source is set
@@ -137,7 +153,22 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
 
         this.resetCache();
 
-        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
+        let event: ModelUpdatedEvent = this.createModelUpdatedEvent();
+        this.eventService.dispatchEvent(event);
+    }
+
+    private createModelUpdatedEvent(): ModelUpdatedEvent {
+        return {
+            type: Events.EVENT_MODEL_UPDATED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            // not sure if these should all be false - noticed if after implementing,
+            // maybe they should be true?
+            newPage: false,
+            newData: false,
+            keepRenderedRows: false,
+            animate: false
+        };
     }
 
     private resetCache(): void {
@@ -213,7 +244,8 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
     }
 
     private onCacheUpdated(): void {
-        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
+        let event: ModelUpdatedEvent = this.createModelUpdatedEvent();
+        this.eventService.dispatchEvent(event);
     }
 
     public getRow(rowIndex: number): RowNode {
@@ -270,7 +302,6 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
     }
 
     public isRowPresent(rowNode: RowNode): boolean {
-        console.log('ag-Grid: not supported.');
         return false;
     }
 

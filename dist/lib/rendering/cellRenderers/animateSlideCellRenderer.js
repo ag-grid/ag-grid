@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -80,10 +80,11 @@ var AnimateSlideCellRenderer = (function (_super) {
         else {
             this.eCurrent.innerHTML = '';
         }
+        return true;
     };
+    AnimateSlideCellRenderer.TEMPLATE = '<span>' +
+        '<span class="ag-value-slide-current"></span>' +
+        '</span>';
     return AnimateSlideCellRenderer;
 }(component_1.Component));
-AnimateSlideCellRenderer.TEMPLATE = '<span>' +
-    '<span class="ag-value-slide-current"></span>' +
-    '</span>';
 exports.AnimateSlideCellRenderer = AnimateSlideCellRenderer;

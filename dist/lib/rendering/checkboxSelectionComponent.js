@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,25 +30,28 @@ var rowNode_1 = require("../entities/rowNode");
 var utils_1 = require("../utils");
 var context_1 = require("../context/context");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
-var svgFactory_1 = require("../svgFactory");
 var events_1 = require("../events");
 var eventService_1 = require("../eventService");
 var gridApi_1 = require("../gridApi");
-var columnController_1 = require("../columnController/columnController");
-var svgFactory = svgFactory_1.SvgFactory.getInstance();
+var columnApi_1 = require("../columnController/columnApi");
 var CheckboxSelectionComponent = (function (_super) {
     __extends(CheckboxSelectionComponent, _super);
     function CheckboxSelectionComponent() {
         return _super.call(this, "<span class=\"ag-selection-checkbox\"/>") || this;
     }
     CheckboxSelectionComponent.prototype.createAndAddIcons = function () {
-        this.eCheckedIcon = utils_1.Utils.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null, svgFactory.createCheckboxCheckedIcon);
-        this.eUncheckedIcon = utils_1.Utils.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null, svgFactory.createCheckboxUncheckedIcon);
-        this.eIndeterminateIcon = utils_1.Utils.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null, svgFactory.createCheckboxIndeterminateIcon);
-        var eGui = this.getGui();
-        eGui.appendChild(this.eCheckedIcon);
-        eGui.appendChild(this.eUncheckedIcon);
-        eGui.appendChild(this.eIndeterminateIcon);
+        this.eCheckedIcon = utils_1.Utils.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column);
+        this.eUncheckedIcon = utils_1.Utils.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column);
+        this.eIndeterminateIcon = utils_1.Utils.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, this.column);
+        var element = this.getGui();
+        element.appendChild(this.eCheckedIcon);
+        element.appendChild(this.eUncheckedIcon);
+        element.appendChild(this.eIndeterminateIcon);
+    };
+    CheckboxSelectionComponent.prototype.onDataChanged = function () {
+        // when rows are loaded for the second time, this can impact the selection, as a row
+        // could be loaded as already selected (if user scrolls down, and then up again).
+        this.onSelectionChanged();
     };
     CheckboxSelectionComponent.prototype.onSelectionChanged = function () {
         var state = this.rowNode.isSelected();
@@ -73,58 +76,45 @@ var CheckboxSelectionComponent = (function (_super) {
         }
     };
     CheckboxSelectionComponent.prototype.init = function (params) {
-        this.createAndAddIcons();
         this.rowNode = params.rowNode;
         this.column = params.column;
-        this.visibleFunc = params.visibleFunc;
+        this.createAndAddIcons();
         this.onSelectionChanged();
         // we don't want the row clicked event to fire when selecting the checkbox, otherwise the row
         // would possibly get selected twice
-        this.addGuiEventListener('click', function (event) { return event.stopPropagation(); });
+        this.addGuiEventListener('click', function (event) { return utils_1.Utils.stopPropagationForAgGrid(event); });
         // likewise we don't want double click on this icon to open a group
-        this.addGuiEventListener('dblclick', function (event) { return event.stopPropagation(); });
+        this.addGuiEventListener('dblclick', function (event) { return utils_1.Utils.stopPropagationForAgGrid(event); });
         this.addDestroyableEventListener(this.eCheckedIcon, 'click', this.onCheckedClicked.bind(this));
         this.addDestroyableEventListener(this.eUncheckedIcon, 'click', this.onUncheckedClicked.bind(this));
         this.addDestroyableEventListener(this.eIndeterminateIcon, 'click', this.onIndeterminateClicked.bind(this));
         this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_ROW_SELECTED, this.onSelectionChanged.bind(this));
-        if (this.visibleFunc) {
+        this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_DATA_CHANGED, this.onDataChanged.bind(this));
+        if (typeof this.column.getColDef().checkboxSelection === 'function') {
             this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelect.bind(this));
             this.showOrHideSelect();
         }
     };
     CheckboxSelectionComponent.prototype.showOrHideSelect = function () {
-        var params = this.createParams();
-        var visible = this.visibleFunc(params);
+        var visible = this.column.isCellCheckboxSelection(this.rowNode);
         this.setVisible(visible);
     };
-    CheckboxSelectionComponent.prototype.createParams = function () {
-        var params = {
-            node: this.rowNode,
-            data: this.rowNode.data,
-            column: this.column,
-            colDef: this.column.getColDef(),
-            context: this.gridOptionsWrapper.getContext(),
-            api: this.gridApi,
-            columnApi: this.columnApi
-        };
-        return params;
-    };
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], CheckboxSelectionComponent.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('eventService'),
+        __metadata("design:type", eventService_1.EventService)
+    ], CheckboxSelectionComponent.prototype, "eventService", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], CheckboxSelectionComponent.prototype, "gridApi", void 0);
+    __decorate([
+        context_1.Autowired('columnApi'),
+        __metadata("design:type", columnApi_1.ColumnApi)
+    ], CheckboxSelectionComponent.prototype, "columnApi", void 0);
     return CheckboxSelectionComponent;
 }(component_1.Component));
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], CheckboxSelectionComponent.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.Autowired('eventService'),
-    __metadata("design:type", eventService_1.EventService)
-], CheckboxSelectionComponent.prototype, "eventService", void 0);
-__decorate([
-    context_1.Autowired('gridApi'),
-    __metadata("design:type", gridApi_1.GridApi)
-], CheckboxSelectionComponent.prototype, "gridApi", void 0);
-__decorate([
-    context_1.Autowired('columnApi'),
-    __metadata("design:type", columnController_1.ColumnApi)
-], CheckboxSelectionComponent.prototype, "columnApi", void 0);
 exports.CheckboxSelectionComponent = CheckboxSelectionComponent;

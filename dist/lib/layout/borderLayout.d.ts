@@ -1,6 +1,6 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v16.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class BorderLayout {
     private static TEMPLATE_FULL_HEIGHT;
     private static TEMPLATE_NORMAL;
@@ -29,10 +29,11 @@ export declare class BorderLayout {
     private centerLeftMarginLastTime;
     private visibleLastTime;
     private sizeChangeListeners;
-    private overlays;
+    private overlayWrapper;
     constructor(params: any);
     addSizeChangeListener(listener: Function): void;
     fireSizeChanged(): void;
+    private getRefElement(refName);
     private setupPanels(params);
     private setupPanel(content, ePanel);
     getGui(): HTMLElement;
@@ -44,7 +45,7 @@ export declare class BorderLayout {
     getCentreHeight(): number;
     private layoutWidth();
     setEastVisible(visible: any): void;
-    private setupOverlays();
+    showLoadingOverlay(): void;
+    showNoRowsOverlay(): void;
     hideOverlay(): void;
-    showOverlay(key: string): void;
 }

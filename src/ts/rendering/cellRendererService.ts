@@ -1,91 +1,141 @@
-import {Utils as _} from "../utils";
-import {ICellRenderer, ICellRendererFunc, ICellRendererComp, ICellRendererParams} from "./cellRenderers/iCellRenderer";
-import {Autowired, Context, Bean} from "../context/context";
-import {CellRendererFactory} from "./cellRendererFactory";
+import {ICellRendererComp} from "./cellRenderers/iCellRenderer";
+import {Autowired, Bean} from "../context/context";
+import {ComponentRecipes} from "../components/framework/componentRecipes";
+import {ColDef} from "../entities/colDef";
+import {GroupCellRendererParams} from "./cellRenderers/groupCellRenderer";
+import {ComponentResolver, ComponentSource, ResolvedComponent} from "../components/framework/componentResolver";
+import {_, Promise} from "../utils";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {IRichCellEditorParams} from "../interfaces/iRichCellEditorParams";
+import {ISetFilterParams} from "../interfaces/iSetFilterParams";
 
 /** Class to use a cellRenderer. */
 @Bean('cellRendererService')
 export class CellRendererService {
+    @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
+    @Autowired('componentResolver') private componentResolver: ComponentResolver;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
-    @Autowired('context') private context: Context;
-
-    /** Uses a cellRenderer, and returns the cellRenderer object if it is a class implementing ICellRenderer.
-     * @cellRendererKey: The cellRenderer to use. Can be: a) a class that we call 'new' on b) a function we call
-     *                   or c) a string that we use to look up the cellRenderer.
-     * @params: The params to pass to the cell renderer if it's a function or a class.
-     * @eTarget: The DOM element we will put the results of the html element into *
-     * @return: If options a, it returns the created class instance */
-    public useCellRenderer(cellRendererKey: {new(): ICellRendererComp} | ICellRendererFunc | string,
-                            eTarget: HTMLElement,
-                            params: any
-                        ): ICellRendererComp {
-
-        let cellRenderer = this.lookUpCellRenderer(cellRendererKey);
-        if (_.missing(cellRenderer)) {
-            // this is a bug in users config, they specified a cellRenderer that doesn't exist,
-            // the factory already printed to console, so here we just skip
-            return;
+    public useCellRenderer(
+        target:ColDef,
+        eTarget: HTMLElement,
+        params: any
+    ): Promise<ICellRendererComp> {
+        let cellRendererPromise: Promise<ICellRendererComp> = this.componentRecipes.newCellRenderer (target, params);
+        if (cellRendererPromise != null) {
+            cellRendererPromise.then(cellRenderer=>{
+                if (cellRenderer == null){
+                    eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+                }else{
+                    this.bindToHtml(cellRendererPromise, eTarget);
+                }
+            })
+        } else {
+            eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
         }
+        return cellRendererPromise;
+    }
 
-        let resultFromRenderer: HTMLElement | string;
-        let iCellRendererInstance: ICellRendererComp = null;
+    public useFilterCellRenderer(
+        target:ColDef,
+        eTarget: HTMLElement,
+        params: any
+    ): Promise<ICellRendererComp> {
+        let cellRendererPromise: Promise<ICellRendererComp> = this.componentRecipes.newCellRenderer((<ISetFilterParams>target.filterParams), params);
+        if (cellRendererPromise != null) {
+            this.bindToHtml(cellRendererPromise, eTarget);
+        } else {
+            if(params.valueFormatted == null && params.value == null) {
+                let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+                eTarget.innerText = '(' + localeTextFunc('blanks', 'Blanks') + ')';
+            } else {
+                eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+            }
+        }
+        return cellRendererPromise;
+    }
 
-        this.checkForDeprecatedItems(cellRenderer);
+    public useRichSelectCellRenderer(
+        target:ColDef,
+        eTarget: HTMLElement,
+        params: any
+    ): Promise<ICellRendererComp> {
+        let cellRendererPromise: Promise<ICellRendererComp> = this.componentRecipes.newCellRenderer((<IRichCellEditorParams>target.cellEditorParams), params);
+        if (cellRendererPromise != null) {
+            this.bindToHtml(cellRendererPromise, eTarget);
+        } else {
+            eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+        }
+        return cellRendererPromise;
+    }
 
-        // we check if the class has the 'getGui' method to know if it's a component
-        let rendererIsAComponent = this.doesImplementICellRenderer(cellRenderer);
-        // if it's a component, we create and initialise it
-        if (rendererIsAComponent) {
-            let CellRendererClass = <{new(): ICellRendererComp}> cellRenderer;
-            iCellRendererInstance = new CellRendererClass();
-            this.context.wireBean(iCellRendererInstance);
+    public useInnerCellRenderer(
+        target:GroupCellRendererParams,
+        originalColumn:ColDef,
+        eTarget: HTMLElement,
+        params: any
+    ): Promise<ICellRendererComp> {
+        let rendererToUsePromise:Promise<ICellRendererComp> = null;
+        let componentToUse:ResolvedComponent<any, any> = this.componentResolver.getComponentToUse(target, "innerRenderer", null);
 
-            if (iCellRendererInstance.init) {
-                iCellRendererInstance.init(params);
+        if (componentToUse && componentToUse.component != null && componentToUse.source != ComponentSource.DEFAULT){
+            //THERE IS ONE INNER CELL RENDERER HARDCODED IN THE COLDEF FOR THIS GROUP COLUMN
+            rendererToUsePromise = this.componentRecipes.newInnerCellRenderer(target, params);
+        } else {
+            let otherRenderer: ResolvedComponent<any, any> = this.componentResolver.getComponentToUse(originalColumn, "cellRenderer", null);
+            if (otherRenderer && otherRenderer.source != ComponentSource.DEFAULT){
+                //Only if the original column is using an specific renderer, it it is a using a DEFAULT one
+                //ignore it
+                //THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, WE REUSE ITS RENDERER
+                rendererToUsePromise = this.componentRecipes.newCellRenderer(originalColumn, params);
+            } else if (otherRenderer && otherRenderer.source == ComponentSource.DEFAULT && (_.get(originalColumn, 'cellRendererParams.innerRenderer', null))) {
+                //EDGE CASE - THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, THAT HAS AS RENDERER 'group'
+                //AND HAS A INNER CELL RENDERER
+                rendererToUsePromise = this.componentRecipes.newInnerCellRenderer(originalColumn.cellRendererParams, params);
+            } else {
+                //This forces the retrieval of the default plain cellRenderer that just renders the values.
+                rendererToUsePromise = this.componentRecipes.newCellRenderer({}, params);
+            }
+        }
+        if (rendererToUsePromise != null) {
+            rendererToUsePromise.then(rendererToUse=>{
+                if (rendererToUse == null) {
+                    eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+                    return;
+                }
+                this.bindToHtml(rendererToUsePromise, eTarget);
+            })
+        } else {
+            eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+        }
+        return rendererToUsePromise;
+    }
+
+    public useFullWidthGroupRowInnerCellRenderer(
+        eTarget: HTMLElement,
+        params: any
+    ): Promise<ICellRendererComp> {
+        let cellRendererPromise: Promise<ICellRendererComp> = this.componentRecipes.newFullWidthGroupRowInnerCellRenderer (params);
+        if (cellRendererPromise != null) {
+            this.bindToHtml(cellRendererPromise, eTarget);
+        } else {
+            eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+        }
+        return cellRendererPromise;
+    }
+
+    public bindToHtml(cellRendererPromise: Promise<ICellRendererComp>, eTarget: HTMLElement) {
+        cellRendererPromise.then(cellRenderer=>{
+            let gui: HTMLElement|string = cellRenderer.getGui();
+            if (gui != null) {
+                if (typeof gui == 'object'){
+                    eTarget.appendChild(gui);
+                } else {
+                    eTarget.innerHTML = gui;
+                }
             }
 
-            resultFromRenderer = iCellRendererInstance.getGui();
-        } else {
-            // otherwise it's a function, so we just use it
-            let cellRendererFunc = <ICellRendererFunc> cellRenderer;
-            resultFromRenderer = cellRendererFunc(params);
-        }
-
-        if (resultFromRenderer===null || resultFromRenderer==='') {
-            return;
-        }
-
-        if (_.isNodeOrElement(resultFromRenderer)) {
-            // a dom node or element was returned, so add child
-            eTarget.appendChild( <HTMLElement> resultFromRenderer);
-        } else {
-            // otherwise assume it was html, so just insert
-            eTarget.innerHTML = <string> resultFromRenderer;
-        }
-
-        return iCellRendererInstance;
+        });
+        return cellRendererPromise;
     }
-
-    private checkForDeprecatedItems(cellRenderer: any) {
-        if (cellRenderer && cellRenderer.renderer) {
-            console.warn('ag-grid: colDef.cellRenderer should not be an object, it should be a string, function or class. this ' +
-                'changed in v4.1.x, please check the documentation on Cell Rendering, or if you are doing grouping, look at the grouping examples.');
-        }
-    }
-
-    private doesImplementICellRenderer(cellRenderer: {new(): ICellRenderer} | ICellRendererFunc): boolean {
-        // see if the class has a prototype that defines a getGui method. this is very rough,
-        // but javascript doesn't have types, so is the only way!
-        return (<any>cellRenderer).prototype && 'getGui' in (<any>cellRenderer).prototype;
-    }
-
-    private lookUpCellRenderer(cellRendererKey: {new(): ICellRenderer} | ICellRendererFunc | string): ({new(): ICellRenderer} | ICellRendererFunc) {
-        if (typeof cellRendererKey === 'string') {
-            return this.cellRendererFactory.getCellRenderer(<string> cellRendererKey);
-        } else {
-            return <{new(): ICellRenderer} | ICellRendererFunc> cellRendererKey;
-        }
-    }
-    
 }

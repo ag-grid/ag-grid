@@ -1,8 +1,9 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v16.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { Promise } from "../utils";
 export interface IAfterGuiAttachedParams {
-    hidePopup?: (event?: any) => void;
+    hidePopup: () => void;
 }
 export interface IComponent<T> {
     /** Return the DOM element of your editor, this is what the grid puts into the DOM */
@@ -19,5 +20,5 @@ export interface IComponent<T> {
      after it is pressed. */
     afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
     /** The init(params) method is called on the filter once. See below for details on the parameters. */
-    init?(params: T): void;
+    init?(params: T): Promise<void> | void;
 }

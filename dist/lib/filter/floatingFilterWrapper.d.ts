@@ -1,13 +1,14 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v16.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
+import { Promise } from "../utils";
 import { IFloatingFilterParams, IFloatingFilterComp, FloatingFilterChange } from "./floatingFilter";
 import { Component } from "../widgets/component";
 import { IComponent } from "../interfaces/iComponent";
 export interface IFloatingFilterWrapperParams<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> {
     column: Column;
-    floatingFilterComp: IFloatingFilterComp<M, F, P>;
+    floatingFilterComp: Promise<IFloatingFilterComp<M, F, P>>;
     suppressFilterButton: boolean;
 }
 export interface IFloatingFilterWrapper<M> {
@@ -17,8 +18,9 @@ export interface IFloatingFilterWrapperComp<M, F extends FloatingFilterChange, P
 }
 export declare abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends Component implements IFloatingFilterWrapperComp<M, F, PC, P> {
     private context;
+    private beans;
     column: Column;
-    init(params: P): void;
+    init(params: P): void | Promise<void>;
     abstract onParentModelChanged(parentModel: M): void;
     abstract enrichBody(body: HTMLElement): void;
     private setupWidth();
@@ -27,9 +29,11 @@ export declare abstract class BaseFilterWrapperComp<M, F extends FloatingFilterC
 export declare class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends BaseFilterWrapperComp<M, F, PC, P> {
     eButtonShowMainFilter: HTMLInputElement;
     private menuFactory;
-    floatingFilterComp: IFloatingFilterComp<M, F, PC>;
+    private gridOptionsWrapper;
+    floatingFilterCompPromise: Promise<IFloatingFilterComp<M, F, PC>>;
     suppressFilterButton: boolean;
     init(params: P): void;
+    private addEventListeners();
     enrichBody(body: HTMLElement): void;
     onParentModelChanged(parentModel: M): void;
     private showParentFilter();

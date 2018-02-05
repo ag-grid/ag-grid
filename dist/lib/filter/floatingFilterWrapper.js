@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31,6 +31,8 @@ var utils_1 = require("../utils");
 var setLeftFeature_1 = require("../rendering/features/setLeftFeature");
 var component_1 = require("../widgets/component");
 var componentAnnotations_1 = require("../widgets/componentAnnotations");
+var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var beans_1 = require("../rendering/beans");
 var BaseFilterWrapperComp = (function (_super) {
     __extends(BaseFilterWrapperComp, _super);
     function BaseFilterWrapperComp() {
@@ -38,11 +40,13 @@ var BaseFilterWrapperComp = (function (_super) {
     }
     BaseFilterWrapperComp.prototype.init = function (params) {
         this.column = params.column;
-        var base = utils_1._.loadTemplate("<div class=\"ag-header-cell\"><div class=\"ag-floating-filter-body\"></div></div>");
+        var base = utils_1._.loadTemplate("<div class=\"ag-header-cell\" aria-hidden=\"true\"><div class=\"ag-floating-filter-body\" aria-hidden=\"true\"></div></div>");
         this.enrichBody(base);
         this.setTemplateFromElement(base);
         this.setupWidth();
-        this.addFeature(this.context, new setLeftFeature_1.SetLeftFeature(this.column, this.getGui()));
+        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.column, this.getGui(), this.beans);
+        setLeftFeature.init();
+        this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
     };
     BaseFilterWrapperComp.prototype.setupWidth = function () {
         this.addDestroyableEventListener(this.column, column_1.Column.EVENT_WIDTH_CHANGED, this.onColumnWidthChanged.bind(this));
@@ -51,12 +55,16 @@ var BaseFilterWrapperComp = (function (_super) {
     BaseFilterWrapperComp.prototype.onColumnWidthChanged = function () {
         this.getGui().style.width = this.column.getActualWidth() + 'px';
     };
+    __decorate([
+        context_1.Autowired('context'),
+        __metadata("design:type", context_1.Context)
+    ], BaseFilterWrapperComp.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired('beans'),
+        __metadata("design:type", beans_1.Beans)
+    ], BaseFilterWrapperComp.prototype, "beans", void 0);
     return BaseFilterWrapperComp;
 }(component_1.Component));
-__decorate([
-    context_1.Autowired('context'),
-    __metadata("design:type", context_1.Context)
-], BaseFilterWrapperComp.prototype, "context", void 0);
 exports.BaseFilterWrapperComp = BaseFilterWrapperComp;
 var FloatingFilterWrapperComp = (function (_super) {
     __extends(FloatingFilterWrapperComp, _super);
@@ -64,44 +72,61 @@ var FloatingFilterWrapperComp = (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     FloatingFilterWrapperComp.prototype.init = function (params) {
-        this.floatingFilterComp = params.floatingFilterComp;
+        this.floatingFilterCompPromise = params.floatingFilterComp;
         this.suppressFilterButton = params.suppressFilterButton;
         _super.prototype.init.call(this, params);
-        if (!this.suppressFilterButton) {
+        this.addEventListeners();
+    };
+    FloatingFilterWrapperComp.prototype.addEventListeners = function () {
+        if (!this.suppressFilterButton && this.eButtonShowMainFilter) {
             this.addDestroyableEventListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
         }
     };
     FloatingFilterWrapperComp.prototype.enrichBody = function (body) {
-        var floatingFilterBody = body.querySelector('.ag-floating-filter-body');
-        if (this.suppressFilterButton) {
-            floatingFilterBody.appendChild(this.floatingFilterComp.getGui());
-            utils_1._.removeCssClass(floatingFilterBody, 'ag-floating-filter-body');
-            utils_1._.addCssClass(floatingFilterBody, 'ag-floating-filter-full-body');
-        }
-        else {
-            floatingFilterBody.appendChild(this.floatingFilterComp.getGui());
-            body.appendChild(utils_1._.loadTemplate("<div class=\"ag-floating-filter-button\">\n                    <button ref=\"eButtonShowMainFilter\">...</button>            \n            </div>"));
-        }
-        if (this.floatingFilterComp.afterGuiAttached) {
-            this.floatingFilterComp.afterGuiAttached();
-        }
+        var _this = this;
+        this.floatingFilterCompPromise.then(function (floatingFilterComp) {
+            var floatingFilterBody = body.querySelector('.ag-floating-filter-body');
+            var floatingFilterCompUi = floatingFilterComp.getGui();
+            if (_this.suppressFilterButton) {
+                floatingFilterBody.appendChild(floatingFilterCompUi);
+                utils_1._.removeCssClass(floatingFilterBody, 'ag-floating-filter-body');
+                utils_1._.addCssClass(floatingFilterBody, 'ag-floating-filter-full-body');
+            }
+            else {
+                floatingFilterBody.appendChild(floatingFilterCompUi);
+                body.appendChild(utils_1._.loadTemplate("<div class=\"ag-floating-filter-button\" aria-hidden=\"true\">\n                        <button ref=\"eButtonShowMainFilter\"></button>\n                </div>"));
+                var eIcon = utils_1._.createIconNoSpan('filter', _this.gridOptionsWrapper, _this.column);
+                body.querySelector('button').appendChild(eIcon);
+            }
+            if (floatingFilterComp.afterGuiAttached) {
+                floatingFilterComp.afterGuiAttached();
+            }
+            _this.wireQuerySelectors();
+            _this.addEventListeners();
+        });
     };
     FloatingFilterWrapperComp.prototype.onParentModelChanged = function (parentModel) {
-        this.floatingFilterComp.onParentModelChanged(parentModel);
+        this.floatingFilterCompPromise.then(function (floatingFilterComp) {
+            floatingFilterComp.onParentModelChanged(parentModel);
+        });
     };
     FloatingFilterWrapperComp.prototype.showParentFilter = function () {
-        this.menuFactory.showMenuAfterButtonClick(this.column, this.eButtonShowMainFilter, 'filter');
+        this.menuFactory.showMenuAfterButtonClick(this.column, this.eButtonShowMainFilter, 'filterMenuTab', ['filterMenuTab']);
     };
+    __decorate([
+        componentAnnotations_1.RefSelector('eButtonShowMainFilter'),
+        __metadata("design:type", HTMLInputElement)
+    ], FloatingFilterWrapperComp.prototype, "eButtonShowMainFilter", void 0);
+    __decorate([
+        context_1.Autowired('menuFactory'),
+        __metadata("design:type", Object)
+    ], FloatingFilterWrapperComp.prototype, "menuFactory", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], FloatingFilterWrapperComp.prototype, "gridOptionsWrapper", void 0);
     return FloatingFilterWrapperComp;
 }(BaseFilterWrapperComp));
-__decorate([
-    componentAnnotations_1.RefSelector('eButtonShowMainFilter'),
-    __metadata("design:type", HTMLInputElement)
-], FloatingFilterWrapperComp.prototype, "eButtonShowMainFilter", void 0);
-__decorate([
-    context_1.Autowired('menuFactory'),
-    __metadata("design:type", Object)
-], FloatingFilterWrapperComp.prototype, "menuFactory", void 0);
 exports.FloatingFilterWrapperComp = FloatingFilterWrapperComp;
 var EmptyFloatingFilterWrapperComp = (function (_super) {
     __extends(EmptyFloatingFilterWrapperComp, _super);

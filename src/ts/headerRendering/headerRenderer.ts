@@ -80,8 +80,6 @@ export class HeaderRenderer {
         this.setHeight();
     }
 
-    // this is called from the API and refreshes everything, should be broken out
-    // into refresh everything vs just something changed
     public refreshHeader() {
 
         this.setHeight();

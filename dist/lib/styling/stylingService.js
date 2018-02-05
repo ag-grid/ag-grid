@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,16 +16,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
-var expressionService_1 = require("../expressionService");
+var expressionService_1 = require("../valueService/expressionService");
 var StylingService = (function () {
     function StylingService() {
     }
     StylingService.prototype.processAllCellClasses = function (colDef, params, onApplicableClass, onNotApplicableClass) {
-        this.processCellClassRules(colDef, params, onApplicableClass, onNotApplicableClass);
+        this.processClassRules(colDef.cellClassRules, params, onApplicableClass, onNotApplicableClass);
         this.processStaticCellClasses(colDef, params, onApplicableClass);
     };
-    StylingService.prototype.processCellClassRules = function (colDef, params, onApplicableClass, onNotApplicableClass) {
-        var classRules = colDef.cellClassRules;
+    StylingService.prototype.processClassRules = function (classRules, params, onApplicableClass, onNotApplicableClass) {
         if (typeof classRules === 'object' && classRules !== null) {
             var classNames = Object.keys(classRules);
             for (var i = 0; i < classNames.length; i++) {
@@ -68,13 +67,13 @@ var StylingService = (function () {
             }
         }
     };
+    __decorate([
+        context_1.Autowired('expressionService'),
+        __metadata("design:type", expressionService_1.ExpressionService)
+    ], StylingService.prototype, "expressionService", void 0);
+    StylingService = __decorate([
+        context_1.Bean('stylingService')
+    ], StylingService);
     return StylingService;
 }());
-__decorate([
-    context_1.Autowired('expressionService'),
-    __metadata("design:type", expressionService_1.ExpressionService)
-], StylingService.prototype, "expressionService", void 0);
-StylingService = __decorate([
-    context_1.Bean('stylingService')
-], StylingService);
 exports.StylingService = StylingService;

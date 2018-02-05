@@ -2,8 +2,10 @@ import {Bean, PreDestroy, Autowired, PostConstruct, Optional} from "../context/c
 import {LoggerFactory, Logger} from "../logger";
 import {Utils as _} from "../utils";
 import {EventService} from "../eventService";
-import {Events} from "../events";
+import {DragStartedEvent, DragStoppedEvent, Events} from "../events";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {ColumnApi} from "../columnController/columnApi";
+import {GridApi} from "../gridApi";
 
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
@@ -13,6 +15,8 @@ export class DragService {
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     private currentDragParams: DragListenerParams;
     private dragging: boolean;
@@ -52,7 +56,7 @@ export class DragService {
         // remove touch listener only if it exists
         if (dragSourceAndListener.touchEnabled) {
             let touchStartListener = dragSourceAndListener.touchStartListener;
-            element.removeEventListener('touchstart', touchStartListener);
+            element.removeEventListener('touchstart', touchStartListener, <any>{passive:true});
         }
     }
 
@@ -86,7 +90,7 @@ export class DragService {
 
         if (reallyIncludeTouch) {
             touchListener = this.onTouchStart.bind(this, params);
-            params.eElement.addEventListener('touchstart', touchListener);
+            params.eElement.addEventListener('touchstart', touchListener, <any>{passive:false});
         }
 
         this.dragSources.push({
@@ -112,14 +116,14 @@ export class DragService {
 
         // we temporally add these listeners, for the duration of the drag, they
         // are removed in touch end handling.
-        params.eElement.addEventListener('touchmove', this.onTouchMoveListener);
-        params.eElement.addEventListener('touchend', this.onTouchEndListener);
-        params.eElement.addEventListener('touchcancel', this.onTouchEndListener);
+        params.eElement.addEventListener('touchmove', this.onTouchMoveListener, <any>{passive:true});
+        params.eElement.addEventListener('touchend', this.onTouchEndListener, <any>{passive:true});
+        params.eElement.addEventListener('touchcancel', this.onTouchEndListener, <any>{passive:true});
 
         this.dragEndFunctions.push( ()=> {
-            params.eElement.removeEventListener('touchmove', this.onTouchMoveListener);
-            params.eElement.removeEventListener('touchend', this.onTouchEndListener);
-            params.eElement.removeEventListener('touchcancel', this.onTouchEndListener);
+            params.eElement.removeEventListener('touchmove', this.onTouchMoveListener, <any>{passive:true});
+            params.eElement.removeEventListener('touchend', this.onTouchEndListener, <any>{passive:true});
+            params.eElement.removeEventListener('touchcancel', this.onTouchEndListener, <any>{passive:true});
         });
 
         // see if we want to start dragging straight away
@@ -130,6 +134,13 @@ export class DragService {
 
     // gets called whenever mouse down on any drag source
     private onMouseDown(params: DragListenerParams, mouseEvent: MouseEvent): void {
+
+        // if there are two elements with parent / child relationship, and both are draggable,
+        // when we drag the child, we should NOT drag the parent. an example of this is row moving
+        // and range selection - row moving should get preference when use drags the rowDrag component.
+        if ((<any>mouseEvent)._alreadyProcessedByDragService) { return; }
+        (<any>mouseEvent)._alreadyProcessedByDragService = true;
+
         // only interested in left button clicks
         if (mouseEvent.button!==0) { return; }
 
@@ -187,7 +198,12 @@ export class DragService {
             } else {
                 // alert(`started`);
                 this.dragging = true;
-                this.eventService.dispatchEvent(Events.EVENT_DRAG_STARTED);
+                let event: DragStartedEvent = {
+                    type: Events.EVENT_DRAG_STARTED,
+                    api: this.gridApi,
+                    columnApi: this.columnApi
+                };
+                this.eventService.dispatchEvent(event);
                 this.currentDragParams.onDragStart(startEvent);
                 this.setNoSelectToBody(true);
             }
@@ -202,6 +218,11 @@ export class DragService {
         if (!touch) { return; }
 
         // this.___statusBar.setInfoText(Math.random() + ' onTouchMove preventDefault stopPropagation');
+
+        // if we don't preview default, then the browser will try and do it's own touch stuff,
+        // like do 'back button' (chrome does this) or scroll the page (eg drag column could  be confused
+        // with scroll page in the app)
+        // touchEvent.preventDefault();
 
         this.onCommonMove(touch, this.touchStart);
     }
@@ -247,7 +268,12 @@ export class DragService {
         if (this.dragging) {
             this.dragging = false;
             this.currentDragParams.onDragStop(eventOrTouch);
-            this.eventService.dispatchEvent(Events.EVENT_DRAG_STOPPED);
+            let event: DragStoppedEvent = {
+                type: Events.EVENT_DRAG_STOPPED,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+            this.eventService.dispatchEvent(event);
         }
 
         this.setNoSelectToBody(false);
@@ -271,6 +297,8 @@ interface DragSourceAndListener {
 }
 
 export interface DragListenerParams {
+    /** Used in the dragStarted and dragStopped events */
+    type: string;
     /** After how many pixels of dragging should the drag operation start. Default is 4px. */
     dragStartPixels?: number;
     /** Dom element to add the drag handling to */

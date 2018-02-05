@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,7 +29,7 @@ var context_1 = require("../context/context");
 var dateFilter_1 = require("./dateFilter");
 var componentAnnotations_1 = require("../widgets/componentAnnotations");
 var utils_1 = require("../utils");
-var componentProvider_1 = require("../componentProvider");
+var componentRecipes_1 = require("../components/framework/componentRecipes");
 var component_1 = require("../widgets/component");
 var constants_1 = require("../constants");
 var InputTextFloatingFilterComp = (function (_super) {
@@ -53,8 +53,13 @@ var InputTextFloatingFilterComp = (function (_super) {
         }
     };
     InputTextFloatingFilterComp.prototype.onParentModelChanged = function (parentModel) {
-        if (this.equalModels(this.lastKnownModel, parentModel))
+        if (this.equalModels(this.lastKnownModel, parentModel)) {
+            // ensure column floating filter text is blanked out when both ranges are empty
+            if (!this.lastKnownModel && !parentModel) {
+                this.eColumnFloatingFilter.value = '';
+            }
             return;
+        }
         this.lastKnownModel = parentModel;
         var incomingTextValue = this.asFloatingFilterText(parentModel);
         if (incomingTextValue === this.eColumnFloatingFilter.value)
@@ -94,12 +99,12 @@ var InputTextFloatingFilterComp = (function (_super) {
             utils_1._.referenceCompare(left.filterTo, right.filterTo) &&
             utils_1._.referenceCompare(left.filterType, right.filterType));
     };
+    __decorate([
+        componentAnnotations_1.RefSelector('eColumnFloatingFilter'),
+        __metadata("design:type", HTMLInputElement)
+    ], InputTextFloatingFilterComp.prototype, "eColumnFloatingFilter", void 0);
     return InputTextFloatingFilterComp;
 }(component_1.Component));
-__decorate([
-    componentAnnotations_1.RefSelector('eColumnFloatingFilter'),
-    __metadata("design:type", HTMLInputElement)
-], InputTextFloatingFilterComp.prototype, "eColumnFloatingFilter", void 0);
 exports.InputTextFloatingFilterComp = InputTextFloatingFilterComp;
 var TextFloatingFilterComp = (function (_super) {
     __extends(TextFloatingFilterComp, _super);
@@ -125,55 +130,75 @@ exports.TextFloatingFilterComp = TextFloatingFilterComp;
 var DateFloatingFilterComp = (function (_super) {
     __extends(DateFloatingFilterComp, _super);
     function DateFloatingFilterComp() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.lastKnownModel = null;
+        return _this;
     }
     DateFloatingFilterComp.prototype.init = function (params) {
         this.onFloatingFilterChanged = params.onFloatingFilterChanged;
         this.currentParentModel = params.currentParentModel;
+        var debounceMs = params.debounceMs != null ? params.debounceMs : 500;
+        var toDebounce = utils_1._.debounce(this.onDateChanged.bind(this), debounceMs);
         var dateComponentParams = {
-            onDateChanged: this.onDateChanged.bind(this)
+            onDateChanged: toDebounce
         };
-        this.dateComponent = this.componentProvider.newDateComponent(dateComponentParams);
+        this.dateComponentPromise = this.componentRecipes.newDateComponent(dateComponentParams);
         var body = utils_1._.loadTemplate("<div></div>");
-        body.appendChild(this.dateComponent.getGui());
+        this.dateComponentPromise.then(function (dateComponent) {
+            body.appendChild(dateComponent.getGui());
+        });
         this.setTemplateFromElement(body);
     };
     DateFloatingFilterComp.prototype.onDateChanged = function () {
         var parentModel = this.currentParentModel();
-        var rawDate = this.dateComponent.getDate();
-        if (!rawDate || typeof rawDate.getMonth !== 'function') {
-            this.onFloatingFilterChanged(null);
+        var model = this.asParentModel();
+        if (this.equalModels(parentModel, model))
             return;
-        }
-        var date = utils_1._.serializeDateToYyyyMmDd(dateFilter_1.DateFilter.removeTimezone(rawDate), "-");
-        var dateTo = null;
-        var type = parentModel.type;
-        if (parentModel) {
-            dateTo = parentModel.dateTo;
-        }
         this.onFloatingFilterChanged({
-            model: {
-                type: type,
-                dateFrom: date,
-                dateTo: dateTo,
-                filterType: 'date'
-            },
+            model: model,
             apply: true
         });
+        this.lastKnownModel = model;
+    };
+    DateFloatingFilterComp.prototype.equalModels = function (left, right) {
+        if (utils_1._.referenceCompare(left, right))
+            return true;
+        if (!left || !right)
+            return false;
+        if (Array.isArray(left) || Array.isArray(right))
+            return false;
+        return (utils_1._.referenceCompare(left.type, right.type) &&
+            utils_1._.referenceCompare(left.dateFrom, right.dateFrom) &&
+            utils_1._.referenceCompare(left.dateTo, right.dateTo) &&
+            utils_1._.referenceCompare(left.filterType, right.filterType));
+    };
+    DateFloatingFilterComp.prototype.asParentModel = function () {
+        var currentParentModel = this.currentParentModel();
+        var filterValueDate = this.dateComponentPromise.resolveNow(null, function (dateComponent) { return dateComponent.getDate(); });
+        var filterValueText = utils_1._.serializeDateToYyyyMmDd(dateFilter_1.DateFilter.removeTimezone(filterValueDate), "-");
+        return {
+            type: currentParentModel.type,
+            dateFrom: filterValueText,
+            dateTo: currentParentModel ? currentParentModel.dateTo : null,
+            filterType: 'date'
+        };
     };
     DateFloatingFilterComp.prototype.onParentModelChanged = function (parentModel) {
-        if (!parentModel || !parentModel.dateFrom) {
-            this.dateComponent.setDate(null);
-            return;
-        }
-        this.dateComponent.setDate(utils_1._.parseYyyyMmDdToDate(parentModel.dateFrom, '-'));
+        this.lastKnownModel = parentModel;
+        this.dateComponentPromise.then(function (dateComponent) {
+            if (!parentModel || !parentModel.dateFrom) {
+                dateComponent.setDate(null);
+                return;
+            }
+            dateComponent.setDate(utils_1._.parseYyyyMmDdToDate(parentModel.dateFrom, '-'));
+        });
     };
+    __decorate([
+        context_1.Autowired('componentRecipes'),
+        __metadata("design:type", componentRecipes_1.ComponentRecipes)
+    ], DateFloatingFilterComp.prototype, "componentRecipes", void 0);
     return DateFloatingFilterComp;
 }(component_1.Component));
-__decorate([
-    context_1.Autowired('componentProvider'),
-    __metadata("design:type", componentProvider_1.ComponentProvider)
-], DateFloatingFilterComp.prototype, "componentProvider", void 0);
 exports.DateFloatingFilterComp = DateFloatingFilterComp;
 var NumberFloatingFilterComp = (function (_super) {
     __extends(NumberFloatingFilterComp, _super);

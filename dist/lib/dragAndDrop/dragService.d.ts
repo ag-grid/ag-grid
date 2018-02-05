@@ -1,12 +1,14 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v16.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
 export declare class DragService {
     private loggerFactory;
     private eventService;
     private gridOptionsWrapper;
+    private columnApi;
+    private gridApi;
     private currentDragParams;
     private dragging;
     private mouseEventLastTime;
@@ -38,6 +40,8 @@ export declare class DragService {
     onUpCommon(eventOrTouch: MouseEvent | Touch): void;
 }
 export interface DragListenerParams {
+    /** Used in the dragStarted and dragStopped events */
+    type: string;
     /** After how many pixels of dragging should the drag operation start. Default is 4px. */
     dragStartPixels?: number;
     /** Dom element to add the drag handling to */

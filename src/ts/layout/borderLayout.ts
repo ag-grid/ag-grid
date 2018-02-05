@@ -1,47 +1,50 @@
 import {Utils as _} from '../utils';
+import {IOverlayWrapperComp} from '../rendering/overlays/overlayWrapperComponent';
 
+
+// This should be a component
 export class BorderLayout {
 
     // this is used if there user has not specified any north or south parts
     private static TEMPLATE_FULL_HEIGHT =
         '<div class="ag-bl ag-bl-full-height">' +
-        '  <div class="ag-bl-west ag-bl-full-height-west" id="west"></div>' +
-        '  <div class="ag-bl-east ag-bl-full-height-east" id="east"></div>' +
-        '  <div class="ag-bl-center ag-bl-full-height-center" id="center"></div>' +
-        '  <div class="ag-bl-overlay" id="overlay"></div>' +
+        '  <div class="ag-bl-west ag-bl-full-height-west" ref="west"></div>' +
+        '  <div class="ag-bl-east ag-bl-full-height-east" ref="east"></div>' +
+        '  <div class="ag-bl-center ag-bl-full-height-center" ref="center"></div>' +
+        '  <div class="ag-bl-overlay" ref="overlay"></div>' +
         '</div>';
 
     private static TEMPLATE_NORMAL =
         '<div class="ag-bl ag-bl-normal">' +
-        '  <div id="north"></div>' +
-        '  <div class="ag-bl-center-row ag-bl-normal-center-row" id="centerRow">' +
-        '    <div class="ag-bl-west ag-bl-normal-west" id="west"></div>' +
-        '    <div class="ag-bl-east ag-bl-normal-east" id="east"></div>' +
-        '    <div class="ag-bl-center ag-bl-normal-center" id="center"></div>' +
+        '  <div ref="north"></div>' +
+        '  <div class="ag-bl-center-row ag-bl-normal-center-row" ref="centerRow">' +
+        '    <div class="ag-bl-west ag-bl-normal-west" ref="west"></div>' +
+        '    <div class="ag-bl-east ag-bl-normal-east" ref="east"></div>' +
+        '    <div class="ag-bl-center ag-bl-normal-center" ref="center"></div>' +
         '  </div>' +
-        '  <div id="south"></div>' +
-        '  <div class="ag-bl-overlay" id="overlay"></div>' +
+        '  <div ref="south"></div>' +
+        '  <div class="ag-bl-overlay" ref="overlay"></div>' +
         '</div>';
 
     private static TEMPLATE_DONT_FILL =
         '<div class="ag-bl ag-bl-dont-fill">' +
-        '  <div id="north"></div>' +
-        '  <div id="centerRow" class="ag-bl-center-row ag-bl-dont-fill-center-row">' +
-        '    <div id="west" class="ag-bl-west ag-bl-dont-fill-west"></div>' +
-        '    <div id="east" class="ag-bl-east ag-bl-dont-fill-east"></div>' +
-        '    <div id="center" class="ag-bl-center ag-bl-dont-fill-center"></div>' +
+        '  <div ref="north"></div>' +
+        '  <div ref="centerRow" class="ag-bl-center-row ag-bl-dont-fill-center-row">' +
+        '    <div ref="west" class="ag-bl-west ag-bl-dont-fill-west"></div>' +
+        '    <div ref="east" class="ag-bl-east ag-bl-dont-fill-east"></div>' +
+        '    <div ref="center" class="ag-bl-center ag-bl-dont-fill-center"></div>' +
         '  </div>' +
-        '  <div id="south"></div>' +
-        '  <div class="ag-bl-overlay" id="overlay"></div>' +
+        '  <div ref="south"></div>' +
+        '  <div class="ag-bl-overlay" ref="overlay"></div>' +
         '</div>';
 
-    private eNorthWrapper: any;
-    private eSouthWrapper: any;
-    private eEastWrapper: any;
-    private eWestWrapper: any;
-    private eCenterWrapper: any;
-    private eOverlayWrapper: any;
-    private eCenterRow: any;
+    private eNorthWrapper: HTMLElement;
+    private eSouthWrapper: HTMLElement;
+    private eEastWrapper: HTMLElement;
+    private eWestWrapper: HTMLElement;
+    private eCenterWrapper: HTMLElement;
+    private eOverlayWrapper: HTMLElement;
+    private eCenterRow: HTMLElement;
 
     private eNorthChildLayout: any;
     private eSouthChildLayout: any;
@@ -63,7 +66,8 @@ export class BorderLayout {
     private visibleLastTime = false;
 
     private sizeChangeListeners = <any>[];
-    private overlays: any;
+
+    private overlayWrapper: IOverlayWrapperComp;
 
     constructor(params: any) {
 
@@ -103,8 +107,9 @@ export class BorderLayout {
             this.setupPanels(params);
         }
 
-        this.overlays = params.overlays;
-        this.setupOverlays();
+        if (params.componentRecipes) {
+            this.overlayWrapper = params.componentRecipes.newOverlayWrapperComponent();
+        }
     }
 
     public addSizeChangeListener(listener: Function): void {
@@ -117,14 +122,26 @@ export class BorderLayout {
         });
     }
 
+    // this logic is also in Component.ts - the plan is sometime in the future,
+    // this layout panel may (or may not) extend the Component class, and somehow
+    // act as a component.
+    private getRefElement(refName: string): HTMLElement {
+        return <HTMLElement> this.eGui.querySelector('[ref="' + refName + '"]');
+    }
+
     private setupPanels(params: any) {
-        this.eNorthWrapper = this.eGui.querySelector('#north');
-        this.eSouthWrapper = this.eGui.querySelector('#south');
-        this.eEastWrapper = this.eGui.querySelector('#east');
-        this.eWestWrapper = this.eGui.querySelector('#west');
-        this.eCenterWrapper = this.eGui.querySelector('#center');
-        this.eOverlayWrapper = this.eGui.querySelector('#overlay');
-        this.eCenterRow = this.eGui.querySelector('#centerRow');
+        this.eNorthWrapper = this.getRefElement('north');
+        this.eSouthWrapper = this.getRefElement('south');
+        this.eEastWrapper = this.getRefElement('east');
+        this.eWestWrapper = this.getRefElement('west');
+        this.eCenterWrapper = this.getRefElement('center');
+        this.eOverlayWrapper = this.getRefElement('overlay');
+        this.eCenterRow = this.getRefElement('centerRow');
+
+        // initially hide the overlay. this is needed for IE10, if we don't hide the overlay,
+        // then it grabs mouse events, and it blocks clicking on the grid (as the overlay consumes
+        // the mouse events).
+        this.eOverlayWrapper.style.display = 'none';
 
         this.eNorthChildLayout = this.setupPanel(params.north, this.eNorthWrapper);
         this.eSouthChildLayout = this.setupPanel(params.south, this.eSouthWrapper);
@@ -296,31 +313,15 @@ export class BorderLayout {
         this.doLayout();
     }
 
-    private setupOverlays(): void {
-        // if no overlays, just remove the panel
-        if (!this.overlays) {
-            this.eOverlayWrapper.parentNode.removeChild(this.eOverlayWrapper);
-            return;
-        }
+    public showLoadingOverlay() {
+        this.overlayWrapper.showLoadingOverlay(this.eOverlayWrapper);
+    }
 
-        this.hideOverlay();
+    public showNoRowsOverlay() {
+        this.overlayWrapper.showNoRowsOverlay(this.eOverlayWrapper);
     }
 
     public hideOverlay() {
-        _.removeAllChildren(this.eOverlayWrapper);
-        this.eOverlayWrapper.style.display = 'none';
+        this.overlayWrapper.hideOverlay(this.eOverlayWrapper);
     }
-
-    public showOverlay(key: string) {
-        let overlay = this.overlays ? this.overlays[key] : null;
-        if (overlay) {
-            _.removeAllChildren(this.eOverlayWrapper);
-            this.eOverlayWrapper.style.display = '';
-            this.eOverlayWrapper.appendChild(overlay);
-        } else {
-            console.log('ag-Grid: unknown overlay');
-            this.hideOverlay();
-        }
-    }
-
 }

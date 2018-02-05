@@ -1,6 +1,7 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v16.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { Promise } from '../utils';
 export declare class TabbedLayout {
     private eGui;
     private eHeader;
@@ -27,6 +28,7 @@ export interface TabbedLayoutParams {
 }
 export interface TabbedItem {
     title: Element;
-    body: HTMLElement;
+    bodyPromise: Promise<HTMLElement>;
+    name: string;
     afterAttachedCallback?: Function;
 }

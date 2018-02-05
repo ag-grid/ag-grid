@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,9 +18,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var rowRenderer_1 = require("./rowRenderer");
 var gridPanel_1 = require("../gridPanel/gridPanel");
 var context_1 = require("../context/context");
-var context_2 = require("../context/context");
 var headerRenderer_1 = require("../headerRendering/headerRenderer");
-var renderedHeaderCell_1 = require("../headerRendering/deprecated/renderedHeaderCell");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var headerWrapperComp_1 = require("../headerRendering/header/headerWrapperComp");
 var AutoWidthCalculator = (function () {
@@ -56,24 +54,16 @@ var AutoWidthCalculator = (function () {
         var dummyContainerWidth = eDummyContainer.offsetWidth;
         // we are finished with the dummy container, so get rid of it
         eBodyContainer.removeChild(eDummyContainer);
-        // we add padding as I found without it, the gui still put '...' after some of the texts
+        // we add padding as I found sometimes the gui still put '...' after some of the texts. so the
+        // user can configure the grid to add a few more pixels after the calculated width
         var autoSizePadding = this.gridOptionsWrapper.getAutoSizePadding();
-        if (typeof autoSizePadding !== 'number' || autoSizePadding < 0) {
-            autoSizePadding = 4;
-        }
         return dummyContainerWidth + autoSizePadding;
     };
     AutoWidthCalculator.prototype.getHeaderCellForColumn = function (column) {
         var comp = null;
         // find the rendered header cell
         this.headerRenderer.forEachHeaderElement(function (headerElement) {
-            if (headerElement instanceof renderedHeaderCell_1.RenderedHeaderCell) {
-                var currentCell = headerElement;
-                if (currentCell.getColumn() === column) {
-                    comp = currentCell;
-                }
-            }
-            else if (headerElement instanceof headerWrapperComp_1.HeaderWrapperComp) {
+            if (headerElement instanceof headerWrapperComp_1.HeaderWrapperComp) {
                 var headerWrapperComp = headerElement;
                 if (headerWrapperComp.getColumn() === column) {
                     comp = headerWrapperComp;
@@ -84,10 +74,8 @@ var AutoWidthCalculator = (function () {
     };
     AutoWidthCalculator.prototype.putRowCellsIntoDummyContainer = function (column, eDummyContainer) {
         var _this = this;
-        var eOriginalCells = this.rowRenderer.getAllCellsForColumn(column);
-        eOriginalCells.forEach(function (eCell, index) {
-            _this.cloneItemIntoDummy(eCell, eDummyContainer);
-        });
+        var eCells = this.rowRenderer.getAllCellsForColumn(column);
+        eCells.forEach(function (eCell) { return _this.cloneItemIntoDummy(eCell, eDummyContainer); });
     };
     AutoWidthCalculator.prototype.cloneItemIntoDummy = function (eCell, eDummyContainer) {
         // make a deep clone of the cell
@@ -110,25 +98,25 @@ var AutoWidthCalculator = (function () {
         eCloneParent.appendChild(eCellClone);
         eDummyContainer.appendChild(eCloneParent);
     };
+    __decorate([
+        context_1.Autowired('rowRenderer'),
+        __metadata("design:type", rowRenderer_1.RowRenderer)
+    ], AutoWidthCalculator.prototype, "rowRenderer", void 0);
+    __decorate([
+        context_1.Autowired('headerRenderer'),
+        __metadata("design:type", headerRenderer_1.HeaderRenderer)
+    ], AutoWidthCalculator.prototype, "headerRenderer", void 0);
+    __decorate([
+        context_1.Autowired('gridPanel'),
+        __metadata("design:type", gridPanel_1.GridPanel)
+    ], AutoWidthCalculator.prototype, "gridPanel", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], AutoWidthCalculator.prototype, "gridOptionsWrapper", void 0);
+    AutoWidthCalculator = __decorate([
+        context_1.Bean('autoWidthCalculator')
+    ], AutoWidthCalculator);
     return AutoWidthCalculator;
 }());
-__decorate([
-    context_2.Autowired('rowRenderer'),
-    __metadata("design:type", rowRenderer_1.RowRenderer)
-], AutoWidthCalculator.prototype, "rowRenderer", void 0);
-__decorate([
-    context_2.Autowired('headerRenderer'),
-    __metadata("design:type", headerRenderer_1.HeaderRenderer)
-], AutoWidthCalculator.prototype, "headerRenderer", void 0);
-__decorate([
-    context_2.Autowired('gridPanel'),
-    __metadata("design:type", gridPanel_1.GridPanel)
-], AutoWidthCalculator.prototype, "gridPanel", void 0);
-__decorate([
-    context_2.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], AutoWidthCalculator.prototype, "gridOptionsWrapper", void 0);
-AutoWidthCalculator = __decorate([
-    context_1.Bean('autoWidthCalculator')
-], AutoWidthCalculator);
 exports.AutoWidthCalculator = AutoWidthCalculator;

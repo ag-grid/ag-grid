@@ -4,10 +4,17 @@ import {Context} from "../../context/context";
 import {BeanStub} from "../../context/beanStub";
 import {RowNodeCacheParams} from "./rowNodeCache";
 import {RowRenderer} from "../../rendering/rowRenderer";
+import {AgEvent} from "../../events";
 
 export interface RowNodeBlockBeans {
     context: Context;
     rowRenderer: RowRenderer;
+}
+
+export interface LoadCompleteEvent extends AgEvent {
+    success: boolean;
+    page: RowNodeBlock;
+    lastRow: number;
 }
 
 export abstract class RowNodeBlock extends BeanStub {
@@ -27,7 +34,7 @@ export abstract class RowNodeBlock extends BeanStub {
     private blockNumber: number;
     private startRow: number;
     private endRow: number;
-    private rowNodes: RowNode[];
+    public rowNodes: RowNode[];
 
     // because the framework cannot wire beans in parent classes, this is a hack
     // to pass bean references up. give out to niall for not getting an IoC context
@@ -134,7 +141,7 @@ export abstract class RowNodeBlock extends BeanStub {
         return this.endRow;
     }
 
-    public getPageNumber(): number {
+    public getBlockNumber(): number {
         return this.blockNumber;
     }
 
@@ -197,8 +204,13 @@ export abstract class RowNodeBlock extends BeanStub {
 
     protected pageLoadFailed() {
         this.state = RowNodeBlock.STATE_FAILED;
-        let event = {success: false, page: this};
-        this.dispatchEvent(RowNodeBlock.EVENT_LOAD_COMPLETE, event);
+        let event: LoadCompleteEvent = {
+            type: RowNodeBlock.EVENT_LOAD_COMPLETE,
+            success: false,
+            page: this,
+            lastRow: null
+        };
+        this.dispatchEvent(event);
     }
 
     private populateWithRowData(rows: any[]): void {
@@ -211,7 +223,7 @@ export abstract class RowNodeBlock extends BeanStub {
             this.setDataAndId(rowNode, data, this.startRow + index);
         });
         if (rowNodesToRefresh.length > 0) {
-            this.beans.rowRenderer.refreshRows(rowNodesToRefresh);
+            this.beans.rowRenderer.redrawRows(rowNodesToRefresh);
         }
     }
 
@@ -222,6 +234,10 @@ export abstract class RowNodeBlock extends BeanStub {
                 rowNode.childrenCache.destroy();
                 rowNode.childrenCache = null;
             }
+            // this is needed, so row render knows to fade out the row, otherwise it
+            // see's row top is present, and thinks the row should be shown. maybe
+            // rowNode should have a flag on whether it is visible???
+            rowNode.clearRowTop();
         });
     }
 
@@ -237,9 +253,14 @@ export abstract class RowNodeBlock extends BeanStub {
         lastRow = _.cleanNumber(lastRow);
 
         // check here if lastrow should be set
-        let event = {success: true, page: this, lastRow: lastRow};
+        let event: LoadCompleteEvent = {
+            type: RowNodeBlock.EVENT_LOAD_COMPLETE,
+            success: true,
+            page: this,
+            lastRow: lastRow
+        };
 
-        this.dispatchEvent(RowNodeBlock.EVENT_LOAD_COMPLETE, event);
+        this.dispatchEvent(event);
     }
 
 }

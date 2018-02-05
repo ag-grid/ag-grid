@@ -62,7 +62,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         }, 3000);
     }
 
-    public refresh(params: any): void {
+    public refresh(params: any): boolean {
 
         let value = params.value;
 
@@ -85,5 +85,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         } else {
             this.eCurrent.innerHTML = '';
         }
+
+        return true;
     }
 }

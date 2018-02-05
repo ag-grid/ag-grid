@@ -1,11 +1,13 @@
 import {Column} from "./entities/column";
 import {Autowired} from "./context/context";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
+import {ColumnApi} from "./columnController/columnApi";
 import {ColumnController} from "./columnController/columnController";
 import {EventService} from "./eventService";
-import {Events} from "./events";
+import {ColumnEventType, Events, SortChangedEvent} from "./events";
 import {Bean} from "./context/context";
 import {Utils as _} from './utils';
+import {GridApi} from "./gridApi";
 
 @Bean('sortController')
 export class SortController {
@@ -15,19 +17,21 @@ export class SortController {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
-    public progressSort(column: Column, multiSort: boolean): void {
+    public progressSort(column: Column, multiSort: boolean, source: ColumnEventType = "api"): void {
         let nextDirection = this.getNextSortDirection(column);
-        this.setSortForColumn(column, nextDirection, multiSort);
+        this.setSortForColumn(column, nextDirection, multiSort, source);
     }
 
-    public setSortForColumn(column: Column, sort: string, multiSort: boolean): void {
+    public setSortForColumn(column: Column, sort: string, multiSort: boolean, source: ColumnEventType = "api"): void {
 
         // auto correct - if sort not legal value, then set it to 'no sort' (which is null)
         if (sort!==Column.SORT_ASC && sort!==Column.SORT_DESC) { sort = null; }
 
         // update sort on current col
-        column.setSort(sort);
+        column.setSort(sort, source);
 
         // sortedAt used for knowing order of cols when multi-col sort
         if (column.getSort()) {
@@ -41,7 +45,7 @@ export class SortController {
 
         // clear sort on all columns except this one, and update the icons
         if (!doingMultiSort) {
-            this.clearSortBarThisColumn(column);
+            this.clearSortBarThisColumn(column, source);
         }
 
         this.dispatchSortChangedEvents();
@@ -54,14 +58,19 @@ export class SortController {
     }
 
     private dispatchSortChangedEvents(): void {
-        this.eventService.dispatchEvent(Events.EVENT_SORT_CHANGED);
+        let event: SortChangedEvent = {
+            type: Events.EVENT_SORT_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
     }
 
-    private clearSortBarThisColumn(columnToSkip: Column): void {
+    private clearSortBarThisColumn(columnToSkip: Column, source: ColumnEventType): void {
         this.columnController.getPrimaryAndSecondaryAndAutoColumns().forEach( (columnToClear: Column)=> {
             // Do not clear if either holding shift, or if column in question was clicked
             if (!(columnToClear === columnToSkip)) {
-                columnToClear.setSort(null);
+                columnToClear.setSort(null, source);
             }
         });
     }
@@ -92,7 +101,7 @@ export class SortController {
             result = sortingOrder[currentIndex + 1];
         }
 
-        // verify the sort type exists, as the user could provide the sortOrder, need to make sure it's valid
+        // verify the sort type exists, as the user could provide the sortingOrder, need to make sure it's valid
         if (SortController.DEFAULT_SORTING_ORDER.indexOf(result) < 0) {
             console.warn('ag-grid: invalid sort type ' + result);
             return null;
@@ -113,7 +122,7 @@ export class SortController {
         });
     }
 
-    public setSortModel(sortModel: any) {
+    public setSortModel(sortModel: any, source: ColumnEventType = "api") {
         if (!this.gridOptionsWrapper.isEnableSorting()) {
             console.warn('ag-grid: You are setting the sort model on a grid that does not have sorting enabled');
             return;
@@ -138,10 +147,10 @@ export class SortController {
             }
 
             if (sortForCol) {
-                column.setSort(sortForCol);
+                column.setSort(sortForCol, source);
                 column.setSortedAt(sortedAt);
             } else {
-                column.setSort(null);
+                column.setSort(null, source);
                 column.setSortedAt(null);
             }
         });

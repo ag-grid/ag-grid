@@ -1,0 +1,125 @@
+@import './ag-theme-classic-common';
+@import './ag-theme-classic-vars';
+
+// Colors
+$icon-color: #333333 !default;
+$foreground-color: rgba(black, $foreground-opacity) !default;
+$secondary-foreground-color: rgba(#333, $secondary-foreground-color-opacity) !default;
+$disabled-foreground-color: rgba(black, $disabled-foreground-color-opacity) !default;
+$menu-option-active-color: #bde2e5 !default;
+
+$card-background-color: #f6f6f6 !default;
+$border-color: darkgrey !default;
+$primary-color: black !default;
+$accent-color: black !default;
+
+$background-color: white !default;
+$odd-row-background-color: #f6f6f6 !default;
+
+$editor-background-color: #f6f6f6 !default;
+
+$header-background-color: transparent !default;
+$header-background-image: linear-gradient(white, lightgrey) !default;
+$panel-background-color: #f6f6f6 !default;
+
+$tool-panel-background-color: #f6f6f6 !default;
+
+$chip-background-color: #ecf0f1 !default;
+
+$range-selection-background-color: rgba(120, 120, 120, 0.4) !default; 
+$range-selection-highlight-color: transparent !default;
+
+$hover-color: inherit !default;
+
+$selected-color: $menu-option-active-color !default;
+
+$cell-data-changed-color: white !default;
+
+$focused-cell-border-color: darkgrey !default;
+
+$tab-background-color: #e6e6e6 !default;
+
+$cell-highlight-border: 2px solid darkgreen !default;
+$cell-horizontal-border: 1px dotted silver !default;
+
+$ag-range-selected-color-1: rgba(120, 120, 120, 0.4) !default;
+$ag-range-selected-color-2: rgba(80, 80, 80, 0.4) !default;
+$ag-range-selected-color-3: rgba(40, 40, 40, 0.4) !default;
+$ag-range-selected-color-4: rgba(0, 0, 0, 0.4) !default;
+
+$row-floating-background-color: #f0f0f0 !default;
+$row-stub-background-color: #f0f0f0 !default;
+
+// delta changes
+$value-change-delta-up-color: darkgreen !default;
+$value-change-delta-down-color: darkred !default;
+$value-change-value-highlight-background-color: #cec !default;
+
+$params: (
+    grid-size: $grid-size,
+    icon-size: $icon-size,
+    header-icon-size: $header-icon-size,
+    row-height: $row-height,
+    header-height: $header-height,
+    virtual-item-height: $virtual-item-height,
+    rich-select-item-height: $row-height,
+    cell-horizontal-padding: $cell-horizontal-padding,
+    toolpanel-indent-size: $toolpanel-indent-size,
+    row-group-indent-size: $row-group-indent-size,
+    icons-path: $icons-path,
+    font-family: $font-family,
+    font-size: $font-size,
+    font-weight: $font-weight,
+    secondary-font-family: $secondary-font-family,
+    secondary-font-size: $secondary-font-size,
+    secondary-font-weight: $secondary-font-weight,
+    foreground-color: $foreground-color,
+    foreground-opacity: $foreground-opacity,
+    secondary-foreground-color-opacity: $secondary-foreground-color-opacity,
+    secondary-foreground-color: $secondary-foreground-color,
+    disabled-foreground-color-opacity: $disabled-foreground-color-opacity,
+    disabled-foreground-color: $disabled-foreground-color,
+    background-color: $background-color,
+    tab-background-color: $tab-background-color,
+    odd-row-background-color: $odd-row-background-color,
+    header-cell-moving-background-color: $header-cell-moving-background-color,
+    icon-color: $icon-color,
+    border-color: $border-color,
+    button-background-color: transparent,
+    cell-data-changed-color: $cell-data-changed-color,
+    chip-background-color: $chip-background-color,
+    editor-background-color: $editor-background-color,
+    range-selection-background-color: $range-selection-background-color,
+    range-selection-highlight-color: $range-selection-highlight-color,
+    header-background-color: $header-background-color,
+    header-background-image: $header-background-image,
+    panel-background-color: $panel-background-color,
+    tool-panel-background-color: $tool-panel-background-color,
+    card-background-color: $card-background-color,
+    accent-color: $accent-color,
+    primary-color: $primary-color,
+    hover-color: $hover-color,
+    selected-color: $selected-color,
+    icon-opacity: $foreground-opacity,
+    button-text-transform: uppercase,
+    card-radius: $card-radius,
+    card-shadow: $card-shadow,
+    input-height: $grid-size * 4,
+    focused-cell-border-color: $focused-cell-border-color,
+    menu-option-active-color: $menu-option-active-color,
+    ag-range-selected-color-1: $ag-range-selected-color-1,
+    ag-range-selected-color-2: $ag-range-selected-color-2,
+    ag-range-selected-color-3: $ag-range-selected-color-3,
+    ag-range-selected-color-4: $ag-range-selected-color-4,
+    cell-highlight-border: $cell-highlight-border,
+    cell-horizontal-border: $cell-horizontal-border,
+    value-change-delta-up-color: $value-change-delta-up-color,
+    value-change-delta-down-color: $value-change-delta-down-color,
+    value-change-value-highlight-background-color: $value-change-value-highlight-background-color,
+    row-floating-background-color: $row-floating-background-color,
+    row-stub-background-color: $row-stub-background-color,
+);
+
+.ag-theme-fresh {
+    @include ag-theme-classic($params);
+}

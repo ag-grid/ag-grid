@@ -2,38 +2,89 @@ import {Bean, Autowired} from "./context/context";
 import {Constants} from "./constants";
 import {ColumnController} from "./columnController/columnController";
 import {IRowModel} from "./interfaces/iRowModel";
-import {FloatingRowModel} from "./rowModels/floatingRowModel";
 import {Utils as _} from "./utils";
 import {GridRow} from "./entities/gridRow";
 import {GridCell, GridCellDef} from "./entities/gridCell";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
+import {PinnedRowModel} from "./rowModels/pinnedRowModel";
+import {RowNode} from "./entities/rowNode";
+import {Column} from "./entities/column";
 
 @Bean('cellNavigationService')
 export class CellNavigationService {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
+    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
+    // returns null if no cell to focus on, ie at the end of the grid
     public getNextCellToFocus(key: any, lastCellToFocus: GridCell): GridCell {
-        switch (key) {
-            case Constants.KEY_UP : return this.getCellAbove(lastCellToFocus);
-            case Constants.KEY_DOWN : return this.getCellBelow(lastCellToFocus);
-            case Constants.KEY_RIGHT :
-                if (this.gridOptionsWrapper.isEnableRtl()) {
-                    return this.getCellToLeft(lastCellToFocus);
-                } else {
-                    return this.getCellToRight(lastCellToFocus);
-                }
-            case Constants.KEY_LEFT :
-                if (this.gridOptionsWrapper.isEnableRtl()) {
-                    return this.getCellToRight(lastCellToFocus);
-                } else {
-                    return this.getCellToLeft(lastCellToFocus);
-                }
-            default : console.log('ag-Grid: unknown key for navigation ' + key);
+
+        // starting with the provided cell, we keep moving until we find a cell we can
+        // focus on.
+        let pointer = lastCellToFocus;
+        let finished = false;
+
+        // finished will be true when either:
+        // a) cell found that we can focus on
+        // b) run out of cells (ie the method returns null)
+        while (!finished) {
+
+            switch (key) {
+                case Constants.KEY_UP :
+                    pointer = this.getCellAbove(pointer);
+                    break;
+                case Constants.KEY_DOWN :
+                    pointer = this.getCellBelow(pointer);
+                    break;
+                case Constants.KEY_RIGHT :
+                    if (this.gridOptionsWrapper.isEnableRtl()) {
+                        pointer = this.getCellToLeft(pointer);
+                    } else {
+                        pointer = this.getCellToRight(pointer);
+                    }
+                    break;
+                case Constants.KEY_LEFT :
+                    if (this.gridOptionsWrapper.isEnableRtl()) {
+                        pointer = this.getCellToRight(pointer);
+                    } else {
+                        pointer = this.getCellToLeft(pointer);
+                    }
+                    break;
+                default : console.log('ag-Grid: unknown key for navigation ' + key);
+                    pointer = null;
+                    break;
+            }
+
+            if (pointer) {
+                finished = this.isCellGoodToFocusOn(pointer);
+            } else {
+                finished = true;
+            }
         }
+
+        return pointer;
+    }
+
+    private isCellGoodToFocusOn(gridCell: GridCell): boolean {
+        let column: Column = gridCell.column;
+        let rowNode: RowNode;
+
+        switch (gridCell.floating) {
+            case Constants.PINNED_TOP:
+                rowNode = this.pinnedRowModel.getPinnedTopRow(gridCell.rowIndex);
+                break;
+            case Constants.PINNED_BOTTOM:
+                rowNode = this.pinnedRowModel.getPinnedBottomRow(gridCell.rowIndex);
+                break;
+            default:
+                rowNode = this.rowModel.getRow(gridCell.rowIndex);
+                break;
+        }
+
+        let suppressNavigable = column.isSuppressNavigable(rowNode);
+        return !suppressNavigable;
     }
 
     private getCellToLeft(lastCell: GridCell): GridCell {
@@ -64,16 +115,16 @@ export class CellNavigationService {
             if (lastRow.isFloatingBottom()) {
                 return null;
             } else if (lastRow.isNotFloating()) {
-                if (this.floatingRowModel.isRowsToRender(Constants.FLOATING_BOTTOM)) {
-                    return new GridRow(0, Constants.FLOATING_BOTTOM);
+                if (this.pinnedRowModel.isRowsToRender(Constants.PINNED_BOTTOM)) {
+                    return new GridRow(0, Constants.PINNED_BOTTOM);
                 } else {
                     return null;
                 }
             } else {
                 if (this.rowModel.isRowsToRender()) {
                     return new GridRow(0, null);
-                } else if (this.floatingRowModel.isRowsToRender(Constants.FLOATING_BOTTOM)) {
-                    return new GridRow(0, Constants.FLOATING_BOTTOM);
+                } else if (this.pinnedRowModel.isRowsToRender(Constants.PINNED_BOTTOM)) {
+                    return new GridRow(0, Constants.PINNED_BOTTOM);
                 } else {
                     return null;
                 }
@@ -97,14 +148,14 @@ export class CellNavigationService {
 
     private isLastRowInContainer(gridRow: GridRow): boolean {
         if (gridRow.isFloatingTop()) {
-            let lastTopIndex = this.floatingRowModel.getFloatingTopRowData().length - 1;
-            return lastTopIndex === gridRow.rowIndex;
+            let lastTopIndex = this.pinnedRowModel.getPinnedTopRowData().length - 1;
+            return lastTopIndex <= gridRow.rowIndex;
         } else if (gridRow.isFloatingBottom()) {
-            let lastBottomIndex = this.floatingRowModel.getFloatingBottomRowData().length - 1;
-            return lastBottomIndex === gridRow.rowIndex;
+            let lastBottomIndex = this.pinnedRowModel.getPinnedBottomRowData().length - 1;
+            return lastBottomIndex <= gridRow.rowIndex;
         } else {
             let lastBodyIndex = this.rowModel.getPageLastRow();
-            return lastBodyIndex === gridRow.rowIndex;
+            return lastBodyIndex <= gridRow.rowIndex;
         }
     }
 
@@ -114,7 +165,7 @@ export class CellNavigationService {
             if (lastRow.isFloatingTop()) {
                 return null;
             } else if (lastRow.isNotFloating()) {
-                if (this.floatingRowModel.isRowsToRender(Constants.FLOATING_TOP)) {
+                if (this.pinnedRowModel.isRowsToRender(Constants.PINNED_TOP)) {
                     return this.getLastFloatingTopRow();
                 } else {
                     return null;
@@ -123,7 +174,7 @@ export class CellNavigationService {
                 // last floating bottom
                 if (this.rowModel.isRowsToRender()) {
                     return this.getLastBodyCell();
-                } else if (this.floatingRowModel.isRowsToRender(Constants.FLOATING_TOP)) {
+                } else if (this.pinnedRowModel.isRowsToRender(Constants.PINNED_TOP)) {
                     return this.getLastFloatingTopRow();
                 } else {
                     return null;
@@ -152,8 +203,8 @@ export class CellNavigationService {
     }
 
     private getLastFloatingTopRow(): GridRow {
-        let lastFloatingRow = this.floatingRowModel.getFloatingTopRowData().length - 1;
-        return new GridRow(lastFloatingRow, Constants.FLOATING_TOP);
+        let lastFloatingRow = this.pinnedRowModel.getPinnedTopRowData().length - 1;
+        return new GridRow(lastFloatingRow, Constants.PINNED_TOP);
     }
 
     public getNextTabbedCell(gridCell: GridCell, backwards: boolean): GridCell {

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -89,7 +89,7 @@ var RowNodeBlock = (function (_super) {
     RowNodeBlock.prototype.getEndRow = function () {
         return this.endRow;
     };
-    RowNodeBlock.prototype.getPageNumber = function () {
+    RowNodeBlock.prototype.getBlockNumber = function () {
         return this.blockNumber;
     };
     RowNodeBlock.prototype.setDirty = function () {
@@ -142,8 +142,13 @@ var RowNodeBlock = (function (_super) {
     };
     RowNodeBlock.prototype.pageLoadFailed = function () {
         this.state = RowNodeBlock.STATE_FAILED;
-        var event = { success: false, page: this };
-        this.dispatchEvent(RowNodeBlock.EVENT_LOAD_COMPLETE, event);
+        var event = {
+            type: RowNodeBlock.EVENT_LOAD_COMPLETE,
+            success: false,
+            page: this,
+            lastRow: null
+        };
+        this.dispatchEvent(event);
     };
     RowNodeBlock.prototype.populateWithRowData = function (rows) {
         var _this = this;
@@ -156,7 +161,7 @@ var RowNodeBlock = (function (_super) {
             _this.setDataAndId(rowNode, data, _this.startRow + index);
         });
         if (rowNodesToRefresh.length > 0) {
-            this.beans.rowRenderer.refreshRows(rowNodesToRefresh);
+            this.beans.rowRenderer.redrawRows(rowNodesToRefresh);
         }
     };
     RowNodeBlock.prototype.destroy = function () {
@@ -166,6 +171,10 @@ var RowNodeBlock = (function (_super) {
                 rowNode.childrenCache.destroy();
                 rowNode.childrenCache = null;
             }
+            // this is needed, so row render knows to fade out the row, otherwise it
+            // see's row top is present, and thinks the row should be shown. maybe
+            // rowNode should have a flag on whether it is visible???
+            rowNode.clearRowTop();
         });
     };
     RowNodeBlock.prototype.pageLoaded = function (version, rows, lastRow) {
@@ -178,14 +187,19 @@ var RowNodeBlock = (function (_super) {
         }
         lastRow = utils_1.Utils.cleanNumber(lastRow);
         // check here if lastrow should be set
-        var event = { success: true, page: this, lastRow: lastRow };
-        this.dispatchEvent(RowNodeBlock.EVENT_LOAD_COMPLETE, event);
+        var event = {
+            type: RowNodeBlock.EVENT_LOAD_COMPLETE,
+            success: true,
+            page: this,
+            lastRow: lastRow
+        };
+        this.dispatchEvent(event);
     };
+    RowNodeBlock.EVENT_LOAD_COMPLETE = 'loadComplete';
+    RowNodeBlock.STATE_DIRTY = 'dirty';
+    RowNodeBlock.STATE_LOADING = 'loading';
+    RowNodeBlock.STATE_LOADED = 'loaded';
+    RowNodeBlock.STATE_FAILED = 'failed';
     return RowNodeBlock;
 }(beanStub_1.BeanStub));
-RowNodeBlock.EVENT_LOAD_COMPLETE = 'loadComplete';
-RowNodeBlock.STATE_DIRTY = 'dirty';
-RowNodeBlock.STATE_LOADING = 'loading';
-RowNodeBlock.STATE_LOADED = 'loaded';
-RowNodeBlock.STATE_FAILED = 'failed';
 exports.RowNodeBlock = RowNodeBlock;

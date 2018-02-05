@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,17 +28,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var component_1 = require("../widgets/component");
 var context_1 = require("../context/context");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
-var columnGroup_1 = require("../entities/columnGroup");
 var columnController_1 = require("../columnController/columnController");
 var column_1 = require("../entities/column");
-var renderedHeaderCell_1 = require("./deprecated/renderedHeaderCell");
 var eventService_1 = require("../eventService");
 var events_1 = require("../events");
 var utils_1 = require("../utils");
 var headerWrapperComp_1 = require("./header/headerWrapperComp");
 var headerGroupWrapperComp_1 = require("./headerGroup/headerGroupWrapperComp");
 var filterManager_1 = require("../filter/filterManager");
-var componentProvider_1 = require("../componentProvider");
+var componentRecipes_1 = require("../components/framework/componentRecipes");
+var gridApi_1 = require("../gridApi");
 var HeaderRowType;
 (function (HeaderRowType) {
     HeaderRowType[HeaderRowType["COLUMN_GROUP"] = 0] = "COLUMN_GROUP";
@@ -48,8 +47,8 @@ var HeaderRowType;
 var HeaderRowComp = (function (_super) {
     __extends(HeaderRowComp, _super);
     function HeaderRowComp(dept, type, pinned, eRoot, dropTarget) {
-        var _this = _super.call(this, "<div class=\"ag-header-row\"/>") || this;
-        _this.headerElements = {};
+        var _this = _super.call(this, "<div class=\"ag-header-row\" role=\"presentation\"/>") || this;
+        _this.headerComps = {};
         _this.dept = dept;
         _this.type = type;
         _this.pinned = pinned;
@@ -59,25 +58,24 @@ var HeaderRowComp = (function (_super) {
     }
     HeaderRowComp.prototype.forEachHeaderElement = function (callback) {
         var _this = this;
-        Object.keys(this.headerElements).forEach(function (key) {
-            var headerElement = _this.headerElements[key];
-            callback(headerElement);
+        Object.keys(this.headerComps).forEach(function (key) {
+            callback(_this.headerComps[key]);
         });
     };
     HeaderRowComp.prototype.destroy = function () {
-        var idsOfAllChildren = Object.keys(this.headerElements);
+        var idsOfAllChildren = Object.keys(this.headerComps);
         this.removeAndDestroyChildComponents(idsOfAllChildren);
         _super.prototype.destroy.call(this);
     };
     HeaderRowComp.prototype.removeAndDestroyChildComponents = function (idsToDestroy) {
         var _this = this;
         idsToDestroy.forEach(function (id) {
-            var child = _this.headerElements[id];
-            _this.getGui().removeChild(child.getGui());
-            if (child.destroy) {
-                child.destroy();
+            var childHeaderComp = _this.headerComps[id];
+            _this.getGui().removeChild(childHeaderComp.getGui());
+            if (childHeaderComp.destroy) {
+                childHeaderComp.destroy();
             }
-            delete _this.headerElements[id];
+            delete _this.headerComps[id];
         });
     };
     HeaderRowComp.prototype.onRowHeightChanged = function () {
@@ -138,7 +136,7 @@ var HeaderRowComp = (function (_super) {
         this.removeAndDestroyAllChildComponents();
     };
     HeaderRowComp.prototype.removeAndDestroyAllChildComponents = function () {
-        var idsOfAllChildren = Object.keys(this.headerElements);
+        var idsOfAllChildren = Object.keys(this.headerComps);
         this.removeAndDestroyChildComponents(idsOfAllChildren);
     };
     HeaderRowComp.prototype.onDisplayedColumnsChanged = function () {
@@ -147,54 +145,56 @@ var HeaderRowComp = (function (_super) {
     };
     HeaderRowComp.prototype.onVirtualColumnsChanged = function () {
         var _this = this;
-        var currentChildIds = Object.keys(this.headerElements);
+        var currentChildIds = Object.keys(this.headerComps);
         var itemsAtDepth = this.columnController.getVirtualHeaderGroupRow(this.pinned, this.type == HeaderRowType.FLOATING_FILTER ?
             this.dept - 1 :
             this.dept);
+        var ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
+        var eBefore;
         itemsAtDepth.forEach(function (child) {
-            var idOfChild = child.getUniqueId();
-            // if we already have this cell rendered, do nothing
-            if (currentChildIds.indexOf(idOfChild) >= 0) {
-                utils_1.Utils.removeFromArray(currentChildIds, idOfChild);
-                return;
-            }
             // skip groups that have no displayed children. this can happen when the group is broken,
             // and this section happens to have nothing to display for the open / closed state.
             // (a broken group is one that is split, ie columns in the group have a non-group column
             // in between them)
-            if (child instanceof columnGroup_1.ColumnGroup && child.getDisplayedChildren().length === 0) {
+            if (child.isEmptyGroup()) {
                 return;
             }
-            var renderedHeaderElement = _this.createHeaderElement(child);
-            _this.headerElements[idOfChild] = renderedHeaderElement;
-            _this.getGui().appendChild(renderedHeaderElement.getGui());
+            var idOfChild = child.getUniqueId();
+            var eParentContainer = _this.getGui();
+            // if we already have this cell rendered, do nothing
+            var colAlreadyInDom = currentChildIds.indexOf(idOfChild) >= 0;
+            var headerComp;
+            var eHeaderCompGui;
+            if (colAlreadyInDom) {
+                utils_1.Utils.removeFromArray(currentChildIds, idOfChild);
+                headerComp = _this.headerComps[idOfChild];
+                eHeaderCompGui = headerComp.getGui();
+                if (ensureDomOrder) {
+                    utils_1.Utils.ensureDomOrder(eParentContainer, eHeaderCompGui, eBefore);
+                }
+                eBefore = eHeaderCompGui;
+            }
+            else {
+                headerComp = _this.createHeaderComp(child);
+                _this.headerComps[idOfChild] = headerComp;
+                eHeaderCompGui = headerComp.getGui();
+                if (ensureDomOrder) {
+                    utils_1.Utils.insertWithDomOrder(eParentContainer, eHeaderCompGui, eBefore);
+                }
+                else {
+                    eParentContainer.appendChild(eHeaderCompGui);
+                }
+                eBefore = eHeaderCompGui;
+            }
         });
         // at this point, anything left in currentChildIds is an element that is no longer in the viewport
         this.removeAndDestroyChildComponents(currentChildIds);
     };
-    // check if user is using the deprecated
-    HeaderRowComp.prototype.isUsingOldHeaderRenderer = function (column) {
-        var colDef = column.getColDef();
-        return utils_1.Utils.anyExists([
-            // header template
-            this.gridOptionsWrapper.getHeaderCellTemplateFunc(),
-            this.gridOptionsWrapper.getHeaderCellTemplate(),
-            colDef.headerCellTemplate,
-            // header cellRenderer
-            colDef.headerCellRenderer,
-            this.gridOptionsWrapper.getHeaderCellRenderer()
-        ]);
-    };
-    HeaderRowComp.prototype.createHeaderElement = function (columnGroupChild) {
+    HeaderRowComp.prototype.createHeaderComp = function (columnGroupChild) {
         var result;
         switch (this.type) {
             case HeaderRowType.COLUMN:
-                if (this.isUsingOldHeaderRenderer(columnGroupChild)) {
-                    result = new renderedHeaderCell_1.RenderedHeaderCell(columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
-                }
-                else {
-                    result = new headerWrapperComp_1.HeaderWrapperComp(columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
-                }
+                result = new headerWrapperComp_1.HeaderWrapperComp(columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
                 break;
             case HeaderRowType.COLUMN_GROUP:
                 result = new headerGroupWrapperComp_1.HeaderGroupWrapperComp(columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
@@ -210,86 +210,101 @@ var HeaderRowComp = (function (_super) {
     HeaderRowComp.prototype.createFloatingFilterWrapper = function (column) {
         var _this = this;
         var floatingFilterParams = this.createFloatingFilterParams(column);
-        var floatingFilterWrapper = this.componentProvider.newFloatingFilterWrapperComponent(column, floatingFilterParams);
-        column.addEventListener(column_1.Column.EVENT_FILTER_CHANGED, function () {
-            var filterComponent = _this.filterManager.getFilterComponent(column);
-            floatingFilterWrapper.onParentModelChanged(filterComponent.getModel());
+        var floatingFilterWrapper = this.componentRecipes.newFloatingFilterWrapperComponent(column, floatingFilterParams);
+        this.addDestroyableEventListener(column, column_1.Column.EVENT_FILTER_CHANGED, function () {
+            var filterComponentPromise = _this.filterManager.getFilterComponent(column);
+            floatingFilterWrapper.onParentModelChanged(filterComponentPromise.resolveNow(null, function (filter) { return filter.getModel(); }));
         });
         var cachedFilter = this.filterManager.cachedFilter(column);
         if (cachedFilter) {
-            var filterComponent = this.filterManager.getFilterComponent(column);
-            floatingFilterWrapper.onParentModelChanged(filterComponent.getModel());
+            var filterComponentPromise = this.filterManager.getFilterComponent(column);
+            floatingFilterWrapper.onParentModelChanged(filterComponentPromise.resolveNow(null, function (filter) { return filter.getModel(); }));
         }
         return floatingFilterWrapper;
     };
     HeaderRowComp.prototype.createFloatingFilterParams = function (column) {
         var _this = this;
-        /** We always get the freshest reference to the baseFilter because the filters get sometimes created
-         * and destroyed beetwen calls
-         *
-         *let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
-         */
+        // We always get the freshest reference to the baseFilter because the filters get sometimes created
+        // and destroyed between calls
+        //
+        // let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
+        //
         var baseParams = {
+            api: this.gridApi,
             column: column,
             currentParentModel: function () {
-                var filterComponent = _this.filterManager.getFilterComponent(column);
-                return (filterComponent.getNullableModel) ?
-                    filterComponent.getNullableModel() :
-                    filterComponent.getModel();
+                var filterComponentPromise = _this.filterManager.getFilterComponent(column);
+                return filterComponentPromise.resolveNow(null, function (filter) {
+                    return (filter.getNullableModel) ?
+                        filter.getNullableModel() :
+                        filter.getModel();
+                });
             },
             onFloatingFilterChanged: function (change) {
-                var filterComponent = _this.filterManager.getFilterComponent(column);
-                if (filterComponent.onFloatingFilterChanged) {
-                    //If going through this branch of code the user MUST
-                    //be passing an object of type change that contains
-                    //a model propery inside and some other stuff
-                    return filterComponent.onFloatingFilterChanged(change);
-                }
-                else {
-                    //If going through this branch of code the user MUST
-                    //be passing the plain model and delegating to ag-Grid
-                    //the responsibility to set the parent model and refresh
-                    //the filters
-                    filterComponent.setModel(change);
-                    _this.filterManager.onFilterChanged();
-                    return true;
-                }
+                var captureModelChangedResolveFunc;
+                var modelChanged = new utils_1.Promise(function (resolve) {
+                    captureModelChangedResolveFunc = resolve;
+                });
+                var filterComponentPromise = _this.filterManager.getFilterComponent(column);
+                filterComponentPromise.then(function (filterComponent) {
+                    if (filterComponent.onFloatingFilterChanged) {
+                        //If going through this branch of code the user MUST
+                        //be passing an object of type change that contains
+                        //a model propery inside and some other stuff
+                        var result = filterComponent.onFloatingFilterChanged(change);
+                        captureModelChangedResolveFunc(result);
+                    }
+                    else {
+                        //If going through this branch of code the user MUST
+                        //be passing the plain model and delegating to ag-Grid
+                        //the responsibility to set the parent model and refresh
+                        //the filters
+                        filterComponent.setModel(change);
+                        _this.filterManager.onFilterChanged();
+                        captureModelChangedResolveFunc(true);
+                    }
+                });
+                return modelChanged.resolveNow(true, function (modelChanged) { return modelChanged; });
             },
             //This one might be overriden from the colDef
             suppressFilterButton: false
         };
         return baseParams;
     };
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], HeaderRowComp.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], HeaderRowComp.prototype, "gridApi", void 0);
+    __decorate([
+        context_1.Autowired('columnController'),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], HeaderRowComp.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('context'),
+        __metadata("design:type", context_1.Context)
+    ], HeaderRowComp.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired('eventService'),
+        __metadata("design:type", eventService_1.EventService)
+    ], HeaderRowComp.prototype, "eventService", void 0);
+    __decorate([
+        context_1.Autowired('filterManager'),
+        __metadata("design:type", filterManager_1.FilterManager)
+    ], HeaderRowComp.prototype, "filterManager", void 0);
+    __decorate([
+        context_1.Autowired('componentRecipes'),
+        __metadata("design:type", componentRecipes_1.ComponentRecipes)
+    ], HeaderRowComp.prototype, "componentRecipes", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], HeaderRowComp.prototype, "init", null);
     return HeaderRowComp;
 }(component_1.Component));
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], HeaderRowComp.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.Autowired('columnController'),
-    __metadata("design:type", columnController_1.ColumnController)
-], HeaderRowComp.prototype, "columnController", void 0);
-__decorate([
-    context_1.Autowired('context'),
-    __metadata("design:type", context_1.Context)
-], HeaderRowComp.prototype, "context", void 0);
-__decorate([
-    context_1.Autowired('eventService'),
-    __metadata("design:type", eventService_1.EventService)
-], HeaderRowComp.prototype, "eventService", void 0);
-__decorate([
-    context_1.Autowired('filterManager'),
-    __metadata("design:type", filterManager_1.FilterManager)
-], HeaderRowComp.prototype, "filterManager", void 0);
-__decorate([
-    context_1.Autowired('componentProvider'),
-    __metadata("design:type", componentProvider_1.ComponentProvider)
-], HeaderRowComp.prototype, "componentProvider", void 0);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], HeaderRowComp.prototype, "init", null);
 exports.HeaderRowComp = HeaderRowComp;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22,11 +22,21 @@ var column_1 = require("../entities/column");
 var gridPanel_1 = require("../gridPanel/gridPanel");
 var bodyDropPivotTarget_1 = require("./bodyDropPivotTarget");
 var columnController_1 = require("../columnController/columnController");
+var DropType;
+(function (DropType) {
+    DropType[DropType["ColumnMove"] = 0] = "ColumnMove";
+    DropType[DropType["Pivot"] = 1] = "Pivot";
+})(DropType || (DropType = {}));
 var BodyDropTarget = (function () {
     function BodyDropTarget(pinned, eContainer) {
+        this.dropListeners = {};
         this.pinned = pinned;
         this.eContainer = eContainer;
     }
+    BodyDropTarget.prototype.isInterestedIn = function (type) {
+        // not interested in row drags
+        return type === dragAndDropService_1.DragSourceType.HeaderCell || type === dragAndDropService_1.DragSourceType.ToolPanel;
+    };
     BodyDropTarget.prototype.getSecondaryContainers = function () {
         return this.eSecondaryContainers;
     };
@@ -34,10 +44,12 @@ var BodyDropTarget = (function () {
         return this.eContainer;
     };
     BodyDropTarget.prototype.init = function () {
-        this.moveColumnController = new moveColumnController_1.MoveColumnController(this.pinned, this.eContainer);
-        this.context.wireBean(this.moveColumnController);
-        this.bodyDropPivotTarget = new bodyDropPivotTarget_1.BodyDropPivotTarget(this.pinned);
-        this.context.wireBean(this.bodyDropPivotTarget);
+        var moveColumnController = new moveColumnController_1.MoveColumnController(this.pinned, this.eContainer);
+        this.context.wireBean(moveColumnController);
+        var bodyDropPivotTarget = new bodyDropPivotTarget_1.BodyDropPivotTarget(this.pinned);
+        this.context.wireBean(bodyDropPivotTarget);
+        this.dropListeners[DropType.ColumnMove] = moveColumnController;
+        this.dropListeners[DropType.Pivot] = bodyDropPivotTarget;
         switch (this.pinned) {
             case column_1.Column.PINNED_LEFT:
                 this.eSecondaryContainers = this.gridPanel.getDropTargetLeftContainers();
@@ -57,26 +69,30 @@ var BodyDropTarget = (function () {
     // we want to use the bodyPivotTarget if the user is dragging columns in from the toolPanel
     // and we are in pivot mode, as it has to logic to set pivot/value/group on the columns when
     // dropped into the grid's body.
-    BodyDropTarget.prototype.isUseBodyDropPivotTarget = function (draggingEvent) {
-        // if not in pivot mode, then we never use the pivot drop target
-        if (!this.columnController.isPivotMode()) {
-            return false;
+    BodyDropTarget.prototype.getDropType = function (draggingEvent) {
+        if (this.columnController.isPivotMode()) {
+            // in pivot mode, then if moving a column (ie didn't come from toolpanel) then it's
+            // a standard column move, however if it came from teh toolpanel, then we are introducing
+            // dimensions or values to the grid
+            if (draggingEvent.dragSource.type === dragAndDropService_1.DragSourceType.ToolPanel) {
+                return DropType.Pivot;
+            }
+            else {
+                return DropType.ColumnMove;
+            }
         }
-        // otherwise we use the drop target if the column came from the toolPanel (ie not reordering)
-        return draggingEvent.dragSource.type === dragAndDropService_1.DragSourceType.ToolPanel;
+        else {
+            // it's a column, and not pivot mode, so always moving
+            return DropType.ColumnMove;
+        }
     };
     BodyDropTarget.prototype.onDragEnter = function (draggingEvent) {
         // we pick the drop listener depending on whether we are in pivot mode are not. if we are
         // in pivot mode, then dropping cols changes the row group, pivot, value stats. otherwise
         // we change visibility state and position.
         // if (this.columnController.isPivotMode()) {
-        var useBodyDropPivotTarget = this.isUseBodyDropPivotTarget(draggingEvent);
-        if (useBodyDropPivotTarget) {
-            this.currentDropListener = this.bodyDropPivotTarget;
-        }
-        else {
-            this.currentDropListener = this.moveColumnController;
-        }
+        var dropType = this.getDropType(draggingEvent);
+        this.currentDropListener = this.dropListeners[dropType];
         this.currentDropListener.onDragEnter(draggingEvent);
     };
     BodyDropTarget.prototype.onDragLeave = function (params) {
@@ -88,28 +104,28 @@ var BodyDropTarget = (function () {
     BodyDropTarget.prototype.onDragStop = function (params) {
         this.currentDropListener.onDragStop(params);
     };
+    __decorate([
+        context_1.Autowired('context'),
+        __metadata("design:type", context_1.Context)
+    ], BodyDropTarget.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired('gridPanel'),
+        __metadata("design:type", gridPanel_1.GridPanel)
+    ], BodyDropTarget.prototype, "gridPanel", void 0);
+    __decorate([
+        context_1.Autowired('dragAndDropService'),
+        __metadata("design:type", dragAndDropService_1.DragAndDropService)
+    ], BodyDropTarget.prototype, "dragAndDropService", void 0);
+    __decorate([
+        context_1.Autowired('columnController'),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], BodyDropTarget.prototype, "columnController", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], BodyDropTarget.prototype, "init", null);
     return BodyDropTarget;
 }());
-__decorate([
-    context_1.Autowired('context'),
-    __metadata("design:type", context_1.Context)
-], BodyDropTarget.prototype, "context", void 0);
-__decorate([
-    context_1.Autowired('gridPanel'),
-    __metadata("design:type", gridPanel_1.GridPanel)
-], BodyDropTarget.prototype, "gridPanel", void 0);
-__decorate([
-    context_1.Autowired('dragAndDropService'),
-    __metadata("design:type", dragAndDropService_1.DragAndDropService)
-], BodyDropTarget.prototype, "dragAndDropService", void 0);
-__decorate([
-    context_1.Autowired('columnController'),
-    __metadata("design:type", columnController_1.ColumnController)
-], BodyDropTarget.prototype, "columnController", void 0);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], BodyDropTarget.prototype, "init", null);
 exports.BodyDropTarget = BodyDropTarget;

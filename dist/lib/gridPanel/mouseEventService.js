@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22,7 +22,18 @@ var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var cellComp_1 = require("../rendering/cellComp");
 var MouseEventService = (function () {
     function MouseEventService() {
+        this.gridInstanceId = MouseEventService_1.gridInstanceSequence.next();
     }
+    MouseEventService_1 = MouseEventService;
+    MouseEventService.prototype.init = function () {
+        this.stampDomElementWithGridInstance();
+    };
+    // we put the instance id onto the main DOM element. this is used for events, when grids are inside grids,
+    // so the grid can work out if the even came from this grid or a grid inside this one. see the ctrl+v logic
+    // for where this is used.
+    MouseEventService.prototype.stampDomElementWithGridInstance = function () {
+        this.eGridDiv[MouseEventService_1.GRID_DOM_KEY] = this.gridInstanceId;
+    };
     MouseEventService.prototype.getRenderedCellForEvent = function (event) {
         var sourceElement = utils_1.Utils.getTarget(event);
         while (sourceElement) {
@@ -34,17 +45,45 @@ var MouseEventService = (function () {
         }
         return null;
     };
-    MouseEventService.prototype.getGridCellForEvent = function (event) {
-        var renderedCell = this.getRenderedCellForEvent(event);
-        return renderedCell ? renderedCell.getGridCell() : null;
+    // walks the path of the event, and returns true if this grid is the first one that it finds. if doing
+    // master / detail grids, and a child grid is found, then it returns false. this stops things like copy/paste
+    // getting executed on many grids at the same time.
+    MouseEventService.prototype.isEventFromThisGrid = function (event) {
+        var path = utils_1.Utils.getEventPath(event);
+        for (var i = 0; i < path.length; i++) {
+            var element = path[i];
+            var instanceId = element[MouseEventService_1.GRID_DOM_KEY];
+            if (utils_1.Utils.exists(instanceId)) {
+                var eventFromThisGrid = instanceId === this.gridInstanceId;
+                return eventFromThisGrid;
+            }
+        }
+        return false;
     };
+    MouseEventService.prototype.getGridCellForEvent = function (event) {
+        var cellComp = this.getRenderedCellForEvent(event);
+        return cellComp ? cellComp.getGridCell() : null;
+    };
+    MouseEventService.gridInstanceSequence = new utils_1.NumberSequence();
+    MouseEventService.GRID_DOM_KEY = '__ag_grid_instance';
+    __decorate([
+        context_2.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], MouseEventService.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_2.Autowired('eGridDiv'),
+        __metadata("design:type", HTMLElement)
+    ], MouseEventService.prototype, "eGridDiv", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], MouseEventService.prototype, "init", null);
+    MouseEventService = MouseEventService_1 = __decorate([
+        context_1.Bean('mouseEventService')
+    ], MouseEventService);
     return MouseEventService;
+    var MouseEventService_1;
 }());
-__decorate([
-    context_2.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], MouseEventService.prototype, "gridOptionsWrapper", void 0);
-MouseEventService = __decorate([
-    context_1.Bean('mouseEventService')
-], MouseEventService);
 exports.MouseEventService = MouseEventService;

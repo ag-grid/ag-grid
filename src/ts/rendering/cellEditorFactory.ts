@@ -1,39 +1,25 @@
-import {Bean, PostConstruct, Autowired, Context} from "../context/context";
-import {Utils} from '../utils';
+import {Autowired, Bean, Context, PostConstruct} from "../context/context";
 import {ICellEditorComp, ICellEditorParams} from "./cellEditors/iCellEditor";
-import {TextCellEditor} from "./cellEditors/textCellEditor";
-import {SelectCellEditor} from "./cellEditors/selectCellEditor";
 import {PopupEditorWrapper} from "./cellEditors/popupEditorWrapper";
-import {PopupTextCellEditor} from "./cellEditors/popupTextCellEditor";
-import {PopupSelectCellEditor} from "./cellEditors/popupSelectCellEditor";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {LargeTextCellEditor} from "./cellEditors/largeTextCellEditor";
+import {ColDef} from "../entities/colDef";
+import {ComponentResolver} from "../components/framework/componentResolver";
+import {_, Promise} from "../utils";
 
 @Bean('cellEditorFactory')
 export class CellEditorFactory {
 
-    private static TEXT = 'text';
-    private static SELECT = 'select';
-    private static POPUP_TEXT = 'popupText';
-    private static POPUP_SELECT = 'popupSelect';
-    private static LARGE_TEXT = 'largeText';
-
     @Autowired('context') private context: Context;
+    @Autowired('componentResolver') private componentResolver: ComponentResolver;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    private cellEditorMap: {[key: string]: {new(): ICellEditorComp}} = {};
 
     @PostConstruct
     private init(): void {
-        this.cellEditorMap[CellEditorFactory.TEXT] = TextCellEditor;
-        this.cellEditorMap[CellEditorFactory.SELECT] = SelectCellEditor;
-        this.cellEditorMap[CellEditorFactory.POPUP_TEXT] = PopupTextCellEditor;
-        this.cellEditorMap[CellEditorFactory.POPUP_SELECT] = PopupSelectCellEditor;
-        this.cellEditorMap[CellEditorFactory.LARGE_TEXT] = LargeTextCellEditor;
     }
     
     public addCellEditor(key: string, cellEditor: {new(): ICellEditorComp}): void {
-        this.cellEditorMap[key] = cellEditor;
+        console.warn(`ag-grid: since v13.3.1 this method is not supported anymore. If you want to register your own editor check the docs: https://www.ag-grid.com/javascript-grid-cell-editor/`)
     }
 
     // private registerEditorsFromGridOptions(): void {
@@ -43,43 +29,40 @@ export class CellEditorFactory {
     //     });
     // }
 
-    public createCellEditor(key: string|{new(): ICellEditorComp}, params: ICellEditorParams): ICellEditorComp {
+    public createCellEditor(column:ColDef, params: ICellEditorParams): Promise<ICellEditorComp> {
 
-        let CellEditorClass: {new(): ICellEditorComp};
+        let cellEditorPromise:Promise<ICellEditorComp> = this.componentResolver.createAgGridComponent (
+            column,
+            params,
+            'cellEditor',
+            {
+                api: params.api,
+                columnApi: params.columnApi,
+                node: params.node,
+                data: params.node.data,
+                rowIndex: params.rowIndex,
+                column: params.column,
+                colDef: params.column.getColDef()
+            },
+            'agCellEditor'
+        );
+        return cellEditorPromise.map(cellEditor => {
 
-        if (Utils.missing(key)) {
-            CellEditorClass = this.cellEditorMap[CellEditorFactory.TEXT];
-        } else if (typeof key === 'string') {
-            CellEditorClass = this.cellEditorMap[key];
-            if (Utils.missing(CellEditorClass)) {
-                console.warn('ag-Grid: unable to find cellEditor for key ' + key);
-                CellEditorClass = this.cellEditorMap[CellEditorFactory.TEXT];
-            }
-        } else {
-            CellEditorClass = <{new(): ICellEditorComp}> key;
-        }
+            let isPopup = cellEditor.isPopup && cellEditor.isPopup();
 
-        let cellEditor = new CellEditorClass();
-        this.context.wireBean(cellEditor);
-
-        // we have to call init first, otherwise when using the frameworks, the wrapper
-        // classes won't be set up
-        if (cellEditor.init) {
-            cellEditor.init(params);
-        }
-
-        if (cellEditor.isPopup && cellEditor.isPopup()) {
+            if (!isPopup) { return cellEditor; }
 
             if (this.gridOptionsWrapper.isFullRowEdit()) {
                 console.warn('ag-Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
                     '- either turn off fullRowEdit, or stop using popup editors.');
             }
 
-            cellEditor = new PopupEditorWrapper(cellEditor);
-            this.context.wireBean(cellEditor);
-            cellEditor.init(params);
-        }
-        
-        return cellEditor;
+            // if a popup, then we wrap in a popup editor and return the popup
+            let popupEditorWrapper = new PopupEditorWrapper(cellEditor);
+            this.context.wireBean(popupEditorWrapper);
+            popupEditorWrapper.init(params);
+            return popupEditorWrapper;
+        });
     }
+
 }

@@ -1,8 +1,7 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v16.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
-import { ColDef } from "../entities/colDef";
 import { GridCell } from "../entities/gridCell";
 export interface IRangeController {
     clearSelection(): void;
@@ -26,6 +25,6 @@ export interface AddRangeSelectionParams {
     floatingStart: string;
     rowEnd: number;
     floatingEnd: string;
-    columnStart: Column | ColDef | string;
-    columnEnd: Column | ColDef | string;
+    columnStart: string | Column;
+    columnEnd: string | Column;
 }

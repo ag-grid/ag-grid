@@ -1,12 +1,13 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v16.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
-import { RowAccumulator, BaseGridSerializingSession, RowSpanningAccumulator } from "./gridSerializer";
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { GridSerializer, RowAccumulator, BaseGridSerializingSession, RowSpanningAccumulator, GridSerializingSession } from "./gridSerializer";
+import { Downloader } from "./downloader";
 import { Column } from "./entities/column";
 import { ColumnController } from "./columnController/columnController";
-import { ValueService } from "./valueService";
+import { ValueService } from "./valueService/valueService";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
-import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "./exportParams";
+import { CsvExportParams, ExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "./exportParams";
 export declare class CsvSerializingSession extends BaseGridSerializingSession<string> {
     private suppressQuotes;
     private columnSeparator;
@@ -25,12 +26,36 @@ export declare class CsvSerializingSession extends BaseGridSerializingSession<st
     private putInQuotes(value, suppressQuotes);
     parse(): string;
 }
-export declare class CsvCreator {
-    private downloader;
-    private gridSerializer;
+export interface BaseCreatorBeans {
+    downloader: Downloader;
+    gridSerializer: GridSerializer;
+    gridOptionsWrapper: GridOptionsWrapper;
+}
+export declare abstract class BaseCreator<T, S extends GridSerializingSession<T>, P extends ExportParams<T>> {
+    private beans;
+    protected setBeans(beans: BaseCreatorBeans): void;
+    export(userParams?: P): string;
+    getData(params: P): string;
+    private getMergedParamsAndData(userParams);
+    private mergeDefaultParams(userParams);
+    abstract createSerializingSession(params?: P): S;
+    abstract getMimeType(): string;
+    abstract getDefaultFileName(): string;
+    abstract getDefaultFileExtension(): string;
+    abstract isExportSuppressed(): boolean;
+}
+export declare class CsvCreator extends BaseCreator<string, CsvSerializingSession, CsvExportParams> {
     private columnController;
     private valueService;
-    private gridOptionsWrapper;
+    private downloader;
+    private gridSerializer;
+    gridOptionsWrapper: GridOptionsWrapper;
+    postConstruct(): void;
     exportDataAsCsv(params?: CsvExportParams): string;
     getDataAsCsv(params?: CsvExportParams): string;
+    getMimeType(): string;
+    getDefaultFileName(): string;
+    getDefaultFileExtension(): string;
+    createSerializingSession(params?: CsvExportParams): CsvSerializingSession;
+    isExportSuppressed(): boolean;
 }

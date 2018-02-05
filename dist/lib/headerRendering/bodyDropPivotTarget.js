@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34,7 +34,7 @@ var BodyDropPivotTarget = (function () {
         if (this.gridOptionsWrapper.isFunctionsReadOnly()) {
             return;
         }
-        var dragColumns = draggingEvent.dragSource.dragItem;
+        var dragColumns = draggingEvent.dragItem.columns;
         dragColumns.forEach(function (column) {
             // we don't allow adding secondary columns
             if (!column.isPrimary()) {
@@ -79,23 +79,23 @@ var BodyDropPivotTarget = (function () {
     /** Callback for when drag stops */
     BodyDropPivotTarget.prototype.onDragStop = function (draggingEvent) {
         if (this.columnsToAggregate.length > 0) {
-            this.columnController.addValueColumns(this.columnsToAggregate);
+            this.columnController.addValueColumns(this.columnsToAggregate, "toolPanelDragAndDrop");
         }
         if (this.columnsToGroup.length > 0) {
-            this.columnController.addRowGroupColumns(this.columnsToGroup);
+            this.columnController.addRowGroupColumns(this.columnsToGroup, "toolPanelDragAndDrop");
         }
         if (this.columnsToPivot.length > 0) {
-            this.columnController.addPivotColumns(this.columnsToPivot);
+            this.columnController.addPivotColumns(this.columnsToPivot, "toolPanelDragAndDrop");
         }
     };
+    __decorate([
+        context_1.Autowired('columnController'),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], BodyDropPivotTarget.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], BodyDropPivotTarget.prototype, "gridOptionsWrapper", void 0);
     return BodyDropPivotTarget;
 }());
-__decorate([
-    context_1.Autowired('columnController'),
-    __metadata("design:type", columnController_1.ColumnController)
-], BodyDropPivotTarget.prototype, "columnController", void 0);
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], BodyDropPivotTarget.prototype, "gridOptionsWrapper", void 0);
 exports.BodyDropPivotTarget = BodyDropPivotTarget;

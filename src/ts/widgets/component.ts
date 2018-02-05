@@ -1,7 +1,14 @@
-import {Utils as _} from "../utils";
+import {NumberSequence, Utils as _} from "../utils";
 import {Context} from "../context/context";
 import {BeanStub} from "../context/beanStub";
-import {IComponent} from "../interfaces/iComponent";
+import {IAfterGuiAttachedParams, IComponent} from "../interfaces/iComponent";
+import {AgEvent} from "../events";
+
+let compIdSequence = new NumberSequence();
+
+export interface VisibleChangedEvent extends AgEvent {
+    visible: boolean;
+}
 
 export class Component extends BeanStub implements IComponent<any> {
 
@@ -15,11 +22,20 @@ export class Component extends BeanStub implements IComponent<any> {
 
     private visible = true;
 
+    // unique id for this row component. this is used for getting a reference to the HTML dom.
+    // we cannot use the RowNode id as this is not unique (due to animation, old rows can be lying
+    // around as we create a new rowComp instance for the same row node).
+    private compId = compIdSequence.next();
+
     constructor(template?: string) {
         super();
         if (template) {
             this.setTemplate(template);
         }
+    }
+
+    public getCompId(): number {
+        return this.compId;
     }
 
     public instantiate(context: Context): void {
@@ -28,7 +44,7 @@ export class Component extends BeanStub implements IComponent<any> {
 
     private instantiateRecurse(parentNode: Element, context: Context): void {
         let childCount = parentNode.childNodes ? parentNode.childNodes.length : 0;
-        for (let i = 0; i<childCount; i++) {
+        for (let i = 0; i < childCount; i++) {
             let childNode = parentNode.childNodes[i];
             let newComponent = context.createComponent(<Element>childNode);
             if (newComponent) {
@@ -36,6 +52,7 @@ export class Component extends BeanStub implements IComponent<any> {
             } else {
                 if (childNode.childNodes) {
                     this.instantiateRecurse(<Element>childNode, context);
+
                 }
             }
         }
@@ -48,15 +65,24 @@ export class Component extends BeanStub implements IComponent<any> {
     }
 
     private swapInComponentForQuerySelectors(newComponent: Component, childNode: Node): void {
-        let metaData = (<any>this).__agComponentMetaData;
-        if (!metaData || !metaData.querySelectors) { return; }
+
+        let thisProto: any = Object.getPrototypeOf(this);
 
         let thisNoType = <any> this;
-        metaData.querySelectors.forEach( (querySelector: any) => {
-            if (thisNoType[querySelector.attributeName]===childNode) {
-                thisNoType[querySelector.attributeName] = newComponent;
+        while (thisProto != null) {
+            let metaData = thisProto.__agComponentMetaData;
+            let currentProtoName = (thisProto.constructor).name;
+
+            if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
+                metaData[currentProtoName].querySelectors.forEach((querySelector: any) => {
+                    if (thisNoType[querySelector.attributeName] === childNode) {
+                        thisNoType[querySelector.attributeName] = newComponent;
+                    }
+                });
             }
-        } );
+
+            thisProto = Object.getPrototypeOf(thisProto);
+        }
     }
 
     public setTemplate(template: string): void {
@@ -74,51 +100,75 @@ export class Component extends BeanStub implements IComponent<any> {
     public attributesSet(): void {
     }
 
-    private wireQuerySelectors(): void {
-        let metaData = (<any>this).__agComponentMetaData;
-        if (!metaData || !metaData.querySelectors) { return; }
+    protected wireQuerySelectors(): void {
+        if (!this.eGui) {
+            return;
+        }
 
-        if (!this.eGui) { return; }
+        let thisProto: any = Object.getPrototypeOf(this);
 
-        let thisNoType = <any> this;
-        metaData.querySelectors.forEach( (querySelector: any) => {
-            let resultOfQuery = this.eGui.querySelector(querySelector.querySelector);
-            if (resultOfQuery) {
-                let backingComponent = (<any>resultOfQuery).__agComponent;
-                if (backingComponent) {
-                    thisNoType[querySelector.attributeName] = backingComponent;
-                } else {
-                    thisNoType[querySelector.attributeName] = resultOfQuery;
-                }
-            } else {
-                // put debug msg in here if query selector fails???
+        while (thisProto != null) {
+            let metaData = thisProto.__agComponentMetaData;
+            let currentProtoName = (thisProto.constructor).name;
+
+            if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
+                let thisNoType = <any> this;
+                metaData[currentProtoName].querySelectors.forEach((querySelector: any) => {
+                    let resultOfQuery = this.eGui.querySelector(querySelector.querySelector);
+                    if (resultOfQuery) {
+                        let backingComponent = (<any>resultOfQuery).__agComponent;
+                        if (backingComponent) {
+                            thisNoType[querySelector.attributeName] = backingComponent;
+                        } else {
+                            thisNoType[querySelector.attributeName] = resultOfQuery;
+                        }
+                    } else {
+                        // put debug msg in here if query selector fails???
+                    }
+                });
             }
-        } );
+
+            thisProto = Object.getPrototypeOf(thisProto);
+        }
     }
 
     private addAnnotatedEventListeners(): void {
         this.removeAnnotatedEventListeners();
-
-        let metaData = (<any>this).__agComponentMetaData;
-        if (!metaData || !metaData.listenerMethods) { return; }
-
-        if (!this.eGui) { return; }
-
-        if (!this.annotatedEventListeners) {
-            this.annotatedEventListeners = [];
+        if (!this.eGui) {
+            return;
         }
 
-        metaData.listenerMethods.forEach( (eventListener: any) => {
-            let listener = (<any>this)[eventListener.methodName].bind(this);
-            this.eGui.addEventListener(eventListener.eventName, listener);
-            this.annotatedEventListeners.push({eventName: eventListener.eventName, listener: listener});
-        });
+        let thisProto: any = Object.getPrototypeOf(this);
+
+        while (thisProto != null) {
+            let metaData = thisProto.__agComponentMetaData;
+            let currentProtoName = (thisProto.constructor).name;
+
+            if (metaData && metaData[currentProtoName] && metaData[currentProtoName].listenerMethods) {
+
+                if (!this.annotatedEventListeners) {
+                    this.annotatedEventListeners = [];
+                }
+
+                metaData[currentProtoName].listenerMethods.forEach((eventListener: any) => {
+                    let listener = (<any>this)[eventListener.methodName].bind(this);
+                    this.eGui.addEventListener(eventListener.eventName, listener);
+                    this.annotatedEventListeners.push({eventName: eventListener.eventName, listener: listener});
+                });
+            }
+
+            thisProto = Object.getPrototypeOf(thisProto);
+        }
     }
 
     private removeAnnotatedEventListeners(): void {
-        if (!this.annotatedEventListeners) { return; }
-        if (!this.eGui) { return; }
-        this.annotatedEventListeners.forEach( (eventListener: any) => {
+        if (!this.annotatedEventListeners) {
+            return;
+        }
+        if (!this.eGui) {
+            return;
+        }
+        this.annotatedEventListeners.forEach((eventListener: any) => {
             this.eGui.removeEventListener(eventListener.eventName, eventListener.listener);
         });
         this.annotatedEventListeners = null;
@@ -142,7 +192,7 @@ export class Component extends BeanStub implements IComponent<any> {
         return <HTMLInputElement> this.eGui.querySelector(cssSelector);
     }
 
-    public appendChild(newChild: Node|IComponent<any>): void {
+    public appendChild(newChild: Node | IComponent<any>): void {
         if (_.isNodeOrElement(newChild)) {
             this.eGui.appendChild(<Node>newChild);
         } else {
@@ -167,25 +217,29 @@ export class Component extends BeanStub implements IComponent<any> {
         if (visible !== this.visible) {
             this.visible = visible;
             _.addOrRemoveCssClass(this.eGui, 'ag-hidden', !visible);
-            this.dispatchEvent(Component.EVENT_VISIBLE_CHANGED, {visible: this.visible});
+            let event: VisibleChangedEvent = {
+                type: Component.EVENT_VISIBLE_CHANGED,
+                visible: this.visible
+            };
+            this.dispatchEvent(event);
         }
     }
 
     public addOrRemoveCssClass(className: string, addOrRemove: boolean): void {
         _.addOrRemoveCssClass(this.eGui, className, addOrRemove);
     }
-    
+
     public destroy(): void {
         super.destroy();
-        this.childComponents.forEach( childComponent => childComponent.destroy() );
+        this.childComponents.forEach(childComponent => childComponent.destroy());
         this.childComponents.length = 0;
 
         this.removeAnnotatedEventListeners();
     }
 
-    public addGuiEventListener(event: string, listener: (event: any)=>void): void {
+    public addGuiEventListener(event: string, listener: (event: any) => void): void {
         this.getGui().addEventListener(event, listener);
-        this.addDestroyFunc( ()=> this.getGui().removeEventListener(event, listener));
+        this.addDestroyFunc(() => this.getGui().removeEventListener(event, listener));
     }
 
     public addCssClass(className: string): void {

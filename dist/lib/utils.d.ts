@@ -1,6 +1,6 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v16.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { Column } from "./entities/column";
 import { RowNode } from "./entities/rowNode";
@@ -14,6 +14,10 @@ export declare class Utils {
     private static isEdge;
     private static isChrome;
     private static isFirefox;
+    private static isIPad;
+    private static PRINTABLE_CHARACTERS;
+    private static doOnceFlags;
+    static doOnce(func: () => void, key: string): void;
     static areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, pixelCount: number): boolean;
     static shallowCompare(arr1: any[], arr2: any[]): boolean;
     static getNameOfClass(TheClass: any): string;
@@ -31,12 +35,13 @@ export declare class Utils {
     static forEach<T>(array: T[], callback: (item: T, index: number) => void): void;
     static filter<T>(array: T[], callback: (item: T) => boolean): T[];
     static getAllKeysInObjects(objects: any[]): string[];
-    static mergeDeep(object: any, source: any): void;
-    static assign(object: any, source: any): void;
+    static mergeDeep(dest: any, source: any): void;
+    static assign(object: any, ...sources: any[]): any;
     static parseYyyyMmDdToDate(yyyyMmDd: string, separator: string): Date;
     static serializeDateToYyyyMmDd(date: Date, separator: string): string;
     static pad(num: number, totalStringSize: number): string;
     static pushAll(target: any[], source: any[]): void;
+    static createArrayOfNumbers(first: number, last: number): number[];
     static getFunctionParameters(func: any): any;
     static find<T>(collection: T[] | {
         [id: string]: T;
@@ -46,12 +51,14 @@ export declare class Utils {
     static isNode(o: any): boolean;
     static isElement(o: any): boolean;
     static isNodeOrElement(o: any): boolean;
+    static isEventFromPrintableCharacter(event: KeyboardEvent): boolean;
     static addChangeListener(element: HTMLElement, listener: EventListener): void;
-    static makeNull(value: any): any;
+    static makeNull<T>(value: T): T;
     static missing(value: any): boolean;
     static missingOrEmpty(value: any[] | string): boolean;
     static missingOrEmptyObject(value: any): boolean;
     static exists(value: any): boolean;
+    static firstExistingValue<A>(...values: A[]): A;
     static anyExists(values: any[]): boolean;
     static existsAndNotEmpty(value: any[]): boolean;
     static removeAllChildren(node: HTMLElement): void;
@@ -63,6 +70,7 @@ export declare class Utils {
      * the dom api to load html directly, eg we cannot do this: document.createElement(template)
      */
     static loadTemplate(template: string): HTMLElement;
+    static appendHtml(eContainer: HTMLElement, htmlTemplate: string): void;
     static addOrRemoveCssClass(element: HTMLElement, className: string, addOrRemove: boolean): void;
     static callIfPresent(func: Function): void;
     static addCssClass(element: HTMLElement, className: string): void;
@@ -70,6 +78,7 @@ export declare class Utils {
     static getElementAttribute(element: any, attributeName: string): string;
     static offsetHeight(element: HTMLElement): number;
     static offsetWidth(element: HTMLElement): number;
+    static sortNumberArray(numberArray: number[]): void;
     static removeCssClass(element: HTMLElement, className: string): void;
     static removeRepeatsFromArray<T>(array: T[], object: T): void;
     static removeFromArray<T>(array: T[], object: T): void;
@@ -77,19 +86,25 @@ export declare class Utils {
     static insertIntoArray<T>(array: T[], object: T, toIndex: number): void;
     static insertArrayIntoArray<T>(dest: T[], src: T[], toIndex: number): void;
     static moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number): void;
-    static defaultComparator(valueA: any, valueB: any): number;
+    static defaultComparator(valueA: any, valueB: any, accentedCompare?: boolean): number;
     static compareArrays(array1: any[], array2: any[]): boolean;
+    static ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore: HTMLElement): void;
+    static insertWithDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore: HTMLElement): void;
+    static insertTemplateWithDomOrder(eContainer: HTMLElement, htmlTemplate: string, eChildBefore: HTMLElement): HTMLElement;
     static toStringOrNull(value: any): string;
     static formatWidth(width: number | string): string;
     static formatNumberTwoDecimalPlacesAndCommas(value: number): string;
     static formatNumberCommas(value: number): string;
     static prependDC(parent: HTMLElement, documentFragment: DocumentFragment): void;
+    static iconNameClassMap: {
+        [key: string]: string;
+    };
     /**
      * If icon provided, use this (either a string, or a function callback).
-     * if not, then use the second parameter, which is the svgFactory function
+     * if not, then use the default icon from the theme
      */
-    static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc: () => HTMLElement): HTMLElement;
-    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc: () => HTMLElement): HTMLElement;
+    static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column): HTMLElement;
+    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column): HTMLElement;
     static addStylesToElement(eElement: any, styles: any): void;
     static isHorizontalScrollShowing(element: HTMLElement): boolean;
     static isVerticalScrollShowing(element: HTMLElement): boolean;
@@ -102,11 +117,20 @@ export declare class Utils {
     static isBrowserSafari(): boolean;
     static isBrowserChrome(): boolean;
     static isBrowserFirefox(): boolean;
+    static isUserAgentIPad(): boolean;
     static getTarget(event: Event): Element;
+    static isElementInEventPath(element: HTMLElement, event: Event): boolean;
+    static createEventPath(event: Event): EventTarget[];
+    static addAgGridEventPath(event: Event): void;
+    static getEventPath(event: Event): EventTarget[];
+    static forEachSnapshotFirst(list: any[], callback: (item: any) => void): void;
     static getBodyWidth(): number;
     static getBodyHeight(): number;
     static setCheckboxState(eCheckbox: any, state: any): void;
     static traverseNodesWithKey(nodes: RowNode[], callback: (node: RowNode, key: string) => void): void;
+    static camelCaseToHyphen(str: string): string;
+    static hyphenToCamelCase(str: string): string;
+    static cssStyleObjectToMarkup(stylesToUse: any): string;
     /**
      * From http://stackoverflow.com/questions/9716468/is-there-any-function-like-isnumeric-in-javascript-to-validate-numbers
      */
@@ -217,7 +241,22 @@ export declare class Utils {
      * https://stackoverflow.com/questions/24004791/can-someone-explain-the-debounce-function-in-javascript
      */
     static debounce(func: () => void, wait: number, immediate?: boolean): () => void;
+    static stopPropagationForAgGrid(event: Event): void;
+    static isStopPropagationForAgGrid(event: Event): boolean;
+    static executeInAWhile(funcs: Function[]): void;
+    static executeNextVMTurn(funcs: Function[]): void;
+    static executeAfter(funcs: Function[], millis: number): void;
     static referenceCompare(left: any, right: any): boolean;
+    static get(source: {
+        [p: string]: any;
+    }, expression: string, defaultValue: any): any;
+    static passiveEvents: string[];
+    static addSafePassiveEventListener(eElement: HTMLElement, event: string, listener: (event?: any) => void): void;
+    static camelCaseToHumanText(camelCase: string): string;
+    static message(msg: string): void;
+    static sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: {
+        [id: string]: number;
+    }): void;
 }
 export declare class NumberSequence {
     private nextValue;
@@ -228,3 +267,27 @@ export declare class NumberSequence {
     skip(count: number): void;
 }
 export declare let _: typeof Utils;
+export declare type ResolveAndRejectCallback<T> = (resolve: (value: T) => void, reject: (params: any) => void) => void;
+export declare enum PromiseStatus {
+    IN_PROGRESS = 0,
+    RESOLVED = 1,
+}
+export interface ExternalPromise<T> {
+    resolve: (value: T) => void;
+    promise: Promise<T>;
+}
+export declare class Promise<T> {
+    private status;
+    private resolution;
+    private listOfWaiters;
+    static all<T>(toCombine: Promise<T>[]): Promise<T[]>;
+    static resolve<T>(value: T): Promise<T>;
+    static external<T>(): ExternalPromise<T>;
+    constructor(callback: ResolveAndRejectCallback<T>);
+    then(func: (result: any) => void): void;
+    firstOneOnly(func: (result: any) => void): void;
+    map<Z>(adapter: (from: T) => Z): Promise<Z>;
+    resolveNow<Z>(ifNotResolvedValue: Z, ifResolved: (current: T) => Z): Z;
+    private onDone(value);
+    private onReject(params);
+}

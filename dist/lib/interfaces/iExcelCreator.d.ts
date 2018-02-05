@@ -1,6 +1,6 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v16.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ExportParams } from "../exportParams";
 export interface ExcelWorksheet {
     name: string;
@@ -25,7 +25,7 @@ export interface ExcelData {
     type: ExcelDataType;
     value: string;
 }
-export declare type ExcelDataType = "String" | "Number";
+export declare type ExcelDataType = "String" | "Number" | "Boolean" | "DateTime" | "Error";
 export interface ExcelStyle {
     id?: string;
     name?: string;
@@ -85,6 +85,7 @@ export interface ExcelInterior {
     patternColor: string;
 }
 export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
+    sheetName?: string;
 }
 export interface IExcelCreator {
     exportDataAsExcel(params?: ExcelExportParams): void;

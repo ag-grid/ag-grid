@@ -3,11 +3,10 @@ import {Autowired, Bean} from "./context/context";
 import {ColumnController} from "./columnController/columnController";
 import {Constants} from "./constants";
 import {IRowModel} from "./interfaces/iRowModel";
-import {FloatingRowModel} from "./rowModels/floatingRowModel";
 import {Utils as _} from "./utils";
 import {RowNode} from "./entities/rowNode";
 import {SelectionController} from "./selectionController";
-import {ValueService} from "./valueService";
+import {ValueService} from "./valueService/valueService";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {
     BaseExportParams,
@@ -23,6 +22,7 @@ import {ColumnGroupChild} from "./entities/columnGroupChild";
 import {ColumnGroup} from "./entities/columnGroup";
 import {GridApi} from "./gridApi";
 import {InMemoryRowModel} from "./rowModels/inMemory/inMemoryRowModel";
+import {PinnedRowModel} from "./rowModels/pinnedRowModel";
 
 /**
  * This interface works in conjuction with the GridSerializer. When serializing a grid, an instance that implements this interface
@@ -115,7 +115,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         return this.cellAndHeaderEscaper? this.cellAndHeaderEscaper(nameForCol) : nameForCol;
     }
 
-    public extractRowCellValue (column: Column, index: number, node?:RowNode){
+    public extractRowCellValue (column: Column, index: number, type: string, node?:RowNode){
         let isRowGrouping = this.columnController.getRowGroupColumns().length > 0;
 
         let valueForCell: any;
@@ -124,7 +124,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         } else {
             valueForCell =  this.valueService.getValue(column, node);
         }
-        valueForCell = this.processCell(node, column, valueForCell, this.processCellCallback);
+        valueForCell = this.processCell(node, column, valueForCell, this.processCellCallback, type);
         if (valueForCell === null || valueForCell === undefined) {
             valueForCell = '';
         }
@@ -155,7 +155,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         return keys.reverse().join(' -> ');
     }
 
-    private processCell(rowNode: RowNode, column: Column, value: any, processCellCallback:(params: ProcessCellForExportParams)=>string): any {
+    private processCell(rowNode: RowNode, column: Column, value: any, processCellCallback:(params: ProcessCellForExportParams)=>string, type: string): any {
         if (processCellCallback) {
             return processCellCallback({
                 column: column,
@@ -163,7 +163,8 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                 value: value,
                 api: this.gridOptionsWrapper.getApi(),
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
-                context: this.gridOptionsWrapper.getContext()
+                context: this.gridOptionsWrapper.getContext(),
+                type: type
             });
         } else {
             return value;
@@ -178,16 +179,12 @@ export class GridSerializer {
     @Autowired('displayedGroupCreator') private displayedGroupCreator: DisplayedGroupCreator;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
+    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('balancedColumnTreeBuilder') private balancedColumnTreeBuilder: BalancedColumnTreeBuilder;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    public serialize<T>(gridSerializingSession: GridSerializingSession<T>, userParams?: ExportParams<T>): string {
-        let baseParams:BaseExportParams = this.gridOptionsWrapper.getDefaultExportParams();
-        let params:ExportParams<T> = <any>{};
-        _.assign(params, baseParams);
-        _.assign(params, userParams);
+    public serialize<T>(gridSerializingSession: GridSerializingSession<T>, params?: ExportParams<T>): string {
 
         let dontSkipRows= (): boolean =>false;
 
@@ -195,8 +192,8 @@ export class GridSerializer {
         let skipHeader = params && params.skipHeader;
         let columnGroups = params && params.columnGroups;
         let skipFooters = params && params.skipFooters;
-        let skipFloatingTop = params && params.skipFloatingTop;
-        let skipFloatingBottom = params && params.skipFloatingBottom;
+        let skipPinnedTop = params && params.skipPinnedTop;
+        let skipPinnedBottom = params && params.skipPinnedBottom;
         let includeCustomHeader = params && params.customHeader;
         let includeCustomFooter = params && params.customFooter;
         let allColumns = params && params.allColumns;
@@ -209,19 +206,10 @@ export class GridSerializer {
 
         // when in pivot mode, we always render cols on screen, never 'all columns'
         let isPivotMode = this.columnController.isPivotMode();
-        let rowModelNormal = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_NORMAL;
+        let rowModelNormal = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_IN_MEMORY;
 
         let onlySelectedNonStandardModel = !rowModelNormal && onlySelected;
 
-        // we can only export if it's a normal row model - unless we are exporting
-        // selected only, as this way we don't use the selected nodes rather than
-        // the row model to get the rows
-        if (!rowModelNormal && !onlySelected) {
-            console.log('ag-Grid: getDataAsCsv is only available for standard row model');
-            return '';
-        }
-
-        let inMemoryRowModel = <InMemoryRowModel> this.rowModel;
 
         let columnsToExport: Column[];
         if (_.existsAndNotEmpty(columnKeys)) {
@@ -260,10 +248,10 @@ export class GridSerializer {
             });
         }
 
-        this.floatingRowModel.forEachFloatingTopRow(processRow);
+        this.pinnedRowModel.forEachPinnedTopRow(processRow);
 
         if (isPivotMode) {
-            inMemoryRowModel.forEachPivotNode(processRow);
+            (<InMemoryRowModel>this.rowModel).forEachPivotNode(processRow);
         } else {
             // onlySelectedAllPages: user doing pagination and wants selected items from
             // other pages, so cannot use the standard row model as it won't have rows from
@@ -279,11 +267,15 @@ export class GridSerializer {
                 // here is everything else - including standard row model and selected. we don't use
                 // the selection model even when just using selected, so that the result is the order
                 // of the rows appearing on the screen.
-                inMemoryRowModel.forEachNodeAfterFilterAndSort(processRow);
+                if (rowModelNormal){
+                    (<InMemoryRowModel>this.rowModel).forEachNodeAfterFilterAndSort(processRow);
+                } else {
+                    this.rowModel.forEachNode(processRow);
+                }
             }
         }
 
-        this.floatingRowModel.forEachFloatingBottomRow(processRow);
+        this.pinnedRowModel.forEachPinnedBottomRow(processRow);
 
         if (includeCustomFooter) {
             gridSerializingSession.addCustomFooter (params.customFooter);
@@ -302,11 +294,11 @@ export class GridSerializer {
                 return;
             }
 
-            if (skipFloatingTop && node.floating === 'top') {
+            if (skipPinnedTop && node.rowPinned === 'top') {
                 return;
             }
 
-            if (skipFloatingBottom && node.floating === 'bottom') {
+            if (skipPinnedBottom && node.rowPinned === 'bottom') {
                 return;
             }
 
@@ -335,18 +327,18 @@ export class GridSerializer {
     }
 
     recursivelyAddHeaderGroups<T> (displayedGroups:ColumnGroupChild[], gridSerializingSession:GridSerializingSession<T>):void{
-        let directChildrenHeaderGroups:ColumnGroupChild[];
+        let directChildrenHeaderGroups:ColumnGroupChild[] = [];
         displayedGroups.forEach((columnGroupChild: ColumnGroupChild) => {
             let columnGroup: ColumnGroup = columnGroupChild as ColumnGroup;
             if (!columnGroup.getChildren) return;
-            directChildrenHeaderGroups = columnGroup.getChildren();
+            columnGroup.getChildren().forEach(it=>directChildrenHeaderGroups.push(it));
         });
 
         if (displayedGroups.length > 0 && displayedGroups[0] instanceof ColumnGroup) {
             this.doAddHeaderHeader(gridSerializingSession, displayedGroups);
         }
 
-        if (directChildrenHeaderGroups){
+        if (directChildrenHeaderGroups && directChildrenHeaderGroups.length > 0){
             this.recursivelyAddHeaderGroups(directChildrenHeaderGroups, gridSerializingSession);
         }
     }
@@ -358,7 +350,8 @@ export class GridSerializer {
             let columnGroup: ColumnGroup = columnGroupChild as ColumnGroup;
             let colDef = columnGroup.getDefinition();
 
-            gridRowIterator.onColumn(colDef != null ? colDef.headerName : '', columnIndex++, columnGroup.getLeafColumns().length - 1);
+            let columnName = this.columnController.getDisplayNameForColumnGroup(columnGroup, 'header');
+            gridRowIterator.onColumn(columnName, columnIndex++, columnGroup.getLeafColumns().length - 1);
         });
     }
 }

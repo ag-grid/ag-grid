@@ -1,13 +1,9 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v16.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
 import { IRowModel } from "../interfaces/iRowModel";
 import { RowNode } from "../entities/rowNode";
-export declare class RowBounds {
-    rowTop: number;
-    rowHeight: number;
-}
 export declare class PaginationAutoPageSizeService extends BeanStub {
     private gridPanel;
     private eventService;
@@ -24,6 +20,9 @@ export declare class PaginationProxy extends BeanStub implements IRowModel {
     private gridPanel;
     private eventService;
     private gridOptionsWrapper;
+    private selectionController;
+    private columnApi;
+    private gridApi;
     private active;
     private pageSize;
     private totalPages;
@@ -35,16 +34,16 @@ export declare class PaginationProxy extends BeanStub implements IRowModel {
     private bottomRowBounds;
     private postConstruct();
     isLastRowFound(): boolean;
-    private onModelUpdated(refreshEvent?);
+    private onModelUpdated(modelUpdatedEvent?);
     goToPage(page: number): void;
     getPixelOffset(): number;
     getRow(index: number): RowNode;
     getRowIndexAtPixel(pixel: number): number;
     getCurrentPageHeight(): number;
     isRowPresent(rowNode: RowNode): boolean;
-    private isRowInPage(rowNode);
     isEmpty(): boolean;
     isRowsToRender(): boolean;
+    getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[];
     forEachNode(callback: (rowNode: RowNode) => void): void;
     getType(): string;
     getRowBounds(index: number): {

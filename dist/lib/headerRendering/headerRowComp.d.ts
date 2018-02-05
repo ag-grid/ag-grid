@@ -1,6 +1,6 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v16.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../widgets/component";
 import { DropTarget } from "../dragAndDrop/dragAndDropService";
 import { IComponent } from "../interfaces/iComponent";
@@ -11,14 +11,15 @@ export declare enum HeaderRowType {
 }
 export declare class HeaderRowComp extends Component {
     private gridOptionsWrapper;
+    private gridApi;
     private columnController;
     private context;
     private eventService;
     private filterManager;
-    private componentProvider;
+    private componentRecipes;
     private dept;
     private pinned;
-    private headerElements;
+    private headerComps;
     private eRoot;
     private dropTarget;
     private type;
@@ -34,8 +35,7 @@ export declare class HeaderRowComp extends Component {
     private removeAndDestroyAllChildComponents();
     private onDisplayedColumnsChanged();
     private onVirtualColumnsChanged();
-    private isUsingOldHeaderRenderer(column);
-    private createHeaderElement(columnGroupChild);
+    private createHeaderComp(columnGroupChild);
     private createFloatingFilterWrapper(column);
     private createFloatingFilterParams<M, F>(column);
 }

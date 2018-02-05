@@ -1,10 +1,12 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v16.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../widgets/component";
 import { IFilterComp, IDoesFilterPassParams, IFilterParams } from "../interfaces/iFilter";
 import { Context } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { FloatingFilterChange } from "./floatingFilter";
+import { INumberFilterParams, ITextFilterParams } from "./textFilter";
 export interface Comparator<T> {
     (left: T, right: T): number;
 }
@@ -39,7 +41,7 @@ export declare abstract class BaseFilter<T, P extends IFilterParams, M> extends 
     private eApplyButton;
     private eClearButton;
     context: Context;
-    private gridOptionsWrapper;
+    gridOptionsWrapper: GridOptionsWrapper;
     init(params: P): void;
     onClearButton(): void;
     abstract customInit(): void;
@@ -63,6 +65,7 @@ export declare abstract class BaseFilter<T, P extends IFilterParams, M> extends 
     generateFilterHeader(): string;
     private generateTemplate();
     translate(toTranslate: string): string;
+    getDebounceMs(filterParams: ITextFilterParams | INumberFilterParams): number;
 }
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values
@@ -80,15 +83,24 @@ export declare abstract class ComparableBaseFilter<T, P extends IFilterParams, M
     isFilterActive(): boolean;
     setFilterType(filterType: string): void;
 }
+export interface NullComparator {
+    equals?: boolean;
+    lessThan?: boolean;
+    greaterThan?: boolean;
+}
 export interface IScalarFilterParams extends IFilterParams {
     inRangeInclusive?: boolean;
+    nullComparator?: NullComparator;
 }
 /**
  * Comparable filter with scalar underlying values (ie numbers and dates. Strings are not scalar so have to extend
  * ComparableBaseFilter)
  */
 export declare abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> extends ComparableBaseFilter<T, P, M> {
+    static readonly DEFAULT_NULL_COMPARATOR: NullComparator;
     abstract comparator(): Comparator<T>;
+    private nullComparator(type);
     getDefaultType(): string;
+    private translateNull(type);
     doesFilterPass(params: IDoesFilterPassParams): boolean;
 }

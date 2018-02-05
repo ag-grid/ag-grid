@@ -1,12 +1,13 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v16.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { NumberSequence } from "../../utils";
 import { RowNode } from "../../entities/rowNode";
 import { BeanStub } from "../../context/beanStub";
 import { RowNodeBlock } from "./rowNodeBlock";
 import { Logger } from "../../logger";
 import { RowNodeBlockLoader } from "./rowNodeBlockLoader";
+import { AgEvent } from "../../events";
 export interface RowNodeCacheParams {
     initialRowCount: number;
     blockSize: number;
@@ -18,6 +19,9 @@ export interface RowNodeCacheParams {
     lastAccessedSequence: NumberSequence;
     maxConcurrentRequests: number;
     rowNodeBlockLoader: RowNodeBlockLoader;
+    dynamicRowHeight: boolean;
+}
+export interface CacheUpdatedEvent extends AgEvent {
 }
 export declare abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCacheParams> extends BeanStub {
     static EVENT_CACHE_UPDATED: string;
@@ -25,7 +29,9 @@ export declare abstract class RowNodeCache<T extends RowNodeBlock, P extends Row
     private maxRowFound;
     protected cacheParams: P;
     private active;
-    private blocks;
+    blocks: {
+        [blockNumber: string]: T;
+    };
     private blockCount;
     protected logger: Logger;
     abstract getRow(rowIndex: number): RowNode;
@@ -39,7 +45,7 @@ export declare abstract class RowNodeCache<T extends RowNodeBlock, P extends Row
     protected onPageLoaded(event: any): void;
     private purgeBlocksIfNeeded(blockToExclude);
     protected postCreateBlock(newBlock: T): void;
-    protected removeBlockFromCache(pageToRemove: T): void;
+    protected removeBlockFromCache(blockToRemove: T): void;
     protected checkBlockToLoad(): void;
     protected checkVirtualRowCount(block: T, lastRow: any): void;
     setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void;
@@ -53,4 +59,5 @@ export declare abstract class RowNodeCache<T extends RowNodeBlock, P extends Row
     protected destroyBlock(block: T): void;
     protected onCacheUpdated(): void;
     purgeCache(): void;
+    getRowNodesInRange(firstInRange: RowNode, lastInRange: RowNode): RowNode[];
 }

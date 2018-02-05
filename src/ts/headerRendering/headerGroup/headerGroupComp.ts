@@ -1,20 +1,15 @@
-
 import {Component} from "../../widgets/component";
 import {IComponent} from "../../interfaces/iComponent";
-import {SvgFactory} from "../../svgFactory";
 import {Utils as _} from "../../utils";
 import {ColumnGroup} from "../../entities/columnGroup";
-import {ColumnApi, ColumnController} from "../../columnController/columnController";
-import {FilterManager} from "../../filter/filterManager";
+import {ColumnApi} from "../../columnController/columnApi";
+import {ColumnController} from "../../columnController/columnController";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {Autowired, PostConstruct} from "../../context/context";
-import {DropTarget, DragAndDropService} from "../../dragAndDrop/dragAndDropService";
+import {Autowired} from "../../context/context";
 import {TouchListener} from "../../widgets/touchListener";
-import {RefSelector, Listener} from "../../widgets/componentAnnotations";
+import {RefSelector} from "../../widgets/componentAnnotations";
 import {OriginalColumnGroup} from "../../entities/originalColumnGroup";
 import {GridApi} from "../../gridApi";
-
-let svgFactory = SvgFactory.getInstance();
 
 export interface IHeaderGroupParams {
     columnGroup: ColumnGroup;
@@ -39,7 +34,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     static TEMPLATE =
-        `<div class="ag-header-group-cell-label">` +
+        `<div class="ag-header-group-cell-label" ref="agContainer">` +
           `<span ref="agLabel" class="ag-header-group-text"></span>` +
           `<span ref="agOpened" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded"></span>` +
           `<span ref="agClosed" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed"></span>` +
@@ -59,53 +54,53 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
 
         this.setupLabel();
         this.addGroupExpandIcon();
-
-        if (this.params.columnGroup.isExpandable()) {
-            this.setupExpandIcons();
-        } else {
-            this.removeExpandIcons();
-        }
+        this.setupExpandIcons();
     }
 
     private setupExpandIcons(): void {
 
-        this.addInIcon('columnGroupOpened', 'agOpened', svgFactory.createGroupExpandedIcon);
-        this.addInIcon('columnGroupClosed', 'agClosed', svgFactory.createGroupContractedIcon);
+        this.addInIcon('columnGroupOpened', 'agOpened');
+        this.addInIcon('columnGroupClosed', 'agClosed');
 
-        this.addTouchAndClickListeners(this.eCloseIcon);
-        this.addTouchAndClickListeners(this.eOpenIcon);
-
-        this.updateIconVisibilty();
-
-        this.addDestroyableEventListener(this.params.columnGroup.getOriginalColumnGroup(), OriginalColumnGroup.EVENT_EXPANDED_CHANGED, this.updateIconVisibilty.bind(this));
-    }
-
-    private addTouchAndClickListeners(eElement: HTMLElement): void {
         let expandAction = ()=> {
             let newExpandedValue = !this.params.columnGroup.isExpanded();
-            this.columnController.setColumnGroupOpened(this.params.columnGroup, newExpandedValue);
+            this.columnController.setColumnGroupOpened(this.params.columnGroup.getOriginalColumnGroup(), newExpandedValue, "uiColumnExpanded");
         };
+        this.addTouchAndClickListeners(this.eCloseIcon, expandAction);
+        this.addTouchAndClickListeners(this.eOpenIcon, expandAction);
+
+        this.addDestroyableEventListener(this.getGui(), 'dblclick', expandAction);
+
+        this.updateIconVisibility();
+
+        let originalColumnGroup = this.params.columnGroup.getOriginalColumnGroup();
+        this.addDestroyableEventListener(originalColumnGroup, OriginalColumnGroup.EVENT_EXPANDED_CHANGED, this.updateIconVisibility.bind(this));
+        this.addDestroyableEventListener(originalColumnGroup, OriginalColumnGroup.EVENT_EXPANDABLE_CHANGED, this.updateIconVisibility.bind(this));
+    }
+
+    private addTouchAndClickListeners(eElement: HTMLElement, action: ()=>void): void {
 
         let touchListener = new TouchListener(this.eCloseIcon);
 
-        this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, expandAction);
+        this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, action);
         this.addDestroyFunc( ()=> touchListener.destroy() );
-        this.addDestroyableEventListener(eElement, 'click', expandAction);
+        this.addDestroyableEventListener(eElement, 'click', action);
     }
 
-    private updateIconVisibilty(): void {
-        let expanded = this.params.columnGroup.isExpanded();
-        _.setVisible(this.eOpenIcon, !expanded);
-        _.setVisible(this.eCloseIcon, expanded);
+    private updateIconVisibility(): void {
+        let columnGroup = this.params.columnGroup;
+        if (columnGroup.isExpandable()) {
+            let expanded = this.params.columnGroup.isExpanded();
+            _.setVisible(this.eOpenIcon, !expanded);
+            _.setVisible(this.eCloseIcon, expanded);
+        } else {
+            _.setVisible(this.eOpenIcon, false);
+            _.setVisible(this.eCloseIcon, false);
+        }
     }
 
-    private removeExpandIcons(): void {
-        _.setVisible(this.eOpenIcon, false);
-        _.setVisible(this.eCloseIcon, false);
-    }
-
-    private addInIcon(iconName: string, refName: string, defaultIconFactory: () => HTMLElement): void {
-        let eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, null, defaultIconFactory);
+    private addInIcon(iconName: string, refName: string): void {
+        let eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, null);
         this.getRefElement(refName).appendChild(eIcon);
     }
 

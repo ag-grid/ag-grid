@@ -4,20 +4,22 @@ import {QuerySelector, Listener} from "./componentAnnotations";
 import {Utils as _} from "../utils";
 import {PostConstruct, Autowired} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {SvgFactory} from "../svgFactory";
+import {AgEvent} from "../events";
 
-let svgFactory = SvgFactory.getInstance();
+export interface ChangeEvent extends AgEvent {
+    selected: boolean;
+}
 
 export class AgCheckbox extends Component {
 
     public static EVENT_CHANGED = 'change';
 
     private static TEMPLATE =
-        '<span class="ag-checkbox">' +
-        '  <span class="ag-checkbox-checked"></span>' +
-        '  <span class="ag-checkbox-unchecked"></span>' +
-        '  <span class="ag-checkbox-indeterminate"></span>' +
-        '  <span class="ag-checkbox-label"></span>' +
+        '<span class="ag-checkbox" role="presentation">' +
+        '  <span class="ag-checkbox-checked" role="presentation"></span>' +
+        '  <span class="ag-checkbox-unchecked" role="presentation"></span>' +
+        '  <span class="ag-checkbox-indeterminate" role="presentation"></span>' +
+        '  <span class="ag-checkbox-label" role="presentation"></span>' +
         '</span>';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -56,18 +58,23 @@ export class AgCheckbox extends Component {
         _.removeAllChildren(this.eUnchecked);
         _.removeAllChildren(this.eIndeterminate);
         if (this.readOnly) {
-            this.eChecked.appendChild(_.createIconNoSpan('checkboxCheckedReadOnly', this.gridOptionsWrapper, null, svgFactory.createCheckboxCheckedReadOnlyIcon));
-            this.eUnchecked.appendChild(_.createIconNoSpan('checkboxUncheckedReadOnly', this.gridOptionsWrapper, null, svgFactory.createCheckboxUncheckedReadOnlyIcon));
-            this.eIndeterminate.appendChild(_.createIconNoSpan('checkboxIndeterminateReadOnly', this.gridOptionsWrapper, null, svgFactory.createCheckboxIndeterminateReadOnlyIcon));
+            this.eChecked.appendChild(_.createIconNoSpan('checkboxCheckedReadOnly', this.gridOptionsWrapper, null));
+            this.eUnchecked.appendChild(_.createIconNoSpan('checkboxUncheckedReadOnly', this.gridOptionsWrapper, null));
+            this.eIndeterminate.appendChild(_.createIconNoSpan('checkboxIndeterminateReadOnly', this.gridOptionsWrapper, null));
         } else {
-            this.eChecked.appendChild(_.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null, svgFactory.createCheckboxCheckedIcon));
-            this.eUnchecked.appendChild(_.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null, svgFactory.createCheckboxUncheckedIcon));
-            this.eIndeterminate.appendChild(_.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null, svgFactory.createCheckboxIndeterminateIcon));
+            this.eChecked.appendChild(_.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null));
+            this.eUnchecked.appendChild(_.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null));
+            this.eIndeterminate.appendChild(_.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null));
         }
     }
 
     @Listener('click')
-    private onClick(): void {
+    private onClick(event: MouseEvent): void {
+        // if we don't set the path, then won't work in Edge, as once the <span> is removed from the dom,
+        // it's not possible to calculate the path by following the parent's chain. in other browser (eg
+        // chrome) there is event.path for this purpose, but missing in Edge.
+        _.addAgGridEventPath(event);
+
         if (!this.readOnly) {
             this.toggle();
         }
@@ -102,7 +109,11 @@ export class AgCheckbox extends Component {
         let nextValue = this.getNextValue();
 
         if (this.passive) {
-            this.dispatchEvent(AgCheckbox.EVENT_CHANGED, {selected: nextValue});
+            let event: ChangeEvent = {
+                type: AgCheckbox.EVENT_CHANGED,
+                selected: nextValue
+            };
+            this.dispatchEvent(event);
         } else {
             this.setSelected(nextValue);
         }
@@ -121,7 +132,11 @@ export class AgCheckbox extends Component {
 
         this.updateIcons();
 
-        this.dispatchEvent(AgCheckbox.EVENT_CHANGED, {selected: this.selected});
+        let event: ChangeEvent = {
+            type: AgCheckbox.EVENT_CHANGED,
+            selected: this.selected
+        };
+        this.dispatchEvent(event);
     }
 
     private updateIcons(): void {

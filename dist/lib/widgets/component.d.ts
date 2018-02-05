@@ -1,16 +1,22 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v16.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Context } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { IComponent } from "../interfaces/iComponent";
+import { AgEvent } from "../events";
+export interface VisibleChangedEvent extends AgEvent {
+    visible: boolean;
+}
 export declare class Component extends BeanStub implements IComponent<any> {
     static EVENT_VISIBLE_CHANGED: string;
     private eGui;
     private childComponents;
     private annotatedEventListeners;
     private visible;
+    private compId;
     constructor(template?: string);
+    getCompId(): number;
     instantiate(context: Context): void;
     private instantiateRecurse(parentNode, context);
     private swapComponentForNode(newComponent, parentNode, childNode);
@@ -18,7 +24,7 @@ export declare class Component extends BeanStub implements IComponent<any> {
     setTemplate(template: string): void;
     setTemplateFromElement(element: HTMLElement): void;
     attributesSet(): void;
-    private wireQuerySelectors();
+    protected wireQuerySelectors(): void;
     private addAnnotatedEventListeners();
     private removeAnnotatedEventListeners();
     getGui(): HTMLElement;

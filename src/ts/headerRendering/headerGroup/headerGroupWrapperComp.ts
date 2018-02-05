@@ -1,19 +1,25 @@
-
 import {Component} from "../../widgets/component";
 import {Column} from "../../entities/column";
 import {Utils as _} from "../../utils";
 import {ColumnGroup} from "../../entities/columnGroup";
-import {ColumnApi, ColumnController} from "../../columnController/columnController";
+import {ColumnApi} from "../../columnController/columnApi";
+import {ColumnController} from "../../columnController/columnController";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {HorizontalDragService} from "../horizontalDragService";
-import {Autowired, PostConstruct, Context} from "../../context/context";
+import {Autowired, Context, PostConstruct} from "../../context/context";
 import {CssClassApplier} from "../cssClassApplier";
-import {DragSource, DropTarget, DragAndDropService, DragSourceType} from "../../dragAndDrop/dragAndDropService";
+import {
+    DragAndDropService,
+    DragItem,
+    DragSource,
+    DragSourceType,
+    DropTarget
+} from "../../dragAndDrop/dragAndDropService";
 import {SetLeftFeature} from "../../rendering/features/setLeftFeature";
-import {IHeaderGroupParams, IHeaderGroupComp} from "./headerGroupComp";
-import {IComponent} from "../../interfaces/iComponent";
-import {ComponentProvider} from "../../componentProvider";
+import {IHeaderGroupComp, IHeaderGroupParams} from "./headerGroupComp";
 import {GridApi} from "../../gridApi";
+import {ComponentRecipes} from "../../components/framework/componentRecipes";
+import {Beans} from "../../rendering/beans";
 
 export class HeaderGroupWrapperComp extends Component {
 
@@ -27,9 +33,10 @@ export class HeaderGroupWrapperComp extends Component {
     @Autowired('horizontalDragService') private dragService: HorizontalDragService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('context') private context: Context;
-    @Autowired('componentProvider') private componentProvider:ComponentProvider;
-    @Autowired('gridApi') private gridApi:GridApi;
-    @Autowired('columnApi') private columnApi:ColumnApi;
+    @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
+    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('beans') private beans: Beans;
 
     private columnGroup: ColumnGroup;
     private dragSourceDropTarget: DropTarget;
@@ -58,35 +65,72 @@ export class HeaderGroupWrapperComp extends Component {
 
         let displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup, 'header');
 
-        let headerComponent: IHeaderGroupComp = this.appendHeaderGroupComp(displayName);
+        this.appendHeaderGroupComp(displayName);
 
         this.setupResize();
         this.addClasses();
-        this.setupMove(headerComponent.getGui(), displayName);
         this.setupWidth();
         this.addAttributes();
+        this.setupMovingCss();
 
-        this.addFeature(this.context, new SetLeftFeature(this.columnGroup, this.getGui()));
+        let setLeftFeature = new SetLeftFeature(this.columnGroup, this.getGui(), this.beans);
+        setLeftFeature.init();
+        this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
+    }
+
+    private setupMovingCss(): void {
+        let originalColumnGroup = this.columnGroup.getOriginalColumnGroup();
+        let leafColumns = originalColumnGroup.getLeafColumns();
+        leafColumns.forEach( col => {
+            this.addDestroyableEventListener(col, Column.EVENT_MOVING_CHANGED, this.onColumnMovingChanged.bind(this));
+        });
+        this.onColumnMovingChanged();
+    }
+
+    private onColumnMovingChanged(): void {
+        // this function adds or removes the moving css, based on if the col is moving.
+        // this is what makes the header go dark when it is been moved (gives impression to
+        // user that the column was picked up).
+        if (this.columnGroup.isMoving()) {
+            _.addCssClass(this.getGui(), 'ag-header-cell-moving');
+        } else {
+            _.removeCssClass(this.getGui(), 'ag-header-cell-moving');
+        }
     }
 
     private addAttributes(): void {
-        this.getGui().setAttribute("colId", this.columnGroup.getUniqueId());
+        this.getGui().setAttribute("col-id", this.columnGroup.getUniqueId());
     }
 
-    private appendHeaderGroupComp(displayName: string): IHeaderGroupComp {
+    private appendHeaderGroupComp(displayName: string): void {
         let params: IHeaderGroupParams = {
             displayName: displayName,
             columnGroup: this.columnGroup,
             setExpanded: (expanded:boolean)=>{
-                this.columnController.setColumnGroupOpened(this.columnGroup, expanded);
+                this.columnController.setColumnGroupOpened(this.columnGroup.getOriginalColumnGroup(), expanded, "gridInitializing");
             },
             api: this.gridApi,
             columnApi: this.columnApi,
             context: this.gridOptionsWrapper.getContext()
         };
-        let headerComp = this.componentProvider.newHeaderGroupComponent(params);
-        this.appendChild(headerComp);
-        return headerComp;
+
+        if(!displayName) {
+            let leafCols = this.columnGroup.getLeafColumns();
+            displayName = leafCols ? leafCols[0].getColDef().headerName : '';
+        }
+
+        let callback = this.afterHeaderCompCreated.bind(this, displayName);
+
+        this.componentRecipes.newHeaderGroupComponent(params).then(callback);
+    }
+
+    private afterHeaderCompCreated(displayName: string, headerGroupComp: IHeaderGroupComp): void {
+        this.appendChild(headerGroupComp);
+        this.setupMove(headerGroupComp.getGui(), displayName);
+
+        if (headerGroupComp.destroy) {
+            this.addDestroyFunc(headerGroupComp.destroy.bind(headerGroupComp));
+        }
     }
 
     private addClasses(): void {
@@ -105,42 +149,56 @@ export class HeaderGroupWrapperComp extends Component {
 
         if (this.isSuppressMoving()) { return; }
 
+        let allLeafColumns = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
+
         if (eHeaderGroup) {
             let dragSource: DragSource = {
                 type: DragSourceType.HeaderCell,
                 eElement: eHeaderGroup,
                 dragItemName: displayName,
                 // we add in the original group leaf columns, so we move both visible and non-visible items
-                dragItem: this.getAllColumnsInThisGroup(),
-                dragSourceDropTarget: this.dragSourceDropTarget
+                dragItemCallback: this.getDragItemForGroup.bind(this),
+                dragSourceDropTarget: this.dragSourceDropTarget,
+                dragStarted: () => allLeafColumns.forEach( col => col.setMoving(true, "uiColumnDragged") ),
+                dragStopped: () => allLeafColumns.forEach( col => col.setMoving(false, "uiColumnDragged") )
             };
             this.dragAndDropService.addDragSource(dragSource, true);
             this.addDestroyFunc( ()=> this.dragAndDropService.removeDragSource(dragSource) );
         }
     }
 
-    // when moving the columns, we want to move all the columns in this group in one go, and in the order they
-    // are currently in the screen.
-    public getAllColumnsInThisGroup(): Column[] {
+    // when moving the columns, we want to move all the columns (contained within the DragItem) in this group in one go,
+    // and in the order they are currently in the screen.
+    public getDragItemForGroup(): DragItem {
         let allColumnsOriginalOrder = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
+
+        // capture visible state, used when reentering grid to dictate which columns should be visible
+        let visibleState: { [key: string]: boolean } = {};
+        allColumnsOriginalOrder.forEach(column => visibleState[column.getId()] = column.isVisible());
+
         let allColumnsCurrentOrder: Column[] = [];
-        this.columnController.getAllDisplayedColumns().forEach( column => {
+        this.columnController.getAllDisplayedColumns().forEach(column => {
             if (allColumnsOriginalOrder.indexOf(column) >= 0) {
                 allColumnsCurrentOrder.push(column);
                 _.removeFromArray(allColumnsOriginalOrder, column);
             }
         });
-        // we are left with non-visible columns, stick these in at the end
-        allColumnsOriginalOrder.forEach( column => allColumnsCurrentOrder.push(column));
 
-        return allColumnsCurrentOrder;
+        // we are left with non-visible columns, stick these in at the end
+        allColumnsOriginalOrder.forEach(column => allColumnsCurrentOrder.push(column));
+
+        // create and return dragItem
+        return {
+            columns: allColumnsCurrentOrder,
+            visibleState: visibleState
+        };
     }
 
     private isSuppressMoving(): boolean {
         // if any child is fixed, then don't allow moving
         let childSuppressesMoving = false;
         this.columnGroup.getLeafColumns().forEach( (column: Column) => {
-            if (column.getColDef().suppressMovable) {
+            if (column.getColDef().suppressMovable || column.isLockPosition()) {
                 childSuppressesMoving = true;
             }
         });
@@ -201,7 +259,7 @@ export class HeaderGroupWrapperComp extends Component {
     private setupResize(): void {
         this.eHeaderCellResize = this.getRefElement('agResize');
 
-        if (!this.gridOptionsWrapper.isEnableColResize()) {
+        if (!this.columnGroup.isResizable()) {
             _.removeFromParent(this.eHeaderCellResize);
             return;
         }
@@ -226,7 +284,7 @@ export class HeaderGroupWrapperComp extends Component {
                     }
                 });
                 if (keys.length>0) {
-                    this.columnController.autoSizeColumns(keys);
+                    this.columnController.autoSizeColumns(keys, "uiColumnResized");
                 }
             });
         }
@@ -242,22 +300,42 @@ export class HeaderGroupWrapperComp extends Component {
 
     public onDragging(dragChange: any, finished: boolean): void {
 
-        let dragChangeNormalised = this.normaliseDragChange(dragChange);
-        let newWidth = this.groupWidthStart + dragChangeNormalised;
+        // this will be the width we have to distribute to the resizable columns
+        let widthForResizableCols: number;
+        // this is all the displayed cols in the group less those that we cannot resize
+        let resizableCols: Column[];
 
-        let minWidth = this.columnGroup.getMinWidth();
-        if (newWidth < minWidth) {
-            newWidth = minWidth;
+        // a lot of variables defined for the first set of maths, but putting
+        // braces in, we localise the variables to this bit of the method
+        {
+            let dragChangeNormalised = this.normaliseDragChange(dragChange);
+            let totalGroupWidth = this.groupWidthStart + dragChangeNormalised;
+
+            let displayedColumns = this.columnGroup.getDisplayedLeafColumns();
+            resizableCols = _.filter(displayedColumns, col => col.isResizable());
+            let nonResizableCols = _.filter(displayedColumns, col => !col.isResizable());
+
+            let nonResizableColsWidth = 0;
+            nonResizableCols.forEach( col => nonResizableColsWidth += col.getActualWidth() );
+
+            widthForResizableCols = totalGroupWidth - nonResizableColsWidth;
+
+            let minWidth = 0;
+            resizableCols.forEach( col => minWidth += col.getMinWidth() );
+
+            if (widthForResizableCols < minWidth) {
+                widthForResizableCols = minWidth;
+            }
         }
 
         // distribute the new width to the child headers
-        let changeRatio = newWidth / this.groupWidthStart;
+        let changeRatio = widthForResizableCols / this.groupWidthStart;
         // keep track of pixels used, and last column gets the remaining,
         // to cater for rounding errors, and min width adjustments
-        let pixelsToDistribute = newWidth;
-        let displayedColumns = this.columnGroup.getDisplayedLeafColumns();
-        displayedColumns.forEach( (column: Column, index: any) => {
-            let notLastCol = index !== (displayedColumns.length - 1);
+        let pixelsToDistribute = widthForResizableCols;
+
+        resizableCols.forEach( (column: Column, index: any) => {
+            let notLastCol = index !== (resizableCols.length - 1);
             let newChildSize: any;
             if (notLastCol) {
                 // if not the last col, calculate the column width as normal
@@ -271,7 +349,7 @@ export class HeaderGroupWrapperComp extends Component {
                 // if last col, give it the remaining pixels
                 newChildSize = pixelsToDistribute;
             }
-            this.columnController.setColumnWidth(column, newChildSize, finished);
+            this.columnController.setColumnWidth(column, newChildSize, finished, "uiColumnDragged");
         });
     }
 

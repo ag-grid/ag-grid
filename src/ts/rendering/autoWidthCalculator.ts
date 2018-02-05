@@ -1,15 +1,12 @@
 import {RowRenderer} from "./rowRenderer";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {Column} from "../entities/column";
-import {Bean} from "../context/context";
-import {Utils as _} from "../utils";
-import {Autowired} from "../context/context";
+import {Autowired, Bean} from "../context/context";
 import {HeaderRenderer} from "../headerRendering/headerRenderer";
-import {RenderedHeaderCell} from "../headerRendering/deprecated/renderedHeaderCell";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {HeaderComp} from "../headerRendering/header/headerComp";
 import {HeaderWrapperComp} from "../headerRendering/header/headerWrapperComp";
 import {Component} from "../widgets/component";
+import {HeaderGroupWrapperComp} from "../headerRendering/headerGroup/headerGroupWrapperComp";
 
 export interface GuiProvider {
     ():HTMLElement
@@ -61,11 +58,9 @@ export class AutoWidthCalculator {
         // we are finished with the dummy container, so get rid of it
         eBodyContainer.removeChild(eDummyContainer);
 
-        // we add padding as I found without it, the gui still put '...' after some of the texts
+        // we add padding as I found sometimes the gui still put '...' after some of the texts. so the
+        // user can configure the grid to add a few more pixels after the calculated width
         let autoSizePadding = this.gridOptionsWrapper.getAutoSizePadding();
-        if (typeof autoSizePadding !== 'number' || autoSizePadding < 0) {
-            autoSizePadding = 4;
-        }
         return dummyContainerWidth + autoSizePadding;
     }
 
@@ -75,12 +70,7 @@ export class AutoWidthCalculator {
 
         // find the rendered header cell
         this.headerRenderer.forEachHeaderElement( headerElement => {
-            if (headerElement instanceof RenderedHeaderCell) {
-                let currentCell = <RenderedHeaderCell> headerElement;
-                if (currentCell.getColumn() === column) {
-                    comp = currentCell;
-                }
-            } else if (headerElement instanceof HeaderWrapperComp) {
+            if (headerElement instanceof HeaderWrapperComp) {
                 let headerWrapperComp = <HeaderWrapperComp> headerElement;
                 if (headerWrapperComp.getColumn() === column) {
                     comp = headerWrapperComp;
@@ -92,12 +82,8 @@ export class AutoWidthCalculator {
     }
     
     private putRowCellsIntoDummyContainer(column: Column, eDummyContainer: HTMLElement): void {
-
-        let eOriginalCells = this.rowRenderer.getAllCellsForColumn(column);
-
-        eOriginalCells.forEach( (eCell: HTMLElement, index: number) => {
-            this.cloneItemIntoDummy(eCell, eDummyContainer);
-        });
+        let eCells = this.rowRenderer.getAllCellsForColumn(column);
+        eCells.forEach( eCell  => this.cloneItemIntoDummy(eCell, eDummyContainer) );
     }
 
     private cloneItemIntoDummy(eCell: HTMLElement, eDummyContainer: HTMLElement): void {

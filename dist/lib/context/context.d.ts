@@ -1,6 +1,6 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v16.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ILogger } from "../iLogger";
 import { Component } from "../widgets/component";
 export interface ContextParams {
@@ -32,7 +32,7 @@ export declare class Context {
     private autoWireBeans(beans);
     private methodWireBeans(beans);
     private autoWireBean(bean);
-    private getBeanName(bean);
+    private getBeanName(constructor);
     private methodWireBean(bean);
     private getBeansForParameters(parameters, beanName);
     private lookupBeanInstance(wiringBean, beanName, optional?);

@@ -17,6 +17,10 @@ export interface IEnterpriseGetRowsRequest {
     rowGroupCols: ColumnVO[];
     // columns that have aggregations on them
     valueCols: ColumnVO[];
+    // columns that have pivot on them
+    pivotCols: ColumnVO[];
+    // defines if pivot mode is on or off
+    pivotMode: boolean;
     // what groups the user is viewing
     groupKeys: string[];
     // if filtering, what the filter model is
@@ -31,7 +35,7 @@ export interface IEnterpriseGetRowsParams {
     request: IEnterpriseGetRowsRequest;
 
     // success callback, pass the rows back the grid asked for
-    successCallback(rowsThisPage: any[]): void;
+    successCallback(rowsThisPage: any[], lastRow: number): void;
 
     // fail callback, tell the grid the call failed so it can adjust it's state
     failCallback(): void;

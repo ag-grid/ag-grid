@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -50,9 +50,10 @@ var NumberFilter = (function (_super) {
         return "<div class=\"ag-filter-body\">\n            <div>\n                <input class=\"ag-filter-filter\" id=\"filterText\" type=\"text\" placeholder=\"" + translate('filterOoo') + "\"/>\n            </div>\n             <div class=\"ag-filter-number-to\" id=\"filterNumberToPanel\">\n                <input class=\"ag-filter-filter\" id=\"filterToText\" type=\"text\" placeholder=\"" + translate('filterOoo') + "\"/>\n            </div>\n        </div>";
     };
     NumberFilter.prototype.initialiseFilterBodyUi = function () {
+        _super.prototype.initialiseFilterBodyUi.call(this);
         this.filterNumber = null;
-        this.eFilterTextField = this.getGui().querySelector("#filterText");
-        var debounceMs = this.filterParams.debounceMs != null ? this.filterParams.debounceMs : 500;
+        this.eFilterTextField = this.queryForHtmlInputElement("#filterText");
+        var debounceMs = this.getDebounceMs(this.filterParams);
         var toDebounce = utils_1.Utils.debounce(this.onTextFieldsChanged.bind(this), debounceMs);
         this.addDestroyableEventListener(this.eFilterTextField, "input", toDebounce);
         this.addDestroyableEventListener(this.eFilterToTextField, "input", toDebounce);
@@ -138,22 +139,22 @@ var NumberFilter = (function (_super) {
         utils_1.Utils.setVisible(this.eNumberToPanel, visible);
     };
     NumberFilter.prototype.resetState = function () {
-        this.setFilterType(baseFilter_1.BaseFilter.EQUALS);
+        this.setFilterType(this.defaultFilter);
         this.setFilter(null);
         this.setFilterTo(null);
     };
     NumberFilter.prototype.setType = function (filterType) {
         this.setFilterType(filterType);
     };
+    NumberFilter.LESS_THAN = 'lessThan'; //3;
+    __decorate([
+        componentAnnotations_1.QuerySelector('#filterNumberToPanel'),
+        __metadata("design:type", HTMLElement)
+    ], NumberFilter.prototype, "eNumberToPanel", void 0);
+    __decorate([
+        componentAnnotations_1.QuerySelector('#filterToText'),
+        __metadata("design:type", HTMLInputElement)
+    ], NumberFilter.prototype, "eFilterToTextField", void 0);
     return NumberFilter;
 }(baseFilter_1.ScalarBaseFilter));
-NumberFilter.LESS_THAN = 'lessThan'; //3;
-__decorate([
-    componentAnnotations_1.QuerySelector('#filterNumberToPanel'),
-    __metadata("design:type", HTMLElement)
-], NumberFilter.prototype, "eNumberToPanel", void 0);
-__decorate([
-    componentAnnotations_1.QuerySelector('#filterToText'),
-    __metadata("design:type", HTMLInputElement)
-], NumberFilter.prototype, "eFilterToTextField", void 0);
 exports.NumberFilter = NumberFilter;

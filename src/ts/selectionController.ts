@@ -5,13 +5,15 @@ import {Qualifier} from "./context/context";
 import {Logger} from "./logger";
 import {LoggerFactory} from "./logger";
 import {EventService} from "./eventService";
-import {Events} from "./events";
+import {Events, SelectionChangedEvent} from "./events";
 import {Autowired} from "./context/context";
 import {IRowModel} from "./interfaces/iRowModel";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {PostConstruct} from "./context/context";
 import {Constants} from "./constants";
 import {InMemoryRowModel} from "./rowModels/inMemory/inMemoryRowModel";
+import {ColumnApi} from "./columnController/columnApi";
+import {GridApi} from "./gridApi";
 
 @Bean('selectionController')
 export class SelectionController {
@@ -19,6 +21,8 @@ export class SelectionController {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     private selectedNodes: {[key: string]: RowNode};
     private logger: Logger;
@@ -67,7 +71,7 @@ export class SelectionController {
     public getSelectedRows() {
         let selectedRows: any[] = [];
         _.iterateObject(this.selectedNodes, (key: string, rowNode: RowNode) => {
-            if (rowNode) {
+            if (rowNode && rowNode.data) {
                 selectedRows.push(rowNode.data);
             }
         });
@@ -84,7 +88,7 @@ export class SelectionController {
 
     // should only be called if groupSelectsChildren=true
     public updateGroupsFromChildrenSelections(): void {
-        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_NORMAL) {
+        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_IN_MEMORY) {
             console.warn('updateGroupsFromChildrenSelections not available when rowModel is not normal');
         }
         let inMemoryRowModel = <InMemoryRowModel> this.rowModel;
@@ -180,7 +184,7 @@ export class SelectionController {
     // where groups don't actually appear in the selection normally.
     public getBestCostNodeSelection() {
 
-        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_NORMAL) {
+        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_IN_MEMORY) {
             console.warn('getBestCostNodeSelection is only avilable when using normal row model');
         }
 
@@ -232,28 +236,43 @@ export class SelectionController {
 
     public deselectAllRowNodes(justFiltered = false) {
 
-        let inMemoryRowModel = <InMemoryRowModel> this.rowModel;
         let callback = (rowNode: RowNode) => rowNode.selectThisNode(false);
+        let rowModelInMemory = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_IN_MEMORY;
 
-        // execute on all nodes in the model. if we are doing pagination, only
-        // the current page is used, thus if we 'deselect all' while on page 2,
-        // any selections on page 1 are left as is.
         if (justFiltered) {
+            if (!rowModelInMemory) {
+                console.error('ag-Grid: selecting just filtered only works with In Memory Row Model');
+                return;
+            }
+            let inMemoryRowModel = <InMemoryRowModel> this.rowModel;
             inMemoryRowModel.forEachNodeAfterFilter(callback);
         } else {
-            inMemoryRowModel.forEachNode(callback);
+            _.iterateObject(this.selectedNodes, (id: string, rowNode: RowNode) => {
+                // remember the reference can be to null, as we never 'delete' from the map
+                if (rowNode) {
+                    callback(rowNode);
+                }
+            });
+            // this clears down the map (whereas above only sets the items in map to 'undefined')
+            this.reset();
         }
 
         // the above does not clean up the parent rows if they are selected
-        if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_NORMAL && this.groupSelectsChildren) {
+        if (rowModelInMemory && this.groupSelectsChildren) {
             this.updateGroupsFromChildrenSelections();
         }
 
-        this.eventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED);
+        let event: SelectionChangedEvent = {
+            type: Events.EVENT_SELECTION_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+
+        this.eventService.dispatchEvent(event);
     }
 
     public selectAllRowNodes(justFiltered = false) {
-        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_NORMAL) {
+        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_IN_MEMORY) {
             throw `selectAll only available with normal row model, ie not ${this.rowModel.getType()}`;
         }
 
@@ -267,11 +286,16 @@ export class SelectionController {
         }
 
         // the above does not clean up the parent rows if they are selected
-        if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_NORMAL && this.groupSelectsChildren) {
+        if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_IN_MEMORY && this.groupSelectsChildren) {
             this.updateGroupsFromChildrenSelections();
         }
 
-        this.eventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED);
+        let event: SelectionChangedEvent = {
+            type: Events.EVENT_SELECTION_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
     }
 
     // Deprecated method

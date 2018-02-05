@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,6 +29,7 @@ var component_1 = require("../../widgets/component");
 var column_1 = require("../../entities/column");
 var utils_1 = require("../../utils");
 var columnGroup_1 = require("../../entities/columnGroup");
+var columnApi_1 = require("../../columnController/columnApi");
 var columnController_1 = require("../../columnController/columnController");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var horizontalDragService_1 = require("../horizontalDragService");
@@ -36,8 +37,9 @@ var context_1 = require("../../context/context");
 var cssClassApplier_1 = require("../cssClassApplier");
 var dragAndDropService_1 = require("../../dragAndDrop/dragAndDropService");
 var setLeftFeature_1 = require("../../rendering/features/setLeftFeature");
-var componentProvider_1 = require("../../componentProvider");
 var gridApi_1 = require("../../gridApi");
+var componentRecipes_1 = require("../../components/framework/componentRecipes");
+var beans_1 = require("../../rendering/beans");
 var HeaderGroupWrapperComp = (function (_super) {
     __extends(HeaderGroupWrapperComp, _super);
     function HeaderGroupWrapperComp(columnGroup, eRoot, dragSourceDropTarget, pinned) {
@@ -53,16 +55,38 @@ var HeaderGroupWrapperComp = (function (_super) {
     HeaderGroupWrapperComp.prototype.postConstruct = function () {
         cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
         var displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup, 'header');
-        var headerComponent = this.appendHeaderGroupComp(displayName);
+        this.appendHeaderGroupComp(displayName);
         this.setupResize();
         this.addClasses();
-        this.setupMove(headerComponent.getGui(), displayName);
         this.setupWidth();
         this.addAttributes();
-        this.addFeature(this.context, new setLeftFeature_1.SetLeftFeature(this.columnGroup, this.getGui()));
+        this.setupMovingCss();
+        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.columnGroup, this.getGui(), this.beans);
+        setLeftFeature.init();
+        this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
+    };
+    HeaderGroupWrapperComp.prototype.setupMovingCss = function () {
+        var _this = this;
+        var originalColumnGroup = this.columnGroup.getOriginalColumnGroup();
+        var leafColumns = originalColumnGroup.getLeafColumns();
+        leafColumns.forEach(function (col) {
+            _this.addDestroyableEventListener(col, column_1.Column.EVENT_MOVING_CHANGED, _this.onColumnMovingChanged.bind(_this));
+        });
+        this.onColumnMovingChanged();
+    };
+    HeaderGroupWrapperComp.prototype.onColumnMovingChanged = function () {
+        // this function adds or removes the moving css, based on if the col is moving.
+        // this is what makes the header go dark when it is been moved (gives impression to
+        // user that the column was picked up).
+        if (this.columnGroup.isMoving()) {
+            utils_1.Utils.addCssClass(this.getGui(), 'ag-header-cell-moving');
+        }
+        else {
+            utils_1.Utils.removeCssClass(this.getGui(), 'ag-header-cell-moving');
+        }
     };
     HeaderGroupWrapperComp.prototype.addAttributes = function () {
-        this.getGui().setAttribute("colId", this.columnGroup.getUniqueId());
+        this.getGui().setAttribute("col-id", this.columnGroup.getUniqueId());
     };
     HeaderGroupWrapperComp.prototype.appendHeaderGroupComp = function (displayName) {
         var _this = this;
@@ -70,15 +94,25 @@ var HeaderGroupWrapperComp = (function (_super) {
             displayName: displayName,
             columnGroup: this.columnGroup,
             setExpanded: function (expanded) {
-                _this.columnController.setColumnGroupOpened(_this.columnGroup, expanded);
+                _this.columnController.setColumnGroupOpened(_this.columnGroup.getOriginalColumnGroup(), expanded, "gridInitializing");
             },
             api: this.gridApi,
             columnApi: this.columnApi,
             context: this.gridOptionsWrapper.getContext()
         };
-        var headerComp = this.componentProvider.newHeaderGroupComponent(params);
-        this.appendChild(headerComp);
-        return headerComp;
+        if (!displayName) {
+            var leafCols = this.columnGroup.getLeafColumns();
+            displayName = leafCols ? leafCols[0].getColDef().headerName : '';
+        }
+        var callback = this.afterHeaderCompCreated.bind(this, displayName);
+        this.componentRecipes.newHeaderGroupComponent(params).then(callback);
+    };
+    HeaderGroupWrapperComp.prototype.afterHeaderCompCreated = function (displayName, headerGroupComp) {
+        this.appendChild(headerGroupComp);
+        this.setupMove(headerGroupComp.getGui(), displayName);
+        if (headerGroupComp.destroy) {
+            this.addDestroyFunc(headerGroupComp.destroy.bind(headerGroupComp));
+        }
     };
     HeaderGroupWrapperComp.prototype.addClasses = function () {
         // having different classes below allows the style to not have a bottom border
@@ -99,23 +133,29 @@ var HeaderGroupWrapperComp = (function (_super) {
         if (this.isSuppressMoving()) {
             return;
         }
+        var allLeafColumns = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
         if (eHeaderGroup) {
             var dragSource_1 = {
                 type: dragAndDropService_1.DragSourceType.HeaderCell,
                 eElement: eHeaderGroup,
                 dragItemName: displayName,
                 // we add in the original group leaf columns, so we move both visible and non-visible items
-                dragItem: this.getAllColumnsInThisGroup(),
-                dragSourceDropTarget: this.dragSourceDropTarget
+                dragItemCallback: this.getDragItemForGroup.bind(this),
+                dragSourceDropTarget: this.dragSourceDropTarget,
+                dragStarted: function () { return allLeafColumns.forEach(function (col) { return col.setMoving(true, "uiColumnDragged"); }); },
+                dragStopped: function () { return allLeafColumns.forEach(function (col) { return col.setMoving(false, "uiColumnDragged"); }); }
             };
             this.dragAndDropService.addDragSource(dragSource_1, true);
             this.addDestroyFunc(function () { return _this.dragAndDropService.removeDragSource(dragSource_1); });
         }
     };
-    // when moving the columns, we want to move all the columns in this group in one go, and in the order they
-    // are currently in the screen.
-    HeaderGroupWrapperComp.prototype.getAllColumnsInThisGroup = function () {
+    // when moving the columns, we want to move all the columns (contained within the DragItem) in this group in one go,
+    // and in the order they are currently in the screen.
+    HeaderGroupWrapperComp.prototype.getDragItemForGroup = function () {
         var allColumnsOriginalOrder = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
+        // capture visible state, used when reentering grid to dictate which columns should be visible
+        var visibleState = {};
+        allColumnsOriginalOrder.forEach(function (column) { return visibleState[column.getId()] = column.isVisible(); });
         var allColumnsCurrentOrder = [];
         this.columnController.getAllDisplayedColumns().forEach(function (column) {
             if (allColumnsOriginalOrder.indexOf(column) >= 0) {
@@ -125,13 +165,17 @@ var HeaderGroupWrapperComp = (function (_super) {
         });
         // we are left with non-visible columns, stick these in at the end
         allColumnsOriginalOrder.forEach(function (column) { return allColumnsCurrentOrder.push(column); });
-        return allColumnsCurrentOrder;
+        // create and return dragItem
+        return {
+            columns: allColumnsCurrentOrder,
+            visibleState: visibleState
+        };
     };
     HeaderGroupWrapperComp.prototype.isSuppressMoving = function () {
         // if any child is fixed, then don't allow moving
         var childSuppressesMoving = false;
         this.columnGroup.getLeafColumns().forEach(function (column) {
-            if (column.getColDef().suppressMovable) {
+            if (column.getColDef().suppressMovable || column.isLockPosition()) {
                 childSuppressesMoving = true;
             }
         });
@@ -180,7 +224,7 @@ var HeaderGroupWrapperComp = (function (_super) {
     HeaderGroupWrapperComp.prototype.setupResize = function () {
         var _this = this;
         this.eHeaderCellResize = this.getRefElement('agResize');
-        if (!this.gridOptionsWrapper.isEnableColResize()) {
+        if (!this.columnGroup.isResizable()) {
             utils_1.Utils.removeFromParent(this.eHeaderCellResize);
             return;
         }
@@ -203,7 +247,7 @@ var HeaderGroupWrapperComp = (function (_super) {
                     }
                 });
                 if (keys.length > 0) {
-                    _this.columnController.autoSizeColumns(keys);
+                    _this.columnController.autoSizeColumns(keys, "uiColumnResized");
                 }
             });
         }
@@ -218,20 +262,34 @@ var HeaderGroupWrapperComp = (function (_super) {
     };
     HeaderGroupWrapperComp.prototype.onDragging = function (dragChange, finished) {
         var _this = this;
-        var dragChangeNormalised = this.normaliseDragChange(dragChange);
-        var newWidth = this.groupWidthStart + dragChangeNormalised;
-        var minWidth = this.columnGroup.getMinWidth();
-        if (newWidth < minWidth) {
-            newWidth = minWidth;
+        // this will be the width we have to distribute to the resizable columns
+        var widthForResizableCols;
+        // this is all the displayed cols in the group less those that we cannot resize
+        var resizableCols;
+        // a lot of variables defined for the first set of maths, but putting
+        // braces in, we localise the variables to this bit of the method
+        {
+            var dragChangeNormalised = this.normaliseDragChange(dragChange);
+            var totalGroupWidth = this.groupWidthStart + dragChangeNormalised;
+            var displayedColumns = this.columnGroup.getDisplayedLeafColumns();
+            resizableCols = utils_1.Utils.filter(displayedColumns, function (col) { return col.isResizable(); });
+            var nonResizableCols = utils_1.Utils.filter(displayedColumns, function (col) { return !col.isResizable(); });
+            var nonResizableColsWidth_1 = 0;
+            nonResizableCols.forEach(function (col) { return nonResizableColsWidth_1 += col.getActualWidth(); });
+            widthForResizableCols = totalGroupWidth - nonResizableColsWidth_1;
+            var minWidth_1 = 0;
+            resizableCols.forEach(function (col) { return minWidth_1 += col.getMinWidth(); });
+            if (widthForResizableCols < minWidth_1) {
+                widthForResizableCols = minWidth_1;
+            }
         }
         // distribute the new width to the child headers
-        var changeRatio = newWidth / this.groupWidthStart;
+        var changeRatio = widthForResizableCols / this.groupWidthStart;
         // keep track of pixels used, and last column gets the remaining,
         // to cater for rounding errors, and min width adjustments
-        var pixelsToDistribute = newWidth;
-        var displayedColumns = this.columnGroup.getDisplayedLeafColumns();
-        displayedColumns.forEach(function (column, index) {
-            var notLastCol = index !== (displayedColumns.length - 1);
+        var pixelsToDistribute = widthForResizableCols;
+        resizableCols.forEach(function (column, index) {
+            var notLastCol = index !== (resizableCols.length - 1);
             var newChildSize;
             if (notLastCol) {
                 // if not the last col, calculate the column width as normal
@@ -246,7 +304,7 @@ var HeaderGroupWrapperComp = (function (_super) {
                 // if last col, give it the remaining pixels
                 newChildSize = pixelsToDistribute;
             }
-            _this.columnController.setColumnWidth(column, newChildSize, finished);
+            _this.columnController.setColumnWidth(column, newChildSize, finished, "uiColumnDragged");
         });
     };
     // optionally inverts the drag, depending on pinned and RTL
@@ -267,47 +325,51 @@ var HeaderGroupWrapperComp = (function (_super) {
         }
         return result;
     };
+    HeaderGroupWrapperComp.TEMPLATE = '<div class="ag-header-group-cell">' +
+        '<div ref="agResize" class="ag-header-cell-resize"></div>' +
+        '</div>';
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], HeaderGroupWrapperComp.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('columnController'),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], HeaderGroupWrapperComp.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('horizontalDragService'),
+        __metadata("design:type", horizontalDragService_1.HorizontalDragService)
+    ], HeaderGroupWrapperComp.prototype, "dragService", void 0);
+    __decorate([
+        context_1.Autowired('dragAndDropService'),
+        __metadata("design:type", dragAndDropService_1.DragAndDropService)
+    ], HeaderGroupWrapperComp.prototype, "dragAndDropService", void 0);
+    __decorate([
+        context_1.Autowired('context'),
+        __metadata("design:type", context_1.Context)
+    ], HeaderGroupWrapperComp.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired('componentRecipes'),
+        __metadata("design:type", componentRecipes_1.ComponentRecipes)
+    ], HeaderGroupWrapperComp.prototype, "componentRecipes", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], HeaderGroupWrapperComp.prototype, "gridApi", void 0);
+    __decorate([
+        context_1.Autowired('columnApi'),
+        __metadata("design:type", columnApi_1.ColumnApi)
+    ], HeaderGroupWrapperComp.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.Autowired('beans'),
+        __metadata("design:type", beans_1.Beans)
+    ], HeaderGroupWrapperComp.prototype, "beans", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], HeaderGroupWrapperComp.prototype, "postConstruct", null);
     return HeaderGroupWrapperComp;
 }(component_1.Component));
-HeaderGroupWrapperComp.TEMPLATE = '<div class="ag-header-group-cell">' +
-    '<div ref="agResize" class="ag-header-cell-resize"></div>' +
-    '</div>';
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], HeaderGroupWrapperComp.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.Autowired('columnController'),
-    __metadata("design:type", columnController_1.ColumnController)
-], HeaderGroupWrapperComp.prototype, "columnController", void 0);
-__decorate([
-    context_1.Autowired('horizontalDragService'),
-    __metadata("design:type", horizontalDragService_1.HorizontalDragService)
-], HeaderGroupWrapperComp.prototype, "dragService", void 0);
-__decorate([
-    context_1.Autowired('dragAndDropService'),
-    __metadata("design:type", dragAndDropService_1.DragAndDropService)
-], HeaderGroupWrapperComp.prototype, "dragAndDropService", void 0);
-__decorate([
-    context_1.Autowired('context'),
-    __metadata("design:type", context_1.Context)
-], HeaderGroupWrapperComp.prototype, "context", void 0);
-__decorate([
-    context_1.Autowired('componentProvider'),
-    __metadata("design:type", componentProvider_1.ComponentProvider)
-], HeaderGroupWrapperComp.prototype, "componentProvider", void 0);
-__decorate([
-    context_1.Autowired('gridApi'),
-    __metadata("design:type", gridApi_1.GridApi)
-], HeaderGroupWrapperComp.prototype, "gridApi", void 0);
-__decorate([
-    context_1.Autowired('columnApi'),
-    __metadata("design:type", columnController_1.ColumnApi)
-], HeaderGroupWrapperComp.prototype, "columnApi", void 0);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], HeaderGroupWrapperComp.prototype, "postConstruct", null);
 exports.HeaderGroupWrapperComp = HeaderGroupWrapperComp;

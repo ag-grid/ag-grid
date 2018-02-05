@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,6 +18,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("../utils");
 var beanStub_1 = require("../context/beanStub");
+var compIdSequence = new utils_1.NumberSequence();
 var Component = (function (_super) {
     __extends(Component, _super);
     function Component(template) {
@@ -25,11 +26,18 @@ var Component = (function (_super) {
         _this.childComponents = [];
         _this.annotatedEventListeners = [];
         _this.visible = true;
+        // unique id for this row component. this is used for getting a reference to the HTML dom.
+        // we cannot use the RowNode id as this is not unique (due to animation, old rows can be lying
+        // around as we create a new rowComp instance for the same row node).
+        _this.compId = compIdSequence.next();
         if (template) {
             _this.setTemplate(template);
         }
         return _this;
     }
+    Component.prototype.getCompId = function () {
+        return this.compId;
+    };
     Component.prototype.instantiate = function (context) {
         this.instantiateRecurse(this.getGui(), context);
     };
@@ -54,16 +62,20 @@ var Component = (function (_super) {
         this.swapInComponentForQuerySelectors(newComponent, childNode);
     };
     Component.prototype.swapInComponentForQuerySelectors = function (newComponent, childNode) {
-        var metaData = this.__agComponentMetaData;
-        if (!metaData || !metaData.querySelectors) {
-            return;
-        }
+        var thisProto = Object.getPrototypeOf(this);
         var thisNoType = this;
-        metaData.querySelectors.forEach(function (querySelector) {
-            if (thisNoType[querySelector.attributeName] === childNode) {
-                thisNoType[querySelector.attributeName] = newComponent;
+        while (thisProto != null) {
+            var metaData = thisProto.__agComponentMetaData;
+            var currentProtoName = (thisProto.constructor).name;
+            if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
+                metaData[currentProtoName].querySelectors.forEach(function (querySelector) {
+                    if (thisNoType[querySelector.attributeName] === childNode) {
+                        thisNoType[querySelector.attributeName] = newComponent;
+                    }
+                });
             }
-        });
+            thisProto = Object.getPrototypeOf(thisProto);
+        }
     };
     Component.prototype.setTemplate = function (template) {
         var eGui = utils_1.Utils.loadTemplate(template);
@@ -79,48 +91,60 @@ var Component = (function (_super) {
     };
     Component.prototype.wireQuerySelectors = function () {
         var _this = this;
-        var metaData = this.__agComponentMetaData;
-        if (!metaData || !metaData.querySelectors) {
-            return;
-        }
         if (!this.eGui) {
             return;
         }
-        var thisNoType = this;
-        metaData.querySelectors.forEach(function (querySelector) {
-            var resultOfQuery = _this.eGui.querySelector(querySelector.querySelector);
-            if (resultOfQuery) {
-                var backingComponent = resultOfQuery.__agComponent;
-                if (backingComponent) {
-                    thisNoType[querySelector.attributeName] = backingComponent;
-                }
-                else {
-                    thisNoType[querySelector.attributeName] = resultOfQuery;
-                }
+        var thisProto = Object.getPrototypeOf(this);
+        var _loop_1 = function () {
+            var metaData = thisProto.__agComponentMetaData;
+            var currentProtoName = (thisProto.constructor).name;
+            if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
+                var thisNoType_1 = this_1;
+                metaData[currentProtoName].querySelectors.forEach(function (querySelector) {
+                    var resultOfQuery = _this.eGui.querySelector(querySelector.querySelector);
+                    if (resultOfQuery) {
+                        var backingComponent = resultOfQuery.__agComponent;
+                        if (backingComponent) {
+                            thisNoType_1[querySelector.attributeName] = backingComponent;
+                        }
+                        else {
+                            thisNoType_1[querySelector.attributeName] = resultOfQuery;
+                        }
+                    }
+                    else {
+                        // put debug msg in here if query selector fails???
+                    }
+                });
             }
-            else {
-                // put debug msg in here if query selector fails???
-            }
-        });
+            thisProto = Object.getPrototypeOf(thisProto);
+        };
+        var this_1 = this;
+        while (thisProto != null) {
+            _loop_1();
+        }
     };
     Component.prototype.addAnnotatedEventListeners = function () {
         var _this = this;
         this.removeAnnotatedEventListeners();
-        var metaData = this.__agComponentMetaData;
-        if (!metaData || !metaData.listenerMethods) {
-            return;
-        }
         if (!this.eGui) {
             return;
         }
-        if (!this.annotatedEventListeners) {
-            this.annotatedEventListeners = [];
+        var thisProto = Object.getPrototypeOf(this);
+        while (thisProto != null) {
+            var metaData = thisProto.__agComponentMetaData;
+            var currentProtoName = (thisProto.constructor).name;
+            if (metaData && metaData[currentProtoName] && metaData[currentProtoName].listenerMethods) {
+                if (!this.annotatedEventListeners) {
+                    this.annotatedEventListeners = [];
+                }
+                metaData[currentProtoName].listenerMethods.forEach(function (eventListener) {
+                    var listener = _this[eventListener.methodName].bind(_this);
+                    _this.eGui.addEventListener(eventListener.eventName, listener);
+                    _this.annotatedEventListeners.push({ eventName: eventListener.eventName, listener: listener });
+                });
+            }
+            thisProto = Object.getPrototypeOf(thisProto);
         }
-        metaData.listenerMethods.forEach(function (eventListener) {
-            var listener = _this[eventListener.methodName].bind(_this);
-            _this.eGui.addEventListener(eventListener.eventName, listener);
-            _this.annotatedEventListeners.push({ eventName: eventListener.eventName, listener: listener });
-        });
     };
     Component.prototype.removeAnnotatedEventListeners = function () {
         var _this = this;
@@ -172,7 +196,11 @@ var Component = (function (_super) {
         if (visible !== this.visible) {
             this.visible = visible;
             utils_1.Utils.addOrRemoveCssClass(this.eGui, 'ag-hidden', !visible);
-            this.dispatchEvent(Component.EVENT_VISIBLE_CHANGED, { visible: this.visible });
+            var event_1 = {
+                type: Component.EVENT_VISIBLE_CHANGED,
+                visible: this.visible
+            };
+            this.dispatchEvent(event_1);
         }
     };
     Component.prototype.addOrRemoveCssClass = function (className, addOrRemove) {
@@ -207,7 +235,7 @@ var Component = (function (_super) {
     Component.prototype.getRefElement = function (refName) {
         return this.queryForHtmlElement('[ref="' + refName + '"]');
     };
+    Component.EVENT_VISIBLE_CHANGED = 'visibleChanged';
     return Component;
 }(beanStub_1.BeanStub));
-Component.EVENT_VISIBLE_CHANGED = 'visibleChanged';
 exports.Component = Component;

@@ -1,0 +1,1335 @@
+@function encodecolor($string) {
+    @if $string == null {
+        @return '';
+    }
+
+    @if type-of($string) == 'color' {
+        $hex: str-slice(ie-hex-str($string), 4);
+        $string: unquote('#{$hex}');
+    }
+    $string: '%23' + $string;
+    @return $string;
+}
+
+@mixin bottom-border($color) {
+    border-bottom: 1px solid $color;
+    box-sizing: border-box;
+}
+
+@mixin grid-cell($height, $padding) {
+    line-height: $height;
+    padding-left: $padding;
+    padding-right: $padding;
+}
+
+@mixin icon-background($params, $icon) {
+    $size: map-get($params, 'icon-size');
+    $color: map-get($params, 'foreground-color');
+    background-color: transparent;
+    background-image: url('#{map-get($params, 'icons-path')}#{$icon}.svg?color1=#{encodecolor(map-get($params, 'icon-color'))}&color2=#{encodecolor(map-get($params, 'alt-icon-color'))}');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: $size $size;
+    height: $size;
+    opacity: map-get($params, 'icon-opacity');
+    width: $size;
+}
+
+@mixin colorful-icon($path, $icon, $color, $altColor) {
+    background-image: url('#{map-get($params, 'icons-path')}#{$icon}.svg?color1=#{encodecolor($color)}&color2=#{encodecolor($altColor)}');
+}
+
+@mixin card($params) {
+    @extend %card !optional;
+    background: map-get($params, 'card-background-color');
+    border-radius: map-get($params, 'card-radius');
+    box-shadow: map-get($params, 'card-shadow');
+    padding: map-get($params, 'grid-size');
+}
+
+@mixin textbox($params) {
+    $border-color: map-get($params, 'border-color');
+    $foreground-color: map-get($params, 'foreground-color');
+    $grid-size: map-get($params, 'grid-size');
+    $primary-color: map-get($params, 'primary-color');
+    $placeholder-color: map-get($params, 'disabled-foreground-color');
+    $focused-border: map-get($params, 'focused-textbox-border');
+    $input-border-width: map-get($params, 'input-border-width');
+    $input-bottom-border: map-get($params, 'input-bottom-border');
+
+    @if map-get($params, 'customize-inputs') {
+        background: transparent;
+
+        @if $input-border-width {
+            border-width: $input-border-width;
+        }
+
+        @if $input-bottom-border {
+            border-bottom: $input-bottom-border;
+        }
+
+        box-sizing: border-box;
+        color: $foreground-color;
+        font-family: inherit;
+        font-size: inherit;
+        height: map-get($params, 'input-height');
+        padding-bottom: $grid-size;
+
+        &:focus {
+            @if $focused-border {
+                border-bottom: $focused-border;
+                outline: none;
+                padding-bottom: $grid-size - 1;
+            }
+        }
+
+        &::placeholder {
+            color: $placeholder-color;
+        }
+    }
+}
+
+@mixin regular-button($color, $background-color, $text-transform) {
+    appearance: none;
+    background-color: $background-color;
+    border: 0;
+    color: $color;
+    font-family: inherit;
+    font-size: inherit;
+    margin: 0;
+    padding: 0;
+    text-transform: $text-transform;
+}
+
+@mixin hide-text {
+    overflow: hidden;
+    text-indent: 100%;
+}
+
+@mixin ag-grid-theme($params) {
+    $grid-size: map-get($params, 'grid-size');
+    $icon-size: map-get($params, 'icon-size');
+    $header-icon-size: map-get($params, 'header-icon-size');
+    $row-height: map-get($params, 'row-height');
+    $header-height: map-get($params, 'header-height');
+    $virtual-item-height: map-get($params, 'virtual-item-height');
+    $rich-select-item-height: map-get($params, 'rich-select-item-height');
+    $cell-horizontal-padding: map-get($params, 'cell-horizontal-padding');
+
+    $icons-path: map-get($params, 'icons-path');
+
+    $font-family: map-get($params, 'font-family');
+    $font-size: map-get($params, 'font-size');
+    $font-weight: map-get($params, 'font-weight');
+
+    $secondary-font-family: map-get($params, 'secondary-font-family');
+    $secondary-font-size: map-get($params, 'secondary-font-size');
+    $secondary-font-weight: map-get($params, 'secondary-font-weight');
+
+    $foreground-color: map-get($params, 'foreground-color');
+    $foreground-opacity: map-get($params, 'foreground-opacity');
+
+    $secondary-foreground-color-opacity: map-get($params, 'secondary-foreground-color-opacity');
+    $secondary-foreground-color: map-get($params, 'secondary-foreground-color');
+
+    $disabled-foreground-color-opacity: map-get($params, 'disabled-foreground-color-opacity');
+    $disabled-foreground-color: map-get($params, 'disabled-foreground-color');
+
+    $background-color: map-get($params, 'background-color');
+    $border-color: map-get($params, 'border-color');
+
+    $button-background-color: map-get($params, 'button-background-color');
+
+    $cell-data-changed-color: map-get($params, 'cell-data-changed-color');
+
+    $chip-background-color: map-get($params, 'chip-background-color');
+
+    $editor-background-color-color: map-get($params, 'editor-background-color-color');
+
+    $range-selection-background-color: map-get($params, 'range-selection-background-color');
+    $range-selection-highlight-color: map-get($params, 'range-selection-highlight-color');
+
+    $header-background-color: map-get($params, 'header-background-color');
+    $panel-background-color: map-get($params, 'panel-background-color');
+    $tool-panel-background-color: map-get($params, 'tool-panel-background-color');
+
+    $accent-color: map-get($params, 'accent-color');
+    $primary-color: map-get($params, 'primary-color');
+    $hover-color: map-get($params, 'hover-color');
+    $selected-color: map-get($params, 'selected-color');
+
+    $icon-opacity: map-get($params, 'icon-opacity');
+    $button-text-transform: map-get($params, 'button-text-transform');
+    $card-radius: map-get($params, 'card-radius');
+    $card-shadow: map-get($params, 'card-shadow');
+    $focused-textbox-border: map-get($params, 'focused-textbox-border');
+
+    $value-change-delta-up-color: map-get($params, 'value-change-delta-up-color');
+    $value-change-delta-down-color: map-get($params, 'value-change-delta-down-color');
+    $value-change-value-highlight-background-color: map-get($params, 'value-change-value-highlight-background-color');
+    $toolpanel-indent-size: map-get($params, 'toolpanel-indent-size');
+    $row-group-indent-size: map-get($params, 'row-group-indent-size');
+    $row-floating-background-color: map-get($params, 'row-floating-background-color');
+
+    ////////////////////////////////////////
+    // Chinese wall of inline vars over
+    ////////////////////////////////////////
+
+    $font: $font-weight $font-size $font-family;
+    $secondary-font: $secondary-font-weight $secondary-font-size $secondary-font-family;
+
+    background-color: $background-color;
+    color: $foreground-color;
+    font: $font;
+
+    // indentation loop
+    @for $i from 1 to 50 {
+        .ag-ltr .ag-toolpanel-indent-#{$i} { padding-left: $i * $toolpanel-indent-size; }
+        .ag-rtl .ag-toolpanel-indent-#{$i} { padding-right: $i * $toolpanel-indent-size; }
+
+        .ag-ltr .ag-row-group-indent-#{$i} { padding-left: $i * $row-group-indent-size; }
+        .ag-rtl .ag-row-group-indent-#{$i} { padding-right: $i * $row-group-indent-size; }
+    }
+
+    // we use rtl and ltr below, even though it's the same style, so it propertly
+    .ag-rtl .ag-cell-first-right-pinned {
+        border-left: 1px solid $border-color;
+    }
+    .ag-ltr .ag-cell-first-right-pinned {
+        border-left: 1px solid $border-color;
+    }
+    .ag-rtl .ag-cell-last-left-pinned {
+        border-right: 1px solid $border-color;
+    }
+    .ag-ltr .ag-cell-last-left-pinned {
+        border-right: 1px solid $border-color;
+    }
+
+    // used by the animateShowChangedCellRenderer
+    .ag-value-change-delta {
+        padding-right: 2px;
+    }
+
+    .ag-value-change-delta-up {
+        color: $value-change-delta-up-color;
+    }
+
+    .ag-value-change-delta-down {
+        color: $value-change-delta-down-color;
+    }
+
+    .ag-value-change-value {
+        background-color: transparent;
+        border-radius: 1px;
+        padding-left: 1px;
+        padding-right: 1px;
+        transition: background-color 1s;
+    }
+    .ag-value-change-value-highlight {
+        background-color: $value-change-value-highlight-background-color;
+        transition: background-color 0.1s;
+    }
+
+    ////////////////////////////////////////
+    // Basic layout
+    ////////////////////////////////////////
+    .ag-header {
+        @if $header-background-color {
+            background-color: $header-background-color;
+        }
+        color: $secondary-foreground-color;
+        font: $secondary-font;
+    }
+
+    .ag-header-row {
+        @include bottom-border($border-color);
+    }
+
+    .ag-row {
+        @include bottom-border($border-color);
+    }
+
+    .ag-row-hover {
+        background-color: $hover-color;
+    }
+
+    @if map-get($params, 'odd-row-background-color') {
+        .ag-row-odd {
+            background-color: map-get($params, 'odd-row-background-color');
+        }
+        .ag-row-even {
+            background-color: map-get($params, 'background-color');
+        }
+    }
+
+    .ag-numeric-cell {
+        text-align: right;
+    }
+
+    .ag-header-cell-label {
+        display: flex;
+        float: left;
+        height: 100%;
+        width: calc(100% - #{$icon-size});
+
+        span {
+            height: 100%;
+        }
+
+        & > span {
+            float: left;
+        }
+
+        .ag-header-icon {
+            background-position-y: $grid-size * 2.5;
+            background-size: $header-icon-size $header-icon-size;
+            height: 100%;
+            margin: 0;
+            margin-left: $grid-size;
+            opacity: $foreground-opacity;
+        }
+
+        .ag-header-cell-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    .ag-numeric-header {
+        .ag-header-cell-label {
+            flex-direction: row-reverse;
+            float: right;
+
+            & > span {
+                float: right;
+            }
+        }
+
+        .ag-header-cell-menu-button {
+            float: left;
+        }
+    }
+
+    .ag-header-cell,
+    .ag-header-group-cell {
+        @include grid-cell($header-height, $cell-horizontal-padding);
+    }
+
+    .ag-cell {
+        @include grid-cell($row-height - 2, $cell-horizontal-padding);
+
+        // adjust for transparent border
+        border: 1px solid transparent;
+        padding-left: $cell-horizontal-padding - 1px;
+        padding-right: $cell-horizontal-padding - 1px;
+    }
+
+    .ag-row-drag {
+        @include icon-background($params, 'grip');
+        background-position-y: $grid-size / 2 + 2px;
+        background-position-x: left;
+        float: left;
+        width: $icon-size + $grid-size * 3;
+        height: 100%;
+    }
+
+    .ag-row-dragging {
+        opacity: 0.5;
+        // very bad putting z-index in here, we have avoided it everywhere else in the grid,
+        // however feel it's a minor issue - as it's only a temporary thing while row is dragging,
+        // - it's unlikely user will have something on top of the grid while also moving a row in
+        // the grid.
+        z-index: 10000;
+    }
+
+    ////////////////////////////////////////
+    // Navigation
+    ////////////////////////////////////////
+    .ag-cell-focus {
+        border: 1px solid $primary-color;
+        outline: initial;
+    }
+
+    ////////////////////////////////////////
+    // Resizing
+    ////////////////////////////////////////
+    .ag-header-cell-resize {
+        position: absolute;
+        right: -($grid-size);
+        width: $grid-size * 2;
+        z-index: 4;
+
+        &::after {
+            border-right: 1px solid $border-color;
+            content: 'resize';
+            display: block;
+            height: $header-height - $grid-size * 4;
+            margin-top: $grid-size * 2;
+            overflow: hidden;
+            text-indent: $grid-size;
+            width: $grid-size;
+            box-sizing: content-box;
+        }
+    }
+
+    ////////////////////////////////////////
+    // Icons
+    ////////////////////////////////////////
+    $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly
+        checkbox-unchecked column columns contracted copy cut desc expanded eye-slash eye filter group indeterminate left loading menu minus none not-allowed
+        paste pin pivot plus right small-left small-right small-up small-down tick cross tree-open tree-closed;
+
+    @each $icon in $icons {
+        .ag-icon-#{$icon} {
+            @include icon-background($params, '#{$icon}');
+            display: inline-block;
+        }
+    }
+
+    .ag-header-cell-menu-button .ag-icon-menu {
+        height: $header-height;
+        display: block;
+    }
+
+    .ag-icon-checkbox-checked:empty {
+        @include colorful-icon($icons-path, 'checkbox-checked', $accent-color, map-get($params, 'alt-icon-color'));
+    }
+
+    ////////////////////////////////////////
+    // Context Menu
+    ////////////////////////////////////////
+    .ag-menu {
+        @include card($params);
+        padding: 0;
+        z-index: 5;
+
+        .ag-menu-list {
+            cursor: default;
+            margin-bottom: $grid-size;
+            margin-top: $grid-size;
+            width: 100%;
+        }
+
+        .ag-menu-option {
+            line-height: $grid-size * 4;
+            padding-left: $grid-size * 2;
+            padding-right: $grid-size * 2;
+
+            & > span {
+                display: table-cell;
+                vertical-align: middle;
+            }
+        }
+
+        .ag-menu-option-active {
+            background: $hover-color;
+        }
+
+        .ag-menu-option-disabled {
+            opacity: 0.5;
+        }
+
+        .ag-menu-option-icon {
+            padding-left: $grid-size;
+            padding-right: $grid-size;
+
+            span {
+                height: $icon-size;
+                line-height: 0;
+                margin-top: $grid-size;
+            }
+        }
+
+        .ag-menu-option-shortcut {
+            padding-left: $grid-size * 2;
+        }
+
+        .ag-menu-separator {
+            margin-left: -$grid-size;
+
+            & > span {
+                background-image: url("data:image/svg+xml;utf8,<svg width='1' height='#{$grid-size * 2}' viewBox='0 0 1 #{$grid-size * 2}' xmlns='http://www.w3.org/2000/svg'> <line x1='0' y1='#{$grid-size}' x2='1' y2='#{$grid-size}' stroke-width='1' stroke='#{$border-color}'/> </svg>");
+                height: $grid-size * 2;
+            }
+        }
+
+        .ag-menu-option-popup-pointer {
+            width: $icon-size + $grid-size * 2;
+        }
+    }
+
+    ////////////////////////////////////////
+    // Column Reordering
+    ////////////////////////////////////////
+    &.ag-dnd-ghost {
+        @include card($params);
+        border: 0;
+        color: $secondary-foreground-color;
+        font: $secondary-font;
+        height: $header-height !important;
+        line-height: $header-height;
+        margin: 0;
+        padding: 0 $grid-size * 2;
+        transform: translatey($grid-size * 2);
+        z-index: 5;
+
+        span,
+        div {
+            float: left;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .ag-dnd-ghost-icon {
+            margin-right: $grid-size;
+            opacity: $foreground-opacity;
+        }
+    }
+
+    $full-width-tabs: map-get($params, 'full-width-tabs');
+
+    ////////////////////////////////////////
+    // Column Filter
+    ////////////////////////////////////////
+    .ag-tab-header {
+        background: $panel-background-color;
+        @if $full-width-tabs {
+            display: table;
+        }
+        min-width: 220px;
+        width: 100%;
+
+        .ag-tab {
+            @extend %tab !optional;
+
+            border-bottom: 2px solid transparent;
+
+            @if $full-width-tabs {
+                display: table-cell;
+            }
+                height: $grid-size * 4;
+
+            text-align: center;
+            vertical-align: middle;
+
+            &.ag-tab-selected {
+                @extend %selected-tab !optional;
+
+                $icons: filter columns menu;
+
+                @each $icon in $icons {
+                    .ag-icon-#{$icon} {
+                        @include colorful-icon($icons-path, $icon, $primary-color, map-get($params, 'alt-icon-color'));
+                        display: inline-block;
+                    }
+                }
+            }
+        }
+    }
+
+    .ag-tab-body {
+        padding: $grid-size 0;
+
+        // string filter type
+        .ag-filter-select {
+            margin: $grid-size;
+            width: calc(100% - #{$grid-size * 2});
+        }
+
+        .ag-menu-list {
+            margin-bottom: 0;
+            margin-top: 0;
+
+            & > div:first-child > span {
+                padding-top: 0;
+            }
+
+            & > div:last-child > span {
+                padding-bottom: 0;
+            }
+
+            & > div:last-child > .ag-menu-option-popup-pointer {
+                background-position-y: 0;
+            }
+        }
+    }
+
+    // string filter type
+    .ag-filter-select {
+        margin: $grid-size;
+        width: calc(100% - #{$grid-size * 2});
+    }
+
+    ////////////////////////////////////////
+    // Value Set Filter
+    ////////////////////////////////////////
+    .ag-filter {
+        input[type='text'],
+        input[type='date'] {
+            @include textbox($params);
+            padding-left: $grid-size;
+        }
+
+        label {
+            display: block;
+            padding-left: $grid-size;
+        }
+
+        .ag-set-filter-list {
+            padding-top: $grid-size;
+        }
+
+        .ag-filter-header-container {
+            box-sizing: border-box;
+            height: $virtual-item-height;
+        }
+
+        .ag-filter-header-container:nth-child(2) {
+            border-bottom: 1px solid $border-color;
+        }
+
+        .ag-filter-checkbox {
+            float: left;
+            height: $virtual-item-height;
+            margin-right: $grid-size;
+            padding-top: $grid-size / 2;
+        }
+
+        .ag-filter-value {
+            height: $virtual-item-height;
+            line-height: $grid-size * 3.5; // hate this
+        }
+
+        .ag-filter-apply-panel {
+            display: flex;
+            justify-content: flex-end;
+            padding: $grid-size;
+            padding-top: $grid-size * 2;
+
+            button {
+                @if map-get($params, 'customize-buttons') {
+                    @include regular-button($primary-color, $button-background-color, $button-text-transform);
+                }
+            }
+
+            button + button {
+                margin-left: $grid-size * 2;
+            }
+        }
+    }
+
+    ////////////////////////////////////////
+    // Column selector
+    ////////////////////////////////////////
+    .ag-column-select-panel {
+        .ag-column-select-column-group,
+        .ag-column-select-column {
+            height: $grid-size * 4;
+            line-height: $grid-size * 4;
+            margin-left: $grid-size;
+
+            span {
+                float: left;
+                height: 100%;
+            }
+
+            .ag-column-select-indent {
+                width: $grid-size * 2;
+            }
+
+            .ag-column-select-checkbox,
+            .ag-column-group-icons {
+                margin-right: $grid-size;
+            }
+        }
+
+        .ag-column-select-column {
+            margin-left: $icon-size + $grid-size * 2;
+        }
+    }
+
+    ////////////////////////////////////////
+    // Tool panel
+    ////////////////////////////////////////
+
+    .ag-group-child-count:before {
+        content: ' ';
+    }
+
+    .ag-tool-panel {
+        background-color: $tool-panel-background-color;
+        border-right: 0;
+
+        .ag-pivot-mode {
+            border-bottom: 1px solid $border-color;
+            box-sizing: border-box;
+            height: $header-height;
+            line-height: $header-height;
+
+            span {
+                float: left;
+                height: 100%;
+            }
+
+            .ag-pivot-mode-select {
+                margin-left: $grid-size;
+
+                .ag-checkbox-label {
+                    margin-left: $grid-size;
+                }
+            }
+        }
+
+        .ag-column-select-panel {
+            border-bottom: 1px solid $border-color;
+            padding: $grid-size 0;
+            padding-bottom: $grid-size - 1; // absorb the bottom border;
+        }
+
+        $group-height: $grid-size * 5;
+
+        .ag-column-drop {
+            border-bottom: 1px solid $border-color;
+            clear: both;
+            overflow: auto;
+            padding: $grid-size 0;
+            padding-bottom: $grid-size * 2;
+
+            .ag-icon {
+                float: left;
+                height: $group-height;
+                margin: 0 $grid-size;
+            }
+
+            .ag-column-drop-title {
+                clear: right;
+                float: left;
+                height: $group-height;
+                line-height: $group-height;
+                width: calc(100% - #{$icon-size + $grid-size * 2});
+            }
+
+            .ag-column-drop-empty-message {
+                clear: both;
+                color: $disabled-foreground-color;
+                font: $secondary-font;
+                line-height: $grid-size * 2;
+                padding-left: $grid-size * 4;
+                padding-right: $grid-size;
+            }
+        }
+    }
+
+    ////////////////////////////////////////
+    // Sorting
+    ////////////////////////////////////////
+    .ag-filter-icon:empty {
+        @include icon-background($params, 'filter');
+    }
+
+    .ag-sort-ascending-icon:empty {
+        @include icon-background($params, 'asc');
+    }
+
+    .ag-sort-descending-icon:empty {
+        @include icon-background($params, 'desc');
+    }
+
+    .ag-sort-none-icon:empty {
+        @include icon-background($params, 'none');
+    }
+
+    .ag-numeric-header .ag-header-cell-label .ag-header-icon {
+        margin-left: 0;
+        margin-right: $grid-size;
+    }
+
+    ////////////////////////////////////////
+    // Pagination
+    ////////////////////////////////////////
+    .ag-paging-panel {
+        align-items: center;
+        border-top: 1px solid $border-color;
+        color: $secondary-foreground-color;
+        display: flex;
+        height: $header-height;
+        justify-content: flex-end;
+        padding: 0 $cell-horizontal-padding;
+
+        & > span {
+            margin-left: $grid-size * 4;
+        }
+
+        @if map-get($params, 'use-icons-for-pager-buttons') {
+            $buttonIcons: (btFirst: first, btPrevious: previous, btLast: last, btNext: next);
+
+            @each $ref, $icon in $buttonIcons {
+                button[ref='#{$ref}'] {
+                    @include icon-background($params, $icon);
+                    @include hide-text;
+
+                    appearance: none;
+                    border: 0;
+
+                    opacity: $secondary-foreground-color-opacity;
+                    padding: 0;
+
+                    &[disabled] {
+                        opacity: $disabled-foreground-color-opacity;
+                    }
+                }
+            }
+        }
+    }
+
+    ////////////////////////////////////////
+    // Selection
+    ////////////////////////////////////////
+    .ag-row-selected {
+        background-color: $selected-color;
+    }
+
+    .ag-cell-range-selected:not(.ag-cell-focus) {
+        background-color: $range-selection-background-color;
+    }
+
+    ////////////////////////////////////////
+    // Editing
+    ////////////////////////////////////////
+    .ag-cell-inline-editing {
+        @include card($params);
+        background: $editor-background-color-color;
+        height: $row-height + $grid-size * 3;
+        line-height: normal;
+        padding: $cell-horizontal-padding;
+        z-index: 2;
+
+        input[type='text'],
+        input[type='tel'],
+        input[type='date'],
+        input[type='datetime-local'] {
+            @include textbox($params);
+        }
+
+        select {
+            height: auto;
+        }
+    }
+
+    .ag-popup-editor {
+        @include card($params);
+        background: $editor-background-color-color;
+        padding: 0;
+
+        .ag-large-textarea textarea {
+            @include textbox($params);
+            height: auto;
+            padding: $cell-horizontal-padding;
+        }
+    }
+
+    ////////////////////////////////////////
+    // Rich Select
+    ////////////////////////////////////////
+    .ag-rich-select {
+        background-color: $editor-background-color-color;
+        background-image: url('#{$icons-path}tree-open.svg?color1=#{encodecolor(map-get($params, 'icon-color'))}');
+        background-position-x: calc(100% - #{$grid-size});
+        background-position-y: $grid-size * 2;
+        background-repeat: no-repeat;
+
+        .ag-rich-select-list {
+            height: 200px;
+        }
+
+        .ag-rich-select-value {
+            height: $row-height;
+            line-height: $row-height;
+            padding-left: $cell-horizontal-padding;
+        }
+
+        .ag-virtual-list-item {
+            cursor: default;
+            height: $rich-select-item-height;
+            line-height: $rich-select-item-height;
+
+            &:hover {
+                background-color: $hover-color;
+            }
+        }
+
+        .ag-rich-select-row {
+            padding-left: $cell-horizontal-padding;
+        }
+
+        .ag-rich-select-row-selected {
+            background-color: $selected-color;
+        }
+    }
+
+    ////////////////////////////////////////
+    // Floating filter
+    ////////////////////////////////////////
+    .ag-floating-filter-body {
+        float: left;
+        height: 100%;
+        margin-right: 0;
+        width: calc(100% - #{$icon-size + $grid-size * 2});
+
+        input {
+            box-sizing: border-box;
+            @include textbox($params);
+        }
+    }
+
+    .ag-floating-filter-full-body {
+        input {
+            box-sizing: border-box;
+            @include textbox($params);
+        }
+    }
+
+    .ag-floating-filter-button {
+        float: right;
+        line-height: $icon-size;
+        margin-top: $grid-size * 2.5;
+
+        button {
+            appearance: none;
+            border: 0;
+            background: transparent;
+            width: $icon-size;
+            height: $icon-size;
+            padding: 0;
+        }
+    }
+
+    .ag-cell-label-container {
+        height: 100%;
+    }
+
+    ////////////////////////////////////////
+    // Expanding headers
+    ////////////////////////////////////////
+    .ag-header-group-cell-label {
+        height: 100%;
+
+        span {
+            float: left;
+            height: 100%;
+        }
+    }
+
+    ////////////////////////////////////////
+    // Header checkbox selection
+    ////////////////////////////////////////
+    .ag-header-select-all {
+        height: 100%;
+        margin-right: $cell-horizontal-padding;
+
+        span {
+            height: 100%;
+        }
+    }
+
+    .ag-header-select-all:not(.ag-hidden) + .ag-cell-label-container {
+        float: left;
+        width: calc(100% - #{$icon-size} - #{$cell-horizontal-padding});
+    }
+
+    ////////////////////////////////////////
+    // Selection checkbox
+    ////////////////////////////////////////
+    .ag-selection-checkbox,
+    .ag-group-expanded,
+    .ag-group-contracted {
+        span {
+            margin-right: $cell-horizontal-padding;;
+        }
+    }
+
+    .ag-selection-checkbox span {
+        position: relative;
+        top: $grid-size / 2;
+    }
+
+    .ag-group-expanded {
+        .ag-icon-contracted:empty {
+            @include icon-background($params, 'tree-open');
+        }
+    }
+
+    ////////////////////////////////////////
+    // Column drop
+    ////////////////////////////////////////
+    .ag-column-drop-horizontal {
+        background-color: $panel-background-color;
+        height: $row-height;
+        line-height: $grid-size * 4;
+        padding-left: $cell-horizontal-padding;
+
+        // nasty fix for inline-block approach with half-width.
+        &.ag-width-half {
+            margin-bottom: -3px;
+        }
+
+        span {
+            float: left;
+            height: 100%;
+        }
+
+        .ag-icon-group,
+        .ag-icon-pivot {
+            margin-right: $cell-horizontal-padding;
+        }
+
+        .ag-right-arrow {
+            @include icon-background($params, 'right');
+        }
+
+        .ag-left-arrow {
+            @include icon-background($params, 'left');
+        }
+
+        .ag-left-arrow,
+        .ag-right-arrow {
+            @include hide-text;
+            height: 100%;
+            margin: 0 $grid-size;
+            opacity: $secondary-foreground-color-opacity;
+        }
+
+        .ag-column-drop-empty-message {
+            height: 100%;
+            line-height: $row-height;
+            opacity: $disabled-foreground-color-opacity;
+        }
+    }
+
+    .ag-column-drop-cell {
+        background: $chip-background-color;
+        border-radius: $grid-size * 4;
+        box-sizing: border-box;
+        height: $grid-size * 4 !important;
+        margin-top: $grid-size;
+        padding: 0 $grid-size / 2;
+
+        .ag-column-drop-cell-text {
+            height: 100%;
+            line-height: $grid-size * 4;
+            margin: 0 $grid-size;
+        }
+
+        .ag-column-drop-cell-button {
+            @include icon-background($params, 'cancel');
+            @include hide-text;
+            height: 100%;
+            margin: 0 $grid-size / 2;
+            opacity: $secondary-foreground-color-opacity;
+
+            &:hover {
+                opacity: $foreground-opacity;
+            }
+        }
+    }
+
+    .ag-select-agg-func-popup {
+        @include card($params);
+        background: $background-color;
+        padding: 0;
+        height: $grid-size * 5 * 3.5;
+
+        .ag-virtual-list-item {
+            cursor: default;
+            line-height: $grid-size * 5;
+            padding-left: $grid-size * 2;
+        }
+
+        .ag-virtual-list-item:hover {
+            background-color: map-get($params, 'menu-option-active-color');
+        }
+    }
+
+    .ag-set-filter-list, .ag-menu-column-select-wrapper {
+        width: auto;
+    }
+
+    .ag-column-drop-vertical > .ag-column-drop-cell {
+        float: left;
+        margin-bottom: $grid-size;
+        margin-left: $grid-size;
+        margin-top: 0;
+    }
+
+    // cell data changed
+    .ag-cell-data-changed {
+        background-color: $value-change-value-highlight-background-color !important;
+    }
+
+    .ag-cell-data-changed-animation {
+        background-color: transparent;
+        transition: background-color 1s;
+    }
+
+    .ag-row-stub {
+        background-color: map-get($params, 'row-stub-background-color');
+    }
+
+    .ag-stub-cell {
+        padding-left: $cell-horizontal-padding;
+        padding-top: $grid-size;
+
+        .ag-loading-icon {
+            float: left;
+            height: 100%;
+        }
+
+        .ag-loading-text {
+            margin-top: $grid-size;
+            margin-left: $grid-size;
+            float: left;
+            height: 100%;
+        }
+    }
+
+    .ag-floating-top {
+        background-color: $row-floating-background-color;
+    }
+
+    .ag-floating-top {
+        .ag-row {
+            background-color: $row-floating-background-color;
+        }
+    }
+
+    .ag-floating-bottom {
+        background-color: $row-floating-background-color;
+    }
+
+    ////////////////////////////////////////
+    // Right-To-Left
+    ////////////////////////////////////////
+    .ag-rtl {
+        .ag-numeric-cell {
+            text-align: left;
+        }
+
+        .ag-header-cell-menu-button {
+            float: left;
+        }
+
+        .ag-header-cell-label {
+            float: right;
+            width: calc(100% - #{$icon-size});
+
+            & > span {
+                float: right;
+            }
+
+            .ag-header-icon {
+                margin-top: 2px;
+            }
+        }
+
+        .ag-numeric-header {
+            .ag-header-cell-menu-button {
+                float: right;
+            }
+
+            .ag-header-cell-label {
+                float: left;
+
+                & > span {
+                    float: left;
+                }
+            }
+        }
+
+        .ag-tool-panel {
+            .ag-pivot-mode {
+                span {
+                    float: right;
+                }
+
+                .ag-pivot-mode-select {
+                    margin-right: $grid-size;
+
+                    .ag-checkbox-label {
+                        margin-right: $grid-size;
+                    }
+                }
+            }
+
+            .ag-column-drop {
+                .ag-icon {
+                    float: right;
+                }
+
+                .ag-column-drop-title {
+                    clear: left;
+                    float: right;
+                }
+
+                .ag-column-drop-empty-message {
+                    padding-left: $grid-size;
+                    padding-right: $grid-size * 4;
+                }
+            }
+        }
+
+        .ag-filter-checkbox {
+            float: right;
+            margin-left: $grid-size;
+        }
+
+        .ag-column-select-panel {
+            .ag-column-select-column-group,
+            .ag-column-select-column {
+                margin-right: $grid-size;
+
+                span {
+                    float: right;
+                }
+
+                .ag-column-select-checkbox,
+                .ag-column-group-icons {
+                    margin-left: $grid-size;
+                }
+            }
+
+            .ag-column-select-column {
+                // this is a very crude approximation, because we have one 10px hard-coded element in there.
+                margin-left: 0;
+                margin-right: $icon-size + $cell-horizontal-padding;
+            }
+        }
+
+        .ag-icon-tree-closed {
+            @include icon-background($params, 'contracted');
+        }
+
+        .ag-header-group-cell-label {
+            height: 100%;
+
+            span {
+                float: right;
+                height: 100%;
+            }
+        }
+
+        .ag-header-select-all:not(.ag-hidden) + .ag-cell-label-container {
+            float: right;
+        }
+
+        .ag-header-select-all {
+            margin-left: $cell-horizontal-padding;
+            margin-right: 0;
+        }
+
+        .ag-selection-checkbox,
+        .ag-group-expanded,
+        .ag-group-contracted {
+            span {
+                margin-right: 0;
+                margin-left: $cell-horizontal-padding;;
+            }
+        }
+
+        .ag-column-drop-horizontal {
+            padding-right: $cell-horizontal-padding;
+
+            span {
+                float: right;
+            }
+
+            .ag-icon-group,
+            .ag-icon-pivot {
+                margin-left: $cell-horizontal-padding;
+                margin-right: 0;
+            }
+
+            .ag-right-arrow {
+                @include icon-background($params, 'right');
+                height: 100%;
+            }
+
+            .ag-left-arrow {
+                @include icon-background($params, 'left');
+                height: 100%;
+            }
+        }
+
+        .ag-floating-filter-body {
+            float: right;
+            margin-left: 0;
+        }
+
+        .ag-floating-filter-button {
+            float: left;
+        }
+
+        .ag-header .ag-header-cell-resize {
+            left: -$grid-size;
+            right: auto;
+        }
+
+        .ag-header .ag-header-cell-resize::after {
+            border-right: 0;
+            border-left: 1px solid $border-color;
+        }
+    }
+
+    .ag-status-bar {
+        background: $background-color;
+        border-top: 1px solid $border-color;
+        color: $disabled-foreground-color;
+        display: flex;
+        font: $secondary-font;
+        justify-content: flex-end;
+        padding: $grid-size * 2 $grid-size * 4;
+
+        .ag-status-bar-item {
+            margin-right: $grid-size * 2;
+
+            span:nth-child(1)::after {
+                content: ':';
+            }
+
+            span:nth-child(2) {
+                color: $foreground-color;
+            }
+        }
+    }
+
+
+    &.ag-dnd-ghost {
+        border: 1px solid $border-color;
+    }
+
+    $exported: (
+        autoSizePadding: $grid-size * 3,
+        headerHeight: $header-height,
+        groupPaddingSize: $grid-size * 3 + $icon-size,
+        footerPaddingAddition: $grid-size * 4,
+        virtualItemHeight: $virtual-item-height,
+        aggFuncPopupHeight: $virtual-item-height * 3.5,
+        checkboxIndentWidth: $grid-size + $icon-size,
+        leafNodePadding: $grid-size * 3,
+        rowHeight: $row-height,
+        gridSize: $grid-size,
+        iconSize: $icon-size
+    );
+
+    $json-list: ();
+
+    @each $name, $value in $exported {
+        $json-list: append($json-list, unquote('"#{$name}": "#{$value}"'), comma);
+    }
+
+    .sass-variables::after {
+        content: '{ #{$json-list} }';
+        display: none;
+    }
+}

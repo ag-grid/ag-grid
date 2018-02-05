@@ -3,13 +3,20 @@ import {Qualifier, PostConstruct, Bean, Autowired, PreDestroy} from "../context/
 import {Column} from "../entities/column";
 import {Utils as _} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {SvgFactory} from "../svgFactory";
 import {DragService, DragListenerParams} from "./dragService";
 import {ColumnController} from "../columnController/columnController";
+import {Environment} from "../environment";
+import {RowNode} from "../entities/rowNode";
 
-let svgFactory = SvgFactory.getInstance();
+export enum DragSourceType { ToolPanel, HeaderCell, RowDrag }
 
-export enum DragSourceType { ToolPanel, HeaderCell }
+export interface DragItem {
+    // if moving a row, the, this contains the row node
+    rowNode?: RowNode,
+    // if moving columns, this contains the columns and the visible state
+    columns?: Column[],
+    visibleState?: {[key: string]: boolean};
+}
 
 export interface DragSource {
     /** So the drop target knows what type of event it is, useful for columns,
@@ -18,22 +25,30 @@ export interface DragSource {
     /** Element which, when dragged, will kick off the DnD process */
     eElement: HTMLElement;
     /** If eElement is dragged, then the dragItem is the object that gets passed around. */
-    dragItem: Column[];
+    dragItemCallback: () => DragItem;
     /** This name appears in the ghost icon when dragging */
     dragItemName: string;
     /** The drop target associated with this dragSource. So when dragging starts, this target does not get
      * onDragEnter event. */
     dragSourceDropTarget?: DropTarget;
+    /** After how many pixels of dragging should the drag operation start. Default is 4px. */
+    dragStartPixels?: number;
+    /** Callback for drag started */
+    dragStarted?: ()=>void;
+    /** Callback for drag stopped */
+    dragStopped?: ()=>void;
 }
 
 export interface DropTarget {
     /** The main container that will get the drop. */
     getContainer(): HTMLElement;
     /** If any secondary containers. For example when moving columns in ag-Grid, we listen for drops
-     * in the header as well as the body (main rows and floating rows) of the grid. */
+     * in the header as well as the body (main rows and pinned rows) of the grid. */
     getSecondaryContainers?(): HTMLElement[];
     /** Icon to show when drag is over*/
     getIconName?(): string;
+
+    isInterestedIn(type: DragSourceType): boolean;
 
     /** Callback for when drag enters */
     onDragEnter?(params: DraggingEvent): void;
@@ -50,13 +65,14 @@ export enum VDirection {Up, Down}
 export enum HDirection {Left, Right}
 
 export interface DraggingEvent {
-    event: MouseEvent,
-    x: number,
-    y: number,
-    vDirection: VDirection,
-    hDirection: HDirection,
-    dragSource: DragSource,
-    fromNudge: boolean
+    event: MouseEvent;
+    x: number;
+    y: number;
+    vDirection: VDirection;
+    hDirection: HDirection;
+    dragSource: DragSource;
+    dragItem: DragItem;
+    fromNudge: boolean;
 }
 
 @Bean('dragAndDropService')
@@ -64,6 +80,7 @@ export class DragAndDropService {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragService') private dragService: DragService;
+    @Autowired('environment') private environment: Environment;
     @Autowired('columnController') private columnController: ColumnController;
 
     public static ICON_PINNED = 'pinned';
@@ -87,7 +104,7 @@ export class DragAndDropService {
 
     private dragSourceAndParamsList: {params: DragListenerParams, dragSource: DragSource}[] = [];
 
-    private dragItem: Column[];
+    private dragItem: DragItem;
     private eventLastTime: MouseEvent;
     private dragSource: DragSource;
     private dragging: boolean;
@@ -112,25 +129,38 @@ export class DragAndDropService {
 
     @PostConstruct
     private init(): void {
-        this.ePinnedIcon = _.createIcon('columnMovePin', this.gridOptionsWrapper, null, svgFactory.createPinIcon);
-        this.ePlusIcon = _.createIcon('columnMoveAdd', this.gridOptionsWrapper, null, svgFactory.createPlusIcon);
-        this.eHiddenIcon = _.createIcon('columnMoveHide', this.gridOptionsWrapper, null, svgFactory.createColumnHiddenIcon);
-        this.eMoveIcon = _.createIcon('columnMoveMove', this.gridOptionsWrapper, null, svgFactory.createMoveIcon);
-        this.eLeftIcon = _.createIcon('columnMoveLeft', this.gridOptionsWrapper, null, svgFactory.createLeftIcon);
-        this.eRightIcon = _.createIcon('columnMoveRight', this.gridOptionsWrapper, null, svgFactory.createRightIcon);
-        this.eGroupIcon = _.createIcon('columnMoveGroup', this.gridOptionsWrapper, null, svgFactory.createGroupIcon);
-        this.eAggregateIcon = _.createIcon('columnMoveValue', this.gridOptionsWrapper, null, svgFactory.createAggregationIcon);
-        this.ePivotIcon = _.createIcon('columnMovePivot', this.gridOptionsWrapper, null, svgFactory.createPivotIcon);
-        this.eDropNotAllowedIcon = _.createIcon('dropNotAllowed', this.gridOptionsWrapper, null, svgFactory.createDropNotAllowedIcon);
+        this.ePinnedIcon = _.createIcon('columnMovePin', this.gridOptionsWrapper, null);
+        this.ePlusIcon = _.createIcon('columnMoveAdd', this.gridOptionsWrapper, null);
+        this.eHiddenIcon = _.createIcon('columnMoveHide', this.gridOptionsWrapper, null);
+        this.eMoveIcon = _.createIcon('columnMoveMove', this.gridOptionsWrapper, null);
+        this.eLeftIcon = _.createIcon('columnMoveLeft', this.gridOptionsWrapper, null);
+        this.eRightIcon = _.createIcon('columnMoveRight', this.gridOptionsWrapper, null);
+        this.eGroupIcon = _.createIcon('columnMoveGroup', this.gridOptionsWrapper, null);
+        this.eAggregateIcon = _.createIcon('columnMoveValue', this.gridOptionsWrapper, null);
+        this.ePivotIcon = _.createIcon('columnMovePivot', this.gridOptionsWrapper, null);
+        this.eDropNotAllowedIcon = _.createIcon('dropNotAllowed', this.gridOptionsWrapper, null);
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('OldToolPanelDragAndDropService');
     }
 
+    private getStringType(type: DragSourceType): string {
+        switch (type) {
+            case DragSourceType.RowDrag: return 'row';
+            case DragSourceType.HeaderCell: return 'headerCell';
+            case DragSourceType.ToolPanel: return 'toolPanel';
+            default:
+                console.warn(`ag-Grid: bug - unknown drag type ${type}`);
+                return null;
+        }
+    }
+
     public addDragSource(dragSource: DragSource, allowTouch = false): void {
-        let params = <DragListenerParams> {
+        let params: DragListenerParams = {
+            type: this.getStringType(dragSource.type),
             eElement: dragSource.eElement,
+            dragStartPixels: dragSource.dragStartPixels,
             onDragStart: this.onDragStart.bind(this, dragSource),
             onDragStop: this.onDragStop.bind(this),
             onDragging: this.onDragging.bind(this)
@@ -167,9 +197,13 @@ export class DragAndDropService {
         this.dragging = true;
         this.dragSource = dragSource;
         this.eventLastTime = mouseEvent;
-        this.dragSource.dragItem.forEach( column => column.setMoving(true));
-        this.dragItem = this.dragSource.dragItem;
+        this.dragItem = this.dragSource.dragItemCallback();
         this.lastDropTarget = this.dragSource.dragSourceDropTarget;
+
+        if (this.dragSource.dragStarted) {
+            this.dragSource.dragStarted();
+        }
+
         this.createGhost();
     }
 
@@ -177,7 +211,9 @@ export class DragAndDropService {
         this.eventLastTime = null;
         this.dragging = false;
 
-        this.dragItem.forEach( column => column.setMoving(false) );
+        if (this.dragSource.dragStopped) {
+            this.dragSource.dragStopped();
+        }
         if (this.lastDropTarget && this.lastDropTarget.onDragStop) {
             let draggingEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, null, null, false);
             this.lastDropTarget.onDragStop(draggingEvent);
@@ -238,7 +274,7 @@ export class DragAndDropService {
     private isMouseOnDropTarget(mouseEvent: MouseEvent, dropTarget: DropTarget): boolean {
         let allContainers = this.getAllContainersFromDropTarget(dropTarget);
 
-        let gotMatch: boolean = false;
+        let mouseOverTarget: boolean = false;
         allContainers.forEach( (eContainer: HTMLElement) => {
             if (!eContainer) { return; } // secondary can be missing
             let rect = eContainer.getBoundingClientRect();
@@ -253,10 +289,16 @@ export class DragAndDropService {
             //console.log(`rect.width = ${rect.width} || rect.height = ${rect.height} ## verticalFit = ${verticalFit}, horizontalFit = ${horizontalFit}, `);
 
             if (horizontalFit && verticalFit) {
-                gotMatch = true;
+                mouseOverTarget = true;
             }
         });
-        return gotMatch;
+
+        if (mouseOverTarget) {
+            let mouseOverTargetAndInterested = dropTarget.isInterestedIn(this.dragSource.type);
+            return mouseOverTargetAndInterested;
+        } else {
+            return false;
+        }
     }
 
     public addDropTarget(dropTarget: DropTarget) {
@@ -290,14 +332,15 @@ export class DragAndDropService {
         let x = event.clientX - rect.left;
         let y = event.clientY - rect.top;
 
-        let dropTargetEvent = <DraggingEvent> {
+        let dropTargetEvent: DraggingEvent = {
             event: event,
             x: x,
             y: y,
             vDirection: vDirection,
             hDirection: hDirection,
             dragSource: this.dragSource,
-            fromNudge: fromNudge
+            fromNudge: fromNudge,
+            dragItem: this.dragItem
         };
 
         return dropTargetEvent;
@@ -353,6 +396,7 @@ export class DragAndDropService {
 
     private createGhost(): void {
         this.eGhost = _.loadTemplate(DragAndDropService.GHOST_TEMPLATE);
+        _.addCssClass(this.eGhost, this.environment.getTheme());
         this.eGhostIcon = <HTMLElement> this.eGhost.querySelector('.ag-dnd-ghost-icon');
 
         this.setGhostIcon(null);

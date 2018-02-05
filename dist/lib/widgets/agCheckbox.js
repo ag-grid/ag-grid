@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,8 +30,6 @@ var componentAnnotations_1 = require("./componentAnnotations");
 var utils_1 = require("../utils");
 var context_1 = require("../context/context");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
-var svgFactory_1 = require("../svgFactory");
-var svgFactory = svgFactory_1.SvgFactory.getInstance();
 var AgCheckbox = (function (_super) {
     __extends(AgCheckbox, _super);
     function AgCheckbox() {
@@ -58,17 +56,21 @@ var AgCheckbox = (function (_super) {
         utils_1.Utils.removeAllChildren(this.eUnchecked);
         utils_1.Utils.removeAllChildren(this.eIndeterminate);
         if (this.readOnly) {
-            this.eChecked.appendChild(utils_1.Utils.createIconNoSpan('checkboxCheckedReadOnly', this.gridOptionsWrapper, null, svgFactory.createCheckboxCheckedReadOnlyIcon));
-            this.eUnchecked.appendChild(utils_1.Utils.createIconNoSpan('checkboxUncheckedReadOnly', this.gridOptionsWrapper, null, svgFactory.createCheckboxUncheckedReadOnlyIcon));
-            this.eIndeterminate.appendChild(utils_1.Utils.createIconNoSpan('checkboxIndeterminateReadOnly', this.gridOptionsWrapper, null, svgFactory.createCheckboxIndeterminateReadOnlyIcon));
+            this.eChecked.appendChild(utils_1.Utils.createIconNoSpan('checkboxCheckedReadOnly', this.gridOptionsWrapper, null));
+            this.eUnchecked.appendChild(utils_1.Utils.createIconNoSpan('checkboxUncheckedReadOnly', this.gridOptionsWrapper, null));
+            this.eIndeterminate.appendChild(utils_1.Utils.createIconNoSpan('checkboxIndeterminateReadOnly', this.gridOptionsWrapper, null));
         }
         else {
-            this.eChecked.appendChild(utils_1.Utils.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null, svgFactory.createCheckboxCheckedIcon));
-            this.eUnchecked.appendChild(utils_1.Utils.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null, svgFactory.createCheckboxUncheckedIcon));
-            this.eIndeterminate.appendChild(utils_1.Utils.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null, svgFactory.createCheckboxIndeterminateIcon));
+            this.eChecked.appendChild(utils_1.Utils.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null));
+            this.eUnchecked.appendChild(utils_1.Utils.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null));
+            this.eIndeterminate.appendChild(utils_1.Utils.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null));
         }
     };
-    AgCheckbox.prototype.onClick = function () {
+    AgCheckbox.prototype.onClick = function (event) {
+        // if we don't set the path, then won't work in Edge, as once the <span> is removed from the dom,
+        // it's not possible to calculate the path by following the parent's chain. in other browser (eg
+        // chrome) there is event.path for this purpose, but missing in Edge.
+        utils_1.Utils.addAgGridEventPath(event);
         if (!this.readOnly) {
             this.toggle();
         }
@@ -97,7 +99,11 @@ var AgCheckbox = (function (_super) {
     AgCheckbox.prototype.toggle = function () {
         var nextValue = this.getNextValue();
         if (this.passive) {
-            this.dispatchEvent(AgCheckbox.EVENT_CHANGED, { selected: nextValue });
+            var event_1 = {
+                type: AgCheckbox.EVENT_CHANGED,
+                selected: nextValue
+            };
+            this.dispatchEvent(event_1);
         }
         else {
             this.setSelected(nextValue);
@@ -117,52 +123,56 @@ var AgCheckbox = (function (_super) {
             this.selected = undefined;
         }
         this.updateIcons();
-        this.dispatchEvent(AgCheckbox.EVENT_CHANGED, { selected: this.selected });
+        var event = {
+            type: AgCheckbox.EVENT_CHANGED,
+            selected: this.selected
+        };
+        this.dispatchEvent(event);
     };
     AgCheckbox.prototype.updateIcons = function () {
         utils_1.Utils.setVisible(this.eChecked, this.selected === true);
         utils_1.Utils.setVisible(this.eUnchecked, this.selected === false);
         utils_1.Utils.setVisible(this.eIndeterminate, this.selected === undefined);
     };
+    AgCheckbox.EVENT_CHANGED = 'change';
+    AgCheckbox.TEMPLATE = '<span class="ag-checkbox" role="presentation">' +
+        '  <span class="ag-checkbox-checked" role="presentation"></span>' +
+        '  <span class="ag-checkbox-unchecked" role="presentation"></span>' +
+        '  <span class="ag-checkbox-indeterminate" role="presentation"></span>' +
+        '  <span class="ag-checkbox-label" role="presentation"></span>' +
+        '</span>';
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], AgCheckbox.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        componentAnnotations_1.QuerySelector('.ag-checkbox-checked'),
+        __metadata("design:type", HTMLElement)
+    ], AgCheckbox.prototype, "eChecked", void 0);
+    __decorate([
+        componentAnnotations_1.QuerySelector('.ag-checkbox-unchecked'),
+        __metadata("design:type", HTMLElement)
+    ], AgCheckbox.prototype, "eUnchecked", void 0);
+    __decorate([
+        componentAnnotations_1.QuerySelector('.ag-checkbox-indeterminate'),
+        __metadata("design:type", HTMLElement)
+    ], AgCheckbox.prototype, "eIndeterminate", void 0);
+    __decorate([
+        componentAnnotations_1.QuerySelector('.ag-checkbox-label'),
+        __metadata("design:type", HTMLElement)
+    ], AgCheckbox.prototype, "eLabel", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], AgCheckbox.prototype, "postConstruct", null);
+    __decorate([
+        componentAnnotations_1.Listener('click'),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [MouseEvent]),
+        __metadata("design:returntype", void 0)
+    ], AgCheckbox.prototype, "onClick", null);
     return AgCheckbox;
 }(component_1.Component));
-AgCheckbox.EVENT_CHANGED = 'change';
-AgCheckbox.TEMPLATE = '<span class="ag-checkbox">' +
-    '  <span class="ag-checkbox-checked"></span>' +
-    '  <span class="ag-checkbox-unchecked"></span>' +
-    '  <span class="ag-checkbox-indeterminate"></span>' +
-    '  <span class="ag-checkbox-label"></span>' +
-    '</span>';
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], AgCheckbox.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    componentAnnotations_1.QuerySelector('.ag-checkbox-checked'),
-    __metadata("design:type", HTMLElement)
-], AgCheckbox.prototype, "eChecked", void 0);
-__decorate([
-    componentAnnotations_1.QuerySelector('.ag-checkbox-unchecked'),
-    __metadata("design:type", HTMLElement)
-], AgCheckbox.prototype, "eUnchecked", void 0);
-__decorate([
-    componentAnnotations_1.QuerySelector('.ag-checkbox-indeterminate'),
-    __metadata("design:type", HTMLElement)
-], AgCheckbox.prototype, "eIndeterminate", void 0);
-__decorate([
-    componentAnnotations_1.QuerySelector('.ag-checkbox-label'),
-    __metadata("design:type", HTMLElement)
-], AgCheckbox.prototype, "eLabel", void 0);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], AgCheckbox.prototype, "postConstruct", null);
-__decorate([
-    componentAnnotations_1.Listener('click'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], AgCheckbox.prototype, "onClick", null);
 exports.AgCheckbox = AgCheckbox;

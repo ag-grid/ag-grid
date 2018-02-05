@@ -16,4 +16,11 @@ src/ts/**/*.js
 
 ag-grid.iml
 
+.DS_Store
+
+.sass-cache
+.cache-loader
+
+package-lock.json
+module.tgz
 

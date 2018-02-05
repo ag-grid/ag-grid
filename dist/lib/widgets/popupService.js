@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20,12 +20,20 @@ var constants_1 = require("../constants");
 var context_1 = require("../context/context");
 var gridCore_1 = require("../gridCore");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var environment_1 = require("../environment");
 var PopupService = (function () {
     function PopupService() {
+        this.activePopupElements = [];
     }
-    // this.popupService.setPopupParent(this.eRootPanel.getGui());
     PopupService.prototype.getPopupParent = function () {
-        return this.gridCore.getRootGui();
+        var ePopupParent = this.gridOptionsWrapper.getPopupParent();
+        if (ePopupParent) {
+            // user provided popup parent, may not have the right theme applied
+            return ePopupParent;
+        }
+        else {
+            return this.gridCore.getRootGui();
+        }
     };
     PopupService.prototype.positionPopupForMenu = function (params) {
         var sourceRect = params.eventSource.getBoundingClientRect();
@@ -185,8 +193,9 @@ var PopupService = (function () {
     //adds an element to a div, but also listens to background checking for clicks,
     //so that when the background is clicked, the child is removed again, giving
     //a model look to popups.
-    PopupService.prototype.addAsModalPopup = function (eChild, closeOnEsc, closedCallback) {
-        var eBody = document.body;
+    PopupService.prototype.addAsModalPopup = function (eChild, closeOnEsc, closedCallback, click) {
+        var _this = this;
+        var eBody = this.gridOptionsWrapper.getDocument();
         if (!eBody) {
             console.warn('ag-grid: could not find the body of the document, document.body is empty');
             return;
@@ -197,79 +206,120 @@ var PopupService = (function () {
         if (popupAlreadyShown) {
             return;
         }
-        this.getPopupParent().appendChild(eChild);
-        var that = this;
+        var ePopupParent = this.getPopupParent();
+        // add env CSS class to child, in case user provided a popup parent, which means
+        // theme class may be missing
+        var eWrapper = document.createElement('div');
+        utils_1.Utils.addCssClass(eWrapper, this.environment.getTheme());
+        eWrapper.appendChild(eChild);
+        ePopupParent.appendChild(eWrapper);
+        this.activePopupElements.push(eChild);
         var popupHidden = false;
-        // if we add these listeners now, then the current mouse
-        // click will be included, which we don't want
-        setTimeout(function () {
-            if (closeOnEsc) {
-                eBody.addEventListener('keydown', hidePopupOnEsc);
-            }
-            eBody.addEventListener('click', hidePopup);
-            eBody.addEventListener('touchstart', hidePopup);
-            eBody.addEventListener('contextmenu', hidePopup);
-            //eBody.addEventListener('mousedown', hidePopup);
-            eChild.addEventListener('click', consumeMouseClick);
-            eChild.addEventListener('touchstart', consumeTouchClick);
-            //eChild.addEventListener('mousedown', consumeClick);
-        }, 0);
-        // let timeOfMouseEventOnChild = new Date().getTime();
-        var childMouseClick = null;
-        var childTouch = null;
-        function hidePopupOnEsc(event) {
+        var hidePopupOnKeyboardEvent = function (event) {
             var key = event.which || event.keyCode;
             if (key === constants_1.Constants.KEY_ESCAPE) {
                 hidePopup(null);
             }
-        }
-        function hidePopup(event) {
-            // we don't hide popup if the event was on the child
-            if (event && event === childMouseClick) {
+        };
+        var hidePopupOnMouseEvent = function (event) {
+            hidePopup(event);
+        };
+        var hidePopupOnTouchEvent = function (event) {
+            hidePopup(null, event);
+        };
+        var hidePopup = function (mouseEvent, touchEvent) {
+            // we don't hide popup if the event was on the child, or any
+            // children of this child
+            if (_this.isEventFromCurrentPopup(mouseEvent, touchEvent, eChild)) {
                 return;
             }
-            if (event && event === childTouch) {
+            // if the event to close is actually the open event, then ignore it
+            if (_this.isEventSameChainAsOriginalEvent(click, mouseEvent, touchEvent)) {
                 return;
             }
             // this method should only be called once. the client can have different
-            // paths, each one wanting to close, so this method may be called multiple
-            // times.
+            // paths, each one wanting to close, so this method may be called multiple times.
             if (popupHidden) {
                 return;
             }
             popupHidden = true;
-            that.getPopupParent().removeChild(eChild);
-            eBody.removeEventListener('keydown', hidePopupOnEsc);
-            //eBody.removeEventListener('mousedown', hidePopupOnEsc);
-            eBody.removeEventListener('click', hidePopup);
-            eBody.removeEventListener('touchstart', hidePopup);
-            eBody.removeEventListener('contextmenu', hidePopup);
-            eChild.removeEventListener('click', consumeMouseClick);
-            eChild.removeEventListener('touchstart', consumeTouchClick);
-            //eChild.removeEventListener('mousedown', consumeClick);
+            ePopupParent.removeChild(eWrapper);
+            utils_1.Utils.removeFromArray(_this.activePopupElements, eChild);
+            eBody.removeEventListener('keydown', hidePopupOnKeyboardEvent);
+            eBody.removeEventListener('click', hidePopupOnMouseEvent);
+            eBody.removeEventListener('touchstart', hidePopupOnTouchEvent);
+            eBody.removeEventListener('contextmenu', hidePopupOnMouseEvent);
             if (closedCallback) {
                 closedCallback();
             }
-        }
-        function consumeMouseClick(event) {
-            childMouseClick = event;
-        }
-        function consumeTouchClick(event) {
-            childTouch = event;
-        }
+        };
+        // if we add these listeners now, then the current mouse
+        // click will be included, which we don't want
+        setTimeout(function () {
+            if (closeOnEsc) {
+                eBody.addEventListener('keydown', hidePopupOnKeyboardEvent);
+            }
+            eBody.addEventListener('click', hidePopupOnMouseEvent);
+            eBody.addEventListener('touchstart', hidePopupOnTouchEvent);
+            eBody.addEventListener('contextmenu', hidePopupOnMouseEvent);
+        }, 0);
         return hidePopup;
     };
+    PopupService.prototype.isEventFromCurrentPopup = function (mouseEvent, touchEvent, eChild) {
+        var event = mouseEvent ? mouseEvent : touchEvent;
+        if (event) {
+            var indexOfThisChild = this.activePopupElements.indexOf(eChild);
+            for (var i = indexOfThisChild; i < this.activePopupElements.length; i++) {
+                var element = this.activePopupElements[i];
+                if (utils_1.Utils.isElementInEventPath(element, event)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+    // in some browsers, the context menu event can be fired before the click event, which means
+    // the context menu event could open the popup, but then the click event closes it straight away.
+    PopupService.prototype.isEventSameChainAsOriginalEvent = function (originalClick, mouseEvent, touchEvent) {
+        // we check the coordinates of the event, to see if it's the same event. there is a 1 / 1000 chance that
+        // the event is a different event, however that is an edge case that is not very relevant (the user clicking
+        // twice on the same location isn't a normal path).
+        // event could be mouse event or touch event.
+        var mouseEventOrTouch;
+        if (mouseEvent) {
+            // mouse event can be used direction, it has coordinates
+            mouseEventOrTouch = mouseEvent;
+        }
+        else if (touchEvent) {
+            // touch event doesn't have coordinates, need it's touch object
+            mouseEventOrTouch = touchEvent.touches[0];
+        }
+        if (mouseEventOrTouch && originalClick) {
+            // for x, allow 4px margin, to cover iPads, where touch (which opens menu) is followed
+            // by browser click (when you life finger up, touch is interrupted as click in browser)
+            var xMatch = Math.abs(originalClick.screenX - mouseEvent.screenX) < 5;
+            var yMatch = Math.abs(originalClick.screenY - mouseEvent.screenY) < 5;
+            if (xMatch && yMatch) {
+                return true;
+            }
+        }
+        return false;
+    };
+    __decorate([
+        context_1.Autowired('gridCore'),
+        __metadata("design:type", gridCore_1.GridCore)
+    ], PopupService.prototype, "gridCore", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], PopupService.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('environment'),
+        __metadata("design:type", environment_1.Environment)
+    ], PopupService.prototype, "environment", void 0);
+    PopupService = __decorate([
+        context_1.Bean('popupService')
+    ], PopupService);
     return PopupService;
 }());
-__decorate([
-    context_1.Autowired('gridCore'),
-    __metadata("design:type", gridCore_1.GridCore)
-], PopupService.prototype, "gridCore", void 0);
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], PopupService.prototype, "gridOptionsWrapper", void 0);
-PopupService = __decorate([
-    context_1.Bean('popupService')
-], PopupService);
 exports.PopupService = PopupService;

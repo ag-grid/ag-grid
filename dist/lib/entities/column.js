@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20,6 +20,8 @@ var utils_1 = require("../utils");
 var context_1 = require("../context/context");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var columnUtils_1 = require("../columnController/columnUtils");
+var columnApi_1 = require("../columnController/columnApi");
+var gridApi_1 = require("../gridApi");
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
 // This class implements both interfaces ColumnGroupChild and OriginalColumnGroupChild as the class can
@@ -29,6 +31,7 @@ var columnUtils_1 = require("../columnController/columnUtils");
 var Column = (function () {
     function Column(colDef, colId, primary) {
         this.moving = false;
+        this.menuVisible = false;
         this.filterActive = false;
         this.eventService = new eventService_1.EventService();
         this.rowGroupActive = false;
@@ -40,7 +43,19 @@ var Column = (function () {
         this.sortedAt = colDef.sortedAt;
         this.colId = colId;
         this.primary = primary;
+        this.lockPosition = colDef.lockPosition === true;
+        this.lockPinned = colDef.lockPinned === true;
+        this.lockVisible = colDef.lockVisible === true;
     }
+    Column.prototype.isLockPosition = function () {
+        return this.lockPosition;
+    };
+    Column.prototype.isLockVisible = function () {
+        return this.lockVisible;
+    };
+    Column.prototype.isLockPinned = function () {
+        return this.lockPinned;
+    };
     Column.prototype.setParent = function (parent) {
         this.parent = parent;
     };
@@ -49,10 +64,6 @@ var Column = (function () {
     };
     // this is done after constructor as it uses gridOptionsWrapper
     Column.prototype.initialise = function () {
-        this.floatingCellRenderer = this.frameworkFactory.colDefFloatingCellRenderer(this.colDef);
-        this.cellRenderer = this.frameworkFactory.colDefCellRenderer(this.colDef);
-        this.cellEditor = this.frameworkFactory.colDefCellEditor(this.colDef);
-        this.filter = this.frameworkFactory.colDefFilter(this.colDef);
         this.setPinned(this.colDef.pinned);
         var minColWidth = this.gridOptionsWrapper.getMinColWidth();
         var maxColWidth = this.gridOptionsWrapper.getMaxColWidth();
@@ -74,17 +85,16 @@ var Column = (function () {
         this.tooltipFieldContainsDots = utils_1.Utils.exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
         this.validate();
     };
-    Column.prototype.getCellRenderer = function () {
-        return this.cellRenderer;
+    Column.prototype.isEmptyGroup = function () {
+        return false;
     };
-    Column.prototype.getCellEditor = function () {
-        return this.cellEditor;
-    };
-    Column.prototype.getFloatingCellRenderer = function () {
-        return this.floatingCellRenderer;
-    };
-    Column.prototype.getFilter = function () {
-        return this.filter;
+    Column.prototype.isRowGroupDisplayed = function (colId) {
+        if (utils_1.Utils.missing(this.colDef) || utils_1.Utils.missing(this.colDef.showRowGroup)) {
+            return false;
+        }
+        var showingAllGroups = this.colDef.showRowGroup === true;
+        var showingThisGroup = this.colDef.showRowGroup === colId;
+        return showingAllGroups || showingThisGroup;
     };
     Column.prototype.getUniqueId = function () {
         return this.getId();
@@ -102,16 +112,65 @@ var Column = (function () {
         return this.tooltipFieldContainsDots;
     };
     Column.prototype.validate = function () {
+        var colDefAny = this.colDef;
         if (!this.gridOptionsWrapper.isEnterprise()) {
-            if (utils_1.Utils.exists(this.colDef.aggFunc)) {
-                console.warn('ag-Grid: aggFunc is only valid in ag-Grid-Enterprise');
-            }
-            if (utils_1.Utils.exists(this.colDef.rowGroupIndex)) {
-                console.warn('ag-Grid: rowGroupIndex is only valid in ag-Grid-Enterprise');
-            }
+            var itemsNotAllowedWithoutEnterprise = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'pivot', 'pivotIndex', 'aggFunc'];
+            itemsNotAllowedWithoutEnterprise.forEach(function (item) {
+                if (utils_1.Utils.exists(colDefAny[item])) {
+                    console.warn("ag-Grid: " + item + " is only valid in ag-Grid-Enterprise, your column definition should not have " + item);
+                }
+            });
+        }
+        if (this.gridOptionsWrapper.isTreeData()) {
+            var itemsNotAllowedWithTreeData = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'pivot', 'pivotIndex'];
+            itemsNotAllowedWithTreeData.forEach(function (item) {
+                if (utils_1.Utils.exists(colDefAny[item])) {
+                    console.warn("ag-Grid: " + item + " is not possible when doing tree data, your column definition should not have " + item);
+                }
+            });
         }
         if (utils_1.Utils.exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
             console.warn('ag-Grid: colDef.width should be a number, not ' + typeof this.colDef.width);
+        }
+        if (utils_1.Utils.get(this, 'colDef.cellRendererParams.restrictToOneGroup', null)) {
+            console.warn('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.restrictToOneGroup is deprecated. You should use showRowGroup');
+        }
+        if (utils_1.Utils.get(this, 'colDef.cellRendererParams.keyMap', null)) {
+            console.warn('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.keyMap is deprecated. You should use colDef.keyCreator');
+        }
+        if (utils_1.Utils.get(this, 'colDef.cellRendererParams.keyMap', null)) {
+            console.warn('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.keyMap is deprecated. You should use colDef.keyCreator');
+        }
+        if (colDefAny.floatingCellRenderer) {
+            console.warn('ag-Grid: since v11, floatingCellRenderer is now pinnedRowCellRenderer');
+            this.colDef.pinnedRowCellRenderer = colDefAny.floatingCellRenderer;
+        }
+        if (colDefAny.floatingRendererFramework) {
+            console.warn('ag-Grid: since v11, floatingRendererFramework is now pinnedRowCellRendererFramework');
+            this.colDef.pinnedRowCellRendererFramework = colDefAny.floatingRendererFramework;
+        }
+        if (colDefAny.floatingRendererParams) {
+            console.warn('ag-Grid: since v11, floatingRendererParams is now pinnedRowCellRendererParams');
+            this.colDef.pinnedRowCellRendererParams = colDefAny.floatingRendererParams;
+        }
+        if (colDefAny.floatingValueFormatter) {
+            console.warn('ag-Grid: since v11, floatingValueFormatter is now pinnedRowValueFormatter');
+            this.colDef.pinnedRowValueFormatter = colDefAny.floatingValueFormatter;
+        }
+        if (colDefAny.cellFormatter) {
+            console.warn('ag-Grid: since v12, cellFormatter is now valueFormatter');
+            if (utils_1.Utils.missing(this.colDef.valueFormatter)) {
+                this.colDef.valueFormatter = colDefAny.cellFormatter;
+            }
+        }
+        if (colDefAny.headerCellTemplate) {
+            console.warn('ag-Grid: since v15, headerCellTemplate is gone, use header component instead.');
+        }
+        if (colDefAny.headerCellRenderer) {
+            console.warn('ag-Grid: since v15, headerCellRenderer is gone, use header component instead.');
+        }
+        if (colDefAny.volatile) {
+            console.warn('ag-Grid: since v16, colDef.volatile is gone, please check refresh docs on how to refresh specific cells.');
         }
     };
     Column.prototype.addEventListener = function (eventType, listener) {
@@ -123,6 +182,7 @@ var Column = (function () {
     Column.prototype.createIsColumnFuncParams = function (rowNode) {
         return {
             node: rowNode,
+            data: rowNode.data,
             column: this,
             colDef: this.colDef,
             context: this.gridOptionsWrapper.getContext(),
@@ -138,27 +198,59 @@ var Column = (function () {
         // if function, then call the function to find out
         if (typeof this.colDef.suppressNavigable === 'function') {
             var params = this.createIsColumnFuncParams(rowNode);
-            var suppressNaviableFunc = this.colDef.suppressNavigable;
-            return suppressNaviableFunc(params);
+            var userFunc = this.colDef.suppressNavigable;
+            return userFunc(params);
         }
         return false;
     };
     Column.prototype.isCellEditable = function (rowNode) {
+        // only allow editing of groups if the user has this option enabled
+        if (rowNode.group && !this.gridOptionsWrapper.isEnableGroupEdit()) {
+            return false;
+        }
+        return this.isColumnFunc(rowNode, this.colDef.editable);
+    };
+    Column.prototype.isRowDrag = function (rowNode) {
+        return this.isColumnFunc(rowNode, this.colDef.rowDrag);
+    };
+    Column.prototype.isCellCheckboxSelection = function (rowNode) {
+        return this.isColumnFunc(rowNode, this.colDef.checkboxSelection);
+    };
+    Column.prototype.isSuppressPaste = function (rowNode) {
+        return this.isColumnFunc(rowNode, this.colDef ? this.colDef.suppressPaste : null);
+    };
+    Column.prototype.isResizable = function () {
+        var enableColResize = this.gridOptionsWrapper.isEnableColResize();
+        var suppressResize = this.colDef && this.colDef.suppressResize;
+        return enableColResize && !suppressResize;
+    };
+    Column.prototype.isColumnFunc = function (rowNode, value) {
         // if boolean set, then just use it
-        if (typeof this.colDef.editable === 'boolean') {
-            return this.colDef.editable;
+        if (typeof value === 'boolean') {
+            return value;
         }
         // if function, then call the function to find out
-        if (typeof this.colDef.editable === 'function') {
+        if (typeof value === 'function') {
             var params = this.createIsColumnFuncParams(rowNode);
-            var editableFunc = this.colDef.editable;
+            var editableFunc = value;
             return editableFunc(params);
         }
         return false;
     };
-    Column.prototype.setMoving = function (moving) {
+    Column.prototype.setMoving = function (moving, source) {
+        if (source === void 0) { source = "api"; }
         this.moving = moving;
-        this.eventService.dispatchEvent(Column.EVENT_MOVING_CHANGED);
+        this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_MOVING_CHANGED, source));
+    };
+    Column.prototype.createColumnEvent = function (type, source) {
+        return {
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            type: type,
+            column: this,
+            columns: [this],
+            source: source
+        };
     };
     Column.prototype.isMoving = function () {
         return this.moving;
@@ -166,11 +258,22 @@ var Column = (function () {
     Column.prototype.getSort = function () {
         return this.sort;
     };
-    Column.prototype.setSort = function (sort) {
+    Column.prototype.setSort = function (sort, source) {
+        if (source === void 0) { source = "api"; }
         if (this.sort !== sort) {
             this.sort = sort;
-            this.eventService.dispatchEvent(Column.EVENT_SORT_CHANGED);
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_SORT_CHANGED, source));
         }
+    };
+    Column.prototype.setMenuVisible = function (visible, source) {
+        if (source === void 0) { source = "api"; }
+        if (this.menuVisible !== visible) {
+            this.menuVisible = visible;
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_MENU_VISIBLE_CHANGED, source));
+        }
+    };
+    Column.prototype.isMenuVisible = function () {
+        return this.menuVisible;
     };
     Column.prototype.isSortAscending = function () {
         return this.sort === Column.SORT_ASC;
@@ -205,22 +308,24 @@ var Column = (function () {
     Column.prototype.getRight = function () {
         return this.left + this.actualWidth;
     };
-    Column.prototype.setLeft = function (left) {
+    Column.prototype.setLeft = function (left, source) {
+        if (source === void 0) { source = "api"; }
         this.oldLeft = this.left;
         if (this.left !== left) {
             this.left = left;
-            this.eventService.dispatchEvent(Column.EVENT_LEFT_CHANGED);
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_LEFT_CHANGED, source));
         }
     };
     Column.prototype.isFilterActive = function () {
         return this.filterActive;
     };
-    Column.prototype.setFilterActive = function (active) {
+    Column.prototype.setFilterActive = function (active, source) {
+        if (source === void 0) { source = "api"; }
         if (this.filterActive !== active) {
             this.filterActive = active;
-            this.eventService.dispatchEvent(Column.EVENT_FILTER_ACTIVE_CHANGED);
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_FILTER_ACTIVE_CHANGED, source));
         }
-        this.eventService.dispatchEvent(Column.EVENT_FILTER_CHANGED);
+        this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_FILTER_CHANGED, source));
     };
     Column.prototype.setPinned = function (pinned) {
         // pinning is not allowed when doing 'forPrint'
@@ -238,16 +343,18 @@ var Column = (function () {
         }
         // console.log(`setColumnsPinned ${this.getColId()} ${this.pinned}`);
     };
-    Column.prototype.setFirstRightPinned = function (firstRightPinned) {
+    Column.prototype.setFirstRightPinned = function (firstRightPinned, source) {
+        if (source === void 0) { source = "api"; }
         if (this.firstRightPinned !== firstRightPinned) {
             this.firstRightPinned = firstRightPinned;
-            this.eventService.dispatchEvent(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED);
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, source));
         }
     };
-    Column.prototype.setLastLeftPinned = function (lastLeftPinned) {
+    Column.prototype.setLastLeftPinned = function (lastLeftPinned, source) {
+        if (source === void 0) { source = "api"; }
         if (this.lastLeftPinned !== lastLeftPinned) {
             this.lastLeftPinned = lastLeftPinned;
-            this.eventService.dispatchEvent(Column.EVENT_LAST_LEFT_PINNED_CHANGED);
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_LAST_LEFT_PINNED_CHANGED, source));
         }
     };
     Column.prototype.isFirstRightPinned = function () {
@@ -268,11 +375,12 @@ var Column = (function () {
     Column.prototype.getPinned = function () {
         return this.pinned;
     };
-    Column.prototype.setVisible = function (visible) {
+    Column.prototype.setVisible = function (visible, source) {
+        if (source === void 0) { source = "api"; }
         var newValue = visible === true;
         if (this.visible !== newValue) {
             this.visible = newValue;
-            this.eventService.dispatchEvent(Column.EVENT_VISIBLE_CHANGED);
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_VISIBLE_CHANGED, source));
         }
     };
     Column.prototype.isVisible = function () {
@@ -296,10 +404,35 @@ var Column = (function () {
     Column.prototype.getActualWidth = function () {
         return this.actualWidth;
     };
-    Column.prototype.setActualWidth = function (actualWidth) {
+    Column.prototype.getColSpan = function (rowNode) {
+        if (utils_1.Utils.missing(this.colDef.colSpan)) {
+            return 1;
+        }
+        else {
+            var params = {
+                node: rowNode,
+                data: rowNode.data,
+                colDef: this.colDef,
+                column: this,
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                context: this.gridOptionsWrapper.getContext()
+            };
+            var colSpan = this.colDef.colSpan(params);
+            // colSpan must be number equal to or greater than 1
+            if (colSpan > 1) {
+                return colSpan;
+            }
+            else {
+                return 1;
+            }
+        }
+    };
+    Column.prototype.setActualWidth = function (actualWidth, source) {
+        if (source === void 0) { source = "api"; }
         if (this.actualWidth !== actualWidth) {
             this.actualWidth = actualWidth;
-            this.eventService.dispatchEvent(Column.EVENT_WIDTH_CHANGED);
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_WIDTH_CHANGED, source));
         }
     };
     Column.prototype.isGreaterThanMax = function (width) {
@@ -316,22 +449,25 @@ var Column = (function () {
     Column.prototype.getMaxWidth = function () {
         return this.maxWidth;
     };
-    Column.prototype.setMinimum = function () {
-        this.setActualWidth(this.minWidth);
+    Column.prototype.setMinimum = function (source) {
+        if (source === void 0) { source = "api"; }
+        this.setActualWidth(this.minWidth, source);
     };
-    Column.prototype.setRowGroupActive = function (rowGroup) {
+    Column.prototype.setRowGroupActive = function (rowGroup, source) {
+        if (source === void 0) { source = "api"; }
         if (this.rowGroupActive !== rowGroup) {
             this.rowGroupActive = rowGroup;
-            this.eventService.dispatchEvent(Column.EVENT_ROW_GROUP_CHANGED, this);
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_ROW_GROUP_CHANGED, source));
         }
     };
     Column.prototype.isRowGroupActive = function () {
         return this.rowGroupActive;
     };
-    Column.prototype.setPivotActive = function (pivot) {
+    Column.prototype.setPivotActive = function (pivot, source) {
+        if (source === void 0) { source = "api"; }
         if (this.pivotActive !== pivot) {
             this.pivotActive = pivot;
-            this.eventService.dispatchEvent(Column.EVENT_PIVOT_CHANGED, this);
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_PIVOT_CHANGED, source));
         }
     };
     Column.prototype.isPivotActive = function () {
@@ -343,10 +479,11 @@ var Column = (function () {
     Column.prototype.isAnyFunctionAllowed = function () {
         return this.isAllowPivot() || this.isAllowRowGroup() || this.isAllowValue();
     };
-    Column.prototype.setValueActive = function (value) {
+    Column.prototype.setValueActive = function (value, source) {
+        if (source === void 0) { source = "api"; }
         if (this.aggregationActive !== value) {
             this.aggregationActive = value;
-            this.eventService.dispatchEvent(Column.EVENT_VALUE_CHANGED, this);
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_VALUE_CHANGED, source));
         }
     };
     Column.prototype.isValueActive = function () {
@@ -361,51 +498,67 @@ var Column = (function () {
     Column.prototype.isAllowRowGroup = function () {
         return this.colDef.enableRowGroup === true;
     };
+    Column.prototype.getMenuTabs = function (defaultValues) {
+        var menuTabs = this.getColDef().menuTabs;
+        if (menuTabs == null) {
+            menuTabs = defaultValues;
+        }
+        return menuTabs;
+    };
+    // + renderedHeaderCell - for making header cell transparent when moving
+    Column.EVENT_MOVING_CHANGED = 'movingChanged';
+    // + renderedCell - changing left position
+    Column.EVENT_LEFT_CHANGED = 'leftChanged';
+    // + renderedCell - changing width
+    Column.EVENT_WIDTH_CHANGED = 'widthChanged';
+    // + renderedCell - for changing pinned classes
+    Column.EVENT_LAST_LEFT_PINNED_CHANGED = 'lastLeftPinnedChanged';
+    Column.EVENT_FIRST_RIGHT_PINNED_CHANGED = 'firstRightPinnedChanged';
+    // + renderedColumn - for changing visibility icon
+    Column.EVENT_VISIBLE_CHANGED = 'visibleChanged';
+    // + every time the filter changes, used in the floating filters
+    Column.EVENT_FILTER_CHANGED = 'filterChanged';
+    // + renderedHeaderCell - marks the header with filter icon
+    Column.EVENT_FILTER_ACTIVE_CHANGED = 'filterActiveChanged';
+    // + renderedHeaderCell - marks the header with sort icon
+    Column.EVENT_SORT_CHANGED = 'sortChanged';
+    Column.EVENT_MENU_VISIBLE_CHANGED = 'menuVisibleChanged';
+    // + toolpanel, for gui updates
+    Column.EVENT_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
+    // + toolpanel, for gui updates
+    Column.EVENT_PIVOT_CHANGED = 'columnPivotChanged';
+    // + toolpanel, for gui updates
+    Column.EVENT_VALUE_CHANGED = 'columnValueChanged';
+    Column.PINNED_RIGHT = 'right';
+    Column.PINNED_LEFT = 'left';
+    Column.SORT_ASC = 'asc';
+    Column.SORT_DESC = 'desc';
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], Column.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('columnUtils'),
+        __metadata("design:type", columnUtils_1.ColumnUtils)
+    ], Column.prototype, "columnUtils", void 0);
+    __decorate([
+        context_1.Autowired('frameworkFactory'),
+        __metadata("design:type", Object)
+    ], Column.prototype, "frameworkFactory", void 0);
+    __decorate([
+        context_1.Autowired('columnApi'),
+        __metadata("design:type", columnApi_1.ColumnApi)
+    ], Column.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], Column.prototype, "gridApi", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], Column.prototype, "initialise", null);
     return Column;
 }());
-// + renderedHeaderCell - for making header cell transparent when moving
-Column.EVENT_MOVING_CHANGED = 'movingChanged';
-// + renderedCell - changing left position
-Column.EVENT_LEFT_CHANGED = 'leftChanged';
-// + renderedCell - changing width
-Column.EVENT_WIDTH_CHANGED = 'widthChanged';
-// + renderedCell - for changing pinned classes
-Column.EVENT_LAST_LEFT_PINNED_CHANGED = 'lastLeftPinnedChanged';
-Column.EVENT_FIRST_RIGHT_PINNED_CHANGED = 'firstRightPinnedChanged';
-// + renderedColumn - for changing visibility icon
-Column.EVENT_VISIBLE_CHANGED = 'visibleChanged';
-// + every time the filter changes, used in the floating filters
-Column.EVENT_FILTER_CHANGED = 'filterChanged';
-// + renderedHeaderCell - marks the header with filter icon
-Column.EVENT_FILTER_ACTIVE_CHANGED = 'filterActiveChanged';
-// + renderedHeaderCell - marks the header with sort icon
-Column.EVENT_SORT_CHANGED = 'sortChanged';
-// + toolpanel, for gui updates
-Column.EVENT_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
-// + toolpanel, for gui updates
-Column.EVENT_PIVOT_CHANGED = 'columnPivotChanged';
-// + toolpanel, for gui updates
-Column.EVENT_VALUE_CHANGED = 'columnValueChanged';
-Column.PINNED_RIGHT = 'right';
-Column.PINNED_LEFT = 'left';
-Column.SORT_ASC = 'asc';
-Column.SORT_DESC = 'desc';
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], Column.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.Autowired('columnUtils'),
-    __metadata("design:type", columnUtils_1.ColumnUtils)
-], Column.prototype, "columnUtils", void 0);
-__decorate([
-    context_1.Autowired('frameworkFactory'),
-    __metadata("design:type", Object)
-], Column.prototype, "frameworkFactory", void 0);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], Column.prototype, "initialise", null);
 exports.Column = Column;

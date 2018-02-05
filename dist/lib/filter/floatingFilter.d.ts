@@ -1,12 +1,13 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v16.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { SerializedTextFilter } from "./textFilter";
 import { SerializedDateFilter } from "./dateFilter";
 import { SerializedNumberFilter } from "./numberFilter";
 import { IComponent } from "../interfaces/iComponent";
 import { Component } from "../widgets/component";
 import { Column } from "../entities/column";
+import { GridApi } from "../gridApi";
 export interface FloatingFilterChange {
 }
 export interface IFloatingFilterParams<M, F extends FloatingFilterChange> {
@@ -15,6 +16,7 @@ export interface IFloatingFilterParams<M, F extends FloatingFilterChange> {
     currentParentModel: () => M;
     suppressFilterButton: boolean;
     debounceMs?: number;
+    api: GridApi;
 }
 export interface IFloatingFilter<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> {
     onParentModelChanged(parentModel: M): void;
@@ -43,12 +45,15 @@ export declare class TextFloatingFilterComp extends InputTextFloatingFilterComp<
     asParentModel(): SerializedTextFilter;
 }
 export declare class DateFloatingFilterComp extends Component implements IFloatingFilter<SerializedDateFilter, BaseFloatingFilterChange<SerializedDateFilter>, IFloatingFilterParams<SerializedDateFilter, BaseFloatingFilterChange<SerializedDateFilter>>> {
-    private componentProvider;
-    private dateComponent;
+    private componentRecipes;
+    private dateComponentPromise;
     onFloatingFilterChanged: (change: BaseFloatingFilterChange<SerializedDateFilter>) => void;
     currentParentModel: () => SerializedDateFilter;
+    lastKnownModel: SerializedDateFilter;
     init(params: IFloatingFilterParams<SerializedDateFilter, BaseFloatingFilterChange<SerializedDateFilter>>): void;
     private onDateChanged();
+    equalModels(left: SerializedDateFilter, right: SerializedDateFilter): boolean;
+    asParentModel(): SerializedDateFilter;
     onParentModelChanged(parentModel: SerializedDateFilter): void;
 }
 export declare class NumberFloatingFilterComp extends InputTextFloatingFilterComp<SerializedNumberFilter, IFloatingFilterParams<SerializedNumberFilter, BaseFloatingFilterChange<SerializedNumberFilter>>> {

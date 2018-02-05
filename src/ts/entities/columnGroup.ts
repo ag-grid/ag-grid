@@ -6,6 +6,9 @@ import {OriginalColumnGroup} from "./originalColumnGroup";
 import {EventService} from "../eventService";
 import {Autowired} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {AgEvent} from "../events";
+import {ColumnApi} from "../columnController/columnApi";
+import {GridApi} from "../gridApi";
 
 export class ColumnGroup implements ColumnGroupChild {
 
@@ -13,7 +16,7 @@ export class ColumnGroup implements ColumnGroupChild {
     public static HEADER_GROUP_SHOW_CLOSED = 'closed';
 
     public static EVENT_LEFT_CHANGED = 'leftChanged';
-    public static EVENT_DISPLAYED_CHILDREN_CHANGED = 'leftChanged';
+    public static EVENT_DISPLAYED_CHILDREN_CHANGED = 'displayedChildrenChanged';
 
     // this is static, a it is used outside of this class
     public static createUniqueId(groupId: string, instanceId: number): string {
@@ -21,6 +24,8 @@ export class ColumnGroup implements ColumnGroupChild {
     }
 
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     // all the children of this group, regardless of whether they are opened or closed
     private children:ColumnGroupChild[];
@@ -64,6 +69,23 @@ export class ColumnGroup implements ColumnGroupChild {
         return ColumnGroup.createUniqueId(this.groupId, this.instanceId);
     }
 
+    public isEmptyGroup(): boolean {
+        return this.displayedChildren.length === 0;
+    }
+
+    public isMoving(): boolean {
+        let allLeafColumns = this.getOriginalColumnGroup().getLeafColumns();
+        if (!allLeafColumns || allLeafColumns.length===0) { return false; }
+
+        let allMoving = true;
+        allLeafColumns.forEach( col => {
+            if (!col.isMoving()) {
+                allMoving = false;
+            }
+        });
+        return allMoving;
+    }
+
     public checkLeft(): void {
         // first get all children to setLeft, as it impacts our decision below
         this.displayedChildren.forEach( (child: ColumnGroupChild) => {
@@ -101,8 +123,14 @@ export class ColumnGroup implements ColumnGroupChild {
         this.oldLeft = left;
         if (this.left !== left) {
             this.left = left;
-            this.localEventService.dispatchEvent(ColumnGroup.EVENT_LEFT_CHANGED);
+            this.localEventService.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_LEFT_CHANGED));
         }
+    }
+
+    private createAgEvent(type: string): AgEvent {
+        return {
+            type: type,
+        };
     }
 
     public addEventListener(eventType: string, listener: Function): void {
@@ -112,14 +140,6 @@ export class ColumnGroup implements ColumnGroupChild {
     public removeEventListener(eventType: string, listener: Function): void {
         this.localEventService.removeEventListener(eventType, listener);
     }
-
-    // public setMoving(moving: boolean) {
-    //     this.getDisplayedLeafColumns().forEach( (column)=> column.setMoving(moving) );
-    // }
-    //
-    // public isMoving(): boolean {
-    //     return this.moving;
-    // }
 
     public getGroupId(): string {
         return this.groupId;
@@ -154,6 +174,20 @@ export class ColumnGroup implements ColumnGroupChild {
             });
         }
         return groupActualWidth;
+    }
+
+    public isResizable(): boolean {
+        if (!this.displayedChildren) { return false; }
+
+        // if at least one child is resizable, then the group is resizable
+        let result = false;
+        this.displayedChildren.forEach( (child: ColumnGroupChild)=> {
+            if (child.isResizable()) {
+                result = true;
+            }
+        });
+
+        return result;
     }
 
     public getMinWidth(): number {
@@ -275,6 +309,6 @@ export class ColumnGroup implements ColumnGroupChild {
             });
         }
 
-        this.localEventService.dispatchEvent(ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED);
+        this.localEventService.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED));
     }
 }

@@ -2,6 +2,16 @@
 import {EventService} from "../eventService";
 import {IEventEmitter} from "../interfaces/iEventEmitter";
 import {Utils as _} from "../utils";
+import {AgEvent} from "../events";
+
+export interface TapEvent extends AgEvent {
+    touchStart: Touch;
+}
+
+export interface LongTapEvent extends AgEvent {
+    touchStart: Touch;
+    touchEvent: TouchEvent;
+}
 
 export class TouchListener implements IEventEmitter {
 
@@ -21,21 +31,25 @@ export class TouchListener implements IEventEmitter {
     public static EVENT_TAP = 'tap';
     public static EVENT_LONG_TAP = 'longTap';
 
-    constructor(eElement: HTMLElement) {
+    private preventMouseClick: boolean;
+
+    constructor(eElement: HTMLElement, preventMouseClick = false) {
         this.eElement = eElement;
+        this.preventMouseClick = preventMouseClick;
 
         let startListener = this.onTouchStart.bind(this);
         let moveListener = this.onTouchMove.bind(this);
         let endListener = this.onTouchEnd.bind(this);
 
-        this.eElement.addEventListener('touchstart', startListener);
-        this.eElement.addEventListener('touchmove', moveListener);
-        this.eElement.addEventListener('touchend', endListener);
+        this.eElement.addEventListener('touchstart', startListener, <any>{passive:true});
+        this.eElement.addEventListener('touchmove', moveListener, <any>{passive:true});
+        // we set passive=false, as we want to prevent default on this event
+        this.eElement.addEventListener('touchend', endListener, <any>{passive:false});
 
         this.destroyFuncs.push( ()=> {
-            this.eElement.addEventListener('touchstart', startListener);
-            this.eElement.addEventListener('touchmove', moveListener);
-            this.eElement.addEventListener('touchend', endListener);
+            this.eElement.addEventListener('touchstart', startListener, <any>{passive:true});
+            this.eElement.addEventListener('touchmove', moveListener, <any>{passive:true});
+            this.eElement.addEventListener('touchend', endListener, <any>{passive:false});
         });
     }
 
@@ -75,7 +89,12 @@ export class TouchListener implements IEventEmitter {
 
             if (this.touching && touchesMatch && !this.moved) {
                 this.moved = true;
-                this.eventService.dispatchEvent(TouchListener.EVENT_LONG_TAP, this.touchStart);
+                let event: LongTapEvent = {
+                    type: TouchListener.EVENT_LONG_TAP,
+                    touchStart: this.touchStart,
+                    touchEvent: touchEvent
+                };
+                this.eventService.dispatchEvent(event);
             }
         }, 500);
     }
@@ -99,7 +118,16 @@ export class TouchListener implements IEventEmitter {
         if (!this.touching) { return; }
 
         if (!this.moved) {
-            this.eventService.dispatchEvent(TouchListener.EVENT_TAP, this.touchStart);
+            let event: TapEvent = {
+                type: TouchListener.EVENT_TAP,
+                touchStart: this.touchStart
+            };
+            this.eventService.dispatchEvent(event);
+
+            // stops the tap from also been processed as a mouse click
+            if (this.preventMouseClick) {
+                touchEvent.preventDefault();
+            }
         }
 
         this.touching = false;

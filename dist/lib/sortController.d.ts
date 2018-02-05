@@ -1,23 +1,26 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v16.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "./entities/column";
+import { ColumnEventType } from "./events";
 export declare class SortController {
     private static DEFAULT_SORTING_ORDER;
     private gridOptionsWrapper;
     private columnController;
     private eventService;
-    progressSort(column: Column, multiSort: boolean): void;
-    setSortForColumn(column: Column, sort: string, multiSort: boolean): void;
+    private columnApi;
+    private gridApi;
+    progressSort(column: Column, multiSort: boolean, source?: ColumnEventType): void;
+    setSortForColumn(column: Column, sort: string, multiSort: boolean, source?: ColumnEventType): void;
     onSortChanged(): void;
     private dispatchSortChangedEvents();
-    private clearSortBarThisColumn(columnToSkip);
+    private clearSortBarThisColumn(columnToSkip, source);
     private getNextSortDirection(column);
     getSortModel(): {
         colId: string;
         sort: string;
     }[];
-    setSortModel(sortModel: any): void;
+    setSortModel(sortModel: any, source?: ColumnEventType): void;
     private compareColIds(sortModelEntry, column);
     getColumnsWithSortingOrdered(): Column[];
     getSortForRowController(): any[];

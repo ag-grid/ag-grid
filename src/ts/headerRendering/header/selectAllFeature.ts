@@ -2,7 +2,7 @@
 import {AgCheckbox} from "../../widgets/agCheckbox";
 import {BeanStub} from "../../context/beanStub";
 import {PostConstruct, Autowired} from "../../context/context";
-import {ColumnApi} from "../../columnController/columnController";
+import {ColumnApi} from "../../columnController/columnApi";
 import {GridApi} from "../../gridApi";
 import {Events} from "../../events";
 import {EventService} from "../../eventService";
@@ -131,7 +131,7 @@ export class SelectAllFeature extends BeanStub {
 
     private checkRightRowModelType(): void {
         let rowModelType = this.rowModel.getType();
-        let rowModelMatches = rowModelType===Constants.ROW_MODEL_TYPE_NORMAL;
+        let rowModelMatches = rowModelType===Constants.ROW_MODEL_TYPE_IN_MEMORY;
         if (!rowModelMatches) {
             console.log(`ag-Grid: selectAllCheckbox is only available if using normal row model, you are using ${rowModelType}`);
         }

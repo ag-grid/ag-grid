@@ -1,6 +1,7 @@
 
 import {GridOptions} from "./entities/gridOptions";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
+import {ColumnApi} from "./columnController/columnApi";
 import {ColumnController} from "./columnController/columnController";
 import {RowRenderer} from "./rendering/rowRenderer";
 import {FilterManager} from "./filter/filterManager";
@@ -9,7 +10,7 @@ import {GridPanel} from "./gridPanel/gridPanel";
 import {Logger, LoggerFactory} from "./logger";
 import {Constants} from "./constants";
 import {PopupService} from "./widgets/popupService";
-import {Events} from "./events";
+import {Events, GridSizeChangedEvent} from "./events";
 import {Utils as _} from "./utils";
 import {BorderLayout} from "./layout/borderLayout";
 import {PreDestroy, Bean, Qualifier, Autowired, PostConstruct, Optional, Context} from "./context/context";
@@ -19,6 +20,7 @@ import {Component} from "./widgets/component";
 import {ICompFactory} from "./interfaces/iCompFactory";
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {PaginationComp} from "./rowModels/pagination/paginationComp";
+import {GridApi} from "./gridApi";
 
 @Bean('gridCore')
 export class GridCore {
@@ -40,6 +42,9 @@ export class GridCore {
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Autowired('context') private context: Context;
+
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     @Optional('rowGroupCompFactory') private rowGroupCompFactory: ICompFactory;
     @Optional('pivotCompFactory') private pivotCompFactory: ICompFactory;
@@ -285,7 +290,8 @@ export class GridCore {
         this.destroyFunctions.forEach(func => func());
     }
 
-    public ensureNodeVisible(comparator: any) {
+    // Valid values for position are bottom, middle and top
+    public ensureNodeVisible(comparator: any, position:string = 'top') {
         if (this.doingVirtualPaging) {
             throw 'Cannot use ensureNodeVisible when doing virtual paging, as we cannot check rows that are not in memory';
         }
@@ -310,7 +316,7 @@ export class GridCore {
             }
         }
         if (indexToSelect >= 0) {
-            this.gridPanel.ensureIndexVisible(indexToSelect);
+            this.gridPanel.ensureIndexVisible(indexToSelect, position);
         }
     }
 
@@ -328,12 +334,15 @@ export class GridCore {
         }
         // both of the two below should be done in gridPanel, the gridPanel should register 'resize' to the panel
         if (sizeChanged) {
-            this.rowRenderer.drawVirtualRowsWithLock();
-            let event = {
+            this.rowRenderer.redrawAfterScroll();
+            let event: GridSizeChangedEvent = {
+                type: Events.EVENT_GRID_SIZE_CHANGED,
                 clientWidth: this.eRootPanel.getGui().clientWidth,
-                clientHeight: this.eRootPanel.getGui().clientHeight
+                clientHeight: this.eRootPanel.getGui().clientHeight,
+                api: this.gridApi,
+                columnApi: this.columnApi
             };
-            this.eventService.dispatchEvent(Events.EVENT_GRID_SIZE_CHANGED, event);
+            this.eventService.dispatchEvent(event);
         }
     }
 }

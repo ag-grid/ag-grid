@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9,7 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var rowNode_1 = require("../../entities/rowNode");
 var utils_1 = require("../../utils");
 var InMemoryNodeManager = (function () {
-    function InMemoryNodeManager(rootNode, gridOptionsWrapper, context, eventService) {
+    function InMemoryNodeManager(rootNode, gridOptionsWrapper, context, eventService, columnController) {
         this.nextId = 0;
         // when user is provide the id's, we also keep a map of ids to row nodes for convenience
         this.allNodesMap = {};
@@ -17,6 +17,7 @@ var InMemoryNodeManager = (function () {
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.context = context;
         this.eventService = eventService;
+        this.columnController = columnController;
         this.rootNode.group = true;
         this.rootNode.level = -1;
         this.rootNode.id = InMemoryNodeManager.ROOT_NODE_ID;
@@ -24,7 +25,19 @@ var InMemoryNodeManager = (function () {
         this.rootNode.childrenAfterGroup = [];
         this.rootNode.childrenAfterSort = [];
         this.rootNode.childrenAfterFilter = [];
+        // if we make this class a bean, then can annotate postConstruct
+        this.postConstruct();
     }
+    // @PostConstruct - this is not a bean, so postConstruct called by constructor
+    InMemoryNodeManager.prototype.postConstruct = function () {
+        // func below doesn't have 'this' pointer, so need to pull out these bits
+        this.getNodeChildDetails = this.gridOptionsWrapper.getNodeChildDetailsFunc();
+        this.suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
+        this.doesDataFlower = this.gridOptionsWrapper.getDoesDataFlowerFunc();
+        this.isRowMasterFunc = this.gridOptionsWrapper.getIsRowMasterFunc();
+        this.doingLegacyTreeData = utils_1.Utils.exists(this.getNodeChildDetails);
+        this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
+    };
     InMemoryNodeManager.prototype.getCopyOfNodesMap = function () {
         var result = utils_1.Utils.cloneObject(this.allNodesMap);
         return result;
@@ -44,14 +57,9 @@ var InMemoryNodeManager = (function () {
             this.rootNode.childrenAfterGroup = [];
             return;
         }
-        // func below doesn't have 'this' pointer, so need to pull out these bits
-        this.getNodeChildDetails = this.gridOptionsWrapper.getNodeChildDetailsFunc();
-        this.suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
-        this.doesDataFlower = this.gridOptionsWrapper.getDoesDataFlowerFunc();
-        var rowsAlreadyGrouped = utils_1.Utils.exists(this.getNodeChildDetails);
         // kick off recursion
         var result = this.recursiveFunction(rowData, null, InMemoryNodeManager.TOP_LEVEL);
-        if (rowsAlreadyGrouped) {
+        if (this.doingLegacyTreeData) {
             this.rootNode.childrenAfterGroup = result;
             this.setLeafChildren(this.rootNode);
         }
@@ -59,23 +67,32 @@ var InMemoryNodeManager = (function () {
             this.rootNode.allLeafChildren = result;
         }
     };
-    InMemoryNodeManager.prototype.updateRowData = function (rowDataTran) {
+    InMemoryNodeManager.prototype.updateRowData = function (rowDataTran, rowNodeOrder) {
         var _this = this;
-        if (this.isRowsAlreadyGrouped()) {
+        if (this.isLegacyTreeData()) {
             return null;
         }
         var add = rowDataTran.add, addIndex = rowDataTran.addIndex, remove = rowDataTran.remove, update = rowDataTran.update;
         var rowNodeTransaction = {
             remove: [],
             update: [],
-            add: [],
-            addIndex: null
+            add: []
         };
         if (utils_1.Utils.exists(add)) {
-            add.forEach(function (item) {
-                var newRowNode = _this.addRowNode(item, addIndex);
-                rowNodeTransaction.add.push(newRowNode);
-            });
+            var useIndex = typeof addIndex === 'number' && addIndex >= 0;
+            if (useIndex) {
+                // items get inserted in reverse order for index insertion
+                add.reverse().forEach(function (item) {
+                    var newRowNode = _this.addRowNode(item, addIndex);
+                    rowNodeTransaction.add.push(newRowNode);
+                });
+            }
+            else {
+                add.forEach(function (item) {
+                    var newRowNode = _this.addRowNode(item);
+                    rowNodeTransaction.add.push(newRowNode);
+                });
+            }
         }
         if (utils_1.Utils.exists(remove)) {
             remove.forEach(function (item) {
@@ -93,11 +110,14 @@ var InMemoryNodeManager = (function () {
                 }
             });
         }
+        if (rowNodeOrder) {
+            utils_1.Utils.sortRowNodesByOrder(this.rootNode.allLeafChildren, rowNodeOrder);
+        }
         return rowNodeTransaction;
     };
     InMemoryNodeManager.prototype.addRowNode = function (data, index) {
         var newNode = this.createNode(data, null, InMemoryNodeManager.TOP_LEVEL);
-        if (typeof index === 'number' && index >= 0) {
+        if (utils_1.Utils.exists(index)) {
             utils_1.Utils.insertIntoArray(this.rootNode.allLeafChildren, newNode, index);
         }
         else {
@@ -109,7 +129,7 @@ var InMemoryNodeManager = (function () {
         var rowNodeIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
         var rowNode;
         if (utils_1.Utils.exists(rowNodeIdFunc)) {
-            // find rowNode us id
+            // find rowNode using id
             var id = rowNodeIdFunc(data);
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
@@ -154,24 +174,48 @@ var InMemoryNodeManager = (function () {
     InMemoryNodeManager.prototype.createNode = function (dataItem, parent, level) {
         var node = new rowNode_1.RowNode();
         this.context.wireBean(node);
-        var nodeChildDetails = this.getNodeChildDetails ? this.getNodeChildDetails(dataItem) : null;
+        var doingTreeData = this.gridOptionsWrapper.isTreeData();
+        var doingLegacyTreeData = !doingTreeData && utils_1.Utils.exists(this.getNodeChildDetails);
+        var nodeChildDetails = doingLegacyTreeData ? this.getNodeChildDetails(dataItem) : null;
         if (nodeChildDetails && nodeChildDetails.group) {
             node.group = true;
             node.childrenAfterGroup = this.recursiveFunction(nodeChildDetails.children, node, level + 1);
             node.expanded = nodeChildDetails.expanded === true;
             node.field = nodeChildDetails.field;
             node.key = nodeChildDetails.key;
-            node.canFlower = false;
+            node.canFlower = node.master; // deprecated, is now 'master'
             // pull out all the leaf children and add to our node
             this.setLeafChildren(node);
         }
         else {
             node.group = false;
-            node.canFlower = this.doesDataFlower ? this.doesDataFlower(dataItem) : false;
-            if (node.canFlower) {
-                node.expanded = this.isExpanded(level);
+            if (doingTreeData) {
+                node.master = false;
+                node.expanded = false;
+            }
+            else {
+                // this is the default, for when doing grid data
+                if (this.doesDataFlower) {
+                    node.master = this.doesDataFlower(dataItem);
+                }
+                else if (this.doingMasterDetail) {
+                    // if we are doing master detail, then the
+                    // default is that everything can flower.
+                    if (this.isRowMasterFunc) {
+                        node.master = this.isRowMasterFunc(dataItem);
+                    }
+                    else {
+                        node.master = true;
+                    }
+                }
+                else {
+                    node.master = false;
+                }
+                node.expanded = node.master ? this.isExpanded(level) : false;
             }
         }
+        // support for backwards compatibility, canFlow is now called 'master'
+        node.canFlower = node.master;
         if (parent && !this.suppressParentsInRowNodes) {
             node.parent = parent;
         }
@@ -190,6 +234,7 @@ var InMemoryNodeManager = (function () {
             return level < expandByDefault;
         }
     };
+    // this is only used for doing legacy tree data
     InMemoryNodeManager.prototype.setLeafChildren = function (node) {
         node.allLeafChildren = [];
         if (node.childrenAfterGroup) {
@@ -206,7 +251,7 @@ var InMemoryNodeManager = (function () {
         }
     };
     InMemoryNodeManager.prototype.insertItemsAtIndex = function (index, rowData) {
-        if (this.isRowsAlreadyGrouped()) {
+        if (this.isLegacyTreeData()) {
             return null;
         }
         var nodeList = this.rootNode.allLeafChildren;
@@ -224,41 +269,23 @@ var InMemoryNodeManager = (function () {
         }
         return newNodes.length > 0 ? newNodes : null;
     };
-    InMemoryNodeManager.prototype.removeItems = function (rowNodes) {
-        var _this = this;
-        if (this.isRowsAlreadyGrouped()) {
-            return;
-        }
-        var nodeList = this.rootNode.allLeafChildren;
-        var removedNodes = [];
-        rowNodes.forEach(function (rowNode) {
-            var indexOfNode = nodeList.indexOf(rowNode);
-            if (indexOfNode >= 0) {
-                rowNode.setSelected(false);
-                nodeList.splice(indexOfNode, 1);
-                _this.allNodesMap[rowNode.id] = undefined;
-            }
-            removedNodes.push(rowNode);
-        });
-        return removedNodes.length > 0 ? removedNodes : null;
-    };
     InMemoryNodeManager.prototype.addItems = function (items) {
         var nodeList = this.rootNode.allLeafChildren;
         return this.insertItemsAtIndex(nodeList.length, items);
     };
-    InMemoryNodeManager.prototype.isRowsAlreadyGrouped = function () {
+    InMemoryNodeManager.prototype.isLegacyTreeData = function () {
         var rowsAlreadyGrouped = utils_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         if (rowsAlreadyGrouped) {
             console.warn('ag-Grid: adding and removing rows is not supported when using nodeChildDetailsFunc, ie it is not ' +
-                'supported if providing groups');
+                'supported for legacy tree data. Please see the docs on the new preferred way of providing tree data that works with delta updates.');
             return true;
         }
         else {
             return false;
         }
     };
+    InMemoryNodeManager.TOP_LEVEL = 0;
+    InMemoryNodeManager.ROOT_NODE_ID = 'ROOT_NODE_ID';
     return InMemoryNodeManager;
 }());
-InMemoryNodeManager.TOP_LEVEL = 0;
-InMemoryNodeManager.ROOT_NODE_ID = 'ROOT_NODE_ID';
 exports.InMemoryNodeManager = InMemoryNodeManager;

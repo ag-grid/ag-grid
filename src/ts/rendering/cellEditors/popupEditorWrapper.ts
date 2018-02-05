@@ -2,6 +2,7 @@ import {Component} from "../../widgets/component";
 import {ICellEditorComp, ICellEditorParams} from "./iCellEditor";
 import {Autowired} from "../../context/context";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
+import {_} from "../../utils";
 
 export class PopupEditorWrapper extends Component implements ICellEditorComp {
 

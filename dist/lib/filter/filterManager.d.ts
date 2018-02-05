@@ -1,7 +1,9 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v16.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { ExternalPromise, Promise } from "../utils";
 import { Column } from "../entities/column";
+import { ColumnEventType } from "../events";
 import { IFilterComp } from "../interfaces/iFilter";
 export declare class FilterManager {
     private $compile;
@@ -15,21 +17,21 @@ export declare class FilterManager {
     private eventService;
     private enterprise;
     private context;
-    private componentProvider;
+    private columnApi;
+    private gridApi;
+    private componentResolver;
     static QUICK_FILTER_SEPARATOR: string;
     private allFilters;
     private quickFilter;
     private advancedFilterPresent;
     private externalFilterPresent;
-    private availableFilters;
     init(): void;
-    registerFilter(key: string, Filter: any): void;
     setFilterModel(model: any): void;
-    private setModelOnFilterWrapper(filter, newModel);
+    private setModelOnFilterWrapper(filterPromise, newModel);
     getFilterModel(): any;
     isAdvancedFilterPresent(): boolean;
     private setAdvancedFilterPresent();
-    private updateFilterFlagInColumns();
+    private updateFilterFlagInColumns(source);
     isAnyFilterPresent(): boolean;
     private doesFilterPass(node, filterToSkip?);
     private parseQuickFilter(newFilter);
@@ -44,26 +46,22 @@ export declare class FilterManager {
     doesRowPassFilter(node: any, filterToSkip?: any): boolean;
     private getQuickFilterTextForColumn(column, rowNode);
     private aggregateRowForQuickFilter(node);
-    private onNewRowsLoaded();
+    private onNewRowsLoaded(source);
     private createValueGetter(column);
-    getFilterComponent(column: Column): IFilterComp;
+    getFilterComponent(column: Column): Promise<IFilterComp>;
     getOrCreateFilterWrapper(column: Column): FilterWrapper;
     cachedFilter(column: Column): FilterWrapper;
-    private createFilterInstance(column);
-    private checkFilterHasAllMandatoryMethods(filterInstance, column);
-    private createParams(filterWrapper);
+    private createFilterInstance(column, $scope);
     private createFilterWrapper(column);
-    private initialiseFilterAndPutIntoGui(filterWrapper);
-    private getFilterFromCache(filterType);
+    private putIntoGui(filterWrapper);
     private onNewColumnsLoaded();
-    destroyFilter(column: Column): void;
-    private disposeFilterWrapper(filterWrapper);
+    destroyFilter(column: Column, source?: ColumnEventType): void;
+    private disposeFilterWrapper(filterWrapper, source);
     destroy(): void;
-    private assertMethodHasNoParameters(theMethod);
 }
 export interface FilterWrapper {
     column: Column;
-    filter: IFilterComp;
+    filterPromise: Promise<IFilterComp>;
     scope: any;
-    gui: HTMLElement;
+    guiPromise: ExternalPromise<HTMLElement>;
 }

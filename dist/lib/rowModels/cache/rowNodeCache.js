@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -54,14 +54,14 @@ var RowNodeCache = (function (_super) {
     };
     // listener on EVENT_LOAD_COMPLETE
     RowNodeCache.prototype.onPageLoaded = function (event) {
+        this.cacheParams.rowNodeBlockLoader.loadComplete();
+        this.checkBlockToLoad();
         // if we are not active, then we ignore all events, otherwise we could end up getting the
         // grid to refresh even though we are no longer the active cache
         if (!this.isActive()) {
             return;
         }
-        this.logger.log("onPageLoaded: page = " + event.page.getPageNumber() + ", lastRow = " + event.lastRow);
-        this.cacheParams.rowNodeBlockLoader.loadComplete();
-        this.checkBlockToLoad();
+        this.logger.log("onPageLoaded: page = " + event.page.getBlockNumber() + ", lastRow = " + event.lastRow);
         if (event.success) {
             this.checkVirtualRowCount(event.page, event.lastRow);
         }
@@ -109,15 +109,15 @@ var RowNodeCache = (function (_super) {
     };
     RowNodeCache.prototype.postCreateBlock = function (newBlock) {
         newBlock.addEventListener(rowNodeBlock_1.RowNodeBlock.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
-        this.setBlock(newBlock.getPageNumber(), newBlock);
+        this.setBlock(newBlock.getBlockNumber(), newBlock);
         this.purgeBlocksIfNeeded(newBlock);
         this.checkBlockToLoad();
     };
-    RowNodeCache.prototype.removeBlockFromCache = function (pageToRemove) {
-        if (!pageToRemove) {
+    RowNodeCache.prototype.removeBlockFromCache = function (blockToRemove) {
+        if (!blockToRemove) {
             return;
         }
-        this.destroyBlock(pageToRemove);
+        this.destroyBlock(blockToRemove);
         // we do not want to remove the 'loaded' event listener, as the
         // concurrent loads count needs to be updated when the load is complete
         // if the purged page is in loading state
@@ -136,10 +136,16 @@ var RowNodeCache = (function (_super) {
         }
         else if (!this.maxRowFound) {
             // otherwise, see if we need to add some virtual rows
-            var lastRowIndex = (block.getPageNumber() + 1) * this.cacheParams.blockSize;
+            var lastRowIndex = (block.getBlockNumber() + 1) * this.cacheParams.blockSize;
             var lastRowIndexPlusOverflow = lastRowIndex + this.cacheParams.overflowSize;
             if (this.virtualRowCount < lastRowIndexPlusOverflow) {
                 this.virtualRowCount = lastRowIndexPlusOverflow;
+                this.onCacheUpdated();
+            }
+            else if (this.cacheParams.dynamicRowHeight) {
+                // the only other time is if dynamic row height, as loading rows
+                // will change the height of the block, given the height of the rows
+                // is only known after the row is loaded.
                 this.onCacheUpdated();
             }
         }
@@ -197,7 +203,7 @@ var RowNodeCache = (function (_super) {
         this.cacheParams.rowNodeBlockLoader.addBlock(block);
     };
     RowNodeCache.prototype.destroyBlock = function (block) {
-        delete this.blocks[block.getPageNumber()];
+        delete this.blocks[block.getBlockNumber()];
         block.destroy();
         this.blockCount--;
         this.cacheParams.rowNodeBlockLoader.removeBlock(block);
@@ -207,7 +213,10 @@ var RowNodeCache = (function (_super) {
         if (this.isActive()) {
             // this results in both row models (infinite and enterprise) firing ModelUpdated,
             // however enterprise also updates the row indexes first
-            this.dispatchEvent(RowNodeCache.EVENT_CACHE_UPDATED);
+            var event_1 = {
+                type: RowNodeCache.EVENT_CACHE_UPDATED
+            };
+            this.dispatchEvent(event_1);
         }
     };
     RowNodeCache.prototype.purgeCache = function () {
@@ -215,7 +224,40 @@ var RowNodeCache = (function (_super) {
         this.forEachBlockInOrder(function (block) { return _this.removeBlockFromCache(block); });
         this.onCacheUpdated();
     };
+    RowNodeCache.prototype.getRowNodesInRange = function (firstInRange, lastInRange) {
+        var _this = this;
+        var result = [];
+        var lastBlockId = -1;
+        var inActiveRange = false;
+        var numberSequence = new utils_1.NumberSequence();
+        // if only one node passed, we start the selection at the top
+        if (utils_1.Utils.missing(firstInRange)) {
+            inActiveRange = true;
+        }
+        var foundGapInSelection = false;
+        this.forEachBlockInOrder(function (block, id) {
+            if (foundGapInSelection)
+                return;
+            if (inActiveRange && (lastBlockId + 1 !== id)) {
+                foundGapInSelection = true;
+                return;
+            }
+            lastBlockId = id;
+            block.forEachNodeShallow(function (rowNode) {
+                var hitFirstOrLast = rowNode === firstInRange || rowNode === lastInRange;
+                if (inActiveRange || hitFirstOrLast) {
+                    result.push(rowNode);
+                }
+                if (hitFirstOrLast) {
+                    inActiveRange = !inActiveRange;
+                }
+            }, numberSequence, _this.virtualRowCount);
+        });
+        // inActiveRange will be still true if we never hit the second rowNode
+        var invalidRange = foundGapInSelection || inActiveRange;
+        return invalidRange ? [] : result;
+    };
+    RowNodeCache.EVENT_CACHE_UPDATED = 'cacheUpdated';
     return RowNodeCache;
 }(beanStub_1.BeanStub));
-RowNodeCache.EVENT_CACHE_UPDATED = 'cacheUpdated';
 exports.RowNodeCache = RowNodeCache;

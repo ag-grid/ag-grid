@@ -1,10 +1,10 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v16.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "./entities/column";
 import { ColumnController } from "./columnController/columnController";
 import { RowNode } from "./entities/rowNode";
-import { ValueService } from "./valueService";
+import { ValueService } from "./valueService/valueService";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { ExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "./exportParams";
 import { ColumnGroupChild } from "./entities/columnGroupChild";
@@ -72,20 +72,20 @@ export declare abstract class BaseGridSerializingSession<T> implements GridSeria
     abstract onNewBodyRow(): RowAccumulator;
     abstract parse(): string;
     extractHeaderValue(column: Column): string;
-    extractRowCellValue(column: Column, index: number, node?: RowNode): any;
+    extractRowCellValue(column: Column, index: number, type: string, node?: RowNode): any;
     private getHeaderName(callback, column);
     private createValueForGroupNode(node);
-    private processCell(rowNode, column, value, processCellCallback);
+    private processCell(rowNode, column, value, processCellCallback, type);
 }
 export declare class GridSerializer {
     private displayedGroupCreator;
     private columnController;
     private rowModel;
-    private floatingRowModel;
+    private pinnedRowModel;
     private selectionController;
     private balancedColumnTreeBuilder;
     private gridOptionsWrapper;
-    serialize<T>(gridSerializingSession: GridSerializingSession<T>, userParams?: ExportParams<T>): string;
+    serialize<T>(gridSerializingSession: GridSerializingSession<T>, params?: ExportParams<T>): string;
     recursivelyAddHeaderGroups<T>(displayedGroups: ColumnGroupChild[], gridSerializingSession: GridSerializingSession<T>): void;
     private doAddHeaderHeader<T>(gridSerializingSession, displayedGroups);
 }

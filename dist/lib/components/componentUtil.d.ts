@@ -1,9 +1,9 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v16.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
-import { GridOptions } from "../entities/gridOptions";
-import { GridApi } from "../gridApi";
-import { ColumnApi } from "../columnController/columnController";
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { GridOptions } from '../entities/gridOptions';
+import { GridApi } from '../gridApi';
+import { ColumnApi } from '../columnController/columnApi';
 export declare class ComponentUtil {
     static EVENTS: string[];
     private static EVENT_CALLBACKS;

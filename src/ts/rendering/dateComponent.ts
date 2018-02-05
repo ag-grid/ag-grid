@@ -7,11 +7,11 @@ export interface IDate {
     setDate(date:Date): void;
 }
 
-export interface IDateParams{
+export interface IDateParams {
     /** Method for component to tell ag-Grid that the date has changed. */
     onDateChanged:()=>void
 }
 
-export interface IDateComp extends IComponent<IDateParams>, IDate{
+export interface IDateComp extends IComponent<IDateParams>, IDate {
 
 }

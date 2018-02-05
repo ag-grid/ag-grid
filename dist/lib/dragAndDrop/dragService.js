@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21,6 +21,8 @@ var utils_1 = require("../utils");
 var eventService_1 = require("../eventService");
 var events_1 = require("../events");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var columnApi_1 = require("../columnController/columnApi");
+var gridApi_1 = require("../gridApi");
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
 var DragService = (function () {
@@ -46,7 +48,7 @@ var DragService = (function () {
         // remove touch listener only if it exists
         if (dragSourceAndListener.touchEnabled) {
             var touchStartListener = dragSourceAndListener.touchStartListener;
-            element.removeEventListener('touchstart', touchStartListener);
+            element.removeEventListener('touchstart', touchStartListener, { passive: true });
         }
     };
     DragService.prototype.removeDragSource = function (params) {
@@ -73,7 +75,7 @@ var DragService = (function () {
         var reallyIncludeTouch = includeTouch && !suppressTouch;
         if (reallyIncludeTouch) {
             touchListener = this.onTouchStart.bind(this, params);
-            params.eElement.addEventListener('touchstart', touchListener);
+            params.eElement.addEventListener('touchstart', touchListener, { passive: false });
         }
         this.dragSources.push({
             dragSource: params,
@@ -93,13 +95,13 @@ var DragService = (function () {
         touchEvent.preventDefault();
         // we temporally add these listeners, for the duration of the drag, they
         // are removed in touch end handling.
-        params.eElement.addEventListener('touchmove', this.onTouchMoveListener);
-        params.eElement.addEventListener('touchend', this.onTouchEndListener);
-        params.eElement.addEventListener('touchcancel', this.onTouchEndListener);
+        params.eElement.addEventListener('touchmove', this.onTouchMoveListener, { passive: true });
+        params.eElement.addEventListener('touchend', this.onTouchEndListener, { passive: true });
+        params.eElement.addEventListener('touchcancel', this.onTouchEndListener, { passive: true });
         this.dragEndFunctions.push(function () {
-            params.eElement.removeEventListener('touchmove', _this.onTouchMoveListener);
-            params.eElement.removeEventListener('touchend', _this.onTouchEndListener);
-            params.eElement.removeEventListener('touchcancel', _this.onTouchEndListener);
+            params.eElement.removeEventListener('touchmove', _this.onTouchMoveListener, { passive: true });
+            params.eElement.removeEventListener('touchend', _this.onTouchEndListener, { passive: true });
+            params.eElement.removeEventListener('touchcancel', _this.onTouchEndListener, { passive: true });
         });
         // see if we want to start dragging straight away
         if (params.dragStartPixels === 0) {
@@ -109,6 +111,13 @@ var DragService = (function () {
     // gets called whenever mouse down on any drag source
     DragService.prototype.onMouseDown = function (params, mouseEvent) {
         var _this = this;
+        // if there are two elements with parent / child relationship, and both are draggable,
+        // when we drag the child, we should NOT drag the parent. an example of this is row moving
+        // and range selection - row moving should get preference when use drags the rowDrag component.
+        if (mouseEvent._alreadyProcessedByDragService) {
+            return;
+        }
+        mouseEvent._alreadyProcessedByDragService = true;
         // only interested in left button clicks
         if (mouseEvent.button !== 0) {
             return;
@@ -157,7 +166,12 @@ var DragService = (function () {
             else {
                 // alert(`started`);
                 this.dragging = true;
-                this.eventService.dispatchEvent(events_1.Events.EVENT_DRAG_STARTED);
+                var event_1 = {
+                    type: events_1.Events.EVENT_DRAG_STARTED,
+                    api: this.gridApi,
+                    columnApi: this.columnApi
+                };
+                this.eventService.dispatchEvent(event_1);
                 this.currentDragParams.onDragStart(startEvent);
                 this.setNoSelectToBody(true);
             }
@@ -170,6 +184,10 @@ var DragService = (function () {
             return;
         }
         // this.___statusBar.setInfoText(Math.random() + ' onTouchMove preventDefault stopPropagation');
+        // if we don't preview default, then the browser will try and do it's own touch stuff,
+        // like do 'back button' (chrome does this) or scroll the page (eg drag column could  be confused
+        // with scroll page in the app)
+        // touchEvent.preventDefault();
         this.onCommonMove(touch, this.touchStart);
     };
     // only gets called after a mouse down - as this is only added after mouseDown
@@ -205,7 +223,12 @@ var DragService = (function () {
         if (this.dragging) {
             this.dragging = false;
             this.currentDragParams.onDragStop(eventOrTouch);
-            this.eventService.dispatchEvent(events_1.Events.EVENT_DRAG_STOPPED);
+            var event_2 = {
+                type: events_1.Events.EVENT_DRAG_STOPPED,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+            this.eventService.dispatchEvent(event_2);
         }
         this.setNoSelectToBody(false);
         this.mouseStartEvent = null;
@@ -216,33 +239,41 @@ var DragService = (function () {
         this.dragEndFunctions.forEach(function (func) { return func(); });
         this.dragEndFunctions.length = 0;
     };
+    __decorate([
+        context_1.Autowired('loggerFactory'),
+        __metadata("design:type", logger_1.LoggerFactory)
+    ], DragService.prototype, "loggerFactory", void 0);
+    __decorate([
+        context_1.Autowired('eventService'),
+        __metadata("design:type", eventService_1.EventService)
+    ], DragService.prototype, "eventService", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], DragService.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('columnApi'),
+        __metadata("design:type", columnApi_1.ColumnApi)
+    ], DragService.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], DragService.prototype, "gridApi", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], DragService.prototype, "init", null);
+    __decorate([
+        context_1.PreDestroy,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], DragService.prototype, "destroy", null);
+    DragService = __decorate([
+        context_1.Bean('dragService')
+    ], DragService);
     return DragService;
 }());
-__decorate([
-    context_1.Autowired('loggerFactory'),
-    __metadata("design:type", logger_1.LoggerFactory)
-], DragService.prototype, "loggerFactory", void 0);
-__decorate([
-    context_1.Autowired('eventService'),
-    __metadata("design:type", eventService_1.EventService)
-], DragService.prototype, "eventService", void 0);
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], DragService.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], DragService.prototype, "init", null);
-__decorate([
-    context_1.PreDestroy,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], DragService.prototype, "destroy", null);
-DragService = __decorate([
-    context_1.Bean('dragService')
-], DragService);
 exports.DragService = DragService;

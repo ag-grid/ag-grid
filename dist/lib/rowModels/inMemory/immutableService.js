@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v16.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,7 +23,7 @@ var ImmutableService = (function () {
     function ImmutableService() {
     }
     ImmutableService.prototype.postConstruct = function () {
-        if (this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_NORMAL) {
+        if (this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_IN_MEMORY) {
             this.inMemoryRowModel = this.rowModel;
         }
     };
@@ -45,14 +45,16 @@ var ImmutableService = (function () {
             add: []
         };
         var existingNodesMap = this.inMemoryRowModel.getCopyOfNodesMap();
+        var orderMap = {};
         if (utils_1._.exists(data)) {
             // split all the new data in the following:
             // if new, push to 'add'
             // if update, push to 'update'
             // if not changed, do not include in the transaction
-            data.forEach(function (dataItem) {
+            data.forEach(function (dataItem, index) {
                 var id = getRowNodeIdFunc(dataItem);
                 var existingNode = existingNodesMap[id];
+                orderMap[id] = index;
                 if (existingNode) {
                     var dataHasChanged = existingNode.data !== dataItem;
                     if (dataHasChanged) {
@@ -73,25 +75,25 @@ var ImmutableService = (function () {
                 transaction.remove.push(rowNode.data);
             }
         });
-        return transaction;
+        return [transaction, orderMap];
     };
+    __decorate([
+        context_1.Autowired('rowModel'),
+        __metadata("design:type", Object)
+    ], ImmutableService.prototype, "rowModel", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], ImmutableService.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], ImmutableService.prototype, "postConstruct", null);
+    ImmutableService = __decorate([
+        context_1.Bean('immutableService')
+    ], ImmutableService);
     return ImmutableService;
 }());
-__decorate([
-    context_1.Autowired('rowModel'),
-    __metadata("design:type", Object)
-], ImmutableService.prototype, "rowModel", void 0);
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], ImmutableService.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], ImmutableService.prototype, "postConstruct", null);
-ImmutableService = __decorate([
-    context_1.Bean('immutableService')
-], ImmutableService);
 exports.ImmutableService = ImmutableService;

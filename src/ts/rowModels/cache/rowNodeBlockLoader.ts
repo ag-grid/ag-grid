@@ -59,7 +59,7 @@ export class RowNodeBlockLoader {
         if (blockToLoad) {
             blockToLoad.load();
             this.activeBlockLoadsCount++;
-            this.logger.log(`checkBlockToLoad: loading page ${blockToLoad.getPageNumber()}`);
+            this.logger.log(`checkBlockToLoad: loading page ${blockToLoad.getBlockNumber()}`);
             this.printCacheStatus();
         } else {
             this.logger.log(`checkBlockToLoad: no pages to load`);
@@ -71,15 +71,15 @@ export class RowNodeBlockLoader {
         this.blocks.forEach( (block: RowNodeBlock) => {
             let nodeIdPrefix = block.getNodeIdPrefix();
             let stateItem = {
-                blockNumber: block.getPageNumber(),
+                blockNumber: block.getBlockNumber(),
                 startRow: block.getStartRow(),
                 endRow: block.getEndRow(),
                 pageStatus: block.getState()
             };
             if (_.exists(nodeIdPrefix)) {
-                result[nodeIdPrefix + block.getPageNumber()] = stateItem;
+                result[nodeIdPrefix + block.getBlockNumber()] = stateItem;
             } else {
-                result[block.getPageNumber()] = stateItem;
+                result[block.getBlockNumber()] = stateItem;
             }
         });
         return result;

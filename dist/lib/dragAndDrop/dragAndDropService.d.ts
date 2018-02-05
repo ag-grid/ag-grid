@@ -1,10 +1,19 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v16.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
+import { RowNode } from "../entities/rowNode";
 export declare enum DragSourceType {
     ToolPanel = 0,
     HeaderCell = 1,
+    RowDrag = 2,
+}
+export interface DragItem {
+    rowNode?: RowNode;
+    columns?: Column[];
+    visibleState?: {
+        [key: string]: boolean;
+    };
 }
 export interface DragSource {
     /** So the drop target knows what type of event it is, useful for columns,
@@ -13,21 +22,28 @@ export interface DragSource {
     /** Element which, when dragged, will kick off the DnD process */
     eElement: HTMLElement;
     /** If eElement is dragged, then the dragItem is the object that gets passed around. */
-    dragItem: Column[];
+    dragItemCallback: () => DragItem;
     /** This name appears in the ghost icon when dragging */
     dragItemName: string;
     /** The drop target associated with this dragSource. So when dragging starts, this target does not get
      * onDragEnter event. */
     dragSourceDropTarget?: DropTarget;
+    /** After how many pixels of dragging should the drag operation start. Default is 4px. */
+    dragStartPixels?: number;
+    /** Callback for drag started */
+    dragStarted?: () => void;
+    /** Callback for drag stopped */
+    dragStopped?: () => void;
 }
 export interface DropTarget {
     /** The main container that will get the drop. */
     getContainer(): HTMLElement;
     /** If any secondary containers. For example when moving columns in ag-Grid, we listen for drops
-     * in the header as well as the body (main rows and floating rows) of the grid. */
+     * in the header as well as the body (main rows and pinned rows) of the grid. */
     getSecondaryContainers?(): HTMLElement[];
     /** Icon to show when drag is over*/
     getIconName?(): string;
+    isInterestedIn(type: DragSourceType): boolean;
     /** Callback for when drag enters */
     onDragEnter?(params: DraggingEvent): void;
     /** Callback for when drag leaves */
@@ -52,11 +68,13 @@ export interface DraggingEvent {
     vDirection: VDirection;
     hDirection: HDirection;
     dragSource: DragSource;
+    dragItem: DragItem;
     fromNudge: boolean;
 }
 export declare class DragAndDropService {
     private gridOptionsWrapper;
     private dragService;
+    private environment;
     private columnController;
     static ICON_PINNED: string;
     static ICON_ADD: string;
@@ -91,6 +109,7 @@ export declare class DragAndDropService {
     private eDropNotAllowedIcon;
     private init();
     private setBeans(loggerFactory);
+    private getStringType(type);
     addDragSource(dragSource: DragSource, allowTouch?: boolean): void;
     removeDragSource(dragSource: DragSource): void;
     private destroy();

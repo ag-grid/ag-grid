@@ -1,15 +1,21 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v16.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { NumberSequence } from "../../utils";
 import { RowNode } from "../../entities/rowNode";
 import { Context } from "../../context/context";
 import { BeanStub } from "../../context/beanStub";
 import { RowNodeCacheParams } from "./rowNodeCache";
 import { RowRenderer } from "../../rendering/rowRenderer";
+import { AgEvent } from "../../events";
 export interface RowNodeBlockBeans {
     context: Context;
     rowRenderer: RowRenderer;
+}
+export interface LoadCompleteEvent extends AgEvent {
+    success: boolean;
+    page: RowNodeBlock;
+    lastRow: number;
 }
 export declare abstract class RowNodeBlock extends BeanStub {
     static EVENT_LOAD_COMPLETE: string;
@@ -23,7 +29,7 @@ export declare abstract class RowNodeBlock extends BeanStub {
     private blockNumber;
     private startRow;
     private endRow;
-    private rowNodes;
+    rowNodes: RowNode[];
     private beans;
     private rowNodeCacheParams;
     protected abstract loadFromDatasource(): void;
@@ -42,7 +48,7 @@ export declare abstract class RowNodeBlock extends BeanStub {
     protected init(beans: RowNodeBlockBeans): void;
     getStartRow(): number;
     getEndRow(): number;
-    getPageNumber(): number;
+    getBlockNumber(): number;
     setDirty(): void;
     setDirtyAndPurge(): void;
     getState(): string;
