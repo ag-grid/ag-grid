@@ -559,6 +559,10 @@
                 "url": "javascript-grid-examples/"
             },
             {
+                "title": "Flexbox",
+                "url": "example-flexbox/"
+            },
+            {
                 "title": "Redux",
                 "url": "example-react-redux/"
             },
