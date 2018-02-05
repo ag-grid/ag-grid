@@ -248,6 +248,9 @@ export class GridCore {
             // if interval is negative, this stops the layout from happening
             if (intervalMillis>0){
                 this.frameworkFactory.setTimeout( () => {
+                    if (this.finished) {
+                        return;
+                    }
                     this.doLayout();
                     this.gridPanel.periodicallyCheck();
                     this.periodicallyDoLayout();
@@ -256,6 +259,9 @@ export class GridCore {
                 // if user provided negative number, we still do the check every 5 seconds,
                 // in case the user turns the number positive again
                 this.frameworkFactory.setTimeout( () => {
+                    if (this.finished) {
+                        return;
+                    }
                     this.periodicallyDoLayout();
                 }, 5000);
             }
