@@ -560,7 +560,13 @@
             },
             {
                 "title": "Flexbox",
-                "url": "example-flexbox/"
+                "url": "example-flexbox/",
+                "new": true
+            },
+            {
+                "title": "CSS Grid",
+                "url": "example-css-grid/",
+                "new": true
             },
             {
                 "title": "Redux",
