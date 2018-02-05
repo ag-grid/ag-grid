@@ -39,6 +39,10 @@ start index.html
 open index.html
 </snippet>
 
+    <p>With those 3 commands you should now see the following application:</p>
+
+    <img src="../images/seed.png" style="display: block;margin: auto;height: 170px;">
+    
     <p>Great! A working Grid application in no time at all. Let's break down the application into its main parts:</p>
 
     <h2>Row Data</h2>
@@ -181,7 +185,7 @@ var gridOptions = {
         clicking and it will cycle through ascending, descending and no sort). Note that in this example we're sorting
         by <code>Price</code> in ascending order (indicated by the up arrow):</p>
 
-    <p><img src="../images/js-gs-sorting.png" alt="ag-Grid with Sorting" height="183"></p>
+    <p><img src="../images/js-gs-sorting.png" alt="ag-Grid with Sorting" height="170"></p>
 
     <h3>Filtering</h3>
 
@@ -211,7 +215,7 @@ var gridOptions = {
         <code>Model</code>
         column by the text <code>Celica</code> - only the row with <code>Celica</code> is shown now.</p>
 
-    <p><img src="../images/js-gs-filtering.png" height="179" alt="ag-Grid with filtering"></p>
+    <p><img src="../images/js-gs-filtering.png" height="170" alt="ag-Grid with filtering"></p>
 
     <h2 id="summary">Summary</h2>
 
