@@ -427,6 +427,12 @@ export class RowRenderer extends BeanStub {
 
         let rowIndexesToRemove = Object.keys(this.rowCompsByIndex);
         this.removeRowComps(rowIndexesToRemove);
+        this.floatingTopRowComps.forEach( rowComp => {
+            rowComp.destroy();
+        });
+        this.floatingBottomRowComps.forEach( rowComp => {
+            rowComp.destroy();
+        });
     }
 
     private binRowComps(recycleRows: boolean): {[key: string]: RowComp} {
