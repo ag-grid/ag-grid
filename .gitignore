@@ -6,3 +6,4 @@ typings/
 module.tgz
 
 lib/
+umd
