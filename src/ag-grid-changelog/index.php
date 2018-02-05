@@ -1,6 +1,7 @@
 <?php
 $navKey = "changelog";
 include_once '../includes/html-helpers.php';
+gtm_data_layer('changelog');
 include '../jira_reports/jira_utilities.php';
 ?>
 <!DOCTYPE html>

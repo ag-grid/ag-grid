@@ -1,6 +1,7 @@
 <?php
 $navKey = "support";
 include_once 'includes/html-helpers.php';
+gtm_data_layer('support');
 ?>
 <!DOCTYPE html>
 <html>
