@@ -42,7 +42,7 @@ npm start</snippet>
 
     <p>With those 3 commands you should now see the following application:</p>
 
-    <img src="polymer-seed.png" style="display: block;margin: auto;height: 200px;padding-bottom: 10px">
+    <img src="../images/seed.png" style="display: block;margin: auto;height: 170px;padding-bottom: 10px">
 
     <p>Great! A working Grid application in no time at all. Let's break down the application into it's main parts:</p>
 
@@ -177,7 +177,7 @@ npm start</snippet>
         clicking and it will cycle through ascending, descending and no sort). Note that in this example we're sorting
         by <code>Price</code> in ascending order (indicated by the up arrow):</p>
 
-    <img src="polymer-gs-sorting.png" style="display: block;margin: auto;height: 200px;">
+    <img src="../images/js-gs-sorting.png" style="display: block;margin: auto;height: 170px;">
 
     <h3>Filtering</h3>
 
@@ -204,7 +204,7 @@ npm start</snippet>
         <code>Model</code>
         column by the text <code>Celica</code> - only the row with <code>Celica</code> is shown now.</p>
 
-    <img src="polymer-gs-filtering.png" style="display: block;margin: auto;height: 200px;">
+    <img src="../images/js-gs-filtering.png" style="display: block;margin: auto;height: 170px;">
 
     <h2>Summary</h2>
 
