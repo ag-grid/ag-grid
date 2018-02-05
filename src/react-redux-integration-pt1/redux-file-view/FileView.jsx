@@ -32,6 +32,7 @@ class FileView extends Component {
           getRowNodeId={data => data.id}
           autoGroupColumnDef={this.autoGroupColumnDef}
           groupDefaultExpanded={-1}
+          onGridReady={params => params.api.sizeColumnsToFit()}
           getContextMenuItems={this.getContextMenuItems}>
         </AgGridReact>
       </div>
