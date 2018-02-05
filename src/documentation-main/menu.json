@@ -33,8 +33,12 @@
                         "url": "react-more-details/"
                     },
                     {
-                        "title": "Redux Integration",
-                        "url": "react-redux-integration/"
+                        "title": "Redux Integration Part 1",
+                        "url": "react-redux-integration-pt1/"
+                    },
+                    {
+                        "title": "Redux Integration Part 2",
+                        "url": "react-redux-integration-pt2/"
                     }
                 ]
             },

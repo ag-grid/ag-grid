@@ -29,24 +29,22 @@ class FileBrowser extends Component {
 
   render() {
     return (
-      <div>
-        <div style={{height: 500}} className="ag-theme-balham">
-          <AgGridReact
-            columnDefs={this.colDefs}
-            rowData={this.props.files}
-            treeData={true}
-            enableFilter={true}
-            groupDefaultExpanded={-1}
-            getDataPath={data => data.filePath}
-            autoGroupColumnDef={this.autoGroupColumnDef}
-            onGridReady={params => params.api.sizeColumnsToFit()}
-            getContextMenuItems={this.getContextMenuItems}
-            deltaRowDataMode={true}
-            getRowNodeId={data => data.id}
-            onRowDragEnd={this.onRowDragEnd}
-            frameworkComponents={this.frameworkComponents}>
-          </AgGridReact>
-        </div>
+      <div style={{height: 500}} className="ag-theme-balham">
+        <AgGridReact
+          columnDefs={this.colDefs}
+          rowData={this.props.files}
+          treeData={true}
+          enableFilter={true}
+          groupDefaultExpanded={-1}
+          getDataPath={data => data.filePath}
+          autoGroupColumnDef={this.autoGroupColumnDef}
+          onGridReady={params => params.api.sizeColumnsToFit()}
+          getContextMenuItems={this.getContextMenuItems}
+          deltaRowDataMode={true}
+          getRowNodeId={data => data.id}
+          onRowDragEnd={this.onRowDragEnd}
+          frameworkComponents={this.frameworkComponents}>
+        </AgGridReact>
       </div>
     )
   }
