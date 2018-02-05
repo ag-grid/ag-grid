@@ -14,6 +14,15 @@ include '../documentation-main/documentation_header.php';
         doesn't fit into a particular documentation section.
     </p>
 
+    <h2>Make scrollbars always visible</h2>
+
+    <p>
+        Avoids visual table 'jumps' when toggling short and long data sets. To make that work, override the <code>overflow</code> of the <code>.ag-grid-body-viewport</code> to <code>scroll !important</code>.
+        The <code>!important</code> is necessary to override the inline styling.
+    </p>
+
+    <?= example('Always visible scrollbars', 'scrollbars', 'vanilla') ?>
+
     <h2>Auto Height, Full Width & Pagination</h2>
 
     <p>
