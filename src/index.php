@@ -2,6 +2,7 @@
 require "example-runner/utils.php";
 require "includes/html-helpers.php";
 define('HOMEPAGE', true);
+gtm_data_layer('home');
 // variable necessary in navbar.php
 $version = 'latest';
 ?>

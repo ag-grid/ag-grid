@@ -2,6 +2,7 @@
 $navKey = "pipeline";
 include_once '../includes/html-helpers.php';
 include '../jira_reports/jira_utilities.php';
+gtm_data_layer('pipeline');
 ?>
 <!DOCTYPE html>
 <html>

@@ -1,4 +1,22 @@
 <?php
+$GTM_SCRIPT = <<<SCRIPT
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-TW77RR3');</script>
+<!-- End Google Tag Manager -->
+SCRIPT;
+
+$GTM_DATA_LAYER = json_encode(array('default' => true));
+
+function gtm_data_layer($pageCategory, $additional = array()) {
+    $additional['pageCategory'] = $pageCategory;
+    $GLOBALS['GTM_DATA_LAYER'] = json_encode($additional);
+}
+
+
 function meta_and_links($title, $keywords, $description, $root = false) {
     $socialImage = $GLOBALS['socialImage'];
     if ($socialImage) {
@@ -26,6 +44,8 @@ META;
         $prefix = "../";
     }
     echo <<<META
+    <script>var dataLayer = [${GLOBALS['GTM_DATA_LAYER']}]</script>
+    ${GLOBALS['GTM_SCRIPT']}    
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
     <!-- link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,900" rel="stylesheet" -->

@@ -1,6 +1,7 @@
 [
     {
         "title": "Getting Started",
+        "gtm": { "category": "getting-started" },
         "items": [
             {
                 "title": "Overview",
@@ -8,6 +9,7 @@
             },
             {
                 "title": "Javascript",
+                "gtm": { "tech": "vanilla" },
                 "url": "best-javascript-data-grid/",
                 "items": [
                     {
@@ -23,6 +25,7 @@
             {
                 "title": "ReactJS",
                 "url": "best-react-data-grid/",
+                "gtm": { "tech": "react" },
                 "items": [
                     {
                         "title": "Getting Started",
@@ -45,6 +48,7 @@
             {
                 "title": "Angular",
                 "url": "best-angular-2-data-grid/",
+                "gtm": { "tech": "angular" },
                 "items": [
                     {
                         "title": "Getting Started",
@@ -57,6 +61,7 @@
                     {
                         "title": "Building",
                         "url": "angular-building/",
+                        "gtm": { "hub": true },
                         "items": [
                             {
                                 "title": "Angular CLI",
@@ -85,6 +90,7 @@
             {
                 "title": "Polymer",
                 "url": "best-polymer-data-grid/",
+                "gtm": { "tech": "polymer" },
                 "items": [
                     {
                         "title": "Getting Started",
@@ -98,28 +104,34 @@
             },
             {
                 "title": "AngularJS 1.x",
+                "gtm": { "tech": "angularjs1" },
                 "url": "best-angularjs-data-grid/"
             },
             {
                 "title": "VueJS",
+                "gtm": { "tech": "vue" },
                 "url": "best-vuejs-data-grid/"
             },
             {
                 "title": "Aurelia",
+                "gtm": { "tech": "aurelia" },
                 "url": "best-aurelia-data-grid/"
             },
             {
                 "title": "Web Components",
+                "gtm": { "tech": "web-components" },
                 "url": "best-web-component-data-grid/"
             },
             {
                 "title": "TypeScript",
+                "gtm": { "tech": "typescript" },
                 "url": "ag-grid-typescript-webpack-2/"
             }
         ]
     },
     {
         "title": "Reference",
+        "gtm": { "category": "reference" },
         "items": [
             {
                 "title": "Overview",
@@ -153,6 +165,7 @@
     },
     {
         "title": "Features",
+        "gtm": { "category": "features" },
         "items": [
             {
                 "title": "Overview",
@@ -434,6 +447,7 @@
     },
     {
         "title": "Row Models",
+        "gtm": { "category": "row-models" },
         "items": [
             {
                 "title": "Overview",
@@ -465,6 +479,7 @@
     },
     {
         "title": "Themes",
+        "gtm": { "category": "themes" },
         "items": [
             {
                 "title": "Overview",
@@ -499,6 +514,7 @@
     },
     {
         "title": "Components",
+        "gtm": { "category": "components" },
         "items": [
             {
                 "title": "Overview",
@@ -536,6 +552,7 @@
     },
     {
         "title": "Examples",
+        "gtm": { "category": "examples" },
         "items": [
             {
                 "title": "Overview",
@@ -585,6 +602,7 @@
     },
     {
         "title": "Misc",
+        "gtm": { "category": "misc" },
         "items": [
             {
                 "title": "Change log",
