@@ -53,7 +53,7 @@ export class PropertyKeys {
         'deltaRowDataMode', 'ensureDomOrder', 'accentedSort', 'pivotTotals', 'suppressChangeDetection',
         'valueCache', 'valueCacheNeverExpires', 'aggregateOnlyChangedColumns', 'suppressAnimationFrame',
         'suppressExcelExport', 'suppressCsvExport', 'treeData', 'masterDetail', 'isRowMaster',
-        'suppressMultiRangeSelection', 'enterMovesDownAfterEdit'
+        'suppressMultiRangeSelection', 'enterMovesDownAfterEdit', 'enterMovesDown'
     ];
 
     public static FUNCTION_PROPERTIES = ['localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
@@ -63,7 +63,7 @@ export class PropertyKeys {
         'getNodeChildDetails', 'groupRowAggNodes', 'getRowNodeId', 'isFullWidthCell', 'fullWidthCellRenderer',
         'fullWidthCellRendererFramework', 'doesDataFlower', 'processSecondaryColDef', 'processSecondaryColGroupDef',
         'getBusinessKeyForNode', 'sendToClipboard', 'navigateToNextCell', 'tabToNextCell', 'getDetailRowData',
-       'processCellFromClipboard', 'getDocument', 'postProcessPopup', 'getChildCount', 'getDataPath', 'loadingOverlayComponent',
+        'processCellFromClipboard', 'getDocument', 'postProcessPopup', 'getChildCount', 'getDataPath', 'loadingOverlayComponent',
         'loadingOverlayComponentFramework', 'noRowsOverlayComponent', 'noRowsOverlayComponentFramework', 'detailCellRenderer', 'detailCellRendererFramework'];
 
      public static ALL_PROPERTIES = PropertyKeys.ARRAY_PROPERTIES

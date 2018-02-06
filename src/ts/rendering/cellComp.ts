@@ -1206,7 +1206,11 @@ export class CellComp extends Component {
         if (this.editingCell || this.rowComp.isEditing()) {
             this.stopEditingAndFocus();
         } else {
-            this.startRowOrCellEdit(Constants.KEY_ENTER);
+            if (this.beans.gridOptionsWrapper.isEnterMovesDown()) {
+                this.beans.rowRenderer.navigateToNextCell(null, Constants.KEY_DOWN, this.gridCell, false);
+            } else {
+                this.startRowOrCellEdit(Constants.KEY_ENTER);
+            }
         }
     }
 
