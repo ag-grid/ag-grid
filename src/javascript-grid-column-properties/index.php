@@ -308,6 +308,10 @@ include '../documentation-main/documentation_header.php';
             <th>openByDefault</th>
             <td>Set to 'true' if this group should be opened by default.</td>
         </tr>
+        <tr>
+            <th>headerGroupTooltip</th>
+            <td>Tooltip for the column group header</td>
+        </tr>
     </table>
 
 <?php include '../documentation-main/documentation_footer.php';?>
