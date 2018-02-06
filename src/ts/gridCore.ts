@@ -20,6 +20,7 @@ import {ICompFactory} from "./interfaces/iCompFactory";
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {PaginationComp} from "./rowModels/pagination/paginationComp";
 import {GridApi} from "./gridApi";
+import {IToolPanel} from "./interfaces/iToolPanel";
 
 @Bean('gridCore')
 export class GridCore {
@@ -47,7 +48,7 @@ export class GridCore {
 
     @Optional('rowGroupCompFactory') private rowGroupCompFactory: ICompFactory;
     @Optional('pivotCompFactory') private pivotCompFactory: ICompFactory;
-    @Optional('toolPanel') private toolPanel: Component;
+    @Optional('toolPanel') private toolPanel: IToolPanel;
     @Optional('statusBar') private statusBar: Component;
 
     private rowGroupComp: Component;
@@ -57,7 +58,6 @@ export class GridCore {
     private doingVirtualPaging: boolean;
 
     private eRootPanel: BorderLayout;
-    private toolPanelShowing: boolean;
 
     private logger: Logger;
 
@@ -267,21 +267,18 @@ export class GridCore {
     }
 
     public showToolPanel(show: any) {
-        if (show && !this.toolPanel) {
+        if (!this.toolPanel) {
             console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
-            this.toolPanelShowing = false;
             return;
         }
 
-        this.toolPanelShowing = show;
-        if (this.toolPanel) {
-            this.toolPanel.setVisible(show);
-            this.eRootPanel.doLayout();
-        }
+        this.toolPanel.init();
+        this.toolPanel.showToolPanel(show);
+        this.eRootPanel.doLayout();
     }
 
     public isToolPanelShowing() {
-        return this.toolPanelShowing;
+        return this.toolPanel.isToolPanelShowing();
     }
 
     @PreDestroy
