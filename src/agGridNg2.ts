@@ -359,6 +359,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public isRowMaster : any = undefined;
     @Input() public suppressMultiRangeSelection : any = undefined;
     @Input() public enterMovesDownAfterEdit : any = undefined;
+    @Input() public enterMovesDown : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();
