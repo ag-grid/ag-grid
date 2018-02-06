@@ -284,7 +284,7 @@ export class GridApi {
     }
 
     public getVerticalPixelRange(): any {
-        return this.gridPanel.getVerticalPixelRange();
+        return this.gridPanel.getVScrollPosition();
     }
 
     public refreshToolPanel(): void {

@@ -28,6 +28,7 @@ import {GridApi, RefreshCellsParams} from "../gridApi";
 import {PinnedRowModel} from "../rowModels/pinnedRowModel";
 import {Beans} from "./beans";
 import {AnimationFrameService} from "../misc/animationFrameService";
+import {HeightScaler} from "./heightScaler";
 
 @Bean('rowRenderer')
 export class RowRenderer extends BeanStub {
@@ -50,6 +51,7 @@ export class RowRenderer extends BeanStub {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('beans') private beans: Beans;
+    @Autowired('heightScaler') private heightScaler: HeightScaler;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Optional('rangeController') private rangeController: IRangeController;
 
@@ -290,10 +292,15 @@ export class RowRenderer extends BeanStub {
         // on the RHS - and if that was where the filter was that cause no rows to be presented, there
         // is no way to remove the filter.
         if (containerHeight===0) { containerHeight = 1; }
-        this.rowContainers.body.setHeight(containerHeight);
-        this.rowContainers.fullWidth.setHeight(containerHeight);
-        this.rowContainers.pinnedLeft.setHeight(containerHeight);
-        this.rowContainers.pinnedRight.setHeight(containerHeight);
+
+        this.heightScaler.setModelHeight(containerHeight);
+
+        let realHeight = this.heightScaler.getUiContainerHeight();
+
+        this.rowContainers.body.setHeight(realHeight);
+        this.rowContainers.fullWidth.setHeight(realHeight);
+        this.rowContainers.pinnedLeft.setHeight(realHeight);
+        this.rowContainers.pinnedRight.setHeight(realHeight);
     }
 
     private getLockOnRefresh(): void {
@@ -506,6 +513,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private redraw(rowsToRecycle?: {[key: string]: RowComp}, animate = false, afterScroll = false) {
+        this.heightScaler.update();
         this.workOutFirstAndLastRowsToRender();
 
         // the row can already exist and be in the following:
@@ -661,13 +669,17 @@ export class RowRenderer extends BeanStub {
             } else {
 
                 let pixelOffset = this.paginationProxy ? this.paginationProxy.getPixelOffset() : 0;
+                let heightOffset = this.heightScaler.getOffset();
 
-                let bodyVRange = this.gridPanel.getVerticalPixelRange();
+                let bodyVRange = this.gridPanel.getVScrollPosition();
                 let topPixel = bodyVRange.top;
                 let bottomPixel = bodyVRange.bottom;
 
-                let first = this.paginationProxy.getRowIndexAtPixel(topPixel + pixelOffset);
-                let last = this.paginationProxy.getRowIndexAtPixel(bottomPixel + pixelOffset);
+                let realPixelTop = topPixel + pixelOffset + heightOffset;
+                let realPixelBottom = bottomPixel + pixelOffset + heightOffset;
+
+                let first = this.paginationProxy.getRowIndexAtPixel(realPixelTop);
+                let last = this.paginationProxy.getRowIndexAtPixel(realPixelBottom);
 
                 //add in buffer
                 let buffer = this.gridOptionsWrapper.getRowBuffer();

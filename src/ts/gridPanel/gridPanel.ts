@@ -37,6 +37,7 @@ import {LongTapEvent, TouchListener} from "../widgets/touchListener";
 import {ComponentRecipes} from "../components/framework/componentRecipes";
 import {DragAndDropService} from "../dragAndDrop/dragAndDropService";
 import {RowDragFeature} from "./rowDragFeature";
+import {HeightScaler} from "../rendering/heightScaler";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -162,6 +163,7 @@ export class GridPanel extends BeanStub {
     @Autowired('valueService') private  valueService: ValueService;
     @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
+    @Autowired('heightScaler') private heightScaler: HeightScaler;
 
     private layout: BorderLayout;
     private logger: Logger;
@@ -235,7 +237,7 @@ export class GridPanel extends BeanStub {
         this.findElements();
     }
 
-    public getVerticalPixelRange(): {top: number, bottom: number} {
+    public getVScrollPosition(): {top: number, bottom: number} {
         let container: HTMLElement = this.getPrimaryScrollViewport();
         let result = {
             top: container.scrollTop,
@@ -725,66 +727,60 @@ export class GridPanel extends BeanStub {
 
         this.paginationProxy.goToPageWithIndex(index);
 
-        let nodeAtIndex = this.paginationProxy.getRow(index);
-        let pixelOffset = this.paginationProxy.getPixelOffset();
-        let rowTopPixel = nodeAtIndex.rowTop - pixelOffset;
-        let rowBottomPixel = rowTopPixel + nodeAtIndex.rowHeight;
+        let rowNode = this.paginationProxy.getRow(index);
+        let paginationOffset = this.paginationProxy.getPixelOffset();
+        let rowTopPixel = rowNode.rowTop - paginationOffset;
+        let rowBottomPixel = rowTopPixel + rowNode.rowHeight;
 
-        let vRange = this.getVerticalPixelRange();
+        let scrollPosition = this.getVScrollPosition();
+        let heightOffset = this.heightScaler.getOffset();
 
-        let vRangeTop = vRange.top;
-        let vRangeBottom = vRange.bottom;
+        let vScrollTop = scrollPosition.top + heightOffset;
+        let vScrollBottom = scrollPosition.bottom + heightOffset;
 
-        let scrollShowing = this.isHorizontalScrollShowing();
+        let hScrollShowing = this.isHorizontalScrollShowing();
 
-        if (scrollShowing) {
-            vRangeBottom -= this.scrollWidth;
+        if (hScrollShowing) {
+            vScrollBottom -= this.scrollWidth;
         }
 
-        let rowToHighlightHeight: number = rowBottomPixel - rowTopPixel;
-        let viewportHeight = vRangeBottom - vRangeTop;
-        let halfScreenHeight: number = (viewportHeight /2) + (rowToHighlightHeight / 2);
+        let viewportHeight = vScrollBottom - vScrollTop;
 
-        let eViewportToScroll = this.getPrimaryScrollViewport();
-        let newScrollPosition: number;
+        let newScrollPosition: number = null;
 
-        switch (position) {
-            case 'top':
-                newScrollPosition = rowTopPixel;
-                break;
-            case 'bottom':
-                newScrollPosition = rowBottomPixel - viewportHeight;
-                break;
-            case 'middle':
-                newScrollPosition = halfScreenHeight;
-                // The if/else logic here protects us from over scrolling
-                // ie: Trying to scroll past the row (ie ensureNodeVisible (0, 'middle'))
-                newScrollPosition = newScrollPosition > rowTopPixel ? rowTopPixel : newScrollPosition;
-                break;
-            default:
-                newScrollPosition = rowTopPixel;
-                let viewportScrolledPastRow = vRangeTop > rowTopPixel;
-                let viewportScrolledBeforeRow = vRangeBottom < rowBottomPixel;
+        // work out the pixels for top, middle and bottom up front,
+        // make the if/else below easier to read
+        let pxTop = this.heightScaler.getScrollPositionForPixel(rowTopPixel);
+        let pxBottom = this.heightScaler.getScrollPositionForPixel(rowBottomPixel - viewportHeight);
+        let pxMiddle = (pxTop + pxBottom) / 2;
 
-                if (viewportScrolledPastRow) {
-                    // if row is before, scroll up with row at top
-                    newScrollPosition = rowTopPixel;
-                } else if (viewportScrolledBeforeRow) {
-                    // if row is below, scroll down with row at bottom
-                    let viewportHeight = vRangeBottom - vRangeTop;
-                    newScrollPosition = rowBottomPixel - viewportHeight;
-                } else {
-                    // row already in view, and top/middle/bottom not specified, so do nothing.
-                    newScrollPosition = null;
-                }
-                break;
+        // make sure if middle, the row is not outside the top of the grid
+        if (pxMiddle > rowTopPixel) {
+            pxMiddle = rowTopPixel;
         }
 
-        // this means the row is already in view, and we don't need to scroll
-        if (newScrollPosition===null) { return; }
+        let rowBelowViewport = vScrollTop > rowTopPixel;
+        let rowAboveViewport = vScrollBottom < rowBottomPixel;
 
-        eViewportToScroll.scrollTop = newScrollPosition;
-        this.rowRenderer.redrawAfterScroll();
+        if (position==='top') {
+            newScrollPosition = pxTop;
+        } else if (position==='bottom') {
+            newScrollPosition = pxBottom;
+        } else if (position==='middle') {
+            newScrollPosition = pxMiddle;
+        } else if (rowBelowViewport) {
+            // if row is before, scroll up with row at top
+            newScrollPosition = pxTop;
+        } else if (rowAboveViewport) {
+            // if row is below, scroll down with row at bottom
+            newScrollPosition = pxBottom;
+        }
+
+        if (newScrollPosition!==null) {
+            let eViewportToScroll = this.getPrimaryScrollViewport();
+            eViewportToScroll.scrollTop = newScrollPosition;
+            this.rowRenderer.redrawAfterScroll();
+        }
     }
 
     public getPrimaryScrollViewport(): HTMLElement {
@@ -1191,6 +1187,7 @@ export class GridPanel extends BeanStub {
 
             this.addMouseWheelEventListeners();
             this.suppressScrollOnFloatingRow();
+            this.setupRowAnimationCssClass();
         }
 
         _.iterateObject(this.rowContainerComponents, (key: string, container: RowContainerComponent)=> {
@@ -1198,6 +1195,21 @@ export class GridPanel extends BeanStub {
                 this.context.wireBean(container);
             }
         });
+    }
+
+    private setupRowAnimationCssClass(): void {
+
+        let listener = () => {
+            // we don't want to use row animation if scaling, as rows jump strangely as you scroll,
+            // when scaling and doing row animation.
+            let animateRows = this.gridOptionsWrapper.isAnimateRows() && !this.heightScaler.isScaling();
+            _.addOrRemoveCssClass(this.eBody, 'ag-row-animation', animateRows);
+            _.addOrRemoveCssClass(this.eBody, 'ag-row-no-animation', !animateRows);
+        };
+
+        listener();
+
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, listener);
     }
 
     // when editing a pinned row, if the cell is half outside the scrollable area, the browser can

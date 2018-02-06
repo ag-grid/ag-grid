@@ -246,9 +246,11 @@ export class RowComp extends Component {
         if (setRowTop) {
             // if sliding in, we take the old row top. otherwise we just set the current row top.
             let pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
-            let pixelsWithOffset = this.applyPaginationOffset(pixels);
+            let afterPaginationPixels = this.applyPaginationOffset(pixels);
+            let afterScalingPixels = this.beans.heightScaler.getRealPixelPosition(afterPaginationPixels);
+
             // if not setting row top, then below is empty string
-            rowTopStyle = `transform: translateY(${pixelsWithOffset}px); `;
+            rowTopStyle = `transform: translateY(${afterScalingPixels}px); `;
         }
         return rowTopStyle;
     }
@@ -441,6 +443,7 @@ export class RowComp extends Component {
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DRAGGING_CHANGED, this.onRowNodeDraggingChanged.bind(this));
 
         let eventService = this.beans.eventService;
+        this.addDestroyableEventListener(eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, this.onTopChanged.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
@@ -873,12 +876,6 @@ export class RowComp extends Component {
             classes.push('ag-row-odd');
         }
 
-        if (this.beans.gridOptionsWrapper.isAnimateRows()) {
-            classes.push('ag-row-animation');
-        } else {
-            classes.push('ag-row-no-animation');
-        }
-
         if (this.rowNode.isSelected()) {
             classes.push('ag-row-selected');
         }
@@ -1200,7 +1197,7 @@ export class RowComp extends Component {
     // moves the row closer to the viewport if it is far away, so the row slide in / out
     // at a speed the user can see.
     private roundRowTopToBounds(rowTop: number): number {
-        let range = this.beans.gridPanel.getVerticalPixelRange();
+        let range = this.beans.gridPanel.getVScrollPosition();
 
         let minPixel = this.applyPaginationOffset(range.top, true) - 100;
         let maxPixel = this.applyPaginationOffset(range.bottom, true) + 100;
@@ -1334,9 +1331,11 @@ export class RowComp extends Component {
         // need to make sure rowTop is not null, as this can happen if the node was once
         // visible (ie parent group was expanded) but is now not visible
         if (_.exists(pixels)) {
-            let pixelsWithOffset = this.applyPaginationOffset(pixels);
+            let afterPaginationPixels = this.applyPaginationOffset(pixels);
 
-            let topPx = pixelsWithOffset + "px";
+            let afterScalingPixels = this.beans.heightScaler.getRealPixelPosition(afterPaginationPixels);
+
+            let topPx = afterScalingPixels + "px";
             this.eAllRowContainers.forEach( row => row.style.transform = `translateY(${topPx})` );
         }
     }

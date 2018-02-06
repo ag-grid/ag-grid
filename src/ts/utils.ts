@@ -984,6 +984,32 @@ export class Utils {
         return element.clientHeight < element.scrollHeight;
     }
 
+    static getMaxDivHeight(): number {
+        if (!document.body) {
+            return -1;
+        }
+
+        let res = 1000000;
+        // FF reports the height back but still renders blank after ~6M px
+        let testUpTo = navigator.userAgent.toLowerCase().match(/firefox/) ? 6000000 : 1000000000;
+        let div = this.loadTemplate("<div/>");
+        document.body.appendChild(div);
+        while (true) {
+            let test = res * 2;
+            div.style.height = test + 'px';
+
+            if (test > testUpTo || div.clientHeight !== test) {
+                break;
+            } else {
+                res = test;
+            }
+        }
+
+        document.body.removeChild(div);
+
+        return res;
+    }
+
     static getScrollbarWidth() {
         let outer = document.createElement("div");
         outer.style.visibility = "hidden";

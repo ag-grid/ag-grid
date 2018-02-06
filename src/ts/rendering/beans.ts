@@ -29,7 +29,13 @@ import {_} from "../utils";
 import {DragAndDropService} from "../dragAndDrop/dragAndDropService";
 import {SortController} from "../sortController";
 import {FilterManager} from "../filter/filterManager";
+import {HeightScaler} from "./heightScaler";
 
+/** Using the IoC has a slight performance consideration, which is no problem most of the
+ * time, unless we are trashing objects - which is the case when scrolling and rowComp
+ * and cellComp. So for performance reasons, RowComp and CellComp do not get autowired
+ * with the IoC. Instead they get passed this object which is all the beans the RowComp
+ * and CellComp need. Not autowiring all the cells gives performance improvement. */
 @Bean('beans')
 export class Beans {
 
@@ -63,6 +69,7 @@ export class Beans {
     @Autowired('dragAndDropService') public dragAndDropService: DragAndDropService;
     @Autowired('sortController') public sortController: SortController;
     @Autowired('filterManager') public filterManager: FilterManager;
+    @Autowired('heightScaler') public heightScaler: HeightScaler;
 
     public forPrint: boolean;
     public doingMasterDetail: boolean;

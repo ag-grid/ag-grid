@@ -488,10 +488,10 @@ ag-grid-aurelia {
     display: inline-block;
 }
 // for animations, allows rows to slide up and down,
-.ag-row-animation {
+.ag-row-animation .ag-row {
     transition: transform 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;
 }
-.ag-row-no-animation {
+.ag-row-no-animation .ag-row {
     transition: background-color 0.1s;
 }
 .ag-row {
