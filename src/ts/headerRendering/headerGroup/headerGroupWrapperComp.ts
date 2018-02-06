@@ -72,6 +72,7 @@ export class HeaderGroupWrapperComp extends Component {
         this.setupWidth();
         this.addAttributes();
         this.setupMovingCss();
+        this.setupTooltip();
 
         let setLeftFeature = new SetLeftFeature(this.columnGroup, this.getGui(), this.beans);
         setLeftFeature.init();
@@ -85,6 +86,15 @@ export class HeaderGroupWrapperComp extends Component {
             this.addDestroyableEventListener(col, Column.EVENT_MOVING_CHANGED, this.onColumnMovingChanged.bind(this));
         });
         this.onColumnMovingChanged();
+    }
+
+    private setupTooltip(): void {
+        let colGroupDef = this.columnGroup.getColGroupDef();
+
+        // add tooltip if exists
+        if (colGroupDef.headerGroupTooltip) {
+            this.getGui().title = colGroupDef.headerGroupTooltip;
+        }
     }
 
     private onColumnMovingChanged(): void {
