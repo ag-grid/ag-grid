@@ -1,6 +1,7 @@
 <?php
 $navKey = "about";
 include_once '../includes/html-helpers.php';
+gtm_data_layer('jobs');
 ?>
 <!DOCTYPE html>
 <html>

@@ -3,6 +3,7 @@ $navKey = "blog";
 $version = 'latest';
 require_once dirname(__FILE__) . '/html-helpers.php';
 require_once dirname(__FILE__) . '/../example-runner/utils.php';
+gtm_data_layer('blogs');
 ?>
 <!DOCTYPE html>
 <html>

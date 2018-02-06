@@ -176,7 +176,7 @@ ng serve</snippet>
 
 <p>The results of which will be:</p>
 
-<img src="../images/angularcli_final.png" style="width: 200px">
+<img src="../images/angularcli_final.png" style="width: 500px">
 
 <p>And that's it! Of course there is much more you can do with Angular CLI, but the above should illustrate how
     quick

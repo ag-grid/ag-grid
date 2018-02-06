@@ -1,5 +1,6 @@
 <?php
 include_once 'includes/html-helpers.php';
+gtm_data_layer('trial', array('state' => 'end'));
 ?>
 <!DOCTYPE html>
 <html class="stretch-html">

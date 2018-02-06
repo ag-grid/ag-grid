@@ -1,6 +1,7 @@
 <?php
 $navKey = "licenseAndPricing";
 include_once 'includes/html-helpers.php';
+gtm_data_layer('pricing', array('state' => 'start'));
 ?>
 <!DOCTYPE html>
 <html>
