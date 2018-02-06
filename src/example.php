@@ -1,4 +1,5 @@
 <?php
+$navKey = "demo";
 require "example-runner/utils.php";
 include_once 'includes/html-helpers.php';
 ?>

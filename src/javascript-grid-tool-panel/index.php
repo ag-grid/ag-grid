@@ -35,6 +35,10 @@ include '../documentation-main/documentation_header.php';
         doesn't make sense to have values if you are not grouping.
     </p>
 
+    <h2>Open/close with side button</h2>
+
+    <p>By default, the user can toggle the tool panel visiblity from the context menu or from the column menu. To use a permanently displayed side button instead, set <code>toolPanelUseSideButton=true</code>.</p>
+
     <h2>Tool Panel Actions</h2>
 
     <h3>Show / Hide Columns</h3>

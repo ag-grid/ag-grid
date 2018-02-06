@@ -9,26 +9,26 @@ var gridDiv;
 var colNames = ["Station", "Railway", "Street", "Address", "Toy", "Soft Box", "Make and Model", "Longest Day", "Shortest Night"];
 
 var countries = [
-    {country: "Ireland", continent: "Europe", language: "English"},
-    {country: "Spain", continent: "Europe", language: "Spanish"},
-    {country: "United Kingdom", continent: "Europe", language: "English"},
-    {country: "France", continent: "Europe", language: "French"},
-    {country: "Germany", continent: "Europe", language: "German"},
-    {country: "Luxembourg", continent: "Europe", language: "French"},
-    {country: "Sweden", continent: "Europe", language: "Swedish"},
-    {country: "Norway", continent: "Europe", language: "Norwegian"},
-    {country: "Italy", continent: "Europe", language: "Italian"},
-    {country: "Greece", continent: "Europe", language: "Greek"},
-    {country: "Iceland", continent: "Europe", language: "Icelandic"},
-    {country: "Portugal", continent: "Europe", language: "Portuguese"},
-    {country: "Malta", continent: "Europe", language: "Maltese"},
-    {country: "Brazil", continent: "South America", language: "Portuguese"},
-    {country: "Argentina", continent: "South America", language: "Spanish"},
-    {country: "Colombia", continent: "South America", language: "Spanish"},
-    {country: "Peru", continent: "South America", language: "Spanish"},
-    {country: "Venezuela", continent: "South America", language: "Spanish"},
-    {country: "Uruguay", continent: "South America", language: "Spanish"},
-    {country: "Belgium", continent: "Europe", language: "French"}
+    { country: "Ireland", continent: "Europe", language: "English" },
+    { country: "Spain", continent: "Europe", language: "Spanish" },
+    { country: "United Kingdom", continent: "Europe", language: "English" },
+    { country: "France", continent: "Europe", language: "French" },
+    { country: "Germany", continent: "Europe", language: "German" },
+    { country: "Luxembourg", continent: "Europe", language: "French" },
+    { country: "Sweden", continent: "Europe", language: "Swedish" },
+    { country: "Norway", continent: "Europe", language: "Norwegian" },
+    { country: "Italy", continent: "Europe", language: "Italian" },
+    { country: "Greece", continent: "Europe", language: "Greek" },
+    { country: "Iceland", continent: "Europe", language: "Icelandic" },
+    { country: "Portugal", continent: "Europe", language: "Portuguese" },
+    { country: "Malta", continent: "Europe", language: "Maltese" },
+    { country: "Brazil", continent: "South America", language: "Portuguese" },
+    { country: "Argentina", continent: "South America", language: "Spanish" },
+    { country: "Colombia", continent: "South America", language: "Spanish" },
+    { country: "Peru", continent: "South America", language: "Spanish" },
+    { country: "Venezuela", continent: "South America", language: "Spanish" },
+    { country: "Uruguay", continent: "South America", language: "Spanish" },
+    { country: "Belgium", continent: "Europe", language: "French" }
 ];
 
 var games = ["Chess", "Cross and Circle", "Daldøs", "Downfall", "DVONN", "Fanorona", "Game of the Generals", "Ghosts",
@@ -63,14 +63,14 @@ var groupColumn = {
     headerName: "Group",
     width: 200,
     field: 'name',
-    valueGetter: function(params) {
+    valueGetter: function (params) {
         if (params.node.group) {
             return params.node.key;
         } else {
             return params.data[params.colDef.field];
         }
     },
-    cellRenderer:'agGroupCellRenderer',
+    cellRenderer: 'agGroupCellRenderer',
     headerCheckboxSelection: true,
     headerCheckboxSelectionFilteredOnly: true,
     cellRendererParams: {
@@ -79,7 +79,7 @@ var groupColumn = {
 };
 
 var gridOptions = {
-    components:{
+    components: {
         personFilter: PersonFilter
     },
     floatingFilter: true,
@@ -100,6 +100,7 @@ var gridOptions = {
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
     autoGroupColumnDef: groupColumn,
     showToolPanel: true,
+    toolPanelUseSideButton: true,
     checkboxSelection: function (params) {
         // we show checkbox selection in the first column, unless we are grouping,
         // as the group column is configured to always show selection
@@ -116,11 +117,11 @@ var gridOptions = {
         }
     },
     // suppressRowHoverClass: true,
-// isScrollLag: function() { return true; },
-// suppressScrollLag: true,
-// floatingTopRowData: [{},{},{}],
-// floatingBottomRowData: [{},{},{}],
-// callback when row clicked
+    // isScrollLag: function() { return true; },
+    // suppressScrollLag: true,
+    // floatingTopRowData: [{},{},{}],
+    // floatingBottomRowData: [{},{},{}],
+    // callback when row clicked
     onRowClicked: function (params) {
         // console.log("Callback onRowClicked: " + (params.data?params.data.name:null) + " - " + params.event);
     },
@@ -130,18 +131,18 @@ var gridOptions = {
     onRowDoubleClicked: function (params) {
         // console.log("Callback onRowDoubleClicked: " + params.data.name + " - " + params.event);
     },
-// callback when cell clicked
+    // callback when cell clicked
     onCellClicked: function (params) {
         // console.log("Callback onCellClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
     },
     onRowDataChanged: function (params) {
         console.log('Callback onRowDataChanged: ');
     },
-// callback when cell double clicked
+    // callback when cell double clicked
     onCellDoubleClicked: function (params) {
         // console.log("Callback onCellDoubleClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
     },
-// callback when cell right clicked
+    // callback when cell right clicked
     onCellContextMenu: function (params) {
         console.log("Callback onCellContextMenu: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
     },
@@ -217,18 +218,18 @@ var defaultCols = [
             {
                 headerName: "Language", field: "language", width: 150, editable: true, filter: 'agSetColumnFilter',
                 cellRenderer: languageCellRenderer,
-                cellEditor:'agSelectCellEditor',
+                cellEditor: 'agSelectCellEditor',
                 enableRowGroup: true,
                 enablePivot: true,
                 // rowGroupIndex: 0,
                 // pivotIndex: 0,
                 cellEditorParams: {
                     values: ['English', 'Spanish', 'French', 'Portuguese', 'German',
-                        'Swedish','Norwegian','Italian','Greek','Icelandic','Portuguese','Maltese']
+                        'Swedish', 'Norwegian', 'Italian', 'Greek', 'Icelandic', 'Portuguese', 'Maltese']
                 },
                 pinned: 'right',
                 headerTooltip: "Example tooltip for Language",
-                filterParams: {newRowsAction: 'keep'}
+                filterParams: { newRowsAction: 'keep' }
             },
             {
                 headerName: "Country", field: "country", width: 150, editable: true,
@@ -258,7 +259,8 @@ var defaultCols = [
         // column group 'Game of Choice'
         headerName: 'Game of Choice',
         children: [
-            {headerName: "Game Name", field: "game.name", width: 180, editable: true, filter: 'agSetColumnFilter',
+            {
+                headerName: "Game Name", field: "game.name", width: 180, editable: true, filter: 'agSetColumnFilter',
                 tooltipField: 'game.name',
                 cellClass: function () {
                     return 'alphabet';
@@ -280,9 +282,10 @@ var defaultCols = [
                 enableRowGroup: true,
                 enablePivot: true,
                 enableValue: true,
-                cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
+                cellRenderer: booleanCellRenderer, cellStyle: { "text-align": "center" }, comparator: booleanComparator,
                 floatCell: true,
-                filterParams: {newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer}}
+                filterParams: { newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer }
+            }
         ]
     },
     {
@@ -290,9 +293,10 @@ var defaultCols = [
         headerName: 'Performance',
         groupId: 'performance',
         children: [
-            {headerName: "Bank Balance", field: "bankBalance", width: 150, editable: true,
+            {
+                headerName: "Bank Balance", field: "bankBalance", width: 150, editable: true,
                 filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
-                filterParams: {cellRenderer: currencyRenderer},
+                filterParams: { cellRenderer: currencyRenderer },
                 enableValue: true,
                 // colId: 'sf',
                 // valueGetter: '55',
@@ -304,13 +308,13 @@ var defaultCols = [
             },
             {
                 headerName: "Extra Info 1", columnGroupShow: 'open', width: 150, editable: false,
-                suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "right"},
-                cellRenderer: function() { return 'Abra...'; }
+                suppressSorting: true, suppressMenu: true, cellStyle: { "text-align": "right" },
+                cellRenderer: function () { return 'Abra...'; }
             },
             {
                 headerName: "Extra Info 2", columnGroupShow: 'open', width: 150, editable: false,
-                suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "left"},
-                cellRenderer: function() { return '...cadabra!'; }
+                suppressSorting: true, suppressMenu: true, cellStyle: { "text-align": "left" },
+                cellRenderer: function () { return '...cadabra!'; }
             }
         ],
     },
@@ -320,7 +324,7 @@ var defaultCols = [
         enableRowGroup: true,
         enablePivot: true,
         enableValue: true,
-        filterParams: {cellRenderer: ratingFilterRenderer}
+        filterParams: { cellRenderer: ratingFilterRenderer }
     },
     {
         headerName: "Total Winnings", field: "totalWinnings", filter: 'agNumberColumnFilter',
@@ -353,7 +357,7 @@ months.forEach(function (month) {
         },
         newValueHandler: numberNewValueHandler, cellRenderer: currencyRenderer,
         filterCellRenderer: currencyRenderer,
-        cellStyle: {"text-align": "right"}
+        cellStyle: { "text-align": "right" }
     })
 });
 
@@ -399,13 +403,13 @@ function getRowCount() {
 
 function createCols() {
     var colCount = getColCount();
-// start with a copy of the default cols
+    // start with a copy of the default cols
     var columns = defaultCols.slice(0, colCount);
 
-// there are 22 cols by default
+    // there are 22 cols by default
     for (var col = 22; col < colCount; col++) {
         var colName = colNames[col % colNames.length];
-        var colDef = {headerName: colName, field: "col" + col, width: 200, editable: true};
+        var colDef = { headerName: colName, field: "col" + col, width: 200, editable: true };
         columns.push(colDef);
     }
 
@@ -459,7 +463,7 @@ function createRowItem(row, colCount) {
 
     //create data for the known columns
     var countriesToPickFrom = Math.floor(countries.length * ((row % 3 + 1) / 3));
-    var countryData = countries[(row*19) % countriesToPickFrom];
+    var countryData = countries[(row * 19) % countriesToPickFrom];
     rowItem.country = countryData.country;
     rowItem.continent = countryData.continent;
     rowItem.language = countryData.language;
@@ -469,7 +473,7 @@ function createRowItem(row, colCount) {
     rowItem.name = firstName + " " + lastName;
 
     rowItem.game = {
-        name: games[Math.floor(row*13/17*19) % games.length],
+        name: games[Math.floor(row * 13 / 17 * 19) % games.length],
         bought: booleanValues[row % booleanValues.length]
     };
 
@@ -510,9 +514,9 @@ function selectionChanged(event) {
 }
 
 function rowSelected(event) {
-// the number of rows selected could be huge, if the user is grouping and selects a group, so
-// to stop the console from clogging up, we only print if in the first 10 (by chance we know
-// the node id's are assigned from 0 upwards)
+    // the number of rows selected could be huge, if the user is grouping and selects a group, so
+    // to stop the console from clogging up, we only print if in the first 10 (by chance we know
+    // the node id's are assigned from 0 upwards)
     if (event.node.id < 10) {
         var valueToPrint = event.node.group ? 'group (' + event.node.key + ')' : event.node.data.name;
         console.log("Callback rowSelected: " + valueToPrint);
@@ -521,7 +525,7 @@ function rowSelected(event) {
 
 function onThemeChanged(newTheme) {
     gridDiv.className = newTheme;
-    if(newTheme === 'ag-theme-material') {
+    if (newTheme === 'ag-theme-material') {
         gridOptions.rowHeight = 48;
         // gridOptions.icons.checkboxChecked = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAABmJLR0QAAAAAAAD5Q7t/AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AUZEBAL/ldO7gAAAEpJREFUKM9jZJjW8Z+BDMDEQCagrcb/meUM/zPL6WQjzCbG6Z10sBGXbRgasQUCLsCCzyZctmHYiEsRUX5E1ozPIKxOJcZmsqMDAKbtFz19uHD9AAAAAElFTkSuQmCC"/>';
         gridOptions.icons.checkboxChecked = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDoxMTQzMkY1NDIyMjhFNjExQkVGOEFCQUI5MzdBNjFEMSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoyMzBBQkU2ODI4MjQxMUU2QjlDRUZCNUFDREJGRTVDMCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoyMzBBQkU2NzI4MjQxMUU2QjlDRUZCNUFDREJGRTVDMCIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M2IChXaW5kb3dzKSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjE0NDMyRjU0MjIyOEU2MTFCRUY4QUJBQjkzN0E2MUQxIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjExNDMyRjU0MjIyOEU2MTFCRUY4QUJBQjkzN0E2MUQxIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+O+zv0gAAAQ1JREFUeNpilJvw35OBgWEuEEsyEAeeA3EyI1DjMxI0wTUzkaEJBCSZiFVpJcvAsDqEgUFVCMInSqOeOAPDLG8GBjNpBoZCCyI1KggwMCzwZ2DgZWdgOPWUgaF4F5pGDxWgqT4MDPzsSB7hYWBYHMDAIMzJwHDjDQND0mYGhu9/0DT6qTEwuCszMOyIZmAwkoTYALJJjp+B4cEHBoaEjQwMn38iDAVFx38wA4gzTBgYSiwhEi++MDDI8DEwvP3OwBC0CqIZGcBtBOmefoaBIXQNA8PvfxBNf4B03AZMTVgD5xwwXcQDFX/8wcAw+RQDw5VX2AMN7lRSARM07ZEKXoA0poAYJGh6CkrkAAEGAKNeQxaS7i+xAAAAAElFTkSuQmCC"/>';
@@ -606,8 +610,8 @@ PersonFilter.prototype.setupGui = function (params) {
     this.eFilterText.addEventListener("changed", listener);
     this.eFilterText.addEventListener("paste", listener);
     this.eFilterText.addEventListener("input", listener);
-// IE doesn't fire changed for special keys (eg delete, backspace), so need to
-// listen for this further ones
+    // IE doesn't fire changed for special keys (eg delete, backspace), so need to
+    // listen for this further ones
     this.eFilterText.addEventListener("keydown", listener);
     this.eFilterText.addEventListener("keyup", listener);
 
@@ -624,7 +628,7 @@ PersonFilter.prototype.getGui = function () {
 };
 
 PersonFilter.prototype.doesFilterPass = function (params) {
-// make sure each word passes separately, ie search for firstname, lastname
+    // make sure each word passes separately, ie search for firstname, lastname
     var passed = true;
     var valueGetter = this.valueGetter;
     this.filterText.toLowerCase().split(" ").forEach(function (filterWord) {
@@ -646,7 +650,7 @@ PersonFilter.prototype.getApi = function () {
     var that = this;
     return {
         getModel: function () {
-            var model = {value: that.filterText.value};
+            var model = { value: that.filterText.value };
             return model;
         },
         setModel: function (model) {
@@ -656,8 +660,8 @@ PersonFilter.prototype.getApi = function () {
 };
 
 // lazy, the example doesn't use getModel() and setModel()
-PersonFilter.prototype.getModel = function () {};
-PersonFilter.prototype.setModel = function () {};
+PersonFilter.prototype.getModel = function () { };
+PersonFilter.prototype.setModel = function () { };
 
 function WinningsFilter() {
 }
@@ -716,14 +720,14 @@ WinningsFilter.prototype.isFilterActive = function () {
 };
 
 // lazy, the example doesn't use getModel() and setModel()
-WinningsFilter.prototype.getModel = function () {};
-WinningsFilter.prototype.setModel = function () {};
+WinningsFilter.prototype.getModel = function () { };
+WinningsFilter.prototype.setModel = function () { };
 
 function currencyCssFunc(params) {
     if (params.value !== null && params.value !== undefined && params.value < 0) {
-        return {"color": "red", "text-align": "right", "font-weight": "bold"};
+        return { "color": "red", "text-align": "right", "font-weight": "bold" };
     } else {
-        return {"text-align": "right"};
+        return { "text-align": "right" };
     }
 }
 
@@ -775,7 +779,7 @@ var count = 0;
 
 function booleanCellRenderer(params) {
     count++;
-    if (count<=1) {
+    if (count <= 1) {
         // params.api.onRowHeightChanged();
     }
 
@@ -786,7 +790,7 @@ function booleanCellRenderer(params) {
     } else if (valueCleaned === false) {
         //this is the unicode for cross character
         return "<span title='false'>&#10006;</span>";
-    } else if (params.value !==null && params.value !== undefined) {
+    } else if (params.value !== null && params.value !== undefined) {
         return params.value.toString();
     } else {
         return null;
@@ -828,7 +832,7 @@ function languageCellRenderer(params) {
 }
 
 function countryCellRenderer(params) {
-//get flags from here: http://www.freeflagicons.com/
+    //get flags from here: http://www.freeflagicons.com/
     if (params.value === "" || params.value === undefined || params.value === null) {
         return null;
     } else {
@@ -843,7 +847,7 @@ function CountryCellRenderer() {
 }
 
 CountryCellRenderer.prototype.init = function (params) {
-//get flags from here: http://www.freeflagicons.com/
+    //get flags from here: http://www.freeflagicons.com/
     if (params.value === "" || params.value === undefined || params.value === null) {
         this.eGui.innerHTML = '';
     } else {
