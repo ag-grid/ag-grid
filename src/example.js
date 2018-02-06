@@ -207,6 +207,7 @@ var gridOptions = {
             return '';
         }
     },
+    // rowHeight: 100,
     // suppressTabbing: true,
     // rowHoverClass: true,
     // layoutInterval: -1,
