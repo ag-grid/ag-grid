@@ -720,7 +720,6 @@ ag-grid-aurelia {
     cursor: default;
 }
 .ag-tool-panel {
-    width: 200px;
     user-select: none;
     cursor: default;
     box-sizing: border-box;
@@ -847,5 +846,39 @@ $row-group-indent-size: 10px !default;
     }
     .ag-rtl .ag-row-group-indent-#{$i} {
         padding-right: $i * $row-group-indent-size;
+    }
+}
+
+.ag-tool-panel-wrapper {
+    display: flex;
+    flex-direction: row-reverse;
+    height: 100%;
+
+    .side-buttons {
+        width: 20px;
+        button {
+            transform: rotate(90deg) translateY(-20px);
+            transform-origin: left top 0;
+            display: block;
+            white-space: nowrap;
+        }
+    }
+
+    .panel-container {
+        width: 180px;
+
+    }
+
+    &.full-width .panel-container {
+        width: 200px;
+    }
+}
+
+.ag-rtl .ag-tool-panel-wrapper {
+    .side-buttons {
+        button {
+            transform: rotate(-90deg) translatex(20px);
+            transform-origin: right bottom 0;
+        }
     }
 }
