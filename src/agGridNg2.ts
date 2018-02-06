@@ -263,6 +263,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public toolPanelSuppressValues : any = undefined;
     @Input() public toolPanelSuppressPivots : any = undefined;
     @Input() public toolPanelSuppressPivotMode : any = undefined;
+    @Input() public toolPanelUseSideButton : any = undefined;
     @Input() public suppressRowClickSelection : any = undefined;
     @Input() public suppressCellSelection : any = undefined;
     @Input() public suppressHorizontalScroll : any = undefined;
@@ -405,6 +406,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Output() public cellEditingStarted: EventEmitter<any> = new EventEmitter<any>();
     @Output() public cellEditingStopped: EventEmitter<any> = new EventEmitter<any>();
     @Output() public bodyScroll: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public heightScaleChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public paginationChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public componentStateChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public bodyHeightChanged: EventEmitter<any> = new EventEmitter<any>();
