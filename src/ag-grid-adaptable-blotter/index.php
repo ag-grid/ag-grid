@@ -17,22 +17,26 @@ include('../includes/mediaHeader.php');
 
 <div class="row">
     <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h1>Adaptable Blotter builds on ag-Grid's Advanced Functionality</h1>
+        <h1>Getting More from your Datagrid - Introducing Adaptable Blotter</h1>
     </div>
 </div>
 
 <div class="row">
     <div class="col-md-9">
 
-        <h2>Make It Faster</h2>
+        <h2>What Does It Do?</h2>
 
         <p>
-        We have been working closely with the team at Adaptable Tools over the past number of months. They have just recently completed their integration with ag-Grid for their financial product Adaptable Blotter. This new version of Adaptable Blotter builds on the ag-Grid API, delivering extended functionality for your users.
+        Adaptable Blotter is a very clever piece of software that sits on top of datagrids and delivers powerful functionality to the end user. We have been working closely with the team and they recently completed their integration with ag-Grid. The combination of the two products significantly reduces development, taking care of common requirements such as user configuration and settings, multiple layouts, auditing of grid activity and custom columns. While Adaptable Blotter is built for financial users, we see many features that would be of interest in other sectors. In our opinion, Adaptable Blotter naturally dovetails with ag-Grid, harnessing our raw power and leveraging our features to deliver a lightening fast and intuitive experience for the user.
         </p>
-        
+
+        <h2>How Does it work with ag-Grid</h2>
+
         <p>
-        The combination of the two products significantly reduces development, taking care of common requirements such as user configuration and settings, multiple layouts, auditing of grid activity and custom columns. While Adaptable Blotter is built for financial users, we see many features that would be of interest in other sectors. In our opinion, Adaptable Blotter naturally dovetails with ag-Grid, harnessing our raw power, leveraging our features to deliver an lightening fast and intuitive experience for the user.
+        Adaptable Blotter builds on the ag-Grid API and uses the hooks and events of our grid to deliver extended functionality. We want to ensure that our grid remains fast and efficient to deliver performance so these are features we don't see as living within a grid. Implementing the blotter is very straightforward and our close relationship with their team ensures that both products work seamlessly ith each other. Adaptable Blotter supports both ag-Grid Community Edition and a-Grid Enterprise up to the latest versions.
         </p>
+
+        <h2>Where can you Learn More?</h2>
 
         <p>
         To learn more about Adaptable Blotter, you can see the demo of ag-Grid here, they have even built a performance monitor. The Adaptable team come to the table with a different perspective as they are heavily user focussed whereas ag-Grid is pitched at the developer, this has long been our stronghold. This is the first time we have worked closely with a partner such as this and believe it has borne fruit. If you'd like to feature on our partner spotlight page or tell us about your project involving ag-Grid, please get in touch.
