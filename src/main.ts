@@ -9,7 +9,7 @@ import {StatusBar} from "./statusBar/statusBar";
 import {ContextMenuFactory} from "./menu/contextMenu";
 import {ViewportRowModel} from "./rowModels/viewport/viewportRowModel";
 import {PivotColumnsPanel} from "./toolPanel/columnDrop/pivotColumnsPanel";
-import {ToolPanelComp} from "./toolPanel/toolPanelComp";
+import {ToolPanelComp, ToolPanelWrapperComp} from "./toolPanel/toolPanelComp";
 import {RowGroupCompFactory} from "./rowGroupCompFactory";
 import {LicenseManager} from "./licenseManager";
 import {MD5} from "./license/md5";
@@ -24,7 +24,7 @@ import {EnterpriseRowModel} from "./rowModels/enterprise/enterpriseRowModel";
 
 let rowModelTypes = {viewport: ViewportRowModel, enterprise: EnterpriseRowModel};
 
-Grid.setEnterpriseBeans([ToolPanelComp, EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, RowGroupCompFactory, PivotCompFactory,
+Grid.setEnterpriseBeans([ToolPanelWrapperComp, EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, RowGroupCompFactory, PivotCompFactory,
     PivotColumnsPanel, RangeController, ClipboardService, PivotStage, PivotColDefService,
     ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService,
     StatusBar, LicenseManager, MD5, MenuItemMapper], rowModelTypes);
