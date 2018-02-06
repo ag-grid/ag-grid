@@ -104,7 +104,7 @@ export class GridApi {
     @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
     @Autowired('valueCache') private valueCache: ValueCache;
-    @Optional('toolPanel') private toolPanel: IToolPanel;
+    @Optional('toolPanelWrapperComp') private toolPanelWrapperComp: IToolPanel;
 
     private inMemoryRowModel: InMemoryRowModel;
     private infinitePageRowModel: InfiniteRowModel;
