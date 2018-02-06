@@ -294,7 +294,10 @@ include '../documentation-main/documentation_header.php';
             <th>showToolPanel</th>
             <td>Set to true to show the <a href="../javascript-grid-tool-panel">Tool Panel</a> by default.</td>
         </tr>
-
+        <tr>
+            <th>toolPanelUseSideButton</th>
+            <td>Set to true to open/close the <a href="../javascript-grid-tool-panel">Tool Panel</a> from a side button.</td>
+        </tr>
         </table>
 <h2>Data & Row Models</h2>
     <table class="table content reference">
