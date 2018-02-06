@@ -1359,6 +1359,40 @@
         @include card($params);
     }
 
+    .ag-tool-panel-wrapper {
+        .side-buttons button {
+            background: transparent;
+            border: 0;
+            border-right: 1px solid $border-color;
+            color: $foreground-color;
+            height: 20px;
+        }
+
+        .ag-panel-container {
+            border-right: 1px solid $border-color;
+            box-sizing: border-box;
+        }
+
+        &.full-width .ag-panel-container {
+            border-right: 0;
+        }
+    }
+
+    .ag-rtl .ag-tool-panel-wrapper {
+        .ag-panel-container {
+            border-right: 0;
+            border-left: 1px solid $border-color;
+        }
+
+        &.full-width .ag-panel-container {
+            border-left: 0;
+        }
+        .side-buttons button {
+            border-right: 0;
+            border-left: 1px solid $border-color;
+        }
+    }
+
     $exported: (
         autoSizePadding: $grid-size * 3,
         headerHeight: $header-height,
