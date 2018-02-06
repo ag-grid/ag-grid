@@ -14,7 +14,7 @@ import {PivotModePanel} from "./columnDrop/pivotModePanel";
 import {ValuesColumnPanel} from "./columnDrop/valueColumnsPanel";
 import {_, IToolPanel} from "ag-grid";
 
-@Bean("toolPanel")
+@Bean("toolPanelWrapperComp")
 export class ToolPanelWrapperComp extends Component implements IToolPanel {
 
     @Autowired("context") private context: Context;
