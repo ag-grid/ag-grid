@@ -221,11 +221,10 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>enterMovesDownAfterEdit</th>
+            <th>enterMovesDown<br/>enterMovesDownAfterEdit</th>
             <td>
-                Set to true to <a href="../javascript-grid-cell-editing/#enter-key-down">move enter down
-                after edit</a>. This allows consistency with Excel. The default is to keep focus on
-                the previously editing cell.
+                Set both properties to true to have Excel style behaviour for the Enter key,
+                i.e. <a href="../javascript-grid-cell-editing/#enter-key-down">enter key moves down</a>.
             </td>
         </tr>
 

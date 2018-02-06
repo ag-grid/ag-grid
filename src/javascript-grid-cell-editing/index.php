@@ -355,18 +355,22 @@ colDef.cellEditorParams = {
 
     <p>
         By default pressing <b>Enter</b> will start editing on a cell, or stop editing
-        on an editing cell. It will not navigate to the next cell.
+        on an editing cell. It will not navigate to the cell below.
     </p>
 
     <p>
-        To allow consistency with Excel set the grid property
-        <code>enterMovesDownAfterEdit=true</code> to move
-        focus down after Enter is pressed while editing.
+        To allow consistency with Excel the grid has the following properties:
+        <ul>
+            <li><code>enterMovesDown</code>: Set to true to have Enter key move focus to the cell
+            below if not editing. The default is Enter key starts editing the currently focused cell.</li>
+            <li><code>enterMovesDownAfterEdit:</code> Set to true to have Enter key move
+                focus to the cell below after Enter is pressed while editing. The default
+            is editing will stop and focus will remain on the editing cell.</li>
+        </ul>
     </p>
 
     <p>
-        The example below demonstrates the focus moving down when <b>Enter</b> is pressed
-        after editing.
+        The example below demonstrates the focus moving down when <b>Enter</b> is pressed.
     </p>
 
     <?= example('Enter Key Navigation', 'enter-key-navigation', 'generated') ?>
