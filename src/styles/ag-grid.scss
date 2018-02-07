@@ -29,7 +29,10 @@ ag-grid-aurelia {
 // when we drag the mouse in ag-Grid, this class gets added / removed from the body, so that
 // the mouse isn't selecting text when dragging.
 .ag-body-no-select {
-    user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .ag-root {
@@ -45,6 +48,9 @@ ag-grid-aurelia {
 .ag-font-style {
     cursor: default;
     /* disable user mouse selection */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
 }
 .ag-layout-for-print {
@@ -148,6 +154,9 @@ ag-grid-aurelia {
 }
 .ag-floating-filter-menu {
     position: absolute;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
 }
 // the ghost header cell doesn't live inside the grid, it's parent is the body element,
@@ -159,6 +168,9 @@ ag-grid-aurelia {
     background: #e5e5e5;
     border: 1px solid black;
     cursor: move;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
     box-sizing: border-box;
     overflow: hidden;
@@ -603,10 +615,16 @@ ag-grid-aurelia {
 }
 .ag-popup-editor {
     position: absolute;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
 }
 .ag-menu {
     position: absolute;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
     max-height: 100%;
     overflow-y: auto;
@@ -706,11 +724,17 @@ ag-grid-aurelia {
 }
 .ag-paging-panel {}
 .ag-list-selection {
-    user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
     cursor: default;
 }
 .ag-tool-panel {
     width: 200px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
     cursor: default;
     box-sizing: border-box;
@@ -751,7 +775,10 @@ ag-grid-aurelia {
     display: inline-block;
 }
 //.ag-tool-panel-container
-//    user-select: none;
+//    -webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
 //    cursor: default;
 //    width: 200px;
 // setting shake class to an item will give it a left ot right animation
