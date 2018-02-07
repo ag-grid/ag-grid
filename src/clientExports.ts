@@ -21,7 +21,7 @@ import {RichSelectRow} from "./rendering/richSelect/richSelectRow";
 import {VirtualList} from "./rendering/virtualList";
 import {AbstractColumnDropPanel} from "./toolPanel/columnDrop/abstractColumnDropPanel";
 import {PivotColumnsPanel} from "./toolPanel/columnDrop/pivotColumnsPanel";
-import {ToolPanelComp} from "./toolPanel/toolPanelComp";
+import {ColumnPanel} from "./toolPanel/columnPanel";
 import {LicenseManager} from "./licenseManager";
 import {PivotStage} from "./rowStages/pivotStage";
 import {PivotColDefService} from "./rowStages/pivotColDefService";
@@ -70,7 +70,7 @@ export function populateClientExports(exports: any): void {
     exports.RowGroupColumnsPanel = RowGroupColumnsPanel;
     exports.ValuesColumnPanel = ValuesColumnPanel;
 
-    exports.ToolPanelComp = ToolPanelComp;
+    exports.ToolPanelComp = ColumnPanel;
 
     exports.ColumnSelectPanel = ColumnSelectComp;
     exports.RenderedColumn = ToolPanelColumnComp;
