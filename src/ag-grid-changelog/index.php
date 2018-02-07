@@ -22,13 +22,101 @@ include '../jira_reports/jira_utilities.php';
     ?>
 </header>
 
+<?php
+function extractFixVersions($data)
+{
+    $fixVersions = array();
+
+    for ($i = 0; $i < count($data->{'issues'}); $i++) {
+        $fixVersion = filter_var($data->{'issues'}[$i]->{'fields'}->{'fixVersions'}[0]->{'name'});
+        if (strlen($fixVersion) > 0) {
+            array_push($fixVersions, $fixVersion);
+        }
+    }
+
+    $fixVersions = array_values(array_unique($fixVersions));
+
+    return $fixVersions;
+}
+
+function extractMoreInformationMap($data)
+{
+    $keyToMoreInfo = array();
+    $keyToBreakingChanges = array();
+    $keyToDeprecations = array();
+
+    for ($i = 0; $i < count($data->{'issues'}); $i++) {
+        $key = filter_var($data->{'issues'}[$i]->{'key'}, FILTER_SANITIZE_STRING);
+
+        // information shown in the more info popovers - the content is here
+        $moreInfoContent = $data->{'issues'}[$i]->{'fields'}->{'customfield_10522'};
+        $deprecationNotes = $data->{'issues'}[$i]->{'fields'}->{'customfield_10520'};
+        $breakingChangesNotes = $data->{'issues'}[$i]->{'fields'}->{'customfield_10521'};
+
+        if (!empty($moreInfoContent)) {
+            $keyToMoreInfo[$key] = $moreInfoContent;
+        }
+        if (!empty($breakingChangesNotes)) {
+            $keyToBreakingChanges[$key] = $breakingChangesNotes;
+        }
+        if (!empty($deprecationNotes)) {
+            $keyToDeprecations[$key] = $deprecationNotes;
+        }
+    }
+    $moreInformationMap = array(
+        'more_info' => $keyToMoreInfo,
+        'breaking' => $keyToBreakingChanges,
+        'deprecation' => $keyToDeprecations
+    );
+
+    return $moreInformationMap;
+}
+
+function createMoreInfoContent($key, $moreInformationMap)
+{
+    $keyToMoreInfo = $moreInformationMap['more_info'];
+    $keyToBreakingChanges = $moreInformationMap['breaking'];
+    $keyToDeprecations = $moreInformationMap['deprecation'];
+
+    $moreInfoContent = '';
+    if (array_key_exists($key, $keyToMoreInfo)) {
+        $moreInfoContent .= $keyToMoreInfo[$key] . '<br/>';
+    }
+    if (array_key_exists($key, $keyToBreakingChanges)) {
+        $moreInfoContent .= '<span style="font-style: italic">' . $keyToBreakingChanges[$key] . '</span><br/>';
+    }
+    if (array_key_exists($key, $keyToDeprecations)) {
+        $moreInfoContent .= '<span style="font-style: italic">' . $keyToDeprecations[$key] . '</span><br/>';
+    }
+
+    return $moreInfoContent;
+}
+
+$report_type = 'changelog';
+
+
+$json_decoded = retrieveJiraFilterData($report_type);
+$fixVersions = extractFixVersions($json_decoded);
+$moreInformationMap = extractMoreInformationMap($json_decoded);
+$keyToMoreInfo = $moreInformationMap['more_info'];
+$keyToBreakingChanges = $moreInformationMap['breaking'];
+$keyToDeprecations = $moreInformationMap['deprecation'];
+?>
+
 <div class="info-page" id="page-changelog">
     <div class="row">
         <section>
             <div class="note">
                 This page covers the full Changelog for all items for 8.x and above. For the Summary
                 Changelog, or the legacy changelog covering versions 7.x and above, please go <a
-                        href="../change-log/changeLogIndex.php">here</a>.
+                        href="../change-log/changeLogIndex.php">here</a>.<br/><br/>
+
+                For a list of up and coming Bug Fixes and Features please refer to our <a
+                        href="../ag-grid-pipeline">Pipeline</a><br/></br>
+                Documentation for previous versions can be found under
+                https://www.ag-grid.com/archive/_version_/<br/><br/>For example,
+                the documentation for version 14.2.0 can be found at <a
+                        href="https://www.ag-grid.com/archive/14.2.0/">https://www.ag-grid.com/archive/14.2.0/</a>
             </div>
             <div class="global-search-pane" style="display: inline-block;width:100%">
                 <input class="clearable global-report-search" style="float: left;height: 50px" type="text"
@@ -36,92 +124,51 @@ include '../jira_reports/jira_utilities.php';
                 <div class="global-report-search-results" style="margin-left:20px;float: left">
                     <table>
                         <tr>
+                            <td>
+                                <select id="fixVersionFilter" style="margin-right: 20px">
+                                    <option selected>All Versions</option>
+                                    <?php
+                                    foreach ($fixVersions as &$value) {
+                                        ?>
+                                        <option><?= $value ?></option>
+                                        <?php
+                                    }
+                                    ?>
+
+                                </select>
+                            </td>
                             <td style="width: 20px;padding:0"><input type="checkbox" id="breaking"></td>
                             <td style="padding:0">Filter By Breaking Changes</td>
                         </tr>
                         <tr>
+                            <td></td>
                             <td style="padding:0"><input type="checkbox" id="deprecation"></td>
                             <td style="padding:0">Filter By Deprecations</td>
                         </tr>
                     </table>
                 </div>
             </div>
-
+            <div style="margin-top: 0;margin-bottom: 10px;float: right">
+                <span style="margin-right: 10px">
+                     <img style="vertical-align: middle" src="<?= mapIssueIcon("Bug") ?>"
+                          height="16" width="16" border="0"/> Bug
+                <span style="margin-right: 10px">
+                    <img style="vertical-align: middle" src="<?= mapIssueIcon("Feature Request") ?>"
+                         height="16" width="16" border="0"/> Feature Request
+                </span>
+                <span style="margin-right: 10px">
+                    <i class="fa fa-external-link"></i> Documentation URL
+                </span>
+                <span style="margin-right: 10px">
+                    <span class='aui-lozenge-complete' style='padding: 1px; border-radius: 2px'>D</span> Deprecation
+                </span>
+                <span class='aui-lozenge-error' style='padding: 1px; border-radius: 2px'>B</span> Breaking Changes
+            </div>
             <div>
-                <?php
-                function extractMoreInformationMap($data)
-                {
-                    $keyToMoreInfo = array();
-                    $keyToBreakingChanges = array();
-                    $keyToDeprecations = array();
-
-                    for ($i = 0; $i < count($data->{'issues'}); $i++) {
-                        $key = filter_var($data->{'issues'}[$i]->{'key'}, FILTER_SANITIZE_STRING);
-
-                        // more info popovers - the content is here
-                        $moreInfoContent = $data->{'issues'}[$i]->{'fields'}->{'customfield_10400'};
-
-                        /* for testing - to be removed */
-                        $random = mt_rand(10, 100);
-                        $just_note = $random % 9 === 0;
-                        $breaking = !$just_note && $random % 5 === 0;
-                        $deprecation = !$just_note && $random % 6 === 0;
-                        if ($just_note || $breaking || $deprecation) {
-                            if ($just_note) {
-                                $keyToMoreInfo[$key] = 'Some long winded comment unrelated to anything really..no breaking changes or deprecations.';
-                            } else {
-                                $keyToMoreInfo[$key] = 'Property Y introduced to add blah blah blah.';
-                                if ($breaking) {
-                                    $keyToBreakingChanges[$key] = 'Breaking Change: Property X removed.';
-                                }
-                                if ($deprecation) {
-                                    $keyToDeprecations[$key] = 'Deprecation: Property X deprecated.';
-                                }
-                            }
-                        }
-                    }
-                    /* for testing - to be removed */
-                    $moreInformationMap = array(
-                        'more_info' => $keyToMoreInfo,
-                        'breaking' => $keyToBreakingChanges,
-                        'deprecation' => $keyToDeprecations
-                    );
-
-                    return $moreInformationMap;
-                }
-
-                function createMoreInfoContent($key, $moreInformationMap)
-                {
-                    $keyToMoreInfo = $moreInformationMap['more_info'];
-                    $keyToBreakingChanges = $moreInformationMap['breaking'];
-                    $keyToDeprecations = $moreInformationMap['deprecation'];
-
-                    $moreInfoContent = '';
-                    if (array_key_exists($key, $keyToMoreInfo)) {
-                        $moreInfoContent .= $keyToMoreInfo[$key] . '<br/>';
-                    }
-                    if (array_key_exists($key, $keyToBreakingChanges)) {
-                        $moreInfoContent .= '<span style="font-style: italic">' . $keyToBreakingChanges[$key] . '</span><br/>';
-                    }
-                    if (array_key_exists($key, $keyToDeprecations)) {
-                        $moreInfoContent .= '<span style="font-style: italic">' . $keyToDeprecations[$key] . '</span><br/>';
-                    }
-
-                    return $moreInfoContent;
-                }
-
-                $report_type = 'changelog';
-                ?>
                 <table class="aui" id="<?= 'content_' . $report_type ?>">
                     <tbody>
+
                     <?php
-                    $json_decoded = retrieveJiraFilterData($report_type);
-
-                    $moreInformationMap = extractMoreInformationMap($json_decoded);
-                    $keyToMoreInfo = $moreInformationMap['more_info'];
-                    $keyToBreakingChanges = $moreInformationMap['breaking'];
-                    $keyToDeprecations = $moreInformationMap['deprecation'];
-
                     $issue_count = count($json_decoded->{'issues'});
                     for ($i = 0; $i < $issue_count; $i++) {
                         if ($i == 0) {
@@ -131,14 +178,13 @@ include '../jira_reports/jira_utilities.php';
                                     <span class="jim-table-header-content">Key</span>
                                 </th>
 
-                                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"
-                                    nowrap>
-                                    <span class="jim-table-header-content">Issue Type</span>
+                                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header">
+                                    <span class="jim-table-header-content">Issue<br/>Type</span>
                                 </th>
 
                                 <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"
                                     nowrap>
-                                    <span class="jim-table-header-content">Fix Version</span>
+                                    <span class="jim-table-header-content">Fix<br/>Version</span>
                                 </th>
 
                                 <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header">
@@ -146,17 +192,19 @@ include '../jira_reports/jira_utilities.php';
                                 </th>
 
                                 <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header">
-                                    <span class="jim-table-header-content">Deprecation</span>
+                                    <!--                                    <span class="jim-table-header-content"></span>-->
                                 </th>
 
-                                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"
-                                    nowrap>
-                                    <span class="jim-table-header-content">Breaking Changes</span>
+                                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header">
+                                    <!--                                    <span class="jim-table-header-content"></span>-->
                                 </th>
 
-                                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"
-                                    nowrap="true">
-                                    <span class="jim-table-header-content">More Info</span>
+                                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header">
+                                    <!--                                    <span class="jim-table-header-content"></span>-->
+                                </th>
+
+                                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header">
+                                    <!--                                    <span class="jim-table-header-content"></span>-->
                                 </th>
                             </tr>
                             <?php
@@ -183,10 +231,10 @@ include '../jira_reports/jira_utilities.php';
                             <td nowrap="true" class="jira-macro-table-underline-pdfexport">
                                 <span>
                                     <img style="vertical-align: middle"
-                                         src="<?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'issuetype'}->{'iconUrl'}, FILTER_SANITIZE_STRING) ?>"
-                                         height="16" width="16" border="0"/>
+                                         src="<?= mapIssueIcon(filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'issuetype'}->{'name'}, FILTER_SANITIZE_STRING)) ?>"
+                                         height="16" width="16" border="0"
+                                         title="<?= mapIssueType(filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'issuetype'}->{'name'}, FILTER_SANITIZE_STRING)) ?>"/>
                                 </span>
-                                <span style="height: 100%"><?= mapIssueType(filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'issuetype'}->{'name'}, FILTER_SANITIZE_STRING)) ?></span>
                             </td>
 
                             <!-- fix version -->
@@ -198,6 +246,19 @@ include '../jira_reports/jira_utilities.php';
 
                             <!-- summary -->
                             <td class="jira-macro-table-underline-pdfexport"><?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'summary'}, FILTER_SANITIZE_STRING); ?></td>
+
+                            <!-- docs url -->
+                            <td class="jira-macro-table-underline-pdfexport">
+                                <?php
+                                if (!empty($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10523'})) {
+                                    ?>
+
+                                    <a href="<?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10523'}, FILTER_SANITIZE_STRING); ?>"
+                                       target="_blank"><i class="fa fa-external-link"></i></a>
+                                    <?php
+                                }
+                                ?>
+                            </td>
 
                             <!-- deprecation -->
                             <td class="jira-macro-table-underline-pdfexport">
@@ -236,7 +297,7 @@ include '../jira_reports/jira_utilities.php';
                             ?>
                             <tr class="jira-more-info jira <?= $i % 2 == 0 ? 'issue-row' : 'issue-row-alternate' ?>"
                                 id="<?= $key ?>">
-                                <td colspan="7">
+                                <td colspan="8">
                                     <div><?= $moreInfoContent ?></div>
                                 </td>
                             </tr>

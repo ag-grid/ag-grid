@@ -145,12 +145,14 @@ function getLiveJiraFilterData($report_type, $maxResults, $jira_config)
 
 function mapIssueType($issueType)
 {
-    switch ($issueType) {
-        case "Task":
-            return "Feature Request";
-            break;
-    }
-    return $issueType;
+    return $issueType == "Bug" ? "Bug" : "Feature Request";
+}
+
+function mapIssueIcon($issueType)
+{
+    return $issueType == "Bug" ?
+        "https://ag-grid.atlassian.net/secure/viewavatar?size=xsmall&avatarId=10303&avatarType=issuetype" :  // bug
+        "https://ag-grid.atlassian.net/secure/viewavatar?size=xsmall&avatarId=10318&avatarType=issuetype"; // task/feature request
 }
 
 function mapPriority($priority)
