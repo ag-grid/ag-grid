@@ -180,10 +180,13 @@ export class HeaderComp extends Component implements IHeaderComp {
             return;
         }
 
+        let sortUsingCtrl = this.gridOptionsWrapper.isMultiSortKeyCtrl();
+
         // add the event on the header, so when clicked, we do sorting
         if (this.eLabel) {
             this.addDestroyableEventListener(this.eLabel, 'click', (event:MouseEvent) => {
-                this.params.progressSort(event.shiftKey);
+                let multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
+                this.params.progressSort(multiSort);
             });
         }
 

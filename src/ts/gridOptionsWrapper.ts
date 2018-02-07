@@ -282,6 +282,7 @@ export class GridOptionsWrapper {
     public isSuppressRowClickSelection() { return isTrue(this.gridOptions.suppressRowClickSelection); }
     public isSuppressCellSelection() { return isTrue(this.gridOptions.suppressCellSelection); }
     public isSuppressMultiSort() { return isTrue(this.gridOptions.suppressMultiSort); }
+    public isMultiSortKeyCtrl() { return this.gridOptions.multiSortKey === 'ctrl'; }
     public isGroupSuppressAutoColumn() { return isTrue(this.gridOptions.groupSuppressAutoColumn); }
     public isSuppressDragLeaveHidesColumns() { return isTrue(this.gridOptions.suppressDragLeaveHidesColumns); }
     public isSuppressScrollOnNewData() { return isTrue(this.gridOptions.suppressScrollOnNewData); }

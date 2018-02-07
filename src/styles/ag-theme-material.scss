@@ -184,12 +184,16 @@ $params: (
         background-color: darken($range-selection-background-color, 12);
     }
 
-    .ag-tool-panel-wrapper {
-        .side-buttons button {
+    .ag-tool-panel {
+        border-right: 0;
+        border-top: 0;
+        border-bottom: 0;
+        .ag-side-buttons button {
             font-size: $secondary-font-size;
             font-family: $secondary-font-family;
             font-weight: $secondary-font-weight;
             color: $secondary-foreground-color;
+            border: 0;
         }
     }
 }

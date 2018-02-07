@@ -62,6 +62,7 @@ export class ColDefUtil {
         'pivotIndex'];
 
     public static BOOLEAN_PROPERTIES = [
+        'suppressCellFlash',
         'suppressToolPanel',
         'openByDefault',
         'marryChildren',

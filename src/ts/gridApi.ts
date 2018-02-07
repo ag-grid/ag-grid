@@ -104,7 +104,7 @@ export class GridApi {
     @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
     @Autowired('valueCache') private valueCache: ValueCache;
-    @Optional('toolPanelWrapperComp') private toolPanelWrapperComp: IToolPanel;
+    @Optional('toolPanelComp') private toolPanelComp: IToolPanel;
 
     private inMemoryRowModel: InMemoryRowModel;
     private infinitePageRowModel: InfiniteRowModel;
@@ -288,8 +288,8 @@ export class GridApi {
     }
 
     public refreshToolPanel(): void {
-        if (this.toolPanelWrapperComp) {
-            this.toolPanelWrapperComp.refresh();
+        if (this.toolPanelComp) {
+            this.toolPanelComp.refresh();
         }
     }
 

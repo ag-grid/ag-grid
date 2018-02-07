@@ -501,16 +501,16 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
         display: inline-block;
         width: 300px;
     }
-    .ag-tool-panel {
+    .ag-column-panel {
         background-color: $ag-background-1;
         border-bottom: $ag-border-1;
         border-top: $ag-border-1;
         color: $ag-foreground-1;
     }
-    .ltr .ag-tool-panel {
+    .ltr .ag-column-panel {
         border-right: $ag-border-1;
     }
-    .rtl .ag-tool-panel {
+    .rtl .ag-column-panel {
         border-left: $ag-border-1;
     }
     .ag-status-bar {
@@ -592,7 +592,7 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
         padding: 2px 4px 3px 4px;
         background-color: $ag-background-1;
     }
-    .ag-tool-panel {
+    .ag-column-panel {
         .ag-column-select-panel {
             padding: $tool-panel-box-padding;
             padding-left: 0; // compensate for eIndent

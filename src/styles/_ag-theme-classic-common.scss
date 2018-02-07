@@ -1,26 +1,26 @@
-@import './ag-theme-common';
+@import "./ag-theme-common";
 
 @mixin ag-theme-classic($params) {
-    $border-color: map-get($params, 'border-color');
-    $editor-background-color: map-get($params, 'editor-background-color');
-    $tab-background-color: map-get($params, 'tab-background-color');
-    $grid-size: map-get($params, 'grid-size');
-    $header-background-image: map-get($params, 'header-background-image');
-    $header-height: map-get($params, 'header-height');
-    $cell-horizontal-border: map-get($params, 'cell-horizontal-border');
-    $focused-cell-border-color: map-get($params, 'focused-cell-border-color');
-    $menu-option-active-color: map-get($params, 'menu-option-active-color');
-    $chip-background-color: map-get($params, 'chip-background-color');
-    $ag-range-selected-color-1: map-get($params, 'ag-range-selected-color-1');
-    $ag-range-selected-color-2: map-get($params, 'ag-range-selected-color-2');
-    $ag-range-selected-color-3: map-get($params, 'ag-range-selected-color-3');
-    $ag-range-selected-color-4: map-get($params, 'ag-range-selected-color-4');
-    $cell-highlight-border: map-get($params, 'cell-highlight-border');
-    $row-height: map-get($params, 'row-height');
-    $icon-size: map-get($params, 'icon-size');
+    $border-color: map-get($params, "border-color");
+    $editor-background-color: map-get($params, "editor-background-color");
+    $tab-background-color: map-get($params, "tab-background-color");
+    $grid-size: map-get($params, "grid-size");
+    $header-background-image: map-get($params, "header-background-image");
+    $header-height: map-get($params, "header-height");
+    $cell-horizontal-border: map-get($params, "cell-horizontal-border");
+    $focused-cell-border-color: map-get($params, "focused-cell-border-color");
+    $menu-option-active-color: map-get($params, "menu-option-active-color");
+    $chip-background-color: map-get($params, "chip-background-color");
+    $ag-range-selected-color-1: map-get($params, "ag-range-selected-color-1");
+    $ag-range-selected-color-2: map-get($params, "ag-range-selected-color-2");
+    $ag-range-selected-color-3: map-get($params, "ag-range-selected-color-3");
+    $ag-range-selected-color-4: map-get($params, "ag-range-selected-color-4");
+    $cell-highlight-border: map-get($params, "cell-highlight-border");
+    $row-height: map-get($params, "row-height");
+    $icon-size: map-get($params, "icon-size");
 
     .ag-body {
-        background-color: map-get($params, 'panel-background-color');
+        background-color: map-get($params, "panel-background-color");
     }
 
     .ag-cell {
@@ -57,7 +57,7 @@
         opacity: 0.3;
     }
 
-    [ref='north'] {
+    [ref="north"] {
         .ag-column-drop {
             border: 1px solid $border-color;
             border-bottom: 0;
@@ -99,9 +99,8 @@
         border: 1px solid $border-color;
     }
 
-    .ag-tool-panel {
-        border: 1px solid $border-color;
-        border-left: 0;
+    .ag-column-panel {
+        border-right: 1px solid $border-color;
     }
 
     .ag-cell-no-focus {
@@ -112,7 +111,7 @@
         border-bottom-width: 0;
     }
 
-    .ag-tool-panel .ag-column-drop .ag-column-drop-empty-message {
+    .ag-column-panel .ag-column-drop .ag-column-drop-empty-message {
         line-height: $header-height;
     }
 
@@ -184,12 +183,12 @@
 
     .ag-group-expanded {
         .ag-icon-contracted:empty {
-            @include icon-background($params, 'contracted');
+            @include icon-background($params, "contracted");
         }
     }
 
     .ag-rtl .ag-icon-tree-closed {
-        @include icon-background($params, 'small-left');
+        @include icon-background($params, "small-left");
     }
 
     .ag-cell-inline-editing {
@@ -206,7 +205,7 @@
         float: none;
     }
 
-    .ag-tool-panel .ag-column-drop .ag-column-drop-title {
+    .ag-column-panel .ag-column-drop .ag-column-drop-title {
         float: none;
     }
 
@@ -245,7 +244,7 @@
     }
 
     .ag-header-cell-moving {
-        background-color: map-get($params, 'header-cell-moving-background-color');
+        background-color: map-get($params, "header-cell-moving-background-color");
     }
 
     .ag-ltr .ag-pinned-right-header {

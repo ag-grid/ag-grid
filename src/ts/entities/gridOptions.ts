@@ -62,6 +62,7 @@ export interface GridOptions {
     suppressCellSelection?: boolean;
     sortingOrder?: string[];
     suppressMultiSort?: boolean;
+    multiSortKey?: string;
     accentedSort?: boolean;
     suppressHorizontalScroll?: boolean;
     suppressTabbing?: boolean;

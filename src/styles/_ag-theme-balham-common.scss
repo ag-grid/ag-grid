@@ -153,10 +153,8 @@ $disabled-foreground-color-opacity: 0.38 !default;
     }
 
     // tool panel
-    .ag-tool-panel {
+    .ag-column-panel {
         border-right: 1px solid $border-color;
-        border-top: 1px solid $border-color;
-        border-bottom: 1px solid $border-color;
 
         .ag-column-select-panel {
             padding: $grid-size * 2 0;
@@ -190,7 +188,8 @@ $disabled-foreground-color-opacity: 0.38 !default;
         }
     }
 
-    .ag-rtl .ag-tool-panel {
+    .ag-rtl .ag-tool-panel,
+    .ag-rtl .ag-column-panel {
         border-left: 1px solid $border-color;
         border-right: 0;
     }
@@ -269,10 +268,10 @@ $disabled-foreground-color-opacity: 0.38 !default;
         padding: $grid-size * 4;
     }
 
-    $ag-range-selected-color-1: map-get($params, 'ag-range-selected-color-1');
-    $ag-range-selected-color-2: map-get($params, 'ag-range-selected-color-2');
-    $ag-range-selected-color-3: map-get($params, 'ag-range-selected-color-3');
-    $ag-range-selected-color-4: map-get($params, 'ag-range-selected-color-4');
+    $ag-range-selected-color-1: map-get($params, "ag-range-selected-color-1");
+    $ag-range-selected-color-2: map-get($params, "ag-range-selected-color-2");
+    $ag-range-selected-color-3: map-get($params, "ag-range-selected-color-3");
+    $ag-range-selected-color-4: map-get($params, "ag-range-selected-color-4");
 
     // we do not want to color the range color when the cell is also focused
     .ag-cell-range-selected-1:not(.ag-cell-focus) {
