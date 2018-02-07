@@ -154,6 +154,10 @@ include '../documentation-main/documentation_header.php';
             <th>refreshHeader()</th>
             <td>Redraws the header. Useful if a column name changes, or something else that changes how the column header is displayed.</td>
         </tr>
+        <tr>
+            <th>flashCells(params)</th>
+            <td>Flash rows, columns or individual cells. See <a href="../javascript-grid-data-update/#flashing">Flashing Cells</a>.</td>
+        </tr>
 
     </table>
 <h2>Sort & Filter</h2>
