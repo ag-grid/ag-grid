@@ -190,6 +190,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public domLayout : any = undefined;
     @Input() public clipboardDeliminator : any = undefined;
     @Input() public rowGroupPanelShow : any = undefined;
+    @Input() public multiSortKey : any = undefined;
     @Input() public rowHeight : any = undefined;
     @Input() public detailRowHeight : any = undefined;
     @Input() public rowBuffer : any = undefined;
