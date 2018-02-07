@@ -215,6 +215,7 @@ export interface GridOptions {
     alignedGrids?: GridOptions[];
     rowSelection?: string;
     rowDeselection?: boolean;
+    rowMultiSelectWithClick?: boolean;
     overlayLoadingTemplate?: string;
     overlayNoRowsTemplate?: string;
     rowHeight?: number;

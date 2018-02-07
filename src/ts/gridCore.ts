@@ -268,7 +268,9 @@ export class GridCore {
 
     public showToolPanel(show: any) {
         if (!this.toolPanelComp) {
-            console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
+            if (show) {
+                console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
+            }
             return;
         }
 

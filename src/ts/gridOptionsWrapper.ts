@@ -228,6 +228,7 @@ export class GridOptionsWrapper {
     public isRowSelection() { return this.gridOptions.rowSelection === "single" || this.gridOptions.rowSelection === "multiple"; }
     public isRowDeselection() { return isTrue(this.gridOptions.rowDeselection); }
     public isRowSelectionMulti() { return this.gridOptions.rowSelection === 'multiple'; }
+    public isRowMultiSelectWithClick() { return isTrue(this.gridOptions.rowMultiSelectWithClick); }
     public getContext() { return this.gridOptions.context; }
     public isPivotMode() { return isTrue(this.gridOptions.pivotMode); }
     public isPivotTotals() { return isTrue(this.gridOptions.pivotTotals); }
