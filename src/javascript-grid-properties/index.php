@@ -149,8 +149,25 @@ include '../documentation-main/documentation_header.php';
 
         </table>
     <h2>Selection</h2>
-    <table class="table content reference">
 
+    <table class="table content reference">
+        <tr>
+            <th>rowSelection</th>
+            <td>
+                Type of <a href="../javascript-grid-selection/">Row Selection</a>, set to either 'single' or 'multiple'.
+            </td>
+        </tr>
+        <tr>
+            <th>rowMultiSelectWithClick</th>
+            <td>
+                Set to true to allow multiple rows to be selected using single click.
+                See <a href="../javascript-grid-selection/#multi-select-single-click">Multi Select Single Click</a>.
+            </td>
+        </tr>
+        <tr>
+            <th>rowDeselection</th>
+            <td>If true then rows will be deselected if you hold down ctrl + click the row.</td>
+        </tr>
         <tr>
             <th>suppressRowClickSelection</th>
             <td>
@@ -331,18 +348,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
 
         </table>
-    <h2>Selection</h2>
-    <table class="table content reference">
-        <tr>
-            <th>rowSelection</th>
-            <td>Type of <a href="../javascript-grid-selection/">Row Selection</a>, set to either 'single' or 'multiple'.</td>
-        </tr>
-        <tr>
-            <th>rowDeselection</th>
-            <td>If true then rows will be deselected if you hold down ctrl + click the row.</td>
-        </tr>
 
-        </table>
     <h2>Scrolling</h2>
     <table class="table content reference">
         <tr>
@@ -742,6 +748,13 @@ include '../documentation-main/documentation_header.php';
             <td>
                 How many milliseconds to wait before executing a
                 <a href="../javascript-grid-data-update/#batch-transactions">batch of update transactions</a>.
+            </td>
+        </tr>
+        <tr>
+            <th>suppressPropertyNamesCheck</th>
+            <td>
+                Disables showing a warning message in the console if using a gridOptions or colDef property that doesn't
+                exist.
             </td>
         </tr>
     </table>
