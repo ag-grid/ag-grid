@@ -48,7 +48,7 @@ export class GridCore {
 
     @Optional('rowGroupCompFactory') private rowGroupCompFactory: ICompFactory;
     @Optional('pivotCompFactory') private pivotCompFactory: ICompFactory;
-    @Optional('toolPanelWrapperComp') private toolPanelWrapperComp: IToolPanel;
+    @Optional('toolPanelComp') private toolPanelComp: IToolPanel;
     @Optional('statusBar') private statusBar: Component;
 
     private rowGroupComp: Component;
@@ -74,12 +74,12 @@ export class GridCore {
 
         let eastPanel: HTMLElement;
         let westPanel: HTMLElement;
-        if (this.toolPanelWrapperComp && !this.gridOptionsWrapper.isForPrint()) {
+        if (this.toolPanelComp && !this.gridOptionsWrapper.isForPrint()) {
             // if we are doing RTL, then the tool panel appears on the left
             if (this.gridOptionsWrapper.isEnableRtl()) {
-                westPanel = this.toolPanelWrapperComp.getGui();
+                westPanel = this.toolPanelComp.getGui();
             } else {
-                eastPanel = this.toolPanelWrapperComp.getGui();
+                eastPanel = this.toolPanelComp.getGui();
             }
         }
 
@@ -267,18 +267,18 @@ export class GridCore {
     }
 
     public showToolPanel(show: any) {
-        if (!this.toolPanelWrapperComp) {
+        if (!this.toolPanelComp) {
             console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
             return;
         }
 
-        this.toolPanelWrapperComp.init();
-        this.toolPanelWrapperComp.showToolPanel(show);
+        this.toolPanelComp.init();
+        this.toolPanelComp.showToolPanel(show);
         this.eRootPanel.doLayout();
     }
 
     public isToolPanelShowing() {
-        return this.toolPanelWrapperComp.isToolPanelShowing();
+        return this.toolPanelComp.isToolPanelShowing();
     }
 
     @PreDestroy

@@ -682,7 +682,7 @@
         content: " ";
     }
 
-    .ag-tool-panel {
+    .ag-column-panel {
         background-color: $tool-panel-background-color;
         border-right: 0;
 
@@ -1184,7 +1184,7 @@
             }
         }
 
-        .ag-tool-panel {
+        .ag-column-panel {
             .ag-pivot-mode {
                 span {
                     float: right;
@@ -1359,8 +1359,8 @@
         @include card($params);
     }
 
-    .ag-tool-panel-wrapper {
-        .side-buttons button {
+    .ag-tool-panel {
+        .ag-side-buttons button {
             background: transparent;
             border: 0;
             border-right: 1px solid $border-color;
@@ -1378,7 +1378,7 @@
         }
     }
 
-    .ag-rtl .ag-tool-panel-wrapper {
+    .ag-rtl .ag-tool-panel {
         .ag-panel-container {
             border-right: 0;
             border-left: 1px solid $border-color;
@@ -1387,7 +1387,7 @@
         &.full-width .ag-panel-container {
             border-left: 0;
         }
-        .side-buttons button {
+        .ag-side-buttons button {
             border-right: 0;
             border-left: 1px solid $border-color;
         }

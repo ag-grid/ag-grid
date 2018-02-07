@@ -719,13 +719,13 @@ ag-grid-aurelia {
     user-select: none;
     cursor: default;
 }
-.ag-tool-panel {
+.ag-column-panel {
     user-select: none;
     cursor: default;
     box-sizing: border-box;
     overflow: auto;
 }
-.ag-layout-normal .ag-tool-panel {
+.ag-layout-normal .ag-column-panel {
     height: 100%;
 }
 .ag-column-select-indent {
@@ -849,12 +849,12 @@ $row-group-indent-size: 10px !default;
     }
 }
 
-.ag-tool-panel-wrapper {
+.ag-tool-panel {
     display: flex;
     flex-direction: row-reverse;
     height: 100%;
 
-    .side-buttons {
+    .ag-side-buttons {
         width: 20px;
         button {
             transform: rotate(90deg) translateY(-20px);
@@ -874,8 +874,8 @@ $row-group-indent-size: 10px !default;
     }
 }
 
-.ag-rtl .ag-tool-panel-wrapper {
-    .side-buttons {
+.ag-rtl .ag-tool-panel {
+    .ag-side-buttons {
         button {
             transform: rotate(-90deg) translatex(20px);
             transform-origin: right bottom 0;

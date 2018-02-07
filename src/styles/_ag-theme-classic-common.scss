@@ -99,7 +99,7 @@
         border: 1px solid $border-color;
     }
 
-    .ag-tool-panel {
+    .ag-column-panel {
         border: 1px solid $border-color;
         border-left: 0;
     }
@@ -112,7 +112,7 @@
         border-bottom-width: 0;
     }
 
-    .ag-tool-panel .ag-column-drop .ag-column-drop-empty-message {
+    .ag-column-panel .ag-column-drop .ag-column-drop-empty-message {
         line-height: $header-height;
     }
 
@@ -206,7 +206,7 @@
         float: none;
     }
 
-    .ag-tool-panel .ag-column-drop .ag-column-drop-title {
+    .ag-column-panel .ag-column-drop .ag-column-drop-title {
         float: none;
     }
 
