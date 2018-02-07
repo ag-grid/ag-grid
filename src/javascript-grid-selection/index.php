@@ -11,12 +11,25 @@ include '../documentation-main/documentation_header.php';
     <h1 id="selection">Row Selection</h1>
 
     <p>
+        Select a row by clicking on it. Selecting a row will remove previous selection unless you
+        hold down <code>ctrl</code> while clicking. Selecting a row and then holding down <code>shift</code>
+        while clicking a second row will select the range.
+    </p>
+
+    <p>
         Configure row selection with the following properties:
     </p>
+
     <ul class="content">
         <li><code>rowSelection</code>: Type of row selection, set to either <code>'single'</code> or <code>'multiple'</code> to
             enable selection. Single sets to single row selection, such that when you select a row,
             the previously selected row gets unselected. Multiple allows multiple row selection.</li>
+        <li><code>rowMultiSelectWithClick</code>: Set to <code>true</code> to all multiple rows to be selected
+            with a single click. E.g. if you click select one row, then click select another row, the first
+            row will keep it's selection. Clicking a selected row in this mode will deselect the row.
+            This is useful for touch devices where <code>ctrl</code> and <code>shift</code> clicking is
+            not an option.
+        </li>
         <li><code>rowDeselection</code>: Set to <code>true</code> or <code>false</code>. If true, then rows will be deselected if
             you hold down ctrl + click the row. Normal behaviour with the grid disallows deselection
             of nodes (ie once a node is selected, it remains selected until another row is selected
@@ -43,21 +56,59 @@ include '../documentation-main/documentation_header.php';
         more information and maps better to the internal representation of ag-grid.
     </p>
 
-    <h2>Example - Single Row Selection</h2>
+    <h2 id="single-row-selection">Example - Single Row Selection</h2>
 
     <p>
         The example below shows single row selection.
+        <ul>
+            <li>
+                Property <code>rowSelection='single'</code> is set to enable single row selection.
+                It is not possible to select multiple rows.
+            </li>
+        </ul>
     </p>
 
     <?= example('Single Row Selection', 'single-row-selection', 'generated') ?>
 
-    <h2>Example - Multiple Row Selection</h2>
+    <h2 id="multi-row-selection">Example - Multiple Row Selection</h2>
 
     <p>
         The example below shows multi-row selection.
+        <ul>
+            <li>
+                Property <code>rowSelection='multiple'</code> is set to enable multiple row selection.
+                Selecting multiple rows can be achieved by holding down <code>control</code> and mouse
+                clicking the rows. A range of rows can be selected by using <code>shift</code>.
+            </li>
+        </ul>
     </p>
 
     <?= example('Multiple Row Selection', 'multiple-row-selection', 'generated') ?>
+
+    <h2 id="multi-select-single-click">Example - Multi Select Single Click</h2>
+
+    <p>
+        The example below shows multi select with single click. Clicking multiple rows will
+        select a range of rows without the need for <code>control</code> or <code>shift</code>
+        keys. Clicking a selected row will deselect it. This is useful for touch devices where
+        Control and Shift clicks are not available.
+    </p>
+
+    <p>
+        <li>
+            Property <code>rowMultiSelectWithClick=true</code> is set to enable multiple row
+            selection with single clicks.
+        </li>
+        <li>
+            Clicking multiple rows will select multiple rows without needing to hit <code>control</code>
+            or <code>shift</code> keys.
+        </li>
+        <li>
+            Clicking a selected row will deselect that row.
+        </li>
+    </p>
+
+    <?= example('Multi Select Single Click', 'multi-select-single-click', 'generated') ?>
 
     <h2>Checkbox Selection</h2>
 
