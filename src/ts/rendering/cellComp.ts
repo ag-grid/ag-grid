@@ -349,7 +349,7 @@ export class CellComp extends Component {
         }
 
         let newData = params && params.newData;
-        let suppressFlash = params && params.suppressFlash;
+        let suppressFlash = (params && params.suppressFlash) || this.column.getColDef().suppressCellFlash;
         let forceRefresh = params && params.forceRefresh;
 
         let oldValue = this.value;
