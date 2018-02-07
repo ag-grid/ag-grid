@@ -47,6 +47,8 @@ export interface ColGroupDef extends AbstractColDef {
     headerGroupComponentFramework?: {new (): any};
     /** The custom header group component to be used for rendering the component header. If none specified the default ag-Grid is used**/
     headerGroupComponentParams?: any;
+    /** Tooltip for the column group header */
+    headerGroupTooltip?: string;
 }
 
 export interface IAggFunc {
@@ -90,6 +92,7 @@ export interface ColDef extends AbstractColDef {
 
     /** The field where we get the tooltip on the object */
     tooltipField?: string;
+
     /** The function used to calculate the tooltip of the object, tooltipField takes precedence*/
     tooltip?: (params:TooltipParams)=>string;
     
