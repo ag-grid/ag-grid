@@ -102,12 +102,12 @@
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
-  <url>
+<!--   <url>
     <loc>https://www.ag-grid.com/ag-grid-changelog/</loc>
     <lastmod>2018-01-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
-  </url>
+  </url> -->
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-export/</loc>
     <lastmod>2018-01-24</lastmod>
