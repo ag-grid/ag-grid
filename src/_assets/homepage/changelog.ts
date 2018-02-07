@@ -28,13 +28,22 @@ $(function () {
             tableRows
                 .show()
                 .filter(function() {
+                    var selectedFixVersion = $('#fixVersionFilter').find(":selected").text();
+                    selectedFixVersion = selectedFixVersion === 'All Versions' ? '' : selectedFixVersion;
+
                     var breakingChangesFail = (<HTMLInputElement>document.getElementById('breaking')).checked && $(this).attr("breaking") === undefined;
                     var deprecationsFail = (<HTMLInputElement>document.getElementById('deprecation')).checked && $(this).attr("deprecation") === undefined;
 
                     var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
                     var searchTextFails = !~text.indexOf(searchCriteria);
 
-                    return breakingChangesFail || deprecationsFail || searchTextFails;
+                    var fixVersionFails = false;
+                    if(!searchTextFails) {
+                        var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+                        fixVersionFails = !~text.indexOf(selectedFixVersion);
+                    }
+
+                    return fixVersionFails || breakingChangesFail || deprecationsFail || searchTextFails;
                 })
                 .hide();
         }
@@ -45,6 +54,10 @@ $(function () {
                 return;
             }
 
+            processSearchValue();
+        });
+
+        $("#fixVersionFilter").change(function () {
             processSearchValue();
         });
 
