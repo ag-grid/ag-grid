@@ -737,6 +737,13 @@ include '../documentation-main/documentation_header.php';
                 <a href="../javascript-grid-data-update/#batch-transactions">batch of update transactions</a>.
             </td>
         </tr>
+        <tr>
+            <th>suppressPropertyNamesCheck</th>
+            <td>
+                Disables showing a warning message in the console if using a gridOptions or colDef property that doesn't
+                exist.
+            </td>
+        </tr>
     </table>
 
 
