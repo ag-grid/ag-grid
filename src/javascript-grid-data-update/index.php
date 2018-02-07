@@ -551,6 +551,38 @@ batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowN
         <a href="../javascript-grid-cell-rendering-components/">custom cell renderer</a>.
     </note>
 
+    <p>
+        You can also explicitly flash cells using the grid API <code>flashCells(params)</code>.
+        The params takes a list of columns and rows to flash, e.g. to flash one cell pass in
+        one column and one row that identifies that cell.
+    </p>
+
+    <p>
+        The example below demonstrates cell flashing. The following can be noted:
+        <ul>
+            <li>
+                All columns have <code>enableCellChangeFlash=true</code> so changes to the columns
+                values will flash.
+            </li>
+            <li>
+                Clicking <b>Update Some Data</b> will update a bunch of data. The grid will then
+                flash the cells where data has changed.
+            </li>
+            <li>
+                Clicking <b>Flash One Cell</b> provides the API <code>flashCells()</code>
+                with one column and one row to flash one cell.
+            </li>
+            <li>
+                Clicking <b>Flash Two Rows</b> provides the API <code>flashCells()</code>
+                with two row nodes only to flash the two rows.
+            </li>
+            <li>
+                Clicking <b>Flash Two Columns</b> provides the API <code>flashCells()</code>
+                with two columns only to flash the two columns.
+            </li>
+        </ul>
+    </p>
+
     <?= example('Flashing Data Changes', 'flashing-data-changes', 'generated', array("enterprise" => 1)) ?>
 
     <h3>How Flashing Works</h3>
