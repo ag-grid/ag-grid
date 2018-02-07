@@ -782,9 +782,15 @@ export class RowComp extends Component {
             return;
         }
 
+        let multiSelectOnClick = this.beans.gridOptionsWrapper.isRowMultiSelectWithClick();
+        let rowDeselectionWithCtrl = this.beans.gridOptionsWrapper.isRowDeselection();
+
         if (this.rowNode.isSelected()) {
-            if (multiSelectKeyPressed) {
-                if (this.beans.gridOptionsWrapper.isRowDeselection()) {
+
+            if (multiSelectOnClick) {
+                this.rowNode.setSelectedParams({newValue: false});
+            } else if (multiSelectKeyPressed) {
+                if (rowDeselectionWithCtrl) {
                     this.rowNode.setSelectedParams({newValue: false});
                 }
             } else {
@@ -792,7 +798,8 @@ export class RowComp extends Component {
                 this.rowNode.setSelectedParams({newValue: true, clearSelection: true});
             }
         } else {
-            this.rowNode.setSelectedParams({newValue: true, clearSelection: !multiSelectKeyPressed, rangeSelect: shiftKeyPressed});
+            let clearSelection = multiSelectOnClick ? false : !multiSelectKeyPressed;
+            this.rowNode.setSelectedParams({newValue: true, clearSelection: clearSelection, rangeSelect: shiftKeyPressed});
         }
     }
 
