@@ -384,7 +384,11 @@ export class CellComp extends Component {
             this.refreshToolTip();
 
             if (!suppressFlash) {
-                this.flashCell();
+                let flashCell = this.beans.gridOptionsWrapper.isEnableCellChangeFlash()
+                    || this.column.getColDef().enableCellChangeFlash;
+                if (flashCell) {
+                    this.flashCell();
+                }
             }
 
             // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
@@ -397,10 +401,9 @@ export class CellComp extends Component {
         this.postProcessCellClassRules();
     }
 
-    private flashCell(): void {
-        if (this.beans.gridOptionsWrapper.isEnableCellChangeFlash() || this.column.getColDef().enableCellChangeFlash) {
-            this.animateCell('data-changed');
-        }
+    // user can also call this via API
+    public flashCell(): void {
+        this.animateCell('data-changed');
     }
 
     private animateCell(cssName: string): void {

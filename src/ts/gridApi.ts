@@ -63,6 +63,11 @@ export interface RefreshCellsParams {
     force?: boolean;
 }
 
+export interface FlashCellsParams {
+    rowNodes?: RowNode[];
+    columns?: (string|Column)[];
+}
+
 export interface RedrawRowsParams {
     rowNodes?: RowNode[];
 }
@@ -300,6 +305,10 @@ export class GridApi {
             return;
         }
         this.rowRenderer.refreshCells(params);
+    }
+
+    public flashCells(params: FlashCellsParams = {}): void {
+        this.rowRenderer.flashCells(params);
     }
 
     public redrawRows(params: RedrawRowsParams = {}): void {

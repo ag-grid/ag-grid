@@ -24,7 +24,7 @@ import {NavigateToNextCellParams, TabToNextCellParams} from "../entities/gridOpt
 import {RowContainerComponent} from "./rowContainerComponent";
 import {BeanStub} from "../context/beanStub";
 import {PaginationProxy} from "../rowModels/paginationProxy";
-import {GridApi, RefreshCellsParams} from "../gridApi";
+import {FlashCellsParams, GridApi, RefreshCellsParams} from "../gridApi";
 import {PinnedRowModel} from "../rowModels/pinnedRowModel";
 import {Beans} from "./beans";
 import {AnimationFrameService} from "../misc/animationFrameService";
@@ -354,16 +354,32 @@ export class RowRenderer extends BeanStub {
         }
     }
 
+    public flashCells(params: FlashCellsParams = {}): void {
+        this.forEachCellCompFiltered(params.rowNodes, params.columns,
+            cellComp => cellComp.flashCell());
+    }
+
     public refreshCells(params: RefreshCellsParams = {}): void {
+        let refreshCellParams = {
+            forceRefresh: params.force,
+            newData: false
+        };
+        this.forEachCellCompFiltered(params.rowNodes, params.columns,
+                cellComp => cellComp.refreshCell(refreshCellParams));
+    }
+
+    // calls the callback for each cellComp that match the provided rowNodes and columns. eg if one row node
+    // and two columns provided, that identifies 4 cells, so callback gets called 4 times, once for each cell.
+    private forEachCellCompFiltered(rowNodes: RowNode[], columns: (string|Column)[], callback: (cellComp: CellComp)=>void): void {
 
         let rowIdsMap: any;
-        if (_.exists(params.rowNodes)) {
+        if (_.exists(rowNodes)) {
             rowIdsMap = {
                 top: {},
                 bottom: {},
                 normal: {}
             };
-            params.rowNodes.forEach( rowNode => {
+            rowNodes.forEach( rowNode => {
                 if (rowNode.rowPinned===Constants.PINNED_TOP) {
                     rowIdsMap.top[rowNode.id] = true;
                 } else if (rowNode.rowPinned===Constants.PINNED_BOTTOM) {
@@ -375,9 +391,9 @@ export class RowRenderer extends BeanStub {
         }
 
         let colIdsMap: any;
-        if (_.exists(params.columns)) {
+        if (_.exists(columns)) {
             colIdsMap = {};
-            params.columns.forEach( (colKey: string|Column) => {
+            columns.forEach( (colKey: string|Column) => {
                 let column: Column = this.columnController.getGridColumn(colKey);
                 if (_.exists(column)) {
                     colIdsMap[column.getId()] = true
@@ -408,10 +424,7 @@ export class RowRenderer extends BeanStub {
                 let excludeColFromRefresh = colIdsMap && !colIdsMap[colId];
                 if (excludeColFromRefresh) { return; }
 
-                cellComp.refreshCell({
-                    forceRefresh: params.force,
-                    newData: false
-                });
+                callback(cellComp);
             });
         };
 
