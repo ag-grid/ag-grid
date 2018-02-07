@@ -408,6 +408,48 @@ gridOptions.groupRowRendererParams: {
         you are rendering in is provided via the <code>pinned</code> parameter.
     </p>
 
+
+    <h2 id="default-group-order">Default Group Order</h2>
+
+    <p>
+        The grid does not attempt to order the groups. The groups are presented on a 'first come, first served'
+        basis. For example if grouping by country, and the first row is for country 'Ireland', then the first
+        displayed group will be 'Ireland'.
+    </p>
+
+    <p>
+        For most scenarios, this will not be a problem as the user can sort the grouping column. However this
+        will be a problem in one of the following cases:
+        <ul>
+            <li>
+                The grid is using <a href="#fullWidthRows">Full Width Group Rows</a>, which means there is no
+                columns associated with the groups to order.
+            </li>
+            <li>
+                The groups have an implied order that should not require column sorting to achieve. For example
+                grouping by month (January, February...) or other groups which have business meaning that require
+                order e.g. ["Severe", "Medium", "Low"] or ["Today", "Yesterday", "Older than 1 day"].
+            </li>
+        </ul>
+    </p>
+
+    <p>
+        To provide a group order, you should supply <code>defaultGroupSortComparator</code> callback to
+        the grid. The callback is a standard JavaScript Array comparator that takes two values and
+        compares them.
+    </p>
+
+    <p>
+        The example below shows providing a default group order. From the example the following can be noted:
+        <ul>
+            <li>Groups are displayed using full width rows. There is no column to click to sort the groups.</li>
+            <li>The grid is provided with <code>defaultGroupSortComparator</code>.</li>
+            <li>Groups are sorted alphabetically.</li>
+        </ul>
+    </p>
+
+    <?= example('Default Group Order', 'default-group-order', 'generated', array("enterprise" => 1)) ?>
+
     <h2 id="unbalanced-groups">Unbalanced Groups</h2>
 
     <p>

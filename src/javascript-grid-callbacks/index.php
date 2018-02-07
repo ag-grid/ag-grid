@@ -135,6 +135,13 @@ include '../documentation-main/documentation_header.php';
             <td>Allows user to process popups after they are created. Applications can use this if they want to, for
                 example, reposition the popup.</td>
         </tr>
+        <tr>
+            <th>defaultGroupSortComparator(nodeA, nodeB)</th>
+            <td>
+                Allows default sorting of groups. See
+                <a href="../javascript-grid-grouping/#default-group-order">Default Group Order</a>.
+            </td>
+        </tr>
 
         <?php include_once '../javascript-grid-pagination/paginationProperties.php' ?>
         <?php printPropertiesRows($paginationCallbacks) ?>

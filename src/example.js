@@ -210,6 +210,15 @@ var gridOptions = {
             return '';
         }
     },
+    defaultGroupSortComparator: function(nodeA, nodeB) {
+        if (nodeA.key < nodeB.key) {
+            return -1;
+        } else if (nodeA.key > nodeB.key) {
+            return 1;
+        } else {
+            return 0;
+        }
+    },
     // rowHeight: 100,
     // suppressTabbing: true,
     // rowHoverClass: true,
