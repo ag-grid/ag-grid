@@ -92,8 +92,8 @@ export class HeaderGroupWrapperComp extends Component {
         let colGroupDef = this.columnGroup.getColGroupDef();
 
         // add tooltip if exists
-        if (colGroupDef.headerGroupTooltip) {
-            this.getGui().title = colGroupDef.headerGroupTooltip;
+        if (colGroupDef.headerTooltip) {
+            this.getGui().title = colGroupDef.headerTooltip;
         }
     }
 

@@ -30,6 +30,8 @@ export interface AbstractColDef {
     pivotKeys?: string[];
     /** Set to true to not include this column in the toolpanel */
     suppressToolPanel?: boolean;
+    /** Tooltip for the column header */
+    headerTooltip?: string;
 }
 
 export interface ColGroupDef extends AbstractColDef {
@@ -47,8 +49,6 @@ export interface ColGroupDef extends AbstractColDef {
     headerGroupComponentFramework?: {new (): any};
     /** The custom header group component to be used for rendering the component header. If none specified the default ag-Grid is used**/
     headerGroupComponentParams?: any;
-    /** Tooltip for the column group header */
-    headerGroupTooltip?: string;
 }
 
 export interface IAggFunc {
@@ -95,9 +95,6 @@ export interface ColDef extends AbstractColDef {
 
     /** The function used to calculate the tooltip of the object, tooltipField takes precedence*/
     tooltip?: (params:TooltipParams)=>string;
-    
-    /** Tooltip for the column header */
-    headerTooltip?: string;
 
     /** Expression or function to get the cells value. */
     valueGetter?: ((params: ValueGetterParams) => any) | string;
