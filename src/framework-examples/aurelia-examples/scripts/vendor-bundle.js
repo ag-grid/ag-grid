@@ -66011,13 +66011,13 @@ var LicenseManager = (function () {
             }
         }
         if (!valid) {
-            LicenseManager_1.outputMessage('********************************************* Invalid License **************************************************', '* Your license for ag-Grid Enterprise is not valid - please contact accounts@ag-grid.com to obtain a valid license. *');
+            LicenseManager_1.outputMessage('********************************************* Invalid License **************************************************', '* Your license for ag-Grid Enterprise is not valid - please contact info@ag-grid.com to obtain a valid license. *');
         }
         else if (!current) {
             var formattedExpiryDate = LicenseManager_1.formatDate(expiry);
             var formattedReleaseDate = LicenseManager_1.formatDate(gridReleaseDate);
             LicenseManager_1.outputMessage('********************* License not compatible with installed version of ag-Grid Enterprise. *********************', "Your license for ag-Grid Enterprise expired on " + formattedExpiryDate + " but the version installed was released on " + formattedReleaseDate + ". Please " +
-                'contact accounts@ag-grid.com to renew your license');
+                'contact info@ag-grid.com to renew your license');
         }
     };
     LicenseManager.extractExpiry = function (license) {

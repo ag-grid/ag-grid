@@ -587,7 +587,7 @@ loadingSpinnerColumn = {
 
     <?= example('Block Equal Than Page', 'block-equal-page', 'generated') ?>
 
-    <h1>Overlays</h1>
+    <h2>Overlays</h2>
 
     <p>
         The infinite row model does not use <a href="../javascript-grid-overlays/">overlays</a>
