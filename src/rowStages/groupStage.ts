@@ -84,6 +84,8 @@ export class GroupStage implements IRowNodeStage {
         } else {
             this.shotgunResetEverything(details);
         }
+
+        this.sortGroupsWithComparator(details.rootNode);
     }
 
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
@@ -142,6 +144,27 @@ export class GroupStage implements IRowNodeStage {
                 this.recursiveSortChildren(childNode, details)
             }
         } );
+    }
+
+    private sortGroupsWithComparator(rootNode: RowNode): void {
+        // we don't do group sorting for tree data
+        if (this.usingTreeData) { return; }
+
+        let comparator = this.gridOptionsWrapper.getDefaultGroupSortComparator();
+        if (_.exists(comparator)) {
+            recursiveSort(rootNode);
+        }
+
+        function recursiveSort(rowNode: RowNode): void {
+            let doSort = _.exists(rowNode.childrenAfterGroup) &&
+                // we only want to sort groups, so we do not sort leafs (a leaf group has leafs as children)
+                !rowNode.leafGroup;
+
+            if (doSort) {
+                rowNode.childrenAfterGroup.sort(comparator);
+                rowNode.childrenAfterGroup.forEach( childNode => recursiveSort(childNode));
+            }
+        }
     }
 
     private getExistingPathForNode(node: RowNode, details: GroupingDetails): GroupInfo[] {
