@@ -139,6 +139,13 @@ include '../documentation-main/documentation_header.php';
                 <a href="../javascript-grid-sorting/#accentedSort">Accented Sort</a>
             </td>
         </tr>
+        <tr>
+            <th>multiSortKey</th>
+            <td>
+                Set to 'ctrl' to have multi sorting work using the Control or Command (for Apple) keys. See
+                <a href="../javascript-grid-sorting/#multi-column-sorting">Multi Column Sorting</a>
+            </td>
+        </tr>
 
         </table>
     <h2>Selection</h2>

@@ -37,40 +37,39 @@ include('../includes/mediaHeader.php');
     <div class="col-md-8">
     
         <p class="lead">
-            <strong>You love React? ag-Grid loves it too! </strong>
+            <strong>You love React? ag-Grid loves it too! Build your first React ag-Grid application and get on track with the best React grid.</strong>
         </p>
-        <p>In this blog post we will dive in the <strong>React</strong> world and build an application with <strong>ag-Grid</strong>. We will gradually explore different features and capabilities of the grid while building our app.</p>
+        <p>In this blog post we will dive in the React world and build an application with ag-Grid. We will gradually explore different features and capabilities of the grid while building our app.</p>
 
-        <p>Pack your <strong>React</strong> tools, get your hands on the keyboards and let's get started!</p>
+        <p>Pack your React tools, get your hands on the keyboards and let's get started!</p>
 
         <h2>Hello React!</h2>
 
-        <p>To set up a basic <strong>React</strong> application we will use the <strong>React-Create-App</strong>. If haven't already installed it you can do it with the following command:</p>
+        <p>To set up a basic React application we will use the React-Create-App. If haven't already installed it you can do it with the following command:</p>
 
         <pre><code class="language-bash">
         npm install -g create-react-app</code></pre>
 
-        <p>Next we simply create and start our <strong>React</strong> application:</p>
+        <p>Next we simply create and start our React application:</p>
 
         <pre><code class="language-bash">
         create-react-app ag-grid-app
         cd ag-grid-app
-        npm start
-        </code></pre>
+        npm start</code></pre>
 
         <h2>Install ag-Grid</h2>
 
-        <p>Time to install <strong>ag-Grid</strong> in our <strong>React</strong> application. The way to do this is with the ag-Grid npm packages.
-        To install <strong>ag-Grid</strong> run the following command:</p>
+        <p>Time to install ag-Grid in our React application. The way to do this is with the ag-Grid npm packages.
+        To install ag-Grid run the following command:</p>
 
         <pre><code class="language-bash">
         npm install --save ag-grid ag-grid-react</code></pre>
 
-        <p>You might have noticed that we are installing two packages. In order to use <strong>ag-Grid</strong> with <strong>React</strong> we need to install not only the <strong>ag-grid</strong> package but also <strong>ag-grid-react</strong> which contains the actual <strong>React</strong> component.</p>
+        <p>You might have noticed that we are installing two packages. In order to use ag-Grid with React we need to install not only the ag-grid package but also ag-grid-react which contains the actual React component.</p>
 
         <h3>ag-Grid Enterprise</h3>
 
-        <p>To use the enterprise features of the grid you need to install also <strong>ag-grid-enterprise</strong>.</p>
+        <p>To use the enterprise features of the grid you need to install also ag-grid-enterprise.</p>
 
         <pre><code class="language-bash">
         npm install --save ag-grid-enterprise</code></pre>
@@ -82,7 +81,7 @@ include('../includes/mediaHeader.php');
         ReactDOM.render(&lt;GridExample /&gt;, document.getElementById('root'));
         </code></pre>
 
-        <p>Since the React Component wraps the functionality of <strong>ag-Grid</strong>, there will be no difference between <strong>core ag-Grid</strong> and <strong>React ag-Grid</strong> when it comes to features.</p>
+        <p>Since the React Component wraps the functionality of ag-Grid, there will be no difference between core ag-Grid and React ag-Grid when it comes to features.</p>
 
         <h2>Grid Component</h2>
 
@@ -99,7 +98,7 @@ include('../includes/mediaHeader.php');
         <li>logo.svg</li>
         </ul>
 
-        <p>Create a new file called <em>GridExample.jsx</em>. This will be our ag-Grid configuration. Before implementing our component don't forget to add the relevant imports:</p>
+        <p>Create a new file called GridExample.jsx. This will be our ag-Grid configuration. Before implementing our component don't forget to add the relevant imports:</p>
 
         <pre><code class="language-javascript">
         import React, { Component } from 'react';
@@ -107,7 +106,7 @@ include('../includes/mediaHeader.php');
         </code></pre>
 
         <p>So let's start implementing our component!
-        Create a class called <em>GridExample</em>, extending <em>Component</em>, which has the following structure:</p>
+        Create a class called GridExample, extending Component, which has the following structure:</p>
 
         <pre><code class="language-javascript">
         class GridExample extends Component {
@@ -124,14 +123,13 @@ include('../includes/mediaHeader.php');
 
         <h3>Configuring the AgGridReact component</h3>
 
-        <p>The <em>AgGridReact component</em> needs to be displayed in a container which will define the dimensions and the theme of the grid.
-        In order to show a basic grid we need only to provide <em>columnDefs</em> and <em>rowData</em> to the <em>AgGidReact component</em>.</p>
+        <p>The AgGridReact component needs to be displayed in a container which will define the dimensions and the theme of the grid.
+        In order to show a basic grid we need only to provide columnDefs and rowData to the AgGridReact component.</p>
 
         <pre><code class="language-javascript">
          render() {
             let containerStyle = {
-                height: 115,
-                width: 500
+                height: 600
             };
 
             return (
@@ -145,14 +143,14 @@ include('../includes/mediaHeader.php');
         }
         </code></pre>
 
-        <p>As you may notice we are using the <em>ag-theme-fresh</em> to style the grid. Have in mind that you need to import the css file for the theme before using it. If you fail to import the .css files, the grid will appeared unstyled. Import the following styles in <em>GridExample.jsx</em>:</p>
+        <p>As you may have noticed we are using the ag-theme-fresh to style the grid. Have in mind that you need to import the .css file for the theme before using it. If you fail to import the .css files, the grid will appear unstyled. Import the following styles in <em>gridExample.jsx</em>:</p>
 
         <pre><code class="language-javascript">
         import "../node_modules/ag-grid/dist/styles/ag-grid.css";
         import "../node_modules/ag-grid/dist/styles/ag-theme-fresh.css";
         </code></pre>
 
-        <p>Now we need to define the <em>this.state.columnDefs</em> and <em>this.state.rowData</em> variables in the constructor of the class.</p>
+        <p>Now we need to define the columnDefs and rowData variables in the constructor of the class.</p>
 
         <pre><code class="language-javascript">
         constructor(props) {
@@ -189,16 +187,16 @@ include('../includes/mediaHeader.php');
         npm start
         </code></pre>
 
-        <p>This is should be the result so far.</p>
+        <p>This should be the result so far.</p>
 
         <p><img src="./seed.png" alt="" /></p>
 
         <h2>Sorting &amp; Filtering</h2>
 
-        <p>Time to add a little bit more functionality to our grid. Since grids usually hold big amounts of data, it is crucial to provide effective navigation through the grid entries. This is where operations like filtering and sorting come handy.</p>
+        <p>Time to add a little bit more functionality to our grid. Since grids usually hold big amounts of data, it is crucial to provide effective navigation through the grid entries. This is where operations like filtering and sorting come in handy.</p>
 
-        <p><strong>ag-Grid</strong> has a flexible and intuitive API which expose the capabilities of the grid in an easy to use manner.
-        In order to enable filtering and sorting you need to set the properties <em>enableFilter</em> and <em>enableSort</em> to true.</p>
+        <p>ag-Grid has a flexible and intuitive API which exposes the capabilities of the grid in an easy to use manner.
+        In order to enable filtering and sorting you need to set the properties enableFilter and enableSort to true.</p>
 
         <pre><code class="language-javascript">
         &lt;AgGridReact
@@ -217,10 +215,10 @@ include('../includes/mediaHeader.php');
 
         <h2>Take it to the Next Level: Fetching Remote Data</h2>
 
-        <p>So far we have created a basic grid with hardcoded data. Now it's time to extend our app into more realistic scenario and fetch our data from a remote service.</p>
+        <p>So far we have created a basic grid with hardcoded data. Now it's time to extend our app into more realistic scenario and fetch our data from a remote JSON.</p>
 
-        <p>You can find the json file that is used in this tutorial <a href="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinners.json">here</a>.
-        The json contains data about olympic winners in different sports. Every entry is specified with the following fields:</p>
+        <p>You can find the JSON file that is used in this tutorial <a href="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinners.json">here</a>.
+        The JSON contains data about olympic winners in different sports. Every entry is specified with the following fields:</p>
 
         <ul>
         <li>Athelete</li>
@@ -246,8 +244,8 @@ include('../includes/mediaHeader.php');
 
         <h3>Column Definitions</h3>
 
-        <p>Before fetching the data we need to update the column definitions since we will be working with a different data set. We should also remove the hardcoded data from the <em>rowData</em> array.
-        Edit the <em>columnDefs</em> and <em>rowData</em> properties as shown below.</p>
+        <p>Before fetching the data we need to update the column definitions since we will be working with a different data set. We should also remove the hardcoded data from the <code>rowData</code> array.
+        Edit the <code>columnDefs</code> and <code>rowData</code> properties as shown below.</p>
 
         <pre><code class="language-javascript">
         this.state = {
@@ -269,7 +267,7 @@ include('../includes/mediaHeader.php');
 
         <h3>Fetching Data</h3>
 
-        <p>We are going to execute the fetch call in the <em>componentDidMount</em> lifecycle method provided by <strong>React</strong>. The fetched data is assinged to the <em>rowData</em> property which feeds the grid.</p>
+        <p>We are going to execute the fetch call in the <code>componentDidMount</code> lifecycle method provided by React. The fetched data is assinged to the <code>rowData</code> property which feeds the grid.</p>
 
         <pre><code class="language-javascript">
         componentDidMount() {
@@ -285,10 +283,10 @@ include('../includes/mediaHeader.php');
 
         <h2>A Glimpse of the Enterprise Features</h2>
 
-        <p>We just got ourselfs a datagrid showing remotely fetched dataset. 
-        Let's take a tour around the Enterprise features of <strong>ag-Grid</strong> and add to our app some more functionality.</p>
+        <p>We just got ourselves a datagrid showing a remotely fetched dataset. 
+        Let's take a tour around the Enterprise features of ag-Grid and add to our app some more functionality.</p>
 
-        <p><em>A quick reminder: If you haven't installed and imported <strong></em>ag-grid-enterprise<em></strong>, now it's the time to do it.</em></p>
+        <p><em>A quick reminder: If you haven't installed and imported ag-grid-enterprise, now it's the time to do it.</em></p>
 
         <pre><code class="language-bash">
         npm install --save ag-grid-enterprise
@@ -304,11 +302,11 @@ include('../includes/mediaHeader.php');
 
         <p>An usual practice when creating reports is to present accumulated values over multiple entries. The combination of grouping and aggregation can be used exactly to present accumulated values which are not visible in first sight.</p>
 
-        <p>In order to enable row grouping for a specific column you should set the <em>enableRowGroup</em> property of that column to true.
-        The <em>enableRowGroup</em> property allows a column to be used in row grouping by altering it's state in the tool panel.</p>
+        <p>In order to enable row grouping for a specific column you should set the <code>enableRowGroup</code> property of that column to true.
+        The <code>enableRowGroup</code> property allows a column to be used in row grouping by altering it's state in the tool panel.</p>
 
-        <p>To enable aggregation just set the <em>enableValue</em> property of the target column to true.
-        The <em>enableValue</em> property allows a specific column to be aggregated.</p>
+        <p>To enable aggregation just set the <code>enableValue</code> property of the target column to true.
+        The <code>enableValue</code> property allows a specific column to be aggregated.</p>
 
         <pre><code class="language-javascript">
         this.state = {
@@ -339,12 +337,117 @@ include('../includes/mediaHeader.php');
         <p><img src="aggr-func.png" alt="" /></p>
 
         <p>To find further information about <em>aggregation</em> visit the <a href="../javascript-grid-aggregation/">dedicated article</a> in our documentation.</p>
+
+        <h2>A Little Colour</h2>
+
+        <p>Let's sprinkle a little colour here and there on our grid!</p>
+
+        <p>For most of the styling you can use the <a href="../javascript-grid-styling/">predefined themes</a>, however sometimes it's necessary to highlight some cells or rows. 
+        We are going to highlight the cells containing the number of medals (gold, silver and bronze). For every type of medal we will define a different color scale depending on the number of won medals.</p>
+
+        <p>This should be the end result.
+        <img src="colour-scale.png" width="100%" /></p>
+
+        <p>Create a .css file named <em>gridExample.css</em> and import it in the <em>gridExample.jsx</em> file.</p>
+
+        <pre><code class="language-javascript">
+        import './gridExample.css';
+        </code></pre>
+
+        <p>In case you are in a mood for picking colours feel free to define your own styles otherwise copy the following styles in the .css file.</p>
+
+        <pre><code class="language-css">
+        .gold-top {
+            background-color: #fffb06;
+        }
+
+        .gold-middle {
+            background-color: #fffd79;
+        }
+
+        .gold-low {
+            background-color: #feffb9;
+        }
+
+        .silver-top {
+            background-color: #cccccc;
+        }
+
+        .silver-low {
+            background-color: #e9e9e9;
+        }
+
+        .bronze-top {
+            background-color: #e2a56c;
+        }
+
+        .bronze-low {
+            background-color: #f8be8e;
+        }
+        </code></pre>
+
+        <p>We will use the <code>classStyleRules</code> to style the cells. These rules are provided as a JavaScript map where the keys are the class names and the values are expressions. If the expression is evaluated to true, the class gets used.</p>
+
+        <p>Add the following style rules into your column definitions.</p>
+
+        <pre><code class="language-javascript">
+        columnDefs: [
+                {headerName: "Athlete", field: "athlete"},
+                {headerName: "Age", field: "age"},
+                {headerName: "Country", field: "country", enableRowGroup:true},
+                {headerName: "Year", field: "year"},
+                {headerName: "Date", field: "date"},
+                {headerName: "Sport", field: "sport"},
+                {headerName: "Gold", field: "gold", enableValue: true, 
+                cellClassRules: {
+                    'gold-top': function(params) { return params.value &gt;= 4},
+                    'gold-middle': function(params) { return params.value &gt;= 2 &amp;&amp; params.value &lt; 4},
+                    'gold-low': function(params) { return params.value &lt; 2}}           
+                },
+                {headerName: "Silver", field: "silver", enableValue: true, 
+                cellClassRules: {
+                    'silver-top': function(params) { return params.value &gt;= 2 &amp;&amp; params.value &lt; 4},
+                    'silver-low': function(params) { return params.value &lt; 2}},
+                },
+                {headerName: "Bronze", field: "bronze", enableValue: true,
+                cellClassRules: {
+                    'bronze-top': function(params) { return params.value &gt;= 2 &amp;&amp; params.value &lt; 4},
+                    'bronze-low': function(params) { return params.value &lt; 2}}
+                },
+                {headerName: "Total", field: "total", enableValue: true}
+                ]
+        </code></pre>
+
+        <p>We are defining only two style rules for Bronze and Silver because their maximum count is 3 and third value is absolete.</p>
+
+        <p>Refresh the application and check out the result!</p>
+
+        <p>Since we have a .css file for our component let's move the style for the size of the div that wraps the grid.</p>
+
+        <pre><code class="language-css">
+        .container {
+            height: 800px;
+        }
+        </code></pre>
+
+        <pre><code class="language-html">
+        &lt;div className="container ag-theme-fresh"&gt;
+        </code></pre>
+
+        <p>Find out more about the styling of <strong>ag-Grid</strong>! Check out the <a href="../javascript-grid-cell-styles/">Cell Styling</a> and <a href="../javascript-grid-row-styles/">Row Styling</a> articles in our documentation.
+        You might be also interested in working with <a href="../javascript-grid-components/">Components</a>. They allow full customization of various parts of the grid.</p>
+
+        <h2>Conclusion &amp; Resorces</h2>
+
+        <p>Congrats, you are ready to start coding on your own with React and ag-Grid!</p>
+
+        <p>Find the full code of the tutorial here.</p>
+
+        <p>You can continue extending the application by adding different capabilities and features. Visit our <a href="../documentation-main/documentation.php">documentation</a> for feature reference and further assistance.
+        In case you have difficulties using React and ag-Grid you can visit the <a href="../best-react-data-grid/">React Getting Started</a> section on our website.
+        You can also find various React examples <a href="../javascript-grid-examples/">here</a>.</p>
  
-        <h2>Give it a Try and Share</h2>
-
-        <p>Try out our new version and feel free to share your thoughts in the comments below.</p>
-
-        <p>Happy coding with ag-Grid!</p>
+        <p>May the force be with you, happy coding and don't forget to share in case this post was useful to you!</p>
         <div style="background-color: #eee; padding: 10px; display: inline-block;">
 
             <div style="margin-bottom: 5px;">If you liked this article then please share</div>

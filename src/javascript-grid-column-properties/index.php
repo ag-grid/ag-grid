@@ -267,6 +267,13 @@ include '../documentation-main/documentation_header.php';
                 Can also be a function to have different rows navigable.</td>
         </tr>
         <tr>
+            <th>suppressCellFlash</th>
+            <td>
+                Set to true then this column will not flash changes. Only applicable if cell flashing is
+                turned on for the grid.
+            </td>
+        </tr>
+        <tr>
             <th>suppressKeyboardEvent(params)</th>
             <td>
                 Function to allow skipping default keyboard behaviour of the grid. Eg if you don't want the

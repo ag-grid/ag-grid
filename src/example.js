@@ -159,6 +159,7 @@ var gridOptions = {
     // suppressDragLeaveHidesColumns: true,
     //unSortIcon: true,
     //     enableRtl: true,
+    multiSortKey: 'ctrl',
     animateRows: true,
     enableColResize: true, //one of [true, false]
     enableSorting: true, //one of [true, false]
