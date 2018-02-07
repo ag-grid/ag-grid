@@ -260,6 +260,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public noRowsOverlayComponentFramework : any = undefined;
     @Input() public detailCellRenderer : any = undefined;
     @Input() public detailCellRendererFramework : any = undefined;
+    @Input() public onGridReady : any = undefined;
     @Input() public toolPanelSuppressRowGroups : any = undefined;
     @Input() public toolPanelSuppressValues : any = undefined;
     @Input() public toolPanelSuppressPivots : any = undefined;
@@ -361,6 +362,8 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public suppressMultiRangeSelection : any = undefined;
     @Input() public enterMovesDownAfterEdit : any = undefined;
     @Input() public enterMovesDown : any = undefined;
+    @Input() public suppressPropertyNamesCheck : any = undefined;
+    @Input() public rowMultiSelectWithClick : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();
