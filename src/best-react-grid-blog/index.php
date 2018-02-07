@@ -130,8 +130,7 @@ include('../includes/mediaHeader.php');
         <pre><code class="language-javascript">
          render() {
             let containerStyle = {
-                height: 115,
-                width: 500
+                height: 600
             };
 
             return (
