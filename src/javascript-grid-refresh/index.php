@@ -80,6 +80,9 @@ interface RefreshCellsParams {
             The grid has <code>enableCellChangeFlash=true</code>, so cells that are refreshed will be flashed.
         </li>
         <li>
+            Column A has <code>suppressCellFlash=true</code> which means this column is excluded from the flashing.
+        </li>
+        <li>
             The grid has two pinned rows at the top and two pinned rows at the bottom. This is to demonstrate
             that cell refreshing works for pinned rows also.
         </li>
