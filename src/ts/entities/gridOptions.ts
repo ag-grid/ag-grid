@@ -162,6 +162,8 @@ export interface GridOptions {
     minColWidth?: number;
     maxColWidth?: number;
 
+    suppressPropertyNamesCheck?: boolean;
+
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/

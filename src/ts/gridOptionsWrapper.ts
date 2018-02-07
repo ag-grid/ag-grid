@@ -3,10 +3,12 @@ import {
     GetContextMenuItems,
     GetMainMenuItems,
     GetRowNodeIdFunc,
-    GridOptions, IsRowMaster,
+    GridOptions,
+    IsRowMaster,
     NavigateToNextCellParams,
-    NodeChildDetails, PaginationNumberFormatterParams, PostProcessPopupParams,
-    ProcessRowParams,
+    NodeChildDetails,
+    PaginationNumberFormatterParams,
+    PostProcessPopupParams,
     TabToNextCellParams,
 } from "./entities/gridOptions";
 import {EventService} from "./eventService";
@@ -19,15 +21,15 @@ import {ColumnApi} from "./columnController/columnApi";
 import {ColumnController} from "./columnController/columnController";
 import {Utils as _} from "./utils";
 import {IViewportDatasource} from "./interfaces/iViewportDatasource";
-import {ICellRendererComp, ICellRendererFunc} from "./rendering/cellRenderers/iCellRenderer";
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {IDatasource} from "./rowModels/iDatasource";
 import {GridCellDef} from "./entities/gridCell";
 import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
 import {BaseExportParams, ProcessCellForExportParams} from "./exportParams";
 import {AgEvent} from "./events";
-import {Column} from "./entities/column";
-import { Environment } from "./environment";
+import {Environment} from "./environment";
+import {PropertyKeys} from "./propertyKeys";
+import {ColDefUtil} from "./components/colDefUtil";
 
 let DEFAULT_ROW_HEIGHT = 25;
 let DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -117,6 +119,12 @@ export class GridOptionsWrapper {
 
     @PostConstruct
     public init(): void {
+
+        if (! (this.gridOptions.suppressPropertyNamesCheck === true)) {
+            this.checkGridOptionsProperties();
+            this.checkColumnDefProperties();
+        }
+
         let async = this.useAsyncEvents();
         this.eventService.addGlobalListener(this.globalEventHandler.bind(this), async);
 
@@ -141,7 +149,63 @@ export class GridOptionsWrapper {
 
     }
 
-    // returns the dom data, or undefined if not found
+    private checkColumnDefProperties() {
+        if (this.gridOptions.columnDefs == null) return;
+
+        this.gridOptions.columnDefs.forEach(colDef=>{
+            let userProperties: string [] = Object.getOwnPropertyNames(colDef);
+            let validProperties: string [] = ColDefUtil.ALL_PROPERTIES;
+
+            this.checkProperties(
+                userProperties,
+                validProperties,
+                validProperties,
+                'colDef',
+                'https://www.ag-grid.com/javascript-grid-column-properties/'
+            );
+        })
+    }
+
+    private checkGridOptionsProperties() {
+        let userProperties: string [] = Object.getOwnPropertyNames(this.gridOptions);
+        let validProperties: string [] = PropertyKeys.ALL_PROPERTIES;
+        let validPropertiesAndExceptions: string [] = validProperties.concat('api', 'columnApi');
+
+        this.checkProperties(
+            userProperties,
+            validPropertiesAndExceptions,
+            validProperties,
+            'gridOptions',
+            'https://www.ag-grid.com/javascript-grid-properties/'
+        );
+    }
+
+
+    private checkProperties(
+        userProperties: string[],
+        validPropertiesAndExceptions: string[],
+        validProperties: string[],
+        containerName: string,
+        docsUrl: string
+    ) {
+        let invalidProperties: { [p: string]: string[] } = _.fuzzyCheckStrings(
+            userProperties,
+            validPropertiesAndExceptions,
+            validProperties
+        );
+
+        let invalidPropertyKeys = Object.keys(invalidProperties);
+        invalidPropertyKeys.forEach(invalidPropertyKey => {
+            let fuzzySuggestions: string[] = invalidProperties [invalidPropertyKey];
+            console.warn(`ag-grid: invalid ${containerName} property '${invalidPropertyKey}' did you mean any of these: ${fuzzySuggestions.slice(0, 8).join(",")}`)
+        });
+
+        if (invalidPropertyKeys.length > 0) {
+            console.warn(`ag-grid: to see all the valid ${containerName} properties please check: ${docsUrl}`)
+        }
+    }
+
+// returns the dom data, or undefined if not found
     public getDomData(element: Node, key: string): any {
         let domData = (<any>element)[this.domDataKey];
         if (domData) {
