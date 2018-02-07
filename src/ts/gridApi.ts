@@ -288,8 +288,8 @@ export class GridApi {
     }
 
     public refreshToolPanel(): void {
-        if (this.toolPanel) {
-            this.toolPanel.refresh();
+        if (this.toolPanelWrapperComp) {
+            this.toolPanelWrapperComp.refresh();
         }
     }
 
