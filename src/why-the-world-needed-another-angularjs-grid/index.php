@@ -202,7 +202,7 @@ include('../includes/mediaHeader.php');
 
         <div style="font-size: 14px; border: 1px solid lightgrey; margin-top: 25px; padding: 15px;">
             <br/>
-            <a href="http://dailyjs.com/2015/03/30/angular-grid-react-native/">DailyJS</a>
+            DailyJS
             <br/>
             <a href="http://www.dzone.com/links/why_the_world_needed_another_angularjs_grid.html">DZone</a>
             <br/>

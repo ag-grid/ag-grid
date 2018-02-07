@@ -69,7 +69,7 @@ import "../node_modules/ag-grid/dist/styles/ag-theme-balham.css";
 import "ag-grid-enterprise/main";
 </snippet>
 
-    <note>Please use the github project <a href="https://github.com/ag-grid/ag-grid-vuejs">ag-grid-vue</a>
+    <note>Please use the github project <a href="https://github.com/ag-grid/ag-grid-vue">ag-grid-vue</a>
         for feedback or issue reporting around ag-Grid's support for VueJS.
     </note>
 

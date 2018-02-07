@@ -103,9 +103,9 @@ import "ag-grid-enterprise/main";
                     target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Pinned Row Renderer Example
-            <a href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/floating-row-example/floating-row-example.ts"
+            <a href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/pinned-row-example/pinned-row-example.ts"
                target="_blank" class="fa fa-external-link"> TypeScript</a> <a
-                    href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/floating-row-example/floating-row-example.html"
+                    href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/pinned-row-example/pinned-row-example.html"
                     target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Full Width Renderer Example
