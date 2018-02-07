@@ -683,7 +683,6 @@
     }
 
     .ag-column-panel {
-        background-color: $tool-panel-background-color;
         border-right: 0;
 
         .ag-pivot-mode {
@@ -1360,6 +1359,11 @@
     }
 
     .ag-tool-panel {
+        background-color: $tool-panel-background-color;
+        border-right: 1px solid $border-color;
+        border-bottom: 1px solid $border-color;
+        border-top: 1px solid $border-color;
+
         .ag-side-buttons button {
             background: transparent;
             border: 0;
