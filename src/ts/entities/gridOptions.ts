@@ -275,6 +275,7 @@ export interface GridOptions {
     navigateToNextCell?: (params: NavigateToNextCellParams)=>GridCellDef;
     tabToNextCell?: (params: TabToNextCellParams)=>GridCellDef;
     getDocument?: ()=> Document;
+    defaultGroupSortComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
 
     loadingOverlayComponent?: {new(): ILoadingOverlayComp} | string;
     loadingOverlayComponentFramework?: any;
