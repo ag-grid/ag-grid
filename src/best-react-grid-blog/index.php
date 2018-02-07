@@ -130,8 +130,7 @@ include('../includes/mediaHeader.php');
         <pre><code class="language-javascript">
          render() {
             let containerStyle = {
-                height: 115,
-                width: 500
+                height: 600
             };
 
             return (
@@ -339,12 +338,117 @@ include('../includes/mediaHeader.php');
         <p><img src="aggr-func.png" alt="" /></p>
 
         <p>To find further information about <em>aggregation</em> visit the <a href="../javascript-grid-aggregation/">dedicated article</a> in our documentation.</p>
+
+        <h2>A Little Colour</h2>
+
+        <p>Let's sprinkle a little colour here and there on our grid!</p>
+
+        <p>For most of the styling you can use the <a href="../javascript-grid-styling/">predefined themes</a>, however sometimes it's necessary to highlight some cells or rows. 
+        We are going to highlight the cells containing the number of medals (gold, silver and bronze). For every type of medal we will define a different color scale depending on the number of won medals.</p>
+
+        <p>This should be the end result.
+        <img src="colour-scale.png" width="100%" /></p>
+
+        <p>Create a .css file named <em>gridExample.css</em> and import it in the <em>gridExample.jsx</em> file.</p>
+
+        <pre><code class="language-javascript">
+        import './gridExample.css';
+        </code></pre>
+
+        <p>Copy the following styles in the .css file. In case you are in a mood for picking colours feel free to define your own styles.</p>
+
+        <pre><code class="language-css">
+        .gold-top {
+            background-color: #fffb06;
+        }
+
+        .gold-middle {
+            background-color: #fffd79;
+        }
+
+        .gold-low {
+            background-color: #feffb9;
+        }
+
+        .silver-top {
+            background-color: #cccccc;
+        }
+
+        .silver-low {
+            background-color: #e9e9e9;
+        }
+
+        .bronze-top {
+            background-color: #e2a56c;
+        }
+
+        .bronze-low {
+            background-color: #f8be8e;
+        }
+        </code></pre>
+
+        <p>We will use the <em>classStyleRules</em> to style the cells. These rules are provided as a JavaScript map where the keys are the class names and the values are expressions. If the expression is evaluated to true, the class gets used.</p>
+
+        <p>Add the following style rules into your column definitions.</p>
+
+        <pre><code class="language-javascript">
+        columnDefs: [
+                {headerName: "Athlete", field: "athlete"},
+                {headerName: "Age", field: "age"},
+                {headerName: "Country", field: "country", enableRowGroup:true},
+                {headerName: "Year", field: "year"},
+                {headerName: "Date", field: "date"},
+                {headerName: "Sport", field: "sport"},
+                {headerName: "Gold", field: "gold", enableValue: true, 
+                cellClassRules: {
+                    'gold-top': function(params) { return params.value &gt;= 4},
+                    'gold-middle': function(params) { return params.value &gt;= 2 &amp;&amp; params.value &lt; 4},
+                    'gold-low': function(params) { return params.value &lt; 2}}           
+                },
+                {headerName: "Silver", field: "silver", enableValue: true, 
+                cellClassRules: {
+                    'silver-top': function(params) { return params.value &gt;= 2 &amp;&amp; params.value &lt; 4},
+                    'silver-low': function(params) { return params.value &lt; 2}},
+                },
+                {headerName: "Bronze", field: "bronze", enableValue: true,
+                cellClassRules: {
+                    'bronze-top': function(params) { return params.value &gt;= 2 &amp;&amp; params.value &lt; 4},
+                    'bronze-low': function(params) { return params.value &lt; 2}}
+                },
+                {headerName: "Total", field: "total", enableValue: true}
+                ]
+        </code></pre>
+
+        <p>We are defining only two style rules for <em>Bronze</em> and <em>Silver</em> because their maximum count is 3 and third value is absolete.</p>
+
+        <p>Refresh the application and check out the result!</p>
+
+        <p>Since we have a <em>.css</em> file for our component let's move the style for the size of the <em>div</em> that wraps the grid.</p>
+
+        <pre><code class="language-css">
+        .container {
+            height: 800px;
+        }
+        </code></pre>
+
+        <pre><code class="language-html">
+        &lt;div className="container ag-theme-fresh"&gt;
+        </code></pre>
+
+        <p>Find out more about the styling of <strong>ag-Grid</strong>! Check out the <a href="../javascript-grid-cell-styles/">Cell Styling</a> and <a href="../javascript-grid-row-styles/">Row Styling</a> articles in our documentation.
+        You might be also interested in working with <a href="../javascript-grid-components/">Components</a>. They allow full customization of various parts of the grid.</p>
+
+        <h2>Conclusion &amp; Resorces</h2>
+
+        <p>Congrats, you are ready to start coding on your own with <strong>React</strong> and <strong>ag-Grid</strong>!</p>
+
+        <p>Find the full code of the tutorial here.</p>
+
+        <p>You can continue extending the application by adding different capabilities and features. Visit our <a href="../documentation-main/documentation.php">documentation</a> for feature reference and further assistance.
+        In case you have difficulties using <strong>React</strong> and <strong>ag-Grid</strong> you can visit the <a href="../best-react-data-grid/">React Getting Started</a> section on our website.
+        You can also find various React examples <a href="../javascript-grid-examples/">here</a>.</p>
  
-        <h2>Give it a Try and Share</h2>
-
-        <p>Try out our new version and feel free to share your thoughts in the comments below.</p>
-
-        <p>Happy coding with ag-Grid!</p>
+        <p>May the force be with you, happy coding and don't forget to share in case this post was useful to you!</p>
         <div style="background-color: #eee; padding: 10px; display: inline-block;">
 
             <div style="margin-bottom: 5px;">If you liked this article then please share</div>
