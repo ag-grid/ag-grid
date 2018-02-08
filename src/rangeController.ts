@@ -23,7 +23,9 @@ import {
     GridOptionsWrapper,
     RangeSelectionChangedEvent,
     ColumnApi,
-    GridApi
+    GridApi,
+    CellNavigationService,
+    _
 } from "ag-grid/main";
 
 @Bean('rangeController')
@@ -40,6 +42,7 @@ export class RangeController implements IRangeController {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
 
     private logger: Logger;
 
@@ -80,6 +83,41 @@ export class RangeController implements IRangeController {
         this.cellRanges.push(newRange);
         this.activeRange = null;
         this.dispatchChangedEvent(true, false);
+    }
+
+    public extendRangeToCell(toCell: GridCell): void {
+
+        let lastRange = _.existsAndNotEmpty(this.cellRanges) ? this.cellRanges[this.cellRanges.length - 1] : null;
+        let startCell = lastRange ? lastRange.start : toCell;
+
+        this.setRange({
+            rowStart: startCell.rowIndex,
+            floatingStart: startCell.floating,
+            rowEnd: toCell.rowIndex,
+            floatingEnd: toCell.floating,
+            columnStart: startCell.column,
+            columnEnd: toCell.column
+        });
+    }
+
+    public extendRangeInDirection(startCell: GridCell, key: number): void {
+
+        let oneRangeExists = _.exists(this.cellRanges) || this.cellRanges.length === 1;
+        let previousSelectionStart = oneRangeExists ? this.cellRanges[0].start : null;
+
+        let takeEndFromPreviousSelection = startCell.equals(previousSelectionStart);
+
+        let previousEndCell = takeEndFromPreviousSelection ? this.cellRanges[0].end : startCell;
+        let newEndCell = this.cellNavigationService.getNextCellToFocus(key, previousEndCell);
+
+        this.setRange({
+            rowStart: startCell.rowIndex,
+            floatingStart: startCell.floating,
+            rowEnd: newEndCell.rowIndex,
+            floatingEnd: newEndCell.floating,
+            columnStart: startCell.column,
+            columnEnd: newEndCell.column
+        });
     }
 
     public setRange(rangeSelection: AddRangeSelectionParams): void {
