@@ -154,7 +154,7 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
         this.dateComponentPromise = this.componentRecipes.newDateComponent(dateComponentParams);
 
         let body: HTMLElement = _.loadTemplate(`<div></div>`);
-        this.dateComponentPromise.then(dateComponent=>{
+        this.dateComponentPromise.then(dateComponent=> {
             body.appendChild(dateComponent.getGui());
         });
         this.setTemplateFromElement(body);
@@ -206,7 +206,7 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
 
     onParentModelChanged(parentModel: SerializedDateFilter): void {
         this.lastKnownModel = parentModel;
-        this.dateComponentPromise.then(dateComponent=>{
+        this.dateComponentPromise.then(dateComponent=> {
             if (!parentModel || !parentModel.dateFrom) {
                 dateComponent.setDate(null);
                 return;

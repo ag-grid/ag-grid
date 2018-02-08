@@ -105,11 +105,11 @@ export interface ExcelInterior {
     patternColor: string;
 }
 
-export interface ExcelExportParams extends ExportParams<ExcelCell[][]>{
+export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
     sheetName?: string;
 }
 
-export interface IExcelCreator{
+export interface IExcelCreator {
     exportDataAsExcel (params?: ExcelExportParams): void ;
 
     getDataAsExcelXml (params?: ExcelExportParams): string ;

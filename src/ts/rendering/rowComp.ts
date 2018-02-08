@@ -930,10 +930,10 @@ export class RowComp extends Component {
         let res: string[] = [];
 
         this.processRowClassRules(
-            (className: string)=>{
+            (className: string)=> {
                 res.push(className);
             },
-            (className: string)=>{
+            (className: string)=> {
                 // not catered for, if creating, no need
                 // to remove class as it was never there
             }
@@ -1015,10 +1015,10 @@ export class RowComp extends Component {
 
     private postProcessRowClassRules(): void {
         this.processRowClassRules(
-            (className: string)=>{
+            (className: string)=> {
                 this.eAllRowContainers.forEach( row => _.addCssClass(row, className));
             },
-            (className: string)=>{
+            (className: string)=> {
                 this.eAllRowContainers.forEach( row => _.removeCssClass(row, className));
             }
         );

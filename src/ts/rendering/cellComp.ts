@@ -585,7 +585,7 @@ export class CellComp extends Component {
         let data = this.rowNode.data;
         if (colDef.tooltipField && _.exists(data)) {
             return _.getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
-        } else if (colDef.tooltip){
+        } else if (colDef.tooltip) {
             return colDef.tooltip({
                 value: this.value,
                 valueFormatted: this.valueFormatted,

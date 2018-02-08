@@ -129,8 +129,7 @@ export class Context {
             let constructorParamsMeta: any;
             if (beanEntry.bean.__agBeanMetaData
                 && beanEntry.bean.__agBeanMetaData.autowireMethods
-                && beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor)
-            {
+                && beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor) {
                 constructorParamsMeta = beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor;
             }
             let constructorParams = this.getBeansForParameters(constructorParamsMeta, beanEntry.bean.name);
@@ -179,12 +178,11 @@ export class Context {
 
 
         let currentBean: any = bean;
-        while (currentBean != null){
+        while (currentBean != null) {
             let currentConstructor: any = currentBean.constructor;
 
             if (currentConstructor.__agBeanMetaData
-                && currentConstructor.__agBeanMetaData.agClassAttributes)
-            {
+                && currentConstructor.__agBeanMetaData.agClassAttributes) {
                 let attributes = currentConstructor.__agBeanMetaData.agClassAttributes;
                 if (!attributes) {
                     return;
@@ -204,7 +202,7 @@ export class Context {
     }
 
     private getBeanName(constructor: any): string {
-        if (constructor.__agBeanMetaData && constructor.__agBeanMetaData.beanName){
+        if (constructor.__agBeanMetaData && constructor.__agBeanMetaData.beanName) {
             return constructor.__agBeanMetaData.beanName;
         }
 
@@ -341,13 +339,13 @@ export function Bean(beanName: string): Function {
 }
 
 export function Autowired(name?: string): Function {
-    return (target: any, propertyKey: string, descriptor: PropertyDescriptor)=>{
+    return (target: any, propertyKey: string, descriptor: PropertyDescriptor)=> {
         autowiredFunc(target, name, false, target, propertyKey, null);
     };
 }
 
 export function Optional(name?: string): Function {
-    return (target: any, propertyKey: string, descriptor: PropertyDescriptor)=>{
+    return (target: any, propertyKey: string, descriptor: PropertyDescriptor)=> {
         autowiredFunc(target, name, true, target, propertyKey, null);
     };
 }

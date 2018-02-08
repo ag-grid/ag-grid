@@ -13,7 +13,7 @@ export class RowNodeFactory {
     @Autowired('context') private context: Context;
     @Autowired('columnController') private columnController: ColumnController;
 
-    public create(data: any[]): RowNode{
+    public create(data: any[]): RowNode {
         let rootNode: RowNode = new RowNode();
         let nodeManager: InMemoryNodeManager = new InMemoryNodeManager(rootNode, this.gridOptionsWrapper,
             this.context, this.eventService, this.columnController);

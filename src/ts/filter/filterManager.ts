@@ -82,13 +82,13 @@ export class FilterManager {
                 allPromises.push(filterWrapper.filterPromise);
             });
         }
-        Promise.all(allPromises).then(whatever=>{
+        Promise.all(allPromises).then(whatever=> {
             this.onFilterChanged();
         });
     }
 
     private setModelOnFilterWrapper(filterPromise: Promise<IFilterComp>, newModel: any) {
-        filterPromise.then(filter=>{
+        filterPromise.then(filter=> {
             if (typeof filter.setModel !== 'function') {
                 console.warn('Warning ag-grid - filter missing setModel method, which is needed for setFilterModel');
                 return;
@@ -221,7 +221,7 @@ export class FilterManager {
         this.checkExternalFilter();
 
         _.iterateObject(this.allFilters, function (key, filterWrapper: FilterWrapper) {
-            filterWrapper.filterPromise.then(filter=>{
+            filterWrapper.filterPromise.then(filter=> {
                 if (filter.onAnyFilterChanged) {
                     filter.onAnyFilterChanged();
                 }
@@ -347,7 +347,7 @@ export class FilterManager {
 
     private onNewRowsLoaded(source: ColumnEventType) {
         _.iterateObject(this.allFilters, function (key, filterWrapper: FilterWrapper) {
-            filterWrapper.filterPromise.then(filter=>{
+            filterWrapper.filterPromise.then(filter=> {
                 if (filter.onNewRowsLoaded) {
                     filter.onNewRowsLoaded();
                 }
@@ -381,7 +381,7 @@ export class FilterManager {
 
     }
 
-    public cachedFilter (column: Column): FilterWrapper{
+    public cachedFilter (column: Column): FilterWrapper {
         return this.allFilters[column.getColId()];
     }
 
@@ -452,7 +452,7 @@ export class FilterManager {
     private putIntoGui(filterWrapper: FilterWrapper): void {
         let eFilterGui = document.createElement('div');
         eFilterGui.className = 'ag-filter';
-        filterWrapper.filterPromise.then(filter=>{
+        filterWrapper.filterPromise.then(filter=> {
             let guiFromFilter = filter.getGui();
 
             if (_.missing(guiFromFilter)) {
@@ -492,7 +492,7 @@ export class FilterManager {
     }
 
     private disposeFilterWrapper(filterWrapper: FilterWrapper, source: ColumnEventType): void {
-        filterWrapper.filterPromise.then(filter=>{
+        filterWrapper.filterPromise.then(filter=> {
             filter.setModel(null);
             if (filter.destroy) {
                 filter.destroy();

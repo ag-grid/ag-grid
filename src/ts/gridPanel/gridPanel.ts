@@ -1281,9 +1281,7 @@ export class GridPanel extends BeanStub {
         if (Math.abs(wheelEvent.pixelX) > Math.abs(wheelEvent.pixelY)) {
             let newLeftPosition = this.eBodyViewport.scrollLeft + wheelEvent.pixelX;
             this.eBodyViewport.scrollLeft = newLeftPosition;
-        }
-        // vertical scroll
-        else {
+        } else {
             let newTopPosition = targetPanel.scrollTop + wheelEvent.pixelY;
             targetPanel.scrollTop = newTopPosition;
         }
@@ -1443,10 +1441,10 @@ export class GridPanel extends BeanStub {
         let numberOfFloating = 0;
         let groupHeight: number;
         let headerHeight: number;
-        if (!this.columnController.isPivotMode()){
+        if (!this.columnController.isPivotMode()) {
             _.removeCssClass(this.eHeader, 'ag-pivot-on');
             _.addCssClass(this.eHeader, 'ag-pivot-off');
-            if (this.gridOptionsWrapper.isFloatingFilter()){
+            if (this.gridOptionsWrapper.isFloatingFilter()) {
                 headerRowCount ++;
             }
             numberOfFloating = (this.gridOptionsWrapper.isFloatingFilter()) ? 1 : 0;

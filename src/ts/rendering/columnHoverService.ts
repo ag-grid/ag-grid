@@ -16,7 +16,7 @@ export class ColumnHoverService extends BeanStub {
     private currentlySelectedColumn: Column;
 
     @PostConstruct
-    private init(): void{
+    private init(): void {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_MOUSE_OVER, this.onCellMouseOver.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_MOUSE_OUT, this.onCellMouseOut.bind(this));
     }
@@ -41,7 +41,7 @@ export class ColumnHoverService extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    public isHovered(column: Column): boolean{
+    public isHovered(column: Column): boolean {
         return column == this.currentlySelectedColumn;
     }
 }

@@ -1429,9 +1429,9 @@ export class ColumnController {
                 console.warn('ag-grid: headerValueGetter must be a function or a string');
                 return '';
             }
-        } else if (colDef.headerName != null){
+        } else if (colDef.headerName != null) {
             return colDef.headerName;
-        } else if ((<ColDef>colDef).field){
+        } else if ((<ColDef>colDef).field) {
             return _.camelCaseToHumanText((<ColDef>colDef).field);
         } else {
             return '';
@@ -2289,7 +2289,7 @@ export class ColumnController {
         return result;
     }
 
-    public getGridBalancedTree(): OriginalColumnGroupChild[]{
+    public getGridBalancedTree(): OriginalColumnGroupChild[] {
         return this.gridBalancedTree;
     }
 }

@@ -25,14 +25,14 @@ export class StylingService {
                 }
                 if (resultOfRule) {
                     onApplicableClass(className);
-                } else if (onNotApplicableClass){
+                } else if (onNotApplicableClass) {
                     onNotApplicableClass(className);
                 }
             }
         }
     }
 
-    public processStaticCellClasses (colDef: ColDef, params: CellClassParams, onApplicableClass: (className: string)=>void){
+    public processStaticCellClasses (colDef: ColDef, params: CellClassParams, onApplicableClass: (className: string)=>void) {
         let cellClass = colDef.cellClass;
         if (cellClass) {
             let classOrClasses: any;

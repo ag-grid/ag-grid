@@ -268,7 +268,7 @@ export class RowRenderer extends BeanStub {
 
         this.redraw(rowsToRecycle, animate);
 
-        if (!params.onlyBody){
+        if (!params.onlyBody) {
             this.refreshFloatingRowComps();
         }
 

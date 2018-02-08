@@ -16,7 +16,7 @@ export interface IFloatingFilterWrapperParams<M, F extends FloatingFilterChange,
     suppressFilterButton: boolean;
 }
 
-export interface IFloatingFilterWrapper <M>{
+export interface IFloatingFilterWrapper <M> {
     onParentModelChanged(parentModel: M): void;
 }
 
@@ -29,7 +29,7 @@ export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, P
 
     column: Column;
 
-    init (params: P): void | Promise<void>{
+    init (params: P): void | Promise<void> {
         this.column = params.column;
 
 
@@ -73,7 +73,7 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
     suppressFilterButton: boolean;
 
 
-    init(params: P): void{
+    init(params: P): void {
         this.floatingFilterCompPromise = params.floatingFilterComp;
         this.suppressFilterButton = params.suppressFilterButton;
         super.init(params);
@@ -83,17 +83,17 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
 
     }
 
-    private addEventListeners (): void{
-        if (!this.suppressFilterButton && this.eButtonShowMainFilter){
+    private addEventListeners (): void {
+        if (!this.suppressFilterButton && this.eButtonShowMainFilter) {
             this.addDestroyableEventListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
         }
     }
 
-    enrichBody(body: HTMLElement): void{
-        this.floatingFilterCompPromise.then(floatingFilterComp=>{
+    enrichBody(body: HTMLElement): void {
+        this.floatingFilterCompPromise.then(floatingFilterComp=> {
             let floatingFilterBody: HTMLElement = <HTMLElement>body.querySelector('.ag-floating-filter-body');
             let floatingFilterCompUi = floatingFilterComp.getGui();
-            if (this.suppressFilterButton){
+            if (this.suppressFilterButton) {
                 floatingFilterBody.appendChild(floatingFilterCompUi);
                 _.removeCssClass(floatingFilterBody, 'ag-floating-filter-body');
                 _.addCssClass(floatingFilterBody, 'ag-floating-filter-full-body');
@@ -106,7 +106,7 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
                 let eIcon = _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column);
                 body.querySelector('button').appendChild(eIcon);
             }
-            if (floatingFilterComp.afterGuiAttached){
+            if (floatingFilterComp.afterGuiAttached) {
                 floatingFilterComp.afterGuiAttached();
             }
 
@@ -115,23 +115,23 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
         });
     }
 
-    onParentModelChanged(parentModel: M): void{
-        this.floatingFilterCompPromise.then(floatingFilterComp=>{
+    onParentModelChanged(parentModel: M): void {
+        this.floatingFilterCompPromise.then(floatingFilterComp=> {
             floatingFilterComp.onParentModelChanged(parentModel);
         });
     }
 
-    private showParentFilter(){
+    private showParentFilter() {
         this.menuFactory.showMenuAfterButtonClick(this.column, this.eButtonShowMainFilter, 'filterMenuTab', ['filterMenuTab']);
     }
 
 }
 
 export class EmptyFloatingFilterWrapperComp extends BaseFilterWrapperComp<any, any, any, any> {
-    enrichBody(body: HTMLElement): void{
+    enrichBody(body: HTMLElement): void {
 
     }
 
-    onParentModelChanged(parentModel: any): void{
+    onParentModelChanged(parentModel: any): void {
     }
 }

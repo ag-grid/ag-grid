@@ -32,7 +32,7 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         };
     }
 
-    public getApplicableFilterTypes (): string[]{
+    public getApplicableFilterTypes (): string[] {
         return [BaseFilter.EQUALS, BaseFilter.NOT_EQUAL, BaseFilter.LESS_THAN, BaseFilter.LESS_THAN_OR_EQUAL,
             BaseFilter.GREATER_THAN, BaseFilter.GREATER_THAN_OR_EQUAL, BaseFilter.IN_RANGE];
     }
@@ -65,7 +65,7 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
     }
 
     public comparator(): Comparator<number> {
-        return (left: number, right: number): number=>{
+        return (left: number, right: number): number=> {
             if (left === right) return 0;
             if (left < right) return 1;
             if (left > right) return -1;
@@ -93,7 +93,7 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
     }
 
 
-    private stringToFloat(value: string): number{
+    private stringToFloat(value: string): number {
         let filterText = _.makeNull(value);
         if (filterText && filterText.trim() === '') {
             filterText = null;
@@ -152,13 +152,13 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         _.setVisible(this.eNumberToPanel, visible);
     }
 
-    public resetState(): void{
+    public resetState(): void {
         this.setFilterType(this.defaultFilter);
         this.setFilter(null);
         this.setFilterTo(null);
     }
 
-    public setType (filterType: string): void{
+    public setType (filterType: string): void {
         this.setFilterType(filterType);
     }
 }

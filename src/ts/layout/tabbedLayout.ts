@@ -106,7 +106,7 @@ export class TabbedLayout {
             return;
         }
         _.removeAllChildren(this.eBody);
-        wrapper.tabbedItem.bodyPromise.then(body=>{
+        wrapper.tabbedItem.bodyPromise.then(body=> {
             this.eBody.appendChild(body);
         });
 

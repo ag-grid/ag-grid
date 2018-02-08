@@ -47,7 +47,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         };
     }
 
-    public getApplicableFilterTypes (): string[]{
+    public getApplicableFilterTypes (): string[] {
         return [BaseFilter.EQUALS, BaseFilter.GREATER_THAN, BaseFilter.LESS_THAN, BaseFilter.NOT_EQUAL, BaseFilter.IN_RANGE];
     }
 
@@ -67,7 +67,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
             onDateChanged: this.onDateChanged.bind(this)
         };
 
-        this.componentRecipes.newDateComponent(dateComponentParams).then (dateToComponent=>{
+        this.componentRecipes.newDateComponent(dateComponentParams).then (dateToComponent=> {
             this.dateToComponent = dateToComponent;
 
             let dateToElement = this.dateToComponent.getGui();
@@ -127,31 +127,31 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     }
 
     // not used by ag-Grid, but exposed as part of the filter API for the client if they want it
-    public getDateFrom (): string{
+    public getDateFrom (): string {
         return Utils.serializeDateToYyyyMmDd(this.dateFromComponent.getDate(), "-");
     }
 
     // not used by ag-Grid, but exposed as part of the filter API for the client if they want it
-    public getDateTo (): string{
+    public getDateTo (): string {
         return Utils.serializeDateToYyyyMmDd(this.dateToComponent.getDate(), "-");
     }
 
     // not used by ag-Grid, but exposed as part of the filter API for the client if they want it
-    public getFilterType (): string{
+    public getFilterType (): string {
         return this.filter;
     }
 
-    public setDateFrom (date: string): void{
+    public setDateFrom (date: string): void {
         this.dateFrom = Utils.parseYyyyMmDdToDate(date, "-");
         this.dateFromComponent.setDate(this.dateFrom);
     }
 
-    public setDateTo (date: string): void{
+    public setDateTo (date: string): void {
         this.dateTo = Utils.parseYyyyMmDdToDate(date, "-");
         this.dateToComponent.setDate(this.dateTo);
     }
 
-    public resetState(): void{
+    public resetState(): void {
         this.setDateFrom(null);
         this.setDateTo(null);
         this.setFilterType(this.defaultFilter);
@@ -163,11 +163,11 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         this.setFilterType(model.type);
     }
 
-    public setType (filterType: string): void{
+    public setType (filterType: string): void {
         this.setFilterType(filterType);
     }
 
-    public static removeTimezone (from: Date): Date{
+    public static removeTimezone (from: Date): Date {
         if (!from) return null;
         return new Date (from.getFullYear(), from.getMonth(), from.getDate());
     }
@@ -182,10 +182,10 @@ export class DefaultDateComponent extends Component implements IDateComp {
         super(`<input class="ag-filter-filter" type="text" placeholder="yyyy-mm-dd">`);
     }
 
-    public init (params: IDateParams): void{
+    public init (params: IDateParams): void {
         this.eDateInput = <HTMLInputElement> this.getGui();
 
-        if (Utils.isBrowserChrome()){
+        if (Utils.isBrowserChrome()) {
             this.eDateInput.type = 'date';
         }
 

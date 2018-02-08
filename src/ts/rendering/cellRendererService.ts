@@ -23,10 +23,10 @@ export class CellRendererService {
     ): Promise<ICellRendererComp> {
         let cellRendererPromise: Promise<ICellRendererComp> = this.componentRecipes.newCellRenderer (target, params);
         if (cellRendererPromise != null) {
-            cellRendererPromise.then(cellRenderer=>{
-                if (cellRenderer == null){
+            cellRendererPromise.then(cellRenderer=> {
+                if (cellRenderer == null) {
                     eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
-                }else{
+                } else {
                     this.bindToHtml(cellRendererPromise, eTarget);
                 }
             });
@@ -78,12 +78,12 @@ export class CellRendererService {
         let rendererToUsePromise: Promise<ICellRendererComp> = null;
         let componentToUse: ResolvedComponent<any, any> = this.componentResolver.getComponentToUse(target, "innerRenderer", null);
 
-        if (componentToUse && componentToUse.component != null && componentToUse.source != ComponentSource.DEFAULT){
+        if (componentToUse && componentToUse.component != null && componentToUse.source != ComponentSource.DEFAULT) {
             //THERE IS ONE INNER CELL RENDERER HARDCODED IN THE COLDEF FOR THIS GROUP COLUMN
             rendererToUsePromise = this.componentRecipes.newInnerCellRenderer(target, params);
         } else {
             let otherRenderer: ResolvedComponent<any, any> = this.componentResolver.getComponentToUse(originalColumn, "cellRenderer", null);
-            if (otherRenderer && otherRenderer.source != ComponentSource.DEFAULT){
+            if (otherRenderer && otherRenderer.source != ComponentSource.DEFAULT) {
                 //Only if the original column is using an specific renderer, it it is a using a DEFAULT one
                 //ignore it
                 //THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, WE REUSE ITS RENDERER
@@ -98,7 +98,7 @@ export class CellRendererService {
             }
         }
         if (rendererToUsePromise != null) {
-            rendererToUsePromise.then(rendererToUse=>{
+            rendererToUsePromise.then(rendererToUse=> {
                 if (rendererToUse == null) {
                     eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
                     return;
@@ -125,10 +125,10 @@ export class CellRendererService {
     }
 
     public bindToHtml(cellRendererPromise: Promise<ICellRendererComp>, eTarget: HTMLElement) {
-        cellRendererPromise.then(cellRenderer=>{
+        cellRendererPromise.then(cellRenderer=> {
             let gui: HTMLElement|string = cellRenderer.getGui();
             if (gui != null) {
-                if (typeof gui == 'object'){
+                if (typeof gui == 'object') {
                     eTarget.appendChild(gui);
                 } else {
                     eTarget.innerHTML = gui;

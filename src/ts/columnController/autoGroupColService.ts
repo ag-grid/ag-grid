@@ -92,7 +92,7 @@ export class AutoGroupColService {
                 headerValueGetter: rowGroupColDef.headerValueGetter
             });
 
-            if (rowGroupColDef.cellRenderer){
+            if (rowGroupColDef.cellRenderer) {
                 _.assign(defaultAutoColDef, {
                     cellRendererParams:{
                         innerRenderer: rowGroupColDef.cellRenderer,
