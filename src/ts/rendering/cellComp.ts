@@ -816,7 +816,7 @@ export class CellComp extends Component {
                 this.onCellClicked(mouseEvent);
                 break;
             case 'mousedown':
-                this.onMouseDown();
+                this.onMouseDown(mouseEvent);
                 break;
             case 'dblclick':
                 this.onCellDoubleClicked(mouseEvent);
@@ -1187,9 +1187,26 @@ export class CellComp extends Component {
         if (this.editingCell) {
             this.stopRowOrCellEdit();
         }
-        this.beans.rowRenderer.navigateToNextCell(event, key, this.gridCell, true);
+        if (event.shiftKey && this.rangeSelectionEnabled) {
+            this.onShiftRangeSelect(key);
+        } else {
+            this.beans.rowRenderer.navigateToNextCell(event, key, this.gridCell, true);
+        }
         // if we don't prevent default, the grid will scroll with the navigation keys
         event.preventDefault();
+    }
+
+    private onShiftRangeSelect(key: number): void {
+        this.beans.rangeController.extendRangeInDirection(this.gridCell, key);
+
+        let ranges = this.beans.rangeController.getCellRanges();
+
+        // this should never happen, as extendRangeFromCell should always have one range after getting called
+        if (_.missing(ranges) || ranges.length!==1) { return; }
+
+        let endCell = ranges[0].end;
+
+        this.beans.rowRenderer.ensureCellVisible(endCell);
     }
 
     private onTabKeyDown(event: KeyboardEvent): void {
@@ -1277,7 +1294,7 @@ export class CellComp extends Component {
         event.preventDefault();
     }
 
-    private onMouseDown(): void {
+    private onMouseDown(mouseEvent: MouseEvent): void {
         // we pass false to focusCell, as we don't want the cell to focus
         // also get the browser focus. if we did, then the cellRenderer could
         // have a text field in it, for example, and as the user clicks on the
@@ -1291,9 +1308,13 @@ export class CellComp extends Component {
         // we set a new range
         if (this.beans.rangeController) {
             let thisCell = this.gridCell;
-            let cellAlreadyInRange = this.beans.rangeController.isCellInAnyRange(thisCell);
-            if (!cellAlreadyInRange) {
-                this.beans.rangeController.setRangeToCell(thisCell);
+            if (mouseEvent.shiftKey) {
+                this.beans.rangeController.extendRangeToCell(thisCell);
+            } else {
+                let cellAlreadyInRange = this.beans.rangeController.isCellInAnyRange(thisCell);
+                if (!cellAlreadyInRange) {
+                    this.beans.rangeController.setRangeToCell(thisCell);
+                }
             }
         }
     }
