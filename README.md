@@ -55,8 +55,8 @@ separately.
 Asking Questions
 ==============
 
-Please do not use GitHub issues to ask questions. Ask questions on the
-[website forum](http://www.ag-grid.com/forum).
+Please do not use GitHub issues to ask questions. Ask questions in the
+[Stack Overflow ag-grid channel](https://stackoverflow.com/questions/tagged/ag-grid).
 
 Contributing
 ==============
