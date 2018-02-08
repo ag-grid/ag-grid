@@ -10,16 +10,45 @@ include '../documentation-main/documentation_header.php';
     <h1 class="heading-enterprise">Range Selection</h1>
 
     <p class="lead">
-        Range selection allows Excel-like range selection of cells. Once enabled, you can drag the mouse over
-        a set of cells to select a range of cells.
+        Range selection allows Excel-like range selection of cells.
+        Range selections are useful for visually highlighting data, copying data to the
+        <a href="../javascript-grid-clipboard/">Clipboard</a>
+        or for doing aggregations using the <a href="../javascript-grid-status-bar/">Status Bar</a>.
     </p>
 
-    <h2>Selecting Multiple Ranges</h2>
+    <h2>Selecting Ranges</h2>
 
     <p>
-        To select multiple ranges, hold down ctrl while making the selection. To prevent multiple
-        selections though the GUI, set grid property <code>suppressMultiRangeSelection=true</code>.
+        Ranges can be selected in the following ways:
+        <ul>
+            <li>
+                <b>Mouse Drag:</b> Click the mouse down on a cell and drag and release the mouse over another cell.
+                A range will be created between the two cells and clear any existing ranges.
+            </li>
+            <li>
+                <b>Ctrl & Mouse Drag:</b> Holding <b>Control</b> key while creating a range using mouse drag
+                will create a new range selection and keep any existing ranges.
+            </li>
+            <li>
+                <b>Shift & Click:</b> Clicking on one cell to focus that cell, then hold down <b>Shift</b>
+                while clicking another cell will create a range between both cells.
+            </li>
+            <li>
+                <b>Shift & Arrow Keys:</b> Focusing a cell and then holding down <b>Shift</b> and using
+                the arrow keys will create a range starting from the focused cell.
+            </li>
+
+        </ul>
     </p>
+
+    <h2>Range Selection Example</h2>
+
+    <p>
+        The example below demonstrates simple range selection. Ranges can be selected in all ways
+        described above.
+    </p>
+
+    <?= example('Range Selection', 'range-selection', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Ranges with Pinning and Floating</h2>
 
@@ -43,7 +72,7 @@ include '../documentation-main/documentation_header.php';
         in the flattened out version with only full rectangles can be selectable.
     </p>
 
-    <h2>Range Change Event</h2>
+    <h2>Range Changed Event</h2>
 
     <p>
         There is one event rangeSelectionChanged to tell you the range selection has changed.
@@ -145,11 +174,10 @@ AddRangeSelectionParams{
         the range down.
     </p>
 
-    <h2>Range Selection Example</h2>
+    <h2>Advanced Range Selection Example</h2>
 
     <p>
-        The example below demonstrates range selection. Use your mouse to drag over the cells
-        to create selections. Hold down ctrl to select more than one range. The example listens
+        The example below demonstrates a more complex range selection scenario. The example listens
         for the <code>rangeSelectionChanged</code> event and creates a sum of all the number values
         that are in the range (it ignores all non-number values). The <code>finished</code> flag
         is used to update the eager and lazy figures separately.
@@ -161,7 +189,7 @@ AddRangeSelectionParams{
         copying it from the clipboard.
     </p>
 
-    <?= example('Range Selection', 'range-selection', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Advanced Range Selection', 'range-selection-advanced', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Range Selection Example - Suppress Multi</h2>
 
