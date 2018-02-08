@@ -54,6 +54,8 @@ export class RangeController implements IRangeController {
 
     private dragging = false;
 
+    private autoScrollService: AutoScrollService;
+
     @PostConstruct
     private init(): void {
         this.logger = this.loggerFactory.create('RangeController');
@@ -64,6 +66,8 @@ export class RangeController implements IRangeController {
         this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.clearSelection.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearSelection.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.clearSelection.bind(this));
+
+        this.autoScrollService = new AutoScrollService(this.gridPanel, this.gridOptionsWrapper);
     }
 
     public setRangeToCell(cell: GridCell): void {
@@ -303,6 +307,8 @@ export class RangeController implements IRangeController {
             return;
         }
 
+        this.autoScrollService.ensureCleared();
+
         this.gridPanel.removeScrollEventListener(this.bodyScrollListener);
         this.lastMouseEvent = null;
         this.dragging = false;
@@ -315,6 +321,8 @@ export class RangeController implements IRangeController {
         }
 
         this.lastMouseEvent = mouseEvent;
+
+        this.autoScrollService.check(mouseEvent);
 
         let cell = this.mouseEventService.getGridCellForEvent(mouseEvent);
         if (Utils.missing(cell)) {
@@ -364,4 +372,94 @@ export class RangeController implements IRangeController {
 
         return columns;
     }
+}
+
+class AutoScrollService {
+
+    private tickingInterval: number = null;
+
+    private tickLeft: boolean;
+    private tickRight: boolean;
+    private tickUp: boolean;
+    private tickDown: boolean;
+
+    private gridPanel: GridPanel;
+    private gridOptionsWrapper: GridOptionsWrapper;
+
+    private tickCount: number;
+
+    constructor(gridPanel: GridPanel, gridOptionsWrapper: GridOptionsWrapper) {
+        this.gridPanel = gridPanel;
+        this.gridOptionsWrapper = gridOptionsWrapper;
+    }
+
+    public check(mouseEvent: MouseEvent): void {
+
+        // we don't do ticking if doing forPrint or autoHeight
+        if (!this.gridOptionsWrapper.isNormalDomLayout()) {
+            return;
+        }
+
+        let rect: ClientRect = this.gridPanel.getBodyClientRect();
+
+        this.tickLeft = mouseEvent.clientX < (rect.left + 20);
+        this.tickRight = mouseEvent.clientX > (rect.right - 20);
+        this.tickUp = mouseEvent.clientY < (rect.top + 20);
+        this.tickDown = mouseEvent.clientY > (rect.bottom - 20);
+
+        if (this.tickLeft || this.tickRight || this.tickUp || this.tickDown) {
+            this.ensureTickingStarted();
+        } else {
+            this.ensureCleared();
+        }
+    }
+
+    private ensureTickingStarted(): void {
+        if (this.tickingInterval===null) {
+            this.tickingInterval = setInterval(this.doTick.bind(this), 100);
+            this.tickCount = 0;
+        }
+    }
+
+    private doTick(): void {
+
+        this.tickCount++;
+
+        let vScrollPosition = this.gridPanel.getVScrollPosition();
+        let hScrollPosition = this.gridPanel.getHScrollPosition();
+
+        let tickAmount: number;
+        if (this.tickCount > 20) {
+            tickAmount = 200;
+        } else if (this.tickCount > 10) {
+            tickAmount = 80;
+        } else {
+            tickAmount = 40;
+        }
+
+        if (this.tickUp) {
+            this.gridPanel.setVerticalScrollPosition(vScrollPosition.top - tickAmount);
+        }
+
+        if (this.tickDown) {
+            this.gridPanel.setVerticalScrollPosition(vScrollPosition.top + tickAmount);
+        }
+
+        if (this.tickLeft) {
+            this.gridPanel.setHorizontalScrollPosition(hScrollPosition.left - tickAmount);
+        }
+
+        if (this.tickRight) {
+            this.gridPanel.setHorizontalScrollPosition(hScrollPosition.left + tickAmount);
+        }
+
+    }
+
+    public ensureCleared(): void {
+        if (this.tickingInterval) {
+            clearInterval(this.tickingInterval);
+            this.tickingInterval = null;
+        }
+    }
+
 }
