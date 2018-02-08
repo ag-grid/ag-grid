@@ -3,17 +3,16 @@ export function QuerySelector(selector?: string): Function {
 }
 
 export function RefSelector(ref?: string): Function {
-    return querySelectorFunc.bind(this, '[ref='+ref+']');
+    return querySelectorFunc.bind(this, "[ref=" + ref + "]");
 }
 
 function querySelectorFunc(selector: string, classPrototype: any, methodOrAttributeName: string, index: number) {
-
-    if (selector===null) {
-        console.error('ag-Grid: QuerySelector selector should not be null');
+    if (selector === null) {
+        console.error("ag-Grid: QuerySelector selector should not be null");
         return;
     }
-    if (typeof index === 'number') {
-        console.error('ag-Grid: QuerySelector should be on an attribute');
+    if (typeof index === "number") {
+        console.error("ag-Grid: QuerySelector should be on an attribute");
         return;
     }
 
@@ -33,9 +32,8 @@ export function Listener(eventName?: string): Function {
 }
 
 function listenerFunc(eventName: string, target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>) {
-
-    if (eventName===null) {
-        console.error('ag-Grid: EventListener eventName should not be null');
+    if (eventName === null) {
+        console.error("ag-Grid: EventListener eventName should not be null");
         return;
     }
 
@@ -50,13 +48,13 @@ function listenerFunc(eventName: string, target: Object, methodName: string, des
     });
 }
 
-function getOrCreateProps(target: any, instanceName:string): any {
+function getOrCreateProps(target: any, instanceName: string): any {
     if (!target.__agComponentMetaData) {
         target.__agComponentMetaData = {};
     }
 
-    if (!target.__agComponentMetaData[instanceName]){
-        target.__agComponentMetaData[instanceName]={}
+    if (!target.__agComponentMetaData[instanceName]) {
+        target.__agComponentMetaData[instanceName] = {};
     }
 
     return target.__agComponentMetaData[instanceName];

@@ -38,7 +38,7 @@ export class PopupService {
 
         y = this.keepYWithinBounds(params, y);
 
-        let minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth: 200;
+        let minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth : 200;
         let widthOfParent = parentRect.right - parentRect.left;
         let maxX = widthOfParent - minWidth;
 
@@ -123,7 +123,7 @@ export class PopupService {
         this.callPostProcessPopup(params.ePopup, params.eventSource, null, params.type, params.column, params.rowNode);
     }
 
-    private callPostProcessPopup(ePopup: HTMLElement, eventSource: HTMLElement, mouseEvent: MouseEvent|Touch, type:string, column: Column, rowNode: RowNode): void {
+    private callPostProcessPopup(ePopup: HTMLElement, eventSource: HTMLElement, mouseEvent: MouseEvent|Touch, type: string, column: Column, rowNode: RowNode): void {
         let callback = this.gridOptionsWrapper.getPostProcessPopupFunc();
         if (callback) {
             let params: PostProcessPopupParams = {
@@ -164,7 +164,7 @@ export class PopupService {
 
         this.callPostProcessPopup(params.ePopup, params.eventSource, null, params.type, params.column, params.rowNode);
     }
-    
+
     private positionPopup(params: {
                         ePopup: HTMLElement,
                         minWidth?: number,
@@ -223,7 +223,7 @@ export class PopupService {
         let minWidth: number;
         if (params.minWidth > 0) {
             minWidth = params.minWidth;
-        } else if (params.ePopup.clientWidth>0) {
+        } else if (params.ePopup.clientWidth > 0) {
             minWidth = params.ePopup.clientWidth;
         } else {
             minWidth = 200;
@@ -243,7 +243,7 @@ export class PopupService {
     //adds an element to a div, but also listens to background checking for clicks,
     //so that when the background is clicked, the child is removed again, giving
     //a model look to popups.
-    public addAsModalPopup(eChild: any, closeOnEsc: boolean, closedCallback?: ()=>void, click?: MouseEvent | Touch): (event?: any)=>void {
+    public addAsModalPopup(eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch): (event?: any) => void {
 
         let eBody = this.gridOptionsWrapper.getDocument();
         if (!eBody) {
@@ -330,7 +330,7 @@ export class PopupService {
         let event = mouseEvent ? mouseEvent : touchEvent;
         if (event) {
             let indexOfThisChild = this.activePopupElements.indexOf(eChild);
-            for (let i = indexOfThisChild; i<this.activePopupElements.length; i++) {
+            for (let i = indexOfThisChild; i < this.activePopupElements.length; i++) {
                 let element = this.activePopupElements[i];
                 if (_.isElementInEventPath(element, event)) {
                     return true;
