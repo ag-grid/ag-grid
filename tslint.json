@@ -5,6 +5,16 @@
     ],
     "jsRules": {},
     "rules": {
+        "no-string-literal": false,
+        "no-unused-expression": false,
+        "variable-name": false,
+        "callable-types": false,
+        "align": false,
+        "no-empty": false,
+        "triple-equals": false,
+        "no-empty-interface": false,
+        "array-type": false,
+        "jsdoc-format": false,
         "member-ordering": false,
         "ordered-imports": false,
         "interface-name": false,
@@ -17,7 +27,15 @@
         "object-literal-shorthand": false,
         "trailing-comma": false,
         "arrow-parens": false,
-        "eofline": false
+        "only-arrow-functions": false,
+        "eofline": false,
+        "max-line-length": false,
+        "whitespace": false,
+        "typedef-whitespace": false,
+        "comment-format": false,
+        "no-console": [true, "log"],
+        "max-classes-per-file": false,
+        "member-access": false
     },
     "rulesDirectory": []
 }
