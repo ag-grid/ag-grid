@@ -66,9 +66,9 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
 
     public comparator(): Comparator<number> {
         return (left: number, right: number): number=> {
-            if (left === right) return 0;
-            if (left < right) return 1;
-            if (left > right) return -1;
+            if (left === right) { return 0; }
+            if (left < right) { return 1; }
+            if (left > right) { return -1; }
         };
     }
 

@@ -52,7 +52,7 @@ export class TabbedLayout {
             _.removeAllChildren(eDummyContainer);
 
             let eClone: HTMLElement = <HTMLElement> itemWrapper.tabbedItem.bodyPromise.resolveNow(null, body=>body.cloneNode(true));
-            if (eClone == null) return;
+            if (eClone == null) { return; }
 
             eDummyContainer.appendChild(eClone);
 

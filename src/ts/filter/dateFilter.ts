@@ -167,7 +167,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     }
 
     public static removeTimezone(from: Date): Date {
-        if (!from) return null;
+        if (!from) { return null; }
         return new Date (from.getFullYear(), from.getMonth(), from.getDate());
     }
 }

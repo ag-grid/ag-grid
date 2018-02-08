@@ -101,7 +101,7 @@ export class FilterManager {
             // because user can provide filters, we provide useful error checking and messages
             let filterPromise: Promise<IFilterComp> = filterWrapper.filterPromise;
             let filter = filterPromise.resolveNow(null, filter=>filter);
-            if (filter == null) return null;
+            if (filter == null) { return null; }
 
             if (typeof filter.getModel !== 'function') {
                 console.warn('Warning ag-grid - filter API missing getModel method, which is needed for getFilterModel');

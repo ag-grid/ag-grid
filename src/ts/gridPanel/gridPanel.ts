@@ -531,7 +531,7 @@ export class GridPanel extends BeanStub {
     }
 
     private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        if (!this.mouseEventService.isEventFromThisGrid(mouseEvent)) return;
+        if (!this.mouseEventService.isEventFromThisGrid(mouseEvent)) { return; }
         if (_.isStopPropagationForAgGrid(mouseEvent)) { return; }
 
         let rowComp = this.getRowForEvent(mouseEvent);
@@ -540,8 +540,8 @@ export class GridPanel extends BeanStub {
         if (eventName === "contextmenu") {
             this.handleContextMenuMouseEvent(mouseEvent, null, rowComp, cellComp);
         } else {
-            if (cellComp) cellComp.onMouseEvent(eventName, mouseEvent);
-            if (rowComp) rowComp.onMouseEvent(eventName, mouseEvent);
+            if (cellComp) { cellComp.onMouseEvent(eventName, mouseEvent); }
+            if (rowComp) { rowComp.onMouseEvent(eventName, mouseEvent); }
         }
 
         this.preventDefaultOnContextMenu(mouseEvent);

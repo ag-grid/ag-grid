@@ -76,14 +76,14 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
         }
         this.lastKnownModel = parentModel;
         let incomingTextValue = this.asFloatingFilterText(parentModel);
-        if (incomingTextValue === this.eColumnFloatingFilter.value) return;
+        if (incomingTextValue === this.eColumnFloatingFilter.value) { return; }
 
         this.eColumnFloatingFilter.value = incomingTextValue;
     }
 
     syncUpWithParentFilter(e: KeyboardEvent): void {
         let model = this.asParentModel();
-        if (this.equalModels(this.lastKnownModel, model)) return;
+        if (this.equalModels(this.lastKnownModel, model)) { return; }
 
         let modelUpdated: boolean = null;
         if (_.isKeyPressed(e, Constants.KEY_ENTER)) {
@@ -104,10 +104,10 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
     }
 
     equalModels(left: any, right: any): boolean {
-        if (_.referenceCompare(left, right)) return true;
-        if (!left || !right) return false;
+        if (_.referenceCompare(left, right)) { return true; }
+        if (!left || !right) { return false; }
 
-        if (Array.isArray(left) || Array.isArray(right)) return false;
+        if (Array.isArray(left) || Array.isArray(right)) { return false; }
 
         return (
             _.referenceCompare(left.type, right.type) &&
@@ -120,7 +120,7 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
 
 export class TextFloatingFilterComp extends InputTextFloatingFilterComp<SerializedTextFilter, IFloatingFilterParams<SerializedTextFilter, BaseFloatingFilterChange<SerializedTextFilter>>> {
     asFloatingFilterText(parentModel: SerializedTextFilter): string {
-        if (!parentModel) return '';
+        if (!parentModel) { return ''; }
         return parentModel.filter;
     }
 
@@ -164,7 +164,7 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
         let parentModel: SerializedDateFilter = this.currentParentModel();
         let model = this.asParentModel();
 
-        if (this.equalModels(parentModel, model)) return;
+        if (this.equalModels(parentModel, model)) { return; }
 
         this.onFloatingFilterChanged({
             model: model,
@@ -175,10 +175,10 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
     }
 
     equalModels(left: SerializedDateFilter, right: SerializedDateFilter): boolean {
-        if (_.referenceCompare(left, right)) return true;
-        if (!left || !right) return false;
+        if (_.referenceCompare(left, right)) { return true; }
+        if (!left || !right) { return false; }
 
-        if (Array.isArray(left) || Array.isArray(right)) return false;
+        if (Array.isArray(left) || Array.isArray(right)) { return false; }
 
         return (
             _.referenceCompare(left.type, right.type) &&
@@ -217,7 +217,7 @@ export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<Serial
 
     asFloatingFilterText(parentModel: SerializedNumberFilter): string {
         let rawParentModel = this.currentParentModel();
-        if (parentModel == null && rawParentModel == null) return '';
+        if (parentModel == null && rawParentModel == null) { return ''; }
         if (parentModel == null && rawParentModel != null && rawParentModel.type !== 'inRange') {
             this.eColumnFloatingFilter.readOnly = false;
             return '';
@@ -261,8 +261,8 @@ export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<Serial
     }
 
     private asNumber(value: any): number {
-        if (value == null) return null;
-        if (value === '') return null;
+        if (value == null) { return null; }
+        if (value === '') { return null; }
 
         let asNumber = Number(value);
         let invalidNumber = !_.isNumeric(asNumber);
@@ -277,14 +277,14 @@ export class SetFloatingFilterComp extends InputTextFloatingFilterComp<string[],
     }
 
     asFloatingFilterText(parentModel: string[]): string {
-        if (!parentModel || parentModel.length === 0) return '';
+        if (!parentModel || parentModel.length === 0) { return ''; }
 
         let arrayToDisplay = parentModel.length > 10 ? parentModel.slice(0, 10).concat(['...']) : parentModel;
         return `(${parentModel.length}) ${arrayToDisplay.join(",")}`;
     }
 
     asParentModel(): string[] {
-        if (this.eColumnFloatingFilter.value == null || this.eColumnFloatingFilter.value === '') return null;
+        if (this.eColumnFloatingFilter.value == null || this.eColumnFloatingFilter.value === '') { return null; }
         return this.eColumnFloatingFilter.value.split(",");
     }
 }

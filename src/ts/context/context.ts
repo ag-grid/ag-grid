@@ -104,7 +104,7 @@ export class Context {
     }
 
     public wireBean(bean: any): void {
-        if (!bean) throw Error(`Can't wire to bean since it is null`);
+        if (!bean) { throw Error(`Can't wire to bean since it is null`); }
         this.wireBeans([bean]);
     }
 
@@ -169,7 +169,7 @@ export class Context {
 
     private methodWireBeans(beans: any[]): void {
         beans.forEach(bean => {
-            if (!bean) throw Error(`Can't wire to bean since it is null`);
+            if (!bean) { throw Error(`Can't wire to bean since it is null`); }
             return this.methodWireBean(bean);
         });
     }

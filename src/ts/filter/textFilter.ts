@@ -37,7 +37,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         return from;
     }
     static DEFAULT_LOWERCASE_FORMATTER: TextFormatter = (from: string)=> {
-        if (from == null) return null;
+        if (from == null) { return null; }
         return from.toString().toLowerCase();
     }
     static DEFAULT_COMPARATOR: TextComparator = (filter: string, value: any, filterText: string)=> {
