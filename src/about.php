@@ -190,7 +190,7 @@ meta_and_links("ag-Grid: About our Company", "About ag-Grid", "ag-Grid is a feat
                                 United Kingdom<br>
                             </address>
 
-                        <p>Email Enquiries: <a href="mailto:accounts@ag-grid.com">accounts@ag-grid.com</a></p>
+                        <p>Email Enquiries: <a href="mailto:info@ag-grid.com">info@ag-grid.com</a></p>
                     </div>
 
                     <div class="col-md-6">

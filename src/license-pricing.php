@@ -155,7 +155,7 @@ We offer three flavors &ndash; <strong>Single Application Developer</strong>, <s
 
                 <p>If external, then you also need SaaS or OEM licensing.</p>
 
-                <p>If you still need help figuring out which one of the above is most suitable for your case, <a href="mailto:accounts@ag-grid.com?Subject=ag-Grid%20Enquiry">contact us.</a></p>
+                <p>If you still need help figuring out which one of the above is most suitable for your case, <a href="mailto:info@ag-grid.com?Subject=ag-Grid%20Enquiry">contact us.</a></p>
 
 
                 <hr>

@@ -37,7 +37,7 @@ include('../includes/mediaHeader.php');
             I believe it will remain
             so for quite a while yet.</p>
 
-        <h1>Introduction to Webpack Tutorial</h1>
+        <h2>Introduction to Webpack Tutorial</h2>
 
         <p>
             Webpack is a module bundler. It takes disparate dependencies, creates modules for them and bundles the
@@ -93,7 +93,7 @@ console.log('Sum of 5 and 3 = ' + totalSum);</snippet>
 Product of 5 and 3 = 15
 index.js:17 Sum of 5 and 3 = 8</snippet>
 
-        <h1>How can Webpack help us?</h1>
+        <h2>How can Webpack help us?</h2>
 
         <h2>Dependencies - Modules To the Rescue!</h2>
 
@@ -136,7 +136,7 @@ index.js:17 Sum of 5 and 3 = 8</snippet>
             this (we'll see this later)
             but primarily this is what Webpack is for.</p>
 
-        <h1>Making Dependencies Available, And Linking Them</h1>
+        <h2>Making Dependencies Available, And Linking Them</h2>
 
         <p>For our initial setup, we'll use the CommonJS module syntax. There are other options (AMD, ES2015) but for
             now we'll use CommonJS and later move to ES2015.</p>
@@ -190,7 +190,7 @@ console.log('Sum of 5 and 3 = ' + totalSum);</snippet>
             effectively private. We also reduce web calls from 3 (sum.js, multiply.js and index.js) to a single call -
             this will help speed loading times.</p>
 
-        <h1>Webpack - Initial Configuration</h1>
+        <h2>Webpack - Initial Configuration</h2>
 
         <p>For the above to work, we need to do some initial Webpack configuration:</p>
         <snippet>
@@ -222,7 +222,7 @@ module.exports = {
         <p><strong>Note:</strong> <code>__dirname</code> is a Node.js utility variable - it is the directory name of the
             current file.</p>
 
-        <h1>Looking at bundle.js</h1>
+        <h2>Looking at bundle.js</h2>
 
         <p>Looking at the resulting bundle.js can be very instructional (prettified and commented for easier
             navigation):</p>
@@ -296,7 +296,7 @@ module.exports = {
             Brilliant!</p>
 
 
-        <h1>Loaders - Making Webpack Smarter</h1>
+        <h2>Loaders - Making Webpack Smarter</h2>
 
         <p>Webpack understands JavaScript. It can create modules and bundle JavaScript out of the box, but if you want
             to use something other than JavaScript, or want to write in something like ES2015/ES6, then
@@ -415,7 +415,7 @@ function(module, exports) {
 
         <p>So the Babel Loader has converted our ES2015 code back into ES5 code - great! The best of both worlds.</p>
 
-        <h1>Making Webpack Look Good - CSS & Styling</h1>
+        <h2>Making Webpack Look Good - CSS & Styling</h2>
 
         <p>Let's expand our example to actually output the results of our calculations. We'll create a body on the page,
             and then add the results of the product and sum to spans, which we'll add to the body:</p>
@@ -629,7 +629,7 @@ span {
 &lt;/html&gt;</snippet>
         <p>The output will be the same as before.</p>
 
-        <h1>A Picture Is Worth A Thousand Words</h1>
+        <h2>A Picture Is Worth A Thousand Words</h2>
 
         <p>Let's add some images to our application - and get Webpack (together with a suitable loader) to process them
             for us.</p>
