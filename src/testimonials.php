@@ -3,7 +3,7 @@ include_once 'includes/html-helpers.php';
 gtm_data_layer('testimonials');
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head lang="en">
 <?php
 meta_and_links("ag-Grid: Customer Testimonials", "ag-Grid Javascript Grid Testimonials", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. We've had great feedback from our customers and you can read those reviews here.", true);

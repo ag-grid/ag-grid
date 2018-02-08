@@ -5,7 +5,7 @@ gtm_data_layer('changelog');
 include '../jira_reports/jira_utilities.php';
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head lang="en">
     <?php
     meta_and_links("ag-Grid: Changelog of Delivered Features and Bug Fixes", "ag-Grid javascript grid changelog release notes", "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. Our Changelog lists all delivered delivered new functionality and bux fixes.", false);

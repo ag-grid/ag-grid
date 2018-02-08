@@ -2,7 +2,7 @@
 include  '../example-runner/utils.php'
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head lang="en">
         <meta charset="UTF-8">
 

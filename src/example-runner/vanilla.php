@@ -35,7 +35,7 @@ foreach ($files as $file) {
 }
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <?php if ($preview) { ?>
 <script> var __basePath = ''; </script>

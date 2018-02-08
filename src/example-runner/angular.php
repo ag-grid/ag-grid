@@ -4,7 +4,7 @@ $example = getExampleInfo('angular');
 $generated = isset($_GET['generated']);
 ?>
 <!DOCTYPE html>
-<html>
+ <html lang="en">
 <head>
     <title>Angular 2 ag-Grid starter</title>
     <script>document.write('<base href="' + document.location + '" />');</script>

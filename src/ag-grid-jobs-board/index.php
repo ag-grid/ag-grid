@@ -4,7 +4,7 @@ include_once '../includes/html-helpers.php';
 gtm_data_layer('jobs');
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head lang="en">
 <?php
 $socialUrl = "https://www.ag-grid.com/ag-grid-jobs-board/";
