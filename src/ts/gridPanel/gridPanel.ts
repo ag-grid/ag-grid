@@ -246,6 +246,14 @@ export class GridPanel extends BeanStub {
         return result;
     }
 
+    public getHScrollPosition(): {left: number, right: number} {
+        let result = {
+            left: this.eBodyViewport.scrollLeft,
+            right: this.eBodyViewport.scrollTop + this.eBodyViewport.offsetWidth
+        };
+        return result;
+    }
+
     // we override this, as the base class is missing the annotation
     @PreDestroy
     public destroy() {
@@ -481,6 +489,12 @@ export class GridPanel extends BeanStub {
         this.addDestroyableEventListener(this.ePinnedRightColsViewport, 'contextmenu', listener);
         this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'contextmenu', listener);
 
+    }
+
+    public getBodyClientRect(): ClientRect {
+        if (this.eBody) {
+            return this.eBody.getBoundingClientRect();
+        }
     }
 
     private getRowForEvent(event: Event): RowComp {
@@ -1522,7 +1536,7 @@ export class GridPanel extends BeanStub {
     }
 
     public setVerticalScrollPosition(vScrollPosition: number): void {
-        this.eBodyViewport.scrollTop = vScrollPosition;
+        this.getPrimaryScrollViewport().scrollTop = vScrollPosition;
     }
 
     // tries to scroll by pixels, but returns what the result actually was
