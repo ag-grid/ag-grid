@@ -10,7 +10,6 @@ import {
 } from "./floatingFilter";
 import {INumberFilterParams, ITextFilterParams} from "./textFilter";
 
-
 export interface Comparator<T> {
     (left: T, right: T): number;
 }
@@ -60,7 +59,6 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
 
     private newRowsActionKeep: boolean;
 
-
     filterParams: P;
     clearActive: boolean;
     applyActive: boolean;
@@ -109,10 +107,8 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
             this.addDestroyableEventListener(this.eClearButton, "click", this.onClearButton.bind(this));
         }
 
-
         let anyButtonVisible: boolean = this.applyActive || this.clearActive;
         _.setVisible(this.eButtonsPanel, anyButtonVisible);
-
 
         this.instantiate(this.context);
 
@@ -120,7 +116,6 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
         this.refreshFilterBodyUi();
 
     }
-
 
     public onClearButton () {
         this.setModel(null);
@@ -138,7 +133,6 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
     public abstract refreshFilterBodyUi(): void;
     public abstract initialiseFilterBodyUi(): void;
 
-
     public floatingFilter(from: string): void {
         if (from !== '') {
             let model: M = this.modelFromFloatingFilter(from);
@@ -148,7 +142,6 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
         }
         this.onFilterChanged();
     }
-
 
     public onNewRowsLoaded() {
         if (!this.newRowsActionKeep) {
@@ -233,7 +226,6 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
         return filterParams.debounceMs != null ? filterParams.debounceMs : 500;
     }
 }
-
 
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values
@@ -328,7 +320,6 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
     };
 
     public abstract comparator(): Comparator<T>;
-
 
     private nullComparator (type: string): Comparator<T> {
         return (filterValue: T, gridValue: T): number => {

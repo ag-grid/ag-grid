@@ -32,7 +32,6 @@ export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, P
     init (params: P): void | Promise<void> {
         this.column = params.column;
 
-
         let base: HTMLElement = _.loadTemplate(`<div class="ag-header-cell" aria-hidden="true"><div class="ag-floating-filter-body" aria-hidden="true"></div></div>`);
         this.enrichBody(base);
 
@@ -47,7 +46,6 @@ export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, P
     abstract onParentModelChanged(parentModel: M): void;
     abstract enrichBody(body: HTMLElement): void;
 
-
     private setupWidth(): void {
         this.addDestroyableEventListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onColumnWidthChanged.bind(this));
         this.onColumnWidthChanged();
@@ -57,7 +55,6 @@ export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, P
         this.getGui().style.width = this.column.getActualWidth() + 'px';
     }
 }
-
 
 export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends BaseFilterWrapperComp<M, F, PC, P> {
 
@@ -72,14 +69,12 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
     floatingFilterCompPromise: Promise<IFloatingFilterComp<M, F, PC>>;
     suppressFilterButton: boolean;
 
-
     init(params: P): void {
         this.floatingFilterCompPromise = params.floatingFilterComp;
         this.suppressFilterButton = params.suppressFilterButton;
         super.init(params);
 
         this.addEventListeners();
-
 
     }
 

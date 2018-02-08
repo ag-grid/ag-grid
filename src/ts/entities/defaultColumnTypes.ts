@@ -6,4 +6,3 @@ export const DefaultColumnTypes: {[key: string]: ColDef} = {
         "cellClass": "ag-numeric-cell"
     }
 };
-

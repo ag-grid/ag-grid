@@ -41,7 +41,6 @@ export class FilterManager {
     private advancedFilterPresent: boolean;
     private externalFilterPresent: boolean;
 
-
     @PostConstruct
     public init(): void {
         this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.onNewRowsLoaded.bind(this));
@@ -52,7 +51,6 @@ export class FilterManager {
         // check this here, in case there is a filter from the start
         this.checkExternalFilter();
     }
-
 
     public setFilterModel(model: any) {
         let allPromises: Promise<IFilterComp> [] = [];
@@ -511,7 +509,6 @@ export class FilterManager {
             this.disposeFilterWrapper(filterWrapper, "filterDestroyed");
         });
     }
-
 
 }
 

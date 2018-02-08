@@ -166,7 +166,6 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
 
         if (this.equalModels(parentModel, model)) return;
 
-
         this.onFloatingFilterChanged({
             model: model,
             apply: true
@@ -189,7 +188,6 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
         );
     }
 
-
     asParentModel(): SerializedDateFilter {
         let currentParentModel = this.currentParentModel();
         let filterValueDate: Date = this.dateComponentPromise.resolveNow(null, dateComponent=>dateComponent.getDate());
@@ -202,7 +200,6 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
             filterType: 'date'
         };
     }
-
 
     onParentModelChanged(parentModel: SerializedDateFilter): void {
         this.lastKnownModel = parentModel;
@@ -218,7 +215,6 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
 
 export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<SerializedNumberFilter, IFloatingFilterParams<SerializedNumberFilter, BaseFloatingFilterChange<SerializedNumberFilter>>> {
 
-
     asFloatingFilterText(parentModel: SerializedNumberFilter): string {
         let rawParentModel = this.currentParentModel();
         if (parentModel == null && rawParentModel == null) return '';
@@ -226,7 +222,6 @@ export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<Serial
             this.eColumnFloatingFilter.readOnly = false;
             return '';
         }
-
 
         if (rawParentModel != null && rawParentModel.type === 'inRange') {
             this.eColumnFloatingFilter.readOnly = true;
@@ -236,7 +231,6 @@ export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<Serial
                 '-' +
                 (numberTo ? numberTo + '' : '');
         }
-
 
         let number: number = this.asNumber(parentModel.filter);
         this.eColumnFloatingFilter.readOnly = false;

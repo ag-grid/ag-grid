@@ -13,7 +13,6 @@ import {ColumnEvent, ColumnEventType} from "../events";
 import {ColumnApi} from "../columnController/columnApi";
 import {GridApi} from "../gridApi";
 
-
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
 // This class implements both interfaces ColumnGroupChild and OriginalColumnGroupChild as the class can
@@ -270,7 +269,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         if (colDefAny.volatile) {
             console.warn('ag-Grid: since v16, colDef.volatile is gone, please check refresh docs on how to refresh specific cells.');
         }
-
 
     }
 

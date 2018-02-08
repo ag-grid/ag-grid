@@ -176,7 +176,6 @@ export class Context {
 
     private autoWireBean(bean: any): void {
 
-
         let currentBean: any = bean;
         while (currentBean != null) {
             let currentConstructor: any = currentBean.constructor;
@@ -405,7 +404,6 @@ function getOrCreateProps(target: any): any {
     if (!target.hasOwnProperty('__agBeanMetaData')) {
         target.__agBeanMetaData = {};
     }
-
 
     return target.__agBeanMetaData;
 }

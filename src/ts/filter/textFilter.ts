@@ -66,7 +66,6 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         return BaseFilter.CONTAINS;
     }
 
-
     public customInit(): void {
         this.comparator = this.filterParams.textCustomComparator ? this.filterParams.textCustomComparator : TextFilter.DEFAULT_COMPARATOR;
         this.formatter =

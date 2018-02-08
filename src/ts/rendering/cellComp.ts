@@ -24,7 +24,6 @@ import {Beans} from "./beans";
 import {RowComp} from "./rowComp";
 import {RowDragComp} from "./rowDragComp";
 
-
 export class CellComp extends Component {
 
     public static DOM_DATA_KEY_CELL_COMP = 'cellComp';

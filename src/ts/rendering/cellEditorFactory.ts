@@ -13,7 +13,6 @@ export class CellEditorFactory {
     @Autowired('componentResolver') private componentResolver: ComponentResolver;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-
     @PostConstruct
     private init(): void {
     }

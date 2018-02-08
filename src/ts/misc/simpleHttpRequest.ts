@@ -20,4 +20,3 @@ export function simpleHttpRequest(params: SimpleHttpRequestParams): Promise<any>
     });
 
 }
-

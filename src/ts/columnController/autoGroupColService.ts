@@ -67,7 +67,6 @@ export class AutoGroupColService {
             defaultAutoColDef.headerCheckboxSelection = false;
         }
 
-
         let newCol = new Column(defaultAutoColDef, colId, true);
         this.context.wireBean(newCol);
 

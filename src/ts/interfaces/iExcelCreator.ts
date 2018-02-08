@@ -1,7 +1,5 @@
 import {CsvExportParams, ExportParams} from "../exportParams";
 
-
-
 export interface ExcelWorksheet {
     name: string;
     table: ExcelTable;
@@ -37,7 +35,6 @@ export type ExcelDataType =
     | "Boolean"
     | "DateTime"
     | "Error";
-
 
 export interface ExcelStyle {
     id?: string;

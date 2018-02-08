@@ -1082,7 +1082,6 @@ export class RowComp extends Component {
             return;
         }
 
-
         // part 1 - rowStyleFunc
         let rowStyleFunc = this.beans.gridOptionsWrapper.getRowStyleFunc();
         let rowStyleFuncResult: any;

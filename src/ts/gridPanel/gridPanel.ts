@@ -522,7 +522,6 @@ export class GridPanel extends BeanStub {
         }
     }
 
-
     // gets called by rowRenderer when new data loaded, as it will want to scroll
     // to the top
     public scrollToTop(): void {

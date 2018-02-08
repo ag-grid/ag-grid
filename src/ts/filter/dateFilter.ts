@@ -51,7 +51,6 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         return [BaseFilter.EQUALS, BaseFilter.GREATER_THAN, BaseFilter.LESS_THAN, BaseFilter.NOT_EQUAL, BaseFilter.IN_RANGE];
     }
 
-
     public bodyTemplate(): string {
         return `<div class="ag-filter-body">
                     <div class="ag-filter-date-from" id="filterDateFromPanel">

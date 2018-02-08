@@ -92,7 +92,6 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         return _.isNumeric(value) ? value : null;
     }
 
-
     private stringToFloat(value: string): number {
         let filterText = _.makeNull(value);
         if (filterText && filterText.trim() === '') {
@@ -106,7 +105,6 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         }
         return newFilter;
     }
-
 
     public setFilter(filter: any) {
         filter = _.makeNull(filter);
