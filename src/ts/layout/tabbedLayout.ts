@@ -129,20 +129,20 @@ export class TabbedLayout {
 }
 
 export interface TabbedLayoutParams {
-    items: TabbedItem[],
-    cssClass?: string,
-    onItemClicked?: Function
-    onActiveItemClicked?: Function
+    items: TabbedItem[];
+    cssClass?: string;
+    onItemClicked?: Function;
+    onActiveItemClicked?: Function;
 }
 
 export interface TabbedItem {
-    title: Element,
-    bodyPromise: Promise<HTMLElement>,
-    name: string,
-    afterAttachedCallback?: Function
+    title: Element;
+    bodyPromise: Promise<HTMLElement>;
+    name: string;
+    afterAttachedCallback?: Function;
 }
 
 interface TabbedItemWrapper {
-    tabbedItem: TabbedItem,
-    eHeaderButton: HTMLElement
+    tabbedItem: TabbedItem;
+    eHeaderButton: HTMLElement;
 }

@@ -25,11 +25,11 @@ export interface IGetRowsParams {
     failCallback(): void;
 
     /** If doing server side sorting, contains the sort model */
-    sortModel: any,
+    sortModel: any;
 
     /** If doing server side filtering, contains the filter model */
-    filterModel: any,
+    filterModel: any;
 
     /** The grid context object */
-    context: any
+    context: any;
 }

@@ -166,7 +166,7 @@ export class FilterManager {
             }
 
             if (filter === filterToSkip) {
-                continue
+                continue;
             }
 
             // don't bother with filters that are not active
@@ -225,7 +225,7 @@ export class FilterManager {
                 if (filter.onAnyFilterChanged) {
                     filter.onAnyFilterChanged();
                 }
-            })
+            });
         });
 
         let event: FilterChangedEvent = {
@@ -502,7 +502,7 @@ export class FilterManager {
                 filterWrapper.scope.$destroy();
             }
             delete this.allFilters[filterWrapper.column.getColId()];
-        })
+        });
     }
 
     @PreDestroy
@@ -516,8 +516,8 @@ export class FilterManager {
 }
 
 export interface FilterWrapper {
-    column: Column,
-    filterPromise: Promise<IFilterComp>,
-    scope: any,
-    guiPromise: ExternalPromise<HTMLElement>
+    column: Column;
+    filterPromise: Promise<IFilterComp>;
+    scope: any;
+    guiPromise: ExternalPromise<HTMLElement>;
 }

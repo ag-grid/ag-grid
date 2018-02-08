@@ -168,7 +168,7 @@ export class RowRenderer extends BeanStub {
 
                 rowComp.init();
                 rowComps.push(rowComp);
-            })
+            });
         }
 
         this.flushContainers(rowComps);
@@ -396,7 +396,7 @@ export class RowRenderer extends BeanStub {
             columns.forEach( (colKey: string|Column) => {
                 let column: Column = this.columnController.getGridColumn(colKey);
                 if (_.exists(column)) {
-                    colIdsMap[column.getId()] = true
+                    colIdsMap[column.getId()] = true;
                 }
             });
         }
@@ -522,7 +522,7 @@ export class RowRenderer extends BeanStub {
 
         indexesToDraw.sort( (a: number, b: number) => a - b);
 
-        return indexesToDraw
+        return indexesToDraw;
     }
 
     private redraw(rowsToRecycle?: {[key: string]: RowComp}, animate = false, afterScroll = false) {

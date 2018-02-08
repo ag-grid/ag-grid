@@ -8,7 +8,7 @@ export class StylingService {
 
     public processAllCellClasses(colDef: ColDef, params: any, onApplicableClass: (className: string)=>void, onNotApplicableClass?: (className: string)=>void) {
         this.processClassRules(colDef.cellClassRules, params, onApplicableClass, onNotApplicableClass);
-        this.processStaticCellClasses(colDef, params, onApplicableClass)
+        this.processStaticCellClasses(colDef, params, onApplicableClass);
     }
 
     public processClassRules(classRules: { [cssClassName: string]: (Function | string) }, params: CellClassParams, onApplicableClass: (className: string)=>void, onNotApplicableClass?: (className: string)=>void) {

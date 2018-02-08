@@ -91,7 +91,7 @@ export class PinnedRowModel {
                 rowNodes.push(rowNode);
             });
         }
-        return rowNodes
+        return rowNodes;
     }
 
     public getPinnedTopRowData(): RowNode[] {

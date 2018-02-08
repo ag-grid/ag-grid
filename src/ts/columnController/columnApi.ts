@@ -24,8 +24,8 @@ export class ColumnApi {
     public setColumnState(columnState: any, source: ColumnEventType): boolean { return this.columnController.setColumnState(columnState, source); }
     public getColumnState(): any[] { return this.columnController.getColumnState(); }
     public resetColumnState(source: ColumnEventType): void { this.columnController.resetColumnState(source); }
-    public getColumnGroupState(): {groupId: string, open: boolean}[] {return this.columnController.getColumnGroupState()}
-    public setColumnGroupState(stateItems: ({groupId: string, open: boolean})[], source: ColumnEventType): void {this.columnController.setColumnGroupState(stateItems, source)}
+    public getColumnGroupState(): {groupId: string, open: boolean}[] {return this.columnController.getColumnGroupState();}
+    public setColumnGroupState(stateItems: ({groupId: string, open: boolean})[], source: ColumnEventType): void {this.columnController.setColumnGroupState(stateItems, source);}
     public resetColumnGroupState(source: ColumnEventType): void { this.columnController.resetColumnGroupState(source); }
 
     public isPinning(): boolean { return this.columnController.isPinningLeft() || this.columnController.isPinningRight(); }

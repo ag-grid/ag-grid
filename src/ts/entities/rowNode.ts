@@ -371,7 +371,7 @@ export class RowNode implements IEventEmitter {
         }
 
         let event: RowGroupOpenedEvent = this.createGlobalRowEvent(Events.EVENT_ROW_GROUP_OPENED);
-        this.mainEventService.dispatchEvent(event)
+        this.mainEventService.dispatchEvent(event);
     }
 
     private createGlobalRowEvent(type: string): RowEvent {

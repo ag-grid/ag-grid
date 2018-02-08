@@ -106,8 +106,8 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     private defaultComparator (filterDate: Date, cellValue: any): number {
         //The default comparator assumes that the cellValue is a date
         let cellAsDate = <Date> cellValue;
-        if  (cellAsDate < filterDate) { return -1 }
-        if  (cellAsDate > filterDate) { return 1 }
+        if  (cellAsDate < filterDate) { return -1; }
+        if  (cellAsDate > filterDate) { return 1; }
         return cellValue != null ? 0 : -1;
     }
 
@@ -117,7 +117,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
             dateFrom: Utils.serializeDateToYyyyMmDd(this.dateFromComponent.getDate(), "-"),
             type: this.filter ? this.filter : this.defaultFilter,
             filterType: 'date'
-        }
+        };
     }
 
     public filterValues (): Date|Date[] {
@@ -148,7 +148,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
 
     public setDateTo (date: string): void{
         this.dateTo = Utils.parseYyyyMmDdToDate(date, "-");
-        this.dateToComponent.setDate(this.dateTo)
+        this.dateToComponent.setDate(this.dateTo);
     }
 
     public resetState(): void{

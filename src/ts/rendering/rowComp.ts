@@ -695,7 +695,7 @@ export class RowComp extends Component {
         let gow = this.beans.gridOptionsWrapper;
         gow.setDomData(eRowContainer, RowComp.DOM_DATA_KEY_RENDERED_ROW, this);
         this.addDestroyFunc( ()=> {
-            gow.setDomData(eRowContainer, RowComp.DOM_DATA_KEY_RENDERED_ROW, null) }
+            gow.setDomData(eRowContainer, RowComp.DOM_DATA_KEY_RENDERED_ROW, null); }
         );
     }
 
@@ -726,7 +726,7 @@ export class RowComp extends Component {
             api: this.beans.gridOptionsWrapper.getApi(),
             columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
             event: domEvent
-        }
+        };
     }
 
     private createRowEventWithSource(type: string, domEvent: Event): RowEvent {
@@ -738,7 +738,7 @@ export class RowComp extends Component {
         // users to be using this, as the rowComp isn't an object we expose, so would be
         // very surprising if a user was using it.
         (<any>event).source = this;
-        return event
+        return event;
     }
 
     private onRowDblClick(mouseEvent: MouseEvent): void {
@@ -988,9 +988,9 @@ export class RowComp extends Component {
         this.forEachCellComp(renderedCell => {
             let cellStartedEdit = renderedCell === sourceRenderedCell;
             if (cellStartedEdit) {
-                renderedCell.startEditingIfEnabled(keyPress, charPress, cellStartedEdit)
+                renderedCell.startEditingIfEnabled(keyPress, charPress, cellStartedEdit);
             } else {
-                renderedCell.startEditingIfEnabled(null, null, cellStartedEdit)
+                renderedCell.startEditingIfEnabled(null, null, cellStartedEdit);
             }
         });
         this.setEditingRow(true);

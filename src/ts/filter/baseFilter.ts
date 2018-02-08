@@ -12,7 +12,7 @@ import {INumberFilterParams, ITextFilterParams} from "./textFilter";
 
 
 export interface Comparator<T>{
-    (left: T, right: T): number
+    (left: T, right: T): number;
 }
 
 const DEFAULT_TRANSLATIONS: {[name: string]: string}= {
@@ -306,14 +306,14 @@ export abstract class ComparableBaseFilter<T, P extends IFilterParams, M> extend
 }
 
 export interface NullComparator{
-    equals?: boolean
-    lessThan?: boolean
-    greaterThan?: boolean
+    equals?: boolean;
+    lessThan?: boolean;
+    greaterThan?: boolean;
 }
 
 export interface IScalarFilterParams extends IFilterParams{
-    inRangeInclusive?: boolean
-    nullComparator?: NullComparator
+    inRangeInclusive?: boolean;
+    nullComparator?: NullComparator;
 }
 
 /**
@@ -361,7 +361,7 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
 
             let actualComparator: Comparator<T> = this.comparator();
             return actualComparator (filterValue, gridValue);
-        }
+        };
     }
 
     public getDefaultType(): string {
@@ -376,9 +376,9 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
 
         if (this.filterParams.nullComparator && (<any>this.filterParams.nullComparator)[reducedType]){
             return (<any>this.filterParams.nullComparator)[reducedType];
-        };
+        }
 
-        return (<any>ScalarBaseFilter.DEFAULT_NULL_COMPARATOR)[reducedType]
+        return (<any>ScalarBaseFilter.DEFAULT_NULL_COMPARATOR)[reducedType];
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
@@ -419,9 +419,9 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
         let compareToResult: number = comparator((<T[]>rawFilterValues)[1], value);
         if (this.filter === BaseFilter.IN_RANGE){
             if (!this.filterParams.inRangeInclusive){
-                return compareResult > 0 && compareToResult < 0
+                return compareResult > 0 && compareToResult < 0;
             }else{
-                return compareResult >= 0 && compareToResult <= 0
+                return compareResult >= 0 && compareToResult <= 0;
             }
         }
 

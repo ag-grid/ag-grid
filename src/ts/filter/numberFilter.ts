@@ -5,9 +5,9 @@ import {BaseFilter, Comparator, IScalarFilterParams, ScalarBaseFilter} from "./b
 import {INumberFilterParams} from "./textFilter";
 
 export interface SerializedNumberFilter extends SerializedFilter {
-    filter: number
-    filterTo: number
-    type: string
+    filter: number;
+    filterTo: number;
+    type: string;
 }
 
 export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, SerializedNumberFilter> {

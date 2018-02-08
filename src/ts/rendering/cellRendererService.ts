@@ -29,7 +29,7 @@ export class CellRendererService {
                 }else{
                     this.bindToHtml(cellRendererPromise, eTarget);
                 }
-            })
+            });
         } else {
             eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
         }
@@ -104,7 +104,7 @@ export class CellRendererService {
                     return;
                 }
                 this.bindToHtml(rendererToUsePromise, eTarget);
-            })
+            });
         } else {
             eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
         }

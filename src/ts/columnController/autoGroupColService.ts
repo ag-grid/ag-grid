@@ -98,7 +98,7 @@ export class AutoGroupColService {
                         innerRenderer: rowGroupColDef.cellRenderer,
                         innerRendererParams: rowGroupColDef.cellRendererParams
                     }
-                })
+                });
             }
 
             defaultAutoColDef.showRowGroup = rowGroupCol.getColId();

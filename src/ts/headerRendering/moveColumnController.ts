@@ -330,7 +330,7 @@ export class MoveColumnController implements DropListener {
 
     // isHidden takes into account visible=false and group=closed, ie it is not displayed
     private isColumnHidden(displayedColumns: Column[], col: Column) {
-        return displayedColumns.indexOf(col)<0
+        return displayedColumns.indexOf(col)<0;
     }
 
     private ensureIntervalStarted(): void {

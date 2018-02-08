@@ -4,8 +4,8 @@ import {ComparableBaseFilter, BaseFilter, IScalarFilterParams} from "./baseFilte
 import {QuerySelector} from "../widgets/componentAnnotations";
 
 export interface SerializedTextFilter extends SerializedFilter {
-    filter: string
-    type: string
+    filter: string;
+    type: string;
 }
 
 export interface TextComparator {
@@ -35,11 +35,11 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
     private formatter: TextFormatter;
     static DEFAULT_FORMATTER: TextFormatter = (from: string)=>{
         return from;
-    };
+    }
     static DEFAULT_LOWERCASE_FORMATTER: TextFormatter = (from: string)=>{
         if (from == null) return null;
         return from.toString().toLowerCase();
-    };
+    }
     static DEFAULT_COMPARATOR: TextComparator = (filter: string, value: any, filterText: string)=>{
         switch (filter) {
         case TextFilter.CONTAINS:
@@ -60,7 +60,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
             console.warn('invalid filter type ' + filter);
             return false;
         }
-    };
+    }
 
     public getDefaultType(): string {
         return BaseFilter.CONTAINS;
@@ -180,7 +180,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
             type: this.filter ? this.filter : this.defaultFilter,
             filter: this.filterText,
             filterType: 'text'
-        }
+        };
     }
 
     public parse(model: SerializedTextFilter): void{

@@ -16,7 +16,7 @@ export interface FloatingFilterChange {
 }
 
 export interface IFloatingFilterParams<M, F extends FloatingFilterChange> {
-    column: Column,
+    column: Column;
     onFloatingFilterChanged: (change: F | M) => boolean;
     currentParentModel: () => M;
     suppressFilterButton: boolean;
@@ -32,8 +32,8 @@ export interface IFloatingFilterComp<M, F extends FloatingFilterChange, P extend
 }
 
 export interface BaseFloatingFilterChange<M> extends FloatingFilterChange {
-    model: M
-    apply: boolean
+    model: M;
+    apply: boolean;
 }
 
 export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterParams<M, BaseFloatingFilterChange<M>>> extends Component implements IFloatingFilter <M, BaseFloatingFilterChange<M>, P> {
@@ -45,7 +45,7 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
     lastKnownModel: M = null;
 
     constructor() {
-        super(`<div><input  ref="eColumnFloatingFilter" class="ag-floating-filter-input"></div>`)
+        super(`<div><input  ref="eColumnFloatingFilter" class="ag-floating-filter-input"></div>`);
     }
 
     init(params: P): void {
@@ -114,7 +114,7 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
             _.referenceCompare(left.filter, right.filter) &&
             _.referenceCompare(left.filterTo, right.filterTo) &&
             _.referenceCompare(left.filterType, right.filterType)
-        )
+        );
     }
 }
 
@@ -130,7 +130,7 @@ export class TextFloatingFilterComp extends InputTextFloatingFilterComp<Serializ
             type: currentParentModel.type,
             filter: this.eColumnFloatingFilter.value,
             filterType: 'text'
-        }
+        };
     }
 }
 
@@ -186,7 +186,7 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
             _.referenceCompare(left.dateFrom, right.dateFrom) &&
             _.referenceCompare(left.dateTo, right.dateTo) &&
             _.referenceCompare(left.filterType, right.filterType)
-        )
+        );
     }
 
 
@@ -212,7 +212,7 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
                 return;
             }
             dateComponent.setDate(_.parseYyyyMmDdToDate(parentModel.dateFrom, '-'));
-        })
+        });
     }
 }
 

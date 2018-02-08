@@ -1432,7 +1432,7 @@ export class ColumnController {
         } else if (colDef.headerName != null){
             return colDef.headerName;
         } else if ((<ColDef>colDef).field){
-            return _.camelCaseToHumanText((<ColDef>colDef).field)
+            return _.camelCaseToHumanText((<ColDef>colDef).field);
         } else {
             return '';
         }
@@ -2290,6 +2290,6 @@ export class ColumnController {
     }
 
     public getGridBalancedTree(): OriginalColumnGroupChild[]{
-        return this.gridBalancedTree
+        return this.gridBalancedTree;
     }
 }

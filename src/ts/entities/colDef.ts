@@ -189,7 +189,7 @@ export interface ColDef extends AbstractColDef {
 
     /** The menu tabs to show, and in which order, the valid values for this property are:
      * filterMenuTab, generalMenuTab, columnsMenuTab **/
-    menuTabs?: string[]
+    menuTabs?: string[];
 
     /** Set to true if no sorting should be done for this column. */
     suppressSorting?: boolean;
@@ -297,11 +297,11 @@ export interface ColDef extends AbstractColDef {
     pivotTotalColumnIds?: string[];
 
     /** The custom header component to be used for rendering the component header. If none specified the default ag-Grid is used**/
-    headerComponent?: string | {new(): any}
+    headerComponent?: string | {new(): any};
     /** The custom header component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default ag-Grid is used**/
     headerComponentFramework?: {new (): any};
     /** The custom header component parameters**/
-    headerComponentParams?: any
+    headerComponentParams?: any;
 
     /** The custom header component to be used for rendering the floating filter. If none specified the default ag-Grid is used**/
     floatingFilterComponent?: {new(): IFloatingFilterComp<any, any, any>};
@@ -348,12 +348,12 @@ export interface BaseWithValueColDefParams extends BaseColDefParams {
 }
 
 export interface ValueGetterParams extends BaseColDefParams {
-    getValue: (field: string) => any
+    getValue: (field: string) => any;
 }
 
 export interface NewValueParams extends BaseColDefParams {
-    oldValue: any,
-    newValue: any
+    oldValue: any;
+    newValue: any;
 }
 
 export interface ValueSetterParams extends NewValueParams {}
@@ -372,24 +372,24 @@ export interface SuppressKeyboardEventParams extends IsColumnFuncParams {
 }
 
 export interface CellClassParams {
-    value: any,
-    data: any,
-    node: RowNode,
-    colDef: ColDef,
-    rowIndex: number,
-    $scope: any,
-    api: GridApi,
-    context: any
+    value: any;
+    data: any;
+    node: RowNode;
+    colDef: ColDef;
+    rowIndex: number;
+    $scope: any;
+    api: GridApi;
+    context: any;
 }
 
 export interface TooltipParams {
-    value: any,
-    valueFormatted: any,
-    data: any,
-    node: RowNode,
-    colDef: ColDef,
-    rowIndex: number,
-    $scope: any,
-    api: GridApi,
-    context: any,
+    value: any;
+    valueFormatted: any;
+    data: any;
+    node: RowNode;
+    colDef: ColDef;
+    rowIndex: number;
+    $scope: any;
+    api: GridApi;
+    context: any;
 }

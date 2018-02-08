@@ -265,7 +265,7 @@ export class HeaderRowComp extends Component {
                     (filter.getNullableModel) ?
                         filter.getNullableModel() :
                         filter.getModel()
-                )
+                );
             },
             onFloatingFilterChanged: (change: F | M): boolean => {
                 let captureModelChangedResolveFunc: (modelChanged: boolean) => void;
@@ -287,9 +287,9 @@ export class HeaderRowComp extends Component {
                         //the filters
                         filterComponent.setModel(<M>change);
                         this.filterManager.onFilterChanged();
-                        captureModelChangedResolveFunc(true)
+                        captureModelChangedResolveFunc(true);
                     }
-                })
+                });
                 return modelChanged.resolveNow(true, modelChanged => modelChanged);
             },
             //This one might be overriden from the colDef

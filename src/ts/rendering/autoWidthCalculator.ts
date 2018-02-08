@@ -9,7 +9,7 @@ import {Component} from "../widgets/component";
 import {HeaderGroupWrapperComp} from "../headerRendering/headerGroup/headerGroupWrapperComp";
 
 export interface GuiProvider {
-    (): HTMLElement
+    (): HTMLElement;
 }
 
 @Bean('autoWidthCalculator')

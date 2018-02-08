@@ -57,13 +57,13 @@ export interface IFilterComp extends IFilter, IComponent<IFilterParams> {
 
 export interface IDoesFilterPassParams {
     node: RowNode;
-    data: any
+    data: any;
 }
 
 export interface IFilterParams {
     clearButton?: boolean;
     applyButton?: boolean;
-    newRowsAction?: string
+    newRowsAction?: string;
     column: Column;
     colDef: ColDef;
     rowModel: IRowModel;

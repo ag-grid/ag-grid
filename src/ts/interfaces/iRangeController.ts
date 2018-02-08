@@ -16,16 +16,16 @@ export interface IRangeController {
 }
 
 export interface RangeSelection {
-    start: GridCell,
-    end: GridCell
-    columns: Column[]
+    start: GridCell;
+    end: GridCell;
+    columns: Column[];
 }
 
 export interface AddRangeSelectionParams {
-    rowStart: number,
-    floatingStart: string,
-    rowEnd: number,
-    floatingEnd: string,
-    columnStart: string|Column,
-    columnEnd: string|Column
+    rowStart: number;
+    floatingStart: string;
+    rowEnd: number;
+    floatingEnd: string;
+    columnStart: string|Column;
+    columnEnd: string|Column;
 }

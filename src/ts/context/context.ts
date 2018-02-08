@@ -12,22 +12,22 @@ import {Component} from "../widgets/component";
 // each bean is responsible for initialising itself, taking items from the gridOptionsWrapper
 
 export interface ContextParams {
-    seed: any,
-    beans: any[],
-    components: ComponentMeta[],
-    overrideBeans: any[],
-    debug: boolean
+    seed: any;
+    beans: any[];
+    components: ComponentMeta[];
+    overrideBeans: any[];
+    debug: boolean;
 }
 
 export interface ComponentMeta {
-    theClass: new()=>Object,
-    componentName: string
+    theClass: new()=>Object;
+    componentName: string;
 }
 
 interface BeanEntry {
-    bean: any,
-    beanInstance: any,
-    beanName: any
+    bean: any;
+    beanInstance: any;
+    beanName: any;
 }
 
 export class Context {
@@ -64,7 +64,7 @@ export class Context {
 
     private setupComponents(): void {
         if (this.contextParams.components) {
-            this.contextParams.components.forEach( componentMeta => this.addComponent(componentMeta) )
+            this.contextParams.components.forEach( componentMeta => this.addComponent(componentMeta) );
         }
     }
 
@@ -342,13 +342,13 @@ export function Bean(beanName: string): Function {
 
 export function Autowired(name?: string): Function {
     return (target: any, propertyKey: string, descriptor: PropertyDescriptor)=>{
-        autowiredFunc(target, name, false, target, propertyKey, null)
+        autowiredFunc(target, name, false, target, propertyKey, null);
     };
 }
 
 export function Optional(name?: string): Function {
     return (target: any, propertyKey: string, descriptor: PropertyDescriptor)=>{
-        autowiredFunc(target, name, true, target, propertyKey, null)
+        autowiredFunc(target, name, true, target, propertyKey, null);
     };
 }
 

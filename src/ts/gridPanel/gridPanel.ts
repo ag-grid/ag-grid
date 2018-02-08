@@ -358,7 +358,7 @@ export class GridPanel extends BeanStub {
                 if (!clickInsideGrid) {
                     this.rowRenderer.stopEditing();
                 }
-            })
+            });
         }
     }
 
@@ -638,7 +638,7 @@ export class GridPanel extends BeanStub {
                     }
                 }
             });
-        })
+        });
     }
 
     private onCtrlAndA(event: KeyboardEvent): boolean {

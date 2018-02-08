@@ -256,8 +256,8 @@ export interface GridOptions {
     // callbacks
     paginationNumberFormatter?: (params: PaginationNumberFormatterParams)=>string;
     postProcessPopup?: (params: PostProcessPopupParams)=>void;
-    frameworkComponents?: {[p: string]: {new(): any}}
-    components?: {[p: string]: AgGridRegisteredComponentInput<IComponent<any>>}
+    frameworkComponents?: {[p: string]: {new(): any}};
+    components?: {[p: string]: AgGridRegisteredComponentInput<IComponent<any>>};
     dateComponent?: {new(): IDateComp};
     dateComponentFramework?: any;
     groupRowRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
@@ -392,17 +392,17 @@ export interface NodeChildDetails {
 }
 
 export interface GetContextMenuItemsParams {
-    defaultItems: string[],
-    column: Column,
-    node: RowNode,
-    value: any,
-    api: GridApi,
-    columnApi: ColumnApi,
-    context: any
+    defaultItems: string[];
+    column: Column;
+    node: RowNode;
+    value: any;
+    api: GridApi;
+    columnApi: ColumnApi;
+    context: any;
 }
 
 export interface GetContextMenuItems {
-    (params: GetContextMenuItemsParams): (string|MenuItemDef)[]
+    (params: GetContextMenuItemsParams): (string|MenuItemDef)[];
 }
 
 export interface MenuItemDef {
@@ -418,31 +418,31 @@ export interface MenuItemDef {
 }
 
 export interface GetMainMenuItemsParams {
-    column: Column,
-    api: GridApi,
-    columnApi: ColumnApi,
-    context: any,
-    defaultItems: string[]
+    column: Column;
+    api: GridApi;
+    columnApi: ColumnApi;
+    context: any;
+    defaultItems: string[];
 }
 
 export interface GetMainMenuItems {
-    (params: GetMainMenuItemsParams): (string|MenuItemDef)[]
+    (params: GetMainMenuItemsParams): (string|MenuItemDef)[];
 }
 
 export interface GetRowNodeIdFunc {
-    (data: any): string
+    (data: any): string;
 }
 
 export interface ProcessRowParams {
     eRow: HTMLElement;
     ePinnedLeftRow: HTMLElement;
     ePinnedRightRow: HTMLElement;
-    rowIndex: number,
-    node: RowNode,
-    api: GridApi,
-    columnApi: ColumnApi,
-    addRenderedRowListener: (eventType: string, listener: Function)=>void,
-    context: any
+    rowIndex: number;
+    node: RowNode;
+    api: GridApi;
+    columnApi: ColumnApi;
+    addRenderedRowListener: (eventType: string, listener: Function)=>void;
+    context: any;
 }
 
 export interface NavigateToNextCellParams {
@@ -461,9 +461,9 @@ export interface TabToNextCellParams {
 
 export interface PostProcessPopupParams {
     // if popup is for a column, this gives the Column
-    column?: Column,
+    column?: Column;
     // if popup is for a row, this gives the RowNode
-    rowNode?: RowNode,
+    rowNode?: RowNode;
     // the popup we are showing
     ePopup: HTMLElement;
     // The different types are: 'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor'

@@ -96,7 +96,7 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
             if (this.suppressFilterButton){
                 floatingFilterBody.appendChild(floatingFilterCompUi);
                 _.removeCssClass(floatingFilterBody, 'ag-floating-filter-body');
-                _.addCssClass(floatingFilterBody, 'ag-floating-filter-full-body')
+                _.addCssClass(floatingFilterBody, 'ag-floating-filter-full-body');
             } else {
                 floatingFilterBody.appendChild(floatingFilterCompUi);
                 body.appendChild(_.loadTemplate(`<div class="ag-floating-filter-button" aria-hidden="true">
@@ -118,7 +118,7 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
     onParentModelChanged(parentModel: M): void{
         this.floatingFilterCompPromise.then(floatingFilterComp=>{
             floatingFilterComp.onParentModelChanged(parentModel);
-        })
+        });
     }
 
     private showParentFilter(){
