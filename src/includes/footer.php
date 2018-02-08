@@ -46,3 +46,12 @@
 <div id="cookie-warning" style="display: none"><div>
     This website uses cookies to ensure you get the best experience on our website. <a class="btn btn-primary" id="cookie-accept">Got It</a>
 </div></div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+<script>
+  WebFont.load({
+    google: {
+      families: ['Roboto:300,400,500,900']
+    }
+  });
+</script>
