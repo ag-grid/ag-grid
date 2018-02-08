@@ -83,7 +83,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         };
     }
 
-    public getApplicableFilterTypes (): string[] {
+    public getApplicableFilterTypes(): string[] {
         return [BaseFilter.EQUALS, BaseFilter.NOT_EQUAL, BaseFilter.STARTS_WITH, BaseFilter.ENDS_WITH,
             BaseFilter.CONTAINS, BaseFilter.NOT_CONTAINS];
     }
@@ -108,7 +108,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         this.eFilterTextField.focus();
     }
 
-    public filterValues (): string {
+    public filterValues(): string {
         return this.filterText;
     }
 
@@ -187,7 +187,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         this.setFilter(model.filter);
     }
 
-    public setType (filterType: string): void {
+    public setType(filterType: string): void {
         this.setFilterType(filterType);
     }
 

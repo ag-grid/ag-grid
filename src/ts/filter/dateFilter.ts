@@ -47,7 +47,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         };
     }
 
-    public getApplicableFilterTypes (): string[] {
+    public getApplicableFilterTypes(): string[] {
         return [BaseFilter.EQUALS, BaseFilter.GREATER_THAN, BaseFilter.LESS_THAN, BaseFilter.NOT_EQUAL, BaseFilter.IN_RANGE];
     }
 
@@ -102,7 +102,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         return this.filterParams.comparator ? this.filterParams.comparator : this.defaultComparator.bind(this);
     }
 
-    private defaultComparator (filterDate: Date, cellValue: any): number {
+    private defaultComparator(filterDate: Date, cellValue: any): number {
         //The default comparator assumes that the cellValue is a date
         let cellAsDate = <Date> cellValue;
         if  (cellAsDate < filterDate) { return -1; }
@@ -119,33 +119,33 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         };
     }
 
-    public filterValues (): Date|Date[] {
+    public filterValues(): Date|Date[] {
         return this.filter !== BaseFilter.IN_RANGE ?
             this.dateFromComponent.getDate() :
             [this.dateFromComponent.getDate(), this.dateToComponent.getDate()];
     }
 
     // not used by ag-Grid, but exposed as part of the filter API for the client if they want it
-    public getDateFrom (): string {
+    public getDateFrom(): string {
         return Utils.serializeDateToYyyyMmDd(this.dateFromComponent.getDate(), "-");
     }
 
     // not used by ag-Grid, but exposed as part of the filter API for the client if they want it
-    public getDateTo (): string {
+    public getDateTo(): string {
         return Utils.serializeDateToYyyyMmDd(this.dateToComponent.getDate(), "-");
     }
 
     // not used by ag-Grid, but exposed as part of the filter API for the client if they want it
-    public getFilterType (): string {
+    public getFilterType(): string {
         return this.filter;
     }
 
-    public setDateFrom (date: string): void {
+    public setDateFrom(date: string): void {
         this.dateFrom = Utils.parseYyyyMmDdToDate(date, "-");
         this.dateFromComponent.setDate(this.dateFrom);
     }
 
-    public setDateTo (date: string): void {
+    public setDateTo(date: string): void {
         this.dateTo = Utils.parseYyyyMmDdToDate(date, "-");
         this.dateToComponent.setDate(this.dateTo);
     }
@@ -162,11 +162,11 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         this.setFilterType(model.type);
     }
 
-    public setType (filterType: string): void {
+    public setType(filterType: string): void {
         this.setFilterType(filterType);
     }
 
-    public static removeTimezone (from: Date): Date {
+    public static removeTimezone(from: Date): Date {
         if (!from) return null;
         return new Date (from.getFullYear(), from.getMonth(), from.getDate());
     }
@@ -181,7 +181,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
         super(`<input class="ag-filter-filter" type="text" placeholder="yyyy-mm-dd">`);
     }
 
-    public init (params: IDateParams): void {
+    public init(params: IDateParams): void {
         this.eDateInput = <HTMLInputElement> this.getGui();
 
         if (Utils.isBrowserChrome()) {

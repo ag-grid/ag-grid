@@ -32,7 +32,7 @@ export class StylingService {
         }
     }
 
-    public processStaticCellClasses (colDef: ColDef, params: CellClassParams, onApplicableClass: (className: string)=>void) {
+    public processStaticCellClasses(colDef: ColDef, params: CellClassParams, onApplicableClass: (className: string)=>void) {
         let cellClass = colDef.cellClass;
         if (cellClass) {
             let classOrClasses: any;

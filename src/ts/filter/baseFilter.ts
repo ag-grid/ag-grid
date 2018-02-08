@@ -117,7 +117,7 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
 
     }
 
-    public onClearButton () {
+    public onClearButton() {
         this.setModel(null);
         this.onFilterChanged();
     }
@@ -170,7 +170,7 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
         this.refreshFilterBodyUi();
     }
 
-    private doOnFilterChanged (applyNow: boolean = false): boolean {
+    private doOnFilterChanged(applyNow: boolean = false): boolean {
         this.filterParams.filterModifiedCallback();
         let requiresApplyAndIsApplying: boolean = this.applyActive && applyNow;
         let notRequiresApply: boolean = !this.applyActive;
@@ -183,11 +183,11 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
         return shouldFilter;
     }
 
-    public onFilterChanged (): void {
+    public onFilterChanged(): void {
         this.doOnFilterChanged();
     }
 
-    public onFloatingFilterChanged (change: FloatingFilterChange): boolean {
+    public onFloatingFilterChanged(change: FloatingFilterChange): boolean {
         //It has to be of the type FloatingFilterWithApplyChange if it gets here
         let casted: BaseFloatingFilterChange<M> = <BaseFloatingFilterChange<M>>change;
         this.setModel(casted ? casted.model : null);
@@ -242,7 +242,7 @@ export abstract class ComparableBaseFilter<T, P extends IFilterParams, M> extend
         this.addDestroyableEventListener(this.eTypeSelector, "change", this.onFilterTypeChanged.bind(this));
     }
 
-    public customInit () {
+    public customInit() {
         if (!this.defaultFilter) {
             this.defaultFilter = this.getDefaultType();
         }
@@ -273,9 +273,9 @@ export abstract class ComparableBaseFilter<T, P extends IFilterParams, M> extend
         this.setFilterType(this.filter);
     }
 
-    public abstract getDefaultType (): string;
+    public abstract getDefaultType(): string;
 
-    private onFilterTypeChanged (): void {
+    private onFilterTypeChanged(): void {
         this.filter = this.eTypeSelector.value;
         this.refreshFilterBodyUi();
         this.onFilterChanged();
@@ -291,7 +291,7 @@ export abstract class ComparableBaseFilter<T, P extends IFilterParams, M> extend
         }
     }
 
-    public setFilterType (filterType: string): void {
+    public setFilterType(filterType: string): void {
         this.filter = filterType;
         this.eTypeSelector.value = filterType;
     }
@@ -321,7 +321,7 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
 
     public abstract comparator(): Comparator<T>;
 
-    private nullComparator (type: string): Comparator<T> {
+    private nullComparator(type: string): Comparator<T> {
         return (filterValue: T, gridValue: T): number => {
             if (gridValue == null) {
                 let nullValue = this.translateNull (type);

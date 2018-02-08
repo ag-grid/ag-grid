@@ -32,7 +32,7 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         };
     }
 
-    public getApplicableFilterTypes (): string[] {
+    public getApplicableFilterTypes(): string[] {
         return [BaseFilter.EQUALS, BaseFilter.NOT_EQUAL, BaseFilter.LESS_THAN, BaseFilter.LESS_THAN_OR_EQUAL,
             BaseFilter.GREATER_THAN, BaseFilter.GREATER_THAN_OR_EQUAL, BaseFilter.IN_RANGE];
     }
@@ -82,7 +82,7 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         }
     }
 
-    public filterValues (): number|number[] {
+    public filterValues(): number|number[] {
         return this.filter !== BaseFilter.IN_RANGE ?
             this.asNumber(this.filterNumber):
             [this.asNumber(this.filterNumber), this.asNumber(this.filterNumberTo)];
@@ -156,7 +156,7 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         this.setFilterTo(null);
     }
 
-    public setType (filterType: string): void {
+    public setType(filterType: string): void {
         this.setFilterType(filterType);
     }
 }

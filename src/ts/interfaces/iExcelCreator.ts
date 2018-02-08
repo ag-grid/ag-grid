@@ -107,7 +107,7 @@ export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
 }
 
 export interface IExcelCreator {
-    exportDataAsExcel (params?: ExcelExportParams): void ;
+    exportDataAsExcel(params?: ExcelExportParams): void ;
 
-    getDataAsExcelXml (params?: ExcelExportParams): string ;
+    getDataAsExcelXml(params?: ExcelExportParams): string ;
 }

@@ -97,7 +97,7 @@ export class FilterManager {
 
     public getFilterModel(): any {
         let result = <any>{};
-        _.iterateObject(this.allFilters, function (key: any, filterWrapper: FilterWrapper) {
+        _.iterateObject(this.allFilters, function(key: any, filterWrapper: FilterWrapper) {
             // because user can provide filters, we provide useful error checking and messages
             let filterPromise: Promise<IFilterComp> = filterWrapper.filterPromise;
             let filter = filterPromise.resolveNow(null, filter=>filter);
@@ -123,7 +123,7 @@ export class FilterManager {
     private setAdvancedFilterPresent() {
         let atLeastOneActive = false;
 
-        _.iterateObject(this.allFilters, function (key, filterWrapper: FilterWrapper) {
+        _.iterateObject(this.allFilters, function(key, filterWrapper: FilterWrapper) {
             if (filterWrapper.filterPromise.resolveNow(false, filter=>filter.isFilterActive())) {
                 atLeastOneActive = true;
             }
@@ -133,7 +133,7 @@ export class FilterManager {
     }
 
     private updateFilterFlagInColumns(source: ColumnEventType): void {
-        _.iterateObject(this.allFilters, function (key, filterWrapper: FilterWrapper) {
+        _.iterateObject(this.allFilters, function(key, filterWrapper: FilterWrapper) {
             let filterActive = filterWrapper.filterPromise.resolveNow(false, filter=>filter.isFilterActive());
             filterWrapper.column.setFilterActive(filterActive, source);
         });
@@ -218,7 +218,7 @@ export class FilterManager {
         this.updateFilterFlagInColumns("filterChanged");
         this.checkExternalFilter();
 
-        _.iterateObject(this.allFilters, function (key, filterWrapper: FilterWrapper) {
+        _.iterateObject(this.allFilters, function(key, filterWrapper: FilterWrapper) {
             filterWrapper.filterPromise.then(filter=> {
                 if (filter.onAnyFilterChanged) {
                     filter.onAnyFilterChanged();
@@ -344,7 +344,7 @@ export class FilterManager {
     }
 
     private onNewRowsLoaded(source: ColumnEventType) {
-        _.iterateObject(this.allFilters, function (key, filterWrapper: FilterWrapper) {
+        _.iterateObject(this.allFilters, function(key, filterWrapper: FilterWrapper) {
             filterWrapper.filterPromise.then(filter=> {
                 if (filter.onNewRowsLoaded) {
                     filter.onNewRowsLoaded();
@@ -379,7 +379,7 @@ export class FilterManager {
 
     }
 
-    public cachedFilter (column: Column): FilterWrapper {
+    public cachedFilter(column: Column): FilterWrapper {
         return this.allFilters[column.getColId()];
     }
 

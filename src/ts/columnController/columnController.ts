@@ -1592,7 +1592,7 @@ export class ColumnController {
             }
         });
         // then sort them
-        this.rowGroupColumns.sort(function (colA: Column, colB: Column): number {
+        this.rowGroupColumns.sort(function(colA: Column, colB: Column): number {
             return colA.getColDef().rowGroupIndex - colB.getColDef().rowGroupIndex;
         });
         // now just pull out items rowGroup, they will be added at the end
@@ -1619,7 +1619,7 @@ export class ColumnController {
             }
         });
         // then sort them
-        this.pivotColumns.sort(function (colA: Column, colB: Column): number {
+        this.pivotColumns.sort(function(colA: Column, colB: Column): number {
             return colA.getColDef().pivotIndex - colB.getColDef().pivotIndex;
         });
         // now check the boolean equivalent

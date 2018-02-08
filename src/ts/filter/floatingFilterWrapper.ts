@@ -29,7 +29,7 @@ export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, P
 
     column: Column;
 
-    init (params: P): void | Promise<void> {
+    init(params: P): void | Promise<void> {
         this.column = params.column;
 
         let base: HTMLElement = _.loadTemplate(`<div class="ag-header-cell" aria-hidden="true"><div class="ag-floating-filter-body" aria-hidden="true"></div></div>`);
@@ -78,7 +78,7 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
 
     }
 
-    private addEventListeners (): void {
+    private addEventListeners(): void {
         if (!this.suppressFilterButton && this.eButtonShowMainFilter) {
             this.addDestroyableEventListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
         }

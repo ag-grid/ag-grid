@@ -15,7 +15,7 @@ export class FilterService {
         this.doingTreeData = this.gridOptionsWrapper.isTreeData();
     }
 
-    public filterAccordingToColumnState (rowNode: RowNode): void {
+    public filterAccordingToColumnState(rowNode: RowNode): void {
         let filterActive: boolean = this.filterManager.isAnyFilterPresent();
         this.filter (rowNode, filterActive);
     }
