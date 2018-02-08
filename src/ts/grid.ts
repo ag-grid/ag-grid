@@ -122,7 +122,7 @@ export class Grid {
         if (!gridOptions) {
             console.error('ag-Grid: no gridOptions provided to the grid');
         }
-        
+
         let rowModelClass = this.getRowModelClass(gridOptions);
 
         let enterprise = _.exists(Grid.enterpriseBeans);

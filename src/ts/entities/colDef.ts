@@ -286,7 +286,7 @@ export interface ColDef extends AbstractColDef {
 
     /** Icons for this column. Leave blank to use default. */
     icons?: {[key: string]: string};
-    
+
     /** If true, grid will flash cell after cell is refreshed */
     enableCellChangeFlash?: boolean;
 

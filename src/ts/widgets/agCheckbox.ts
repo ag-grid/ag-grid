@@ -91,7 +91,7 @@ export class AgCheckbox extends Component {
     public setPassive(passive: boolean): void {
         this.passive = passive;
     }
-    
+
     public setReadOnly(readOnly: boolean): void {
         this.readOnly = readOnly;
         this.loadIcons();
@@ -118,7 +118,7 @@ export class AgCheckbox extends Component {
             this.setSelected(nextValue);
         }
     }
-    
+
     public setSelected(selected: boolean): void {
         if (this.selected === selected) { return; }
 

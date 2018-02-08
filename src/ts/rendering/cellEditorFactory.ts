@@ -17,7 +17,7 @@ export class CellEditorFactory {
     @PostConstruct
     private init(): void {
     }
-    
+
     public addCellEditor(key: string, cellEditor: {new(): ICellEditorComp}): void {
         console.warn(`ag-grid: since v13.3.1 this method is not supported anymore. If you want to register your own editor check the docs: https://www.ag-grid.com/javascript-grid-cell-editor/`)
     }

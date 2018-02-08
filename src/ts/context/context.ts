@@ -39,7 +39,7 @@ export class Context {
     private componentsMappedByName: {[key: string]: any} = {};
 
     private destroyed = false;
-    
+
     public constructor(params: ContextParams, logger: ILogger) {
 
         if (!params || !params.beans) {
@@ -287,7 +287,7 @@ export class Context {
             return;
         }
         this.logger.log('>> Shutting down ag-Application Context');
-        
+
         // try calling destroy methods
         _.iterateObject(this.beans, (key: string, beanEntry: BeanEntry) => {
             let bean = beanEntry.beanInstance;

@@ -255,7 +255,7 @@ export abstract class ComparableBaseFilter<T, P extends IFilterParams, M> extend
             this.defaultFilter = this.getDefaultType();
         }
     }
-    
+
     public generateFilterHeader(): string {
         let defaultFilterTypes = this.getApplicableFilterTypes();
         let restrictedFilterTypes = this.filterParams.filterOptions;

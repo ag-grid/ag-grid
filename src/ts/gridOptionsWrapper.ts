@@ -570,7 +570,7 @@ export class GridOptionsWrapper {
             return Constants.LAYOUT_INTERVAL;
         }
     }
-    
+
     public getMinColWidth() {
         if (this.gridOptions.minColWidth > GridOptionsWrapper.MIN_COL_WIDTH) {
             return this.gridOptions.minColWidth;
@@ -787,7 +787,7 @@ export class GridOptionsWrapper {
         return !isNaN(value) && typeof value === 'number';
     }
 
-    // Material data table has strict guidelines about whitespace, and these values are different than the ones 
+    // Material data table has strict guidelines about whitespace, and these values are different than the ones
     // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
     private specialForNewMaterial(defaultValue: number, sassVariableName: string): number {
         var theme = this.environment.getTheme();

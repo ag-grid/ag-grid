@@ -3,7 +3,7 @@ export interface IViewportDatasource {
 
     /** Gets called exactly once before viewPort is used. Passes methods to be used to tell viewPort of data loads / changes. */
     init(params: IViewportDatasourceParams): void;
-    
+
     /** Tell the viewport what the scroll position of the grid is, so it knows what rows it has to get */
     setViewportRange(firstRow: number, lastRow: number): void;
 

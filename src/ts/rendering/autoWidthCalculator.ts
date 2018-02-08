@@ -29,7 +29,7 @@ export class AutoWidthCalculator {
         let eHeaderCell = this.getHeaderCellForColumn(column);
         // cell isn't visible
         if (!eHeaderCell) {
-            return -1; 
+            return -1;
         }
 
         let eDummyContainer = document.createElement('span');
@@ -80,7 +80,7 @@ export class AutoWidthCalculator {
 
         return comp ? comp.getGui() : null;
     }
-    
+
     private putRowCellsIntoDummyContainer(column: Column, eDummyContainer: HTMLElement): void {
         let eCells = this.rowRenderer.getAllCellsForColumn(column);
         eCells.forEach( eCell  => this.cloneItemIntoDummy(eCell, eDummyContainer) );

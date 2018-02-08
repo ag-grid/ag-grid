@@ -277,7 +277,7 @@ export class ColumnGroup implements ColumnGroupChild {
     public getOriginalColumnGroup(): OriginalColumnGroup {
         return this.originalColumnGroup;
     }
-    
+
     public calculateDisplayedColumns() {
         // clear out last time we calculated
         this.displayedChildren = [];

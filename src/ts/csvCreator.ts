@@ -90,7 +90,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<string> {
             onColumn: this.onNewBodyRowColumn.bind(this)
         };
     }
-    
+
     private onNewBodyRowColumn (column: Column, index: number, node?:RowNode):void{
         if (index != 0) {
             this.result += this.columnSeparator;
