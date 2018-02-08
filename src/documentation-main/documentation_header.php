@@ -2,7 +2,7 @@
 include_once '../example-runner/utils.php';
 include_once '../includes/html-helpers.php';
 include_once '../php-utils/printPropertiesTable.php';
-
+$DONT_USE_FONT_AWESOME=true;
 $version = 'latest';
 
 $rootFolder;
@@ -13,7 +13,7 @@ if (strcmp($version, 'latest') == 0) {
 }
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head lang="en">
 <?php
 meta_and_links($pageTitle, $pageKeyboards, $pageDescription, false);
