@@ -6,7 +6,7 @@ require_once dirname(__FILE__) . '/../example-runner/utils.php';
 gtm_data_layer('blogs');
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head lang="en">
 <?php
 meta_and_links($pageTitle, $pageKeyboards, $pageDescription, false);

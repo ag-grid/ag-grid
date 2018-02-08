@@ -4,7 +4,7 @@ include_once 'includes/html-helpers.php';
 gtm_data_layer('trial', array('state' => 'start'));
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head lang="en">
 <?php
 meta_and_links("ag-Grid: Free 2 Month Trial", "Free Trial of ag-Grid JavaScrpt Datagrid", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. You can take the Enterprise version for a free 2 Month Trial - somply fill out this page.", true);
