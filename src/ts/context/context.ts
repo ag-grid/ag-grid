@@ -178,7 +178,7 @@ export class Context {
     private autoWireBean(bean: any): void {
 
 
-        let currentBean:any = bean;
+        let currentBean: any = bean;
         while (currentBean != null){
             let currentConstructor: any = currentBean.constructor;
 
@@ -378,7 +378,7 @@ function autowiredFunc(target: any, name: string, optional: boolean, classProtot
 export function Qualifier(name: string): Function {
     return (classPrototype: any, methodOrAttributeName: string, index: number) => {
 
-        let constructor:any = (typeof classPrototype == 'function') ? classPrototype : classPrototype.constructor;
+        let constructor: any = (typeof classPrototype == 'function') ? classPrototype : classPrototype.constructor;
         let props: any;
 
         if (typeof index === 'number') {

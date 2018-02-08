@@ -35,7 +35,7 @@ export class FilterManager {
 
     public static QUICK_FILTER_SEPARATOR = '\n';
 
-    private allFilters: {[p:string]:FilterWrapper} = {};
+    private allFilters: {[p: string]: FilterWrapper} = {};
     private quickFilter: string = null;
 
     private advancedFilterPresent: boolean;
@@ -55,7 +55,7 @@ export class FilterManager {
 
 
     public setFilterModel(model: any) {
-        let allPromises:Promise<IFilterComp> [] = [];
+        let allPromises: Promise<IFilterComp> [] = [];
         if (model) {
             // mark the filters as we set them, so any active filters left over we stop
             let modelKeys = Object.keys(model);
@@ -125,7 +125,7 @@ export class FilterManager {
     private setAdvancedFilterPresent() {
         let atLeastOneActive = false;
 
-        _.iterateObject(this.allFilters, function (key, filterWrapper:FilterWrapper) {
+        _.iterateObject(this.allFilters, function (key, filterWrapper: FilterWrapper) {
             if (filterWrapper.filterPromise.resolveNow(false, filter=>filter.isFilterActive())) {
                 atLeastOneActive = true;
             }
@@ -134,8 +134,8 @@ export class FilterManager {
         this.advancedFilterPresent = atLeastOneActive;
     }
 
-    private updateFilterFlagInColumns(source:ColumnEventType): void {
-        _.iterateObject(this.allFilters, function (key, filterWrapper:FilterWrapper) {
+    private updateFilterFlagInColumns(source: ColumnEventType): void {
+        _.iterateObject(this.allFilters, function (key, filterWrapper: FilterWrapper) {
             let filterActive = filterWrapper.filterPromise.resolveNow(false, filter=>filter.isFilterActive());
             filterWrapper.column.setFilterActive(filterActive, source);
         });
@@ -158,7 +158,7 @@ export class FilterManager {
                 continue;
             }
 
-            let filter:IFilterComp = filterWrapper.filterPromise.resolveNow(undefined, filter=>filter);
+            let filter: IFilterComp = filterWrapper.filterPromise.resolveNow(undefined, filter=>filter);
 
             // if filter not yet there, continue
             if (filter === undefined) {
@@ -220,7 +220,7 @@ export class FilterManager {
         this.updateFilterFlagInColumns("filterChanged");
         this.checkExternalFilter();
 
-        _.iterateObject(this.allFilters, function (key, filterWrapper:FilterWrapper) {
+        _.iterateObject(this.allFilters, function (key, filterWrapper: FilterWrapper) {
             filterWrapper.filterPromise.then(filter=>{
                 if (filter.onAnyFilterChanged) {
                     filter.onAnyFilterChanged();
@@ -364,13 +364,13 @@ export class FilterManager {
         };
     }
 
-    public getFilterComponent(column: Column):Promise<IFilterComp> {
+    public getFilterComponent(column: Column): Promise<IFilterComp> {
         let filterWrapper = this.getOrCreateFilterWrapper(column);
         return filterWrapper.filterPromise;
     }
 
     public getOrCreateFilterWrapper(column: Column): FilterWrapper {
-        let filterWrapper:FilterWrapper = this.cachedFilter(column);
+        let filterWrapper: FilterWrapper = this.cachedFilter(column);
 
         if (!filterWrapper) {
             filterWrapper = this.createFilterWrapper(column);
@@ -381,17 +381,17 @@ export class FilterManager {
 
     }
 
-    public cachedFilter (column: Column):FilterWrapper{
+    public cachedFilter (column: Column): FilterWrapper{
         return this.allFilters[column.getColId()];
     }
 
-    private createFilterInstance(column: Column, $scope:any): Promise<IFilterComp> {
-        let defaultFilter:string = 'agTextColumnFilter';
+    private createFilterInstance(column: Column, $scope: any): Promise<IFilterComp> {
+        let defaultFilter: string = 'agTextColumnFilter';
 
         if (this.gridOptionsWrapper.isEnterprise()) {
             defaultFilter = 'agSetColumnFilter';
         }
-        let sanitisedColDef:ColDef = _.cloneObject(column.getColDef());
+        let sanitisedColDef: ColDef = _.cloneObject(column.getColDef());
 
         let event: FilterModifiedEvent = {
             type: Events.EVENT_FILTER_MODIFIED,
@@ -484,7 +484,7 @@ export class FilterManager {
 
     // destroys the filter, so it not longer takes part
     public destroyFilter(column: Column, source: ColumnEventType = "api"): void {
-        let filterWrapper:FilterWrapper = this.allFilters[column.getColId()];
+        let filterWrapper: FilterWrapper = this.allFilters[column.getColId()];
         if (filterWrapper) {
             this.disposeFilterWrapper(filterWrapper, source);
             this.onFilterChanged();

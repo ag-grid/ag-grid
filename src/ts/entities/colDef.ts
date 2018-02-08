@@ -94,7 +94,7 @@ export interface ColDef extends AbstractColDef {
     tooltipField?: string;
 
     /** The function used to calculate the tooltip of the object, tooltipField takes precedence*/
-    tooltip?: (params:TooltipParams)=>string;
+    tooltip?: (params: TooltipParams)=>string;
 
     /** Expression or function to get the cells value. */
     valueGetter?: ((params: ValueGetterParams) => any) | string;
@@ -116,22 +116,22 @@ export interface ColDef extends AbstractColDef {
     maxWidth?: number;
 
     /** Class to use for the cell. Can be string, array of strings, or function. */
-    cellClass?: string | string[]| ((cellClassParams:CellClassParams) => string | string[]);
+    cellClass?: string | string[]| ((cellClassParams: CellClassParams) => string | string[]);
 
     /** An object of css values. Or a function returning an object of css values. */
-    cellStyle?: {} | ((params:any) => {});
+    cellStyle?: {} | ((params: any) => {});
 
     /** A function for rendering a cell. */
     cellRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
     cellRendererFramework?: any;
     cellRendererParams?: any;
-    cellRendererSelector?: (params:DynamicComponentParams)=>DynamicComponentDef;
+    cellRendererSelector?: (params: DynamicComponentParams)=>DynamicComponentDef;
 
     /** Cell editor */
     cellEditor?: {new(): ICellEditorComp} | string ;
     cellEditorFramework?: any;
     cellEditorParams?: any;
-    cellEditorSelector?: (params:DynamicComponentParams)=>DynamicComponentDef;
+    cellEditorSelector?: (params: DynamicComponentParams)=>DynamicComponentDef;
 
     /** A function for rendering a pinned row cell. */
     pinnedRowCellRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
@@ -189,7 +189,7 @@ export interface ColDef extends AbstractColDef {
 
     /** The menu tabs to show, and in which order, the valid values for this property are:
      * filterMenuTab, generalMenuTab, columnsMenuTab **/
-    menuTabs?:string[]
+    menuTabs?: string[]
 
     /** Set to true if no sorting should be done for this column. */
     suppressSorting?: boolean;
@@ -305,8 +305,8 @@ export interface ColDef extends AbstractColDef {
 
     /** The custom header component to be used for rendering the floating filter. If none specified the default ag-Grid is used**/
     floatingFilterComponent?: {new(): IFloatingFilterComp<any, any, any>};
-    floatingFilterComponentParams?:any;
-    floatingFilterComponentFramework?:{new (): any};
+    floatingFilterComponentParams?: any;
+    floatingFilterComponentFramework?: {new (): any};
 
     refData?: {[key: string]: string};
 }

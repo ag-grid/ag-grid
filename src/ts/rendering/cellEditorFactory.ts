@@ -29,9 +29,9 @@ export class CellEditorFactory {
     //     });
     // }
 
-    public createCellEditor(column:ColDef, params: ICellEditorParams): Promise<ICellEditorComp> {
+    public createCellEditor(column: ColDef, params: ICellEditorParams): Promise<ICellEditorComp> {
 
-        let cellEditorPromise:Promise<ICellEditorComp> = this.componentResolver.createAgGridComponent (
+        let cellEditorPromise: Promise<ICellEditorComp> = this.componentResolver.createAgGridComponent (
             column,
             params,
             'cellEditor',

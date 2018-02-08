@@ -12,13 +12,13 @@ import {IAfterGuiAttachedParams} from "../interfaces/iComponent";
 export class StandardMenuFactory implements IMenuFactory {
 
     @Autowired('eventService')
-    private eventService:EventService;
+    private eventService: EventService;
     @Autowired('filterManager')
-    private filterManager:FilterManager;
+    private filterManager: FilterManager;
     @Autowired('popupService')
-    private popupService:PopupService;
+    private popupService: PopupService;
     @Autowired('gridOptionsWrapper')
-    private gridOptionsWrapper:GridOptionsWrapper;
+    private gridOptionsWrapper: GridOptionsWrapper;
 
     private hidePopup: ()=> void;
 
@@ -28,7 +28,7 @@ export class StandardMenuFactory implements IMenuFactory {
         }
     }
 
-    public showMenuAfterMouseEvent(column:Column, mouseEvent:MouseEvent|Touch): void {
+    public showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent|Touch): void {
         this.showPopup(column, (eMenu: HTMLElement) => {
             this.popupService.positionPopupUnderMouseEvent({
                 column: column,
@@ -48,7 +48,7 @@ export class StandardMenuFactory implements IMenuFactory {
     }
 
     public showPopup(column: Column,  positionCallback: (eMenu: HTMLElement)=>void): void {
-        let filterWrapper:FilterWrapper = this.filterManager.getOrCreateFilterWrapper(column);
+        let filterWrapper: FilterWrapper = this.filterManager.getOrCreateFilterWrapper(column);
 
         let eMenu = document.createElement('div');
         _.addCssClass(eMenu, 'ag-menu');

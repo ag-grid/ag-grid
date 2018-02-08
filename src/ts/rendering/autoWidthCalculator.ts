@@ -9,7 +9,7 @@ import {Component} from "../widgets/component";
 import {HeaderGroupWrapperComp} from "../headerRendering/headerGroup/headerGroupWrapperComp";
 
 export interface GuiProvider {
-    ():HTMLElement
+    (): HTMLElement
 }
 
 @Bean('autoWidthCalculator')
@@ -66,7 +66,7 @@ export class AutoWidthCalculator {
 
     private getHeaderCellForColumn(column: Column): HTMLElement {
 
-        let comp : Component = null;
+        let comp: Component = null;
 
         // find the rendered header cell
         this.headerRenderer.forEachHeaderElement( headerElement => {

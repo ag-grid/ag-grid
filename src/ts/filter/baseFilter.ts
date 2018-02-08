@@ -12,10 +12,10 @@ import {INumberFilterParams, ITextFilterParams} from "./textFilter";
 
 
 export interface Comparator<T>{
-    (left:T, right:T):number
+    (left: T, right: T): number
 }
 
-const DEFAULT_TRANSLATIONS : {[name:string]:string}= {
+const DEFAULT_TRANSLATIONS: {[name: string]: string}= {
     loadingOoo:'Loading...',
     equals:'Equals',
     notEqual:'Not equal',
@@ -64,8 +64,8 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
     filterParams: P;
     clearActive: boolean;
     applyActive: boolean;
-    defaultFilter:string;
-    filter:string;
+    defaultFilter: string;
+    filter: string;
 
     @QuerySelector('#applyPanel')
     private eButtonsPanel: HTMLElement;
@@ -129,17 +129,17 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
 
     public abstract customInit(): void;
     public abstract isFilterActive(): boolean;
-    public abstract modelFromFloatingFilter(from:string): M;
+    public abstract modelFromFloatingFilter(from: string): M;
     public abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
     public abstract bodyTemplate(): string;
     public abstract resetState(): void;
     public abstract serialize(): M;
-    public abstract parse(toParse:M): void;
+    public abstract parse(toParse: M): void;
     public abstract refreshFilterBodyUi(): void;
     public abstract initialiseFilterBodyUi(): void;
 
 
-    public floatingFilter(from:string): void{
+    public floatingFilter(from: string): void{
         if (from !== ''){
             let model: M = this.modelFromFloatingFilter(from);
             this.setModel(model);
@@ -177,12 +177,12 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
         this.refreshFilterBodyUi();
     }
 
-    private doOnFilterChanged (applyNow:boolean = false):boolean{
+    private doOnFilterChanged (applyNow: boolean = false): boolean{
         this.filterParams.filterModifiedCallback();
         let requiresApplyAndIsApplying: boolean = this.applyActive && applyNow;
         let notRequiresApply: boolean = !this.applyActive;
 
-        let shouldFilter:boolean = notRequiresApply || requiresApplyAndIsApplying;
+        let shouldFilter: boolean = notRequiresApply || requiresApplyAndIsApplying;
         if (shouldFilter) {
             this.filterParams.filterChangedCallback();
         }
@@ -190,24 +190,24 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
         return shouldFilter;
     }
 
-    public onFilterChanged ():void{
+    public onFilterChanged (): void{
         this.doOnFilterChanged();
     }
 
-    public onFloatingFilterChanged (change:FloatingFilterChange):boolean{
+    public onFloatingFilterChanged (change: FloatingFilterChange): boolean{
         //It has to be of the type FloatingFilterWithApplyChange if it gets here
-        let casted:BaseFloatingFilterChange<M> = <BaseFloatingFilterChange<M>>change;
+        let casted: BaseFloatingFilterChange<M> = <BaseFloatingFilterChange<M>>change;
         this.setModel(casted ? casted.model : null);
         return this.doOnFilterChanged(casted ? casted.apply : false);
     }
 
-    public generateFilterHeader():string{
+    public generateFilterHeader(): string{
         return '';
     }
 
     private generateTemplate(): string {
         let translate = this.translate.bind(this);
-        let body:string = this.bodyTemplate();
+        let body: string = this.bodyTemplate();
 
         return `<div>
                     ${this.generateFilterHeader()}
@@ -219,7 +219,7 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
                 </div>`;
     }
 
-    public translate(toTranslate:string):string {
+    public translate(toTranslate: string): string {
         let translate = this.gridOptionsWrapper.getLocaleTextFunc();
         return translate(toTranslate, DEFAULT_TRANSLATIONS[toTranslate]);
     }
@@ -245,7 +245,7 @@ export abstract class ComparableBaseFilter<T, P extends IFilterParams, M> extend
     public abstract getApplicableFilterTypes(): string[];
     public abstract filterValues(): T | T[];
 
-    public init(params:P){
+    public init(params: P){
         super.init(params);
         this.addDestroyableEventListener(this.eTypeSelector, "change", this.onFilterTypeChanged.bind(this));
     }
@@ -281,7 +281,7 @@ export abstract class ComparableBaseFilter<T, P extends IFilterParams, M> extend
         this.setFilterType(this.filter);
     }
 
-    public abstract getDefaultType ():string;
+    public abstract getDefaultType (): string;
 
     private onFilterTypeChanged (): void{
         this.filter = this.eTypeSelector.value;
@@ -299,21 +299,21 @@ export abstract class ComparableBaseFilter<T, P extends IFilterParams, M> extend
         }
     }
 
-    public setFilterType (filterType:string):void{
+    public setFilterType (filterType: string): void{
         this.filter = filterType;
         this.eTypeSelector.value = filterType;
     }
 }
 
 export interface NullComparator{
-    equals?:boolean
-    lessThan?:boolean
-    greaterThan?:boolean
+    equals?: boolean
+    lessThan?: boolean
+    greaterThan?: boolean
 }
 
 export interface IScalarFilterParams extends IFilterParams{
-    inRangeInclusive?:boolean
-    nullComparator?:NullComparator
+    inRangeInclusive?: boolean
+    nullComparator?: NullComparator
 }
 
 /**
@@ -321,7 +321,7 @@ export interface IScalarFilterParams extends IFilterParams{
  * ComparableBaseFilter)
  */
 export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> extends ComparableBaseFilter<T, P, M>{
-    static readonly DEFAULT_NULL_COMPARATOR:NullComparator = {
+    static readonly DEFAULT_NULL_COMPARATOR: NullComparator = {
         equals: false,
         lessThan: false,
         greaterThan: false
@@ -330,8 +330,8 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
     public abstract comparator(): Comparator<T>;
 
 
-    private nullComparator (type:string):Comparator<T>{
-        return (filterValue:T, gridValue:T):number => {
+    private nullComparator (type: string): Comparator<T>{
+        return (filterValue: T, gridValue: T): number => {
             if (gridValue == null){
                 let nullValue = this.translateNull (type);
                 if (this.filter === BaseFilter.EQUALS){
@@ -359,7 +359,7 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
                 }
             }
 
-            let actualComparator:Comparator<T> = this.comparator();
+            let actualComparator: Comparator<T> = this.comparator();
             return actualComparator (filterValue, gridValue);
         }
     }
@@ -368,8 +368,8 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
         return BaseFilter.EQUALS;
     }
 
-    private translateNull(type:string): boolean {
-        let reducedType:string =
+    private translateNull(type: string): boolean {
+        let reducedType: string =
             type.indexOf('greater') > -1 ? 'greaterThan':
             type.indexOf('lessThan') > -1 ? 'lessThan':
             'equals';
@@ -382,11 +382,11 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
-        let value:any = this.filterParams.valueGetter(params.node);
+        let value: any = this.filterParams.valueGetter(params.node);
         let comparator: Comparator<T> = this.nullComparator (this.filter);
 
-        let rawFilterValues : T[] | T= this.filterValues();
-        let from : T= Array.isArray(rawFilterValues) ? rawFilterValues[0]: rawFilterValues;
+        let rawFilterValues: T[] | T= this.filterValues();
+        let from: T= Array.isArray(rawFilterValues) ? rawFilterValues[0]: rawFilterValues;
         if (from == null) return true;
 
         let compareResult = comparator(from, value);

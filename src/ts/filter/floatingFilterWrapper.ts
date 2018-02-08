@@ -11,13 +11,13 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {Beans} from "../rendering/beans";
 
 export interface IFloatingFilterWrapperParams<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> {
-    column:Column;
-    floatingFilterComp:Promise<IFloatingFilterComp<M, F, P>>;
+    column: Column;
+    floatingFilterComp: Promise<IFloatingFilterComp<M, F, P>>;
     suppressFilterButton: boolean;
 }
 
 export interface IFloatingFilterWrapper <M>{
-    onParentModelChanged(parentModel:M):void;
+    onParentModelChanged(parentModel: M): void;
 }
 
 export interface IFloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends IFloatingFilterWrapper<M>, IComponent<P> { }
@@ -29,11 +29,11 @@ export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, P
 
     column: Column;
 
-    init (params:P):void | Promise<void>{
+    init (params: P): void | Promise<void>{
         this.column = params.column;
 
 
-        let base:HTMLElement = _.loadTemplate(`<div class="ag-header-cell" aria-hidden="true"><div class="ag-floating-filter-body" aria-hidden="true"></div></div>`);
+        let base: HTMLElement = _.loadTemplate(`<div class="ag-header-cell" aria-hidden="true"><div class="ag-floating-filter-body" aria-hidden="true"></div></div>`);
         this.enrichBody(base);
 
         this.setTemplateFromElement(base);
@@ -44,8 +44,8 @@ export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, P
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
     }
 
-    abstract onParentModelChanged(parentModel:M):void;
-    abstract enrichBody(body:HTMLElement):void;
+    abstract onParentModelChanged(parentModel: M): void;
+    abstract enrichBody(body: HTMLElement): void;
 
 
     private setupWidth(): void {
@@ -69,8 +69,8 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
     @Autowired('gridOptionsWrapper')
     private gridOptionsWrapper: GridOptionsWrapper;
 
-    floatingFilterCompPromise:Promise<IFloatingFilterComp<M, F, PC>>;
-    suppressFilterButton:boolean;
+    floatingFilterCompPromise: Promise<IFloatingFilterComp<M, F, PC>>;
+    suppressFilterButton: boolean;
 
 
     init(params: P): void{
@@ -83,15 +83,15 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
 
     }
 
-    private addEventListeners ():void{
+    private addEventListeners (): void{
         if (!this.suppressFilterButton && this.eButtonShowMainFilter){
             this.addDestroyableEventListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
         }
     }
 
-    enrichBody(body:HTMLElement):void{
+    enrichBody(body: HTMLElement): void{
         this.floatingFilterCompPromise.then(floatingFilterComp=>{
-            let floatingFilterBody:HTMLElement = <HTMLElement>body.querySelector('.ag-floating-filter-body');
+            let floatingFilterBody: HTMLElement = <HTMLElement>body.querySelector('.ag-floating-filter-body');
             let floatingFilterCompUi = floatingFilterComp.getGui();
             if (this.suppressFilterButton){
                 floatingFilterBody.appendChild(floatingFilterCompUi);
@@ -115,7 +115,7 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
         });
     }
 
-    onParentModelChanged(parentModel:M):void{
+    onParentModelChanged(parentModel: M): void{
         this.floatingFilterCompPromise.then(floatingFilterComp=>{
             floatingFilterComp.onParentModelChanged(parentModel);
         })
@@ -128,10 +128,10 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
 }
 
 export class EmptyFloatingFilterWrapperComp extends BaseFilterWrapperComp<any, any, any, any> {
-    enrichBody(body:HTMLElement):void{
+    enrichBody(body: HTMLElement): void{
 
     }
 
-    onParentModelChanged(parentModel:any):void{
+    onParentModelChanged(parentModel: any): void{
     }
 }

@@ -37,7 +37,7 @@ export function initialiseAgGridWithWebComponents() {
 
     let agGridProtoNoType = <any> AgileGridProto;
 
-    agGridProtoNoType.__agGridSetProperty = function (key:string, value:any) {
+    agGridProtoNoType.__agGridSetProperty = function (key: string, value: any) {
         if (!this.__attributes) {
             this.__attributes = {};
         }
@@ -48,13 +48,13 @@ export function initialiseAgGridWithWebComponents() {
         this.onChange(changeObject);
     };
 
-    agGridProtoNoType.onChange = function (changes:any) {
+    agGridProtoNoType.onChange = function (changes: any) {
         if (this._initialised) {
             ComponentUtil.processOnChange(changes, this._gridOptions, this.api, this.columnApi);
         }
     };
 
-    agGridProtoNoType.__agGridGetProperty = function (key:string) {
+    agGridProtoNoType.__agGridGetProperty = function (key: string) {
         if (!this.__attributes) {
             this.__attributes = {};
         }

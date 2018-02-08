@@ -48,7 +48,7 @@ export interface ExcelStyle {
     interior?: ExcelInterior
     numberFormat?: ExcelNumberFormat
     protection?: ExcelProtection
-    dataType?:string
+    dataType?: string
 }
 
 export interface ExcelProtection {
@@ -91,12 +91,12 @@ export interface ExcelFont {
     italic: boolean,
     outline: boolean,
     shadow: boolean,
-    size:number,
-    strikeThrough:boolean,
-    underline:string,
-    verticalAlign:string,
-    charSet:number,
-    family:string
+    size: number,
+    strikeThrough: boolean,
+    underline: string,
+    verticalAlign: string,
+    charSet: number,
+    family: string
 }
 
 export interface ExcelInterior {
@@ -106,11 +106,11 @@ export interface ExcelInterior {
 }
 
 export interface ExcelExportParams extends ExportParams<ExcelCell[][]>{
-    sheetName?:string;
+    sheetName?: string;
 }
 
 export interface IExcelCreator{
     exportDataAsExcel (params?: ExcelExportParams): void ;
 
-    getDataAsExcelXml (params?: ExcelExportParams) : string ;
+    getDataAsExcelXml (params?: ExcelExportParams): string ;
 }

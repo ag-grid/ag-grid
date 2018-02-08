@@ -5,7 +5,7 @@ import {ChangedPath} from "../rowModels/inMemory/changedPath";
 export interface StageExecuteParams {
     rowNode: RowNode;
     rowNodeTransaction?: RowNodeTransaction;
-    rowNodeOrder?: {[id:string]:number};
+    rowNodeOrder?: {[id: string]: number};
     changedPath?: ChangedPath;
 }
 

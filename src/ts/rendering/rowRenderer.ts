@@ -748,8 +748,8 @@ export class RowRenderer extends BeanStub {
     //    and then ctrl+c, nothing will happen if cell is removed from dom.
     private keepRowBecauseEditing(rowComp: RowComp): boolean {
 
-        let REMOVE_ROW : boolean = false;
-        let KEEP_ROW : boolean = true;
+        let REMOVE_ROW: boolean = false;
+        let KEEP_ROW: boolean = true;
         let rowNode = rowComp.getRowNode();
 
         let rowHasFocus = this.focusedCellController.isRowNodeFocused(rowNode);
@@ -1095,11 +1095,11 @@ export class RowRenderer extends BeanStub {
 }
 
 export interface RefreshViewParams {
-    recycleRows?:boolean;
-    animate?:boolean;
-    suppressKeepFocus?:boolean;
-    onlyBody?:boolean;
+    recycleRows?: boolean;
+    animate?: boolean;
+    suppressKeepFocus?: boolean;
+    onlyBody?: boolean;
     // when new data, grid scrolls back to top
-    newData?:boolean;
-    newPage?:boolean;
+    newData?: boolean;
+    newPage?: boolean;
 }

@@ -485,7 +485,7 @@ export class RowNode implements IEventEmitter {
         let atLeastOneDeSelected = false;
         let atLeastOneMixed = false;
 
-        let newSelectedValue:boolean;
+        let newSelectedValue: boolean;
         if (this.childrenAfterGroup) {
             for (let i = 0; i < this.childrenAfterGroup.length; i++) {
                 let childState = this.childrenAfterGroup[i].isSelected();

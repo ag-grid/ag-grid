@@ -154,8 +154,8 @@ export interface GridOptions {
     //This is an array of ExcelStyle, but because that class lives on the enterprise project is referenced as any from the client project
     excelStyles?: any[];
     floatingFilter?: boolean;
-    suppressExcelExport?:boolean;
-    suppressCsvExport?:boolean;
+    suppressExcelExport?: boolean;
+    suppressCsvExport?: boolean;
 
     // these should really be deprecated, as the user should be using the default
     // column definitions for specifying column defaults.
@@ -255,10 +255,10 @@ export interface GridOptions {
 
     // callbacks
     paginationNumberFormatter?: (params: PaginationNumberFormatterParams)=>string;
-    postProcessPopup?:(params: PostProcessPopupParams)=>void;
-    frameworkComponents?:{[p:string]:{new(): any}}
-    components?:{[p:string]:AgGridRegisteredComponentInput<IComponent<any>>}
-    dateComponent?:{new(): IDateComp};
+    postProcessPopup?: (params: PostProcessPopupParams)=>void;
+    frameworkComponents?: {[p: string]: {new(): any}}
+    components?: {[p: string]: AgGridRegisteredComponentInput<IComponent<any>>}
+    dateComponent?: {new(): IDateComp};
     dateComponentFramework?: any;
     groupRowRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
     groupRowRendererFramework?: any;

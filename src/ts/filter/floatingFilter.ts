@@ -21,7 +21,7 @@ export interface IFloatingFilterParams<M, F extends FloatingFilterChange> {
     currentParentModel: () => M;
     suppressFilterButton: boolean;
     debounceMs?: number;
-    api:GridApi;
+    api: GridApi;
 }
 
 export interface IFloatingFilter<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> {

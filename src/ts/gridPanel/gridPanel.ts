@@ -1441,8 +1441,8 @@ export class GridPanel extends BeanStub {
 
         let totalHeaderHeight: number;
         let numberOfFloating = 0;
-        let groupHeight:number;
-        let headerHeight:number;
+        let groupHeight: number;
+        let headerHeight: number;
         if (!this.columnController.isPivotMode()){
             _.removeCssClass(this.eHeader, 'ag-pivot-on');
             _.addCssClass(this.eHeader, 'ag-pivot-off');

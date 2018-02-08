@@ -348,7 +348,7 @@ export class RowComp extends Component {
         }
     }
 
-    private createFullWidthRows(type: string, name:string): void {
+    private createFullWidthRows(type: string, name: string): void {
 
         this.fullWidthRow = true;
         this.fullWidthRowEmbedded = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
@@ -613,8 +613,8 @@ export class RowComp extends Component {
     private isCellEligibleToBeRemoved(indexStr: string): boolean {
         let displayedColumns = this.beans.columnController.getAllDisplayedColumns();
 
-        let REMOVE_CELL : boolean = true;
-        let KEEP_CELL : boolean = false;
+        let REMOVE_CELL: boolean = true;
+        let KEEP_CELL: boolean = false;
         let renderedCell = this.cellComps[indexStr];
 
         if (!renderedCell) { return REMOVE_CELL; }
@@ -930,10 +930,10 @@ export class RowComp extends Component {
         let res: string[] = [];
 
         this.processRowClassRules(
-            (className:string)=>{
+            (className: string)=>{
                 res.push(className);
             },
-            (className:string)=>{
+            (className: string)=>{
                 // not catered for, if creating, no need
                 // to remove class as it was never there
             }
@@ -942,7 +942,7 @@ export class RowComp extends Component {
         return res;
     }
 
-    private processRowClassRules(onApplicableClass:(className:string)=>void, onNotApplicableClass?:(className:string)=>void): void {
+    private processRowClassRules(onApplicableClass: (className: string)=>void, onNotApplicableClass?: (className: string)=>void): void {
         this.beans.stylingService.processClassRules(
             this.beans.gridOptionsWrapper.rowClassRules(),
             {
@@ -1015,10 +1015,10 @@ export class RowComp extends Component {
 
     private postProcessRowClassRules(): void {
         this.processRowClassRules(
-            (className:string)=>{
+            (className: string)=>{
                 this.eAllRowContainers.forEach( row => _.addCssClass(row, className));
             },
-            (className:string)=>{
+            (className: string)=>{
                 this.eAllRowContainers.forEach( row => _.removeCssClass(row, className));
             }
         );
