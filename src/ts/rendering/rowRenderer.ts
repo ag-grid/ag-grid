@@ -29,6 +29,7 @@ import { PinnedRowModel } from "../rowModels/pinnedRowModel";
 import { Beans } from "./beans";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { HeightScaler } from "./heightScaler";
+import {Grid} from "../grid";
 
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {
@@ -865,13 +866,23 @@ export class RowRenderer extends BeanStub {
             return;
         }
 
+        this.ensureCellVisible(nextCell);
+
+        this.focusedCellController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.floating, true);
+        if (this.rangeController) {
+            let gridCell = new GridCell({ rowIndex: nextCell.rowIndex, floating: nextCell.floating, column: nextCell.column });
+            this.rangeController.setRangeToCell(gridCell);
+        }
+    }
+
+    public ensureCellVisible(gridCell: GridCell): void {
         // this scrolls the row into view
-        if (_.missing(nextCell.floating)) {
-            this.gridPanel.ensureIndexVisible(nextCell.rowIndex);
+        if (_.missing(gridCell.floating)) {
+            this.gridPanel.ensureIndexVisible(gridCell.rowIndex);
         }
 
-        if (!nextCell.column.isPinned()) {
-            this.gridPanel.ensureColumnVisible(nextCell.column);
+        if (!gridCell.column.isPinned()) {
+            this.gridPanel.ensureColumnVisible(gridCell.column);
         }
 
         // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
@@ -880,12 +891,6 @@ export class RowRenderer extends BeanStub {
 
         // need to flush frames, to make sure the correct cells are rendered
         this.animationFrameService.flushAllFrames();
-
-        this.focusedCellController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.floating, true);
-        if (this.rangeController) {
-            let gridCell = new GridCell({ rowIndex: nextCell.rowIndex, floating: nextCell.floating, column: nextCell.column });
-            this.rangeController.setRangeToCell(gridCell);
-        }
     }
 
     public startEditingCell(gridCell: GridCell, keyPress: number, charPress: string): void {
