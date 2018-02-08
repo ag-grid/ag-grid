@@ -214,7 +214,7 @@ export class CellNavigationService {
             return this.getNextTabbedCellForwards(gridCell);
         }
     }
-    
+
     public getNextTabbedCellForwards(gridCell: GridCell): GridCell {
 
         let displayedColumns = this.columnController.getAllDisplayedColumns();

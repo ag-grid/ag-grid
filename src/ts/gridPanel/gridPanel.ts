@@ -358,7 +358,7 @@ export class GridPanel extends BeanStub {
                 if (!clickInsideGrid) {
                     this.rowRenderer.stopEditing();
                 }
-            })
+            });
         }
     }
 
@@ -522,7 +522,6 @@ export class GridPanel extends BeanStub {
         }
     }
 
-
     // gets called by rowRenderer when new data loaded, as it will want to scroll
     // to the top
     public scrollToTop(): void {
@@ -532,7 +531,7 @@ export class GridPanel extends BeanStub {
     }
 
     private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        if (!this.mouseEventService.isEventFromThisGrid(mouseEvent)) return;
+        if (!this.mouseEventService.isEventFromThisGrid(mouseEvent)) { return; }
         if (_.isStopPropagationForAgGrid(mouseEvent)) { return; }
 
         let rowComp = this.getRowForEvent(mouseEvent);
@@ -541,8 +540,8 @@ export class GridPanel extends BeanStub {
         if (eventName === "contextmenu") {
             this.handleContextMenuMouseEvent(mouseEvent, null, rowComp, cellComp);
         } else {
-            if (cellComp) cellComp.onMouseEvent(eventName, mouseEvent);
-            if (rowComp) rowComp.onMouseEvent(eventName, mouseEvent);
+            if (cellComp) { cellComp.onMouseEvent(eventName, mouseEvent); }
+            if (rowComp) { rowComp.onMouseEvent(eventName, mouseEvent); }
         }
 
         this.preventDefaultOnContextMenu(mouseEvent);
@@ -638,7 +637,7 @@ export class GridPanel extends BeanStub {
                     }
                 }
             });
-        })
+        });
     }
 
     private onCtrlAndA(event: KeyboardEvent): boolean {
@@ -1281,9 +1280,7 @@ export class GridPanel extends BeanStub {
         if (Math.abs(wheelEvent.pixelX) > Math.abs(wheelEvent.pixelY)) {
             let newLeftPosition = this.eBodyViewport.scrollLeft + wheelEvent.pixelX;
             this.eBodyViewport.scrollLeft = newLeftPosition;
-        }
-        // vertical scroll
-        else {
+        } else {
             let newTopPosition = targetPanel.scrollTop + wheelEvent.pixelY;
             targetPanel.scrollTop = newTopPosition;
         }
@@ -1441,12 +1438,12 @@ export class GridPanel extends BeanStub {
 
         let totalHeaderHeight: number;
         let numberOfFloating = 0;
-        let groupHeight:number;
-        let headerHeight:number;
-        if (!this.columnController.isPivotMode()){
+        let groupHeight: number;
+        let headerHeight: number;
+        if (!this.columnController.isPivotMode()) {
             _.removeCssClass(this.eHeader, 'ag-pivot-on');
             _.addCssClass(this.eHeader, 'ag-pivot-off');
-            if (this.gridOptionsWrapper.isFloatingFilter()){
+            if (this.gridOptionsWrapper.isFloatingFilter()) {
                 headerRowCount ++;
             }
             numberOfFloating = (this.gridOptionsWrapper.isFloatingFilter()) ? 1 : 0;

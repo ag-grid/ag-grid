@@ -26,7 +26,7 @@ export class GridCell {
             rowIndex: this.rowIndex,
             column: this.column,
             floating: this.floating
-        }
+        };
     }
 
     public getGridRow(): GridRow {

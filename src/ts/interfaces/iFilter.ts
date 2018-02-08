@@ -29,7 +29,7 @@ export interface IFilter {
      * associated for this filter, this will happen if you create a custom filter and NOT a custom floating
      * filter.
      */
-    getModelAsString?(model:any): string;
+    getModelAsString?(model: any): string;
 
     /**
      * Optional method used by ag-Grid when rendering floating filters.
@@ -45,7 +45,7 @@ export interface IFilter {
      *
      *     change: The exact same object passed on FloatingFilter.onFloatingFilterChanged
      */
-    onFloatingFilterChanged ?(change:any): void;
+    onFloatingFilterChanged ?(change: any): void;
 }
 
 export interface SerializedFilter {
@@ -57,13 +57,13 @@ export interface IFilterComp extends IFilter, IComponent<IFilterParams> {
 
 export interface IDoesFilterPassParams {
     node: RowNode;
-    data: any
+    data: any;
 }
 
 export interface IFilterParams {
     clearButton?: boolean;
     applyButton?: boolean;
-    newRowsAction?: string
+    newRowsAction?: string;
     column: Column;
     colDef: ColDef;
     rowModel: IRowModel;
@@ -75,5 +75,5 @@ export interface IFilterParams {
     $scope: any;
     filterOptions?: string[];
     defaultOption?: string;
-    textFormatter?: (from:string)=>string;
+    textFormatter?: (from: string)=>string;
 }

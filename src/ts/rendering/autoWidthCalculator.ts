@@ -9,7 +9,7 @@ import {Component} from "../widgets/component";
 import {HeaderGroupWrapperComp} from "../headerRendering/headerGroup/headerGroupWrapperComp";
 
 export interface GuiProvider {
-    ():HTMLElement
+    (): HTMLElement;
 }
 
 @Bean('autoWidthCalculator')
@@ -20,7 +20,6 @@ export class AutoWidthCalculator {
     @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-
     // this is the trick: we create a dummy container and clone all the cells
     // into the dummy, then check the dummy's width. then destroy the dummy
     // as we don't need it any more.
@@ -29,7 +28,7 @@ export class AutoWidthCalculator {
         let eHeaderCell = this.getHeaderCellForColumn(column);
         // cell isn't visible
         if (!eHeaderCell) {
-            return -1; 
+            return -1;
         }
 
         let eDummyContainer = document.createElement('span');
@@ -66,7 +65,7 @@ export class AutoWidthCalculator {
 
     private getHeaderCellForColumn(column: Column): HTMLElement {
 
-        let comp : Component = null;
+        let comp: Component = null;
 
         // find the rendered header cell
         this.headerRenderer.forEachHeaderElement( headerElement => {
@@ -80,7 +79,7 @@ export class AutoWidthCalculator {
 
         return comp ? comp.getGui() : null;
     }
-    
+
     private putRowCellsIntoDummyContainer(column: Column, eDummyContainer: HTMLElement): void {
         let eCells = this.rowRenderer.getAllCellsForColumn(column);
         eCells.forEach( eCell  => this.cloneItemIntoDummy(eCell, eDummyContainer) );

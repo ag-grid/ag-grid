@@ -1142,11 +1142,11 @@ export class GridApi {
 
     /*
     Taking these out, as we want to reconsider how we register components
-    
+
     public addCellRenderer(key: string, cellRenderer: {new(): ICellRenderer} | ICellRendererFunc): void {
         this.cellRendererFactory.addCellRenderer(key, cellRenderer);
     }
-    
+
     public addCellEditor(key: string, cellEditor: {new(): ICellEditor}): void {
         this.cellEditorFactory.addCellEditor(key, cellEditor);
     }*/

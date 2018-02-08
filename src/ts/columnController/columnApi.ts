@@ -21,12 +21,12 @@ export class ColumnApi {
     public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string { return this.columnController.getDisplayNameForColumnGroup(columnGroup, location); }
 
     public getColumn(key: any): Column { return this.columnController.getPrimaryColumn(key); }
-    public setColumnState(columnState: any, source:ColumnEventType): boolean { return this.columnController.setColumnState(columnState, source); }
+    public setColumnState(columnState: any, source: ColumnEventType): boolean { return this.columnController.setColumnState(columnState, source); }
     public getColumnState(): any[] { return this.columnController.getColumnState(); }
-    public resetColumnState(source:ColumnEventType): void { this.columnController.resetColumnState(source); }
-    public getColumnGroupState(): {groupId: string, open: boolean}[] {return this.columnController.getColumnGroupState()}
-    public setColumnGroupState(stateItems: ({groupId: string, open: boolean})[], source: ColumnEventType): void {this.columnController.setColumnGroupState(stateItems, source)}
-    public resetColumnGroupState(source:ColumnEventType): void { this.columnController.resetColumnGroupState(source); }
+    public resetColumnState(source: ColumnEventType): void { this.columnController.resetColumnState(source); }
+    public getColumnGroupState(): {groupId: string, open: boolean}[] {return this.columnController.getColumnGroupState();}
+    public setColumnGroupState(stateItems: ({groupId: string, open: boolean})[], source: ColumnEventType): void {this.columnController.setColumnGroupState(stateItems, source);}
+    public resetColumnGroupState(source: ColumnEventType): void { this.columnController.resetColumnGroupState(source); }
 
     public isPinning(): boolean { return this.columnController.isPinningLeft() || this.columnController.isPinningRight(); }
     public isPinningLeft(): boolean { return this.columnController.isPinningLeft(); }
@@ -61,7 +61,7 @@ export class ColumnApi {
     public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this.columnController.moveRowGroupColumn(fromIndex, toIndex); }
     public setColumnAggFunc(column: Column, aggFunc: string): void { this.columnController.setColumnAggFunc(column, aggFunc); }
     public setColumnWidth(key: string|Column, newWidth: number, finished: boolean = true): void { this.columnController.setColumnWidth(key, newWidth, finished); }
-    public setPivotMode(pivotMode: boolean, source:ColumnEventType = "api"): void { this.columnController.setPivotMode(pivotMode); }
+    public setPivotMode(pivotMode: boolean, source: ColumnEventType = "api"): void { this.columnController.setPivotMode(pivotMode); }
     public isPivotMode(): boolean { return this.columnController.isPivotMode(); }
     public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: string|Column): Column { return this.columnController.getSecondaryPivotColumn(pivotKeys, valueColKey); }
 
@@ -90,15 +90,15 @@ export class ColumnApi {
     public getCenterDisplayedColumnGroups(): ColumnGroupChild[] { return this.columnController.getCenterDisplayedColumnGroups(); }
     public getRightDisplayedColumnGroups(): ColumnGroupChild[] { return this.columnController.getRightDisplayedColumnGroups(); }
     public getAllDisplayedColumnGroups(): ColumnGroupChild[] { return this.columnController.getAllDisplayedColumnGroups(); }
-    public autoSizeColumn(key: string|Column, source:ColumnEventType): void {return this.columnController.autoSizeColumn(key, source); }
-    public autoSizeColumns(keys: (string|Column)[], source:ColumnEventType): void {return this.columnController.autoSizeColumns(keys, source); }
-    public autoSizeAllColumns(source:ColumnEventType): void { this.columnController.autoSizeAllColumns(source); }
+    public autoSizeColumn(key: string|Column, source: ColumnEventType): void {return this.columnController.autoSizeColumn(key, source); }
+    public autoSizeColumns(keys: (string|Column)[], source: ColumnEventType): void {return this.columnController.autoSizeColumns(keys, source); }
+    public autoSizeAllColumns(source: ColumnEventType): void { this.columnController.autoSizeAllColumns(source); }
 
-    public setSecondaryColumns(colDefs: (ColDef|ColGroupDef)[], source:ColumnEventType): void { this.columnController.setSecondaryColumns(colDefs, source); }
+    public setSecondaryColumns(colDefs: (ColDef|ColGroupDef)[], source: ColumnEventType): void { this.columnController.setSecondaryColumns(colDefs, source); }
 
     // below goes through deprecated items, prints message to user, then calls the new version of the same method
 
-    public columnGroupOpened(group: OriginalColumnGroup|string, newValue: boolean, source:ColumnEventType): void {
+    public columnGroupOpened(group: OriginalColumnGroup|string, newValue: boolean, source: ColumnEventType): void {
         console.error('ag-Grid: columnGroupOpened no longer exists, use setColumnGroupOpened');
         this.setColumnGroupOpened(group, newValue, source);
     }
@@ -111,7 +111,7 @@ export class ColumnApi {
         this.columnController.setColumnVisible(colId, !hide, source);
     }
 
-    public setState(columnState: any, source:ColumnEventType): boolean {
+    public setState(columnState: any, source: ColumnEventType): boolean {
         console.error('ag-Grid: setState is deprecated, use setColumnState');
         return this.setColumnState(columnState, source);
     }
@@ -119,7 +119,7 @@ export class ColumnApi {
         console.error('ag-Grid: getState is deprecated, use getColumnState');
         return this.getColumnState();
     }
-    public resetState(source:ColumnEventType): void {
+    public resetState(source: ColumnEventType): void {
         console.error('ag-Grid: resetState is deprecated, use resetColumnState');
         this.resetColumnState(source);
     }

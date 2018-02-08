@@ -187,7 +187,7 @@ export class NavigationService {
         let leftKey = key === Constants.KEY_LEFT;
 
         let allColumns: Column[] = this.columnController.getAllDisplayedColumns();
-        let columnToSelect : Column = leftKey ? allColumns[0]: allColumns[allColumns.length - 1];
+        let columnToSelect: Column = leftKey ? allColumns[0]: allColumns[allColumns.length - 1];
 
         this.navigateTo(gridCell.rowIndex, null, columnToSelect, gridCell.rowIndex, columnToSelect);
     }

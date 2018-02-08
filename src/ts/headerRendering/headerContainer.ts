@@ -28,7 +28,7 @@ export class HeaderContainer {
     private eRoot: HTMLElement;
 
     private headerRowComps: HeaderRowComp[] = [];
-    
+
     private pinned: string;
 
     private dropTarget: DropTarget;
@@ -106,7 +106,7 @@ export class HeaderContainer {
     public refresh(): void {
         this.onGridColumnsChanged();
     }
-    
+
     private setupDragAndDrop(): void {
         let dropContainer = this.eViewport ? this.eViewport : this.eContainer;
         let bodyDropTarget = new BodyDropTarget(this.pinned, dropContainer);
@@ -125,7 +125,7 @@ export class HeaderContainer {
         // if we are displaying header groups, then we have many rows here.
         // go through each row of the header, one by one.
         let rowCount = this.columnController.getHeaderRowCount();
-        
+
         for (let dept = 0; dept<rowCount; dept++) {
             let groupRow = dept !== (rowCount - 1);
             let type = groupRow ? HeaderRowType.COLUMN_GROUP : HeaderRowType.COLUMN;

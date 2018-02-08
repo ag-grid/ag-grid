@@ -84,5 +84,5 @@ export class BodyDropPivotTarget implements DropListener {
             this.columnController.addPivotColumns(this.columnsToPivot, "toolPanelDragAndDrop");
         }
     }
-    
+
 }

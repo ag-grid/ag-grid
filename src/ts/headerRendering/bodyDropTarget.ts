@@ -48,7 +48,7 @@ export class BodyDropTarget implements DropTarget {
     public getSecondaryContainers(): HTMLElement[] {
         return this.eSecondaryContainers;
     }
-    
+
     public getContainer(): HTMLElement {
         return this.eContainer;
     }

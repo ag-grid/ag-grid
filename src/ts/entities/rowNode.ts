@@ -371,7 +371,7 @@ export class RowNode implements IEventEmitter {
         }
 
         let event: RowGroupOpenedEvent = this.createGlobalRowEvent(Events.EVENT_ROW_GROUP_OPENED);
-        this.mainEventService.dispatchEvent(event)
+        this.mainEventService.dispatchEvent(event);
     }
 
     private createGlobalRowEvent(type: string): RowEvent {
@@ -485,7 +485,7 @@ export class RowNode implements IEventEmitter {
         let atLeastOneDeSelected = false;
         let atLeastOneMixed = false;
 
-        let newSelectedValue:boolean;
+        let newSelectedValue: boolean;
         if (this.childrenAfterGroup) {
             for (let i = 0; i < this.childrenAfterGroup.length; i++) {
                 let childState = this.childrenAfterGroup[i].isSelected();

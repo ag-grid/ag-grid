@@ -52,6 +52,6 @@ export class Constants {
 
     static PINNED_TOP = 'top';
     static PINNED_BOTTOM = 'bottom';
-    
+
 }
 

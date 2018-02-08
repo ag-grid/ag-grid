@@ -24,7 +24,6 @@ import {Beans} from "./beans";
 import {RowComp} from "./rowComp";
 import {RowDragComp} from "./rowDragComp";
 
-
 export class CellComp extends Component {
 
     public static DOM_DATA_KEY_CELL_COMP = 'cellComp';
@@ -174,13 +173,13 @@ export class CellComp extends Component {
         // if not doing enterprise, then range selection service would be missing
         // so need to check before trying to use it
         if (this.rangeSelectionEnabled) {
-            this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this))
+            this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
         }
     }
 
     private onColumnHover(): void {
         let isHovered = this.beans.columnHoverService.isHovered(this.column);
-        _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered)
+        _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
     }
 
     private onCellChanged(event: CellChangedEvent): void {
@@ -585,7 +584,7 @@ export class CellComp extends Component {
         let data = this.rowNode.data;
         if (colDef.tooltipField && _.exists(data)) {
             return _.getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
-        } else if (colDef.tooltip){
+        } else if (colDef.tooltip) {
             return colDef.tooltip({
                 value: this.value,
                 valueFormatted: this.valueFormatted,
@@ -596,7 +595,7 @@ export class CellComp extends Component {
                 $scope: this.scope,
                 context: this.beans.gridOptionsWrapper.getContext(),
                 rowIndex: this.gridCell.rowIndex
-            })
+            });
         } else {
             return null;
         }
@@ -740,7 +739,7 @@ export class CellComp extends Component {
             valueFormatted: this.valueFormatted,
             getValue: this.getValue.bind(this),
             setValue: (value: any) => {
-                this.beans.valueService.setValue(this.rowNode, this.column, value)
+                this.beans.valueService.setValue(this.rowNode, this.column, value);
             },
             formatValue: this.formatValue.bind(this),
             data: this.rowNode.data,

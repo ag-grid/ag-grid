@@ -348,7 +348,7 @@ export class RowComp extends Component {
         }
     }
 
-    private createFullWidthRows(type: string, name:string): void {
+    private createFullWidthRows(type: string, name: string): void {
 
         this.fullWidthRow = true;
         this.fullWidthRowEmbedded = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
@@ -613,8 +613,8 @@ export class RowComp extends Component {
     private isCellEligibleToBeRemoved(indexStr: string): boolean {
         let displayedColumns = this.beans.columnController.getAllDisplayedColumns();
 
-        let REMOVE_CELL : boolean = true;
-        let KEEP_CELL : boolean = false;
+        let REMOVE_CELL: boolean = true;
+        let KEEP_CELL: boolean = false;
         let renderedCell = this.cellComps[indexStr];
 
         if (!renderedCell) { return REMOVE_CELL; }
@@ -695,7 +695,7 @@ export class RowComp extends Component {
         let gow = this.beans.gridOptionsWrapper;
         gow.setDomData(eRowContainer, RowComp.DOM_DATA_KEY_RENDERED_ROW, this);
         this.addDestroyFunc( ()=> {
-            gow.setDomData(eRowContainer, RowComp.DOM_DATA_KEY_RENDERED_ROW, null) }
+            gow.setDomData(eRowContainer, RowComp.DOM_DATA_KEY_RENDERED_ROW, null); }
         );
     }
 
@@ -726,7 +726,7 @@ export class RowComp extends Component {
             api: this.beans.gridOptionsWrapper.getApi(),
             columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
             event: domEvent
-        }
+        };
     }
 
     private createRowEventWithSource(type: string, domEvent: Event): RowEvent {
@@ -738,7 +738,7 @@ export class RowComp extends Component {
         // users to be using this, as the rowComp isn't an object we expose, so would be
         // very surprising if a user was using it.
         (<any>event).source = this;
-        return event
+        return event;
     }
 
     private onRowDblClick(mouseEvent: MouseEvent): void {
@@ -930,10 +930,10 @@ export class RowComp extends Component {
         let res: string[] = [];
 
         this.processRowClassRules(
-            (className:string)=>{
+            (className: string)=> {
                 res.push(className);
             },
-            (className:string)=>{
+            (className: string)=> {
                 // not catered for, if creating, no need
                 // to remove class as it was never there
             }
@@ -942,7 +942,7 @@ export class RowComp extends Component {
         return res;
     }
 
-    private processRowClassRules(onApplicableClass:(className:string)=>void, onNotApplicableClass?:(className:string)=>void): void {
+    private processRowClassRules(onApplicableClass: (className: string)=>void, onNotApplicableClass?: (className: string)=>void): void {
         this.beans.stylingService.processClassRules(
             this.beans.gridOptionsWrapper.rowClassRules(),
             {
@@ -988,9 +988,9 @@ export class RowComp extends Component {
         this.forEachCellComp(renderedCell => {
             let cellStartedEdit = renderedCell === sourceRenderedCell;
             if (cellStartedEdit) {
-                renderedCell.startEditingIfEnabled(keyPress, charPress, cellStartedEdit)
+                renderedCell.startEditingIfEnabled(keyPress, charPress, cellStartedEdit);
             } else {
-                renderedCell.startEditingIfEnabled(null, null, cellStartedEdit)
+                renderedCell.startEditingIfEnabled(null, null, cellStartedEdit);
             }
         });
         this.setEditingRow(true);
@@ -1015,10 +1015,10 @@ export class RowComp extends Component {
 
     private postProcessRowClassRules(): void {
         this.processRowClassRules(
-            (className:string)=>{
+            (className: string)=> {
                 this.eAllRowContainers.forEach( row => _.addCssClass(row, className));
             },
-            (className:string)=>{
+            (className: string)=> {
                 this.eAllRowContainers.forEach( row => _.removeCssClass(row, className));
             }
         );
@@ -1081,7 +1081,6 @@ export class RowComp extends Component {
             console.log('ag-Grid: rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead');
             return;
         }
-
 
         // part 1 - rowStyleFunc
         let rowStyleFunc = this.beans.gridOptionsWrapper.getRowStyleFunc();

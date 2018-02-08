@@ -1,7 +1,6 @@
 import {Utils as _} from '../utils';
 import {IOverlayWrapperComp} from '../rendering/overlays/overlayWrapperComponent';
 
-
 // This should be a component
 export class BorderLayout {
 

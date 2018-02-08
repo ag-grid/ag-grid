@@ -6,12 +6,12 @@ import {ExpressionService} from "../valueService/expressionService";
 export class StylingService {
     @Autowired('expressionService') private expressionService: ExpressionService;
 
-    public processAllCellClasses(colDef:ColDef, params:any, onApplicableClass:(className:string)=>void, onNotApplicableClass?:(className:string)=>void) {
+    public processAllCellClasses(colDef: ColDef, params: any, onApplicableClass: (className: string)=>void, onNotApplicableClass?: (className: string)=>void) {
         this.processClassRules(colDef.cellClassRules, params, onApplicableClass, onNotApplicableClass);
-        this.processStaticCellClasses(colDef, params, onApplicableClass)
+        this.processStaticCellClasses(colDef, params, onApplicableClass);
     }
 
-    public processClassRules(classRules: { [cssClassName: string]: (Function | string) }, params:CellClassParams, onApplicableClass:(className:string)=>void, onNotApplicableClass?:(className:string)=>void) {
+    public processClassRules(classRules: { [cssClassName: string]: (Function | string) }, params: CellClassParams, onApplicableClass: (className: string)=>void, onNotApplicableClass?: (className: string)=>void) {
         if (typeof classRules === 'object' && classRules !== null) {
             let classNames = Object.keys(classRules);
             for (let i = 0; i < classNames.length; i++) {
@@ -25,14 +25,14 @@ export class StylingService {
                 }
                 if (resultOfRule) {
                     onApplicableClass(className);
-                } else if (onNotApplicableClass){
+                } else if (onNotApplicableClass) {
                     onNotApplicableClass(className);
                 }
             }
         }
     }
 
-    public processStaticCellClasses (colDef:ColDef, params:CellClassParams, onApplicableClass:(className:string)=>void){
+    public processStaticCellClasses(colDef: ColDef, params: CellClassParams, onApplicableClass: (className: string)=>void) {
         let cellClass = colDef.cellClass;
         if (cellClass) {
             let classOrClasses: any;

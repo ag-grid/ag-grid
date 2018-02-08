@@ -70,7 +70,7 @@ export class HeaderRenderer {
     public forEachHeaderElement(callback: (renderedHeaderElement: Component)=>void): void {
         this.childContainers.forEach( childContainer => childContainer.forEachHeaderElement(callback) );
     }
-    
+
     @PreDestroy
     private destroy(): void {
         this.childContainers.forEach( container => container.destroy() );
@@ -99,7 +99,7 @@ export class HeaderRenderer {
             this.eHeaderOverlay.style.top = ((dept-1) * rowHeight) + 'px';
         }
     }
-    
+
     public setPinnedColContainerWidth() {
         // pinned col doesn't exist when doing forPrint
         if (this.gridOptionsWrapper.isForPrint()) { return; }

@@ -97,12 +97,12 @@ export class HeaderRowComp extends Component {
         let numberOfNonGroups = 1 + numberOfFloating;
         let numberOfGroups = headerRowCount - numberOfNonGroups;
 
-        for (let i = 0; i < numberOfGroups; i++) sizes.push(groupHeight);
+        for (let i = 0; i < numberOfGroups; i++) { sizes.push(groupHeight); }
         sizes.push(headerHeight);
-        for (let i = 0; i < numberOfFloating; i++) sizes.push(this.gridOptionsWrapper.getFloatingFiltersHeight());
+        for (let i = 0; i < numberOfFloating; i++) { sizes.push(this.gridOptionsWrapper.getFloatingFiltersHeight()); }
 
         let rowHeight = 0;
-        for (let i = 0; i < this.dept; i++) rowHeight += sizes[i];
+        for (let i = 0; i < this.dept; i++) { rowHeight += sizes[i]; }
 
         this.getGui().style.top = rowHeight + 'px';
         this.getGui().style.height = sizes[this.dept] + 'px';
@@ -265,7 +265,7 @@ export class HeaderRowComp extends Component {
                     (filter.getNullableModel) ?
                         filter.getNullableModel() :
                         filter.getModel()
-                )
+                );
             },
             onFloatingFilterChanged: (change: F | M): boolean => {
                 let captureModelChangedResolveFunc: (modelChanged: boolean) => void;
@@ -287,9 +287,9 @@ export class HeaderRowComp extends Component {
                         //the filters
                         filterComponent.setModel(<M>change);
                         this.filterManager.onFilterChanged();
-                        captureModelChangedResolveFunc(true)
+                        captureModelChangedResolveFunc(true);
                     }
-                })
+                });
                 return modelChanged.resolveNow(true, modelChanged => modelChanged);
             },
             //This one might be overriden from the colDef

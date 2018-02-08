@@ -6,6 +6,7 @@
   "scripts": {
     "test": "exit 0",
     "lint": "tslint -p tsconfig.json src/ts/**/*.ts",
+    "lint-fix": "tslint -p tsconfig.json -c tslint-fix.json --fix src/ts/**/*.ts",
     "watchWebpack": "webpack --watch"
   },
   "typings": "./main.d.ts",

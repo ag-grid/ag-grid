@@ -267,7 +267,7 @@ export class ColumnController {
         this.logger = loggerFactory.create('ColumnController');
     }
 
-    private setFirstRightAndLastLeftPinned(source:ColumnEventType): void {
+    private setFirstRightAndLastLeftPinned(source: ColumnEventType): void {
         let lastLeft: Column;
         let firstRight: Column;
 
@@ -285,7 +285,7 @@ export class ColumnController {
         } );
     }
 
-    public autoSizeColumns(keys: (string|Column)[], source:ColumnEventType = "api"): void {
+    public autoSizeColumns(keys: (string|Column)[], source: ColumnEventType = "api"): void {
         // because of column virtualisation, we can only do this function on columns that are
         // actually rendered, as non-rendered columns (outside the viewport and not rendered
         // due to column virtualisation) are not present. this can result in all rendered columns
@@ -1069,7 +1069,7 @@ export class ColumnController {
                             keys: (string|Column)[],
                             // the action to do - if this returns false, the column was skipped
                             // and won't be included in the event
-                            action: (column:Column) => boolean,
+                            action: (column: Column) => boolean,
                             // should return back a column event of the right type
                             source: ColumnEventType,
                             createEvent?: ()=> ColumnEvent,
@@ -1429,10 +1429,10 @@ export class ColumnController {
                 console.warn('ag-grid: headerValueGetter must be a function or a string');
                 return '';
             }
-        } else if (colDef.headerName != null){
+        } else if (colDef.headerName != null) {
             return colDef.headerName;
-        } else if ((<ColDef>colDef).field){
-            return _.camelCaseToHumanText((<ColDef>colDef).field)
+        } else if ((<ColDef>colDef).field) {
+            return _.camelCaseToHumanText((<ColDef>colDef).field);
         } else {
             return '';
         }
@@ -1592,7 +1592,7 @@ export class ColumnController {
             }
         });
         // then sort them
-        this.rowGroupColumns.sort(function (colA: Column, colB: Column): number {
+        this.rowGroupColumns.sort(function(colA: Column, colB: Column): number {
             return colA.getColDef().rowGroupIndex - colB.getColDef().rowGroupIndex;
         });
         // now just pull out items rowGroup, they will be added at the end
@@ -1619,7 +1619,7 @@ export class ColumnController {
             }
         });
         // then sort them
-        this.pivotColumns.sort(function (colA: Column, colB: Column): number {
+        this.pivotColumns.sort(function(colA: Column, colB: Column): number {
             return colA.getColDef().pivotIndex - colB.getColDef().pivotIndex;
         });
         // now check the boolean equivalent
@@ -1940,7 +1940,7 @@ export class ColumnController {
         this.allDisplayedVirtualColumns = [];
     }
 
-    private updateGroupsAndDisplayedColumns(source:ColumnEventType) {
+    private updateGroupsAndDisplayedColumns(source: ColumnEventType) {
         this.updateOpenClosedVisibilityInColumnGroups();
         this.updateDisplayedColumnsFromTrees(source);
         this.updateVirtualSets();
@@ -1955,7 +1955,7 @@ export class ColumnController {
         this.eventService.dispatchEvent(event);
     }
 
-    private updateDisplayedColumnsFromTrees(source:ColumnEventType): void {
+    private updateDisplayedColumnsFromTrees(source: ColumnEventType): void {
         this.addToDisplayedColumns(this.displayedLeftColumnTree, this.displayedLeftColumns);
         this.addToDisplayedColumns(this.displayedCentreColumnTree, this.displayedCenterColumns);
         this.addToDisplayedColumns(this.displayedRightColumnTree, this.displayedRightColumns);
@@ -2266,7 +2266,7 @@ export class ColumnController {
         }
     }
 
-    private createValueColumns(source:ColumnEventType): void {
+    private createValueColumns(source: ColumnEventType): void {
         this.valueColumns.forEach( column => column.setValueActive(false, source) );
         this.valueColumns = [];
 
@@ -2289,7 +2289,7 @@ export class ColumnController {
         return result;
     }
 
-    public getGridBalancedTree():OriginalColumnGroupChild[]{
-        return this.gridBalancedTree
+    public getGridBalancedTree(): OriginalColumnGroupChild[] {
+        return this.gridBalancedTree;
     }
 }
