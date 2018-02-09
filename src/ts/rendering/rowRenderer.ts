@@ -19,7 +19,7 @@ import { Logger, LoggerFactory } from "../logger";
 import { FocusedCellController } from "../focusedCellController";
 import { IRangeController } from "../interfaces/iRangeController";
 import { CellNavigationService } from "../cellNavigationService";
-import { GridCell } from "../entities/gridCell";
+import {GridCell, GridCellDef} from "../entities/gridCell";
 import { NavigateToNextCellParams, TabToNextCellParams } from "../entities/gridOptions";
 import { RowContainerComponent } from "./rowContainerComponent";
 import { BeanStub } from "../context/beanStub";
@@ -358,9 +358,7 @@ export class RowRenderer extends BeanStub {
     }
 
     public forEachCellComp(callback: (cellComp: CellComp) => void): void {
-        _.iterateObject(this.rowCompsByIndex, (index: any, renderedRow: RowComp) => {
-            renderedRow.forEachCellComp(callback);
-        });
+        this.forEachRowComp( (key: string, rowComp: RowComp) => rowComp.forEachCellComp(callback));
     }
 
     private forEachRowComp(callback: (key: string, rowComp: RowComp) => void): void {
@@ -413,6 +411,17 @@ export class RowRenderer extends BeanStub {
             }
         } );
 
+        return res;
+    }
+
+    public getEditingCells(): GridCellDef[] {
+        let res: GridCellDef[] = [];
+        this.forEachCellComp( cellComp => {
+            if (cellComp.isEditing()) {
+                let gridCellDef: GridCellDef = cellComp.getGridCell().getGridCellDef();
+                res.push(gridCellDef);
+            }
+        });
         return res;
     }
 

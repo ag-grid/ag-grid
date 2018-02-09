@@ -899,6 +899,10 @@ export class GridApi {
         return this.rowRenderer.getCellEditorInstances(params);
     }
 
+    public getEditingCells(): GridCellDef[] {
+        return this.rowRenderer.getEditingCells();
+    }
+
     public stopEditing(cancel: boolean = false): void {
         this.rowRenderer.stopEditing(cancel);
     }
