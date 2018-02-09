@@ -70,8 +70,11 @@ include '../documentation-main/documentation_header.php';
 // datasource for enterprise row model
 interface IEnterpriseDatasource {
 
-    // just one method, to get the rows
+    // grid calls this to get rows
     getRows(params: IEnterpriseGetRowsParams): void;
+
+    // optional destroy method, if your datasource has state it needs to clean up
+    destroy?(): void;
 }</snippet>
 
 <p>
