@@ -370,6 +370,92 @@ colDef.cellRenderer = function(params) {
 
 <?= example('Cell Renderer', 'cell-renderer') ?>
 
+<h2>Accessing Cell Renderer Instances</h2>
+
+<p>
+    It is possible to access the instances of your cell renderers. This is useful if you want to call a method
+    on the cell renderer - a method that you provide that has nothing to do with the operation of the grid.
+    Accessing cell renderers is done using the grid API <code>getCellRendererInstances(params)</code>.
+</p>
+
+<snippet>
+// function takes params to identify what cells and returns back a list of cell renderers
+function getCellRendererInstances(params: GetCellRendererInstancesParams): ICellRendererComp[];
+
+// params object for the above
+interface GetCellRendererInstancesParams {
+    // an optional list of row nodes
+    rowNodes?: RowNode[];
+    // an optional list of columns
+    columns?: (string|Column)[];
+}
+</snippet>
+
+<p>
+    An example of getting the cell renderer for exactly one cell is as follows:
+</p>
+
+<snippet>
+// example - get cell renderer for first row and column 'gold'
+var firstRowNode = gridOptions.api.getDisplayedRowAtIndex(0);
+var params = { columns: ['gold'], rowNodes: [firstRowNode]};
+var instances = gridOptions.api.getCellRendererInstances(params);
+if (instances.length > 0) {
+    // got it, user must be scrolled so that it exists
+    var instance = instances[0];
+}
+</snippet>
+
+<p>
+    Not that this method will only return instances of the cell renderer that exists. Due to row
+    and column virtualisation, renderers will only exists for the user can actually see due to horizontal
+    and vertical scrolling.
+</p>
+
+<p>
+    The example below demonstrates custom methods on cell renderers called by the application. The following
+    can be noted:
+    <ul>
+        <li>
+            The medal columns are all using the user defined <code>MedalCellRenderer</code>.
+            The cell renderer has an arbitrary method <code>medalUserFunction()</code> which
+            prints some data to the console.
+        </li>
+        <li>
+            The <b>Gold</b> method executes a method on all instances of the cell renderer in the
+            gold column.
+        </li>
+        <li>
+            The <b>First Row Gold</b> method executes a method on the gold cell of the first row only.
+            Note that the <code>getCellRendererInstances()</code> method will return nothing if the
+            grid is scrolled past the first row.
+        </li>
+        <li>
+            The <b>All Cells</b> method executes a method on all instances of all cell renderers.
+        </li>
+    </ul>
+</p>
+
+<?= example('Get Cell Renderer', 'get-cell-renderer') ?>
+
+<p>
+    If your are using a framework component (detailed below), then the returned object
+    is a wrapper and you can get the underlying cell renderer using <code>getFrameworkComponentInstance()</code>
+</p>
+
+<snippet>
+// example - get cell renderer for first row and column 'gold'
+var firstRowNode = gridOptions.api.getDisplayedRowAtIndex(0);
+var params = { columns: ['gold'], rowNodes: [firstRowNode]};
+var instances = gridOptions.api.getCellRendererInstances(params);
+if (instances.length > 0) {
+    // got it, user must be scrolled so that it exists
+    var wrapperInstance = instances[0];
+    var frameworkInstance = wrapperInstance.getFrameworkComponentInstance();
+}
+</snippet>
+
+
 <?php include './angular.php'; ?>
 
 <?php include './react.php'; ?>
