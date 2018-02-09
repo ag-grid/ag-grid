@@ -67,7 +67,7 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     }
 
     @PreDestroy
-    private destroy(): void {
+    public destroy(): void {
         super.destroy();
     }
 
