@@ -19,6 +19,7 @@ export class ColDefUtil {
         'templateUrl',
         'filter',
         'aggFunc',
+        'cellRenderer',
         'cellEditor',
         'pinned'
     ];

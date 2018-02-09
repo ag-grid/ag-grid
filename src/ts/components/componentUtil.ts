@@ -201,7 +201,7 @@ ComponentUtil {
     }
 }
 
-_.iterateObject(Events, function(key, value) {
+_.iterateObject<any>(Events, function(key, value) {
     ComponentUtil.EVENTS.push(value);
 });
 

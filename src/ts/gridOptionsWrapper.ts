@@ -9,7 +9,7 @@ import {
     NodeChildDetails,
     PaginationNumberFormatterParams,
     PostProcessPopupParams,
-    TabToNextCellParams,
+    TabToNextCellParams
 } from "./entities/gridOptions";
 import {EventService} from "./eventService";
 import {Constants} from "./constants";

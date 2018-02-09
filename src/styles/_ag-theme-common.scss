@@ -678,6 +678,19 @@
     // Tool panel
     ////////////////////////////////////////
 
+    .ag-column-select-header{
+        label {
+            display: block;
+            padding-left: 4px;
+            .ag-filter-checkbox{
+                float: left;
+                height: 28px;
+                margin-right: 4px;
+                padding-top: 2px;
+            }
+        }
+    }
+
     .ag-group-child-count:before {
         content: " ";
     }
@@ -704,6 +717,7 @@
                 }
             }
         }
+
 
         .ag-column-select-panel {
             border-bottom: 1px solid $border-color;

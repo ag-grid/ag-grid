@@ -117,20 +117,23 @@ const GRID_PANEL_FOR_PRINT_TEMPLATE =
             '<div class="ag-floating-bottom-container"></div>'+
         '</div>';
 
-export interface RowContainerComponents {
-    fullWidth: RowContainerComponent;
-    body: RowContainerComponent;
-    pinnedLeft: RowContainerComponent;
-    pinnedRight: RowContainerComponent;
-    floatingTop: RowContainerComponent;
-    floatingTopPinnedLeft: RowContainerComponent;
-    floatingTopPinnedRight: RowContainerComponent;
-    floatingTopFullWidth: RowContainerComponent;
-    floatingBottom: RowContainerComponent;
-    floatingBottomPinnedLeft: RowContainerComponent;
-    floatingBottomPinnedRight: RowContainerComponent;
-    floatingBottomFullWith: RowContainerComponent;
-}
+
+export type RowContainerComponentNames =
+    'fullWidth' |
+    'body' |
+    'pinnedLeft' |
+    'pinnedRight' |
+    'floatingTop' |
+    'floatingTopPinnedLeft' |
+    'floatingTopPinnedRight' |
+    'floatingTopFullWidth' |
+    'floatingBottom' |
+    'floatingBottomPinnedLeft' |
+    'floatingBottomPinnedRight' |
+    'floatingBottomFullWith';
+
+export type RowContainerComponents = { [K in RowContainerComponentNames]: RowContainerComponent };
+
 
 @Bean('gridPanel')
 export class GridPanel extends BeanStub {

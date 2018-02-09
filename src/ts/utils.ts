@@ -169,16 +169,24 @@ export class Utils {
         element.scrollLeft = value;
     }
 
-    static iterateObject(object: any, callback: (key: string, value: any) => void) {
+    static iterateObject<T>(object: {[p:string]:T} | T[], callback: (key: string, value: T) => void) {
         if (this.missing(object)) {
             return;
         }
-        let keys = Object.keys(object);
-        for (let i = 0; i < keys.length; i++) {
-            let key = keys[i];
-            let value = object[key];
-            callback(key, value);
+
+        if (Array.isArray(object)){
+            object.forEach((value, index)=>{
+                callback(index + '', value);
+            })
+        } else {
+            let keys = Object.keys(object);
+            for (let i = 0; i < keys.length; i++) {
+                let key = keys[i];
+                let value = object[key];
+                callback(key, value);
+            }
         }
+
     }
 
     static cloneObject<T>(object: T): T {

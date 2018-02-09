@@ -1261,7 +1261,8 @@ export class ColumnController {
         let event: ColumnEverythingChangedEvent = {
             type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
             api: this.gridApi,
-            columnApi: this.columnApi
+            columnApi: this.columnApi,
+            source: source
         };
         this.eventService.dispatchEvent(event);
 
@@ -1565,7 +1566,8 @@ export class ColumnController {
         let eventEverythingChanged: ColumnEverythingChangedEvent = {
             type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
             api: this.gridApi,
-            columnApi: this.columnApi
+            columnApi: this.columnApi,
+            source: source
         };
         this.eventService.dispatchEvent(eventEverythingChanged);
 
