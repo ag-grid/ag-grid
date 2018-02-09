@@ -335,6 +335,10 @@ export class CellComp extends Component {
         return this.column.isSuppressNavigable(this.rowNode);
     }
 
+    public getCellRenderer(): ICellRendererComp {
+        return this.cellRenderer;
+    }
+
     // + stop editing {forceRefresh: true, suppressFlash: true}
     // + event cellChanged {}
     // + cellRenderer.params.refresh() {} -> method passes 'as is' to the cellRenderer, so params could be anything

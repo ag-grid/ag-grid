@@ -48,6 +48,7 @@ import {AgEvent, ColumnEventType} from "./events";
 import {IToolPanel} from "./interfaces/iToolPanel";
 import {GridOptions} from "./entities/gridOptions";
 import {IContextMenuFactory} from "./interfaces/iContextMenuFactory";
+import {ICellRendererComp} from "./rendering/cellRenderers/iCellRenderer";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -64,6 +65,11 @@ export interface RefreshCellsParams {
 }
 
 export interface FlashCellsParams {
+    rowNodes?: RowNode[];
+    columns?: (string|Column)[];
+}
+
+export interface GetCellRendererInstancesParams {
     rowNodes?: RowNode[];
     columns?: (string|Column)[];
 }
@@ -883,6 +889,10 @@ export class GridApi {
 
     public tabToPreviousCell(): boolean {
         return this.rowRenderer.tabToNextCell(true);
+    }
+
+    public getCellRendererInstances(params: GetCellRendererInstancesParams = {}): ICellRendererComp[] {
+        return this.rowRenderer.getCellRendererInstances(params);
     }
 
     public stopEditing(cancel: boolean = false): void {

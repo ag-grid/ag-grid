@@ -24,12 +24,13 @@ import { NavigateToNextCellParams, TabToNextCellParams } from "../entities/gridO
 import { RowContainerComponent } from "./rowContainerComponent";
 import { BeanStub } from "../context/beanStub";
 import { PaginationProxy } from "../rowModels/paginationProxy";
-import { FlashCellsParams, GridApi, RefreshCellsParams } from "../gridApi";
+import {FlashCellsParams, GetCellRendererInstancesParams, GridApi, RefreshCellsParams} from "../gridApi";
 import { PinnedRowModel } from "../rowModels/pinnedRowModel";
 import { Beans } from "./beans";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { HeightScaler } from "./heightScaler";
 import {Grid} from "../grid";
+import {ICellRendererComp} from "./cellRenderers/iCellRenderer";
 
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {
@@ -350,12 +351,12 @@ export class RowRenderer extends BeanStub {
     }
 
     public stopEditing(cancel: boolean = false) {
-        this.forEachRowComp((key: string, renderedRow: RowComp) => {
-            renderedRow.stopEditing(cancel);
+        this.forEachRowComp((key: string, rowComp: RowComp) => {
+            rowComp.stopEditing(cancel);
         });
     }
 
-    public forEachCellComp(callback: (renderedCell: CellComp) => void): void {
+    public forEachCellComp(callback: (cellComp: CellComp) => void): void {
         _.iterateObject(this.rowCompsByIndex, (index: any, renderedRow: RowComp) => {
             renderedRow.forEachCellComp(callback);
         });
@@ -384,6 +385,20 @@ export class RowRenderer extends BeanStub {
             newData: false
         };
         this.forEachCellCompFiltered(params.rowNodes, params.columns, cellComp => cellComp.refreshCell(refreshCellParams));
+    }
+
+    public getCellRendererInstances(params: GetCellRendererInstancesParams): ICellRendererComp[] {
+
+        let res: ICellRendererComp[] = [];
+
+        this.forEachCellCompFiltered(params.rowNodes, params.columns, cellComp => {
+            let cellRenderer = cellComp.getCellRenderer();
+            if (cellRenderer) {
+                res.push(cellRenderer);
+            }
+        } );
+
+        return res;
     }
 
     // calls the callback for each cellComp that match the provided rowNodes and columns. eg if one row node
