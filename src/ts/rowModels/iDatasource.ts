@@ -7,6 +7,8 @@ export interface IDatasource {
 
     /** Callback the grid calls that you implement to fetch rows from the server. See below for params.*/
     getRows(params: IGetRowsParams): void;
+
+    destroy?(): void;
 }
 
 /** Params for the above IDatasource.getRows() */

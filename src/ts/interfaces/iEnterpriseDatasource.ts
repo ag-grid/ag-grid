@@ -44,4 +44,5 @@ export interface IEnterpriseGetRowsParams {
 // datasource for Enterprise Row Model
 export interface IEnterpriseDatasource {
     getRows(params: IEnterpriseGetRowsParams): void;
+    destroy?(): void;
 }
