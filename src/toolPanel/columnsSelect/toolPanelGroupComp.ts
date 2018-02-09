@@ -19,8 +19,9 @@ import {
     TouchListener,
     Utils
 } from "ag-grid/main";
+import {ToolPanelBaseColumnItem} from "./columnSelectComp";
 
-export class ToolPanelGroupComp extends Component {
+export class ToolPanelGroupComp extends Component implements ToolPanelBaseColumnItem{
 
     private static TEMPLATE =
         '<div class="ag-column-select-column-group">' +
@@ -57,6 +58,7 @@ export class ToolPanelGroupComp extends Component {
     private displayName: string;
 
     private processingColumnStateChange = false;
+    private selectionCallback: (selected:boolean)=>void;
 
     constructor(columnGroup: OriginalColumnGroup, columnDept: number, expandedCallback: ()=>void, allowDragging: boolean) {
         super();
@@ -175,6 +177,10 @@ export class ToolPanelGroupComp extends Component {
             let allowedColumns = childColumns.filter( c => !c.isLockVisible() );
             this.columnController.setColumnsVisible(allowedColumns, selected, "toolPanelUi");
         }
+
+        if (this.selectionCallback){
+            this.selectionCallback(this.isSelected());
+        }
     }
 
     private actionUnCheckedReduce(columns: Column[]): void {
@@ -243,6 +249,9 @@ export class ToolPanelGroupComp extends Component {
         let readOnlyValue = this.workOutReadOnlyValue();
         this.processingColumnStateChange = true;
         this.cbSelect.setSelected(selectedValue);
+        if (this.selectionCallback){
+            this.selectionCallback(this.isSelected());
+        }
         this.cbSelect.setReadOnly(readOnlyValue);
         this.processingColumnStateChange = false;
     }
@@ -318,5 +327,40 @@ export class ToolPanelGroupComp extends Component {
 
     public isExpanded(): boolean {
         return this.expanded;
+    }
+
+    getLabelText(): string {
+        return this.displayName;
+    }
+
+    onColumnFilterChanged(filterText: string): void {
+        if (this.getLabelText().toLowerCase().indexOf(filterText.toLowerCase()) < 0) {
+            this.setVisible(false);
+        } else {
+            this.setVisible(true);
+        }
+    }
+
+    onSelectAllChanged(value: boolean): void {
+        if (
+            (value && !this.cbSelect.isSelected()) ||
+            (! value && this.cbSelect.isSelected())
+        ){
+            if(!this.cbSelect.isReadOnly()){
+                this.cbSelect.toggle();
+            }
+        }
+    }
+
+    isSelected(): boolean {
+        return this.cbSelect.isSelected();
+    }
+
+    setSelectionCallback(callback: (selected: boolean) => void): void {
+        this.selectionCallback = callback;
+    }
+
+    isSelectable(): boolean {
+        return !this.cbSelect.isReadOnly();
     }
 }
