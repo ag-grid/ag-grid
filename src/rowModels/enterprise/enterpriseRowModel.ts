@@ -30,6 +30,7 @@ import {
     RowDataChangedEvent
 } from "ag-grid";
 import {EnterpriseCache, EnterpriseCacheParams} from "./enterpriseCache";
+import {PreDestroy} from "../../../../ag-grid/src/ts/context/context";
 
 @Bean('rowModel')
 export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel {
@@ -63,6 +64,19 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         if (_.exists(datasource)) {
             this.setDatasource(datasource);
         }
+    }
+
+    @PreDestroy
+    private destroy(): void {
+        super.destroy();
+    }
+
+    @PreDestroy
+    private destroyDatasource(): void {
+        if (this.datasource && this.datasource.destroy) {
+            this.datasource.destroy();
+        }
+        this.datasource = null;
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
@@ -197,6 +211,7 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     }
 
     public setDatasource(datasource: IEnterpriseDatasource): void {
+        this.destroyDatasource();
         this.datasource = datasource;
         this.reset();
     }
@@ -430,4 +445,5 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     public isRowPresent(rowNode: RowNode): boolean {
         return false;
     }
+
 }
