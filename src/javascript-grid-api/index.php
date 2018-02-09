@@ -347,6 +347,20 @@ include '../documentation-main/documentation_header.php';
                 visible rows and the amount in the buffer.
             </td>
         </tr>
+        <tr>
+            <th>getCellRendererInstances(params)</th>
+            <td>
+                Returns back the list of active
+                <a href="../javascript-grid-cell-rendering-components/#accessing-cell-renderer-instances">Cell Renderer Instances</a>.
+            </td>
+        </tr>
+        <tr>
+            <th>getCellEditorInstances(params)</th>
+            <td>
+                Returns back the list of active
+                <a href="../javascript-grid-cell-editor/#accessing-cell-editor-instances">Cell Editor Instances</a>.
+            </td>
+        </tr>
 
     </table>
 <h2>Scrolling</h2>

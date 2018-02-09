@@ -370,12 +370,13 @@ colDef.cellRenderer = function(params) {
 
 <?= example('Cell Renderer', 'cell-renderer') ?>
 
-<h2>Accessing Cell Renderer Instances</h2>
+<h2 id="accessing-cell-renderer-instances">Accessing Cell Renderer Instances</h2>
 
 <p>
-    It is possible to access the instances of your cell renderers. This is useful if you want to call a method
-    on the cell renderer - a method that you provide that has nothing to do with the operation of the grid.
-    Accessing cell renderers is done using the grid API <code>getCellRendererInstances(params)</code>.
+    After the grid has created an instance of a cell renderer for a cell it is possible to access that instance.
+    This is useful if you want to call a method that you provide on the cell renderer that has nothing to do
+    with the operation of the grid. Accessing cell renderers is done using the grid API
+    <code>getCellRendererInstances(params)</code>.
 </p>
 
 <snippet>
