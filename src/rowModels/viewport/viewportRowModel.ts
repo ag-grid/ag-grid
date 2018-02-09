@@ -55,16 +55,12 @@ export class ViewportRowModel implements IRowModel {
 
     }
 
-    @PreDestroy
-    private destroy(): void {
-        this.destroyCurrentDatasource();
-    }
-
     public isLastRowFound(): boolean {
         return true;
     }
 
-    private destroyCurrentDatasource(): void {
+    @PreDestroy
+    private destroyDatasource(): void {
         if (this.viewportDatasource && this.viewportDatasource.destroy) {
             this.viewportDatasource.destroy();
         }
@@ -118,7 +114,7 @@ export class ViewportRowModel implements IRowModel {
     }
 
     public setViewportDatasource(viewportDatasource: IViewportDatasource): void {
-        this.destroyCurrentDatasource();
+        this.destroyDatasource();
 
         this.viewportDatasource = viewportDatasource;
         this.rowCount = 0;
