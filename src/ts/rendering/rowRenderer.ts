@@ -31,6 +31,7 @@ import { AnimationFrameService } from "../misc/animationFrameService";
 import { HeightScaler } from "./heightScaler";
 import {Grid} from "../grid";
 import {ICellRendererComp} from "./cellRenderers/iCellRenderer";
+import {ICellEditorComp} from "./cellEditors/iCellEditor";
 
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {
@@ -395,6 +396,20 @@ export class RowRenderer extends BeanStub {
             let cellRenderer = cellComp.getCellRenderer();
             if (cellRenderer) {
                 res.push(cellRenderer);
+            }
+        } );
+
+        return res;
+    }
+
+    public getCellEditorInstances(params: GetCellRendererInstancesParams): ICellEditorComp[] {
+
+        let res: ICellEditorComp[] = [];
+
+        this.forEachCellCompFiltered(params.rowNodes, params.columns, cellComp => {
+            let cellEditor = cellComp.getCellEditor();
+            if (cellEditor) {
+                res.push(cellEditor);
             }
         } );
 

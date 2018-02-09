@@ -339,6 +339,10 @@ export class CellComp extends Component {
         return this.cellRenderer;
     }
 
+    public getCellEditor(): ICellEditorComp {
+        return this.cellEditor;
+    }
+
     // + stop editing {forceRefresh: true, suppressFlash: true}
     // + event cellChanged {}
     // + cellRenderer.params.refresh() {} -> method passes 'as is' to the cellRenderer, so params could be anything

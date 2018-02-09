@@ -49,6 +49,7 @@ import {IToolPanel} from "./interfaces/iToolPanel";
 import {GridOptions} from "./entities/gridOptions";
 import {IContextMenuFactory} from "./interfaces/iContextMenuFactory";
 import {ICellRendererComp} from "./rendering/cellRenderers/iCellRenderer";
+import {ICellEditorComp} from "./rendering/cellEditors/iCellEditor";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -58,21 +59,20 @@ export interface StartEditingCellParams {
     charPress?: string;
 }
 
-export interface RefreshCellsParams {
+export interface GetCellsParams {
     rowNodes?: RowNode[];
     columns?: (string|Column)[];
+}
+
+export interface RefreshCellsParams extends GetCellsParams {
     force?: boolean;
 }
 
-export interface FlashCellsParams {
-    rowNodes?: RowNode[];
-    columns?: (string|Column)[];
-}
+export interface FlashCellsParams extends GetCellsParams {}
 
-export interface GetCellRendererInstancesParams {
-    rowNodes?: RowNode[];
-    columns?: (string|Column)[];
-}
+export interface GetCellRendererInstancesParams extends GetCellsParams {}
+
+export interface GetCellEditorInstancesParams extends GetCellsParams {}
 
 export interface RedrawRowsParams {
     rowNodes?: RowNode[];
@@ -893,6 +893,10 @@ export class GridApi {
 
     public getCellRendererInstances(params: GetCellRendererInstancesParams = {}): ICellRendererComp[] {
         return this.rowRenderer.getCellRendererInstances(params);
+    }
+
+    public getCellEditorInstances(params: GetCellEditorInstancesParams = {}): ICellEditorComp[] {
+        return this.rowRenderer.getCellEditorInstances(params);
     }
 
     public stopEditing(cancel: boolean = false): void {
