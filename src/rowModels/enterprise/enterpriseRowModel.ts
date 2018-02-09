@@ -27,10 +27,10 @@ import {
     RowBounds,
     GridApi,
     ColumnApi,
-    RowDataChangedEvent
+    RowDataChangedEvent,
+    PreDestroy
 } from "ag-grid";
 import {EnterpriseCache, EnterpriseCacheParams} from "./enterpriseCache";
-import {PreDestroy} from "../../../../ag-grid/src/ts/context/context";
 
 @Bean('rowModel')
 export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel {
