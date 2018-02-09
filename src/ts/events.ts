@@ -31,7 +31,9 @@ export interface AgGridEvent extends AgEvent {
 
 export interface ColumnPivotModeChangedEvent extends AgGridEvent {}
 export interface VirtualColumnsChangedEvent extends AgGridEvent {}
-export interface ColumnEverythingChangedEvent extends AgGridEvent {}
+export interface ColumnEverythingChangedEvent extends AgGridEvent {
+    source: string
+}
 export interface NewColumnsLoadedEvent extends AgGridEvent {}
 export interface GridColumnsChangedEvent extends AgGridEvent {}
 export interface DisplayedColumnsChangedEvent extends AgGridEvent {}

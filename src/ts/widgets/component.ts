@@ -1,7 +1,7 @@
 import {NumberSequence, Utils as _} from "../utils";
 import {Context} from "../context/context";
 import {BeanStub} from "../context/beanStub";
-import {IAfterGuiAttachedParams, IComponent} from "../interfaces/iComponent";
+import {IComponent} from "../interfaces/iComponent";
 import {AgEvent} from "../events";
 
 let compIdSequence = new NumberSequence();
