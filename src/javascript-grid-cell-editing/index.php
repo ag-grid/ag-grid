@@ -228,27 +228,54 @@ colDef.cellEditorParams = {
     <h2>Editing API</h2>
 
     <p>
-        There are two api methods for editing, <code>startEditingCell()</code> and <code>stopEditing(params)</code>.
+        The grid has the following API methods for editing:
+        <ul>
+            <li>
+                <code>startEditingCell(params)</code>: Starts editing the provided cell. If another cell is editing,
+                the editing will be stopped in that other cell. Parameters are as follows:
+                <ul>
+                    <li><b>rowIndex</b>: The row index of the row to start editing.</li>
+                    <li><b>colKey</b>: The column key of the column to start editing.</li>
+                    <li><b>rowPinned</b>: Set to 'top' or 'bottom' to started editing a pinned row.</li>
+                    <li><b>keyPress, charPress</b>: The keyPress and charPress that are passed to the cell editor.</li>
+                </ul>
+            </li>
+            <li>
+                <code>stopEditing(cancel)</code>: If the grid is editing then editing is stopped. Passing
+                <code>cancel=true</code> will keep the cells original value and passing <code>cancel=false</code>
+                will take the latest value from the cell editor.
+            </li>
+            <li>
+                <code>getEditingCells()</code>: If the grid is editing, returns back details of the editing cell(s).
+                The result is an array of objects. If only one cell is editing (the default) then the array will have
+                one entry. If multiple cells are editing (eg <a href="./#fullRowEdit">Full Row Edit</a>) then the
+                array contains all editing cells.
+            </li>
+        </ul>
     </p>
 
     <p>
-        <code>api.startEditingCell(params)</code><br/>
-        Starts editing the provided cell. If another cell is editing, the editing will be stopped in that other cell. Parameters are as follows:
+        Below is a code example of using the editing API methods.
     </p>
-        <ul class="content">
-        <li><b>rowIndex</b>: The row index of the row to start editing.</li>
-        <li><b>colKey</b>: The column key of the column to start editing.</li>
-        <li><b>rowPinned</b>: Set to 'top' or 'bottom' to started editing a pinned row.</li>
-        <li><b>keyPress, charPress</b>: The keyPress and charPress that are passed to the cell editor</li>
-    </ul>
 
-    <p>
-        <code>api.stopEditing(cancel)</code><br/>
-        If the grid is editing this will stop editing.
-    </p>
-    <p>
-        Pass true to cancel editing, i.e. revert any changes.
-    </p>
+<snippet>
+// start editing country cell on first row
+api.startEditing({
+    rowIndex: 0,
+    colKey: 'country'
+});
+
+// stop editing
+api.stopEditing();
+
+// print details of editing cell
+var cellDefs = gridOptions.api.getEditingCells();
+cellDefs.forEach( function(cellDef) {
+    console.log(cellDef.rowIndex);
+    console.log(cellDef.column.getId());
+    console.log(cellDef.floating);
+});
+</snippet>
 
     <h2>Start / Stop Editing Events</h2>
 
