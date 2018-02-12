@@ -133,7 +133,7 @@
     },
     {
         "title": "ag-Grid - The Enterprise Datagrid For Aurelia",
-        "link": "/ag-grid-datagrid-aurelia/",
+        "link": "../ag-grid-datagrid-aurelia/",
         "date": "30th November 2016",
         "author": "sean",
         "medium": "https://medium.com/@underlog_27126/ece33767042b?source=collection_detail----d394a9b92994-----16----------------"
@@ -168,28 +168,28 @@
     },
     {
         "title": "ag-Grid Goes Commercial",
-        "link": "/ag-grid-goes-commercial/",
+        "link": "../ag-grid-goes-commercial/",
         "date": "9th March 2016",
         "author": "niall", 
         "medium": "https://medium.com/@underlog_27126/3961cf0c6f7b?source=collection_detail----d394a9b92994-----11----------------"
     },
     {
         "title": "Understand Packaging for Javascript, TypesScript, CommonJS and Everything Else",
-        "link": "/understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/",
+        "link": "../understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/",
         "date": "9th February 2016",
         "author": "niall",
         "medium": "https://medium.com/@underlog_27126/1fe835f3243a?source=collection_detail----d394a9b92994-----10----------------"
     },
     {
         "title": "Announcing React and ag-Grid",
-        "link": "/react-and-ag-grid/",
+        "link": "../react-and-ag-grid/",
         "date": "28th January 2016",
         "author": "niall",
         "medium": "https://medium.com/@underlog_27126/5a4c45f3bedb?source=collection_detail----d394a9b92994-----9----------------"
     },
     {
         "title": "Stepping it Up, ag-Grid Focuses on Agnostic in 2016",
-        "link": "/ag-grid-in-2016/",
+        "link": "../ag-grid-in-2016/",
         "date": "25th October 2015",
         "author": "niall",
         "medium": "https://medium.com/@underlog_27126/fd7cdb8c11d4?source=collection_detail----d394a9b92994-----8----------------"
@@ -203,7 +203,7 @@
     },
     {
         "title": "Embracing the Future with Angular 2.0, Web Components and ag-Grid",
-        "link": "/embracing-the-future-with-angularjs2-web-components-and-ag-grid/",
+        "link": "../embracing-the-future-with-angularjs2-web-components-and-ag-grid/",
         "date": "25th September 2015",
         "author": "niall",
         "medium": "https://medium.com/@underlog_27126/fec000d5a304?source=collection_detail----d394a9b92994-----6----------------"
