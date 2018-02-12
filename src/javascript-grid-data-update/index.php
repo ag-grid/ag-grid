@@ -8,6 +8,13 @@ include '../documentation-main/documentation_header.php';
 
     <h1>Updating Data</h1>
 
+    <note>
+        Note that this is only applicable if you are using the <a href="../javascript-grid-in-memory">in memory row model</a>.
+        If you are using <a href="../javascript-grid-viewport">viewport</a> or <a href="../javascript-grid-enterprise-model">enterprise</a>
+        the data would be passed to the grid through a datasource and the specifics on how to
+        update each model would be explained in their respective docs.
+    </note>
+
     <p class="lead">
         Data can be updated inside the grid using the grid's API.
     </p>
