@@ -7,6 +7,7 @@ globalObj.HTMLButtonElement = typeof HTMLButtonElement === 'undefined' ? {} : HT
 globalObj.HTMLSelectElement = typeof HTMLSelectElement === 'undefined' ? {} : HTMLSelectElement;
 globalObj.HTMLInputElement = typeof HTMLInputElement === 'undefined' ? {} : HTMLInputElement;
 globalObj.Node = typeof Node === 'undefined' ? {} : Node;
+globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 
 // columnController
 export {BalancedColumnTreeBuilder} from "./dist/lib/columnController/balancedColumnTreeBuilder";
