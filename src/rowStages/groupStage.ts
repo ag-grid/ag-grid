@@ -16,6 +16,7 @@ import {
     ValueService,
     ChangedPath,
     GetDataPath,
+    IsRowSelectable,
     PostConstruct
 } from "ag-grid/main";
 
@@ -52,6 +53,9 @@ export class GroupStage implements IRowNodeStage {
     private usingTreeData: boolean;
     private getDataPath: GetDataPath;
 
+    // row selectable callback function
+    private isRowSelectableFunc: IsRowSelectable;
+
     // we use a sequence variable so that each time we do a grouping, we don't
     // reuse the ids - otherwise the rowRenderer will confuse rowNodes between redraws
     // when it tries to animate between rows. we set to -1 as others row id 0 will be shared
@@ -73,6 +77,7 @@ export class GroupStage implements IRowNodeStage {
                 console.warn('ag-Grid: property usingTreeData=true, but you did not provide getDataPath function, please provide getDataPath function if using tree data.')
             }
         }
+        this.isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc();
     }
 
     public execute(params: StageExecuteParams): void {
@@ -80,12 +85,16 @@ export class GroupStage implements IRowNodeStage {
         let details = this.createGroupingDetails(params);
 
         if (details.transaction) {
-            this.handleTransaction(details);
+                this.handleTransaction(details);
         } else {
             this.shotgunResetEverything(details);
         }
 
         this.sortGroupsWithComparator(details.rootNode);
+
+        if (this.isRowSelectableFunc) {
+            this.updateSelectableGroups(details.rootNode);
+        }
     }
 
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
@@ -325,7 +334,6 @@ export class GroupStage implements IRowNodeStage {
         let path: GroupInfo[] = this.getGroupInfo(childNode, details);
 
         let parentGroup = this.findParentForNode(childNode, path, details);
-
         if (!parentGroup.group) {
             console.warn(`ag-Grid: duplicate group keys for row data, keys should be unique`,
                 [parentGroup.data, childNode.data]);
@@ -507,4 +515,32 @@ export class GroupStage implements IRowNodeStage {
         return res;
     }
 
+    private updateSelectableGroups(rootNode: RowNode) {
+        let groupSelectsChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
+        this.recursivelyUpdateSelectableGroups(rootNode, groupSelectsChildren);
+    }
+
+    private recursivelyUpdateSelectableGroups(rowNode: RowNode, groupSelectsChildren: boolean) {
+        rowNode.childrenAfterGroup.forEach((child: RowNode) => {
+            if (child.hasChildren()) {
+                if (groupSelectsChildren) {
+                    // reset selectable on group, will be updated by bubbleUpSelectable() if leaf nodes are selectable
+                    child.setRowSelectable(false);
+                } else {
+                    // directly retrieve selectable value from user callback
+                    child.selectable = this.isRowSelectableFunc(child);
+                }
+                this.recursivelyUpdateSelectableGroups(child, groupSelectsChildren);
+            } else if (groupSelectsChildren && child.selectable) {
+                // at leaf node, so bubble up selectable value to parent nodes
+                this.bubbleUpSelectableValue(child);
+            }
+        });
+    }
+
+    private bubbleUpSelectableValue(rowNode: RowNode) {
+        if (!rowNode.parent) return;
+        rowNode.parent.setRowSelectable(true);
+        this.bubbleUpSelectableValue(rowNode.parent);
+    }
 }
