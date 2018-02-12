@@ -6,8 +6,6 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-
-
     <h1 id="selection">Row Selection</h1>
 
     <p>
@@ -280,6 +278,59 @@ colDef = {
     </ul>
 
     <?= example('Header Checkbox Entire Set', 'header-checkbox-entire-set', 'generated') ?>
+
+
+    <h2 id="specify-selectable-rows">Specify Selectable Rows</h2>
+
+    <p>
+        It possible to specify which rows can be selected via the <code>gridOptions.isRowSelectable(rowNode)</code>
+        callback function.
+    </p>
+    <p>
+        For instance if we only wanted to allow rows where the 'year' property is less than 2007, we could implement
+        the following:
+    </p>
+
+    <snippet>
+        gridOptions.isRowSelectable: function(rowNode) {
+            return rowNode.data ? rowNode.data.year < 2007 : false;
+        }</snippet>
+
+    <h3>Selectable Rows with Header Checkbox</h3>
+
+    <p>This example demonstrates the following: </p>
+
+    <ul class="content">
+        <li>The <code>isRowSelectable()</code> callback only allows selections on rows where the year < 2007.</li>
+        <li>The country column has <code>headerCheckboxSelection:true</code> and <code>checkboxSelection:true</code>,
+            however only rows which are selectable will obtain a selectable checkbox. Similarly, the header checkbox
+            will only select selectable rows.
+        </li>
+    </ul>
+
+    <?= example('Specify Selectable Rows', 'specify-selectable-rows', 'generated') ?>
+
+    <h3>Grouping Selectable Rows - groupSelectsChildren = false</h3>
+
+    <p>This example demonstrates the following: </p>
+
+    <ul class="content">
+        <li>The <code>isRowSelectable()</code> allows all groups to be selected but only rows with year < 2007.</li>
+        <li>As <code>gridOptions.groupSelectsChildren = false</code> selecting groups won't select children.</li>
+    </ul>
+
+    <?= example('Grouping Selectable Rows (groupSelectsChildren = false)', 'no-group-selects-children-selectable-rows', 'generated', array("enterprise" => 1)) ?>
+
+    <h3>Grouping Selectable Rows - groupSelectsChildren = true</h3>
+
+    <p>This example demonstrates the following: </p>
+
+    <ul class="content">
+        <li>The <code>isRowSelectable()</code> callback only allows selections on rows with year < 2007.</li>
+        <li>As <code>gridOptions.groupSelectsChildren = true</code> selecting groups will also select children.</li>
+    </ul>
+
+    <?= example('Grouping Selectable Rows (groupSelectsChildren = true)', 'group-selects-children-selectable-rows', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Selection Events</h2>
 

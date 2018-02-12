@@ -394,6 +394,13 @@ include '../documentation-main/documentation_header.php';
             <td><span class="green-tick">&#10005;</span></td>
             <td><span class="green-tick">&#10005;</span></td>
         </tr>
+        <tr class="item-row">
+            <td><a href="../javascript-grid-selection/#specify-selectable-rows">Specify Selectable Rows</a></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10005;</span></td>
+        </tr>
     </table>
 
     <h2>Deeper Understanding of Row Models</h2>

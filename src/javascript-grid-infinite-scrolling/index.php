@@ -290,7 +290,6 @@ gridOptions.getRowNodeId: function(item) {
         filtering, ag-Grid-Enterprise is not required for infinite scrolling.
     </note>
 
-
     <note>When filtering using the Infinite Row Model it's important to specify the filter parameter: <code>newRowsAction: 'keep'</code>.
           This is to prevent the filter from being reset.
     </note>
@@ -303,6 +302,29 @@ gridOptions.getRowNodeId: function(item) {
         will not be allowed.
     </note>
 
+
+    <h2>Specify Selectable Rows</h2>
+
+    <p>
+        It is also possible to specify which rows can be selected via the <code>gridOptions.isRowSelectable()</code>
+        callback function.
+    </p>
+    <p>
+        For instance if we only wanted to allow rows where the <code>data.country</code> property is the
+        'United States' we could implement the following:
+    </p>
+
+    <snippet>
+        gridOptions.isRowSelectable: function(data) {
+            return data.country === 'United States';
+        }</snippet>
+    <p>
+        <?= example('Specify Selectable Rows', 'specify-selectable-rows', 'generated') ?>
+
+    <p>
+        Note that in the above example we have also included an optional checkbox to help highlight which rows
+        are selectable.
+    </p>
 
     <h3>Configuring A Bit Differently</h3>
 
