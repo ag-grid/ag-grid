@@ -60,8 +60,15 @@
     } else {
         $json_decoded = retrieveJiraFilterData($report_type);
     }
+
+    $moreInformationMap = extractMoreInformationMap($json_decoded);
+    $keyToMoreInfo = $moreInformationMap['more_info'];
+    $keyToBreakingChanges = $moreInformationMap['breaking'];
+    $keyToDeprecations = $moreInformationMap['deprecation'];
+
     $issue_count = count($json_decoded->{'issues'});
     for ($i = 0; $i < $issue_count; $i++) {
+        $key = filter_var($json_decoded->{'issues'}[$i]->{'key'}, FILTER_SANITIZE_STRING);
         if ($i == 0) {
             ?>
             <tr>
@@ -86,6 +93,8 @@
                     <!-- status -->
                     <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"><span
                                 class="jim-table-header-content">Status</span></th>
+
+                    <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header" colspan="4"></th>
                     <?php
                 } else {
                     ?>
@@ -98,16 +107,24 @@
             </tr>
             <?php
         }
-        if (empty(filter_var($json_decoded->{'issues'}[$i]->{'key'}, FILTER_SANITIZE_STRING))) {
+        if (empty($key)) {
             continue;
         }
+
+        $moreInfoContent = createMoreInfoContent($key, $moreInformationMap);
+
         ?>
-        <tr class="jira <?= $i % 2 == 0 ? 'issue-row' : 'issue-row-alternate' ?>">
+        <tr class="jira <?= $i % 2 == 0 ? 'issue-row' : 'issue-row-alternate' ?>"
+            style="<?= strlen($moreInfoContent) > 0 ? 'border-bottom: none' : '' ?>"
+            jira_data
+            <?= array_key_exists($key, $keyToBreakingChanges) ? 'breaking' : '' ?>
+            <?= array_key_exists($key, $keyToDeprecations) ? 'deprecation' : '' ?>
+        >
             <?php
             if ($displayEpic) {
                 ?>
-                <td nowrap="true" class="jira-macro-table-underline-pdfexport">
-                    <span style="height: 100%"><?= mapIssueType(filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'epicName'}, FILTER_SANITIZE_STRING)) ?></span>
+                <td class="jira-macro-table-underline-pdfexport">
+                    <span style="height: 100%"><?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10002'}, FILTER_SANITIZE_STRING) ?></span>
                 </td>
                 <?php
             }
@@ -115,7 +132,7 @@
 
             <!-- key -->
             <td nowrap="true"
-                class="jira-macro-table-underline-pdfexport"><?= filter_var($json_decoded->{'issues'}[$i]->{'key'}, FILTER_SANITIZE_STRING) ?></td>
+                class="jira-macro-table-underline-pdfexport"><?= $key ?></td>
 
             <!-- summary -->
             <td class="jira-macro-table-underline-pdfexport"><?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'summary'}, FILTER_SANITIZE_STRING); ?></td>
@@ -126,16 +143,60 @@
                 ?>
                 <!-- status -->
                 <td nowrap="true" class="jira-macro-table-underline-pdfexport">
-                                        <span
-                                                class="aui-lozenge aui-lozenge-subtle
-                                            <?= classForStatusAndResolution(
-                                                    filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'status'}->{'name'}, FILTER_SANITIZE_STRING),
-                                                    filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'resolution'}->{'name'}, FILTER_SANITIZE_STRING)) ?>">
-                                            <?= getStatusForStatusAndResolution(
-                                                filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'status'}->{'name'}, FILTER_SANITIZE_STRING),
-                                                filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'resolution'}->{'name'}, FILTER_SANITIZE_STRING)
-                                            ) ?>
-                                        </span>
+                    <span
+                            class="aui-lozenge aui-lozenge-subtle
+                        <?= classForStatusAndResolution(
+                                filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'status'}->{'name'}, FILTER_SANITIZE_STRING),
+                                filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'resolution'}->{'name'}, FILTER_SANITIZE_STRING)) ?>">
+                        <?= getStatusForStatusAndResolution(
+                            filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'status'}->{'name'}, FILTER_SANITIZE_STRING),
+                            filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'resolution'}->{'name'}, FILTER_SANITIZE_STRING)
+                        ) ?>
+                    </span>
+                </td>
+                <!-- docs url -->
+                <td class="jira-macro-table-underline-pdfexport">
+                    <?php
+                    if (!empty($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10523'})) {
+                        ?>
+
+                        <a href="<?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10523'}, FILTER_SANITIZE_STRING); ?>"
+                           target="_blank"><i class="fa fa-external-link"></i></a>
+                        <?php
+                    }
+                    ?>
+                </td>
+
+                <!-- deprecation -->
+                <td class="jira-macro-table-underline-pdfexport">
+                    <?php
+                    if (array_key_exists($key, $keyToDeprecations)) {
+                        echo "<span class='aui-lozenge-complete' style='padding: 1px; border-radius: 2px'>D</span>";
+                    } else {
+                        echo "";
+                    }
+                    ?>
+                </td>
+
+                <!-- breaking changes -->
+                <td class="jira-macro-table-underline-pdfexport">
+                    <?php
+                    if (array_key_exists($key, $keyToBreakingChanges)) {
+                        echo "<span class='aui-lozenge-error' style='padding: 1px; border-radius: 2px'>B</span>";
+                    } else {
+                        echo "";
+                    }
+                    ?>
+                </td>
+
+                <!-- more info  -->
+                <td nowrap="true"
+                    class="jira-macro-table-underline-pdfexport">
+                    <?php
+                    if (strlen($moreInfoContent) > 0) {
+                        ?>
+                        <span style="width: 100%" class="btn btn-primary" more-info data-key="<?= $key ?>">More Info</span>
+                    <?php } ?>
                 </td>
                 <?php
             } else {
@@ -157,6 +218,16 @@
                 <?php
             } ?>
         </tr>
+        <?php
+        if (strlen($moreInfoContent) > 0) {
+            ?>
+            <tr class="jira-more-info jira <?= $i % 2 == 0 ? 'issue-row' : 'issue-row-alternate' ?>"
+                id="<?= $key ?>">
+                <td colspan="8">
+                    <div><?= $moreInfoContent ?></div>
+                </td>
+            </tr>
+        <?php } ?>
         <?php
     }
     ?>

@@ -188,7 +188,7 @@ function classForStatusAndResolution($status, $resolution)
             $class = "aui-lozenge-complete";
             break;
         case "Done":
-            $class = $resolution == 'Done' ? $class : "aui-lozenge-error";
+            $class = $status == 'Done' && empty($resolution) ? $class : ($resolution == 'Done' ? $class : "aui-lozenge-error");
     }
 
     return $class;
@@ -199,7 +199,7 @@ function getStatusForStatusAndResolution($status, $resolution)
     $result = $status;
     switch ($status) {
         case "Done":
-            $result = $resolution == 'Done' ? $result : $resolution;
+            $result = $status == 'Done' && empty($resolution) ? $result : ($resolution == 'Done' ? $result : $resolution);
     }
 
     return $result;

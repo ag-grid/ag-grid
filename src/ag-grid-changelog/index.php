@@ -112,7 +112,7 @@ $keyToDeprecations = $moreInformationMap['deprecation'];
                         href="../change-log/changeLogIndex.php">here</a>.<br/><br/>
 
                 For a list of up and coming Bug Fixes and Features please refer to our <a
-                        href="../ag-grid-pipeline">Pipeline</a><br/></br>
+                        href="../ag-grid-pipeline">Pipeline</a>.<br/></br>
                 Documentation for previous versions can be found under
                 https://www.ag-grid.com/archive/_version_/<br/><br/>For example,
                 the documentation for version 14.2.0 can be found at <a
@@ -191,20 +191,7 @@ $keyToDeprecations = $moreInformationMap['deprecation'];
                                     <span class="jim-table-header-content">Summary</span>
                                 </th>
 
-                                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header">
-                                    <!--                                    <span class="jim-table-header-content"></span>-->
-                                </th>
-
-                                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header">
-                                    <!--                                    <span class="jim-table-header-content"></span>-->
-                                </th>
-
-                                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header">
-                                    <!--                                    <span class="jim-table-header-content"></span>-->
-                                </th>
-
-                                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header">
-                                    <!--                                    <span class="jim-table-header-content"></span>-->
+                                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header" colspan="4">
                                 </th>
                             </tr>
                             <?php

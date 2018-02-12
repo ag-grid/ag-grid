@@ -3,7 +3,7 @@ import {$} from '../common/vendor';
 $(function () {
     $('#page-changelog').each(function () {
         // show/hide tabs
-        $('ul.nav-tabs a').click(function(e) {
+        $('ul.nav-tabs a').click(function (e) {
             e.preventDefault();
             (<any>$(this)).tab('show');
         });
@@ -14,7 +14,7 @@ $(function () {
         }
 
         function processSearchValue() {
-            let value = (<any>document.getElementById('global_search')).value;
+            var value = (<any>document.getElementById('global_search')).value;
             var searchCriteria = (<any>$).trim(value).replace(/ +/g, ' ').toLowerCase();
 
             var reportTable = $("table[id^=content_]")[0];
@@ -27,7 +27,7 @@ $(function () {
             // 1) filter out rows that DON'T match the current search
             tableRows
                 .show()
-                .filter(function() {
+                .filter(function () {
                     var selectedFixVersion = $('#fixVersionFilter').find(":selected").text();
                     selectedFixVersion = selectedFixVersion === 'All Versions' ? '' : selectedFixVersion;
 
@@ -38,7 +38,7 @@ $(function () {
                     var searchTextFails = !~text.indexOf(searchCriteria);
 
                     var fixVersionFails = false;
-                    if(!searchTextFails) {
+                    if (!searchTextFails) {
                         var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
                         fixVersionFails = !~text.indexOf(selectedFixVersion);
                     }
@@ -49,7 +49,7 @@ $(function () {
         }
 
         // global issue search
-        $('#global_search').keyup(function(event) {
+        $('#global_search').keyup(function (event) {
             if (skipKey(event.key)) {
                 return;
             }
@@ -61,13 +61,13 @@ $(function () {
             processSearchValue();
         });
 
-        $("#breaking").click( function(){
+        $("#breaking").click(function () {
             processSearchValue();
         });
-        $("#deprecation").click( function(){
+        $("#deprecation").click(function () {
             processSearchValue();
         });
-        $("span[more-info]").click( function(){
+        $("span[more-info]").click(function () {
             toggleMoreInfo($(this).attr("data-key"))
         });
 
