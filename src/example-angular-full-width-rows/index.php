@@ -8,8 +8,8 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Full Width Renderer</h2>
-    <p>A Full Width Renderer Example</p>
+    <h2>Angular Examples: Full Width Renderer</h2>
+    <p>The example below highlights how to create a Full Width Renderer Example.</p>
 
     <?= example('Full Width Renderer', 'full-width', 'angular', array("exampleHeight" => 490, "showResult" => true)); ?>
 </div>

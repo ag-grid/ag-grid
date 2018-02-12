@@ -8,8 +8,8 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Pinned Row Renderer</h2>
-    <p>A Pinned Row Renderer Example</p>
+    <h2>Pinned Row Renderer using Angular</h2>
+    <p>This page demonstrates a Pinned Row Renderer using Angular.</p>
 
     <?= example('Pinned Row Component', 'pinned-row', 'angular', array("exampleHeight" => 370, "showResult" => true)); ?>
 </div>
