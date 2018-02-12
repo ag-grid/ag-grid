@@ -201,10 +201,14 @@ export class RowRenderer extends BeanStub {
             recycleRows: refreshEvent.keepRenderedRows,
             animate: refreshEvent.animate,
             newData: refreshEvent.newData,
-            newPage: refreshEvent.newPage
+            newPage: refreshEvent.newPage,
+            // because this is a model updated event (not pinned rows), we
+            // can skip updating the pinned rows. this is needed so that if user
+            // is doing transaction updates, the pinned rows are not getting constantly
+            // trashed - or editing cells in pinned rows are not refreshed and put into read mode
+            onlyBody: true
         };
         this.redrawAfterModelUpdate(params);
-        // this.eventService.dispatchEvent(Events.DEPRECATED_EVENT_PAGINATION_PAGE_LOADED);
     }
 
     // if the row nodes are not rendered, no index is returned
