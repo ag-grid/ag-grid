@@ -66,7 +66,7 @@ export class PropertyKeys {
         'getBusinessKeyForNode', 'sendToClipboard', 'navigateToNextCell', 'tabToNextCell', 'getDetailRowData',
         'processCellFromClipboard', 'getDocument', 'postProcessPopup', 'getChildCount', 'getDataPath', 'loadingOverlayComponent',
         'loadingOverlayComponentFramework', 'noRowsOverlayComponent', 'noRowsOverlayComponentFramework', 'detailCellRenderer',
-        'detailCellRendererFramework', 'onGridReady', 'defaultGroupSortComparator', 'isRowMaster'];
+        'detailCellRendererFramework', 'onGridReady', 'defaultGroupSortComparator', 'isRowMaster', 'isRowSelectable'];
 
      public static ALL_PROPERTIES = PropertyKeys.ARRAY_PROPERTIES
         .concat(PropertyKeys.OBJECT_PROPERTIES)

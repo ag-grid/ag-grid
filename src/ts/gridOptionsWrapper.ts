@@ -5,6 +5,7 @@ import {
     GetRowNodeIdFunc,
     GridOptions,
     IsRowMaster,
+    IsRowSelectable,
     NavigateToNextCellParams,
     NodeChildDetails,
     PaginationNumberFormatterParams,
@@ -416,6 +417,7 @@ export class GridOptionsWrapper {
         return usingMasterDetail && this.enterprise;
     }
     public getIsRowMasterFunc(): IsRowMaster { return this.gridOptions.isRowMaster; }
+    public getIsRowSelectableFunc(): IsRowSelectable { return this.gridOptions.isRowSelectable; }
     public getGroupRowRendererParams() { return this.gridOptions.groupRowRendererParams; }
     public getOverlayLoadingTemplate() { return this.gridOptions.overlayLoadingTemplate; }
     public getOverlayNoRowsTemplate() { return this.gridOptions.overlayNoRowsTemplate; }

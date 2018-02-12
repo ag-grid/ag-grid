@@ -218,6 +218,8 @@ export {
     GetContextMenuItemsParams,
     GetContextMenuItems,
     GetDataPath,
+    IsRowMaster,
+    IsRowSelectable,
     MenuItemDef,
     GetNodeChildDetails,
     NodeChildDetails,

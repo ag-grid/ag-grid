@@ -216,6 +216,7 @@ export interface GridOptions {
     rowSelection?: string;
     rowDeselection?: boolean;
     rowMultiSelectWithClick?: boolean;
+    isRowSelectable?: IsRowSelectable;
     overlayLoadingTemplate?: string;
     overlayNoRowsTemplate?: string;
     rowHeight?: number;
@@ -381,6 +382,10 @@ export interface GetNodeChildDetails {
 
 export interface IsRowMaster {
     (dataItem: any): boolean;
+}
+
+export interface IsRowSelectable {
+    (node: RowNode): boolean;
 }
 
 export interface NodeChildDetails {
