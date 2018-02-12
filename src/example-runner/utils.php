@@ -344,7 +344,7 @@ function getExampleInfo($boilerplatePrefix)
         "preview" => $preview,
         "boilerplatePath" => $boilerplatePath,
         "appLocation" => $appLocation,
-        "agGridScriptPath" => AG_SCRIPT_PATH,
+        "agGridScriptPath" => AG_GRID_SCRIPT_PATH,
         "styles" => $styles,
         "scripts" => $scripts,
         "documents" => $documents,
