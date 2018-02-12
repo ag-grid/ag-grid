@@ -225,7 +225,7 @@ colDef.cellEditorParams = {
         <code>newValue</code> for <code>onCellValueChanged</code> will have the number.
     </p>
 
-    <h2>Editing API</h2>
+    <h2 id="editing-api">Editing API</h2>
 
     <p>
         The grid has the following API methods for editing:
@@ -322,6 +322,12 @@ cellDefs.forEach( function(cellDef) {
             </li>
             <li>
                 <code>previous()</code>: Edits the previous cell.
+            </li>
+        </ul>
+        <p>Finally the example demonstrates querying what cell is editing:</p>
+        <ul class="content">
+            <li>
+                <code>which()</code>: If the grid is editing, prints to the console which cell is in edit mode.
             </li>
         </ul>
 

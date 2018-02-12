@@ -262,12 +262,25 @@ include '../documentation-main/documentation_header.php';
     <table class="table reference">
         <tr>
             <th>stopEditing(cancel?)</th>
-            <td>If a cell is editing, it stops the editing. Pass 'true' if you want to cancel the editing
-                (ie don't accept changes).</td>
+            <td>
+                If a cell is editing, it stops the editing. Pass 'true' if you want to cancel the editing
+                (ie don't accept changes). See
+                <a href="../javascript-grid-cell-editing/#editing-api">Editing API</a>
+            </td>
         </tr>
         <tr>
             <th>startEditingCell(params)</th>
-            <td>Gets the grid to start editing on a particular cell.</td>
+            <td>
+                Gets the grid to start editing on a particular cell. See
+                <a href="../javascript-grid-cell-editing/#editing-api">Editing API</a>
+            </td>
+        </tr>
+        <tr>
+            <th>getEditingCells()</th>
+            <td>
+                If the grid is editing, returns back details of the editing cell(s). See
+                <a href="../javascript-grid-cell-editing/#editing-api">Editing API</a>
+            </td>
         </tr>
 
     </table>
