@@ -188,6 +188,7 @@ export {FocusedCellController} from "./dist/lib/focusedCellController";
 export {defaultGroupComparator} from "./dist/lib/functions";
 export {GridOptionsWrapper} from "./dist/lib/gridOptionsWrapper";
 export {EventService} from "./dist/lib/eventService";
+export {SelectableService} from "./dist/lib/rowNodes/selectableService";
 export {GridCore} from "./dist/lib/gridCore";
 export {Logger} from "./dist/lib/logger";
 export {SelectionController} from "./dist/lib/selectionController";

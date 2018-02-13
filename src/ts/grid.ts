@@ -72,6 +72,7 @@ import {Environment} from "./environment";
 import {AnimationFrameService} from "./misc/animationFrameService";
 import {NavigationService} from "./gridPanel/navigationService";
 import {HeightScaler} from "./rendering/heightScaler";
+import {SelectableService} from "./rowNodes/selectableService";
 
 export interface GridParams {
     // used by Web Components
@@ -171,7 +172,7 @@ export class Grid {
                 DragAndDropService, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService, RowNodeFactory,
                 CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService,
-                ColumnHoverService, ColumnAnimationService, SortService, AutoGroupColService, ImmutableService,
+                ColumnHoverService, ColumnAnimationService, SortService, SelectableService, AutoGroupColService, ImmutableService,
                 ChangeDetectionService, Environment, Beans, AnimationFrameService, SortController],
             components: [
                 {componentName: 'AgCheckbox', theClass: AgCheckbox}
