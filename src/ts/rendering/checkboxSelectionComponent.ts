@@ -100,21 +100,26 @@ export class CheckboxSelectionComponent extends Component {
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_SELECTABLE_CHANGED, this.onSelectableChanged.bind(this));
 
         this.isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc();
-        if (this.isRowSelectableFunc || this.checkboxCallbackExists()) {
+        let checkboxVisibleIsDynamic = this.isRowSelectableFunc || this.checkboxCallbackExists();
+        if (checkboxVisibleIsDynamic) {
             this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelect.bind(this));
             this.showOrHideSelect();
         }
     }
 
     private showOrHideSelect(): void {
-        // checkboxSelection callback is deemed a legacy solution however we will still consider it's result
-        let checkboxVisible = this.checkboxCallbackExists() ? this.column.isCellCheckboxSelection(this.rowNode) : true;
-
         // if the isRowSelectable() is not provided the row node is selectable by default
         let selectable = this.rowNode.selectable;
 
+        // checkboxSelection callback is deemed a legacy solution however we will still consider it's result.
+        // If selectable, then also check the colDef callback. if not selectable, this it short circuits - no need
+        // to call the colDef callback.
+        if (selectable && this.checkboxCallbackExists()) {
+            selectable = this.column.isCellCheckboxSelection(this.rowNode);
+        }
+
         // show checkbox if both conditions are true
-        this.setVisible(selectable && checkboxVisible);
+        this.setVisible(selectable);
     }
 
     private checkboxCallbackExists(): boolean {
