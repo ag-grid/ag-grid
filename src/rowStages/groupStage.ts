@@ -515,19 +515,53 @@ export class GroupStage implements IRowNodeStage {
         return res;
     }
 
-    private updateSelectableGroups(rootNode: RowNode) {
+    private updateSelectableGroups(rootNode: RowNode): void {
+        let groupSelectsChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
+        this.recurseDown(rootNode.childrenAfterGroup, groupSelectsChildren);
+    }
+
+    private recurseDown(children: RowNode[], groupSelectsChildren: boolean): void {
+        children.forEach((child: RowNode) => {
+
+            if (!child.group) { return; } // only interested in groups
+
+            if (child.hasChildren()) {
+                this.recurseDown(child.childrenAfterGroup, groupSelectsChildren);
+            }
+
+            let rowSelectable: boolean;
+
+            if (groupSelectsChildren) {
+                // have this group selectable if at least one direct child is selectable
+                let firstSelectable = _.find(child.childrenAfterGroup, 'selectable', true);
+                rowSelectable = _.exists(firstSelectable);
+            } else {
+                // directly retrieve selectable value from user callback
+                rowSelectable = this.isRowSelectableFunc(child);
+            }
+
+            child.setRowSelectable(rowSelectable);
+        });
+    }
+
+    private updateSelectableGroups_old(rootNode: RowNode) {
         let groupSelectsChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
         this.recursivelyUpdateSelectableGroups(rootNode, groupSelectsChildren);
     }
 
-    private recursivelyUpdateSelectableGroups(rowNode: RowNode, groupSelectsChildren: boolean) {
+    private recursivelyUpdateSelectableGroups(rowNode: RowNode, groupSelectsChildren: boolean): void {
         rowNode.childrenAfterGroup.forEach((child: RowNode) => {
             if (child.hasChildren()) {
                 if (groupSelectsChildren) {
                     // reset selectable on group, will be updated by bubbleUpSelectable() if leaf nodes are selectable
+                    //******* i don't like this, as it results in the RowSelectableChanged event getting fired twice
+                    //******* if the RowNode was true, and stays true (as there is an intermediary state of false introduced).
+                    //******* in my alternative, it never changes (as setting true to true fires no event)
                     child.setRowSelectable(false);
                 } else {
                     // directly retrieve selectable value from user callback
+                    //******* should o fused child.setSelectable() as otherwise event
+                    //******* to update up doesn't get fired.
                     child.selectable = this.isRowSelectableFunc(child);
                 }
                 this.recursivelyUpdateSelectableGroups(child, groupSelectsChildren);
@@ -538,7 +572,7 @@ export class GroupStage implements IRowNodeStage {
         });
     }
 
-    private bubbleUpSelectableValue(rowNode: RowNode) {
+    private bubbleUpSelectableValue(rowNode: RowNode): void {
         if (!rowNode.parent) return;
         rowNode.parent.setRowSelectable(true);
         this.bubbleUpSelectableValue(rowNode.parent);
