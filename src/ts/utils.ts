@@ -328,7 +328,7 @@ export class Utils {
         }
     }
 
-    static find<T>(collection: T[] | { [id: string]: T }, predicate: string | ((item: T) => void), value?: any): T {
+    static find<T>(collection: T[] | { [id: string]: T }, predicate: string | boolean | ((item: T) => void), value?: any): T {
         if (collection === null || collection === undefined) {
             return null;
         }
