@@ -887,7 +887,7 @@
         background-repeat: no-repeat;
 
         .ag-rich-select-list {
-            height: 200px;
+            height: $row-height * 6.5; // intentional
         }
 
         .ag-rich-select-value {
