@@ -310,27 +310,18 @@ colDef = {
 
     <?= example('Specify Selectable Rows', 'specify-selectable-rows', 'generated') ?>
 
-    <h3>Grouping Selectable Rows - groupSelectsChildren = false</h3>
+    <h3>Specifying Selectable Rows with Groups</h3>
 
     <p>This example demonstrates the following: </p>
 
     <ul class="content">
-        <li>The <code>isRowSelectable()</code> allows all groups to be selected but only rows with year < 2007.</li>
-        <li>As <code>gridOptions.groupSelectsChildren = false</code> selecting groups won't select children.</li>
+        <li>The <code>isRowSelectable()</code> callback allows rows with year 2004 and 2008 to be selectable.</li>
+        <li>As <code>gridOptions.groupSelectsChildren = true</code> selecting groups will also select 'selectable' children.</li>
+        <li>As <code>gridOptions.groupSelectsFiltered = true</code> selecting groups will only select 'selectable' children
+        that are filtered.</li>
     </ul>
 
-    <?= example('Grouping Selectable Rows (groupSelectsChildren = false)', 'no-group-selects-children-selectable-rows', 'generated', array("enterprise" => 1)) ?>
-
-    <h3>Grouping Selectable Rows - groupSelectsChildren = true</h3>
-
-    <p>This example demonstrates the following: </p>
-
-    <ul class="content">
-        <li>The <code>isRowSelectable()</code> callback only allows selections on rows with year < 2007.</li>
-        <li>As <code>gridOptions.groupSelectsChildren = true</code> selecting groups will also select children.</li>
-    </ul>
-
-    <?= example('Grouping Selectable Rows (groupSelectsChildren = true)', 'group-selects-children-selectable-rows', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Specifying Selectable Rows with Groups', 'specify-selectable-rows-with-groups', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Selection Events</h2>
 

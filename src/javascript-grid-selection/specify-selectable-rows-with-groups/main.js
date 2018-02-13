@@ -1,13 +1,13 @@
 var columnDefs = [
+  {headerName: "Year", field: "year", width: 90},
   {headerName: "Gold", field: "gold", width: 140, aggFunc: 'sum'},
   {headerName: "Silver", field: "silver", width: 140, aggFunc: 'sum'},
   {headerName: "Bronze", field: "bronze", width: 140, aggFunc: 'sum'},
   {headerName: "Total", field: "total", width: 140, aggFunc: 'sum'},
   {headerName: "Age", field: "age", width: 120, aggFunc: 'sum'},
   {headerName: "Country", field: "country", width: 180, rowGroupIndex: 0},
-  {headerName: "Year", field: "year", width: 90},
   {headerName: "Date", field: "date", width: 110},
-  {headerName: "Sport", field: "sport", width: 110, rowGroupIndex: 1}
+  {headerName: "Sport", field: "sport", width: 110}
 ];
 
 var gridOptions = {
@@ -16,21 +16,31 @@ var gridOptions = {
   rowSelection: 'multiple',
   rowDeselection: true,
   isRowSelectable: function(node) {
-    if(node.group) return true;
-    return node.data ? node.data.year > 2004 : false;
+    return node.data ? (node.data.year === 2008 || node.data.year === 2004) : false;
   },
+  groupSelectsChildren: true,
+  groupSelectsFiltered: true,
+  enableSorting: true,
   suppressRowClickSelection: true,
   groupDefaultExpanded: -1,
   autoGroupColumnDef: {
     headerName: "Athlete",
     field: "athlete",
-    width: 350,
+    width: 250,
     cellRenderer:'agGroupCellRenderer',
     cellRendererParams: {
       checkbox: true
     }
   }
 };
+
+function filterBy2004() {
+  gridOptions.api.setFilterModel({year: ['2004']});
+}
+
+function clearFilter() {
+  gridOptions.api.setFilterModel(null);
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
