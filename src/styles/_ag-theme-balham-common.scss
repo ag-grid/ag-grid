@@ -22,6 +22,7 @@ $disabled-foreground-color-opacity: 0.38 !default;
     .ag-row,
     .ag-header-cell,
     .ag-header-group-cell,
+    .ag-rich-select-value,
     .ag-root {
         box-sizing: border-box;
     }
@@ -288,5 +289,9 @@ $disabled-foreground-color-opacity: 0.38 !default;
 
     .ag-cell-range-selected-4:not(.ag-cell-focus) {
         background-color: $ag-range-selected-color-4;
+    }
+
+    .ag-rich-select-value {
+        border-bottom: 1px solid $border-color;
     }
 }
