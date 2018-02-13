@@ -6,6 +6,7 @@ import {
     ColumnController,
     Context,
     EventService,
+    SelectableService,
     GridOptionsWrapper,
     IRowNodeStage,
     NumberSequence,
@@ -16,7 +17,6 @@ import {
     ValueService,
     ChangedPath,
     GetDataPath,
-    IsRowSelectable,
     PostConstruct
 } from "ag-grid/main";
 
@@ -44,6 +44,7 @@ export class GroupStage implements IRowNodeStage {
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('selectableService') private selectableService: SelectableService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
@@ -52,9 +53,6 @@ export class GroupStage implements IRowNodeStage {
     // cater for the scenario where this is switched on / off dynamically
     private usingTreeData: boolean;
     private getDataPath: GetDataPath;
-
-    // row selectable callback function
-    private isRowSelectableFunc: IsRowSelectable;
 
     // we use a sequence variable so that each time we do a grouping, we don't
     // reuse the ids - otherwise the rowRenderer will confuse rowNodes between redraws
@@ -77,7 +75,6 @@ export class GroupStage implements IRowNodeStage {
                 console.warn('ag-Grid: property usingTreeData=true, but you did not provide getDataPath function, please provide getDataPath function if using tree data.')
             }
         }
-        this.isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc();
     }
 
     public execute(params: StageExecuteParams): void {
@@ -85,16 +82,14 @@ export class GroupStage implements IRowNodeStage {
         let details = this.createGroupingDetails(params);
 
         if (details.transaction) {
-                this.handleTransaction(details);
+            this.handleTransaction(details);
         } else {
             this.shotgunResetEverything(details);
         }
 
         this.sortGroupsWithComparator(details.rootNode);
 
-        if (this.isRowSelectableFunc) {
-            this.updateSelectableGroups(details.rootNode);
-        }
+        this.selectableService.updateSelectableAfterGrouping(details.rootNode);
     }
 
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
@@ -513,34 +508,5 @@ export class GroupStage implements IRowNodeStage {
             }
         });
         return res;
-    }
-
-    private updateSelectableGroups(rootNode: RowNode): void {
-        let groupSelectsChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
-        this.recurseDown(rootNode.childrenAfterGroup, groupSelectsChildren);
-    }
-
-    private recurseDown(children: RowNode[], groupSelectsChildren: boolean): void {
-        children.forEach((child: RowNode) => {
-
-            if (!child.group) { return; } // only interested in groups
-
-            if (child.hasChildren()) {
-                this.recurseDown(child.childrenAfterGroup, groupSelectsChildren);
-            }
-
-            let rowSelectable: boolean;
-
-            if (groupSelectsChildren) {
-                // have this group selectable if at least one direct child is selectable
-                let firstSelectable = _.find(child.childrenAfterGroup, 'selectable', true);
-                rowSelectable = _.exists(firstSelectable);
-            } else {
-                // directly retrieve selectable value from user callback
-                rowSelectable = this.isRowSelectableFunc(child);
-            }
-
-            child.setRowSelectable(rowSelectable);
-        });
     }
 }
