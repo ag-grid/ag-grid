@@ -875,11 +875,13 @@ export class CellComp extends Component {
     private onMouseOut(mouseEvent: MouseEvent): void {
         let cellMouseOutEvent: CellMouseOutEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_MOUSE_OUT);
         this.beans.eventService.dispatchEvent(cellMouseOutEvent);
+        this.beans.columnHoverService.clearMouseOver();
     }
 
     private onMouseOver(mouseEvent: MouseEvent): void {
         let cellMouseOverEvent: CellMouseOverEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_MOUSE_OVER);
         this.beans.eventService.dispatchEvent(cellMouseOverEvent);
+        this.beans.columnHoverService.setMouseOver([this.column]);
     }
 
     private onCellDoubleClicked(mouseEvent: MouseEvent) {

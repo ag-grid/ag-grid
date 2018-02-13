@@ -24,6 +24,7 @@ import {SelectAllFeature} from "./selectAllFeature";
 import {Events} from "../../events";
 import {ColumnHoverService} from "../../rendering/columnHoverService";
 import {Beans} from "../../rendering/beans";
+import {HoverFeature} from "../hoverFeature";
 
 export class HeaderWrapperComp extends Component {
 
@@ -87,6 +88,8 @@ export class HeaderWrapperComp extends Component {
         this.setupMenuClass();
         this.setupSortableClass(enableSorting);
         this.addColumnHoverListener();
+
+        this.addFeature(this.context, new HoverFeature([this.column], this.getGui()));
 
         this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_ACTIVE_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
@@ -156,6 +159,8 @@ export class HeaderWrapperComp extends Component {
             this.addDestroyFunc(headerComp.destroy.bind(headerComp));
         }
     }
+
+
 
     private onColumnMovingChanged(): void {
         // this function adds or removes the moving css, based on if the col is moving.

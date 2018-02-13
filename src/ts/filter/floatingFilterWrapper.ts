@@ -9,6 +9,10 @@ import {RefSelector} from "../widgets/componentAnnotations";
 import {IAfterGuiAttachedParams, IComponent} from "../interfaces/iComponent";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {Beans} from "../rendering/beans";
+import {HoverFeature} from "../headerRendering/hoverFeature";
+import {Events} from "../events";
+import {EventService} from "../eventService";
+import {ColumnHoverService} from "../rendering/columnHoverService";
 
 export interface IFloatingFilterWrapperParams<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> {
     column: Column;
@@ -25,6 +29,8 @@ export interface IFloatingFilterWrapperComp<M, F extends FloatingFilterChange, P
 export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends Component implements IFloatingFilterWrapperComp<M, F, PC, P> {
 
     @Autowired('context') private context: Context;
+    @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
+    @Autowired('eventService') private eventService: EventService;
     @Autowired('beans') private beans: Beans;
 
     column: Column;
@@ -37,10 +43,23 @@ export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, P
 
         this.setTemplateFromElement(base);
         this.setupWidth();
+        this.addColumnHoverListener();
+
+        this.addFeature(this.context, new HoverFeature([this.column], this.getGui()));
 
         let setLeftFeature = new SetLeftFeature(this.column, this.getGui(), this.beans);
         setLeftFeature.init();
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
+    }
+
+    private addColumnHoverListener(): void {
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
+        this.onColumnHover();
+    }
+
+    private onColumnHover(): void {
+        let isHovered = this.columnHoverService.isHovered(this.column);
+        _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered)
     }
 
     abstract onParentModelChanged(parentModel: M): void;

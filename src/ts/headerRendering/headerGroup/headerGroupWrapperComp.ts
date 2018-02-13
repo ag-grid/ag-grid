@@ -20,6 +20,7 @@ import {IHeaderGroupComp, IHeaderGroupParams} from "./headerGroupComp";
 import {GridApi} from "../../gridApi";
 import {ComponentRecipes} from "../../components/framework/componentRecipes";
 import {Beans} from "../../rendering/beans";
+import {HoverFeature} from "../hoverFeature";
 
 export class HeaderGroupWrapperComp extends Component {
 
@@ -73,6 +74,8 @@ export class HeaderGroupWrapperComp extends Component {
         this.addAttributes();
         this.setupMovingCss();
         this.setupTooltip();
+
+        this.addFeature(this.context, new HoverFeature(this.columnGroup.getOriginalColumnGroup().getLeafColumns(), this.getGui()));
 
         let setLeftFeature = new SetLeftFeature(this.columnGroup, this.getGui(), this.beans);
         setLeftFeature.init();
