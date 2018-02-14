@@ -388,8 +388,8 @@ export interface ColumnVO {
 
 <p>
     Below shows another example using checkbox selection. The example shows:
-    The example shows checkboxes on two columns. This is for comparison in the example
-    only. Normal applications generally have the checkbox only on one column.
+    The example shows checkboxes on the groups and a regular column. This is for comparison in the example
+    only. Normal applications generally have the checkbox on one column or the groups.
 </p>
 
     <ul class="content">
@@ -397,8 +397,9 @@ export interface ColumnVO {
             Checkbox selection on the group column allowing selection of any row.
         </li>
         <li>
-            Checkbox selection on the group year column allowing selection on leaf
-            level rows only.
+            Checkbox selection on the group sport column. Selection is restricted to leaf level rows only
+            via <code>gridOptions.isRowSelectable(rowNode)</code> callback.
+
         </li>
     </ul>
 <?= example('Checkbox Example', 'checkbox', 'generated', array("enterprise" => 1)) ?>
