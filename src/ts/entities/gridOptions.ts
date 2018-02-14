@@ -303,6 +303,7 @@ export interface GridOptions {
     processCellFromClipboard?(params: ProcessCellForExportParams): any;
     processSecondaryColDef?(colDef: ColDef): void;
     processSecondaryColGroupDef?(colGroupDef: ColGroupDef): void;
+    postSort?(nodes: RowNode[]): void;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
