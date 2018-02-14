@@ -172,6 +172,13 @@ export class EnterpriseBlock extends RowNodeBlock {
 
             if (rowNode.group) {
                 rowNode.key = this.valueService.getValue(this.rowGroupColumn, rowNode);
+                if (rowNode.key===null || rowNode.key===undefined) {
+                    _.doOnce( ()=> {
+                        console.warn(`null and undefined values are not allowed for enterprise row model keys`);
+                        if (this.rowGroupColumn) { console.warn(`column = ${this.rowGroupColumn.getId()}`)}
+                        console.warn(`data is `, rowNode.data);
+                    }, 'EnterpriseBlock-CannotHaveNullOrUndefinedForKey');
+                }
             }
         } else {
             rowNode.setDataAndId(undefined, undefined);
