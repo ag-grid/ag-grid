@@ -462,6 +462,8 @@ export class GridOptionsWrapper {
     // public getCellRenderers(): {[key: string]: {new(): ICellRenderer} | ICellRendererFunc} { return this.gridOptions.cellRenderers; }
     // public getCellEditors(): {[key: string]: {new(): ICellEditor}} { return this.gridOptions.cellEditors; }
 
+    public getPostSortFunc(): (rowNodes: RowNode[]) => void { return this.gridOptions.postSort; }
+
     public getClipboardDeliminator() {
         return _.exists(this.gridOptions.clipboardDeliminator) ? this.gridOptions.clipboardDeliminator : '\t';
     }
