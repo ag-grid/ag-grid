@@ -283,7 +283,7 @@ colDef = {
     <h2 id="specify-selectable-rows">Specify Selectable Rows</h2>
 
     <p>
-        It possible to specify which rows can be selected via the <code>gridOptions.isRowSelectable(rowNode)</code>
+        It is possible to specify which rows can be selected via the <code>gridOptions.isRowSelectable(rowNode)</code>
         callback function.
     </p>
     <p>
@@ -318,7 +318,15 @@ colDef = {
         <li>The <code>isRowSelectable()</code> callback allows rows with year 2004 and 2008 to be selectable.</li>
         <li>As <code>gridOptions.groupSelectsChildren = true</code> selecting groups will also select 'selectable' children.</li>
         <li>As <code>gridOptions.groupSelectsFiltered = true</code> selecting groups will only select 'selectable' children
-        that are filtered.</li>
+        that pass the filter.</li>
+        <li>To demonstrate, follow these steps:
+            <ol>
+                <li>Click 'Filter by Year 2008 & 2012'.</li>
+                <li>Select checkbox beside 'United States'.</li>
+                <li>Click 'Clear Filter'.</li>
+                <li>Notice that only 'United States' for 2008 is selected.</li>
+            </ol>
+        </li>
     </ul>
 
     <?= example('Specifying Selectable Rows with Groups', 'specify-selectable-rows-with-groups', 'generated', array("enterprise" => 1)) ?>

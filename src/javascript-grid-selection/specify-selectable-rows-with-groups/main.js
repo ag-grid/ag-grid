@@ -21,6 +21,7 @@ var gridOptions = {
   groupSelectsChildren: true,
   groupSelectsFiltered: true,
   enableSorting: true,
+  enableFilter: true,
   suppressRowClickSelection: true,
   groupDefaultExpanded: -1,
   autoGroupColumnDef: {
@@ -35,7 +36,7 @@ var gridOptions = {
 };
 
 function filterBy2004() {
-  gridOptions.api.setFilterModel({year: ['2004']});
+  gridOptions.api.setFilterModel({year: ['2008','2012']});
 }
 
 function clearFilter() {
