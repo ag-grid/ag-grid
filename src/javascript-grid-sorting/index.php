@@ -174,5 +174,24 @@ var groupColumn = {
 
     <?= example('Accented Sort', 'accented-sort', 'generated') ?>
 
+    <h2 id="post-sort">Post Sort</h2>
+
+    <p>
+        It is also possible to perform some post sorting if you require additional control over the sorted rows.
+    </p>
+
+    <p>This is provided via the grid callback function: <code>gridOptions.postSort</code> as shown below:</p>
+
+    <snippet>
+gridOptions.postSort(rowNodes) {
+    rowNodes.reverse(); // reverse rows after grid sorting.
+}
+    </snippet>
+
+    <p>
+        The following example uses this configuration to perform a post sort on the rows.
+    </p>
+
+    <?= example('Post Sort', 'post-sort', 'generated', array("enterprise" => 1)) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
