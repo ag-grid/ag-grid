@@ -86,7 +86,10 @@ include '../documentation-main/documentation_header.php';
             <td>Callback to be used with <a href="../javascript-grid-master-detail">Master Detail</a> to determine if
                 a row should be master row. If false is returned no detail row will exist for this row.</td>
         </tr>
-
+        <tr>
+            <th>postSort(rowNodes)</th>
+            <td>Callback to perform additional sorting after the grid has sorted the rows. For more details see <a href="../javascript-grid-sorting/#post-sort">Post Sort</a>.</td>
+        </tr>
         <tr>
             <th>doesDataFlower(dataItem)</th>
             <td>Tells the grid if this row should flower.</td>
