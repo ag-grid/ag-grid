@@ -18,7 +18,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     enableSorting: true,
     postSort(rowNodes) {
-        rowNodes.reverse();
+      rowNodes.sort((n1, n2) => n1.data.country === 'Ireland' ? -1 : 1);
     }
 };
 
