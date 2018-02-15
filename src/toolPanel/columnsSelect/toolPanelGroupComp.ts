@@ -363,4 +363,16 @@ export class ToolPanelGroupComp extends Component implements ToolPanelBaseColumn
     isSelectable(): boolean {
         return !this.cbSelect.isReadOnly();
     }
+
+    isExpandable(): boolean {
+        return true;
+    }
+
+    setExpandable(value: boolean): void {
+        if (this.expanded && !value) {
+            this.onExpandOrContractClicked();
+        } else if (!this.expanded && value){
+            this.onExpandOrContractClicked();
+        }
+    }
 }

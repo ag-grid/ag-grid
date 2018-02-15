@@ -324,11 +324,16 @@ export class ToolPanelColumnComp extends Component implements ToolPanelBaseColum
         return this.cbSelect.isSelected();
     }
 
-    setSelectionCallback(callback: (selected: boolean) => void): void {
-        this.selectionCallback = callback;
-    }
 
     isSelectable(): boolean {
         return !this.cbSelect.isReadOnly();
+    }
+
+    isExpandable(): boolean {
+        return false;
+    }
+
+    setExpandable(value: boolean): void {
+        console.warn('ag-grid: can not expand a column item that does not represent a column group header');
     }
 }

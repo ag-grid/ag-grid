@@ -1,37 +1,44 @@
 import {
-    Component,
+    _,
     Autowired,
-    ColumnController,
-    EventService,
-    Context,
-    PostConstruct,
-    Events,
-    OriginalColumnGroup,
+    BaseHtmlElementBuilder,
     Column,
-    Utils,
-    OriginalColumnGroupChild,
-    RefSelector,
+    ColumnController,
+    Component,
+    Context,
+    Events,
+    EventService,
     GridOptionsWrapper,
-    _
+    OriginalColumnGroup,
+    OriginalColumnGroupChild,
+    PostConstruct,
+    RefSelector,
+    Utils,
+    HtmlElementBuilder
 } from "ag-grid/main";
 import {ToolPanelGroupComp} from "./toolPanelGroupComp";
 import {ToolPanelColumnComp} from "./toolPanelColumnComp";
+import {ToolbarBuilder, ToolbarItemBuilder} from "../../toolbar/toolbar";
 
-enum CheckboxState {CHECKED, UNCHECKED, INTERMEDIATE};
 
 export interface ToolPanelBaseColumnItem {
     onColumnFilterChanged(filterText: string): void;
 
-    onSelectAllChanged (value:boolean):void;
+    onSelectAllChanged(value: boolean): void;
 
-    isSelected():boolean;
+    isSelected(): boolean;
 
-    isSelectable():boolean;
+    isSelectable(): boolean;
 
-    setSelectionCallback (callback:(selected:boolean)=>void):void;
+    isExpandable(): boolean;
+
+    setExpandable(value: boolean): void;
+
 }
 
 export type ToolPanelColumnItem = ToolPanelBaseColumnItem & Component;
+
+
 
 
 export class ColumnSelectComp extends Component {
@@ -47,23 +54,21 @@ export class ColumnSelectComp extends Component {
     @RefSelector('column-select-columns')
     eColumnSelectColumns: HTMLElement;
 
+
+
+    @RefSelector('filterTextField')
     private eFilterTextField: HTMLInputElement;
-    private eSelectAllContainer: HTMLElement;
+    @RefSelector('expandAllButton')
+    private eExpandAll: HTMLButtonElement;
+    @RefSelector('collapseAllButton')
+    private eCollapseAll: HTMLButtonElement;
+    @RefSelector('selectAllButton')
     private eSelectAll: HTMLInputElement;
-    private selectAllState: CheckboxState = CheckboxState.UNCHECKED;
+    @RefSelector('deselectAllButton')
+    private eDeselectAll: HTMLInputElement;
 
-    private eCheckedIcon: HTMLElement;
-    private eUncheckedIcon: HTMLElement;
-    private eIndeterminateCheckedIcon: HTMLElement;
 
-    static translate = ()=>{};
-
-    private static TEMPLATE = `<div class="ag-column-select-panel">
-        <div class="ag-column-select-header" ref="column-select-header"></div>
-        <div class="ag-column-select-columns" ref="column-select-columns"></div>
-    </div>`;
-
-    private renderedItems: {[key: string]: ToolPanelColumnItem};
+    private renderedItems: { [key: string]: ToolPanelColumnItem };
 
     private columnTree: OriginalColumnGroupChild[];
 
@@ -71,108 +76,105 @@ export class ColumnSelectComp extends Component {
 
     // we allow dragging in the toolPanel, but not when this component appears in the column menu
     constructor(allowDragging: boolean) {
-        super(ColumnSelectComp.TEMPLATE);
+        super();
         this.allowDragging = allowDragging;
     }
 
     @PostConstruct
     public init(): void {
-        this.setupHeader ();
+        BaseHtmlElementBuilder
+            .from('div', 'ag-column-select-panel')
+            .withChild(BaseHtmlElementBuilder
+                .from('div', "ag-column-select-header", 'column-select-header')
+                .withChild(this.createFilter())
+                .withChild(this.createToolbar())
+            )
+            .withChild(this.createColumnsContainer())
+            .withBinding(this)
+            .build();
+
         this.addDestroyableEventListener(this.globalEventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
         if (this.columnController.isReady()) {
             this.onColumnsChanged();
         }
     }
 
-    private setupHeader ():void{
-        this.setupFilterBox();
-        this.setupSelectAll();
+    createFilter():HtmlElementBuilder {
+        return BaseHtmlElementBuilder
+            .from('div', "ag-filter-body")
+            .withChild(BaseHtmlElementBuilder.fromString(`<input class="ag-filter-filter" ref="filterTextField" type="text">`)
+                .withProperty('placeholder', this.translate('filterOoo', 'Filter...'))
+                .withEventHandler('input', _.debounce(this.onFilterTextFieldChanged.bind(this), 400))
+            );
     }
 
-    private setupSelectAll() {
-        let translate = this.translate.bind(this);
-        this.eColumnSelectHeader.appendChild(_.loadTemplate(`<label ref="selectAllContainer">
-            <div ref="selectAll" class="ag-filter-checkbox"></div><span class="ag-filter-value">(${translate('selectAll', 'Select All')})</span>
-        </label>`));
+    createColumnsContainer():HtmlElementBuilder {
+        return BaseHtmlElementBuilder
+            .from('div', "ag-column-select-columns", 'column-select-columns');
+    }
 
-        this.eSelectAllContainer = this.getRefElement('selectAllContainer');
-        this.eSelectAll = <HTMLInputElement>this.getRefElement('selectAll');
+    createToolbar(): ToolbarBuilder{
+        return new ToolbarBuilder()
+            .withButtons([
+                new ToolbarItemBuilder()
+                    .withChild(`<span class="ag-icon ag-icon-checkbox-checked">`)
+                    .withEventHandler('click', this.onSelectAll.bind(this)),
+                new ToolbarItemBuilder()
+                    .withChild(`<span class="ag-icon ag-icon-checkbox-unchecked">`)
+                    .withEventHandler('click', this.onDeselectAll.bind(this)),
+                new ToolbarItemBuilder()
+                    .withChild(`<span class="ag-icon ag-icon-expanded">`)
+                    .withEventHandler('click', this.onExpandAll.bind(this)),
+                new ToolbarItemBuilder()
+                    .withChild(`<span class="ag-icon ag-icon-contracted">`)
+                    .withEventHandler('click', this.onCollapseAll.bind(this)),
+            ]);
+    }
 
-        this.eCheckedIcon = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null);
-        this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null);
-        this.eIndeterminateCheckedIcon = _.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null);
+    private onExpandAll(event: Event) {
+        _.addAgGridEventPath(event);
+        this.doSetExandedAll(true);
+    }
 
-        this.addDestroyableEventListener(this.eSelectAllContainer, 'click', this.onSelectAll.bind(this));
+    private onCollapseAll(event: Event) {
+        _.addAgGridEventPath(event);
+        this.doSetExandedAll(false);
+    }
+
+    private doSetExandedAll(value: boolean): void {
+        _.iterateObject(this.renderedItems, (key, renderedItem) => {
+            if (renderedItem.isExpandable()) {
+                renderedItem.setExpandable(value);
+            }
+        });
+
+    }
+
+    private onDeselectAll(event: Event) {
+        _.addAgGridEventPath(event);
+        this.doSelectAll(false);
     }
 
     private onSelectAll(event: Event) {
         _.addAgGridEventPath(event);
-        if (this.selectAllState === CheckboxState.CHECKED) {
-            this.selectAllState = CheckboxState.UNCHECKED;
-        } else {
-            this.selectAllState = CheckboxState.CHECKED;
-        }
-        this.doSelectAll();
+        this.doSelectAll(true);
     }
 
-    private doSelectAll(): void {
-        let checked = this.selectAllState === CheckboxState.CHECKED;
-        _.iterateObject(this.renderedItems, (key, column)=>{
-            column.onSelectAllChanged (checked);
+    private doSelectAll(value:boolean): void {
+        _.iterateObject(this.renderedItems, (key, column) => {
+            column.onSelectAllChanged(value);
         });
-
-        this.updateCheckboxIcon();
     }
-
-
-
-    private updateCheckboxIcon() {
-        _.removeAllChildren(this.eSelectAll);
-
-        let selectedCount: number = 0;
-        let allSelectableCount: number = 0;
-        _.iterateObject(this.renderedItems, (key, renderedItem) =>{
-            if (renderedItem.isSelected()) selectedCount ++;
-            if (renderedItem.isSelectable()) allSelectableCount ++;
-        });
-
-
-        if (selectedCount === allSelectableCount){
-            this.selectAllState = CheckboxState.CHECKED;
-            this.eSelectAll.appendChild(this.eCheckedIcon);
-        } else if (selectedCount === 0){
-            this.selectAllState = CheckboxState.UNCHECKED;
-            this.eSelectAll.appendChild(this.eUncheckedIcon);
-        } else {
-            this.selectAllState = CheckboxState.INTERMEDIATE;
-            this.eSelectAll.appendChild(this.eIndeterminateCheckedIcon);
-        }
-    }
-
-
-    setupFilterBox() {
-        let translate = this.translate.bind(this);
-        this.eColumnSelectHeader.appendChild(_.loadTemplate(`<div class="ag-filter-body">
-            <input ref="filterTextField" class="ag-filter-filter" id="filterText" type="text" placeholder="${translate('filterOoo', 'Filter...')}"/>
-        </div>`));
-
-        this.eFilterTextField = <HTMLInputElement>this.getRefElement('filterTextField');
-
-        let debounceMs = 400;
-        let toDebounce: () => void = _.debounce(this.onFilterTextFieldChanged.bind(this), debounceMs);
-        this.addDestroyableEventListener(this.eFilterTextField, 'input', toDebounce);
-    }
-
 
     private onFilterTextFieldChanged() {
         let filterText = this.eFilterTextField.value;
 
-        _.iterateObject(this.renderedItems, (key, value)=>{
-            value.onColumnFilterChanged (filterText);
+        _.iterateObject(this.renderedItems, (key, value) => {
+            value.onColumnFilterChanged(filterText);
         })
     }
 
-    private translate(toTranslate:string, defaultValue:string):string {
+    private translate(toTranslate: string, defaultValue: string): string {
         let translate = this.gridOptionsWrapper.getLocaleTextFunc();
         return translate(toTranslate, defaultValue);
     }
@@ -181,7 +183,6 @@ export class ColumnSelectComp extends Component {
         this.resetColumns();
         this.columnTree = this.columnController.getPrimaryColumnTree();
         this.recursivelyRenderComponents(this.columnTree, 0);
-        this.updateCheckboxIcon();
     }
 
     public destroy(): void {
@@ -192,7 +193,7 @@ export class ColumnSelectComp extends Component {
     private resetColumns(): void {
         Utils.removeAllChildren(this.eColumnSelectColumns);
         if (this.renderedItems) {
-            Utils.iterateObject(this.renderedItems, (key: string, renderedItem: Component) => renderedItem.destroy() );
+            Utils.iterateObject(this.renderedItems, (key: string, renderedItem: Component) => renderedItem.destroy());
         }
         this.renderedItems = {};
     }
@@ -201,7 +202,9 @@ export class ColumnSelectComp extends Component {
         // only render group if user provided the definition
         let newDept: number;
 
-        if (columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressToolPanel) { return; }
+        if (columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressToolPanel) {
+            return;
+        }
 
         if (!columnGroup.isPadding()) {
             let renderedGroup = new ToolPanelGroupComp(columnGroup, dept, this.onGroupExpanded.bind(this), this.allowDragging);
@@ -209,10 +212,6 @@ export class ColumnSelectComp extends Component {
             this.eColumnSelectColumns.appendChild(renderedGroup.getGui());
             // we want to indent on the gui for the children
             newDept = dept + 1;
-
-            renderedGroup.setSelectionCallback(()=>{
-                this.updateCheckboxIcon();
-            });
 
             this.renderedItems[columnGroup.getId()] = renderedGroup;
         } else {
@@ -225,21 +224,20 @@ export class ColumnSelectComp extends Component {
     }
 
     private recursivelyRenderColumnComponent(column: Column, dept: number): void {
-        if (column.getColDef() && column.getColDef().suppressToolPanel) { return; }
+        if (column.getColDef() && column.getColDef().suppressToolPanel) {
+            return;
+        }
 
         let renderedColumn = new ToolPanelColumnComp(column, dept, this.allowDragging);
         this.context.wireBean(renderedColumn);
         this.eColumnSelectColumns.appendChild(renderedColumn.getGui());
 
-        renderedColumn.setSelectionCallback(()=>{
-            this.updateCheckboxIcon();
-        });
 
         this.renderedItems[column.getId()] = renderedColumn;
     }
 
     private recursivelyRenderComponents(tree: OriginalColumnGroupChild[], dept: number): void {
-        tree.forEach( child => {
+        tree.forEach(child => {
             if (child instanceof OriginalColumnGroup) {
                 this.recursivelyRenderGroupComponent(<OriginalColumnGroup> child, dept);
             } else {
@@ -250,7 +248,7 @@ export class ColumnSelectComp extends Component {
 
     private recursivelySetVisibility(columnTree: any[], visible: boolean): void {
 
-        columnTree.forEach( child => {
+        columnTree.forEach(child => {
 
             let component: ToolPanelColumnItem = this.renderedItems[child.getId()];
             if (component) {
