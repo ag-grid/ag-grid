@@ -72,6 +72,8 @@ export class CellComp extends Component {
     private valueFormatted: any;
     private colsSpanning: Column[];
 
+    private tooltip: any;
+
     private scope: null;
 
     // every time we go into edit mode, or back again, this gets incremented.
@@ -117,8 +119,8 @@ export class CellComp extends Component {
 
         let valueToRender = this.getInitialValueToRender();
         let valueSanitised = _.get(this.column, 'colDef.template', null) ? valueToRender : _.escape(valueToRender);
-        let tooltip = this.getToolTip();
-        let tooltipSanitised = _.escape(tooltip);
+        this.tooltip = this.getToolTip();
+        let tooltipSanitised = _.escape(this.tooltip);
         let colIdSanitised = _.escape(col.getId());
 
         let wrapperStartTemplate: string;
@@ -388,8 +390,6 @@ export class CellComp extends Component {
                 this.replaceContentsAfterRefresh();
             }
 
-            this.refreshToolTip();
-
             if (!suppressFlash) {
                 let flashCell = this.beans.gridOptionsWrapper.isEnableCellChangeFlash()
                     || this.column.getColDef().enableCellChangeFlash;
@@ -402,6 +402,8 @@ export class CellComp extends Component {
             this.postProcessStylesFromColDef();
             this.postProcessClassesFromColDef();
         }
+
+        this.refreshToolTip();
 
         // we do cellClassRules even if the value has not changed, so that users who have rules that
         // look at other parts of the row (where the other part of the row might of changed) will work.
@@ -566,11 +568,15 @@ export class CellComp extends Component {
     }
 
     private refreshToolTip() {
-        let tooltip = this.getToolTip();
-        if (_.exists(tooltip)) {
-            this.eParentOfValue.setAttribute('title', tooltip);
-        } else {
-            this.eParentOfValue.removeAttribute('title');
+        let newTooltip = this.getToolTip();
+        if (this.tooltip !== newTooltip) {
+            this.tooltip = newTooltip;
+            if (_.exists(newTooltip)) {
+                let tooltipSanitised = _.escape(this.tooltip);
+                this.eParentOfValue.setAttribute('title', tooltipSanitised);
+            } else {
+                this.eParentOfValue.removeAttribute('title');
+            }
         }
     }
 
