@@ -114,7 +114,7 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
             } else {
                 floatingFilterBody.appendChild(floatingFilterCompUi);
                 body.appendChild(_.loadTemplate(`<div class="ag-floating-filter-button" aria-hidden="true">
-                        <button ref="eButtonShowMainFilter"></button>
+                        <button type="button" ref="eButtonShowMainFilter"></button>
                 </div>`));
 
                 let eIcon = _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column);

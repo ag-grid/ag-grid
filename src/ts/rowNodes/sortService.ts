@@ -1,6 +1,6 @@
 import {RowNode} from "../entities/rowNode";
 import {Column} from "../entities/column";
-import {Autowired, Bean} from "../context/context";
+import {Autowired, Bean, PostConstruct} from "../context/context";
 import {SortController} from "../sortController";
 import {_} from "../utils";
 import {ValueService} from "../valueService/valueService";
@@ -24,6 +24,13 @@ export class SortService {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+
+    private postSortFunc: (rowNodes: RowNode[]) => void;
+
+    @PostConstruct
+    public init(): void {
+        this.postSortFunc = this.gridOptionsWrapper.getPostSortFunc();
+    }
 
     public sortAccordingToColumnsState(rowNode: RowNode) {
         let sortOptions: SortOption[] = this.sortController.getSortForRowController();
@@ -59,6 +66,10 @@ export class SortService {
                 this.sort(child, sortOptions);
             }
         });
+
+        if (this.postSortFunc) {
+            this.postSortFunc(rowNode.childrenAfterSort);
+        }
     }
 
     private compareRowNodes(sortOptions: any, sortedNodeA: SortedRowNode, sortedNodeB: SortedRowNode) {
