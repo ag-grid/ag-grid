@@ -55,10 +55,6 @@ export class SortService {
             });
             sortedRowNodes.sort(this.compareRowNodes.bind(this, sortOptions));
             rowNode.childrenAfterSort = sortedRowNodes.map(sorted => sorted.rowNode);
-
-            if (this.postSortFunc) {
-                this.postSortFunc(rowNode.childrenAfterSort);
-            }
         }
 
         this.updateChildIndexes(rowNode);
@@ -70,6 +66,10 @@ export class SortService {
                 this.sort(child, sortOptions);
             }
         });
+
+        if (this.postSortFunc) {
+            this.postSortFunc(rowNode.childrenAfterSort);
+        }
     }
 
     private compareRowNodes(sortOptions: any, sortedNodeA: SortedRowNode, sortedNodeB: SortedRowNode) {
