@@ -19,6 +19,12 @@ export {GroupInstanceIdCreator} from "./dist/lib/columnController/groupInstanceI
 
 // components
 export {ComponentUtil} from "./dist/lib/components/componentUtil";
+export {
+    HtmlContent,
+    BaseHtmlElementBuilder,
+    HtmlElementDecorable,
+    HtmlElementBuilder
+} from "./dist/lib/components/htmlBuilder/htmlElementBuilder";
 export {ColDefUtil} from "./dist/lib/components/colDefUtil";
 export {ComponentProvider} from "./dist/lib/components/framework/componentProvider";
 export {initialiseAgGridWithAngular1} from "./dist/lib/components/agGridNg1";
