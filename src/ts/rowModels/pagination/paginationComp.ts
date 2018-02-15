@@ -63,7 +63,7 @@ export class PaginationComp extends Component {
     }
 
     private formatNumber(value: number): string {
-        var userFunc = this.gridOptionsWrapper.getPaginationNumberFormatterFunc();
+        let userFunc = this.gridOptionsWrapper.getPaginationNumberFormatterFunc();
         if (userFunc) {
             return userFunc({value: value});
         } else {
