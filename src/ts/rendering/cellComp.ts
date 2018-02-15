@@ -824,12 +824,13 @@ export class CellComp extends Component {
             return;
         }
 
+        let middleClick = (mouseEvent: MouseEvent) => mouseEvent.which == 2;
         switch (eventName) {
             case 'click':
                 this.onCellClicked(mouseEvent);
                 break;
             case 'mousedown':
-                this.onMouseDown(mouseEvent);
+                middleClick(mouseEvent) ? this.onCellClicked(mouseEvent) : this.onMouseDown(mouseEvent);
                 break;
             case 'dblclick':
                 this.onCellDoubleClicked(mouseEvent);
