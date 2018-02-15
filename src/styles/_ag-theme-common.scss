@@ -677,6 +677,17 @@
     ////////////////////////////////////////
     // Tool panel
     ////////////////////////////////////////
+    .ag-column-tool-panel{
+        display: flex;
+    }
+
+    .ag-column-tool-panel-item {
+        button {
+            height: $grid-size;
+            font-size: $font-size;
+            font-family: $font-family;
+        }
+    }
 
     .ag-filter-filter {
         margin-bottom: $grid-size;
