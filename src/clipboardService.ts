@@ -37,7 +37,7 @@ import {
 import {RangeController} from "./rangeController";
 
 interface RowCallback {
-    (gridRow: GridRow, rowNode: RowNode, columns: Column[]): void
+    (gridRow: GridRow, rowNode: RowNode, columns: Column[], rangeIndex: number): void
 }
 
 interface ColumnCallback {
@@ -73,15 +73,109 @@ export class ClipboardService implements IClipboardService {
 
     public pasteFromClipboard(): void {
         this.logger.log('pasteFromClipboard');
+
         this.executeOnTempElement(
             (textArea: HTMLTextAreaElement)=> {
                 textArea.focus();
             },
             (element: HTMLTextAreaElement)=> {
-                let text = element.value;
-                this.finishPasteFromClipboard(text);
+                let data = element.value;
+                if (Utils.missingOrEmpty(data)) return;
+                this.rangeController.isMoreThanOneCell() ? this.pasteToRange(data) : this.pasteToSingleCell(data);
             }
         );
+    }
+
+    private pasteToRange(data: string) {
+        let clipboardData: any[][] = this.dataToArray(data);
+
+        // remove extra empty row which is inserted when clipboard has more than one row
+        if (clipboardData.length > 1) clipboardData.pop();
+
+        let cellsToFlash = <any>{};
+        let updatedRowNodes: RowNode[] = [];
+        let updatedColumnIds: string[] = [];
+
+        // true if clipboard data can be evenly pasted into range, otherwise false
+        let abortRepeatingPasteIntoRows = this.rangeSize() % clipboardData.length != 0;
+
+        let indexOffset = 0, dataRowIndex = 0;
+        let rowCallback = (currentRow: GridRow, rowNode: RowNode, columns: Column[], index: number) => {
+
+            let atEndOfClipboardData = index - indexOffset >= clipboardData.length;
+            if (atEndOfClipboardData) {
+                if(abortRepeatingPasteIntoRows) return;
+                // increment offset and reset data index to repeat paste of data
+                indexOffset += dataRowIndex;
+                dataRowIndex = 0;
+            }
+
+            let currentRowData = clipboardData[index - indexOffset];
+
+            // otherwise we are not the first row, so copy
+            updatedRowNodes.push(rowNode);
+            columns.forEach( (column: Column, index: number) => {
+                if (!column.isCellEditable(rowNode)) return;
+
+                // ignore columns we don't have data for - happens when to range is bigger than copied data range
+                if (index >= currentRowData.length) return;
+
+                let firstRowValue = currentRowData[index];
+                let processCellFromClipboardFunc = this.gridOptionsWrapper.getProcessCellFromClipboardFunc();
+                firstRowValue = this.userProcessCell(rowNode, column, firstRowValue, processCellFromClipboardFunc, Constants.EXPORT_TYPE_DRAG_COPY);
+                this.valueService.setValue(rowNode, column, firstRowValue);
+
+                let gridCellDef = <GridCellDef> {rowIndex: currentRow.rowIndex, floating: currentRow.floating, column: column};
+                let cellId = new GridCell(gridCellDef).createId();
+                cellsToFlash[cellId] = true;
+            });
+
+            ++dataRowIndex;
+        };
+
+        this.iterateActiveRanges(false, rowCallback);
+        this.rowRenderer.refreshCells({rowNodes: updatedRowNodes, columns: updatedColumnIds});
+        this.dispatchFlashCells(cellsToFlash);
+    }
+
+    private pasteToSingleCell(data: string) {
+        if (Utils.missingOrEmpty(data)) { return; }
+
+        let focusedCell = this.focusedCellController.getFocusedCell();
+        if (!focusedCell) { return; }
+
+        let parsedData: string[][] = this.dataToArray(data);
+        if (!parsedData) {
+            return;
+        }
+
+        // remove last row if empty, excel puts empty last row in
+        let lastLine = parsedData[parsedData.length - 1];
+        if (lastLine.length===1 && lastLine[0]==='') {
+            Utils.removeFromArray(parsedData, lastLine);
+        }
+
+        let currentRow = new GridRow(focusedCell.rowIndex, focusedCell.floating);
+        let cellsToFlash = <any>{};
+
+        let updatedRowNodes: RowNode[] = [];
+        let updatedColumnIds: string[] = [];
+
+        let columnsToPasteInto = this.columnController.getDisplayedColumnsStartingAt(focusedCell.column);
+
+        let onlyOneCellInRange = parsedData.length === 1 && parsedData[0].length === 1;
+        if (onlyOneCellInRange) {
+            this.singleCellRange(parsedData, updatedRowNodes, currentRow, cellsToFlash, updatedColumnIds);
+        } else {
+            this.multipleCellRange(parsedData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, updatedColumnIds, Constants.EXPORT_TYPE_CLIPBOARD);
+        }
+
+        // this is very heavy, should possibly just refresh the specific cells?
+        this.rowRenderer.refreshCells({rowNodes: updatedRowNodes, columns: updatedColumnIds});
+
+        this.dispatchFlashCells(cellsToFlash);
+
+        this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.floating, true);
     }
 
     public copyRangeDown(): void {
@@ -131,46 +225,6 @@ export class ClipboardService implements IClipboardService {
         this.rowRenderer.refreshCells({rowNodes: updatedRowNodes, columns: updatedColumnIds});
 
         this.dispatchFlashCells(cellsToFlash);
-    }
-
-    private finishPasteFromClipboard(data: string) {
-        if (Utils.missingOrEmpty(data)) { return; }
-
-        let focusedCell = this.focusedCellController.getFocusedCell();
-        if (!focusedCell) { return; }
-
-        let parsedData: string[][] = this.dataToArray(data);
-        if (!parsedData) {
-            return;
-        }
-
-        // remove last row if empty, excel puts empty last row in
-        let lastLine = parsedData[parsedData.length - 1];
-        if (lastLine.length===1 && lastLine[0]==='') {
-            Utils.removeFromArray(parsedData, lastLine);
-        }
-
-        let currentRow = new GridRow(focusedCell.rowIndex, focusedCell.floating);
-        let cellsToFlash = <any>{};
-
-        let updatedRowNodes: RowNode[] = [];
-        let updatedColumnIds: string[] = [];
-
-        let columnsToPasteInto = this.columnController.getDisplayedColumnsStartingAt(focusedCell.column);
-
-        let onlyOneCellInRange = parsedData.length === 1 && parsedData[0].length === 1;
-        if (onlyOneCellInRange) {
-            this.singleCellRange(parsedData, updatedRowNodes, currentRow, cellsToFlash, updatedColumnIds);
-        } else {
-            this.multipleCellRange(parsedData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, updatedColumnIds, Constants.EXPORT_TYPE_CLIPBOARD);
-        }
-
-        // this is very heavy, should possibly just refresh the specific cells?
-        this.rowRenderer.refreshCells({rowNodes: updatedRowNodes, columns: updatedColumnIds});
-
-        this.dispatchFlashCells(cellsToFlash);
-
-        this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.floating, true);
     }
 
     private multipleCellRange(clipboardGridData: string[][], currentRow: GridRow, updatedRowNodes: RowNode[], columnsToPasteInto: Column[], cellsToFlash: any, updatedColumnIds: string[], type: string) {
@@ -285,10 +339,11 @@ export class ClipboardService implements IClipboardService {
             columnCallback(range.columns);
         }
 
+        let rangeIndex = 0;
         while (true) {
 
             let rowNode = this.getRowNode(currentRow);
-            rowCallback(currentRow, rowNode, range.columns);
+            rowCallback(currentRow, rowNode, range.columns, rangeIndex++);
 
             if (currentRow.equals(lastRow)) {
                 break;
@@ -563,5 +618,11 @@ export class ClipboardService implements IClipboardService {
 
         // Return the parsed data.
         return arrData;
+    }
+
+    private rangeSize() {
+        let ranges = this.rangeController.getCellRanges();
+        let [startRange, endRange] = [ranges[0].start.rowIndex, ranges[0].end.rowIndex];
+        return (startRange > endRange ? startRange - endRange : endRange - startRange) + 1;
     }
 }
