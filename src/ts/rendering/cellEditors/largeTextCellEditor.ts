@@ -11,7 +11,6 @@ export interface ILargeTextEditorParams extends ICellEditorParams {
     maxLength: number;
     rows: number;
     cols: number;
-    cellRenderer: {new(): ICellRenderer} | ICellRendererFunc | string;
 }
 
 export class LargeTextCellEditor extends Component implements ICellEditorComp {

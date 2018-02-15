@@ -164,12 +164,6 @@ export class RowRenderer extends BeanStub {
 
         rowComps.length = 0;
 
-        // if no cols, don't draw row - can we get rid of this???
-        let columns = this.columnController.getAllDisplayedColumns();
-        if (_.missingOrEmpty(columns)) {
-            return;
-        }
-
         if (rowNodes) {
             rowNodes.forEach((node: RowNode) => {
                 let rowComp = new RowComp(
