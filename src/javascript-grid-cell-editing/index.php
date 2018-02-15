@@ -356,7 +356,7 @@ cellEditorSelector:function (params){
     <?= example('Dynamic Editor Component', 'dynamic-editor-component', 'vanilla', array("enterprise" => 1, "exampleHeight" => 250)) ?>
 
 
-    <h2>Provided Cell Editors</h2>
+    <h2 id="provided-cell-editors">Provided Cell Editors</h2>
 
     <p>
         The grid, out of the box, comes with the following editors:
@@ -462,7 +462,7 @@ colDef.cellEditorParams = {
     </ul>
     </p>
 
-    <h2>Dynamic Parameters</h2>
+    <h2 id="dynamic-parameters">Dynamic Parameters</h2>
 
     <p>
         Parameters for cell editors can be dynamic to allow different selections based on what cell is getting edited.
@@ -470,7 +470,7 @@ colDef.cellEditorParams = {
         provide a function that returns parameters for the property <code>cellEditorParams</code>
     </p>
 
-<snipet>
+<snippet>
 cellEditorParams: function(params) {
     var selectedCountry = params.data.country;
     if (selectedCountry==='Ireland') {
@@ -483,9 +483,9 @@ cellEditorParams: function(params) {
         };
     }
 }
-</snipet>
+</snippet>
 
-    <h2>Example Rich Cell Editor / Dynamic Parameters</h2>
+    <h2 id="example-dynamic-parameters">Example Rich Cell Editor / Dynamic Parameters</h2>
 
     <p>
         Below shows an example with dynamic editor parameters. The following can be noted:
