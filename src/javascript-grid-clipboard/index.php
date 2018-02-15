@@ -35,13 +35,17 @@ include '../documentation-main/documentation_header.php';
 
     <h2> Paste from Clipboard </h2>
 
-    <p> Paste to clipboard can only be done in one way:</p>
+    <p> Paste to clipboard can only be done in the following ways:</p>
 
     <ul class="content">
-        <li>Press keys Ctrl+V while focus in on the grid with a cell selected.</li>
+        <li>Press keys <b>Ctrl+V</b> while focus in on the grid with a <b>single cell selected</b>. The paste will then proceed starting at
+            the selected cell if multiple cells are to be pasted.</li>
+        <li>
+            Press keys <b>Ctrl+V</b> while focus in on the grid with a <b>range of cells selected</b>. If the selected
+            range being pasted is larger than copied range, it will repeat if it fits evenly, otherwise it will just
+            copy the cells into the start of the range.
+        </li>
     </ul>
-
-    <p>The paste will then proceed starting at the selected cell if multiple cells are to be pasted.  </p>
 
     <note>
         The 'paste' operation in the context menu is not possible and hence always disabled.
@@ -58,7 +62,7 @@ include '../documentation-main/documentation_header.php';
         on this order:
     </p>
 
-    <ol class="content">
+    <ul class="content">
         <li>
             If range selected (via range selection), copy range.
         </li>

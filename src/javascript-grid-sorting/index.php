@@ -184,7 +184,8 @@ var groupColumn = {
 
     <snippet>
 gridOptions.postSort(rowNodes) {
-    rowNodes.reverse(); // reverse rows after grid sorting.
+    // keep Ireland rows on top
+    rowNodes.sort((n1, n2) => n1.data.country === 'Ireland' ? -1 : 1);
 }
     </snippet>
 

@@ -157,11 +157,11 @@ include '../documentation-main/documentation_header.php';
 
     <table class="row-model-table reference">
         <tr class="first-row">
-            <td>Feature</td>
-            <td>In Memory</td>
-            <td>Infinite</td>
-            <td>Enterprise</td>
-            <td>Viewport</td>
+            <th>Feature</th>
+            <th>In Memory</th>
+            <th>Infinite</th>
+            <th>Enterprise</th>
+            <th>Viewport</th>
         </tr>
         <tr class="item-row">
             <td>All Data in Client</td>
