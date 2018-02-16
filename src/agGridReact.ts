@@ -1,15 +1,15 @@
-import {ReactFrameworkComponentWrapper} from "./reactFrameworkComponentWrapper";
-
-import * as DOM from 'react-dom-factories';
+import * as DOM from "react-dom-factories";
 import * as React from "react";
-import {Component} from "react";
+import { Component } from "react";
 import * as PropTypes from "prop-types";
 import * as AgGrid from "ag-grid";
-import {GridOptions} from "ag-grid";
-import {AgGridColumn} from "./agGridColumn";
+import { Autowired, BaseComponentWrapper, Bean, FrameworkComponentWrapper, IComponent, WrapableInterface, Promise, GridOptions } from "ag-grid";
+
+import { AgGridColumn } from "./agGridColumn";
+import { AgReactComponent } from "./agReactComponent";
 
 export interface AgGridReactProps extends GridOptions {
-    gridOptions?: GridOptions
+    gridOptions?: GridOptions;
 }
 
 export class AgGridReact extends Component<AgGridReactProps, {}> {
@@ -35,7 +35,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     }
 
     createStyleForDiv() {
-        const style: any = {height: '100%'};
+        const style: any = { height: "100%" };
         // allow user to override styles
         const containerStyle = this.props.containerStyle;
         if (containerStyle) {
@@ -47,7 +47,6 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     }
 
     componentDidMount() {
-
         const gridParams = {
             seedBeanInstances: {
                 agGridReact: this
@@ -60,15 +59,12 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         }
 
         this.gridOptions = AgGrid.ComponentUtil.copyAttributesToGridOptions(gridOptions, this.props);
-        AgGrid.Grid.setFrameworkBeans([ReactFrameworkComponentWrapper]);
 
         // don't need the return value
         new AgGrid.Grid(this.eGridDiv, this.gridOptions, gridParams);
 
         this.api = this.gridOptions.api;
         this.columnApi = this.gridOptions.columnApi;
-
-
     }
 
     shouldComponentUpdate() {
@@ -121,9 +117,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
      * deeper object comparison - taken from https://stackoverflow.com/questions/1068834/object-comparison-in-javascript
      */
     static unwrapStringOrNumber(obj) {
-        return (obj instanceof Number || obj instanceof String
-            ? obj.valueOf()
-            : obj);
+        return obj instanceof Number || obj instanceof String ? obj.valueOf() : obj;
     }
 
     // sigh, here for ie compatibility
@@ -143,7 +137,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         }
 
         return [{}, value].reduce((r, o) => {
-            Object.keys(o).forEach(function (k) {
+            Object.keys(o).forEach(function(k) {
                 r[k] = o[k];
             });
             return r;
@@ -151,7 +145,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     }
 
     areEquivalent(a, b) {
-        return AgGridReact.areEquivalent(this.copy(a), this.copy(b))
+        return AgGridReact.areEquivalent(this.copy(a), this.copy(b));
     }
 
     /*
@@ -166,32 +160,32 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         a = AgGridReact.unwrapStringOrNumber(a);
         b = AgGridReact.unwrapStringOrNumber(b);
         if (a === b) return true; //e.g. a and b both null
-        if (a === null || b === null || typeof (a) !== typeof (b)) return false;
+        if (a === null || b === null || typeof a !== typeof b) return false;
         if (a instanceof Date) {
             return b instanceof Date && a.valueOf() === b.valueOf();
         }
         if (typeof a === "function") {
             return a.toString() === b.toString();
         }
-        if (typeof (a) !== "object") {
+        if (typeof a !== "object") {
             return a == b; //for boolean, number, string, function, xml
         }
 
-        const newA = (a.areEquivPropertyTracking === undefined),
-            newB = (b.areEquivPropertyTracking === undefined);
+        const newA = a.areEquivPropertyTracking === undefined,
+            newB = b.areEquivPropertyTracking === undefined;
         try {
             let prop;
             if (newA) {
                 a.areEquivPropertyTracking = [];
-            }
-            else if (a.areEquivPropertyTracking.some(
-                    function (other) {
-                        return other === b;
-                    })) return true;
+            } else if (
+                a.areEquivPropertyTracking.some(function(other) {
+                    return other === b;
+                })
+            )
+                return true;
             if (newB) {
                 b.areEquivPropertyTracking = [];
-            }
-            else if (b.areEquivPropertyTracking.some((other) => other === a)) {
+            } else if (b.areEquivPropertyTracking.some(other => other === a)) {
                 return true;
             }
             a.areEquivPropertyTracking.push(b);
@@ -220,9 +214,8 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     }
 }
 
-
 AgGridReact.propTypes = {
-    gridOptions: PropTypes.object,
+    gridOptions: PropTypes.object
 };
 
 addProperties(AgGrid.ComponentUtil.getEventCallbacks(), PropTypes.func);
@@ -239,3 +232,49 @@ function addProperties(listOfProps: string[], propType: any) {
     });
 }
 
+@Bean("frameworkComponentWrapper")
+class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterface> implements FrameworkComponentWrapper {
+    @Autowired("agGridReact") private agGridReact: AgGridReact;
+
+    createWrapper(ReactComponent: { new (): any }): WrapableInterface {
+        let _self = this;
+        class DynamicAgReactComponent extends AgReactComponent implements IComponent<any>, WrapableInterface {
+            constructor() {
+                super(ReactComponent, _self.agGridReact);
+            }
+
+            public init(params: any): Promise<void> {
+                return super.init(<any>params);
+            }
+
+            hasMethod(name: string): boolean {
+                let frameworkComponentInstance = wrapper.getFrameworkComponentInstance();
+                if (frameworkComponentInstance == null) {
+                    return true;
+                }
+                return frameworkComponentInstance[name] != null;
+            }
+
+            callMethod(name: string, args: IArguments): void {
+                let frameworkComponentInstance = this.getFrameworkComponentInstance();
+
+                if (frameworkComponentInstance == null) {
+                    setTimeout(() => this.callMethod(name, args), 100);
+                } else {
+                    let method = wrapper.getFrameworkComponentInstance()[name];
+                    if (method == null) return null;
+                    return method.apply(frameworkComponentInstance, args);
+                }
+            }
+
+            addMethod(name: string, callback: Function): void {
+                wrapper[name] = callback;
+            }
+        }
+
+        const wrapper: DynamicAgReactComponent = new DynamicAgReactComponent();
+        return wrapper;
+    }
+}
+
+AgGrid.Grid.setFrameworkBeans([ReactFrameworkComponentWrapper]);

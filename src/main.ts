@@ -1,2 +1,2 @@
-export {AgGridReact} from './agGridReact';
-export {AgGridColumn} from './agGridColumn';
+export { AgGridReact } from './agGridReact';
+export { AgGridColumn } from './agGridColumn';
