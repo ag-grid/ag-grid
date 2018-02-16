@@ -45,8 +45,8 @@ include '../documentation-main/documentation_header.php';
             <td>Cell is focused.</td>
         </tr>
         <tr>
-            <th>cellMouseOver, cellMouseOut</th>
-            <td>Mouse enters / leaves cell.</td>
+            <th>cellMouseOver, cellMouseOut, cellMouseDown</th>
+            <td>Mouse enters / leaves cell / mouse down</td>
         </tr>
         <tr>
             <th>rowClicked</th>
@@ -433,6 +433,7 @@ CellValueChangedEvent {
                 │   <span class="event-attribute">value</span>: any // the value for the cell in question
                 │ }</span>
                 ├── CellClickedEvent <span class="event-properties">{}</span>
+                ├── CellMouseDownEvent <span class="event-properties">{}</span>
                 ├── CellDoubleClickedEvent <span class="event-properties">{}</span>
                 ├── CellMouseOverEvent <span class="event-properties">{}</span>
                 ├── CellMouseOutEvent <span class="event-properties">{}</span>
