@@ -389,6 +389,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Output() public rangeSelectionChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public modelUpdated: EventEmitter<any> = new EventEmitter<any>();
     @Output() public cellClicked: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public cellMouseDown: EventEmitter<any> = new EventEmitter<any>();
     @Output() public cellDoubleClicked: EventEmitter<any> = new EventEmitter<any>();
     @Output() public cellContextMenu: EventEmitter<any> = new EventEmitter<any>();
     @Output() public cellValueChanged: EventEmitter<any> = new EventEmitter<any>();
