@@ -492,15 +492,15 @@ export class InMemoryRowModel {
     // + gridApi.expandAll()
     // + gridApi.collapseAll()
     public expandOrCollapseAll(expand: boolean): void {
-
-        if (this.rootNode){
+        let usingTreeData = this.gridOptionsWrapper.isTreeData();
+        if (this.rootNode) {
             recursiveExpandOrCollapse(this.rootNode.childrenAfterGroup);
         }
-
         function recursiveExpandOrCollapse(rowNodes: RowNode[]): void {
             if (!rowNodes) { return; }
             rowNodes.forEach( (rowNode: RowNode) => {
-                if (rowNode.group) {
+                let shouldExpandOrCollapse = usingTreeData ? _.exists(rowNode.childrenAfterGroup) : rowNode.group;
+                if(shouldExpandOrCollapse) {
                     rowNode.expanded = expand;
                     recursiveExpandOrCollapse(rowNode.childrenAfterGroup);
                 }

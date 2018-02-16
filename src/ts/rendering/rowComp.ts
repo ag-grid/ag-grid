@@ -709,9 +709,11 @@ export class RowComp extends Component {
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
+        let middleClick = (mouseEvent: MouseEvent) => mouseEvent.which == 2;
         switch (eventName) {
             case 'dblclick': this.onRowDblClick(mouseEvent); break;
             case 'click': this.onRowClick(mouseEvent); break;
+            case 'mousedown': if(middleClick(mouseEvent)) { this.onRowClick(mouseEvent); } break;
         }
     }
 
