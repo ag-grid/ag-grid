@@ -5,7 +5,7 @@ import {ColumnGroup} from "../../entities/columnGroup";
 import {ColumnApi} from "../../columnController/columnApi";
 import {ColumnController} from "../../columnController/columnController";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {HorizontalDragService} from "../horizontalDragService";
+import {HorizontalResizeService} from "../horizontalResizeService";
 import {Autowired, Context, PostConstruct} from "../../context/context";
 import {CssClassApplier} from "../cssClassApplier";
 import {
@@ -31,7 +31,7 @@ export class HeaderGroupWrapperComp extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('horizontalDragService') private dragService: HorizontalDragService;
+    @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('context') private context: Context;
     @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
@@ -42,7 +42,6 @@ export class HeaderGroupWrapperComp extends Component {
     private columnGroup: ColumnGroup;
     private dragSourceDropTarget: DropTarget;
     private pinned: string;
-    private eRoot: HTMLElement;
 
     private eHeaderCellResize: HTMLElement;
     private groupWidthStart: number;
@@ -51,10 +50,9 @@ export class HeaderGroupWrapperComp extends Component {
     // the children can change, we keep destroy functions related to listening to the children here
     private childColumnsDestroyFuncs: Function[] = [];
 
-    constructor(columnGroup: ColumnGroup, eRoot: HTMLElement, dragSourceDropTarget: DropTarget, pinned: string) {
+    constructor(columnGroup: ColumnGroup, dragSourceDropTarget: DropTarget, pinned: string) {
         super(HeaderGroupWrapperComp.TEMPLATE);
         this.columnGroup = columnGroup;
-        this.eRoot = eRoot;
         this.dragSourceDropTarget = dragSourceDropTarget;
         this.pinned = pinned;
     }
@@ -277,14 +275,13 @@ export class HeaderGroupWrapperComp extends Component {
             return;
         }
 
-        this.dragService.addDragHandling({
-            eDraggableElement: this.eHeaderCellResize,
-            eBody: this.eRoot,
-            cursor: 'col-resize',
-            startAfterPixels: 0,
-            onDragStart: this.onDragStart.bind(this),
-            onDragging: this.onDragging.bind(this)
+        let finishedWithResizeFunc = this.horizontalResizeService.addResizeBar({
+            eResizeBar: this.eHeaderCellResize,
+            onResizeStart: this.onResizeStart.bind(this),
+            onResizing: this.onResizing.bind(this, false),
+            onResizeEnd: this.onResizing.bind(this, true)
         });
+        this.addDestroyFunc(finishedWithResizeFunc);
 
         if (!this.gridOptionsWrapper.isSuppressAutoSize()) {
             this.eHeaderCellResize.addEventListener('dblclick', (event:MouseEvent) => {
@@ -303,7 +300,7 @@ export class HeaderGroupWrapperComp extends Component {
         }
     }
 
-    public onDragStart(): void {
+    public onResizeStart(): void {
         this.groupWidthStart = this.columnGroup.getActualWidth();
         this.childrenWidthStarts = [];
         this.columnGroup.getDisplayedLeafColumns().forEach( (column: Column) => {
@@ -311,7 +308,7 @@ export class HeaderGroupWrapperComp extends Component {
         });
     }
 
-    public onDragging(dragChange: any, finished: boolean): void {
+    public onResizing(finished: boolean, resizeAmount: any): void {
 
         // this will be the width we have to distribute to the resizable columns
         let widthForResizableCols: number;
@@ -321,8 +318,8 @@ export class HeaderGroupWrapperComp extends Component {
         // a lot of variables defined for the first set of maths, but putting
         // braces in, we localise the variables to this bit of the method
         {
-            let dragChangeNormalised = this.normaliseDragChange(dragChange);
-            let totalGroupWidth = this.groupWidthStart + dragChangeNormalised;
+            let resizeAmountNormalised = this.normaliseDragChange(resizeAmount);
+            let totalGroupWidth = this.groupWidthStart + resizeAmountNormalised;
 
             let displayedColumns = this.columnGroup.getDisplayedLeafColumns();
             resizableCols = _.filter(displayedColumns, col => col.isResizable());

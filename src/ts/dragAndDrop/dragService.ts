@@ -301,8 +301,6 @@ interface DragSourceAndListener {
 }
 
 export interface DragListenerParams {
-    /** Used in the dragStarted and dragStopped events */
-    type: string;
     /** After how many pixels of dragging should the drag operation start. Default is 4px. */
     dragStartPixels?: number;
     /** Dom element to add the drag handling to */

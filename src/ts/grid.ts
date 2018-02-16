@@ -18,7 +18,7 @@ import {PopupService} from "./widgets/popupService";
 import {Logger, LoggerFactory} from "./logger";
 import {ColumnUtils} from "./columnController/columnUtils";
 import {AutoWidthCalculator} from "./rendering/autoWidthCalculator";
-import {HorizontalDragService} from "./headerRendering/horizontalDragService";
+import {HorizontalResizeService} from "./headerRendering/horizontalResizeService";
 import {Context} from "./context/context";
 import {CsvCreator} from "./csvCreator";
 import {GridCore} from "./gridCore";
@@ -163,7 +163,7 @@ export class Grid {
             //Careful with the order of the beans here, there are dependencies between them that need to be kept
             beans: [rowModelClass, PaginationAutoPageSizeService, GridApi, ComponentProvider, AgComponentUtils, ComponentMetadataProvider,
                 ComponentProvider, ComponentResolver, ComponentRecipes, HeightScaler,
-                CellRendererFactory, HorizontalDragService, PinnedRowModel, DragService,
+                CellRendererFactory, HorizontalResizeService, PinnedRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
                 FilterManager, ColumnController, PaginationProxy, RowRenderer, HeaderRenderer, ExpressionService,
                 BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService,

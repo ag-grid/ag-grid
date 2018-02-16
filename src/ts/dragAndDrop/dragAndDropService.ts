@@ -158,7 +158,6 @@ export class DragAndDropService {
 
     public addDragSource(dragSource: DragSource, allowTouch = false): void {
         let params: DragListenerParams = {
-            type: this.getStringType(dragSource.type),
             eElement: dragSource.eElement,
             dragStartPixels: dragSource.dragStartPixels,
             onDragStart: this.onDragStart.bind(this, dragSource),

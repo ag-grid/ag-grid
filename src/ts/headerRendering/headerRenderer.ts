@@ -26,21 +26,19 @@ export class HeaderRenderer {
     private childContainers: HeaderContainer[];
 
     private eHeaderViewport: HTMLElement;
-    private eRoot: HTMLElement;
     private eHeaderOverlay: HTMLElement;
 
     @PostConstruct
     private init() {
         this.eHeaderViewport = this.gridPanel.getHeaderViewport();
-        this.eRoot = this.gridPanel.getRoot();
         this.eHeaderOverlay = this.gridPanel.getHeaderOverlay();
 
-        this.centerContainer = new HeaderContainer(this.gridPanel.getHeaderContainer(), this.gridPanel.getHeaderViewport(), this.eRoot, null);
+        this.centerContainer = new HeaderContainer(this.gridPanel.getHeaderContainer(), this.gridPanel.getHeaderViewport(), null);
         this.childContainers = [this.centerContainer];
 
         if (!this.gridOptionsWrapper.isForPrint()) {
-            this.pinnedLeftContainer = new HeaderContainer(this.gridPanel.getPinnedLeftHeader(), null, this.eRoot, Column.PINNED_LEFT);
-            this.pinnedRightContainer = new HeaderContainer(this.gridPanel.getPinnedRightHeader(), null, this.eRoot, Column.PINNED_RIGHT);
+            this.pinnedLeftContainer = new HeaderContainer(this.gridPanel.getPinnedLeftHeader(), null, Column.PINNED_LEFT);
+            this.pinnedRightContainer = new HeaderContainer(this.gridPanel.getPinnedRightHeader(), null, Column.PINNED_RIGHT);
             this.childContainers.push(this.pinnedLeftContainer);
             this.childContainers.push(this.pinnedRightContainer);
         }
