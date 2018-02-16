@@ -500,7 +500,7 @@ export class InMemoryRowModel {
             if (!rowNodes) { return; }
             rowNodes.forEach( (rowNode: RowNode) => {
                 let shouldExpandOrCollapse = usingTreeData ? _.exists(rowNode.childrenAfterGroup) : rowNode.group;
-                if(shouldExpandOrCollapse) {
+                if (shouldExpandOrCollapse) {
                     rowNode.expanded = expand;
                     recursiveExpandOrCollapse(rowNode.childrenAfterGroup);
                 }
