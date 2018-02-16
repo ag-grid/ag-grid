@@ -61,6 +61,7 @@ export class Events {
 
     public static EVENT_CELL_CLICKED = 'cellClicked';
     public static EVENT_CELL_DOUBLE_CLICKED = 'cellDoubleClicked';
+    public static EVENT_CELL_MOUSE_DOWN = 'cellMouseDown';
     public static EVENT_CELL_CONTEXT_MENU = 'cellContextMenu';
     public static EVENT_CELL_VALUE_CHANGED = 'cellValueChanged';
     public static EVENT_ROW_VALUE_CHANGED = 'rowValueChanged';

@@ -12,7 +12,7 @@ import {IEnterpriseDatasource} from "../interfaces/iEnterpriseDatasource";
 import {CsvExportParams, ProcessCellForExportParams} from "../exportParams";
 import {
     CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditingStartedEvent, CellEditingStoppedEvent,
-    CellFocusedEvent,
+    CellFocusedEvent, CellMouseDownEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
     CellValueChangedEvent,
@@ -334,6 +334,7 @@ export interface GridOptions {
     onColumnAggFuncChangeRequest?(event?: ColumnAggFuncChangeRequestEvent): void;
     onModelUpdated?(event?: ModelUpdatedEvent): void;
     onCellClicked?(event?: CellClickedEvent): void;
+    onCellMouseDown?(event?: CellMouseDownEvent): void;
     onCellDoubleClicked?(event?: CellDoubleClickedEvent): void;
     onCellContextMenu?(event?: CellContextMenuEvent): void;
     onCellValueChanged?(event?: CellValueChangedEvent): void;

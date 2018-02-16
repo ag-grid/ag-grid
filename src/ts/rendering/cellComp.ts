@@ -8,7 +8,7 @@ import {
     CellDoubleClickedEvent,
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
-    CellEvent,
+    CellEvent, CellMouseDownEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
     Events,
@@ -824,13 +824,12 @@ export class CellComp extends Component {
             return;
         }
 
-        let middleClick = (mouseEvent: MouseEvent) => mouseEvent.which == 2;
         switch (eventName) {
             case 'click':
                 this.onCellClicked(mouseEvent);
                 break;
             case 'mousedown':
-                middleClick(mouseEvent) ? this.onCellClicked(mouseEvent) : this.onMouseDown(mouseEvent);
+                this.onMouseDown(mouseEvent);
                 break;
             case 'dblclick':
                 this.onCellDoubleClicked(mouseEvent);
@@ -1333,6 +1332,9 @@ export class CellComp extends Component {
                 }
             }
         }
+
+        let cellMouseDownEvent: CellMouseDownEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_MOUSE_DOWN);
+        this.beans.eventService.dispatchEvent(cellMouseDownEvent);
     }
 
     // returns true if on iPad and this is second 'click' event in 200ms

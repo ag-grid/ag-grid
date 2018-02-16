@@ -220,6 +220,8 @@ export interface CellEvent extends RowEvent {
 
 export interface CellClickedEvent extends CellEvent {}
 
+export interface CellMouseDownEvent extends CellEvent {}
+
 export interface CellDoubleClickedEvent extends CellEvent {}
 
 export interface CellMouseOverEvent extends CellEvent {}
