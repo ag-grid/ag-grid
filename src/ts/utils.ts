@@ -169,6 +169,14 @@ export class Utils {
         element.scrollLeft = value;
     }
 
+    static iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string)=>void): void {
+        if (!map) { return; }
+        for (let i = 0; i < map.length; i++) {
+            let attr = map[i];
+            callback(attr.name, attr.value);
+        }
+    }
+
     static iterateObject<T>(object: {[p:string]:T} | T[], callback: (key: string, value: T) => void) {
         if (this.missing(object)) {
             return;

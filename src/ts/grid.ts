@@ -73,6 +73,7 @@ import {AnimationFrameService} from "./misc/animationFrameService";
 import {NavigationService} from "./gridPanel/navigationService";
 import {HeightScaler} from "./rendering/heightScaler";
 import {SelectableService} from "./rowNodes/selectableService";
+import {SmallComponent} from "./widgets/testingSandbox";
 
 export interface GridParams {
     // used by Web Components
@@ -176,6 +177,9 @@ export class Grid {
                 ChangeDetectionService, Environment, Beans, AnimationFrameService, SortController],
             components: [
                 {componentName: 'AgCheckbox', theClass: AgCheckbox}
+                // niall put the below in for testing some PoC code, niall will
+                // remove this comment and code when PoC is over
+                // , {componentName: 'AgSmallComponent', theClass: SmallComponent}
             ],
             debug: !!gridOptions.debug
         };
@@ -203,8 +207,6 @@ export class Grid {
 
         let nothingToSet = _.missing(columnDefs) && _.missing(rowData);
         if (nothingToSet) { return; }
-
-        let valueService: ValueService = this.context.getBean('valueService');
 
         if (_.exists(columnDefs)) {
             columnController.setColumnDefs(columnDefs, "gridInitializing");

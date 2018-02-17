@@ -7,7 +7,7 @@ import {AgEvent} from "../events";
 
 export class BeanStub implements IEventEmitter {
 
-    public static EVENT_DESTORYED = 'destroyed';
+    public static EVENT_DESTROYED = 'destroyed';
 
     private localEventService: EventService;
 
@@ -20,7 +20,7 @@ export class BeanStub implements IEventEmitter {
         this.destroyFunctions.length = 0;
         this.destroyed = true;
 
-        this.dispatchEvent({type: BeanStub.EVENT_DESTORYED});
+        this.dispatchEvent({type: BeanStub.EVENT_DESTROYED});
     }
 
     public addEventListener(eventType: string, listener: Function): void {

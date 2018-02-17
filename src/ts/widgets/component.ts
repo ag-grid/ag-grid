@@ -46,16 +46,93 @@ export class Component extends BeanStub implements IComponent<any> {
         let childCount = parentNode.childNodes ? parentNode.childNodes.length : 0;
         for (let i = 0; i < childCount; i++) {
             let childNode = parentNode.childNodes[i];
-            let newComponent = context.createComponent(<Element>childNode);
-            if (newComponent) {
-                this.swapComponentForNode(newComponent, parentNode, childNode);
+            let childComp = context.createComponent(<Element>childNode);
+            if (childComp) {
+                this.swapComponentForNode(childComp, parentNode, childNode);
+                this.copyAttributesFromNode(<Element>childNode, childComp.getGui());
+                this.createChildAttributes(<Element>childNode, childComp);
+                this.addEventListenersToComponent(<HTMLElement>childNode, childComp);
+                // should remove this, get agCheckbox to use this.attributes
+                childComp.attributesSet();
+                childComp.instantiate(context);
             } else {
                 if (childNode.childNodes) {
                     this.instantiateRecurse(<Element>childNode, context);
-
+                }
+                if (childNode instanceof HTMLElement) {
+                    this.addEventListenersToElement(<HTMLElement>childNode);
                 }
             }
         }
+    }
+
+    private addEventListenersToElement(element: HTMLElement): void {
+        let processAttribute = (name: string, value: string): void => {
+            let firstCharacter = name.substr(0,1);
+            if (firstCharacter==='(') {
+                let eventName =
+                    name.replace('(', '')
+                        .replace(')', '');
+                let callback = (<any>this)[value];
+                if (typeof callback !== 'function') {
+                    console.warn('ag-Grid: count not find callback ' + value);
+                    return;
+                }
+                this.addDestroyableEventListener(element, eventName, callback.bind(this));
+            }
+        };
+        _.iterateNamedNodeMap(element.attributes, processAttribute);
+    }
+
+    private addEventListenersToComponent(element: Element, component: Component): void {
+        let processAttribute = (name: string, value: string): void => {
+            let firstCharacter = name.substr(0,1);
+            if (firstCharacter==='(') {
+                let eventName =
+                    name.replace('(', '')
+                        .replace(')', '');
+                let callback = (<any>this)[value];
+                if (typeof callback !== 'function') {
+                    console.warn('ag-Grid: count not find callback ' + value);
+                    return;
+                }
+                this.addDestroyableEventListener(component, eventName, callback.bind(this));
+            }
+        };
+        _.iterateNamedNodeMap(element.attributes, processAttribute);
+    }
+
+    private createChildAttributes(fromNode: Element, child: any): void {
+        let processAttribute = (name: string, value: string): void => {
+            // square brackets means lookup on parent
+            let firstCharacter = name.substr(0,1);
+            if (firstCharacter==='[') {
+                let nameWithoutSquareBrackets =
+                    name.replace('[', '')
+                        .replace(']', '');
+                childAttributes[nameWithoutSquareBrackets] = (<any>this)[value];
+            } else if (firstCharacter==='<') {
+                // for events - no sure yet, maybe dealt with elsewhere,
+                // listeners should not end up on agAttributes
+            } else {
+                childAttributes[name] = value
+            }
+        };
+
+        let childAttributes: any = {};
+        _.iterateNamedNodeMap(fromNode.attributes, processAttribute);
+        child.agAttributes = childAttributes;
+    }
+
+    private copyAttributesFromNode(fromNode: Element, toNode: Element): void {
+        _.iterateNamedNodeMap(fromNode.attributes,
+            (name: string, value: string) => {
+                let firstCharacter = name.substr(0,1);
+                if (firstCharacter!=='(' && firstCharacter!=='[') {
+                    toNode.setAttribute(name, value)
+                }
+            }
+        );
     }
 
     private swapComponentForNode(newComponent: Component, parentNode: Element, childNode: Node): void {

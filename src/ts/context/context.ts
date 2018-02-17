@@ -1,6 +1,7 @@
 import { Utils as _ } from "../utils";
 import { ILogger } from "../iLogger";
 import { Component } from "../widgets/component";
+import {IComponent} from "../interfaces/iComponent";
 
 // steps in booting up:
 // 1. create all beans
@@ -81,23 +82,11 @@ export class Context {
     public createComponent(element: Element): Component {
         let key = element.nodeName;
         if (this.componentsMappedByName && this.componentsMappedByName[key]) {
-            let newComponent = <Component>new this.componentsMappedByName[key]();
+            let newComponent = <Component> new this.componentsMappedByName[key]();
             this.wireBean(newComponent);
-            this.copyAttributesFromNode(element, newComponent.getGui());
-            newComponent.attributesSet();
             return newComponent;
         } else {
             return null;
-        }
-    }
-
-    private copyAttributesFromNode(fromNode: Element, toNode: Element): void {
-        if (fromNode.attributes) {
-            let count = fromNode.attributes.length;
-            for (let i = 0; i < count; i++) {
-                let attr = fromNode.attributes[i];
-                toNode.setAttribute(attr.name, attr.value);
-            }
         }
     }
 
