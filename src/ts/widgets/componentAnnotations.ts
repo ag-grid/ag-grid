@@ -16,36 +16,53 @@ function querySelectorFunc(selector: string, classPrototype: any, methodOrAttrib
         return;
     }
 
-    // it's an attribute on the class
-    let props = getOrCreateProps(classPrototype, classPrototype.constructor.name);
-    if (!props.querySelectors) {
-        props.querySelectors = [];
-    }
-    props.querySelectors.push({
+    addToObjectProps(classPrototype, 'querySelectors', {
         attributeName: methodOrAttributeName,
         querySelector: selector
     });
 }
 
+// think we should take this out, put property bindings on the
 export function Listener(eventName?: string): Function {
     return listenerFunc.bind(this, eventName);
 }
 
-function listenerFunc(eventName: string, target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>) {
+function listenerFunc(eventName: string, target: Object, methodName: string) {
     if (eventName === null) {
         console.error("ag-Grid: EventListener eventName should not be null");
         return;
     }
 
-    // it's an attribute on the class
-    let props = getOrCreateProps(target, (<any>target.constructor).name);
-    if (!props.listenerMethods) {
-        props.listenerMethods = [];
-    }
-    props.listenerMethods.push({
+    addToObjectProps(target, 'listenerMethods', {
         methodName: methodName,
         eventName: eventName
     });
+}
+
+// think we should take this out, put property bindings on the
+export function Method(eventName?: string): Function {
+    return methodFunc.bind(this, eventName);
+}
+
+function methodFunc(alias: string, target: Object, methodName: string) {
+    if (alias === null) {
+        console.error("ag-Grid: EventListener eventName should not be null");
+        return;
+    }
+
+    addToObjectProps(target, 'methods', {
+        methodName: methodName,
+        alias: alias
+    });
+}
+
+function addToObjectProps(target: Object, key: string, value: any): void {
+    // it's an attribute on the class
+    let props = getOrCreateProps(target, (<any>target.constructor).name);
+    if (!props[key]) {
+        props[key] = [];
+    }
+    props[key].push(value);
 }
 
 function getOrCreateProps(target: any, instanceName: string): any {

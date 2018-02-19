@@ -67,38 +67,42 @@ export class Component extends BeanStub implements IComponent<any> {
     }
 
     private addEventListenersToElement(element: HTMLElement): void {
-        let processAttribute = (name: string, value: string): void => {
-            let firstCharacter = name.substr(0,1);
-            if (firstCharacter==='(') {
-                let eventName =
-                    name.replace('(', '')
-                        .replace(')', '');
-                let callback = (<any>this)[value];
-                if (typeof callback !== 'function') {
-                    console.warn('ag-Grid: count not find callback ' + value);
-                    return;
-                }
-                this.addDestroyableEventListener(element, eventName, callback.bind(this));
-            }
-        };
-        _.iterateNamedNodeMap(element.attributes, processAttribute);
+        this.addEventListenerCommon(element, (eventName: string, listener: (event?: any)=>void )=> {
+            this.addDestroyableEventListener(element, eventName, listener);
+        });
     }
 
     private addEventListenersToComponent(element: Element, component: Component): void {
-        let processAttribute = (name: string, value: string): void => {
-            let firstCharacter = name.substr(0,1);
+        this.addEventListenerCommon(element, (eventName: string, listener: (event?: any)=>void )=> {
+            this.addDestroyableEventListener(component, eventName, listener);
+        });
+    }
+
+    private addEventListenerCommon(element: Element,
+                                   callback: (eventName: string, listener: (event?: any)=>void)=>void): void {
+        let methodAliases = this.getAgComponentMetaData('methods');
+
+        let processAttribute = (eventName: string, methodName: string): void => {
+            let firstCharacter = eventName.substr(0,1);
             if (firstCharacter==='(') {
-                let eventName =
-                    name.replace('(', '')
+                let eventNameStripped =
+                    eventName.replace('(', '')
                         .replace(')', '');
-                let callback = (<any>this)[value];
-                if (typeof callback !== 'function') {
-                    console.warn('ag-Grid: count not find callback ' + value);
+
+                let methodAlias = _.find(methodAliases, 'alias', methodName);
+
+                let methodNameToUse = _.exists(methodAlias) ? methodAlias.methodName : methodName;
+
+                let listener = (<any>this)[methodNameToUse];
+                if (typeof listener !== 'function') {
+                    console.warn('ag-Grid: count not find callback ' + methodName);
                     return;
                 }
-                this.addDestroyableEventListener(component, eventName, callback.bind(this));
+
+                callback(eventNameStripped, listener.bind(this));
             }
         };
+
         _.iterateNamedNodeMap(element.attributes, processAttribute);
     }
 
@@ -215,27 +219,38 @@ export class Component extends BeanStub implements IComponent<any> {
             return;
         }
 
+        let listenerMethods = this.getAgComponentMetaData('listenerMethods');
+
+        if (_.missingOrEmpty(listenerMethods)) { return; }
+
+        if (!this.annotatedEventListeners) {
+            this.annotatedEventListeners = [];
+        }
+
+        listenerMethods.forEach((eventListener: any) => {
+            let listener = (<any>this)[eventListener.methodName].bind(this);
+            this.eGui.addEventListener(eventListener.eventName, listener);
+            this.annotatedEventListeners.push({eventName: eventListener.eventName, listener: listener});
+        });
+    }
+
+    private getAgComponentMetaData(key: string): any[] {
+        let res: any[] = [];
+
         let thisProto: any = Object.getPrototypeOf(this);
 
         while (thisProto != null) {
             let metaData = thisProto.__agComponentMetaData;
             let currentProtoName = (thisProto.constructor).name;
 
-            if (metaData && metaData[currentProtoName] && metaData[currentProtoName].listenerMethods) {
-
-                if (!this.annotatedEventListeners) {
-                    this.annotatedEventListeners = [];
-                }
-
-                metaData[currentProtoName].listenerMethods.forEach((eventListener: any) => {
-                    let listener = (<any>this)[eventListener.methodName].bind(this);
-                    this.eGui.addEventListener(eventListener.eventName, listener);
-                    this.annotatedEventListeners.push({eventName: eventListener.eventName, listener: listener});
-                });
+            if (metaData && metaData[currentProtoName] && metaData[currentProtoName][key]) {
+                res = res.concat(metaData[currentProtoName][key]);
             }
 
             thisProto = Object.getPrototypeOf(thisProto);
         }
+
+        return res;
     }
 
     private removeAnnotatedEventListeners(): void {
