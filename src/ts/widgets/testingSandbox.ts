@@ -64,7 +64,7 @@ export class SmallComponent extends Component {
                         <ag-checkbox label="My Checkbox" (change)="onMyCheckboxChanged"/>
                     </div>
                     <div>
-                        <button (click)="clickBtOk">OK</button>
+                        <button (click)="onBtOk">OK</button>
                         <button (click)="onBtCancel">Cancel</button>
                     </div>
             </div>`);
@@ -74,7 +74,7 @@ export class SmallComponent extends Component {
         console.log('onMyCheckboxChanged', event);
     }
 
-    @Method('clickBtOk')
+    @Method('onBtOk')
     private onBtOk(event: MouseEvent): void {
         console.log('smallComponent.onBtOK', event);
         console.log('attributes', this.attributes);
