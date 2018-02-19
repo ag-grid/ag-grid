@@ -1,7 +1,5 @@
 // to satisfy server side compilation
 
-import {CellMouseDownEvent} from "./src/ts/events";
-
 declare let global: any;
 let globalObj = typeof global === 'undefined' ? {} : global;
 globalObj.HTMLElement = typeof HTMLElement === 'undefined' ? {} : HTMLElement;
