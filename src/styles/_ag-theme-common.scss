@@ -663,6 +663,7 @@
                 width: $grid-size * 2;
             }
 
+
             .ag-column-select-checkbox,
             .ag-column-group-icons {
                 margin-right: $grid-size;
@@ -683,7 +684,7 @@
 
     .ag-column-tool-panel-item {
         button {
-            height: $grid-size;
+            height: 100%;
             font-size: $font-size;
             font-family: $font-family;
         }

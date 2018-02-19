@@ -340,4 +340,14 @@ export class Component extends BeanStub implements IComponent<any> {
         return this.queryForHtmlElement('[ref="' + refName + '"]');
     }
 
+    public addChildComponentToRef (context: Context, childComponentConstructor:()=>Component, intoRef?: string): void {
+        let parent = intoRef ? this.getRefElement(intoRef) : this.getGui();
+
+        let childComponent: Component = childComponentConstructor ();
+        context.wireBean(childComponent);
+
+        this.childComponents.push(childComponent);
+        parent.appendChild(childComponent.getGui());
+    }
+
 }
