@@ -10,6 +10,17 @@ export interface VisibleChangedEvent extends AgEvent {
     visible: boolean;
 }
 
+interface AttrLists {
+    normal: NameValue [];
+    events: NameValue [];
+    bindings: NameValue [];
+}
+
+interface NameValue {
+    name: string;
+    value: string;
+}
+
 export class Component extends BeanStub implements IComponent<any> {
 
     public static EVENT_VISIBLE_CHANGED = 'visibleChanged';
@@ -48,10 +59,11 @@ export class Component extends BeanStub implements IComponent<any> {
             let childNode = parentNode.childNodes[i];
             let childComp = context.createComponent(<Element>childNode);
             if (childComp) {
+                let attrList = this.getAttrLists(<Element>childNode);
                 this.swapComponentForNode(childComp, parentNode, childNode);
-                this.copyAttributesFromNode(<Element>childNode, childComp.getGui());
-                this.createChildAttributes(<Element>childNode, childComp);
-                this.addEventListenersToComponent(<HTMLElement>childNode, childComp);
+                this.copyAttributesFromNode(attrList, childComp.getGui());
+                this.createChildAttributes(attrList, childComp);
+                this.addEventListenersToComponent(attrList, childComp);
                 // should remove this, get agCheckbox to use this.attributes
                 childComp.attributesSet();
                 childComp.instantiate(context);
@@ -60,83 +72,96 @@ export class Component extends BeanStub implements IComponent<any> {
                     this.instantiateRecurse(<Element>childNode, context);
                 }
                 if (childNode instanceof HTMLElement) {
-                    this.addEventListenersToElement(<HTMLElement>childNode);
+                    let attrList = this.getAttrLists(<Element>childNode);
+                    this.addEventListenersToElement(attrList, <HTMLElement>childNode);
                 }
             }
         }
     }
 
-    private addEventListenersToElement(element: HTMLElement): void {
-        this.addEventListenerCommon(element, (eventName: string, listener: (event?: any)=>void )=> {
+    private getAttrLists(child: Element): AttrLists {
+        let res: AttrLists = {
+            bindings: [],
+            events: [],
+            normal: []
+        };
+        _.iterateNamedNodeMap(child.attributes,
+            (name: string, value: string) => {
+                let firstCharacter = name.substr(0,1);
+                if (firstCharacter==='(') {
+                    let eventName = name.replace('(', '').replace(')', '');
+                    res.events.push({
+                        name: eventName,
+                        value: value
+                    });
+                } else if (firstCharacter==='[') {
+                    let bindingName = name.replace('[', '').replace(']', '');
+                    res.bindings.push({
+                        name: bindingName,
+                        value: value
+                    });
+                } else {
+                    res.normal.push({
+                        name: name,
+                        value: value
+                    });
+                }
+            }
+        );
+        return res;
+    }
+
+    private addEventListenersToElement(attrLists: AttrLists, element: HTMLElement): void {
+        this.addEventListenerCommon(attrLists, (eventName: string, listener: (event?: any)=>void )=> {
             this.addDestroyableEventListener(element, eventName, listener);
         });
     }
 
-    private addEventListenersToComponent(element: Element, component: Component): void {
-        this.addEventListenerCommon(element, (eventName: string, listener: (event?: any)=>void )=> {
+    private addEventListenersToComponent(attrLists: AttrLists, component: Component): void {
+        this.addEventListenerCommon(attrLists, (eventName: string, listener: (event?: any)=>void )=> {
             this.addDestroyableEventListener(component, eventName, listener);
         });
     }
 
-    private addEventListenerCommon(element: Element,
+    private addEventListenerCommon(attrLists: AttrLists,
                                    callback: (eventName: string, listener: (event?: any)=>void)=>void): void {
         let methodAliases = this.getAgComponentMetaData('methods');
 
-        let processAttribute = (eventName: string, methodName: string): void => {
-            let firstCharacter = eventName.substr(0,1);
-            if (firstCharacter==='(') {
-                let eventNameStripped =
-                    eventName.replace('(', '')
-                        .replace(')', '');
+        attrLists.events.forEach( nameValue => {
+            let methodName = nameValue.value;
+            let methodAlias = _.find(methodAliases, 'alias', methodName);
 
-                let methodAlias = _.find(methodAliases, 'alias', methodName);
+            let methodNameToUse = _.exists(methodAlias) ? methodAlias.methodName : methodName;
 
-                let methodNameToUse = _.exists(methodAlias) ? methodAlias.methodName : methodName;
-
-                let listener = (<any>this)[methodNameToUse];
-                if (typeof listener !== 'function') {
-                    console.warn('ag-Grid: count not find callback ' + methodName);
-                    return;
-                }
-
-                callback(eventNameStripped, listener.bind(this));
+            let listener = (<any>this)[methodNameToUse];
+            if (typeof listener !== 'function') {
+                console.warn('ag-Grid: count not find callback ' + methodName);
+                return;
             }
-        };
 
-        _.iterateNamedNodeMap(element.attributes, processAttribute);
+            callback(nameValue.name, listener.bind(this));
+        });
     }
 
-    private createChildAttributes(fromNode: Element, child: any): void {
-        let processAttribute = (name: string, value: string): void => {
-            // square brackets means lookup on parent
-            let firstCharacter = name.substr(0,1);
-            if (firstCharacter==='[') {
-                let nameWithoutSquareBrackets =
-                    name.replace('[', '')
-                        .replace(']', '');
-                childAttributes[nameWithoutSquareBrackets] = (<any>this)[value];
-            } else if (firstCharacter==='(') {
-                // for events - no sure yet, maybe dealt with elsewhere,
-                // listeners should not end up on agAttributes
-            } else {
-                childAttributes[name] = value
-            }
-        };
+    private createChildAttributes(attrLists: AttrLists, child: any): void {
 
         let childAttributes: any = {};
-        _.iterateNamedNodeMap(fromNode.attributes, processAttribute);
+
+        attrLists.normal.forEach( nameValue => {
+            childAttributes[nameValue.name] = nameValue.value;
+        });
+
+        attrLists.bindings.forEach( nameValue => {
+            childAttributes[nameValue.name] = (<any>this)[nameValue.value];
+        });
+
         child.attributes = childAttributes;
     }
 
-    private copyAttributesFromNode(fromNode: Element, toNode: Element): void {
-        _.iterateNamedNodeMap(fromNode.attributes,
-            (name: string, value: string) => {
-                let firstCharacter = name.substr(0,1);
-                if (firstCharacter!=='(' && firstCharacter!=='[') {
-                    toNode.setAttribute(name, value)
-                }
-            }
-        );
+    private copyAttributesFromNode(attrLists: AttrLists, childNode: Element): void {
+        attrLists.normal.forEach( nameValue => {
+            childNode.setAttribute(nameValue.name, nameValue.value);
+        });
     }
 
     private swapComponentForNode(newComponent: Component, parentNode: Element, childNode: Node): void {
