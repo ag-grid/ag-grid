@@ -356,10 +356,6 @@ export class ToolPanelGroupComp extends Component implements ToolPanelBaseColumn
         return this.cbSelect.isSelected();
     }
 
-    setSelectionCallback(callback: (selected: boolean) => void): void {
-        this.selectionCallback = callback;
-    }
-
     isSelectable(): boolean {
         return !this.cbSelect.isReadOnly();
     }
