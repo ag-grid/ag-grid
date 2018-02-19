@@ -136,6 +136,7 @@ export class ToolpanelFilterComp extends Component {
 }
 
 export class ToolpanelColumnsContainerComp extends Component {
+
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private globalEventService: EventService;
 
@@ -202,7 +203,6 @@ export class ToolpanelColumnsContainerComp extends Component {
         this.recursivelySetVisibility(this.columnTree, true);
     }
 
-
     private recursivelyRenderColumnComponent(column: Column, dept: number): void {
         if (column.getColDef() && column.getColDef().suppressToolPanel) {
             return;
@@ -211,7 +211,6 @@ export class ToolpanelColumnsContainerComp extends Component {
         let renderedColumn = new ToolPanelColumnComp(column, dept, this.allowDragging);
         this.context.wireBean(renderedColumn);
         this.getGui().appendChild(renderedColumn.getGui());
-
 
         this.renderedItems[column.getId()] = renderedColumn;
     }
@@ -237,7 +236,6 @@ export class ToolpanelColumnsContainerComp extends Component {
                 renderedItem.setExpandable(value);
             }
         });
-
     }
 
     public doFilterColumns(filterText:string) {
@@ -281,31 +279,20 @@ export class ToolpanelColumnsContainerComp extends Component {
             column.onSelectAllChanged (checked);
         });
     }
-
 }
 
 export class ColumnSelectComp extends Component {
-    private static TEMPLATE = '<div class="ag-column-select-panel"></div>';
 
+    private static TEMPLATE = '<div class="ag-column-select-panel"></div>';
 
     @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @RefSelector('column-select-header')
-    eColumnSelectHeader: HTMLElement;
-
-
-
-
+    private eColumnSelectHeader: HTMLElement;
 
     @RefSelector('filterTextField')
     private eFilterTextField: HTMLInputElement;
-
-
-
-
-
-
 
     private allowDragging: boolean;
 
@@ -320,7 +307,7 @@ export class ColumnSelectComp extends Component {
         let toolpanelColumnsContainerComp = new ToolpanelColumnsContainerComp(this.context, this.allowDragging);
         this.addChildComponentToRef (this.context, ()=> new ToolpanelHeaderComp(
             this.context,
-            this.onFilterTextFieldChanged.bind(this),
+            (value)=>this.onFilterTextFieldChanged(value, toolpanelColumnsContainerComp),
             (event)=>this.onExpandAll(event, toolpanelColumnsContainerComp),
             (event)=>this.onCollapseAll(event, toolpanelColumnsContainerComp),
             (event)=>this.onSelectAll(event, toolpanelColumnsContainerComp),

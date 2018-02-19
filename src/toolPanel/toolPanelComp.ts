@@ -1,19 +1,5 @@
-import {
-    Component,
-    GridApi,
-    GridOptionsWrapper,
-    PostConstruct,
-    Bean,
-    Autowired,
-    GridCore,
-    Context
-} from "ag-grid/main";
-import {ColumnSelectComp} from "./columnsSelect/columnSelectComp";
-import {RowGroupColumnsPanel} from "./columnDrop/rowGroupColumnsPanel";
-import {PivotColumnsPanel} from "./columnDrop/pivotColumnsPanel";
-import {PivotModePanel} from "./columnDrop/pivotModePanel";
-import {ValuesColumnPanel} from "./columnDrop/valueColumnsPanel";
-import {_, IToolPanel} from "ag-grid";
+import {Autowired, Bean, Component, Context, GridCore, GridOptionsWrapper, PostConstruct} from "ag-grid/main";
+import {IToolPanel} from "ag-grid";
 import {ColumnPanel} from "./columnPanel";
 
 @Bean("toolPanelComp")
