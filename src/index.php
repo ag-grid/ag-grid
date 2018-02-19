@@ -35,12 +35,12 @@ meta_and_links($title, $keywords, $description, false);
             </div>
 
             <div>
-                <h1 title="ag-Grid">THE BEST
+                <h2 title="ag-Grid">THE BEST
                     <br>
                     HTML5 GRID
                     <br>
                     IN THE WORLD
-                </h1>
+                </h2>
 
                 <ul id="homepage-highlights">
                     <li>
