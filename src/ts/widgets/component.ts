@@ -111,7 +111,7 @@ export class Component extends BeanStub implements IComponent<any> {
                     name.replace('[', '')
                         .replace(']', '');
                 childAttributes[nameWithoutSquareBrackets] = (<any>this)[value];
-            } else if (firstCharacter==='<') {
+            } else if (firstCharacter==='(') {
                 // for events - no sure yet, maybe dealt with elsewhere,
                 // listeners should not end up on agAttributes
             } else {
@@ -121,7 +121,7 @@ export class Component extends BeanStub implements IComponent<any> {
 
         let childAttributes: any = {};
         _.iterateNamedNodeMap(fromNode.attributes, processAttribute);
-        child.agAttributes = childAttributes;
+        child.attributes = childAttributes;
     }
 
     private copyAttributesFromNode(fromNode: Element, toNode: Element): void {

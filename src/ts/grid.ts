@@ -179,7 +179,7 @@ export class Grid {
                 {componentName: 'AgCheckbox', theClass: AgCheckbox}
                 // niall put the below in for testing some PoC code, niall will
                 // remove this comment and code when PoC is over
-                // , {componentName: 'AgSmallComponent', theClass: SmallComponent}
+                , {componentName: 'AgSmallComponent', theClass: SmallComponent}
             ],
             debug: !!gridOptions.debug
         };

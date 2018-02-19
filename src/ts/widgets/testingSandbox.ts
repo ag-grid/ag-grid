@@ -9,7 +9,7 @@ export class TestingSandbox extends Component implements IFilterComp {
     private static TEMPLATE =
         `<div>
           <ag-checkbox ref="eCheckbox" label="Select Me"></ag-checkbox>
-          <ag-small-component ref="eSmallComponent" [bag]="bag"></ag-small-component>
+          <ag-small-component ref="eSmallComponent" [bag]="bag" some-string="bananas"></ag-small-component>
         </div>`;
 
     @Autowired('context') private context: Context;
@@ -76,10 +76,12 @@ export class SmallComponent extends Component {
 
     private onBtOk(event: MouseEvent): void {
         console.log('smallComponent.onBtOK', event);
+        console.log('attributes', this.attributes);
     }
 
     private onBtCancel(event: MouseEvent): void {
         console.log('smallComponent.onBtCancel', event);
+        console.log('attributes', this.attributes);
     }
 
     public doSomething(): void {
