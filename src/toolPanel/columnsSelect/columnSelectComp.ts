@@ -189,7 +189,7 @@ export class ColumnSelectComp extends Component {
                 (collapse-all)="onCollapseAll"
                 (select-all)="onSelectAll"
                 (unselect-all)="onUnselectAll"
-                [filter-changed-callback]="filterChangedCallback"
+                (filter-changed)="onFilterChanged"
                 />
         </div>`;
 
@@ -206,8 +206,6 @@ export class ColumnSelectComp extends Component {
 
     private toolPanelColumnsContainerComp: ToolPanelColumnsContainerComp;
 
-    private filterChangedCallback = this.onFilterTextFieldChanged.bind(this);
-
     // we allow dragging in the toolPanel, but not when this component appears in the column menu
     constructor(allowDragging: boolean) {
         super(ColumnSelectComp.TEMPLATE);
@@ -223,8 +221,8 @@ export class ColumnSelectComp extends Component {
         this.instantiate(this.context);
     }
 
-    private onFilterTextFieldChanged(value: string) {
-        this.toolPanelColumnsContainerComp.doFilterColumns(value);
+    private onFilterChanged(event: any) {
+        this.toolPanelColumnsContainerComp.doFilterColumns(event.filterText);
     }
 
     private onSelectAll() {

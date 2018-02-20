@@ -1,10 +1,26 @@
-import {_, Autowired, Component, Context, Events, GridOptionsWrapper, PostConstruct, RefSelector} from "ag-grid/main";
+import {PreConstruct, _, Autowired, Component, Context, Events, GridOptionsWrapper, PostConstruct, RefSelector} from "ag-grid/main";
 
 export class ColumnSelectHeaderComp extends Component {
 
     @Autowired('context') private context: Context;
 
-    public static TEMPLATE: string =
+    private attributes: {
+        filterChangedCallback:(filterValue:string)=>void,
+    };
+
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+
+    @RefSelector('eFilterTextField')
+    private eFilterTextField: HTMLInputElement;
+
+    private onFilterTextChangedDebounced: ()=>void;
+
+    @PreConstruct
+    private preConstruct(): void {
+
+        let translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
+        this.setTemplate(
         `<div class="ag-column-select-header">
 
             <div class="ag-column-tool-panel">
@@ -22,23 +38,28 @@ export class ColumnSelectHeaderComp extends Component {
                 </button>
             </div>
             
-        </div>`;
-
-    private attributes: {
-        filterChangedCallback:(filterValue:string)=>void,
-    };
-
-    constructor() {
-        super(ColumnSelectHeaderComp.TEMPLATE);
+            <div class="ag-filter-body">
+                <input class="ag-filter-filter" ref="eFilterTextField" type="text" placeholder="${translate('filterOoo', 'Filter...')}" (input)="onFilterTextChanged">
+            </div>
+        
+        </div>`);
     }
 
     @PostConstruct
     public init(): void {
-
-        this.addChildComponentToRef (this.context, ()=> new ToolPanelFilterComp(this.attributes.filterChangedCallback));
-
-        // this.addChildComponentToRef(this.context, ()=> new ToolbarComp (this.onCollapseAll, this.onSelectAll, this.onUnselectAll));
+        // this.addDestroyableEventListener(this.eFilterTextField, 'input', _.debounce(this.onFilterTextChanged.bind(this), 400));
         this.instantiate(this.context);
+    }
+
+    private onFilterTextChanged(): void {
+        if (!this.onFilterTextChangedDebounced) {
+            this.onFilterTextChangedDebounced = _.debounce( ()=> {
+                let filterText = this.eFilterTextField.value;
+                this.dispatchEvent({type: 'filterChanged', filterText: filterText});
+            }, 400);
+        }
+
+        this.onFilterTextChangedDebounced();
     }
 
     private onExpandAll(): void {
@@ -55,41 +76,5 @@ export class ColumnSelectHeaderComp extends Component {
 
     private onUnselectAll(): void {
         this.dispatchEvent({type: 'unselectAll'});
-    }
-}
-
-export class ToolPanelFilterComp extends Component {
-
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-
-    @RefSelector('filterTextField')
-    private eFilterTextField: HTMLInputElement;
-
-    public static TEMPLATE = (translatedPlaceholder:string)=>
-        `<div class="ag-filter-body">
-            <input class="ag-filter-filter" ref="filterTextField" type="text" placeholder="${translatedPlaceholder}">
-        </div>`;
-
-    constructor(
-        private onFilterChanged:(filterValue:string)=>void
-    ){
-        super();
-    }
-
-    @PostConstruct
-    public init(): void {
-        let placeHolder:string = this.translate('filterOoo', 'Filter...');
-        this.setTemplate(ToolPanelFilterComp.TEMPLATE(placeHolder));
-        this.addDestroyableEventListener(this.eFilterTextField, 'input', _.debounce(this.onFilterTextFieldChanged.bind(this), 400))
-    }
-
-    private translate(toTranslate: string, defaultValue: string): string {
-        let translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        return translate(toTranslate, defaultValue);
-    }
-
-    private onFilterTextFieldChanged() {
-        let filterText = this.eFilterTextField.value;
-        this.onFilterChanged(filterText)
     }
 }
