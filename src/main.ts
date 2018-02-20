@@ -21,6 +21,7 @@ import {MenuItemMapper} from "./menu/menuItemMapper";
 import {ExcelCreator} from "./excelCreator";
 import {ExcelXmlFactory} from "./excelXmlFactory";
 import {EnterpriseRowModel} from "./rowModels/enterprise/enterpriseRowModel";
+import {ToolbarComp} from "./toolPanel/columnsSelect/columnSelectComp";
 
 let rowModelTypes = {viewport: ViewportRowModel, enterprise: EnterpriseRowModel};
 
@@ -28,3 +29,7 @@ Grid.setEnterpriseBeans([ToolPanelComp, EnterpriseMenuFactory, ExcelCreator, Exc
     PivotColumnsPanel, RangeController, ClipboardService, PivotStage, PivotColDefService,
     ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService,
     StatusBar, LicenseManager, MD5, MenuItemMapper], rowModelTypes);
+
+Grid.setEnterpriseComponents([
+    {componentName: 'AgToolbar', theClass: ToolbarComp}
+]);

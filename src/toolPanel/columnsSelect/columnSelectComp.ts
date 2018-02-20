@@ -17,7 +17,6 @@ import {
 import {ToolPanelGroupComp} from "./toolPanelGroupComp";
 import {ToolPanelColumnComp} from "./toolPanelColumnComp";
 
-
 export interface ToolPanelBaseColumnItem {
     onColumnFilterChanged(filterText: string): void;
 
@@ -36,73 +35,108 @@ export interface ToolPanelBaseColumnItem {
 export type ToolPanelColumnItem = ToolPanelBaseColumnItem & Component;
 
 
-export class ToolpanelHeaderComp extends Component {
-    public static TEMPLATE: string = `<div class="ag-column-select-header" ref="column-select-header"></div>`;
+export class ToolPanelHeaderComp extends Component {
+
+    public static TEMPLATE: string =
+        `<div class="ag-column-select-header" ref="column-select-header">
+            <ag-toolbar 
+                (expand-all)="onExpandAll" 
+                (collapse-all)="onCollapseAll" 
+                (select-all)="onSelectAll" 
+                (unselect-all)="onUnselectAll"/>
+        </div>`;
+
+    // private attributes: {
+    //     onFilterChanged:(filterValue:string)=>void,
+    //     onExpandAll: ()=>void,
+    //     onCollapseAll: ()=>void,
+    //     onSelectAll: ()=>void,
+    //     onUnselectAll: ()=>void,
+    // };
 
     constructor(
-        private context:Context,
-        private onFilterChanged:(filterValue:string)=>void,
-        private onExpandAll: (event:MouseEvent)=>void,
-        private onCollapseAll: (event:MouseEvent)=>void,
-        private onSelectAll: (event:MouseEvent)=>void,
-        private onUnselectAll: (event:MouseEvent)=>void,
+        private context: Context,
+        private onFilterChanged: (filterValue:string)=>void,
+        private onExpandAll2: ()=>void,
+        private onCollapseAll2: ()=>void,
+        private onSelectAll2: ()=>void,
+        private onUnselectAll2: ()=>void,
     ){
-        super(ToolpanelHeaderComp.TEMPLATE);
+        super(ToolPanelHeaderComp.TEMPLATE);
     }
 
     @PostConstruct
     public init(): void {
-        this.addChildComponentToRef (this.context, ()=> new ToolpanelFilterComp(this.onFilterChanged));
-        this.addChildComponentToRef(this.context, ()=> new ToolbarComp (this.onExpandAll, this.onCollapseAll, this.onSelectAll, this.onUnselectAll));
+        this.addChildComponentToRef (this.context, ()=> new ToolPanelFilterComp(this.onFilterChanged));
 
+        // this.addChildComponentToRef(this.context, ()=> new ToolbarComp (this.onCollapseAll, this.onSelectAll, this.onUnselectAll));
+        this.instantiate(this.context);
+    }
+
+    private onExpandAll(): void {
+        this.onExpandAll2();
+    }
+    private onCollapseAll(): void {
+        this.onCollapseAll2();
+    }
+    private onSelectAll(): void {
+        this.onSelectAll2();
+    }
+    private onUnselectAll(): void {
+        this.onUnselectAll2();
     }
 }
 
 export class ToolbarComp extends Component {
-    public static TEMPLATE = `<div class="ag-column-tool-panel" ref="toolPanel">
-            <div class="ag-column-tool-panel-item" ref="selectAllButton">
-                <button><span class="ag-icon ag-icon-checkbox-checked"></button>
-            </div>
-            <div class="ag-column-tool-panel-item" ref="deselectAllButton">
-                <button><span class="ag-icon ag-icon-checkbox-unchecked"></button>
-            </div>
-             <div class="ag-column-tool-panel-item" ref="expandAllButton">
-                <button><span class="ag-icon ag-icon-expanded"></button>
-            </div>
-            <div class="ag-column-tool-panel-item" ref="collapseAllButton">
-                <button><span class="ag-icon ag-icon-contracted"></button>
-            </div>
+
+    public static TEMPLATE =
+        `<div class="ag-column-tool-panel">
+            <button class="ag-column-tool-panel-item" (click)="onSelectAll">
+                <span class="ag-icon ag-icon-checkbox-checked"/>
+            </button>
+            <button class="ag-column-tool-panel-item" (click)="onUnselectAll">
+                <span class="ag-icon ag-icon-checkbox-unchecked"/>
+            </button>
+            <button class="ag-column-tool-panel-item" (click)="onExpandAll">
+                <span class="ag-icon ag-icon-expanded"/>
+            </button>
+            <button class="ag-column-tool-panel-item" (click)="onCollapseAll">
+                <span class="ag-icon ag-icon-contracted"/>
+            </button>
         </div>`;
 
-    @RefSelector('expandAllButton')
-    private eExpandAll: HTMLButtonElement;
-    @RefSelector('collapseAllButton')
-    private eCollapseAll: HTMLButtonElement;
-    @RefSelector('selectAllButton')
-    private eSelectAll: HTMLInputElement;
-    @RefSelector('deselectAllButton')
-    private eDeselectAll: HTMLInputElement;
+    @Autowired('context') private context: Context;
 
-    constructor(
-        private onExpandAll: (event:MouseEvent)=>void,
-        private onCollapseAll: (event:MouseEvent)=>void,
-        private onSelectAll: (event:MouseEvent)=>void,
-        private onUnselectAll: (event:MouseEvent)=>void,
-    ){
+    constructor() {
         super(ToolbarComp.TEMPLATE);
+    }
+
+    private onExpandAll(): void {
+        this.dispatchEvent({type: 'expandAll'});
+    }
+
+    private onCollapseAll(): void {
+        this.dispatchEvent({type: 'collapseAll'});
+    }
+
+    private onSelectAll(): void {
+        this.dispatchEvent({type: 'selectAll'});
+    }
+
+    private onUnselectAll(): void {
+        this.dispatchEvent({type: 'unselectAll'});
     }
 
     @PostConstruct
     public init(): void {
-        this.addDestroyableEventListener(this.eExpandAll, 'click', this.onExpandAll);
-        this.addDestroyableEventListener(this.eCollapseAll, 'click', this.onCollapseAll);
-        this.addDestroyableEventListener(this.eSelectAll, 'click', this.onSelectAll);
-        this.addDestroyableEventListener(this.eDeselectAll, 'click', this.onUnselectAll);
+        this.instantiate(this.context);
     }
 }
 
-export class ToolpanelFilterComp extends Component {
+export class ToolPanelFilterComp extends Component {
+
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+
     @RefSelector('filterTextField')
     private eFilterTextField: HTMLInputElement;
 
@@ -119,7 +153,7 @@ export class ToolpanelFilterComp extends Component {
     @PostConstruct
     public init(): void {
         let placeHolder:string = this.translate('filterOoo', 'Filter...');
-        this.setTemplate (ToolpanelFilterComp.TEMPLATE (placeHolder));
+        this.setTemplate (ToolPanelFilterComp.TEMPLATE (placeHolder));
         this.addDestroyableEventListener(this.eFilterTextField, 'input', _.debounce(this.onFilterTextFieldChanged.bind(this), 400))
     }
 
@@ -304,40 +338,36 @@ export class ColumnSelectComp extends Component {
 
     @PostConstruct
     public init(): void {
-        let toolpanelColumnsContainerComp = new ToolpanelColumnsContainerComp(this.context, this.allowDragging);
-        this.addChildComponentToRef (this.context, ()=> new ToolpanelHeaderComp(
+        let toolPanelColumnsContainerComp = new ToolpanelColumnsContainerComp(this.context, this.allowDragging);
+        this.addChildComponentToRef (this.context, ()=> new ToolPanelHeaderComp(
             this.context,
-            (value)=>this.onFilterTextFieldChanged(value, toolpanelColumnsContainerComp),
-            (event)=>this.onExpandAll(event, toolpanelColumnsContainerComp),
-            (event)=>this.onCollapseAll(event, toolpanelColumnsContainerComp),
-            (event)=>this.onSelectAll(event, toolpanelColumnsContainerComp),
-            (event)=>this.onDeselectAll(event, toolpanelColumnsContainerComp),
+            (value)=>this.onFilterTextFieldChanged(value, toolPanelColumnsContainerComp),
+            ()=>this.onExpandAll(toolPanelColumnsContainerComp),
+            ()=>this.onCollapseAll(toolPanelColumnsContainerComp),
+            ()=>this.onSelectAll(toolPanelColumnsContainerComp),
+            ()=>this.onDeselectAll(toolPanelColumnsContainerComp),
         ));
-        this.addChildComponentToRef (this.context, ()=> toolpanelColumnsContainerComp);
+        this.addChildComponentToRef (this.context, ()=> toolPanelColumnsContainerComp);
     }
 
     private onFilterTextFieldChanged(value:string, toolpanelColumnsContainerComp: ToolpanelColumnsContainerComp) {
         toolpanelColumnsContainerComp.doFilterColumns(value);
     }
 
-    private onSelectAll(event: Event, toolpanelColumnsContainerComp: ToolpanelColumnsContainerComp) {
-        _.addAgGridEventPath(event);
-        toolpanelColumnsContainerComp.doSetSelectedAll(true);
+    private onSelectAll(toolPanelColumnsContainerComp: ToolpanelColumnsContainerComp) {
+        toolPanelColumnsContainerComp.doSetSelectedAll(true);
     }
 
-    private onDeselectAll(event: Event, toolpanelColumnsContainerComp: ToolpanelColumnsContainerComp) {
-        _.addAgGridEventPath(event);
-        toolpanelColumnsContainerComp.doSetSelectedAll(false);
+    private onDeselectAll(toolPanelColumnsContainerComp: ToolpanelColumnsContainerComp) {
+        toolPanelColumnsContainerComp.doSetSelectedAll(false);
     }
 
-    private onExpandAll(event: Event, toolpanelColumnsContainerComp: ToolpanelColumnsContainerComp) {
-        _.addAgGridEventPath(event);
-        toolpanelColumnsContainerComp.doSetExpandedAll(true);
+    private onExpandAll(toolPanelColumnsContainerComp: ToolpanelColumnsContainerComp) {
+        toolPanelColumnsContainerComp.doSetExpandedAll(true);
     }
 
-    private onCollapseAll(event: Event, toolpanelColumnsContainerComp: ToolpanelColumnsContainerComp) {
-        _.addAgGridEventPath(event);
-        toolpanelColumnsContainerComp.doSetExpandedAll(false);
+    private onCollapseAll(toolPanelColumnsContainerComp: ToolpanelColumnsContainerComp) {
+        toolPanelColumnsContainerComp.doSetExpandedAll(false);
     }
 
 
