@@ -79,28 +79,33 @@ export class Context {
         this.componentsMappedByName[classUpperCase] = componentMeta.theClass;
     }
 
-    public createComponent(element: Element): Component {
+    public createComponent(element: Element, afterPreCreateCallback?: (comp: Component)=>void): Component {
         let key = element.nodeName;
         if (this.componentsMappedByName && this.componentsMappedByName[key]) {
             let newComponent = <Component> new this.componentsMappedByName[key]();
-            this.wireBean(newComponent);
+            this.wireBean(newComponent, afterPreCreateCallback);
             return newComponent;
         } else {
             return null;
         }
     }
 
-    public wireBean(bean: any): void {
+    public wireBean(bean: any, afterPreCreateCallback?: (comp: Component)=>void): void {
         if (!bean) {
             throw Error(`Can't wire to bean since it is null`);
         }
-        this.wireBeans([bean]);
+        this.wireBeans([bean], afterPreCreateCallback);
     }
 
-    private wireBeans(beans: any[]): void {
+    private wireBeans(beans: any[], afterPreCreateCallback?: (comp: Component)=>void): void {
         this.autoWireBeans(beans);
         this.methodWireBeans(beans);
         this.preConstruct(beans);
+        // the callback sets the attributes, so the component has access to attributes
+        // before postConstruct methods in the component are executed
+        if (_.exists(afterPreCreateCallback)) {
+            beans.forEach(afterPreCreateCallback);
+        }
         this.postConstruct(beans);
     }
 

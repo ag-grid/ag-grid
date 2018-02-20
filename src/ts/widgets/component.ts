@@ -57,16 +57,16 @@ export class Component extends BeanStub implements IComponent<any> {
         let childCount = parentNode.childNodes ? parentNode.childNodes.length : 0;
         for (let i = 0; i < childCount; i++) {
             let childNode = parentNode.childNodes[i];
-            let childComp = context.createComponent(<Element>childNode);
-            if (childComp) {
+            let childComp = context.createComponent(<Element>childNode, (childComp)=> {
                 let attrList = this.getAttrLists(<Element>childNode);
-                this.swapComponentForNode(childComp, parentNode, childNode);
                 this.copyAttributesFromNode(attrList, childComp.getGui());
                 this.createChildAttributes(attrList, childComp);
                 this.addEventListenersToComponent(attrList, childComp);
+            });
+            if (childComp) {
+                this.swapComponentForNode(childComp, parentNode, childNode);
                 // should remove this, get agCheckbox to use this.attributes
-                childComp.attributesSet();
-                childComp.instantiate(context);
+                // childComp.instantiate(context);
             } else {
                 if (childNode.childNodes) {
                     this.instantiateRecurse(<Element>childNode, context);
@@ -201,9 +201,6 @@ export class Component extends BeanStub implements IComponent<any> {
         (<any>this.eGui).__agComponent = this;
         this.addAnnotatedEventListeners();
         this.wireQuerySelectors();
-    }
-
-    public attributesSet(): void {
     }
 
     protected wireQuerySelectors(): void {

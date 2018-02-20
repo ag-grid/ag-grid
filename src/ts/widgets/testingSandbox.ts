@@ -53,6 +53,8 @@ export class TestingSandbox extends Component implements IFilterComp {
 
 export class SmallComponent extends Component {
 
+    @Autowired('context') private context: Context;
+
     private attributes: any;
 
     constructor() {
@@ -70,11 +72,15 @@ export class SmallComponent extends Component {
             </div>`);
     }
 
+    @PostConstruct
+    private postConstruct(): void {
+        this.instantiate(this.context);
+    }
+
     private onMyCheckboxChanged(event: any): void {
         console.log('onMyCheckboxChanged', event);
     }
 
-    @Method('onBtOk')
     private onBtOk(event: MouseEvent): void {
         console.log('smallComponent.onBtOK', event);
         console.log('attributes', this.attributes);
