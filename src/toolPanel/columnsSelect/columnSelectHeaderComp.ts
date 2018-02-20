@@ -4,10 +4,6 @@ export class ColumnSelectHeaderComp extends Component {
 
     @Autowired('context') private context: Context;
 
-    private attributes: {
-        filterChangedCallback:(filterValue:string)=>void,
-    };
-
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @RefSelector('eFilterTextField')
@@ -47,7 +43,6 @@ export class ColumnSelectHeaderComp extends Component {
 
     @PostConstruct
     public init(): void {
-        // this.addDestroyableEventListener(this.eFilterTextField, 'input', _.debounce(this.onFilterTextChanged.bind(this), 400));
         this.instantiate(this.context);
     }
 

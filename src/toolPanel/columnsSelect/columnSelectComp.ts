@@ -38,16 +38,18 @@ export class ToolPanelColumnsContainerComp extends Component {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private globalEventService: EventService;
+    @Autowired('context') private context: Context;
+
+    private attributes: {
+        allowDragging: boolean;
+    };
 
     private columnTree: OriginalColumnGroupChild[];
     private renderedItems: { [key: string]: ToolPanelColumnItem };
 
     public static TEMPLATE = `<div class="ag-column-select-columns" ref="column-select-columns"></div>`;
 
-    constructor(
-        private context:Context,
-        private allowDragging: boolean
-    ){
+    constructor(){
         super(ToolPanelColumnsContainerComp.TEMPLATE);
     }
 
@@ -82,7 +84,7 @@ export class ToolPanelColumnsContainerComp extends Component {
         }
 
         if (!columnGroup.isPadding()) {
-            let renderedGroup = new ToolPanelGroupComp(columnGroup, dept, this.onGroupExpanded.bind(this), this.allowDragging);
+            let renderedGroup = new ToolPanelGroupComp(columnGroup, dept, this.onGroupExpanded.bind(this), this.attributes.allowDragging);
             this.context.wireBean(renderedGroup);
             this.getGui().appendChild(renderedGroup.getGui());
             // we want to indent on the gui for the children
@@ -107,7 +109,7 @@ export class ToolPanelColumnsContainerComp extends Component {
             return;
         }
 
-        let renderedColumn = new ToolPanelColumnComp(column, dept, this.allowDragging);
+        let renderedColumn = new ToolPanelColumnComp(column, dept, this.attributes.allowDragging);
         this.context.wireBean(renderedColumn);
         this.getGui().appendChild(renderedColumn.getGui());
 
@@ -143,8 +145,8 @@ export class ToolPanelColumnsContainerComp extends Component {
         })
     }
 
-    public doSetVisibilityAll (visible:boolean) {
-        this.recursivelySetVisibility (this.columnTree, visible);
+    public doSetVisibilityAll(visible:boolean) {
+        this.recursivelySetVisibility(this.columnTree, visible);
     }
 
     private recursivelySetVisibility(columnTree: any[], visible: boolean): void {
@@ -189,8 +191,12 @@ export class ColumnSelectComp extends Component {
                 (collapse-all)="onCollapseAll"
                 (select-all)="onSelectAll"
                 (unselect-all)="onUnselectAll"
-                (filter-changed)="onFilterChanged"
-                />
+                (filter-changed)="onFilterChanged">
+            </ag-column-select-header>
+            <ag-tool-panel-columns-container 
+                [allow-dragging]="allowDragging"
+                ref="eToolPanelColumnsContainerComp">
+            </ag-tool-panel-columns-container>
         </div>`;
 
     @Autowired('context') private context: Context;
@@ -204,6 +210,7 @@ export class ColumnSelectComp extends Component {
 
     private allowDragging: boolean;
 
+    @RefSelector('eToolPanelColumnsContainerComp')
     private toolPanelColumnsContainerComp: ToolPanelColumnsContainerComp;
 
     // we allow dragging in the toolPanel, but not when this component appears in the column menu
@@ -214,10 +221,6 @@ export class ColumnSelectComp extends Component {
 
     @PostConstruct
     public init(): void {
-        this.toolPanelColumnsContainerComp = new ToolPanelColumnsContainerComp(this.context, this.allowDragging);
-
-        this.addChildComponentToRef (this.context, ()=> this.toolPanelColumnsContainerComp);
-
         this.instantiate(this.context);
     }
 
