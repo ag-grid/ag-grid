@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="dynamic">Simple Dynamic Component</h2>
+    <h1 id="dynamic">Simple Dynamic Component</h1>
     <p>A simple Grid using Angular Components as Cell Renderers, with Child Components, Two-Way Binding and
         Parent to Child Components Events.</p>
 

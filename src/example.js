@@ -345,6 +345,7 @@ var defaultCols = [
                 editable: true,
                 enableRowGroup: true,
                 // enablePivot: true,
+                // filter: 'agTestingSandbox',
                 filter: 'personFilter',
                 floatingFilterComponent: 'personFloatingFilterComponent',
                 checkboxSelection: function (params) {

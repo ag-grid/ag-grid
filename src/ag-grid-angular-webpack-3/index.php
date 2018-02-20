@@ -453,7 +453,7 @@ if (process.env.ENV === 'production') {
     <p>Now we can either run <code>npm start</code> to run the development setup, or <code>npm run build</code> for the production build.
         In the case of the production build the generated files will be under the <code>dist/</code> folder.</p>
 
-    <p>If we now run our applicatiom with the above code we will see this:</p>
+    <p>If we now run our application with the above code we will see this:</p>
 
     <img src="../images/seed.png" style="width: 100%">
 

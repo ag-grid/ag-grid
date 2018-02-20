@@ -205,12 +205,6 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/example-angular-grouped-row/</loc>
-    <lastmod>2018-01-24</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
     <loc>https://www.ag-grid.com/javascript-getting-started/</loc>
     <lastmod>2018-01-24</lastmod>
     <changefreq>daily</changefreq>
@@ -218,12 +212,6 @@
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-row-styles/</loc>
-    <lastmod>2018-01-24</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://www.ag-grid.com/example-polymer-dynamic/</loc>
     <lastmod>2018-01-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -415,12 +403,6 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/example-react-grouped-row/</loc>
-    <lastmod>2018-01-24</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
     <loc>https://www.ag-grid.com/about.php</loc>
     <lastmod>2018-01-24</lastmod>
     <changefreq>daily</changefreq>
@@ -541,12 +523,6 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/example-polymer/</loc>
-    <lastmod>2018-01-24</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
     <loc>https://www.ag-grid.com/ag-grid-tutorials/</loc>
     <lastmod>2018-01-24</lastmod>
     <changefreq>daily</changefreq>
@@ -613,12 +589,6 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/example-angular-full-width-rows/</loc>
-    <lastmod>2018-01-24</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
     <loc>https://www.ag-grid.com/ag-grid-angular2-support-v6/</loc>
     <lastmod>2018-01-24</lastmod>
     <changefreq>daily</changefreq>
@@ -661,19 +631,7 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/example-react/</loc>
-    <lastmod>2018-01-24</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
     <loc>https://www.ag-grid.com/javascript-grid-set-license/</loc>
-    <lastmod>2018-01-24</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://www.ag-grid.com/example-angular-floating-row/</loc>
     <lastmod>2018-01-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -823,19 +781,7 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/example-react-full-width-rows/</loc>
-    <lastmod>2018-01-24</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
     <loc>https://www.ag-grid.com/javascript-grid-context-menu/</loc>
-    <lastmod>2018-01-24</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://www.ag-grid.com/example-polymer-grouped-row/</loc>
     <lastmod>2018-01-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -920,12 +866,6 @@
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-context/</loc>
-    <lastmod>2018-01-24</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://www.ag-grid.com/example-react-floating-row/</loc>
     <lastmod>2018-01-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -1045,12 +985,6 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/example-polymer-floating-row/</loc>
-    <lastmod>2018-01-24</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
     <loc>https://www.ag-grid.com/javascript-grid-pinning/</loc>
     <lastmod>2018-01-24</lastmod>
     <changefreq>daily</changefreq>
@@ -1118,12 +1052,6 @@
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-filter-text/</loc>
-    <lastmod>2018-01-24</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://www.ag-grid.com/example-polymer-full-width-rows/</loc>
     <lastmod>2018-01-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
