@@ -21,7 +21,7 @@ import {MenuItemMapper} from "./menu/menuItemMapper";
 import {ExcelCreator} from "./excelCreator";
 import {ExcelXmlFactory} from "./excelXmlFactory";
 import {EnterpriseRowModel} from "./rowModels/enterprise/enterpriseRowModel";
-import {ColumnSelectHeaderComp, ToolbarComp} from "./toolPanel/columnsSelect/columnSelectComp";
+import {ColumnSelectHeaderComp} from "./toolPanel/columnsSelect/columnSelectHeaderComp";
 
 let rowModelTypes = {viewport: ViewportRowModel, enterprise: EnterpriseRowModel};
 
@@ -31,6 +31,5 @@ Grid.setEnterpriseBeans([ToolPanelComp, EnterpriseMenuFactory, ExcelCreator, Exc
     StatusBar, LicenseManager, MD5, MenuItemMapper], rowModelTypes);
 
 Grid.setEnterpriseComponents([
-    {componentName: 'AgToolbar', theClass: ToolbarComp},
     {componentName: 'AgColumnSelectHeader', theClass: ColumnSelectHeaderComp}
 ]);
