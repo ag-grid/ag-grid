@@ -150,11 +150,13 @@ export class Component extends BeanStub implements IComponent<any> {
         let childAttributes: any = {};
 
         attrLists.normal.forEach( nameValue => {
-            childAttributes[nameValue.name] = nameValue.value;
+            let nameCamelCase = _.hyphenToCamelCase(nameValue.name);
+            childAttributes[nameCamelCase] = nameValue.value;
         });
 
         attrLists.bindings.forEach( nameValue => {
-            childAttributes[nameValue.name] = (<any>this)[nameValue.value];
+            let nameCamelCase = _.hyphenToCamelCase(nameValue.name);
+            childAttributes[nameCamelCase] = (<any>this)[nameValue.value];
         });
 
         child.attributes = childAttributes;
