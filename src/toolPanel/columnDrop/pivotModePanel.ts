@@ -8,9 +8,10 @@ import {
     EventService,
     Events,
     Context,
-    AgCheckbox
+    AgCheckbox,
+    PreConstruct
 } from "ag-grid/main";
-import {PreConstruct} from "../../../../ag-grid/src/ts/context/context";
+
 
 export class PivotModePanel extends Component {
 
