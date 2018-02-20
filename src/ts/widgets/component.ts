@@ -169,7 +169,9 @@ export class Component extends BeanStub implements IComponent<any> {
     }
 
     private swapComponentForNode(newComponent: Component, parentNode: Element, childNode: Node): void {
-        parentNode.replaceChild(newComponent.getGui(), childNode);
+        let eComponent = newComponent.getGui();
+        parentNode.replaceChild(eComponent, childNode);
+        parentNode.insertBefore(document.createComment(childNode.nodeName), eComponent);
         this.childComponents.push(newComponent);
         this.swapInComponentForQuerySelectors(newComponent, childNode);
     }
@@ -379,16 +381,6 @@ export class Component extends BeanStub implements IComponent<any> {
 
     public getRefElement(refName: string): HTMLElement {
         return this.queryForHtmlElement('[ref="' + refName + '"]');
-    }
-
-    public addChildComponentToRef (context: Context, childComponentConstructor:()=>Component, intoRef?: string): void {
-        let parent = intoRef ? this.getRefElement(intoRef) : this.getGui();
-
-        let childComponent: Component = childComponentConstructor ();
-        context.wireBean(childComponent);
-
-        this.childComponents.push(childComponent);
-        parent.appendChild(childComponent.getGui());
     }
 
 }
