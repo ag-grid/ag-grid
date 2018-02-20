@@ -35,10 +35,10 @@ export interface ToolPanelBaseColumnItem {
 export type ToolPanelColumnItem = ToolPanelBaseColumnItem & Component;
 
 
-export class ToolPanelHeaderComp extends Component {
+export class ColumnSelectHeaderComp extends Component {
 
     public static TEMPLATE: string =
-        `<div class="ag-column-select-header" ref="column-select-header">
+        `<div class="ag-column-select-header">
             <ag-toolbar 
                 (expand-all)="onExpandAll" 
                 (collapse-all)="onCollapseAll" 
@@ -62,7 +62,7 @@ export class ToolPanelHeaderComp extends Component {
         private onSelectAll2: ()=>void,
         private onUnselectAll2: ()=>void,
     ){
-        super(ToolPanelHeaderComp.TEMPLATE);
+        super(ColumnSelectHeaderComp.TEMPLATE);
     }
 
     @PostConstruct
@@ -317,7 +317,10 @@ export class ToolpanelColumnsContainerComp extends Component {
 
 export class ColumnSelectComp extends Component {
 
-    private static TEMPLATE = '<div class="ag-column-select-panel"></div>';
+    private static TEMPLATE =
+        `<div class="ag-column-select-panel">
+            <column-select-header  />
+        </div>`;
 
     @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -339,7 +342,7 @@ export class ColumnSelectComp extends Component {
     @PostConstruct
     public init(): void {
         let toolPanelColumnsContainerComp = new ToolpanelColumnsContainerComp(this.context, this.allowDragging);
-        this.addChildComponentToRef (this.context, ()=> new ToolPanelHeaderComp(
+        this.addChildComponentToRef (this.context, ()=> new ColumnSelectHeaderComp(
             this.context,
             (value)=>this.onFilterTextFieldChanged(value, toolPanelColumnsContainerComp),
             ()=>this.onExpandAll(toolPanelColumnsContainerComp),
