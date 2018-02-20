@@ -10,6 +10,7 @@ import {
     Context,
     AgCheckbox
 } from "ag-grid/main";
+import {PreConstruct} from "../../../../ag-grid/src/ts/context/context";
 
 export class PivotModePanel extends Component {
 
@@ -31,7 +32,7 @@ export class PivotModePanel extends Component {
             </div>`;
     }
 
-    @PostConstruct
+    @PreConstruct
     private init(): void {
         this.setTemplate(this.createTemplate());
         this.instantiate(this.context);
