@@ -97,6 +97,7 @@ export class Grid {
 
     private static enterpriseBeans: any[];
     private static frameworkBeans: any[];
+    private static enterpriseComponents: any[];
 
     // the default is InMemoryRowModel, which is also used for pagination.
     // the enterprise adds viewport to this list.
@@ -110,6 +111,10 @@ export class Grid {
 
         // the enterprise can inject additional row models. this is how it injects the viewportRowModel
         _.iterateObject(rowModelClasses, (key: string, value: any)=> Grid.RowModelClasses[key] = value );
+    }
+
+    public static setEnterpriseComponents(components: any[]): void {
+        this.enterpriseComponents = components;
     }
 
     public static setFrameworkBeans(frameworkBeans: any[]): void {
@@ -158,6 +163,17 @@ export class Grid {
             _.assign(seed, params.seedBeanInstances);
         }
 
+        let components = [
+            {componentName: 'AgCheckbox', theClass: AgCheckbox}
+            // niall put the below in for testing some PoC code, niall will
+            // remove this comment and code when PoC is over
+            , {componentName: 'AgSmallComponent', theClass: SmallComponent}
+        ];
+
+        if (Grid.enterpriseComponents) {
+            components = components.concat(Grid.enterpriseComponents);
+        }
+
         let contextParams = {
             overrideBeans: overrideBeans,
             seed: seed,
@@ -175,12 +191,7 @@ export class Grid {
                 CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService,
                 ColumnHoverService, ColumnAnimationService, SortService, SelectableService, AutoGroupColService, ImmutableService,
                 ChangeDetectionService, Environment, Beans, AnimationFrameService, SortController],
-            components: [
-                {componentName: 'AgCheckbox', theClass: AgCheckbox}
-                // niall put the below in for testing some PoC code, niall will
-                // remove this comment and code when PoC is over
-                , {componentName: 'AgSmallComponent', theClass: SmallComponent}
-            ],
+            components: components,
             debug: !!gridOptions.debug
         };
 

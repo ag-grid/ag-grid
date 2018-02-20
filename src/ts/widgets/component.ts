@@ -139,7 +139,9 @@ export class Component extends BeanStub implements IComponent<any> {
                 return;
             }
 
-            callback(nameValue.name, listener.bind(this));
+            let eventCamelCase = _.hyphenToCamelCase(nameValue.name);
+
+            callback(eventCamelCase, listener.bind(this));
         });
     }
 
