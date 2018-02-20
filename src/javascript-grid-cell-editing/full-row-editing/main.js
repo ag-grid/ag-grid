@@ -56,6 +56,21 @@ function onBtStartEditing() {
 }
 
 function getNumericCellEditor() {
+    function isCharNumeric(charStr) {
+        return !!/\d/.test(charStr);
+    }
+
+    function isKeyPressedNumeric(event) {
+        var charCode = getCharCodeFromEvent(event);
+        var charStr = String.fromCharCode(charCode);
+        return isCharNumeric(charStr);
+    }
+
+    function getCharCodeFromEvent(event) {
+        event = event || window.event;
+        return typeof event.which === 'undefined' ? event.keyCode : event.which;
+    }
+
     // function to act as a class
     function NumericCellEditor() {}
 
@@ -124,21 +139,6 @@ function getNumericCellEditor() {
 
     return NumericCellEditor;
 }
-function isCharNumeric(charStr) {
-    return !!/\d/.test(charStr);
-}
-
-function isKeyPressedNumeric(event) {
-    var charCode = getCharCodeFromEvent(event);
-    var charStr = String.fromCharCode(charCode);
-    return isCharNumeric(charStr);
-}
-
-function getCharCodeFromEvent(event) {
-    event = event || window.event;
-    return typeof event.which === 'undefined' ? event.keyCode : event.which;
-}
-
 // wait for the document to be loaded, otherwise
 // ag-Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function() {

@@ -299,7 +299,7 @@ cellDefs.forEach( function(cellDef) {
             </li>
         </ul>
 
-    <?= example('Cell Editing', 'cell-editing', 'generated') ?>
+    <?= example('Cell Editing', 'cell-editing', 'generated', array("processVue" => true)) ?>
 
     <h2>Many Editors One Column</h2>
 
@@ -522,7 +522,7 @@ cellEditorParams: function(params) {
         The example below demonstrates the focus moving down when <b>Enter</b> is pressed.
     </p>
 
-    <?= example('Enter Key Navigation', 'enter-key-navigation', 'generated') ?>
+    <?= example('Enter Key Navigation', 'enter-key-navigation', 'generated', array("processVue" => true)) ?>
 
     <h2>Datepicker Cell Editing Example</h2>
 
@@ -531,7 +531,7 @@ cellEditorParams: function(params) {
         <li>'Date' column uses a Component cell editor that allows you to pick a date using jQuery UI Datepicker.</li>
     </ul>
 
-    <?= example('Datepicker Cell Editing', 'datepicker-cell-editing', 'generated', array("enterprise" => 1, "extras" => array('jquery', 'jqueryui', 'bootstrap') )) ?>
+    <?= example('Datepicker Cell Editing', 'datepicker-cell-editing', 'generated', array("processVue" => true, "enterprise" => 1, "extras" => array('jquery', 'jqueryui', 'bootstrap') )) ?>
 
     </p>
 
@@ -611,7 +611,7 @@ cellEditorParams: function(params) {
             </li>
         </ul>
 
-    <?= example('Full Row Editing', 'full-row-editing', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Full Row Editing', 'full-row-editing', 'generated', array("processVue" => true, "enterprise" => 1)) ?>
 
     <h2 id="singleClickEditing">Single Click, Double Click, No Click Editing</h2>
 
@@ -640,11 +640,11 @@ cellEditorParams: function(params) {
 
     <p> The grid below has <code>singleClickEdit=true</code> so that editing will start on a cell when you single click on it.  </p>
 
-    <?= example('Single Click Editing', 'single-click-editing', 'generated') ?>
+    <?= example('Single Click Editing', 'single-click-editing', 'generated', array("processVue" => true)) ?>
 
     <p>The grid below has <code>suppressClickEdit=true</code> so that clicking doesn't started editing. The grid configures a cellRenderer with a button to start editing.</p>
 
-    <?= example('Single Click Editing', 'single-click-editing-renderer', 'generated') ?>
+    <?= example('Single Click Editing', 'single-click-editing-renderer', 'generated', array("processVue" => true)) ?>
 
     <h3 id="losingFocusStopsEditing">Stop Editing When Grid Loses Focus</h3>
 
@@ -680,7 +680,7 @@ cellEditorParams: function(params) {
                 anywhere on the popup editor, but once you click outside the editor, the popup closes.
             </li>
         </ul>
-    <?= example('Stop Editing When Grid Loses Focus', 'stop-edit-when-grid-loses-focus', 'generated') ?>
+    <?= example('Stop Editing When Grid Loses Focus', 'stop-edit-when-grid-loses-focus', 'generated', array("processVue" => true)) ?>
 
     <note>Cell Editing can also be done via Cell Editor Components - please see <a href="../javascript-grid-cell-editor">
             Cell Editor Components</a> for more information.</note>
@@ -707,7 +707,7 @@ suppressKeyboardEvent: function(event){
     if (event.editing) return true;
 }</snippet>
 
-    <?= example('Controlling keyboard while editing', 'controlling-keyboard-while-editing', 'generated') ?>
+    <?= example('Controlling keyboard while editing', 'controlling-keyboard-while-editing', 'generated', array("processVue" => true)) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

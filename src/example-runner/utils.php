@@ -31,7 +31,8 @@ if (USE_LOCAL) {
         "ag-grid/main" => "$prefix/ag-grid/dist/ag-grid.js",
         "ag-grid-enterprise" => "$prefix/ag-grid-enterprise",
         "ag-grid-react" => "$prefix/ag-grid-react",
-        "ag-grid-angular" => "$prefix/ag-grid-angular"
+        "ag-grid-angular" => "$prefix/ag-grid-angular",
+        "ag-grid-vue" => "$prefix/ag-grid-vue"
     );
 // production mode, return from unpkg
 } else {
@@ -43,7 +44,8 @@ if (USE_LOCAL) {
         "ag-grid/main" => "https://unpkg.com/ag-grid@" . AG_GRID_VERSION . "/dist/ag-grid.js",
         "ag-grid-enterprise" => "https://unpkg.com/ag-grid-enterprise@" . AG_GRID_ENTERPRISE_VERSION . "/",
         "ag-grid-react" => "npm:ag-grid-react@" . AG_GRID_REACT_VERSION . "/",
-        "ag-grid-angular" => "npm:ag-grid-angular@" . AG_GRID_ANGULAR_VERSION . "/"
+        "ag-grid-angular" => "npm:ag-grid-angular@" . AG_GRID_ANGULAR_VERSION . "/",
+        "ag-grid-vue" => "npm:ag-grid-vue@" . AG_GRID_VUE_VERSION . "/"
     );
 }
 
@@ -158,7 +160,7 @@ function example($title, $dir, $type = 'vanilla', $options = array())
     );
 
     if ($generated) {
-        $types = array('vanilla', 'angular', 'react');
+        $types = array('vanilla', 'angular', 'react', 'vue');
     } else if ($multi) {
         $types = getTypes($dir);
     } else {

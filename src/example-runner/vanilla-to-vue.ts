@@ -5,10 +5,11 @@ function removeFunction(code) {
 }
 
 function getFunctionName(code) {
-    return /function ([^\(]*)/.exec(code)[1];
+    let matches = /function ([^\(]*)/.exec(code);
+    return matches && matches.length === 2 ?  matches[1] : null;
 }
 
-function getMountedTemplate(readyCode: string, resizeToFit: boolean, data: { url: string, callback: string }) {
+function onGridReadyTemplate(readyCode: string, resizeToFit: boolean, data: { url: string, callback: string }) {
     let resize = '', getData = '';
 
     if (!readyCode) {
@@ -16,7 +17,7 @@ function getMountedTemplate(readyCode: string, resizeToFit: boolean, data: { url
     }
 
     if (resizeToFit) {
-        resize = `this.gridApi.sizeColumnsToFit();`;
+        resize = `params.api.sizeColumnsToFit();`;
     }
 
     if (data) {
@@ -33,10 +34,7 @@ function getMountedTemplate(readyCode: string, resizeToFit: boolean, data: { url
             };`
     }
 
-    return `mounted() {
-        this.gridApi = this.gridOptions.api;
-        this.gridColumnApi = this.gridOptions.api.columnApi;
-
+    return `onGridReady(params) {
         ${getData}
         ${resize}
         ${readyCode.trim().replace(/^\{|\}$/g, '')}
@@ -63,15 +61,9 @@ const toAssignment = (property, methodNames: string[]) => {
     return `this.${property.name} = ${value}`;
 };
 
-function appComponentTemplate(bindings, componentFileNames) {
-    const diParams = [];
+function componentTemplate(bindings, componentFileNames) {
     const imports = [];
     const additional = [];
-
-    // if (bindings.data) {
-    //     imports.push('import { HttpClient } from "@angular/common/http";');
-    //     diParams.push('private http: HttpClient');
-    // }
 
     if (bindings.gridSettings.enterprise) {
         imports.push('import "ag-grid-enterprise";');
@@ -85,7 +77,7 @@ function appComponentTemplate(bindings, componentFileNames) {
 
         componentFileNames.forEach(filename => {
             let fileFragments = filename.split('.');
-            imports.push('import { ' + titleCase(fileFragments[0]) + ' } from "./' + fileFragments[0] + '.component";');
+            imports.push('import ' + titleCase(fileFragments[0]) + ' from "./' + fileFragments[0] + '.js";');
         });
     }
 
@@ -94,35 +86,37 @@ function appComponentTemplate(bindings, componentFileNames) {
     const propertyAssignments = [];
 
     const utilMethodNames = bindings.utils.map(getFunctionName);
-    bindings.properties.forEach(property => {
-        if (property.value === 'null') {
-            return;
-        }
+    bindings.properties
+        .filter(property => property.name !== "onGridReady")
+        .forEach(property => {
+            if (property.value === 'null') {
+                return;
+            }
 
-        if (componentFileNames.length > 0 && property.name === "components") {
-            property.name = "frameworkComponents";
-        }
+            if (componentFileNames.length > 0 && property.name === "components") {
+                property.name = "frameworkComponents";
+            }
 
-        if (property.value === 'true' || property.value === 'false') {
-            propertyAttributes.push(toConst(property));
-        } else {
-            propertyAttributes.push(toInput(property));
-            propertyVars.push(toMember(property));
-            propertyAssignments.push(toAssignment(property, utilMethodNames));
-        }
-    });
+            if (property.value === 'true' || property.value === 'false') {
+                propertyAttributes.push(toConst(property));
+            } else {
+                propertyAttributes.push(toInput(property));
+                propertyVars.push(toMember(property));
+                propertyAssignments.push(toAssignment(property, utilMethodNames));
+            }
+        });
 
     const eventAttributes = bindings.eventHandlers.filter(event => event.name != 'onGridReady').map(toOutput);
     const eventHandlers = bindings.eventHandlers.map(event => event.handler).map(removeFunction);
     const utilsMethods = bindings.utils.map(removeFunction);
 
-    // eventAttributes.push('(gridReady)="onGridReady($event)"');
-    const mountedTemplate = getMountedTemplate(bindings.onGridReady, bindings.resizeToFit, bindings.data);
+    additional.push(onGridReadyTemplate(bindings.onGridReady, bindings.resizeToFit, bindings.data));
 
     const style = bindings.gridSettings.noStyle ? '' : `style="width: ${bindings.gridSettings.width}; height: ${bindings.gridSettings.height};"`;
 
     const agGridTag = `      <ag-grid-vue ${style} class="${bindings.gridSettings.theme}"
-              :gridOptions="gridOptions" 
+              :gridOptions="gridOptions"
+              :gridReady="onGridReady" 
               ${propertyAttributes.concat(eventAttributes).map((line) => `${line}`).join('\n              ')}></ag-grid-vue>`;
 
     let template;
@@ -171,13 +165,16 @@ const VueExample = {
         this.gridOptions = {};
         ${propertyAssignments.join(';\n')}
     },
-    ${mountedTemplate},
+    mounted() {
+        this.gridApi = this.gridOptions.api;
+        this.gridColumnApi = this.gridOptions.api.columnApi;
+    },
     methods: {
         ${eventHandlers
         .concat(externalEventHandlers)
         .concat(additional)
         .map(snippet => `${snippet.trim()},`)
-        .join(',\n')}
+        .join('\n')}
         ${utilsMethods.join(',\n')}            
     },
         
@@ -195,7 +192,7 @@ new Vue({
 
 export function vanillaToVue(src, gridSettings, componentFileNames) {
     const bindings = parser(src, gridSettings);
-    return appComponentTemplate(bindings, componentFileNames);
+    return componentTemplate(bindings, componentFileNames);
 }
 
 if (typeof window !== 'undefined') {

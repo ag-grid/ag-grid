@@ -6,4 +6,5 @@ define('AG_GRID_VERSION', '$$LOCAL$$'); // if $$LOCAL$$, the runner will load al
 define('AG_GRID_ENTERPRISE_VERSION', '$$LOCAL$$');
 define('AG_GRID_REACT_VERSION', '$$LOCAL$$');
 define('AG_GRID_ANGULAR_VERSION', '$$LOCAL$$');
+define('AG_GRID_VUE_VERSION', '$$LOCAL$$');
 ?>

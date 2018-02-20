@@ -314,7 +314,8 @@ class ExampleRunner {
     titles: { [key: string]: string } = {
         vanilla: "JavaScript",
         react: "React",
-        angular: "Angular"
+        angular: "Angular",
+        vue: "Vue"
     };
 
     typeTitle(title: string) {
