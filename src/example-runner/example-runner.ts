@@ -86,6 +86,8 @@ class ExampleRunner {
     private boilerplatePath: string;
     sourcePrefix: string;
 
+    private titles: { [key: string]: string };
+
     private options: {
         showResult?: boolean;
         initialFile?: string;
@@ -113,6 +115,8 @@ class ExampleRunner {
     private openFwDropdown: boolean = false;
     private visible: boolean = false;
 
+    private processVue: boolean = false;
+
     toggleFwDropdown() {
         this.openFwDropdown = !this.openFwDropdown;
     }
@@ -137,6 +141,21 @@ class ExampleRunner {
         this.section = this.config.section;
         this.showFrameworksDropdown = !options.onlyShow && (this.config.type === "multi" || this.config.type === "generated");
         this.availableTypes = options.onlyShow ? [options.onlyShow.toLowerCase()] : Object.keys(this.config.types);
+
+        this.titles = {
+            vanilla: "JavaScript",
+            react: "React",
+            angular: "Angular"
+        };
+
+        // for now - once all examples have been converted/tested for vue, this can be removed and the vue entry added to
+        // this.titles as a permanent addition
+        this.processVue = options.processVue;
+        if(this.processVue) {
+            this.titles['vue'] = "Vue";
+        } else {
+            this.availableTypes.splice(this.availableTypes.indexOf('vue'), 1)
+        }
 
         const divWrapper = jQuery(this.$element).find("div.example-wrapper");
 
@@ -310,13 +329,6 @@ class ExampleRunner {
 
         this.formPostData("//plnkr.co/edit/?p=preview", true, postData);
     }
-
-    titles: { [key: string]: string } = {
-        vanilla: "JavaScript",
-        react: "React",
-        angular: "Angular",
-        vue: "Vue"
-    };
 
     typeTitle(title: string) {
         return this.titles[title];
