@@ -883,6 +883,10 @@ ag-grid-aurelia {
 
 .ag-layout-normal .ag-column-panel {
     height: 100%;
+}
+
+.ag-layout-normal .ag-column-panel-center {
+    height: 100%;
     display: flex;
     flex-direction: column;
 }
@@ -920,6 +924,17 @@ ag-grid-aurelia {
 }
 .ag-tool-panel .ag-column-select-panel {
     flex-grow: 4;
+}
+.ag-tool-panel-horizontal-resize {
+    width: 5px;
+    height: 100%;
+    cursor: col-resize;
+}
+.ag-rtl .ag-tool-panel-horizontal-resize {
+    float: right;
+}
+.ag-ltr .ag-tool-panel-horizontal-resize {
+    float: left;
 }
 .ag-menu-column-select-wrapper .ag-column-select-panel {
     height: 100%;
