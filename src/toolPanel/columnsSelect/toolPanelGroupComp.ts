@@ -329,19 +329,11 @@ export class ToolPanelGroupComp extends Component implements BaseColumnItem{
         return this.expanded;
     }
 
-    getLabelText(): string {
+    public getDisplayName(): string {
         return this.displayName;
     }
 
-    onColumnFilterChanged(filterText: string): void {
-        if (this.getLabelText().toLowerCase().indexOf(filterText.toLowerCase()) < 0) {
-            this.setVisible(false);
-        } else {
-            this.setVisible(true);
-        }
-    }
-
-    onSelectAllChanged(value: boolean): void {
+    public onSelectAllChanged(value: boolean): void {
         if (
             (value && !this.cbSelect.isSelected()) ||
             (! value && this.cbSelect.isSelected())
@@ -352,22 +344,20 @@ export class ToolPanelGroupComp extends Component implements BaseColumnItem{
         }
     }
 
-    isSelected(): boolean {
+    public isSelected(): boolean {
         return this.cbSelect.isSelected();
     }
 
-    isSelectable(): boolean {
+    public isSelectable(): boolean {
         return !this.cbSelect.isReadOnly();
     }
 
-    isExpandable(): boolean {
+    public isExpandable(): boolean {
         return true;
     }
 
-    setExpandable(value: boolean): void {
-        if (this.expanded && !value) {
-            this.onExpandOrContractClicked();
-        } else if (!this.expanded && value){
+    public setExpanded(value: boolean): void {
+        if (this.expanded !== value) {
             this.onExpandOrContractClicked();
         }
     }

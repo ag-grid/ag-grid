@@ -29,7 +29,9 @@ export class ColumnContainerComp extends Component {
     };
 
     private columnTree: OriginalColumnGroupChild[];
-    private renderedItems: { [key: string]: ColumnItem };
+    private columnComps: { [key: string]: ColumnItem };
+
+    private filterText: string;
 
     public static TEMPLATE = `<div class="ag-column-container"></div>`;
 
@@ -46,20 +48,20 @@ export class ColumnContainerComp extends Component {
     }
 
     public onColumnsChanged(): void {
-        this.resetColumns();
+        this.destroyColumnComps();
         this.columnTree = this.columnController.getPrimaryColumnTree();
-        this.recursivelyRenderComponents(this.columnTree, 0);
+        this.recursivelyAddComps(this.columnTree, 0);
     }
 
-    private resetColumns(): void {
+    private destroyColumnComps(): void {
         Utils.removeAllChildren(this.getGui());
-        if (this.renderedItems) {
-            Utils.iterateObject(this.renderedItems, (key: string, renderedItem: Component) => renderedItem.destroy());
+        if (this.columnComps) {
+            Utils.iterateObject(this.columnComps, (key: string, renderedItem: Component) => renderedItem.destroy());
         }
-        this.renderedItems = {};
+        this.columnComps = {};
     }
 
-    private recursivelyRenderGroupComponent(columnGroup: OriginalColumnGroup, dept: number): void {
+    private recursivelyAddGroupComps(columnGroup: OriginalColumnGroup, dept: number): void {
         // only render group if user provided the definition
         let newDept: number;
 
@@ -74,21 +76,21 @@ export class ColumnContainerComp extends Component {
             // we want to indent on the gui for the children
             newDept = dept + 1;
 
-            this.renderedItems[columnGroup.getId()] = renderedGroup;
+            this.columnComps[columnGroup.getId()] = renderedGroup;
         } else {
             // no children, so no indent
             newDept = dept;
         }
 
-        this.recursivelyRenderComponents(columnGroup.getChildren(), newDept);
+        this.recursivelyAddComps(columnGroup.getChildren(), newDept);
 
     }
 
     public onGroupExpanded(): void {
-        this.recursivelySetVisibility(this.columnTree, true);
+        this.updateVisibilityOfRows();
     }
 
-    private recursivelyRenderColumnComponent(column: Column, dept: number): void {
+    private recursivelyAddColumnComps(column: Column, dept: number): void {
         if (column.getColDef() && column.getColDef().suppressToolPanel) {
             return;
         }
@@ -97,71 +99,121 @@ export class ColumnContainerComp extends Component {
         this.context.wireBean(renderedColumn);
         this.getGui().appendChild(renderedColumn.getGui());
 
-        this.renderedItems[column.getId()] = renderedColumn;
+        this.columnComps[column.getId()] = renderedColumn;
     }
 
-    private recursivelyRenderComponents(tree: OriginalColumnGroupChild[], dept: number): void {
+    private recursivelyAddComps(tree: OriginalColumnGroupChild[], dept: number): void {
         tree.forEach(child => {
             if (child instanceof OriginalColumnGroup) {
-                this.recursivelyRenderGroupComponent(<OriginalColumnGroup> child, dept);
+                this.recursivelyAddGroupComps(<OriginalColumnGroup> child, dept);
             } else {
-                this.recursivelyRenderColumnComponent(<Column> child, dept);
+                this.recursivelyAddColumnComps(<Column> child, dept);
             }
         });
     }
 
     public destroy(): void {
         super.destroy();
-        this.resetColumns();
+        this.destroyColumnComps();
     }
 
     public doSetExpandedAll(value: boolean): void {
-        _.iterateObject(this.renderedItems, (key, renderedItem) => {
+        _.iterateObject(this.columnComps, (key, renderedItem) => {
             if (renderedItem.isExpandable()) {
-                renderedItem.setExpandable(value);
+                renderedItem.setExpanded(value);
             }
         });
     }
 
-    public doFilterColumns(filterText:string) {
-        _.iterateObject(this.renderedItems, (key, value) => {
-            value.onColumnFilterChanged(filterText);
-        })
+    public setFilterText(filterText:string) {
+        this.filterText = _.exists(filterText) ? filterText.toLowerCase() : null;
+        this.updateVisibilityOfRows();
     }
 
-    public doSetVisibilityAll(visible:boolean) {
-        this.recursivelySetVisibility(this.columnTree, visible);
+    private updateVisibilityOfRows(): void {
+        // we have to create the filter results first as that requires dept first search, then setting
+        // the visibility requires breadth first search. this is because a group passes filter if CHILDREN
+        // pass filter, a column passes group open/closed visibility if a PARENT is open. so we need to do
+        // two recursions. we pass the result of the first recursion to the second.
+        let filterResults: {[id: string]: boolean} = _.exists(this.filterText) ? this.createFilterResults() : null;
+        this.recursivelySetVisibility(this.columnTree, true, filterResults);
     }
 
-    private recursivelySetVisibility(columnTree: any[], visible: boolean): void {
+    private createFilterResults(): {[id: string]: boolean} {
+        let filterResults: {[id: string]: boolean} = {};
+
+        // we recurse dept first - as the item should show if any of the children are showing
+
+        let recursivelyCheckFilter = (items: OriginalColumnGroupChild[]): boolean => {
+
+            let atLeastOneThisLevelPassed = false;
+
+            items.forEach( item => {
+
+                let atLeastOneChildPassed = false;
+
+                if (item instanceof OriginalColumnGroup) {
+                    let columnGroup = <OriginalColumnGroup> item;
+                    let groupChildren = columnGroup.getChildren();
+                    atLeastOneChildPassed = recursivelyCheckFilter(groupChildren);
+                }
+
+                let filterPasses: boolean;
+                if (atLeastOneChildPassed) {
+                    filterPasses = true;
+                } else {
+                    let comp = this.columnComps[item.getId()];
+                    if (comp) {
+                        filterPasses = comp.getDisplayName().toLowerCase().indexOf(this.filterText) >= 0;
+                    } else {
+                        filterPasses = true;
+                    }
+                }
+
+                filterResults[item.getId()] = filterPasses;
+
+                if (filterPasses) {
+                    atLeastOneThisLevelPassed = true;
+                }
+            });
+
+            return atLeastOneThisLevelPassed;
+        };
+
+        recursivelyCheckFilter(this.columnTree);
+
+        return filterResults;
+    }
+
+    private recursivelySetVisibility(columnTree: any[], parentGroupsOpen: boolean, filterResults: {[id: string]: boolean}): void {
         columnTree.forEach(child => {
 
-            let component: ColumnItem = this.renderedItems[child.getId()];
-            if (component) {
-                component.setVisible(visible);
+            let comp: ColumnItem = this.columnComps[child.getId()];
+            if (comp) {
+                let passesFilter = filterResults ? filterResults[child.getId()] : true;
+                comp.setVisible(parentGroupsOpen && passesFilter);
             }
 
             if (child instanceof OriginalColumnGroup) {
                 let columnGroup = <OriginalColumnGroup> child;
 
-                let newVisible: boolean;
-                if (component) {
-                    let expanded = (<ToolPanelGroupComp>component).isExpanded();
-                    newVisible = visible ? expanded : false;
+                let childrenOpen: boolean;
+                if (comp) {
+                    let expanded = (<ToolPanelGroupComp>comp).isExpanded();
+                    childrenOpen = parentGroupsOpen ? expanded : false;
                 } else {
-                    newVisible = visible;
+                    childrenOpen = parentGroupsOpen;
                 }
 
-                let newChildren = columnGroup.getChildren();
-                this.recursivelySetVisibility(newChildren, newVisible);
+                let children = columnGroup.getChildren();
+                this.recursivelySetVisibility(children, childrenOpen, filterResults);
             }
-        })
-
+        });
     }
 
-    public doSetSelectedAll(checked:boolean): void {
-        _.iterateObject(this.renderedItems, (key, column)=>{
-            column.onSelectAllChanged (checked);
+    public doSetSelectedAll(checked: boolean): void {
+        _.iterateObject(this.columnComps, (key, column)=>{
+            column.onSelectAllChanged(checked);
         });
     }
 }

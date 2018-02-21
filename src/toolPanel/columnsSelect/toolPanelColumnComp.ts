@@ -297,43 +297,31 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem{
         this.processingColumnStateChange = false;
     }
 
-    getLabelText(): string {
+    public getDisplayName(): string {
         return this.displayName;
     }
 
-    onColumnFilterChanged(filterText: string): void {
-        if (this.getLabelText().toLowerCase().indexOf(filterText.toLowerCase()) < 0) {
-            this.setVisible(false);
-        } else {
-            this.setVisible(true);
-        }
-    }
-
-    onSelectAllChanged(value: boolean): void {
-        if (
-            (value && !this.cbSelect.isSelected()) ||
-            (! value && this.cbSelect.isSelected())
-        ){
-            if(!this.cbSelect.isReadOnly()){
+    public onSelectAllChanged(value: boolean): void {
+        if (value !== this.cbSelect.isSelected()) {
+            if (!this.cbSelect.isReadOnly()) {
                 this.cbSelect.toggle();
             }
         }
     }
 
-    isSelected(): boolean {
+    public isSelected(): boolean {
         return this.cbSelect.isSelected();
     }
 
-
-    isSelectable(): boolean {
+    public isSelectable(): boolean {
         return !this.cbSelect.isReadOnly();
     }
 
-    isExpandable(): boolean {
+    public isExpandable(): boolean {
         return false;
     }
 
-    setExpandable(value: boolean): void {
+    public setExpanded(value: boolean): void {
         console.warn('ag-grid: can not expand a column item that does not represent a column group header');
     }
 }

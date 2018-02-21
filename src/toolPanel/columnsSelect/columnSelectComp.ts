@@ -3,7 +3,7 @@ import {ColumnContainerComp} from "./columnContainerComp";
 
 export interface BaseColumnItem {
 
-    onColumnFilterChanged(filterText: string): void;
+    getDisplayName(): string;
 
     onSelectAllChanged(value: boolean): void;
 
@@ -13,7 +13,7 @@ export interface BaseColumnItem {
 
     isExpandable(): boolean;
 
-    setExpandable(value: boolean): void;
+    setExpanded(value: boolean): void;
 
 }
 
@@ -46,7 +46,7 @@ export class ColumnSelectComp extends Component {
     private allowDragging: boolean;
 
     @RefSelector('eToolPanelColumnsContainerComp')
-    private toolPanelColumnsContainerComp: ColumnContainerComp;
+    private columnContainerComp: ColumnContainerComp;
 
     // we allow dragging in the toolPanel, but not when this component appears in the column menu
     constructor(allowDragging: boolean) {
@@ -60,23 +60,23 @@ export class ColumnSelectComp extends Component {
     }
 
     private onFilterChanged(event: any) {
-        this.toolPanelColumnsContainerComp.doFilterColumns(event.filterText);
+        this.columnContainerComp.setFilterText(event.filterText);
     }
 
     private onSelectAll() {
-        this.toolPanelColumnsContainerComp.doSetSelectedAll(true);
+        this.columnContainerComp.doSetSelectedAll(true);
     }
 
     private onUnselectAll() {
-        this.toolPanelColumnsContainerComp.doSetSelectedAll(false);
+        this.columnContainerComp.doSetSelectedAll(false);
     }
 
     private onExpandAll() {
-        this.toolPanelColumnsContainerComp.doSetExpandedAll(true);
+        this.columnContainerComp.doSetExpandedAll(true);
     }
 
     private onCollapseAll() {
-        this.toolPanelColumnsContainerComp.doSetExpandedAll(false);
+        this.columnContainerComp.doSetExpandedAll(false);
     }
 
 }
