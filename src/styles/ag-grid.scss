@@ -862,11 +862,11 @@ ag-grid-aurelia {
 }
 
 .ag-column-panel {
-    width: 200px;
     box-sizing: border-box;
     cursor: default;
     overflow: auto;
     user-select: none;
+    width: 200px;
 }
 
 .ag-layout-normal .ag-column-panel {
