@@ -40,7 +40,7 @@ export class ToolPanelColumnsContainerComp extends Component {
     @Autowired('eventService') private globalEventService: EventService;
     @Autowired('context') private context: Context;
 
-    private params: {
+    private props: {
         allowDragging: boolean;
     };
 
@@ -84,7 +84,7 @@ export class ToolPanelColumnsContainerComp extends Component {
         }
 
         if (!columnGroup.isPadding()) {
-            let renderedGroup = new ToolPanelGroupComp(columnGroup, dept, this.onGroupExpanded.bind(this), this.params.allowDragging);
+            let renderedGroup = new ToolPanelGroupComp(columnGroup, dept, this.onGroupExpanded.bind(this), this.props.allowDragging);
             this.context.wireBean(renderedGroup);
             this.getGui().appendChild(renderedGroup.getGui());
             // we want to indent on the gui for the children
@@ -109,7 +109,7 @@ export class ToolPanelColumnsContainerComp extends Component {
             return;
         }
 
-        let renderedColumn = new ToolPanelColumnComp(column, dept, this.params.allowDragging);
+        let renderedColumn = new ToolPanelColumnComp(column, dept, this.props.allowDragging);
         this.context.wireBean(renderedColumn);
         this.getGui().appendChild(renderedColumn.getGui());
 
