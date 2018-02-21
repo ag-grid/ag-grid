@@ -23,6 +23,7 @@ import {ExcelXmlFactory} from "./excelXmlFactory";
 import {EnterpriseRowModel} from "./rowModels/enterprise/enterpriseRowModel";
 import {ColumnSelectHeaderComp} from "./toolPanel/columnsSelect/columnSelectHeaderComp";
 import {ColumnContainerComp} from "./toolPanel/columnsSelect/columnContainerComp";
+import {HorizontalResizeComp} from "./toolPanel/columnsSelect/horizontalResizeComp";
 
 let rowModelTypes = {viewport: ViewportRowModel, enterprise: EnterpriseRowModel};
 
@@ -33,5 +34,6 @@ Grid.setEnterpriseBeans([ToolPanelComp, EnterpriseMenuFactory, ExcelCreator, Exc
 
 Grid.setEnterpriseComponents([
     {componentName: 'AgColumnSelectHeader', theClass: ColumnSelectHeaderComp},
-    {componentName: 'AgColumnContainer', theClass: ColumnContainerComp}
+    {componentName: 'AgColumnContainer', theClass: ColumnContainerComp},
+    {componentName: 'AgHorizontalResize', theClass: HorizontalResizeComp}
 ]);

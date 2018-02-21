@@ -4,10 +4,15 @@ import {ValuesColumnPanel} from "./columnDrop/valueColumnsPanel";
 import {RowGroupColumnsPanel} from "./columnDrop/rowGroupColumnsPanel";
 import {ColumnSelectComp} from "./columnsSelect/columnSelectComp";
 import {PivotColumnsPanel} from "./columnDrop/pivotColumnsPanel";
+import {RefSelector} from "ag-grid";
 
 export class ColumnPanel extends Component {
 
-    private static TEMPLATE = '<div class="ag-column-panel"></div>';
+    private static TEMPLATE =
+        `<div class="ag-column-panel">
+            <ag-horizontal-resize class="ag-tool-panel-horizontal-resize" [component-to-resize]="componentToResize"></ag-horizontal-resize>
+            <div class="ag-column-panel-center" ref="eColumnPanelCenter"></div>
+        </div>`;
 
     @Autowired("context") private context: Context;
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
@@ -16,6 +21,11 @@ export class ColumnPanel extends Component {
     private initialised = false;
 
     private childDestroyFuncs: Function[] = [];
+
+    private componentToResize = this;
+
+    @RefSelector('eColumnPanelCenter')
+    private eCenterPanel: HTMLElement;
 
     constructor() {
         super(ColumnPanel.TEMPLATE);
@@ -30,6 +40,8 @@ export class ColumnPanel extends Component {
     }
 
     public init(): void {
+        this.instantiate(this.context);
+
         if (!this.gridOptionsWrapper.isToolPanelSuppressPivotMode()) {
             this.addComponent(new PivotModePanel());
         }
@@ -53,14 +65,14 @@ export class ColumnPanel extends Component {
 
     private addComponent(component: Component): void {
         this.context.wireBean(component);
-        this.getGui().appendChild(component.getGui());
+        this.eCenterPanel.appendChild(component.getGui());
         this.childDestroyFuncs.push(component.destroy.bind(component));
     }
 
     public destroyChildren(): void {
         this.childDestroyFuncs.forEach(func => func());
         this.childDestroyFuncs.length = 0;
-        _.removeAllChildren(this.getGui());
+        _.removeAllChildren(this.eCenterPanel);
     }
 
     public refresh(): void {
