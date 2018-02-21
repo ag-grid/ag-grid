@@ -23,9 +23,9 @@ import {
     TouchListener,
     Utils
 } from "ag-grid/main";
-import {ToolPanelBaseColumnItem} from "./columnSelectComp";
+import {BaseColumnItem} from "./columnSelectComp";
 
-export class ToolPanelColumnComp extends Component implements ToolPanelBaseColumnItem{
+export class ToolPanelColumnComp extends Component implements BaseColumnItem{
 
     private static TEMPLATE =
         '<div class="ag-column-select-column">' +

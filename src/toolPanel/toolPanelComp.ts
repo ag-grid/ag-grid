@@ -8,7 +8,7 @@ export class ToolPanelComp extends Component implements IToolPanel {
     @Autowired("context") private context: Context;
 
     private buttonComp: PanelSelectComp;
-    private toolPanelComp: ColumnPanel;
+    private columnPanel: ColumnPanel;
 
     // solves a race condition, where this is getting initialised after the grid core.
     // so gridCore also calls init()
@@ -27,26 +27,26 @@ export class ToolPanelComp extends Component implements IToolPanel {
         if (this.initialised) { return; }
         this.initialised = true;
 
-        this.toolPanelComp = new ColumnPanel();
-        this.buttonComp = new PanelSelectComp(this.toolPanelComp);
+        this.columnPanel = new ColumnPanel();
+        this.buttonComp = new PanelSelectComp(this.columnPanel);
 
-        this.context.wireBean(this.toolPanelComp);
+        this.context.wireBean(this.columnPanel);
         this.context.wireBean(this.buttonComp);
 
         this.appendChild(this.buttonComp);
-        this.appendChild(this.toolPanelComp);
+        this.appendChild(this.columnPanel);
     }
 
     public refresh(): void {
-        this.toolPanelComp.refresh();
+        this.columnPanel.refresh();
     }
 
     public showToolPanel(show: boolean): void {
-        this.toolPanelComp.setVisible(show);
+        this.columnPanel.setVisible(show);
     }
 
     public isToolPanelShowing(): boolean {
-        return this.toolPanelComp.isVisible();
+        return this.columnPanel.isVisible();
     }
 
 }
