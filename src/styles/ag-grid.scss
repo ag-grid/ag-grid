@@ -631,6 +631,19 @@ ag-grid-aurelia {
 }
 
 .ag-column-drop-vertical {
+
+    flex-grow: 1;
+    flex-direction: column;
+    height: 50px;
+    overflow: hidden;
+    display: flex;
+
+    .ag-column-drop-list {
+        flex-grow: 1;
+        height: 20px;
+        overflow-x: auto;
+    }
+
     .ag-column-drop-cell {
         display: block;
     }
@@ -864,12 +877,19 @@ ag-grid-aurelia {
     width: 200px;
     box-sizing: border-box;
     cursor: default;
-    overflow: auto;
     user-select: none;
 }
 
 .ag-layout-normal .ag-column-panel {
     height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.ag-column-container {
+    height: 50px;
+    overflow: auto;
+    flex-grow: 1;
 }
 
 .ag-column-select-indent {
@@ -891,9 +911,19 @@ ag-grid-aurelia {
 .ag-column-select-column-group {
     white-space: nowrap;
 }
-//.ag-column-select-panel
-//    height: 100%;
-//    overflow: auto;
+
+.ag-column-select-panel {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.ag-tool-panel .ag-column-select-panel {
+    flex-grow: 4;
+}
+.ag-menu-column-select-wrapper .ag-column-select-panel {
+    height: 100%;
+}
+
 .ag-hidden {
     display: none !important;
 }
