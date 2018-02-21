@@ -67,8 +67,19 @@ $disabled-foreground-color-opacity: 0.38 !default;
     }
 
     .ag-header-cell-resize::after {
-        height: $header-height - 16px;
-        margin-top: 8px;
+        height: $header-height - $grid-size * 4;
+        margin-top: $grid-size * 2;
+    }
+
+    .ag-header-cell::after {
+        border-right: 1px solid transparentize($border-color, 0.5);
+        content: " ";
+        height: $header-height - $grid-size * 4;
+        margin-top: $grid-size * 2;
+        position: absolute;
+        right: 0;
+        text-indent: -2000px;
+        top: 0;
     }
 
     [ref="north"] {
