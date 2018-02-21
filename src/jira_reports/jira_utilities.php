@@ -210,4 +210,39 @@ function getValueForTargetEta($sprintEta, $nextSprint)
     return "+" . ($sprintEta - $nextSprint + 1);
 }
 
+function getEpicKeyToEpicDataMap()
+{
+    $epic_data = json_decode(json_encode(retrieveJiraFilterData('epic_by_priority')), true);
+
+    // build up a map for epic key=>epic name
+    $epicKeyToName = array();
+    $epicKeyToSprintETA = array();
+    $epicKeyToEpicPriority = array();
+    for ($x = 0; $x < count($epic_data['issues']); $x++) {
+        $epicKeyToName[$epic_data['issues'][$x]['key']] = $epic_data['issues'][$x]['fields']['summary'];
+        $epicKeyToSprintETA[$epic_data['issues'][$x]['key']] = $epic_data['issues'][$x]['fields']['customfield_10515'];
+        $epicKeyToEpicPriority[$epic_data['issues'][$x]['key']] = $epic_data['issues'][$x]['fields']['priority']['id'];
+    }
+    return array($epicKeyToName, $epicKeyToSprintETA, $epicKeyToEpicPriority);
+}
+
+function addEpicDataToIssueData($issue_data, $epicKeyToName, $epicKeyToSprintETA, $epicKeyToEpicPriority)
+{
+    for ($x = 0; $x < count($issue_data['issues']); $x++) {
+        $issue_fields = $issue_data['issues'][$x]['fields'];
+
+        if($issue_fields['issuetype']['name'] == 'Epic') {
+            $issue_data['issues'][$x]['fields']['epicName'] = $issue_fields['summary'];
+            $issue_data['issues'][$x]['fields']['customfield_10515'] = $issue_fields['customfield_10005'];
+            $issue_data['issues'][$x]['fields']['epicPriority'] = $issue_fields['priority']['id'];
+        } else {
+            $issue_data['issues'][$x]['fields']['epicName'] = $epicKeyToName[$issue_fields['customfield_10005']];
+            $issue_data['issues'][$x]['fields']['customfield_10515'] = $epicKeyToSprintETA[$issue_fields['customfield_10005']];
+            $issue_data['issues'][$x]['fields']['epicPriority'] = $epicKeyToEpicPriority[$issue_fields['customfield_10005']];
+        }
+    }
+
+    return $issue_data;
+}
+
 ?>

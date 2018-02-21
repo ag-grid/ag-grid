@@ -1,64 +1,83 @@
 <table class="aui" id="<?= 'content_' . $report_type ?>">
     <tbody>
     <?php
-    if ($report_type == 'issue_by_epic') {
+    // we treat epics differently as we effective stitch the two datasets together
+    // ideally we'd do this on jira side, but atm it doesnt appear to be possible to have parent epic info
+    // on a child issue
+    list($epicKeyToName, $epicKeyToSprintETA, $epicKeyToEpicPriority) = getEpicKeyToEpicDataMap();
 
-        function sortBySpringEta($a, $b)
-        {
-            $etaA = $a['fields']['customfield_10515'];
-            $etaB = $b['fields']['customfield_10515'];
+    switch($report_type) {
+        case 'issue_by_epic':
+            function sortBySpringEta($a, $b)
+            {
+                $etaA = $a['fields']['customfield_10515'];
+                $etaB = $b['fields']['customfield_10515'];
 
-            $etaA = empty($etaA) ? 1000 : $etaA;
-            $etaB = empty($etaB) ? 1000 : $etaB;
+                $etaA = empty($etaA) ? 1000 : $etaA;
+                $etaB = empty($etaB) ? 1000 : $etaB;
 
-            // sort first by Sprint ETA
-            $result = $etaA - $etaB;
+                // sort first by Sprint ETA
+                $result = $etaA - $etaB;
 
-            // then by epic priority
-            $result .= $a['fields']['epicPriority'] - $b['fields']['epicPriority'];
+                // then by epic priority
+                $result .= $a['fields']['epicPriority'] - $b['fields']['epicPriority'];
 
-            // and finally by epic name
-            $result .= strcmp($a['fields']['epicName'], $b['fields']['epicName']);
+                // and finally by epic name
+                $result .= strcmp($a['fields']['epicName'], $b['fields']['epicName']);
 
-            return $result;
+                return $result;
 
-        }
+            }
 
-        // we treat epics differently as we effective stitch the two datasets together
-        // ideally we'd do this on jira side, but atm it doesnt appear to be possible to have parent epic info
-        // on a child issue
-        $epic_data = json_decode(json_encode(retrieveJiraFilterData('epic_by_priority')), true);
+            // now add the epic name to each issue (we have the epic key, but not the name)
+            $issue_data = json_decode(json_encode(retrieveJiraFilterData('issue_by_epic')), true);
+            $issue_data = addEpicDataToIssueData($issue_data, $epicKeyToName, $epicKeyToSprintETA, $epicKeyToEpicPriority);
 
-        // build up a map for epic key=>epic name
-        $epicKeyToName = array();
-        $epicKeyToSprintETA = array();
-        $epicKeyToEpicPriority = array();
-        for ($x = 0; $x < count($epic_data['issues']); $x++) {
-            $epicKeyToName[$epic_data['issues'][$x]['key']] = $epic_data['issues'][$x]['fields']['summary'];
-            $epicKeyToSprintETA[$epic_data['issues'][$x]['key']] = $epic_data['issues'][$x]['fields']['customfield_10515'];
-            $epicKeyToEpicPriority[$epic_data['issues'][$x]['key']] = $epic_data['issues'][$x]['fields']['priority']['id'];
-        }
+            // sort the issues by sprint eta - as we're sorting by the parent epic and we've stitched two datasets
+            // together here, we have to do the sort client side (ie we can't rely on JIRA sorting to do it for us)
+            $issues = $issue_data['issues'];
+            usort($issues, 'sortBySpringEta');
+            $issue_data['issues'] = $issues;
 
-        // now add the epic name to each issue (we have the epic key, but not the name)
-        $issue_data = json_decode(json_encode(retrieveJiraFilterData('issue_by_epic')), true);
-        for ($x = 0; $x < count($issue_data['issues']); $x++) {
-            $issue_fields = $issue_data['issues'][$x]['fields'];
-            $issue_data['issues'][$x]['fields']['epicName'] = $epicKeyToName[$issue_fields['customfield_10005']];
-            $issue_data['issues'][$x]['fields']['customfield_10515'] = $epicKeyToSprintETA[$issue_fields['customfield_10005']];
-            $issue_data['issues'][$x]['fields']['epicPriority'] = $epicKeyToEpicPriority[$issue_fields['customfield_10005']];
-        }
+            // finally, convert back to object form
+            $json_decoded = json_decode(json_encode($issue_data));
+            break;
+        case 'current_release':
+            function sortByEpicAndPriority($a, $b)
+            {
+                $epicPriorityA = $a['fields']['epicPriority'];
+                $epicPriorityB = $b['fields']['epicPriority'];
 
-        // sort the issues by sprint eta - as we're sorting by the parent epic and we've stitched two datasets
-        // together here, we have to do the sort client side (ie we can't rely on JIRA sorting to do it for us)
-        $issues = $issue_data['issues'];
-        usort($issues, 'sortBySpringEta');
-        $issue_data['issues'] = $issues;
+                $epicPriorityA = empty($epicPriorityA) ? 1000 : $epicPriorityA;
+                $epicPriorityB = empty($epicPriorityB) ? 1000 : $epicPriorityB;
 
+                // sort first by epic priority
+                $result = $epicPriorityA - $epicPriorityB;
 
-        // finally, convert back to object form
-        $json_decoded = json_decode(json_encode($issue_data));
-    } else {
-        $json_decoded = retrieveJiraFilterData($report_type);
+                // then by epic name
+                $result .= strcmp($a['fields']['epicName'], $b['fields']['epicName']);
+
+                // and finally by issue priority name
+                $result .= strcmp($a['fields']['priority']['id'], $b['fields']['epicName']);
+
+                return $result;
+            }
+
+            // now add the epic name to each issue (we have the epic key, but not the name)
+            $issue_data = json_decode(json_encode(retrieveJiraFilterData('current_release')), true);
+            $issue_data = addEpicDataToIssueData($issue_data, $epicKeyToName, $epicKeyToSprintETA, $epicKeyToEpicPriority);
+
+            // sort the issues by sprint eta - as we're sorting by the parent epic and we've stitched two datasets
+            // together here, we have to do the sort client side (ie we can't rely on JIRA sorting to do it for us)
+            $issues = $issue_data['issues'];
+            usort($issues, 'sortByEpicAndPriority');
+            $issue_data['issues'] = $issues;
+
+            // finally, convert back to object form
+            $json_decoded = json_decode(json_encode($issue_data));
+            break;
+        default:
+            $json_decoded = retrieveJiraFilterData($report_type);
     }
 
     $moreInformationMap = extractMoreInformationMap($json_decoded);
@@ -73,7 +92,7 @@
             ?>
             <tr>
                 <?php
-                if ($displayEpic) {
+                if ($displayParentEpicData) {
                     ?>
                     <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"><span
                                 class="jim-table-header-content">Epic</span></th>
@@ -107,7 +126,12 @@
             </tr>
             <?php
         }
+
         if (empty($key)) {
+            continue;
+        }
+
+        if($filterOutEpics && filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'issuetype'}->{'name'}, FILTER_SANITIZE_STRING) == 'Epic') {
             continue;
         }
 
@@ -121,10 +145,10 @@
             <?= array_key_exists($key, $keyToDeprecations) ? 'deprecation' : '' ?>
         >
             <?php
-            if ($displayEpic) {
+            if ($displayParentEpicData) {
                 ?>
                 <td class="jira-macro-table-underline-pdfexport">
-                    <span style="height: 100%"><?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10002'}, FILTER_SANITIZE_STRING) ?></span>
+                    <span style="height: 100%"><?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'epicName'}, FILTER_SANITIZE_STRING) ?></span>
                 </td>
                 <?php
             }
@@ -153,18 +177,6 @@
                             filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'resolution'}->{'name'}, FILTER_SANITIZE_STRING)
                         ) ?>
                     </span>
-                </td>
-                <!-- docs url -->
-                <td class="jira-macro-table-underline-pdfexport">
-                    <?php
-                    if (!empty($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10523'})) {
-                        ?>
-
-                        <a href="<?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10523'}, FILTER_SANITIZE_STRING); ?>"
-                           target="_blank"><i class="fa fa-external-link"></i></a>
-                        <?php
-                    }
-                    ?>
                 </td>
 
                 <!-- deprecation -->
@@ -223,7 +235,7 @@
             ?>
             <tr class="jira-more-info jira <?= $i % 2 == 0 ? 'issue-row' : 'issue-row-alternate' ?>"
                 id="<?= $key ?>">
-                <td colspan="8">
+                <td colspan="7">
                     <div><?= $moreInfoContent ?></div>
                 </td>
             </tr>

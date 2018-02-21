@@ -94,7 +94,6 @@ function createMoreInfoContent($key, $moreInformationMap)
 
 $report_type = 'changelog';
 
-
 $json_decoded = retrieveJiraFilterData($report_type);
 $fixVersions = extractFixVersions($json_decoded);
 $moreInformationMap = extractMoreInformationMap($json_decoded);

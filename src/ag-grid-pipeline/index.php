@@ -83,13 +83,14 @@ function extractMoreInformationMap($data)
         <section>
             <h1>Next Release Target: TBD - 15.0.0 just released</h1>
 
-            <p>
-                The ag-Grid pipeline visualises the features and bug fixes we have in our internal issue tracker (JIRA).
-                The issues commonly have an ID, that looks like <code>AG-XXX</code>.
-                The next release tab contains items that we are looking into for our next release, that usually has a
-                scheduled release date.
+            <div class="note">
+                <p>
+            The ag-Grid pipeline visualises the features and bug fixes we have in our internal issue tracker (JIRA).
+                The issues commonly have an ID, that looks like <code>AG-XXX</code>.</p>
+                <p>The next release tab contains items that we are looking into for our next release, that usually has a
+                scheduled release date.<br/></p>
                 The green tabs contain items from our backlog (no concrete release date), grouped by type.
-            </p>
+            </div>
 
             <div class="global-search-pane" style="display: inline-block;width: 100%">
                 <input class="clearable global-report-search" style="float: left;height: 50px" type="text"
@@ -106,6 +107,19 @@ function extractMoreInformationMap($data)
                             <td style="padding:0">Filter By Deprecations</td>
                         </tr>
                     </table>
+                </div>
+                <div style="margin-top: 15px;float: right">
+                    <span style="margin-right: 10px">
+                         <img style="vertical-align: middle" src="<?= mapIssueIcon("Bug") ?>"
+                              height="16" width="16" border="0"/> Bug
+                    <span style="margin-right: 10px">
+                        <img style="vertical-align: middle" src="<?= mapIssueIcon("Feature Request") ?>"
+                             height="16" width="16" border="0"/> Feature Request
+                    </span>
+                    <span style="margin-right: 10px">
+                        <span class='aui-lozenge-complete' style='padding: 1px; border-radius: 2px'>D</span> Deprecation
+                    </span>
+                    <span class='aui-lozenge-error' style='padding: 1px; border-radius: 2px'>B</span> Breaking Changes
                 </div>
             </div>
             <div class="global-report-search-results"></div>
@@ -146,7 +160,8 @@ function extractMoreInformationMap($data)
                 <div class="tab-content" style="margin-top: 5px">
                     <div class="tab-pane top-level-pane active" id="release">
                         <?php
-                        $displayEpic = 1;
+                        $displayParentEpicData = 1;
+                        $filterOutEpics = 1;
                         $suppressTargetSprint = 1;
                         $report_type = 'current_release';
                         include '../jira_reports/jira_report.php';
@@ -154,7 +169,8 @@ function extractMoreInformationMap($data)
                     </div>
                     <div class="tab-pane top-level-pane" id="bugs">
                         <?php
-                        $displayEpic = 0;
+                        $displayParentEpicData = 0;
+                        $filterOutEpics = 1;
                         $suppressTargetSprint = 0;
                         $report_type = 'bugs';
                         include '../jira_reports/jira_report.php';
@@ -162,7 +178,8 @@ function extractMoreInformationMap($data)
                     </div>
                     <div class="tab-pane top-level-pane" id="fr">
                         <?php
-                        $displayEpic = 0;
+                        $displayParentEpicData = 0;
+                        $filterOutEpics = 1;
                         $suppressTargetSprint = 0;
                         $report_type = 'feature_requests';
                         include '../jira_reports/jira_report.php';
@@ -170,7 +187,8 @@ function extractMoreInformationMap($data)
                     </div>
                     <div class="tab-pane top-level-pane" id="epics">
                         <?php
-                        $displayEpic = 1;
+                        $displayParentEpicData = 1;
+                        $filterOutEpics = 0;
                         $suppressTargetSprint = 0;
                         $report_type = 'issue_by_epic';
                         include '../jira_reports/jira_report.php';
@@ -178,7 +196,8 @@ function extractMoreInformationMap($data)
                     </div>
                     <div class="tab-pane top-level-pane" id="parked">
                         <?php
-                        $displayEpic = 0;
+                        $displayParentEpicData = 0;
+                        $filterOutEpics = 1;
                         $report_type = 'parked';
                         include '../jira_reports/jira_report.php';
                         ?>
