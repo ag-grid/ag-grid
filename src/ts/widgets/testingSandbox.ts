@@ -55,7 +55,7 @@ export class SmallComponent extends Component {
 
     @Autowired('context') private context: Context;
 
-    private attributes: any;
+    private params: any;
 
     constructor() {
         super(`<div>
@@ -83,17 +83,17 @@ export class SmallComponent extends Component {
 
     private onBtOk(event: MouseEvent): void {
         console.log('smallComponent.onBtOK', event);
-        console.log('attributes', this.attributes);
+        console.log('attributes', this.params);
     }
 
     private onBtCancel(event: MouseEvent): void {
         console.log('smallComponent.onBtCancel', event);
-        console.log('attributes', this.attributes);
+        console.log('attributes', this.params);
     }
 
     public doSomething(): void {
         console.log('SmallComponent.doSomething()');
-        console.log('attributes', this.attributes);
+        console.log('attributes', this.params);
     }
 
 }
