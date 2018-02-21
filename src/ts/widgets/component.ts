@@ -159,7 +159,7 @@ export class Component extends BeanStub implements IComponent<any> {
             childAttributes[nameCamelCase] = (<any>this)[nameValue.value];
         });
 
-        child.params = childAttributes;
+        child.props = childAttributes;
     }
 
     private copyAttributesFromNode(attrLists: AttrLists, childNode: Element): void {

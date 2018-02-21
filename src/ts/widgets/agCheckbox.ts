@@ -33,7 +33,7 @@ export class AgCheckbox extends Component {
     private readOnly = false;
     private passive = false;
 
-    private params: {label: string};
+    private props: {label: string};
 
     constructor() {
         super();
@@ -50,8 +50,8 @@ export class AgCheckbox extends Component {
         this.loadIcons();
         this.updateIcons();
 
-        if (this.params.label) {
-            this.eLabel.innerText = this.params.label;
+        if (this.props.label) {
+            this.eLabel.innerText = this.props.label;
         }
     }
 
