@@ -233,16 +233,16 @@ $disabled-foreground-color-opacity: 0.38 !default;
         }
 
         .ag-tab.ag-tab-selected {
-            border-bottom-color: transparent;
             background-color: $default-background;
+            border-bottom-color: transparent;
         }
     }
 
     .ag-tab-body,
     .ag-popup-editor,
     .ag-menu {
-        color: $foreground-color;
         background-color: $default-background;
+        color: $foreground-color;
     }
 
     .ag-cell-inline-editing {
@@ -293,5 +293,13 @@ $disabled-foreground-color-opacity: 0.38 !default;
 
     .ag-rich-select-value {
         border-bottom: 1px solid $border-color;
+    }
+
+    .ag-filter-apply-panel {
+        border-top: 1px solid $border-color;
+    }
+
+    .ag-header-cell-moving {
+        background-color: $default-background;
     }
 }

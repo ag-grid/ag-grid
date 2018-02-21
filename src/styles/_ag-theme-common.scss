@@ -602,6 +602,7 @@
         }
 
         .ag-set-filter-list {
+            height: $virtual-item-height * 6.5;
             padding-top: $grid-size;
         }
 
@@ -663,7 +664,6 @@
                 width: $grid-size * 2;
             }
 
-
             .ag-column-select-checkbox,
             .ag-column-group-icons {
                 margin-right: $grid-size;
@@ -678,15 +678,15 @@
     ////////////////////////////////////////
     // Tool panel
     ////////////////////////////////////////
-    .ag-column-tool-panel{
+    .ag-column-tool-panel {
         display: flex;
     }
 
     .ag-column-tool-panel-item {
         button {
-            height: 100%;
-            font-size: $font-size;
             font-family: $font-family;
+            font-size: $font-size;
+            height: 100%;
         }
     }
 
@@ -1388,8 +1388,8 @@
 
     .ag-tool-panel {
         background-color: $tool-panel-background-color;
-        border-right: 1px solid $border-color;
         border-bottom: 1px solid $border-color;
+        border-right: 1px solid $border-color;
         border-top: 1px solid $border-color;
 
         .ag-side-buttons button {
@@ -1412,16 +1412,17 @@
 
     .ag-rtl .ag-tool-panel {
         .ag-panel-container {
-            border-right: 0;
             border-left: 1px solid $border-color;
+            border-right: 0;
         }
 
         &.full-width .ag-panel-container {
             border-left: 0;
         }
+
         .ag-side-buttons button {
-            border-right: 0;
             border-left: 1px solid $border-color;
+            border-right: 0;
         }
     }
 
