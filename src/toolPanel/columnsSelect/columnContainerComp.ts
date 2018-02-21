@@ -15,6 +15,7 @@ import {
 import {ToolPanelGroupComp} from "./toolPanelGroupComp";
 import {ToolPanelColumnComp} from "./toolPanelColumnComp";
 import {BaseColumnItem} from "./columnSelectComp";
+import {SELECTED_STATE} from "./columnSelectHeaderComp";
 
 export type ColumnItem = BaseColumnItem & Component;
 
@@ -88,6 +89,48 @@ export class ColumnContainerComp extends Component {
 
     public onGroupExpanded(): void {
         this.updateVisibilityOfRows();
+        this.fireExpandedEvent();
+    }
+
+    private fireExpandedEvent(): void {
+        let expandedCount = 0;
+        let notExpandedCount = 0;
+
+        let recursiveFunc = (items: OriginalColumnGroupChild[]) => {
+            items.forEach( item => {
+
+                // only interested in groups
+                if (item instanceof OriginalColumnGroup) {
+                    let comp = <ToolPanelGroupComp> this.columnComps[item.getId()];
+
+                    if (comp) {
+                        if (comp.isExpanded()) {
+                            expandedCount++;
+                        } else {
+                            notExpandedCount++;
+                        }
+                    }
+
+                    let columnGroup = <OriginalColumnGroup> item;
+                    let groupChildren = columnGroup.getChildren();
+
+                    recursiveFunc(groupChildren);
+                }
+            });
+        };
+
+        recursiveFunc(this.columnTree);
+
+        let state: SELECTED_STATE;
+        if (expandedCount>0 && notExpandedCount>0) {
+            state = SELECTED_STATE.INDETERMINIATE;
+        } else if (notExpandedCount>0) {
+            state = SELECTED_STATE.UNCHECKED;
+        } else {
+            state = SELECTED_STATE.CHECKED;
+        }
+
+        this.dispatchEvent({type: 'groupExpanded', state: state});
     }
 
     private recursivelyAddColumnComps(column: Column, dept: number): void {

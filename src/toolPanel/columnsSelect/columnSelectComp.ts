@@ -1,5 +1,6 @@
 import {Autowired, Component, Context, Events, GridOptionsWrapper, PostConstruct, RefSelector} from "ag-grid/main";
 import {ColumnContainerComp} from "./columnContainerComp";
+import {ColumnSelectHeaderComp} from "./columnSelectHeaderComp";
 
 export interface BaseColumnItem {
 
@@ -26,10 +27,12 @@ export class ColumnSelectComp extends Component {
                 (collapse-all)="onCollapseAll"
                 (select-all)="onSelectAll"
                 (unselect-all)="onUnselectAll"
-                (filter-changed)="onFilterChanged">
+                (filter-changed)="onFilterChanged"
+                ref="eColumnSelectHeader">
             </ag-column-select-header>
             <ag-column-container 
                 [allow-dragging]="allowDragging"
+                (group-expanded)="onGroupExpanded"
                 ref="eToolPanelColumnsContainerComp">
             </ag-column-container>
         </div>`;
@@ -37,16 +40,14 @@ export class ColumnSelectComp extends Component {
     @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    @RefSelector('column-select-header')
-    private eColumnSelectHeader: HTMLElement;
-
-    @RefSelector('filterTextField')
-    private eFilterTextField: HTMLInputElement;
-
-    private allowDragging: boolean;
+    @RefSelector('eColumnSelectHeader')
+    private columnSelectHeaderComp: ColumnSelectHeaderComp;
 
     @RefSelector('eToolPanelColumnsContainerComp')
     private columnContainerComp: ColumnContainerComp;
+
+    private allowDragging: boolean;
+
 
     // we allow dragging in the toolPanel, but not when this component appears in the column menu
     constructor(allowDragging: boolean) {
@@ -77,6 +78,10 @@ export class ColumnSelectComp extends Component {
 
     private onCollapseAll() {
         this.columnContainerComp.doSetExpandedAll(false);
+    }
+
+    private onGroupExpanded(event: any) {
+        this.columnSelectHeaderComp.setExpandState(event.state);
     }
 
 }
