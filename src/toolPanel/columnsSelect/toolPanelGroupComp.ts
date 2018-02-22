@@ -32,8 +32,8 @@ export class ToolPanelGroupComp extends Component implements BaseColumnItem{
                 <span id="eGroupClosedIcon" class="ag-column-group-opened-icon"></span>
             </span>
             <ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>
-            <span class="ag-column-drag" ref="eDragHandle"></span>
             <span id="eText" class="ag-column-select-column-group-label"></span>
+            <span class="ag-column-drag" ref="eDragHandle"></span>
         </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
