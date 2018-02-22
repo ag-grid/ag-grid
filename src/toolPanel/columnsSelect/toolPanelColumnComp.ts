@@ -20,18 +20,20 @@ import {
     GridPanel,
     PostConstruct,
     QuerySelector,
-    TouchListener,
-    Utils
+    Utils,
+    RefSelector,
+    _
 } from "ag-grid/main";
 import {BaseColumnItem} from "./columnSelectComp";
 
 export class ToolPanelColumnComp extends Component implements BaseColumnItem{
 
     private static TEMPLATE =
-        '<div class="ag-column-select-column">' +
-          '<ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>' +
-          '<span class="ag-column-select-label"></span>' +
-        '</div>';
+        `<div class="ag-column-select-column">
+            <ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>
+            <span class="ag-column-drag" ref="eDragHandle"></span>
+            <span class="ag-column-select-label"></span>
+        </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
@@ -45,6 +47,8 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem{
     @QuerySelector('.ag-column-select-label') private eText: HTMLElement;
     @QuerySelector('.ag-column-select-indent') private eIndent: HTMLElement;
     @QuerySelector('.ag-column-select-checkbox') private cbSelect: AgCheckbox;
+
+    @RefSelector('eDragHandle') private eDragHandle: HTMLElement;
 
     private column: Column;
     private columnDept: number;
@@ -72,9 +76,7 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem{
 
         this.addCssClass('ag-toolpanel-indent-' + this.columnDept);
 
-        if (this.allowDragging) {
-            this.addDragSource();
-        }
+        this.setupDragging();
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this) );
         this.addDestroyableEventListener(this.column, Column.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this) );
@@ -89,22 +91,8 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem{
         this.onColumnStateChanged();
 
         this.addDestroyableEventListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onChange.bind(this));
-        this.addDestroyableEventListener(this.eText, 'click', this.onClick.bind(this));
 
-        this.addTap();
         CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
-    }
-
-    private addTap(): void {
-        let touchListener = new TouchListener(this.getGui(), true);
-        this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, this.onClick.bind(this));
-        this.addDestroyFunc( touchListener.destroy.bind(touchListener) );
-    }
-
-    private onClick(): void {
-        if (this.cbSelect.isReadOnly()) { return; }
-
-        this.cbSelect.toggle();
     }
 
     private onChange(event: any): void {
@@ -238,10 +226,15 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem{
         }
     }
 
-    private addDragSource(): void {
+    private setupDragging(): void {
+        if (!this.allowDragging) {
+            _.setVisible(this.eDragHandle, false);
+            return;
+        }
+
         let dragSource: DragSource = {
             type: DragSourceType.ToolPanel,
-            eElement: this.getGui(),
+            eElement: this.eDragHandle,
             dragItemName: this.displayName,
             dragItemCallback: () => this.createDragItem()
         };

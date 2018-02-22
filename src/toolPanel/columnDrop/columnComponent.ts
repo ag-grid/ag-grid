@@ -21,7 +21,8 @@ import {
     ColumnApi,
     GridApi,
     AgEvent,
-    TapEvent
+    TapEvent,
+    RefSelector
 } from "ag-grid/main";
 import {VirtualList} from "../../rendering/virtualList";
 import {AggFuncService} from "../../aggregation/aggFuncService";
@@ -34,6 +35,7 @@ export class ColumnComponent extends Component {
 
     private static TEMPLATE =
        `<span class="ag-column-drop-cell">
+          <span class="ag-column-drag" ref="eDragHandle"></span>
           <span class="ag-column-drop-cell-text"></span>
           <span class="ag-column-drop-cell-button">&#10006;</span>
         </span>`;
@@ -51,6 +53,8 @@ export class ColumnComponent extends Component {
 
     @QuerySelector('.ag-column-drop-cell-text') private eText: HTMLElement;
     @QuerySelector('.ag-column-drop-cell-button') private btRemove: HTMLElement;
+
+    @RefSelector('eDragHandle') private eDragHandle: HTMLElement;
 
     private column: Column;
     private dragSourceDropTarget: DropTarget;
@@ -82,7 +86,7 @@ export class ColumnComponent extends Component {
     private addDragSource(): void {
         let dragSource: DragSource = {
             type: DragSourceType.ToolPanel,
-            eElement: this.eText,
+            eElement: this.eDragHandle,
             dragItemCallback: () => this.createDragItem(),
             dragItemName: this.displayName,
             dragSourceDropTarget: this.dragSourceDropTarget

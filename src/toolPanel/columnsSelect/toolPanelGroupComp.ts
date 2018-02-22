@@ -17,23 +17,24 @@ import {
     PostConstruct,
     QuerySelector,
     TouchListener,
-    Utils
+    Utils,
+    RefSelector,
+    _
 } from "ag-grid/main";
 import {BaseColumnItem} from "./columnSelectComp";
 
 export class ToolPanelGroupComp extends Component implements BaseColumnItem{
 
     private static TEMPLATE =
-        '<div class="ag-column-select-column-group">' +
-        '  <span id="eColumnGroupIcons" class="ag-column-group-icons">' +
-        '    <span id="eGroupOpenedIcon" class="ag-column-group-closed-icon"></span>' +
-        '    <span id="eGroupClosedIcon" class="ag-column-group-opened-icon"></span>' +
-        '  </span>' +
-        '  <span id="eCheckboxAndText">' +
-        '    <ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>' +
-        '    <span id="eText" class="ag-column-select-column-group-label"></span>' +
-        '  </span>' +
-        '</div>';
+        `<div class="ag-column-select-column-group">
+            <span id="eColumnGroupIcons" class="ag-column-group-icons">
+                <span id="eGroupOpenedIcon" class="ag-column-group-closed-icon"></span>
+                <span id="eGroupClosedIcon" class="ag-column-group-opened-icon"></span>
+            </span>
+            <ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>
+            <span class="ag-column-drag" ref="eDragHandle"></span>
+            <span id="eText" class="ag-column-select-column-group-label"></span>
+        </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
@@ -43,6 +44,8 @@ export class ToolPanelGroupComp extends Component implements BaseColumnItem{
     @Autowired('eventService') private eventService: EventService;
 
     @QuerySelector('.ag-column-select-checkbox') private cbSelect: AgCheckbox;
+
+    @RefSelector('eDragHandle') private eDragHandle: HTMLElement;
 
     private columnGroup: OriginalColumnGroup;
     private expanded = true;
@@ -90,16 +93,9 @@ export class ToolPanelGroupComp extends Component implements BaseColumnItem{
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this) );
         this.addDestroyableEventListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
 
-        let eCheckboxAndText = this.queryForHtmlElement('#eCheckboxAndText');
-        let touchListener = new TouchListener(eCheckboxAndText, true);
-        this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, this.onClick.bind(this) );
-        this.addDestroyFunc( touchListener.destroy.bind(touchListener) );
-
         this.setOpenClosedIcons();
 
-        if (this.allowDragging) {
-            this.addDragSource();
-        }
+        this.setupDragging();
 
         this.onColumnStateChanged();
         this.addVisibilityListenersToAllChildren();
@@ -116,10 +112,16 @@ export class ToolPanelGroupComp extends Component implements BaseColumnItem{
         });
     }
 
-    private addDragSource(): void {
+    private setupDragging(): void {
+
+        if (!this.allowDragging) {
+            _.setVisible(this.eDragHandle, false);
+            return;
+        }
+
         let dragSource: DragSource = {
             type: DragSourceType.ToolPanel,
-            eElement: this.getGui(),
+            eElement: this.eDragHandle,
             dragItemName: this.displayName,
             dragItemCallback: () => this.createDragItem()
         };
