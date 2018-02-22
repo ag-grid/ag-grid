@@ -6,7 +6,7 @@ var authors = {
     john: "@john.masterson",
     sean: "@sean_35243",
     amit: "@amitmoryossef",
-    sophia: "!!!sophia"
+    sophia: "@sophialazarova"
 };
 
 for (var blog of blogs) {
