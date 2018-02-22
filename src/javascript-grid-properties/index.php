@@ -342,7 +342,9 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true to not show the column 'expand all' component.</td>
         </tr>
     </table>
-<h2>Data & Row Models</h2>
+
+
+    <h2>Data & Row Models</h2>
     <table class="table content reference">
         <tr>
             <th>rowModelType</th>
@@ -365,8 +367,8 @@ include '../documentation-main/documentation_header.php';
             <th>pinnedBottomRowData</th>
             <td>Data to be displayed as <a href="../javascript-grid-row-pinning/">Pinned Bottom Rows</a> in the grid.</td>
         </tr>
+    </table>
 
-        </table>
 
     <h2>Scrolling</h2>
     <table class="table content reference">
