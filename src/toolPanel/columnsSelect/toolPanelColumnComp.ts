@@ -31,8 +31,8 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem{
     private static TEMPLATE =
         `<div class="ag-column-select-column">
             <ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>
-            <span class="ag-column-select-label"></span>
             <span class="ag-column-drag" ref="eDragHandle"></span>
+            <span class="ag-column-select-label"></span>
         </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
