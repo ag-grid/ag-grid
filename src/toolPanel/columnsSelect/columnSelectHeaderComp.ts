@@ -36,7 +36,7 @@ export class ColumnSelectHeaderComp extends Component {
         this.setTemplate(
         `<div class="ag-column-select-header">
             <div class="ag-column-tool-panel">
-                <a href="javascript:void(0)" (click)="onExpandClicked">
+                <a href="javascript:void(0)" (click)="onExpandClicked" ref="eExpand">
                     <span class="ag-icon ag-icon-tree-open" ref="eExpandChecked"></span>
                     <span class="ag-icon ag-icon-tree-closed" ref="eExpandUnchecked"></span>
                     <span class="ag-icon ag-icon ag-icon-tree-indeterminate" ref="eExpandIndeterminate"></span>
