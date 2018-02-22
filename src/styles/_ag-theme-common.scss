@@ -723,7 +723,7 @@
         }
 
         .ag-column-tool-panel a {
-            margin-right: $grid-size;
+            margin-right: $grid-size * 2;
             padding-top: $grid-size / 2;
         }
     }
