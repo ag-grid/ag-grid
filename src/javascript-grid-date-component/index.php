@@ -74,7 +74,7 @@ interface IDateParams {
     the date column for both the rich filter and the floating filter.
 </p>
 
-<?= example('Auto Height', 'custom-date', 'generated', array()) ?>
+<?= example('Auto Height', 'custom-date', 'generated', array("processVue" => true)) ?>
 
 
 
