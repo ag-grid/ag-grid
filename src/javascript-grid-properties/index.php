@@ -322,6 +322,10 @@ include '../documentation-main/documentation_header.php';
             <th>toolPanelUseSideButton</th>
             <td>Set to true to open/close the <a href="../javascript-grid-tool-panel">Tool Panel</a> from a side button.</td>
         </tr>
+        <tr>
+            <th>contractColumnSelection</th>
+            <td>Set to true to have column list contracted by default - only used if column groups exist.</td>
+        </tr>
         </table>
 <h2>Data & Row Models</h2>
     <table class="table content reference">

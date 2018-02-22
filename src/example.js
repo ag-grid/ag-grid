@@ -185,6 +185,7 @@ var gridOptions = {
     //toolPanelSuppressGroups: true,
     //toolPanelSuppressValues: true,
     //groupSuppressAutoColumn: true,
+    //contractColumnSelection: true,
     //groupAggFields: ['bankBalance','totalWinnings'],
     //     groupMultiAutoColumn: true,
     //     groupHideOpenParents: true,
