@@ -48,7 +48,7 @@ export class ToolPanelGroupComp extends Component implements BaseColumnItem{
     @RefSelector('eDragHandle') private eDragHandle: HTMLElement;
 
     private columnGroup: OriginalColumnGroup;
-    private expanded = true;
+    private expanded: boolean;
     private columnDept: number;
 
     private eGroupClosedIcon: HTMLElement;
@@ -63,12 +63,13 @@ export class ToolPanelGroupComp extends Component implements BaseColumnItem{
     private processingColumnStateChange = false;
     private selectionCallback: (selected:boolean)=>void;
 
-    constructor(columnGroup: OriginalColumnGroup, columnDept: number, expandedCallback: ()=>void, allowDragging: boolean) {
+    constructor(columnGroup: OriginalColumnGroup, columnDept: number, expandedCallback: ()=>void, allowDragging: boolean, expandByDefault: boolean) {
         super();
         this.columnGroup = columnGroup;
         this.columnDept = columnDept;
         this.expandedCallback = expandedCallback;
         this.allowDragging = allowDragging;
+        this.expanded = expandByDefault;
     }
 
     @PostConstruct

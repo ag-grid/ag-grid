@@ -10,7 +10,8 @@ import {
     OriginalColumnGroup,
     OriginalColumnGroupChild,
     PostConstruct,
-    Utils
+    Utils,
+    GridOptionsWrapper
 } from "ag-grid/main";
 import {ToolPanelGroupComp} from "./toolPanelGroupComp";
 import {ToolPanelColumnComp} from "./toolPanelColumnComp";
@@ -21,6 +22,7 @@ export type ColumnItem = BaseColumnItem & Component;
 
 export class ColumnContainerComp extends Component {
 
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private globalEventService: EventService;
     @Autowired('context') private context: Context;
@@ -34,6 +36,8 @@ export class ColumnContainerComp extends Component {
 
     private filterText: string;
 
+    private expandGroupsByDefault: boolean;
+
     public static TEMPLATE = `<div class="ag-column-container"></div>`;
 
     constructor(){
@@ -43,6 +47,7 @@ export class ColumnContainerComp extends Component {
     @PostConstruct
     public init(): void {
         this.addDestroyableEventListener(this.globalEventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
+        this.expandGroupsByDefault = !this.gridOptionsWrapper.isContractColumnSelection();
         if (this.columnController.isReady()) {
             this.onColumnsChanged();
         }
@@ -52,6 +57,7 @@ export class ColumnContainerComp extends Component {
         this.destroyColumnComps();
         this.columnTree = this.columnController.getPrimaryColumnTree();
         this.recursivelyAddComps(this.columnTree, 0);
+        this.updateVisibilityOfRows();
     }
 
     private destroyColumnComps(): void {
@@ -71,7 +77,8 @@ export class ColumnContainerComp extends Component {
         }
 
         if (!columnGroup.isPadding()) {
-            let renderedGroup = new ToolPanelGroupComp(columnGroup, dept, this.onGroupExpanded.bind(this), this.props.allowDragging);
+            let renderedGroup = new ToolPanelGroupComp(columnGroup,  dept, this.onGroupExpanded.bind(this),
+                this.props.allowDragging, this.expandGroupsByDefault);
             this.context.wireBean(renderedGroup);
             this.getGui().appendChild(renderedGroup.getGui());
             // we want to indent on the gui for the children
