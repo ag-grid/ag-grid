@@ -58,12 +58,14 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem{
     private displayName: string;
 
     private processingColumnStateChange = false;
+    private groupsExist: boolean;
 
-    constructor(column: Column, columnDept: number, allowDragging: boolean) {
+    constructor(column: Column, columnDept: number, allowDragging: boolean, groupsExist: boolean) {
         super();
         this.column = column;
         this.columnDept = columnDept;
         this.allowDragging = allowDragging;
+        this.groupsExist = groupsExist;
     }
 
     @PostConstruct
@@ -74,7 +76,10 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem{
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
         this.eText.innerHTML = this.displayName;
 
-        this.addCssClass('ag-toolpanel-indent-' + this.columnDept);
+        // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
+        let indent = this.columnDept;
+        if (this.groupsExist) {indent++;}
+        this.addCssClass(`ag-toolpanel-indent-${indent}`);
 
         this.setupDragging();
 

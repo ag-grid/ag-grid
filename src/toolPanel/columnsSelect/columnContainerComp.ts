@@ -56,7 +56,8 @@ export class ColumnContainerComp extends Component {
     public onColumnsChanged(): void {
         this.destroyColumnComps();
         this.columnTree = this.columnController.getPrimaryColumnTree();
-        this.recursivelyAddComps(this.columnTree, 0);
+        let groupsExist = this.columnController.isPrimaryColumnGroupsPresent();
+        this.recursivelyAddComps(this.columnTree, 0, groupsExist);
         this.updateVisibilityOfRows();
     }
 
@@ -68,7 +69,7 @@ export class ColumnContainerComp extends Component {
         this.columnComps = {};
     }
 
-    private recursivelyAddGroupComps(columnGroup: OriginalColumnGroup, dept: number): void {
+    private recursivelyAddGroupComps(columnGroup: OriginalColumnGroup, dept: number, groupsExist: boolean): void {
         // only render group if user provided the definition
         let newDept: number;
 
@@ -90,7 +91,7 @@ export class ColumnContainerComp extends Component {
             newDept = dept;
         }
 
-        this.recursivelyAddComps(columnGroup.getChildren(), newDept);
+        this.recursivelyAddComps(columnGroup.getChildren(), newDept, groupsExist);
 
     }
 
@@ -140,24 +141,24 @@ export class ColumnContainerComp extends Component {
         this.dispatchEvent({type: 'groupExpanded', state: state});
     }
 
-    private recursivelyAddColumnComps(column: Column, dept: number): void {
+    private recursivelyAddColumnComps(column: Column, dept: number, groupsExist: boolean): void {
         if (column.getColDef() && column.getColDef().suppressToolPanel) {
             return;
         }
 
-        let renderedColumn = new ToolPanelColumnComp(column, dept, this.props.allowDragging);
+        let renderedColumn = new ToolPanelColumnComp(column, dept, this.props.allowDragging, groupsExist);
         this.context.wireBean(renderedColumn);
         this.getGui().appendChild(renderedColumn.getGui());
 
         this.columnComps[column.getId()] = renderedColumn;
     }
 
-    private recursivelyAddComps(tree: OriginalColumnGroupChild[], dept: number): void {
+    private recursivelyAddComps(tree: OriginalColumnGroupChild[], dept: number, groupsExist: boolean): void {
         tree.forEach(child => {
             if (child instanceof OriginalColumnGroup) {
-                this.recursivelyAddGroupComps(<OriginalColumnGroup> child, dept);
+                this.recursivelyAddGroupComps(<OriginalColumnGroup> child, dept, groupsExist);
             } else {
-                this.recursivelyAddColumnComps(<Column> child, dept);
+                this.recursivelyAddColumnComps(<Column> child, dept, groupsExist);
             }
         });
     }
