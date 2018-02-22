@@ -106,6 +106,10 @@ $disabled-foreground-color-opacity: 0.38 !default;
         background-position-y: center;
     }
 
+    .ag-column-drag {
+        background-position-y: center;
+    }
+
     .ag-column-drop-cell {
         height: $grid-size * 6 !important;
 

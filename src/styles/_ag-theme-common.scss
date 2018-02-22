@@ -353,6 +353,16 @@
         width: $icon-size + $grid-size * 3;
     }
 
+    .ag-column-drag {
+        @include icon-background($params, "grip");
+
+        background-position-x: left;
+        background-position-y: $grid-size / 2 + 2px;
+        float: left;
+        height: 100%;
+        width: $icon-size + $grid-size * 3;
+    }
+
     .ag-row-dragging {
         opacity: 0.5;
         // very bad putting z-index in here, we have avoided it everywhere else in the grid,

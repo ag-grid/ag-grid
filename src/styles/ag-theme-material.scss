@@ -163,6 +163,10 @@ $params: (
         background-position-y: center;
     }
 
+    .ag-column-drag {
+        background-position-y: center;
+    }
+
     .ag-header-cell-resize {
         right: -($grid-size) + 1px;
     }
