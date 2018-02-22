@@ -5,6 +5,8 @@ export class HorizontalResizeComp extends Component {
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
     @Autowired('gridCore') private gridCore: GridCore;
 
+    private startingWidth: number;
+
     private props: {
         componentToResize: Component
     };
@@ -28,16 +30,14 @@ export class HorizontalResizeComp extends Component {
         console.log('to resize', this.props.componentToResize);
     }
 
-    private startingWidth: number;
-
     private onResizeStart(): void {
         this.startingWidth = this.props.componentToResize.getGui().clientWidth;
     }
 
     private onResizing(delta: number): void {
         let newWidth = this.startingWidth - delta;
-        if (newWidth < 50) {
-            newWidth = 50;
+        if (newWidth < 100) {
+            newWidth = 100;
         }
         this.props.componentToResize.getGui().style.width = newWidth + 'px';
         this.gridCore.doLayout();
