@@ -82,7 +82,7 @@ class PanelSelectComp extends Component {
             this.gridCore.doLayout();
         });
 
-        let showButtons = this.gridOptionsWrapper.isToolPanelUsingSideButton();
+        let showButtons = !this.gridOptionsWrapper.isToolPanelSuppressSideButtons();
         this.setVisible(showButtons);
     }
 

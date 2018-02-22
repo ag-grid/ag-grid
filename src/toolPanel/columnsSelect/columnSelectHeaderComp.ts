@@ -21,6 +21,8 @@ export class ColumnSelectHeaderComp extends Component {
     @RefSelector('eExpandUnchecked') private eExpandUnchecked: HTMLElement;
     @RefSelector('eExpandIndeterminate') private eExpandIndeterminate: HTMLElement;
 
+    @RefSelector('eExpand') private eExpand: HTMLElement;
+
     private onFilterTextChangedDebounced: ()=>void;
 
     private expandState: SELECTED_STATE = SELECTED_STATE.CHECKED;
@@ -34,7 +36,7 @@ export class ColumnSelectHeaderComp extends Component {
         this.setTemplate(
         `<div class="ag-column-select-header">
             <div class="ag-column-tool-panel">
-                <button class="ag-column-tool-panel-item" (click)="onExpandClicked">
+                <button class="ag-column-tool-panel-item" (click)="onExpandClicked" ref="eExpand">
                     <span class="ag-icon ag-icon-tree-open" ref="eExpandChecked"></span>
                     <span class="ag-icon ag-icon-tree-closed" ref="eExpandUnchecked"></span>
                     <span class="ag-icon ag-icon ag-icon-columns" ref="eExpandIndeterminate"></span>
@@ -58,8 +60,15 @@ export class ColumnSelectHeaderComp extends Component {
 
         if (this.columnController.isReady()) {
             this.setColumnsCheckedState();
+            this.showOrHideExpand();
         }
         this.setExpandState(SELECTED_STATE.CHECKED);
+    }
+
+    // we only show expand / collapse if we are showing columns
+    private showOrHideExpand(): void {
+        let groupsPresent = this.columnController.isPrimaryColumnGroupsPresent();
+        _.setVisible(this.eExpand, groupsPresent);
     }
 
     private addEventListeners(): void {
@@ -75,6 +84,8 @@ export class ColumnSelectHeaderComp extends Component {
         eventsImpactingCheckedState.forEach( event => {
             this.addDestroyableEventListener(this.eventService, event, this.setColumnsCheckedState.bind(this));
         });
+
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideExpand.bind(this));
     }
 
     private onFilterTextChanged(): void {
