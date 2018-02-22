@@ -90,7 +90,6 @@ export class ToolPanelGroupComp extends Component implements BaseColumnItem{
 
         this.addCssClass('ag-toolpanel-indent-' + this.columnDept);
 
-        this.addDestroyableEventListener(eText, 'click', this.onClick.bind(this) );
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this) );
         this.addDestroyableEventListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
 
@@ -156,12 +155,6 @@ export class ToolPanelGroupComp extends Component implements BaseColumnItem{
         let touchListener = new TouchListener(eColumnGroupIcons, true);
         this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, this.onExpandOrContractClicked.bind(this));
         this.addDestroyFunc( touchListener.destroy.bind(touchListener) );
-    }
-
-    private onClick(): void {
-        if (!this.cbSelect.isReadOnly()) {
-            this.cbSelect.setSelected(!this.cbSelect.isSelected());
-        }
     }
 
     private onCheckboxChanged(): void {
