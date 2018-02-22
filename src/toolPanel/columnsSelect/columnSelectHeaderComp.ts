@@ -75,6 +75,7 @@ export class ColumnSelectHeaderComp extends Component {
         let eventsImpactingCheckedState: string[] = [
             Events.EVENT_COLUMN_EVERYTHING_CHANGED, // api.setColumnState() called
             Events.EVENT_COLUMN_PIVOT_CHANGED,
+            Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
             Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
             Events.EVENT_COLUMN_VALUE_CHANGED,
             Events.EVENT_COLUMN_VISIBLE,
@@ -137,9 +138,20 @@ export class ColumnSelectHeaderComp extends Component {
         let uncheckedCount = 0;
 
         columns.forEach( col => {
-            let checked = pivotMode ?
-                col.isValueActive() || col.isPivotActive() || col.isRowGroupActive()
-                : col.isVisible();
+
+            // not not count columns not in tool panel
+            let colDef = col.getColDef();
+            if (colDef && colDef.suppressToolPanel) { return; }
+
+            let checked: boolean;
+            if (pivotMode) {
+                let noPivotModeOptionsAllowed = !col.isAllowPivot() && !col.isAllowRowGroup() && !col.isAllowValue();
+                if (noPivotModeOptionsAllowed) { return; }
+                checked = col.isValueActive() || col.isPivotActive() || col.isRowGroupActive()
+            } else {
+                checked = col.isVisible();
+            }
+
             if (checked) {
                 checkedCount++;
             } else {
