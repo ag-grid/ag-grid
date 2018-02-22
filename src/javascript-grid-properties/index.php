@@ -319,8 +319,11 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true to show the <a href="../javascript-grid-tool-panel">Tool Panel</a> by default.</td>
         </tr>
         <tr>
-            <th>toolPanelUseSideButton</th>
-            <td>Set to true to open/close the <a href="../javascript-grid-tool-panel">Tool Panel</a> from a side button.</td>
+            <th>toolPanelSuppressSideButtons</th>
+            <td>
+                Set to true to hide the <a href="../javascript-grid-tool-panel">Tool Panel</a> side buttons for
+                opening / closing the tool panel.
+            </td>
         </tr>
         <tr>
             <th>contractColumnSelection</th>

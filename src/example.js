@@ -180,7 +180,6 @@ var gridOptions = {
     //suppressCellSelection: true,
     //suppressMultiSort: true,
     showToolPanel: true,//window.innerWidth > 1000,
-    toolPanelUseSideButton: true,
     //  autoSizePadding: 20,
     //toolPanelSuppressGroups: true,
     //toolPanelSuppressValues: true,
@@ -189,7 +188,6 @@ var gridOptions = {
     //groupAggFields: ['bankBalance','totalWinnings'],
     //     groupMultiAutoColumn: true,
     //     groupHideOpenParents: true,
-
     //suppressMenuFilterPanel: true,
     //     clipboardDeliminator: ',',
     //suppressMenuMainPanel: true,
