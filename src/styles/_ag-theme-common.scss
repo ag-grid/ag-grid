@@ -677,6 +677,7 @@
             .ag-column-select-checkbox,
             .ag-column-group-icons {
                 margin-right: $grid-size;
+                margin-left: $grid-size;
             }
         }
 
@@ -1289,6 +1290,7 @@
                 .ag-column-select-checkbox,
                 .ag-column-group-icons {
                     margin-left: $grid-size;
+                    margin-right: $grid-size;
                 }
             }
 
