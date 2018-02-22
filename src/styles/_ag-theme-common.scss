@@ -360,7 +360,8 @@
         background-position-y: $grid-size / 2 + 2px;
         float: left;
         height: 100%;
-        width: $icon-size + $grid-size * 3;
+        margin-right: $grid-size;
+        width: $icon-size;
     }
 
     .ag-row-dragging {
