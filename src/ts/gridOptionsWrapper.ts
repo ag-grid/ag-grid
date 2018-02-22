@@ -494,7 +494,7 @@ export class GridOptionsWrapper {
     }
 
     public getAutoSizePadding(): number {
-        return this.gridOptions.autoSizePadding > 0 ? this.gridOptions.autoSizePadding : 0;
+        return this.gridOptions.autoSizePadding > 0 ? this.gridOptions.autoSizePadding : 20;
     }
 
     // properties
