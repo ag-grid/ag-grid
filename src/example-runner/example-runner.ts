@@ -154,7 +154,9 @@ class ExampleRunner {
         if(this.processVue) {
             this.titles['vue'] = "Vue";
         } else {
-            this.availableTypes.splice(this.availableTypes.indexOf('vue'), 1)
+            if(this.availableTypes.indexOf('vue') !== -1) {
+                this.availableTypes.splice(this.availableTypes.indexOf('vue'), 1)
+            }
         }
 
         const divWrapper = jQuery(this.$element).find("div.example-wrapper");
