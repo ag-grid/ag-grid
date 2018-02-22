@@ -36,19 +36,19 @@ export class ColumnSelectHeaderComp extends Component {
         this.setTemplate(
         `<div class="ag-column-select-header">
             <div class="ag-column-tool-panel">
-                <button class="ag-column-tool-panel-item" (click)="onExpandClicked" ref="eExpand">
+                <a href="javascript:void(0)" (click)="onExpandClicked">
                     <span class="ag-icon ag-icon-tree-open" ref="eExpandChecked"></span>
                     <span class="ag-icon ag-icon-tree-closed" ref="eExpandUnchecked"></span>
-                    <span class="ag-icon ag-icon ag-icon-columns" ref="eExpandIndeterminate"></span>
-                </button>
-                <button class="ag-column-tool-panel-item" (click)="onSelectClicked">
+                    <span class="ag-icon ag-icon ag-icon-tree-indeterminate" ref="eExpandIndeterminate"></span>
+                </a>
+                <a href="javascript:void(0)" class="ag-column-tool-panel-item" (click)="onSelectClicked">
                     <span class="ag-icon ag-icon-checkbox-checked" ref="eSelectChecked"></span>
                     <span class="ag-icon ag-icon-checkbox-unchecked" ref="eSelectUnchecked"></span>
                     <span class="ag-icon ag-icon-checkbox-indeterminate" ref="eSelectIndeterminate"></span>
-                </button>
+                </a>
             </div>
             <div class="ag-filter-body">
-                <input class="ag-filter-filter" ref="eFilterTextField" type="text" placeholder="${translate('filterOoo', 'Filter...')}" (input)="onFilterTextChanged">
+                <input class="ag-column-name-filter" ref="eFilterTextField" type="text" placeholder="${translate('filterOoo', 'Filter...')}" (input)="onFilterTextChanged">
             </div>
         </div>`);
     }
