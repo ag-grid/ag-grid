@@ -632,12 +632,11 @@ ag-grid-aurelia {
 }
 
 .ag-column-drop-vertical {
-
-    flex-grow: 1;
+    display: flex;
     flex-direction: column;
+    flex-grow: 1;
     height: 50px;
     overflow: hidden;
-    display: flex;
 
     .ag-column-drop-list {
         flex-grow: 1;
@@ -675,6 +674,10 @@ ag-grid-aurelia {
 
     .ag-column-drop-empty-message {
         display: inline-block;
+    }
+
+    .ag-column-drop-list {
+        height: 100%;
     }
 }
 
@@ -886,15 +889,15 @@ ag-grid-aurelia {
 }
 
 .ag-layout-normal .ag-column-panel-center {
-    height: 100%;
     display: flex;
     flex-direction: column;
+    height: 100%;
 }
 
 .ag-column-container {
+    flex-grow: 1;
     height: 50px;
     overflow: auto;
-    flex-grow: 1;
 }
 
 .ag-column-select-indent {
@@ -922,20 +925,29 @@ ag-grid-aurelia {
     flex-direction: column;
     overflow: hidden;
 }
+
 .ag-tool-panel .ag-column-select-panel {
     flex-grow: 4;
 }
+
 .ag-tool-panel-horizontal-resize {
-    width: 5px;
-    height: 100%;
     cursor: col-resize;
+    height: 100%;
+    position: absolute;
+    width: 5px;
+    z-index: 1;
 }
+
 .ag-rtl .ag-tool-panel-horizontal-resize {
     float: right;
+    transform: translateX(3px);
 }
+
 .ag-ltr .ag-tool-panel-horizontal-resize {
     float: left;
+    transform: translateX(-3px);
 }
+
 .ag-menu-column-select-wrapper .ag-column-select-panel {
     height: 100%;
 }

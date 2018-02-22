@@ -486,14 +486,14 @@
     &.ag-dnd-ghost {
         @include card($params);
 
-        border: 0;
+        border: 1px solid $border-color;
         color: $secondary-foreground-color;
         font: $secondary-font;
         height: $header-height !important;
         line-height: $header-height;
         margin: 0;
         padding: 0 $grid-size * 2;
-        transform: translatey($grid-size * 2);
+        transform: translateY($grid-size * 2);
         z-index: 5;
 
         span,
@@ -706,7 +706,7 @@
         }
     }
 
-    .ag-group-child-count:before {
+    .ag-group-child-count::before {
         content: " ";
     }
 
@@ -1040,6 +1040,11 @@
             height: 100%;
         }
 
+        & > div:first-child {
+            float: left;
+            height: 100%;
+        }
+
         .ag-icon-group,
         .ag-icon-pivot {
             margin-right: $cell-horizontal-padding;
@@ -1349,7 +1354,8 @@
 
     .ag-status-bar {
         background: $background-color;
-        border-top: 1px solid $border-color;
+        border: 1px solid $border-color;
+        border-top: 0;
         color: $disabled-foreground-color;
         display: flex;
         font: $secondary-font;
@@ -1374,10 +1380,6 @@
         padding: $grid-size * 5;
     }
 
-    &.ag-dnd-ghost {
-        border: 1px solid $border-color;
-    }
-
     .ag-overlay-loading-wrapper {
         background-color: rgba(255, 255, 255, 0.5);
     }
@@ -1388,16 +1390,19 @@
 
     .ag-tool-panel {
         background-color: $tool-panel-background-color;
-        border-bottom: 1px solid $border-color;
         border-right: 1px solid $border-color;
         border-top: 1px solid $border-color;
 
-        .ag-side-buttons button {
-            background: transparent;
-            border: 0;
-            border-right: 1px solid $border-color;
-            color: $foreground-color;
-            height: 20px;
+        .ag-side-buttons {
+            border-bottom: 1px solid $border-color;
+
+            button {
+                background: transparent;
+                border: 0;
+                border-right: 1px solid $border-color;
+                color: $foreground-color;
+                height: 20px;
+            }
         }
 
         .ag-panel-container {
@@ -1407,6 +1412,10 @@
 
         &.full-width .ag-panel-container {
             border-right: 0;
+        }
+
+        .ag-column-drop {
+            min-height: 100px;
         }
     }
 
