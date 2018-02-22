@@ -663,7 +663,6 @@
         .ag-column-select-column {
             height: $grid-size * 4;
             line-height: $grid-size * 4;
-            margin-left: $grid-size;
 
             span {
                 float: left;
@@ -678,10 +677,6 @@
             .ag-column-group-icons {
                 margin-right: $grid-size;
             }
-        }
-
-        .ag-column-select-column {
-            margin-left: $icon-size + $grid-size * 2;
         }
 
         .ag-column-container {
@@ -1281,8 +1276,6 @@
         .ag-column-select-panel {
             .ag-column-select-column-group,
             .ag-column-select-column {
-                margin-right: $grid-size;
-
                 span {
                     float: right;
                 }
@@ -1291,12 +1284,6 @@
                 .ag-column-group-icons {
                     margin-left: $grid-size;
                 }
-            }
-
-            .ag-column-select-column {
-                // this is a very crude approximation, because we have one 10px hard-coded element in there.
-                margin-left: 0;
-                margin-right: $icon-size + $cell-horizontal-padding;
             }
         }
 
