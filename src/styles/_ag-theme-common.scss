@@ -407,7 +407,7 @@
     ////////////////////////////////////////
     $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked
         column columns contracted copy cut desc expanded eye-slash eye filter group indeterminate left loading menu minus none not-allowed paste pin pivot plus right small-left
-        small-right small-up small-down tick cross tree-open tree-closed;
+        small-right small-up small-down tick cross tree-open tree-closed tree-indeterminate;
 
     @each $icon in $icons {
         .ag-icon-#{$icon} {
@@ -683,6 +683,10 @@
         .ag-column-select-column {
             margin-left: $icon-size + $grid-size * 2;
         }
+
+        .ag-column-container {
+            padding-top: $grid-size;
+        }
     }
 
     ////////////////////////////////////////
@@ -705,6 +709,12 @@
     }
 
     .ag-column-select-header {
+        border-bottom: 1px solid $border-color;
+        box-sizing: border-box;
+        height: $header-height;
+        padding-left: $grid-size;
+        padding-top: $grid-size;
+
         label {
             display: block;
             padding-left: $grid-size;
@@ -713,6 +723,11 @@
                 float: left;
                 margin-right: $grid-size;
             }
+        }
+
+        .ag-column-tool-panel a {
+            margin-right: $grid-size;
+            padding-top: $grid-size / 2;
         }
     }
 
@@ -745,8 +760,8 @@
 
         .ag-column-select-panel {
             border-bottom: 1px solid $border-color;
-            padding: $grid-size 0;
             padding-bottom: $grid-size - 1; // absorb the bottom border;
+            padding-top: 0;
         }
 
         $group-height: $grid-size * 5;
@@ -1323,6 +1338,10 @@
                 float: right;
             }
 
+            & > div:first-child {
+                float: right;
+            }
+
             .ag-icon-group,
             .ag-icon-pivot {
                 margin-left: $cell-horizontal-padding;
@@ -1359,6 +1378,15 @@
         .ag-header .ag-header-cell-resize::after {
             border-left: 1px solid $border-color;
             border-right: 0;
+        }
+
+        .ag-column-select-header .ag-column-tool-panel a {
+            margin-left: 0;
+            margin-right: $grid-size * 2;
+        }
+
+        .ag-column-select-header .ag-filter-body {
+            margin-right: $grid-size;
         }
     }
 
@@ -1443,6 +1471,10 @@
             border-left: 1px solid $border-color;
             border-right: 0;
         }
+    }
+
+    .ag-column-name-filter {
+        @include textbox($params);
     }
 
     $exported: (

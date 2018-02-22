@@ -1012,7 +1012,7 @@ $ag-icons-filter: "initial" !default;
 /* icons are used outside of the grid root (in the ghost) */
 $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked
     column columns contracted copy cut desc expanded eye-slash eye filter folder-open folder group indeterminate left loading menu minus none not-allowed paste pin pivot plus right
-    small-left small-right small-up small-down tick cross tree-open tree-closed;
+    small-left small-right small-up small-down tick cross tree-open tree-closed tree-indeterminate;
 
 @each $icon in $icons {
     .ag-icon-#{$icon} {
@@ -1040,6 +1040,11 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 .ag-details-grid {
     height: 100%;
     width: 100%;
+}
+
+.ag-column-select-header {
+    display: flex;
+    flex-direction: row;
 }
 
 $toolpanel-indent-size: 10px !default;

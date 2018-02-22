@@ -63,7 +63,7 @@ $disabled-foreground-color-opacity: 0.38 !default;
     }
 
     .ag-rtl .ag-header .ag-header-cell-resize {
-        left: -($grid-size) + 1px;
+        left: -($grid-size);
     }
 
     .ag-header-cell-resize::after {
@@ -174,7 +174,7 @@ $disabled-foreground-color-opacity: 0.38 !default;
         border-right: 1px solid $border-color;
 
         .ag-column-select-panel {
-            padding: $grid-size * 2 0;
+            padding-bottom: $grid-size * 2;
 
             .ag-column-select-column-group,
             .ag-column-select-column {
