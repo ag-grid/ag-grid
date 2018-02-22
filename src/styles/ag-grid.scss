@@ -33,6 +33,7 @@ ag-grid-aurelia {
 .ag-select-agg-func-popup {
     position: absolute;
 }
+
 // when we drag the mouse in ag-Grid, this class gets added / removed from the body, so that
 // the mouse isn't selecting text when dragging.
 .ag-body-no-select {
@@ -904,12 +905,37 @@ ag-grid-aurelia {
     display: inline-block;
 }
 
-.ag-column-select-column {
-    white-space: nowrap;
+
+.ag-ltr .ag-column-select-column {
+    margin-left: 16px;
 }
 
+.ag-rtl .ag-column-select-column {
+    margin-right: 16px;
+}
+
+.ag-column-select-column,
 .ag-column-select-column-group {
+    align-items: stretch;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    text-overflow: ellipsis;
     white-space: nowrap;
+
+    .ag-column-select-label, 
+    .ag-column-select-column-group-label {
+        flex-grow: 1;
+        flex-shrink: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .ag-column-drag {
+        min-width: 16px;
+        flex-grow: 0;
+        flex-shrink: 0;
+    }
 }
 
 .ag-column-select-panel {

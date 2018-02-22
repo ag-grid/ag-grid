@@ -1120,6 +1120,11 @@
                 opacity: $foreground-opacity;
             }
         }
+
+        .ag-column-drag {
+            width: $icon-size;
+            margin-left: $grid-size * 2;
+        }
     }
 
     .ag-select-agg-func-popup {
@@ -1284,6 +1289,11 @@
                 .ag-column-group-icons {
                     margin-left: $grid-size;
                 }
+            }
+
+            .ag-column-select-column {
+                margin-left: 0;
+                margin-right: $icon-size + $cell-horizontal-padding;
             }
         }
 
