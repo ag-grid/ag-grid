@@ -58,6 +58,14 @@ export class ColumnSelectComp extends Component {
     @PostConstruct
     public init(): void {
         this.instantiate(this.context);
+
+        let hideFilter = this.gridOptionsWrapper.isToolPanelSuppressColumnFilter();
+        let hideSelect = this.gridOptionsWrapper.isToolPanelSuppressColumnSelectAll();
+        let hideExpand = this.gridOptionsWrapper.isToolPanelSuppressColumnExpandAll();
+
+        if (hideExpand && hideFilter && hideSelect) {
+            this.columnSelectHeaderComp.setVisible(false);
+        }
     }
 
     private onFilterChanged(event: any) {

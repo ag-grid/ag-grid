@@ -22,6 +22,8 @@ export class ColumnSelectHeaderComp extends Component {
     @RefSelector('eExpandIndeterminate') private eExpandIndeterminate: HTMLElement;
 
     @RefSelector('eExpand') private eExpand: HTMLElement;
+    @RefSelector('eSelect') private eSelect: HTMLElement;
+    @RefSelector('eFilter') private eFilter: HTMLElement;
 
     private onFilterTextChangedDebounced: ()=>void;
 
@@ -41,13 +43,13 @@ export class ColumnSelectHeaderComp extends Component {
                     <span class="ag-icon ag-icon-tree-closed" ref="eExpandUnchecked"></span>
                     <span class="ag-icon ag-icon ag-icon-tree-indeterminate" ref="eExpandIndeterminate"></span>
                 </a>
-                <a href="javascript:void(0)" class="ag-column-tool-panel-item" (click)="onSelectClicked">
+                <a href="javascript:void(0)" class="ag-column-tool-panel-item" (click)="onSelectClicked" ref="eSelect">
                     <span class="ag-icon ag-icon-checkbox-checked" ref="eSelectChecked"></span>
                     <span class="ag-icon ag-icon-checkbox-unchecked" ref="eSelectUnchecked"></span>
                     <span class="ag-icon ag-icon-checkbox-indeterminate" ref="eSelectIndeterminate"></span>
                 </a>
             </div>
-            <div class="ag-filter-body">
+            <div class="ag-filter-body" ref="eFilter">
                 <input class="ag-column-name-filter" ref="eFilterTextField" type="text" placeholder="${translate('filterOoo', 'Filter...')}" (input)="onFilterTextChanged">
             </div>
         </div>`);
@@ -60,15 +62,23 @@ export class ColumnSelectHeaderComp extends Component {
 
         if (this.columnController.isReady()) {
             this.setColumnsCheckedState();
-            this.showOrHideExpand();
+            this.showOrHideOptions();
         }
         this.setExpandState(SELECTED_STATE.CHECKED);
     }
 
     // we only show expand / collapse if we are showing columns
-    private showOrHideExpand(): void {
+    private showOrHideOptions(): void {
+
+        let showFilter = !this.gridOptionsWrapper.isToolPanelSuppressColumnFilter();
+        let showSelect = !this.gridOptionsWrapper.isToolPanelSuppressColumnSelectAll();
+        let showExpand = !this.gridOptionsWrapper.isToolPanelSuppressColumnExpandAll();
+
         let groupsPresent = this.columnController.isPrimaryColumnGroupsPresent();
-        _.setVisible(this.eExpand, groupsPresent);
+
+        _.setVisible(this.eFilter, showFilter);
+        _.setVisible(this.eSelect, showSelect);
+        _.setVisible(this.eExpand, showExpand && groupsPresent);
     }
 
     private addEventListeners(): void {
@@ -86,7 +96,7 @@ export class ColumnSelectHeaderComp extends Component {
             this.addDestroyableEventListener(this.eventService, event, this.setColumnsCheckedState.bind(this));
         });
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideExpand.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
     }
 
     private onFilterTextChanged(): void {
