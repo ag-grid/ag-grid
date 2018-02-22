@@ -255,15 +255,14 @@ export class GridOptionsWrapper {
         // we don't allow row grouping when doing tree data
         return isTrue(this.gridOptions.toolPanelSuppressRowGroups) || this.isTreeData();
     }
-    public isToolPanelSuppressSideButtons() {
-        return isTrue(this.gridOptions.toolPanelSuppressSideButtons);
-    }
-    public isToolPanelSuppressPivotMode() {
-        return isTrue(this.gridOptions.toolPanelSuppressPivotMode) || this.isTreeData();
-    }
-    public isContractColumnSelection() {
-        return isTrue(this.gridOptions.contractColumnSelection);
-    }
+    public isToolPanelSuppressSideButtons() { return isTrue(this.gridOptions.toolPanelSuppressSideButtons); }
+    public isToolPanelSuppressPivotMode() { return isTrue(this.gridOptions.toolPanelSuppressPivotMode) || this.isTreeData();}
+    public isContractColumnSelection() { return isTrue(this.gridOptions.contractColumnSelection); }
+
+    public isToolPanelSuppressColumnFilter() { return isTrue(this.gridOptions.toolPanelSuppressColumnFilter); }
+    public isToolPanelSuppressColumnSelectAll() { return isTrue(this.gridOptions.toolPanelSuppressColumnSelectAll); }
+    public isToolPanelSuppressColumnExpandAll() { return isTrue(this.gridOptions.toolPanelSuppressColumnExpandAll); }
+
     public isSuppressTouch() { return isTrue(this.gridOptions.suppressTouch); }
     public useAsyncEvents() { return !isTrue(this.gridOptions.suppressAsyncEvents); }
     public isEnableCellChangeFlash() { return isTrue(this.gridOptions.enableCellChangeFlash); }
