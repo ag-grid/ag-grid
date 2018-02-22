@@ -255,8 +255,8 @@ export class GridOptionsWrapper {
         // we don't allow row grouping when doing tree data
         return isTrue(this.gridOptions.toolPanelSuppressRowGroups) || this.isTreeData();
     }
-    public isToolPanelUsingSideButton() {
-        return isTrue(this.gridOptions.toolPanelUseSideButton);
+    public isToolPanelSuppressSideButtons() {
+        return isTrue(this.gridOptions.toolPanelSuppressSideButtons);
     }
     public isToolPanelSuppressPivotMode() {
         return isTrue(this.gridOptions.toolPanelSuppressPivotMode) || this.isTreeData();

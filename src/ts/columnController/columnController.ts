@@ -1889,6 +1889,10 @@ export class ColumnController {
         this.eventService.dispatchEvent(event);
     }
 
+    public isPrimaryColumnGroupsPresent(): boolean {
+        return this.primaryHeaderRowCount > 1;
+    }
+
     // if we are using autoGroupCols, then they should be included for quick filter. this covers the
     // following scenarios:
     // a) user provides 'field' into autoGroupCol of normal grid, so now because a valid col to filter leafs on
