@@ -58,6 +58,7 @@ export interface GridOptions {
     toolPanelSuppressPivots?: boolean;
     toolPanelSuppressPivotMode?: boolean;
     toolPanelUseSideButton?: boolean;
+    contractColumnSelection?: boolean;
     suppressRowClickSelection?: boolean;
     suppressCellSelection?: boolean;
     sortingOrder?: string[];

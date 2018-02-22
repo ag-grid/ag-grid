@@ -261,6 +261,9 @@ export class GridOptionsWrapper {
     public isToolPanelSuppressPivotMode() {
         return isTrue(this.gridOptions.toolPanelSuppressPivotMode) || this.isTreeData();
     }
+    public isContractColumnSelection() {
+        return isTrue(this.gridOptions.contractColumnSelection);
+    }
     public isSuppressTouch() { return isTrue(this.gridOptions.suppressTouch); }
     public useAsyncEvents() { return !isTrue(this.gridOptions.suppressAsyncEvents); }
     public isEnableCellChangeFlash() { return isTrue(this.gridOptions.enableCellChangeFlash); }
