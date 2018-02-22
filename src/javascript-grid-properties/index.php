@@ -329,7 +329,19 @@ include '../documentation-main/documentation_header.php';
             <th>contractColumnSelection</th>
             <td>Set to true to have column list contracted by default - only used if column groups exist.</td>
         </tr>
-        </table>
+        <tr>
+            <th>toolPanelSuppressColumnFilter</th>
+            <td>Set to true to not show the 'column filter' component.</td>
+        </tr>
+        <tr>
+            <th>toolPanelSuppressColumnSelectAll</th>
+            <td>Set to true to not sure the column 'select all' component.</td>
+        </tr>
+        <tr>
+            <th>toolPanelSuppressColumnExpandAll</th>
+            <td>Set to true to not show the column 'expand all' component.</td>
+        </tr>
+    </table>
 <h2>Data & Row Models</h2>
     <table class="table content reference">
         <tr>
