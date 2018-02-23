@@ -357,7 +357,7 @@
         @include icon-background($params, "grip");
 
         background-position-x: left;
-        background-position-y: $grid-size / 2 + 2px;
+        background-position-y: $grid-size !important;
         float: left;
         height: 100%;
         width: $icon-size + $grid-size;
@@ -1125,6 +1125,7 @@
         .ag-column-drag {
             width: $icon-size;
             margin-left: $grid-size * 2;
+            margin-top: $grid-size / 2;
         }
     }
 
