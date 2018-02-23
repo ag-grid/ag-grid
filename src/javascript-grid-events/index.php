@@ -284,6 +284,10 @@ include '../documentation-main/documentation_header.php';
             the <code>rowData</code> bound property with <code>deltaRowDataMode=true</code>.</td>
         </tr>
         <tr>
+            <th>toolPanelVisibleChanged</th>
+            <td>The tool panel was hidden or shown. Use <code>api.isToolPanelShowing()</code> to get status..</td>
+        </tr>
+        <tr>
             <th>componentStateChanged</th>
             <td>
                 Only used by React, Angular, Web Components, Aurelia and VueJS ag-Grid components
@@ -333,6 +337,7 @@ CellValueChangedEvent {
         ├── ColumnPivotModeChangedEvent <span class="event-properties">{}</span>
         ├── ColumnEverythingChangedEvent <span class="event-properties">{}</span>
         ├── DisplayedColumnsChangedEvent <span class="event-properties">{}</span>
+        ├── toolPanelVisibleChanged <span class="event-properties">{}</span>
         ├── CellFocusedEvent <span class="event-properties">{
         │       <span class="event-attribute">rowIndex</span>: number, // the row index of the focused cell
         │       <span class="event-attribute">column</span>: Column, // the column of the focused cell
