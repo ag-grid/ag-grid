@@ -1,40 +1,29 @@
 var columnDefs = [
-    { headerName: "Athlete", field: "athlete", width: 150, enableRowGroup: true, enablePivot: true },
-    { headerName: "Age", field: "age", width: 90, enableValue: true },
-    { headerName: "Country", field: "country", width: 120, enableRowGroup: true, enablePivot: true, headerValueGetter: countryHeaderValueGetter },
-    { headerName: "Year", field: "year", width: 90, enableRowGroup: true, enablePivot: true },
-    { headerName: "Date", field: "date", width: 110, enableRowGroup: true, enablePivot: true },
-    { headerName: "Sport", field: "sport", width: 110, enableRowGroup: true, enablePivot: true },
-    { headerName: "Gold", field: "gold", width: 100, hide: true, enableValue: true, toolPanelClass: 'tp-gold' },
-    { headerName: "Silver", field: "silver", width: 100, hide: true, enableValue: true, toolPanelClass: ['tp-silver'] },
-    {
-        headerName: "Bronze", field: "bronze", width: 100, hide: true, enableValue: true,
-        toolPanelClass: function (params) {
-            return 'tp-bronze';
-        }
-    },
-    { headerName: "Total", field: "totalAgg", valueGetter: "node.group ? data.totalAgg : data.gold + data.silver + data.bronze", width: 100 }
+    { field: "athlete", width: 150},
+    { field: "age", width: 90},
+    { field: "country", width: 120},
+    { field: "year", width: 90 },
+    { field: "date", width: 110 },
+    { field: "sport", width: 110 },
+    { field: "gold", width: 100 },
+    { field: "silver", width: 100 },
+    { field: "bronze", width: 100 },
+    { field: "total", width: 100 }
 ];
 
-function countryHeaderValueGetter(params) {
-    switch (params.location) {
-        case 'csv': return 'CSV Country';
-        case 'clipboard': return 'CLIP Country';
-        case 'toolPanel': return 'TP Country';
-        case 'columnDrop': return 'CD Country';
-        case 'header': return 'H Country';
-        default: return 'Should never happen!';
-    }
-}
-
 var gridOptions = {
+    defaultColDef: {
+        // allow every column to be aggregated
+        enableValue: true,
+        // allow every column to be grouped
+        enableRowGroup: true,
+        // allow every column to be pivoted
+        enablePivot: true
+    },
     columnDefs: columnDefs,
-    rowData: null,
     enableSorting: true,
     showToolPanel: true,
-    enableFilter: true,
-    rowGroupPanelShow: 'always',
-    toolPanelUseSideButton: true
+    enableFilter: true
 };
 
 // setup the grid after the page has finished loading

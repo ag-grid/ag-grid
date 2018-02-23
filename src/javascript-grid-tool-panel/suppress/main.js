@@ -1,27 +1,29 @@
 var columnDefs = [
-    {headerName: "No Tool Panel 1", field: "athlete", width: 150, suppressToolPanel: true},
-    {headerName: "No Tool Panel 2", field: "athlete", width: 150, suppressToolPanel: true},
-    {headerName: "Athlete", field: "athlete", width: 150},
-    {headerName: "Age", field: "age", width: 90},
+    {headerName: "Athlete", field: "athlete", width: 150, suppressToolPanel: true},
+    {headerName: "Age", field: "age", width: 90, suppressToolPanel: true},
     {headerName: "Country", field: "country", width: 120},
     {headerName: "Year", field: "year", width: 90},
     {headerName: "Date", field: "date", width: 110},
     {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100, hide: true},
-    {headerName: "Silver", field: "silver", width: 100, hide: true},
-    {headerName: "Bronze", field: "bronze", width: 100, hide: true},
-    {headerName: "Total", field: "totalAgg", valueGetter: "node.group ? data.totalAgg : data.gold + data.silver + data.bronze", width: 100}
+    {headerName: "Gold", field: "gold", width: 100},
+    {headerName: "Silver", field: "silver", width: 100},
+    {headerName: "Bronze", field: "bronze", width: 100},
+    {headerName: "Total", field: "total", width: 100}
 ];
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: null,
     enableSorting: true,
     showToolPanel: true,
+
     toolPanelSuppressRowGroups: true,
     toolPanelSuppressValues: true,
     toolPanelSuppressPivots: true,
-    toolPanelSuppressPivotMode: true
+    toolPanelSuppressPivotMode: true,
+    toolPanelSuppressSideButtons: true,
+    toolPanelSuppressColumnFilter: true,
+    toolPanelSuppressColumnSelectAll: true,
+    toolPanelSuppressColumnExpandAll: true
 };
 
 // setup the grid after the page has finished loading

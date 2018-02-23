@@ -100,7 +100,6 @@ var gridOptions = {
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
     autoGroupColumnDef: groupColumn,
     showToolPanel: true,
-    toolPanelUseSideButton: true,
     checkboxSelection: function (params) {
         // we show checkbox selection in the first column, unless we are grouping,
         // as the group column is configured to always show selection
