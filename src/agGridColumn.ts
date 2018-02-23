@@ -91,6 +91,7 @@ export class AgGridColumn {
     @Input() public showRowGroup: any;
     @Input() public filter: any;
     @Input() public aggFunc: any;
+    @Input() public cellRenderer: any;
     @Input() public cellEditor: any;
     @Input() public pinned: any;
     @Input() public sortedAt: any;
@@ -102,7 +103,6 @@ export class AgGridColumn {
     @Input() public valueGetter: any;
     @Input() public valueSetter: any;
     @Input() public keyCreator: any;
-    @Input() public cellRenderer: any;
     @Input() public cellRendererFramework: any;
     @Input() public pinnedRowCellRenderer: any;
     @Input() public valueFormatter: any;

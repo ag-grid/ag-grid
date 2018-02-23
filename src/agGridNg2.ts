@@ -261,11 +261,18 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public detailCellRenderer : any = undefined;
     @Input() public detailCellRendererFramework : any = undefined;
     @Input() public onGridReady : any = undefined;
+    @Input() public defaultGroupSortComparator : any = undefined;
+    @Input() public isRowMaster : any = undefined;
+    @Input() public isRowSelectable : any = undefined;
+    @Input() public postSort : any = undefined;
     @Input() public toolPanelSuppressRowGroups : any = undefined;
     @Input() public toolPanelSuppressValues : any = undefined;
     @Input() public toolPanelSuppressPivots : any = undefined;
     @Input() public toolPanelSuppressPivotMode : any = undefined;
-    @Input() public toolPanelUseSideButton : any = undefined;
+    @Input() public toolPanelSuppressSideButtons : any = undefined;
+    @Input() public toolPanelSuppressColumnFilter : any = undefined;
+    @Input() public toolPanelSuppressColumnSelectAll : any = undefined;
+    @Input() public toolPanelSuppressColumnExpandAll : any = undefined;
     @Input() public suppressRowClickSelection : any = undefined;
     @Input() public suppressCellSelection : any = undefined;
     @Input() public suppressHorizontalScroll : any = undefined;
@@ -358,15 +365,12 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public suppressCsvExport : any = undefined;
     @Input() public treeData : any = undefined;
     @Input() public masterDetail : any = undefined;
-    @Input() public isRowMaster : any = undefined;
     @Input() public suppressMultiRangeSelection : any = undefined;
     @Input() public enterMovesDownAfterEdit : any = undefined;
     @Input() public enterMovesDown : any = undefined;
     @Input() public suppressPropertyNamesCheck : any = undefined;
     @Input() public rowMultiSelectWithClick : any = undefined;
-    @Input() public defaultGroupSortComparator : any = undefined;
-    @Input() public isRowSelectable : any = undefined;
-    @Input() public postSort : any = undefined;
+    @Input() public contractColumnSelection : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();
@@ -389,8 +393,8 @@ export class AgGridNg2 implements AfterViewInit {
     @Output() public rangeSelectionChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public modelUpdated: EventEmitter<any> = new EventEmitter<any>();
     @Output() public cellClicked: EventEmitter<any> = new EventEmitter<any>();
-    @Output() public cellMouseDown: EventEmitter<any> = new EventEmitter<any>();
     @Output() public cellDoubleClicked: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public cellMouseDown: EventEmitter<any> = new EventEmitter<any>();
     @Output() public cellContextMenu: EventEmitter<any> = new EventEmitter<any>();
     @Output() public cellValueChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowValueChanged: EventEmitter<any> = new EventEmitter<any>();

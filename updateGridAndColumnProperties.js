@@ -44,7 +44,11 @@ function getGridColumnProperties() {
 
     let result = '';
 
-    ColDefUtil.ALL_PROPERTIES.forEach((property) => {
+    function unique(value, index, self) {
+        return self.indexOf(value) === index;
+    }
+
+    ColDefUtil.ALL_PROPERTIES.filter(unique).forEach((property) => {
         if (skippableProperties.indexOf(property) === -1) {
             result += `    @Input() public ${property}: any;\n`;
         }
