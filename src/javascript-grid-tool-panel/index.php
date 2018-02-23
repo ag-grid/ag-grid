@@ -8,14 +8,30 @@ include '../documentation-main/documentation_header.php';
 
     <h1 class="heading-enterprise">Tool Panel</h1>
 
-    <p>
-        The tool panel is where you can change the state of the columns. This includes show / hide, move and group.
+    <p class="lead">
+        The tool panel is a side panel that provides functions for managing columns inside the grid.
     </p>
 
+    <h2>Showing the Tool Panel</h2>
+
     <p>
-        The tool panel panel can be shown be default by setting <code>showToolPanel=true</code> property,
-        or after the grid is initialised by calling the api function <code>showToolPanel(show)</code>. You can query if
-        the tool panel is showing with the api <code>isToolPanelShowing()</code>.
+        The tool panel can be shown in the following ways:
+        <ul>
+            <li>Setting the grid property <code>showToolPanel=true</code>.</li>
+            <li>Calling the api <code>showToolPanel(show)</code> to show or hide the tool panel.</li>
+            <li>Clicking the 'Columns' tab on the RHS of the tool panel.</li>
+            <li>Selecting the tool panel option from the <a href="../javascript-grid-context-menu/">context menu</a>.</li>
+        </ul>
+        To check if the tool panel is showing or not call the api <code>isToolPanelShowing()</code>. To be notified
+        when the tool panel is made visible or hidden listen for the event <code>toolPanelVisibleChanged</code>.
+    </p>
+
+    <p>============= put in example here</p>
+
+    <h2>Tool Panel Sections</h2>
+
+    <p>
+        The tool panel is split into sections.
     </p>
 
     <h2>Suppress Values</h2>
@@ -34,10 +50,6 @@ include '../documentation-main/documentation_header.php';
         in the tool panel. Note that hiding the group has the impact of also hiding the values, as it
         doesn't make sense to have values if you are not grouping.
     </p>
-
-    <h2>Open/close with side button</h2>
-
-    <p>By default, the user can toggle the tool panel visiblity from the context menu or from the column menu. To use a permanently displayed side button instead, set <code>toolPanelUseSideButton=true</code>.</p>
 
     <h2>Tool Panel Actions</h2>
 
