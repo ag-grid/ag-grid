@@ -141,6 +141,20 @@ gridOptions.columnDefs = [
     }
 ]</snippet>
 
+    <h2>Align the Header Group Label To The right</h2>
+
+<p>
+The labels in the grouping headers are positioned with <code>float: left</code>. 
+To make the group headers right-aligned, add the following  rule set in your application, after the grid's stylesheets. 
+Change the theme class to the one you use.
+</p>
+
+<snippet language="css">
+.ag-theme-balham .ag-header-group-cell-label span {
+    float: right;
+}
+</snippet>
+
     <h2 id="grouping-example">Grouping Example</h2>
 
     <p>
