@@ -1,4 +1,4 @@
-import {Autowired, Bean, Component, Context, GridCore, GridOptionsWrapper, PostConstruct} from "ag-grid/main";
+import {ToolPanelVisibleChanged, Events, EventService, Autowired, Bean, Component, Context, GridCore, GridOptionsWrapper, PostConstruct} from "ag-grid/main";
 import {IToolPanel} from "ag-grid";
 import {ColumnPanel} from "./columnPanel";
 
@@ -6,6 +6,8 @@ import {ColumnPanel} from "./columnPanel";
 export class ToolPanelComp extends Component implements IToolPanel {
 
     @Autowired("context") private context: Context;
+    @Autowired("eventService") private eventService: EventService;
+    @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
 
     private buttonComp: PanelSelectComp;
     private columnPanel: ColumnPanel;
@@ -43,6 +45,12 @@ export class ToolPanelComp extends Component implements IToolPanel {
 
     public showToolPanel(show: boolean): void {
         this.columnPanel.setVisible(show);
+        let event: ToolPanelVisibleChanged = {
+            type: Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi()
+        };
+        this.eventService.dispatchEvent(event);
     }
 
     public isToolPanelShowing(): boolean {
