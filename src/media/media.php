@@ -1,4 +1,7 @@
 <?php
+header("Location: https://medium.com/ag-grid", true, 301);
+exit;
+
 $pageTitle = "ag-Grid Blog: Home";
 $pageDescription = "Welcome to the ag-Grid Blog where we provide information on our new releases and lots of useful tutorials and guides to our products and the frameworks that we support.";
 $pageKeyboards = "blogs ag-grid angular react webpack";

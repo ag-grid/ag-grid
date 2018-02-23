@@ -15,8 +15,8 @@
                 <li class="<?php if ($navKey == "documentation") { ?>active<?php }?>">
                     <a href="/documentation-main/documentation.php">Documentation</a>
                 </li>
-                <li class="<?php if ($navKey == "blog") { ?>active<?php }?>">
-                    <a href="/media/media.php">Blog</a>
+                <li>
+                    <a href="https://medium.com/ag-grid" class="medium">Blog</a>
                 </li>
 
                 <li class="<?php if ($navKey == "support") { ?>active<?php }?>">

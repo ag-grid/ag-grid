@@ -21,7 +21,7 @@
             <ul>
                 <li><a href="/about.php">About</a></li>
                 <li><a href="/about.php#team">Team</a></li>
-                <li><a href="/media/media.php">Blog</a></li>
+                <li><a href="https://medium.com/ag-grid">Blog (Medium)</a></li>
                 <li><a href="/testimonials.php">Testimonials</a></li>
             </ul>
         </div>
