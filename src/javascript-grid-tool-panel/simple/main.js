@@ -1,14 +1,29 @@
 var columnDefs = [
-    { field: "athlete", width: 150},
-    { field: "age", width: 90},
-    { field: "country", width: 120},
-    { field: "year", width: 90 },
-    { field: "date", width: 110 },
+    {
+        headerName: 'Athlete',
+        children: [
+            { field: "athlete", width: 150},
+            { field: "age", width: 90},
+            { field: "country", width: 120}
+        ]
+    },
+    {
+        headerName: 'Competition',
+        children: [
+            { field: "year", width: 90 },
+            { field: "date", width: 110 },
+        ]
+    },
     { field: "sport", width: 110 },
-    { field: "gold", width: 100 },
-    { field: "silver", width: 100 },
-    { field: "bronze", width: 100 },
-    { field: "total", width: 100 }
+    {
+        headerName: 'Medals',
+        children: [
+            { field: "gold", width: 100 },
+            { field: "silver", width: 100 },
+            { field: "bronze", width: 100 },
+            { field: "total", width: 100 }
+        ]
+    }
 ];
 
 var gridOptions = {
