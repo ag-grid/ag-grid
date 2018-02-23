@@ -1,4 +1,5 @@
 export class Events {
+
     /** Everything has changed with the columns. Either complete new set of columns set, or user called setState()*/
     public static EVENT_COLUMN_EVERYTHING_CHANGED = 'columnEverythingChanged';
 
@@ -55,6 +56,9 @@ export class Events {
 
     /** Range selection has changed */
     public static EVENT_RANGE_SELECTION_CHANGED = 'rangeSelectionChanged';
+
+    /** For when the tool panel is shown / hidden */
+    public static EVENT_TOOL_PANEL_VISIBLE_CHANGED = 'toolPanelVisibleChanged';
 
     /** Model was updated - grid updates the drawn rows when this happens */
     public static EVENT_MODEL_UPDATED = 'modelUpdated';
