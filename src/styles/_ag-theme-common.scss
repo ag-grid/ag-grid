@@ -663,6 +663,7 @@
         .ag-column-select-column {
             height: $grid-size * 4;
             line-height: $grid-size * 4;
+            margin-left: 0;
 
             span {
                 float: left;
@@ -683,6 +684,10 @@
         .ag-column-container {
             padding-top: $grid-size;
         }
+
+        .ag-column-select-column.ag-toolpanel-add-group-indent {
+            margin-left: $icon-size + $grid-size * 2;
+        }
     }
 
     ////////////////////////////////////////
@@ -692,6 +697,13 @@
         display: flex;
     }
 
+    .ag-filter-body {
+        flex-grow: 1;
+        flex-shrink: 1;
+        padding-right: $grid-size;
+        
+    }
+
     .ag-column-tool-panel-item {
         button {
             font-family: $font-family;
@@ -699,6 +711,7 @@
             height: 100%;
         }
     }
+
 
     .ag-filter-filter {
         margin-bottom: $grid-size;
@@ -1453,7 +1466,7 @@
         }
 
         .ag-column-drop {
-            min-height: 100px;
+            min-height: 50px;
         }
     }
 
@@ -1475,6 +1488,8 @@
 
     .ag-column-name-filter {
         @include textbox($params);
+        width: 100%;
+        box-sizing: border-box;
     }
 
     $exported: (
