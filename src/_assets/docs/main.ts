@@ -5,6 +5,20 @@ import { $, lazyload, AnchorJS, Prism, initCookieDisclaimer } from "../common/ve
 declare const autocomplete: any;
 declare const algoliasearch: any;
 
+const anchors = new AnchorJS();
+anchors.options = {
+    placement: "left",
+    visible: "hover"
+};
+
+var selectors = new Array(5)
+    .fill(1)
+    .map(function(_, index) {
+        return "#content:not(.skip-in-page-nav) h" + (index + 1);
+    })
+    .join(", ");
+anchors.add(selectors);
+
 $(function() {
     var client = algoliasearch("O1K1ESGB5K", "29b87d27d24660f31e63cbcfd7a0316f");
 
@@ -57,20 +71,6 @@ $(function() {
         ul.css("height", $parent.hasClass("expanded") ? "0" : ul[0].scrollHeight);
         $parent.toggleClass("expanded");
     });
-
-    const anchors = new AnchorJS();
-    anchors.options = {
-        placement: "left",
-        visible: "hover"
-    };
-
-    var selectors = new Array(5)
-        .fill(1)
-        .map(function(_, index) {
-            return "#content:not(.skip-in-page-nav) h" + (index + 1);
-        })
-        .join(", ");
-    anchors.add(selectors);
 
     var docNav = $("#doc-nav");
     var level = 1;
