@@ -701,7 +701,6 @@
         flex-grow: 1;
         flex-shrink: 1;
         padding-right: $grid-size;
-        
     }
 
     .ag-column-tool-panel-item {
@@ -712,7 +711,6 @@
         }
     }
 
-
     .ag-filter-filter {
         margin-bottom: $grid-size;
     }
@@ -721,7 +719,6 @@
         border-bottom: 1px solid $border-color;
         box-sizing: border-box;
         height: $header-height;
-        padding-left: $grid-size;
         padding-top: $grid-size;
 
         label {
@@ -735,7 +732,7 @@
         }
 
         .ag-column-tool-panel a {
-            margin-right: $grid-size * 2;
+            margin: 0 $grid-size;
             padding-top: $grid-size / 2;
         }
     }
@@ -848,12 +845,7 @@
         }
 
         @if map-get($params, "use-icons-for-pager-buttons") {
-            $buttonIcons: (
-                btFirst: first,
-                btPrevious: previous,
-                btLast: last,
-                btNext: next
-            );
+            $buttonIcons: (btFirst: first, btPrevious: previous, btLast: last, btNext: next);
 
             @each $ref, $icon in $buttonIcons {
                 button[ref="#{$ref}"] {
@@ -1307,9 +1299,9 @@
                 }
             }
 
-            .ag-column-select-column {
+            .ag-column-select-column.ag-toolpanel-add-group-indent {
                 margin-left: 0;
-                margin-right: $icon-size + $cell-horizontal-padding;
+                margin-right: $icon-size + $grid-size * 2;
             }
         }
 
@@ -1393,13 +1385,13 @@
             border-right: 0;
         }
 
-        .ag-column-select-header .ag-column-tool-panel a {
-            margin-left: 0;
-            margin-right: $grid-size * 2;
+        .ag-column-select-header .ag-filter-body {
+            margin-left: $grid-size;
+            margin-right: 0;
         }
 
-        .ag-column-select-header .ag-filter-body {
-            margin-right: $grid-size;
+        .ag-column-drag {
+            background-position-x: right;
         }
     }
 
