@@ -1,6 +1,8 @@
 <?php
 date_default_timezone_set('Europe/London');
 
+const INDEFINITE_LIFETIME=-1;
+
 const JIRA_ENDPOINT = 'https://ag-grid.atlassian.net/rest/api/2/search?jql=filter=';
 const PIPELINE_SECTIONS = array(
     'current_release' => JIRA_ENDPOINT . '11730+order+by+priority+DESC+%2C+status+ASC',
@@ -66,13 +68,33 @@ function getCacheFile($report_type)
     return dirname(__FILE__) . "/cache/" . $report_type . '.json';
 }
 
+function getCacheLifetimeMinutes($report_type, $jira_config)
+{
+    $cache_lifetime_minutes = $jira_config->{"cache-lifetime-minutes"};
+    if(isset($jira_config->{"overrides"}->{$report_type}) && isset($jira_config->{"overrides"}->{$report_type}->{"cache-lifetime-minutes"}))
+    {
+        $cache_lifetime_minutes = $jira_config->{"overrides"}->{$report_type}->{"cache-lifetime-minutes"};
+    }
+
+    return $cache_lifetime_minutes;
+
+}
+
+
 function cacheEntryValid($report_type, $jira_config)
 {
     clearstatcache();
 
     $cache_file = getCacheFile($report_type);
-    $cache_lifetime_minutes = $jira_config->{"cache-lifetime-minutes"};
-    return file_exists($cache_file) && (filemtime($cache_file) > (time() - 60 * $cache_lifetime_minutes));
+    $cache_lifetime_minutes = getCacheLifetimeMinutes($report_type, $jira_config);
+
+    $file_exists = file_exists($cache_file);
+    if($file_exists && $cache_lifetime_minutes == INDEFINITE_LIFETIME)
+    {
+        return True;
+    }
+
+    return $file_exists && (filemtime($cache_file) > (time() - 60 * $cache_lifetime_minutes));
 }
 
 function getFromCache($report_type)
@@ -107,8 +129,10 @@ function retrieveJiraFilterData($report_type)
     } else {
         // cache valid? retrieve from cache
         if (cacheEntryValid($report_type, $jira_config)) {
+            echo 'cache valid<br/>';
             $dataAsJson = getFromCache($report_type);
         } else {
+            echo 'cache not valid<br/>';
             // other get live data and update cache for next time
             $dataAsJson = getLiveJiraFilterData($report_type, $maxResults, $jira_config);
             updateCache($report_type, $dataAsJson);
