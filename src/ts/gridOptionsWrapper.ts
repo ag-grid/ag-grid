@@ -31,6 +31,7 @@ import {AgEvent} from "./events";
 import {Environment} from "./environment";
 import {PropertyKeys} from "./propertyKeys";
 import {ColDefUtil} from "./components/colDefUtil";
+import {Events} from "./eventKeys";
 
 let DEFAULT_ROW_HEIGHT = 25;
 let DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -170,6 +171,7 @@ export class GridOptionsWrapper {
     private checkGridOptionsProperties() {
         let userProperties: string [] = Object.getOwnPropertyNames(this.gridOptions);
         let validProperties: string [] = PropertyKeys.ALL_PROPERTIES;
+        Object.keys(Events).forEach(it=>validProperties.push (ComponentUtil.getCallbackForEvent((<any>Events)[it])));
         let validPropertiesAndExceptions: string [] = validProperties.concat('api', 'columnApi');
 
         this.checkProperties(
