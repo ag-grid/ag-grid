@@ -261,8 +261,4 @@ this.params.context.componentParent</snippet>
         point is that you can use the <code>context</code> mechanism to share information between the
         components.</p>
 
-    <p>The <a href="../example-polymer-dynamic#dynamic">Dynamic Components Example</a> illustrates this in the Child/Parent column</p>
-
-
-
 <?php include '../documentation-main/documentation_footer.php'; ?>

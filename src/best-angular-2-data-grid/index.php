@@ -45,16 +45,6 @@ include '../documentation-main/documentation_header.php';
     </div>
 </div>
 
-<div class="docs-homepage-section-preview">
-    <div>
-    <h2>Full Examples with Angular</h2>
-    <p>
-                    This page features examples of using ag-Grid and Angular together. It covers more of the features of ag-Grid.
-                </p>
-    <p> <a href="../example-angular/">Go Full Examples with Angular</a> </p>
-    </div>
-</div>
-
 <?php
 $featuresRoot = '../javascript-grid-features';
 include '../javascript-grid-features/gridFeatures.php';
