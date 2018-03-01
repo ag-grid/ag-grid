@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "ag-Grid: Datagrid Performance";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. The core grid engine gives Performance unlike that seen before. The grid uses row and column virtualisation, animation frames and many other techniques. Free and Commercial version available.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. The core grid engine gives Performance unlike that seen before. The grid uses row and column virtualisation, animation frames and many other techniques. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Performance";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

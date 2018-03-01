@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid - Enterprise Grade Features: Tree Data";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Tree Data. Use Tree Data to display data that has parent / child relationships where the parent / child relationships are provided as part of the data. For example, a folder can contain zero or more files and other folders. Free and Commercial version available.";
+$pageTitle = "Tree Data: Enterprise Grade Feature of our Datagrid";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Tree Data. Use Tree Data to display data that has parent / child relationships where the parent / child relationships are provided as part of the data. For example, a folder can contain zero or more files and other folders. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Tree Data";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

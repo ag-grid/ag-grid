@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "ag-Grid - Working with Data: View Refresh";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is View Refresh. If the data changes outside of the grid, get the grid to do a View Refresh to update the UI to the latest values. The grid will use change detection to only refresh values that have changed. Free and Commercial version available.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is View Refresh. If the data changes outside of the grid, get the grid to do a View Refresh to update the UI to the latest values. The grid will use change detection to only refresh values that have changed. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Refresh";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid - Enterprise Grade Features: Master Detail";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Master Detail. Use Master Detail to expand rows and have another grid with different columns inside. Free and Commercial version available.";
+$pageTitle = "Master Detail: Enterprise Grade Feature of our Datagrid";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Master Detail. Use Master Detail to expand rows and have another grid with different columns inside. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid full width master detail javascript datagrid";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid - Core Grid Features: Column Filter";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Column Filter. Column Filters appear in the column menu. The grid comes with filters out of the box: text, number, date and set filters. You can also create your own customer filter. Free and Commercial version available.";
+$pageTitle = "Column Filter: Core Feature of our Datagrid";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Column Filter. Column Filters appear in the column menu. The grid comes with filters out of the box: text, number, date and set filters. You can also create your own customer filter. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Filtering";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid - Enterprise Grade Features: Range Selection";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Range Selection. Drag the mouse over cells to create a Range Selection. This is handy for highlighting data or for copying to the clipboard. Free and Commercial version available.";
+$pageTitle = "Range Selection: Enterprise Grade Feature of our Datagrid";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Range Selection. Drag the mouse over cells to create a Range Selection. This is handy for highlighting data or for copying to the clipboard. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "range selection javascript grid ag-grid";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

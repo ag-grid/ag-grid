@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid - Core Grid Features: Column Resizing";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Column Resizing. Resize columns by dragging the edge of the column header, Auto Fill to fill the grid width, or Auto Size columns to fit their content. Free and Commercial version available.";
+$pageTitle = "Column Resizing: Core Feature of our Datagrid";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Column Resizing. Resize columns by dragging the edge of the column header, Auto Fill to fill the grid width, or Auto Size columns to fit their content. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Resizing";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
