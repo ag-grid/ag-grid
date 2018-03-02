@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Internationalisation: Styling & Appearance Feature of our Datagrid";
+$pageTitle = "Internationalisation: Styling & Appearance with our Datagrid";
 $pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Internationalisation. Support multiple languages with Internationalisation. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Internationalisation";
 $pageGroup = "feature";

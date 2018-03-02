@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "ag-Grid Examples: Overview";
+$pageTitle = "ag-Grid Examples: Overview showcasing our features";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. We have built lots of examples so you can see the datagrid in action with your framework of choice. This page is the jumping off point for those examples.";
 $pageKeyboards = "ag-Grid Examples";
 $pageGroup = "examples";

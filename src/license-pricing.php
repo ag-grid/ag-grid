@@ -7,7 +7,7 @@ gtm_data_layer('pricing', array('state' => 'start'));
 <html lang="en">
 <head lang="en">
 <?php
-meta_and_links("ag-Grid: License and Pricing", "ag-Grid Javascript Grid License and Pricing", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page shows adescribes the License and Pricing details for ag-Grid Enterprise.", true);
+meta_and_links("Understanding License and Pricing for ag-Grid Enterprise", "ag-Grid Javascript Grid License and Pricing", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page shows adescribes the License and Pricing details for ag-Grid Enterprise.", true);
 ?>
 
 <!-- Facebook Pixel Code -->

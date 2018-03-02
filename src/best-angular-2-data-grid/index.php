@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "ag-Grid: The Best Angular Datagrid in the World";
+$pageTitle = "Datagrid for Angular. 63 Features and world class performance.";
 $pageDescription = "A feature rich data grid designed for Enterprise applications. Easily integrate with Angular to deliver filtering, grouping, aggregation, pivoting and much more. Try our Community version now or take a free 2 month trial of Enterprise Version.";
 $pageKeyboards = "Angular 2 Grid";
 $pageGroup = "basics";
@@ -10,6 +10,12 @@ include '../documentation-main/documentation_header.php';
 <div>
 
     <h1 class="first-h1"> Angular Datagrid </h1>
+    
+    <p class="lead">
+        ag-Grid is designed to integrate seamlessly with Angular 2+. You can quickly add a datagrid or datatables to your Angular application and leverage our 
+        63 <a href="/javascript-grid-features/">features</a>. This page features a working example with sample Angular code viewable on 
+        <a href="https://plnkr.co/"> Plunker</a>. The <a href="/angular-getting-started/">Getting Started</a> section contains How To guides and tutorials so you can learn the product step-by-step.
+    </p>
 
     <?= example('ag-Grid in Angular', 'rich-grid-example', 'angular', array( "enterprise" => 1, "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome" ) )); ?>
 

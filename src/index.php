@@ -10,9 +10,9 @@ $version = 'latest';
 <html lang="en">
 <head>
 <?
-$title = 'ag-Grid: The Best HTML5 Datagrid in the World';
+$title = 'ag-Grid: Datagrid with 63 Features and Lightening Performance';
 $keywords = 'javascript data grid react angularjs angular 2 web components aurelia';
-$description = 'ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. Easily integrate with your framework to deliver filtering, grouping, aggregation, pivoting and much more. Version 16 just released.';
+$description = 'ag-Grid is feature rich datagrid designed for the major JavaScript Frameworks. Version 17 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that your users expect. Our Community version is free and open source or take a 2 month trial of ag-Grid Enterprise.';
 meta_and_links($title, $keywords, $description, false);
 ?>
 <link rel="stylesheet" href="dist/homepage.css">
@@ -35,21 +35,21 @@ meta_and_links($title, $keywords, $description, false);
             </div>
 
             <div>
-                <h2 title="ag-Grid">THE BEST
+                <h1 title="ag-Grid">THE BEST
                     <br>
                     HTML5 GRID
                     <br>
                     IN THE WORLD
-                </h2>
+                </h1>
 
                 <ul id="homepage-highlights">
                     <li>
-                        Over <strong>1,000</strong> Companies
+                        Over <strong>1,200</strong> Companies
                         use ag-Grid Enterprise.
                     </li>
 
                     <li>
-                        Over <strong>15%</strong> of the Fortune 500
+                        Over <strong>20%</strong> of the Fortune 500
                         use ag-Grid Enterprise.
                     </li>
 

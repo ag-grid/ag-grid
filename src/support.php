@@ -7,7 +7,7 @@ gtm_data_layer('support');
 <html lang="en">
 <head lang="en">
 <?php
-meta_and_links("ag-Grid: Technical Support", "ag-Grid Javascript Grid Support", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page explains the different support models for the free and Enterprise versions of ag-Grid.", false);
+meta_and_links("How to get Support for ag-Grid", "ag-Grid Javascript Grid Support", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page explains the different support models for the free and Enterprise versions of ag-Grid.", false);
 ?>
 <link rel="stylesheet" href="../dist/homepage.css">
 </head>

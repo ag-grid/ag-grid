@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "ag-Grid Reference: Grid API";
+$pageTitle = "ag-Grid Reference Guide: Grid API";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This reference guide covers all of the methods available in the Grid API.";
 $pageKeyboards = "ag-Grid API";
 $pageGroup = "reference";
