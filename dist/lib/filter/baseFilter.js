@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -312,7 +312,6 @@ var ScalarBaseFilter = (function (_super) {
         if (this.filterParams.nullComparator && this.filterParams.nullComparator[reducedType]) {
             return this.filterParams.nullComparator[reducedType];
         }
-        ;
         return ScalarBaseFilter.DEFAULT_NULL_COMPARATOR[reducedType];
     };
     ScalarBaseFilter.prototype.doesFilterPass = function (params) {
@@ -320,8 +319,9 @@ var ScalarBaseFilter = (function (_super) {
         var comparator = this.nullComparator(this.filter);
         var rawFilterValues = this.filterValues();
         var from = Array.isArray(rawFilterValues) ? rawFilterValues[0] : rawFilterValues;
-        if (from == null)
+        if (from == null) {
             return true;
+        }
         var compareResult = comparator(from, value);
         if (this.filter === BaseFilter.EQUALS) {
             return compareResult === 0;

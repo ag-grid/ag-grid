@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v16.0.1
+// Type definitions for ag-grid v17.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../widgets/component";
@@ -13,11 +13,10 @@ export declare class HeaderContainer {
     private scrollVisibleService;
     private eContainer;
     private eViewport;
-    private eRoot;
     private headerRowComps;
     private pinned;
     private dropTarget;
-    constructor(eContainer: HTMLElement, eViewport: HTMLElement, eRoot: HTMLElement, pinned: string);
+    constructor(eContainer: HTMLElement, eViewport: HTMLElement, pinned: string);
     forEachHeaderElement(callback: (renderedHeaderElement: Component) => void): void;
     private init();
     private onColumnRowGroupChanged();

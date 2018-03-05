@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v16.0.1
+// Type definitions for ag-grid v17.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../entities/rowNode";
@@ -16,6 +16,8 @@ export declare class SortService {
     private columnController;
     private valueService;
     private gridOptionsWrapper;
+    private postSortFunc;
+    init(): void;
     sortAccordingToColumnsState(rowNode: RowNode): void;
     sort(rowNode: RowNode, sortOptions: SortOption[]): void;
     private compareRowNodes(sortOptions, sortedNodeA, sortedNodeB);

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,6 +29,7 @@ var ColDefUtil = (function () {
         'templateUrl',
         'filter',
         'aggFunc',
+        'cellRenderer',
         'cellEditor',
         'pinned'
     ];
@@ -71,6 +72,7 @@ var ColDefUtil = (function () {
         'pivotIndex'
     ];
     ColDefUtil.BOOLEAN_PROPERTIES = [
+        'suppressCellFlash',
         'suppressToolPanel',
         'openByDefault',
         'marryChildren',
@@ -104,6 +106,7 @@ var ColDefUtil = (function () {
         'valueGetter',
         'valueSetter',
         'keyCreator',
+        'cellRenderer',
         'cellRendererFramework',
         'pinnedRowCellRenderer',
         'valueFormatter',

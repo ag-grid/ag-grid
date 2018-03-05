@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,7 @@ globalObj.HTMLButtonElement = typeof HTMLButtonElement === 'undefined' ? {} : HT
 globalObj.HTMLSelectElement = typeof HTMLSelectElement === 'undefined' ? {} : HTMLSelectElement;
 globalObj.HTMLInputElement = typeof HTMLInputElement === 'undefined' ? {} : HTMLInputElement;
 globalObj.Node = typeof Node === 'undefined' ? {} : Node;
+globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 // columnController
 var balancedColumnTreeBuilder_1 = require("./dist/lib/columnController/balancedColumnTreeBuilder");
 exports.BalancedColumnTreeBuilder = balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder;
@@ -105,8 +106,8 @@ var headerRenderer_1 = require("./dist/lib/headerRendering/headerRenderer");
 exports.HeaderRenderer = headerRenderer_1.HeaderRenderer;
 var headerRowComp_1 = require("./dist/lib/headerRendering/headerRowComp");
 exports.HeaderRowComp = headerRowComp_1.HeaderRowComp;
-var horizontalDragService_1 = require("./dist/lib/headerRendering/horizontalDragService");
-exports.HorizontalDragService = horizontalDragService_1.HorizontalDragService;
+var horizontalResizeService_1 = require("./dist/lib/headerRendering/horizontalResizeService");
+exports.HorizontalResizeService = horizontalResizeService_1.HorizontalResizeService;
 var moveColumnController_1 = require("./dist/lib/headerRendering/moveColumnController");
 exports.MoveColumnController = moveColumnController_1.MoveColumnController;
 var standardMenu_1 = require("./dist/lib/headerRendering/standardMenu");
@@ -225,6 +226,8 @@ var gridOptionsWrapper_1 = require("./dist/lib/gridOptionsWrapper");
 exports.GridOptionsWrapper = gridOptionsWrapper_1.GridOptionsWrapper;
 var eventService_1 = require("./dist/lib/eventService");
 exports.EventService = eventService_1.EventService;
+var selectableService_1 = require("./dist/lib/rowNodes/selectableService");
+exports.SelectableService = selectableService_1.SelectableService;
 var gridCore_1 = require("./dist/lib/gridCore");
 exports.GridCore = gridCore_1.GridCore;
 var logger_1 = require("./dist/lib/logger");

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -1051,7 +1051,8 @@ var ColumnController = (function () {
         var event = {
             type: events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED,
             api: this.gridApi,
-            columnApi: this.columnApi
+            columnApi: this.columnApi,
+            source: source
         };
         this.eventService.dispatchEvent(event);
         return success;
@@ -1333,7 +1334,8 @@ var ColumnController = (function () {
         var eventEverythingChanged = {
             type: events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED,
             api: this.gridApi,
-            columnApi: this.columnApi
+            columnApi: this.columnApi,
+            source: source
         };
         this.eventService.dispatchEvent(eventEverythingChanged);
         var newColumnsLoadedEvent = {
@@ -1623,6 +1625,9 @@ var ColumnController = (function () {
             columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(event);
+    };
+    ColumnController.prototype.isPrimaryColumnGroupsPresent = function () {
+        return this.primaryHeaderRowCount > 1;
     };
     // if we are using autoGroupCols, then they should be included for quick filter. this covers the
     // following scenarios:

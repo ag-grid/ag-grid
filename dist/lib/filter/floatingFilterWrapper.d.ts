@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v16.0.1
+// Type definitions for ag-grid v17.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -18,9 +18,13 @@ export interface IFloatingFilterWrapperComp<M, F extends FloatingFilterChange, P
 }
 export declare abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends Component implements IFloatingFilterWrapperComp<M, F, PC, P> {
     private context;
+    private columnHoverService;
+    private eventService;
     private beans;
     column: Column;
     init(params: P): void | Promise<void>;
+    private addColumnHoverListener();
+    private onColumnHover();
     abstract onParentModelChanged(parentModel: M): void;
     abstract enrichBody(body: HTMLElement): void;
     private setupWidth();

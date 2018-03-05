@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,6 +29,12 @@ var GridCell = (function () {
     };
     GridCell.prototype.createId = function () {
         return this.rowIndex + "." + this.floating + "." + this.column.getId();
+    };
+    GridCell.prototype.equals = function (other) {
+        var colsMatch = this.column === other.column;
+        var floatingMatch = this.floating === other.floating;
+        var indexMatch = this.rowIndex === other.rowIndex;
+        return colsMatch && floatingMatch && indexMatch;
     };
     return GridCell;
 }());

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v16.0.1
+// Type definitions for ag-grid v17.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
@@ -9,7 +9,7 @@ export declare class HeaderWrapperComp extends Component {
     private gridOptionsWrapper;
     private dragAndDropService;
     private columnController;
-    private horizontalDragService;
+    private horizontalResizeService;
     private context;
     private menuFactory;
     private gridApi;
@@ -22,11 +22,10 @@ export declare class HeaderWrapperComp extends Component {
     private eResize;
     private cbSelectAll;
     private column;
-    private eRoot;
     private dragSourceDropTarget;
     private pinned;
     private startWidth;
-    constructor(column: Column, eRoot: HTMLElement, dragSourceDropTarget: DropTarget, pinned: string);
+    constructor(column: Column, dragSourceDropTarget: DropTarget, pinned: string);
     getColumn(): Column;
     init(): void;
     private addColumnHoverListener();
@@ -39,8 +38,8 @@ export declare class HeaderWrapperComp extends Component {
     private setupMove(eHeaderCellLabel, displayName);
     private createDragItem();
     private setupResize();
-    onDragging(dragChange: number, finished: boolean): void;
-    onDragStart(): void;
+    onResizing(finished: boolean, resizeAmount: number): void;
+    onResizeStart(): void;
     private setupTooltip();
     private setupMovingCss();
     private addAttributes();
@@ -48,5 +47,5 @@ export declare class HeaderWrapperComp extends Component {
     private setupMenuClass();
     private onMenuVisible();
     private onColumnWidthChanged();
-    private normaliseDragChange(dragChange);
+    private normaliseResizeAmount(dragChange);
 }

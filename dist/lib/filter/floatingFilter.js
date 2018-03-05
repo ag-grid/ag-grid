@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -62,14 +62,16 @@ var InputTextFloatingFilterComp = (function (_super) {
         }
         this.lastKnownModel = parentModel;
         var incomingTextValue = this.asFloatingFilterText(parentModel);
-        if (incomingTextValue === this.eColumnFloatingFilter.value)
+        if (incomingTextValue === this.eColumnFloatingFilter.value) {
             return;
+        }
         this.eColumnFloatingFilter.value = incomingTextValue;
     };
     InputTextFloatingFilterComp.prototype.syncUpWithParentFilter = function (e) {
         var model = this.asParentModel();
-        if (this.equalModels(this.lastKnownModel, model))
+        if (this.equalModels(this.lastKnownModel, model)) {
             return;
+        }
         var modelUpdated = null;
         if (utils_1._.isKeyPressed(e, constants_1.Constants.KEY_ENTER)) {
             modelUpdated = this.onFloatingFilterChanged({
@@ -88,12 +90,15 @@ var InputTextFloatingFilterComp = (function (_super) {
         }
     };
     InputTextFloatingFilterComp.prototype.equalModels = function (left, right) {
-        if (utils_1._.referenceCompare(left, right))
+        if (utils_1._.referenceCompare(left, right)) {
             return true;
-        if (!left || !right)
+        }
+        if (!left || !right) {
             return false;
-        if (Array.isArray(left) || Array.isArray(right))
+        }
+        if (Array.isArray(left) || Array.isArray(right)) {
             return false;
+        }
         return (utils_1._.referenceCompare(left.type, right.type) &&
             utils_1._.referenceCompare(left.filter, right.filter) &&
             utils_1._.referenceCompare(left.filterTo, right.filterTo) &&
@@ -112,8 +117,9 @@ var TextFloatingFilterComp = (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     TextFloatingFilterComp.prototype.asFloatingFilterText = function (parentModel) {
-        if (!parentModel)
+        if (!parentModel) {
             return '';
+        }
         return parentModel.filter;
     };
     TextFloatingFilterComp.prototype.asParentModel = function () {
@@ -152,8 +158,9 @@ var DateFloatingFilterComp = (function (_super) {
     DateFloatingFilterComp.prototype.onDateChanged = function () {
         var parentModel = this.currentParentModel();
         var model = this.asParentModel();
-        if (this.equalModels(parentModel, model))
+        if (this.equalModels(parentModel, model)) {
             return;
+        }
         this.onFloatingFilterChanged({
             model: model,
             apply: true
@@ -161,12 +168,15 @@ var DateFloatingFilterComp = (function (_super) {
         this.lastKnownModel = model;
     };
     DateFloatingFilterComp.prototype.equalModels = function (left, right) {
-        if (utils_1._.referenceCompare(left, right))
+        if (utils_1._.referenceCompare(left, right)) {
             return true;
-        if (!left || !right)
+        }
+        if (!left || !right) {
             return false;
-        if (Array.isArray(left) || Array.isArray(right))
+        }
+        if (Array.isArray(left) || Array.isArray(right)) {
             return false;
+        }
         return (utils_1._.referenceCompare(left.type, right.type) &&
             utils_1._.referenceCompare(left.dateFrom, right.dateFrom) &&
             utils_1._.referenceCompare(left.dateTo, right.dateTo) &&
@@ -207,8 +217,9 @@ var NumberFloatingFilterComp = (function (_super) {
     }
     NumberFloatingFilterComp.prototype.asFloatingFilterText = function (parentModel) {
         var rawParentModel = this.currentParentModel();
-        if (parentModel == null && rawParentModel == null)
+        if (parentModel == null && rawParentModel == null) {
             return '';
+        }
         if (parentModel == null && rawParentModel != null && rawParentModel.type !== 'inRange') {
             this.eColumnFloatingFilter.readOnly = false;
             return '';
@@ -247,10 +258,12 @@ var NumberFloatingFilterComp = (function (_super) {
         };
     };
     NumberFloatingFilterComp.prototype.asNumber = function (value) {
-        if (value == null)
+        if (value == null) {
             return null;
-        if (value === '')
+        }
+        if (value === '') {
             return null;
+        }
         var asNumber = Number(value);
         var invalidNumber = !utils_1._.isNumeric(asNumber);
         return invalidNumber ? null : asNumber;
@@ -268,14 +281,16 @@ var SetFloatingFilterComp = (function (_super) {
         this.eColumnFloatingFilter.readOnly = true;
     };
     SetFloatingFilterComp.prototype.asFloatingFilterText = function (parentModel) {
-        if (!parentModel || parentModel.length === 0)
+        if (!parentModel || parentModel.length === 0) {
             return '';
+        }
         var arrayToDisplay = parentModel.length > 10 ? parentModel.slice(0, 10).concat(['...']) : parentModel;
         return "(" + parentModel.length + ") " + arrayToDisplay.join(",");
     };
     SetFloatingFilterComp.prototype.asParentModel = function () {
-        if (this.eColumnFloatingFilter.value == null || this.eColumnFloatingFilter.value === '')
+        if (this.eColumnFloatingFilter.value == null || this.eColumnFloatingFilter.value === '') {
             return null;
+        }
         return this.eColumnFloatingFilter.value.split(",");
     };
     return SetFloatingFilterComp;

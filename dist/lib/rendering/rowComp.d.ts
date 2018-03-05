@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v16.0.1
+// Type definitions for ag-grid v17.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { CellComp } from "./cellComp";
@@ -134,7 +134,6 @@ export declare class RowComp extends Component {
     private onRowHeightChanged();
     addEventListener(eventType: string, listener: Function): void;
     removeEventListener(eventType: string, listener: Function): void;
-    private destroyScope();
     destroy(animate?: boolean): void;
     private destroyContainingCells();
     getAndClearDelayedDestroyFunctions(): Function[];

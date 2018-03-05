@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -48,12 +48,25 @@ var HeaderGroupComp = (function (_super) {
         var _this = this;
         this.addInIcon('columnGroupOpened', 'agOpened');
         this.addInIcon('columnGroupClosed', 'agClosed');
-        var expandAction = function () {
+        var expandAction = function (event) {
+            if (utils_1.Utils.isStopPropagationForAgGrid(event)) {
+                return;
+            }
             var newExpandedValue = !_this.params.columnGroup.isExpanded();
             _this.columnController.setColumnGroupOpened(_this.params.columnGroup.getOriginalColumnGroup(), newExpandedValue, "uiColumnExpanded");
         };
         this.addTouchAndClickListeners(this.eCloseIcon, expandAction);
         this.addTouchAndClickListeners(this.eOpenIcon, expandAction);
+        var stopPropagationAction = function (event) {
+            utils_1.Utils.stopPropagationForAgGrid(event);
+        };
+        // adding stopPropagation to the double click for the icons prevents double click action happening
+        // when the icons are clicked. if the icons are double clicked, then the groups should open and
+        // then close again straight away. if we also listened to double click, then the group would open,
+        // close, then open, which is not what we want. double click should only action if the user double
+        // clicks outside of the icons.
+        this.addDestroyableEventListener(this.eCloseIcon, 'dblclick', stopPropagationAction);
+        this.addDestroyableEventListener(this.eOpenIcon, 'dblclick', stopPropagationAction);
         this.addDestroyableEventListener(this.getGui(), 'dblclick', expandAction);
         this.updateIconVisibility();
         var originalColumnGroup = this.params.columnGroup.getOriginalColumnGroup();

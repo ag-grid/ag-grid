@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35,8 +35,9 @@ var TabbedLayout = (function () {
         this.items.forEach(function (itemWrapper) {
             utils_1.Utils.removeAllChildren(eDummyContainer);
             var eClone = itemWrapper.tabbedItem.bodyPromise.resolveNow(null, function (body) { return body.cloneNode(true); });
-            if (eClone == null)
+            if (eClone == null) {
                 return;
+            }
             eDummyContainer.appendChild(eClone);
             if (minWidth < eDummyContainer.offsetWidth) {
                 minWidth = eDummyContainer.offsetWidth;

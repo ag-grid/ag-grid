@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -46,13 +46,12 @@ var HeaderRowType;
 })(HeaderRowType = exports.HeaderRowType || (exports.HeaderRowType = {}));
 var HeaderRowComp = (function (_super) {
     __extends(HeaderRowComp, _super);
-    function HeaderRowComp(dept, type, pinned, eRoot, dropTarget) {
+    function HeaderRowComp(dept, type, pinned, dropTarget) {
         var _this = _super.call(this, "<div class=\"ag-header-row\" role=\"presentation\"/>") || this;
         _this.headerComps = {};
         _this.dept = dept;
         _this.type = type;
         _this.pinned = pinned;
-        _this.eRoot = eRoot;
         _this.dropTarget = dropTarget;
         return _this;
     }
@@ -99,14 +98,17 @@ var HeaderRowComp = (function (_super) {
         }
         var numberOfNonGroups = 1 + numberOfFloating;
         var numberOfGroups = headerRowCount - numberOfNonGroups;
-        for (var i = 0; i < numberOfGroups; i++)
+        for (var i = 0; i < numberOfGroups; i++) {
             sizes.push(groupHeight);
+        }
         sizes.push(headerHeight);
-        for (var i = 0; i < numberOfFloating; i++)
+        for (var i = 0; i < numberOfFloating; i++) {
             sizes.push(this.gridOptionsWrapper.getFloatingFiltersHeight());
+        }
         var rowHeight = 0;
-        for (var i = 0; i < this.dept; i++)
+        for (var i = 0; i < this.dept; i++) {
             rowHeight += sizes[i];
+        }
         this.getGui().style.top = rowHeight + 'px';
         this.getGui().style.height = sizes[this.dept] + 'px';
     };
@@ -194,10 +196,10 @@ var HeaderRowComp = (function (_super) {
         var result;
         switch (this.type) {
             case HeaderRowType.COLUMN:
-                result = new headerWrapperComp_1.HeaderWrapperComp(columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
+                result = new headerWrapperComp_1.HeaderWrapperComp(columnGroupChild, this.dropTarget, this.pinned);
                 break;
             case HeaderRowType.COLUMN_GROUP:
-                result = new headerGroupWrapperComp_1.HeaderGroupWrapperComp(columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
+                result = new headerGroupWrapperComp_1.HeaderGroupWrapperComp(columnGroupChild, this.dropTarget, this.pinned);
                 break;
             case HeaderRowType.FLOATING_FILTER:
                 var column = columnGroupChild;

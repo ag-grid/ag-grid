@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -145,8 +145,9 @@ var TextFilter = (function (_super) {
         return from;
     };
     TextFilter.DEFAULT_LOWERCASE_FORMATTER = function (from) {
-        if (from == null)
+        if (from == null) {
             return null;
+        }
         return from.toString().toLowerCase();
     };
     TextFilter.DEFAULT_COMPARATOR = function (filter, value, filterText) {

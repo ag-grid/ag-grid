@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,6 +18,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../../context/context");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var filterService_1 = require("../../rowNodes/filterService");
+var selectableService_1 = require("../../rowNodes/selectableService");
 var FilterStage = (function () {
     function FilterStage() {
     }
@@ -29,11 +30,16 @@ var FilterStage = (function () {
         else {
             this.filterService.filterAccordingToColumnState(rowNode);
         }
+        this.selectableService.updateSelectableAfterFiltering(rowNode);
     };
     __decorate([
         context_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
     ], FilterStage.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('selectableService'),
+        __metadata("design:type", selectableService_1.SelectableService)
+    ], FilterStage.prototype, "selectableService", void 0);
     __decorate([
         context_1.Autowired('filterService'),
         __metadata("design:type", filterService_1.FilterService)

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -88,8 +88,9 @@ var FilterManager = (function () {
             // because user can provide filters, we provide useful error checking and messages
             var filterPromise = filterWrapper.filterPromise;
             var filter = filterPromise.resolveNow(null, function (filter) { return filter; });
-            if (filter == null)
+            if (filter == null) {
                 return null;
+            }
             if (typeof filter.getModel !== 'function') {
                 console.warn('Warning ag-grid - filter API missing getModel method, which is needed for getFilterModel');
                 return;

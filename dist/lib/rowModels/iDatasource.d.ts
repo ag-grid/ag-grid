@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v16.0.1
+// Type definitions for ag-grid v17.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 /** Datasource used by both PaginationController and InfiniteRowModel */
@@ -7,6 +7,7 @@ export interface IDatasource {
     rowCount?: number;
     /** Callback the grid calls that you implement to fetch rows from the server. See below for params.*/
     getRows(params: IGetRowsParams): void;
+    destroy?(): void;
 }
 /** Params for the above IDatasource.getRows() */
 export interface IGetRowsParams {

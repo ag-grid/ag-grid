@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -144,15 +144,31 @@ var Utils = (function () {
         }
         element.scrollLeft = value;
     };
+    Utils.iterateNamedNodeMap = function (map, callback) {
+        if (!map) {
+            return;
+        }
+        for (var i = 0; i < map.length; i++) {
+            var attr = map[i];
+            callback(attr.name, attr.value);
+        }
+    };
     Utils.iterateObject = function (object, callback) {
         if (this.missing(object)) {
             return;
         }
-        var keys = Object.keys(object);
-        for (var i = 0; i < keys.length; i++) {
-            var key = keys[i];
-            var value = object[key];
-            callback(key, value);
+        if (Array.isArray(object)) {
+            object.forEach(function (value, index) {
+                callback(index + '', value);
+            });
+        }
+        else {
+            var keys = Object.keys(object);
+            for (var i = 0; i < keys.length; i++) {
+                var key = keys[i];
+                var value = object[key];
+                callback(key, value);
+            }
         }
     };
     Utils.cloneObject = function (object) {
@@ -869,6 +885,28 @@ var Utils = (function () {
     Utils.isVerticalScrollShowing = function (element) {
         return element.clientHeight < element.scrollHeight;
     };
+    Utils.getMaxDivHeight = function () {
+        if (!document.body) {
+            return -1;
+        }
+        var res = 1000000;
+        // FF reports the height back but still renders blank after ~6M px
+        var testUpTo = navigator.userAgent.toLowerCase().match(/firefox/) ? 6000000 : 1000000000;
+        var div = this.loadTemplate("<div/>");
+        document.body.appendChild(div);
+        while (true) {
+            var test = res * 2;
+            div.style.height = test + 'px';
+            if (test > testUpTo || div.clientHeight !== test) {
+                break;
+            }
+            else {
+                res = test;
+            }
+        }
+        document.body.removeChild(div);
+        return res;
+    };
     Utils.getScrollbarWidth = function () {
         var outer = document.createElement("div");
         outer.style.visibility = "hidden";
@@ -1415,6 +1453,41 @@ var Utils = (function () {
             }
         });
     };
+    Utils.fuzzyCheckStrings = function (inputValues, validValues, allSuggestions) {
+        var _this = this;
+        var fuzzyMatches = {};
+        var invalidInputs = inputValues.filter(function (inputValue) {
+            return !validValues.some(function (validValue) { return validValue === inputValue; });
+        });
+        if (invalidInputs.length > 0) {
+            invalidInputs.forEach(function (invalidInput) {
+                return fuzzyMatches[invalidInput] = _this.fuzzySuggestions(invalidInput, validValues, allSuggestions);
+            });
+        }
+        return fuzzyMatches;
+    };
+    Utils.fuzzySuggestions = function (inputValue, validValues, allSuggestions) {
+        var thisSuggestions = allSuggestions.slice(0);
+        thisSuggestions.sort(function (suggestedValueLeft, suggestedValueRight) {
+            var leftDifference = exports._.string_similarity(suggestedValueLeft.toLowerCase(), inputValue.toLowerCase());
+            var rightDifference = exports._.string_similarity(suggestedValueRight.toLowerCase(), inputValue.toLowerCase());
+            return leftDifference > rightDifference ? -1 :
+                leftDifference === rightDifference ? 0 :
+                    1;
+        });
+        return thisSuggestions;
+    };
+    //Algorithm to do fuzzy search
+    //https://stackoverflow.com/questions/23305000/javascript-fuzzy-search-that-makes-sense
+    Utils.get_bigrams = function (from) {
+        var i, j, ref, s, v;
+        s = from.toLowerCase();
+        v = new Array(s.length - 1);
+        for (i = j = 0, ref = v.length; j <= ref; i = j += 1) {
+            v[i] = s.slice(i, i + 2);
+        }
+        return v;
+    };
     Utils.PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\\|<>?:@~{}';
     Utils.doOnceFlags = {};
     // static prepend(parent: HTMLElement, child: HTMLElement): void {
@@ -1467,6 +1540,28 @@ var Utils = (function () {
         'sortUnSort': 'none'
     };
     Utils.passiveEvents = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
+    Utils.string_similarity = function (str1, str2) {
+        var hit_count, j, k, len, len1, pairs1, pairs2, union, x, y;
+        if (str1.length > 0 && str2.length > 0) {
+            pairs1 = Utils.get_bigrams(str1);
+            pairs2 = Utils.get_bigrams(str2);
+            union = pairs1.length + pairs2.length;
+            hit_count = 0;
+            for (j = 0, len = pairs1.length; j < len; j++) {
+                x = pairs1[j];
+                for (k = 0, len1 = pairs2.length; k < len1; k++) {
+                    y = pairs2[k];
+                    if (x === y) {
+                        hit_count++;
+                    }
+                }
+            }
+            if (hit_count > 0) {
+                return (2.0 * hit_count) / union;
+            }
+        }
+        return 0.0;
+    };
     return Utils;
 }());
 exports.Utils = Utils;

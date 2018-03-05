@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -63,12 +63,15 @@ var NumberFilter = (function (_super) {
     };
     NumberFilter.prototype.comparator = function () {
         return function (left, right) {
-            if (left === right)
+            if (left === right) {
                 return 0;
-            if (left < right)
+            }
+            if (left < right) {
                 return 1;
-            if (left > right)
+            }
+            if (left > right) {
                 return -1;
+            }
         };
     };
     NumberFilter.prototype.onTextFieldsChanged = function () {

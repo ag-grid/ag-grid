@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,13 +30,12 @@ var HeaderRenderer = (function () {
     HeaderRenderer.prototype.init = function () {
         var _this = this;
         this.eHeaderViewport = this.gridPanel.getHeaderViewport();
-        this.eRoot = this.gridPanel.getRoot();
         this.eHeaderOverlay = this.gridPanel.getHeaderOverlay();
-        this.centerContainer = new headerContainer_1.HeaderContainer(this.gridPanel.getHeaderContainer(), this.gridPanel.getHeaderViewport(), this.eRoot, null);
+        this.centerContainer = new headerContainer_1.HeaderContainer(this.gridPanel.getHeaderContainer(), this.gridPanel.getHeaderViewport(), null);
         this.childContainers = [this.centerContainer];
         if (!this.gridOptionsWrapper.isForPrint()) {
-            this.pinnedLeftContainer = new headerContainer_1.HeaderContainer(this.gridPanel.getPinnedLeftHeader(), null, this.eRoot, column_1.Column.PINNED_LEFT);
-            this.pinnedRightContainer = new headerContainer_1.HeaderContainer(this.gridPanel.getPinnedRightHeader(), null, this.eRoot, column_1.Column.PINNED_RIGHT);
+            this.pinnedLeftContainer = new headerContainer_1.HeaderContainer(this.gridPanel.getPinnedLeftHeader(), null, column_1.Column.PINNED_LEFT);
+            this.pinnedRightContainer = new headerContainer_1.HeaderContainer(this.gridPanel.getPinnedRightHeader(), null, column_1.Column.PINNED_RIGHT);
             this.childContainers.push(this.pinnedLeftContainer);
             this.childContainers.push(this.pinnedRightContainer);
         }

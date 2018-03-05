@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,7 +25,7 @@ var popupService_1 = require("./widgets/popupService");
 var logger_1 = require("./logger");
 var columnUtils_1 = require("./columnController/columnUtils");
 var autoWidthCalculator_1 = require("./rendering/autoWidthCalculator");
-var horizontalDragService_1 = require("./headerRendering/horizontalDragService");
+var horizontalResizeService_1 = require("./headerRendering/horizontalResizeService");
 var context_1 = require("./context/context");
 var csvCreator_1 = require("./csvCreator");
 var gridCore_1 = require("./gridCore");
@@ -76,6 +76,9 @@ var beans_1 = require("./rendering/beans");
 var environment_1 = require("./environment");
 var animationFrameService_1 = require("./misc/animationFrameService");
 var navigationService_1 = require("./gridPanel/navigationService");
+var heightScaler_1 = require("./rendering/heightScaler");
+var selectableService_1 = require("./rowNodes/selectableService");
+var testingSandbox_1 = require("./widgets/testingSandbox");
 var Grid = (function () {
     function Grid(eGridDiv, gridOptions, params) {
         if (!eGridDiv) {
@@ -110,13 +113,23 @@ var Grid = (function () {
         if (params && params.seedBeanInstances) {
             utils_1.Utils.assign(seed, params.seedBeanInstances);
         }
+        var components = [
+            { componentName: 'AgCheckbox', theClass: agCheckbox_1.AgCheckbox }
+            // niall put the below in for testing some PoC code, niall will
+            // remove this comment and code when PoC is over
+            ,
+            { componentName: 'AgSmallComponent', theClass: testingSandbox_1.SmallComponent }
+        ];
+        if (Grid.enterpriseComponents) {
+            components = components.concat(Grid.enterpriseComponents);
+        }
         var contextParams = {
             overrideBeans: overrideBeans,
             seed: seed,
             //Careful with the order of the beans here, there are dependencies between them that need to be kept
             beans: [rowModelClass, paginationProxy_1.PaginationAutoPageSizeService, gridApi_1.GridApi, componentProvider_1.ComponentProvider, agComponentUtils_1.AgComponentUtils, componentMetadataProvider_1.ComponentMetadataProvider,
-                componentProvider_1.ComponentProvider, componentResolver_1.ComponentResolver, componentRecipes_1.ComponentRecipes,
-                cellRendererFactory_1.CellRendererFactory, horizontalDragService_1.HorizontalDragService, pinnedRowModel_1.PinnedRowModel, dragService_1.DragService,
+                componentProvider_1.ComponentProvider, componentResolver_1.ComponentResolver, componentRecipes_1.ComponentRecipes, heightScaler_1.HeightScaler,
+                cellRendererFactory_1.CellRendererFactory, horizontalResizeService_1.HorizontalResizeService, pinnedRowModel_1.PinnedRowModel, dragService_1.DragService,
                 displayedGroupCreator_1.DisplayedGroupCreator, eventService_1.EventService, gridOptionsWrapper_1.GridOptionsWrapper, selectionController_1.SelectionController,
                 filterManager_1.FilterManager, columnController_1.ColumnController, paginationProxy_1.PaginationProxy, rowRenderer_1.RowRenderer, headerRenderer_1.HeaderRenderer, expressionService_1.ExpressionService,
                 balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder, csvCreator_1.CsvCreator, downloader_1.Downloader, xmlFactory_1.XmlFactory, gridSerializer_1.GridSerializer, templateService_1.TemplateService,
@@ -125,11 +138,9 @@ var Grid = (function () {
                 dragAndDropService_1.DragAndDropService, columnApi_1.ColumnApi, focusedCellController_1.FocusedCellController, mouseEventService_1.MouseEventService,
                 cellNavigationService_1.CellNavigationService, filterStage_1.FilterStage, sortStage_1.SortStage, flattenStage_1.FlattenStage, filterService_1.FilterService, rowNodeFactory_1.RowNodeFactory,
                 cellEditorFactory_1.CellEditorFactory, cellRendererService_1.CellRendererService, valueFormatterService_1.ValueFormatterService, stylingService_1.StylingService, scrollVisibleService_1.ScrollVisibleService,
-                columnHoverService_1.ColumnHoverService, columnAnimationService_1.ColumnAnimationService, sortService_1.SortService, autoGroupColService_1.AutoGroupColService, immutableService_1.ImmutableService,
+                columnHoverService_1.ColumnHoverService, columnAnimationService_1.ColumnAnimationService, sortService_1.SortService, selectableService_1.SelectableService, autoGroupColService_1.AutoGroupColService, immutableService_1.ImmutableService,
                 changeDetectionService_1.ChangeDetectionService, environment_1.Environment, beans_1.Beans, animationFrameService_1.AnimationFrameService, sortController_1.SortController],
-            components: [
-                { componentName: 'AgCheckbox', theClass: agCheckbox_1.AgCheckbox }
-            ],
+            components: components,
             debug: !!gridOptions.debug
         };
         var isLoggingFunc = function () { return contextParams.debug; };
@@ -145,6 +156,9 @@ var Grid = (function () {
         // the enterprise can inject additional row models. this is how it injects the viewportRowModel
         utils_1.Utils.iterateObject(rowModelClasses, function (key, value) { return Grid.RowModelClasses[key] = value; });
     };
+    Grid.setEnterpriseComponents = function (components) {
+        this.enterpriseComponents = components;
+    };
     Grid.setFrameworkBeans = function (frameworkBeans) {
         this.frameworkBeans = frameworkBeans;
     };
@@ -158,7 +172,6 @@ var Grid = (function () {
         if (nothingToSet) {
             return;
         }
-        var valueService = this.context.getBean('valueService');
         if (utils_1.Utils.exists(columnDefs)) {
             columnController.setColumnDefs(columnDefs, "gridInitializing");
         }

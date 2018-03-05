@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -143,8 +143,9 @@ var DateFilter = (function (_super) {
         this.setFilterType(filterType);
     };
     DateFilter.removeTimezone = function (from) {
-        if (!from)
+        if (!from) {
             return null;
+        }
         return new Date(from.getFullYear(), from.getMonth(), from.getDate());
     };
     __decorate([

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,12 +17,12 @@ var Context = (function () {
         }
         this.contextParams = params;
         this.logger = logger;
-        this.logger.log('>> creating ag-Application Context');
+        this.logger.log(">> creating ag-Application Context");
         this.setupComponents();
         this.createBeans();
         var beans = utils_1.Utils.mapObject(this.beans, function (beanEntry) { return beanEntry.beanInstance; });
         this.wireBeans(beans);
-        this.logger.log('>> ag-Application Context ready - component is alive');
+        this.logger.log(">> ag-Application Context ready - component is alive");
     }
     Context.prototype.setupComponents = function () {
         var _this = this;
@@ -35,43 +35,38 @@ var Context = (function () {
         // let className = _.getNameOfClass(ComponentClass);
         // insert a dash after every capital letter
         // let classEscaped = className.replace(/([A-Z])/g, "-$1").toLowerCase();
-        var classEscaped = componentMeta.componentName.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+        var classEscaped = componentMeta.componentName.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
         // put all to upper case
         var classUpperCase = classEscaped.toUpperCase();
         // finally store
         this.componentsMappedByName[classUpperCase] = componentMeta.theClass;
     };
-    Context.prototype.createComponent = function (element) {
+    Context.prototype.createComponent = function (element, afterPreCreateCallback) {
         var key = element.nodeName;
         if (this.componentsMappedByName && this.componentsMappedByName[key]) {
-            var newComponent = new this.componentsMappedByName[key];
-            this.wireBean(newComponent);
-            this.copyAttributesFromNode(element, newComponent.getGui());
-            newComponent.attributesSet();
+            var newComponent = new this.componentsMappedByName[key]();
+            this.wireBean(newComponent, afterPreCreateCallback);
             return newComponent;
         }
         else {
             return null;
         }
     };
-    Context.prototype.copyAttributesFromNode = function (fromNode, toNode) {
-        if (fromNode.attributes) {
-            var count = fromNode.attributes.length;
-            for (var i = 0; i < count; i++) {
-                var attr = fromNode.attributes[i];
-                toNode.setAttribute(attr.name, attr.value);
-            }
-        }
-    };
-    Context.prototype.wireBean = function (bean) {
-        if (!bean)
+    Context.prototype.wireBean = function (bean, afterPreCreateCallback) {
+        if (!bean) {
             throw Error("Can't wire to bean since it is null");
-        this.wireBeans([bean]);
+        }
+        this.wireBeans([bean], afterPreCreateCallback);
     };
-    Context.prototype.wireBeans = function (beans) {
+    Context.prototype.wireBeans = function (beans, afterPreCreateCallback) {
         this.autoWireBeans(beans);
         this.methodWireBeans(beans);
         this.preConstruct(beans);
+        // the callback sets the attributes, so the component has access to attributes
+        // before postConstruct methods in the component are executed
+        if (utils_1.Utils.exists(afterPreCreateCallback)) {
+            beans.forEach(afterPreCreateCallback);
+        }
         this.postConstruct(beans);
     };
     Context.prototype.createBeans = function () {
@@ -85,15 +80,13 @@ var Context = (function () {
         // instantiate all beans - overridden beans will be left out
         utils_1.Utils.iterateObject(this.beans, function (key, beanEntry) {
             var constructorParamsMeta;
-            if (beanEntry.bean.__agBeanMetaData
-                && beanEntry.bean.__agBeanMetaData.autowireMethods
-                && beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor) {
+            if (beanEntry.bean.__agBeanMetaData && beanEntry.bean.__agBeanMetaData.autowireMethods && beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor) {
                 constructorParamsMeta = beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor;
             }
             var constructorParams = _this.getBeansForParameters(constructorParamsMeta, beanEntry.bean.name);
             var newInstance = applyToConstructor(beanEntry.bean, constructorParams);
             beanEntry.beanInstance = newInstance;
-            _this.logger.log('bean ' + _this.getBeanName(newInstance) + ' created');
+            _this.logger.log("bean " + _this.getBeanName(newInstance) + " created");
         });
     };
     Context.prototype.createBeanEntry = function (Bean) {
@@ -104,9 +97,9 @@ var Context = (function () {
                 beanName = Bean.prototype.constructor.name;
             }
             else {
-                beanName = '' + Bean;
+                beanName = "" + Bean;
             }
-            console.error('context item ' + beanName + ' is not a bean');
+            console.error("context item " + beanName + " is not a bean");
             return;
         }
         var beanEntry = {
@@ -123,8 +116,9 @@ var Context = (function () {
     Context.prototype.methodWireBeans = function (beans) {
         var _this = this;
         beans.forEach(function (bean) {
-            if (!bean)
+            if (!bean) {
                 throw Error("Can't wire to bean since it is null");
+            }
             return _this.methodWireBean(bean);
         });
     };
@@ -133,8 +127,7 @@ var Context = (function () {
         var currentBean = bean;
         var _loop_1 = function () {
             var currentConstructor = currentBean.constructor;
-            if (currentConstructor.__agBeanMetaData
-                && currentConstructor.__agBeanMetaData.agClassAttributes) {
+            if (currentConstructor.__agBeanMetaData && currentConstructor.__agBeanMetaData.agClassAttributes) {
                 var attributes = currentConstructor.__agBeanMetaData.agClassAttributes;
                 if (!attributes) {
                     return { value: void 0 };
@@ -159,7 +152,7 @@ var Context = (function () {
             return constructor.__agBeanMetaData.beanName;
         }
         var constructorString = constructor.toString();
-        var beanName = constructorString.substring(9, constructorString.indexOf('('));
+        var beanName = constructorString.substring(9, constructorString.indexOf("("));
         return beanName;
     };
     Context.prototype.methodWireBean = function (bean) {
@@ -170,7 +163,7 @@ var Context = (function () {
         }
         utils_1.Utils.iterateObject(autowiredMethods, function (methodName, wireParams) {
             // skip constructor, as this is dealt with elsewhere
-            if (methodName === 'agConstructor') {
+            if (methodName === "agConstructor") {
                 return;
             }
             var beanName = _this.getBeanName(bean.constructor);
@@ -191,7 +184,7 @@ var Context = (function () {
     };
     Context.prototype.lookupBeanInstance = function (wiringBean, beanName, optional) {
         if (optional === void 0) { optional = false; }
-        if (beanName === 'context') {
+        if (beanName === "context") {
             return this;
         }
         else if (this.contextParams.seed && this.contextParams.seed.hasOwnProperty(beanName)) {
@@ -203,7 +196,7 @@ var Context = (function () {
                 return beanEntry.beanInstance;
             }
             if (!optional) {
-                console.error('ag-Grid: unable to find bean reference ' + beanName + ' while initialising ' + wiringBean);
+                console.error("ag-Grid: unable to find bean reference " + beanName + " while initialising " + wiringBean);
             }
             return null;
         }
@@ -225,14 +218,14 @@ var Context = (function () {
         });
     };
     Context.prototype.getBean = function (name) {
-        return this.lookupBeanInstance('getBean', name, true);
+        return this.lookupBeanInstance("getBean", name, true);
     };
     Context.prototype.destroy = function () {
         // should only be able to destroy once
         if (this.destroyed) {
             return;
         }
-        this.logger.log('>> Shutting down ag-Application Context');
+        this.logger.log(">> Shutting down ag-Application Context");
         // try calling destroy methods
         utils_1.Utils.iterateObject(this.beans, function (key, beanEntry) {
             var bean = beanEntry.beanInstance;
@@ -241,7 +234,7 @@ var Context = (function () {
             }
         });
         this.destroyed = true;
-        this.logger.log('>> ag-Application Context shut down - component is dead');
+        this.logger.log(">> ag-Application Context shut down - component is dead");
     };
     return Context;
 }());
@@ -298,11 +291,11 @@ function Optional(name) {
 exports.Optional = Optional;
 function autowiredFunc(target, name, optional, classPrototype, methodOrAttributeName, index) {
     if (name === null) {
-        console.error('ag-Grid: Autowired name should not be null');
+        console.error("ag-Grid: Autowired name should not be null");
         return;
     }
-    if (typeof index === 'number') {
-        console.error('ag-Grid: Autowired should be on an attribute');
+    if (typeof index === "number") {
+        console.error("ag-Grid: Autowired should be on an attribute");
         return;
     }
     // it's an attribute on the class
@@ -318,9 +311,9 @@ function autowiredFunc(target, name, optional, classPrototype, methodOrAttribute
 }
 function Qualifier(name) {
     return function (classPrototype, methodOrAttributeName, index) {
-        var constructor = (typeof classPrototype == 'function') ? classPrototype : classPrototype.constructor;
+        var constructor = typeof classPrototype == "function" ? classPrototype : classPrototype.constructor;
         var props;
-        if (typeof index === 'number') {
+        if (typeof index === "number") {
             // it's a parameter on a method
             var methodName = void 0;
             if (methodOrAttributeName) {
@@ -329,7 +322,7 @@ function Qualifier(name) {
             }
             else {
                 props = getOrCreateProps(constructor);
-                methodName = 'agConstructor';
+                methodName = "agConstructor";
             }
             if (!props.autowireMethods) {
                 props.autowireMethods = {};
@@ -343,7 +336,7 @@ function Qualifier(name) {
 }
 exports.Qualifier = Qualifier;
 function getOrCreateProps(target) {
-    if (!target.hasOwnProperty('__agBeanMetaData')) {
+    if (!target.hasOwnProperty("__agBeanMetaData")) {
         target.__agBeanMetaData = {};
     }
     return target.__agBeanMetaData;

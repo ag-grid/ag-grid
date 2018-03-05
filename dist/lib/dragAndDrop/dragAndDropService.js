@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -75,7 +75,6 @@ var DragAndDropService = (function () {
     DragAndDropService.prototype.addDragSource = function (dragSource, allowTouch) {
         if (allowTouch === void 0) { allowTouch = false; }
         var params = {
-            type: this.getStringType(dragSource.type),
             eElement: dragSource.eElement,
             dragStartPixels: dragSource.dragStartPixels,
             onDragStart: this.onDragStart.bind(this, dragSource),

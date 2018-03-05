@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,6 +41,12 @@ var componentResolver_1 = require("../components/framework/componentResolver");
 var dragAndDropService_1 = require("../dragAndDrop/dragAndDropService");
 var sortController_1 = require("../sortController");
 var filterManager_1 = require("../filter/filterManager");
+var heightScaler_1 = require("./heightScaler");
+/** Using the IoC has a slight performance consideration, which is no problem most of the
+ * time, unless we are trashing objects - which is the case when scrolling and rowComp
+ * and cellComp. So for performance reasons, RowComp and CellComp do not get autowired
+ * with the IoC. Instead they get passed this object which is all the beans the RowComp
+ * and CellComp need. Not autowiring all the cells gives performance improvement. */
 var Beans = (function () {
     function Beans() {
     }
@@ -168,6 +174,10 @@ var Beans = (function () {
         context_1.Autowired('filterManager'),
         __metadata("design:type", filterManager_1.FilterManager)
     ], Beans.prototype, "filterManager", void 0);
+    __decorate([
+        context_1.Autowired('heightScaler'),
+        __metadata("design:type", heightScaler_1.HeightScaler)
+    ], Beans.prototype, "heightScaler", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

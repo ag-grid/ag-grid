@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35,6 +35,7 @@ var numberFilter_1 = require("../../filter/numberFilter");
 var loadingOverlayComponent_1 = require("../../rendering/overlays/loadingOverlayComponent");
 var noRowsOverlayComponent_1 = require("../../rendering/overlays/noRowsOverlayComponent");
 var utils_1 = require("../../utils");
+var testingSandbox_1 = require("../../widgets/testingSandbox");
 var RegisteredComponentSource;
 (function (RegisteredComponentSource) {
     RegisteredComponentSource[RegisteredComponentSource["DEFAULT"] = 0] = "DEFAULT";
@@ -70,6 +71,8 @@ var ComponentProvider = (function () {
             agTextColumnFilter: textFilter_1.TextFilter,
             agNumberColumnFilter: numberFilter_1.NumberFilter,
             agDateColumnFilter: dateFilter_1.DateFilter,
+            // a text component Niall is working on, for some PoC work
+            agTestingSandbox: testingSandbox_1.TestingSandbox,
             //overlays
             agLoadingOverlay: loadingOverlayComponent_1.LoadingOverlayComponent,
             agNoRowsOverlay: noRowsOverlayComponent_1.NoRowsOverlayComponent

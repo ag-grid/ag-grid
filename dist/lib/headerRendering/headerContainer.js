@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,10 +28,9 @@ var bodyDropTarget_1 = require("./bodyDropTarget");
 var column_1 = require("../entities/column");
 var scrollVisibleService_1 = require("../gridPanel/scrollVisibleService");
 var HeaderContainer = (function () {
-    function HeaderContainer(eContainer, eViewport, eRoot, pinned) {
+    function HeaderContainer(eContainer, eViewport, pinned) {
         this.headerRowComps = [];
         this.eContainer = eContainer;
-        this.eRoot = eRoot;
         this.pinned = pinned;
         this.eViewport = eViewport;
     }
@@ -109,14 +108,14 @@ var HeaderContainer = (function () {
         for (var dept = 0; dept < rowCount; dept++) {
             var groupRow = dept !== (rowCount - 1);
             var type = groupRow ? headerRowComp_1.HeaderRowType.COLUMN_GROUP : headerRowComp_1.HeaderRowType.COLUMN;
-            var headerRowComp = new headerRowComp_1.HeaderRowComp(dept, type, this.pinned, this.eRoot, this.dropTarget);
+            var headerRowComp = new headerRowComp_1.HeaderRowComp(dept, type, this.pinned, this.dropTarget);
             this.context.wireBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
             this.eContainer.appendChild(headerRowComp.getGui());
         }
         var includeFloatingFilterRow = this.gridOptionsWrapper.isFloatingFilter() && !this.columnController.isPivotMode();
         if (includeFloatingFilterRow) {
-            var headerRowComp = new headerRowComp_1.HeaderRowComp(rowCount, headerRowComp_1.HeaderRowType.FLOATING_FILTER, this.pinned, this.eRoot, this.dropTarget);
+            var headerRowComp = new headerRowComp_1.HeaderRowComp(rowCount, headerRowComp_1.HeaderRowType.FLOATING_FILTER, this.pinned, this.dropTarget);
             this.context.wireBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
             this.eContainer.appendChild(headerRowComp.getGui());

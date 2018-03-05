@@ -715,14 +715,14 @@
   .ag-fresh .ag-paging-row-summary-panel {
     display: inline-block;
     width: 300px; }
-  .ag-fresh .ag-tool-panel {
+  .ag-fresh .ag-column-panel {
     background-color: #f6f6f6;
     border-bottom: 1px solid darkgrey;
     border-top: 1px solid darkgrey;
     color: #222; }
-  .ag-fresh .ltr .ag-tool-panel {
+  .ag-fresh .ltr .ag-column-panel {
     border-right: 1px solid darkgrey; }
-  .ag-fresh .rtl .ag-tool-panel {
+  .ag-fresh .rtl .ag-column-panel {
     border-left: 1px solid darkgrey; }
   .ag-fresh .ag-status-bar {
     color: #222;
@@ -778,7 +778,7 @@
     border-bottom: 1px solid darkgrey;
     padding: 2px 4px 3px 4px;
     background-color: #f6f6f6; }
-  .ag-fresh .ag-tool-panel .ag-column-select-panel {
+  .ag-fresh .ag-column-panel .ag-column-select-panel {
     padding: 4px 4px 10px 4px;
     padding-left: 0;
     border-bottom: 1px solid darkgrey;
