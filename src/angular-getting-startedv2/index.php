@@ -337,4 +337,143 @@ export class AppComponent implements OnInit {
 
 <p>The only thing we have to add is a button that gets the selected data and sends it to the server. To do this, we need the following change:</p> 
 
-</snippet><?php include '../documentation-main/documentation_footer.php'; ?>
+<snippet language="html">
+&lt;button (click)="getSelectedRows()"&lt;Get Selected Rows&lt;/button&gt;
+
+&lt;ag-grid-angular 
+    #agGrid
+    style="width: 500px; height: 200px;" 
+    class="ag-theme-fresh"
+    [enableSorting]="true"
+    [enableFilter]="true"
+    [rowData]="rowData | async" 
+    [columnDefs]="columnDefs"
+    rowSelection="multiple"
+    &gt;
+&lt;/ag-grid-angular&gt;
+</snippet>
+
+<snippet language="ts">
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { AgGridNg2 } from 'ag-grid-angular';
+
+@Component({
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss']
+})
+export class AppComponent implements OnInit {
+    @ViewChild('agGrid') agGrid: AgGridNg2;
+
+    title = 'app';
+
+    columnDefs = [
+        {headerName: 'Make', field: 'make', checkboxSelection: true },
+        {headerName: 'Model', field: 'model' },
+        {headerName: 'Price', field: 'price'}
+    ];
+
+    rowData: any;
+
+    constructor(private http: HttpClient) {
+
+    }
+
+    ngOnInit() {
+        this.rowData = this.http.get('https://api.myjson.com/bins/15psn9');
+    }
+
+    getSelectedRows() {
+        const selectedNodes = this.agGrid.api.getSelectedNodes();
+        const selectedData = selectedNodes.map( node =&gt; node.data );
+        const selectedDataStringPresentation = selectedData.map( node =&gt; node.make + ' ' + node.model).join(', ');
+        alert(`Selected nodes: ${selectedDataStringPresentation}`);
+    }
+}
+</snippet>
+
+<p>Well, we cheated a bit. Calling <code>alert</code> is not exactly a call to our backend. 
+Hopefully you will forgive us this shortcut for the sake of keeping the article short and simple. Of course, you can substitute that bit with a real-world application logic after you are done with the tutorial.</p> 
+
+<h2>Grouping (enterprise)</h2>
+
+<div class="note">Grouping is a feature exclusive to the enterprise version of ag-Grid.</div>
+
+<p>In addition to filtering and sorting, grouping is another  effective way for the user to make sense out of large amounts of data. In our case, the data is not that much. Let's switch to a slightly larger data set:</p>
+
+<snippet language="diff">
+ngOnInit() {
+-        this.rowData = this.http.get('https://api.myjson.com/bins/15psn9');
++        this.rowData = this.http.get('https://api.myjson.com/bins/ly7d1');
+}
+</snippet>
+
+<p>Afterwards, let's enable the enterprise features of ag-grid. Install the additional package:</p>
+
+<snippet language="sh">
+npm install --save ag-grid-enterprise
+</snippet>
+
+<p>Then, add the import to <code>app.module.ts</code>:</p>
+
+<snippet language="diff">
+import { AgGridModule } from 'ag-grid-angular';
+import { HttpClientModule } from '@angular/common/http';
+
++import 'ag-grid-enterprise';
+</snippet>
+
+<p>If everything is ok, you should see a message in the console that warns you about missing enterprise license. In addition to that, the grid got a few UI improvements - a custom context menu and fancier column menu popup - feel free to look around:</p>
+
+<p>-- screenshot</p>
+
+<p>Now, let's enable grouping! Add an autoGroupColumnDef property and change the columnDefs to the following:</p>
+
+<snippet language="ts">
+export class AppComponent implements OnInit {
+    @ViewChild('agGrid') agGrid: AgGridNg2;
+
+    title = 'app';
+
+    columnDefs = [
+        {headerName: 'Make', field: 'make', rowGroupIndex: 0 },
+        {headerName: 'Price', field: 'price'}
+    ];
+
+    autoGroupColumnDef = {
+        headerName: 'Model',
+        field: 'model',
+        cellRenderer: 'agGroupCellRenderer',
+        cellRendererParams: {
+            checkbox: true
+        }
+    };
+
+    rowData: any;
+
+    constructor(private http: HttpClient) {
+
+    }
+
+    ngOnInit() {
+        this.rowData = this.http.get('https://api.myjson.com/bins/ly7d1');
+    }
+
+    getSelectedRows() {
+        const selectedNodes = this.agGrid.api.getSelectedNodes();
+        const selectedData = selectedNodes.map( node => node.data );
+        const selectedDataStringPresentation = selectedData.map( node => node.make + ' ' + node.model).join(', ');
+        alert(`Selected nodes: ${selectedDataStringPresentation}`);
+    }
+}
+</snippet>
+
+<p>Add the the <code>autoGroupColumnDef</code> property to the template too:</p> 
+
+<snippet language="diff">
+class="ag-theme-fresh"
++[autoGroupColumnDef]="autoGroupColumnDef"
+[enableSorting]="true"
+</snippet>
+<?php include '../documentation-main/documentation_footer.php'; ?>
