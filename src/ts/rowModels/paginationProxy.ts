@@ -201,7 +201,7 @@ export class PaginationProxy extends BeanStub implements IRowModel {
         this.goToPage(pageNumber);
     }
 
-    public getTotalRowCount ():number{
+    public getTotalRowCount(): number {
         return this.rowModel.getPageLastRow() + 1;
     }
 

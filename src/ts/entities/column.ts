@@ -13,7 +13,6 @@ import {ColumnEvent, ColumnEventType} from "../events";
 import {ColumnApi} from "../columnController/columnApi";
 import {GridApi} from "../gridApi";
 
-
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
 // This class implements both interfaces ColumnGroupChild and OriginalColumnGroupChild as the class can
@@ -48,7 +47,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     public static EVENT_PIVOT_CHANGED = 'columnPivotChanged';
     // + toolpanel, for gui updates
     public static EVENT_VALUE_CHANGED = 'columnValueChanged';
-    
+
     public static PINNED_RIGHT = 'right';
     public static PINNED_LEFT = 'left';
 
@@ -188,7 +187,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     public isFilterAllowed(): boolean {
         return this.primary && !this.colDef.suppressFilter;
     }
-    
+
     public isFieldContainsDots(): boolean {
         return this.fieldContainsDots;
     }
@@ -271,9 +270,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             console.warn('ag-Grid: since v16, colDef.volatile is gone, please check refresh docs on how to refresh specific cells.');
         }
 
-
     }
-    
+
     public addEventListener(eventType: string, listener: Function): void {
         this.eventService.addEventListener(eventType, listener);
     }
@@ -359,7 +357,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_MOVING_CHANGED, source));
     }
 
-    private createColumnEvent(type: string, source: ColumnEventType ): ColumnEvent {
+    private createColumnEvent(type: string, source: ColumnEventType): ColumnEvent {
         return {
             api: this.gridApi,
             columnApi: this.columnApi,
@@ -601,14 +599,14 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     public setMinimum(source: ColumnEventType = "api"): void {
         this.setActualWidth(this.minWidth, source);
     }
-    
+
     public setRowGroupActive(rowGroup: boolean, source: ColumnEventType = "api"): void {
         if (this.rowGroupActive !== rowGroup) {
             this.rowGroupActive = rowGroup;
             this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_ROW_GROUP_CHANGED, source));
         }
     }
-    
+
     public isRowGroupActive(): boolean {
         return this.rowGroupActive;
     }
@@ -655,7 +653,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.colDef.enableRowGroup === true;
     }
 
-    public getMenuTabs(defaultValues:string[]):string [] {
+    public getMenuTabs(defaultValues: string[]): string [] {
         let menuTabs: string[] = this.getColDef().menuTabs;
         if (menuTabs == null) {
             menuTabs = defaultValues;

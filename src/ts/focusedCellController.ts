@@ -53,7 +53,7 @@ export class FocusedCellController {
         if (this.gridOptionsWrapper.isSuppressFocusAfterRefresh()) {
             return null;
         }
-        
+
         if (!this.focusedCell) {
             return null;
         }

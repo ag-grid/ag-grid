@@ -64,6 +64,7 @@ export class RowNode implements IEventEmitter {
     public static EVENT_CHILD_INDEX_CHANGED = 'childIndexChanged';
     public static EVENT_ROW_INDEX_CHANGED = 'rowIndexChanged';
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
+    public static EVENT_SELECTABLE_CHANGED = 'selectableChanged';
     public static EVENT_UI_LEVEL_CHANGED = 'uiLevelChanged';
     public static EVENT_DRAGGING_CHANGED = 'draggingChanged';
 
@@ -178,6 +179,9 @@ export class RowNode implements IEventEmitter {
      * a copy where daemon=true. */
     public daemon: boolean;
 
+    /** True by default - can be overridden via gridOptions.isRowSelectable(rowNode) */
+    public selectable = true;
+
     /** Used by the value service, stores values for a particular change detection turn. */
     public __cacheData: {[colId: string]: any};
     public __cacheVersion: number;
@@ -261,6 +265,23 @@ export class RowNode implements IEventEmitter {
 
         let event: DataChangedEvent = this.createDataChangedEvent(data, oldData, false);
         this.dispatchLocalEvent(event);
+
+        this.checkRowSelectable();
+    }
+
+    private checkRowSelectable() {
+        let isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc();
+        let shouldInvokeIsRowSelectable = isRowSelectableFunc && _.exists(this);
+        this.setRowSelectable(shouldInvokeIsRowSelectable ? isRowSelectableFunc(this) : true)
+    }
+
+    public setRowSelectable(newVal: boolean) {
+        if (this.selectable !== newVal) {
+            this.selectable = newVal;
+            if (this.eventService) {
+                this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_SELECTABLE_CHANGED));
+            }
+        }
     }
 
     public setId(id: string): void {
@@ -371,7 +392,7 @@ export class RowNode implements IEventEmitter {
         }
 
         let event: RowGroupOpenedEvent = this.createGlobalRowEvent(Events.EVENT_ROW_GROUP_OPENED);
-        this.mainEventService.dispatchEvent(event)
+        this.mainEventService.dispatchEvent(event);
     }
 
     private createGlobalRowEvent(type: string): RowEvent {
@@ -485,10 +506,15 @@ export class RowNode implements IEventEmitter {
         let atLeastOneDeSelected = false;
         let atLeastOneMixed = false;
 
-        let newSelectedValue:boolean;
+        let newSelectedValue: boolean;
         if (this.childrenAfterGroup) {
             for (let i = 0; i < this.childrenAfterGroup.length; i++) {
-                let childState = this.childrenAfterGroup[i].isSelected();
+                let child = this.childrenAfterGroup[i];
+
+                // skip non-selectable nodes to prevent inconsistent selection values
+                if (!child.selectable) continue;
+
+                let childState = child.isSelected();
                 switch (childState) {
                     case true:
                         atLeastOneSelected = true;
@@ -502,6 +528,7 @@ export class RowNode implements IEventEmitter {
                 }
             }
         }
+
         if (atLeastOneMixed) {
             newSelectedValue = undefined;
         } else if (atLeastOneSelected && !atLeastOneDeSelected) {
@@ -700,7 +727,7 @@ export class RowNode implements IEventEmitter {
     }
 
     public selectThisNode(newValue: boolean): boolean {
-        if (this.selected === newValue) { return false; }
+        if(!this.selectable || this.selected === newValue) return false;
 
         this.selected = newValue;
 
@@ -716,14 +743,15 @@ export class RowNode implements IEventEmitter {
 
     private selectChildNodes(newValue: boolean, groupSelectsFiltered: boolean): number {
         let children = groupSelectsFiltered ? this.childrenAfterFilter : this.childrenAfterGroup;
+
         let updatedCount = 0;
         if (_.missing(children)) { return; }
         for (let i = 0; i<children.length; i++) {
-            updatedCount += children[i].setSelectedParams({
-                newValue: newValue,
-                clearSelection: false,
-                tailingNodeInSequence: true
-            });
+                updatedCount += children[i].setSelectedParams({
+                    newValue: newValue,
+                    clearSelection: false,
+                    tailingNodeInSequence: true
+                });
         }
         return updatedCount;
     }
@@ -774,5 +802,4 @@ export class RowNode implements IEventEmitter {
 
         return foundFirstChildPath ? nodeToSwapIn : null;
     }
-
 }

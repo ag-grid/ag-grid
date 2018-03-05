@@ -52,7 +52,7 @@ export class TabbedLayout {
             _.removeAllChildren(eDummyContainer);
 
             let eClone: HTMLElement = <HTMLElement> itemWrapper.tabbedItem.bodyPromise.resolveNow(null, body=>body.cloneNode(true));
-            if (eClone == null) return;
+            if (eClone == null) { return; }
 
             eDummyContainer.appendChild(eClone);
 
@@ -106,7 +106,7 @@ export class TabbedLayout {
             return;
         }
         _.removeAllChildren(this.eBody);
-        wrapper.tabbedItem.bodyPromise.then(body=>{
+        wrapper.tabbedItem.bodyPromise.then(body=> {
             this.eBody.appendChild(body);
         });
 
@@ -129,20 +129,20 @@ export class TabbedLayout {
 }
 
 export interface TabbedLayoutParams {
-    items: TabbedItem[],
-    cssClass?: string,
-    onItemClicked?: Function
-    onActiveItemClicked?: Function
+    items: TabbedItem[];
+    cssClass?: string;
+    onItemClicked?: Function;
+    onActiveItemClicked?: Function;
 }
 
 export interface TabbedItem {
-    title: Element,
-    bodyPromise: Promise<HTMLElement>,
-    name: string,
-    afterAttachedCallback?: Function
+    title: Element;
+    bodyPromise: Promise<HTMLElement>;
+    name: string;
+    afterAttachedCallback?: Function;
 }
 
 interface TabbedItemWrapper {
-    tabbedItem: TabbedItem,
-    eHeaderButton: HTMLElement
+    tabbedItem: TabbedItem;
+    eHeaderButton: HTMLElement;
 }

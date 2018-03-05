@@ -1,13 +1,13 @@
 import {PreDestroy, Bean, Qualifier, Autowired, PostConstruct, Optional, Context} from './context/context';
 
-let themeNames = ['fresh', 'dark', 'blue', 'bootstrap', 'material'];
+let themeNames = ['fresh', 'dark', 'blue', 'bootstrap', 'material', 'balham-dark', 'balham'];
 const themes = themeNames.concat(themeNames.map(name => `theme-${name}`));
 const themeClass = new RegExp(`ag-(${themes.join('|')})`);
 
 const matGridSize = 8;
 type HardCodedSize = {[key: string]: {[key: string]: number}};
-
 const freshGridSize = 4;
+const balhamGridSize = 4;
 
 const HARD_CODED_SIZES: HardCodedSize = {
     'ag-theme-material': {
@@ -19,7 +19,12 @@ const HARD_CODED_SIZES: HardCodedSize = {
         headerHeight: 25,
         virtualItemHeight: freshGridSize * 5,
         rowHeight: 25
-    }
+    },
+    'ag-theme-balham': {
+        headerHeight: balhamGridSize * 8,
+        virtualItemHeight: balhamGridSize * 7,
+        rowHeight: balhamGridSize * 7
+   }
 };
 
 @Bean('environment')
@@ -53,6 +58,9 @@ export class Environment {
     public getSassVariable(theme: string, key: string): number {
         if (theme == 'ag-theme-material') {
             return HARD_CODED_SIZES['ag-theme-material'][key];
+        }
+        else if (theme == 'ag-theme-balham' || theme == 'ag-theme-balham-dark') {
+            return HARD_CODED_SIZES['ag-theme-balham'][key];
         }
         return HARD_CODED_SIZES['ag-theme-classic'][key];
         /*

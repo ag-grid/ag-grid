@@ -2,7 +2,7 @@
 import {Component} from "./component";
 import {QuerySelector, Listener} from "./componentAnnotations";
 import {Utils as _} from "../utils";
-import {PostConstruct, Autowired} from "../context/context";
+import {PostConstruct, Autowired, PreConstruct} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {AgEvent} from "../events";
 
@@ -33,23 +33,25 @@ export class AgCheckbox extends Component {
     private readOnly = false;
     private passive = false;
 
+    private props: {label: string};
+
     constructor() {
         super();
     }
 
+    @PreConstruct
+    private preConstruct(): void {
+        this.setTemplate(AgCheckbox.TEMPLATE);
+    }
+
     @PostConstruct
     private postConstruct(): void {
-        this.setTemplate(AgCheckbox.TEMPLATE);
 
         this.loadIcons();
         this.updateIcons();
-    }
 
-    public attributesSet(): void {
-        super.attributesSet();
-        let label = this.getAttribute('label');
-        if (label) {
-            this.eLabel.innerText = label;
+        if (this.props.label) {
+            this.eLabel.innerText = this.props.label;
         }
     }
 
@@ -91,7 +93,7 @@ export class AgCheckbox extends Component {
     public setPassive(passive: boolean): void {
         this.passive = passive;
     }
-    
+
     public setReadOnly(readOnly: boolean): void {
         this.readOnly = readOnly;
         this.loadIcons();
@@ -118,7 +120,7 @@ export class AgCheckbox extends Component {
             this.setSelected(nextValue);
         }
     }
-    
+
     public setSelected(selected: boolean): void {
         if (this.selected === selected) { return; }
 

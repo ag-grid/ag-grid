@@ -1,6 +1,6 @@
 import {RowNode} from "../entities/rowNode";
 import {Column} from "../entities/column";
-import {Autowired, Bean} from "../context/context";
+import {Autowired, Bean, PostConstruct} from "../context/context";
 import {SortController} from "../sortController";
 import {_} from "../utils";
 import {ValueService} from "../valueService/valueService";
@@ -8,13 +8,13 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnController} from "../columnController/columnController";
 
 export interface SortOption {
-    inverter: number,
-    column: Column
+    inverter: number;
+    column: Column;
 }
 
 export interface SortedRowNode {
-    currentPos: number,
-    rowNode: RowNode
+    currentPos: number;
+    rowNode: RowNode;
 }
 
 @Bean('sortService')
@@ -24,6 +24,13 @@ export class SortService {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+
+    private postSortFunc: (rowNodes: RowNode[]) => void;
+
+    @PostConstruct
+    public init(): void {
+        this.postSortFunc = this.gridOptionsWrapper.getPostSortFunc();
+    }
 
     public sortAccordingToColumnsState(rowNode: RowNode) {
         let sortOptions: SortOption[] = this.sortController.getSortForRowController();
@@ -44,7 +51,7 @@ export class SortService {
             //order, then you need to add an additional sorting condition manually, in this
             //case we are going to inspect the original array position
             let sortedRowNodes: SortedRowNode[] = rowNode.childrenAfterSort.map((it, pos) => {
-                return {currentPos: pos, rowNode: it}
+                return {currentPos: pos, rowNode: it};
             });
             sortedRowNodes.sort(this.compareRowNodes.bind(this, sortOptions));
             rowNode.childrenAfterSort = sortedRowNodes.map(sorted => sorted.rowNode);
@@ -59,6 +66,10 @@ export class SortService {
                 this.sort(child, sortOptions);
             }
         });
+
+        if (this.postSortFunc) {
+            this.postSortFunc(rowNode.childrenAfterSort);
+        }
     }
 
     private compareRowNodes(sortOptions: any, sortedNodeA: SortedRowNode, sortedNodeB: SortedRowNode) {
@@ -124,7 +135,7 @@ export class SortService {
 
                 let showRowGroup = groupDisplayCol.getColDef().showRowGroup;
                 if (typeof showRowGroup !== 'string') {
-                    console.error('ag-Grid: groupHideOpenParents only works when specifying specific columns for colDef.showRowGroup')
+                    console.error('ag-Grid: groupHideOpenParents only works when specifying specific columns for colDef.showRowGroup');
                     return;
                 }
                 let displayingGroupKey: string = <string> showRowGroup;

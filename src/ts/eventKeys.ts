@@ -1,4 +1,5 @@
 export class Events {
+
     /** Everything has changed with the columns. Either complete new set of columns set, or user called setState()*/
     public static EVENT_COLUMN_EVERYTHING_CHANGED = 'columnEverythingChanged';
 
@@ -7,7 +8,7 @@ export class Events {
 
     /** The pivot mode flag was changed */
     public static EVENT_COLUMN_PIVOT_MODE_CHANGED = 'columnPivotModeChanged';
-    
+
     /** A row group column was added, removed or order changed. */
     public static EVENT_COLUMN_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
 
@@ -56,11 +57,15 @@ export class Events {
     /** Range selection has changed */
     public static EVENT_RANGE_SELECTION_CHANGED = 'rangeSelectionChanged';
 
+    /** For when the tool panel is shown / hidden */
+    public static EVENT_TOOL_PANEL_VISIBLE_CHANGED = 'toolPanelVisibleChanged';
+
     /** Model was updated - grid updates the drawn rows when this happens */
     public static EVENT_MODEL_UPDATED = 'modelUpdated';
 
     public static EVENT_CELL_CLICKED = 'cellClicked';
     public static EVENT_CELL_DOUBLE_CLICKED = 'cellDoubleClicked';
+    public static EVENT_CELL_MOUSE_DOWN = 'cellMouseDown';
     public static EVENT_CELL_CONTEXT_MENU = 'cellContextMenu';
     public static EVENT_CELL_VALUE_CHANGED = 'cellValueChanged';
     public static EVENT_ROW_VALUE_CHANGED = 'rowValueChanged';
@@ -105,6 +110,8 @@ export class Events {
 
     /** Main body of grid has scrolled, either horizontally or vertically */
     public static EVENT_BODY_SCROLL = 'bodyScroll';
+
+    public static EVENT_HEIGHT_SCALE_CHANGED = 'heightScaleChanged';
 
     /** The displayed page for pagination has changed. For example the data was filtered or sorted,
      * or the user has moved to a different page. */

@@ -1,4 +1,3 @@
-
 import {GridOptions} from "./entities/gridOptions";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {ColumnApi} from "./columnController/columnApi";
@@ -21,6 +20,7 @@ import {ICompFactory} from "./interfaces/iCompFactory";
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {PaginationComp} from "./rowModels/pagination/paginationComp";
 import {GridApi} from "./gridApi";
+import {IToolPanel} from "./interfaces/iToolPanel";
 
 @Bean('gridCore')
 export class GridCore {
@@ -48,7 +48,7 @@ export class GridCore {
 
     @Optional('rowGroupCompFactory') private rowGroupCompFactory: ICompFactory;
     @Optional('pivotCompFactory') private pivotCompFactory: ICompFactory;
-    @Optional('toolPanel') private toolPanel: Component;
+    @Optional('toolPanelComp') private toolPanelComp: IToolPanel;
     @Optional('statusBar') private statusBar: Component;
 
     private rowGroupComp: Component;
@@ -58,7 +58,6 @@ export class GridCore {
     private doingVirtualPaging: boolean;
 
     private eRootPanel: BorderLayout;
-    private toolPanelShowing: boolean;
 
     private logger: Logger;
 
@@ -75,12 +74,12 @@ export class GridCore {
 
         let eastPanel: HTMLElement;
         let westPanel: HTMLElement;
-        if (this.toolPanel && !this.gridOptionsWrapper.isForPrint()) {
+        if (this.toolPanelComp && !this.gridOptionsWrapper.isForPrint()) {
             // if we are doing RTL, then the tool panel appears on the left
             if (this.gridOptionsWrapper.isEnableRtl()) {
-                westPanel = this.toolPanel.getGui();
+                westPanel = this.toolPanelComp.getGui();
             } else {
-                eastPanel = this.toolPanel.getGui();
+                eastPanel = this.toolPanelComp.getGui();
             }
         }
 
@@ -118,7 +117,8 @@ export class GridCore {
 
         // if using angular, watch for quickFilter changes
         if (this.$scope) {
-            this.$scope.$watch(this.quickFilterOnScope, (newFilter: any) => this.filterManager.setQuickFilter(newFilter) );
+            let quickFilterUnregisterFn = this.$scope.$watch(this.quickFilterOnScope, (newFilter: any) => this.filterManager.setQuickFilter(newFilter) );
+            this.destroyFunctions.push(quickFilterUnregisterFn);
         }
 
         if (!this.gridOptionsWrapper.isForPrint()) {
@@ -152,7 +152,9 @@ export class GridCore {
 
     private createNorthPanel(): HTMLElement {
 
-        if (!this.gridOptionsWrapper.isEnterprise()) { return null; }
+        if (!this.gridOptionsWrapper.isEnterprise()) {
+            return null;
+        }
 
         let topPanelGui = document.createElement('div');
 
@@ -167,10 +169,10 @@ export class GridCore {
         this.rowGroupComp.addEventListener(Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
         this.pivotComp.addEventListener(Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
 
-        this.destroyFunctions.push( ()=> {
+        this.destroyFunctions.push(() => {
             this.rowGroupComp.removeEventListener(Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
             this.pivotComp.removeEventListener(Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
-        } );
+        });
 
         this.onDropPanelVisible();
 
@@ -186,7 +188,7 @@ export class GridCore {
     public getRootGui(): HTMLElement {
         return this.eRootPanel.getGui();
     }
-    
+
     private createSouthPanel(): HTMLElement {
 
         if (!this.statusBar && this.gridOptionsWrapper.isEnableStatusBar()) {
@@ -220,13 +222,15 @@ export class GridCore {
     }
 
     private onRowGroupChanged(): void {
-        if (!this.rowGroupComp) { return; }
+        if (!this.rowGroupComp) {
+            return;
+        }
 
         let rowGroupPanelShow = this.gridOptionsWrapper.getRowGroupPanelShow();
 
-        if (rowGroupPanelShow===Constants.ALWAYS) {
+        if (rowGroupPanelShow === Constants.ALWAYS) {
             this.rowGroupComp.setVisible(true);
-        } else if (rowGroupPanelShow===Constants.ONLY_WHEN_GROUPING) {
+        } else if (rowGroupPanelShow === Constants.ONLY_WHEN_GROUPING) {
             let grouping = !this.columnController.isRowGroupEmpty();
             this.rowGroupComp.setVisible(grouping);
         } else {
@@ -235,49 +239,48 @@ export class GridCore {
 
         this.eRootPanel.doLayout();
     }
-    
+
     private addWindowResizeListener(): void {
         let eventListener = this.doLayout.bind(this);
         window.addEventListener('resize', eventListener);
-        this.destroyFunctions.push( ()=> window.removeEventListener('resize', eventListener) );
+        this.destroyFunctions.push(() => window.removeEventListener('resize', eventListener));
     }
 
     private periodicallyDoLayout() {
         if (!this.finished) {
             let intervalMillis = this.gridOptionsWrapper.getLayoutInterval();
             // if interval is negative, this stops the layout from happening
-            if (intervalMillis>0){
-                this.frameworkFactory.setTimeout( () => {
-                    this.doLayout();
-                    this.gridPanel.periodicallyCheck();
-                    this.periodicallyDoLayout();
+            if (intervalMillis > 0) {
+                this.frameworkFactory.setTimeout(() => {
+                        this.doLayout();
+                        this.gridPanel.periodicallyCheck();
+                        this.periodicallyDoLayout();
                 }, intervalMillis);
             } else {
                 // if user provided negative number, we still do the check every 5 seconds,
                 // in case the user turns the number positive again
-                this.frameworkFactory.setTimeout( () => {
-                    this.periodicallyDoLayout();
+                this.frameworkFactory.setTimeout(() => {
+                        this.periodicallyDoLayout();
                 }, 5000);
             }
         }
     }
 
     public showToolPanel(show: any) {
-        if (show && !this.toolPanel) {
-            console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
-            this.toolPanelShowing = false;
+        if (!this.toolPanelComp) {
+            if (show) {
+                console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
+            }
             return;
         }
 
-        this.toolPanelShowing = show;
-        if (this.toolPanel) {
-            this.toolPanel.setVisible(show);
-            this.eRootPanel.doLayout();
-        }
+        this.toolPanelComp.init();
+        this.toolPanelComp.showToolPanel(show);
+        this.eRootPanel.doLayout();
     }
 
     public isToolPanelShowing() {
-        return this.toolPanelShowing;
+        return this.toolPanelComp.isToolPanelShowing();
     }
 
     @PreDestroy
@@ -291,7 +294,7 @@ export class GridCore {
     }
 
     // Valid values for position are bottom, middle and top
-    public ensureNodeVisible(comparator: any, position:string = 'top') {
+    public ensureNodeVisible(comparator: any, position: string = 'top') {
         if (this.doingVirtualPaging) {
             throw 'Cannot use ensureNodeVisible when doing virtual paging, as we cannot check rows that are not in memory';
         }

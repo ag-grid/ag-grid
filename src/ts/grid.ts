@@ -18,7 +18,7 @@ import {PopupService} from "./widgets/popupService";
 import {Logger, LoggerFactory} from "./logger";
 import {ColumnUtils} from "./columnController/columnUtils";
 import {AutoWidthCalculator} from "./rendering/autoWidthCalculator";
-import {HorizontalDragService} from "./headerRendering/horizontalDragService";
+import {HorizontalResizeService} from "./headerRendering/horizontalResizeService";
 import {Context} from "./context/context";
 import {CsvCreator} from "./csvCreator";
 import {GridCore} from "./gridCore";
@@ -71,6 +71,9 @@ import {Beans} from "./rendering/beans";
 import {Environment} from "./environment";
 import {AnimationFrameService} from "./misc/animationFrameService";
 import {NavigationService} from "./gridPanel/navigationService";
+import {HeightScaler} from "./rendering/heightScaler";
+import {SelectableService} from "./rowNodes/selectableService";
+import {SmallComponent} from "./widgets/testingSandbox";
 
 export interface GridParams {
     // used by Web Components
@@ -94,6 +97,7 @@ export class Grid {
 
     private static enterpriseBeans: any[];
     private static frameworkBeans: any[];
+    private static enterpriseComponents: any[];
 
     // the default is InMemoryRowModel, which is also used for pagination.
     // the enterprise adds viewport to this list.
@@ -109,6 +113,10 @@ export class Grid {
         _.iterateObject(rowModelClasses, (key: string, value: any)=> Grid.RowModelClasses[key] = value );
     }
 
+    public static setEnterpriseComponents(components: any[]): void {
+        this.enterpriseComponents = components;
+    }
+
     public static setFrameworkBeans(frameworkBeans: any[]): void {
         this.frameworkBeans = frameworkBeans;
     }
@@ -121,7 +129,7 @@ export class Grid {
         if (!gridOptions) {
             console.error('ag-Grid: no gridOptions provided to the grid');
         }
-        
+
         let rowModelClass = this.getRowModelClass(gridOptions);
 
         let enterprise = _.exists(Grid.enterpriseBeans);
@@ -155,13 +163,24 @@ export class Grid {
             _.assign(seed, params.seedBeanInstances);
         }
 
+        let components = [
+            {componentName: 'AgCheckbox', theClass: AgCheckbox}
+            // niall put the below in for testing some PoC code, niall will
+            // remove this comment and code when PoC is over
+            , {componentName: 'AgSmallComponent', theClass: SmallComponent}
+        ];
+
+        if (Grid.enterpriseComponents) {
+            components = components.concat(Grid.enterpriseComponents);
+        }
+
         let contextParams = {
             overrideBeans: overrideBeans,
             seed: seed,
             //Careful with the order of the beans here, there are dependencies between them that need to be kept
             beans: [rowModelClass, PaginationAutoPageSizeService, GridApi, ComponentProvider, AgComponentUtils, ComponentMetadataProvider,
-                ComponentProvider, ComponentResolver, ComponentRecipes,
-                CellRendererFactory, HorizontalDragService, PinnedRowModel, DragService,
+                ComponentProvider, ComponentResolver, ComponentRecipes, HeightScaler,
+                CellRendererFactory, HorizontalResizeService, PinnedRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
                 FilterManager, ColumnController, PaginationProxy, RowRenderer, HeaderRenderer, ExpressionService,
                 BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService,
@@ -170,11 +189,9 @@ export class Grid {
                 DragAndDropService, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService, RowNodeFactory,
                 CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService,
-                ColumnHoverService, ColumnAnimationService, SortService, AutoGroupColService, ImmutableService,
+                ColumnHoverService, ColumnAnimationService, SortService, SelectableService, AutoGroupColService, ImmutableService,
                 ChangeDetectionService, Environment, Beans, AnimationFrameService, SortController],
-            components: [
-                {componentName: 'AgCheckbox', theClass: AgCheckbox}
-            ],
+            components: components,
             debug: !!gridOptions.debug
         };
 
@@ -201,8 +218,6 @@ export class Grid {
 
         let nothingToSet = _.missing(columnDefs) && _.missing(rowData);
         if (nothingToSet) { return; }
-
-        let valueService: ValueService = this.context.getBean('valueService');
 
         if (_.exists(columnDefs)) {
             columnController.setColumnDefs(columnDefs, "gridInitializing");

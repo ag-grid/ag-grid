@@ -1,5 +1,5 @@
-@import './ag-theme-classic-common';
-@import './ag-theme-classic-vars';
+@import "./ag-theme-classic-common";
+@import "./ag-theme-classic-vars";
 
 // Colors
 $icon-color: #333333 !default;
@@ -26,10 +26,10 @@ $tool-panel-background-color: #f6f6f6 !default;
 
 $chip-background-color: #ecf0f1 !default;
 
-$range-selection-background-color: rgba(120, 120, 120, 0.4) !default; 
+$range-selection-background-color: rgba(120, 120, 120, 0.4) !default;
 $range-selection-highlight-color: transparent !default;
 
-$hover-color: inherit !default;
+$hover-color: "" !default;
 
 $selected-color: $menu-option-active-color !default;
 
@@ -117,7 +117,7 @@ $params: (
     value-change-delta-down-color: $value-change-delta-down-color,
     value-change-value-highlight-background-color: $value-change-value-highlight-background-color,
     row-floating-background-color: $row-floating-background-color,
-    row-stub-background-color: $row-stub-background-color,
+    row-stub-background-color: $row-stub-background-color
 );
 
 .ag-theme-fresh {

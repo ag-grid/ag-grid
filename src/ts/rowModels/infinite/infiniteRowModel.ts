@@ -56,6 +56,14 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
         this.addDestroyFunc( () => this.destroyCache() );
     }
 
+    @PreDestroy
+    private destroyDatasource(): void {
+        if (this.datasource && this.datasource.destroy) {
+            this.datasource.destroy();
+        }
+        this.datasource = null;
+    }
+
     public isLastRowFound(): boolean {
         return this.infiniteCache ? this.infiniteCache.isMaxRowFound() : false;
     }
@@ -95,6 +103,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
     }
 
     public setDatasource(datasource: IDatasource): void {
+        this.destroyDatasource();
         this.datasource = datasource;
 
         // only reset if we have a valid datasource to working with

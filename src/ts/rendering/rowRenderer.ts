@@ -1,64 +1,68 @@
-import {Utils as _} from "../utils";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {GridPanel, RowContainerComponents} from "../gridPanel/gridPanel";
-import {ExpressionService} from "../valueService/expressionService";
-import {TemplateService} from "../templateService";
-import {ValueService} from "../valueService/valueService";
-import {EventService} from "../eventService";
-import {RowComp} from "./rowComp";
-import {Column} from "../entities/column";
-import {RowNode} from "../entities/rowNode";
-import {Events, ModelUpdatedEvent, ViewportChangedEvent} from "../events";
-import {Constants} from "../constants";
-import {CellComp} from "./cellComp";
-import {Autowired, Bean, Context, Optional, PostConstruct, PreDestroy, Qualifier} from "../context/context";
-import {GridCore} from "../gridCore";
-import {ColumnApi} from "../columnController/columnApi";
-import {ColumnController} from "../columnController/columnController";
-import {Logger, LoggerFactory} from "../logger";
-import {FocusedCellController} from "../focusedCellController";
-import {IRangeController} from "../interfaces/iRangeController";
-import {CellNavigationService} from "../cellNavigationService";
-import {GridCell} from "../entities/gridCell";
-import {NavigateToNextCellParams, TabToNextCellParams} from "../entities/gridOptions";
-import {RowContainerComponent} from "./rowContainerComponent";
-import {BeanStub} from "../context/beanStub";
-import {PaginationProxy} from "../rowModels/paginationProxy";
-import {GridApi, RefreshCellsParams} from "../gridApi";
-import {PinnedRowModel} from "../rowModels/pinnedRowModel";
-import {Beans} from "./beans";
-import {AnimationFrameService} from "../misc/animationFrameService";
+import { Utils as _ } from "../utils";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { GridPanel, RowContainerComponents } from "../gridPanel/gridPanel";
+import { ExpressionService } from "../valueService/expressionService";
+import { TemplateService } from "../templateService";
+import { ValueService } from "../valueService/valueService";
+import { EventService } from "../eventService";
+import { RowComp } from "./rowComp";
+import { Column } from "../entities/column";
+import { RowNode } from "../entities/rowNode";
+import { Events, ModelUpdatedEvent, ViewportChangedEvent } from "../events";
+import { Constants } from "../constants";
+import { CellComp } from "./cellComp";
+import { Autowired, Bean, Context, Optional, PostConstruct, PreDestroy, Qualifier } from "../context/context";
+import { GridCore } from "../gridCore";
+import { ColumnApi } from "../columnController/columnApi";
+import { ColumnController } from "../columnController/columnController";
+import { Logger, LoggerFactory } from "../logger";
+import { FocusedCellController } from "../focusedCellController";
+import { IRangeController } from "../interfaces/iRangeController";
+import { CellNavigationService } from "../cellNavigationService";
+import {GridCell, GridCellDef} from "../entities/gridCell";
+import { NavigateToNextCellParams, TabToNextCellParams } from "../entities/gridOptions";
+import { RowContainerComponent } from "./rowContainerComponent";
+import { BeanStub } from "../context/beanStub";
+import { PaginationProxy } from "../rowModels/paginationProxy";
+import {FlashCellsParams, GetCellRendererInstancesParams, GridApi, RefreshCellsParams} from "../gridApi";
+import { PinnedRowModel } from "../rowModels/pinnedRowModel";
+import { Beans } from "./beans";
+import { AnimationFrameService } from "../misc/animationFrameService";
+import { HeightScaler } from "./heightScaler";
+import {Grid} from "../grid";
+import {ICellRendererComp} from "./cellRenderers/iCellRenderer";
+import {ICellEditorComp} from "./cellEditors/iCellEditor";
 
-@Bean('rowRenderer')
+@Bean("rowRenderer")
 export class RowRenderer extends BeanStub {
-
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
-    @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('gridCore') private gridCore: GridCore;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
-    @Autowired('$scope') private $scope: any;
-    @Autowired('expressionService') private expressionService: ExpressionService;
-    @Autowired('templateService') private templateService: TemplateService;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('eventService') private eventService: EventService;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
-    @Autowired('context') private context: Context;
-    @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
-    @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
-    @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('beans') private beans: Beans;
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Optional('rangeController') private rangeController: IRangeController;
+    @Autowired("paginationProxy") private paginationProxy: PaginationProxy;
+    @Autowired("columnController") private columnController: ColumnController;
+    @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired("gridCore") private gridCore: GridCore;
+    @Autowired("gridPanel") private gridPanel: GridPanel;
+    @Autowired("$scope") private $scope: any;
+    @Autowired("expressionService") private expressionService: ExpressionService;
+    @Autowired("templateService") private templateService: TemplateService;
+    @Autowired("valueService") private valueService: ValueService;
+    @Autowired("eventService") private eventService: EventService;
+    @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
+    @Autowired("context") private context: Context;
+    @Autowired("loggerFactory") private loggerFactory: LoggerFactory;
+    @Autowired("focusedCellController") private focusedCellController: FocusedCellController;
+    @Autowired("cellNavigationService") private cellNavigationService: CellNavigationService;
+    @Autowired("columnApi") private columnApi: ColumnApi;
+    @Autowired("gridApi") private gridApi: GridApi;
+    @Autowired("beans") private beans: Beans;
+    @Autowired("heightScaler") private heightScaler: HeightScaler;
+    @Autowired("animationFrameService") private animationFrameService: AnimationFrameService;
+    @Optional("rangeController") private rangeController: IRangeController;
 
     private firstRenderedRow: number;
     private lastRenderedRow: number;
 
     // map of row ids to row objects. keeps track of which elements
     // are rendered for which rows in the dom.
-    private rowCompsByIndex: {[key: string]: RowComp} = {};
+    private rowCompsByIndex: { [key: string]: RowComp } = {};
     private floatingTopRowComps: RowComp[] = [];
     private floatingBottomRowComps: RowComp[] = [];
 
@@ -78,8 +82,8 @@ export class RowRenderer extends BeanStub {
 
     private logger: Logger;
 
-    public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('RowRenderer');
+    public agWire(@Qualifier("loggerFactory") loggerFactory: LoggerFactory) {
+        this.logger = loggerFactory.create("RowRenderer");
     }
 
     @PostConstruct
@@ -134,43 +138,52 @@ export class RowRenderer extends BeanStub {
             this.rowContainers.floatingTopPinnedLeft,
             this.rowContainers.floatingTopPinnedRight,
             this.rowContainers.floatingTop,
-            this.rowContainers.floatingTopFullWidth);
+            this.rowContainers.floatingTopFullWidth
+        );
         this.refreshFloatingRows(
             this.floatingBottomRowComps,
             this.pinnedRowModel.getPinnedBottomRowData(),
             this.rowContainers.floatingBottomPinnedLeft,
             this.rowContainers.floatingBottomPinnedRight,
             this.rowContainers.floatingBottom,
-            this.rowContainers.floatingBottomFullWith);
+            this.rowContainers.floatingBottomFullWith
+        );
     }
 
-    private refreshFloatingRows(rowComps: RowComp[], rowNodes: RowNode[],
-                                pinnedLeftContainerComp: RowContainerComponent, pinnedRightContainerComp: RowContainerComponent,
-                                bodyContainerComp: RowContainerComponent, fullWidthContainerComp: RowContainerComponent): void {
-        rowComps.forEach( (row: RowComp) => {
+    private refreshFloatingRows(
+        rowComps: RowComp[],
+        rowNodes: RowNode[],
+        pinnedLeftContainerComp: RowContainerComponent,
+        pinnedRightContainerComp: RowContainerComponent,
+        bodyContainerComp: RowContainerComponent,
+        fullWidthContainerComp: RowContainerComponent
+    ): void {
+        rowComps.forEach((row: RowComp) => {
             row.destroy();
         });
 
         rowComps.length = 0;
 
-        // if no cols, don't draw row - can we get rid of this???
-        let columns = this.columnController.getAllDisplayedColumns();
-        if (_.missingOrEmpty(columns)) { return; }
-
         if (rowNodes) {
-            rowNodes.forEach( (node: RowNode) => {
-
-                let rowComp = new RowComp(this.$scope, bodyContainerComp,
-                        pinnedLeftContainerComp, pinnedRightContainerComp,
-                        fullWidthContainerComp, node, this.beans, false, false);
+            rowNodes.forEach((node: RowNode) => {
+                let rowComp = new RowComp(
+                    this.$scope,
+                    bodyContainerComp,
+                    pinnedLeftContainerComp,
+                    pinnedRightContainerComp,
+                    fullWidthContainerComp,
+                    node,
+                    this.beans,
+                    false,
+                    false
+                );
 
                 rowComp.init();
                 rowComps.push(rowComp);
-            })
+            });
         }
 
         this.flushContainers(rowComps);
-
     }
 
     private onPinnedRowDataChanged(): void {
@@ -182,19 +195,25 @@ export class RowRenderer extends BeanStub {
             recycleRows: refreshEvent.keepRenderedRows,
             animate: refreshEvent.animate,
             newData: refreshEvent.newData,
-            newPage: refreshEvent.newPage
+            newPage: refreshEvent.newPage,
+            // because this is a model updated event (not pinned rows), we
+            // can skip updating the pinned rows. this is needed so that if user
+            // is doing transaction updates, the pinned rows are not getting constantly
+            // trashed - or editing cells in pinned rows are not refreshed and put into read mode
+            onlyBody: true
         };
         this.redrawAfterModelUpdate(params);
-        // this.eventService.dispatchEvent(Events.DEPRECATED_EVENT_PAGINATION_PAGE_LOADED);
     }
 
     // if the row nodes are not rendered, no index is returned
     private getRenderedIndexesForRowNodes(rowNodes: RowNode[]): string[] {
         let result: string[] = [];
-        if (_.missing(rowNodes)) { return result; }
-        _.iterateObject(this.rowCompsByIndex, (index: string, renderedRow: RowComp)=> {
+        if (_.missing(rowNodes)) {
+            return result;
+        }
+        _.iterateObject(this.rowCompsByIndex, (index: string, renderedRow: RowComp) => {
             let rowNode = renderedRow.getRowNode();
-            if (rowNodes.indexOf(rowNode)>=0) {
+            if (rowNodes.indexOf(rowNode) >= 0) {
                 result.push(index);
             }
         });
@@ -202,7 +221,7 @@ export class RowRenderer extends BeanStub {
     }
 
     public redrawRows(rowNodes: RowNode[]): void {
-        if (!rowNodes || rowNodes.length==0) {
+        if (!rowNodes || rowNodes.length == 0) {
             return;
         }
 
@@ -244,7 +263,6 @@ export class RowRenderer extends BeanStub {
 
     // gets called after changes to the model.
     public redrawAfterModelUpdate(params: RefreshViewParams = {}): void {
-
         this.getLockOnRefresh();
 
         let focusedCell: GridCell = this.getCellToRestoreFocusToAfterRefresh(params);
@@ -260,13 +278,13 @@ export class RowRenderer extends BeanStub {
         // all rows and insert them again from scratch
         let rowsUsingFlow = this.forPrint || this.autoHeight;
         let recycleRows = rowsUsingFlow ? false : params.recycleRows;
-        let animate = rowsUsingFlow ? false : (params.animate && this.gridOptionsWrapper.isAnimateRows());
+        let animate = rowsUsingFlow ? false : params.animate && this.gridOptionsWrapper.isAnimateRows();
 
-        let rowsToRecycle: {[key: string]: RowComp} = this.binRowComps(recycleRows);
+        let rowsToRecycle: { [key: string]: RowComp } = this.binRowComps(recycleRows);
 
         this.redraw(rowsToRecycle, animate);
 
-        if (!params.onlyBody){
+        if (!params.onlyBody) {
             this.refreshFloatingRowComps();
         }
 
@@ -289,20 +307,29 @@ export class RowRenderer extends BeanStub {
         // we still want the scroll to be present, otherwise there would be no way to access the columns
         // on the RHS - and if that was where the filter was that cause no rows to be presented, there
         // is no way to remove the filter.
-        if (containerHeight===0) { containerHeight = 1; }
-        this.rowContainers.body.setHeight(containerHeight);
-        this.rowContainers.fullWidth.setHeight(containerHeight);
-        this.rowContainers.pinnedLeft.setHeight(containerHeight);
-        this.rowContainers.pinnedRight.setHeight(containerHeight);
+        if (containerHeight === 0) {
+            containerHeight = 1;
+        }
+
+        this.heightScaler.setModelHeight(containerHeight);
+
+        let realHeight = this.heightScaler.getUiContainerHeight();
+
+        this.rowContainers.body.setHeight(realHeight);
+        this.rowContainers.fullWidth.setHeight(realHeight);
+        this.rowContainers.pinnedLeft.setHeight(realHeight);
+        this.rowContainers.pinnedRight.setHeight(realHeight);
     }
 
     private getLockOnRefresh(): void {
         if (this.refreshInProgress) {
-            throw 'ag-Grid: cannot get grid to draw rows when it is in the middle of drawing rows. ' +
-            'Your code probably called a grid API method while the grid was in the render stage. To overcome ' +
-            'this, put the API call into a timeout, eg instead of api.refreshView(), ' +
-            'call setTimeout(function(){api.refreshView(),0}). To see what part of your code ' +
-            'that caused the refresh check this stacktrace.';
+            throw new Error(
+                "ag-Grid: cannot get grid to draw rows when it is in the middle of drawing rows. " +
+                    "Your code probably called a grid API method while the grid was in the render stage. To overcome " +
+                    "this, put the API call into a timeout, eg instead of api.refreshView(), " +
+                    "call setTimeout(function(){api.refreshView(),0}). To see what part of your code " +
+                    "that caused the refresh check this stacktrace."
+            );
         }
 
         this.refreshInProgress = true;
@@ -323,18 +350,16 @@ export class RowRenderer extends BeanStub {
     }
 
     public stopEditing(cancel: boolean = false) {
-        this.forEachRowComp( (key: string, renderedRow: RowComp) => {
-            renderedRow.stopEditing(cancel);
+        this.forEachRowComp((key: string, rowComp: RowComp) => {
+            rowComp.stopEditing(cancel);
         });
     }
 
-    public forEachCellComp(callback: (renderedCell: CellComp)=>void): void {
-        _.iterateObject(this.rowCompsByIndex, (index: any, renderedRow: RowComp)=> {
-            renderedRow.forEachCellComp(callback);
-        });
+    public forEachCellComp(callback: (cellComp: CellComp) => void): void {
+        this.forEachRowComp( (key: string, rowComp: RowComp) => rowComp.forEachCellComp(callback));
     }
 
-    private forEachRowComp(callback: (key: string, rowComp: RowComp)=>void): void {
+    private forEachRowComp(callback: (key: string, rowComp: RowComp) => void): void {
         _.iterateObject(this.rowCompsByIndex, callback);
         _.iterateObject(this.floatingTopRowComps, callback);
         _.iterateObject(this.floatingBottomRowComps, callback);
@@ -347,19 +372,71 @@ export class RowRenderer extends BeanStub {
         }
     }
 
-    public refreshCells(params: RefreshCellsParams = {}): void {
+    public flashCells(params: FlashCellsParams = {}): void {
+        this.forEachCellCompFiltered(params.rowNodes, params.columns, cellComp => cellComp.flashCell());
+    }
 
+    public refreshCells(params: RefreshCellsParams = {}): void {
+        let refreshCellParams = {
+            forceRefresh: params.force,
+            newData: false
+        };
+        this.forEachCellCompFiltered(params.rowNodes, params.columns, cellComp => cellComp.refreshCell(refreshCellParams));
+    }
+
+    public getCellRendererInstances(params: GetCellRendererInstancesParams): ICellRendererComp[] {
+
+        let res: ICellRendererComp[] = [];
+
+        this.forEachCellCompFiltered(params.rowNodes, params.columns, cellComp => {
+            let cellRenderer = cellComp.getCellRenderer();
+            if (cellRenderer) {
+                res.push(cellRenderer);
+            }
+        } );
+
+        return res;
+    }
+
+    public getCellEditorInstances(params: GetCellRendererInstancesParams): ICellEditorComp[] {
+
+        let res: ICellEditorComp[] = [];
+
+        this.forEachCellCompFiltered(params.rowNodes, params.columns, cellComp => {
+            let cellEditor = cellComp.getCellEditor();
+            if (cellEditor) {
+                res.push(cellEditor);
+            }
+        } );
+
+        return res;
+    }
+
+    public getEditingCells(): GridCellDef[] {
+        let res: GridCellDef[] = [];
+        this.forEachCellComp( cellComp => {
+            if (cellComp.isEditing()) {
+                let gridCellDef: GridCellDef = cellComp.getGridCell().getGridCellDef();
+                res.push(gridCellDef);
+            }
+        });
+        return res;
+    }
+
+    // calls the callback for each cellComp that match the provided rowNodes and columns. eg if one row node
+    // and two columns provided, that identifies 4 cells, so callback gets called 4 times, once for each cell.
+    private forEachCellCompFiltered(rowNodes: RowNode[], columns: (string | Column)[], callback: (cellComp: CellComp) => void): void {
         let rowIdsMap: any;
-        if (_.exists(params.rowNodes)) {
+        if (_.exists(rowNodes)) {
             rowIdsMap = {
                 top: {},
                 bottom: {},
                 normal: {}
             };
-            params.rowNodes.forEach( rowNode => {
-                if (rowNode.rowPinned===Constants.PINNED_TOP) {
+            rowNodes.forEach(rowNode => {
+                if (rowNode.rowPinned === Constants.PINNED_TOP) {
                     rowIdsMap.top[rowNode.id] = true;
-                } else if (rowNode.rowPinned===Constants.PINNED_BOTTOM) {
+                } else if (rowNode.rowPinned === Constants.PINNED_BOTTOM) {
                     rowIdsMap.bottom[rowNode.id] = true;
                 } else {
                     rowIdsMap.normal[rowNode.id] = true;
@@ -368,12 +445,12 @@ export class RowRenderer extends BeanStub {
         }
 
         let colIdsMap: any;
-        if (_.exists(params.columns)) {
+        if (_.exists(columns)) {
             colIdsMap = {};
-            params.columns.forEach( (colKey: string|Column) => {
+            columns.forEach((colKey: string | Column) => {
                 let column: Column = this.columnController.getGridColumn(colKey);
                 if (_.exists(column)) {
-                    colIdsMap[column.getId()] = true
+                    colIdsMap[column.getId()] = true;
                 }
             });
         }
@@ -386,29 +463,33 @@ export class RowRenderer extends BeanStub {
 
             // skip this row if it is missing from the provided list
             if (_.exists(rowIdsMap)) {
-                if (floating===Constants.PINNED_BOTTOM) {
-                    if (!rowIdsMap.bottom[id]) { return; }
-                } else if (floating===Constants.PINNED_TOP) {
-                    if (!rowIdsMap.top[id]) { return; }
+                if (floating === Constants.PINNED_BOTTOM) {
+                    if (!rowIdsMap.bottom[id]) {
+                        return;
+                    }
+                } else if (floating === Constants.PINNED_TOP) {
+                    if (!rowIdsMap.top[id]) {
+                        return;
+                    }
                 } else {
-                    if (!rowIdsMap.normal[id]) { return; }
+                    if (!rowIdsMap.normal[id]) {
+                        return;
+                    }
                 }
             }
 
-            rowComp.forEachCellComp( cellComp => {
-
+            rowComp.forEachCellComp(cellComp => {
                 let colId: string = cellComp.getColumn().getId();
                 let excludeColFromRefresh = colIdsMap && !colIdsMap[colId];
-                if (excludeColFromRefresh) { return; }
+                if (excludeColFromRefresh) {
+                    return;
+                }
 
-                cellComp.refreshCell({
-                    forceRefresh: params.force,
-                    newData: false
-                });
+                callback(cellComp);
             });
         };
 
-        _.iterateObject(this.rowCompsByIndex, (index: string, rowComp: RowComp)=> {
+        _.iterateObject(this.rowCompsByIndex, (index: string, rowComp: RowComp) => {
             processRow(rowComp);
         });
 
@@ -429,14 +510,13 @@ export class RowRenderer extends BeanStub {
         this.removeRowComps(rowIndexesToRemove);
     }
 
-    private binRowComps(recycleRows: boolean): {[key: string]: RowComp} {
-
+    private binRowComps(recycleRows: boolean): { [key: string]: RowComp } {
         let indexesToRemove: string[];
-        let rowsToRecycle: {[key: string]: RowComp} = {};
+        let rowsToRecycle: { [key: string]: RowComp } = {};
 
         if (recycleRows) {
             indexesToRemove = [];
-            _.iterateObject(this.rowCompsByIndex, (index: string, rowComp: RowComp)=> {
+            _.iterateObject(this.rowCompsByIndex, (index: string, rowComp: RowComp) => {
                 let rowNode = rowComp.getRowNode();
                 if (_.exists(rowNode.id)) {
                     rowsToRecycle[rowNode.id] = rowComp;
@@ -458,7 +538,7 @@ export class RowRenderer extends BeanStub {
     private removeRowComps(rowsToRemove: any[]) {
         // if no fromIndex then set to -1, which will refresh everything
         // let realFromIndex = -1;
-        rowsToRemove.forEach( indexToRemove => {
+        rowsToRemove.forEach(indexToRemove => {
             let renderedRow = this.rowCompsByIndex[indexToRemove];
             renderedRow.destroy();
             delete this.rowCompsByIndex[indexToRemove];
@@ -477,8 +557,8 @@ export class RowRenderer extends BeanStub {
 
     private removeRowCompsNotToDraw(indexesToDraw: number[]): void {
         // for speedy lookup, dump into map
-        let indexesToDrawMap: {[index: string]: boolean} = {};
-        indexesToDraw.forEach(index => indexesToDrawMap[index] = true);
+        let indexesToDrawMap: { [index: string]: boolean } = {};
+        indexesToDraw.forEach(index => (indexesToDrawMap[index] = true));
 
         let existingIndexes = Object.keys(this.rowCompsByIndex);
         let indexesNotToDraw: string[] = _.filter(existingIndexes, index => !indexesToDrawMap[index]);
@@ -500,12 +580,13 @@ export class RowRenderer extends BeanStub {
             }
         });
 
-        indexesToDraw.sort( (a: number, b: number) => a - b);
+        indexesToDraw.sort((a: number, b: number) => a - b);
 
-        return indexesToDraw
+        return indexesToDraw;
     }
 
-    private redraw(rowsToRecycle?: {[key: string]: RowComp}, animate = false, afterScroll = false) {
+    private redraw(rowsToRecycle?: { [key: string]: RowComp }, animate = false, afterScroll = false) {
+        this.heightScaler.update();
         this.workOutFirstAndLastRowsToRender();
 
         // the row can already exist and be in the following:
@@ -523,7 +604,7 @@ export class RowRenderer extends BeanStub {
         let nextVmTurnFunctions: Function[] = [];
 
         let rowComps: RowComp[] = [];
-        indexesToDraw.forEach( rowIndex => {
+        indexesToDraw.forEach(rowIndex => {
             let rowComp = this.createOrUpdateRowComp(rowIndex, rowsToRecycle, animate, afterScroll);
             if (_.exists(rowComp)) {
                 rowComps.push(rowComp);
@@ -551,13 +632,13 @@ export class RowRenderer extends BeanStub {
             }
         });
 
-        rowComps.forEach( rowComp => rowComp.afterFlush());
+        rowComps.forEach(rowComp => rowComp.afterFlush());
     }
 
     private onDisplayedColumnsChanged(): void {
         let pinningLeft = this.columnController.isPinningLeft();
         let pinningRight = this.columnController.isPinningRight();
-        let atLeastOneChanged = this.pinningLeft!==pinningLeft || pinningRight!==this.pinningRight;
+        let atLeastOneChanged = this.pinningLeft !== pinningLeft || pinningRight !== this.pinningRight;
         if (atLeastOneChanged) {
             this.pinningLeft = pinningLeft;
             this.pinningRight = pinningRight;
@@ -573,7 +654,7 @@ export class RowRenderer extends BeanStub {
         // if either of the pinned panels has shown / hidden, then need to redraw the fullWidth bits when
         // embedded, as what appears in each section depends on whether we are pinned or not
         let rowsToRemove: string[] = [];
-        this.forEachRowComp( (id: string, rowComp: RowComp) => {
+        this.forEachRowComp((id: string, rowComp: RowComp) => {
             if (rowComp.isFullWidth()) {
                 let rowIndex = rowComp.getRowNode().rowIndex;
                 rowsToRemove.push(rowIndex.toString());
@@ -583,9 +664,7 @@ export class RowRenderer extends BeanStub {
         this.redrawAfterScroll();
     }
 
-    private createOrUpdateRowComp(rowIndex: number, rowsToRecycle: {[key: string]: RowComp},
-                                  animate: boolean, afterScroll: boolean): RowComp {
-
+    private createOrUpdateRowComp(rowIndex: number, rowsToRecycle: { [key: string]: RowComp }, animate: boolean, afterScroll: boolean): RowComp {
         let rowNode: RowNode;
 
         let rowComp: RowComp = this.rowCompsByIndex[rowIndex];
@@ -623,11 +702,13 @@ export class RowRenderer extends BeanStub {
         return rowComp;
     }
 
-    private destroyRowComps(rowCompsMap: {[key: string]: RowComp}, animate: boolean): void {
+    private destroyRowComps(rowCompsMap: { [key: string]: RowComp }, animate: boolean): void {
         let delayedFuncs: Function[] = [];
         _.iterateObject(rowCompsMap, (nodeId: string, rowComp: RowComp) => {
             // if row was used, then it's null
-            if (!rowComp) { return; }
+            if (!rowComp) {
+                return;
+            }
             rowComp.destroy(animate);
             _.pushAll(delayedFuncs, rowComp.getAndClearDelayedDestroyFunctions());
         });
@@ -638,12 +719,13 @@ export class RowRenderer extends BeanStub {
         // if we are doing angular compiling, then do digest the scope here
         if (this.gridOptionsWrapper.isAngularCompileRows()) {
             // we do it in a timeout, in case we are already in an apply
-            setTimeout( () => { this.$scope.$apply(); }, 0);
+            setTimeout(() => {
+                this.$scope.$apply();
+            }, 0);
         }
     }
 
     private workOutFirstAndLastRowsToRender(): void {
-
         let newFirst: number;
         let newLast: number;
 
@@ -651,7 +733,6 @@ export class RowRenderer extends BeanStub {
             newFirst = 0;
             newLast = -1; // setting to -1 means nothing in range
         } else {
-
             let pageFirstRow = this.paginationProxy.getPageFirstRow();
             let pageLastRow = this.paginationProxy.getPageLastRow();
 
@@ -659,15 +740,18 @@ export class RowRenderer extends BeanStub {
                 newFirst = pageFirstRow;
                 newLast = pageLastRow;
             } else {
-
                 let pixelOffset = this.paginationProxy ? this.paginationProxy.getPixelOffset() : 0;
+                let heightOffset = this.heightScaler.getOffset();
 
-                let bodyVRange = this.gridPanel.getVerticalPixelRange();
+                let bodyVRange = this.gridPanel.getVScrollPosition();
                 let topPixel = bodyVRange.top;
                 let bottomPixel = bodyVRange.bottom;
 
-                let first = this.paginationProxy.getRowIndexAtPixel(topPixel + pixelOffset);
-                let last = this.paginationProxy.getRowIndexAtPixel(bottomPixel + pixelOffset);
+                let realPixelTop = topPixel + pixelOffset + heightOffset;
+                let realPixelBottom = bottomPixel + pixelOffset + heightOffset;
+
+                let first = this.paginationProxy.getRowIndexAtPixel(realPixelTop);
+                let last = this.paginationProxy.getRowIndexAtPixel(realPixelBottom);
 
                 //add in buffer
                 let buffer = this.gridOptionsWrapper.getRowBuffer();
@@ -722,9 +806,8 @@ export class RowRenderer extends BeanStub {
     //    otherwise the user can range select and drag (with focus cell going out of the viewport)
     //    and then ctrl+c, nothing will happen if cell is removed from dom.
     private keepRowBecauseEditing(rowComp: RowComp): boolean {
-
-        let REMOVE_ROW : boolean = false;
-        let KEEP_ROW : boolean = true;
+        let REMOVE_ROW: boolean = false;
+        let KEEP_ROW: boolean = true;
         let rowNode = rowComp.getRowNode();
 
         let rowHasFocus = this.focusedCellController.isRowNodeFocused(rowNode);
@@ -733,7 +816,9 @@ export class RowRenderer extends BeanStub {
         let mightWantToKeepRow = rowHasFocus || rowIsEditing;
 
         // if we deffo don't want to keep it,
-        if (!mightWantToKeepRow) { return REMOVE_ROW; }
+        if (!mightWantToKeepRow) {
+            return REMOVE_ROW;
+        }
 
         // editing row, only remove if it is no longer rendered, eg filtered out or new data set.
         // the reason we want to keep is if user is scrolling up and down, we don't want to loose
@@ -743,12 +828,19 @@ export class RowRenderer extends BeanStub {
     }
 
     private createRowComp(rowNode: RowNode, animate: boolean, afterScroll: boolean): RowComp {
-
         let useAnimationFrameForCreate = afterScroll && !this.gridOptionsWrapper.isSuppressAnimationFrame();
 
-        let rowComp = new RowComp(this.$scope, this.rowContainers.body,
-                this.rowContainers.pinnedLeft, this.rowContainers.pinnedRight,
-                this.rowContainers.fullWidth, rowNode, this.beans, animate, useAnimationFrameForCreate);
+        let rowComp = new RowComp(
+            this.$scope,
+            this.rowContainers.body,
+            this.rowContainers.pinnedLeft,
+            this.rowContainers.pinnedRight,
+            this.rowContainers.fullWidth,
+            rowNode,
+            this.beans,
+            animate,
+            useAnimationFrameForCreate
+        );
 
         rowComp.init();
 
@@ -765,7 +857,6 @@ export class RowRenderer extends BeanStub {
     // we use index for rows, but column object for columns, as the next column (by index) might not
     // be visible (header grouping) so it's not reliable, so using the column object instead.
     public navigateToNextCell(event: KeyboardEvent, key: number, previousCell: GridCell, allowUserOverride: boolean) {
-
         let nextCell = previousCell;
 
         // we keep searching for a next cell until we find one. this is how the group rows get skipped
@@ -792,7 +883,7 @@ export class RowRenderer extends BeanStub {
         if (allowUserOverride) {
             let userFunc = this.gridOptionsWrapper.getNavigateToNextCellFunc();
             if (_.exists(userFunc)) {
-                let params = <NavigateToNextCellParams> {
+                let params = <NavigateToNextCellParams>{
                     key: key,
                     previousCellDef: previousCell,
                     nextCellDef: nextCell ? nextCell.getGridCellDef() : null,
@@ -812,13 +903,23 @@ export class RowRenderer extends BeanStub {
             return;
         }
 
+        this.ensureCellVisible(nextCell);
+
+        this.focusedCellController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.floating, true);
+        if (this.rangeController) {
+            let gridCell = new GridCell({ rowIndex: nextCell.rowIndex, floating: nextCell.floating, column: nextCell.column });
+            this.rangeController.setRangeToCell(gridCell);
+        }
+    }
+
+    public ensureCellVisible(gridCell: GridCell): void {
         // this scrolls the row into view
-        if (_.missing(nextCell.floating)) {
-            this.gridPanel.ensureIndexVisible(nextCell.rowIndex);
+        if (_.missing(gridCell.floating)) {
+            this.gridPanel.ensureIndexVisible(gridCell.rowIndex);
         }
 
-        if (!nextCell.column.isPinned()) {
-            this.gridPanel.ensureColumnVisible(nextCell.column);
+        if (!gridCell.column.isPinned()) {
+            this.gridPanel.ensureColumnVisible(gridCell.column);
         }
 
         // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
@@ -827,12 +928,6 @@ export class RowRenderer extends BeanStub {
 
         // need to flush frames, to make sure the correct cells are rendered
         this.animationFrameService.flushAllFrames();
-
-        this.focusedCellController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.floating, true);
-        if (this.rangeController) {
-            let gridCell = new GridCell({rowIndex: nextCell.rowIndex, floating: nextCell.floating, column: nextCell.column});
-            this.rangeController.setRangeToCell(gridCell);
-        }
     }
 
     public startEditingCell(gridCell: GridCell, keyPress: number, charPress: string): void {
@@ -875,10 +970,14 @@ export class RowRenderer extends BeanStub {
     public tabToNextCell(backwards: boolean): boolean {
         let focusedCell = this.focusedCellController.getFocusedCell();
         // if no focus, then cannot navigate
-        if (_.missing(focusedCell)) { return false; }
+        if (_.missing(focusedCell)) {
+            return false;
+        }
         let renderedCell = this.getComponentForCell(focusedCell);
         // if cell is not rendered, means user has scrolled away from the cell
-        if (_.missing(renderedCell)) { return false; }
+        if (_.missing(renderedCell)) {
+            return false;
+        }
 
         let result = this.moveToCellAfter(renderedCell, backwards);
         return result;
@@ -900,7 +999,6 @@ export class RowRenderer extends BeanStub {
     }
 
     private moveToNextEditingCell(previousRenderedCell: CellComp, backwards: boolean): boolean {
-
         let gridCell = previousRenderedCell.getGridCell();
 
         // need to do this before getting next cell to edit, in case the next cell
@@ -925,7 +1023,6 @@ export class RowRenderer extends BeanStub {
     }
 
     private moveToNextEditingRow(previousRenderedCell: CellComp, backwards: boolean): boolean {
-
         let gridCell = previousRenderedCell.getGridCell();
 
         // find the next cell to start editing
@@ -963,8 +1060,7 @@ export class RowRenderer extends BeanStub {
         let pGridCell = previousRenderedCell.getGridCell();
         let nGridCell = nextRenderedCell.getGridCell();
 
-        let rowsMatch = (pGridCell.rowIndex === nGridCell.rowIndex)
-            && (pGridCell.floating === nGridCell.floating);
+        let rowsMatch = pGridCell.rowIndex === nGridCell.rowIndex && pGridCell.floating === nGridCell.floating;
 
         if (rowsMatch) {
             // same row, so we don't start / stop editing, we just move the focus along
@@ -987,17 +1083,15 @@ export class RowRenderer extends BeanStub {
     // called by the cell, when tab is pressed while editing.
     // @return: RenderedCell when navigation successful, otherwise null
     private findNextCellToFocusOn(gridCell: GridCell, backwards: boolean, startEditing: boolean): CellComp {
-
         let nextCell: GridCell = gridCell;
 
         while (true) {
-
             nextCell = this.cellNavigationService.getNextTabbedCell(nextCell, backwards);
 
             // allow user to override what cell to go to next
             let userFunc = this.gridOptionsWrapper.getTabToNextCellFunc();
             if (_.exists(userFunc)) {
-                let params = <TabToNextCellParams> {
+                let params = <TabToNextCellParams>{
                     backwards: backwards,
                     editing: startEditing,
                     previousCellDef: gridCell.getGridCellDef(),
@@ -1058,7 +1152,7 @@ export class RowRenderer extends BeanStub {
             // by default, when we click a cell, it gets selected into a range, so to keep keyboard navigation
             // consistent, we set into range here also.
             if (this.rangeController) {
-                let gridCell = new GridCell({rowIndex: nextCell.rowIndex, floating: nextCell.floating, column: nextCell.column});
+                let gridCell = new GridCell({ rowIndex: nextCell.rowIndex, floating: nextCell.floating, column: nextCell.column });
                 this.rangeController.setRangeToCell(gridCell);
             }
 
@@ -1066,15 +1160,14 @@ export class RowRenderer extends BeanStub {
             return nextCellComp;
         }
     }
-
 }
 
 export interface RefreshViewParams {
-    recycleRows?:boolean;
-    animate?:boolean;
-    suppressKeepFocus?:boolean;
-    onlyBody?:boolean;
+    recycleRows?: boolean;
+    animate?: boolean;
+    suppressKeepFocus?: boolean;
+    onlyBody?: boolean;
     // when new data, grid scrolls back to top
-    newData?:boolean;
-    newPage?:boolean;
+    newData?: boolean;
+    newPage?: boolean;
 }

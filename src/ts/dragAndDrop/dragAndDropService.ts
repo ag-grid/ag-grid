@@ -12,9 +12,9 @@ export enum DragSourceType { ToolPanel, HeaderCell, RowDrag }
 
 export interface DragItem {
     // if moving a row, the, this contains the row node
-    rowNode?: RowNode,
+    rowNode?: RowNode;
     // if moving columns, this contains the columns and the visible state
-    columns?: Column[],
+    columns?: Column[];
     visibleState?: {[key: string]: boolean};
 }
 
@@ -158,7 +158,6 @@ export class DragAndDropService {
 
     public addDragSource(dragSource: DragSource, allowTouch = false): void {
         let params: DragListenerParams = {
-            type: this.getStringType(dragSource.type),
             eElement: dragSource.eElement,
             dragStartPixels: dragSource.dragStartPixels,
             onDragStart: this.onDragStart.bind(this, dragSource),

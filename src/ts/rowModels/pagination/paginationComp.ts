@@ -63,7 +63,7 @@ export class PaginationComp extends Component {
     }
 
     private formatNumber(value: number): string {
-        var userFunc = this.gridOptionsWrapper.getPaginationNumberFormatterFunc();
+        let userFunc = this.gridOptionsWrapper.getPaginationNumberFormatterFunc();
         if (userFunc) {
             return userFunc({value: value});
         } else {
@@ -88,11 +88,11 @@ export class PaginationComp extends Component {
                     <span ref="lbFirstRowOnPage"></span> ${strTo} <span ref="lbLastRowOnPage"></span> ${strOf} <span ref="lbRecordCount"></span>
                 </span>
                 <span class="ag-paging-page-summary-panel">
-                    <button class="ag-paging-button" ref="btFirst">${strFirst}</button>
-                    <button class="ag-paging-button" ref="btPrevious">${strPrevious}</button>
+                    <button type="button" class="ag-paging-button" ref="btFirst">${strFirst}</button>
+                    <button type="button" class="ag-paging-button" ref="btPrevious">${strPrevious}</button>
                     ${strPage} <span ref="lbCurrent"></span> ${strOf} <span ref="lbTotal"></span>
-                    <button class="ag-paging-button" ref="btNext">${strNext}</button>
-                    <button class="ag-paging-button" ref="btLast">${strLast}</button>
+                    <button type="button" class="ag-paging-button" ref="btNext">${strNext}</button>
+                    <button type="button" class="ag-paging-button" ref="btLast">${strLast}</button>
                 </span>
             </div>`;
     }

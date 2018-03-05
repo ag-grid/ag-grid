@@ -32,7 +32,7 @@ export interface RefreshModelParams {
     // if true, then rows we are editing will be kept
     keepEditingRows?: boolean;
     // if doing delta updates, this has the changes that were done
-    rowNodeTransaction?: RowNodeTransaction;
+    rowNodeTransactions?: RowNodeTransaction[];
     // if doing delta updates, this has the order of the nodes
     rowNodeOrder?: {[id:string]: number};
     // true user called setRowData() (or a new page in pagination). the grid scrolls
@@ -51,6 +51,11 @@ export interface RowNodeTransaction {
     add: RowNode[];
     remove: RowNode[];
     update: RowNode[];
+}
+
+export interface BatchTransactionItem {
+    rowDataTransaction: RowDataTransaction;
+    callback: (res: RowNodeTransaction)=>void;
 }
 
 @Bean('rowModel')
@@ -84,6 +89,8 @@ export class InMemoryRowModel {
     private rowsToDisplay: RowNode[]; // the rows mapped to rows to display
 
     private nodeManager: InMemoryNodeManager;
+
+    private rowDataTransactionBatch: BatchTransactionItem[];
 
     @PostConstruct
     public init(): void {
@@ -181,9 +188,7 @@ export class InMemoryRowModel {
         }
     }
 
-    private createChangePath(transaction: RowNodeTransaction): ChangedPath {
-
-        if (!transaction) { return null; }
+    private createChangePath(rowNodeTransactions: RowNodeTransaction[]): ChangedPath {
 
         // for updates, if the row is updated at all, then we re-calc all the values
         // in that row. we could compare each value to each old value, however if we
@@ -192,11 +197,17 @@ export class InMemoryRowModel {
         // each column is different. that way the changedPath is used so that only
         // the impacted parent rows are recalculated, parents who's children have
         // not changed are not impacted.
+
         let valueColumns = this.columnController.getValueColumns();
 
-        if (!valueColumns || valueColumns.length === 0) { return null; }
+        let noValueColumns = _.missingOrEmpty(valueColumns);
+        let noTransactions = _.missingOrEmpty(rowNodeTransactions);
 
         let changedPath = new ChangedPath(false);
+
+        if (noValueColumns || noTransactions) {
+            changedPath.setInactive();
+        }
 
         return changedPath;
     }
@@ -215,19 +226,19 @@ export class InMemoryRowModel {
         // let start: number;
         // console.log('======= start =======');
 
-        let changedPath: ChangedPath = this.createChangePath(params.rowNodeTransaction);
+        let changedPath: ChangedPath = this.createChangePath(params.rowNodeTransactions);
 
         switch (params.step) {
             case constants.STEP_EVERYTHING:
                 // start = new Date().getTime();
-                this.doRowGrouping(params.groupState, params.rowNodeTransaction, params.rowNodeOrder, changedPath);
+                this.doRowGrouping(params.groupState, params.rowNodeTransactions, params.rowNodeOrder, changedPath);
                 // console.log('rowGrouping = ' + (new Date().getTime() - start));
             case constants.STEP_FILTER:
                 // start = new Date().getTime();
                 this.doFilter();
                 // console.log('filter = ' + (new Date().getTime() - start));
             case constants.STEP_PIVOT:
-                this.doPivot();
+                this.doPivot(changedPath);
             case constants.STEP_AGGREGATE: // depends on agg fields
                 // start = new Date().getTime();
                 this.doAggregate(changedPath);
@@ -481,15 +492,15 @@ export class InMemoryRowModel {
     // + gridApi.expandAll()
     // + gridApi.collapseAll()
     public expandOrCollapseAll(expand: boolean): void {
-
-        if (this.rootNode){
+        let usingTreeData = this.gridOptionsWrapper.isTreeData();
+        if (this.rootNode) {
             recursiveExpandOrCollapse(this.rootNode.childrenAfterGroup);
         }
-
         function recursiveExpandOrCollapse(rowNodes: RowNode[]): void {
             if (!rowNodes) { return; }
             rowNodes.forEach( (rowNode: RowNode) => {
-                if (rowNode.group) {
+                let shouldExpandOrCollapse = usingTreeData ? _.exists(rowNode.childrenAfterGroup) : rowNode.group;
+                if (shouldExpandOrCollapse) {
                     rowNode.expanded = expand;
                     recursiveExpandOrCollapse(rowNode.childrenAfterGroup);
                 }
@@ -503,7 +514,7 @@ export class InMemoryRowModel {
     }
 
     private doRowGrouping(groupState: any,
-                          rowNodeTransaction: RowNodeTransaction,
+                          rowNodeTransactions: RowNodeTransaction[],
                           rowNodeOrder: {[id:string]: number},
                           changedPath: ChangedPath) {
 
@@ -513,15 +524,17 @@ export class InMemoryRowModel {
 
         if (this.groupStage) {
 
-            if (rowNodeTransaction) {
-                this.groupStage.execute({rowNode: this.rootNode,
-                    rowNodeTransaction: rowNodeTransaction,
-                    rowNodeOrder: rowNodeOrder,
-                    changedPath: changedPath});
+            if (_.exists(rowNodeTransactions)) {
+                rowNodeTransactions.forEach( tran => {
+                    this.groupStage.execute({rowNode: this.rootNode,
+                        rowNodeTransaction: tran,
+                        rowNodeOrder: rowNodeOrder,
+                        changedPath: changedPath});
+                });
             } else {
                 // groups are about to get disposed, so need to deselect any that are selected
                 this.selectionController.removeGroupsFromSelection();
-                this.groupStage.execute({rowNode: this.rootNode});
+                this.groupStage.execute({rowNode: this.rootNode, changedPath: changedPath});
                 // set open/closed state on groups
                 this.restoreGroupState(groupState);
             }
@@ -552,9 +565,9 @@ export class InMemoryRowModel {
         this.filterStage.execute({rowNode: this.rootNode});
     }
 
-    private doPivot() {
+    private doPivot(changedPath: ChangedPath) {
         if (this.pivotStage) {
-            this.pivotStage.execute({rowNode: this.rootNode});
+            this.pivotStage.execute({rowNode: this.rootNode, changedPath: changedPath});
         }
     }
 
@@ -603,15 +616,58 @@ export class InMemoryRowModel {
             newData: true});
     }
 
+    public batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction)=>void): void {
+        if (!this.rowDataTransactionBatch) {
+            this.rowDataTransactionBatch = [];
+            let waitMillis = this.gridOptionsWrapper.getBatchUpdateWaitMillis();
+            setTimeout( ()=> {
+                this.executeBatchUpdateRowData();
+                this.rowDataTransactionBatch = null;
+            }, waitMillis);
+        }
+        this.rowDataTransactionBatch.push({rowDataTransaction: rowDataTransaction, callback: callback});
+    }
+
+    private executeBatchUpdateRowData(): void {
+        this.valueCache.onDataChanged();
+
+        let callbackFuncsBound: Function[] = [];
+        let rowNodeTrans: RowNodeTransaction[] = [];
+
+        this.rowDataTransactionBatch.forEach( tranItem => {
+            let rowNodeTran = this.nodeManager.updateRowData(tranItem.rowDataTransaction, null);
+            rowNodeTrans.push(rowNodeTran);
+            if (tranItem.callback) {
+                callbackFuncsBound.push(tranItem.callback.bind(rowNodeTran));
+            }
+        });
+
+        this.commonUpdateRowData(rowNodeTrans);
+
+        // do callbacks in next VM turn so it's async
+        if (callbackFuncsBound.length > 0) {
+            setTimeout( ()=> {
+                callbackFuncsBound.forEach( func => func() );
+            }, 0);
+        }
+    }
+
     public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder?: {[id:string]: number}): RowNodeTransaction {
 
         this.valueCache.onDataChanged();
 
         let rowNodeTran = this.nodeManager.updateRowData(rowDataTran, rowNodeOrder);
 
+        this.commonUpdateRowData([rowNodeTran]);
+
+        return rowNodeTran;
+    }
+
+    // common to updateRowData and batchUpdateRowData
+    private commonUpdateRowData(rowNodeTrans: RowNodeTransaction[], rowNodeOrder?: {[id:string]: number}): void {
         this.refreshModel({
             step: Constants.STEP_EVERYTHING,
-            rowNodeTransaction: rowNodeTran,
+            rowNodeTransactions: rowNodeTrans,
             rowNodeOrder: rowNodeOrder,
             keepRenderedRows: true,
             animate: true,
@@ -624,8 +680,6 @@ export class InMemoryRowModel {
             columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(event);
-
-        return rowNodeTran;
     }
 
     private doRowsToDisplay() {

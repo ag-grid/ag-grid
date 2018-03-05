@@ -62,12 +62,26 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         this.addInIcon('columnGroupOpened', 'agOpened');
         this.addInIcon('columnGroupClosed', 'agClosed');
 
-        let expandAction = ()=> {
+        let expandAction = (event: MouseEvent)=> {
+            if (_.isStopPropagationForAgGrid(event)) { return; }
             let newExpandedValue = !this.params.columnGroup.isExpanded();
             this.columnController.setColumnGroupOpened(this.params.columnGroup.getOriginalColumnGroup(), newExpandedValue, "uiColumnExpanded");
         };
+
         this.addTouchAndClickListeners(this.eCloseIcon, expandAction);
         this.addTouchAndClickListeners(this.eOpenIcon, expandAction);
+
+        let stopPropagationAction = (event: MouseEvent)=> {
+            _.stopPropagationForAgGrid(event);
+        };
+
+        // adding stopPropagation to the double click for the icons prevents double click action happening
+        // when the icons are clicked. if the icons are double clicked, then the groups should open and
+        // then close again straight away. if we also listened to double click, then the group would open,
+        // close, then open, which is not what we want. double click should only action if the user double
+        // clicks outside of the icons.
+        this.addDestroyableEventListener(this.eCloseIcon, 'dblclick', stopPropagationAction);
+        this.addDestroyableEventListener(this.eOpenIcon, 'dblclick', stopPropagationAction);
 
         this.addDestroyableEventListener(this.getGui(), 'dblclick', expandAction);
 
@@ -78,7 +92,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         this.addDestroyableEventListener(originalColumnGroup, OriginalColumnGroup.EVENT_EXPANDABLE_CHANGED, this.updateIconVisibility.bind(this));
     }
 
-    private addTouchAndClickListeners(eElement: HTMLElement, action: ()=>void): void {
+    private addTouchAndClickListeners(eElement: HTMLElement, action: (event: MouseEvent)=>void): void {
 
         let touchListener = new TouchListener(this.eCloseIcon);
 

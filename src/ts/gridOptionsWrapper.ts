@@ -3,11 +3,14 @@ import {
     GetContextMenuItems,
     GetMainMenuItems,
     GetRowNodeIdFunc,
-    GridOptions, IsRowMaster,
+    GridOptions,
+    IsRowMaster,
+    IsRowSelectable,
     NavigateToNextCellParams,
-    NodeChildDetails, PaginationNumberFormatterParams, PostProcessPopupParams,
-    ProcessRowParams,
-    TabToNextCellParams,
+    NodeChildDetails,
+    PaginationNumberFormatterParams,
+    PostProcessPopupParams,
+    TabToNextCellParams
 } from "./entities/gridOptions";
 import {EventService} from "./eventService";
 import {Constants} from "./constants";
@@ -19,15 +22,16 @@ import {ColumnApi} from "./columnController/columnApi";
 import {ColumnController} from "./columnController/columnController";
 import {Utils as _} from "./utils";
 import {IViewportDatasource} from "./interfaces/iViewportDatasource";
-import {ICellRendererComp, ICellRendererFunc} from "./rendering/cellRenderers/iCellRenderer";
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {IDatasource} from "./rowModels/iDatasource";
 import {GridCellDef} from "./entities/gridCell";
 import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
 import {BaseExportParams, ProcessCellForExportParams} from "./exportParams";
 import {AgEvent} from "./events";
-import {Column} from "./entities/column";
-import { Environment } from "./environment";
+import {Environment} from "./environment";
+import {PropertyKeys} from "./propertyKeys";
+import {ColDefUtil} from "./components/colDefUtil";
+import {Events} from "./eventKeys";
 
 let DEFAULT_ROW_HEIGHT = 25;
 let DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -117,6 +121,12 @@ export class GridOptionsWrapper {
 
     @PostConstruct
     public init(): void {
+
+        if (! (this.gridOptions.suppressPropertyNamesCheck === true)) {
+            this.checkGridOptionsProperties();
+            this.checkColumnDefProperties();
+        }
+
         let async = this.useAsyncEvents();
         this.eventService.addGlobalListener(this.globalEventHandler.bind(this), async);
 
@@ -141,7 +151,64 @@ export class GridOptionsWrapper {
 
     }
 
-    // returns the dom data, or undefined if not found
+    private checkColumnDefProperties() {
+        if (this.gridOptions.columnDefs == null) return;
+
+        this.gridOptions.columnDefs.forEach(colDef=>{
+            let userProperties: string [] = Object.getOwnPropertyNames(colDef);
+            let validProperties: string [] = ColDefUtil.ALL_PROPERTIES;
+
+            this.checkProperties(
+                userProperties,
+                validProperties,
+                validProperties,
+                'colDef',
+                'https://www.ag-grid.com/javascript-grid-column-properties/'
+            );
+        })
+    }
+
+    private checkGridOptionsProperties() {
+        let userProperties: string [] = Object.getOwnPropertyNames(this.gridOptions);
+        let validProperties: string [] = PropertyKeys.ALL_PROPERTIES;
+        Object.keys(Events).forEach(it=>validProperties.push (ComponentUtil.getCallbackForEvent((<any>Events)[it])));
+        let validPropertiesAndExceptions: string [] = validProperties.concat('api', 'columnApi');
+
+        this.checkProperties(
+            userProperties,
+            validPropertiesAndExceptions,
+            validProperties,
+            'gridOptions',
+            'https://www.ag-grid.com/javascript-grid-properties/'
+        );
+    }
+
+
+    private checkProperties(
+        userProperties: string[],
+        validPropertiesAndExceptions: string[],
+        validProperties: string[],
+        containerName: string,
+        docsUrl: string
+    ) {
+        let invalidProperties: { [p: string]: string[] } = _.fuzzyCheckStrings(
+            userProperties,
+            validPropertiesAndExceptions,
+            validProperties
+        );
+
+        let invalidPropertyKeys = Object.keys(invalidProperties);
+        invalidPropertyKeys.forEach(invalidPropertyKey => {
+            let fuzzySuggestions: string[] = invalidProperties [invalidPropertyKey];
+            console.warn(`ag-grid: invalid ${containerName} property '${invalidPropertyKey}' did you mean any of these: ${fuzzySuggestions.slice(0, 8).join(",")}`)
+        });
+
+        if (invalidPropertyKeys.length > 0) {
+            console.warn(`ag-grid: to see all the valid ${containerName} properties please check: ${docsUrl}`)
+        }
+    }
+
+// returns the dom data, or undefined if not found
     public getDomData(element: Node, key: string): any {
         let domData = (<any>element)[this.domDataKey];
         if (domData) {
@@ -164,6 +231,7 @@ export class GridOptionsWrapper {
     public isRowSelection() { return this.gridOptions.rowSelection === "single" || this.gridOptions.rowSelection === "multiple"; }
     public isRowDeselection() { return isTrue(this.gridOptions.rowDeselection); }
     public isRowSelectionMulti() { return this.gridOptions.rowSelection === 'multiple'; }
+    public isRowMultiSelectWithClick() { return isTrue(this.gridOptions.rowMultiSelectWithClick); }
     public getContext() { return this.gridOptions.context; }
     public isPivotMode() { return isTrue(this.gridOptions.pivotMode); }
     public isPivotTotals() { return isTrue(this.gridOptions.pivotTotals); }
@@ -189,9 +257,14 @@ export class GridOptionsWrapper {
         // we don't allow row grouping when doing tree data
         return isTrue(this.gridOptions.toolPanelSuppressRowGroups) || this.isTreeData();
     }
-    public isToolPanelSuppressPivotMode() {
-        return isTrue(this.gridOptions.toolPanelSuppressPivotMode) || this.isTreeData();
-    }
+    public isToolPanelSuppressSideButtons() { return isTrue(this.gridOptions.toolPanelSuppressSideButtons); }
+    public isToolPanelSuppressPivotMode() { return isTrue(this.gridOptions.toolPanelSuppressPivotMode) || this.isTreeData();}
+    public isContractColumnSelection() { return isTrue(this.gridOptions.contractColumnSelection); }
+
+    public isToolPanelSuppressColumnFilter() { return isTrue(this.gridOptions.toolPanelSuppressColumnFilter); }
+    public isToolPanelSuppressColumnSelectAll() { return isTrue(this.gridOptions.toolPanelSuppressColumnSelectAll); }
+    public isToolPanelSuppressColumnExpandAll() { return isTrue(this.gridOptions.toolPanelSuppressColumnExpandAll); }
+
     public isSuppressTouch() { return isTrue(this.gridOptions.suppressTouch); }
     public useAsyncEvents() { return !isTrue(this.gridOptions.suppressAsyncEvents); }
     public isEnableCellChangeFlash() { return isTrue(this.gridOptions.enableCellChangeFlash); }
@@ -215,6 +288,7 @@ export class GridOptionsWrapper {
     public isSuppressRowClickSelection() { return isTrue(this.gridOptions.suppressRowClickSelection); }
     public isSuppressCellSelection() { return isTrue(this.gridOptions.suppressCellSelection); }
     public isSuppressMultiSort() { return isTrue(this.gridOptions.suppressMultiSort); }
+    public isMultiSortKeyCtrl() { return this.gridOptions.multiSortKey === 'ctrl'; }
     public isGroupSuppressAutoColumn() { return isTrue(this.gridOptions.groupSuppressAutoColumn); }
     public isSuppressDragLeaveHidesColumns() { return isTrue(this.gridOptions.suppressDragLeaveHidesColumns); }
     public isSuppressScrollOnNewData() { return isTrue(this.gridOptions.suppressScrollOnNewData); }
@@ -241,6 +315,7 @@ export class GridOptionsWrapper {
     public isUnSortIcon() { return isTrue(this.gridOptions.unSortIcon); }
     public isSuppressMenuHide() { return isTrue(this.gridOptions.suppressMenuHide); }
     public isEnterMovesDownAfterEdit() { return isTrue(this.gridOptions.enterMovesDownAfterEdit); }
+    public isEnterMovesDown() { return isTrue(this.gridOptions.enterMovesDown); }
     public getRowStyle() { return this.gridOptions.rowStyle; }
     public getRowClass() { return this.gridOptions.rowClass; }
     public getRowStyleFunc() { return this.gridOptions.getRowStyle; }
@@ -251,6 +326,7 @@ export class GridOptionsWrapper {
     public getDoesDataFlowerFunc(): (data: any)=>boolean { return this.gridOptions.doesDataFlower; }
     public getPaginationNumberFormatterFunc(): (params: PaginationNumberFormatterParams)=>string { return this.gridOptions.paginationNumberFormatter; }
     public getChildCountFunc() { return this.gridOptions.getChildCount; }
+    public getDefaultGroupSortComparator() { return this.gridOptions.defaultGroupSortComparator; }
 
     public getIsFullWidthCellFunc(): (rowNode: RowNode)=> boolean { return this.gridOptions.isFullWidthCell; }
     public getFullWidthCellRendererParams() { return this.gridOptions.fullWidthCellRendererParams; }
@@ -308,6 +384,10 @@ export class GridOptionsWrapper {
     public isEnableFilter() { return isTrue(this.gridOptions.enableFilter) || isTrue(this.gridOptions.enableServerSideFilter); }
     public isPagination() { return isTrue(this.gridOptions.pagination); }
 
+    public getBatchUpdateWaitMillis(): number {
+        return _.exists(this.gridOptions.batchUpdateWaitMillis) ? this.gridOptions.batchUpdateWaitMillis : Constants.BATCH_WAIT_MILLIS;
+    }
+
     // these are deprecated, should remove them when we take out server side pagination
     public isEnableServerSideFilter() { return this.gridOptions.enableServerSideFilter; }
     public isEnableServerSideSorting() { return isTrue(this.gridOptions.enableServerSideSorting); }
@@ -341,6 +421,7 @@ export class GridOptionsWrapper {
         return usingMasterDetail && this.enterprise;
     }
     public getIsRowMasterFunc(): IsRowMaster { return this.gridOptions.isRowMaster; }
+    public getIsRowSelectableFunc(): IsRowSelectable { return this.gridOptions.isRowSelectable; }
     public getGroupRowRendererParams() { return this.gridOptions.groupRowRendererParams; }
     public getOverlayLoadingTemplate() { return this.gridOptions.overlayLoadingTemplate; }
     public getOverlayNoRowsTemplate() { return this.gridOptions.overlayNoRowsTemplate; }
@@ -376,7 +457,7 @@ export class GridOptionsWrapper {
     public getProcessSecondaryColDefFunc(): (colDef: ColDef)=>void { return this.gridOptions.processSecondaryColDef; }
     public getProcessSecondaryColGroupDefFunc(): (colGroupDef: ColGroupDef)=>void { return this.gridOptions.processSecondaryColGroupDef; }
     public getSendToClipboardFunc() { return this.gridOptions.sendToClipboard; }
-    public getProcessRowPostCreateFunc() { return this.gridOptions.processRowPostCreate; }
+    public getProcessRowPostCreateFunc() : any { return this.gridOptions.processRowPostCreate; }
 
     public getProcessCellForClipboardFunc(): (params: ProcessCellForExportParams)=>any { return this.gridOptions.processCellForClipboard; }
     public getProcessCellFromClipboardFunc(): (params: ProcessCellForExportParams)=>any { return this.gridOptions.processCellFromClipboard; }
@@ -384,6 +465,8 @@ export class GridOptionsWrapper {
     public getViewportRowModelBufferSize(): number { return zeroOrGreater(this.gridOptions.viewportRowModelBufferSize, DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE); }
     // public getCellRenderers(): {[key: string]: {new(): ICellRenderer} | ICellRendererFunc} { return this.gridOptions.cellRenderers; }
     // public getCellEditors(): {[key: string]: {new(): ICellEditor}} { return this.gridOptions.cellEditors; }
+
+    public getPostSortFunc(): (rowNodes: RowNode[]) => void { return this.gridOptions.postSort; }
 
     public getClipboardDeliminator() {
         return _.exists(this.gridOptions.clipboardDeliminator) ? this.gridOptions.clipboardDeliminator : '\t';
@@ -413,7 +496,7 @@ export class GridOptionsWrapper {
     }
 
     public getAutoSizePadding(): number {
-        return this.gridOptions.autoSizePadding > 0 ? this.gridOptions.autoSizePadding : 0;
+        return this.gridOptions.autoSizePadding > 0 ? this.gridOptions.autoSizePadding : 20;
     }
 
     // properties
@@ -495,7 +578,7 @@ export class GridOptionsWrapper {
             return Constants.LAYOUT_INTERVAL;
         }
     }
-    
+
     public getMinColWidth() {
         if (this.gridOptions.minColWidth > GridOptionsWrapper.MIN_COL_WIDTH) {
             return this.gridOptions.minColWidth;
@@ -712,7 +795,7 @@ export class GridOptionsWrapper {
         return !isNaN(value) && typeof value === 'number';
     }
 
-    // Material data table has strict guidelines about whitespace, and these values are different than the ones 
+    // Material data table has strict guidelines about whitespace, and these values are different than the ones
     // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
     private specialForNewMaterial(defaultValue: number, sassVariableName: string): number {
         var theme = this.environment.getTheme();

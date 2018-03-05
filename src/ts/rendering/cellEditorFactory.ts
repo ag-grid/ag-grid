@@ -13,13 +13,12 @@ export class CellEditorFactory {
     @Autowired('componentResolver') private componentResolver: ComponentResolver;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-
     @PostConstruct
     private init(): void {
     }
-    
+
     public addCellEditor(key: string, cellEditor: {new(): ICellEditorComp}): void {
-        console.warn(`ag-grid: since v13.3.1 this method is not supported anymore. If you want to register your own editor check the docs: https://www.ag-grid.com/javascript-grid-cell-editor/`)
+        console.warn(`ag-grid: since v13.3.1 this method is not supported anymore. If you want to register your own editor check the docs: https://www.ag-grid.com/javascript-grid-cell-editor/`);
     }
 
     // private registerEditorsFromGridOptions(): void {
@@ -29,9 +28,9 @@ export class CellEditorFactory {
     //     });
     // }
 
-    public createCellEditor(column:ColDef, params: ICellEditorParams): Promise<ICellEditorComp> {
+    public createCellEditor(column: ColDef, params: ICellEditorParams): Promise<ICellEditorComp> {
 
-        let cellEditorPromise:Promise<ICellEditorComp> = this.componentResolver.createAgGridComponent (
+        let cellEditorPromise: Promise<ICellEditorComp> = this.componentResolver.createAgGridComponent (
             column,
             params,
             'cellEditor',

@@ -3,6 +3,6 @@ import {ICellEditorParams} from "../rendering/cellEditors/iCellEditor";
 
 export interface IRichCellEditorParams extends ICellEditorParams {
     values: string[];
-    cellHeight: number,
+    cellHeight: number;
     cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
 }
