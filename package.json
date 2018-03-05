@@ -1,11 +1,12 @@
 {
   "name": "ag-grid-angular",
-  "version": "16.0.0",
+  "version": "17.0.0",
   "description": "ag-Grid Angular Component",
   "main": "main.js",
   "typings": "main.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "update-properties": "node updateGridAndColumnProperties.js",
     "verify-properties": "node agGridPropertiesCheck.js",
     "build": "npm run clean && npm run build-no-verify && npm run verify-properties",
     "build-gulp": "npm run build-no-verify-gulp && npm run verify-properties",
@@ -16,7 +17,7 @@
     "clean": "rimraf aot/* && rimraf dist/* && npm run clean-main",
     "clean-build": "npm run clean && npm run build",
     "clean-build-no-verify": "npm run clean && npm run build-no-verify",
-    "release": "npm run clean-build"
+    "release": "npm run update-properties && npm run clean-build"
   },
   "repository": {
     "type": "git",
@@ -50,10 +51,11 @@
     "@angular/core": "2.1.x - 4.x",
     "rxjs": ">=5.0.0-beta.12",
     "zone.js": ">=0.6.x",
-    "core-js": "^2.4.1"
+    "core-js": "^2.4.1",
+    "replace-in-file": "^3.1.0"
   },
   "peerDependencies": {
-    "ag-grid": "^16.0.0",
+    "ag-grid": "^17.0.0",
     "@angular/compiler": ">=2.1.x",
     "@angular/compiler-cli": ">=2.1.x",
     "@angular/core": ">=2.1.x",
