@@ -61,5 +61,5 @@ export declare abstract class AbstractColumnDropPanel extends Component {
     private addIconAndTitleToGui();
     private isExistingColumnsEmpty();
     private addEmptyMessageToGui();
-    private addArrowToGui();
+    private addArrow(eParent);
 }

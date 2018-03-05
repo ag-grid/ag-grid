@@ -16,6 +16,8 @@ export declare class EnterpriseRowModel extends BeanStub implements IEnterpriseR
     private logger;
     private rowNodeBlockLoader;
     private postConstruct();
+    destroy(): void;
+    private destroyDatasource();
     private setBeans(loggerFactory);
     isLastRowFound(): boolean;
     private addEventListeners();

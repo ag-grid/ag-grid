@@ -85,8 +85,8 @@ var MenuItemMapper = (function () {
                 action: function () { return _this.columnController.removeRowGroupColumn(column, "contextMenu"); },
                 icon: ag_grid_1.Utils.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null)
             };
-            case 'resetColumns': return {
-                name: localeTextFunc('resetColumns', 'Reset Columns'),
+            case 'destroyColumnComps': return {
+                name: localeTextFunc('destroyColumnComps', 'Reset Columns'),
                 action: function () { return _this.columnController.resetColumnState("contextMenu"); }
             };
             case 'expandAll': return {

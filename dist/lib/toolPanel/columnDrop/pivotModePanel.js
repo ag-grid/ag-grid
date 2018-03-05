@@ -70,7 +70,7 @@ var PivotModePanel = (function (_super) {
         __metadata("design:type", main_1.AgCheckbox)
     ], PivotModePanel.prototype, "cbPivotMode", void 0);
     __decorate([
-        main_1.PostConstruct,
+        main_1.PreConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)

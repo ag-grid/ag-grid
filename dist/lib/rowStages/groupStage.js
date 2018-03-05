@@ -41,6 +41,8 @@ var GroupStage = (function () {
         else {
             this.shotgunResetEverything(details);
         }
+        this.sortGroupsWithComparator(details.rootNode);
+        this.selectableService.updateSelectableAfterGrouping(details.rootNode);
     };
     GroupStage.prototype.createGroupingDetails = function (params) {
         var rowNode = params.rowNode, changedPath = params.changedPath, rowNodeTransaction = params.rowNodeTransaction, rowNodeOrder = params.rowNodeOrder;
@@ -63,8 +65,8 @@ var GroupStage = (function () {
             // ie, if not grouping, then we just want to shotgun so the rootNode.allLeafChildren gets copied
             // to rootNode.childrenAfterGroup and maintaining order (as delta transaction misses the order).
             transaction: usingTransaction ? rowNodeTransaction : null,
-            // if no transaction, then it's shotgun, so no changed path
-            changedPath: usingTransaction ? changedPath : null
+            // if no transaction, then it's shotgun, changed path would be 'not active' at this point anyway
+            changedPath: changedPath
         };
         return details;
     };
@@ -93,6 +95,25 @@ var GroupStage = (function () {
             }
         });
     };
+    GroupStage.prototype.sortGroupsWithComparator = function (rootNode) {
+        // we don't do group sorting for tree data
+        if (this.usingTreeData) {
+            return;
+        }
+        var comparator = this.gridOptionsWrapper.getDefaultGroupSortComparator();
+        if (main_1._.exists(comparator)) {
+            recursiveSort(rootNode);
+        }
+        function recursiveSort(rowNode) {
+            var doSort = main_1._.exists(rowNode.childrenAfterGroup) &&
+                // we only want to sort groups, so we do not sort leafs (a leaf group has leafs as children)
+                !rowNode.leafGroup;
+            if (doSort) {
+                rowNode.childrenAfterGroup.sort(comparator);
+                rowNode.childrenAfterGroup.forEach(function (childNode) { return recursiveSort(childNode); });
+            }
+        }
+    };
     GroupStage.prototype.getExistingPathForNode = function (node, details) {
         var res = [];
         // when doing tree data, the node is part of the path,
@@ -114,7 +135,7 @@ var GroupStage = (function () {
         childNodes.forEach(function (childNode) {
             // we add node, even if parent has not changed, as the data could have
             // changed, hence aggregations will be wrong
-            if (details.changedPath) {
+            if (details.changedPath.isActive()) {
                 details.changedPath.addParentNode(childNode.parent);
             }
             var infoToKeyMapper = function (item) { return item.key; };
@@ -137,7 +158,7 @@ var GroupStage = (function () {
         childNode.setData(childNode.data);
         // we add both old and new parents to changed path, as both will need to be refreshed.
         // we already added the old parent (in calling method), so just add the new parent here
-        if (details.changedPath) {
+        if (details.changedPath.isActive()) {
             var newParent = childNode.parent;
             details.changedPath.addParentNode(newParent);
         }
@@ -146,7 +167,7 @@ var GroupStage = (function () {
         var _this = this;
         leafRowNodes.forEach(function (leafToRemove) {
             _this.removeOneNode(leafToRemove, details);
-            if (details.changedPath) {
+            if (details.changedPath.isActive()) {
                 details.changedPath.addParentNode(leafToRemove.parent);
             }
         });
@@ -218,7 +239,7 @@ var GroupStage = (function () {
         var _this = this;
         newRowNodes.forEach(function (rowNode) {
             _this.insertOneNode(rowNode, details);
-            if (details.changedPath) {
+            if (details.changedPath.isActive()) {
                 details.changedPath.addParentNode(rowNode.parent);
             }
         });
@@ -389,6 +410,10 @@ var GroupStage = (function () {
         main_1.Autowired('columnController'),
         __metadata("design:type", main_1.ColumnController)
     ], GroupStage.prototype, "columnController", void 0);
+    __decorate([
+        main_1.Autowired('selectableService'),
+        __metadata("design:type", main_1.SelectableService)
+    ], GroupStage.prototype, "selectableService", void 0);
     __decorate([
         main_1.Autowired('valueService'),
         __metadata("design:type", main_1.ValueService)

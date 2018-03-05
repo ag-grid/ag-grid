@@ -24,7 +24,7 @@ var richSelectRow_1 = require("./rendering/richSelect/richSelectRow");
 var virtualList_1 = require("./rendering/virtualList");
 var abstractColumnDropPanel_1 = require("./toolPanel/columnDrop/abstractColumnDropPanel");
 var pivotColumnsPanel_1 = require("./toolPanel/columnDrop/pivotColumnsPanel");
-var toolPanelComp_1 = require("./toolPanel/toolPanelComp");
+var columnPanel_1 = require("./toolPanel/columnPanel");
 var licenseManager_1 = require("./licenseManager");
 var pivotStage_1 = require("./rowStages/pivotStage");
 var pivotColDefService_1 = require("./rowStages/pivotColDefService");
@@ -62,7 +62,7 @@ function populateClientExports(exports) {
     exports.PivotModePanel = pivotModePanel_1.PivotModePanel;
     exports.RowGroupColumnsPanel = rowGroupColumnsPanel_1.RowGroupColumnsPanel;
     exports.ValuesColumnPanel = valueColumnsPanel_1.ValuesColumnPanel;
-    exports.ToolPanelComp = toolPanelComp_1.ToolPanelComp;
+    exports.ToolPanelComp = columnPanel_1.ColumnPanel;
     exports.ColumnSelectPanel = columnSelectComp_1.ColumnSelectComp;
     exports.RenderedColumn = toolPanelColumnComp_1.ToolPanelColumnComp;
     exports.RenderedGroup = toolPanelGroupComp_1.ToolPanelGroupComp;

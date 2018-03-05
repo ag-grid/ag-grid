@@ -62,7 +62,8 @@ var AggregationStage = (function () {
                 return;
             }
         }
-        var skipBecauseNoChangedPath = aggDetails.changedPath && !aggDetails.changedPath.isInPath(rowNode);
+        var skipBecauseNoChangedPath = aggDetails.changedPath.isActive()
+            && !aggDetails.changedPath.isInPath(rowNode);
         if (skipBecauseNoChangedPath) {
             return;
         }
@@ -129,10 +130,10 @@ var AggregationStage = (function () {
     AggregationStage.prototype.aggregateRowNodeUsingValuesOnly = function (rowNode, aggDetails) {
         var _this = this;
         var result = {};
-        var changedValueColumns = aggDetails.changedPath ?
+        var changedValueColumns = aggDetails.changedPath.isActive() ?
             aggDetails.changedPath.getValueColumnsForNode(rowNode, aggDetails.valueColumns)
             : aggDetails.valueColumns;
-        var notChangedValueColumns = aggDetails.changedPath ?
+        var notChangedValueColumns = aggDetails.changedPath.isActive() ?
             aggDetails.changedPath.getNotValueColumnsForNode(rowNode, aggDetails.valueColumns)
             : null;
         var values2d = this.getValuesNormal(rowNode, changedValueColumns);

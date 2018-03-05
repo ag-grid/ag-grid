@@ -18,6 +18,7 @@ export declare class ColumnComponent extends Component {
     private gridApi;
     private eText;
     private btRemove;
+    private eDragHandle;
     private column;
     private dragSourceDropTarget;
     private ghost;

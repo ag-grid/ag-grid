@@ -18,19 +18,23 @@ var PivotStage = (function () {
     }
     PivotStage.prototype.execute = function (params) {
         var rootNode = params.rowNode;
+        var changedPath = params.changedPath;
         if (this.columnController.isPivotActive()) {
-            this.executePivotOn(rootNode);
+            this.executePivotOn(rootNode, changedPath);
         }
         else {
-            this.executePivotOff();
+            this.executePivotOff(changedPath);
         }
     };
-    PivotStage.prototype.executePivotOff = function () {
+    PivotStage.prototype.executePivotOff = function (changedPath) {
         this.aggregationColumnsHashLastTime = null;
         this.uniqueValues = {};
-        this.columnController.setSecondaryColumns(null, "rowModelUpdated");
+        if (this.columnController.isSecondaryColumnsPresent()) {
+            this.columnController.setSecondaryColumns(null, "rowModelUpdated");
+            changedPath.setInactive();
+        }
     };
-    PivotStage.prototype.executePivotOn = function (rootNode) {
+    PivotStage.prototype.executePivotOn = function (rootNode, changedPath) {
         var uniqueValues = this.bucketUpRowNodes(rootNode);
         var uniqueValuesChanged = this.setUniqueValues(uniqueValues);
         var aggregationColumns = this.columnController.getValueColumns();
@@ -45,6 +49,9 @@ var PivotStage = (function () {
             this.pivotColumnGroupDefs = result.pivotColumnGroupDefs;
             this.pivotColumnDefs = result.pivotColumnDefs;
             this.columnController.setSecondaryColumns(this.pivotColumnGroupDefs, "rowModelUpdated");
+            // because the secondary columns have changed, then the aggregation needs to visit the whole
+            // tree again, so we make the changedPath not active, to force aggregation to visit all paths.
+            changedPath.setInactive();
         }
     };
     PivotStage.prototype.setUniqueValues = function (newValues) {

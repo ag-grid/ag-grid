@@ -1,6 +1,7 @@
 // ag-grid-enterprise v16.0.1
 import { Column, Component } from "ag-grid/main";
-export declare class ToolPanelColumnComp extends Component {
+import { BaseColumnItem } from "./columnSelectComp";
+export declare class ToolPanelColumnComp extends Component implements BaseColumnItem {
     private static TEMPLATE;
     private gridOptionsWrapper;
     private columnController;
@@ -13,19 +14,26 @@ export declare class ToolPanelColumnComp extends Component {
     private eText;
     private eIndent;
     private cbSelect;
+    private eDragHandle;
     private column;
     private columnDept;
+    private selectionCallback;
     private allowDragging;
     private displayName;
     private processingColumnStateChange;
-    constructor(column: Column, columnDept: number, allowDragging: boolean);
+    private groupsExist;
+    constructor(column: Column, columnDept: number, allowDragging: boolean, groupsExist: boolean);
     init(): void;
-    private addTap();
-    private onClick();
     private onChange(event);
     private actionUnCheckedPivotMode();
     private actionCheckedPivotMode();
-    private addDragSource();
+    private setupDragging();
     private createDragItem();
     private onColumnStateChanged();
+    getDisplayName(): string;
+    onSelectAllChanged(value: boolean): void;
+    isSelected(): boolean;
+    isSelectable(): boolean;
+    isExpandable(): boolean;
+    setExpanded(value: boolean): void;
 }

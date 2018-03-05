@@ -12,8 +12,8 @@ export declare class PivotStage implements IRowNodeStage {
     private aggregationColumnsHashLastTime;
     private aggregationFuncsHashLastTime;
     execute(params: StageExecuteParams): void;
-    private executePivotOff();
-    private executePivotOn(rootNode);
+    private executePivotOff(changedPath);
+    private executePivotOn(rootNode, changedPath);
     private setUniqueValues(newValues);
     private bucketUpRowNodes(rootNode);
     private bucketRowNode(rowNode, uniqueValues);

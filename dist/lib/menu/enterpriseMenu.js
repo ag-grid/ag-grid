@@ -88,7 +88,7 @@ var EnterpriseMenuFactory = (function () {
         });
         column.setMenuVisible(true, "contextMenu");
         this.activeMenu = menu;
-        menu.addEventListener(ag_grid_1.BeanStub.EVENT_DESTORYED, function () {
+        menu.addEventListener(ag_grid_1.BeanStub.EVENT_DESTROYED, function () {
             if (_this.activeMenu === menu) {
                 _this.activeMenu = null;
             }
@@ -259,6 +259,7 @@ var EnterpriseMenu = (function (_super) {
         var isPrimary = this.column.isPrimary();
         var pivotModeOn = this.columnController.isPivotMode();
         var isInMemoryRowModel = this.rowModel.getType() === ag_grid_1.Constants.ROW_MODEL_TYPE_IN_MEMORY;
+        var usingTreeData = this.gridOptionsWrapper.isTreeData();
         var allowValueAgg = 
         // if primary, then only allow aggValue if grouping and it's a value columns
         (isPrimary && doingGrouping && allowValue)
@@ -284,13 +285,21 @@ var EnterpriseMenu = (function (_super) {
             }
         }
         result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
-        result.push('resetColumns');
+        result.push('destroyColumnComps');
         result.push('toolPanel');
         // only add grouping expand/collapse if grouping in the InMemoryRowModel
         // if pivoting, we only have expandable groups if grouping by 2 or more columns
         // as the lowest level group is not expandable while pivoting.
         // if not pivoting, then any active row group can be expanded.
-        var allowExpandAndContract = isInMemoryRowModel && (pivotModeOn ? rowGroupCount > 1 : rowGroupCount > 0);
+        var allowExpandAndContract = false;
+        if (isInMemoryRowModel) {
+            if (usingTreeData) {
+                allowExpandAndContract = true;
+            }
+            else {
+                allowExpandAndContract = pivotModeOn ? rowGroupCount > 1 : rowGroupCount > 0;
+            }
+        }
         if (allowExpandAndContract) {
             result.push('expandAll');
             result.push('contractAll');

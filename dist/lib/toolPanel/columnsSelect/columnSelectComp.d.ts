@@ -1,21 +1,26 @@
 // ag-grid-enterprise v16.0.1
 import { Component } from "ag-grid/main";
+export interface BaseColumnItem {
+    getDisplayName(): string;
+    onSelectAllChanged(value: boolean): void;
+    isSelected(): boolean;
+    isSelectable(): boolean;
+    isExpandable(): boolean;
+    setExpanded(value: boolean): void;
+}
 export declare class ColumnSelectComp extends Component {
-    private columnController;
-    private globalEventService;
-    private context;
     private static TEMPLATE;
-    private renderedItems;
-    private columnTree;
+    private context;
+    private gridOptionsWrapper;
+    private columnSelectHeaderComp;
+    private columnContainerComp;
     private allowDragging;
     constructor(allowDragging: boolean);
     init(): void;
-    onColumnsChanged(): void;
-    destroy(): void;
-    private destroyAllRenderedElements();
-    private recursivelyRenderGroupComponent(columnGroup, dept);
-    private recursivelyRenderColumnComponent(column, dept);
-    private recursivelyRenderComponents(tree, dept);
-    private recursivelySetVisibility(columnTree, visible);
-    onGroupExpanded(): void;
+    private onFilterChanged(event);
+    private onSelectAll();
+    private onUnselectAll();
+    private onExpandAll();
+    private onCollapseAll();
+    private onGroupExpanded(event);
 }

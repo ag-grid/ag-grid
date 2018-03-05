@@ -20,8 +20,9 @@ export declare class ClipboardService implements IClipboardService {
     private logger;
     private init();
     pasteFromClipboard(): void;
+    private pasteToRange(data);
+    private pasteToSingleCell(data);
     copyRangeDown(): void;
-    private finishPasteFromClipboard(data);
     private multipleCellRange(clipboardGridData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, updatedColumnIds, type);
     private singleCellRange(parsedData, updatedRowNodes, currentRow, cellsToFlash, updatedColumnIds);
     private updateCellValue(rowNode, column, value, currentRow, cellsToFlash, updatedColumnIds, type);
@@ -37,4 +38,5 @@ export declare class ClipboardService implements IClipboardService {
     private copyDataToClipboard(data);
     private executeOnTempElement(callbackNow, callbackAfter?);
     private dataToArray(strData);
+    private rangeSize();
 }

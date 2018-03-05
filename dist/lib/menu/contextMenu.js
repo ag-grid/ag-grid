@@ -98,7 +98,7 @@ var ContextMenuFactory = (function () {
             hidePopup: hidePopup
         });
         this.activeMenu = menu;
-        menu.addEventListener(ag_grid_1.BeanStub.EVENT_DESTORYED, function () {
+        menu.addEventListener(ag_grid_1.BeanStub.EVENT_DESTROYED, function () {
             if (_this.activeMenu === menu) {
                 _this.activeMenu = null;
             }

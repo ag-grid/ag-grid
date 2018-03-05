@@ -14,9 +14,8 @@ export declare class ViewportRowModel implements IRowModel {
     private rowHeight;
     private viewportDatasource;
     private init();
-    private destroy();
     isLastRowFound(): boolean;
-    private destroyCurrentDatasource();
+    private destroyDatasource();
     private calculateFirstRow(firstRenderedRow);
     private calculateLastRow(lastRenderedRow);
     private onViewportChanged(event);

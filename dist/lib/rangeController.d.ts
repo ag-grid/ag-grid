@@ -12,14 +12,18 @@ export declare class RangeController implements IRangeController {
     private gridOptionsWrapper;
     private columnApi;
     private gridApi;
+    private cellNavigationService;
     private logger;
     private cellRanges;
     private activeRange;
     private lastMouseEvent;
     private bodyScrollListener;
     private dragging;
+    private autoScrollService;
     private init();
     setRangeToCell(cell: GridCell): void;
+    extendRangeToCell(toCell: GridCell): void;
+    extendRangeInDirection(startCell: GridCell, key: number): void;
     setRange(rangeSelection: AddRangeSelectionParams): void;
     addRange(rangeSelection: AddRangeSelectionParams): void;
     getCellRanges(): RangeSelection[];

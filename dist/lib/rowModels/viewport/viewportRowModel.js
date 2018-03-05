@@ -28,13 +28,10 @@ var ViewportRowModel = (function () {
             this.setViewportDatasource(this.gridOptionsWrapper.getViewportDatasource());
         }
     };
-    ViewportRowModel.prototype.destroy = function () {
-        this.destroyCurrentDatasource();
-    };
     ViewportRowModel.prototype.isLastRowFound = function () {
         return true;
     };
-    ViewportRowModel.prototype.destroyCurrentDatasource = function () {
+    ViewportRowModel.prototype.destroyDatasource = function () {
         if (this.viewportDatasource && this.viewportDatasource.destroy) {
             this.viewportDatasource.destroy();
         }
@@ -84,7 +81,7 @@ var ViewportRowModel = (function () {
         });
     };
     ViewportRowModel.prototype.setViewportDatasource = function (viewportDatasource) {
-        this.destroyCurrentDatasource();
+        this.destroyDatasource();
         this.viewportDatasource = viewportDatasource;
         this.rowCount = 0;
         if (!viewportDatasource.init) {
@@ -246,7 +243,7 @@ var ViewportRowModel = (function () {
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
-    ], ViewportRowModel.prototype, "destroy", null);
+    ], ViewportRowModel.prototype, "destroyDatasource", null);
     ViewportRowModel = __decorate([
         main_1.Bean('rowModel')
     ], ViewportRowModel);
