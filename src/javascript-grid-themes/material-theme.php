@@ -108,48 +108,4 @@ You can customize the various UI bits of the grid by providing custom cell rende
 A working example that integrates Angular Material's input, checkbox, select and datepicker can be found in the <a href="https://github.com/ag-grid/ag-grid-material/tree/master/angular-material">ag-grid-material GitHub repository</a>.
 </p> 
 
-<hr />
-
-<div style="border-left: 4px solid lightcoral; padding-left: 4px;">
-
-    <h2 id="material-theme-legacy">DEPRECATED - Old Material Theme (legacy)</h2>
-
-    The Material Theme is one of the four original themes supplied with ag-Grid. It is deprecated in favor of the new material theme.
-
-    <p/>
-    <p/>
-    To use a theme, add the theme class name to the div element where the ag-Grid directive is attached.
-    <p/>
-    The following is an example of using the <code>ag-theme-material</code> theme:<br/>
-    <snippet>
-&lt;div ag-grid="gridOptions" class="ag-theme-material"&gt;&lt;/div&gt;</snippet>
-
-    </p>
-    Note that to use the Material theme you'll need to override the default rowHeight
-    <snippet>
-gridOptions = {
-    rowHeight: 48
-}</snippet>
-
-    Additionally, to be consistent with Googles guidelines, you should override the default checkbox behaviour - in the example
-    below we've overriden the selected checkbox state to be blue:
-
-    <snippet>
-gridOptions = {
-    icons: {
-        checkboxChecked: '&lt;img src="data:image/png;base64,..."/&gt;'
-    }
-}</snippet>
-
-    <div class="bigTitle" id="material-theme-example">Material Theme Example</div>
-
-    This grouped example demonstrates some of the different facets of a theme - full, part and no checkbox selection for example, as well as general look and feel
-
-    <p/>
-
-    <?= example('Old Material Theme', 'theme-material-old', 'vanilla', array( 'enterprise' => true, 'extras' => array("roboto") )) ?>
-</pre>
-
-</div>
-
 <?php include '../documentation-main/documentation_footer.php';?>
