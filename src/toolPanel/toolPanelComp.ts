@@ -1,77 +1,97 @@
-import {Component, GridOptionsWrapper, PostConstruct, Bean, Autowired, Context} from "ag-grid/main";
-import {ColumnSelectComp} from "./columnsSelect/columnSelectComp";
-import {RowGroupColumnsPanel} from "./columnDrop/rowGroupColumnsPanel";
-import {PivotColumnsPanel} from "./columnDrop/pivotColumnsPanel";
-import {PivotModePanel} from "./columnDrop/pivotModePanel";
-import {ValuesColumnPanel} from "./columnDrop/valueColumnsPanel";
-import {_, IToolPanel} from 'ag-grid';
+import {ToolPanelVisibleChanged, Events, EventService, Autowired, Bean, Component, Context, GridCore, GridOptionsWrapper, PostConstruct} from "ag-grid/main";
+import {IToolPanel} from "ag-grid";
+import {ColumnPanel} from "./columnPanel";
 
-@Bean('toolPanel')
+@Bean("toolPanelComp")
 export class ToolPanelComp extends Component implements IToolPanel {
 
-    private static TEMPLATE = '<div class="ag-tool-panel"></div>';
+    @Autowired("context") private context: Context;
+    @Autowired("eventService") private eventService: EventService;
+    @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
 
-    @Autowired('context') private context: Context;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    private buttonComp: PanelSelectComp;
+    private columnPanel: ColumnPanel;
 
+    // solves a race condition, where this is getting initialised after the grid core.
+    // so gridCore also calls init()
     private initialised = false;
 
-    private childDestroyFuncs: Function[] = [];
-
     constructor() {
-        super(ToolPanelComp.TEMPLATE);
+        super(`<div class="ag-tool-panel"/>`);
     }
 
-    // lazy initialise the toolPanel
-    public setVisible(visible: boolean): void {
-        super.setVisible(visible);
-        if (visible && !this.initialised) {
-            this.init();
-        }
-    }
-
-    public init(): void {
-
-        if (!this.gridOptionsWrapper.isToolPanelSuppressPivotMode()) {
-            this.addComponent(new PivotModePanel())
-        }
-
-        this.addComponent(new ColumnSelectComp(true));
-
-        if (!this.gridOptionsWrapper.isToolPanelSuppressRowGroups()) {
-            this.addComponent(new RowGroupColumnsPanel(false));
-        }
-
-        if (!this.gridOptionsWrapper.isToolPanelSuppressValues()) {
-            this.addComponent(new ValuesColumnPanel(false));
-        }
-
-        if (!this.gridOptionsWrapper.isToolPanelSuppressPivots()) {
-            this.addComponent(new PivotColumnsPanel(false));
-        }
-
-        this.initialised = true;
-    }
-
-    private addComponent(component: Component): void {
-        this.context.wireBean(component);
-        this.getGui().appendChild(component.getGui());
-        this.childDestroyFuncs.push(component.destroy.bind(component))
-    }
-
-    public destroyChildren(): void {
-        this.childDestroyFuncs.forEach(func => func());
-        this.childDestroyFuncs.length = 0;
-        _.removeAllChildren(this.getGui());
-    }
-
-    public refresh(): void {
-        this.destroyChildren();
+    @PostConstruct
+    private postConstruct(): void {
         this.init();
     }
 
-    public destroy(): void {
-        this.destroyChildren();
-        super.destroy();
+    public init(): void {
+        if (this.initialised) { return; }
+        this.initialised = true;
+
+        this.columnPanel = new ColumnPanel();
+        this.buttonComp = new PanelSelectComp(this.columnPanel);
+
+        this.context.wireBean(this.columnPanel);
+        this.context.wireBean(this.buttonComp);
+
+        this.appendChild(this.buttonComp);
+        this.appendChild(this.columnPanel);
     }
+
+    public refresh(): void {
+        this.columnPanel.refresh();
+    }
+
+    public showToolPanel(show: boolean): void {
+        this.columnPanel.setVisible(show);
+        let event: ToolPanelVisibleChanged = {
+            type: Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi()
+        };
+        this.eventService.dispatchEvent(event);
+    }
+
+    public isToolPanelShowing(): boolean {
+        return this.columnPanel.isVisible();
+    }
+
+}
+
+class PanelSelectComp extends Component {
+
+    private columnPanel: ColumnPanel;
+
+    @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired("gridCore") private gridCore: GridCore;
+
+    constructor(columnPanel: ColumnPanel) {
+        super();
+        this.columnPanel = columnPanel;
+    }
+
+    private createTemplate() {
+        let translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
+        return `<div class="ag-side-buttons">
+                    <button type="button" ref="toggle-button">${translate('columns', 'Columns')}</button>
+                </div>`;
+    }
+
+    @PostConstruct
+    private postConstruct(): void {
+        this.setTemplate(this.createTemplate());
+        let btShow = this.getRefElement("toggle-button");
+        this.addDestroyableEventListener(btShow, 'click', () => {
+            this.columnPanel.setVisible(!this.columnPanel.isVisible());
+            // this gets grid to resize immediately, rather than waiting
+            // for next 500ms
+            this.gridCore.doLayout();
+        });
+
+        let showButtons = !this.gridOptionsWrapper.isToolPanelSuppressSideButtons();
+        this.setVisible(showButtons);
+    }
+
 }

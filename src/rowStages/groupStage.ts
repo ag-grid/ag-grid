@@ -6,6 +6,7 @@ import {
     ColumnController,
     Context,
     EventService,
+    SelectableService,
     GridOptionsWrapper,
     IRowNodeStage,
     NumberSequence,
@@ -43,6 +44,7 @@ export class GroupStage implements IRowNodeStage {
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('selectableService') private selectableService: SelectableService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
@@ -84,6 +86,10 @@ export class GroupStage implements IRowNodeStage {
         } else {
             this.shotgunResetEverything(details);
         }
+
+        this.sortGroupsWithComparator(details.rootNode);
+
+        this.selectableService.updateSelectableAfterGrouping(details.rootNode);
     }
 
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
@@ -111,8 +117,8 @@ export class GroupStage implements IRowNodeStage {
             // to rootNode.childrenAfterGroup and maintaining order (as delta transaction misses the order).
             transaction: usingTransaction ? rowNodeTransaction : null,
 
-            // if no transaction, then it's shotgun, so no changed path
-            changedPath: usingTransaction ? changedPath : null
+            // if no transaction, then it's shotgun, changed path would be 'not active' at this point anyway
+            changedPath: changedPath
         };
 
         return details;
@@ -144,6 +150,27 @@ export class GroupStage implements IRowNodeStage {
         } );
     }
 
+    private sortGroupsWithComparator(rootNode: RowNode): void {
+        // we don't do group sorting for tree data
+        if (this.usingTreeData) { return; }
+
+        let comparator = this.gridOptionsWrapper.getDefaultGroupSortComparator();
+        if (_.exists(comparator)) {
+            recursiveSort(rootNode);
+        }
+
+        function recursiveSort(rowNode: RowNode): void {
+            let doSort = _.exists(rowNode.childrenAfterGroup) &&
+                // we only want to sort groups, so we do not sort leafs (a leaf group has leafs as children)
+                !rowNode.leafGroup;
+
+            if (doSort) {
+                rowNode.childrenAfterGroup.sort(comparator);
+                rowNode.childrenAfterGroup.forEach( childNode => recursiveSort(childNode));
+            }
+        }
+    }
+
     private getExistingPathForNode(node: RowNode, details: GroupingDetails): GroupInfo[] {
         let res: GroupInfo[] = [];
 
@@ -168,7 +195,7 @@ export class GroupStage implements IRowNodeStage {
 
             // we add node, even if parent has not changed, as the data could have
             // changed, hence aggregations will be wrong
-            if (details.changedPath) {
+            if (details.changedPath.isActive()) {
                 details.changedPath.addParentNode(childNode.parent);
             }
 
@@ -198,7 +225,7 @@ export class GroupStage implements IRowNodeStage {
 
         // we add both old and new parents to changed path, as both will need to be refreshed.
         // we already added the old parent (in calling method), so just add the new parent here
-        if (details.changedPath) {
+        if (details.changedPath.isActive()) {
             let newParent = childNode.parent;
             details.changedPath.addParentNode(newParent);
         }
@@ -207,7 +234,7 @@ export class GroupStage implements IRowNodeStage {
     private removeNodes(leafRowNodes: RowNode[], details: GroupingDetails): void {
         leafRowNodes.forEach( leafToRemove => {
             this.removeOneNode(leafToRemove, details);
-            if (details.changedPath) {
+            if (details.changedPath.isActive()) {
                 details.changedPath.addParentNode(leafToRemove.parent);
             }
         });
@@ -291,7 +318,7 @@ export class GroupStage implements IRowNodeStage {
     private insertNodes(newRowNodes: RowNode[], details: GroupingDetails): void {
         newRowNodes.forEach( rowNode => {
             this.insertOneNode(rowNode, details);
-            if (details.changedPath) {
+            if (details.changedPath.isActive()) {
                 details.changedPath.addParentNode(rowNode.parent);
             }
         });
@@ -302,7 +329,6 @@ export class GroupStage implements IRowNodeStage {
         let path: GroupInfo[] = this.getGroupInfo(childNode, details);
 
         let parentGroup = this.findParentForNode(childNode, path, details);
-
         if (!parentGroup.group) {
             console.warn(`ag-Grid: duplicate group keys for row data, keys should be unique`,
                 [parentGroup.data, childNode.data]);
@@ -483,5 +509,4 @@ export class GroupStage implements IRowNodeStage {
         });
         return res;
     }
-
 }

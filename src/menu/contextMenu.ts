@@ -122,7 +122,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
         });
 
         this.activeMenu = menu;
-        menu.addEventListener(BeanStub.EVENT_DESTORYED, ()=> {
+        menu.addEventListener(BeanStub.EVENT_DESTROYED, ()=> {
             if (this.activeMenu===menu) {
                 this.activeMenu = null;
             }
