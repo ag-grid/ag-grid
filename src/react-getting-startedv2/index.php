@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "ag-Grid Reference: Getting Started with the React Datagrid";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This Getting Start guide covers installing our seed repo and getting up and running with a simple React Datagrid. We also cover basisc configuration.";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This Getting Start guide covers installing our seed repo and getting up and running with a simple React Datagrid.";
 $pageKeyboards = "React Datagrid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
@@ -96,7 +96,7 @@ import 'ag-grid/dist/styles/ag-grid.css';
 import 'ag-grid/dist/styles/ag-theme-fresh.css';
 </code></pre>
 
-<p>The three lines above import the <code>AgGridReact</code> component, the grid "structure" stylesheet (ag-grid.css), and one of the available grid themes: (ag-theme-fresh.css). 
+<p>The three lines above import the <code>AgGridReact</code> component, the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-fresh.css</code>). 
 The grid ships several different themes; pick one that matches your project design. You can customize it further with Sass variables, a technique which we will cover further down the road.</p>
 
 <snippet language="jsx">
@@ -277,10 +277,10 @@ npm install --save ag-grid-enterprise
 Then, add the import to your file:
 
 <snippet language="diff">
- import { AgGridReact } from 'ag-grid-react';
- import 'ag-grid/dist/styles/ag-grid.css';
- import 'ag-grid/dist/styles/ag-theme-fresh.css';
-+import 'ag-grid-enterprise';
+  import { AgGridReact } from 'ag-grid-react';
+  import 'ag-grid/dist/styles/ag-grid.css';
+  import 'ag-grid/dist/styles/ag-theme-fresh.css';
++ import 'ag-grid-enterprise';
 </snippet>
 
 <p>If everything is ok, you should see a message in the console that warns you about missing enterprise license. In addition to that, the grid got a few UI improvements - a custom context menu and fancier column menu popup - feel free to look around:</p>
