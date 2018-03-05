@@ -2,7 +2,7 @@
 include  '../example-runner/utils.php'
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head lang="en">
         <meta charset="UTF-8">
 
@@ -40,7 +40,7 @@ include  '../example-runner/utils.php'
             </div>
             <div style="width: 100%; height: 400px;"
                 id="bestHtml5Grid"
-                class="ag-theme-fresh ag-basic">
+                class="ag-theme-balham ag-basic">
             </div>
         </div>
 

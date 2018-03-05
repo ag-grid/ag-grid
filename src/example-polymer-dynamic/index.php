@@ -14,11 +14,6 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Simple Dynamic Component', 'dynamic-components', 'polymer', array("exampleHeight" => 460)) ?>
 
-    <h2 id="rich-dynamic">Richer Dynamic Components</h2>
-    <p>A Richer Example using Polymer Components as Cell Renderers, with Dynamic Components included via Modules.</p>
-
-    <?= example('Richer Dynamic Components', 'rich-dynamic-components', 'polymer', array("exampleHeight" => 390) ) ?>
-
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

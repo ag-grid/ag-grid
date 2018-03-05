@@ -1,6 +1,6 @@
 // wait for the document to be loaded, otherwise
 // ag-Grid will not find the div in the document.
-document.addEventListener("DOMContentLoaded", function() {
+function initDashboard() {
     let exchangeService = new ExchangeService();
     exchangeService.init();
 
@@ -28,5 +28,10 @@ document.addEventListener("DOMContentLoaded", function() {
     priceChangesGrid.render("priceChangesGrid");
     topMoversGrid.render("topMovers");
     fxQuoteMatrix.render("quoteMatrix");
-});
+}
 
+if (document.readyState == "complete") {
+    initDashboard();
+} else {
+    document.addEventListener("DOMContentLoaded", initDashboard);
+}

@@ -25,7 +25,7 @@ include('../includes/mediaHeader.php');
             concepts and ideas. This blog does go into some detail and assumes a certain level of Webpack understanding,
             especially in the latter half.</note>
 
-        <h1>Introduction to @ngtools/webpack</h1>
+        <h2>Introduction to @ngtools/webpack</h2>
 
         <p>
             Webpack is a module bundler but through the use of <code>loaders</code> and <code>plugins</code> we can get it to do

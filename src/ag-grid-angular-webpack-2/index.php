@@ -11,12 +11,12 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1 id="angular-building-with-webpack">Angular Webpack 2</h1>
+    <h1 id="angular-building-with-webpack">Building ag-Grid with Angular and Webpack 2</h1>
 
-    <p class="lead">We walk through the main steps required when using ag-Grid, Angular and Webpack 2 below, but please refer to
-        <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> on GitHub for a full working example of this.</p>
+    <p class="lead">This article walks through the main steps involved when using ag-Grid, Angular and Webpack 2 together. Please refer to
+        <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> on GitHub for a full working example of this. This can be used in conjunction with this article.</p>
 
-    <h2>Initialise Project</h2>
+    <h2>Initialise the Project</h2>
 
     <snippet language="sh">
 mkdir ag-grid-webpack2
@@ -37,7 +37,7 @@ npm i --save ag-grid-enterprise</snippet>
 
     <h2>Create Application</h2>
 
-    <p>Our application will be a very simple one, consisting of a single Module, a single Component and a bootstrap file, as well a few utility files for vendor & polyfills.</p>
+    <p>The application in the example is a very simple one, consisting of a single Module, a single Component and a bootstrap file, as well a few utility files for vendor & polyfills.</p>
 
     <note>You can either create the project by hand, or check it out from our Angular Seed Repo in <a href="https://github.com/ag-grid/ag-grid-angular-seed">GitHub.</a></note>
 
@@ -120,7 +120,7 @@ export class AppComponent {
 <snippet language="html">
 &lt;!-- app/app.component.html  -->
 
-&lt;ag-grid-angular #agGrid style="width: 500px; height: 150px;" class="ag-theme-fresh"
+&lt;ag-grid-angular #agGrid style="width: 500px; height: 150px;" class="ag-theme-balham"
                  [gridOptions]="gridOptions"
                  [columnDefs]="columnDefs"
                  [rowData]="rowData"&gt;
@@ -161,7 +161,7 @@ import 'rxjs';
 
 // ag-grid
 import 'ag-grid/dist/styles/ag-grid.css';
-import 'ag-grid/dist/styles/ag-theme-fresh.css';
+import 'ag-grid/dist/styles/ag-theme-balham.css';
 
 import 'ag-grid-angular/main'</snippet>
 
@@ -461,9 +461,9 @@ if (process.env.ENV === 'production') {
     <p>Now we can either run <code>npm start</code> to run the development setup, or <code>npm run build</code> for the production build.
         In the case of the production build the generated files will be under the <code>dist/</code> folder.</p>
 
-    <p>If we now run our applicatiom with the above code we will see this:</p>
+    <p>If we now run our application with the above code we will see this:</p>
 
-    <img src="../images/webpack_app.png" style="width: 100%">
+    <img src="../images/seed.png" style="width: 100%">
 
     <h3>Override ag-Grid CSS</h3>
     <p>There are many ways to override the CSS with Webpack, but if you use the configuration above then you can override ag-Grid CSS as follows:</p>

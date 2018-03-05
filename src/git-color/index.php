@@ -51,7 +51,7 @@ include('../includes/mediaHeader.php');
 
         <p>If I happened to be in a non-Git controlled directory then the branch and file status information would not be shown.</p>
 
-        <h1>Adding Colour to Git - The Basics</h1>
+        <h2>Adding Colour to Git - The Basics</h2>
 
         <p>
             You can add colour to Git output by modifying <code>~/.gitconfig</code>. The following will add colour to the main
@@ -81,7 +81,7 @@ include('../includes/mediaHeader.php');
 
         <p>This is great and already helps visually distinguish between the different pieces of information - a good start!</p>
 
-        <h1>Information...Without Asking</h1>
+        <h2>Information...Without Asking</h2>
 
         <p>The above helps, but relies us executing Git commands to get the current state of play. This is fine of course,
         but if like me you'd like a gentle reminder of what's going on, and where you are, then we can improve on this.</p>

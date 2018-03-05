@@ -22,7 +22,7 @@
     <p>You'll need to import the ag-Grid CSS in your application, as well as a theme you wish to use:</p>
     <snippet>
         import "../node_modules/ag-grid/dist/styles/ag-grid.css";
-        import "../node_modules/ag-grid/dist/styles/ag-theme-fresh.css";
+        import "../node_modules/ag-grid/dist/styles/ag-theme-balham.css";
     </snippet>
     <p>In this case we're using the Fresh Theme - please refer to the <a href="../javascript-grid-themes">Themes</a>
         documentation for more information.</p>
@@ -131,14 +131,14 @@
     </p>
     <snippet>
         &lt;link href="node_modules/ag-grid/dist/styles/ag-grid.css" rel="stylesheet" /&gt;
-        &lt;link href="node_modules/ag-grid/dist/styles/ag-theme-fresh.css" rel="stylesheet" /&gt;
+        &lt;link href="node_modules/ag-grid/dist/styles/ag-theme-balham.css" rel="stylesheet" /&gt;
     </snippet>
 
     <p>If you're using the <code>style-loader</code> you can also import the CSS dependencies into your final bundle:
     </p>
     <snippet>
         import "../node_modules/ag-grid/dist/styles/ag-grid.css"
-        import "../node_modules/ag-grid/dist/styles/ag-theme-fresh.css"
+        import "../node_modules/ag-grid/dist/styles/ag-theme-balham.css"
 
         // only needed if you're using enterprise features
         import "ag-grid-enterprise/main";
@@ -162,7 +162,7 @@
         </li>
         <li><b>Attributes:</b> When the property is just a simple string value, then
             no binding is necessary, just the value is placed as an attribute
-            eg <i>rowHeight="22"</i>.If the attribute is a boolean and a value is not provided, it is taken as false.
+            eg <code>rowHeight="22"</code>. If the attribute is a boolean and a value is not provided, it is taken as false.
         </li>
         <li><b>Changing Properties:</b> When a property changes value, VueJS
             automatically passes the new value onto the grid. This is used in
@@ -345,9 +345,8 @@
     </p>
 
     <snippet>
-        &lt;ag-grid-vue style="width: 100%; height: 350px;" class="ag-theme-fresh"
+        &lt;ag-grid-vue style="width: 100%; height: 350px;" class="ag-theme-balham"
         // these are attributes, not bound, give explicit values here
-        rowHeight="22"
         rowSelection="multiple"
 
         // these are boolean values

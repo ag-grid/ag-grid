@@ -46,8 +46,8 @@ interface IDateComp {
 
     // optional methods
 
-    &lt;span class="codeComment"&gt;// Gets called when the component is destroyed. If your custom component ne eds to do
-    // any resource cleaning up, do it here.&lt;/span&gt;
+    // Gets called when the component is destroyed. If your custom component needs to do
+    // any resource cleaning up, do it here.
     destroy?(): void;
 }</snippet>
 
@@ -74,7 +74,7 @@ interface IDateParams {
     the date column for both the rich filter and the floating filter.
 </p>
 
-<?= example('Auto Height', 'custom-date', 'generated', array()) ?>
+<?= example('Auto Height', 'custom-date', 'generated', array("processVue" => true)) ?>
 
 
 

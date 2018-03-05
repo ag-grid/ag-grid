@@ -23,13 +23,13 @@ export default class extends Component {
 
     render() {
         let containerStyle = {
-            height: 115
+            height: 131
         };
 
         return (
 
             <div>
-                <div style={containerStyle} className="ag-theme-fresh">
+                <div style={containerStyle} className="ag-theme-balham">
                     <AgGridReact
                         // properties
                         rowData={this.state.rowData}

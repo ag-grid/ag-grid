@@ -1,5 +1,13 @@
 [
   {
+    "title": "Building a CRUD Application with ag-Grid - Part 4",
+    "summary": "In Part 3 of this Series we create the scaffolding for our Angular application and get our data displayed in our first, simple, grid.",
+    "link": "../ag-grid-datagrid-crud-part-4/",
+    "img": "../ag-grid-datagrid-crud-part-1/crud_overview.png",
+    "date": "5th December 2017",
+    "author": "sean"
+  },
+  {
     "title": "Building a CRUD Application with ag-Grid - Part 3",
     "summary": "In Part 3 of this Series we create the scaffolding for our Angular application and get our data displayed in our first, simple, grid.",
     "link": "../ag-grid-datagrid-crud-part-3/",

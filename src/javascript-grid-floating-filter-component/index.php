@@ -53,10 +53,10 @@ interface IFloatingFilterComp {
     // The init(params) method is called on the floating filter once. See below for details on the parameters.
     init(params: IFilterFloatingParams): void;
 
-    &lt;span class="codeComment"&gt;// This is a method that ag-Grid will call every time the model from the associated
+    // This is a method that ag-Grid will call every time the model from the associated
     rich filter
     // for this floating filter changes. Typically this would be used so that you can refresh your UI and show
-    // on it a visual representation of the latest model for the filter as it is being updated somewhere else.&lt;/span&gt;
+    // on it a visual representation of the latest model for the filter as it is being updated somewhere else.
     onParentModelChanged(parentModel:any)
 
     // Returns the dom html element for this floating filter.
@@ -64,10 +64,10 @@ interface IFloatingFilterComp {
 
     // optional methods
 
-    &lt;span class="codeComment"&gt;// Gets called when the floating filter is destroyed.
+    // Gets called when the floating filter is destroyed.
     // Like column headers, the floating filter life span is only when the column is visible,
     // so gets destroyed if column is made not visible or when user scrolls column out of
-    // view with horizontal scrolling.&lt;/span&gt;
+    // view with horizontal scrolling.
     destroy?(): void;
 }
 </snippet>
@@ -87,18 +87,18 @@ interface IFloatingFilterParams {
     // The column this filter is for
     column: Column;
 
-    &lt;span class="codeComment"&gt;// This is the callback you need to invoke from your component every time that you
+    // This is the callback you need to invoke from your component every time that you
     want
     // to update the model from your parent rich filter. In order to make this call you need to be able to produce a
     // model object like the one this rich filter will produce through getModel(). After this call is completed,
-    // the parent rich filter will be updated and the data on the grid filtered accordingly if applyButton=false.&lt;/span&gt;
+    // the parent rich filter will be updated and the data on the grid filtered accordingly if applyButton=false.
     onFloatingFilterChanged(change:any): void;
 
     // This is a shortcut to invoke getModel on the parent rich filter..
     currentParentModel(): any;
 
-    &lt;span class="codeComment"&gt;// Boolean flag to indicate if the button in the floating filter that opens the rich
-    // filter in a popup should be displayed&lt;/span&gt;
+    // Boolean flag to indicate if the button in the floating filter that opens the rich
+    // filter in a popup should be displayed
     suppressFilterButton: boolean;
 
     // Amount in ms to debounce key presses before the filter is fired defaults to 500

@@ -1,9 +1,10 @@
 <?php
 $navKey = "support";
 include_once 'includes/html-helpers.php';
+gtm_data_layer('support');
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head lang="en">
 <?php
 meta_and_links("ag-Grid: Technical Support", "ag-Grid Javascript Grid Support", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page explains the different support models for the free and Enterprise versions of ag-Grid.", false);

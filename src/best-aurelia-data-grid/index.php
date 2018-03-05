@@ -103,9 +103,9 @@ import "ag-grid-enterprise/main";
                     target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Pinned Row Renderer Example
-            <a href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/floating-row-example/floating-row-example.ts"
+            <a href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/pinned-row-example/pinned-row-example.ts"
                target="_blank" class="fa fa-external-link"> TypeScript</a> <a
-                    href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/floating-row-example/floating-row-example.html"
+                    href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/pinned-row-example/pinned-row-example.html"
                     target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Full Width Renderer Example
@@ -141,7 +141,7 @@ import {GridOptions, GridApi, ColumnApi} from "ag-grid";</snippet>
     </p>
     <snippet>
 &lt;link href="node_modules/ag-grid/styles/ag-grid.css" rel="stylesheet" /&gt;
-&lt;link href="node_modules/ag-grid/styles/ag-theme-fresh.css" rel="stylesheet" /&gt;</snippet>
+&lt;link href="node_modules/ag-grid/styles/ag-theme-balham.css" rel="stylesheet" /&gt;</snippet>
 
     <p>
         You will also need to configure Aurelia (aurelia_project/aurelia.json) to use ag-grid and ag-grid-aurelia as
@@ -225,7 +225,7 @@ import {GridOptions, GridApi, ColumnApi} from "ag-grid";</snippet>
 
     <snippet>
 // notice the grid has an id called agGrid, which can be used to call the API
-&lt;ag-grid-aurelia #agGrid class="ag-theme-fresh"
+&lt;ag-grid-aurelia #agGrid class="ag-theme-balham"
     // items bound to properties on the controller
     grid-options.bind="gridOptions"
     column-defs.bind="columnDefs"

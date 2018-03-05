@@ -52,21 +52,17 @@ var gridOptions = {
         return res;
     },
     onGridReady: function(params) {
-        setInitialLayout(params.api);
+        params.api.sizeColumnsToFit();
+
+        // arbitrarily expand a row for presentational purposes
+        setTimeout(function() {
+            var nodeA = params.api.getDisplayedRowAtIndex(1);
+            var nodeB = params.api.getDisplayedRowAtIndex(2);
+            nodeA.setExpanded(true);
+            nodeB.setExpanded(true);
+        }, 500);
     }
 };
-
-function setInitialLayout(api) {
-    api.sizeColumnsToFit();
-
-    // arbitrarily expand a row for presentational purposes
-    setTimeout(function() {
-        var nodeA = api.getDisplayedRowAtIndex(1);
-        var nodeB = api.getDisplayedRowAtIndex(2);
-        nodeA.setExpanded(true);
-        nodeB.setExpanded(true);
-    }, 500);
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

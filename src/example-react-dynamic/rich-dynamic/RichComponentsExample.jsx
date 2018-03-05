@@ -64,7 +64,7 @@ export default class RichComponentsExample extends Component {
 
     render() {
         return (
-            <div style={{height: 370, width: 900}} className="ag-theme-fresh">
+            <div style={{height: 370, width: 900}} className="ag-theme-balham">
                 <AgGridReact
                     // properties
                     columnDefs={this.state.columnDefs}

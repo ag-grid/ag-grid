@@ -104,7 +104,7 @@
     </p>
     <snippet>
         &lt;link href="node_modules/ag-grid/styles/ag-grid.css" rel="stylesheet" /&gt;
-        &lt;link href="node_modules/ag-grid/styles/ag-theme-fresh.css" rel="stylesheet" /&gt;
+        &lt;link href="node_modules/ag-grid/styles/ag-theme-balham.css" rel="stylesheet" /&gt;
     </snippet>
 
     <p>
@@ -190,7 +190,7 @@
 
 <snippet>
 // notice the grid has an id called agGrid, which can be used to call the API
-&lt;ag-grid-aurelia #agGrid class="ag-theme-fresh"
+&lt;ag-grid-aurelia #agGrid class="ag-theme-balham"
     // items bound to properties on the controller
     grid-options.bind="gridOptions"
     column-defs.bind="columnDefs"

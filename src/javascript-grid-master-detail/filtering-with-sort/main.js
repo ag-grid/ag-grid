@@ -31,28 +31,26 @@ var gridOptions = {
         }
     },
     onGridReady: function(params) {
-        setInitialLayout(params.api);
+        params.api.sizeColumnsToFit();
+
+        // arbitrarily expand a row for presentational purposes
+        setTimeout(function() {
+            var rowCount = 0;
+            params.api.forEachNode(function (node) {
+                node.setExpanded(rowCount++ === 1);
+            });
+        }, 500);
     }
 };
-
-function setInitialLayout(api) {
-    api.sizeColumnsToFit();
-
-    // arbitrarily expand a row for presentational purposes
-    setTimeout(function() {
-        var rowCount = 0;
-        api.forEachNode(function (node) {
-            node.setExpanded(rowCount++ === 1);
-        });
-    }, 500);
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
+    console.log("here");
     agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/latest/src/javascript-grid-master-detail/filtering-with-sort/data/data.json'}).then(function(data) {
+        console.log("and here");
         gridOptions.api.setRowData(data);
     });
 });

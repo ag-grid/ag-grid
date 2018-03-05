@@ -146,7 +146,6 @@
         enableFilter: true,
         enableRangeSelection: true,
         suppressRowClickSelection: true,
-        rowHeight: 22,
         animateRows: true,
         onModelUpdated: modelUpdated,
         debug: true

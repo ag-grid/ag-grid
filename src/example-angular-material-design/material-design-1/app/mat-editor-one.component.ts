@@ -1,14 +1,14 @@
-import {Component} from "@angular/core";
+import { Component } from "@angular/core";
 
-import {GridOptions} from "ag-grid/main";
-import {MatCheckboxComponent} from "./mat-checkbox.component";
-import {MatInputComponent} from "./mat-input.component";
-import {MatRadioComponent} from "./mat-radio.component";
-import {MatSelectComponent} from "./mat-select.component";
+import { GridOptions } from "ag-grid/main";
+import { MatCheckboxComponent } from "./mat-checkbox.component";
+import { MatInputComponent } from "./mat-input.component";
+import { MatRadioComponent } from "./mat-radio.component";
+import { MatSelectComponent } from "./mat-select.component";
 
 @Component({
-    selector: 'my-app',
-    templateUrl: './mat-editor-one.component.html'
+    selector: "my-app",
+    templateUrl: "./mat-editor-one.component.html"
 })
 export class MatEditorComponentOne {
     public gridOptions: GridOptions;
@@ -22,12 +22,12 @@ export class MatEditorComponentOne {
             },
             rowHeight: 48, // recommended row height for material design data grids,
             frameworkComponents: {
-                'checkboxRenderer': MatCheckboxComponent,
-                'inputRenderer': MatInputComponent,
-                'radioEditor': MatRadioComponent,
-                'selectEditor': MatSelectComponent
+                checkboxRenderer: MatCheckboxComponent,
+                inputRenderer: MatInputComponent,
+                radioEditor: MatRadioComponent,
+                selectEditor: MatSelectComponent
             }
-        }
+        };
     }
 
     private createColumnDefs() {
@@ -35,29 +35,29 @@ export class MatEditorComponentOne {
             {
                 headerName: "Checkbox (inline editing)",
                 field: "on_off",
-                cellRenderer: 'checkboxRenderer'
+                cellRenderer: "checkboxRenderer"
             },
             {
                 headerName: "Full Name (popup input editor)",
                 field: "full_name",
-                cellEditor: 'inputRenderer',
+                cellEditor: "inputRenderer",
                 editable: true
             },
             {
                 headerName: "Fruit (popup radio editor)",
                 field: "fruit",
-                cellEditor: 'radioEditor',
+                cellEditor: "radioEditor",
                 cellEditorParams: {
-                    fruits: ['Apple', 'Orange', 'Banana']
+                    fruits: ["Apple", "Orange", "Banana"]
                 },
                 editable: true
             },
             {
                 headerName: "Vegetables (popup select editor)",
                 field: "vegetable",
-                cellEditor: 'selectEditor',
+                cellEditor: "selectEditor",
                 cellEditorParams: {
-                    vegetables: ['Carrot', 'Broccoli', 'Potato']
+                    vegetables: ["Carrot", "Broccoli", "Potato"]
                 },
                 editable: true
             }
@@ -68,31 +68,30 @@ export class MatEditorComponentOne {
         return [
             {
                 full_name: "Sean Landsman",
-                fruit: 'Apple',
-                on_off: 'On',
-                vegetable: 'Carrot',
+                fruit: "Apple",
+                on_off: "On",
+                vegetable: "Carrot",
                 percentage: 5
-
             },
             {
                 full_name: "Niall Crosby",
-                fruit: 'Apple',
-                on_off: 'On',
-                vegetable: 'Potato',
+                fruit: "Apple",
+                on_off: "On",
+                vegetable: "Potato",
                 percentage: 35
             },
             {
                 full_name: "Alberto Guiterzzz",
-                fruit: 'Orange',
-                on_off: 'Off',
-                vegetable: 'Broccoli',
+                fruit: "Orange",
+                on_off: "Off",
+                vegetable: "Broccoli",
                 percentage: 78
             },
             {
                 full_name: "John Masterson",
-                fruit: 'Banana',
-                on_off: 'On',
-                vegetable: 'Potato',
+                fruit: "Banana",
+                on_off: "On",
+                vegetable: "Potato",
                 percentage: 98
             }
         ];

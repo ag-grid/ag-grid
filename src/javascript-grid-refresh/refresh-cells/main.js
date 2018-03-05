@@ -1,10 +1,10 @@
 var columnDefs = [
-    {headerName: 'A', field: 'a'},
-    {headerName: 'B', field: 'b'},
-    {headerName: 'C', field: 'c'},
-    {headerName: 'D', field: 'd'},
-    {headerName: 'E', field: 'e'},
-    {headerName: 'F', field: 'f'}
+    {field: 'a', suppressCellFlash: true},
+    {field: 'b'},
+    {field: 'c'},
+    {field: 'd'},
+    {field: 'e'},
+    {field: 'f'}
 ];
 
 // placing in 13 rows, so there are exactly enough rows to fill the grid, makes
@@ -34,6 +34,7 @@ var gridOptions = {
     pinnedTopRowData: [],
     pinnedBottomRowData: [ ],
     enableCellChangeFlash: true,
+    refreshCells: true,
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
         // placing in 13 rows, so there are exactly enough rows to fill the grid, makes

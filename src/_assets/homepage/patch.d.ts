@@ -1,0 +1,3 @@
+interface IntersectionObserverEntry {
+    isIntersecting: boolean;
+}

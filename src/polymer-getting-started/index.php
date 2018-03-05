@@ -42,7 +42,7 @@ npm start</snippet>
 
     <p>With those 3 commands you should now see the following application:</p>
 
-    <img src="polymer-seed.png" style="display: block;margin: auto;height: 200px;padding-bottom: 10px">
+    <img src="../images/seed.png" style="display: block;margin: auto;height: 170px;padding-bottom: 10px">
 
     <p>Great! A working Grid application in no time at all. Let's break down the application into it's main parts:</p>
 
@@ -94,7 +94,7 @@ npm start</snippet>
     <snippet>
 // Grid Definition
 &lt;ag-grid-polymer style="width: 500px; height: 120px;"
-                 class="ag-theme-fresh"
+                 class="ag-theme-balham"
                  rowData="{{rowData}}"
                  columnDefs="{{columnDefs}}"
                  onGridReady="{{onGridReady}}"&gt;&lt;/ag-grid-polymer&gt;</snippet>
@@ -111,11 +111,11 @@ npm start</snippet>
 &lt;dom-module id="simple-grid"&gt;
     &lt;template&gt;
         &lt;link rel="stylesheet" href="bower_components/ag-grid/dist/styles/ag-grid.css"&gt;
-        &lt;link rel="stylesheet" href="bower_components/ag-grid/dist/styles/ag-theme-fresh.css"&gt;
+        &lt;link rel="stylesheet" href="bower_components/ag-grid/dist/styles/ag-theme-balham.css"&gt;
 
         &lt;h1&gt;Simple ag-Grid Polymer Example&lt;/h1&gt;
         &lt;ag-grid-polymer style="width: 500px; height: 120px;"
-                         class="ag-theme-fresh"
+                         class="ag-theme-balham"
                          rowData="{{rowData}}"
                          columnDefs="{{columnDefs}}"
                          onGridReady="{{onGridReady}}"&gt;&lt;/ag-grid-polymer&gt;
@@ -167,7 +167,7 @@ npm start</snippet>
     <snippet language="html">
 &lt;!-- Grid Definition -->
 &lt;ag-grid-polymer style="width: 500px; height: 120px;"
-                 class="ag-theme-fresh"
+                 class="ag-theme-balham"
                  rowData="{{rowData}}"
                  columnDefs="{{columnDefs}}"
                  enableSorting
@@ -177,7 +177,7 @@ npm start</snippet>
         clicking and it will cycle through ascending, descending and no sort). Note that in this example we're sorting
         by <code>Price</code> in ascending order (indicated by the up arrow):</p>
 
-    <img src="polymer-gs-sorting.png" style="display: block;margin: auto;height: 200px;">
+    <img src="../images/js-gs-sorting.png" style="display: block;margin: auto;height: 170px;">
 
     <h3>Filtering</h3>
 
@@ -192,7 +192,7 @@ npm start</snippet>
     <snippet language="html">
 &lt;!-- Grid Definition -->
 &lt;ag-grid-polymer style="width: 500px; height: 120px;"
-                 class="ag-theme-fresh"
+                 class="ag-theme-balham"
                  rowData="{{rowData}}"
                  columnDefs="{{columnDefs}}"
                  enableFilter="true"
@@ -204,7 +204,7 @@ npm start</snippet>
         <code>Model</code>
         column by the text <code>Celica</code> - only the row with <code>Celica</code> is shown now.</p>
 
-    <img src="polymer-gs-filtering.png" style="display: block;margin: auto;height: 200px;">
+    <img src="../images/js-gs-filtering.png" style="display: block;margin: auto;height: 170px;">
 
     <h2>Summary</h2>
 

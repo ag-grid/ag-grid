@@ -45,8 +45,8 @@ include '../documentation-main/documentation_header.php';
             <td>Cell is focused.</td>
         </tr>
         <tr>
-            <th>cellMouseOver, cellMouseOut</th>
-            <td>Mouse enters / leaves cell.</td>
+            <th>cellMouseOver, cellMouseOut, cellMouseDown</th>
+            <td>Mouse enters / leaves cell / mouse down</td>
         </tr>
         <tr>
             <th>rowClicked</th>
@@ -284,6 +284,10 @@ include '../documentation-main/documentation_header.php';
             the <code>rowData</code> bound property with <code>deltaRowDataMode=true</code>.</td>
         </tr>
         <tr>
+            <th>toolPanelVisibleChanged</th>
+            <td>The tool panel was hidden or shown. Use <code>api.isToolPanelShowing()</code> to get status..</td>
+        </tr>
+        <tr>
             <th>componentStateChanged</th>
             <td>
                 Only used by React, Angular, Web Components, Aurelia and VueJS ag-Grid components
@@ -333,6 +337,7 @@ CellValueChangedEvent {
         ├── ColumnPivotModeChangedEvent <span class="event-properties">{}</span>
         ├── ColumnEverythingChangedEvent <span class="event-properties">{}</span>
         ├── DisplayedColumnsChangedEvent <span class="event-properties">{}</span>
+        ├── toolPanelVisibleChanged <span class="event-properties">{}</span>
         ├── CellFocusedEvent <span class="event-properties">{
         │       <span class="event-attribute">rowIndex</span>: number, // the row index of the focused cell
         │       <span class="event-attribute">column</span>: Column, // the column of the focused cell
@@ -433,6 +438,7 @@ CellValueChangedEvent {
                 │   <span class="event-attribute">value</span>: any // the value for the cell in question
                 │ }</span>
                 ├── CellClickedEvent <span class="event-properties">{}</span>
+                ├── CellMouseDownEvent <span class="event-properties">{}</span>
                 ├── CellDoubleClickedEvent <span class="event-properties">{}</span>
                 ├── CellMouseOverEvent <span class="event-properties">{}</span>
                 ├── CellMouseOutEvent <span class="event-properties">{}</span>

@@ -23,36 +23,45 @@ if (preg_match($archiveMatch, $_SERVER['PHP_SELF'], $matches)) {
 
 if (USE_LOCAL) {
 
-    define(AG_GRID_SCRIPT_PATH, "$prefix/ag-grid/dist/ag-grid.js");
-    define(AG_GRID_ENTERPRISE_SCRIPT_PATH, "$prefix/ag-grid-enterprise-bundle/ag-grid-enterprise.js");
+    define('AG_GRID_SCRIPT_PATH', "$prefix/ag-grid/dist/ag-grid.js");
+    define('AG_GRID_ENTERPRISE_SCRIPT_PATH', "$prefix/ag-grid-enterprise-bundle/ag-grid-enterprise.js");
 
     $systemJsMap = array(
         "ag-grid" => "$prefix/ag-grid/dist/ag-grid.js",
         "ag-grid/main" => "$prefix/ag-grid/dist/ag-grid.js",
         "ag-grid-enterprise" => "$prefix/ag-grid-enterprise",
         "ag-grid-react" => "$prefix/ag-grid-react",
-        "ag-grid-angular" => "$prefix/ag-grid-angular"
+        "ag-grid-angular" => "$prefix/ag-grid-angular",
+        "ag-grid-vue" => "$prefix/ag-grid-vue"
     );
 // production mode, return from unpkg
 } else {
-    define(AG_GRID_SCRIPT_PATH, "https://unpkg.com/ag-grid@" . AG_GRID_VERSION . "/dist/ag-grid.js");
-    define(AG_GRID_ENTERPRISE_SCRIPT_PATH, "https://unpkg.com/ag-grid-enterprise@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.js");
+    define('AG_GRID_SCRIPT_PATH', "https://unpkg.com/ag-grid@" . AG_GRID_VERSION . "/dist/ag-grid.min.js");
+    define('AG_GRID_ENTERPRISE_SCRIPT_PATH', "https://unpkg.com/ag-grid-enterprise@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.min.js");
 
     $systemJsMap = array(
         "ag-grid" => "https://unpkg.com/ag-grid@" . AG_GRID_VERSION . "/dist/ag-grid.js",
         "ag-grid/main" => "https://unpkg.com/ag-grid@" . AG_GRID_VERSION . "/dist/ag-grid.js",
         "ag-grid-enterprise" => "https://unpkg.com/ag-grid-enterprise@" . AG_GRID_ENTERPRISE_VERSION . "/",
         "ag-grid-react" => "npm:ag-grid-react@" . AG_GRID_REACT_VERSION . "/",
-        "ag-grid-angular" => "npm:ag-grid-angular@" . AG_GRID_ANGULAR_VERSION . "/"
+        "ag-grid-angular" => "npm:ag-grid-angular@" . AG_GRID_ANGULAR_VERSION . "/",
+        "ag-grid-vue" => "npm:ag-grid-vue@" . AG_GRID_VUE_VERSION . "/"
     );
 }
 
-function globalAgGridScript($enterprise = false)
+function globalAgGridScript($enterprise = false, $lazyLoad = false)
 {
     $path = $enterprise ? AG_GRID_ENTERPRISE_SCRIPT_PATH : AG_GRID_SCRIPT_PATH;
-    return <<<SCR
+    if ($lazyLoad) {
+     return <<<SCR
+    <script id="ag-grid-script" data-src="$path"></script>
+SCR;
+
+    } else {
+     return <<<SCR
     <script src="$path"></script>
 SCR;
+    }
 }
 
 function path_combine(...$parts)
@@ -151,7 +160,7 @@ function example($title, $dir, $type = 'vanilla', $options = array())
     );
 
     if ($generated) {
-        $types = array('vanilla', 'angular', 'react');
+        $types = array('vanilla', 'angular', 'react', 'vue');
     } else if ($multi) {
         $types = getTypes($dir);
     } else {
@@ -190,7 +199,7 @@ function example($title, $dir, $type = 'vanilla', $options = array())
     }
 
     $gridSettings = array(
-        'theme' => 'ag-theme-fresh',
+        'theme' => 'ag-theme-balham',
         'noStyle' => $options['noStyle'] ? $options['noStyle'] : 0,
         'height' => '100%',
         'width' => '100%',
@@ -337,7 +346,7 @@ function getExampleInfo($boilerplatePrefix)
         "preview" => $preview,
         "boilerplatePath" => $boilerplatePath,
         "appLocation" => $appLocation,
-        "agGridScriptPath" => AG_SCRIPT_PATH,
+        "agGridScriptPath" => AG_GRID_SCRIPT_PATH,
         "styles" => $styles,
         "scripts" => $scripts,
         "documents" => $documents,

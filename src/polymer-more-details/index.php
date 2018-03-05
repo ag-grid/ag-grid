@@ -58,7 +58,7 @@ bower install -save ag-grid-polymer</snippet>
 
     <snippet language="html">
 &lt;ag-grid-polymer style="width: 500px; height: 120px;"
-         class="ag-theme-fresh"
+         class="ag-theme-balham"
          rowData="{{rowData}}"
 columnDefs="{{columnDefs}}"&gt;&lt;/ag-grid-polymer&gt;</snippet>
 
@@ -260,9 +260,5 @@ this.params.context.componentParent</snippet>
         main
         point is that you can use the <code>context</code> mechanism to share information between the
         components.</p>
-
-    <p>The <a href="../example-polymer-dynamic#dynamic">Dynamic Components Example</a> illustrates this in the Child/Parent column</p>
-
-
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

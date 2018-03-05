@@ -1,45 +1,45 @@
 // import './example-runner.scss';
 
-import * as angular from 'angular';
-import * as jQuery from 'jquery';
+import * as angular from "angular";
+import * as jQuery from "jquery";
 
-import {whenInViewPort, trackIfInViewPort} from './lib/viewport';
-import {highlight} from './lib/highlight';
+import { whenInViewPort, trackIfInViewPort } from "./lib/viewport";
+import { highlight } from "./lib/highlight";
 
-const docs: angular.IModule = angular.module('documentation');
+const docs: angular.IModule = angular.module("documentation");
 
 function resetIndent(str) {
-    const leadingWhitespace = str.match(/^\n?( +)/) ;
+    const leadingWhitespace = str.match(/^\n?( +)/);
     if (leadingWhitespace) {
-        return str.replace(new RegExp(' {' + leadingWhitespace[1].length + '}', 'g'), '').trim();
+        return str.replace(new RegExp(" {" + leadingWhitespace[1].length + "}", "g"), "").trim();
     } else {
         return str.trim();
     }
 }
 
-docs.service('HighlightService', function() {
+docs.service("HighlightService", function() {
     this.highlight = function(code: string, language: string) {
         return highlight(code, language);
     };
 });
 
-docs.directive('snippet', function() {
+docs.directive("snippet", function() {
     return {
-        restrict: 'E',
+        restrict: "E",
         scope: {
-            language: '='
+            language: "="
         },
         link: function(scope, element, attrs) {
-            const language = attrs.language || 'js';
+            const language = attrs.language || "js";
             const highlightedSource = highlight(resetIndent(element.text()), language);
-            element.empty().html('<pre><code>' + highlightedSource + '</code></pre>');
+            element.empty().html("<pre><code>" + highlightedSource + "</code></pre>");
         }
     };
 });
 
 // taken from https://github.com/angular/angular.js/blob/489835dd0b36a108bedd5ded439a186aca4fa739/docs/app/src/examples.js#L53
-docs.factory('formPostData', [
-    '$document',
+docs.factory("formPostData", [
+    "$document",
     function($document) {
         return function(url, newWindow, fields) {
             /*
@@ -49,14 +49,14 @@ docs.factory('formPostData', [
              * some may still want to open the plnk in a new window by opting-in via ctrl+click.  The
              * newWindow param allows for this possibility.
              */
-            var target = newWindow ? '_blank' : '_self';
+            var target = newWindow ? "_blank" : "_self";
             var form: any = angular.element('<form style="display: none;" method="post" action="' + url + '" target="' + target + '"></form>');
             angular.forEach(fields, function(value, name) {
                 var input = angular.element('<input type="hidden" name="' + name + '">');
-                input.attr('value', value);
+                input.attr("value", value);
                 form.append(input);
             });
-            $document.find('body').append(form);
+            $document.find("body").append(form);
             form[0].submit();
             form.remove();
         };
@@ -86,6 +86,8 @@ class ExampleRunner {
     private boilerplatePath: string;
     sourcePrefix: string;
 
+    private titles: { [key: string]: string };
+
     private options: {
         showResult?: boolean;
         initialFile?: string;
@@ -113,6 +115,8 @@ class ExampleRunner {
     private openFwDropdown: boolean = false;
     private visible: boolean = false;
 
+    private processVue: boolean = false;
+
     toggleFwDropdown() {
         this.openFwDropdown = !this.openFwDropdown;
     }
@@ -127,18 +131,35 @@ class ExampleRunner {
         const options = this.config.options;
 
         if (options.exampleHeight) {
-            this.iframeStyle.height = options.exampleHeight + 'px';
+            this.iframeStyle.height = options.exampleHeight + "px";
         }
 
-        this.selectedTab = options.showResult === false ? 'code' : 'result';
+        this.selectedTab = options.showResult === false ? "code" : "result";
 
         this.title = this.config.title;
         this.name = this.config.name;
         this.section = this.config.section;
-        this.showFrameworksDropdown = !options.onlyShow && (this.config.type === 'multi' || this.config.type === 'generated');
+        this.showFrameworksDropdown = !options.onlyShow && (this.config.type === "multi" || this.config.type === "generated");
         this.availableTypes = options.onlyShow ? [options.onlyShow.toLowerCase()] : Object.keys(this.config.types);
 
-        const divWrapper = jQuery(this.$element).find('div.example-wrapper');
+        this.titles = {
+            vanilla: "JavaScript",
+            react: "React",
+            angular: "Angular"
+        };
+
+        // for now - once all examples have been converted/tested for vue, this can be removed and the vue entry added to
+        // this.titles as a permanent addition
+        this.processVue = options.processVue;
+        if(this.processVue) {
+            this.titles['vue'] = "Vue";
+        } else {
+            if(this.availableTypes.indexOf('vue') !== -1) {
+                this.availableTypes.splice(this.availableTypes.indexOf('vue'), 1)
+            }
+        }
+
+        const divWrapper = jQuery(this.$element).find("div.example-wrapper");
 
         this.$timeout(() => {
             let visibleToggle: angular.IPromise<void>;
@@ -163,12 +184,12 @@ class ExampleRunner {
     }
 
     getInitialType(): string {
-        if(this.config.showOnly) {
+        if (this.config.showOnly) {
             return this.config.showOnly;
         }
 
-        const selectedFramework = this.$cookies.get('agGridFramework');
-        const selectedRunnerVersion = this.$cookies.get('agGridRunnerVersion');
+        const selectedFramework = this.$cookies.get("agGridFramework");
+        const selectedRunnerVersion = this.$cookies.get("agGridRunnerVersion");
 
         if (this.availableTypes.indexOf(selectedRunnerVersion) > -1) {
             return selectedRunnerVersion;
@@ -183,8 +204,8 @@ class ExampleRunner {
         this.setType(type);
         const tenYearsFromNow = new Date();
         tenYearsFromNow.setFullYear(tenYearsFromNow.getFullYear() + 10);
-        this.$cookies.put('agGridRunnerVersion', type, {
-            path: '/',
+        this.$cookies.put("agGridRunnerVersion", type, {
+            path: "/",
             expires: tenYearsFromNow
         });
     }
@@ -197,7 +218,7 @@ class ExampleRunner {
 
         const files = typeConfig.files;
 
-        this.files = files[0] === 'index.html' ? files : ['index.html'].concat(files);
+        this.files = files[0] === "index.html" ? files : ["index.html"].concat(files);
 
         this.selectedFile = this.files[1];
 
@@ -233,12 +254,12 @@ class ExampleRunner {
 
     refreshSource() {
         this.loadingSource = true;
-        this.source = this.$sce.trustAsHtml('Loading...');
+        this.source = this.$sce.trustAsHtml("Loading...");
 
         this.loadSource(this.selectedFile).then(source => {
             this.loadingSource = false;
             if (!this.selectedFile) {
-                throw new Error('We ended up without a selected file :(')
+                throw new Error("We ended up without a selected file :(");
             }
             const extension = this.selectedFile.match(/\.([a-z]+)$/)[1];
             const highlightedSource = highlight(source.trim(), extension);
@@ -250,12 +271,12 @@ class ExampleRunner {
         let source = this.getSource(file);
         let sourceUrl;
 
-        if (typeof source === 'string') {
+        if (typeof source === "string") {
             return this.$http.get(source).then((response: angular.IHttpResponse<string>) => {
                 return response.data;
             });
         } else {
-            const sourcePromises = source.sources.map(source => source ? this.$http.get(source).then(response => response.data) : '');
+            const sourcePromises = source.sources.map(source => (source ? this.$http.get(source).then(response => response.data) : ""));
             return this.$q.all(sourcePromises).then(responses => {
                 // stupid typescript
                 return (<any>source).process(responses);
@@ -263,13 +284,13 @@ class ExampleRunner {
         }
     }
 
-    getSource(file: string): string | {sources: string[]; process: (string) => string} {
+    getSource(file: string): string | { sources: string[]; process: (string) => string } {
         if (this.boilerplateFiles.indexOf(file) > -1) {
-            return [this.boilerplatePath, file].join('/');
+            return [this.boilerplatePath, file].join("/");
         }
 
         if (file == this.files[0]) {
-            return this.resultUrl + '&preview=true';
+            return this.resultUrl + "&preview=true";
         } else {
             return this.appFilePath(file);
         }
@@ -278,56 +299,47 @@ class ExampleRunner {
     sourcesForGeneration(): string[] {
         const vanillaTypes = this.config.types.vanilla.files;
 
-        return [
-            this.appFilePath(vanillaTypes.filter(file => file.endsWith('.js'))[0]),
-            this.appFilePath(vanillaTypes.filter(file => file.endsWith('.html'))[0]) 
-        ];
+        return [this.appFilePath(vanillaTypes.filter(file => file.endsWith(".js"))[0]), this.appFilePath(vanillaTypes.filter(file => file.endsWith(".html"))[0])];
     }
 
     appFilePath(file) {
         if (!file) {
-            return '';
+            return "";
         }
 
-        let endSegment = [ file ];
-        if (this.config.type === 'multi') {
+        let endSegment = [file];
+        if (this.config.type === "multi") {
             endSegment = [this.currentType, file];
-        } else if (this.config.type === 'generated') {
+        } else if (this.config.type === "generated") {
             endSegment = ["_gen", this.currentType, file];
         }
 
-        return [this.config.sourcePrefix, this.section, this.name].concat(endSegment).join('/');
+        return [this.config.sourcePrefix, this.section, this.name].concat(endSegment).join("/");
     }
 
     openPlunker(clickEvent) {
         const postData: any = {
-            'tags[0]': 'ag-grid',
-            'tags[1]': 'example',
+            "tags[0]": "ag-grid",
+            "tags[1]": "example",
             private: true,
             description: this.title
         };
 
         this.sources.forEach((file: any, index: number) => {
-            postData['files[' + this.allFiles[index] + ']'] = file;
+            postData["files[" + this.allFiles[index] + "]"] = file;
         });
 
-        this.formPostData('//plnkr.co/edit/?p=preview', true, postData);
+        this.formPostData("//plnkr.co/edit/?p=preview", true, postData);
     }
-
-    titles: {[key: string]: string} = {
-        vanilla: 'JavaScript',
-        react: 'React',
-        angular: 'Angular'
-    };
 
     typeTitle(title: string) {
         return this.titles[title];
     }
 }
 
-ExampleRunner.$inject = ['$http', '$timeout', '$sce', '$q', 'formPostData', '$element', '$cookies'];
+ExampleRunner.$inject = ["$http", "$timeout", "$sce", "$q", "formPostData", "$element", "$cookies"];
 
-docs.component('exampleTab', {
+docs.component("exampleTab", {
     template: `
     <li role="presentation" ng-class="{ active: $ctrl.currentValue == $ctrl.value }">
             <a role="tab" ng-click="$ctrl.onClick(); $event.preventDefault()" href="#" title="{{$ctrl.tooltip}}">
@@ -337,16 +349,16 @@ docs.component('exampleTab', {
 
     `,
     bindings: {
-        icon: '<',
-        title: '<',
-        tooltip: '<',
-        value: '<',
-        currentValue: '<',
-        onClick: '&'
+        icon: "<",
+        title: "<",
+        tooltip: "<",
+        value: "<",
+        currentValue: "<",
+        onClick: "&"
     }
 });
 
-docs.component('exampleRunner', {
+docs.component("exampleRunner", {
     template: ` 
         <div ng-class='["example-runner"]'>
 
@@ -469,19 +481,19 @@ docs.component('exampleRunner', {
     </div>
     `,
     bindings: {
-        config: '<'
+        config: "<"
     },
 
     controller: ExampleRunner
 });
 
-docs.component('preview', {
+docs.component("preview", {
     bindings: {
-        resultUrl: '<',
-        sourceCodeUrl: '<',
-        title: '<',
-        name: '<',
-        options: '<'
+        resultUrl: "<",
+        sourceCodeUrl: "<",
+        title: "<",
+        name: "<",
+        options: "<"
     },
 
     template: `<div ng-class='["example-runner"]'>
@@ -524,8 +536,8 @@ docs.component('preview', {
     `,
 
     controller: [
-        '$timeout',
-        '$element',
+        "$timeout",
+        "$element",
         function($timeout, $element) {
             this.ready = false;
 
@@ -533,7 +545,7 @@ docs.component('preview', {
                 this.iframeStyle = {};
 
                 if (this.options.exampleHeight) {
-                    this.iframeStyle.height = this.options.exampleHeight + 'px';
+                    this.iframeStyle.height = this.options.exampleHeight + "px";
                 }
 
                 whenInViewPort(jQuery($element), () => {
@@ -545,39 +557,39 @@ docs.component('preview', {
 });
 
 let removeFilenameFromPath = function(pathname) {
-    if (pathname.lastIndexOf('/') === 0) {
+    if (pathname.lastIndexOf("/") === 0) {
         // only the root slash present
         return pathname;
     }
-    return pathname.slice(0, pathname.lastIndexOf('/'));
+    return pathname.slice(0, pathname.lastIndexOf("/"));
 };
 
 let getPathWithTrailingSlash = function() {
     let pathname = removeFilenameFromPath(window.location.pathname);
-    let trailingSlash = pathname.indexOf('/', 1) === pathname.length - 1;
-    pathname += trailingSlash ? '' : '/';
+    let trailingSlash = pathname.indexOf("/", 1) === pathname.length - 1;
+    pathname += trailingSlash ? "" : "/";
     return pathname;
 };
 
-docs.directive('showSources', function() {
+docs.directive("showSources", function() {
     const ShowComplexScriptExampleController = [
-        '$scope',
-        '$http',
-        '$attrs',
-        '$sce',
-        'HighlightService',
+        "$scope",
+        "$http",
+        "$attrs",
+        "$sce",
+        "HighlightService",
         function($scope, $http, $attrs, $sce, HighlightService) {
             const pathname = getPathWithTrailingSlash();
 
-            $scope.source = $scope.sourcesOnly ? $attrs['example'] : pathname + $attrs['example'];
+            $scope.source = $scope.sourcesOnly ? $attrs["example"] : pathname + $attrs["example"];
 
             $scope.extraPages = [];
 
             const sources = eval($attrs.sources);
             sources.forEach(function(source) {
                 let root = source.root;
-                root = root === './' ? pathname : root;
-                const files = source.files.split(',');
+                root = root === "./" ? pathname : root;
+                const files = source.files.split(",");
 
                 $scope.extraPages = $scope.extraPages.concat(files);
 
@@ -586,9 +598,9 @@ docs.directive('showSources', function() {
                     $http
                         .get(root + file)
                         .then(function(response) {
-                            const language = $attrs.language ? $attrs.language : 'js';
+                            const language = $attrs.language ? $attrs.language : "js";
                             const content = $attrs.highlight ? HighlightService.highlight(response.data, language) : response.data;
-                            $scope.extraPageContent[file] = $sce.trustAsHtml('<pre class="language-' + language + '"><code>' + content + '</code></pre>');
+                            $scope.extraPageContent[file] = $sce.trustAsHtml('<pre class="language-' + language + '"><code>' + content + "</code></pre>");
                         })
                         .catch(function(response) {
                             $scope.extraPageContent[file] = response.data;
@@ -598,9 +610,9 @@ docs.directive('showSources', function() {
             });
 
             if ($attrs.exampleheight) {
-                $scope.iframeStyle = {height: $attrs.exampleheight};
+                $scope.iframeStyle = { height: $attrs.exampleheight };
             } else {
-                $scope.iframeStyle = {height: '500px'};
+                $scope.iframeStyle = { height: "500px" };
             }
 
             $scope.isActivePage = function(item) {
@@ -615,6 +627,6 @@ docs.directive('showSources', function() {
     return {
         scope: true,
         controller: ShowComplexScriptExampleController,
-        templateUrl: '/showSources.html'
+        templateUrl: "/showSources.html"
     };
 });

@@ -118,7 +118,7 @@ export class AppComponent {
 }</snippet>
 <snippet>
 // app/app.component.html 
-&lt;ag-grid-angular #agGrid style="width: 500px; height: 150px;" class="ag-theme-fresh"
+&lt;ag-grid-angular #agGrid style="width: 500px; height: 150px;" class="ag-theme-balham"
                  [gridOptions]="gridOptions"
                  [columnDefs]="columnDefs"
                  [rowData]="rowData"&gt;
@@ -158,7 +158,7 @@ import 'rxjs';
 
 // ag-grid
 import 'ag-grid/dist/styles/ag-grid.css';
-import 'ag-grid/dist/styles/ag-theme-fresh.css';
+import 'ag-grid/dist/styles/ag-theme-balham.css';
 
 import 'ag-grid-angular/main'</snippet>
 <snippet>
@@ -457,7 +457,7 @@ if (process.env.ENV === 'production') {
 
     <p>If we now run our applicatiom with the above code we will see this:</p>
 
-    <img src="../images/webpack_app.png" style="width: 100%">
+    <img src="../images/seed.png" style="width: 100%">
 
     <h3>Override ag-Grid CSS</h3>
     <p>There are many ways to override the CSS with Webpack, but if you use the configuration above then you can override ag-Grid CSS as follows:</p>

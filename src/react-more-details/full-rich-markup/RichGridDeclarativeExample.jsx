@@ -60,7 +60,7 @@ export default class RichGridDeclarativeExample extends Component {
 
     render() {
         return (
-            <div style={{height: 525, width: 900}} className="ag-fresh">
+            <div style={{height: 525, width: 900}} className="ag-theme-balham">
                 <AgGridReact
                     // listening for events
                     onGridReady={this.onGridReady}
@@ -79,7 +79,6 @@ export default class RichGridDeclarativeExample extends Component {
                     enableFilter
                     floatingFilter
                     groupHeaders
-                    rowHeight="22"
 
                     // setting grid wide date component
                     dateComponentFramework={DateComponent}

@@ -37,7 +37,7 @@
                 <button @click="createRowData()">Refresh Data</button>
             </div>
             <div style="clear: both;"></div>
-            <ag-grid-vue style="width: 100%; height: 350px;" class="ag-fresh"
+            <ag-grid-vue style="width: 100%; height: 350px;" class="ag-theme-balham"
                          :gridOptions="gridOptions"
                          :columnDefs="columnDefs"
                          :rowData="rowData"
@@ -50,7 +50,6 @@
                          :suppressRowClickSelection="true"
                          :toolPanelSuppressGroups="true"
                          :toolPanelSuppressValues="true"
-                         rowHeight="22"
                          rowSelection="multiple"
 
                          :modelUpdated="onModelUpdated"

@@ -42,7 +42,7 @@ include('../includes/faqHeader.php');
 
 
         <p>
-            If you have a question - please send us an email to accounts@ag-grid.com.
+            If you have a question - please send us an email to info@ag-grid.com.
         </p>
 
 

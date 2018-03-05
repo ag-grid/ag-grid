@@ -65,6 +65,7 @@ localeText = {
         pivots: 'laPivots',
         valueColumnsEmptyMessage: 'la drag cols to aggregate',
         pivotColumnsEmptyMessage: 'la drag here to pivot',
+        toolPanelButton: 'la tool panel',
 
         // other
         noRowsToShow: 'la no rows',
