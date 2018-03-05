@@ -270,4 +270,8 @@
     .ag-column-name-filter {
         height: $grid-size * 4;
     }
+
+    .ag-column-drop-cell .ag-column-drag {
+        background-position-y: 0 !important;
+    }
 }
