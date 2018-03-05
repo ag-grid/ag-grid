@@ -128,7 +128,7 @@ meta_and_links("Our Mission, Our Principles and Meet the Team at ag-Grid", "Abou
 
                     <div class="col-md-4">
                         <div>
-                            <img src='images/team/sophia.jpg'/>
+                            <img src='images/team/Rod.png'/>
                         </div>
                         <h3>Rod Smith</h3>
                         <h4>Support Engineer</h4>
@@ -164,7 +164,7 @@ meta_and_links("Our Mission, Our Principles and Meet the Team at ag-Grid", "Abou
                     
                     <div class="col-md-4">
                         <div>
-                            <img src='images/team/dimple.jpg'/>
+                            <img src='images/team/Fahad.jpg'/>
                         </div>
                         <h3>Fahad Ahmad</h3>
                         <h4>Digital Marketing Executive</h4>
