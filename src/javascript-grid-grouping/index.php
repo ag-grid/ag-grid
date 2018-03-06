@@ -104,7 +104,7 @@ gridOptions.columnDefs = [
         </li>
         <li>
             The group column has a custom comparator that changes the way sorting works, this is achieved by setting
-            <code>autoGroupColumnDef.cellRendererParams.comparator = function (left, right){...}</code>.
+            <code>autoGroupColumnDef.comparator = function (left, right){...}</code>.
 
             The custom comparator provided in the example changes the way the sorting works by ignoring the first letter
             of the group. To test this click on the header. When sorting desc you should see countries which second letter
