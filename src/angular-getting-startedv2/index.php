@@ -159,7 +159,7 @@ As you may have already noticed, the CSS class matches the name of CSS file we i
 
 <h2>Fetch Remote Data</h2>
 
-<p>Displaying hard-coded data in JavaScript is not going to get us very far. In the real world, most of the time, we are dealing with data that resides on a remote server. Thanks to React, implementing this is actually quite simple. 
+<p>Displaying hard-coded data in JavaScript is not going to get us very far. In the real world, most of the time, we are dealing with data that resides on a remote server. Thanks to Angular, implementing this is actually quite simple. 
 Notice that the actual data fetching is performed outside of the grid component - We are using Angular's <a href="https://angular.io/guide/http">HttpClient</a> and an async pipe. As a first step, let's add the <code>HttpModule</code> to our app module:</p> 
 </div>
 
@@ -428,7 +428,7 @@ import { HttpClientModule } from '@angular/common/http';
 
 <p>-- screenshot</p>
 
-<p>Now, let's enable grouping! Add an autoGroupColumnDef property and change the columnDefs to the following:</p>
+<p>Now, let's enable grouping! Add an <code>autoGroupColumnDef</code> property and change the <code>columnDefs</code> to the following:</p>
 
 <snippet language="ts">
 export class AppComponent implements OnInit {
@@ -462,8 +462,8 @@ export class AppComponent implements OnInit {
 
     getSelectedRows() {
         const selectedNodes = this.agGrid.api.getSelectedNodes();
-        const selectedData = selectedNodes.map( node => node.data );
-        const selectedDataStringPresentation = selectedData.map( node => node.make + ' ' + node.model).join(', ');
+        const selectedData = selectedNodes.map( node =&lt; node.data );
+        const selectedDataStringPresentation = selectedData.map( node =&lt; node.make + ' ' + node.model).join(', ');
         alert(`Selected nodes: ${selectedDataStringPresentation}`);
     }
 }
@@ -476,4 +476,59 @@ class="ag-theme-fresh"
 +[autoGroupColumnDef]="autoGroupColumnDef"
 [enableSorting]="true"
 </snippet>
+
+<p>There we go! The grid now groups the data by <code>make</code>, while listing the <code>model</code> field value when expanded. 
+Notice that grouping works with checkboxes as well - the <code>groupSelectsChildren</code> property adds a group-level checkbox that selects/deselects all items in the group.</p>
+
+<div class="note"> Don't worry if this step feels a bit overwhelming - the  grouping feature is very powerful and supports complex interaction scenarios which you might not need initially. 
+The grouping documentation section contains plenty of real-world runnable examples that can get you started for your particular  case.</div>
+
+<h2>Customize the Theme Look</h2>
+
+<p>The last thing which we are going to do is to change the grid look and feel by modifying some of the theme's Sass variables.</p> 
+
+<p>By default, ag-Grid ships a set of pre-built theme stylesheets. If we want to tweak the colors and the fonts of theme, we should add a Sass preprocessor to our project, 
+override the theme variable values, and refer the ag-grid Sass files instead of the pre-built stylesheets so that the variable overrides are applied.</p>
+
+<p>Thankfully, Angular CLI has done most of the heavy lifting for us. Remember that  we bootstrapped our project with <code>--style scss</code>? Everything we need to do now is to change the paths in <code>src/styles.scss</code>:</p>
+
+<snippet language="scss">
+$ag-icons-path: "../node_modules/ag-grid/src/styles/icons/";
+
+@import "~ag-grid/src/styles/ag-grid.scss";
+@import "~ag-grid/src/styles/ag-theme-fresh.scss";
+</snippet>
+
+<p>Notice that we had to aid the Sass preprocessor a bit by setting the <code>$ag-icons-path</code> variable. This is a common gotcha with Sass, as external image paths are considered relative to the main file. 
+In fact, by specifying the icons path, we also made our first theme override! We might change the entire theme icon set by changing the path in the variable to a directory containing our icon set.</p> 
+
+<p>Let's do something simpler, though. We can override the alternating row background color to grayish blue. Add the following line:</p>
+
+<snippet language="diff">
+ $ag-icons-path: "../node_modules/ag-grid/src/styles/icons/";
++$odd-row-background-color: #CFD8DC;
+</snippet>
+
+<p>If everything is configured correctly, the second row of the grid will get slightly darker. Congratulations! 
+You now know now bend the grid look to your will - there are a few dozens more Sass variables that let you control the font family and size, border color, 
+header background color and even the amount of spacing in the cells and columns. The full Sass variable list is available in the themes documentation section.</p> 
+
+<h2>Summary</h2> 
+
+<p>With this tutorial, we managed to accomplish a lot. Starting from the humble beginnings of a three row / column setup, we now have a grid that supports sorting, filtering, binding to remote data, selection and even grouping! 
+While doing so, we learned how to configure the grid, how to access its API object, and how to change the styling of the component.</p> 
+
+<p>That's just scratching the surface, though. The grid has a lot more features to offer; the abilities to customize cells and headers with custom components allow for almost infinite possible configurations. </p>
+<h2>next steps</h2> 
+<p>you can go through the following help articles to learn more about the features we enabled:</p>
+
+<ul>
+    <li>Sorting</li>
+    <li>Filtering</li>
+    <li>Grouping</li>
+    <li>Selection</li>
+    <li>Customizing Themes Appearance</li>
+</ul>
+
+
 <?php include '../documentation-main/documentation_footer.php'; ?>
