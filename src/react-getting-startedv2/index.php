@@ -364,8 +364,9 @@ header background color and even the amount of spacing in the cells and columns.
 While doing so, we learned how to configure the grid, how to access its API object, and how to change the styling of the component.</p> 
 
 <p>That's just scratching the surface, though. The grid has a lot more features to offer; the abilities to customize cells and headers with custom components allow for almost infinite possible configurations. </p>
-<h2>next steps</h2> 
-<p>you can go through the following help articles to learn more about the features we enabled:</p>
+
+<h2>Next Steps</h2> 
+<p>You can go through the following help articles to learn more about the features we enabled:</p>
 
 <ul>
     <li>Sorting</li>

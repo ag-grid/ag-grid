@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "ag-Grid Reference: Getting Started with the Angular Datagrid";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This Getting Start guide covers installing our seed repo and getting up and running with a simple Angualr Datagrid. We also cover basisc configuration.";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This Getting Start guide covers installing our seed repo and getting up and running with a simple Angular Datagrid. We also cover basisc configuration.";
 $pageKeyboards = "Angular Datagrid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
