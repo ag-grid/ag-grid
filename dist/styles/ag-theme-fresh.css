@@ -1746,3 +1746,5 @@
     padding: 10px; }
   .ag-theme-fresh .ag-column-name-filter {
     height: 16px; }
+  .ag-theme-fresh .ag-column-drop-cell .ag-column-drag {
+    background-position-y: 0 !important; }

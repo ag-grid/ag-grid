@@ -1746,6 +1746,8 @@
     padding: 10px; }
   .ag-theme-dark .ag-column-name-filter {
     height: 16px; }
+  .ag-theme-dark .ag-column-drop-cell .ag-column-drag {
+    background-position-y: 0 !important; }
   .ag-theme-dark input,
   .ag-theme-dark select {
     background-color: #302e2e;

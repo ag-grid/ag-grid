@@ -1746,5 +1746,7 @@
     padding: 10px; }
   .ag-theme-bootstrap .ag-column-name-filter {
     height: 16px; }
+  .ag-theme-bootstrap .ag-column-drop-cell .ag-column-drag {
+    background-position-y: 0 !important; }
   .ag-theme-bootstrap .ag-menu, .ag-theme-bootstrap .ag-theme-bootstrap.ag-dnd-ghost, .ag-theme-bootstrap .ag-cell-inline-editing, .ag-theme-bootstrap .ag-popup-editor, .ag-theme-bootstrap .ag-select-agg-func-popup, .ag-theme-bootstrap .ag-overlay-loading-center {
     border: 1px solid #ccc; }
