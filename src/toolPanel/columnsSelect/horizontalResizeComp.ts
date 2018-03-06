@@ -26,8 +26,6 @@ export class HorizontalResizeComp extends Component {
         });
 
         this.addDestroyFunc(finishedWithResizeFunc);
-
-        console.log('to resize', this.props.componentToResize);
     }
 
     private onResizeStart(): void {
