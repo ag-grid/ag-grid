@@ -361,12 +361,6 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>http://localhost:8080/javascript-grid-tree-data/</loc>
-    <lastmod>2018-01-24</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
     <loc>http://localhost:8080/javascript-grid-overlay-component/</loc>
     <lastmod>2018-01-24</lastmod>
     <changefreq>daily</changefreq>
@@ -1050,7 +1044,23 @@
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
-  
-  
+  <url>
+    <loc>http://localhost:8080/ag-grid-changelog/</loc>
+    <lastmod>2018-01-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>  
+  <url>
+    <loc>http://localhost:8080/ag-grid-gpu-animation-transform-translate/</loc>
+    <lastmod>2018-01-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>    
+  <url>
+    <loc>http://localhost:8080/ag-grid-the-best-html5-grid-for-streaming-updates/</loc>
+    <lastmod>2018-01-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>  
   
 </urlset>
