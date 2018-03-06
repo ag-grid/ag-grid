@@ -45548,6 +45548,44 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.ExcelCreator = excelCreator_1.ExcelCreator;
 	var excelXmlFactory_1 = __webpack_require__(189);
 	exports.ExcelXmlFactory = excelXmlFactory_1.ExcelXmlFactory;
+	// bootstrap the enterprise side of things - this ensures the enterprise code
+	// is loaded up and ready to go
+	var main_1 = __webpack_require__(2);
+	var enterpriseMenu_2 = __webpack_require__(148);
+	var rangeController_2 = __webpack_require__(158);
+	var clipboardService_2 = __webpack_require__(157);
+	var groupStage_2 = __webpack_require__(160);
+	var aggregationStage_2 = __webpack_require__(161);
+	var enterpriseBoot_2 = __webpack_require__(164);
+	var statusBar_2 = __webpack_require__(174);
+	var contextMenu_2 = __webpack_require__(176);
+	var viewportRowModel_2 = __webpack_require__(177);
+	var pivotColumnsPanel_2 = __webpack_require__(178);
+	var toolPanelComp_2 = __webpack_require__(181);
+	var rowGroupCompFactory_2 = __webpack_require__(186);
+	var licenseManager_2 = __webpack_require__(171);
+	var md5_2 = __webpack_require__(172);
+	var pivotStage_2 = __webpack_require__(162);
+	var pivotColDefService_2 = __webpack_require__(163);
+	var aggFuncService_2 = __webpack_require__(159);
+	var pivotCompFactory_2 = __webpack_require__(187);
+	var menuItemMapper_1 = __webpack_require__(156);
+	var excelCreator_2 = __webpack_require__(188);
+	var excelXmlFactory_2 = __webpack_require__(189);
+	var enterpriseRowModel_1 = __webpack_require__(190);
+	var columnSelectHeaderComp_1 = __webpack_require__(153);
+	var columnContainerComp_1 = __webpack_require__(150);
+	var horizontalResizeComp_1 = __webpack_require__(193);
+	var rowModelTypes = { viewport: viewportRowModel_2.ViewportRowModel, enterprise: enterpriseRowModel_1.EnterpriseRowModel };
+	main_1.Grid.setEnterpriseBeans([toolPanelComp_2.ToolPanelComp, enterpriseMenu_2.EnterpriseMenuFactory, excelCreator_2.ExcelCreator, excelXmlFactory_2.ExcelXmlFactory, rowGroupCompFactory_2.RowGroupCompFactory, pivotCompFactory_2.PivotCompFactory,
+	    pivotColumnsPanel_2.PivotColumnsPanel, rangeController_2.RangeController, clipboardService_2.ClipboardService, pivotStage_2.PivotStage, pivotColDefService_2.PivotColDefService,
+	    contextMenu_2.ContextMenuFactory, groupStage_2.GroupStage, aggregationStage_2.AggregationStage, enterpriseBoot_2.EnterpriseBoot, aggFuncService_2.AggFuncService,
+	    statusBar_2.StatusBar, licenseManager_2.LicenseManager, md5_2.MD5, menuItemMapper_1.MenuItemMapper], rowModelTypes);
+	main_1.Grid.setEnterpriseComponents([
+	    { componentName: 'AgColumnSelectHeader', theClass: columnSelectHeaderComp_1.ColumnSelectHeaderComp },
+	    { componentName: 'AgColumnContainer', theClass: columnContainerComp_1.ColumnContainerComp },
+	    { componentName: 'AgHorizontalResize', theClass: horizontalResizeComp_1.HorizontalResizeComp }
+	]);
 
 
 /***/ })
