@@ -35,3 +35,45 @@ export {PivotCompFactory} from "./dist/lib/pivotCompFactory";
 export {RowGroupCompFactory} from "./dist/lib/rowGroupCompFactory";
 export {ExcelCreator} from "./dist/lib/excelCreator";
 export {ExcelXmlFactory} from "./dist/lib/excelXmlFactory";
+
+// bootstrap the enterprise side of things - this ensures the enterprise code
+// is loaded up and ready to go
+import {Grid} from "ag-grid/main";
+import {EnterpriseMenuFactory} from "./dist/lib/menu/enterpriseMenu";
+import {RangeController} from "./dist/lib/rangeController";
+import {ClipboardService} from "./dist/lib/clipboardService";
+import {GroupStage} from "./dist/lib/rowStages/groupStage";
+import {AggregationStage} from "./dist/lib/rowStages/aggregationStage";
+import {EnterpriseBoot} from "./dist/lib/enterpriseBoot";
+import {StatusBar} from "./dist/lib/statusBar/statusBar";
+import {ContextMenuFactory} from "./dist/lib/menu/contextMenu";
+import {ViewportRowModel} from "./dist/lib/rowModels/viewport/viewportRowModel";
+import {PivotColumnsPanel} from "./dist/lib/toolPanel/columnDrop/pivotColumnsPanel";
+import {ToolPanelComp} from "./dist/lib/toolPanel/toolPanelComp";
+import {RowGroupCompFactory} from "./dist/lib/rowGroupCompFactory";
+import {LicenseManager} from "./dist/lib/licenseManager";
+import {MD5} from "./dist/lib/license/md5";
+import {PivotStage} from "./dist/lib/rowStages/pivotStage";
+import {PivotColDefService} from "./dist/lib/rowStages/pivotColDefService";
+import {AggFuncService} from "./dist/lib/aggregation/aggFuncService";
+import {PivotCompFactory} from "./dist/lib/pivotCompFactory";
+import {MenuItemMapper} from "./dist/lib/menu/menuItemMapper";
+import {ExcelCreator} from "./dist/lib/excelCreator";
+import {ExcelXmlFactory} from "./dist/lib/excelXmlFactory";
+import {EnterpriseRowModel} from "./dist/lib/rowModels/enterprise/enterpriseRowModel";
+import {ColumnSelectHeaderComp} from "./dist/lib/toolPanel/columnsSelect/columnSelectHeaderComp";
+import {ColumnContainerComp} from "./dist/lib/toolPanel/columnsSelect/columnContainerComp";
+import {HorizontalResizeComp} from "./dist/lib/toolPanel/columnsSelect/horizontalResizeComp";
+
+let rowModelTypes = {viewport: ViewportRowModel, enterprise: EnterpriseRowModel};
+
+Grid.setEnterpriseBeans([ToolPanelComp, EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, RowGroupCompFactory, PivotCompFactory,
+    PivotColumnsPanel, RangeController, ClipboardService, PivotStage, PivotColDefService,
+    ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService,
+    StatusBar, LicenseManager, MD5, MenuItemMapper], rowModelTypes);
+
+Grid.setEnterpriseComponents([
+    {componentName: 'AgColumnSelectHeader', theClass: ColumnSelectHeaderComp},
+    {componentName: 'AgColumnContainer', theClass: ColumnContainerComp},
+    {componentName: 'AgHorizontalResize', theClass: HorizontalResizeComp}
+]);
