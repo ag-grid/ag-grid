@@ -1,4 +1,4 @@
-// ag-grid-enterprise v16.0.1
+// ag-grid-enterprise v17.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -39,7 +39,7 @@ var ToolPanelColumnComp = (function (_super) {
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
         var indent = this.columnDept;
         if (this.groupsExist) {
-            indent++;
+            this.addCssClass('ag-toolpanel-add-group-indent');
         }
         this.addCssClass("ag-toolpanel-indent-" + indent);
         this.setupDragging();

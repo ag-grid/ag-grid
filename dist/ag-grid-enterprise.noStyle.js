@@ -1,4 +1,4 @@
-// ag-grid-enterprise v16.0.1
+// ag-grid-enterprise v17.0.0
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -74,7 +74,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
 	var main_1 = __webpack_require__(2);
@@ -35176,7 +35176,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -35599,7 +35599,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -35691,7 +35691,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -35942,7 +35942,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -36268,7 +36268,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -36309,7 +36309,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
 	        var indent = this.columnDept;
 	        if (this.groupsExist) {
-	            indent++;
+	            this.addCssClass('ag-toolpanel-add-group-indent');
 	        }
 	        this.addCssClass("ag-toolpanel-indent-" + indent);
 	        this.setupDragging();
@@ -36605,7 +36605,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -36838,7 +36838,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -37006,7 +37006,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -37138,7 +37138,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -37344,7 +37344,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -37932,7 +37932,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -38343,7 +38343,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -38586,7 +38586,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -39032,7 +39032,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -39268,7 +39268,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -39430,7 +39430,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -39631,7 +39631,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -39692,7 +39692,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -40025,7 +40025,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
 	var main_1 = __webpack_require__(2);
@@ -40404,7 +40404,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -40522,7 +40522,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -40694,7 +40694,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -40884,7 +40884,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -40963,7 +40963,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -41122,7 +41122,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -41313,7 +41313,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -41473,7 +41473,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -41685,7 +41685,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 175 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -41740,7 +41740,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 176 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -41932,7 +41932,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 177 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -42190,7 +42190,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 178 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -42352,7 +42352,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 179 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -42699,7 +42699,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 180 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -42941,7 +42941,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 181 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -43075,7 +43075,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 182 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -43181,7 +43181,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 183 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -43267,7 +43267,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 184 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -43394,7 +43394,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 185 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -43521,7 +43521,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 186 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -43559,7 +43559,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 187 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -43597,7 +43597,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 188 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -43916,7 +43916,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 189 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -44271,7 +44271,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 190 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -44700,7 +44700,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 191 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -45011,7 +45011,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 192 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -45399,7 +45399,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 193 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -45471,7 +45471,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 194 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v16.0.1
+	// ag-grid-enterprise v17.0.0
 	"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
 	var columnSelectComp_1 = __webpack_require__(149);

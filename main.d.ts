@@ -1,4 +1,4 @@
-// ag-grid-enterprise v16.0.1
+// ag-grid-enterprise v17.0.0
 export { ColumnSelectComp } from "./dist/lib/toolPanel/columnsSelect/columnSelectComp";
 export { ToolPanelColumnComp } from "./dist/lib/toolPanel/columnsSelect/toolPanelColumnComp";
 export { ToolPanelGroupComp } from "./dist/lib/toolPanel/columnsSelect/toolPanelGroupComp";
