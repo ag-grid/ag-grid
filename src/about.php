@@ -7,7 +7,7 @@ gtm_data_layer('about');
 <html lang="en">
 <head lang="en">
 <?php
-meta_and_links("Our Mission, Our Principles and Meet the Team at ag-Grid", "About ag-Grid", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is the story of ag-Grid and explains our mission, where we came from and who we are.", true);
+meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-Grid", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is the story of ag-Grid and explains our mission, where we came from and who we are.", true);
 ?>
 <link rel="stylesheet" href="dist/homepage.css">
 </head>
