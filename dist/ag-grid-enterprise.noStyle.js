@@ -45435,7 +45435,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            onResizeEnd: this.onResizing.bind(this)
 	        });
 	        this.addDestroyFunc(finishedWithResizeFunc);
-	        console.log('to resize', this.props.componentToResize);
 	    };
 	    HorizontalResizeComp.prototype.onResizeStart = function () {
 	        this.startingWidth = this.props.componentToResize.getGui().clientWidth;
