@@ -78,7 +78,9 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem{
 
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
         let indent = this.columnDept;
-        if (this.groupsExist) {indent++;}
+        if (this.groupsExist) {
+            this.addCssClass('ag-toolpanel-add-group-indent');
+        }
         this.addCssClass(`ag-toolpanel-indent-${indent}`);
 
         this.setupDragging();
