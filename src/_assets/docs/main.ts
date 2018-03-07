@@ -11,12 +11,8 @@ anchors.options = {
     visible: "hover"
 };
 
-var selectors = new Array(5)
-    .fill(1)
-    .map(function(_, index) {
-        return "#content:not(.skip-in-page-nav) h" + (index + 1);
-    })
-    .join(", ");
+var selectors = [1, 2, 3, 4, 5].map(level => "#content:not(.skip-in-page-nav) h" + level).join(", ");
+
 anchors.add(selectors);
 
 $(function() {

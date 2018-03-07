@@ -387,7 +387,6 @@ While doing so, we learned how to configure the grid and how how to use its api 
     <li>Customizing Themes Appearance</li>
 </ul>
 
-
 <p><b id="f1">1</b> This is not exactly true. ag-Grid's core, as well as the framework wrappers are written in TypeScript. This provides nice strong typing and compile-time checks for our TypeScript users, while not giving the Babel/Vanilla users any disadvantage.  <a href="#a1">↩</a></p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
