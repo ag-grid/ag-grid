@@ -52,7 +52,7 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
 
             <p>Our experience is in building Enterprise applications: we know that the datagrid is at the core of an Enterprise application, and needs to deliver performance and a rich feature set.  </p>
 
-            <p>We give away what others charge for. <strong>ag-Grid Community</strong> provides all of the features of our competion. We only charge when we go above and beyond, with features that other grids don’t provide.  </p>
+            <p>We give away what others charge for. <strong>ag-Grid Community</strong> provides all of the features of our competition. We only charge when we go above and beyond, with features that other grids don’t provide.  </p>
 
             <h2 id="team">The Technical Team</h2>
 
