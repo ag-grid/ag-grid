@@ -31,7 +31,7 @@ include './includes/navbar.php';
                 Chances are that we are already aware of it. Please check the changelog and the pipeline first.</p>
 
             <ul class="content-list">
-                <li><a href="/change-log/changeLogIndex.php">Changelog covering versions 7.x and earlier</a></li>
+                <li><a href="/ag-grid-changelog">Changelog covering versions 7.x and earlier</a></li>
                 <li><a href="/ag-grid-pipeline">Pipeline of up and coming features and Bug Fixes</a></li>
             </ul>
 

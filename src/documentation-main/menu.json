@@ -189,8 +189,7 @@
             },
             {
                 "title": "Column Moving",
-                "url": "javascript-grid-column-moving/",
-                "new": true
+                "url": "javascript-grid-column-moving/"
             },
             {
                 "title": "Column Filter",
@@ -210,8 +209,7 @@
                     },
                     {
                         "title": "Set Filter",
-                        "url": "javascript-grid-filter-set/",
-                        "enterprise": true
+                        "url": "javascript-grid-filter-set/"
                     },
                     {
                         "title": "Custom Filter",
@@ -233,8 +231,7 @@
             },
             {
                 "title": "Row Dragging",
-                "url": "javascript-grid-row-dragging/",
-                "new": true
+                "url": "javascript-grid-row-dragging/"
             },
             {
                 "title": "Row Selection",
@@ -242,8 +239,7 @@
             },
             {
                 "title": "Range Selection",
-                "url": "javascript-grid-range-selection/",
-                "enterprise": true
+                "url": "javascript-grid-range-selection/"
             },
             {
                 "title": "Grid Size",
@@ -616,8 +612,9 @@
         "items": [
             {
                 "title": "Change log",
-                "url": "change-log/changeLogIndex.php",
-                "skipIndex": true
+                "url": "ag-grid-changelog/",
+                "skipIndex": true,
+                "new": true
             },
             {
                 "title": "OpenFin",

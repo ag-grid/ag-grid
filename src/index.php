@@ -68,7 +68,7 @@ meta_and_links($title, $keywords, $description, false);
     <div id="stage-frameworks">
         <section id="news-flash">
             <div>
-                January 24th, 2018: Version 16 released featuring Row Drag & Drop and Locked Columns. <a href="/ag-grid-blog-16-0-0/">See what is new</a>.
+                March 7th, 2018: Version 17 released featuring toolbar redesign, new Balham theme & performance improvements.
             </div>
         </section>
 
