@@ -184,8 +184,23 @@ var groupColumn = {
 
     <snippet>
 gridOptions.postSort(rowNodes) {
-    // keep Ireland rows on top
-    rowNodes.sort((n1, n2) => n1.data.country === 'Ireland' ? -1 : 1);
+    // here we put Ireland rows on top while preserving the sort order
+
+    function isIreland(node) {
+        return node.data.country === "Ireland";
+    }
+
+    function move(toIndex, fromIndex) {
+        rowNodes.splice(toIndex, 0, rowNodes.splice(fromIndex, 1)[0]);
+    }
+
+    var nextInsertPos = 0;
+    for (var i = 0; i < rowNodes.length; i++) {
+        if (isIreland(rowNodes[i])) {
+            move(nextInsertPos, i)
+            nextInsertPos++;
+        }
+    }
 }
     </snippet>
 
