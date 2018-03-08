@@ -18,6 +18,10 @@ function gtm_data_layer($pageCategory, $additional = array()) {
 
 
 function meta_and_links($title, $keywords, $description, $root = false) {
+    $font_awesome = $GLOBALS['DONT_USE_FONT_AWESOME']
+        ? ""
+        : '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">';
+
     $socialImage = $GLOBALS['socialImage'];
     if ($socialImage) {
         $socialImageMeta = <<<META
@@ -45,7 +49,7 @@ META;
     }
     echo <<<META
     <script>var dataLayer = [${GLOBALS['GTM_DATA_LAYER']}]</script>
-    ${GLOBALS['GTM_SCRIPT']}    
+    ${GLOBALS['GTM_SCRIPT']}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
     <!-- link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,900" rel="stylesheet" -->

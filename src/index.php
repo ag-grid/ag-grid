@@ -9,7 +9,7 @@ $version = 'latest';
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<?
+<?php
 $title = 'ag-Grid: Datagrid with 63 Features and Lightening Performance';
 $keywords = 'javascript data grid react angularjs angular 2 web components aurelia';
 $description = 'ag-Grid is feature rich datagrid designed for the major JavaScript Frameworks. Version 17 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that your users expect. Our Community version is free and open source or take a 2 month trial of ag-Grid Enterprise.';
