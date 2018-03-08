@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24,6 +24,9 @@ var columnController_1 = require("../columnController/columnController");
 var SortService = (function () {
     function SortService() {
     }
+    SortService.prototype.init = function () {
+        this.postSortFunc = this.gridOptionsWrapper.getPostSortFunc();
+    };
     SortService.prototype.sortAccordingToColumnsState = function (rowNode) {
         var sortOptions = this.sortController.getSortForRowController();
         this.sort(rowNode, sortOptions);
@@ -54,6 +57,9 @@ var SortService = (function () {
                 _this.sort(child, sortOptions);
             }
         });
+        if (this.postSortFunc) {
+            this.postSortFunc(rowNode.childrenAfterSort);
+        }
     };
     SortService.prototype.compareRowNodes = function (sortOptions, sortedNodeA, sortedNodeB) {
         var nodeA = sortedNodeA.rowNode;
@@ -148,6 +154,12 @@ var SortService = (function () {
         context_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
     ], SortService.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], SortService.prototype, "init", null);
     SortService = __decorate([
         context_1.Bean('sortService')
     ], SortService);

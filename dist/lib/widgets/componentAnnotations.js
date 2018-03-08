@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,46 +11,60 @@ function QuerySelector(selector) {
 }
 exports.QuerySelector = QuerySelector;
 function RefSelector(ref) {
-    return querySelectorFunc.bind(this, '[ref=' + ref + ']');
+    return querySelectorFunc.bind(this, "[ref=" + ref + "]");
 }
 exports.RefSelector = RefSelector;
 function querySelectorFunc(selector, classPrototype, methodOrAttributeName, index) {
     if (selector === null) {
-        console.error('ag-Grid: QuerySelector selector should not be null');
+        console.error("ag-Grid: QuerySelector selector should not be null");
         return;
     }
-    if (typeof index === 'number') {
-        console.error('ag-Grid: QuerySelector should be on an attribute');
+    if (typeof index === "number") {
+        console.error("ag-Grid: QuerySelector should be on an attribute");
         return;
     }
-    // it's an attribute on the class
-    var props = getOrCreateProps(classPrototype, classPrototype.constructor.name);
-    if (!props.querySelectors) {
-        props.querySelectors = [];
-    }
-    props.querySelectors.push({
+    addToObjectProps(classPrototype, 'querySelectors', {
         attributeName: methodOrAttributeName,
         querySelector: selector
     });
 }
+// think we should take this out, put property bindings on the
 function Listener(eventName) {
     return listenerFunc.bind(this, eventName);
 }
 exports.Listener = Listener;
-function listenerFunc(eventName, target, methodName, descriptor) {
+function listenerFunc(eventName, target, methodName) {
     if (eventName === null) {
-        console.error('ag-Grid: EventListener eventName should not be null');
+        console.error("ag-Grid: EventListener eventName should not be null");
         return;
     }
-    // it's an attribute on the class
-    var props = getOrCreateProps(target, target.constructor.name);
-    if (!props.listenerMethods) {
-        props.listenerMethods = [];
-    }
-    props.listenerMethods.push({
+    addToObjectProps(target, 'listenerMethods', {
         methodName: methodName,
         eventName: eventName
     });
+}
+// think we should take this out, put property bindings on the
+function Method(eventName) {
+    return methodFunc.bind(this, eventName);
+}
+exports.Method = Method;
+function methodFunc(alias, target, methodName) {
+    if (alias === null) {
+        console.error("ag-Grid: EventListener eventName should not be null");
+        return;
+    }
+    addToObjectProps(target, 'methods', {
+        methodName: methodName,
+        alias: alias
+    });
+}
+function addToObjectProps(target, key, value) {
+    // it's an attribute on the class
+    var props = getOrCreateProps(target, target.constructor.name);
+    if (!props[key]) {
+        props[key] = [];
+    }
+    props[key].push(value);
 }
 function getOrCreateProps(target, instanceName) {
     if (!target.__agComponentMetaData) {

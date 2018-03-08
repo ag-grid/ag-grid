@@ -28,9 +28,9 @@ export class ColumnGroup implements ColumnGroupChild {
     @Autowired('gridApi') private gridApi: GridApi;
 
     // all the children of this group, regardless of whether they are opened or closed
-    private children:ColumnGroupChild[];
+    private children: ColumnGroupChild[];
     // depends on the open/closed state of the group, only displaying columns are stored here
-    private displayedChildren:ColumnGroupChild[] = [];
+    private displayedChildren: ColumnGroupChild[] = [];
 
     private groupId: string;
     private instanceId: number;
@@ -277,7 +277,7 @@ export class ColumnGroup implements ColumnGroupChild {
     public getOriginalColumnGroup(): OriginalColumnGroup {
         return this.originalColumnGroup;
     }
-    
+
     public calculateDisplayedColumns() {
         // clear out last time we calculated
         this.displayedChildren = [];

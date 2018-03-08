@@ -1,10 +1,14 @@
 import {Component} from "../../widgets/component";
-import {ICellEditorComp} from "./iCellEditor";
+import {ICellEditorComp, ICellEditorParams} from "./iCellEditor";
 import {Utils as _} from '../../utils';
 import {Constants} from "../../constants";
 import {Autowired} from "../../context/context";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {ValueFormatterService} from "../valueFormatterService";
+
+export interface ISelectCellEditorParams extends ICellEditorParams {
+    values: any[]
+}
 
 export class SelectCellEditor extends Component implements ICellEditorComp {
 
@@ -19,7 +23,7 @@ export class SelectCellEditor extends Component implements ICellEditorComp {
         this.eSelect = <HTMLSelectElement> this.getGui().querySelector('select');
     }
 
-    public init(params: any) {
+    public init(params: ISelectCellEditorParams) {
         this.focusAfterAttached = params.cellStartedEdit;
 
         if (_.missing(params.values)) {

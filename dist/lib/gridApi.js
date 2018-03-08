@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -44,11 +44,11 @@ var GridApi = (function () {
         this.detailGridInfoMap = {};
         /*
         Taking these out, as we want to reconsider how we register components
-        
+    
         public addCellRenderer(key: string, cellRenderer: {new(): ICellRenderer} | ICellRendererFunc): void {
             this.cellRendererFactory.addCellRenderer(key, cellRenderer);
         }
-        
+    
         public addCellEditor(key: string, cellEditor: {new(): ICellEditor}): void {
             this.cellEditorFactory.addCellEditor(key, cellEditor);
         }*/
@@ -206,11 +206,11 @@ var GridApi = (function () {
         this.valueCache.expire();
     };
     GridApi.prototype.getVerticalPixelRange = function () {
-        return this.gridPanel.getVerticalPixelRange();
+        return this.gridPanel.getVScrollPosition();
     };
     GridApi.prototype.refreshToolPanel = function () {
-        if (this.toolPanel) {
-            this.toolPanel.refresh();
+        if (this.toolPanelComp) {
+            this.toolPanelComp.refresh();
         }
     };
     GridApi.prototype.refreshCells = function (params) {
@@ -221,6 +221,10 @@ var GridApi = (function () {
             return;
         }
         this.rowRenderer.refreshCells(params);
+    };
+    GridApi.prototype.flashCells = function (params) {
+        if (params === void 0) { params = {}; }
+        this.rowRenderer.flashCells(params);
     };
     GridApi.prototype.redrawRows = function (params) {
         if (params === void 0) { params = {}; }
@@ -724,6 +728,17 @@ var GridApi = (function () {
     GridApi.prototype.tabToPreviousCell = function () {
         return this.rowRenderer.tabToNextCell(true);
     };
+    GridApi.prototype.getCellRendererInstances = function (params) {
+        if (params === void 0) { params = {}; }
+        return this.rowRenderer.getCellRendererInstances(params);
+    };
+    GridApi.prototype.getCellEditorInstances = function (params) {
+        if (params === void 0) { params = {}; }
+        return this.rowRenderer.getCellEditorInstances(params);
+    };
+    GridApi.prototype.getEditingCells = function () {
+        return this.rowRenderer.getEditingCells();
+    };
     GridApi.prototype.stopEditing = function (cancel) {
         if (cancel === void 0) { cancel = false; }
         this.rowRenderer.stopEditing(cancel);
@@ -777,6 +792,13 @@ var GridApi = (function () {
             this.rowRenderer.refreshCells();
         }
         return res;
+    };
+    GridApi.prototype.batchUpdateRowData = function (rowDataTransaction, callback) {
+        if (!this.inMemoryRowModel) {
+            console.error('ag-Grid: api.batchUpdateRowData() only works with InMemoryRowModel.');
+            return;
+        }
+        this.inMemoryRowModel.batchUpdateRowData(rowDataTransaction, callback);
     };
     GridApi.prototype.insertItemsAtIndex = function (index, items, skipRefresh) {
         if (skipRefresh === void 0) { skipRefresh = false; }
@@ -1054,9 +1076,9 @@ var GridApi = (function () {
         __metadata("design:type", valueCache_1.ValueCache)
     ], GridApi.prototype, "valueCache", void 0);
     __decorate([
-        context_1.Optional('toolPanel'),
+        context_1.Optional('toolPanelComp'),
         __metadata("design:type", Object)
-    ], GridApi.prototype, "toolPanel", void 0);
+    ], GridApi.prototype, "toolPanelComp", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

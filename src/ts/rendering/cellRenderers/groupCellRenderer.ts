@@ -2,10 +2,10 @@ import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {ExpressionService} from "../../valueService/expressionService";
 import {EventService} from "../../eventService";
 import {Constants} from "../../constants";
-import {Utils as _} from "../../utils";
+import {Utils as _, Promise} from "../../utils";
 import {Autowired, Context} from "../../context/context";
 import {Component} from "../../widgets/component";
-import {ICellRenderer, ICellRendererParams} from "./iCellRenderer";
+import {ICellRenderer, ICellRendererComp, ICellRendererParams} from "./iCellRenderer";
 import {RowNode} from "../../entities/rowNode";
 import {CellRendererService} from "../cellRendererService";
 import {ValueFormatterService} from "../valueFormatterService";
@@ -66,6 +66,9 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     // keep reference to this, so we can remove again when indent changes
     private indentClass: string;
+
+    // this cell renderer
+    private innerCellRenderer: ICellRendererComp;
 
     constructor() {
         super(GroupCellRenderer.TEMPLATE);
@@ -233,10 +236,19 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             this.valueFormatterService.formatValue(columnToUse, params.node, params.scope, groupName) : null;
 
         params.valueFormatted = valueFormatted;
+
+        let rendererPromise:Promise<ICellRendererComp>;
         if (params.fullWidth == true) {
-            this.cellRendererService.useFullWidthGroupRowInnerCellRenderer(this.eValue, params);
+            rendererPromise = this.cellRendererService.useFullWidthGroupRowInnerCellRenderer(this.eValue, params);
         } else {
-            this.cellRendererService.useInnerCellRenderer(this.params.colDef.cellRendererParams, columnToUse.getColDef(), this.eValue, params);
+            rendererPromise = this.cellRendererService.useInnerCellRenderer(this.params.colDef.cellRendererParams, columnToUse.getColDef(), this.eValue, params);
+        }
+
+        // retain a reference to the created renderer - we'll use this later for cleanup (in destroy)
+        if(rendererPromise) {
+            rendererPromise.then((value:ICellRendererComp) => {
+                this.innerCellRenderer = value;
+            })
         }
     }
 
@@ -427,6 +439,14 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             // it not expandable, show neither
             _.setVisible(this.eExpanded, false);
             _.setVisible(this.eContracted, false);
+        }
+    }
+
+    public destroy() : void {
+        super.destroy();
+
+        if(this.innerCellRenderer && this.innerCellRenderer.destroy) {
+            this.innerCellRenderer.destroy();
         }
     }
 

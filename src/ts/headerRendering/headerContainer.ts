@@ -25,17 +25,15 @@ export class HeaderContainer {
 
     private eContainer: HTMLElement;
     private eViewport: HTMLElement;
-    private eRoot: HTMLElement;
 
     private headerRowComps: HeaderRowComp[] = [];
-    
+
     private pinned: string;
 
     private dropTarget: DropTarget;
 
-    constructor(eContainer: HTMLElement, eViewport: HTMLElement, eRoot: HTMLElement, pinned: string) {
+    constructor(eContainer: HTMLElement, eViewport: HTMLElement, pinned: string) {
         this.eContainer = eContainer;
-        this.eRoot = eRoot;
         this.pinned = pinned;
         this.eViewport = eViewport;
     }
@@ -106,7 +104,7 @@ export class HeaderContainer {
     public refresh(): void {
         this.onGridColumnsChanged();
     }
-    
+
     private setupDragAndDrop(): void {
         let dropContainer = this.eViewport ? this.eViewport : this.eContainer;
         let bodyDropTarget = new BodyDropTarget(this.pinned, dropContainer);
@@ -125,11 +123,11 @@ export class HeaderContainer {
         // if we are displaying header groups, then we have many rows here.
         // go through each row of the header, one by one.
         let rowCount = this.columnController.getHeaderRowCount();
-        
+
         for (let dept = 0; dept<rowCount; dept++) {
             let groupRow = dept !== (rowCount - 1);
             let type = groupRow ? HeaderRowType.COLUMN_GROUP : HeaderRowType.COLUMN;
-            let headerRowComp = new HeaderRowComp(dept, type, this.pinned, this.eRoot, this.dropTarget);
+            let headerRowComp = new HeaderRowComp(dept, type, this.pinned, this.dropTarget);
             this.context.wireBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
             this.eContainer.appendChild(headerRowComp.getGui());
@@ -138,7 +136,7 @@ export class HeaderContainer {
         let includeFloatingFilterRow = this.gridOptionsWrapper.isFloatingFilter() && !this.columnController.isPivotMode();
 
         if (includeFloatingFilterRow) {
-            let headerRowComp = new HeaderRowComp(rowCount, HeaderRowType.FLOATING_FILTER, this.pinned, this.eRoot, this.dropTarget);
+            let headerRowComp = new HeaderRowComp(rowCount, HeaderRowType.FLOATING_FILTER, this.pinned,  this.dropTarget);
             this.context.wireBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
             this.eContainer.appendChild(headerRowComp.getGui());

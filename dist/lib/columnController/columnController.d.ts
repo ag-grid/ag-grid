@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v16.0.1
+// Type definitions for ag-grid v17.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroup } from "../entities/columnGroup";
@@ -200,6 +200,7 @@ export declare class ColumnController {
     setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[], source?: ColumnEventType): void;
     private processSecondaryColumnDefinitions(colDefs);
     private updateGridColumns();
+    isPrimaryColumnGroupsPresent(): boolean;
     private setupQuickFilterColumns();
     private putFixedColumnsFirst();
     private addAutoGroupToGridColumns();

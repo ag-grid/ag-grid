@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -175,9 +175,10 @@ var RowComp = (function (_super) {
         if (setRowTop) {
             // if sliding in, we take the old row top. otherwise we just set the current row top.
             var pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
-            var pixelsWithOffset = this.applyPaginationOffset(pixels);
+            var afterPaginationPixels = this.applyPaginationOffset(pixels);
+            var afterScalingPixels = this.beans.heightScaler.getRealPixelPosition(afterPaginationPixels);
             // if not setting row top, then below is empty string
-            rowTopStyle = "top: " + pixelsWithOffset + "px; ";
+            rowTopStyle = "transform: translateY(" + afterScalingPixels + "px); ";
         }
         return rowTopStyle;
     };
@@ -218,11 +219,17 @@ var RowComp = (function (_super) {
     };
     RowComp.prototype.createChildScopeOrNull = function (data) {
         if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
-            var newChildScope = this.parentScope.$new();
-            newChildScope.data = data;
-            newChildScope.rowNode = this.rowNode;
-            newChildScope.context = this.beans.gridOptionsWrapper.getContext();
-            return newChildScope;
+            var newChildScope_1 = this.parentScope.$new();
+            newChildScope_1.data = data;
+            newChildScope_1.rowNode = this.rowNode;
+            newChildScope_1.context = this.beans.gridOptionsWrapper.getContext();
+            this.addDestroyFunc(function () {
+                newChildScope_1.$destroy();
+                newChildScope_1.data = null;
+                newChildScope_1.rowNode = null;
+                newChildScope_1.context = null;
+            });
+            return newChildScope_1;
         }
         else {
             return null;
@@ -334,6 +341,7 @@ var RowComp = (function (_super) {
         this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_CELL_CHANGED, this.onRowNodeCellChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_DRAGGING_CHANGED, this.onRowNodeDraggingChanged.bind(this));
         var eventService = this.beans.eventService;
+        this.addDestroyableEventListener(eventService, events_1.Events.EVENT_HEIGHT_SCALE_CHANGED, this.onTopChanged.bind(this));
         this.addDestroyableEventListener(eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addDestroyableEventListener(eventService, events_1.Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
         this.addDestroyableEventListener(eventService, events_1.Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
@@ -636,9 +644,14 @@ var RowComp = (function (_super) {
         if (this.beans.gridOptionsWrapper.isSuppressRowClickSelection()) {
             return;
         }
+        var multiSelectOnClick = this.beans.gridOptionsWrapper.isRowMultiSelectWithClick();
+        var rowDeselectionWithCtrl = this.beans.gridOptionsWrapper.isRowDeselection();
         if (this.rowNode.isSelected()) {
-            if (multiSelectKeyPressed) {
-                if (this.beans.gridOptionsWrapper.isRowDeselection()) {
+            if (multiSelectOnClick) {
+                this.rowNode.setSelectedParams({ newValue: false });
+            }
+            else if (multiSelectKeyPressed) {
+                if (rowDeselectionWithCtrl) {
                     this.rowNode.setSelectedParams({ newValue: false });
                 }
             }
@@ -648,7 +661,8 @@ var RowComp = (function (_super) {
             }
         }
         else {
-            this.rowNode.setSelectedParams({ newValue: true, clearSelection: !multiSelectKeyPressed, rangeSelect: shiftKeyPressed });
+            var clearSelection = multiSelectOnClick ? false : !multiSelectKeyPressed;
+            this.rowNode.setSelectedParams({ newValue: true, clearSelection: clearSelection, rangeSelect: shiftKeyPressed });
         }
     };
     RowComp.prototype.createFullWidthRowContainer = function (rowContainerComp, pinned, extraCssClass, cellRendererType, cellRendererName, eRowCallback, cellRendererCallback) {
@@ -714,12 +728,6 @@ var RowComp = (function (_super) {
         }
         else {
             classes.push('ag-row-odd');
-        }
-        if (this.beans.gridOptionsWrapper.isAnimateRows()) {
-            classes.push('ag-row-animation');
-        }
-        else {
-            classes.push('ag-row-no-animation');
         }
         if (this.rowNode.isSelected()) {
             classes.push('ag-row-selected');
@@ -1002,7 +1010,7 @@ var RowComp = (function (_super) {
     // moves the row closer to the viewport if it is far away, so the row slide in / out
     // at a speed the user can see.
     RowComp.prototype.roundRowTopToBounds = function (rowTop) {
-        var range = this.beans.gridPanel.getVerticalPixelRange();
+        var range = this.beans.gridPanel.getVScrollPosition();
         var minPixel = this.applyPaginationOffset(range.top, true) - 100;
         var maxPixel = this.applyPaginationOffset(range.bottom, true) + 100;
         if (rowTop < minPixel) {
@@ -1038,16 +1046,9 @@ var RowComp = (function (_super) {
         }
         _super.prototype.removeEventListener.call(this, eventType, listener);
     };
-    RowComp.prototype.destroyScope = function () {
-        if (this.scope) {
-            this.scope.$destroy();
-            this.scope = null;
-        }
-    };
     RowComp.prototype.destroy = function (animate) {
         if (animate === void 0) { animate = false; }
         _super.prototype.destroy.call(this);
-        this.destroyScope();
         this.active = false;
         // why do we have this method? shouldn't everything below be added as a destroy func beside
         // the corresponding create logic?
@@ -1128,9 +1129,10 @@ var RowComp = (function (_super) {
         // need to make sure rowTop is not null, as this can happen if the node was once
         // visible (ie parent group was expanded) but is now not visible
         if (utils_1._.exists(pixels)) {
-            var pixelsWithOffset = this.applyPaginationOffset(pixels);
-            var topPx_1 = pixelsWithOffset + "px";
-            this.eAllRowContainers.forEach(function (row) { return row.style.top = topPx_1; });
+            var afterPaginationPixels = this.applyPaginationOffset(pixels);
+            var afterScalingPixels = this.beans.heightScaler.getRealPixelPosition(afterPaginationPixels);
+            var topPx_1 = afterScalingPixels + "px";
+            this.eAllRowContainers.forEach(function (row) { return row.style.transform = "translateY(" + topPx_1 + ")"; });
         }
     };
     // we clear so that the functions are never executed twice

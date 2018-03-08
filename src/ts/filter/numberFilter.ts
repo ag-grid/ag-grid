@@ -5,9 +5,9 @@ import {BaseFilter, Comparator, IScalarFilterParams, ScalarBaseFilter} from "./b
 import {INumberFilterParams} from "./textFilter";
 
 export interface SerializedNumberFilter extends SerializedFilter {
-    filter:number
-    filterTo:number
-    type:string
+    filter: number;
+    filterTo: number;
+    type: string;
 }
 
 export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, SerializedNumberFilter> {
@@ -32,7 +32,7 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         };
     }
 
-    public getApplicableFilterTypes ():string[]{
+    public getApplicableFilterTypes(): string[] {
         return [BaseFilter.EQUALS, BaseFilter.NOT_EQUAL, BaseFilter.LESS_THAN, BaseFilter.LESS_THAN_OR_EQUAL,
             BaseFilter.GREATER_THAN, BaseFilter.GREATER_THAN_OR_EQUAL, BaseFilter.IN_RANGE];
     }
@@ -55,7 +55,7 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         this.eFilterTextField = this.queryForHtmlInputElement("#filterText");
 
         let debounceMs = this.getDebounceMs(this.filterParams);
-        let toDebounce:()=>void = _.debounce(this.onTextFieldsChanged.bind(this), debounceMs);
+        let toDebounce: ()=>void = _.debounce(this.onTextFieldsChanged.bind(this), debounceMs);
         this.addDestroyableEventListener(this.eFilterTextField, "input", toDebounce);
         this.addDestroyableEventListener(this.eFilterToTextField, "input", toDebounce);
     }
@@ -65,10 +65,10 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
     }
 
     public comparator(): Comparator<number> {
-        return (left:number, right:number):number=>{
-            if (left === right) return 0;
-            if (left < right) return 1;
-            if (left > right) return -1;
+        return (left: number, right: number): number=> {
+            if (left === right) { return 0; }
+            if (left < right) { return 1; }
+            if (left > right) { return -1; }
         };
     }
 
@@ -82,7 +82,7 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         }
     }
 
-    public filterValues ():number|number[] {
+    public filterValues(): number|number[] {
         return this.filter !== BaseFilter.IN_RANGE ?
             this.asNumber(this.filterNumber):
             [this.asNumber(this.filterNumber), this.asNumber(this.filterNumberTo)];
@@ -92,8 +92,7 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         return _.isNumeric(value) ? value : null;
     }
 
-
-    private stringToFloat(value:string) :number{
+    private stringToFloat(value: string): number {
         let filterText = _.makeNull(value);
         if (filterText && filterText.trim() === '') {
             filterText = null;
@@ -106,7 +105,6 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         }
         return newFilter;
     }
-
 
     public setFilter(filter: any) {
         filter = _.makeNull(filter);
@@ -152,13 +150,13 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         _.setVisible(this.eNumberToPanel, visible);
     }
 
-    public resetState():void{
+    public resetState(): void {
         this.setFilterType(this.defaultFilter);
         this.setFilter(null);
         this.setFilterTo(null);
     }
 
-    public setType (filterType:string):void{
+    public setType(filterType: string): void {
         this.setFilterType(filterType);
     }
 }

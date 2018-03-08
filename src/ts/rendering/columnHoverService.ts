@@ -13,16 +13,10 @@ export class ColumnHoverService extends BeanStub {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    private currentlySelectedColumn: Column;
+    private selectedColumns: Column[];
 
-    @PostConstruct
-    private init():void{
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_MOUSE_OVER, this.onCellMouseOver.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_MOUSE_OUT, this.onCellMouseOut.bind(this));
-    }
-
-    private onCellMouseOver(cellEvent:CellEvent): void {
-        this.currentlySelectedColumn = cellEvent.column;
+    public setMouseOver(columns: Column[]): void {
+        this.selectedColumns = columns;
         let event: ColumnHoverChangedEvent = {
             type: Events.EVENT_COLUMN_HOVER_CHANGED,
             api: this.gridApi,
@@ -31,8 +25,8 @@ export class ColumnHoverService extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    private onCellMouseOut(): void {
-        this.currentlySelectedColumn = null;
+    public clearMouseOver(): void {
+        this.selectedColumns = null;
         let event: ColumnHoverChangedEvent = {
             type: Events.EVENT_COLUMN_HOVER_CHANGED,
             api: this.gridApi,
@@ -41,7 +35,7 @@ export class ColumnHoverService extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    public isHovered(column:Column): boolean{
-        return column == this.currentlySelectedColumn;
+    public isHovered(column: Column): boolean {
+        return this.selectedColumns && this.selectedColumns.indexOf(column) >= 0;
     }
 }

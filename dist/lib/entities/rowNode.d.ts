@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v16.0.1
+// Type definitions for ag-grid v17.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgEvent } from "../events";
@@ -40,6 +40,7 @@ export declare class RowNode implements IEventEmitter {
     static EVENT_CHILD_INDEX_CHANGED: string;
     static EVENT_ROW_INDEX_CHANGED: string;
     static EVENT_EXPANDED_CHANGED: string;
+    static EVENT_SELECTABLE_CHANGED: string;
     static EVENT_UI_LEVEL_CHANGED: string;
     static EVENT_DRAGGING_CHANGED: string;
     private mainEventService;
@@ -144,6 +145,8 @@ export declare class RowNode implements IEventEmitter {
      * representing a different entity, so the selection controller, if the node is selected, takes
      * a copy where daemon=true. */
     daemon: boolean;
+    /** True by default - can be overridden via gridOptions.isRowSelectable(rowNode) */
+    selectable: boolean;
     /** Used by the value service, stores values for a particular change detection turn. */
     __cacheData: {
         [colId: string]: any;
@@ -158,6 +161,8 @@ export declare class RowNode implements IEventEmitter {
     getRowIndexString(): string;
     private createDaemonNode();
     setDataAndId(data: any, id: string): void;
+    private checkRowSelectable();
+    setRowSelectable(newVal: boolean): void;
     setId(id: string): void;
     isPixelInRange(pixel: number): boolean;
     clearRowTop(): void;

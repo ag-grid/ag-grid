@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -64,10 +64,7 @@ var ComponentUtil = (function () {
             return 'on' + eventName[0].toUpperCase() + eventName.substr(1);
         }
     };
-    // change this method, the caller should know if it's initialised or not, plus 'initialised'
-    // is not relevant for all component types. maybe pass in the api and columnApi instead???
     ComponentUtil.processOnChange = function (changes, gridOptions, api, columnApi) {
-        //if (!component._initialised || !changes) { return; }
         if (!changes) {
             return;
         }

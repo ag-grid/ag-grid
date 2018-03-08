@@ -16,12 +16,12 @@ export interface FloatingFilterChange {
 }
 
 export interface IFloatingFilterParams<M, F extends FloatingFilterChange> {
-    column: Column,
+    column: Column;
     onFloatingFilterChanged: (change: F | M) => boolean;
     currentParentModel: () => M;
     suppressFilterButton: boolean;
     debounceMs?: number;
-    api:GridApi;
+    api: GridApi;
 }
 
 export interface IFloatingFilter<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> {
@@ -32,8 +32,8 @@ export interface IFloatingFilterComp<M, F extends FloatingFilterChange, P extend
 }
 
 export interface BaseFloatingFilterChange<M> extends FloatingFilterChange {
-    model: M
-    apply: boolean
+    model: M;
+    apply: boolean;
 }
 
 export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterParams<M, BaseFloatingFilterChange<M>>> extends Component implements IFloatingFilter <M, BaseFloatingFilterChange<M>, P> {
@@ -45,7 +45,7 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
     lastKnownModel: M = null;
 
     constructor() {
-        super(`<div><input  ref="eColumnFloatingFilter" class="ag-floating-filter-input"></div>`)
+        super(`<div><input  ref="eColumnFloatingFilter" class="ag-floating-filter-input"></div>`);
     }
 
     init(params: P): void {
@@ -76,14 +76,14 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
         }
         this.lastKnownModel = parentModel;
         let incomingTextValue = this.asFloatingFilterText(parentModel);
-        if (incomingTextValue === this.eColumnFloatingFilter.value) return;
+        if (incomingTextValue === this.eColumnFloatingFilter.value) { return; }
 
         this.eColumnFloatingFilter.value = incomingTextValue;
     }
 
     syncUpWithParentFilter(e: KeyboardEvent): void {
         let model = this.asParentModel();
-        if (this.equalModels(this.lastKnownModel, model)) return;
+        if (this.equalModels(this.lastKnownModel, model)) { return; }
 
         let modelUpdated: boolean = null;
         if (_.isKeyPressed(e, Constants.KEY_ENTER)) {
@@ -104,23 +104,23 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
     }
 
     equalModels(left: any, right: any): boolean {
-        if (_.referenceCompare(left, right)) return true;
-        if (!left || !right) return false;
+        if (_.referenceCompare(left, right)) { return true; }
+        if (!left || !right) { return false; }
 
-        if (Array.isArray(left) || Array.isArray(right)) return false;
+        if (Array.isArray(left) || Array.isArray(right)) { return false; }
 
         return (
             _.referenceCompare(left.type, right.type) &&
             _.referenceCompare(left.filter, right.filter) &&
             _.referenceCompare(left.filterTo, right.filterTo) &&
             _.referenceCompare(left.filterType, right.filterType)
-        )
+        );
     }
 }
 
 export class TextFloatingFilterComp extends InputTextFloatingFilterComp<SerializedTextFilter, IFloatingFilterParams<SerializedTextFilter, BaseFloatingFilterChange<SerializedTextFilter>>> {
     asFloatingFilterText(parentModel: SerializedTextFilter): string {
-        if (!parentModel) return '';
+        if (!parentModel) { return ''; }
         return parentModel.filter;
     }
 
@@ -130,7 +130,7 @@ export class TextFloatingFilterComp extends InputTextFloatingFilterComp<Serializ
             type: currentParentModel.type,
             filter: this.eColumnFloatingFilter.value,
             filterType: 'text'
-        }
+        };
     }
 }
 
@@ -154,7 +154,7 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
         this.dateComponentPromise = this.componentRecipes.newDateComponent(dateComponentParams);
 
         let body: HTMLElement = _.loadTemplate(`<div></div>`);
-        this.dateComponentPromise.then(dateComponent=>{
+        this.dateComponentPromise.then(dateComponent=> {
             body.appendChild(dateComponent.getGui());
         });
         this.setTemplateFromElement(body);
@@ -164,8 +164,7 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
         let parentModel: SerializedDateFilter = this.currentParentModel();
         let model = this.asParentModel();
 
-        if (this.equalModels(parentModel, model)) return;
-
+        if (this.equalModels(parentModel, model)) { return; }
 
         this.onFloatingFilterChanged({
             model: model,
@@ -176,19 +175,18 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
     }
 
     equalModels(left: SerializedDateFilter, right: SerializedDateFilter): boolean {
-        if (_.referenceCompare(left, right)) return true;
-        if (!left || !right) return false;
+        if (_.referenceCompare(left, right)) { return true; }
+        if (!left || !right) { return false; }
 
-        if (Array.isArray(left) || Array.isArray(right)) return false;
+        if (Array.isArray(left) || Array.isArray(right)) { return false; }
 
         return (
             _.referenceCompare(left.type, right.type) &&
             _.referenceCompare(left.dateFrom, right.dateFrom) &&
             _.referenceCompare(left.dateTo, right.dateTo) &&
             _.referenceCompare(left.filterType, right.filterType)
-        )
+        );
     }
-
 
     asParentModel(): SerializedDateFilter {
         let currentParentModel = this.currentParentModel();
@@ -203,30 +201,27 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
         };
     }
 
-
     onParentModelChanged(parentModel: SerializedDateFilter): void {
         this.lastKnownModel = parentModel;
-        this.dateComponentPromise.then(dateComponent=>{
+        this.dateComponentPromise.then(dateComponent=> {
             if (!parentModel || !parentModel.dateFrom) {
                 dateComponent.setDate(null);
                 return;
             }
             dateComponent.setDate(_.parseYyyyMmDdToDate(parentModel.dateFrom, '-'));
-        })
+        });
     }
 }
 
 export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<SerializedNumberFilter, IFloatingFilterParams<SerializedNumberFilter, BaseFloatingFilterChange<SerializedNumberFilter>>> {
 
-
     asFloatingFilterText(parentModel: SerializedNumberFilter): string {
         let rawParentModel = this.currentParentModel();
-        if (parentModel == null && rawParentModel == null) return '';
+        if (parentModel == null && rawParentModel == null) { return ''; }
         if (parentModel == null && rawParentModel != null && rawParentModel.type !== 'inRange') {
             this.eColumnFloatingFilter.readOnly = false;
             return '';
         }
-
 
         if (rawParentModel != null && rawParentModel.type === 'inRange') {
             this.eColumnFloatingFilter.readOnly = true;
@@ -236,7 +231,6 @@ export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<Serial
                 '-' +
                 (numberTo ? numberTo + '' : '');
         }
-
 
         let number: number = this.asNumber(parentModel.filter);
         this.eColumnFloatingFilter.readOnly = false;
@@ -267,8 +261,8 @@ export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<Serial
     }
 
     private asNumber(value: any): number {
-        if (value == null) return null;
-        if (value === '') return null;
+        if (value == null) { return null; }
+        if (value === '') { return null; }
 
         let asNumber = Number(value);
         let invalidNumber = !_.isNumeric(asNumber);
@@ -283,14 +277,14 @@ export class SetFloatingFilterComp extends InputTextFloatingFilterComp<string[],
     }
 
     asFloatingFilterText(parentModel: string[]): string {
-        if (!parentModel || parentModel.length === 0) return '';
+        if (!parentModel || parentModel.length === 0) { return ''; }
 
         let arrayToDisplay = parentModel.length > 10 ? parentModel.slice(0, 10).concat(['...']) : parentModel;
         return `(${parentModel.length}) ${arrayToDisplay.join(",")}`;
     }
 
     asParentModel(): string[] {
-        if (this.eColumnFloatingFilter.value == null || this.eColumnFloatingFilter.value === '') return null;
+        if (this.eColumnFloatingFilter.value == null || this.eColumnFloatingFilter.value === '') { return null; }
         return this.eColumnFloatingFilter.value.split(",");
     }
 }

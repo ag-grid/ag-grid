@@ -38,17 +38,15 @@ export class HeaderRowComp extends Component {
 
     private headerComps: { [key: string]: IComponent<any> } = {};
 
-    private eRoot: HTMLElement;
     private dropTarget: DropTarget;
 
     private type: HeaderRowType;
 
-    constructor(dept: number, type: HeaderRowType, pinned: string, eRoot: HTMLElement, dropTarget: DropTarget) {
+    constructor(dept: number, type: HeaderRowType, pinned: string, dropTarget: DropTarget) {
         super(`<div class="ag-header-row" role="presentation"/>`);
         this.dept = dept;
         this.type = type;
         this.pinned = pinned;
-        this.eRoot = eRoot;
         this.dropTarget = dropTarget;
     }
 
@@ -97,12 +95,12 @@ export class HeaderRowComp extends Component {
         let numberOfNonGroups = 1 + numberOfFloating;
         let numberOfGroups = headerRowCount - numberOfNonGroups;
 
-        for (let i = 0; i < numberOfGroups; i++) sizes.push(groupHeight);
+        for (let i = 0; i < numberOfGroups; i++) { sizes.push(groupHeight); }
         sizes.push(headerHeight);
-        for (let i = 0; i < numberOfFloating; i++) sizes.push(this.gridOptionsWrapper.getFloatingFiltersHeight());
+        for (let i = 0; i < numberOfFloating; i++) { sizes.push(this.gridOptionsWrapper.getFloatingFiltersHeight()); }
 
         let rowHeight = 0;
-        for (let i = 0; i < this.dept; i++) rowHeight += sizes[i];
+        for (let i = 0; i < this.dept; i++) { rowHeight += sizes[i]; }
 
         this.getGui().style.top = rowHeight + 'px';
         this.getGui().style.height = sizes[this.dept] + 'px';
@@ -213,10 +211,10 @@ export class HeaderRowComp extends Component {
 
         switch (this.type) {
             case HeaderRowType.COLUMN :
-                result = new HeaderWrapperComp(<Column> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
+                result = new HeaderWrapperComp(<Column> columnGroupChild, this.dropTarget, this.pinned);
                 break;
             case HeaderRowType.COLUMN_GROUP :
-                result = new HeaderGroupWrapperComp(<ColumnGroup> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
+                result = new HeaderGroupWrapperComp(<ColumnGroup> columnGroupChild, this.dropTarget, this.pinned);
                 break;
             case HeaderRowType.FLOATING_FILTER :
                 let column = <Column> columnGroupChild;
@@ -265,7 +263,7 @@ export class HeaderRowComp extends Component {
                     (filter.getNullableModel) ?
                         filter.getNullableModel() :
                         filter.getModel()
-                )
+                );
             },
             onFloatingFilterChanged: (change: F | M): boolean => {
                 let captureModelChangedResolveFunc: (modelChanged: boolean) => void;
@@ -287,9 +285,9 @@ export class HeaderRowComp extends Component {
                         //the filters
                         filterComponent.setModel(<M>change);
                         this.filterManager.onFilterChanged();
-                        captureModelChangedResolveFunc(true)
+                        captureModelChangedResolveFunc(true);
                     }
-                })
+                });
                 return modelChanged.resolveNow(true, modelChanged => modelChanged);
             },
             //This one might be overriden from the colDef

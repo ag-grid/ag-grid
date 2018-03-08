@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -125,10 +125,7 @@ var InMemoryRowModel = (function () {
             this.refreshModel({ step: constants_1.Constants.STEP_AGGREGATE });
         }
     };
-    InMemoryRowModel.prototype.createChangePath = function (transaction) {
-        if (!transaction) {
-            return null;
-        }
+    InMemoryRowModel.prototype.createChangePath = function (rowNodeTransactions) {
         // for updates, if the row is updated at all, then we re-calc all the values
         // in that row. we could compare each value to each old value, however if we
         // did this, we would be calling the valueService twice, once on the old value
@@ -137,10 +134,12 @@ var InMemoryRowModel = (function () {
         // the impacted parent rows are recalculated, parents who's children have
         // not changed are not impacted.
         var valueColumns = this.columnController.getValueColumns();
-        if (!valueColumns || valueColumns.length === 0) {
-            return null;
-        }
+        var noValueColumns = utils_1.Utils.missingOrEmpty(valueColumns);
+        var noTransactions = utils_1.Utils.missingOrEmpty(rowNodeTransactions);
         var changedPath = new changedPath_1.ChangedPath(false);
+        if (noValueColumns || noTransactions) {
+            changedPath.setInactive();
+        }
         return changedPath;
     };
     InMemoryRowModel.prototype.refreshModel = function (params) {
@@ -155,18 +154,18 @@ var InMemoryRowModel = (function () {
         // step get done
         // let start: number;
         // console.log('======= start =======');
-        var changedPath = this.createChangePath(params.rowNodeTransaction);
+        var changedPath = this.createChangePath(params.rowNodeTransactions);
         switch (params.step) {
             case constants_1.Constants.STEP_EVERYTHING:
                 // start = new Date().getTime();
-                this.doRowGrouping(params.groupState, params.rowNodeTransaction, params.rowNodeOrder, changedPath);
+                this.doRowGrouping(params.groupState, params.rowNodeTransactions, params.rowNodeOrder, changedPath);
             // console.log('rowGrouping = ' + (new Date().getTime() - start));
             case constants_1.Constants.STEP_FILTER:
                 // start = new Date().getTime();
                 this.doFilter();
             // console.log('filter = ' + (new Date().getTime() - start));
             case constants_1.Constants.STEP_PIVOT:
-                this.doPivot();
+                this.doPivot(changedPath);
             case constants_1.Constants.STEP_AGGREGATE:// depends on agg fields
                 // start = new Date().getTime();
                 this.doAggregate(changedPath);
@@ -388,6 +387,7 @@ var InMemoryRowModel = (function () {
     // + gridApi.expandAll()
     // + gridApi.collapseAll()
     InMemoryRowModel.prototype.expandOrCollapseAll = function (expand) {
+        var usingTreeData = this.gridOptionsWrapper.isTreeData();
         if (this.rootNode) {
             recursiveExpandOrCollapse(this.rootNode.childrenAfterGroup);
         }
@@ -396,7 +396,8 @@ var InMemoryRowModel = (function () {
                 return;
             }
             rowNodes.forEach(function (rowNode) {
-                if (rowNode.group) {
+                var shouldExpandOrCollapse = usingTreeData ? utils_1.Utils.exists(rowNode.childrenAfterGroup) : rowNode.group;
+                if (shouldExpandOrCollapse) {
                     rowNode.expanded = expand;
                     recursiveExpandOrCollapse(rowNode.childrenAfterGroup);
                 }
@@ -407,23 +408,26 @@ var InMemoryRowModel = (function () {
     InMemoryRowModel.prototype.doSort = function () {
         this.sortStage.execute({ rowNode: this.rootNode });
     };
-    InMemoryRowModel.prototype.doRowGrouping = function (groupState, rowNodeTransaction, rowNodeOrder, changedPath) {
+    InMemoryRowModel.prototype.doRowGrouping = function (groupState, rowNodeTransactions, rowNodeOrder, changedPath) {
+        var _this = this;
         // grouping is enterprise only, so if service missing, skip the step
         var doingLegacyTreeData = utils_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         if (doingLegacyTreeData) {
             return;
         }
         if (this.groupStage) {
-            if (rowNodeTransaction) {
-                this.groupStage.execute({ rowNode: this.rootNode,
-                    rowNodeTransaction: rowNodeTransaction,
-                    rowNodeOrder: rowNodeOrder,
-                    changedPath: changedPath });
+            if (utils_1.Utils.exists(rowNodeTransactions)) {
+                rowNodeTransactions.forEach(function (tran) {
+                    _this.groupStage.execute({ rowNode: _this.rootNode,
+                        rowNodeTransaction: tran,
+                        rowNodeOrder: rowNodeOrder,
+                        changedPath: changedPath });
+                });
             }
             else {
                 // groups are about to get disposed, so need to deselect any that are selected
                 this.selectionController.removeGroupsFromSelection();
-                this.groupStage.execute({ rowNode: this.rootNode });
+                this.groupStage.execute({ rowNode: this.rootNode, changedPath: changedPath });
                 // set open/closed state on groups
                 this.restoreGroupState(groupState);
             }
@@ -451,9 +455,9 @@ var InMemoryRowModel = (function () {
     InMemoryRowModel.prototype.doFilter = function () {
         this.filterStage.execute({ rowNode: this.rootNode });
     };
-    InMemoryRowModel.prototype.doPivot = function () {
+    InMemoryRowModel.prototype.doPivot = function (changedPath) {
         if (this.pivotStage) {
-            this.pivotStage.execute({ rowNode: this.rootNode });
+            this.pivotStage.execute({ rowNode: this.rootNode, changedPath: changedPath });
         }
     };
     InMemoryRowModel.prototype.getGroupState = function () {
@@ -493,12 +497,49 @@ var InMemoryRowModel = (function () {
             newData: true
         });
     };
+    InMemoryRowModel.prototype.batchUpdateRowData = function (rowDataTransaction, callback) {
+        var _this = this;
+        if (!this.rowDataTransactionBatch) {
+            this.rowDataTransactionBatch = [];
+            var waitMillis = this.gridOptionsWrapper.getBatchUpdateWaitMillis();
+            setTimeout(function () {
+                _this.executeBatchUpdateRowData();
+                _this.rowDataTransactionBatch = null;
+            }, waitMillis);
+        }
+        this.rowDataTransactionBatch.push({ rowDataTransaction: rowDataTransaction, callback: callback });
+    };
+    InMemoryRowModel.prototype.executeBatchUpdateRowData = function () {
+        var _this = this;
+        this.valueCache.onDataChanged();
+        var callbackFuncsBound = [];
+        var rowNodeTrans = [];
+        this.rowDataTransactionBatch.forEach(function (tranItem) {
+            var rowNodeTran = _this.nodeManager.updateRowData(tranItem.rowDataTransaction, null);
+            rowNodeTrans.push(rowNodeTran);
+            if (tranItem.callback) {
+                callbackFuncsBound.push(tranItem.callback.bind(rowNodeTran));
+            }
+        });
+        this.commonUpdateRowData(rowNodeTrans);
+        // do callbacks in next VM turn so it's async
+        if (callbackFuncsBound.length > 0) {
+            setTimeout(function () {
+                callbackFuncsBound.forEach(function (func) { return func(); });
+            }, 0);
+        }
+    };
     InMemoryRowModel.prototype.updateRowData = function (rowDataTran, rowNodeOrder) {
         this.valueCache.onDataChanged();
         var rowNodeTran = this.nodeManager.updateRowData(rowDataTran, rowNodeOrder);
+        this.commonUpdateRowData([rowNodeTran]);
+        return rowNodeTran;
+    };
+    // common to updateRowData and batchUpdateRowData
+    InMemoryRowModel.prototype.commonUpdateRowData = function (rowNodeTrans, rowNodeOrder) {
         this.refreshModel({
             step: constants_1.Constants.STEP_EVERYTHING,
-            rowNodeTransaction: rowNodeTran,
+            rowNodeTransactions: rowNodeTrans,
             rowNodeOrder: rowNodeOrder,
             keepRenderedRows: true,
             animate: true,
@@ -510,7 +551,6 @@ var InMemoryRowModel = (function () {
             columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(event);
-        return rowNodeTran;
     };
     InMemoryRowModel.prototype.doRowsToDisplay = function () {
         this.rowsToDisplay = this.flattenStage.execute({ rowNode: this.rootNode });

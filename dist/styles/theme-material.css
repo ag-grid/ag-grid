@@ -715,14 +715,14 @@
   .ag-material .ag-paging-row-summary-panel {
     display: inline-block;
     width: 300px; }
-  .ag-material .ag-tool-panel {
+  .ag-material .ag-column-panel {
     background-color: #fff;
     border-bottom: none;
     border-top: none;
     color: #666; }
-  .ag-material .ltr .ag-tool-panel {
+  .ag-material .ltr .ag-column-panel {
     border-right: none; }
-  .ag-material .rtl .ag-tool-panel {
+  .ag-material .rtl .ag-column-panel {
     border-left: none; }
   .ag-material .ag-status-bar {
     color: #666;
@@ -778,7 +778,7 @@
     border-bottom: none;
     padding: 2px 4px 3px 4px;
     background-color: #fff; }
-  .ag-material .ag-tool-panel .ag-column-select-panel {
+  .ag-material .ag-column-panel .ag-column-select-panel {
     padding: 4px 4px 10px 4px;
     padding-left: 0;
     border-bottom: none;

@@ -10,6 +10,7 @@ import {ColumnController} from "../../columnController/columnController";
 
 export class InMemoryNodeManager {
 
+
     private static TOP_LEVEL = 0;
 
     private rootNode: RowNode;
@@ -192,6 +193,8 @@ export class InMemoryNodeManager {
         } else {
             // do delete
             rowNode.setSelected(false);
+            // so row renderer knows to fade row out (and not reposition it)
+            rowNode.clearRowTop();
             _.removeFromArray(this.rootNode.allLeafChildren, rowNode);
             this.allNodesMap[rowNode.id] = undefined;
         }

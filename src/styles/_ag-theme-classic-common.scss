@@ -1,26 +1,26 @@
-@import './ag-theme-common';
+@import "./ag-theme-common";
 
 @mixin ag-theme-classic($params) {
-    $border-color: map-get($params, 'border-color');
-    $editor-background-color: map-get($params, 'editor-background-color');
-    $tab-background-color: map-get($params, 'tab-background-color');
-    $grid-size: map-get($params, 'grid-size');
-    $header-background-image: map-get($params, 'header-background-image');
-    $header-height: map-get($params, 'header-height');
-    $cell-horizontal-border: map-get($params, 'cell-horizontal-border');
-    $focused-cell-border-color: map-get($params, 'focused-cell-border-color');
-    $menu-option-active-color: map-get($params, 'menu-option-active-color');
-    $chip-background-color: map-get($params, 'chip-background-color');
-    $ag-range-selected-color-1: map-get($params, 'ag-range-selected-color-1');
-    $ag-range-selected-color-2: map-get($params, 'ag-range-selected-color-2');
-    $ag-range-selected-color-3: map-get($params, 'ag-range-selected-color-3');
-    $ag-range-selected-color-4: map-get($params, 'ag-range-selected-color-4');
-    $cell-highlight-border: map-get($params, 'cell-highlight-border');
-    $row-height: map-get($params, 'row-height');
-    $icon-size: map-get($params, 'icon-size');
+    $border-color: map-get($params, "border-color");
+    $editor-background-color: map-get($params, "editor-background-color");
+    $tab-background-color: map-get($params, "tab-background-color");
+    $grid-size: map-get($params, "grid-size");
+    $header-background-image: map-get($params, "header-background-image");
+    $header-height: map-get($params, "header-height");
+    $cell-horizontal-border: map-get($params, "cell-horizontal-border");
+    $focused-cell-border-color: map-get($params, "focused-cell-border-color");
+    $menu-option-active-color: map-get($params, "menu-option-active-color");
+    $chip-background-color: map-get($params, "chip-background-color");
+    $ag-range-selected-color-1: map-get($params, "ag-range-selected-color-1");
+    $ag-range-selected-color-2: map-get($params, "ag-range-selected-color-2");
+    $ag-range-selected-color-3: map-get($params, "ag-range-selected-color-3");
+    $ag-range-selected-color-4: map-get($params, "ag-range-selected-color-4");
+    $cell-highlight-border: map-get($params, "cell-highlight-border");
+    $row-height: map-get($params, "row-height");
+    $icon-size: map-get($params, "icon-size");
 
     .ag-body {
-        background-color: map-get($params, 'panel-background-color');
+        background-color: map-get($params, "panel-background-color");
     }
 
     .ag-cell {
@@ -28,23 +28,23 @@
     }
 
     %card {
-        border: 1px solid $border-color;
         background-color: $editor-background-color;
+        border: 1px solid $border-color;
     }
 
     %tab {
+        border: 1px solid transparent;
+        border-bottom-width: 0;
         display: inline-block;
         margin: $grid-size;
         margin-bottom: 0;
         padding: $grid-size $grid-size * 2;
-        border: 1px solid transparent;
-        border-bottom-width: 0;
     }
 
     %selected-tab {
         background-color: $editor-background-color;
-        border-color: $border-color;
         border-bottom: 2px solid $editor-background-color !important;
+        border-color: $border-color;
     }
 
     @include ag-grid-theme($params);
@@ -57,7 +57,7 @@
         opacity: 0.3;
     }
 
-    [ref=north] {
+    [ref="north"] {
         .ag-column-drop {
             border: 1px solid $border-color;
             border-bottom: 0;
@@ -69,13 +69,13 @@
     }
 
     .ag-header {
-        border-bottom: 1px solid $border-color;
         background-image: $header-background-image;
+        border-bottom: 1px solid $border-color;
     }
 
     .ag-header-cell-resize::after {
-        margin-top: 0;
         height: $header-height;
+        margin-top: 0;
     }
 
     .ag-header-cell {
@@ -99,9 +99,8 @@
         border: 1px solid $border-color;
     }
 
-    .ag-tool-panel {
-        border: 1px solid $border-color;
-        border-left: 0;
+    .ag-column-panel {
+        border-right: 1px solid $border-color;
     }
 
     .ag-cell-no-focus {
@@ -112,16 +111,12 @@
         border-bottom-width: 0;
     }
 
-    .ag-tool-panel .ag-column-drop .ag-column-drop-empty-message {
+    .ag-column-panel .ag-column-drop .ag-column-drop-empty-message {
         line-height: $header-height;
     }
 
     .ag-floating-filter-button {
         margin-top: $grid-size * 2;
-    }
-
-    .ag-menu .ag-menu-option {
-        line-height: $grid-size * 5;
     }
 
     .ag-filter .ag-filter-apply-panel {
@@ -143,22 +138,36 @@
 
     .ag-column-drop-cell {
         background: $chip-background-color;
-        border-radius: 0;
         background-image: $header-background-image;
-        height: $grid-size * 4.5 !important;
         border: 1px solid $border-color;
+        border-radius: 0;
+        height: $grid-size * 4.5 !important;
+
+        .ag-column-drop-cell-button {
+            box-sizing: border-box;
+            height: calc(100% - #{$grid-size});
+            margin-bottom: $grid-size / 2;
+            margin-top: $grid-size / 2;
+        }
+
+        .ag-column-drop-cell-button:hover {
+            border: 1px solid $border-color;
+        }
     }
 
     // we do not want to color the range color when the cell is also focused
     .ag-cell-range-selected-1:not(.ag-cell-focus) {
         background-color: $ag-range-selected-color-1;
     }
+
     .ag-cell-range-selected-2:not(.ag-cell-focus) {
         background-color: $ag-range-selected-color-2;
     }
+
     .ag-cell-range-selected-3:not(.ag-cell-focus) {
         background-color: $ag-range-selected-color-3;
     }
+
     .ag-cell-range-selected-4:not(.ag-cell-focus) {
         background-color: $ag-range-selected-color-4;
     }
@@ -174,33 +183,20 @@
 
     .ag-group-expanded {
         .ag-icon-contracted:empty {
-            @include icon-background($params, 'contracted');
+            @include icon-background($params, "contracted");
         }
     }
 
     .ag-rtl .ag-icon-tree-closed {
-        @include icon-background($params, 'small-left');
+        @include icon-background($params, "small-left");
     }
 
     .ag-cell-inline-editing {
-        padding: 0;
         height: $row-height;
+        padding: 0;
 
         input {
             box-sizing: border-box;
-        }
-    }
-
-    .ag-column-drop-cell {
-        .ag-column-drop-cell-button {
-            box-sizing: border-box;
-            height: calc(100% - #{$grid-size});
-            margin-top: $grid-size / 2;
-            margin-bottom:  $grid-size / 2;
-        }
-
-        .ag-column-drop-cell-button:hover {
-            border: 1px solid $border-color;
         }
     }
 
@@ -209,7 +205,7 @@
         float: none;
     }
 
-    .ag-tool-panel .ag-column-drop .ag-column-drop-title {
+    .ag-column-panel .ag-column-drop .ag-column-drop-title {
         float: none;
     }
 
@@ -231,7 +227,7 @@
     }
 
     .ag-filter .ag-filter-value {
-       line-height: $icon-size + $grid-size; 
+        line-height: $icon-size + $grid-size;
     }
 
     .ag-selection-checkbox span {
@@ -246,13 +242,15 @@
     .ag-header-cell-moving .ag-header-cell-label {
         opacity: 0.5;
     }
+
     .ag-header-cell-moving {
-        background-color: map-get($params, 'header-cell-moving-background-color');
+        background-color: map-get($params, "header-cell-moving-background-color");
     }
 
     .ag-ltr .ag-pinned-right-header {
         border-left: 1px solid $border-color;
     }
+
     .ag-rtl .ag-pinned-left-header {
         border-right: 1px solid $border-color;
     }
@@ -262,10 +260,18 @@
     }
 
     .ag-overlay-loading-center {
-        background-color: #ffffff;
+        background-color: #fff;
         border: 1px solid $border-color;
         border-radius: 10px;
-        padding: 10px;
         color: black;
+        padding: 10px;
+    }
+
+    .ag-column-name-filter {
+        height: $grid-size * 4;
+    }
+
+    .ag-column-drop-cell .ag-column-drag {
+        background-position-y: 0 !important;
     }
 }

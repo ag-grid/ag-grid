@@ -715,14 +715,14 @@
   .ag-dark .ag-paging-row-summary-panel {
     display: inline-block;
     width: 300px; }
-  .ag-dark .ag-tool-panel {
+  .ag-dark .ag-column-panel {
     background-color: #302E2E;
     border-bottom: 1px solid grey;
     border-top: 1px solid grey;
     color: #ccc; }
-  .ag-dark .ltr .ag-tool-panel {
+  .ag-dark .ltr .ag-column-panel {
     border-right: 1px solid grey; }
-  .ag-dark .rtl .ag-tool-panel {
+  .ag-dark .rtl .ag-column-panel {
     border-left: 1px solid grey; }
   .ag-dark .ag-status-bar {
     color: #ccc;
@@ -778,7 +778,7 @@
     border-bottom: 1px solid grey;
     padding: 2px 4px 3px 4px;
     background-color: #302E2E; }
-  .ag-dark .ag-tool-panel .ag-column-select-panel {
+  .ag-dark .ag-column-panel .ag-column-select-panel {
     padding: 4px 4px 10px 4px;
     padding-left: 0;
     border-bottom: 1px solid grey;

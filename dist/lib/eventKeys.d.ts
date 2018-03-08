@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v16.0.1
+// Type definitions for ag-grid v17.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class Events {
@@ -40,10 +40,13 @@ export declare class Events {
     static EVENT_PINNED_ROW_DATA_CHANGED: string;
     /** Range selection has changed */
     static EVENT_RANGE_SELECTION_CHANGED: string;
+    /** For when the tool panel is shown / hidden */
+    static EVENT_TOOL_PANEL_VISIBLE_CHANGED: string;
     /** Model was updated - grid updates the drawn rows when this happens */
     static EVENT_MODEL_UPDATED: string;
     static EVENT_CELL_CLICKED: string;
     static EVENT_CELL_DOUBLE_CLICKED: string;
+    static EVENT_CELL_MOUSE_DOWN: string;
     static EVENT_CELL_CONTEXT_MENU: string;
     static EVENT_CELL_VALUE_CHANGED: string;
     static EVENT_ROW_VALUE_CHANGED: string;
@@ -78,6 +81,7 @@ export declare class Events {
     static EVENT_CELL_EDITING_STOPPED: string;
     /** Main body of grid has scrolled, either horizontally or vertically */
     static EVENT_BODY_SCROLL: string;
+    static EVENT_HEIGHT_SCALE_CHANGED: string;
     /** The displayed page for pagination has changed. For example the data was filtered or sorted,
      * or the user has moved to a different page. */
     static EVENT_PAGINATION_CHANGED: string;

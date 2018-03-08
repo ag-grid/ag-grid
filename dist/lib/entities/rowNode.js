@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31,6 +31,8 @@ var RowNode = (function () {
     function RowNode() {
         /** Children mapped by the pivot columns */
         this.childrenMapped = {};
+        /** True by default - can be overridden via gridOptions.isRowSelectable(rowNode) */
+        this.selectable = true;
         this.selected = false;
     }
     RowNode.prototype.setData = function (data) {
@@ -98,6 +100,20 @@ var RowNode = (function () {
         this.selectionController.syncInRowNode(this, oldNode);
         var event = this.createDataChangedEvent(data, oldData, false);
         this.dispatchLocalEvent(event);
+        this.checkRowSelectable();
+    };
+    RowNode.prototype.checkRowSelectable = function () {
+        var isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc();
+        var shouldInvokeIsRowSelectable = isRowSelectableFunc && utils_1.Utils.exists(this);
+        this.setRowSelectable(shouldInvokeIsRowSelectable ? isRowSelectableFunc(this) : true);
+    };
+    RowNode.prototype.setRowSelectable = function (newVal) {
+        if (this.selectable !== newVal) {
+            this.selectable = newVal;
+            if (this.eventService) {
+                this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_SELECTABLE_CHANGED));
+            }
+        }
     };
     RowNode.prototype.setId = function (id) {
         // see if user is providing the id's
@@ -308,7 +324,11 @@ var RowNode = (function () {
         var newSelectedValue;
         if (this.childrenAfterGroup) {
             for (var i = 0; i < this.childrenAfterGroup.length; i++) {
-                var childState = this.childrenAfterGroup[i].isSelected();
+                var child = this.childrenAfterGroup[i];
+                // skip non-selectable nodes to prevent inconsistent selection values
+                if (!child.selectable)
+                    continue;
+                var childState = child.isSelected();
                 switch (childState) {
                     case true:
                         atLeastOneSelected = true;
@@ -497,9 +517,8 @@ var RowNode = (function () {
         });
     };
     RowNode.prototype.selectThisNode = function (newValue) {
-        if (this.selected === newValue) {
+        if (!this.selectable || this.selected === newValue)
             return false;
-        }
         this.selected = newValue;
         if (this.eventService) {
             this.dispatchLocalEvent(this.createLocalRowEvent(RowNode.EVENT_ROW_SELECTED));
@@ -574,6 +593,7 @@ var RowNode = (function () {
     RowNode.EVENT_CHILD_INDEX_CHANGED = 'childIndexChanged';
     RowNode.EVENT_ROW_INDEX_CHANGED = 'rowIndexChanged';
     RowNode.EVENT_EXPANDED_CHANGED = 'expandedChanged';
+    RowNode.EVENT_SELECTABLE_CHANGED = 'selectableChanged';
     RowNode.EVENT_UI_LEVEL_CHANGED = 'uiLevelChanged';
     RowNode.EVENT_DRAGGING_CHANGED = 'draggingChanged';
     __decorate([

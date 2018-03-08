@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -53,6 +53,9 @@ var CheckboxSelectionComponent = (function (_super) {
         // could be loaded as already selected (if user scrolls down, and then up again).
         this.onSelectionChanged();
     };
+    CheckboxSelectionComponent.prototype.onSelectableChanged = function () {
+        this.showOrHideSelect();
+    };
     CheckboxSelectionComponent.prototype.onSelectionChanged = function () {
         var state = this.rowNode.isSelected();
         utils_1.Utils.setVisible(this.eCheckedIcon, state === true);
@@ -90,14 +93,28 @@ var CheckboxSelectionComponent = (function (_super) {
         this.addDestroyableEventListener(this.eIndeterminateIcon, 'click', this.onIndeterminateClicked.bind(this));
         this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_ROW_SELECTED, this.onSelectionChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_DATA_CHANGED, this.onDataChanged.bind(this));
-        if (typeof this.column.getColDef().checkboxSelection === 'function') {
+        this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_SELECTABLE_CHANGED, this.onSelectableChanged.bind(this));
+        this.isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc();
+        var checkboxVisibleIsDynamic = this.isRowSelectableFunc || this.checkboxCallbackExists();
+        if (checkboxVisibleIsDynamic) {
             this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelect.bind(this));
             this.showOrHideSelect();
         }
     };
     CheckboxSelectionComponent.prototype.showOrHideSelect = function () {
-        var visible = this.column.isCellCheckboxSelection(this.rowNode);
-        this.setVisible(visible);
+        // if the isRowSelectable() is not provided the row node is selectable by default
+        var selectable = this.rowNode.selectable;
+        // checkboxSelection callback is deemed a legacy solution however we will still consider it's result.
+        // If selectable, then also check the colDef callback. if not selectable, this it short circuits - no need
+        // to call the colDef callback.
+        if (selectable && this.checkboxCallbackExists()) {
+            selectable = this.column.isCellCheckboxSelection(this.rowNode);
+        }
+        // show checkbox if both conditions are true
+        this.setVisible(selectable);
+    };
+    CheckboxSelectionComponent.prototype.checkboxCallbackExists = function () {
+        return typeof this.column.getColDef().checkboxSelection === 'function';
     };
     __decorate([
         context_1.Autowired('gridOptionsWrapper'),

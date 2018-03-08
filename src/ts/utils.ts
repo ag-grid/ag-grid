@@ -169,16 +169,32 @@ export class Utils {
         element.scrollLeft = value;
     }
 
-    static iterateObject(object: any, callback: (key: string, value: any) => void) {
+    static iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string)=>void): void {
+        if (!map) { return; }
+        for (let i = 0; i < map.length; i++) {
+            let attr = map[i];
+            callback(attr.name, attr.value);
+        }
+    }
+
+    static iterateObject<T>(object: {[p:string]:T} | T[], callback: (key: string, value: T) => void) {
         if (this.missing(object)) {
             return;
         }
-        let keys = Object.keys(object);
-        for (let i = 0; i < keys.length; i++) {
-            let key = keys[i];
-            let value = object[key];
-            callback(key, value);
+
+        if (Array.isArray(object)){
+            object.forEach((value, index)=>{
+                callback(index + '', value);
+            })
+        } else {
+            let keys = Object.keys(object);
+            for (let i = 0; i < keys.length; i++) {
+                let key = keys[i];
+                let value = object[key];
+                callback(key, value);
+            }
         }
+
     }
 
     static cloneObject<T>(object: T): T {
@@ -320,7 +336,7 @@ export class Utils {
         }
     }
 
-    static find<T>(collection: T[] | { [id: string]: T }, predicate: string | ((item: T) => void), value?: any): T {
+    static find<T>(collection: T[] | { [id: string]: T }, predicate: string | boolean | ((item: T) => void), value?: any): T {
         if (collection === null || collection === undefined) {
             return null;
         }
@@ -984,6 +1000,32 @@ export class Utils {
         return element.clientHeight < element.scrollHeight;
     }
 
+    static getMaxDivHeight(): number {
+        if (!document.body) {
+            return -1;
+        }
+
+        let res = 1000000;
+        // FF reports the height back but still renders blank after ~6M px
+        let testUpTo = navigator.userAgent.toLowerCase().match(/firefox/) ? 6000000 : 1000000000;
+        let div = this.loadTemplate("<div/>");
+        document.body.appendChild(div);
+        while (true) {
+            let test = res * 2;
+            div.style.height = test + 'px';
+
+            if (test > testUpTo || div.clientHeight !== test) {
+                break;
+            } else {
+                res = test;
+            }
+        }
+
+        document.body.removeChild(div);
+
+        return res;
+    }
+
     static getScrollbarWidth() {
         let outer = document.createElement("div");
         outer.style.visibility = "hidden";
@@ -1591,6 +1633,83 @@ export class Utils {
             }
         });
     }
+
+    public static fuzzyCheckStrings(
+        inputValues: string[],
+        validValues: string[],
+        allSuggestions: string[]
+    ) : {[p:string]: string[]}{
+        let fuzzyMatches: {[p:string]: string[]} = {};
+        let invalidInputs: string [] = inputValues.filter(inputValue =>
+            !validValues.some(
+                (validValue) => validValue === inputValue
+            )
+        );
+
+        if (invalidInputs.length > 0) {
+            invalidInputs.forEach(invalidInput =>
+                fuzzyMatches[invalidInput] = this.fuzzySuggestions(invalidInput, validValues, allSuggestions)
+            );
+        }
+
+        return fuzzyMatches;
+    }
+
+    public static fuzzySuggestions(
+        inputValue: string,
+        validValues: string[],
+        allSuggestions: string[]
+    ) : string[]{
+        let thisSuggestions: string [] = allSuggestions.slice(0);
+        thisSuggestions.sort((suggestedValueLeft, suggestedValueRight) => {
+                let leftDifference = _.string_similarity(suggestedValueLeft.toLowerCase(), inputValue.toLowerCase());
+                let rightDifference = _.string_similarity(suggestedValueRight.toLowerCase(), inputValue.toLowerCase());
+                return leftDifference > rightDifference ? -1 :
+                    leftDifference === rightDifference ? 0 :
+                        1;
+            }
+        );
+
+         return thisSuggestions;
+    }
+
+
+
+    //Algorithm to do fuzzy search
+    //https://stackoverflow.com/questions/23305000/javascript-fuzzy-search-that-makes-sense
+    static get_bigrams (from:string) {
+        var i, j, ref, s, v;
+        s = from.toLowerCase();
+        v = new Array(s.length - 1);
+        for (i = j = 0, ref = v.length; j <= ref; i = j += 1) {
+            v[i] = s.slice(i, i + 2);
+
+        }
+        return v;
+    }
+
+    static string_similarity = function(str1:string, str2:string) {
+        var hit_count, j, k, len, len1, pairs1, pairs2, union, x, y;
+        if (str1.length > 0 && str2.length > 0) {
+            pairs1 = Utils.get_bigrams(str1);
+            pairs2 = Utils.get_bigrams(str2);
+            union = pairs1.length + pairs2.length;
+            hit_count = 0;
+            for (j = 0, len = pairs1.length; j < len; j++) {
+                x = pairs1[j];
+                for (k = 0, len1 = pairs2.length; k < len1; k++) {
+                    y = pairs2[k];
+                    if (x === y) {
+                        hit_count++;
+                    }
+                }
+            }
+            if (hit_count > 0) {
+                return (2.0 * hit_count) / union;
+            }
+        }
+        return 0.0;
+    };
 }
 
 export class NumberSequence {

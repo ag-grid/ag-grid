@@ -1,7 +1,10 @@
-// Type definitions for ag-grid v16.0.1
+// Type definitions for ag-grid v17.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IComponent } from "./iComponent";
 export interface IToolPanel extends IComponent<any> {
     refresh(): void;
+    showToolPanel(show: boolean): void;
+    isToolPanelShowing(): boolean;
+    init(): void;
 }

@@ -24,10 +24,10 @@ export function initialiseAgGridWithWebComponents() {
     // wrap each property with a get and set method, so we can track when changes are done
     ComponentUtil.ALL_PROPERTIES.forEach((key) => {
        Object.defineProperty(AgileGridProto, key, {
-           set: function (v) {
+           set: function(v) {
                this.__agGridSetProperty(key, v);
            },
-           get: function () {
+           get: function() {
                return this.__agGridGetProperty(key);
            },
            enumerable: true,
@@ -37,7 +37,7 @@ export function initialiseAgGridWithWebComponents() {
 
     let agGridProtoNoType = <any> AgileGridProto;
 
-    agGridProtoNoType.__agGridSetProperty = function (key:string, value:any) {
+    agGridProtoNoType.__agGridSetProperty = function(key: string, value: any) {
         if (!this.__attributes) {
             this.__attributes = {};
         }
@@ -48,20 +48,20 @@ export function initialiseAgGridWithWebComponents() {
         this.onChange(changeObject);
     };
 
-    agGridProtoNoType.onChange = function (changes:any) {
+    agGridProtoNoType.onChange = function(changes: any) {
         if (this._initialised) {
             ComponentUtil.processOnChange(changes, this._gridOptions, this.api, this.columnApi);
         }
     };
 
-    agGridProtoNoType.__agGridGetProperty = function (key:string) {
+    agGridProtoNoType.__agGridGetProperty = function(key: string) {
         if (!this.__attributes) {
             this.__attributes = {};
         }
         return this.__attributes[key];
     };
 
-    agGridProtoNoType.setGridOptions = function (options: any) {
+    agGridProtoNoType.setGridOptions = function(options: any) {
 
         let globalEventListener = this.globalEventListener.bind(this);
         this._gridOptions = ComponentUtil.copyAttributesToGridOptions(options, this);
@@ -77,14 +77,14 @@ export function initialiseAgGridWithWebComponents() {
     };
 
     // copies all the attributes into this object
-    agGridProtoNoType.createdCallback = function () {
+    agGridProtoNoType.createdCallback = function() {
        for (let i = 0; i < this.attributes.length; i++) {
            let attribute = this.attributes[i];
            this.setPropertyFromAttribute(attribute);
        }
     };
 
-    agGridProtoNoType.setPropertyFromAttribute = function (attribute: any) {
+    agGridProtoNoType.setPropertyFromAttribute = function(attribute: any) {
         let name = toCamelCase(attribute.nodeName);
         let value = attribute.nodeValue;
         if (ComponentUtil.ALL_PROPERTIES.indexOf(name) >= 0) {
@@ -122,7 +122,7 @@ export function initialiseAgGridWithWebComponents() {
 
 function toCamelCase(myString: string): string {
     if (typeof myString === 'string') {
-        let result = myString.replace(/-([a-z])/g, function (g) {
+        let result = myString.replace(/-([a-z])/g, function(g) {
             return g[1].toUpperCase();
         });
         return result;

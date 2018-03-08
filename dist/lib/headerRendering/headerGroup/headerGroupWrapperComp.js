@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,7 +32,7 @@ var columnGroup_1 = require("../../entities/columnGroup");
 var columnApi_1 = require("../../columnController/columnApi");
 var columnController_1 = require("../../columnController/columnController");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
-var horizontalDragService_1 = require("../horizontalDragService");
+var horizontalResizeService_1 = require("../horizontalResizeService");
 var context_1 = require("../../context/context");
 var cssClassApplier_1 = require("../cssClassApplier");
 var dragAndDropService_1 = require("../../dragAndDrop/dragAndDropService");
@@ -40,14 +40,14 @@ var setLeftFeature_1 = require("../../rendering/features/setLeftFeature");
 var gridApi_1 = require("../../gridApi");
 var componentRecipes_1 = require("../../components/framework/componentRecipes");
 var beans_1 = require("../../rendering/beans");
+var hoverFeature_1 = require("../hoverFeature");
 var HeaderGroupWrapperComp = (function (_super) {
     __extends(HeaderGroupWrapperComp, _super);
-    function HeaderGroupWrapperComp(columnGroup, eRoot, dragSourceDropTarget, pinned) {
+    function HeaderGroupWrapperComp(columnGroup, dragSourceDropTarget, pinned) {
         var _this = _super.call(this, HeaderGroupWrapperComp.TEMPLATE) || this;
         // the children can change, we keep destroy functions related to listening to the children here
         _this.childColumnsDestroyFuncs = [];
         _this.columnGroup = columnGroup;
-        _this.eRoot = eRoot;
         _this.dragSourceDropTarget = dragSourceDropTarget;
         _this.pinned = pinned;
         return _this;
@@ -61,6 +61,8 @@ var HeaderGroupWrapperComp = (function (_super) {
         this.setupWidth();
         this.addAttributes();
         this.setupMovingCss();
+        this.setupTooltip();
+        this.addFeature(this.context, new hoverFeature_1.HoverFeature(this.columnGroup.getOriginalColumnGroup().getLeafColumns(), this.getGui()));
         var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.columnGroup, this.getGui(), this.beans);
         setLeftFeature.init();
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
@@ -73,6 +75,13 @@ var HeaderGroupWrapperComp = (function (_super) {
             _this.addDestroyableEventListener(col, column_1.Column.EVENT_MOVING_CHANGED, _this.onColumnMovingChanged.bind(_this));
         });
         this.onColumnMovingChanged();
+    };
+    HeaderGroupWrapperComp.prototype.setupTooltip = function () {
+        var colGroupDef = this.columnGroup.getColGroupDef();
+        // add tooltip if exists
+        if (colGroupDef && colGroupDef.headerTooltip) {
+            this.getGui().title = colGroupDef.headerTooltip;
+        }
     };
     HeaderGroupWrapperComp.prototype.onColumnMovingChanged = function () {
         // this function adds or removes the moving css, based on if the col is moving.
@@ -228,14 +237,13 @@ var HeaderGroupWrapperComp = (function (_super) {
             utils_1.Utils.removeFromParent(this.eHeaderCellResize);
             return;
         }
-        this.dragService.addDragHandling({
-            eDraggableElement: this.eHeaderCellResize,
-            eBody: this.eRoot,
-            cursor: 'col-resize',
-            startAfterPixels: 0,
-            onDragStart: this.onDragStart.bind(this),
-            onDragging: this.onDragging.bind(this)
+        var finishedWithResizeFunc = this.horizontalResizeService.addResizeBar({
+            eResizeBar: this.eHeaderCellResize,
+            onResizeStart: this.onResizeStart.bind(this),
+            onResizing: this.onResizing.bind(this, false),
+            onResizeEnd: this.onResizing.bind(this, true)
         });
+        this.addDestroyFunc(finishedWithResizeFunc);
         if (!this.gridOptionsWrapper.isSuppressAutoSize()) {
             this.eHeaderCellResize.addEventListener('dblclick', function (event) {
                 // get list of all the column keys we are responsible for
@@ -252,7 +260,7 @@ var HeaderGroupWrapperComp = (function (_super) {
             });
         }
     };
-    HeaderGroupWrapperComp.prototype.onDragStart = function () {
+    HeaderGroupWrapperComp.prototype.onResizeStart = function () {
         var _this = this;
         this.groupWidthStart = this.columnGroup.getActualWidth();
         this.childrenWidthStarts = [];
@@ -260,7 +268,7 @@ var HeaderGroupWrapperComp = (function (_super) {
             _this.childrenWidthStarts.push(column.getActualWidth());
         });
     };
-    HeaderGroupWrapperComp.prototype.onDragging = function (dragChange, finished) {
+    HeaderGroupWrapperComp.prototype.onResizing = function (finished, resizeAmount) {
         var _this = this;
         // this will be the width we have to distribute to the resizable columns
         var widthForResizableCols;
@@ -269,8 +277,8 @@ var HeaderGroupWrapperComp = (function (_super) {
         // a lot of variables defined for the first set of maths, but putting
         // braces in, we localise the variables to this bit of the method
         {
-            var dragChangeNormalised = this.normaliseDragChange(dragChange);
-            var totalGroupWidth = this.groupWidthStart + dragChangeNormalised;
+            var resizeAmountNormalised = this.normaliseDragChange(resizeAmount);
+            var totalGroupWidth = this.groupWidthStart + resizeAmountNormalised;
             var displayedColumns = this.columnGroup.getDisplayedLeafColumns();
             resizableCols = utils_1.Utils.filter(displayedColumns, function (col) { return col.isResizable(); });
             var nonResizableCols = utils_1.Utils.filter(displayedColumns, function (col) { return !col.isResizable(); });
@@ -337,9 +345,9 @@ var HeaderGroupWrapperComp = (function (_super) {
         __metadata("design:type", columnController_1.ColumnController)
     ], HeaderGroupWrapperComp.prototype, "columnController", void 0);
     __decorate([
-        context_1.Autowired('horizontalDragService'),
-        __metadata("design:type", horizontalDragService_1.HorizontalDragService)
-    ], HeaderGroupWrapperComp.prototype, "dragService", void 0);
+        context_1.Autowired('horizontalResizeService'),
+        __metadata("design:type", horizontalResizeService_1.HorizontalResizeService)
+    ], HeaderGroupWrapperComp.prototype, "horizontalResizeService", void 0);
     __decorate([
         context_1.Autowired('dragAndDropService'),
         __metadata("design:type", dragAndDropService_1.DragAndDropService)

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -152,6 +152,8 @@ var InMemoryNodeManager = (function () {
         else {
             // do delete
             rowNode.setSelected(false);
+            // so row renderer knows to fade row out (and not reposition it)
+            rowNode.clearRowTop();
             utils_1.Utils.removeFromArray(this.rootNode.allLeafChildren, rowNode);
             this.allNodesMap[rowNode.id] = undefined;
         }

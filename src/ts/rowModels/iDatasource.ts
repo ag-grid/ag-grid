@@ -7,6 +7,8 @@ export interface IDatasource {
 
     /** Callback the grid calls that you implement to fetch rows from the server. See below for params.*/
     getRows(params: IGetRowsParams): void;
+
+    destroy?(): void;
 }
 
 /** Params for the above IDatasource.getRows() */
@@ -25,11 +27,11 @@ export interface IGetRowsParams {
     failCallback(): void;
 
     /** If doing server side sorting, contains the sort model */
-    sortModel: any,
+    sortModel: any;
 
     /** If doing server side filtering, contains the filter model */
-    filterModel: any,
+    filterModel: any;
 
     /** The grid context object */
-    context: any
+    context: any;
 }

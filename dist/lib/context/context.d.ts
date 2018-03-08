@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v16.0.1
+// Type definitions for ag-grid v17.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ILogger } from "../iLogger";
@@ -23,10 +23,9 @@ export declare class Context {
     constructor(params: ContextParams, logger: ILogger);
     private setupComponents();
     private addComponent(componentMeta);
-    createComponent(element: Element): Component;
-    private copyAttributesFromNode(fromNode, toNode);
-    wireBean(bean: any): void;
-    private wireBeans(beans);
+    createComponent(element: Element, afterPreCreateCallback?: (comp: Component) => void): Component;
+    wireBean(bean: any, afterPreCreateCallback?: (comp: Component) => void): void;
+    private wireBeans(beans, afterPreCreateCallback?);
     private createBeans();
     private createBeanEntry(Bean);
     private autoWireBeans(beans);

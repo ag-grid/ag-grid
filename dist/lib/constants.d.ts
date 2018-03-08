@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v16.0.1
+// Type definitions for ag-grid v17.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class Constants {
@@ -10,6 +10,7 @@ export declare class Constants {
     static STEP_PIVOT: number;
     static ROW_BUFFER_SIZE: number;
     static LAYOUT_INTERVAL: number;
+    static BATCH_WAIT_MILLIS: number;
     static EXPORT_TYPE_DRAG_COPY: string;
     static EXPORT_TYPE_CLIPBOARD: string;
     static EXPORT_TYPE_EXCEL: string;

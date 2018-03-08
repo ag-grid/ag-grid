@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,11 +16,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("./context/context");
-var themeNames = ['fresh', 'dark', 'blue', 'bootstrap', 'material'];
+var themeNames = ['fresh', 'dark', 'blue', 'bootstrap', 'material', 'balham-dark', 'balham'];
 var themes = themeNames.concat(themeNames.map(function (name) { return "theme-" + name; }));
 var themeClass = new RegExp("ag-(" + themes.join('|') + ")");
 var matGridSize = 8;
 var freshGridSize = 4;
+var balhamGridSize = 4;
 var HARD_CODED_SIZES = {
     'ag-theme-material': {
         headerHeight: matGridSize * 7,
@@ -31,6 +32,11 @@ var HARD_CODED_SIZES = {
         headerHeight: 25,
         virtualItemHeight: freshGridSize * 5,
         rowHeight: 25
+    },
+    'ag-theme-balham': {
+        headerHeight: balhamGridSize * 8,
+        virtualItemHeight: balhamGridSize * 7,
+        rowHeight: balhamGridSize * 7
     }
 };
 var Environment = (function () {
@@ -59,6 +65,9 @@ var Environment = (function () {
     Environment.prototype.getSassVariable = function (theme, key) {
         if (theme == 'ag-theme-material') {
             return HARD_CODED_SIZES['ag-theme-material'][key];
+        }
+        else if (theme == 'ag-theme-balham' || theme == 'ag-theme-balham-dark') {
+            return HARD_CODED_SIZES['ag-theme-balham'][key];
         }
         return HARD_CODED_SIZES['ag-theme-classic'][key];
         /*

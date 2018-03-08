@@ -1,13 +1,15 @@
-// Type definitions for ag-grid v16.0.1
+// Type definitions for ag-grid v17.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
 import { CellComp } from "./cellComp";
 import { LoggerFactory } from "../logger";
-import { GridCell } from "../entities/gridCell";
+import { GridCell, GridCellDef } from "../entities/gridCell";
 import { BeanStub } from "../context/beanStub";
-import { RefreshCellsParams } from "../gridApi";
+import { FlashCellsParams, GetCellRendererInstancesParams, RefreshCellsParams } from "../gridApi";
+import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
+import { ICellEditorComp } from "./cellEditors/iCellEditor";
 export declare class RowRenderer extends BeanStub {
     private paginationProxy;
     private columnController;
@@ -27,6 +29,7 @@ export declare class RowRenderer extends BeanStub {
     private columnApi;
     private gridApi;
     private beans;
+    private heightScaler;
     private animationFrameService;
     private rangeController;
     private firstRenderedRow;
@@ -59,10 +62,15 @@ export declare class RowRenderer extends BeanStub {
     private releaseLockOnRefresh();
     private restoreFocusedCell(gridCell);
     stopEditing(cancel?: boolean): void;
-    forEachCellComp(callback: (renderedCell: CellComp) => void): void;
+    forEachCellComp(callback: (cellComp: CellComp) => void): void;
     private forEachRowComp(callback);
     addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void;
+    flashCells(params?: FlashCellsParams): void;
     refreshCells(params?: RefreshCellsParams): void;
+    getCellRendererInstances(params: GetCellRendererInstancesParams): ICellRendererComp[];
+    getCellEditorInstances(params: GetCellRendererInstancesParams): ICellEditorComp[];
+    getEditingCells(): GridCellDef[];
+    private forEachCellCompFiltered(rowNodes, columns, callback);
     destroy(): void;
     private binRowComps(recycleRows);
     private removeRowComps(rowsToRemove);
@@ -83,6 +91,7 @@ export declare class RowRenderer extends BeanStub {
     private createRowComp(rowNode, animate, afterScroll);
     getRenderedNodes(): RowNode[];
     navigateToNextCell(event: KeyboardEvent, key: number, previousCell: GridCell, allowUserOverride: boolean): void;
+    ensureCellVisible(gridCell: GridCell): void;
     startEditingCell(gridCell: GridCell, keyPress: number, charPress: string): void;
     private getComponentForCell(gridCell);
     onTabKeyDown(previousRenderedCell: CellComp, keyboardEvent: KeyboardEvent): void;

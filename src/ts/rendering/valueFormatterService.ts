@@ -17,7 +17,7 @@ export class ValueFormatterService {
                        $scope: any,
                        value: any): string {
 
-        let formatter: (value:any)=>string;
+        let formatter: (value: any)=>string;
         let colDef = column.getColDef();
         // if floating, give preference to the floating formatter
         if (rowNode && rowNode.rowPinned) {

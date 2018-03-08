@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v16.0.1
+// Type definitions for ag-grid v17.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export { BalancedColumnTreeBuilder } from "./dist/lib/columnController/balancedColumnTreeBuilder";
@@ -39,7 +39,7 @@ export { CssClassApplier } from "./dist/lib/headerRendering/cssClassApplier";
 export { HeaderContainer } from "./dist/lib/headerRendering/headerContainer";
 export { HeaderRenderer } from "./dist/lib/headerRendering/headerRenderer";
 export { HeaderRowComp } from "./dist/lib/headerRendering/headerRowComp";
-export { HorizontalDragService } from "./dist/lib/headerRendering/horizontalDragService";
+export { HorizontalResizeService } from "./dist/lib/headerRendering/horizontalResizeService";
 export { MoveColumnController } from "./dist/lib/headerRendering/moveColumnController";
 export { StandardMenuFactory } from "./dist/lib/headerRendering/standardMenu";
 export { BorderLayout } from "./dist/lib/layout/borderLayout";
@@ -110,6 +110,7 @@ export { FocusedCellController } from "./dist/lib/focusedCellController";
 export { defaultGroupComparator } from "./dist/lib/functions";
 export { GridOptionsWrapper } from "./dist/lib/gridOptionsWrapper";
 export { EventService } from "./dist/lib/eventService";
+export { SelectableService } from "./dist/lib/rowNodes/selectableService";
 export { GridCore } from "./dist/lib/gridCore";
 export { Logger } from "./dist/lib/logger";
 export { SelectionController } from "./dist/lib/selectionController";
@@ -133,7 +134,7 @@ export { IAggFunc, ColGroupDef } from "./dist/lib/entities/colDef";
 export { GridCellDef } from "./dist/lib/entities/gridCell";
 export { ColDef } from "./dist/lib/entities/colDef";
 export { ProcessCellForExportParams, ProcessHeaderForExportParams } from "./dist/lib/exportParams";
-export { GridOptions, GetContextMenuItemsParams, GetContextMenuItems, GetDataPath, MenuItemDef, GetNodeChildDetails, NodeChildDetails, GetMainMenuItemsParams, GetMainMenuItems, GetRowNodeIdFunc, ProcessRowParams, NavigateToNextCellParams, TabToNextCellParams, PostProcessPopupParams } from "./dist/lib/entities/gridOptions";
+export { GridOptions, GetContextMenuItemsParams, GetContextMenuItems, GetDataPath, IsRowMaster, IsRowSelectable, MenuItemDef, GetNodeChildDetails, NodeChildDetails, GetMainMenuItemsParams, GetMainMenuItems, GetRowNodeIdFunc, ProcessRowParams, NavigateToNextCellParams, TabToNextCellParams, PostProcessPopupParams } from "./dist/lib/entities/gridOptions";
 export { OriginalColumnGroupChild } from "./dist/lib/entities/originalColumnGroupChild";
 export { IViewportDatasource, IViewportDatasourceParams } from "./dist/lib/interfaces/iViewportDatasource";
 export { IContextMenuFactory } from "./dist/lib/interfaces/iContextMenuFactory";
@@ -159,4 +160,4 @@ export { FrameworkComponentWrapper } from "./dist/lib/components/framework/frame
 export { IFrameworkFactory } from "./dist/lib/interfaces/iFrameworkFactory";
 export { SerializedNumberFilter } from "./dist/lib/filter/numberFilter";
 export { Environment } from "./dist/lib/environment";
-export { AgEvent, AgGridEvent, ModelUpdatedEvent, ColumnPivotModeChangedEvent, VirtualColumnsChangedEvent, ColumnEverythingChangedEvent, NewColumnsLoadedEvent, GridColumnsChangedEvent, DisplayedColumnsChangedEvent, RowDataChangedEvent, RowDataUpdatedEvent, PinnedRowDataChangedEvent, SelectionChangedEvent, FilterChangedEvent, FilterModifiedEvent, SortChangedEvent, GridReadyEvent, DragStartedEvent, DragStoppedEvent, DisplayedColumnsWidthChangedEvent, ColumnHoverChangedEvent, BodyHeightChangedEvent, ComponentStateChangedEvent, GridSizeChangedEvent, ViewportChangedEvent, RangeSelectionChangedEvent, ColumnGroupOpenedEvent, ItemsAddedEvent, BodyScrollEvent, FlashCellsEvent, PaginationChangedEvent, CellFocusedEvent, ColumnEvent, ColumnResizedEvent, ColumnPivotChangedEvent, ColumnRowGroupChangedEvent, ColumnValueChangedEvent, ColumnMovedEvent, ColumnVisibleEvent, ColumnPinnedEvent, RowEvent, RowGroupOpenedEvent, RowValueChangedEvent, RowSelectedEvent, VirtualRowRemovedEvent, RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, CellEvent, CellClickedEvent, CellDoubleClickedEvent, CellMouseOverEvent, CellMouseOutEvent, CellContextMenuEvent, CellEditingStartedEvent, CellEditingStoppedEvent, CellValueChangedEvent, ColumnRequestEvent, ColumnRowGroupChangeRequestEvent, ColumnPivotChangeRequestEvent, ColumnValueChangeRequestEvent, ColumnAggFuncChangeRequestEvent, ScrollVisibilityChangedEvent, RowDragEvent, RowDragLeaveEvent, RowDragEnterEvent, RowDragEndEvent, RowDragMoveEvent } from "./dist/lib/events";
+export { AgEvent, AgGridEvent, ModelUpdatedEvent, ColumnPivotModeChangedEvent, VirtualColumnsChangedEvent, ColumnEverythingChangedEvent, NewColumnsLoadedEvent, GridColumnsChangedEvent, DisplayedColumnsChangedEvent, RowDataChangedEvent, RowDataUpdatedEvent, PinnedRowDataChangedEvent, SelectionChangedEvent, FilterChangedEvent, FilterModifiedEvent, SortChangedEvent, GridReadyEvent, DragStartedEvent, DragStoppedEvent, DisplayedColumnsWidthChangedEvent, ColumnHoverChangedEvent, BodyHeightChangedEvent, ComponentStateChangedEvent, GridSizeChangedEvent, ViewportChangedEvent, RangeSelectionChangedEvent, ColumnGroupOpenedEvent, ItemsAddedEvent, BodyScrollEvent, FlashCellsEvent, PaginationChangedEvent, CellFocusedEvent, ColumnEvent, ColumnResizedEvent, ColumnPivotChangedEvent, ColumnRowGroupChangedEvent, ColumnValueChangedEvent, ColumnMovedEvent, ColumnVisibleEvent, ColumnPinnedEvent, RowEvent, RowGroupOpenedEvent, RowValueChangedEvent, RowSelectedEvent, VirtualRowRemovedEvent, RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, CellEvent, CellClickedEvent, CellMouseDownEvent, CellDoubleClickedEvent, CellMouseOverEvent, CellMouseOutEvent, CellContextMenuEvent, CellEditingStartedEvent, CellEditingStoppedEvent, CellValueChangedEvent, ColumnRequestEvent, ColumnRowGroupChangeRequestEvent, ColumnPivotChangeRequestEvent, ColumnValueChangeRequestEvent, ColumnAggFuncChangeRequestEvent, ScrollVisibilityChangedEvent, RowDragEvent, RowDragLeaveEvent, RowDragEnterEvent, RowDragEndEvent, RowDragMoveEvent, ToolPanelVisibleChanged } from "./dist/lib/events";

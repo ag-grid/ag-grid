@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v16.0.1
+// Type definitions for ag-grid v17.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -7,9 +7,8 @@ export declare class ColumnHoverService extends BeanStub {
     private eventService;
     private columnApi;
     private gridApi;
-    private currentlySelectedColumn;
-    private init();
-    private onCellMouseOver(cellEvent);
-    private onCellMouseOut();
+    private selectedColumns;
+    setMouseOver(columns: Column[]): void;
+    clearMouseOver(): void;
     isHovered(column: Column): boolean;
 }

@@ -1,7 +1,8 @@
-import {Bean, Autowired} from "../../context/context";
+import {Bean, Autowired, PostConstruct} from "../../context/context";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {StageExecuteParams} from "../../interfaces/iRowNodeStage";
 import {SortService} from "../../rowNodes/sortService";
+import {RowNode} from "../../entities/rowNode";
 
 @Bean('sortStage')
 export class SortStage {
@@ -17,6 +18,4 @@ export class SortStage {
             this.sortService.sortAccordingToColumnsState(params.rowNode);
         }
     }
-
-
 }

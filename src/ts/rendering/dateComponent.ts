@@ -4,12 +4,12 @@ export interface IDate {
     getDate(): Date;
 
     /** Sets the date represented by this component */
-    setDate(date:Date): void;
+    setDate(date: Date): void;
 }
 
 export interface IDateParams {
     /** Method for component to tell ag-Grid that the date has changed. */
-    onDateChanged:()=>void
+    onDateChanged: ()=>void;
 }
 
 export interface IDateComp extends IComponent<IDateParams>, IDate {

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v16.0.1
+// Type definitions for ag-grid v17.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../../entities/rowNode";
@@ -10,7 +10,7 @@ export interface RefreshModelParams {
     keepRenderedRows?: boolean;
     animate?: boolean;
     keepEditingRows?: boolean;
-    rowNodeTransaction?: RowNodeTransaction;
+    rowNodeTransactions?: RowNodeTransaction[];
     rowNodeOrder?: {
         [id: string]: number;
     };
@@ -26,6 +26,10 @@ export interface RowNodeTransaction {
     add: RowNode[];
     remove: RowNode[];
     update: RowNode[];
+}
+export interface BatchTransactionItem {
+    rowDataTransaction: RowDataTransaction;
+    callback: (res: RowNodeTransaction) => void;
 }
 export declare class InMemoryRowModel {
     private gridOptionsWrapper;
@@ -48,6 +52,7 @@ export declare class InMemoryRowModel {
     private rootNode;
     private rowsToDisplay;
     private nodeManager;
+    private rowDataTransactionBatch;
     init(): void;
     ensureRowAtPixel(rowNode: RowNode, pixel: number): boolean;
     isLastRowFound(): boolean;
@@ -58,7 +63,7 @@ export declare class InMemoryRowModel {
     private onSortChanged();
     getType(): string;
     private onValueChanged();
-    private createChangePath(transaction);
+    private createChangePath(rowNodeTransactions);
     refreshModel(params: RefreshModelParams): void;
     isEmpty(): boolean;
     isRowsToRender(): boolean;
@@ -83,19 +88,22 @@ export declare class InMemoryRowModel {
     doAggregate(changedPath?: ChangedPath): void;
     expandOrCollapseAll(expand: boolean): void;
     private doSort();
-    private doRowGrouping(groupState, rowNodeTransaction, rowNodeOrder, changedPath);
+    private doRowGrouping(groupState, rowNodeTransactions, rowNodeOrder, changedPath);
     private restoreGroupState(groupState);
     private doFilter();
-    private doPivot();
+    private doPivot(changedPath);
     private getGroupState();
     getCopyOfNodesMap(): {
         [id: string]: RowNode;
     };
     getRowNode(id: string): RowNode;
     setRowData(rowData: any[]): void;
+    batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void;
+    private executeBatchUpdateRowData();
     updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder?: {
         [id: string]: number;
     }): RowNodeTransaction;
+    private commonUpdateRowData(rowNodeTrans, rowNodeOrder?);
     private doRowsToDisplay();
     onRowHeightChanged(): void;
     resetRowHeights(): void;

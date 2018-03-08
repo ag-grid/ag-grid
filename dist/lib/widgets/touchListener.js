@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20,14 +20,14 @@ var TouchListener = (function () {
         var startListener = this.onTouchStart.bind(this);
         var moveListener = this.onTouchMove.bind(this);
         var endListener = this.onTouchEnd.bind(this);
-        this.eElement.addEventListener('touchstart', startListener, { passive: true });
-        this.eElement.addEventListener('touchmove', moveListener, { passive: true });
+        this.eElement.addEventListener("touchstart", startListener, { passive: true });
+        this.eElement.addEventListener("touchmove", moveListener, { passive: true });
         // we set passive=false, as we want to prevent default on this event
-        this.eElement.addEventListener('touchend', endListener, { passive: false });
+        this.eElement.addEventListener("touchend", endListener, { passive: false });
         this.destroyFuncs.push(function () {
-            _this.eElement.addEventListener('touchstart', startListener, { passive: true });
-            _this.eElement.addEventListener('touchmove', moveListener, { passive: true });
-            _this.eElement.addEventListener('touchend', endListener, { passive: false });
+            _this.eElement.addEventListener("touchstart", startListener, { passive: true });
+            _this.eElement.addEventListener("touchmove", moveListener, { passive: true });
+            _this.eElement.addEventListener("touchend", endListener, { passive: false });
         });
     }
     TouchListener.prototype.getActiveTouch = function (touchList) {
@@ -102,8 +102,8 @@ var TouchListener = (function () {
         this.destroyFuncs.forEach(function (func) { return func(); });
     };
     // private mostRecentTouch: Touch;
-    TouchListener.EVENT_TAP = 'tap';
-    TouchListener.EVENT_LONG_TAP = 'longTap';
+    TouchListener.EVENT_TAP = "tap";
+    TouchListener.EVENT_LONG_TAP = "longTap";
     return TouchListener;
 }());
 exports.TouchListener = TouchListener;

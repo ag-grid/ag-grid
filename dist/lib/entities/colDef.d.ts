@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v16.0.1
+// Type definitions for ag-grid v17.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
@@ -31,6 +31,8 @@ export interface AbstractColDef {
     pivotKeys?: string[];
     /** Set to true to not include this column in the toolpanel */
     suppressToolPanel?: boolean;
+    /** Tooltip for the column header */
+    headerTooltip?: string;
 }
 export interface ColGroupDef extends AbstractColDef {
     /** Columns in this group */
@@ -85,8 +87,6 @@ export interface ColDef extends AbstractColDef {
     tooltipField?: string;
     /** The function used to calculate the tooltip of the object, tooltipField takes precedence*/
     tooltip?: (params: TooltipParams) => string;
-    /** Tooltip for the column header */
-    headerTooltip?: string;
     /** Expression or function to get the cells value. */
     valueGetter?: ((params: ValueGetterParams) => any) | string;
     /** If not using a field, then this puts the value into the cell */
@@ -165,6 +165,8 @@ export interface ColDef extends AbstractColDef {
     suppressSorting?: boolean;
     /** Set to true to not allow moving this column via dragging it's header */
     suppressMovable?: boolean;
+    /** Set to true to not flash this column for value changes */
+    suppressCellFlash?: boolean;
     /** Set to true to make sure this column is always first. Other columns, if movable, cannot move before this column. */
     lockPosition?: boolean;
     /** Set to true to block the user showing / hiding the column, the column can only be shown / hidden via definitions or API */
@@ -236,7 +238,7 @@ export interface ColDef extends AbstractColDef {
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotTotalColumnIds?: string[];
     /** The custom header component to be used for rendering the component header. If none specified the default ag-Grid is used**/
-    headerComponent?: {
+    headerComponent?: string | {
         new (): any;
     };
     /** The custom header component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default ag-Grid is used**/

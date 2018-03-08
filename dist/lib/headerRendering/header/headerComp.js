@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -132,10 +132,12 @@ var HeaderComp = (function (_super) {
             this.removeSortIcons();
             return;
         }
+        var sortUsingCtrl = this.gridOptionsWrapper.isMultiSortKeyCtrl();
         // add the event on the header, so when clicked, we do sorting
         if (this.eLabel) {
             this.addDestroyableEventListener(this.eLabel, 'click', function (event) {
-                _this.params.progressSort(event.shiftKey);
+                var multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
+                _this.params.progressSort(multiSort);
             });
         }
         this.addDestroyableEventListener(this.params.column, column_1.Column.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));

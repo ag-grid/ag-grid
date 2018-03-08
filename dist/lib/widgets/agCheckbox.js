@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39,16 +39,14 @@ var AgCheckbox = (function (_super) {
         _this.passive = false;
         return _this;
     }
-    AgCheckbox.prototype.postConstruct = function () {
+    AgCheckbox.prototype.preConstruct = function () {
         this.setTemplate(AgCheckbox.TEMPLATE);
+    };
+    AgCheckbox.prototype.postConstruct = function () {
         this.loadIcons();
         this.updateIcons();
-    };
-    AgCheckbox.prototype.attributesSet = function () {
-        _super.prototype.attributesSet.call(this);
-        var label = this.getAttribute('label');
-        if (label) {
-            this.eLabel.innerText = label;
+        if (this.props.label) {
+            this.eLabel.innerText = this.props.label;
         }
     };
     AgCheckbox.prototype.loadIcons = function () {
@@ -161,6 +159,12 @@ var AgCheckbox = (function (_super) {
         componentAnnotations_1.QuerySelector('.ag-checkbox-label'),
         __metadata("design:type", HTMLElement)
     ], AgCheckbox.prototype, "eLabel", void 0);
+    __decorate([
+        context_1.PreConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], AgCheckbox.prototype, "preConstruct", null);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

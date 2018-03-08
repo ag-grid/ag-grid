@@ -180,7 +180,7 @@ function scssTask() {
     };
 
     // Uncompressed
-    return gulp.src(['src/styles/*.scss', '!src/styles/_theme-common.scss'])
+    return gulp.src(['src/styles/*.scss', '!src/styles/_*.scss'])
         .pipe(named())
         .pipe(webpackStream({
             module: {

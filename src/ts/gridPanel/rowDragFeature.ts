@@ -102,7 +102,7 @@ export class RowDragFeature implements DropTarget {
     private normaliseForScroll(pixel: number): number {
         let gridPanelHasScrolls = this.gridOptionsWrapper.isNormalDomLayout();
         if (gridPanelHasScrolls) {
-            let pixelRange = this.gridPanel.getVerticalPixelRange();
+            let pixelRange = this.gridPanel.getVScrollPosition();
             return pixel + pixelRange.top;
         } else {
             return pixel;
@@ -112,7 +112,7 @@ export class RowDragFeature implements DropTarget {
     private checkCenterForScrolling(pixel: number): void {
 
         // scroll if the mouse is within 50px of the grid edge
-        let pixelRange = this.gridPanel.getVerticalPixelRange();
+        let pixelRange = this.gridPanel.getVScrollPosition();
 
         // console.log(`pixelRange = (${pixelRange.top}, ${pixelRange.bottom})`);
 

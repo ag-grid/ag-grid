@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v16.0.1
+// Type definitions for ag-grid v17.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
@@ -8,7 +8,7 @@ export declare class HeaderGroupWrapperComp extends Component {
     private static TEMPLATE;
     private gridOptionsWrapper;
     private columnController;
-    private dragService;
+    private horizontalResizeService;
     private dragAndDropService;
     private context;
     private componentRecipes;
@@ -18,14 +18,14 @@ export declare class HeaderGroupWrapperComp extends Component {
     private columnGroup;
     private dragSourceDropTarget;
     private pinned;
-    private eRoot;
     private eHeaderCellResize;
     private groupWidthStart;
     private childrenWidthStarts;
     private childColumnsDestroyFuncs;
-    constructor(columnGroup: ColumnGroup, eRoot: HTMLElement, dragSourceDropTarget: DropTarget, pinned: string);
+    constructor(columnGroup: ColumnGroup, dragSourceDropTarget: DropTarget, pinned: string);
     private postConstruct();
     private setupMovingCss();
+    private setupTooltip();
     private onColumnMovingChanged();
     private addAttributes();
     private appendHeaderGroupComp(displayName);
@@ -40,7 +40,7 @@ export declare class HeaderGroupWrapperComp extends Component {
     private destroyListenersOnChildrenColumns();
     private onWidthChanged();
     private setupResize();
-    onDragStart(): void;
-    onDragging(dragChange: any, finished: boolean): void;
+    onResizeStart(): void;
+    onResizing(finished: boolean, resizeAmount: any): void;
     private normaliseDragChange(dragChange);
 }

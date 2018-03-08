@@ -715,14 +715,14 @@
   .ag-blue .ag-paging-row-summary-panel {
     display: inline-block;
     width: 300px; }
-  .ag-blue .ag-tool-panel {
+  .ag-blue .ag-column-panel {
     background-color: #f6f6f6;
     border-bottom: 1px solid #9bc2e6;
     border-top: 1px solid #9bc2e6;
     color: #222; }
-  .ag-blue .ltr .ag-tool-panel {
+  .ag-blue .ltr .ag-column-panel {
     border-right: 1px solid #9bc2e6; }
-  .ag-blue .rtl .ag-tool-panel {
+  .ag-blue .rtl .ag-column-panel {
     border-left: 1px solid #9bc2e6; }
   .ag-blue .ag-status-bar {
     color: #222;
@@ -778,7 +778,7 @@
     border-bottom: 1px solid #9bc2e6;
     padding: 2px 4px 3px 4px;
     background-color: #f6f6f6; }
-  .ag-blue .ag-tool-panel .ag-column-select-panel {
+  .ag-blue .ag-column-panel .ag-column-select-panel {
     padding: 4px 4px 10px 4px;
     padding-left: 0;
     border-bottom: 1px solid #9bc2e6;

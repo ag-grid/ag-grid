@@ -24,17 +24,17 @@ export class PopupEditorWrapper extends Component implements ICellEditorComp {
     }
 
     public getGui(): HTMLElement {
-        
+
         // we call getGui() on child here (rather than in the constructor)
         // as we should wait for 'init' to be called on child first.
         if (!this.getGuiCalledOnChild) {
             this.appendChild(this.cellEditor.getGui());
             this.getGuiCalledOnChild = true;
         }
-        
+
         return super.getGui();
     }
-    
+
     public init(params: ICellEditorParams): void {
         this.params = params;
 

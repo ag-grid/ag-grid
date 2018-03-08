@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -75,7 +75,7 @@ var RowDragFeature = (function () {
     RowDragFeature.prototype.normaliseForScroll = function (pixel) {
         var gridPanelHasScrolls = this.gridOptionsWrapper.isNormalDomLayout();
         if (gridPanelHasScrolls) {
-            var pixelRange = this.gridPanel.getVerticalPixelRange();
+            var pixelRange = this.gridPanel.getVScrollPosition();
             return pixel + pixelRange.top;
         }
         else {
@@ -84,7 +84,7 @@ var RowDragFeature = (function () {
     };
     RowDragFeature.prototype.checkCenterForScrolling = function (pixel) {
         // scroll if the mouse is within 50px of the grid edge
-        var pixelRange = this.gridPanel.getVerticalPixelRange();
+        var pixelRange = this.gridPanel.getVScrollPosition();
         // console.log(`pixelRange = (${pixelRange.top}, ${pixelRange.bottom})`);
         this.needToMoveUp = pixel < (pixelRange.top + 50);
         this.needToMoveDown = pixel > (pixelRange.bottom - 50);

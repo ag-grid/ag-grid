@@ -1,13 +1,24 @@
 import {NumberSequence, Utils as _} from "../utils";
 import {Context} from "../context/context";
 import {BeanStub} from "../context/beanStub";
-import {IAfterGuiAttachedParams, IComponent} from "../interfaces/iComponent";
+import {IComponent} from "../interfaces/iComponent";
 import {AgEvent} from "../events";
 
 let compIdSequence = new NumberSequence();
 
 export interface VisibleChangedEvent extends AgEvent {
     visible: boolean;
+}
+
+interface AttrLists {
+    normal: NameValue [];
+    events: NameValue [];
+    bindings: NameValue [];
+}
+
+interface NameValue {
+    name: string;
+    value: string;
 }
 
 export class Component extends BeanStub implements IComponent<any> {
@@ -46,20 +57,121 @@ export class Component extends BeanStub implements IComponent<any> {
         let childCount = parentNode.childNodes ? parentNode.childNodes.length : 0;
         for (let i = 0; i < childCount; i++) {
             let childNode = parentNode.childNodes[i];
-            let newComponent = context.createComponent(<Element>childNode);
-            if (newComponent) {
-                this.swapComponentForNode(newComponent, parentNode, childNode);
+            let childComp = context.createComponent(<Element>childNode, (childComp)=> {
+                let attrList = this.getAttrLists(<Element>childNode);
+                this.copyAttributesFromNode(attrList, childComp.getGui());
+                this.createChildAttributes(attrList, childComp);
+                this.addEventListenersToComponent(attrList, childComp);
+            });
+            if (childComp) {
+                this.swapComponentForNode(childComp, parentNode, childNode);
+                // should remove this, get agCheckbox to use this.attributes
+                // childComp.instantiate(context);
             } else {
                 if (childNode.childNodes) {
                     this.instantiateRecurse(<Element>childNode, context);
-
+                }
+                if (childNode instanceof HTMLElement) {
+                    let attrList = this.getAttrLists(<Element>childNode);
+                    this.addEventListenersToElement(attrList, <HTMLElement>childNode);
                 }
             }
         }
     }
 
+    private getAttrLists(child: Element): AttrLists {
+        let res: AttrLists = {
+            bindings: [],
+            events: [],
+            normal: []
+        };
+        _.iterateNamedNodeMap(child.attributes,
+            (name: string, value: string) => {
+                let firstCharacter = name.substr(0,1);
+                if (firstCharacter==='(') {
+                    let eventName = name.replace('(', '').replace(')', '');
+                    res.events.push({
+                        name: eventName,
+                        value: value
+                    });
+                } else if (firstCharacter==='[') {
+                    let bindingName = name.replace('[', '').replace(']', '');
+                    res.bindings.push({
+                        name: bindingName,
+                        value: value
+                    });
+                } else {
+                    res.normal.push({
+                        name: name,
+                        value: value
+                    });
+                }
+            }
+        );
+        return res;
+    }
+
+    private addEventListenersToElement(attrLists: AttrLists, element: HTMLElement): void {
+        this.addEventListenerCommon(attrLists, (eventName: string, listener: (event?: any)=>void )=> {
+            this.addDestroyableEventListener(element, eventName, listener);
+        });
+    }
+
+    private addEventListenersToComponent(attrLists: AttrLists, component: Component): void {
+        this.addEventListenerCommon(attrLists, (eventName: string, listener: (event?: any)=>void )=> {
+            this.addDestroyableEventListener(component, eventName, listener);
+        });
+    }
+
+    private addEventListenerCommon(attrLists: AttrLists,
+                                   callback: (eventName: string, listener: (event?: any)=>void)=>void): void {
+        let methodAliases = this.getAgComponentMetaData('methods');
+
+        attrLists.events.forEach( nameValue => {
+            let methodName = nameValue.value;
+            let methodAlias = _.find(methodAliases, 'alias', methodName);
+
+            let methodNameToUse = _.exists(methodAlias) ? methodAlias.methodName : methodName;
+
+            let listener = (<any>this)[methodNameToUse];
+            if (typeof listener !== 'function') {
+                console.warn('ag-Grid: count not find callback ' + methodName);
+                return;
+            }
+
+            let eventCamelCase = _.hyphenToCamelCase(nameValue.name);
+
+            callback(eventCamelCase, listener.bind(this));
+        });
+    }
+
+    private createChildAttributes(attrLists: AttrLists, child: any): void {
+
+        let childAttributes: any = {};
+
+        attrLists.normal.forEach( nameValue => {
+            let nameCamelCase = _.hyphenToCamelCase(nameValue.name);
+            childAttributes[nameCamelCase] = nameValue.value;
+        });
+
+        attrLists.bindings.forEach( nameValue => {
+            let nameCamelCase = _.hyphenToCamelCase(nameValue.name);
+            childAttributes[nameCamelCase] = (<any>this)[nameValue.value];
+        });
+
+        child.props = childAttributes;
+    }
+
+    private copyAttributesFromNode(attrLists: AttrLists, childNode: Element): void {
+        attrLists.normal.forEach( nameValue => {
+            childNode.setAttribute(nameValue.name, nameValue.value);
+        });
+    }
+
     private swapComponentForNode(newComponent: Component, parentNode: Element, childNode: Node): void {
-        parentNode.replaceChild(newComponent.getGui(), childNode);
+        let eComponent = newComponent.getGui();
+        parentNode.replaceChild(eComponent, childNode);
+        parentNode.insertBefore(document.createComment(childNode.nodeName), eComponent);
         this.childComponents.push(newComponent);
         this.swapInComponentForQuerySelectors(newComponent, childNode);
     }
@@ -95,9 +207,6 @@ export class Component extends BeanStub implements IComponent<any> {
         (<any>this.eGui).__agComponent = this;
         this.addAnnotatedEventListeners();
         this.wireQuerySelectors();
-    }
-
-    public attributesSet(): void {
     }
 
     protected wireQuerySelectors(): void {
@@ -138,27 +247,38 @@ export class Component extends BeanStub implements IComponent<any> {
             return;
         }
 
+        let listenerMethods = this.getAgComponentMetaData('listenerMethods');
+
+        if (_.missingOrEmpty(listenerMethods)) { return; }
+
+        if (!this.annotatedEventListeners) {
+            this.annotatedEventListeners = [];
+        }
+
+        listenerMethods.forEach((eventListener: any) => {
+            let listener = (<any>this)[eventListener.methodName].bind(this);
+            this.eGui.addEventListener(eventListener.eventName, listener);
+            this.annotatedEventListeners.push({eventName: eventListener.eventName, listener: listener});
+        });
+    }
+
+    private getAgComponentMetaData(key: string): any[] {
+        let res: any[] = [];
+
         let thisProto: any = Object.getPrototypeOf(this);
 
         while (thisProto != null) {
             let metaData = thisProto.__agComponentMetaData;
             let currentProtoName = (thisProto.constructor).name;
 
-            if (metaData && metaData[currentProtoName] && metaData[currentProtoName].listenerMethods) {
-
-                if (!this.annotatedEventListeners) {
-                    this.annotatedEventListeners = [];
-                }
-
-                metaData[currentProtoName].listenerMethods.forEach((eventListener: any) => {
-                    let listener = (<any>this)[eventListener.methodName].bind(this);
-                    this.eGui.addEventListener(eventListener.eventName, listener);
-                    this.annotatedEventListeners.push({eventName: eventListener.eventName, listener: listener});
-                });
+            if (metaData && metaData[currentProtoName] && metaData[currentProtoName][key]) {
+                res = res.concat(metaData[currentProtoName][key]);
             }
 
             thisProto = Object.getPrototypeOf(thisProto);
         }
+
+        return res;
     }
 
     private removeAnnotatedEventListeners(): void {

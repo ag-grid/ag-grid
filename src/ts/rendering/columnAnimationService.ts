@@ -1,4 +1,4 @@
-import {Bean, Autowired} from "../context/context";
+import {Autowired, Bean} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {Utils as _} from "../utils";

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -61,6 +61,12 @@ var InfiniteRowModel = (function (_super) {
         this.setDatasource(this.gridOptionsWrapper.getDatasource());
         this.addDestroyFunc(function () { return _this.destroyCache(); });
     };
+    InfiniteRowModel.prototype.destroyDatasource = function () {
+        if (this.datasource && this.datasource.destroy) {
+            this.datasource.destroy();
+        }
+        this.datasource = null;
+    };
     InfiniteRowModel.prototype.isLastRowFound = function () {
         return this.infiniteCache ? this.infiniteCache.isMaxRowFound() : false;
     };
@@ -92,6 +98,7 @@ var InfiniteRowModel = (function (_super) {
         return constants_1.Constants.ROW_MODEL_TYPE_INFINITE;
     };
     InfiniteRowModel.prototype.setDatasource = function (datasource) {
+        this.destroyDatasource();
         this.datasource = datasource;
         // only reset if we have a valid datasource to working with
         if (datasource) {
@@ -342,6 +349,12 @@ var InfiniteRowModel = (function (_super) {
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], InfiniteRowModel.prototype, "init", null);
+    __decorate([
+        context_1.PreDestroy,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], InfiniteRowModel.prototype, "destroyDatasource", null);
     __decorate([
         context_1.PreDestroy,
         __metadata("design:type", Function),

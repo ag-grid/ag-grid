@@ -9,6 +9,7 @@ export class Constants {
 
     static ROW_BUFFER_SIZE = 10;
     static LAYOUT_INTERVAL = 500;
+    static BATCH_WAIT_MILLIS = 50;
 
     static EXPORT_TYPE_DRAG_COPY:string = 'dragCopy';
     static EXPORT_TYPE_CLIPBOARD:string = 'clipboard';
@@ -51,6 +52,6 @@ export class Constants {
 
     static PINNED_TOP = 'top';
     static PINNED_BOTTOM = 'bottom';
-    
+
 }
 

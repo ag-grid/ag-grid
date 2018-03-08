@@ -46,9 +46,12 @@ export class AgComponentUtils {
 
             getGui(): HTMLElement {
                 let callbackResult: string | HTMLElement = callback(this.params);
-                if (typeof callbackResult != 'string') return callbackResult;
-
-                return _.loadTemplate('<span>' + callbackResult + '</span>');
+                let type = typeof callbackResult;
+                if (type === 'string' || type === 'number' || type === 'boolean') {
+                    return _.loadTemplate('<span>' + callbackResult + '</span>');
+                } else {
+                    return <HTMLElement> callbackResult;
+                }
             }
 
             init?(params: ICellRendererParams): void {

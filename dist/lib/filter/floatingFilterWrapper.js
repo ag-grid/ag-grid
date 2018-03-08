@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33,6 +33,10 @@ var component_1 = require("../widgets/component");
 var componentAnnotations_1 = require("../widgets/componentAnnotations");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var beans_1 = require("../rendering/beans");
+var hoverFeature_1 = require("../headerRendering/hoverFeature");
+var events_1 = require("../events");
+var eventService_1 = require("../eventService");
+var columnHoverService_1 = require("../rendering/columnHoverService");
 var BaseFilterWrapperComp = (function (_super) {
     __extends(BaseFilterWrapperComp, _super);
     function BaseFilterWrapperComp() {
@@ -44,9 +48,19 @@ var BaseFilterWrapperComp = (function (_super) {
         this.enrichBody(base);
         this.setTemplateFromElement(base);
         this.setupWidth();
+        this.addColumnHoverListener();
+        this.addFeature(this.context, new hoverFeature_1.HoverFeature([this.column], this.getGui()));
         var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.column, this.getGui(), this.beans);
         setLeftFeature.init();
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
+    };
+    BaseFilterWrapperComp.prototype.addColumnHoverListener = function () {
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
+        this.onColumnHover();
+    };
+    BaseFilterWrapperComp.prototype.onColumnHover = function () {
+        var isHovered = this.columnHoverService.isHovered(this.column);
+        utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
     };
     BaseFilterWrapperComp.prototype.setupWidth = function () {
         this.addDestroyableEventListener(this.column, column_1.Column.EVENT_WIDTH_CHANGED, this.onColumnWidthChanged.bind(this));
@@ -59,6 +73,14 @@ var BaseFilterWrapperComp = (function (_super) {
         context_1.Autowired('context'),
         __metadata("design:type", context_1.Context)
     ], BaseFilterWrapperComp.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired('columnHoverService'),
+        __metadata("design:type", columnHoverService_1.ColumnHoverService)
+    ], BaseFilterWrapperComp.prototype, "columnHoverService", void 0);
+    __decorate([
+        context_1.Autowired('eventService'),
+        __metadata("design:type", eventService_1.EventService)
+    ], BaseFilterWrapperComp.prototype, "eventService", void 0);
     __decorate([
         context_1.Autowired('beans'),
         __metadata("design:type", beans_1.Beans)
@@ -94,7 +116,7 @@ var FloatingFilterWrapperComp = (function (_super) {
             }
             else {
                 floatingFilterBody.appendChild(floatingFilterCompUi);
-                body.appendChild(utils_1._.loadTemplate("<div class=\"ag-floating-filter-button\" aria-hidden=\"true\">\n                        <button ref=\"eButtonShowMainFilter\"></button>\n                </div>"));
+                body.appendChild(utils_1._.loadTemplate("<div class=\"ag-floating-filter-button\" aria-hidden=\"true\">\n                        <button type=\"button\" ref=\"eButtonShowMainFilter\"></button>\n                </div>"));
                 var eIcon = utils_1._.createIconNoSpan('filter', _this.gridOptionsWrapper, _this.column);
                 body.querySelector('button').appendChild(eIcon);
             }

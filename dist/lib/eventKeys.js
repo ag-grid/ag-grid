@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -47,10 +47,13 @@ var Events = (function () {
     Events.EVENT_PINNED_ROW_DATA_CHANGED = 'pinnedRowDataChanged';
     /** Range selection has changed */
     Events.EVENT_RANGE_SELECTION_CHANGED = 'rangeSelectionChanged';
+    /** For when the tool panel is shown / hidden */
+    Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED = 'toolPanelVisibleChanged';
     /** Model was updated - grid updates the drawn rows when this happens */
     Events.EVENT_MODEL_UPDATED = 'modelUpdated';
     Events.EVENT_CELL_CLICKED = 'cellClicked';
     Events.EVENT_CELL_DOUBLE_CLICKED = 'cellDoubleClicked';
+    Events.EVENT_CELL_MOUSE_DOWN = 'cellMouseDown';
     Events.EVENT_CELL_CONTEXT_MENU = 'cellContextMenu';
     Events.EVENT_CELL_VALUE_CHANGED = 'cellValueChanged';
     Events.EVENT_ROW_VALUE_CHANGED = 'rowValueChanged';
@@ -85,6 +88,7 @@ var Events = (function () {
     Events.EVENT_CELL_EDITING_STOPPED = 'cellEditingStopped';
     /** Main body of grid has scrolled, either horizontally or vertically */
     Events.EVENT_BODY_SCROLL = 'bodyScroll';
+    Events.EVENT_HEIGHT_SCALE_CHANGED = 'heightScaleChanged';
     /** The displayed page for pagination has changed. For example the data was filtered or sorted,
      * or the user has moved to a different page. */
     Events.EVENT_PAGINATION_CHANGED = 'paginationChanged';

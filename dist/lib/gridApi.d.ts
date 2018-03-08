@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v16.0.1
+// Type definitions for ag-grid v17.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnApi } from "./columnController/columnApi";
@@ -7,7 +7,7 @@ import { RowNode } from "./entities/rowNode";
 import { Column } from "./entities/column";
 import { IRowModel } from "./interfaces/iRowModel";
 import { AddRangeSelectionParams, RangeSelection } from "./interfaces/iRangeController";
-import { GridCell } from "./entities/gridCell";
+import { GridCell, GridCellDef } from "./entities/gridCell";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { IFilterComp } from "./interfaces/iFilter";
 import { CsvExportParams } from "./exportParams";
@@ -17,6 +17,8 @@ import { IEnterpriseDatasource } from "./interfaces/iEnterpriseDatasource";
 import { RowDataTransaction, RowNodeTransaction } from "./rowModels/inMemory/inMemoryRowModel";
 import { AlignedGridsService } from "./alignedGridsService";
 import { AgEvent, ColumnEventType } from "./events";
+import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
+import { ICellEditorComp } from "./rendering/cellEditors/iCellEditor";
 export interface StartEditingCellParams {
     rowIndex: number;
     colKey: string | Column;
@@ -24,10 +26,18 @@ export interface StartEditingCellParams {
     keyPress?: number;
     charPress?: string;
 }
-export interface RefreshCellsParams {
+export interface GetCellsParams {
     rowNodes?: RowNode[];
     columns?: (string | Column)[];
+}
+export interface RefreshCellsParams extends GetCellsParams {
     force?: boolean;
+}
+export interface FlashCellsParams extends GetCellsParams {
+}
+export interface GetCellRendererInstancesParams extends GetCellsParams {
+}
+export interface GetCellEditorInstancesParams extends GetCellsParams {
 }
 export interface RedrawRowsParams {
     rowNodes?: RowNode[];
@@ -66,7 +76,7 @@ export declare class GridApi {
     private cellRendererFactory;
     private cellEditorFactory;
     private valueCache;
-    private toolPanel;
+    private toolPanelComp;
     private inMemoryRowModel;
     private infinitePageRowModel;
     private enterpriseRowModel;
@@ -103,6 +113,7 @@ export declare class GridApi {
     getVerticalPixelRange(): any;
     refreshToolPanel(): void;
     refreshCells(params?: RefreshCellsParams): void;
+    flashCells(params?: FlashCellsParams): void;
     redrawRows(params?: RedrawRowsParams): void;
     timeFullRedraw(count?: number): void;
     refreshView(): void;
@@ -204,6 +215,9 @@ export declare class GridApi {
     setPopupParent(ePopupParent: HTMLElement): void;
     tabToNextCell(): boolean;
     tabToPreviousCell(): boolean;
+    getCellRendererInstances(params?: GetCellRendererInstancesParams): ICellRendererComp[];
+    getCellEditorInstances(params?: GetCellEditorInstancesParams): ICellEditorComp[];
+    getEditingCells(): GridCellDef[];
     stopEditing(cancel?: boolean): void;
     startEditingCell(params: StartEditingCellParams): void;
     addAggFunc(key: string, aggFunc: IAggFunc): void;
@@ -212,6 +226,7 @@ export declare class GridApi {
     }): void;
     clearAggFuncs(): void;
     updateRowData(rowDataTransaction: RowDataTransaction): RowNodeTransaction;
+    batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void;
     insertItemsAtIndex(index: number, items: any[], skipRefresh?: boolean): void;
     removeItems(rowNodes: RowNode[], skipRefresh?: boolean): void;
     addItems(items: any[], skipRefresh?: boolean): void;

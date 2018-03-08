@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -46,13 +46,13 @@ var GridCore = (function () {
         var eSouthPanel = this.createSouthPanel();
         var eastPanel;
         var westPanel;
-        if (this.toolPanel && !this.gridOptionsWrapper.isForPrint()) {
+        if (this.toolPanelComp && !this.gridOptionsWrapper.isForPrint()) {
             // if we are doing RTL, then the tool panel appears on the left
             if (this.gridOptionsWrapper.isEnableRtl()) {
-                westPanel = this.toolPanel.getGui();
+                westPanel = this.toolPanelComp.getGui();
             }
             else {
-                eastPanel = this.toolPanel.getGui();
+                eastPanel = this.toolPanelComp.getGui();
             }
         }
         var createTopPanelGui = this.createNorthPanel();
@@ -86,7 +86,8 @@ var GridCore = (function () {
         this.eGridDiv.appendChild(this.eRootPanel.getGui());
         // if using angular, watch for quickFilter changes
         if (this.$scope) {
-            this.$scope.$watch(this.quickFilterOnScope, function (newFilter) { return _this.filterManager.setQuickFilter(newFilter); });
+            var quickFilterUnregisterFn = this.$scope.$watch(this.quickFilterOnScope, function (newFilter) { return _this.filterManager.setQuickFilter(newFilter); });
+            this.destroyFunctions.push(quickFilterUnregisterFn);
         }
         if (!this.gridOptionsWrapper.isForPrint()) {
             this.addWindowResizeListener();
@@ -206,19 +207,18 @@ var GridCore = (function () {
         }
     };
     GridCore.prototype.showToolPanel = function (show) {
-        if (show && !this.toolPanel) {
-            console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
-            this.toolPanelShowing = false;
+        if (!this.toolPanelComp) {
+            if (show) {
+                console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
+            }
             return;
         }
-        this.toolPanelShowing = show;
-        if (this.toolPanel) {
-            this.toolPanel.setVisible(show);
-            this.eRootPanel.doLayout();
-        }
+        this.toolPanelComp.init();
+        this.toolPanelComp.showToolPanel(show);
+        this.eRootPanel.doLayout();
     };
     GridCore.prototype.isToolPanelShowing = function () {
-        return this.toolPanelShowing;
+        return this.toolPanelComp.isToolPanelShowing();
     };
     GridCore.prototype.destroy = function () {
         this.finished = true;
@@ -359,9 +359,9 @@ var GridCore = (function () {
         __metadata("design:type", Object)
     ], GridCore.prototype, "pivotCompFactory", void 0);
     __decorate([
-        context_1.Optional('toolPanel'),
-        __metadata("design:type", component_1.Component)
-    ], GridCore.prototype, "toolPanel", void 0);
+        context_1.Optional('toolPanelComp'),
+        __metadata("design:type", Object)
+    ], GridCore.prototype, "toolPanelComp", void 0);
     __decorate([
         context_1.Optional('statusBar'),
         __metadata("design:type", component_1.Component)

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -111,6 +111,11 @@ var DragService = (function () {
     // gets called whenever mouse down on any drag source
     DragService.prototype.onMouseDown = function (params, mouseEvent) {
         var _this = this;
+        // we ignore when shift key is pressed. this is for the range selection, as when
+        // user shift-clicks a cell, this should not be interpreted as the start of a drag.
+        if (mouseEvent.shiftKey) {
+            return;
+        }
         // if there are two elements with parent / child relationship, and both are draggable,
         // when we drag the child, we should NOT drag the parent. an example of this is row moving
         // and range selection - row moving should get preference when use drags the rowDrag component.

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v16.0.1
+// Type definitions for ag-grid v17.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
@@ -34,6 +34,7 @@ export declare class GroupCellRenderer extends Component implements ICellRendere
     private displayedGroup;
     private cellIsBlank;
     private indentClass;
+    private innerCellRenderer;
     constructor();
     init(params: GroupCellRendererParams): void;
     private isEmbeddedRowMismatch();
@@ -57,5 +58,6 @@ export declare class GroupCellRenderer extends Component implements ICellRendere
     onExpandOrContract(): void;
     private isExpandable();
     private showExpandAndContractIcons();
+    destroy(): void;
     refresh(): boolean;
 }

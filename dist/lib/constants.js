@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,6 +17,7 @@ var Constants = (function () {
     Constants.STEP_PIVOT = 5;
     Constants.ROW_BUFFER_SIZE = 10;
     Constants.LAYOUT_INTERVAL = 500;
+    Constants.BATCH_WAIT_MILLIS = 50;
     Constants.EXPORT_TYPE_DRAG_COPY = 'dragCopy';
     Constants.EXPORT_TYPE_CLIPBOARD = 'clipboard';
     Constants.EXPORT_TYPE_EXCEL = 'excel';

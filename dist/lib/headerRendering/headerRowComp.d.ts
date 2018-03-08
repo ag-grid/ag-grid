@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v16.0.1
+// Type definitions for ag-grid v17.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../widgets/component";
@@ -20,10 +20,9 @@ export declare class HeaderRowComp extends Component {
     private dept;
     private pinned;
     private headerComps;
-    private eRoot;
     private dropTarget;
     private type;
-    constructor(dept: number, type: HeaderRowType, pinned: string, eRoot: HTMLElement, dropTarget: DropTarget);
+    constructor(dept: number, type: HeaderRowType, pinned: string, dropTarget: DropTarget);
     forEachHeaderElement(callback: (comp: IComponent<any>) => void): void;
     destroy(): void;
     private removeAndDestroyChildComponents(idsToDestroy);

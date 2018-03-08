@@ -1,24 +1,14 @@
-// Type definitions for ag-grid v16.0.1
+// Type definitions for ag-grid v17.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BorderLayout } from "../layout/borderLayout";
 import { LoggerFactory } from "../logger";
 import { BeanStub } from "../context/beanStub";
 import { RowContainerComponent } from "../rendering/rowContainerComponent";
-export interface RowContainerComponents {
-    fullWidth: RowContainerComponent;
-    body: RowContainerComponent;
-    pinnedLeft: RowContainerComponent;
-    pinnedRight: RowContainerComponent;
-    floatingTop: RowContainerComponent;
-    floatingTopPinnedLeft: RowContainerComponent;
-    floatingTopPinnedRight: RowContainerComponent;
-    floatingTopFullWidth: RowContainerComponent;
-    floatingBottom: RowContainerComponent;
-    floatingBottomPinnedLeft: RowContainerComponent;
-    floatingBottomPinnedRight: RowContainerComponent;
-    floatingBottomFullWith: RowContainerComponent;
-}
+export declare type RowContainerComponentNames = 'fullWidth' | 'body' | 'pinnedLeft' | 'pinnedRight' | 'floatingTop' | 'floatingTopPinnedLeft' | 'floatingTopPinnedRight' | 'floatingTopFullWidth' | 'floatingBottom' | 'floatingBottomPinnedLeft' | 'floatingBottomPinnedRight' | 'floatingBottomFullWith';
+export declare type RowContainerComponents = {
+    [K in RowContainerComponentNames]: RowContainerComponent;
+};
 export declare class GridPanel extends BeanStub {
     private alignedGridsService;
     private gridOptionsWrapper;
@@ -46,6 +36,7 @@ export declare class GridPanel extends BeanStub {
     private valueService;
     private componentRecipes;
     private dragAndDropService;
+    private heightScaler;
     private layout;
     private logger;
     private eBodyViewport;
@@ -93,9 +84,13 @@ export declare class GridPanel extends BeanStub {
     private pinningLeft;
     private useAnimationFrame;
     agWire(loggerFactory: LoggerFactory): void;
-    getVerticalPixelRange(): {
+    getVScrollPosition(): {
         top: number;
         bottom: number;
+    };
+    getHScrollPosition(): {
+        left: number;
+        right: number;
     };
     destroy(): void;
     private onRowDataChanged();
@@ -112,6 +107,7 @@ export declare class GridPanel extends BeanStub {
     private addMouseListeners();
     private addKeyboardEvents();
     private addBodyViewportListener();
+    getBodyClientRect(): ClientRect;
     private getRowForEvent(event);
     private processKeyboardEvent(eventName, keyboardEvent);
     scrollToTop(): void;
@@ -154,6 +150,7 @@ export declare class GridPanel extends BeanStub {
     private queryHtmlElement(selector);
     private loadTemplate();
     private findElements();
+    private setupRowAnimationCssClass();
     private suppressScrollOnFloatingRow();
     getRowContainers(): RowContainerComponents;
     private addMouseWheelEventListeners();
@@ -174,6 +171,7 @@ export declare class GridPanel extends BeanStub {
     setVerticalScrollPosition(vScrollPosition: number): void;
     scrollHorizontally(pixels: number): number;
     scrollVertically(pixels: number): number;
+    private addPreventHeaderScroll();
     private addScrollListener();
     private onBodyScroll();
     private onBodyHorizontalScroll();

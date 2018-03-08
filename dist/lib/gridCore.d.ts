@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v16.0.1
+// Type definitions for ag-grid v17.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { LoggerFactory } from "./logger";
@@ -22,14 +22,13 @@ export declare class GridCore {
     private gridApi;
     private rowGroupCompFactory;
     private pivotCompFactory;
-    private toolPanel;
+    private toolPanelComp;
     private statusBar;
     private rowGroupComp;
     private pivotComp;
     private finished;
     private doingVirtualPaging;
     private eRootPanel;
-    private toolPanelShowing;
     private logger;
     private destroyFunctions;
     constructor(loggerFactory: LoggerFactory);

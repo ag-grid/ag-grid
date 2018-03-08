@@ -9,7 +9,7 @@ import {
 import {IHeaderComp, IHeaderParams} from "./headerComp";
 import {ColumnApi} from "../../columnController/columnApi";
 import {ColumnController} from "../../columnController/columnController";
-import {HorizontalDragService} from "../horizontalDragService";
+import {HorizontalResizeService} from "../horizontalResizeService";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {CssClassApplier} from "../cssClassApplier";
 import {SetLeftFeature} from "../../rendering/features/setLeftFeature";
@@ -24,6 +24,7 @@ import {SelectAllFeature} from "./selectAllFeature";
 import {Events} from "../../events";
 import {ColumnHoverService} from "../../rendering/columnHoverService";
 import {Beans} from "../../rendering/beans";
+import {HoverFeature} from "../hoverFeature";
 
 export class HeaderWrapperComp extends Component {
 
@@ -37,7 +38,7 @@ export class HeaderWrapperComp extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('horizontalDragService') private horizontalDragService: HorizontalDragService;
+    @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
     @Autowired('context') private context: Context;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -52,16 +53,14 @@ export class HeaderWrapperComp extends Component {
     @RefSelector('cbSelectAll') private cbSelectAll: AgCheckbox;
 
     private column: Column;
-    private eRoot: HTMLElement;
     private dragSourceDropTarget: DropTarget;
     private pinned: string;
 
     private startWidth: number;
 
-    constructor(column: Column, eRoot: HTMLElement, dragSourceDropTarget: DropTarget, pinned: string) {
+    constructor(column: Column, dragSourceDropTarget: DropTarget, pinned: string) {
         super(HeaderWrapperComp.TEMPLATE);
         this.column = column;
-        this.eRoot = eRoot;
         this.dragSourceDropTarget = dragSourceDropTarget;
         this.pinned = pinned;
     }
@@ -87,6 +86,8 @@ export class HeaderWrapperComp extends Component {
         this.setupMenuClass();
         this.setupSortableClass(enableSorting);
         this.addColumnHoverListener();
+
+        this.addFeature(this.context, new HoverFeature([this.column], this.getGui()));
 
         this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_ACTIVE_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
@@ -214,14 +215,14 @@ export class HeaderWrapperComp extends Component {
             return;
         }
 
-        this.horizontalDragService.addDragHandling({
-            eDraggableElement: this.eResize,
-            eBody: this.eRoot,
-            cursor: 'col-resize',
-            startAfterPixels: 0,
-            onDragStart: this.onDragStart.bind(this),
-            onDragging: this.onDragging.bind(this)
+        let finishedWithResizeFunc = this.horizontalResizeService.addResizeBar({
+            eResizeBar: this.eResize,
+            onResizeStart: this.onResizeStart.bind(this),
+            onResizing: this.onResizing.bind(this, false),
+            onResizeEnd: this.onResizing.bind(this, true)
         });
+
+        this.addDestroyFunc(finishedWithResizeFunc);
 
         let weWantAutoSize = !this.gridOptionsWrapper.isSuppressAutoSize() && !colDef.suppressAutoSize;
         if (weWantAutoSize) {
@@ -231,13 +232,13 @@ export class HeaderWrapperComp extends Component {
         }
     }
 
-    public onDragging(dragChange: number, finished: boolean): void {
-        let dragChangeNormalised = this.normaliseDragChange(dragChange);
-        let newWidth = this.startWidth + dragChangeNormalised;
+    public onResizing(finished: boolean, resizeAmount: number): void {
+        let resizeAmountNormalised = this.normaliseResizeAmount(resizeAmount);
+        let newWidth = this.startWidth + resizeAmountNormalised;
         this.columnController.setColumnWidth(this.column, newWidth, finished, "uiColumnDragged");
     }
 
-    public onDragStart(): void {
+    public onResizeStart(): void {
         this.startWidth = this.column.getActualWidth();
     }
 
@@ -279,7 +280,7 @@ export class HeaderWrapperComp extends Component {
 
     // optionally inverts the drag, depending on pinned and RTL
     // note - this method is duplicated in RenderedHeaderGroupCell - should refactor out?
-    private normaliseDragChange(dragChange: number): number {
+    private normaliseResizeAmount(dragChange: number): number {
         let result = dragChange;
         if (this.gridOptionsWrapper.isEnableRtl()) {
             // for RTL, dragging left makes the col bigger, except when pinning left

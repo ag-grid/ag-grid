@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -110,6 +110,9 @@ var SelectAllFeature = (function (_super) {
         var callback = function (node) {
             if (node.isSelected()) {
                 selectedCount++;
+            }
+            else if (!node.selectable) {
+                // don't count non-selectable nodes!
             }
             else {
                 notSelectedCount++;

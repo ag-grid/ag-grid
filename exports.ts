@@ -7,6 +7,7 @@ globalObj.HTMLButtonElement = typeof HTMLButtonElement === 'undefined' ? {} : HT
 globalObj.HTMLSelectElement = typeof HTMLSelectElement === 'undefined' ? {} : HTMLSelectElement;
 globalObj.HTMLInputElement = typeof HTMLInputElement === 'undefined' ? {} : HTMLInputElement;
 globalObj.Node = typeof Node === 'undefined' ? {} : Node;
+globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 
 // columnController
 export {BalancedColumnTreeBuilder} from "./dist/lib/columnController/balancedColumnTreeBuilder";
@@ -18,6 +19,7 @@ export {GroupInstanceIdCreator} from "./dist/lib/columnController/groupInstanceI
 
 // components
 export {ComponentUtil} from "./dist/lib/components/componentUtil";
+
 export {ColDefUtil} from "./dist/lib/components/colDefUtil";
 export {ComponentProvider} from "./dist/lib/components/framework/componentProvider";
 export {initialiseAgGridWithAngular1} from "./dist/lib/components/agGridNg1";
@@ -90,7 +92,7 @@ export {CssClassApplier} from "./dist/lib/headerRendering/cssClassApplier";
 export {HeaderContainer} from "./dist/lib/headerRendering/headerContainer";
 export {HeaderRenderer} from "./dist/lib/headerRendering/headerRenderer";
 export {HeaderRowComp} from "./dist/lib/headerRendering/headerRowComp";
-export {HorizontalDragService} from "./dist/lib/headerRendering/horizontalDragService";
+export {HorizontalResizeService} from "./dist/lib/headerRendering/horizontalResizeService";
 export {MoveColumnController} from "./dist/lib/headerRendering/moveColumnController";
 export {StandardMenuFactory} from "./dist/lib/headerRendering/standardMenu";
 
@@ -187,6 +189,7 @@ export {FocusedCellController} from "./dist/lib/focusedCellController";
 export {defaultGroupComparator} from "./dist/lib/functions";
 export {GridOptionsWrapper} from "./dist/lib/gridOptionsWrapper";
 export {EventService} from "./dist/lib/eventService";
+export {SelectableService} from "./dist/lib/rowNodes/selectableService";
 export {GridCore} from "./dist/lib/gridCore";
 export {Logger} from "./dist/lib/logger";
 export {SelectionController} from "./dist/lib/selectionController";
@@ -217,6 +220,8 @@ export {
     GetContextMenuItemsParams,
     GetContextMenuItems,
     GetDataPath,
+    IsRowMaster,
+    IsRowSelectable,
     MenuItemDef,
     GetNodeChildDetails,
     NodeChildDetails,
@@ -265,8 +270,8 @@ export {AgEvent, AgGridEvent, ModelUpdatedEvent, ColumnPivotModeChangedEvent, Vi
     ColumnPivotChangedEvent, ColumnRowGroupChangedEvent, ColumnValueChangedEvent, ColumnMovedEvent, ColumnVisibleEvent,
     ColumnPinnedEvent, RowEvent, RowGroupOpenedEvent, RowValueChangedEvent, RowSelectedEvent, VirtualRowRemovedEvent,
     RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, CellEvent, CellClickedEvent,
-    CellDoubleClickedEvent, CellMouseOverEvent, CellMouseOutEvent, CellContextMenuEvent, CellEditingStartedEvent,
+    CellMouseDownEvent, CellDoubleClickedEvent, CellMouseOverEvent, CellMouseOutEvent, CellContextMenuEvent, CellEditingStartedEvent,
     CellEditingStoppedEvent, CellValueChangedEvent, ColumnRequestEvent, ColumnRowGroupChangeRequestEvent,
     ColumnPivotChangeRequestEvent, ColumnValueChangeRequestEvent, ColumnAggFuncChangeRequestEvent, ScrollVisibilityChangedEvent,
-    RowDragEvent, RowDragLeaveEvent, RowDragEnterEvent, RowDragEndEvent, RowDragMoveEvent}
+    RowDragEvent, RowDragLeaveEvent, RowDragEnterEvent, RowDragEndEvent, RowDragMoveEvent, ToolPanelVisibleChanged}
     from "./dist/lib/events";

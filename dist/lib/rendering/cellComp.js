@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v16.0.1
+ * @version v17.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -64,8 +64,8 @@ var CellComp = (function (_super) {
         var left = col.getLeft();
         var valueToRender = this.getInitialValueToRender();
         var valueSanitised = utils_1._.get(this.column, 'colDef.template', null) ? valueToRender : utils_1._.escape(valueToRender);
-        var tooltip = this.getToolTip();
-        var tooltipSanitised = utils_1._.escape(tooltip);
+        this.tooltip = this.getToolTip();
+        var tooltipSanitised = utils_1._.escape(this.tooltip);
         var colIdSanitised = utils_1._.escape(col.getId());
         var wrapperStartTemplate;
         var wrapperEndTemplate;
@@ -256,6 +256,12 @@ var CellComp = (function (_super) {
     CellComp.prototype.isSuppressNavigable = function () {
         return this.column.isSuppressNavigable(this.rowNode);
     };
+    CellComp.prototype.getCellRenderer = function () {
+        return this.cellRenderer;
+    };
+    CellComp.prototype.getCellEditor = function () {
+        return this.cellEditor;
+    };
     // + stop editing {forceRefresh: true, suppressFlash: true}
     // + event cellChanged {}
     // + cellRenderer.params.refresh() {} -> method passes 'as is' to the cellRenderer, so params could be anything
@@ -267,7 +273,7 @@ var CellComp = (function (_super) {
             return;
         }
         var newData = params && params.newData;
-        var suppressFlash = params && params.suppressFlash;
+        var suppressFlash = (params && params.suppressFlash) || this.column.getColDef().suppressCellFlash;
         var forceRefresh = params && params.forceRefresh;
         var oldValue = this.value;
         this.getValueAndFormat();
@@ -293,22 +299,25 @@ var CellComp = (function (_super) {
             if (!cellRendererRefreshed) {
                 this.replaceContentsAfterRefresh();
             }
-            this.refreshToolTip();
             if (!suppressFlash) {
-                this.flashCell();
+                var flashCell = this.beans.gridOptionsWrapper.isEnableCellChangeFlash()
+                    || this.column.getColDef().enableCellChangeFlash;
+                if (flashCell) {
+                    this.flashCell();
+                }
             }
             // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
             this.postProcessStylesFromColDef();
             this.postProcessClassesFromColDef();
         }
+        this.refreshToolTip();
         // we do cellClassRules even if the value has not changed, so that users who have rules that
         // look at other parts of the row (where the other part of the row might of changed) will work.
         this.postProcessCellClassRules();
     };
+    // user can also call this via API
     CellComp.prototype.flashCell = function () {
-        if (this.beans.gridOptionsWrapper.isEnableCellChangeFlash() || this.column.getColDef().enableCellChangeFlash) {
-            this.animateCell('data-changed');
-        }
+        this.animateCell('data-changed');
     };
     CellComp.prototype.animateCell = function (cssName) {
         var fullName = 'ag-cell-' + cssName;
@@ -445,12 +454,16 @@ var CellComp = (function (_super) {
         return result === true || result === undefined;
     };
     CellComp.prototype.refreshToolTip = function () {
-        var tooltip = this.getToolTip();
-        if (utils_1._.exists(tooltip)) {
-            this.eParentOfValue.setAttribute('title', tooltip);
-        }
-        else {
-            this.eParentOfValue.removeAttribute('title');
+        var newTooltip = this.getToolTip();
+        if (this.tooltip !== newTooltip) {
+            this.tooltip = newTooltip;
+            if (utils_1._.exists(newTooltip)) {
+                var tooltipSanitised = utils_1._.escape(this.tooltip);
+                this.eParentOfValue.setAttribute('title', tooltipSanitised);
+            }
+            else {
+                this.eParentOfValue.removeAttribute('title');
+            }
         }
     };
     CellComp.prototype.valuesAreEqual = function (val1, val2) {
@@ -661,7 +674,7 @@ var CellComp = (function (_super) {
                 this.onCellClicked(mouseEvent);
                 break;
             case 'mousedown':
-                this.onMouseDown();
+                this.onMouseDown(mouseEvent);
                 break;
             case 'dblclick':
                 this.onCellDoubleClicked(mouseEvent);
@@ -707,10 +720,12 @@ var CellComp = (function (_super) {
     CellComp.prototype.onMouseOut = function (mouseEvent) {
         var cellMouseOutEvent = this.createEvent(mouseEvent, events_1.Events.EVENT_CELL_MOUSE_OUT);
         this.beans.eventService.dispatchEvent(cellMouseOutEvent);
+        this.beans.columnHoverService.clearMouseOver();
     };
     CellComp.prototype.onMouseOver = function (mouseEvent) {
         var cellMouseOverEvent = this.createEvent(mouseEvent, events_1.Events.EVENT_CELL_MOUSE_OVER);
         this.beans.eventService.dispatchEvent(cellMouseOverEvent);
+        this.beans.columnHoverService.setMouseOver([this.column]);
     };
     CellComp.prototype.onCellDoubleClicked = function (mouseEvent) {
         var colDef = this.column.getColDef();
@@ -983,9 +998,24 @@ var CellComp = (function (_super) {
         if (this.editingCell) {
             this.stopRowOrCellEdit();
         }
-        this.beans.rowRenderer.navigateToNextCell(event, key, this.gridCell, true);
+        if (event.shiftKey && this.rangeSelectionEnabled) {
+            this.onShiftRangeSelect(key);
+        }
+        else {
+            this.beans.rowRenderer.navigateToNextCell(event, key, this.gridCell, true);
+        }
         // if we don't prevent default, the grid will scroll with the navigation keys
         event.preventDefault();
+    };
+    CellComp.prototype.onShiftRangeSelect = function (key) {
+        this.beans.rangeController.extendRangeInDirection(this.gridCell, key);
+        var ranges = this.beans.rangeController.getCellRanges();
+        // this should never happen, as extendRangeFromCell should always have one range after getting called
+        if (utils_1._.missing(ranges) || ranges.length !== 1) {
+            return;
+        }
+        var endCell = ranges[0].end;
+        this.beans.rowRenderer.ensureCellVisible(endCell);
     };
     CellComp.prototype.onTabKeyDown = function (event) {
         if (this.beans.gridOptionsWrapper.isSuppressTabbing()) {
@@ -1003,7 +1033,12 @@ var CellComp = (function (_super) {
             this.stopEditingAndFocus();
         }
         else {
-            this.startRowOrCellEdit(constants_1.Constants.KEY_ENTER);
+            if (this.beans.gridOptionsWrapper.isEnterMovesDown()) {
+                this.beans.rowRenderer.navigateToNextCell(null, constants_1.Constants.KEY_DOWN, this.gridCell, false);
+            }
+            else {
+                this.startRowOrCellEdit(constants_1.Constants.KEY_ENTER);
+            }
         }
     };
     CellComp.prototype.navigateAfterEdit = function () {
@@ -1061,7 +1096,7 @@ var CellComp = (function (_super) {
         // prevent default as space key, by default, moves browser scroll down
         event.preventDefault();
     };
-    CellComp.prototype.onMouseDown = function () {
+    CellComp.prototype.onMouseDown = function (mouseEvent) {
         // we pass false to focusCell, as we don't want the cell to focus
         // also get the browser focus. if we did, then the cellRenderer could
         // have a text field in it, for example, and as the user clicks on the
@@ -1074,11 +1109,18 @@ var CellComp = (function (_super) {
         // we set a new range
         if (this.beans.rangeController) {
             var thisCell = this.gridCell;
-            var cellAlreadyInRange = this.beans.rangeController.isCellInAnyRange(thisCell);
-            if (!cellAlreadyInRange) {
-                this.beans.rangeController.setRangeToCell(thisCell);
+            if (mouseEvent.shiftKey) {
+                this.beans.rangeController.extendRangeToCell(thisCell);
+            }
+            else {
+                var cellAlreadyInRange = this.beans.rangeController.isCellInAnyRange(thisCell);
+                if (!cellAlreadyInRange) {
+                    this.beans.rangeController.setRangeToCell(thisCell);
+                }
             }
         }
+        var cellMouseDownEvent = this.createEvent(mouseEvent, events_1.Events.EVENT_CELL_MOUSE_DOWN);
+        this.beans.eventService.dispatchEvent(cellMouseDownEvent);
     };
     // returns true if on iPad and this is second 'click' event in 200ms
     CellComp.prototype.isDoubleClickOnIPad = function () {

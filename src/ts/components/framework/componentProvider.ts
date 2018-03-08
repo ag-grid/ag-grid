@@ -27,6 +27,7 @@ import {LoadingOverlayComponent} from "../../rendering/overlays/loadingOverlayCo
 import {NoRowsOverlayComponent} from "../../rendering/overlays/noRowsOverlayComponent";
 import {GridOptions} from "../../entities/gridOptions";
 import {_} from "../../utils";
+import {TestingSandbox} from "../../widgets/testingSandbox";
 
 export enum RegisteredComponentSource {
     DEFAULT, REGISTERED
@@ -94,6 +95,9 @@ export class ComponentProvider {
         agTextColumnFilter: TextFilter,
         agNumberColumnFilter: NumberFilter,
         agDateColumnFilter: DateFilter,
+
+        // a text component Niall is working on, for some PoC work
+        agTestingSandbox: TestingSandbox,
 
         //overlays
         agLoadingOverlay: LoadingOverlayComponent,

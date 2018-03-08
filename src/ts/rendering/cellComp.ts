@@ -8,7 +8,7 @@ import {
     CellDoubleClickedEvent,
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
-    CellEvent,
+    CellEvent, CellMouseDownEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
     Events,
@@ -23,7 +23,6 @@ import {NewValueParams, SuppressKeyboardEventParams} from "../entities/colDef";
 import {Beans} from "./beans";
 import {RowComp} from "./rowComp";
 import {RowDragComp} from "./rowDragComp";
-
 
 export class CellComp extends Component {
 
@@ -73,6 +72,8 @@ export class CellComp extends Component {
     private valueFormatted: any;
     private colsSpanning: Column[];
 
+    private tooltip: any;
+
     private scope: null;
 
     // every time we go into edit mode, or back again, this gets incremented.
@@ -118,8 +119,8 @@ export class CellComp extends Component {
 
         let valueToRender = this.getInitialValueToRender();
         let valueSanitised = _.get(this.column, 'colDef.template', null) ? valueToRender : _.escape(valueToRender);
-        let tooltip = this.getToolTip();
-        let tooltipSanitised = _.escape(tooltip);
+        this.tooltip = this.getToolTip();
+        let tooltipSanitised = _.escape(this.tooltip);
         let colIdSanitised = _.escape(col.getId());
 
         let wrapperStartTemplate: string;
@@ -174,13 +175,13 @@ export class CellComp extends Component {
         // if not doing enterprise, then range selection service would be missing
         // so need to check before trying to use it
         if (this.rangeSelectionEnabled) {
-            this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this))
+            this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
         }
     }
 
     private onColumnHover(): void {
         let isHovered = this.beans.columnHoverService.isHovered(this.column);
-        _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered)
+        _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
     }
 
     private onCellChanged(event: CellChangedEvent): void {
@@ -336,6 +337,14 @@ export class CellComp extends Component {
         return this.column.isSuppressNavigable(this.rowNode);
     }
 
+    public getCellRenderer(): ICellRendererComp {
+        return this.cellRenderer;
+    }
+
+    public getCellEditor(): ICellEditorComp {
+        return this.cellEditor;
+    }
+
     // + stop editing {forceRefresh: true, suppressFlash: true}
     // + event cellChanged {}
     // + cellRenderer.params.refresh() {} -> method passes 'as is' to the cellRenderer, so params could be anything
@@ -349,7 +358,7 @@ export class CellComp extends Component {
         }
 
         let newData = params && params.newData;
-        let suppressFlash = params && params.suppressFlash;
+        let suppressFlash = (params && params.suppressFlash) || this.column.getColDef().suppressCellFlash;
         let forceRefresh = params && params.forceRefresh;
 
         let oldValue = this.value;
@@ -381,10 +390,12 @@ export class CellComp extends Component {
                 this.replaceContentsAfterRefresh();
             }
 
-            this.refreshToolTip();
-
             if (!suppressFlash) {
-                this.flashCell();
+                let flashCell = this.beans.gridOptionsWrapper.isEnableCellChangeFlash()
+                    || this.column.getColDef().enableCellChangeFlash;
+                if (flashCell) {
+                    this.flashCell();
+                }
             }
 
             // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
@@ -392,15 +403,16 @@ export class CellComp extends Component {
             this.postProcessClassesFromColDef();
         }
 
+        this.refreshToolTip();
+
         // we do cellClassRules even if the value has not changed, so that users who have rules that
         // look at other parts of the row (where the other part of the row might of changed) will work.
         this.postProcessCellClassRules();
     }
 
-    private flashCell(): void {
-        if (this.beans.gridOptionsWrapper.isEnableCellChangeFlash() || this.column.getColDef().enableCellChangeFlash) {
-            this.animateCell('data-changed');
-        }
+    // user can also call this via API
+    public flashCell(): void {
+        this.animateCell('data-changed');
     }
 
     private animateCell(cssName: string): void {
@@ -556,11 +568,15 @@ export class CellComp extends Component {
     }
 
     private refreshToolTip() {
-        let tooltip = this.getToolTip();
-        if (_.exists(tooltip)) {
-            this.eParentOfValue.setAttribute('title', tooltip);
-        } else {
-            this.eParentOfValue.removeAttribute('title');
+        let newTooltip = this.getToolTip();
+        if (this.tooltip !== newTooltip) {
+            this.tooltip = newTooltip;
+            if (_.exists(newTooltip)) {
+                let tooltipSanitised = _.escape(this.tooltip);
+                this.eParentOfValue.setAttribute('title', tooltipSanitised);
+            } else {
+                this.eParentOfValue.removeAttribute('title');
+            }
         }
     }
 
@@ -582,7 +598,7 @@ export class CellComp extends Component {
         let data = this.rowNode.data;
         if (colDef.tooltipField && _.exists(data)) {
             return _.getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
-        } else if (colDef.tooltip){
+        } else if (colDef.tooltip) {
             return colDef.tooltip({
                 value: this.value,
                 valueFormatted: this.valueFormatted,
@@ -593,7 +609,7 @@ export class CellComp extends Component {
                 $scope: this.scope,
                 context: this.beans.gridOptionsWrapper.getContext(),
                 rowIndex: this.gridCell.rowIndex
-            })
+            });
         } else {
             return null;
         }
@@ -737,7 +753,7 @@ export class CellComp extends Component {
             valueFormatted: this.valueFormatted,
             getValue: this.getValue.bind(this),
             setValue: (value: any) => {
-                this.beans.valueService.setValue(this.rowNode, this.column, value)
+                this.beans.valueService.setValue(this.rowNode, this.column, value);
             },
             formatValue: this.formatValue.bind(this),
             data: this.rowNode.data,
@@ -813,7 +829,7 @@ export class CellComp extends Component {
                 this.onCellClicked(mouseEvent);
                 break;
             case 'mousedown':
-                this.onMouseDown();
+                this.onMouseDown(mouseEvent);
                 break;
             case 'dblclick':
                 this.onCellDoubleClicked(mouseEvent);
@@ -865,11 +881,13 @@ export class CellComp extends Component {
     private onMouseOut(mouseEvent: MouseEvent): void {
         let cellMouseOutEvent: CellMouseOutEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_MOUSE_OUT);
         this.beans.eventService.dispatchEvent(cellMouseOutEvent);
+        this.beans.columnHoverService.clearMouseOver();
     }
 
     private onMouseOver(mouseEvent: MouseEvent): void {
         let cellMouseOverEvent: CellMouseOverEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_MOUSE_OVER);
         this.beans.eventService.dispatchEvent(cellMouseOverEvent);
+        this.beans.columnHoverService.setMouseOver([this.column]);
     }
 
     private onCellDoubleClicked(mouseEvent: MouseEvent) {
@@ -1184,9 +1202,26 @@ export class CellComp extends Component {
         if (this.editingCell) {
             this.stopRowOrCellEdit();
         }
-        this.beans.rowRenderer.navigateToNextCell(event, key, this.gridCell, true);
+        if (event.shiftKey && this.rangeSelectionEnabled) {
+            this.onShiftRangeSelect(key);
+        } else {
+            this.beans.rowRenderer.navigateToNextCell(event, key, this.gridCell, true);
+        }
         // if we don't prevent default, the grid will scroll with the navigation keys
         event.preventDefault();
+    }
+
+    private onShiftRangeSelect(key: number): void {
+        this.beans.rangeController.extendRangeInDirection(this.gridCell, key);
+
+        let ranges = this.beans.rangeController.getCellRanges();
+
+        // this should never happen, as extendRangeFromCell should always have one range after getting called
+        if (_.missing(ranges) || ranges.length!==1) { return; }
+
+        let endCell = ranges[0].end;
+
+        this.beans.rowRenderer.ensureCellVisible(endCell);
     }
 
     private onTabKeyDown(event: KeyboardEvent): void {
@@ -1206,7 +1241,11 @@ export class CellComp extends Component {
         if (this.editingCell || this.rowComp.isEditing()) {
             this.stopEditingAndFocus();
         } else {
-            this.startRowOrCellEdit(Constants.KEY_ENTER);
+            if (this.beans.gridOptionsWrapper.isEnterMovesDown()) {
+                this.beans.rowRenderer.navigateToNextCell(null, Constants.KEY_DOWN, this.gridCell, false);
+            } else {
+                this.startRowOrCellEdit(Constants.KEY_ENTER);
+            }
         }
     }
 
@@ -1270,7 +1309,7 @@ export class CellComp extends Component {
         event.preventDefault();
     }
 
-    private onMouseDown(): void {
+    private onMouseDown(mouseEvent: MouseEvent): void {
         // we pass false to focusCell, as we don't want the cell to focus
         // also get the browser focus. if we did, then the cellRenderer could
         // have a text field in it, for example, and as the user clicks on the
@@ -1284,11 +1323,18 @@ export class CellComp extends Component {
         // we set a new range
         if (this.beans.rangeController) {
             let thisCell = this.gridCell;
-            let cellAlreadyInRange = this.beans.rangeController.isCellInAnyRange(thisCell);
-            if (!cellAlreadyInRange) {
-                this.beans.rangeController.setRangeToCell(thisCell);
+            if (mouseEvent.shiftKey) {
+                this.beans.rangeController.extendRangeToCell(thisCell);
+            } else {
+                let cellAlreadyInRange = this.beans.rangeController.isCellInAnyRange(thisCell);
+                if (!cellAlreadyInRange) {
+                    this.beans.rangeController.setRangeToCell(thisCell);
+                }
             }
         }
+
+        let cellMouseDownEvent: CellMouseDownEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_MOUSE_DOWN);
+        this.beans.eventService.dispatchEvent(cellMouseDownEvent);
     }
 
     // returns true if on iPad and this is second 'click' event in 200ms

@@ -36,6 +36,7 @@ import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
 import {PaginationProxy} from "./rowModels/paginationProxy";
 import {IEnterpriseRowModel} from "./interfaces/iEnterpriseRowModel";
 import {
+    BatchTransactionItem,
     InMemoryRowModel, RefreshModelParams, RowDataTransaction,
     RowNodeTransaction
 } from "./rowModels/inMemory/inMemoryRowModel";
@@ -47,6 +48,8 @@ import {AgEvent, ColumnEventType} from "./events";
 import {IToolPanel} from "./interfaces/iToolPanel";
 import {GridOptions} from "./entities/gridOptions";
 import {IContextMenuFactory} from "./interfaces/iContextMenuFactory";
+import {ICellRendererComp} from "./rendering/cellRenderers/iCellRenderer";
+import {ICellEditorComp} from "./rendering/cellEditors/iCellEditor";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -56,11 +59,20 @@ export interface StartEditingCellParams {
     charPress?: string;
 }
 
-export interface RefreshCellsParams {
+export interface GetCellsParams {
     rowNodes?: RowNode[];
     columns?: (string|Column)[];
+}
+
+export interface RefreshCellsParams extends GetCellsParams {
     force?: boolean;
 }
+
+export interface FlashCellsParams extends GetCellsParams {}
+
+export interface GetCellRendererInstancesParams extends GetCellsParams {}
+
+export interface GetCellEditorInstancesParams extends GetCellsParams {}
 
 export interface RedrawRowsParams {
     rowNodes?: RowNode[];
@@ -103,7 +115,7 @@ export class GridApi {
     @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
     @Autowired('valueCache') private valueCache: ValueCache;
-    @Optional('toolPanel') private toolPanel: IToolPanel;
+    @Optional('toolPanelComp') private toolPanelComp: IToolPanel;
 
     private inMemoryRowModel: InMemoryRowModel;
     private infinitePageRowModel: InfiniteRowModel;
@@ -283,12 +295,12 @@ export class GridApi {
     }
 
     public getVerticalPixelRange(): any {
-        return this.gridPanel.getVerticalPixelRange();
+        return this.gridPanel.getVScrollPosition();
     }
 
     public refreshToolPanel(): void {
-        if (this.toolPanel) {
-            this.toolPanel.refresh();
+        if (this.toolPanelComp) {
+            this.toolPanelComp.refresh();
         }
     }
 
@@ -299,6 +311,10 @@ export class GridApi {
             return;
         }
         this.rowRenderer.refreshCells(params);
+    }
+
+    public flashCells(params: FlashCellsParams = {}): void {
+        this.rowRenderer.flashCells(params);
     }
 
     public redrawRows(params: RedrawRowsParams = {}): void {
@@ -875,6 +891,18 @@ export class GridApi {
         return this.rowRenderer.tabToNextCell(true);
     }
 
+    public getCellRendererInstances(params: GetCellRendererInstancesParams = {}): ICellRendererComp[] {
+        return this.rowRenderer.getCellRendererInstances(params);
+    }
+
+    public getCellEditorInstances(params: GetCellEditorInstancesParams = {}): ICellEditorComp[] {
+        return this.rowRenderer.getCellEditorInstances(params);
+    }
+
+    public getEditingCells(): GridCellDef[] {
+        return this.rowRenderer.getEditingCells();
+    }
+
     public stopEditing(cancel: boolean = false): void {
         this.rowRenderer.stopEditing(cancel);
     }
@@ -932,6 +960,14 @@ export class GridApi {
         }
 
         return res;
+    }
+
+    public batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction)=>void): void {
+        if (!this.inMemoryRowModel) {
+            console.error('ag-Grid: api.batchUpdateRowData() only works with InMemoryRowModel.');
+            return;
+        }
+        this.inMemoryRowModel.batchUpdateRowData(rowDataTransaction, callback);
     }
 
     public insertItemsAtIndex(index: number, items: any[], skipRefresh = false): void {
@@ -1124,11 +1160,11 @@ export class GridApi {
 
     /*
     Taking these out, as we want to reconsider how we register components
-    
+
     public addCellRenderer(key: string, cellRenderer: {new(): ICellRenderer} | ICellRendererFunc): void {
         this.cellRendererFactory.addCellRenderer(key, cellRenderer);
     }
-    
+
     public addCellEditor(key: string, cellEditor: {new(): ICellEditor}): void {
         this.cellEditorFactory.addCellEditor(key, cellEditor);
     }*/

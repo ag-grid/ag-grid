@@ -19,6 +19,7 @@ export class ColDefUtil {
         'templateUrl',
         'filter',
         'aggFunc',
+        'cellRenderer',
         'cellEditor',
         'pinned'
     ];
@@ -62,6 +63,7 @@ export class ColDefUtil {
         'pivotIndex'];
 
     public static BOOLEAN_PROPERTIES = [
+        'suppressCellFlash',
         'suppressToolPanel',
         'openByDefault',
         'marryChildren',
@@ -96,6 +98,7 @@ export class ColDefUtil {
         'valueGetter',
         'valueSetter',
         'keyCreator',
+        'cellRenderer',
         'cellRendererFramework',
         'pinnedRowCellRenderer',
         'valueFormatter',
