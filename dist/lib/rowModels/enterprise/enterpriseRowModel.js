@@ -1,4 +1,4 @@
-// ag-grid-enterprise v16.0.1
+// ag-grid-enterprise v17.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -37,6 +37,15 @@ var EnterpriseRowModel = (function (_super) {
         if (ag_grid_1._.exists(datasource)) {
             this.setDatasource(datasource);
         }
+    };
+    EnterpriseRowModel.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+    };
+    EnterpriseRowModel.prototype.destroyDatasource = function () {
+        if (this.datasource && this.datasource.destroy) {
+            this.datasource.destroy();
+        }
+        this.datasource = null;
     };
     EnterpriseRowModel.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('EnterpriseRowModel');
@@ -150,6 +159,7 @@ var EnterpriseRowModel = (function (_super) {
         }
     };
     EnterpriseRowModel.prototype.setDatasource = function (datasource) {
+        this.destroyDatasource();
         this.datasource = datasource;
         this.reset();
     };
@@ -387,6 +397,18 @@ var EnterpriseRowModel = (function (_super) {
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], EnterpriseRowModel.prototype, "postConstruct", null);
+    __decorate([
+        ag_grid_1.PreDestroy,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], EnterpriseRowModel.prototype, "destroy", null);
+    __decorate([
+        ag_grid_1.PreDestroy,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], EnterpriseRowModel.prototype, "destroyDatasource", null);
     __decorate([
         __param(0, ag_grid_1.Qualifier('loggerFactory')),
         __metadata("design:type", Function),

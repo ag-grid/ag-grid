@@ -1,9 +1,10 @@
-// ag-grid-enterprise v16.0.1
+// ag-grid-enterprise v17.0.0
 import { IRowNodeStage, StageExecuteParams } from "ag-grid/main";
 export declare class GroupStage implements IRowNodeStage {
     private selectionController;
     private gridOptionsWrapper;
     private columnController;
+    private selectableService;
     private valueService;
     private eventService;
     private context;
@@ -15,6 +16,7 @@ export declare class GroupStage implements IRowNodeStage {
     private createGroupingDetails(params);
     private handleTransaction(details);
     private recursiveSortChildren(node, details);
+    private sortGroupsWithComparator(rootNode);
     private getExistingPathForNode(node, details);
     private moveNodesInWrongPath(childNodes, details);
     private moveNode(childNode, details);

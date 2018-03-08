@@ -1,4 +1,4 @@
-// ag-grid-enterprise v16.0.1
+// ag-grid-enterprise v17.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -110,6 +110,7 @@ var EnterpriseBlock = (function (_super) {
         });
     };
     EnterpriseBlock.prototype.setDataAndId = function (rowNode, data, index) {
+        var _this = this;
         rowNode.stub = false;
         if (ag_grid_1._.exists(data)) {
             // if the user is not providing id's, then we build an id based on the index.
@@ -129,6 +130,15 @@ var EnterpriseBlock = (function (_super) {
             rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode));
             if (rowNode.group) {
                 rowNode.key = this.valueService.getValue(this.rowGroupColumn, rowNode);
+                if (rowNode.key === null || rowNode.key === undefined) {
+                    ag_grid_1._.doOnce(function () {
+                        console.warn("null and undefined values are not allowed for enterprise row model keys");
+                        if (_this.rowGroupColumn) {
+                            console.warn("column = " + _this.rowGroupColumn.getId());
+                        }
+                        console.warn("data is ", rowNode.data);
+                    }, 'EnterpriseBlock-CannotHaveNullOrUndefinedForKey');
+                }
             }
         }
         else {

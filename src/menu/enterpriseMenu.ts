@@ -118,7 +118,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
         column.setMenuVisible(true, "contextMenu");
 
         this.activeMenu = menu;
-        menu.addEventListener(BeanStub.EVENT_DESTORYED, ()=> {
+        menu.addEventListener(BeanStub.EVENT_DESTROYED, ()=> {
             if (this.activeMenu===menu) {
                 this.activeMenu = null;
             }
@@ -323,6 +323,8 @@ export class EnterpriseMenu extends BeanStub {
 
         let isInMemoryRowModel = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_IN_MEMORY;
 
+        let usingTreeData = this.gridOptionsWrapper.isTreeData();
+
         let allowValueAgg =
             // if primary, then only allow aggValue if grouping and it's a value columns
             (isPrimary && doingGrouping && allowValue)
@@ -353,7 +355,7 @@ export class EnterpriseMenu extends BeanStub {
             }
         }
         result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
-        result.push('resetColumns');
+        result.push('destroyColumnComps');
         result.push('toolPanel');
 
         // only add grouping expand/collapse if grouping in the InMemoryRowModel
@@ -361,7 +363,15 @@ export class EnterpriseMenu extends BeanStub {
         // if pivoting, we only have expandable groups if grouping by 2 or more columns
         // as the lowest level group is not expandable while pivoting.
         // if not pivoting, then any active row group can be expanded.
-        let allowExpandAndContract = isInMemoryRowModel && (pivotModeOn ? rowGroupCount > 1 : rowGroupCount > 0);
+
+        let allowExpandAndContract = false;
+        if (isInMemoryRowModel) {
+            if (usingTreeData) {
+                allowExpandAndContract = true;
+            } else {
+                allowExpandAndContract = pivotModeOn ? rowGroupCount > 1 : rowGroupCount > 0;
+            }
+        }
         if (allowExpandAndContract) {
             result.push('expandAll');
             result.push('contractAll');

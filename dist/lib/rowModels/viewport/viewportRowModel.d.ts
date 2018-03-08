@@ -1,4 +1,4 @@
-// ag-grid-enterprise v16.0.1
+// ag-grid-enterprise v17.0.0
 import { IRowModel, RowNode, IViewportDatasource, RowBounds } from "ag-grid/main";
 export declare class ViewportRowModel implements IRowModel {
     private gridOptionsWrapper;
@@ -14,9 +14,8 @@ export declare class ViewportRowModel implements IRowModel {
     private rowHeight;
     private viewportDatasource;
     private init();
-    private destroy();
     isLastRowFound(): boolean;
-    private destroyCurrentDatasource();
+    private destroyDatasource();
     private calculateFirstRow(firstRenderedRow);
     private calculateLastRow(lastRenderedRow);
     private onViewportChanged(event);

@@ -13,7 +13,8 @@ import {
     Events,
     DraggingEvent,
     Column,
-    DragSourceType
+    DragSourceType,
+    _
 } from "ag-grid/main";
 import {ColumnComponent} from "./columnComponent";
 
@@ -351,12 +352,16 @@ export abstract class AbstractColumnDropPanel extends Component {
             });
         }
 
+        let eContainer = document.createElement('div');
+        _.addCssClass(eContainer, 'ag-column-drop-list');
+        this.getGui().appendChild(eContainer);
+
         itemsToAddToGui.forEach( (columnComponent: ColumnComponent, index: number) => {
             let needSeparator = index!==0;
             if (needSeparator) {
-                this.addArrowToGui();
+                this.addArrow(eContainer);
             }
-            this.getGui().appendChild(columnComponent.getGui());
+            eContainer.appendChild(columnComponent.getGui());
         });
 
     }
@@ -378,19 +383,22 @@ export abstract class AbstractColumnDropPanel extends Component {
         let iconFaded = this.horizontal && this.isExistingColumnsEmpty();
 
         let eGroupIcon = this.params.icon;
-        
+        let eContainer = document.createElement('div');
+
         Utils.addCssClass(eGroupIcon, 'ag-column-drop-icon');
         Utils.addOrRemoveCssClass(eGroupIcon, 'ag-faded', iconFaded);
-        this.getGui().appendChild(eGroupIcon);
+
+        eContainer.appendChild(eGroupIcon);
 
         if (!this.horizontal) {
             let eTitle = document.createElement('span');
             eTitle.innerHTML = this.params.title;
             Utils.addCssClass(eTitle, 'ag-column-drop-title');
             Utils.addOrRemoveCssClass(eTitle, 'ag-faded', iconFaded);
-            this.getGui().appendChild(eTitle);
+            eContainer.appendChild(eTitle);
         }
 
+        this.getGui().appendChild(eContainer);
     }
 
     private isExistingColumnsEmpty(): boolean {
@@ -407,7 +415,7 @@ export abstract class AbstractColumnDropPanel extends Component {
         this.getGui().appendChild(eMessage);
     }
 
-    private addArrowToGui(): void {
+    private addArrow(eParent: HTMLElement): void {
         // only add the arrows if the layout is horizontal
         if (this.horizontal) {
             // for RTL it's a left arrow, otherwise it's a right arrow
@@ -419,7 +427,7 @@ export abstract class AbstractColumnDropPanel extends Component {
 
             eArrow.className = spanClass;
             eArrow.innerHTML = charCode;
-            this.getGui().appendChild(eArrow);
+            eParent.appendChild(eArrow);
         }
     }
 }

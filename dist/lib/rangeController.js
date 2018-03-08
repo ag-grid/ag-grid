@@ -1,4 +1,4 @@
-// ag-grid-enterprise v16.0.1
+// ag-grid-enterprise v17.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -24,6 +24,7 @@ var RangeController = (function () {
         this.eventService.addEventListener(main_1.Events.EVENT_COLUMN_PINNED, this.clearSelection.bind(this));
         this.eventService.addEventListener(main_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearSelection.bind(this));
         this.eventService.addEventListener(main_1.Events.EVENT_COLUMN_VISIBLE, this.clearSelection.bind(this));
+        this.autoScrollService = new AutoScrollService(this.gridPanel, this.gridOptionsWrapper);
     };
     RangeController.prototype.setRangeToCell = function (cell) {
         if (!this.gridOptionsWrapper.isEnableRangeSelection()) {
@@ -43,6 +44,33 @@ var RangeController = (function () {
         this.cellRanges.push(newRange);
         this.activeRange = null;
         this.dispatchChangedEvent(true, false);
+    };
+    RangeController.prototype.extendRangeToCell = function (toCell) {
+        var lastRange = main_1._.existsAndNotEmpty(this.cellRanges) ? this.cellRanges[this.cellRanges.length - 1] : null;
+        var startCell = lastRange ? lastRange.start : toCell;
+        this.setRange({
+            rowStart: startCell.rowIndex,
+            floatingStart: startCell.floating,
+            rowEnd: toCell.rowIndex,
+            floatingEnd: toCell.floating,
+            columnStart: startCell.column,
+            columnEnd: toCell.column
+        });
+    };
+    RangeController.prototype.extendRangeInDirection = function (startCell, key) {
+        var oneRangeExists = main_1._.exists(this.cellRanges) || this.cellRanges.length === 1;
+        var previousSelectionStart = oneRangeExists ? this.cellRanges[0].start : null;
+        var takeEndFromPreviousSelection = startCell.equals(previousSelectionStart);
+        var previousEndCell = takeEndFromPreviousSelection ? this.cellRanges[0].end : startCell;
+        var newEndCell = this.cellNavigationService.getNextCellToFocus(key, previousEndCell);
+        this.setRange({
+            rowStart: startCell.rowIndex,
+            floatingStart: startCell.floating,
+            rowEnd: newEndCell.rowIndex,
+            floatingEnd: newEndCell.floating,
+            columnStart: startCell.column,
+            columnEnd: newEndCell.column
+        });
     };
     RangeController.prototype.setRange = function (rangeSelection) {
         if (!this.gridOptionsWrapper.isEnableRangeSelection()) {
@@ -200,6 +228,7 @@ var RangeController = (function () {
         if (!this.dragging) {
             return;
         }
+        this.autoScrollService.ensureCleared();
         this.gridPanel.removeScrollEventListener(this.bodyScrollListener);
         this.lastMouseEvent = null;
         this.dragging = false;
@@ -210,6 +239,7 @@ var RangeController = (function () {
             return;
         }
         this.lastMouseEvent = mouseEvent;
+        this.autoScrollService.check(mouseEvent);
         var cell = this.mouseEventService.getGridCellForEvent(mouseEvent);
         if (main_1.Utils.missing(cell)) {
             return;
@@ -294,6 +324,10 @@ var RangeController = (function () {
         __metadata("design:type", main_1.GridApi)
     ], RangeController.prototype, "gridApi", void 0);
     __decorate([
+        main_1.Autowired('cellNavigationService'),
+        __metadata("design:type", main_1.CellNavigationService)
+    ], RangeController.prototype, "cellNavigationService", void 0);
+    __decorate([
         main_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
@@ -305,3 +339,67 @@ var RangeController = (function () {
     return RangeController;
 }());
 exports.RangeController = RangeController;
+var AutoScrollService = (function () {
+    function AutoScrollService(gridPanel, gridOptionsWrapper) {
+        this.tickingInterval = null;
+        this.gridPanel = gridPanel;
+        this.gridOptionsWrapper = gridOptionsWrapper;
+    }
+    AutoScrollService.prototype.check = function (mouseEvent) {
+        // we don't do ticking if doing forPrint or autoHeight
+        if (!this.gridOptionsWrapper.isNormalDomLayout()) {
+            return;
+        }
+        var rect = this.gridPanel.getBodyClientRect();
+        this.tickLeft = mouseEvent.clientX < (rect.left + 20);
+        this.tickRight = mouseEvent.clientX > (rect.right - 20);
+        this.tickUp = mouseEvent.clientY < (rect.top + 20);
+        this.tickDown = mouseEvent.clientY > (rect.bottom - 20);
+        if (this.tickLeft || this.tickRight || this.tickUp || this.tickDown) {
+            this.ensureTickingStarted();
+        }
+        else {
+            this.ensureCleared();
+        }
+    };
+    AutoScrollService.prototype.ensureTickingStarted = function () {
+        if (this.tickingInterval === null) {
+            this.tickingInterval = setInterval(this.doTick.bind(this), 100);
+            this.tickCount = 0;
+        }
+    };
+    AutoScrollService.prototype.doTick = function () {
+        this.tickCount++;
+        var vScrollPosition = this.gridPanel.getVScrollPosition();
+        var hScrollPosition = this.gridPanel.getHScrollPosition();
+        var tickAmount;
+        if (this.tickCount > 20) {
+            tickAmount = 200;
+        }
+        else if (this.tickCount > 10) {
+            tickAmount = 80;
+        }
+        else {
+            tickAmount = 40;
+        }
+        if (this.tickUp) {
+            this.gridPanel.setVerticalScrollPosition(vScrollPosition.top - tickAmount);
+        }
+        if (this.tickDown) {
+            this.gridPanel.setVerticalScrollPosition(vScrollPosition.top + tickAmount);
+        }
+        if (this.tickLeft) {
+            this.gridPanel.setHorizontalScrollPosition(hScrollPosition.left - tickAmount);
+        }
+        if (this.tickRight) {
+            this.gridPanel.setHorizontalScrollPosition(hScrollPosition.left + tickAmount);
+        }
+    };
+    AutoScrollService.prototype.ensureCleared = function () {
+        if (this.tickingInterval) {
+            clearInterval(this.tickingInterval);
+            this.tickingInterval = null;
+        }
+    };
+    return AutoScrollService;
+}());

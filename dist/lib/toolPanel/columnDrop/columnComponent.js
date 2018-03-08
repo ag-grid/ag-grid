@@ -1,4 +1,4 @@
-// ag-grid-enterprise v16.0.1
+// ag-grid-enterprise v17.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -46,7 +46,7 @@ var ColumnComponent = (function (_super) {
         var _this = this;
         var dragSource = {
             type: main_1.DragSourceType.ToolPanel,
-            eElement: this.eText,
+            eElement: this.eDragHandle,
             dragItemCallback: function () { return _this.createDragItem(); },
             dragItemName: this.displayName,
             dragSourceDropTarget: this.dragSourceDropTarget
@@ -161,7 +161,7 @@ var ColumnComponent = (function (_super) {
         return comp;
     };
     ColumnComponent.EVENT_COLUMN_REMOVE = 'columnRemove';
-    ColumnComponent.TEMPLATE = "<span class=\"ag-column-drop-cell\">\n          <span class=\"ag-column-drop-cell-text\"></span>\n          <span class=\"ag-column-drop-cell-button\">&#10006;</span>\n        </span>";
+    ColumnComponent.TEMPLATE = "<span class=\"ag-column-drop-cell\">\n          <span class=\"ag-column-drag\" ref=\"eDragHandle\"></span>\n          <span class=\"ag-column-drop-cell-text\"></span>\n          <span class=\"ag-column-drop-cell-button\">&#10006;</span>\n        </span>";
     __decorate([
         main_1.Autowired('dragAndDropService'),
         __metadata("design:type", main_1.DragAndDropService)
@@ -210,6 +210,10 @@ var ColumnComponent = (function (_super) {
         main_1.QuerySelector('.ag-column-drop-cell-button'),
         __metadata("design:type", HTMLElement)
     ], ColumnComponent.prototype, "btRemove", void 0);
+    __decorate([
+        main_1.RefSelector('eDragHandle'),
+        __metadata("design:type", HTMLElement)
+    ], ColumnComponent.prototype, "eDragHandle", void 0);
     __decorate([
         main_1.PostConstruct,
         __metadata("design:type", Function),

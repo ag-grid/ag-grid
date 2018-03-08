@@ -1,4 +1,4 @@
-// ag-grid-enterprise v16.0.1
+// ag-grid-enterprise v17.0.0
 import { Component, Column, AgEvent } from "ag-grid/main";
 export interface SelectedEvent extends AgEvent {
 }

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v16.0.1
+// ag-grid-enterprise v17.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -24,9 +24,89 @@ var ClipboardService = (function () {
         this.executeOnTempElement(function (textArea) {
             textArea.focus();
         }, function (element) {
-            var text = element.value;
-            _this.finishPasteFromClipboard(text);
+            var data = element.value;
+            if (main_1.Utils.missingOrEmpty(data))
+                return;
+            _this.rangeController.isMoreThanOneCell() ? _this.pasteToRange(data) : _this.pasteToSingleCell(data);
         });
+    };
+    ClipboardService.prototype.pasteToRange = function (data) {
+        var _this = this;
+        var clipboardData = this.dataToArray(data);
+        // remove extra empty row which is inserted when clipboard has more than one row
+        if (clipboardData.length > 1)
+            clipboardData.pop();
+        var cellsToFlash = {};
+        var updatedRowNodes = [];
+        var updatedColumnIds = [];
+        // true if clipboard data can be evenly pasted into range, otherwise false
+        var abortRepeatingPasteIntoRows = this.rangeSize() % clipboardData.length != 0;
+        var indexOffset = 0, dataRowIndex = 0;
+        var rowCallback = function (currentRow, rowNode, columns, index) {
+            var atEndOfClipboardData = index - indexOffset >= clipboardData.length;
+            if (atEndOfClipboardData) {
+                if (abortRepeatingPasteIntoRows)
+                    return;
+                // increment offset and reset data index to repeat paste of data
+                indexOffset += dataRowIndex;
+                dataRowIndex = 0;
+            }
+            var currentRowData = clipboardData[index - indexOffset];
+            // otherwise we are not the first row, so copy
+            updatedRowNodes.push(rowNode);
+            columns.forEach(function (column, index) {
+                if (!column.isCellEditable(rowNode))
+                    return;
+                // ignore columns we don't have data for - happens when to range is bigger than copied data range
+                if (index >= currentRowData.length)
+                    return;
+                var firstRowValue = currentRowData[index];
+                var processCellFromClipboardFunc = _this.gridOptionsWrapper.getProcessCellFromClipboardFunc();
+                firstRowValue = _this.userProcessCell(rowNode, column, firstRowValue, processCellFromClipboardFunc, main_1.Constants.EXPORT_TYPE_DRAG_COPY);
+                _this.valueService.setValue(rowNode, column, firstRowValue);
+                var gridCellDef = { rowIndex: currentRow.rowIndex, floating: currentRow.floating, column: column };
+                var cellId = new main_1.GridCell(gridCellDef).createId();
+                cellsToFlash[cellId] = true;
+            });
+            ++dataRowIndex;
+        };
+        this.iterateActiveRanges(false, rowCallback);
+        this.rowRenderer.refreshCells({ rowNodes: updatedRowNodes, columns: updatedColumnIds });
+        this.dispatchFlashCells(cellsToFlash);
+    };
+    ClipboardService.prototype.pasteToSingleCell = function (data) {
+        if (main_1.Utils.missingOrEmpty(data)) {
+            return;
+        }
+        var focusedCell = this.focusedCellController.getFocusedCell();
+        if (!focusedCell) {
+            return;
+        }
+        var parsedData = this.dataToArray(data);
+        if (!parsedData) {
+            return;
+        }
+        // remove last row if empty, excel puts empty last row in
+        var lastLine = parsedData[parsedData.length - 1];
+        if (lastLine.length === 1 && lastLine[0] === '') {
+            main_1.Utils.removeFromArray(parsedData, lastLine);
+        }
+        var currentRow = new main_1.GridRow(focusedCell.rowIndex, focusedCell.floating);
+        var cellsToFlash = {};
+        var updatedRowNodes = [];
+        var updatedColumnIds = [];
+        var columnsToPasteInto = this.columnController.getDisplayedColumnsStartingAt(focusedCell.column);
+        var onlyOneCellInRange = parsedData.length === 1 && parsedData[0].length === 1;
+        if (onlyOneCellInRange) {
+            this.singleCellRange(parsedData, updatedRowNodes, currentRow, cellsToFlash, updatedColumnIds);
+        }
+        else {
+            this.multipleCellRange(parsedData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, updatedColumnIds, main_1.Constants.EXPORT_TYPE_CLIPBOARD);
+        }
+        // this is very heavy, should possibly just refresh the specific cells?
+        this.rowRenderer.refreshCells({ rowNodes: updatedRowNodes, columns: updatedColumnIds });
+        this.dispatchFlashCells(cellsToFlash);
+        this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.floating, true);
     };
     ClipboardService.prototype.copyRangeDown = function () {
         var _this = this;
@@ -73,40 +153,6 @@ var ClipboardService = (function () {
         // this is very heavy, should possibly just refresh the specific cells?
         this.rowRenderer.refreshCells({ rowNodes: updatedRowNodes, columns: updatedColumnIds });
         this.dispatchFlashCells(cellsToFlash);
-    };
-    ClipboardService.prototype.finishPasteFromClipboard = function (data) {
-        if (main_1.Utils.missingOrEmpty(data)) {
-            return;
-        }
-        var focusedCell = this.focusedCellController.getFocusedCell();
-        if (!focusedCell) {
-            return;
-        }
-        var parsedData = this.dataToArray(data);
-        if (!parsedData) {
-            return;
-        }
-        // remove last row if empty, excel puts empty last row in
-        var lastLine = parsedData[parsedData.length - 1];
-        if (lastLine.length === 1 && lastLine[0] === '') {
-            main_1.Utils.removeFromArray(parsedData, lastLine);
-        }
-        var currentRow = new main_1.GridRow(focusedCell.rowIndex, focusedCell.floating);
-        var cellsToFlash = {};
-        var updatedRowNodes = [];
-        var updatedColumnIds = [];
-        var columnsToPasteInto = this.columnController.getDisplayedColumnsStartingAt(focusedCell.column);
-        var onlyOneCellInRange = parsedData.length === 1 && parsedData[0].length === 1;
-        if (onlyOneCellInRange) {
-            this.singleCellRange(parsedData, updatedRowNodes, currentRow, cellsToFlash, updatedColumnIds);
-        }
-        else {
-            this.multipleCellRange(parsedData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, updatedColumnIds, main_1.Constants.EXPORT_TYPE_CLIPBOARD);
-        }
-        // this is very heavy, should possibly just refresh the specific cells?
-        this.rowRenderer.refreshCells({ rowNodes: updatedRowNodes, columns: updatedColumnIds });
-        this.dispatchFlashCells(cellsToFlash);
-        this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.floating, true);
     };
     ClipboardService.prototype.multipleCellRange = function (clipboardGridData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, updatedColumnIds, type) {
         var _this = this;
@@ -212,9 +258,10 @@ var ClipboardService = (function () {
         if (main_1.Utils.exists(columnCallback)) {
             columnCallback(range.columns);
         }
+        var rangeIndex = 0;
         while (true) {
             var rowNode = this.getRowNode(currentRow);
-            rowCallback(currentRow, rowNode, range.columns);
+            rowCallback(currentRow, rowNode, range.columns, rangeIndex++);
             if (currentRow.equals(lastRow)) {
                 break;
             }
@@ -451,6 +498,11 @@ var ClipboardService = (function () {
         }
         // Return the parsed data.
         return arrData;
+    };
+    ClipboardService.prototype.rangeSize = function () {
+        var ranges = this.rangeController.getCellRanges();
+        var _a = [ranges[0].start.rowIndex, ranges[0].end.rowIndex], startRange = _a[0], endRange = _a[1];
+        return (startRange > endRange ? startRange - endRange : endRange - startRange) + 1;
     };
     __decorate([
         main_1.Autowired('csvCreator'),

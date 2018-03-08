@@ -1,4 +1,4 @@
-// ag-grid-enterprise v16.0.1
+// ag-grid-enterprise v17.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -98,7 +98,7 @@ var ContextMenuFactory = (function () {
             hidePopup: hidePopup
         });
         this.activeMenu = menu;
-        menu.addEventListener(ag_grid_1.BeanStub.EVENT_DESTORYED, function () {
+        menu.addEventListener(ag_grid_1.BeanStub.EVENT_DESTROYED, function () {
             if (_this.activeMenu === menu) {
                 _this.activeMenu = null;
             }

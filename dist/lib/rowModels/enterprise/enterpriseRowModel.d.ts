@@ -1,4 +1,4 @@
-// ag-grid-enterprise v16.0.1
+// ag-grid-enterprise v17.0.0
 import { BeanStub, IEnterpriseDatasource, IEnterpriseRowModel, RowNode, RowBounds } from "ag-grid";
 export declare class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel {
     private gridOptionsWrapper;
@@ -16,6 +16,8 @@ export declare class EnterpriseRowModel extends BeanStub implements IEnterpriseR
     private logger;
     private rowNodeBlockLoader;
     private postConstruct();
+    destroy(): void;
+    private destroyDatasource();
     private setBeans(loggerFactory);
     isLastRowFound(): boolean;
     private addEventListeners();
