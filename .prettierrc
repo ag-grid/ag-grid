@@ -1,0 +1,4 @@
+# vim: ft=yaml
+printWidth: 180
+tabWidth: 4
+semi: true
