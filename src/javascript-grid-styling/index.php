@@ -19,7 +19,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        <table class="theme-table">
+        <table class="theme-table reference">
             <tr>
                 <th>Old Theme</th><th>New Theme</th>
             </tr>
@@ -51,24 +51,27 @@ include '../documentation-main/documentation_header.php';
 </note>
 
     <p>
-        ag-Grid is designed to have its look and feel derived from a theme.
+        ag-Grid is designed to have its look and feel derived from a theme. The following themes are available out of the box:
     </p>
 
-    <p>
-        Out of the box, five themes are provided: 
-    </p>
 <dl>
+    <dt>ag-theme-balham</dt>
+    <dd>The default flat light theme which is used in most of the examples in the documentation.</dd>
+
+    <dt>ag-theme-balham-dark</dt>
+    <dd>A dark variation of the balham theme, used in the enterprise examples in the documentation.</dd>
+
+    <dt>ag-theme-material</dt>
+    <dd>A theme designed according to the Google Material Language Specs.</dd>
+
     <dt>ag-theme-fresh</dt>
-    <dd>The light / grey theme which is used in most of the examples in the documentation.</dd>
+    <dd>A light gray theme.</dd>
 
     <dt>ag-theme-dark</dt>
-    <dd>The dark grey / inverted theme with light text, used in some of the enterprise examples.</dd>
+    <dd>A dark grey theme.</dd>
 
     <dt>ag-theme-blue</dt>
     <dd>A light theme with blue headers.</dd>
-
-    <dt>ag-theme-material</dt>
-    <dd>A theme designed according to the Google Material Language Specs</dd>
 
     <dt>ag-theme-bootstrap</dt>
     <dd>Neutral / white theme that fits well in the context of bootstrap components. Notice: the theme does not have a bootstrap dependency.</dd>
@@ -79,19 +82,19 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        The following is an example of using the fresh theme:
+        The following is an example of using the balham theme:
     </p>
 
     <snippet language="html">
-     &lt;div id="myGrid" class="ag-theme-fresh"&gt;&lt;/div&gt; 
+     &lt;div id="myGrid" class="ag-theme-balham"&gt;&lt;/div&gt; 
 </snippet>
 
     <p>
-        The following is an example of using the dark theme:
+        The following is an example of using the dark balham theme:
     </p>
 
     <snippet language="html">
-    &lt;div id="myGrid" class="ag-theme-dark"&gt;&lt;/div&gt;
+    &lt;div id="myGrid" class="ag-theme-balham-dark"&gt;&lt;/div&gt;
 </snippet> 
 
     <h2>When to Create a Theme</h2>
@@ -101,7 +104,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <ol class="content">
-        <li>Use one of the provided themes e.g. <code>ag-theme-fresh</code>.</li>
+        <li>Use one of the provided themes e.g. <code>ag-theme-balham</code>.</li>
         <li>Use one of the provided themes and tweak using the provided <a href="#customizing-sass-variables">Sass variables</a>.</li>
         <li>Create your own theme from scratch. This is the most complex approach and you are more
         exposed to breaking changes in ag-Grid releases.</li>
@@ -114,7 +117,6 @@ include '../documentation-main/documentation_header.php';
         use that as a template. They can be found on GitHub here:
         <a href="https://github.com/ag-grid/ag-grid/tree/master/src/styles">https://github.com/ceolter/ag-grid/tree/master/src/styles</a>.
     </p>
-
 
     <p>
         This section does not provide an example of building a theme as a number of themes
@@ -370,6 +372,31 @@ include '../documentation-main/documentation_header.php';
 &lt;/div>
 </snippet>
 
+<h2 id="highlighting-rows-and-columns">Highlighting Rows and Columns</h2>
+
+<p>
+    The class <code>ag-row-hover</code> and <code>ag-column-hover</code> are added
+    to cells as the mouse is dragged over the cells row or column.
+</p>
+
+<p>
+    The example below demonstrates the following:
+    <ul>
+        <li>
+            CSS class <code>ag-row-hover</code> has background color added to it,
+            so when you hover over a cell, the row will be highlighted.
+        </li>
+        <li>
+            CSS class <code>ag-column-hover</code> has background color added to it,
+            so when you hover over a cell or a header, the column will be highlighted.
+        </li>
+        <li>
+            If you hover over a header group, all columns in the group will be highlighted.
+        </li>
+    </ul>
+</p>
+
+<?= example('Highlight Rows And Columns', 'highlight-rows-and-columns', 'generated') ?>
 
 <h2 id="customizing-sass-variables">Customizing the themes with Sass variables</h2>
 
@@ -395,7 +422,7 @@ This is a redundant step we are looking into removing in the future.
 
 <snippet>
 // Customize the look and feel of the grid with Sass variables
-// Up-to-date list of variables is available in the source code: https://github.com/ag-grid/ag-grid/blob/latest/src/styles/theme-fresh.scss 
+// Up-to-date list of variables is available in the source code: https://github.com/ag-grid/ag-grid/blob/latest/src/styles/ag-theme-fresh.scss 
 $icons-path: "~ag-grid/src/styles/icons/";
 
 // changes the border color

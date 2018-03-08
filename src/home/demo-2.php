@@ -1,4 +1,5 @@
 <style>
+    .ag-theme-balham-dark .ag-value-change-value-highlight,
     .ag-theme-dark .ag-value-change-value-highlight {
         background-color: #afbcff;
     }
@@ -33,7 +34,7 @@
     }
 
     .blackish {
-        background-color: #333333;
+        background-color: rgba(44, 51, 53, 0.95);
         padding-bottom: 10px;
     }
 
@@ -86,7 +87,7 @@
 
 <div class="row mb-3">
     <div class="col-md-7">
-        <div id="priceChangesGrid" style="width: 100%; height: 410px;" class="ag-theme-dark"></div>
+        <div id="priceChangesGrid" style="width: 100%; height: 410px;" class="ag-theme-balham-dark"></div>
     </div>
 
     <div class="col-md-5">
@@ -189,10 +190,10 @@ data-content="A service will provide updates rows only, with the Grid updating t
 
 <div class="row">
 <div class="col-md-7">
-<div id="quoteMatrix" style="height: 410px; width: 100%" class="ag-theme-dark"></div>
+<div id="quoteMatrix" style="height: 410px; width: 100%" class="ag-theme-balham-dark"></div>
 </div>
 <div class="col-md-5">
-<div id="topMovers" style="height: 410px; width: 100%" class="ag-theme-dark"></div>
+<div id="topMovers" style="height: 410px; width: 100%" class="ag-theme-balham-dark"></div>
 </div>
 </div>
 

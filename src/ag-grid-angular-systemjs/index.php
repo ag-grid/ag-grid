@@ -123,7 +123,7 @@ export class AppComponent {
 <snippet language="html">
 &lt;!-- app/app.component.html --> 
 
-&lt;ag-grid-angular #agGrid style="width: 500px; height: 150px;" class="ag-theme-fresh"
+&lt;ag-grid-angular #agGrid style="width: 500px; height: 150px;" class="ag-theme-balham"
                  [gridOptions]="gridOptions"
                  [columnDefs]="columnDefs"
                  [rowData]="rowData"&gt;
@@ -227,7 +227,7 @@ platformBrowserDynamic().bootstrapModule(AppModule);</snippet>
     &lt;!-- problem, so I've not included how to do it here. For simplicity, and --&gt;
     &lt;!-- explicitness, the CSS files are loaded in directly here. --&gt;
     &lt;link href="node_modules/ag-grid/dist/styles/ag-grid.css" rel="stylesheet"/&gt;
-    &lt;link href="node_modules/ag-grid/dist/styles/ag-theme-fresh.css" rel="stylesheet"/&gt;
+    &lt;link href="node_modules/ag-grid/dist/styles/ag-theme-balham.css" rel="stylesheet"/&gt;
 
     &lt;!-- Configure SystemJS --&gt;
     &lt;script src="systemjs.config.js"&gt;&lt;/script&gt;
@@ -258,7 +258,7 @@ platformBrowserDynamic().bootstrapModule(AppModule);</snippet>
 
     <p>We can now run <code>npm start</code> to run the development setup.</p>
 
-    <img src="../images/systemjs-app.png" style="width: 100%">
+    <img src="../images/seed.png" style="width: 100%">
 
     <h3 id="aotCompilation">For Ahead-of-Time (AOT) Compilation</h3>
 
@@ -422,7 +422,7 @@ gulp.task('aot-bundle', function () {
 cp ./node_modules/core-js/client/shim.min.js aot/
 cp ./node_modules/zone.js/dist/zone.min.js aot/
 cp ./node_modules/ag-grid/dist/styles/ag-grid.css aot/
-cp ./node_modules/ag-grid/dist/styles/ag-theme-fresh.css aot/</snippet>
+cp ./node_modules/ag-grid/dist/styles/ag-theme-balham.css aot/</snippet>
 
     <p>We make use of lite-server to test the application, so let's create a AOT friendly config file for it:</p>
 
@@ -441,7 +441,7 @@ cp ./node_modules/ag-grid/dist/styles/ag-theme-fresh.css aot/</snippet>
 "build:aot": "gulp ngc && gulp aot-bundle",
 "lite:aot": "lite-server -c aot/bs-config.json",</snippet>
 
-    <img src="../images/systemjs-app.png" style="width: 100%">
+    <img src="../images/seed.png" style="width: 100%">
 
     <p>
         All the above items are specific to either Angular, SystemJS or SystemJS Builder. The above is intended to point

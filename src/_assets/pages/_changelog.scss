@@ -1,0 +1,52 @@
+#page-changelog {
+    .nav-item:not(:first-child) {
+        margin-left: 0.5rem;
+    }
+
+    .inner-nav {
+        margin-top: 1rem;
+        font-size: 0.8rem;
+
+        .nav-item a {
+            color: darken($teal, 10);
+        }
+
+        .nav-item:first-child a {
+            color: $blue-2;
+        }
+
+        .nav-link {
+            border-color: $border-color;
+        }
+
+        .nav-link.active  {
+            border-bottom-color: white;
+            margin-bottom: -1px;
+        }
+    }
+
+    table.aui th {
+        border-top: 0;
+    }
+
+    .global-search-pane {
+        margin-bottom: 1rem;
+        input {
+            @extend .form-control;
+            font-size: 1.1rem;
+            width: 65%;
+        }
+    }
+
+    .search-higlight {
+        background-color: lightgreen;
+    }
+
+    .issue-row-alternate {
+        background-color: $gray-100;
+    }
+
+    .jira-more-info {
+        display: none;
+    }
+}

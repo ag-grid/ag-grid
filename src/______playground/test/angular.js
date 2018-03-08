@@ -6066,7 +6066,7 @@ var $CoreAnimateCssProvider = function() {
 
       function applyAnimationContents() {
         if (options.addClass) {
-          element.addClass(options.addClass);
+          element.withClass(options.addClass);
           options.addClass = null;
         }
         if (options.removeClass) {
@@ -8434,7 +8434,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
        */
       $addClass: function(classVal) {
         if (classVal && classVal.length > 0) {
-          $animate.addClass(this.$$element, classVal);
+          $animate.withClass(this.$$element, classVal);
         }
       },
 
@@ -8470,7 +8470,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
       $updateClass: function(newClasses, oldClasses) {
         var toAdd = tokenDifference(newClasses, oldClasses);
         if (toAdd && toAdd.length) {
-          $animate.addClass(this.$$element, toAdd);
+          $animate.withClass(this.$$element, toAdd);
         }
 
         var toRemove = tokenDifference(oldClasses, newClasses);
@@ -8640,7 +8640,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
 
     function safeAddClass($element, className) {
       try {
-        $element.addClass(className);
+        $element.withClass(className);
       } catch (e) {
         // ignore, since it means that we are trying to set class on
         // SVG element, where class name is read-only.
@@ -22874,7 +22874,7 @@ FormController.prototype = {
    */
   $setDirty: function() {
     this.$$animate.removeClass(this.$$element, PRISTINE_CLASS);
-    this.$$animate.addClass(this.$$element, DIRTY_CLASS);
+    this.$$animate.withClass(this.$$element, DIRTY_CLASS);
     this.$dirty = true;
     this.$pristine = false;
     this.$$parentForm.$setDirty();
@@ -22933,7 +22933,7 @@ FormController.prototype = {
    * Sets the form to its submitted state.
    */
   $setSubmitted: function() {
-    this.$$animate.addClass(this.$$element, SUBMITTED_CLASS);
+    this.$$animate.withClass(this.$$element, SUBMITTED_CLASS);
     this.$submitted = true;
     this.$$parentForm.$setSubmitted();
   }
@@ -23143,7 +23143,7 @@ var formDirectiveFactory = function(isNgForm) {
       controller: FormController,
       compile: function ngFormCompile(formElement, attr) {
         // Setup initial state of the control
-        formElement.addClass(PRISTINE_CLASS).addClass(VALID_CLASS);
+        formElement.withClass(PRISTINE_CLASS).withClass(VALID_CLASS);
 
         var nameAttr = attr.name ? 'name' : (isNgForm && attr.ngForm ? 'ngForm' : false);
 
@@ -23297,7 +23297,7 @@ function addSetValidityMethod(context) {
 
   function cachedToggleClass(ctrl, className, switchValue) {
     if (switchValue && !ctrl.$$classCache[className]) {
-      ctrl.$$animate.addClass(ctrl.$$element, className);
+      ctrl.$$animate.withClass(ctrl.$$element, className);
       ctrl.$$classCache[className] = true;
     } else if (!switchValue && ctrl.$$classCache[className]) {
       ctrl.$$animate.removeClass(ctrl.$$element, className);
@@ -25995,7 +25995,7 @@ function classDirective(name, selector) {
  * @animations
  * | Animation                        | Occurs                              |
  * |----------------------------------|-------------------------------------|
- * | {@link ng.$animate#addClass addClass}       | just before the class is applied to the element   |
+ * | {@link ng.$animate#withClass addClass}       | just before the class is applied to the element   |
  * | {@link ng.$animate#removeClass removeClass} | just before the class is removed from the element |
  *
  * @element ANY
@@ -28199,10 +28199,10 @@ NgModelController.prototype = {
   $$updateEmptyClasses: function(value) {
     if (this.$isEmpty(value)) {
       this.$$animate.removeClass(this.$$element, NOT_EMPTY_CLASS);
-      this.$$animate.addClass(this.$$element, EMPTY_CLASS);
+      this.$$animate.withClass(this.$$element, EMPTY_CLASS);
     } else {
       this.$$animate.removeClass(this.$$element, EMPTY_CLASS);
-      this.$$animate.addClass(this.$$element, NOT_EMPTY_CLASS);
+      this.$$animate.withClass(this.$$element, NOT_EMPTY_CLASS);
     }
   },
 
@@ -28221,7 +28221,7 @@ NgModelController.prototype = {
     this.$dirty = false;
     this.$pristine = true;
     this.$$animate.removeClass(this.$$element, DIRTY_CLASS);
-    this.$$animate.addClass(this.$$element, PRISTINE_CLASS);
+    this.$$animate.withClass(this.$$element, PRISTINE_CLASS);
   },
 
   /**
@@ -28239,7 +28239,7 @@ NgModelController.prototype = {
     this.$dirty = true;
     this.$pristine = false;
     this.$$animate.removeClass(this.$$element, PRISTINE_CLASS);
-    this.$$animate.addClass(this.$$element, DIRTY_CLASS);
+    this.$$animate.withClass(this.$$element, DIRTY_CLASS);
     this.$$parentForm.$setDirty();
   },
 
@@ -28984,7 +28984,7 @@ var ngModelDirective = ['$rootScope', function($rootScope) {
     priority: 1,
     compile: function ngModelCompile(element) {
       // Setup initial state of the control
-      element.addClass(PRISTINE_CLASS).addClass(UNTOUCHED_CLASS).addClass(VALID_CLASS);
+      element.withClass(PRISTINE_CLASS).withClass(UNTOUCHED_CLASS).withClass(VALID_CLASS);
 
       return {
         pre: function ngModelPreLink(scope, element, attr, ctrls) {

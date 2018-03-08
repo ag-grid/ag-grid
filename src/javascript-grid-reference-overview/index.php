@@ -105,7 +105,6 @@ var gridOptions = {
 
     // PROPERTIES - simple boolean / string / number properties
     enableColResize: true,
-    rowHeight: 22,
     rowSelection: 'single',
 
     // EVENTS - add event callback handlers
@@ -196,7 +195,6 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
     ref="agGrid"
 
     // these are simple attributes, not bound to any state or prop
-    rowHeight="22"
     rowSelection="multiple"
 
     // these are bound props, so can use anything in React state or props
@@ -266,7 +264,6 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
     enable-filter
 
     // these are attributes, not bound, give explicit values here
-    row-height="22"
     row-selection="multiple"
 
     // these are bound properties, bound to the AngularJS 1.x current context (that's what a
@@ -467,7 +464,6 @@ this.$.myGrid.oncolumnresized = (event) =&gt; {
 <snippet language="html">
 &lt;ag-grid-vue
     // these are attributes, not bound, give explicit values here
-    rowHeight="22"
     rowSelection="multiple"
 
     // these are boolean values
@@ -629,7 +625,7 @@ myGrid.showToolPanel = true;
 
 <snippet>
 // notice the grid has an id called agGrid, which can be used to call the API
-&lt;ag-grid-aurelia class="ag-theme-fresh"
+&lt;ag-grid-aurelia class="ag-theme-balham"
     // items bound to properties on the controller
     grid-options.bind="gridOptions"
     column-defs.bind="columnDefs"

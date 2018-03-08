@@ -1,9 +1,10 @@
 <?php
+header("Location: https://medium.com/ag-grid", true, 301);
+exit;
 
 $pageTitle = "ag-Grid Blog: Home";
 $pageDescription = "Welcome to the ag-Grid Blog where we provide information on our new releases and lots of useful tutorials and guides to our products and the frameworks that we support.";
 $pageKeyboards = "blogs ag-grid angular react webpack";
-
 include('../includes/mediaHeader.php');
 
 $authors = array(
@@ -77,6 +78,14 @@ HTML;
     <div class="row">
     <?php
     featuredBlog(
+        'Meet the Best React Grid',
+        '../best-react-grid-blog/cover.svg',
+        '../best-react-grid-blog/',
+        'sophia',
+        '27th February 2018'
+    );
+
+    featuredBlog(
         'Plunker is now backed by ag-Grid',
         '../images/Plunker_Cover_Smaller.png',
         '../ag-grid-proud-to-support-plunker/',
@@ -91,15 +100,6 @@ HTML;
         'sophia',
         '13th December 2017'
     );
-
-    featuredBlog(
-        'Building a CRUD Application with ag-Grid - Part 4',
-        '../ag-grid-datagrid-crud-part-1/crud_overview.png',
-        '../ag-grid-datagrid-crud-part-4/',
-        'sean',
-        '5th December 2017'
-    );
-
     ?>
     </div>
 </div>

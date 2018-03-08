@@ -40,7 +40,7 @@ npm run server
 npm run simple-grid
 </snippet>
 
-    <img src="../images/openfin-simple-grid.png" class="img-fluid" />
+    <img src="../images/seed.png" class="img-fluid" />
 
     <h2>A Richer Grid</h2>
 

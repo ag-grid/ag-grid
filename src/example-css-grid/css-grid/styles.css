@@ -1,0 +1,24 @@
+.container {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-rows: 50vh;
+    width: 100%;
+}
+
+#left {
+    grid-row: 1/1;
+    grid-column: 1/1;
+    background: gray;
+}
+
+#center {
+    grid-row: 1/1;
+    grid-column: 2/2;
+    overflow: hidden;
+}
+
+#right {
+    grid-row: 1/1;
+    grid-column: 3/3;
+    background: gray;
+}

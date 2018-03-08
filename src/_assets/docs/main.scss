@@ -1,15 +1,15 @@
-@import '../common/vars.scss';
-@import '../common/bootstrap.scss';
-@import '../common/syntax-highlight.scss';
-@import '../common/grid.scss';
-@import '../common/content.scss';
-@import '../common/nav.scss';
-@import '../common/footer.scss';
-@import '../common/roadshow.scss';
-@import '../common/note.scss';
-@import './example-runner.scss';
-@import './legacy.scss';
-@import './algolia.scss';
+@import "../common/vars.scss";
+@import "../common/bootstrap.scss";
+@import "../common/syntax-highlight.scss";
+@import "../common/grid.scss";
+@import "../common/content.scss";
+@import "../common/nav.scss";
+@import "../common/footer.scss";
+@import "../common/roadshow.scss";
+@import "../common/note.scss";
+@import "./example-runner.scss";
+@import "./legacy.scss";
+@import "./algolia.scss";
 
 #documentation {
     @extend .container-fluid;
@@ -95,9 +95,8 @@
             }
 
             ul {
-                -webkit-padding-start: 0;
-                -moz-padding-start: 0;
                 padding-start: 0;
+                padding-inline-start: 0;
             }
 
             ul ul ul {
@@ -144,7 +143,7 @@
             > li > a::after,
             > li > span::after {
                 color: $gray-600;
-                content: '❯ ';
+                content: "❯ ";
                 display: inline-block;
                 float: right;
                 font-size: 80%;
@@ -169,7 +168,8 @@
 
             > ul {
                 border-left: 1px solid $border-color;
-                -webkit-padding-start: 2rem;
+                padding-start: 2rem;
+                padding-inline-start: 2rem;
             }
 
             > ul > li:first-child {
@@ -244,7 +244,7 @@
 
                     &::before {
                         border-left: 1px solid $blue-2;
-                        content: '\00a0';
+                        content: "\00a0";
                         left: -1px;
                         position: absolute;
                     }
@@ -260,10 +260,10 @@
     .docs-homepage-section-preview {
         border: 1px solid $border-color;
         border-top-width: 0;
-        padding: 2rem;
+        padding: 1rem;
 
         &:first-of-type {
-            @extend .mt-4;
+            @extend .mt-3;
             // border-top: 1px solid $border-color;
             border-top-width: 1px;
         }
@@ -284,10 +284,13 @@
 
         h2 {
             @extend h4;
+            margin-top: 0 !important;
+            margin-bottom: 1rem !important;
         }
 
         p:last-child {
             @extend .text-right;
+            margin-bottom: 0 !important;
 
             a {
                 @extend .btn, .btn-primary;
@@ -346,12 +349,11 @@
         }
     }
 
-    $frameworks: angular react polymer vue javascript angularjs aurelia
-        webcomponents;
+    $frameworks: angular react polymer vue javascript angularjs aurelia webcomponents;
 
     @each $framework in $frameworks {
         .get-started-framework.card-#{$framework} > a:first-child {
-            background-image: url('../fw-logos/#{$framework}.svg');
+            background-image: url("../fw-logos/#{$framework}.svg");
         }
     }
 
@@ -444,7 +446,7 @@ table.reference {
     }
 
     tr:nth-child(2n -1) {
-        td:not([colspan='2']),
+        td:not([colspan="2"]),
         th {
             background-color: $offwhite;
         }

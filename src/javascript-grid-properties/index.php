@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "ag-Grid Reference: Properties";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This reference guide covers the properties that are available the GridOptions.";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This reference guide covers the properties that are available in the GridOptions.";
 $pageKeyboards = "javascript data grid ag-Grid properties";
 $pageGroup = "reference";
 include '../documentation-main/documentation_header.php';
@@ -139,11 +139,35 @@ include '../documentation-main/documentation_header.php';
                 <a href="../javascript-grid-sorting/#accentedSort">Accented Sort</a>
             </td>
         </tr>
+        <tr>
+            <th>multiSortKey</th>
+            <td>
+                Set to 'ctrl' to have multi sorting work using the Control or Command (for Apple) keys. See
+                <a href="../javascript-grid-sorting/#multi-column-sorting">Multi Column Sorting</a>
+            </td>
+        </tr>
 
         </table>
     <h2>Selection</h2>
-    <table class="table content reference">
 
+    <table class="table content reference">
+        <tr>
+            <th>rowSelection</th>
+            <td>
+                Type of <a href="../javascript-grid-selection/">Row Selection</a>, set to either 'single' or 'multiple'.
+            </td>
+        </tr>
+        <tr>
+            <th>rowMultiSelectWithClick</th>
+            <td>
+                Set to true to allow multiple rows to be selected using single click.
+                See <a href="../javascript-grid-selection/#multi-select-single-click">Multi Select Single Click</a>.
+            </td>
+        </tr>
+        <tr>
+            <th>rowDeselection</th>
+            <td>If true then rows will be deselected if you hold down ctrl + click the row.</td>
+        </tr>
         <tr>
             <th>suppressRowClickSelection</th>
             <td>
@@ -221,11 +245,10 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>enterMovesDownAfterEdit</th>
+            <th>enterMovesDown<br/>enterMovesDownAfterEdit</th>
             <td>
-                Set to true to <a href="../javascript-grid-cell-editing/#enter-key-down">move enter down
-                after edit</a>. This allows consistency with Excel. The default is to keep focus on
-                the previously editing cell.
+                Set both properties to true to have Excel style behaviour for the Enter key,
+                i.e. <a href="../javascript-grid-cell-editing/#enter-key-down">enter key moves down</a>.
             </td>
         </tr>
 
@@ -295,9 +318,33 @@ include '../documentation-main/documentation_header.php';
             <th>showToolPanel</th>
             <td>Set to true to show the <a href="../javascript-grid-tool-panel">Tool Panel</a> by default.</td>
         </tr>
+        <tr>
+            <th>toolPanelSuppressSideButtons</th>
+            <td>
+                Set to true to hide the <a href="../javascript-grid-tool-panel">Tool Panel</a> side buttons for
+                opening / closing the tool panel.
+            </td>
+        </tr>
+        <tr>
+            <th>contractColumnSelection</th>
+            <td>Set to true to have column list contracted by default - only used if column groups exist.</td>
+        </tr>
+        <tr>
+            <th>toolPanelSuppressColumnFilter</th>
+            <td>Set to true to not show the 'column filter' component.</td>
+        </tr>
+        <tr>
+            <th>toolPanelSuppressColumnSelectAll</th>
+            <td>Set to true to not sure the column 'select all' component.</td>
+        </tr>
+        <tr>
+            <th>toolPanelSuppressColumnExpandAll</th>
+            <td>Set to true to not show the column 'expand all' component.</td>
+        </tr>
+    </table>
 
-        </table>
-<h2>Data & Row Models</h2>
+
+    <h2>Data & Row Models</h2>
     <table class="table content reference">
         <tr>
             <th>rowModelType</th>
@@ -320,20 +367,9 @@ include '../documentation-main/documentation_header.php';
             <th>pinnedBottomRowData</th>
             <td>Data to be displayed as <a href="../javascript-grid-row-pinning/">Pinned Bottom Rows</a> in the grid.</td>
         </tr>
+    </table>
 
-        </table>
-    <h2>Selection</h2>
-    <table class="table content reference">
-        <tr>
-            <th>rowSelection</th>
-            <td>Type of <a href="../javascript-grid-selection/">Row Selection</a>, set to either 'single' or 'multiple'.</td>
-        </tr>
-        <tr>
-            <th>rowDeselection</th>
-            <td>If true then rows will be deselected if you hold down ctrl + click the row.</td>
-        </tr>
 
-        </table>
     <h2>Scrolling</h2>
     <table class="table content reference">
         <tr>
@@ -726,6 +762,20 @@ include '../documentation-main/documentation_header.php';
             <th>suppressExcelExport</th>
             <td>
                 Prevents the user to export any grid to Excel.
+            </td>
+        </tr>
+        <tr>
+            <th>batchUpdateWaitMillis</th>
+            <td>
+                How many milliseconds to wait before executing a
+                <a href="../javascript-grid-data-update/#batch-transactions">batch of update transactions</a>.
+            </td>
+        </tr>
+        <tr>
+            <th>suppressPropertyNamesCheck</th>
+            <td>
+                Disables showing a warning message in the console if using a gridOptions or colDef property that doesn't
+                exist.
             </td>
         </tr>
     </table>

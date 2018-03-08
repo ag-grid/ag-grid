@@ -34,8 +34,8 @@
 .ag-pivot-on .ag-header-cell-label{
     font-size: 10px;
     height: 90px;
-    margin-top: -26px;
-    margin-left: -20px;
+    padding-top: 36px;
+    margin-left: 0px;
     color:#1b6d85;
     font-weight: bold;
 }

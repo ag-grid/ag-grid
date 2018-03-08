@@ -6,7 +6,7 @@ if ($generated) {
     echo "<!DOCTYPE html>\n";
 };
 ?>
-<html>
+<html lang="en">
 <head>
     <title>ag-Grid React Example</title>
     <meta charset="UTF-8">

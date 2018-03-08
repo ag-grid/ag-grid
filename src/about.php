@@ -1,8 +1,10 @@
-<?php $navKey = "about";
+<?php 
+$navKey = "about";
 include_once 'includes/html-helpers.php';
+gtm_data_layer('about');
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head lang="en">
 <?php
 meta_and_links("ag-Grid: About our Company", "About ag-Grid", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is the story of ag-Grid and explains our mission, where we came from and who we are.", true);
@@ -188,7 +190,7 @@ meta_and_links("ag-Grid: About our Company", "About ag-Grid", "ag-Grid is a feat
                                 United Kingdom<br>
                             </address>
 
-                        <p>Email Enquiries: <a href="mailto:accounts@ag-grid.com">accounts@ag-grid.com</a></p>
+                        <p>Email Enquiries: <a href="mailto:info@ag-grid.com">info@ag-grid.com</a></p>
                     </div>
 
                     <div class="col-md-6">

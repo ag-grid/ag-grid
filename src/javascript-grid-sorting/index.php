@@ -14,14 +14,6 @@ include '../documentation-main/documentation_header.php';
         This page describes how to get your grid data sorting.
     </p>
 
-    <note>
-        This page discusses sorting outside of the context of paging. To see how to implement server
-        side sorting, see the sections
-        <a href="../javascript-grid-pagination/">pagination</a>
-        and
-        <a href="../javascript-grid-virtual-paging/">virtual paging</a>
-    </note>
-
     <h2>Enable Sorting</h2>
 
     <p>
@@ -29,8 +21,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        Sort a column by clicking on the column header. To do multi-column sorting,
-        hold down shift while clicking the column header.
+        Sort a column by clicking on the column header.
     </p>
 
     <h2>Custom Sorting</h2>
@@ -56,6 +47,27 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
         </ul>
 
     <?= example('Custom Sorting', 'custom-sorting', 'generated') ?>
+
+    <h2 id="multi-column-sorting">Multi Column Sorting</h2>
+
+    <p>
+        It is possible to sort by multiple columns. The default action for multiple column sorting is for
+        the user to hold down shift while clicking the column header. To change the default action to use
+        the Control key (or Cmd key on Apple) instead set the property <code>multiSortKey='ctrl'</code>.
+    </p>
+
+    <p>
+        The example below demonstrates the following:
+        <ul>
+            <li>The grid sorts by Country then Athlete by default.</li>
+            <li>
+                The property <code>multiSortKey='ctrl'</code> is set so multiple column selection
+                is achieved by holding down Control and selecting multiple columns.
+            </li>
+        </ul>
+    </p>
+
+    <?= example('Multi Column Sort', 'multi-column', 'generated') ?>
 
     <h2>Sorting Animation</h2>
 
@@ -162,5 +174,25 @@ var groupColumn = {
 
     <?= example('Accented Sort', 'accented-sort', 'generated') ?>
 
+    <h2 id="post-sort">Post Sort</h2>
+
+    <p>
+        It is also possible to perform some post sorting if you require additional control over the sorted rows.
+    </p>
+
+    <p>This is provided via the grid callback function: <code>gridOptions.postSort</code> as shown below:</p>
+
+    <snippet>
+gridOptions.postSort(rowNodes) {
+    // keep Ireland rows on top
+    rowNodes.sort((n1, n2) => n1.data.country === 'Ireland' ? -1 : 1);
+}
+    </snippet>
+
+    <p>
+        The following example uses this configuration to perform a post sort on the rows.
+    </p>
+
+    <?= example('Post Sort', 'post-sort', 'generated', array("enterprise" => 1)) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

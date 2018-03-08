@@ -2,6 +2,7 @@
 require "example-runner/utils.php";
 require "includes/html-helpers.php";
 define('HOMEPAGE', true);
+gtm_data_layer('home');
 // variable necessary in navbar.php
 $version = 'latest';
 ?>
@@ -103,8 +104,11 @@ meta_and_links($title, $keywords, $description, false);
         <h2 class="heading-scenarios">Complex Scenarios, Made Easy </h2>
 
         <section>
-            <div class="demo">
-                <?php include 'home/demo-1.php' ?>
+            <div class="demo" id="demo-1" data-load="home/demo-1.php">
+                <div class="loading">
+                <img src="_assets/doodles/checkbox-selection.svg">
+                <p>Loading Demo...</p>
+                </div>
                 <div class="view-code">
                     <a href="/javascript-getting-started#summary">View Code</a>
                 </div>
@@ -143,8 +147,11 @@ meta_and_links($title, $keywords, $description, false);
         <h2 class="heading-scenarios">Live Streaming Updates</h2>
 
         <section>
-            <div class="demo">
-                <?php include 'home/demo-2.php' ?>
+            <div class="demo" id="demo-2" data-load="home/demo-2.php">
+                <div class="loading">
+                <img src="_assets/doodles/checkbox-selection.svg">
+                <p>Loading Demo...</p>
+                </div>
                 <div class="view-code">
                     &nbsp;
                 </div>
@@ -207,8 +214,11 @@ meta_and_links($title, $keywords, $description, false);
         <h2 class="heading-scenarios">Developer Friendly API</h2>
 
         <section>
-            <div class="demo">
-                <?php include 'home/demo-api.php' ?>
+            <div class="demo" data-load="home/demo-api.php">
+                <div class="loading">
+                <img src="_assets/doodles/checkbox-selection.svg">
+                <p>Loading Demo...</p>
+                </div>
                 <div class="view-code">
                     <a href="/javascript-grid-animation/">View Code</a>
                 </div>
@@ -230,8 +240,11 @@ meta_and_links($title, $keywords, $description, false);
         </div>
     </div>
 
-    <?= globalAgGridScript(true) ?>
+    <?= globalAgGridScript(true, true) ?>
     <script src="dist/homepage.js"></script>
+    <!-- Used by the dashboard demo -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.9.1/d3.min.js"></script>
     <?php include 'includes/footer.php' ?>
 </body>
 </html>

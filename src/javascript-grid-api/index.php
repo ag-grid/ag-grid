@@ -154,6 +154,10 @@ include '../documentation-main/documentation_header.php';
             <th>refreshHeader()</th>
             <td>Redraws the header. Useful if a column name changes, or something else that changes how the column header is displayed.</td>
         </tr>
+        <tr>
+            <th>flashCells(params)</th>
+            <td>Flash rows, columns or individual cells. See <a href="../javascript-grid-data-update/#flashing">Flashing Cells</a>.</td>
+        </tr>
 
     </table>
 <h2>Sort & Filter</h2>
@@ -258,12 +262,25 @@ include '../documentation-main/documentation_header.php';
     <table class="table reference">
         <tr>
             <th>stopEditing(cancel?)</th>
-            <td>If a cell is editing, it stops the editing. Pass 'true' if you want to cancel the editing
-                (ie don't accept changes).</td>
+            <td>
+                If a cell is editing, it stops the editing. Pass 'true' if you want to cancel the editing
+                (ie don't accept changes). See
+                <a href="../javascript-grid-cell-editing/#editing-api">Editing API</a>
+            </td>
         </tr>
         <tr>
             <th>startEditingCell(params)</th>
-            <td>Gets the grid to start editing on a particular cell.</td>
+            <td>
+                Gets the grid to start editing on a particular cell. See
+                <a href="../javascript-grid-cell-editing/#editing-api">Editing API</a>
+            </td>
+        </tr>
+        <tr>
+            <th>getEditingCells()</th>
+            <td>
+                If the grid is editing, returns back details of the editing cell(s). See
+                <a href="../javascript-grid-cell-editing/#editing-api">Editing API</a>
+            </td>
         </tr>
 
     </table>
@@ -341,6 +358,20 @@ include '../documentation-main/documentation_header.php';
             <th>getRenderedNodes()</th>
             <td>Retrieve rendered nodes. Due to virtualisation this will contain only the current
                 visible rows and the amount in the buffer.
+            </td>
+        </tr>
+        <tr>
+            <th>getCellRendererInstances(params)</th>
+            <td>
+                Returns back the list of active
+                <a href="../javascript-grid-cell-rendering-components/#accessing-cell-renderer-instances">Cell Renderer Instances</a>.
+            </td>
+        </tr>
+        <tr>
+            <th>getCellEditorInstances(params)</th>
+            <td>
+                Returns back the list of active
+                <a href="../javascript-grid-cell-editor/#accessing-cell-editor-instances">Cell Editor Instances</a>.
             </td>
         </tr>
 

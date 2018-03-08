@@ -340,6 +340,72 @@ interface SuppressKeyboardEventParams {
 
 <?= example('Editor Component', 'vanilla-editor-component', 'vanilla', array("enterprise" => 1)) ?>
 
+<h2 id="accessing-cell-editor-instances">Accessing Cell Editor Instances</h2>
+
+<p>
+    After the grid has created an instance of a cell editor for a cell it is possible to access that instance.
+    This is useful if you want to call a method that you provide on the cell editor that has nothing to do
+    with the operation of the grid. Accessing cell editors is done using the grid API
+    <code>getCellEditorInstances(params)</code>.
+</p>
+
+<snippet>// function takes params to identify what cells and returns back a list of cell editors
+function getCellEditorInstances(params: GetCellEditorInstancesParams): ICellRendererComp[];
+
+// params object for the above
+interface GetCellEditorInstancesParams {
+    // an optional list of row nodes
+    rowNodes?: RowNode[];
+    // an optional list of columns
+    columns?: (string|Column)[];
+}</snippet>
+
+<p>
+    If you are doing normal editing, then only on cell is editable at any given time. For this reason
+    if you call <code>getCellEditorInstances()</code> with no params, it will return back the editing
+    cell's editor if a cell is editing, or an empty list if no cell is editing.
+</p>
+
+<p>
+    An example of calling <code>getCellEditorInstances()</code> is as follows:
+</p>
+
+<snippet>
+var instances = gridOptions.api.getCellRendererInstances(params);
+if (instances.length > 0) {
+    var instance = instances[0];
+}
+</snippet>
+
+<p>
+    The example below shows using <code>getCellEditorInstances</code>. The following can be noted:
+    <ul>
+        <li>All cells are editable.</li>
+        <li><b>First Name</b> and <b>Last Name</b> use the default editor.</li>
+        <li>All other columns use the provided <code>MySimpleCellEditor</code> editor.</li>
+        <li>The example sets an interval to print information from the active cell editor.
+        There are three results: 1) No editing 2) Editing with default cell renderer and 3)
+        editing with the custom cell editor. All results are printed to the developer console.</li>
+    </ul>
+</p>
+
+<?= example('Get Editor Instance', 'get-editor-instance', 'vanilla', array("enterprise" => 1)) ?>
+
+<p>
+    If your are using a framework component (detailed below), then the returned object
+    is a wrapper and you can get the underlying cell editor using <code>getFrameworkComponentInstance()</code>
+</p>
+
+<snippet>
+// example - get cell editor
+var instances = gridOptions.api.getCellEditorInstances(params);
+if (instances.length > 0) {
+    // got it, user must be scrolled so that it exists
+    var wrapperInstance = instances[0];
+    var frameworkInstance = wrapperInstance.getFrameworkComponentInstance();
+}
+</snippet>
+
 <?php include './angular.php'; ?>
 
 <?php include './react.php'; ?>

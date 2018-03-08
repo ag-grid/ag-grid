@@ -162,7 +162,7 @@ var colDef3 = function(params) {
     </li>
 </ul>
 
-<?= example('Animation Renderers', 'animation-renderers', 'generated') ?>
+<?= example('Animation Renderers', 'animation-renderers', 'generated', array("processVue" => true)) ?>
 
 <note>
     We hope you like the animation cell renderers. However you can also take inspiration from them,
@@ -267,7 +267,7 @@ colDef = {
         </li>
     </ul>
 
-<?= example('Group Renderers', 'group-renderer', 'generated', array("enterprise" => 1)) ?>
+<?= example('Group Renderers', 'group-renderer', 'generated', array("processVue" => true, "enterprise" => 1)) ?>
 
 <note>
     If you don't like the grid provided group cell renderer, you can build your own cell renderer and provide

@@ -149,7 +149,7 @@ import {createStore} from "redux";
 
 // pull in the ag-grid styles we're interested in
 import "ag-grid-root/dist/styles/ag-grid.css";
-import "ag-grid-root/dist/styles/ag-theme-fresh.css";
+import "ag-grid-root/dist/styles/ag-theme-balham.css";
 
 // only necessary if you're using ag-Grid-Enterprise features
 // import "ag-grid-enterprise";
@@ -256,7 +256,7 @@ class SimpleGridExample extends Component {
         };
 
         return (
-            &lt;div style={containerStyle} className="ag-theme-fresh"&gt;
+            &lt;div style={containerStyle} className="ag-theme-balham"&gt;
                 &lt;h1&gt;Simple ag-Grid React Example&lt;/h1&gt;
                 &lt;AgGridReact
                     // properties

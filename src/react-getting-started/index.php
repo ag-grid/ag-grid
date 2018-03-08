@@ -47,7 +47,7 @@ npm start
 
     <p>It will take a few seconds to bundle the application and with just those 3 commands you should now see the following application:</p>
 
-    <img src="../images/react-seed.png" style="display: block;margin: auto;height: 200px;">
+    <img src="../images/seed.png" style="display: block;margin: auto;height: 170px;">
 
     <p>Great! A working Grid application in no time at all. Let's break down the application into it's main parts:</p>
 
@@ -115,7 +115,7 @@ npm start
     <p>Of course there is much more we can do - in the following sections we will build on this starting point. For our
         seed application here is the complete example:</p>
 
-    <?= example('ag-Grid in React', 'hello-world', 'react',  array( "exampleHeight" => 130, "showResult" => true)); ?>
+    <?= example('ag-Grid in React', 'hello-world', 'react',  array( "exampleHeight" => 150, "showResult" => true)); ?>
 
     <h2>Adding Features</h2>
 
@@ -145,7 +145,7 @@ npm start
         clicking and it will cycle through ascending, descending and no sort). Note that in this example we're sorting
         by <code>Price</code> in ascending order (indicated by the up arrow):</p>
 
-    <img src="../images/react-gs-sorting.png" style="display: block;margin: auto;height: 200px;">
+    <img src="../images/js-gs-sorting.png" style="display: block;margin: auto;height: 170px;">
 
     <h3>Filtering</h3>
 
@@ -178,7 +178,7 @@ npm start
         <code>Model</code>
         column by the text <code>Celica</code> - only the row with <code>Celica</code> is shown now.</p>
 
-    <img src="../images/react-gs-filtering.png" style="display: block;margin: auto;height: 200px;">
+    <img src="../images/js-gs-filtering.png" style="display: block;margin: auto;height: 170px;">
 
     <h2>Summary</h2>
 

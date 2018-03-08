@@ -64,15 +64,22 @@ module.exports = {
                 use: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
                     use: [
-                        'css-loader?sourceMap=true',
+                        { 
+                            loader: 'css-loader', 
+                            options: { 
+                                minimize: true 
+                            } 
+                        },
                         {
                             loader: 'postcss-loader',
                             options: {
-                                sourceMap: true,
+                                // sourceMap: true,
                                 plugins: [require('precss'), require('autoprefixer')]
                             }
                         },
-                        'sass-loader?sourceMap=true'
+                        {   
+                            loader: 'sass-loader' 
+                        }
                     ]
                 })
             },

@@ -319,7 +319,7 @@ export default function parser([js, html], gridSettings) {
     bindings.gridSettings = (<any>Object).assign({
         width: '100%',
         height: '100%',
-        theme: 'ag-theme-fresh'
+        theme: 'ag-theme-balham'
     }, gridSettings);
     return bindings;
 }

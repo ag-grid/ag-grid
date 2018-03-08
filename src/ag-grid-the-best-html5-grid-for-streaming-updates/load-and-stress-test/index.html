@@ -1,0 +1,30 @@
+<div style="height: 100%; padding-top: 60px; box-sizing: border-box;">
+    <div id="myGrid" style="height: 100%;" class="ag-theme-balham-dark"></div>
+</div>
+
+<div style="position: absolute; top: 0px; left: 0px;">
+    <div style="padding: 2px;">
+        <span>Test:</span>
+
+        <button onclick="onStartStress()">&#9658; Stress</button>
+        <button onclick="onStartLoad()">&#9658; Load</button>
+        <button onclick="onStopMessages()">&#9632; Stop</button>
+
+        <span style="padding-left: 6px;">Columns:</span>
+
+        <button onclick="onColumnsFlat()">Flat</button>
+        <button onclick="onColumnsGroup()">Group</button>
+        <button onclick="onColumnsPivot()">Pivot</button>
+
+        <span style="padding-left: 6px;">Tool Panel:</span>
+
+        <button onclick="onShowToolPanel()">Show</button>
+        <button onclick="onHideToolPanel()">Hide</button>
+    </div>
+
+    <div style="padding: 2px; margin: 4px;">
+        <span id="eMessage" class="message-box">
+        </span>
+    </div>
+
+</div>

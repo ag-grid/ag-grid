@@ -49,7 +49,7 @@ import {Grid, GridOptions} from "ag-grid/main";
 //import 'ag-grid-enterprise/main';
 
 import "ag-grid/dist/styles/ag-grid.css";
-import "ag-grid/dist/styles/ag-theme-fresh.css";
+import "ag-grid/dist/styles/ag-theme-balham.css";
 
 class SimpleGrid {
     private gridOptions: GridOptions = &lt;GridOptions&gt;{};
@@ -91,7 +91,7 @@ new SimpleGrid();</snippet>
 &lt;head&gt;
 &lt;/head&gt;
 &lt;body&gt;
-&lt;div id="myGrid" style="height: 150px;width: 600px" class="ag-theme-fresh"&gt;&lt;/div&gt;
+&lt;div id="myGrid" style="height: 150px;width: 600px" class="ag-theme-balham"&gt;&lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;</snippet>
 
@@ -275,7 +275,7 @@ module.exports = {
 
     <p>If we now run our application with the above code we will see this:</p>
 
-    <img src="../images/ts_webpack_app.png" style="width: 100%">
+    <img src="../images/seed.png" style="width: 100%">
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

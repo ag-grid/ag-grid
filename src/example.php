@@ -1,4 +1,5 @@
 <?php
+$navKey = "demo";
 require "example-runner/utils.php";
 include_once 'includes/html-helpers.php';
 ?>
@@ -53,8 +54,10 @@ meta_and_links("ag-Grid: Datagrid Example", "react angular angularjs data grid e
                     <select onchange="onThemeChanged(this.value)" style="width: 90px; color: #333;"
                             class="hide-when-small">
                         <option value="">-none-</option>
+                        <option value="ag-theme-balham" selected>Balham</option>
+                        <option value="ag-theme-balham-dark">Balham (dark)</option>
                         <option value="ag-theme-material">Material</option>
-                        <option value="ag-theme-fresh" selected>Fresh</option>
+                        <option value="ag-theme-fresh">Fresh</option>
                         <option value="ag-theme-dark">Dark</option>
                         <option value="ag-theme-blue">Blue</option>
                     </select>
@@ -76,8 +79,8 @@ meta_and_links("ag-Grid: Datagrid Example", "react angular angularjs data grid e
 </div>
 
 <!-- The table div -->
-<div id="grid-wrapper">
-    <div id="myGrid" style="height: 100%; overflow: hidden;" class="ag-theme-fresh"></div>
+<div id="grid-wrapper" style="padding: 1rem;">
+    <div id="myGrid" style="height: 100%; overflow: hidden;" class="ag-theme-balham"></div>
 </div>
 </div> <!-- example wrapper -->
 

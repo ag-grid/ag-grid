@@ -21,7 +21,7 @@ foreach ($files as $file) {
     }
 }
 ?>
-<html>
+<html lang="en">
     <head>
     <base href="<?= POLYMER_BASE_HREF_PREFIX ."${exampleSection}/$exampleDir/" ?>" />
 <?php if (!$preview) { ?>

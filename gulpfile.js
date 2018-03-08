@@ -24,7 +24,10 @@ gulp.task('default', ['release']);
 
 gulp.task('bundle-site', () => {
     const theWebpack = require('webpack')
+    const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
     const webpackConfig = require('./webpack-config/site.js');
+    webpackConfig.plugins.push( new UglifyJSPlugin({ sourceMap: true }) );
+    webpackConfig.devtool = false;
 
     return gulp
         .src('./src/_assets/homepage/main.ts')
@@ -77,7 +80,9 @@ gulp.task('populate-dev', () => {
 
     const angular = gulp.src('../ag-grid-angular/**/*.*', {base: '../ag-grid-angular/'}).pipe(gulp.dest(`dist/${PACKAGES_DIR}/ag-grid-angular`));
 
-    return merge(standard, enterprise, enterpriseBundle, react, angular);
+    const vue = gulp.src('../ag-grid-vue/**/*.*', {base: '../ag-grid-vue/'}).pipe(gulp.dest(`dist/${PACKAGES_DIR}/ag-grid-vue`));
+
+    return merge(standard, enterprise, enterpriseBundle, react, angular, vue);
 });
 
 gulp.task('replace-to-cdn', () => {

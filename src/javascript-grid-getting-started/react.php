@@ -74,7 +74,6 @@
             rowSelection="multiple"
             enableSorting="true"
             enableFilter="true"
-            rowHeight="22"
             /&gt;
         </snippet>
     </p>
@@ -92,7 +91,7 @@
         Once this is done, we can then access the two css files that we need as follows:
         <snippet>
             import 'ag-grid-root/dist/styles/ag-grid.css';
-            import 'ag-grid-root/dist/styles/ag-theme-fresh.css';
+            import 'ag-grid-root/dist/styles/ag-theme-balham.css';
         </snippet>
         You will also need to configure CSS loaders for Webpack.
     </p>
@@ -101,7 +100,7 @@
 
     <p>
         You need to set a theme for the grid. You do this by giving the grid a CSS class, one
-        of ag-theme-fresh, ag-theme-blue or ag-theme-dark. You must have the CSS loaded as specified above
+        of ag-theme-balham, ag-theme-material, ag-theme-fresh, ag-theme-blue or ag-theme-dark. You must have the CSS loaded as specified above
         for this to work.
     </p>
 
@@ -110,11 +109,11 @@
         // if you only every wanted to use one style of grid
 
         // HTML
-        &lt;div class="ag-theme-fresh"&gt;
+        &lt;div class="ag-theme-balham"&gt;
         ...
 
         // OR JSX
-        &lt;div className="ag-theme-fresh"&gt;
+        &lt;div className="ag-theme-balham"&gt;
         ...
 
         // then later, use the grid

@@ -69,7 +69,7 @@ function appComponentTemplate(bindings, componentFileNames) {
     const propertyVars = [];
     const propertyAssignments = [];
 
-    bindings.properties.forEach(property => {
+    bindings.properties.filter(property => property.name != 'onGridReady').forEach(property => {
         if (property.value === 'null') {
             return;
         }

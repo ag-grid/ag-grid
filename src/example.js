@@ -9,26 +9,26 @@ var gridDiv;
 var colNames = ["Station", "Railway", "Street", "Address", "Toy", "Soft Box", "Make and Model", "Longest Day", "Shortest Night"];
 
 var countries = [
-    {country: "Ireland", continent: "Europe", language: "English"},
-    {country: "Spain", continent: "Europe", language: "Spanish"},
-    {country: "United Kingdom", continent: "Europe", language: "English"},
-    {country: "France", continent: "Europe", language: "French"},
-    {country: "Germany", continent: "Europe", language: "German"},
-    {country: "Luxembourg", continent: "Europe", language: "French"},
-    {country: "Sweden", continent: "Europe", language: "Swedish"},
-    {country: "Norway", continent: "Europe", language: "Norwegian"},
-    {country: "Italy", continent: "Europe", language: "Italian"},
-    {country: "Greece", continent: "Europe", language: "Greek"},
-    {country: "Iceland", continent: "Europe", language: "Icelandic"},
-    {country: "Portugal", continent: "Europe", language: "Portuguese"},
-    {country: "Malta", continent: "Europe", language: "Maltese"},
-    {country: "Brazil", continent: "South America", language: "Portuguese"},
-    {country: "Argentina", continent: "South America", language: "Spanish"},
-    {country: "Colombia", continent: "South America", language: "Spanish"},
-    {country: "Peru", continent: "South America", language: "Spanish"},
-    {country: "Venezuela", continent: "South America", language: "Spanish"},
-    {country: "Uruguay", continent: "South America", language: "Spanish"},
-    {country: "Belgium", continent: "Europe", language: "French"}
+    { country: "Ireland", continent: "Europe", language: "English" },
+    { country: "Spain", continent: "Europe", language: "Spanish" },
+    { country: "United Kingdom", continent: "Europe", language: "English" },
+    { country: "France", continent: "Europe", language: "French" },
+    { country: "Germany", continent: "Europe", language: "German" },
+    { country: "Luxembourg", continent: "Europe", language: "French" },
+    { country: "Sweden", continent: "Europe", language: "Swedish" },
+    { country: "Norway", continent: "Europe", language: "Norwegian" },
+    { country: "Italy", continent: "Europe", language: "Italian" },
+    { country: "Greece", continent: "Europe", language: "Greek" },
+    { country: "Iceland", continent: "Europe", language: "Icelandic" },
+    { country: "Portugal", continent: "Europe", language: "Portuguese" },
+    { country: "Malta", continent: "Europe", language: "Maltese" },
+    { country: "Brazil", continent: "South America", language: "Portuguese" },
+    { country: "Argentina", continent: "South America", language: "Spanish" },
+    { country: "Colombia", continent: "South America", language: "Spanish" },
+    { country: "Peru", continent: "South America", language: "Spanish" },
+    { country: "Venezuela", continent: "South America", language: "Spanish" },
+    { country: "Uruguay", continent: "South America", language: "Spanish" },
+    { country: "Belgium", continent: "Europe", language: "French" }
 ];
 
 var games = ["Chess", "Cross and Circle", "Daldos", "Downfall", "DVONN", "Fanorona", "Game of the Generals", "Ghosts",
@@ -87,9 +87,9 @@ var groupColumn = {
 // the moving animation looks crap on IE, firefox and safari, so we turn it off in the demo for them
 function suppressColumnMoveAnimation() {
     var isFirefox = typeof InstallTrigger !== 'undefined';
-// At least Safari 3+: "[object HTMLElementConstructor]"
+    // At least Safari 3+: "[object HTMLElementConstructor]"
     var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
-// Internet Explorer 6-11
+    // Internet Explorer 6-11
     var isIE = /*@cc_on!@*/false || !!document.documentMode;
 
     return isFirefox || isSafari || isIE;
@@ -123,42 +123,42 @@ var gridOptions = {
     // },
     // suppressAsyncEvents: true,
     // suppressAggAtRootLevel: true,
-    floatingFilter:true,
-//debug: true,
-//     editType: 'fullRow',
-//     debug: true,
-//     suppressMultiRangeSelection: true,
+    floatingFilter: true,
+    //debug: true,
+    //     editType: 'fullRow',
+    //     debug: true,
+    //     suppressMultiRangeSelection: true,
     rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
     pivotTotals: true,
-//minColWidth: 50,
-//maxColWidth: 300,
+    //minColWidth: 50,
+    //maxColWidth: 300,
     rowBuffer: 10,
-//columnDefs: [],
-//singleClickEdit: true,
-// suppressClickEdit: true,
-//rowData: [
-//    {name: 'Niall'},
-//    {name: 'Eamon'},
-//    {name: 'Kevin'},
-//    {name: 'Brian'}
-//],
+    //columnDefs: [],
+    //singleClickEdit: true,
+    // suppressClickEdit: true,
+    //rowData: [
+    //    {name: 'Niall'},
+    //    {name: 'Eamon'},
+    //    {name: 'Kevin'},
+    //    {name: 'Brian'}
+    //],
     enterMovesDownAfterEdit: true,
-    groupKeys: undefined, //set as string of keys eg ["region","country"],
+    enterMovesDown: true,
     // groupUseEntireRow: true, //one of [true, false]
-//        groupDefaultExpanded: 9999, //one of [true, false], or an integer if greater than 1
-//            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
-//        groupSuppressAutoColumn: true,
-//groupSuppressBlankHeader: true,
-//suppressMovingCss: true,
-//suppressMovableColumns: true,
-//groupIncludeFooter: true,
+    //        groupDefaultExpanded: 9999, //one of [true, false], or an integer if greater than 1
+    //            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
+    //        groupSuppressAutoColumn: true,
+    //groupSuppressBlankHeader: true,
+    //suppressMovingCss: true,
+    //suppressMovableColumns: true,
+    //groupIncludeFooter: true,
     suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
     // suppressTouch: true,
     // suppressDragLeaveHidesColumns: true,
-//unSortIcon: true,
-//     rowHeight: 30, // defaults to 25, can be any integer
-//     enableRtl: true,
+    //unSortIcon: true,
+    //     enableRtl: true,
+    multiSortKey: 'ctrl',
     animateRows: true,
     enableColResize: true, //one of [true, false]
     enableSorting: true, //one of [true, false]
@@ -174,44 +174,35 @@ var gridOptions = {
     // groupSelectsFiltered: true,
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
     // suppressColumnVirtualisation: true,
-//suppressContextMenu: true,
-//suppressFieldDotNotation: true,
+    //suppressContextMenu: true,
+    //suppressFieldDotNotation: true,
     autoGroupColumnDef: groupColumn,
-//suppressCellSelection: true,
-//suppressMultiSort: true,
+    //suppressCellSelection: true,
+    //suppressMultiSort: true,
     showToolPanel: true,//window.innerWidth > 1000,
-//  autoSizePadding: 20,
-//toolPanelSuppressGroups: true,
-//toolPanelSuppressValues: true,
-//groupSuppressAutoColumn: true,
-//groupAggFields: ['bankBalance','totalWinnings'],
-//     groupMultiAutoColumn: true,
-//     groupHideOpenParents: true,
-
-//suppressMenuFilterPanel: true,
-//     clipboardDeliminator: ',',
-//suppressMenuMainPanel: true,
-//suppressMenuColumnPanel: true,
-//forPrint: true,
-//rowClass: function(params) { return (params.data.country === 'Ireland') ? "theClass" : null; },
-//headerCellRenderer: headerCellRenderer_text,
-//headerCellRenderer: headerCellRenderer_dom,
+    // toolPanelSuppressColumnFilter: true,
+    // toolPanelSuppressColumnSelectAll: true,
+    // toolPanelSuppressColumnExpandAll: true,
+    //  autoSizePadding: 20,
+    //toolPanelSuppressGroups: true,
+    //toolPanelSuppressValues: true,
+    //groupSuppressAutoColumn: true,
+    //contractColumnSelection: true,
+    //groupAggFields: ['bankBalance','totalWinnings'],
+    //     groupMultiAutoColumn: true,
+    //     groupHideOpenParents: true,
+    //suppressMenuFilterPanel: true,
+    //     clipboardDeliminator: ',',
+    //suppressMenuMainPanel: true,
+    //suppressMenuColumnPanel: true,
+    //forPrint: true,
+    //rowClass: function(params) { return (params.data.country === 'Ireland') ? "theClass" : null; },
+    //headerCellRenderer: headerCellRenderer_text,
+    //headerCellRenderer: headerCellRenderer_dom,
     onRowSelected: rowSelected, //callback when row selected
     onSelectionChanged: selectionChanged, //callback when selection changed,
-    icons: {
-        //menu: '<i class="fa fa-bars"/>',
-        //columnVisible: '<i class="fa fa-eye"/>',
-        //columnHidden: '<i class="fa fa-eye-slash"/>',
-        columnRemoveFromGroup: '<i class="fa fa-remove"/>',
-        sortAscending: '<i class="fa fa-long-arrow-down"/>',
-        sortDescending: '<i class="fa fa-long-arrow-up"/>',
-        // groupExpanded: '<i class="fa fa-minus-square-o"/>',
-        // groupContracted: '<i class="fa fa-plus-square-o"/>',
-        // columnGroupOpened: '<i class="fa fa-minus-square-o"/>',
-        // columnGroupClosed: '<i class="fa fa-plus-square-o"/>'
-    },
     aggFuncs: {
-        'zero': function() {return 0;}
+        'zero': function () { return 0; }
     },
     getBusinessKeyForNode: function (node) {
         if (node.data) {
@@ -220,14 +211,24 @@ var gridOptions = {
             return '';
         }
     },
+    defaultGroupSortComparator: function(nodeA, nodeB) {
+        if (nodeA.key < nodeB.key) {
+            return -1;
+        } else if (nodeA.key > nodeB.key) {
+            return 1;
+        } else {
+            return 0;
+        }
+    },
+    // rowHeight: 100,
     // suppressTabbing: true,
     // rowHoverClass: true,
     // layoutInterval: -1,
-// suppressAnimationFrame: true,
-//     pinnedTopRowData: [{},{},{}],
-//     pinnedBottomRowData: [{},{},{}],
-// callback when row clicked
-//     stopEditingWhenGridLosesFocus: true,
+    // suppressAnimationFrame: true,
+    //     pinnedTopRowData: [{},{},{}],
+    //     pinnedBottomRowData: [{},{},{}],
+    // callback when row clicked
+    //     stopEditingWhenGridLosesFocus: true,
     onRowClicked: function (params) {
         // console.log("Callback onRowClicked: " + (params.data?params.data.name:null) + " - " + params.event);
     },
@@ -237,11 +238,11 @@ var gridOptions = {
     onRowDoubleClicked: function (params) {
         // console.log("Callback onRowDoubleClicked: " + params.data.name + " - " + params.event);
     },
-// callback when cell clicked
+    // callback when cell clicked
     onCellClicked: function (params) {
         // console.log("Callback onCellClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
     },
-    onColumnVisible: function(event) {
+    onColumnVisible: function (event) {
         console.log("Callback onColumnVisible:", event);
     },
     onCellValueChanged: function (params) {
@@ -250,11 +251,11 @@ var gridOptions = {
     onRowDataChanged: function (params) {
         console.log('Callback onRowDataChanged: ');
     },
-// callback when cell double clicked
+    // callback when cell double clicked
     onCellDoubleClicked: function (params) {
         // console.log("Callback onCellDoubleClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
     },
-// callback when cell right clicked
+    // callback when cell right clicked
     onCellContextMenu: function (params) {
         console.log("Callback onCellContextMenu: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
     },
@@ -291,7 +292,7 @@ var gridOptions = {
             }
         },
         {
-            id:'header',
+            id: 'header',
             interior: {
                 color: "#CCCCCC", pattern: 'Solid'
             }
@@ -305,7 +306,7 @@ function getContextMenuItems(params) {
     result.push(
         {
             name: 'Custom Menu Item',
-            icon: '<img src="../images/lab.png" style="width: 14px;"/>',
+            icon: '<img src="images/lab.svg" style="width: 14px;"/>',
             //shortcut: 'Alt + M',
             action: function () {
                 var value = params.value ? params.value : '<empty>';
@@ -346,8 +347,9 @@ var defaultCols = [
                 editable: true,
                 enableRowGroup: true,
                 // enablePivot: true,
-                filter: 'personFilter',
-                floatingFilterComponent: 'personFloatingFilterComponent',
+                filter: 'agTestingSandbox',
+                // filter: 'personFilter',
+                // floatingFilterComponent: 'personFloatingFilterComponent',
                 checkboxSelection: function (params) {
                     // we put checkbox on the name if we are not doing grouping
                     return params.columnApi.getRowGroupColumns().length === 0;
@@ -356,22 +358,18 @@ var defaultCols = [
                     // we put checkbox on the name if we are not doing grouping
                     return params.columnApi.getRowGroupColumns().length === 0;
                 },
-                headerCheckboxSelectionFilteredOnly: true,
-                icons: {
-                    sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-                    sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
-                }
+                headerCheckboxSelectionFilteredOnly: true
             },
             {
                 headerName: "Language", field: "language", width: 150, editable: true, filter: 'agSetColumnFilter',
-                cellEditor:'agSelectCellEditor',
+                cellEditor: 'agSelectCellEditor',
                 enableRowGroup: true,
                 enablePivot: true,
                 // rowGroupIndex: 0,
                 // pivotIndex: 0,
                 cellEditorParams: {
                     values: ['English', 'Spanish', 'French', 'Portuguese', 'German',
-                        'Swedish','Norwegian','Italian','Greek','Icelandic','Portuguese','Maltese']
+                        'Swedish', 'Norwegian', 'Italian', 'Greek', 'Icelandic', 'Portuguese', 'Maltese']
                 },
                 // pinned: 'left',
                 headerTooltip: "Example tooltip for Language",
@@ -379,10 +377,6 @@ var defaultCols = [
                     selectAllOnMiniFilter: true,
                     newRowsAction: 'keep',
                     clearButton: true
-                },
-                icons: {
-                    sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-                    sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
                 }
             },
             {
@@ -448,7 +442,7 @@ var defaultCols = [
                 enableRowGroup: true,
                 enablePivot: true,
                 enableValue: true,
-                cellRenderer: 'booleanCellRenderer', cellStyle: {"text-align": "center"}, comparator: booleanComparator,
+                cellRenderer: 'booleanCellRenderer', cellStyle: { "text-align": "center" }, comparator: booleanComparator,
                 floatCell: true,
                 filterParams: {
                     cellRenderer: 'booleanFilterCellRenderer',
@@ -464,7 +458,8 @@ var defaultCols = [
         headerName: 'Performance',
         groupId: 'performance',
         children: [
-            {headerName: "Bank Balance", field: "bankBalance", width: 180, editable: true,
+            {
+                headerName: "Bank Balance", field: "bankBalance", width: 180, editable: true,
                 filter: 'winningsFilter', valueFormatter: currencyFormatter,
                 type: 'numericColumn',
                 enableValue: true,
@@ -478,13 +473,13 @@ var defaultCols = [
             },
             {
                 headerName: "Extra Info 1", columnGroupShow: 'open', width: 150, editable: false,
-                suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "right"},
-                cellRenderer: function() { return 'Abra...'; }
+                suppressSorting: true, suppressMenu: true, cellStyle: { "text-align": "right" },
+                cellRenderer: function () { return 'Abra...'; }
             },
             {
                 headerName: "Extra Info 2", columnGroupShow: 'open', width: 150, editable: false,
-                suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "left"},
-                cellRenderer: function() { return '...cadabra!'; }
+                suppressSorting: true, suppressMenu: true, cellStyle: { "text-align": "left" },
+                cellRenderer: function () { return '...cadabra!'; }
             }
         ]
     },
@@ -494,7 +489,7 @@ var defaultCols = [
         enableRowGroup: true,
         enablePivot: true,
         enableValue: true,
-        filterParams: {cellRenderer: 'ratingFilterRenderer'}
+        filterParams: { cellRenderer: 'ratingFilterRenderer' }
     },
     {
         headerName: "Total Winnings", field: "totalWinnings", filter: 'agNumberColumnFilter', type: 'numericColumn',
@@ -526,7 +521,7 @@ months.forEach(function (month) {
             'bad-score': 'typeof x === "number" && x < 10000'
         },
         valueParser: numberParser, valueFormatter: currencyFormatter,
-        filterParams:{
+        filterParams: {
             clearButton: true
         }
     })
@@ -574,13 +569,13 @@ function getRowCount() {
 
 function createCols() {
     var colCount = getColCount();
-// start with a copy of the default cols
+    // start with a copy of the default cols
     var columns = defaultCols.slice(0, colCount);
 
-// there are 22 cols by default
+    // there are 22 cols by default
     for (var col = 22; col < colCount; col++) {
         var colName = colNames[col % colNames.length];
-        var colDef = {headerName: colName, field: "col" + col, width: 200, editable: true};
+        var colDef = { headerName: colName, field: "col" + col, width: 200, editable: true };
         columns.push(colDef);
     }
 
@@ -642,7 +637,7 @@ function createRowItem(row, colCount) {
 
     //create data for the known columns
     var countriesToPickFrom = Math.floor(countries.length * ((row % 3 + 1) / 3));
-    var countryData = countries[(row*19) % countriesToPickFrom];
+    var countryData = countries[(row * 19) % countriesToPickFrom];
     rowItem.country = countryData.country;
     rowItem.continent = countryData.continent;
     rowItem.language = countryData.language;
@@ -652,7 +647,7 @@ function createRowItem(row, colCount) {
     rowItem.name = firstName + " " + lastName;
 
     rowItem.game = {
-        name: games[Math.floor(row*13/17*19) % games.length],
+        name: games[Math.floor(row * 13 / 17 * 19) % games.length],
         bought: booleanValues[row % booleanValues.length]
     };
 
@@ -693,9 +688,9 @@ function selectionChanged(event) {
 }
 
 function rowSelected(event) {
-// the number of rows selected could be huge, if the user is grouping and selects a group, so
-// to stop the console from clogging up, we only print if in the first 10 (by chance we know
-// the node id's are assigned from 0 upwards)
+    // the number of rows selected could be huge, if the user is grouping and selects a group, so
+    // to stop the console from clogging up, we only print if in the first 10 (by chance we know
+    // the node id's are assigned from 0 upwards)
     if (event.node.id < 10) {
         var valueToPrint = event.node.group ? 'group (' + event.node.key + ')' : event.node.data.name;
         console.log("Callback rowSelected: " + valueToPrint + " - " + event.node.isSelected());
@@ -779,7 +774,7 @@ PersonFilter.prototype.setupGui = function () {
         '</div>';
 
     var that = this;
-    this.onFilterChanged = function() {
+    this.onFilterChanged = function () {
         that.extractFilterText();
         that.params.filterChangedCallback();
     };
@@ -797,7 +792,7 @@ PersonFilter.prototype.getGui = function () {
 };
 
 PersonFilter.prototype.doesFilterPass = function (params) {
-// make sure each word passes separately, ie search for firstname, lastname
+    // make sure each word passes separately, ie search for firstname, lastname
     var passed = true;
     var valueGetter = this.valueGetter;
     this.filterText.toLowerCase().split(" ").forEach(function (filterWord) {
@@ -815,7 +810,7 @@ PersonFilter.prototype.isFilterActive = function () {
     return isActive;
 };
 
-PersonFilter.prototype.getModelAsString = function (model){
+PersonFilter.prototype.getModelAsString = function (model) {
     return model ? model : '';
 };
 
@@ -833,23 +828,23 @@ PersonFilter.prototype.destroy = function () {
     this.eFilterText.removeEventListener("input", this.onFilterChanged);
 };
 
-function PersonFloatingFilterComponent() {}
+function PersonFloatingFilterComponent() { }
 
-PersonFloatingFilterComponent.prototype.init = function(params) {
+PersonFloatingFilterComponent.prototype.init = function (params) {
     this.params = params;
     this.eGui = document.createElement('input');
     var eGui = this.eGui;
-    this.changeEventListener = function() {
+    this.changeEventListener = function () {
         params.onFloatingFilterChanged(eGui.value);
     };
     this.eGui.addEventListener('input', this.changeEventListener);
 };
 
-PersonFloatingFilterComponent.prototype.getGui = function() {
+PersonFloatingFilterComponent.prototype.getGui = function () {
     return this.eGui;
 };
 
-PersonFloatingFilterComponent.prototype.onParentModelChanged = function(model) {
+PersonFloatingFilterComponent.prototype.onParentModelChanged = function (model) {
     // add in child, one for each flat
     if (model) {
         this.eGui.value = model;
@@ -858,7 +853,7 @@ PersonFloatingFilterComponent.prototype.onParentModelChanged = function(model) {
     }
 };
 
-PersonFloatingFilterComponent.prototype.destroy = function() {
+PersonFloatingFilterComponent.prototype.destroy = function () {
     this.eGui.removeEventListener('input', this.changeEventListener);
 };
 
@@ -919,7 +914,7 @@ WinningsFilter.prototype.isFilterActive = function () {
 };
 
 WinningsFilter.prototype.getModelAsString = function (model) {
-    return model? model: '';
+    return model ? model : '';
 };
 
 WinningsFilter.prototype.getModel = function () {
@@ -938,11 +933,11 @@ WinningsFilter.prototype.getModel = function () {
     }
 };
 // lazy, the example doesn't use setModel()
-WinningsFilter.prototype.setModel = function () {};
+WinningsFilter.prototype.setModel = function () { };
 
 function currencyCssFunc(params) {
     if (params.value !== null && params.value !== undefined && params.value < 0) {
-        return {"color": "red", "font-weight": "bold"};
+        return { "color": "red", "font-weight": "bold" };
     } else {
         return {};
     }
@@ -1012,16 +1007,16 @@ var count = 0;
 
 function booleanCellRenderer(params) {
     count++;
-    if (count<=1) {
+    if (count <= 1) {
         // params.api.onRowHeightChanged();
     }
 
     var valueCleaned = booleanCleaner(params.value);
     if (valueCleaned === true) {
-        return "<span title='true' class='ag-icon ag-icon-tick'></span>";
+        return "<span title='true' class='ag-icon ag-icon-tick content-icon'></span>";
     } else if (valueCleaned === false) {
-        return "<span title='false' class='ag-icon ag-icon-cross'></span>";
-    } else if (params.value !==null && params.value !== undefined) {
+        return "<span title='false' class='ag-icon ag-icon-cross content-icon'></span>";
+    } else if (params.value !== null && params.value !== undefined) {
         return params.value.toString();
     } else {
         return null;
@@ -1031,9 +1026,9 @@ function booleanCellRenderer(params) {
 function booleanFilterCellRenderer(params) {
     var valueCleaned = booleanCleaner(params.value);
     if (valueCleaned === true) {
-        return "<span title='true' class='ag-icon ag-icon-tick'></span>";
+        return "<span title='true' class='ag-icon ag-icon-tick content-icon'></span>";
     } else if (valueCleaned === false) {
-        return "<span title='false' class='ag-icon ag-icon-cross'></span>";
+        return "<span title='false' class='ag-icon ag-icon-cross content-icon'></span>";
     } else {
         return "(empty)";
     }
@@ -1049,19 +1044,19 @@ function booleanCleaner(value) {
     }
 }
 
-function CountryFloatingFilterComponent() {}
+function CountryFloatingFilterComponent() { }
 
-CountryFloatingFilterComponent.prototype.init = function(params) {
+CountryFloatingFilterComponent.prototype.init = function (params) {
     this.params = params;
     this.eGui = document.createElement('div');
     // this.eGui.style.borderBottom = '1px solid lightgrey';
 };
 
-CountryFloatingFilterComponent.prototype.getGui = function() {
+CountryFloatingFilterComponent.prototype.getGui = function () {
     return this.eGui;
 };
 
-CountryFloatingFilterComponent.prototype.onParentModelChanged = function(model) {
+CountryFloatingFilterComponent.prototype.onParentModelChanged = function (model) {
     // add in child, one for each flat
     if (model) {
         var flagsHtml = [];
@@ -1072,13 +1067,13 @@ CountryFloatingFilterComponent.prototype.onParentModelChanged = function(model) 
         } else {
             var toPrint = model;
         }
-        toPrint.forEach(function(country) {
-            flagsHtml.push('<img style="border: 0px; width: 15px; height: 10px; margin-left: 2px" ' +
+        toPrint.forEach(function (country) {
+            flagsHtml.push('<img class="flag" style="border: 0px; width: 15px; height: 10px; margin-left: 2px" ' +
                 'src="https://flags.fmcdn.net/data/flags/mini/'
                 + COUNTRY_CODES[country] + '.png">');
         });
-        this.eGui.innerHTML = '('+model.length+') ' + flagsHtml.join('');
-        if (printDotDotDot){
+        this.eGui.innerHTML = '(' + model.length + ') ' + flagsHtml.join('');
+        if (printDotDotDot) {
             this.eGui.innerHTML = this.eGui.innerHTML + '...';
         }
     } else {
@@ -1091,7 +1086,7 @@ function countryCellRenderer(params) {
     if (params.value === "" || params.value === undefined || params.value === null) {
         return '';
     } else {
-        var flag = '<img border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
+        var flag = '<img class="flag" border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
         return flag + ' ' + params.value;
     }
 }

@@ -7,7 +7,7 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
-    <h2>ag-Grid Angular Examples Using Third Party Libraries</h2>
+    <h1>ag-Grid Angular Examples Using Third Party Libraries</h1>
 
     <p>This page offers some suggestions and ideas of how third-party libraries can be used with ag-Grid.</p>
 

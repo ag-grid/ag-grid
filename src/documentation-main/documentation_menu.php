@@ -32,20 +32,26 @@ function should_expand($item) {
     return false;
 }
 
-function render_menu_items($items) {
+function render_menu_items($items, $gtm = array()) {
     if (count($items) == 0) {
         return;
     }
 
     echo "<ul>";
     foreach($items as $item) {
+        $item_gtm = array_merge($gtm, ($item['gtm'] ? $item['gtm'] : array()));
         $li_class = should_expand($item) ? ' class="expanded"' : '';
         echo "<li$li_class>";
+
         $enterprise_icon = ($item['enterprise'] ? '<span class="enterprise-icon">e</span>' : '');
         $new_marker = ($item['new'] ? '<span class="new-marker">new</span>' : '');
         if ($item['url']) {
             $url = $GLOBALS['rootFolder'] . $item['url'];
-            $a_class = is_current($item) ? ' class="active"' : '';
+            $current = is_current($item);
+            $a_class = $current ? ' class="active"' : '';
+            if ($current) {
+                $GLOBALS['DOC_GTM'] = json_encode($item_gtm);
+            }
             echo <<<LINK
                 <a href="$url"$a_class>{$item['title']}$new_marker$enterprise_icon</a>
 LINK;
@@ -53,11 +59,14 @@ LINK;
             echo "<span>{$item['title']}</span>";
         }
 
-        render_menu_items($item['items']);
+        render_menu_items($item['items'], $item_gtm);
         echo "</li>";
     }
     echo "</ul>";
 }
 
-render_menu_items($menu_items);
+render_menu_items($menu_items, array());
 ?>
+<script>
+dataLayer.push(<?=$GLOBALS['DOC_GTM'] ?>);
+</script>

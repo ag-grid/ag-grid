@@ -40,6 +40,7 @@ var gridOptions = {
     rowData: rowData,
     columnDefs: columnDefs,
     rowGroupPanelShow: 'always',
+    enableColResize: true,
     animateRows: true,
     groupDefaultExpanded: -1,
     autoGroupColumnDef: {

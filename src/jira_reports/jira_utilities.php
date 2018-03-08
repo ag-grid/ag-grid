@@ -1,6 +1,8 @@
 <?php
 date_default_timezone_set('Europe/London');
 
+const INDEFINITE_LIFETIME=-1;
+
 const JIRA_ENDPOINT = 'https://ag-grid.atlassian.net/rest/api/2/search?jql=filter=';
 const PIPELINE_SECTIONS = array(
     'current_release' => JIRA_ENDPOINT . '11730+order+by+priority+DESC+%2C+status+ASC',
@@ -9,7 +11,7 @@ const PIPELINE_SECTIONS = array(
     'issue_by_epic' => JIRA_ENDPOINT . '11726+order+by+cf%5B10005%5D+desc+%2C+priority+desc',
     'epic_by_priority' => JIRA_ENDPOINT . '11727+order+by+cf[10005]+asc+%2C+priority+desc',
     'parked' => JIRA_ENDPOINT . '11732',
-    'changelog' => JIRA_ENDPOINT . '10203+order+by+fixversion+desc',
+    'changelog' => JIRA_ENDPOINT . '11743+order+by+fixversion+desc',
     'kanban' => JIRA_ENDPOINT . '11716+order+by+fixversion+desc'
 
 );
@@ -66,13 +68,33 @@ function getCacheFile($report_type)
     return dirname(__FILE__) . "/cache/" . $report_type . '.json';
 }
 
+function getCacheLifetimeMinutes($report_type, $jira_config)
+{
+    $cache_lifetime_minutes = $jira_config->{"cache-lifetime-minutes"};
+    if(isset($jira_config->{"overrides"}->{$report_type}) && isset($jira_config->{"overrides"}->{$report_type}->{"cache-lifetime-minutes"}))
+    {
+        $cache_lifetime_minutes = $jira_config->{"overrides"}->{$report_type}->{"cache-lifetime-minutes"};
+    }
+
+    return $cache_lifetime_minutes;
+
+}
+
+
 function cacheEntryValid($report_type, $jira_config)
 {
     clearstatcache();
 
     $cache_file = getCacheFile($report_type);
-    $cache_lifetime_minutes = $jira_config->{"cache-lifetime-minutes"};
-    return file_exists($cache_file) && (filemtime($cache_file) > (time() - 60 * $cache_lifetime_minutes));
+    $cache_lifetime_minutes = getCacheLifetimeMinutes($report_type, $jira_config);
+
+    $file_exists = file_exists($cache_file);
+    if($file_exists && $cache_lifetime_minutes == INDEFINITE_LIFETIME)
+    {
+        return True;
+    }
+
+    return $file_exists && (filemtime($cache_file) > (time() - 60 * $cache_lifetime_minutes));
 }
 
 function getFromCache($report_type)
@@ -107,8 +129,10 @@ function retrieveJiraFilterData($report_type)
     } else {
         // cache valid? retrieve from cache
         if (cacheEntryValid($report_type, $jira_config)) {
+            echo 'cache valid<br/>';
             $dataAsJson = getFromCache($report_type);
         } else {
+            echo 'cache not valid<br/>';
             // other get live data and update cache for next time
             $dataAsJson = getLiveJiraFilterData($report_type, $maxResults, $jira_config);
             updateCache($report_type, $dataAsJson);
@@ -145,12 +169,14 @@ function getLiveJiraFilterData($report_type, $maxResults, $jira_config)
 
 function mapIssueType($issueType)
 {
-    switch ($issueType) {
-        case "Task":
-            return "Feature Request";
-            break;
-    }
-    return $issueType;
+    return $issueType == "Bug" ? "Bug" : "Feature Request";
+}
+
+function mapIssueIcon($issueType)
+{
+    return $issueType == "Bug" ?
+        "https://ag-grid.atlassian.net/secure/viewavatar?size=xsmall&avatarId=10303&avatarType=issuetype" :  // bug
+        "https://ag-grid.atlassian.net/secure/viewavatar?size=xsmall&avatarId=10318&avatarType=issuetype"; // task/feature request
 }
 
 function mapPriority($priority)
@@ -186,7 +212,7 @@ function classForStatusAndResolution($status, $resolution)
             $class = "aui-lozenge-complete";
             break;
         case "Done":
-            $class = $resolution == 'Done' ? $class : "aui-lozenge-error";
+            $class = $status == 'Done' && empty($resolution) ? $class : ($resolution == 'Done' ? $class : "aui-lozenge-error");
     }
 
     return $class;
@@ -197,7 +223,7 @@ function getStatusForStatusAndResolution($status, $resolution)
     $result = $status;
     switch ($status) {
         case "Done":
-            $result = $resolution == 'Done' ? $result : $resolution;
+            $result = $status == 'Done' && empty($resolution) ? $result : ($resolution == 'Done' ? $result : $resolution);
     }
 
     return $result;
@@ -206,6 +232,41 @@ function getStatusForStatusAndResolution($status, $resolution)
 function getValueForTargetEta($sprintEta, $nextSprint)
 {
     return "+" . ($sprintEta - $nextSprint + 1);
+}
+
+function getEpicKeyToEpicDataMap()
+{
+    $epic_data = json_decode(json_encode(retrieveJiraFilterData('epic_by_priority')), true);
+
+    // build up a map for epic key=>epic name
+    $epicKeyToName = array();
+    $epicKeyToSprintETA = array();
+    $epicKeyToEpicPriority = array();
+    for ($x = 0; $x < count($epic_data['issues']); $x++) {
+        $epicKeyToName[$epic_data['issues'][$x]['key']] = $epic_data['issues'][$x]['fields']['summary'];
+        $epicKeyToSprintETA[$epic_data['issues'][$x]['key']] = $epic_data['issues'][$x]['fields']['customfield_10515'];
+        $epicKeyToEpicPriority[$epic_data['issues'][$x]['key']] = $epic_data['issues'][$x]['fields']['priority']['id'];
+    }
+    return array($epicKeyToName, $epicKeyToSprintETA, $epicKeyToEpicPriority);
+}
+
+function addEpicDataToIssueData($issue_data, $epicKeyToName, $epicKeyToSprintETA, $epicKeyToEpicPriority)
+{
+    for ($x = 0; $x < count($issue_data['issues']); $x++) {
+        $issue_fields = $issue_data['issues'][$x]['fields'];
+
+        if($issue_fields['issuetype']['name'] == 'Epic') {
+            $issue_data['issues'][$x]['fields']['epicName'] = $issue_fields['summary'];
+            $issue_data['issues'][$x]['fields']['customfield_10515'] = $issue_fields['customfield_10005'];
+            $issue_data['issues'][$x]['fields']['epicPriority'] = $issue_fields['priority']['id'];
+        } else {
+            $issue_data['issues'][$x]['fields']['epicName'] = $epicKeyToName[$issue_fields['customfield_10005']];
+            $issue_data['issues'][$x]['fields']['customfield_10515'] = $epicKeyToSprintETA[$issue_fields['customfield_10005']];
+            $issue_data['issues'][$x]['fields']['epicPriority'] = $epicKeyToEpicPriority[$issue_fields['customfield_10005']];
+        }
+    }
+
+    return $issue_data;
 }
 
 ?>

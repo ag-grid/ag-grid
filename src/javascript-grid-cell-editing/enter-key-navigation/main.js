@@ -14,6 +14,7 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     enterMovesDownAfterEdit: true,
+    enterMovesDown: true,
     defaultColDef: {
         editable: true,
         width: 100

@@ -76,11 +76,20 @@ include '../documentation-main/documentation_header.php';
             <td>Tells the grid if this row should be rendered using <a href="../javascript-grid-master-detail/">fullWidth</a>.</td>
         </tr>
         <tr>
+            <th>isRowSelectable(rowNode)</th>
+            <td>Callback to be used to determine which rows are selectable. By default rows are selectable, return false
+                to make row un-selectable. For more details see
+                <a href="../javascript-grid-selection/#specify-selectable-rows">Specify Selectable Rows</a>.</td>
+        </tr>
+        <tr>
             <th>isRowMaster(dataItem)</th>
             <td>Callback to be used with <a href="../javascript-grid-master-detail">Master Detail</a> to determine if
                 a row should be master row. If false is returned no detail row will exist for this row.</td>
         </tr>
-
+        <tr>
+            <th>postSort(rowNodes)</th>
+            <td>Callback to perform additional sorting after the grid has sorted the rows. For more details see <a href="../javascript-grid-sorting/#post-sort">Post Sort</a>.</td>
+        </tr>
         <tr>
             <th>doesDataFlower(dataItem)</th>
             <td>Tells the grid if this row should flower.</td>
@@ -134,6 +143,13 @@ include '../documentation-main/documentation_header.php';
             <th>postProcessPopup(params)</th>
             <td>Allows user to process popups after they are created. Applications can use this if they want to, for
                 example, reposition the popup.</td>
+        </tr>
+        <tr>
+            <th>defaultGroupSortComparator(nodeA, nodeB)</th>
+            <td>
+                Allows default sorting of groups. See
+                <a href="../javascript-grid-grouping/#default-group-order">Default Group Order</a>.
+            </td>
         </tr>
 
         <?php include_once '../javascript-grid-pagination/paginationProperties.php' ?>

@@ -32,8 +32,8 @@ include '../documentation-main/documentation_header.php';
     <p>You'll need to import the ag-Grid CSS in your application, as well as a theme you wish to use:</p>
     <snippet>
 import "../node_modules/ag-grid/dist/styles/ag-grid.css";
-import "../node_modules/ag-grid/dist/styles/ag-theme-fresh.css";</snippet>
-    <p>In this case we're using the Fresh Theme - please refer to the <a href="../javascript-grid-themes">Themes</a>
+import "../node_modules/ag-grid/dist/styles/ag-theme-balham.css";</snippet>
+    <p>In this case we're using the Balham Theme - please refer to the <a href="../javascript-grid-themes">Themes</a>
         documentation for more information.</p>
 
 
@@ -63,13 +63,13 @@ import "../node_modules/ag-grid/dist/styles/ag-theme-fresh.css";</snippet>
     <snippet>
 import Vue from "vue";
 import "../node_modules/ag-grid/dist/styles/ag-grid.css";
-import "../node_modules/ag-grid/dist/styles/ag-theme-fresh.css";
+import "../node_modules/ag-grid/dist/styles/ag-theme-balham.css";
 
 // need if you use ag-grid enterprise features
 import "ag-grid-enterprise/main";
 </snippet>
 
-    <note>Please use the github project <a href="https://github.com/ag-grid/ag-grid-vuejs">ag-grid-vue</a>
+    <note>Please use the github project <a href="https://github.com/ag-grid/ag-grid-vue">ag-grid-vue</a>
         for feedback or issue reporting around ag-Grid's support for VueJS.
     </note>
 
@@ -147,13 +147,13 @@ export default {
     </p>
     <snippet>
 &lt;link href="node_modules/ag-grid/dist/styles/ag-grid.css" rel="stylesheet" /&gt;
-&lt;link href="node_modules/ag-grid/dist/styles/theme-fresh.css" rel="stylesheet" /&gt;</snippet>
+&lt;link href="node_modules/ag-grid/dist/styles/ag-theme-balham.css" rel="stylesheet" /&gt;</snippet>
 
     <p>If you're using the <code>style-loader</code> you can also import the CSS dependencies into your final bundle:
     </p>
     <snippet>
 import "../node_modules/ag-grid/dist/styles/ag-grid.css"
-import "../node_modules/ag-grid/dist/styles/theme-fresh.css"
+import "../node_modules/ag-grid/dist/styles/ag-theme-balham.css"
 
 // only needed if you're using enterprise features
 import "ag-grid-enterprise/main";</snippet>
@@ -354,7 +354,7 @@ this.columnDefs = [
     </p>
 
     <snippet>
-&lt;ag-grid-vue style="width: 100%; height: 350px;" class="ag-theme-fresh"
+&lt;ag-grid-vue style="width: 100%; height: 350px;" class="ag-theme-balham"
     // these are attributes, not bound, give explicit values here
     rowHeight="22"
     rowSelection="multiple"

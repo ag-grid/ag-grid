@@ -113,6 +113,17 @@ function onBtPreviousCell() {
     gridOptions.api.tabToPreviousCell();
 }
 
+function onBtWhich() {
+    let cellDefs = gridOptions.api.getEditingCells();
+    if (cellDefs.length>0) {
+        var cellDef = cellDefs[0];
+        console.log('editing cell is: row = ' + cellDef.rowIndex + ', col = ' + cellDef.column.getId()
+            + ', floating = ' + cellDef.floating);
+    } else {
+        console.log('no cells are editing');
+    }
+}
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');

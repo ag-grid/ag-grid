@@ -8,9 +8,9 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2><img src="../images/svg/docs/abc.svg" width="50" /> ag-Grid Third Party Examples</h2>
+    <h1><img src="../images/svg/docs/abc.svg" width="50" />Third Party Examples - Integrating with ag-Grid</h1>
 
-    <p>This section lists a a few examples of ag-Grid intergration with Third Party products.</p>
+    <p>This section of our documentation demonstrates some examples of ag-Grid integration with commonly used Third Party products.</p>
 
     <p>Please note that these examples are for demonstration purposes only and provided "as is" - please contact the respective
     vendors if support with those products is required.</p>

@@ -1,7 +1,7 @@
 <template>
     <div style="width: 800px;">
         <h1>Dynamic Components</h1>
-        <ag-grid-vue style="width: 100%; height: 350px;" class="ag-theme-fresh"
+        <ag-grid-vue style="width: 100%; height: 350px;" class="ag-theme-balham"
                      :gridOptions="gridOptions"
                      :columnDefs="columnDefs"
                      :rowData="rowData">

@@ -87,6 +87,21 @@ function serveAndWatchAngular(app) {
     });
 }
 
+function serveAndWatchVue(app) {
+    const gulpPath = WINDOWS ? 'node_modules\\.bin\\gulp.cmd' : 'node_modules/.bin/gulp';
+
+    const vueWatch = cp.spawn(gulpPath, ['watch'], {
+        stdio: 'inherit',
+        cwd: '../ag-grid-vue'
+    });
+
+    app.use('/dev/ag-grid-vue', express.static('../ag-grid-vue'));
+
+    process.on('exit', () => {
+        vueWatch.kill();
+    });
+}
+
 function launchTSCCheck() {
     if (!fs.existsSync('_dev')) {
         console.log('_dev not present, creating links...');
@@ -97,15 +112,12 @@ function launchTSCCheck() {
         lnk('../ag-grid-enterprise/', '_dev', {force: true, type: linkType});
         lnk('../ag-grid-react/', '_dev', {force: true, type: linkType});
         lnk('../ag-grid-angular/', '_dev', {force: true, type: linkType});
+        lnk('../ag-grid-vue/', '_dev', {force: true, type: linkType});
     }
 
     const tscPath = WINDOWS ? 'node_modules\\.bin\\tsc.cmd' : 'node_modules/.bin/tsc';
 
     const tsChecker = cp.spawn(tscPath, ['--watch', '--noEmit']);
-
-    // works:
-    //    ..\ag-grid\src\ts\rendering\cellComp.ts(689,9): error TS2304: Cannot find name 'asfdsdf'.
-    //    @ ../ag-grid-react/src/reactFrameworkFactory.ts 4:33-75
 
     tsChecker.stdout.on('data', data => {
         data
@@ -155,8 +167,10 @@ module.exports = callback => {
     addWebpackMiddleware(app, 'enterprise-bundle', '/dev/ag-grid-enterprise-bundle');
     addWebpackMiddleware(app, 'react', '/dev/ag-grid-react');
 
-    // angular is a separate process
+    // angular & vue are separate processes
     serveAndWatchAngular(app);
+    serveAndWatchVue(app);
+
     // regenerate examples
     watchAndGenerateExamples();
 

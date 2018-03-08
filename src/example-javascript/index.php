@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Plain JavaScript Examples</h2>
+    <h1>Plain JavaScript Examples</h1>
 
     <p>
         Here we show some examples in plain JavaScript combining different features of the grid.

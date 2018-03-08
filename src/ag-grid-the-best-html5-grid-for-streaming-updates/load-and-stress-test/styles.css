@@ -1,0 +1,11 @@
+body {
+    font: 400 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+.number { text-align: right; }
+.ag-row-level-0 { font-weight: bold; }
+.ag-row-level-1 { color: lightblue; }
+.ag-row-level-2 { color: lightyellow; }
+
+.message-box {
+    font-weight: bold;
+}

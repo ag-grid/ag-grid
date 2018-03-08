@@ -6,17 +6,28 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-
-
     <h1 id="selection">Row Selection</h1>
+
+    <p>
+        Select a row by clicking on it. Selecting a row will remove previous selection unless you
+        hold down <code>ctrl</code> while clicking. Selecting a row and then holding down <code>shift</code>
+        while clicking a second row will select the range.
+    </p>
 
     <p>
         Configure row selection with the following properties:
     </p>
+
     <ul class="content">
         <li><code>rowSelection</code>: Type of row selection, set to either <code>'single'</code> or <code>'multiple'</code> to
             enable selection. Single sets to single row selection, such that when you select a row,
             the previously selected row gets unselected. Multiple allows multiple row selection.</li>
+        <li><code>rowMultiSelectWithClick</code>: Set to <code>true</code> to all multiple rows to be selected
+            with a single click. E.g. if you click select one row, then click select another row, the first
+            row will keep it's selection. Clicking a selected row in this mode will deselect the row.
+            This is useful for touch devices where <code>ctrl</code> and <code>shift</code> clicking is
+            not an option.
+        </li>
         <li><code>rowDeselection</code>: Set to <code>true</code> or <code>false</code>. If true, then rows will be deselected if
             you hold down ctrl + click the row. Normal behaviour with the grid disallows deselection
             of nodes (ie once a node is selected, it remains selected until another row is selected
@@ -43,21 +54,59 @@ include '../documentation-main/documentation_header.php';
         more information and maps better to the internal representation of ag-grid.
     </p>
 
-    <h2>Example - Single Row Selection</h2>
+    <h2 id="single-row-selection">Example - Single Row Selection</h2>
 
     <p>
         The example below shows single row selection.
+        <ul>
+            <li>
+                Property <code>rowSelection='single'</code> is set to enable single row selection.
+                It is not possible to select multiple rows.
+            </li>
+        </ul>
     </p>
 
     <?= example('Single Row Selection', 'single-row-selection', 'generated') ?>
 
-    <h2>Example - Multiple Row Selection</h2>
+    <h2 id="multi-row-selection">Example - Multiple Row Selection</h2>
 
     <p>
         The example below shows multi-row selection.
+        <ul>
+            <li>
+                Property <code>rowSelection='multiple'</code> is set to enable multiple row selection.
+                Selecting multiple rows can be achieved by holding down <code>control</code> and mouse
+                clicking the rows. A range of rows can be selected by using <code>shift</code>.
+            </li>
+        </ul>
     </p>
 
     <?= example('Multiple Row Selection', 'multiple-row-selection', 'generated') ?>
+
+    <h2 id="multi-select-single-click">Example - Multi Select Single Click</h2>
+
+    <p>
+        The example below shows multi select with single click. Clicking multiple rows will
+        select a range of rows without the need for <code>control</code> or <code>shift</code>
+        keys. Clicking a selected row will deselect it. This is useful for touch devices where
+        Control and Shift clicks are not available.
+    </p>
+
+    <p>
+        <li>
+            Property <code>rowMultiSelectWithClick=true</code> is set to enable multiple row
+            selection with single clicks.
+        </li>
+        <li>
+            Clicking multiple rows will select multiple rows without needing to hit <code>control</code>
+            or <code>shift</code> keys.
+        </li>
+        <li>
+            Clicking a selected row will deselect that row.
+        </li>
+    </p>
+
+    <?= example('Multi Select Single Click', 'multi-select-single-click', 'generated') ?>
 
     <h2>Checkbox Selection</h2>
 
@@ -229,6 +278,58 @@ colDef = {
     </ul>
 
     <?= example('Header Checkbox Entire Set', 'header-checkbox-entire-set', 'generated') ?>
+
+
+    <h2 id="specify-selectable-rows">Specify Selectable Rows</h2>
+
+    <p>
+        It is possible to specify which rows can be selected via the <code>gridOptions.isRowSelectable(rowNode)</code>
+        callback function.
+    </p>
+    <p>
+        For instance if we only wanted to allow rows where the 'year' property is less than 2007, we could implement
+        the following:
+    </p>
+
+    <snippet>
+        gridOptions.isRowSelectable: function(rowNode) {
+            return rowNode.data ? rowNode.data.year < 2007 : false;
+        }</snippet>
+
+    <h3>Selectable Rows with Header Checkbox</h3>
+
+    <p>This example demonstrates the following: </p>
+
+    <ul class="content">
+        <li>The <code>isRowSelectable()</code> callback only allows selections on rows where the year < 2007.</li>
+        <li>The country column has <code>headerCheckboxSelection:true</code> and <code>checkboxSelection:true</code>,
+            however only rows which are selectable will obtain a selectable checkbox. Similarly, the header checkbox
+            will only select selectable rows.
+        </li>
+    </ul>
+
+    <?= example('Specify Selectable Rows', 'specify-selectable-rows', 'generated') ?>
+
+    <h3>Specifying Selectable Rows with Groups</h3>
+
+    <p>This example demonstrates the following: </p>
+
+    <ul class="content">
+        <li>The <code>isRowSelectable()</code> callback allows rows with year 2004 and 2008 to be selectable.</li>
+        <li>As <code>gridOptions.groupSelectsChildren = true</code> selecting groups will also select 'selectable' children.</li>
+        <li>As <code>gridOptions.groupSelectsFiltered = true</code> selecting groups will only select 'selectable' children
+        that pass the filter.</li>
+        <li>To demonstrate, follow these steps:
+            <ol>
+                <li>Click 'Filter by Year 2008 & 2012'.</li>
+                <li>Select checkbox beside 'United States'.</li>
+                <li>Click 'Clear Filter'.</li>
+                <li>Notice that only 'United States' for 2008 is selected.</li>
+            </ol>
+        </li>
+    </ul>
+
+    <?= example('Specifying Selectable Rows with Groups', 'specify-selectable-rows-with-groups', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Selection Events</h2>
 
