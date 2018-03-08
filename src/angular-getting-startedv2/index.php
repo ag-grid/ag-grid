@@ -103,7 +103,7 @@ each column entry specifies the header label and the data field to be displayed 
 
 <snippet language="html">
 &lt;ag-grid-angular 
-    style="width: 500px; height: 200px;" 
+    style="width: 500px; height: 500px;" 
     class="ag-theme-balham"
     [rowData]="rowData" 
     [columnDefs]="columnDefs"
@@ -126,7 +126,7 @@ As you may have already noticed, the CSS class matches the name of CSS file we i
 
 <snippet language="html">
 &lt;ag-grid-angular 
-    style="width: 500px; height: 200px;" 
+    style="width: 500px; height: 500px;" 
     class="ag-theme-balham"
     [enableSorting]="true"
     [rowData]="rowData" 
@@ -143,7 +143,7 @@ As you may have already noticed, the CSS class matches the name of CSS file we i
 
 <snippet language="html">
 &lt;ag-grid-angular 
-    style="width: 500px; height: 200px;" 
+    style="width: 500px; height: 500px;" 
     class="ag-theme-balham"
     [enableSorting]="true"
     [enableFilter]="true"
@@ -215,7 +215,7 @@ export class AppComponent implements OnInit {
 
 <snippet language="html">
 &lt;ag-grid-angular 
-    style="width: 500px; height: 200px;" 
+    style="width: 500px; height: 500px;" 
     class="ag-theme-balham"
     [enableSorting]="true"
     [enableFilter]="true"
@@ -271,7 +271,7 @@ export class appcomponent implements oninit {
 
 <snippet language="html">
 &lt;ag-grid-angular 
-    style="width: 500px; height: 200px;" 
+    style="width: 500px; height: 500px;" 
     class="ag-theme-balham"
     [enableSorting]="true"
     [enableFilter]="true"
@@ -289,7 +289,7 @@ export class appcomponent implements oninit {
 <snippet language="html">
 &lt;ag-grid-angular 
     #agGrid
-    style="width: 500px; height: 200px;" 
+    style="width: 500px; height: 500px;" 
     class="ag-theme-balham"
     [enableSorting]="true"
     [enableFilter]="true"
@@ -342,7 +342,7 @@ export class AppComponent implements OnInit {
 
 &lt;ag-grid-angular 
     #agGrid
-    style="width: 500px; height: 200px;" 
+    style="width: 500px; height: 500px;" 
     class="ag-theme-balham"
     [enableSorting]="true"
     [enableFilter]="true"
