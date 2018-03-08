@@ -55,8 +55,6 @@ gulp.task('copy-nm-dirs', (callback) => {
 });
 
 gulp.task('watch', ['copy-nm-dirs'], () => {
-    gulp.watch(['../ag-grid/dist/**/*', '../ag-grid/src/**/*'], ['copy-from-ag-grid']);
-    gulp.watch(['../ag-grid-enterprise/dist/**/*', '../ag-grid-enterprise/src/**/*'], ['copy-from-ag-grid-enterprise']);
     gulp.watch(['./src/**/*','./dist/**/*'], ['default']);
 });
 
