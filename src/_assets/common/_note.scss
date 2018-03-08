@@ -2,7 +2,7 @@ $note-background-size: 30px;
 .note {
     padding: 1rem;
     padding-left: calc(#{$note-background-size} + 2rem);
-    background-image: url('../common/bulb.svg');
+    background-image: url("../common/bulb.svg");
     background-repeat: no-repeat;
     background-position-x: 1rem;
     background-position-y: 1rem;
@@ -14,5 +14,5 @@ $note-background-size: 30px;
     border-radius: $border-radius;
     min-height: calc(#{$note-background-size} + 2rem);
     margin-bottom: 1rem;
+    margin-top: 2rem;
 }
-

@@ -10,7 +10,7 @@ include '../documentation-main/documentation_header.php';
 
 <h1>Get Started with ag-Grid in Your React Project</h1>
 
-<p>The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid engine is implemented in plain JavaScript<sup id="a1"><a href="#f1">[1]</a></sup> and has zero dependencies. 
+<p class="lead">The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid engine is implemented in plain JavaScript<sup id="a1"><a href="#f1">[1]</a></sup> and has zero dependencies. 
 Ag-grid supports React through a <strong>wrapper component</strong>. The React wrapper lets you use ag-Grid in your application like any other React component &ndash; you pass configuration through properties and handle events through callbacks. 
 You can even use React components to customize the grid UI and cell contents / behavior.</p> 
 
@@ -44,7 +44,7 @@ import './App.css';
 
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid/dist/styles/ag-grid.css';
-import 'ag-grid/dist/styles/ag-theme-fresh.css';
+import 'ag-grid/dist/styles/ag-theme-balham.css';
 
 class App extends Component {
     constructor(props) {
@@ -68,9 +68,9 @@ class App extends Component {
     render() {
         return (
                 &lt;div 
-                  className="ag-theme-fresh"
+                  className="ag-theme-balham"
                   style={{ 
-	                height: '150px', 
+	                height: '500px', 
 	                width: '600px' }} 
 		            &gt;
                     &lt;AgGridReact
@@ -87,16 +87,16 @@ export default App;
 
 <p>Done? If everything is correct, we should see a simple grid that looks like this:</p>
 
-<p>-- TODO: screenshot</p>
+<img class="mx-auto d-block" src="../getting-started/step1.png" alt="ag-Grid in its simplest form" />
 
 <p>Let's go over the <code>App.jsx</code> changes we made:</p>
 
 <pre class="language-jsx" ng-non-bindable><code>import {AgGridReact} from 'ag-grid-react';
 import 'ag-grid/dist/styles/ag-grid.css';
-import 'ag-grid/dist/styles/ag-theme-fresh.css';
+import 'ag-grid/dist/styles/ag-theme-balham.css';
 </code></pre>
 
-<p>The three lines above import the <code>AgGridReact</code> component, the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-fresh.css</code>). 
+<p>The three lines above import the <code>AgGridReact</code> component, the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-balham.css</code>). 
 The grid ships several different themes; pick one that matches your project design. You can customize it further with Sass variables, a technique which we will cover further down the road.</p>
 
 <snippet language="jsx">
@@ -125,7 +125,7 @@ each column entry specifies the header label and the data field to be displayed 
 <p>The actual data is defined in the <code>rowData</code> as an array of objects. Notice that the fields of the objects match the <code>field</code> values in the <code>columnDefs</code> configuration object.</p> 
 
 <pre class="language-jsx" ng-non-bindable><code>
-    &lt;div style={{ height: '150px', width: '600px' }} className="ag-theme-fresh"&gt;
+    &lt;div style={{ height: '150px', width: '600px' }} className="ag-theme-balham"&gt;
         &lt;AgGridReact
             columnDefs={this.state.columnDefs}
             rowData={this.state.rowData}&gt;
@@ -133,7 +133,7 @@ each column entry specifies the header label and the data field to be displayed 
     &lt;/div&gt;
 </code></pre>
 
-<p>Finally, the JSX code above describes a wrapper <code>DIV</code> element which sets the grid dimensions and specifies the grid's theme by setting the <code>className</code> to <code>ag-theme-fresh</code>. As you may have already noticed, the CSS class matches the name of CSS file we imported earlier.</p> 
+<p>Finally, the JSX code above describes a wrapper <code>DIV</code> element which sets the grid dimensions and specifies the grid's theme by setting the <code>className</code> to <code>ag-theme-balham</code>. As you may have already noticed, the CSS class matches the name of CSS file we imported earlier.</p> 
 
 <p>Inside the container, we place an <code>AgGridReact</code> component with the configuration objects (<code>columnDefs</code> and <code>rowData</code>) from the component's constructor passed as properties.</p> 
 
@@ -166,7 +166,7 @@ each column entry specifies the header label and the data field to be displayed 
 
 <p>With this property set, the grid will display a small column menu icon when you hover the header. Pressing it will display a popup with filtering UI which lets you choose the kind of filter and the text that you want to filter by.</p>
 
-<p>-- screenshot</p>
+<img class="mx-auto d-block" src="../getting-started/step2.png" alt="ag-Grid sorting and filtering" />
 
 <h2>Fetch Remote Data</h2>
 
@@ -223,7 +223,7 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 <p>Great! Now the first column contains a checkbox that, when clicked, selects the row. The only thing we have to add is a button that gets the selected data and sends it to the server. To do this, we need the following change:</p> 
 
 <pre class="language-diff" ng-non-bindable><code>
-&lt;div style={{ height: '150px', width: '600px' }} className="ag-theme-fresh"&gt;
+&lt;div style={{ height: '150px', width: '600px' }} className="ag-theme-balham"&gt;
 +    &lt;button onClick={this.onButtonClick}&gt;Get selected rows&lt;/button&gt;
 +
 		 &lt;AgGridReact
@@ -279,13 +279,13 @@ Then, add the import to your file:
 <snippet language="diff">
   import { AgGridReact } from 'ag-grid-react';
   import 'ag-grid/dist/styles/ag-grid.css';
-  import 'ag-grid/dist/styles/ag-theme-fresh.css';
+  import 'ag-grid/dist/styles/ag-theme-balham.css';
 + import 'ag-grid-enterprise';
 </snippet>
 
 <p>If everything is ok, you should see a message in the console that warns you about missing enterprise license. In addition to that, the grid got a few UI improvements - a custom context menu and fancier column menu popup - feel free to look around:</p>
 
-<p>-- screenshot</p>
+<img class="mx-auto d-block" src="../getting-started/step3.png" alt="ag-Grid final" />
 
 <p>Now, let's enable grouping! Change the <code>state</code> assignment to this:</p>
 
@@ -333,7 +333,7 @@ this.state = {
 <snippet language="scss">
 $ag-icons-path: "../node_modules/ag-grid/src/styles/icons/";
 @import "../node_modules/ag-grid/src/styles/ag-grid.scss";
-@import "../node_modules/ag-grid/src/styles/ag-theme-fresh.scss";
+@import "../node_modules/ag-grid/src/styles/ag-theme-balham.scss";
 </snippet>
 
 <p>To avoid importing the stylesheets twice, remove the imports from <code>src/App.js</code>:</p>
@@ -341,7 +341,7 @@ $ag-icons-path: "../node_modules/ag-grid/src/styles/icons/";
 <snippet language="diff">
  import { AgGridReact } from 'ag-grid-react';
 -import 'ag-grid/dist/styles/ag-grid.css';
--import 'ag-grid/dist/styles/ag-theme-fresh.css';
+-import 'ag-grid/dist/styles/ag-theme-balham.css';
 </snippet>
 
 <p>Notice that we had to aid the Sass preprocessor a bit by setting the <code>$ag-icons-path</code> variable. This is a common gotcha with Sass, as external image paths are considered relative to the main file. 
@@ -369,14 +369,14 @@ While doing so, we learned how to configure the grid, how to access its API obje
 <p>You can go through the following help articles to learn more about the features we enabled:</p>
 
 <ul>
-    <li>Sorting</li>
-    <li>Filtering</li>
-    <li>Grouping</li>
-    <li>Selection</li>
-    <li>Customizing Themes Appearance</li>
+    <li><a href="../javascript-grid-sorting/">Sorting</a></li>
+    <li><a href="../javascript-grid-filtering">Filtering</a></li>
+    <li><a href="../javascript-grid-grouping">Grouping</a></li>
+    <li><a href="../javascript-grid-selection/">Selection</a></li>
+    <li><a href="../javascript-grid-styling/#customizing-sass-variables">Customizing themes with Sass</a></li>
 </ul>
 
-<p>In addition to that, if you are using Redux, make sure to check out the Integrating ag-Grid with Redux help article.</p>
+<p>In addition to that, if you are using Redux, make sure to check out the <a href="../react-redux-integration-pt1/">Integrating ag-Grid with Redux help article</a>.</p>
 
 <p><b id="f1">1</b> This is not exactly true. ag-Grid's core, as well as the framework wrappers are written in TypeScript. This provides nice strong typing and compile-time checks for our TypeScript users, while not giving the Babel/Vanilla users any disadvantage.  <a href="#a1">↩</a></p>
 

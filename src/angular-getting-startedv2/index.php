@@ -63,10 +63,10 @@ export class AppModule {}
 
 <snippet language="scss">
 @import "~ag-grid/dist/styles/ag-grid.css";
-@import "~ag-grid/dist/styles/ag-theme-fresh.css";
+@import "~ag-grid/dist/styles/ag-theme-balham.css";
 </snippet>
 
-<p>The code above imports the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-fresh.css</code>). 
+<p>The code above imports the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-balham.css</code>). 
 The grid ships several different themes; pick one that matches your project design. You can customize it further with Sass variables, a technique which we will cover further down the road.</p>
 
 <p>Next, let's declare the basic grid configuration. Edit <code>src/app.component.ts</code>:</p>
@@ -104,7 +104,7 @@ each column entry specifies the header label and the data field to be displayed 
 <snippet language="html">
 &lt;ag-grid-angular 
     style="width: 500px; height: 200px;" 
-    class="ag-theme-fresh"
+    class="ag-theme-balham"
     [rowData]="rowData" 
     [columnDefs]="columnDefs"
     &gt;
@@ -112,13 +112,13 @@ each column entry specifies the header label and the data field to be displayed 
 </snippet>
 
 <p>This is the ag-grid component definition, with two property bindings - <code>rowData</code> and <code>columnDefs</code>. The component also accepts the standard DOM <code>style</code> and <code>class</code>. 
-We have set the class to <code>ag-theme-fresh</code>, which defines the grid theme. 
+We have set the class to <code>ag-theme-balham</code>, which defines the grid theme. 
 As you may have already noticed, the CSS class matches the name of CSS file we imported earlier.
 </p>
 
 <p>If everything works as expected, you should see a simple grid like the one on the screenshot:</p> 
 
-<p> - - screenshot</p>
+<img class="mx-auto d-block" src="../getting-started/step3.png" alt="ag-Grid final" />
 
 <h2>Enable Sorting And Filtering</h2>
 
@@ -127,7 +127,7 @@ As you may have already noticed, the CSS class matches the name of CSS file we i
 <snippet language="html">
 &lt;ag-grid-angular 
     style="width: 500px; height: 200px;" 
-    class="ag-theme-fresh"
+    class="ag-theme-balham"
     [enableSorting]="true"
     [rowData]="rowData" 
     [columnDefs]="columnDefs"
@@ -144,7 +144,7 @@ As you may have already noticed, the CSS class matches the name of CSS file we i
 <snippet language="html">
 &lt;ag-grid-angular 
     style="width: 500px; height: 200px;" 
-    class="ag-theme-fresh"
+    class="ag-theme-balham"
     [enableSorting]="true"
     [enableFilter]="true"
     [rowData]="rowData" 
@@ -155,7 +155,7 @@ As you may have already noticed, the CSS class matches the name of CSS file we i
 
 <p>With this property set, the grid will display a small column menu icon when you hover the header. Pressing it will display a popup with filtering UI which lets you choose the kind of filter and the text that you want to filter by.</p>
 
-<p>-- screenshot</p>
+<img class="mx-auto d-block" src="../getting-started/step2.png" alt="ag-Grid sorting and filtering" />
 
 <h2>Fetch Remote Data</h2>
 
@@ -216,7 +216,7 @@ export class AppComponent implements OnInit {
 <snippet language="html">
 &lt;ag-grid-angular 
     style="width: 500px; height: 200px;" 
-    class="ag-theme-fresh"
+    class="ag-theme-balham"
     [enableSorting]="true"
     [enableFilter]="true"
     [rowData]="rowData | async" 
@@ -272,7 +272,7 @@ export class appcomponent implements oninit {
 <snippet language="html">
 &lt;ag-grid-angular 
     style="width: 500px; height: 200px;" 
-    class="ag-theme-fresh"
+    class="ag-theme-balham"
     [enableSorting]="true"
     [enableFilter]="true"
     [rowData]="rowData | async" 
@@ -290,7 +290,7 @@ export class appcomponent implements oninit {
 &lt;ag-grid-angular 
     #agGrid
     style="width: 500px; height: 200px;" 
-    class="ag-theme-fresh"
+    class="ag-theme-balham"
     [enableSorting]="true"
     [enableFilter]="true"
     [rowData]="rowData | async" 
@@ -343,7 +343,7 @@ export class AppComponent implements OnInit {
 &lt;ag-grid-angular 
     #agGrid
     style="width: 500px; height: 200px;" 
-    class="ag-theme-fresh"
+    class="ag-theme-balham"
     [enableSorting]="true"
     [enableFilter]="true"
     [rowData]="rowData | async" 
@@ -426,7 +426,7 @@ import { HttpClientModule } from '@angular/common/http';
 
 <p>If everything is ok, you should see a message in the console that warns you about missing enterprise license. In addition to that, the grid got a few UI improvements - a custom context menu and fancier column menu popup - feel free to look around:</p>
 
-<p>-- screenshot</p>
+<img class="mx-auto d-block" src="../getting-started/step3.png" alt="ag-Grid final" />
 
 <p>Now, let's enable grouping! Add an <code>autoGroupColumnDef</code> property and change the <code>columnDefs</code> to the following:</p>
 
@@ -472,7 +472,7 @@ export class AppComponent implements OnInit {
 <p>Add the the <code>autoGroupColumnDef</code> property to the template too:</p> 
 
 <snippet language="diff">
-class="ag-theme-fresh"
+class="ag-theme-balham"
 +[autoGroupColumnDef]="autoGroupColumnDef"
 [enableSorting]="true"
 </snippet>
@@ -496,7 +496,7 @@ override the theme variable values, and refer the ag-grid Sass files instead of 
 $ag-icons-path: "../node_modules/ag-grid/src/styles/icons/";
 
 @import "~ag-grid/src/styles/ag-grid.scss";
-@import "~ag-grid/src/styles/ag-theme-fresh.scss";
+@import "~ag-grid/src/styles/ag-theme-balham.scss";
 </snippet>
 
 <p>Notice that we had to aid the Sass preprocessor a bit by setting the <code>$ag-icons-path</code> variable. This is a common gotcha with Sass, as external image paths are considered relative to the main file. 
@@ -519,15 +519,17 @@ header background color and even the amount of spacing in the cells and columns.
 While doing so, we learned how to configure the grid, how to access its API object, and how to change the styling of the component.</p> 
 
 <p>That's just scratching the surface, though. The grid has a lot more features to offer; the abilities to customize cells and headers with custom components allow for almost infinite possible configurations. </p>
-<h2>next steps</h2> 
-<p>you can go through the following help articles to learn more about the features we enabled:</p>
+
+<h2>Next Steps</h2> 
+
+<p>You can go through the following help articles to learn more about the features we enabled:</p>
 
 <ul>
-    <li>Sorting</li>
-    <li>Filtering</li>
-    <li>Grouping</li>
-    <li>Selection</li>
-    <li>Customizing Themes Appearance</li>
+    <li><a href="../javascript-grid-sorting/">Sorting</a></li>
+    <li><a href="../javascript-grid-filtering">Filtering</a></li>
+    <li><a href="../javascript-grid-grouping">Grouping</a></li>
+    <li><a href="../javascript-grid-selection/">Selection</a></li>
+    <li><a href="../javascript-grid-styling/#customizing-sass-variables">Customizing themes with Sass</a></li>
 </ul>
 
 

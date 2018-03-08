@@ -45,7 +45,7 @@ You can either use your favorite programming text editor, or you can execute the
   &lt;head&gt;
     &lt;script src=&quot;https://unpkg.com/ag-grid/dist/ag-grid.min.noStyle.js&quot;&gt;&lt;/script&gt;
     &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-grid.css&quot;&gt;
-    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-theme-fresh.css&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-theme-balham.css&quot;&gt;
   &lt;/head&gt;
   &lt;body&gt;
     &lt;h1&gt;Hello from ag-grid!&lt;/h1&gt;
@@ -53,7 +53,7 @@ You can either use your favorite programming text editor, or you can execute the
 &lt;/html&gt;
 </snippet>
 
-<p>The lines above import the <code>AgGrid</code> component, the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-fresh.css</code>). 
+<p>The lines above import the <code>AgGrid</code> component, the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-balham.css</code>). 
 The grid ships several different themes; pick one that matches your project design. </p>
 
 <p>Now, let's instantiate a grid!</p>
@@ -64,12 +64,12 @@ The grid ships several different themes; pick one that matches your project desi
 &lt;head&gt;
   &lt;script src=&quot;https://unpkg.com/ag-grid/dist/ag-grid.min.noStyle.js&quot;&gt;&lt;/script&gt;
   &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-grid.css&quot;&gt;
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-theme-fresh.css&quot;&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-theme-balham.css&quot;&gt;
 &lt;/head&gt;
 &lt;body&gt;
   &lt;h1&gt;Hello from ag-grid!&lt;/h1&gt;
   
-  &lt;div id=&quot;myGrid&quot; style=&quot;height: 115px;width:500px;&quot; class=&quot;ag-theme-fresh&quot;&gt;&lt;/div&gt;
+  &lt;div id=&quot;myGrid&quot; style=&quot;height: 600px;width:500px;&quot; class=&quot;ag-theme-balham&quot;&gt;&lt;/div&gt;
 
   &lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot;&gt;
     // specify the columns
@@ -108,8 +108,9 @@ each column entry specifies the header label and the data field to be displayed 
 
 <p>The actual data is defined in the <code>rowData</code> as an array of objects. Notice that the fields of the objects match the <code>field</code> values in the <code>columnDefs</code> configuration object.</p> 
 
-<p>Finally, the <code>DIV</code> element is the DOM entry point of the grid. It sets the grid dimensions and specifies the grid's theme by setting the <code>class</code> to <code>ag-theme-fresh</code>. As you may have already noticed, the CSS class matches the name of CSS file we imported earlier.</p> 
+<p>Finally, the <code>DIV</code> element is the DOM entry point of the grid. It sets the grid dimensions and specifies the grid's theme by setting the <code>class</code> to <code>ag-theme-balham</code>. As you may have already noticed, the CSS class matches the name of CSS file we imported earlier.</p> 
 
+<img class="mx-auto d-block" src="../getting-started/step1.png" alt="ag-Grid in its simplest form" />
 
 <h2>Enable Sorting And Filtering</h2>
 
@@ -141,7 +142,7 @@ Well, enabling sorting in ag-Grid is actually quite simple - all you need to do 
 
 <p>With this property set, the grid will display a small column menu icon when you hover the header. Pressing it will display a popup with filtering UI which lets you choose the kind of filter and the text that you want to filter by.</p>
 
-<p>-- screenshot</p>
+<img class="mx-auto d-block" src="../getting-started/step2.png" alt="ag-Grid sorting and filtering" />
 
 <h2>Fetch Remote Data</h2>
 
@@ -157,12 +158,12 @@ Notice that the actual data fetching is performed outside of the grid component 
 &lt;head&gt;
   &lt;script src=&quot;https://unpkg.com/ag-grid/dist/ag-grid.min.noStyle.js&quot;&gt;&lt;/script&gt;
   &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-grid.css&quot;&gt;
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-theme-fresh.css&quot;&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-theme-balham.css&quot;&gt;
 &lt;/head&gt;
 &lt;body&gt;
   &lt;h1&gt;Hello from ag-grid!&lt;/h1&gt;
   
-  &lt;div id=&quot;myGrid&quot; style=&quot;height: 115px;width:500px;&quot; class=&quot;ag-theme-fresh&quot;&gt;&lt;/div&gt;
+  &lt;div id=&quot;myGrid&quot; style=&quot;height: 600px;width:500px;&quot; class=&quot;ag-theme-balham&quot;&gt;&lt;/div&gt;
 
   &lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot;&gt;
     // specify the columns
@@ -229,7 +230,7 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 
 <snippet language="html">
   &lt;button onclick=&quot;getSelectedRows()&quot;&gt;Get Selected Rows&lt;/button&gt;
-  &lt;div id=&quot;myGrid&quot; style=&quot;height: 115px;width:500px;&quot; class=&quot;ag-theme-fresh&quot;&gt;&lt;/div&gt;
+  &lt;div id=&quot;myGrid&quot; style=&quot;height: 600px;width:500px;&quot; class=&quot;ag-theme-balham&quot;&gt;&lt;/div&gt;
 </snippet>
 
 <snippet language="js">
@@ -271,7 +272,7 @@ Hopefully you will forgive us this shortcut for the sake of keeping the article 
 
 <p>If everything is ok, you should see a message in the console that warns you about missing enterprise license. In addition to that, the grid got a few UI improvements - a custom context menu and fancier column menu popup - feel free to look around:</p>
 
-<p>-- screenshot</p>
+<img class="mx-auto d-block" src="../getting-started/step3.png" alt="ag-Grid final" />
 
 <p>Now, let's enable grouping! Change the configuration to this:</p>
 
@@ -313,12 +314,12 @@ var gridOptions = {
 &lt;head&gt;
   &lt;script src=&quot;https://unpkg.com/ag-grid-enterprise/dist/ag-grid-enterprise.min.noStyle.js&quot;&gt;&lt;/script&gt;
   &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-grid.css&quot;&gt;
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-theme-fresh.css&quot;&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-theme-balham.css&quot;&gt;
 &lt;/head&gt;
 &lt;body&gt;
   &lt;h1&gt;Hello from ag-grid!&lt;/h1&gt;
   &lt;button onclick=&quot;getSelectedRows()&quot;&gt;Get Selected Rows&lt;/button&gt;
-  &lt;div id=&quot;myGrid&quot; style=&quot;height: 115px;width:500px;&quot; class=&quot;ag-theme-fresh&quot;&gt;&lt;/div&gt;
+  &lt;div id=&quot;myGrid&quot; style=&quot;height: 600px;width:500px;&quot; class=&quot;ag-theme-balham&quot;&gt;&lt;/div&gt;
 
   &lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot;&gt;
     // specify the columns
@@ -380,11 +381,10 @@ While doing so, we learned how to configure the grid and how how to use its api 
 <p>You can go through the following help articles to learn more about the features we enabled:</p>
 
 <ul>
-    <li>Sorting</li>
-    <li>Filtering</li>
-    <li>Grouping</li>
-    <li>Selection</li>
-    <li>Customizing Themes Appearance</li>
+    <li><a href="../javascript-grid-sorting/">Sorting</a></li>
+    <li><a href="../javascript-grid-filtering">Filtering</a></li>
+    <li><a href="../javascript-grid-grouping">Grouping</a></li>
+    <li><a href="../javascript-grid-selection/">Selection</a></li>
 </ul>
 
 <p><b id="f1">1</b> This is not exactly true. ag-Grid's core, as well as the framework wrappers are written in TypeScript. This provides nice strong typing and compile-time checks for our TypeScript users, while not giving the Babel/Vanilla users any disadvantage.  <a href="#a1">↩</a></p>
