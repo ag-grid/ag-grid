@@ -23,6 +23,8 @@ include '../jira_reports/jira_utilities.php';
 </header>
 
 <?php
+const NEXT_SPRINT = 6;
+
 function createMoreInfoContent($key, $moreInformationMap)
 {
     $keyToMoreInfo = $moreInformationMap['more_info'];

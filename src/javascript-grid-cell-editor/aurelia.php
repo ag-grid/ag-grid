@@ -98,4 +98,4 @@ export class NumericEditor extends BaseAureliaEditor {
     </p>
 
     <h3 id="aurelia-editor">Editor Component in Aurelia</h3>
-    <?= example('Editor Component in Aurelia', 'aurelia-editor', 'as-is', array("noPlunker" => 1, "usePath" => "#/?route=editor")) ?>
+    <?= example('Editor Component in Aurelia', 'aurelia-editor', 'as-is', array("exampleHeight" => 370, "noPlunker" => 1, "usePath" => "#/?route=editor")) ?>

@@ -107,7 +107,7 @@ export default class RichGridDeclarativeExample extends Component {
 
     render() {
         return (
-            <div style={{width: '900px'}}>
+            <div style={{width: '100%'}}>
                 <div style={{display: "inline-block", width: "100%"}}>
                     <div style={{float: "left"}}>
                         <b>Employees Skills and Contact Details</b><span id="rowCount"/>

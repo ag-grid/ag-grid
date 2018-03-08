@@ -218,7 +218,8 @@
                     <?php
                     if (!empty($sprintEta)) {
                         ?>
-                        <span><?= getValueForTargetEta($sprintEta, $NEXT_SPRINT) ?></span>
+
+                        <span><?= getValueForTargetEta($sprintEta, NEXT_SPRINT) ?></span>
                         <?php
                     } else {
                         ?>

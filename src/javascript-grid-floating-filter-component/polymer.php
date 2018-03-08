@@ -10,4 +10,4 @@
     The below example show how to create a custom floating filter reusing the out of the box number filter with Polymer.
 </p>
 
-<?= example('Floating Filter Component', 'polymer-floating-filter', 'polymer', array("exampleHeight" => 410) ) ?>
+<?= example('Floating Filter Component', 'polymer-floating-filter', 'polymer', array("exampleHeight" => 370) ) ?>

@@ -1,4 +1,4 @@
-<div style="width: 900px;">
+<div style="width: 760px;">
     <div style="display: inline-block;width: 100%">
         <div style="float: left">
             <b>Employees Skills and Contact Details</b>
@@ -12,7 +12,7 @@
                 <button [disabled]="allSelected" (click)="allSelected=true;gridOptions.api.selectAll()"
                         class="btn btn-primary">Select All</button>
                 <button [disabled]="!allSelected" (click)="allSelected=false;gridOptions.api.deselectAll()"
-                        class="btn btn-secondary">Clear Selection</button>
+                        class="btn btn-primary">Clear Selection</button>
             </span>
             <span style="float: right;">
                 Column API:
@@ -21,7 +21,7 @@
                         class="btn btn-primary">Hide Country Column</button>
                 <button [disabled]="!countryHidden"
                         (click)="countryHidden=false;gridOptions.columnApi.setColumnVisible('country', true)"
-                        class="btn btn-secondary">Show Country Column</button>
+                        class="btn btn-primary">Show Country Column</button>
             </span>
         </div>
         <div style="display: inline-block;width: 100%;margin-top: 10px;margin-bottom: 10px">
@@ -35,7 +35,7 @@
                 <button (click)="createRowData()" class="btn btn-primary">Refresh Data</button>
             </div>
             <div style="float: left; margin-left: 20px">
-                <input (keyup)="onQuickFilterChanged($event)" id="quickFilterInput" style="width: 250px"
+                <input (keyup)="onQuickFilterChanged($event)" id="quickFilterInput" style="width: 225px"
                        class="form-control" placeholder="Type text to filter..."/>
             </div>
             <div style="float: right">
