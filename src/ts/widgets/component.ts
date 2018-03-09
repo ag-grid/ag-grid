@@ -135,7 +135,7 @@ export class Component extends BeanStub implements IComponent<any> {
 
             let listener = (<any>this)[methodNameToUse];
             if (typeof listener !== 'function') {
-                console.warn('ag-Grid: count not find callback ' + methodName);
+                console.warn('ag-Grid: could not find callback ' + methodName);
                 return;
             }
 
