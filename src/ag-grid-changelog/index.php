@@ -112,10 +112,8 @@ $keyToDeprecations = $moreInformationMap['deprecation'];
 
                 For a list of up and coming Bug Fixes and Features please refer to our <a
                         href="../ag-grid-pipeline">Pipeline</a>.<br/></br>
-                Documentation for previous versions can be found under
-                https://www.ag-grid.com/archive/_version_/<br/><br/>For example,
-                the documentation for version 14.2.0 can be found at <a
-                        href="https://www.ag-grid.com/archive/14.2.0/">https://www.ag-grid.com/archive/14.2.0/</a>
+                Documentation for previous versions can be found
+<a href="https://www.ag-grid.com/archive/">here.</a>
             </div>
             <div class="global-search-pane" style="display: inline-block;width:100%">
                 <input class="clearable global-report-search" style="float: left;height: 50px" type="text"

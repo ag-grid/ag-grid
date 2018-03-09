@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Angular Datagrid. 59 Features with Lightening Performance.";
+$pageTitle = "Angular Datagrid. 59 Features with Lightning Performance.";
 $pageDescription = "ag-Grid is feature rich datagrid designed for Angular. Version 17 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that your users expect. Our Community version is free and open source or take a 2 month trial of ag-Grid Enterprise.";
 $pageKeyboards = "Angular Grid";
 $pageGroup = "basics";
