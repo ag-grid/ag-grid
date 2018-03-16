@@ -350,6 +350,12 @@ export class ClipboardService implements IClipboardService {
             }
 
             currentRow = this.cellNavigationService.getRowBelow(currentRow);
+
+            // this can happen if the user sets the active range manually, and sets a range
+            // that is outside of the grid, eg sets range rows 0 to 100, but grid has only 20 rows.
+            if (_.missing(currentRow)) {
+                break;
+            }
         }
     }
 
