@@ -454,7 +454,10 @@ export class CellComp extends Component {
         // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
         if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
             let eGui = this.getGui();
-            this.beans.$compile(eGui)(this.scope);
+            const compiledElement = this.beans.$compile(eGui)(this.scope);
+            this.addDestroyFunc(() => {
+                compiledElement.remove();
+            });
         }
     }
 
