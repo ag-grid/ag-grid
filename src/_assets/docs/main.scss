@@ -39,6 +39,10 @@
             padding-right: 15px;
         }
 
+        & > section.skip-left-nav {
+            padding-left: 0;
+        }
+
         #side-nav,
         & > section {
             padding-bottom: 3rem;
@@ -139,7 +143,7 @@
             font-weight: 500;
         }
 
-        #side-nav-container > ul {
+        #side-nav-container:not(.flat) > ul {
             > li > a::after,
             > li > span::after {
                 color: $gray-600;
@@ -302,14 +306,11 @@
         margin-left: -1rem;
         margin-right: -1rem;
         padding: 0;
+        margin-top: 2rem;
     }
 
     #get-started-frameworks > div > div {
-        @extend .col-md-6, .mb-4;
-    }
-
-    #get-started-frameworks > div > div:nth-child(2n) {
-        padding-right: 0;
+        @extend .col-md-3, .mb-4;
     }
 
     // get started overview
@@ -323,7 +324,7 @@
             background-position-y: center;
             background-repeat: no-repeat;
             background-size: 6rem 6rem;
-            height: 8rem;
+            height: 15rem;
             overflow: hidden;
             text-indent: -10000px;
         }
