@@ -538,10 +538,11 @@ export class RowRenderer extends BeanStub {
     private removeRowComps(rowsToRemove: any[]) {
         // if no fromIndex then set to -1, which will refresh everything
         // let realFromIndex = -1;
-        rowsToRemove.forEach(indexToRemove => {
-            let renderedRow = this.rowCompsByIndex[indexToRemove];
+        _.iterateObject(rowsToRemove, (indexToRemove: string) => {
+            const index = rowsToRemove[Number(indexToRemove)];
+            var renderedRow = this.rowCompsByIndex[index];
             renderedRow.destroy();
-            delete this.rowCompsByIndex[indexToRemove];
+            delete this.rowCompsByIndex[index];
         });
     }
 
