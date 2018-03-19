@@ -1,5 +1,21 @@
 [
     {
+        "title": "Guides",
+        "gtm": { "category": "guides" },
+        "items": [
+            {
+                "title": "Vanilla JavaScript",
+                "gtm": { "category": "getting-started-vanilla" },
+                "items": [
+                    {
+                        "title": "Download ag-Grid",
+                        "url": "javascript-grid-download/"
+                    }
+                ]
+            }
+        ]
+    },
+    {
         "title": "Getting Started",
         "gtm": { "category": "getting-started" },
         "items": [
