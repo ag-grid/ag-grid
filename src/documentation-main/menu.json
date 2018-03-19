@@ -8,8 +8,21 @@
                 "gtm": { "category": "getting-started-vanilla" },
                 "items": [
                     {
-                        "title": "Download ag-Grid",
+                        "title": "Install with NPM",
+                        "url": "javascript-grid-npm/"
+                    },
+                    {
+                        "title": "Download for Local Usage",
                         "url": "javascript-grid-download/"
+                    },
+                    {
+                        "title": "Test with Jasmine",
+                        "url": "javascript-grid-test-with-jasmine/"
+                    },
+                    {
+                        "title": "Use with TypeScript",
+                        "gtm": { "tech": "typescript" },
+                        "url": "ag-grid-typescript-webpack-2/"
                     }
                 ]
             }
@@ -137,11 +150,6 @@
                 "title": "Web Components",
                 "gtm": { "tech": "web-components" },
                 "url": "best-web-component-data-grid/"
-            },
-            {
-                "title": "TypeScript",
-                "gtm": { "tech": "typescript" },
-                "url": "ag-grid-typescript-webpack-2/"
             }
         ]
     },
