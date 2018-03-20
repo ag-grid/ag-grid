@@ -25,43 +25,13 @@
                         "url": "ag-grid-typescript-webpack-2/"
                     }
                 ]
-            }
-        ]
-    },
-    {
-        "title": "Getting Started",
-        "gtm": { "category": "getting-started" },
-        "items": [
-            {
-                "title": "Overview",
-                "url": "javascript-grid-getting-started/"
             },
             {
-                "title": "Javascript",
-                "gtm": { "tech": "vanilla" },
-                "url": "best-javascript-data-grid/",
+                "title": "React",
+                "gtm": { "category": "getting-started-react" },
                 "items": [
                     {
-                        "title": "Getting Started",
-                        "url": "javascript-getting-started/"
-                    },
-                    {
-                        "title": "More Details",
-                        "url": "javascript-more-details/"
-                    }
-                ]
-            },
-            {
-                "title": "ReactJS",
-                "url": "best-react-data-grid/",
-                "gtm": { "tech": "react" },
-                "items": [
-                    {
-                        "title": "Getting Started",
-                        "url": "react-getting-started/"
-                    },
-                    {
-                        "title": "More Details",
+                        "title": "Ag-Grid React Overview",
                         "url": "react-more-details/"
                     },
                     {
@@ -73,6 +43,45 @@
                         "url": "react-redux-integration-pt2/"
                     }
                 ]
+            },
+            {
+                "title": "Polymer",
+                "gtm": { "tech": "polymer" },
+                "items": [
+                    {
+                        "title": "Getting Started",
+                        "url": "polymer-getting-started/"
+                    },
+                    {
+                        "title": "More Details",
+                        "url": "polymer-more-details/"
+                    }
+                ]
+            },
+            {
+                "title": "AngularJS 1.x",
+                "gtm": { "tech": "angularjs1" },
+                "url": "best-angularjs-data-grid/"
+            },
+            {
+                "title": "Aurelia",
+                "gtm": { "tech": "aurelia" },
+                "url": "best-aurelia-data-grid/"
+            },
+            {
+                "title": "Web Components",
+                "gtm": { "tech": "web-components" },
+                "url": "best-web-component-data-grid/"
+            }
+        ]
+    },
+    {
+        "title": "Getting Started",
+        "gtm": { "category": "getting-started" },
+        "items": [
+            {
+                "title": "Overview",
+                "url": "javascript-grid-getting-started/"
             },
             {
                 "title": "Angular",
@@ -115,41 +124,6 @@
                         ]
                     }
                 ]
-            },
-            {
-                "title": "Polymer",
-                "url": "best-polymer-data-grid/",
-                "gtm": { "tech": "polymer" },
-                "items": [
-                    {
-                        "title": "Getting Started",
-                        "url": "polymer-getting-started/"
-                    },
-                    {
-                        "title": "More Details",
-                        "url": "polymer-more-details/"
-                    }
-                ]
-            },
-            {
-                "title": "AngularJS 1.x",
-                "gtm": { "tech": "angularjs1" },
-                "url": "best-angularjs-data-grid/"
-            },
-            {
-                "title": "VueJS",
-                "gtm": { "tech": "vue" },
-                "url": "best-vuejs-data-grid/"
-            },
-            {
-                "title": "Aurelia",
-                "gtm": { "tech": "aurelia" },
-                "url": "best-aurelia-data-grid/"
-            },
-            {
-                "title": "Web Components",
-                "gtm": { "tech": "web-components" },
-                "url": "best-web-component-data-grid/"
             }
         ]
     },

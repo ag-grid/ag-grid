@@ -127,13 +127,13 @@
             */
         }
 
-        #side-nav-container > ul > li > ul {
+        #side-nav-container > ul ul {
             height: 0;
             overflow: hidden;
-            transition: height 0.3s ease-out;
+            // transition: height 0.3s ease-out;
         }
 
-        #side-nav-container > ul > li.expanded > ul {
+        #side-nav-container li.expanded > ul {
             height: auto;
         }
 
