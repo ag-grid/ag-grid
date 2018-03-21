@@ -5,7 +5,7 @@
         "items": [
             {
                 "title": "Vanilla JavaScript",
-                "gtm": { "category": "getting-started-vanilla" },
+                "gtm": { "tech": "vanilla" },
                 "items": [
                     {
                         "title": "Install with NPM",
@@ -27,8 +27,39 @@
                 ]
             },
             {
+                "title": "Angular",
+                "gtm": { "tech": "angular" },
+                "items": [
+                    {
+                        "title": "Ag-Grid Angular Overview",
+                        "url": "angular-more-details/"
+                    },
+                    {
+                        "title": "Building",
+                        "items": [
+                            {
+                                "title": "SystemJS",
+                                "url": "ag-grid-angular-systemjs/"
+                            },
+                            {
+                                "title": "Webpack 3",
+                                "url": "ag-grid-angular-webpack-3/"
+                            },
+                            {
+                                "title": "Webpack 2",
+                                "url": "ag-grid-angular-webpack-2/"
+                            },
+                            {
+                                "title": "Webpack",
+                                "url": "ag-grid-angular-webpack/"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
                 "title": "React",
-                "gtm": { "category": "getting-started-react" },
+                "gtm": { "tech": "react" },
                 "items": [
                     {
                         "title": "Ag-Grid React Overview",
@@ -82,48 +113,6 @@
             {
                 "title": "Overview",
                 "url": "javascript-grid-getting-started/"
-            },
-            {
-                "title": "Angular",
-                "url": "best-angular-2-data-grid/",
-                "gtm": { "tech": "angular" },
-                "items": [
-                    {
-                        "title": "Getting Started",
-                        "url": "angular-getting-started/"
-                    },
-                    {
-                        "title": "More Details",
-                        "url": "angular-more-details/"
-                    },
-                    {
-                        "title": "Building",
-                        "url": "angular-building/",
-                        "gtm": { "hub": true },
-                        "items": [
-                            {
-                                "title": "Angular CLI",
-                                "url": "ag-grid-angular-angularcli/"
-                            },
-                            {
-                                "title": "SystemJS",
-                                "url": "ag-grid-angular-systemjs/"
-                            },
-                            {
-                                "title": "Webpack 3",
-                                "url": "ag-grid-angular-webpack-3/"
-                            },
-                            {
-                                "title": "Webpack 2",
-                                "url": "ag-grid-angular-webpack-2/"
-                            },
-                            {
-                                "title": "Webpack",
-                                "url": "ag-grid-angular-webpack/"
-                            }
-                        ]
-                    }
-                ]
             }
         ]
     },
