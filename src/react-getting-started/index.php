@@ -367,17 +367,20 @@ While doing so, we learned how to configure the grid, how to access its API obje
 <p>That's just scratching the surface, though. The grid has a lot more features to offer; the abilities to customize cells and headers with custom components allow for almost infinite possible configurations. </p>
 
 <h2>Next Steps</h2> 
+
+<p>You are hungry for more? Head over to the <a href="../react-more-details/">React guides section</a> for more in-depth information about the angular flavor of ag-Grid. To learn more about the features used in this tutorial, you can go through the following help articles:</p>
+
 <p>You can go through the following help articles to learn more about the features we enabled:</p>
 
 <ul>
     <li><a href="../javascript-grid-sorting/">Sorting</a></li>
-    <li><a href="../javascript-grid-filtering">Filtering</a></li>
-    <li><a href="../javascript-grid-grouping">Grouping</a></li>
+    <li><a href="../javascript-grid-filtering/">Filtering</a></li>
+    <li><a href="../javascript-grid-grouping/">Grouping</a></li>
     <li><a href="../javascript-grid-selection/">Selection</a></li>
     <li><a href="../javascript-grid-styling/#customizing-sass-variables">Customizing themes with Sass</a></li>
 </ul>
 
-<p>In addition to that, if you are using Redux, make sure to check out the <a href="../react-redux-integration-pt1/">Integrating ag-Grid with Redux help article</a>.</p>
+<p>In addition to that, if you are using Redux, make sure to check out the <a href="../react-redux-integration-pt1/">Integrating ag-Grid with Redux guide</a>.</p>
 
 <p><b id="f1">1</b> This is not exactly true. ag-Grid's core, as well as the framework wrappers are written in TypeScript. This provides nice strong typing and compile-time checks for our TypeScript users, while not giving the Babel/Vanilla users any disadvantage.  <a href="#a1">↩</a></p>
 

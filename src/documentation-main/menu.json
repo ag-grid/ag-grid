@@ -107,16 +107,6 @@
         ]
     },
     {
-        "title": "Getting Started",
-        "gtm": { "category": "getting-started" },
-        "items": [
-            {
-                "title": "Overview",
-                "url": "javascript-grid-getting-started/"
-            }
-        ]
-    },
-    {
         "title": "Reference",
         "gtm": { "category": "reference" },
         "items": [

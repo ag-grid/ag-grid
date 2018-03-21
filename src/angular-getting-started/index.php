@@ -520,12 +520,12 @@ While doing so, we learned how to configure the grid, how to access its API obje
 
 <h2>Next Steps</h2> 
 
-<p>You can go through the following help articles to learn more about the features we enabled:</p>
+<p>You are hungry for more? Head over to the <a href="../angular-more-details/">Angular guides section</a> for more in-depth information about the angular flavor of ag-Grid.  To learn more about the features used in this tutorial, you can go through the following help articles:</p>
 
 <ul>
     <li><a href="../javascript-grid-sorting/">Sorting</a></li>
-    <li><a href="../javascript-grid-filtering">Filtering</a></li>
-    <li><a href="../javascript-grid-grouping">Grouping</a></li>
+    <li><a href="../javascript-grid-filtering/">Filtering</a></li>
+    <li><a href="../javascript-grid-grouping/">Grouping</a></li>
     <li><a href="../javascript-grid-selection/">Selection</a></li>
     <li><a href="../javascript-grid-styling/#customizing-sass-variables">Customizing themes with Sass</a></li>
 </ul>

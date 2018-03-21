@@ -377,12 +377,13 @@ While doing so, we learned how to configure the grid and how how to use its api 
 <p>That's just scratching the surface, though. The grid has a lot more features to offer; the abilities to customize cells and headers with custom components allow for almost infinite possible configurations. </p>
 
 <h2>Next Steps</h2> 
-<p>You can go through the following help articles to learn more about the features we enabled:</p>
+
+<p>The best thing you can check after the tutorial is the <a href="../javascript-grid-features/">features overview</a>. It provides an extensive review of what you can achieve with ag-Grid. In addition, you can go through the following help articles to learn more about the features we enabled:</p>
 
 <ul>
     <li><a href="../javascript-grid-sorting/">Sorting</a></li>
-    <li><a href="../javascript-grid-filtering">Filtering</a></li>
-    <li><a href="../javascript-grid-grouping">Grouping</a></li>
+    <li><a href="../javascript-grid-filtering/">Filtering</a></li>
+    <li><a href="../javascript-grid-grouping/">Grouping</a></li>
     <li><a href="../javascript-grid-selection/">Selection</a></li>
 </ul>
 
