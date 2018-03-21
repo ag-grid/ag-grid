@@ -175,7 +175,7 @@ gridOptions = {
         </ul>
 
         <p>
-            If you are using on of the supported frameworks registration is done using the
+            If you are using one of the supported frameworks registration is done using the
             <code>frameworkComponents</code> property rather than the <code>components</code> property.
             Then the component is registered by name as normal.
         </p>

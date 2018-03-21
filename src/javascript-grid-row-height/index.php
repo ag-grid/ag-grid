@@ -84,6 +84,10 @@ gridOptions.getRowHeight = function(params) {
 
     <?= example('Row Height Complex', 'row-height-complex', 'generated') ?>
 
+    <h2>Auto Row Height</h2>
+
+    <?= example('Auto Row Height', 'auto-row-height', 'generated') ?>
+
     <h2>Changing Row Height</h2>
 
     <p>
