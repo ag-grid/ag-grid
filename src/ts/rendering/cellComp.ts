@@ -61,6 +61,8 @@ export class CellComp extends Component {
     private cellRendererGui: HTMLElement;
     private cellEditor: ICellEditorComp;
 
+    private autoHeightCell: boolean;
+
     private firstRightPinned: boolean;
     private lastLeftPinned: boolean;
 
@@ -85,13 +87,14 @@ export class CellComp extends Component {
     private cellEditorVersion = 0;
     private cellRendererVersion = 0;
 
-    constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: RowComp) {
+    constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: RowComp, autoHeightCell: boolean) {
         super();
         this.scope = scope;
         this.beans = beans;
         this.column = column;
         this.rowNode = rowNode;
         this.rowComp = rowComp;
+        this.autoHeightCell = autoHeightCell;
 
         this.createGridCellVo();
 
@@ -273,6 +276,12 @@ export class CellComp extends Component {
 
     private getInitialCssClasses(): string[] {
         let cssClasses: string[] = ["ag-cell", "ag-cell-not-inline-editing"];
+
+        // if we are putting the cell into a dummy container, to work out it's height,
+        // then we don't put the height css in, as we want cell to fit height in that case.
+        if (!this.autoHeightCell) {
+            cssClasses.push('ag-cell-with-height');
+        }
 
         cssClasses.push(this.cellFocused ? 'ag-cell-focus' : 'ag-cell-no-focus');
 
@@ -775,10 +784,12 @@ export class CellComp extends Component {
             // row was removed (the row comp was removed), however now that the user
             // can provide components for cells, the destroy method gets call when this
             // happens so no longer need to fire event.
-            addRowCompListener: this.rowComp.addEventListener.bind(this.rowComp),
+            addRowCompListener: this.rowComp ? this.rowComp.addEventListener.bind(this.rowComp) : null,
             addRenderedRowListener: (eventType: string, listener: Function) => {
                 console.warn('ag-Grid: since ag-Grid .v11, params.addRenderedRowListener() is now params.addRowCompListener()');
-                this.rowComp.addEventListener(eventType, listener);
+                if (this.rowComp) {
+                    this.rowComp.addEventListener(eventType, listener);
+                }
             }
         };
 

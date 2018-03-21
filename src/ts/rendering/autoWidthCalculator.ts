@@ -6,11 +6,6 @@ import {HeaderRenderer} from "../headerRendering/headerRenderer";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {HeaderWrapperComp} from "../headerRendering/header/headerWrapperComp";
 import {Component} from "../widgets/component";
-import {HeaderGroupWrapperComp} from "../headerRendering/headerGroup/headerGroupWrapperComp";
-
-export interface GuiProvider {
-    (): HTMLElement;
-}
 
 @Bean('autoWidthCalculator')
 export class AutoWidthCalculator {

@@ -685,7 +685,6 @@ ag-grid-aurelia {
 .ag-cell {
     box-sizing: border-box;
     display: inline-block;
-    height: 100%;
     overflow: hidden;
     // this float was needed for layout in safari, without it, when images were used (eg country flags),
     // then the layout was broken
@@ -694,6 +693,11 @@ ag-grid-aurelia {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+.ag-cell-with-height {
+    height: 100%;
+}
+
 // this is used by the animateShowChangeCellRenderer. it is arguable that this belongs in the themes,
 // however it is not tied to color, only placement and visiblity, which is behaviour and not style,
 // thus belongs here, besides it doesn't change wih the themes

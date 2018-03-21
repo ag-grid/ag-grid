@@ -32,6 +32,7 @@ import {Environment} from "./environment";
 import {PropertyKeys} from "./propertyKeys";
 import {ColDefUtil} from "./components/colDefUtil";
 import {Events} from "./eventKeys";
+import {AutoHeightCalculator} from "./rendering/autoHeightCalculator";
 
 let DEFAULT_ROW_HEIGHT = 25;
 let DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -99,6 +100,7 @@ export class GridOptionsWrapper {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('environment') private environment: Environment;
+    @Autowired('autoHeightCalculator') private autoHeightCalculator: AutoHeightCalculator;
 
     private propertyEventService: EventService = new EventService();
 
@@ -776,10 +778,21 @@ export class GridOptionsWrapper {
             } else {
                 return DEFAULT_DETAIL_ROW_HEIGHT;
             }
-        } else if (this.isNumeric(this.gridOptions.rowHeight)) {
-            return this.gridOptions.rowHeight;
         } else {
-            return this.getDefaultRowHeight();
+            let defaultHeight = this.isNumeric(this.gridOptions.rowHeight) ?
+                this.gridOptions.rowHeight : this.getDefaultRowHeight();
+            if (this.columnController.isAutoRowHeightActive()) {
+                let autoHeight = this.autoHeightCalculator.getPreferredHeightForRow(rowNode);
+                // never return less than the default row height - covers when auto height
+                // cells are blank.
+                if (autoHeight > defaultHeight) {
+                    return autoHeight;
+                } else {
+                    return defaultHeight;
+                }
+            } else {
+                return defaultHeight;
+            }
         }
     }
 

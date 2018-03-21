@@ -112,6 +112,9 @@ export class ColumnController {
     // true if we are doing column spanning
     private colSpanActive: boolean;
 
+    // primate columns that have colDef.autoHeight set
+    private autoRowHeightColumns: Column[];
+
     private rowGroupColumns: Column[] = [];
     private valueColumns: Column[] = [];
     private pivotColumns: Column[] = [];
@@ -148,6 +151,14 @@ export class ColumnController {
             this.pivotMode = pivotMode;
         }
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
+    }
+
+    public isAutoRowHeightActive(): boolean {
+        return this.autoRowHeightColumns && this.autoRowHeightColumns.length > 0;
+    }
+
+    public getAllAutoRowHeightCols(): Column[] {
+        return this.autoRowHeightColumns;
     }
 
     private setVirtualViewportLeftAndRight(): void {
@@ -1553,6 +1564,7 @@ export class ColumnController {
         this.primaryHeaderRowCount = balancedTreeResult.treeDept + 1;
 
         this.primaryColumns = this.getColumnsFromTree(this.primaryBalancedTree);
+        this.autoRowHeightColumns = this.primaryColumns.filter( col => col.getColDef().autoHeight );
         this.extractRowGroupColumns(source);
         this.extractPivotColumns(source);
         this.createValueColumns(source);
