@@ -228,14 +228,14 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 +    &lt;button onClick={this.onButtonClick}&gt;Get selected rows&lt;/button&gt;
 +
 		 &lt;AgGridReact
-+      ref={ ref =&gt; this.grid = ref }
++      onGridReady={ params =&gt; this.gridApi = params.api }
 </code></pre>
 
 <p>Afterwards, add the following event handler at the end of the component class:</p>
 
 <snippet language="jsx">
 onButtonClick = e =&gt; {
-    const selectedNodes = this.grid.api.getSelectedNodes()  
+    const selectedNodes = this.gridApi.getSelectedNodes()  
     const selectedData = selectedNodes.map( node =&gt; node.data )
     const selectedDataStringPresentation = selectedData.map( node =&gt; node.make + ' ' + node.model).join(', ')
     alert(`Selected nodes: ${selectedDataStringPresentation}`) 
@@ -248,9 +248,9 @@ Hopefully you will forgive us this shortcut for the sake of keeping the article 
 <p>What happened above? Several things:</p>
 
 <ul>
-<li><code>ref={ ref =&gt; this.grid = ref }</code> obtained a reference to the ag-grid React component instance;</li>
+<li><code>onGridReady={ params =&gt; this.gridApi = params.api }</code> obtained a reference to the ag-grid API instance;</li>
 <li>We added a button with an event handler;</li>
-<li>Inside the event handler, we accessed the grid react component reference and used its `api` object to access the currently selected grid row nodes;</li>
+    <li>Inside the event handler, we accessed the grid api object reference to access the currently selected grid row nodes;</li>
 <li>Afterwards, we extracted the row nodes' underlying data items and converted them to a string suitable to be presented to the user in an alert box.</li> 
 </ul>
   
