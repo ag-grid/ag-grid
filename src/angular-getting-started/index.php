@@ -236,31 +236,31 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 <p>Fortunately, the above task is quite simple with ag-Grid. As you may have already guessed, it is just a matter of adding and changing couple of properties. Edit <code>src/app.component.ts</code> first:</p>
 
 <snippet language="ts">
-import { component, oninit } from '@angular/core';
-import { httpclient } from '@angular/common/http';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
-@component({
+@Component({
     selector: 'app-root',
-    templateurl: './app.component.html',
-    styleurls: ['./app.component.scss']
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss']
 })
-export class appcomponent implements oninit {
+export class AppComponent implements OnInit {
     title = 'app';
 
-    columndefs = [
-        {headername: 'make', field: 'make', checkboxselection: true },
-        {headername: 'model', field: 'model' },
-        {headername: 'price', field: 'price'}
+    columnDefs = [
+        {headerName: 'make', field: 'make', checkboxSelection: true },
+        {headerName: 'model', field: 'model' },
+        {headerName: 'price', field: 'price' }
     ];
 
-    rowdata: any;
+    rowData: any;
 
-    constructor(private http: httpclient) {
+    constructor(private http: HttpClient) {
 
     }
 
-    ngoninit() {
-        this.rowdata = this.http.get('https://api.myjson.com/bins/15psn9');
+    ngOnInit() {
+        this.rowData = this.http.get('https://api.myjson.com/bins/15psn9');
     }
 }
 </snippet>
