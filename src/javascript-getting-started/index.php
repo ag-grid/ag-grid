@@ -3,236 +3,391 @@ $pageTitle = "ag-Grid Reference: Getting Started with the JavaScript Datagrid";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This Getting Start guide covers installing our seed repo and getting up and running with a simple JavaScript Datagrid. We also cover basisc configuration.";
 $pageKeyboards = "Javascript Grid";
 $pageGroup = "basics";
-include '../documentation-main/documentation_header.php';
+include '../getting-started/header.php';
 ?>
+<div>
+<h1>Get Started with ag-Grid in Your Project</h1>
 
-    <h1>JavaScript Grid</h1>
+<p class="lead">The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid engine is implemented in plain JavaScript<sup id="a1"><a href="#f1">[1]</a></sup> and has zero dependencies. 
+If your project does not use one of the JavaScript frameworks that ag-Grid supports, or you are curious to understand how the grid works in its pure form, this guide is for you!
+</p> 
 
-    <p>This section documents how to get started with ag-Grid and JavaScript as quickly as possible. You will start off
-        with
-        a simple application and section by section add Grid features to the application ending up with a fully fledged
-        application with ag-Grid at the heart of it.</p>
+<p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing React project, and configure some of the essential features of it. We will show you some of the fundamentals of the grid (passing properties, using the API, etc).</p>
 
-    <h2>Prerequisites</h2>
+<h2>The Project Setup</h2>
 
-    <p>You will need the following build tools installed at a minimum:</p>
-
-    <ul class="content">
-        <li>Git: Please see <a href="https://git-scm.com/">Git</a> for installation options</li>
-    </ul>
-
-    <h2>Scaffolding</h2>
-
-    <p>To get started as quickly as possible we provide a <code>"Seed"</code> repo on Git that you can use. Let's clone
-        this
-        repo, install the dependencies and start it up:</p>
-
-<snippet language="sh">
-# clone the ag-Grid  seed project
-git clone https://github.com/ag-grid/ag-grid-seed
-cd ag-grid-seed/javascript
-
-# Now either open index.html from the browser of your choice, or from the command line:
-# either Windows:
-start index.html
-# or OSX:
-open index.html
-</snippet>
-
-    <p>With those 3 commands you should now see the following application:</p>
-
-    <img src="../images/seed.png" style="display: block;margin: auto;height: 170px;">
-    
-    <p>Great! A working Grid application in no time at all. Let's break down the application into its main parts:</p>
-
-    <h2>Row Data</h2>
-
-    <p>At a minimum, a Grid requires row data &amp; column definitions. Row data is provided to the grid as an array of
-        JavaScript objects:</p>
-
-<snippet>
-// row data 
-[
-    {make: "Toyota", model: "Celica", price: 35000},
-    {make: "Ford", model: "Mondeo", price: 32000},
-    {make: "Porsche", model: "Boxter", price: 72000}
-]
-</snippet>
-
-<p>Here we have 3 rows of data, with <code>make</code>, <code>model</code> and <code>price</code> making up the
-    data.</p>
-
-<h2>Column Definitions</h2>
-
-    <p>To display this information we need to tell the Grid what data we're interested in. Let's define the three
-        columns
-        that match the data above:</p>
-
-<snippet>
-// column definitions
-[
-    {headerName: "Make", field: "make"},
-    {headerName: "Model", field: "model"},
-    {headerName: "Price", field: "price"}
-]
-</snippet>
-
-    <p>At a minimum a column definition needs a <code>headerName</code> - the column title to display - and a <code>field</code>
-        - the data item to read off of from the row data. Here we're defining 3 columns, <code>Make</code>,
-        <code>Model</code>
-        and <code>Price</code>, each of which correspond to their lowercase equivalent in the row data above.</p>
-
-<h2>Grid Definition</h2>
-
-    <p>Ok, so now we know how to define our row and column data - how do we define our actual Grid?</p>
-
-    <p>For a JavaScript application, you need to reference ag-Grid in your html file and provide a container (typically
-        a <code>div</code> for ag-Grid to use:</p>
+<p>During the last couple of years, we are witnessing a Cambrian Explosion of JavaScript project stacks. It seems like everyday there is a new, better way for JavaScript developers to build and distribute their apps. 
+However,  for the purposes of this setup, we are going to stick to tried-and-true no-build, single HTML file setup which loads the ag-Grid scripts from CDN (our favorite one is <a href="https://unpkg.com/#/">unpkg</a>). Let's start from this clean html file:</p>
 
 <snippet language="html">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Hello from ag-grid!&lt;/h1&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</snippet>
+
+<div class="note">
+You can either use your favorite programming text editor, or you can execute the steps in the tutorial using <a href="http://plnkr.co/edit/ZicWEPr1TP04bttMLkCr">this Plunker as a starting point</a>.
+</div>
+
+<h2>Add ag-Grid to Your Project</h2>
+
+<p>We are going to load the necessary scripts and styles from the unpkg CDN. Add the following to the <code>head</code> element:</p>
+
+<snippet language="html">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;script src=&quot;https://unpkg.com/ag-grid/dist/ag-grid.min.noStyle.js&quot;&gt;&lt;/script&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-grid.css&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-theme-balham.css&quot;&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Hello from ag-grid!&lt;/h1&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</snippet>
+
+<p>The lines above import the <code>AgGrid</code> component, the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-balham.css</code>). 
+The grid ships several different themes; pick one that matches your project design. </p>
+
+<p>Now, let's instantiate a grid!</p>
+
+<snippet language="html">
+&lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
-    &lt;!-- reference the ag-Grid library--&gt;
-    &lt;script src="https://unpkg.com/ag-grid/dist/ag-grid.min.js"&gt;&lt;/script&gt;
-
-    &lt;!-- our application code --&gt;
-    &lt;script src="example.js"&gt;&lt;/script&gt;
+  &lt;script src=&quot;https://unpkg.com/ag-grid/dist/ag-grid.min.noStyle.js&quot;&gt;&lt;/script&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-grid.css&quot;&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-theme-balham.css&quot;&gt;
 &lt;/head&gt;
 &lt;body&gt;
-&lt;h1&gt;Simple ag-Grid Example&lt;/h1&gt;
+  &lt;h1&gt;Hello from ag-grid!&lt;/h1&gt;
+  
+  &lt;div id=&quot;myGrid&quot; style=&quot;height: 600px;width:500px;&quot; class=&quot;ag-theme-balham&quot;&gt;&lt;/div&gt;
 
-&lt;!-- the div ag-Grid will use to render it's data --&gt;
-&lt;div id="myGrid" style="height: 115px;width:500px" class="ag-theme-balham"&gt;&lt;/div&gt;
+  &lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot;&gt;
+    // specify the columns
+    var columnDefs = [
+      {headerName: &quot;Make&quot;, field: &quot;make&quot;},
+      {headerName: &quot;Model&quot;, field: &quot;model&quot;},
+      {headerName: &quot;Price&quot;, field: &quot;price&quot;}
+    ];
+    
+    // specify the data
+    var rowData = [
+      {make: &quot;Toyota&quot;, model: &quot;Celica&quot;, price: 35000},
+      {make: &quot;Ford&quot;, model: &quot;Mondeo&quot;, price: 32000},
+      {make: &quot;Porsche&quot;, model: &quot;Boxter&quot;, price: 72000}
+    ];
+    
+    // let the grid know which columns and what data to use
+    var gridOptions = {
+      columnDefs: columnDefs,
+      rowData: rowData
+    };
 
+  // lookup the container we want the Grid to use
+  var eGridDiv = document.querySelector('#myGrid');
+
+  // create the grid passing in the div to use together with the columns &amp; data we want to use
+  new agGrid.Grid(eGridDiv, gridOptions);
+
+  &lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;
 </snippet>
 
-    <p>Here we're referencing the latest version from the <a href="https://unpkg.com/ag-grid/">unpkg CDN service</a>. You can use a CDN too, download ag-Grid (see <a
-                href="../javascript-more-details">More Details</a>) or bundle it with a tool like <a
-                href="https://webpack.github.io/">Webpack</a>.</p>
+<p>The variables above present two essential configuration properties of the grid - <strong>the column definitions</strong> (<code>columnDefs</code>) and the data (<code>rowData</code>). In our case, the column definitions contain three columns; 
+each column entry specifies the header label and the data field to be displayed in the body of the table.</p> 
 
-    <p>We're also providing a <code>div</code> for ag-Grid to use here, along with a width and height. These could be
-        any unit
-        of course, including <code>%</code>.</p>
+<p>The actual data is defined in the <code>rowData</code> as an array of objects. Notice that the fields of the objects match the <code>field</code> values in the <code>columnDefs</code> configuration object.</p> 
 
-    <p>Finally, we provide a <code>theme</code> for our Grid - the theme determines the Grid's look and feel. Please see
-        <a href="../javascript-grid-styling">themes</a> for more information.</p>
+<p>Finally, the <code>DIV</code> element is the DOM entry point of the grid. It sets the grid dimensions and specifies the grid's theme by setting the <code>class</code> to <code>ag-theme-balham</code>. As you may have already noticed, the CSS class matches the name of CSS file we imported earlier.</p> 
 
-    <p>Next in our application, we define a <code>gridOptions</code> object that we will pass to the Grid - in this we declare the
-        row and column information we want displayed:</p>
+<img class="img-fluid" src="../getting-started/step1.png" alt="ag-Grid in its simplest form" />
 
-<snippet>
-// Grid Definition 
-// let the grid know which columns and what data to use
-var gridOptions = {
-    columnDefs: columnDefs,
-    rowData: rowData
+<h2>Enable Sorting And Filtering</h2>
+
+<p>So far, so good. But wouldn't it be nice to be able to sort the data to help us see which car is the least/most expensive? 
+Well, enabling sorting in ag-Grid is actually quite simple - all you need to do is add <code>enableSorting</code> to the <code>gridOptions</code>.</p> 
+
+<snippet language="js">
+    var gridOptions = {
+      columnDefs: columnDefs,
+      rowData: rowData,
+      enableSorting: true
+    };
+</snippet>
+
+<p>After adding the property, you should be able to sort the grid by clicking on the column headers. Clicking on a header toggles through ascending, descending and no-sort.</p>
+
+<p>Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to imagine how a real-world application may have hundreds (or even hundreds of thousands!) or rows, with many columns. In a data set like this filtering is your friend.</p>
+
+<p>As with sorting, enabling filtering is as easy as adding the <code>enableFilter</code> property:</p>
+
+<snippet language="js">
+    var gridOptions = {
+      columnDefs: columnDefs,
+      rowData: rowData,
+      enableSorting: true,
+      enableFilter: true
+    };
+</snippet>
+
+<p>With this property set, the grid will display a small column menu icon when you hover the header. Pressing it will display a popup with filtering UI which lets you choose the kind of filter and the text that you want to filter by.</p>
+
+<img class="img-fluid" src="../getting-started/step2.png" alt="ag-Grid sorting and filtering" />
+
+<h2>Fetch Remote Data</h2>
+
+<p>Displaying hard-coded data in JavaScript is not going to get us very far. In the real world, most of the time, we are dealing with data that resides on a remote server. Nowadays, implementing this is actually quite simple. 
+Notice that the actual data fetching is performed outside of the grid component - We are using the HTML5 <code>fetch</code> API.</p>
+
+<div class="note">If you have to support older browsers but you want to use fetch, you can add <a href="https://github.com/github/fetch">the respective polyfill</a>.</div>
+
+
+<snippet language="html">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;script src=&quot;https://unpkg.com/ag-grid/dist/ag-grid.min.noStyle.js&quot;&gt;&lt;/script&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-grid.css&quot;&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-theme-balham.css&quot;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Hello from ag-grid!&lt;/h1&gt;
+  
+  &lt;div id=&quot;myGrid&quot; style=&quot;height: 600px;width:500px;&quot; class=&quot;ag-theme-balham&quot;&gt;&lt;/div&gt;
+
+  &lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot;&gt;
+    // specify the columns
+    var columnDefs = [
+      {headerName: &quot;Make&quot;, field: &quot;make&quot;},
+      {headerName: &quot;Model&quot;, field: &quot;model&quot;},
+      {headerName: &quot;Price&quot;, field: &quot;price&quot;}
+    ];
+
+    // let the grid know which columns and what data to use
+    var gridOptions = {
+      columnDefs: columnDefs,
+      enableSorting: true,
+      enableFilter: true
+    };
+
+
+  // lookup the container we want the Grid to use
+  var eGridDiv = document.querySelector('#myGrid');
+
+  // create the grid passing in the div to use together with the columns &amp; data we want to use
+  new agGrid.Grid(eGridDiv, gridOptions);
+  
+  fetch('https://api.myjson.com/bins/15psn9').then(function(response) {
+    return response.json();
+  }).then(function(data) {
+    gridOptions.api.setRowData(data);
+  })
+
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</snippet>
+
+<p>Here, we replaced the <code>rowData</code> assignment  with a data fetch from a remote service. The remote data is the same as the one we initially had, so you should not notice any actual changes to the grid.</p>
+
+<p>Notice that we also did something new - we accessed the grid Api instance through the <code>gridOptions.api</code>. The api object exposes plethora of methods that allow us to implement complex scenarios with the grid.</p>
+<h2>Enable Selection</h2> 
+
+<p>Being a programmer is a hectic job. Just when we thought that we are done with our assignment, the manager shows up with a fresh set of requirements! 
+It turned out that we need to allow the user to select certain rows from the grid and to mark them as flagged in the system. 
+We will leave the flag toggle state and persistence to the backend team. On our side, we should enable the selection and, afterwards, to obtain the selected records and pass them with an API call to a remote service endpoint.</p> 
+
+<p>Fortunately, the above task is quite simple with ag-Grid. As you may have already guessed, it is just a matter of adding and changing couple of properties:</p>
+
+<snippet language="js">
+    // specify the columns
+    var columnDefs = [
+      {headerName: "Make", field: "make", checkboxSelection: true },
+      {headerName: "Model", field: "model"},
+      {headerName: "Price", field: "price"}
+    ];
+
+    // let the grid know which columns and what data to use
+    var gridOptions = {
+      columnDefs: columnDefs,
+      enableSorting: true,
+      enableFilter: true,
+      rowSelection: 'multiple'
+    };
+</snippet>
+
+<p>Great! Now the first column contains a checkbox that, when clicked, selects the row. The only thing we have to add is a button that gets the selected data and sends it to the server. To do this, we need the following change:</p> 
+
+<snippet language="html">
+  &lt;button onclick=&quot;getSelectedRows()&quot;&gt;Get Selected Rows&lt;/button&gt;
+  &lt;div id=&quot;myGrid&quot; style=&quot;height: 600px;width:500px;&quot; class=&quot;ag-theme-balham&quot;&gt;&lt;/div&gt;
+</snippet>
+
+<snippet language="js">
+function getSelectedRows() {
+    var selectedNodes = gridOptions.api.getSelectedNodes()  
+    var selectedData = selectedNodes.map( function(node) { return node.data })
+    var selectedDataStringPresentation = selectedData.map( function(node) { return node.make + ' ' + node.model }).join(', ')
+    alert('Selected nodes: ' + selectedDataStringPresentation);
 }
 </snippet>
 
-    <p>Finally, we wait for the DOM to load and once ready find the container we want ag-Grid to use (as defined by the
-        ID we provided above)
-        and pass in the <code>GridOptions</code> we want to use:</p>
+<p>Well, we cheated a bit. Calling <code>alert</code> is not exactly a call to our backend. 
+Hopefully you will forgive us this shortcut for the sake of keeping the article short and simple. Of course, you can substitute that bit with a real-world application logic after you are done with the tutorial.</p> 
 
-<snippet>
-// wait for the document to be loaded, otherwise,
-// ag-Grid will not find the div in the document.
+<p>What happened above? Several things:</p>
 
-document.addEventListener("DOMContentLoaded", function() {
-    // lookup the container we want the Grid to use
-    var eGridDiv = document.querySelector('#myGrid');
+<ul>
+<li>We added a button with an event handler;</li>
+<li>Inside the event handler, we accessed the grid API to get the currently selected grid row nodes;</li>
+<li>Afterwards, we extracted the row nodes' underlying data items and converted them to a string suitable to be presented to the user in an alert box.</li> 
+</ul>
 
-    // create the grid passing in the div to use together with the columns & data we want to use
-    new agGrid.Grid(eGridDiv, gridOptions);
-});
+<h2>Grouping (enterprise)</h2>
+
+<div class="note">Grouping is a feature exclusive to the enterprise version of ag-Grid.</div>
+
+<p>In addition to filtering and sorting, grouping is another  effective way for the user to make sense out of large amounts of data. In our case, the data is not that much. Let's switch to a slightly larger data set:</p>
+
+<snippet language="diff">
+-        fetch('https://api.myjson.com/bins/15psn9')
++        fetch('https://api.myjson.com/bins/ly7d1')
 </snippet>
 
-    <p>The final setup looks like this:</p>
+<p>Now, let's use ag-grid-enterprise! Replace the ag-grid script reference in the <code>head</code> with this one:</p>
 
-<?= example('Simple ag-Grid Example', 'hello-world', 'vanilla', array("showResult" => true,"exampleHeight" => 140)) ?>
+<snippet language="html">
+&lt;script src=&quot;https://unpkg.com/ag-grid-enterprise/dist/ag-grid-enterprise.min.noStyle.js&quot;&gt;&lt;/script&gt;
+</snippet>
 
-    <p>We encourage you to experiment with the plunker above - try adding new rows of data for example or renaming
-        column headers.</p>
+<p>If everything is ok, you should see a message in the console that warns you about missing enterprise license. In addition to that, the grid got a few UI improvements - a custom context menu and fancier column menu popup - feel free to look around:</p>
 
-    <p>With this we have a simple application ready to go of course there is much more we can do - in the following
-        sections
-        we will build on this starting point. </p>
+<img class="img-fluid" src="../getting-started/step3.png" alt="ag-Grid final" />
 
-    <h3>Adding Features</h3>
+<p>Now, let's enable grouping! Change the configuration to this:</p>
 
-    <p>Ok, great - so far so good. But wouldn't it be nice to be able to sort the data to help us see which car is the
-        most expensive (or least!)?</p>
+<snippet language="js">
+var columnDefs = [
+    {headerName: "Make", field: "make", rowGroupIndex: 0 },
+    {headerName: "Price", field: "price"}
+];
 
-    <h3>Sorting</h3>
-
-    <p>Adding sorting to our application is very easy - all you need to do is let the Grid know you want sorting to be
-        enabled by setting a Grid property to true:</p>
-
-<snippet>
-// Grid Definition 
-// let the grid know which columns and what data to use
-var gridOptions = {
-    columnDefs: columnDefs,
-    rowData: rowData,
-
-    // enable sorting 
-    enableSorting: true
+var autoGroupColumnDef = {
+    headerName: "Model", 
+    field: "model", 
+    cellRenderer:'agGroupCellRenderer',
+    cellRendererParams: {
+        checkbox: true
+    }
 }
-</snippet>
 
-    <p>With a single property change we are now able to sort any column by clicking the column header (you can keep
-        clicking and it will cycle through ascending, descending and no sort). Note that in this example we're sorting
-        by <code>Price</code> in ascending order (indicated by the up arrow):</p>
-
-    <p><img src="../images/js-gs-sorting.png" alt="ag-Grid with Sorting" height="170"></p>
-
-    <h3>Filtering</h3>
-
-    <p>Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to imagine how a
-        real-world
-        application may have hundreds (or even hundreds of thousands!) or rows, with many columns. In a data set like
-        this filtering is your friend.
-    </p>
-
-    <p>As with sorting, enabling filtering is as easy as setting a single property in our Grid definition:</p>
-
-    <snippet>
-// Grid Definition 
 // let the grid know which columns and what data to use
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: rowData,
     enableSorting: true,
-    // enable filtering 
-    enableFilter: true
-}
+    enableFilter: true,
+    autoGroupColumnDef: autoGroupColumnDef,
+    groupSelectsChildren: true,
+    rowSelection: 'multiple'
+};
 </snippet>
 
-    <p>With the <code>enableFilter</code> property set we are now able to filter any column by clicking the column
-        header
-        "hamburger" to the right of a column (visible when hovered over). Note that in this example we're filtering the
-        <code>Model</code>
-        column by the text <code>Celica</code> - only the row with <code>Celica</code> is shown now.</p>
+<p>There we go! The grid now groups the data by <code>make</code>, while listing the <code>model</code> field value when expanded. Notice that grouping works with checkboxes as well - the <code>groupSelectsChildren</code> property adds a group-level checkbox that selects/deselects all items in the group.</p>
 
-    <p><img src="../images/js-gs-filtering.png" height="170" alt="ag-Grid with filtering"></p>
+<div class="note"> Don't worry if this step feels a bit overwhelming - the  grouping feature is very powerful and supports complex interaction scenarios which you might not need initially. The grouping documentation section contains plenty of real-world runnable examples that can get you started for your particular  case.</div>
 
-    <h2 id="summary">Summary</h2>
+<p>This is how the final code should look:</p>
 
-    <p>We've only scratched the surface with what you can do with the Grid - please refer to the full set of features on
-        the left
-        hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
+<snippet language="html">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;script src=&quot;https://unpkg.com/ag-grid-enterprise/dist/ag-grid-enterprise.min.noStyle.js&quot;&gt;&lt;/script&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-grid.css&quot;&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-theme-balham.css&quot;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Hello from ag-grid!&lt;/h1&gt;
+  &lt;button onclick=&quot;getSelectedRows()&quot;&gt;Get Selected Rows&lt;/button&gt;
+  &lt;div id=&quot;myGrid&quot; style=&quot;height: 600px;width:500px;&quot; class=&quot;ag-theme-balham&quot;&gt;&lt;/div&gt;
 
-    <?= example('Advanced ag-Grid Example', 'rich-grid', 'vanilla', array("enterprise" => 1, "showResult" => true, "exampleHeight" => 460, "extras" => array("bootstrap", "jquery"))) ?>
+  &lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot;&gt;
+    // specify the columns
+    var columnDefs = [
+      {headerName: &quot;Make&quot;, field: &quot;make&quot;, rowGroupIndex: 0 },
+      {headerName: &quot;Price&quot;, field: &quot;price&quot;}
+    ];
 
+    var autoGroupColumnDef = {
+        headerName: &quot;Model&quot;, 
+        field: &quot;model&quot;, 
+        cellRenderer:'agGroupCellRenderer',
+        cellRendererParams: {
+            checkbox: true
+        }
+    }
 
-    <p>This example makes use of custom <code>cell renderers</code> to show data in a visually friendly way, demonstrates
-        <code>column grouping</code> as well as using <code>JavaScript Components</code> in the header. And even this
-        rich
-        example is only scratching the surface - we've only just gotten started with with ag-Grid can do!</p>
+    // let the grid know which columns and what data to use
+    var gridOptions = {
+      columnDefs: columnDefs,
+      enableSorting: true,
+      enableFilter: true,
+      autoGroupColumnDef: autoGroupColumnDef,
+      groupSelectsChildren: true,
+      rowSelection: 'multiple'
+    };
 
-    <p>Please read the <a href="../javascript-more-details">More Details</a> section next to get a deeper understanding
-        of how to use ag-Grid, as well as the options in installing dependencies and accessing the <code>Enterprise
-            Features</code>.</p>
+  // lookup the container we want the Grid to use
+  var eGridDiv = document.querySelector('#myGrid');
 
-<?php include '../documentation-main/documentation_footer.php'; ?>
+  // create the grid passing in the div to use together with the columns &amp; data we want to use
+  new agGrid.Grid(eGridDiv, gridOptions);
+  
+  fetch('https://api.myjson.com/bins/ly7d1').then(function(response) {
+    return response.json();
+  }).then(function(data) {
+    gridOptions.api.setRowData(data);
+  })
+  
+  function getSelectedRows() {
+    const selectedNodes = gridOptions.api.getSelectedNodes()  
+    const selectedData = selectedNodes.map( function(node) { return node.data })
+    const selectedDataStringPresentation = selectedData.map( function(node) { return node.make + ' ' + node.model }).join(', ')
+    alert('Selected nodes: ' + selectedDataStringPresentation);
+  }
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</snippet>
+
+<h2>Summary</h2> 
+
+<p>With this tutorial, we managed to accomplish a lot. Starting from the humble beginnings of a three row / column setup, we now have a grid that supports sorting, filtering, binding to remote data, selection and even grouping! 
+While doing so, we learned how to configure the grid and how how to use its api object to call methods.</p> 
+
+<p>That's just scratching the surface, though. The grid has a lot more features to offer; the abilities to customize cells and headers with custom components allow for almost infinite possible configurations. </p>
+
+<h2>Next Steps</h2> 
+
+<p>The best thing you can check after the tutorial is the <a href="../javascript-grid-features/">features overview</a>. It provides an extensive review of what you can achieve with ag-Grid. In addition, you can go through the following help articles to learn more about the features we enabled:</p>
+
+<ul>
+    <li><a href="../javascript-grid-sorting/">Sorting</a></li>
+    <li><a href="../javascript-grid-filtering/">Filtering</a></li>
+    <li><a href="../javascript-grid-grouping/">Grouping</a></li>
+    <li><a href="../javascript-grid-selection/">Selection</a></li>
+</ul>
+
+<p><b id="f1">1</b> This is not exactly true. ag-Grid's core, as well as the framework wrappers are written in TypeScript. This provides nice strong typing and compile-time checks for our TypeScript users, while not giving the Babel/Vanilla users any disadvantage.  <a href="#a1">↩</a></p>
+</div>
+
+<?php include '../getting-started/footer.php'; ?>

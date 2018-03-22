@@ -12,6 +12,9 @@
                 <li class="<?php if ($navKey == "demo") { ?>active<?php }?>">
                     <a href="/example.php">Demo</a>
                 </li>
+                <li class="<?php if ($navKey == "getting-started") { ?>active<?php }?>">
+                    <a href="/javascript-grid-getting-started/">Getting Started</a>
+                </li>
                 <li class="<?php if ($navKey == "documentation") { ?>active<?php }?>">
                     <a href="/documentation-main/documentation.php">Documentation</a>
                 </li>
