@@ -117,7 +117,7 @@ As you may have already noticed, the CSS class matches the name of CSS file we i
 
 <p>If everything works as expected, you should see a simple grid like the one on the screenshot:</p> 
 
-<img class="img-fluid" src="../getting-started/step3.png" alt="ag-Grid final" />
+<img class="img-fluid" src="../getting-started/step1.png" alt="ag-Grid hello world" />
 
 <h2>Enable Sorting And Filtering</h2>
 
