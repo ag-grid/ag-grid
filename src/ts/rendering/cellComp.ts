@@ -283,7 +283,14 @@ export class CellComp extends Component {
             cssClasses.push('ag-cell-with-height');
         }
 
-        cssClasses.push(this.cellFocused ? 'ag-cell-focus' : 'ag-cell-no-focus');
+        let doingFocusCss = !this.beans.gridOptionsWrapper.isSuppressCellSelection();
+        if (doingFocusCss) {
+            // otherwise the class depends on the focus state
+            cssClasses.push(this.cellFocused ? 'ag-cell-focus' : 'ag-cell-no-focus');
+        } else {
+            // if we are not doing cell selection, then ag-cell-no-focus gets put onto every cell
+            cssClasses.push('ag-cell-no-focus');
+        }
 
         if (this.firstRightPinned) {
             cssClasses.push('ag-cell-first-right-pinned');
@@ -1599,8 +1606,15 @@ export class CellComp extends Component {
 
         // see if we need to change the classes on this cell
         if (cellFocused !== this.cellFocused) {
-            _.addOrRemoveCssClass(this.getGui(), 'ag-cell-focus', cellFocused);
-            _.addOrRemoveCssClass(this.getGui(), 'ag-cell-no-focus', !cellFocused);
+
+            // if we are not doing cell selection, then the focus class does not change, all cells will
+            // stay with ag-cell-no-focus class
+            let doingFocusCss = !this.beans.gridOptionsWrapper.isSuppressCellSelection();
+            if (doingFocusCss) {
+                _.addOrRemoveCssClass(this.getGui(), 'ag-cell-focus', cellFocused);
+                _.addOrRemoveCssClass(this.getGui(), 'ag-cell-no-focus', !cellFocused);
+            }
+
             this.cellFocused = cellFocused;
         }
 
