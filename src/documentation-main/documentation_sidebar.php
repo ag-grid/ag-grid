@@ -26,4 +26,18 @@
     </p>
   </div>
 </div>
+
+<p>Upcoming events:</p>
+
+<div class="card">
+    <a class="card-header d-block text-hide" style="background-image: url('https://www.ng-conf.org/wp-content/uploads/2016/09/logo.png'); height: 10rem; background-position: center center; background-repeat: no-repeat; " href="https://www.ng-conf.org/">
+        NG Conf
+    </a>
+  <div class="card-body">
+    <h5 class="card-title"><a href="https://www.ng-conf.org/">NG Conf</a></h5>
+    <h6 class="card-subtitle mb-2 text-muted">April 18–20th<br> Salt Lake City, UT</h6>
+    <p class="card-text">For another year, ag-Grid is proud to sponsor NG Conf. See you there!</p>
+  </div>
+</div>
+
 </div>

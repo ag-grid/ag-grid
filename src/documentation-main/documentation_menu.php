@@ -16,7 +16,7 @@ if (basename($_SERVER['PHP_SELF']) == 'index.php') {
 define('DOC_SECTION', $article_id);
 
 function is_current($item) {
-    return explode('#', $item['url'])[0] == DOC_SECTION;
+    return $item['url'] && explode('#', $item['url'])[0] == DOC_SECTION;
 }
 
 function should_expand($item) {
@@ -40,14 +40,15 @@ function render_menu_items($items, $gtm = array()) {
     echo "<ul>";
     foreach($items as $item) {
         $item_gtm = array_merge($gtm, ($item['gtm'] ? $item['gtm'] : array()));
-        $li_class = should_expand($item) ? ' class="expanded"' : '';
+        $current = is_current($item);
+        $li_class = should_expand($item) || $current ? ' class="expanded"' : '';
+
         echo "<li$li_class>";
 
         $enterprise_icon = ($item['enterprise'] ? '<span class="enterprise-icon">e</span>' : '');
         $new_marker = ($item['new'] ? '<span class="new-marker">new</span>' : '');
         if ($item['url']) {
             $url = $GLOBALS['rootFolder'] . $item['url'];
-            $current = is_current($item);
             $a_class = $current ? ' class="active"' : '';
             if ($current) {
                 $GLOBALS['DOC_GTM'] = json_encode($item_gtm);
