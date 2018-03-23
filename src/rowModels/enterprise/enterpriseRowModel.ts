@@ -233,9 +233,16 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
 
         let dynamicRowHeight = this.gridOptionsWrapper.isDynamicRowHeight();
         let maxBlocksInCache = this.gridOptionsWrapper.getMaxBlocksInCache();
+
         if (dynamicRowHeight && maxBlocksInCache >= 0 ) {
             console.warn('ag-Grid: Enterprise Row Model does not support Dynamic Row Height and Cache Purging. ' +
                 'Either a) remove getRowHeight() callback or b) remove maxBlocksInCache property. Purging has been disabled.');
+            maxBlocksInCache = undefined;
+        }
+
+        if (maxBlocksInCache >= 0 && this.columnController.isAutoRowHeightActive()) {
+            console.warn('ag-Grid: Enterprise Row Model does not support Auto Row Height and Cache Purging. ' +
+                'Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.');
             maxBlocksInCache = undefined;
         }
 
