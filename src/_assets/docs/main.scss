@@ -202,6 +202,21 @@
             }
         }
 
+        #upcoming-events {
+            a {
+                color: $primary;
+            }
+
+            dd.date {
+                @extend .text-muted;
+                font-size: 0.7rem;
+            }
+
+            dt:not(:first-child) {
+                margin-top: 1.5rem;
+            }
+        }
+
         #side-nav-container .card {
             h5 {
                 font-size: 1rem;
