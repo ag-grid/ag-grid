@@ -184,6 +184,38 @@
             }
         }
 
+        #side-nav-container .learn-more {
+            color: $primary;
+        }
+
+        #side-nav-container .card-highlight {
+            background-color: $blue-4;
+        }
+
+        #side-bar-announcements {
+            margin-top: 3rem;
+            border-top: 1px solid $border-color;
+
+            > p {
+                margin-top: 2rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        #side-nav-container .card {
+            h5 {
+                font-size: 1rem;
+            }
+
+            h6 {
+                font-size: 0.9rem;
+            }
+
+            p {
+                font-size: 0.8rem;
+            }
+        }
+
         #doc-nav {
             display: none;
             font-size: 90%;
