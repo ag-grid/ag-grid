@@ -88,6 +88,9 @@ export class ColumnController {
     // header row count, either above, or based on pivoting if we are pivoting
     private gridHeaderRowCount = 0;
 
+    private lastPrimaryOrder: Column[];
+    private gridColsArePrimary: boolean;
+
     // these are the columns actually shown on the screen. used by the header renderer,
     // as header needs to know about column groups and the tree structure.
     private displayedLeftColumnTree: ColumnGroupChild[];
@@ -1873,14 +1876,25 @@ export class ColumnController {
 
     // called from: setColumnState, setColumnDefs, setSecondaryColumns
     private updateGridColumns(): void {
+        if (this.gridColsArePrimary) {
+            this.lastPrimaryOrder = this.gridColumns;
+        }
+
         if (this.secondaryColumns) {
             this.gridBalancedTree = this.secondaryBalancedTree.slice();
             this.gridHeaderRowCount = this.secondaryHeaderRowCount;
             this.gridColumns = this.secondaryColumns.slice();
+            this.gridColsArePrimary = false;
         } else {
             this.gridBalancedTree = this.primaryBalancedTree.slice();
             this.gridHeaderRowCount = this.primaryHeaderRowCount;
             this.gridColumns = this.primaryColumns.slice();
+            this.gridColsArePrimary = true;
+
+            // updateGridColumns gets called after user adds a row group. we want to maintain the order of the columns
+            // when this happens (eg if user moved a column) rather than revert back to the original column order.
+            // likewise if changing in/out of pivot mode, we want to maintain the order of the primary cols
+            this.orderGridColsLikeLastPrimary();
         }
 
         this.putFixedColumnsFirst();
@@ -1899,6 +1913,24 @@ export class ColumnController {
             columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(event);
+    }
+
+    private orderGridColsLikeLastPrimary(): void {
+        if (_.missing(this.lastPrimaryOrder)) { return; }
+
+        // only do the sort if all columns are accounted for. columns will be not accounted for
+        // if changing from secondary to primary columns
+        let oneMissing = false;
+        this.gridColumns.forEach( col => {
+            if (this.lastPrimaryOrder.indexOf(col)<0) { oneMissing = true; }
+        });
+        if (oneMissing) { return; }
+
+        this.gridColumns.sort( (colA: Column, colB: Column): number => {
+            let indexA = this.lastPrimaryOrder.indexOf(colA);
+            let indexB = this.lastPrimaryOrder.indexOf(colB);
+            return indexA - indexB;
+        });
     }
 
     public isPrimaryColumnGroupsPresent(): boolean {
