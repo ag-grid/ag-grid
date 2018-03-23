@@ -453,6 +453,35 @@ gridOptions.getChildCount = function(data) {
     If you are using dynamic row height, ensure 'maxBlocksInCache' is not set.
 </note>
 
+<h2>Auto Row Height</h2>
+
+<p>
+    To have the grid calculate the row height based on the cell contents, set <code>autoHeight=true</code>
+    on columns that require variable height. The grid will calculate the height once when the data is loaded
+    into the grid.
+</p>
+
+<p>
+    This is different to the <a href="../javascript-grid-in-memory/">In Memory Row Model</a> where the
+    grid height can be changed. For Enterprise Row Model the row height cannot be changed once it is set.
+</p>
+
+<p>
+    In the example below, the following can be noted:
+    <ul>
+        <li>All top level groups are the same height.</li>
+        <li>All bottom level rows are auto-sized based on the contents of the Auto A, Auto B and Auto C columns.</li>
+        <li>All columns with auto-size have CSS <code>white-space: normal</code> to wrap the text.</li>
+    </ul>
+</p>
+
+<?= example('Auto Row Height Example', 'auto-row-height', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
+
+<note>
+    Purging the cache and auto row heights do not work together for the Enterprise Row Model.
+    If you are using auto row height, ensure 'maxBlocksInCache' is not set.
+</note>
+
 <h2>Enterprise Model API</h2>
 
 <p>

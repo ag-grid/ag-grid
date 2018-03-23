@@ -319,6 +319,10 @@ include '../documentation-main/documentation_header.php';
             <th>headerGroupTooltip</th>
             <td>Tooltip for the column group header</td>
         </tr>
+        <tr>
+            <th>autoHeight</th>
+            <td>Set to true to have the grid calculate height of row based on contents of this column.</td>
+        </tr>
     </table>
 
 <?php include '../documentation-main/documentation_footer.php';?>

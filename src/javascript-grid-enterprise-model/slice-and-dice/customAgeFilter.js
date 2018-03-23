@@ -60,4 +60,15 @@ CustomAgeFilter.prototype.getModel = function() {
 };
 
 // not needed for this example
-CustomAgeFilter.prototype.setModel = function() {};
+CustomAgeFilter.prototype.setModel = function(model) {
+    if (model && model.filter===18) {
+        this.eGui.querySelector('[ref="bt18"]').checked = true;
+        this.filterValue = 18;
+    } else if (model && model.filter===20) {
+        this.eGui.querySelector('[ref="bt20"]').checked = true;
+        this.filterValue = 20;
+    } else {
+        this.eGui.querySelector('[ref="btAll"]').checked = true;
+        this.filterValue = null;
+    }
+};

@@ -1,10 +1,8 @@
-var latinText =
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum';
-
 var columnDefs = [
     {
         field: 'name',
-        cellClass: 'cell-wrap-text'
+        cellClass: 'cell-wrap-text',
+        width: 100
     },
     {
         field: 'autoA',
@@ -30,6 +28,8 @@ var gridOptions = {
     enableFilter: true,
     enableColResize: true,
     onGridReady: function(event) {
+        // in this example, the CSS styles are loaded AFTER the grid is created,
+        // so we put this in a timeout, so height is calculated after styles are applied.
         setTimeout( function() {
             gridOptions.api.resetRowHeights();
         }, 500);
