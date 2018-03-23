@@ -40,6 +40,7 @@ meta_and_links($pageTitle, $pageKeyboards, $pageDescription, false);
 
     <div id="side-nav-container" class="collapse">
         <?php include 'documentation_menu.php'; ?>
+        <?php include 'documentation_sidebar.php'; ?>
     </div>
     </aside>
 
