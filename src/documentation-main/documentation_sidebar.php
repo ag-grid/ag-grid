@@ -1,5 +1,5 @@
 <div id="side-bar-announcements">
-<p>Latest Release</p>
+<p>Latest Release:</p>
 
 <div class="card card-highlight">
   <div class="card-body">
@@ -27,16 +27,21 @@
   </div>
 </div>
 
-<p>Upcoming events:</p>
+<p>Upcoming events we will<br> be attending and sponsoring:</p>
 
 <div class="card">
-    <a class="card-header d-block text-hide" style="background-image: url('https://www.ng-conf.org/wp-content/uploads/2016/09/logo.png'); height: 10rem; background-position: center center; background-repeat: no-repeat; " href="https://www.ng-conf.org/">
-        NG Conf
-    </a>
   <div class="card-body">
-    <h5 class="card-title"><a href="https://www.ng-conf.org/">NG Conf</a></h5>
-    <h6 class="card-subtitle mb-2 text-muted">April 18–20th<br> Salt Lake City, UT</h6>
-    <p class="card-text">For another year, ag-Grid is proud to sponsor NG Conf. See you there!</p>
+        <dl id="upcoming-events">
+            <dt><a href="https://react.amsterdam/" target="_blank" rel="noopener">React Amsterdam</a></dt>
+            <dd class="date">April 13<br> Kromhouthal, Amsterdam</dd>
+            <dd>Gold Sponsor</dd>
+            <dt><a href="https://www.ng-conf.org/" target="_blank" rel="noopener">NG Conf</a></dt>
+            <dd class="date">April 18–20<br> Salt Lake City, UT</dd>
+            <dd>Platinum Sponsor</dd>
+            <dt><a href="https://www.microsoft.com/en-us/build" target="_blank" rel="noopener">Microsoft Build</a></dt>
+            <dd class="date">May 7–9<br> Seattle, WA</dd>
+            <dd>Silver Sponsor</dd>
+        </dl>
   </div>
 </div>
 
