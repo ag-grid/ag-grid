@@ -57,9 +57,6 @@ meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance
                         <option value="ag-theme-balham" selected>Balham</option>
                         <option value="ag-theme-balham-dark">Balham (dark)</option>
                         <option value="ag-theme-material">Material</option>
-                        <option value="ag-theme-fresh">Fresh</option>
-                        <option value="ag-theme-dark">Dark</option>
-                        <option value="ag-theme-blue">Blue</option>
                     </select>
 
                     <span id="message" style="margin-left: 10px;">
