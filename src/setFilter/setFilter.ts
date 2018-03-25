@@ -4,6 +4,7 @@ import {
     Component,
     IDoesFilterPassParams,
     ISetFilterParams,
+    SerializedFilter,
     QuerySelector,
     Utils,
     RefSelector
@@ -12,9 +13,13 @@ import {SetFilterModel, SetFilterModelValuesType} from "./setFilterModel";
 import {SetFilterListItem} from "./setFilterListItem";
 import {VirtualList, VirtualListModel} from "../rendering/virtualList";
 
-enum CheckboxState {CHECKED, UNCHECKED, INTERMEDIATE};
+enum CheckboxState {CHECKED, UNCHECKED, INTERMEDIATE}
 
-export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
+export interface SerializedSetFilter extends SerializedFilter {
+    values: string[]
+}
+
+export class SetFilter extends BaseFilter <string, ISetFilterParams, SerializedSetFilter> {
 
     private model: SetFilterModel;
 
@@ -112,8 +117,11 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         this.virtualList.refresh();
     }
 
-    modelFromFloatingFilter(from: string): string[] {
-        return [from];
+    modelFromFloatingFilter(from: string): SerializedSetFilter {
+        return {
+            values: [from],
+            filterType: 'set'
+        };
     }
 
     public refreshFilterBodyUi(): void {
@@ -345,12 +353,15 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         return this.model.getUniqueValue(index);
     }
 
-    public serialize(): string[] {
-        return this.model.getModel();
+    public serialize(): SerializedSetFilter {
+        return {
+            values: this.model.getModel(),
+            filterType: 'set'
+        };
     }
 
-    public parse(dataModel: string[]) {
-        this.model.setModel(dataModel);
+    public parse(dataModel: SerializedSetFilter) {
+        this.model.setModel(dataModel.values);
         this.updateSelectAll();
         this.virtualList.refresh();
     }
@@ -360,7 +371,6 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         this.model.setModel(null, true);
         this.selectEverything();
     }
-
 }
 
 class ModelWrapper implements VirtualListModel {
