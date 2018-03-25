@@ -255,7 +255,7 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
 
             // sort and filter model
             filterModel: this.filterManager.getFilterModel(),
-            sortModel: this.sortController.getSortModel(),
+            sortModel: this.extractSortModel(),
 
             rowNodeBlockLoader: this.rowNodeBlockLoader,
 
@@ -453,4 +453,30 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         return false;
     }
 
+    private extractSortModel(): { colId: string; sort: string }[] {
+        let sortModel = this.sortController.getSortModel();
+        let rowGroupCols = this.toValueObjects(this.columnController.getRowGroupColumns());
+
+        // replace auto column with individual group columns
+        let index = sortModel.findIndex(e => e.colId === 'ag-Grid-AutoColumn');
+        if (index > -1) {
+            let individualGroupCols =
+                rowGroupCols.map(group => {
+                    return {
+                        colId: group.field,
+                        sort: sortModel[index].sort
+                    }
+                });
+
+            // remove auto group column
+            sortModel.splice(index, 1);
+
+            // insert individual group columns
+            for (let i = 0; i < individualGroupCols.length; i++) {
+                sortModel.splice(index++, 0, individualGroupCols[i]);
+            }
+        }
+
+        return sortModel;
+    };
 }
