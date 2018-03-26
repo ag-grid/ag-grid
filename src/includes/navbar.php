@@ -12,9 +12,6 @@
                 <li class="<?php if ($navKey == "demo") { ?>active<?php }?>">
                     <a href="/example.php">Demo</a>
                 </li>
-                <li class="<?php if ($navKey == "community-enterprise") { ?>active<?php }?>">
-                    <a href="/community-enterprise.php">Community / Enterprise</a>
-                </li>
                 <li class="<?php if ($navKey == "getting-started") { ?>active<?php }?>">
                     <a href="/javascript-grid-getting-started/">Getting Started</a>
                 </li>
@@ -35,13 +32,16 @@
                     <a href="/about.php">About</a>
                 </li>
 
-                <li class="<?php if ($navKey == "licenseAndPricing") { ?> active<?php }?>">
-                    <a href="/license-pricing.php">Pricing</a>
+                <li id="trial" class="<?php if ($navKey == "community-enterprise") { ?>active<?php }?>">
+                    <a href="/community-enterprise.php">Community / Enterprise</a>
                 </li>
+
                 <?php if (!defined('HOMEPAGE')) { ?>
+                <!--
                 <li id="trial" class="<?php if ($navKey == "trial") { ?> active<?php }?>">
                     <a href="/start-trial.php">Free Trial</a>
                 </li>
+-->
                 <?php }?>
             </ul>
         <?php } else { ?> 
