@@ -3,7 +3,7 @@ $pageTitle = "Angular Datagrid. 59 Features with Lightning Performance.";
 $pageDescription = "ag-Grid is feature rich datagrid designed for Angular. Version 17 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that your users expect. Our Community version is free and open source or take a 2 month trial of ag-Grid Enterprise.";
 $pageKeyboards = "Angular Grid";
 $pageGroup = "basics";
-include '../documentation-main/documentation_header.php';
+include '../getting-started/header.php';
 ?>
 
 <div>
@@ -330,4 +330,4 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     to learn about accessing all the features of the grid.
 </p>
 
-<?php include '../documentation-main/documentation_footer.php'; ?>
+<?php include '../getting-started/footer.php'; ?>

@@ -74,35 +74,6 @@
                         "url": "react-redux-integration-pt2/"
                     }
                 ]
-            },
-            {
-                "title": "Polymer",
-                "gtm": { "tech": "polymer" },
-                "items": [
-                    {
-                        "title": "Getting Started",
-                        "url": "polymer-getting-started/"
-                    },
-                    {
-                        "title": "More Details",
-                        "url": "polymer-more-details/"
-                    }
-                ]
-            },
-            {
-                "title": "AngularJS 1.x",
-                "gtm": { "tech": "angularjs1" },
-                "url": "best-angularjs-data-grid/"
-            },
-            {
-                "title": "Aurelia",
-                "gtm": { "tech": "aurelia" },
-                "url": "best-aurelia-data-grid/"
-            },
-            {
-                "title": "Web Components",
-                "gtm": { "tech": "web-components" },
-                "url": "best-web-component-data-grid/"
             }
         ]
     },

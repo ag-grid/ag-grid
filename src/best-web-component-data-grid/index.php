@@ -3,7 +3,7 @@ $pageTitle = "ag-Grid: The Best Web Component Datagrid in the World";
 $pageDescription = "A feature rich data grid designed for Enterprise applications. Easily integrate with Web Components to deliver filtering, grouping, aggregation, pivoting and much more. Try our Community version now or take a free 2 month trial of Enterprise Version.";
 $pageKeyboards = "Web Component Grid";
 $pageGroup = "basics";
-include '../documentation-main/documentation_header.php';
+include '../getting-started/header.php';
 ?>
 
 <div>
@@ -311,4 +311,4 @@ include '../documentation-main/documentation_header.php';
 
 </div>
 
-<?php include '../documentation-main/documentation_footer.php';?>
+<?php include '../getting-started/footer.php'; ?>

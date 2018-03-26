@@ -51,6 +51,11 @@ meta_and_links($pageTitle, $pageKeyboards, $pageDescription, false);
             <li><a class="<?=($article_id == "angular-getting-started/" ? 'active' : '') ?>" href="../angular-getting-started/">Angular</a></li>
             <li><a class="<?=($article_id == "react-getting-started/" ? 'active' : '') ?>" href="../react-getting-started/">React</a></li>
             <!-- li><a class="<?=($article_id == "best-vuejs-data-grid/" ? 'active' : '') ?>" href="../best-vuejs-data-grid/">Vue.js</a></li -->
+            <li><hr></li>
+            <li class="misc"><a class="<?=($article_id == "best-angularjs-data-grid/" ? 'active' : '') ?>" href="../best-angularjs-data-grid/">AngularJS 1.x</a></li>
+            <li class="misc"><a class="<?=($article_id == "polymer-getting-started/" ? 'active' : '') ?>" href="../polymer-getting-started/">Polymer</a></li>
+            <li class="misc"><a class="<?=($article_id == "best-aurelia-data-grid/" ? 'active' : '') ?>" href="../best-aurelia-data-grid/">Aurelia</a></li>
+            <li class="misc"><a class="<?=($article_id == "best-web-component-data-grid/" ? 'active' : '') ?>" href="../best-web-component-data-grid/">Web Components</a></li>
           </ul>
       </div>
     </aside>
