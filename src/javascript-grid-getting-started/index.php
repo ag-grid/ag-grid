@@ -43,11 +43,11 @@ include '../getting-started/header.php';
 </div></div>
 
 <div><div class="get-started-framework card-vue">
-    <a href="../best-vuejs-data-grid/">Vue.js</a>
+    <a href="../vue-getting-started/">Vue.js</a>
     <div>
         <h2>Vue.js</h2>
         <p class="card-text">Get started with the Vue.js ag-Grid component wrapper.</p>
-        <p><a href="../best-vuejs-data-grid/">Start With Vue.js</a></p>
+        <p><a href="../vue-getting-started/">Start With Vue.js</a></p>
     </div>
 </div></div>
 

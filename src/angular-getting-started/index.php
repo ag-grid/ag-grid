@@ -224,7 +224,7 @@ export class AppComponent implements OnInit {
 </snippet>
 
 
-<p>The remote data is the same as the one we initially had, so you should not notice any actual changes to the grid. However, you will see an addtiional HTTP request performed if you open your developer tools.</p>
+<p>The remote data is the same as the one we initially had, so you should not notice any actual changes to the grid. However, you will see an additional HTTP request performed if you open your developer tools.</p>
 
 
 <h2>Enable Selection</h2> 
@@ -280,7 +280,7 @@ export class AppComponent implements OnInit {
 &lt;/ag-grid-angular&gt;
 </snippet>
 
-<div class="note">We took a bit of a shortcut here, by not binding the propery value. Without <code>[]</code>, the assignment will pass the attribute value as a string, which is fine for our purposes.</div> 
+<div class="note">We took a bit of a shortcut here, by not binding the property value. Without <code>[]</code>, the assignment will pass the attribute value as a string, which is fine for our purposes.</div>
 
 <p>Great! Now the first column contains a checkbox that, when clicked, selects the row. The only thing we have to add is a button that gets the selected data and sends it to the server. To do this, we are going to use the ag-Grid API - we will access it through the component instance. </p> 
 

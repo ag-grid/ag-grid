@@ -74,6 +74,11 @@
                         "url": "react-redux-integration-pt2/"
                     }
                 ]
+            },
+            {
+                "title": "Vue.js",
+                "gtm": { "tech": "vue" },
+                "url": "best-vuejs-data-grid/"
             }
         ]
     },
