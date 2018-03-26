@@ -457,8 +457,16 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         let sortModel = this.sortController.getSortModel();
         let rowGroupCols = this.toValueObjects(this.columnController.getRowGroupColumns());
 
+        // find index of auto group column in sort model
+        let index = -1;
+        for (let i = 0; i < sortModel.length; ++i) {
+            if (sortModel[i].colId === 'ag-Grid-AutoColumn') {
+                index = i;
+                break;
+            }
+        }
+
         // replace auto column with individual group columns
-        let index = sortModel.findIndex(e => e.colId === 'ag-Grid-AutoColumn');
         if (index > -1) {
             let individualGroupCols =
                 rowGroupCols.map(group => {
