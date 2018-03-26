@@ -717,6 +717,9 @@ export class GridOptionsWrapper {
         if (options.headerCellRenderer) {
             console.warn(`ag-grid: since version 15.x, headerCellRenderer is gone, please check the header documentation on how to set header templates.`);
         }
+        if (options.angularCompileHeaders) {
+            console.warn(`ag-grid: since version 15.x, angularCompileHeaders is gone, please see the getting started for Angular 1 docs to see how to do headers in Angular 1.x.`);
+        }
 
     }
 

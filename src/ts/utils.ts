@@ -1542,7 +1542,6 @@ export class Utils {
         return left === right;
     }
 
-
     static get(source: { [p: string]: any }, expression: string, defaultValue: any): any {
         if (source == null) return defaultValue;
 
