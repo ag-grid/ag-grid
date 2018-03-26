@@ -149,6 +149,7 @@ export class AgGridColumn {
     @Input() public suppressNavigable: any;
     @Input() public enableCellChangeFlash: any;
     @Input() public rowDrag: any;
+    @Input() public autoHeight: any;
     // @END@
 
 }
