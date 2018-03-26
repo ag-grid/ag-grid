@@ -32,8 +32,8 @@
                     <a href="/about.php">About</a>
                 </li>
 
-                <li id="trial" class="<?php if ($navKey == "community-enterprise") { ?>active<?php }?>">
-                    <a href="/community-enterprise.php">Community / Enterprise</a>
+                <li id="trial" class="<?php if ($navKey == "licenseAndPricing") { ?>active<?php }?>">
+                    <a href="/license-pricing.php">Pricing</a>
                 </li>
 
                 <?php if (!defined('HOMEPAGE')) { ?>
