@@ -361,7 +361,10 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, SerializedS
     }
 
     public parse(dataModel: SerializedSetFilter) {
-        this.model.setModel(dataModel.values);
+        // also supporting old filter model for backwards compatibility
+        let newValues: string[] = (dataModel instanceof Array) ? dataModel : dataModel.values;
+
+        this.model.setModel(newValues);
         this.updateSelectAll();
         this.virtualList.refresh();
     }
