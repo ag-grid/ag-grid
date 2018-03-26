@@ -351,5 +351,6 @@ if(window.location.href.indexOf("/community-support.php?submitted=true") !=-1)
 (new Image()).src="//www.googleadservices.com/pagead/conversion/873243008/?label=8TOnCM7BnWsQgMOyoAM&guid=ON&script=0";
 }
 </script>
+<script src="dist/homepage.js"></script>
 </body>
 </html>
