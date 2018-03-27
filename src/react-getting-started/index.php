@@ -28,6 +28,7 @@ npx create-react-app my-app
 cd my-app
 npm start
 </snippet>
+<div class="note"><a href="https://medium.com/@maybekatz/introducing-npx-an-npm-package-runner-55f7d4bd282b" rel="nofollow">npx</a> comes with npm 5.2+ and higher, see <a href="https://gist.github.com/gaearon/4064d3c23a77c74a3614c498a8bb1c5f">instructions for older npm versions</a></div>
 
 <p>If everything goes well, <code>npm start</code> has started the web server and conveniently opened a browser pointing to <a href="http://localhost:3000">localhost:3000</a>.</p> 
 

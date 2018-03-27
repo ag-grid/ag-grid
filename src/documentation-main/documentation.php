@@ -8,14 +8,9 @@ include 'documentation_header.php';
 
 <div class="docs-homepage-section-preview">
     <div>
-    <h2>New to ag-Grid?</h2>
-    <p>
-        Learn how to get a simple
-        application working using ag-Grid with your framework of choice.
-        Start here to get a simple grid working in your application, then follow on
-        to the next sections to understand how particular features work.
-    </p>
-    <p> <a href="/javascript-grid-getting-started/">Go to Getting Started</a> </p>
+    <h2>How Do I?</h2>
+    <p>Review the guides section for step by step, task oriented articles that navigate through the recommended means of using ag-Grid.</p>
+    <p> <a href="/javascript-grid-npm/">Start with Guides</a> </p>
     </div>
 </div>
 
