@@ -11,6 +11,7 @@ import {Component} from "../widgets/component";
 import {Constants} from "../constants";
 import {Column} from "../entities/column";
 import {GridApi} from "../gridApi";
+import {SerializedSetFilter} from "../../../../ag-grid-enterprise/src/setFilter/setFilter";
 
 export interface FloatingFilterChange {
 }
@@ -75,6 +76,7 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
             return;
         }
         this.lastKnownModel = parentModel;
+        // let values = parentModel ? parentModel.values : [];
         let incomingTextValue = this.asFloatingFilterText(parentModel);
         if (incomingTextValue === this.eColumnFloatingFilter.value) { return; }
 
@@ -270,22 +272,27 @@ export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<Serial
     }
 }
 
-export class SetFloatingFilterComp extends InputTextFloatingFilterComp<string[], IFloatingFilterParams<string[], BaseFloatingFilterChange<string[]>>> {
-    init(params: IFloatingFilterParams<string[], BaseFloatingFilterChange<string[]>>): void {
+export class SetFloatingFilterComp extends InputTextFloatingFilterComp<SerializedSetFilter, IFloatingFilterParams<SerializedSetFilter, BaseFloatingFilterChange<SerializedSetFilter>>> {
+    init(params: IFloatingFilterParams<SerializedSetFilter, BaseFloatingFilterChange<SerializedSetFilter>>): void {
         super.init(params);
         this.eColumnFloatingFilter.readOnly = true;
     }
 
-    asFloatingFilterText(parentModel: string[]): string {
-        if (!parentModel || parentModel.length === 0) { return ''; }
+    asFloatingFilterText(parentModel: SerializedSetFilter): string {
+        if (!parentModel || parentModel.values.length === 0) { return ''; }
 
-        let arrayToDisplay = parentModel.length > 10 ? parentModel.slice(0, 10).concat(['...']) : parentModel;
-        return `(${parentModel.length}) ${arrayToDisplay.join(",")}`;
+        let arrayToDisplay = parentModel.values.length > 10 ? parentModel.values.slice(0, 10).concat(['...']) : parentModel.values;
+        return `(${parentModel.values.length}) ${arrayToDisplay.join(",")}`;
     }
 
-    asParentModel(): string[] {
-        if (this.eColumnFloatingFilter.value == null || this.eColumnFloatingFilter.value === '') { return null; }
-        return this.eColumnFloatingFilter.value.split(",");
+    asParentModel(): SerializedSetFilter {
+        if (this.eColumnFloatingFilter.value == null || this.eColumnFloatingFilter.value === '') {
+            return {values: [], filterType: 'set'};
+        }
+        return {
+            values: this.eColumnFloatingFilter.value.split(","),
+            filterType: 'set'
+        }
     }
 }
 
