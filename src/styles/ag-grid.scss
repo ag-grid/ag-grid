@@ -232,8 +232,8 @@ ag-grid-aurelia {
 // as with inline-block, the layout messed up in Safari (not problems in the others).
 .ag-header-group-cell-label {
     overflow: hidden;
-    //display table-cell
     text-overflow: ellipsis;
+    display: flex;
 }
 
 .ag-header-cell-label {
