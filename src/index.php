@@ -98,8 +98,6 @@ meta_and_links($title, $keywords, $description, false);
         </section>
     </div>
 
-
-
     <div class="stage-scenarios">
         <h2 class="heading-scenarios">Complex Scenarios, Made Easy </h2>
 

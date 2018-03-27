@@ -195,5 +195,5 @@ function initApiGrid() {
 if (document.readyState == "complete") {
     initApiGrid();
 } else {
-    document.addEventListener("DOMContentLoaded", initApiGrid);
+    document.addEventListener('readystatechange', initApiGrid);
 }
