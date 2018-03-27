@@ -1,19 +1,27 @@
 import Vue from "vue";
-import {Grid, ComponentUtil} from "ag-grid/main";
+import {ComponentUtil, Grid} from "ag-grid/main";
 import {VueFrameworkFactory} from "./vueFrameworkFactory";
 import {VueFrameworkComponentWrapper} from "./vueFrameworkComponentWrapper";
 
 const watchedProperties = {};
-const props = ['gridOptions'];
+const props = {
+    gridOptions: {
+        default: function () {
+            return {}
+        }
+    }
+};
 ComponentUtil.ALL_PROPERTIES.forEach((propertyName) => {
-    props.push(propertyName);
+    // props.push(propertyName);
+    props[propertyName] = {};
 
     watchedProperties[propertyName] = function (val, oldVal) {
         this.processChanges(propertyName, val, oldVal);
     };
 });
 ComponentUtil.EVENTS.forEach((eventName) => {
-    props.push(eventName);
+    // props.push(eventName);
+    props[eventName] = {};
 });
 
 export default Vue.extend({
