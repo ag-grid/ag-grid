@@ -25,6 +25,7 @@ import {Events} from "../../events";
 import {ColumnHoverService} from "../../rendering/columnHoverService";
 import {Beans} from "../../rendering/beans";
 import {HoverFeature} from "../hoverFeature";
+import {TouchListener} from "../../widgets/touchListener";
 
 export class HeaderWrapperComp extends Component {
 
@@ -229,6 +230,11 @@ export class HeaderWrapperComp extends Component {
             this.addDestroyableEventListener(this.eResize, 'dblclick', () => {
                 this.columnController.autoSizeColumn(this.column, "uiColumnResized");
             });
+            let touchListener: TouchListener = new TouchListener(this.eResize);
+            this.addDestroyableEventListener(touchListener, TouchListener.EVENT_DOUBLE_TAP, ()=> {
+                this.columnController.autoSizeColumn(this.column, "uiColumnResized");
+            });
+            this.addDestroyFunc(touchListener.destroy.bind(touchListener));
         }
     }
 
