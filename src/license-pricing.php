@@ -127,8 +127,8 @@ We offer three flavors &ndash; <strong>Single Application Developer</strong>, <s
                         <h4>&pound;495
                             <span>per Developer</span>
                         </h4>
-
                         <p>Usage of ag-Grid Enterprise in a <br><strong>single application</strong></p>
+                        <p><a href="start-trial.php">Sign up for a free trial</a></p>
                     </div>
 
                     <div class="card-footer">
@@ -150,9 +150,8 @@ We offer three flavors &ndash; <strong>Single Application Developer</strong>, <s
                         <h4>&pound;795
                             <span>per Developer</span>
                         </h4>
-
-
                         <p>Usage of ag-Grid Enterprise in <br><strong>multiple applications</strong></p>
+                        <p><a href="start-trial.php">Sign up for a free trial</a></p>
                     </div>
 
                     <div class="card-footer">
@@ -169,9 +168,8 @@ We offer three flavors &ndash; <strong>Single Application Developer</strong>, <s
                         <h4>POA
                             <span>price on asking</span>
                         </h4>
-
-
                         <p>Usage of ag-Grid Enterprise in <br><strong>SaaS/OEM Applications</strong></p>
+                        <p><a href="start-trial.php">Sign up for a free trial</a></p>
                     </div>
 
                     <div class="card-footer">
@@ -182,8 +180,6 @@ We offer three flavors &ndash; <strong>Single Application Developer</strong>, <s
                 </div>
                 </div>
                 </div>
-
-                <p>If you need some time to test ag-Grid Enterprise before making a purchase, <a href="#">Sign up for a 2 month free trial</a>.</p>
 
                 <h2 class="small-block">Which License Should You Choose? </h2>
 
