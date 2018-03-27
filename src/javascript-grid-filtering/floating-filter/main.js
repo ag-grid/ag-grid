@@ -168,8 +168,8 @@ function setCountryModel() {
 function printCountryModel() {
     var countryFilterComponent = gridOptions.api.getFilterInstance('country');
     var model = countryFilterComponent.getModel();
-    if (model) {
-        console.log('Country model is: [' + model.join(',') + ']');
+    if (model && model.values) {
+        console.log('Country model is: [' + model.values.join(',') + ']');
     } else {
         console.log('Country model filter is not active');
     }
