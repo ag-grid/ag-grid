@@ -1055,9 +1055,12 @@ CountryFloatingFilterComponent.prototype.getGui = function () {
     return this.eGui;
 };
 
-CountryFloatingFilterComponent.prototype.onParentModelChanged = function (model) {
+CountryFloatingFilterComponent.prototype.onParentModelChanged = function (dataModel) {
     // add in child, one for each flat
-    if (model) {
+    if (dataModel) {
+
+        let model = dataModel.values;
+
         var flagsHtml = [];
         var printDotDotDot = false;
         if (model.length > 4) {
