@@ -329,6 +329,12 @@
         }
     }
 
+    .ag-header-group-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
     .ag-header-cell,
     .ag-header-group-cell {
         @include grid-cell($header-height, $cell-horizontal-padding);
