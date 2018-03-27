@@ -11,7 +11,7 @@ import {Component} from "../widgets/component";
 import {Constants} from "../constants";
 import {Column} from "../entities/column";
 import {GridApi} from "../gridApi";
-import {SerializedSetFilter} from "../../../../ag-grid-enterprise/src/setFilter/setFilter";
+import {SerializedSetFilter} from "../interfaces/iSerializedSetFilter";
 
 export interface FloatingFilterChange {
 }
@@ -76,7 +76,6 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
             return;
         }
         this.lastKnownModel = parentModel;
-        // let values = parentModel ? parentModel.values : [];
         let incomingTextValue = this.asFloatingFilterText(parentModel);
         if (incomingTextValue === this.eColumnFloatingFilter.value) { return; }
 
@@ -281,18 +280,27 @@ export class SetFloatingFilterComp extends InputTextFloatingFilterComp<Serialize
     asFloatingFilterText(parentModel: SerializedSetFilter): string {
         if (!parentModel || parentModel.values.length === 0) { return ''; }
 
-        let arrayToDisplay = parentModel.values.length > 10 ? parentModel.values.slice(0, 10).concat(['...']) : parentModel.values;
-        return `(${parentModel.values.length}) ${arrayToDisplay.join(",")}`;
+        let values = parentModel.values;
+
+        let arrayToDisplay = values.length > 10 ? values.slice(0, 10).concat('...') : values;
+        return `(${values.length}) ${arrayToDisplay.join(",")}`;
     }
 
     asParentModel(): SerializedSetFilter {
         if (this.eColumnFloatingFilter.value == null || this.eColumnFloatingFilter.value === '') {
-            return {values: [], filterType: 'set'};
+            return {
+                values: [],
+                filterType: 'set'
+            };
         }
         return {
             values: this.eColumnFloatingFilter.value.split(","),
             filterType: 'set'
         }
+    }
+
+    equalModels(left: SerializedSetFilter, right: SerializedSetFilter): boolean {
+        return false;
     }
 }
 
