@@ -189,43 +189,18 @@ $(() => {
     Prism.highlightAll(false);
 });
 
-$(() => {
-    var agGridScriptIsLoaded = false;
-
-    function loadAgGridScript(): Promise<boolean> {
-        if (agGridScriptIsLoaded) {
-            return Promise.resolve(true);
-        } else {
-            return new Promise((resolve, reject) => {
-                $.getScript($("#ag-grid-script").data("src"), (data, status, xhr) => {
-                    agGridScriptIsLoaded = true;
-                    resolve(true);
-                });
-            });
-        }
-    }
-    var observer = new IntersectionObserver(
-        targets => {
-            // console.log(targets);
-            for (const { target, isIntersecting } of targets) {
-                if (isIntersecting) {
-                    observer.unobserve(target);
-                    loadAgGridScript().then(() => {
-                        $(target)
-                            .find(".loading")
-                            .load($(target).data("load"))
-                            .removeClass("loading");
-                    });
-                }
-            }
-        },
-        {
-            root: null,
-            rootMargin: "0px",
-            threshold: 0
-        }
-    );
+function loadDemos() {
     $(".demo").each(function() {
-        observer.observe(this);
+        $(this)
+            .find(".loading")
+            .load($(this).data("load"))
+            .removeClass("loading");
     });
+}
+$(() => {
+    if (window["agGrid"]) {
+        loadDemos();
+    } else {
+        $("#ag-grid-script").on("load", loadDemos);
+    }
 });
