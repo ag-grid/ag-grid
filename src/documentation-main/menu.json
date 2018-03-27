@@ -79,6 +79,16 @@
                 "title": "Vue.js",
                 "gtm": { "tech": "vue" },
                 "url": "best-vuejs-data-grid/"
+            },
+            {
+                "title": "Server-side Operations",
+                "gtm": { "tech": "enterprise-row-model" },
+                "items": [
+                    {
+                        "title": "Integrate with Oracle",
+                        "url": "enterprise-oracle-guide/"
+                    }
+                ]
             }
         ]
     },
