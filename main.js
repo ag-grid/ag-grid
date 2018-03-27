@@ -1,4 +1,4 @@
-// ag-grid-enterprise v16.0.1
+// ag-grid-enterprise v17.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var columnSelectComp_1 = require("./dist/lib/toolPanel/columnsSelect/columnSelectComp");
@@ -75,3 +75,41 @@ var excelCreator_1 = require("./dist/lib/excelCreator");
 exports.ExcelCreator = excelCreator_1.ExcelCreator;
 var excelXmlFactory_1 = require("./dist/lib/excelXmlFactory");
 exports.ExcelXmlFactory = excelXmlFactory_1.ExcelXmlFactory;
+// bootstrap the enterprise side of things - this ensures the enterprise code
+// is loaded up and ready to go
+var main_1 = require("ag-grid/main");
+var enterpriseMenu_2 = require("./dist/lib/menu/enterpriseMenu");
+var rangeController_2 = require("./dist/lib/rangeController");
+var clipboardService_2 = require("./dist/lib/clipboardService");
+var groupStage_2 = require("./dist/lib/rowStages/groupStage");
+var aggregationStage_2 = require("./dist/lib/rowStages/aggregationStage");
+var enterpriseBoot_2 = require("./dist/lib/enterpriseBoot");
+var statusBar_2 = require("./dist/lib/statusBar/statusBar");
+var contextMenu_2 = require("./dist/lib/menu/contextMenu");
+var viewportRowModel_2 = require("./dist/lib/rowModels/viewport/viewportRowModel");
+var pivotColumnsPanel_2 = require("./dist/lib/toolPanel/columnDrop/pivotColumnsPanel");
+var toolPanelComp_2 = require("./dist/lib/toolPanel/toolPanelComp");
+var rowGroupCompFactory_2 = require("./dist/lib/rowGroupCompFactory");
+var licenseManager_2 = require("./dist/lib/licenseManager");
+var md5_2 = require("./dist/lib/license/md5");
+var pivotStage_2 = require("./dist/lib/rowStages/pivotStage");
+var pivotColDefService_2 = require("./dist/lib/rowStages/pivotColDefService");
+var aggFuncService_2 = require("./dist/lib/aggregation/aggFuncService");
+var pivotCompFactory_2 = require("./dist/lib/pivotCompFactory");
+var menuItemMapper_1 = require("./dist/lib/menu/menuItemMapper");
+var excelCreator_2 = require("./dist/lib/excelCreator");
+var excelXmlFactory_2 = require("./dist/lib/excelXmlFactory");
+var enterpriseRowModel_1 = require("./dist/lib/rowModels/enterprise/enterpriseRowModel");
+var columnSelectHeaderComp_1 = require("./dist/lib/toolPanel/columnsSelect/columnSelectHeaderComp");
+var columnContainerComp_1 = require("./dist/lib/toolPanel/columnsSelect/columnContainerComp");
+var horizontalResizeComp_1 = require("./dist/lib/toolPanel/columnsSelect/horizontalResizeComp");
+var rowModelTypes = { viewport: viewportRowModel_2.ViewportRowModel, enterprise: enterpriseRowModel_1.EnterpriseRowModel };
+main_1.Grid.setEnterpriseBeans([toolPanelComp_2.ToolPanelComp, enterpriseMenu_2.EnterpriseMenuFactory, excelCreator_2.ExcelCreator, excelXmlFactory_2.ExcelXmlFactory, rowGroupCompFactory_2.RowGroupCompFactory, pivotCompFactory_2.PivotCompFactory,
+    pivotColumnsPanel_2.PivotColumnsPanel, rangeController_2.RangeController, clipboardService_2.ClipboardService, pivotStage_2.PivotStage, pivotColDefService_2.PivotColDefService,
+    contextMenu_2.ContextMenuFactory, groupStage_2.GroupStage, aggregationStage_2.AggregationStage, enterpriseBoot_2.EnterpriseBoot, aggFuncService_2.AggFuncService,
+    statusBar_2.StatusBar, licenseManager_2.LicenseManager, md5_2.MD5, menuItemMapper_1.MenuItemMapper], rowModelTypes);
+main_1.Grid.setEnterpriseComponents([
+    { componentName: 'AgColumnSelectHeader', theClass: columnSelectHeaderComp_1.ColumnSelectHeaderComp },
+    { componentName: 'AgColumnContainer', theClass: columnContainerComp_1.ColumnContainerComp },
+    { componentName: 'AgHorizontalResize', theClass: horizontalResizeComp_1.HorizontalResizeComp }
+]);

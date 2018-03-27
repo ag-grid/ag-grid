@@ -4,7 +4,7 @@ import {
     Component,
     IDoesFilterPassParams,
     ISetFilterParams,
-    SerializedFilter,
+    SerializedSetFilter,
     QuerySelector,
     Utils,
     RefSelector
@@ -14,10 +14,6 @@ import {SetFilterListItem} from "./setFilterListItem";
 import {VirtualList, VirtualListModel} from "../rendering/virtualList";
 
 enum CheckboxState {CHECKED, UNCHECKED, INTERMEDIATE}
-
-export interface SerializedSetFilter extends SerializedFilter {
-    values: string[]
-}
 
 export class SetFilter extends BaseFilter <string, ISetFilterParams, SerializedSetFilter> {
 
