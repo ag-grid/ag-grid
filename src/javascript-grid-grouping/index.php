@@ -114,35 +114,43 @@ gridOptions.columnDefs = [
 
     <?= example('Configuring the Auto Group Column', 'configuring-auto-group-column', 'generated', array("enterprise" => 1)) ?>
 
+    <h2>Filtering on Group Columns</h2>
+
+    <p>
+        Filter on group columns is more complex than filtering on normal columns as the data inside the column
+        can be a mix of data from different columns. For example if grouping by Country and Year, should the filter
+        be for Year or for Country?
+    </p>
+
+    <p>
+        For auto generated group columns, the filter will work if you specify one of
+        <code>field</code>, <code>valueGetter</code> or <code>filterValueGetter</code>.
+    </p>
+
     <h2>Adding Values To Leaf Nodes</h2>
 
     <p>
         You may have noticed in the examples so far that the group columns don't produce values on the leaf nodes, the cells
         are empty. If you want to add values you can add a <a href="../javascript-grid-value-getters">valueGetter</a>
-        or a field to the colDef and it will be used to render the leaf node.
+        or <code>field</code> to the colDef and it will be used to render the leaf node.
     </p>
 
     <p>
-        A good side effect of this is that then you can turn on filtering on the group column which has values for the leaf
-        node and then the filtering will be available based on these values.
+        A side effect of this is that filtering will now work for the columns using the field values.
     </p>
 
     <p>
-        The following example shows the easiest way to implement this with a single auto group column and a value getter
-        in the <code>autoGroupColumnDef</code> that is returning the athlete column
-
-        Note that:
+        This example shows specifying <code>field</code> in the auto group column. Note the following:
     </p>
 
 
     <ul class="content">
-        <li>To see the leaf node values, open any country and any year int the group column. Note how their leaf nodes are showing
-            the value for the athlete column, this is achieved with a valueGetter:
-<snippet>
-valueGetter: function (params){
-    return params.data ? params.data.athlete : ''
-}</snippet></li>
-        <li>Filtering is switched on so you can see how now you can filter the group column by athlete.</li>
+        <li>
+            The group column shows both groups (Country and Year) as well as Athlete at the leaf level.
+        </li>
+        <li>
+            The field (Athlete) is used for filtering.
+        </li>
     </ul>
 
     <?= example('Adding Values To Leaf Nodes', 'adding-values-to-leaf-nodes', 'generated', array("enterprise" => 1)) ?>
@@ -153,19 +161,18 @@ valueGetter: function (params){
     </p>
 
     <ul class="content">
-        <li>To see the leaf node values, open any country and any year group column. Note how their leaf nodes have
-        values for the columns 'Country' and 'Year - Group', the default is not to have values for this cells.</li>
-        <li>Filtering is switched on so you can see how now you can filter the group column 'Country' and 'Year - Group'
-            based on their leaf node values.</li>
-        <li>Country is providing the value to the leaf nodes via specifying the field property, it is also reusing
-            the same column that is grouping by as the column to display that group</code>
+        <li>
+            The first column shows the Country group only. The <colde>filterValueGetter</colde> is configured to
+            return the country so that country is used for filtering.
         </li>
-        <li>Year is providing the value to the leaf nodes via a value getter, this way we get to show the value from a
-            different column, the athlete column. In this case we are using two different columns 'Year - Group'
-            shows the year group and 'year' which is hidden <code>hide:true</code> specifies that we want to group
-            by this column.</li>
-        <li>This is an example of a case where not using auto group columns lets us add custom behaviour to our
-        grouping.</li>
+        <li>
+            The second columns shows Year (for group levels) and Athlete (for leaf levels). Because the field is
+            set, the filter will use the field value for filtering.
+        </li>
+        <li>
+            This is an example of a case where not using auto group columns lets us add custom different behaviour to
+            each of the grouping columns.
+        </li>
     </ul>
 
     <?= example('Adding Values To Leaf Nodes for Groups', 'adding-values-to-leaf-nodes-for-groups', 'generated', array("enterprise" => 1)) ?>
@@ -257,6 +264,12 @@ columnDefs = [
         for the different group levels, so when you open a group, you can see the background
         change indicating that the group row is no longer display, instead the children
         are in it's place.
+    </p>
+
+    <p>
+        Filter is achieved for each column by providing a <code>filterValueGetter</code>
+        for the <code>autoGroupColumnDef</code>. The filterValueGetter returns the value of
+        the grouped column - eg for Country, it will filter on Country.
     </p>
 
     <?= example('Hide Open Parents', 'hide-open-parents', 'generated', array("enterprise" => 1)) ?>

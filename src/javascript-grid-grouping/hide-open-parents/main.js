@@ -14,6 +14,7 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    enableFilter: true,
     enableRangeSelection: true,
     columnDefs: columnDefs,
     rowData: null,
@@ -21,8 +22,12 @@ var gridOptions = {
     animateRows: true,
     enableColResize: true,
     enableSorting: true,
-    onGridReady: function(params) {
-        // params.api.sizeColumnsToFit();
+    autoGroupColumnDef: {
+        filterValueGetter: function(params) {
+            var colGettingGrouped = params.colDef.showRowGroup;
+            var valueForOtherCol = params.api.getValue(colGettingGrouped, params.node);
+            return valueForOtherCol;
+        }
     }
 };
 
