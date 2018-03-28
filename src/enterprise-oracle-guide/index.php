@@ -10,7 +10,7 @@ include '../documentation-main/documentation_header.php';
     </h1>
 
     <p class="lead">
-        Learn how to perform server-side operations using the Oracle Database.
+        Learn how to perform server-side operations using the Oracle Database with a complete reference implementation.
     </p>
 
     <p>
@@ -25,10 +25,71 @@ include '../documentation-main/documentation_header.php';
 
     <img src="oracle-enterprise.png" width="100%" style="border: 1px solid grey"/>
 
-    <note>This example is provided for illustrative purposes and as such is not intended for production use.</note>
+    <note>The reference implementation covered in this guide is for instructive purposes only and as such is not
+          intended for production use.</note>
 
     <p>
         The source code can be found here: <a href="https://github.com/ag-grid/ag-grid-server-side-oracle-example">https://github.com/ag-grid/ag-grid-server-side-oracle-example</a>
+    </p>
+
+    <h2>Overview</h2>
+
+    <p>
+        When designing a grid based application, one of the key considerations is how much data needs to be sent from
+        the server to the client? As a developer using ag-Grid you won't need to switch between grids based on the
+        answer to this question, instead just select the appropriate Row Model used by the grid.
+    </p>
+
+    <h4>In-Memory Row Model</h4>
+
+    <p>
+        The simplest approach is to send all row data to the browser in response to a single request at initialisation.
+        For this use case the <a href="/javascript-grid-in-memory/">In-Memory Row Model</a> has been designed.
+
+     <p>
+        This scenario is illustrated below where 10,000 records are loaded directly into the browser:
+    </p>
+
+    <p><img src="in-memory-row-model.png" width="90%" style="border: 1px solid grey"/></p>
+
+    <p>
+        The In-Memory Row Model only renders the rows currently visible, so the upper limit of rows is governed by the
+        browsers memory footprint and data transfer time, rather than any restrictions inside the grid.
+    </p>
+
+    <h4>Enterprise Row Model</h4>
+
+    <p>
+        However many real world applications contain much larger data sets, often involving millions of records. In this
+        case it simply isn't feasible to load all the data into the browser in one go. Instead data will somehow need
+        to be lazy-loaded as required and then purged to limit the memory footprint in the browser?
+    </p>
+
+    <p>
+        This is precisely the problem the <a href="/javascript-grid-enterprise-model/">Enterprise Row Model</a> addresses,
+        along with delegating server-side operations such as filtering, sorting, grouping and pivoting.
+    </p>
+
+    <p>
+        The following diagram shows the approach used by the Enterprise Row Model. Here there are 10 million records,
+        however the number of records is only constrained by the limits of the server-side:
+    </p>
+
+    <p><img src="enterprise-row-model.png" width="90%" style="border: 1px solid grey"/></p>
+
+    <p>
+        As the user performs operations such as sorting and grouping, the grid issues requests to the server that contains
+        all the necessary metadata required, including which portion of data should be returned based on the users position in
+        the data set.
+    </p>
+
+    <p>
+        The browser will never run out of heap space as the grid will automatically purge out-of-range records.
+    </p>
+
+    <p>
+        Throughout the rest of this guide we will demonstrate the power of the Enterprise Row Model with the aid a Java
+        service connected to an oracle database.
     </p>
 
     <h2 id="prerequisites">Prerequisites</h2>
@@ -522,8 +583,23 @@ private String limitSql() {
 
     <h2 id="conclusion">Conclusion</h2>
 
-<p>
-    TODO: In this guide we demonstrated how awesome ag-Grid is ;-)
-</p>
+    <p>
+        In this guide we presented a reference implementation for integrating the Enterprise Row Model with a Java
+        service connected to an Oracle database. This included all necessary configuration and install instructions.
+    </p>
+
+    <p>
+        A high level overview was given to illustrate the problem this approach solves before providing details of how
+        to achieve the following server-side operations:
+
+        <ul>
+            <li>Filtering</li>
+            <li>Sorting</li>
+            <li>Grouping</li>
+            <li>Pivoting</li>
+            <li>Infinite Scrolling</li>
+        </ul>
+
+    </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
