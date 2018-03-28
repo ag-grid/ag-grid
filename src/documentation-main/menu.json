@@ -82,11 +82,11 @@
             },
             {
                 "title": "Server-side Operations",
-                "gtm": { "tech": "enterprise-row-model" },
+                "gtm": { "tech": "server-side-operations" },
                 "items": [
                     {
                         "title": "Integrate with Oracle",
-                        "url": "enterprise-oracle-guide/"
+                        "url": "oracle-server-side-operations/"
                     }
                 ]
             }
