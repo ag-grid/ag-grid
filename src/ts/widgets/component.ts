@@ -54,9 +54,12 @@ export class Component extends BeanStub implements IComponent<any> {
     }
 
     private instantiateRecurse(parentNode: Element, context: Context): void {
-        let childCount = parentNode.childNodes ? parentNode.childNodes.length : 0;
-        for (let i = 0; i < childCount; i++) {
-            let childNode = parentNode.childNodes[i];
+
+        // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
+        // which messes up the traversal order of the children.
+        let childNodeList: Node[] = _.copyNodeList(parentNode.childNodes);
+
+        childNodeList.forEach(childNode => {
             let childComp = context.createComponent(<Element>childNode, (childComp)=> {
                 let attrList = this.getAttrLists(<Element>childNode);
                 this.copyAttributesFromNode(attrList, childComp.getGui());
@@ -65,8 +68,6 @@ export class Component extends BeanStub implements IComponent<any> {
             });
             if (childComp) {
                 this.swapComponentForNode(childComp, parentNode, childNode);
-                // should remove this, get agCheckbox to use this.attributes
-                // childComp.instantiate(context);
             } else {
                 if (childNode.childNodes) {
                     this.instantiateRecurse(<Element>childNode, context);
@@ -76,7 +77,7 @@ export class Component extends BeanStub implements IComponent<any> {
                     this.addEventListenersToElement(attrList, <HTMLElement>childNode);
                 }
             }
-        }
+        });
     }
 
     private getAttrLists(child: Element): AttrLists {

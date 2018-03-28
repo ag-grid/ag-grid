@@ -406,6 +406,16 @@ export class Utils {
         return this.isNode(o) || this.isElement(o);
     }
 
+    // makes a copy of a node list into a list
+    static copyNodeList(nodeList: NodeList) {
+        let childCount = nodeList ? nodeList.length : 0;
+        let res: Node[] = [];
+        for (let i = 0; i < childCount; i++) {
+            res.push(nodeList[i]);
+        }
+        return res;
+    }
+
     static isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
         let pressedChar = String.fromCharCode(event.charCode);
 
