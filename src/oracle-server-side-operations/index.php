@@ -6,7 +6,7 @@ $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
     <h1 id="oracle-enterprise">
-        Server-side operations with Oracle
+        Server-side operations with Java & Oracle
     </h1>
 
     <p class="lead">
@@ -25,8 +25,10 @@ include '../documentation-main/documentation_header.php';
 
     <img src="oracle-enterprise.png" width="100%" style="border: 1px solid grey"/>
 
-    <note>The reference implementation covered in this guide is for instructive purposes only and as such is not
-          intended for production use.</note>
+    <note>
+        The reference implementation covered in this guide is for demonstration purposes only. If you use
+        this in production it comes with no warranty or support.
+    </note>
 
     <p>
         The source code can be found here: <a href="https://github.com/ag-grid/ag-grid-server-side-oracle-example">https://github.com/ag-grid/ag-grid-server-side-oracle-example</a>
