@@ -307,7 +307,7 @@ export class FilterManager {
     }
 
     private getQuickFilterTextForColumn(column: Column, rowNode: RowNode): string {
-        let value = this.valueService.getValue(column, rowNode);
+        let value = this.valueService.getValue(column, rowNode, true);
 
         let valueAfterCallback: any;
         let colDef = column.getColDef();
@@ -356,9 +356,8 @@ export class FilterManager {
     }
 
     private createValueGetter(column: Column) {
-        let that = this;
-        return function valueGetter(node: RowNode) {
-            return that.valueService.getValue(column, node);
+        return (node: RowNode) => {
+            return this.valueService.getValue(column, node, true);
         };
     }
 
