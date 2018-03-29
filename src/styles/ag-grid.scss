@@ -352,10 +352,13 @@ ag-grid-aurelia {
 
 .ag-column-panel {
     display: flex;
+    overflow-y: auto;
 }
 
 .ag-column-panel-center {
     display: flex;
+    max-height: 100vh;
+    min-height: 500px;
     flex-direction: column;
     flex-grow: 1;
     overflow-x: hidden;
@@ -1106,6 +1109,7 @@ $row-group-indent-size: 10px !default;
     display: flex;
     flex-direction: row-reverse;
     height: 100%;
+    box-sizing: border-box;
 
     .ag-side-buttons {
         width: 20px;
