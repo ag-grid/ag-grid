@@ -350,6 +350,17 @@ ag-grid-aurelia {
     height: 100%;
 }
 
+.ag-column-panel {
+    display: flex;
+}
+
+.ag-column-panel-center {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow-x: hidden;
+}
+
 .ag-bl-normal-center {
     height: 100%;
 }
