@@ -2,11 +2,6 @@ html, body {
     height: 100%;
 }
 
-button {
-    margin-left: 4px;
-    margin-right: 4px;
-}
-
 .customHeaderMenuButton {
     margin-left: 4px;
     float: left;
