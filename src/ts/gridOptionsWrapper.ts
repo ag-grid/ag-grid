@@ -728,7 +728,7 @@ export class GridOptionsWrapper {
             return this.gridOptions.localeTextFunc;
         }
         let that = this;
-        return function (key: any, defaultValue: any) {
+        return function(key: any, defaultValue: any) {
             let localeText = that.gridOptions.localeText;
             if (localeText && localeText[key]) {
                 return localeText[key];
@@ -740,9 +740,6 @@ export class GridOptionsWrapper {
 
     // responsible for calling the onXXX functions on gridOptions
     public globalEventHandler(eventName: string, event?: any): void {
-        if (eventName==='columnVisible') {
-            console.log('columnVisible');
-        }
         let callbackMethodName = ComponentUtil.getCallbackForEvent(eventName);
         if (typeof (<any>this.gridOptions)[callbackMethodName] === 'function') {
             (<any>this.gridOptions)[callbackMethodName](event);
