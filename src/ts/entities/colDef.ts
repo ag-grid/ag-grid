@@ -99,6 +99,9 @@ export interface ColDef extends AbstractColDef {
     /** Expression or function to get the cells value. */
     valueGetter?: ((params: ValueGetterParams) => any) | string;
 
+    /** Expression or function to get the cells value for filtering. */
+    filterValueGetter?: ((params: ValueGetterParams) => any) | string;
+
     /** If not using a field, then this puts the value into the cell */
     valueSetter?: ((params: ValueSetterParams) => boolean) | string;
 

@@ -807,6 +807,10 @@
                 padding-left: $grid-size * 4;
                 padding-right: $grid-size;
             }
+
+            &:last-child {
+                border-bottom: 0;
+            }
         }
     }
 

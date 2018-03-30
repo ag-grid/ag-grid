@@ -834,7 +834,7 @@ export class CellComp extends Component {
         if (isOpenGroup && this.beans.gridOptionsWrapper.isGroupIncludeFooter()) {
             // if doing grouping and footers, we don't want to include the agg value
             // in the header when the group is open
-            return this.beans.valueService.getValue(this.column, this.rowNode, true);
+            return this.beans.valueService.getValue(this.column, this.rowNode, false, true);
         } else {
             return this.beans.valueService.getValue(this.column, this.rowNode);
         }

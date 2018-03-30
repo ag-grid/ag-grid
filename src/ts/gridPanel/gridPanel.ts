@@ -299,8 +299,8 @@ export class GridPanel extends BeanStub {
 
         this.layout = new BorderLayout({
             center: this.eRoot,
-            dontFill: this.forPrint,
-            fillHorizontalOnly: this.autoHeight,
+            forPrint: this.forPrint,
+            autoHeight: this.autoHeight,
             name: 'eGridPanel',
             componentRecipes: this.componentRecipes
         });

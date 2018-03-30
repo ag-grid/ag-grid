@@ -29,7 +29,10 @@ export class ValueService {
         this.initialised = true;
     }
 
-    public getValue(column: Column, rowNode: RowNode, ignoreAggData = false): any {
+    public getValue(column: Column,
+                    rowNode: RowNode,
+                    forFilter = false,
+                    ignoreAggData = false): any {
 
         // console.log(`turnActive = ${this.turnActive}`);
 
@@ -48,7 +51,9 @@ export class ValueService {
         // if there is a value getter, this gets precedence over a field
         let groupDataExists = rowNode.groupData && rowNode.groupData[colId] !== undefined;
         let aggDataExists = !ignoreAggData && rowNode.aggData && rowNode.aggData[colId] !== undefined;
-        if (groupDataExists) {
+        if (forFilter && colDef.filterValueGetter) {
+            result = this.executeValueGetter(colDef.filterValueGetter, data, column, rowNode);
+        } else if (groupDataExists) {
             result = rowNode.groupData[colId];
         } else if (aggDataExists) {
             result = rowNode.aggData[colId];
@@ -180,7 +185,7 @@ export class ValueService {
         return !valuesAreSame;
     }
 
-    private executeValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: RowNode): any {
+    private executeValueGetter(filterValueGetter: string | Function, data: any, column: Column, rowNode: RowNode): any {
 
         let colId = column.getId();
 
@@ -202,7 +207,7 @@ export class ValueService {
             getValue: this.getValueCallback.bind(this, rowNode)
         };
 
-        let result = this.expressionService.evaluate(valueGetter, params);
+        let result = this.expressionService.evaluate(filterValueGetter, params);
 
         // if a turn is active, store the value in case the grid asks for it again
         this.valueCache.setValue(rowNode, colId, result);

@@ -11,6 +11,7 @@ import {Component} from "../widgets/component";
 import {Constants} from "../constants";
 import {Column} from "../entities/column";
 import {GridApi} from "../gridApi";
+import {SerializedSetFilter} from "../interfaces/iSerializedSetFilter";
 
 export interface FloatingFilterChange {
 }
@@ -270,22 +271,36 @@ export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<Serial
     }
 }
 
-export class SetFloatingFilterComp extends InputTextFloatingFilterComp<string[], IFloatingFilterParams<string[], BaseFloatingFilterChange<string[]>>> {
-    init(params: IFloatingFilterParams<string[], BaseFloatingFilterChange<string[]>>): void {
+export class SetFloatingFilterComp extends InputTextFloatingFilterComp<SerializedSetFilter, IFloatingFilterParams<SerializedSetFilter, BaseFloatingFilterChange<SerializedSetFilter>>> {
+    init(params: IFloatingFilterParams<SerializedSetFilter, BaseFloatingFilterChange<SerializedSetFilter>>): void {
         super.init(params);
         this.eColumnFloatingFilter.readOnly = true;
     }
 
-    asFloatingFilterText(parentModel: string[]): string {
-        if (!parentModel || parentModel.length === 0) { return ''; }
+    asFloatingFilterText(parentModel: SerializedSetFilter): string {
+        if (!parentModel || parentModel.values.length === 0) { return ''; }
 
-        let arrayToDisplay = parentModel.length > 10 ? parentModel.slice(0, 10).concat(['...']) : parentModel;
-        return `(${parentModel.length}) ${arrayToDisplay.join(",")}`;
+        let values = parentModel.values;
+
+        let arrayToDisplay = values.length > 10 ? values.slice(0, 10).concat('...') : values;
+        return `(${values.length}) ${arrayToDisplay.join(",")}`;
     }
 
-    asParentModel(): string[] {
-        if (this.eColumnFloatingFilter.value == null || this.eColumnFloatingFilter.value === '') { return null; }
-        return this.eColumnFloatingFilter.value.split(",");
+    asParentModel(): SerializedSetFilter {
+        if (this.eColumnFloatingFilter.value == null || this.eColumnFloatingFilter.value === '') {
+            return {
+                values: [],
+                filterType: 'set'
+            };
+        }
+        return {
+            values: this.eColumnFloatingFilter.value.split(","),
+            filterType: 'set'
+        }
+    }
+
+    equalModels(left: SerializedSetFilter, right: SerializedSetFilter): boolean {
+        return false;
     }
 }
 
