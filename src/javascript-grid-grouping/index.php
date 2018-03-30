@@ -549,7 +549,7 @@ colDef = {
 
     <p>
         If you want to include a footer with each group, set the property <code>groupIncludeFooter</code> to true.
-        The footer is displayed as the last line of the group when then group is expanded - it is not displayed
+        The footer is displayed as the last line of the group when the group is expanded - it is not displayed
         when the group is collapsed.
     </p>
     <p>
@@ -583,7 +583,16 @@ cellRendererParams: {
 
     <?= example('Group Footers', 'grouping-footers', 'generated', array("enterprise" => 1)) ?>
 
-    </p>
+    <note>
+        Group footers are a UI concept only in the grid. It is the grids way of showing aggregated data (which belongs
+        to the group) appearing after the group's children. Because the footer is a UI concept only, the following
+        should be noted:
+        <ul>
+            <li>It is not possible to select footer nodes. Footer rows appear selected when the group is selected.</li>
+            <li>Footer rows are not parted of the iterated set when the api method <code>api.forEachNode()</code> is called.</li>
+            <li>Footer nodes are not exported to CSV or Excel.</li>
+        </ul>
+    </note>
 
     <h2 id="keeping-group-state">Keeping Group State</h2>
 
