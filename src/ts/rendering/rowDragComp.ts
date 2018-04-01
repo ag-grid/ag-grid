@@ -15,11 +15,11 @@ import {Column} from "../entities/column";
 
 export class RowDragComp extends Component {
 
-    private beans: Beans;
+    private readonly beans: Beans;
 
-    private rowNode: RowNode;
-    private column: Column;
-    private cellValue: string;
+    private readonly rowNode: RowNode;
+    private readonly column: Column;
+    private readonly cellValue: string;
 
     constructor(rowNode: RowNode, column: Column, cellValue: string, beans: Beans) {
         super(`<span class="ag-row-drag"></span>`);
@@ -78,10 +78,10 @@ export class RowDragComp extends Component {
 // when non managed, the visibility depends on suppressRowDrag property only
 class NonManagedVisibilityStrategy extends BeanStub {
 
-    private parent: RowDragComp;
-    private beans: Beans;
-    private column: Column;
-    private rowNode: RowNode;
+    private readonly parent: RowDragComp;
+    private readonly beans: Beans;
+    private readonly column: Column;
+    private readonly rowNode: RowNode;
 
     constructor(parent: RowDragComp, beans: Beans, rowNode: RowNode, column: Column) {
         super();
@@ -118,10 +118,10 @@ class NonManagedVisibilityStrategy extends BeanStub {
 // when managed, the visibility depends on sort, filter and row group, as well as suppressRowDrag property
 class ManagedVisibilityStrategy extends BeanStub {
 
-    private parent: RowDragComp;
-    private column: Column;
-    private rowNode: RowNode;
-    private beans: Beans;
+    private readonly parent: RowDragComp;
+    private readonly column: Column;
+    private readonly rowNode: RowNode;
+    private readonly beans: Beans;
 
     private sortActive: boolean;
     private filterActive: boolean;
