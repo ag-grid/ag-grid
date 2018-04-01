@@ -156,7 +156,7 @@ var gridOptions = {
     suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
     // suppressTouch: true,
     // suppressDragLeaveHidesColumns: true,
-    suppressMakeColumnVisibleAfterUnGroup: true,
+    // suppressMakeColumnVisibleAfterUnGroup: true,
     //unSortIcon: true,
     //     enableRtl: true,
     multiSortKey: 'ctrl',
