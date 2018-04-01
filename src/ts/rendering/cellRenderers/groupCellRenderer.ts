@@ -285,7 +285,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     }
 
     private addCheckboxIfNeeded(): void {
-        let rowNode = this.params.node;
+        let rowNode = this.displayedGroup;
         let checkboxNeeded = this.isUserWantsSelected()
                 // footers cannot be selected
                 && !rowNode.footer
