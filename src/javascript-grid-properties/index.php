@@ -305,6 +305,16 @@ include '../documentation-main/documentation_header.php';
                 See example <a href="../javascript-grid-aggregation/#custom-aggregation-functions">Custom Aggregation Functions</a>.
             </td>
         </tr>
+        <tr>
+            <th>suppressMakeVisibleAfterUnGroup</th>
+            <td>
+                By default when a column is un-grouped, it is made visible. Eg on main demo: 1) group by country by dragging
+                (action of moving column out of grid means column is made visible=false); then 2) un-group by clicking 'x' on
+                the country column in the column drop zone, the column is then made visible=true. This property stops the
+                column becoming visible again when un-grouping.
+            </td>
+        </tr>
+
 
         </table>
 <h2>Tool Panel</h2>

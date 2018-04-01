@@ -274,6 +274,48 @@ columnDefs = [
 
     <?= example('Hide Open Parents', 'hide-open-parents', 'generated', array("enterprise" => 1)) ?>
 
+    <h2 id="fullWidthRows">Keeping Columns Visible</h2>
+
+    <p>
+        By default dragging a column out of the grid will make it hidden and
+        un-grouping a column will make it visible again. This default behaviour
+        can be changed with the following properties:
+        <ul>
+            <li>
+                <code>suppressDragLeaveHidesColumns</code>: When dragging a column
+                out of the grid, eg when dragging a column from the grid to the group
+                drop zone, the column will remain visible.
+            </li>
+            <li>
+                <code>suppressMakeColumnVisibleAfterUnGroup</code>: When un-grouping,
+                eg when clicking the 'x' on a column in the drop zone, the column will
+                not be made visible.
+            </li>
+        </ul>
+        The default behaviour is more natural for most scenarios as it stops data
+        appearing twice. E.g. if country is displayed in group column, there is no
+        need to display country again in the country column.
+    </p>
+
+    <p>
+        The example below demonstrates these two properties. Note the following:
+        <ul>
+            <li>
+                Columns country and year can be grouped by dragging the column
+                to the group drop zone.
+            </li>
+            <li>
+                Grouped columns can be un-grouped by clicking the 'x' on the column
+                in the drop zone.
+            </li>
+            <li>
+                The column visibility is not changed while the columns are grouped
+                and un-grouped.
+            </li>
+        </ul>
+    </p>
+
+    <?= example('Keep Columns Visible', 'keep-columns-visible', 'generated', array("enterprise" => 1)) ?>
 
     <h2 id="fullWidthRows">Full Width Group Rows</h2>
 
