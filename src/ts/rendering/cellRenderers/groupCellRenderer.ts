@@ -245,7 +245,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         }
 
         // retain a reference to the created renderer - we'll use this later for cleanup (in destroy)
-        if(rendererPromise) {
+        if (rendererPromise) {
             rendererPromise.then((value:ICellRendererComp) => {
                 this.innerCellRenderer = value;
             })
