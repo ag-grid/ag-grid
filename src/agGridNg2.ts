@@ -273,6 +273,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public toolPanelSuppressColumnFilter : any = undefined;
     @Input() public toolPanelSuppressColumnSelectAll : any = undefined;
     @Input() public toolPanelSuppressColumnExpandAll : any = undefined;
+    @Input() public suppressMakeColumnVisibleAfterUnGroup : any = undefined;
     @Input() public suppressRowClickSelection : any = undefined;
     @Input() public suppressCellSelection : any = undefined;
     @Input() public suppressHorizontalScroll : any = undefined;

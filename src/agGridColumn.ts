@@ -102,6 +102,7 @@ export class AgGridColumn {
     @Input() public pivotIndex: any;
     @Input() public valueGetter: any;
     @Input() public valueSetter: any;
+    @Input() public filterValueGetter: any;
     @Input() public keyCreator: any;
     @Input() public cellRendererFramework: any;
     @Input() public pinnedRowCellRenderer: any;
