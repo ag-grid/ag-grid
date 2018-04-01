@@ -440,6 +440,7 @@ export class GridOptionsWrapper {
     public getDefaultExportParams(): BaseExportParams { return this.gridOptions.defaultExportParams; }
     public isSuppressCsvExport() { return isTrue(this.gridOptions.suppressCsvExport); }
     public isSuppressExcelExport() { return isTrue(this.gridOptions.suppressExcelExport); }
+    public isSuppressMakeColumnVisibleAfterUnGroup() { return isTrue(this.gridOptions.suppressMakeColumnVisibleAfterUnGroup); }
 
     public getNodeChildDetailsFunc(): ((dataItem: any)=> NodeChildDetails) { return this.gridOptions.getNodeChildDetails; }
     public getDataPathFunc(): ((dataItem: any) => string[]) { return this.gridOptions.getDataPath; }

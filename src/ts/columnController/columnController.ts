@@ -572,7 +572,7 @@ export class ColumnController {
     private setRowGroupActive(active: boolean, column: Column, source: ColumnEventType): void {
         if (active === column.isRowGroupActive()) {return;}
         column.setRowGroupActive(active, source);
-        if (!active) {
+        if (!active && !this.gridOptionsWrapper.isSuppressMakeColumnVisibleAfterUnGroup()) {
             column.setVisible(true, source);
         }
     }

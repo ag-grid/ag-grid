@@ -98,6 +98,7 @@ export class ColDefUtil {
     public static FUNCTION_PROPERTIES = [
         'valueGetter',
         'valueSetter',
+        'filterValueGetter',
         'keyCreator',
         'cellRenderer',
         'cellRendererFramework',
