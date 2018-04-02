@@ -90,8 +90,8 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        Throughout the rest of this guide we will demonstrate the power of the Enterprise Row Model with the aid a Java
-        service connected to an oracle database.
+        Throughout the rest of this guide we will demonstrate the power of the Enterprise Row Model with the aid of a
+        Java service connected to an oracle database.
     </p>
 
     <h2 id="prerequisites">Prerequisites</h2>
@@ -554,7 +554,7 @@ let createSecondaryColumns = function (fields, valueCols) {
 </snippet>
 
     <p>
-        In order for the grid to show these newly created columns an an explicit api call is required:
+        In order for the grid to show these newly created columns an explicit api call is required:
     </p>
 
 <snippet>
