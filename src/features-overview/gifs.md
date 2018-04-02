@@ -1,10 +1,11 @@
 # Headliners
 ## grouping / aggregation
     - Use https://www.ag-grid.com/javascript-grid-aggregation/#example-built-in-functions
-    - Modify source code to allow grouping
+    - Modify source code to allow grouping (NC and remove group footers)
     - start ungrouped
     - group by country
     - change aggregation function for gold column
+    - NC Why not use main demo?? i like visual grouping by country as the flags makes it easier to follow 
 
 ## filtering
     - Use https://www.ag-grid.com/javascript-grid-filter-set/#example-set-filter
@@ -24,7 +25,8 @@
     - Use https://www.ag-grid.com/javascript-grid-enterprise-model/#example-slice-and-dice
     - Scroll 
     - Sort
-    - TODO: it would be great if we had filter here
+    - NC - Grouping, aggregation, pivoting
+    - TODO: it would be great if we had filter here - NC you do, check age and country, for country woould need to ungroup first
 
 ## Live Data Updates
     - Use https://www.ag-grid.com/javascript-grid-data-update/#example-batch-transaction
@@ -32,6 +34,7 @@
 
 ## Tree Data
     - TODO: I don't like the demos we have. We need something with larger, more complex data, perhaps file structure - can dump something from `/usr/local`. 
+    - NC - ok - new example???
 
 ## Customizable Appearance
     - Use https://www.ag-grid.com/example.php
@@ -50,13 +53,14 @@
     - Use https://www.ag-grid.com/example.php
     - Turn on pivoting mode
     - scroll horizontally
+    - NC - why not pivot using main demo? side note - niall to teach petyo how to pivot
 
 ## Master Detail
     - Use https://www.ag-grid.com/javascript-grid-master-detail/#example-simple
     - Expand / Collapse couple of rows
 
 ## State Persistance
-    - TODO: I would love to have a demo that saves/restores everything possible in the grid.
+    - TODO: I would love to have a demo that saves/restores everything possible in the grid. NC - Agreed, that would be cool.
     - Use https://www.ag-grid.com/javascript-grid-filtering/#example-filter-model
     - Filter by "Michael"
     - Click save
@@ -77,6 +81,7 @@
 
 ## Wide Audience Support
     - Use https://www.ag-grid.com/javascript-grid-rtl/#example-rtl-complex
+    - NC - or you can set RTL on the main demo
     - Scroll around, open context menu
     - Edit a column
 
@@ -84,6 +89,7 @@
     - Use https://www.ag-grid.com/javascript-grid-excel/#example-excel-export-without-styles
     - Press Export to Excel
     - !!! I can't record the excel opening, do not have office. 
+    - NC - Someone can give you a screenshot? Then you just bring screenshot up, looks like opened in Excel!
 
 ## Customizable Cell Contents
     - Use https://www.ag-grid.com/javascript-grid-cell-rendering-components/#example-angular-rich-dynamic
@@ -93,6 +99,7 @@
 ## Row Reordering
     - Use https://www.ag-grid.com/javascript-grid-row-dragging/#example-simple-managed
     - Drag rows around
+    - NC why not use main demo?
 
 ## Copy / Paste
     - Use https://www.ag-grid.com/example.php
@@ -130,6 +137,7 @@
 ## Pinned Rows
     - Use https://www.ag-grid.com/javascript-grid-row-pinning/#example-row-pinning
     - Scroll Around
+    - NC or set pinned rows on the main demo
 
 ## Full Width Rows
     - Use https://www.ag-grid.com/javascript-grid-full-width-rows/#example-simple-full-width
