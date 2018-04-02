@@ -85,8 +85,12 @@
                 "gtm": { "tech": "server-side-operations" },
                 "items": [
                     {
-                        "title": "Integrate with Oracle",
+                        "title": "Using Java & Oracle",
                         "url": "oracle-server-side-operations/"
+                    },
+                    {
+                        "title": "Using Java & Apache Spark",
+                        "url": "spark-server-side-operations/"
                     }
                 ]
             }
