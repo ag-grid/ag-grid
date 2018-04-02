@@ -43,8 +43,8 @@ include '../documentation-main/documentation_header.php';
     <h2 id="overview">Overview</h2>
 
     <p>
-        Apache Spark has quickly become the most popular choice for iterative data processing and reporting in a big
-        data context due to it's ability to cache distributed datasets in memory for faster execution times.
+        Apache Spark has quickly become a popular choice for iterative data processing and reporting in a big
+        data context. This is largely due to it's ability to cache distributed datasets in memory for faster execution times.
     </p>
 
     <h4 id="dataframes">DataFrames</h4>
@@ -64,7 +64,7 @@ include '../documentation-main/documentation_header.php';
     <h4 id="transformations">Transformations</h4>
 
     <p>
-        With our application data loaded into a DataFrame we can then use it's API to perform data transformations. It's
+        With our application data loaded into a DataFrame we can then use API calls to perform data transformations. It's
         important to note that transformations just specify the processing that will occur when triggered by an action
         such as <i>count</i> or <i>collect</i>.
     </p>
@@ -149,8 +149,8 @@ SparkConf sparkConf = new SparkConf()
 
     <p>
         By default the <code>spark.sql.shuffle.partitions</code> is set to 200. This will result in performance degradation
-        when in local mode. This has been arbitrarily set to 2 partitions, however this should be increased to enable
-        parallelism and prevent out of memory exceptions when in cluster mode.
+        when in local mode. It has been arbitrarily set to 2 partitions, however when in cluster mode this should be
+        increased to enable parallelism and prevent out of memory exceptions.
     </p>
 
 
@@ -160,7 +160,7 @@ SparkConf sparkConf = new SparkConf()
 
     <p><code>src/main/resources/data/result.csv</code></p>
 
-    <p>However the <code>OlympicMedalDataLoader</code> can be used for generating a larger dataset:</p>
+    <p>The <code>OlympicMedalDataLoader</code> utility has been provided to generate a larger dataset however:</p>
 
 <snippet>
 // src/test/java/util/OlympicMedalDataLoader.java
@@ -182,7 +182,7 @@ public class OlympicMedalDataLoader {
 
 <p>
     When executed it will append an additional 10 million records to <code>results.csv</code>, however you can modify
-    this by changing <code>BATCH_SIZE</code>.
+    this by changing the <code>BATCH_SIZE</code>.
 </p>
 
     <h2 id="run-app">Run the App</h2>
@@ -239,7 +239,7 @@ public class EnterpriseGetRowsRequest implements Serializable {
     <h2 id="service-controller">Service Controller</h2>
 
     <p>
-        Our service shall contain a single endpoint <code>/getRows</code> with the request and response objects defined above:
+        Our service shall contain a single endpoint <code>/getRows</code> with accepts the request defined above:
     </p>
 
 <snippet>
@@ -400,7 +400,7 @@ df.filter(filters);
     <h2 id="grouping">Grouping</h2>
 
     <p>
-        Grouping performed using <code>DataFrame.groupBy()</code> as shown below:
+        Grouping is performed using <code>Dataset.groupBy()</code> as shown below:
     </p>
 
 <snippet>
@@ -427,8 +427,8 @@ private Dataset&lt;Row> groupBy(Dataset&lt;Row> df) {
 
     <p>
         Spark SQL provides a convenient pivot function to create pivot tables, however as it currently only supports
-        pivots on a single column our example will only allow pivoting on the sport <code>ColDef</code> in the client
-        code.
+        pivots on a single column our example will only allow pivoting on the sport column. This is enabled on the
+        <code>ColDef.enablePivot=true</code> in the client code.
     </p>
 
 <snippet>
@@ -564,7 +564,7 @@ private Dataset&lt;Row> agg(RelationalGroupedDataset groupedDf) {
     </snippet>
 
     <p>
-        The <code>SortModel</code> contains the <code>colId</code> (i.e. 'book') and the <code>sort</code> type (i.e. 'asc')
+        The <code>SortModel</code> contains the <code>colId</code> (i.e. 'athlete') and the <code>sort</code> type (i.e. 'asc')
     </p>
 
 <snippet>
@@ -578,8 +578,8 @@ public class SortModel implements Serializable {
 </snippet>
 
     <p>
-        The <code>Dataset.orderBy()</code> function accepts an array of Spark <code>Column</code> objects that require
-        specify the sort order as shown below:
+        The <code>Dataset.orderBy()</code> function accepts an array of Spark <code>Column</code> objects that specify
+        the sort order as shown below:
     </p>
 
 <snippet>
@@ -607,7 +607,7 @@ private Dataset&lt;Row> orderBy(Dataset&lt;Row> df) {
     <h2 id="infinite-scrolling">Infinite Scrolling</h2>
 
     <p>
-        The <code>EnterpriseGetRowsRequest</code> contains the following attribute to determine the range to return:
+        The <code>EnterpriseGetRowsRequest</code> contains the following attributes to determine the range to return:
     </p>
 
 <snippet>
