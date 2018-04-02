@@ -41,7 +41,7 @@
             },
             {
                 "title": "Grouping / Aggregation",
-                "img": "https://www.ag-grid.com/javascript-grid-features/images/rowGroup.gif",
+                "img": "grouping-aggregation.gif",
                 "description":
                     "Let your users explore their data. Ag-grid allows the end user to group by specific columns. Optionally, you can display various aggregate column values in the grouped row.",
                 "links": [
@@ -57,7 +57,7 @@
             },
             {
                 "title": "Filtering",
-                "img": "https://www.ag-grid.com/javascript-grid-features/images/setFilter.gif",
+                "img": "filtering.gif",
                 "description":
                     "Ag-grid comes with an extensive set of built-in column filter types.  You can also filter by all columns simultaneously with quick filtering. You can even implement your own custom filtering UI and logic.",
                 "links": [
@@ -81,7 +81,7 @@
             },
             {
                 "title": "Cell Editing",
-                "img": "https://www.ag-grid.com/javascript-grid-features/images/cellEditing.gif",
+                "img": "editing.gif",
                 "description": "Users can update data with cell editing. Use one of the provided cell editors or create your own to suit your business needs.  ",
                 "links": [
                     {
@@ -96,7 +96,7 @@
             },
             {
                 "title": "Lazy Loading",
-                "img": "https://www.ag-grid.com/javascript-grid-features/images/rowPinning.gif",
+                "img": "lazy-loading.gif",
                 "description":
                     "Save your server resources! Ag-Grid can request the right amount of records just in time when the user scrolls, or when filtering / sorting / paging is applied.",
                 "links": [
@@ -108,7 +108,7 @@
             },
             {
                 "title": "Server-Side Operations",
-                "img": "https://www.ag-grid.com/javascript-grid-features/images/rowPinning.gif",
+                "img": "server-side-operations.gif",
                 "description": "Dealing with extremely large data sets? Perform the heavy / complex filtering and sorting using your database. ",
                 "links": [
                     {
@@ -123,7 +123,7 @@
             },
             {
                 "title": "Live Stream Updates",
-                "img": "https://www.ag-grid.com/javascript-grid-features/images/dataUpdate.gif",
+                "img": "live-updates.gif",
                 "description": "The data in the grid can be updated in real time. The grid can easily handle hundreds of updates per second while remaining performant. ",
                 "links": [
                     {
@@ -134,7 +134,7 @@
             },
             {
                 "title": "Tree Data",
-                "img": "https://www.ag-grid.com/javascript-grid-features/images/treeData.gif",
+                "img": "tree-data.gif",
                 "description":
                     "You can easily display data has parent / child relationships by passing the relationship as part of the data. For example, a folder can contain zero or more files and other folders.",
                 "links": [
@@ -145,8 +145,8 @@
                 ]
             },
             {
-                "title": "Customizable Appearance",
-                "img": "https://www.ag-grid.com/javascript-grid-features/images/columnMoving.gif",
+                "title": "Customisable Appearance",
+                "img": "customizable-appearance.gif",
                 "description":
                     "Ag-Grid ships several different themes. Pick one that matches your project look and feel, and fully customize so that the grid is consistent with your application.",
                 "links": [
