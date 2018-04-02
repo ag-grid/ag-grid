@@ -5,7 +5,7 @@ $pageKeyboards = "Server-side operations with the Apache Spark";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
-    <h1 id="oracle-enterprise">
+    <h1 id="spark-enterprise">
         Server-side operations with Java & Spark
     </h1>
 
@@ -40,14 +40,14 @@ include '../documentation-main/documentation_header.php';
         The source code can be found here: <a href="https://github.com/ag-grid/ag-grid-server-side-apache-spark-example">ag-grid-server-side-apache-spark-example</a>
     </p>
 
-    <h2>Overview</h2>
+    <h2 id="overview">Overview</h2>
 
     <p>
         Apache Spark has quickly become the most popular choice for iterative data processing and reporting in a big
         data context due to it's ability to cache distributed datasets in memory for faster execution times.
     </p>
 
-    <h4>DataFrames</h4>
+    <h4 id="dataframes">DataFrames</h4>
 
     <p>
         The Apache Spark SQL library contains a distributed collection called a
@@ -61,7 +61,7 @@ include '../documentation-main/documentation_header.php';
         transformations. In real world applications data will typically be sourced from many input systems and files.
     </p>
 
-    <h4>Transformations</h4>
+    <h4 id="transformations">Transformations</h4>
 
     <p>
         With our application data loaded into a DataFrame we can then use it's API to perform data transformations. It's
@@ -132,7 +132,7 @@ include '../documentation-main/documentation_header.php';
 
     <p><img src="mvn-success.png" width="90%" style="border: 1px solid grey"/></p>
 
-    <h2 id="configure-oracle">Spark Configuration</h2>
+    <h2 id="configure-spark">Spark Configuration</h2>
 
     <p>
        The example application is configured to run in local mode as shown below:
@@ -200,7 +200,7 @@ public class OlympicMedalDataLoader {
     <p>Our Java service will use the following request:</p>
 
 <snippet>
-// src/main/java/com/ag/grid/enterprise/oracle/demo/request/EnterpriseGetRowsRequest.java
+// src/main/java/com/ag/grid/enterprise/spark/demo/request/EnterpriseGetRowsRequest.java
 
 public class EnterpriseGetRowsRequest implements Serializable {
 
@@ -527,7 +527,7 @@ let createSecondaryColumns = function (fields, valueCols) {
 gridOptions.columnApi.setSecondaryColumns(secondaryColDefs);
 </snippet>
 
-    <h2 id="grouping">Aggregation</h2>
+    <h2 id="aggregations">Aggregation</h2>
 
     <p>
         Aggregations are performed using <code>RelationalGroupedDataset.agg()</code> as shown below:
@@ -685,7 +685,7 @@ private DataResult paginate(Dataset&lt;Row> df, int startRow, int endRow) {
             <li>Filtering</li>
             <li>Grouping</li>
             <li>Pivoting</li>
-            <li>Aggregations</li>
+            <li>Aggregation</li>
             <li>Sorting</li>
             <li>Infinite Scrolling</li>
         </ul>
