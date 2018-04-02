@@ -1,9 +1,7 @@
 <?php
 $pageTitle = "Server-side operations with Apache Spark and ag-Grid";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. 
-                    This is a detailed guide on how to use with React and Redux. We explore how a React component using 
-                    ag-Grid can take advantage of a Redux store to simplify state management.";
-$pageKeyboards = "Server-side operations with the Oracle Database";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is a guide on how to perform server-side operations with Apache Spark and ag-Grid";
+$pageKeyboards = "Server-side operations with the Apache Spark";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
@@ -522,7 +520,7 @@ let createSecondaryColumns = function (fields, valueCols) {
 </snippet>
 
     <p>
-        In order for the grid to show these newly created columns an an explicit api call is required:
+        In order for the grid to show these newly created columns an explicit api call is required:
     </p>
 
 <snippet>
@@ -680,14 +678,15 @@ private DataResult paginate(Dataset&lt;Row> df, int startRow, int endRow) {
     </p>
 
     <p>
-        A high level overview was given to illustrate the problem this approach solves before providing details of how
-        to achieve the following server-side operations:
+        A high level overview was given to illustrate how the distributed DataFrame is transformed in the example
+        application before providing details of how to achieve the following server-side operations:
 
         <ul>
             <li>Filtering</li>
-            <li>Sorting</li>
             <li>Grouping</li>
             <li>Pivoting</li>
+            <li>Aggregations</li>
+            <li>Sorting</li>
             <li>Infinite Scrolling</li>
         </ul>
 
