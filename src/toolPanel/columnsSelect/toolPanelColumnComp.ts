@@ -108,7 +108,6 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem{
     }
 
     private onChangeCommon(nextState: boolean): void {
-        console.log('next state = ' + nextState);
         // only want to action if the user clicked the checkbox, not is we are setting the checkbox because
         // of a change in the model
         if (this.processingColumnStateChange) { return; }
