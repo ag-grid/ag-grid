@@ -362,11 +362,6 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
             lastRow = 0;
         }
 
-        // this doesn't make sense, but it works, if there are now rows, then -1 is returned above
-        if (lastRow < 0) {
-            lastRow = 0;
-        }
-
         return lastRow;
     }
 
