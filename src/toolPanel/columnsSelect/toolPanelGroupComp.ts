@@ -31,9 +31,9 @@ export class ToolPanelGroupComp extends Component implements BaseColumnItem{
                 <span id="eGroupOpenedIcon" class="ag-column-group-closed-icon"></span>
                 <span id="eGroupClosedIcon" class="ag-column-group-opened-icon"></span>
             </span>
-            <ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>
+            <ag-checkbox ref="cbSelect" (change)="onCheckboxChanged" class="ag-column-select-checkbox"></ag-checkbox>
             <span class="ag-column-drag" ref="eDragHandle"></span>
-            <span id="eText" class="ag-column-select-column-group-label"></span>
+            <span id="eText" class="ag-column-select-column-group-label" (click)="onLabelClicked"></span>
         </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -43,8 +43,7 @@ export class ToolPanelGroupComp extends Component implements BaseColumnItem{
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('eventService') private eventService: EventService;
 
-    @QuerySelector('.ag-column-select-checkbox') private cbSelect: AgCheckbox;
-
+    @RefSelector('cbSelect') private cbSelect: AgCheckbox;
     @RefSelector('eDragHandle') private eDragHandle: HTMLElement;
 
     private columnGroup: OriginalColumnGroup;
@@ -91,7 +90,6 @@ export class ToolPanelGroupComp extends Component implements BaseColumnItem{
         this.addCssClass('ag-toolpanel-indent-' + this.columnDept);
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this) );
-        this.addDestroyableEventListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
 
         this.setOpenClosedIcons();
 
@@ -157,21 +155,29 @@ export class ToolPanelGroupComp extends Component implements BaseColumnItem{
         this.addDestroyFunc( touchListener.destroy.bind(touchListener) );
     }
 
-    private onCheckboxChanged(): void {
+    private onLabelClicked(): void {
+        let nextState = !this.cbSelect.isSelected();
+        this.onChangeCommon(nextState);
+    }
+
+    private onCheckboxChanged(event: any): void {
+        this.onChangeCommon(event.selected);
+    }
+
+    private onChangeCommon(nextState: boolean): void {
         if (this.processingColumnStateChange) { return; }
 
         let childColumns = this.columnGroup.getLeafColumns();
-        let selected = this.cbSelect.isSelected();
 
         if (this.columnController.isPivotMode()) {
-            if (selected) {
+            if (nextState) {
                 this.actionCheckedReduce(childColumns);
             } else {
                 this.actionUnCheckedReduce(childColumns)
             }
         } else {
             let allowedColumns = childColumns.filter( c => !c.isLockVisible() );
-            this.columnController.setColumnsVisible(allowedColumns, selected, "toolPanelUi");
+            this.columnController.setColumnsVisible(allowedColumns, nextState, "toolPanelUi");
         }
 
         if (this.selectionCallback){
