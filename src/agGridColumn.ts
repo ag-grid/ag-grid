@@ -121,6 +121,8 @@ export class AgGridColumn {
     @Input() public onCellDoubleClicked: any;
     @Input() public onCellContextMenu: any;
     @Input() public tooltip: any;
+    @Input() public cellRendererSelector: any;
+    @Input() public cellEditorSelector: any;
     @Input() public suppressCellFlash: any;
     @Input() public suppressToolPanel: any;
     @Input() public openByDefault: any;
