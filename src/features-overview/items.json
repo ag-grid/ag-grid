@@ -243,7 +243,7 @@
                 "title": "Enables Productivity",
                 "img": "https://www.ag-grid.com/javascript-grid-features/images/keyboardNavigation.gif",
                 "description":
-                    "Ag-Grid is fully keyboard navigatable for your users' maximum productivity. It is also fully functional on touch devices. You can even provide  a print friendly version of it.",
+                    "Ag-Grid is fully keyboard navigable for your users' maximum productivity. It is also fully functional on touch devices. You can even provide  a print friendly version of it.",
                 "links": [{ "title": "Keyboard Navigation Demo", "url": "#" }, { "title": "Print Layout Demo", "url": "#" }]
             },
             {
