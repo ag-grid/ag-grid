@@ -53,8 +53,8 @@ export class ComponentMetadataProvider {
                 optionalMethodList: []
             },
             cellRenderer:{
-                mandatoryMethodList: ['refresh'],
-                optionalMethodList: ['afterGuiAttached'],
+                mandatoryMethodList: [],
+                optionalMethodList: ['refresh', 'afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
             cellEditor:{
