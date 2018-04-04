@@ -682,8 +682,8 @@
 
             .ag-column-select-checkbox,
             .ag-column-group-icons {
-                margin-right: $grid-size;
                 margin-left: $grid-size;
+                margin-right: $grid-size;
             }
         }
 
@@ -1146,9 +1146,9 @@
         }
 
         .ag-column-drag {
-            width: $icon-size;
             margin-left: $grid-size * 2;
             margin-top: $grid-size / 2;
+            width: $icon-size;
         }
     }
 
@@ -1215,9 +1215,7 @@
 
     .ag-floating-top {
         background-color: $row-floating-background-color;
-    }
 
-    .ag-floating-top {
         .ag-row {
             background-color: $row-floating-background-color;
         }
@@ -1498,8 +1496,9 @@
 
     .ag-column-name-filter {
         @include textbox($params);
-        width: 100%;
+
         box-sizing: border-box;
+        width: 100%;
     }
 
     $exported: (
