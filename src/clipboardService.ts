@@ -81,7 +81,12 @@ export class ClipboardService implements IClipboardService {
             (element: HTMLTextAreaElement)=> {
                 let data = element.value;
                 if (Utils.missingOrEmpty(data)) return;
-                this.rangeController.isMoreThanOneCell() ? this.pasteToRange(data) : this.pasteToSingleCell(data);
+
+                let parsedData: string[][] = this.dataToArray(data);
+
+                let singleCellInClipboard = parsedData.length == 1 && parsedData[0].length == 1;
+                this.rangeController.isMoreThanOneCell() && !singleCellInClipboard ?
+                    this.pasteToRange(data) : this.pasteToSingleCell(data);
             }
         );
     }
