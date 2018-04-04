@@ -32,7 +32,8 @@ import {
     FlashCellsEvent,
     _,
     ColumnApi,
-    GridApi
+    GridApi,
+    RowValueChangedEvent
 } from "ag-grid/main";
 import {RangeController} from "./rangeController";
 
@@ -136,6 +137,8 @@ export class ClipboardService implements IClipboardService {
         this.iterateActiveRanges(false, rowCallback);
         this.rowRenderer.refreshCells({rowNodes: updatedRowNodes, columns: updatedColumnIds});
         this.dispatchFlashCells(cellsToFlash);
+
+        this.fireRowChanged(updatedRowNodes);
     }
 
     private pasteToSingleCell(data: string) {
@@ -176,6 +179,8 @@ export class ClipboardService implements IClipboardService {
         this.dispatchFlashCells(cellsToFlash);
 
         this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.floating, true);
+
+        this.fireRowChanged(updatedRowNodes);
     }
 
     public copyRangeDown(): void {
@@ -225,6 +230,28 @@ export class ClipboardService implements IClipboardService {
         this.rowRenderer.refreshCells({rowNodes: updatedRowNodes, columns: updatedColumnIds});
 
         this.dispatchFlashCells(cellsToFlash);
+
+        this.fireRowChanged(updatedRowNodes);
+    }
+
+    private fireRowChanged(rowNodes: RowNode[]): void {
+        if (!this.gridOptionsWrapper.isFullRowEdit()) {
+            return;
+        }
+
+        rowNodes.forEach( rowNode => {
+            let event: RowValueChangedEvent = {
+                type: Events.EVENT_ROW_VALUE_CHANGED,
+                node: rowNode,
+                data: rowNode.data,
+                rowIndex: rowNode.rowIndex,
+                rowPinned: rowNode.rowPinned,
+                context: this.gridOptionsWrapper.getContext(),
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi()
+            };
+            this.eventService.dispatchEvent(event);
+        });
     }
 
     private multipleCellRange(clipboardGridData: string[][], currentRow: GridRow, updatedRowNodes: RowNode[], columnsToPasteInto: Column[], cellsToFlash: any, updatedColumnIds: string[], type: string) {
