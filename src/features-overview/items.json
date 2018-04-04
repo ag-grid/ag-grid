@@ -7,7 +7,7 @@
             {
                 "title": "Outstanding Performance",
                 "img": "performance.gif",
-                "description": " Out of the box, Ag-Grid is designed to perform smoothly with millions of records. No specific configuration requided.",
+                "description": " Out of the box, Ag-Grid is designed to perform smoothly with millions of records. No specific configuration required.",
                 "links": [
                     {
                         "title": "100 000 rows, 25 columns demo",
@@ -124,7 +124,7 @@
             {
                 "title": "Live Stream Updates",
                 "img": "live-updates.gif",
-                "description": "The data in the grid can be updated in real time. The grid can easily handle hundreds of updates per second while remaining performant. ",
+                "description": "The data in the grid can be updated in real time. The grid can easily handle hundreds of updates per second while being fully responsive. ",
                 "links": [
                     {
                         "title": "Live Streaming Demo",
@@ -148,7 +148,7 @@
                 "title": "Customisable Appearance",
                 "img": "customizable-appearance.gif",
                 "description":
-                    "Ag-Grid ships several different themes. Pick one that matches your project look and feel, and fully customize so that the grid is consistent with your application.",
+                    "Ag-Grid ships several different themes. Pick one that matches your project look and feel, and fully customise so that the grid is consistent with your application.",
                 "links": [
                     {
                         "title": "Themes Overview",
@@ -164,7 +164,7 @@
                 "title": "Convenient Licensing",
                 "img": "https://unicornomy.com/wp-content/uploads/2017/11/examples-of-licensing-agreements.jpg",
                 "description":
-                    "Ag-Grid free is MIT licensed, no strings attached. ag-Grid Enterprise comes with a commercial license, that works for both Single and Multiple App Developers. Both are in public GitHub repos.",
+                    "Ag-Grid free is MIT licensed, no strings attached. ag-Grid Enterprise comes with a commercial license, that works for both Single and Multiple App Developers. Both are in public GitHub repositories.",
                 "links": [
                     {
                         "title": "Our Pricing",
@@ -338,7 +338,7 @@
                 "title": "Aligned Grids",
                 "img": "https://www.ag-grid.com/javascript-grid-features/images/alignedGrids.gif",
                 "description":
-                    "Aligned grids will bind two or more grid istances so that any column changes in one grid impact the other grid. This allows two grids with different data to be kept horizontally in sync.  ",
+                    "Aligned grids will bind two or more grid instances so that any column changes in one grid impact the other grid. This allows two grids with different data to be kept horizontally in sync.  ",
                 "links": [{ "title": "Aligned Grids Demo", "url": "#" }]
             }
         ]
