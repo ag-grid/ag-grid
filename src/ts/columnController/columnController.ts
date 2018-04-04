@@ -443,8 +443,8 @@ export class ColumnController {
     }
 
     private getDisplayedColumnsForRow(rowNode: RowNode, displayedColumns: Column[],
-                                        filterCallback?: (column: Column)=>boolean,
-                                        gapBeforeCallback?: (column: Column)=>boolean): Column[] {
+                                      filterCallback?: (column: Column)=>boolean,
+                                      emptySpaceBeforeColumn?: (column: Column)=>boolean): Column[] {
 
         let result: Column[] = [];
         let lastConsideredCol: Column = null;
@@ -454,19 +454,40 @@ export class ColumnController {
             let col = displayedColumns[i];
 
             let colSpan = col.getColSpan(rowNode);
+            let columnsToCheckFilter: Column[] = [col];
             if (colSpan > 1) {
                 let colsToRemove = colSpan - 1;
+
+                for (let j = 1; j<=colsToRemove; j++) {
+                    columnsToCheckFilter.push(displayedColumns[i+j]);
+                }
+
                 i += colsToRemove;
             }
 
-            let filterPasses = filterCallback ? filterCallback(col) : true;
+            // see which cols we should take out for column virtualisation
+            let filterPasses: boolean;
+            if (filterCallback) {
+                // if user provided a callback, means some columns may not be in the viewport.
+                // the user will NOT provide a callback if we are talking about pinned areas,
+                // as pinned areas have no horizontal scroll and do not virtualise the columns.
+                // if lots of columns, that means column spanning, and we set filterPasses = true
+                // if one or more of the columns spanned pass the filter.
+                filterPasses = false;
+                columnsToCheckFilter.forEach( colForFilter => {
+                    if (filterCallback(colForFilter)) filterPasses = true;
+                });
+            } else {
+                filterPasses = true
+            }
 
             if (filterPasses) {
 
-                let gapBeforeColumn = gapBeforeCallback ? gapBeforeCallback(col) : false;
-                let addInPreviousColumn = result.length===0 && gapBeforeColumn && lastConsideredCol;
-                if (addInPreviousColumn) {
-                    result.push(lastConsideredCol);
+                if (result.length===0 && lastConsideredCol) {
+                    let gapBeforeColumn = emptySpaceBeforeColumn ? emptySpaceBeforeColumn(col) : false;
+                    if (gapBeforeColumn) {
+                        result.push(lastConsideredCol);
+                    }
                 }
 
                 result.push(col);
@@ -488,10 +509,10 @@ export class ColumnController {
             return this.allDisplayedCenterVirtualColumns;
         }
 
-        let gapBeforeCallback = (col: Column) => col.getLeft() > this.viewportLeft;
+        let emptySpaceBeforeColumn = (col: Column) => col.getLeft() > this.viewportLeft;
 
         return this.getDisplayedColumnsForRow(rowNode, this.displayedCenterColumns,
-            this.isColumnInViewport.bind(this), gapBeforeCallback);
+            this.isColumnInViewport.bind(this), emptySpaceBeforeColumn);
     }
 
     private isColumnInViewport(col: Column): boolean {
