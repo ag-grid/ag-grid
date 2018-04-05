@@ -372,6 +372,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public suppressPropertyNamesCheck : any = undefined;
     @Input() public rowMultiSelectWithClick : any = undefined;
     @Input() public contractColumnSelection : any = undefined;
+    @Input() public suppressEnterpriseResetOnNewColumns : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();
