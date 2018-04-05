@@ -16,10 +16,6 @@
                         "url": "javascript-grid-download/"
                     },
                     {
-                        "title": "Test with Jasmine",
-                        "url": "javascript-grid-test-with-jasmine/"
-                    },
-                    {
                         "title": "Use with TypeScript",
                         "gtm": { "tech": "typescript" },
                         "url": "ag-grid-typescript-webpack-2/"
@@ -54,6 +50,10 @@
                                 "url": "ag-grid-angular-webpack/"
                             }
                         ]
+                    },
+                    {
+                        "title": "Use with RxJS",
+                        "url": "example-angular-rxjs/"
                     }
                 ]
             },
@@ -103,7 +103,7 @@
                 "url": "javascript-grid-responsiveness/"
             },
             {
-                "title": "Use With Protractor &amp; Jasmine",
+                "title": "Test With Protractor &amp; Jasmine",
                 "url": "javascript-grid-testing/"
             },
             {
@@ -538,24 +538,8 @@
                 "url": "javascript-grid-examples/"
             },
             {
-                "title": "Redux",
-                "url": "example-react-redux/"
-            },
-            {
-                "title": "Angular RxJS",
-                "url": "example-angular-rxjs/"
-            },
-            {
                 "title": "Angular & Material Design",
                 "url": "example-angular-material-design/"
-            },
-            {
-                "title": "Angular & ngx Bootstrap",
-                "url": "example-angular-ngx-bootstrap/"
-            },
-            {
-                "title": "Angular with Typeahead",
-                "url": "example-angular-typeahead/"
             },
             {
                 "title": "Expressions & Context",
@@ -568,10 +552,6 @@
             {
                 "title": "Gallery",
                 "url": "example-gallery/"
-            },
-            {
-                "title": "OpenFin Dashboard",
-                "url": "javascript-grid-openfin-dashboard/"
             },
             {
                 "title": "Graphing",
