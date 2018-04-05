@@ -6,6 +6,7 @@ import {
     Column,
     ColumnController,
     Constants,
+    Downloader,
     ExcelCell,
     ExcelColumn,
     ExcelDataType,
@@ -15,7 +16,9 @@ import {
     ExcelWorksheet,
     GridOptions,
     GridOptionsWrapper,
+    GridSerializer,
     IExcelCreator,
+    PostConstruct,
     ProcessCellForExportParams,
     ProcessHeaderForExportParams,
     RowAccumulator,
@@ -24,10 +27,7 @@ import {
     RowType,
     StylingService,
     Utils,
-    ValueService,
-    GridSerializer,
-    Downloader,
-    PostConstruct
+    ValueService
 } from "ag-grid/main";
 
 import {ExcelXmlFactory} from "./excelXmlFactory";
@@ -233,11 +233,15 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession<Exce
             return type;
         }
 
+        let typeTransformed: ExcelDataType = getType();
         return {
             styleId: styleExists ? styleId : null,
             data: {
-                type: getType(),
-                value: value
+                type: typeTransformed,
+                value:
+                    typeTransformed === 'String' ? `<![CDATA[${value}]]>` :
+                    typeTransformed === 'Number' ? Number(value).valueOf() + '' :
+                    value
             }
         };
     }
