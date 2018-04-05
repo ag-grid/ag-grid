@@ -16,11 +16,9 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>setColumnDefs(colDefs)</th>
-            <td>
-                Call to set new column definitions into the grid. The grid will redraw all the column headers,
-                and then redraw all of the rows. The rows will not be discarded, so any selections or scrolling
-                will stay.
-            </td>
+            <td>Call to set new column definitions into the grid. The grid will redraw all the column headers,
+                and then redraw all of the rows. The rows will not be discarded, so any selections, scrolling or groups
+                open, will stay.</td>
         </tr>
 
     </table>
