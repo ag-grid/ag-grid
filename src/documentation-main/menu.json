@@ -95,8 +95,12 @@
                 "url": "best-vuejs-data-grid/"
             },
             {
-                "title": "Use ag-Grid with RxJS",
+                "title": "Use ag-Grid With RxJS",
                 "url": "javascript-grid-rxjs/"
+            },
+            {
+                "title": "Resize ag-Grid With Parent Container",
+                "url": "javascript-grid-responsiveness/"
             }
         ]
     },
@@ -526,16 +530,6 @@
                 "url": "javascript-grid-examples/"
             },
             {
-                "title": "Flexbox",
-                "url": "example-flexbox/",
-                "new": true
-            },
-            {
-                "title": "CSS Grid",
-                "url": "example-css-grid/",
-                "new": true
-            },
-            {
                 "title": "Redux",
                 "url": "example-react-redux/"
             },
@@ -588,10 +582,6 @@
             {
                 "title": "Tutorials",
                 "url": "ag-grid-tutorials/"
-            },
-            {
-                "title": "Responsive Design",
-                "url": "javascript-grid-responsiveness/"
             },
             {
                 "title": "Testing",

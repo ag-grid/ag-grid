@@ -1,12 +1,12 @@
 <?php
-$pageTitle = "ag-Grid Reference: Responsive Web Design for Datagrid";
+$pageTitle = "ag-Grid Guides: Resize ag-Grid With Parent Container";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. It works on all platforms from phone to tablet up to desktop. This reference guide covers our recommendations for Responsive Web Design in a Datagrid.";
-$pageKeyboards = "ag-Grid Responsive Web Design";
+$pageKeyboards = "ag-Grid Resize ag-Grid With Parent Container";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1>Responsive Web Design</h1>
+<h1>Resize ag-Grid With Parent Container</h1>
 
 <p class="lead">
     We can dynamically react to screen changes by making use of the grid API features. In this section we describe
@@ -16,6 +16,20 @@ include '../documentation-main/documentation_header.php';
 <note>These recipes below are suggestions - as the grid can be placed & positioned in your application in many ways and
 with many frameworks the suggestions below may not work out of the box in your particular application, but they should serve
 to help point you in the right direction.</note>
+
+<h2>ag-Grid Inside Flexbox Container</h2>
+<p>By default, ag-Grid runs a timer that watches its container size and resizes the UI accordingly. This might interfere with the default behavior of elements with <code>display: flex</code> set. The simple workaround is to add <code>overflow: hidden</code> to the grid element parent.</p>
+
+<p>Open the example below in a new tab and resize the window to see how the grid instance gets resized accordingly.</p>
+
+<?= example('Grid Inside a Flexbox Container', 'flexbox', 'generated') ?>
+
+<h2>ag-Grid Inside CSS Grid Container</h2>
+<p>By default, ag-Grid runs a timer that watches its container size and resizes the UI accordingly. This might interfere with the default behavior of elements with <code>display: grid</code> set. The simple workaround is to add <code>overflow: hidden</code> to the grid element parent.</p>
+
+<p>Open the example below in a new tab and resize the window to see how the grid instance gets resized accordingly.</p>
+
+<?= example('Grid Inside a CSS Grid Container', 'css-grid', 'generated') ?>
 
 <h2>Dynamic Resizing with Horizontal Scroll</h2>
 
