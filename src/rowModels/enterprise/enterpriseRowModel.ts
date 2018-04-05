@@ -104,9 +104,13 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     }
 
     private onColumnEverything(): void {
-        // this is a hack for one customer only, so they can suppress the resetting of the columns
+        // this is a hack for one customer only, so they can suppress the resetting of the columns.
+        // The problem the customer had was they were api.setColumnDefs() after the data source came
+        // back with data. So this stops the reload from the grid after the data comes back.
+        // Once we have "AG-1591 Allow delta changes to columns" fixed, then this hack can be taken out.
         if (this.gridOptionsWrapper.isSuppressEnterpriseResetOnNewColumns()) { return; }
 
+        // every other customer can continue as normal and have it working!!!
         this.reset();
     }
 
