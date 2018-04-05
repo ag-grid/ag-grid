@@ -76,11 +76,6 @@
                 ]
             },
             {
-                "title": "Vue.js",
-                "gtm": { "tech": "vue" },
-                "url": "best-vuejs-data-grid/"
-            },
-            {
                 "title": "Server-side Operations",
                 "gtm": { "tech": "server-side-operations" },
                 "items": [
@@ -93,6 +88,15 @@
                         "url": "spark-server-side-operations/"
                     }
                 ]
+            },
+            {
+                "title": "Vue.js",
+                "gtm": { "tech": "vue" },
+                "url": "best-vuejs-data-grid/"
+            },
+            {
+                "title": "Use ag-Grid with RxJS",
+                "url": "javascript-grid-rxjs/"
             }
         ]
     },
@@ -578,12 +582,6 @@
         "gtm": { "category": "misc" },
         "items": [
             {
-                "title": "Change log",
-                "url": "ag-grid-changelog/",
-                "skipIndex": true,
-                "new": true
-            },
-            {
                 "title": "OpenFin",
                 "url": "javascript-grid-openfin/"
             },
@@ -598,15 +596,6 @@
             {
                 "title": "Testing",
                 "url": "javascript-grid-testing/"
-            },
-            {
-                "title": "RxJS",
-                "url": "javascript-grid-rxjs/"
-            },
-            {
-                "title": "Archive Docs",
-                "url": "archive/",
-                "skipIndex": true
             }
         ]
     }
