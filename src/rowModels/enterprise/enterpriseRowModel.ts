@@ -104,6 +104,9 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     }
 
     private onColumnEverything(): void {
+        // this is a hack for one customer only, so they can suppress the resetting of the columns
+        if (this.gridOptionsWrapper.isSuppressEnterpriseResetOnNewColumns()) { return; }
+
         this.reset();
     }
 
