@@ -250,47 +250,6 @@ detailCellRendererParams: {
 
 <p>
     By the very nature of a custom detail cell renderer it can contain zero or many grid instances. For this reason if
-    you need the master grid to reference it's detail grids you will have to manually register them.
-</p>
-
-<p>
-    When the detail grid is initialised, register it via <code>masterGridApi.addDetailGridInfo()</code> like so:
-</p>
-
-<snippet>
-onGridReady(params) {
-    var detailGridId = "detail_" + masterRowIndex;
-
-    var detailGridInfo = {
-        id: detailGridId,
-        api: params.api,
-        columnApi: params.columnApi
-    };
-
-    this.masterGridApi.addDetailGridInfo(detailGridId, detailGridInfo);
-}
-</snippet>
-
-<p>
-    And in a similar way unregister when the detail cell renderer is destroyed using:
-</p>
-
-<snippet>
-    this.masterGridApi.removeDetailGridInfo(this.createDetailGridId());
-</snippet>
-
-<p>
-    For details on how to access the detail grid api see:
-    <a href="../javascript-grid-master-detail/#accessing-detail-grid-api/">Accessing Detail Grid API</a>.
-</p>
-
-
-<?= example('Custom Detail Cell Renderer with Grid', 'custom-detail-with-grid', 'generated', array("processVue" => true, "enterprise" => 1)) ?>
-
-<h2>Example - Register Custom Detail Cell Renderer with Master Grid</h2>
-
-<p>
-    By the very nature of a custom detail cell renderer it can contain zero or many grid instances. For this reason if
     you need the master grid to reference it's detail grids you will have to register them manually.
 </p>
 
@@ -317,24 +276,21 @@ onGridReady(params) {
 </p>
 
 <snippet>
-this.masterGridApi.removeDetailGridInfo(this.createDetailGridId());
+    var detailGridId = "detail_" + masterRowIndex;
+    this.masterGridApi.removeDetailGridInfo(detailGridId);
 </snippet>
 
 <p>
-For details on how to access the detail grid api see:
+    For details on how to access the detail grid api see:
     <a href="../javascript-grid-master-detail/#accessing-detail-grid-api/">Accessing Detail Grid API</a>.
 </p>
 
 <p>
-This example demonstrates how to embeds a grid into the detail row using a custom Cell Renderer component:
+    This example demonstrates how to embeds a grid into the detail row using a custom Cell Renderer component:
 </p>
 
-<p>
-    This following example demonstrates how to register the grids contained within custom detail cell renderer's with the
-    <code>gridOptions</code> of the master grid.
-</p>
+<?= example('Custom Detail Cell Renderer with Grid', 'custom-detail-with-grid', 'generated', array("processVue" => true, "enterprise" => 1)) ?>
 
-<?= example('Register Custom Detail Cell Renderer with Master Grid', 'register-custom-detail-cell-renderer-with-master-grid', 'generated', array("processVue" => true, "enterprise" => 1)) ?>
 
 <h2>Example - Custom Detail Cell Renderer with a Form</h2>
 

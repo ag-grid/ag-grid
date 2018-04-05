@@ -55,6 +55,10 @@ export default class DetailCellRenderer extends Component {
 
   componentWillUnmount() {
     let detailGridId = this.createDetailGridId();
+
+    console.log("destroying detail grid with id: ", detailGridId);
+    this.state.masterGridApi.getDetailGridInfo(detailGridId).api.destroy();
+
     console.log("removing detail grid info with id: ", detailGridId);
     this.state.masterGridApi.removeDetailGridInfo(detailGridId);
   }
