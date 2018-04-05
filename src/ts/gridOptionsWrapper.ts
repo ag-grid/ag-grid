@@ -385,6 +385,7 @@ export class GridOptionsWrapper {
     public isSuppressCopyRowsToClipboard() { return isTrue(this.gridOptions.suppressCopyRowsToClipboard); }
     public isEnableFilter() { return isTrue(this.gridOptions.enableFilter) || isTrue(this.gridOptions.enableServerSideFilter); }
     public isPagination() { return isTrue(this.gridOptions.pagination); }
+    public isSuppressEnterpriseResetOnNewColumns() { return isTrue(this.gridOptions.suppressEnterpriseResetOnNewColumns); }
 
     public getBatchUpdateWaitMillis(): number {
         return _.exists(this.gridOptions.batchUpdateWaitMillis) ? this.gridOptions.batchUpdateWaitMillis : Constants.BATCH_WAIT_MILLIS;

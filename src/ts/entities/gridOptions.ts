@@ -115,6 +115,7 @@ export interface GridOptions {
     rowModelType?: string;
     pivotMode?: boolean;
     pivotTotals?: boolean;
+    suppressEnterpriseResetOnNewColumns?: boolean;
     enableRangeSelection?: boolean;
     suppressMultiRangeSelection?: boolean;
     // enterprise only
