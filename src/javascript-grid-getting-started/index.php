@@ -62,5 +62,6 @@ include '../getting-started/header.php';
 <li><a href="../best-web-component-data-grid/">Use ag-Grid as a Web Component</a></li>
 </ul>
 
+<p>After you are done with the above, you can check <a href="../ag-grid-tutorials/">the 6 part intermediate ag-Grid tutorial</a> which guides you from the very basics to implementing a complex use case.</p>
 
 <?php include '../getting-started/footer.php'; ?>

@@ -95,12 +95,20 @@
                 "url": "best-vuejs-data-grid/"
             },
             {
-                "title": "Use ag-Grid With RxJS",
+                "title": "Use  With RxJS",
                 "url": "javascript-grid-rxjs/"
             },
             {
-                "title": "Resize ag-Grid With Parent Container",
+                "title": "Resize With Parent Container",
                 "url": "javascript-grid-responsiveness/"
+            },
+            {
+                "title": "Use With Protractor &amp; Jasmine",
+                "url": "javascript-grid-testing/"
+            },
+            {
+                "title": "Use in OpenFin",
+                "url": "javascript-grid-openfin/"
             }
         ]
     },
@@ -568,24 +576,6 @@
             {
                 "title": "Graphing",
                 "url": "javascript-grid-graphing/"
-            }
-        ]
-    },
-    {
-        "title": "Misc",
-        "gtm": { "category": "misc" },
-        "items": [
-            {
-                "title": "OpenFin",
-                "url": "javascript-grid-openfin/"
-            },
-            {
-                "title": "Tutorials",
-                "url": "ag-grid-tutorials/"
-            },
-            {
-                "title": "Testing",
-                "url": "javascript-grid-testing/"
             }
         ]
     }
