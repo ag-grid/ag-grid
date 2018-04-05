@@ -83,6 +83,79 @@ var detailGridOptions = {
 
 <?= example('Simple Example', 'simple', 'generated', array("processVue" => true, "enterprise" => 1)) ?>
 
+<h2>Accessing Detail Grid API</h2>
+
+<p>
+    You can access the API of all detail grids via the master grid. The API for each detail grid
+    is stored in a <code>DetailGridInfo</code> object that has the following properties:
+</p>
+
+<snippet>
+interface DetailGridInfo {
+    // id of the detail grid, the format is detail_&lt;row-id>
+    // where row-id is the id of the parent row.
+    id: string;
+
+    // the grid API of the detail grid
+    api: GridApi;
+
+    // the column API of the detail grid
+    columnApi: ColumnApi;
+}
+</snippet>
+
+<p>
+    The <code>DetailGridInfo</code> is accessed via the <code>GridApi</code> of the master
+    <code>gridOptions</code>. You can either reference a particular detail grid API by ID,
+    or loop through all the existing detail grid APIs.
+</p>
+
+<snippet>
+// lookup a specific DetailGridInfo by id, and then call stopEditing() on it
+var detailGridInfo = masterGridOptions.api.getDetailGridInfo('someDetailGridId');
+detailGridInfo.api.stopEditing();
+
+// iterate over all DetailGridInfo's, and call stopEditing() on each one
+masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
+    console.log("detailGridInfo: ", detailGridInfo);
+    // then e.g. call stopEditing() on that detail grid
+    detailGridInfo.api.stopEditing();
+});
+</snippet>
+
+<p>
+    The <code>DetailGridInfo</code> contains a reference to the underlying <a href="../javascript-grid-api/">Grid API</a>
+    and <a href="../javascript-grid-column-api/">Column API</a> for each detail grid. Methods invoked on these API's
+    will only operate on the specific detail grid.
+</p>
+
+<h2>Example - Editing Cells with Master / Detail</h2>
+
+<p>
+    This example shows how to control cell editing when using Master / Detail. This examples demonstrates
+    the following:
+
+</p>
+
+<ul class="content">
+    <li><b>Edit Master</b> - performs editing on a master cell using the master grid options:
+        <code>masterGridOptions.api.startEditingCell()</code>
+    </li>
+    <li><b>Stop Edit Master</b> - iterates over each master row node using <code>masterGridOptions.api.forEachNode</code>
+        and then calls <code>masterGridOptions.api.stopEditing()</code> on each node.
+    </li>
+    <li><b>Edit Detail</b> - looks up the corresponding <code>DetailGridInfo</code> using <code>masterGridOptions.api.getDetailGridInfo()</code>
+        and then uses the grid api on that detail grid start editing: <code>detailGrid.api.startEditingCell()</code>
+    </li>
+    <li><b>Stop Edit Detail</b> - iterates over each detail grid using <code>masterGridOptions.api.forEachDetailGridInfo()</code>
+        and then calls <code>detailGridApi.api.stopEditing()</code> on each detail grid.
+    </li>
+</ul>
+
+<?= example('Editing Cells with Master / Detail', 'cell-editing', 'generated', array("processVue" => true, "enterprise" => 1)) ?>
+
+
+
 <h2>Overriding the Default Detail Cell Renderer</h2>
 
     <p>
@@ -176,10 +249,92 @@ detailCellRendererParams: {
 <h2>Example - Custom Detail Cell Renderer with a Grid</h2>
 
 <p>
-    This example demonstrates how to embeds a grid into the detail row using a custom Cell Renderer component:
+    By the very nature of a custom detail cell renderer it can contain zero or many grid instances. For this reason if
+    you need the master grid to reference it's detail grids you will have to manually register them.
 </p>
 
+<p>
+    When the detail grid is initialised, register it via <code>masterGridApi.addDetailGridInfo()</code> like so:
+</p>
+
+<snippet>
+onGridReady(params) {
+    var detailGridId = "detail_" + masterRowIndex;
+
+    var detailGridInfo = {
+        id: detailGridId,
+        api: params.api,
+        columnApi: params.columnApi
+    };
+
+    this.masterGridApi.addDetailGridInfo(detailGridId, detailGridInfo);
+}
+</snippet>
+
+<p>
+    And in a similar way unregister when the detail cell renderer is destroyed using:
+</p>
+
+<snippet>
+    this.masterGridApi.removeDetailGridInfo(this.createDetailGridId());
+</snippet>
+
+<p>
+    For details on how to access the detail grid api see:
+    <a href="../javascript-grid-master-detail/#accessing-detail-grid-api/">Accessing Detail Grid API</a>.
+</p>
+
+
 <?= example('Custom Detail Cell Renderer with Grid', 'custom-detail-with-grid', 'generated', array("processVue" => true, "enterprise" => 1)) ?>
+
+<h2>Example - Register Custom Detail Cell Renderer with Master Grid</h2>
+
+<p>
+    By the very nature of a custom detail cell renderer it can contain zero or many grid instances. For this reason if
+    you need the master grid to reference it's detail grids you will have to register them manually.
+</p>
+
+<p>
+    When the detail grid is initialised, register it via <code>masterGridApi.addDetailGridInfo()</code> like so:
+</p>
+
+<snippet>
+onGridReady(params) {
+    var detailGridId = "detail_" + masterRowIndex;
+
+    var detailGridInfo = {
+        id: detailGridId,
+        api: params.api,
+        columnApi: params.columnApi
+    };
+
+    this.masterGridApi.addDetailGridInfo(detailGridId, detailGridInfo);
+}
+</snippet>
+
+<p>
+    And in a similar way unregister it when the detail cell renderer is destroyed using:
+</p>
+
+<snippet>
+this.masterGridApi.removeDetailGridInfo(this.createDetailGridId());
+</snippet>
+
+<p>
+For details on how to access the detail grid api see:
+    <a href="../javascript-grid-master-detail/#accessing-detail-grid-api/">Accessing Detail Grid API</a>.
+</p>
+
+<p>
+This example demonstrates how to embeds a grid into the detail row using a custom Cell Renderer component:
+</p>
+
+<p>
+    This following example demonstrates how to register the grids contained within custom detail cell renderer's with the
+    <code>gridOptions</code> of the master grid.
+</p>
+
+<?= example('Register Custom Detail Cell Renderer with Master Grid', 'register-custom-detail-cell-renderer-with-master-grid', 'generated', array("processVue" => true, "enterprise" => 1)) ?>
 
 <h2>Example - Custom Detail Cell Renderer with a Form</h2>
 
@@ -212,77 +367,6 @@ detailCellRendererParams: {
 </p>
 
 <?= example('Dynamic Params', 'dynamic-params', 'generated', array("processVue" => true, "enterprise" => 1)) ?>
-
-<h2>Accessing Detail Grid API</h2>
-
-<p>
-    You can access the API of all detail grids via the master grid. The API for each detail grid
-    is stored in a <code>DetailGridInfo</code> object that has the following properties:
-</p>
-
-<snippet>
-interface DetailGridInfo {
-
-    // id of the detail grid, the format is detail_&lt;row-id>
-    // where row-id is the id of the parent row.
-    id: string;
-
-    // the grid API of the detail grid
-    api: GridApi;
-
-    // the column API of the detail grid
-    columnApi: ColumnApi;
-}
-</snippet>
-
-<p>
-    The <code>DetailGridInfo</code> is accessed via the <code>GridApi</code> of the master
-    <code>gridOptions</code>. You can either reference a particular detail grid API by ID,
-    or loop through all the existing detail grid APIs.
-</p>
-
-<snippet>
-// lookup a specific DetailGridInfo by id, and then call stopEditing() on it
-var detailGridInfo = masterGridOptions.api.getDetailGridInfo('someDetailGridId');
-detailGridInfo.api.stopEditing();
-
-// iterate over all DetailGridInfo's, and call stopEditing() on each one
-masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
-    console.log("detailGridInfo: ", detailGridInfo);
-    // then e.g. call stopEditing() on that detail grid
-    detailGridInfo.api.stopEditing();
-});</snippet>
-
-<p>
-    The <code>DetailGridInfo</code> contains a reference to the underlying <a href="../javascript-grid-api/">Grid API</a>
-    and <a href="../javascript-grid-column-api/">Column API</a> for each detail grid. Methods invoked on these API's
-    will only operate on the specific detail grid.
-</p>
-
-<h2>Example - Editing Cells with Master / Detail</h2>
-
-<p>
-    This example shows how to control cell editing when using Master / Detail. This examples demonstrates
-    the following:
-
-</p>
-
-<ul class="content">
-    <li><b>Edit Master</b> - performs editing on a master cell using the master grid options:
-                             <code>masterGridOptions.api.startEditingCell()</code>
-    </li>
-    <li><b>Stop Edit Master</b> - iterates over each master row node using <code>masterGridOptions.api.forEachNode</code>
-                                  and then calls <code>masterGridOptions.api.stopEditing()</code> on each node.
-    </li>
-    <li><b>Edit Detail</b> - looks up the corresponding <code>DetailGridInfo</code> using <code>masterGridOptions.api.getDetailGridInfo()</code>
-                             and then uses the grid api on that detail grid start editing: <code>detailGrid.api.startEditingCell()</code>
-    </li>
-    <li><b>Stop Edit Detail</b> - iterates over each detail grid using <code>masterGridOptions.api.forEachDetailGridInfo()</code>
-                                  and then calls <code>detailGridApi.api.stopEditing()</code> on each detail grid.
-    </li>
-</ul>
-
-<?= example('Editing Cells with Master / Detail', 'cell-editing', 'generated', array("processVue" => true, "enterprise" => 1)) ?>
 
 
 <h2>Dynamically Specify Master Nodes</h2>
