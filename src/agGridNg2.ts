@@ -284,6 +284,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public enableServerSideSorting : any = undefined;
     @Input() public enableFilter : any = undefined;
     @Input() public enableServerSideFilter : any = undefined;
+    @Input() public enableOldSetFilterModel : any = undefined;
     @Input() public angularCompileRows : any = undefined;
     @Input() public angularCompileFilters : any = undefined;
     @Input() public angularCompileHeaders : any = undefined;
