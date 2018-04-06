@@ -33,7 +33,8 @@ import {
     _,
     ColumnApi,
     GridApi,
-    RowValueChangedEvent
+    RowValueChangedEvent,
+    ProcessHeaderForExportParams
 } from "ag-grid/main";
 import {RangeController} from "./rangeController";
 
@@ -405,11 +406,14 @@ export class ClipboardService implements IClipboardService {
 
             columns.forEach( (column, index) => {
                 let value = this.columnController.getDisplayNameForColumn(column, 'clipboard', true);
+
+                let processedValue = this.userProcessHeader(column, value, this.gridOptionsWrapper.getProcessHeaderForClipboardFunc());
+
                 if (index != 0) {
                     data += deliminator;
                 }
-                if (Utils.exists(value)) {
-                    data += value;
+                if (Utils.exists(processedValue)) {
+                    data += processedValue;
                 }
             });
             data += '\r\n';
@@ -494,6 +498,20 @@ export class ClipboardService implements IClipboardService {
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
                 context: this.gridOptionsWrapper.getContext(),
                 type: type
+            };
+            return func(params);
+        } else {
+            return value;
+        }
+    }
+
+    private userProcessHeader(column: Column, value: any, func: (params: ProcessHeaderForExportParams) => void): any {
+        if (func) {
+            let params: ProcessHeaderForExportParams = {
+                column: column,
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                context: this.gridOptionsWrapper.getContext()
             };
             return func(params);
         } else {
