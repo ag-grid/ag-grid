@@ -117,7 +117,9 @@ export class AgGridNg2 implements AfterViewInit {
             // need to do this before the destroy, so we know not to emit any events
             // while tearing down the grid.
             this._destroyed = true;
-            this.api.destroy();
+            if(this.api) {
+                this.api.destroy();
+            }
         }
     }
 
