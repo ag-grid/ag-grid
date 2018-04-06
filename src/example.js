@@ -396,6 +396,7 @@ var defaultCols = [
                 // pinned: 'left',
                 floatCell: true,
                 filterParams: {
+                    applyButton:true,
                     cellRenderer: 'countryCellRenderer',
                     // cellHeight: 20,
                     newRowsAction: 'keep',
