@@ -196,7 +196,8 @@ colDef = {
     cellRenderer:'agGroupCellRenderer',
     // provide extra params to the cellRenderer
     cellRendererParams: {
-        suppressCount: false, // turn off the row count
+        suppressCount: true, // turn off the row count
+        suppressDoubleClickExpand: true, // turn off double click for expand
         checkbox: true, // enable checkbox selection
         innerRenderer: myInnerRenderer, // provide an inner renderer
         footerValueGetter: myFooterValueGetter // provide a footer value getter
@@ -212,6 +213,7 @@ colDef = {
     <li><b>suppressPadding:</b> Set to true to node including any padding (indentation) in the child rows.</li>
     <li><b>innerRenderer:</b> The renderer to use for inside the cell (after grouping functions are added).</li>
     <li><b>footerValueGetter:</b> The value getter for the footer text. Can be a function or expression.</li>
+    <li><b>suppressDoubleClickExpand:</b> If true then double clicking will not expand the group.</li>
 </ul>
 
 <h3>Example Group cellRenderer</h3>
@@ -255,6 +257,7 @@ colDef = {
             The column <b>Group Renderer C</b> builds on before, but adds the following <code>cellRendererParams</code>:
             <ul class="content">
                 <li><code>suppressCount=true</code>: Suppresses the row count.</li>
+                <li><code>suppressDoubleClickExpand=true</code>: Suppress double click for expanding.</li>
                 <li><code>checkbox=true</code>: Adds a selection checkbox.</li>
                 <li><code>padding=20</code>: Changes the padding (indentation) of the levels.</li>
                 <li><code>innerRenderer=SimpleCellRenderer</code>: Puts custom rendering for displaying the value.
