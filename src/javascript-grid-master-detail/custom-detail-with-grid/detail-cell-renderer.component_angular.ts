@@ -60,8 +60,7 @@ export class DetailCellRenderer implements ICellRendererAngularComp {
     ngOnDestroy(): void {
         var detailGridId = "detail_" + this.masterRowIndex;
 
-        console.log("destroying detail grid with id: ", detailGridId);
-        this.masterGridApi.getDetailGridInfo(detailGridId).api.destroy();
+        // ag-Grid is automatically destroyed
 
         console.log("removing detail grid info with id: ", detailGridId);
         this.masterGridApi.removeDetailGridInfo(detailGridId);
