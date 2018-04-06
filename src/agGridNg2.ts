@@ -254,6 +254,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public processCellFromClipboard : any = undefined;
     @Input() public getDocument : any = undefined;
     @Input() public postProcessPopup : any = undefined;
+    @Input() public paginationNumberFormatter : any = undefined;
     @Input() public getChildCount : any = undefined;
     @Input() public getDataPath : any = undefined;
     @Input() public loadingOverlayComponent : any = undefined;
