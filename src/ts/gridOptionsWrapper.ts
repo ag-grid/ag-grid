@@ -26,7 +26,7 @@ import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {IDatasource} from "./rowModels/iDatasource";
 import {GridCellDef} from "./entities/gridCell";
 import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
-import {BaseExportParams, ProcessCellForExportParams} from "./exportParams";
+import {BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams} from "./exportParams";
 import {AgEvent} from "./events";
 import {Environment} from "./environment";
 import {PropertyKeys} from "./propertyKeys";
@@ -434,6 +434,7 @@ export class GridOptionsWrapper {
     public isAlwaysShowStatusBar() { return isTrue(this.gridOptions.alwaysShowStatusBar); }
     public isFunctionsReadOnly() { return isTrue(this.gridOptions.functionsReadOnly); }
     public isFloatingFilter(): boolean { return this.gridOptions.floatingFilter; }
+    public isEnableOldSetFilterModel(): boolean { return isTrue(this.gridOptions.enableOldSetFilterModel); }
     // public isFloatingFilter(): boolean { return true; }
 
     public getDefaultColDef(): ColDef { return this.gridOptions.defaultColDef; }
@@ -464,6 +465,7 @@ export class GridOptionsWrapper {
     public getProcessRowPostCreateFunc() : any { return this.gridOptions.processRowPostCreate; }
 
     public getProcessCellForClipboardFunc(): (params: ProcessCellForExportParams)=>any { return this.gridOptions.processCellForClipboard; }
+    public getProcessHeaderForClipboardFunc(): (params: ProcessHeaderForExportParams)=>any { return this.gridOptions.processHeaderForClipboard; }
     public getProcessCellFromClipboardFunc(): (params: ProcessCellForExportParams)=>any { return this.gridOptions.processCellFromClipboard; }
     public getViewportRowModelPageSize(): number { return oneOrGreater(this.gridOptions.viewportRowModelPageSize, DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE); }
     public getViewportRowModelBufferSize(): number { return zeroOrGreater(this.gridOptions.viewportRowModelBufferSize, DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE); }
