@@ -15,7 +15,8 @@ import {VirtualList, VirtualListModel} from "../rendering/virtualList";
 
 enum CheckboxState {CHECKED, UNCHECKED, INTERMEDIATE}
 
-export class SetFilter extends BaseFilter <string, ISetFilterParams, SerializedSetFilter> {
+
+export class SetFilter extends BaseFilter <string, ISetFilterParams, string[] | SerializedSetFilter> {
 
     private model: SetFilterModel;
 
@@ -113,11 +114,15 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, SerializedS
         this.virtualList.refresh();
     }
 
-    modelFromFloatingFilter(from: string): SerializedSetFilter {
-        return {
-            values: [from],
-            filterType: 'set'
-        };
+    modelFromFloatingFilter(from: string): string[] | SerializedSetFilter {
+        if(this.gridOptionsWrapper.isEnableOldSetFilterModel()) {
+            return [from];
+        } else {
+            return {
+                values: [from],
+                filterType: 'set'
+            };
+        }
     }
 
     public refreshFilterBodyUi(): void {
@@ -349,14 +354,18 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, SerializedS
         return this.model.getUniqueValue(index);
     }
 
-    public serialize(): SerializedSetFilter {
-        return {
-            values: this.model.getModel(),
-            filterType: 'set'
-        };
+    public serialize(): string[] | SerializedSetFilter {
+        if(this.gridOptionsWrapper.isEnableOldSetFilterModel()) {
+            return this.model.getModel();
+        } else {
+            return {
+                values: this.model.getModel(),
+                filterType: 'set'
+            };
+        }
     }
 
-    public parse(dataModel: SerializedSetFilter) {
+    public parse(dataModel: string[] | SerializedSetFilter) {
         // also supporting old filter model for backwards compatibility
         let newValues: string[] = (dataModel instanceof Array) ? dataModel : dataModel.values;
 
