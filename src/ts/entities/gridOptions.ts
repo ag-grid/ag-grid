@@ -9,7 +9,7 @@ import {IDatasource} from "../rowModels/iDatasource";
 import {GridCellDef} from "./gridCell";
 import {IDateComp} from "../rendering/dateComponent";
 import {IEnterpriseDatasource} from "../interfaces/iEnterpriseDatasource";
-import {CsvExportParams, ProcessCellForExportParams} from "../exportParams";
+import {CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams} from "../exportParams";
 import {
     CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditingStartedEvent, CellEditingStoppedEvent,
     CellFocusedEvent, CellMouseDownEvent,
@@ -307,6 +307,7 @@ export interface GridOptions {
     doesDataFlower?(dataItem: any): boolean;
     processRowPostCreate?(params: ProcessRowParams): void;
     processCellForClipboard?(params: ProcessCellForExportParams): any;
+    processHeaderForClipboard?(params: ProcessHeaderForExportParams): any;
     processCellFromClipboard?(params: ProcessCellForExportParams): any;
     processSecondaryColDef?(colDef: ColDef): void;
     processSecondaryColGroupDef?(colGroupDef: ColGroupDef): void;
