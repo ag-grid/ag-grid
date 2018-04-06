@@ -45,8 +45,7 @@ export default Vue.extend({
     beforeDestroy() {
       let detailGridId = "detail_" + this.rowIndex;
 
-      console.log("destroying detail grid with id: ", detailGridId);
-      this.masterGridApi.getDetailGridInfo(detailGridId).api.destroy();
+      // ag-Grid is automatically destroyed
 
       console.log("removing detail grid info with id: ", detailGridId);
       this.masterGridApi.removeDetailGridInfo(detailGridId);
