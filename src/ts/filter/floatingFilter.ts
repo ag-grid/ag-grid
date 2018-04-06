@@ -277,10 +277,13 @@ export class SetFloatingFilterComp extends InputTextFloatingFilterComp<Serialize
         this.eColumnFloatingFilter.readOnly = true;
     }
 
-    asFloatingFilterText(parentModel: SerializedSetFilter): string {
-        if (!parentModel || parentModel.values.length === 0) { return ''; }
+    asFloatingFilterText(parentModel: string[] | SerializedSetFilter): string {
+        if(!parentModel) return '';
 
-        let values = parentModel.values;
+        // also supporting old filter model for backwards compatibility
+        let values: string[] = (parentModel instanceof Array) ? parentModel : parentModel.values;
+
+        if (values.length === 0) { return ''; }
 
         let arrayToDisplay = values.length > 10 ? values.slice(0, 10).concat('...') : values;
         return `(${values.length}) ${arrayToDisplay.join(",")}`;

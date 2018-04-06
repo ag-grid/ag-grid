@@ -434,6 +434,7 @@ export class GridOptionsWrapper {
     public isAlwaysShowStatusBar() { return isTrue(this.gridOptions.alwaysShowStatusBar); }
     public isFunctionsReadOnly() { return isTrue(this.gridOptions.functionsReadOnly); }
     public isFloatingFilter(): boolean { return this.gridOptions.floatingFilter; }
+    public isEnableOldSetFilterModel(): boolean { return isTrue(this.gridOptions.enableOldSetFilterModel); }
     // public isFloatingFilter(): boolean { return true; }
 
     public getDefaultColDef(): ColDef { return this.gridOptions.defaultColDef; }
