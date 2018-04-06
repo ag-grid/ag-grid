@@ -183,8 +183,8 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
         return shouldFilter;
     }
 
-    public onFilterChanged(): void {
-        this.doOnFilterChanged();
+    public onFilterChanged(applyNow: boolean = false): void {
+        this.doOnFilterChanged(applyNow);
     }
 
     public onFloatingFilterChanged(change: FloatingFilterChange): boolean {
