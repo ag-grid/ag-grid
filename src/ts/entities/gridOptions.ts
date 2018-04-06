@@ -207,6 +207,7 @@ export interface GridOptions {
     autoGroupColumnDef?: ColDef;
     // deprecated - should use domLayout
     forPrint?: boolean;
+    enableOldSetFilterModel?: boolean;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
