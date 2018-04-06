@@ -55,6 +55,20 @@ include '../documentation-main/documentation_header.php';
             </li>
         </ul>
 
+<h2 class="heading-viewport-zooming">Enabling Double Clicking on Mobile Devices</h2>
+
+<p>
+    The default behaviour on many mobile devices when a page is double clicked on it to zoom in. To prevent this behaviour
+    so that a double click would, for example, edit a cell you need to disable viewport zooming.
+</p>
+
+<p>You can disable viewport zooming by setting the following tag at the top level page:</p>
+
+<snippet language="html">
+&lt;meta name="viewport" content="width=device-width, initial-scale=1" /&gt;
+</snippet>
+
+
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

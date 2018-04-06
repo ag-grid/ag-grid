@@ -34,13 +34,14 @@ export default class DetailCellRenderer extends Component {
           id="detailGrid"
           columnDefs={this.state.colDefs}
           rowData={this.state.rowData}
-          onGridReady={this.onGridReady.bind(this)}
+          debug={true}
+          onGridReady={this.onGridReady}
         />
       </div>
     );
   }
 
-  onGridReady(params) {
+  onGridReady = params => {
     let detailGridId = this.createDetailGridId();
 
     let gridInfo = {
@@ -51,19 +52,18 @@ export default class DetailCellRenderer extends Component {
 
     console.log("adding detail grid info with id: ", detailGridId);
     this.state.masterGridApi.addDetailGridInfo(detailGridId, gridInfo);
-  }
+  };
 
-  componentWillUnmount() {
+  componentWillUnmount = () => {
     let detailGridId = this.createDetailGridId();
 
-    console.log("destroying detail grid with id: ", detailGridId);
-    this.state.masterGridApi.getDetailGridInfo(detailGridId).api.destroy();
+    // ag-Grid is automatically destroyed
 
     console.log("removing detail grid info with id: ", detailGridId);
     this.state.masterGridApi.removeDetailGridInfo(detailGridId);
-  }
+  };
 
-  createDetailGridId() {
+  createDetailGridId = () => {
     return "detail_" + this.state.rowIndex;
   }
 }
