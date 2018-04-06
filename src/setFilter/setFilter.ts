@@ -31,7 +31,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, SerializedS
     private selectAllState: CheckboxState;
 
     private virtualList: VirtualList;
-    private debounceFilterChanged: () => void;
+    private debounceFilterChanged: (applyNow?: boolean) => void;
 
     private eCheckedIcon: HTMLElement;
     private eUncheckedIcon: HTMLElement;
@@ -42,8 +42,8 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, SerializedS
     }
 
     public customInit(): void {
-        let changeFilter: () => void = () => {
-            this.onFilterChanged();
+        let changeFilter: (applyNow?: boolean) => void = (applyNow: boolean = false) => {
+            this.onFilterChanged(applyNow);
         };
         let debounceMs: number = this.filterParams && this.filterParams.debounceMs != null ? this.filterParams.debounceMs : 0;
         this.debounceFilterChanged = _.debounce(changeFilter, debounceMs);
@@ -97,7 +97,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, SerializedS
             this.filterParams.valueGetter,
             this.filterParams.doesRowPassOtherFilter,
             this.filterParams.suppressSorting,
-            (values:string[])=>this.setFilterValues(values, true, false),
+            (values:string[], toSelect:string[])=>this.setFilterValues(values, toSelect ? false: true, toSelect ? true: false, toSelect),
             this.setLoading.bind(this)
         );
         this.virtualList.setModel(new ModelWrapper(this.model));
@@ -194,19 +194,21 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, SerializedS
      * @param options The options to use.
      * @param selectAll If by default all the values should be selected.
      * @param notify If we should let know the model that the values of the filter have changed
+     * @param toSelect The subset of options to subselect
      */
-    public setFilterValues(options: string[], selectAll:boolean = false, notify:boolean = true): void {
+    public setFilterValues(options: string[], selectAll:boolean = false, notify:boolean = true, toSelect ?: string[]): void {
         this.model.onFilterValuesReady (()=>{
             let keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
-            let isSelectAll = selectAll  || (this.selectAllState===CheckboxState.CHECKED);
-
             this.model.setValuesType(SetFilterModelValuesType.PROVIDED_LIST);
-            this.model.refreshValues(options, keepSelection, isSelectAll);
+            this.model.refreshValues(options, keepSelection, selectAll);
             this.updateSelectAll();
-            options.forEach(option=>this.model.selectValue(option));
+
+            let actualToSelect: string[] = toSelect ? toSelect : options;
+
+            actualToSelect.forEach(option=>this.model.selectValue(option));
             this.virtualList.refresh();
             if (notify){
-                this.debounceFilterChanged();
+                this.debounceFilterChanged(true);
             }
         });
     }

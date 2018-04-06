@@ -38,11 +38,11 @@ export class SetFilterModel {
     private valuesType: SetFilterModelValuesType;
 
     private doesRowPassOtherFilters: any;
-    private modelUpdatedFunc: (values: string[]) => void;
+    private modelUpdatedFunc: (values: string[], selected?:string[]) => void;
     private isLoadingFunc: (loading: boolean) => void;
 
-    private filterValuesExternalPromise: ExternalPromise<void>;
-    private filterValuesPromise: Promise<void>;
+    private filterValuesExternalPromise: ExternalPromise<string[]>;
+    private filterValuesPromise: Promise<string[]>;
 
     constructor(
         colDef: ColDef,
@@ -50,7 +50,7 @@ export class SetFilterModel {
         valueGetter: any,
         doesRowPassOtherFilters: any,
         suppressSorting: boolean,
-        modelUpdatedFunc: (values:string[])=>void,
+        modelUpdatedFunc: (values:string[], selected?:string[])=>void,
         isLoadingFunc: (loading:boolean)=>void
     ) {
         this.suppressSorting = suppressSorting;
@@ -135,7 +135,7 @@ export class SetFilterModel {
             this.setValues(valuesToUse);
             this.filterValuesPromise = Promise.resolve(null);
         } else {
-            this.filterValuesExternalPromise = Promise.external<void>();
+            this.filterValuesExternalPromise = Promise.external<string[]>();
             this.filterValuesPromise = this.filterValuesExternalPromise.promise;
             this.isLoadingFunc(true);
             this.setValues([]);
@@ -150,7 +150,7 @@ export class SetFilterModel {
     private onAsyncValuesLoaded(values:string[]): void {
         this.modelUpdatedFunc(values);
         this.isLoadingFunc(false);
-        this.filterValuesExternalPromise.resolve(null);
+        this.filterValuesExternalPromise.resolve(values);
     }
 
     private areValuesSync() {
@@ -419,6 +419,16 @@ export class SetFilterModel {
     }
 
     public setModel(model: string[], isSelectAll = false): void {
+        if (this.areValuesSync()){
+            this.setSyncModel(model, isSelectAll)
+        } else {
+            this.filterValuesExternalPromise.promise.then(values=>{
+                this.modelUpdatedFunc(values, model);
+            })
+        }
+    }
+
+    private setSyncModel (model: string[], isSelectAll = false):void {
         if (model && !isSelectAll) {
             this.selectNothing();
             for (let i = 0; i < model.length; i++) {
