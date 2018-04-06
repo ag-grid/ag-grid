@@ -750,7 +750,11 @@ export class RowComp extends Component {
     }
 
     public onRowClick(mouseEvent: MouseEvent) {
-        if (_.isStopPropagationForAgGrid(mouseEvent)) { return; }
+
+        let stop = _.isStopPropagationForAgGrid(mouseEvent);
+        if (stop) {
+            return;
+        }
 
         let agEvent: RowClickedEvent = this.createRowEventWithSource(Events.EVENT_ROW_CLICKED, mouseEvent);
 

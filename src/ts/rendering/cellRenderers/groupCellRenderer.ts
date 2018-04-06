@@ -387,6 +387,10 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     public onExpandClicked(mouseEvent: MouseEvent): void {
         if (_.isStopPropagationForAgGrid(mouseEvent)) { return; }
+
+        // so if we expand a node, it does not also get selected.
+        _.stopPropagationForAgGrid(mouseEvent);
+
         this.onExpandOrContract();
     }
 
