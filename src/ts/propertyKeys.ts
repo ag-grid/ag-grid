@@ -70,7 +70,7 @@ export class PropertyKeys {
         'processCellFromClipboard', 'getDocument', 'postProcessPopup', 'getChildCount', 'getDataPath', 'loadingOverlayComponent',
         'loadingOverlayComponentFramework', 'noRowsOverlayComponent', 'noRowsOverlayComponentFramework', 'detailCellRenderer',
         'detailCellRendererFramework', 'onGridReady', 'defaultGroupSortComparator', 'isRowMaster', 'isRowSelectable', 'postSort',
-        'processHeaderForClipboard'];
+        'processHeaderForClipboard', 'paginationNumberFormatter'];
 
      public static ALL_PROPERTIES = PropertyKeys.ARRAY_PROPERTIES
         .concat(PropertyKeys.OBJECT_PROPERTIES)
