@@ -75,7 +75,9 @@ export default Vue.extend({
     watch: watchedProperties,
     destroyed() {
         if (this._initialised) {
-            this.gridOptions.api.destroy();
+            if(this.gridOptions.api) {
+                this.gridOptions.api.destroy();
+            }
             this._destroyed = true;
         }
     }
