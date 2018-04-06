@@ -1233,7 +1233,9 @@ export class CellComp extends Component {
     }
 
     private onShiftRangeSelect(key: number): void {
-        this.beans.rangeController.extendRangeInDirection(this.gridCell, key);
+        let success = this.beans.rangeController.extendRangeInDirection(this.gridCell, key);
+
+        if (!success) { return; }
 
         let ranges = this.beans.rangeController.getCellRanges();
 
