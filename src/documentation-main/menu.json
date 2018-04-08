@@ -16,10 +16,6 @@
                         "url": "javascript-grid-download/"
                     },
                     {
-                        "title": "Test with Jasmine",
-                        "url": "javascript-grid-test-with-jasmine/"
-                    },
-                    {
                         "title": "Use with TypeScript",
                         "gtm": { "tech": "typescript" },
                         "url": "ag-grid-typescript-webpack-2/"
@@ -54,6 +50,10 @@
                                 "url": "ag-grid-angular-webpack/"
                             }
                         ]
+                    },
+                    {
+                        "title": "Use with RxJS",
+                        "url": "example-angular-rxjs/"
                     }
                 ]
             },
@@ -76,19 +76,39 @@
                 ]
             },
             {
+                "title": "Server-side Operations",
+                "gtm": { "tech": "server-side-operations" },
+                "items": [
+                    {
+                        "title": "Using Java & Oracle",
+                        "url": "oracle-server-side-operations/"
+                    },
+                    {
+                        "title": "Using Java & Apache Spark",
+                        "url": "spark-server-side-operations/"
+                    }
+                ]
+            },
+            {
                 "title": "Vue.js",
                 "gtm": { "tech": "vue" },
                 "url": "best-vuejs-data-grid/"
             },
             {
-                "title": "Server-side Operations",
-                "gtm": { "tech": "server-side-operations" },
-                "items": [
-                    {
-                        "title": "Integrate with Oracle",
-                        "url": "oracle-server-side-operations/"
-                    }
-                ]
+                "title": "Use  With RxJS",
+                "url": "javascript-grid-rxjs/"
+            },
+            {
+                "title": "Resize With Parent Container",
+                "url": "javascript-grid-responsiveness/"
+            },
+            {
+                "title": "Test With Protractor &amp; Jasmine",
+                "url": "javascript-grid-testing/"
+            },
+            {
+                "title": "Use in OpenFin",
+                "url": "javascript-grid-openfin/"
             }
         ]
     },
@@ -518,34 +538,8 @@
                 "url": "javascript-grid-examples/"
             },
             {
-                "title": "Flexbox",
-                "url": "example-flexbox/",
-                "new": true
-            },
-            {
-                "title": "CSS Grid",
-                "url": "example-css-grid/",
-                "new": true
-            },
-            {
-                "title": "Redux",
-                "url": "example-react-redux/"
-            },
-            {
-                "title": "Angular RxJS",
-                "url": "example-angular-rxjs/"
-            },
-            {
                 "title": "Angular & Material Design",
                 "url": "example-angular-material-design/"
-            },
-            {
-                "title": "Angular & ngx Bootstrap",
-                "url": "example-angular-ngx-bootstrap/"
-            },
-            {
-                "title": "Angular with Typeahead",
-                "url": "example-angular-typeahead/"
             },
             {
                 "title": "Expressions & Context",
@@ -560,49 +554,8 @@
                 "url": "example-gallery/"
             },
             {
-                "title": "OpenFin Dashboard",
-                "url": "javascript-grid-openfin-dashboard/"
-            },
-            {
                 "title": "Graphing",
                 "url": "javascript-grid-graphing/"
-            }
-        ]
-    },
-    {
-        "title": "Misc",
-        "gtm": { "category": "misc" },
-        "items": [
-            {
-                "title": "Change log",
-                "url": "ag-grid-changelog/",
-                "skipIndex": true,
-                "new": true
-            },
-            {
-                "title": "OpenFin",
-                "url": "javascript-grid-openfin/"
-            },
-            {
-                "title": "Tutorials",
-                "url": "ag-grid-tutorials/"
-            },
-            {
-                "title": "Responsive Design",
-                "url": "javascript-grid-responsiveness/"
-            },
-            {
-                "title": "Testing",
-                "url": "javascript-grid-testing/"
-            },
-            {
-                "title": "RxJS",
-                "url": "javascript-grid-rxjs/"
-            },
-            {
-                "title": "Archive Docs",
-                "url": "archive/",
-                "skipIndex": true
             }
         ]
     }

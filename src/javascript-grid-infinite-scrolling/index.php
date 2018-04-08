@@ -602,7 +602,7 @@ loadingSpinnerColumn = {
         sided call is needed.
     </p>
 
-    <?= example('Block Larger Than Page', 'block-larger-page', 'generated') ?>
+    <?= example('Block Larger Than Page', 'block-larger-page', 'generated', array("enterprise" => 1)) ?>
 
     <h3>Example 2: Equal Pagination Page Size and Large Infinite Block Size</h3>
 

@@ -133,11 +133,40 @@ include '../documentation-main/documentation_header.php';
         do so: </p>
 
     <ul class="content">
-        <li><code>processCellForClipboard(params):</code>Allows you to process cells for the clipboard. Handy if you have date objects that you need to have a particular format if importing into Excel.
+        <li>
+            <code>processCellForClipboard(params):</code>
+            Allows you to process cells for the clipboard. Handy if you have date objects that you
+            need to have a particular format if importing into Excel.
         </li>
-        <li><code>processCellFromClipboard(params):</code>Allows you to process cells from the clipboard. Handy if you have for example number fields, and want to block non-numbers from getting into the grid.
+        <li>
+            <code>processHeaderForClipboard(params):</code>
+            Allows you to process header values for the clipboard.
+        </li>
+        <li>
+            <code>processCellFromClipboard(params):</code>Allows you to process cells from the clipboard.
+            Handy if you have for example number fields and want to block non-numbers from getting into the grid.
         </li>
     </ul>
+
+    <p>
+        The three callbacks above are demonstrated in the example below. Not the following:
+        <ul>
+            <li>
+                When cells are copied to the clipboard, values are prefixed with 'C-'.
+                Cells can be copied by dragging a range with the mouse and hitting ctrl+c.
+            </li>
+            <li>
+                When cells are pasted from the clipboard, values are prefixed with 'Z-'.
+                Cells can be pasted by hitting ctrl+v.
+            </li>
+            <li>
+                When headers are copied to the clipboard, values are prefixed with 'H-'.
+                Headers can be copied by using the context menu.
+            </li>
+        </ul>
+    </p>
+
+    <?= example('Example Process', 'process', 'generated', array("enterprise" => true)) ?>
 
     <h2>Changing the Deliminator</h2>
 

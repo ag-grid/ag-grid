@@ -101,6 +101,9 @@
             ul {
                 padding-start: 0;
                 padding-inline-start: 0;
+                a {
+                    // color: $gray-600;
+                }
             }
 
             ul ul ul {
@@ -133,24 +136,29 @@
             width: 100%;
             // transition: height 0.3s ease-out;
         }
-
-        #side-nav-container > ul ul li span {
-            &::after {
-                color: $gray-600;
-                content: "❯ ";
-                display: inline-block;
-                float: right;
-                font-size: 60%;
-                line-height: 1.8rem;
-                margin-right: 1rem;
-                transform: rotate(90deg);
-                transition: transform 0.3s ease-out;
+        #side-nav-container > ul ul li {
+            span,
+            a.has-children {
+                &::after {
+                    color: $gray-600;
+                    content: "❯ ";
+                    display: inline-block;
+                    float: right;
+                    font-size: 60%;
+                    line-height: 1.4rem;
+                    margin-right: 1rem;
+                    transform: rotate(90deg);
+                    transition: transform 0.3s ease-out;
+                }
             }
-        }
 
-        #side-nav-container > ul ul li.expanded > span {
-            &::after {
-                transform: rotate(-90deg);
+            &.expanded {
+                span,
+                a.has-children {
+                    &::after {
+                        transform: rotate(-90deg);
+                    }
+                }
             }
         }
 

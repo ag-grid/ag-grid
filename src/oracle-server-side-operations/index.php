@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "Server-side operations with the Oracle Database with ag-Grid";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is a detailed guide on how to use with React and Redux. We explore how a React component using ag-Grid can take advantage of a Redux store to simplify state management.";
+$pageTitle = "Server-side operations with the Oracle Database and ag-Grid";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is a guide on how to perform server-side operations with Oracle and ag-Grid.";
 $pageKeyboards = "Server-side operations with the Oracle Database";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
@@ -46,7 +46,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The simplest approach is to send all row data to the browser in response to a single request at initialisation.
-        For this use case the <a href="/javascript-grid-in-memory/">In-Memory Row Model</a> has been designed.
+        For this use case the <a href="/oracle-server-side-operations/">In-Memory Row Model</a> has been designed.
 
      <p>
         This scenario is illustrated below where 10,000 records are loaded directly into the browser:
@@ -90,8 +90,8 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        Throughout the rest of this guide we will demonstrate the power of the Enterprise Row Model with the aid a Java
-        service connected to an oracle database.
+        Throughout the rest of this guide we will demonstrate the power of the Enterprise Row Model with the aid of a
+        Java service connected to an oracle database.
     </p>
 
     <h2 id="prerequisites">Prerequisites</h2>
@@ -104,7 +104,7 @@ include '../documentation-main/documentation_header.php';
         This example was tested using the following versions:
 
         <ul>
-            <li>ag-grid-enterprise (v17.0.0)</li>
+            <li>ag-grid-enterprise (v18.0.0)</li>
             <li>Java(TM) SE Runtime Environment (build 1.8.0_162-b12)</li>
             <li>Java HotSpot(TM) 64-Bit Server VM (build 25.162-b12, mixed mode)</li>
             <li>Apache Maven (3.5.2)</li>
@@ -554,7 +554,7 @@ let createSecondaryColumns = function (fields, valueCols) {
 </snippet>
 
     <p>
-        In order for the grid to show these newly created columns an an explicit api call is required:
+        In order for the grid to show these newly created columns an explicit api call is required:
     </p>
 
 <snippet>

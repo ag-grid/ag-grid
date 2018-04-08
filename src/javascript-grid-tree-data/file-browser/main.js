@@ -78,7 +78,7 @@ function getFileCellRenderer() {
         var tempDiv = document.createElement('div');
         var value = params.value;
         var icon = getFileIcon(params.value);
-        tempDiv.innerHTML = icon ? '<i class="' + icon + '"/>' + '<span class="filename">' + value + '</span>' : value;
+        tempDiv.innerHTML = icon ? '<span><i class="' + icon + '"></i>' + '<span class="filename"></span>' + value + '</span>' : value;
         this.eGui = tempDiv.firstChild;
     };
     FileCellRenderer.prototype.getGui = function() {

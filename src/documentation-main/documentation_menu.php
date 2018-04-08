@@ -49,7 +49,17 @@ function render_menu_items($items, $gtm = array()) {
         $new_marker = ($item['new'] ? '<span class="new-marker">new</span>' : '');
         if ($item['url']) {
             $url = $GLOBALS['rootFolder'] . $item['url'];
-            $a_class = $current ? ' class="active"' : '';
+            $a_classes = array();
+            if ($current) {
+                array_push($a_classes, 'active');
+            } 
+
+            if (count($item['items']) > 0) {
+                array_push($a_classes, 'has-children');
+            }
+
+            $a_class = count($a_classes) > 0 ? ' class="' . join($a_classes, ' ') . '"' : '';
+
             if ($current) {
                 $GLOBALS['DOC_GTM'] = json_encode($item_gtm);
             }
