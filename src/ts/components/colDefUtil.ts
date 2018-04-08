@@ -117,7 +117,9 @@ export class ColDefUtil {
         'onCellClicked',
         'onCellDoubleClicked',
         'onCellContextMenu',
-        'tooltip'];
+        'tooltip',
+        'cellRendererSelector',
+        'cellEditorSelector'];
 
     public static ALL_PROPERTIES = ColDefUtil.ARRAY_PROPERTIES
         .concat(ColDefUtil.OBJECT_PROPERTIES)

@@ -682,8 +682,8 @@
 
             .ag-column-select-checkbox,
             .ag-column-group-icons {
-                margin-right: $grid-size;
                 margin-left: $grid-size;
+                margin-right: $grid-size;
             }
         }
 
@@ -853,24 +853,32 @@
         & > span {
             margin-left: $grid-size * 4;
         }
+    }
 
-        @if map-get($params, "use-icons-for-pager-buttons") {
-            $buttonIcons: (btFirst: first, btPrevious: previous, btLast: last, btNext: next);
 
-            @each $ref, $icon in $buttonIcons {
-                button[ref="#{$ref}"] {
-                    @include icon-background($params, $icon);
-                    @include hide-text;
+    @if map-get($params, "use-icons-for-pager-buttons") {
+        $buttonIcons:    (btFirst: first,   btPrevious: previous,   btLast: last,   btNext: next);
+        $rtlButtonIcons: (btFirst: last,    btPrevious: next,       btLast: first,  btNext: previous);
 
-                    appearance: none;
-                    border: 0;
-                    opacity: $secondary-foreground-color-opacity;
-                    padding: 0;
+        @each $ref, $icon in $buttonIcons {
+            button[ref="#{$ref}"] {
+                @include icon-background($params, $icon);
+                @include hide-text;
 
-                    &[disabled] {
-                        opacity: $disabled-foreground-color-opacity;
-                    }
+                appearance: none;
+                border: 0;
+                opacity: $secondary-foreground-color-opacity;
+                padding: 0;
+
+                &[disabled] {
+                    opacity: $disabled-foreground-color-opacity;
                 }
+            }
+        }
+
+        @each $ref, $icon in $rtlButtonIcons {
+            .ag-rtl button[ref="#{$ref}"] {
+                @include icon-background($params, $icon);
             }
         }
     }
@@ -1138,9 +1146,9 @@
         }
 
         .ag-column-drag {
-            width: $icon-size;
             margin-left: $grid-size * 2;
             margin-top: $grid-size / 2;
+            width: $icon-size;
         }
     }
 
@@ -1207,9 +1215,7 @@
 
     .ag-floating-top {
         background-color: $row-floating-background-color;
-    }
 
-    .ag-floating-top {
         .ag-row {
             background-color: $row-floating-background-color;
         }
@@ -1490,8 +1496,9 @@
 
     .ag-column-name-filter {
         @include textbox($params);
-        width: 100%;
+
         box-sizing: border-box;
+        width: 100%;
     }
 
     $exported: (

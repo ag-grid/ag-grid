@@ -19,6 +19,7 @@ export interface GroupCellRendererParams extends ICellRendererParams{
     pinned:string,
     padding:number,
     suppressPadding:boolean,
+    suppressDoubleClickExpand:boolean;
     footerValueGetter:any,
     suppressCount:boolean,
     fullWidth:boolean,
@@ -324,7 +325,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             this.onAllChildrenCountChanged.bind(this));
 
         // if editing groups, then double click is to start editing
-        if (!this.gridOptionsWrapper.isEnableGroupEdit() && this.isExpandable()) {
+        if (!this.gridOptionsWrapper.isEnableGroupEdit() && this.isExpandable() && !params.suppressDoubleClickExpand) {
             this.addDestroyableEventListener(eGroupCell, 'dblclick', this.onCellDblClicked.bind(this));
         }
     }
@@ -387,6 +388,10 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     public onExpandClicked(mouseEvent: MouseEvent): void {
         if (_.isStopPropagationForAgGrid(mouseEvent)) { return; }
+
+        // so if we expand a node, it does not also get selected.
+        _.stopPropagationForAgGrid(mouseEvent);
+
         this.onExpandOrContract();
     }
 

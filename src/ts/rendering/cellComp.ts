@@ -1233,7 +1233,9 @@ export class CellComp extends Component {
     }
 
     private onShiftRangeSelect(key: number): void {
-        this.beans.rangeController.extendRangeInDirection(this.gridCell, key);
+        let success = this.beans.rangeController.extendRangeInDirection(this.gridCell, key);
+
+        if (!success) { return; }
 
         let ranges = this.beans.rangeController.getCellRanges();
 
@@ -1652,15 +1654,17 @@ export class CellComp extends Component {
             return;
         }
 
+        let newValueExists = false;
+        let newValue: any;
+
         if (!cancel) {
             // also have another option here to cancel after editing, so for example user could have a popup editor and
             // it is closed by user clicking outside the editor. then the editor will close automatically (with false
             // passed above) and we need to see if the editor wants to accept the new value.
             let userWantsToCancel = this.cellEditor.isCancelAfterEnd && this.cellEditor.isCancelAfterEnd();
             if (!userWantsToCancel) {
-                let newValue = this.cellEditor.getValue();
-                this.rowNode.setDataValue(this.column, newValue);
-                this.getValueAndFormat();
+                newValue = this.cellEditor.getValue();
+                newValueExists = true;
             }
         }
 
@@ -1706,6 +1710,11 @@ export class CellComp extends Component {
         }
 
         this.setInlineEditingClass();
+
+        if (newValueExists) {
+            this.rowNode.setDataValue(this.column, newValue);
+            this.getValueAndFormat();
+        }
 
         // we suppress the flash, as it is not correct to flash the cell the user has finished editing,
         // the user doesn't need to flash as they were the one who did the edit, the flash is pointless
