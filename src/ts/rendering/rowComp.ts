@@ -400,6 +400,9 @@ export class RowComp extends Component {
     }
 
     private addMouseWheelListenerToFullWidthRow(): void {
+
+        if (this.beans.gridOptionsWrapper.isNativeScroll()) { return; }
+
         let mouseWheelListener = this.beans.gridPanel.genericMouseWheelListener.bind(this.beans.gridPanel);
         // IE9, Chrome, Safari, Opera
         this.addDestroyableEventListener(this.eFullWidthRow, 'mousewheel', mouseWheelListener);
