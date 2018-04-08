@@ -1060,7 +1060,7 @@ CountryFloatingFilterComponent.prototype.onParentModelChanged = function (dataMo
     // add in child, one for each flat
     if (dataModel) {
 
-        let model = dataModel.values;
+        var model = dataModel.values;
 
         var flagsHtml = [];
         var printDotDotDot = false;
