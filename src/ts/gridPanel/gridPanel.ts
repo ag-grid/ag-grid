@@ -1200,7 +1200,14 @@ export class GridPanel extends BeanStub {
                 floatingBottomFullWith: new RowContainerComponent({eContainer: this.eFloatingBottomFullWidthCellContainer, hideWhenNoChildren: true}),
             };
 
-            this.addMouseWheelEventListeners();
+            if (this.gridOptionsWrapper.isNativeScroll()) {
+                _.addCssClass(this.ePinnedLeftColsViewport, 'ag-pinned-left-cols-viewport-new');
+                _.addCssClass(this.ePinnedRightColsViewport, 'ag-pinned-right-cols-viewport-new');
+            } else {
+                _.addCssClass(this.ePinnedLeftColsViewport, 'ag-pinned-left-cols-viewport-old');
+                _.addCssClass(this.ePinnedRightColsViewport, 'ag-pinned-right-cols-viewport-old');
+            }
+
             this.suppressScrollOnFloatingRow();
             this.setupRowAnimationCssClass();
         }
@@ -1386,15 +1393,6 @@ export class GridPanel extends BeanStub {
 
         let changeDetected = false;
 
-        // if we are v scrolling, then one of these will have the scroll position.
-        // we us this inside the if(changedDetected), so we don't always use it, however
-        // it is changed when we make a pinned panel not visible, so we have to check it
-        // before we change display on the pinned panels
-        let scrollTop = Math.max(
-            this.eBodyViewport.scrollTop,
-            this.ePinnedLeftColsViewport.scrollTop,
-            this.ePinnedRightColsViewport.scrollTop);
-
         let showLeftPinned = this.columnController.isPinningLeft();
         if (showLeftPinned !== this.pinningLeft) {
             this.pinningLeft = showLeftPinned;
@@ -1412,29 +1410,56 @@ export class GridPanel extends BeanStub {
         }
 
         if (changeDetected) {
-            let bodyVScrollActive = this.isBodyVerticalScrollActive();
-            this.eBodyViewport.style.overflowY = bodyVScrollActive ? 'auto' : 'hidden';
-
-            // the body either uses it's scroll (when scrolling) or it's style.top
-            // (when following the scroll of a pinned section), so we need to set it
-            // back when changing from one to the other
-            if (bodyVScrollActive) {
-                this.setFakeScroll(this.eBodyContainer, 0);
-                // this.eBodyContainer.style.top = '0px';
+            if (this.gridOptionsWrapper.isNativeScroll()) {
+                this.setPinnedContainersVisibleNew();
             } else {
-                this.eBodyViewport.scrollTop = 0;
+                this.setPinnedContainersVisibleOld();
             }
+        }
+    }
 
-            // when changing the primary scroll viewport, we copy over the scroll position,
-            // eg if body was getting scrolled and we were at position 100px, then we start
-            // pinning and pinned viewport is now the primary, we need to set it to 100px
-            let primaryScrollViewport = this.getPrimaryScrollViewport();
-            primaryScrollViewport.scrollTop = scrollTop;
-            // this adjusts the scroll position of all the faking panels. they should already
-            // be correct except body which has potentially just turned to be fake.
-            this.fakeVerticalScroll(scrollTop);
+    private setPinnedContainersVisibleOld(): void {
+        let bodyVScrollActive = this.isBodyVerticalScrollActive();
+        this.eBodyViewport.style.overflowY = bodyVScrollActive ? 'auto' : 'hidden';
+
+        // the body either uses it's scroll (when scrolling) or it's style.top
+        // (when following the scroll of a pinned section), so we need to set it
+        // back when changing from one to the other
+        if (bodyVScrollActive) {
+            this.setFakeScroll(this.eBodyContainer, 0);
+            // this.eBodyContainer.style.top = '0px';
+        } else {
+            this.eBodyViewport.scrollTop = 0;
         }
 
+        // if we are v scrolling, then one of these will have the scroll position.
+        // we us this inside the if(changedDetected), so we don't always use it, however
+        // it is changed when we make a pinned panel not visible, so we have to check it
+        // before we change display on the pinned panels
+        let scrollTop = Math.max(
+            this.eBodyViewport.scrollTop,
+            this.ePinnedLeftColsViewport.scrollTop,
+            this.ePinnedRightColsViewport.scrollTop);
+
+        // when changing the primary scroll viewport, we copy over the scroll position,
+        // eg if body was getting scrolled and we were at position 100px, then we start
+        // pinning and pinned viewport is now the primary, we need to set it to 100px
+        let primaryScrollViewport = this.getPrimaryScrollViewport();
+        primaryScrollViewport.scrollTop = scrollTop;
+        // this adjusts the scroll position of all the faking panels. they should already
+        // be correct except body which has potentially just turned to be fake.
+        this.fakeVerticalScroll(scrollTop);
+    }
+
+    private setPinnedContainersVisibleNew(): void {
+
+        if (this.enableRtl) {
+            _.addOrRemoveCssClass(this.eBodyViewport, 'ag-hide-scroll-bar', this.pinningLeft);
+            _.addCssClass(this.ePinnedRightColsViewport, 'ag-hide-scroll-bar');
+        } else {
+            _.addOrRemoveCssClass(this.eBodyViewport, 'ag-hide-scroll-bar', this.pinningRight);
+            _.addCssClass(this.ePinnedLeftColsViewport, 'ag-hide-scroll-bar');
+        }
     }
 
     // init, layoutChanged, floatingDataChanged, headerHeightChanged
@@ -1583,6 +1608,15 @@ export class GridPanel extends BeanStub {
             return;
         }
 
+        if (this.gridOptionsWrapper.isNativeScroll()) {
+            this.doScrollingNativeWay();
+        } else {
+            this.doScrollingOldWay();
+        }
+    }
+
+    private doScrollingOldWay(): void {
+
         this.addDestroyableEventListener(this.eBodyViewport, 'scroll', this.onBodyScroll.bind(this));
 
         // below we add two things:
@@ -1614,6 +1648,51 @@ export class GridPanel extends BeanStub {
         this.addDestroyableEventListener(this.eBodyViewport, 'scroll', suppressCenterScroll);
 
         this.addIEPinFix(onPinnedRightVerticalScroll, onPinnedLeftVerticalScroll);
+
+        this.addMouseWheelEventListeners();
+    }
+
+    private doScrollingNativeWay(): void {
+
+        this.addDestroyableEventListener(this.eBodyViewport, 'scroll', ()=> {
+            this.onBodyHorizontalScroll();
+            this.onAnyBodyScroll(this.eBodyViewport);
+        });
+
+        this.addDestroyableEventListener(this.ePinnedRightColsViewport, 'scroll',
+            this.onAnyBodyScroll.bind(this, this.ePinnedRightColsViewport));
+        this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'scroll',
+            this.onAnyBodyScroll.bind(this, this.ePinnedLeftColsViewport));
+    }
+
+    private lastVScrollElement: HTMLElement;
+    private lastVScrollTime: number;
+
+    private onAnyBodyScroll(source: HTMLElement): void {
+
+        let now = new Date().getTime();
+        let diff = now - this.lastVScrollTime;
+        let elementIsNotControllingTheScroll = source!==this.lastVScrollElement && diff < 500;
+        if (elementIsNotControllingTheScroll) { return; }
+
+        this.lastVScrollElement = source;
+        this.lastVScrollTime = now;
+
+        let scrollTop: number = source.scrollTop;
+
+        if (this.useAnimationFrame) {
+            if (this.nextScrollTop !== scrollTop) {
+                this.nextScrollTop = scrollTop;
+                this.animationFrameService.schedule();
+            }
+        } else {
+            if (scrollTop !== this.scrollTop) {
+                this.scrollTop = scrollTop;
+                this.fakeVerticalScroll(scrollTop);
+                this.redrawRowsAfterScroll();
+            }
+        }
+
     }
 
     private onBodyScroll(): void {
@@ -1772,28 +1851,51 @@ export class GridPanel extends BeanStub {
     // we say fake scroll as only one panel (left, right or body) has scrolls,
     // the other panels mimic the scroll by getting it's top position updated.
     private fakeVerticalScroll(position: number): void {
-        if (this.enableRtl) {
-            // RTL
-            // if pinning left, then body scroll is faking
-            let pinningLeft = this.columnController.isPinningLeft();
-            if (pinningLeft) {
-                this.setFakeScroll(this.eBodyContainer, position);
+
+        if (this.gridOptionsWrapper.isNativeScroll()) {
+
+            if (this.lastVScrollElement !== this.eBodyViewport) {
+                this.eBodyViewport.scrollTop = position;
             }
-            // right is always faking
-            this.setFakeScroll(this.ePinnedRightColsContainer, position);
+
+            if (this.lastVScrollElement !== this.ePinnedLeftColsViewport && this.pinningLeft) {
+                this.ePinnedLeftColsViewport.scrollTop = position;
+            }
+
+            if (this.lastVScrollElement !== this.ePinnedRightColsViewport && this.pinningRight) {
+                this.ePinnedRightColsViewport.scrollTop = position;
+            }
+
+            this.redrawRowsAfterScroll();
+
+
         } else {
-            // LTR
-            // if pinning right, then body scroll is faking
-            let pinningRight = this.columnController.isPinningRight();
-            if (pinningRight) {
-                this.setFakeScroll(this.eBodyContainer, position);
+
+            if (this.enableRtl) {
+                // RTL
+                // if pinning left, then body scroll is faking
+                let pinningLeft = this.columnController.isPinningLeft();
+                if (pinningLeft) {
+                    this.setFakeScroll(this.eBodyContainer, position);
+                }
+                // right is always faking
+                this.setFakeScroll(this.ePinnedRightColsContainer, position);
+            } else {
+                // LTR
+                // if pinning right, then body scroll is faking
+                let pinningRight = this.columnController.isPinningRight();
+                if (pinningRight) {
+                    this.setFakeScroll(this.eBodyContainer, position);
+                }
+                // left is always faking
+                this.setFakeScroll(this.ePinnedLeftColsContainer, position);
             }
-            // left is always faking
-            this.setFakeScroll(this.ePinnedLeftColsContainer, position);
+
+            // always scroll fullWidth container, as this is never responsible for a scroll
+            this.setFakeScroll(this.eFullWidthCellContainer, position);
+
         }
 
-        // always scroll fullWidth container, as this is never responsible for a scroll
-        this.setFakeScroll(this.eFullWidthCellContainer, position);
     }
 
     private setFakeScroll(eContainer: HTMLElement, pixels: number): void {

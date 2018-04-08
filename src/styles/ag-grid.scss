@@ -486,7 +486,7 @@ ag-grid-aurelia {
     //height 100%
 }
 
-.ag-pinned-left-cols-viewport {
+.ag-pinned-left-cols-viewport-old {
     float: left;
 }
 
@@ -495,26 +495,48 @@ ag-grid-aurelia {
     position: relative;
 }
 
-.ag-pinned-right-cols-viewport {
+.ag-pinned-right-cols-viewport-old {
     float: right;
 }
 // for LTR, we show scrolls on the right pinned only
-.ag-ltr .ag-pinned-right-cols-viewport {
+.ag-ltr .ag-pinned-right-cols-viewport-old {
     overflow-x: hidden;
     overflow-y: auto;
 }
 
-.ag-ltr .ag-pinned-left-cols-viewport {
+.ag-ltr .ag-pinned-left-cols-viewport-old {
     overflow: hidden;
 }
 // for RTL, other way around, we show scrolls on left only
-.ag-rtl .ag-pinned-right-cols-viewport {
+.ag-rtl .ag-pinned-right-cols-viewport-old {
     overflow: hidden;
 }
 
-.ag-rtl .ag-pinned-left-cols-viewport {
+.ag-rtl .ag-pinned-left-cols-viewport-old {
     overflow-x: hidden;
     overflow-y: auto;
+}
+
+.ag-pinned-right-cols-viewport-new {
+    float: right;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.ag-pinned-left-cols-viewport-new {
+    float: left;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.ag-hide-scroll-bar::-webkit-scrollbar {
+    //display: none;
+}
+
+.ag-hide-scroll-bar {
+    margin-right: -16px;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .ag-pinned-right-cols-container {
