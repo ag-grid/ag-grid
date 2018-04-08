@@ -61,6 +61,9 @@ export class DetailCellRenderer extends Component {
     }
 
     private setupGrabMouseWheelEvent(): void {
+
+        if (this.gridOptionsWrapper.isNativeScroll()) { return; }
+
         let mouseWheelListener = (event: WheelEvent) => {
             event.stopPropagation();
         };
