@@ -188,7 +188,7 @@ export class BalancedColumnTreeBuilder {
         return column;
     }
 
-    private mergeColDefs(colDef: ColDef) {
+    public mergeColDefs(colDef: ColDef) {
         // start with empty merged definition
         let colDefMerged: ColDef = <ColDef> {};
 
