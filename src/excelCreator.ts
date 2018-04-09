@@ -57,7 +57,7 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession<Exce
                 private excelXmlFactory: ExcelXmlFactory,
                 baseExcelStyles: ExcelStyle[],
                 private styleLinker: (rowType: RowType, rowIndex: number, colIndex: number, value: string, column: Column, node: RowNode) => string[]) {
-        super(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback, (raw: string) => Utils.escape(raw));
+        super(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback, (raw: string) => raw);
         this.stylesByIds = {};
         if (!baseExcelStyles) {
             this.excelStyles = [];
