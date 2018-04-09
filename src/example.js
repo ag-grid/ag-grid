@@ -107,7 +107,9 @@ var gridOptions = {
         ratingRenderer: ratingRenderer,
         ratingFilterRenderer: ratingFilterRenderer
     },
-
+    defaultExportParams:{
+        columnGroups: true
+    },
     defaultColDef: {
         minWidth: 50
     },
