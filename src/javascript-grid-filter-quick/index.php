@@ -17,7 +17,12 @@ include '../documentation-main/documentation_header.php';
 api.setQuickFilter('new filter text');</snippet>
 
     <p>If you are using a framework such as Angular or React, you can set bind the quick filter text to the
-    <code>quickFilter</code> attribute.
+        <code>quickFilter</code> attribute.
+    </p>
+
+<p>
+    The quick filter text will check all words provided against the full row. For example if the text provided
+    is "Tony Ireland", the quick filter will bring back allow rows with both "Tony" AND "Ireland" in them.
 </p>
 
 <h2>Overriding the Quick Filter Value</h2>
