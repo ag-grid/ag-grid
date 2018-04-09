@@ -108,7 +108,7 @@ npm run stocks-detail</snippet>
 
     <h2>A Trader Dashboard with Tear Out Windows</h2>
 
-    <note>You can try this example live using the following <a href="https://dl.openfin.co/services/download?fileName=aggrid_openfin_traderdashboard&config=https://ag-grid.github.io/ag-grid-openfin-example/app-trader-remote.json">Link</a>.
+    <note>You can try this example live using the following <a href="https://install.openfin.co/download/?fileName=aggrid_openfin_traderdashboard&config=https://ag-grid.github.io/ag-grid-openfin-example/app-trader-remote.json">Link</a>.
     This will download a Zip file with a Windows executable within - if you run this executable the Trader Dashboard will install and run on your computer.</note>
 
     <p>In this example we host the full <a href="../ag-grid-trader-dashboard/">Trader Dashboard</a> within an OpenFin container,
