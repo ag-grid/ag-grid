@@ -891,6 +891,8 @@ export class GridPanel extends BeanStub {
     private setMarginOnFullWidthCellContainer(): void {
         if (this.forPrint) { return; }
 
+        if (this.gridOptionsWrapper.isNativeScroll()) { return; }
+
         // if either right or bottom scrollbars are showing, we need to make sure the
         // fullWidthCell panel isn't covering the scrollbars. originally i tried to do this using
         // margin, but the overflow was not getting clipped and going into the margin,
@@ -1201,11 +1203,9 @@ export class GridPanel extends BeanStub {
             };
 
             if (this.gridOptionsWrapper.isNativeScroll()) {
-                _.addCssClass(this.ePinnedLeftColsViewport, 'ag-pinned-left-cols-viewport-new');
-                _.addCssClass(this.ePinnedRightColsViewport, 'ag-pinned-right-cols-viewport-new');
+                _.addCssClass(this.eRoot, 'ag-native-scroll');
             } else {
-                _.addCssClass(this.ePinnedLeftColsViewport, 'ag-pinned-left-cols-viewport-old');
-                _.addCssClass(this.ePinnedRightColsViewport, 'ag-pinned-right-cols-viewport-old');
+                _.addCssClass(this.eRoot, 'ag-hacked-scroll');
             }
 
             this.suppressScrollOnFloatingRow();
@@ -1663,6 +1663,8 @@ export class GridPanel extends BeanStub {
             this.onAnyBodyScroll.bind(this, this.ePinnedRightColsViewport));
         this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'scroll',
             this.onAnyBodyScroll.bind(this, this.ePinnedLeftColsViewport));
+        this.addDestroyableEventListener(this.eFullWidthCellViewport, 'scroll',
+            this.onAnyBodyScroll.bind(this, this.eFullWidthCellViewport));
     }
 
     private lastVScrollElement: HTMLElement;
@@ -1672,7 +1674,7 @@ export class GridPanel extends BeanStub {
 
         let now = new Date().getTime();
         let diff = now - this.lastVScrollTime;
-        let elementIsNotControllingTheScroll = source!==this.lastVScrollElement && diff < 500;
+        let elementIsNotControllingTheScroll = source!==this.lastVScrollElement && diff < 100;
         if (elementIsNotControllingTheScroll) { return; }
 
         this.lastVScrollElement = source;
@@ -1866,8 +1868,11 @@ export class GridPanel extends BeanStub {
                 this.ePinnedRightColsViewport.scrollTop = position;
             }
 
-            this.redrawRowsAfterScroll();
+            if (this.lastVScrollElement !== this.eFullWidthCellViewport) {
+                this.eFullWidthCellViewport.scrollTop = position;
+            }
 
+            this.redrawRowsAfterScroll();
 
         } else {
 
