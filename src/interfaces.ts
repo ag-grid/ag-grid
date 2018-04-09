@@ -1,22 +1,20 @@
 import {
-    IHeaderGroup,
-    IHeaderGroupParams,
-    IHeader,
-    IHeaderParams,
-    IFilterParams,
-    IDate,
-    IDateParams,
-    ICellRenderer,
-    ICellRendererParams,
+    IAfterGuiAttachedParams,
     ICellEditor,
     ICellEditorParams,
+    ICellRenderer,
+    ICellRendererParams,
+    IDate,
+    IDateParams,
     IFilter,
-    IAfterGuiAttachedParams,
+    IFilterParams,
     IFloatingFilter,
     IFloatingFilterParams,
-    ILoadingOverlayComp,
+    IHeader,
+    IHeaderGroup,
+    IHeaderGroupParams,
+    IHeaderParams,
     ILoadingOverlayParams,
-    INoRowsOverlayComp,
     INoRowsOverlayParams
 } from "ag-grid/main";
 
@@ -38,5 +36,5 @@ export interface AgRendererComponent extends ICellRendererAngularComp {}
 export interface AgEditorComponent extends ICellEditorAngularComp {}
 export interface AgFilterComponent extends IFilterAngularComp {}
 
-export interface ILoadingOverlayAngularComp extends ILoadingOverlayComp, AgFrameworkComponent<ILoadingOverlayParams> {}
-export interface INoRowsOverlayAngularComp extends INoRowsOverlayComp, AgFrameworkComponent<INoRowsOverlayParams> {}
+export interface ILoadingOverlayAngularComp extends AgFrameworkComponent<ILoadingOverlayParams> {}
+export interface INoRowsOverlayAngularComp extends AgFrameworkComponent<INoRowsOverlayParams> {}
