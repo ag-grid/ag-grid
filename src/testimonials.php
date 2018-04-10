@@ -36,7 +36,7 @@ meta_and_links("ag-Grid: Customer Testimonials", "ag-Grid Javascript Grid Testim
     </blockquote>
 
     <blockquote>
-        <p>We love Ag-grid for its simple integration, blazing-fast performance, and friendly community.</p>
+        <p>We love ag-Grid for its simple integration, blazing-fast performance, and friendly community.</p>
         <footer>
             Lucas Val
             <span class="position">VP of Product Development at Hexonet Services Inc</span>
@@ -86,7 +86,7 @@ meta_and_links("ag-Grid: Customer Testimonials", "ag-Grid Javascript Grid Testim
     </blockquote>
 
     <blockquote>
-        <p>Ag-grid is one of the best Grids I have ever worked with. In spite of being feature rich it is still one of the fastest grids I have ever used. This grid will be an essential part of my tool kit especially when working with extremely large datasets.</p>
+        <p>ag-Grid is one of the best Grids I have ever worked with. In spite of being feature rich it is still one of the fastest grids I have ever used. This grid will be an essential part of my tool kit especially when working with extremely large datasets.</p>
         <footer>
             Zach Lewis
             <span class="position">Senior Software Developer, Nutraceutical</span>

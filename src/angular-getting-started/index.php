@@ -9,7 +9,7 @@ include '../getting-started/header.php';
 <h1>Get Started with ag-Grid in Your Angular Project</h1>
 
 <p class="lead">The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid engine is implemented in TypeScript with zero dependencies. 
-Ag-grid supports Angular through a <strong>wrapper component</strong>. The wrapper lets you use ag-Grid in your application like any other Angular component &ndash; you pass configuration through property bindings and handle events through event bindings. 
+ag-Grid supports Angular through a <strong>wrapper component</strong>. The wrapper lets you use ag-Grid in your application like any other Angular component &ndash; you pass configuration through property bindings and handle events through event bindings. 
 You can even use Angular components to customize the grid UI and cell contents / behavior.</p> 
 
 <p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing Angular project, and configure some of the essential features of it. 

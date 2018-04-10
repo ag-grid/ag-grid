@@ -12,7 +12,7 @@ include '../getting-started/header.php';
 <h1>Get Started with ag-Grid in Your React Project</h1>
 
 <p class="lead">The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid engine is implemented in plain JavaScript<sup id="a1"><a href="#f1">[1]</a></sup> and has zero dependencies. 
-Ag-grid supports React through a <strong>wrapper component</strong>. The React wrapper lets you use ag-Grid in your application like any other React component &ndash; you pass configuration through properties and handle events through callbacks. 
+ag-Grid supports React through a <strong>wrapper component</strong>. The React wrapper lets you use ag-Grid in your application like any other React component &ndash; you pass configuration through properties and handle events through callbacks. 
 You can even use React components to customize the grid UI and cell contents / behavior.</p> 
 
 <p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing React project, and configure some of the essential features of it. We will show you some of the fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the grid's visual appearance using Sass variables.</p>

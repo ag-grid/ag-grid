@@ -43,7 +43,7 @@
                 "title": "Grouping / Aggregation",
                 "img": "grouping-aggregation.gif",
                 "description":
-                    "Let your users explore their data. Ag-grid allows the end user to group by specific columns. Optionally, you can display various aggregate column values in the grouped row.",
+                    "Let your users explore their data. ag-Grid allows the end user to group by specific columns. Optionally, you can display various aggregate column values in the grouped row.",
                 "links": [
                     {
                         "title": "Grouping Rows Demo",
@@ -59,7 +59,7 @@
                 "title": "Filtering",
                 "img": "filtering.gif",
                 "description":
-                    "Ag-grid comes with an extensive set of built-in column filter types.  You can also filter by all columns simultaneously with quick filtering. You can even implement your own custom filtering UI and logic.",
+                    "ag-Grid comes with an extensive set of built-in column filter types.  You can also filter by all columns simultaneously with quick filtering. You can even implement your own custom filtering UI and logic.",
                 "links": [
                     {
                         "title": "Column Filters Demo",
@@ -268,7 +268,7 @@
             {
                 "title": "Row Reordering",
                 "img": "row-reordering.gif",
-                "description": "Let your users change the order of the records displayed. Ag-grid exposes convenient API for persisting the order changes.",
+                "description": "Let your users change the order of the records displayed. ag-Grid exposes convenient API for persisting the order changes.",
                 "links": [{ "title": "Row Reordering Demo", "url": "#" }]
             },
             {
