@@ -107,7 +107,8 @@ var columnDefs = [
             if (cellDate > filterLocalDateAtMidnight) {
                 return 1;
             }
-        }
+        },
+        browserDatePicker: true
     }, suppressMenu:true},
     {headerName: "Sport", field: "sport", width: 110, suppressMenu:true, filter: 'agTextColumnFilter'},
     {headerName: "Gold", field: "gold", width: 100, filter: 'agNumberColumnFilter', filterParams:{applyButton:true}, suppressMenu:true},
