@@ -39,9 +39,9 @@ export class HeaderGroupWrapperComp extends Component {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('beans') private beans: Beans;
 
-    private columnGroup: ColumnGroup;
-    private dragSourceDropTarget: DropTarget;
-    private pinned: string;
+    private readonly columnGroup: ColumnGroup;
+    private readonly dragSourceDropTarget: DropTarget;
+    private readonly pinned: string;
 
     private eHeaderCellResize: HTMLElement;
     private groupWidthStart: number;
@@ -300,7 +300,7 @@ export class HeaderGroupWrapperComp extends Component {
         }
     }
 
-    public onResizeStart(): void {
+    public onResizeStart(shiftKey: boolean): void {
         this.groupWidthStart = this.columnGroup.getActualWidth();
         this.childrenWidthStarts = [];
         this.columnGroup.getDisplayedLeafColumns().forEach( (column: Column) => {
@@ -359,7 +359,7 @@ export class HeaderGroupWrapperComp extends Component {
                 // if last col, give it the remaining pixels
                 newChildSize = pixelsToDistribute;
             }
-            this.columnController.setColumnWidth(column, newChildSize, finished, "uiColumnDragged");
+            this.columnController.setColumnWidth(column, newChildSize, false, finished, "uiColumnDragged");
         });
     }
 

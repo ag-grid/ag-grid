@@ -202,7 +202,7 @@ export class AlignedGridsService {
                 let resizedEvent = <ColumnResizedEvent> colEvent;
                 masterColumns.forEach( (masterColumn: Column)=> {
                     this.logger.log('onColumnEvent-> processing '+colEvent.type+' actualWidth = '+ masterColumn.getActualWidth());
-                    this.columnController.setColumnWidth(masterColumn.getColId(), masterColumn.getActualWidth(), resizedEvent.finished, "alignedGridChanged");
+                    this.columnController.setColumnWidth(masterColumn.getColId(), masterColumn.getActualWidth(), false, resizedEvent.finished, "alignedGridChanged");
                 });
                 break;
         }

@@ -4,7 +4,7 @@ import {DragListenerParams, DragService} from "../dragAndDrop/dragService";
 
 export interface HorizontalResizeParams {
     eResizeBar: HTMLElement;
-    onResizeStart: ()=>void;
+    onResizeStart: (shiftKey: boolean)=>void;
     onResizing: (delta: number)=>void;
     onResizeEnd: (delta: number)=>void;
 }
@@ -50,7 +50,8 @@ export class HorizontalResizeService {
 
         this.setResizeIcons();
 
-        params.onResizeStart();
+        let shiftKey = mouseEvent instanceof MouseEvent ? (<MouseEvent>mouseEvent).shiftKey === true : false;
+        params.onResizeStart(shiftKey);
     }
 
     private setResizeIcons(): void {

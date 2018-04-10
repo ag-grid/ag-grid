@@ -440,7 +440,10 @@ export class GridPanel extends BeanStub {
                 eElement: container,
                 onDragStart: this.rangeController.onDragStart.bind(this.rangeController),
                 onDragStop: this.rangeController.onDragStop.bind(this.rangeController),
-                onDragging: this.rangeController.onDragging.bind(this.rangeController)
+                onDragging: this.rangeController.onDragging.bind(this.rangeController),
+                // for range selection by dragging the mouse, we want to ignore the event if shift key is pressed,
+                // as shift key click is another type of range selection
+                skipMouseEvent: mouseEvent => mouseEvent.shiftKey
             };
 
             this.dragService.addDragSource(params);

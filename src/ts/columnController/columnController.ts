@@ -747,20 +747,45 @@ export class ColumnController {
         }
     }
 
-    public setColumnWidth(key: string|Column, newWidth: number, finished: boolean, source: ColumnEventType = "api"): void {
-        let column = this.getPrimaryOrGridColumn(key);
-        if (!column) {
+    public setColumnWidth(
+            key: string|Column, // @key - the column who's size we want to change
+            newWidth: number, // @newWidth - width in pixels
+            takeFromAdjacent: boolean, // @takeFromAdjacent - if user has 'shift' pressed, then pixels are taken from adjacent column
+            finished: boolean, // @finished - ends up in the event, tells the user if more events are to come
+            source: ColumnEventType = "api"): void {
+
+        let col = this.getPrimaryOrGridColumn(key);
+        if (!col) {
             return;
         }
 
-        newWidth = this.normaliseColumnWidth(column, newWidth);
+        newWidth = this.normaliseColumnWidth(col, newWidth);
 
-        let widthChanged = column.getActualWidth() !== newWidth;
+        let widthDiff = col.getActualWidth() - newWidth;
+        let widthChanged = widthDiff !== 0;
 
-        if (widthChanged) {
-            column.setActualWidth(newWidth, source);
-            this.setLeftValues(source);
+        if (!widthChanged) { return; }
+
+        // if doing takeFromRight, we get the col to take from and work out the new size
+        let adjacentCol: Column = null;
+        let newAdjacentWidth: number = null;
+        if (takeFromAdjacent) {
+            adjacentCol = this.getDisplayedColAfter(col);
+            if (!adjacentCol) { return; }
+
+            newAdjacentWidth = this.normaliseColumnWidth(adjacentCol, adjacentCol.getActualWidth() + widthDiff);
+            let adjacentDiff = adjacentCol.getActualWidth() - newAdjacentWidth;
+
+            // if the adjacent column doesn't have the pixels to share, then we ignore the resize request
+            let rightColCantResizeToSameAmount = adjacentDiff !== -widthDiff;
+            if (rightColCantResizeToSameAmount) { return; }
         }
+
+        col.setActualWidth(newWidth, source);
+        if (takeFromAdjacent) {
+            adjacentCol.setActualWidth(newAdjacentWidth);
+        }
+        this.setLeftValues(source);
 
         this.updateBodyWidths();
         this.checkDisplayedVirtualColumns();
@@ -773,8 +798,8 @@ export class ColumnController {
         if (finished || widthChanged) {
             let event: ColumnResizedEvent = {
                 type: Events.EVENT_COLUMN_RESIZED,
-                columns: [column],
-                column: column,
+                columns: takeFromAdjacent ? [col, adjacentCol] : [col],
+                column: takeFromAdjacent ? null : col,
                 finished: finished,
                 api: this.gridApi,
                 columnApi: this.columnApi,
