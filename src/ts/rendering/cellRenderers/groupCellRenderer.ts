@@ -440,10 +440,16 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             let expanded = this.draggedFromHideOpenParents ? true : rowNode.expanded;
             _.setVisible(this.eContracted, !expanded);
             _.setVisible(this.eExpanded, expanded);
+
+            // compensation padding not needed
+            this.removeCssClass('ag-row-group-leaf-indent');
         } else {
             // it not expandable, show neither
             _.setVisible(this.eExpanded, false);
             _.setVisible(this.eContracted, false);
+
+            // compensation padding for leaf nodes, so there is blank space instead of the expand icon
+            this.addCssClass('ag-row-group-leaf-indent');
         }
     }
 
