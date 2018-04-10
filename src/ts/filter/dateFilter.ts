@@ -187,7 +187,11 @@ export class DefaultDateComponent extends Component implements IDateComp {
         this.eDateInput = <HTMLInputElement> this.getGui();
 
         if (Utils.isBrowserChrome() || params.filterParams.browserDatePicker) {
-            this.eDateInput.type = 'date';
+            if (Utils.isBrowserIE()){
+                console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11, reverting to plain text date picker')
+            }else{
+                this.eDateInput.type = 'date';
+            }
         }
 
         this.listener = params.onDateChanged;
