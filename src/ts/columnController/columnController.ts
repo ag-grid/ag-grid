@@ -41,6 +41,12 @@ import {ValueCache} from "../valueService/valueCache";
 import {GridApi} from "../gridApi";
 import {ColumnApi} from "./columnApi";
 
+export interface ColumnResizeSet {
+    columns: Column[];
+    ratios: number[];
+    width: number;
+}
+
 @Bean('columnController')
 export class ColumnController {
 
@@ -764,8 +770,6 @@ export class ColumnController {
         let widthDiff = col.getActualWidth() - newWidth;
         let widthChanged = widthDiff !== 0;
 
-        if (!widthChanged) { return; }
-
         // if doing takeFromRight, we get the col to take from and work out the new size
         let adjacentCol: Column = null;
         let newAdjacentWidth: number = null;
@@ -800,6 +804,80 @@ export class ColumnController {
                 type: Events.EVENT_COLUMN_RESIZED,
                 columns: takeFromAdjacent ? [col, adjacentCol] : [col],
                 column: takeFromAdjacent ? null : col,
+                finished: finished,
+                api: this.gridApi,
+                columnApi: this.columnApi,
+                source: source
+            };
+            this.eventService.dispatchEvent(event);
+        }
+    }
+
+    public setColumnsWidth(resizeSets: ColumnResizeSet[],
+                           finished: boolean,
+                           source: ColumnEventType): void {
+
+        let atLeastOneSetFailsMinWidth = false;
+
+        resizeSets.forEach( set => {
+            let {columns, width} = set;
+            let minWidth = 0;
+            columns.forEach( col => minWidth += col.getMinWidth());
+            if (width < minWidth) { atLeastOneSetFailsMinWidth = true; }
+        });
+
+        if (atLeastOneSetFailsMinWidth) { return; }
+
+        let changedCols: Column[] = [];
+        let allCols: Column[] = [];
+
+        resizeSets.forEach( set => {
+
+            let {width, columns, ratios} = set;
+
+            // keep track of pixels used, and last column gets the remaining,
+            // to cater for rounding errors, and min width adjustments
+            let pixelsToDistribute = width;
+            columns.forEach( (col: Column, index: number) => {
+                let notLastCol = index !== (columns.length - 1);
+                allCols.push(col);
+
+                let colNewWidth: number;
+
+                if (notLastCol) {
+                    colNewWidth = Math.floor(ratios[index] * width);
+                    if (colNewWidth < col.getMinWidth()) {
+                        colNewWidth = col.getMinWidth();
+                    }
+                    pixelsToDistribute -= colNewWidth;
+                } else {
+                    colNewWidth = pixelsToDistribute;
+                }
+
+                if (col.getActualWidth()!==colNewWidth) {
+                    changedCols.push(col);
+                    col.setActualWidth(colNewWidth, source);
+                }
+            });
+
+        });
+
+        this.setLeftValues(source);
+
+        this.updateBodyWidths();
+        this.checkDisplayedVirtualColumns();
+
+        // check for change first, to avoid unnecessary firing of events
+        // however we always fire 'finished' events. this is important
+        // when groups are resized, as if the group is changing slowly,
+        // eg 1 pixel at a time, then each change will fire change events
+        // in all the columns in the group, but only one with get the pixel.
+        let widthChanged = changedCols.length > 0;
+        if (finished || widthChanged) {
+            let event: ColumnResizedEvent = {
+                type: Events.EVENT_COLUMN_RESIZED,
+                columns: allCols,
+                column: allCols.length === 1 ? allCols[0] : null,
                 finished: finished,
                 api: this.gridApi,
                 columnApi: this.columnApi,
@@ -1184,6 +1262,31 @@ export class ColumnController {
             return allDisplayedColumns[oldIndex + 1];
         } else {
             return null;
+        }
+    }
+
+    public getDisplayedGroupAfter(columnGroup: ColumnGroup): ColumnGroup {
+
+        // pick one col in this group at random
+        let col = columnGroup.getDisplayedLeafColumns()[0];
+        let requiredLevel = columnGroup.getOriginalColumnGroup().getLevel();
+
+        while (true) {
+            // keep moving to the next col, until we get to another group
+            col = this.getDisplayedColAfter(col);
+
+            // if no col after, means no group after
+            if (!col) { return null; }
+
+            // get group at same level as the one we are looking for
+            let groupPointer = col.getParent();
+            while (groupPointer.getOriginalColumnGroup().getLevel() !== requiredLevel) {
+                groupPointer = groupPointer.getParent();
+            }
+
+            if (groupPointer!==columnGroup) {
+                return groupPointer;
+            }
         }
     }
 
