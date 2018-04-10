@@ -338,12 +338,14 @@ export class ComponentResolver {
         let componentAndParams: [A, any] = <[A, any]>this.newAgGridComponent(holder, propertyName, dynamicComponentParams, defaultComponentName, mandatory);
         if (!componentAndParams) return null;
 
-        //Wire the component and call the init method with the correct params
+        // Wire the component and call the init method with the correct params
         let finalParams = this.mergeParams(holder, propertyName, agGridParams, dynamicComponentParams, componentAndParams[1]);
 
+        // a temporary fix for AG-1574
+        // AG-1715 raised to do a wider ranging refactor to improve this
+        finalParams.agGridReact = this.context.getBean('agGridReact') ? _.cloneObject(this.context.getBean('agGridReact')) : {};
+
         let deferredInit : void | Promise<void> = this.initialiseComponent(componentAndParams[0], finalParams, customInitParamsCb);
-
-
         if (deferredInit == null){
             return Promise.resolve(componentAndParams[0]);
         } else {
