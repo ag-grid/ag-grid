@@ -4,6 +4,7 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {_} from "../utils";
 import {ColDef, ValueGetterParams} from "../entities/colDef";
 import {ColumnController} from "./columnController";
+import {BalancedColumnTreeBuilder} from "./balancedColumnTreeBuilder";
 
 @Bean('autoGroupColService')
 export class AutoGroupColService {
@@ -14,6 +15,7 @@ export class AutoGroupColService {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('balancedColumnTreeBuilder') private balancedColumnTreeBuilder: BalancedColumnTreeBuilder;
 
     public createAutoGroupColumns(rowGroupColumns: Column[]): Column[] {
         let groupAutoColumns: Column[] = [];
@@ -43,17 +45,20 @@ export class AutoGroupColService {
     private createOneAutoGroupColumn(rowGroupCol?: Column, index?: number): Column {
         // if one provided by user, use it, otherwise create one
         let defaultAutoColDef: ColDef = this.generateDefaultColDef(rowGroupCol);
-        let userAutoColDef: ColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
         // if doing multi, set the field
         let colId: string;
-
         if (rowGroupCol) {
+
             colId = `${AutoGroupColService.GROUP_AUTO_COLUMN_ID}-${rowGroupCol.getId()}`;
         } else {
             colId = AutoGroupColService.GROUP_AUTO_COLUMN_BUNDLE_ID;
         }
 
+        let userAutoColDef: ColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
         _.mergeDeep(defaultAutoColDef, userAutoColDef);
+
+        defaultAutoColDef = this.balancedColumnTreeBuilder.mergeColDefs(defaultAutoColDef);
+
         defaultAutoColDef.colId = colId;
 
         // For tree data the filter is always allowed
