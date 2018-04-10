@@ -11,6 +11,10 @@ SCRIPT;
 
 $GTM_DATA_LAYER = json_encode(array('default' => true));
 
+$LINKEDIN_SCRIPT = <<<SCRIPT
+<script type="text/javascript"> _linkedin_data_partner_id = "302985"; </script><script type="text/javascript"> (function(){var s = document.getElementsByTagName("script")[0]; var b = document.createElement("script"); b.type = "text/javascript";b.async = true; b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js"; s.parentNode.insertBefore(b, s);})(); </script> <noscript> <img height="1" width="1" style="display:none;" alt="" src="https://dc.ads.linkedin.com/collect/?pid=302985&fmt=gif" /> </noscript>
+SCRIPT;
+
 function gtm_data_layer($pageCategory, $additional = array()) {
     $additional['pageCategory'] = $pageCategory;
     $GLOBALS['GTM_DATA_LAYER'] = json_encode($additional);
@@ -75,6 +79,7 @@ META;
     <link rel="icon" type="image/png" sizes="32x32" href="{$prefix}_assets/favicons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="{$prefix}_assets/favicons/favicon-16x16.png">
     <link rel="shortcut icon" href="{$prefix}_assets/favicons/favicon.ico">
+    ${GLOBALS['LINKEDIN_SCRIPT']}
 META;
 }
 
