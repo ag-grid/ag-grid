@@ -9,6 +9,7 @@ import {ComponentRecipes} from "../components/framework/componentRecipes";
 
 export interface IDateFilterParams extends IFilterParams {
     comparator?: IDateComparatorFunc;
+    browserDatePicker?: boolean;
 }
 
 export interface IDateComparatorFunc {
@@ -63,7 +64,8 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     public initialiseFilterBodyUi(): void {
         super.initialiseFilterBodyUi();
         let dateComponentParams: IDateParams = {
-            onDateChanged: this.onDateChanged.bind(this)
+            onDateChanged: this.onDateChanged.bind(this),
+            filterParams: this.filterParams
         };
 
         this.componentRecipes.newDateComponent(dateComponentParams).then (dateToComponent=> {
@@ -184,7 +186,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
     public init(params: IDateParams): void {
         this.eDateInput = <HTMLInputElement> this.getGui();
 
-        if (Utils.isBrowserChrome()) {
+        if (Utils.isBrowserChrome() || params.filterParams.browserDatePicker) {
             this.eDateInput.type = 'date';
         }
 
