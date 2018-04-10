@@ -227,6 +227,10 @@ export class SetFilterModel {
                 value = this.colDef.keyCreator( {value: value} );
             }
 
+            if (this.colDef.refData) {
+                value = this.colDef.refData[value];
+            }
+
             if (value === "" || value === undefined) {
                 value = null;
             }
