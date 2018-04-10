@@ -508,11 +508,11 @@ ag-grid-aurelia {
     overflow: hidden;
 }
 // for RTL, other way around, we show scrolls on left only
-.ag-rtl .ag-hacked-scroll  .ag-pinned-right-cols-viewport {
+.ag-rtl .ag-hacked-scroll .ag-pinned-right-cols-viewport {
     overflow: hidden;
 }
 
-.ag-rtl .ag-hacked-scroll  .ag-pinned-left-cols-viewport {
+.ag-rtl .ag-hacked-scroll .ag-pinned-left-cols-viewport {
     overflow-x: hidden;
     overflow-y: auto;
 }
@@ -690,7 +690,14 @@ ag-grid-aurelia {
     }
 
     .ag-column-drop-cell {
-        display: block;
+        display: flex;
+
+        .ag-column-drop-cell-text {
+            overflow: hidden;
+            flex: 1;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     }
 
     .ag-column-drop-empty-message {

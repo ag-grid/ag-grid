@@ -364,9 +364,8 @@
 
         background-position-x: left;
         background-position-y: $grid-size !important;
-        float: left;
         height: 100%;
-        width: $icon-size + $grid-size;
+        min-width: $icon-size + $grid-size;
     }
 
     .ag-row-dragging {
@@ -855,10 +854,9 @@
         }
     }
 
-
     @if map-get($params, "use-icons-for-pager-buttons") {
-        $buttonIcons:    (btFirst: first,   btPrevious: previous,   btLast: last,   btNext: next);
-        $rtlButtonIcons: (btFirst: last,    btPrevious: next,       btLast: first,  btNext: previous);
+        $buttonIcons: (btFirst: first, btPrevious: previous, btLast: last, btNext: next);
+        $rtlButtonIcons: (btFirst: last, btPrevious: next, btLast: first, btNext: previous);
 
         @each $ref, $icon in $buttonIcons {
             button[ref="#{$ref}"] {
@@ -1135,6 +1133,7 @@
         .ag-column-drop-cell-button {
             @include icon-background($params, "cancel");
             @include hide-text;
+            min-width: $grid-size * 4;
 
             height: 100%;
             margin: 0 $grid-size / 2;
