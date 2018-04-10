@@ -21,7 +21,8 @@ var columnDefs = [
             if (cellDate > filterLocalDateAtMidnight) {
                 return 1;
             }
-        }
+        },
+        browserDatePicker: true
     }},
     {headerName: "Sport", field: "sport", width: 110},
     {headerName: "Gold", field: "gold", width: 100, filter: 'agNumberColumnFilter'},
