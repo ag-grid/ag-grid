@@ -203,6 +203,14 @@
         }
     }
 
+    .ag-ltr .ag-row-group-leaf-indent {
+        margin-left: $icon-size + $grid-size * 3;
+    }
+
+    .ag-rtl .ag-row-group-leaf-indent {
+        margin-right: $icon-size + $grid-size * 3;
+    }
+
     // we use rtl and ltr below, even though it's the same style, so it propertly
     .ag-rtl .ag-cell-first-right-pinned {
         border-left: 1px solid $border-color;
