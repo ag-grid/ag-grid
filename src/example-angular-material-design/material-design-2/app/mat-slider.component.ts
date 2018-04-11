@@ -1,9 +1,10 @@
-import {Component, ElementRef} from "@angular/core";
-import {ICellEditorAngularComp} from "ag-grid-angular/main";
+import { Component, ElementRef } from "@angular/core";
+import { ICellEditorAngularComp } from "ag-grid-angular/main";
 
 @Component({
-    selector: 'slider-cell',
+    selector: "slider-cell",
     template: `
+    <mat-card>
         <div class="container" (keydown)="onKeyDown($event)">
             <mat-slider
                     [max]="max"
@@ -16,12 +17,11 @@ import {ICellEditorAngularComp} from "ag-grid-angular/main";
             >
             </mat-slider>
         </div>
+        </mat-card>
     `,
-    styles: [`
+    styles: [
+        `
         .container {
-            border-radius: 15px;
-            border: 1px solid grey;
-            background: #fff;
             width: 160px;
             height: 100%;
         }
@@ -35,7 +35,8 @@ import {ICellEditorAngularComp} from "ag-grid-angular/main";
         .mat-slider-thumb:focus {
             outline: none;
         }
-    `]
+    `
+    ]
 })
 export class MatSliderComponent implements ICellEditorAngularComp {
     private params: any;
@@ -57,16 +58,15 @@ export class MatSliderComponent implements ICellEditorAngularComp {
         this.value = this.params.value;
     }
 
-    constructor(private elRef: ElementRef) {
-    }
+    constructor(private elRef: ElementRef) {}
 
     // don't use afterGuiAttached for post gui events - hook into ngAfterViewInit instead for this
     ngAfterViewInit() {
-        let sliderThumb = this.elRef.nativeElement.querySelector('.mat-slider-thumb');
+        let sliderThumb = this.elRef.nativeElement.querySelector(".mat-slider-thumb");
         sliderThumb.tabIndex = 0;
         setTimeout(() => {
             sliderThumb.focus();
-        })
+        });
     }
 
     getValue() {
@@ -79,7 +79,8 @@ export class MatSliderComponent implements ICellEditorAngularComp {
 
     onKeyDown(event): void {
         let key = event.which || event.keyCode;
-        if (key === 39 || key === 37) { // left/right
+        if (key === 39 || key === 37) {
+            // left/right
             event.stopPropagation();
         }
     }
