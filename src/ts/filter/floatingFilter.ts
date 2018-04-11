@@ -150,7 +150,8 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
         let debounceMs: number = params.debounceMs != null ? params.debounceMs : 500;
         let toDebounce: () => void = _.debounce(this.onDateChanged.bind(this), debounceMs);
         let dateComponentParams: IDateParams = {
-            onDateChanged: toDebounce
+            onDateChanged: toDebounce,
+            filterParams: params.column.getColDef().filterParams
         };
         this.dateComponentPromise = this.componentRecipes.newDateComponent(dateComponentParams);
 

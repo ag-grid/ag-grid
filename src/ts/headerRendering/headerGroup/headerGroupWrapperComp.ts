@@ -3,7 +3,7 @@ import {Column} from "../../entities/column";
 import {Utils as _} from "../../utils";
 import {ColumnGroup} from "../../entities/columnGroup";
 import {ColumnApi} from "../../columnController/columnApi";
-import {ColumnController} from "../../columnController/columnController";
+import {ColumnController, ColumnResizeSet} from "../../columnController/columnController";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {HorizontalResizeService} from "../horizontalResizeService";
 import {Autowired, Context, PostConstruct} from "../../context/context";
@@ -21,6 +21,7 @@ import {GridApi} from "../../gridApi";
 import {ComponentRecipes} from "../../components/framework/componentRecipes";
 import {Beans} from "../../rendering/beans";
 import {HoverFeature} from "../hoverFeature";
+import {ColumnEventType} from "../../events";
 
 export class HeaderGroupWrapperComp extends Component {
 
@@ -44,8 +45,9 @@ export class HeaderGroupWrapperComp extends Component {
     private readonly pinned: string;
 
     private eHeaderCellResize: HTMLElement;
-    private groupWidthStart: number;
-    private childrenWidthStarts: number[];
+    private resizeWidthStart: number;
+    private resizeChildrenWidthStarts: number[];
+    private resizeWithShiftKey: boolean;
 
     // the children can change, we keep destroy functions related to listening to the children here
     private childColumnsDestroyFuncs: Function[] = [];
@@ -301,14 +303,73 @@ export class HeaderGroupWrapperComp extends Component {
     }
 
     public onResizeStart(shiftKey: boolean): void {
-        this.groupWidthStart = this.columnGroup.getActualWidth();
-        this.childrenWidthStarts = [];
+        this.resizeWithShiftKey = shiftKey;
+        this.resizeWidthStart = this.columnGroup.getActualWidth();
+        this.resizeChildrenWidthStarts = [];
         this.columnGroup.getDisplayedLeafColumns().forEach( (column: Column) => {
-            this.childrenWidthStarts.push(column.getActualWidth());
+            this.resizeChildrenWidthStarts.push(column.getActualWidth());
         });
+
+        let leafCols = this.columnGroup.getDisplayedLeafColumns();
+        this.resizeCols = _.filter(leafCols, col => col.isResizable());
+        this.resizeStartWidth = 0;
+        this.resizeCols.forEach( col => this.resizeStartWidth += col.getActualWidth());
+        this.resizeRatios = [];
+        this.resizeCols.forEach( col => this.resizeRatios.push(col.getActualWidth() / this.resizeStartWidth));
+
+
+        let takeFromGroup: ColumnGroup = null;
+        if (shiftKey) {
+            takeFromGroup = this.columnController.getDisplayedGroupAfter(this.columnGroup);
+        }
+
+        if (takeFromGroup) {
+            let takeFromLeafCols = takeFromGroup.getDisplayedLeafColumns();
+
+            this.resizeTakeFromCols = _.filter(takeFromLeafCols, col => col.isResizable());
+
+            this.resizeTakeFromStartWidth = 0;
+            this.resizeTakeFromCols.forEach( col => this.resizeTakeFromStartWidth += col.getActualWidth());
+            this.resizeTakeFromRatios = [];
+            this.resizeTakeFromCols.forEach( col => this.resizeTakeFromRatios.push(col.getActualWidth() / this.resizeTakeFromStartWidth));
+        } else {
+            this.resizeTakeFromCols = null;
+            this.resizeTakeFromStartWidth = null;
+            this.resizeTakeFromRatios = null;
+        }
+
     }
 
+    private resizeCols: Column[];
+    private resizeStartWidth: number;
+    private resizeRatios: number[];
+
+    private resizeTakeFromCols: Column[];
+    private resizeTakeFromStartWidth: number;
+    private resizeTakeFromRatios: number[];
+
     public onResizing(finished: boolean, resizeAmount: any): void {
+
+        let resizeSets: ColumnResizeSet[] = [];
+
+        resizeSets.push({
+            columns: this.resizeCols,
+            ratios: this.resizeRatios,
+            width: this.resizeStartWidth + resizeAmount
+        });
+
+        if (this.resizeTakeFromCols) {
+            resizeSets.push({
+                columns: this.resizeTakeFromCols,
+                ratios: this.resizeTakeFromRatios,
+                width: this.resizeTakeFromStartWidth - resizeAmount
+            });
+        }
+
+        this.columnController.setColumnsWidth(resizeSets, finished, 'uiColumnDragged');
+    }
+
+    public onResizing_old(finished: boolean, resizeAmount: any): void {
 
         // this will be the width we have to distribute to the resizable columns
         let widthForResizableCols: number;
@@ -319,7 +380,7 @@ export class HeaderGroupWrapperComp extends Component {
         // braces in, we localise the variables to this bit of the method
         {
             let resizeAmountNormalised = this.normaliseDragChange(resizeAmount);
-            let totalGroupWidth = this.groupWidthStart + resizeAmountNormalised;
+            let totalGroupWidth = this.resizeWidthStart + resizeAmountNormalised;
 
             let displayedColumns = this.columnGroup.getDisplayedLeafColumns();
             resizableCols = _.filter(displayedColumns, col => col.isResizable());
@@ -339,7 +400,7 @@ export class HeaderGroupWrapperComp extends Component {
         }
 
         // distribute the new width to the child headers
-        let changeRatio = widthForResizableCols / this.groupWidthStart;
+        let changeRatio = widthForResizableCols / this.resizeWidthStart;
         // keep track of pixels used, and last column gets the remaining,
         // to cater for rounding errors, and min width adjustments
         let pixelsToDistribute = widthForResizableCols;
@@ -349,7 +410,7 @@ export class HeaderGroupWrapperComp extends Component {
             let newChildSize: any;
             if (notLastCol) {
                 // if not the last col, calculate the column width as normal
-                let startChildSize = this.childrenWidthStarts[index];
+                let startChildSize = this.resizeChildrenWidthStarts[index];
                 newChildSize = startChildSize * changeRatio;
                 if (newChildSize < column.getMinWidth()) {
                     newChildSize = column.getMinWidth();

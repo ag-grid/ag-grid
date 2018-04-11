@@ -41,7 +41,7 @@ export class ColumnGroup implements ColumnGroupChild {
     private oldLeft: number;
     private localEventService: EventService = new EventService();
 
-    private parent: ColumnGroupChild;
+    private parent: ColumnGroup;
 
     constructor(originalColumnGroup: OriginalColumnGroup, groupId: string, instanceId: number) {
         this.groupId = groupId;
@@ -57,11 +57,11 @@ export class ColumnGroup implements ColumnGroupChild {
         this.displayedChildren = null;
     }
 
-    public getParent(): ColumnGroupChild {
+    public getParent(): ColumnGroup {
         return this.parent;
     }
 
-    public setParent(parent: ColumnGroupChild): void {
+    public setParent(parent: ColumnGroup): void {
         this.parent = parent;
     }
 
