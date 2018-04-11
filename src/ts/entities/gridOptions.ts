@@ -37,6 +37,7 @@ import {IComponent} from "../interfaces/iComponent";
 import {AgGridRegisteredComponentInput} from "../components/framework/componentProvider";
 import {ILoadingOverlayComp, ILoadingOverlayParams} from "../rendering/overlays/loadingOverlayComponent";
 import {INoRowsOverlayComp, INoRowsOverlayParams} from "../rendering/overlays/noRowsOverlayComponent";
+import {DraggingEvent} from "../dragAndDrop/dragAndDropService";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
@@ -368,6 +369,10 @@ export interface GridOptions {
     onDragStarted?(event?: DragStartedEvent): void;
     onDragStopped?(event?: DragStoppedEvent): void;
     onPaginationChanged?(event?: PaginationChangedEvent): void;
+    onRowDragEnter?(event? : DraggingEvent): void;
+    onRowDragMove?(event? : DraggingEvent): void;
+    onRowDragLeave?(event? : DraggingEvent): void;
+    onRowDragEnd?(event? : DraggingEvent): void;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
