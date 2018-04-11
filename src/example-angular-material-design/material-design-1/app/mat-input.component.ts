@@ -1,9 +1,10 @@
-import {Component, QueryList, ViewChildren, ViewContainerRef} from "@angular/core";
-import {ICellEditorAngularComp} from "ag-grid-angular/main";
+import { Component, QueryList, ViewChildren, ViewContainerRef } from "@angular/core";
+import { ICellEditorAngularComp } from "ag-grid-angular/main";
 
 @Component({
-    selector: 'input-cell',
+    selector: "input-cell",
     template: `
+        <mat-card>
         <form class="container" tabindex="0" (keydown)="onKeyDown($event)">
             <mat-form-field class="example-full-width">
                 <input #input matInput [(ngModel)]="firstName" placeholder="First name"
@@ -14,15 +15,12 @@ import {ICellEditorAngularComp} from "ag-grid-angular/main";
                        [ngModelOptions]="{standalone: true}">
             </mat-form-field>
         </form>
+        </mat-card>
     `,
     styles: [
-            `
+        `
             .container {
-                border-radius: 15px;
-                border: 1px solid grey;
-                background: #fff;
                 width: 350px;
-                padding-left: 15px;
             }
         `
     ]
@@ -33,7 +31,8 @@ export class MatInputComponent implements ICellEditorAngularComp {
     private firstName: string;
     private lastName: string;
 
-    @ViewChildren('input', {read: ViewContainerRef}) public inputs: QueryList<any>;
+    @ViewChildren("input", { read: ViewContainerRef })
+    public inputs: QueryList<any>;
     private focusedInput: number = 0;
 
     agInit(params: any): void {
@@ -69,22 +68,24 @@ export class MatInputComponent implements ICellEditorAngularComp {
      */
     onKeyDown(event): void {
         let key = event.which || event.keyCode;
-        if (key == 9) { // tab
+        if (key == 9) {
+            // tab
             this.preventDefaultAndPropagation(event);
 
             // either move one input along, or cycle back to 0
-            this.focusedInput = this.focusedInput === this.inputs.length - 1 ? 0 : (this.focusedInput + 1);
+            this.focusedInput = this.focusedInput === this.inputs.length - 1 ? 0 : this.focusedInput + 1;
 
             let focusedInput = this.focusedInput;
             let inputToFocusOn = this.inputs.find((item: any, index: number) => {
                 return index === focusedInput;
             });
 
-            this.focusOnInputNextTick(inputToFocusOn)
-        } else if (key == 13) { // enter
+            this.focusOnInputNextTick(inputToFocusOn);
+        } else if (key == 13) {
+            // enter
             // perform some validation on enter - in this example we assume all inputs are mandatory
             // in a proper application you'd probably want to inform the user that an input is blank
-            this.inputs.forEach((input) => {
+            this.inputs.forEach(input => {
                 if (!input.element.nativeElement.value) {
                     this.preventDefaultAndPropagation(event);
                     this.focusOnInputNextTick(input);

@@ -1,26 +1,26 @@
-import {Component, ViewChild, ViewContainerRef} from "@angular/core";
-import {ICellEditorAngularComp} from "ag-grid-angular/main";
+import { Component, ViewChild, ViewContainerRef } from "@angular/core";
+import { ICellEditorAngularComp } from "ag-grid-angular/main";
 
 @Component({
-    selector: 'radio-cell',
+    selector: "radio-cell",
     template: `
+    <mat-card>
         <div class="container" #group tabindex="0" (keydown)="onKeyDown($event)">
+        <mat-form-field>
             <mat-select [(ngModel)]="favouriteVegetable">
                 <mat-option *ngFor="let vegetable of vegetables" [value]="vegetable">
                     {{ vegetable }}
                 </mat-option>
             </mat-select>
+            </mat-form-field>
         </div>
-    `,
+    </mat-card>
+`,
     styles: [
-            `
+        `
             .container {
-                border-radius: 15px;
-                border: 1px solid grey;
-                background: #fff;
                 width: 190px;
-                height: 45px;
-                padding-left: 15px;
+                height: 48px;
             }
 
             .container:focus {
@@ -36,7 +36,8 @@ export class MatSelectComponent implements ICellEditorAngularComp {
     private favouriteVegetable: string;
     private selectedIndex: number;
 
-    @ViewChild('group', {read: ViewContainerRef}) public group;
+    @ViewChild("group", { read: ViewContainerRef })
+    public group;
 
     agInit(params: any): void {
         this.params = params;
@@ -44,7 +45,7 @@ export class MatSelectComponent implements ICellEditorAngularComp {
         this.favouriteVegetable = this.params.value;
         this.vegetables = this.params.vegetables;
 
-        this.selectedIndex = this.vegetables.findIndex((item) => {
+        this.selectedIndex = this.vegetables.findIndex(item => {
             return item === this.params.value;
         });
     }
@@ -78,10 +79,12 @@ export class MatSelectComponent implements ICellEditorAngularComp {
         if (key === 38 || key === 40) {
             this.preventDefaultAndPropagation(event);
 
-            if (key == 38) {            // up
-                this.selectedIndex = this.selectedIndex === 0 ? (this.vegetables.length - 1) : this.selectedIndex - 1;
-            } else if (key == 40) {     // down
-                this.selectedIndex = (this.selectedIndex === this.vegetables.length - 1) ? 0 : this.selectedIndex + 1;
+            if (key == 38) {
+                // up
+                this.selectedIndex = this.selectedIndex === 0 ? this.vegetables.length - 1 : this.selectedIndex - 1;
+            } else if (key == 40) {
+                // down
+                this.selectedIndex = this.selectedIndex === this.vegetables.length - 1 ? 0 : this.selectedIndex + 1;
             }
             this.selectFavouriteVegetableBasedOnSelectedIndex();
         }
