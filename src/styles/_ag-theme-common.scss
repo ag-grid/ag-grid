@@ -921,6 +921,7 @@
 
         background: $editor-background-color-color;
         padding: 0;
+        z-index: 1;
 
         .ag-large-textarea textarea {
             @include textbox($params);

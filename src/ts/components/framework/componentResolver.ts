@@ -344,6 +344,8 @@ export class ComponentResolver {
         // a temporary fix for AG-1574
         // AG-1715 raised to do a wider ranging refactor to improve this
         finalParams.agGridReact = this.context.getBean('agGridReact') ? _.cloneObject(this.context.getBean('agGridReact')) : {};
+        // AG-1716 - directly related to AG-1574 and AG-1715
+        finalParams.frameworkComponentWrapper = this.context.getBean('frameworkComponentWrapper') ? this.context.getBean('frameworkComponentWrapper') : {};
 
         let deferredInit : void | Promise<void> = this.initialiseComponent(componentAndParams[0], finalParams, customInitParamsCb);
         if (deferredInit == null){
