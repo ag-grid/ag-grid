@@ -135,7 +135,16 @@ columnDefinition = {
 
     <p>
         In addition to being able to specify a hardcoded list of values for your setFilter, you can provide a callback
-        to load the values asynchronously. The callback receives a parameter object. This parameter object has
+        to load the values asynchronously. The callback receives a parameter object. The interface for this parameter object
+        is like this:
+    <p>
+<snippet>
+export interface SetFilterValuesFuncParams {
+    // The function to call with the values to load for the filter once that they are ready
+    success: (values: string[])=>void;
+    // The column definition object from which the set filter is invoked
+    colDef: ColDef,
+}</snippet>
         a <code>success</code> callback function that you can callback as soon as the values for the setFilter are ready.
     </p>
 
@@ -147,13 +156,13 @@ columnDefinition = {
         <ul class="content">
             <li><code>colDef.filterParams.values</code> specifies the values for the set filter in a callback and introduces a 5 second delay
 <snippet>
-    filterParams: {
-        values: (params)=>{
-            setTimeout(()=>{
-                params.success(['value 1', 'value 2'])
-            }, 5000)
-        }
-    }</snippet>
+filterParams: {
+    values: (params)=>{
+        setTimeout(()=>{
+            params.success(['value 1', 'value 2'])
+        }, 5000)
+    }
+}</snippet>
 </li>
 
             <li>While the data is obtained, (the 5s delay), the setFilter is showing a loading message</li>
