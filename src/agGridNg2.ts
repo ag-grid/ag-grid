@@ -254,7 +254,6 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public processCellFromClipboard : any = undefined;
     @Input() public getDocument : any = undefined;
     @Input() public postProcessPopup : any = undefined;
-    @Input() public paginationNumberFormatter : any = undefined;
     @Input() public getChildCount : any = undefined;
     @Input() public getDataPath : any = undefined;
     @Input() public loadingOverlayComponent : any = undefined;
@@ -268,6 +267,8 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public isRowMaster : any = undefined;
     @Input() public isRowSelectable : any = undefined;
     @Input() public postSort : any = undefined;
+    @Input() public processHeaderForClipboard : any = undefined;
+    @Input() public paginationNumberFormatter : any = undefined;
     @Input() public toolPanelSuppressRowGroups : any = undefined;
     @Input() public toolPanelSuppressValues : any = undefined;
     @Input() public toolPanelSuppressPivots : any = undefined;
@@ -287,7 +288,6 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public enableServerSideSorting : any = undefined;
     @Input() public enableFilter : any = undefined;
     @Input() public enableServerSideFilter : any = undefined;
-    @Input() public enableOldSetFilterModel : any = undefined;
     @Input() public angularCompileRows : any = undefined;
     @Input() public angularCompileFilters : any = undefined;
     @Input() public angularCompileHeaders : any = undefined;
@@ -377,6 +377,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public rowMultiSelectWithClick : any = undefined;
     @Input() public contractColumnSelection : any = undefined;
     @Input() public suppressEnterpriseResetOnNewColumns : any = undefined;
+    @Input() public enableOldSetFilterModel : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();
