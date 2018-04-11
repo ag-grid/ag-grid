@@ -116,6 +116,13 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Default Resizing', 'default-resizing', 'generated') ?>
 
+    <h2 id="shift-resizing">Shift Resizing</h2>
+
+    <p>
+        If you hold 'shift' while dragging the resize handle, the column will take space away from the
+        column adjacent to it. This means the total width for all columns will be constant.
+    </p>
+
     <h2>Resizing Groups</h2>
 
     <p>
