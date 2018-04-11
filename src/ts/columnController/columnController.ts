@@ -813,20 +813,39 @@ export class ColumnController {
         }
     }
 
+    private checkMinAndMaxWidthsForSet(columnResizeSet: ColumnResizeSet): boolean {
+
+        let {columns, width} = columnResizeSet;
+
+        // every col has a min width, so sum them all up and see if we have enough room
+        // for all the min widths
+        let minWidthAccumulated = 0;
+        let maxWidthAccumulated = 0;
+        let maxWidthActive = true;
+        columns.forEach( col => {
+            minWidthAccumulated += col.getMinWidth();
+            if (col.getMaxWidth() > 0) {
+                maxWidthAccumulated += col.getMaxWidth();
+            } else {
+                // if at least one columns has no max width, it means the group of columns
+                // then has no max width, as at least one column can take as much width as possible
+                maxWidthActive = false;
+            }
+        });
+
+        let minWidthPasses = width >= minWidthAccumulated;
+
+        let maxWidthPasses = !maxWidthActive || (width <= maxWidthAccumulated);
+
+        return minWidthPasses && maxWidthPasses;
+    }
+
     public setColumnsWidth(resizeSets: ColumnResizeSet[],
                            finished: boolean,
                            source: ColumnEventType): void {
 
-        let atLeastOneSetFailsMinWidth = false;
-
-        resizeSets.forEach( set => {
-            let {columns, width} = set;
-            let minWidth = 0;
-            columns.forEach( col => minWidth += col.getMinWidth());
-            if (width < minWidth) { atLeastOneSetFailsMinWidth = true; }
-        });
-
-        if (atLeastOneSetFailsMinWidth) { return; }
+        let passMinMaxCheck = _.every(resizeSets, this.checkMinAndMaxWidthsForSet.bind(this));
+        if (!passMinMaxCheck) { return; }
 
         let changedCols: Column[] = [];
         let allCols: Column[] = [];
@@ -886,6 +905,88 @@ export class ColumnController {
             this.eventService.dispatchEvent(event);
         }
     }
+
+
+    // called from api
+    public sizeColumnsToFit_temp(gridWidth: any, source: ColumnEventType = "api"): void {
+        // avoid divide by zero
+        let allDisplayedColumns = this.getAllDisplayedColumns();
+
+        if (gridWidth <= 0 || allDisplayedColumns.length === 0) {
+            return;
+        }
+
+        let colsToNotSpread = _.filter(allDisplayedColumns, (column: Column): boolean => {
+            return column.getColDef().suppressSizeToFit === true;
+        });
+        let colsToSpread = _.filter(allDisplayedColumns, (column: Column): boolean => {
+            return column.getColDef().suppressSizeToFit !== true;
+        });
+
+        // make a copy of the cols that are going to be resized
+        let colsToFireEventFor = colsToSpread.slice(0);
+
+        let finishedResizing = false;
+        while (!finishedResizing) {
+            finishedResizing = true;
+            let availablePixels = gridWidth - this.getWidthOfColsInList(colsToNotSpread);
+            if (availablePixels <= 0) {
+                // no width, set everything to minimum
+                colsToSpread.forEach( (column: Column) => {
+                    column.setMinimum(source);
+                });
+            } else {
+                let scale = availablePixels / this.getWidthOfColsInList(colsToSpread);
+                // we set the pixels for the last col based on what's left, as otherwise
+                // we could be a pixel or two short or extra because of rounding errors.
+                let pixelsForLastCol = availablePixels;
+                // backwards through loop, as we are removing items as we go
+                for (let i = colsToSpread.length - 1; i >= 0; i--) {
+                    let column = colsToSpread[i];
+                    let newWidth = Math.round(column.getActualWidth() * scale);
+                    if (newWidth < column.getMinWidth()) {
+                        column.setMinimum(source);
+                        moveToNotSpread(column);
+                        finishedResizing = false;
+                    } else if (column.isGreaterThanMax(newWidth)) {
+                        column.setActualWidth(column.getMaxWidth(), source);
+                        moveToNotSpread(column);
+                        finishedResizing = false;
+                    } else {
+                        let onLastCol = i === 0;
+                        if (onLastCol) {
+                            column.setActualWidth(pixelsForLastCol, source);
+                        } else {
+                            column.setActualWidth(newWidth, source);
+                        }
+                    }
+                    pixelsForLastCol -= newWidth;
+                }
+            }
+        }
+
+        this.setLeftValues(source);
+        this.updateBodyWidths();
+
+        colsToFireEventFor.forEach( (column: Column) => {
+            let event: ColumnResizedEvent = {
+                type: Events.EVENT_COLUMN_RESIZED,
+                column: column,
+                columns: [column],
+                finished: true,
+                api: this.gridApi,
+                columnApi: this.columnApi,
+                source: "sizeColumnsToFit"
+            };
+            this.eventService.dispatchEvent(event);
+        });
+
+        function moveToNotSpread(column: Column) {
+            _.removeFromArray(colsToSpread, column);
+            colsToNotSpread.push(column);
+        }
+    }
+
 
     public setColumnAggFunc(column: Column, aggFunc: string, source: ColumnEventType = "api"): void {
         column.setAggFunc(aggFunc);
