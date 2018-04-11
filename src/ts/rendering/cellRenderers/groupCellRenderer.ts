@@ -136,13 +136,6 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         // let paddingPx: number;
         let paddingCount = rowNode.uiLevel;
 
-        let pivotModeAndLeafGroup = this.columnController.isPivotMode() && params.node.leafGroup;
-
-        let notExpandable = !rowNode.isExpandable();
-        if (rowNode.footer || notExpandable || pivotModeAndLeafGroup) {
-            paddingCount += 1;
-        }
-
         let userProvidedPaddingPixelsTheDeprecatedWay = params.padding >= 0;
         if (userProvidedPaddingPixelsTheDeprecatedWay) {
             this.setPaddingDeprecatedWay(paddingCount, params.padding);
@@ -451,6 +444,11 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             // compensation padding for leaf nodes, so there is blank space instead of the expand icon
             this.addCssClass('ag-row-group-leaf-indent');
         }
+
+        let pivotModeAndLeafGroup = this.columnController.isPivotMode() && rowNode.leafGroup;
+        let notExpandable = !rowNode.isExpandable();
+        let addLeafIndentClass = rowNode.footer || notExpandable || pivotModeAndLeafGroup;
+        this.addOrRemoveCssClass('ag-row-group-leaf-indent', addLeafIndentClass);
     }
 
     public destroy() : void {
