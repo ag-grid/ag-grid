@@ -14,67 +14,74 @@ include '../landing-pages/header.php';
 
 <h2>Two Versions - Which is the Best Fit for you?</h2>
 
-<div class="inline-container team">
+<div class="">
     <div class="row">
-
-        <div class="col-md-5">
+        <div class="col-md-6">
             <h3>ag-Grid Community Edition</h3>
             <p>
                 Free and Open Source datagrid designed to meet all of your core requirements. Available via Github or NPM. To keep up to date with our releases, you can join our mailing list or follow us on Medium.
             </p>
         </div>
 
-        <div class="col-md-5">
+        <div class="col-md-6">
             <h3>ag-Grid Enterprise Edition</h3>
             <p>
                 Built on ag-Grid Community Edition, our commercial version contains more features designed for Enterprise Applications. This version also includes Technical Support and Feature Requests. Sign up now for a free two month, fully functional trial.
             </p>
         </div>
+    </div>
 </div>
 
     <h2>Key Features and Benefits</h2>
 
-    <div class="inline-container team">
+    <div class="">
         <div class="row">
 
             <div class="col-md-4">
                 <h3>Core and Enterprise Features</h3>
-                    <li>
-                        Everything you'd expect from a datagrid. Sorting, filtering, row grouping. Available in ag-Grid Community.
-                    </li>
-                    <li>
-                        A more powerful set of advanced features designed for Enterprise Applications. Pivoting, Aggregation, Clipboard, Master/Detail, Tree Data
-                    </li>
-                    <li>
-                        View all of our features in the Features Overview.
-                    </li>
+                    <ul class="content-list">
+                        <li>
+                            Everything you'd expect from a datagrid. Sorting, filtering, row grouping. Available in ag-Grid Community.
+                        </li>
+                        <li>
+                            A more powerful set of advanced features designed for Enterprise Applications. Pivoting, Aggregation, Clipboard, Master/Detail, Tree Data
+                        </li>
+                        <li>
+                            View all of our features in the Features Overview.
+                        </li>
+                    </ul>
             </div>
 
             <div class="col-md-4">
                 <h3>Performance</h3>
-                    <li>
-                        Features are useless without performance. 
-                    </li>
-                    <li>
-                        We find that the browser runs out of steam before the grid, easily handles 100,000 rows.
-                    </li>
-                    <li>
-                        For larger datasets, use one of our other Row Models designed to handle Big Data.
-                    </li>
+                    <ul class="content-list">
+                        <li>
+                            Features are useless without performance. 
+                        </li>
+                        <li>
+                            We find that the browser runs out of steam before the grid, easily handles 100,000 rows.
+                        </li>
+                        <li>
+                            For larger datasets, use one of our other Row Models designed to handle Big Data.
+                        </li>
+                    </ul>
             </div>
 
             <div class="col-md-4">
                 <h3>Detailed Documentation</h3>
-                    <li>
-                        We have created in depth guides which you can follow to implement specific features.
-                    </li>
-                    <li>
-                        There are lots of articles covering our Row Models, Themes, Components as well a detailed reference guide.
-                    </li>
-                    <li>
-                        Finally, we have provided a library of Examples which you can use as a basis for your implementation of ag-Grid.
-                    </li>
+                    <ul class="content-list">
+                        <li>
+                            We have created in depth guides which you can follow to implement specific features.
+                        </li>
+                        <li>
+                            There are lots of articles covering our Row Models, Themes, Components as well a detailed reference guide.
+                        </li>
+                        <li>
+                            Finally, we have provided a library of Examples which you can use as a basis for your implementation of ag-Grid.
+                        </li>
+                    </ul>
             </div>
+    </div>
     </div>
 
 <h2>React Example</h2>
