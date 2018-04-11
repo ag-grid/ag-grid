@@ -131,7 +131,9 @@ export class DetailCellRenderer extends Component {
             seedBeanInstances: {
                 // a temporary fix for AG-1574
                 // AG-1715 raised to do a wider ranging refactor to improve this
-                agGridReact: params.agGridReact
+                agGridReact: params.agGridReact,
+                // AG-1716 - directly related to AG-1574 and AG-1715
+                frameworkComponentWrapper: params.frameworkComponentWrapper
             }
         });
 
@@ -162,7 +164,8 @@ export class DetailCellRenderer extends Component {
 export interface IDetailCellRendererParams extends ICellRendererParams {
     detailGridOptions: GridOptions;
     getDetailRowData: GetDetailRowData;
-    agGridReact: any
+    agGridReact: any;
+    frameworkComponentWrapper: any;
 }
 
 export interface GetDetailRowData {
