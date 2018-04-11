@@ -765,52 +765,29 @@ export class ColumnController {
             return;
         }
 
-        newWidth = this.normaliseColumnWidth(col, newWidth);
+        let sets: ColumnResizeSet[] = [];
 
-        let widthDiff = col.getActualWidth() - newWidth;
-        let widthChanged = widthDiff !== 0;
+        sets.push({
+            width: newWidth,
+            ratios: [1],
+            columns: [col]
+        });
 
-        // if doing takeFromRight, we get the col to take from and work out the new size
-        let adjacentCol: Column = null;
-        let newAdjacentWidth: number = null;
         if (takeFromAdjacent) {
-            adjacentCol = this.getDisplayedColAfter(col);
-            if (!adjacentCol) { return; }
+            let otherCol = this.getDisplayedColAfter(col);
+            if (!otherCol) { return; }
 
-            newAdjacentWidth = this.normaliseColumnWidth(adjacentCol, adjacentCol.getActualWidth() + widthDiff);
-            let adjacentDiff = adjacentCol.getActualWidth() - newAdjacentWidth;
+            let widthDiff = col.getActualWidth() - newWidth;
+            let otherColWidth = otherCol.getActualWidth() + widthDiff;
 
-            // if the adjacent column doesn't have the pixels to share, then we ignore the resize request
-            let rightColCantResizeToSameAmount = adjacentDiff !== -widthDiff;
-            if (rightColCantResizeToSameAmount) { return; }
+            sets.push({
+                width: otherColWidth,
+                ratios: [1],
+                columns: [otherCol]
+            })
         }
 
-        col.setActualWidth(newWidth, source);
-        if (takeFromAdjacent) {
-            adjacentCol.setActualWidth(newAdjacentWidth);
-        }
-        this.setLeftValues(source);
-
-        this.updateBodyWidths();
-        this.checkDisplayedVirtualColumns();
-
-        // check for change first, to avoid unnecessary firing of events
-        // however we always fire 'finished' events. this is important
-        // when groups are resized, as if the group is changing slowly,
-        // eg 1 pixel at a time, then each change will fire change events
-        // in all the columns in the group, but only one with get the pixel.
-        if (finished || widthChanged) {
-            let event: ColumnResizedEvent = {
-                type: Events.EVENT_COLUMN_RESIZED,
-                columns: takeFromAdjacent ? [col, adjacentCol] : [col],
-                column: takeFromAdjacent ? null : col,
-                finished: finished,
-                api: this.gridApi,
-                columnApi: this.columnApi,
-                source: source
-            };
-            this.eventService.dispatchEvent(event);
-        }
+        this.resizeColumnSets(sets, finished, source);
     }
 
     private checkMinAndMaxWidthsForSet(columnResizeSet: ColumnResizeSet): boolean {
@@ -840,9 +817,13 @@ export class ColumnController {
         return minWidthPasses && maxWidthPasses;
     }
 
-    public setColumnsWidth(resizeSets: ColumnResizeSet[],
-                           finished: boolean,
-                           source: ColumnEventType): void {
+    // method takes sets of columns and resizes them. either all sets will be resized, or nothing
+    // be resized. this is used for example when user tries to resize a group and holds shift key,
+    // then both the current group (grows), and the adjacent group (shrinks), will get resized,
+    // so that's two sets for this method.
+    public resizeColumnSets(resizeSets: ColumnResizeSet[],
+                            finished: boolean,
+                            source: ColumnEventType): void {
 
         let passMinMaxCheck = _.every(resizeSets, this.checkMinAndMaxWidthsForSet.bind(this));
         if (!passMinMaxCheck) { return; }
@@ -856,47 +837,112 @@ export class ColumnController {
 
             // keep track of pixels used, and last column gets the remaining,
             // to cater for rounding errors, and min width adjustments
-            let pixelsToDistribute = width;
-            columns.forEach( (col: Column, index: number) => {
-                let notLastCol = index !== (columns.length - 1);
-                allCols.push(col);
+            let newWidths: {[colId: string]: number} = {};
 
-                let colNewWidth: number;
+            let finishedCols: {[colId: string]: boolean} = {};
 
-                if (notLastCol) {
-                    colNewWidth = Math.floor(ratios[index] * width);
+            columns.forEach( col => allCols.push(col) );
+
+            // the loop below goes through each col. if a col exceeds it's min/max width,
+            // it then gets set to its min/max width and the column is removed marked as 'finished'
+            // and the calculation is done again leaving this column out. take for example columns
+            // {A, width: 50, maxWidth: 100}
+            // {B, width: 50}
+            // {C, width: 50}
+            // and then the set is set to width 600 - on the first pass the grid tries to set each column
+            // to 200. it checks A and sees 200 > 100 and so sets the width to 100. col A is then marked
+            // as 'finished' and the calculation is done again with the remaining cols B and C, which end up
+            // splitting the remaining 500 pixels.
+            let finishedColsGrew = true;
+            let loopCount = 0;
+
+            while (finishedColsGrew) {
+
+                loopCount++;
+                if (loopCount>1000) {
+                    // this should never happen, but in the future, someone might introduce a bug here,
+                    // so we stop the browser from hanging and report bug properly
+                    console.error('ag-Grid: infinite loop in resizeColumnSets');
+                    break;
+                }
+
+                finishedColsGrew = false;
+
+                let subsetCols: Column[] = [];
+                let subsetRatios: number[] = [];
+                let subsetRatioTotal = 0;
+                let pixelsToDistribute = width;
+
+                columns.forEach( (col: Column, index: number) => {
+                    let thisColFinished = finishedCols[col.getId()];
+                    if (thisColFinished) {
+                        pixelsToDistribute -= newWidths[col.getId()];
+                    } else {
+                        subsetCols.push(col);
+                        let ratioThisCol = ratios[index];
+                        subsetRatioTotal += ratioThisCol;
+                        subsetRatios.push(ratioThisCol);
+                    }
+                });
+
+                // because we are not using all of the ratios (cols can be missing),
+                // we scale the ratio. if all columns are included, then subsetRatioTotal=1,
+                // and so the ratioScale will be 1.
+                let ratioScale = 1 / subsetRatioTotal;
+
+                subsetCols.forEach( (col: Column, index: number) => {
+                    let lastCol = index === (subsetCols.length - 1);
+                    let colNewWidth: number;
+
+                    if (lastCol) {
+                        colNewWidth = pixelsToDistribute;
+                    } else {
+                        colNewWidth = Math.round(ratios[index] * width * ratioScale);
+                        pixelsToDistribute -= colNewWidth;
+                    }
+
                     if (colNewWidth < col.getMinWidth()) {
                         colNewWidth = col.getMinWidth();
+                        finishedCols[col.getId()] = true;
+                        finishedColsGrew = true;
+                    } else if (col.getMaxWidth() > 0 && colNewWidth > col.getMaxWidth()) {
+                        colNewWidth = col.getMaxWidth();
+                        finishedCols[col.getId()] = true;
+                        finishedColsGrew = true;
                     }
-                    pixelsToDistribute -= colNewWidth;
-                } else {
-                    colNewWidth = pixelsToDistribute;
-                }
 
-                if (col.getActualWidth()!==colNewWidth) {
+                    newWidths[col.getId()] = colNewWidth;
+                });
+            }
+
+            columns.forEach( col => {
+                let newWidth = newWidths[col.getId()];
+                if (col.getActualWidth() !== newWidth) {
+                    col.setActualWidth(newWidth);
                     changedCols.push(col);
-                    col.setActualWidth(colNewWidth, source);
                 }
             });
-
         });
 
-        this.setLeftValues(source);
+        // if no cols changed, then no need to update more or send event.
+        let atLeastOneColChanged = changedCols.length > 0;
 
-        this.updateBodyWidths();
-        this.checkDisplayedVirtualColumns();
+        if (atLeastOneColChanged) {
+            this.setLeftValues(source);
+            this.updateBodyWidths();
+            this.checkDisplayedVirtualColumns();
+        }
 
         // check for change first, to avoid unnecessary firing of events
         // however we always fire 'finished' events. this is important
         // when groups are resized, as if the group is changing slowly,
         // eg 1 pixel at a time, then each change will fire change events
         // in all the columns in the group, but only one with get the pixel.
-        let widthChanged = changedCols.length > 0;
-        if (finished || widthChanged) {
+        if (atLeastOneColChanged || finished) {
             let event: ColumnResizedEvent = {
                 type: Events.EVENT_COLUMN_RESIZED,
-                columns: allCols,
-                column: allCols.length === 1 ? allCols[0] : null,
+                columns: changedCols,
+                column: changedCols.length === 1 ? changedCols[0] : null,
                 finished: finished,
                 api: this.gridApi,
                 columnApi: this.columnApi,
@@ -905,88 +951,6 @@ export class ColumnController {
             this.eventService.dispatchEvent(event);
         }
     }
-
-
-    // called from api
-    public sizeColumnsToFit_temp(gridWidth: any, source: ColumnEventType = "api"): void {
-        // avoid divide by zero
-        let allDisplayedColumns = this.getAllDisplayedColumns();
-
-        if (gridWidth <= 0 || allDisplayedColumns.length === 0) {
-            return;
-        }
-
-        let colsToNotSpread = _.filter(allDisplayedColumns, (column: Column): boolean => {
-            return column.getColDef().suppressSizeToFit === true;
-        });
-        let colsToSpread = _.filter(allDisplayedColumns, (column: Column): boolean => {
-            return column.getColDef().suppressSizeToFit !== true;
-        });
-
-        // make a copy of the cols that are going to be resized
-        let colsToFireEventFor = colsToSpread.slice(0);
-
-        let finishedResizing = false;
-        while (!finishedResizing) {
-            finishedResizing = true;
-            let availablePixels = gridWidth - this.getWidthOfColsInList(colsToNotSpread);
-            if (availablePixels <= 0) {
-                // no width, set everything to minimum
-                colsToSpread.forEach( (column: Column) => {
-                    column.setMinimum(source);
-                });
-            } else {
-                let scale = availablePixels / this.getWidthOfColsInList(colsToSpread);
-                // we set the pixels for the last col based on what's left, as otherwise
-                // we could be a pixel or two short or extra because of rounding errors.
-                let pixelsForLastCol = availablePixels;
-                // backwards through loop, as we are removing items as we go
-                for (let i = colsToSpread.length - 1; i >= 0; i--) {
-                    let column = colsToSpread[i];
-                    let newWidth = Math.round(column.getActualWidth() * scale);
-                    if (newWidth < column.getMinWidth()) {
-                        column.setMinimum(source);
-                        moveToNotSpread(column);
-                        finishedResizing = false;
-                    } else if (column.isGreaterThanMax(newWidth)) {
-                        column.setActualWidth(column.getMaxWidth(), source);
-                        moveToNotSpread(column);
-                        finishedResizing = false;
-                    } else {
-                        let onLastCol = i === 0;
-                        if (onLastCol) {
-                            column.setActualWidth(pixelsForLastCol, source);
-                        } else {
-                            column.setActualWidth(newWidth, source);
-                        }
-                    }
-                    pixelsForLastCol -= newWidth;
-                }
-            }
-        }
-
-        this.setLeftValues(source);
-        this.updateBodyWidths();
-
-        colsToFireEventFor.forEach( (column: Column) => {
-            let event: ColumnResizedEvent = {
-                type: Events.EVENT_COLUMN_RESIZED,
-                column: column,
-                columns: [column],
-                finished: true,
-                api: this.gridApi,
-                columnApi: this.columnApi,
-                source: "sizeColumnsToFit"
-            };
-            this.eventService.dispatchEvent(event);
-        });
-
-        function moveToNotSpread(column: Column) {
-            _.removeFromArray(colsToSpread, column);
-            colsToNotSpread.push(column);
-        }
-    }
-
 
     public setColumnAggFunc(column: Column, aggFunc: string, source: ColumnEventType = "api"): void {
         column.setAggFunc(aggFunc);

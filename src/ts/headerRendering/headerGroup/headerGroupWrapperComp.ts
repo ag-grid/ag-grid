@@ -45,9 +45,14 @@ export class HeaderGroupWrapperComp extends Component {
     private readonly pinned: string;
 
     private eHeaderCellResize: HTMLElement;
-    private resizeWidthStart: number;
-    private resizeChildrenWidthStarts: number[];
-    private resizeWithShiftKey: boolean;
+
+    private resizeCols: Column[];
+    private resizeStartWidth: number;
+    private resizeRatios: number[];
+
+    private resizeTakeFromCols: Column[];
+    private resizeTakeFromStartWidth: number;
+    private resizeTakeFromRatios: number[];
 
     // the children can change, we keep destroy functions related to listening to the children here
     private childColumnsDestroyFuncs: Function[] = [];
@@ -303,12 +308,6 @@ export class HeaderGroupWrapperComp extends Component {
     }
 
     public onResizeStart(shiftKey: boolean): void {
-        this.resizeWithShiftKey = shiftKey;
-        this.resizeWidthStart = this.columnGroup.getActualWidth();
-        this.resizeChildrenWidthStarts = [];
-        this.columnGroup.getDisplayedLeafColumns().forEach( (column: Column) => {
-            this.resizeChildrenWidthStarts.push(column.getActualWidth());
-        });
 
         let leafCols = this.columnGroup.getDisplayedLeafColumns();
         this.resizeCols = _.filter(leafCols, col => col.isResizable());
@@ -316,7 +315,6 @@ export class HeaderGroupWrapperComp extends Component {
         this.resizeCols.forEach( col => this.resizeStartWidth += col.getActualWidth());
         this.resizeRatios = [];
         this.resizeCols.forEach( col => this.resizeRatios.push(col.getActualWidth() / this.resizeStartWidth));
-
 
         let takeFromGroup: ColumnGroup = null;
         if (shiftKey) {
@@ -340,90 +338,28 @@ export class HeaderGroupWrapperComp extends Component {
 
     }
 
-    private resizeCols: Column[];
-    private resizeStartWidth: number;
-    private resizeRatios: number[];
-
-    private resizeTakeFromCols: Column[];
-    private resizeTakeFromStartWidth: number;
-    private resizeTakeFromRatios: number[];
-
     public onResizing(finished: boolean, resizeAmount: any): void {
 
         let resizeSets: ColumnResizeSet[] = [];
 
+        let resizeAmountNormalised = this.normaliseDragChange(resizeAmount);
+
         resizeSets.push({
             columns: this.resizeCols,
             ratios: this.resizeRatios,
-            width: this.resizeStartWidth + resizeAmount
+            width: this.resizeStartWidth + resizeAmountNormalised
         });
 
         if (this.resizeTakeFromCols) {
             resizeSets.push({
                 columns: this.resizeTakeFromCols,
                 ratios: this.resizeTakeFromRatios,
-                width: this.resizeTakeFromStartWidth - resizeAmount
+                width: this.resizeTakeFromStartWidth - resizeAmountNormalised
             });
         }
 
-        this.columnController.setColumnsWidth(resizeSets, finished, 'uiColumnDragged');
+        this.columnController.resizeColumnSets(resizeSets, finished, 'uiColumnDragged');
     }
-
-    public onResizing_old(finished: boolean, resizeAmount: any): void {
-
-        // this will be the width we have to distribute to the resizable columns
-        let widthForResizableCols: number;
-        // this is all the displayed cols in the group less those that we cannot resize
-        let resizableCols: Column[];
-
-        // a lot of variables defined for the first set of maths, but putting
-        // braces in, we localise the variables to this bit of the method
-        {
-            let resizeAmountNormalised = this.normaliseDragChange(resizeAmount);
-            let totalGroupWidth = this.resizeWidthStart + resizeAmountNormalised;
-
-            let displayedColumns = this.columnGroup.getDisplayedLeafColumns();
-            resizableCols = _.filter(displayedColumns, col => col.isResizable());
-            let nonResizableCols = _.filter(displayedColumns, col => !col.isResizable());
-
-            let nonResizableColsWidth = 0;
-            nonResizableCols.forEach( col => nonResizableColsWidth += col.getActualWidth() );
-
-            widthForResizableCols = totalGroupWidth - nonResizableColsWidth;
-
-            let minWidth = 0;
-            resizableCols.forEach( col => minWidth += col.getMinWidth() );
-
-            if (widthForResizableCols < minWidth) {
-                widthForResizableCols = minWidth;
-            }
-        }
-
-        // distribute the new width to the child headers
-        let changeRatio = widthForResizableCols / this.resizeWidthStart;
-        // keep track of pixels used, and last column gets the remaining,
-        // to cater for rounding errors, and min width adjustments
-        let pixelsToDistribute = widthForResizableCols;
-
-        resizableCols.forEach( (column: Column, index: any) => {
-            let notLastCol = index !== (resizableCols.length - 1);
-            let newChildSize: any;
-            if (notLastCol) {
-                // if not the last col, calculate the column width as normal
-                let startChildSize = this.resizeChildrenWidthStarts[index];
-                newChildSize = startChildSize * changeRatio;
-                if (newChildSize < column.getMinWidth()) {
-                    newChildSize = column.getMinWidth();
-                }
-                pixelsToDistribute -= newChildSize;
-            } else {
-                // if last col, give it the remaining pixels
-                newChildSize = pixelsToDistribute;
-            }
-            this.columnController.setColumnWidth(column, newChildSize, false, finished, "uiColumnDragged");
-        });
-    }
-
 
     // optionally inverts the drag, depending on pinned and RTL
     // note - this method is duplicated in RenderedHeaderCell - should refactor out?
