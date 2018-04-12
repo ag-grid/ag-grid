@@ -76,6 +76,11 @@
                 ]
             },
             {
+                "title": "Vue.js",
+                "gtm": { "tech": "vue" },
+                "url": "best-vuejs-data-grid/"
+            },
+            {
                 "title": "Server-side Operations",
                 "gtm": { "tech": "server-side-operations" },
                 "items": [
@@ -88,11 +93,6 @@
                         "url": "spark-server-side-operations/"
                     }
                 ]
-            },
-            {
-                "title": "Vue.js",
-                "gtm": { "tech": "vue" },
-                "url": "best-vuejs-data-grid/"
             },
             {
                 "title": "Use  With RxJS",
