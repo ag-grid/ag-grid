@@ -406,6 +406,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     public onExpandOrContract(): void {
 
+        console.log(`onExpandOrContract`);
+
         // must use the displayedGroup, so if data was dragged down, we expand the parent, not this row
         let rowNode: RowNode = this.displayedGroup;
 
@@ -439,10 +441,11 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             _.setVisible(this.eContracted, false);
         }
 
+        let displayedGroup = this.displayedGroup;
         // compensation padding for leaf nodes, so there is blank space instead of the expand icon
-        let pivotModeAndLeafGroup = this.columnController.isPivotMode() && rowNode.leafGroup;
-        let notExpandable = !rowNode.isExpandable();
-        let addLeafIndentClass = rowNode.footer || notExpandable || pivotModeAndLeafGroup;
+        let pivotModeAndLeafGroup = this.columnController.isPivotMode() && displayedGroup.leafGroup;
+        let notExpandable = !displayedGroup.isExpandable();
+        let addLeafIndentClass = displayedGroup.footer || notExpandable || pivotModeAndLeafGroup;
         this.addOrRemoveCssClass('ag-row-group-leaf-indent', addLeafIndentClass);
     }
 
