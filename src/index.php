@@ -68,7 +68,7 @@ meta_and_links($title, $keywords, $description, false);
     <div id="stage-frameworks">
         <section id="news-flash">
             <div>
-                March 7th, 2018: Version 17 released featuring toolbar redesign, new Balham theme & performance improvements.
+                April 12th, 2018: <a href="./ag-grid-changelog/?fixVersion=17.1.0">Version 17.1</a> released featuring 60 changes, features and bug fixes.
             </div>
         </section>
 

@@ -3,12 +3,16 @@
 
 <div class="card card-highlight">
   <div class="card-body">
-    <h5 class="card-title"><a href="https://medium.com/ag-grid/introducing-version-17-thomas-9d66234aa416">Version 17.0 Released</a></h5>
-    <h6 class="card-subtitle mb-2 text-muted">Mar 8</h6>
-    <p class="card-text">Improved tool panel, a new theme, performance enhancements and lots more. </p>
+    <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=17.1.0">Version 17.1 Released</a></h5>
+    <h6 class="card-subtitle mb-2 text-muted">Apr 13</h6>
+    <p class="card-text">
+        Minor release including 60 bug fixes and changes in total. Check the new guides on connecting to
+        <a class="learn-more" href="../oracle-server-side-operations/">Oracle</a> and
+        <a class="learn-more" href="../spark-server-side-operations/">Apache Spark</a>.
+    </p>
 
     <p class="text-right">
-        <a class="learn-more" href="https://medium.com/ag-grid/introducing-version-17-thomas-9d66234aa416">Release Announcement</a>
+        <a class="learn-more" href="../ag-grid-changelog/?fixVersion=17.1.0">Change Log</a>
     </p>
   </div>
 </div>
