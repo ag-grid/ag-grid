@@ -10,7 +10,7 @@ include 'documentation_header.php';
     <div>
     <h2>How Do I?</h2>
     <p>Review the guides section for step by step, task oriented articles that navigate through the recommended means of using ag-Grid.</p>
-    <p> <a href="/javascript-grid-npm/">Start with Guides</a> </p>
+    <p> <a href="../javascript-grid-npm/">Start with Guides</a> </p>
     </div>
 </div>
 
@@ -21,7 +21,7 @@ include 'documentation_header.php';
         All the configuration options (<strong>properties</strong>, <strong>events</strong>, <strong>API</strong>, etc.) for ag-Grid.
         Use this as a quick reference to look all available options.
     </p>
-    <p> <a href="/javascript-grid-reference-overview/">Go to Reference</a> </p>
+    <p> <a href="../javascript-grid-reference-overview/">Go to Reference</a> </p>
     </div>
 </div>
 
@@ -34,7 +34,7 @@ include 'documentation_header.php';
         in ag-Grid Enterprise are marked with the <span class="enterprise-icon">e</span> symbol.
     </p>
 
-    <p> <a href="/javascript-grid-features/">Go to Features</a> </p>
+    <p> <a href="../javascript-grid-features/">Go to Features</a> </p>
     </div>
 </div>
 
@@ -47,7 +47,7 @@ include 'documentation_header.php';
         Learn how to apply these techniques to manage large amounts of data.
     </p>
 
-    <p> <a href="/javascript-grid-row-models/">Go to Row Models</a> </p>
+    <p> <a href="../javascript-grid-row-models/">Go to Row Models</a> </p>
     </div>
 </div>
 
@@ -60,7 +60,7 @@ include 'documentation_header.php';
         application.
     </p>
 
-    <p> <a href="/javascript-grid-styling/">Go to Themes</a> </p>
+    <p> <a href="../javascript-grid-styling/">Go to Themes</a> </p>
     </div>
 </div>
 
@@ -75,7 +75,7 @@ include 'documentation_header.php';
         These can be done using plain JavaScript or a framework of your choice e.g. Angular or React.
     </p>
 
-    <p> <a href="/javascript-grid-components/">Go to Components</a> </p>
+    <p> <a href="../javascript-grid-components/">Go to Components</a> </p>
     </div>
 </div>
 
@@ -86,7 +86,7 @@ include 'documentation_header.php';
         End to end examples demonstrating many of the features of ag-Grid.
     </p>
 
-    <p> <a href="/javascript-grid-examples/">Go to Examples</a> </p>
+    <p> <a href="../javascript-grid-examples/">Go to Examples</a> </p>
     </div>
 </div>
 
