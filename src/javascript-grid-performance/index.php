@@ -93,6 +93,18 @@ include '../documentation-main/documentation_header.php';
     <h2>7. Understand</h2>
 
     <p>
+        For fast changing data, consider using
+        <a href="/javascript-grid-data-update/#batch-transactions">Batch Update Transactions</a>
+        which allows the grid to take very large amounts of updates without bringing the browser
+        to a crawl. This is also demonstrated in the blog
+        <a href="https://medium.com/ag-grid/how-to-test-for-the-best-html5-grid-for-streaming-updates-53545bb9256a">
+            Streaming Updates in JavaScript Datagrids
+        </a> that shows hundreds of thousands of updates per second.
+    </p>
+
+    <h2>8. Understand</h2>
+
+    <p>
         Read the article <a href="../ag-grid-8-performance-hacks-for-javascript/">8 Performance Hacks for JavaScript</a>
         so you know what the grid is doing, that way you will be able to reason with it.
     </p>
