@@ -99,6 +99,9 @@ export interface ColDef extends AbstractColDef {
     /** Expression or function to get the cells value. */
     valueGetter?: ((params: ValueGetterParams) => any) | string;
 
+    /** Expression or function to get the cells value for filtering. */
+    filterValueGetter?: ((params: ValueGetterParams) => any) | string;
+
     /** If not using a field, then this puts the value into the cell */
     valueSetter?: ((params: ValueSetterParams) => boolean) | string;
 
@@ -114,6 +117,9 @@ export interface ColDef extends AbstractColDef {
 
     /** Max width, in pixels, of the cell */
     maxWidth?: number;
+
+    /** True if this column should stretch rows height to fit contents */
+    autoHeight?: number;
 
     /** Class to use for the cell. Can be string, array of strings, or function. */
     cellClass?: string | string[]| ((cellClassParams: CellClassParams) => string | string[]);

@@ -123,6 +123,8 @@ export class CheckboxSelectionComponent extends Component {
     }
 
     private checkboxCallbackExists(): boolean {
-        return typeof this.column.getColDef().checkboxSelection === 'function';
+        // column will be missing if groupUseEntireRow=true
+        let colDef = this.column ? this.column.getColDef() : null;
+        return colDef && typeof colDef.checkboxSelection === 'function';
     }
 }

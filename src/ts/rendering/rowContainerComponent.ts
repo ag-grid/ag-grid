@@ -6,10 +6,6 @@ export interface RowContainerComponentParams {
     eContainer: HTMLElement;
     eViewport?: HTMLElement;
     hideWhenNoChildren?: boolean;
-
-    // this was put in for testing only. there is some code below that demonstrates the problem
-    // with max div height solution
-    body?: boolean;
 }
 
 /**
@@ -46,7 +42,6 @@ export class RowContainerComponent {
         this.eContainer = params.eContainer;
         this.eViewport = params.eViewport;
         this.hideWhenNoChildren = params.hideWhenNoChildren;
-        this.body = params.body;
     }
 
     @PostConstruct
@@ -61,32 +56,6 @@ export class RowContainerComponent {
 
     public setHeight(height: number): void {
         this.eContainer.style.height = height + "px";
-
-        // can ask niall about this - was testing different ways to get the browser to display
-        // unlimited number of rows
-
-        // if (this.body) {
-        //     let eParent = this.eViewport;
-        //
-        //     let FILLER_HEIGHT = 1000000;
-        //
-        //     let fillerCount = 0;
-        //     let colors = ['#000020','#000040','#000060','#000080','#0000A0','#0000C0','#0000E0','#00F000','#00F020','#00F040','#00F060','#00F080','#00F0A0','#00F0C0','#00F0E0'];
-        //     _.removeAllChildren(eParent);
-        //     let pixelsToGo = height;
-        //     while (pixelsToGo > 0) {
-        //         fillerCount++;
-        //         let pixelsThisDiv = (pixelsToGo > FILLER_HEIGHT) ? FILLER_HEIGHT : pixelsToGo;
-        //         pixelsToGo -= FILLER_HEIGHT;
-        //         let eFiller = document.createElement('div');
-        //         eFiller.style.height = pixelsThisDiv + 'px';
-        //         eFiller.style.backgroundColor = colors[fillerCount%colors.length];
-        //         eFiller.innerHTML = '' + fillerCount;
-        //         eParent.appendChild(eFiller);
-        //     }
-        //     console.log(`fillerCount = ${fillerCount}`);
-        // }
-
     }
 
     public flushRowTemplates(): void {

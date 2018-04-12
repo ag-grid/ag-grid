@@ -13,7 +13,7 @@ export interface IRangeController {
     setRangeToCell(cell: GridCell): void;
     setRange(rangeSelection: AddRangeSelectionParams): void;
     addRange(rangeSelection: AddRangeSelectionParams): void;
-    extendRangeInDirection(cell: GridCell, key: number): void;
+    extendRangeInDirection(cell: GridCell, key: number): boolean;
     extendRangeToCell(cell: GridCell): void;
 }
 

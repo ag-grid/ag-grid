@@ -232,8 +232,8 @@ ag-grid-aurelia {
 // as with inline-block, the layout messed up in Safari (not problems in the others).
 .ag-header-group-cell-label {
     overflow: hidden;
-    //display table-cell
     text-overflow: ellipsis;
+    display: flex;
 }
 
 .ag-header-cell-label {
@@ -306,7 +306,7 @@ ag-grid-aurelia {
 //
 .ag-bl-full-height {
     height: 100%;
-    overflow: auto;
+    overflow: hidden;
     position: relative;
 }
 
@@ -348,6 +348,20 @@ ag-grid-aurelia {
 .ag-bl-normal-east {
     float: right;
     height: 100%;
+}
+
+.ag-column-panel {
+    display: flex;
+    overflow-y: auto;
+}
+
+.ag-column-panel-center {
+    display: flex;
+    max-height: 100vh;
+    min-height: 400px;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow-x: hidden;
 }
 
 .ag-bl-normal-center {
@@ -472,7 +486,7 @@ ag-grid-aurelia {
     //height 100%
 }
 
-.ag-pinned-left-cols-viewport {
+.ag-hacked-scroll .ag-pinned-left-cols-viewport {
     float: left;
 }
 
@@ -481,26 +495,48 @@ ag-grid-aurelia {
     position: relative;
 }
 
-.ag-pinned-right-cols-viewport {
+.ag-hacked-scroll .ag-pinned-right-cols-viewport {
     float: right;
 }
 // for LTR, we show scrolls on the right pinned only
-.ag-ltr .ag-pinned-right-cols-viewport {
+.ag-ltr .ag-hacked-scroll .ag-pinned-right-cols-viewport {
     overflow-x: hidden;
     overflow-y: auto;
 }
 
-.ag-ltr .ag-pinned-left-cols-viewport {
+.ag-ltr .ag-hacked-scroll .ag-pinned-left-cols-viewport {
     overflow: hidden;
 }
 // for RTL, other way around, we show scrolls on left only
-.ag-rtl .ag-pinned-right-cols-viewport {
+.ag-rtl .ag-hacked-scroll .ag-pinned-right-cols-viewport {
     overflow: hidden;
 }
 
-.ag-rtl .ag-pinned-left-cols-viewport {
+.ag-rtl .ag-hacked-scroll .ag-pinned-left-cols-viewport {
     overflow-x: hidden;
     overflow-y: auto;
+}
+
+.ag-native-scroll .ag-pinned-right-cols-viewport {
+    float: right;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.ag-native-scroll .ag-pinned-left-cols-viewport {
+    float: left;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.ag-hide-scroll-bar::-webkit-scrollbar {
+    //display: none;
+}
+
+.ag-hide-scroll-bar {
+    margin-right: -16px;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .ag-pinned-right-cols-container {
@@ -526,7 +562,6 @@ ag-grid-aurelia {
     display: inline;
     height: 100%;
     left: 0;
-    overflow: hidden;
     // because the full width container is an overlay over the rest of the grid, we cannot
     // have it consume mouse events, otherwise no mouse events would be allowed on the
     // rest of the grid
@@ -535,6 +570,15 @@ ag-grid-aurelia {
     position: absolute;
     top: 0;
     width: 100%;
+}
+
+.ag-hacked-scroll .ag-full-width-viewport {
+    overflow: hidden;
+}
+
+.ag-native-scroll .ag-full-width-viewport {
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .ag-full-width-container {
@@ -646,7 +690,14 @@ ag-grid-aurelia {
     }
 
     .ag-column-drop-cell {
-        display: block;
+        display: flex;
+
+        .ag-column-drop-cell-text {
+            overflow: hidden;
+            flex: 1;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     }
 
     .ag-column-drop-empty-message {
@@ -685,7 +736,6 @@ ag-grid-aurelia {
 .ag-cell {
     box-sizing: border-box;
     display: inline-block;
-    height: 100%;
     overflow: hidden;
     // this float was needed for layout in safari, without it, when images were used (eg country flags),
     // then the layout was broken
@@ -694,6 +744,11 @@ ag-grid-aurelia {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+.ag-cell-with-height {
+    height: 100%;
+}
+
 // this is used by the animateShowChangeCellRenderer. it is arguable that this belongs in the themes,
 // however it is not tied to color, only placement and visiblity, which is behaviour and not style,
 // thus belongs here, besides it doesn't change wih the themes
@@ -905,7 +960,6 @@ ag-grid-aurelia {
     display: inline-block;
 }
 
-
 .ag-ltr .ag-column-select-column {
     margin-left: 16px;
 }
@@ -923,7 +977,7 @@ ag-grid-aurelia {
     text-overflow: ellipsis;
     white-space: nowrap;
 
-    .ag-column-select-label, 
+    .ag-column-select-label,
     .ag-column-select-column-group-label {
         flex-grow: 1;
         flex-shrink: 1;
@@ -1030,8 +1084,8 @@ $ag-icons-filter: "initial" !default;
 
 /* icons are used outside of the grid root (in the ghost) */
 $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked
-    column columns contracted copy cut desc expanded eye-slash eye filter folder-open folder group indeterminate left loading menu minus none not-allowed paste pin pivot plus right
-    small-left small-right small-up small-down tick cross tree-open tree-closed tree-indeterminate;
+    column columns contracted copy cut desc expanded eye-slash eye filter group indeterminate left loading menu minus none not-allowed paste pin pivot plus right small-left
+    small-right small-up small-down tick cross tree-open tree-closed tree-indeterminate;
 
 @each $icon in $icons {
     .ag-icon-#{$icon} {
@@ -1092,6 +1146,7 @@ $row-group-indent-size: 10px !default;
     display: flex;
     flex-direction: row-reverse;
     height: 100%;
+    box-sizing: border-box;
 
     .ag-side-buttons {
         width: 20px;
@@ -1121,4 +1176,8 @@ $row-group-indent-size: 10px !default;
             transform-origin: right bottom 0;
         }
     }
+}
+
+.ag-row-focus {
+    z-index: 1;
 }

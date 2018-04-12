@@ -26,12 +26,13 @@ import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {IDatasource} from "./rowModels/iDatasource";
 import {GridCellDef} from "./entities/gridCell";
 import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
-import {BaseExportParams, ProcessCellForExportParams} from "./exportParams";
+import {BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams} from "./exportParams";
 import {AgEvent} from "./events";
 import {Environment} from "./environment";
 import {PropertyKeys} from "./propertyKeys";
 import {ColDefUtil} from "./components/colDefUtil";
 import {Events} from "./eventKeys";
+import {AutoHeightCalculator} from "./rendering/autoHeightCalculator";
 
 let DEFAULT_ROW_HEIGHT = 25;
 let DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -99,6 +100,7 @@ export class GridOptionsWrapper {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('environment') private environment: Environment;
+    @Autowired('autoHeightCalculator') private autoHeightCalculator: AutoHeightCalculator;
 
     private propertyEventService: EventService = new EventService();
 
@@ -383,6 +385,7 @@ export class GridOptionsWrapper {
     public isSuppressCopyRowsToClipboard() { return isTrue(this.gridOptions.suppressCopyRowsToClipboard); }
     public isEnableFilter() { return isTrue(this.gridOptions.enableFilter) || isTrue(this.gridOptions.enableServerSideFilter); }
     public isPagination() { return isTrue(this.gridOptions.pagination); }
+    public isSuppressEnterpriseResetOnNewColumns() { return isTrue(this.gridOptions.suppressEnterpriseResetOnNewColumns); }
 
     public getBatchUpdateWaitMillis(): number {
         return _.exists(this.gridOptions.batchUpdateWaitMillis) ? this.gridOptions.batchUpdateWaitMillis : Constants.BATCH_WAIT_MILLIS;
@@ -431,6 +434,7 @@ export class GridOptionsWrapper {
     public isAlwaysShowStatusBar() { return isTrue(this.gridOptions.alwaysShowStatusBar); }
     public isFunctionsReadOnly() { return isTrue(this.gridOptions.functionsReadOnly); }
     public isFloatingFilter(): boolean { return this.gridOptions.floatingFilter; }
+    public isEnableOldSetFilterModel(): boolean { return isTrue(this.gridOptions.enableOldSetFilterModel); }
     // public isFloatingFilter(): boolean { return true; }
 
     public getDefaultColDef(): ColDef { return this.gridOptions.defaultColDef; }
@@ -438,6 +442,7 @@ export class GridOptionsWrapper {
     public getDefaultExportParams(): BaseExportParams { return this.gridOptions.defaultExportParams; }
     public isSuppressCsvExport() { return isTrue(this.gridOptions.suppressCsvExport); }
     public isSuppressExcelExport() { return isTrue(this.gridOptions.suppressExcelExport); }
+    public isSuppressMakeColumnVisibleAfterUnGroup() { return isTrue(this.gridOptions.suppressMakeColumnVisibleAfterUnGroup); }
 
     public getNodeChildDetailsFunc(): ((dataItem: any)=> NodeChildDetails) { return this.gridOptions.getNodeChildDetails; }
     public getDataPathFunc(): ((dataItem: any) => string[]) { return this.gridOptions.getDataPath; }
@@ -449,6 +454,7 @@ export class GridOptionsWrapper {
     public getNavigateToNextCellFunc(): (params: NavigateToNextCellParams)=>GridCellDef { return this.gridOptions.navigateToNextCell; }
     public getTabToNextCellFunc(): (params: TabToNextCellParams)=>GridCellDef { return this.gridOptions.tabToNextCell; }
 
+    public isNativeScroll(): boolean { return false; }
     public isTreeData(): boolean { return isTrue(this.gridOptions.treeData); }
     public isValueCache(): boolean { return isTrue(this.gridOptions.valueCache); }
     public isValueCacheNeverExpires(): boolean { return isTrue(this.gridOptions.valueCacheNeverExpires); }
@@ -460,6 +466,7 @@ export class GridOptionsWrapper {
     public getProcessRowPostCreateFunc() : any { return this.gridOptions.processRowPostCreate; }
 
     public getProcessCellForClipboardFunc(): (params: ProcessCellForExportParams)=>any { return this.gridOptions.processCellForClipboard; }
+    public getProcessHeaderForClipboardFunc(): (params: ProcessHeaderForExportParams)=>any { return this.gridOptions.processHeaderForClipboard; }
     public getProcessCellFromClipboardFunc(): (params: ProcessCellForExportParams)=>any { return this.gridOptions.processCellFromClipboard; }
     public getViewportRowModelPageSize(): number { return oneOrGreater(this.gridOptions.viewportRowModelPageSize, DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE); }
     public getViewportRowModelBufferSize(): number { return zeroOrGreater(this.gridOptions.viewportRowModelBufferSize, DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE); }
@@ -715,6 +722,9 @@ export class GridOptionsWrapper {
         if (options.headerCellRenderer) {
             console.warn(`ag-grid: since version 15.x, headerCellRenderer is gone, please check the header documentation on how to set header templates.`);
         }
+        if (options.angularCompileHeaders) {
+            console.warn(`ag-grid: since version 15.x, angularCompileHeaders is gone, please see the getting started for Angular 1 docs to see how to do headers in Angular 1.x.`);
+        }
 
     }
 
@@ -723,7 +733,7 @@ export class GridOptionsWrapper {
             return this.gridOptions.localeTextFunc;
         }
         let that = this;
-        return function (key: any, defaultValue: any) {
+        return function(key: any, defaultValue: any) {
             let localeText = that.gridOptions.localeText;
             if (localeText && localeText[key]) {
                 return localeText[key];
@@ -735,9 +745,6 @@ export class GridOptionsWrapper {
 
     // responsible for calling the onXXX functions on gridOptions
     public globalEventHandler(eventName: string, event?: any): void {
-        if (eventName==='columnVisible') {
-            console.log('columnVisible');
-        }
         let callbackMethodName = ComponentUtil.getCallbackForEvent(eventName);
         if (typeof (<any>this.gridOptions)[callbackMethodName] === 'function') {
             (<any>this.gridOptions)[callbackMethodName](event);
@@ -776,10 +783,21 @@ export class GridOptionsWrapper {
             } else {
                 return DEFAULT_DETAIL_ROW_HEIGHT;
             }
-        } else if (this.isNumeric(this.gridOptions.rowHeight)) {
-            return this.gridOptions.rowHeight;
         } else {
-            return this.getDefaultRowHeight();
+            let defaultHeight = this.isNumeric(this.gridOptions.rowHeight) ?
+                this.gridOptions.rowHeight : this.getDefaultRowHeight();
+            if (this.columnController.isAutoRowHeightActive()) {
+                let autoHeight = this.autoHeightCalculator.getPreferredHeightForRow(rowNode);
+                // never return less than the default row height - covers when auto height
+                // cells are blank.
+                if (autoHeight > defaultHeight) {
+                    return autoHeight;
+                } else {
+                    return defaultHeight;
+                }
+            } else {
+                return defaultHeight;
+            }
         }
     }
 

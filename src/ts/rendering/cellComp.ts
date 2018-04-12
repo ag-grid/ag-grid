@@ -61,6 +61,8 @@ export class CellComp extends Component {
     private cellRendererGui: HTMLElement;
     private cellEditor: ICellEditorComp;
 
+    private autoHeightCell: boolean;
+
     private firstRightPinned: boolean;
     private lastLeftPinned: boolean;
 
@@ -85,13 +87,14 @@ export class CellComp extends Component {
     private cellEditorVersion = 0;
     private cellRendererVersion = 0;
 
-    constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: RowComp) {
+    constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: RowComp, autoHeightCell: boolean) {
         super();
         this.scope = scope;
         this.beans = beans;
         this.column = column;
         this.rowNode = rowNode;
         this.rowComp = rowComp;
+        this.autoHeightCell = autoHeightCell;
 
         this.createGridCellVo();
 
@@ -274,7 +277,20 @@ export class CellComp extends Component {
     private getInitialCssClasses(): string[] {
         let cssClasses: string[] = ["ag-cell", "ag-cell-not-inline-editing"];
 
-        cssClasses.push(this.cellFocused ? 'ag-cell-focus' : 'ag-cell-no-focus');
+        // if we are putting the cell into a dummy container, to work out it's height,
+        // then we don't put the height css in, as we want cell to fit height in that case.
+        if (!this.autoHeightCell) {
+            cssClasses.push('ag-cell-with-height');
+        }
+
+        let doingFocusCss = !this.beans.gridOptionsWrapper.isSuppressCellSelection();
+        if (doingFocusCss) {
+            // otherwise the class depends on the focus state
+            cssClasses.push(this.cellFocused ? 'ag-cell-focus' : 'ag-cell-no-focus');
+        } else {
+            // if we are not doing cell selection, then ag-cell-no-focus gets put onto every cell
+            cssClasses.push('ag-cell-no-focus');
+        }
 
         if (this.firstRightPinned) {
             cssClasses.push('ag-cell-first-right-pinned');
@@ -454,7 +470,10 @@ export class CellComp extends Component {
         // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
         if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
             let eGui = this.getGui();
-            this.beans.$compile(eGui)(this.scope);
+            const compiledElement = this.beans.$compile(eGui)(this.scope);
+            this.addDestroyFunc(() => {
+                compiledElement.remove();
+            });
         }
     }
 
@@ -775,10 +794,12 @@ export class CellComp extends Component {
             // row was removed (the row comp was removed), however now that the user
             // can provide components for cells, the destroy method gets call when this
             // happens so no longer need to fire event.
-            addRowCompListener: this.rowComp.addEventListener.bind(this.rowComp),
+            addRowCompListener: this.rowComp ? this.rowComp.addEventListener.bind(this.rowComp) : null,
             addRenderedRowListener: (eventType: string, listener: Function) => {
                 console.warn('ag-Grid: since ag-Grid .v11, params.addRenderedRowListener() is now params.addRowCompListener()');
-                this.rowComp.addEventListener(eventType, listener);
+                if (this.rowComp) {
+                    this.rowComp.addEventListener(eventType, listener);
+                }
             }
         };
 
@@ -813,7 +834,7 @@ export class CellComp extends Component {
         if (isOpenGroup && this.beans.gridOptionsWrapper.isGroupIncludeFooter()) {
             // if doing grouping and footers, we don't want to include the agg value
             // in the header when the group is open
-            return this.beans.valueService.getValue(this.column, this.rowNode, true);
+            return this.beans.valueService.getValue(this.column, this.rowNode, false, true);
         } else {
             return this.beans.valueService.getValue(this.column, this.rowNode);
         }
@@ -1212,7 +1233,9 @@ export class CellComp extends Component {
     }
 
     private onShiftRangeSelect(key: number): void {
-        this.beans.rangeController.extendRangeInDirection(this.gridCell, key);
+        let success = this.beans.rangeController.extendRangeInDirection(this.gridCell, key);
+
+        if (!success) { return; }
 
         let ranges = this.beans.rangeController.getCellRanges();
 
@@ -1585,8 +1608,15 @@ export class CellComp extends Component {
 
         // see if we need to change the classes on this cell
         if (cellFocused !== this.cellFocused) {
-            _.addOrRemoveCssClass(this.getGui(), 'ag-cell-focus', cellFocused);
-            _.addOrRemoveCssClass(this.getGui(), 'ag-cell-no-focus', !cellFocused);
+
+            // if we are not doing cell selection, then the focus class does not change, all cells will
+            // stay with ag-cell-no-focus class
+            let doingFocusCss = !this.beans.gridOptionsWrapper.isSuppressCellSelection();
+            if (doingFocusCss) {
+                _.addOrRemoveCssClass(this.getGui(), 'ag-cell-focus', cellFocused);
+                _.addOrRemoveCssClass(this.getGui(), 'ag-cell-no-focus', !cellFocused);
+            }
+
             this.cellFocused = cellFocused;
         }
 
@@ -1624,15 +1654,17 @@ export class CellComp extends Component {
             return;
         }
 
+        let newValueExists = false;
+        let newValue: any;
+
         if (!cancel) {
             // also have another option here to cancel after editing, so for example user could have a popup editor and
             // it is closed by user clicking outside the editor. then the editor will close automatically (with false
             // passed above) and we need to see if the editor wants to accept the new value.
             let userWantsToCancel = this.cellEditor.isCancelAfterEnd && this.cellEditor.isCancelAfterEnd();
             if (!userWantsToCancel) {
-                let newValue = this.cellEditor.getValue();
-                this.rowNode.setDataValue(this.column, newValue);
-                this.getValueAndFormat();
+                newValue = this.cellEditor.getValue();
+                newValueExists = true;
             }
         }
 
@@ -1678,6 +1710,11 @@ export class CellComp extends Component {
         }
 
         this.setInlineEditingClass();
+
+        if (newValueExists) {
+            this.rowNode.setDataValue(this.column, newValue);
+            this.getValueAndFormat();
+        }
 
         // we suppress the flash, as it is not correct to flash the cell the user has finished editing,
         // the user doesn't need to flash as they were the one who did the edit, the flash is pointless

@@ -400,6 +400,9 @@ export class RowComp extends Component {
     }
 
     private addMouseWheelListenerToFullWidthRow(): void {
+
+        if (this.beans.gridOptionsWrapper.isNativeScroll()) { return; }
+
         let mouseWheelListener = this.beans.gridPanel.genericMouseWheelListener.bind(this.beans.gridPanel);
         // IE9, Chrome, Safari, Opera
         this.addDestroyableEventListener(this.eFullWidthRow, 'mousewheel', mouseWheelListener);
@@ -700,7 +703,7 @@ export class RowComp extends Component {
     }
 
     private createNewCell(col: Column, eContainer: HTMLElement, cellTemplates: string[], newCellComps: CellComp[]): void {
-        let newCellComp = new CellComp(this.scope, this.beans, col, this.rowNode, this);
+        let newCellComp = new CellComp(this.scope, this.beans, col, this.rowNode, this, false);
         let cellTemplate = newCellComp.getCreateTemplate();
         cellTemplates.push(cellTemplate);
         newCellComps.push(newCellComp);
@@ -750,7 +753,11 @@ export class RowComp extends Component {
     }
 
     public onRowClick(mouseEvent: MouseEvent) {
-        if (_.isStopPropagationForAgGrid(mouseEvent)) { return; }
+
+        let stop = _.isStopPropagationForAgGrid(mouseEvent);
+        if (stop) {
+            return;
+        }
 
         let agEvent: RowClickedEvent = this.createRowEventWithSource(Events.EVENT_ROW_CLICKED, mouseEvent);
 
@@ -1103,7 +1110,7 @@ export class RowComp extends Component {
         let templateParts: string[] = [];
         let newCellComps: CellComp[] = [];
         cols.forEach( col => {
-            let newCellComp = new CellComp(this.scope, this.beans, col, this.rowNode, this);
+            let newCellComp = new CellComp(this.scope, this.beans, col, this.rowNode, this, false);
             let cellTemplate = newCellComp.getCreateTemplate();
             templateParts.push(cellTemplate);
             newCellComps.push(newCellComp);

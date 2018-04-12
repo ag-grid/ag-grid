@@ -25,6 +25,7 @@ import {Events} from "../../events";
 import {ColumnHoverService} from "../../rendering/columnHoverService";
 import {Beans} from "../../rendering/beans";
 import {HoverFeature} from "../hoverFeature";
+import {TouchListener} from "../../widgets/touchListener";
 
 export class HeaderWrapperComp extends Component {
 
@@ -56,7 +57,8 @@ export class HeaderWrapperComp extends Component {
     private dragSourceDropTarget: DropTarget;
     private pinned: string;
 
-    private startWidth: number;
+    private resizeStartWidth: number;
+    private resizeWithShiftKey:  boolean;
 
     constructor(column: Column, dragSourceDropTarget: DropTarget, pinned: string) {
         super(HeaderWrapperComp.TEMPLATE);
@@ -229,17 +231,23 @@ export class HeaderWrapperComp extends Component {
             this.addDestroyableEventListener(this.eResize, 'dblclick', () => {
                 this.columnController.autoSizeColumn(this.column, "uiColumnResized");
             });
+            let touchListener: TouchListener = new TouchListener(this.eResize);
+            this.addDestroyableEventListener(touchListener, TouchListener.EVENT_DOUBLE_TAP, ()=> {
+                this.columnController.autoSizeColumn(this.column, "uiColumnResized");
+            });
+            this.addDestroyFunc(touchListener.destroy.bind(touchListener));
         }
     }
 
     public onResizing(finished: boolean, resizeAmount: number): void {
         let resizeAmountNormalised = this.normaliseResizeAmount(resizeAmount);
-        let newWidth = this.startWidth + resizeAmountNormalised;
-        this.columnController.setColumnWidth(this.column, newWidth, finished, "uiColumnDragged");
+        let newWidth = this.resizeStartWidth + resizeAmountNormalised;
+        this.columnController.setColumnWidth(this.column, newWidth, this.resizeWithShiftKey, finished, "uiColumnDragged");
     }
 
-    public onResizeStart(): void {
-        this.startWidth = this.column.getActualWidth();
+    public onResizeStart(shiftKey: boolean): void {
+        this.resizeStartWidth = this.column.getActualWidth();
+        this.resizeWithShiftKey = shiftKey;
     }
 
     private setupTooltip(): void {

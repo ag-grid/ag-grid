@@ -74,6 +74,7 @@ import {NavigationService} from "./gridPanel/navigationService";
 import {HeightScaler} from "./rendering/heightScaler";
 import {SelectableService} from "./rowNodes/selectableService";
 import {SmallComponent} from "./widgets/testingSandbox";
+import {AutoHeightCalculator} from "./rendering/autoHeightCalculator";
 
 export interface GridParams {
     // used by Web Components
@@ -179,7 +180,7 @@ export class Grid {
             seed: seed,
             //Careful with the order of the beans here, there are dependencies between them that need to be kept
             beans: [rowModelClass, PaginationAutoPageSizeService, GridApi, ComponentProvider, AgComponentUtils, ComponentMetadataProvider,
-                ComponentProvider, ComponentResolver, ComponentRecipes, HeightScaler,
+                ComponentProvider, ComponentResolver, ComponentRecipes, HeightScaler, AutoHeightCalculator,
                 CellRendererFactory, HorizontalResizeService, PinnedRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
                 FilterManager, ColumnController, PaginationProxy, RowRenderer, HeaderRenderer, ExpressionService,

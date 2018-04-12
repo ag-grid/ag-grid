@@ -37,6 +37,7 @@ export class FilterManager {
 
     private allFilters: {[p: string]: FilterWrapper} = {};
     private quickFilter: string = null;
+    private quickFilterParts: string[] = null;
 
     private advancedFilterPresent: boolean;
     private externalFilterPresent: boolean;
@@ -47,9 +48,18 @@ export class FilterManager {
         this.eventService.addEventListener(Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
 
         this.quickFilter = this.parseQuickFilter(this.gridOptionsWrapper.getQuickFilterText());
+        this.setQuickFilterParts();
 
         // check this here, in case there is a filter from the start
         this.checkExternalFilter();
+    }
+
+    private setQuickFilterParts(): void {
+        if (this.quickFilter) {
+             this.quickFilterParts = this.quickFilter.split(' ');
+        } else {
+            this.quickFilterParts = null;
+        }
     }
 
     public setFilterModel(model: any) {
@@ -205,6 +215,7 @@ export class FilterManager {
         let parsedFilter = this.parseQuickFilter(newFilter);
         if (this.quickFilter !== parsedFilter) {
             this.quickFilter = parsedFilter;
+            this.setQuickFilterParts();
             this.onFilterChanged();
         }
     }
@@ -242,14 +253,14 @@ export class FilterManager {
         return this.doesRowPassFilter(node, filterToSkip);
     }
 
-    private doesRowPassQuickFilterNoCache(node: RowNode): boolean {
+    private doesRowPassQuickFilterNoCache(node: RowNode, filterPart: string): boolean {
         let columns = this.columnController.getAllColumnsForQuickFilter();
         let filterPasses = false;
         columns.forEach( column => {
             if (filterPasses) { return; }
             let part = this.getQuickFilterTextForColumn(column, node);
             if (_.exists(part)) {
-                if (part.indexOf(this.quickFilter)>=0) {
+                if (part.indexOf(filterPart)>=0) {
                     filterPasses = true;
                 }
             }
@@ -257,21 +268,29 @@ export class FilterManager {
         return filterPasses;
     }
 
-    private doesRowPassQuickFilterCache(node: any): boolean {
+    private doesRowPassQuickFilterCache(node: any, filterPart: string): boolean {
         if (!node.quickFilterAggregateText) {
             this.aggregateRowForQuickFilter(node);
         }
-        let filterPasses = node.quickFilterAggregateText.indexOf(this.quickFilter) >= 0;
+        let filterPasses = node.quickFilterAggregateText.indexOf(filterPart) >= 0;
         return filterPasses;
     }
 
     private doesRowPassQuickFilter(node: any): boolean {
-        let filterPasses: boolean;
-        if (this.gridOptionsWrapper.isCacheQuickFilter()) {
-            filterPasses = this.doesRowPassQuickFilterCache(node);
-        } else {
-            filterPasses = this.doesRowPassQuickFilterNoCache(node);
-        }
+
+        let filterPasses = true;
+        let usingCache = this.gridOptionsWrapper.isCacheQuickFilter();
+
+        this.quickFilterParts.forEach( filterPart => {
+            let partPasses = usingCache ?
+                this.doesRowPassQuickFilterCache(node, filterPart) : this.doesRowPassQuickFilterNoCache(node, filterPart);
+
+            // each part must pass, if any fails, then the whole filter fails
+            if (!partPasses) {
+                filterPasses = false;
+            }
+        });
+
         return filterPasses;
     }
 
@@ -307,7 +326,7 @@ export class FilterManager {
     }
 
     private getQuickFilterTextForColumn(column: Column, rowNode: RowNode): string {
-        let value = this.valueService.getValue(column, rowNode);
+        let value = this.valueService.getValue(column, rowNode, true);
 
         let valueAfterCallback: any;
         let colDef = column.getColDef();
@@ -356,9 +375,8 @@ export class FilterManager {
     }
 
     private createValueGetter(column: Column) {
-        let that = this;
-        return function valueGetter(node: RowNode) {
-            return that.valueService.getValue(column, node);
+        return (node: RowNode) => {
+            return this.valueService.getValue(column, node, true);
         };
     }
 

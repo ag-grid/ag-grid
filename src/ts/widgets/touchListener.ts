@@ -13,6 +13,13 @@ export interface LongTapEvent extends AgEvent {
 }
 
 export class TouchListener implements IEventEmitter {
+
+    public static EVENT_TAP = "tap";
+    public static EVENT_DOUBLE_TAP = "doubleTap";
+    public static EVENT_LONG_TAP = "longTap";
+
+    private static DOUBLE_TAP_MILLIS = 500;
+
     private eElement: HTMLElement;
 
     private destroyFuncs: Function[] = [];
@@ -22,12 +29,11 @@ export class TouchListener implements IEventEmitter {
     private touching = false;
     private touchStart: Touch;
 
+    private lastTapTime: number;
+
     private eventService: EventService = new EventService();
 
     // private mostRecentTouch: Touch;
-
-    public static EVENT_TAP = "tap";
-    public static EVENT_LONG_TAP = "longTap";
 
     private preventMouseClick: boolean;
 
@@ -125,6 +131,7 @@ export class TouchListener implements IEventEmitter {
                 touchStart: this.touchStart
             };
             this.eventService.dispatchEvent(event);
+            this.checkForDoubleTap();
 
             // stops the tap from also been processed as a mouse click
             if (this.preventMouseClick) {
@@ -133,6 +140,30 @@ export class TouchListener implements IEventEmitter {
         }
 
         this.touching = false;
+    }
+
+    private checkForDoubleTap(): void {
+        let now = new Date().getTime();
+
+        if (this.lastTapTime>0) {
+            // if previous tap, see if duration is short enough to be considered double tap
+            let interval = now - this.lastTapTime;
+            if (interval > TouchListener.DOUBLE_TAP_MILLIS) {
+                // dispatch double tap event
+                let event: TapEvent = {
+                    type: TouchListener.EVENT_DOUBLE_TAP,
+                    touchStart: this.touchStart
+                };
+                this.eventService.dispatchEvent(event);
+
+                // this stops a tripple tap ending up as two double taps
+                this.lastTapTime = null;
+            } else {
+                this.lastTapTime = now;
+            }
+        } else {
+            this.lastTapTime = now;
+        }
     }
 
     public destroy(): void {
