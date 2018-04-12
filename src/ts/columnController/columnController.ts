@@ -827,8 +827,6 @@ export class ColumnController {
 
         let passMinMaxCheck = _.every(resizeSets, this.checkMinAndMaxWidthsForSet.bind(this));
 
-        console.log(`passMinMaxCheck = ${passMinMaxCheck}`);
-
         if (!passMinMaxCheck) { return; }
 
         let changedCols: Column[] = [];
