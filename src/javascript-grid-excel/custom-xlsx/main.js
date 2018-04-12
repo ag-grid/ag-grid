@@ -132,7 +132,11 @@ var gridOptions = {
                 size: 25
             }
         }
-    ]
+    ],
+    defaultExportParams:{
+        //This is necessary for sheetJs to read the resultant file
+        suppressTextAsCDATA: true
+    }
 };
 
 function getBooleanValue(cssSelector) {
