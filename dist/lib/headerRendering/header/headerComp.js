@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38,7 +38,9 @@ var events_1 = require("../../events");
 var HeaderComp = (function (_super) {
     __extends(HeaderComp, _super);
     function HeaderComp() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.lastMovingChanged = 0;
+        return _this;
     }
     HeaderComp.prototype.init = function (params) {
         var template = utils_1.Utils.firstExistingValue(params.template, HeaderComp.TEMPLATE);
@@ -133,11 +135,29 @@ var HeaderComp = (function (_super) {
             return;
         }
         var sortUsingCtrl = this.gridOptionsWrapper.isMultiSortKeyCtrl();
+        // keep track of last time the moving changed flag was set
+        this.addDestroyableEventListener(this.params.column, column_1.Column.EVENT_MOVING_CHANGED, function () {
+            _this.lastMovingChanged = new Date().getTime();
+            console.log('set it');
+        });
         // add the event on the header, so when clicked, we do sorting
         if (this.eLabel) {
             this.addDestroyableEventListener(this.eLabel, 'click', function (event) {
-                var multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
-                _this.params.progressSort(multiSort);
+                // sometimes when moving a column via dragging, this was also firing a clicked event.
+                // here is issue raised by user: https://ag-grid.zendesk.com/agent/tickets/1076
+                // this check stops sort if a) column is moving or b) column moved less than 200ms ago (so caters for race condition)
+                var moving = _this.params.column.isMoving();
+                var nowTime = new Date().getTime();
+                // typically there is <2ms if moving flag was set recently, as it would be done in same VM turn
+                var movedRecently = (nowTime - _this.lastMovingChanged) < 50;
+                var columnMoving = moving || movedRecently;
+                if (!columnMoving) {
+                    var multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
+                    _this.params.progressSort(multiSort);
+                }
+                else {
+                    console.log("kipping sort cos of moving " + _this.lastMovingChanged);
+                }
             });
         }
         this.addDestroyableEventListener(this.params.column, column_1.Column.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.0.0
+// Type definitions for ag-grid v17.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroup } from "../entities/columnGroup";
@@ -9,6 +9,11 @@ import { OriginalColumnGroupChild } from "../entities/originalColumnGroupChild";
 import { ColumnEventType } from "../events";
 import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 import { RowNode } from "../entities/rowNode";
+export interface ColumnResizeSet {
+    columns: Column[];
+    ratios: number[];
+    width: number;
+}
 export declare class ColumnController {
     private gridOptionsWrapper;
     private expressionService;
@@ -36,6 +41,8 @@ export declare class ColumnController {
     private gridBalancedTree;
     private gridColumns;
     private gridHeaderRowCount;
+    private lastPrimaryOrder;
+    private gridColsArePrimary;
     private displayedLeftColumnTree;
     private displayedRightColumnTree;
     private displayedCentreColumnTree;
@@ -49,6 +56,7 @@ export declare class ColumnController {
     private allDisplayedVirtualColumns;
     private allDisplayedCenterVirtualColumns;
     private colSpanActive;
+    private autoRowHeightColumns;
     private rowGroupColumns;
     private valueColumns;
     private pivotColumns;
@@ -68,6 +76,8 @@ export declare class ColumnController {
     private viewportLeft;
     private viewportRight;
     init(): void;
+    isAutoRowHeightActive(): boolean;
+    getAllAutoRowHeightCols(): Column[];
     private setVirtualViewportLeftAndRight();
     getDisplayedColumnsStartingAt(column: Column): Column[];
     private checkDisplayedVirtualColumns();
@@ -94,7 +104,7 @@ export declare class ColumnController {
     getAllDisplayedVirtualColumns(): Column[];
     getDisplayedLeftColumnsForRow(rowNode: RowNode): Column[];
     getDisplayedRightColumnsForRow(rowNode: RowNode): Column[];
-    private getDisplayedColumnsForRow(rowNode, displayedColumns, filterCallback?, gapBeforeCallback?);
+    private getDisplayedColumnsForRow(rowNode, displayedColumns, filterCallback?, emptySpaceBeforeColumn?);
     getAllDisplayedCenterVirtualColumnsForRow(rowNode: RowNode): Column[];
     private isColumnInViewport(col);
     getPinnedLeftContainerWidth(): number;
@@ -120,7 +130,9 @@ export declare class ColumnController {
     removeValueColumns(keys: (string | Column)[], source?: ColumnEventType): void;
     private normaliseColumnWidth(column, newWidth);
     private getPrimaryOrGridColumn(key);
-    setColumnWidth(key: string | Column, newWidth: number, finished: boolean, source?: ColumnEventType): void;
+    setColumnWidth(key: string | Column, newWidth: number, takeFromAdjacent: boolean, finished: boolean, source?: ColumnEventType): void;
+    private checkMinAndMaxWidthsForSet(columnResizeSet);
+    resizeColumnSets(resizeSets: ColumnResizeSet[], finished: boolean, source: ColumnEventType): void;
     setColumnAggFunc(column: Column, aggFunc: string, source?: ColumnEventType): void;
     moveRowGroupColumn(fromIndex: number, toIndex: number, source?: ColumnEventType): void;
     moveColumns(columnsToMoveKeys: (string | Column)[], toIndex: number, source?: ColumnEventType): void;
@@ -152,6 +164,7 @@ export declare class ColumnController {
     private actionOnGridColumns(keys, action, source, createEvent?);
     getDisplayedColBefore(col: Column): Column;
     getDisplayedColAfter(col: Column): Column;
+    getDisplayedGroupAfter(columnGroup: ColumnGroup): ColumnGroup;
     isPinningLeft(): boolean;
     isPinningRight(): boolean;
     getPrimaryAndSecondaryAndAutoColumns(): Column[];
@@ -200,6 +213,7 @@ export declare class ColumnController {
     setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[], source?: ColumnEventType): void;
     private processSecondaryColumnDefinitions(colDefs);
     private updateGridColumns();
+    private orderGridColsLikeLastPrimary();
     isPrimaryColumnGroupsPresent(): boolean;
     private setupQuickFilterColumns();
     private putFixedColumnsFirst();

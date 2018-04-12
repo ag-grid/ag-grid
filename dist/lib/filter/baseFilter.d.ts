@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.0.0
+// Type definitions for ag-grid v17.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../widgets/component";
@@ -60,7 +60,7 @@ export declare abstract class BaseFilter<T, P extends IFilterParams, M> extends 
     getNullableModel(): M;
     setModel(model: M): void;
     private doOnFilterChanged(applyNow?);
-    onFilterChanged(): void;
+    onFilterChanged(applyNow?: boolean): void;
     onFloatingFilterChanged(change: FloatingFilterChange): boolean;
     generateFilterHeader(): string;
     private generateTemplate();

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.0.0
+// Type definitions for ag-grid v17.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { SerializedTextFilter } from "./textFilter";
@@ -8,6 +8,7 @@ import { IComponent } from "../interfaces/iComponent";
 import { Component } from "../widgets/component";
 import { Column } from "../entities/column";
 import { GridApi } from "../gridApi";
+import { SerializedSetFilter } from "../interfaces/iSerializedSetFilter";
 export interface FloatingFilterChange {
 }
 export interface IFloatingFilterParams<M, F extends FloatingFilterChange> {
@@ -61,10 +62,11 @@ export declare class NumberFloatingFilterComp extends InputTextFloatingFilterCom
     asParentModel(): SerializedNumberFilter;
     private asNumber(value);
 }
-export declare class SetFloatingFilterComp extends InputTextFloatingFilterComp<string[], IFloatingFilterParams<string[], BaseFloatingFilterChange<string[]>>> {
-    init(params: IFloatingFilterParams<string[], BaseFloatingFilterChange<string[]>>): void;
-    asFloatingFilterText(parentModel: string[]): string;
-    asParentModel(): string[];
+export declare class SetFloatingFilterComp extends InputTextFloatingFilterComp<SerializedSetFilter, IFloatingFilterParams<SerializedSetFilter, BaseFloatingFilterChange<SerializedSetFilter>>> {
+    init(params: IFloatingFilterParams<SerializedSetFilter, BaseFloatingFilterChange<SerializedSetFilter>>): void;
+    asFloatingFilterText(parentModel: string[] | SerializedSetFilter): string;
+    asParentModel(): SerializedSetFilter;
+    equalModels(left: SerializedSetFilter, right: SerializedSetFilter): boolean;
 }
 export declare class ReadModelAsStringFloatingFilterComp extends InputTextFloatingFilterComp<string, IFloatingFilterParams<string, BaseFloatingFilterChange<string>>> {
     init(params: IFloatingFilterParams<string, BaseFloatingFilterChange<string>>): void;

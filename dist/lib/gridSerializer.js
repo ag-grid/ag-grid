@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -152,7 +152,13 @@ var GridSerializer = (function () {
         }
         this.pinnedRowModel.forEachPinnedTopRow(processRow);
         if (isPivotMode) {
-            this.rowModel.forEachPivotNode(processRow);
+            if (this.rowModel.forEachPivotNode) {
+                this.rowModel.forEachPivotNode(processRow);
+            }
+            else {
+                //Must be enterprise, so we can just loop through all the nodes
+                this.rowModel.forEachNode(processRow);
+            }
         }
         else {
             // onlySelectedAllPages: user doing pagination and wants selected items from

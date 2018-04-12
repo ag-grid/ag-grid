@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.0.0
+// Type definitions for ag-grid v17.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BorderLayout } from "../layout/borderLayout";
@@ -165,6 +165,8 @@ export declare class GridPanel extends BeanStub {
     private setPinnedLeftWidth();
     private setPinnedRightWidth();
     private setPinnedContainersVisible();
+    private setPinnedContainersVisibleOld();
+    private setPinnedContainersVisibleNew();
     setBodyAndHeaderHeights(): void;
     getBodyHeight(): number;
     setHorizontalScrollPosition(hScrollPosition: number): void;
@@ -173,6 +175,11 @@ export declare class GridPanel extends BeanStub {
     scrollVertically(pixels: number): number;
     private addPreventHeaderScroll();
     private addScrollListener();
+    private doScrollingOldWay();
+    private doScrollingNativeWay();
+    private lastVScrollElement;
+    private lastVScrollTime;
+    private onAnyBodyScroll(source);
     private onBodyScroll();
     private onBodyHorizontalScroll();
     private doHorizontalScroll();

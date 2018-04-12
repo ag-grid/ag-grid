@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,14 +30,24 @@ var FilterManager = (function () {
     function FilterManager() {
         this.allFilters = {};
         this.quickFilter = null;
+        this.quickFilterParts = null;
     }
     FilterManager_1 = FilterManager;
     FilterManager.prototype.init = function () {
         this.eventService.addEventListener(events_1.Events.EVENT_ROW_DATA_CHANGED, this.onNewRowsLoaded.bind(this));
         this.eventService.addEventListener(events_1.Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
         this.quickFilter = this.parseQuickFilter(this.gridOptionsWrapper.getQuickFilterText());
+        this.setQuickFilterParts();
         // check this here, in case there is a filter from the start
         this.checkExternalFilter();
+    };
+    FilterManager.prototype.setQuickFilterParts = function () {
+        if (this.quickFilter) {
+            this.quickFilterParts = this.quickFilter.split(' ');
+        }
+        else {
+            this.quickFilterParts = null;
+        }
     };
     FilterManager.prototype.setFilterModel = function (model) {
         var _this = this;
@@ -176,6 +186,7 @@ var FilterManager = (function () {
         var parsedFilter = this.parseQuickFilter(newFilter);
         if (this.quickFilter !== parsedFilter) {
             this.quickFilter = parsedFilter;
+            this.setQuickFilterParts();
             this.onFilterChanged();
         }
     };
@@ -206,7 +217,7 @@ var FilterManager = (function () {
     FilterManager.prototype.doesRowPassOtherFilters = function (filterToSkip, node) {
         return this.doesRowPassFilter(node, filterToSkip);
     };
-    FilterManager.prototype.doesRowPassQuickFilterNoCache = function (node) {
+    FilterManager.prototype.doesRowPassQuickFilterNoCache = function (node, filterPart) {
         var _this = this;
         var columns = this.columnController.getAllColumnsForQuickFilter();
         var filterPasses = false;
@@ -216,28 +227,32 @@ var FilterManager = (function () {
             }
             var part = _this.getQuickFilterTextForColumn(column, node);
             if (utils_1.Utils.exists(part)) {
-                if (part.indexOf(_this.quickFilter) >= 0) {
+                if (part.indexOf(filterPart) >= 0) {
                     filterPasses = true;
                 }
             }
         });
         return filterPasses;
     };
-    FilterManager.prototype.doesRowPassQuickFilterCache = function (node) {
+    FilterManager.prototype.doesRowPassQuickFilterCache = function (node, filterPart) {
         if (!node.quickFilterAggregateText) {
             this.aggregateRowForQuickFilter(node);
         }
-        var filterPasses = node.quickFilterAggregateText.indexOf(this.quickFilter) >= 0;
+        var filterPasses = node.quickFilterAggregateText.indexOf(filterPart) >= 0;
         return filterPasses;
     };
     FilterManager.prototype.doesRowPassQuickFilter = function (node) {
-        var filterPasses;
-        if (this.gridOptionsWrapper.isCacheQuickFilter()) {
-            filterPasses = this.doesRowPassQuickFilterCache(node);
-        }
-        else {
-            filterPasses = this.doesRowPassQuickFilterNoCache(node);
-        }
+        var _this = this;
+        var filterPasses = true;
+        var usingCache = this.gridOptionsWrapper.isCacheQuickFilter();
+        this.quickFilterParts.forEach(function (filterPart) {
+            var partPasses = usingCache ?
+                _this.doesRowPassQuickFilterCache(node, filterPart) : _this.doesRowPassQuickFilterNoCache(node, filterPart);
+            // each part must pass, if any fails, then the whole filter fails
+            if (!partPasses) {
+                filterPasses = false;
+            }
+        });
         return filterPasses;
     };
     FilterManager.prototype.doesRowPassFilter = function (node, filterToSkip) {
@@ -266,7 +281,7 @@ var FilterManager = (function () {
         return true;
     };
     FilterManager.prototype.getQuickFilterTextForColumn = function (column, rowNode) {
-        var value = this.valueService.getValue(column, rowNode);
+        var value = this.valueService.getValue(column, rowNode, true);
         var valueAfterCallback;
         var colDef = column.getColDef();
         if (column.getColDef().getQuickFilterText) {
@@ -313,9 +328,9 @@ var FilterManager = (function () {
         this.setAdvancedFilterPresent();
     };
     FilterManager.prototype.createValueGetter = function (column) {
-        var that = this;
-        return function valueGetter(node) {
-            return that.valueService.getValue(column, node);
+        var _this = this;
+        return function (node) {
+            return _this.valueService.getValue(column, node, true);
         };
     };
     FilterManager.prototype.getFilterComponent = function (column) {

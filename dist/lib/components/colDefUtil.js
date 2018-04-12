@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -100,11 +100,13 @@ var ColDefUtil = (function () {
         'suppressPaste',
         'suppressNavigable',
         'enableCellChangeFlash',
-        'rowDrag'
+        'rowDrag',
+        'autoHeight'
     ];
     ColDefUtil.FUNCTION_PROPERTIES = [
         'valueGetter',
         'valueSetter',
+        'filterValueGetter',
         'keyCreator',
         'cellRenderer',
         'cellRendererFramework',
@@ -123,7 +125,9 @@ var ColDefUtil = (function () {
         'onCellClicked',
         'onCellDoubleClicked',
         'onCellContextMenu',
-        'tooltip'
+        'tooltip',
+        'cellRendererSelector',
+        'cellEditorSelector'
     ];
     ColDefUtil.ALL_PROPERTIES = ColDefUtil.ARRAY_PROPERTIES
         .concat(ColDefUtil.OBJECT_PROPERTIES)

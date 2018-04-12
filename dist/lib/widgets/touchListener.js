@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -91,6 +91,7 @@ var TouchListener = (function () {
                 touchStart: this.touchStart
             };
             this.eventService.dispatchEvent(event_2);
+            this.checkForDoubleTap();
             // stops the tap from also been processed as a mouse click
             if (this.preventMouseClick) {
                 touchEvent.preventDefault();
@@ -98,12 +99,36 @@ var TouchListener = (function () {
         }
         this.touching = false;
     };
+    TouchListener.prototype.checkForDoubleTap = function () {
+        var now = new Date().getTime();
+        if (this.lastTapTime > 0) {
+            // if previous tap, see if duration is short enough to be considered double tap
+            var interval = now - this.lastTapTime;
+            if (interval > TouchListener.DOUBLE_TAP_MILLIS) {
+                // dispatch double tap event
+                var event_3 = {
+                    type: TouchListener.EVENT_DOUBLE_TAP,
+                    touchStart: this.touchStart
+                };
+                this.eventService.dispatchEvent(event_3);
+                // this stops a tripple tap ending up as two double taps
+                this.lastTapTime = null;
+            }
+            else {
+                this.lastTapTime = now;
+            }
+        }
+        else {
+            this.lastTapTime = now;
+        }
+    };
     TouchListener.prototype.destroy = function () {
         this.destroyFuncs.forEach(function (func) { return func(); });
     };
-    // private mostRecentTouch: Touch;
     TouchListener.EVENT_TAP = "tap";
+    TouchListener.EVENT_DOUBLE_TAP = "doubleTap";
     TouchListener.EVENT_LONG_TAP = "longTap";
+    TouchListener.DOUBLE_TAP_MILLIS = 500;
     return TouchListener;
 }());
 exports.TouchListener = TouchListener;

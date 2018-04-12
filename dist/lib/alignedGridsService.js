@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -192,7 +192,7 @@ var AlignedGridsService = (function () {
                 var resizedEvent_1 = colEvent;
                 masterColumns.forEach(function (masterColumn) {
                     _this.logger.log('onColumnEvent-> processing ' + colEvent.type + ' actualWidth = ' + masterColumn.getActualWidth());
-                    _this.columnController.setColumnWidth(masterColumn.getColId(), masterColumn.getActualWidth(), resizedEvent_1.finished, "alignedGridChanged");
+                    _this.columnController.setColumnWidth(masterColumn.getColId(), masterColumn.getActualWidth(), false, resizedEvent_1.finished, "alignedGridChanged");
                 });
                 break;
         }

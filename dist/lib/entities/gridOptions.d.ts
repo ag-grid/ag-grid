@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.0.0
+// Type definitions for ag-grid v17.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
@@ -12,12 +12,13 @@ import { IDatasource } from "../rowModels/iDatasource";
 import { GridCellDef } from "./gridCell";
 import { IDateComp } from "../rendering/dateComponent";
 import { IEnterpriseDatasource } from "../interfaces/iEnterpriseDatasource";
-import { CsvExportParams, ProcessCellForExportParams } from "../exportParams";
+import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "../exportParams";
 import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditingStartedEvent, CellEditingStoppedEvent, CellFocusedEvent, CellMouseDownEvent, CellMouseOutEvent, CellMouseOverEvent, CellValueChangedEvent, ColumnAggFuncChangeRequestEvent, ColumnEverythingChangedEvent, ColumnGroupOpenedEvent, ColumnMovedEvent, ColumnPinnedEvent, ColumnPivotChangedEvent, ColumnPivotChangeRequestEvent, ColumnPivotModeChangedEvent, ColumnResizedEvent, ColumnRowGroupChangedEvent, ColumnRowGroupChangeRequestEvent, ColumnValueChangedEvent, ColumnValueChangeRequestEvent, ColumnVisibleEvent, DisplayedColumnsChangedEvent, DragStartedEvent, DragStoppedEvent, FilterChangedEvent, FilterModifiedEvent, GridColumnsChangedEvent, GridReadyEvent, GridSizeChangedEvent, ModelUpdatedEvent, NewColumnsLoadedEvent, PaginationChangedEvent, PinnedRowDataChangedEvent, RangeSelectionChangedEvent, RowClickedEvent, RowDataChangedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowGroupOpenedEvent, RowSelectedEvent, RowValueChangedEvent, SelectionChangedEvent, SortChangedEvent, ViewportChangedEvent, VirtualColumnsChangedEvent, VirtualRowRemovedEvent } from "../events";
 import { IComponent } from "../interfaces/iComponent";
 import { AgGridRegisteredComponentInput } from "../components/framework/componentProvider";
 import { ILoadingOverlayComp } from "../rendering/overlays/loadingOverlayComponent";
 import { INoRowsOverlayComp } from "../rendering/overlays/noRowsOverlayComponent";
+import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
  ****************************************************************/
@@ -81,6 +82,7 @@ export interface GridOptions {
     suppressColumnMoveAnimation?: boolean;
     suppressMovableColumns?: boolean;
     suppressDragLeaveHidesColumns?: boolean;
+    suppressMakeColumnVisibleAfterUnGroup?: boolean;
     suppressParentsInRowNodes?: boolean;
     suppressFieldDotNotation?: boolean;
     suppressCopyRowsToClipboard?: boolean;
@@ -91,6 +93,7 @@ export interface GridOptions {
     rowModelType?: string;
     pivotMode?: boolean;
     pivotTotals?: boolean;
+    suppressEnterpriseResetOnNewColumns?: boolean;
     enableRangeSelection?: boolean;
     suppressMultiRangeSelection?: boolean;
     rowGroupPanelShow?: string;
@@ -165,6 +168,7 @@ export interface GridOptions {
     groupColumnDef?: ColDef;
     autoGroupColumnDef?: ColDef;
     forPrint?: boolean;
+    enableOldSetFilterModel?: boolean;
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
@@ -274,6 +278,7 @@ export interface GridOptions {
     doesDataFlower?(dataItem: any): boolean;
     processRowPostCreate?(params: ProcessRowParams): void;
     processCellForClipboard?(params: ProcessCellForExportParams): any;
+    processHeaderForClipboard?(params: ProcessHeaderForExportParams): any;
     processCellFromClipboard?(params: ProcessCellForExportParams): any;
     processSecondaryColDef?(colDef: ColDef): void;
     processSecondaryColGroupDef?(colGroupDef: ColGroupDef): void;
@@ -331,6 +336,10 @@ export interface GridOptions {
     onDragStarted?(event?: DragStartedEvent): void;
     onDragStopped?(event?: DragStoppedEvent): void;
     onPaginationChanged?(event?: PaginationChangedEvent): void;
+    onRowDragEnter?(event?: DraggingEvent): void;
+    onRowDragMove?(event?: DraggingEvent): void;
+    onRowDragLeave?(event?: DraggingEvent): void;
+    onRowDragEnd?(event?: DraggingEvent): void;
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/

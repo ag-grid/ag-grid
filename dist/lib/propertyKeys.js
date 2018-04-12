@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39,7 +39,7 @@ var PropertyKeys = (function () {
     PropertyKeys.BOOLEAN_PROPERTIES = [
         'toolPanelSuppressRowGroups', 'toolPanelSuppressValues', 'toolPanelSuppressPivots', 'toolPanelSuppressPivotMode',
         'toolPanelSuppressSideButtons', 'toolPanelSuppressColumnFilter', 'toolPanelSuppressColumnSelectAll',
-        'toolPanelSuppressColumnExpandAll',
+        'toolPanelSuppressColumnExpandAll', 'suppressMakeColumnVisibleAfterUnGroup',
         'suppressRowClickSelection', 'suppressCellSelection', 'suppressHorizontalScroll', 'debug',
         'enableColResize', 'enableCellExpressions', 'enableSorting', 'enableServerSideSorting',
         'enableFilter', 'enableServerSideFilter', 'angularCompileRows', 'angularCompileFilters',
@@ -64,7 +64,7 @@ var PropertyKeys = (function () {
         'valueCache', 'valueCacheNeverExpires', 'aggregateOnlyChangedColumns', 'suppressAnimationFrame',
         'suppressExcelExport', 'suppressCsvExport', 'treeData', 'masterDetail', 'suppressMultiRangeSelection',
         'enterMovesDownAfterEdit', 'enterMovesDown', 'suppressPropertyNamesCheck', 'rowMultiSelectWithClick',
-        'contractColumnSelection'
+        'contractColumnSelection', 'suppressEnterpriseResetOnNewColumns', 'enableOldSetFilterModel'
     ];
     PropertyKeys.FUNCTION_PROPERTIES = ['localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
         'dateComponent', 'dateComponentFramework', 'groupRowRenderer', 'groupRowRendererFramework', 'isExternalFilterPresent',
@@ -75,7 +75,8 @@ var PropertyKeys = (function () {
         'getBusinessKeyForNode', 'sendToClipboard', 'navigateToNextCell', 'tabToNextCell', 'getDetailRowData',
         'processCellFromClipboard', 'getDocument', 'postProcessPopup', 'getChildCount', 'getDataPath', 'loadingOverlayComponent',
         'loadingOverlayComponentFramework', 'noRowsOverlayComponent', 'noRowsOverlayComponentFramework', 'detailCellRenderer',
-        'detailCellRendererFramework', 'onGridReady', 'defaultGroupSortComparator', 'isRowMaster', 'isRowSelectable', 'postSort'];
+        'detailCellRendererFramework', 'onGridReady', 'defaultGroupSortComparator', 'isRowMaster', 'isRowSelectable', 'postSort',
+        'processHeaderForClipboard', 'paginationNumberFormatter'];
     PropertyKeys.ALL_PROPERTIES = PropertyKeys.ARRAY_PROPERTIES
         .concat(PropertyKeys.OBJECT_PROPERTIES)
         .concat(PropertyKeys.STRING_PROPERTIES)

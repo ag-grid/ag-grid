@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -79,6 +79,7 @@ var navigationService_1 = require("./gridPanel/navigationService");
 var heightScaler_1 = require("./rendering/heightScaler");
 var selectableService_1 = require("./rowNodes/selectableService");
 var testingSandbox_1 = require("./widgets/testingSandbox");
+var autoHeightCalculator_1 = require("./rendering/autoHeightCalculator");
 var Grid = (function () {
     function Grid(eGridDiv, gridOptions, params) {
         if (!eGridDiv) {
@@ -128,7 +129,7 @@ var Grid = (function () {
             seed: seed,
             //Careful with the order of the beans here, there are dependencies between them that need to be kept
             beans: [rowModelClass, paginationProxy_1.PaginationAutoPageSizeService, gridApi_1.GridApi, componentProvider_1.ComponentProvider, agComponentUtils_1.AgComponentUtils, componentMetadataProvider_1.ComponentMetadataProvider,
-                componentProvider_1.ComponentProvider, componentResolver_1.ComponentResolver, componentRecipes_1.ComponentRecipes, heightScaler_1.HeightScaler,
+                componentProvider_1.ComponentProvider, componentResolver_1.ComponentResolver, componentRecipes_1.ComponentRecipes, heightScaler_1.HeightScaler, autoHeightCalculator_1.AutoHeightCalculator,
                 cellRendererFactory_1.CellRendererFactory, horizontalResizeService_1.HorizontalResizeService, pinnedRowModel_1.PinnedRowModel, dragService_1.DragService,
                 displayedGroupCreator_1.DisplayedGroupCreator, eventService_1.EventService, gridOptionsWrapper_1.GridOptionsWrapper, selectionController_1.SelectionController,
                 filterManager_1.FilterManager, columnController_1.ColumnController, paginationProxy_1.PaginationProxy, rowRenderer_1.RowRenderer, headerRenderer_1.HeaderRenderer, expressionService_1.ExpressionService,

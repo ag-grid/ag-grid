@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.0.0
+// Type definitions for ag-grid v17.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
@@ -24,7 +24,8 @@ export declare class HeaderWrapperComp extends Component {
     private column;
     private dragSourceDropTarget;
     private pinned;
-    private startWidth;
+    private resizeStartWidth;
+    private resizeWithShiftKey;
     constructor(column: Column, dragSourceDropTarget: DropTarget, pinned: string);
     getColumn(): Column;
     init(): void;
@@ -39,7 +40,7 @@ export declare class HeaderWrapperComp extends Component {
     private createDragItem();
     private setupResize();
     onResizing(finished: boolean, resizeAmount: number): void;
-    onResizeStart(): void;
+    onResizeStart(shiftKey: boolean): void;
     private setupTooltip();
     private setupMovingCss();
     private addAttributes();

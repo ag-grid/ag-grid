@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.0.0
+// Type definitions for ag-grid v17.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -54,6 +54,7 @@ export declare class Utils {
     static isNode(o: any): boolean;
     static isElement(o: any): boolean;
     static isNodeOrElement(o: any): boolean;
+    static copyNodeList(nodeList: NodeList): Node[];
     static isEventFromPrintableCharacter(event: KeyboardEvent): boolean;
     static addChangeListener(element: HTMLElement, listener: EventListener): void;
     static makeNull<T>(value: T): T;
@@ -94,6 +95,7 @@ export declare class Utils {
     static ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore: HTMLElement): void;
     static insertWithDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore: HTMLElement): void;
     static insertTemplateWithDomOrder(eContainer: HTMLElement, htmlTemplate: string, eChildBefore: HTMLElement): HTMLElement;
+    static every<T>(items: T[], callback: (item: T) => boolean): boolean;
     static toStringOrNull(value: any): string;
     static formatWidth(width: number | string): string;
     static formatNumberTwoDecimalPlacesAndCommas(value: number): string;

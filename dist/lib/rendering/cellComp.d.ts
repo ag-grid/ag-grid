@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.0.0
+// Type definitions for ag-grid v17.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -32,6 +32,7 @@ export declare class CellComp extends Component {
     private cellRenderer;
     private cellRendererGui;
     private cellEditor;
+    private autoHeightCell;
     private firstRightPinned;
     private lastLeftPinned;
     private rowComp;
@@ -43,7 +44,7 @@ export declare class CellComp extends Component {
     private scope;
     private cellEditorVersion;
     private cellRendererVersion;
-    constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: RowComp);
+    constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: RowComp, autoHeightCell: boolean);
     getCreateTemplate(): string;
     afterAttached(): void;
     private onColumnHover();

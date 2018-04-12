@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -98,11 +98,6 @@ var GroupCellRenderer = (function (_super) {
         var rowNode = params.node;
         // let paddingPx: number;
         var paddingCount = rowNode.uiLevel;
-        var pivotModeAndLeafGroup = this.columnController.isPivotMode() && params.node.leafGroup;
-        var notExpandable = !rowNode.isExpandable();
-        if (rowNode.footer || notExpandable || pivotModeAndLeafGroup) {
-            paddingCount += 1;
-        }
         var userProvidedPaddingPixelsTheDeprecatedWay = params.padding >= 0;
         if (userProvidedPaddingPixelsTheDeprecatedWay) {
             this.setPaddingDeprecatedWay(paddingCount, params.padding);
@@ -230,7 +225,7 @@ var GroupCellRenderer = (function (_super) {
         }
     };
     GroupCellRenderer.prototype.addCheckboxIfNeeded = function () {
-        var rowNode = this.params.node;
+        var rowNode = this.displayedGroup;
         var checkboxNeeded = this.isUserWantsSelected()
             && !rowNode.footer
             && !rowNode.rowPinned
@@ -260,7 +255,7 @@ var GroupCellRenderer = (function (_super) {
         // the number of children change.
         this.addDestroyableEventListener(this.displayedGroup, rowNode_1.RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED, this.onAllChildrenCountChanged.bind(this));
         // if editing groups, then double click is to start editing
-        if (!this.gridOptionsWrapper.isEnableGroupEdit() && this.isExpandable()) {
+        if (!this.gridOptionsWrapper.isEnableGroupEdit() && this.isExpandable() && !params.suppressDoubleClickExpand) {
             this.addDestroyableEventListener(eGroupCell, 'dblclick', this.onCellDblClicked.bind(this));
         }
     };
@@ -319,6 +314,8 @@ var GroupCellRenderer = (function (_super) {
         if (utils_1.Utils.isStopPropagationForAgGrid(mouseEvent)) {
             return;
         }
+        // so if we expand a node, it does not also get selected.
+        utils_1.Utils.stopPropagationForAgGrid(mouseEvent);
         this.onExpandOrContract();
     };
     GroupCellRenderer.prototype.onCellDblClicked = function (mouseEvent) {
@@ -336,6 +333,7 @@ var GroupCellRenderer = (function (_super) {
         }
     };
     GroupCellRenderer.prototype.onExpandOrContract = function () {
+        console.log("onExpandOrContract");
         // must use the displayedGroup, so if data was dragged down, we expand the parent, not this row
         var rowNode = this.displayedGroup;
         rowNode.setExpanded(!rowNode.expanded);
@@ -363,6 +361,12 @@ var GroupCellRenderer = (function (_super) {
             utils_1.Utils.setVisible(this.eExpanded, false);
             utils_1.Utils.setVisible(this.eContracted, false);
         }
+        var displayedGroup = this.displayedGroup;
+        // compensation padding for leaf nodes, so there is blank space instead of the expand icon
+        var pivotModeAndLeafGroup = this.columnController.isPivotMode() && displayedGroup.leafGroup;
+        var notExpandable = !displayedGroup.isExpandable();
+        var addLeafIndentClass = displayedGroup.footer || notExpandable || pivotModeAndLeafGroup;
+        this.addOrRemoveCssClass('ag-row-group-leaf-indent', addLeafIndentClass);
     };
     GroupCellRenderer.prototype.destroy = function () {
         _super.prototype.destroy.call(this);

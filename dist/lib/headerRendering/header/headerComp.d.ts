@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.0.0
+// Type definitions for ag-grid v17.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
@@ -38,6 +38,7 @@ export declare class HeaderComp extends Component implements IHeaderComp {
     private eLabel;
     private eText;
     private params;
+    private lastMovingChanged;
     init(params: IHeaderParams): void;
     private setupText(displayName);
     private setupIcons(column);

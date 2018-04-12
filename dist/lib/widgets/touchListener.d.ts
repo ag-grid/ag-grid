@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.0.0
+// Type definitions for ag-grid v17.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IEventEmitter } from "../interfaces/iEventEmitter";
@@ -11,14 +11,17 @@ export interface LongTapEvent extends AgEvent {
     touchEvent: TouchEvent;
 }
 export declare class TouchListener implements IEventEmitter {
+    static EVENT_TAP: string;
+    static EVENT_DOUBLE_TAP: string;
+    static EVENT_LONG_TAP: string;
+    private static DOUBLE_TAP_MILLIS;
     private eElement;
     private destroyFuncs;
     private moved;
     private touching;
     private touchStart;
+    private lastTapTime;
     private eventService;
-    static EVENT_TAP: string;
-    static EVENT_LONG_TAP: string;
     private preventMouseClick;
     constructor(eElement: HTMLElement, preventMouseClick?: boolean);
     private getActiveTouch(touchList);
@@ -27,5 +30,6 @@ export declare class TouchListener implements IEventEmitter {
     private onTouchStart(touchEvent);
     private onTouchMove(touchEvent);
     private onTouchEnd(touchEvent);
+    private checkForDoubleTap();
     destroy(): void;
 }

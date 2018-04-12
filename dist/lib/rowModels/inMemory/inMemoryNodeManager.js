@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -213,7 +213,11 @@ var InMemoryNodeManager = (function () {
                 else {
                     node.master = false;
                 }
-                node.expanded = node.master ? this.isExpanded(level) : false;
+                var rowGroupColumns = this.columnController.getRowGroupColumns();
+                var numRowGroupColumns = rowGroupColumns ? rowGroupColumns.length : 0;
+                // need to take row group into account when determining level
+                var masterRowLevel = level + numRowGroupColumns;
+                node.expanded = node.master ? this.isExpanded(masterRowLevel) : false;
             }
         }
         // support for backwards compatibility, canFlow is now called 'master'

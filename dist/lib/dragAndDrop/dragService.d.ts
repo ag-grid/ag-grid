@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.0.0
+// Type definitions for ag-grid v17.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
@@ -44,6 +44,8 @@ export interface DragListenerParams {
     dragStartPixels?: number;
     /** Dom element to add the drag handling to */
     eElement: HTMLElement;
+    /** Some places may wish to ignore certain events, eg range selection ignores shift clicks */
+    skipMouseEvent?: (mouseEvent: MouseEvent) => boolean;
     /** Callback for drag starting */
     onDragStart: (mouseEvent: MouseEvent | Touch) => void;
     /** Callback for drag stopping */

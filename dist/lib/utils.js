@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -362,6 +362,15 @@ var Utils = (function () {
     };
     Utils.isNodeOrElement = function (o) {
         return this.isNode(o) || this.isElement(o);
+    };
+    // makes a copy of a node list into a list
+    Utils.copyNodeList = function (nodeList) {
+        var childCount = nodeList ? nodeList.length : 0;
+        var res = [];
+        for (var i = 0; i < childCount; i++) {
+            res.push(nodeList[i]);
+        }
+        return res;
     };
     Utils.isEventFromPrintableCharacter = function (event) {
         var pressedChar = String.fromCharCode(event.charCode);
@@ -771,6 +780,9 @@ var Utils = (function () {
             res = eContainer.firstChild;
         }
         return res;
+    };
+    Utils.every = function (items, callback) {
+        return Utils.find(items, callback) != null;
     };
     Utils.toStringOrNull = function (value) {
         if (this.exists(value) && value.toString) {

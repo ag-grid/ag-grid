@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.0.0
+// Type definitions for ag-grid v17.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroupChild } from "./columnGroupChild";
@@ -27,8 +27,8 @@ export declare class ColumnGroup implements ColumnGroupChild {
     private parent;
     constructor(originalColumnGroup: OriginalColumnGroup, groupId: string, instanceId: number);
     reset(): void;
-    getParent(): ColumnGroupChild;
-    setParent(parent: ColumnGroupChild): void;
+    getParent(): ColumnGroup;
+    setParent(parent: ColumnGroup): void;
     getUniqueId(): string;
     isEmptyGroup(): boolean;
     isMoving(): boolean;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -46,8 +46,8 @@ var HeaderGroupComp = (function (_super) {
     };
     HeaderGroupComp.prototype.setupExpandIcons = function () {
         var _this = this;
-        this.addInIcon('columnGroupOpened', 'agOpened');
-        this.addInIcon('columnGroupClosed', 'agClosed');
+        this.addInIcon("columnGroupOpened", "agOpened");
+        this.addInIcon("columnGroupClosed", "agClosed");
         var expandAction = function (event) {
             if (utils_1.Utils.isStopPropagationForAgGrid(event)) {
                 return;
@@ -65,9 +65,9 @@ var HeaderGroupComp = (function (_super) {
         // then close again straight away. if we also listened to double click, then the group would open,
         // close, then open, which is not what we want. double click should only action if the user double
         // clicks outside of the icons.
-        this.addDestroyableEventListener(this.eCloseIcon, 'dblclick', stopPropagationAction);
-        this.addDestroyableEventListener(this.eOpenIcon, 'dblclick', stopPropagationAction);
-        this.addDestroyableEventListener(this.getGui(), 'dblclick', expandAction);
+        this.addDestroyableEventListener(this.eCloseIcon, "dblclick", stopPropagationAction);
+        this.addDestroyableEventListener(this.eOpenIcon, "dblclick", stopPropagationAction);
+        this.addDestroyableEventListener(this.getGui(), "dblclick", expandAction);
         this.updateIconVisibility();
         var originalColumnGroup = this.params.columnGroup.getOriginalColumnGroup();
         this.addDestroyableEventListener(originalColumnGroup, originalColumnGroup_1.OriginalColumnGroup.EVENT_EXPANDED_CHANGED, this.updateIconVisibility.bind(this));
@@ -77,7 +77,7 @@ var HeaderGroupComp = (function (_super) {
         var touchListener = new touchListener_1.TouchListener(this.eCloseIcon);
         this.addDestroyableEventListener(touchListener, touchListener_1.TouchListener.EVENT_TAP, action);
         this.addDestroyFunc(function () { return touchListener.destroy(); });
-        this.addDestroyableEventListener(eElement, 'click', action);
+        this.addDestroyableEventListener(eElement, "click", action);
     };
     HeaderGroupComp.prototype.updateIconVisibility = function () {
         var columnGroup = this.params.columnGroup;
@@ -104,11 +104,8 @@ var HeaderGroupComp = (function (_super) {
     };
     HeaderGroupComp.prototype.setupLabel = function () {
         // no renderer, default text render
-        if (this.params.displayName && this.params.displayName !== '') {
-            if (utils_1.Utils.isBrowserSafari()) {
-                this.getGui().style.display = 'table-cell';
-            }
-            var eInnerText = this.getRefElement('agLabel');
+        if (this.params.displayName && this.params.displayName !== "") {
+            var eInnerText = this.getRefElement("agLabel");
             eInnerText.innerHTML = this.params.displayName;
         }
     };
@@ -118,19 +115,19 @@ var HeaderGroupComp = (function (_super) {
         "<span ref=\"agClosed\" class=\"ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed\"></span>" +
         "</div>";
     __decorate([
-        context_1.Autowired('columnController'),
+        context_1.Autowired("columnController"),
         __metadata("design:type", columnController_1.ColumnController)
     ], HeaderGroupComp.prototype, "columnController", void 0);
     __decorate([
-        context_1.Autowired('gridOptionsWrapper'),
+        context_1.Autowired("gridOptionsWrapper"),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
     ], HeaderGroupComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('agOpened'),
+        componentAnnotations_1.RefSelector("agOpened"),
         __metadata("design:type", HTMLElement)
     ], HeaderGroupComp.prototype, "eOpenIcon", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('agClosed'),
+        componentAnnotations_1.RefSelector("agClosed"),
         __metadata("design:type", HTMLElement)
     ], HeaderGroupComp.prototype, "eCloseIcon", void 0);
     return HeaderGroupComp;

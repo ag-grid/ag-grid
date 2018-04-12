@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,6 +30,7 @@ var environment_1 = require("./environment");
 var propertyKeys_1 = require("./propertyKeys");
 var colDefUtil_1 = require("./components/colDefUtil");
 var eventKeys_1 = require("./eventKeys");
+var autoHeightCalculator_1 = require("./rendering/autoHeightCalculator");
 var DEFAULT_ROW_HEIGHT = 25;
 var DEFAULT_DETAIL_ROW_HEIGHT = 300;
 var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
@@ -296,6 +297,7 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.isSuppressCopyRowsToClipboard = function () { return isTrue(this.gridOptions.suppressCopyRowsToClipboard); };
     GridOptionsWrapper.prototype.isEnableFilter = function () { return isTrue(this.gridOptions.enableFilter) || isTrue(this.gridOptions.enableServerSideFilter); };
     GridOptionsWrapper.prototype.isPagination = function () { return isTrue(this.gridOptions.pagination); };
+    GridOptionsWrapper.prototype.isSuppressEnterpriseResetOnNewColumns = function () { return isTrue(this.gridOptions.suppressEnterpriseResetOnNewColumns); };
     GridOptionsWrapper.prototype.getBatchUpdateWaitMillis = function () {
         return utils_1.Utils.exists(this.gridOptions.batchUpdateWaitMillis) ? this.gridOptions.batchUpdateWaitMillis : constants_1.Constants.BATCH_WAIT_MILLIS;
     };
@@ -342,12 +344,14 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.isAlwaysShowStatusBar = function () { return isTrue(this.gridOptions.alwaysShowStatusBar); };
     GridOptionsWrapper.prototype.isFunctionsReadOnly = function () { return isTrue(this.gridOptions.functionsReadOnly); };
     GridOptionsWrapper.prototype.isFloatingFilter = function () { return this.gridOptions.floatingFilter; };
+    GridOptionsWrapper.prototype.isEnableOldSetFilterModel = function () { return isTrue(this.gridOptions.enableOldSetFilterModel); };
     // public isFloatingFilter(): boolean { return true; }
     GridOptionsWrapper.prototype.getDefaultColDef = function () { return this.gridOptions.defaultColDef; };
     GridOptionsWrapper.prototype.getDefaultColGroupDef = function () { return this.gridOptions.defaultColGroupDef; };
     GridOptionsWrapper.prototype.getDefaultExportParams = function () { return this.gridOptions.defaultExportParams; };
     GridOptionsWrapper.prototype.isSuppressCsvExport = function () { return isTrue(this.gridOptions.suppressCsvExport); };
     GridOptionsWrapper.prototype.isSuppressExcelExport = function () { return isTrue(this.gridOptions.suppressExcelExport); };
+    GridOptionsWrapper.prototype.isSuppressMakeColumnVisibleAfterUnGroup = function () { return isTrue(this.gridOptions.suppressMakeColumnVisibleAfterUnGroup); };
     GridOptionsWrapper.prototype.getNodeChildDetailsFunc = function () { return this.gridOptions.getNodeChildDetails; };
     GridOptionsWrapper.prototype.getDataPathFunc = function () { return this.gridOptions.getDataPath; };
     // public getIsGroupFunc(): ((dataItem: any) => boolean) { return this.gridOptions.isGroup }
@@ -357,6 +361,7 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.getRowNodeIdFunc = function () { return this.gridOptions.getRowNodeId; };
     GridOptionsWrapper.prototype.getNavigateToNextCellFunc = function () { return this.gridOptions.navigateToNextCell; };
     GridOptionsWrapper.prototype.getTabToNextCellFunc = function () { return this.gridOptions.tabToNextCell; };
+    GridOptionsWrapper.prototype.isNativeScroll = function () { return false; };
     GridOptionsWrapper.prototype.isTreeData = function () { return isTrue(this.gridOptions.treeData); };
     GridOptionsWrapper.prototype.isValueCache = function () { return isTrue(this.gridOptions.valueCache); };
     GridOptionsWrapper.prototype.isValueCacheNeverExpires = function () { return isTrue(this.gridOptions.valueCacheNeverExpires); };
@@ -366,6 +371,7 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.getSendToClipboardFunc = function () { return this.gridOptions.sendToClipboard; };
     GridOptionsWrapper.prototype.getProcessRowPostCreateFunc = function () { return this.gridOptions.processRowPostCreate; };
     GridOptionsWrapper.prototype.getProcessCellForClipboardFunc = function () { return this.gridOptions.processCellForClipboard; };
+    GridOptionsWrapper.prototype.getProcessHeaderForClipboardFunc = function () { return this.gridOptions.processHeaderForClipboard; };
     GridOptionsWrapper.prototype.getProcessCellFromClipboardFunc = function () { return this.gridOptions.processCellFromClipboard; };
     GridOptionsWrapper.prototype.getViewportRowModelPageSize = function () { return oneOrGreater(this.gridOptions.viewportRowModelPageSize, DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE); };
     GridOptionsWrapper.prototype.getViewportRowModelBufferSize = function () { return zeroOrGreater(this.gridOptions.viewportRowModelBufferSize, DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE); };
@@ -610,6 +616,9 @@ var GridOptionsWrapper = (function () {
         if (options.headerCellRenderer) {
             console.warn("ag-grid: since version 15.x, headerCellRenderer is gone, please check the header documentation on how to set header templates.");
         }
+        if (options.angularCompileHeaders) {
+            console.warn("ag-grid: since version 15.x, angularCompileHeaders is gone, please see the getting started for Angular 1 docs to see how to do headers in Angular 1.x.");
+        }
     };
     GridOptionsWrapper.prototype.getLocaleTextFunc = function () {
         if (this.gridOptions.localeTextFunc) {
@@ -628,9 +637,6 @@ var GridOptionsWrapper = (function () {
     };
     // responsible for calling the onXXX functions on gridOptions
     GridOptionsWrapper.prototype.globalEventHandler = function (eventName, event) {
-        if (eventName === 'columnVisible') {
-            console.log('columnVisible');
-        }
         var callbackMethodName = componentUtil_1.ComponentUtil.getCallbackForEvent(eventName);
         if (typeof this.gridOptions[callbackMethodName] === 'function') {
             this.gridOptions[callbackMethodName](event);
@@ -671,11 +677,23 @@ var GridOptionsWrapper = (function () {
                 return DEFAULT_DETAIL_ROW_HEIGHT;
             }
         }
-        else if (this.isNumeric(this.gridOptions.rowHeight)) {
-            return this.gridOptions.rowHeight;
-        }
         else {
-            return this.getDefaultRowHeight();
+            var defaultHeight = this.isNumeric(this.gridOptions.rowHeight) ?
+                this.gridOptions.rowHeight : this.getDefaultRowHeight();
+            if (this.columnController.isAutoRowHeightActive()) {
+                var autoHeight = this.autoHeightCalculator.getPreferredHeightForRow(rowNode);
+                // never return less than the default row height - covers when auto height
+                // cells are blank.
+                if (autoHeight > defaultHeight) {
+                    return autoHeight;
+                }
+                else {
+                    return defaultHeight;
+                }
+            }
+            else {
+                return defaultHeight;
+            }
         }
     };
     GridOptionsWrapper.prototype.isDynamicRowHeight = function () {
@@ -743,6 +761,10 @@ var GridOptionsWrapper = (function () {
         context_1.Autowired('environment'),
         __metadata("design:type", environment_1.Environment)
     ], GridOptionsWrapper.prototype, "environment", void 0);
+    __decorate([
+        context_1.Autowired('autoHeightCalculator'),
+        __metadata("design:type", autoHeightCalculator_1.AutoHeightCalculator)
+    ], GridOptionsWrapper.prototype, "autoHeightCalculator", void 0);
     __decorate([
         __param(0, context_1.Qualifier('gridApi')), __param(1, context_1.Qualifier('columnApi')),
         __metadata("design:type", Function),

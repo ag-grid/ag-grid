@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.0.0
+// Type definitions for ag-grid v17.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { OriginalColumnGroupChild } from "./originalColumnGroupChild";
@@ -17,7 +17,9 @@ export declare class OriginalColumnGroup implements OriginalColumnGroupChild, IE
     private expandable;
     private expanded;
     private padding;
-    constructor(colGroupDef: ColGroupDef, groupId: string, padding: boolean);
+    private level;
+    constructor(colGroupDef: ColGroupDef, groupId: string, padding: boolean, level: number);
+    getLevel(): number;
     isVisible(): boolean;
     isPadding(): boolean;
     setExpanded(expanded: boolean): void;

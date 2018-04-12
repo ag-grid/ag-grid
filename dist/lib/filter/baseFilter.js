@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -143,8 +143,9 @@ var BaseFilter = (function (_super) {
         this.refreshFilterBodyUi();
         return shouldFilter;
     };
-    BaseFilter.prototype.onFilterChanged = function () {
-        this.doOnFilterChanged();
+    BaseFilter.prototype.onFilterChanged = function (applyNow) {
+        if (applyNow === void 0) { applyNow = false; }
+        this.doOnFilterChanged(applyNow);
     };
     BaseFilter.prototype.onFloatingFilterChanged = function (change) {
         //It has to be of the type FloatingFilterWithApplyChange if it gets here
@@ -242,7 +243,12 @@ var ComparableBaseFilter = (function (_super) {
     ComparableBaseFilter.prototype.onFilterTypeChanged = function () {
         this.filter = this.eTypeSelector.value;
         this.refreshFilterBodyUi();
-        this.onFilterChanged();
+        // we check if filter is active, so that if user changes the type (eg from 'less than' to 'equals'),
+        // well this doesn't matter if the user has no value in the text field, so don't fire 'onFilterChanged'.
+        // this means we don't refresh the grid when the type changes if no value is present.
+        if (this.isFilterActive()) {
+            this.onFilterChanged();
+        }
     };
     ComparableBaseFilter.prototype.isFilterActive = function () {
         var rawFilterValues = this.filterValues();

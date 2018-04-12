@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -43,9 +43,10 @@ var Component = (function (_super) {
     };
     Component.prototype.instantiateRecurse = function (parentNode, context) {
         var _this = this;
-        var childCount = parentNode.childNodes ? parentNode.childNodes.length : 0;
-        var _loop_1 = function (i) {
-            var childNode = parentNode.childNodes[i];
+        // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
+        // which messes up the traversal order of the children.
+        var childNodeList = utils_1.Utils.copyNodeList(parentNode.childNodes);
+        childNodeList.forEach(function (childNode) {
             var childComp = context.createComponent(childNode, function (childComp) {
                 var attrList = _this.getAttrLists(childNode);
                 _this.copyAttributesFromNode(attrList, childComp.getGui());
@@ -53,24 +54,18 @@ var Component = (function (_super) {
                 _this.addEventListenersToComponent(attrList, childComp);
             });
             if (childComp) {
-                this_1.swapComponentForNode(childComp, parentNode, childNode);
-                // should remove this, get agCheckbox to use this.attributes
-                // childComp.instantiate(context);
+                _this.swapComponentForNode(childComp, parentNode, childNode);
             }
             else {
                 if (childNode.childNodes) {
-                    this_1.instantiateRecurse(childNode, context);
+                    _this.instantiateRecurse(childNode, context);
                 }
                 if (childNode instanceof HTMLElement) {
-                    var attrList = this_1.getAttrLists(childNode);
-                    this_1.addEventListenersToElement(attrList, childNode);
+                    var attrList = _this.getAttrLists(childNode);
+                    _this.addEventListenersToElement(attrList, childNode);
                 }
             }
-        };
-        var this_1 = this;
-        for (var i = 0; i < childCount; i++) {
-            _loop_1(i);
-        }
+        });
     };
     Component.prototype.getAttrLists = function (child) {
         var res = {
@@ -188,11 +183,11 @@ var Component = (function (_super) {
             return;
         }
         var thisProto = Object.getPrototypeOf(this);
-        var _loop_2 = function () {
+        var _loop_1 = function () {
             var metaData = thisProto.__agComponentMetaData;
             var currentProtoName = (thisProto.constructor).name;
             if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
-                var thisNoType_1 = this_2;
+                var thisNoType_1 = this_1;
                 metaData[currentProtoName].querySelectors.forEach(function (querySelector) {
                     var resultOfQuery = _this.eGui.querySelector(querySelector.querySelector);
                     if (resultOfQuery) {
@@ -211,9 +206,9 @@ var Component = (function (_super) {
             }
             thisProto = Object.getPrototypeOf(thisProto);
         };
-        var this_2 = this;
+        var this_1 = this;
         while (thisProto != null) {
-            _loop_2();
+            _loop_1();
         }
     };
     Component.prototype.addAnnotatedEventListeners = function () {
