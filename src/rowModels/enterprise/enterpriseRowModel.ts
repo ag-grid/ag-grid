@@ -104,6 +104,13 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     }
 
     private onColumnEverything(): void {
+        // this is a hack for one customer only, so they can suppress the resetting of the columns.
+        // The problem the customer had was they were api.setColumnDefs() after the data source came
+        // back with data. So this stops the reload from the grid after the data comes back.
+        // Once we have "AG-1591 Allow delta changes to columns" fixed, then this hack can be taken out.
+        if (this.gridOptionsWrapper.isSuppressEnterpriseResetOnNewColumns()) { return; }
+
+        // every other customer can continue as normal and have it working!!!
         this.reset();
     }
 
@@ -233,9 +240,16 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
 
         let dynamicRowHeight = this.gridOptionsWrapper.isDynamicRowHeight();
         let maxBlocksInCache = this.gridOptionsWrapper.getMaxBlocksInCache();
+
         if (dynamicRowHeight && maxBlocksInCache >= 0 ) {
             console.warn('ag-Grid: Enterprise Row Model does not support Dynamic Row Height and Cache Purging. ' +
                 'Either a) remove getRowHeight() callback or b) remove maxBlocksInCache property. Purging has been disabled.');
+            maxBlocksInCache = undefined;
+        }
+
+        if (maxBlocksInCache >= 0 && this.columnController.isAutoRowHeightActive()) {
+            console.warn('ag-Grid: Enterprise Row Model does not support Auto Row Height and Cache Purging. ' +
+                'Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.');
             maxBlocksInCache = undefined;
         }
 
@@ -248,7 +262,7 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
 
             // sort and filter model
             filterModel: this.filterManager.getFilterModel(),
-            sortModel: this.sortController.getSortModel(),
+            sortModel: this.extractSortModel(),
 
             rowNodeBlockLoader: this.rowNodeBlockLoader,
 
@@ -355,11 +369,6 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
             lastRow = 0;
         }
 
-        // this doesn't make sense, but it works, if there are now rows, then -1 is returned above
-        if (lastRow < 0) {
-            lastRow = 0;
-        }
-
         return lastRow;
     }
 
@@ -446,4 +455,38 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         return false;
     }
 
+    private extractSortModel(): { colId: string; sort: string }[] {
+        let sortModel = this.sortController.getSortModel();
+        let rowGroupCols = this.toValueObjects(this.columnController.getRowGroupColumns());
+
+        // find index of auto group column in sort model
+        let index = -1;
+        for (let i = 0; i < sortModel.length; ++i) {
+            if (sortModel[i].colId === 'ag-Grid-AutoColumn') {
+                index = i;
+                break;
+            }
+        }
+
+        // replace auto column with individual group columns
+        if (index > -1) {
+            let individualGroupCols =
+                rowGroupCols.map(group => {
+                    return {
+                        colId: group.field,
+                        sort: sortModel[index].sort
+                    }
+                });
+
+            // remove auto group column
+            sortModel.splice(index, 1);
+
+            // insert individual group columns
+            for (let i = 0; i < individualGroupCols.length; i++) {
+                sortModel.splice(index++, 0, individualGroupCols[i]);
+            }
+        }
+
+        return sortModel;
+    };
 }

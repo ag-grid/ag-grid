@@ -61,6 +61,9 @@ export class DetailCellRenderer extends Component {
     }
 
     private setupGrabMouseWheelEvent(): void {
+
+        if (this.gridOptionsWrapper.isNativeScroll()) { return; }
+
         let mouseWheelListener = (event: WheelEvent) => {
             event.stopPropagation();
         };
@@ -124,10 +127,13 @@ export class DetailCellRenderer extends Component {
 
         // IMPORTANT - gridOptions must be cloned
         this.detailGridOptions = _.cloneObject(gridOptions);
-        //Passing a dummy agGridReact bean in case this is for a REACT grid
         new Grid(this.eDetailGrid, this.detailGridOptions, {
             seedBeanInstances: {
-                agGridReact: {}
+                // a temporary fix for AG-1574
+                // AG-1715 raised to do a wider ranging refactor to improve this
+                agGridReact: params.agGridReact,
+                // AG-1716 - directly related to AG-1574 and AG-1715
+                frameworkComponentWrapper: params.frameworkComponentWrapper
             }
         });
 
@@ -158,6 +164,8 @@ export class DetailCellRenderer extends Component {
 export interface IDetailCellRendererParams extends ICellRendererParams {
     detailGridOptions: GridOptions;
     getDetailRowData: GetDetailRowData;
+    agGridReact: any;
+    frameworkComponentWrapper: any;
 }
 
 export interface GetDetailRowData {

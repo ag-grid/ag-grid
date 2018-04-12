@@ -4,6 +4,7 @@ import {
     Component,
     IDoesFilterPassParams,
     ISetFilterParams,
+    SerializedSetFilter,
     QuerySelector,
     Utils,
     RefSelector
@@ -12,9 +13,10 @@ import {SetFilterModel, SetFilterModelValuesType} from "./setFilterModel";
 import {SetFilterListItem} from "./setFilterListItem";
 import {VirtualList, VirtualListModel} from "../rendering/virtualList";
 
-enum CheckboxState {CHECKED, UNCHECKED, INTERMEDIATE};
+enum CheckboxState {CHECKED, UNCHECKED, INTERMEDIATE}
 
-export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
+
+export class SetFilter extends BaseFilter <string, ISetFilterParams, string[] | SerializedSetFilter> {
 
     private model: SetFilterModel;
 
@@ -30,7 +32,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     private selectAllState: CheckboxState;
 
     private virtualList: VirtualList;
-    private debounceFilterChanged: () => void;
+    private debounceFilterChanged: (applyNow?: boolean) => void;
 
     private eCheckedIcon: HTMLElement;
     private eUncheckedIcon: HTMLElement;
@@ -41,8 +43,8 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     }
 
     public customInit(): void {
-        let changeFilter: () => void = () => {
-            this.onFilterChanged();
+        let changeFilter: (applyNow?: boolean) => void = (applyNow: boolean = false) => {
+            this.onFilterChanged(applyNow);
         };
         let debounceMs: number = this.filterParams && this.filterParams.debounceMs != null ? this.filterParams.debounceMs : 0;
         this.debounceFilterChanged = _.debounce(changeFilter, debounceMs);
@@ -96,7 +98,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
             this.filterParams.valueGetter,
             this.filterParams.doesRowPassOtherFilter,
             this.filterParams.suppressSorting,
-            (values:string[])=>this.setFilterValues(values, true, false),
+            (values:string[], toSelect:string[])=>this.setFilterValues(values, toSelect ? false: true, toSelect ? true: false, toSelect),
             this.setLoading.bind(this)
         );
         this.virtualList.setModel(new ModelWrapper(this.model));
@@ -112,8 +114,15 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         this.virtualList.refresh();
     }
 
-    modelFromFloatingFilter(from: string): string[] {
-        return [from];
+    modelFromFloatingFilter(from: string): string[] | SerializedSetFilter {
+        if(this.gridOptionsWrapper.isEnableOldSetFilterModel()) {
+            return [from];
+        } else {
+            return {
+                values: [from],
+                filterType: 'set'
+            };
+        }
     }
 
     public refreshFilterBodyUi(): void {
@@ -159,6 +168,11 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         if (this.filterParams.colDef.keyCreator) {
             value = this.filterParams.colDef.keyCreator({value: value});
         }
+
+        if (this.filterParams.colDef.refData) {
+            value = this.filterParams.colDef.refData[value];
+        }
+
         value = Utils.makeNull(value);
 
         if (Array.isArray(value)) {
@@ -190,19 +204,21 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
      * @param options The options to use.
      * @param selectAll If by default all the values should be selected.
      * @param notify If we should let know the model that the values of the filter have changed
+     * @param toSelect The subset of options to subselect
      */
-    public setFilterValues(options: string[], selectAll:boolean = false, notify:boolean = true): void {
+    public setFilterValues(options: string[], selectAll:boolean = false, notify:boolean = true, toSelect ?: string[]): void {
         this.model.onFilterValuesReady (()=>{
             let keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
-            let isSelectAll = selectAll  || (this.selectAllState===CheckboxState.CHECKED);
-
             this.model.setValuesType(SetFilterModelValuesType.PROVIDED_LIST);
-            this.model.refreshValues(options, keepSelection, isSelectAll);
+            this.model.refreshValues(options, keepSelection, selectAll);
             this.updateSelectAll();
-            options.forEach(option=>this.model.selectValue(option));
+
+            let actualToSelect: string[] = toSelect ? toSelect : options;
+
+            actualToSelect.forEach(option=>this.model.selectValue(option));
             this.virtualList.refresh();
             if (notify){
-                this.debounceFilterChanged();
+                this.debounceFilterChanged(true);
             }
         });
     }
@@ -345,12 +361,22 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         return this.model.getUniqueValue(index);
     }
 
-    public serialize(): string[] {
-        return this.model.getModel();
+    public serialize(): string[] | SerializedSetFilter {
+        if(this.gridOptionsWrapper.isEnableOldSetFilterModel()) {
+            return this.model.getModel();
+        } else {
+            return {
+                values: this.model.getModel(),
+                filterType: 'set'
+            };
+        }
     }
 
-    public parse(dataModel: string[]) {
-        this.model.setModel(dataModel);
+    public parse(dataModel: string[] | SerializedSetFilter) {
+        // also supporting old filter model for backwards compatibility
+        let newValues: string[] = (dataModel instanceof Array) ? dataModel : dataModel.values;
+
+        this.model.setModel(newValues);
         this.updateSelectAll();
         this.virtualList.refresh();
     }
@@ -360,7 +386,6 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         this.model.setModel(null, true);
         this.selectEverything();
     }
-
 }
 
 class ModelWrapper implements VirtualListModel {

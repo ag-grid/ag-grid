@@ -1,11 +1,13 @@
-import {Utils} from "ag-grid/main";
-import {ColDef} from "ag-grid/main";
-import {ISetFilterParams} from "ag-grid/main";
-import {TextFormatter} from "ag-grid/main";
-import {TextFilter} from "ag-grid/main";
-import {InMemoryRowModel, IRowModel, Constants} from 'ag-grid';
-import {SetFilterValuesFunc, SetFilterValuesFuncParams} from "ag-grid/main";
-import {ExternalPromise, Promise} from 'ag-grid';
+import {
+    ColDef,
+    ISetFilterParams,
+    SetFilterValuesFunc,
+    SetFilterValuesFuncParams,
+    TextFilter,
+    TextFormatter,
+    Utils
+} from "ag-grid/main";
+import {Constants, ExternalPromise, InMemoryRowModel, IRowModel, Promise} from 'ag-grid';
 
 // we cannot have 'null' as a key in a JavaScript map,
 // it needs to be a string. so we use this string for
@@ -38,11 +40,11 @@ export class SetFilterModel {
     private valuesType: SetFilterModelValuesType;
 
     private doesRowPassOtherFilters: any;
-    private modelUpdatedFunc: (values: string[]) => void;
+    private modelUpdatedFunc: (values: string[], selected?:string[]) => void;
     private isLoadingFunc: (loading: boolean) => void;
 
-    private filterValuesExternalPromise: ExternalPromise<void>;
-    private filterValuesPromise: Promise<void>;
+    private filterValuesExternalPromise: ExternalPromise<string[]>;
+    private filterValuesPromise: Promise<string[]>;
 
     constructor(
         colDef: ColDef,
@@ -50,7 +52,7 @@ export class SetFilterModel {
         valueGetter: any,
         doesRowPassOtherFilters: any,
         suppressSorting: boolean,
-        modelUpdatedFunc: (values:string[])=>void,
+        modelUpdatedFunc: (values:string[], selected?:string[])=>void,
         isLoadingFunc: (loading:boolean)=>void
     ) {
         this.suppressSorting = suppressSorting;
@@ -135,13 +137,14 @@ export class SetFilterModel {
             this.setValues(valuesToUse);
             this.filterValuesPromise = Promise.resolve(null);
         } else {
-            this.filterValuesExternalPromise = Promise.external<void>();
+            this.filterValuesExternalPromise = Promise.external<string[]>();
             this.filterValuesPromise = this.filterValuesExternalPromise.promise;
             this.isLoadingFunc(true);
             this.setValues([]);
             let callback = <SetFilterValuesFunc> this.filterParams.values;
             let params: SetFilterValuesFuncParams = {
-                success:this.onAsyncValuesLoaded.bind(this)
+                success:this.onAsyncValuesLoaded.bind(this),
+                colDef: this.colDef
             };
             callback(params);
         }
@@ -150,7 +153,7 @@ export class SetFilterModel {
     private onAsyncValuesLoaded(values:string[]): void {
         this.modelUpdatedFunc(values);
         this.isLoadingFunc(false);
-        this.filterValuesExternalPromise.resolve(null);
+        this.filterValuesExternalPromise.resolve(values);
     }
 
     private areValuesSync() {
@@ -225,6 +228,10 @@ export class SetFilterModel {
 
             if (this.colDef.keyCreator) {
                 value = this.colDef.keyCreator( {value: value} );
+            }
+
+            if (this.colDef.refData) {
+                value = this.colDef.refData[value];
             }
 
             if (value === "" || value === undefined) {
@@ -419,6 +426,16 @@ export class SetFilterModel {
     }
 
     public setModel(model: string[], isSelectAll = false): void {
+        if (this.areValuesSync()){
+            this.setSyncModel(model, isSelectAll)
+        } else {
+            this.filterValuesExternalPromise.promise.then(values=>{
+                this.modelUpdatedFunc(values, model);
+            })
+        }
+    }
+
+    private setSyncModel (model: string[], isSelectAll = false):void {
         if (model && !isSelectAll) {
             this.selectNothing();
             for (let i = 0; i < model.length; i++) {

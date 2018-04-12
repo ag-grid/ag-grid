@@ -32,7 +32,9 @@ import {
     FlashCellsEvent,
     _,
     ColumnApi,
-    GridApi
+    GridApi,
+    RowValueChangedEvent,
+    ProcessHeaderForExportParams
 } from "ag-grid/main";
 import {RangeController} from "./rangeController";
 
@@ -81,7 +83,12 @@ export class ClipboardService implements IClipboardService {
             (element: HTMLTextAreaElement)=> {
                 let data = element.value;
                 if (Utils.missingOrEmpty(data)) return;
-                this.rangeController.isMoreThanOneCell() ? this.pasteToRange(data) : this.pasteToSingleCell(data);
+
+                let parsedData: string[][] = this.dataToArray(data);
+
+                let singleCellInClipboard = parsedData.length == 1 && parsedData[0].length == 1;
+                this.rangeController.isMoreThanOneCell() && !singleCellInClipboard ?
+                    this.pasteToRange(data) : this.pasteToSingleCell(data);
             }
         );
     }
@@ -136,6 +143,8 @@ export class ClipboardService implements IClipboardService {
         this.iterateActiveRanges(false, rowCallback);
         this.rowRenderer.refreshCells({rowNodes: updatedRowNodes, columns: updatedColumnIds});
         this.dispatchFlashCells(cellsToFlash);
+
+        this.fireRowChanged(updatedRowNodes);
     }
 
     private pasteToSingleCell(data: string) {
@@ -176,6 +185,8 @@ export class ClipboardService implements IClipboardService {
         this.dispatchFlashCells(cellsToFlash);
 
         this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.floating, true);
+
+        this.fireRowChanged(updatedRowNodes);
     }
 
     public copyRangeDown(): void {
@@ -225,6 +236,28 @@ export class ClipboardService implements IClipboardService {
         this.rowRenderer.refreshCells({rowNodes: updatedRowNodes, columns: updatedColumnIds});
 
         this.dispatchFlashCells(cellsToFlash);
+
+        this.fireRowChanged(updatedRowNodes);
+    }
+
+    private fireRowChanged(rowNodes: RowNode[]): void {
+        if (!this.gridOptionsWrapper.isFullRowEdit()) {
+            return;
+        }
+
+        rowNodes.forEach( rowNode => {
+            let event: RowValueChangedEvent = {
+                type: Events.EVENT_ROW_VALUE_CHANGED,
+                node: rowNode,
+                data: rowNode.data,
+                rowIndex: rowNode.rowIndex,
+                rowPinned: rowNode.rowPinned,
+                context: this.gridOptionsWrapper.getContext(),
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi()
+            };
+            this.eventService.dispatchEvent(event);
+        });
     }
 
     private multipleCellRange(clipboardGridData: string[][], currentRow: GridRow, updatedRowNodes: RowNode[], columnsToPasteInto: Column[], cellsToFlash: any, updatedColumnIds: string[], type: string) {
@@ -350,6 +383,12 @@ export class ClipboardService implements IClipboardService {
             }
 
             currentRow = this.cellNavigationService.getRowBelow(currentRow);
+
+            // this can happen if the user sets the active range manually, and sets a range
+            // that is outside of the grid, eg sets range rows 0 to 100, but grid has only 20 rows.
+            if (_.missing(currentRow)) {
+                break;
+            }
         }
     }
 
@@ -367,11 +406,14 @@ export class ClipboardService implements IClipboardService {
 
             columns.forEach( (column, index) => {
                 let value = this.columnController.getDisplayNameForColumn(column, 'clipboard', true);
+
+                let processedValue = this.userProcessHeader(column, value, this.gridOptionsWrapper.getProcessHeaderForClipboardFunc());
+
                 if (index != 0) {
                     data += deliminator;
                 }
-                if (Utils.exists(value)) {
-                    data += value;
+                if (Utils.exists(processedValue)) {
+                    data += processedValue;
                 }
             });
             data += '\r\n';
@@ -456,6 +498,20 @@ export class ClipboardService implements IClipboardService {
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
                 context: this.gridOptionsWrapper.getContext(),
                 type: type
+            };
+            return func(params);
+        } else {
+            return value;
+        }
+    }
+
+    private userProcessHeader(column: Column, value: any, func: (params: ProcessHeaderForExportParams) => void): any {
+        if (func) {
+            let params: ProcessHeaderForExportParams = {
+                column: column,
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                context: this.gridOptionsWrapper.getContext()
             };
             return func(params);
         } else {

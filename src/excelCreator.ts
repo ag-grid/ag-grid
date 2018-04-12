@@ -6,6 +6,7 @@ import {
     Column,
     ColumnController,
     Constants,
+    Downloader,
     ExcelCell,
     ExcelColumn,
     ExcelDataType,
@@ -15,7 +16,9 @@ import {
     ExcelWorksheet,
     GridOptions,
     GridOptionsWrapper,
+    GridSerializer,
     IExcelCreator,
+    PostConstruct,
     ProcessCellForExportParams,
     ProcessHeaderForExportParams,
     RowAccumulator,
@@ -25,9 +28,7 @@ import {
     StylingService,
     Utils,
     ValueService,
-    GridSerializer,
-    Downloader,
-    PostConstruct
+    _
 } from "ag-grid/main";
 
 import {ExcelXmlFactory} from "./excelXmlFactory";
@@ -47,6 +48,7 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession<Exce
     private customHeader: ExcelCell[][];
     private customFooter: ExcelCell[][];
     private sheetName:string;
+    private suppressTextAsCDATA:boolean;
 
     constructor(columnController: ColumnController,
                 valueService: ValueService,
@@ -56,8 +58,9 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession<Exce
                 sheetName:string,
                 private excelXmlFactory: ExcelXmlFactory,
                 baseExcelStyles: ExcelStyle[],
-                private styleLinker: (rowType: RowType, rowIndex: number, colIndex: number, value: string, column: Column, node: RowNode) => string[]) {
-        super(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback, (raw: string) => Utils.escape(raw));
+                private styleLinker: (rowType: RowType, rowIndex: number, colIndex: number, value: string, column: Column, node: RowNode) => string[],
+                suppressTextAsCDATA:boolean) {
+        super(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback, (raw: string) => raw);
         this.stylesByIds = {};
         if (!baseExcelStyles) {
             this.excelStyles = [];
@@ -68,6 +71,7 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession<Exce
             this.excelStyles = baseExcelStyles.slice();
         }
         this.sheetName = sheetName;
+        this.suppressTextAsCDATA = suppressTextAsCDATA;
     }
 
     private rows: ExcelRow[] = [];
@@ -233,11 +237,23 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession<Exce
             return type;
         }
 
+        let typeTransformed: ExcelDataType = getType();
+
+        let massageText: (value:string)=> string = (value:string)=> {
+            return this.suppressTextAsCDATA ?
+                _.escape(value) :
+                `<![CDATA[${value}]]>`;
+        };
+
+
         return {
             styleId: styleExists ? styleId : null,
             data: {
-                type: getType(),
-                value: value
+                type: typeTransformed,
+                value:
+                    typeTransformed === 'String' ? massageText(value):
+                    typeTransformed === 'Number' ? Number(value).valueOf() + '' :
+                    value
             }
         };
     }
@@ -306,7 +322,8 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], ExcelGridSerializin
             params && params.sheetName != null && params.sheetName != "" ? params.sheetName : 'ag-grid',
             this.excelXmlFactory,
             this.gridOptions.excelStyles,
-            this.styleLinker.bind(this)
+            this.styleLinker.bind(this),
+            params && params.suppressTextAsCDATA ? params.suppressTextAsCDATA : false
         )
     }
 
