@@ -3,7 +3,7 @@
 
 <div class="card card-highlight">
   <div class="card-body">
-    <h5 class="card-title"><a href="https://www.ag-grid.com/ag-grid-changelog/?fixVersion=17.1.0">Version 17.1 Released</a></h5>
+    <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=17.1.0">Version 17.1 Released</a></h5>
     <h6 class="card-subtitle mb-2 text-muted">Apr 13</h6>
     <p class="card-text">
         Minor release including 60 bug fixes and changes in total. Check the new guides on connecting to
@@ -12,7 +12,7 @@
     </p>
 
     <p class="text-right">
-        <a class="learn-more" href="https://www.ag-grid.com/ag-grid-changelog/?fixVersion=17.1.0">Change Log</a>
+        <a class="learn-more" href="../ag-grid-changelog/?fixVersion=17.1.0">Change Log</a>
     </p>
   </div>
 </div>
