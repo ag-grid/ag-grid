@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.0.0
+// ag-grid-enterprise v17.1.0
 import { ColDef, IRowNodeStage, StageExecuteParams } from "ag-grid/main";
 export declare class PivotStage implements IRowNodeStage {
     private rowModel;

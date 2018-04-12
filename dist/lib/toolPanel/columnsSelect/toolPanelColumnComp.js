@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.0.0
+// ag-grid-enterprise v17.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -35,7 +35,7 @@ var ToolPanelColumnComp = (function (_super) {
     ToolPanelColumnComp.prototype.init = function () {
         this.setTemplate(ToolPanelColumnComp.TEMPLATE);
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
-        this.eText.innerHTML = this.displayName;
+        this.eLabel.innerHTML = this.displayName;
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
         var indent = this.columnDept;
         if (this.groupsExist) {
@@ -51,10 +51,16 @@ var ToolPanelColumnComp = (function (_super) {
         this.addDestroyableEventListener(this.gridOptionsWrapper, 'functionsReadOnly', this.onColumnStateChanged.bind(this));
         this.instantiate(this.context);
         this.onColumnStateChanged();
-        this.addDestroyableEventListener(this.cbSelect, main_1.AgCheckbox.EVENT_CHANGED, this.onChange.bind(this));
         main_1.CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
     };
-    ToolPanelColumnComp.prototype.onChange = function (event) {
+    ToolPanelColumnComp.prototype.onLabelClicked = function () {
+        var nextState = !this.cbSelect.isSelected();
+        this.onChangeCommon(nextState);
+    };
+    ToolPanelColumnComp.prototype.onCheckboxChanged = function (event) {
+        this.onChangeCommon(event.selected);
+    };
+    ToolPanelColumnComp.prototype.onChangeCommon = function (nextState) {
         // only want to action if the user clicked the checkbox, not is we are setting the checkbox because
         // of a change in the model
         if (this.processingColumnStateChange) {
@@ -64,7 +70,7 @@ var ToolPanelColumnComp = (function (_super) {
         // so the user gets nice feedback when they click. otherwise there would be a lag and the
         // user would think the checkboxes were clunky
         if (this.columnController.isPivotMode()) {
-            if (event.selected) {
+            if (nextState) {
                 this.actionCheckedPivotMode();
             }
             else {
@@ -72,7 +78,7 @@ var ToolPanelColumnComp = (function (_super) {
             }
         }
         else {
-            this.columnController.setColumnVisible(this.column, event.selected, "columnMenu");
+            this.columnController.setColumnVisible(this.column, nextState, "columnMenu");
         }
         if (this.selectionCallback) {
             this.selectionCallback(this.isSelected());
@@ -271,7 +277,7 @@ var ToolPanelColumnComp = (function (_super) {
     ToolPanelColumnComp.prototype.setExpanded = function (value) {
         console.warn('ag-grid: can not expand a column item that does not represent a column group header');
     };
-    ToolPanelColumnComp.TEMPLATE = "<div class=\"ag-column-select-column\">\n            <ag-checkbox class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-drag\" ref=\"eDragHandle\"></span>\n            <span class=\"ag-column-select-label\"></span>\n        </div>";
+    ToolPanelColumnComp.TEMPLATE = "<div class=\"ag-column-select-column\">\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\" (change)=\"onCheckboxChanged\"></ag-checkbox>\n            <span class=\"ag-column-drag\" ref=\"eDragHandle\"></span>\n            <span class=\"ag-column-select-label\" ref=\"eLabel\" (click)=\"onLabelClicked\"></span>\n        </div>";
     __decorate([
         main_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", main_1.GridOptionsWrapper)
@@ -305,15 +311,11 @@ var ToolPanelColumnComp = (function (_super) {
         __metadata("design:type", main_1.GridApi)
     ], ToolPanelColumnComp.prototype, "gridApi", void 0);
     __decorate([
-        main_1.QuerySelector('.ag-column-select-label'),
+        main_1.RefSelector('eLabel'),
         __metadata("design:type", HTMLElement)
-    ], ToolPanelColumnComp.prototype, "eText", void 0);
+    ], ToolPanelColumnComp.prototype, "eLabel", void 0);
     __decorate([
-        main_1.QuerySelector('.ag-column-select-indent'),
-        __metadata("design:type", HTMLElement)
-    ], ToolPanelColumnComp.prototype, "eIndent", void 0);
-    __decorate([
-        main_1.QuerySelector('.ag-column-select-checkbox'),
+        main_1.RefSelector('cbSelect'),
         __metadata("design:type", main_1.AgCheckbox)
     ], ToolPanelColumnComp.prototype, "cbSelect", void 0);
     __decorate([

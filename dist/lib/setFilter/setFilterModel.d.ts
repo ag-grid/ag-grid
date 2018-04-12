@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.0.0
+// ag-grid-enterprise v17.1.0
 import { ColDef } from "ag-grid/main";
 import { IRowModel } from 'ag-grid';
 export declare enum SetFilterModelValuesType {
@@ -26,7 +26,7 @@ export declare class SetFilterModel {
     private isLoadingFunc;
     private filterValuesExternalPromise;
     private filterValuesPromise;
-    constructor(colDef: ColDef, rowModel: IRowModel, valueGetter: any, doesRowPassOtherFilters: any, suppressSorting: boolean, modelUpdatedFunc: (values: string[]) => void, isLoadingFunc: (loading: boolean) => void);
+    constructor(colDef: ColDef, rowModel: IRowModel, valueGetter: any, doesRowPassOtherFilters: any, suppressSorting: boolean, modelUpdatedFunc: (values: string[], selected?: string[]) => void, isLoadingFunc: (loading: boolean) => void);
     refreshAfterNewRowsLoaded(keepSelection: any, isSelectAll: boolean): void;
     refreshValues(valuesToUse: string[], keepSelection: any, isSelectAll: boolean): void;
     private refreshSelection(keepSelection, isSelectAll);
@@ -60,5 +60,6 @@ export declare class SetFilterModel {
     isNothingSelected(): boolean;
     getModel(): string[];
     setModel(model: string[], isSelectAll?: boolean): void;
+    private setSyncModel(model, isSelectAll?);
     onFilterValuesReady(callback: () => void): void;
 }

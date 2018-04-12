@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.0.0
+// ag-grid-enterprise v17.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -69,6 +69,14 @@ var EnterpriseRowModel = (function (_super) {
         this.addDestroyableEventListener(this.eventService, ag_grid_1.Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
     };
     EnterpriseRowModel.prototype.onColumnEverything = function () {
+        // this is a hack for one customer only, so they can suppress the resetting of the columns.
+        // The problem the customer had was they were api.setColumnDefs() after the data source came
+        // back with data. So this stops the reload from the grid after the data comes back.
+        // Once we have "AG-1591 Allow delta changes to columns" fixed, then this hack can be taken out.
+        if (this.gridOptionsWrapper.isSuppressEnterpriseResetOnNewColumns()) {
+            return;
+        }
+        // every other customer can continue as normal and have it working!!!
         this.reset();
     };
     EnterpriseRowModel.prototype.onFilterChanged = function () {
@@ -183,6 +191,11 @@ var EnterpriseRowModel = (function (_super) {
                 'Either a) remove getRowHeight() callback or b) remove maxBlocksInCache property. Purging has been disabled.');
             maxBlocksInCache = undefined;
         }
+        if (maxBlocksInCache >= 0 && this.columnController.isAutoRowHeightActive()) {
+            console.warn('ag-Grid: Enterprise Row Model does not support Auto Row Height and Cache Purging. ' +
+                'Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.');
+            maxBlocksInCache = undefined;
+        }
         var params = {
             // the columns the user has grouped and aggregated by
             valueCols: valueColumnVos,
@@ -191,7 +204,7 @@ var EnterpriseRowModel = (function (_super) {
             pivotMode: this.columnController.isPivotMode(),
             // sort and filter model
             filterModel: this.filterManager.getFilterModel(),
-            sortModel: this.sortController.getSortModel(),
+            sortModel: this.extractSortModel(),
             rowNodeBlockLoader: this.rowNodeBlockLoader,
             datasource: this.datasource,
             lastAccessedSequence: new ag_grid_1.NumberSequence(),
@@ -285,10 +298,6 @@ var EnterpriseRowModel = (function (_super) {
         else {
             lastRow = 0;
         }
-        // this doesn't make sense, but it works, if there are now rows, then -1 is returned above
-        if (lastRow < 0) {
-            lastRow = 0;
-        }
         return lastRow;
     };
     EnterpriseRowModel.prototype.getRowCount = function () {
@@ -359,6 +368,35 @@ var EnterpriseRowModel = (function (_super) {
     EnterpriseRowModel.prototype.isRowPresent = function (rowNode) {
         return false;
     };
+    EnterpriseRowModel.prototype.extractSortModel = function () {
+        var sortModel = this.sortController.getSortModel();
+        var rowGroupCols = this.toValueObjects(this.columnController.getRowGroupColumns());
+        // find index of auto group column in sort model
+        var index = -1;
+        for (var i = 0; i < sortModel.length; ++i) {
+            if (sortModel[i].colId === 'ag-Grid-AutoColumn') {
+                index = i;
+                break;
+            }
+        }
+        // replace auto column with individual group columns
+        if (index > -1) {
+            var individualGroupCols = rowGroupCols.map(function (group) {
+                return {
+                    colId: group.field,
+                    sort: sortModel[index].sort
+                };
+            });
+            // remove auto group column
+            sortModel.splice(index, 1);
+            // insert individual group columns
+            for (var i = 0; i < individualGroupCols.length; i++) {
+                sortModel.splice(index++, 0, individualGroupCols[i]);
+            }
+        }
+        return sortModel;
+    };
+    ;
     __decorate([
         ag_grid_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", ag_grid_1.GridOptionsWrapper)

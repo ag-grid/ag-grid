@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.0.0
+// ag-grid-enterprise v17.1.0
 import { RowNode, Component, GridOptions, ICellRendererParams } from "ag-grid/main";
 export declare class DetailCellRenderer extends Component {
     private static TEMPLATE;
@@ -20,6 +20,8 @@ export declare class DetailCellRenderer extends Component {
 export interface IDetailCellRendererParams extends ICellRendererParams {
     detailGridOptions: GridOptions;
     getDetailRowData: GetDetailRowData;
+    agGridReact: any;
+    frameworkComponentWrapper: any;
 }
 export interface GetDetailRowData {
     (params: GetDetailRowDataParams): void;

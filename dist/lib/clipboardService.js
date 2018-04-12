@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.0.0
+// ag-grid-enterprise v17.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -27,7 +27,10 @@ var ClipboardService = (function () {
             var data = element.value;
             if (main_1.Utils.missingOrEmpty(data))
                 return;
-            _this.rangeController.isMoreThanOneCell() ? _this.pasteToRange(data) : _this.pasteToSingleCell(data);
+            var parsedData = _this.dataToArray(data);
+            var singleCellInClipboard = parsedData.length == 1 && parsedData[0].length == 1;
+            _this.rangeController.isMoreThanOneCell() && !singleCellInClipboard ?
+                _this.pasteToRange(data) : _this.pasteToSingleCell(data);
         });
     };
     ClipboardService.prototype.pasteToRange = function (data) {
@@ -73,6 +76,7 @@ var ClipboardService = (function () {
         this.iterateActiveRanges(false, rowCallback);
         this.rowRenderer.refreshCells({ rowNodes: updatedRowNodes, columns: updatedColumnIds });
         this.dispatchFlashCells(cellsToFlash);
+        this.fireRowChanged(updatedRowNodes);
     };
     ClipboardService.prototype.pasteToSingleCell = function (data) {
         if (main_1.Utils.missingOrEmpty(data)) {
@@ -107,6 +111,7 @@ var ClipboardService = (function () {
         this.rowRenderer.refreshCells({ rowNodes: updatedRowNodes, columns: updatedColumnIds });
         this.dispatchFlashCells(cellsToFlash);
         this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.floating, true);
+        this.fireRowChanged(updatedRowNodes);
     };
     ClipboardService.prototype.copyRangeDown = function () {
         var _this = this;
@@ -153,6 +158,26 @@ var ClipboardService = (function () {
         // this is very heavy, should possibly just refresh the specific cells?
         this.rowRenderer.refreshCells({ rowNodes: updatedRowNodes, columns: updatedColumnIds });
         this.dispatchFlashCells(cellsToFlash);
+        this.fireRowChanged(updatedRowNodes);
+    };
+    ClipboardService.prototype.fireRowChanged = function (rowNodes) {
+        var _this = this;
+        if (!this.gridOptionsWrapper.isFullRowEdit()) {
+            return;
+        }
+        rowNodes.forEach(function (rowNode) {
+            var event = {
+                type: main_1.Events.EVENT_ROW_VALUE_CHANGED,
+                node: rowNode,
+                data: rowNode.data,
+                rowIndex: rowNode.rowIndex,
+                rowPinned: rowNode.rowPinned,
+                context: _this.gridOptionsWrapper.getContext(),
+                api: _this.gridOptionsWrapper.getApi(),
+                columnApi: _this.gridOptionsWrapper.getColumnApi()
+            };
+            _this.eventService.dispatchEvent(event);
+        });
     };
     ClipboardService.prototype.multipleCellRange = function (clipboardGridData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, updatedColumnIds, type) {
         var _this = this;
@@ -266,6 +291,11 @@ var ClipboardService = (function () {
                 break;
             }
             currentRow = this.cellNavigationService.getRowBelow(currentRow);
+            // this can happen if the user sets the active range manually, and sets a range
+            // that is outside of the grid, eg sets range rows 0 to 100, but grid has only 20 rows.
+            if (main_1._.missing(currentRow)) {
+                break;
+            }
         }
     };
     ClipboardService.prototype.copySelectedRangeToClipboard = function (includeHeaders) {
@@ -284,11 +314,12 @@ var ClipboardService = (function () {
             }
             columns.forEach(function (column, index) {
                 var value = _this.columnController.getDisplayNameForColumn(column, 'clipboard', true);
+                var processedValue = _this.userProcessHeader(column, value, _this.gridOptionsWrapper.getProcessHeaderForClipboardFunc());
                 if (index != 0) {
                     data += deliminator;
                 }
-                if (main_1.Utils.exists(value)) {
-                    data += value;
+                if (main_1.Utils.exists(processedValue)) {
+                    data += processedValue;
                 }
             });
             data += '\r\n';
@@ -363,6 +394,20 @@ var ClipboardService = (function () {
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
                 context: this.gridOptionsWrapper.getContext(),
                 type: type
+            };
+            return func(params);
+        }
+        else {
+            return value;
+        }
+    };
+    ClipboardService.prototype.userProcessHeader = function (column, value, func) {
+        if (func) {
+            var params = {
+                column: column,
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                context: this.gridOptionsWrapper.getContext()
             };
             return func(params);
         }

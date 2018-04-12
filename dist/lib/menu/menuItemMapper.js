@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.0.0
+// ag-grid-enterprise v17.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -85,8 +85,8 @@ var MenuItemMapper = (function () {
                 action: function () { return _this.columnController.removeRowGroupColumn(column, "contextMenu"); },
                 icon: ag_grid_1.Utils.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null)
             };
-            case 'destroyColumnComps': return {
-                name: localeTextFunc('destroyColumnComps', 'Reset Columns'),
+            case 'resetColumns': return {
+                name: localeTextFunc('resetColumns', 'Reset Columns'),
                 action: function () { return _this.columnController.resetColumnState("contextMenu"); }
             };
             case 'expandAll': return {

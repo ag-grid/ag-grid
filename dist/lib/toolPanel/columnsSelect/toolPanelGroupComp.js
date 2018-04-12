@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.0.0
+// ag-grid-enterprise v17.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -45,7 +45,6 @@ var ToolPanelGroupComp = (function (_super) {
         this.setupExpandContract();
         this.addCssClass('ag-toolpanel-indent-' + this.columnDept);
         this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.cbSelect, main_1.AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
         this.setOpenClosedIcons();
         this.setupDragging();
         this.onColumnStateChanged();
@@ -98,14 +97,20 @@ var ToolPanelGroupComp = (function (_super) {
         this.addDestroyableEventListener(touchListener, main_1.TouchListener.EVENT_TAP, this.onExpandOrContractClicked.bind(this));
         this.addDestroyFunc(touchListener.destroy.bind(touchListener));
     };
-    ToolPanelGroupComp.prototype.onCheckboxChanged = function () {
+    ToolPanelGroupComp.prototype.onLabelClicked = function () {
+        var nextState = !this.cbSelect.isSelected();
+        this.onChangeCommon(nextState);
+    };
+    ToolPanelGroupComp.prototype.onCheckboxChanged = function (event) {
+        this.onChangeCommon(event.selected);
+    };
+    ToolPanelGroupComp.prototype.onChangeCommon = function (nextState) {
         if (this.processingColumnStateChange) {
             return;
         }
         var childColumns = this.columnGroup.getLeafColumns();
-        var selected = this.cbSelect.isSelected();
         if (this.columnController.isPivotMode()) {
-            if (selected) {
+            if (nextState) {
                 this.actionCheckedReduce(childColumns);
             }
             else {
@@ -114,7 +119,7 @@ var ToolPanelGroupComp = (function (_super) {
         }
         else {
             var allowedColumns = childColumns.filter(function (c) { return !c.isLockVisible(); });
-            this.columnController.setColumnsVisible(allowedColumns, selected, "toolPanelUi");
+            this.columnController.setColumnsVisible(allowedColumns, nextState, "toolPanelUi");
         }
         if (this.selectionCallback) {
             this.selectionCallback(this.isSelected());
@@ -276,7 +281,7 @@ var ToolPanelGroupComp = (function (_super) {
             this.onExpandOrContractClicked();
         }
     };
-    ToolPanelGroupComp.TEMPLATE = "<div class=\"ag-column-select-column-group\">\n            <span id=\"eColumnGroupIcons\" class=\"ag-column-group-icons\">\n                <span id=\"eGroupOpenedIcon\" class=\"ag-column-group-closed-icon\"></span>\n                <span id=\"eGroupClosedIcon\" class=\"ag-column-group-opened-icon\"></span>\n            </span>\n            <ag-checkbox class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-drag\" ref=\"eDragHandle\"></span>\n            <span id=\"eText\" class=\"ag-column-select-column-group-label\"></span>\n        </div>";
+    ToolPanelGroupComp.TEMPLATE = "<div class=\"ag-column-select-column-group\">\n            <span id=\"eColumnGroupIcons\" class=\"ag-column-group-icons\">\n                <span id=\"eGroupOpenedIcon\" class=\"ag-column-group-closed-icon\"></span>\n                <span id=\"eGroupClosedIcon\" class=\"ag-column-group-opened-icon\"></span>\n            </span>\n            <ag-checkbox ref=\"cbSelect\" (change)=\"onCheckboxChanged\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-drag\" ref=\"eDragHandle\"></span>\n            <span id=\"eText\" class=\"ag-column-select-column-group-label\" (click)=\"onLabelClicked\"></span>\n        </div>";
     __decorate([
         main_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", main_1.GridOptionsWrapper)
@@ -302,7 +307,7 @@ var ToolPanelGroupComp = (function (_super) {
         __metadata("design:type", main_1.EventService)
     ], ToolPanelGroupComp.prototype, "eventService", void 0);
     __decorate([
-        main_1.QuerySelector('.ag-column-select-checkbox'),
+        main_1.RefSelector('cbSelect'),
         __metadata("design:type", main_1.AgCheckbox)
     ], ToolPanelGroupComp.prototype, "cbSelect", void 0);
     __decorate([

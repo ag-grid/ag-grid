@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.0.0
+// ag-grid-enterprise v17.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -151,6 +151,7 @@ var PivotColDefService = (function () {
         colDef.field = colDef.colId;
         colDef.pivotKeys = pivotKeys;
         colDef.pivotValueColumn = valueColumn;
+        colDef.suppressFilter = true;
         return colDef;
     };
     PivotColDefService.prototype.sameAggFuncs = function (aggFuncs) {

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.0.0
+// ag-grid-enterprise v17.1.0
 import { BeanStub, IEnterpriseDatasource, IEnterpriseRowModel, RowNode, RowBounds } from "ag-grid";
 export declare class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel {
     private gridOptionsWrapper;
@@ -55,4 +55,5 @@ export declare class EnterpriseRowModel extends BeanStub implements IEnterpriseR
     getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[];
     getBlockState(): any;
     isRowPresent(rowNode: RowNode): boolean;
+    private extractSortModel();
 }

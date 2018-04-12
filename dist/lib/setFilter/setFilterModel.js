@@ -1,10 +1,8 @@
-// ag-grid-enterprise v17.0.0
+// ag-grid-enterprise v17.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
-var main_2 = require("ag-grid/main");
 var ag_grid_1 = require("ag-grid");
-var ag_grid_2 = require("ag-grid");
 // we cannot have 'null' as a key in a JavaScript map,
 // it needs to be a string. so we use this string for
 // storing null values.
@@ -47,7 +45,7 @@ var SetFilterModel = (function () {
         // the length of the array is thousands of records long
         this.selectedValuesMap = {};
         this.selectEverything();
-        this.formatter = this.filterParams.textFormatter ? this.filterParams.textFormatter : main_2.TextFilter.DEFAULT_FORMATTER;
+        this.formatter = this.filterParams.textFormatter ? this.filterParams.textFormatter : main_1.TextFilter.DEFAULT_FORMATTER;
     }
     // if keepSelection not set will always select all filters
     // if keepSelection set will keep current state of selected filters
@@ -85,16 +83,17 @@ var SetFilterModel = (function () {
         if (this.areValuesSync()) {
             var valuesToUse = this.extractSyncValuesToUse();
             this.setValues(valuesToUse);
-            this.filterValuesPromise = ag_grid_2.Promise.resolve(null);
+            this.filterValuesPromise = ag_grid_1.Promise.resolve(null);
         }
         else {
-            this.filterValuesExternalPromise = ag_grid_2.Promise.external();
+            this.filterValuesExternalPromise = ag_grid_1.Promise.external();
             this.filterValuesPromise = this.filterValuesExternalPromise.promise;
             this.isLoadingFunc(true);
             this.setValues([]);
             var callback = this.filterParams.values;
             var params = {
-                success: this.onAsyncValuesLoaded.bind(this)
+                success: this.onAsyncValuesLoaded.bind(this),
+                colDef: this.colDef
             };
             callback(params);
         }
@@ -102,7 +101,7 @@ var SetFilterModel = (function () {
     SetFilterModel.prototype.onAsyncValuesLoaded = function (values) {
         this.modelUpdatedFunc(values);
         this.isLoadingFunc(false);
-        this.filterValuesExternalPromise.resolve(null);
+        this.filterValuesExternalPromise.resolve(values);
     };
     SetFilterModel.prototype.areValuesSync = function () {
         return this.valuesType == SetFilterModelValuesType.PROVIDED_LIST || this.valuesType == SetFilterModelValuesType.NOT_PROVIDED;
@@ -173,6 +172,9 @@ var SetFilterModel = (function () {
             var value = _this.valueGetter(node);
             if (_this.colDef.keyCreator) {
                 value = _this.colDef.keyCreator({ value: value });
+            }
+            if (_this.colDef.refData) {
+                value = _this.colDef.refData[value];
             }
             if (value === "" || value === undefined) {
                 value = null;
@@ -345,6 +347,18 @@ var SetFilterModel = (function () {
         return selectedValues;
     };
     SetFilterModel.prototype.setModel = function (model, isSelectAll) {
+        var _this = this;
+        if (isSelectAll === void 0) { isSelectAll = false; }
+        if (this.areValuesSync()) {
+            this.setSyncModel(model, isSelectAll);
+        }
+        else {
+            this.filterValuesExternalPromise.promise.then(function (values) {
+                _this.modelUpdatedFunc(values, model);
+            });
+        }
+    };
+    SetFilterModel.prototype.setSyncModel = function (model, isSelectAll) {
         if (isSelectAll === void 0) { isSelectAll = false; }
         if (model && !isSelectAll) {
             this.selectNothing();
