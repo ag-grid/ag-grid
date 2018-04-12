@@ -13,6 +13,16 @@ $(function () {
             return ignore.indexOf(key) >= 0;
         }
 
+        function displayFixVersionInformation(fixVersion) {
+            const underscoredId = fixVersion.split('.').join('_');
+            // NOTE!! This will _only_ work for 17.1.0 - to be made more generic post release
+            if(fixVersion === 'All Versions') {
+                $("#fixVersion_info_17_1_0").hide()
+            } else {
+                $(`#fixVersion_info_${underscoredId}`).show()
+            }
+        }
+        
         function processSearchValue() {
             var value = (<any>document.getElementById('global_search')).value;
             var searchCriteria = (<any>$).trim(value).replace(/ +/g, ' ').toLowerCase();
@@ -59,6 +69,7 @@ $(function () {
 
         $("#fixVersionFilter").change(function () {
             processSearchValue();
+            displayFixVersionInformation($("#fixVersionFilter").val())
         });
 
         $("#breaking").click(function () {
@@ -92,5 +103,8 @@ $(function () {
         function toggleMoreInfo(id) {
             $("#" + id).toggle();
         }
+
+        processSearchValue();
+        displayFixVersionInformation($("#fixVersionFilter").val())
     });
 });
