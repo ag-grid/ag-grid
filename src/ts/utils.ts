@@ -844,15 +844,7 @@ export class Utils {
     }
 
     static every<T>(items: T[], callback: (item: T)=>boolean): boolean {
-        if (!items || items.length===0) { return true; }
-
-        for (let i = 0; i<items.length; i++) {
-            if (!callback(items[i])) {
-                return false;
-            }
-        }
-
-        return true;
+        return Utils.find<T>(items, callback) != null
     }
 
     static toStringOrNull(value: any): string {

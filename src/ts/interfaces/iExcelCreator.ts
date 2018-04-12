@@ -104,6 +104,7 @@ export interface ExcelInterior {
 
 export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
     sheetName?: string;
+    suppressTextAsCDATA?:boolean;
 }
 
 export interface IExcelCreator {
