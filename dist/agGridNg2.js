@@ -135,6 +135,8 @@ var AgGridNg2 = (function () {
         this.isRowMaster = undefined;
         this.isRowSelectable = undefined;
         this.postSort = undefined;
+        this.processHeaderForClipboard = undefined;
+        this.paginationNumberFormatter = undefined;
         this.toolPanelSuppressRowGroups = undefined;
         this.toolPanelSuppressValues = undefined;
         this.toolPanelSuppressPivots = undefined;
@@ -143,6 +145,7 @@ var AgGridNg2 = (function () {
         this.toolPanelSuppressColumnFilter = undefined;
         this.toolPanelSuppressColumnSelectAll = undefined;
         this.toolPanelSuppressColumnExpandAll = undefined;
+        this.suppressMakeColumnVisibleAfterUnGroup = undefined;
         this.suppressRowClickSelection = undefined;
         this.suppressCellSelection = undefined;
         this.suppressHorizontalScroll = undefined;
@@ -241,6 +244,8 @@ var AgGridNg2 = (function () {
         this.suppressPropertyNamesCheck = undefined;
         this.rowMultiSelectWithClick = undefined;
         this.contractColumnSelection = undefined;
+        this.suppressEnterpriseResetOnNewColumns = undefined;
+        this.enableOldSetFilterModel = undefined;
         this.columnEverythingChanged = new core_1.EventEmitter();
         this.newColumnsLoaded = new core_1.EventEmitter();
         this.columnPivotModeChanged = new core_1.EventEmitter();
@@ -357,7 +362,9 @@ var AgGridNg2 = (function () {
             // need to do this before the destroy, so we know not to emit any events
             // while tearing down the grid.
             this._destroyed = true;
-            this.api.destroy();
+            if (this.api) {
+                this.api.destroy();
+            }
         }
     };
     AgGridNg2.prototype.globalEventListener = function (eventType, event) {
@@ -527,6 +534,8 @@ AgGridNg2.propDecorators = {
     'isRowMaster': [{ type: core_1.Input },],
     'isRowSelectable': [{ type: core_1.Input },],
     'postSort': [{ type: core_1.Input },],
+    'processHeaderForClipboard': [{ type: core_1.Input },],
+    'paginationNumberFormatter': [{ type: core_1.Input },],
     'toolPanelSuppressRowGroups': [{ type: core_1.Input },],
     'toolPanelSuppressValues': [{ type: core_1.Input },],
     'toolPanelSuppressPivots': [{ type: core_1.Input },],
@@ -535,6 +544,7 @@ AgGridNg2.propDecorators = {
     'toolPanelSuppressColumnFilter': [{ type: core_1.Input },],
     'toolPanelSuppressColumnSelectAll': [{ type: core_1.Input },],
     'toolPanelSuppressColumnExpandAll': [{ type: core_1.Input },],
+    'suppressMakeColumnVisibleAfterUnGroup': [{ type: core_1.Input },],
     'suppressRowClickSelection': [{ type: core_1.Input },],
     'suppressCellSelection': [{ type: core_1.Input },],
     'suppressHorizontalScroll': [{ type: core_1.Input },],
@@ -633,6 +643,8 @@ AgGridNg2.propDecorators = {
     'suppressPropertyNamesCheck': [{ type: core_1.Input },],
     'rowMultiSelectWithClick': [{ type: core_1.Input },],
     'contractColumnSelection': [{ type: core_1.Input },],
+    'suppressEnterpriseResetOnNewColumns': [{ type: core_1.Input },],
+    'enableOldSetFilterModel': [{ type: core_1.Input },],
     'columnEverythingChanged': [{ type: core_1.Output },],
     'newColumnsLoaded': [{ type: core_1.Output },],
     'columnPivotModeChanged': [{ type: core_1.Output },],
