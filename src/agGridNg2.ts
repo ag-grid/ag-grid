@@ -117,7 +117,9 @@ export class AgGridNg2 implements AfterViewInit {
             // need to do this before the destroy, so we know not to emit any events
             // while tearing down the grid.
             this._destroyed = true;
-            this.api.destroy();
+            if(this.api) {
+                this.api.destroy();
+            }
         }
     }
 
@@ -265,6 +267,8 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public isRowMaster : any = undefined;
     @Input() public isRowSelectable : any = undefined;
     @Input() public postSort : any = undefined;
+    @Input() public processHeaderForClipboard : any = undefined;
+    @Input() public paginationNumberFormatter : any = undefined;
     @Input() public toolPanelSuppressRowGroups : any = undefined;
     @Input() public toolPanelSuppressValues : any = undefined;
     @Input() public toolPanelSuppressPivots : any = undefined;
@@ -273,6 +277,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public toolPanelSuppressColumnFilter : any = undefined;
     @Input() public toolPanelSuppressColumnSelectAll : any = undefined;
     @Input() public toolPanelSuppressColumnExpandAll : any = undefined;
+    @Input() public suppressMakeColumnVisibleAfterUnGroup : any = undefined;
     @Input() public suppressRowClickSelection : any = undefined;
     @Input() public suppressCellSelection : any = undefined;
     @Input() public suppressHorizontalScroll : any = undefined;
@@ -371,6 +376,8 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public suppressPropertyNamesCheck : any = undefined;
     @Input() public rowMultiSelectWithClick : any = undefined;
     @Input() public contractColumnSelection : any = undefined;
+    @Input() public suppressEnterpriseResetOnNewColumns : any = undefined;
+    @Input() public enableOldSetFilterModel : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();
