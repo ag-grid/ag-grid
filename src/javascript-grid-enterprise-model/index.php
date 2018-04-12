@@ -87,8 +87,12 @@ interface IEnterpriseDatasource {
 <snippet>
 interface IEnterpriseGetRowsParams {
 
-    // details for the request
+    // details for the request, simple object, can be converted to JSON
     request: IEnterpriseGetRowsRequest;
+
+    // the parent row node. is the RootNode (level -1) if request is top level.
+    // this is NOT part fo the request as it cannot be serialised to JSON (a rowNode has methods)
+    parentNode: RowNode;
 
     // success callback, pass the rows back the grid asked for.
     // if the total row count is known, provide it via lastRow, so the
@@ -332,6 +336,14 @@ export interface ColumnVO {
 <p>
     The example does not demonstrate pivoting. This is because pivot is not easily achievable in
     MySQL.
+</p>
+
+<p>
+    You can also check out these guides on connecting to other data sources:
+    <ul>
+        <li><a href="../oracle-server-side-operations/">Java Server connecting to Oracle</a></li>
+        <li><a href="../spark-server-side-operations/">Java Server connecting to Apache Spark</a></li>
+    </ul>
 </p>
 
 <note>
