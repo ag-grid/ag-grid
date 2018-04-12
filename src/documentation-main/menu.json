@@ -192,7 +192,8 @@
                     },
                     {
                         "title": "Set Filter",
-                        "url": "javascript-grid-filter-set/"
+                        "url": "javascript-grid-filter-set/",
+                        "enterprise": true
                     },
                     {
                         "title": "Custom Filter",
