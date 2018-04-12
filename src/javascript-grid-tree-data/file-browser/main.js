@@ -21,8 +21,6 @@ function getNextId() {
     } else {
         window.nextId++;
     }
-
-    console.log(window.nextId);
     return window.nextId;
 }
 
