@@ -1213,7 +1213,15 @@ var Utils = (function () {
         return res;
     };
     Utils.every = function (items, callback) {
-        return Utils.find(items, callback) != null;
+        if (!items || items.length === 0) {
+            return true;
+        }
+        for (var i = 0; i < items.length; i++) {
+            if (!callback(items[i])) {
+                return false;
+            }
+        }
+        return true;
     };
     Utils.toStringOrNull = function (value) {
         if (this.exists(value) && value.toString) {
