@@ -10,7 +10,7 @@ include 'documentation_header.php';
     <div>
     <h2>How Do I?</h2>
     <p>Review the guides section for step by step, task oriented articles that navigate through the recommended means of using ag-Grid.</p>
-    <p> <a href="../javascript-grid-npm/">Start with Guides</a> </p>
+    <p> <a href="../javascript-grid-npm/">Go to Guides</a> </p>
     </div>
 </div>
 
