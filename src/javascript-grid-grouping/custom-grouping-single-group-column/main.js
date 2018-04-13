@@ -13,6 +13,7 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    enableColResize: true,
     columnDefs: columnDefs,
     animateRows: true,
     enableSorting: true,

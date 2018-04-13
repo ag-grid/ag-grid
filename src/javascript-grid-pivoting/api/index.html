@@ -1,15 +1,18 @@
-<div style="height: 100%; padding-top: 35px; box-sizing: border-box;">
+<div style="height: 100%; padding-top: 70px; box-sizing: border-box;">
     <div id="myGrid" style="height: 100%;" class="ag-theme-balham"></div>
 </div>
 <div style="position: absolute; top: 0; left: 0">
-    <button onclick="turnOnPivotMode()">Pivot Mode On</button>
-    <button onclick="turnOffPivotMode()">Pivot Mode Off</button>
-    &nbsp;&nbsp;
-    <button onclick="addPivotColumn()">Pivot Country</button>
-    <button onclick="addPivotColumns()">Pivot Year & Country</button>
-    <button onclick="removePivotColumn()">Un-Pivot Country</button>
-    &nbsp;&nbsp;
-    <button onclick="emptyPivotColumns()">Remove All Pivots</button>
-    &nbsp;&nbsp;
-    <button onclick="exportToCsv()">CSV Export</button>
+    <div>
+        <button onclick="turnOnPivotMode()">Pivot Mode On</button>
+        <button onclick="turnOffPivotMode()">Pivot Mode Off</button>
+        &nbsp;&nbsp;
+        <button onclick="addPivotColumn()">Pivot Country</button>
+        <button onclick="addPivotColumns()">Pivot Year & Country</button>
+        <button onclick="removePivotColumn()">Un-Pivot Country</button>
+    </div>
+    <div style="margin-top: 4px;">
+        <button onclick="emptyPivotColumns()">Remove All Pivots</button>
+        &nbsp;&nbsp;
+        <button onclick="exportToCsv()">CSV Export</button>
+    </div>
 </div>

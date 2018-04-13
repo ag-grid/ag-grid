@@ -175,7 +175,7 @@ masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
             </li>
         </ul>
 
-<p> Both methods require specifying the <code>detailCellRendererParams.template</code>property as shown below: </p>
+<p> Both methods require specifying the <code>detailCellRendererParams.template</code> property as shown below: </p>
 
 <snippet>
 // override using string template
@@ -234,7 +234,7 @@ detailCellRendererParams: {
     The previous section described how to override the detail template used in the default Cell Renderer, however it is also
     possible to provide a custom detail <a href="../javascript-grid-cell-rendering-components/">Cell Renderer Component</a>.
     This approach provides more flexibility but is more difficult to implement as you have to provide your
-    own customer detail cell renderer. Use this approach if you want to add additional functionality to the
+    own custom detail cell renderer. Use this approach if you want to add additional functionality to the
     detail panel that cannot be done by simply changing the template.
 </p>
 
@@ -286,7 +286,7 @@ onGridReady(params) {
 </p>
 
 <p>
-    This example demonstrates how to embeds a grid into the detail row using a custom Cell Renderer component:
+    This example demonstrates how to embed a grid into the detail row using a custom Cell Renderer component:
 </p>
 
 <?= example('Custom Detail Cell Renderer with Grid', 'custom-detail-with-grid', 'generated', array("processVue" => true, "enterprise" => 1)) ?>

@@ -24,6 +24,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     animateRows: true,
     enableRangeSelection: true,
+    enableColResize: true,
     // we are defining the group columns, so tell the grid we don't
     // want it to auto-generate group columns for us
     groupSuppressAutoColumn: true,

@@ -91,7 +91,7 @@ colDef = {
     <ul class="content">
         <li>
             In order for aggregations to be used, a group column is specified. The example groups
-            by country by setting <code>rowGroupIndex=0</code> for the country column.
+            by country by setting <code>rowGroup=true</code> for the country column.
         </li>
         <li>
             Column gold, silver, bronze and total all have <code>enableValue=true</code>. This tells

@@ -152,7 +152,7 @@ function addNewGroup() {
     var newGroupData = [
         {
             id: getNextId(),
-            filePath: ['Music', 'wav', 'hit.wav'],
+            filePath: ['Music', 'wav', 'hit_'+new Date().getTime()+'.wav'],
             dateModified: 'Aug 23 2017 11:52:00 PM',
             size: 58.9
         }
