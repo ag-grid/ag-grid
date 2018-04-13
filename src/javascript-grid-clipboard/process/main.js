@@ -22,7 +22,7 @@ var gridOptions = {
         return 'C-' + params.value;
     },
     processHeaderForClipboard: function(params) {
-        return 'H-' + params.value;
+        return 'H-' + params.column.getColDef().headerName;
     },
     processCellFromClipboard: function(params) {
         return 'Z-' + params.value;
