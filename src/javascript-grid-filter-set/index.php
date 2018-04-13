@@ -305,14 +305,46 @@ var countryFilterComponent = gridOptions.api.getFilterInstance('country');
 var model = countryFilterComponent.getModel();
 
 // OR set filter model and update
-countryFilterComponent.setModel(['Spain','Ireland','South Africa','Australia','England']);
+countryFilterComponent.setModel({
+    type: 'set',
+    values: ['Spain','Ireland','South Africa','Australia','England']
+});
 countryFilterComponent.onFilterChanged()</snippet>
 
 
     <p>
-        The number filter model its an straight string array where each item in the array corresponds to an element
-        to be selected from the set:
+        The filter model contains an array of string values where each item in the array corresponds to an
+        element to be selected from the set:
     </p>
+
+    <note>
+        <p>
+            In version 17.1.x of ag-Grid, the set filter model change. If you are using version 17.1.x or later,
+            you don't need to be concerned. The following outlines the old and new models side by side:
+            <snippet>
+                // OLD model was simple string array
+                var model = ['Value 1', 'Value 2'];
+
+                // NEW model is object with type and values
+                var model = {
+                type: 'set',
+                values: ['Value 1', 'Value 2']
+                };
+            </snippet>
+            The <code>setModel()</code> method will work with both model versions. The <code>getModel()</code>
+            will provide the new version.
+        </p>
+        <p>
+            To disable this change and have the grid exclusively work with the old model, set grid
+            property <code>enableOldSetFilterModel=true</code>.
+        </p>
+        <p>
+            <b>
+                Both models will be supported for releases for the next 6 months. After this one major ag-Grid
+                release will have the old model deprecated and then the following release will have it dropped.
+            </b>
+        </p>
+    </note>
 
     <h2>Set Filter API</h2>
     <p>

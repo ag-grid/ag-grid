@@ -180,7 +180,13 @@ $keyToDeprecations = $moreInformationMap['deprecation'];
                         <a href="../spark-server-side-operations/">Enterprise Row Model to Apache Spark</a>.
                     </li>
                     <li>
-                        AG-1675 – BREAKING CHANGE - The filter model for the set filter was changed to be consistent with other filter models. For backwards compatibility, this change can be toggled off using the grid property <code>enableOldSetFilterModel</code>.
+                        AG-1675 – BREAKING CHANGE - The
+                        <a href="../javascript-grid-filter-set/#set-filter-model">set filter model</a>
+                        was changed to be consistent with other filter models. For backwards compatibility,
+                        this change can be toggled off using the grid property
+                        <code>enableOldSetFilterModel</code>. Both models will be supported for releases for
+                        the next 6 months. After this one major ag-Grid release will have the old model
+                        deprecated and then the following release will have it dropped.
                     </li>
                 </ul>
 
