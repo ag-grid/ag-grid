@@ -195,5 +195,6 @@ function initApiGrid() {
 if (document.readyState == "complete") {
     initApiGrid();
 } else {
-    document.addEventListener('readystatechange', initApiGrid);
+    // don't use readystatechange - it'll get fired twice and cause the example to break
+    document.addEventListener("DOMContentLoaded", initApiGrid);
 }
