@@ -1,3 +1,4 @@
+
 var eTitle;
 var eCountdown;
 var countDownDirection = true;
@@ -174,8 +175,13 @@ var actions = [
     }
 ];
 
+var apiGridInitialised = false;
+
 // setup the grid after the page has finished loading
 function initApiGrid() {
+    if (apiGridInitialised) { return; }
+    apiGridInitialised = true;
+
     var gridDiv = document.querySelector("#myGrid") || document.querySelector("#animationGrid");
 
     new agGrid.Grid(gridDiv, gridOptions);
@@ -195,6 +201,8 @@ function initApiGrid() {
 if (document.readyState == "complete") {
     initApiGrid();
 } else {
-    // don't use readystatechange - it'll get fired twice and cause the example to break
+    // to cover scenarios of using this demo on the main webpage, and also the documentation pages,
+    // we cover both events. BUT make sure it's only done once, hence we have the flag apiGridInitialised
+    document.addEventListener("readystatechange", initApiGrid);
     document.addEventListener("DOMContentLoaded", initApiGrid);
 }
