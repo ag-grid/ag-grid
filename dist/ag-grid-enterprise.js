@@ -2887,7 +2887,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return res;
 	    };
 	    Utils.every = function (items, callback) {
-	        return Utils.find(items, callback) != null;
+	        if (!items || items.length === 0) {
+	            return true;
+	        }
+	        for (var i = 0; i < items.length; i++) {
+	            if (!callback(items[i])) {
+	                return false;
+	            }
+	        }
+	        return true;
 	    };
 	    Utils.toStringOrNull = function (value) {
 	        if (this.exists(value) && value.toString) {
@@ -41816,7 +41824,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    LicenseManager.setLicenseKey = function (licenseKey) {
 	        LicenseManager_1.licenseKey = licenseKey;
 	    };
-	    LicenseManager.RELEASE_INFORMATION = 'MTUxNjgwMzAyNTAwNQ==';
+	    LicenseManager.RELEASE_INFORMATION = 'MTUyMzU0NTI1NDE5Ng==';
 	    __decorate([
 	        main_1.Autowired('md5'),
 	        __metadata("design:type", md5_1.MD5)
