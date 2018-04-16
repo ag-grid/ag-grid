@@ -3,6 +3,11 @@
 
     <ul>
         <li>
+            AG-1730
+            Deprecate <a href="../javascript-grid-for-print">for print</a>, the same functionality can be achieved with
+            <a href="../javascript-grid-width-and-height/#autoHeight">domLayout: 'autoHeight'</a>
+        </li>
+        <li>
             AG-1626 – <a href="../javascript-grid-filter-quick/">Quick filter</a> now filters
             using multiple words, eg search for “Tony Ireland” to bring back all rows with “Tony” in the name column and
             “Ireland” in the country column.
