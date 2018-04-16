@@ -6,6 +6,7 @@ export declare class SetFilter extends BaseFilter<string, ISetFilterParams, stri
     private eSelectAllContainer;
     private eMiniFilter;
     private eFilterLoading;
+    private valueFormatterService;
     private selectAllState;
     private virtualList;
     private debounceFilterChanged;

@@ -78,7 +78,7 @@ var SetFilter = (function (_super) {
             this.virtualList.setRowHeight(this.filterParams.cellHeight);
         }
         this.virtualList.setComponentCreator(this.createSetListItem.bind(this));
-        this.model = new setFilterModel_1.SetFilterModel(this.filterParams.colDef, this.filterParams.rowModel, this.filterParams.valueGetter, this.filterParams.doesRowPassOtherFilter, this.filterParams.suppressSorting, function (values, toSelect) { return _this.setFilterValues(values, toSelect ? false : true, toSelect ? true : false, toSelect); }, this.setLoading.bind(this));
+        this.model = new setFilterModel_1.SetFilterModel(this.filterParams.colDef, this.filterParams.rowModel, this.filterParams.valueGetter, this.filterParams.doesRowPassOtherFilter, this.filterParams.suppressSorting, function (values, toSelect) { return _this.setFilterValues(values, toSelect ? false : true, toSelect ? true : false, toSelect); }, this.setLoading.bind(this), this.valueFormatterService, this.filterParams.column);
         this.virtualList.setModel(new ModelWrapper(this.model));
         main_1._.setVisible(this.getGui().querySelector('#ag-mini-filter'), !this.filterParams.suppressMiniFilter);
         this.eMiniFilter.value = this.model.getMiniFilter();
@@ -332,6 +332,10 @@ var SetFilter = (function (_super) {
         main_1.RefSelector('ag-filter-loading'),
         __metadata("design:type", HTMLInputElement)
     ], SetFilter.prototype, "eFilterLoading", void 0);
+    __decorate([
+        main_1.Autowired('valueFormatterService'),
+        __metadata("design:type", main_1.ValueFormatterService)
+    ], SetFilter.prototype, "valueFormatterService", void 0);
     return SetFilter;
 }(main_1.BaseFilter));
 exports.SetFilter = SetFilter;

@@ -14,13 +14,15 @@ var SetFilterModelValuesType;
     SetFilterModelValuesType[SetFilterModelValuesType["NOT_PROVIDED"] = 2] = "NOT_PROVIDED";
 })(SetFilterModelValuesType = exports.SetFilterModelValuesType || (exports.SetFilterModelValuesType = {}));
 var SetFilterModel = (function () {
-    function SetFilterModel(colDef, rowModel, valueGetter, doesRowPassOtherFilters, suppressSorting, modelUpdatedFunc, isLoadingFunc) {
+    function SetFilterModel(colDef, rowModel, valueGetter, doesRowPassOtherFilters, suppressSorting, modelUpdatedFunc, isLoadingFunc, valueFormatterService, column) {
         this.suppressSorting = suppressSorting;
         this.colDef = colDef;
         this.valueGetter = valueGetter;
         this.doesRowPassOtherFilters = doesRowPassOtherFilters;
         this.modelUpdatedFunc = modelUpdatedFunc;
         this.isLoadingFunc = isLoadingFunc;
+        this.valueFormatterService = valueFormatterService;
+        this.column = column;
         if (rowModel.getType() === ag_grid_1.Constants.ROW_MODEL_TYPE_IN_MEMORY) {
             this.inMemoryRowModel = rowModel;
         }
@@ -227,15 +229,21 @@ var SetFilterModel = (function () {
         // make upper case to have search case insensitive
         var miniFilterUpperCase = miniFilter.toUpperCase();
         for (var i = 0, l = this.availableUniqueValues.length; i < l; i++) {
-            var filteredValue = this.availableUniqueValues[i];
-            if (filteredValue) {
-                var value = this.formatter(filteredValue.toString());
-                if (value !== null) {
-                    // allow for case insensitive searches, make both filter and value uppercase
-                    var valueUpperCase = value.toUpperCase();
-                    if (valueUpperCase.indexOf(miniFilterUpperCase) >= 0) {
-                        this.displayedValues.push(filteredValue);
+            var value = this.availableUniqueValues[i];
+            if (value) {
+                var displayedValue = this.formatter(value.toString());
+                //This function encapsulates the logic to check if a string matches the mini filter
+                var matchesFn = function (valueToCheck) {
+                    if (valueToCheck === null) {
+                        return false;
                     }
+                    // allow for case insensitive searches, make both filter and value uppercase
+                    var valueUpperCase = valueToCheck.toUpperCase();
+                    return valueUpperCase.indexOf(miniFilterUpperCase) >= 0;
+                };
+                var formattedValue = this.valueFormatterService.formatValue(this.column, null, null, displayedValue);
+                if (matchesFn(displayedValue) || matchesFn(formattedValue)) {
+                    this.displayedValues.push(displayedValue);
                 }
             }
         }

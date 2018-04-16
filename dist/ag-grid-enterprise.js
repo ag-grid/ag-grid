@@ -23564,7 +23564,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // keep track of last time the moving changed flag was set
 	        this.addDestroyableEventListener(this.params.column, column_1.Column.EVENT_MOVING_CHANGED, function () {
 	            _this.lastMovingChanged = new Date().getTime();
-	            console.log('set it');
 	        });
 	        // add the event on the header, so when clicked, we do sorting
 	        if (this.eLabel) {
@@ -40456,7 +40455,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.virtualList.setRowHeight(this.filterParams.cellHeight);
 	        }
 	        this.virtualList.setComponentCreator(this.createSetListItem.bind(this));
-	        this.model = new setFilterModel_1.SetFilterModel(this.filterParams.colDef, this.filterParams.rowModel, this.filterParams.valueGetter, this.filterParams.doesRowPassOtherFilter, this.filterParams.suppressSorting, function (values, toSelect) { return _this.setFilterValues(values, toSelect ? false : true, toSelect ? true : false, toSelect); }, this.setLoading.bind(this));
+	        this.model = new setFilterModel_1.SetFilterModel(this.filterParams.colDef, this.filterParams.rowModel, this.filterParams.valueGetter, this.filterParams.doesRowPassOtherFilter, this.filterParams.suppressSorting, function (values, toSelect) { return _this.setFilterValues(values, toSelect ? false : true, toSelect ? true : false, toSelect); }, this.setLoading.bind(this), this.valueFormatterService, this.filterParams.column);
 	        this.virtualList.setModel(new ModelWrapper(this.model));
 	        main_1._.setVisible(this.getGui().querySelector('#ag-mini-filter'), !this.filterParams.suppressMiniFilter);
 	        this.eMiniFilter.value = this.model.getMiniFilter();
@@ -40710,6 +40709,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        main_1.RefSelector('ag-filter-loading'),
 	        __metadata("design:type", HTMLInputElement)
 	    ], SetFilter.prototype, "eFilterLoading", void 0);
+	    __decorate([
+	        main_1.Autowired('valueFormatterService'),
+	        __metadata("design:type", main_1.ValueFormatterService)
+	    ], SetFilter.prototype, "valueFormatterService", void 0);
 	    return SetFilter;
 	}(main_1.BaseFilter));
 	exports.SetFilter = SetFilter;
@@ -40747,13 +40750,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    SetFilterModelValuesType[SetFilterModelValuesType["NOT_PROVIDED"] = 2] = "NOT_PROVIDED";
 	})(SetFilterModelValuesType = exports.SetFilterModelValuesType || (exports.SetFilterModelValuesType = {}));
 	var SetFilterModel = (function () {
-	    function SetFilterModel(colDef, rowModel, valueGetter, doesRowPassOtherFilters, suppressSorting, modelUpdatedFunc, isLoadingFunc) {
+	    function SetFilterModel(colDef, rowModel, valueGetter, doesRowPassOtherFilters, suppressSorting, modelUpdatedFunc, isLoadingFunc, valueFormatterService, column) {
 	        this.suppressSorting = suppressSorting;
 	        this.colDef = colDef;
 	        this.valueGetter = valueGetter;
 	        this.doesRowPassOtherFilters = doesRowPassOtherFilters;
 	        this.modelUpdatedFunc = modelUpdatedFunc;
 	        this.isLoadingFunc = isLoadingFunc;
+	        this.valueFormatterService = valueFormatterService;
+	        this.column = column;
 	        if (rowModel.getType() === ag_grid_1.Constants.ROW_MODEL_TYPE_IN_MEMORY) {
 	            this.inMemoryRowModel = rowModel;
 	        }
@@ -40960,15 +40965,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // make upper case to have search case insensitive
 	        var miniFilterUpperCase = miniFilter.toUpperCase();
 	        for (var i = 0, l = this.availableUniqueValues.length; i < l; i++) {
-	            var filteredValue = this.availableUniqueValues[i];
-	            if (filteredValue) {
-	                var value = this.formatter(filteredValue.toString());
-	                if (value !== null) {
-	                    // allow for case insensitive searches, make both filter and value uppercase
-	                    var valueUpperCase = value.toUpperCase();
-	                    if (valueUpperCase.indexOf(miniFilterUpperCase) >= 0) {
-	                        this.displayedValues.push(filteredValue);
+	            var value = this.availableUniqueValues[i];
+	            if (value) {
+	                var displayedValue = this.formatter(value.toString());
+	                //This function encapsulates the logic to check if a string matches the mini filter
+	                var matchesFn = function (valueToCheck) {
+	                    if (valueToCheck === null) {
+	                        return false;
 	                    }
+	                    // allow for case insensitive searches, make both filter and value uppercase
+	                    var valueUpperCase = valueToCheck.toUpperCase();
+	                    return valueUpperCase.indexOf(miniFilterUpperCase) >= 0;
+	                };
+	                var formattedValue = this.valueFormatterService.formatValue(this.column, null, null, displayedValue);
+	                if (matchesFn(displayedValue) || matchesFn(formattedValue)) {
+	                    this.displayedValues.push(displayedValue);
 	                }
 	            }
 	        }

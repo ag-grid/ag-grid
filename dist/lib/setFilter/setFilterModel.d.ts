@@ -1,5 +1,5 @@
 // ag-grid-enterprise v17.1.0
-import { ColDef } from "ag-grid/main";
+import { ColDef, Column, ValueFormatterService } from "ag-grid/main";
 import { IRowModel } from 'ag-grid';
 export declare enum SetFilterModelValuesType {
     PROVIDED_LIST = 0,
@@ -26,7 +26,9 @@ export declare class SetFilterModel {
     private isLoadingFunc;
     private filterValuesExternalPromise;
     private filterValuesPromise;
-    constructor(colDef: ColDef, rowModel: IRowModel, valueGetter: any, doesRowPassOtherFilters: any, suppressSorting: boolean, modelUpdatedFunc: (values: string[], selected?: string[]) => void, isLoadingFunc: (loading: boolean) => void);
+    private valueFormatterService;
+    private column;
+    constructor(colDef: ColDef, rowModel: IRowModel, valueGetter: any, doesRowPassOtherFilters: any, suppressSorting: boolean, modelUpdatedFunc: (values: string[], selected?: string[]) => void, isLoadingFunc: (loading: boolean) => void, valueFormatterService: ValueFormatterService, column: Column);
     refreshAfterNewRowsLoaded(keepSelection: any, isSelectAll: boolean): void;
     refreshValues(valuesToUse: string[], keepSelection: any, isSelectAll: boolean): void;
     private refreshSelection(keepSelection, isSelectAll);
