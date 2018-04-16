@@ -7,7 +7,8 @@ import {
     SerializedSetFilter,
     QuerySelector,
     Utils,
-    RefSelector
+    RefSelector,
+    Autowired, ValueFormatterService
 } from "ag-grid/main";
 import {SetFilterModel, SetFilterModelValuesType} from "./setFilterModel";
 import {SetFilterListItem} from "./setFilterListItem";
@@ -28,6 +29,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[] | 
     private eMiniFilter: HTMLInputElement;
     @RefSelector('ag-filter-loading')
     private eFilterLoading: HTMLInputElement;
+    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
 
     private selectAllState: CheckboxState;
 
@@ -99,7 +101,9 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[] | 
             this.filterParams.doesRowPassOtherFilter,
             this.filterParams.suppressSorting,
             (values:string[], toSelect:string[])=>this.setFilterValues(values, toSelect ? false: true, toSelect ? true: false, toSelect),
-            this.setLoading.bind(this)
+            this.setLoading.bind(this),
+            this.valueFormatterService,
+            this.filterParams.column
         );
         this.virtualList.setModel(new ModelWrapper(this.model));
         _.setVisible(<HTMLElement>this.getGui().querySelector('#ag-mini-filter'), !this.filterParams.suppressMiniFilter);

@@ -5,9 +5,11 @@ import {
     SetFilterValuesFuncParams,
     TextFilter,
     TextFormatter,
-    Utils
+    Utils,
+    Column, ValueFormatterService, _
 } from "ag-grid/main";
 import {Constants, ExternalPromise, InMemoryRowModel, IRowModel, Promise} from 'ag-grid';
+
 
 // we cannot have 'null' as a key in a JavaScript map,
 // it needs to be a string. so we use this string for
@@ -46,6 +48,9 @@ export class SetFilterModel {
     private filterValuesExternalPromise: ExternalPromise<string[]>;
     private filterValuesPromise: Promise<string[]>;
 
+    private valueFormatterService: ValueFormatterService;
+    private column: Column;
+
     constructor(
         colDef: ColDef,
         rowModel: IRowModel,
@@ -53,7 +58,9 @@ export class SetFilterModel {
         doesRowPassOtherFilters: any,
         suppressSorting: boolean,
         modelUpdatedFunc: (values:string[], selected?:string[])=>void,
-        isLoadingFunc: (loading:boolean)=>void
+        isLoadingFunc: (loading:boolean)=>void,
+        valueFormatterService: ValueFormatterService,
+        column: Column
     ) {
         this.suppressSorting = suppressSorting;
         this.colDef = colDef;
@@ -61,6 +68,8 @@ export class SetFilterModel {
         this.doesRowPassOtherFilters = doesRowPassOtherFilters;
         this.modelUpdatedFunc = modelUpdatedFunc;
         this.isLoadingFunc = isLoadingFunc;
+        this.valueFormatterService = valueFormatterService;
+        this.column = column;
 
         if (rowModel.getType()===Constants.ROW_MODEL_TYPE_IN_MEMORY) {
             this.inMemoryRowModel = <InMemoryRowModel> rowModel;
@@ -294,21 +303,25 @@ export class SetFilterModel {
         const miniFilterUpperCase = miniFilter.toUpperCase();
 
         for (let i = 0, l = this.availableUniqueValues.length; i < l; i++) {
-            let filteredValue = this.availableUniqueValues[i];
-            if (filteredValue){
-                const value = this.formatter(filteredValue.toString());
+            let value = this.availableUniqueValues[i];
+            if (value){
+                const displayedValue = this.formatter(value.toString());
 
-                if (value !== null) {
-
-                    // allow for case insensitive searches, make both filter and value uppercase
-                    const valueUpperCase = value.toUpperCase();
-
-                    if (valueUpperCase.indexOf(miniFilterUpperCase) >= 0) {
-                        this.displayedValues.push(filteredValue);
+                //This function encapsulates the logic to check if a string matches the mini filter
+                let matchesFn: any = (valueToCheck:string):boolean=>{
+                    if (valueToCheck === null) {
+                        return false;
                     }
+                    // allow for case insensitive searches, make both filter and value uppercase
+                    const valueUpperCase = valueToCheck.toUpperCase();
 
+                    return valueUpperCase.indexOf(miniFilterUpperCase) >= 0;
+                };
+
+                let formattedValue:string = this.valueFormatterService.formatValue(this.column, null, null, displayedValue);
+                if (matchesFn(displayedValue) || matchesFn(formattedValue)) {
+                    this.displayedValues.push(displayedValue);
                 }
-
             }
         }
     }
