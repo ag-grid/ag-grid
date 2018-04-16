@@ -71,6 +71,9 @@ include '../documentation-main/documentation_header.php';
             on the number of rows so that there is no vertical scrolls. Use this if you have relatively
             few rows in your grid and want to pack them into your web-page (so that there is no blank
             space in the grid after the last row).</li>
+            <note>Since v17.1.0 domLayout: 'forPrint' has been deprecated.
+            Please use instead auto height
+            </note>
             <li><b>For Print: </b><a href="../javascript-grid-for-print/">For print</a> will have
             no scrolls, very bad for performance (as a large grid will create a lot of DOM) however
             ideal if you want to print the grid, as it will remove all scrolls and pinned areas,

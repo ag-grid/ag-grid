@@ -6,6 +6,9 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
+    <note>Since v17.1.0 domLayout: 'forPrint' has been deprecated.
+    Please use instead <a href="../javascript-grid-width-and-height/#autoHeight">auto height</a></note>
+
     <h1>Layout For Print</h1>
 
     <p>
