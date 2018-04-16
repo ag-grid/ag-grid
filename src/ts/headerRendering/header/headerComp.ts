@@ -186,7 +186,6 @@ export class HeaderComp extends Component implements IHeaderComp {
         // keep track of last time the moving changed flag was set
         this.addDestroyableEventListener(this.params.column, Column.EVENT_MOVING_CHANGED, ()=> {
             this.lastMovingChanged = new Date().getTime();
-            console.log('set it')
         });
 
         // add the event on the header, so when clicked, we do sorting
