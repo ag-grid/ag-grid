@@ -297,7 +297,10 @@ export class GridOptionsWrapper {
     public isRowDragManaged() { return isTrue(this.gridOptions.rowDragManaged); }
     public isSuppressRowDrag() { return isTrue(this.gridOptions.suppressRowDrag); }
 
-    public isForPrint() { return this.gridOptions.domLayout === 'forPrint'; }
+    public isForPrint() {
+        console.warn(`ag-grid: Since v17.1.0 domLayout: 'forPrint' has been deprecated. Please use instead auto height: https://www.ag-grid.com/javascript-grid-width-and-height/#autoHeight`)
+        return this.gridOptions.domLayout === 'forPrint';
+    }
     public isAutoHeight() { return this.gridOptions.domLayout === 'autoHeight'; }
     public isNormalDomLayout() { return !this.isForPrint() && !this.isAutoHeight(); }
 
