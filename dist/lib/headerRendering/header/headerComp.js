@@ -138,7 +138,6 @@ var HeaderComp = (function (_super) {
         // keep track of last time the moving changed flag was set
         this.addDestroyableEventListener(this.params.column, column_1.Column.EVENT_MOVING_CHANGED, function () {
             _this.lastMovingChanged = new Date().getTime();
-            console.log('set it');
         });
         // add the event on the header, so when clicked, we do sorting
         if (this.eLabel) {
