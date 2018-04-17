@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.1.0
+// ag-grid-enterprise v17.1.1
 import { Component } from "ag-grid/main";
 export declare enum SELECTED_STATE {
     CHECKED = 0,

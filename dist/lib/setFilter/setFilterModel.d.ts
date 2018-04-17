@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.1.0
+// ag-grid-enterprise v17.1.1
 import { ColDef, Column, ValueFormatterService } from "ag-grid/main";
 import { IRowModel } from 'ag-grid';
 export declare enum SetFilterModelValuesType {
