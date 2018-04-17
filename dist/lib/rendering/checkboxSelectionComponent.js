@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -114,7 +114,9 @@ var CheckboxSelectionComponent = (function (_super) {
         this.setVisible(selectable);
     };
     CheckboxSelectionComponent.prototype.checkboxCallbackExists = function () {
-        return typeof this.column.getColDef().checkboxSelection === 'function';
+        // column will be missing if groupUseEntireRow=true
+        var colDef = this.column ? this.column.getColDef() : null;
+        return colDef && typeof colDef.checkboxSelection === 'function';
     };
     __decorate([
         context_1.Autowired('gridOptionsWrapper'),

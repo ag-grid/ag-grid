@@ -406,6 +406,16 @@ export class Utils {
         return this.isNode(o) || this.isElement(o);
     }
 
+    // makes a copy of a node list into a list
+    static copyNodeList(nodeList: NodeList) {
+        let childCount = nodeList ? nodeList.length : 0;
+        let res: Node[] = [];
+        for (let i = 0; i < childCount; i++) {
+            res.push(nodeList[i]);
+        }
+        return res;
+    }
+
     static isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
         let pressedChar = String.fromCharCode(event.charCode);
 
@@ -831,6 +841,18 @@ export class Utils {
             res = <HTMLElement> eContainer.firstChild;
         }
         return res;
+    }
+
+    static every<T>(items: T[], callback: (item: T)=>boolean): boolean {
+        if (!items || items.length===0) { return true; }
+
+        for (let i = 0; i<items.length; i++) {
+            if (!callback(items[i])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     static toStringOrNull(value: any): string {
@@ -1541,7 +1563,6 @@ export class Utils {
         if (left && right == null) return false;
         return left === right;
     }
-
 
     static get(source: { [p: string]: any }, expression: string, defaultValue: any): any {
         if (source == null) return defaultValue;

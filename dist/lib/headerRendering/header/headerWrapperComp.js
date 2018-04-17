@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -47,6 +47,7 @@ var events_1 = require("../../events");
 var columnHoverService_1 = require("../../rendering/columnHoverService");
 var beans_1 = require("../../rendering/beans");
 var hoverFeature_1 = require("../hoverFeature");
+var touchListener_1 = require("../../widgets/touchListener");
 var HeaderWrapperComp = (function (_super) {
     __extends(HeaderWrapperComp, _super);
     function HeaderWrapperComp(column, dragSourceDropTarget, pinned) {
@@ -195,15 +196,21 @@ var HeaderWrapperComp = (function (_super) {
             this.addDestroyableEventListener(this.eResize, 'dblclick', function () {
                 _this.columnController.autoSizeColumn(_this.column, "uiColumnResized");
             });
+            var touchListener = new touchListener_1.TouchListener(this.eResize);
+            this.addDestroyableEventListener(touchListener, touchListener_1.TouchListener.EVENT_DOUBLE_TAP, function () {
+                _this.columnController.autoSizeColumn(_this.column, "uiColumnResized");
+            });
+            this.addDestroyFunc(touchListener.destroy.bind(touchListener));
         }
     };
     HeaderWrapperComp.prototype.onResizing = function (finished, resizeAmount) {
         var resizeAmountNormalised = this.normaliseResizeAmount(resizeAmount);
-        var newWidth = this.startWidth + resizeAmountNormalised;
-        this.columnController.setColumnWidth(this.column, newWidth, finished, "uiColumnDragged");
+        var newWidth = this.resizeStartWidth + resizeAmountNormalised;
+        this.columnController.setColumnWidth(this.column, newWidth, this.resizeWithShiftKey, finished, "uiColumnDragged");
     };
-    HeaderWrapperComp.prototype.onResizeStart = function () {
-        this.startWidth = this.column.getActualWidth();
+    HeaderWrapperComp.prototype.onResizeStart = function (shiftKey) {
+        this.resizeStartWidth = this.column.getActualWidth();
+        this.resizeWithShiftKey = shiftKey;
     };
     HeaderWrapperComp.prototype.setupTooltip = function () {
         var colDef = this.column.getColDef();

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.0.0
+// Type definitions for ag-grid v17.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroupChild } from "./columnGroupChild";
@@ -7,6 +7,7 @@ import { AbstractColDef, ColDef, IAggFunc } from "./colDef";
 import { RowNode } from "./rowNode";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { ColumnEventType } from "../events";
+import { ColumnGroup } from "./columnGroup";
 export declare class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEventEmitter {
     static EVENT_MOVING_CHANGED: string;
     static EVENT_LEFT_CHANGED: string;
@@ -62,8 +63,8 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     isLockPosition(): boolean;
     isLockVisible(): boolean;
     isLockPinned(): boolean;
-    setParent(parent: ColumnGroupChild): void;
-    getParent(): ColumnGroupChild;
+    setParent(parent: ColumnGroup): void;
+    getParent(): ColumnGroup;
     initialise(): void;
     isEmptyGroup(): boolean;
     isRowGroupDisplayed(colId: string): boolean;

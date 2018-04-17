@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.0.0
+// Type definitions for ag-grid v17.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export { BalancedColumnTreeBuilder } from "./dist/lib/columnController/balancedColumnTreeBuilder";
@@ -140,8 +140,9 @@ export { IViewportDatasource, IViewportDatasourceParams } from "./dist/lib/inter
 export { IContextMenuFactory } from "./dist/lib/interfaces/iContextMenuFactory";
 export { ICompFactory } from "./dist/lib/interfaces/iCompFactory";
 export { IRowNodeStage, StageExecuteParams } from "./dist/lib/interfaces/iRowNodeStage";
-export { IFilterParams, IDoesFilterPassParams } from "./dist/lib/interfaces/iFilter";
+export { IFilterParams, IDoesFilterPassParams, SerializedFilter } from "./dist/lib/interfaces/iFilter";
 export { ISetFilterParams, SetFilterValues, SetFilterValuesFunc, SetFilterValuesFuncParams } from "./dist/lib/interfaces/iSetFilterParams";
+export { SerializedSetFilter } from "./dist/lib/interfaces/iSerializedSetFilter";
 export { IDateParams, IDate, IDateComp } from "./dist/lib/rendering/dateComponent";
 export { IAfterGuiAttachedParams, IComponent } from "./dist/lib/interfaces/iComponent";
 export { IFilter, IFilterComp } from "./dist/lib/interfaces/iFilter";

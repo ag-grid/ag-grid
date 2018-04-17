@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.0.0
+// Type definitions for ag-grid v17.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ExternalPromise, Promise } from "../utils";
@@ -23,9 +23,11 @@ export declare class FilterManager {
     static QUICK_FILTER_SEPARATOR: string;
     private allFilters;
     private quickFilter;
+    private quickFilterParts;
     private advancedFilterPresent;
     private externalFilterPresent;
     init(): void;
+    private setQuickFilterParts();
     setFilterModel(model: any): void;
     private setModelOnFilterWrapper(filterPromise, newModel);
     getFilterModel(): any;
@@ -40,8 +42,8 @@ export declare class FilterManager {
     onFilterChanged(): void;
     isQuickFilterPresent(): boolean;
     doesRowPassOtherFilters(filterToSkip: any, node: any): boolean;
-    private doesRowPassQuickFilterNoCache(node);
-    private doesRowPassQuickFilterCache(node);
+    private doesRowPassQuickFilterNoCache(node, filterPart);
+    private doesRowPassQuickFilterCache(node, filterPart);
     private doesRowPassQuickFilter(node);
     doesRowPassFilter(node: any, filterToSkip?: any): boolean;
     private getQuickFilterTextForColumn(column, rowNode);

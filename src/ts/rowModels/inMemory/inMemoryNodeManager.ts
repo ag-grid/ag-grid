@@ -258,7 +258,14 @@ export class InMemoryNodeManager {
                 } else {
                     node.master = false;
                 }
-                node.expanded = node.master ? this.isExpanded(level) : false;
+
+                let rowGroupColumns = this.columnController.getRowGroupColumns();
+                let numRowGroupColumns = rowGroupColumns ? rowGroupColumns.length : 0;
+
+                // need to take row group into account when determining level
+                let masterRowLevel = level + numRowGroupColumns;
+
+                node.expanded = node.master ? this.isExpanded(masterRowLevel) : false;
             }
         }
 

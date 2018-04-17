@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22,14 +22,18 @@ var context_1 = require("../context/context");
 var columnApi_1 = require("../columnController/columnApi");
 var gridApi_1 = require("../gridApi");
 var OriginalColumnGroup = (function () {
-    function OriginalColumnGroup(colGroupDef, groupId, padding) {
+    function OriginalColumnGroup(colGroupDef, groupId, padding, level) {
         this.localEventService = new eventService_1.EventService();
         this.expandable = false;
         this.colGroupDef = colGroupDef;
         this.groupId = groupId;
         this.expanded = colGroupDef && !!colGroupDef.openByDefault;
         this.padding = padding;
+        this.level = level;
     }
+    OriginalColumnGroup.prototype.getLevel = function () {
+        return this.level;
+    };
     OriginalColumnGroup.prototype.isVisible = function () {
         // return true if at least one child is visible
         if (this.children) {

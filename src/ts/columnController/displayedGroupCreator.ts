@@ -126,7 +126,7 @@ export class DisplayedGroupCreator {
         return result;
     }
 
-    private setupParentsIntoColumns(columnsOrGroups: ColumnGroupChild[], parent: ColumnGroupChild): void {
+    private setupParentsIntoColumns(columnsOrGroups: ColumnGroupChild[], parent: ColumnGroup): void {
         columnsOrGroups.forEach( columnsOrGroup => {
             columnsOrGroup.setParent(parent);
             if (columnsOrGroup instanceof ColumnGroup) {

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -236,8 +236,13 @@ var ComponentResolver = (function () {
         var componentAndParams = this.newAgGridComponent(holder, propertyName, dynamicComponentParams, defaultComponentName, mandatory);
         if (!componentAndParams)
             return null;
-        //Wire the component and call the init method with the correct params
+        // Wire the component and call the init method with the correct params
         var finalParams = this.mergeParams(holder, propertyName, agGridParams, dynamicComponentParams, componentAndParams[1]);
+        // a temporary fix for AG-1574
+        // AG-1715 raised to do a wider ranging refactor to improve this
+        finalParams.agGridReact = this.context.getBean('agGridReact') ? utils_1._.cloneObject(this.context.getBean('agGridReact')) : {};
+        // AG-1716 - directly related to AG-1574 and AG-1715
+        finalParams.frameworkComponentWrapper = this.context.getBean('frameworkComponentWrapper') ? this.context.getBean('frameworkComponentWrapper') : {};
         var deferredInit = this.initialiseComponent(componentAndParams[0], finalParams, customInitParamsCb);
         if (deferredInit == null) {
             return utils_1.Promise.resolve(componentAndParams[0]);

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -303,6 +303,9 @@ var RowComp = (function (_super) {
         }
     };
     RowComp.prototype.addMouseWheelListenerToFullWidthRow = function () {
+        if (this.beans.gridOptionsWrapper.isNativeScroll()) {
+            return;
+        }
         var mouseWheelListener = this.beans.gridPanel.genericMouseWheelListener.bind(this.beans.gridPanel);
         // IE9, Chrome, Safari, Opera
         this.addDestroyableEventListener(this.eFullWidthRow, 'mousewheel', mouseWheelListener);
@@ -570,7 +573,7 @@ var RowComp = (function (_super) {
         });
     };
     RowComp.prototype.createNewCell = function (col, eContainer, cellTemplates, newCellComps) {
-        var newCellComp = new cellComp_1.CellComp(this.scope, this.beans, col, this.rowNode, this);
+        var newCellComp = new cellComp_1.CellComp(this.scope, this.beans, col, this.rowNode, this, false);
         var cellTemplate = newCellComp.getCreateTemplate();
         cellTemplates.push(cellTemplate);
         newCellComps.push(newCellComp);
@@ -619,7 +622,8 @@ var RowComp = (function (_super) {
         this.beans.eventService.dispatchEvent(agEvent);
     };
     RowComp.prototype.onRowClick = function (mouseEvent) {
-        if (utils_1._.isStopPropagationForAgGrid(mouseEvent)) {
+        var stop = utils_1._.isStopPropagationForAgGrid(mouseEvent);
+        if (stop) {
             return;
         }
         var agEvent = this.createRowEventWithSource(events_1.Events.EVENT_ROW_CLICKED, mouseEvent);
@@ -920,7 +924,7 @@ var RowComp = (function (_super) {
         var templateParts = [];
         var newCellComps = [];
         cols.forEach(function (col) {
-            var newCellComp = new cellComp_1.CellComp(_this.scope, _this.beans, col, _this.rowNode, _this);
+            var newCellComp = new cellComp_1.CellComp(_this.scope, _this.beans, col, _this.rowNode, _this, false);
             var cellTemplate = newCellComp.getCreateTemplate();
             templateParts.push(cellTemplate);
             newCellComps.push(newCellComp);

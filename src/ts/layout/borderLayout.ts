@@ -52,7 +52,7 @@ export class BorderLayout {
     private eCenterChildLayout: any;
 
     private isLayoutPanel: any;
-    private fullHeight: any;
+    private noNorthOrSouth: any;
     private horizontalLayoutActive: boolean;
     private verticalLayoutActive: boolean;
 
@@ -72,19 +72,19 @@ export class BorderLayout {
 
         this.isLayoutPanel = true;
 
-        this.fullHeight = !params.north && !params.south;
+        this.noNorthOrSouth = !params.north && !params.south;
 
         let template: any;
-        if (params.dontFill) {
+        if (params.forPrint) {
             template = BorderLayout.TEMPLATE_DONT_FILL;
             this.horizontalLayoutActive = false;
             this.verticalLayoutActive = false;
-        } else if (params.fillHorizontalOnly) {
+        } else if (params.autoHeight) {
             template = BorderLayout.TEMPLATE_DONT_FILL;
             this.horizontalLayoutActive = true;
             this.verticalLayoutActive = false;
         } else {
-            if (this.fullHeight) {
+            if (this.noNorthOrSouth) {
                 template = BorderLayout.TEMPLATE_FULL_HEIGHT;
             } else {
                 template = BorderLayout.TEMPLATE_NORMAL;
@@ -205,7 +205,15 @@ export class BorderLayout {
         }
 
         if (this.verticalLayoutActive) {
+            // layout center to match heights of east and west
             let ourHeightChanged = this.layoutHeight();
+            if (ourHeightChanged) {
+                atLeastOneChanged = true;
+            }
+        } else {
+            // layout east and west to be same height as center,
+            // otherwise the tool panel doesn't size right
+            let ourHeightChanged = this.layoutEastWestHeight();
             if (ourHeightChanged) {
                 atLeastOneChanged = true;
             }
@@ -232,7 +240,7 @@ export class BorderLayout {
     }
 
     private layoutHeight() {
-        if (this.fullHeight) {
+        if (this.noNorthOrSouth) {
             return this.layoutHeightFullHeight();
         } else {
             return this.layoutHeightNormal();
@@ -267,6 +275,24 @@ export class BorderLayout {
 
         if (this.centerHeightLastTime !== centerHeight) {
             this.eCenterRow.style.height = centerHeight + 'px';
+            this.centerHeightLastTime = centerHeight;
+            return true; // return true because there was a change
+        } else {
+            return false;
+        }
+    }
+
+    private layoutEastWestHeight(): boolean {
+
+        let centerHeight = _.offsetHeight(this.eCenterRow);
+
+        if (this.centerHeightLastTime !== centerHeight) {
+            if (this.eEastWrapper) {
+                this.eEastWrapper.style.height = centerHeight + 'px';
+            }
+            if (this.eWestWrapper) {
+                this.eWestWrapper.style.height = centerHeight + 'px';
+            }
             this.centerHeightLastTime = centerHeight;
             return true; // return true because there was a change
         } else {

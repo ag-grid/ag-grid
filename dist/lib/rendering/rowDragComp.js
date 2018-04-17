@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,6 +27,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var component_1 = require("../widgets/component");
 var context_1 = require("../context/context");
+var rowNode_1 = require("../entities/rowNode");
 var dragAndDropService_1 = require("../dragAndDrop/dragAndDropService");
 var eventKeys_1 = require("../eventKeys");
 var utils_1 = require("../utils");
@@ -98,6 +99,9 @@ var NonManagedVisibilityStrategy = (function (_super) {
     }
     NonManagedVisibilityStrategy.prototype.postConstruct = function () {
         this.addDestroyableEventListener(this.beans.gridOptionsWrapper, 'suppressRowDrag', this.onSuppressRowDrag.bind(this));
+        // in case data changes, then we need to update visibility of drag item
+        this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_DATA_CHANGED, this.workOutVisibility.bind(this));
+        this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_CELL_CHANGED, this.workOutVisibility.bind(this));
         this.workOutVisibility();
     };
     NonManagedVisibilityStrategy.prototype.onSuppressRowDrag = function () {
@@ -138,6 +142,9 @@ var ManagedVisibilityStrategy = (function (_super) {
         this.addDestroyableEventListener(this.beans.eventService, eventKeys_1.Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.addDestroyableEventListener(this.beans.eventService, eventKeys_1.Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.addDestroyableEventListener(this.beans.eventService, eventKeys_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
+        // in case data changes, then we need to update visibility of drag item
+        this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_DATA_CHANGED, this.workOutVisibility.bind(this));
+        this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_CELL_CHANGED, this.workOutVisibility.bind(this));
         this.addDestroyableEventListener(this.beans.gridOptionsWrapper, 'suppressRowDrag', this.onSuppressRowDrag.bind(this));
         this.updateSortActive();
         this.updateFilterActive();

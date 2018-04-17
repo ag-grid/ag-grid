@@ -183,8 +183,8 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
         return shouldFilter;
     }
 
-    public onFilterChanged(): void {
-        this.doOnFilterChanged();
+    public onFilterChanged(applyNow: boolean = false): void {
+        this.doOnFilterChanged(applyNow);
     }
 
     public onFloatingFilterChanged(change: FloatingFilterChange): boolean {
@@ -278,7 +278,13 @@ export abstract class ComparableBaseFilter<T, P extends IFilterParams, M> extend
     private onFilterTypeChanged(): void {
         this.filter = this.eTypeSelector.value;
         this.refreshFilterBodyUi();
-        this.onFilterChanged();
+
+        // we check if filter is active, so that if user changes the type (eg from 'less than' to 'equals'),
+        // well this doesn't matter if the user has no value in the text field, so don't fire 'onFilterChanged'.
+        // this means we don't refresh the grid when the type changes if no value is present.
+        if (this.isFilterActive()) {
+            this.onFilterChanged();
+        }
     }
 
     public isFilterActive(): boolean {

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.0.0
+// Type definitions for ag-grid v17.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../entities/rowNode";
@@ -12,10 +12,10 @@ export declare class ValueService {
     private cellExpressions;
     private initialised;
     init(): void;
-    getValue(column: Column, rowNode: RowNode, ignoreAggData?: boolean): any;
+    getValue(column: Column, rowNode: RowNode, forFilter?: boolean, ignoreAggData?: boolean): any;
     setValue(rowNode: RowNode, colKey: string | Column, newValue: any): void;
     private setValueUsingField(data, field, newValue, isFieldContainsDots);
-    private executeValueGetter(valueGetter, data, column, rowNode);
+    private executeValueGetter(filterValueGetter, data, column, rowNode);
     private getValueCallback(node, field);
     getKeyForNode(col: Column, rowNode: RowNode): any;
 }

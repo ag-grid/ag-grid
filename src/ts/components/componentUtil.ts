@@ -154,7 +154,7 @@ ComponentUtil {
         }
 
         if (changes.pivotMode) {
-            columnApi.setPivotMode(ComponentUtil.toBoolean(changes.pivotMode.currentValue), "gridOptionsChanged");
+            columnApi.setPivotMode(ComponentUtil.toBoolean(changes.pivotMode.currentValue));
         }
 
         if (changes.groupRemoveSingleChildren) {

@@ -46,7 +46,8 @@ export class BalancedColumnTreeBuilder {
             let autoGroup = new OriginalColumnGroup(
                 null,
                 `FAKE_PATH_${column.getId()}}_${i}`,
-                true);
+                true,
+                i);
             this.context.wireBean(autoGroup);
             autoGroup.setChildren([nextChild]);
             nextChild = autoGroup;
@@ -109,7 +110,7 @@ export class BalancedColumnTreeBuilder {
                 for (let i = columnDept-1; i>=currentDept; i--) {
                     let newColId = columnKeyCreator.getUniqueKey(null, null);
                     let colGroupDefMerged = this.createMergedColGroupDef(null);
-                    let paddedGroup = new OriginalColumnGroup(colGroupDefMerged, newColId, true);
+                    let paddedGroup = new OriginalColumnGroup(colGroupDefMerged, newColId, true, currentDept);
                     this.context.wireBean(paddedGroup);
                     paddedGroup.setChildren([newChild]);
                     newChild = paddedGroup;
@@ -162,7 +163,7 @@ export class BalancedColumnTreeBuilder {
         let colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
 
         let groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId, null);
-        let originalGroup = new OriginalColumnGroup(colGroupDefMerged, groupId, false);
+        let originalGroup = new OriginalColumnGroup(colGroupDefMerged, groupId, false, level);
         this.context.wireBean(originalGroup);
         let children = this.recursivelyCreateColumns(colGroupDefMerged.children, level + 1, columnKeyCreator, primaryColumns);
 
@@ -188,7 +189,7 @@ export class BalancedColumnTreeBuilder {
         return column;
     }
 
-    private mergeColDefs(colDef: ColDef) {
+    public mergeColDefs(colDef: ColDef) {
         // start with empty merged definition
         let colDefMerged: ColDef = <ColDef> {};
 

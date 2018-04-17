@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31,8 +31,9 @@ var ValueService = (function () {
         this.cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
         this.initialised = true;
     };
-    ValueService.prototype.getValue = function (column, rowNode, ignoreAggData) {
+    ValueService.prototype.getValue = function (column, rowNode, forFilter, ignoreAggData) {
         // console.log(`turnActive = ${this.turnActive}`);
+        if (forFilter === void 0) { forFilter = false; }
         if (ignoreAggData === void 0) { ignoreAggData = false; }
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
         // really should have a way so they get initialised in the right order???
@@ -48,7 +49,10 @@ var ValueService = (function () {
         // if there is a value getter, this gets precedence over a field
         var groupDataExists = rowNode.groupData && rowNode.groupData[colId] !== undefined;
         var aggDataExists = !ignoreAggData && rowNode.aggData && rowNode.aggData[colId] !== undefined;
-        if (groupDataExists) {
+        if (forFilter && colDef.filterValueGetter) {
+            result = this.executeValueGetter(colDef.filterValueGetter, data, column, rowNode);
+        }
+        else if (groupDataExists) {
             result = rowNode.groupData[colId];
         }
         else if (aggDataExists) {
@@ -171,7 +175,7 @@ var ValueService = (function () {
         }
         return !valuesAreSame;
     };
-    ValueService.prototype.executeValueGetter = function (valueGetter, data, column, rowNode) {
+    ValueService.prototype.executeValueGetter = function (filterValueGetter, data, column, rowNode) {
         var colId = column.getId();
         // if inside the same turn, just return back the value we got last time
         var valueFromCache = this.valueCache.getValue(rowNode, colId);
@@ -188,7 +192,7 @@ var ValueService = (function () {
             context: this.gridOptionsWrapper.getContext(),
             getValue: this.getValueCallback.bind(this, rowNode)
         };
-        var result = this.expressionService.evaluate(valueGetter, params);
+        var result = this.expressionService.evaluate(filterValueGetter, params);
         // if a turn is active, store the value in case the grid asks for it again
         this.valueCache.setValue(rowNode, colId, result);
         return result;

@@ -39,15 +39,10 @@ export class ChangeDetectionService extends BeanStub {
         if (this.gridOptionsWrapper.isSuppressChangeDetection()) { return; }
 
         // step 1 of change detection is to update the aggregated values
-        if (this.inMemoryRowModel) {
-
-            let changedPath: ChangedPath;
-            if (rowNode.parent) {
-                let onlyChangedColumns = this.gridOptionsWrapper.isAggregateOnlyChangedColumns();
-                changedPath = new ChangedPath(onlyChangedColumns);
-                changedPath.addParentNode(rowNode.parent, [column]);
-            }
-
+        if (this.inMemoryRowModel && !rowNode.isRowPinned()) {
+            let onlyChangedColumns = this.gridOptionsWrapper.isAggregateOnlyChangedColumns();
+            let changedPath = new ChangedPath(onlyChangedColumns);
+            changedPath.addParentNode(rowNode.parent, [column]);
             this.inMemoryRowModel.doAggregate(changedPath);
         }
 

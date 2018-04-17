@@ -2,8 +2,9 @@ import {Autowired, Bean, Context} from "../context/context";
 import {Column} from "../entities/column";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {_} from "../utils";
-import {ColDef} from "../entities/colDef";
+import {ColDef, ValueGetterParams} from "../entities/colDef";
 import {ColumnController} from "./columnController";
+import {BalancedColumnTreeBuilder} from "./balancedColumnTreeBuilder";
 
 @Bean('autoGroupColService')
 export class AutoGroupColService {
@@ -14,6 +15,7 @@ export class AutoGroupColService {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('balancedColumnTreeBuilder') private balancedColumnTreeBuilder: BalancedColumnTreeBuilder;
 
     public createAutoGroupColumns(rowGroupColumns: Column[]): Column[] {
         let groupAutoColumns: Column[] = [];
@@ -42,24 +44,31 @@ export class AutoGroupColService {
     // rowGroupCol and index are missing if groupMultiAutoColumn=false
     private createOneAutoGroupColumn(rowGroupCol?: Column, index?: number): Column {
         // if one provided by user, use it, otherwise create one
-        let defaultAutoColDef: ColDef = this.generateDefaultColDef(rowGroupCol, index);
-        let userAutoColDef: ColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
+        let defaultAutoColDef: ColDef = this.generateDefaultColDef(rowGroupCol);
         // if doing multi, set the field
         let colId: string;
-
         if (rowGroupCol) {
+
             colId = `${AutoGroupColService.GROUP_AUTO_COLUMN_ID}-${rowGroupCol.getId()}`;
         } else {
             colId = AutoGroupColService.GROUP_AUTO_COLUMN_BUNDLE_ID;
         }
 
+        let userAutoColDef: ColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
         _.mergeDeep(defaultAutoColDef, userAutoColDef);
+
+        defaultAutoColDef = this.balancedColumnTreeBuilder.mergeColDefs(defaultAutoColDef);
+
         defaultAutoColDef.colId = colId;
 
-        let noUserFilterPreferences = userAutoColDef == null || userAutoColDef.suppressFilter == null;
-        if (noUserFilterPreferences && !this.gridOptionsWrapper.isTreeData()) {
-            let produceLeafNodeValues = defaultAutoColDef.field != null || defaultAutoColDef.valueGetter != null;
-            defaultAutoColDef.suppressFilter = !produceLeafNodeValues;
+        // For tree data the filter is always allowed
+        if (!this.gridOptionsWrapper.isTreeData()) {
+            // we would only allow filter if the user has provided field or value getter. otherwise the filter
+            // would not be able to work.
+            let noFieldOrValueGetter = _.missing(defaultAutoColDef.field) && _.missing(defaultAutoColDef.valueGetter) && _.missing(defaultAutoColDef.filterValueGetter);
+            if (noFieldOrValueGetter){
+                defaultAutoColDef.suppressFilter = true;
+            }
         }
 
         // if showing many cols, we don't want to show more than one with a checkbox for selection
@@ -73,7 +82,7 @@ export class AutoGroupColService {
         return newCol;
     }
 
-    private generateDefaultColDef(rowGroupCol?: Column, index?: number): ColDef {
+    private generateDefaultColDef(rowGroupCol?: Column): ColDef {
         let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         let defaultAutoColDef: ColDef = {
             headerName: localeTextFunc('group', 'Group'),

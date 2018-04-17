@@ -1,10 +1,7 @@
-// Type definitions for ag-grid v17.0.0
+// Type definitions for ag-grid v17.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
-export interface GuiProvider {
-    (): HTMLElement;
-}
 export declare class AutoWidthCalculator {
     private rowRenderer;
     private headerRenderer;

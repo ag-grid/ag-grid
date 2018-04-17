@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.0.0
+// Type definitions for ag-grid v17.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
@@ -15,12 +15,16 @@ export declare class HeaderGroupWrapperComp extends Component {
     private gridApi;
     private columnApi;
     private beans;
-    private columnGroup;
-    private dragSourceDropTarget;
-    private pinned;
+    private readonly columnGroup;
+    private readonly dragSourceDropTarget;
+    private readonly pinned;
     private eHeaderCellResize;
-    private groupWidthStart;
-    private childrenWidthStarts;
+    private resizeCols;
+    private resizeStartWidth;
+    private resizeRatios;
+    private resizeTakeFromCols;
+    private resizeTakeFromStartWidth;
+    private resizeTakeFromRatios;
     private childColumnsDestroyFuncs;
     constructor(columnGroup: ColumnGroup, dragSourceDropTarget: DropTarget, pinned: string);
     private postConstruct();
@@ -40,7 +44,7 @@ export declare class HeaderGroupWrapperComp extends Component {
     private destroyListenersOnChildrenColumns();
     private onWidthChanged();
     private setupResize();
-    onResizeStart(): void;
+    onResizeStart(shiftKey: boolean): void;
     onResizing(finished: boolean, resizeAmount: any): void;
     private normaliseDragChange(dragChange);
 }

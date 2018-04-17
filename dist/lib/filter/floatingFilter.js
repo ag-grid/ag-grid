@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -146,7 +146,8 @@ var DateFloatingFilterComp = (function (_super) {
         var debounceMs = params.debounceMs != null ? params.debounceMs : 500;
         var toDebounce = utils_1._.debounce(this.onDateChanged.bind(this), debounceMs);
         var dateComponentParams = {
-            onDateChanged: toDebounce
+            onDateChanged: toDebounce,
+            filterParams: params.column.getColDef().filterParams
         };
         this.dateComponentPromise = this.componentRecipes.newDateComponent(dateComponentParams);
         var body = utils_1._.loadTemplate("<div></div>");
@@ -281,17 +282,30 @@ var SetFloatingFilterComp = (function (_super) {
         this.eColumnFloatingFilter.readOnly = true;
     };
     SetFloatingFilterComp.prototype.asFloatingFilterText = function (parentModel) {
-        if (!parentModel || parentModel.length === 0) {
+        if (!parentModel)
+            return '';
+        // also supporting old filter model for backwards compatibility
+        var values = (parentModel instanceof Array) ? parentModel : parentModel.values;
+        if (values.length === 0) {
             return '';
         }
-        var arrayToDisplay = parentModel.length > 10 ? parentModel.slice(0, 10).concat(['...']) : parentModel;
-        return "(" + parentModel.length + ") " + arrayToDisplay.join(",");
+        var arrayToDisplay = values.length > 10 ? values.slice(0, 10).concat('...') : values;
+        return "(" + values.length + ") " + arrayToDisplay.join(",");
     };
     SetFloatingFilterComp.prototype.asParentModel = function () {
         if (this.eColumnFloatingFilter.value == null || this.eColumnFloatingFilter.value === '') {
-            return null;
+            return {
+                values: [],
+                filterType: 'set'
+            };
         }
-        return this.eColumnFloatingFilter.value.split(",");
+        return {
+            values: this.eColumnFloatingFilter.value.split(","),
+            filterType: 'set'
+        };
+    };
+    SetFloatingFilterComp.prototype.equalModels = function (left, right) {
+        return false;
     };
     return SetFloatingFilterComp;
 }(InputTextFloatingFilterComp));

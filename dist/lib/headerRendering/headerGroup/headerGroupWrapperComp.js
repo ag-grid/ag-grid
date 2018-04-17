@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -260,60 +260,48 @@ var HeaderGroupWrapperComp = (function (_super) {
             });
         }
     };
-    HeaderGroupWrapperComp.prototype.onResizeStart = function () {
+    HeaderGroupWrapperComp.prototype.onResizeStart = function (shiftKey) {
         var _this = this;
-        this.groupWidthStart = this.columnGroup.getActualWidth();
-        this.childrenWidthStarts = [];
-        this.columnGroup.getDisplayedLeafColumns().forEach(function (column) {
-            _this.childrenWidthStarts.push(column.getActualWidth());
-        });
+        var leafCols = this.columnGroup.getDisplayedLeafColumns();
+        this.resizeCols = utils_1.Utils.filter(leafCols, function (col) { return col.isResizable(); });
+        this.resizeStartWidth = 0;
+        this.resizeCols.forEach(function (col) { return _this.resizeStartWidth += col.getActualWidth(); });
+        this.resizeRatios = [];
+        this.resizeCols.forEach(function (col) { return _this.resizeRatios.push(col.getActualWidth() / _this.resizeStartWidth); });
+        var takeFromGroup = null;
+        if (shiftKey) {
+            takeFromGroup = this.columnController.getDisplayedGroupAfter(this.columnGroup);
+        }
+        if (takeFromGroup) {
+            var takeFromLeafCols = takeFromGroup.getDisplayedLeafColumns();
+            this.resizeTakeFromCols = utils_1.Utils.filter(takeFromLeafCols, function (col) { return col.isResizable(); });
+            this.resizeTakeFromStartWidth = 0;
+            this.resizeTakeFromCols.forEach(function (col) { return _this.resizeTakeFromStartWidth += col.getActualWidth(); });
+            this.resizeTakeFromRatios = [];
+            this.resizeTakeFromCols.forEach(function (col) { return _this.resizeTakeFromRatios.push(col.getActualWidth() / _this.resizeTakeFromStartWidth); });
+        }
+        else {
+            this.resizeTakeFromCols = null;
+            this.resizeTakeFromStartWidth = null;
+            this.resizeTakeFromRatios = null;
+        }
     };
     HeaderGroupWrapperComp.prototype.onResizing = function (finished, resizeAmount) {
-        var _this = this;
-        // this will be the width we have to distribute to the resizable columns
-        var widthForResizableCols;
-        // this is all the displayed cols in the group less those that we cannot resize
-        var resizableCols;
-        // a lot of variables defined for the first set of maths, but putting
-        // braces in, we localise the variables to this bit of the method
-        {
-            var resizeAmountNormalised = this.normaliseDragChange(resizeAmount);
-            var totalGroupWidth = this.groupWidthStart + resizeAmountNormalised;
-            var displayedColumns = this.columnGroup.getDisplayedLeafColumns();
-            resizableCols = utils_1.Utils.filter(displayedColumns, function (col) { return col.isResizable(); });
-            var nonResizableCols = utils_1.Utils.filter(displayedColumns, function (col) { return !col.isResizable(); });
-            var nonResizableColsWidth_1 = 0;
-            nonResizableCols.forEach(function (col) { return nonResizableColsWidth_1 += col.getActualWidth(); });
-            widthForResizableCols = totalGroupWidth - nonResizableColsWidth_1;
-            var minWidth_1 = 0;
-            resizableCols.forEach(function (col) { return minWidth_1 += col.getMinWidth(); });
-            if (widthForResizableCols < minWidth_1) {
-                widthForResizableCols = minWidth_1;
-            }
-        }
-        // distribute the new width to the child headers
-        var changeRatio = widthForResizableCols / this.groupWidthStart;
-        // keep track of pixels used, and last column gets the remaining,
-        // to cater for rounding errors, and min width adjustments
-        var pixelsToDistribute = widthForResizableCols;
-        resizableCols.forEach(function (column, index) {
-            var notLastCol = index !== (resizableCols.length - 1);
-            var newChildSize;
-            if (notLastCol) {
-                // if not the last col, calculate the column width as normal
-                var startChildSize = _this.childrenWidthStarts[index];
-                newChildSize = startChildSize * changeRatio;
-                if (newChildSize < column.getMinWidth()) {
-                    newChildSize = column.getMinWidth();
-                }
-                pixelsToDistribute -= newChildSize;
-            }
-            else {
-                // if last col, give it the remaining pixels
-                newChildSize = pixelsToDistribute;
-            }
-            _this.columnController.setColumnWidth(column, newChildSize, finished, "uiColumnDragged");
+        var resizeSets = [];
+        var resizeAmountNormalised = this.normaliseDragChange(resizeAmount);
+        resizeSets.push({
+            columns: this.resizeCols,
+            ratios: this.resizeRatios,
+            width: this.resizeStartWidth + resizeAmountNormalised
         });
+        if (this.resizeTakeFromCols) {
+            resizeSets.push({
+                columns: this.resizeTakeFromCols,
+                ratios: this.resizeTakeFromRatios,
+                width: this.resizeTakeFromStartWidth - resizeAmountNormalised
+            });
+        }
+        this.columnController.resizeColumnSets(resizeSets, finished, 'uiColumnDragged');
     };
     // optionally inverts the drag, depending on pinned and RTL
     // note - this method is duplicated in RenderedHeaderCell - should refactor out?

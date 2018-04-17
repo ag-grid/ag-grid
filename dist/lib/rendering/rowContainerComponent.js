@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31,7 +31,6 @@ var RowContainerComponent = (function () {
         this.eContainer = params.eContainer;
         this.eViewport = params.eViewport;
         this.hideWhenNoChildren = params.hideWhenNoChildren;
-        this.body = params.body;
     }
     RowContainerComponent.prototype.postConstruct = function () {
         this.domOrder = this.gridOptionsWrapper.isEnsureDomOrder() && !this.gridOptionsWrapper.isForPrint();
@@ -42,29 +41,6 @@ var RowContainerComponent = (function () {
     };
     RowContainerComponent.prototype.setHeight = function (height) {
         this.eContainer.style.height = height + "px";
-        // can ask niall about this - was testing different ways to get the browser to display
-        // unlimited number of rows
-        // if (this.body) {
-        //     let eParent = this.eViewport;
-        //
-        //     let FILLER_HEIGHT = 1000000;
-        //
-        //     let fillerCount = 0;
-        //     let colors = ['#000020','#000040','#000060','#000080','#0000A0','#0000C0','#0000E0','#00F000','#00F020','#00F040','#00F060','#00F080','#00F0A0','#00F0C0','#00F0E0'];
-        //     _.removeAllChildren(eParent);
-        //     let pixelsToGo = height;
-        //     while (pixelsToGo > 0) {
-        //         fillerCount++;
-        //         let pixelsThisDiv = (pixelsToGo > FILLER_HEIGHT) ? FILLER_HEIGHT : pixelsToGo;
-        //         pixelsToGo -= FILLER_HEIGHT;
-        //         let eFiller = document.createElement('div');
-        //         eFiller.style.height = pixelsThisDiv + 'px';
-        //         eFiller.style.backgroundColor = colors[fillerCount%colors.length];
-        //         eFiller.innerHTML = '' + fillerCount;
-        //         eParent.appendChild(eFiller);
-        //     }
-        //     console.log(`fillerCount = ${fillerCount}`);
-        // }
     };
     RowContainerComponent.prototype.flushRowTemplates = function () {
         // if doing dom order, then rowTemplates will be empty,

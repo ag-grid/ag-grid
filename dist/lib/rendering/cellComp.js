@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,7 +27,7 @@ var checkboxSelectionComponent_1 = require("./checkboxSelectionComponent");
 var rowDragComp_1 = require("./rowDragComp");
 var CellComp = (function (_super) {
     __extends(CellComp, _super);
-    function CellComp(scope, beans, column, rowNode, rowComp) {
+    function CellComp(scope, beans, column, rowNode, rowComp, autoHeightCell) {
         var _this = _super.call(this) || this;
         _this.editingCell = false;
         // every time we go into edit mode, or back again, this gets incremented.
@@ -43,6 +43,7 @@ var CellComp = (function (_super) {
         _this.column = column;
         _this.rowNode = rowNode;
         _this.rowComp = rowComp;
+        _this.autoHeightCell = autoHeightCell;
         _this.createGridCellVo();
         _this.rangeSelectionEnabled = beans.enterprise && beans.gridOptionsWrapper.isEnableRangeSelection();
         _this.cellFocused = _this.beans.focusedCellController.isCellFocused(_this.gridCell);
@@ -199,7 +200,20 @@ var CellComp = (function (_super) {
     };
     CellComp.prototype.getInitialCssClasses = function () {
         var cssClasses = ["ag-cell", "ag-cell-not-inline-editing"];
-        cssClasses.push(this.cellFocused ? 'ag-cell-focus' : 'ag-cell-no-focus');
+        // if we are putting the cell into a dummy container, to work out it's height,
+        // then we don't put the height css in, as we want cell to fit height in that case.
+        if (!this.autoHeightCell) {
+            cssClasses.push('ag-cell-with-height');
+        }
+        var doingFocusCss = !this.beans.gridOptionsWrapper.isSuppressCellSelection();
+        if (doingFocusCss) {
+            // otherwise the class depends on the focus state
+            cssClasses.push(this.cellFocused ? 'ag-cell-focus' : 'ag-cell-no-focus');
+        }
+        else {
+            // if we are not doing cell selection, then ag-cell-no-focus gets put onto every cell
+            cssClasses.push('ag-cell-no-focus');
+        }
         if (this.firstRightPinned) {
             cssClasses.push('ag-cell-first-right-pinned');
         }
@@ -353,7 +367,10 @@ var CellComp = (function (_super) {
         // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
         if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
             var eGui = this.getGui();
-            this.beans.$compile(eGui)(this.scope);
+            var compiledElement_1 = this.beans.$compile(eGui)(this.scope);
+            this.addDestroyFunc(function () {
+                compiledElement_1.remove();
+            });
         }
     };
     CellComp.prototype.postProcessStylesFromColDef = function () {
@@ -628,10 +645,12 @@ var CellComp = (function (_super) {
             // row was removed (the row comp was removed), however now that the user
             // can provide components for cells, the destroy method gets call when this
             // happens so no longer need to fire event.
-            addRowCompListener: this.rowComp.addEventListener.bind(this.rowComp),
+            addRowCompListener: this.rowComp ? this.rowComp.addEventListener.bind(this.rowComp) : null,
             addRenderedRowListener: function (eventType, listener) {
                 console.warn('ag-Grid: since ag-Grid .v11, params.addRenderedRowListener() is now params.addRowCompListener()');
-                _this.rowComp.addEventListener(eventType, listener);
+                if (_this.rowComp) {
+                    _this.rowComp.addEventListener(eventType, listener);
+                }
             }
         };
         return params;
@@ -659,7 +678,7 @@ var CellComp = (function (_super) {
         if (isOpenGroup && this.beans.gridOptionsWrapper.isGroupIncludeFooter()) {
             // if doing grouping and footers, we don't want to include the agg value
             // in the header when the group is open
-            return this.beans.valueService.getValue(this.column, this.rowNode, true);
+            return this.beans.valueService.getValue(this.column, this.rowNode, false, true);
         }
         else {
             return this.beans.valueService.getValue(this.column, this.rowNode);
@@ -1008,7 +1027,10 @@ var CellComp = (function (_super) {
         event.preventDefault();
     };
     CellComp.prototype.onShiftRangeSelect = function (key) {
-        this.beans.rangeController.extendRangeInDirection(this.gridCell, key);
+        var success = this.beans.rangeController.extendRangeInDirection(this.gridCell, key);
+        if (!success) {
+            return;
+        }
         var ranges = this.beans.rangeController.getCellRanges();
         // this should never happen, as extendRangeFromCell should always have one range after getting called
         if (utils_1._.missing(ranges) || ranges.length !== 1) {
@@ -1327,8 +1349,13 @@ var CellComp = (function (_super) {
         var cellFocused = this.beans.focusedCellController.isCellFocused(this.gridCell);
         // see if we need to change the classes on this cell
         if (cellFocused !== this.cellFocused) {
-            utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-focus', cellFocused);
-            utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-no-focus', !cellFocused);
+            // if we are not doing cell selection, then the focus class does not change, all cells will
+            // stay with ag-cell-no-focus class
+            var doingFocusCss = !this.beans.gridOptionsWrapper.isSuppressCellSelection();
+            if (doingFocusCss) {
+                utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-focus', cellFocused);
+                utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-no-focus', !cellFocused);
+            }
             this.cellFocused = cellFocused;
         }
         // if this cell was just focused, see if we need to force browser focus, his can
@@ -1363,15 +1390,16 @@ var CellComp = (function (_super) {
             this.editingCell = false;
             return;
         }
+        var newValueExists = false;
+        var newValue;
         if (!cancel) {
             // also have another option here to cancel after editing, so for example user could have a popup editor and
             // it is closed by user clicking outside the editor. then the editor will close automatically (with false
             // passed above) and we need to see if the editor wants to accept the new value.
             var userWantsToCancel = this.cellEditor.isCancelAfterEnd && this.cellEditor.isCancelAfterEnd();
             if (!userWantsToCancel) {
-                var newValue = this.cellEditor.getValue();
-                this.rowNode.setDataValue(this.column, newValue);
-                this.getValueAndFormat();
+                newValue = this.cellEditor.getValue();
+                newValueExists = true;
             }
         }
         // it is important we set this after setValue() above, as otherwise the cell will flash
@@ -1413,6 +1441,10 @@ var CellComp = (function (_super) {
             }
         }
         this.setInlineEditingClass();
+        if (newValueExists) {
+            this.rowNode.setDataValue(this.column, newValue);
+            this.getValueAndFormat();
+        }
         // we suppress the flash, as it is not correct to flash the cell the user has finished editing,
         // the user doesn't need to flash as they were the one who did the edit, the flash is pointless
         // (as the flash is meant to draw the user to a change that they didn't manually do themselves).

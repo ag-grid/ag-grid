@@ -15,11 +15,11 @@ import {Column} from "../entities/column";
 
 export class RowDragComp extends Component {
 
-    private beans: Beans;
+    private readonly beans: Beans;
 
-    private rowNode: RowNode;
-    private column: Column;
-    private cellValue: string;
+    private readonly rowNode: RowNode;
+    private readonly column: Column;
+    private readonly cellValue: string;
 
     constructor(rowNode: RowNode, column: Column, cellValue: string, beans: Beans) {
         super(`<span class="ag-row-drag"></span>`);
@@ -78,10 +78,10 @@ export class RowDragComp extends Component {
 // when non managed, the visibility depends on suppressRowDrag property only
 class NonManagedVisibilityStrategy extends BeanStub {
 
-    private parent: RowDragComp;
-    private beans: Beans;
-    private column: Column;
-    private rowNode: RowNode;
+    private readonly parent: RowDragComp;
+    private readonly beans: Beans;
+    private readonly column: Column;
+    private readonly rowNode: RowNode;
 
     constructor(parent: RowDragComp, beans: Beans, rowNode: RowNode, column: Column) {
         super();
@@ -94,6 +94,11 @@ class NonManagedVisibilityStrategy extends BeanStub {
     @PostConstruct
     private postConstruct(): void {
         this.addDestroyableEventListener(this.beans.gridOptionsWrapper, 'suppressRowDrag', this.onSuppressRowDrag.bind(this));
+
+        // in case data changes, then we need to update visibility of drag item
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.workOutVisibility.bind(this));
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.workOutVisibility.bind(this));
+
         this.workOutVisibility();
     }
 
@@ -102,6 +107,7 @@ class NonManagedVisibilityStrategy extends BeanStub {
     }
 
     private workOutVisibility(): void {
+
         // only show the drag if both sort and filter are not present
         let suppressRowDrag = this.beans.gridOptionsWrapper.isSuppressRowDrag();
 
@@ -118,10 +124,10 @@ class NonManagedVisibilityStrategy extends BeanStub {
 // when managed, the visibility depends on sort, filter and row group, as well as suppressRowDrag property
 class ManagedVisibilityStrategy extends BeanStub {
 
-    private parent: RowDragComp;
-    private column: Column;
-    private rowNode: RowNode;
-    private beans: Beans;
+    private readonly parent: RowDragComp;
+    private readonly column: Column;
+    private readonly rowNode: RowNode;
+    private readonly beans: Beans;
 
     private sortActive: boolean;
     private filterActive: boolean;
@@ -142,6 +148,10 @@ class ManagedVisibilityStrategy extends BeanStub {
         this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
+
+        // in case data changes, then we need to update visibility of drag item
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.workOutVisibility.bind(this));
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.workOutVisibility.bind(this));
 
         this.addDestroyableEventListener(this.beans.gridOptionsWrapper, 'suppressRowDrag', this.onSuppressRowDrag.bind(this));
 

@@ -28,11 +28,18 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
     private expanded: boolean;
     private padding: boolean;
 
-    constructor(colGroupDef: ColGroupDef, groupId: string, padding: boolean) {
+    private level: number;
+
+    constructor(colGroupDef: ColGroupDef, groupId: string, padding: boolean, level: number) {
         this.colGroupDef = colGroupDef;
         this.groupId = groupId;
         this.expanded = colGroupDef && !!colGroupDef.openByDefault;
         this.padding = padding;
+        this.level = level;
+    }
+
+    public getLevel(): number {
+        return this.level;
     }
 
     public isVisible(): boolean {

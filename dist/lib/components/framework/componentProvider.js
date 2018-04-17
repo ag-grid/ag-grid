@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -136,15 +136,14 @@ var ComponentProvider = (function () {
     }
     ComponentProvider.prototype.init = function () {
         var _this = this;
-        var componentProvider = this.context.getBean('componentProvider');
         if (this.gridOptions.components != null) {
             Object.keys(this.gridOptions.components).forEach(function (it) {
-                componentProvider.registerComponent(it, _this.gridOptions.components[it]);
+                _this.registerComponent(it, _this.gridOptions.components[it]);
             });
         }
         if (this.gridOptions.frameworkComponents != null) {
             Object.keys(this.gridOptions.frameworkComponents).forEach(function (it) {
-                componentProvider.registerFwComponent(it, _this.gridOptions.frameworkComponents[it]);
+                _this.registerFwComponent(it, _this.gridOptions.frameworkComponents[it]);
             });
         }
     };
@@ -225,10 +224,6 @@ var ComponentProvider = (function () {
         context_1.Autowired('gridOptions'),
         __metadata("design:type", Object)
     ], ComponentProvider.prototype, "gridOptions", void 0);
-    __decorate([
-        context_1.Autowired('context'),
-        __metadata("design:type", context_1.Context)
-    ], ComponentProvider.prototype, "context", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

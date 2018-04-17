@@ -1,6 +1,8 @@
 // we pass a VO of the column and not the column itself,
 // so the data is read to be be converted to JSON and thrown
 // over the wire
+import {RowNode} from "../entities/rowNode";
+
 export interface ColumnVO {
     id: string;
     displayName: string;
@@ -33,6 +35,10 @@ export interface IEnterpriseGetRowsParams {
 
     // details for the request,
     request: IEnterpriseGetRowsRequest;
+
+    // the parent row node. is the RootNode (level -1) if request is top level.
+    // this is NOT part fo the request as it cannot be serialised to JSON (a rowNode has methods)
+    parentNode: RowNode;
 
     // success callback, pass the rows back the grid asked for
     successCallback(rowsThisPage: any[], lastRow: number): void;

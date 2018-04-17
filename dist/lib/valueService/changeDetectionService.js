@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -52,13 +52,10 @@ var ChangeDetectionService = (function (_super) {
             return;
         }
         // step 1 of change detection is to update the aggregated values
-        if (this.inMemoryRowModel) {
-            var changedPath = void 0;
-            if (rowNode.parent) {
-                var onlyChangedColumns = this.gridOptionsWrapper.isAggregateOnlyChangedColumns();
-                changedPath = new changedPath_1.ChangedPath(onlyChangedColumns);
-                changedPath.addParentNode(rowNode.parent, [column]);
-            }
+        if (this.inMemoryRowModel && !rowNode.isRowPinned()) {
+            var onlyChangedColumns = this.gridOptionsWrapper.isAggregateOnlyChangedColumns();
+            var changedPath = new changedPath_1.ChangedPath(onlyChangedColumns);
+            changedPath.addParentNode(rowNode.parent, [column]);
             this.inMemoryRowModel.doAggregate(changedPath);
         }
         // step 2 of change detection is to refresh the cells

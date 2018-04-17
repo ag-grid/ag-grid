@@ -67,6 +67,7 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     private params:IHeaderParams;
 
+    private lastMovingChanged = 0;
 
     public init(params: IHeaderParams): void {
         let template:string = _.firstExistingValue(
@@ -182,11 +183,30 @@ export class HeaderComp extends Component implements IHeaderComp {
 
         let sortUsingCtrl = this.gridOptionsWrapper.isMultiSortKeyCtrl();
 
+        // keep track of last time the moving changed flag was set
+        this.addDestroyableEventListener(this.params.column, Column.EVENT_MOVING_CHANGED, ()=> {
+            this.lastMovingChanged = new Date().getTime();
+        });
+
         // add the event on the header, so when clicked, we do sorting
         if (this.eLabel) {
             this.addDestroyableEventListener(this.eLabel, 'click', (event:MouseEvent) => {
-                let multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
-                this.params.progressSort(multiSort);
+
+                // sometimes when moving a column via dragging, this was also firing a clicked event.
+                // here is issue raised by user: https://ag-grid.zendesk.com/agent/tickets/1076
+                // this check stops sort if a) column is moving or b) column moved less than 200ms ago (so caters for race condition)
+                let moving = this.params.column.isMoving();
+                let nowTime = new Date().getTime();
+                // typically there is <2ms if moving flag was set recently, as it would be done in same VM turn
+                let movedRecently = (nowTime - this.lastMovingChanged) < 50;
+                let columnMoving = moving || movedRecently;
+
+                if (!columnMoving) {
+                    let multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
+                    this.params.progressSort(multiSort);
+                } else {
+                    console.log(`kipping sort cos of moving ${this.lastMovingChanged}`);
+                }
             });
         }
 

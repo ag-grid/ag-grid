@@ -127,8 +127,6 @@ $disabled-foreground-color-opacity: 0.38 !default;
     }
 
     .ag-column-drop-vertical .ag-column-drop-cell {
-        display: block;
-        float: none;
         margin-left: $grid-size * 2;
         margin-right: $grid-size * 2;
 
@@ -172,6 +170,7 @@ $disabled-foreground-color-opacity: 0.38 !default;
     // tool panel
     .ag-column-panel {
         border-right: 1px solid $border-color;
+        border-bottom: 1px solid $border-color;
 
         .ag-column-select-panel {
             padding-bottom: $grid-size * 2;

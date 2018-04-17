@@ -91,8 +91,8 @@ export class GridCore {
             west: westPanel,
             north: createTopPanelGui,
             south: eSouthPanel,
-            dontFill: this.gridOptionsWrapper.isForPrint(),
-            fillHorizontalOnly: this.gridOptionsWrapper.isAutoHeight(),
+            forPrint: this.gridOptionsWrapper.isForPrint(),
+            autoHeight: this.gridOptionsWrapper.isAutoHeight(),
             name: 'eRootPanel'
         });
 

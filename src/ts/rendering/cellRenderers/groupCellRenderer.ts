@@ -19,6 +19,7 @@ export interface GroupCellRendererParams extends ICellRendererParams{
     pinned:string,
     padding:number,
     suppressPadding:boolean,
+    suppressDoubleClickExpand:boolean;
     footerValueGetter:any,
     suppressCount:boolean,
     fullWidth:boolean,
@@ -135,13 +136,6 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         // let paddingPx: number;
         let paddingCount = rowNode.uiLevel;
 
-        let pivotModeAndLeafGroup = this.columnController.isPivotMode() && params.node.leafGroup;
-
-        let notExpandable = !rowNode.isExpandable();
-        if (rowNode.footer || notExpandable || pivotModeAndLeafGroup) {
-            paddingCount += 1;
-        }
-
         let userProvidedPaddingPixelsTheDeprecatedWay = params.padding >= 0;
         if (userProvidedPaddingPixelsTheDeprecatedWay) {
             this.setPaddingDeprecatedWay(paddingCount, params.padding);
@@ -245,7 +239,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         }
 
         // retain a reference to the created renderer - we'll use this later for cleanup (in destroy)
-        if(rendererPromise) {
+        if (rendererPromise) {
             rendererPromise.then((value:ICellRendererComp) => {
                 this.innerCellRenderer = value;
             })
@@ -285,7 +279,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     }
 
     private addCheckboxIfNeeded(): void {
-        let rowNode = this.params.node;
+        let rowNode = this.displayedGroup;
         let checkboxNeeded = this.isUserWantsSelected()
                 // footers cannot be selected
                 && !rowNode.footer
@@ -324,7 +318,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             this.onAllChildrenCountChanged.bind(this));
 
         // if editing groups, then double click is to start editing
-        if (!this.gridOptionsWrapper.isEnableGroupEdit() && this.isExpandable()) {
+        if (!this.gridOptionsWrapper.isEnableGroupEdit() && this.isExpandable() && !params.suppressDoubleClickExpand) {
             this.addDestroyableEventListener(eGroupCell, 'dblclick', this.onCellDblClicked.bind(this));
         }
     }
@@ -387,6 +381,10 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     public onExpandClicked(mouseEvent: MouseEvent): void {
         if (_.isStopPropagationForAgGrid(mouseEvent)) { return; }
+
+        // so if we expand a node, it does not also get selected.
+        _.stopPropagationForAgGrid(mouseEvent);
+
         this.onExpandOrContract();
     }
 
@@ -407,6 +405,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     }
 
     public onExpandOrContract(): void {
+
+        console.log(`onExpandOrContract`);
 
         // must use the displayedGroup, so if data was dragged down, we expand the parent, not this row
         let rowNode: RowNode = this.displayedGroup;
@@ -440,6 +440,13 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             _.setVisible(this.eExpanded, false);
             _.setVisible(this.eContracted, false);
         }
+
+        let displayedGroup = this.displayedGroup;
+        // compensation padding for leaf nodes, so there is blank space instead of the expand icon
+        let pivotModeAndLeafGroup = this.columnController.isPivotMode() && displayedGroup.leafGroup;
+        let notExpandable = !displayedGroup.isExpandable();
+        let addLeafIndentClass = displayedGroup.footer || notExpandable || pivotModeAndLeafGroup;
+        this.addOrRemoveCssClass('ag-row-group-leaf-indent', addLeafIndentClass);
     }
 
     public destroy() : void {

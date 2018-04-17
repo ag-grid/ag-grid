@@ -41,6 +41,12 @@ import {ValueCache} from "../valueService/valueCache";
 import {GridApi} from "../gridApi";
 import {ColumnApi} from "./columnApi";
 
+export interface ColumnResizeSet {
+    columns: Column[];
+    ratios: number[];
+    width: number;
+}
+
 @Bean('columnController')
 export class ColumnController {
 
@@ -88,6 +94,9 @@ export class ColumnController {
     // header row count, either above, or based on pivoting if we are pivoting
     private gridHeaderRowCount = 0;
 
+    private lastPrimaryOrder: Column[];
+    private gridColsArePrimary: boolean;
+
     // these are the columns actually shown on the screen. used by the header renderer,
     // as header needs to know about column groups and the tree structure.
     private displayedLeftColumnTree: ColumnGroupChild[];
@@ -111,6 +120,9 @@ export class ColumnController {
 
     // true if we are doing column spanning
     private colSpanActive: boolean;
+
+    // primate columns that have colDef.autoHeight set
+    private autoRowHeightColumns: Column[];
 
     private rowGroupColumns: Column[] = [];
     private valueColumns: Column[] = [];
@@ -148,6 +160,14 @@ export class ColumnController {
             this.pivotMode = pivotMode;
         }
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
+    }
+
+    public isAutoRowHeightActive(): boolean {
+        return this.autoRowHeightColumns && this.autoRowHeightColumns.length > 0;
+    }
+
+    public getAllAutoRowHeightCols(): Column[] {
+        return this.autoRowHeightColumns;
     }
 
     private setVirtualViewportLeftAndRight(): void {
@@ -429,8 +449,8 @@ export class ColumnController {
     }
 
     private getDisplayedColumnsForRow(rowNode: RowNode, displayedColumns: Column[],
-                                        filterCallback?: (column: Column)=>boolean,
-                                        gapBeforeCallback?: (column: Column)=>boolean): Column[] {
+                                      filterCallback?: (column: Column)=>boolean,
+                                      emptySpaceBeforeColumn?: (column: Column)=>boolean): Column[] {
 
         let result: Column[] = [];
         let lastConsideredCol: Column = null;
@@ -440,19 +460,40 @@ export class ColumnController {
             let col = displayedColumns[i];
 
             let colSpan = col.getColSpan(rowNode);
+            let columnsToCheckFilter: Column[] = [col];
             if (colSpan > 1) {
                 let colsToRemove = colSpan - 1;
+
+                for (let j = 1; j<=colsToRemove; j++) {
+                    columnsToCheckFilter.push(displayedColumns[i+j]);
+                }
+
                 i += colsToRemove;
             }
 
-            let filterPasses = filterCallback ? filterCallback(col) : true;
+            // see which cols we should take out for column virtualisation
+            let filterPasses: boolean;
+            if (filterCallback) {
+                // if user provided a callback, means some columns may not be in the viewport.
+                // the user will NOT provide a callback if we are talking about pinned areas,
+                // as pinned areas have no horizontal scroll and do not virtualise the columns.
+                // if lots of columns, that means column spanning, and we set filterPasses = true
+                // if one or more of the columns spanned pass the filter.
+                filterPasses = false;
+                columnsToCheckFilter.forEach( colForFilter => {
+                    if (filterCallback(colForFilter)) filterPasses = true;
+                });
+            } else {
+                filterPasses = true
+            }
 
             if (filterPasses) {
 
-                let gapBeforeColumn = gapBeforeCallback ? gapBeforeCallback(col) : false;
-                let addInPreviousColumn = result.length===0 && gapBeforeColumn && lastConsideredCol;
-                if (addInPreviousColumn) {
-                    result.push(lastConsideredCol);
+                if (result.length===0 && lastConsideredCol) {
+                    let gapBeforeColumn = emptySpaceBeforeColumn ? emptySpaceBeforeColumn(col) : false;
+                    if (gapBeforeColumn) {
+                        result.push(lastConsideredCol);
+                    }
                 }
 
                 result.push(col);
@@ -474,10 +515,10 @@ export class ColumnController {
             return this.allDisplayedCenterVirtualColumns;
         }
 
-        let gapBeforeCallback = (col: Column) => col.getLeft() > this.viewportLeft;
+        let emptySpaceBeforeColumn = (col: Column) => col.getLeft() > this.viewportLeft;
 
         return this.getDisplayedColumnsForRow(rowNode, this.displayedCenterColumns,
-            this.isColumnInViewport.bind(this), gapBeforeCallback);
+            this.isColumnInViewport.bind(this), emptySpaceBeforeColumn);
     }
 
     private isColumnInViewport(col: Column): boolean {
@@ -558,7 +599,7 @@ export class ColumnController {
     private setRowGroupActive(active: boolean, column: Column, source: ColumnEventType): void {
         if (active === column.isRowGroupActive()) {return;}
         column.setRowGroupActive(active, source);
-        if (!active) {
+        if (!active && !this.gridOptionsWrapper.isSuppressMakeColumnVisibleAfterUnGroup()) {
             column.setVisible(true, source);
         }
     }
@@ -712,34 +753,197 @@ export class ColumnController {
         }
     }
 
-    public setColumnWidth(key: string|Column, newWidth: number, finished: boolean, source: ColumnEventType = "api"): void {
-        let column = this.getPrimaryOrGridColumn(key);
-        if (!column) {
+    public setColumnWidth(
+            key: string|Column, // @key - the column who's size we want to change
+            newWidth: number, // @newWidth - width in pixels
+            takeFromAdjacent: boolean, // @takeFromAdjacent - if user has 'shift' pressed, then pixels are taken from adjacent column
+            finished: boolean, // @finished - ends up in the event, tells the user if more events are to come
+            source: ColumnEventType = "api"): void {
+
+        let col = this.getPrimaryOrGridColumn(key);
+        if (!col) {
             return;
         }
 
-        newWidth = this.normaliseColumnWidth(column, newWidth);
+        let sets: ColumnResizeSet[] = [];
 
-        let widthChanged = column.getActualWidth() !== newWidth;
+        sets.push({
+            width: newWidth,
+            ratios: [1],
+            columns: [col]
+        });
 
-        if (widthChanged) {
-            column.setActualWidth(newWidth, source);
-            this.setLeftValues(source);
+        if (takeFromAdjacent) {
+            let otherCol = this.getDisplayedColAfter(col);
+            if (!otherCol) { return; }
+
+            let widthDiff = col.getActualWidth() - newWidth;
+            let otherColWidth = otherCol.getActualWidth() + widthDiff;
+
+            sets.push({
+                width: otherColWidth,
+                ratios: [1],
+                columns: [otherCol]
+            })
         }
 
-        this.updateBodyWidths();
-        this.checkDisplayedVirtualColumns();
+        this.resizeColumnSets(sets, finished, source);
+    }
+
+    private checkMinAndMaxWidthsForSet(columnResizeSet: ColumnResizeSet): boolean {
+
+        let {columns, width} = columnResizeSet;
+
+        // every col has a min width, so sum them all up and see if we have enough room
+        // for all the min widths
+        let minWidthAccumulated = 0;
+        let maxWidthAccumulated = 0;
+        let maxWidthActive = true;
+        columns.forEach( col => {
+            minWidthAccumulated += col.getMinWidth();
+            if (col.getMaxWidth() > 0) {
+                maxWidthAccumulated += col.getMaxWidth();
+            } else {
+                // if at least one columns has no max width, it means the group of columns
+                // then has no max width, as at least one column can take as much width as possible
+                maxWidthActive = false;
+            }
+        });
+
+        let minWidthPasses = width >= minWidthAccumulated;
+
+        let maxWidthPasses = !maxWidthActive || (width <= maxWidthAccumulated);
+
+        return minWidthPasses && maxWidthPasses;
+    }
+
+    // method takes sets of columns and resizes them. either all sets will be resized, or nothing
+    // be resized. this is used for example when user tries to resize a group and holds shift key,
+    // then both the current group (grows), and the adjacent group (shrinks), will get resized,
+    // so that's two sets for this method.
+    public resizeColumnSets(resizeSets: ColumnResizeSet[],
+                            finished: boolean,
+                            source: ColumnEventType): void {
+
+        let passMinMaxCheck = _.every(resizeSets, this.checkMinAndMaxWidthsForSet.bind(this));
+
+        if (!passMinMaxCheck) { return; }
+
+        let changedCols: Column[] = [];
+        let allCols: Column[] = [];
+
+        resizeSets.forEach( set => {
+
+            let {width, columns, ratios} = set;
+
+            // keep track of pixels used, and last column gets the remaining,
+            // to cater for rounding errors, and min width adjustments
+            let newWidths: {[colId: string]: number} = {};
+
+            let finishedCols: {[colId: string]: boolean} = {};
+
+            columns.forEach( col => allCols.push(col) );
+
+            // the loop below goes through each col. if a col exceeds it's min/max width,
+            // it then gets set to its min/max width and the column is removed marked as 'finished'
+            // and the calculation is done again leaving this column out. take for example columns
+            // {A, width: 50, maxWidth: 100}
+            // {B, width: 50}
+            // {C, width: 50}
+            // and then the set is set to width 600 - on the first pass the grid tries to set each column
+            // to 200. it checks A and sees 200 > 100 and so sets the width to 100. col A is then marked
+            // as 'finished' and the calculation is done again with the remaining cols B and C, which end up
+            // splitting the remaining 500 pixels.
+            let finishedColsGrew = true;
+            let loopCount = 0;
+
+            while (finishedColsGrew) {
+
+                loopCount++;
+                if (loopCount>1000) {
+                    // this should never happen, but in the future, someone might introduce a bug here,
+                    // so we stop the browser from hanging and report bug properly
+                    console.error('ag-Grid: infinite loop in resizeColumnSets');
+                    break;
+                }
+
+                finishedColsGrew = false;
+
+                let subsetCols: Column[] = [];
+                let subsetRatios: number[] = [];
+                let subsetRatioTotal = 0;
+                let pixelsToDistribute = width;
+
+                columns.forEach( (col: Column, index: number) => {
+                    let thisColFinished = finishedCols[col.getId()];
+                    if (thisColFinished) {
+                        pixelsToDistribute -= newWidths[col.getId()];
+                    } else {
+                        subsetCols.push(col);
+                        let ratioThisCol = ratios[index];
+                        subsetRatioTotal += ratioThisCol;
+                        subsetRatios.push(ratioThisCol);
+                    }
+                });
+
+                // because we are not using all of the ratios (cols can be missing),
+                // we scale the ratio. if all columns are included, then subsetRatioTotal=1,
+                // and so the ratioScale will be 1.
+                let ratioScale = 1 / subsetRatioTotal;
+
+                subsetCols.forEach( (col: Column, index: number) => {
+                    let lastCol = index === (subsetCols.length - 1);
+                    let colNewWidth: number;
+
+                    if (lastCol) {
+                        colNewWidth = pixelsToDistribute;
+                    } else {
+                        colNewWidth = Math.round(ratios[index] * width * ratioScale);
+                        pixelsToDistribute -= colNewWidth;
+                    }
+
+                    if (colNewWidth < col.getMinWidth()) {
+                        colNewWidth = col.getMinWidth();
+                        finishedCols[col.getId()] = true;
+                        finishedColsGrew = true;
+                    } else if (col.getMaxWidth() > 0 && colNewWidth > col.getMaxWidth()) {
+                        colNewWidth = col.getMaxWidth();
+                        finishedCols[col.getId()] = true;
+                        finishedColsGrew = true;
+                    }
+
+                    newWidths[col.getId()] = colNewWidth;
+                });
+            }
+
+            columns.forEach( col => {
+                let newWidth = newWidths[col.getId()];
+                if (col.getActualWidth() !== newWidth) {
+                    col.setActualWidth(newWidth);
+                    changedCols.push(col);
+                }
+            });
+        });
+
+        // if no cols changed, then no need to update more or send event.
+        let atLeastOneColChanged = changedCols.length > 0;
+
+        if (atLeastOneColChanged) {
+            this.setLeftValues(source);
+            this.updateBodyWidths();
+            this.checkDisplayedVirtualColumns();
+        }
 
         // check for change first, to avoid unnecessary firing of events
         // however we always fire 'finished' events. this is important
         // when groups are resized, as if the group is changing slowly,
         // eg 1 pixel at a time, then each change will fire change events
         // in all the columns in the group, but only one with get the pixel.
-        if (finished || widthChanged) {
+        if (atLeastOneColChanged || finished) {
             let event: ColumnResizedEvent = {
                 type: Events.EVENT_COLUMN_RESIZED,
-                columns: [column],
-                column: column,
+                columns: changedCols,
+                column: changedCols.length === 1 ? changedCols[0] : null,
                 finished: finished,
                 api: this.gridApi,
                 columnApi: this.columnApi,
@@ -1124,6 +1328,31 @@ export class ColumnController {
             return allDisplayedColumns[oldIndex + 1];
         } else {
             return null;
+        }
+    }
+
+    public getDisplayedGroupAfter(columnGroup: ColumnGroup): ColumnGroup {
+
+        // pick one col in this group at random
+        let col = columnGroup.getDisplayedLeafColumns()[0];
+        let requiredLevel = columnGroup.getOriginalColumnGroup().getLevel();
+
+        while (true) {
+            // keep moving to the next col, until we get to another group
+            col = this.getDisplayedColAfter(col);
+
+            // if no col after, means no group after
+            if (!col) { return null; }
+
+            // get group at same level as the one we are looking for
+            let groupPointer = col.getParent();
+            while (groupPointer.getOriginalColumnGroup().getLevel() !== requiredLevel) {
+                groupPointer = groupPointer.getParent();
+            }
+
+            if (groupPointer!==columnGroup) {
+                return groupPointer;
+            }
         }
     }
 
@@ -1553,6 +1782,7 @@ export class ColumnController {
         this.primaryHeaderRowCount = balancedTreeResult.treeDept + 1;
 
         this.primaryColumns = this.getColumnsFromTree(this.primaryBalancedTree);
+        this.autoRowHeightColumns = this.primaryColumns.filter( col => col.getColDef().autoHeight );
         this.extractRowGroupColumns(source);
         this.extractPivotColumns(source);
         this.createValueColumns(source);
@@ -1861,14 +2091,25 @@ export class ColumnController {
 
     // called from: setColumnState, setColumnDefs, setSecondaryColumns
     private updateGridColumns(): void {
+        if (this.gridColsArePrimary) {
+            this.lastPrimaryOrder = this.gridColumns;
+        }
+
         if (this.secondaryColumns) {
             this.gridBalancedTree = this.secondaryBalancedTree.slice();
             this.gridHeaderRowCount = this.secondaryHeaderRowCount;
             this.gridColumns = this.secondaryColumns.slice();
+            this.gridColsArePrimary = false;
         } else {
             this.gridBalancedTree = this.primaryBalancedTree.slice();
             this.gridHeaderRowCount = this.primaryHeaderRowCount;
             this.gridColumns = this.primaryColumns.slice();
+            this.gridColsArePrimary = true;
+
+            // updateGridColumns gets called after user adds a row group. we want to maintain the order of the columns
+            // when this happens (eg if user moved a column) rather than revert back to the original column order.
+            // likewise if changing in/out of pivot mode, we want to maintain the order of the primary cols
+            this.orderGridColsLikeLastPrimary();
         }
 
         this.putFixedColumnsFirst();
@@ -1887,6 +2128,24 @@ export class ColumnController {
             columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(event);
+    }
+
+    private orderGridColsLikeLastPrimary(): void {
+        if (_.missing(this.lastPrimaryOrder)) { return; }
+
+        // only do the sort if all columns are accounted for. columns will be not accounted for
+        // if changing from secondary to primary columns
+        let oneMissing = false;
+        this.gridColumns.forEach( col => {
+            if (this.lastPrimaryOrder.indexOf(col)<0) { oneMissing = true; }
+        });
+        if (oneMissing) { return; }
+
+        this.gridColumns.sort( (colA: Column, colB: Column): number => {
+            let indexA = this.lastPrimaryOrder.indexOf(colA);
+            let indexB = this.lastPrimaryOrder.indexOf(colB);
+            return indexA - indexB;
+        });
     }
 
     public isPrimaryColumnGroupsPresent(): boolean {

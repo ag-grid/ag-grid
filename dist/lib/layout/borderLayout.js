@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,20 +16,20 @@ var BorderLayout = (function () {
         this.visibleLastTime = false;
         this.sizeChangeListeners = [];
         this.isLayoutPanel = true;
-        this.fullHeight = !params.north && !params.south;
+        this.noNorthOrSouth = !params.north && !params.south;
         var template;
-        if (params.dontFill) {
+        if (params.forPrint) {
             template = BorderLayout.TEMPLATE_DONT_FILL;
             this.horizontalLayoutActive = false;
             this.verticalLayoutActive = false;
         }
-        else if (params.fillHorizontalOnly) {
+        else if (params.autoHeight) {
             template = BorderLayout.TEMPLATE_DONT_FILL;
             this.horizontalLayoutActive = true;
             this.verticalLayoutActive = false;
         }
         else {
-            if (this.fullHeight) {
+            if (this.noNorthOrSouth) {
                 template = BorderLayout.TEMPLATE_FULL_HEIGHT;
             }
             else {
@@ -134,7 +134,16 @@ var BorderLayout = (function () {
             }
         }
         if (this.verticalLayoutActive) {
+            // layout center to match heights of east and west
             var ourHeightChanged = this.layoutHeight();
+            if (ourHeightChanged) {
+                atLeastOneChanged = true;
+            }
+        }
+        else {
+            // layout east and west to be same height as center,
+            // otherwise the tool panel doesn't size right
+            var ourHeightChanged = this.layoutEastWestHeight();
             if (ourHeightChanged) {
                 atLeastOneChanged = true;
             }
@@ -157,7 +166,7 @@ var BorderLayout = (function () {
         }
     };
     BorderLayout.prototype.layoutHeight = function () {
-        if (this.fullHeight) {
+        if (this.noNorthOrSouth) {
             return this.layoutHeightFullHeight();
         }
         else {
@@ -189,6 +198,22 @@ var BorderLayout = (function () {
         }
         if (this.centerHeightLastTime !== centerHeight) {
             this.eCenterRow.style.height = centerHeight + 'px';
+            this.centerHeightLastTime = centerHeight;
+            return true; // return true because there was a change
+        }
+        else {
+            return false;
+        }
+    };
+    BorderLayout.prototype.layoutEastWestHeight = function () {
+        var centerHeight = utils_1.Utils.offsetHeight(this.eCenterRow);
+        if (this.centerHeightLastTime !== centerHeight) {
+            if (this.eEastWrapper) {
+                this.eEastWrapper.style.height = centerHeight + 'px';
+            }
+            if (this.eWestWrapper) {
+                this.eWestWrapper.style.height = centerHeight + 'px';
+            }
             this.centerHeightLastTime = centerHeight;
             return true; // return true because there was a change
         }

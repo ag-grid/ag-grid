@@ -11,6 +11,7 @@ import {Component} from "../widgets/component";
 import {Constants} from "../constants";
 import {Column} from "../entities/column";
 import {GridApi} from "../gridApi";
+import {SerializedSetFilter} from "../interfaces/iSerializedSetFilter";
 
 export interface FloatingFilterChange {
 }
@@ -149,7 +150,8 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
         let debounceMs: number = params.debounceMs != null ? params.debounceMs : 500;
         let toDebounce: () => void = _.debounce(this.onDateChanged.bind(this), debounceMs);
         let dateComponentParams: IDateParams = {
-            onDateChanged: toDebounce
+            onDateChanged: toDebounce,
+            filterParams: params.column.getColDef().filterParams
         };
         this.dateComponentPromise = this.componentRecipes.newDateComponent(dateComponentParams);
 
@@ -270,22 +272,39 @@ export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<Serial
     }
 }
 
-export class SetFloatingFilterComp extends InputTextFloatingFilterComp<string[], IFloatingFilterParams<string[], BaseFloatingFilterChange<string[]>>> {
-    init(params: IFloatingFilterParams<string[], BaseFloatingFilterChange<string[]>>): void {
+export class SetFloatingFilterComp extends InputTextFloatingFilterComp<SerializedSetFilter, IFloatingFilterParams<SerializedSetFilter, BaseFloatingFilterChange<SerializedSetFilter>>> {
+    init(params: IFloatingFilterParams<SerializedSetFilter, BaseFloatingFilterChange<SerializedSetFilter>>): void {
         super.init(params);
         this.eColumnFloatingFilter.readOnly = true;
     }
 
-    asFloatingFilterText(parentModel: string[]): string {
-        if (!parentModel || parentModel.length === 0) { return ''; }
+    asFloatingFilterText(parentModel: string[] | SerializedSetFilter): string {
+        if(!parentModel) return '';
 
-        let arrayToDisplay = parentModel.length > 10 ? parentModel.slice(0, 10).concat(['...']) : parentModel;
-        return `(${parentModel.length}) ${arrayToDisplay.join(",")}`;
+        // also supporting old filter model for backwards compatibility
+        let values: string[] = (parentModel instanceof Array) ? parentModel : parentModel.values;
+
+        if (values.length === 0) { return ''; }
+
+        let arrayToDisplay = values.length > 10 ? values.slice(0, 10).concat('...') : values;
+        return `(${values.length}) ${arrayToDisplay.join(",")}`;
     }
 
-    asParentModel(): string[] {
-        if (this.eColumnFloatingFilter.value == null || this.eColumnFloatingFilter.value === '') { return null; }
-        return this.eColumnFloatingFilter.value.split(",");
+    asParentModel(): SerializedSetFilter {
+        if (this.eColumnFloatingFilter.value == null || this.eColumnFloatingFilter.value === '') {
+            return {
+                values: [],
+                filterType: 'set'
+            };
+        }
+        return {
+            values: this.eColumnFloatingFilter.value.split(","),
+            filterType: 'set'
+        }
+    }
+
+    equalModels(left: SerializedSetFilter, right: SerializedSetFilter): boolean {
+        return false;
     }
 }
 

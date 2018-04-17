@@ -1,7 +1,8 @@
-// Type definitions for ag-grid v17.0.0
+// Type definitions for ag-grid v17.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IComponent } from "../interfaces/iComponent";
+import { IDateFilterParams } from "../filter/dateFilter";
 export interface IDate {
     /** Returns the current date represented by this editor */
     getDate(): Date;
@@ -11,6 +12,7 @@ export interface IDate {
 export interface IDateParams {
     /** Method for component to tell ag-Grid that the date has changed. */
     onDateChanged: () => void;
+    filterParams: IDateFilterParams;
 }
 export interface IDateComp extends IComponent<IDateParams>, IDate {
 }

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.0.0
+// Type definitions for ag-grid v17.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
@@ -89,6 +89,8 @@ export interface ColDef extends AbstractColDef {
     tooltip?: (params: TooltipParams) => string;
     /** Expression or function to get the cells value. */
     valueGetter?: ((params: ValueGetterParams) => any) | string;
+    /** Expression or function to get the cells value for filtering. */
+    filterValueGetter?: ((params: ValueGetterParams) => any) | string;
     /** If not using a field, then this puts the value into the cell */
     valueSetter?: ((params: ValueSetterParams) => boolean) | string;
     /** Function to return the key for a value - use this if the value is an object (not a primitive type) and you
@@ -100,6 +102,8 @@ export interface ColDef extends AbstractColDef {
     minWidth?: number;
     /** Max width, in pixels, of the cell */
     maxWidth?: number;
+    /** True if this column should stretch rows height to fit contents */
+    autoHeight?: number;
     /** Class to use for the cell. Can be string, array of strings, or function. */
     cellClass?: string | string[] | ((cellClassParams: CellClassParams) => string | string[]);
     /** An object of css values. Or a function returning an object of css values. */

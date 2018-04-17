@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -62,8 +62,8 @@ var GridCore = (function () {
             west: westPanel,
             north: createTopPanelGui,
             south: eSouthPanel,
-            dontFill: this.gridOptionsWrapper.isForPrint(),
-            fillHorizontalOnly: this.gridOptionsWrapper.isAutoHeight(),
+            forPrint: this.gridOptionsWrapper.isForPrint(),
+            autoHeight: this.gridOptionsWrapper.isAutoHeight(),
             name: 'eRootPanel'
         });
         // parts of the CSS need to know if we are in 'for print' mode or not,

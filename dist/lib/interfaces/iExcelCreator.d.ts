@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.0.0
+// Type definitions for ag-grid v17.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ExportParams } from "../exportParams";
@@ -86,6 +86,7 @@ export interface ExcelInterior {
 }
 export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
     sheetName?: string;
+    suppressTextAsCDATA?: boolean;
 }
 export interface IExcelCreator {
     exportDataAsExcel(params?: ExcelExportParams): void;

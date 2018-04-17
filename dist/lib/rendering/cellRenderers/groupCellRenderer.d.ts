@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.0.0
+// Type definitions for ag-grid v17.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
@@ -7,6 +7,7 @@ export interface GroupCellRendererParams extends ICellRendererParams {
     pinned: string;
     padding: number;
     suppressPadding: boolean;
+    suppressDoubleClickExpand: boolean;
     footerValueGetter: any;
     suppressCount: boolean;
     fullWidth: boolean;

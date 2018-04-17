@@ -91,12 +91,14 @@ export class ColDefUtil {
         'suppressPaste',
         'suppressNavigable',
         'enableCellChangeFlash',
-        'rowDrag'
+        'rowDrag',
+        'autoHeight'
     ];
 
     public static FUNCTION_PROPERTIES = [
         'valueGetter',
         'valueSetter',
+        'filterValueGetter',
         'keyCreator',
         'cellRenderer',
         'cellRendererFramework',
@@ -115,7 +117,9 @@ export class ColDefUtil {
         'onCellClicked',
         'onCellDoubleClicked',
         'onCellContextMenu',
-        'tooltip'];
+        'tooltip',
+        'cellRendererSelector',
+        'cellEditorSelector'];
 
     public static ALL_PROPERTIES = ColDefUtil.ARRAY_PROPERTIES
         .concat(ColDefUtil.OBJECT_PROPERTIES)

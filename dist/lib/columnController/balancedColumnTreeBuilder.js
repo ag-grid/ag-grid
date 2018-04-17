@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -48,7 +48,7 @@ var BalancedColumnTreeBuilder = (function () {
         // at the end, this will be the top of the tree item.
         var nextChild = column;
         for (var i = dept - 1; i >= 0; i--) {
-            var autoGroup = new originalColumnGroup_1.OriginalColumnGroup(null, "FAKE_PATH_" + column.getId() + "}_" + i, true);
+            var autoGroup = new originalColumnGroup_1.OriginalColumnGroup(null, "FAKE_PATH_" + column.getId() + "}_" + i, true, i);
             this.context.wireBean(autoGroup);
             autoGroup.setChildren([nextChild]);
             nextChild = autoGroup;
@@ -102,7 +102,7 @@ var BalancedColumnTreeBuilder = (function () {
                 for (var i = columnDept - 1; i >= currentDept; i--) {
                     var newColId = columnKeyCreator.getUniqueKey(null, null);
                     var colGroupDefMerged = _this.createMergedColGroupDef(null);
-                    var paddedGroup = new originalColumnGroup_1.OriginalColumnGroup(colGroupDefMerged, newColId, true);
+                    var paddedGroup = new originalColumnGroup_1.OriginalColumnGroup(colGroupDefMerged, newColId, true, currentDept);
                     _this.context.wireBean(paddedGroup);
                     paddedGroup.setChildren([newChild]);
                     newChild = paddedGroup;
@@ -147,7 +147,7 @@ var BalancedColumnTreeBuilder = (function () {
     BalancedColumnTreeBuilder.prototype.createColumnGroup = function (columnKeyCreator, primaryColumns, colGroupDef, level) {
         var colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
         var groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId, null);
-        var originalGroup = new originalColumnGroup_1.OriginalColumnGroup(colGroupDefMerged, groupId, false);
+        var originalGroup = new originalColumnGroup_1.OriginalColumnGroup(colGroupDefMerged, groupId, false, level);
         this.context.wireBean(originalGroup);
         var children = this.recursivelyCreateColumns(colGroupDefMerged.children, level + 1, columnKeyCreator, primaryColumns);
         originalGroup.setChildren(children);

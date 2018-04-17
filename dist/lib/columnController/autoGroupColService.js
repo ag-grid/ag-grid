@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20,6 +20,7 @@ var column_1 = require("../entities/column");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var utils_1 = require("../utils");
 var columnController_1 = require("./columnController");
+var balancedColumnTreeBuilder_1 = require("./balancedColumnTreeBuilder");
 var AutoGroupColService = (function () {
     function AutoGroupColService() {
     }
@@ -48,8 +49,7 @@ var AutoGroupColService = (function () {
     // rowGroupCol and index are missing if groupMultiAutoColumn=false
     AutoGroupColService.prototype.createOneAutoGroupColumn = function (rowGroupCol, index) {
         // if one provided by user, use it, otherwise create one
-        var defaultAutoColDef = this.generateDefaultColDef(rowGroupCol, index);
-        var userAutoColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
+        var defaultAutoColDef = this.generateDefaultColDef(rowGroupCol);
         // if doing multi, set the field
         var colId;
         if (rowGroupCol) {
@@ -58,12 +58,18 @@ var AutoGroupColService = (function () {
         else {
             colId = AutoGroupColService_1.GROUP_AUTO_COLUMN_BUNDLE_ID;
         }
+        var userAutoColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
         utils_1._.mergeDeep(defaultAutoColDef, userAutoColDef);
+        defaultAutoColDef = this.balancedColumnTreeBuilder.mergeColDefs(defaultAutoColDef);
         defaultAutoColDef.colId = colId;
-        var noUserFilterPreferences = userAutoColDef == null || userAutoColDef.suppressFilter == null;
-        if (noUserFilterPreferences && !this.gridOptionsWrapper.isTreeData()) {
-            var produceLeafNodeValues = defaultAutoColDef.field != null || defaultAutoColDef.valueGetter != null;
-            defaultAutoColDef.suppressFilter = !produceLeafNodeValues;
+        // For tree data the filter is always allowed
+        if (!this.gridOptionsWrapper.isTreeData()) {
+            // we would only allow filter if the user has provided field or value getter. otherwise the filter
+            // would not be able to work.
+            var noFieldOrValueGetter = utils_1._.missing(defaultAutoColDef.field) && utils_1._.missing(defaultAutoColDef.valueGetter) && utils_1._.missing(defaultAutoColDef.filterValueGetter);
+            if (noFieldOrValueGetter) {
+                defaultAutoColDef.suppressFilter = true;
+            }
         }
         // if showing many cols, we don't want to show more than one with a checkbox for selection
         if (index > 0) {
@@ -73,7 +79,7 @@ var AutoGroupColService = (function () {
         this.context.wireBean(newCol);
         return newCol;
     };
-    AutoGroupColService.prototype.generateDefaultColDef = function (rowGroupCol, index) {
+    AutoGroupColService.prototype.generateDefaultColDef = function (rowGroupCol) {
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         var defaultAutoColDef = {
             headerName: localeTextFunc('group', 'Group'),
@@ -117,6 +123,10 @@ var AutoGroupColService = (function () {
         context_1.Autowired('columnController'),
         __metadata("design:type", columnController_1.ColumnController)
     ], AutoGroupColService.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('balancedColumnTreeBuilder'),
+        __metadata("design:type", balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder)
+    ], AutoGroupColService.prototype, "balancedColumnTreeBuilder", void 0);
     AutoGroupColService = AutoGroupColService_1 = __decorate([
         context_1.Bean('autoGroupColService')
     ], AutoGroupColService);

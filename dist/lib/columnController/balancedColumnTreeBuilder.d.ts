@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.0.0
+// Type definitions for ag-grid v17.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColDef, ColGroupDef } from "../entities/colDef";
@@ -20,7 +20,7 @@ export declare class BalancedColumnTreeBuilder {
     private createColumnGroup(columnKeyCreator, primaryColumns, colGroupDef, level);
     private createMergedColGroupDef(colGroupDef);
     private createColumn(columnKeyCreator, primaryColumns, colDef);
-    private mergeColDefs(colDef);
+    mergeColDefs(colDef: ColDef): ColDef;
     private assignColumnTypes(colDef, colDefMerged);
     private checkForDeprecatedItems(colDef);
     private isColumnGroup(abstractColDef);
