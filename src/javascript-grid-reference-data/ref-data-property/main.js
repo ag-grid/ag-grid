@@ -44,8 +44,7 @@ var gridOptions = {
             },
             filter: 'agSetColumnFilter',
             filterParams: {
-                values: extractValues(colourMappings),
-                cellRenderer: colorCellRenderer
+                cellRenderer: filterColorCellRenderer
             },
             refData: colourMappings,
             cellRenderer: colorCellRenderer
@@ -55,7 +54,7 @@ var gridOptions = {
             field: "interiorColour",
             filter: 'agSetColumnFilter',
             filterParams: {
-                cellRenderer: colorCellRenderer
+                cellRenderer: filterColorCellRenderer
             },
             refData: colourMappings,
             cellRenderer: colorCellRenderer
@@ -73,7 +72,6 @@ var gridOptions = {
         {
             headerName: "Retail Price (incl Taxes)",
             editable: false,
-            // cellStyle: {'background-color': 'lightGrey'},
             valueGetter: function (params) {
                 // example of chaining value getters
                 return params.getValue("retailPrice") * 1.2;
@@ -95,6 +93,11 @@ function extractValues(mappings) {
 
 function colorCellRenderer(params) {
     return "<span style='color:" + removeSpaces(params.valueFormatted) + "'>" + params.valueFormatted + "</span>";
+}
+
+function filterColorCellRenderer(params) {
+    console.log(params);
+    return "<span style='color:" + removeSpaces(params.value) + "'>" + params.value + "</span>";
 }
 
 function currencyFormatter(params) {

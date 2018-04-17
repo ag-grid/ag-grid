@@ -53,4 +53,8 @@ export class RichComponent {
             {name: 'Krusty', ratios: {top: 0.74, bottom: 0.26}}
         ];
     }
+
+    onGridReady(params) {
+        params.api.sizeColumnsToFit();
+    }
 }

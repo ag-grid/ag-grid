@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid - Enterprise Grade Features: Grouping by Row";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Grouping by Row. Use Grouping Rows to group the data over selected dimensions. You can set the data to group by specific columns, or allow the user to drag and drop columns of their choice and have it grouped on the fly. Free and Commercial version available.";
+$pageTitle = "Grouping by Row: Core Feature of our Datagrid";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Grouping by Row. Use Grouping Rows to group the data over selected dimensions. You can set the data to group by specific columns, or allow the user to drag and drop columns of their choice and have it grouped on the fly. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Grid Grouping";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -104,7 +104,7 @@ gridOptions.columnDefs = [
         </li>
         <li>
             The group column has a custom comparator that changes the way sorting works, this is achieved by setting
-            <code>autoGroupColumnDef.cellRendererParams.comparator = function (left, right){...}</code>.
+            <code>autoGroupColumnDef.comparator = function (left, right){...}</code>.
 
             The custom comparator provided in the example changes the way the sorting works by ignoring the first letter
             of the group. To test this click on the header. When sorting desc you should see countries which second letter
@@ -114,35 +114,43 @@ gridOptions.columnDefs = [
 
     <?= example('Configuring the Auto Group Column', 'configuring-auto-group-column', 'generated', array("enterprise" => 1)) ?>
 
+    <h2>Filtering on Group Columns</h2>
+
+    <p>
+        Filter on group columns is more complex than filtering on normal columns as the data inside the column
+        can be a mix of data from different columns. For example if grouping by Country and Year, should the filter
+        be for Year or for Country?
+    </p>
+
+    <p>
+        For auto generated group columns, the filter will work if you specify one of
+        <code>field</code>, <code>valueGetter</code> or <code>filterValueGetter</code>.
+    </p>
+
     <h2>Adding Values To Leaf Nodes</h2>
 
     <p>
         You may have noticed in the examples so far that the group columns don't produce values on the leaf nodes, the cells
         are empty. If you want to add values you can add a <a href="../javascript-grid-value-getters">valueGetter</a>
-        or a field to the colDef and it will be used to render the leaf node.
+        or <code>field</code> to the colDef and it will be used to render the leaf node.
     </p>
 
     <p>
-        A good side effect of this is that then you can turn on filtering on the group column which has values for the leaf
-        node and then the filtering will be available based on these values.
+        A side effect of this is that filtering will now work for the columns using the field values.
     </p>
 
     <p>
-        The following example shows the easiest way to implement this with a single auto group column and a value getter
-        in the <code>autoGroupColumnDef</code> that is returning the athlete column
-
-        Note that:
+        This example shows specifying <code>field</code> in the auto group column. Note the following:
     </p>
 
 
     <ul class="content">
-        <li>To see the leaf node values, open any country and any year int the group column. Note how their leaf nodes are showing
-            the value for the athlete column, this is achieved with a valueGetter:
-<snippet>
-valueGetter: function (params){
-    return params.data ? params.data.athlete : ''
-}</snippet></li>
-        <li>Filtering is switched on so you can see how now you can filter the group column by athlete.</li>
+        <li>
+            The group column shows both groups (Country and Year) as well as Athlete at the leaf level.
+        </li>
+        <li>
+            The field (Athlete) is used for filtering.
+        </li>
     </ul>
 
     <?= example('Adding Values To Leaf Nodes', 'adding-values-to-leaf-nodes', 'generated', array("enterprise" => 1)) ?>
@@ -153,19 +161,18 @@ valueGetter: function (params){
     </p>
 
     <ul class="content">
-        <li>To see the leaf node values, open any country and any year group column. Note how their leaf nodes have
-        values for the columns 'Country' and 'Year - Group', the default is not to have values for this cells.</li>
-        <li>Filtering is switched on so you can see how now you can filter the group column 'Country' and 'Year - Group'
-            based on their leaf node values.</li>
-        <li>Country is providing the value to the leaf nodes via specifying the field property, it is also reusing
-            the same column that is grouping by as the column to display that group</code>
+        <li>
+            The first column shows the Country group only. The <colde>filterValueGetter</colde> is configured to
+            return the country so that country is used for filtering.
         </li>
-        <li>Year is providing the value to the leaf nodes via a value getter, this way we get to show the value from a
-            different column, the athlete column. In this case we are using two different columns 'Year - Group'
-            shows the year group and 'year' which is hidden <code>hide:true</code> specifies that we want to group
-            by this column.</li>
-        <li>This is an example of a case where not using auto group columns lets us add custom behaviour to our
-        grouping.</li>
+        <li>
+            The second columns shows Year (for group levels) and Athlete (for leaf levels). Because the field is
+            set, the filter will use the field value for filtering.
+        </li>
+        <li>
+            This is an example of a case where not using auto group columns lets us add custom different behaviour to
+            each of the grouping columns.
+        </li>
     </ul>
 
     <?= example('Adding Values To Leaf Nodes for Groups', 'adding-values-to-leaf-nodes-for-groups', 'generated', array("enterprise" => 1)) ?>
@@ -259,8 +266,56 @@ columnDefs = [
         are in it's place.
     </p>
 
+    <p>
+        Filter is achieved for each column by providing a <code>filterValueGetter</code>
+        for the <code>autoGroupColumnDef</code>. The filterValueGetter returns the value of
+        the grouped column - eg for Country, it will filter on Country.
+    </p>
+
     <?= example('Hide Open Parents', 'hide-open-parents', 'generated', array("enterprise" => 1)) ?>
 
+    <h2 id="fullWidthRows">Keeping Columns Visible</h2>
+
+    <p>
+        By default dragging a column out of the grid will make it hidden and
+        un-grouping a column will make it visible again. This default behaviour
+        can be changed with the following properties:
+        <ul>
+            <li>
+                <code>suppressDragLeaveHidesColumns</code>: When dragging a column
+                out of the grid, eg when dragging a column from the grid to the group
+                drop zone, the column will remain visible.
+            </li>
+            <li>
+                <code>suppressMakeColumnVisibleAfterUnGroup</code>: When un-grouping,
+                eg when clicking the 'x' on a column in the drop zone, the column will
+                not be made visible.
+            </li>
+        </ul>
+        The default behaviour is more natural for most scenarios as it stops data
+        appearing twice. E.g. if country is displayed in group column, there is no
+        need to display country again in the country column.
+    </p>
+
+    <p>
+        The example below demonstrates these two properties. Note the following:
+        <ul>
+            <li>
+                Columns country and year can be grouped by dragging the column
+                to the group drop zone.
+            </li>
+            <li>
+                Grouped columns can be un-grouped by clicking the 'x' on the column
+                in the drop zone.
+            </li>
+            <li>
+                The column visibility is not changed while the columns are grouped
+                and un-grouped.
+            </li>
+        </ul>
+    </p>
+
+    <?= example('Keep Columns Visible', 'keep-columns-visible', 'generated', array("enterprise" => 1)) ?>
 
     <h2 id="fullWidthRows">Full Width Group Rows</h2>
 
@@ -536,7 +591,7 @@ colDef = {
 
     <p>
         If you want to include a footer with each group, set the property <code>groupIncludeFooter</code> to true.
-        The footer is displayed as the last line of the group when then group is expanded - it is not displayed
+        The footer is displayed as the last line of the group when the group is expanded - it is not displayed
         when the group is collapsed.
     </p>
     <p>
@@ -570,7 +625,16 @@ cellRendererParams: {
 
     <?= example('Group Footers', 'grouping-footers', 'generated', array("enterprise" => 1)) ?>
 
-    </p>
+    <note>
+        Group footers are a UI concept only in the grid. It is the grids way of showing aggregated data (which belongs
+        to the group) appearing after the group's children. Because the footer is a UI concept only, the following
+        should be noted:
+        <ul>
+            <li>It is not possible to select footer nodes. Footer rows appear selected when the group is selected.</li>
+            <li>Footer rows are not parted of the iterated set when the api method <code>api.forEachNode()</code> is called.</li>
+            <li>Footer nodes are not exported to CSV or Excel.</li>
+        </ul>
+    </note>
 
     <h2 id="keeping-group-state">Keeping Group State</h2>
 

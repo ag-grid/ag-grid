@@ -22,6 +22,11 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        enableRowGroup: true,
+        enablePivot: true,
+        enableValue: true
+    },
     pivotMode: true,
     groupDefaultExpanded: 9,
     columnDefs: columnDefs,

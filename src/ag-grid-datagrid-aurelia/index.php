@@ -1,4 +1,3 @@
-
 <?php
 
 $pageTitle = "ag-Grid Blog: Announcing Aurelia Datagrid support";

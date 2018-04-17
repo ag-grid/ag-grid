@@ -87,8 +87,12 @@ interface IEnterpriseDatasource {
 <snippet>
 interface IEnterpriseGetRowsParams {
 
-    // details for the request
+    // details for the request, simple object, can be converted to JSON
     request: IEnterpriseGetRowsRequest;
+
+    // the parent row node. is the RootNode (level -1) if request is top level.
+    // this is NOT part fo the request as it cannot be serialised to JSON (a rowNode has methods)
+    parentNode: RowNode;
 
     // success callback, pass the rows back the grid asked for.
     // if the total row count is known, provide it via lastRow, so the
@@ -334,6 +338,14 @@ export interface ColumnVO {
     MySQL.
 </p>
 
+<p>
+    You can also check out these guides on connecting to other data sources:
+    <ul>
+        <li><a href="../oracle-server-side-operations/">Java Server connecting to Oracle</a></li>
+        <li><a href="../spark-server-side-operations/">Java Server connecting to Apache Spark</a></li>
+    </ul>
+</p>
+
 <note>
     The example is provided to show what logic you will need on the server side. It is
     provided 'as is' and we hope you find it useful. It is not provided as part of the
@@ -451,6 +463,35 @@ gridOptions.getChildCount = function(data) {
 <note>
     Purging the cache and dynamic row heights do not work together for the Enterprise Row Model.
     If you are using dynamic row height, ensure 'maxBlocksInCache' is not set.
+</note>
+
+<h2>Auto Row Height</h2>
+
+<p>
+    To have the grid calculate the row height based on the cell contents, set <code>autoHeight=true</code>
+    on columns that require variable height. The grid will calculate the height once when the data is loaded
+    into the grid.
+</p>
+
+<p>
+    This is different to the <a href="../javascript-grid-in-memory/">In Memory Row Model</a> where the
+    grid height can be changed. For Enterprise Row Model the row height cannot be changed once it is set.
+</p>
+
+<p>
+    In the example below, the following can be noted:
+    <ul>
+        <li>All top level groups are the same height.</li>
+        <li>All bottom level rows are auto-sized based on the contents of the Auto A, Auto B and Auto C columns.</li>
+        <li>All columns with auto-size have CSS <code>white-space: normal</code> to wrap the text.</li>
+    </ul>
+</p>
+
+<?= example('Auto Row Height Example', 'auto-row-height', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
+
+<note>
+    Purging the cache and auto row heights do not work together for the Enterprise Row Model.
+    If you are using auto row height, ensure 'maxBlocksInCache' is not set.
 </note>
 
 <h2>Enterprise Model API</h2>

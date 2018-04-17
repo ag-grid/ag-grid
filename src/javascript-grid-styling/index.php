@@ -247,7 +247,7 @@ include '../documentation-main/documentation_header.php';
             attributes cannot be set as classes, they are set as dynamic styles by ag-Grid.</li>
     </ul>
 
-<snippet>&lt;div class='ag-root ag-layout-normal'>
+<snippet language="html">&lt;div class='ag-root ag-layout-normal'>
 
     &lt;!-- header -->
     &lt;div class="ag-header">
@@ -334,7 +334,7 @@ include '../documentation-main/documentation_header.php';
         When laying out for printing, there are no pinned columns and no viewports for scrolling.
     </p>
 
-<snippet>&lt;div class="ag-root ag-layout-for-print">
+<snippet language="html">&lt;div class="ag-root ag-layout-for-print">
 
     &lt;!-- header -->
     &lt;div class="ag-header-container">

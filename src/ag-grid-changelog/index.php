@@ -96,6 +96,7 @@ $report_type = 'changelog';
 
 $json_decoded = retrieveJiraFilterData($report_type);
 $fixVersions = extractFixVersions($json_decoded);
+$currentFixVersion = isset($_GET["fixVersion"]) ? htmlspecialchars($_GET["fixVersion"]) : 'all';
 $moreInformationMap = extractMoreInformationMap($json_decoded);
 $keyToMoreInfo = $moreInformationMap['more_info'];
 $keyToBreakingChanges = $moreInformationMap['breaking'];
@@ -112,10 +113,8 @@ $keyToDeprecations = $moreInformationMap['deprecation'];
 
                 For a list of up and coming Bug Fixes and Features please refer to our <a
                         href="../ag-grid-pipeline">Pipeline</a>.<br/></br>
-                Documentation for previous versions can be found under
-                https://www.ag-grid.com/archive/_version_/<br/><br/>For example,
-                the documentation for version 14.2.0 can be found at <a
-                        href="https://www.ag-grid.com/archive/14.2.0/">https://www.ag-grid.com/archive/14.2.0/</a>
+                Documentation for previous versions can be found
+<a href="https://www.ag-grid.com/archive/">here.</a>
             </div>
             <div class="global-search-pane" style="display: inline-block;width:100%">
                 <input class="clearable global-report-search" style="float: left;height: 50px" type="text"
@@ -125,11 +124,11 @@ $keyToDeprecations = $moreInformationMap['deprecation'];
                         <tr>
                             <td>
                                 <select id="fixVersionFilter" style="margin-right: 20px">
-                                    <option selected>All Versions</option>
+                                    <option <?=$currentFixVersion == 'all' ? 'selected' : '' ?>>All Versions</option>
                                     <?php
                                     foreach ($fixVersions as &$value) {
                                         ?>
-                                        <option><?= $value ?></option>
+                                        <option <?=$currentFixVersion == $value ? 'selected' : '' ?>><?= $value ?></option>
                                         <?php
                                     }
                                     ?>
@@ -162,6 +161,9 @@ $keyToDeprecations = $moreInformationMap['deprecation'];
                     <span class='aui-lozenge-complete' style='padding: 1px; border-radius: 2px'>D</span> Deprecation
                 </span>
                 <span class='aui-lozenge-error' style='padding: 1px; border-radius: 2px'>B</span> Breaking Changes
+            </div>
+            <div>
+                <?php include_once 'versionReleaseNotes.php' ?>
             </div>
             <div>
                 <table class="aui" id="<?= 'content_' . $report_type ?>">

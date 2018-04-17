@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "ag-Grid Features: Context";
+$pageTitle = "ag-Grid Features: Context Object";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. It provides the ability to pass down values to the renderers or use in the rendering process. These are stored in the context in the grid options.";
 $pageKeyboards = "ag-Grid Context";
 $pageGroup = "feature";

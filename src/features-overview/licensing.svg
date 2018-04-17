@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="320px" height="180px" viewBox="0 0 320 180" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.2 (51160) - http://www.bohemiancoding.com/sketch -->
+    <title>licensing</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M25.6112942,138.667926 C9.85846524,124.057253 0,103.179911 0,80 C0,35.81722 35.81722,0 80,0 C103.179911,0 124.057253,9.85846524 138.667926,25.6112942 L25.6112942,138.667926 Z" id="path-1"></path>
+        <path d="M0.152915287,111.567864 L111.567864,0.152915287 C120.662955,13.1360765 126,28.9447714 126,46 C126,90.18278 90.18278,126 46,126 C28.9447714,126 13.1360765,120.662955 0.152915287,111.567864 Z" id="path-3"></path>
+    </defs>
+    <g id="licensing" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="MIT" transform="translate(74.000000, 9.000000)">
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <g id="Mask"></g>
+        </g>
+        <g id="￡" transform="translate(108.000000, 43.000000)">
+            <mask id="mask-4" fill="white">
+                <use xlink:href="#path-3"></use>
+            </mask>
+            <g id="Mask"></g>
+        </g>
+        <text id="MIT" font-family="Roboto-Medium, Roboto" font-size="48" font-weight="400" fill="#4A4A4A">
+            <tspan x="53" y="103">MIT</tspan>
+        </text>
+        <text id="￡" font-family="AppleSymbols, Apple Symbols" font-size="62" font-weight="normal" fill="#4A4A4A">
+            <tspan x="167" y="103">￡</tspan>
+        </text>
+        <path d="M252.5,-9.5 L-4.05896009,247.05896" id="Line" stroke="#9B9B9B" stroke-linecap="square"></path>
+        <rect id="Rectangle-2" stroke="#9B9B9B" x="0.5" y="0.5" width="319" height="179"></rect>
+        <g id="Group" transform="translate(213.000000, 55.000000)">
+            <text id="e" font-family="Roboto-Regular, Roboto" font-size="14" font-weight="normal" fill="#D0021B">
+                <tspan x="2" y="13">e</tspan>
+            </text>
+            <circle id="Oval-2" stroke="#D0021B" stroke-linecap="square" cx="6" cy="9" r="6"></circle>
+        </g>
+    </g>
+</svg>

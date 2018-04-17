@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid - Core Grid Features: Date Filter";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Date Filter. Date Filter allows filtering dates with {equals, notEquals, lessThanOrEqual, greaterThan, greaterThanOrEqual, inRange}. Free and Commercial version available.";
+$pageTitle = "Data Filter: Core Feature of our Datagrid";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Date Filter. Date Filter allows filtering dates with {equals, notEquals, lessThanOrEqual, greaterThan, greaterThanOrEqual, inRange}. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Date Filter";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -54,6 +54,11 @@ colDef: {
         is the first item in the filterOptions</li>
     <li><code>nullComparator:</code> If specified, it will be used to specify if null values should be included when filtering.
         See: <a href="../javascript-grid-filtering#nullFiltering">Null filtering</a></li>
+    <li><code>browserDatePicker:</code> This is only taking into consideration if there isn’t a date component provided. By default the grid will use
+        the browser date picker in Chrome and a plain text box for all other browsers (this is because Chrome is the only
+        browser providing a decent out of the box date picker). If this property is true, the browser date picker will
+        be used regardless of the browser type.
+    </li>
 </ul>
 
 

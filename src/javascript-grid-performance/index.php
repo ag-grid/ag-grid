@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid: Datagrid Performance";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. The core grid engine gives Performance unlike that seen before. The grid uses row and column virtualisation, animation frames and many other techniques. Free and Commercial version available.";
+$pageTitle = "ag-Grid: Optimising your Datagrid Performance";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. The core grid engine gives Performance unlike that seen before. The grid uses row and column virtualisation, animation frames and many other techniques. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Performance";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -91,6 +91,18 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <h2>7. Understand</h2>
+
+    <p>
+        For fast changing data, consider using
+        <a href="/javascript-grid-data-update/#batch-transactions">Batch Update Transactions</a>
+        which allows the grid to take very large amounts of updates without bringing the browser
+        to a crawl. This is also demonstrated in the blog
+        <a href="https://medium.com/ag-grid/how-to-test-for-the-best-html5-grid-for-streaming-updates-53545bb9256a">
+            Streaming Updates in JavaScript Datagrids
+        </a> that shows hundreds of thousands of updates per second.
+    </p>
+
+    <h2>8. Understand</h2>
 
     <p>
         Read the article <a href="../ag-grid-8-performance-hacks-for-javascript/">8 Performance Hacks for JavaScript</a>

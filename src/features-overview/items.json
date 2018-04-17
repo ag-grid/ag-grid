@@ -1,0 +1,346 @@
+[
+    {
+        "title": "The Headliners",
+        "summary":
+            "What makes ag-Grid different from the other grids? We are proud of the amount of polish and completeness of our grid; the features below are our personal favourites. They are hard to find in alternative offerings, let alone combined and working out of the box together at the level we offer.",
+        "items": [
+            {
+                "title": "Outstanding Performance",
+                "img": "performance.gif",
+                "description": " Out of the box, Ag-Grid is designed to perform smoothly with millions of records. No specific configuration required.",
+                "links": [
+                    {
+                        "title": "100 000 rows, 25 columns demo",
+                        "url": "#"
+                    },
+                    {
+                        "title": "1 000 000 records demo",
+                        "url": "#"
+                    }
+                ]
+            },
+            {
+                "title": "Works With Your Framework",
+                "img": "frameworks.png",
+                "description":
+                    "Ag-Grid supports all major web frameworks through idiomatic, hand-crafted wrappers. You don't use any of these? No problem, we support vanilla JavaScript too.",
+                "links": [
+                    {
+                        "title": "Angular Demo",
+                        "url": "#"
+                    },
+                    {
+                        "title": "React Demo",
+                        "url": "#"
+                    },
+                    {
+                        "title": "Vanilla JS Demo",
+                        "url": "#"
+                    }
+                ]
+            },
+            {
+                "title": "Grouping / Aggregation",
+                "img": "grouping-aggregation.gif",
+                "description":
+                    "Let your users explore their data. ag-Grid allows the end user to group by specific columns. Optionally, you can display various aggregate column values in the grouped row.",
+                "links": [
+                    {
+                        "title": "Grouping Rows Demo",
+                        "url": "#"
+                    },
+                    {
+                        "title": "Aggregation Demo",
+                        "url": "#"
+                    }
+                ]
+            },
+            {
+                "title": "Filtering",
+                "img": "filtering.gif",
+                "description":
+                    "ag-Grid comes with an extensive set of built-in column filter types.  You can also filter by all columns simultaneously with quick filtering. You can even implement your own custom filtering UI and logic.",
+                "links": [
+                    {
+                        "title": "Column Filters Demo",
+                        "url": "#"
+                    },
+                    {
+                        "title": "Quick Filter Demo",
+                        "url": "#"
+                    },
+                    {
+                        "title": "Floating Filter Demo",
+                        "url": "#"
+                    },
+                    {
+                        "title": "External Filter Demo",
+                        "url": "#"
+                    }
+                ]
+            },
+            {
+                "title": "Cell Editing",
+                "img": "editing.gif",
+                "description": "Users can update data with cell editing. Use one of the provided cell editors or create your own to suit your business needs.  ",
+                "links": [
+                    {
+                        "title": "Built-in Editors Demo",
+                        "url": "#"
+                    },
+                    {
+                        "title": "Custom Editors Demo",
+                        "url": "#"
+                    }
+                ]
+            },
+            {
+                "title": "Lazy Loading",
+                "img": "lazy-loading.gif",
+                "description":
+                    "Save your server resources! Ag-Grid can request the right amount of records just in time when the user scrolls, or when filtering / sorting / paging is applied.",
+                "links": [
+                    {
+                        "title": "Infinite Scrolling Demo",
+                        "url": "#"
+                    }
+                ]
+            },
+            {
+                "title": "Server-Side Operations",
+                "img": "server-side-operations.gif",
+                "description": "Dealing with extremely large data sets? Perform the heavy / complex filtering and sorting using your database. ",
+                "links": [
+                    {
+                        "title": "ag-Grid / MySQL Walkthrough",
+                        "url": "#"
+                    },
+                    {
+                        "title": "ag-Grid / Oracle Walkthrough",
+                        "url": "#"
+                    }
+                ]
+            },
+            {
+                "title": "Live Stream Updates",
+                "img": "live-updates.gif",
+                "description": "The data in the grid can be updated in real time. The grid can easily handle hundreds of updates per second while being fully responsive. ",
+                "links": [
+                    {
+                        "title": "Live Streaming Demo",
+                        "url": "#"
+                    }
+                ]
+            },
+            {
+                "title": "Tree Data",
+                "img": "tree-data.gif",
+                "description":
+                    "You can easily display data has parent / child relationships by passing the relationship as part of the data. For example, a folder can contain zero or more files and other folders.",
+                "links": [
+                    {
+                        "title": "Tree Data Demo",
+                        "url": "#"
+                    }
+                ]
+            },
+            {
+                "title": "Customisable Appearance",
+                "img": "customizable-appearance.gif",
+                "description":
+                    "Ag-Grid ships several different themes. Pick one that matches your project look and feel, and fully customise so that the grid is consistent with your application.",
+                "links": [
+                    {
+                        "title": "Themes Overview",
+                        "url": "#"
+                    },
+                    {
+                        "title": "Customizing a Theme",
+                        "url": "#"
+                    }
+                ]
+            },
+            {
+                "title": "Convenient Licensing",
+                "img": "licensing.svg",
+                "description":
+                    "Ag-Grid Community is MIT licensed, no strings attached. ag-Grid Enterprise comes with a commercial license, that works for both Single and Multiple App Developers. Both are in public GitHub repositories.",
+                "links": [
+                    {
+                        "title": "Our Pricing",
+                        "url": "#"
+                    },
+                    {
+                        "title": "Free / Enterprise Comparison",
+                        "url": "#"
+                    },
+                    {
+                        "title": "Ag-Grid in GitHub",
+                        "url": "#"
+                    }
+                ]
+            },
+            {
+                "title": "Commercial Grade Support",
+                "img": "support.svg",
+                "description": "Ag-Grid Enterprise comes with a private support by the ag-Grid development team itself, with a guaranteed 24 hour response time.",
+                "links": [
+                    {
+                        "title": "Request a Trial",
+                        "url": "#"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "title": "The Runner-ups",
+        "summary":
+            "Still not convinced? Let's show you some more then. Some of the these are truly unique to ag-Grid. We know the enterprise, and the complex scenarios you developers should deal with on a daily basis. ",
+        "items": [
+            {
+                "title": "Pivoting",
+                "img": "pivoting.gif",
+                "description": "Empower your advanced users! Let them make columns out of values by pivoting on the data, similar to Pivot Tables in Excel.",
+                "links": [
+                    {
+                        "title": "Pivoting Demo",
+                        "url": "#"
+                    }
+                ]
+            },
+            {
+                "title": "Master / Detail",
+                "img": "master-detail.gif",
+                "description": "Master Detail lets your users expand rows and have an additional grid with different columns inside.",
+                "links": [
+                    {
+                        "title": "Master/Detail Demo",
+                        "url": "#"
+                    }
+                ]
+            },
+            {
+                "title": "State Persistence",
+                "img": "state-persistance.gif",
+                "description":
+                    "Let your users resume their work from where they left. ag-Grid lets you save and restore the user's grid preferences, including filtering, sorting and column order/visibility. ",
+                "links": [
+                    {
+                        "title": "State Persistence Demo",
+                        "url": "#"
+                    }
+                ]
+            },
+            {
+                "title": "Rich UI",
+                "img": "rich-ui.gif",
+                "description":
+                    "The grid exposes its features through several modules - column headers and menus, context menu, tool panel, and status bar. Extend these further with your own custom bits when necessary.",
+                "links": [{ "title": "Built-in UI Demo", "url": "#" }, { "title": "Custom UI Demo", "url": "#" }]
+            },
+            {
+                "title": "Enables Productivity",
+                "img": "touch-support.gif",
+                "description":
+                    "Ag-Grid is fully keyboard navigable for your users' maximum productivity. It is also fully functional on touch devices. You can even provide  a print friendly version of it.",
+                "links": [{ "title": "Keyboard Navigation Demo", "url": "#" }, { "title": "Print Layout Demo", "url": "#" }]
+            },
+            {
+                "title": "Wide Audience Support",
+                "img": "rtl.gif",
+                "description": "ag-Grid conforms to the WAI-ARIA and Section 508 specs, and also support i18n / RTL. ",
+                "links": [{ "title": "I18n Demo", "url": "#" }, { "title": "RTL Demo", "url": "#" }]
+            },
+            {
+                "title": "Data Export",
+                "img": "data-export.gif",
+                "description": "Let your users export data to CSV or Excel file format right from the grid. The excel format preserves the styling.",
+                "links": [{ "title": "Excel Export Demo", "url": "#" }, { "title": "CSV Export Demo", "url": "#" }]
+            },
+            {
+                "title": "Customisable Cell Contents",
+                "img": "customizable-cell-contents.gif",
+                "description":
+                    "Ag-Grid allows you to change the format of the data displayed for a certain column, add additional markup to the cell, or even insert custom components written in your framework of choice.",
+                "links": [{ "title": "Value Formatting Demo", "url": "#" }, { "title": "Custom Cell Components Demo", "url": "#" }]
+            },
+            {
+                "title": "Row Reordering",
+                "img": "row-reordering.gif",
+                "description": "Let your users change the order of the records displayed. ag-Grid exposes convenient API for persisting the order changes.",
+                "links": [{ "title": "Row Reordering Demo", "url": "#" }]
+            },
+            {
+                "title": "Copy / Paste",
+                "img": "copy-paste.gif",
+                "description": "Ag-Grid supports range cell selection and allows the users to copy / paste data from the grid to a another grid or a spreadsheet and vice versa.",
+                "links": [{ "title": "Clipboard Demo", "url": "#" }]
+            }
+        ]
+    },
+    {
+        "title": "The Basics",
+        "summary": "Goes without saying, We've got the features everyone expects from a datagrid. And they work flawlessly. ",
+        "items": [
+            {
+                "title": "Column Interactions",
+                "img": "column-interactions.gif",
+                "description":
+                    "Ag-Grid allows the user to resize, reorder, and pin columns to the left or right side. You can also stick the columns in expanding / collapsing groups.",
+                "links": [{ "title": "Resizing and Reordering Demo", "url": "#" }, { "title": "Pinned Columns Demo", "url": "#" }, { "title": "Column Groups Demo", "url": "#" }]
+            },
+            {
+                "title": "Pagination",
+                "img": "pagination.gif",
+                "description": "Instead of long scrolling, you can configure the grid to display paging controls that allow the users to jump to a specific page of the data set",
+                "links": [{ "title": "Paging Demo", "url": "#" }]
+            },
+            {
+                "title": "Sorting",
+                "img": "sorting.gif",
+                "description": "Enabling sorting lets your users sort a column by clicking the header and sort multiple columns by holding down shift.",
+                "links": [{ "title": "Sorting Demo", "url": "#" }]
+            },
+            {
+                "title": "Selection",
+                "img": "selection.gif",
+                "description": "Row Selection allows your users to select rows either by clicking on them or by using a checkbox column.",
+                "links": [{ "title": "Selection Demo", "url": "#" }, { "title": "Checkbox Selection Demo", "url": "#" }]
+            }
+        ]
+    },
+    {
+        "title": "The Rares",
+        "summary":
+            "And the list goes on. We are on the constant lookout to push the envelope of what is achievable with the grid. The following are not used that often, but can be life savers in certain scenarios.",
+        "items": [
+            {
+                "title": "Column Spanning",
+                "img": "column-spanning.gif",
+                "description": "Column Spanning allows cells to span columns, similar to cell span in Excel.",
+                "links": [{ "title": "Column Spanning Demo", "url": "#" }]
+            },
+            {
+                "title": "Pinned Rows",
+                "img": "pinned-rows.gif",
+                "description":
+                    "Typically used for displaying totals or other aggregation, pinned rows can be displayed either at the top or the bottom, and are always visible to the user.  ",
+                "links": [{ "title": "Pinned Rows", "url": "#" }]
+            },
+            {
+                "title": "Full Width Rows",
+                "img": "full-width-rows.gif",
+                "description": "Full width rows allow you to display information that does not fit tabular format. You can display them alongside regular rows.",
+                "links": [{ "title": "Full Width Rows Demo", "url": "#" }]
+            },
+            {
+                "title": "Aligned Grids",
+                "img": "aligned-grids.gif",
+                "description":
+                    "Aligned grids will bind two or more grid instances so that any column changes in one grid impact the other grid. This allows two grids with different data to be kept horizontally in sync.  ",
+                "links": [{ "title": "Aligned Grids Demo", "url": "#" }]
+            }
+        ]
+    }
+]

@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid - Styling & Appearance: Column Headers";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Column Headers. The display of column headers can be fine-tuned to change Header Height and Text Orientation for example. Free and Commercial version available.";
+$pageTitle = "Column Header: Styling & Appearance Feature of our Datagrid";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Column Headers. The display of column headers can be fine-tuned to change Header Height and Text Orientation for example. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "grid header";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

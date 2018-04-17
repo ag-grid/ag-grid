@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid - Core Grid Features: Touch support";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Touch Support. User can navigate the features of the grid on a touch device with the built-in Touch Support. You don't need to do anything, it works out of the box. Free and Commercial version available.";
+$pageTitle = "Touch support: Core Feature of our Datagrid";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Touch Support. User can navigate the features of the grid on a touch device with the built-in Touch Support. You don't need to do anything, it works out of the box. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "JavaScript DataGrid Touch";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -54,6 +54,20 @@ include '../documentation-main/documentation_header.php';
                 Drag columns out of the row group and pivot drop zones by dragging.
             </li>
         </ul>
+
+<h2 class="heading-viewport-zooming">Enabling Double Clicking on Mobile Devices</h2>
+
+<p>
+    The default behaviour on many mobile devices when a page is double clicked on it to zoom in. To prevent this behaviour
+    so that a double click would, for example, edit a cell you need to disable viewport zooming.
+</p>
+
+<p>You can disable viewport zooming by setting the following tag at the top level page:</p>
+
+<snippet language="html">
+&lt;meta name="viewport" content="width=device-width, initial-scale=1" /&gt;
+</snippet>
+
 
 
 

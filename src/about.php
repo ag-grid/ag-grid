@@ -7,7 +7,7 @@ gtm_data_layer('about');
 <html lang="en">
 <head lang="en">
 <?php
-meta_and_links("ag-Grid: About our Company", "About ag-Grid", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is the story of ag-Grid and explains our mission, where we came from and who we are.", true);
+meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-Grid", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is the story of ag-Grid and explains our mission, where we came from and who we are.", true);
 ?>
 <link rel="stylesheet" href="dist/homepage.css">
 </head>
@@ -27,11 +27,11 @@ meta_and_links("ag-Grid: About our Company", "About ag-Grid", "ag-Grid is a feat
             <h1>Our Mission</h1>
 
             <p class="lead">
-                At ag-Grid, our mission is simple: <strong>Build the best data grid in the world</strong>.  
+                At ag-Grid, our mission is simple: <strong>Build the best datagrid in the world</strong>.  
             </p>
 
             <p>
-                Born out of frustration with existing solutions, <strong>ag-Grid</strong> evolved from a side project to becoming the leading JavaScript datagrid on the market. We are a company built by developers for developers, and - true to our roots - we offer <strong>ag-Grid Free</strong>: an open-source project that delivers world class grid performance. <strong>ag-Grid Enterprise</strong> is our commercially-licensed offering which has enjoyed widespread adoption and permits us to keep delivering on our mission.
+                Born out of frustration with existing solutions, <strong>ag-Grid</strong> evolved from a side project to becoming the leading JavaScript datagrid on the market. We are a company built by developers for developers, and - true to our roots - we offer <strong>ag-Grid Community</strong>: a free and open-source project that delivers world class grid performance. <strong>ag-Grid Enterprise</strong> is our commercially-licensed offering which has enjoyed widespread adoption and facilitates us to keep delivering on our mission.
             </p>
 
             <p>    
@@ -43,7 +43,7 @@ meta_and_links("ag-Grid: About our Company", "About ag-Grid", "ag-Grid is a feat
             </p>
 
             <p>
-                Today, <strong>ag-Grid</strong> is a self-funded, bootstrapped company with over 1,000 customers in 52 countries. Our product has resonated in the market - as our users face the same challenges Niall did - and this has been central to our rapid growth. And we’re not stopping here: we are furiously working on the next great features to continue our mission.
+                Today, <strong>ag-Grid</strong> is a self-funded, bootstrapped company with over 1,200 customers in 65 countries. Our product has resonated in the market - as our users face the same challenges Niall did - and this has been central to our rapid growth. And we’re not stopping here: we are working on the next great features to continue our mission.
             </p>
 
             <h2> Our Principles</h2>
@@ -52,7 +52,7 @@ meta_and_links("ag-Grid: About our Company", "About ag-Grid", "ag-Grid is a feat
 
             <p>Our experience is in building Enterprise applications: we know that the datagrid is at the core of an Enterprise application, and needs to deliver performance and a rich feature set.  </p>
 
-            <p>We give away what others charge for. <strong>ag-Grid Free</strong> provides all of the features of our competion. We only charge when we go above and beyond, with features that other grids don’t provide.  </p>
+            <p>We give away what others charge for. <strong>ag-Grid Community</strong> provides all of the features of our competition. We only charge when we go above and beyond, with features that other grids don’t provide.  </p>
 
             <h2 id="team">The Technical Team</h2>
 
@@ -89,7 +89,10 @@ meta_and_links("ag-Grid: About our Company", "About ag-Grid", "ag-Grid is a feat
                         <h3>Alberto Gutierrez</h3>
                         <h4>Lead Developer, <br> Data Internals</h4>
                         <p>
-                            Alberto joined the team in early 2017 and further broadens the Enterprise applications experience. With over 15 years across multiple industries, Alberto has been involved in all aspects of the software development lifecycle. He has joined Niall in enhancing and expanding the core features of the grid as well as contributing technical and industry knowledge. 
+                            Alberto joined the team in early 2017 and further broadens the Enterprise applications experience. 
+                            With over 15 years across multiple industries, Alberto has been involved in all aspects of the 
+                            software development lifecycle. He has joined Niall in enhancing and expanding the core features 
+                            of the grid as well as contributing technical and industry knowledge. 
                         </p>
                     </div>
 
@@ -104,7 +107,9 @@ meta_and_links("ag-Grid: About our Company", "About ag-Grid", "ag-Grid is a feat
                         <h3>Rob Clarke</h3>
                         <h4>Lead Developer, <br> Enterprise Applications</h4>
                         <p>
-                            Rob is a Software Architect and Developer who specialises in complex data-centric enterprise applications within Finance. He is expert in numerous server and client side programming languages and technologies which he uses to drive forward the core engine of ag-Grid.
+                            Rob is a Software Architect and Developer who specialises in complex data-centric enterprise
+                             applications within Finance. He is expert in numerous server and client side programming 
+                            languages and technologies which he uses to drive forward the core engine of ag-Grid.
                         </p>
                     </div>
 
@@ -115,27 +120,30 @@ meta_and_links("ag-Grid: About our Company", "About ag-Grid", "ag-Grid is a feat
                         <h3>Petyo Ivanov</h3>
                         <h4>Lead Developer, UI</h4>
                         <p>
-                            With more than a decade of experience in front-end web technologies, Petyo ensures that ag-Grid takes advantage of industry best practice. He is also charged with improving the look and feel of the grid and the overall user experience.
+                            With more than a decade of experience in front-end web technologies, Petyo ensures that ag-Grid
+                             takes advantage of industry best practice. He is also charged with improving the look and feel 
+                            of the grid and the overall user experience.
                         </p>
                     </div>
 
                     <div class="col-md-4">
                         <div>
-                            <img src='images/team/sophia.jpg'/>
+                            <img src='images/team/Rod.png'/>
                         </div>
-                        <h3>Sophia Lazarova</h3>
-                        <h4>Developer Advocate</h4>
+                        <h3>Rod Smith</h3>
+                        <h4>Support Engineer</h4>
                         <p>
-                            Sophia is an active JavaScript community member and regularly speaks at
-                            meetups and conferences. As a developer advocate her goal is to help
-                            users of ag-Grid have an excellent experience with our product.
+                            Rod joins the team to provide a dedicated support for our
+                            growing customer base through Zendesk. He is an experienced
+                            Developer across many technologies and has become an expert
+                            on ag-Grid and how it's used in our customers' applications.
                         </p>
                     </div>
 
                 </div>
             </div>
 
-            <h2 id="customer_team"> The Customer Experience Team</h2>
+            <h2 id="operations_team"> The Operations Team</h2>
 
             <div class="inline-container team">
                 <div class="row">
@@ -145,11 +153,34 @@ meta_and_links("ag-Grid: About our Company", "About ag-Grid", "ag-Grid is a feat
                             <img src='images/team/john.jpg'/>
                         </div>
                         <h3>John Masterson</h3>
-                        <h4>Customer Experience Manager</h4>
+                        <h4>COO</h4>
                         <p>
-                            John was the first business focused hire at ag-Grid and joined in late 2016 to manage and grow the customer base. He has an operations and product management background and has always focused on the end user of technology. John is always available to deal with customer queries as well as building ag-Grid's infrastructure for growth.
+                            John was the first business focused hire at ag-Grid and joined in late 2016 to manage and grow the customer base. 
+                            As the company has grown, he has moved into the COO role but his focus remains on ensuring our customers receive
+                            best-in-class service. His background is in operations and product management always with an eye on the end user of technology.
+                            John heads up the customer team and is always available to deal with customer queries as well as building ag-Grid's infrastructure for growth.
                         </p>
                     </div>
+                    
+                    <div class="col-md-4">
+                        <div>
+                            <img src='images/team/Fahad.jpg'/>
+                        </div>
+                        <h3>Fahad Ahmad</h3>
+                        <h4>Digital Marketing Executive</h4>
+                        <p>
+                            Fahad joins the company as the first employee with a primary focus on Digital Marketing. He comes with a background in Digital 
+                            Marketing, Social Media Management and Content Creation. He is charged with the task of improving ag-Grid’s digital footprint 
+                            using his expertise.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <h2 id="customer_team"> The Customer Team</h2>
+
+            <div class="inline-container team">
+                <div class="row">
 
                     <div class="col-md-4">
                         <div>
@@ -158,8 +189,9 @@ meta_and_links("ag-Grid: About our Company", "About ag-Grid", "ag-Grid is a feat
                         <h3>Bas Rahman</h3>
                         <h4>Customer Experience Team</h4>
                         <p>
-                            Bas joined the team to manage our evergrowing customer base - she has broad experience in dealing with customers and internal stakeholders from previous roles in startups and 
-                            consulting companies.
+                            Bas joined the team to manage our evergrowing customer base - she has broad experience in dealing with customers 
+                            and internal stakeholders from previous roles in startups and consulting companies. Recently, Bas has been managing
+                            ag-Grid participation in conferences and making sure everything runs smoothly for these events.
                         </p>
                     </div>
 
@@ -170,7 +202,9 @@ meta_and_links("ag-Grid: About our Company", "About ag-Grid", "ag-Grid is a feat
                         <h3>Dimple Unalkat</h3>
                         <h4>Customer Experience Team</h4>
                         <p>
-                            Dimple also joined as we expanded our customer team. She brings a wealth of sales and customer service experience from her previous roles in B2B sales.
+                            Dimple joined the company along with Bas in our first round of expansion of the customer team. She brings a wealth of 
+                            sales and customer service experience from her previous roles in B2B sales. Since joining, Dimple has taken control of 
+                            a number of important financial functions and is a specialist in customer retention.
                         </p>
                     </div>
                 </div>

@@ -3,7 +3,7 @@ $pageTitle = "ag-Grid: The Best Aurelia Datagrid in the World";
 $pageDescription = "A feature rich data grid designed for Enterprise applications. Easily integrate with Aurelia to deliver filtering, grouping, aggregation, pivoting and much more. Try our Community version now or take a free 2 month trial of Enterprise Version.";
 $pageKeyboards = "Aurelia Datagrid";
 $pageGroup = "basics";
-include '../documentation-main/documentation_header.php';
+include '../getting-started/header.php';
 ?>
 
 <div>
@@ -376,4 +376,4 @@ private getCountryFilterParams():any {
     to learn about accessing all the features of the grid.
 </p>
 
-<?php include '../documentation-main/documentation_footer.php'; ?>
+<?php include '../getting-started/footer.php'; ?>

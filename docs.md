@@ -124,7 +124,6 @@
  - [ ] example-angular/
  - [ ] angular-getting-started/#angular-rich-grid-example
  - [ ] angular-more-details/#example-rich-grid-using-markup
- - [ ] example-angular-dynamic/
  - [ ] javascript-grid-cell-editor/#example-cell-editing-using-angular-components
  - [ ] javascript-grid-filter-component/#example-filtering-using-angular-components
  - [ ] javascript-grid-floating-filter-component/#ng2Angular

@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "ag-Grid Reference: Overview";
+$pageTitle = "ag-Grid Reference: Overview Section";
 $pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. This page is an overview of the Reference documentation. This section explains how to configure the the grid's properties, events, callbacks and API.";
 $pageKeyboards = "html5 data grid ag-Grid reference events functions api";
 $pageGroup = "reference";

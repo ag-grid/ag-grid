@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "ag-Grid Detailed Guides: React Redux Integration";
+$pageTitle = "React Redux Integration: Part 1 of a detailed guide from ag-Grid";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is a detailed guide on how to use with React and Redux. We explore how a React component using ag-Grid can take advantage of a Redux store to simplify state management.";
 $pageKeyboards = "React Redux Grid";
 $pageGroup = "basics";

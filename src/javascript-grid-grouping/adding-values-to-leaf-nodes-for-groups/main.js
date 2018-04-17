@@ -1,7 +1,19 @@
 var columnDefs = [
-    {headerName: "Country", field:'country', width: 200, rowGroup:true, showRowGroup:'country', cellRenderer:'agGroupCellRenderer'},
-    {headerName: "Year - Group", valueGetter: function (params){return params.data ? params.data.athlete : null}, width: 150, showRowGroup:'year', cellRenderer:'agGroupCellRenderer'},
-    {headerName: "Year", field:'year', width: 150, rowGroup:true, hide: true},
+
+    {
+        headerName: "Country", width: 200, showRowGroup:'country', cellRenderer:'agGroupCellRenderer',
+        filterValueGetter: function(params) { return params.data ? params.data.country : null; }
+    },
+
+    {field:'country', rowGroup: true, hide: true},
+
+    {
+        headerName: "Year / Athlete", width: 150, showRowGroup:'year', cellRenderer:'agGroupCellRenderer',
+        valueGetter: 'data ? data.athlete : null'
+    },
+
+    {field: 'year', rowGroup: true, hide: true},
+
     {headerName: "Sport", field: "sport", width: 110},
     {headerName: "Athlete", field: "athlete", width: 200},
     {headerName: "Gold", field: "gold", width: 100},
@@ -13,6 +25,7 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    enableColResize: true,
     columnDefs: columnDefs,
     animateRows: true,
     enableRangeSelection: true,

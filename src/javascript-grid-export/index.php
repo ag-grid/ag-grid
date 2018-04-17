@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid - Core Grid Features: CSV Export";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is CSV Export. Use CSV Export to take data out of the grid and into another application for further processing such as Excel. Free and Commercial version available.";
+$pageTitle = "Excel Export: Core Feature of our Datagrid";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is CSV Export which is used to take data out of the grid and into another application for further processing such as Excel. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Data Export Javascript CSV";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid - Styling & Appearance: Row Height";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Row Height. Rows can have different Row Height. You can even change the row height dynamically at run time. Free and Commercial version available.";
+$pageTitle = "Row Height: Styling & Appearance Feature of our Datagrid";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Row Height. Rows can have different Row Height. You can even change the row height dynamically at run time. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid ag grid javascript Row Height";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -83,6 +83,70 @@ gridOptions.getRowHeight = function(params) {
     </p>
 
     <?= example('Row Height Complex', 'row-height-complex', 'generated') ?>
+
+    <h2>Auto Row Height</h2>
+
+    <p>
+        It is possible to set the row height based on the contents of the cells.
+        To do this, set <code>autoHeight=true</code> on each column where
+        height should be calculated from. For example, if one column is showing
+        description text over multiple lines, then you may choose to select only
+        that column to determine the line height.
+    </p>
+
+    <p>
+        If multiple columns are marked with <code>autoHeight=true</code> then the
+        the height of the largest column is used.
+    </p>
+
+    <p>
+        The height is calculated once when the data is first given to the grid.
+        If the data changes, or the width of a column changes, then you may require the
+        grid to calculate the height again by calling <code>api.resetRowHeights()</code>.
+    </p>
+
+    <p>
+        The example below shows auto height in actions. The following can be noted:
+        <ul>
+            <li>
+                Columns Auto A, Auto B and Auto C have <code>autoHeight=true</code>,
+                so the height of each row is such that it fits all contents form these
+                three columns.
+            </li>
+            <li>All columns with auto-size have CSS <code>white-space: normal</code> to wrap the text.</li>
+            <li>
+                When a column is resized, the grid re-calculated the row heights after
+                the resize is finished.
+            </li>
+        </ul>
+    </p>
+
+    <?= example('Auto Row Height', 'auto-row-height', 'generated') ?>
+
+    <p>
+        Auto height works by the grid creating an off-screen temporary row with all the
+        auto height columns rendered into it. The grid then measures the height of the
+        temporary row. Because DOM interaction is required for each row this can be an
+        intensive process. For this reason be careful of the following:
+        <ul>
+            <li>
+                Only apply auto height to columns where it makes sense. For example if you have
+                many columns that do not require a variable height, then do not set them to auto-height.
+            </li>
+            <li>
+                Do not recalculate auto height to often. In the example above the code checks
+                the columns resize event <code>event.finished</code> so that the height is only calculated
+                when the resize is complete, rather than re-calculating the height continually
+                during the column resizing.
+            </li>
+            <li>
+                For large data grids (eg 10,000+ rows) the time taken to calculate the heights
+                may take to long and you may decide not to use the feature in these circumstances.
+                The row limit depends on your browser choice, computer speed and data so you will
+                need to decide for yourself how much data is to much for this feature.
+            </li>
+        </ul>
+    </p>
 
     <h2>Changing Row Height</h2>
 

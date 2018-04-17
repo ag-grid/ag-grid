@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "ag-Grid Row Models: In Memory";
+$pageTitle = "ag-Grid Row Models: In Memory Row Model";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the simplest one is the In Memory model. We recommend using this as a default.";
 $pageKeyboards = "ag-Grid data row model";
 $pageGroup = "row_models";

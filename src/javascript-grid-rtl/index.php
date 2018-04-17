@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid - Styling & Appearance: RTL";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is RTL. Use Right to Left alignment to allow languages such as Arabic & Hebrew. Free and Commercial version available.";
+$pageTitle = "RTL: Styling & Appearance Feature of our Datagrid";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is RTL. Use Right to Left alignment to allow languages such as Arabic & Hebrew. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid RTL";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

@@ -129,10 +129,8 @@ function retrieveJiraFilterData($report_type)
     } else {
         // cache valid? retrieve from cache
         if (cacheEntryValid($report_type, $jira_config)) {
-            echo 'cache valid<br/>';
             $dataAsJson = getFromCache($report_type);
         } else {
-            echo 'cache not valid<br/>';
             // other get live data and update cache for next time
             $dataAsJson = getLiveJiraFilterData($report_type, $maxResults, $jira_config);
             updateCache($report_type, $dataAsJson);

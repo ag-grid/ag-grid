@@ -10,9 +10,9 @@ $version = 'latest';
 <html lang="en">
 <head>
 <?php
-$title = 'ag-Grid: The Best HTML5 Datagrid in the World';
+$title = 'ag-Grid: Datagrid with 63 Features and Lightning Performance';
 $keywords = 'javascript data grid react angularjs angular 2 web components aurelia';
-$description = 'ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. Easily integrate with your framework to deliver filtering, grouping, aggregation, pivoting and much more. Version 16 just released.';
+$description = 'ag-Grid is feature rich datagrid designed for the major JavaScript Frameworks. Version 17 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that your users expect. Our Community version is free and open source or take a 2 month trial of ag-Grid Enterprise.';
 meta_and_links($title, $keywords, $description, false);
 ?>
 <link rel="stylesheet" href="dist/homepage.css">
@@ -35,21 +35,21 @@ meta_and_links($title, $keywords, $description, false);
             </div>
 
             <div>
-                <h2 title="ag-Grid">THE BEST
+                <h1 title="ag-Grid">THE BEST
                     <br>
                     HTML5 GRID
                     <br>
                     IN THE WORLD
-                </h2>
+                </h1>
 
                 <ul id="homepage-highlights">
                     <li>
-                        Over <strong>1,000</strong> Companies
+                        Over <strong>1,200</strong> Companies
                         use ag-Grid Enterprise.
                     </li>
 
                     <li>
-                        Over <strong>15%</strong> of the Fortune 500
+                        Over <strong>20%</strong> of the Fortune 500
                         use ag-Grid Enterprise.
                     </li>
 
@@ -68,7 +68,7 @@ meta_and_links($title, $keywords, $description, false);
     <div id="stage-frameworks">
         <section id="news-flash">
             <div>
-                January 24th, 2018: Version 16 released featuring Row Drag & Drop and Locked Columns. <a href="/ag-grid-blog-16-0-0/">See what is new</a>.
+                April 12th, 2018: <a href="./ag-grid-changelog/?fixVersion=17.1.0">Version 17.1</a> released featuring 60 changes, features and bug fixes.
             </div>
         </section>
 
@@ -85,20 +85,18 @@ meta_and_links($title, $keywords, $description, false);
 
             <div>
                 <ul id="frameworks">
+                    <li id="fw-javascript"><a href="./best-javascript-data-grid/">JavaScript</a></li>
                     <li id="fw-angular"><a href="./best-angular-2-data-grid/">Angular</a></li>
                     <li id="fw-react"><a href="./best-react-data-grid/">React</a></li>
-                    <li id="fw-polymer"><a href="./best-polymer-data-grid/">Polymer</a></li>
                     <li id="fw-vue"><a href="./best-vuejs-data-grid/">Vue.js</a></li>
-                    <li id="fw-javascript"><a href="./best-javascript-data-grid/">JavaScript</a></li>
                     <li id="fw-angularjs"><a href="./best-angularjs-data-grid/">AngularJS 1.x</a></li>
+                    <li id="fw-polymer"><a href="./best-polymer-data-grid/">Polymer</a></li>
                     <li id="fw-aurelia"><a href="./best-aurelia-data-grid/">Aurelia</a></li>
                     <li id="fw-webcomponents"><a href="./best-web-component-data-grid/">Web Components</a></li>
                 </ul>
             </div>
         </section>
     </div>
-
-
 
     <div class="stage-scenarios">
         <h2 class="heading-scenarios">Complex Scenarios, Made Easy </h2>

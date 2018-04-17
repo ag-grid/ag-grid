@@ -55,7 +55,7 @@ export default class RichGridDeclarativeExample extends Component {
 
     render() {
         return (
-            <div style={{height: 525, width: 900}} className="ag-theme-balham">
+            <div style={{height: 525, width: '100%'}} className="ag-theme-balham">
                 <AgGridReact
                     // binding to array properties
                     rowData={this.state.rowData}

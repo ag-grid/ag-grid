@@ -4,7 +4,7 @@
         <link rel="stylesheet" href="https://unpkg.com/ag-grid/dist/styles/ag-grid.css">
         <link rel="stylesheet" href="https://unpkg.com/ag-grid/dist/styles/ag-theme-balham.css">
 
-        <div style="width: 900px;">
+        <div style="width: 100%;">
             <ag-grid-polymer style="width: 100%; height: 350px; display: block;"
                              class="ag-theme-balham"
                              gridOptions="{{gridOptions}}"></ag-grid-polymer>
@@ -23,14 +23,16 @@
                 this.gridOptions = {
                     rowData: this.createRowData(),
                     columnDefs: this.createColumnDefs(),
-                    floatingFilter: true
+                    floatingFilter: true,
+                    onGridReady: function(params) {
+                        params.api.sizeColumnsToFit();
+                    }
                 };
             }
 
             createColumnDefs() {
                 return [
                     {headerName: "Country", field: "country", suppressFilter: true},
-                    {headerName: "Language", field: "language", suppressFilter: true},
                     {headerName: "Name", field: "name", suppressFilter: true},
                     {
                         headerName: "Gold",

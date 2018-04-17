@@ -10,7 +10,7 @@
 
 <p> Using VueJS Components in the Cell Renderers </p>
 
-<?= example('Dynamic Components with VueJS', 'vue-dynamic', 'as-is', array("noPlunker"=> 1, "skipDirs" => array("dist"))) ?>
+<?= example('Dynamic Components with VueJS', 'vue-dynamic', 'as-is', array("exampleHeight" => 350, "noPlunker"=> 1, "skipDirs" => array("dist"))) ?>
 
 <h3 id="vuejs-methods-lifecycle">VueJS Methods / Lifecycle</h3>
 

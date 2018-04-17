@@ -54,7 +54,7 @@ function globalAgGridScript($enterprise = false, $lazyLoad = false)
     $path = $enterprise ? AG_GRID_ENTERPRISE_SCRIPT_PATH : AG_GRID_SCRIPT_PATH;
     if ($lazyLoad) {
      return <<<SCR
-    <script id="ag-grid-script" data-src="$path"></script>
+    <script id="ag-grid-script" src="$path" defer="true" async="true"></script>
 SCR;
 
     } else {

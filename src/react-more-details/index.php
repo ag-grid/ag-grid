@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "ag-Grid Reference: React Datagrid - More Details";
+$pageTitle = "ag-Grid Reference: React Datagrid - Overview";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page covers setting up the ag-Grid React Component, ag-Grid React dependency and getting through some of the fundamental setup.";
 $pageKeyboards = "React Grid";
 $pageGroup = "basics";
@@ -9,61 +9,11 @@ include '../documentation-main/documentation_header.php';
 <div>
 
     <h1>
-        React Datagrid - More Details
+        Ag-Grid React Overview
     </h1>
 
     <note>Full working examples of ag-Grid and React can be found in <a href="https://github.com/ceolter/ag-grid-react-example">Github</a>, illustrating
         (amongst others) Rich Grids, Filtering with React Components Grid and so on.</note>
-
-    <h3>Downloading the ag-Grid React Component</h3>
-
-    <p>
-        Using ReactJS with ag-Grid introduces a dependency on React. For this reason:
-    </p>
-
-    <ul class="content">
-        <li>You need to include the additional project <code>ag-grid-react</code>, which has the React dependency.</li>
-        <li>You cannot use the bundled version of ag-Grid. You <strong>must use the NPM package</strong>.</li>
-    </ul>
-
-    <snippet language="sh">
-        npm install --save ag-grid ag-grid-react
-    </snippet>
-
-    <p>You can then reference the dependency as follows in the top of your component:</p>
-
-    <snippet>
-import {AgGridReact} from 'ag-grid-react';</snippet>
-
-    <h3 class="heading-enterprise">Downloading the ag-Grid React Enterprise Dependency</h3>
-
-    <p>If you're using the ag-Grid Enterprise features, then in addition to the ag-Grid React dependency above, you also require
-    the ag-Grid React Enterprise dependency:</p>
-
-    <h3>Download ag-Grid-Enterprise</h3>
-
-<snippet language="sh">
-npm install --save ag-grid-enterprise
-</snippet>
-
-    <p>The Enterprise dependency has to be made available before any Grid related component, so we suggest importing it in your
-    React bootstrap file (typically named index.js) before kicking off the actual application - for example:</p>
-
-<snippet language="jsx">
-import React from "react";
-import {render} from "react-dom";
-
-// only necessary if you're using ag-Grid-Enterprise features
-import "ag-grid-enterprise";
-
-    // our application
-import SimpleGridExample from "./SimpleGridExample";
-
-render(
-    &lt;SimpleGridExample>&lt;/SimpleGridExample>,
-    document.querySelector('#root')
-);
-</snippet>
 
     <h2 id="ag-Grid-react-features">ag-Grid React Features</h2>
 
@@ -73,7 +23,7 @@ render(
         React ag-Grid when it comes to features.
     </p>
 
-    <h2 id="configuring-aggridreact-component">Configuring the AgGridReact Component</h2>
+    <h2 id="configuring-aggridreact-component">Configuring the ag-Grid React Component</h2>
 
     <p>After importing <code>AgGridReact</code>  you can then reference the component inside your JSX definitions.
         An example of the Grid Component can be seen below:</p>
@@ -108,7 +58,7 @@ render(
 </snippet>
     </p>
 
-    <h2 id="configuring-aggridreact-columns">Configuring AgGridColumns</h2>
+    <h2 id="configuring-aggridreact-columns">Configuring the Columns</h2>
     <p>Columns can be defined in three ways: declaratively (i.e. via markup), via <code>GridOptions</code> or by binding to
         <code>columnDefs</code> on the <code>AgGridReact</code> component.</p>
 

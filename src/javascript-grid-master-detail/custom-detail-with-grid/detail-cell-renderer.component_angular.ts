@@ -15,7 +15,9 @@ import {ICellRendererAngularComp} from "ag-grid-angular";
                  id="detailGrid"
                  class="full-width-grid"
                  [columnDefs]="colDefs"
-                 [rowData]="rowData">
+                 [rowData]="rowData"
+                 (gridReady)="onGridReady($event)"
+             >
             </ag-grid-angular>
             </div>`
 })
@@ -23,6 +25,10 @@ export class DetailCellRenderer implements ICellRendererAngularComp {
     // called on init
     agInit(params: any): void {
         this.params = params;
+
+        this.masterGridApi = params.api;
+        this.masterRowIndex = params.rowIndex;
+
         this.colDefs = [
             {field: 'callId'},
             {field: 'direction'},
@@ -36,5 +42,27 @@ export class DetailCellRenderer implements ICellRendererAngularComp {
     // called when the cell is refreshed
     refresh(params: any): boolean {
         return false;
+    }
+
+    onGridReady(params) {
+        var detailGridId = "detail_" + this.masterRowIndex;
+
+        var gridInfo = {
+            id: detailGridId,
+            api: params.api,
+            columnApi: params.columnApi
+        };
+
+        console.log("adding detail grid info with id: ", detailGridId);
+        this.masterGridApi.addDetailGridInfo(detailGridId, gridInfo);
+    }
+
+    ngOnDestroy(): void {
+        var detailGridId = "detail_" + this.masterRowIndex;
+
+        // ag-Grid is automatically destroyed
+
+        console.log("removing detail grid info with id: ", detailGridId);
+        this.masterGridApi.removeDetailGridInfo(detailGridId);
     }
 }

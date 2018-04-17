@@ -11,12 +11,8 @@ anchors.options = {
     visible: "hover"
 };
 
-var selectors = new Array(5)
-    .fill(1)
-    .map(function(_, index) {
-        return "#content:not(.skip-in-page-nav) h" + (index + 1);
-    })
-    .join(", ");
+var selectors = [1, 2, 3, 4, 5].map(level => "#content:not(.skip-in-page-nav) h" + level).join(", ");
+
 anchors.add(selectors);
 
 $(function() {
@@ -53,22 +49,18 @@ $(function() {
 });
 
 $(function() {
-    var $currentlyExpanded = $("#side-nav-container > ul > li.expanded > ul");
+    var $currentlyExpanded = $("#side-nav-container li.expanded > ul");
 
-    if ($currentlyExpanded.length) {
-        $currentlyExpanded.css("height", $currentlyExpanded[0].scrollHeight);
-    }
-
-    $("#side-nav-container > ul > li > span").on("click", function() {
+    $("#side-nav-container > ul > li span").on("click", function() {
         var $parent = $(this).parent();
-        var $otherCats = $("#side-nav-container > ul > li").not($parent);
+        var $otherCats = $parent
+            .parent()
+            .children()
+            .not($parent);
 
         $otherCats.removeClass("expanded");
-        $otherCats.find("> ul").css("height", "0");
 
         var ul = $(this).next("ul");
-
-        ul.css("height", $parent.hasClass("expanded") ? "0" : ul[0].scrollHeight);
         $parent.toggleClass("expanded");
     });
 

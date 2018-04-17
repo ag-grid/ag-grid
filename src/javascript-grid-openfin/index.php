@@ -10,7 +10,7 @@ include '../documentation-main/documentation_header.php';
     <p class="lead"><a href="https://openfin.co/">OpenFin</a> provides runtime technology solutions for financial desktops. Below we document and illustrate how you can use
     ag-Grid within the <a href="https://openfin.co/">OpenFin</a> platform.</p>
 
-    <note>Full working examples can be found <a href="https://github.com/ag-grid/ag-grid-openfin-example"> in GitHub</a></note>
+    <note>Full working examples can be found <a href="https://github.com/ag-grid/ag-grid-openfin-example"> in GitHub</a>.</note>
 
     <h2>Installation</h2>
 
@@ -108,7 +108,27 @@ npm run stocks-detail</snippet>
 
     <h2>A Trader Dashboard with Tear Out Windows</h2>
 
-    <p>Please see the section on <a href="../javascript-grid-openfin-dashboard/">A Trader Dashboard with Tear Out Windows</a> for
-    information about the ag-Grid OpenFin Trader Dashboard.</p>
+    <note>You can try this example live using the following <a href="https://install.openfin.co/download/?fileName=aggrid_openfin_traderdashboard&config=https://ag-grid.github.io/ag-grid-openfin-example/app-trader-remote.json">Link</a>.
+    This will download a Zip file with a Windows executable within - if you run this executable the Trader Dashboard will install and run on your computer.</note>
+
+    <p>In this example we host the full <a href="../ag-grid-trader-dashboard/">Trader Dashboard</a> within an OpenFin container,
+    but also add the ability to <span style="font-style: italic">tear out</span> the Stock Detail panel from the top left.</p>
+
+    <p>The following images show the default state of the application followed by the state of the application with the Detail
+    Panel torn out:</p>
+
+    <h3>Default State</h3>
+    <img width="100%" src="./trader-default.png" style="padding-bottom: 15px"/>
+
+    <h3>Torn Out State</h3>
+    <img width="100%" src="./trader-tearout.png" style="padding-bottom: 15px"/>
+
+    <p>A better illustration of the functionality is shown in the movie below - note how the top grid fills out the remaining space
+    when the Detail Panel is torn out. Note too that the Detail Panel could become larger once torn out, perhaps showing
+        a more detailed view once torn out:</p>
+
+    <h3>Application in Action</h3>
+    <img src="openfin-tearout.gif" width="100%"/>
+
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

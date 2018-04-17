@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://unpkg.com/ag-grid@17.0.0/dist/ag-grid.min.js"></script></head>
+  <body>
+
+    <div id="myGrid" style="width: 640px; height: 360px;" class="ag-theme-balham"></div>
+
+    <script>
+      var columnDefs = [];
+// specify the data
+var rowData = [
+];
+  for (var i = 0; i < 50; i++) {
+    columnDefs.push({ field: "column" + (i + 1), headerName: "Column " + (i + 1) })
+  }
+
+for (var i = 0; i < 100000; i ++) {
+  var row = {}
+
+  for (var j = 0; j < 50; j++) {
+    row["column" + (j +1) ] = "Cell " + (j + 1) + ":" + (i + 1);
+  }
+
+  rowData.push(row);
+}
+
+// let the grid know which columns and what data to use
+var gridOptions = {
+  columnDefs: columnDefs,
+  rowData: rowData,
+  onGridReady: function (params) {
+    // params.api.sizeColumnsToFit();
+  }
+};
+
+// wait for the document to be loaded, otherwise
+// ag-Grid will not find the div in the document.
+document.addEventListener("DOMContentLoaded", function() {
+
+  // lookup the container we want the Grid to use
+  var eGridDiv = document.querySelector('#myGrid');
+
+  // create the grid passing in the div to use together with the columns & data we want to use
+  new agGrid.Grid(eGridDiv, gridOptions);
+});
+
+    </script>
+  </body>
+</html>
+

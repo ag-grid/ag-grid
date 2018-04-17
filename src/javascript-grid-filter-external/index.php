@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid - Core Grid Features: External Filter";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is External Filter. External Filter allows you to build filters that live outside of the grid. For example, you can include your own widgets outside the grid for your own filter. Free and Commercial version available.";
+$pageTitle = "External Filter: Core Feature of our Datagrid";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is External Filter which allows you to build filters that live outside of the grid. For example, you can include your own widgets outside the grid for your own filter. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Quick Filter";
 $pageGroup = "feature";
 define('skipInPageNav', true);
