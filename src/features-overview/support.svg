@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="320px" height="180px" viewBox="0 0 320 180" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.2 (51160) - http://www.bohemiancoding.com/sketch -->
+    <title>support</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M25.6112942,138.667926 C9.85846524,124.057253 0,103.179911 0,80 C0,35.81722 35.81722,0 80,0 C103.179911,0 124.057253,9.85846524 138.667926,25.6112942 L25.6112942,138.667926 Z" id="path-1"></path>
+        <path d="M0.152915287,111.567864 L111.567864,0.152915287 C120.662955,13.1360765 126,28.9447714 126,46 C126,90.18278 90.18278,126 46,126 C28.9447714,126 13.1360765,120.662955 0.152915287,111.567864 Z" id="path-3"></path>
+    </defs>
+    <g id="support" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="MIT" transform="translate(74.000000, 9.000000)">
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <g id="Mask"></g>
+        </g>
+        <g id="￡" transform="translate(108.000000, 43.000000)">
+            <mask id="mask-4" fill="white">
+                <use xlink:href="#path-3"></use>
+            </mask>
+            <g id="Mask"></g>
+        </g>
+        <rect id="Rectangle-2" stroke="#9B9B9B" x="0.5" y="0.5" width="319" height="179"></rect>
+        <rect id="Rectangle-3" stroke="#9B9B9B" stroke-width="2" x="13" y="116" width="294" height="51" rx="8"></rect>
+        <rect id="Rectangle-3-Copy" stroke="#0084E7" stroke-width="2" x="13" y="17" width="294" height="86" rx="8"></rect>
+        <rect id="Rectangle-4" stroke="#0084E7" x="22.5" y="26.5" width="29" height="29" rx="8"></rect>
+        <rect id="Rectangle-4-Copy" stroke="#9B9B9B" x="266.5" y="125.5" width="29" height="29" rx="8"></rect>
+        <path d="M62.5,36.5 L295.5,36.5" id="Line" stroke="#0084E7" stroke-linecap="square"></path>
+        <path d="M62.5,46.5 L295.5,46.5" id="Line-Copy" stroke="#0084E7" stroke-linecap="square"></path>
+        <path d="M62.5,56.5 L295.5,56.5" id="Line-Copy-2" stroke="#0084E7" stroke-linecap="square"></path>
+        <path d="M22.5,126.5 L255.5,126.5" id="Line-Copy-8" stroke="#9B9B9B" stroke-linecap="square"></path>
+        <path d="M22.5,136.5 L255.5,136.5" id="Line-Copy-7" stroke="#9B9B9B" stroke-linecap="square"></path>
+        <path d="M22.5,146.5 L255.5,146.5" id="Line-Copy-6" stroke="#9B9B9B" stroke-linecap="square"></path>
+        <path d="M22.5,66.5 L295.5,66.5" id="Line-Copy-3" stroke="#0084E7" stroke-linecap="square"></path>
+        <path d="M22.5,76.5 L295.5,76.5" id="Line-Copy-4" stroke="#0084E7" stroke-linecap="square"></path>
+        <path d="M22.5,86.5 L295.5,86.5" id="Line-Copy-5" stroke="#0084E7" stroke-linecap="square"></path>
+    </g>
+</svg>

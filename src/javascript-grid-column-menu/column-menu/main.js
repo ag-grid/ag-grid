@@ -72,7 +72,7 @@ function getMainMenuItems(params) {
                     action: function() {console.log('He also wrote a book');},
                     checked: true
                 },
-                'destroyColumnComps' // a built in item
+                'resetColumns' // a built in item
             ];
 
         // return all the default items, but remove app seperators and the two sub menus

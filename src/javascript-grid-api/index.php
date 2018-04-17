@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "ag-Grid Reference: Grid API";
+$pageTitle = "ag-Grid Reference Guide: Grid API";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This reference guide covers all of the methods available in the Grid API.";
 $pageKeyboards = "ag-Grid API";
 $pageGroup = "reference";
@@ -17,8 +17,7 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>setColumnDefs(colDefs)</th>
             <td>Call to set new column definitions into the grid. The grid will redraw all the column headers,
-                and then redraw all of the rows. The rows will not be discarded, so any selections, scrolling or groups
-                open, will stay.</td>
+                and then redraw all of the rows.</td>
         </tr>
 
     </table>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style> html, body { margin: 0; padding: 0; height: 100%; } </style>
+    <script src="//localhost:8080/dev/ag-grid-enterprise-bundle/ag-grid-enterprise.js"></script></head>
+</head>
+<body>
+
+<style>
+    .greenBackground{
+        background-color: #008000;
+        color: #e0ffc1;
+    }
+
+    .blueBackground{
+        background-color: #00008B;
+        color: white;
+    }
+</style>
+
+<div style="padding-bottom: 4px;">
+    <label>
+        File Name:
+        <input type="text" id="fileName"/>
+    </label>
+    <label>
+        Sheet Name:
+        <input type="text" id="sheetName"/>
+    </label>
+    <label style="margin-left: 20px;">
+        <button onclick="onBtExport()">Export to Excel</button>
+    </label>
+</div>
+<div style="padding-bottom: 4px;">
+    <span style="display: inline-block;">
+        <label style="margin-right: 20px;">
+            <input type="checkbox" id="skipHeader"/>
+            Skip Header
+        </label>
+        <br/>
+        <label style="margin-right: 20px;">
+            <input type="checkbox" id="columnGroups"/>
+            Column groups
+        </label>
+        <br/>
+        <label style="margin-right: 20px;">
+            <input type="checkbox" id="skipFooters"/>
+            Skip Footers
+        </label>
+    </span>
+    <span style="display: inline-block;">
+    </span>
+    <span style="display: inline-block;">
+        <label style="margin-right: 20px;">
+            <input type="checkbox" id="onlySelected"/>
+            Only Selected
+        </label>
+        <br/>
+        <label style="margin-right: 20px;">
+            <input type="checkbox" id="useCellCallback"/>
+            Use Cell Callback
+        </label>
+        <br/>
+        <label style="margin-right: 20px;">
+            <input type="checkbox" id="processHeaders"/>
+            Format Headers
+        </label>
+        <br/>
+    </span>
+    <span style="display: inline-block;">
+        <label style="margin-right: 20px;">
+            <input type="checkbox" id="skipPinnedTop"/>
+            Skip Pinned Top
+        </label>
+        <br/>
+        <label style="margin-right: 20px;">
+            <input type="checkbox" id="skipPinnedBottom"/>
+            Skip Pinned Bottom
+        </label>
+        <br/>
+        <label style="margin-right: 20px;">
+            <input type="checkbox" id="skipGroups"/>
+            Skip Groups
+        </label>
+    </span>
+    <span style="display: inline-block;">
+        <label style="margin-right: 20px;">
+            <input type="checkbox" id="useSpecificColumns"/>
+            Specify Columns
+        </label>
+        <br />
+        <label style="margin-right: 20px;">
+            <input type="checkbox" id="allColumns"/>
+            All Columns
+        </label>
+        <br/>
+         <label style="margin-right: 20px;">
+            <input type="checkbox" id="skipGroupR"/>
+            Skip Group R
+        </label>
+        <br/>
+    </span>
+    <span style="display: inline-block;">
+        <label style="margin-right: 20px;">
+            <input type="checkbox" id="appendHeader"/>
+            Append Header
+        </label>
+        <br />
+        <label style="margin-right: 20px;">
+            <input type="checkbox" id="appendFooter"/>
+            Append Footer
+        </label>
+        <br /><br />
+    </span>
+</div>
+<div id="myGrid" style="height: 380px;" class="ag-theme-fresh"></div>
+    <script src="main.js"></script>
+</body>
+</html>

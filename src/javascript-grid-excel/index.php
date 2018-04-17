@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid - Enterprise Grade Features: Excel Export";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Excel Export. Export in native Excel Format which will maintain the column widths and also allow exporting of styles. For example, you can color cells in the grid and have the equivalent cells colored in the Excel export. Free and Commercial version available.";
+$pageTitle = "Excel Export: Enterprise Grade Feature of our Datagrid";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Excel Export. Export in native Excel Format which will maintain the column widths and also allow exporting of styles. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "JavaScript Grid Excel";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -61,6 +61,8 @@ include '../documentation-main/documentation_header.php';
             The format of this rows is specified below in the section custom rows.</li>
         <li><code>customFooter</code>: Same as customHeader, but for the end of the file.</li>
         <li><code>sheetName</code>: The name of the sheet in excel where the grid will get exported. If not specified defaults to 'ag-grid'.</li>
+        <li><code>suppressTextAsCDATA</code>: Since v17 the default behaviour of exporting text is to include CDATA tags to avoid any text
+            parsing issues, but if this is incompatible to you current approach, you can switch this off by setting this to true.</li>
     </ul>
 
 
@@ -461,6 +463,7 @@ var gridOptions = {
 
 </li>
         </li>
+        <li>The CDATA tags for text columns have been disabled (This is not compatible with sheetJs) <code>defaultExportParams.suppressTextAsCDATA = true</code></li>
         <li>There is some code to handle the conversion from base64 to blob adapted from
             <a href="http://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript">stackOverflow</a></li>
         <li>There is some code to handle the download of the blob:

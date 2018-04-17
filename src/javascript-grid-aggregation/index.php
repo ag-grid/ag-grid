@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid - Enterprise Grade Features: Aggregation";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Aggregation. When grouping you can also do Aggregation to get aggregate values for the data i.e. sum, min, max etc. Use the built in functions or create your own. Free and Commercial version available.";
+$pageTitle = "Aggregation: Enterprise Grade Feature of our Datagrid";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Aggregation. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid JavaScript Grid Aggregation";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -91,7 +91,7 @@ colDef = {
     <ul class="content">
         <li>
             In order for aggregations to be used, a group column is specified. The example groups
-            by country by setting <code>rowGroupIndex=0</code> for the country column.
+            by country by setting <code>rowGroup=true</code> for the country column.
         </li>
         <li>
             Column gold, silver, bronze and total all have <code>enableValue=true</code>. This tells

@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "ag-Grid Reference: Column API";
+$pageTitle = "ag-Grid Reference Guide: Column API";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This reference guide covers the methods available in the Column API. It also covers how to save and restore the column state. This includes column widths, aggregation fields and visibility.";
 $pageKeyboards = "ag-Grid Column API";
 $pageGroup = "reference";

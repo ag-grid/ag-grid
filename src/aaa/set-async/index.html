@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style> html, body { margin: 0; padding: 0; height: 100%; } </style>
+    <script src="//localhost:8080/dev/ag-grid-enterprise-bundle/ag-grid-enterprise.js"></script></head>
+</head>
+<body>
+<button type="button" onClick="test()">setFilterModel</button>
+<div id="myGrid" class="ag-theme-fresh" style="height: 100%;"></div>
+    <script src="main.js"></script>
+    <script>
+      function test() {
+        var test = new Object();
+        var list = ["Paddy Barnes"];
+        test.athlete = list;
+        gridOptions.api.setFilterModel(test);
+      }
+    </script>
+</body>
+</html>

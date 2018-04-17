@@ -206,7 +206,7 @@ module.exports = (cb, scope) =>     {
             mkdirp(vanillaPath);
             const vanillaScripts = glob.sync(
                 path.join('./src', section, example, '*.{html,js,css}'),
-                {ignore: ['**/*_angular.js', '**/*_react.js']}
+                {ignore: ['**/*_angular.js', '**/*_react.js', '**/*_vue.js']}
             );
             moveScriptsWithoutToken(vanillaScripts, vanillaPath, '_vanilla');
         },

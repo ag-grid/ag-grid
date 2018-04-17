@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid - Core Grid Features: Pagination";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Pagination. Use Pagination when you don't want the user to have to scroll. Pagination allows viewing rows one page at a time. Free and Commercial version available.";
+$pageTitle = "Pagination: Core Feature of our Datagrid";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Pagination. Use Pagination when you don't want the user to have to scroll. Pagination allows viewing rows one page at a time. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Pagination";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -41,12 +41,20 @@ include '../documentation-main/documentation_header.php';
     <h2 id="auto-page-size">Example: Auto Page Size</h2>
 
     <p>
-        If you set <code>paginationAutoPageSize=true</code> the grid will automatically show as many rows in each page as it can
-        fit. This is demonstrated below. Note if you resize the display area of the grid, the page size
+        If you set <code>paginationAutoPageSize=true</code> the grid will automatically show as many rows in each page
+        as it can fit. This is demonstrated below. Note if you resize the display area of the grid, the page size
         automatically changes. To view this, open the example up in a new tab and resize your browser.
     </p>
 
     <?= example('Auto Page Size', 'auto-page-size', 'generated', array("enterprise" => 1)) ?>
+
+    <note>
+        Each pagination page must have the same number of rows.
+        If you use <code>paginationAutoPageSize</code> with
+        <a href="../javascript-grid-row-height/#getrowheight-callback">getRowHeight()</a> callback (to have different
+        rows with different heights) then the page height will be calculated using the default row height and not
+        the actual row heights. Therefore the rows will not fit perfectly into the page if these features are mixed.
+    </note>
 
     <h2 id="customising-pagination">Example: Customising Pagination</h2> 
     <p>In this example the default pagination settings are changed. Note the following:</p>

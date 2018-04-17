@@ -1,10 +1,11 @@
-import {Component, ViewChildren} from "@angular/core";
-import {ICellEditorAngularComp} from "ag-grid-angular/main";
-import {MatRadioButton} from "@angular/material";
+import { Component, ViewChildren } from "@angular/core";
+import { ICellEditorAngularComp } from "ag-grid-angular/main";
+import { MatRadioButton } from "@angular/material";
 
 @Component({
-    selector: 'radio-cell',
+    selector: "radio-cell",
     template: `
+        <mat-card>
         <div class="container" tabindex="0" (keydown)="onKeyDown($event)">
             <mat-radio-group class="radio-group" [(ngModel)]="favouriteFruit">
                 <mat-radio-button class="radio-button" *ngFor="let fruit of fruits" [value]="fruit">
@@ -12,13 +13,11 @@ import {MatRadioButton} from "@angular/material";
                 </mat-radio-button>
             </mat-radio-group>
         </div>
+        </mat-card>
     `,
     styles: [
-            `
+        `
             .container {
-                border-radius: 15px;
-                border: 1px solid grey;
-                background: #fff;
                 width: 350px;
             }
 
@@ -48,7 +47,7 @@ export class MatRadioComponent implements ICellEditorAngularComp {
         this.favouriteFruit = this.params.value;
         this.fruits = this.params.fruits;
 
-        this.selectedIndex = this.fruits.findIndex((item) => {
+        this.selectedIndex = this.fruits.findIndex(item => {
             return item === this.params.value;
         });
     }
@@ -62,7 +61,7 @@ export class MatRadioComponent implements ICellEditorAngularComp {
         this.favouriteFruit = this.fruits[this.selectedIndex];
 
         // focus on next tick
-        let fruitRadio = this.fruitRadios.find((radio) => radio.value === this.favouriteFruit);
+        let fruitRadio = this.fruitRadios.find(radio => radio.value === this.favouriteFruit);
         setTimeout(() => {
             fruitRadio.focus();
         }, 0);
@@ -85,10 +84,12 @@ export class MatRadioComponent implements ICellEditorAngularComp {
         if (key === 38 || key === 40) {
             this.preventDefaultAndPropagation(event);
 
-            if (key == 38) {            // up
-                this.selectedIndex = this.selectedIndex === 0 ? (this.fruits.length - 1) : this.selectedIndex - 1;
-            } else if (key == 40) {     // down
-                this.selectedIndex = (this.selectedIndex === this.fruits.length - 1) ? 0 : this.selectedIndex + 1;
+            if (key == 38) {
+                // up
+                this.selectedIndex = this.selectedIndex === 0 ? this.fruits.length - 1 : this.selectedIndex - 1;
+            } else if (key == 40) {
+                // down
+                this.selectedIndex = this.selectedIndex === this.fruits.length - 1 ? 0 : this.selectedIndex + 1;
             }
             this.selectFavouriteFruitBasedOnSelectedIndex();
         }

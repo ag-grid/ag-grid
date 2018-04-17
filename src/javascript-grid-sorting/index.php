@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid - Core Grid Features: Row Sorting";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Row Sorting. Row Sorting will sort the data. Sort a column by clicking the header. Sort multiple columns by holding down shift. Free and Commercial version available.";
+$pageTitle = "Row Sorting: Core Feature of our Datagrid";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Row Sorting. Row Sorting will sort the data. Sort a column by clicking the header. Sort multiple columns by holding down shift. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Sorting";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -184,8 +184,23 @@ var groupColumn = {
 
     <snippet>
 gridOptions.postSort(rowNodes) {
-    // keep Ireland rows on top
-    rowNodes.sort((n1, n2) => n1.data.country === 'Ireland' ? -1 : 1);
+    // here we put Ireland rows on top while preserving the sort order
+
+    function isIreland(node) {
+        return node.data.country === "Ireland";
+    }
+
+    function move(toIndex, fromIndex) {
+        rowNodes.splice(toIndex, 0, rowNodes.splice(fromIndex, 1)[0]);
+    }
+
+    var nextInsertPos = 0;
+    for (var i = 0; i < rowNodes.length; i++) {
+        if (isIreland(rowNodes[i])) {
+            move(nextInsertPos, i)
+            nextInsertPos++;
+        }
+    }
 }
     </snippet>
 

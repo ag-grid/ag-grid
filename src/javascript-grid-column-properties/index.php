@@ -293,6 +293,12 @@ include '../documentation-main/documentation_header.php';
             <th>onCellContextMenu(params)</th>
             <td>Function callback, gets called when a cell is right clicked.</td>
         </tr>
+        <tr>
+            <th>autoHeight</th>
+            <td>Set to true to have the grid calculate height of row based on contents of this column.</td>
+        </tr>
+
+
         <tr class="title-row">
             <!-- TITLE ROW -->
             <td colspan="2"><h2>Column Groups Only</h2></td>

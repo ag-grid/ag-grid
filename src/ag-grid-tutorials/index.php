@@ -3,12 +3,9 @@ $pageTitle = "ag-Grid Tutorials: Intermediate Level with Examples";
 $pageDescription = "We've put together some tutorials so you can get the best from ag-Grid. This page has step by step videos on building up ag-Grid. Follow the videos to learn how the examples are built.";
 $pageKeyboards = "ag-Grid tutorials";
 $pageGroup = "misc";
-include '../documentation-main/documentation_header.php';
+include '../getting-started/header.php';
 ?>
-
-
-
-    <h1>Intermediate</h1>
+    <h1>ag-Grid Video Tutorial</h1>
 
     <note>
         These tutorials were created in an older version of ag-Grid. The general principles are all still true,
@@ -63,4 +60,4 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Expressions', 'expressions') ?>
 
-<?php include '../documentation-main/documentation_footer.php';?>
+<?php include '../getting-started/footer.php';?>

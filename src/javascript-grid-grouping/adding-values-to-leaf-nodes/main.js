@@ -12,17 +12,16 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    enableColResize: true,
     columnDefs: columnDefs,
     animateRows: true,
     enableRangeSelection: true,
     rowData: null,
     enableSorting:true,
     enableFilter:true,
-    autoGroupColumnDef:{
+    autoGroupColumnDef: {
         headerName:'Group',
-        valueGetter: function (params){
-            return params.data ? params.data.athlete : ''
-        }
+        field: 'athlete'
     }
 };
 

@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid - Working with Data: Change Detection";
-$pageDescription = "aag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Change Detection. As you change data inside the grid, the grid runs Change Detection to check if any other cells need to be updated to reflect the change. Free and Commercial version available.";
+$pageTitle = "Change Detection: A Core Feature of our Datagrid";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Change Detection. As you change data inside the grid, the grid runs Change Detection to check if any other cells need to be updated to reflect the change. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Change Detection";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

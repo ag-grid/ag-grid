@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>ag-Grid Feature Overview</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+        <style type="text/css" media="screen">
+            dl {
+                font-size: 0.8rem;
+                position: sticky;
+                height: 100vh;
+                top: 0;
+                overflow: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app">
+            <div class="container">
+                <h1 class="mb-5">ag-Grid Feature Overview</h1>
+            </div>
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-9">
+                        <div v-for="group of items">
+                            <div class="container mb-5">
+                                <h2 class="mt-3" v-bind:id="group.title.toLowerCase().replace(/\s+/, '-')">{{group.title}}</h2>
+                                <p class="lead mb-5">{{group.summary}}</p>
+                                <div class="row mb-5" v-for="(item, index) in group.items">
+                                    <div class="col-sm-7" v-bind:class=" index % 2 ? 'order-1' : 'order-0'">
+                                        <h4 class="" v-bind:id="item.title.toLowerCase().replace(/[\s\/]+/, '-')">{{item.title}}</h4>
+                                        <p class="">{{item.description}}</p>
+
+                                        <ul class="list-unstyled">
+                                            <li v-for="link of item.links"><a v-bind:href="link.url">{{link.title}} &rarr;</a></li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="col-sm-5">
+                                        <img v-bind:src="item.img" height="180" width="320">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <dl>
+                            <div v-for="group in items">
+                                <dt class="mb-2 mt-4">{{group.title}}</dt>
+                                <dd v-for="item in group.items">
+                                    <a v-bind:href="'#' + item.title.toLowerCase().replace(/[\s\/]+/, '-')">{{item.title}}</a>
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script charset="utf-8">
+            var app = new Vue({ 
+                el: '#app', 
+                data: { 
+                    items: [] 
+                }, 
+                computed: { 
+                    allItems: function() {
+                        return this.items.reduce( (arr, group) => arr.concat(group.items), []) 
+                    } 
+                }
+            });
+
+async function getItems() {
+    const response = await fetch('items.json')
+    const items = await response.json()
+    app.items = items;
+}
+
+getItems();
+        </script>
+    </div>
+</body>
+</html>

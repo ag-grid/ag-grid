@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "ag-Grid Reference: Properties";
+$pageTitle = "ag-Grid Reference: Grid Properties";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This reference guide covers the properties that are available in the GridOptions.";
 $pageKeyboards = "javascript data grid ag-Grid properties";
 $pageGroup = "reference";
@@ -146,7 +146,12 @@ include '../documentation-main/documentation_header.php';
                 <a href="../javascript-grid-sorting/#multi-column-sorting">Multi Column Sorting</a>
             </td>
         </tr>
-
+        <tr>
+            <th>enableOldSetFilterModel</th>
+            <td>Set to true to return the old set filter model format. This is intended as a temporary measure to
+                facilitate migration.
+                <a href="../javascript-grid-filtering/">Row Filtering</a>.</td>
+        </tr>
         </table>
     <h2>Selection</h2>
 
@@ -305,6 +310,16 @@ include '../documentation-main/documentation_header.php';
                 See example <a href="../javascript-grid-aggregation/#custom-aggregation-functions">Custom Aggregation Functions</a>.
             </td>
         </tr>
+        <tr>
+            <th>suppressMakeVisibleAfterUnGroup</th>
+            <td>
+                By default when a column is un-grouped, it is made visible. Eg on main demo: 1) group by country by dragging
+                (action of moving column out of grid means column is made visible=false); then 2) un-group by clicking 'x' on
+                the country column in the column drop zone, the column is then made visible=true. This property stops the
+                column becoming visible again when un-grouping.
+            </td>
+        </tr>
+
 
         </table>
 <h2>Tool Panel</h2>

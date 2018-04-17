@@ -79,7 +79,7 @@ include('../includes/mediaHeader.php');
                 <li>We recorded a 20-minute demonstration of ag-Grid to play on repeat throughout the conference.</li>
                 <li>We worked up a competition to win an iPad mini.</li>
                 <li>We printed 1,500 fliers explaining what ag-Grid does, to drop into the conference welcome bags.</li>
-                <li>And we prepared a five-minute lightening talk to be delivered on the main stage on day two.</li>
+                <li>And we prepared a five-minute lightning talk to be delivered on the main stage on day two.</li>
             </ul>
         <div style="float: right; padding-left: 20px; padding-bottom: 20px; padding-top: 5px;">
             <img src="../images/angularConnect2016/dayBefore.png"/>
@@ -188,7 +188,7 @@ include('../includes/mediaHeader.php');
 
         <h3>Don’t swear on stage</h3>
         <p>
-            Part of our sponsorship included giving a five-minute lightening talk on the main track on day two. It was between two particularly popular talks, so we had a lot of people in the room.
+            Part of our sponsorship included giving a five-minute lightning talk on the main track on day two. It was between two particularly popular talks, so we had a lot of people in the room.
         </p>
         <p>
             Sean and I were going to show how ag-Grid can use Angular 2 internally in the grid for customising the cells - something Sean had been working on in previous weeks.
@@ -196,7 +196,7 @@ include('../includes/mediaHeader.php');
         <div style="float: left; padding-right: 20px; padding-bottom: 20px; padding-top: 5px;">
             <img src="../images/angularConnect2016/viewFromStage.png"/>
             <div style="padding: 0px; width: 400px; color: darkgrey; font-size: 12px;">
-                View from the main stage, just before out lightening talk.
+                View from the main stage, just before out lightning talk.
             </div>
         </div>
 
@@ -243,7 +243,7 @@ include('../includes/mediaHeader.php');
             <img src="../images/angularConnect2016/lighteningTalk.png"/>
             <div style="padding: 0px; width: 400px; color: darkgrey; font-size: 12px;">
                 Niall and Sean on stage giving the <a href="https://www.youtube.com/watch?v=jamr2jmEzh8">
-                    3 minute lightening talk</a>.
+                    3 minute lightning talk</a>.
             </div>
         </div>
         <p>

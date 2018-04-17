@@ -8,65 +8,14 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1 class="first-h1 heading-enterprise">Angular Datagrid - More Details</h1>
+    <h1>ag-Grid Angular Overview</h1>
 
     <note>Full working examples of ag-Grid and Angular can be found in <a href="https://github.com/ag-grid/ag-grid-angular-example">Github</a>, illustrating
-        (amongst others) Rich Grids, Filtering with Angular Components, Master/Detail Grid and so on.</note>
+        (amongst others) rich grids, filtering with angular components, master/detail grid and so on.</note>
 
-    <h3>Downloading the ag-Grid Angular Component</h3>
-
-    <p> Using Angular with ag-Grid introduces a dependency on Angular. For this reason:</p> 
-    <ul class="content">
-        <li>You need to include the additional project ag-grid-angular, which has the Angular dependency.</li>
-        <li>You cannot use the bundled version of ag-Grid. You <strong>must use the NPM package</strong>.</li>
-    </ul>
-
-    <snippet language="sh">npm install --save ag-grid ag-grid-angular</snippet>
-
-    <p>You can then reference the dependency as follows in the top of your component:</p>
-
-    <snippet>
-    import {AgGridModule} from 'ag-grid-angular';</snippet>
 
     <p>
-        Which you can then use as a dependency inside your module:
-    </p>
-
-    <snippet>
-@NgModule({
-    imports: [
-        BrowserModule,
-        AgGridModule.withComponents([/*optional Angular Components to be used in the grid*/]),
-        // ...
-})</snippet>
-
-    <p>And finally, reference it in your template as follows:</p>
-
-<snippet>
-// component template
-&lt;ag-grid-angular style="width: 500px; height: 115px;" class="ag-theme-balham"
-                [rowData]="rowData"
-                [columnDefs]="columnDefs"&gt;
-&lt;/ag-grid-angular&gt;</snippet>
-
-    <h3 class="heading-enterprise">Downloading the ag-Grid Angular Enterprise Dependency</h3>
-
-    <p>If you're using the ag-Grid Enterprise features, then in addition to the ag-Grid Angular dependency above, you also require
-    the ag-Grid Angular Enterprise dependency:</p>
-
-    <snippet language="sh">npm install ag-grid-enterprise</snippet>
-
-    <p>The Enterprise dependency has to be made available before any Grid related component, so we suggest importing it in your
-    Angular root module if possible before kicking off the actual application - for example:</p>
-
-<snippet>
-// only necessary if you're using ag-Grid-Enterprise features
-import "ag-grid-enterprise";</snippet>
-
-    <h2 id="ag-Grid-angular-features">ag-Grid Angular Features</h2>
-
-    <p>
-        Every feature of ag-Grid is available when using the ag-Grid Angular Component. The Angular Component wraps the
+        Every feature of ag-Grid is available when using the ag-Grid Angular component. The Angular component wraps the
         functionality of ag-Grid, it doesn't duplicate, so there will be no difference between core ag-Grid and
         Angular ag-Grid when it comes to features.
     </p>
@@ -74,6 +23,7 @@ import "ag-grid-enterprise";</snippet>
     <h2 id="configuring-ag-grid-in-angular">Configuring ag-Grid in Angular</h2>
 
     <p>You can configure the grid in the following ways through Angular:</p>
+
     <ul class="content">
         <li><b>Events:</b> All data out of the grid comes through events. These use
             Angular event bindings eg <code>(modelUpdated)="onModelUpdated()"</code>.
@@ -100,9 +50,9 @@ import "ag-grid-enterprise";</snippet>
         <li><b>Changing Properties:</b> When a property changes value, Angular
             automatically passes the new value onto the grid. This is used in
             the following locations in the feature rich grid example above:<br/>
-            a) The quickFilter on the top right updates the quick filter of
+            a) The quick filter on the top right updates the quick filter of
             the grid.
-            b) The 'Show Tool Panel' checkbox has it's value bound to the <code>showToolPanel</code>
+            b) The 'Show Tool Panel' checkbox has its value bound to the <code>showToolPanel</code>
             property of the grid.
             c) The 'Refresh Data' generates new data for the grid and updates the
             <code>rowData</code> property.
@@ -117,15 +67,12 @@ import "ag-grid-enterprise";</snippet>
     </p>
 
     <note>
-        Sometimes the gridReady grid event can fire before the Angular component is ready to receive it, so in
-        an
-        Angular
-        environment its safer to rely on <code>AfterViewInit</code> instead before using
-        the API
+        Sometimes the <code>gridReady</code> grid event can fire before the Angular component is ready to receive it, so in
+        an Angular environment its safer to rely on <code>AfterViewInit</code> instead before using the API.
     </note>
 
     <h3 id="providing-angular-components-to-ag-grid">Providing Angular Components to ag-Grid</h3>
-    <p>In order for ag-Grid to be able to use your Angular Components, you need to provide them in the <strong>top
+    <p>In order for ag-Grid to be able to use your Angular components, you need to provide them in the <strong>top
             level</strong> module:</p>
     <snippet>
 @NgModule({
@@ -158,7 +105,7 @@ let colDefs = [
                 href="../javascript-grid-cell-rendering-components/#ng2CellRendering">cell renderers</a>,
         <a href="../javascript-grid-cell-editing/#ng2CellEditing">cell editors</a> and
         <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> 
-for configuring and using Angular Components in ag-Grid.</p> 
+for configuring and using Angular components in ag-Grid.</p> 
 
 <p> The example has ag-Grid configured through the template in the following ways: </p>
 
@@ -224,10 +171,7 @@ constructor() {
 this.params.context.componentParent</snippet>
 
     <p>Note that although we've used <code>componentParent</code> as the property name here it can be anything -
-        the
-        main
-        point is that you can use the <code>context</code> mechanism to share information between the
-        components.</p>
+        the main point is that you can use the <code>context</code> mechanism to share information between the components.</p>
 
     <p>The <span
                 style="font-style: italic">"A Simple Example, using CellRenderers created from Angular Components"</span>

@@ -12,6 +12,9 @@
                 <li class="<?php if ($navKey == "demo") { ?>active<?php }?>">
                     <a href="/example.php">Demo</a>
                 </li>
+                <li class="<?php if ($navKey == "getting-started") { ?>active<?php }?>">
+                    <a href="/javascript-grid-getting-started/">Getting Started</a>
+                </li>
                 <li class="<?php if ($navKey == "documentation") { ?>active<?php }?>">
                     <a href="/documentation-main/documentation.php">Documentation</a>
                 </li>
@@ -19,17 +22,20 @@
                     <a href="https://medium.com/ag-grid" class="medium">Blog</a>
                 </li>
 
+<!--
                 <li class="<?php if ($navKey == "support") { ?>active<?php }?>">
                     <a href="/support.php">Support</a>
                 </li>
+-->
 
                 <li class="<?php if ($navKey == "about") { ?>active<?php }?>">
                     <a href="/about.php">About</a>
                 </li>
 
-                <li class="<?php if ($navKey == "licenseAndPricing") { ?> active<?php }?>">
+                <li class="<?php if ($navKey == "licenseAndPricing") { ?>active<?php }?>">
                     <a href="/license-pricing.php">Pricing</a>
                 </li>
+
                 <?php if (!defined('HOMEPAGE')) { ?>
                 <li id="trial" class="<?php if ($navKey == "trial") { ?> active<?php }?>">
                     <a href="/start-trial.php">Free Trial</a>

@@ -33,5 +33,5 @@ function initDashboard() {
 if (document.readyState == "complete") {
     initDashboard();
 } else {
-    document.addEventListener("DOMContentLoaded", initDashboard);
+    document.addEventListener("readystatechange", initDashboard);
 }

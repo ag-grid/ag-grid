@@ -8,70 +8,12 @@ include '../documentation-main/documentation_header.php';
 
 <div>
     <h1 id="implementing-the-vuejs-datagrid">
-        VueJS Grid
+        ag-Grid VueJS Overview
     </h1>
 
     <p class="lead">
         This page details how to set up ag-Grid inside a VueJS application.
     </p>
-
-    <?php
-    $frameworkChild = 'vue';
-    include '../javascript-grid-getting-started/ag-grid-dependency-framework.php'
-    ?>
-
-    <p>
-        If you are building an VueJS application then you have the choice between A) using the plain JavaScript version
-        of ag-Grid or B) using the ag-Grid VueJS Component from the <a href="https://github.com/ag-grid/ag-grid-vue">
-            ag-grid-vue</a> project. If you use the ag-Grid VueJS Component, then the grid's properties, events and API
-        will all tie in with the VueJS ecosystem. This will make your VueJS coding easier.
-    </p>
-
-    <h2>Referencing Styles</h2>
-
-    <p>You'll need to import the ag-Grid CSS in your application, as well as a theme you wish to use:</p>
-    <snippet>
-import "../node_modules/ag-grid/dist/styles/ag-grid.css";
-import "../node_modules/ag-grid/dist/styles/ag-theme-balham.css";</snippet>
-    <p>In this case we're using the Balham Theme - please refer to the <a href="../javascript-grid-themes">Themes</a>
-        documentation for more information.</p>
-
-
-    <h2>Download ag-Grid-Enterprise</h2>
-
-    <table class="content">
-        <tr>
-            <td style="padding: 10px;"><img src="../images/npm.png"/></td>
-            <td>
-                <b>NPM</b><br/>
-                <code>npm install ag-grid-enterprise</code>
-            </td>
-
-            <td style="width: 20px;"/>
-
-            <td style="padding: 10px;"><img src="../images/github.png"/></td>
-            <td>
-                <b>Github</b><br/>
-                Download from <a href="https://github.com/ag-grid/ag-grid-enterprise">Github</a>
-            </td>
-        </tr>
-    </table>
-
-    <h3>Referencing ag-Grid-Enterprise</h3>
-    <p>In your application, before instantiating the grid, you need to reference the included ag-grid-enterprise
-        dependency:</p>
-    <snippet>
-import Vue from "vue";
-import "../node_modules/ag-grid/dist/styles/ag-grid.css";
-import "../node_modules/ag-grid/dist/styles/ag-theme-balham.css";
-
-// need if you use ag-grid enterprise features
-import "ag-grid-enterprise/main";
-</snippet>
-
-    <note>Please use the github project <a href="https://github.com/ag-grid/ag-grid-vue">ag-grid-vue</a>
-        for feedback or issue reporting around ag-Grid's support for VueJS.
-    </note>
 
     <h2 id="ag-grid-vuejs-features">ag-Grid VueJS Features</h2>
 
@@ -80,85 +22,6 @@ import "ag-grid-enterprise/main";
         the functionality of ag-Grid, it doesn't duplicate, so there will be no difference between core ag-Grid and
         VueJS ag-Grid when it comes to features.
     </p>
-
-    <h2 id="vuejs-full-example">VueJS Full Example</h2>
-
-    <p>
-        This page goes through the
-        <a href="https://github.com/ag-grid/ag-grid-vue-example">ag-grid-vue-example</a>
-        on Github.
-    </p>
-
-    <p>The example project includes a number of separate grids on a page, with each section demonstrating a different
-        feature set:
-    </p>
-    <ul class="content">
-        <li>A feature rich grid example, demonstrating many of ag-Grid's features using VueJS as a wrapper
-        </li>
-        <li>Vue A Simple Example, using CellRenderers created from VueJS Components
-        </li>
-        <li>A Richer Example, using CellRenderers created from VueJS Components, with child components, and two-way
-            binding (parent to child components events)
-        </li>
-        <li>A Cell Editor example - one with a popup editor, and another with a numeric editor. Each demonstrates
-            different editor related features
-        </li>
-        <li>A Pinned Row Renderer Example
-        </li>
-        <li>A Full Width Renderer Example
-        </li>
-        <li>A Group Row Inner Renderer Example
-        </li>
-        <li>A Filter Example, with the filter written as a VueJS Component
-        </li>
-        <li>A Master/Detail Example, with both the Master and the Detail elements being VueJS Components</li>
-    </ul>
-    </p>
-
-    <p>Once you have the ag-Grid dependencies installed, you will then be able to access ag-Grid inside your
-        application:</p>
-
-    <snippet>
-import {AgGridVue} from 'ag-grid-vue';</snippet>
-
-    <p>
-        Which you can then use as a component within your application:
-    </p>
-
-    <snippet>
-export default {
-    data () {
-        return {
-            gridOptions: null,
-            ..other data
-        }
-    },
-    components: {
-        'ag-grid-vue': AgGridVue,
-        ..other components
-    },
-    ... the rest of your application component
-}</snippet>
-
-    <p>
-        You will need to include the CSS for ag-Grid, either directly inside
-        your html page, or as part of creating your bundle if bundling. The following
-        shows referencing the css from your web page:
-    </p>
-    <snippet>
-&lt;link href="node_modules/ag-grid/dist/styles/ag-grid.css" rel="stylesheet" /&gt;
-&lt;link href="node_modules/ag-grid/dist/styles/ag-theme-balham.css" rel="stylesheet" /&gt;</snippet>
-
-    <p>If you're using the <code>style-loader</code> you can also import the CSS dependencies into your final bundle:
-    </p>
-    <snippet>
-import "../node_modules/ag-grid/dist/styles/ag-grid.css"
-import "../node_modules/ag-grid/dist/styles/ag-theme-balham.css"
-
-// only needed if you're using enterprise features
-import "ag-grid-enterprise/main";</snippet>
-
-    <p>Importing of the CSS should be done before you use the ag-Grid Vue Component.</p>
 
     <h2 id="configuring-ag-grid-in-vuejs">Configuring ag-Grid in VueJS</h2>
 

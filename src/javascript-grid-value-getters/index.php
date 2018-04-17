@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "ag-Grid - Working with Data: Value Getter & Value Formatter";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Value Getter & Value Formatter. Value Getters & Value Formatters are about getting and formatting the data to display. Use Value Getters when the data is not a simple field. Use Value Formatters to format values for display. Free and Commercial version available.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Value Getter & Value Formatter. Value Getters & Value Formatters are about getting and formatting the data to display. Use Value Getters when the data is not a simple field. Use Value Formatters to format values for display. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Value Getters";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid - Enterprise Grade Features: Tool Panel";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Tool Panel. The Tool Panel allows the user to manipulate the list of columns, such as show and hide, or drag columns to group or pivot. Free and Commercial version available.";
+$pageTitle = "Tool Panel: Enterprise Grade Feature of our Datagrid";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Tool Panel. The Tool Panel allows the user to manipulate the list of columns, such as show and hide, or drag columns to group or pivot. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Show Hide Column Tool Panel";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -220,6 +220,17 @@ colDefs = {
         }},
 }</snippet>
     </p>
+
+<h2>Fixing Tool Panel Contents Height </h2>
+
+<p> By default, the tool panel panels stretch to fit the height of the grid, with maximum height set to <code>100vh</code>. To tweak the height of them, you can tweak the <code>.ag-column-panel-center</code> selector: </p>
+
+    <snippet language="css">
+    .ag-column-panel-center {
+        /* increase the total max height of tool panel contents */
+        max-height: 2000px;
+    }
+    </snippet>
 
     <h2>Tool Panel Example</h2>
 

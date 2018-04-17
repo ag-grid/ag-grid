@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid - Styling & Appearance: Cell Styling";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Cell Styling. Use CSS rules to define Cell Style based on data content, e.g. put a red background onto cells that have negative values, and green on values greater than 100. Free and Commercial version available.";
+$pageTitle = "Cell Styles: Styling & Appearance Feature of our Datagrid";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Cell Styling. Use CSS rules to define Cell Style based on data content, e.g. put a red background onto cells that have negative values, and green on values greater than 100. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Cell Styles";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -35,13 +35,13 @@ include '../documentation-main/documentation_header.php';
 // return same style for each row
 var colDef = {
     name: 'Static Styles',
-    field' 'field1',
+    field: 'field1',
     cellStyle: {color: 'red', 'background-color': 'green'}
 }
 // return different styles for each row
 var colDef = {
     name: 'Dynamic Styles',
-    field' 'field2',
+    field: 'field2',
     cellStyle: function(params) {
         if (params.value=='Police') {
             //mark police cells as red
@@ -64,28 +64,28 @@ var colDef = {
 // return same class for each row
 var colDef1 = {
     name: 'Static Class',
-    field' 'field1',
+    field: 'field1',
     cellClass: 'my-class'
 }
 
 // return same array of classes for each row
 var colDef2 = {
     name: 'Static Array of Classes',
-    field' 'field2',
+    field: 'field2',
     cellClass: ['my-class1','my-class2']
 }
 
 // return class based on function
 var colDef3 = {
     name: 'Function Returns String',
-    field' 'field3',
+    field: 'field3',
     cellClass: function(params) { return (params.value==='something'?'my-class-1':'my-class-2'); }
 }
 
 // return array of classes based on function
 var colDef4 = {
     name: 'Function Returns Array',
-    field' 'field4',
+    field: 'field4',
     cellClass: function(params) { return ['my-class-1','my-class-2']; }
 }</snippet>
 

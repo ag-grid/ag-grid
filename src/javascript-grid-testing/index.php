@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "ag-Grid Reference: Testing";
+$pageTitle = "ag-Grid Reference: Testing Techniques";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This reference pages covers methods for End to End - e2e - testing within our datagrid.";
 $pageKeyboards = "ag-Grid e2e testing";
 $pageGroup = "feature";
@@ -9,9 +9,9 @@ include '../documentation-main/documentation_header.php';
 
     <h1>ag-Grid Testing</h1>
 
-    <h2>Testing ag-Grid with Karma & Jasmine</h2>
-    <p>Information on testing in a JavaScript application can be found in the <a href="../javascript-more-details#aggrid-javascript-testing">JavaScript More Details</a> section,
-    while details on testing in an Angular application can be found in the <a href="../angular-more-details#aggrid-angular-testing">Angular More Details</a> section.</p>
+    <h2>Testing ag-Grid with Protractor & Jasmine</h2>
+
+    <note>Information on testing in an Angular application can be found in the <a href="../angular-more-details#aggrid-angular-testing">Angular More Details</a> section.</note>
 
     <h2 id="e2e-testing">End to End (e2e) Testing</h2>
 
@@ -211,7 +211,7 @@ ag_grid_utils.clickOnHeader("Name");</snippet>
 
     <snippet>
 ag_grid_utils.getLocatorForCell(0, "make")
-ag_grid_utils.getLocatorForCell(0, "make", "div.myClass)</snippet>
+ag_grid_utils.getLocatorForCell(0, "make", "div.myClass")</snippet>
 
     <h3>getCellContentsAsText</h3>
 
@@ -223,7 +223,7 @@ ag_grid_utils.getCellContentsAsText(0, "make")
                 // do something with cellValue
              });
 
-ag_grid_utils.getCellContentsAsText(0, "make", "div.myClass)
+ag_grid_utils.getCellContentsAsText(0, "make", "div.myClass")
              .then(function(cellValue) {
                 // do something with cellValue
              });</snippet>

@@ -7,7 +7,7 @@ gtm_data_layer('support');
 <html lang="en">
 <head lang="en">
 <?php
-meta_and_links("ag-Grid: Technical Support", "ag-Grid Javascript Grid Support", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page explains the different support models for the free and Enterprise versions of ag-Grid.", false);
+meta_and_links("How to get Support for ag-Grid", "ag-Grid Javascript Grid Support", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page explains the different support models for the free and Enterprise versions of ag-Grid.", false);
 ?>
 <link rel="stylesheet" href="../dist/homepage.css">
 </head>
@@ -31,7 +31,7 @@ include './includes/navbar.php';
                 Chances are that we are already aware of it. Please check the changelog and the pipeline first.</p>
 
             <ul class="content-list">
-                <li><a href="/change-log/changeLogIndex.php">Changelog covering versions 7.x and earlier</a></li>
+                <li><a href="/ag-grid-changelog">Changelog covering versions 7.x and earlier</a></li>
                 <li><a href="/ag-grid-pipeline">Pipeline of up and coming features and Bug Fixes</a></li>
             </ul>
 

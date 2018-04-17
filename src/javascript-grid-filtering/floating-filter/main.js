@@ -107,7 +107,8 @@ var columnDefs = [
             if (cellDate > filterLocalDateAtMidnight) {
                 return 1;
             }
-        }
+        },
+        browserDatePicker: true
     }, suppressMenu:true},
     {headerName: "Sport", field: "sport", width: 110, suppressMenu:true, filter: 'agTextColumnFilter'},
     {headerName: "Gold", field: "gold", width: 100, filter: 'agNumberColumnFilter', filterParams:{applyButton:true}, suppressMenu:true},
@@ -168,8 +169,8 @@ function setCountryModel() {
 function printCountryModel() {
     var countryFilterComponent = gridOptions.api.getFilterInstance('country');
     var model = countryFilterComponent.getModel();
-    if (model) {
-        console.log('Country model is: [' + model.join(',') + ']');
+    if (model && model.values) {
+        console.log('Country model is: [' + model.values.join(',') + ']');
     } else {
         console.log('Country model filter is not active');
     }

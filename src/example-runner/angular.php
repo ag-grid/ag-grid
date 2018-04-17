@@ -36,6 +36,6 @@ $generated = isset($_GET['generated']);
 
 </head>
 <body>
-    <my-app>Loading ag-Grid example&hellip;<my-app>
+    <my-app>Loading ag-Grid example&hellip;</my-app>
 </body>
 </html>

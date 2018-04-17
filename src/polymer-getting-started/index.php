@@ -3,7 +3,7 @@ $pageTitle = "ag-Grid Reference: Getting Started with the Polymer Datagrid";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This Getting Start guide covers installing our seed repo and getting up and running with a simple Polymer Datagrid. We also cover basisc configuration."; 
 $pageKeyboards = "Polymer Grid";
 $pageGroup = "basics";
-include '../documentation-main/documentation_header.php';
+include '../getting-started/header.php';
 ?>
 
 <div>
@@ -224,4 +224,4 @@ npm start</snippet>
         use ag-Grid and Polymer, as well the <strong>Enterprise Features</strong>.</p> 
 </div>
 
-<?php include '../documentation-main/documentation_footer.php'; ?>
+<?php include '../getting-started/footer.php'; ?>

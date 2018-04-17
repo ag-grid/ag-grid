@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid - Working with Data: Updating Data";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Updating Data. Data can be updated in real time. The grid can highlight the change by flashing the cells or by animation inside the cell as the cell refreshes. Free and Commercial version available.";
+$pageTitle = "Updating Data: Core Feature of our Datagrid";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Updating Data. Data can be updated in real time. The grid can highlight the change by flashing the cells or by animation inside the cell as the cell refreshes. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Insert Remove";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

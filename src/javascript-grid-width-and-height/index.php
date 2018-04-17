@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid - Core Grid Features: Grid Size";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Grid Size. Rows in the grid will Animate into place after the user sorts or filters. Free and Commercial version available.";
+$pageTitle = "Grid Size: Core Feature of our Datagrid";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Grid Size. Rows in the grid will Animate into place after the user sorts or filters. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Resizing";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -71,6 +71,9 @@ include '../documentation-main/documentation_header.php';
             on the number of rows so that there is no vertical scrolls. Use this if you have relatively
             few rows in your grid and want to pack them into your web-page (so that there is no blank
             space in the grid after the last row).</li>
+            <note>Since v17.1.0 domLayout: 'forPrint' has been deprecated.
+            Please use instead auto height
+            </note>
             <li><b>For Print: </b><a href="../javascript-grid-for-print/">For print</a> will have
             no scrolls, very bad for performance (as a large grid will create a lot of DOM) however
             ideal if you want to print the grid, as it will remove all scrolls and pinned areas,

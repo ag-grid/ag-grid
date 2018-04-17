@@ -13,6 +13,15 @@ $(function () {
             return ignore.indexOf(key) >= 0;
         }
 
+        function displayFixVersionInformation(fixVersion) {
+            $("[fixVersionNote]").hide()
+
+            const underscoredId = fixVersion.split('.').join('_');
+            if(fixVersion !== 'All Versions') {
+                $(`#fix_version_${underscoredId}`).show()
+            }
+        }
+        
         function processSearchValue() {
             var value = (<any>document.getElementById('global_search')).value;
             var searchCriteria = (<any>$).trim(value).replace(/ +/g, ' ').toLowerCase();
@@ -59,6 +68,7 @@ $(function () {
 
         $("#fixVersionFilter").change(function () {
             processSearchValue();
+            displayFixVersionInformation($("#fixVersionFilter").val())
         });
 
         $("#breaking").click(function () {
@@ -92,5 +102,8 @@ $(function () {
         function toggleMoreInfo(id) {
             $("#" + id).toggle();
         }
+
+        processSearchValue();
+        displayFixVersionInformation($("#fixVersionFilter").val())
     });
 });

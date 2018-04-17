@@ -27,7 +27,7 @@ include('../includes/mediaHeader.php');
         <h2>What Does It Do?</h2>
 
         <p>
-        Adaptable Blotter is a very clever piece of software that sits on top of datagrids and delivers powerful functionality to the end user. We have been working closely with the team and they recently completed their integration with ag-Grid. The combination of the two products significantly reduces development, taking care of common requirements such as user configuration and settings, multiple layouts, auditing of grid activity and custom columns. While Adaptable Blotter is built for financial users, we see many features that would be of interest in other sectors. In our opinion, Adaptable Blotter naturally dovetails with ag-Grid, harnessing our raw power and leveraging our features to deliver a lightening fast and intuitive experience for the user.
+        Adaptable Blotter is a very clever piece of software that sits on top of datagrids and delivers powerful functionality to the end user. We have been working closely with the team and they recently completed their integration with ag-Grid. The combination of the two products significantly reduces development, taking care of common requirements such as user configuration and settings, multiple layouts, auditing of grid activity and custom columns. While Adaptable Blotter is built for financial users, we see many features that would be of interest in other sectors. In our opinion, Adaptable Blotter naturally dovetails with ag-Grid, harnessing our raw power and leveraging our features to deliver a lightning fast and intuitive experience for the user.
         </p>
 
         <h2>How Does it work with ag-Grid</h2>

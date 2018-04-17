@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid - Core Grid Features: Keyboard Navigation";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Keyboard Navigation. With Keyboard Navigation users can use cursor keys and tab keys to navigate between cells. Free and Commercial version available.";
+$pageTitle = "Keyboard Navigation: Core Feature of our Datagrid";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Keyboard Navigation. With Keyboard Navigation users can use cursor keys and tab keys to navigate between cells. Version 17 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Keyboard Navigation";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

@@ -1,5 +1,5 @@
 @keyframes doodle-drop {
-    from { 
+    from {
         opacity: 0;
         transform: translateY(-1em);
     }
@@ -35,7 +35,6 @@
     %shadow {
         text-shadow: 1px 1px 20px $blue-1;
     }
-
 
     h2 {
         @extend %shadow;
@@ -76,7 +75,8 @@
         }
     }
 
-    #enterprise-cta, #free-cta {
+    #enterprise-cta,
+    #free-cta {
         @extend .py-2, .px-4;
         @extend .btn, .mt-3;
         @extend %animated-drop;
@@ -107,7 +107,7 @@
         opacity: 0;
         @extend %animated-drop;
 
-        @include media-breakpoint-down(md) { 
+        @include media-breakpoint-down(md) {
             display: none;
         }
     }
@@ -118,7 +118,7 @@
             left: 0;
             animation-delay: 1s;
         }
-        
+
         #doodle-tree-data {
             top: -50px;
             left: 420px;
@@ -148,7 +148,7 @@
         }
 
         #doodle-context-menu {
-            top: 280px;
+            top: 240px;
             left: 20px;
             animation-delay: 1.8s;
         }
@@ -159,5 +159,4 @@
             animation-delay: 2s;
         }
     }
-
 }

@@ -107,7 +107,9 @@ var gridOptions = {
         ratingRenderer: ratingRenderer,
         ratingFilterRenderer: ratingFilterRenderer
     },
-
+    defaultExportParams:{
+        columnGroups: true
+    },
     defaultColDef: {
         minWidth: 50
     },
@@ -156,6 +158,7 @@ var gridOptions = {
     suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
     // suppressTouch: true,
     // suppressDragLeaveHidesColumns: true,
+    // suppressMakeColumnVisibleAfterUnGroup: true,
     //unSortIcon: true,
     //     enableRtl: true,
     multiSortKey: 'ctrl',
@@ -347,9 +350,8 @@ var defaultCols = [
                 editable: true,
                 enableRowGroup: true,
                 // enablePivot: true,
-                filter: 'agTestingSandbox',
-                // filter: 'personFilter',
-                // floatingFilterComponent: 'personFloatingFilterComponent',
+                filter: 'personFilter',
+                floatingFilterComponent: 'personFloatingFilterComponent',
                 checkboxSelection: function (params) {
                     // we put checkbox on the name if we are not doing grouping
                     return params.columnApi.getRowGroupColumns().length === 0;
@@ -1056,9 +1058,12 @@ CountryFloatingFilterComponent.prototype.getGui = function () {
     return this.eGui;
 };
 
-CountryFloatingFilterComponent.prototype.onParentModelChanged = function (model) {
+CountryFloatingFilterComponent.prototype.onParentModelChanged = function (dataModel) {
     // add in child, one for each flat
-    if (model) {
+    if (dataModel) {
+
+        var model = dataModel.values;
+
         var flagsHtml = [];
         var printDotDotDot = false;
         if (model.length > 4) {

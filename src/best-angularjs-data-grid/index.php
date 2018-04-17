@@ -1,9 +1,9 @@
 <?php
-$pageTitle = "ag-Grd: The Best AngularJS Datagrid in the World";
-$pageDescription = "A feature rich data grid designed for Enterprise applications. Easily integrate with AngularJS to deliver filtering, grouping, aggregation, pivoting and much more. Try our Community version now or take a free 2 month trial of Enterprise Version.";
+$pageTitle = "Angular Datagrid. 59 Features with Lightning Performance.";
+$pageDescription = "ag-Grid is feature rich datagrid designed for Angular. Version 17 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that your users expect. Our Community version is free and open source or take a 2 month trial of ag-Grid Enterprise.";
 $pageKeyboards = "Angular Grid";
 $pageGroup = "basics";
-include '../documentation-main/documentation_header.php';
+include '../getting-started/header.php';
 ?>
 
 <div>
@@ -166,24 +166,23 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 </p>
 
 <h2 id="basic-angularjs-1-x-example">Basic AngularJS 1.x Example</h2>
+
 <?= example('Basic AngularJS 1.x ag-Grid', 'basic', 'vanilla', array("exampleHeight" => 130, 'extras' => array('angularjs1'))) ?>
-<h2 class="components">Components</h2>
 
-<p>When using <a href="../javascript-grid-components">Components</a> within an AngularJS 1.x application you need to
-    manage
-    both the scope yourself - the Grid does not provide the scope to the Components nor will it destroy it.</p>
 
-<p>You need to ensure provide an appropriate scope to the Components and ensure you delete it when the component is
-    destroyed.</p>
+<h2>Events & Digest Cycle</h2>
 
-<p><code>angularCompileRows</code>, <code>angularCompileFilters</code> and <code>angularCompileHeaders</code> are not
-    supported within Components.</p>
+<p>
+    For AngularJS 1.x - ag-Grid does not not fire events inside an Angular JS digest cycle. This is done on purpose
+    for performance reasons, as there are many events fired, even if you don't listen to them. Firing the digest
+    cycle for each one would kill performance. So you may want to $scope.$apply() after you handle the event.
+</p>
 
 <h2 id="destroy">Destroy</h2>
 
 <p>
-    You do not need to manually clean up the grid. The grid ties in with the AngularJS 1.x lifecycle
-    and releases all resources when the directive is destroyed.
+    If using ag-Grid's AngularJS direction, you do not need to manually clean up the grid. The grid ties in with the
+    AngularJS 1.x lifecycle and releases all resources when the directive is destroyed.
 </p>
 
 <h2 id="advanced-angularjs-1-x-example">Advanced AngularJS 1.x Example</h2>
@@ -195,6 +194,43 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 </p>
 
 <?= example('Basic AngularJS 1.x ag-Grid', 'basic2', 'vanilla', array('extras' => array('angularjs1'))) ?>
+
+<h2 id="ng1Components">Angular 1.x and ag-Grid Components</h2>
+
+<p>
+    ag-Grid does not provide direct support for it's <a href="../javascript-grid-components/">components</a> and
+    AngularJS 1.x. If you want to put custom
+    AngularJS 1.x components into ag-Grid, follow the instructions for plain JavaScript component. You will
+    then need to manage creating and destroying child scopes yourself inside the <code>init()</code> and
+    <code>destroy()</code> methods.
+</p>
+
+<p>
+    Below shows an example of using ag-Grid Filter, Header and Cell Renderer components.
+    The following can be noted:
+<ul>
+    <li>
+        The Make column has an Angular 1 Header Component.
+    </li>
+    <li>
+        The Model column has an Angular 1 Filter.
+    </li>
+    <li>
+        The Price column has an Angular 1 Cell Renderer.
+    </li>
+    <li>
+        Each component creates it's own $scope in the <code>init</code>
+        method and destroys it in the <code>destroy</code> method.
+    </li>
+</ul>
+</p>
+
+<?= example('Components', 'components', 'vanilla', array("exampleHeight" => 250, 'extras' => array('angularjs1'))) ?>
+
+<note>
+    Creating child scopes and managing AngularJS compiling is part of the AngularJS
+    framework. Please google how to do this, it's not part of ag-Grid.
+</note>
 
 <h2 id="angular-compiling">Angular Compiling</h2>
 
@@ -230,13 +266,9 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 
 <ul class="content">
     <li><b>angularCompileRows:</b> Whether to compile the rows for Angular.</li>
-    <li><b>angularCompileFilters:</b> Whether to compile provided custom filters.</li>
-    <li><b>angularCompileHeaders:</b> Whether to compile the customer headers for AngularJS 1.x.</li>
 </ul>
 
 <p>The default is always to have Angular compiling off for performance reasons.</p>
-
-<h4 id="example-using-angular-compile">Example using Angular Compile</h4>
 
 <p>
     Below then uses three columns rendered using custom Angular renderers.
@@ -291,28 +323,6 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 
 <?= example('Cell Templates', 'cell-templates', 'vanilla', array('enterprise' => true, 'extras' => array('angularjs1'))) ?>
 
-<h2 id="ng1Components">Angular 1.x and ag-Grid Components</h2>
-
-<p>
-    ag-Grid does not provide direct support for it's <a href="../javascript-grid-components/">components</a> and
-    AngularJS 1.x. If you want to put custom
-    AngularJS 1.x components into ag-Grid, follow the instructions for plain JavaScript component. You will
-    then need to manage creating and destroying child scopes yourself inside the <code>init()</code> and
-    <code>destroy()</code> methods.
-</p>
-
-<p><code>angularCompileRows</code>, <code>angularCompileFilters</code> and <code>angularCompileHeaders</code> are not
-    supported within Components.</p>
-
-
-<h2>Events & Digest Cycle</h2>
-
-<p>
-    For AngularJS 1.x - ag-Grid does not not fire events inside an Angular JS digest cycle. This is done on purpose
-    for performance reasons, as there are many events fired, even if you don't listen to them. Firing the digest
-    cycle for each one would kill performance. So you may want to $scope.$apply() after you handle the event.
-</p>
-
 <h2 id="next-steps">Next Steps</h2>
 
 <p>
@@ -320,4 +330,4 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     to learn about accessing all the features of the grid.
 </p>
 
-<?php include '../documentation-main/documentation_footer.php'; ?>
+<?php include '../getting-started/footer.php'; ?>

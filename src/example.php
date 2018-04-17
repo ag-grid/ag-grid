@@ -7,7 +7,7 @@ include_once 'includes/html-helpers.php';
 <html class="stretch-html">
 <head lang="en">
 <?php
-meta_and_links("ag-Grid: Datagrid Example", "react angular angularjs data grid example", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is our fully interactive demo showcasing all of our features and our performance with large datasets.", false);
+meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance", "react angular angularjs data grid example", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is our fully interactive demo showcasing all of our features and our performance with large datasets.", false);
 ?>
 <link rel="stylesheet" href="./dist/homepage.css">
 
@@ -57,9 +57,6 @@ meta_and_links("ag-Grid: Datagrid Example", "react angular angularjs data grid e
                         <option value="ag-theme-balham" selected>Balham</option>
                         <option value="ag-theme-balham-dark">Balham (dark)</option>
                         <option value="ag-theme-material">Material</option>
-                        <option value="ag-theme-fresh">Fresh</option>
-                        <option value="ag-theme-dark">Dark</option>
-                        <option value="ag-theme-blue">Blue</option>
                     </select>
 
                     <span id="message" style="margin-left: 10px;">

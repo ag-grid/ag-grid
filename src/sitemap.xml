@@ -2,1046 +2,1053 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
   <url>
     <loc>https://www.ag-grid.com/ag-grid-angular-systemjs/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-cell-styles/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-column-api/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-data-update/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-column-moving/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-grouping-headers/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/example-angular-material-design/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/example-excel-import/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-keyboard-navigation/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/pivoting-blog/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-examples/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/example-angular-third-party/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-graphing/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/embracing-the-future-with-angularjs2-web-components-and-ag-grid/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-filter-custom/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-pagination/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-more-details/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 <!--   <url>
     <loc>https://www.ag-grid.com/ag-grid-changelog/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url> -->
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-export/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-angular-webpack-2/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-animation/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-performance/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/react-and-ag-grid/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-reference-overview/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-blog-14-0-0/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/example-javascript/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-filtering/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/example-gallery/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-floating-filter-component/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/example-angular-ngx-bootstrap/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-pipeline/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/angular-building/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-openfin/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-viewport/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-getting-started/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-row-styles/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-styling/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-testing/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-icons/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-cell-editor/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-features/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-angular-aot-dynamic-components/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/vue-js-grid/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-angular-ngtools-webpack/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/index.php/</loc>
-    <lastmod>2018-01-24</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://www.ag-grid.com/example-angular-dynamic</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-filter-number/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-8-performance-hacks-for-javascript/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-accessing-data/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-internationalisation/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-column-spanning/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-full-width-rows/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-value-handlers/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-partners-with-webpack/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-rxjs/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/best-aurelia-data-grid/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-row-dragging/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-column-header/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/angular-more-details/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-goes-commercial/</loc>
-    <lastmod>2018-01-24</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://www.ag-grid.com/javascript-grid-tree-data/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-overlay-component/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-excel/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/best-web-component-data-grid/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-callbacks/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-adaptable-blotter/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/about.php</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-reference-data/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-row-node/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/example-expressions-and-context/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-angular-webpack/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/example-angular-rxjs/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-angular-webpack-3/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-proud-to-support-plunker/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-row-pinning/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-clipboard/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/polymer-more-details/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-value-setters/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/react-more-details/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-responsiveness/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/best-angularjs-data-grid/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-cell-editing/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-properties</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-events/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/best-javascript-data-grid/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-webpack-ngtools/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-tutorials/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-filter-component/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-infinite-scrolling/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-column-menu/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-master-detail</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/best-vuejs-data-grid/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/why-the-world-needed-another-angularjs-grid/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-cell-rendering-components/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-for-print/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-angular-angularcli/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-row-models/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-angular2-support-v6/</loc>
-    <lastmod>2018-01-24</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://www.ag-grid.com/react-redux-integration/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-aggregation/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-datagrid-crud-part-1/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-touch/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-angular-connect-2016/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-grouping/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-set-license/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-api/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-datagrid-crud-part-2/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-header-rendering/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/review-of-angularjs-grids/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/best-polymer-data-grid/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-filter-date/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-rtl/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-react-datagrid/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-openfin-dashboard/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-range-selection</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-components/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-blog-15-0-0/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-jobs-board/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-tool-panel/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-datagrid-crud-part-3/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-pivoting</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-resizing/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-big-data-small-browser/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-row-height/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-cell-rendering/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-typescript-webpack-2/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-datagrid-crud-part-4/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-filter-quick/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-context-menu/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-selection/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-getting-started/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/testimonials.php/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/example-react-redux/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-blog-16-0-0/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-third-party/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/support.php/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-sorting/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/git-color/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-status-bar/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-enterprise-model/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-filter-external/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-context/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-in-2016/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-overlays/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-datagrid/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/polymer-getting-started/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-change-detection/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/best-angular-2-data-grid/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-in-memory/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-javascript-pivot-grid/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-value-getters/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-understanding-webpack/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-cell-expressions/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/angular-getting-started/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-date-component/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-column-definitions/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-aligned-grids/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-accessibility/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/example.php/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/react-getting-started/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-filter-set/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-pinning/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-width-and-height/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-value-cache/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/license-pricing.php/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/example-angular-typeahead/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-column-properties/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-refresh/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-angular2-support-v7/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-blog-14-2-0/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/best-react-data-grid/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/ag-grid-datagrid-aurelia/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-filter-text/</loc>
-    <lastmod>2018-01-24</lastmod>
+    <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
+  <url>
+    <loc>https://www.ag-grid.com/react-redux-integration-pt1/</loc>
+    <lastmod>2018-03-07</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.ag-grid.com/react-redux-integration-pt2/</loc>
+    <lastmod>2018-03-07</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.ag-grid.com/ag-grid-changelog/</loc>
+    <lastmod>2018-03-07</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>  
+  <url>
+    <loc>https://www.ag-grid.com/ag-grid-gpu-animation-transform-translate/</loc>
+    <lastmod>2018-03-07</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  
 </urlset>

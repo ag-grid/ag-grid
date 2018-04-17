@@ -1,72 +1,38 @@
 [
     {
-        "title": "Getting Started",
-        "gtm": { "category": "getting-started" },
+        "title": "Guides",
+        "gtm": { "category": "guides" },
         "items": [
             {
-                "title": "Overview",
-                "url": "javascript-grid-getting-started/"
-            },
-            {
-                "title": "Javascript",
+                "title": "Vanilla JavaScript",
                 "gtm": { "tech": "vanilla" },
-                "url": "best-javascript-data-grid/",
                 "items": [
                     {
-                        "title": "Getting Started",
-                        "url": "javascript-getting-started/"
+                        "title": "Install with NPM",
+                        "url": "javascript-grid-npm/"
                     },
                     {
-                        "title": "More Details",
-                        "url": "javascript-more-details/"
-                    }
-                ]
-            },
-            {
-                "title": "ReactJS",
-                "url": "best-react-data-grid/",
-                "gtm": { "tech": "react" },
-                "items": [
-                    {
-                        "title": "Getting Started",
-                        "url": "react-getting-started/"
+                        "title": "Download for Local Usage",
+                        "url": "javascript-grid-download/"
                     },
                     {
-                        "title": "More Details",
-                        "url": "react-more-details/"
-                    },
-                    {
-                        "title": "Redux Integration Part 1",
-                        "url": "react-redux-integration-pt1/"
-                    },
-                    {
-                        "title": "Redux Integration Part 2",
-                        "url": "react-redux-integration-pt2/"
+                        "title": "Use with TypeScript",
+                        "gtm": { "tech": "typescript" },
+                        "url": "ag-grid-typescript-webpack-2/"
                     }
                 ]
             },
             {
                 "title": "Angular",
-                "url": "best-angular-2-data-grid/",
                 "gtm": { "tech": "angular" },
                 "items": [
                     {
-                        "title": "Getting Started",
-                        "url": "angular-getting-started/"
-                    },
-                    {
-                        "title": "More Details",
+                        "title": "Ag-Grid Angular Overview",
                         "url": "angular-more-details/"
                     },
                     {
                         "title": "Building",
-                        "url": "angular-building/",
-                        "gtm": { "hub": true },
                         "items": [
-                            {
-                                "title": "Angular CLI",
-                                "url": "ag-grid-angular-angularcli/"
-                            },
                             {
                                 "title": "SystemJS",
                                 "url": "ag-grid-angular-systemjs/"
@@ -84,48 +50,65 @@
                                 "url": "ag-grid-angular-webpack/"
                             }
                         ]
-                    }
-                ]
-            },
-            {
-                "title": "Polymer",
-                "url": "best-polymer-data-grid/",
-                "gtm": { "tech": "polymer" },
-                "items": [
-                    {
-                        "title": "Getting Started",
-                        "url": "polymer-getting-started/"
                     },
                     {
-                        "title": "More Details",
-                        "url": "polymer-more-details/"
+                        "title": "Use with RxJS",
+                        "url": "example-angular-rxjs/"
                     }
                 ]
             },
             {
-                "title": "AngularJS 1.x",
-                "gtm": { "tech": "angularjs1" },
-                "url": "best-angularjs-data-grid/"
+                "title": "React",
+                "gtm": { "tech": "react" },
+                "items": [
+                    {
+                        "title": "Ag-Grid React Overview",
+                        "url": "react-more-details/"
+                    },
+                    {
+                        "title": "Redux Integration Part 1",
+                        "url": "react-redux-integration-pt1/"
+                    },
+                    {
+                        "title": "Redux Integration Part 2",
+                        "url": "react-redux-integration-pt2/"
+                    }
+                ]
             },
             {
-                "title": "VueJS",
+                "title": "Vue.js",
                 "gtm": { "tech": "vue" },
                 "url": "best-vuejs-data-grid/"
             },
             {
-                "title": "Aurelia",
-                "gtm": { "tech": "aurelia" },
-                "url": "best-aurelia-data-grid/"
+                "title": "Server-side Operations",
+                "gtm": { "tech": "server-side-operations" },
+                "items": [
+                    {
+                        "title": "Using Java & Oracle",
+                        "url": "oracle-server-side-operations/"
+                    },
+                    {
+                        "title": "Using Java & Apache Spark",
+                        "url": "spark-server-side-operations/"
+                    }
+                ]
             },
             {
-                "title": "Web Components",
-                "gtm": { "tech": "web-components" },
-                "url": "best-web-component-data-grid/"
+                "title": "Use  With RxJS",
+                "url": "javascript-grid-rxjs/"
             },
             {
-                "title": "TypeScript",
-                "gtm": { "tech": "typescript" },
-                "url": "ag-grid-typescript-webpack-2/"
+                "title": "Resize With Parent Container",
+                "url": "javascript-grid-responsiveness/"
+            },
+            {
+                "title": "Test With Protractor &amp; Jasmine",
+                "url": "javascript-grid-testing/"
+            },
+            {
+                "title": "Use in OpenFin",
+                "url": "javascript-grid-openfin/"
             }
         ]
     },
@@ -189,8 +172,7 @@
             },
             {
                 "title": "Column Moving",
-                "url": "javascript-grid-column-moving/",
-                "new": true
+                "url": "javascript-grid-column-moving/"
             },
             {
                 "title": "Column Filter",
@@ -233,8 +215,7 @@
             },
             {
                 "title": "Row Dragging",
-                "url": "javascript-grid-row-dragging/",
-                "new": true
+                "url": "javascript-grid-row-dragging/"
             },
             {
                 "title": "Row Selection",
@@ -242,8 +223,7 @@
             },
             {
                 "title": "Range Selection",
-                "url": "javascript-grid-range-selection/",
-                "enterprise": true
+                "url": "javascript-grid-range-selection/"
             },
             {
                 "title": "Grid Size",
@@ -559,34 +539,8 @@
                 "url": "javascript-grid-examples/"
             },
             {
-                "title": "Flexbox",
-                "url": "example-flexbox/",
-                "new": true
-            },
-            {
-                "title": "CSS Grid",
-                "url": "example-css-grid/",
-                "new": true
-            },
-            {
-                "title": "Redux",
-                "url": "example-react-redux/"
-            },
-            {
-                "title": "Angular RxJS",
-                "url": "example-angular-rxjs/"
-            },
-            {
                 "title": "Angular & Material Design",
                 "url": "example-angular-material-design/"
-            },
-            {
-                "title": "Angular & ngx Bootstrap",
-                "url": "example-angular-ngx-bootstrap/"
-            },
-            {
-                "title": "Angular with Typeahead",
-                "url": "example-angular-typeahead/"
             },
             {
                 "title": "Expressions & Context",
@@ -601,48 +555,8 @@
                 "url": "example-gallery/"
             },
             {
-                "title": "OpenFin Dashboard",
-                "url": "javascript-grid-openfin-dashboard/"
-            },
-            {
                 "title": "Graphing",
                 "url": "javascript-grid-graphing/"
-            }
-        ]
-    },
-    {
-        "title": "Misc",
-        "gtm": { "category": "misc" },
-        "items": [
-            {
-                "title": "Change log",
-                "url": "change-log/changeLogIndex.php",
-                "skipIndex": true
-            },
-            {
-                "title": "OpenFin",
-                "url": "javascript-grid-openfin/"
-            },
-            {
-                "title": "Tutorials",
-                "url": "ag-grid-tutorials/"
-            },
-            {
-                "title": "Responsive Design",
-                "url": "javascript-grid-responsiveness/"
-            },
-            {
-                "title": "Testing",
-                "url": "javascript-grid-testing/"
-            },
-            {
-                "title": "RxJS",
-                "url": "javascript-grid-rxjs/"
-            },
-            {
-                "title": "Archive Docs",
-                "url": "archive/",
-                "skipIndex": true
             }
         ]
     }

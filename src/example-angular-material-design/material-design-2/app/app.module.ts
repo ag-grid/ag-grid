@@ -1,11 +1,12 @@
-import {NgModule} from "@angular/core";
-import {BrowserModule} from "@angular/platform-browser";
-import {FormsModule} from "@angular/forms";
+import { NgModule } from "@angular/core";
+import { BrowserModule } from "@angular/platform-browser";
+import { FormsModule } from "@angular/forms";
 // ag-grid
-import {AgGridModule} from "ag-grid-angular/main";
+import { AgGridModule } from "ag-grid-angular/main";
 
 // material design
 import {
+    MatCardModule,
     MatButtonToggleModule,
     MatCheckboxModule,
     MatFormFieldModule,
@@ -16,23 +17,18 @@ import {
     MatSelectModule,
     MatSliderModule
 } from "@angular/material";
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatEditorComponentTwo} from "./mat-editor-two.component";
-import {MatSliderComponent} from "./mat-slider.component";
-import {MatButtonToggleHeaderComponent} from "./mat-button-toggle.component";
-import {MatProgressSpinnerComponent} from "./mat-progress-spinner.component";
-import {ColumnAlignmentService} from "./columnAlignmentService";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { MatEditorComponentTwo } from "./mat-editor-two.component";
+import { MatSliderComponent } from "./mat-slider.component";
+import { MatButtonToggleHeaderComponent } from "./mat-button-toggle.component";
+import { MatProgressSpinnerComponent } from "./mat-progress-spinner.component";
+import { ColumnAlignmentService } from "./columnAlignmentService";
 
 @NgModule({
     imports: [
         BrowserModule,
         FormsModule,
-        AgGridModule.withComponents(
-            [
-                MatSliderComponent,
-                MatButtonToggleHeaderComponent,
-                MatProgressSpinnerComponent
-            ]),
+        AgGridModule.withComponents([MatSliderComponent, MatButtonToggleHeaderComponent, MatProgressSpinnerComponent]),
         BrowserAnimationsModule,
         MatCheckboxModule,
         MatFormFieldModule,
@@ -42,16 +38,11 @@ import {ColumnAlignmentService} from "./columnAlignmentService";
         MatButtonToggleModule,
         MatIconModule,
         MatProgressSpinnerModule,
-        MatSliderModule
+        MatSliderModule,
+        MatCardModule
     ],
-    declarations: [
-        MatEditorComponentTwo,
-        MatSliderComponent,
-        MatButtonToggleHeaderComponent,
-        MatProgressSpinnerComponent
-    ],
+    declarations: [MatEditorComponentTwo, MatSliderComponent, MatButtonToggleHeaderComponent, MatProgressSpinnerComponent],
     providers: [ColumnAlignmentService],
     bootstrap: [MatEditorComponentTwo]
 })
-export class AppModule {
-}
+export class AppModule {}

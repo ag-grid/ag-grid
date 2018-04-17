@@ -12,7 +12,8 @@ export default Vue.extend({
                  class="full-width-grid"
                  :gridOptions="gridOptions"
                  :columnDefs="colDefs"
-                 :rowData="rowData">
+                 :rowData="rowData"
+                 :gridReady="onGridReady">
             </ag-grid-vue>
         </div>
     `,
@@ -27,7 +28,7 @@ export default Vue.extend({
         };
     },
     beforeMount() {
-        this.gridOptions = {};
+        this.gridOptions = {debug: true};
         this.colDefs = [
             {field: 'callId'},
             {field: 'direction'},
@@ -38,6 +39,29 @@ export default Vue.extend({
     },
     mounted() {
         this.rowData = this.params.data.callRecords;
+        this.rowIndex = this.params.rowIndex;
+        this.masterGridApi = this.params.api;
     },
-    methods: {}
+    beforeDestroy() {
+      let detailGridId = "detail_" + this.rowIndex;
+
+      // ag-Grid is automatically destroyed
+
+      console.log("removing detail grid info with id: ", detailGridId);
+      this.masterGridApi.removeDetailGridInfo(detailGridId);
+    },
+    methods: {
+      onGridReady(params) {
+        let detailGridId = "detail_" + this.rowIndex;
+
+        let gridInfo = {
+          id: detailGridId,
+          api: params.api,
+          columnApi: params.columnApi
+        };
+
+        console.log("adding detail grid info with id: ", detailGridId);
+        this.masterGridApi.addDetailGridInfo(detailGridId, gridInfo);
+      }
+    }
 });
