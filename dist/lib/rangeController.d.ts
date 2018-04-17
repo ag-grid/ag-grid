@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.0.0
+// ag-grid-enterprise v17.1.0
 import { IRangeController, RangeSelection, GridCell, AddRangeSelectionParams } from "ag-grid/main";
 export declare class RangeController implements IRangeController {
     private loggerFactory;
@@ -23,7 +23,7 @@ export declare class RangeController implements IRangeController {
     private init();
     setRangeToCell(cell: GridCell): void;
     extendRangeToCell(toCell: GridCell): void;
-    extendRangeInDirection(startCell: GridCell, key: number): void;
+    extendRangeInDirection(startCell: GridCell, key: number): boolean;
     setRange(rangeSelection: AddRangeSelectionParams): void;
     addRange(rangeSelection: AddRangeSelectionParams): void;
     getCellRanges(): RangeSelection[];

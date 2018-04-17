@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.0.0
+// ag-grid-enterprise v17.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -323,7 +323,8 @@ var EnterpriseBlock = (function (_super) {
         var params = {
             successCallback: this.pageLoaded.bind(this, this.getVersion()),
             failCallback: this.pageLoadFailed.bind(this),
-            request: request
+            request: request,
+            parentNode: this.parentRowNode
         };
         return params;
     };

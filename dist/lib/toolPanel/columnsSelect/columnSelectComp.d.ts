@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.0.0
+// ag-grid-enterprise v17.1.0
 import { Component } from "ag-grid/main";
 export interface BaseColumnItem {
     getDisplayName(): string;

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.0.0
+// ag-grid-enterprise v17.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -285,7 +285,7 @@ var EnterpriseMenu = (function (_super) {
             }
         }
         result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
-        result.push('destroyColumnComps');
+        result.push('resetColumns');
         result.push('toolPanel');
         // only add grouping expand/collapse if grouping in the InMemoryRowModel
         // if pivoting, we only have expandable groups if grouping by 2 or more columns

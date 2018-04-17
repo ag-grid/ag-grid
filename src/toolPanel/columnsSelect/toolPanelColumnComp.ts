@@ -30,9 +30,9 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem{
 
     private static TEMPLATE =
         `<div class="ag-column-select-column">
-            <ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>
+            <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox" (change)="onCheckboxChanged"></ag-checkbox>
             <span class="ag-column-drag" ref="eDragHandle"></span>
-            <span class="ag-column-select-label"></span>
+            <span class="ag-column-select-label" ref="eLabel" (click)="onLabelClicked"></span>
         </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -44,10 +44,8 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem{
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    @QuerySelector('.ag-column-select-label') private eText: HTMLElement;
-    @QuerySelector('.ag-column-select-indent') private eIndent: HTMLElement;
-    @QuerySelector('.ag-column-select-checkbox') private cbSelect: AgCheckbox;
-
+    @RefSelector('eLabel') private eLabel: HTMLElement;
+    @RefSelector('cbSelect') private cbSelect: AgCheckbox;
     @RefSelector('eDragHandle') private eDragHandle: HTMLElement;
 
     private column: Column;
@@ -74,7 +72,7 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem{
         this.setTemplate(ToolPanelColumnComp.TEMPLATE);
 
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
-        this.eText.innerHTML = this.displayName;
+        this.eLabel.innerHTML = this.displayName;
 
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
         let indent = this.columnDept;
@@ -97,12 +95,19 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem{
 
         this.onColumnStateChanged();
 
-        this.addDestroyableEventListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onChange.bind(this));
-
         CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
     }
 
-    private onChange(event: any): void {
+    private onLabelClicked(): void {
+        let nextState = !this.cbSelect.isSelected();
+        this.onChangeCommon(nextState);
+    }
+
+    private onCheckboxChanged(event: any): void {
+        this.onChangeCommon(event.selected);
+    }
+
+    private onChangeCommon(nextState: boolean): void {
         // only want to action if the user clicked the checkbox, not is we are setting the checkbox because
         // of a change in the model
         if (this.processingColumnStateChange) { return; }
@@ -111,13 +116,13 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem{
         // so the user gets nice feedback when they click. otherwise there would be a lag and the
         // user would think the checkboxes were clunky
         if (this.columnController.isPivotMode()) {
-            if (event.selected) {
+            if (nextState) {
                 this.actionCheckedPivotMode();
             } else {
                 this.actionUnCheckedPivotMode();
             }
         } else {
-            this.columnController.setColumnVisible(this.column, event.selected, "columnMenu");
+            this.columnController.setColumnVisible(this.column, nextState, "columnMenu");
         }
 
         if (this.selectionCallback){

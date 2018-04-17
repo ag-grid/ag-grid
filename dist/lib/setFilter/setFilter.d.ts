@@ -1,11 +1,12 @@
-// ag-grid-enterprise v17.0.0
-import { BaseFilter, IDoesFilterPassParams, ISetFilterParams } from "ag-grid/main";
-export declare class SetFilter extends BaseFilter<string, ISetFilterParams, string[]> {
+// ag-grid-enterprise v17.1.0
+import { BaseFilter, IDoesFilterPassParams, ISetFilterParams, SerializedSetFilter } from "ag-grid/main";
+export declare class SetFilter extends BaseFilter<string, ISetFilterParams, string[] | SerializedSetFilter> {
     private model;
     private eSelectAll;
     private eSelectAllContainer;
     private eMiniFilter;
     private eFilterLoading;
+    private valueFormatterService;
     private selectAllState;
     private virtualList;
     private debounceFilterChanged;
@@ -17,7 +18,7 @@ export declare class SetFilter extends BaseFilter<string, ISetFilterParams, stri
     private updateCheckboxIcon();
     setLoading(loading: boolean): void;
     initialiseFilterBodyUi(): void;
-    modelFromFloatingFilter(from: string): string[];
+    modelFromFloatingFilter(from: string): string[] | SerializedSetFilter;
     refreshFilterBodyUi(): void;
     private createSetListItem(value);
     afterGuiAttached(params: any): void;
@@ -30,8 +31,9 @@ export declare class SetFilter extends BaseFilter<string, ISetFilterParams, stri
      * @param options The options to use.
      * @param selectAll If by default all the values should be selected.
      * @param notify If we should let know the model that the values of the filter have changed
+     * @param toSelect The subset of options to subselect
      */
-    setFilterValues(options: string[], selectAll?: boolean, notify?: boolean): void;
+    setFilterValues(options: string[], selectAll?: boolean, notify?: boolean, toSelect?: string[]): void;
     /**
      * Public method provided so the user can reset the values of the filter once that it has started
      * @param options The options to use.
@@ -55,7 +57,7 @@ export declare class SetFilter extends BaseFilter<string, ISetFilterParams, stri
     isNothingSelected(): boolean;
     getUniqueValueCount(): number;
     getUniqueValue(index: any): string;
-    serialize(): string[];
-    parse(dataModel: string[]): void;
+    serialize(): string[] | SerializedSetFilter;
+    parse(dataModel: string[] | SerializedSetFilter): void;
     resetState(): void;
 }

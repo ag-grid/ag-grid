@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.0.0
+// ag-grid-enterprise v17.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -57,12 +57,17 @@ var RangeController = (function () {
             columnEnd: toCell.column
         });
     };
+    // returns true if successful, false if not sucessful
     RangeController.prototype.extendRangeInDirection = function (startCell, key) {
         var oneRangeExists = main_1._.exists(this.cellRanges) || this.cellRanges.length === 1;
         var previousSelectionStart = oneRangeExists ? this.cellRanges[0].start : null;
         var takeEndFromPreviousSelection = startCell.equals(previousSelectionStart);
         var previousEndCell = takeEndFromPreviousSelection ? this.cellRanges[0].end : startCell;
         var newEndCell = this.cellNavigationService.getNextCellToFocus(key, previousEndCell);
+        // if user is at end of grid, so no cell to extend to, we return false
+        if (!newEndCell) {
+            return false;
+        }
         this.setRange({
             rowStart: startCell.rowIndex,
             floatingStart: startCell.floating,
@@ -71,6 +76,7 @@ var RangeController = (function () {
             columnStart: startCell.column,
             columnEnd: newEndCell.column
         });
+        return true;
     };
     RangeController.prototype.setRange = function (rangeSelection) {
         if (!this.gridOptionsWrapper.isEnableRangeSelection()) {

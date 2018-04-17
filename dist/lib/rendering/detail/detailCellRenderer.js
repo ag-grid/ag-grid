@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.0.0
+// ag-grid-enterprise v17.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -53,6 +53,9 @@ var DetailCellRenderer = (function (_super) {
         }
     };
     DetailCellRenderer.prototype.setupGrabMouseWheelEvent = function () {
+        if (this.gridOptionsWrapper.isNativeScroll()) {
+            return;
+        }
         var mouseWheelListener = function (event) {
             event.stopPropagation();
         };
@@ -111,10 +114,13 @@ var DetailCellRenderer = (function (_super) {
         }
         // IMPORTANT - gridOptions must be cloned
         this.detailGridOptions = main_1._.cloneObject(gridOptions);
-        //Passing a dummy agGridReact bean in case this is for a REACT grid
         new main_1.Grid(this.eDetailGrid, this.detailGridOptions, {
             seedBeanInstances: {
-                agGridReact: {}
+                // a temporary fix for AG-1574
+                // AG-1715 raised to do a wider ranging refactor to improve this
+                agGridReact: params.agGridReact,
+                // AG-1716 - directly related to AG-1574 and AG-1715
+                frameworkComponentWrapper: params.frameworkComponentWrapper
             }
         });
         this.addDestroyFunc(function () { return _this.detailGridOptions.api.destroy(); });

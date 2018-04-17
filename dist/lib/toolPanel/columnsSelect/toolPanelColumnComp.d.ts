@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.0.0
+// ag-grid-enterprise v17.1.0
 import { Column, Component } from "ag-grid/main";
 import { BaseColumnItem } from "./columnSelectComp";
 export declare class ToolPanelColumnComp extends Component implements BaseColumnItem {
@@ -11,8 +11,7 @@ export declare class ToolPanelColumnComp extends Component implements BaseColumn
     private context;
     private columnApi;
     private gridApi;
-    private eText;
-    private eIndent;
+    private eLabel;
     private cbSelect;
     private eDragHandle;
     private column;
@@ -24,7 +23,9 @@ export declare class ToolPanelColumnComp extends Component implements BaseColumn
     private groupsExist;
     constructor(column: Column, columnDept: number, allowDragging: boolean, groupsExist: boolean);
     init(): void;
-    private onChange(event);
+    private onLabelClicked();
+    private onCheckboxChanged(event);
+    private onChangeCommon(nextState);
     private actionUnCheckedPivotMode();
     private actionCheckedPivotMode();
     private setupDragging();

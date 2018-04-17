@@ -82,8 +82,8 @@ export class MenuItemMapper {
                 action: ()=> this.columnController.removeRowGroupColumn(column, "contextMenu"),
                 icon: Utils.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null)
             };
-            case 'destroyColumnComps': return {
-                name: localeTextFunc('destroyColumnComps', 'Reset Columns'),
+            case 'resetColumns': return {
+                name: localeTextFunc('resetColumns', 'Reset Columns'),
                 action: ()=> this.columnController.resetColumnState("contextMenu")
             };
             case 'expandAll': return {

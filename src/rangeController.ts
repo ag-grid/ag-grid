@@ -104,7 +104,8 @@ export class RangeController implements IRangeController {
         });
     }
 
-    public extendRangeInDirection(startCell: GridCell, key: number): void {
+    // returns true if successful, false if not sucessful
+    public extendRangeInDirection(startCell: GridCell, key: number): boolean {
 
         let oneRangeExists = _.exists(this.cellRanges) || this.cellRanges.length === 1;
         let previousSelectionStart = oneRangeExists ? this.cellRanges[0].start : null;
@@ -114,6 +115,11 @@ export class RangeController implements IRangeController {
         let previousEndCell = takeEndFromPreviousSelection ? this.cellRanges[0].end : startCell;
         let newEndCell = this.cellNavigationService.getNextCellToFocus(key, previousEndCell);
 
+        // if user is at end of grid, so no cell to extend to, we return false
+        if (!newEndCell) {
+            return false;
+        }
+
         this.setRange({
             rowStart: startCell.rowIndex,
             floatingStart: startCell.floating,
@@ -122,6 +128,8 @@ export class RangeController implements IRangeController {
             columnStart: startCell.column,
             columnEnd: newEndCell.column
         });
+
+        return true;
     }
 
     public setRange(rangeSelection: AddRangeSelectionParams): void {

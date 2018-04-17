@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.0.0
+// ag-grid-enterprise v17.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -30,7 +30,6 @@ var CheckboxState;
     CheckboxState[CheckboxState["UNCHECKED"] = 1] = "UNCHECKED";
     CheckboxState[CheckboxState["INTERMEDIATE"] = 2] = "INTERMEDIATE";
 })(CheckboxState || (CheckboxState = {}));
-;
 var SetFilter = (function (_super) {
     __extends(SetFilter, _super);
     function SetFilter() {
@@ -38,8 +37,9 @@ var SetFilter = (function (_super) {
     }
     SetFilter.prototype.customInit = function () {
         var _this = this;
-        var changeFilter = function () {
-            _this.onFilterChanged();
+        var changeFilter = function (applyNow) {
+            if (applyNow === void 0) { applyNow = false; }
+            _this.onFilterChanged(applyNow);
         };
         var debounceMs = this.filterParams && this.filterParams.debounceMs != null ? this.filterParams.debounceMs : 0;
         this.debounceFilterChanged = main_1._.debounce(changeFilter, debounceMs);
@@ -78,7 +78,7 @@ var SetFilter = (function (_super) {
             this.virtualList.setRowHeight(this.filterParams.cellHeight);
         }
         this.virtualList.setComponentCreator(this.createSetListItem.bind(this));
-        this.model = new setFilterModel_1.SetFilterModel(this.filterParams.colDef, this.filterParams.rowModel, this.filterParams.valueGetter, this.filterParams.doesRowPassOtherFilter, this.filterParams.suppressSorting, function (values) { return _this.setFilterValues(values, true, false); }, this.setLoading.bind(this));
+        this.model = new setFilterModel_1.SetFilterModel(this.filterParams.colDef, this.filterParams.rowModel, this.filterParams.valueGetter, this.filterParams.doesRowPassOtherFilter, this.filterParams.suppressSorting, function (values, toSelect) { return _this.setFilterValues(values, toSelect ? false : true, toSelect ? true : false, toSelect); }, this.setLoading.bind(this), this.valueFormatterService, this.filterParams.column);
         this.virtualList.setModel(new ModelWrapper(this.model));
         main_1._.setVisible(this.getGui().querySelector('#ag-mini-filter'), !this.filterParams.suppressMiniFilter);
         this.eMiniFilter.value = this.model.getMiniFilter();
@@ -89,7 +89,15 @@ var SetFilter = (function (_super) {
         this.virtualList.refresh();
     };
     SetFilter.prototype.modelFromFloatingFilter = function (from) {
-        return [from];
+        if (this.gridOptionsWrapper.isEnableOldSetFilterModel()) {
+            return [from];
+        }
+        else {
+            return {
+                values: [from],
+                filterType: 'set'
+            };
+        }
     };
     SetFilter.prototype.refreshFilterBodyUi = function () {
     };
@@ -125,6 +133,9 @@ var SetFilter = (function (_super) {
         if (this.filterParams.colDef.keyCreator) {
             value = this.filterParams.colDef.keyCreator({ value: value });
         }
+        if (this.filterParams.colDef.refData) {
+            value = this.filterParams.colDef.refData[value];
+        }
         value = main_1.Utils.makeNull(value);
         if (Array.isArray(value)) {
             for (var i = 0; i < value.length; i++) {
@@ -153,21 +164,22 @@ var SetFilter = (function (_super) {
      * @param options The options to use.
      * @param selectAll If by default all the values should be selected.
      * @param notify If we should let know the model that the values of the filter have changed
+     * @param toSelect The subset of options to subselect
      */
-    SetFilter.prototype.setFilterValues = function (options, selectAll, notify) {
+    SetFilter.prototype.setFilterValues = function (options, selectAll, notify, toSelect) {
         var _this = this;
         if (selectAll === void 0) { selectAll = false; }
         if (notify === void 0) { notify = true; }
         this.model.onFilterValuesReady(function () {
             var keepSelection = _this.filterParams && _this.filterParams.newRowsAction === 'keep';
-            var isSelectAll = selectAll || (_this.selectAllState === CheckboxState.CHECKED);
             _this.model.setValuesType(setFilterModel_1.SetFilterModelValuesType.PROVIDED_LIST);
-            _this.model.refreshValues(options, keepSelection, isSelectAll);
+            _this.model.refreshValues(options, keepSelection, selectAll);
             _this.updateSelectAll();
-            options.forEach(function (option) { return _this.model.selectValue(option); });
+            var actualToSelect = toSelect ? toSelect : options;
+            actualToSelect.forEach(function (option) { return _this.model.selectValue(option); });
             _this.virtualList.refresh();
             if (notify) {
-                _this.debounceFilterChanged();
+                _this.debounceFilterChanged(true);
             }
         });
     };
@@ -282,10 +294,20 @@ var SetFilter = (function (_super) {
         return this.model.getUniqueValue(index);
     };
     SetFilter.prototype.serialize = function () {
-        return this.model.getModel();
+        if (this.gridOptionsWrapper.isEnableOldSetFilterModel()) {
+            return this.model.getModel();
+        }
+        else {
+            return {
+                values: this.model.getModel(),
+                filterType: 'set'
+            };
+        }
     };
     SetFilter.prototype.parse = function (dataModel) {
-        this.model.setModel(dataModel);
+        // also supporting old filter model for backwards compatibility
+        var newValues = (dataModel instanceof Array) ? dataModel : dataModel.values;
+        this.model.setModel(newValues);
         this.updateSelectAll();
         this.virtualList.refresh();
     };
@@ -310,6 +332,10 @@ var SetFilter = (function (_super) {
         main_1.RefSelector('ag-filter-loading'),
         __metadata("design:type", HTMLInputElement)
     ], SetFilter.prototype, "eFilterLoading", void 0);
+    __decorate([
+        main_1.Autowired('valueFormatterService'),
+        __metadata("design:type", main_1.ValueFormatterService)
+    ], SetFilter.prototype, "valueFormatterService", void 0);
     return SetFilter;
 }(main_1.BaseFilter));
 exports.SetFilter = SetFilter;

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.0.0
+// ag-grid-enterprise v17.1.0
 import { Component, OriginalColumnGroup } from "ag-grid/main";
 import { BaseColumnItem } from "./columnSelectComp";
 export declare class ToolPanelGroupComp extends Component implements BaseColumnItem {
@@ -27,7 +27,9 @@ export declare class ToolPanelGroupComp extends Component implements BaseColumnI
     private setupDragging();
     private createDragItem();
     private setupExpandContract();
-    private onCheckboxChanged();
+    private onLabelClicked();
+    private onCheckboxChanged(event);
+    private onChangeCommon(nextState);
     private actionUnCheckedReduce(columns);
     private actionCheckedReduce(columns);
     private onColumnStateChanged();

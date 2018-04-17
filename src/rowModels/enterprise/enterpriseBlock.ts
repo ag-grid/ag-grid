@@ -404,7 +404,8 @@ export class EnterpriseBlock extends RowNodeBlock {
         let params = <IEnterpriseGetRowsParams> {
             successCallback: this.pageLoaded.bind(this, this.getVersion()),
             failCallback: this.pageLoadFailed.bind(this),
-            request: request
+            request: request,
+            parentNode: this.parentRowNode
         };
 
         return params;

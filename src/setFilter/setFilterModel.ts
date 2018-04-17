@@ -1,11 +1,15 @@
-import {Utils} from "ag-grid/main";
-import {ColDef} from "ag-grid/main";
-import {ISetFilterParams} from "ag-grid/main";
-import {TextFormatter} from "ag-grid/main";
-import {TextFilter} from "ag-grid/main";
-import {InMemoryRowModel, IRowModel, Constants} from 'ag-grid';
-import {SetFilterValuesFunc, SetFilterValuesFuncParams} from "ag-grid/main";
-import {ExternalPromise, Promise} from 'ag-grid';
+import {
+    ColDef,
+    ISetFilterParams,
+    SetFilterValuesFunc,
+    SetFilterValuesFuncParams,
+    TextFilter,
+    TextFormatter,
+    Utils,
+    Column, ValueFormatterService, _
+} from "ag-grid/main";
+import {Constants, ExternalPromise, InMemoryRowModel, IRowModel, Promise} from 'ag-grid';
+
 
 // we cannot have 'null' as a key in a JavaScript map,
 // it needs to be a string. so we use this string for
@@ -38,11 +42,14 @@ export class SetFilterModel {
     private valuesType: SetFilterModelValuesType;
 
     private doesRowPassOtherFilters: any;
-    private modelUpdatedFunc: (values: string[]) => void;
+    private modelUpdatedFunc: (values: string[], selected?:string[]) => void;
     private isLoadingFunc: (loading: boolean) => void;
 
-    private filterValuesExternalPromise: ExternalPromise<void>;
-    private filterValuesPromise: Promise<void>;
+    private filterValuesExternalPromise: ExternalPromise<string[]>;
+    private filterValuesPromise: Promise<string[]>;
+
+    private valueFormatterService: ValueFormatterService;
+    private column: Column;
 
     constructor(
         colDef: ColDef,
@@ -50,8 +57,10 @@ export class SetFilterModel {
         valueGetter: any,
         doesRowPassOtherFilters: any,
         suppressSorting: boolean,
-        modelUpdatedFunc: (values:string[])=>void,
-        isLoadingFunc: (loading:boolean)=>void
+        modelUpdatedFunc: (values:string[], selected?:string[])=>void,
+        isLoadingFunc: (loading:boolean)=>void,
+        valueFormatterService: ValueFormatterService,
+        column: Column
     ) {
         this.suppressSorting = suppressSorting;
         this.colDef = colDef;
@@ -59,6 +68,8 @@ export class SetFilterModel {
         this.doesRowPassOtherFilters = doesRowPassOtherFilters;
         this.modelUpdatedFunc = modelUpdatedFunc;
         this.isLoadingFunc = isLoadingFunc;
+        this.valueFormatterService = valueFormatterService;
+        this.column = column;
 
         if (rowModel.getType()===Constants.ROW_MODEL_TYPE_IN_MEMORY) {
             this.inMemoryRowModel = <InMemoryRowModel> rowModel;
@@ -135,13 +146,14 @@ export class SetFilterModel {
             this.setValues(valuesToUse);
             this.filterValuesPromise = Promise.resolve(null);
         } else {
-            this.filterValuesExternalPromise = Promise.external<void>();
+            this.filterValuesExternalPromise = Promise.external<string[]>();
             this.filterValuesPromise = this.filterValuesExternalPromise.promise;
             this.isLoadingFunc(true);
             this.setValues([]);
             let callback = <SetFilterValuesFunc> this.filterParams.values;
             let params: SetFilterValuesFuncParams = {
-                success:this.onAsyncValuesLoaded.bind(this)
+                success:this.onAsyncValuesLoaded.bind(this),
+                colDef: this.colDef
             };
             callback(params);
         }
@@ -150,7 +162,7 @@ export class SetFilterModel {
     private onAsyncValuesLoaded(values:string[]): void {
         this.modelUpdatedFunc(values);
         this.isLoadingFunc(false);
-        this.filterValuesExternalPromise.resolve(null);
+        this.filterValuesExternalPromise.resolve(values);
     }
 
     private areValuesSync() {
@@ -227,6 +239,10 @@ export class SetFilterModel {
                 value = this.colDef.keyCreator( {value: value} );
             }
 
+            if (this.colDef.refData) {
+                value = this.colDef.refData[value];
+            }
+
             if (value === "" || value === undefined) {
                 value = null;
             }
@@ -287,21 +303,25 @@ export class SetFilterModel {
         const miniFilterUpperCase = miniFilter.toUpperCase();
 
         for (let i = 0, l = this.availableUniqueValues.length; i < l; i++) {
-            let filteredValue = this.availableUniqueValues[i];
-            if (filteredValue){
-                const value = this.formatter(filteredValue.toString());
+            let value = this.availableUniqueValues[i];
+            if (value){
+                const displayedValue = this.formatter(value.toString());
 
-                if (value !== null) {
-
-                    // allow for case insensitive searches, make both filter and value uppercase
-                    const valueUpperCase = value.toUpperCase();
-
-                    if (valueUpperCase.indexOf(miniFilterUpperCase) >= 0) {
-                        this.displayedValues.push(filteredValue);
+                //This function encapsulates the logic to check if a string matches the mini filter
+                let matchesFn: any = (valueToCheck:string):boolean=>{
+                    if (valueToCheck === null) {
+                        return false;
                     }
+                    // allow for case insensitive searches, make both filter and value uppercase
+                    const valueUpperCase = valueToCheck.toUpperCase();
 
+                    return valueUpperCase.indexOf(miniFilterUpperCase) >= 0;
+                };
+
+                let formattedValue:string = this.valueFormatterService.formatValue(this.column, null, null, displayedValue);
+                if (matchesFn(displayedValue) || matchesFn(formattedValue)) {
+                    this.displayedValues.push(displayedValue);
                 }
-
             }
         }
     }
@@ -419,6 +439,16 @@ export class SetFilterModel {
     }
 
     public setModel(model: string[], isSelectAll = false): void {
+        if (this.areValuesSync()){
+            this.setSyncModel(model, isSelectAll)
+        } else {
+            this.filterValuesExternalPromise.promise.then(values=>{
+                this.modelUpdatedFunc(values, model);
+            })
+        }
+    }
+
+    private setSyncModel (model: string[], isSelectAll = false):void {
         if (model && !isSelectAll) {
             this.selectNothing();
             for (let i = 0; i < model.length; i++) {
