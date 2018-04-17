@@ -17,16 +17,24 @@ var _vueFrameworkComponentWrapper = require("./vueFrameworkComponentWrapper");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var watchedProperties = {};
-var props = ['gridOptions'];
+var props = {
+    gridOptions: {
+        default: function _default() {
+            return {};
+        }
+    }
+};
 _main.ComponentUtil.ALL_PROPERTIES.forEach(function (propertyName) {
-    props.push(propertyName);
+    // props.push(propertyName);
+    props[propertyName] = {};
 
     watchedProperties[propertyName] = function (val, oldVal) {
         this.processChanges(propertyName, val, oldVal);
     };
 });
 _main.ComponentUtil.EVENTS.forEach(function (eventName) {
-    props.push(eventName);
+    // props.push(eventName);
+    props[eventName] = {};
 });
 
 exports.default = _vue2.default.extend({
@@ -82,7 +90,9 @@ exports.default = _vue2.default.extend({
     watch: watchedProperties,
     destroyed: function destroyed() {
         if (this._initialised) {
-            this.gridOptions.api.destroy();
+            if (this.gridOptions.api) {
+                this.gridOptions.api.destroy();
+            }
             this._destroyed = true;
         }
     }
