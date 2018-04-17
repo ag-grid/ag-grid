@@ -219,13 +219,19 @@ var module = angular.module("example", ["agGrid"]);</snippet>
         The Price column has an Angular 1 Cell Renderer.
     </li>
     <li>
+        The Date column has an Angular 1 Cell Editor (using the <a href="https://angular-ui.github.io/bootstrap/">AngularJS UI Bootstrap Directive</a>).
+    </li>
+    <li>
+        The Date column has an Angular 1 Date Filter (using the <a href="https://angular-ui.github.io/bootstrap/">AngularJS UI Bootstrap Directive</a>).
+    </li>
+    <li>
         Each component creates it's own $scope in the <code>init</code>
         method and destroys it in the <code>destroy</code> method.
     </li>
 </ul>
 </p>
 
-<?= example('Components', 'components', 'vanilla', array("exampleHeight" => 250, 'extras' => array('angularjs1'))) ?>
+<?= example('Components', 'components', 'vanilla', array("exampleHeight" => 400, 'extras' => array('angularjs1', 'ui-bootstrap'))) ?>
 
 <note>
     Creating child scopes and managing AngularJS compiling is part of the AngularJS

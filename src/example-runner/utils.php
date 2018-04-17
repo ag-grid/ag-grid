@@ -412,7 +412,15 @@ function renderExampleExtras($config)
         ),
         'angularjs1' => array(
             'scripts' => array(
-                'https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js'
+                'https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js'
+            )
+        ),
+        'ui-bootstrap' => array(
+            'scripts' => array(
+                '//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.5.0.js'
+            ),
+            'styles' => array(
+                '//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'
             )
         ),
         'materialdesign' => array(
