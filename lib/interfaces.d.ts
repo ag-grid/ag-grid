@@ -1,5 +1,5 @@
-// ag-grid-react v17.0.0
-import { IHeaderGroup, IHeaderGroupParams, IHeader, IHeaderParams, IFilterParams, IDate, IDateParams, ICellRenderer, ICellRendererParams, ICellEditor, ICellEditorParams, IFilter, ILoadingOverlayComp, ILoadingOverlayParams, INoRowsOverlayComp, INoRowsOverlayParams } from 'ag-grid';
+// ag-grid-react v17.1.0
+import { IHeaderGroup, IHeaderGroupParams, IHeader, IHeaderParams, IFilterParams, IDate, IDateParams, ICellRenderer, ICellRendererParams, ICellEditor, ICellEditorParams, IFilter, ILoadingOverlayParams, INoRowsOverlayParams } from 'ag-grid';
 export interface AgReactFrameworkComponent<T> {
 }
 export interface IHeaderGroupReactComp extends IHeaderGroup, AgReactFrameworkComponent<IHeaderGroupParams> {
@@ -14,7 +14,7 @@ export interface ICellRendererReactComp extends ICellRenderer, AgReactFrameworkC
 }
 export interface ICellEditorReactComp extends ICellEditor, AgReactFrameworkComponent<ICellEditorParams> {
 }
-export interface ILoadingOverlayReactComp extends ILoadingOverlayComp, AgReactFrameworkComponent<ILoadingOverlayParams> {
+export interface ILoadingOverlayReactComp extends AgReactFrameworkComponent<ILoadingOverlayParams> {
 }
-export interface INoRowsOverlayReactComp extends INoRowsOverlayComp, AgReactFrameworkComponent<INoRowsOverlayParams> {
+export interface INoRowsOverlayReactComp extends AgReactFrameworkComponent<INoRowsOverlayParams> {
 }

@@ -29,5 +29,5 @@ export interface IFilterReactComp extends IFilter, AgReactFrameworkComponent<IFi
 export interface ICellRendererReactComp extends ICellRenderer, AgReactFrameworkComponent<ICellRendererParams> {}
 export interface ICellEditorReactComp extends ICellEditor, AgReactFrameworkComponent<ICellEditorParams> {}
 
-export interface ILoadingOverlayReactComp extends ILoadingOverlayComp, AgReactFrameworkComponent<ILoadingOverlayParams> {}
-export interface INoRowsOverlayReactComp extends INoRowsOverlayComp, AgReactFrameworkComponent<INoRowsOverlayParams>{}
+export interface ILoadingOverlayReactComp extends AgReactFrameworkComponent<ILoadingOverlayParams> {}
+export interface INoRowsOverlayReactComp extends AgReactFrameworkComponent<INoRowsOverlayParams>{}
