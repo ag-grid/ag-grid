@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -67,6 +67,7 @@ var GridOptionsWrapper = (function () {
     function GridOptionsWrapper() {
         this.propertyEventService = new eventService_1.EventService();
         this.domDataKey = '__AG_' + Math.random().toString();
+        this.forPrintWarningGiven = false;
     }
     GridOptionsWrapper_1 = GridOptionsWrapper;
     GridOptionsWrapper.prototype.agWire = function (gridApi, columnApi) {
@@ -216,8 +217,12 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.isRowDragManaged = function () { return isTrue(this.gridOptions.rowDragManaged); };
     GridOptionsWrapper.prototype.isSuppressRowDrag = function () { return isTrue(this.gridOptions.suppressRowDrag); };
     GridOptionsWrapper.prototype.isForPrint = function () {
-        console.warn("ag-grid: Since v17.1.0 domLayout: 'forPrint' has been deprecated. Please use instead auto height: https://www.ag-grid.com/javascript-grid-width-and-height/#autoHeight");
-        return this.gridOptions.domLayout === 'forPrint';
+        var isForPrint = this.gridOptions.domLayout === 'forPrint';
+        if (isForPrint && !this.forPrintWarningGiven) {
+            console.warn("ag-grid: Since v17.1.0 domLayout: 'forPrint' has been deprecated. Please use instead auto height: https://www.ag-grid.com/javascript-grid-width-and-height/#autoHeight");
+            this.forPrintWarningGiven = true;
+        }
+        return isForPrint;
     };
     GridOptionsWrapper.prototype.isAutoHeight = function () { return this.gridOptions.domLayout === 'autoHeight'; };
     GridOptionsWrapper.prototype.isNormalDomLayout = function () { return !this.isForPrint() && !this.isAutoHeight(); };

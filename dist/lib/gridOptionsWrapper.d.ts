@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.1.0
+// Type definitions for ag-grid v17.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
@@ -38,6 +38,7 @@ export declare class GridOptionsWrapper {
     private autoHeightCalculator;
     private propertyEventService;
     private domDataKey;
+    private forPrintWarningGiven;
     private agWire(gridApi, columnApi);
     private destroy();
     init(): void;

@@ -105,6 +105,7 @@ export class GridOptionsWrapper {
     private propertyEventService: EventService = new EventService();
 
     private domDataKey = '__AG_'+Math.random().toString();
+    private forPrintWarningGiven = false;
 
     private agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
         this.gridOptions.api = gridApi;
@@ -298,8 +299,12 @@ export class GridOptionsWrapper {
     public isSuppressRowDrag() { return isTrue(this.gridOptions.suppressRowDrag); }
 
     public isForPrint() {
-        console.warn(`ag-grid: Since v17.1.0 domLayout: 'forPrint' has been deprecated. Please use instead auto height: https://www.ag-grid.com/javascript-grid-width-and-height/#autoHeight`)
-        return this.gridOptions.domLayout === 'forPrint';
+        let isForPrint = this.gridOptions.domLayout === 'forPrint';
+        if (isForPrint && !this.forPrintWarningGiven){
+            console.warn(`ag-grid: Since v17.1.0 domLayout: 'forPrint' has been deprecated. Please use instead auto height: https://www.ag-grid.com/javascript-grid-width-and-height/#autoHeight`)
+            this.forPrintWarningGiven = true
+        }
+        return isForPrint;
     }
     public isAutoHeight() { return this.gridOptions.domLayout === 'autoHeight'; }
     public isNormalDomLayout() { return !this.isForPrint() && !this.isAutoHeight(); }
