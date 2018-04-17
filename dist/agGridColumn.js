@@ -97,6 +97,7 @@ AgGridColumn.propDecorators = {
     'pivotIndex': [{ type: core_1.Input },],
     'valueGetter': [{ type: core_1.Input },],
     'valueSetter': [{ type: core_1.Input },],
+    'filterValueGetter': [{ type: core_1.Input },],
     'keyCreator': [{ type: core_1.Input },],
     'cellRendererFramework': [{ type: core_1.Input },],
     'pinnedRowCellRenderer': [{ type: core_1.Input },],
@@ -115,6 +116,8 @@ AgGridColumn.propDecorators = {
     'onCellDoubleClicked': [{ type: core_1.Input },],
     'onCellContextMenu': [{ type: core_1.Input },],
     'tooltip': [{ type: core_1.Input },],
+    'cellRendererSelector': [{ type: core_1.Input },],
+    'cellEditorSelector': [{ type: core_1.Input },],
     'suppressCellFlash': [{ type: core_1.Input },],
     'suppressToolPanel': [{ type: core_1.Input },],
     'openByDefault': [{ type: core_1.Input },],
@@ -144,6 +147,7 @@ AgGridColumn.propDecorators = {
     'suppressNavigable': [{ type: core_1.Input },],
     'enableCellChangeFlash': [{ type: core_1.Input },],
     'rowDrag': [{ type: core_1.Input },],
+    'autoHeight': [{ type: core_1.Input },],
 };
 exports.AgGridColumn = AgGridColumn;
 //# sourceMappingURL=agGridColumn.js.map

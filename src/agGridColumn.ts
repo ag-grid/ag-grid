@@ -102,6 +102,7 @@ export class AgGridColumn {
     @Input() public pivotIndex: any;
     @Input() public valueGetter: any;
     @Input() public valueSetter: any;
+    @Input() public filterValueGetter: any;
     @Input() public keyCreator: any;
     @Input() public cellRendererFramework: any;
     @Input() public pinnedRowCellRenderer: any;
@@ -120,6 +121,8 @@ export class AgGridColumn {
     @Input() public onCellDoubleClicked: any;
     @Input() public onCellContextMenu: any;
     @Input() public tooltip: any;
+    @Input() public cellRendererSelector: any;
+    @Input() public cellEditorSelector: any;
     @Input() public suppressCellFlash: any;
     @Input() public suppressToolPanel: any;
     @Input() public openByDefault: any;
@@ -149,6 +152,7 @@ export class AgGridColumn {
     @Input() public suppressNavigable: any;
     @Input() public enableCellChangeFlash: any;
     @Input() public rowDrag: any;
+    @Input() public autoHeight: any;
     // @END@
 
 }

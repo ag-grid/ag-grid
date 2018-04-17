@@ -57,6 +57,7 @@ export declare class AgGridColumn {
     pivotIndex: any;
     valueGetter: any;
     valueSetter: any;
+    filterValueGetter: any;
     keyCreator: any;
     cellRendererFramework: any;
     pinnedRowCellRenderer: any;
@@ -75,6 +76,8 @@ export declare class AgGridColumn {
     onCellDoubleClicked: any;
     onCellContextMenu: any;
     tooltip: any;
+    cellRendererSelector: any;
+    cellEditorSelector: any;
     suppressCellFlash: any;
     suppressToolPanel: any;
     openByDefault: any;
@@ -104,4 +107,5 @@ export declare class AgGridColumn {
     suppressNavigable: any;
     enableCellChangeFlash: any;
     rowDrag: any;
+    autoHeight: any;
 }

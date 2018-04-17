@@ -36,14 +36,15 @@ exports.AgGridColumnNgFactory = i0.ɵccf('ag-grid-column', i1.AgGridColumn, View
     filter: 'filter', aggFunc: 'aggFunc', cellRenderer: 'cellRenderer', cellEditor: 'cellEditor',
     pinned: 'pinned', sortedAt: 'sortedAt', width: 'width', minWidth: 'minWidth', maxWidth: 'maxWidth',
     rowGroupIndex: 'rowGroupIndex', pivotIndex: 'pivotIndex', valueGetter: 'valueGetter',
-    valueSetter: 'valueSetter', keyCreator: 'keyCreator', cellRendererFramework: 'cellRendererFramework',
-    pinnedRowCellRenderer: 'pinnedRowCellRenderer', valueFormatter: 'valueFormatter',
-    pinnedRowValueFormatter: 'pinnedRowValueFormatter', valueParser: 'valueParser',
-    comparator: 'comparator', equals: 'equals', pivotComparator: 'pivotComparator',
+    valueSetter: 'valueSetter', filterValueGetter: 'filterValueGetter', keyCreator: 'keyCreator',
+    cellRendererFramework: 'cellRendererFramework', pinnedRowCellRenderer: 'pinnedRowCellRenderer',
+    valueFormatter: 'valueFormatter', pinnedRowValueFormatter: 'pinnedRowValueFormatter',
+    valueParser: 'valueParser', comparator: 'comparator', equals: 'equals', pivotComparator: 'pivotComparator',
     suppressKeyboardEvent: 'suppressKeyboardEvent', colSpan: 'colSpan', getQuickFilterText: 'getQuickFilterText',
     newValueHandler: 'newValueHandler', onCellValueChanged: 'onCellValueChanged',
     onCellClicked: 'onCellClicked', onCellDoubleClicked: 'onCellDoubleClicked', onCellContextMenu: 'onCellContextMenu',
-    tooltip: 'tooltip', suppressCellFlash: 'suppressCellFlash', suppressToolPanel: 'suppressToolPanel',
+    tooltip: 'tooltip', cellRendererSelector: 'cellRendererSelector', cellEditorSelector: 'cellEditorSelector',
+    suppressCellFlash: 'suppressCellFlash', suppressToolPanel: 'suppressToolPanel',
     openByDefault: 'openByDefault', marryChildren: 'marryChildren', hide: 'hide', rowGroup: 'rowGroup',
     pivot: 'pivot', checkboxSelection: 'checkboxSelection', headerCheckboxSelection: 'headerCheckboxSelection',
     headerCheckboxSelectionFilteredOnly: 'headerCheckboxSelectionFilteredOnly',
@@ -53,5 +54,5 @@ exports.AgGridColumnNgFactory = i0.ɵccf('ag-grid-column', i1.AgGridColumn, View
     suppressResize: 'suppressResize', suppressAutoSize: 'suppressAutoSize', enableRowGroup: 'enableRowGroup',
     enablePivot: 'enablePivot', enableValue: 'enableValue', editable: 'editable', suppressPaste: 'suppressPaste',
     suppressNavigable: 'suppressNavigable', enableCellChangeFlash: 'enableCellChangeFlash',
-    rowDrag: 'rowDrag' }, {}, []);
+    rowDrag: 'rowDrag', autoHeight: 'autoHeight' }, {}, []);
 //# sourceMappingURL=agGridColumn.ngfactory.js.map

@@ -140,6 +140,8 @@ export declare class AgGridNg2 implements AfterViewInit {
     isRowMaster: any;
     isRowSelectable: any;
     postSort: any;
+    processHeaderForClipboard: any;
+    paginationNumberFormatter: any;
     toolPanelSuppressRowGroups: any;
     toolPanelSuppressValues: any;
     toolPanelSuppressPivots: any;
@@ -148,6 +150,7 @@ export declare class AgGridNg2 implements AfterViewInit {
     toolPanelSuppressColumnFilter: any;
     toolPanelSuppressColumnSelectAll: any;
     toolPanelSuppressColumnExpandAll: any;
+    suppressMakeColumnVisibleAfterUnGroup: any;
     suppressRowClickSelection: any;
     suppressCellSelection: any;
     suppressHorizontalScroll: any;
@@ -246,6 +249,8 @@ export declare class AgGridNg2 implements AfterViewInit {
     suppressPropertyNamesCheck: any;
     rowMultiSelectWithClick: any;
     contractColumnSelection: any;
+    suppressEnterpriseResetOnNewColumns: any;
+    enableOldSetFilterModel: any;
     columnEverythingChanged: EventEmitter<any>;
     newColumnsLoaded: EventEmitter<any>;
     columnPivotModeChanged: EventEmitter<any>;
