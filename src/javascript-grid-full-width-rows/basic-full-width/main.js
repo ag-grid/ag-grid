@@ -82,7 +82,7 @@ var gridOptions = {
             // params.api.onRowHeightChanged();
         });
 
-        return eDiv;
+        return eDiv.firstChild;
     },
     getRowHeight: function(params) {
         // you can have normal rows and full width rows any height that you want

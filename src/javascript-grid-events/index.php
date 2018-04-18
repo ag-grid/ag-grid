@@ -248,10 +248,6 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>gridSizeChanged</th>
-            <td>The grid had to lay out again because it changed size.</td>
-        </tr>
-        <tr>
             <th>pinnedRowDataChanged</th>
             <td>The client has set new pinned row data into the grid</td>
         </tr>
@@ -343,10 +339,6 @@ CellValueChangedEvent {
         │       <span class="event-attribute">column</span>: Column, // the column of the focused cell
         │       <span class="event-attribute">rowPinned</span>: string, // either 'top', 'bottom' or undefined/null (if not pinned)
         │       <span class="event-attribute">forceBrowserFocus</span>: boolean // whether browser focus is also set (false when editing)
-        │     }</span>
-        ├── GridSizeChangedEvent <span class="event-properties">{
-        │       <span class="event-attribute">clientWidth</span>: number, // new width in pixels of the grid
-        │       <span class="event-attribute">clientHeight</span>: number // new height in pixels of the grid
         │     }</span>
         ├── ViewportChangedEvent <span class="event-properties">{
         │       <span class="event-attribute">firstRow</span>: number, // the index of the first rendered row

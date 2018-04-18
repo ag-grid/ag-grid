@@ -135,7 +135,7 @@ var gridOptions = {
     pivotTotals: true,
     //minColWidth: 50,
     //maxColWidth: 300,
-    rowBuffer: 10,
+//    rowBuffer: 10,
     //columnDefs: [],
     //singleClickEdit: true,
     // suppressClickEdit: true,
@@ -147,6 +147,8 @@ var gridOptions = {
     //],
     enterMovesDownAfterEdit: true,
     enterMovesDown: true,
+    // domLayout: 'autoHeight',
+    // domLayout: 'forPrint',
     // groupUseEntireRow: true, //one of [true, false]
     //        groupDefaultExpanded: 9999, //one of [true, false], or an integer if greater than 1
     //            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
@@ -228,8 +230,16 @@ var gridOptions = {
     // rowHoverClass: true,
     // layoutInterval: -1,
     // suppressAnimationFrame: true,
-    //     pinnedTopRowData: [{},{},{}],
-    //     pinnedBottomRowData: [{},{},{}],
+    //     pinnedTopRowData: [
+    //         {name: 'Mr Pinned Top 1', language: 'English', country: 'Ireland', continent:"Europe", game:{name:"Hare and Hounds",bought:"true"}, totalWinnings: 342424, bankBalance:75700.9,rating:2,jan:20478.54,feb:2253.06,mar:39308.65,apr:98710.13,may:96186.55,jun:91925.91,jul:1149.47,aug:32493.69,sep:19279.44,oct:21624.14,nov:71239.81,dec:80031.35},
+    //         {name: 'Mr Pinned Top 2', language: 'English', country: 'Ireland', continent:"Europe", game:{name:"Hare and Hounds",bought:"true"}, totalWinnings: 342424, bankBalance:75700.9,rating:2,jan:20478.54,feb:2253.06,mar:39308.65,apr:98710.13,may:96186.55,jun:91925.91,jul:1149.47,aug:32493.69,sep:19279.44,oct:21624.14,nov:71239.81,dec:80031.35},
+    //         {name: 'Mr Pinned Top 3', language: 'English', country: 'Ireland', continent:"Europe", game:{name:"Hare and Hounds",bought:"true"}, totalWinnings: 342424, bankBalance:75700.9,rating:2,jan:20478.54,feb:2253.06,mar:39308.65,apr:98710.13,may:96186.55,jun:91925.91,jul:1149.47,aug:32493.69,sep:19279.44,oct:21624.14,nov:71239.81,dec:80031.35},
+    //         ],
+    //     pinnedBottomRowData: [
+    //         {name: 'Mr Pinned Bottom 1', language: 'English', country: 'Ireland', continent:"Europe", game:{name:"Hare and Hounds",bought:"true"}, totalWinnings: 342424, bankBalance:75700.9,rating:2,jan:20478.54,feb:2253.06,mar:39308.65,apr:98710.13,may:96186.55,jun:91925.91,jul:1149.47,aug:32493.69,sep:19279.44,oct:21624.14,nov:71239.81,dec:80031.35},
+    //         {name: 'Mr Pinned Bottom 2', language: 'English', country: 'Ireland', continent:"Europe", game:{name:"Hare and Hounds",bought:"true"}, totalWinnings: 342424, bankBalance:75700.9,rating:2,jan:20478.54,feb:2253.06,mar:39308.65,apr:98710.13,may:96186.55,jun:91925.91,jul:1149.47,aug:32493.69,sep:19279.44,oct:21624.14,nov:71239.81,dec:80031.35},
+    //         {name: 'Mr Pinned Bottom 3', language: 'English', country: 'Ireland', continent:"Europe", game:{name:"Hare and Hounds",bought:"true"}, totalWinnings: 342424, bankBalance:75700.9,rating:2,jan:20478.54,feb:2253.06,mar:39308.65,apr:98710.13,may:96186.55,jun:91925.91,jul:1149.47,aug:32493.69,sep:19279.44,oct:21624.14,nov:71239.81,dec:80031.35},
+    //     ],
     // callback when row clicked
     //     stopEditingWhenGridLosesFocus: true,
     onRowClicked: function (params) {
@@ -270,9 +280,6 @@ var gridOptions = {
         //event.api.addGlobalListener(function(type, event) {
         //    console.log('event ' + type);
         //});
-    },
-    onGridSizeChanged: function (event) {
-        console.log('Callback onGridSizeChanged: clientWidth = ' + event.clientWidth + ', clientHeight = ' + event.clientHeight);
     },
     onRowGroupOpened: function (event) {
         console.log('Callback onRowGroupOpened: node = ' + event.node.key + ', ' + event.node.expanded);
