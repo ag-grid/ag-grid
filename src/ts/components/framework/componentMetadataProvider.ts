@@ -22,7 +22,7 @@ export class ComponentMetadataProvider {
         this.componentMetaData = {
             dateComponent: {
                 mandatoryMethodList: ['getDate', 'setDate'],
-                optionalMethodList: []
+                optionalMethodList: ['afterGuiAttached']
             },
             detailCellRenderer: {
                 mandatoryMethodList: [],
