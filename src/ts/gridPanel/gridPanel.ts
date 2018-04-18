@@ -4,7 +4,16 @@ import {ColumnController} from "../columnController/columnController";
 import {ColumnApi} from "../columnController/columnApi";
 import {RowRenderer} from "../rendering/rowRenderer";
 import {Logger, LoggerFactory} from "../logger";
-import {Bean, Qualifier, Autowired, PostConstruct, Optional, PreDestroy, Context} from "../context/context";
+import {
+    Bean,
+    Qualifier,
+    Autowired,
+    PostConstruct,
+    Optional,
+    PreDestroy,
+    Context,
+    PreConstruct
+} from "../context/context";
 import {EventService} from "../eventService";
 import {BodyHeightChangedEvent, BodyScrollEvent, Events} from "../events";
 import {DragService, DragListenerParams} from "../dragAndDrop/dragService";
@@ -152,8 +161,6 @@ export class GridPanel extends Component {
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('heightScaler') private heightScaler: HeightScaler;
 
-    private logger: Logger;
-
     private eBodyViewport: HTMLElement;
     private eBody: HTMLElement;
 
@@ -223,8 +230,8 @@ export class GridPanel extends Component {
         super(GRID_PANEL_NORMAL_TEMPLATE);
     }
 
-    public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('GridPanel');
+    @PreConstruct
+    public preConstruct() {
         // makes code below more readable if we pull 'forPrint' out
         this.autoHeight = this.gridOptionsWrapper.isAutoHeight();
         this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
@@ -712,7 +719,6 @@ export class GridPanel extends Component {
         // if for print or auto height, everything is always visible
         if (this.gridOptionsWrapper.isAutoHeight()) { return; }
 
-        this.logger.log('ensureIndexVisible: ' + index);
         let rowCount = this.paginationProxy.getTotalRowCount();
         if (typeof index !== 'number' || index < 0 || index >= rowCount) {
             console.warn('invalid row index for ensureIndexVisible: ' + index);
