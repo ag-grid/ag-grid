@@ -22,10 +22,22 @@ import {GridApi} from "./gridApi";
 import {IToolPanel} from "./interfaces/iToolPanel";
 
 @Bean('gridCore')
-export class GridCore {
+export class GridCore extends Component {
 
-    private static TEMPLATE = '<div class="ag-root-wrapper"></div>';
+    private static TEMPLATE_NORMAL =
+        `<div class="ag-root-wrapper">
+            <div class="ag-root-wrapper-body">
+            </div>
+        </div>`;
 
+    private static TEMPLATE_ENTERPRISE =
+        `<div class="ag-root-wrapper">
+            <ag-header-column-drop></ag-header-column-drop>
+            <div class="ag-root-wrapper-body">
+            </div>
+        </div>`;
+
+    @Autowired('enterprise') private enterprise: boolean;
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowModel') private rowModel: IRowModel;
@@ -43,6 +55,7 @@ export class GridCore {
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Autowired('context') private context: Context;
+    @Autowired('loggerFactory') loggerFactory: LoggerFactory;
 
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -52,66 +65,60 @@ export class GridCore {
     @Optional('toolPanelComp') private toolPanelComp: IToolPanel;
     @Optional('statusBar') private statusBar: Component;
 
-    private rowGroupComp: Component;
-    private pivotComp: Component;
-
     private finished: boolean;
     private doingVirtualPaging: boolean;
 
-    private eGridWrapper: HTMLElement;
-
     private logger: Logger;
 
-    private destroyFunctions: Function[] = [];
-
-    constructor(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('GridCore');
+    constructor() {
+        super();
     }
 
     @PostConstruct
     public init(): void {
 
+        this.logger = this.loggerFactory.create('GridCore');
+
         let eSouthPanel = this.createSouthPanel();
 
-        let eColumnDropZone = this.createNorthPanel();
+        let template = this.enterprise ? GridCore.TEMPLATE_ENTERPRISE : GridCore.TEMPLATE_NORMAL;
+        this.setTemplate(template);
+        this.instantiate(this.context);
 
-        this.eGridWrapper = _.loadTemplate(GridCore.TEMPLATE);
-
-        if (eColumnDropZone) {
-            this.eGridWrapper.appendChild(eColumnDropZone);
-        }
-
-        let eCenter = _.loadTemplate(`<div class="ag-root-wrapper-body"></div>`);
+        let eCenter = this.queryForHtmlElement('.ag-root-wrapper-body');
         eCenter.appendChild(this.gridPanel.getGui());
+
         if (this.toolPanelComp) {
             eCenter.appendChild(this.toolPanelComp.getGui());
         }
-
-        this.eGridWrapper.appendChild(eCenter);
+        this.getGui().appendChild(eCenter);
 
         if (eSouthPanel) {
-            this.eGridWrapper.appendChild(eSouthPanel);
+            this.getGui().appendChild(eSouthPanel);
         }
 
         // parts of the CSS need to know if we are in 'for print' mode or not,
         // so we add a class to allow applying CSS based on this.
         if (this.gridOptionsWrapper.isAutoHeight()) {
-            _.addCssClass(this.eGridWrapper, 'ag-layout-auto-height');
+            _.addCssClass(this.getGui(), 'ag-layout-auto-height');
         } else {
-            _.addCssClass(this.eGridWrapper, 'ag-layout-normal');
+            _.addCssClass(this.getGui(), 'ag-layout-normal');
             // kept to limit breaking changes, ag-scrolls was renamed to ag-layout-normal
-            _.addCssClass(this.eGridWrapper, 'ag-scrolls');
+            _.addCssClass(this.getGui(), 'ag-scrolls');
         }
 
         // see what the grid options are for default of toolbar
         this.showToolPanel(this.gridOptionsWrapper.isShowToolPanel());
 
-        this.eGridDiv.appendChild(this.eGridWrapper);
+        this.eGridDiv.appendChild(this.getGui());
+        this.addDestroyFunc( () => {
+            this.eGridDiv.removeChild(this.getGui());
+        });
 
         // if using angular, watch for quickFilter changes
         if (this.$scope) {
             let quickFilterUnregisterFn = this.$scope.$watch(this.quickFilterOnScope, (newFilter: any) => this.filterManager.setQuickFilter(newFilter) );
-            this.destroyFunctions.push(quickFilterUnregisterFn);
+            this.addDestroyFunc(quickFilterUnregisterFn);
         }
 
         this.addWindowResizeListener();
@@ -121,68 +128,25 @@ export class GridCore {
         this.addRtlSupport();
 
         this.finished = false;
+        this.addDestroyFunc( () => this.finished = true );
         this.periodicallyDoLayout();
-
-        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this));
-
-        this.onRowGroupChanged();
 
         this.logger.log('ready');
     }
 
     private addRtlSupport(): void {
         if (this.gridOptionsWrapper.isEnableRtl()) {
-            _.addCssClass(this.eGridWrapper, 'ag-rtl');
+            _.addCssClass(this.getGui(), 'ag-rtl');
         } else {
-            _.addCssClass(this.eGridWrapper, 'ag-ltr');
+            _.addCssClass(this.getGui(), 'ag-ltr');
         }
-    }
-
-    private createNorthPanel(): HTMLElement {
-
-        if (!this.gridOptionsWrapper.isEnterprise()) {
-            return null;
-        }
-
-        let topPanelGui = document.createElement('div');
-
-        let dropPanelVisibleListener = this.onDropPanelVisible.bind(this);
-
-        this.rowGroupComp = this.rowGroupCompFactory.create();
-        this.pivotComp = this.pivotCompFactory.create();
-
-        topPanelGui.appendChild(this.rowGroupComp.getGui());
-        topPanelGui.appendChild(this.pivotComp.getGui());
-
-        this.rowGroupComp.addEventListener(Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
-        this.pivotComp.addEventListener(Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
-
-        this.destroyFunctions.push(() => {
-            this.rowGroupComp.removeEventListener(Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
-            this.pivotComp.removeEventListener(Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
-        });
-
-        this.onDropPanelVisible();
-
-        return topPanelGui;
-    }
-
-    private onDropPanelVisible(): void {
-        let bothVisible = this.rowGroupComp.isVisible() && this.pivotComp.isVisible();
-        this.rowGroupComp.addOrRemoveCssClass('ag-width-half', bothVisible);
-        this.pivotComp.addOrRemoveCssClass('ag-width-half', bothVisible);
     }
 
     public getRootGui(): HTMLElement {
-        return this.eGridWrapper;
+        return this.getGui();
     }
 
     private createSouthPanel(): HTMLElement {
-
-        if (!this.statusBar && this.gridOptionsWrapper.isEnableStatusBar()) {
-            console.warn('ag-Grid: status bar is only available in ag-Grid-Enterprise');
-        }
 
         let statusBarEnabled = this.statusBar && this.gridOptionsWrapper.isEnableStatusBar();
         let isPaging = this.gridOptionsWrapper.isPagination();
@@ -197,38 +161,20 @@ export class GridCore {
             eSouthPanel.appendChild(this.statusBar.getGui());
         }
 
-
         if (paginationPanelEnabled) {
             let paginationComp = new PaginationComp();
             this.context.wireBean(paginationComp);
             eSouthPanel.appendChild(paginationComp.getGui());
-            this.destroyFunctions.push(paginationComp.destroy.bind(paginationComp));
+            this.addDestroyFunc(paginationComp.destroy.bind(paginationComp));
         }
 
         return eSouthPanel;
     }
 
-    private onRowGroupChanged(): void {
-        if (!this.rowGroupComp) {
-            return;
-        }
-
-        let rowGroupPanelShow = this.gridOptionsWrapper.getRowGroupPanelShow();
-
-        if (rowGroupPanelShow === Constants.ALWAYS) {
-            this.rowGroupComp.setVisible(true);
-        } else if (rowGroupPanelShow === Constants.ONLY_WHEN_GROUPING) {
-            let grouping = !this.columnController.isRowGroupEmpty();
-            this.rowGroupComp.setVisible(grouping);
-        } else {
-            this.rowGroupComp.setVisible(false);
-        }
-    }
-
     private addWindowResizeListener(): void {
         let eventListener = this.gridPanel.checkViewportSize.bind(this.gridPanel);
         window.addEventListener('resize', eventListener);
-        this.destroyFunctions.push(() => window.removeEventListener('resize', eventListener));
+        this.addDestroyFunc(() => window.removeEventListener('resize', eventListener));
     }
 
     private periodicallyDoLayout() {
@@ -268,14 +214,11 @@ export class GridCore {
         return this.toolPanelComp.isToolPanelShowing();
     }
 
+    // need to override, as parent class isn't marked with PreDestroy
     @PreDestroy
-    private destroy() {
-        this.finished = true;
-
-        this.eGridDiv.removeChild(this.eGridWrapper);
+    public destroy() {
+        super.destroy();
         this.logger.log('Grid DOM removed');
-
-        this.destroyFunctions.forEach(func => func());
     }
 
     // Valid values for position are bottom, middle and top
@@ -307,4 +250,79 @@ export class GridCore {
             this.gridPanel.ensureIndexVisible(indexToSelect, position);
         }
     }
+}
+
+export class HeaderColumnDropComp extends Component {
+
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('eventService') private eventService: EventService;
+    @Optional('rowGroupCompFactory') private rowGroupCompFactory: ICompFactory;
+    @Optional('pivotCompFactory') private pivotCompFactory: ICompFactory;
+
+    private rowGroupComp: Component;
+    private pivotComp: Component;
+
+    constructor() {
+        super();
+    }
+
+    @PostConstruct
+    private postConstruct(): void {
+        this.setGui(this.createNorthPanel());
+
+        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this));
+
+        this.onRowGroupChanged();
+    }
+
+    private createNorthPanel(): HTMLElement {
+
+        let topPanelGui = document.createElement('div');
+
+        let dropPanelVisibleListener = this.onDropPanelVisible.bind(this);
+
+        this.rowGroupComp = this.rowGroupCompFactory.create();
+        this.pivotComp = this.pivotCompFactory.create();
+
+        topPanelGui.appendChild(this.rowGroupComp.getGui());
+        topPanelGui.appendChild(this.pivotComp.getGui());
+
+        this.rowGroupComp.addEventListener(Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
+        this.pivotComp.addEventListener(Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
+
+        this.addDestroyFunc(() => {
+            this.rowGroupComp.removeEventListener(Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
+            this.pivotComp.removeEventListener(Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
+        });
+
+        this.onDropPanelVisible();
+
+        return topPanelGui;
+    }
+
+    private onDropPanelVisible(): void {
+        let bothVisible = this.rowGroupComp.isVisible() && this.pivotComp.isVisible();
+        this.rowGroupComp.addOrRemoveCssClass('ag-width-half', bothVisible);
+        this.pivotComp.addOrRemoveCssClass('ag-width-half', bothVisible);
+    }
+
+    private onRowGroupChanged(): void {
+        if (!this.rowGroupComp) {
+            return;
+        }
+
+        let rowGroupPanelShow = this.gridOptionsWrapper.getRowGroupPanelShow();
+
+        if (rowGroupPanelShow === Constants.ALWAYS) {
+            this.rowGroupComp.setVisible(true);
+        } else if (rowGroupPanelShow === Constants.ONLY_WHEN_GROUPING) {
+            let grouping = !this.columnController.isRowGroupEmpty();
+            this.rowGroupComp.setVisible(grouping);
+        } else {
+            this.rowGroupComp.setVisible(false);
+        }
+    }
+
 }

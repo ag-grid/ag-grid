@@ -21,7 +21,7 @@ import {AutoWidthCalculator} from "./rendering/autoWidthCalculator";
 import {HorizontalResizeService} from "./headerRendering/horizontalResizeService";
 import {Context} from "./context/context";
 import {CsvCreator} from "./csvCreator";
-import {GridCore} from "./gridCore";
+import {GridCore, HeaderColumnDropComp} from "./gridCore";
 import {StandardMenuFactory} from "./headerRendering/standardMenu";
 import {DragAndDropService} from "./dragAndDrop/dragAndDropService";
 import {DragService} from "./dragAndDrop/dragService";
@@ -165,7 +165,8 @@ export class Grid {
         }
 
         let components = [
-            {componentName: 'AgCheckbox', theClass: AgCheckbox}
+            {componentName: 'AgCheckbox', theClass: AgCheckbox},
+            {componentName: 'AgHeaderColumnDrop', theClass: HeaderColumnDropComp},
             // niall put the below in for testing some PoC code, niall will
             // remove this comment and code when PoC is over
             , {componentName: 'AgSmallComponent', theClass: SmallComponent}

@@ -3,10 +3,8 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnController} from "../columnController/columnController";
 import {ColumnApi} from "../columnController/columnApi";
 import {RowRenderer} from "../rendering/rowRenderer";
-import {Logger, LoggerFactory} from "../logger";
 import {
     Bean,
-    Qualifier,
     Autowired,
     PostConstruct,
     Optional,
@@ -26,7 +24,6 @@ import {IClipboardService} from "../interfaces/iClipboardService";
 import {FocusedCellController} from "../focusedCellController";
 import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
 import {SetScrollsVisibleParams, ScrollVisibleService} from "./scrollVisibleService";
-import {BeanStub} from "../context/beanStub";
 import {IFrameworkFactory} from "../interfaces/iFrameworkFactory";
 import {Column} from "../entities/column";
 import {RowContainerComponent} from "../rendering/rowContainerComponent";
