@@ -1,5 +1,5 @@
 import {EventService, Component, Autowired, PostConstruct, Events, _,
-    GridRow, RowNode, Constants, PinnedRowModel, IRowModel, ValueService, GridCore,
+    GridRow, RowNode, Constants, PinnedRowModel, IRowModel, ValueService, GridPanel,
     CellNavigationService, Bean, Context, GridOptionsWrapper} from 'ag-grid/main';
 import {StatusItem} from "./statusItem";
 import {RangeController} from "../rangeController";
@@ -19,7 +19,7 @@ export class StatusBar extends Component {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('gridCore') private gridCore: GridCore;
+    @Autowired('gridPanel') private gridPanel: GridPanel;
 
     private statusItemSum: StatusItem;
     private statusItemCount: StatusItem;
@@ -169,7 +169,7 @@ export class StatusBar extends Component {
 
         if (this.isVisible()!==gotResult) {
             this.setVisible(gotResult);
-            this.gridCore.doLayout();
+            this.gridPanel.checkViewportSize();
         }
     }
 

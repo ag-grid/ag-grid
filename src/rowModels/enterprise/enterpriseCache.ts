@@ -97,7 +97,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
             }
         }
 
-        //TODO: what about purged blocks
+        // NOTE: what about purged blocks
 
         this.logger.log(`getRowBounds(${index}), result = ${result}`);
 
@@ -151,7 +151,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
             result = lastAllowedIndex;
         }
 
-        //TODO: purged
+        //NOTE: purged
 
         this.logger.log(`getRowIndexAtPixel(${pixel}) result = ${result}`);
 

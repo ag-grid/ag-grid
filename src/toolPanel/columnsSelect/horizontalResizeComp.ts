@@ -1,9 +1,9 @@
-import {GridCore, Autowired, Component, PostConstruct, HorizontalResizeService} from "ag-grid";
+import {GridPanel, Autowired, Component, PostConstruct, HorizontalResizeService} from "ag-grid";
 
 export class HorizontalResizeComp extends Component {
 
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
-    @Autowired('gridCore') private gridCore: GridCore;
+    @Autowired('gridPanel') private gridPanel: GridPanel;
 
     private startingWidth: number;
 
@@ -38,6 +38,6 @@ export class HorizontalResizeComp extends Component {
             newWidth = 100;
         }
         this.props.componentToResize.getGui().style.width = newWidth + 'px';
-        this.gridCore.doLayout();
+        this.gridPanel.checkViewportSize();
     }
 }

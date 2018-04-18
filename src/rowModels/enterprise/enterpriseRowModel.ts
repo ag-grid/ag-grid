@@ -325,7 +325,7 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     public updateRowIndexesAndBounds(): void {
         let cacheExists = _.exists(this.rootNode) && _.exists(this.rootNode.childrenCache);
         if (cacheExists) {
-            // todo: should not be casting here, the RowModel should use IEnterpriseRowModel interface?
+            // NOTE: should not be casting here, the RowModel should use IEnterpriseRowModel interface?
             let enterpriseCache = <EnterpriseCache> this.rootNode.childrenCache;
             this.resetRowTops(enterpriseCache);
             this.setDisplayIndexes(enterpriseCache);
@@ -362,7 +362,7 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         let cacheExists = _.exists(this.rootNode) && _.exists(this.rootNode.childrenCache);
         let lastRow: number;
         if (cacheExists) {
-            // todo: should not be casting here, the RowModel should use IEnterpriseRowModel interface?
+            // NOTE: should not be casting here, the RowModel should use IEnterpriseRowModel interface?
             let enterpriseCache = <EnterpriseCache> this.rootNode.childrenCache;
             lastRow = enterpriseCache.getDisplayIndexEnd() - 1;
         } else {
