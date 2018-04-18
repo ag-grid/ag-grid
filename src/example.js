@@ -184,6 +184,7 @@ var gridOptions = {
     autoGroupColumnDef: groupColumn,
     //suppressCellSelection: true,
     //suppressMultiSort: true,
+    // scrollbarWidth: 20,
     showToolPanel: true,//window.innerWidth > 1000,
     // toolPanelSuppressColumnFilter: true,
     // toolPanelSuppressColumnSelectAll: true,
