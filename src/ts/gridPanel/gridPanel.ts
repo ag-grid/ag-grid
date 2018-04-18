@@ -52,65 +52,55 @@ import {Component} from "../widgets/component";
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
 
-const HEADER_SNIPPET =
-    '<div class="ag-header" role="row">'+
-      '<div class="ag-pinned-left-header" role="presentation"></div>' +
-      '<div class="ag-pinned-right-header" role="presentation"></div>' +
-      '<div class="ag-header-viewport" role="presentation">' +
-        '<div class="ag-header-container" role="presentation"></div>' +
-      '</div>'+
-    '</div>';
-
-const FLOATING_TOP_SNIPPET =
-    '<div class="ag-floating-top" role="presentation">'+
-      '<div class="ag-pinned-left-floating-top" role="presentation"></div>' +
-      '<div class="ag-pinned-right-floating-top" role="presentation"></div>' +
-      '<div class="ag-floating-top-viewport" role="presentation">' +
-        '<div class="ag-floating-top-container" role="presentation"></div>' +
-      '</div>'+
-      '<div class="ag-floating-top-full-width-container" role="presentation"></div>'+
-    '</div>';
-
-const FLOATING_BOTTOM_SNIPPET =
-    '<div class="ag-floating-bottom" role="presentation">'+
-      '<div class="ag-pinned-left-floating-bottom" role="presentation"></div>' +
-      '<div class="ag-pinned-right-floating-bottom" role="presentation"></div>' +
-      '<div class="ag-floating-bottom-viewport" role="presentation">' +
-        '<div class="ag-floating-bottom-container" role="presentation"></div>' +
-      '</div>'+
-      '<div class="ag-floating-bottom-full-width-container" role="presentation"></div>'+
-    '</div>';
-
-const BODY_SNIPPET =
-    '<div class="ag-body" role="presentation">'+
-      '<div class="ag-pinned-left-cols-viewport-wrapper" role="presentation">'+
-        '<div class="ag-pinned-left-cols-viewport" role="presentation">'+
-          '<div class="ag-pinned-left-cols-container" role="presentation"></div>'+
-        '</div>'+
-      '</div>'+
-      '<div class="ag-body-viewport-wrapper" role="presentation">'+
-        '<div class="ag-body-viewport" role="presentation">'+
-          '<div class="ag-body-container" role="presentation"></div>'+
-        '</div>'+
-      '</div>'+
-      '<div class="ag-pinned-right-cols-viewport-wrapper" role="presentation">'+
-        '<div class="ag-pinned-right-cols-viewport" role="presentation">'+
-          '<div class="ag-pinned-right-cols-container" role="presentation"></div>'+
-        '</div>'+
-      '</div>'+
-      '<div class="ag-full-width-viewport-wrapper" role="presentation">'+
-        '<div class="ag-full-width-viewport" role="presentation">'+
-          '<div class="ag-full-width-container" role="presentation"></div>'+
-        '</div>'+
-      '</div>'+
-    '</div>';
-
-const OVERLAY_TEMPLATE = '<div class="ag-overlay" ref="eOverlay"></div>';
-
 const GRID_PANEL_NORMAL_TEMPLATE =
-    '<div class="ag-root ag-font-style" role="grid">'+
-        HEADER_SNIPPET + FLOATING_TOP_SNIPPET + BODY_SNIPPET + FLOATING_BOTTOM_SNIPPET + OVERLAY_TEMPLATE +
-    '</div>';
+    `<div class="ag-root ag-font-style" role="grid">
+        <div class="ag-header" role="row">
+            <div class="ag-pinned-left-header" role="presentation"></div>
+            <div class="ag-pinned-right-header" role="presentation"></div>
+            <div class="ag-header-viewport" role="presentation">
+                <div class="ag-header-container" role="presentation"></div>
+            </div>
+        </div>
+        <div class="ag-floating-top" role="presentation">
+            <div class="ag-pinned-left-floating-top" role="presentation"></div>
+            <div class="ag-pinned-right-floating-top" role="presentation"></div>
+            <div class="ag-floating-top-viewport" role="presentation">
+                <div class="ag-floating-top-container" role="presentation"></div>
+            </div>
+            <div class="ag-floating-top-full-width-container" role="presentation"></div>
+        </div>
+        <div class="ag-body" role="presentation">
+            <div class="ag-pinned-left-cols-viewport-wrapper" role="presentation">
+                <div class="ag-pinned-left-cols-viewport" role="presentation">
+                    <div class="ag-pinned-left-cols-container" role="presentation"></div>
+                </div>
+            </div>
+            <div class="ag-body-viewport-wrapper" role="presentation">
+                <div class="ag-body-viewport" role="presentation">
+                    <div class="ag-body-container" role="presentation"></div>
+                </div>
+            </div>
+            <div class="ag-pinned-right-cols-viewport-wrapper" role="presentation">
+                <div class="ag-pinned-right-cols-viewport" role="presentation">
+                    <div class="ag-pinned-right-cols-container" role="presentation"></div>
+                </div>
+            </div>
+            <div class="ag-full-width-viewport-wrapper" role="presentation">
+                <div class="ag-full-width-viewport" role="presentation">
+                    <div class="ag-full-width-container" role="presentation"></div>
+                </div>
+            </div>
+        </div>
+        <div class="ag-floating-bottom" role="presentation">
+            <div class="ag-pinned-left-floating-bottom" role="presentation"></div>
+            <div class="ag-pinned-right-floating-bottom" role="presentation"></div>
+            <div class="ag-floating-bottom-viewport" role="presentation">
+                <div class="ag-floating-bottom-container" role="presentation"></div>
+            </div>
+            <div class="ag-floating-bottom-full-width-container" role="presentation"></div>
+        </div>
+        <div class="ag-overlay" ref="eOverlay"></div>
+    </div>`;
 
 export type RowContainerComponentNames =
     'fullWidth' |
