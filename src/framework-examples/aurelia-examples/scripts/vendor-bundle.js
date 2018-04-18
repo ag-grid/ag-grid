@@ -4004,27 +4004,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-define('auRenderers/styled-renderer',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var StyledRenderer = (function () {
-        function StyledRenderer() {
-        }
-        StyledRenderer = __decorate([
-            aurelia_framework_1.customElement('ag-styled-renderer'),
-            aurelia_framework_1.inject(Element)
-        ], StyledRenderer);
-        return StyledRenderer;
-    }());
-    exports.StyledRenderer = StyledRenderer;
-});
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
@@ -4126,6 +4105,27 @@ define('auHeaderComponents/header-group-component',["require", "exports", "aurel
         return HeaderGroupComponent;
     }());
     exports.HeaderGroupComponent = HeaderGroupComponent;
+});
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+define('auRenderers/styled-renderer',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var StyledRenderer = (function () {
+        function StyledRenderer() {
+        }
+        StyledRenderer = __decorate([
+            aurelia_framework_1.customElement('ag-styled-renderer'),
+            aurelia_framework_1.inject(Element)
+        ], StyledRenderer);
+        return StyledRenderer;
+    }());
+    exports.StyledRenderer = StyledRenderer;
 });
 
 define('data/refData',["require", "exports"], function (require, exports) {
@@ -5183,6 +5183,203 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+define('components/rich-grid-declarative-example/rich-grid-declarative-example',["require", "exports", "aurelia-framework", "../../data/refData", "../../filters/skillFilter", "../../filters/proficiencyFilter", "ag-grid-enterprise/main"], function (require, exports, aurelia_framework_1, refData_1, skillFilter_1, proficiencyFilter_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var RichGridDeclarative = (function () {
+        function RichGridDeclarative() {
+            var _this = this;
+            this.gridOptions = {};
+            var that = this;
+            this.createRowData();
+            this.showGrid = true;
+            this.gridOptions.onGridReady = function () {
+                _this.api = _this.gridOptions.api;
+                _this.columnApi = _this.gridOptions.columnApi;
+            };
+        }
+        RichGridDeclarative.prototype.createRowData = function () {
+            var rowData = [];
+            for (var i = 0; i < 10000; i++) {
+                var countryData = refData_1.default.countries[i % refData_1.default.countries.length];
+                rowData.push({
+                    name: refData_1.default.firstNames[i % refData_1.default.firstNames.length] + ' ' + refData_1.default.lastNames[i % refData_1.default.lastNames.length],
+                    skills: {
+                        android: Math.random() < 0.4,
+                        html5: Math.random() < 0.4,
+                        mac: Math.random() < 0.4,
+                        windows: Math.random() < 0.4,
+                        css: Math.random() < 0.4
+                    },
+                    dob: refData_1.default.DOBs[i % refData_1.default.DOBs.length],
+                    address: refData_1.default.addresses[i % refData_1.default.addresses.length],
+                    years: Math.round(Math.random() * 100),
+                    proficiency: Math.round(Math.random() * 100),
+                    country: countryData.country,
+                    continent: countryData.continent,
+                    language: countryData.language,
+                    mobile: this.createRandomPhoneNumber(),
+                    landline: this.createRandomPhoneNumber()
+                });
+            }
+            this.rowData = rowData;
+        };
+        RichGridDeclarative.prototype.calculateRowCount = function () {
+            if (this.gridOptions.api && this.rowData) {
+                var model = this.gridOptions.api.getModel();
+                var totalRows = this.rowData.length;
+                var processedRows = model.getRowCount();
+                this.rowCount = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
+            }
+        };
+        RichGridDeclarative.prototype.onModelUpdated = function () {
+            console.log('onModelUpdated');
+            this.calculateRowCount();
+        };
+        RichGridDeclarative.prototype.onReady = function () {
+            console.log('onReady');
+            this.calculateRowCount();
+        };
+        RichGridDeclarative.prototype.onCellClicked = function ($event) {
+            console.log('onCellClicked: ' + $event.rowIndex + ' ' + $event.colDef.field);
+        };
+        RichGridDeclarative.prototype.onCellValueChanged = function ($event) {
+            console.log('onCellValueChanged: ' + $event.oldValue + ' to ' + $event.newValue);
+        };
+        RichGridDeclarative.prototype.onCellDoubleClicked = function ($event) {
+            console.log('onCellDoubleClicked: ' + $event.rowIndex + ' ' + $event.colDef.field);
+        };
+        RichGridDeclarative.prototype.onCellContextMenu = function ($event) {
+            console.log('onCellContextMenu: ' + $event.rowIndex + ' ' + $event.colDef.field);
+        };
+        RichGridDeclarative.prototype.onCellFocused = function ($event) {
+            if ($event.rowIndex !== null) {
+                console.log('onCellFocused: (' + $event.rowIndex + ',' + ($event.column ? $event.column.colId : '') + ')');
+            }
+        };
+        RichGridDeclarative.prototype.onRowSelected = function ($event) {
+        };
+        RichGridDeclarative.prototype.onSelectionChanged = function () {
+            console.log('selectionChanged');
+        };
+        RichGridDeclarative.prototype.onBeforeFilterChanged = function () {
+            console.log('beforeFilterChanged');
+        };
+        RichGridDeclarative.prototype.onAfterFilterChanged = function () {
+            console.log('afterFilterChanged');
+        };
+        RichGridDeclarative.prototype.onFilterModified = function () {
+            console.log('onFilterModified');
+        };
+        RichGridDeclarative.prototype.onBeforeSortChanged = function () {
+            console.log('onBeforeSortChanged');
+        };
+        RichGridDeclarative.prototype.onAfterSortChanged = function () {
+            console.log('onAfterSortChanged');
+        };
+        RichGridDeclarative.prototype.onVirtualRowRemoved = function ($event) {
+        };
+        RichGridDeclarative.prototype.onRowClicked = function ($event) {
+            console.log('onRowClicked: ' + $event.node.data.name);
+        };
+        RichGridDeclarative.prototype.onQuickFilterChanged = function ($event) {
+            this.gridOptions.api.setQuickFilter($event.target.value);
+        };
+        RichGridDeclarative.prototype.onColumnEvent = function ($event) {
+            console.log('onColumnEvent: ' + $event);
+        };
+        RichGridDeclarative.prototype.onIdClicked = function (row) {
+            console.log('id clicked ' + row.id);
+        };
+        RichGridDeclarative.prototype.dobCellRenderer = function (params) {
+            return pad(params.value.getDate(), 2) + '/' +
+                pad(params.value.getMonth() + 1, 2) + '/' +
+                params.value.getFullYear();
+        };
+        RichGridDeclarative.prototype.countryCellRenderer = function (params) {
+            var flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/flags/" + refData_1.default.COUNTRY_CODES[params.value] + ".png'>";
+            return flag + " " + params.value;
+        };
+        RichGridDeclarative.prototype.skillsCellRenderer = function (params) {
+            var data = params.data;
+            var skills = [];
+            refData_1.default.IT_SKILLS.forEach(function (skill) {
+                if (data && data.skills && data.skills[skill]) {
+                    skills.push('<img src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
+                }
+            });
+            return skills.join(' ');
+        };
+        RichGridDeclarative.prototype.percentCellRenderer = function (params) {
+            var value = params.value;
+            var eDivPercentBar = document.createElement('div');
+            eDivPercentBar.className = 'div-percent-bar';
+            eDivPercentBar.style.width = value + '%';
+            if (value < 20) {
+                eDivPercentBar.style.backgroundColor = 'red';
+            }
+            else if (value < 60) {
+                eDivPercentBar.style.backgroundColor = '#ff9900';
+            }
+            else {
+                eDivPercentBar.style.backgroundColor = '#00A000';
+            }
+            var eValue = document.createElement('div');
+            eValue.className = 'div-percent-value';
+            eValue.innerHTML = value + '%';
+            var eOuterDiv = document.createElement('div');
+            eOuterDiv.className = 'div-outer-div';
+            eOuterDiv.appendChild(eValue);
+            eOuterDiv.appendChild(eDivPercentBar);
+            return eOuterDiv;
+        };
+        RichGridDeclarative.prototype.getSkillFilter = function () {
+            return skillFilter_1.default;
+        };
+        RichGridDeclarative.prototype.getProficiencyFilter = function () {
+            return proficiencyFilter_1.default;
+        };
+        RichGridDeclarative.prototype.getCountryFilterParams = function () {
+            return {
+                cellRenderer: this.countryCellRenderer,
+                cellHeight: 20
+            };
+        };
+        RichGridDeclarative.prototype.createRandomPhoneNumber = function () {
+            var result = '+';
+            for (var i = 0; i < 12; i++) {
+                result += Math.round(Math.random() * 10);
+                if (i === 2 || i === 5 || i === 8) {
+                    result += ' ';
+                }
+            }
+            return result;
+        };
+        RichGridDeclarative = __decorate([
+            aurelia_framework_1.autoinject(),
+            aurelia_framework_1.customElement('rich-grid-declarative'),
+            __metadata("design:paramtypes", [])
+        ], RichGridDeclarative);
+        return RichGridDeclarative;
+    }());
+    exports.RichGridDeclarative = RichGridDeclarative;
+    function pad(num, totalStringSize) {
+        var asString = num + "";
+        while (asString.length < totalStringSize)
+            asString = "0" + asString;
+        return asString;
+    }
+});
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 define('components/rich-grid-example/rich-grid-example',["require", "exports", "aurelia-framework", "../../data/refData", "../../filters/skillFilter", "../../filters/proficiencyFilter", "../../jsHeaderComponent/headerComponent", "../../jsHeaderComponent/headerGroupComponent", "../../jsDateComponent/dateComponent", "ag-grid-enterprise/main"], function (require, exports, aurelia_framework_1, refData_1, skillFilter_1, proficiencyFilter_1, headerComponent_1, headerGroupComponent_1, dateComponent_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -5416,203 +5613,6 @@ define('components/rich-grid-example/rich-grid-example',["require", "exports", "
     }
 });
 
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-define('components/rich-grid-declarative-example/rich-grid-declarative-example',["require", "exports", "aurelia-framework", "../../data/refData", "../../filters/skillFilter", "../../filters/proficiencyFilter", "ag-grid-enterprise/main"], function (require, exports, aurelia_framework_1, refData_1, skillFilter_1, proficiencyFilter_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var RichGridDeclarative = (function () {
-        function RichGridDeclarative() {
-            var _this = this;
-            this.gridOptions = {};
-            var that = this;
-            this.createRowData();
-            this.showGrid = true;
-            this.gridOptions.onGridReady = function () {
-                _this.api = _this.gridOptions.api;
-                _this.columnApi = _this.gridOptions.columnApi;
-            };
-        }
-        RichGridDeclarative.prototype.createRowData = function () {
-            var rowData = [];
-            for (var i = 0; i < 10000; i++) {
-                var countryData = refData_1.default.countries[i % refData_1.default.countries.length];
-                rowData.push({
-                    name: refData_1.default.firstNames[i % refData_1.default.firstNames.length] + ' ' + refData_1.default.lastNames[i % refData_1.default.lastNames.length],
-                    skills: {
-                        android: Math.random() < 0.4,
-                        html5: Math.random() < 0.4,
-                        mac: Math.random() < 0.4,
-                        windows: Math.random() < 0.4,
-                        css: Math.random() < 0.4
-                    },
-                    dob: refData_1.default.DOBs[i % refData_1.default.DOBs.length],
-                    address: refData_1.default.addresses[i % refData_1.default.addresses.length],
-                    years: Math.round(Math.random() * 100),
-                    proficiency: Math.round(Math.random() * 100),
-                    country: countryData.country,
-                    continent: countryData.continent,
-                    language: countryData.language,
-                    mobile: this.createRandomPhoneNumber(),
-                    landline: this.createRandomPhoneNumber()
-                });
-            }
-            this.rowData = rowData;
-        };
-        RichGridDeclarative.prototype.calculateRowCount = function () {
-            if (this.gridOptions.api && this.rowData) {
-                var model = this.gridOptions.api.getModel();
-                var totalRows = this.rowData.length;
-                var processedRows = model.getRowCount();
-                this.rowCount = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
-            }
-        };
-        RichGridDeclarative.prototype.onModelUpdated = function () {
-            console.log('onModelUpdated');
-            this.calculateRowCount();
-        };
-        RichGridDeclarative.prototype.onReady = function () {
-            console.log('onReady');
-            this.calculateRowCount();
-        };
-        RichGridDeclarative.prototype.onCellClicked = function ($event) {
-            console.log('onCellClicked: ' + $event.rowIndex + ' ' + $event.colDef.field);
-        };
-        RichGridDeclarative.prototype.onCellValueChanged = function ($event) {
-            console.log('onCellValueChanged: ' + $event.oldValue + ' to ' + $event.newValue);
-        };
-        RichGridDeclarative.prototype.onCellDoubleClicked = function ($event) {
-            console.log('onCellDoubleClicked: ' + $event.rowIndex + ' ' + $event.colDef.field);
-        };
-        RichGridDeclarative.prototype.onCellContextMenu = function ($event) {
-            console.log('onCellContextMenu: ' + $event.rowIndex + ' ' + $event.colDef.field);
-        };
-        RichGridDeclarative.prototype.onCellFocused = function ($event) {
-            if ($event.rowIndex !== null) {
-                console.log('onCellFocused: (' + $event.rowIndex + ',' + ($event.column ? $event.column.colId : '') + ')');
-            }
-        };
-        RichGridDeclarative.prototype.onRowSelected = function ($event) {
-        };
-        RichGridDeclarative.prototype.onSelectionChanged = function () {
-            console.log('selectionChanged');
-        };
-        RichGridDeclarative.prototype.onBeforeFilterChanged = function () {
-            console.log('beforeFilterChanged');
-        };
-        RichGridDeclarative.prototype.onAfterFilterChanged = function () {
-            console.log('afterFilterChanged');
-        };
-        RichGridDeclarative.prototype.onFilterModified = function () {
-            console.log('onFilterModified');
-        };
-        RichGridDeclarative.prototype.onBeforeSortChanged = function () {
-            console.log('onBeforeSortChanged');
-        };
-        RichGridDeclarative.prototype.onAfterSortChanged = function () {
-            console.log('onAfterSortChanged');
-        };
-        RichGridDeclarative.prototype.onVirtualRowRemoved = function ($event) {
-        };
-        RichGridDeclarative.prototype.onRowClicked = function ($event) {
-            console.log('onRowClicked: ' + $event.node.data.name);
-        };
-        RichGridDeclarative.prototype.onQuickFilterChanged = function ($event) {
-            this.gridOptions.api.setQuickFilter($event.target.value);
-        };
-        RichGridDeclarative.prototype.onColumnEvent = function ($event) {
-            console.log('onColumnEvent: ' + $event);
-        };
-        RichGridDeclarative.prototype.onIdClicked = function (row) {
-            console.log('id clicked ' + row.id);
-        };
-        RichGridDeclarative.prototype.dobCellRenderer = function (params) {
-            return pad(params.value.getDate(), 2) + '/' +
-                pad(params.value.getMonth() + 1, 2) + '/' +
-                params.value.getFullYear();
-        };
-        RichGridDeclarative.prototype.countryCellRenderer = function (params) {
-            var flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/flags/" + refData_1.default.COUNTRY_CODES[params.value] + ".png'>";
-            return flag + " " + params.value;
-        };
-        RichGridDeclarative.prototype.skillsCellRenderer = function (params) {
-            var data = params.data;
-            var skills = [];
-            refData_1.default.IT_SKILLS.forEach(function (skill) {
-                if (data && data.skills && data.skills[skill]) {
-                    skills.push('<img src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
-                }
-            });
-            return skills.join(' ');
-        };
-        RichGridDeclarative.prototype.percentCellRenderer = function (params) {
-            var value = params.value;
-            var eDivPercentBar = document.createElement('div');
-            eDivPercentBar.className = 'div-percent-bar';
-            eDivPercentBar.style.width = value + '%';
-            if (value < 20) {
-                eDivPercentBar.style.backgroundColor = 'red';
-            }
-            else if (value < 60) {
-                eDivPercentBar.style.backgroundColor = '#ff9900';
-            }
-            else {
-                eDivPercentBar.style.backgroundColor = '#00A000';
-            }
-            var eValue = document.createElement('div');
-            eValue.className = 'div-percent-value';
-            eValue.innerHTML = value + '%';
-            var eOuterDiv = document.createElement('div');
-            eOuterDiv.className = 'div-outer-div';
-            eOuterDiv.appendChild(eValue);
-            eOuterDiv.appendChild(eDivPercentBar);
-            return eOuterDiv;
-        };
-        RichGridDeclarative.prototype.getSkillFilter = function () {
-            return skillFilter_1.default;
-        };
-        RichGridDeclarative.prototype.getProficiencyFilter = function () {
-            return proficiencyFilter_1.default;
-        };
-        RichGridDeclarative.prototype.getCountryFilterParams = function () {
-            return {
-                cellRenderer: this.countryCellRenderer,
-                cellHeight: 20
-            };
-        };
-        RichGridDeclarative.prototype.createRandomPhoneNumber = function () {
-            var result = '+';
-            for (var i = 0; i < 12; i++) {
-                result += Math.round(Math.random() * 10);
-                if (i === 2 || i === 5 || i === 8) {
-                    result += ' ';
-                }
-            }
-            return result;
-        };
-        RichGridDeclarative = __decorate([
-            aurelia_framework_1.autoinject(),
-            aurelia_framework_1.customElement('rich-grid-declarative'),
-            __metadata("design:paramtypes", [])
-        ], RichGridDeclarative);
-        return RichGridDeclarative;
-    }());
-    exports.RichGridDeclarative = RichGridDeclarative;
-    function pad(num, totalStringSize) {
-        var asString = num + "";
-        while (asString.length < totalStringSize)
-            asString = "0" + asString;
-        return asString;
-    }
-});
-
 define('text!app.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"bootstrap/css/bootstrap.css\"></require>\n  <require from=\"ag-grid/dist/styles/ag-grid.css\"></require>\n  <require from=\"ag-grid/dist/styles/ag-theme-balham.css\"></require>\n  <ul if.bind=\"!router.currentInstruction.queryParams.route\" class=\"nav nav-pills\" style=\"margin-bottom: 20px\">\n    <li role=\"presentation\" class.bind=\"row.isActive ? 'active' : ''\" repeat.for=\"row of router.navigation\">\n      <a href.bind=\"row.href\">${row.title}</a>\n    </li>\n  </ul>\n\n  <router-view></router-view>\n</template>\n"; });
 define('text!auDateComponents/date.component.css', ['module'], function(module) { module.exports = ".dd {\n    width: 30px\n}\n\n.mm {\n    width: 30px\n}\n\n.yyyy {\n    width: 40px\n}\n\n.reset {\n    padding: 2px;\n    background-color: red;\n    border-radius: 3px;\n    font-size: 10px;\n    color: white\n}"; });
 define('text!auDateComponents/date-component.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"./date.component.css\"></require>\n\n    <div class=\"filter\">\n        <span class=\"reset\" click.delegate=\"onResetDate()\">x</span>\n        <input class=\"dd\" value.bind=\"dd\" change.delegate=\"onDateChanged('dd', $event.target.value)\" maxLength=\"2\">\n        <span>/</span>\n        <input class=\"mm\" value.bind=\"mm\" change.delegate=\"onDateChanged('mm', $event.target.value)\" maxLength=\"2\">\n        <span>/</span>\n        <input class=\"yyyy\" value.bind=\"yyyy\" change.delegate=\"onDateChanged('yyyy', $event.target.value)\" maxLength=\"4\">\n    </div>\n</template>"; });
@@ -5625,16 +5625,16 @@ define('text!auRenderers/styled-renderer.html', ['module'], function(module) { m
 define('text!jsHeaderComponent/headerComponent.css', ['module'], function(module) { module.exports = ".headerComponent {\n    position:relative;\n    top: -5px\n}\n\n.customHeaderMenuButton {\n    margin-top: 5px;\n    margin-left: 4px;\n    float: left;\n}\n\n.customHeaderLabel {\n    margin-left: 5px;\n    margin-top: 3px;\n    float: left;\n}\n\n.customSortDownLabel {\n    float: left;\n    margin-left: 10px;\n    margin-top: 5px;\n}\n\n.customSortUpLabel {\n    float: left;\n    margin-left: 3px;\n    margin-top: 4px;\n}\n\n.customSortRemoveLabel {\n    float: left;\n    font-size: 11px;\n    margin-left: 3px;\n    margin-top: 6px;\n}\n\n.active {\n    color: cornflowerblue;\n}"; });
 define('text!editors/mood-editor.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"./mood-editor.css\"></require>\n\n    <div class.bind=\"'mood'\" tabindex=\"0\" focus.bind=\"hasFocus\" keydown.trigger=\"onKeyDown($event)\">\n        <img src=\"https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/smiley.png\" click.delegate=\"setHappy(true)\" class.bind=\"happy ? 'selected' : 'default'\">\n        <img src=\"https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/smiley-sad.png\" click.delegate=\"setHappy(false)\" class.bind=\"!happy ? 'selected' : 'default'\">\n    </div>\n</template>\n"; });
 define('text!jsHeaderComponent/headerGroup.css', ['module'], function(module) { module.exports = ".customHeaderLabel{\n    margin-left: 5px;\n    margin-top: 3px;\n    float: left;\n}\n\n.customExpandButton{\n    float:right;\n    margin-top: 5px;\n    margin-left: 3px;\n}\n\n.expanded {\n    animation-name: toExpanded;\n    animation-duration: 1s;\n    -ms-transform: rotate(180deg); /* IE 9 */\n    -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */\n    transform: rotate(180deg);\n}\n\n.collapsed {\n    color: cornflowerblue;\n    animation-name: toCollapsed;\n    animation-duration: 1s;\n    -ms-transform: rotate(0deg); /* IE 9 */\n    -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */\n    transform: rotate(0deg);\n}\n\n\n\n@keyframes  toExpanded{\n    from {\n        color: cornflowerblue;\n        -ms-transform: rotate(0deg); /* IE 9 */\n        -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */\n        transform: rotate(0deg);\n    }\n    to {\n        color: black;\n        -ms-transform: rotate(180deg); /* IE 9 */\n        -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */\n        transform: rotate(180deg);\n    }\n}\n\n@keyframes toCollapsed{\n    from {\n        color: black;\n        -ms-transform: rotate(180deg); /* IE 9 */\n        -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */\n        transform: rotate(180deg);\n    }\n    to {\n        color: cornflowerblue;\n        -ms-transform: rotate(0deg); /* IE 9 */\n        -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */\n        transform: rotate(0deg);\n    }\n}"; });
-define('text!components/rich-grid-example/rich-grid-example.css', ['module'], function(module) { module.exports = ".filter {\n    margin: 2px\n}\n\n.dd {\n    width: 30px\n}\n\n.mm {\n    width: 30px\n}\n\n.yyyy {\n    width: 60px\n}\n\n.reset {\n    padding: 2px;\n    background-color: red;\n    border-radius: 3px;\n    font-size: 10px;\n    margin-right: 5px;\n    color: white\n}"; });
 define('text!editors/numeric-editor.html', ['module'], function(module) { module.exports = "<template>\n  <input focus.bind=\"hasFocus\" value.bind=\"params.value\">\n</template>\n"; });
+define('text!components/rich-grid-example/rich-grid-example.css', ['module'], function(module) { module.exports = ".filter {\n    margin: 2px\n}\n\n.dd {\n    width: 30px\n}\n\n.mm {\n    width: 30px\n}\n\n.yyyy {\n    width: 60px\n}\n\n.reset {\n    padding: 2px;\n    background-color: red;\n    border-radius: 3px;\n    font-size: 10px;\n    margin-right: 5px;\n    color: white\n}"; });
 define('text!components/blank/blank.html', ['module'], function(module) { module.exports = "<template>\n    <div>\n    </div>\n</template>\n"; });
-define('text!components/filter-example/filter-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 740px;\">\n    <div style=\"width: 100%; height: 350px;\">\n      <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-theme-balham\"\n                       grid-options.bind=\"gridOptions\">\n        <ag-grid-column header-name=\"Row\" field=\"row\" width.bind=\"370\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Filter Component\" field=\"name\" width.bind=\"355\" filter.bind=\"getPartialMatchFilter()\">\n        </ag-grid-column>\n      </ag-grid-aurelia>\n    </div>\n  </div>\n  </div>\n</template>\n"; });
 define('text!components/editor-example/editor-example.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"../../editors/numeric-editor\"></require>\n    <require from=\"../../editors/mood-editor\"></require>\n    <div style=\"width: 740px;\">\n        <div style=\"width: 100%; height: 350px;\">\n            <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-theme-balham\"\n                             grid-options.bind=\"gridOptions\">\n\n                <ag-grid-column header-name=\"Name\" field=\"name\" width.bind=\"300\"></ag-grid-column>\n                <ag-grid-column header-name=\"Mood\" field=\"mood\" width.bind=\"300\" editable.bind=\"true\">\n                    <ag-cell-template>\n                        <img width=\"20px\" if.bind=\"params.value === 'Happy'\" src=\"https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/smiley.png\"/>\n                        <img width=\"20px\" if.bind=\"params.value !== 'Happy'\" src=\"https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/smiley-sad.png\"/>\n                    </ag-cell-template>\n                    <ag-editor-template>\n                        <ag-mood-editor></ag-mood-editor>\n                    </ag-editor-template>\n                </ag-grid-column>\n                <ag-grid-column header-name=\"Numeric\" field=\"number\" width.bind=\"280\" editable.bind=\"true\">\n                    <ag-editor-template>\n                        <ag-numeric-editor></ag-numeric-editor>\n                    </ag-editor-template>\n                </ag-grid-column>\n            </ag-grid-aurelia>\n        </div>\n    </div>\n</template>\n"; });
+define('text!components/filter-example/filter-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 740px;\">\n    <div style=\"width: 100%; height: 350px;\">\n      <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-theme-balham\"\n                       grid-options.bind=\"gridOptions\">\n        <ag-grid-column header-name=\"Row\" field=\"row\" width.bind=\"370\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Filter Component\" field=\"name\" width.bind=\"355\" filter.bind=\"getPartialMatchFilter()\">\n        </ag-grid-column>\n      </ag-grid-aurelia>\n    </div>\n  </div>\n  </div>\n</template>\n"; });
 define('text!components/full-width-example/full-width-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 740px;\">\n      <div style=\"width: 100%; height: 350px;\">\n        <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-theme-balham\"\n                         grid-options.bind=\"gridOptions\">\n            <ag-grid-column header-name=\"Name\" field=\"name\" width.bind=\"450\">\n            </ag-grid-column>\n            <ag-grid-column header-name=\"Age\" field=\"age\" width.bind=\"430\">\n            </ag-grid-column>\n        </ag-grid-aurelia>\n      </div>\n    </div>\n  </div>\n</template>\n"; });
 define('text!components/group-row-example/group-row-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 740px;\">\n    <div style=\"width: 100%; height: 350px;\">\n      <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-theme-balham\"\n                       grid-options.bind=\"gridOptions\">\n        <ag-grid-column header-name=\"Country\" field=\"country\" width.bind=\"100\" row-group-index.bind=\"0\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Name\" field=\"name\" width.bind=\"100\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Gold\" field=\"gold\" width.bind=\"100\" agg-func=\"sum\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Silver\" field=\"silver\" width.bind=\"100\" agg-func=\"sum\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Bronze\" field=\"bronze\" width.bind=\"100\" agg-func=\"sum\">\n        </ag-grid-column>\n      </ag-grid-aurelia>\n    </div>\n  </div>\n  </div>\n</template>\n"; });
 define('text!components/pinned-row-example/pinned-row-example.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"../../auRenderers/styled-renderer\"></require>\n    <div style=\"width: 740px;\">\n        <div style=\"width: 100%; height: 350px;\">\n            <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-theme-balham\"\n                             grid-options.bind=\"gridOptions\">\n                <ag-grid-column header-name=\"Row\" field=\"row\" width.bind=\"450\" pinned-row-cell-renderer-params.bind=\"{style: {'fontWeight': 'bold'}}\">\n                    <ag-pinned-row-template>\n                        <ag-styled-renderer></ag-styled-renderer>\n                    </ag-pinned-row-template>\n                </ag-grid-column>\n                <ag-grid-column header-name=\"Number\" field=\"number\" width.bind=\"430\" pinned-row-cell-renderer-params.bind=\"{style: {'fontStyle': 'italic'}}\">\n                    <ag-pinned-row-template>\n                        <ag-styled-renderer></ag-styled-renderer>\n                    </ag-pinned-row-template>\n                </ag-grid-column>\n            </ag-grid-aurelia>\n        </div>\n    </div>\n    </div>\n</template>\n"; });
-define('text!components/rich-grid-declarative-example/rich-grid-declarative-example.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"../../auHeaderComponents/header-component\"></require>\n    <require from=\"../../auHeaderComponents/header-group-component\"></require>\n    <require from=\"../../auDateComponents/date-component\"></require>\n\n    <div style=\"width: 740px;\">\n        <div style=\"padding: 4px;\">\n            <div style=\"float: right;\">\n                <input keyup.delegate=\"onQuickFilterChanged($event)\" type=\"text\" id=\"quickFilterInput\"\n                       placeholder=\"Type text to filter...\"/>\n                <button disabled.bind=\"!showGrid\" click.delegate=\"showGrid=false\">Destroy Grid</button>\n                <button disabled.bind=\"showGrid\" click.delegate=\"showGrid=true\">Create Grid</button>\n            </div>\n            <div>\n                <b>Employees Skills and Contact Details</b>\n                ${rowCount}\n            </div>\n        </div>\n        <div style=\"clear: both;\"></div>\n\n        <div if.bind=\"showGrid\">\n\n            <!-- Because we are using the Angular ID (ie #ag-grid marker), we have to have all the items that use\n                 that marker inside the same ng-if as the grid -->\n\n            <div style=\"padding: 4px;\" class=\"toolbar\">\n            <span>\n                Grid API:\n                <button click.delegate=\"api.selectAll()\">Select All</button>\n                <button click.delegate=\"api.deselectAll()\">Clear Selection</button>\n            </span>\n                <span style=\"margin-left: 20px;\">\n                Column API:\n                <button click.delegate=\"columnApi.setColumnVisible('country', false)\">Hide Country Column</button>\n                <button click.delegate=\"columnApi.setColumnVisible('country', true)\">Show Country Column</button>\n            </span>\n            </div>\n            <div style=\"clear: both;\"></div>\n            <div style=\"padding: 4px;\" class=\"toolbar\">\n                <label>\n                    <input type=\"checkbox\" change.delegate=\"showToolPanel=$event.target.checked\"/>\n                    Show Tool Panel\n                </label>\n                <button click.delegate=\"createRowData()\">Refresh Data</button>\n            </div>\n            <div style=\"clear: both;\"></div>\n\n            <div style=\"width: 100%; height: 350px;\">\n                <ag-grid-aurelia #agGrid style=\"width: 100%; height: 350px;\" class=\"ag-theme-balham\"\n                                 context.bind=\"$this\"\n                                 grid-options.bind=\"gridOptions\"\n                                 column-defs.bind=\"columnDefs\"\n                                 show-tool-panel.bind=\"showToolPanel\"\n                                 row-data.bind=\"rowData\"\n\n                                 enable-col-resize\n                                 enable-sorting\n                                 enable-filter\n                                 group-headers\n                                 suppress-row-click-selection\n                                 tool-panel-suppress-groups\n                                 tool-panel-suppress-values\n                                 row-height=\"22\"\n                                 row-selection=\"multiple\"\n\n                                 model-updated.call=\"onModelUpdated()\"\n                                 cell-clicked.call=\"onCellClicked($event)\"\n                                 cell-double-clicked.call=\"onCellDoubleClicked($event)\"\n                                 cell-context-menu.call=\"onCellContextMenu($event)\"\n                                 cell-value-changed.call=\"onCellValueChanged($event)\"\n                                 cell-focused.call=\"onCellFocused($event)\"\n                                 row-selected.call=\"onRowSelected($event)\"\n                                 selection-changed.call=\"onSelectionChanged()\"\n                                 before-filter-changed.call=\"onBeforeFilterChanged()\"\n                                 after-filter-changed.call=\"onAfterFilterChanged()\"\n                                 filter-modified.call=\"onFilterModified()\"\n                                 before-sort-changed.call=\"onBeforeSortChanged()\"\n                                 after-sort-changed.call=\"onAfterSortChanged()\"\n                                 virtual-row-removed.call=\"onVirtualRowRemoved($event)\"\n                                 row-clicked.call=\"onRowClicked($event)\"\n                                 grid-ready.call=\"onReady($event)\"\n\n                                 column-everything-changed.call=\"onColumnEvent($event)\"\n                                 column-row-group-changed.call=\"onColumnEvent($event)\"\n                                 column-value-changed.call=\"onColumnEvent($event)\"\n                                 column-moved.call=\"onColumnEvent($event)\"\n                                 column-visible.call=\"onColumnEvent($event)\"\n                                 column-group-opened.call=\"onColumnEvent($event)\"\n                                 column-resized.call=\"onColumnEvent($event)\"\n                                 column-pinned-count-changed.call=\"onColumnEvent($event)\">\n                    <ag-date-template>\n                        <ag-date-component></ag-date-component>\n                    </ag-date-template>\n                    <ag-grid-column header-name=\"#\" width.bind=\"30\" checkbox-selection.bind=\"true\"\n                                    suppress-sorting.bind=\"true\" suppress-menu.bind=\"true\"\n                                    pinned.bind=\"true\"></ag-grid-column>\n                    <ag-grid-column header-name=\"Employee\">\n                        <ag-header-group-template>\n                            <ag-header-group-component></ag-header-group-component>\n                        </ag-header-group-template>\n                        <ag-grid-column header-name=\"Name\" field=\"name\" width.bind=\"150\" pinned.bind=\"true\"\n                                        header-component-params.bind=\"{ menuIcon: 'fa-bars' }\">\n                            <ag-header-template>\n                                <ag-header-component></ag-header-component>\n                            </ag-header-template>\n                        </ag-grid-column>\n                        <ag-grid-column header-name=\"Country\" field=\"country\" width.bind=\"150\"\n                                        cell-renderer.bind=\"countryCellRenderer\" pinned.bind=\"true\"\n                                        filter-params.bind=\"getCountryFilterParams()\"\n                                        header-component-params.bind=\"{ menuIcon: 'fa-bars' }\">\n                            <ag-header-template>\n                                <ag-header-component></ag-header-component>\n                            </ag-header-template>\n                        </ag-grid-column>\n                        <ag-grid-column header-name=\"DOB\" field=\"dob\" width.bind=\"150\"\n                                        cell-renderer.bind=\"dobCellRenderer\" pinned.bind=\"true\"\n                                        filter=\"agDateColumnFilter\" column-group-show=\"open\"\n                                        header-component-params.bind=\"{ menuIcon: 'fa-bars' }\">\n                            <ag-header-template>\n                                <ag-header-component></ag-header-component>\n                            </ag-header-template>\n                        </ag-grid-column>\n                    </ag-grid-column>\n                    <ag-grid-column header-name=\"IT Skills\">\n                        <ag-grid-column header-name=\"Skills\" width.bind=\"125\" suppress-sorting.bind=\"true\"\n                                        cell-renderer.bind=\"skillsCellRenderer\"\n                                        filter.bind=\"getSkillFilter()\"\n                                        header-component-params.bind=\"{ menuIcon: 'fa-bars' }\">\n                            <ag-header-template>\n                                <ag-header-component></ag-header-component>\n                            </ag-header-template>\n                        </ag-grid-column>\n                        <ag-grid-column header-name=\"Proficiency\" field=\"proficiency\" width.bind=\"120\"\n                                        cell-renderer.bind=\"percentCellRenderer\"\n                                        filter.bind=\"getProficiencyFilter()\"\n                                        header-component-params.bind=\"{ menuIcon: 'fa-bars' }\">\n                            <ag-header-template>\n                                <ag-header-component></ag-header-component>\n                            </ag-header-template>\n                        </ag-grid-column>\n                    </ag-grid-column>\n                    <ag-grid-column header-name=\"Contact\">\n                        <ag-grid-column header-name=\"Mobile\" field=\"mobile\" width.bind=\"150\"\n                                        filter=\"text\"\n                                        header-component-params.bind=\"{ menuIcon: 'fa-bars' }\">\n                            <ag-header-template>\n                                <ag-header-component></ag-header-component>\n                            </ag-header-template>\n                        </ag-grid-column>\n                        <ag-grid-column header-name=\"Land-line\" field=\"landline\" width.bind=\"150\"\n                                        filter=\"text\"\n                                        header-component-params.bind=\"{ menuIcon: 'fa-bars' }\">\n                            <ag-header-template>\n                                <ag-header-component></ag-header-component>\n                            </ag-header-template>\n                        </ag-grid-column>\n                        <ag-grid-column header-name=\"Address\" field=\"address\" width.bind=\"500\"\n                                        filter=\"text\"\n                                        header-component-params.bind=\"{ menuIcon: 'fa-bars' }\">\n                            <ag-header-template>\n                                <ag-header-component></ag-header-component>\n                            </ag-header-template>\n                        </ag-grid-column>\n                    </ag-grid-column>\n                </ag-grid-aurelia>\n            </div>\n        </div>\n    </div>\n</template>\n"; });
-define('text!components/rich-grid-example/rich-grid-example.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"./rich-grid-example.css\"></require>\n    <require from=\"../../jsHeaderComponent/headerGroup.css\"></require>\n    <require from=\"../../jsHeaderComponent/headerComponent.css\"></require>\n\n    <div style=\"width: 740px;\">\n        <div style=\"padding: 4px;\">\n            <div style=\"float: right;\">\n                <input keyup.delegate=\"onQuickFilterChanged($event)\" type=\"text\" id=\"quickFilterInput\"\n                       placeholder=\"Type text to filter...\"/>\n                <button disabled.bind=\"!showGrid\" click.delegate=\"showGrid=false\">Destroy Grid</button>\n                <button disabled.bind=\"showGrid\" click.delegate=\"showGrid=true\">Create Grid</button>\n            </div>\n            <div>\n                <b>Employees Skills and Contact Details</b>\n                ${rowCount}\n            </div>\n        </div>\n        <div style=\"clear: both;\"></div>\n\n        <div if.bind=\"showGrid\">\n\n            <!-- Because we are using the Angular ID (ie #ag-grid marker), we have to have all the items that use\n                 that marker inside the same ng-if as the grid -->\n\n            <div style=\"padding: 4px;\" class=\"toolbar\">\n            <span>\n                Grid API:\n                <button click.delegate=\"api.selectAll()\">Select All</button>\n                <button click.delegate=\"api.deselectAll()\">Clear Selection</button>\n            </span>\n                <span style=\"margin-left: 20px;\">\n                Column API:\n                <button click.delegate=\"columnApi.setColumnVisible('country', false)\">Hide Country Column</button>\n                <button click.delegate=\"columnApi.setColumnVisible('country', true)\">Show Country Column</button>\n            </span>\n            </div>\n            <div style=\"clear: both;\"></div>\n            <div style=\"padding: 4px;\" class=\"toolbar\">\n                <label>\n                    <input type=\"checkbox\" change.delegate=\"showToolPanel=$event.target.checked\"/>\n                    Show Tool Panel\n                </label>\n                <button click.delegate=\"createRowData()\">Refresh Data</button>\n            </div>\n            <div style=\"clear: both;\"></div>\n\n            <div style=\"width: 100%; height: 350px;\">\n                <ag-grid-aurelia #agGrid class=\"ag-theme-balham\"\n                                 style=\"width: 100%; height: 350px;\"\n                                 grid-options.bind=\"gridOptions\"\n                                 column-defs.bind=\"columnDefs\"\n                                 show-tool-panel.bind=\"showToolPanel\"\n                                 row-data.bind=\"rowData\"\n\n                                 enable-col-resize\n                                 enable-sorting\n                                 enable-filter\n                                 group-headers\n                                 suppress-row-click-selection\n                                 tool-panel-suppress-groups\n                                 tool-panel-suppress-values\n                                 row-height.bind=\"22\"\n                                 row-selection=\"multiple\"\n\n                                 model-updated.call=\"onModelUpdated()\"\n                                 cell-clicked.call=\"onCellClicked($event)\"\n                                 cell-double-clicked.call=\"onCellDoubleClicked($event)\"\n                                 cell-context-menu.call=\"onCellContextMenu($event)\"\n                                 cell-value-changed.call=\"onCellValueChanged($event)\"\n                                 cell-focused.call=\"onCellFocused($event)\"\n                                 row-selected.call=\"onRowSelected($event)\"\n                                 selection-changed.call=\"onSelectionChanged()\"\n                                 before-filter-changed.call=\"onBeforeFilterChanged()\"\n                                 after-filter-changed.call=\"onAfterFilterChanged()\"\n                                 filter-modified.call=\"onFilterModified()\"\n                                 before-sort-changed.call=\"onBeforeSortChanged()\"\n                                 after-sort-changed.call=\"onAfterSortChanged()\"\n                                 virtual-row-removed.call=\"onVirtualRowRemoved($event)\"\n                                 row-clicked.call=\"onRowClicked($event)\"\n                                 ready.call=\"onReady($event)\"\n\n                                 column-everything-changed.call=\"onColumnEvent($event)\"\n                                 column-row-group-changed.call=\"onColumnEvent($event)\"\n                                 column-value-changed.call=\"onColumnEvent($event)\"\n                                 column-moved.call=\"onColumnEvent($event)\"\n                                 column-visible.call=\"onColumnEvent($event)\"\n                                 column-group-opened.call=\"onColumnEvent($event)\"\n                                 column-resized.call=\"onColumnEvent($event)\"\n                                 column-pinned-count-changed.call=\"onColumnEvent($event)\">\n                </ag-grid-aurelia>\n            </div>\n        </div>\n\n    </div>\n</template>\n"; });
+define('text!components/rich-grid-declarative-example/rich-grid-declarative-example.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"../../auHeaderComponents/header-component\"></require>\n    <require from=\"../../auHeaderComponents/header-group-component\"></require>\n    <require from=\"../../auDateComponents/date-component\"></require>\n\n    <div style=\"width: 740px;\">\n        <div style=\"padding: 4px;\">\n            <div style=\"float: right;\">\n                <input keyup.delegate=\"onQuickFilterChanged($event)\" type=\"text\" id=\"quickFilterInput\"\n                       placeholder=\"Type text to filter...\"/>\n                <button disabled.bind=\"!showGrid\" click.delegate=\"showGrid=false\">Destroy Grid</button>\n                <button disabled.bind=\"showGrid\" click.delegate=\"showGrid=true\">Create Grid</button>\n            </div>\n            <div>\n                <b>Employees Skills and Contact Details</b>\n                ${rowCount}\n            </div>\n        </div>\n        <div style=\"clear: both;\"></div>\n\n        <div if.bind=\"showGrid\">\n\n            <!-- Because we are using the Angular ID (ie #ag-grid marker), we have to have all the items that use\n                 that marker inside the same ng-if as the grid -->\n\n            <div style=\"padding: 4px;\" class=\"toolbar\">\n            <span>\n                Grid API:\n                <button click.delegate=\"api.selectAll()\">Select All</button>\n                <button click.delegate=\"api.deselectAll()\">Clear Selection</button>\n            </span>\n                <span style=\"margin-left: 20px;\">\n                Column API:\n                <button click.delegate=\"columnApi.setColumnVisible('country', false)\">Hide Country Column</button>\n                <button click.delegate=\"columnApi.setColumnVisible('country', true)\">Show Country Column</button>\n            </span>\n            </div>\n            <div style=\"clear: both;\"></div>\n            <div style=\"padding: 4px;\" class=\"toolbar\">\n                <label>\n                    <input type=\"checkbox\" change.delegate=\"showToolPanel=$event.target.checked\"/>\n                    Show Tool Panel\n                </label>\n                <button click.delegate=\"createRowData()\">Refresh Data</button>\n            </div>\n            <div style=\"clear: both;\"></div>\n\n            <div style=\"width: 100%; height: 350px;\">\n                <ag-grid-aurelia #agGrid style=\"width: 100%; height: 350px;\" class=\"ag-theme-balham\"\n                                 context.bind=\"$this\"\n                                 grid-options.bind=\"gridOptions\"\n                                 column-defs.bind=\"columnDefs\"\n                                 show-tool-panel.bind=\"showToolPanel\"\n                                 row-data.bind=\"rowData\"\n\n                                 enable-col-resize\n                                 enable-sorting\n                                 enable-filter\n                                 group-headers\n                                 suppress-row-click-selection\n                                 tool-panel-suppress-groups\n                                 tool-panel-suppress-values\n                                 row-selection=\"multiple\"\n\n                                 model-updated.call=\"onModelUpdated()\"\n                                 cell-clicked.call=\"onCellClicked($event)\"\n                                 cell-double-clicked.call=\"onCellDoubleClicked($event)\"\n                                 cell-context-menu.call=\"onCellContextMenu($event)\"\n                                 cell-value-changed.call=\"onCellValueChanged($event)\"\n                                 cell-focused.call=\"onCellFocused($event)\"\n                                 row-selected.call=\"onRowSelected($event)\"\n                                 selection-changed.call=\"onSelectionChanged()\"\n                                 before-filter-changed.call=\"onBeforeFilterChanged()\"\n                                 after-filter-changed.call=\"onAfterFilterChanged()\"\n                                 filter-modified.call=\"onFilterModified()\"\n                                 before-sort-changed.call=\"onBeforeSortChanged()\"\n                                 after-sort-changed.call=\"onAfterSortChanged()\"\n                                 virtual-row-removed.call=\"onVirtualRowRemoved($event)\"\n                                 row-clicked.call=\"onRowClicked($event)\"\n                                 grid-ready.call=\"onReady($event)\"\n\n                                 column-everything-changed.call=\"onColumnEvent($event)\"\n                                 column-row-group-changed.call=\"onColumnEvent($event)\"\n                                 column-value-changed.call=\"onColumnEvent($event)\"\n                                 column-moved.call=\"onColumnEvent($event)\"\n                                 column-visible.call=\"onColumnEvent($event)\"\n                                 column-group-opened.call=\"onColumnEvent($event)\"\n                                 column-resized.call=\"onColumnEvent($event)\"\n                                 column-pinned-count-changed.call=\"onColumnEvent($event)\">\n                    <ag-date-template>\n                        <ag-date-component></ag-date-component>\n                    </ag-date-template>\n                    <ag-grid-column header-name=\"#\" width.bind=\"30\" checkbox-selection.bind=\"true\"\n                                    suppress-sorting.bind=\"true\" suppress-menu.bind=\"true\"\n                                    pinned.bind=\"true\"></ag-grid-column>\n                    <ag-grid-column header-name=\"Employee\">\n                        <ag-header-group-template>\n                            <ag-header-group-component></ag-header-group-component>\n                        </ag-header-group-template>\n                        <ag-grid-column header-name=\"Name\" field=\"name\" width.bind=\"150\" pinned.bind=\"true\"\n                                        header-component-params.bind=\"{ menuIcon: 'fa-bars' }\">\n                            <ag-header-template>\n                                <ag-header-component></ag-header-component>\n                            </ag-header-template>\n                        </ag-grid-column>\n                        <ag-grid-column header-name=\"Country\" field=\"country\" width.bind=\"150\"\n                                        cell-renderer.bind=\"countryCellRenderer\" pinned.bind=\"true\"\n                                        filter-params.bind=\"getCountryFilterParams()\"\n                                        header-component-params.bind=\"{ menuIcon: 'fa-bars' }\">\n                            <ag-header-template>\n                                <ag-header-component></ag-header-component>\n                            </ag-header-template>\n                        </ag-grid-column>\n                        <ag-grid-column header-name=\"DOB\" field=\"dob\" width.bind=\"150\"\n                                        cell-renderer.bind=\"dobCellRenderer\" pinned.bind=\"true\"\n                                        filter=\"agDateColumnFilter\" column-group-show=\"open\"\n                                        header-component-params.bind=\"{ menuIcon: 'fa-bars' }\">\n                            <ag-header-template>\n                                <ag-header-component></ag-header-component>\n                            </ag-header-template>\n                        </ag-grid-column>\n                    </ag-grid-column>\n                    <ag-grid-column header-name=\"IT Skills\">\n                        <ag-grid-column header-name=\"Skills\" width.bind=\"125\" suppress-sorting.bind=\"true\"\n                                        cell-renderer.bind=\"skillsCellRenderer\"\n                                        filter.bind=\"getSkillFilter()\"\n                                        header-component-params.bind=\"{ menuIcon: 'fa-bars' }\">\n                            <ag-header-template>\n                                <ag-header-component></ag-header-component>\n                            </ag-header-template>\n                        </ag-grid-column>\n                        <ag-grid-column header-name=\"Proficiency\" field=\"proficiency\" width.bind=\"120\"\n                                        cell-renderer.bind=\"percentCellRenderer\"\n                                        filter.bind=\"getProficiencyFilter()\"\n                                        header-component-params.bind=\"{ menuIcon: 'fa-bars' }\">\n                            <ag-header-template>\n                                <ag-header-component></ag-header-component>\n                            </ag-header-template>\n                        </ag-grid-column>\n                    </ag-grid-column>\n                    <ag-grid-column header-name=\"Contact\">\n                        <ag-grid-column header-name=\"Mobile\" field=\"mobile\" width.bind=\"150\"\n                                        filter=\"text\"\n                                        header-component-params.bind=\"{ menuIcon: 'fa-bars' }\">\n                            <ag-header-template>\n                                <ag-header-component></ag-header-component>\n                            </ag-header-template>\n                        </ag-grid-column>\n                        <ag-grid-column header-name=\"Land-line\" field=\"landline\" width.bind=\"150\"\n                                        filter=\"text\"\n                                        header-component-params.bind=\"{ menuIcon: 'fa-bars' }\">\n                            <ag-header-template>\n                                <ag-header-component></ag-header-component>\n                            </ag-header-template>\n                        </ag-grid-column>\n                        <ag-grid-column header-name=\"Address\" field=\"address\" width.bind=\"500\"\n                                        filter=\"text\"\n                                        header-component-params.bind=\"{ menuIcon: 'fa-bars' }\">\n                            <ag-header-template>\n                                <ag-header-component></ag-header-component>\n                            </ag-header-template>\n                        </ag-grid-column>\n                    </ag-grid-column>\n                </ag-grid-aurelia>\n            </div>\n        </div>\n    </div>\n</template>\n"; });
+define('text!components/rich-grid-example/rich-grid-example.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"./rich-grid-example.css\"></require>\n    <require from=\"../../jsHeaderComponent/headerGroup.css\"></require>\n    <require from=\"../../jsHeaderComponent/headerComponent.css\"></require>\n\n    <div style=\"width: 740px;\">\n        <div style=\"padding: 4px;\">\n            <div style=\"float: right;\">\n                <input keyup.delegate=\"onQuickFilterChanged($event)\" type=\"text\" id=\"quickFilterInput\"\n                       placeholder=\"Type text to filter...\"/>\n                <button disabled.bind=\"!showGrid\" click.delegate=\"showGrid=false\">Destroy Grid</button>\n                <button disabled.bind=\"showGrid\" click.delegate=\"showGrid=true\">Create Grid</button>\n            </div>\n            <div>\n                <b>Employees Skills and Contact Details</b>\n                ${rowCount}\n            </div>\n        </div>\n        <div style=\"clear: both;\"></div>\n\n        <div if.bind=\"showGrid\">\n\n            <!-- Because we are using the Angular ID (ie #ag-grid marker), we have to have all the items that use\n                 that marker inside the same ng-if as the grid -->\n\n            <div style=\"padding: 4px;\" class=\"toolbar\">\n            <span>\n                Grid API:\n                <button click.delegate=\"api.selectAll()\">Select All</button>\n                <button click.delegate=\"api.deselectAll()\">Clear Selection</button>\n            </span>\n                <span style=\"margin-left: 20px;\">\n                Column API:\n                <button click.delegate=\"columnApi.setColumnVisible('country', false)\">Hide Country Column</button>\n                <button click.delegate=\"columnApi.setColumnVisible('country', true)\">Show Country Column</button>\n            </span>\n            </div>\n            <div style=\"clear: both;\"></div>\n            <div style=\"padding: 4px;\" class=\"toolbar\">\n                <label>\n                    <input type=\"checkbox\" change.delegate=\"showToolPanel=$event.target.checked\"/>\n                    Show Tool Panel\n                </label>\n                <button click.delegate=\"createRowData()\">Refresh Data</button>\n            </div>\n            <div style=\"clear: both;\"></div>\n\n            <div style=\"width: 100%; height: 350px;\">\n                <ag-grid-aurelia #agGrid class=\"ag-theme-balham\"\n                                 style=\"width: 100%; height: 350px;\"\n                                 grid-options.bind=\"gridOptions\"\n                                 column-defs.bind=\"columnDefs\"\n                                 show-tool-panel.bind=\"showToolPanel\"\n                                 row-data.bind=\"rowData\"\n\n                                 enable-col-resize\n                                 enable-sorting\n                                 enable-filter\n                                 group-headers\n                                 suppress-row-click-selection\n                                 tool-panel-suppress-groups\n                                 tool-panel-suppress-values\n                                 row-selection=\"multiple\"\n\n                                 model-updated.call=\"onModelUpdated()\"\n                                 cell-clicked.call=\"onCellClicked($event)\"\n                                 cell-double-clicked.call=\"onCellDoubleClicked($event)\"\n                                 cell-context-menu.call=\"onCellContextMenu($event)\"\n                                 cell-value-changed.call=\"onCellValueChanged($event)\"\n                                 cell-focused.call=\"onCellFocused($event)\"\n                                 row-selected.call=\"onRowSelected($event)\"\n                                 selection-changed.call=\"onSelectionChanged()\"\n                                 before-filter-changed.call=\"onBeforeFilterChanged()\"\n                                 after-filter-changed.call=\"onAfterFilterChanged()\"\n                                 filter-modified.call=\"onFilterModified()\"\n                                 before-sort-changed.call=\"onBeforeSortChanged()\"\n                                 after-sort-changed.call=\"onAfterSortChanged()\"\n                                 virtual-row-removed.call=\"onVirtualRowRemoved($event)\"\n                                 row-clicked.call=\"onRowClicked($event)\"\n                                 ready.call=\"onReady($event)\"\n\n                                 column-everything-changed.call=\"onColumnEvent($event)\"\n                                 column-row-group-changed.call=\"onColumnEvent($event)\"\n                                 column-value-changed.call=\"onColumnEvent($event)\"\n                                 column-moved.call=\"onColumnEvent($event)\"\n                                 column-visible.call=\"onColumnEvent($event)\"\n                                 column-group-opened.call=\"onColumnEvent($event)\"\n                                 column-resized.call=\"onColumnEvent($event)\"\n                                 column-pinned-count-changed.call=\"onColumnEvent($event)\">\n                </ag-grid-aurelia>\n            </div>\n        </div>\n\n    </div>\n</template>\n"; });
 /*! jQuery v3.1.1 | (c) jQuery Foundation | jquery.org/license */
 !function(a,b){"use strict";"object"==typeof module&&"object"==typeof module.exports?module.exports=a.document?b(a,!0):function(a){if(!a.document)throw new Error("jQuery requires a window with a document");return b(a)}:b(a)}("undefined"!=typeof window?window:this,function(a,b){"use strict";var c=[],d=a.document,e=Object.getPrototypeOf,f=c.slice,g=c.concat,h=c.push,i=c.indexOf,j={},k=j.toString,l=j.hasOwnProperty,m=l.toString,n=m.call(Object),o={};function p(a,b){b=b||d;var c=b.createElement("script");c.text=a,b.head.appendChild(c).parentNode.removeChild(c)}var q="3.1.1",r=function(a,b){return new r.fn.init(a,b)},s=/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g,t=/^-ms-/,u=/-([a-z])/g,v=function(a,b){return b.toUpperCase()};r.fn=r.prototype={jquery:q,constructor:r,length:0,toArray:function(){return f.call(this)},get:function(a){return null==a?f.call(this):a<0?this[a+this.length]:this[a]},pushStack:function(a){var b=r.merge(this.constructor(),a);return b.prevObject=this,b},each:function(a){return r.each(this,a)},map:function(a){return this.pushStack(r.map(this,function(b,c){return a.call(b,c,b)}))},slice:function(){return this.pushStack(f.apply(this,arguments))},first:function(){return this.eq(0)},last:function(){return this.eq(-1)},eq:function(a){var b=this.length,c=+a+(a<0?b:0);return this.pushStack(c>=0&&c<b?[this[c]]:[])},end:function(){return this.prevObject||this.constructor()},push:h,sort:c.sort,splice:c.splice},r.extend=r.fn.extend=function(){var a,b,c,d,e,f,g=arguments[0]||{},h=1,i=arguments.length,j=!1;for("boolean"==typeof g&&(j=g,g=arguments[h]||{},h++),"object"==typeof g||r.isFunction(g)||(g={}),h===i&&(g=this,h--);h<i;h++)if(null!=(a=arguments[h]))for(b in a)c=g[b],d=a[b],g!==d&&(j&&d&&(r.isPlainObject(d)||(e=r.isArray(d)))?(e?(e=!1,f=c&&r.isArray(c)?c:[]):f=c&&r.isPlainObject(c)?c:{},g[b]=r.extend(j,f,d)):void 0!==d&&(g[b]=d));return g},r.extend({expando:"jQuery"+(q+Math.random()).replace(/\D/g,""),isReady:!0,error:function(a){throw new Error(a)},noop:function(){},isFunction:function(a){return"function"===r.type(a)},isArray:Array.isArray,isWindow:function(a){return null!=a&&a===a.window},isNumeric:function(a){var b=r.type(a);return("number"===b||"string"===b)&&!isNaN(a-parseFloat(a))},isPlainObject:function(a){var b,c;return!(!a||"[object Object]"!==k.call(a))&&(!(b=e(a))||(c=l.call(b,"constructor")&&b.constructor,"function"==typeof c&&m.call(c)===n))},isEmptyObject:function(a){var b;for(b in a)return!1;return!0},type:function(a){return null==a?a+"":"object"==typeof a||"function"==typeof a?j[k.call(a)]||"object":typeof a},globalEval:function(a){p(a)},camelCase:function(a){return a.replace(t,"ms-").replace(u,v)},nodeName:function(a,b){return a.nodeName&&a.nodeName.toLowerCase()===b.toLowerCase()},each:function(a,b){var c,d=0;if(w(a)){for(c=a.length;d<c;d++)if(b.call(a[d],d,a[d])===!1)break}else for(d in a)if(b.call(a[d],d,a[d])===!1)break;return a},trim:function(a){return null==a?"":(a+"").replace(s,"")},makeArray:function(a,b){var c=b||[];return null!=a&&(w(Object(a))?r.merge(c,"string"==typeof a?[a]:a):h.call(c,a)),c},inArray:function(a,b,c){return null==b?-1:i.call(b,a,c)},merge:function(a,b){for(var c=+b.length,d=0,e=a.length;d<c;d++)a[e++]=b[d];return a.length=e,a},grep:function(a,b,c){for(var d,e=[],f=0,g=a.length,h=!c;f<g;f++)d=!b(a[f],f),d!==h&&e.push(a[f]);return e},map:function(a,b,c){var d,e,f=0,h=[];if(w(a))for(d=a.length;f<d;f++)e=b(a[f],f,c),null!=e&&h.push(e);else for(f in a)e=b(a[f],f,c),null!=e&&h.push(e);return g.apply([],h)},guid:1,proxy:function(a,b){var c,d,e;if("string"==typeof b&&(c=a[b],b=a,a=c),r.isFunction(a))return d=f.call(arguments,2),e=function(){return a.apply(b||this,d.concat(f.call(arguments)))},e.guid=a.guid=a.guid||r.guid++,e},now:Date.now,support:o}),"function"==typeof Symbol&&(r.fn[Symbol.iterator]=c[Symbol.iterator]),r.each("Boolean Number String Function Array Date RegExp Object Error Symbol".split(" "),function(a,b){j["[object "+b+"]"]=b.toLowerCase()});function w(a){var b=!!a&&"length"in a&&a.length,c=r.type(a);return"function"!==c&&!r.isWindow(a)&&("array"===c||0===b||"number"==typeof b&&b>0&&b-1 in a)}var x=function(a){var b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u="sizzle"+1*new Date,v=a.document,w=0,x=0,y=ha(),z=ha(),A=ha(),B=function(a,b){return a===b&&(l=!0),0},C={}.hasOwnProperty,D=[],E=D.pop,F=D.push,G=D.push,H=D.slice,I=function(a,b){for(var c=0,d=a.length;c<d;c++)if(a[c]===b)return c;return-1},J="checked|selected|async|autofocus|autoplay|controls|defer|disabled|hidden|ismap|loop|multiple|open|readonly|required|scoped",K="[\\x20\\t\\r\\n\\f]",L="(?:\\\\.|[\\w-]|[^\0-\\xa0])+",M="\\["+K+"*("+L+")(?:"+K+"*([*^$|!~]?=)"+K+"*(?:'((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\"|("+L+"))|)"+K+"*\\]",N=":("+L+")(?:\\((('((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\")|((?:\\\\.|[^\\\\()[\\]]|"+M+")*)|.*)\\)|)",O=new RegExp(K+"+","g"),P=new RegExp("^"+K+"+|((?:^|[^\\\\])(?:\\\\.)*)"+K+"+$","g"),Q=new RegExp("^"+K+"*,"+K+"*"),R=new RegExp("^"+K+"*([>+~]|"+K+")"+K+"*"),S=new RegExp("="+K+"*([^\\]'\"]*?)"+K+"*\\]","g"),T=new RegExp(N),U=new RegExp("^"+L+"$"),V={ID:new RegExp("^#("+L+")"),CLASS:new RegExp("^\\.("+L+")"),TAG:new RegExp("^("+L+"|[*])"),ATTR:new RegExp("^"+M),PSEUDO:new RegExp("^"+N),CHILD:new RegExp("^:(only|first|last|nth|nth-last)-(child|of-type)(?:\\("+K+"*(even|odd|(([+-]|)(\\d*)n|)"+K+"*(?:([+-]|)"+K+"*(\\d+)|))"+K+"*\\)|)","i"),bool:new RegExp("^(?:"+J+")$","i"),needsContext:new RegExp("^"+K+"*[>+~]|:(even|odd|eq|gt|lt|nth|first|last)(?:\\("+K+"*((?:-\\d)?\\d*)"+K+"*\\)|)(?=[^-]|$)","i")},W=/^(?:input|select|textarea|button)$/i,X=/^h\d$/i,Y=/^[^{]+\{\s*\[native \w/,Z=/^(?:#([\w-]+)|(\w+)|\.([\w-]+))$/,$=/[+~]/,_=new RegExp("\\\\([\\da-f]{1,6}"+K+"?|("+K+")|.)","ig"),aa=function(a,b,c){var d="0x"+b-65536;return d!==d||c?b:d<0?String.fromCharCode(d+65536):String.fromCharCode(d>>10|55296,1023&d|56320)},ba=/([\0-\x1f\x7f]|^-?\d)|^-$|[^\0-\x1f\x7f-\uFFFF\w-]/g,ca=function(a,b){return b?"\0"===a?"\ufffd":a.slice(0,-1)+"\\"+a.charCodeAt(a.length-1).toString(16)+" ":"\\"+a},da=function(){m()},ea=ta(function(a){return a.disabled===!0&&("form"in a||"label"in a)},{dir:"parentNode",next:"legend"});try{G.apply(D=H.call(v.childNodes),v.childNodes),D[v.childNodes.length].nodeType}catch(fa){G={apply:D.length?function(a,b){F.apply(a,H.call(b))}:function(a,b){var c=a.length,d=0;while(a[c++]=b[d++]);a.length=c-1}}}function ga(a,b,d,e){var f,h,j,k,l,o,r,s=b&&b.ownerDocument,w=b?b.nodeType:9;if(d=d||[],"string"!=typeof a||!a||1!==w&&9!==w&&11!==w)return d;if(!e&&((b?b.ownerDocument||b:v)!==n&&m(b),b=b||n,p)){if(11!==w&&(l=Z.exec(a)))if(f=l[1]){if(9===w){if(!(j=b.getElementById(f)))return d;if(j.id===f)return d.push(j),d}else if(s&&(j=s.getElementById(f))&&t(b,j)&&j.id===f)return d.push(j),d}else{if(l[2])return G.apply(d,b.getElementsByTagName(a)),d;if((f=l[3])&&c.getElementsByClassName&&b.getElementsByClassName)return G.apply(d,b.getElementsByClassName(f)),d}if(c.qsa&&!A[a+" "]&&(!q||!q.test(a))){if(1!==w)s=b,r=a;else if("object"!==b.nodeName.toLowerCase()){(k=b.getAttribute("id"))?k=k.replace(ba,ca):b.setAttribute("id",k=u),o=g(a),h=o.length;while(h--)o[h]="#"+k+" "+sa(o[h]);r=o.join(","),s=$.test(a)&&qa(b.parentNode)||b}if(r)try{return G.apply(d,s.querySelectorAll(r)),d}catch(x){}finally{k===u&&b.removeAttribute("id")}}}return i(a.replace(P,"$1"),b,d,e)}function ha(){var a=[];function b(c,e){return a.push(c+" ")>d.cacheLength&&delete b[a.shift()],b[c+" "]=e}return b}function ia(a){return a[u]=!0,a}function ja(a){var b=n.createElement("fieldset");try{return!!a(b)}catch(c){return!1}finally{b.parentNode&&b.parentNode.removeChild(b),b=null}}function ka(a,b){var c=a.split("|"),e=c.length;while(e--)d.attrHandle[c[e]]=b}function la(a,b){var c=b&&a,d=c&&1===a.nodeType&&1===b.nodeType&&a.sourceIndex-b.sourceIndex;if(d)return d;if(c)while(c=c.nextSibling)if(c===b)return-1;return a?1:-1}function ma(a){return function(b){var c=b.nodeName.toLowerCase();return"input"===c&&b.type===a}}function na(a){return function(b){var c=b.nodeName.toLowerCase();return("input"===c||"button"===c)&&b.type===a}}function oa(a){return function(b){return"form"in b?b.parentNode&&b.disabled===!1?"label"in b?"label"in b.parentNode?b.parentNode.disabled===a:b.disabled===a:b.isDisabled===a||b.isDisabled!==!a&&ea(b)===a:b.disabled===a:"label"in b&&b.disabled===a}}function pa(a){return ia(function(b){return b=+b,ia(function(c,d){var e,f=a([],c.length,b),g=f.length;while(g--)c[e=f[g]]&&(c[e]=!(d[e]=c[e]))})})}function qa(a){return a&&"undefined"!=typeof a.getElementsByTagName&&a}c=ga.support={},f=ga.isXML=function(a){var b=a&&(a.ownerDocument||a).documentElement;return!!b&&"HTML"!==b.nodeName},m=ga.setDocument=function(a){var b,e,g=a?a.ownerDocument||a:v;return g!==n&&9===g.nodeType&&g.documentElement?(n=g,o=n.documentElement,p=!f(n),v!==n&&(e=n.defaultView)&&e.top!==e&&(e.addEventListener?e.addEventListener("unload",da,!1):e.attachEvent&&e.attachEvent("onunload",da)),c.attributes=ja(function(a){return a.className="i",!a.getAttribute("className")}),c.getElementsByTagName=ja(function(a){return a.appendChild(n.createComment("")),!a.getElementsByTagName("*").length}),c.getElementsByClassName=Y.test(n.getElementsByClassName),c.getById=ja(function(a){return o.appendChild(a).id=u,!n.getElementsByName||!n.getElementsByName(u).length}),c.getById?(d.filter.ID=function(a){var b=a.replace(_,aa);return function(a){return a.getAttribute("id")===b}},d.find.ID=function(a,b){if("undefined"!=typeof b.getElementById&&p){var c=b.getElementById(a);return c?[c]:[]}}):(d.filter.ID=function(a){var b=a.replace(_,aa);return function(a){var c="undefined"!=typeof a.getAttributeNode&&a.getAttributeNode("id");return c&&c.value===b}},d.find.ID=function(a,b){if("undefined"!=typeof b.getElementById&&p){var c,d,e,f=b.getElementById(a);if(f){if(c=f.getAttributeNode("id"),c&&c.value===a)return[f];e=b.getElementsByName(a),d=0;while(f=e[d++])if(c=f.getAttributeNode("id"),c&&c.value===a)return[f]}return[]}}),d.find.TAG=c.getElementsByTagName?function(a,b){return"undefined"!=typeof b.getElementsByTagName?b.getElementsByTagName(a):c.qsa?b.querySelectorAll(a):void 0}:function(a,b){var c,d=[],e=0,f=b.getElementsByTagName(a);if("*"===a){while(c=f[e++])1===c.nodeType&&d.push(c);return d}return f},d.find.CLASS=c.getElementsByClassName&&function(a,b){if("undefined"!=typeof b.getElementsByClassName&&p)return b.getElementsByClassName(a)},r=[],q=[],(c.qsa=Y.test(n.querySelectorAll))&&(ja(function(a){o.appendChild(a).innerHTML="<a id='"+u+"'></a><select id='"+u+"-\r\\' msallowcapture=''><option selected=''></option></select>",a.querySelectorAll("[msallowcapture^='']").length&&q.push("[*^$]="+K+"*(?:''|\"\")"),a.querySelectorAll("[selected]").length||q.push("\\["+K+"*(?:value|"+J+")"),a.querySelectorAll("[id~="+u+"-]").length||q.push("~="),a.querySelectorAll(":checked").length||q.push(":checked"),a.querySelectorAll("a#"+u+"+*").length||q.push(".#.+[+~]")}),ja(function(a){a.innerHTML="<a href='' disabled='disabled'></a><select disabled='disabled'><option/></select>";var b=n.createElement("input");b.setAttribute("type","hidden"),a.appendChild(b).setAttribute("name","D"),a.querySelectorAll("[name=d]").length&&q.push("name"+K+"*[*^$|!~]?="),2!==a.querySelectorAll(":enabled").length&&q.push(":enabled",":disabled"),o.appendChild(a).disabled=!0,2!==a.querySelectorAll(":disabled").length&&q.push(":enabled",":disabled"),a.querySelectorAll("*,:x"),q.push(",.*:")})),(c.matchesSelector=Y.test(s=o.matches||o.webkitMatchesSelector||o.mozMatchesSelector||o.oMatchesSelector||o.msMatchesSelector))&&ja(function(a){c.disconnectedMatch=s.call(a,"*"),s.call(a,"[s!='']:x"),r.push("!=",N)}),q=q.length&&new RegExp(q.join("|")),r=r.length&&new RegExp(r.join("|")),b=Y.test(o.compareDocumentPosition),t=b||Y.test(o.contains)?function(a,b){var c=9===a.nodeType?a.documentElement:a,d=b&&b.parentNode;return a===d||!(!d||1!==d.nodeType||!(c.contains?c.contains(d):a.compareDocumentPosition&&16&a.compareDocumentPosition(d)))}:function(a,b){if(b)while(b=b.parentNode)if(b===a)return!0;return!1},B=b?function(a,b){if(a===b)return l=!0,0;var d=!a.compareDocumentPosition-!b.compareDocumentPosition;return d?d:(d=(a.ownerDocument||a)===(b.ownerDocument||b)?a.compareDocumentPosition(b):1,1&d||!c.sortDetached&&b.compareDocumentPosition(a)===d?a===n||a.ownerDocument===v&&t(v,a)?-1:b===n||b.ownerDocument===v&&t(v,b)?1:k?I(k,a)-I(k,b):0:4&d?-1:1)}:function(a,b){if(a===b)return l=!0,0;var c,d=0,e=a.parentNode,f=b.parentNode,g=[a],h=[b];if(!e||!f)return a===n?-1:b===n?1:e?-1:f?1:k?I(k,a)-I(k,b):0;if(e===f)return la(a,b);c=a;while(c=c.parentNode)g.unshift(c);c=b;while(c=c.parentNode)h.unshift(c);while(g[d]===h[d])d++;return d?la(g[d],h[d]):g[d]===v?-1:h[d]===v?1:0},n):n},ga.matches=function(a,b){return ga(a,null,null,b)},ga.matchesSelector=function(a,b){if((a.ownerDocument||a)!==n&&m(a),b=b.replace(S,"='$1']"),c.matchesSelector&&p&&!A[b+" "]&&(!r||!r.test(b))&&(!q||!q.test(b)))try{var d=s.call(a,b);if(d||c.disconnectedMatch||a.document&&11!==a.document.nodeType)return d}catch(e){}return ga(b,n,null,[a]).length>0},ga.contains=function(a,b){return(a.ownerDocument||a)!==n&&m(a),t(a,b)},ga.attr=function(a,b){(a.ownerDocument||a)!==n&&m(a);var e=d.attrHandle[b.toLowerCase()],f=e&&C.call(d.attrHandle,b.toLowerCase())?e(a,b,!p):void 0;return void 0!==f?f:c.attributes||!p?a.getAttribute(b):(f=a.getAttributeNode(b))&&f.specified?f.value:null},ga.escape=function(a){return(a+"").replace(ba,ca)},ga.error=function(a){throw new Error("Syntax error, unrecognized expression: "+a)},ga.uniqueSort=function(a){var b,d=[],e=0,f=0;if(l=!c.detectDuplicates,k=!c.sortStable&&a.slice(0),a.sort(B),l){while(b=a[f++])b===a[f]&&(e=d.push(f));while(e--)a.splice(d[e],1)}return k=null,a},e=ga.getText=function(a){var b,c="",d=0,f=a.nodeType;if(f){if(1===f||9===f||11===f){if("string"==typeof a.textContent)return a.textContent;for(a=a.firstChild;a;a=a.nextSibling)c+=e(a)}else if(3===f||4===f)return a.nodeValue}else while(b=a[d++])c+=e(b);return c},d=ga.selectors={cacheLength:50,createPseudo:ia,match:V,attrHandle:{},find:{},relative:{">":{dir:"parentNode",first:!0}," ":{dir:"parentNode"},"+":{dir:"previousSibling",first:!0},"~":{dir:"previousSibling"}},preFilter:{ATTR:function(a){return a[1]=a[1].replace(_,aa),a[3]=(a[3]||a[4]||a[5]||"").replace(_,aa),"~="===a[2]&&(a[3]=" "+a[3]+" "),a.slice(0,4)},CHILD:function(a){return a[1]=a[1].toLowerCase(),"nth"===a[1].slice(0,3)?(a[3]||ga.error(a[0]),a[4]=+(a[4]?a[5]+(a[6]||1):2*("even"===a[3]||"odd"===a[3])),a[5]=+(a[7]+a[8]||"odd"===a[3])):a[3]&&ga.error(a[0]),a},PSEUDO:function(a){var b,c=!a[6]&&a[2];return V.CHILD.test(a[0])?null:(a[3]?a[2]=a[4]||a[5]||"":c&&T.test(c)&&(b=g(c,!0))&&(b=c.indexOf(")",c.length-b)-c.length)&&(a[0]=a[0].slice(0,b),a[2]=c.slice(0,b)),a.slice(0,3))}},filter:{TAG:function(a){var b=a.replace(_,aa).toLowerCase();return"*"===a?function(){return!0}:function(a){return a.nodeName&&a.nodeName.toLowerCase()===b}},CLASS:function(a){var b=y[a+" "];return b||(b=new RegExp("(^|"+K+")"+a+"("+K+"|$)"))&&y(a,function(a){return b.test("string"==typeof a.className&&a.className||"undefined"!=typeof a.getAttribute&&a.getAttribute("class")||"")})},ATTR:function(a,b,c){return function(d){var e=ga.attr(d,a);return null==e?"!="===b:!b||(e+="","="===b?e===c:"!="===b?e!==c:"^="===b?c&&0===e.indexOf(c):"*="===b?c&&e.indexOf(c)>-1:"$="===b?c&&e.slice(-c.length)===c:"~="===b?(" "+e.replace(O," ")+" ").indexOf(c)>-1:"|="===b&&(e===c||e.slice(0,c.length+1)===c+"-"))}},CHILD:function(a,b,c,d,e){var f="nth"!==a.slice(0,3),g="last"!==a.slice(-4),h="of-type"===b;return 1===d&&0===e?function(a){return!!a.parentNode}:function(b,c,i){var j,k,l,m,n,o,p=f!==g?"nextSibling":"previousSibling",q=b.parentNode,r=h&&b.nodeName.toLowerCase(),s=!i&&!h,t=!1;if(q){if(f){while(p){m=b;while(m=m[p])if(h?m.nodeName.toLowerCase()===r:1===m.nodeType)return!1;o=p="only"===a&&!o&&"nextSibling"}return!0}if(o=[g?q.firstChild:q.lastChild],g&&s){m=q,l=m[u]||(m[u]={}),k=l[m.uniqueID]||(l[m.uniqueID]={}),j=k[a]||[],n=j[0]===w&&j[1],t=n&&j[2],m=n&&q.childNodes[n];while(m=++n&&m&&m[p]||(t=n=0)||o.pop())if(1===m.nodeType&&++t&&m===b){k[a]=[w,n,t];break}}else if(s&&(m=b,l=m[u]||(m[u]={}),k=l[m.uniqueID]||(l[m.uniqueID]={}),j=k[a]||[],n=j[0]===w&&j[1],t=n),t===!1)while(m=++n&&m&&m[p]||(t=n=0)||o.pop())if((h?m.nodeName.toLowerCase()===r:1===m.nodeType)&&++t&&(s&&(l=m[u]||(m[u]={}),k=l[m.uniqueID]||(l[m.uniqueID]={}),k[a]=[w,t]),m===b))break;return t-=e,t===d||t%d===0&&t/d>=0}}},PSEUDO:function(a,b){var c,e=d.pseudos[a]||d.setFilters[a.toLowerCase()]||ga.error("unsupported pseudo: "+a);return e[u]?e(b):e.length>1?(c=[a,a,"",b],d.setFilters.hasOwnProperty(a.toLowerCase())?ia(function(a,c){var d,f=e(a,b),g=f.length;while(g--)d=I(a,f[g]),a[d]=!(c[d]=f[g])}):function(a){return e(a,0,c)}):e}},pseudos:{not:ia(function(a){var b=[],c=[],d=h(a.replace(P,"$1"));return d[u]?ia(function(a,b,c,e){var f,g=d(a,null,e,[]),h=a.length;while(h--)(f=g[h])&&(a[h]=!(b[h]=f))}):function(a,e,f){return b[0]=a,d(b,null,f,c),b[0]=null,!c.pop()}}),has:ia(function(a){return function(b){return ga(a,b).length>0}}),contains:ia(function(a){return a=a.replace(_,aa),function(b){return(b.textContent||b.innerText||e(b)).indexOf(a)>-1}}),lang:ia(function(a){return U.test(a||"")||ga.error("unsupported lang: "+a),a=a.replace(_,aa).toLowerCase(),function(b){var c;do if(c=p?b.lang:b.getAttribute("xml:lang")||b.getAttribute("lang"))return c=c.toLowerCase(),c===a||0===c.indexOf(a+"-");while((b=b.parentNode)&&1===b.nodeType);return!1}}),target:function(b){var c=a.location&&a.location.hash;return c&&c.slice(1)===b.id},root:function(a){return a===o},focus:function(a){return a===n.activeElement&&(!n.hasFocus||n.hasFocus())&&!!(a.type||a.href||~a.tabIndex)},enabled:oa(!1),disabled:oa(!0),checked:function(a){var b=a.nodeName.toLowerCase();return"input"===b&&!!a.checked||"option"===b&&!!a.selected},selected:function(a){return a.parentNode&&a.parentNode.selectedIndex,a.selected===!0},empty:function(a){for(a=a.firstChild;a;a=a.nextSibling)if(a.nodeType<6)return!1;return!0},parent:function(a){return!d.pseudos.empty(a)},header:function(a){return X.test(a.nodeName)},input:function(a){return W.test(a.nodeName)},button:function(a){var b=a.nodeName.toLowerCase();return"input"===b&&"button"===a.type||"button"===b},text:function(a){var b;return"input"===a.nodeName.toLowerCase()&&"text"===a.type&&(null==(b=a.getAttribute("type"))||"text"===b.toLowerCase())},first:pa(function(){return[0]}),last:pa(function(a,b){return[b-1]}),eq:pa(function(a,b,c){return[c<0?c+b:c]}),even:pa(function(a,b){for(var c=0;c<b;c+=2)a.push(c);return a}),odd:pa(function(a,b){for(var c=1;c<b;c+=2)a.push(c);return a}),lt:pa(function(a,b,c){for(var d=c<0?c+b:c;--d>=0;)a.push(d);return a}),gt:pa(function(a,b,c){for(var d=c<0?c+b:c;++d<b;)a.push(d);return a})}},d.pseudos.nth=d.pseudos.eq;for(b in{radio:!0,checkbox:!0,file:!0,password:!0,image:!0})d.pseudos[b]=ma(b);for(b in{submit:!0,reset:!0})d.pseudos[b]=na(b);function ra(){}ra.prototype=d.filters=d.pseudos,d.setFilters=new ra,g=ga.tokenize=function(a,b){var c,e,f,g,h,i,j,k=z[a+" "];if(k)return b?0:k.slice(0);h=a,i=[],j=d.preFilter;while(h){c&&!(e=Q.exec(h))||(e&&(h=h.slice(e[0].length)||h),i.push(f=[])),c=!1,(e=R.exec(h))&&(c=e.shift(),f.push({value:c,type:e[0].replace(P," ")}),h=h.slice(c.length));for(g in d.filter)!(e=V[g].exec(h))||j[g]&&!(e=j[g](e))||(c=e.shift(),f.push({value:c,type:g,matches:e}),h=h.slice(c.length));if(!c)break}return b?h.length:h?ga.error(a):z(a,i).slice(0)};function sa(a){for(var b=0,c=a.length,d="";b<c;b++)d+=a[b].value;return d}function ta(a,b,c){var d=b.dir,e=b.next,f=e||d,g=c&&"parentNode"===f,h=x++;return b.first?function(b,c,e){while(b=b[d])if(1===b.nodeType||g)return a(b,c,e);return!1}:function(b,c,i){var j,k,l,m=[w,h];if(i){while(b=b[d])if((1===b.nodeType||g)&&a(b,c,i))return!0}else while(b=b[d])if(1===b.nodeType||g)if(l=b[u]||(b[u]={}),k=l[b.uniqueID]||(l[b.uniqueID]={}),e&&e===b.nodeName.toLowerCase())b=b[d]||b;else{if((j=k[f])&&j[0]===w&&j[1]===h)return m[2]=j[2];if(k[f]=m,m[2]=a(b,c,i))return!0}return!1}}function ua(a){return a.length>1?function(b,c,d){var e=a.length;while(e--)if(!a[e](b,c,d))return!1;return!0}:a[0]}function va(a,b,c){for(var d=0,e=b.length;d<e;d++)ga(a,b[d],c);return c}function wa(a,b,c,d,e){for(var f,g=[],h=0,i=a.length,j=null!=b;h<i;h++)(f=a[h])&&(c&&!c(f,d,e)||(g.push(f),j&&b.push(h)));return g}function xa(a,b,c,d,e,f){return d&&!d[u]&&(d=xa(d)),e&&!e[u]&&(e=xa(e,f)),ia(function(f,g,h,i){var j,k,l,m=[],n=[],o=g.length,p=f||va(b||"*",h.nodeType?[h]:h,[]),q=!a||!f&&b?p:wa(p,m,a,h,i),r=c?e||(f?a:o||d)?[]:g:q;if(c&&c(q,r,h,i),d){j=wa(r,n),d(j,[],h,i),k=j.length;while(k--)(l=j[k])&&(r[n[k]]=!(q[n[k]]=l))}if(f){if(e||a){if(e){j=[],k=r.length;while(k--)(l=r[k])&&j.push(q[k]=l);e(null,r=[],j,i)}k=r.length;while(k--)(l=r[k])&&(j=e?I(f,l):m[k])>-1&&(f[j]=!(g[j]=l))}}else r=wa(r===g?r.splice(o,r.length):r),e?e(null,g,r,i):G.apply(g,r)})}function ya(a){for(var b,c,e,f=a.length,g=d.relative[a[0].type],h=g||d.relative[" "],i=g?1:0,k=ta(function(a){return a===b},h,!0),l=ta(function(a){return I(b,a)>-1},h,!0),m=[function(a,c,d){var e=!g&&(d||c!==j)||((b=c).nodeType?k(a,c,d):l(a,c,d));return b=null,e}];i<f;i++)if(c=d.relative[a[i].type])m=[ta(ua(m),c)];else{if(c=d.filter[a[i].type].apply(null,a[i].matches),c[u]){for(e=++i;e<f;e++)if(d.relative[a[e].type])break;return xa(i>1&&ua(m),i>1&&sa(a.slice(0,i-1).concat({value:" "===a[i-2].type?"*":""})).replace(P,"$1"),c,i<e&&ya(a.slice(i,e)),e<f&&ya(a=a.slice(e)),e<f&&sa(a))}m.push(c)}return ua(m)}function za(a,b){var c=b.length>0,e=a.length>0,f=function(f,g,h,i,k){var l,o,q,r=0,s="0",t=f&&[],u=[],v=j,x=f||e&&d.find.TAG("*",k),y=w+=null==v?1:Math.random()||.1,z=x.length;for(k&&(j=g===n||g||k);s!==z&&null!=(l=x[s]);s++){if(e&&l){o=0,g||l.ownerDocument===n||(m(l),h=!p);while(q=a[o++])if(q(l,g||n,h)){i.push(l);break}k&&(w=y)}c&&((l=!q&&l)&&r--,f&&t.push(l))}if(r+=s,c&&s!==r){o=0;while(q=b[o++])q(t,u,g,h);if(f){if(r>0)while(s--)t[s]||u[s]||(u[s]=E.call(i));u=wa(u)}G.apply(i,u),k&&!f&&u.length>0&&r+b.length>1&&ga.uniqueSort(i)}return k&&(w=y,j=v),t};return c?ia(f):f}return h=ga.compile=function(a,b){var c,d=[],e=[],f=A[a+" "];if(!f){b||(b=g(a)),c=b.length;while(c--)f=ya(b[c]),f[u]?d.push(f):e.push(f);f=A(a,za(e,d)),f.selector=a}return f},i=ga.select=function(a,b,c,e){var f,i,j,k,l,m="function"==typeof a&&a,n=!e&&g(a=m.selector||a);if(c=c||[],1===n.length){if(i=n[0]=n[0].slice(0),i.length>2&&"ID"===(j=i[0]).type&&9===b.nodeType&&p&&d.relative[i[1].type]){if(b=(d.find.ID(j.matches[0].replace(_,aa),b)||[])[0],!b)return c;m&&(b=b.parentNode),a=a.slice(i.shift().value.length)}f=V.needsContext.test(a)?0:i.length;while(f--){if(j=i[f],d.relative[k=j.type])break;if((l=d.find[k])&&(e=l(j.matches[0].replace(_,aa),$.test(i[0].type)&&qa(b.parentNode)||b))){if(i.splice(f,1),a=e.length&&sa(i),!a)return G.apply(c,e),c;break}}}return(m||h(a,n))(e,b,!p,c,!b||$.test(a)&&qa(b.parentNode)||b),c},c.sortStable=u.split("").sort(B).join("")===u,c.detectDuplicates=!!l,m(),c.sortDetached=ja(function(a){return 1&a.compareDocumentPosition(n.createElement("fieldset"))}),ja(function(a){return a.innerHTML="<a href='#'></a>","#"===a.firstChild.getAttribute("href")})||ka("type|href|height|width",function(a,b,c){if(!c)return a.getAttribute(b,"type"===b.toLowerCase()?1:2)}),c.attributes&&ja(function(a){return a.innerHTML="<input/>",a.firstChild.setAttribute("value",""),""===a.firstChild.getAttribute("value")})||ka("value",function(a,b,c){if(!c&&"input"===a.nodeName.toLowerCase())return a.defaultValue}),ja(function(a){return null==a.getAttribute("disabled")})||ka(J,function(a,b,c){var d;if(!c)return a[b]===!0?b.toLowerCase():(d=a.getAttributeNode(b))&&d.specified?d.value:null}),ga}(a);r.find=x,r.expr=x.selectors,r.expr[":"]=r.expr.pseudos,r.uniqueSort=r.unique=x.uniqueSort,r.text=x.getText,r.isXMLDoc=x.isXML,r.contains=x.contains,r.escapeSelector=x.escape;var y=function(a,b,c){var d=[],e=void 0!==c;while((a=a[b])&&9!==a.nodeType)if(1===a.nodeType){if(e&&r(a).is(c))break;d.push(a)}return d},z=function(a,b){for(var c=[];a;a=a.nextSibling)1===a.nodeType&&a!==b&&c.push(a);return c},A=r.expr.match.needsContext,B=/^<([a-z][^\/\0>:\x20\t\r\n\f]*)[\x20\t\r\n\f]*\/?>(?:<\/\1>|)$/i,C=/^.[^:#\[\.,]*$/;function D(a,b,c){return r.isFunction(b)?r.grep(a,function(a,d){return!!b.call(a,d,a)!==c}):b.nodeType?r.grep(a,function(a){return a===b!==c}):"string"!=typeof b?r.grep(a,function(a){return i.call(b,a)>-1!==c}):C.test(b)?r.filter(b,a,c):(b=r.filter(b,a),r.grep(a,function(a){return i.call(b,a)>-1!==c&&1===a.nodeType}))}r.filter=function(a,b,c){var d=b[0];return c&&(a=":not("+a+")"),1===b.length&&1===d.nodeType?r.find.matchesSelector(d,a)?[d]:[]:r.find.matches(a,r.grep(b,function(a){return 1===a.nodeType}))},r.fn.extend({find:function(a){var b,c,d=this.length,e=this;if("string"!=typeof a)return this.pushStack(r(a).filter(function(){for(b=0;b<d;b++)if(r.contains(e[b],this))return!0}));for(c=this.pushStack([]),b=0;b<d;b++)r.find(a,e[b],c);return d>1?r.uniqueSort(c):c},filter:function(a){return this.pushStack(D(this,a||[],!1))},not:function(a){return this.pushStack(D(this,a||[],!0))},is:function(a){return!!D(this,"string"==typeof a&&A.test(a)?r(a):a||[],!1).length}});var E,F=/^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]+))$/,G=r.fn.init=function(a,b,c){var e,f;if(!a)return this;if(c=c||E,"string"==typeof a){if(e="<"===a[0]&&">"===a[a.length-1]&&a.length>=3?[null,a,null]:F.exec(a),!e||!e[1]&&b)return!b||b.jquery?(b||c).find(a):this.constructor(b).find(a);if(e[1]){if(b=b instanceof r?b[0]:b,r.merge(this,r.parseHTML(e[1],b&&b.nodeType?b.ownerDocument||b:d,!0)),B.test(e[1])&&r.isPlainObject(b))for(e in b)r.isFunction(this[e])?this[e](b[e]):this.attr(e,b[e]);return this}return f=d.getElementById(e[2]),f&&(this[0]=f,this.length=1),this}return a.nodeType?(this[0]=a,this.length=1,this):r.isFunction(a)?void 0!==c.ready?c.ready(a):a(r):r.makeArray(a,this)};G.prototype=r.fn,E=r(d);var H=/^(?:parents|prev(?:Until|All))/,I={children:!0,contents:!0,next:!0,prev:!0};r.fn.extend({has:function(a){var b=r(a,this),c=b.length;return this.filter(function(){for(var a=0;a<c;a++)if(r.contains(this,b[a]))return!0})},closest:function(a,b){var c,d=0,e=this.length,f=[],g="string"!=typeof a&&r(a);if(!A.test(a))for(;d<e;d++)for(c=this[d];c&&c!==b;c=c.parentNode)if(c.nodeType<11&&(g?g.index(c)>-1:1===c.nodeType&&r.find.matchesSelector(c,a))){f.push(c);break}return this.pushStack(f.length>1?r.uniqueSort(f):f)},index:function(a){return a?"string"==typeof a?i.call(r(a),this[0]):i.call(this,a.jquery?a[0]:a):this[0]&&this[0].parentNode?this.first().prevAll().length:-1},add:function(a,b){return this.pushStack(r.uniqueSort(r.merge(this.get(),r(a,b))))},addBack:function(a){return this.add(null==a?this.prevObject:this.prevObject.filter(a))}});function J(a,b){while((a=a[b])&&1!==a.nodeType);return a}r.each({parent:function(a){var b=a.parentNode;return b&&11!==b.nodeType?b:null},parents:function(a){return y(a,"parentNode")},parentsUntil:function(a,b,c){return y(a,"parentNode",c)},next:function(a){return J(a,"nextSibling")},prev:function(a){return J(a,"previousSibling")},nextAll:function(a){return y(a,"nextSibling")},prevAll:function(a){return y(a,"previousSibling")},nextUntil:function(a,b,c){return y(a,"nextSibling",c)},prevUntil:function(a,b,c){return y(a,"previousSibling",c)},siblings:function(a){return z((a.parentNode||{}).firstChild,a)},children:function(a){return z(a.firstChild)},contents:function(a){return a.contentDocument||r.merge([],a.childNodes)}},function(a,b){r.fn[a]=function(c,d){var e=r.map(this,b,c);return"Until"!==a.slice(-5)&&(d=c),d&&"string"==typeof d&&(e=r.filter(d,e)),this.length>1&&(I[a]||r.uniqueSort(e),H.test(a)&&e.reverse()),this.pushStack(e)}});var K=/[^\x20\t\r\n\f]+/g;function L(a){var b={};return r.each(a.match(K)||[],function(a,c){b[c]=!0}),b}r.Callbacks=function(a){a="string"==typeof a?L(a):r.extend({},a);var b,c,d,e,f=[],g=[],h=-1,i=function(){for(e=a.once,d=b=!0;g.length;h=-1){c=g.shift();while(++h<f.length)f[h].apply(c[0],c[1])===!1&&a.stopOnFalse&&(h=f.length,c=!1)}a.memory||(c=!1),b=!1,e&&(f=c?[]:"")},j={add:function(){return f&&(c&&!b&&(h=f.length-1,g.push(c)),function d(b){r.each(b,function(b,c){r.isFunction(c)?a.unique&&j.has(c)||f.push(c):c&&c.length&&"string"!==r.type(c)&&d(c)})}(arguments),c&&!b&&i()),this},remove:function(){return r.each(arguments,function(a,b){var c;while((c=r.inArray(b,f,c))>-1)f.splice(c,1),c<=h&&h--}),this},has:function(a){return a?r.inArray(a,f)>-1:f.length>0},empty:function(){return f&&(f=[]),this},disable:function(){return e=g=[],f=c="",this},disabled:function(){return!f},lock:function(){return e=g=[],c||b||(f=c=""),this},locked:function(){return!!e},fireWith:function(a,c){return e||(c=c||[],c=[a,c.slice?c.slice():c],g.push(c),b||i()),this},fire:function(){return j.fireWith(this,arguments),this},fired:function(){return!!d}};return j};function M(a){return a}function N(a){throw a}function O(a,b,c){var d;try{a&&r.isFunction(d=a.promise)?d.call(a).done(b).fail(c):a&&r.isFunction(d=a.then)?d.call(a,b,c):b.call(void 0,a)}catch(a){c.call(void 0,a)}}r.extend({Deferred:function(b){var c=[["notify","progress",r.Callbacks("memory"),r.Callbacks("memory"),2],["resolve","done",r.Callbacks("once memory"),r.Callbacks("once memory"),0,"resolved"],["reject","fail",r.Callbacks("once memory"),r.Callbacks("once memory"),1,"rejected"]],d="pending",e={state:function(){return d},always:function(){return f.done(arguments).fail(arguments),this},"catch":function(a){return e.then(null,a)},pipe:function(){var a=arguments;return r.Deferred(function(b){r.each(c,function(c,d){var e=r.isFunction(a[d[4]])&&a[d[4]];f[d[1]](function(){var a=e&&e.apply(this,arguments);a&&r.isFunction(a.promise)?a.promise().progress(b.notify).done(b.resolve).fail(b.reject):b[d[0]+"With"](this,e?[a]:arguments)})}),a=null}).promise()},then:function(b,d,e){var f=0;function g(b,c,d,e){return function(){var h=this,i=arguments,j=function(){var a,j;if(!(b<f)){if(a=d.apply(h,i),a===c.promise())throw new TypeError("Thenable self-resolution");j=a&&("object"==typeof a||"function"==typeof a)&&a.then,r.isFunction(j)?e?j.call(a,g(f,c,M,e),g(f,c,N,e)):(f++,j.call(a,g(f,c,M,e),g(f,c,N,e),g(f,c,M,c.notifyWith))):(d!==M&&(h=void 0,i=[a]),(e||c.resolveWith)(h,i))}},k=e?j:function(){try{j()}catch(a){r.Deferred.exceptionHook&&r.Deferred.exceptionHook(a,k.stackTrace),b+1>=f&&(d!==N&&(h=void 0,i=[a]),c.rejectWith(h,i))}};b?k():(r.Deferred.getStackHook&&(k.stackTrace=r.Deferred.getStackHook()),a.setTimeout(k))}}return r.Deferred(function(a){c[0][3].add(g(0,a,r.isFunction(e)?e:M,a.notifyWith)),c[1][3].add(g(0,a,r.isFunction(b)?b:M)),c[2][3].add(g(0,a,r.isFunction(d)?d:N))}).promise()},promise:function(a){return null!=a?r.extend(a,e):e}},f={};return r.each(c,function(a,b){var g=b[2],h=b[5];e[b[1]]=g.add,h&&g.add(function(){d=h},c[3-a][2].disable,c[0][2].lock),g.add(b[3].fire),f[b[0]]=function(){return f[b[0]+"With"](this===f?void 0:this,arguments),this},f[b[0]+"With"]=g.fireWith}),e.promise(f),b&&b.call(f,f),f},when:function(a){var b=arguments.length,c=b,d=Array(c),e=f.call(arguments),g=r.Deferred(),h=function(a){return function(c){d[a]=this,e[a]=arguments.length>1?f.call(arguments):c,--b||g.resolveWith(d,e)}};if(b<=1&&(O(a,g.done(h(c)).resolve,g.reject),"pending"===g.state()||r.isFunction(e[c]&&e[c].then)))return g.then();while(c--)O(e[c],h(c),g.reject);return g.promise()}});var P=/^(Eval|Internal|Range|Reference|Syntax|Type|URI)Error$/;r.Deferred.exceptionHook=function(b,c){a.console&&a.console.warn&&b&&P.test(b.name)&&a.console.warn("jQuery.Deferred exception: "+b.message,b.stack,c)},r.readyException=function(b){a.setTimeout(function(){throw b})};var Q=r.Deferred();r.fn.ready=function(a){return Q.then(a)["catch"](function(a){r.readyException(a)}),this},r.extend({isReady:!1,readyWait:1,holdReady:function(a){a?r.readyWait++:r.ready(!0)},ready:function(a){(a===!0?--r.readyWait:r.isReady)||(r.isReady=!0,a!==!0&&--r.readyWait>0||Q.resolveWith(d,[r]))}}),r.ready.then=Q.then;function R(){d.removeEventListener("DOMContentLoaded",R),
 a.removeEventListener("load",R),r.ready()}"complete"===d.readyState||"loading"!==d.readyState&&!d.documentElement.doScroll?a.setTimeout(r.ready):(d.addEventListener("DOMContentLoaded",R),a.addEventListener("load",R));var S=function(a,b,c,d,e,f,g){var h=0,i=a.length,j=null==c;if("object"===r.type(c)){e=!0;for(h in c)S(a,b,h,c[h],!0,f,g)}else if(void 0!==d&&(e=!0,r.isFunction(d)||(g=!0),j&&(g?(b.call(a,d),b=null):(j=b,b=function(a,b,c){return j.call(r(a),c)})),b))for(;h<i;h++)b(a[h],c,g?d:d.call(a[h],h,b(a[h],c)));return e?a:j?b.call(a):i?b(a[0],c):f},T=function(a){return 1===a.nodeType||9===a.nodeType||!+a.nodeType};function U(){this.expando=r.expando+U.uid++}U.uid=1,U.prototype={cache:function(a){var b=a[this.expando];return b||(b={},T(a)&&(a.nodeType?a[this.expando]=b:Object.defineProperty(a,this.expando,{value:b,configurable:!0}))),b},set:function(a,b,c){var d,e=this.cache(a);if("string"==typeof b)e[r.camelCase(b)]=c;else for(d in b)e[r.camelCase(d)]=b[d];return e},get:function(a,b){return void 0===b?this.cache(a):a[this.expando]&&a[this.expando][r.camelCase(b)]},access:function(a,b,c){return void 0===b||b&&"string"==typeof b&&void 0===c?this.get(a,b):(this.set(a,b,c),void 0!==c?c:b)},remove:function(a,b){var c,d=a[this.expando];if(void 0!==d){if(void 0!==b){r.isArray(b)?b=b.map(r.camelCase):(b=r.camelCase(b),b=b in d?[b]:b.match(K)||[]),c=b.length;while(c--)delete d[b[c]]}(void 0===b||r.isEmptyObject(d))&&(a.nodeType?a[this.expando]=void 0:delete a[this.expando])}},hasData:function(a){var b=a[this.expando];return void 0!==b&&!r.isEmptyObject(b)}};var V=new U,W=new U,X=/^(?:\{[\w\W]*\}|\[[\w\W]*\])$/,Y=/[A-Z]/g;function Z(a){return"true"===a||"false"!==a&&("null"===a?null:a===+a+""?+a:X.test(a)?JSON.parse(a):a)}function $(a,b,c){var d;if(void 0===c&&1===a.nodeType)if(d="data-"+b.replace(Y,"-$&").toLowerCase(),c=a.getAttribute(d),"string"==typeof c){try{c=Z(c)}catch(e){}W.set(a,b,c)}else c=void 0;return c}r.extend({hasData:function(a){return W.hasData(a)||V.hasData(a)},data:function(a,b,c){return W.access(a,b,c)},removeData:function(a,b){W.remove(a,b)},_data:function(a,b,c){return V.access(a,b,c)},_removeData:function(a,b){V.remove(a,b)}}),r.fn.extend({data:function(a,b){var c,d,e,f=this[0],g=f&&f.attributes;if(void 0===a){if(this.length&&(e=W.get(f),1===f.nodeType&&!V.get(f,"hasDataAttrs"))){c=g.length;while(c--)g[c]&&(d=g[c].name,0===d.indexOf("data-")&&(d=r.camelCase(d.slice(5)),$(f,d,e[d])));V.set(f,"hasDataAttrs",!0)}return e}return"object"==typeof a?this.each(function(){W.set(this,a)}):S(this,function(b){var c;if(f&&void 0===b){if(c=W.get(f,a),void 0!==c)return c;if(c=$(f,a),void 0!==c)return c}else this.each(function(){W.set(this,a,b)})},null,b,arguments.length>1,null,!0)},removeData:function(a){return this.each(function(){W.remove(this,a)})}}),r.extend({queue:function(a,b,c){var d;if(a)return b=(b||"fx")+"queue",d=V.get(a,b),c&&(!d||r.isArray(c)?d=V.access(a,b,r.makeArray(c)):d.push(c)),d||[]},dequeue:function(a,b){b=b||"fx";var c=r.queue(a,b),d=c.length,e=c.shift(),f=r._queueHooks(a,b),g=function(){r.dequeue(a,b)};"inprogress"===e&&(e=c.shift(),d--),e&&("fx"===b&&c.unshift("inprogress"),delete f.stop,e.call(a,g,f)),!d&&f&&f.empty.fire()},_queueHooks:function(a,b){var c=b+"queueHooks";return V.get(a,c)||V.access(a,c,{empty:r.Callbacks("once memory").add(function(){V.remove(a,[b+"queue",c])})})}}),r.fn.extend({queue:function(a,b){var c=2;return"string"!=typeof a&&(b=a,a="fx",c--),arguments.length<c?r.queue(this[0],a):void 0===b?this:this.each(function(){var c=r.queue(this,a,b);r._queueHooks(this,a),"fx"===a&&"inprogress"!==c[0]&&r.dequeue(this,a)})},dequeue:function(a){return this.each(function(){r.dequeue(this,a)})},clearQueue:function(a){return this.queue(a||"fx",[])},promise:function(a,b){var c,d=1,e=r.Deferred(),f=this,g=this.length,h=function(){--d||e.resolveWith(f,[f])};"string"!=typeof a&&(b=a,a=void 0),a=a||"fx";while(g--)c=V.get(f[g],a+"queueHooks"),c&&c.empty&&(d++,c.empty.add(h));return h(),e.promise(b)}});var _=/[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/.source,aa=new RegExp("^(?:([+-])=|)("+_+")([a-z%]*)$","i"),ba=["Top","Right","Bottom","Left"],ca=function(a,b){return a=b||a,"none"===a.style.display||""===a.style.display&&r.contains(a.ownerDocument,a)&&"none"===r.css(a,"display")},da=function(a,b,c,d){var e,f,g={};for(f in b)g[f]=a.style[f],a.style[f]=b[f];e=c.apply(a,d||[]);for(f in b)a.style[f]=g[f];return e};function ea(a,b,c,d){var e,f=1,g=20,h=d?function(){return d.cur()}:function(){return r.css(a,b,"")},i=h(),j=c&&c[3]||(r.cssNumber[b]?"":"px"),k=(r.cssNumber[b]||"px"!==j&&+i)&&aa.exec(r.css(a,b));if(k&&k[3]!==j){j=j||k[3],c=c||[],k=+i||1;do f=f||".5",k/=f,r.style(a,b,k+j);while(f!==(f=h()/i)&&1!==f&&--g)}return c&&(k=+k||+i||0,e=c[1]?k+(c[1]+1)*c[2]:+c[2],d&&(d.unit=j,d.start=k,d.end=e)),e}var fa={};function ga(a){var b,c=a.ownerDocument,d=a.nodeName,e=fa[d];return e?e:(b=c.body.appendChild(c.createElement(d)),e=r.css(b,"display"),b.parentNode.removeChild(b),"none"===e&&(e="block"),fa[d]=e,e)}function ha(a,b){for(var c,d,e=[],f=0,g=a.length;f<g;f++)d=a[f],d.style&&(c=d.style.display,b?("none"===c&&(e[f]=V.get(d,"display")||null,e[f]||(d.style.display="")),""===d.style.display&&ca(d)&&(e[f]=ga(d))):"none"!==c&&(e[f]="none",V.set(d,"display",c)));for(f=0;f<g;f++)null!=e[f]&&(a[f].style.display=e[f]);return a}r.fn.extend({show:function(){return ha(this,!0)},hide:function(){return ha(this)},toggle:function(a){return"boolean"==typeof a?a?this.show():this.hide():this.each(function(){ca(this)?r(this).show():r(this).hide()})}});var ia=/^(?:checkbox|radio)$/i,ja=/<([a-z][^\/\0>\x20\t\r\n\f]+)/i,ka=/^$|\/(?:java|ecma)script/i,la={option:[1,"<select multiple='multiple'>","</select>"],thead:[1,"<table>","</table>"],col:[2,"<table><colgroup>","</colgroup></table>"],tr:[2,"<table><tbody>","</tbody></table>"],td:[3,"<table><tbody><tr>","</tr></tbody></table>"],_default:[0,"",""]};la.optgroup=la.option,la.tbody=la.tfoot=la.colgroup=la.caption=la.thead,la.th=la.td;function ma(a,b){var c;return c="undefined"!=typeof a.getElementsByTagName?a.getElementsByTagName(b||"*"):"undefined"!=typeof a.querySelectorAll?a.querySelectorAll(b||"*"):[],void 0===b||b&&r.nodeName(a,b)?r.merge([a],c):c}function na(a,b){for(var c=0,d=a.length;c<d;c++)V.set(a[c],"globalEval",!b||V.get(b[c],"globalEval"))}var oa=/<|&#?\w+;/;function pa(a,b,c,d,e){for(var f,g,h,i,j,k,l=b.createDocumentFragment(),m=[],n=0,o=a.length;n<o;n++)if(f=a[n],f||0===f)if("object"===r.type(f))r.merge(m,f.nodeType?[f]:f);else if(oa.test(f)){g=g||l.appendChild(b.createElement("div")),h=(ja.exec(f)||["",""])[1].toLowerCase(),i=la[h]||la._default,g.innerHTML=i[1]+r.htmlPrefilter(f)+i[2],k=i[0];while(k--)g=g.lastChild;r.merge(m,g.childNodes),g=l.firstChild,g.textContent=""}else m.push(b.createTextNode(f));l.textContent="",n=0;while(f=m[n++])if(d&&r.inArray(f,d)>-1)e&&e.push(f);else if(j=r.contains(f.ownerDocument,f),g=ma(l.appendChild(f),"script"),j&&na(g),c){k=0;while(f=g[k++])ka.test(f.type||"")&&c.push(f)}return l}!function(){var a=d.createDocumentFragment(),b=a.appendChild(d.createElement("div")),c=d.createElement("input");c.setAttribute("type","radio"),c.setAttribute("checked","checked"),c.setAttribute("name","t"),b.appendChild(c),o.checkClone=b.cloneNode(!0).cloneNode(!0).lastChild.checked,b.innerHTML="<textarea>x</textarea>",o.noCloneChecked=!!b.cloneNode(!0).lastChild.defaultValue}();var qa=d.documentElement,ra=/^key/,sa=/^(?:mouse|pointer|contextmenu|drag|drop)|click/,ta=/^([^.]*)(?:\.(.+)|)/;function ua(){return!0}function va(){return!1}function wa(){try{return d.activeElement}catch(a){}}function xa(a,b,c,d,e,f){var g,h;if("object"==typeof b){"string"!=typeof c&&(d=d||c,c=void 0);for(h in b)xa(a,h,c,d,b[h],f);return a}if(null==d&&null==e?(e=c,d=c=void 0):null==e&&("string"==typeof c?(e=d,d=void 0):(e=d,d=c,c=void 0)),e===!1)e=va;else if(!e)return a;return 1===f&&(g=e,e=function(a){return r().off(a),g.apply(this,arguments)},e.guid=g.guid||(g.guid=r.guid++)),a.each(function(){r.event.add(this,b,e,d,c)})}r.event={global:{},add:function(a,b,c,d,e){var f,g,h,i,j,k,l,m,n,o,p,q=V.get(a);if(q){c.handler&&(f=c,c=f.handler,e=f.selector),e&&r.find.matchesSelector(qa,e),c.guid||(c.guid=r.guid++),(i=q.events)||(i=q.events={}),(g=q.handle)||(g=q.handle=function(b){return"undefined"!=typeof r&&r.event.triggered!==b.type?r.event.dispatch.apply(a,arguments):void 0}),b=(b||"").match(K)||[""],j=b.length;while(j--)h=ta.exec(b[j])||[],n=p=h[1],o=(h[2]||"").split(".").sort(),n&&(l=r.event.special[n]||{},n=(e?l.delegateType:l.bindType)||n,l=r.event.special[n]||{},k=r.extend({type:n,origType:p,data:d,handler:c,guid:c.guid,selector:e,needsContext:e&&r.expr.match.needsContext.test(e),namespace:o.join(".")},f),(m=i[n])||(m=i[n]=[],m.delegateCount=0,l.setup&&l.setup.call(a,d,o,g)!==!1||a.addEventListener&&a.addEventListener(n,g)),l.add&&(l.add.call(a,k),k.handler.guid||(k.handler.guid=c.guid)),e?m.splice(m.delegateCount++,0,k):m.push(k),r.event.global[n]=!0)}},remove:function(a,b,c,d,e){var f,g,h,i,j,k,l,m,n,o,p,q=V.hasData(a)&&V.get(a);if(q&&(i=q.events)){b=(b||"").match(K)||[""],j=b.length;while(j--)if(h=ta.exec(b[j])||[],n=p=h[1],o=(h[2]||"").split(".").sort(),n){l=r.event.special[n]||{},n=(d?l.delegateType:l.bindType)||n,m=i[n]||[],h=h[2]&&new RegExp("(^|\\.)"+o.join("\\.(?:.*\\.|)")+"(\\.|$)"),g=f=m.length;while(f--)k=m[f],!e&&p!==k.origType||c&&c.guid!==k.guid||h&&!h.test(k.namespace)||d&&d!==k.selector&&("**"!==d||!k.selector)||(m.splice(f,1),k.selector&&m.delegateCount--,l.remove&&l.remove.call(a,k));g&&!m.length&&(l.teardown&&l.teardown.call(a,o,q.handle)!==!1||r.removeEvent(a,n,q.handle),delete i[n])}else for(n in i)r.event.remove(a,n+b[j],c,d,!0);r.isEmptyObject(i)&&V.remove(a,"handle events")}},dispatch:function(a){var b=r.event.fix(a),c,d,e,f,g,h,i=new Array(arguments.length),j=(V.get(this,"events")||{})[b.type]||[],k=r.event.special[b.type]||{};for(i[0]=b,c=1;c<arguments.length;c++)i[c]=arguments[c];if(b.delegateTarget=this,!k.preDispatch||k.preDispatch.call(this,b)!==!1){h=r.event.handlers.call(this,b,j),c=0;while((f=h[c++])&&!b.isPropagationStopped()){b.currentTarget=f.elem,d=0;while((g=f.handlers[d++])&&!b.isImmediatePropagationStopped())b.rnamespace&&!b.rnamespace.test(g.namespace)||(b.handleObj=g,b.data=g.data,e=((r.event.special[g.origType]||{}).handle||g.handler).apply(f.elem,i),void 0!==e&&(b.result=e)===!1&&(b.preventDefault(),b.stopPropagation()))}return k.postDispatch&&k.postDispatch.call(this,b),b.result}},handlers:function(a,b){var c,d,e,f,g,h=[],i=b.delegateCount,j=a.target;if(i&&j.nodeType&&!("click"===a.type&&a.button>=1))for(;j!==this;j=j.parentNode||this)if(1===j.nodeType&&("click"!==a.type||j.disabled!==!0)){for(f=[],g={},c=0;c<i;c++)d=b[c],e=d.selector+" ",void 0===g[e]&&(g[e]=d.needsContext?r(e,this).index(j)>-1:r.find(e,this,null,[j]).length),g[e]&&f.push(d);f.length&&h.push({elem:j,handlers:f})}return j=this,i<b.length&&h.push({elem:j,handlers:b.slice(i)}),h},addProp:function(a,b){Object.defineProperty(r.Event.prototype,a,{enumerable:!0,configurable:!0,get:r.isFunction(b)?function(){if(this.originalEvent)return b(this.originalEvent)}:function(){if(this.originalEvent)return this.originalEvent[a]},set:function(b){Object.defineProperty(this,a,{enumerable:!0,configurable:!0,writable:!0,value:b})}})},fix:function(a){return a[r.expando]?a:new r.Event(a)},special:{load:{noBubble:!0},focus:{trigger:function(){if(this!==wa()&&this.focus)return this.focus(),!1},delegateType:"focusin"},blur:{trigger:function(){if(this===wa()&&this.blur)return this.blur(),!1},delegateType:"focusout"},click:{trigger:function(){if("checkbox"===this.type&&this.click&&r.nodeName(this,"input"))return this.click(),!1},_default:function(a){return r.nodeName(a.target,"a")}},beforeunload:{postDispatch:function(a){void 0!==a.result&&a.originalEvent&&(a.originalEvent.returnValue=a.result)}}}},r.removeEvent=function(a,b,c){a.removeEventListener&&a.removeEventListener(b,c)},r.Event=function(a,b){return this instanceof r.Event?(a&&a.type?(this.originalEvent=a,this.type=a.type,this.isDefaultPrevented=a.defaultPrevented||void 0===a.defaultPrevented&&a.returnValue===!1?ua:va,this.target=a.target&&3===a.target.nodeType?a.target.parentNode:a.target,this.currentTarget=a.currentTarget,this.relatedTarget=a.relatedTarget):this.type=a,b&&r.extend(this,b),this.timeStamp=a&&a.timeStamp||r.now(),void(this[r.expando]=!0)):new r.Event(a,b)},r.Event.prototype={constructor:r.Event,isDefaultPrevented:va,isPropagationStopped:va,isImmediatePropagationStopped:va,isSimulated:!1,preventDefault:function(){var a=this.originalEvent;this.isDefaultPrevented=ua,a&&!this.isSimulated&&a.preventDefault()},stopPropagation:function(){var a=this.originalEvent;this.isPropagationStopped=ua,a&&!this.isSimulated&&a.stopPropagation()},stopImmediatePropagation:function(){var a=this.originalEvent;this.isImmediatePropagationStopped=ua,a&&!this.isSimulated&&a.stopImmediatePropagation(),this.stopPropagation()}},r.each({altKey:!0,bubbles:!0,cancelable:!0,changedTouches:!0,ctrlKey:!0,detail:!0,eventPhase:!0,metaKey:!0,pageX:!0,pageY:!0,shiftKey:!0,view:!0,"char":!0,charCode:!0,key:!0,keyCode:!0,button:!0,buttons:!0,clientX:!0,clientY:!0,offsetX:!0,offsetY:!0,pointerId:!0,pointerType:!0,screenX:!0,screenY:!0,targetTouches:!0,toElement:!0,touches:!0,which:function(a){var b=a.button;return null==a.which&&ra.test(a.type)?null!=a.charCode?a.charCode:a.keyCode:!a.which&&void 0!==b&&sa.test(a.type)?1&b?1:2&b?3:4&b?2:0:a.which}},r.event.addProp),r.each({mouseenter:"mouseover",mouseleave:"mouseout",pointerenter:"pointerover",pointerleave:"pointerout"},function(a,b){r.event.special[a]={delegateType:b,bindType:b,handle:function(a){var c,d=this,e=a.relatedTarget,f=a.handleObj;return e&&(e===d||r.contains(d,e))||(a.type=f.origType,c=f.handler.apply(this,arguments),a.type=b),c}}}),r.fn.extend({on:function(a,b,c,d){return xa(this,a,b,c,d)},one:function(a,b,c,d){return xa(this,a,b,c,d,1)},off:function(a,b,c){var d,e;if(a&&a.preventDefault&&a.handleObj)return d=a.handleObj,r(a.delegateTarget).off(d.namespace?d.origType+"."+d.namespace:d.origType,d.selector,d.handler),this;if("object"==typeof a){for(e in a)this.off(e,b,a[e]);return this}return b!==!1&&"function"!=typeof b||(c=b,b=void 0),c===!1&&(c=va),this.each(function(){r.event.remove(this,a,c,b)})}});var ya=/<(?!area|br|col|embed|hr|img|input|link|meta|param)(([a-z][^\/\0>\x20\t\r\n\f]*)[^>]*)\/>/gi,za=/<script|<style|<link/i,Aa=/checked\s*(?:[^=]|=\s*.checked.)/i,Ba=/^true\/(.*)/,Ca=/^\s*<!(?:\[CDATA\[|--)|(?:\]\]|--)>\s*$/g;function Da(a,b){return r.nodeName(a,"table")&&r.nodeName(11!==b.nodeType?b:b.firstChild,"tr")?a.getElementsByTagName("tbody")[0]||a:a}function Ea(a){return a.type=(null!==a.getAttribute("type"))+"/"+a.type,a}function Fa(a){var b=Ba.exec(a.type);return b?a.type=b[1]:a.removeAttribute("type"),a}function Ga(a,b){var c,d,e,f,g,h,i,j;if(1===b.nodeType){if(V.hasData(a)&&(f=V.access(a),g=V.set(b,f),j=f.events)){delete g.handle,g.events={};for(e in j)for(c=0,d=j[e].length;c<d;c++)r.event.add(b,e,j[e][c])}W.hasData(a)&&(h=W.access(a),i=r.extend({},h),W.set(b,i))}}function Ha(a,b){var c=b.nodeName.toLowerCase();"input"===c&&ia.test(a.type)?b.checked=a.checked:"input"!==c&&"textarea"!==c||(b.defaultValue=a.defaultValue)}function Ia(a,b,c,d){b=g.apply([],b);var e,f,h,i,j,k,l=0,m=a.length,n=m-1,q=b[0],s=r.isFunction(q);if(s||m>1&&"string"==typeof q&&!o.checkClone&&Aa.test(q))return a.each(function(e){var f=a.eq(e);s&&(b[0]=q.call(this,e,f.html())),Ia(f,b,c,d)});if(m&&(e=pa(b,a[0].ownerDocument,!1,a,d),f=e.firstChild,1===e.childNodes.length&&(e=f),f||d)){for(h=r.map(ma(e,"script"),Ea),i=h.length;l<m;l++)j=e,l!==n&&(j=r.clone(j,!0,!0),i&&r.merge(h,ma(j,"script"))),c.call(a[l],j,l);if(i)for(k=h[h.length-1].ownerDocument,r.map(h,Fa),l=0;l<i;l++)j=h[l],ka.test(j.type||"")&&!V.access(j,"globalEval")&&r.contains(k,j)&&(j.src?r._evalUrl&&r._evalUrl(j.src):p(j.textContent.replace(Ca,""),k))}return a}function Ja(a,b,c){for(var d,e=b?r.filter(b,a):a,f=0;null!=(d=e[f]);f++)c||1!==d.nodeType||r.cleanData(ma(d)),d.parentNode&&(c&&r.contains(d.ownerDocument,d)&&na(ma(d,"script")),d.parentNode.removeChild(d));return a}r.extend({htmlPrefilter:function(a){return a.replace(ya,"<$1></$2>")},clone:function(a,b,c){var d,e,f,g,h=a.cloneNode(!0),i=r.contains(a.ownerDocument,a);if(!(o.noCloneChecked||1!==a.nodeType&&11!==a.nodeType||r.isXMLDoc(a)))for(g=ma(h),f=ma(a),d=0,e=f.length;d<e;d++)Ha(f[d],g[d]);if(b)if(c)for(f=f||ma(a),g=g||ma(h),d=0,e=f.length;d<e;d++)Ga(f[d],g[d]);else Ga(a,h);return g=ma(h,"script"),g.length>0&&na(g,!i&&ma(a,"script")),h},cleanData:function(a){for(var b,c,d,e=r.event.special,f=0;void 0!==(c=a[f]);f++)if(T(c)){if(b=c[V.expando]){if(b.events)for(d in b.events)e[d]?r.event.remove(c,d):r.removeEvent(c,d,b.handle);c[V.expando]=void 0}c[W.expando]&&(c[W.expando]=void 0)}}}),r.fn.extend({detach:function(a){return Ja(this,a,!0)},remove:function(a){return Ja(this,a)},text:function(a){return S(this,function(a){return void 0===a?r.text(this):this.empty().each(function(){1!==this.nodeType&&11!==this.nodeType&&9!==this.nodeType||(this.textContent=a)})},null,a,arguments.length)},append:function(){return Ia(this,arguments,function(a){if(1===this.nodeType||11===this.nodeType||9===this.nodeType){var b=Da(this,a);b.appendChild(a)}})},prepend:function(){return Ia(this,arguments,function(a){if(1===this.nodeType||11===this.nodeType||9===this.nodeType){var b=Da(this,a);b.insertBefore(a,b.firstChild)}})},before:function(){return Ia(this,arguments,function(a){this.parentNode&&this.parentNode.insertBefore(a,this)})},after:function(){return Ia(this,arguments,function(a){this.parentNode&&this.parentNode.insertBefore(a,this.nextSibling)})},empty:function(){for(var a,b=0;null!=(a=this[b]);b++)1===a.nodeType&&(r.cleanData(ma(a,!1)),a.textContent="");return this},clone:function(a,b){return a=null!=a&&a,b=null==b?a:b,this.map(function(){return r.clone(this,a,b)})},html:function(a){return S(this,function(a){var b=this[0]||{},c=0,d=this.length;if(void 0===a&&1===b.nodeType)return b.innerHTML;if("string"==typeof a&&!za.test(a)&&!la[(ja.exec(a)||["",""])[1].toLowerCase()]){a=r.htmlPrefilter(a);try{for(;c<d;c++)b=this[c]||{},1===b.nodeType&&(r.cleanData(ma(b,!1)),b.innerHTML=a);b=0}catch(e){}}b&&this.empty().append(a)},null,a,arguments.length)},replaceWith:function(){var a=[];return Ia(this,arguments,function(b){var c=this.parentNode;r.inArray(this,a)<0&&(r.cleanData(ma(this)),c&&c.replaceChild(b,this))},a)}}),r.each({appendTo:"append",prependTo:"prepend",insertBefore:"before",insertAfter:"after",replaceAll:"replaceWith"},function(a,b){r.fn[a]=function(a){for(var c,d=[],e=r(a),f=e.length-1,g=0;g<=f;g++)c=g===f?this:this.clone(!0),r(e[g])[b](c),h.apply(d,c.get());return this.pushStack(d)}});var Ka=/^margin/,La=new RegExp("^("+_+")(?!px)[a-z%]+$","i"),Ma=function(b){var c=b.ownerDocument.defaultView;return c&&c.opener||(c=a),c.getComputedStyle(b)};!function(){function b(){if(i){i.style.cssText="box-sizing:border-box;position:relative;display:block;margin:auto;border:1px;padding:1px;top:1%;width:50%",i.innerHTML="",qa.appendChild(h);var b=a.getComputedStyle(i);c="1%"!==b.top,g="2px"===b.marginLeft,e="4px"===b.width,i.style.marginRight="50%",f="4px"===b.marginRight,qa.removeChild(h),i=null}}var c,e,f,g,h=d.createElement("div"),i=d.createElement("div");i.style&&(i.style.backgroundClip="content-box",i.cloneNode(!0).style.backgroundClip="",o.clearCloneStyle="content-box"===i.style.backgroundClip,h.style.cssText="border:0;width:8px;height:0;top:0;left:-9999px;padding:0;margin-top:1px;position:absolute",h.appendChild(i),r.extend(o,{pixelPosition:function(){return b(),c},boxSizingReliable:function(){return b(),e},pixelMarginRight:function(){return b(),f},reliableMarginLeft:function(){return b(),g}}))}();function Na(a,b,c){var d,e,f,g,h=a.style;return c=c||Ma(a),c&&(g=c.getPropertyValue(b)||c[b],""!==g||r.contains(a.ownerDocument,a)||(g=r.style(a,b)),!o.pixelMarginRight()&&La.test(g)&&Ka.test(b)&&(d=h.width,e=h.minWidth,f=h.maxWidth,h.minWidth=h.maxWidth=h.width=g,g=c.width,h.width=d,h.minWidth=e,h.maxWidth=f)),void 0!==g?g+"":g}function Oa(a,b){return{get:function(){return a()?void delete this.get:(this.get=b).apply(this,arguments)}}}var Pa=/^(none|table(?!-c[ea]).+)/,Qa={position:"absolute",visibility:"hidden",display:"block"},Ra={letterSpacing:"0",fontWeight:"400"},Sa=["Webkit","Moz","ms"],Ta=d.createElement("div").style;function Ua(a){if(a in Ta)return a;var b=a[0].toUpperCase()+a.slice(1),c=Sa.length;while(c--)if(a=Sa[c]+b,a in Ta)return a}function Va(a,b,c){var d=aa.exec(b);return d?Math.max(0,d[2]-(c||0))+(d[3]||"px"):b}function Wa(a,b,c,d,e){var f,g=0;for(f=c===(d?"border":"content")?4:"width"===b?1:0;f<4;f+=2)"margin"===c&&(g+=r.css(a,c+ba[f],!0,e)),d?("content"===c&&(g-=r.css(a,"padding"+ba[f],!0,e)),"margin"!==c&&(g-=r.css(a,"border"+ba[f]+"Width",!0,e))):(g+=r.css(a,"padding"+ba[f],!0,e),"padding"!==c&&(g+=r.css(a,"border"+ba[f]+"Width",!0,e)));return g}function Xa(a,b,c){var d,e=!0,f=Ma(a),g="border-box"===r.css(a,"boxSizing",!1,f);if(a.getClientRects().length&&(d=a.getBoundingClientRect()[b]),d<=0||null==d){if(d=Na(a,b,f),(d<0||null==d)&&(d=a.style[b]),La.test(d))return d;e=g&&(o.boxSizingReliable()||d===a.style[b]),d=parseFloat(d)||0}return d+Wa(a,b,c||(g?"border":"content"),e,f)+"px"}r.extend({cssHooks:{opacity:{get:function(a,b){if(b){var c=Na(a,"opacity");return""===c?"1":c}}}},cssNumber:{animationIterationCount:!0,columnCount:!0,fillOpacity:!0,flexGrow:!0,flexShrink:!0,fontWeight:!0,lineHeight:!0,opacity:!0,order:!0,orphans:!0,widows:!0,zIndex:!0,zoom:!0},cssProps:{"float":"cssFloat"},style:function(a,b,c,d){if(a&&3!==a.nodeType&&8!==a.nodeType&&a.style){var e,f,g,h=r.camelCase(b),i=a.style;return b=r.cssProps[h]||(r.cssProps[h]=Ua(h)||h),g=r.cssHooks[b]||r.cssHooks[h],void 0===c?g&&"get"in g&&void 0!==(e=g.get(a,!1,d))?e:i[b]:(f=typeof c,"string"===f&&(e=aa.exec(c))&&e[1]&&(c=ea(a,b,e),f="number"),null!=c&&c===c&&("number"===f&&(c+=e&&e[3]||(r.cssNumber[h]?"":"px")),o.clearCloneStyle||""!==c||0!==b.indexOf("background")||(i[b]="inherit"),g&&"set"in g&&void 0===(c=g.set(a,c,d))||(i[b]=c)),void 0)}},css:function(a,b,c,d){var e,f,g,h=r.camelCase(b);return b=r.cssProps[h]||(r.cssProps[h]=Ua(h)||h),g=r.cssHooks[b]||r.cssHooks[h],g&&"get"in g&&(e=g.get(a,!0,c)),void 0===e&&(e=Na(a,b,d)),"normal"===e&&b in Ra&&(e=Ra[b]),""===c||c?(f=parseFloat(e),c===!0||isFinite(f)?f||0:e):e}}),r.each(["height","width"],function(a,b){r.cssHooks[b]={get:function(a,c,d){if(c)return!Pa.test(r.css(a,"display"))||a.getClientRects().length&&a.getBoundingClientRect().width?Xa(a,b,d):da(a,Qa,function(){return Xa(a,b,d)})},set:function(a,c,d){var e,f=d&&Ma(a),g=d&&Wa(a,b,d,"border-box"===r.css(a,"boxSizing",!1,f),f);return g&&(e=aa.exec(c))&&"px"!==(e[3]||"px")&&(a.style[b]=c,c=r.css(a,b)),Va(a,c,g)}}}),r.cssHooks.marginLeft=Oa(o.reliableMarginLeft,function(a,b){if(b)return(parseFloat(Na(a,"marginLeft"))||a.getBoundingClientRect().left-da(a,{marginLeft:0},function(){return a.getBoundingClientRect().left}))+"px"}),r.each({margin:"",padding:"",border:"Width"},function(a,b){r.cssHooks[a+b]={expand:function(c){for(var d=0,e={},f="string"==typeof c?c.split(" "):[c];d<4;d++)e[a+ba[d]+b]=f[d]||f[d-2]||f[0];return e}},Ka.test(a)||(r.cssHooks[a+b].set=Va)}),r.fn.extend({css:function(a,b){return S(this,function(a,b,c){var d,e,f={},g=0;if(r.isArray(b)){for(d=Ma(a),e=b.length;g<e;g++)f[b[g]]=r.css(a,b[g],!1,d);return f}return void 0!==c?r.style(a,b,c):r.css(a,b)},a,b,arguments.length>1)}});function Ya(a,b,c,d,e){return new Ya.prototype.init(a,b,c,d,e)}r.Tween=Ya,Ya.prototype={constructor:Ya,init:function(a,b,c,d,e,f){this.elem=a,this.prop=c,this.easing=e||r.easing._default,this.options=b,this.start=this.now=this.cur(),this.end=d,this.unit=f||(r.cssNumber[c]?"":"px")},cur:function(){var a=Ya.propHooks[this.prop];return a&&a.get?a.get(this):Ya.propHooks._default.get(this)},run:function(a){var b,c=Ya.propHooks[this.prop];return this.options.duration?this.pos=b=r.easing[this.easing](a,this.options.duration*a,0,1,this.options.duration):this.pos=b=a,this.now=(this.end-this.start)*b+this.start,this.options.step&&this.options.step.call(this.elem,this.now,this),c&&c.set?c.set(this):Ya.propHooks._default.set(this),this}},Ya.prototype.init.prototype=Ya.prototype,Ya.propHooks={_default:{get:function(a){var b;return 1!==a.elem.nodeType||null!=a.elem[a.prop]&&null==a.elem.style[a.prop]?a.elem[a.prop]:(b=r.css(a.elem,a.prop,""),b&&"auto"!==b?b:0)},set:function(a){r.fx.step[a.prop]?r.fx.step[a.prop](a):1!==a.elem.nodeType||null==a.elem.style[r.cssProps[a.prop]]&&!r.cssHooks[a.prop]?a.elem[a.prop]=a.now:r.style(a.elem,a.prop,a.now+a.unit)}}},Ya.propHooks.scrollTop=Ya.propHooks.scrollLeft={set:function(a){a.elem.nodeType&&a.elem.parentNode&&(a.elem[a.prop]=a.now)}},r.easing={linear:function(a){return a},swing:function(a){return.5-Math.cos(a*Math.PI)/2},_default:"swing"},r.fx=Ya.prototype.init,r.fx.step={};var Za,$a,_a=/^(?:toggle|show|hide)$/,ab=/queueHooks$/;function bb(){$a&&(a.requestAnimationFrame(bb),r.fx.tick())}function cb(){return a.setTimeout(function(){Za=void 0}),Za=r.now()}function db(a,b){var c,d=0,e={height:a};for(b=b?1:0;d<4;d+=2-b)c=ba[d],e["margin"+c]=e["padding"+c]=a;return b&&(e.opacity=e.width=a),e}function eb(a,b,c){for(var d,e=(hb.tweeners[b]||[]).concat(hb.tweeners["*"]),f=0,g=e.length;f<g;f++)if(d=e[f].call(c,b,a))return d}function fb(a,b,c){var d,e,f,g,h,i,j,k,l="width"in b||"height"in b,m=this,n={},o=a.style,p=a.nodeType&&ca(a),q=V.get(a,"fxshow");c.queue||(g=r._queueHooks(a,"fx"),null==g.unqueued&&(g.unqueued=0,h=g.empty.fire,g.empty.fire=function(){g.unqueued||h()}),g.unqueued++,m.always(function(){m.always(function(){g.unqueued--,r.queue(a,"fx").length||g.empty.fire()})}));for(d in b)if(e=b[d],_a.test(e)){if(delete b[d],f=f||"toggle"===e,e===(p?"hide":"show")){if("show"!==e||!q||void 0===q[d])continue;p=!0}n[d]=q&&q[d]||r.style(a,d)}if(i=!r.isEmptyObject(b),i||!r.isEmptyObject(n)){l&&1===a.nodeType&&(c.overflow=[o.overflow,o.overflowX,o.overflowY],j=q&&q.display,null==j&&(j=V.get(a,"display")),k=r.css(a,"display"),"none"===k&&(j?k=j:(ha([a],!0),j=a.style.display||j,k=r.css(a,"display"),ha([a]))),("inline"===k||"inline-block"===k&&null!=j)&&"none"===r.css(a,"float")&&(i||(m.done(function(){o.display=j}),null==j&&(k=o.display,j="none"===k?"":k)),o.display="inline-block")),c.overflow&&(o.overflow="hidden",m.always(function(){o.overflow=c.overflow[0],o.overflowX=c.overflow[1],o.overflowY=c.overflow[2]})),i=!1;for(d in n)i||(q?"hidden"in q&&(p=q.hidden):q=V.access(a,"fxshow",{display:j}),f&&(q.hidden=!p),p&&ha([a],!0),m.done(function(){p||ha([a]),V.remove(a,"fxshow");for(d in n)r.style(a,d,n[d])})),i=eb(p?q[d]:0,d,m),d in q||(q[d]=i.start,p&&(i.end=i.start,i.start=0))}}function gb(a,b){var c,d,e,f,g;for(c in a)if(d=r.camelCase(c),e=b[d],f=a[c],r.isArray(f)&&(e=f[1],f=a[c]=f[0]),c!==d&&(a[d]=f,delete a[c]),g=r.cssHooks[d],g&&"expand"in g){f=g.expand(f),delete a[d];for(c in f)c in a||(a[c]=f[c],b[c]=e)}else b[d]=e}function hb(a,b,c){var d,e,f=0,g=hb.prefilters.length,h=r.Deferred().always(function(){delete i.elem}),i=function(){if(e)return!1;for(var b=Za||cb(),c=Math.max(0,j.startTime+j.duration-b),d=c/j.duration||0,f=1-d,g=0,i=j.tweens.length;g<i;g++)j.tweens[g].run(f);return h.notifyWith(a,[j,f,c]),f<1&&i?c:(h.resolveWith(a,[j]),!1)},j=h.promise({elem:a,props:r.extend({},b),opts:r.extend(!0,{specialEasing:{},easing:r.easing._default},c),originalProperties:b,originalOptions:c,startTime:Za||cb(),duration:c.duration,tweens:[],createTween:function(b,c){var d=r.Tween(a,j.opts,b,c,j.opts.specialEasing[b]||j.opts.easing);return j.tweens.push(d),d},stop:function(b){var c=0,d=b?j.tweens.length:0;if(e)return this;for(e=!0;c<d;c++)j.tweens[c].run(1);return b?(h.notifyWith(a,[j,1,0]),h.resolveWith(a,[j,b])):h.rejectWith(a,[j,b]),this}}),k=j.props;for(gb(k,j.opts.specialEasing);f<g;f++)if(d=hb.prefilters[f].call(j,a,k,j.opts))return r.isFunction(d.stop)&&(r._queueHooks(j.elem,j.opts.queue).stop=r.proxy(d.stop,d)),d;return r.map(k,eb,j),r.isFunction(j.opts.start)&&j.opts.start.call(a,j),r.fx.timer(r.extend(i,{elem:a,anim:j,queue:j.opts.queue})),j.progress(j.opts.progress).done(j.opts.done,j.opts.complete).fail(j.opts.fail).always(j.opts.always)}r.Animation=r.extend(hb,{tweeners:{"*":[function(a,b){var c=this.createTween(a,b);return ea(c.elem,a,aa.exec(b),c),c}]},tweener:function(a,b){r.isFunction(a)?(b=a,a=["*"]):a=a.match(K);for(var c,d=0,e=a.length;d<e;d++)c=a[d],hb.tweeners[c]=hb.tweeners[c]||[],hb.tweeners[c].unshift(b)},prefilters:[fb],prefilter:function(a,b){b?hb.prefilters.unshift(a):hb.prefilters.push(a)}}),r.speed=function(a,b,c){var e=a&&"object"==typeof a?r.extend({},a):{complete:c||!c&&b||r.isFunction(a)&&a,duration:a,easing:c&&b||b&&!r.isFunction(b)&&b};return r.fx.off||d.hidden?e.duration=0:"number"!=typeof e.duration&&(e.duration in r.fx.speeds?e.duration=r.fx.speeds[e.duration]:e.duration=r.fx.speeds._default),null!=e.queue&&e.queue!==!0||(e.queue="fx"),e.old=e.complete,e.complete=function(){r.isFunction(e.old)&&e.old.call(this),e.queue&&r.dequeue(this,e.queue)},e},r.fn.extend({fadeTo:function(a,b,c,d){return this.filter(ca).css("opacity",0).show().end().animate({opacity:b},a,c,d)},animate:function(a,b,c,d){var e=r.isEmptyObject(a),f=r.speed(b,c,d),g=function(){var b=hb(this,r.extend({},a),f);(e||V.get(this,"finish"))&&b.stop(!0)};return g.finish=g,e||f.queue===!1?this.each(g):this.queue(f.queue,g)},stop:function(a,b,c){var d=function(a){var b=a.stop;delete a.stop,b(c)};return"string"!=typeof a&&(c=b,b=a,a=void 0),b&&a!==!1&&this.queue(a||"fx",[]),this.each(function(){var b=!0,e=null!=a&&a+"queueHooks",f=r.timers,g=V.get(this);if(e)g[e]&&g[e].stop&&d(g[e]);else for(e in g)g[e]&&g[e].stop&&ab.test(e)&&d(g[e]);for(e=f.length;e--;)f[e].elem!==this||null!=a&&f[e].queue!==a||(f[e].anim.stop(c),b=!1,f.splice(e,1));!b&&c||r.dequeue(this,a)})},finish:function(a){return a!==!1&&(a=a||"fx"),this.each(function(){var b,c=V.get(this),d=c[a+"queue"],e=c[a+"queueHooks"],f=r.timers,g=d?d.length:0;for(c.finish=!0,r.queue(this,a,[]),e&&e.stop&&e.stop.call(this,!0),b=f.length;b--;)f[b].elem===this&&f[b].queue===a&&(f[b].anim.stop(!0),f.splice(b,1));for(b=0;b<g;b++)d[b]&&d[b].finish&&d[b].finish.call(this);delete c.finish})}}),r.each(["toggle","show","hide"],function(a,b){var c=r.fn[b];r.fn[b]=function(a,d,e){return null==a||"boolean"==typeof a?c.apply(this,arguments):this.animate(db(b,!0),a,d,e)}}),r.each({slideDown:db("show"),slideUp:db("hide"),slideToggle:db("toggle"),fadeIn:{opacity:"show"},fadeOut:{opacity:"hide"},fadeToggle:{opacity:"toggle"}},function(a,b){r.fn[a]=function(a,c,d){return this.animate(b,a,c,d)}}),r.timers=[],r.fx.tick=function(){var a,b=0,c=r.timers;for(Za=r.now();b<c.length;b++)a=c[b],a()||c[b]!==a||c.splice(b--,1);c.length||r.fx.stop(),Za=void 0},r.fx.timer=function(a){r.timers.push(a),a()?r.fx.start():r.timers.pop()},r.fx.interval=13,r.fx.start=function(){$a||($a=a.requestAnimationFrame?a.requestAnimationFrame(bb):a.setInterval(r.fx.tick,r.fx.interval))},r.fx.stop=function(){a.cancelAnimationFrame?a.cancelAnimationFrame($a):a.clearInterval($a),$a=null},r.fx.speeds={slow:600,fast:200,_default:400},r.fn.delay=function(b,c){return b=r.fx?r.fx.speeds[b]||b:b,c=c||"fx",this.queue(c,function(c,d){var e=a.setTimeout(c,b);d.stop=function(){a.clearTimeout(e)}})},function(){var a=d.createElement("input"),b=d.createElement("select"),c=b.appendChild(d.createElement("option"));a.type="checkbox",o.checkOn=""!==a.value,o.optSelected=c.selected,a=d.createElement("input"),a.value="t",a.type="radio",o.radioValue="t"===a.value}();var ib,jb=r.expr.attrHandle;r.fn.extend({attr:function(a,b){return S(this,r.attr,a,b,arguments.length>1)},removeAttr:function(a){return this.each(function(){r.removeAttr(this,a)})}}),r.extend({attr:function(a,b,c){var d,e,f=a.nodeType;if(3!==f&&8!==f&&2!==f)return"undefined"==typeof a.getAttribute?r.prop(a,b,c):(1===f&&r.isXMLDoc(a)||(e=r.attrHooks[b.toLowerCase()]||(r.expr.match.bool.test(b)?ib:void 0)),
@@ -5660,7 +5660,7 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.getSetObserver = exports.BindingEngine = exports.NameExpression = exports.Listener = exports.ListenerExpression = exports.BindingBehaviorResource = exports.ValueConverterResource = exports.Call = exports.CallExpression = exports.Binding = exports.BindingExpression = exports.ObjectObservationAdapter = exports.ObserverLocator = exports.SVGAnalyzer = exports.presentationAttributes = exports.presentationElements = exports.elements = exports.ComputedExpression = exports.ClassObserver = exports.SelectValueObserver = exports.CheckedObserver = exports.ValueAttributeObserver = exports.StyleObserver = exports.DataAttributeObserver = exports.dataAttributeAccessor = exports.XLinkAttributeObserver = exports.SetterObserver = exports.PrimitiveObserver = exports.propertyAccessor = exports.DirtyCheckProperty = exports.DirtyChecker = exports.EventManager = exports.delegationStrategy = exports.getMapObserver = exports.ParserImplementation = exports.Parser = exports.Scanner = exports.Lexer = exports.Token = exports.bindingMode = exports.ExpressionCloner = exports.Unparser = exports.LiteralObject = exports.LiteralArray = exports.LiteralString = exports.LiteralPrimitive = exports.PrefixNot = exports.Binary = exports.CallFunction = exports.CallMember = exports.CallScope = exports.AccessKeyed = exports.AccessMember = exports.AccessScope = exports.AccessThis = exports.Conditional = exports.Assign = exports.ValueConverter = exports.BindingBehavior = exports.Chain = exports.Expression = exports.getArrayObserver = exports.CollectionLengthObserver = exports.ModifyCollectionObserver = exports.ExpressionObserver = exports.sourceContext = exports.targetContext = undefined;
+  exports.getSetObserver = exports.BindingEngine = exports.NameExpression = exports.Listener = exports.ListenerExpression = exports.BindingBehaviorResource = exports.ValueConverterResource = exports.Call = exports.CallExpression = exports.Binding = exports.BindingExpression = exports.ObjectObservationAdapter = exports.ObserverLocator = exports.SVGAnalyzer = exports.presentationAttributes = exports.presentationElements = exports.elements = exports.ComputedExpression = exports.ClassObserver = exports.SelectValueObserver = exports.CheckedObserver = exports.ValueAttributeObserver = exports.StyleObserver = exports.DataAttributeObserver = exports.dataAttributeAccessor = exports.XLinkAttributeObserver = exports.SetterObserver = exports.PrimitiveObserver = exports.propertyAccessor = exports.DirtyCheckProperty = exports.DirtyChecker = exports.EventSubscriber = exports.EventManager = exports.delegationStrategy = exports.getMapObserver = exports.ParserImplementation = exports.Parser = exports.Scanner = exports.Lexer = exports.Token = exports.bindingMode = exports.ExpressionCloner = exports.Unparser = exports.LiteralObject = exports.LiteralArray = exports.LiteralString = exports.LiteralPrimitive = exports.PrefixNot = exports.Binary = exports.CallFunction = exports.CallMember = exports.CallScope = exports.AccessKeyed = exports.AccessMember = exports.AccessScope = exports.AccessThis = exports.Conditional = exports.Assign = exports.ValueConverter = exports.BindingBehavior = exports.Chain = exports.Expression = exports.getArrayObserver = exports.CollectionLengthObserver = exports.ModifyCollectionObserver = exports.ExpressionObserver = exports.sourceContext = exports.targetContext = undefined;
   exports.camelCase = camelCase;
   exports.createOverrideContext = createOverrideContext;
   exports.getContextFor = getContextFor;
@@ -5705,7 +5705,7 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
   var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
     return typeof obj;
   } : function (obj) {
-    return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
+    return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
   };
 
   var _createClass = function () {
@@ -7725,7 +7725,7 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
       Unparser.prototype.visitChain = function visitChain(chain) {
         var expressions = chain.expressions;
 
-        for (var _i16 = 0, length = expression.length; _i16 < length; ++_i16) {
+        for (var _i16 = 0, length = expressions.length; _i16 < length; ++_i16) {
           if (_i16 !== 0) {
             this.write(';');
           }
@@ -8276,7 +8276,7 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
     };
 
     Scanner.prototype.error = function error(message) {
-      var offset = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+      var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
       var position = this.index + offset;
       throw new Error('Lexer Error: ' + message + ' at column ' + position + ' in expression [' + this.input + ']');
@@ -8517,9 +8517,9 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
       while (this.peek.text === '=') {
         if (!result.isAssignable) {
           var end = this.index < this.tokens.length ? this.peek.index : this.input.length;
-          var _expression = this.input.substring(start, end);
+          var expression = this.input.substring(start, end);
 
-          this.error('Expression ' + _expression + ' is not assignable');
+          this.error('Expression ' + expression + ' is not assignable');
         }
 
         this.expect('=');
@@ -8538,9 +8538,9 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
 
         if (!this.optional(':')) {
           var end = this.index < this.tokens.length ? this.peek.index : this.input.length;
-          var _expression2 = this.input.substring(start, end);
+          var expression = this.input.substring(start, end);
 
-          this.error('Conditional expression ' + _expression2 + ' requires all 3 expressions');
+          this.error('Conditional expression ' + expression + ' requires all 3 expressions');
         }
 
         var no = this.parseExpression();
@@ -8700,9 +8700,9 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
       } else if (this.optional('false')) {
         return new LiteralPrimitive(false);
       } else if (this.optional('[')) {
-        var elements = this.parseExpressionList(']');
+        var _elements = this.parseExpressionList(']');
         this.expect(']');
-        return new LiteralArray(elements);
+        return new LiteralArray(_elements);
       } else if (this.peek.text === '{') {
         return this.parseObject();
       } else if (this.peek.key !== null && this.peek.key !== undefined) {
@@ -8920,13 +8920,7 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
     this.propagationStopped = true;
   }
 
-  function interceptStopPropagation(event) {
-    event.standardStopPropagation = event.stopPropagation;
-    event.stopPropagation = stopPropagation;
-  }
-
   function handleCapturedEvent(event) {
-    var interceptInstalled = false;
     event.propagationStopped = false;
     var target = findOriginalEventTarget(event);
 
@@ -8936,24 +8930,21 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
       if (target.capturedCallbacks) {
         var callback = target.capturedCallbacks[event.type];
         if (callback) {
-          if (!interceptInstalled) {
-            interceptStopPropagation(event);
-            interceptInstalled = true;
+          if (event.stopPropagation !== stopPropagation) {
+            event.standardStopPropagation = event.stopPropagation;
+            event.stopPropagation = stopPropagation;
           }
           orderedCallbacks.push(callback);
         }
       }
       target = target.parentNode;
     }
-    for (var _i22 = orderedCallbacks.length - 1; _i22 >= 0; _i22--) {
+    for (var _i22 = orderedCallbacks.length - 1; _i22 >= 0 && !event.propagationStopped; _i22--) {
       var orderedCallback = orderedCallbacks[_i22];
       if ('handleEvent' in orderedCallback) {
         orderedCallback.handleEvent(event);
       } else {
         orderedCallback(event);
-      }
-      if (event.propagationStopped) {
-        break;
       }
     }
   }
@@ -8986,7 +8977,6 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
   }();
 
   function handleDelegatedEvent(event) {
-    var interceptInstalled = false;
     event.propagationStopped = false;
     var target = findOriginalEventTarget(event);
 
@@ -8994,9 +8984,9 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
       if (target.delegatedCallbacks) {
         var callback = target.delegatedCallbacks[event.type];
         if (callback) {
-          if (!interceptInstalled) {
-            interceptStopPropagation(event);
-            interceptInstalled = true;
+          if (event.stopPropagation !== stopPropagation) {
+            event.standardStopPropagation = event.stopPropagation;
+            event.stopPropagation = stopPropagation;
           }
           if ('handleEvent' in callback) {
             callback.handleEvent(event);
@@ -9030,11 +9020,46 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
       this.count--;
 
       if (this.count === 0) {
-        _aureliaPal.DOM.removeEventListener(this.eventName, handleDelegatedEvent);
+        _aureliaPal.DOM.removeEventListener(this.eventName, handleDelegatedEvent, false);
       }
     };
 
     return DelegateHandlerEntry;
+  }();
+
+  var DelegationEntryHandler = function () {
+    function DelegationEntryHandler(entry, lookup, targetEvent) {
+      
+
+      this.entry = entry;
+      this.lookup = lookup;
+      this.targetEvent = targetEvent;
+    }
+
+    DelegationEntryHandler.prototype.dispose = function dispose() {
+      this.entry.decrement();
+      this.lookup[this.targetEvent] = null;
+      this.entry = this.lookup = this.targetEvent = null;
+    };
+
+    return DelegationEntryHandler;
+  }();
+
+  var EventHandler = function () {
+    function EventHandler(target, targetEvent, callback) {
+      
+
+      this.target = target;
+      this.targetEvent = targetEvent;
+      this.callback = callback;
+    }
+
+    EventHandler.prototype.dispose = function dispose() {
+      this.target.removeEventListener(this.targetEvent, this.callback);
+      this.target = this.targetEvent = this.callback = null;
+    };
+
+    return EventHandler;
   }();
 
   var DefaultEventStrategy = function () {
@@ -9045,53 +9070,51 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
       this.capturedHandlers = {};
     }
 
-    DefaultEventStrategy.prototype.subscribe = function subscribe(target, targetEvent, callback, strategy) {
-      var _this22 = this;
-
+    DefaultEventStrategy.prototype.subscribe = function subscribe(target, targetEvent, callback, strategy, disposable) {
       var delegatedHandlers = void 0;
       var capturedHandlers = void 0;
       var handlerEntry = void 0;
 
       if (strategy === delegationStrategy.bubbling) {
-        var _ret = function () {
-          delegatedHandlers = _this22.delegatedHandlers;
-          handlerEntry = delegatedHandlers[targetEvent] || (delegatedHandlers[targetEvent] = new DelegateHandlerEntry(targetEvent));
-          var delegatedCallbacks = target.delegatedCallbacks || (target.delegatedCallbacks = {});
+        delegatedHandlers = this.delegatedHandlers;
+        handlerEntry = delegatedHandlers[targetEvent] || (delegatedHandlers[targetEvent] = new DelegateHandlerEntry(targetEvent));
+        var delegatedCallbacks = target.delegatedCallbacks || (target.delegatedCallbacks = {});
 
-          handlerEntry.increment();
-          delegatedCallbacks[targetEvent] = callback;
+        handlerEntry.increment();
+        delegatedCallbacks[targetEvent] = callback;
 
-          return {
-            v: function v() {
-              handlerEntry.decrement();
-              delegatedCallbacks[targetEvent] = null;
-            }
-          };
-        }();
+        if (disposable === true) {
+          return new DelegationEntryHandler(handlerEntry, delegatedCallbacks, targetEvent);
+        }
 
-        if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+        return function () {
+          handlerEntry.decrement();
+          delegatedCallbacks[targetEvent] = null;
+        };
       }
       if (strategy === delegationStrategy.capturing) {
-        var _ret2 = function () {
-          capturedHandlers = _this22.capturedHandlers;
-          handlerEntry = capturedHandlers[targetEvent] || (capturedHandlers[targetEvent] = new CapturedHandlerEntry(targetEvent));
-          var capturedCallbacks = target.capturedCallbacks || (target.capturedCallbacks = {});
+        capturedHandlers = this.capturedHandlers;
+        handlerEntry = capturedHandlers[targetEvent] || (capturedHandlers[targetEvent] = new CapturedHandlerEntry(targetEvent));
+        var capturedCallbacks = target.capturedCallbacks || (target.capturedCallbacks = {});
 
-          handlerEntry.increment();
-          capturedCallbacks[targetEvent] = callback;
+        handlerEntry.increment();
+        capturedCallbacks[targetEvent] = callback;
 
-          return {
-            v: function v() {
-              handlerEntry.decrement();
-              capturedCallbacks[targetEvent] = null;
-            }
-          };
-        }();
+        if (disposable === true) {
+          return new DelegationEntryHandler(handlerEntry, capturedCallbacks, targetEvent);
+        }
 
-        if ((typeof _ret2 === 'undefined' ? 'undefined' : _typeof(_ret2)) === "object") return _ret2.v;
+        return function () {
+          handlerEntry.decrement();
+          capturedCallbacks[targetEvent] = null;
+        };
       }
 
-      target.addEventListener(targetEvent, callback, false);
+      target.addEventListener(targetEvent, callback);
+
+      if (disposable === true) {
+        return new EventHandler(target, targetEvent, callback);
+      }
 
       return function () {
         target.removeEventListener(targetEvent, callback);
@@ -9160,37 +9183,13 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
       var properties = config.properties;
       var propertyName = void 0;
 
-      this.elementHandlerLookup[tagName] = {};
+      var lookup = this.elementHandlerLookup[tagName] = {};
 
       for (propertyName in properties) {
         if (properties.hasOwnProperty(propertyName)) {
-          this.registerElementPropertyConfig(tagName, propertyName, properties[propertyName]);
+          lookup[propertyName] = properties[propertyName];
         }
       }
-    };
-
-    EventManager.prototype.registerElementPropertyConfig = function registerElementPropertyConfig(tagName, propertyName, events) {
-      this.elementHandlerLookup[tagName][propertyName] = this.createElementHandler(events);
-    };
-
-    EventManager.prototype.createElementHandler = function createElementHandler(events) {
-      return {
-        subscribe: function subscribe(target, callbackOrListener) {
-          events.forEach(function (changeEvent) {
-            target.addEventListener(changeEvent, callbackOrListener, false);
-          });
-
-          return function () {
-            events.forEach(function (changeEvent) {
-              target.removeEventListener(changeEvent, callbackOrListener, false);
-            });
-          };
-        }
-      };
-    };
-
-    EventManager.prototype.registerElementHandler = function registerElementHandler(tagName, handler) {
-      this.elementHandlerLookup[tagName.toLowerCase()] = handler;
     };
 
     EventManager.prototype.registerEventStrategy = function registerEventStrategy(eventName, strategy) {
@@ -9205,26 +9204,61 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
         tagName = target.tagName.toLowerCase();
 
         if (lookup[tagName] && lookup[tagName][propertyName]) {
-          return lookup[tagName][propertyName];
+          return new EventSubscriber(lookup[tagName][propertyName]);
         }
 
         if (propertyName === 'textContent' || propertyName === 'innerHTML') {
-          return lookup['content editable'].value;
+          return new EventSubscriber(lookup['content editable'].value);
         }
 
         if (propertyName === 'scrollTop' || propertyName === 'scrollLeft') {
-          return lookup['scrollable element'][propertyName];
+          return new EventSubscriber(lookup['scrollable element'][propertyName]);
         }
       }
 
       return null;
     };
 
-    EventManager.prototype.addEventListener = function addEventListener(target, targetEvent, callbackOrListener, delegate) {
-      return (this.eventStrategyLookup[targetEvent] || this.defaultEventStrategy).subscribe(target, targetEvent, callbackOrListener, delegate);
+    EventManager.prototype.addEventListener = function addEventListener(target, targetEvent, callbackOrListener, delegate, disposable) {
+      return (this.eventStrategyLookup[targetEvent] || this.defaultEventStrategy).subscribe(target, targetEvent, callbackOrListener, delegate, disposable);
     };
 
     return EventManager;
+  }();
+
+  var EventSubscriber = exports.EventSubscriber = function () {
+    function EventSubscriber(events) {
+      
+
+      this.events = events;
+      this.element = null;
+      this.handler = null;
+    }
+
+    EventSubscriber.prototype.subscribe = function subscribe(element, callbackOrListener) {
+      this.element = element;
+      this.handler = callbackOrListener;
+
+      var events = this.events;
+      for (var _i23 = 0, ii = events.length; ii > _i23; ++_i23) {
+        element.addEventListener(events[_i23], callbackOrListener);
+      }
+    };
+
+    EventSubscriber.prototype.dispose = function dispose() {
+      if (this.element === null) {
+        return;
+      }
+      var element = this.element;
+      var callbackOrListener = this.handler;
+      var events = this.events;
+      for (var _i24 = 0, ii = events.length; ii > _i24; ++_i24) {
+        element.removeEventListener(events[_i24], callbackOrListener);
+      }
+      this.element = this.handler = null;
+    };
+
+    return EventSubscriber;
   }();
 
   var DirtyChecker = exports.DirtyChecker = function () {
@@ -9251,10 +9285,10 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
     };
 
     DirtyChecker.prototype.scheduleDirtyCheck = function scheduleDirtyCheck() {
-      var _this23 = this;
+      var _this22 = this;
 
       setTimeout(function () {
-        return _this23.check();
+        return _this22.check();
       }, this.checkDelay);
     };
 
@@ -9624,7 +9658,7 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
     ValueAttributeObserver.prototype.subscribe = function subscribe(context, callable) {
       if (!this.hasSubscribers()) {
         this.oldValue = this.getValue();
-        this.disposeHandler = this.handler.subscribe(this.element, this);
+        this.handler.subscribe(this.element, this);
       }
 
       this.addSubscriber(context, callable);
@@ -9632,8 +9666,7 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
 
     ValueAttributeObserver.prototype.unsubscribe = function unsubscribe(context, callable) {
       if (this.removeSubscriber(context, callable) && !this.hasSubscribers()) {
-        this.disposeHandler();
-        this.disposeHandler = null;
+        this.handler.dispose();
       }
     };
 
@@ -9760,15 +9793,14 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
 
     CheckedObserver.prototype.subscribe = function subscribe(context, callable) {
       if (!this.hasSubscribers()) {
-        this.disposeHandler = this.handler.subscribe(this.element, this);
+        this.handler.subscribe(this.element, this);
       }
       this.addSubscriber(context, callable);
     };
 
     CheckedObserver.prototype.unsubscribe = function unsubscribe(context, callable) {
       if (this.removeSubscriber(context, callable) && !this.hasSubscribers()) {
-        this.disposeHandler();
-        this.disposeHandler = null;
+        this.handler.dispose();
       }
     };
 
@@ -9861,21 +9893,21 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
       };
 
       while (i--) {
-        var _ret3 = _loop();
+        var _ret = _loop();
 
-        if (_ret3 === 'continue') continue;
+        if (_ret === 'continue') continue;
       }
     };
 
     SelectValueObserver.prototype.synchronizeValue = function synchronizeValue() {
-      var _this24 = this;
+      var _this23 = this;
 
       var options = this.element.options;
       var count = 0;
       var value = [];
 
-      for (var _i23 = 0, ii = options.length; _i23 < ii; _i23++) {
-        var _option = options.item(_i23);
+      for (var _i25 = 0, ii = options.length; _i25 < ii; _i25++) {
+        var _option = options.item(_i25);
         if (!_option.selected) {
           continue;
         }
@@ -9885,25 +9917,25 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
 
       if (this.element.multiple) {
         if (Array.isArray(this.value)) {
-          var _ret4 = function () {
-            var matcher = _this24.element.matcher || function (a, b) {
+          var _ret2 = function () {
+            var matcher = _this23.element.matcher || function (a, b) {
               return a === b;
             };
 
             var i = 0;
 
             var _loop2 = function _loop2() {
-              var a = _this24.value[i];
+              var a = _this23.value[i];
               if (value.findIndex(function (b) {
                 return matcher(a, b);
               }) === -1) {
-                _this24.value.splice(i, 1);
+                _this23.value.splice(i, 1);
               } else {
                 i++;
               }
             };
 
-            while (i < _this24.value.length) {
+            while (i < _this23.value.length) {
               _loop2();
             }
 
@@ -9911,10 +9943,10 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
 
             var _loop3 = function _loop3() {
               var a = value[i];
-              if (_this24.value.findIndex(function (b) {
+              if (_this23.value.findIndex(function (b) {
                 return matcher(a, b);
               }) === -1) {
-                _this24.value.push(a);
+                _this23.value.push(a);
               }
               i++;
             };
@@ -9927,7 +9959,7 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
             };
           }();
 
-          if ((typeof _ret4 === 'undefined' ? 'undefined' : _typeof(_ret4)) === "object") return _ret4.v;
+          if ((typeof _ret2 === 'undefined' ? 'undefined' : _typeof(_ret2)) === "object") return _ret2.v;
         }
       } else {
         if (count === 0) {
@@ -9957,24 +9989,23 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
 
     SelectValueObserver.prototype.subscribe = function subscribe(context, callable) {
       if (!this.hasSubscribers()) {
-        this.disposeHandler = this.handler.subscribe(this.element, this);
+        this.handler.subscribe(this.element, this);
       }
       this.addSubscriber(context, callable);
     };
 
     SelectValueObserver.prototype.unsubscribe = function unsubscribe(context, callable) {
       if (this.removeSubscriber(context, callable) && !this.hasSubscribers()) {
-        this.disposeHandler();
-        this.disposeHandler = null;
+        this.handler.dispose();
       }
     };
 
     SelectValueObserver.prototype.bind = function bind() {
-      var _this25 = this;
+      var _this24 = this;
 
       this.domObserver = _aureliaPal.DOM.createMutationObserver(function () {
-        _this25.synchronizeOptions();
-        _this25.synchronizeValue();
+        _this24.synchronizeOptions();
+        _this24.synchronizeValue();
       });
       this.domObserver.observe(this.element, { childList: true, subtree: true });
     };
@@ -10014,8 +10045,8 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
 
       if (newValue !== null && newValue !== undefined && newValue.length) {
         names = newValue.split(/\s+/);
-        for (var _i24 = 0, length = names.length; _i24 < length; _i24++) {
-          name = names[_i24];
+        for (var _i26 = 0, length = names.length; _i26 < length; _i26++) {
+          name = names[_i26];
           if (name === '') {
             continue;
           }
@@ -10074,12 +10105,12 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
     function ComputedExpression(name, dependencies) {
       
 
-      var _this26 = _possibleConstructorReturn(this, _Expression19.call(this));
+      var _this25 = _possibleConstructorReturn(this, _Expression19.call(this));
 
-      _this26.name = name;
-      _this26.dependencies = dependencies;
-      _this26.isAssignable = true;
-      return _this26;
+      _this25.name = name;
+      _this25.dependencies = dependencies;
+      _this25.isAssignable = true;
+      return _this25;
     }
 
     ComputedExpression.prototype.evaluate = function evaluate(scope, lookupFunctions) {
@@ -10108,9 +10139,9 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
   function createComputedObserver(obj, propertyName, descriptor, observerLocator) {
     var dependencies = descriptor.get.dependencies;
     if (!(dependencies instanceof ComputedExpression)) {
-      var _i25 = dependencies.length;
-      while (_i25--) {
-        dependencies[_i25] = observerLocator.parser.parse(dependencies[_i25]);
+      var _i27 = dependencies.length;
+      while (_i27--) {
+        dependencies[_i27] = observerLocator.parser.parse(dependencies[_i27]);
       }
       dependencies = descriptor.get.dependencies = new ComputedExpression(propertyName, dependencies);
     }
@@ -10125,236 +10156,234 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
   var svgAnalyzer = void 0;
 
   if (typeof FEATURE_NO_SVG === 'undefined') {
-    (function () {
-      svgElements = {
-        a: ['class', 'externalResourcesRequired', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'target', 'transform', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space'],
-        altGlyph: ['class', 'dx', 'dy', 'externalResourcesRequired', 'format', 'glyphRef', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'rotate', 'style', 'systemLanguage', 'x', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        altGlyphDef: ['id', 'xml:base', 'xml:lang', 'xml:space'],
-        altGlyphItem: ['id', 'xml:base', 'xml:lang', 'xml:space'],
-        animate: ['accumulate', 'additive', 'attributeName', 'attributeType', 'begin', 'by', 'calcMode', 'dur', 'end', 'externalResourcesRequired', 'fill', 'from', 'id', 'keySplines', 'keyTimes', 'max', 'min', 'onbegin', 'onend', 'onload', 'onrepeat', 'repeatCount', 'repeatDur', 'requiredExtensions', 'requiredFeatures', 'restart', 'systemLanguage', 'to', 'values', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space'],
-        animateColor: ['accumulate', 'additive', 'attributeName', 'attributeType', 'begin', 'by', 'calcMode', 'dur', 'end', 'externalResourcesRequired', 'fill', 'from', 'id', 'keySplines', 'keyTimes', 'max', 'min', 'onbegin', 'onend', 'onload', 'onrepeat', 'repeatCount', 'repeatDur', 'requiredExtensions', 'requiredFeatures', 'restart', 'systemLanguage', 'to', 'values', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space'],
-        animateMotion: ['accumulate', 'additive', 'begin', 'by', 'calcMode', 'dur', 'end', 'externalResourcesRequired', 'fill', 'from', 'id', 'keyPoints', 'keySplines', 'keyTimes', 'max', 'min', 'onbegin', 'onend', 'onload', 'onrepeat', 'origin', 'path', 'repeatCount', 'repeatDur', 'requiredExtensions', 'requiredFeatures', 'restart', 'rotate', 'systemLanguage', 'to', 'values', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space'],
-        animateTransform: ['accumulate', 'additive', 'attributeName', 'attributeType', 'begin', 'by', 'calcMode', 'dur', 'end', 'externalResourcesRequired', 'fill', 'from', 'id', 'keySplines', 'keyTimes', 'max', 'min', 'onbegin', 'onend', 'onload', 'onrepeat', 'repeatCount', 'repeatDur', 'requiredExtensions', 'requiredFeatures', 'restart', 'systemLanguage', 'to', 'type', 'values', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space'],
-        circle: ['class', 'cx', 'cy', 'externalResourcesRequired', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'r', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'transform', 'xml:base', 'xml:lang', 'xml:space'],
-        clipPath: ['class', 'clipPathUnits', 'externalResourcesRequired', 'id', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'transform', 'xml:base', 'xml:lang', 'xml:space'],
-        'color-profile': ['id', 'local', 'name', 'rendering-intent', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space'],
-        cursor: ['externalResourcesRequired', 'id', 'requiredExtensions', 'requiredFeatures', 'systemLanguage', 'x', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        defs: ['class', 'externalResourcesRequired', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'transform', 'xml:base', 'xml:lang', 'xml:space'],
-        desc: ['class', 'id', 'style', 'xml:base', 'xml:lang', 'xml:space'],
-        ellipse: ['class', 'cx', 'cy', 'externalResourcesRequired', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'rx', 'ry', 'style', 'systemLanguage', 'transform', 'xml:base', 'xml:lang', 'xml:space'],
-        feBlend: ['class', 'height', 'id', 'in', 'in2', 'mode', 'result', 'style', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        feColorMatrix: ['class', 'height', 'id', 'in', 'result', 'style', 'type', 'values', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        feComponentTransfer: ['class', 'height', 'id', 'in', 'result', 'style', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        feComposite: ['class', 'height', 'id', 'in', 'in2', 'k1', 'k2', 'k3', 'k4', 'operator', 'result', 'style', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        feConvolveMatrix: ['bias', 'class', 'divisor', 'edgeMode', 'height', 'id', 'in', 'kernelMatrix', 'kernelUnitLength', 'order', 'preserveAlpha', 'result', 'style', 'targetX', 'targetY', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        feDiffuseLighting: ['class', 'diffuseConstant', 'height', 'id', 'in', 'kernelUnitLength', 'result', 'style', 'surfaceScale', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        feDisplacementMap: ['class', 'height', 'id', 'in', 'in2', 'result', 'scale', 'style', 'width', 'x', 'xChannelSelector', 'xml:base', 'xml:lang', 'xml:space', 'y', 'yChannelSelector'],
-        feDistantLight: ['azimuth', 'elevation', 'id', 'xml:base', 'xml:lang', 'xml:space'],
-        feFlood: ['class', 'height', 'id', 'result', 'style', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        feFuncA: ['amplitude', 'exponent', 'id', 'intercept', 'offset', 'slope', 'tableValues', 'type', 'xml:base', 'xml:lang', 'xml:space'],
-        feFuncB: ['amplitude', 'exponent', 'id', 'intercept', 'offset', 'slope', 'tableValues', 'type', 'xml:base', 'xml:lang', 'xml:space'],
-        feFuncG: ['amplitude', 'exponent', 'id', 'intercept', 'offset', 'slope', 'tableValues', 'type', 'xml:base', 'xml:lang', 'xml:space'],
-        feFuncR: ['amplitude', 'exponent', 'id', 'intercept', 'offset', 'slope', 'tableValues', 'type', 'xml:base', 'xml:lang', 'xml:space'],
-        feGaussianBlur: ['class', 'height', 'id', 'in', 'result', 'stdDeviation', 'style', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        feImage: ['class', 'externalResourcesRequired', 'height', 'id', 'preserveAspectRatio', 'result', 'style', 'width', 'x', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        feMerge: ['class', 'height', 'id', 'result', 'style', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        feMergeNode: ['id', 'xml:base', 'xml:lang', 'xml:space'],
-        feMorphology: ['class', 'height', 'id', 'in', 'operator', 'radius', 'result', 'style', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        feOffset: ['class', 'dx', 'dy', 'height', 'id', 'in', 'result', 'style', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        fePointLight: ['id', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y', 'z'],
-        feSpecularLighting: ['class', 'height', 'id', 'in', 'kernelUnitLength', 'result', 'specularConstant', 'specularExponent', 'style', 'surfaceScale', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        feSpotLight: ['id', 'limitingConeAngle', 'pointsAtX', 'pointsAtY', 'pointsAtZ', 'specularExponent', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y', 'z'],
-        feTile: ['class', 'height', 'id', 'in', 'result', 'style', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        feTurbulence: ['baseFrequency', 'class', 'height', 'id', 'numOctaves', 'result', 'seed', 'stitchTiles', 'style', 'type', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        filter: ['class', 'externalResourcesRequired', 'filterRes', 'filterUnits', 'height', 'id', 'primitiveUnits', 'style', 'width', 'x', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        font: ['class', 'externalResourcesRequired', 'horiz-adv-x', 'horiz-origin-x', 'horiz-origin-y', 'id', 'style', 'vert-adv-y', 'vert-origin-x', 'vert-origin-y', 'xml:base', 'xml:lang', 'xml:space'],
-        'font-face': ['accent-height', 'alphabetic', 'ascent', 'bbox', 'cap-height', 'descent', 'font-family', 'font-size', 'font-stretch', 'font-style', 'font-variant', 'font-weight', 'hanging', 'id', 'ideographic', 'mathematical', 'overline-position', 'overline-thickness', 'panose-1', 'slope', 'stemh', 'stemv', 'strikethrough-position', 'strikethrough-thickness', 'underline-position', 'underline-thickness', 'unicode-range', 'units-per-em', 'v-alphabetic', 'v-hanging', 'v-ideographic', 'v-mathematical', 'widths', 'x-height', 'xml:base', 'xml:lang', 'xml:space'],
-        'font-face-format': ['id', 'string', 'xml:base', 'xml:lang', 'xml:space'],
-        'font-face-name': ['id', 'name', 'xml:base', 'xml:lang', 'xml:space'],
-        'font-face-src': ['id', 'xml:base', 'xml:lang', 'xml:space'],
-        'font-face-uri': ['id', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space'],
-        foreignObject: ['class', 'externalResourcesRequired', 'height', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'transform', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        g: ['class', 'externalResourcesRequired', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'transform', 'xml:base', 'xml:lang', 'xml:space'],
-        glyph: ['arabic-form', 'class', 'd', 'glyph-name', 'horiz-adv-x', 'id', 'lang', 'orientation', 'style', 'unicode', 'vert-adv-y', 'vert-origin-x', 'vert-origin-y', 'xml:base', 'xml:lang', 'xml:space'],
-        glyphRef: ['class', 'dx', 'dy', 'format', 'glyphRef', 'id', 'style', 'x', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        hkern: ['g1', 'g2', 'id', 'k', 'u1', 'u2', 'xml:base', 'xml:lang', 'xml:space'],
-        image: ['class', 'externalResourcesRequired', 'height', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'preserveAspectRatio', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'transform', 'width', 'x', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        line: ['class', 'externalResourcesRequired', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'transform', 'x1', 'x2', 'xml:base', 'xml:lang', 'xml:space', 'y1', 'y2'],
-        linearGradient: ['class', 'externalResourcesRequired', 'gradientTransform', 'gradientUnits', 'id', 'spreadMethod', 'style', 'x1', 'x2', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space', 'y1', 'y2'],
-        marker: ['class', 'externalResourcesRequired', 'id', 'markerHeight', 'markerUnits', 'markerWidth', 'orient', 'preserveAspectRatio', 'refX', 'refY', 'style', 'viewBox', 'xml:base', 'xml:lang', 'xml:space'],
-        mask: ['class', 'externalResourcesRequired', 'height', 'id', 'maskContentUnits', 'maskUnits', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        metadata: ['id', 'xml:base', 'xml:lang', 'xml:space'],
-        'missing-glyph': ['class', 'd', 'horiz-adv-x', 'id', 'style', 'vert-adv-y', 'vert-origin-x', 'vert-origin-y', 'xml:base', 'xml:lang', 'xml:space'],
-        mpath: ['externalResourcesRequired', 'id', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space'],
-        path: ['class', 'd', 'externalResourcesRequired', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'pathLength', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'transform', 'xml:base', 'xml:lang', 'xml:space'],
-        pattern: ['class', 'externalResourcesRequired', 'height', 'id', 'patternContentUnits', 'patternTransform', 'patternUnits', 'preserveAspectRatio', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'viewBox', 'width', 'x', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        polygon: ['class', 'externalResourcesRequired', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'points', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'transform', 'xml:base', 'xml:lang', 'xml:space'],
-        polyline: ['class', 'externalResourcesRequired', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'points', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'transform', 'xml:base', 'xml:lang', 'xml:space'],
-        radialGradient: ['class', 'cx', 'cy', 'externalResourcesRequired', 'fx', 'fy', 'gradientTransform', 'gradientUnits', 'id', 'r', 'spreadMethod', 'style', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space'],
-        rect: ['class', 'externalResourcesRequired', 'height', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'rx', 'ry', 'style', 'systemLanguage', 'transform', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        script: ['externalResourcesRequired', 'id', 'type', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space'],
-        set: ['attributeName', 'attributeType', 'begin', 'dur', 'end', 'externalResourcesRequired', 'fill', 'id', 'max', 'min', 'onbegin', 'onend', 'onload', 'onrepeat', 'repeatCount', 'repeatDur', 'requiredExtensions', 'requiredFeatures', 'restart', 'systemLanguage', 'to', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space'],
-        stop: ['class', 'id', 'offset', 'style', 'xml:base', 'xml:lang', 'xml:space'],
-        style: ['id', 'media', 'title', 'type', 'xml:base', 'xml:lang', 'xml:space'],
-        svg: ['baseProfile', 'class', 'contentScriptType', 'contentStyleType', 'externalResourcesRequired', 'height', 'id', 'onabort', 'onactivate', 'onclick', 'onerror', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'onresize', 'onscroll', 'onunload', 'onzoom', 'preserveAspectRatio', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'version', 'viewBox', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y', 'zoomAndPan'],
-        switch: ['class', 'externalResourcesRequired', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'transform', 'xml:base', 'xml:lang', 'xml:space'],
-        symbol: ['class', 'externalResourcesRequired', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'preserveAspectRatio', 'style', 'viewBox', 'xml:base', 'xml:lang', 'xml:space'],
-        text: ['class', 'dx', 'dy', 'externalResourcesRequired', 'id', 'lengthAdjust', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'rotate', 'style', 'systemLanguage', 'textLength', 'transform', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        textPath: ['class', 'externalResourcesRequired', 'id', 'lengthAdjust', 'method', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'spacing', 'startOffset', 'style', 'systemLanguage', 'textLength', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space'],
-        title: ['class', 'id', 'style', 'xml:base', 'xml:lang', 'xml:space'],
-        tref: ['class', 'dx', 'dy', 'externalResourcesRequired', 'id', 'lengthAdjust', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'rotate', 'style', 'systemLanguage', 'textLength', 'x', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        tspan: ['class', 'dx', 'dy', 'externalResourcesRequired', 'id', 'lengthAdjust', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'rotate', 'style', 'systemLanguage', 'textLength', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        use: ['class', 'externalResourcesRequired', 'height', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'transform', 'width', 'x', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space', 'y'],
-        view: ['externalResourcesRequired', 'id', 'preserveAspectRatio', 'viewBox', 'viewTarget', 'xml:base', 'xml:lang', 'xml:space', 'zoomAndPan'],
-        vkern: ['g1', 'g2', 'id', 'k', 'u1', 'u2', 'xml:base', 'xml:lang', 'xml:space']
-      };
+    svgElements = {
+      a: ['class', 'externalResourcesRequired', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'target', 'transform', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space'],
+      altGlyph: ['class', 'dx', 'dy', 'externalResourcesRequired', 'format', 'glyphRef', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'rotate', 'style', 'systemLanguage', 'x', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      altGlyphDef: ['id', 'xml:base', 'xml:lang', 'xml:space'],
+      altGlyphItem: ['id', 'xml:base', 'xml:lang', 'xml:space'],
+      animate: ['accumulate', 'additive', 'attributeName', 'attributeType', 'begin', 'by', 'calcMode', 'dur', 'end', 'externalResourcesRequired', 'fill', 'from', 'id', 'keySplines', 'keyTimes', 'max', 'min', 'onbegin', 'onend', 'onload', 'onrepeat', 'repeatCount', 'repeatDur', 'requiredExtensions', 'requiredFeatures', 'restart', 'systemLanguage', 'to', 'values', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space'],
+      animateColor: ['accumulate', 'additive', 'attributeName', 'attributeType', 'begin', 'by', 'calcMode', 'dur', 'end', 'externalResourcesRequired', 'fill', 'from', 'id', 'keySplines', 'keyTimes', 'max', 'min', 'onbegin', 'onend', 'onload', 'onrepeat', 'repeatCount', 'repeatDur', 'requiredExtensions', 'requiredFeatures', 'restart', 'systemLanguage', 'to', 'values', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space'],
+      animateMotion: ['accumulate', 'additive', 'begin', 'by', 'calcMode', 'dur', 'end', 'externalResourcesRequired', 'fill', 'from', 'id', 'keyPoints', 'keySplines', 'keyTimes', 'max', 'min', 'onbegin', 'onend', 'onload', 'onrepeat', 'origin', 'path', 'repeatCount', 'repeatDur', 'requiredExtensions', 'requiredFeatures', 'restart', 'rotate', 'systemLanguage', 'to', 'values', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space'],
+      animateTransform: ['accumulate', 'additive', 'attributeName', 'attributeType', 'begin', 'by', 'calcMode', 'dur', 'end', 'externalResourcesRequired', 'fill', 'from', 'id', 'keySplines', 'keyTimes', 'max', 'min', 'onbegin', 'onend', 'onload', 'onrepeat', 'repeatCount', 'repeatDur', 'requiredExtensions', 'requiredFeatures', 'restart', 'systemLanguage', 'to', 'type', 'values', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space'],
+      circle: ['class', 'cx', 'cy', 'externalResourcesRequired', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'r', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'transform', 'xml:base', 'xml:lang', 'xml:space'],
+      clipPath: ['class', 'clipPathUnits', 'externalResourcesRequired', 'id', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'transform', 'xml:base', 'xml:lang', 'xml:space'],
+      'color-profile': ['id', 'local', 'name', 'rendering-intent', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space'],
+      cursor: ['externalResourcesRequired', 'id', 'requiredExtensions', 'requiredFeatures', 'systemLanguage', 'x', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      defs: ['class', 'externalResourcesRequired', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'transform', 'xml:base', 'xml:lang', 'xml:space'],
+      desc: ['class', 'id', 'style', 'xml:base', 'xml:lang', 'xml:space'],
+      ellipse: ['class', 'cx', 'cy', 'externalResourcesRequired', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'rx', 'ry', 'style', 'systemLanguage', 'transform', 'xml:base', 'xml:lang', 'xml:space'],
+      feBlend: ['class', 'height', 'id', 'in', 'in2', 'mode', 'result', 'style', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      feColorMatrix: ['class', 'height', 'id', 'in', 'result', 'style', 'type', 'values', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      feComponentTransfer: ['class', 'height', 'id', 'in', 'result', 'style', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      feComposite: ['class', 'height', 'id', 'in', 'in2', 'k1', 'k2', 'k3', 'k4', 'operator', 'result', 'style', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      feConvolveMatrix: ['bias', 'class', 'divisor', 'edgeMode', 'height', 'id', 'in', 'kernelMatrix', 'kernelUnitLength', 'order', 'preserveAlpha', 'result', 'style', 'targetX', 'targetY', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      feDiffuseLighting: ['class', 'diffuseConstant', 'height', 'id', 'in', 'kernelUnitLength', 'result', 'style', 'surfaceScale', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      feDisplacementMap: ['class', 'height', 'id', 'in', 'in2', 'result', 'scale', 'style', 'width', 'x', 'xChannelSelector', 'xml:base', 'xml:lang', 'xml:space', 'y', 'yChannelSelector'],
+      feDistantLight: ['azimuth', 'elevation', 'id', 'xml:base', 'xml:lang', 'xml:space'],
+      feFlood: ['class', 'height', 'id', 'result', 'style', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      feFuncA: ['amplitude', 'exponent', 'id', 'intercept', 'offset', 'slope', 'tableValues', 'type', 'xml:base', 'xml:lang', 'xml:space'],
+      feFuncB: ['amplitude', 'exponent', 'id', 'intercept', 'offset', 'slope', 'tableValues', 'type', 'xml:base', 'xml:lang', 'xml:space'],
+      feFuncG: ['amplitude', 'exponent', 'id', 'intercept', 'offset', 'slope', 'tableValues', 'type', 'xml:base', 'xml:lang', 'xml:space'],
+      feFuncR: ['amplitude', 'exponent', 'id', 'intercept', 'offset', 'slope', 'tableValues', 'type', 'xml:base', 'xml:lang', 'xml:space'],
+      feGaussianBlur: ['class', 'height', 'id', 'in', 'result', 'stdDeviation', 'style', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      feImage: ['class', 'externalResourcesRequired', 'height', 'id', 'preserveAspectRatio', 'result', 'style', 'width', 'x', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      feMerge: ['class', 'height', 'id', 'result', 'style', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      feMergeNode: ['id', 'xml:base', 'xml:lang', 'xml:space'],
+      feMorphology: ['class', 'height', 'id', 'in', 'operator', 'radius', 'result', 'style', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      feOffset: ['class', 'dx', 'dy', 'height', 'id', 'in', 'result', 'style', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      fePointLight: ['id', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y', 'z'],
+      feSpecularLighting: ['class', 'height', 'id', 'in', 'kernelUnitLength', 'result', 'specularConstant', 'specularExponent', 'style', 'surfaceScale', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      feSpotLight: ['id', 'limitingConeAngle', 'pointsAtX', 'pointsAtY', 'pointsAtZ', 'specularExponent', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y', 'z'],
+      feTile: ['class', 'height', 'id', 'in', 'result', 'style', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      feTurbulence: ['baseFrequency', 'class', 'height', 'id', 'numOctaves', 'result', 'seed', 'stitchTiles', 'style', 'type', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      filter: ['class', 'externalResourcesRequired', 'filterRes', 'filterUnits', 'height', 'id', 'primitiveUnits', 'style', 'width', 'x', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      font: ['class', 'externalResourcesRequired', 'horiz-adv-x', 'horiz-origin-x', 'horiz-origin-y', 'id', 'style', 'vert-adv-y', 'vert-origin-x', 'vert-origin-y', 'xml:base', 'xml:lang', 'xml:space'],
+      'font-face': ['accent-height', 'alphabetic', 'ascent', 'bbox', 'cap-height', 'descent', 'font-family', 'font-size', 'font-stretch', 'font-style', 'font-variant', 'font-weight', 'hanging', 'id', 'ideographic', 'mathematical', 'overline-position', 'overline-thickness', 'panose-1', 'slope', 'stemh', 'stemv', 'strikethrough-position', 'strikethrough-thickness', 'underline-position', 'underline-thickness', 'unicode-range', 'units-per-em', 'v-alphabetic', 'v-hanging', 'v-ideographic', 'v-mathematical', 'widths', 'x-height', 'xml:base', 'xml:lang', 'xml:space'],
+      'font-face-format': ['id', 'string', 'xml:base', 'xml:lang', 'xml:space'],
+      'font-face-name': ['id', 'name', 'xml:base', 'xml:lang', 'xml:space'],
+      'font-face-src': ['id', 'xml:base', 'xml:lang', 'xml:space'],
+      'font-face-uri': ['id', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space'],
+      foreignObject: ['class', 'externalResourcesRequired', 'height', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'transform', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      g: ['class', 'externalResourcesRequired', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'transform', 'xml:base', 'xml:lang', 'xml:space'],
+      glyph: ['arabic-form', 'class', 'd', 'glyph-name', 'horiz-adv-x', 'id', 'lang', 'orientation', 'style', 'unicode', 'vert-adv-y', 'vert-origin-x', 'vert-origin-y', 'xml:base', 'xml:lang', 'xml:space'],
+      glyphRef: ['class', 'dx', 'dy', 'format', 'glyphRef', 'id', 'style', 'x', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      hkern: ['g1', 'g2', 'id', 'k', 'u1', 'u2', 'xml:base', 'xml:lang', 'xml:space'],
+      image: ['class', 'externalResourcesRequired', 'height', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'preserveAspectRatio', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'transform', 'width', 'x', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      line: ['class', 'externalResourcesRequired', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'transform', 'x1', 'x2', 'xml:base', 'xml:lang', 'xml:space', 'y1', 'y2'],
+      linearGradient: ['class', 'externalResourcesRequired', 'gradientTransform', 'gradientUnits', 'id', 'spreadMethod', 'style', 'x1', 'x2', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space', 'y1', 'y2'],
+      marker: ['class', 'externalResourcesRequired', 'id', 'markerHeight', 'markerUnits', 'markerWidth', 'orient', 'preserveAspectRatio', 'refX', 'refY', 'style', 'viewBox', 'xml:base', 'xml:lang', 'xml:space'],
+      mask: ['class', 'externalResourcesRequired', 'height', 'id', 'maskContentUnits', 'maskUnits', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      metadata: ['id', 'xml:base', 'xml:lang', 'xml:space'],
+      'missing-glyph': ['class', 'd', 'horiz-adv-x', 'id', 'style', 'vert-adv-y', 'vert-origin-x', 'vert-origin-y', 'xml:base', 'xml:lang', 'xml:space'],
+      mpath: ['externalResourcesRequired', 'id', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space'],
+      path: ['class', 'd', 'externalResourcesRequired', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'pathLength', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'transform', 'xml:base', 'xml:lang', 'xml:space'],
+      pattern: ['class', 'externalResourcesRequired', 'height', 'id', 'patternContentUnits', 'patternTransform', 'patternUnits', 'preserveAspectRatio', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'viewBox', 'width', 'x', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      polygon: ['class', 'externalResourcesRequired', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'points', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'transform', 'xml:base', 'xml:lang', 'xml:space'],
+      polyline: ['class', 'externalResourcesRequired', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'points', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'transform', 'xml:base', 'xml:lang', 'xml:space'],
+      radialGradient: ['class', 'cx', 'cy', 'externalResourcesRequired', 'fx', 'fy', 'gradientTransform', 'gradientUnits', 'id', 'r', 'spreadMethod', 'style', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space'],
+      rect: ['class', 'externalResourcesRequired', 'height', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'rx', 'ry', 'style', 'systemLanguage', 'transform', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      script: ['externalResourcesRequired', 'id', 'type', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space'],
+      set: ['attributeName', 'attributeType', 'begin', 'dur', 'end', 'externalResourcesRequired', 'fill', 'id', 'max', 'min', 'onbegin', 'onend', 'onload', 'onrepeat', 'repeatCount', 'repeatDur', 'requiredExtensions', 'requiredFeatures', 'restart', 'systemLanguage', 'to', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space'],
+      stop: ['class', 'id', 'offset', 'style', 'xml:base', 'xml:lang', 'xml:space'],
+      style: ['id', 'media', 'title', 'type', 'xml:base', 'xml:lang', 'xml:space'],
+      svg: ['baseProfile', 'class', 'contentScriptType', 'contentStyleType', 'externalResourcesRequired', 'height', 'id', 'onabort', 'onactivate', 'onclick', 'onerror', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'onresize', 'onscroll', 'onunload', 'onzoom', 'preserveAspectRatio', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'version', 'viewBox', 'width', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y', 'zoomAndPan'],
+      switch: ['class', 'externalResourcesRequired', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'transform', 'xml:base', 'xml:lang', 'xml:space'],
+      symbol: ['class', 'externalResourcesRequired', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'preserveAspectRatio', 'style', 'viewBox', 'xml:base', 'xml:lang', 'xml:space'],
+      text: ['class', 'dx', 'dy', 'externalResourcesRequired', 'id', 'lengthAdjust', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'rotate', 'style', 'systemLanguage', 'textLength', 'transform', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      textPath: ['class', 'externalResourcesRequired', 'id', 'lengthAdjust', 'method', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'spacing', 'startOffset', 'style', 'systemLanguage', 'textLength', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space'],
+      title: ['class', 'id', 'style', 'xml:base', 'xml:lang', 'xml:space'],
+      tref: ['class', 'dx', 'dy', 'externalResourcesRequired', 'id', 'lengthAdjust', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'rotate', 'style', 'systemLanguage', 'textLength', 'x', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      tspan: ['class', 'dx', 'dy', 'externalResourcesRequired', 'id', 'lengthAdjust', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'rotate', 'style', 'systemLanguage', 'textLength', 'x', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      use: ['class', 'externalResourcesRequired', 'height', 'id', 'onactivate', 'onclick', 'onfocusin', 'onfocusout', 'onload', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'requiredExtensions', 'requiredFeatures', 'style', 'systemLanguage', 'transform', 'width', 'x', 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space', 'y'],
+      view: ['externalResourcesRequired', 'id', 'preserveAspectRatio', 'viewBox', 'viewTarget', 'xml:base', 'xml:lang', 'xml:space', 'zoomAndPan'],
+      vkern: ['g1', 'g2', 'id', 'k', 'u1', 'u2', 'xml:base', 'xml:lang', 'xml:space']
+    };
 
 
-      svgPresentationElements = {
-        'a': true,
-        'altGlyph': true,
-        'animate': true,
-        'animateColor': true,
-        'circle': true,
-        'clipPath': true,
-        'defs': true,
-        'ellipse': true,
-        'feBlend': true,
-        'feColorMatrix': true,
-        'feComponentTransfer': true,
-        'feComposite': true,
-        'feConvolveMatrix': true,
-        'feDiffuseLighting': true,
-        'feDisplacementMap': true,
-        'feFlood': true,
-        'feGaussianBlur': true,
-        'feImage': true,
-        'feMerge': true,
-        'feMorphology': true,
-        'feOffset': true,
-        'feSpecularLighting': true,
-        'feTile': true,
-        'feTurbulence': true,
-        'filter': true,
-        'font': true,
-        'foreignObject': true,
-        'g': true,
-        'glyph': true,
-        'glyphRef': true,
-        'image': true,
-        'line': true,
-        'linearGradient': true,
-        'marker': true,
-        'mask': true,
-        'missing-glyph': true,
-        'path': true,
-        'pattern': true,
-        'polygon': true,
-        'polyline': true,
-        'radialGradient': true,
-        'rect': true,
-        'stop': true,
-        'svg': true,
-        'switch': true,
-        'symbol': true,
-        'text': true,
-        'textPath': true,
-        'tref': true,
-        'tspan': true,
-        'use': true
-      };
+    svgPresentationElements = {
+      'a': true,
+      'altGlyph': true,
+      'animate': true,
+      'animateColor': true,
+      'circle': true,
+      'clipPath': true,
+      'defs': true,
+      'ellipse': true,
+      'feBlend': true,
+      'feColorMatrix': true,
+      'feComponentTransfer': true,
+      'feComposite': true,
+      'feConvolveMatrix': true,
+      'feDiffuseLighting': true,
+      'feDisplacementMap': true,
+      'feFlood': true,
+      'feGaussianBlur': true,
+      'feImage': true,
+      'feMerge': true,
+      'feMorphology': true,
+      'feOffset': true,
+      'feSpecularLighting': true,
+      'feTile': true,
+      'feTurbulence': true,
+      'filter': true,
+      'font': true,
+      'foreignObject': true,
+      'g': true,
+      'glyph': true,
+      'glyphRef': true,
+      'image': true,
+      'line': true,
+      'linearGradient': true,
+      'marker': true,
+      'mask': true,
+      'missing-glyph': true,
+      'path': true,
+      'pattern': true,
+      'polygon': true,
+      'polyline': true,
+      'radialGradient': true,
+      'rect': true,
+      'stop': true,
+      'svg': true,
+      'switch': true,
+      'symbol': true,
+      'text': true,
+      'textPath': true,
+      'tref': true,
+      'tspan': true,
+      'use': true
+    };
 
-      svgPresentationAttributes = {
-        'alignment-baseline': true,
-        'baseline-shift': true,
-        'clip-path': true,
-        'clip-rule': true,
-        'clip': true,
-        'color-interpolation-filters': true,
-        'color-interpolation': true,
-        'color-profile': true,
-        'color-rendering': true,
-        'color': true,
-        'cursor': true,
-        'direction': true,
-        'display': true,
-        'dominant-baseline': true,
-        'enable-background': true,
-        'fill-opacity': true,
-        'fill-rule': true,
-        'fill': true,
-        'filter': true,
-        'flood-color': true,
-        'flood-opacity': true,
-        'font-family': true,
-        'font-size-adjust': true,
-        'font-size': true,
-        'font-stretch': true,
-        'font-style': true,
-        'font-variant': true,
-        'font-weight': true,
-        'glyph-orientation-horizontal': true,
-        'glyph-orientation-vertical': true,
-        'image-rendering': true,
-        'kerning': true,
-        'letter-spacing': true,
-        'lighting-color': true,
-        'marker-end': true,
-        'marker-mid': true,
-        'marker-start': true,
-        'mask': true,
-        'opacity': true,
-        'overflow': true,
-        'pointer-events': true,
-        'shape-rendering': true,
-        'stop-color': true,
-        'stop-opacity': true,
-        'stroke-dasharray': true,
-        'stroke-dashoffset': true,
-        'stroke-linecap': true,
-        'stroke-linejoin': true,
-        'stroke-miterlimit': true,
-        'stroke-opacity': true,
-        'stroke-width': true,
-        'stroke': true,
-        'text-anchor': true,
-        'text-decoration': true,
-        'text-rendering': true,
-        'unicode-bidi': true,
-        'visibility': true,
-        'word-spacing': true,
-        'writing-mode': true
-      };
+    svgPresentationAttributes = {
+      'alignment-baseline': true,
+      'baseline-shift': true,
+      'clip-path': true,
+      'clip-rule': true,
+      'clip': true,
+      'color-interpolation-filters': true,
+      'color-interpolation': true,
+      'color-profile': true,
+      'color-rendering': true,
+      'color': true,
+      'cursor': true,
+      'direction': true,
+      'display': true,
+      'dominant-baseline': true,
+      'enable-background': true,
+      'fill-opacity': true,
+      'fill-rule': true,
+      'fill': true,
+      'filter': true,
+      'flood-color': true,
+      'flood-opacity': true,
+      'font-family': true,
+      'font-size-adjust': true,
+      'font-size': true,
+      'font-stretch': true,
+      'font-style': true,
+      'font-variant': true,
+      'font-weight': true,
+      'glyph-orientation-horizontal': true,
+      'glyph-orientation-vertical': true,
+      'image-rendering': true,
+      'kerning': true,
+      'letter-spacing': true,
+      'lighting-color': true,
+      'marker-end': true,
+      'marker-mid': true,
+      'marker-start': true,
+      'mask': true,
+      'opacity': true,
+      'overflow': true,
+      'pointer-events': true,
+      'shape-rendering': true,
+      'stop-color': true,
+      'stop-opacity': true,
+      'stroke-dasharray': true,
+      'stroke-dashoffset': true,
+      'stroke-linecap': true,
+      'stroke-linejoin': true,
+      'stroke-miterlimit': true,
+      'stroke-opacity': true,
+      'stroke-width': true,
+      'stroke': true,
+      'text-anchor': true,
+      'text-decoration': true,
+      'text-rendering': true,
+      'unicode-bidi': true,
+      'visibility': true,
+      'word-spacing': true,
+      'writing-mode': true
+    };
 
-      var createElement = function createElement(html) {
-        var div = _aureliaPal.DOM.createElement('div');
-        div.innerHTML = html;
-        return div.firstChild;
-      };
+    var createElement = function createElement(html) {
+      var div = _aureliaPal.DOM.createElement('div');
+      div.innerHTML = html;
+      return div.firstChild;
+    };
 
-      svgAnalyzer = function () {
-        function SVGAnalyzer() {
-          
+    svgAnalyzer = function () {
+      function SVGAnalyzer() {
+        
 
-          if (createElement('<svg><altGlyph /></svg>').firstElementChild.nodeName === 'altglyph' && elements.altGlyph) {
-            elements.altglyph = elements.altGlyph;
-            delete elements.altGlyph;
-            elements.altglyphdef = elements.altGlyphDef;
-            delete elements.altGlyphDef;
-            elements.altglyphitem = elements.altGlyphItem;
-            delete elements.altGlyphItem;
-            elements.glyphref = elements.glyphRef;
-            delete elements.glyphRef;
-          }
+        if (createElement('<svg><altGlyph /></svg>').firstElementChild.nodeName === 'altglyph' && elements.altGlyph) {
+          elements.altglyph = elements.altGlyph;
+          delete elements.altGlyph;
+          elements.altglyphdef = elements.altGlyphDef;
+          delete elements.altGlyphDef;
+          elements.altglyphitem = elements.altGlyphItem;
+          delete elements.altGlyphItem;
+          elements.glyphref = elements.glyphRef;
+          delete elements.glyphRef;
         }
+      }
 
-        SVGAnalyzer.prototype.isStandardSvgAttribute = function isStandardSvgAttribute(nodeName, attributeName) {
-          return presentationElements[nodeName] && presentationAttributes[attributeName] || elements[nodeName] && elements[nodeName].indexOf(attributeName) !== -1;
-        };
+      SVGAnalyzer.prototype.isStandardSvgAttribute = function isStandardSvgAttribute(nodeName, attributeName) {
+        return presentationElements[nodeName] && presentationAttributes[attributeName] || elements[nodeName] && elements[nodeName].indexOf(attributeName) !== -1;
+      };
 
-        return SVGAnalyzer;
-      }();
-    })();
+      return SVGAnalyzer;
+    }();
   }
 
   var elements = exports.elements = svgElements;
@@ -10381,6 +10410,7 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
       this.dirtyChecker = dirtyChecker;
       this.svgAnalyzer = svgAnalyzer;
       this.parser = parser;
+
       this.adapters = [];
       this.logger = LogManager.getLogger('observer-locator');
     }
@@ -10430,8 +10460,8 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
     };
 
     ObserverLocator.prototype.getAdapterObserver = function getAdapterObserver(obj, propertyName, descriptor) {
-      for (var _i26 = 0, ii = this.adapters.length; _i26 < ii; _i26++) {
-        var adapter = this.adapters[_i26];
+      for (var _i28 = 0, ii = this.adapters.length; _i28 < ii; _i28++) {
+        var adapter = this.adapters[_i28];
         var observer = adapter.getObserver(obj, propertyName, descriptor);
         if (observer) {
           return observer;
@@ -10737,7 +10767,7 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
     };
 
     Call.prototype.bind = function bind(source) {
-      var _this27 = this;
+      var _this26 = this;
 
       if (this.isBound) {
         if (this.source === source) {
@@ -10752,7 +10782,7 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
         this.sourceExpression.bind(this, source, this.lookupFunctions);
       }
       this.targetProperty.setValue(function ($event) {
-        return _this27.callSource($event);
+        return _this26.callSource($event);
       });
     };
 
@@ -10905,7 +10935,7 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
       if (this.sourceExpression.bind) {
         this.sourceExpression.bind(this, source, this.lookupFunctions);
       }
-      this._disposeListener = this.eventManager.addEventListener(this.target, this.targetEvent, this, this.delegationStrategy);
+      this._handler = this.eventManager.addEventListener(this.target, this.targetEvent, this, this.delegationStrategy, true);
     };
 
     Listener.prototype.unbind = function unbind() {
@@ -10917,8 +10947,8 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
         this.sourceExpression.unbind(this, this.source);
       }
       this.source = null;
-      this._disposeListener();
-      this._disposeListener = null;
+      this._handler.dispose();
+      this._handler = null;
     };
 
     return Listener;
@@ -11031,18 +11061,18 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
     }
 
     BindingEngine.prototype.createBindingExpression = function createBindingExpression(targetProperty, sourceExpression) {
-      var mode = arguments.length <= 2 || arguments[2] === undefined ? bindingMode.toView : arguments[2];
-      var lookupFunctions = arguments.length <= 3 || arguments[3] === undefined ? LookupFunctions : arguments[3];
+      var mode = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : bindingMode.toView;
+      var lookupFunctions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : LookupFunctions;
 
       return new BindingExpression(this.observerLocator, targetProperty, this.parser.parse(sourceExpression), mode, lookupFunctions);
     };
 
     BindingEngine.prototype.propertyObserver = function propertyObserver(obj, propertyName) {
-      var _this28 = this;
+      var _this27 = this;
 
       return {
         subscribe: function subscribe(callback) {
-          var observer = _this28.observerLocator.getObserver(obj, propertyName);
+          var observer = _this27.observerLocator.getObserver(obj, propertyName);
           observer.subscribe(callback);
           return {
             dispose: function dispose() {
@@ -11054,17 +11084,17 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
     };
 
     BindingEngine.prototype.collectionObserver = function collectionObserver(collection) {
-      var _this29 = this;
+      var _this28 = this;
 
       return {
         subscribe: function subscribe(callback) {
           var observer = void 0;
           if (collection instanceof Array) {
-            observer = _this29.observerLocator.getArrayObserver(collection);
+            observer = _this28.observerLocator.getArrayObserver(collection);
           } else if (collection instanceof Map) {
-            observer = _this29.observerLocator.getMapObserver(collection);
+            observer = _this28.observerLocator.getMapObserver(collection);
           } else if (collection instanceof Set) {
-            observer = _this29.observerLocator.getSetObserver(collection);
+            observer = _this28.observerLocator.getSetObserver(collection);
           } else {
             throw new Error('collection must be an instance of Array, Map or Set.');
           }
@@ -13230,8 +13260,13 @@ define('aurelia-history-browser',['exports', 'aurelia-pal', 'aurelia-history'], 
 
     BrowserHistory.prototype.setState = function setState(key, value) {
       var state = Object.assign({}, this.history.state);
+      var _location = this.location;
+      var pathname = _location.pathname;
+      var search = _location.search;
+      var hash = _location.hash;
+
       state[key] = value;
-      this.history.replaceState(state, null, null);
+      this.history.replaceState(state, null, '' + pathname + search + hash);
     };
 
     BrowserHistory.prototype.getState = function getState(key) {
@@ -13597,7 +13632,7 @@ define('aurelia-loader-default',['exports', 'aurelia-loader', 'aurelia-pal', 'au
 
     DefaultLoader.prototype._import = function (moduleId) {
       return new Promise(function (resolve, reject) {
-        require([moduleId], resolve, reject);
+        _aureliaPal.PLATFORM.global.require([moduleId], resolve, reject);
       });
     };
 
@@ -13610,7 +13645,7 @@ define('aurelia-loader-default',['exports', 'aurelia-loader', 'aurelia-pal', 'au
       }
 
       return new Promise(function (resolve, reject) {
-        require([id], function (m) {
+        _aureliaPal.PLATFORM.global.require([id], function (m) {
           _this2.moduleRegistry[id] = m;
           resolve(ensureOriginOnExports(m, id));
         }, reject);
@@ -14410,128 +14445,126 @@ define('aurelia-pal-browser',['exports', 'aurelia-pal'], function (exports, _aur
 
   if (typeof FEATURE_NO_IE === 'undefined') {
     if (!('classList' in document.createElement('_')) || document.createElementNS && !('classList' in document.createElementNS('http://www.w3.org/2000/svg', 'g'))) {
-      (function () {
-        var protoProp = 'prototype';
-        var strTrim = String.prototype.trim;
-        var arrIndexOf = Array.prototype.indexOf;
-        var emptyArray = [];
+      var protoProp = 'prototype';
+      var strTrim = String.prototype.trim;
+      var arrIndexOf = Array.prototype.indexOf;
+      var emptyArray = [];
 
-        var DOMEx = function DOMEx(type, message) {
-          this.name = type;
-          this.code = DOMException[type];
-          this.message = message;
+      var DOMEx = function DOMEx(type, message) {
+        this.name = type;
+        this.code = DOMException[type];
+        this.message = message;
+      };
+
+      var checkTokenAndGetIndex = function checkTokenAndGetIndex(classList, token) {
+        if (token === '') {
+          throw new DOMEx('SYNTAX_ERR', 'An invalid or illegal string was specified');
+        }
+
+        if (/\s/.test(token)) {
+          throw new DOMEx('INVALID_CHARACTER_ERR', 'String contains an invalid character');
+        }
+
+        return arrIndexOf.call(classList, token);
+      };
+
+      var ClassList = function ClassList(elem) {
+        var trimmedClasses = strTrim.call(elem.getAttribute('class') || '');
+        var classes = trimmedClasses ? trimmedClasses.split(/\s+/) : emptyArray;
+
+        for (var i = 0, ii = classes.length; i < ii; ++i) {
+          this.push(classes[i]);
+        }
+
+        this._updateClassName = function () {
+          elem.setAttribute('class', this.toString());
         };
+      };
 
-        var checkTokenAndGetIndex = function checkTokenAndGetIndex(classList, token) {
-          if (token === '') {
-            throw new DOMEx('SYNTAX_ERR', 'An invalid or illegal string was specified');
+      var classListProto = ClassList[protoProp] = [];
+
+      DOMEx[protoProp] = Error[protoProp];
+
+      classListProto.item = function (i) {
+        return this[i] || null;
+      };
+
+      classListProto.contains = function (token) {
+        token += '';
+        return checkTokenAndGetIndex(this, token) !== -1;
+      };
+
+      classListProto.add = function () {
+        var tokens = arguments;
+        var i = 0;
+        var ii = tokens.length;
+        var token = void 0;
+        var updated = false;
+
+        do {
+          token = tokens[i] + '';
+          if (checkTokenAndGetIndex(this, token) === -1) {
+            this.push(token);
+            updated = true;
           }
+        } while (++i < ii);
 
-          if (/\s/.test(token)) {
-            throw new DOMEx('INVALID_CHARACTER_ERR', 'String contains an invalid character');
-          }
+        if (updated) {
+          this._updateClassName();
+        }
+      };
 
-          return arrIndexOf.call(classList, token);
-        };
+      classListProto.remove = function () {
+        var tokens = arguments;
+        var i = 0;
+        var ii = tokens.length;
+        var token = void 0;
+        var updated = false;
+        var index = void 0;
 
-        var ClassList = function ClassList(elem) {
-          var trimmedClasses = strTrim.call(elem.getAttribute('class') || '');
-          var classes = trimmedClasses ? trimmedClasses.split(/\s+/) : emptyArray;
-
-          for (var i = 0, ii = classes.length; i < ii; ++i) {
-            this.push(classes[i]);
-          }
-
-          this._updateClassName = function () {
-            elem.setAttribute('class', this.toString());
-          };
-        };
-
-        var classListProto = ClassList[protoProp] = [];
-
-        DOMEx[protoProp] = Error[protoProp];
-
-        classListProto.item = function (i) {
-          return this[i] || null;
-        };
-
-        classListProto.contains = function (token) {
-          token += '';
-          return checkTokenAndGetIndex(this, token) !== -1;
-        };
-
-        classListProto.add = function () {
-          var tokens = arguments;
-          var i = 0;
-          var ii = tokens.length;
-          var token = void 0;
-          var updated = false;
-
-          do {
-            token = tokens[i] + '';
-            if (checkTokenAndGetIndex(this, token) === -1) {
-              this.push(token);
-              updated = true;
-            }
-          } while (++i < ii);
-
-          if (updated) {
-            this._updateClassName();
-          }
-        };
-
-        classListProto.remove = function () {
-          var tokens = arguments;
-          var i = 0;
-          var ii = tokens.length;
-          var token = void 0;
-          var updated = false;
-          var index = void 0;
-
-          do {
-            token = tokens[i] + '';
+        do {
+          token = tokens[i] + '';
+          index = checkTokenAndGetIndex(this, token);
+          while (index !== -1) {
+            this.splice(index, 1);
+            updated = true;
             index = checkTokenAndGetIndex(this, token);
-            while (index !== -1) {
-              this.splice(index, 1);
-              updated = true;
-              index = checkTokenAndGetIndex(this, token);
-            }
-          } while (++i < ii);
-
-          if (updated) {
-            this._updateClassName();
           }
-        };
+        } while (++i < ii);
 
-        classListProto.toggle = function (token, force) {
-          token += '';
+        if (updated) {
+          this._updateClassName();
+        }
+      };
 
-          var result = this.contains(token);
-          var method = result ? force !== true && 'remove' : force !== false && 'add';
+      classListProto.toggle = function (token, force) {
+        token += '';
 
-          if (method) {
-            this[method](token);
-          }
+        var result = this.contains(token);
+        var method = result ? force !== true && 'remove' : force !== false && 'add';
 
-          if (force === true || force === false) {
-            return force;
-          }
+        if (method) {
+          this[method](token);
+        }
 
-          return !result;
-        };
+        if (force === true || force === false) {
+          return force;
+        }
 
-        classListProto.toString = function () {
-          return this.join(' ');
-        };
+        return !result;
+      };
 
-        Object.defineProperty(Element.prototype, 'classList', {
-          get: function get() {
-            return new ClassList(this);
-          },
-          enumerable: true,
-          configurable: true
-        });
-      })();
+      classListProto.toString = function () {
+        return this.join(' ');
+      };
+
+      Object.defineProperty(Element.prototype, 'classList', {
+        get: function get() {
+          return new ClassList(this);
+        },
+        enumerable: true,
+        configurable: true
+      });
     } else {
       var testElement = document.createElement('_');
       testElement.classList.add('c1', 'c2');
@@ -14555,17 +14588,15 @@ define('aurelia-pal-browser',['exports', 'aurelia-pal'], function (exports, _aur
       testElement.classList.toggle('c3', false);
 
       if (testElement.classList.contains('c3')) {
-        (function () {
-          var _toggle = DOMTokenList.prototype.toggle;
+        var _toggle = DOMTokenList.prototype.toggle;
 
-          DOMTokenList.prototype.toggle = function (token, force) {
-            if (1 in arguments && !this.contains(token) === !force) {
-              return force;
-            }
+        DOMTokenList.prototype.toggle = function (token, force) {
+          if (1 in arguments && !this.contains(token) === !force) {
+            return force;
+          }
 
-            return _toggle.call(this, token);
-          };
-        })();
+          return _toggle.call(this, token);
+        };
       }
 
       testElement = null;
@@ -14573,44 +14604,121 @@ define('aurelia-pal-browser',['exports', 'aurelia-pal'], function (exports, _aur
   }
 
   if (typeof FEATURE_NO_IE === 'undefined') {
+    var _filterEntries = function _filterEntries(key, value) {
+      var i = 0,
+          n = _entries.length,
+          result = [];
+      for (; i < n; i++) {
+        if (_entries[i][key] == value) {
+          result.push(_entries[i]);
+        }
+      }
+      return result;
+    };
+
+    var _clearEntries = function _clearEntries(type, name) {
+      var i = _entries.length,
+          entry;
+      while (i--) {
+        entry = _entries[i];
+        if (entry.entryType == type && (name === void 0 || entry.name == name)) {
+          _entries.splice(i, 1);
+        }
+      }
+    };
+
     // @license http://opensource.org/licenses/MIT
     if ('performance' in window === false) {
       window.performance = {};
     }
 
     if ('now' in window.performance === false) {
-      (function () {
-        var nowOffset = Date.now();
+      var nowOffset = Date.now();
 
-        if (performance.timing && performance.timing.navigationStart) {
-          nowOffset = performance.timing.navigationStart;
-        }
+      if (performance.timing && performance.timing.navigationStart) {
+        nowOffset = performance.timing.navigationStart;
+      }
 
-        window.performance.now = function now() {
-          return Date.now() - nowOffset;
+      window.performance.now = function now() {
+        return Date.now() - nowOffset;
+      };
+    }
+
+    var startOffset = Date.now ? Date.now() : +new Date();
+    var _entries = [];
+    var _marksIndex = {};
+
+    ;
+
+    if (!window.performance.mark) {
+      window.performance.mark = window.performance.webkitMark || function (name) {
+        var mark = {
+          name: name,
+          entryType: "mark",
+          startTime: window.performance.now(),
+          duration: 0
         };
-      })();
+
+        _entries.push(mark);
+        _marksIndex[name] = mark;
+      };
+    }
+
+    if (!window.performance.measure) {
+      window.performance.measure = window.performance.webkitMeasure || function (name, startMark, endMark) {
+        startMark = _marksIndex[startMark].startTime;
+        endMark = _marksIndex[endMark].startTime;
+
+        _entries.push({
+          name: name,
+          entryType: "measure",
+          startTime: startMark,
+          duration: endMark - startMark
+        });
+      };
+    }
+
+    if (!window.performance.getEntriesByType) {
+      window.performance.getEntriesByType = window.performance.webkitGetEntriesByType || function (type) {
+        return _filterEntries("entryType", type);
+      };
+    }
+
+    if (!window.performance.getEntriesByName) {
+      window.performance.getEntriesByName = window.performance.webkitGetEntriesByName || function (name) {
+        return _filterEntries("name", name);
+      };
+    }
+
+    if (!window.performance.clearMarks) {
+      window.performance.clearMarks = window.performance.webkitClearMarks || function (name) {
+        _clearEntries("mark", name);
+      };
+    }
+
+    if (!window.performance.clearMeasures) {
+      window.performance.clearMeasures = window.performance.webkitClearMeasures || function (name) {
+        _clearEntries("measure", name);
+      };
     }
 
     _PLATFORM.performance = window.performance;
   }
 
   if (typeof FEATURE_NO_IE === 'undefined') {
-    (function () {
-      var con = window.console = window.console || {};
-      var nop = function nop() {};
+    var con = window.console = window.console || {};
+    var nop = function nop() {};
 
-      if (!con.memory) con.memory = {};
-      ('assert,clear,count,debug,dir,dirxml,error,exception,group,' + 'groupCollapsed,groupEnd,info,log,markTimeline,profile,profiles,profileEnd,' + 'show,table,time,timeEnd,timeline,timelineEnd,timeStamp,trace,warn').split(',').forEach(function (m) {
-        if (!con[m]) con[m] = nop;
-      });
+    if (!con.memory) con.memory = {};
+    ('assert,clear,count,debug,dir,dirxml,error,exception,group,' + 'groupCollapsed,groupEnd,info,log,markTimeline,profile,profiles,profileEnd,' + 'show,table,time,timeEnd,timeline,timelineEnd,timeStamp,trace,warn').split(',').forEach(function (m) {
+      if (!con[m]) con[m] = nop;
+    });
 
-      if (_typeof(con.log) === 'object') {
-        'log,info,warn,error,assert,dir,clear,profile,profileEnd'.split(',').forEach(function (method) {
-          console[method] = this.bind(console[method], console);
-        }, Function.prototype.call);
-      }
-    })();
+    if (_typeof(con.log) === 'object') {
+      'log,info,warn,error,assert,dir,clear,profile,profileEnd'.split(',').forEach(function (method) {
+        console[method] = this.bind(console[method], console);
+      }, Function.prototype.call);
+    }
   }
 
   if (typeof FEATURE_NO_IE === 'undefined') {
@@ -14652,68 +14760,67 @@ define('aurelia-pal-browser',['exports', 'aurelia-pal'], function (exports, _aur
   };
 
   if (typeof FEATURE_NO_IE === 'undefined') {
-    (function () {
-      var isSVGTemplate = function isSVGTemplate(el) {
-        return el.tagName === 'template' && el.namespaceURI === 'http://www.w3.org/2000/svg';
-      };
+    var isSVGTemplate = function isSVGTemplate(el) {
+      return el.tagName === 'template' && el.namespaceURI === 'http://www.w3.org/2000/svg';
+    };
 
-      var fixSVGTemplateElement = function fixSVGTemplateElement(el) {
-        var template = el.ownerDocument.createElement('template');
-        var attrs = el.attributes;
-        var length = attrs.length;
-        var attr = void 0;
+    var fixSVGTemplateElement = function fixSVGTemplateElement(el) {
+      var template = el.ownerDocument.createElement('template');
+      var attrs = el.attributes;
+      var length = attrs.length;
+      var attr = void 0;
 
-        el.parentNode.insertBefore(template, el);
+      el.parentNode.insertBefore(template, el);
 
-        while (length-- > 0) {
-          attr = attrs[length];
-          template.setAttribute(attr.name, attr.value);
-          el.removeAttribute(attr.name);
-        }
-
-        el.parentNode.removeChild(el);
-
-        return fixHTMLTemplateElement(template);
-      };
-
-      var fixHTMLTemplateElement = function fixHTMLTemplateElement(template) {
-        var content = template.content = document.createDocumentFragment();
-        var child = void 0;
-
-        while (child = template.firstChild) {
-          content.appendChild(child);
-        }
-
-        return template;
-      };
-
-      var fixHTMLTemplateElementRoot = function fixHTMLTemplateElementRoot(template) {
-        var content = fixHTMLTemplateElement(template).content;
-        var childTemplates = content.querySelectorAll('template');
-
-        for (var i = 0, ii = childTemplates.length; i < ii; ++i) {
-          var child = childTemplates[i];
-
-          if (isSVGTemplate(child)) {
-            fixSVGTemplateElement(child);
-          } else {
-            fixHTMLTemplateElement(child);
-          }
-        }
-
-        return template;
-      };
-
-      if (!_FEATURE.htmlTemplateElement) {
-        _FEATURE.ensureHTMLTemplateElement = fixHTMLTemplateElementRoot;
+      while (length-- > 0) {
+        attr = attrs[length];
+        template.setAttribute(attr.name, attr.value);
+        el.removeAttribute(attr.name);
       }
-    })();
+
+      el.parentNode.removeChild(el);
+
+      return fixHTMLTemplateElement(template);
+    };
+
+    var fixHTMLTemplateElement = function fixHTMLTemplateElement(template) {
+      var content = template.content = document.createDocumentFragment();
+      var child = void 0;
+
+      while (child = template.firstChild) {
+        content.appendChild(child);
+      }
+
+      return template;
+    };
+
+    var fixHTMLTemplateElementRoot = function fixHTMLTemplateElementRoot(template) {
+      var content = fixHTMLTemplateElement(template).content;
+      var childTemplates = content.querySelectorAll('template');
+
+      for (var i = 0, ii = childTemplates.length; i < ii; ++i) {
+        var child = childTemplates[i];
+
+        if (isSVGTemplate(child)) {
+          fixSVGTemplateElement(child);
+        } else {
+          fixHTMLTemplateElement(child);
+        }
+      }
+
+      return template;
+    };
+
+    if (!_FEATURE.htmlTemplateElement) {
+      _FEATURE.ensureHTMLTemplateElement = fixHTMLTemplateElementRoot;
+    }
   }
 
   var shadowPoly = window.ShadowDOMPolyfill || null;
 
   var _DOM = exports._DOM = {
     Element: Element,
+    NodeList: NodeList,
     SVGElement: SVGElement,
     boundary: 'aurelia-dom-boundary',
     addEventListener: function addEventListener(eventName, callback, capture) {
@@ -14723,7 +14830,7 @@ define('aurelia-pal-browser',['exports', 'aurelia-pal'], function (exports, _aur
       document.removeEventListener(eventName, callback, capture);
     },
     adoptNode: function adoptNode(node) {
-      return document.adoptNode(node, true);
+      return document.adoptNode(node);
     },
     createAttribute: function createAttribute(name) {
       return document.createAttribute(name);
@@ -14758,6 +14865,9 @@ define('aurelia-pal-browser',['exports', 'aurelia-pal'], function (exports, _aur
     },
     getElementById: function getElementById(id) {
       return document.getElementById(id);
+    },
+    querySelector: function querySelector(query) {
+      return document.querySelector(query);
     },
     querySelectorAll: function querySelectorAll(query) {
       return document.querySelectorAll(query);
@@ -14805,10 +14915,28 @@ define('aurelia-pal-browser',['exports', 'aurelia-pal'], function (exports, _aur
         }
       }
     },
-    injectStyles: function injectStyles(styles, destination, prepend) {
+    injectStyles: function injectStyles(styles, destination, prepend, id) {
+      if (id) {
+        var oldStyle = document.getElementById(id);
+        if (oldStyle) {
+          var isStyleTag = oldStyle.tagName.toLowerCase() === 'style';
+
+          if (isStyleTag) {
+            oldStyle.innerHTML = styles;
+            return;
+          }
+
+          throw new Error('The provided id does not indicate a style tag.');
+        }
+      }
+
       var node = document.createElement('style');
       node.innerHTML = styles;
       node.type = 'text/css';
+
+      if (id) {
+        node.id = id;
+      }
 
       destination = destination || document.head;
 
@@ -15618,6 +15746,16 @@ define('aurelia-polyfills',['aurelia-pal'], function (_aureliaPal) {
         }()
       });
     })(Object);
+
+    if (!Object.is) {
+      Object.is = function (x, y) {
+        if (x === y) {
+          return x !== 0 || 1 / x === 1 / y;
+        } else {
+          return x !== x && y !== y;
+        }
+      };
+    }
   }
 
   if (typeof FEATURE_NO_ES2015 === 'undefined') {
@@ -26049,8 +26187,6 @@ define('aurelia-templating-router/route-loader',['exports', 'aurelia-dependency-
   });
   exports.TemplatingRouteLoader = undefined;
 
-  
-
   function _possibleConstructorReturn(self, call) {
     if (!self) {
       throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
@@ -26075,9 +26211,14 @@ define('aurelia-templating-router/route-loader',['exports', 'aurelia-dependency-
     if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
   }
 
-  var _dec, _class;
+  
 
-  var TemplatingRouteLoader = exports.TemplatingRouteLoader = (_dec = (0, _aureliaDependencyInjection.inject)(_aureliaTemplating.CompositionEngine), _dec(_class = function (_RouteLoader) {
+  var _dec, _class, _dec2, _class2;
+
+  var EmptyClass = (_dec = (0, _aureliaTemplating.inlineView)('<template></template>'), _dec(_class = function EmptyClass() {
+    
+  }) || _class);
+  var TemplatingRouteLoader = exports.TemplatingRouteLoader = (_dec2 = (0, _aureliaDependencyInjection.inject)(_aureliaTemplating.CompositionEngine), _dec2(_class2 = function (_RouteLoader) {
     _inherits(TemplatingRouteLoader, _RouteLoader);
 
     function TemplatingRouteLoader(compositionEngine) {
@@ -26092,7 +26233,16 @@ define('aurelia-templating-router/route-loader',['exports', 'aurelia-dependency-
     TemplatingRouteLoader.prototype.loadRoute = function loadRoute(router, config) {
       var childContainer = router.container.createChild();
 
-      var viewModel = /\.html/.test(config.moduleId) ? createDynamicClass(config.moduleId) : (0, _aureliaPath.relativeToFile)(config.moduleId, _aureliaMetadata.Origin.get(router.container.viewModel.constructor).moduleId);
+      var viewModel = void 0;
+      if (config.moduleId === null) {
+        viewModel = EmptyClass;
+      } else if (/\.html/i.test(config.moduleId)) {
+        viewModel = createDynamicClass(config.moduleId);
+      } else {
+        viewModel = (0, _aureliaPath.relativeToFile)(config.moduleId, _aureliaMetadata.Origin.get(router.container.viewModel.constructor).moduleId);
+      }
+
+      config = config || {};
 
       var instruction = {
         viewModel: viewModel,
@@ -26117,15 +26267,15 @@ define('aurelia-templating-router/route-loader',['exports', 'aurelia-dependency-
     };
 
     return TemplatingRouteLoader;
-  }(_aureliaRouter.RouteLoader)) || _class);
+  }(_aureliaRouter.RouteLoader)) || _class2);
 
 
   function createDynamicClass(moduleId) {
-    var _dec2, _dec3, _class2;
+    var _dec3, _dec4, _class3;
 
     var name = /([^\/^\?]+)\.html/i.exec(moduleId)[1];
 
-    var DynamicClass = (_dec2 = (0, _aureliaTemplating.customElement)(name), _dec3 = (0, _aureliaTemplating.useView)(moduleId), _dec2(_class2 = _dec3(_class2 = function () {
+    var DynamicClass = (_dec3 = (0, _aureliaTemplating.customElement)(name), _dec4 = (0, _aureliaTemplating.useView)(moduleId), _dec3(_class3 = _dec4(_class3 = function () {
       function DynamicClass() {
         
       }
@@ -26135,7 +26285,7 @@ define('aurelia-templating-router/route-loader',['exports', 'aurelia-dependency-
       };
 
       return DynamicClass;
-    }()) || _class2) || _class2);
+    }()) || _class3) || _class3);
 
 
     return DynamicClass;
@@ -26241,7 +26391,7 @@ define('aurelia-templating-router/router-view',['exports', 'aurelia-dependency-i
       var viewModelResource = component.viewModelResource;
       var metadata = viewModelResource.metadata;
       var config = component.router.currentInstruction.config;
-      var viewPort = config.viewPorts ? config.viewPorts[viewPortInstruction.name] : {};
+      var viewPort = config.viewPorts ? config.viewPorts[viewPortInstruction.name] || {} : {};
 
       childContainer.get(RouterViewLocator)._notify(this);
 
@@ -26413,7 +26563,7 @@ define('aurelia-templating-router/route-href',['exports', 'aurelia-templating', 
       this.element = element;
     }
 
-    RouteHref.prototype.attached = function attached() {
+    RouteHref.prototype.bind = function bind() {
       this.isActive = true;
       this.processChange();
     };
@@ -26921,7 +27071,7 @@ define('aurelia-templating-binding',['exports', 'aurelia-logging', 'aurelia-bind
     SyntaxInterpreter.prototype._getPrimaryPropertyName = function _getPrimaryPropertyName(resources, context) {
       var type = resources.getAttribute(context.attributeName);
       if (type && type.primaryProperty) {
-        return type.primaryProperty.name;
+        return type.primaryProperty.attribute;
       }
       return null;
     };
@@ -27541,7 +27691,7 @@ define('aurelia-testing/wait',["require", "exports"], function (require, exports
 
 define('ag-grid/main',['require','exports','module','./dist/lib/columnController/balancedColumnTreeBuilder','./dist/lib/columnController/columnController','./dist/lib/columnController/columnKeyCreator','./dist/lib/columnController/columnUtils','./dist/lib/columnController/displayedGroupCreator','./dist/lib/columnController/groupInstanceIdCreator','./dist/lib/components/componentUtil','./dist/lib/components/colDefUtil','./dist/lib/components/framework/componentProvider','./dist/lib/components/agGridNg1','./dist/lib/components/agGridWebComponent','./dist/lib/context/beanStub','./dist/lib/context/context','./dist/lib/widgets/componentAnnotations','./dist/lib/dragAndDrop/dragAndDropService','./dist/lib/dragAndDrop/dragService','./dist/lib/entities/column','./dist/lib/entities/columnGroup','./dist/lib/entities/gridCell','./dist/lib/entities/gridRow','./dist/lib/entities/originalColumnGroup','./dist/lib/entities/rowNode','./dist/lib/filter/baseFilter','./dist/lib/filter/dateFilter','./dist/lib/filter/filterManager','./dist/lib/filter/numberFilter','./dist/lib/filter/textFilter','./dist/lib/gridPanel/gridPanel','./dist/lib/gridPanel/scrollVisibleService','./dist/lib/gridPanel/mouseEventService','./dist/lib/headerRendering/bodyDropPivotTarget','./dist/lib/headerRendering/bodyDropTarget','./dist/lib/headerRendering/cssClassApplier','./dist/lib/headerRendering/headerContainer','./dist/lib/headerRendering/headerRenderer','./dist/lib/headerRendering/headerRowComp','./dist/lib/headerRendering/horizontalResizeService','./dist/lib/headerRendering/moveColumnController','./dist/lib/headerRendering/standardMenu','./dist/lib/layout/borderLayout','./dist/lib/layout/tabbedLayout','./dist/lib/layout/verticalStack','./dist/lib/misc/simpleHttpRequest','./dist/lib/rendering/cellEditors/largeTextCellEditor','./dist/lib/rendering/cellEditors/popupEditorWrapper','./dist/lib/rendering/cellEditors/popupSelectCellEditor','./dist/lib/rendering/cellEditors/popupTextCellEditor','./dist/lib/rendering/cellEditors/selectCellEditor','./dist/lib/rendering/cellEditors/textCellEditor','./dist/lib/rendering/cellRenderers/animateShowChangeCellRenderer','./dist/lib/rendering/cellRenderers/animateSlideCellRenderer','./dist/lib/rendering/cellRenderers/groupCellRenderer','./dist/lib/rendering/features/setLeftFeature','./dist/lib/rendering/autoWidthCalculator','./dist/lib/rendering/cellEditorFactory','./dist/lib/rendering/cellRendererFactory','./dist/lib/rendering/cellRendererService','./dist/lib/rendering/checkboxSelectionComponent','./dist/lib/rendering/cellComp','./dist/lib/rendering/rowComp','./dist/lib/rendering/rowRenderer','./dist/lib/rendering/valueFormatterService','./dist/lib/rowModels/inMemory/filterStage','./dist/lib/rowModels/inMemory/flattenStage','./dist/lib/rowModels/inMemory/sortStage','./dist/lib/rowModels/pinnedRowModel','./dist/lib/rowModels/inMemory/inMemoryRowModel','./dist/lib/rowModels/inMemory/changedPath','./dist/lib/rowModels/inMemory/inMemoryNodeManager','./dist/lib/rowModels/infinite/infiniteRowModel','./dist/lib/rowModels/cache/rowNodeBlock','./dist/lib/rowModels/cache/rowNodeBlockLoader','./dist/lib/rowModels/cache/rowNodeCache','./dist/lib/styling/stylingService','./dist/lib/widgets/agCheckbox','./dist/lib/widgets/component','./dist/lib/widgets/popupService','./dist/lib/widgets/touchListener','./dist/lib/baseFrameworkFactory','./dist/lib/cellNavigationService','./dist/lib/alignedGridsService','./dist/lib/constants','./dist/lib/csvCreator','./dist/lib/downloader','./dist/lib/grid','./dist/lib/gridApi','./dist/lib/events','./dist/lib/focusedCellController','./dist/lib/functions','./dist/lib/gridOptionsWrapper','./dist/lib/eventService','./dist/lib/rowNodes/selectableService','./dist/lib/gridCore','./dist/lib/logger','./dist/lib/selectionController','./dist/lib/sortController','./dist/lib/templateService','./dist/lib/utils','./dist/lib/valueService/valueService','./dist/lib/valueService/expressionService','./dist/lib/xmlFactory','./dist/lib/gridSerializer','./dist/lib/logger','./dist/lib/columnController/columnApi','./dist/lib/components/framework/frameworkComponentWrapper','./dist/lib/environment'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27807,7 +27957,7 @@ exports.Environment = environment_1.Environment;
 
 ;define('ag-grid', ['ag-grid/main'], function (main) { return main; });
 
-define('ag-grid-aurelia/lib/agGridAurelia',['require','exports','module','aurelia-framework','ag-grid/main','./aureliaFrameworkFactory','./agUtils','./agTemplate','./aureliaFrameworkComponentWrapper'],function (require, exports, module) {// ag-grid-aurelia v17.0.0
+define('ag-grid-aurelia/lib/agGridAurelia',['require','exports','module','aurelia-framework','ag-grid/main','./aureliaFrameworkFactory','./agUtils','./agTemplate','./aureliaFrameworkComponentWrapper'],function (require, exports, module) {// ag-grid-aurelia v17.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -27961,7 +28111,7 @@ exports.AgGridAurelia = AgGridAurelia;
 
 define('ag-grid/dist/lib/columnController/balancedColumnTreeBuilder',['require','exports','module','../gridOptionsWrapper','../logger','../columnController/columnUtils','./columnKeyCreator','../entities/originalColumnGroup','../entities/column','../context/context','../utils','../entities/defaultColumnTypes'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28009,7 +28159,7 @@ var BalancedColumnTreeBuilder = (function () {
         // at the end, this will be the top of the tree item.
         var nextChild = column;
         for (var i = dept - 1; i >= 0; i--) {
-            var autoGroup = new originalColumnGroup_1.OriginalColumnGroup(null, "FAKE_PATH_" + column.getId() + "}_" + i, true);
+            var autoGroup = new originalColumnGroup_1.OriginalColumnGroup(null, "FAKE_PATH_" + column.getId() + "}_" + i, true, i);
             this.context.wireBean(autoGroup);
             autoGroup.setChildren([nextChild]);
             nextChild = autoGroup;
@@ -28063,7 +28213,7 @@ var BalancedColumnTreeBuilder = (function () {
                 for (var i = columnDept - 1; i >= currentDept; i--) {
                     var newColId = columnKeyCreator.getUniqueKey(null, null);
                     var colGroupDefMerged = _this.createMergedColGroupDef(null);
-                    var paddedGroup = new originalColumnGroup_1.OriginalColumnGroup(colGroupDefMerged, newColId, true);
+                    var paddedGroup = new originalColumnGroup_1.OriginalColumnGroup(colGroupDefMerged, newColId, true, currentDept);
                     _this.context.wireBean(paddedGroup);
                     paddedGroup.setChildren([newChild]);
                     newChild = paddedGroup;
@@ -28108,7 +28258,7 @@ var BalancedColumnTreeBuilder = (function () {
     BalancedColumnTreeBuilder.prototype.createColumnGroup = function (columnKeyCreator, primaryColumns, colGroupDef, level) {
         var colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
         var groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId, null);
-        var originalGroup = new originalColumnGroup_1.OriginalColumnGroup(colGroupDefMerged, groupId, false);
+        var originalGroup = new originalColumnGroup_1.OriginalColumnGroup(colGroupDefMerged, groupId, false, level);
         this.context.wireBean(originalGroup);
         var children = this.recursivelyCreateColumns(colGroupDefMerged.children, level + 1, columnKeyCreator, primaryColumns);
         originalGroup.setChildren(children);
@@ -28230,9 +28380,9 @@ exports.BalancedColumnTreeBuilder = BalancedColumnTreeBuilder;
 
 });
 
-define('ag-grid/dist/lib/gridOptionsWrapper',['require','exports','module','./eventService','./constants','./components/componentUtil','./gridApi','./context/context','./columnController/columnApi','./columnController/columnController','./utils','./environment','./propertyKeys','./components/colDefUtil','./eventKeys'],function (require, exports, module) {/**
+define('ag-grid/dist/lib/gridOptionsWrapper',['require','exports','module','./eventService','./constants','./components/componentUtil','./gridApi','./context/context','./columnController/columnApi','./columnController/columnController','./utils','./environment','./propertyKeys','./components/colDefUtil','./eventKeys','./rendering/autoHeightCalculator'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28262,6 +28412,7 @@ var environment_1 = require("./environment");
 var propertyKeys_1 = require("./propertyKeys");
 var colDefUtil_1 = require("./components/colDefUtil");
 var eventKeys_1 = require("./eventKeys");
+var autoHeightCalculator_1 = require("./rendering/autoHeightCalculator");
 var DEFAULT_ROW_HEIGHT = 25;
 var DEFAULT_DETAIL_ROW_HEIGHT = 300;
 var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
@@ -28298,6 +28449,7 @@ var GridOptionsWrapper = (function () {
     function GridOptionsWrapper() {
         this.propertyEventService = new eventService_1.EventService();
         this.domDataKey = '__AG_' + Math.random().toString();
+        this.forPrintWarningGiven = false;
     }
     GridOptionsWrapper_1 = GridOptionsWrapper;
     GridOptionsWrapper.prototype.agWire = function (gridApi, columnApi) {
@@ -28446,7 +28598,14 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.isSuppressScrollOnNewData = function () { return isTrue(this.gridOptions.suppressScrollOnNewData); };
     GridOptionsWrapper.prototype.isRowDragManaged = function () { return isTrue(this.gridOptions.rowDragManaged); };
     GridOptionsWrapper.prototype.isSuppressRowDrag = function () { return isTrue(this.gridOptions.suppressRowDrag); };
-    GridOptionsWrapper.prototype.isForPrint = function () { return this.gridOptions.domLayout === 'forPrint'; };
+    GridOptionsWrapper.prototype.isForPrint = function () {
+        var isForPrint = this.gridOptions.domLayout === 'forPrint';
+        if (isForPrint && !this.forPrintWarningGiven) {
+            console.warn("ag-grid: Since v17.1.0 domLayout: 'forPrint' has been deprecated. Please use instead auto height: https://www.ag-grid.com/javascript-grid-width-and-height/#autoHeight");
+            this.forPrintWarningGiven = true;
+        }
+        return isForPrint;
+    };
     GridOptionsWrapper.prototype.isAutoHeight = function () { return this.gridOptions.domLayout === 'autoHeight'; };
     GridOptionsWrapper.prototype.isNormalDomLayout = function () { return !this.isForPrint() && !this.isAutoHeight(); };
     GridOptionsWrapper.prototype.isSuppressHorizontalScroll = function () { return isTrue(this.gridOptions.suppressHorizontalScroll); };
@@ -28528,6 +28687,7 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.isSuppressCopyRowsToClipboard = function () { return isTrue(this.gridOptions.suppressCopyRowsToClipboard); };
     GridOptionsWrapper.prototype.isEnableFilter = function () { return isTrue(this.gridOptions.enableFilter) || isTrue(this.gridOptions.enableServerSideFilter); };
     GridOptionsWrapper.prototype.isPagination = function () { return isTrue(this.gridOptions.pagination); };
+    GridOptionsWrapper.prototype.isSuppressEnterpriseResetOnNewColumns = function () { return isTrue(this.gridOptions.suppressEnterpriseResetOnNewColumns); };
     GridOptionsWrapper.prototype.getBatchUpdateWaitMillis = function () {
         return utils_1.Utils.exists(this.gridOptions.batchUpdateWaitMillis) ? this.gridOptions.batchUpdateWaitMillis : constants_1.Constants.BATCH_WAIT_MILLIS;
     };
@@ -28574,12 +28734,14 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.isAlwaysShowStatusBar = function () { return isTrue(this.gridOptions.alwaysShowStatusBar); };
     GridOptionsWrapper.prototype.isFunctionsReadOnly = function () { return isTrue(this.gridOptions.functionsReadOnly); };
     GridOptionsWrapper.prototype.isFloatingFilter = function () { return this.gridOptions.floatingFilter; };
+    GridOptionsWrapper.prototype.isEnableOldSetFilterModel = function () { return isTrue(this.gridOptions.enableOldSetFilterModel); };
     // public isFloatingFilter(): boolean { return true; }
     GridOptionsWrapper.prototype.getDefaultColDef = function () { return this.gridOptions.defaultColDef; };
     GridOptionsWrapper.prototype.getDefaultColGroupDef = function () { return this.gridOptions.defaultColGroupDef; };
     GridOptionsWrapper.prototype.getDefaultExportParams = function () { return this.gridOptions.defaultExportParams; };
     GridOptionsWrapper.prototype.isSuppressCsvExport = function () { return isTrue(this.gridOptions.suppressCsvExport); };
     GridOptionsWrapper.prototype.isSuppressExcelExport = function () { return isTrue(this.gridOptions.suppressExcelExport); };
+    GridOptionsWrapper.prototype.isSuppressMakeColumnVisibleAfterUnGroup = function () { return isTrue(this.gridOptions.suppressMakeColumnVisibleAfterUnGroup); };
     GridOptionsWrapper.prototype.getNodeChildDetailsFunc = function () { return this.gridOptions.getNodeChildDetails; };
     GridOptionsWrapper.prototype.getDataPathFunc = function () { return this.gridOptions.getDataPath; };
     // public getIsGroupFunc(): ((dataItem: any) => boolean) { return this.gridOptions.isGroup }
@@ -28589,6 +28751,7 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.getRowNodeIdFunc = function () { return this.gridOptions.getRowNodeId; };
     GridOptionsWrapper.prototype.getNavigateToNextCellFunc = function () { return this.gridOptions.navigateToNextCell; };
     GridOptionsWrapper.prototype.getTabToNextCellFunc = function () { return this.gridOptions.tabToNextCell; };
+    GridOptionsWrapper.prototype.isNativeScroll = function () { return false; };
     GridOptionsWrapper.prototype.isTreeData = function () { return isTrue(this.gridOptions.treeData); };
     GridOptionsWrapper.prototype.isValueCache = function () { return isTrue(this.gridOptions.valueCache); };
     GridOptionsWrapper.prototype.isValueCacheNeverExpires = function () { return isTrue(this.gridOptions.valueCacheNeverExpires); };
@@ -28598,6 +28761,7 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.getSendToClipboardFunc = function () { return this.gridOptions.sendToClipboard; };
     GridOptionsWrapper.prototype.getProcessRowPostCreateFunc = function () { return this.gridOptions.processRowPostCreate; };
     GridOptionsWrapper.prototype.getProcessCellForClipboardFunc = function () { return this.gridOptions.processCellForClipboard; };
+    GridOptionsWrapper.prototype.getProcessHeaderForClipboardFunc = function () { return this.gridOptions.processHeaderForClipboard; };
     GridOptionsWrapper.prototype.getProcessCellFromClipboardFunc = function () { return this.gridOptions.processCellFromClipboard; };
     GridOptionsWrapper.prototype.getViewportRowModelPageSize = function () { return oneOrGreater(this.gridOptions.viewportRowModelPageSize, DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE); };
     GridOptionsWrapper.prototype.getViewportRowModelBufferSize = function () { return zeroOrGreater(this.gridOptions.viewportRowModelBufferSize, DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE); };
@@ -28842,6 +29006,9 @@ var GridOptionsWrapper = (function () {
         if (options.headerCellRenderer) {
             console.warn("ag-grid: since version 15.x, headerCellRenderer is gone, please check the header documentation on how to set header templates.");
         }
+        if (options.angularCompileHeaders) {
+            console.warn("ag-grid: since version 15.x, angularCompileHeaders is gone, please see the getting started for Angular 1 docs to see how to do headers in Angular 1.x.");
+        }
     };
     GridOptionsWrapper.prototype.getLocaleTextFunc = function () {
         if (this.gridOptions.localeTextFunc) {
@@ -28860,9 +29027,6 @@ var GridOptionsWrapper = (function () {
     };
     // responsible for calling the onXXX functions on gridOptions
     GridOptionsWrapper.prototype.globalEventHandler = function (eventName, event) {
-        if (eventName === 'columnVisible') {
-            console.log('columnVisible');
-        }
         var callbackMethodName = componentUtil_1.ComponentUtil.getCallbackForEvent(eventName);
         if (typeof this.gridOptions[callbackMethodName] === 'function') {
             this.gridOptions[callbackMethodName](event);
@@ -28903,11 +29067,23 @@ var GridOptionsWrapper = (function () {
                 return DEFAULT_DETAIL_ROW_HEIGHT;
             }
         }
-        else if (this.isNumeric(this.gridOptions.rowHeight)) {
-            return this.gridOptions.rowHeight;
-        }
         else {
-            return this.getDefaultRowHeight();
+            var defaultHeight = this.isNumeric(this.gridOptions.rowHeight) ?
+                this.gridOptions.rowHeight : this.getDefaultRowHeight();
+            if (this.columnController.isAutoRowHeightActive()) {
+                var autoHeight = this.autoHeightCalculator.getPreferredHeightForRow(rowNode);
+                // never return less than the default row height - covers when auto height
+                // cells are blank.
+                if (autoHeight > defaultHeight) {
+                    return autoHeight;
+                }
+                else {
+                    return defaultHeight;
+                }
+            }
+            else {
+                return defaultHeight;
+            }
         }
     };
     GridOptionsWrapper.prototype.isDynamicRowHeight = function () {
@@ -28976,6 +29152,10 @@ var GridOptionsWrapper = (function () {
         __metadata("design:type", environment_1.Environment)
     ], GridOptionsWrapper.prototype, "environment", void 0);
     __decorate([
+        context_1.Autowired('autoHeightCalculator'),
+        __metadata("design:type", autoHeightCalculator_1.AutoHeightCalculator)
+    ], GridOptionsWrapper.prototype, "autoHeightCalculator", void 0);
+    __decorate([
         __param(0, context_1.Qualifier('gridApi')), __param(1, context_1.Qualifier('columnApi')),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [gridApi_1.GridApi, columnApi_1.ColumnApi]),
@@ -29005,7 +29185,7 @@ exports.GridOptionsWrapper = GridOptionsWrapper;
 
 define('ag-grid/dist/lib/eventService',['require','exports','module','./logger','./utils','./context/context','./context/context','./gridOptionsWrapper'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29209,7 +29389,7 @@ exports.EventService = EventService;
 
 define('ag-grid/dist/lib/logger',['require','exports','module','./gridOptionsWrapper','./context/context','./context/context'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29275,7 +29455,7 @@ exports.Logger = Logger;
 
 define('ag-grid/dist/lib/context/context',['require','exports','module','../utils'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29621,7 +29801,7 @@ function getOrCreateProps(target) {
 
 define('ag-grid/dist/lib/utils',['require','exports','module','./constants'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29983,6 +30163,15 @@ var Utils = (function () {
     };
     Utils.isNodeOrElement = function (o) {
         return this.isNode(o) || this.isElement(o);
+    };
+    // makes a copy of a node list into a list
+    Utils.copyNodeList = function (nodeList) {
+        var childCount = nodeList ? nodeList.length : 0;
+        var res = [];
+        for (var i = 0; i < childCount; i++) {
+            res.push(nodeList[i]);
+        }
+        return res;
     };
     Utils.isEventFromPrintableCharacter = function (event) {
         var pressedChar = String.fromCharCode(event.charCode);
@@ -30392,6 +30581,17 @@ var Utils = (function () {
             res = eContainer.firstChild;
         }
         return res;
+    };
+    Utils.every = function (items, callback) {
+        if (!items || items.length === 0) {
+            return true;
+        }
+        for (var i = 0; i < items.length; i++) {
+            if (!callback(items[i])) {
+                return false;
+            }
+        }
+        return true;
     };
     Utils.toStringOrNull = function (value) {
         if (this.exists(value) && value.toString) {
@@ -31298,7 +31498,7 @@ exports.Promise = Promise;
 
 define('ag-grid/dist/lib/constants',['require','exports','module'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31358,7 +31558,7 @@ exports.Constants = Constants;
 
 define('ag-grid/dist/lib/components/componentUtil',['require','exports','module','../events','../propertyKeys','../utils'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31481,7 +31681,7 @@ var ComponentUtil = (function () {
             api.paginationSetPageSize(ComponentUtil.toNumber(changes.paginationPageSize.currentValue));
         }
         if (changes.pivotMode) {
-            columnApi.setPivotMode(ComponentUtil.toBoolean(changes.pivotMode.currentValue), "gridOptionsChanged");
+            columnApi.setPivotMode(ComponentUtil.toBoolean(changes.pivotMode.currentValue));
         }
         if (changes.groupRemoveSingleChildren) {
             api.setGroupRemoveSingleChildren(ComponentUtil.toBoolean(changes.groupRemoveSingleChildren.currentValue));
@@ -31549,7 +31749,7 @@ function checkForDeprecated(changes) {
 
 define('ag-grid/dist/lib/events',['require','exports','module','./eventKeys'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31562,7 +31762,7 @@ exports.Events = eventKeys_1.Events;
 
 define('ag-grid/dist/lib/eventKeys',['require','exports','module'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31684,7 +31884,7 @@ exports.Events = Events;
 
 define('ag-grid/dist/lib/propertyKeys',['require','exports','module'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31723,7 +31923,7 @@ var PropertyKeys = (function () {
     PropertyKeys.BOOLEAN_PROPERTIES = [
         'toolPanelSuppressRowGroups', 'toolPanelSuppressValues', 'toolPanelSuppressPivots', 'toolPanelSuppressPivotMode',
         'toolPanelSuppressSideButtons', 'toolPanelSuppressColumnFilter', 'toolPanelSuppressColumnSelectAll',
-        'toolPanelSuppressColumnExpandAll',
+        'toolPanelSuppressColumnExpandAll', 'suppressMakeColumnVisibleAfterUnGroup',
         'suppressRowClickSelection', 'suppressCellSelection', 'suppressHorizontalScroll', 'debug',
         'enableColResize', 'enableCellExpressions', 'enableSorting', 'enableServerSideSorting',
         'enableFilter', 'enableServerSideFilter', 'angularCompileRows', 'angularCompileFilters',
@@ -31748,7 +31948,7 @@ var PropertyKeys = (function () {
         'valueCache', 'valueCacheNeverExpires', 'aggregateOnlyChangedColumns', 'suppressAnimationFrame',
         'suppressExcelExport', 'suppressCsvExport', 'treeData', 'masterDetail', 'suppressMultiRangeSelection',
         'enterMovesDownAfterEdit', 'enterMovesDown', 'suppressPropertyNamesCheck', 'rowMultiSelectWithClick',
-        'contractColumnSelection'
+        'contractColumnSelection', 'suppressEnterpriseResetOnNewColumns', 'enableOldSetFilterModel'
     ];
     PropertyKeys.FUNCTION_PROPERTIES = ['localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
         'dateComponent', 'dateComponentFramework', 'groupRowRenderer', 'groupRowRendererFramework', 'isExternalFilterPresent',
@@ -31759,7 +31959,8 @@ var PropertyKeys = (function () {
         'getBusinessKeyForNode', 'sendToClipboard', 'navigateToNextCell', 'tabToNextCell', 'getDetailRowData',
         'processCellFromClipboard', 'getDocument', 'postProcessPopup', 'getChildCount', 'getDataPath', 'loadingOverlayComponent',
         'loadingOverlayComponentFramework', 'noRowsOverlayComponent', 'noRowsOverlayComponentFramework', 'detailCellRenderer',
-        'detailCellRendererFramework', 'onGridReady', 'defaultGroupSortComparator', 'isRowMaster', 'isRowSelectable', 'postSort'];
+        'detailCellRendererFramework', 'onGridReady', 'defaultGroupSortComparator', 'isRowMaster', 'isRowSelectable', 'postSort',
+        'processHeaderForClipboard', 'paginationNumberFormatter'];
     PropertyKeys.ALL_PROPERTIES = PropertyKeys.ARRAY_PROPERTIES
         .concat(PropertyKeys.OBJECT_PROPERTIES)
         .concat(PropertyKeys.STRING_PROPERTIES)
@@ -31774,7 +31975,7 @@ exports.PropertyKeys = PropertyKeys;
 
 define('ag-grid/dist/lib/gridApi',['require','exports','module','./csvCreator','./rendering/rowRenderer','./headerRendering/headerRenderer','./filter/filterManager','./columnController/columnController','./selectionController','./gridOptionsWrapper','./gridPanel/gridPanel','./valueService/valueService','./eventService','./constants','./context/context','./gridCore','./sortController','./focusedCellController','./entities/gridCell','./utils','./rendering/cellRendererFactory','./rendering/cellEditorFactory','./rowModels/paginationProxy','./rowModels/inMemory/immutableService','./valueService/valueCache','./alignedGridsService','./rowModels/pinnedRowModel'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32870,7 +33071,7 @@ exports.GridApi = GridApi;
 
 define('ag-grid/dist/lib/csvCreator',['require','exports','module','./context/context','./gridSerializer','./downloader','./columnController/columnController','./valueService/valueService','./gridOptionsWrapper','./constants','./utils'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33107,7 +33308,7 @@ exports.CsvCreator = CsvCreator;
 
 define('ag-grid/dist/lib/gridSerializer',['require','exports','module','./context/context','./columnController/columnController','./constants','./utils','./selectionController','./gridOptionsWrapper','./columnController/displayedGroupCreator','./columnController/balancedColumnTreeBuilder','./columnController/groupInstanceIdCreator','./entities/columnGroup','./rowModels/pinnedRowModel'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33259,7 +33460,13 @@ var GridSerializer = (function () {
         }
         this.pinnedRowModel.forEachPinnedTopRow(processRow);
         if (isPivotMode) {
-            this.rowModel.forEachPivotNode(processRow);
+            if (this.rowModel.forEachPivotNode) {
+                this.rowModel.forEachPivotNode(processRow);
+            }
+            else {
+                //Must be enterprise, so we can just loop through all the nodes
+                this.rowModel.forEachNode(processRow);
+            }
         }
         else {
             // onlySelectedAllPages: user doing pagination and wants selected items from
@@ -33396,7 +33603,7 @@ var RowType;
 
 define('ag-grid/dist/lib/columnController/columnController',['require','exports','module','../utils','../entities/columnGroup','../entities/column','../gridOptionsWrapper','../valueService/expressionService','./balancedColumnTreeBuilder','./displayedGroupCreator','../rendering/autoWidthCalculator','../eventService','./columnUtils','../logger','../events','../entities/originalColumnGroup','./groupInstanceIdCreator','../context/context','../gridPanel/gridPanel','../rendering/columnAnimationService','./autoGroupColService','../valueService/valueCache','../gridApi','./columnApi'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33470,6 +33677,12 @@ var ColumnController = (function () {
             this.pivotMode = pivotMode;
         }
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
+    };
+    ColumnController.prototype.isAutoRowHeightActive = function () {
+        return this.autoRowHeightColumns && this.autoRowHeightColumns.length > 0;
+    };
+    ColumnController.prototype.getAllAutoRowHeightCols = function () {
+        return this.autoRowHeightColumns;
     };
     ColumnController.prototype.setVirtualViewportLeftAndRight = function () {
         if (this.gridOptionsWrapper.isEnableRtl()) {
@@ -33729,26 +33942,53 @@ var ColumnController = (function () {
             return this.getDisplayedColumnsForRow(rowNode, this.displayedRightColumns);
         }
     };
-    ColumnController.prototype.getDisplayedColumnsForRow = function (rowNode, displayedColumns, filterCallback, gapBeforeCallback) {
+    ColumnController.prototype.getDisplayedColumnsForRow = function (rowNode, displayedColumns, filterCallback, emptySpaceBeforeColumn) {
         var result = [];
         var lastConsideredCol = null;
-        for (var i = 0; i < displayedColumns.length; i++) {
+        var _loop_1 = function (i) {
             var col = displayedColumns[i];
             var colSpan = col.getColSpan(rowNode);
+            var columnsToCheckFilter = [col];
             if (colSpan > 1) {
                 var colsToRemove = colSpan - 1;
+                for (var j = 1; j <= colsToRemove; j++) {
+                    columnsToCheckFilter.push(displayedColumns[i + j]);
+                }
                 i += colsToRemove;
             }
-            var filterPasses = filterCallback ? filterCallback(col) : true;
+            // see which cols we should take out for column virtualisation
+            var filterPasses;
+            if (filterCallback) {
+                // if user provided a callback, means some columns may not be in the viewport.
+                // the user will NOT provide a callback if we are talking about pinned areas,
+                // as pinned areas have no horizontal scroll and do not virtualise the columns.
+                // if lots of columns, that means column spanning, and we set filterPasses = true
+                // if one or more of the columns spanned pass the filter.
+                filterPasses = false;
+                columnsToCheckFilter.forEach(function (colForFilter) {
+                    if (filterCallback(colForFilter))
+                        filterPasses = true;
+                });
+            }
+            else {
+                filterPasses = true;
+            }
             if (filterPasses) {
-                var gapBeforeColumn = gapBeforeCallback ? gapBeforeCallback(col) : false;
-                var addInPreviousColumn = result.length === 0 && gapBeforeColumn && lastConsideredCol;
-                if (addInPreviousColumn) {
-                    result.push(lastConsideredCol);
+                if (result.length === 0 && lastConsideredCol) {
+                    var gapBeforeColumn = emptySpaceBeforeColumn ? emptySpaceBeforeColumn(col) : false;
+                    if (gapBeforeColumn) {
+                        result.push(lastConsideredCol);
+                    }
                 }
                 result.push(col);
             }
             lastConsideredCol = col;
+            out_i_1 = i;
+        };
+        var out_i_1;
+        for (var i = 0; i < displayedColumns.length; i++) {
+            _loop_1(i);
+            i = out_i_1;
         }
         return result;
     };
@@ -33761,8 +34001,8 @@ var ColumnController = (function () {
         if (!this.colSpanActive) {
             return this.allDisplayedCenterVirtualColumns;
         }
-        var gapBeforeCallback = function (col) { return col.getLeft() > _this.viewportLeft; };
-        return this.getDisplayedColumnsForRow(rowNode, this.displayedCenterColumns, this.isColumnInViewport.bind(this), gapBeforeCallback);
+        var emptySpaceBeforeColumn = function (col) { return col.getLeft() > _this.viewportLeft; };
+        return this.getDisplayedColumnsForRow(rowNode, this.displayedCenterColumns, this.isColumnInViewport.bind(this), emptySpaceBeforeColumn);
     };
     ColumnController.prototype.isColumnInViewport = function (col) {
         var columnLeft = col.getLeft();
@@ -33835,7 +34075,7 @@ var ColumnController = (function () {
             return;
         }
         column.setRowGroupActive(active, source);
-        if (!active) {
+        if (!active && !this.gridOptionsWrapper.isSuppressMakeColumnVisibleAfterUnGroup()) {
             column.setVisible(true, source);
         }
     };
@@ -33955,30 +34195,171 @@ var ColumnController = (function () {
             return this.getGridColumn(key);
         }
     };
-    ColumnController.prototype.setColumnWidth = function (key, newWidth, finished, source) {
+    ColumnController.prototype.setColumnWidth = function (key, // @key - the column who's size we want to change
+        newWidth, // @newWidth - width in pixels
+        takeFromAdjacent, // @takeFromAdjacent - if user has 'shift' pressed, then pixels are taken from adjacent column
+        finished, // @finished - ends up in the event, tells the user if more events are to come
+        source) {
         if (source === void 0) { source = "api"; }
-        var column = this.getPrimaryOrGridColumn(key);
-        if (!column) {
+        var col = this.getPrimaryOrGridColumn(key);
+        if (!col) {
             return;
         }
-        newWidth = this.normaliseColumnWidth(column, newWidth);
-        var widthChanged = column.getActualWidth() !== newWidth;
-        if (widthChanged) {
-            column.setActualWidth(newWidth, source);
-            this.setLeftValues(source);
+        var sets = [];
+        sets.push({
+            width: newWidth,
+            ratios: [1],
+            columns: [col]
+        });
+        if (takeFromAdjacent) {
+            var otherCol = this.getDisplayedColAfter(col);
+            if (!otherCol) {
+                return;
+            }
+            var widthDiff = col.getActualWidth() - newWidth;
+            var otherColWidth = otherCol.getActualWidth() + widthDiff;
+            sets.push({
+                width: otherColWidth,
+                ratios: [1],
+                columns: [otherCol]
+            });
         }
-        this.updateBodyWidths();
-        this.checkDisplayedVirtualColumns();
+        this.resizeColumnSets(sets, finished, source);
+    };
+    ColumnController.prototype.checkMinAndMaxWidthsForSet = function (columnResizeSet) {
+        var columns = columnResizeSet.columns, width = columnResizeSet.width;
+        // every col has a min width, so sum them all up and see if we have enough room
+        // for all the min widths
+        var minWidthAccumulated = 0;
+        var maxWidthAccumulated = 0;
+        var maxWidthActive = true;
+        columns.forEach(function (col) {
+            minWidthAccumulated += col.getMinWidth();
+            if (col.getMaxWidth() > 0) {
+                maxWidthAccumulated += col.getMaxWidth();
+            }
+            else {
+                // if at least one columns has no max width, it means the group of columns
+                // then has no max width, as at least one column can take as much width as possible
+                maxWidthActive = false;
+            }
+        });
+        var minWidthPasses = width >= minWidthAccumulated;
+        var maxWidthPasses = !maxWidthActive || (width <= maxWidthAccumulated);
+        return minWidthPasses && maxWidthPasses;
+    };
+    // method takes sets of columns and resizes them. either all sets will be resized, or nothing
+    // be resized. this is used for example when user tries to resize a group and holds shift key,
+    // then both the current group (grows), and the adjacent group (shrinks), will get resized,
+    // so that's two sets for this method.
+    ColumnController.prototype.resizeColumnSets = function (resizeSets, finished, source) {
+        var passMinMaxCheck = utils_1.Utils.every(resizeSets, this.checkMinAndMaxWidthsForSet.bind(this));
+        if (!passMinMaxCheck) {
+            return;
+        }
+        var changedCols = [];
+        var allCols = [];
+        resizeSets.forEach(function (set) {
+            var width = set.width, columns = set.columns, ratios = set.ratios;
+            // keep track of pixels used, and last column gets the remaining,
+            // to cater for rounding errors, and min width adjustments
+            var newWidths = {};
+            var finishedCols = {};
+            columns.forEach(function (col) { return allCols.push(col); });
+            // the loop below goes through each col. if a col exceeds it's min/max width,
+            // it then gets set to its min/max width and the column is removed marked as 'finished'
+            // and the calculation is done again leaving this column out. take for example columns
+            // {A, width: 50, maxWidth: 100}
+            // {B, width: 50}
+            // {C, width: 50}
+            // and then the set is set to width 600 - on the first pass the grid tries to set each column
+            // to 200. it checks A and sees 200 > 100 and so sets the width to 100. col A is then marked
+            // as 'finished' and the calculation is done again with the remaining cols B and C, which end up
+            // splitting the remaining 500 pixels.
+            var finishedColsGrew = true;
+            var loopCount = 0;
+            var _loop_2 = function () {
+                loopCount++;
+                if (loopCount > 1000) {
+                    // this should never happen, but in the future, someone might introduce a bug here,
+                    // so we stop the browser from hanging and report bug properly
+                    console.error('ag-Grid: infinite loop in resizeColumnSets');
+                    return "break";
+                }
+                finishedColsGrew = false;
+                var subsetCols = [];
+                var subsetRatios = [];
+                var subsetRatioTotal = 0;
+                var pixelsToDistribute = width;
+                columns.forEach(function (col, index) {
+                    var thisColFinished = finishedCols[col.getId()];
+                    if (thisColFinished) {
+                        pixelsToDistribute -= newWidths[col.getId()];
+                    }
+                    else {
+                        subsetCols.push(col);
+                        var ratioThisCol = ratios[index];
+                        subsetRatioTotal += ratioThisCol;
+                        subsetRatios.push(ratioThisCol);
+                    }
+                });
+                // because we are not using all of the ratios (cols can be missing),
+                // we scale the ratio. if all columns are included, then subsetRatioTotal=1,
+                // and so the ratioScale will be 1.
+                var ratioScale = 1 / subsetRatioTotal;
+                subsetCols.forEach(function (col, index) {
+                    var lastCol = index === (subsetCols.length - 1);
+                    var colNewWidth;
+                    if (lastCol) {
+                        colNewWidth = pixelsToDistribute;
+                    }
+                    else {
+                        colNewWidth = Math.round(ratios[index] * width * ratioScale);
+                        pixelsToDistribute -= colNewWidth;
+                    }
+                    if (colNewWidth < col.getMinWidth()) {
+                        colNewWidth = col.getMinWidth();
+                        finishedCols[col.getId()] = true;
+                        finishedColsGrew = true;
+                    }
+                    else if (col.getMaxWidth() > 0 && colNewWidth > col.getMaxWidth()) {
+                        colNewWidth = col.getMaxWidth();
+                        finishedCols[col.getId()] = true;
+                        finishedColsGrew = true;
+                    }
+                    newWidths[col.getId()] = colNewWidth;
+                });
+            };
+            while (finishedColsGrew) {
+                var state_1 = _loop_2();
+                if (state_1 === "break")
+                    break;
+            }
+            columns.forEach(function (col) {
+                var newWidth = newWidths[col.getId()];
+                if (col.getActualWidth() !== newWidth) {
+                    col.setActualWidth(newWidth);
+                    changedCols.push(col);
+                }
+            });
+        });
+        // if no cols changed, then no need to update more or send event.
+        var atLeastOneColChanged = changedCols.length > 0;
+        if (atLeastOneColChanged) {
+            this.setLeftValues(source);
+            this.updateBodyWidths();
+            this.checkDisplayedVirtualColumns();
+        }
         // check for change first, to avoid unnecessary firing of events
         // however we always fire 'finished' events. this is important
         // when groups are resized, as if the group is changing slowly,
         // eg 1 pixel at a time, then each change will fire change events
         // in all the columns in the group, but only one with get the pixel.
-        if (finished || widthChanged) {
+        if (atLeastOneColChanged || finished) {
             var event_3 = {
                 type: events_1.Events.EVENT_COLUMN_RESIZED,
-                columns: [column],
-                column: column,
+                columns: changedCols,
+                column: changedCols.length === 1 ? changedCols[0] : null,
                 finished: finished,
                 api: this.gridApi,
                 columnApi: this.columnApi,
@@ -34330,6 +34711,27 @@ var ColumnController = (function () {
         }
         else {
             return null;
+        }
+    };
+    ColumnController.prototype.getDisplayedGroupAfter = function (columnGroup) {
+        // pick one col in this group at random
+        var col = columnGroup.getDisplayedLeafColumns()[0];
+        var requiredLevel = columnGroup.getOriginalColumnGroup().getLevel();
+        while (true) {
+            // keep moving to the next col, until we get to another group
+            col = this.getDisplayedColAfter(col);
+            // if no col after, means no group after
+            if (!col) {
+                return null;
+            }
+            // get group at same level as the one we are looking for
+            var groupPointer = col.getParent();
+            while (groupPointer.getOriginalColumnGroup().getLevel() !== requiredLevel) {
+                groupPointer = groupPointer.getParent();
+            }
+            if (groupPointer !== columnGroup) {
+                return groupPointer;
+            }
         }
     };
     ColumnController.prototype.isPinningLeft = function () {
@@ -34720,6 +35122,7 @@ var ColumnController = (function () {
         this.primaryBalancedTree = balancedTreeResult.balancedTree;
         this.primaryHeaderRowCount = balancedTreeResult.treeDept + 1;
         this.primaryColumns = this.getColumnsFromTree(this.primaryBalancedTree);
+        this.autoRowHeightColumns = this.primaryColumns.filter(function (col) { return col.getColDef().autoHeight; });
         this.extractRowGroupColumns(source);
         this.extractPivotColumns(source);
         this.createValueColumns(source);
@@ -35000,15 +35403,24 @@ var ColumnController = (function () {
     };
     // called from: setColumnState, setColumnDefs, setSecondaryColumns
     ColumnController.prototype.updateGridColumns = function () {
+        if (this.gridColsArePrimary) {
+            this.lastPrimaryOrder = this.gridColumns;
+        }
         if (this.secondaryColumns) {
             this.gridBalancedTree = this.secondaryBalancedTree.slice();
             this.gridHeaderRowCount = this.secondaryHeaderRowCount;
             this.gridColumns = this.secondaryColumns.slice();
+            this.gridColsArePrimary = false;
         }
         else {
             this.gridBalancedTree = this.primaryBalancedTree.slice();
             this.gridHeaderRowCount = this.primaryHeaderRowCount;
             this.gridColumns = this.primaryColumns.slice();
+            this.gridColsArePrimary = true;
+            // updateGridColumns gets called after user adds a row group. we want to maintain the order of the columns
+            // when this happens (eg if user moved a column) rather than revert back to the original column order.
+            // likewise if changing in/out of pivot mode, we want to maintain the order of the primary cols
+            this.orderGridColsLikeLastPrimary();
         }
         this.putFixedColumnsFirst();
         this.addAutoGroupToGridColumns();
@@ -35021,6 +35433,28 @@ var ColumnController = (function () {
             columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(event);
+    };
+    ColumnController.prototype.orderGridColsLikeLastPrimary = function () {
+        var _this = this;
+        if (utils_1.Utils.missing(this.lastPrimaryOrder)) {
+            return;
+        }
+        // only do the sort if all columns are accounted for. columns will be not accounted for
+        // if changing from secondary to primary columns
+        var oneMissing = false;
+        this.gridColumns.forEach(function (col) {
+            if (_this.lastPrimaryOrder.indexOf(col) < 0) {
+                oneMissing = true;
+            }
+        });
+        if (oneMissing) {
+            return;
+        }
+        this.gridColumns.sort(function (colA, colB) {
+            var indexA = _this.lastPrimaryOrder.indexOf(colA);
+            var indexB = _this.lastPrimaryOrder.indexOf(colB);
+            return indexA - indexB;
+        });
     };
     ColumnController.prototype.isPrimaryColumnGroupsPresent = function () {
         return this.primaryHeaderRowCount > 1;
@@ -35468,7 +35902,7 @@ exports.ColumnController = ColumnController;
 
 define('ag-grid/dist/lib/entities/columnGroup',['require','exports','module','./column','../eventService','../context/context','../gridOptionsWrapper','../columnController/columnApi','../gridApi'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35757,7 +36191,7 @@ exports.ColumnGroup = ColumnGroup;
 
 define('ag-grid/dist/lib/entities/column',['require','exports','module','../eventService','../utils','../context/context','../gridOptionsWrapper','../columnController/columnUtils','../columnController/columnApi','../gridApi'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36324,7 +36758,7 @@ exports.Column = Column;
 
 define('ag-grid/dist/lib/columnController/columnUtils',['require','exports','module','../gridOptionsWrapper','../entities/columnGroup','../entities/originalColumnGroup','../context/context','../context/context'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36479,7 +36913,7 @@ exports.ColumnUtils = ColumnUtils;
 
 define('ag-grid/dist/lib/entities/originalColumnGroup',['require','exports','module','./columnGroup','./column','../eventService','../context/context','../columnController/columnApi','../gridApi'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36501,14 +36935,18 @@ var context_1 = require("../context/context");
 var columnApi_1 = require("../columnController/columnApi");
 var gridApi_1 = require("../gridApi");
 var OriginalColumnGroup = (function () {
-    function OriginalColumnGroup(colGroupDef, groupId, padding) {
+    function OriginalColumnGroup(colGroupDef, groupId, padding, level) {
         this.localEventService = new eventService_1.EventService();
         this.expandable = false;
         this.colGroupDef = colGroupDef;
         this.groupId = groupId;
         this.expanded = colGroupDef && !!colGroupDef.openByDefault;
         this.padding = padding;
+        this.level = level;
     }
+    OriginalColumnGroup.prototype.getLevel = function () {
+        return this.level;
+    };
     OriginalColumnGroup.prototype.isVisible = function () {
         // return true if at least one child is visible
         if (this.children) {
@@ -36649,7 +37087,7 @@ exports.OriginalColumnGroup = OriginalColumnGroup;
 
 define('ag-grid/dist/lib/columnController/columnApi',['require','exports','module','./columnController','../context/context'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36669,28 +37107,28 @@ var context_1 = require("../context/context");
 var ColumnApi = (function () {
     function ColumnApi() {
     }
-    ColumnApi.prototype.sizeColumnsToFit = function (gridWidth, source) { this.columnController.sizeColumnsToFit(gridWidth, source); };
-    ColumnApi.prototype.setColumnGroupOpened = function (group, newValue, source) { this.columnController.setColumnGroupOpened(group, newValue, source); };
+    ColumnApi.prototype.sizeColumnsToFit = function (gridWidth) { this.columnController.sizeColumnsToFit(gridWidth, 'api'); };
+    ColumnApi.prototype.setColumnGroupOpened = function (group, newValue) { this.columnController.setColumnGroupOpened(group, newValue, 'api'); };
     ColumnApi.prototype.getColumnGroup = function (name, instanceId) { return this.columnController.getColumnGroup(name, instanceId); };
     ColumnApi.prototype.getOriginalColumnGroup = function (name) { return this.columnController.getOriginalColumnGroup(name); };
     ColumnApi.prototype.getDisplayNameForColumn = function (column, location) { return this.columnController.getDisplayNameForColumn(column, location); };
     ColumnApi.prototype.getDisplayNameForColumnGroup = function (columnGroup, location) { return this.columnController.getDisplayNameForColumnGroup(columnGroup, location); };
     ColumnApi.prototype.getColumn = function (key) { return this.columnController.getPrimaryColumn(key); };
-    ColumnApi.prototype.setColumnState = function (columnState, source) { return this.columnController.setColumnState(columnState, source); };
+    ColumnApi.prototype.setColumnState = function (columnState) { return this.columnController.setColumnState(columnState, 'api'); };
     ColumnApi.prototype.getColumnState = function () { return this.columnController.getColumnState(); };
-    ColumnApi.prototype.resetColumnState = function (source) { this.columnController.resetColumnState(source); };
+    ColumnApi.prototype.resetColumnState = function () { this.columnController.resetColumnState('api'); };
     ColumnApi.prototype.getColumnGroupState = function () { return this.columnController.getColumnGroupState(); };
-    ColumnApi.prototype.setColumnGroupState = function (stateItems, source) { this.columnController.setColumnGroupState(stateItems, source); };
-    ColumnApi.prototype.resetColumnGroupState = function (source) { this.columnController.resetColumnGroupState(source); };
+    ColumnApi.prototype.setColumnGroupState = function (stateItems) { this.columnController.setColumnGroupState(stateItems, 'api'); };
+    ColumnApi.prototype.resetColumnGroupState = function () { this.columnController.resetColumnGroupState('api'); };
     ColumnApi.prototype.isPinning = function () { return this.columnController.isPinningLeft() || this.columnController.isPinningRight(); };
     ColumnApi.prototype.isPinningLeft = function () { return this.columnController.isPinningLeft(); };
     ColumnApi.prototype.isPinningRight = function () { return this.columnController.isPinningRight(); };
     ColumnApi.prototype.getDisplayedColAfter = function (col) { return this.columnController.getDisplayedColAfter(col); };
     ColumnApi.prototype.getDisplayedColBefore = function (col) { return this.columnController.getDisplayedColBefore(col); };
-    ColumnApi.prototype.setColumnVisible = function (key, visible, source) { this.columnController.setColumnVisible(key, visible, source); };
-    ColumnApi.prototype.setColumnsVisible = function (keys, visible, source) { this.columnController.setColumnsVisible(keys, visible, source); };
-    ColumnApi.prototype.setColumnPinned = function (key, pinned, source) { this.columnController.setColumnPinned(key, pinned, source); };
-    ColumnApi.prototype.setColumnsPinned = function (keys, pinned, source) { this.columnController.setColumnsPinned(keys, pinned, source); };
+    ColumnApi.prototype.setColumnVisible = function (key, visible) { this.columnController.setColumnVisible(key, visible, 'api'); };
+    ColumnApi.prototype.setColumnsVisible = function (keys, visible) { this.columnController.setColumnsVisible(keys, visible, 'api'); };
+    ColumnApi.prototype.setColumnPinned = function (key, pinned) { this.columnController.setColumnPinned(key, pinned, 'api'); };
+    ColumnApi.prototype.setColumnsPinned = function (keys, pinned) { this.columnController.setColumnsPinned(keys, pinned, 'api'); };
     ColumnApi.prototype.getAllColumns = function () { return this.columnController.getAllPrimaryColumns(); };
     ColumnApi.prototype.getAllGridColumns = function () { return this.columnController.getAllGridColumns(); };
     ColumnApi.prototype.getDisplayedLeftColumns = function () { return this.columnController.getDisplayedLeftColumns(); };
@@ -36698,104 +37136,101 @@ var ColumnApi = (function () {
     ColumnApi.prototype.getDisplayedRightColumns = function () { return this.columnController.getDisplayedRightColumns(); };
     ColumnApi.prototype.getAllDisplayedColumns = function () { return this.columnController.getAllDisplayedColumns(); };
     ColumnApi.prototype.getAllDisplayedVirtualColumns = function () { return this.columnController.getAllDisplayedVirtualColumns(); };
-    ColumnApi.prototype.moveColumn = function (key, toIndex, source) {
+    ColumnApi.prototype.moveColumn = function (key, toIndex) {
         if (typeof key === 'number') {
             // moveColumn used to take indexes, so this is advising user who hasn't moved to new method name
             console.log('ag-Grid: you are using moveColumn(fromIndex, toIndex) - moveColumn takes a column key and a destination index, not two indexes, to move with indexes use moveColumnByIndex(from,to) instead');
-            this.columnController.moveColumnByIndex(key, toIndex, source);
+            this.columnController.moveColumnByIndex(key, toIndex, 'api');
         }
         else {
-            this.columnController.moveColumn(key, toIndex, source);
+            this.columnController.moveColumn(key, toIndex, 'api');
         }
     };
-    ColumnApi.prototype.moveColumnByIndex = function (fromIndex, toIndex, source) { this.columnController.moveColumnByIndex(fromIndex, toIndex, source); };
-    ColumnApi.prototype.moveColumns = function (columnsToMoveKeys, toIndex, source) { this.columnController.moveColumns(columnsToMoveKeys, toIndex, source); };
+    ColumnApi.prototype.moveColumnByIndex = function (fromIndex, toIndex) { this.columnController.moveColumnByIndex(fromIndex, toIndex, 'api'); };
+    ColumnApi.prototype.moveColumns = function (columnsToMoveKeys, toIndex) { this.columnController.moveColumns(columnsToMoveKeys, toIndex, 'api'); };
     ColumnApi.prototype.moveRowGroupColumn = function (fromIndex, toIndex) { this.columnController.moveRowGroupColumn(fromIndex, toIndex); };
     ColumnApi.prototype.setColumnAggFunc = function (column, aggFunc) { this.columnController.setColumnAggFunc(column, aggFunc); };
     ColumnApi.prototype.setColumnWidth = function (key, newWidth, finished) {
         if (finished === void 0) { finished = true; }
-        this.columnController.setColumnWidth(key, newWidth, finished);
+        this.columnController.setColumnWidth(key, newWidth, false, finished);
     };
-    ColumnApi.prototype.setPivotMode = function (pivotMode, source) {
-        if (source === void 0) { source = "api"; }
-        this.columnController.setPivotMode(pivotMode);
-    };
+    ColumnApi.prototype.setPivotMode = function (pivotMode) { this.columnController.setPivotMode(pivotMode); };
     ColumnApi.prototype.isPivotMode = function () { return this.columnController.isPivotMode(); };
     ColumnApi.prototype.getSecondaryPivotColumn = function (pivotKeys, valueColKey) { return this.columnController.getSecondaryPivotColumn(pivotKeys, valueColKey); };
-    ColumnApi.prototype.setValueColumns = function (colKeys, source) { this.columnController.setValueColumns(colKeys, source); };
+    ColumnApi.prototype.setValueColumns = function (colKeys) { this.columnController.setValueColumns(colKeys, 'api'); };
     ColumnApi.prototype.getValueColumns = function () { return this.columnController.getValueColumns(); };
-    ColumnApi.prototype.removeValueColumn = function (colKey, source) { this.columnController.removeValueColumn(colKey, source); };
-    ColumnApi.prototype.removeValueColumns = function (colKeys, source) { this.columnController.removeValueColumns(colKeys, source); };
-    ColumnApi.prototype.addValueColumn = function (colKey, source) { this.columnController.addValueColumn(colKey, source); };
-    ColumnApi.prototype.addValueColumns = function (colKeys, source) { this.columnController.addValueColumns(colKeys, source); };
-    ColumnApi.prototype.setRowGroupColumns = function (colKeys, source) { this.columnController.setRowGroupColumns(colKeys, source); };
-    ColumnApi.prototype.removeRowGroupColumn = function (colKey, source) { this.columnController.removeRowGroupColumn(colKey, source); };
-    ColumnApi.prototype.removeRowGroupColumns = function (colKeys, source) { this.columnController.removeRowGroupColumns(colKeys, source); };
-    ColumnApi.prototype.addRowGroupColumn = function (colKey, source) { this.columnController.addRowGroupColumn(colKey, source); };
-    ColumnApi.prototype.addRowGroupColumns = function (colKeys, source) { this.columnController.addRowGroupColumns(colKeys, source); };
+    ColumnApi.prototype.removeValueColumn = function (colKey) { this.columnController.removeValueColumn(colKey, 'api'); };
+    ColumnApi.prototype.removeValueColumns = function (colKeys) { this.columnController.removeValueColumns(colKeys, 'api'); };
+    ColumnApi.prototype.addValueColumn = function (colKey) { this.columnController.addValueColumn(colKey, 'api'); };
+    ColumnApi.prototype.addValueColumns = function (colKeys) { this.columnController.addValueColumns(colKeys, 'api'); };
+    ColumnApi.prototype.setRowGroupColumns = function (colKeys) { this.columnController.setRowGroupColumns(colKeys, 'api'); };
+    ColumnApi.prototype.removeRowGroupColumn = function (colKey) { this.columnController.removeRowGroupColumn(colKey, 'api'); };
+    ColumnApi.prototype.removeRowGroupColumns = function (colKeys) { this.columnController.removeRowGroupColumns(colKeys, 'api'); };
+    ColumnApi.prototype.addRowGroupColumn = function (colKey) { this.columnController.addRowGroupColumn(colKey, 'api'); };
+    ColumnApi.prototype.addRowGroupColumns = function (colKeys) { this.columnController.addRowGroupColumns(colKeys, 'api'); };
     ColumnApi.prototype.getRowGroupColumns = function () { return this.columnController.getRowGroupColumns(); };
-    ColumnApi.prototype.setPivotColumns = function (colKeys, source) { this.columnController.setPivotColumns(colKeys, source); };
-    ColumnApi.prototype.removePivotColumn = function (colKey, source) { this.columnController.removePivotColumn(colKey, source); };
-    ColumnApi.prototype.removePivotColumns = function (colKeys, source) { this.columnController.removePivotColumns(colKeys, source); };
-    ColumnApi.prototype.addPivotColumn = function (colKey, source) { this.columnController.addPivotColumn(colKey, source); };
-    ColumnApi.prototype.addPivotColumns = function (colKeys, source) { this.columnController.addPivotColumns(colKeys, source); };
+    ColumnApi.prototype.setPivotColumns = function (colKeys) { this.columnController.setPivotColumns(colKeys, 'api'); };
+    ColumnApi.prototype.removePivotColumn = function (colKey) { this.columnController.removePivotColumn(colKey, 'api'); };
+    ColumnApi.prototype.removePivotColumns = function (colKeys) { this.columnController.removePivotColumns(colKeys, 'api'); };
+    ColumnApi.prototype.addPivotColumn = function (colKey) { this.columnController.addPivotColumn(colKey, 'api'); };
+    ColumnApi.prototype.addPivotColumns = function (colKeys) { this.columnController.addPivotColumns(colKeys, 'api'); };
     ColumnApi.prototype.getPivotColumns = function () { return this.columnController.getPivotColumns(); };
     ColumnApi.prototype.getLeftDisplayedColumnGroups = function () { return this.columnController.getLeftDisplayedColumnGroups(); };
     ColumnApi.prototype.getCenterDisplayedColumnGroups = function () { return this.columnController.getCenterDisplayedColumnGroups(); };
     ColumnApi.prototype.getRightDisplayedColumnGroups = function () { return this.columnController.getRightDisplayedColumnGroups(); };
     ColumnApi.prototype.getAllDisplayedColumnGroups = function () { return this.columnController.getAllDisplayedColumnGroups(); };
-    ColumnApi.prototype.autoSizeColumn = function (key, source) { return this.columnController.autoSizeColumn(key, source); };
-    ColumnApi.prototype.autoSizeColumns = function (keys, source) { return this.columnController.autoSizeColumns(keys, source); };
-    ColumnApi.prototype.autoSizeAllColumns = function (source) { this.columnController.autoSizeAllColumns(source); };
-    ColumnApi.prototype.setSecondaryColumns = function (colDefs, source) { this.columnController.setSecondaryColumns(colDefs, source); };
+    ColumnApi.prototype.autoSizeColumn = function (key) { return this.columnController.autoSizeColumn(key, 'api'); };
+    ColumnApi.prototype.autoSizeColumns = function (keys) { return this.columnController.autoSizeColumns(keys, 'api'); };
+    ColumnApi.prototype.autoSizeAllColumns = function () { this.columnController.autoSizeAllColumns('api'); };
+    ColumnApi.prototype.setSecondaryColumns = function (colDefs) { this.columnController.setSecondaryColumns(colDefs, 'api'); };
     // below goes through deprecated items, prints message to user, then calls the new version of the same method
-    ColumnApi.prototype.columnGroupOpened = function (group, newValue, source) {
+    ColumnApi.prototype.columnGroupOpened = function (group, newValue) {
         console.error('ag-Grid: columnGroupOpened no longer exists, use setColumnGroupOpened');
-        this.setColumnGroupOpened(group, newValue, source);
+        this.setColumnGroupOpened(group, newValue);
     };
-    ColumnApi.prototype.hideColumns = function (colIds, hide, source) {
+    ColumnApi.prototype.hideColumns = function (colIds, hide) {
         console.error('ag-Grid: hideColumns is deprecated, use setColumnsVisible');
-        this.columnController.setColumnsVisible(colIds, !hide, source);
+        this.columnController.setColumnsVisible(colIds, !hide, 'api');
     };
-    ColumnApi.prototype.hideColumn = function (colId, hide, source) {
+    ColumnApi.prototype.hideColumn = function (colId, hide) {
         console.error('ag-Grid: hideColumn is deprecated, use setColumnVisible');
-        this.columnController.setColumnVisible(colId, !hide, source);
+        this.columnController.setColumnVisible(colId, !hide, 'api');
     };
-    ColumnApi.prototype.setState = function (columnState, source) {
+    ColumnApi.prototype.setState = function (columnState) {
         console.error('ag-Grid: setState is deprecated, use setColumnState');
-        return this.setColumnState(columnState, source);
+        return this.setColumnState(columnState);
     };
     ColumnApi.prototype.getState = function () {
         console.error('ag-Grid: getState is deprecated, use getColumnState');
         return this.getColumnState();
     };
-    ColumnApi.prototype.resetState = function (source) {
+    ColumnApi.prototype.resetState = function () {
         console.error('ag-Grid: resetState is deprecated, use resetColumnState');
-        this.resetColumnState(source);
+        this.resetColumnState();
     };
     ColumnApi.prototype.getAggregationColumns = function () {
         console.error('ag-Grid: getAggregationColumns is deprecated, use getValueColumns');
         return this.columnController.getValueColumns();
     };
-    ColumnApi.prototype.removeAggregationColumn = function (colKey, source) {
+    ColumnApi.prototype.removeAggregationColumn = function (colKey) {
         console.error('ag-Grid: removeAggregationColumn is deprecated, use removeValueColumn');
-        this.columnController.removeValueColumn(colKey, source);
+        this.columnController.removeValueColumn(colKey, 'api');
     };
-    ColumnApi.prototype.removeAggregationColumns = function (colKeys, source) {
+    ColumnApi.prototype.removeAggregationColumns = function (colKeys) {
         console.error('ag-Grid: removeAggregationColumns is deprecated, use removeValueColumns');
-        this.columnController.removeValueColumns(colKeys, source);
+        this.columnController.removeValueColumns(colKeys, 'api');
     };
-    ColumnApi.prototype.addAggregationColumn = function (colKey, source) {
+    ColumnApi.prototype.addAggregationColumn = function (colKey) {
         console.error('ag-Grid: addAggregationColumn is deprecated, use addValueColumn');
-        this.columnController.addValueColumn(colKey, source);
+        this.columnController.addValueColumn(colKey, 'api');
     };
-    ColumnApi.prototype.addAggregationColumns = function (colKeys, source) {
+    ColumnApi.prototype.addAggregationColumns = function (colKeys) {
         console.error('ag-Grid: addAggregationColumns is deprecated, use addValueColumns');
-        this.columnController.addValueColumns(colKeys, source);
+        this.columnController.addValueColumns(colKeys, 'api');
     };
-    ColumnApi.prototype.setColumnAggFunction = function (column, aggFunc, source) {
+    ColumnApi.prototype.setColumnAggFunction = function (column, aggFunc) {
         console.error('ag-Grid: setColumnAggFunction is deprecated, use setColumnAggFunc');
-        this.columnController.setColumnAggFunc(column, aggFunc, source);
+        this.columnController.setColumnAggFunc(column, aggFunc, 'api');
     };
     ColumnApi.prototype.getDisplayNameForCol = function (column) {
         console.error('ag-Grid: getDisplayNameForCol is deprecated, use getDisplayNameForColumn');
@@ -36816,7 +37251,7 @@ exports.ColumnApi = ColumnApi;
 
 define('ag-grid/dist/lib/valueService/expressionService',['require','exports','module','../logger','../context/context','../context/context'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36915,7 +37350,7 @@ exports.ExpressionService = ExpressionService;
 
 define('ag-grid/dist/lib/columnController/displayedGroupCreator',['require','exports','module','./columnUtils','../entities/columnGroup','../entities/originalColumnGroup','../context/context','../utils','../context/context'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37121,7 +37556,7 @@ exports.DisplayedGroupCreator = DisplayedGroupCreator;
 
 define('ag-grid/dist/lib/rendering/autoWidthCalculator',['require','exports','module','./rowRenderer','../gridPanel/gridPanel','../context/context','../headerRendering/headerRenderer','../gridOptionsWrapper','../headerRendering/header/headerWrapperComp'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37246,7 +37681,7 @@ exports.AutoWidthCalculator = AutoWidthCalculator;
 
 define('ag-grid/dist/lib/rendering/rowRenderer',['require','exports','module','../utils','../gridOptionsWrapper','../gridPanel/gridPanel','../valueService/expressionService','../templateService','../valueService/valueService','../eventService','./rowComp','../events','../constants','./cellComp','../context/context','../gridCore','../columnController/columnApi','../columnController/columnController','../logger','../focusedCellController','../cellNavigationService','../entities/gridCell','../context/beanStub','../rowModels/paginationProxy','../gridApi','../rowModels/pinnedRowModel','./beans','../misc/animationFrameService','./heightScaler'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38304,7 +38739,7 @@ exports.RowRenderer = RowRenderer;
 
 define('ag-grid/dist/lib/gridPanel/gridPanel',['require','exports','module','../utils','../gridOptionsWrapper','../columnController/columnController','../columnController/columnApi','../rendering/rowRenderer','../layout/borderLayout','../logger','../context/context','../eventService','../events','../dragAndDrop/dragService','../constants','../selectionController','../csvCreator','./mouseEventService','../focusedCellController','./scrollVisibleService','../context/beanStub','../rendering/rowContainerComponent','../rowModels/paginationProxy','../rendering/cellEditors/popupEditorWrapper','../alignedGridsService','../rowModels/pinnedRowModel','../gridApi','../misc/animationFrameService','../rendering/rowComp','./navigationService','../valueService/valueService','../widgets/touchListener','../components/framework/componentRecipes','../dragAndDrop/dragAndDropService','./rowDragFeature','../rendering/heightScaler'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38497,8 +38932,8 @@ var GridPanel = (function (_super) {
         this.addDragListeners();
         this.layout = new borderLayout_1.BorderLayout({
             center: this.eRoot,
-            dontFill: this.forPrint,
-            fillHorizontalOnly: this.autoHeight,
+            forPrint: this.forPrint,
+            autoHeight: this.autoHeight,
             name: 'eGridPanel',
             componentRecipes: this.componentRecipes
         });
@@ -38608,11 +39043,13 @@ var GridPanel = (function (_super) {
             this.eFloatingTop, this.eFloatingBottom];
         containers.forEach(function (container) {
             var params = {
-                dragStartPixels: 0,
                 eElement: container,
                 onDragStart: _this.rangeController.onDragStart.bind(_this.rangeController),
                 onDragStop: _this.rangeController.onDragStop.bind(_this.rangeController),
-                onDragging: _this.rangeController.onDragging.bind(_this.rangeController)
+                onDragging: _this.rangeController.onDragging.bind(_this.rangeController),
+                // for range selection by dragging the mouse, we want to ignore the event if shift key is pressed,
+                // as shift key click is another type of range selection
+                skipMouseEvent: function (mouseEvent) { return mouseEvent.shiftKey; }
             };
             _this.dragService.addDragSource(params);
             _this.addDestroyFunc(function () { return _this.dragService.removeDragSource(params); });
@@ -39031,6 +39468,9 @@ var GridPanel = (function (_super) {
         if (this.forPrint) {
             return;
         }
+        if (this.gridOptionsWrapper.isNativeScroll()) {
+            return;
+        }
         // if either right or bottom scrollbars are showing, we need to make sure the
         // fullWidthCell panel isn't covering the scrollbars. originally i tried to do this using
         // margin, but the overflow was not getting clipped and going into the margin,
@@ -39307,7 +39747,7 @@ var GridPanel = (function (_super) {
                 this.eFloatingTop, this.eFloatingBottom, this.eFullWidthCellContainer
             ];
             this.rowContainerComponents = {
-                body: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.eBodyContainer, eViewport: this.eBodyViewport, body: true }),
+                body: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.eBodyContainer, eViewport: this.eBodyViewport }),
                 fullWidth: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.eFullWidthCellContainer, hideWhenNoChildren: true, eViewport: this.eFullWidthCellViewport }),
                 pinnedLeft: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.ePinnedLeftColsContainer, eViewport: this.ePinnedLeftColsViewport }),
                 pinnedRight: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.ePinnedRightColsContainer, eViewport: this.ePinnedRightColsViewport }),
@@ -39320,7 +39760,12 @@ var GridPanel = (function (_super) {
                 floatingBottomPinnedRight: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.ePinnedRightFloatingBottom }),
                 floatingBottomFullWith: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.eFloatingBottomFullWidthCellContainer, hideWhenNoChildren: true }),
             };
-            this.addMouseWheelEventListeners();
+            if (this.gridOptionsWrapper.isNativeScroll()) {
+                utils_1.Utils.addCssClass(this.eRoot, 'ag-native-scroll');
+            }
+            else {
+                utils_1.Utils.addCssClass(this.eRoot, 'ag-hacked-scroll');
+            }
             this.suppressScrollOnFloatingRow();
             this.setupRowAnimationCssClass();
         }
@@ -39471,11 +39916,6 @@ var GridPanel = (function (_super) {
             return;
         }
         var changeDetected = false;
-        // if we are v scrolling, then one of these will have the scroll position.
-        // we us this inside the if(changedDetected), so we don't always use it, however
-        // it is changed when we make a pinned panel not visible, so we have to check it
-        // before we change display on the pinned panels
-        var scrollTop = Math.max(this.eBodyViewport.scrollTop, this.ePinnedLeftColsViewport.scrollTop, this.ePinnedRightColsViewport.scrollTop);
         var showLeftPinned = this.columnController.isPinningLeft();
         if (showLeftPinned !== this.pinningLeft) {
             this.pinningLeft = showLeftPinned;
@@ -39491,26 +39931,49 @@ var GridPanel = (function (_super) {
             changeDetected = true;
         }
         if (changeDetected) {
-            var bodyVScrollActive = this.isBodyVerticalScrollActive();
-            this.eBodyViewport.style.overflowY = bodyVScrollActive ? 'auto' : 'hidden';
-            // the body either uses it's scroll (when scrolling) or it's style.top
-            // (when following the scroll of a pinned section), so we need to set it
-            // back when changing from one to the other
-            if (bodyVScrollActive) {
-                this.setFakeScroll(this.eBodyContainer, 0);
-                // this.eBodyContainer.style.top = '0px';
+            if (this.gridOptionsWrapper.isNativeScroll()) {
+                this.setPinnedContainersVisibleNew();
             }
             else {
-                this.eBodyViewport.scrollTop = 0;
+                this.setPinnedContainersVisibleOld();
             }
-            // when changing the primary scroll viewport, we copy over the scroll position,
-            // eg if body was getting scrolled and we were at position 100px, then we start
-            // pinning and pinned viewport is now the primary, we need to set it to 100px
-            var primaryScrollViewport = this.getPrimaryScrollViewport();
-            primaryScrollViewport.scrollTop = scrollTop;
-            // this adjusts the scroll position of all the faking panels. they should already
-            // be correct except body which has potentially just turned to be fake.
-            this.fakeVerticalScroll(scrollTop);
+        }
+    };
+    GridPanel.prototype.setPinnedContainersVisibleOld = function () {
+        var bodyVScrollActive = this.isBodyVerticalScrollActive();
+        this.eBodyViewport.style.overflowY = bodyVScrollActive ? 'auto' : 'hidden';
+        // the body either uses it's scroll (when scrolling) or it's style.top
+        // (when following the scroll of a pinned section), so we need to set it
+        // back when changing from one to the other
+        if (bodyVScrollActive) {
+            this.setFakeScroll(this.eBodyContainer, 0);
+            // this.eBodyContainer.style.top = '0px';
+        }
+        else {
+            this.eBodyViewport.scrollTop = 0;
+        }
+        // if we are v scrolling, then one of these will have the scroll position.
+        // we us this inside the if(changedDetected), so we don't always use it, however
+        // it is changed when we make a pinned panel not visible, so we have to check it
+        // before we change display on the pinned panels
+        var scrollTop = Math.max(this.eBodyViewport.scrollTop, this.ePinnedLeftColsViewport.scrollTop, this.ePinnedRightColsViewport.scrollTop);
+        // when changing the primary scroll viewport, we copy over the scroll position,
+        // eg if body was getting scrolled and we were at position 100px, then we start
+        // pinning and pinned viewport is now the primary, we need to set it to 100px
+        var primaryScrollViewport = this.getPrimaryScrollViewport();
+        primaryScrollViewport.scrollTop = scrollTop;
+        // this adjusts the scroll position of all the faking panels. they should already
+        // be correct except body which has potentially just turned to be fake.
+        this.fakeVerticalScroll(scrollTop);
+    };
+    GridPanel.prototype.setPinnedContainersVisibleNew = function () {
+        if (this.enableRtl) {
+            utils_1.Utils.addOrRemoveCssClass(this.eBodyViewport, 'ag-hide-scroll-bar', this.pinningLeft);
+            utils_1.Utils.addCssClass(this.ePinnedRightColsViewport, 'ag-hide-scroll-bar');
+        }
+        else {
+            utils_1.Utils.addOrRemoveCssClass(this.eBodyViewport, 'ag-hide-scroll-bar', this.pinningRight);
+            utils_1.Utils.addCssClass(this.ePinnedLeftColsViewport, 'ag-hide-scroll-bar');
         }
     };
     // init, layoutChanged, floatingDataChanged, headerHeightChanged
@@ -39610,9 +40073,10 @@ var GridPanel = (function (_super) {
     };
     // tries to scroll by pixels, but returns what the result actually was
     GridPanel.prototype.scrollVertically = function (pixels) {
-        var oldScrollPosition = this.eBodyViewport.scrollTop;
+        var viewport = this.getPrimaryScrollViewport();
+        var oldScrollPosition = viewport.scrollTop;
         this.setVerticalScrollPosition(oldScrollPosition + pixels);
-        var newScrollPosition = this.eBodyViewport.scrollTop;
+        var newScrollPosition = viewport.scrollTop;
         return newScrollPosition - oldScrollPosition;
     };
     // if the user is in floating filter and hits tab a few times, the header can
@@ -39635,11 +40099,19 @@ var GridPanel = (function (_super) {
         });
     };
     GridPanel.prototype.addScrollListener = function () {
-        var _this = this;
         // if printing, then no scrolling, so no point in listening for scroll events
         if (this.forPrint) {
             return;
         }
+        if (this.gridOptionsWrapper.isNativeScroll()) {
+            this.doScrollingNativeWay();
+        }
+        else {
+            this.doScrollingOldWay();
+        }
+    };
+    GridPanel.prototype.doScrollingOldWay = function () {
+        var _this = this;
         this.addDestroyableEventListener(this.eBodyViewport, 'scroll', this.onBodyScroll.bind(this));
         // below we add two things:
         // pinnedScrollListener -> when pinned panel with scrollbar gets scrolled, it updates body and other pinned
@@ -39664,6 +40136,41 @@ var GridPanel = (function (_super) {
         };
         this.addDestroyableEventListener(this.eBodyViewport, 'scroll', suppressCenterScroll);
         this.addIEPinFix(onPinnedRightVerticalScroll, onPinnedLeftVerticalScroll);
+        this.addMouseWheelEventListeners();
+    };
+    GridPanel.prototype.doScrollingNativeWay = function () {
+        var _this = this;
+        this.addDestroyableEventListener(this.eBodyViewport, 'scroll', function () {
+            _this.onBodyHorizontalScroll();
+            _this.onAnyBodyScroll(_this.eBodyViewport);
+        });
+        this.addDestroyableEventListener(this.ePinnedRightColsViewport, 'scroll', this.onAnyBodyScroll.bind(this, this.ePinnedRightColsViewport));
+        this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'scroll', this.onAnyBodyScroll.bind(this, this.ePinnedLeftColsViewport));
+        this.addDestroyableEventListener(this.eFullWidthCellViewport, 'scroll', this.onAnyBodyScroll.bind(this, this.eFullWidthCellViewport));
+    };
+    GridPanel.prototype.onAnyBodyScroll = function (source) {
+        var now = new Date().getTime();
+        var diff = now - this.lastVScrollTime;
+        var elementIsNotControllingTheScroll = source !== this.lastVScrollElement && diff < 100;
+        if (elementIsNotControllingTheScroll) {
+            return;
+        }
+        this.lastVScrollElement = source;
+        this.lastVScrollTime = now;
+        var scrollTop = source.scrollTop;
+        if (this.useAnimationFrame) {
+            if (this.nextScrollTop !== scrollTop) {
+                this.nextScrollTop = scrollTop;
+                this.animationFrameService.schedule();
+            }
+        }
+        else {
+            if (scrollTop !== this.scrollTop) {
+                this.scrollTop = scrollTop;
+                this.fakeVerticalScroll(scrollTop);
+                this.redrawRowsAfterScroll();
+            }
+        }
     };
     GridPanel.prototype.onBodyScroll = function () {
         this.onBodyHorizontalScroll();
@@ -39812,28 +40319,45 @@ var GridPanel = (function (_super) {
     // we say fake scroll as only one panel (left, right or body) has scrolls,
     // the other panels mimic the scroll by getting it's top position updated.
     GridPanel.prototype.fakeVerticalScroll = function (position) {
-        if (this.enableRtl) {
-            // RTL
-            // if pinning left, then body scroll is faking
-            var pinningLeft = this.columnController.isPinningLeft();
-            if (pinningLeft) {
-                this.setFakeScroll(this.eBodyContainer, position);
+        if (this.gridOptionsWrapper.isNativeScroll()) {
+            if (this.lastVScrollElement !== this.eBodyViewport) {
+                this.eBodyViewport.scrollTop = position;
             }
-            // right is always faking
-            this.setFakeScroll(this.ePinnedRightColsContainer, position);
+            if (this.lastVScrollElement !== this.ePinnedLeftColsViewport && this.pinningLeft) {
+                this.ePinnedLeftColsViewport.scrollTop = position;
+            }
+            if (this.lastVScrollElement !== this.ePinnedRightColsViewport && this.pinningRight) {
+                this.ePinnedRightColsViewport.scrollTop = position;
+            }
+            if (this.lastVScrollElement !== this.eFullWidthCellViewport) {
+                this.eFullWidthCellViewport.scrollTop = position;
+            }
+            this.redrawRowsAfterScroll();
         }
         else {
-            // LTR
-            // if pinning right, then body scroll is faking
-            var pinningRight = this.columnController.isPinningRight();
-            if (pinningRight) {
-                this.setFakeScroll(this.eBodyContainer, position);
+            if (this.enableRtl) {
+                // RTL
+                // if pinning left, then body scroll is faking
+                var pinningLeft = this.columnController.isPinningLeft();
+                if (pinningLeft) {
+                    this.setFakeScroll(this.eBodyContainer, position);
+                }
+                // right is always faking
+                this.setFakeScroll(this.ePinnedRightColsContainer, position);
             }
-            // left is always faking
-            this.setFakeScroll(this.ePinnedLeftColsContainer, position);
+            else {
+                // LTR
+                // if pinning right, then body scroll is faking
+                var pinningRight = this.columnController.isPinningRight();
+                if (pinningRight) {
+                    this.setFakeScroll(this.eBodyContainer, position);
+                }
+                // left is always faking
+                this.setFakeScroll(this.ePinnedLeftColsContainer, position);
+            }
+            // always scroll fullWidth container, as this is never responsible for a scroll
+            this.setFakeScroll(this.eFullWidthCellContainer, position);
         }
-        // always scroll fullWidth container, as this is never responsible for a scroll
-        this.setFakeScroll(this.eFullWidthCellContainer, position);
     };
     GridPanel.prototype.setFakeScroll = function (eContainer, pixels) {
         eContainer.style.top = -pixels + 'px';
@@ -39982,7 +40506,7 @@ exports.GridPanel = GridPanel;
 
 define('ag-grid/dist/lib/layout/borderLayout',['require','exports','module','../utils'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39998,20 +40522,20 @@ var BorderLayout = (function () {
         this.visibleLastTime = false;
         this.sizeChangeListeners = [];
         this.isLayoutPanel = true;
-        this.fullHeight = !params.north && !params.south;
+        this.noNorthOrSouth = !params.north && !params.south;
         var template;
-        if (params.dontFill) {
+        if (params.forPrint) {
             template = BorderLayout.TEMPLATE_DONT_FILL;
             this.horizontalLayoutActive = false;
             this.verticalLayoutActive = false;
         }
-        else if (params.fillHorizontalOnly) {
+        else if (params.autoHeight) {
             template = BorderLayout.TEMPLATE_DONT_FILL;
             this.horizontalLayoutActive = true;
             this.verticalLayoutActive = false;
         }
         else {
-            if (this.fullHeight) {
+            if (this.noNorthOrSouth) {
                 template = BorderLayout.TEMPLATE_FULL_HEIGHT;
             }
             else {
@@ -40116,7 +40640,16 @@ var BorderLayout = (function () {
             }
         }
         if (this.verticalLayoutActive) {
+            // layout center to match heights of east and west
             var ourHeightChanged = this.layoutHeight();
+            if (ourHeightChanged) {
+                atLeastOneChanged = true;
+            }
+        }
+        else {
+            // layout east and west to be same height as center,
+            // otherwise the tool panel doesn't size right
+            var ourHeightChanged = this.layoutEastWestHeight();
             if (ourHeightChanged) {
                 atLeastOneChanged = true;
             }
@@ -40139,7 +40672,7 @@ var BorderLayout = (function () {
         }
     };
     BorderLayout.prototype.layoutHeight = function () {
-        if (this.fullHeight) {
+        if (this.noNorthOrSouth) {
             return this.layoutHeightFullHeight();
         }
         else {
@@ -40171,6 +40704,22 @@ var BorderLayout = (function () {
         }
         if (this.centerHeightLastTime !== centerHeight) {
             this.eCenterRow.style.height = centerHeight + 'px';
+            this.centerHeightLastTime = centerHeight;
+            return true; // return true because there was a change
+        }
+        else {
+            return false;
+        }
+    };
+    BorderLayout.prototype.layoutEastWestHeight = function () {
+        var centerHeight = utils_1.Utils.offsetHeight(this.eCenterRow);
+        if (this.centerHeightLastTime !== centerHeight) {
+            if (this.eEastWrapper) {
+                this.eEastWrapper.style.height = centerHeight + 'px';
+            }
+            if (this.eWestWrapper) {
+                this.eWestWrapper.style.height = centerHeight + 'px';
+            }
             this.centerHeightLastTime = centerHeight;
             return true; // return true because there was a change
         }
@@ -40252,7 +40801,7 @@ exports.BorderLayout = BorderLayout;
 
 define('ag-grid/dist/lib/dragAndDrop/dragService',['require','exports','module','../context/context','../logger','../utils','../eventService','../events','../gridOptionsWrapper','../columnController/columnApi','../gridApi'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -40365,8 +40914,11 @@ var DragService = (function () {
         var _this = this;
         // we ignore when shift key is pressed. this is for the range selection, as when
         // user shift-clicks a cell, this should not be interpreted as the start of a drag.
-        if (mouseEvent.shiftKey) {
-            return;
+        // if (mouseEvent.shiftKey) { return; }
+        if (params.skipMouseEvent) {
+            if (params.skipMouseEvent(mouseEvent)) {
+                return;
+            }
         }
         // if there are two elements with parent / child relationship, and both are draggable,
         // when we drag the child, we should NOT drag the parent. an example of this is row moving
@@ -40539,7 +41091,7 @@ exports.DragService = DragService;
 
 define('ag-grid/dist/lib/selectionController',['require','exports','module','./utils','./context/context','./context/context','./logger','./eventService','./events','./context/context','./gridOptionsWrapper','./context/context','./constants','./columnController/columnApi','./gridApi'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -40869,7 +41421,7 @@ exports.SelectionController = SelectionController;
 
 define('ag-grid/dist/lib/gridPanel/mouseEventService',['require','exports','module','../context/context','../context/context','../utils','../gridOptionsWrapper','../rendering/cellComp'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -40961,7 +41513,7 @@ exports.MouseEventService = MouseEventService;
 
 define('ag-grid/dist/lib/rendering/cellComp',['require','exports','module','../utils','../entities/column','../entities/rowNode','../constants','../events','../entities/gridCell','../widgets/component','./checkboxSelectionComponent','./rowDragComp'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -40988,7 +41540,7 @@ var checkboxSelectionComponent_1 = require("./checkboxSelectionComponent");
 var rowDragComp_1 = require("./rowDragComp");
 var CellComp = (function (_super) {
     __extends(CellComp, _super);
-    function CellComp(scope, beans, column, rowNode, rowComp) {
+    function CellComp(scope, beans, column, rowNode, rowComp, autoHeightCell) {
         var _this = _super.call(this) || this;
         _this.editingCell = false;
         // every time we go into edit mode, or back again, this gets incremented.
@@ -41004,6 +41556,7 @@ var CellComp = (function (_super) {
         _this.column = column;
         _this.rowNode = rowNode;
         _this.rowComp = rowComp;
+        _this.autoHeightCell = autoHeightCell;
         _this.createGridCellVo();
         _this.rangeSelectionEnabled = beans.enterprise && beans.gridOptionsWrapper.isEnableRangeSelection();
         _this.cellFocused = _this.beans.focusedCellController.isCellFocused(_this.gridCell);
@@ -41160,7 +41713,20 @@ var CellComp = (function (_super) {
     };
     CellComp.prototype.getInitialCssClasses = function () {
         var cssClasses = ["ag-cell", "ag-cell-not-inline-editing"];
-        cssClasses.push(this.cellFocused ? 'ag-cell-focus' : 'ag-cell-no-focus');
+        // if we are putting the cell into a dummy container, to work out it's height,
+        // then we don't put the height css in, as we want cell to fit height in that case.
+        if (!this.autoHeightCell) {
+            cssClasses.push('ag-cell-with-height');
+        }
+        var doingFocusCss = !this.beans.gridOptionsWrapper.isSuppressCellSelection();
+        if (doingFocusCss) {
+            // otherwise the class depends on the focus state
+            cssClasses.push(this.cellFocused ? 'ag-cell-focus' : 'ag-cell-no-focus');
+        }
+        else {
+            // if we are not doing cell selection, then ag-cell-no-focus gets put onto every cell
+            cssClasses.push('ag-cell-no-focus');
+        }
         if (this.firstRightPinned) {
             cssClasses.push('ag-cell-first-right-pinned');
         }
@@ -41314,7 +41880,10 @@ var CellComp = (function (_super) {
         // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
         if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
             var eGui = this.getGui();
-            this.beans.$compile(eGui)(this.scope);
+            var compiledElement_1 = this.beans.$compile(eGui)(this.scope);
+            this.addDestroyFunc(function () {
+                compiledElement_1.remove();
+            });
         }
     };
     CellComp.prototype.postProcessStylesFromColDef = function () {
@@ -41589,10 +42158,12 @@ var CellComp = (function (_super) {
             // row was removed (the row comp was removed), however now that the user
             // can provide components for cells, the destroy method gets call when this
             // happens so no longer need to fire event.
-            addRowCompListener: this.rowComp.addEventListener.bind(this.rowComp),
+            addRowCompListener: this.rowComp ? this.rowComp.addEventListener.bind(this.rowComp) : null,
             addRenderedRowListener: function (eventType, listener) {
                 console.warn('ag-Grid: since ag-Grid .v11, params.addRenderedRowListener() is now params.addRowCompListener()');
-                _this.rowComp.addEventListener(eventType, listener);
+                if (_this.rowComp) {
+                    _this.rowComp.addEventListener(eventType, listener);
+                }
             }
         };
         return params;
@@ -41620,7 +42191,7 @@ var CellComp = (function (_super) {
         if (isOpenGroup && this.beans.gridOptionsWrapper.isGroupIncludeFooter()) {
             // if doing grouping and footers, we don't want to include the agg value
             // in the header when the group is open
-            return this.beans.valueService.getValue(this.column, this.rowNode, true);
+            return this.beans.valueService.getValue(this.column, this.rowNode, false, true);
         }
         else {
             return this.beans.valueService.getValue(this.column, this.rowNode);
@@ -41969,7 +42540,10 @@ var CellComp = (function (_super) {
         event.preventDefault();
     };
     CellComp.prototype.onShiftRangeSelect = function (key) {
-        this.beans.rangeController.extendRangeInDirection(this.gridCell, key);
+        var success = this.beans.rangeController.extendRangeInDirection(this.gridCell, key);
+        if (!success) {
+            return;
+        }
         var ranges = this.beans.rangeController.getCellRanges();
         // this should never happen, as extendRangeFromCell should always have one range after getting called
         if (utils_1._.missing(ranges) || ranges.length !== 1) {
@@ -42288,8 +42862,13 @@ var CellComp = (function (_super) {
         var cellFocused = this.beans.focusedCellController.isCellFocused(this.gridCell);
         // see if we need to change the classes on this cell
         if (cellFocused !== this.cellFocused) {
-            utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-focus', cellFocused);
-            utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-no-focus', !cellFocused);
+            // if we are not doing cell selection, then the focus class does not change, all cells will
+            // stay with ag-cell-no-focus class
+            var doingFocusCss = !this.beans.gridOptionsWrapper.isSuppressCellSelection();
+            if (doingFocusCss) {
+                utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-focus', cellFocused);
+                utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-no-focus', !cellFocused);
+            }
             this.cellFocused = cellFocused;
         }
         // if this cell was just focused, see if we need to force browser focus, his can
@@ -42324,15 +42903,16 @@ var CellComp = (function (_super) {
             this.editingCell = false;
             return;
         }
+        var newValueExists = false;
+        var newValue;
         if (!cancel) {
             // also have another option here to cancel after editing, so for example user could have a popup editor and
             // it is closed by user clicking outside the editor. then the editor will close automatically (with false
             // passed above) and we need to see if the editor wants to accept the new value.
             var userWantsToCancel = this.cellEditor.isCancelAfterEnd && this.cellEditor.isCancelAfterEnd();
             if (!userWantsToCancel) {
-                var newValue = this.cellEditor.getValue();
-                this.rowNode.setDataValue(this.column, newValue);
-                this.getValueAndFormat();
+                newValue = this.cellEditor.getValue();
+                newValueExists = true;
             }
         }
         // it is important we set this after setValue() above, as otherwise the cell will flash
@@ -42374,6 +42954,10 @@ var CellComp = (function (_super) {
             }
         }
         this.setInlineEditingClass();
+        if (newValueExists) {
+            this.rowNode.setDataValue(this.column, newValue);
+            this.getValueAndFormat();
+        }
         // we suppress the flash, as it is not correct to flash the cell the user has finished editing,
         // the user doesn't need to flash as they were the one who did the edit, the flash is pointless
         // (as the flash is meant to draw the user to a change that they didn't manually do themselves).
@@ -42390,7 +42974,7 @@ exports.CellComp = CellComp;
 
 define('ag-grid/dist/lib/entities/rowNode',['require','exports','module','../eventService','../events','../gridOptionsWrapper','../selectionController','../valueService/valueService','../columnController/columnController','../columnController/columnApi','../context/context','../constants','../utils','../valueService/valueCache','../gridApi'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -43034,7 +43618,7 @@ exports.RowNode = RowNode;
 
 define('ag-grid/dist/lib/valueService/valueService',['require','exports','module','../gridOptionsWrapper','./expressionService','../columnController/columnController','../context/context','../utils','../events','../eventService','./valueCache'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -43065,8 +43649,9 @@ var ValueService = (function () {
         this.cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
         this.initialised = true;
     };
-    ValueService.prototype.getValue = function (column, rowNode, ignoreAggData) {
+    ValueService.prototype.getValue = function (column, rowNode, forFilter, ignoreAggData) {
         // console.log(`turnActive = ${this.turnActive}`);
+        if (forFilter === void 0) { forFilter = false; }
         if (ignoreAggData === void 0) { ignoreAggData = false; }
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
         // really should have a way so they get initialised in the right order???
@@ -43082,7 +43667,10 @@ var ValueService = (function () {
         // if there is a value getter, this gets precedence over a field
         var groupDataExists = rowNode.groupData && rowNode.groupData[colId] !== undefined;
         var aggDataExists = !ignoreAggData && rowNode.aggData && rowNode.aggData[colId] !== undefined;
-        if (groupDataExists) {
+        if (forFilter && colDef.filterValueGetter) {
+            result = this.executeValueGetter(colDef.filterValueGetter, data, column, rowNode);
+        }
+        else if (groupDataExists) {
             result = rowNode.groupData[colId];
         }
         else if (aggDataExists) {
@@ -43205,7 +43793,7 @@ var ValueService = (function () {
         }
         return !valuesAreSame;
     };
-    ValueService.prototype.executeValueGetter = function (valueGetter, data, column, rowNode) {
+    ValueService.prototype.executeValueGetter = function (filterValueGetter, data, column, rowNode) {
         var colId = column.getId();
         // if inside the same turn, just return back the value we got last time
         var valueFromCache = this.valueCache.getValue(rowNode, colId);
@@ -43222,7 +43810,7 @@ var ValueService = (function () {
             context: this.gridOptionsWrapper.getContext(),
             getValue: this.getValueCallback.bind(this, rowNode)
         };
-        var result = this.expressionService.evaluate(valueGetter, params);
+        var result = this.expressionService.evaluate(filterValueGetter, params);
         // if a turn is active, store the value in case the grid asks for it again
         this.valueCache.setValue(rowNode, colId, result);
         return result;
@@ -43296,7 +43884,7 @@ exports.ValueService = ValueService;
 
 define('ag-grid/dist/lib/valueService/valueCache',['require','exports','module','../context/context','../gridOptionsWrapper'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -43371,7 +43959,7 @@ exports.ValueCache = ValueCache;
 
 define('ag-grid/dist/lib/entities/gridCell',['require','exports','module','../utils','./gridRow'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -43415,7 +44003,7 @@ exports.GridCell = GridCell;
 
 define('ag-grid/dist/lib/entities/gridRow',['require','exports','module','../constants','../utils','./gridCell'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -43489,7 +44077,7 @@ exports.GridRow = GridRow;
 
 define('ag-grid/dist/lib/widgets/component',['require','exports','module','../utils','../context/beanStub'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -43532,9 +44120,10 @@ var Component = (function (_super) {
     };
     Component.prototype.instantiateRecurse = function (parentNode, context) {
         var _this = this;
-        var childCount = parentNode.childNodes ? parentNode.childNodes.length : 0;
-        var _loop_1 = function (i) {
-            var childNode = parentNode.childNodes[i];
+        // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
+        // which messes up the traversal order of the children.
+        var childNodeList = utils_1.Utils.copyNodeList(parentNode.childNodes);
+        childNodeList.forEach(function (childNode) {
             var childComp = context.createComponent(childNode, function (childComp) {
                 var attrList = _this.getAttrLists(childNode);
                 _this.copyAttributesFromNode(attrList, childComp.getGui());
@@ -43542,24 +44131,18 @@ var Component = (function (_super) {
                 _this.addEventListenersToComponent(attrList, childComp);
             });
             if (childComp) {
-                this_1.swapComponentForNode(childComp, parentNode, childNode);
-                // should remove this, get agCheckbox to use this.attributes
-                // childComp.instantiate(context);
+                _this.swapComponentForNode(childComp, parentNode, childNode);
             }
             else {
                 if (childNode.childNodes) {
-                    this_1.instantiateRecurse(childNode, context);
+                    _this.instantiateRecurse(childNode, context);
                 }
                 if (childNode instanceof HTMLElement) {
-                    var attrList = this_1.getAttrLists(childNode);
-                    this_1.addEventListenersToElement(attrList, childNode);
+                    var attrList = _this.getAttrLists(childNode);
+                    _this.addEventListenersToElement(attrList, childNode);
                 }
             }
-        };
-        var this_1 = this;
-        for (var i = 0; i < childCount; i++) {
-            _loop_1(i);
-        }
+        });
     };
     Component.prototype.getAttrLists = function (child) {
         var res = {
@@ -43677,11 +44260,11 @@ var Component = (function (_super) {
             return;
         }
         var thisProto = Object.getPrototypeOf(this);
-        var _loop_2 = function () {
+        var _loop_1 = function () {
             var metaData = thisProto.__agComponentMetaData;
             var currentProtoName = (thisProto.constructor).name;
             if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
-                var thisNoType_1 = this_2;
+                var thisNoType_1 = this_1;
                 metaData[currentProtoName].querySelectors.forEach(function (querySelector) {
                     var resultOfQuery = _this.eGui.querySelector(querySelector.querySelector);
                     if (resultOfQuery) {
@@ -43700,9 +44283,9 @@ var Component = (function (_super) {
             }
             thisProto = Object.getPrototypeOf(thisProto);
         };
-        var this_2 = this;
+        var this_1 = this;
         while (thisProto != null) {
-            _loop_2();
+            _loop_1();
         }
     };
     Component.prototype.addAnnotatedEventListeners = function () {
@@ -43835,7 +44418,7 @@ exports.Component = Component;
 
 define('ag-grid/dist/lib/context/beanStub',['require','exports','module','../eventService','../gridOptionsWrapper','../utils'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -43921,7 +44504,7 @@ exports.BeanStub = BeanStub;
 
 define('ag-grid/dist/lib/rendering/checkboxSelectionComponent',['require','exports','module','../widgets/component','../entities/rowNode','../utils','../context/context','../gridOptionsWrapper','../events','../eventService','../gridApi','../columnController/columnApi'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -44035,7 +44618,9 @@ var CheckboxSelectionComponent = (function (_super) {
         this.setVisible(selectable);
     };
     CheckboxSelectionComponent.prototype.checkboxCallbackExists = function () {
-        return typeof this.column.getColDef().checkboxSelection === 'function';
+        // column will be missing if groupUseEntireRow=true
+        var colDef = this.column ? this.column.getColDef() : null;
+        return colDef && typeof colDef.checkboxSelection === 'function';
     };
     __decorate([
         context_1.Autowired('gridOptionsWrapper'),
@@ -44059,9 +44644,9 @@ exports.CheckboxSelectionComponent = CheckboxSelectionComponent;
 
 });
 
-define('ag-grid/dist/lib/rendering/rowDragComp',['require','exports','module','../widgets/component','../context/context','../dragAndDrop/dragAndDropService','../eventKeys','../utils','../context/beanStub'],function (require, exports, module) {/**
+define('ag-grid/dist/lib/rendering/rowDragComp',['require','exports','module','../widgets/component','../context/context','../entities/rowNode','../dragAndDrop/dragAndDropService','../eventKeys','../utils','../context/beanStub'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -44088,6 +44673,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var component_1 = require("../widgets/component");
 var context_1 = require("../context/context");
+var rowNode_1 = require("../entities/rowNode");
 var dragAndDropService_1 = require("../dragAndDrop/dragAndDropService");
 var eventKeys_1 = require("../eventKeys");
 var utils_1 = require("../utils");
@@ -44159,6 +44745,9 @@ var NonManagedVisibilityStrategy = (function (_super) {
     }
     NonManagedVisibilityStrategy.prototype.postConstruct = function () {
         this.addDestroyableEventListener(this.beans.gridOptionsWrapper, 'suppressRowDrag', this.onSuppressRowDrag.bind(this));
+        // in case data changes, then we need to update visibility of drag item
+        this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_DATA_CHANGED, this.workOutVisibility.bind(this));
+        this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_CELL_CHANGED, this.workOutVisibility.bind(this));
         this.workOutVisibility();
     };
     NonManagedVisibilityStrategy.prototype.onSuppressRowDrag = function () {
@@ -44199,6 +44788,9 @@ var ManagedVisibilityStrategy = (function (_super) {
         this.addDestroyableEventListener(this.beans.eventService, eventKeys_1.Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.addDestroyableEventListener(this.beans.eventService, eventKeys_1.Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.addDestroyableEventListener(this.beans.eventService, eventKeys_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
+        // in case data changes, then we need to update visibility of drag item
+        this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_DATA_CHANGED, this.workOutVisibility.bind(this));
+        this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_CELL_CHANGED, this.workOutVisibility.bind(this));
         this.addDestroyableEventListener(this.beans.gridOptionsWrapper, 'suppressRowDrag', this.onSuppressRowDrag.bind(this));
         this.updateSortActive();
         this.updateFilterActive();
@@ -44257,7 +44849,7 @@ var ManagedVisibilityStrategy = (function (_super) {
 
 define('ag-grid/dist/lib/dragAndDrop/dragAndDropService',['require','exports','module','../logger','../context/context','../utils','../gridOptionsWrapper','./dragService','../columnController/columnController','../environment'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -44655,7 +45247,7 @@ exports.DragAndDropService = DragAndDropService;
 
 define('ag-grid/dist/lib/environment',['require','exports','module','./context/context'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -44765,7 +45357,7 @@ exports.Environment = Environment;
 
 define('ag-grid/dist/lib/focusedCellController',['require','exports','module','./context/context','./eventService','./events','./gridOptionsWrapper','./columnController/columnApi','./columnController/columnController','./utils','./entities/gridCell','./gridApi','./rendering/cellComp'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -44844,9 +45436,6 @@ var FocusedCellController = (function () {
     };
     FocusedCellController.prototype.setFocusedCell = function (rowIndex, colKey, floating, forceBrowserFocus) {
         if (forceBrowserFocus === void 0) { forceBrowserFocus = false; }
-        if (this.gridOptionsWrapper.isSuppressCellSelection()) {
-            return;
-        }
         var column = utils_1.Utils.makeNull(this.columnController.getGridColumn(colKey));
         this.focusedCell = new gridCell_1.GridCell({ rowIndex: rowIndex,
             floating: utils_1.Utils.makeNull(floating),
@@ -44927,7 +45516,7 @@ exports.FocusedCellController = FocusedCellController;
 
 define('ag-grid/dist/lib/gridPanel/scrollVisibleService',['require','exports','module','../context/context','../utils','../eventService','../events','../columnController/columnController','../columnController/columnApi','../gridApi'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -45029,7 +45618,7 @@ exports.ScrollVisibleService = ScrollVisibleService;
 
 define('ag-grid/dist/lib/rendering/rowContainerComponent',['require','exports','module','../utils','../context/context','../gridOptionsWrapper'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -45060,7 +45649,6 @@ var RowContainerComponent = (function () {
         this.eContainer = params.eContainer;
         this.eViewport = params.eViewport;
         this.hideWhenNoChildren = params.hideWhenNoChildren;
-        this.body = params.body;
     }
     RowContainerComponent.prototype.postConstruct = function () {
         this.domOrder = this.gridOptionsWrapper.isEnsureDomOrder() && !this.gridOptionsWrapper.isForPrint();
@@ -45071,29 +45659,6 @@ var RowContainerComponent = (function () {
     };
     RowContainerComponent.prototype.setHeight = function (height) {
         this.eContainer.style.height = height + "px";
-        // can ask niall about this - was testing different ways to get the browser to display
-        // unlimited number of rows
-        // if (this.body) {
-        //     let eParent = this.eViewport;
-        //
-        //     let FILLER_HEIGHT = 1000000;
-        //
-        //     let fillerCount = 0;
-        //     let colors = ['#000020','#000040','#000060','#000080','#0000A0','#0000C0','#0000E0','#00F000','#00F020','#00F040','#00F060','#00F080','#00F0A0','#00F0C0','#00F0E0'];
-        //     _.removeAllChildren(eParent);
-        //     let pixelsToGo = height;
-        //     while (pixelsToGo > 0) {
-        //         fillerCount++;
-        //         let pixelsThisDiv = (pixelsToGo > FILLER_HEIGHT) ? FILLER_HEIGHT : pixelsToGo;
-        //         pixelsToGo -= FILLER_HEIGHT;
-        //         let eFiller = document.createElement('div');
-        //         eFiller.style.height = pixelsThisDiv + 'px';
-        //         eFiller.style.backgroundColor = colors[fillerCount%colors.length];
-        //         eFiller.innerHTML = '' + fillerCount;
-        //         eParent.appendChild(eFiller);
-        //     }
-        //     console.log(`fillerCount = ${fillerCount}`);
-        // }
     };
     RowContainerComponent.prototype.flushRowTemplates = function () {
         // if doing dom order, then rowTemplates will be empty,
@@ -45165,7 +45730,7 @@ exports.RowContainerComponent = RowContainerComponent;
 
 define('ag-grid/dist/lib/rowModels/paginationProxy',['require','exports','module','../context/beanStub','../eventService','../events','../utils','../context/context','../gridOptionsWrapper','../gridPanel/gridPanel','../gridPanel/scrollVisibleService','../selectionController','../columnController/columnApi','../gridApi'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -45486,7 +46051,7 @@ exports.PaginationProxy = PaginationProxy;
 
 define('ag-grid/dist/lib/rendering/cellEditors/popupEditorWrapper',['require','exports','module','../../widgets/component','../../context/context','../../gridOptionsWrapper'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -45593,7 +46158,7 @@ exports.PopupEditorWrapper = PopupEditorWrapper;
 
 define('ag-grid/dist/lib/alignedGridsService',['require','exports','module','./gridOptionsWrapper','./columnController/columnController','./gridPanel/gridPanel','./eventService','./logger','./events','./context/context','./context/context','./context/context','./context/context'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -45785,7 +46350,7 @@ var AlignedGridsService = (function () {
                 var resizedEvent_1 = colEvent;
                 masterColumns.forEach(function (masterColumn) {
                     _this.logger.log('onColumnEvent-> processing ' + colEvent.type + ' actualWidth = ' + masterColumn.getActualWidth());
-                    _this.columnController.setColumnWidth(masterColumn.getColId(), masterColumn.getActualWidth(), resizedEvent_1.finished, "alignedGridChanged");
+                    _this.columnController.setColumnWidth(masterColumn.getColId(), masterColumn.getActualWidth(), false, resizedEvent_1.finished, "alignedGridChanged");
                 });
                 break;
         }
@@ -45829,7 +46394,7 @@ exports.AlignedGridsService = AlignedGridsService;
 
 define('ag-grid/dist/lib/rowModels/pinnedRowModel',['require','exports','module','../gridOptionsWrapper','../entities/rowNode','../context/context','../eventService','../context/context','../events','../context/context','../constants','../utils','../columnController/columnApi','../gridApi'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -46004,7 +46569,7 @@ exports.PinnedRowModel = PinnedRowModel;
 
 define('ag-grid/dist/lib/misc/animationFrameService',['require','exports','module','../context/context','../gridPanel/gridPanel','./linkedList','../gridOptionsWrapper'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -46136,7 +46701,7 @@ exports.AnimationFrameService = AnimationFrameService;
 
 define('ag-grid/dist/lib/misc/linkedList',['require','exports','module'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -46186,7 +46751,7 @@ var LinkedListItem = (function () {
 
 define('ag-grid/dist/lib/rendering/rowComp',['require','exports','module','../utils','./cellComp','../entities/rowNode','../gridOptionsWrapper','../entities/column','../events','../context/context','../widgets/component','../widgets/componentAnnotations'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -46489,6 +47054,9 @@ var RowComp = (function (_super) {
         }
     };
     RowComp.prototype.addMouseWheelListenerToFullWidthRow = function () {
+        if (this.beans.gridOptionsWrapper.isNativeScroll()) {
+            return;
+        }
         var mouseWheelListener = this.beans.gridPanel.genericMouseWheelListener.bind(this.beans.gridPanel);
         // IE9, Chrome, Safari, Opera
         this.addDestroyableEventListener(this.eFullWidthRow, 'mousewheel', mouseWheelListener);
@@ -46756,7 +47324,7 @@ var RowComp = (function (_super) {
         });
     };
     RowComp.prototype.createNewCell = function (col, eContainer, cellTemplates, newCellComps) {
-        var newCellComp = new cellComp_1.CellComp(this.scope, this.beans, col, this.rowNode, this);
+        var newCellComp = new cellComp_1.CellComp(this.scope, this.beans, col, this.rowNode, this, false);
         var cellTemplate = newCellComp.getCreateTemplate();
         cellTemplates.push(cellTemplate);
         newCellComps.push(newCellComp);
@@ -46805,7 +47373,8 @@ var RowComp = (function (_super) {
         this.beans.eventService.dispatchEvent(agEvent);
     };
     RowComp.prototype.onRowClick = function (mouseEvent) {
-        if (utils_1._.isStopPropagationForAgGrid(mouseEvent)) {
+        var stop = utils_1._.isStopPropagationForAgGrid(mouseEvent);
+        if (stop) {
             return;
         }
         var agEvent = this.createRowEventWithSource(events_1.Events.EVENT_ROW_CLICKED, mouseEvent);
@@ -47106,7 +47675,7 @@ var RowComp = (function (_super) {
         var templateParts = [];
         var newCellComps = [];
         cols.forEach(function (col) {
-            var newCellComp = new cellComp_1.CellComp(_this.scope, _this.beans, col, _this.rowNode, _this);
+            var newCellComp = new cellComp_1.CellComp(_this.scope, _this.beans, col, _this.rowNode, _this, false);
             var cellTemplate = newCellComp.getCreateTemplate();
             templateParts.push(cellTemplate);
             newCellComps.push(newCellComp);
@@ -47402,7 +47971,7 @@ exports.RowComp = RowComp;
 
 define('ag-grid/dist/lib/widgets/componentAnnotations',['require','exports','module'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -47482,7 +48051,7 @@ function getOrCreateProps(target, instanceName) {
 
 define('ag-grid/dist/lib/gridPanel/navigationService',['require','exports','module','../context/context','../entities/gridCell','../constants','./mouseEventService','../rowModels/paginationProxy','../focusedCellController','../utils','./gridPanel','../misc/animationFrameService','../columnController/columnController','../gridOptionsWrapper'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -47705,7 +48274,7 @@ exports.NavigationService = NavigationService;
 
 define('ag-grid/dist/lib/widgets/touchListener',['require','exports','module','../eventService','../utils'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -47796,6 +48365,7 @@ var TouchListener = (function () {
                 touchStart: this.touchStart
             };
             this.eventService.dispatchEvent(event_2);
+            this.checkForDoubleTap();
             // stops the tap from also been processed as a mouse click
             if (this.preventMouseClick) {
                 touchEvent.preventDefault();
@@ -47803,12 +48373,36 @@ var TouchListener = (function () {
         }
         this.touching = false;
     };
+    TouchListener.prototype.checkForDoubleTap = function () {
+        var now = new Date().getTime();
+        if (this.lastTapTime > 0) {
+            // if previous tap, see if duration is short enough to be considered double tap
+            var interval = now - this.lastTapTime;
+            if (interval > TouchListener.DOUBLE_TAP_MILLIS) {
+                // dispatch double tap event
+                var event_3 = {
+                    type: TouchListener.EVENT_DOUBLE_TAP,
+                    touchStart: this.touchStart
+                };
+                this.eventService.dispatchEvent(event_3);
+                // this stops a tripple tap ending up as two double taps
+                this.lastTapTime = null;
+            }
+            else {
+                this.lastTapTime = now;
+            }
+        }
+        else {
+            this.lastTapTime = now;
+        }
+    };
     TouchListener.prototype.destroy = function () {
         this.destroyFuncs.forEach(function (func) { return func(); });
     };
-    // private mostRecentTouch: Touch;
     TouchListener.EVENT_TAP = "tap";
+    TouchListener.EVENT_DOUBLE_TAP = "doubleTap";
     TouchListener.EVENT_LONG_TAP = "longTap";
+    TouchListener.DOUBLE_TAP_MILLIS = 500;
     return TouchListener;
 }());
 exports.TouchListener = TouchListener;
@@ -47817,7 +48411,7 @@ exports.TouchListener = TouchListener;
 
 define('ag-grid/dist/lib/components/framework/componentRecipes',['require','exports','module','../../context/context','../../filter/floatingFilter','../../gridOptionsWrapper','../../filter/floatingFilterWrapper','../../filter/filterManager','./componentResolver','../../utils','../../rendering/overlays/overlayWrapperComponent','../../gridApi','../../columnController/columnApi'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -47997,7 +48591,7 @@ exports.ComponentRecipes = ComponentRecipes;
 
 define('ag-grid/dist/lib/filter/floatingFilter',['require','exports','module','../context/context','./dateFilter','../widgets/componentAnnotations','../utils','../components/framework/componentRecipes','../widgets/component','../constants'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -48143,7 +48737,8 @@ var DateFloatingFilterComp = (function (_super) {
         var debounceMs = params.debounceMs != null ? params.debounceMs : 500;
         var toDebounce = utils_1._.debounce(this.onDateChanged.bind(this), debounceMs);
         var dateComponentParams = {
-            onDateChanged: toDebounce
+            onDateChanged: toDebounce,
+            filterParams: params.column.getColDef().filterParams
         };
         this.dateComponentPromise = this.componentRecipes.newDateComponent(dateComponentParams);
         var body = utils_1._.loadTemplate("<div></div>");
@@ -48278,17 +48873,30 @@ var SetFloatingFilterComp = (function (_super) {
         this.eColumnFloatingFilter.readOnly = true;
     };
     SetFloatingFilterComp.prototype.asFloatingFilterText = function (parentModel) {
-        if (!parentModel || parentModel.length === 0) {
+        if (!parentModel)
+            return '';
+        // also supporting old filter model for backwards compatibility
+        var values = (parentModel instanceof Array) ? parentModel : parentModel.values;
+        if (values.length === 0) {
             return '';
         }
-        var arrayToDisplay = parentModel.length > 10 ? parentModel.slice(0, 10).concat(['...']) : parentModel;
-        return "(" + parentModel.length + ") " + arrayToDisplay.join(",");
+        var arrayToDisplay = values.length > 10 ? values.slice(0, 10).concat('...') : values;
+        return "(" + values.length + ") " + arrayToDisplay.join(",");
     };
     SetFloatingFilterComp.prototype.asParentModel = function () {
         if (this.eColumnFloatingFilter.value == null || this.eColumnFloatingFilter.value === '') {
-            return null;
+            return {
+                values: [],
+                filterType: 'set'
+            };
         }
-        return this.eColumnFloatingFilter.value.split(",");
+        return {
+            values: this.eColumnFloatingFilter.value.split(","),
+            filterType: 'set'
+        };
+    };
+    SetFloatingFilterComp.prototype.equalModels = function (left, right) {
+        return false;
     };
     return SetFloatingFilterComp;
 }(InputTextFloatingFilterComp));
@@ -48319,7 +48927,7 @@ exports.ReadModelAsStringFloatingFilterComp = ReadModelAsStringFloatingFilterCom
 
 define('ag-grid/dist/lib/filter/dateFilter',['require','exports','module','../widgets/component','../widgets/componentAnnotations','../utils','./baseFilter','../context/context','../components/framework/componentRecipes'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -48373,7 +48981,8 @@ var DateFilter = (function (_super) {
         var _this = this;
         _super.prototype.initialiseFilterBodyUi.call(this);
         var dateComponentParams = {
-            onDateChanged: this.onDateChanged.bind(this)
+            onDateChanged: this.onDateChanged.bind(this),
+            filterParams: this.filterParams
         };
         this.componentRecipes.newDateComponent(dateComponentParams).then(function (dateToComponent) {
             _this.dateToComponent = dateToComponent;
@@ -48489,8 +49098,13 @@ var DefaultDateComponent = (function (_super) {
     }
     DefaultDateComponent.prototype.init = function (params) {
         this.eDateInput = this.getGui();
-        if (utils_1.Utils.isBrowserChrome()) {
-            this.eDateInput.type = 'date';
+        if (utils_1.Utils.isBrowserChrome() || params.filterParams.browserDatePicker) {
+            if (utils_1.Utils.isBrowserIE()) {
+                console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11, reverting to plain text date picker');
+            }
+            else {
+                this.eDateInput.type = 'date';
+            }
         }
         this.listener = params.onDateChanged;
         this.addGuiEventListener('input', this.listener);
@@ -48509,7 +49123,7 @@ exports.DefaultDateComponent = DefaultDateComponent;
 
 define('ag-grid/dist/lib/filter/baseFilter',['require','exports','module','../widgets/component','../widgets/componentAnnotations','../context/context','../gridOptionsWrapper','../utils'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -48652,8 +49266,9 @@ var BaseFilter = (function (_super) {
         this.refreshFilterBodyUi();
         return shouldFilter;
     };
-    BaseFilter.prototype.onFilterChanged = function () {
-        this.doOnFilterChanged();
+    BaseFilter.prototype.onFilterChanged = function (applyNow) {
+        if (applyNow === void 0) { applyNow = false; }
+        this.doOnFilterChanged(applyNow);
     };
     BaseFilter.prototype.onFloatingFilterChanged = function (change) {
         //It has to be of the type FloatingFilterWithApplyChange if it gets here
@@ -48751,7 +49366,12 @@ var ComparableBaseFilter = (function (_super) {
     ComparableBaseFilter.prototype.onFilterTypeChanged = function () {
         this.filter = this.eTypeSelector.value;
         this.refreshFilterBodyUi();
-        this.onFilterChanged();
+        // we check if filter is active, so that if user changes the type (eg from 'less than' to 'equals'),
+        // well this doesn't matter if the user has no value in the text field, so don't fire 'onFilterChanged'.
+        // this means we don't refresh the grid when the type changes if no value is present.
+        if (this.isFilterActive()) {
+            this.onFilterChanged();
+        }
     };
     ComparableBaseFilter.prototype.isFilterActive = function () {
         var rawFilterValues = this.filterValues();
@@ -48875,7 +49495,7 @@ exports.ScalarBaseFilter = ScalarBaseFilter;
 
 define('ag-grid/dist/lib/filter/floatingFilterWrapper',['require','exports','module','../context/context','../entities/column','../utils','../rendering/features/setLeftFeature','../widgets/component','../widgets/componentAnnotations','../gridOptionsWrapper','../rendering/beans','../headerRendering/hoverFeature','../events','../eventService','../rendering/columnHoverService'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -49042,7 +49662,7 @@ exports.EmptyFloatingFilterWrapperComp = EmptyFloatingFilterWrapperComp;
 
 define('ag-grid/dist/lib/rendering/features/setLeftFeature',['require','exports','module','../../utils','../../entities/column','../../context/beanStub'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -49136,7 +49756,7 @@ exports.SetLeftFeature = SetLeftFeature;
 
 define('ag-grid/dist/lib/rendering/beans',['require','exports','module','../context/context','../columnController/columnApi','../columnController/columnController','../gridApi','../gridOptionsWrapper','../valueService/expressionService','./rowRenderer','../templateService','../valueService/valueService','../eventService','./columnAnimationService','../focusedCellController','./cellEditorFactory','./cellRendererFactory','../widgets/popupService','./cellRendererService','./valueFormatterService','../styling/stylingService','./columnHoverService','../gridPanel/gridPanel','../rowModels/paginationProxy','../misc/animationFrameService','../components/framework/componentResolver','../dragAndDrop/dragAndDropService','../sortController','../filter/filterManager','./heightScaler'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -49331,7 +49951,7 @@ exports.Beans = Beans;
 
 define('ag-grid/dist/lib/templateService',['require','exports','module','./context/context','./context/context'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -49420,7 +50040,7 @@ exports.TemplateService = TemplateService;
 
 define('ag-grid/dist/lib/rendering/columnAnimationService',['require','exports','module','../context/context','../gridOptionsWrapper','../gridPanel/gridPanel','../utils'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -49532,7 +50152,7 @@ exports.ColumnAnimationService = ColumnAnimationService;
 
 define('ag-grid/dist/lib/rendering/cellEditorFactory',['require','exports','module','../context/context','./cellEditors/popupEditorWrapper','../gridOptionsWrapper','../components/framework/componentResolver'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -49621,7 +50241,7 @@ exports.CellEditorFactory = CellEditorFactory;
 
 define('ag-grid/dist/lib/components/framework/componentResolver',['require','exports','module','../../context/context','../../gridOptionsWrapper','../../utils','./componentProvider','./agComponentUtils','./componentMetadataProvider'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -49857,8 +50477,13 @@ var ComponentResolver = (function () {
         var componentAndParams = this.newAgGridComponent(holder, propertyName, dynamicComponentParams, defaultComponentName, mandatory);
         if (!componentAndParams)
             return null;
-        //Wire the component and call the init method with the correct params
+        // Wire the component and call the init method with the correct params
         var finalParams = this.mergeParams(holder, propertyName, agGridParams, dynamicComponentParams, componentAndParams[1]);
+        // a temporary fix for AG-1574
+        // AG-1715 raised to do a wider ranging refactor to improve this
+        finalParams.agGridReact = this.context.getBean('agGridReact') ? utils_1._.cloneObject(this.context.getBean('agGridReact')) : {};
+        // AG-1716 - directly related to AG-1574 and AG-1715
+        finalParams.frameworkComponentWrapper = this.context.getBean('frameworkComponentWrapper') ? this.context.getBean('frameworkComponentWrapper') : {};
         var deferredInit = this.initialiseComponent(componentAndParams[0], finalParams, customInitParamsCb);
         if (deferredInit == null) {
             return utils_1.Promise.resolve(componentAndParams[0]);
@@ -49953,7 +50578,7 @@ exports.ComponentResolver = ComponentResolver;
 
 define('ag-grid/dist/lib/components/framework/componentProvider',['require','exports','module','../../rendering/cellEditors/textCellEditor','../../context/context','../../filter/dateFilter','../../headerRendering/header/headerComp','../../headerRendering/headerGroup/headerGroupComp','../../filter/floatingFilter','./componentResolver','../../rendering/cellRenderers/groupCellRenderer','../../rendering/cellRenderers/animateShowChangeCellRenderer','../../rendering/cellRenderers/animateSlideCellRenderer','../../rendering/rowComp','../../rendering/cellEditors/selectCellEditor','../../rendering/cellEditors/popupTextCellEditor','../../rendering/cellEditors/popupSelectCellEditor','../../rendering/cellEditors/largeTextCellEditor','../../filter/textFilter','../../filter/numberFilter','../../rendering/overlays/loadingOverlayComponent','../../rendering/overlays/noRowsOverlayComponent','../../utils','../../widgets/testingSandbox'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -50089,15 +50714,14 @@ var ComponentProvider = (function () {
     }
     ComponentProvider.prototype.init = function () {
         var _this = this;
-        var componentProvider = this.context.getBean('componentProvider');
         if (this.gridOptions.components != null) {
             Object.keys(this.gridOptions.components).forEach(function (it) {
-                componentProvider.registerComponent(it, _this.gridOptions.components[it]);
+                _this.registerComponent(it, _this.gridOptions.components[it]);
             });
         }
         if (this.gridOptions.frameworkComponents != null) {
             Object.keys(this.gridOptions.frameworkComponents).forEach(function (it) {
-                componentProvider.registerFwComponent(it, _this.gridOptions.frameworkComponents[it]);
+                _this.registerFwComponent(it, _this.gridOptions.frameworkComponents[it]);
             });
         }
     };
@@ -50179,10 +50803,6 @@ var ComponentProvider = (function () {
         __metadata("design:type", Object)
     ], ComponentProvider.prototype, "gridOptions", void 0);
     __decorate([
-        context_1.Autowired('context'),
-        __metadata("design:type", context_1.Context)
-    ], ComponentProvider.prototype, "context", void 0);
-    __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
@@ -50199,7 +50819,7 @@ exports.ComponentProvider = ComponentProvider;
 
 define('ag-grid/dist/lib/rendering/cellEditors/textCellEditor',['require','exports','module','../../constants','../../widgets/component','../../utils'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -50316,7 +50936,7 @@ exports.TextCellEditor = TextCellEditor;
 
 define('ag-grid/dist/lib/headerRendering/header/headerComp',['require','exports','module','../../widgets/component','../../entities/column','../../utils','../../context/context','../../gridOptionsWrapper','../../sortController','../../widgets/touchListener','../../eventService','../../widgets/componentAnnotations','../../events'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -50354,7 +50974,9 @@ var events_1 = require("../../events");
 var HeaderComp = (function (_super) {
     __extends(HeaderComp, _super);
     function HeaderComp() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.lastMovingChanged = 0;
+        return _this;
     }
     HeaderComp.prototype.init = function (params) {
         var template = utils_1.Utils.firstExistingValue(params.template, HeaderComp.TEMPLATE);
@@ -50449,11 +51071,28 @@ var HeaderComp = (function (_super) {
             return;
         }
         var sortUsingCtrl = this.gridOptionsWrapper.isMultiSortKeyCtrl();
+        // keep track of last time the moving changed flag was set
+        this.addDestroyableEventListener(this.params.column, column_1.Column.EVENT_MOVING_CHANGED, function () {
+            _this.lastMovingChanged = new Date().getTime();
+        });
         // add the event on the header, so when clicked, we do sorting
         if (this.eLabel) {
             this.addDestroyableEventListener(this.eLabel, 'click', function (event) {
-                var multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
-                _this.params.progressSort(multiSort);
+                // sometimes when moving a column via dragging, this was also firing a clicked event.
+                // here is issue raised by user: https://ag-grid.zendesk.com/agent/tickets/1076
+                // this check stops sort if a) column is moving or b) column moved less than 200ms ago (so caters for race condition)
+                var moving = _this.params.column.isMoving();
+                var nowTime = new Date().getTime();
+                // typically there is <2ms if moving flag was set recently, as it would be done in same VM turn
+                var movedRecently = (nowTime - _this.lastMovingChanged) < 50;
+                var columnMoving = moving || movedRecently;
+                if (!columnMoving) {
+                    var multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
+                    _this.params.progressSort(multiSort);
+                }
+                else {
+                    console.log("kipping sort cos of moving " + _this.lastMovingChanged);
+                }
             });
         }
         this.addDestroyableEventListener(this.params.column, column_1.Column.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
@@ -50574,7 +51213,7 @@ exports.HeaderComp = HeaderComp;
 
 define('ag-grid/dist/lib/sortController',['require','exports','module','./entities/column','./context/context','./gridOptionsWrapper','./columnController/columnApi','./columnController/columnController','./eventService','./events','./context/context','./utils','./gridApi'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -50784,7 +51423,7 @@ exports.SortController = SortController;
 
 define('ag-grid/dist/lib/headerRendering/headerGroup/headerGroupComp',['require','exports','module','../../widgets/component','../../utils','../../columnController/columnController','../../gridOptionsWrapper','../../context/context','../../widgets/touchListener','../../widgets/componentAnnotations','../../entities/originalColumnGroup'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -50830,8 +51469,8 @@ var HeaderGroupComp = (function (_super) {
     };
     HeaderGroupComp.prototype.setupExpandIcons = function () {
         var _this = this;
-        this.addInIcon('columnGroupOpened', 'agOpened');
-        this.addInIcon('columnGroupClosed', 'agClosed');
+        this.addInIcon("columnGroupOpened", "agOpened");
+        this.addInIcon("columnGroupClosed", "agClosed");
         var expandAction = function (event) {
             if (utils_1.Utils.isStopPropagationForAgGrid(event)) {
                 return;
@@ -50849,9 +51488,9 @@ var HeaderGroupComp = (function (_super) {
         // then close again straight away. if we also listened to double click, then the group would open,
         // close, then open, which is not what we want. double click should only action if the user double
         // clicks outside of the icons.
-        this.addDestroyableEventListener(this.eCloseIcon, 'dblclick', stopPropagationAction);
-        this.addDestroyableEventListener(this.eOpenIcon, 'dblclick', stopPropagationAction);
-        this.addDestroyableEventListener(this.getGui(), 'dblclick', expandAction);
+        this.addDestroyableEventListener(this.eCloseIcon, "dblclick", stopPropagationAction);
+        this.addDestroyableEventListener(this.eOpenIcon, "dblclick", stopPropagationAction);
+        this.addDestroyableEventListener(this.getGui(), "dblclick", expandAction);
         this.updateIconVisibility();
         var originalColumnGroup = this.params.columnGroup.getOriginalColumnGroup();
         this.addDestroyableEventListener(originalColumnGroup, originalColumnGroup_1.OriginalColumnGroup.EVENT_EXPANDED_CHANGED, this.updateIconVisibility.bind(this));
@@ -50861,7 +51500,7 @@ var HeaderGroupComp = (function (_super) {
         var touchListener = new touchListener_1.TouchListener(this.eCloseIcon);
         this.addDestroyableEventListener(touchListener, touchListener_1.TouchListener.EVENT_TAP, action);
         this.addDestroyFunc(function () { return touchListener.destroy(); });
-        this.addDestroyableEventListener(eElement, 'click', action);
+        this.addDestroyableEventListener(eElement, "click", action);
     };
     HeaderGroupComp.prototype.updateIconVisibility = function () {
         var columnGroup = this.params.columnGroup;
@@ -50888,11 +51527,8 @@ var HeaderGroupComp = (function (_super) {
     };
     HeaderGroupComp.prototype.setupLabel = function () {
         // no renderer, default text render
-        if (this.params.displayName && this.params.displayName !== '') {
-            if (utils_1.Utils.isBrowserSafari()) {
-                this.getGui().style.display = 'table-cell';
-            }
-            var eInnerText = this.getRefElement('agLabel');
+        if (this.params.displayName && this.params.displayName !== "") {
+            var eInnerText = this.getRefElement("agLabel");
             eInnerText.innerHTML = this.params.displayName;
         }
     };
@@ -50902,19 +51538,19 @@ var HeaderGroupComp = (function (_super) {
         "<span ref=\"agClosed\" class=\"ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed\"></span>" +
         "</div>";
     __decorate([
-        context_1.Autowired('columnController'),
+        context_1.Autowired("columnController"),
         __metadata("design:type", columnController_1.ColumnController)
     ], HeaderGroupComp.prototype, "columnController", void 0);
     __decorate([
-        context_1.Autowired('gridOptionsWrapper'),
+        context_1.Autowired("gridOptionsWrapper"),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
     ], HeaderGroupComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('agOpened'),
+        componentAnnotations_1.RefSelector("agOpened"),
         __metadata("design:type", HTMLElement)
     ], HeaderGroupComp.prototype, "eOpenIcon", void 0);
     __decorate([
-        componentAnnotations_1.RefSelector('agClosed'),
+        componentAnnotations_1.RefSelector("agClosed"),
         __metadata("design:type", HTMLElement)
     ], HeaderGroupComp.prototype, "eCloseIcon", void 0);
     return HeaderGroupComp;
@@ -50925,7 +51561,7 @@ exports.HeaderGroupComp = HeaderGroupComp;
 
 define('ag-grid/dist/lib/rendering/cellRenderers/groupCellRenderer',['require','exports','module','../../gridOptionsWrapper','../../valueService/expressionService','../../eventService','../../constants','../../utils','../../context/context','../../widgets/component','../../entities/rowNode','../cellRendererService','../valueFormatterService','../checkboxSelectionComponent','../../columnController/columnController','../../entities/column','../../widgets/componentAnnotations','../../gridPanel/mouseEventService'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -51023,11 +51659,6 @@ var GroupCellRenderer = (function (_super) {
         var rowNode = params.node;
         // let paddingPx: number;
         var paddingCount = rowNode.uiLevel;
-        var pivotModeAndLeafGroup = this.columnController.isPivotMode() && params.node.leafGroup;
-        var notExpandable = !rowNode.isExpandable();
-        if (rowNode.footer || notExpandable || pivotModeAndLeafGroup) {
-            paddingCount += 1;
-        }
         var userProvidedPaddingPixelsTheDeprecatedWay = params.padding >= 0;
         if (userProvidedPaddingPixelsTheDeprecatedWay) {
             this.setPaddingDeprecatedWay(paddingCount, params.padding);
@@ -51155,7 +51786,7 @@ var GroupCellRenderer = (function (_super) {
         }
     };
     GroupCellRenderer.prototype.addCheckboxIfNeeded = function () {
-        var rowNode = this.params.node;
+        var rowNode = this.displayedGroup;
         var checkboxNeeded = this.isUserWantsSelected()
             && !rowNode.footer
             && !rowNode.rowPinned
@@ -51185,7 +51816,7 @@ var GroupCellRenderer = (function (_super) {
         // the number of children change.
         this.addDestroyableEventListener(this.displayedGroup, rowNode_1.RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED, this.onAllChildrenCountChanged.bind(this));
         // if editing groups, then double click is to start editing
-        if (!this.gridOptionsWrapper.isEnableGroupEdit() && this.isExpandable()) {
+        if (!this.gridOptionsWrapper.isEnableGroupEdit() && this.isExpandable() && !params.suppressDoubleClickExpand) {
             this.addDestroyableEventListener(eGroupCell, 'dblclick', this.onCellDblClicked.bind(this));
         }
     };
@@ -51244,6 +51875,8 @@ var GroupCellRenderer = (function (_super) {
         if (utils_1.Utils.isStopPropagationForAgGrid(mouseEvent)) {
             return;
         }
+        // so if we expand a node, it does not also get selected.
+        utils_1.Utils.stopPropagationForAgGrid(mouseEvent);
         this.onExpandOrContract();
     };
     GroupCellRenderer.prototype.onCellDblClicked = function (mouseEvent) {
@@ -51261,6 +51894,7 @@ var GroupCellRenderer = (function (_super) {
         }
     };
     GroupCellRenderer.prototype.onExpandOrContract = function () {
+        console.log("onExpandOrContract");
         // must use the displayedGroup, so if data was dragged down, we expand the parent, not this row
         var rowNode = this.displayedGroup;
         rowNode.setExpanded(!rowNode.expanded);
@@ -51288,6 +51922,12 @@ var GroupCellRenderer = (function (_super) {
             utils_1.Utils.setVisible(this.eExpanded, false);
             utils_1.Utils.setVisible(this.eContracted, false);
         }
+        var displayedGroup = this.displayedGroup;
+        // compensation padding for leaf nodes, so there is blank space instead of the expand icon
+        var pivotModeAndLeafGroup = this.columnController.isPivotMode() && displayedGroup.leafGroup;
+        var notExpandable = !displayedGroup.isExpandable();
+        var addLeafIndentClass = displayedGroup.footer || notExpandable || pivotModeAndLeafGroup;
+        this.addOrRemoveCssClass('ag-row-group-leaf-indent', addLeafIndentClass);
     };
     GroupCellRenderer.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
@@ -51365,7 +52005,7 @@ exports.GroupCellRenderer = GroupCellRenderer;
 
 define('ag-grid/dist/lib/rendering/cellRendererService',['require','exports','module','../context/context','../components/framework/componentRecipes','../components/framework/componentResolver','../utils','../gridOptionsWrapper'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -51520,7 +52160,7 @@ exports.CellRendererService = CellRendererService;
 
 define('ag-grid/dist/lib/rendering/valueFormatterService',['require','exports','module','../context/context','../gridOptionsWrapper','../valueService/expressionService'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -51599,7 +52239,7 @@ exports.ValueFormatterService = ValueFormatterService;
 
 define('ag-grid/dist/lib/rendering/cellRenderers/animateShowChangeCellRenderer',['require','exports','module','../../utils','../../widgets/component'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -51705,7 +52345,7 @@ exports.AnimateShowChangeCellRenderer = AnimateShowChangeCellRenderer;
 
 define('ag-grid/dist/lib/rendering/cellRenderers/animateSlideCellRenderer',['require','exports','module','../../utils','../../widgets/component'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -51798,7 +52438,7 @@ exports.AnimateSlideCellRenderer = AnimateSlideCellRenderer;
 
 define('ag-grid/dist/lib/rendering/cellEditors/selectCellEditor',['require','exports','module','../../widgets/component','../../utils','../../constants','../../context/context','../../gridOptionsWrapper','../valueFormatterService'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -51896,7 +52536,7 @@ exports.SelectCellEditor = SelectCellEditor;
 
 define('ag-grid/dist/lib/rendering/cellEditors/popupTextCellEditor',['require','exports','module','./textCellEditor'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -51929,7 +52569,7 @@ exports.PopupTextCellEditor = PopupTextCellEditor;
 
 define('ag-grid/dist/lib/rendering/cellEditors/popupSelectCellEditor',['require','exports','module','./selectCellEditor'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -51962,7 +52602,7 @@ exports.PopupSelectCellEditor = PopupSelectCellEditor;
 
 define('ag-grid/dist/lib/rendering/cellEditors/largeTextCellEditor',['require','exports','module','../../widgets/component','../../constants','../../utils'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -52033,7 +52673,7 @@ exports.LargeTextCellEditor = LargeTextCellEditor;
 
 define('ag-grid/dist/lib/filter/textFilter',['require','exports','module','../utils','./baseFilter','../widgets/componentAnnotations'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -52216,7 +52856,7 @@ exports.TextFilter = TextFilter;
 
 define('ag-grid/dist/lib/filter/numberFilter',['require','exports','module','../utils','../widgets/componentAnnotations','./baseFilter'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -52382,7 +53022,7 @@ exports.NumberFilter = NumberFilter;
 
 define('ag-grid/dist/lib/rendering/overlays/loadingOverlayComponent',['require','exports','module','../../gridOptionsWrapper','../../context/context','../../widgets/component'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -52435,7 +53075,7 @@ exports.LoadingOverlayComponent = LoadingOverlayComponent;
 
 define('ag-grid/dist/lib/rendering/overlays/noRowsOverlayComponent',['require','exports','module','../../gridOptionsWrapper','../../context/context','../../widgets/component'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -52488,7 +53128,7 @@ exports.NoRowsOverlayComponent = NoRowsOverlayComponent;
 
 define('ag-grid/dist/lib/widgets/testingSandbox',['require','exports','module','./component','../context/context','./componentAnnotations'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -52601,7 +53241,7 @@ exports.SmallComponent = SmallComponent;
 
 define('ag-grid/dist/lib/components/framework/agComponentUtils',['require','exports','module','../../context/context','./componentMetadataProvider','../../utils'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -52685,7 +53325,7 @@ exports.AgComponentUtils = AgComponentUtils;
 
 define('ag-grid/dist/lib/components/framework/componentMetadataProvider',['require','exports','module','../../context/context','./agComponentUtils'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -52740,8 +53380,8 @@ var ComponentMetadataProvider = (function () {
                 optionalMethodList: []
             },
             cellRenderer: {
-                mandatoryMethodList: ['refresh'],
-                optionalMethodList: ['afterGuiAttached'],
+                mandatoryMethodList: [],
+                optionalMethodList: ['refresh', 'afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
             cellEditor: {
@@ -52802,7 +53442,7 @@ exports.ComponentMetadataProvider = ComponentMetadataProvider;
 
 define('ag-grid/dist/lib/rendering/cellRendererFactory',['require','exports','module','../context/context','../utils','../gridOptionsWrapper','../eventService','../valueService/expressionService','./cellRenderers/animateSlideCellRenderer','./cellRenderers/animateShowChangeCellRenderer','./cellRenderers/groupCellRenderer'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -52886,7 +53526,7 @@ exports.CellRendererFactory = CellRendererFactory;
 
 define('ag-grid/dist/lib/widgets/popupService',['require','exports','module','../utils','../constants','../context/context','../gridCore','../gridOptionsWrapper','../environment'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -53214,7 +53854,7 @@ exports.PopupService = PopupService;
 
 define('ag-grid/dist/lib/gridCore',['require','exports','module','./gridOptionsWrapper','./columnController/columnApi','./columnController/columnController','./rendering/rowRenderer','./filter/filterManager','./eventService','./gridPanel/gridPanel','./logger','./constants','./widgets/popupService','./events','./utils','./layout/borderLayout','./context/context','./focusedCellController','./widgets/component','./rowModels/pagination/paginationComp','./gridApi'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -53276,8 +53916,8 @@ var GridCore = (function () {
             west: westPanel,
             north: createTopPanelGui,
             south: eSouthPanel,
-            dontFill: this.gridOptionsWrapper.isForPrint(),
-            fillHorizontalOnly: this.gridOptionsWrapper.isAutoHeight(),
+            forPrint: this.gridOptionsWrapper.isForPrint(),
+            autoHeight: this.gridOptionsWrapper.isAutoHeight(),
             name: 'eRootPanel'
         });
         // parts of the CSS need to know if we are in 'for print' mode or not,
@@ -53605,7 +54245,7 @@ exports.GridCore = GridCore;
 
 define('ag-grid/dist/lib/filter/filterManager',['require','exports','module','../utils','../gridOptionsWrapper','../widgets/popupService','../valueService/valueService','../columnController/columnController','../columnController/columnApi','../context/context','../eventService','../events','../gridApi','../components/framework/componentResolver'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -53635,14 +54275,24 @@ var FilterManager = (function () {
     function FilterManager() {
         this.allFilters = {};
         this.quickFilter = null;
+        this.quickFilterParts = null;
     }
     FilterManager_1 = FilterManager;
     FilterManager.prototype.init = function () {
         this.eventService.addEventListener(events_1.Events.EVENT_ROW_DATA_CHANGED, this.onNewRowsLoaded.bind(this));
         this.eventService.addEventListener(events_1.Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
         this.quickFilter = this.parseQuickFilter(this.gridOptionsWrapper.getQuickFilterText());
+        this.setQuickFilterParts();
         // check this here, in case there is a filter from the start
         this.checkExternalFilter();
+    };
+    FilterManager.prototype.setQuickFilterParts = function () {
+        if (this.quickFilter) {
+            this.quickFilterParts = this.quickFilter.split(' ');
+        }
+        else {
+            this.quickFilterParts = null;
+        }
     };
     FilterManager.prototype.setFilterModel = function (model) {
         var _this = this;
@@ -53781,6 +54431,7 @@ var FilterManager = (function () {
         var parsedFilter = this.parseQuickFilter(newFilter);
         if (this.quickFilter !== parsedFilter) {
             this.quickFilter = parsedFilter;
+            this.setQuickFilterParts();
             this.onFilterChanged();
         }
     };
@@ -53811,7 +54462,7 @@ var FilterManager = (function () {
     FilterManager.prototype.doesRowPassOtherFilters = function (filterToSkip, node) {
         return this.doesRowPassFilter(node, filterToSkip);
     };
-    FilterManager.prototype.doesRowPassQuickFilterNoCache = function (node) {
+    FilterManager.prototype.doesRowPassQuickFilterNoCache = function (node, filterPart) {
         var _this = this;
         var columns = this.columnController.getAllColumnsForQuickFilter();
         var filterPasses = false;
@@ -53821,28 +54472,32 @@ var FilterManager = (function () {
             }
             var part = _this.getQuickFilterTextForColumn(column, node);
             if (utils_1.Utils.exists(part)) {
-                if (part.indexOf(_this.quickFilter) >= 0) {
+                if (part.indexOf(filterPart) >= 0) {
                     filterPasses = true;
                 }
             }
         });
         return filterPasses;
     };
-    FilterManager.prototype.doesRowPassQuickFilterCache = function (node) {
+    FilterManager.prototype.doesRowPassQuickFilterCache = function (node, filterPart) {
         if (!node.quickFilterAggregateText) {
             this.aggregateRowForQuickFilter(node);
         }
-        var filterPasses = node.quickFilterAggregateText.indexOf(this.quickFilter) >= 0;
+        var filterPasses = node.quickFilterAggregateText.indexOf(filterPart) >= 0;
         return filterPasses;
     };
     FilterManager.prototype.doesRowPassQuickFilter = function (node) {
-        var filterPasses;
-        if (this.gridOptionsWrapper.isCacheQuickFilter()) {
-            filterPasses = this.doesRowPassQuickFilterCache(node);
-        }
-        else {
-            filterPasses = this.doesRowPassQuickFilterNoCache(node);
-        }
+        var _this = this;
+        var filterPasses = true;
+        var usingCache = this.gridOptionsWrapper.isCacheQuickFilter();
+        this.quickFilterParts.forEach(function (filterPart) {
+            var partPasses = usingCache ?
+                _this.doesRowPassQuickFilterCache(node, filterPart) : _this.doesRowPassQuickFilterNoCache(node, filterPart);
+            // each part must pass, if any fails, then the whole filter fails
+            if (!partPasses) {
+                filterPasses = false;
+            }
+        });
         return filterPasses;
     };
     FilterManager.prototype.doesRowPassFilter = function (node, filterToSkip) {
@@ -53871,7 +54526,7 @@ var FilterManager = (function () {
         return true;
     };
     FilterManager.prototype.getQuickFilterTextForColumn = function (column, rowNode) {
-        var value = this.valueService.getValue(column, rowNode);
+        var value = this.valueService.getValue(column, rowNode, true);
         var valueAfterCallback;
         var colDef = column.getColDef();
         if (column.getColDef().getQuickFilterText) {
@@ -53918,9 +54573,9 @@ var FilterManager = (function () {
         this.setAdvancedFilterPresent();
     };
     FilterManager.prototype.createValueGetter = function (column) {
-        var that = this;
-        return function valueGetter(node) {
-            return that.valueService.getValue(column, node);
+        var _this = this;
+        return function (node) {
+            return _this.valueService.getValue(column, node, true);
         };
     };
     FilterManager.prototype.getFilterComponent = function (column) {
@@ -54121,7 +54776,7 @@ exports.FilterManager = FilterManager;
 
 define('ag-grid/dist/lib/rowModels/pagination/paginationComp',['require','exports','module','../../widgets/component','../../context/context','../../gridOptionsWrapper','../../widgets/componentAnnotations','../../utils','../../eventService','../../events','../../rendering/rowRenderer','../paginationProxy'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -54339,7 +54994,7 @@ exports.PaginationComp = PaginationComp;
 
 define('ag-grid/dist/lib/styling/stylingService',['require','exports','module','../context/context','../valueService/expressionService'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -54421,7 +55076,7 @@ exports.StylingService = StylingService;
 
 define('ag-grid/dist/lib/rendering/columnHoverService',['require','exports','module','../eventService','../context/context','../events','../context/beanStub','../columnController/columnApi','../gridApi'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -54501,7 +55156,7 @@ exports.ColumnHoverService = ColumnHoverService;
 
 define('ag-grid/dist/lib/rendering/heightScaler',['require','exports','module','../context/beanStub','../context/context','../eventService','../eventKeys','../gridPanel/gridPanel','../utils'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -54651,7 +55306,7 @@ exports.HeightScaler = HeightScaler;
 
 define('ag-grid/dist/lib/headerRendering/hoverFeature',['require','exports','module','../context/beanStub','../context/context','../rendering/columnHoverService'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -54709,7 +55364,7 @@ exports.HoverFeature = HoverFeature;
 
 define('ag-grid/dist/lib/rendering/overlays/overlayWrapperComponent',['require','exports','module','../../utils','../../gridOptionsWrapper','../../context/context','../../widgets/component','../../components/framework/componentRecipes'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -54804,7 +55459,7 @@ exports.OverlayWrapperComponent = OverlayWrapperComponent;
 
 define('ag-grid/dist/lib/gridPanel/rowDragFeature',['require','exports','module','../dragAndDrop/dragAndDropService','../context/context','../focusedCellController','./gridPanel','../gridOptionsWrapper','../eventService','../eventKeys'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -55024,7 +55679,7 @@ exports.RowDragFeature = RowDragFeature;
 
 define('ag-grid/dist/lib/cellNavigationService',['require','exports','module','./context/context','./constants','./columnController/columnController','./utils','./entities/gridRow','./entities/gridCell','./gridOptionsWrapper','./rowModels/pinnedRowModel'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -55311,7 +55966,7 @@ exports.CellNavigationService = CellNavigationService;
 
 define('ag-grid/dist/lib/headerRendering/headerRenderer',['require','exports','module','../gridOptionsWrapper','../columnController/columnController','../gridPanel/gridPanel','../entities/column','../context/context','./headerContainer','../eventService','../events','../gridPanel/scrollVisibleService'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -55447,7 +56102,7 @@ exports.HeaderRenderer = HeaderRenderer;
 
 define('ag-grid/dist/lib/headerRendering/headerContainer',['require','exports','module','../utils','../gridOptionsWrapper','../context/context','../dragAndDrop/dragAndDropService','../columnController/columnController','../gridPanel/gridPanel','../eventService','../events','./headerRowComp','./bodyDropTarget','../entities/column','../gridPanel/scrollVisibleService'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -55614,7 +56269,7 @@ exports.HeaderContainer = HeaderContainer;
 
 define('ag-grid/dist/lib/headerRendering/headerRowComp',['require','exports','module','../widgets/component','../context/context','../gridOptionsWrapper','../columnController/columnController','../entities/column','../eventService','../events','../utils','./header/headerWrapperComp','./headerGroup/headerGroupWrapperComp','../filter/filterManager','../components/framework/componentRecipes','../gridApi'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -55927,9 +56582,9 @@ exports.HeaderRowComp = HeaderRowComp;
 
 });
 
-define('ag-grid/dist/lib/headerRendering/header/headerWrapperComp',['require','exports','module','../../widgets/component','../../context/context','../../entities/column','../../utils','../../dragAndDrop/dragAndDropService','../../columnController/columnApi','../../columnController/columnController','../horizontalResizeService','../../gridOptionsWrapper','../cssClassApplier','../../rendering/features/setLeftFeature','../../gridApi','../../sortController','../../eventService','../../components/framework/componentRecipes','../../widgets/agCheckbox','../../widgets/componentAnnotations','./selectAllFeature','../../events','../../rendering/columnHoverService','../../rendering/beans','../hoverFeature'],function (require, exports, module) {/**
+define('ag-grid/dist/lib/headerRendering/header/headerWrapperComp',['require','exports','module','../../widgets/component','../../context/context','../../entities/column','../../utils','../../dragAndDrop/dragAndDropService','../../columnController/columnApi','../../columnController/columnController','../horizontalResizeService','../../gridOptionsWrapper','../cssClassApplier','../../rendering/features/setLeftFeature','../../gridApi','../../sortController','../../eventService','../../components/framework/componentRecipes','../../widgets/agCheckbox','../../widgets/componentAnnotations','./selectAllFeature','../../events','../../rendering/columnHoverService','../../rendering/beans','../hoverFeature','../../widgets/touchListener'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -55976,6 +56631,7 @@ var events_1 = require("../../events");
 var columnHoverService_1 = require("../../rendering/columnHoverService");
 var beans_1 = require("../../rendering/beans");
 var hoverFeature_1 = require("../hoverFeature");
+var touchListener_1 = require("../../widgets/touchListener");
 var HeaderWrapperComp = (function (_super) {
     __extends(HeaderWrapperComp, _super);
     function HeaderWrapperComp(column, dragSourceDropTarget, pinned) {
@@ -56124,15 +56780,21 @@ var HeaderWrapperComp = (function (_super) {
             this.addDestroyableEventListener(this.eResize, 'dblclick', function () {
                 _this.columnController.autoSizeColumn(_this.column, "uiColumnResized");
             });
+            var touchListener = new touchListener_1.TouchListener(this.eResize);
+            this.addDestroyableEventListener(touchListener, touchListener_1.TouchListener.EVENT_DOUBLE_TAP, function () {
+                _this.columnController.autoSizeColumn(_this.column, "uiColumnResized");
+            });
+            this.addDestroyFunc(touchListener.destroy.bind(touchListener));
         }
     };
     HeaderWrapperComp.prototype.onResizing = function (finished, resizeAmount) {
         var resizeAmountNormalised = this.normaliseResizeAmount(resizeAmount);
-        var newWidth = this.startWidth + resizeAmountNormalised;
-        this.columnController.setColumnWidth(this.column, newWidth, finished, "uiColumnDragged");
+        var newWidth = this.resizeStartWidth + resizeAmountNormalised;
+        this.columnController.setColumnWidth(this.column, newWidth, this.resizeWithShiftKey, finished, "uiColumnDragged");
     };
-    HeaderWrapperComp.prototype.onResizeStart = function () {
-        this.startWidth = this.column.getActualWidth();
+    HeaderWrapperComp.prototype.onResizeStart = function (shiftKey) {
+        this.resizeStartWidth = this.column.getActualWidth();
+        this.resizeWithShiftKey = shiftKey;
     };
     HeaderWrapperComp.prototype.setupTooltip = function () {
         var colDef = this.column.getColDef();
@@ -56259,7 +56921,7 @@ exports.HeaderWrapperComp = HeaderWrapperComp;
 
 define('ag-grid/dist/lib/headerRendering/horizontalResizeService',['require','exports','module','../gridOptionsWrapper','../context/context','../dragAndDrop/dragService'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -56299,7 +56961,8 @@ var HorizontalResizeService = (function () {
         this.draggingStarted = true;
         this.dragStartX = mouseEvent.clientX;
         this.setResizeIcons();
-        params.onResizeStart();
+        var shiftKey = mouseEvent instanceof MouseEvent ? mouseEvent.shiftKey === true : false;
+        params.onResizeStart(shiftKey);
     };
     HorizontalResizeService.prototype.setResizeIcons = function () {
         this.oldBodyCursor = this.eGridDiv.style.cursor;
@@ -56348,7 +57011,7 @@ exports.HorizontalResizeService = HorizontalResizeService;
 
 define('ag-grid/dist/lib/headerRendering/cssClassApplier',['require','exports','module','../utils'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -56409,7 +57072,7 @@ exports.CssClassApplier = CssClassApplier;
 
 define('ag-grid/dist/lib/widgets/agCheckbox',['require','exports','module','./component','./componentAnnotations','../utils','../context/context','../gridOptionsWrapper'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -56594,7 +57257,7 @@ exports.AgCheckbox = AgCheckbox;
 
 define('ag-grid/dist/lib/headerRendering/header/selectAllFeature',['require','exports','module','../../widgets/agCheckbox','../../context/beanStub','../../context/context','../../columnController/columnApi','../../gridApi','../../events','../../eventService','../../constants','../../selectionController','../../gridOptionsWrapper'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -56814,7 +57477,7 @@ exports.SelectAllFeature = SelectAllFeature;
 
 define('ag-grid/dist/lib/headerRendering/headerGroup/headerGroupWrapperComp',['require','exports','module','../../widgets/component','../../entities/column','../../utils','../../entities/columnGroup','../../columnController/columnApi','../../columnController/columnController','../../gridOptionsWrapper','../horizontalResizeService','../../context/context','../cssClassApplier','../../dragAndDrop/dragAndDropService','../../rendering/features/setLeftFeature','../../gridApi','../../components/framework/componentRecipes','../../rendering/beans','../hoverFeature'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -57074,60 +57737,48 @@ var HeaderGroupWrapperComp = (function (_super) {
             });
         }
     };
-    HeaderGroupWrapperComp.prototype.onResizeStart = function () {
+    HeaderGroupWrapperComp.prototype.onResizeStart = function (shiftKey) {
         var _this = this;
-        this.groupWidthStart = this.columnGroup.getActualWidth();
-        this.childrenWidthStarts = [];
-        this.columnGroup.getDisplayedLeafColumns().forEach(function (column) {
-            _this.childrenWidthStarts.push(column.getActualWidth());
-        });
+        var leafCols = this.columnGroup.getDisplayedLeafColumns();
+        this.resizeCols = utils_1.Utils.filter(leafCols, function (col) { return col.isResizable(); });
+        this.resizeStartWidth = 0;
+        this.resizeCols.forEach(function (col) { return _this.resizeStartWidth += col.getActualWidth(); });
+        this.resizeRatios = [];
+        this.resizeCols.forEach(function (col) { return _this.resizeRatios.push(col.getActualWidth() / _this.resizeStartWidth); });
+        var takeFromGroup = null;
+        if (shiftKey) {
+            takeFromGroup = this.columnController.getDisplayedGroupAfter(this.columnGroup);
+        }
+        if (takeFromGroup) {
+            var takeFromLeafCols = takeFromGroup.getDisplayedLeafColumns();
+            this.resizeTakeFromCols = utils_1.Utils.filter(takeFromLeafCols, function (col) { return col.isResizable(); });
+            this.resizeTakeFromStartWidth = 0;
+            this.resizeTakeFromCols.forEach(function (col) { return _this.resizeTakeFromStartWidth += col.getActualWidth(); });
+            this.resizeTakeFromRatios = [];
+            this.resizeTakeFromCols.forEach(function (col) { return _this.resizeTakeFromRatios.push(col.getActualWidth() / _this.resizeTakeFromStartWidth); });
+        }
+        else {
+            this.resizeTakeFromCols = null;
+            this.resizeTakeFromStartWidth = null;
+            this.resizeTakeFromRatios = null;
+        }
     };
     HeaderGroupWrapperComp.prototype.onResizing = function (finished, resizeAmount) {
-        var _this = this;
-        // this will be the width we have to distribute to the resizable columns
-        var widthForResizableCols;
-        // this is all the displayed cols in the group less those that we cannot resize
-        var resizableCols;
-        // a lot of variables defined for the first set of maths, but putting
-        // braces in, we localise the variables to this bit of the method
-        {
-            var resizeAmountNormalised = this.normaliseDragChange(resizeAmount);
-            var totalGroupWidth = this.groupWidthStart + resizeAmountNormalised;
-            var displayedColumns = this.columnGroup.getDisplayedLeafColumns();
-            resizableCols = utils_1.Utils.filter(displayedColumns, function (col) { return col.isResizable(); });
-            var nonResizableCols = utils_1.Utils.filter(displayedColumns, function (col) { return !col.isResizable(); });
-            var nonResizableColsWidth_1 = 0;
-            nonResizableCols.forEach(function (col) { return nonResizableColsWidth_1 += col.getActualWidth(); });
-            widthForResizableCols = totalGroupWidth - nonResizableColsWidth_1;
-            var minWidth_1 = 0;
-            resizableCols.forEach(function (col) { return minWidth_1 += col.getMinWidth(); });
-            if (widthForResizableCols < minWidth_1) {
-                widthForResizableCols = minWidth_1;
-            }
-        }
-        // distribute the new width to the child headers
-        var changeRatio = widthForResizableCols / this.groupWidthStart;
-        // keep track of pixels used, and last column gets the remaining,
-        // to cater for rounding errors, and min width adjustments
-        var pixelsToDistribute = widthForResizableCols;
-        resizableCols.forEach(function (column, index) {
-            var notLastCol = index !== (resizableCols.length - 1);
-            var newChildSize;
-            if (notLastCol) {
-                // if not the last col, calculate the column width as normal
-                var startChildSize = _this.childrenWidthStarts[index];
-                newChildSize = startChildSize * changeRatio;
-                if (newChildSize < column.getMinWidth()) {
-                    newChildSize = column.getMinWidth();
-                }
-                pixelsToDistribute -= newChildSize;
-            }
-            else {
-                // if last col, give it the remaining pixels
-                newChildSize = pixelsToDistribute;
-            }
-            _this.columnController.setColumnWidth(column, newChildSize, finished, "uiColumnDragged");
+        var resizeSets = [];
+        var resizeAmountNormalised = this.normaliseDragChange(resizeAmount);
+        resizeSets.push({
+            columns: this.resizeCols,
+            ratios: this.resizeRatios,
+            width: this.resizeStartWidth + resizeAmountNormalised
         });
+        if (this.resizeTakeFromCols) {
+            resizeSets.push({
+                columns: this.resizeTakeFromCols,
+                ratios: this.resizeTakeFromRatios,
+                width: this.resizeTakeFromStartWidth - resizeAmountNormalised
+            });
+        }
+        this.columnController.resizeColumnSets(resizeSets, finished, 'uiColumnDragged');
     };
     // optionally inverts the drag, depending on pinned and RTL
     // note - this method is duplicated in RenderedHeaderCell - should refactor out?
@@ -57200,7 +57851,7 @@ exports.HeaderGroupWrapperComp = HeaderGroupWrapperComp;
 
 define('ag-grid/dist/lib/headerRendering/bodyDropTarget',['require','exports','module','../dragAndDrop/dragAndDropService','../context/context','./moveColumnController','../entities/column','../gridPanel/gridPanel','./bodyDropPivotTarget','../columnController/columnController'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -57334,7 +57985,7 @@ exports.BodyDropTarget = BodyDropTarget;
 
 define('ag-grid/dist/lib/headerRendering/moveColumnController',['require','exports','module','../context/context','../logger','../columnController/columnController','../entities/column','../utils','../dragAndDrop/dragAndDropService','../gridPanel/gridPanel','../gridOptionsWrapper'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -57703,7 +58354,7 @@ exports.MoveColumnController = MoveColumnController;
 
 define('ag-grid/dist/lib/headerRendering/bodyDropPivotTarget',['require','exports','module','../dragAndDrop/dragAndDropService','../columnController/columnController','../context/context','../gridOptionsWrapper'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -57807,7 +58458,7 @@ exports.BodyDropPivotTarget = BodyDropPivotTarget;
 
 define('ag-grid/dist/lib/columnController/groupInstanceIdCreator',['require','exports','module'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -57847,9 +58498,9 @@ exports.GroupInstanceIdCreator = GroupInstanceIdCreator;
 
 });
 
-define('ag-grid/dist/lib/columnController/autoGroupColService',['require','exports','module','../context/context','../entities/column','../gridOptionsWrapper','../utils','./columnController'],function (require, exports, module) {/**
+define('ag-grid/dist/lib/columnController/autoGroupColService',['require','exports','module','../context/context','../entities/column','../gridOptionsWrapper','../utils','./columnController','./balancedColumnTreeBuilder'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -57869,6 +58520,7 @@ var column_1 = require("../entities/column");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var utils_1 = require("../utils");
 var columnController_1 = require("./columnController");
+var balancedColumnTreeBuilder_1 = require("./balancedColumnTreeBuilder");
 var AutoGroupColService = (function () {
     function AutoGroupColService() {
     }
@@ -57897,8 +58549,7 @@ var AutoGroupColService = (function () {
     // rowGroupCol and index are missing if groupMultiAutoColumn=false
     AutoGroupColService.prototype.createOneAutoGroupColumn = function (rowGroupCol, index) {
         // if one provided by user, use it, otherwise create one
-        var defaultAutoColDef = this.generateDefaultColDef(rowGroupCol, index);
-        var userAutoColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
+        var defaultAutoColDef = this.generateDefaultColDef(rowGroupCol);
         // if doing multi, set the field
         var colId;
         if (rowGroupCol) {
@@ -57907,12 +58558,18 @@ var AutoGroupColService = (function () {
         else {
             colId = AutoGroupColService_1.GROUP_AUTO_COLUMN_BUNDLE_ID;
         }
+        var userAutoColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
         utils_1._.mergeDeep(defaultAutoColDef, userAutoColDef);
+        defaultAutoColDef = this.balancedColumnTreeBuilder.mergeColDefs(defaultAutoColDef);
         defaultAutoColDef.colId = colId;
-        var noUserFilterPreferences = userAutoColDef == null || userAutoColDef.suppressFilter == null;
-        if (noUserFilterPreferences && !this.gridOptionsWrapper.isTreeData()) {
-            var produceLeafNodeValues = defaultAutoColDef.field != null || defaultAutoColDef.valueGetter != null;
-            defaultAutoColDef.suppressFilter = !produceLeafNodeValues;
+        // For tree data the filter is always allowed
+        if (!this.gridOptionsWrapper.isTreeData()) {
+            // we would only allow filter if the user has provided field or value getter. otherwise the filter
+            // would not be able to work.
+            var noFieldOrValueGetter = utils_1._.missing(defaultAutoColDef.field) && utils_1._.missing(defaultAutoColDef.valueGetter) && utils_1._.missing(defaultAutoColDef.filterValueGetter);
+            if (noFieldOrValueGetter) {
+                defaultAutoColDef.suppressFilter = true;
+            }
         }
         // if showing many cols, we don't want to show more than one with a checkbox for selection
         if (index > 0) {
@@ -57922,7 +58579,7 @@ var AutoGroupColService = (function () {
         this.context.wireBean(newCol);
         return newCol;
     };
-    AutoGroupColService.prototype.generateDefaultColDef = function (rowGroupCol, index) {
+    AutoGroupColService.prototype.generateDefaultColDef = function (rowGroupCol) {
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         var defaultAutoColDef = {
             headerName: localeTextFunc('group', 'Group'),
@@ -57966,6 +58623,10 @@ var AutoGroupColService = (function () {
         context_1.Autowired('columnController'),
         __metadata("design:type", columnController_1.ColumnController)
     ], AutoGroupColService.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('balancedColumnTreeBuilder'),
+        __metadata("design:type", balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder)
+    ], AutoGroupColService.prototype, "balancedColumnTreeBuilder", void 0);
     AutoGroupColService = AutoGroupColService_1 = __decorate([
         context_1.Bean('autoGroupColService')
     ], AutoGroupColService);
@@ -57978,7 +58639,7 @@ exports.AutoGroupColService = AutoGroupColService;
 
 define('ag-grid/dist/lib/downloader',['require','exports','module','./context/context'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -58025,7 +58686,7 @@ exports.Downloader = Downloader;
 
 define('ag-grid/dist/lib/rowModels/inMemory/immutableService',['require','exports','module','../../context/context','../../constants','../../utils','../../gridOptionsWrapper'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -58127,7 +58788,7 @@ exports.ImmutableService = ImmutableService;
 
 define('ag-grid/dist/lib/components/colDefUtil',['require','exports','module'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -58227,11 +58888,13 @@ var ColDefUtil = (function () {
         'suppressPaste',
         'suppressNavigable',
         'enableCellChangeFlash',
-        'rowDrag'
+        'rowDrag',
+        'autoHeight'
     ];
     ColDefUtil.FUNCTION_PROPERTIES = [
         'valueGetter',
         'valueSetter',
+        'filterValueGetter',
         'keyCreator',
         'cellRenderer',
         'cellRendererFramework',
@@ -58250,7 +58913,9 @@ var ColDefUtil = (function () {
         'onCellClicked',
         'onCellDoubleClicked',
         'onCellContextMenu',
-        'tooltip'
+        'tooltip',
+        'cellRendererSelector',
+        'cellEditorSelector'
     ];
     ColDefUtil.ALL_PROPERTIES = ColDefUtil.ARRAY_PROPERTIES
         .concat(ColDefUtil.OBJECT_PROPERTIES)
@@ -58264,9 +58929,104 @@ exports.ColDefUtil = ColDefUtil;
 
 });
 
+define('ag-grid/dist/lib/rendering/autoHeightCalculator',['require','exports','module','../gridPanel/gridPanel','../context/context','./beans','./cellComp','../columnController/columnController','../utils'],function (require, exports, module) {/**
+ * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v17.1.1
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var gridPanel_1 = require("../gridPanel/gridPanel");
+var context_1 = require("../context/context");
+var beans_1 = require("./beans");
+var cellComp_1 = require("./cellComp");
+var columnController_1 = require("../columnController/columnController");
+var utils_1 = require("../utils");
+var AutoHeightCalculator = (function () {
+    function AutoHeightCalculator() {
+    }
+    AutoHeightCalculator.prototype.getPreferredHeightForRow = function (rowNode) {
+        var _this = this;
+        if (!this.eDummyContainer) {
+            this.eDummyContainer = document.createElement('div');
+            // so any styles on row also get applied in dummy, otherwise
+            // the content in dummy may differ to the real
+            utils_1._.addCssClass(this.eDummyContainer, 'ag-row ag-row-no-focus');
+        }
+        // we put the dummy into the body container, so it will inherit all the
+        // css styles that the real cells are inheriting
+        var eBodyContainer = this.gridPanel.getBodyContainer();
+        eBodyContainer.appendChild(this.eDummyContainer);
+        var cellComps = [];
+        var cols = this.columnController.getAllAutoRowHeightCols();
+        cols.forEach(function (col) {
+            var cellComp = new cellComp_1.CellComp(null, _this.beans, col, rowNode, null, true);
+            cellComp.setParentRow(_this.eDummyContainer);
+            cellComps.push(cellComp);
+        });
+        var template = cellComps.map(function (cellComp) { return cellComp.getCreateTemplate(); }).join(' ');
+        this.eDummyContainer.innerHTML = template;
+        // this gets any cellComps that are using components to put the components in
+        cellComps.forEach(function (cellComp) { return cellComp.afterAttached(); });
+        // we should be able to just take the height of the row at this point, however
+        // the row isn't expanding to cover the cell heights, i don't know why, i couldn't
+        // figure it out so instead looking at the individual cells instead
+        var maxCellHeight = 0;
+        for (var i = 0; i < this.eDummyContainer.children.length; i++) {
+            var child = this.eDummyContainer.children[i];
+            if (child.offsetHeight > maxCellHeight) {
+                maxCellHeight = child.offsetHeight;
+            }
+        }
+        // we are finished with the dummy container, so get rid of it
+        eBodyContainer.removeChild(this.eDummyContainer);
+        cellComps.forEach(function (cellComp) {
+            // dunno why we need to detach first, doing it here to be consistent with code in RowComp
+            cellComp.detach();
+            cellComp.destroy();
+        });
+        // in case anything left over from last time
+        utils_1._.removeAllChildren(this.eDummyContainer);
+        return maxCellHeight;
+    };
+    __decorate([
+        context_1.Autowired('gridPanel'),
+        __metadata("design:type", gridPanel_1.GridPanel)
+    ], AutoHeightCalculator.prototype, "gridPanel", void 0);
+    __decorate([
+        context_1.Autowired('beans'),
+        __metadata("design:type", beans_1.Beans)
+    ], AutoHeightCalculator.prototype, "beans", void 0);
+    __decorate([
+        context_1.Autowired("$scope"),
+        __metadata("design:type", Object)
+    ], AutoHeightCalculator.prototype, "$scope", void 0);
+    __decorate([
+        context_1.Autowired("columnController"),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], AutoHeightCalculator.prototype, "columnController", void 0);
+    AutoHeightCalculator = __decorate([
+        context_1.Bean('autoHeightCalculator')
+    ], AutoHeightCalculator);
+    return AutoHeightCalculator;
+}());
+exports.AutoHeightCalculator = AutoHeightCalculator;
+
+});
+
 define('ag-grid/dist/lib/columnController/columnKeyCreator',['require','exports','module','../utils'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -58317,7 +59077,7 @@ exports.ColumnKeyCreator = ColumnKeyCreator;
 
 define('ag-grid/dist/lib/entities/defaultColumnTypes',['require','exports','module'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -58334,7 +59094,7 @@ exports.DefaultColumnTypes = {
 
 define('ag-grid/dist/lib/components/agGridNg1',['require','exports','module','../grid'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -58377,9 +59137,9 @@ function AngularDirectiveController($element, $scope, $compile, $attrs) {
 
 });
 
-define('ag-grid/dist/lib/grid',['require','exports','module','./gridOptionsWrapper','./selectionController','./columnController/columnApi','./columnController/columnController','./rendering/rowRenderer','./headerRendering/headerRenderer','./filter/filterManager','./valueService/valueService','./eventService','./gridPanel/gridPanel','./gridApi','./columnController/balancedColumnTreeBuilder','./columnController/displayedGroupCreator','./valueService/expressionService','./templateService','./widgets/popupService','./logger','./columnController/columnUtils','./rendering/autoWidthCalculator','./headerRendering/horizontalResizeService','./context/context','./csvCreator','./gridCore','./headerRendering/standardMenu','./dragAndDrop/dragAndDropService','./dragAndDrop/dragService','./sortController','./focusedCellController','./gridPanel/mouseEventService','./cellNavigationService','./utils','./rowModels/inMemory/filterStage','./rowModels/inMemory/sortStage','./rowModels/inMemory/flattenStage','./rendering/cellEditorFactory','./events','./rowModels/infinite/infiniteRowModel','./rowModels/inMemory/inMemoryRowModel','./rendering/cellRendererFactory','./rendering/cellRendererService','./rendering/valueFormatterService','./widgets/agCheckbox','./baseFrameworkFactory','./gridPanel/scrollVisibleService','./downloader','./xmlFactory','./gridSerializer','./styling/stylingService','./rendering/columnHoverService','./rendering/columnAnimationService','./rowNodes/sortService','./rowNodes/filterService','./rowNodes/rowNodeFactory','./columnController/autoGroupColService','./rowModels/paginationProxy','./rowModels/inMemory/immutableService','./constants','./valueService/valueCache','./valueService/changeDetectionService','./alignedGridsService','./rowModels/pinnedRowModel','./components/framework/componentResolver','./components/framework/componentRecipes','./components/framework/componentProvider','./components/framework/agComponentUtils','./components/framework/componentMetadataProvider','./rendering/beans','./environment','./misc/animationFrameService','./gridPanel/navigationService','./rendering/heightScaler','./rowNodes/selectableService','./widgets/testingSandbox'],function (require, exports, module) {/**
+define('ag-grid/dist/lib/grid',['require','exports','module','./gridOptionsWrapper','./selectionController','./columnController/columnApi','./columnController/columnController','./rendering/rowRenderer','./headerRendering/headerRenderer','./filter/filterManager','./valueService/valueService','./eventService','./gridPanel/gridPanel','./gridApi','./columnController/balancedColumnTreeBuilder','./columnController/displayedGroupCreator','./valueService/expressionService','./templateService','./widgets/popupService','./logger','./columnController/columnUtils','./rendering/autoWidthCalculator','./headerRendering/horizontalResizeService','./context/context','./csvCreator','./gridCore','./headerRendering/standardMenu','./dragAndDrop/dragAndDropService','./dragAndDrop/dragService','./sortController','./focusedCellController','./gridPanel/mouseEventService','./cellNavigationService','./utils','./rowModels/inMemory/filterStage','./rowModels/inMemory/sortStage','./rowModels/inMemory/flattenStage','./rendering/cellEditorFactory','./events','./rowModels/infinite/infiniteRowModel','./rowModels/inMemory/inMemoryRowModel','./rendering/cellRendererFactory','./rendering/cellRendererService','./rendering/valueFormatterService','./widgets/agCheckbox','./baseFrameworkFactory','./gridPanel/scrollVisibleService','./downloader','./xmlFactory','./gridSerializer','./styling/stylingService','./rendering/columnHoverService','./rendering/columnAnimationService','./rowNodes/sortService','./rowNodes/filterService','./rowNodes/rowNodeFactory','./columnController/autoGroupColService','./rowModels/paginationProxy','./rowModels/inMemory/immutableService','./constants','./valueService/valueCache','./valueService/changeDetectionService','./alignedGridsService','./rowModels/pinnedRowModel','./components/framework/componentResolver','./components/framework/componentRecipes','./components/framework/componentProvider','./components/framework/agComponentUtils','./components/framework/componentMetadataProvider','./rendering/beans','./environment','./misc/animationFrameService','./gridPanel/navigationService','./rendering/heightScaler','./rowNodes/selectableService','./widgets/testingSandbox','./rendering/autoHeightCalculator'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -58458,6 +59218,7 @@ var navigationService_1 = require("./gridPanel/navigationService");
 var heightScaler_1 = require("./rendering/heightScaler");
 var selectableService_1 = require("./rowNodes/selectableService");
 var testingSandbox_1 = require("./widgets/testingSandbox");
+var autoHeightCalculator_1 = require("./rendering/autoHeightCalculator");
 var Grid = (function () {
     function Grid(eGridDiv, gridOptions, params) {
         if (!eGridDiv) {
@@ -58507,7 +59268,7 @@ var Grid = (function () {
             seed: seed,
             //Careful with the order of the beans here, there are dependencies between them that need to be kept
             beans: [rowModelClass, paginationProxy_1.PaginationAutoPageSizeService, gridApi_1.GridApi, componentProvider_1.ComponentProvider, agComponentUtils_1.AgComponentUtils, componentMetadataProvider_1.ComponentMetadataProvider,
-                componentProvider_1.ComponentProvider, componentResolver_1.ComponentResolver, componentRecipes_1.ComponentRecipes, heightScaler_1.HeightScaler,
+                componentProvider_1.ComponentProvider, componentResolver_1.ComponentResolver, componentRecipes_1.ComponentRecipes, heightScaler_1.HeightScaler, autoHeightCalculator_1.AutoHeightCalculator,
                 cellRendererFactory_1.CellRendererFactory, horizontalResizeService_1.HorizontalResizeService, pinnedRowModel_1.PinnedRowModel, dragService_1.DragService,
                 displayedGroupCreator_1.DisplayedGroupCreator, eventService_1.EventService, gridOptionsWrapper_1.GridOptionsWrapper, selectionController_1.SelectionController,
                 filterManager_1.FilterManager, columnController_1.ColumnController, paginationProxy_1.PaginationProxy, rowRenderer_1.RowRenderer, headerRenderer_1.HeaderRenderer, expressionService_1.ExpressionService,
@@ -58609,7 +59370,7 @@ exports.Grid = Grid;
 
 define('ag-grid/dist/lib/headerRendering/standardMenu',['require','exports','module','../context/context','../filter/filterManager','../utils','../widgets/popupService','../gridOptionsWrapper','../eventService'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -58722,7 +59483,7 @@ exports.StandardMenuFactory = StandardMenuFactory;
 
 define('ag-grid/dist/lib/rowModels/inMemory/filterStage',['require','exports','module','../../context/context','../../gridOptionsWrapper','../../rowNodes/filterService','../../rowNodes/selectableService'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -58777,7 +59538,7 @@ exports.FilterStage = FilterStage;
 
 define('ag-grid/dist/lib/rowNodes/filterService',['require','exports','module','../context/context','../filter/filterManager','../gridOptionsWrapper'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -58891,7 +59652,7 @@ exports.FilterService = FilterService;
 
 define('ag-grid/dist/lib/rowNodes/selectableService',['require','exports','module','../context/context','../utils','../gridOptionsWrapper'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -58971,7 +59732,7 @@ exports.SelectableService = SelectableService;
 
 define('ag-grid/dist/lib/rowModels/inMemory/sortStage',['require','exports','module','../../context/context','../../gridOptionsWrapper','../../rowNodes/sortService'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -59020,7 +59781,7 @@ exports.SortStage = SortStage;
 
 define('ag-grid/dist/lib/rowNodes/sortService',['require','exports','module','../context/context','../sortController','../utils','../valueService/valueService','../gridOptionsWrapper','../columnController/columnController'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -59191,7 +59952,7 @@ exports.SortService = SortService;
 
 define('ag-grid/dist/lib/rowModels/inMemory/flattenStage',['require','exports','module','../../context/context','../../entities/rowNode','../../utils','../../gridOptionsWrapper','../../selectionController','../../eventService','../../columnController/columnController'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -59388,7 +60149,7 @@ exports.FlattenStage = FlattenStage;
 
 define('ag-grid/dist/lib/rowModels/infinite/infiniteRowModel',['require','exports','module','../../utils','../../gridOptionsWrapper','../../context/context','../../eventService','../../selectionController','../../events','../../sortController','../../filter/filterManager','../../constants','./infiniteCache','../../context/beanStub','../cache/rowNodeCache','../cache/rowNodeBlockLoader','../../gridApi','../../columnController/columnApi'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -59760,7 +60521,7 @@ exports.InfiniteRowModel = InfiniteRowModel;
 
 define('ag-grid/dist/lib/rowModels/infinite/infiniteCache',['require','exports','module','../../context/context','../../eventService','../../events','../../logger','./infiniteBlock','../cache/rowNodeCache','../../gridApi','../../columnController/columnApi'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -59939,7 +60700,7 @@ exports.InfiniteCache = InfiniteCache;
 
 define('ag-grid/dist/lib/rowModels/infinite/infiniteBlock',['require','exports','module','../../utils','../../gridOptionsWrapper','../../context/context','../cache/rowNodeBlock','../../rendering/rowRenderer'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -60070,7 +60831,7 @@ exports.InfiniteBlock = InfiniteBlock;
 
 define('ag-grid/dist/lib/rowModels/cache/rowNodeBlock',['require','exports','module','../../utils','../../entities/rowNode','../../context/beanStub'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -60278,7 +61039,7 @@ exports.RowNodeBlock = RowNodeBlock;
 
 define('ag-grid/dist/lib/rowModels/cache/rowNodeCache',['require','exports','module','../../utils','../../context/beanStub','./rowNodeBlock'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -60544,7 +61305,7 @@ exports.RowNodeCache = RowNodeCache;
 
 define('ag-grid/dist/lib/rowModels/cache/rowNodeBlockLoader',['require','exports','module','./rowNodeBlock','../../logger','../../context/context','../../utils'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -60652,7 +61413,7 @@ exports.RowNodeBlockLoader = RowNodeBlockLoader;
 
 define('ag-grid/dist/lib/rowModels/inMemory/inMemoryRowModel',['require','exports','module','../../utils','../../constants','../../gridOptionsWrapper','../../columnController/columnApi','../../columnController/columnController','../../filter/filterManager','../../entities/rowNode','../../eventService','../../events','../../context/context','../../selectionController','./inMemoryNodeManager','./changedPath','../../valueService/valueService','../../valueService/valueCache','../../gridApi'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -61299,7 +62060,7 @@ exports.InMemoryRowModel = InMemoryRowModel;
 
 define('ag-grid/dist/lib/rowModels/inMemory/inMemoryNodeManager',['require','exports','module','../../entities/rowNode','../../utils'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -61512,7 +62273,11 @@ var InMemoryNodeManager = (function () {
                 else {
                     node.master = false;
                 }
-                node.expanded = node.master ? this.isExpanded(level) : false;
+                var rowGroupColumns = this.columnController.getRowGroupColumns();
+                var numRowGroupColumns = rowGroupColumns ? rowGroupColumns.length : 0;
+                // need to take row group into account when determining level
+                var masterRowLevel = level + numRowGroupColumns;
+                node.expanded = node.master ? this.isExpanded(masterRowLevel) : false;
             }
         }
         // support for backwards compatibility, canFlow is now called 'master'
@@ -61595,7 +62360,7 @@ exports.InMemoryNodeManager = InMemoryNodeManager;
 
 define('ag-grid/dist/lib/rowModels/inMemory/changedPath',['require','exports','module'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -61669,7 +62434,7 @@ exports.ChangedPath = ChangedPath;
 
 define('ag-grid/dist/lib/baseFrameworkFactory',['require','exports','module'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -61714,7 +62479,7 @@ exports.BaseFrameworkFactory = BaseFrameworkFactory;
 
 define('ag-grid/dist/lib/xmlFactory',['require','exports','module','./context/context'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -61785,7 +62550,7 @@ exports.XmlFactory = XmlFactory;
 
 define('ag-grid/dist/lib/rowNodes/rowNodeFactory',['require','exports','module','../entities/rowNode','../rowModels/inMemory/inMemoryNodeManager','../gridOptionsWrapper','../eventService','../context/context','../columnController/columnController'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -61843,7 +62608,7 @@ exports.RowNodeFactory = RowNodeFactory;
 
 define('ag-grid/dist/lib/valueService/changeDetectionService',['require','exports','module','../context/context','../gridOptionsWrapper','../rowModels/inMemory/changedPath','../rendering/rowRenderer','../eventService','../constants','../context/beanStub','../events'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -61895,13 +62660,10 @@ var ChangeDetectionService = (function (_super) {
             return;
         }
         // step 1 of change detection is to update the aggregated values
-        if (this.inMemoryRowModel) {
-            var changedPath = void 0;
-            if (rowNode.parent) {
-                var onlyChangedColumns = this.gridOptionsWrapper.isAggregateOnlyChangedColumns();
-                changedPath = new changedPath_1.ChangedPath(onlyChangedColumns);
-                changedPath.addParentNode(rowNode.parent, [column]);
-            }
+        if (this.inMemoryRowModel && !rowNode.isRowPinned()) {
+            var onlyChangedColumns = this.gridOptionsWrapper.isAggregateOnlyChangedColumns();
+            var changedPath = new changedPath_1.ChangedPath(onlyChangedColumns);
+            changedPath.addParentNode(rowNode.parent, [column]);
             this.inMemoryRowModel.doAggregate(changedPath);
         }
         // step 2 of change detection is to refresh the cells
@@ -61940,7 +62702,7 @@ exports.ChangeDetectionService = ChangeDetectionService;
 
 define('ag-grid/dist/lib/components/agGridWebComponent',['require','exports','module','./componentUtil','../grid'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -62059,7 +62821,7 @@ function toCamelCase(myString) {
 
 define('ag-grid/dist/lib/layout/tabbedLayout',['require','exports','module','../utils'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -62167,7 +62929,7 @@ exports.TabbedLayout = TabbedLayout;
 
 define('ag-grid/dist/lib/layout/verticalStack',['require','exports','module'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -62210,7 +62972,7 @@ exports.VerticalStack = VerticalStack;
 
 define('ag-grid/dist/lib/misc/simpleHttpRequest',['require','exports','module','../utils'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -62236,7 +62998,7 @@ exports.simpleHttpRequest = simpleHttpRequest;
 
 define('ag-grid/dist/lib/functions',['require','exports','module','./utils'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -62269,7 +63031,7 @@ exports.defaultGroupComparator = defaultGroupComparator;
 
 define('ag-grid/dist/lib/components/framework/frameworkComponentWrapper',['require','exports','module'],function (require, exports, module) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.0.0
+ * @version v17.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -62311,7 +63073,7 @@ exports.BaseComponentWrapper = BaseComponentWrapper;
 
 });
 
-define('ag-grid-aurelia/lib/aureliaFrameworkFactory',['require','exports','module','aurelia-framework','ag-grid/main'],function (require, exports, module) {// ag-grid-aurelia v17.0.0
+define('ag-grid-aurelia/lib/aureliaFrameworkFactory',['require','exports','module','aurelia-framework','ag-grid/main'],function (require, exports, module) {// ag-grid-aurelia v17.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -62345,7 +63107,7 @@ exports.AureliaFrameworkFactory = AureliaFrameworkFactory;
 
 });
 
-define('ag-grid-aurelia/lib/agUtils',['require','exports','module','aurelia-framework'],function (require, exports, module) {// ag-grid-aurelia v17.0.0
+define('ag-grid-aurelia/lib/agUtils',['require','exports','module','aurelia-framework'],function (require, exports, module) {// ag-grid-aurelia v17.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var aurelia_framework_1 = require("aurelia-framework");
@@ -62373,7 +63135,7 @@ exports.generateBindables = generateBindables;
 
 });
 
-define('ag-grid-aurelia/lib/agTemplate',['require','exports','module','aurelia-framework'],function (require, exports, module) {// ag-grid-aurelia v17.0.0
+define('ag-grid-aurelia/lib/agTemplate',['require','exports','module','aurelia-framework'],function (require, exports, module) {// ag-grid-aurelia v17.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -62520,7 +63282,7 @@ exports.AgFullWidthRowTemplate = AgFullWidthRowTemplate;
 
 });
 
-define('ag-grid-aurelia/lib/aureliaFrameworkComponentWrapper',['require','exports','module','aurelia-framework','ag-grid'],function (require, exports, module) {// ag-grid-aurelia v17.0.0
+define('ag-grid-aurelia/lib/aureliaFrameworkComponentWrapper',['require','exports','module','aurelia-framework','ag-grid'],function (require, exports, module) {// ag-grid-aurelia v17.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -62646,7 +63408,7 @@ var BaseGuiComponent = /** @class */ (function () {
 
 });
 
-define('ag-grid-aurelia/lib/agGridColumn',['require','exports','module','aurelia-framework','./agTemplate','./agUtils'],function (require, exports, module) {// ag-grid-aurelia v17.0.0
+define('ag-grid-aurelia/lib/agGridColumn',['require','exports','module','aurelia-framework','./agTemplate','./agUtils'],function (require, exports, module) {// ag-grid-aurelia v17.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -62977,7 +63739,7 @@ exports.BaseAureliaEditor = BaseAureliaEditor;
 
 });
 
-define('ag-grid-enterprise/dist/lib/toolPanel/columnsSelect/columnSelectComp',['require','exports','module','ag-grid/main','./columnContainerComp','./columnSelectHeaderComp'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/toolPanel/columnsSelect/columnSelectComp',['require','exports','module','ag-grid/main','./columnContainerComp','./columnSelectHeaderComp'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -63066,7 +63828,7 @@ exports.ColumnSelectComp = ColumnSelectComp;
 
 });
 
-define('ag-grid-enterprise/dist/lib/toolPanel/columnsSelect/columnContainerComp',['require','exports','module','ag-grid/main','./toolPanelGroupComp','./toolPanelColumnComp','./columnSelectHeaderComp'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/toolPanel/columnsSelect/columnContainerComp',['require','exports','module','ag-grid/main','./toolPanelGroupComp','./toolPanelColumnComp','./columnSelectHeaderComp'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -63314,7 +64076,7 @@ exports.ColumnContainerComp = ColumnContainerComp;
 
 });
 
-define('ag-grid-enterprise/dist/lib/toolPanel/columnsSelect/toolPanelGroupComp',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/toolPanel/columnsSelect/toolPanelGroupComp',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -63361,7 +64123,6 @@ var ToolPanelGroupComp = (function (_super) {
         this.setupExpandContract();
         this.addCssClass('ag-toolpanel-indent-' + this.columnDept);
         this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.cbSelect, main_1.AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
         this.setOpenClosedIcons();
         this.setupDragging();
         this.onColumnStateChanged();
@@ -63414,14 +64175,20 @@ var ToolPanelGroupComp = (function (_super) {
         this.addDestroyableEventListener(touchListener, main_1.TouchListener.EVENT_TAP, this.onExpandOrContractClicked.bind(this));
         this.addDestroyFunc(touchListener.destroy.bind(touchListener));
     };
-    ToolPanelGroupComp.prototype.onCheckboxChanged = function () {
+    ToolPanelGroupComp.prototype.onLabelClicked = function () {
+        var nextState = !this.cbSelect.isSelected();
+        this.onChangeCommon(nextState);
+    };
+    ToolPanelGroupComp.prototype.onCheckboxChanged = function (event) {
+        this.onChangeCommon(event.selected);
+    };
+    ToolPanelGroupComp.prototype.onChangeCommon = function (nextState) {
         if (this.processingColumnStateChange) {
             return;
         }
         var childColumns = this.columnGroup.getLeafColumns();
-        var selected = this.cbSelect.isSelected();
         if (this.columnController.isPivotMode()) {
-            if (selected) {
+            if (nextState) {
                 this.actionCheckedReduce(childColumns);
             }
             else {
@@ -63430,7 +64197,7 @@ var ToolPanelGroupComp = (function (_super) {
         }
         else {
             var allowedColumns = childColumns.filter(function (c) { return !c.isLockVisible(); });
-            this.columnController.setColumnsVisible(allowedColumns, selected, "toolPanelUi");
+            this.columnController.setColumnsVisible(allowedColumns, nextState, "toolPanelUi");
         }
         if (this.selectionCallback) {
             this.selectionCallback(this.isSelected());
@@ -63592,7 +64359,7 @@ var ToolPanelGroupComp = (function (_super) {
             this.onExpandOrContractClicked();
         }
     };
-    ToolPanelGroupComp.TEMPLATE = "<div class=\"ag-column-select-column-group\">\n            <span id=\"eColumnGroupIcons\" class=\"ag-column-group-icons\">\n                <span id=\"eGroupOpenedIcon\" class=\"ag-column-group-closed-icon\"></span>\n                <span id=\"eGroupClosedIcon\" class=\"ag-column-group-opened-icon\"></span>\n            </span>\n            <ag-checkbox class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-drag\" ref=\"eDragHandle\"></span>\n            <span id=\"eText\" class=\"ag-column-select-column-group-label\"></span>\n        </div>";
+    ToolPanelGroupComp.TEMPLATE = "<div class=\"ag-column-select-column-group\">\n            <span id=\"eColumnGroupIcons\" class=\"ag-column-group-icons\">\n                <span id=\"eGroupOpenedIcon\" class=\"ag-column-group-closed-icon\"></span>\n                <span id=\"eGroupClosedIcon\" class=\"ag-column-group-opened-icon\"></span>\n            </span>\n            <ag-checkbox ref=\"cbSelect\" (change)=\"onCheckboxChanged\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-drag\" ref=\"eDragHandle\"></span>\n            <span id=\"eText\" class=\"ag-column-select-column-group-label\" (click)=\"onLabelClicked\"></span>\n        </div>";
     __decorate([
         main_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", main_1.GridOptionsWrapper)
@@ -63618,7 +64385,7 @@ var ToolPanelGroupComp = (function (_super) {
         __metadata("design:type", main_1.EventService)
     ], ToolPanelGroupComp.prototype, "eventService", void 0);
     __decorate([
-        main_1.QuerySelector('.ag-column-select-checkbox'),
+        main_1.RefSelector('cbSelect'),
         __metadata("design:type", main_1.AgCheckbox)
     ], ToolPanelGroupComp.prototype, "cbSelect", void 0);
     __decorate([
@@ -63637,7 +64404,7 @@ exports.ToolPanelGroupComp = ToolPanelGroupComp;
 
 });
 
-define('ag-grid-enterprise/dist/lib/toolPanel/columnsSelect/toolPanelColumnComp',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/toolPanel/columnsSelect/toolPanelColumnComp',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -63674,7 +64441,7 @@ var ToolPanelColumnComp = (function (_super) {
     ToolPanelColumnComp.prototype.init = function () {
         this.setTemplate(ToolPanelColumnComp.TEMPLATE);
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
-        this.eText.innerHTML = this.displayName;
+        this.eLabel.innerHTML = this.displayName;
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
         var indent = this.columnDept;
         if (this.groupsExist) {
@@ -63690,10 +64457,16 @@ var ToolPanelColumnComp = (function (_super) {
         this.addDestroyableEventListener(this.gridOptionsWrapper, 'functionsReadOnly', this.onColumnStateChanged.bind(this));
         this.instantiate(this.context);
         this.onColumnStateChanged();
-        this.addDestroyableEventListener(this.cbSelect, main_1.AgCheckbox.EVENT_CHANGED, this.onChange.bind(this));
         main_1.CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
     };
-    ToolPanelColumnComp.prototype.onChange = function (event) {
+    ToolPanelColumnComp.prototype.onLabelClicked = function () {
+        var nextState = !this.cbSelect.isSelected();
+        this.onChangeCommon(nextState);
+    };
+    ToolPanelColumnComp.prototype.onCheckboxChanged = function (event) {
+        this.onChangeCommon(event.selected);
+    };
+    ToolPanelColumnComp.prototype.onChangeCommon = function (nextState) {
         // only want to action if the user clicked the checkbox, not is we are setting the checkbox because
         // of a change in the model
         if (this.processingColumnStateChange) {
@@ -63703,7 +64476,7 @@ var ToolPanelColumnComp = (function (_super) {
         // so the user gets nice feedback when they click. otherwise there would be a lag and the
         // user would think the checkboxes were clunky
         if (this.columnController.isPivotMode()) {
-            if (event.selected) {
+            if (nextState) {
                 this.actionCheckedPivotMode();
             }
             else {
@@ -63711,7 +64484,7 @@ var ToolPanelColumnComp = (function (_super) {
             }
         }
         else {
-            this.columnController.setColumnVisible(this.column, event.selected, "columnMenu");
+            this.columnController.setColumnVisible(this.column, nextState, "columnMenu");
         }
         if (this.selectionCallback) {
             this.selectionCallback(this.isSelected());
@@ -63910,7 +64683,7 @@ var ToolPanelColumnComp = (function (_super) {
     ToolPanelColumnComp.prototype.setExpanded = function (value) {
         console.warn('ag-grid: can not expand a column item that does not represent a column group header');
     };
-    ToolPanelColumnComp.TEMPLATE = "<div class=\"ag-column-select-column\">\n            <ag-checkbox class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-drag\" ref=\"eDragHandle\"></span>\n            <span class=\"ag-column-select-label\"></span>\n        </div>";
+    ToolPanelColumnComp.TEMPLATE = "<div class=\"ag-column-select-column\">\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\" (change)=\"onCheckboxChanged\"></ag-checkbox>\n            <span class=\"ag-column-drag\" ref=\"eDragHandle\"></span>\n            <span class=\"ag-column-select-label\" ref=\"eLabel\" (click)=\"onLabelClicked\"></span>\n        </div>";
     __decorate([
         main_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", main_1.GridOptionsWrapper)
@@ -63944,15 +64717,11 @@ var ToolPanelColumnComp = (function (_super) {
         __metadata("design:type", main_1.GridApi)
     ], ToolPanelColumnComp.prototype, "gridApi", void 0);
     __decorate([
-        main_1.QuerySelector('.ag-column-select-label'),
+        main_1.RefSelector('eLabel'),
         __metadata("design:type", HTMLElement)
-    ], ToolPanelColumnComp.prototype, "eText", void 0);
+    ], ToolPanelColumnComp.prototype, "eLabel", void 0);
     __decorate([
-        main_1.QuerySelector('.ag-column-select-indent'),
-        __metadata("design:type", HTMLElement)
-    ], ToolPanelColumnComp.prototype, "eIndent", void 0);
-    __decorate([
-        main_1.QuerySelector('.ag-column-select-checkbox'),
+        main_1.RefSelector('cbSelect'),
         __metadata("design:type", main_1.AgCheckbox)
     ], ToolPanelColumnComp.prototype, "cbSelect", void 0);
     __decorate([
@@ -63971,7 +64740,7 @@ exports.ToolPanelColumnComp = ToolPanelColumnComp;
 
 });
 
-define('ag-grid-enterprise/dist/lib/toolPanel/columnsSelect/columnSelectHeaderComp',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/toolPanel/columnsSelect/columnSelectHeaderComp',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -64201,7 +64970,7 @@ exports.ColumnSelectHeaderComp = ColumnSelectHeaderComp;
 
 });
 
-define('ag-grid-enterprise/dist/lib/rowStages/aggregationStage',['require','exports','module','ag-grid/main','./pivotStage','../aggregation/aggFuncService'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/rowStages/aggregationStage',['require','exports','module','ag-grid/main','./pivotStage','../aggregation/aggFuncService'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -64434,7 +65203,7 @@ exports.AggregationStage = AggregationStage;
 
 });
 
-define('ag-grid-enterprise/dist/lib/rowStages/pivotStage',['require','exports','module','ag-grid/main','./pivotColDefService'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/rowStages/pivotStage',['require','exports','module','ag-grid/main','./pivotColDefService'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -64593,7 +65362,7 @@ exports.PivotStage = PivotStage;
 
 });
 
-define('ag-grid-enterprise/dist/lib/rowStages/pivotColDefService',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/rowStages/pivotColDefService',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -64746,6 +65515,7 @@ var PivotColDefService = (function () {
         colDef.field = colDef.colId;
         colDef.pivotKeys = pivotKeys;
         colDef.pivotValueColumn = valueColumn;
+        colDef.suppressFilter = true;
         return colDef;
     };
     PivotColDefService.prototype.sameAggFuncs = function (aggFuncs) {
@@ -64791,7 +65561,7 @@ exports.PivotColDefService = PivotColDefService;
 
 });
 
-define('ag-grid-enterprise/dist/lib/aggregation/aggFuncService',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/aggregation/aggFuncService',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -65031,7 +65801,7 @@ function aggAvg(input) {
 
 });
 
-define('ag-grid-enterprise/dist/lib/rowStages/groupStage',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/rowStages/groupStage',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -65474,7 +66244,7 @@ exports.GroupStage = GroupStage;
 
 });
 
-define('ag-grid-enterprise/dist/lib/setFilter/setFilter',['require','exports','module','ag-grid/main','./setFilterModel','./setFilterListItem','../rendering/virtualList'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/setFilter/setFilter',['require','exports','module','ag-grid/main','./setFilterModel','./setFilterListItem','../rendering/virtualList'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -65506,7 +66276,6 @@ var CheckboxState;
     CheckboxState[CheckboxState["UNCHECKED"] = 1] = "UNCHECKED";
     CheckboxState[CheckboxState["INTERMEDIATE"] = 2] = "INTERMEDIATE";
 })(CheckboxState || (CheckboxState = {}));
-;
 var SetFilter = (function (_super) {
     __extends(SetFilter, _super);
     function SetFilter() {
@@ -65514,8 +66283,9 @@ var SetFilter = (function (_super) {
     }
     SetFilter.prototype.customInit = function () {
         var _this = this;
-        var changeFilter = function () {
-            _this.onFilterChanged();
+        var changeFilter = function (applyNow) {
+            if (applyNow === void 0) { applyNow = false; }
+            _this.onFilterChanged(applyNow);
         };
         var debounceMs = this.filterParams && this.filterParams.debounceMs != null ? this.filterParams.debounceMs : 0;
         this.debounceFilterChanged = main_1._.debounce(changeFilter, debounceMs);
@@ -65554,7 +66324,7 @@ var SetFilter = (function (_super) {
             this.virtualList.setRowHeight(this.filterParams.cellHeight);
         }
         this.virtualList.setComponentCreator(this.createSetListItem.bind(this));
-        this.model = new setFilterModel_1.SetFilterModel(this.filterParams.colDef, this.filterParams.rowModel, this.filterParams.valueGetter, this.filterParams.doesRowPassOtherFilter, this.filterParams.suppressSorting, function (values) { return _this.setFilterValues(values, true, false); }, this.setLoading.bind(this));
+        this.model = new setFilterModel_1.SetFilterModel(this.filterParams.colDef, this.filterParams.rowModel, this.filterParams.valueGetter, this.filterParams.doesRowPassOtherFilter, this.filterParams.suppressSorting, function (values, toSelect) { return _this.setFilterValues(values, toSelect ? false : true, toSelect ? true : false, toSelect); }, this.setLoading.bind(this), this.valueFormatterService, this.filterParams.column);
         this.virtualList.setModel(new ModelWrapper(this.model));
         main_1._.setVisible(this.getGui().querySelector('#ag-mini-filter'), !this.filterParams.suppressMiniFilter);
         this.eMiniFilter.value = this.model.getMiniFilter();
@@ -65565,7 +66335,15 @@ var SetFilter = (function (_super) {
         this.virtualList.refresh();
     };
     SetFilter.prototype.modelFromFloatingFilter = function (from) {
-        return [from];
+        if (this.gridOptionsWrapper.isEnableOldSetFilterModel()) {
+            return [from];
+        }
+        else {
+            return {
+                values: [from],
+                filterType: 'set'
+            };
+        }
     };
     SetFilter.prototype.refreshFilterBodyUi = function () {
     };
@@ -65601,6 +66379,9 @@ var SetFilter = (function (_super) {
         if (this.filterParams.colDef.keyCreator) {
             value = this.filterParams.colDef.keyCreator({ value: value });
         }
+        if (this.filterParams.colDef.refData) {
+            value = this.filterParams.colDef.refData[value];
+        }
         value = main_1.Utils.makeNull(value);
         if (Array.isArray(value)) {
             for (var i = 0; i < value.length; i++) {
@@ -65629,21 +66410,22 @@ var SetFilter = (function (_super) {
      * @param options The options to use.
      * @param selectAll If by default all the values should be selected.
      * @param notify If we should let know the model that the values of the filter have changed
+     * @param toSelect The subset of options to subselect
      */
-    SetFilter.prototype.setFilterValues = function (options, selectAll, notify) {
+    SetFilter.prototype.setFilterValues = function (options, selectAll, notify, toSelect) {
         var _this = this;
         if (selectAll === void 0) { selectAll = false; }
         if (notify === void 0) { notify = true; }
         this.model.onFilterValuesReady(function () {
             var keepSelection = _this.filterParams && _this.filterParams.newRowsAction === 'keep';
-            var isSelectAll = selectAll || (_this.selectAllState === CheckboxState.CHECKED);
             _this.model.setValuesType(setFilterModel_1.SetFilterModelValuesType.PROVIDED_LIST);
-            _this.model.refreshValues(options, keepSelection, isSelectAll);
+            _this.model.refreshValues(options, keepSelection, selectAll);
             _this.updateSelectAll();
-            options.forEach(function (option) { return _this.model.selectValue(option); });
+            var actualToSelect = toSelect ? toSelect : options;
+            actualToSelect.forEach(function (option) { return _this.model.selectValue(option); });
             _this.virtualList.refresh();
             if (notify) {
-                _this.debounceFilterChanged();
+                _this.debounceFilterChanged(true);
             }
         });
     };
@@ -65758,10 +66540,20 @@ var SetFilter = (function (_super) {
         return this.model.getUniqueValue(index);
     };
     SetFilter.prototype.serialize = function () {
-        return this.model.getModel();
+        if (this.gridOptionsWrapper.isEnableOldSetFilterModel()) {
+            return this.model.getModel();
+        }
+        else {
+            return {
+                values: this.model.getModel(),
+                filterType: 'set'
+            };
+        }
     };
     SetFilter.prototype.parse = function (dataModel) {
-        this.model.setModel(dataModel);
+        // also supporting old filter model for backwards compatibility
+        var newValues = (dataModel instanceof Array) ? dataModel : dataModel.values;
+        this.model.setModel(newValues);
         this.updateSelectAll();
         this.virtualList.refresh();
     };
@@ -65786,6 +66578,10 @@ var SetFilter = (function (_super) {
         main_1.RefSelector('ag-filter-loading'),
         __metadata("design:type", HTMLInputElement)
     ], SetFilter.prototype, "eFilterLoading", void 0);
+    __decorate([
+        main_1.Autowired('valueFormatterService'),
+        __metadata("design:type", main_1.ValueFormatterService)
+    ], SetFilter.prototype, "valueFormatterService", void 0);
     return SetFilter;
 }(main_1.BaseFilter));
 exports.SetFilter = SetFilter;
@@ -65804,13 +66600,11 @@ var ModelWrapper = (function () {
 
 });
 
-define('ag-grid-enterprise/dist/lib/setFilter/setFilterModel',['require','exports','module','ag-grid/main','ag-grid/main','ag-grid','ag-grid'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/setFilter/setFilterModel',['require','exports','module','ag-grid/main','ag-grid'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
-var main_2 = require("ag-grid/main");
 var ag_grid_1 = require("ag-grid");
-var ag_grid_2 = require("ag-grid");
 // we cannot have 'null' as a key in a JavaScript map,
 // it needs to be a string. so we use this string for
 // storing null values.
@@ -65822,13 +66616,15 @@ var SetFilterModelValuesType;
     SetFilterModelValuesType[SetFilterModelValuesType["NOT_PROVIDED"] = 2] = "NOT_PROVIDED";
 })(SetFilterModelValuesType = exports.SetFilterModelValuesType || (exports.SetFilterModelValuesType = {}));
 var SetFilterModel = (function () {
-    function SetFilterModel(colDef, rowModel, valueGetter, doesRowPassOtherFilters, suppressSorting, modelUpdatedFunc, isLoadingFunc) {
+    function SetFilterModel(colDef, rowModel, valueGetter, doesRowPassOtherFilters, suppressSorting, modelUpdatedFunc, isLoadingFunc, valueFormatterService, column) {
         this.suppressSorting = suppressSorting;
         this.colDef = colDef;
         this.valueGetter = valueGetter;
         this.doesRowPassOtherFilters = doesRowPassOtherFilters;
         this.modelUpdatedFunc = modelUpdatedFunc;
         this.isLoadingFunc = isLoadingFunc;
+        this.valueFormatterService = valueFormatterService;
+        this.column = column;
         if (rowModel.getType() === ag_grid_1.Constants.ROW_MODEL_TYPE_IN_MEMORY) {
             this.inMemoryRowModel = rowModel;
         }
@@ -65853,7 +66649,7 @@ var SetFilterModel = (function () {
         // the length of the array is thousands of records long
         this.selectedValuesMap = {};
         this.selectEverything();
-        this.formatter = this.filterParams.textFormatter ? this.filterParams.textFormatter : main_2.TextFilter.DEFAULT_FORMATTER;
+        this.formatter = this.filterParams.textFormatter ? this.filterParams.textFormatter : main_1.TextFilter.DEFAULT_FORMATTER;
     }
     // if keepSelection not set will always select all filters
     // if keepSelection set will keep current state of selected filters
@@ -65891,16 +66687,17 @@ var SetFilterModel = (function () {
         if (this.areValuesSync()) {
             var valuesToUse = this.extractSyncValuesToUse();
             this.setValues(valuesToUse);
-            this.filterValuesPromise = ag_grid_2.Promise.resolve(null);
+            this.filterValuesPromise = ag_grid_1.Promise.resolve(null);
         }
         else {
-            this.filterValuesExternalPromise = ag_grid_2.Promise.external();
+            this.filterValuesExternalPromise = ag_grid_1.Promise.external();
             this.filterValuesPromise = this.filterValuesExternalPromise.promise;
             this.isLoadingFunc(true);
             this.setValues([]);
             var callback = this.filterParams.values;
             var params = {
-                success: this.onAsyncValuesLoaded.bind(this)
+                success: this.onAsyncValuesLoaded.bind(this),
+                colDef: this.colDef
             };
             callback(params);
         }
@@ -65908,7 +66705,7 @@ var SetFilterModel = (function () {
     SetFilterModel.prototype.onAsyncValuesLoaded = function (values) {
         this.modelUpdatedFunc(values);
         this.isLoadingFunc(false);
-        this.filterValuesExternalPromise.resolve(null);
+        this.filterValuesExternalPromise.resolve(values);
     };
     SetFilterModel.prototype.areValuesSync = function () {
         return this.valuesType == SetFilterModelValuesType.PROVIDED_LIST || this.valuesType == SetFilterModelValuesType.NOT_PROVIDED;
@@ -65980,6 +66777,9 @@ var SetFilterModel = (function () {
             if (_this.colDef.keyCreator) {
                 value = _this.colDef.keyCreator({ value: value });
             }
+            if (_this.colDef.refData) {
+                value = _this.colDef.refData[value];
+            }
             if (value === "" || value === undefined) {
                 value = null;
             }
@@ -66031,15 +66831,21 @@ var SetFilterModel = (function () {
         // make upper case to have search case insensitive
         var miniFilterUpperCase = miniFilter.toUpperCase();
         for (var i = 0, l = this.availableUniqueValues.length; i < l; i++) {
-            var filteredValue = this.availableUniqueValues[i];
-            if (filteredValue) {
-                var value = this.formatter(filteredValue.toString());
-                if (value !== null) {
-                    // allow for case insensitive searches, make both filter and value uppercase
-                    var valueUpperCase = value.toUpperCase();
-                    if (valueUpperCase.indexOf(miniFilterUpperCase) >= 0) {
-                        this.displayedValues.push(filteredValue);
+            var value = this.availableUniqueValues[i];
+            if (value) {
+                var displayedValue = this.formatter(value.toString());
+                //This function encapsulates the logic to check if a string matches the mini filter
+                var matchesFn = function (valueToCheck) {
+                    if (valueToCheck === null) {
+                        return false;
                     }
+                    // allow for case insensitive searches, make both filter and value uppercase
+                    var valueUpperCase = valueToCheck.toUpperCase();
+                    return valueUpperCase.indexOf(miniFilterUpperCase) >= 0;
+                };
+                var formattedValue = this.valueFormatterService.formatValue(this.column, null, null, displayedValue);
+                if (matchesFn(displayedValue) || matchesFn(formattedValue)) {
+                    this.displayedValues.push(displayedValue);
                 }
             }
         }
@@ -66151,6 +66957,18 @@ var SetFilterModel = (function () {
         return selectedValues;
     };
     SetFilterModel.prototype.setModel = function (model, isSelectAll) {
+        var _this = this;
+        if (isSelectAll === void 0) { isSelectAll = false; }
+        if (this.areValuesSync()) {
+            this.setSyncModel(model, isSelectAll);
+        }
+        else {
+            this.filterValuesExternalPromise.promise.then(function (values) {
+                _this.modelUpdatedFunc(values, model);
+            });
+        }
+    };
+    SetFilterModel.prototype.setSyncModel = function (model, isSelectAll) {
         if (isSelectAll === void 0) { isSelectAll = false; }
         if (model && !isSelectAll) {
             this.selectNothing();
@@ -66180,7 +66998,7 @@ exports.SetFilterModel = SetFilterModel;
 
 });
 
-define('ag-grid-enterprise/dist/lib/setFilter/setFilterListItem',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/setFilter/setFilterListItem',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -66295,7 +67113,7 @@ exports.SetFilterListItem = SetFilterListItem;
 
 });
 
-define('ag-grid-enterprise/dist/lib/rendering/virtualList',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/rendering/virtualList',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -66464,7 +67282,7 @@ exports.VirtualList = VirtualList;
 
 });
 
-define('ag-grid-enterprise/dist/lib/statusBar/statusBar',['require','exports','module','ag-grid/main','./statusItem','../rangeController'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/statusBar/statusBar',['require','exports','module','ag-grid/main','./statusItem','../rangeController'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -66673,7 +67491,7 @@ exports.StatusBar = StatusBar;
 
 });
 
-define('ag-grid-enterprise/dist/lib/statusBar/statusItem',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/statusBar/statusItem',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -66725,7 +67543,7 @@ exports.StatusItem = StatusItem;
 
 });
 
-define('ag-grid-enterprise/dist/lib/rangeController',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/rangeController',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -66784,12 +67602,17 @@ var RangeController = (function () {
             columnEnd: toCell.column
         });
     };
+    // returns true if successful, false if not sucessful
     RangeController.prototype.extendRangeInDirection = function (startCell, key) {
         var oneRangeExists = main_1._.exists(this.cellRanges) || this.cellRanges.length === 1;
         var previousSelectionStart = oneRangeExists ? this.cellRanges[0].start : null;
         var takeEndFromPreviousSelection = startCell.equals(previousSelectionStart);
         var previousEndCell = takeEndFromPreviousSelection ? this.cellRanges[0].end : startCell;
         var newEndCell = this.cellNavigationService.getNextCellToFocus(key, previousEndCell);
+        // if user is at end of grid, so no cell to extend to, we return false
+        if (!newEndCell) {
+            return false;
+        }
         this.setRange({
             rowStart: startCell.rowIndex,
             floatingStart: startCell.floating,
@@ -66798,6 +67621,7 @@ var RangeController = (function () {
             columnStart: startCell.column,
             columnEnd: newEndCell.column
         });
+        return true;
     };
     RangeController.prototype.setRange = function (rangeSelection) {
         if (!this.gridOptionsWrapper.isEnableRangeSelection()) {
@@ -67133,7 +67957,7 @@ var AutoScrollService = (function () {
 
 });
 
-define('ag-grid-enterprise/dist/lib/clipboardService',['require','exports','module','ag-grid/main','./rangeController'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/clipboardService',['require','exports','module','ag-grid/main','./rangeController'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -67162,7 +67986,10 @@ var ClipboardService = (function () {
             var data = element.value;
             if (main_1.Utils.missingOrEmpty(data))
                 return;
-            _this.rangeController.isMoreThanOneCell() ? _this.pasteToRange(data) : _this.pasteToSingleCell(data);
+            var parsedData = _this.dataToArray(data);
+            var singleCellInClipboard = parsedData.length == 1 && parsedData[0].length == 1;
+            _this.rangeController.isMoreThanOneCell() && !singleCellInClipboard ?
+                _this.pasteToRange(data) : _this.pasteToSingleCell(data);
         });
     };
     ClipboardService.prototype.pasteToRange = function (data) {
@@ -67208,6 +68035,7 @@ var ClipboardService = (function () {
         this.iterateActiveRanges(false, rowCallback);
         this.rowRenderer.refreshCells({ rowNodes: updatedRowNodes, columns: updatedColumnIds });
         this.dispatchFlashCells(cellsToFlash);
+        this.fireRowChanged(updatedRowNodes);
     };
     ClipboardService.prototype.pasteToSingleCell = function (data) {
         if (main_1.Utils.missingOrEmpty(data)) {
@@ -67242,6 +68070,7 @@ var ClipboardService = (function () {
         this.rowRenderer.refreshCells({ rowNodes: updatedRowNodes, columns: updatedColumnIds });
         this.dispatchFlashCells(cellsToFlash);
         this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.floating, true);
+        this.fireRowChanged(updatedRowNodes);
     };
     ClipboardService.prototype.copyRangeDown = function () {
         var _this = this;
@@ -67288,6 +68117,26 @@ var ClipboardService = (function () {
         // this is very heavy, should possibly just refresh the specific cells?
         this.rowRenderer.refreshCells({ rowNodes: updatedRowNodes, columns: updatedColumnIds });
         this.dispatchFlashCells(cellsToFlash);
+        this.fireRowChanged(updatedRowNodes);
+    };
+    ClipboardService.prototype.fireRowChanged = function (rowNodes) {
+        var _this = this;
+        if (!this.gridOptionsWrapper.isFullRowEdit()) {
+            return;
+        }
+        rowNodes.forEach(function (rowNode) {
+            var event = {
+                type: main_1.Events.EVENT_ROW_VALUE_CHANGED,
+                node: rowNode,
+                data: rowNode.data,
+                rowIndex: rowNode.rowIndex,
+                rowPinned: rowNode.rowPinned,
+                context: _this.gridOptionsWrapper.getContext(),
+                api: _this.gridOptionsWrapper.getApi(),
+                columnApi: _this.gridOptionsWrapper.getColumnApi()
+            };
+            _this.eventService.dispatchEvent(event);
+        });
     };
     ClipboardService.prototype.multipleCellRange = function (clipboardGridData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, updatedColumnIds, type) {
         var _this = this;
@@ -67401,6 +68250,11 @@ var ClipboardService = (function () {
                 break;
             }
             currentRow = this.cellNavigationService.getRowBelow(currentRow);
+            // this can happen if the user sets the active range manually, and sets a range
+            // that is outside of the grid, eg sets range rows 0 to 100, but grid has only 20 rows.
+            if (main_1._.missing(currentRow)) {
+                break;
+            }
         }
     };
     ClipboardService.prototype.copySelectedRangeToClipboard = function (includeHeaders) {
@@ -67419,11 +68273,12 @@ var ClipboardService = (function () {
             }
             columns.forEach(function (column, index) {
                 var value = _this.columnController.getDisplayNameForColumn(column, 'clipboard', true);
+                var processedValue = _this.userProcessHeader(column, value, _this.gridOptionsWrapper.getProcessHeaderForClipboardFunc());
                 if (index != 0) {
                     data += deliminator;
                 }
-                if (main_1.Utils.exists(value)) {
-                    data += value;
+                if (main_1.Utils.exists(processedValue)) {
+                    data += processedValue;
                 }
             });
             data += '\r\n';
@@ -67498,6 +68353,20 @@ var ClipboardService = (function () {
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
                 context: this.gridOptionsWrapper.getContext(),
                 type: type
+            };
+            return func(params);
+        }
+        else {
+            return value;
+        }
+    };
+    ClipboardService.prototype.userProcessHeader = function (column, value, func) {
+        if (func) {
+            var params = {
+                column: column,
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                context: this.gridOptionsWrapper.getContext()
             };
             return func(params);
         }
@@ -67718,7 +68587,7 @@ exports.ClipboardService = ClipboardService;
 
 });
 
-define('ag-grid-enterprise/dist/lib/enterpriseBoot',['require','exports','module','ag-grid/main','./setFilter/setFilter','./rendering/richSelect/richSelectCellEditor','./licenseManager','./rendering/detail/detailCellRenderer'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/enterpriseBoot',['require','exports','module','ag-grid/main','./setFilter/setFilter','./rendering/richSelect/richSelectCellEditor','./licenseManager','./rendering/detail/detailCellRenderer'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -67776,7 +68645,7 @@ exports.EnterpriseBoot = EnterpriseBoot;
 
 });
 
-define('ag-grid-enterprise/dist/lib/rendering/richSelect/richSelectCellEditor',['require','exports','module','ag-grid/main','./richSelectRow','../virtualList','ag-grid'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/rendering/richSelect/richSelectCellEditor',['require','exports','module','ag-grid/main','./richSelectRow','../virtualList','ag-grid'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -67963,7 +68832,7 @@ exports.RichSelectCellEditor = RichSelectCellEditor;
 
 });
 
-define('ag-grid-enterprise/dist/lib/rendering/richSelect/richSelectRow',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/rendering/richSelect/richSelectRow',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -68039,7 +68908,7 @@ exports.RichSelectRow = RichSelectRow;
 
 });
 
-define('ag-grid-enterprise/dist/lib/licenseManager',['require','exports','module','ag-grid/main','ag-grid/main','./license/md5'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/licenseManager',['require','exports','module','ag-grid/main','ag-grid/main','./license/md5'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -68180,7 +69049,7 @@ var LicenseManager = (function () {
     LicenseManager.setLicenseKey = function (licenseKey) {
         LicenseManager_1.licenseKey = licenseKey;
     };
-    LicenseManager.RELEASE_INFORMATION = 'MTUyMDQyNTAzNzU0NQ==';
+    LicenseManager.RELEASE_INFORMATION = 'MTUyMzU0NTI1NDE5Ng==';
     __decorate([
         main_1.Autowired('md5'),
         __metadata("design:type", md5_1.MD5)
@@ -68195,7 +69064,7 @@ exports.LicenseManager = LicenseManager;
 
 });
 
-define('ag-grid-enterprise/dist/lib/license/md5',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/license/md5',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -68383,7 +69252,7 @@ exports.MD5 = MD5;
 
 });
 
-define('ag-grid-enterprise/dist/lib/rendering/detail/detailCellRenderer',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/rendering/detail/detailCellRenderer',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -68438,6 +69307,9 @@ var DetailCellRenderer = (function (_super) {
         }
     };
     DetailCellRenderer.prototype.setupGrabMouseWheelEvent = function () {
+        if (this.gridOptionsWrapper.isNativeScroll()) {
+            return;
+        }
         var mouseWheelListener = function (event) {
             event.stopPropagation();
         };
@@ -68496,10 +69368,13 @@ var DetailCellRenderer = (function (_super) {
         }
         // IMPORTANT - gridOptions must be cloned
         this.detailGridOptions = main_1._.cloneObject(gridOptions);
-        //Passing a dummy agGridReact bean in case this is for a REACT grid
         new main_1.Grid(this.eDetailGrid, this.detailGridOptions, {
             seedBeanInstances: {
-                agGridReact: {}
+                // a temporary fix for AG-1574
+                // AG-1715 raised to do a wider ranging refactor to improve this
+                agGridReact: params.agGridReact,
+                // AG-1716 - directly related to AG-1574 and AG-1715
+                frameworkComponentWrapper: params.frameworkComponentWrapper
             }
         });
         this.addDestroyFunc(function () { return _this.detailGridOptions.api.destroy(); });
@@ -68540,7 +69415,7 @@ exports.DetailCellRenderer = DetailCellRenderer;
 
 });
 
-define('ag-grid-enterprise/dist/lib/menu/enterpriseMenu',['require','exports','module','ag-grid','../toolPanel/columnsSelect/columnSelectComp','./menuList','./menuItemComponent','./menuItemMapper'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/menu/enterpriseMenu',['require','exports','module','ag-grid','../toolPanel/columnsSelect/columnSelectComp','./menuList','./menuItemComponent','./menuItemMapper'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -68827,7 +69702,7 @@ var EnterpriseMenu = (function (_super) {
             }
         }
         result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
-        result.push('destroyColumnComps');
+        result.push('resetColumns');
         result.push('toolPanel');
         // only add grouping expand/collapse if grouping in the InMemoryRowModel
         // if pivoting, we only have expandable groups if grouping by 2 or more columns
@@ -68960,7 +69835,7 @@ exports.EnterpriseMenu = EnterpriseMenu;
 
 });
 
-define('ag-grid-enterprise/dist/lib/menu/menuList',['require','exports','module','ag-grid','./menuItemComponent'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/menu/menuList',['require','exports','module','ag-grid','./menuItemComponent'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -69125,7 +70000,7 @@ exports.MenuList = MenuList;
 
 });
 
-define('ag-grid-enterprise/dist/lib/menu/menuItemComponent',['require','exports','module','ag-grid'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/menu/menuItemComponent',['require','exports','module','ag-grid'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -69254,7 +70129,7 @@ exports.MenuItemComponent = MenuItemComponent;
 
 });
 
-define('ag-grid-enterprise/dist/lib/menu/menuItemMapper',['require','exports','module','ag-grid','../clipboardService','../aggregation/aggFuncService'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/menu/menuItemMapper',['require','exports','module','ag-grid','../clipboardService','../aggregation/aggFuncService'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -69341,8 +70216,8 @@ var MenuItemMapper = (function () {
                 action: function () { return _this.columnController.removeRowGroupColumn(column, "contextMenu"); },
                 icon: ag_grid_1.Utils.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null)
             };
-            case 'destroyColumnComps': return {
-                name: localeTextFunc('destroyColumnComps', 'Reset Columns'),
+            case 'resetColumns': return {
+                name: localeTextFunc('resetColumns', 'Reset Columns'),
                 action: function () { return _this.columnController.resetColumnState("contextMenu"); }
             };
             case 'expandAll': return {
@@ -69457,7 +70332,7 @@ exports.MenuItemMapper = MenuItemMapper;
 
 });
 
-define('ag-grid-enterprise/dist/lib/toolPanel/columnDrop/rowGroupColumnsPanel',['require','exports','module','ag-grid/main','./abstractColumnDropPanel'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/toolPanel/columnDrop/rowGroupColumnsPanel',['require','exports','module','ag-grid/main','./abstractColumnDropPanel'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -69581,7 +70456,7 @@ exports.RowGroupColumnsPanel = RowGroupColumnsPanel;
 
 });
 
-define('ag-grid-enterprise/dist/lib/toolPanel/columnDrop/abstractColumnDropPanel',['require','exports','module','ag-grid/main','./columnComponent'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/toolPanel/columnDrop/abstractColumnDropPanel',['require','exports','module','ag-grid/main','./columnComponent'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -69925,7 +70800,7 @@ exports.AbstractColumnDropPanel = AbstractColumnDropPanel;
 
 });
 
-define('ag-grid-enterprise/dist/lib/toolPanel/columnDrop/columnComponent',['require','exports','module','ag-grid/main','../../rendering/virtualList','../../aggregation/aggFuncService'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/toolPanel/columnDrop/columnComponent',['require','exports','module','ag-grid/main','../../rendering/virtualList','../../aggregation/aggFuncService'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -70164,7 +71039,7 @@ var AggItemComp = (function (_super) {
 
 });
 
-define('ag-grid-enterprise/dist/lib/menu/contextMenu',['require','exports','module','ag-grid','../clipboardService','./menuItemComponent','./menuList','./menuItemMapper'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/menu/contextMenu',['require','exports','module','ag-grid','../clipboardService','./menuItemComponent','./menuList','./menuItemMapper'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -70353,7 +71228,7 @@ var ContextMenu = (function (_super) {
 
 });
 
-define('ag-grid-enterprise/dist/lib/rowModels/viewport/viewportRowModel',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/rowModels/viewport/viewportRowModel',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -70608,7 +71483,7 @@ exports.ViewportRowModel = ViewportRowModel;
 
 });
 
-define('ag-grid-enterprise/dist/lib/toolPanel/columnDrop/pivotColumnsPanel',['require','exports','module','ag-grid/main','./abstractColumnDropPanel'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/toolPanel/columnDrop/pivotColumnsPanel',['require','exports','module','ag-grid/main','./abstractColumnDropPanel'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -70767,7 +71642,7 @@ exports.PivotColumnsPanel = PivotColumnsPanel;
 
 });
 
-define('ag-grid-enterprise/dist/lib/toolPanel/toolPanelComp',['require','exports','module','ag-grid/main','./columnPanel'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/toolPanel/toolPanelComp',['require','exports','module','ag-grid/main','./columnPanel'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -70898,7 +71773,7 @@ var PanelSelectComp = (function (_super) {
 
 });
 
-define('ag-grid-enterprise/dist/lib/toolPanel/columnPanel',['require','exports','module','ag-grid/main','./columnDrop/pivotModePanel','./columnDrop/valueColumnsPanel','./columnDrop/rowGroupColumnsPanel','./columnsSelect/columnSelectComp','./columnDrop/pivotColumnsPanel','ag-grid'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/toolPanel/columnPanel',['require','exports','module','ag-grid/main','./columnDrop/pivotModePanel','./columnDrop/valueColumnsPanel','./columnDrop/rowGroupColumnsPanel','./columnsSelect/columnSelectComp','./columnDrop/pivotColumnsPanel','ag-grid'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -71001,7 +71876,7 @@ exports.ColumnPanel = ColumnPanel;
 
 });
 
-define('ag-grid-enterprise/dist/lib/toolPanel/columnDrop/pivotModePanel',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/toolPanel/columnDrop/pivotModePanel',['require','exports','module','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -71084,7 +71959,7 @@ exports.PivotModePanel = PivotModePanel;
 
 });
 
-define('ag-grid-enterprise/dist/lib/toolPanel/columnDrop/valueColumnsPanel',['require','exports','module','ag-grid/main','./abstractColumnDropPanel'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/toolPanel/columnDrop/valueColumnsPanel',['require','exports','module','ag-grid/main','./abstractColumnDropPanel'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -71208,7 +72083,7 @@ exports.ValuesColumnPanel = ValuesColumnPanel;
 
 });
 
-define('ag-grid-enterprise/dist/lib/pivotCompFactory',['require','exports','module','ag-grid/main','./toolPanel/columnDrop/pivotColumnsPanel'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/pivotCompFactory',['require','exports','module','ag-grid/main','./toolPanel/columnDrop/pivotColumnsPanel'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -71243,7 +72118,7 @@ exports.PivotCompFactory = PivotCompFactory;
 
 });
 
-define('ag-grid-enterprise/dist/lib/rowGroupCompFactory',['require','exports','module','ag-grid/main','./toolPanel/columnDrop/rowGroupColumnsPanel'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/rowGroupCompFactory',['require','exports','module','ag-grid/main','./toolPanel/columnDrop/rowGroupColumnsPanel'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -71278,7 +72153,7 @@ exports.RowGroupCompFactory = RowGroupCompFactory;
 
 });
 
-define('ag-grid-enterprise/dist/lib/excelCreator',['require','exports','module','ag-grid/main','./excelXmlFactory'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/excelCreator',['require','exports','module','ag-grid/main','./excelXmlFactory'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -71304,8 +72179,8 @@ var main_1 = require("ag-grid/main");
 var excelXmlFactory_1 = require("./excelXmlFactory");
 var ExcelGridSerializingSession = (function (_super) {
     __extends(ExcelGridSerializingSession, _super);
-    function ExcelGridSerializingSession(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback, sheetName, excelXmlFactory, baseExcelStyles, styleLinker) {
-        var _this = _super.call(this, columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback, function (raw) { return main_1.Utils.escape(raw); }) || this;
+    function ExcelGridSerializingSession(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback, sheetName, excelXmlFactory, baseExcelStyles, styleLinker, suppressTextAsCDATA) {
+        var _this = _super.call(this, columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback, function (raw) { return raw; }) || this;
         _this.excelXmlFactory = excelXmlFactory;
         _this.styleLinker = styleLinker;
         _this.mixedStyles = {};
@@ -71322,6 +72197,7 @@ var ExcelGridSerializingSession = (function (_super) {
             _this.excelStyles = baseExcelStyles.slice();
         }
         _this.sheetName = sheetName;
+        _this.suppressTextAsCDATA = suppressTextAsCDATA;
         return _this;
     }
     ExcelGridSerializingSession.prototype.addCustomHeader = function (customHeader) {
@@ -71446,6 +72322,7 @@ var ExcelGridSerializingSession = (function (_super) {
         return this.stylesByIds[styleId];
     };
     ExcelGridSerializingSession.prototype.createCell = function (styleId, type, value) {
+        var _this = this;
         var actualStyle = this.stylesByIds[styleId];
         var styleExists = actualStyle != null;
         function getType() {
@@ -71467,11 +72344,19 @@ var ExcelGridSerializingSession = (function (_super) {
                 }
             return type;
         }
+        var typeTransformed = getType();
+        var massageText = function (value) {
+            return _this.suppressTextAsCDATA ?
+                main_1._.escape(value) :
+                "<![CDATA[" + value + "]]>";
+        };
         return {
             styleId: styleExists ? styleId : null,
             data: {
-                type: getType(),
-                value: value
+                type: typeTransformed,
+                value: typeTransformed === 'String' ? massageText(value) :
+                    typeTransformed === 'Number' ? Number(value).valueOf() + '' :
+                        value
             }
         };
     };
@@ -71516,7 +72401,7 @@ var ExcelCreator = (function (_super) {
         return 'xls';
     };
     ExcelCreator.prototype.createSerializingSession = function (params) {
-        return new ExcelGridSerializingSession(this.columnController, this.valueService, this.gridOptionsWrapper, params ? params.processCellCallback : null, params ? params.processHeaderCallback : null, params && params.sheetName != null && params.sheetName != "" ? params.sheetName : 'ag-grid', this.excelXmlFactory, this.gridOptions.excelStyles, this.styleLinker.bind(this));
+        return new ExcelGridSerializingSession(this.columnController, this.valueService, this.gridOptionsWrapper, params ? params.processCellCallback : null, params ? params.processHeaderCallback : null, params && params.sheetName != null && params.sheetName != "" ? params.sheetName : 'ag-grid', this.excelXmlFactory, this.gridOptions.excelStyles, this.styleLinker.bind(this), params && params.suppressTextAsCDATA ? params.suppressTextAsCDATA : false);
     };
     ExcelCreator.prototype.styleLinker = function (rowType, rowIndex, colIndex, value, column, node) {
         if ((rowType === main_1.RowType.HEADER) || (rowType === main_1.RowType.HEADER_GROUPING))
@@ -71594,7 +72479,7 @@ exports.ExcelCreator = ExcelCreator;
 
 });
 
-define('ag-grid-enterprise/dist/lib/excelXmlFactory',['require','exports','module','ag-grid/main','ag-grid/main','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/excelXmlFactory',['require','exports','module','ag-grid/main','ag-grid/main','ag-grid/main'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -71946,7 +72831,7 @@ exports.ExcelXmlFactory = ExcelXmlFactory;
 
 });
 
-define('ag-grid-enterprise/dist/lib/rowModels/enterprise/enterpriseRowModel',['require','exports','module','ag-grid','./enterpriseCache'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/rowModels/enterprise/enterpriseRowModel',['require','exports','module','ag-grid','./enterpriseCache'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -72017,6 +72902,14 @@ var EnterpriseRowModel = (function (_super) {
         this.addDestroyableEventListener(this.eventService, ag_grid_1.Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
     };
     EnterpriseRowModel.prototype.onColumnEverything = function () {
+        // this is a hack for one customer only, so they can suppress the resetting of the columns.
+        // The problem the customer had was they were api.setColumnDefs() after the data source came
+        // back with data. So this stops the reload from the grid after the data comes back.
+        // Once we have "AG-1591 Allow delta changes to columns" fixed, then this hack can be taken out.
+        if (this.gridOptionsWrapper.isSuppressEnterpriseResetOnNewColumns()) {
+            return;
+        }
+        // every other customer can continue as normal and have it working!!!
         this.reset();
     };
     EnterpriseRowModel.prototype.onFilterChanged = function () {
@@ -72131,6 +73024,11 @@ var EnterpriseRowModel = (function (_super) {
                 'Either a) remove getRowHeight() callback or b) remove maxBlocksInCache property. Purging has been disabled.');
             maxBlocksInCache = undefined;
         }
+        if (maxBlocksInCache >= 0 && this.columnController.isAutoRowHeightActive()) {
+            console.warn('ag-Grid: Enterprise Row Model does not support Auto Row Height and Cache Purging. ' +
+                'Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.');
+            maxBlocksInCache = undefined;
+        }
         var params = {
             // the columns the user has grouped and aggregated by
             valueCols: valueColumnVos,
@@ -72139,7 +73037,7 @@ var EnterpriseRowModel = (function (_super) {
             pivotMode: this.columnController.isPivotMode(),
             // sort and filter model
             filterModel: this.filterManager.getFilterModel(),
-            sortModel: this.sortController.getSortModel(),
+            sortModel: this.extractSortModel(),
             rowNodeBlockLoader: this.rowNodeBlockLoader,
             datasource: this.datasource,
             lastAccessedSequence: new ag_grid_1.NumberSequence(),
@@ -72233,10 +73131,6 @@ var EnterpriseRowModel = (function (_super) {
         else {
             lastRow = 0;
         }
-        // this doesn't make sense, but it works, if there are now rows, then -1 is returned above
-        if (lastRow < 0) {
-            lastRow = 0;
-        }
         return lastRow;
     };
     EnterpriseRowModel.prototype.getRowCount = function () {
@@ -72307,6 +73201,35 @@ var EnterpriseRowModel = (function (_super) {
     EnterpriseRowModel.prototype.isRowPresent = function (rowNode) {
         return false;
     };
+    EnterpriseRowModel.prototype.extractSortModel = function () {
+        var sortModel = this.sortController.getSortModel();
+        var rowGroupCols = this.toValueObjects(this.columnController.getRowGroupColumns());
+        // find index of auto group column in sort model
+        var index = -1;
+        for (var i = 0; i < sortModel.length; ++i) {
+            if (sortModel[i].colId === 'ag-Grid-AutoColumn') {
+                index = i;
+                break;
+            }
+        }
+        // replace auto column with individual group columns
+        if (index > -1) {
+            var individualGroupCols = rowGroupCols.map(function (group) {
+                return {
+                    colId: group.field,
+                    sort: sortModel[index].sort
+                };
+            });
+            // remove auto group column
+            sortModel.splice(index, 1);
+            // insert individual group columns
+            for (var i = 0; i < individualGroupCols.length; i++) {
+                sortModel.splice(index++, 0, individualGroupCols[i]);
+            }
+        }
+        return sortModel;
+    };
+    ;
     __decorate([
         ag_grid_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", ag_grid_1.GridOptionsWrapper)
@@ -72372,7 +73295,7 @@ exports.EnterpriseRowModel = EnterpriseRowModel;
 
 });
 
-define('ag-grid-enterprise/dist/lib/rowModels/enterprise/enterpriseCache',['require','exports','module','ag-grid','./enterpriseBlock'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/rowModels/enterprise/enterpriseCache',['require','exports','module','ag-grid','./enterpriseBlock'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -72680,7 +73603,7 @@ exports.EnterpriseCache = EnterpriseCache;
 
 });
 
-define('ag-grid-enterprise/dist/lib/rowModels/enterprise/enterpriseBlock',['require','exports','module','ag-grid'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/rowModels/enterprise/enterpriseBlock',['require','exports','module','ag-grid'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -73005,7 +73928,8 @@ var EnterpriseBlock = (function (_super) {
         var params = {
             successCallback: this.pageLoaded.bind(this, this.getVersion()),
             failCallback: this.pageLoadFailed.bind(this),
-            request: request
+            request: request,
+            parentNode: this.parentRowNode
         };
         return params;
     };
@@ -73065,7 +73989,7 @@ exports.EnterpriseBlock = EnterpriseBlock;
 
 });
 
-define('ag-grid-enterprise/dist/lib/toolPanel/columnsSelect/horizontalResizeComp',['require','exports','module','ag-grid'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('ag-grid-enterprise/dist/lib/toolPanel/columnsSelect/horizontalResizeComp',['require','exports','module','ag-grid'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -73133,9 +74057,9 @@ exports.HorizontalResizeComp = HorizontalResizeComp;
 
 });
 
-define('text!ag-grid/dist/styles/ag-grid.css', ['module'], function(module) { module.exports = "ag-grid-angular {\n  display: block; }\n\nag-grid-ng2 {\n  display: block; }\n\nag-grid {\n  display: block; }\n\nag-grid-polymer {\n  display: block; }\n\nag-grid-aurelia {\n  display: block; }\n\n.ag-rtl {\n  direction: rtl; }\n\n.ag-ltr {\n  direction: ltr; }\n\n.ag-select-agg-func-popup {\n  position: absolute; }\n\n.ag-body-no-select {\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-root {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  /* was getting some 'should be there' scrolls, this sorts it out */\n  overflow: hidden;\n  /* set to relative, so absolute popups appear relative to this */\n  position: relative; }\n\n.ag-layout-normal .ag-root {\n  height: 100%; }\n\n.ag-font-style {\n  cursor: default;\n  /* disable user mouse selection */\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-layout-for-print {\n  display: block;\n  white-space: nowrap; }\n\n.ag-layout-for-print .ag-row,\n.ag-layout-for-print .ag-cell {\n  page-break-inside: avoid !important; }\n\n.ag-layout-normal {\n  height: 100%; }\n\n.ag-popup-backdrop {\n  height: 100%;\n  left: 0;\n  position: fixed;\n  top: 0;\n  width: 100%; }\n\n.ag-header {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  white-space: nowrap;\n  width: 100%; }\n\n.ag-layout-normal .ag-header {\n  left: 0;\n  position: absolute;\n  top: 0; }\n\n.ag-pinned-left-header {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  float: left;\n  height: 100%;\n  overflow: hidden; }\n\n.ag-pinned-right-header {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  float: right;\n  height: 100%;\n  overflow: hidden; }\n\n.ag-header-viewport {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  height: 100%;\n  overflow: hidden; }\n\n.ag-layout-normal .ag-header-row {\n  position: absolute; }\n\n.ag-layout-normal .ag-header-container {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  height: 100%;\n  position: relative;\n  white-space: nowrap; }\n\n.ag-layout-auto-height .ag-header-row {\n  position: absolute; }\n\n.ag-layout-auto-height .ag-header-container {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  height: 100%;\n  position: relative;\n  white-space: nowrap; }\n\n.ag-layout-for-print .ag-header-container {\n  white-space: nowrap; }\n\n.ag-header-overlay {\n  display: block;\n  position: absolute; }\n\n.ag-header-cell {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  height: 100%;\n  position: absolute;\n  vertical-align: bottom; }\n\n.ag-floating-filter {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  position: absolute; }\n\n.ag-floating-filter-body {\n  height: 20px;\n  margin-right: 25px; }\n\n.ag-floating-filter-full-body {\n  height: 20px;\n  width: 100%; }\n\n.ag-floating-filter-input {\n  width: 100%; }\n\n.ag-floating-filter-input:-moz-read-only {\n  background-color: #eee; }\n\n.ag-floating-filter-input:read-only {\n  background-color: #eee; }\n\n.ag-floating-filter-menu {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-dnd-ghost {\n  background: #e5e5e5;\n  border: 1px solid black;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  cursor: move;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  line-height: 1.4;\n  overflow: hidden;\n  padding: 3px;\n  position: absolute;\n  text-overflow: ellipsis;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-dnd-ghost-icon {\n  display: inline-block;\n  float: left;\n  padding: 2px; }\n\n.ag-dnd-ghost-label {\n  display: inline-block; }\n\n.ag-header-group-cell {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  height: 100%;\n  overflow: hidden;\n  position: absolute;\n  text-overflow: ellipsis; }\n\n.ag-header-group-cell-label {\n  overflow: hidden;\n  text-overflow: ellipsis; }\n\n.ag-header-cell-label {\n  overflow: hidden;\n  text-overflow: ellipsis; }\n\n.ag-header-cell-resize {\n  cursor: col-resize;\n  height: 100%;\n  width: 4px; }\n\n.ag-ltr .ag-header-cell-resize {\n  float: right; }\n\n.ag-ltr .ag-pinned-right-header .ag-header-cell-resize {\n  float: left; }\n\n.ag-rtl .ag-header-cell-resize {\n  float: left; }\n\n.ag-rtl .ag-pinned-left-header .ag-header-cell-resize {\n  float: right; }\n\n.ag-ltr .ag-header-select-all {\n  float: left; }\n\n.ag-rtl .ag-header-select-all {\n  float: right; }\n\n.ag-header-expand-icon {\n  padding-left: 4px; }\n\n.ag-header-cell-menu-button {\n  float: right; }\n\n.ag-overlay-panel {\n  display: table;\n  height: 100%;\n  pointer-events: none;\n  width: 100%; }\n\n.ag-overlay-wrapper {\n  display: table-cell;\n  text-align: center;\n  vertical-align: middle; }\n\n.ag-bl-overlay {\n  height: 100%;\n  left: 0;\n  pointer-events: none;\n  position: absolute;\n  top: 0;\n  width: 100%; }\n\n.ag-bl-full-height {\n  height: 100%;\n  overflow: auto;\n  position: relative; }\n\n.ag-bl-west {\n  float: left; }\n\n.ag-bl-full-height-west {\n  height: 100%; }\n\n.ag-bl-east {\n  float: right; }\n\n.ag-bl-full-height-east {\n  height: 100%; }\n\n.ag-bl-full-height-center {\n  height: 100%; }\n\n.ag-bl-normal {\n  height: 100%;\n  position: relative; }\n\n.ag-bl-normal-center-row {\n  height: 100%;\n  overflow: hidden; }\n\n.ag-bl-normal-west {\n  float: left;\n  height: 100%; }\n\n.ag-bl-normal-east {\n  float: right;\n  height: 100%; }\n\n.ag-bl-normal-center {\n  height: 100%; }\n\n.ag-bl-dont-fill {\n  position: relative; }\n\n.ag-body {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  width: 100%; }\n\n.ag-layout-normal .ag-body {\n  height: 100%;\n  position: absolute; }\n\n.ag-floating-top {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  white-space: nowrap;\n  width: 100%; }\n\n.ag-layout-normal .ag-floating-top {\n  left: 0;\n  position: absolute; }\n\n.ag-pinned-left-floating-top {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  float: left;\n  overflow: hidden;\n  position: relative; }\n\n.ag-layout-normal .ag-pinned-left-floating-top {\n  height: 100%; }\n\n.ag-pinned-right-floating-top {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  float: right;\n  overflow: hidden;\n  position: relative; }\n\n.ag-layout-normal .ag-pinned-right-floating-top {\n  height: 100%; }\n\n.ag-floating-top-viewport {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden; }\n\n.ag-layout-normal .ag-floating-top-viewport {\n  height: 100%; }\n\n.ag-floating-top-container {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap; }\n\n.ag-floating-bottom {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  white-space: nowrap;\n  width: 100%; }\n\n.ag-layout-normal .ag-floating-bottom {\n  left: 0;\n  position: absolute; }\n\n.ag-pinned-left-floating-bottom {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  float: left;\n  overflow: hidden;\n  position: relative; }\n\n.ag-layout-normal .ag-pinned-left-floating-bottom {\n  height: 100%; }\n\n.ag-pinned-right-floating-bottom {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  float: right;\n  overflow: hidden;\n  position: relative; }\n\n.ag-layout-normal .ag-pinned-right-floating-bottom {\n  height: 100%; }\n\n.ag-floating-bottom-viewport {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden; }\n\n.ag-layout-normal .ag-floating-bottom-viewport {\n  height: 100%; }\n\n.ag-floating-bottom-container {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap; }\n\n.ag-pinned-left-cols-viewport {\n  float: left; }\n\n.ag-pinned-left-cols-container {\n  display: inline-block;\n  position: relative; }\n\n.ag-pinned-right-cols-viewport {\n  float: right; }\n\n.ag-ltr .ag-pinned-right-cols-viewport {\n  overflow-x: hidden;\n  overflow-y: auto; }\n\n.ag-ltr .ag-pinned-left-cols-viewport {\n  overflow: hidden; }\n\n.ag-rtl .ag-pinned-right-cols-viewport {\n  overflow: hidden; }\n\n.ag-rtl .ag-pinned-left-cols-viewport {\n  overflow-x: hidden;\n  overflow-y: auto; }\n\n.ag-pinned-right-cols-container {\n  display: inline-block;\n  position: relative; }\n\n.ag-layout-normal .ag-body-viewport-wrapper {\n  height: 100%; }\n\n.ag-body-viewport {\n  overflow-x: auto;\n  overflow-y: auto; }\n\n.ag-layout-normal .ag-body-viewport {\n  height: 100%; }\n\n.ag-full-width-viewport {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline;\n  height: 100%;\n  left: 0;\n  overflow: hidden;\n  pointer-events: none;\n  position: absolute;\n  top: 0;\n  width: 100%; }\n\n.ag-full-width-container {\n  overflow: hidden;\n  position: relative;\n  width: 100%; }\n\n.ag-floating-bottom-full-width-container {\n  display: inline;\n  height: 100%;\n  left: 0;\n  overflow: hidden;\n  pointer-events: none;\n  position: absolute;\n  top: 0;\n  width: 100%; }\n\n.ag-floating-top-full-width-container {\n  display: inline;\n  height: 100%;\n  left: 0;\n  overflow: hidden;\n  pointer-events: none;\n  position: absolute;\n  top: 0;\n  width: 100%; }\n\n.ag-full-width-row {\n  overflow: hidden;\n  pointer-events: all; }\n\n.ag-layout-normal .ag-body-container {\n  display: inline-block;\n  margin-bottom: -2px;\n  position: relative; }\n\n.ag-layout-auto-height .ag-body-container {\n  display: block;\n  position: relative; }\n\n.ag-row-animation .ag-row {\n  -webkit-transition: height 0.4s, background-color 0.1s, opacity 0.2s, -webkit-transform 0.4s;\n  transition: height 0.4s, background-color 0.1s, opacity 0.2s, -webkit-transform 0.4s;\n  transition: transform 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;\n  transition: transform 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s, -webkit-transform 0.4s; }\n\n.ag-row-no-animation .ag-row {\n  -webkit-transition: background-color 0.1s;\n  transition: background-color 0.1s; }\n\n.ag-row {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box; }\n\n.ag-layout-normal .ag-row {\n  position: absolute;\n  white-space: nowrap;\n  width: 100%; }\n\n.ag-layout-auto-height .ag-row {\n  position: relative;\n  white-space: nowrap;\n  width: 100%; }\n\n.ag-layout-for-print .ag-row {\n  position: relative; }\n\n.ag-column-moving .ag-cell {\n  -webkit-transition: left 0.2s;\n  transition: left 0.2s; }\n\n.ag-column-moving .ag-header-cell {\n  -webkit-transition: left 0.2s;\n  transition: left 0.2s; }\n\n.ag-column-moving .ag-header-group-cell {\n  -webkit-transition: left 0.2s, width 0.2s;\n  transition: left 0.2s, width 0.2s; }\n\n.ag-column-drop {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  width: 100%; }\n\n.ag-column-drop-vertical {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -ms-flex-direction: column;\n  flex-direction: column;\n  -webkit-box-flex: 1;\n  -ms-flex-positive: 1;\n  flex-grow: 1;\n  height: 50px;\n  overflow: hidden; }\n  .ag-column-drop-vertical .ag-column-drop-list {\n    -webkit-box-flex: 1;\n    -ms-flex-positive: 1;\n    flex-grow: 1;\n    height: 20px;\n    overflow-x: auto; }\n  .ag-column-drop-vertical .ag-column-drop-cell {\n    display: block; }\n  .ag-column-drop-vertical .ag-column-drop-empty-message {\n    display: block; }\n  .ag-column-drop-vertical .ag-column-drop-cell-button {\n    line-height: 16px; }\n\n.ag-ltr .ag-column-drop-vertical .ag-column-drop-cell-button {\n  float: right; }\n\n.ag-rtl .ag-column-drop-vertical .ag-column-drop-cell-button {\n  float: left; }\n\n.ag-column-drop-horizontal {\n  white-space: nowrap; }\n  .ag-column-drop-horizontal .ag-column-drop-cell {\n    display: inline-block; }\n  .ag-column-drop-horizontal .ag-column-drop-empty-message {\n    display: inline-block; }\n  .ag-column-drop-horizontal .ag-column-drop-list {\n    height: 100%; }\n\n.ag-cell {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  height: 100%;\n  overflow: hidden;\n  position: absolute;\n  text-overflow: ellipsis;\n  white-space: nowrap; }\n\n.ag-value-slide-out {\n  margin-right: 5px;\n  opacity: 1;\n  -webkit-transition: opacity 3s, margin-right 3s;\n  transition: opacity 3s, margin-right 3s;\n  -webkit-transition-timing-function: linear;\n  transition-timing-function: linear; }\n\n.ag-value-slide-out-end {\n  margin-right: 10px;\n  opacity: 0; }\n\n.ag-opacity-zero {\n  opacity: 0; }\n\n.ag-cell-edit-input {\n  height: 100%;\n  width: 100%; }\n\n.ag-group-cell-entire-row {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  height: 100%;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  width: 100%; }\n\n.ag-footer-cell-entire-row {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  height: 100%;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  width: 100%; }\n\n.ag-large .ag-root {\n  font-size: 20px; }\n\n.ag-popup-editor {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-menu {\n  max-height: 100%;\n  overflow-y: auto;\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-menu-column-select-wrapper {\n  height: 300px;\n  overflow: auto;\n  width: 200px; }\n\n.ag-menu-list {\n  border-collapse: collapse;\n  display: table; }\n\n.ag-menu-option {\n  display: table-row; }\n\n.ag-menu-option-text {\n  display: table-cell; }\n\n.ag-menu-option-shortcut {\n  display: table-cell; }\n\n.ag-menu-option-icon {\n  display: table-cell; }\n\n.ag-menu-option-popup-pointer {\n  display: table-cell; }\n\n.ag-menu-separator {\n  display: table-row; }\n\n.ag-menu-separator-cell {\n  display: table-cell; }\n\n.ag-virtual-list-viewport {\n  height: 100%;\n  overflow-x: auto;\n  width: 100%; }\n\n.ag-virtual-list-container {\n  overflow: hidden;\n  position: relative; }\n\n.ag-rich-select {\n  cursor: default;\n  outline: none; }\n\n.ag-rich-select-row {\n  white-space: nowrap; }\n\n.ag-rich-select-list {\n  height: 200px;\n  width: 200px; }\n\n.ag-set-filter-list {\n  height: 200px;\n  width: 200px; }\n\n.ag-set-filter-item {\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap; }\n\n.ag-virtual-list-item {\n  position: absolute;\n  width: 100%; }\n  .ag-virtual-list-item span:empty:not(.ag-icon) {\n    border-left: 1px solid transparent; }\n\n.ag-filter-filter {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  width: 100%; }\n\n.ag-floating-filter-body input {\n  height: 19px;\n  margin: 0;\n  width: 100%; }\n\n.ag-floating-filter-full-body input {\n  height: 19px;\n  margin: 0;\n  width: 100%; }\n\n.ag-filter-select {\n  margin: 4px 4px 0 4px;\n  width: 110px; }\n\n.ag-list-selection {\n  cursor: default;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-column-panel {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  cursor: default;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  width: 200px; }\n\n.ag-layout-normal .ag-column-panel {\n  height: 100%; }\n\n.ag-layout-normal .ag-column-panel-center {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -ms-flex-direction: column;\n  flex-direction: column;\n  height: 100%; }\n\n.ag-column-container {\n  -webkit-box-flex: 1;\n  -ms-flex-positive: 1;\n  flex-grow: 1;\n  height: 50px;\n  overflow: auto; }\n\n.ag-column-select-indent {\n  display: inline-block; }\n\n.ag-ltr .ag-column-select-column {\n  margin-left: 16px; }\n\n.ag-rtl .ag-column-select-column {\n  margin-right: 16px; }\n\n.ag-column-select-column,\n.ag-column-select-column-group {\n  -webkit-box-align: stretch;\n  -ms-flex-align: stretch;\n  align-items: stretch;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -ms-flex-direction: row;\n  flex-direction: row;\n  -ms-flex-wrap: nowrap;\n  flex-wrap: nowrap;\n  text-overflow: ellipsis;\n  white-space: nowrap; }\n  .ag-column-select-column .ag-column-select-label,\n  .ag-column-select-column .ag-column-select-column-group-label,\n  .ag-column-select-column-group .ag-column-select-label,\n  .ag-column-select-column-group .ag-column-select-column-group-label {\n    -webkit-box-flex: 1;\n    -ms-flex-positive: 1;\n    flex-grow: 1;\n    -ms-flex-negative: 1;\n    flex-shrink: 1;\n    overflow: hidden;\n    text-overflow: ellipsis; }\n  .ag-column-select-column .ag-column-drag,\n  .ag-column-select-column-group .ag-column-drag {\n    min-width: 16px;\n    -webkit-box-flex: 0;\n    -ms-flex-positive: 0;\n    flex-grow: 0;\n    -ms-flex-negative: 0;\n    flex-shrink: 0; }\n\n.ag-column-select-panel {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -ms-flex-direction: column;\n  flex-direction: column;\n  overflow: hidden; }\n\n.ag-tool-panel .ag-column-select-panel {\n  -webkit-box-flex: 4;\n  -ms-flex-positive: 4;\n  flex-grow: 4; }\n\n.ag-tool-panel-horizontal-resize {\n  cursor: col-resize;\n  height: 100%;\n  position: absolute;\n  top: 0;\n  width: 5px;\n  z-index: 1; }\n\n.ag-rtl .ag-tool-panel-horizontal-resize {\n  float: right;\n  -webkit-transform: translateX(3px);\n  transform: translateX(3px); }\n\n.ag-ltr .ag-tool-panel-horizontal-resize {\n  float: left;\n  -webkit-transform: translateX(-3px);\n  transform: translateX(-3px); }\n\n.ag-menu-column-select-wrapper .ag-column-select-panel {\n  height: 100%; }\n\n.ag-hidden {\n  display: none !important; }\n\n.ag-visibility-hidden {\n  visibility: hidden !important; }\n\n.ag-faded {\n  opacity: 0.3; }\n\n.ag-width-half {\n  display: inline-block;\n  width: 50%; }\n\n.ag-shake-left-to-right {\n  -webkit-animation-direction: alternate;\n  animation-direction: alternate;\n  -webkit-animation-duration: 0.2s;\n  animation-duration: 0.2s;\n  -webkit-animation-iteration-count: infinite;\n  animation-iteration-count: infinite;\n  -webkit-animation-name: ag-shake-left-to-right;\n  animation-name: ag-shake-left-to-right; }\n\n@-webkit-keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px; }\n  to {\n    padding-left: 2px;\n    padding-right: 6px; } }\n\n@keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px; }\n  to {\n    padding-left: 2px;\n    padding-right: 6px; } }\n\n/* icons are used outside of the grid root (in the ghost) */\n.ag-icon-aggregation {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOS41IDIuNWgtNmwyIDMuNS0yIDMuNWg2IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZT0iIzAwMCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-arrows {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgNmwtMS40MSAxLjQxTDE2LjE3IDlINHYyaDEyLjE3bC0xLjU4IDEuNTlMMTYgMTRsNC00eiIvPjxwYXRoIGQ9Ik00IDZsMS40MSAxLjQxTDMuODMgOUgxNnYySDMuODNsMS41OCAxLjU5TDQgMTRsLTQtNHoiLz48cGF0aCBkPSJNNiAxNmwxLjQxLTEuNDFMOSAxNi4xN1Y0aDJ2MTIuMTdsMS41OS0xLjU4TDE0IDE2bC00IDR6Ii8+PHBhdGggZD0iTTE0IDRsLTEuNDEgMS40MUwxMSAzLjgzVjE2SDlWMy44M0w3LjQxIDUuNDEgNiA0bDQtNHoiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-asc {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-checkbox-checked-readonly {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik05IDNMNiA4LjVsLTIuNS0yIi8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-checkbox-checked {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik05IDNMNiA4LjVsLTIuNS0yIi8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-checkbox-indeterminate-readonly {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNNCA1aDR2Mkg0eiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-checkbox-indeterminate {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNNCA1aDR2Mkg0eiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-checkbox-unchecked-readonly {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-checkbox-unchecked {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-column {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDR2Mkgxem0wIDNoNHY3SDF6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-columns {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDR2Mkgxem02IDBoNHYySDd6TTEgNWg0djJIMXptNiAwaDR2Mkg3ek0xIDloNHYySDF6bTYgMGg0djJIN3oiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-contracted {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxyZWN0IHN0cm9rZS1vcGFjaXR5PSIuNSIgc3Ryb2tlPSIjMDAwIiB4PSIxLjUiIHk9IjEuNSIgd2lkdGg9IjkiIGhlaWdodD0iOSIgcng9IjEiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNOSA1djJIM1Y1eiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-copy {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTQuNSA0LjVoNXY1aC01eiIvPjxwYXRoIGQ9Ik03LjUgMi41aC01djVoMnYyaDV2LTVoLTJ2LTJ6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-cut {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTMgMy4xMmMuNjY3LjA3OCAzIDEuNzQ1IDcgNS0uMzI2LjIwNC0uNjU5LjIwNC0xIDAtLjM0MS0uMjA2LTEuNjc0LTEuMjA2LTQtMyAwIC42NjYtLjY2Ny42NjYtMiAwLTItMS0xLTIuMTIgMC0yeiIvPjxwYXRoIGQ9Ik0zIDguMjY0Yy42NjctLjA4IDMtMS43NDYgNy01LS4zMjYtLjIwNS0uNjU5LS4yMDUtMSAwLS4zNDEuMjA0LTEuNjc0IDEuMjA0LTQgMyAwLS42NjctLjY2Ny0uNjY3LTIgMC0yIDEtMSAyLjExOSAwIDJ6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-desc {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-expanded {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxyZWN0IHN0cm9rZS1vcGFjaXR5PSIuNSIgc3Ryb2tlPSIjMDAwIiB4PSIxLjUiIHk9IjEuNSIgd2lkdGg9IjkiIGhlaWdodD0iOSIgcng9IjEiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNNSAzaDJ2Nkg1eiIvPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik05IDV2MkgzVjV6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-eye-slash {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zLjAwMSAzLjkwOEwzIDRhMyAzIDAgMSAwIDUuOTk5LS4wOTJBNS4yNDggNS4yNDggMCAwIDAgNiAzYy0xLjEgMC0yLjEuMzAzLTIuOTk5LjkwOHoiIGZpbGw9IiMwMDAiLz48cGF0aCBkPSJNNCA0LjVjLjY2Ny0uMzMzIDEuNjY3LS41IDMtLjUiIHN0cm9rZT0iIzk3OTc5NyIvPjxwYXRoIGQ9Ik0xIDZjMS4zMzMtMiAzLTMgNS0zczMuNjY3IDEgNSAzQzkuNjY3IDggOCA5IDYgOVMyLjMzMyA4IDEgNnoiIHN0cm9rZT0iIzAwMCIvPjxwYXRoIGQ9Ik00LjAwNCAyLjgzNWw0Ljk5MiA2LjMzIiBzdHJva2U9IiMwMDAiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiLz48cGF0aCBkPSJNMy4wMDQgMi44MzVsNC45OTIgNi4zMyIgc3Ryb2tlPSIjRkZGIiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIi8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-eye {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zLjAwMSAzLjkwOEwzIDRhMyAzIDAgMSAwIDUuOTk5LS4wOTJBNS4yNDggNS4yNDggMCAwIDAgNiAzYy0xLjEgMC0yLjEuMzAzLTIuOTk5LjkwOHoiIGZpbGw9IiMwMDAiLz48cGF0aCBkPSJNNCA0LjVjLjY2Ny0uMzMzIDEuNjY3LS41IDMtLjUiIHN0cm9rZT0iIzk3OTc5NyIvPjxwYXRoIGQ9Ik0xIDZjMS4zMzMtMiAzLTMgNS0zczMuNjY3IDEgNSAzQzkuNjY3IDggOCA5IDYgOVMyLjMzMyA4IDEgNnoiIHN0cm9rZT0iIzAwMCIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-filter {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAyaDEwTDcgNnY1TDUgOVY2TDEgMnptNCA0djFoMlY2SDV6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-folder-open {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9IiNGRkYiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTEuMzMzIDIuNUwuNSAzLjV2Ni4yMTRsMSAuNzg2aDhsMS0xdi01bC0xLTFoLTNsLTEtMXoiLz48cGF0aCBkPSJNMi41IDEwLjVMMiA5bDEtMyAyLjUtLjVoNmwtMSA1eiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-folder {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTEuMzMzIDIuNUwuNSAzLjV2Ni4yMTRsMSAuNzg2aDhsMS0xdi01bC0xLTFoLTNsLTEtMXoiLz48cGF0aCBkPSJNNy41IDMuNWwtMiAyaC01Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-group {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNSAxLjVoM3YyaC0zem0wIDRoM3YyaC0zem0wIDRoM3YyaC0zeiIvPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik0yIDNoMXY4SDJ6bTEgM2g0djFIM3ptMi00aDN2MUg1eiIvPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik0yIDEwaDV2MUgyeiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTEuNSAxLjVoM3YyaC0zeiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-indeterminate {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zLjA1NiA0LjU4MWEzLjAwMSAzLjAwMSAwIDAgMCA1Ljg4OCAwQzguMDU5IDQuMTk0IDcuMDc4IDQgNiA0Yy0xLjA3OCAwLTIuMDYuMTk0LTIuOTQ0LjU4MXoiIGZpbGw9IiMwMDAiLz48cGF0aCBkPSJNNCA1LjVjLjY2Ny0uMzMzIDEuNjY3LS41IDMtLjUiIHN0cm9rZT0iIzk3OTc5NyIvPjxwYXRoIGQ9Ik0xIDZjMS4zMzMtMS4zMzMgMy0yIDUtMnMzLjY2Ny42NjcgNSAyQzkuNjY3IDcuMzMzIDggOCA2IDhzLTMuNjY3LS42NjctNS0yeiIgc3Ryb2tlPSIjMDAwIi8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-left {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01LjUgMS41aDJ2OWgtMnoiLz48cGF0aCBkPSJNNy45OTMgNC43VjIuOTkzaC02djZIMy43VjQuN2g0LjI5M3oiIGlkPSJiIi8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGcgdHJhbnNmb3JtPSJyb3RhdGUoOTAgNi41IDYpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNNiAyaDF2OEg2eiIvPjwvZz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtNDUgNC45OTMgNS45OTMpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNiIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNNy40OTMgNC4ydi0uNzA3aC01djVIMy4yVjQuMmg0LjI5M3oiLz48L2c+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-loading {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDFoMnYzSDV6Ii8+PHBhdGggaWQ9ImIiIGQ9Ik01IDhoMnYzSDV6Ii8+PHBhdGggaWQ9ImMiIGQ9Ik0xIDVoM3YySDF6Ii8+PHBhdGggaWQ9ImQiIGQ9Ik04IDVoM3YySDh6Ii8+PHBhdGggaWQ9ImUiIGQ9Ik00IDBoMnYzSDR6Ii8+PHBhdGggaWQ9ImYiIGQ9Ik00IDdoMnYzSDR6Ii8+PHBhdGggaWQ9ImciIGQ9Ik0wIDRoM3YySDB6Ii8+PHBhdGggaWQ9ImgiIGQ9Ik03IDRoM3YySDd6Ii8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYSIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTUuNSAxLjVoMXYyaC0xeiIvPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiM5Nzk3OTciIGQ9Ik01LjUgOC41aDF2MmgtMXoiLz48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNjIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNMS41IDUuNWgydjFoLTJ6Ii8+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjZCIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTguNSA1LjVoMnYxaC0yeiIvPjxnIG9wYWNpdHk9Ii43MTQiPjxnIHRyYW5zZm9ybT0icm90YXRlKDQ1IDQuMjkzIDYuNzA3KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjZSIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTQuNS41aDF2MmgtMXoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNC4yOTMgNi43MDcpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNmIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNNC41IDcuNWgxdjJoLTF6Ii8+PC9nPjxnIHRyYW5zZm9ybT0icm90YXRlKDQ1IDQuMjkzIDYuNzA3KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjZyIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTS41IDQuNWgydjFoLTJ6Ii8+PC9nPjxnIHRyYW5zZm9ybT0icm90YXRlKDQ1IDQuMjkzIDYuNzA3KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjaCIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTcuNSA0LjVoMnYxaC0yeiIvPjwvZz48L2c+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-menu {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-minus {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiA1aDh2MkgyeiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-none {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-not-allowed {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGNpcmNsZSBjeD0iNiIgY3k9IjYiIHI9IjQiLz48cGF0aCBkPSJNOC41IDMuNUwzLjQwMSA4LjU5OSIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-paste {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTIuNSAyLjVoN3Y3aC03eiIvPjxwYXRoIGQ9Ik02LjUgMS41aC0xdjJoLTF2MWgzdi0xaC0xdi0yeiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-pin {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik0zIDJoNnYxSDh2NGwyIDFIN2wtMSAzLTEtM0gybDItMVYzSDN6Ii8+PHBhdGggZmlsbC1vcGFjaXR5PSIuNSIgZmlsbD0iI0ZGRiIgZD0iTTUgM2gxdjRINXoiLz48cGF0aCBmaWxsLW9wYWNpdHk9Ii4yOCIgZmlsbD0iI0ZGRiIgZD0iTTQgM2gxdjNINHoiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-pivot {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHJlY3QgeD0iMS41IiB5PSIxLjUiIHdpZHRoPSI5IiBoZWlnaHQ9IjkiIHJ4PSIxIi8+PHBhdGggZD0iTTEwLjUgMy41aC05bTItMnY5IiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIi8+PHBhdGggZD0iTTcuNSA2LjVsMS0xIDEgMW0tMyAxbC0xIDEgMSAxIi8+PHBhdGggZD0iTTguNSA1LjV2M2gtMyIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-plus {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik01IDJoMnY4SDV6Ii8+PHBhdGggZD0iTTIgNWg4djJIMnoiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-right {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik00LjUgMS41aDJ2OWgtMnoiLz48cGF0aCBkPSJNOS45OTMgNC43VjIuOTkzaC02djZINS43VjQuN2g0LjI5M3oiIGlkPSJiIi8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGcgdHJhbnNmb3JtPSJyb3RhdGUoOTAgNS41IDYpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNNSAyaDF2OEg1eiIvPjwvZz48ZyB0cmFuc2Zvcm09InNjYWxlKC0xIDEpIHJvdGF0ZSgtNDUgMCAyMi44NzQpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNiIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNOS40OTMgNC4ydi0uNzA3aC01djVINS4yVjQuMmg0LjI5M3oiLz48L2c+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-small-left {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMyA2bDQtNHY4eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-small-right {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNSAybDQgNC00IDR6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-small-up {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiA3bDQtNCA0IDR6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-small-down {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiA1aDhMNiA5eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-tick {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMS41IDUuNWwzIDMgNi02IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZT0iIzAwMCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-cross {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiAxMGw4LThtMCA4TDIgMiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-tree-open {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiA1aDhMNiA5eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-tree-closed {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNSAybDQgNC00IDR6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-tree-indeterminate {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiA1aDh2MkgyeiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.loading-filter {\n  background-color: #e6e6e6;\n  height: 100%;\n  padding: 5px;\n  position: absolute;\n  top: 34px;\n  width: 100%;\n  z-index: 1; }\n\n.ag-details-row {\n  height: 100%;\n  width: 100%; }\n\n.ag-details-grid {\n  height: 100%;\n  width: 100%; }\n\n.ag-column-select-header {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -ms-flex-direction: row;\n  flex-direction: row; }\n\n.ag-ltr .ag-toolpanel-indent-1 {\n  padding-left: 10px; }\n\n.ag-rtl .ag-toolpanel-indent-1 {\n  padding-right: 10px; }\n\n.ag-ltr .ag-row-group-indent-1 {\n  padding-left: 10px; }\n\n.ag-rtl .ag-row-group-indent-1 {\n  padding-right: 10px; }\n\n.ag-ltr .ag-toolpanel-indent-2 {\n  padding-left: 20px; }\n\n.ag-rtl .ag-toolpanel-indent-2 {\n  padding-right: 20px; }\n\n.ag-ltr .ag-row-group-indent-2 {\n  padding-left: 20px; }\n\n.ag-rtl .ag-row-group-indent-2 {\n  padding-right: 20px; }\n\n.ag-ltr .ag-toolpanel-indent-3 {\n  padding-left: 30px; }\n\n.ag-rtl .ag-toolpanel-indent-3 {\n  padding-right: 30px; }\n\n.ag-ltr .ag-row-group-indent-3 {\n  padding-left: 30px; }\n\n.ag-rtl .ag-row-group-indent-3 {\n  padding-right: 30px; }\n\n.ag-ltr .ag-toolpanel-indent-4 {\n  padding-left: 40px; }\n\n.ag-rtl .ag-toolpanel-indent-4 {\n  padding-right: 40px; }\n\n.ag-ltr .ag-row-group-indent-4 {\n  padding-left: 40px; }\n\n.ag-rtl .ag-row-group-indent-4 {\n  padding-right: 40px; }\n\n.ag-ltr .ag-toolpanel-indent-5 {\n  padding-left: 50px; }\n\n.ag-rtl .ag-toolpanel-indent-5 {\n  padding-right: 50px; }\n\n.ag-ltr .ag-row-group-indent-5 {\n  padding-left: 50px; }\n\n.ag-rtl .ag-row-group-indent-5 {\n  padding-right: 50px; }\n\n.ag-ltr .ag-toolpanel-indent-6 {\n  padding-left: 60px; }\n\n.ag-rtl .ag-toolpanel-indent-6 {\n  padding-right: 60px; }\n\n.ag-ltr .ag-row-group-indent-6 {\n  padding-left: 60px; }\n\n.ag-rtl .ag-row-group-indent-6 {\n  padding-right: 60px; }\n\n.ag-ltr .ag-toolpanel-indent-7 {\n  padding-left: 70px; }\n\n.ag-rtl .ag-toolpanel-indent-7 {\n  padding-right: 70px; }\n\n.ag-ltr .ag-row-group-indent-7 {\n  padding-left: 70px; }\n\n.ag-rtl .ag-row-group-indent-7 {\n  padding-right: 70px; }\n\n.ag-ltr .ag-toolpanel-indent-8 {\n  padding-left: 80px; }\n\n.ag-rtl .ag-toolpanel-indent-8 {\n  padding-right: 80px; }\n\n.ag-ltr .ag-row-group-indent-8 {\n  padding-left: 80px; }\n\n.ag-rtl .ag-row-group-indent-8 {\n  padding-right: 80px; }\n\n.ag-ltr .ag-toolpanel-indent-9 {\n  padding-left: 90px; }\n\n.ag-rtl .ag-toolpanel-indent-9 {\n  padding-right: 90px; }\n\n.ag-ltr .ag-row-group-indent-9 {\n  padding-left: 90px; }\n\n.ag-rtl .ag-row-group-indent-9 {\n  padding-right: 90px; }\n\n.ag-ltr .ag-toolpanel-indent-10 {\n  padding-left: 100px; }\n\n.ag-rtl .ag-toolpanel-indent-10 {\n  padding-right: 100px; }\n\n.ag-ltr .ag-row-group-indent-10 {\n  padding-left: 100px; }\n\n.ag-rtl .ag-row-group-indent-10 {\n  padding-right: 100px; }\n\n.ag-ltr .ag-toolpanel-indent-11 {\n  padding-left: 110px; }\n\n.ag-rtl .ag-toolpanel-indent-11 {\n  padding-right: 110px; }\n\n.ag-ltr .ag-row-group-indent-11 {\n  padding-left: 110px; }\n\n.ag-rtl .ag-row-group-indent-11 {\n  padding-right: 110px; }\n\n.ag-ltr .ag-toolpanel-indent-12 {\n  padding-left: 120px; }\n\n.ag-rtl .ag-toolpanel-indent-12 {\n  padding-right: 120px; }\n\n.ag-ltr .ag-row-group-indent-12 {\n  padding-left: 120px; }\n\n.ag-rtl .ag-row-group-indent-12 {\n  padding-right: 120px; }\n\n.ag-ltr .ag-toolpanel-indent-13 {\n  padding-left: 130px; }\n\n.ag-rtl .ag-toolpanel-indent-13 {\n  padding-right: 130px; }\n\n.ag-ltr .ag-row-group-indent-13 {\n  padding-left: 130px; }\n\n.ag-rtl .ag-row-group-indent-13 {\n  padding-right: 130px; }\n\n.ag-ltr .ag-toolpanel-indent-14 {\n  padding-left: 140px; }\n\n.ag-rtl .ag-toolpanel-indent-14 {\n  padding-right: 140px; }\n\n.ag-ltr .ag-row-group-indent-14 {\n  padding-left: 140px; }\n\n.ag-rtl .ag-row-group-indent-14 {\n  padding-right: 140px; }\n\n.ag-ltr .ag-toolpanel-indent-15 {\n  padding-left: 150px; }\n\n.ag-rtl .ag-toolpanel-indent-15 {\n  padding-right: 150px; }\n\n.ag-ltr .ag-row-group-indent-15 {\n  padding-left: 150px; }\n\n.ag-rtl .ag-row-group-indent-15 {\n  padding-right: 150px; }\n\n.ag-ltr .ag-toolpanel-indent-16 {\n  padding-left: 160px; }\n\n.ag-rtl .ag-toolpanel-indent-16 {\n  padding-right: 160px; }\n\n.ag-ltr .ag-row-group-indent-16 {\n  padding-left: 160px; }\n\n.ag-rtl .ag-row-group-indent-16 {\n  padding-right: 160px; }\n\n.ag-ltr .ag-toolpanel-indent-17 {\n  padding-left: 170px; }\n\n.ag-rtl .ag-toolpanel-indent-17 {\n  padding-right: 170px; }\n\n.ag-ltr .ag-row-group-indent-17 {\n  padding-left: 170px; }\n\n.ag-rtl .ag-row-group-indent-17 {\n  padding-right: 170px; }\n\n.ag-ltr .ag-toolpanel-indent-18 {\n  padding-left: 180px; }\n\n.ag-rtl .ag-toolpanel-indent-18 {\n  padding-right: 180px; }\n\n.ag-ltr .ag-row-group-indent-18 {\n  padding-left: 180px; }\n\n.ag-rtl .ag-row-group-indent-18 {\n  padding-right: 180px; }\n\n.ag-ltr .ag-toolpanel-indent-19 {\n  padding-left: 190px; }\n\n.ag-rtl .ag-toolpanel-indent-19 {\n  padding-right: 190px; }\n\n.ag-ltr .ag-row-group-indent-19 {\n  padding-left: 190px; }\n\n.ag-rtl .ag-row-group-indent-19 {\n  padding-right: 190px; }\n\n.ag-ltr .ag-toolpanel-indent-20 {\n  padding-left: 200px; }\n\n.ag-rtl .ag-toolpanel-indent-20 {\n  padding-right: 200px; }\n\n.ag-ltr .ag-row-group-indent-20 {\n  padding-left: 200px; }\n\n.ag-rtl .ag-row-group-indent-20 {\n  padding-right: 200px; }\n\n.ag-ltr .ag-toolpanel-indent-21 {\n  padding-left: 210px; }\n\n.ag-rtl .ag-toolpanel-indent-21 {\n  padding-right: 210px; }\n\n.ag-ltr .ag-row-group-indent-21 {\n  padding-left: 210px; }\n\n.ag-rtl .ag-row-group-indent-21 {\n  padding-right: 210px; }\n\n.ag-ltr .ag-toolpanel-indent-22 {\n  padding-left: 220px; }\n\n.ag-rtl .ag-toolpanel-indent-22 {\n  padding-right: 220px; }\n\n.ag-ltr .ag-row-group-indent-22 {\n  padding-left: 220px; }\n\n.ag-rtl .ag-row-group-indent-22 {\n  padding-right: 220px; }\n\n.ag-ltr .ag-toolpanel-indent-23 {\n  padding-left: 230px; }\n\n.ag-rtl .ag-toolpanel-indent-23 {\n  padding-right: 230px; }\n\n.ag-ltr .ag-row-group-indent-23 {\n  padding-left: 230px; }\n\n.ag-rtl .ag-row-group-indent-23 {\n  padding-right: 230px; }\n\n.ag-ltr .ag-toolpanel-indent-24 {\n  padding-left: 240px; }\n\n.ag-rtl .ag-toolpanel-indent-24 {\n  padding-right: 240px; }\n\n.ag-ltr .ag-row-group-indent-24 {\n  padding-left: 240px; }\n\n.ag-rtl .ag-row-group-indent-24 {\n  padding-right: 240px; }\n\n.ag-ltr .ag-toolpanel-indent-25 {\n  padding-left: 250px; }\n\n.ag-rtl .ag-toolpanel-indent-25 {\n  padding-right: 250px; }\n\n.ag-ltr .ag-row-group-indent-25 {\n  padding-left: 250px; }\n\n.ag-rtl .ag-row-group-indent-25 {\n  padding-right: 250px; }\n\n.ag-ltr .ag-toolpanel-indent-26 {\n  padding-left: 260px; }\n\n.ag-rtl .ag-toolpanel-indent-26 {\n  padding-right: 260px; }\n\n.ag-ltr .ag-row-group-indent-26 {\n  padding-left: 260px; }\n\n.ag-rtl .ag-row-group-indent-26 {\n  padding-right: 260px; }\n\n.ag-ltr .ag-toolpanel-indent-27 {\n  padding-left: 270px; }\n\n.ag-rtl .ag-toolpanel-indent-27 {\n  padding-right: 270px; }\n\n.ag-ltr .ag-row-group-indent-27 {\n  padding-left: 270px; }\n\n.ag-rtl .ag-row-group-indent-27 {\n  padding-right: 270px; }\n\n.ag-ltr .ag-toolpanel-indent-28 {\n  padding-left: 280px; }\n\n.ag-rtl .ag-toolpanel-indent-28 {\n  padding-right: 280px; }\n\n.ag-ltr .ag-row-group-indent-28 {\n  padding-left: 280px; }\n\n.ag-rtl .ag-row-group-indent-28 {\n  padding-right: 280px; }\n\n.ag-ltr .ag-toolpanel-indent-29 {\n  padding-left: 290px; }\n\n.ag-rtl .ag-toolpanel-indent-29 {\n  padding-right: 290px; }\n\n.ag-ltr .ag-row-group-indent-29 {\n  padding-left: 290px; }\n\n.ag-rtl .ag-row-group-indent-29 {\n  padding-right: 290px; }\n\n.ag-ltr .ag-toolpanel-indent-30 {\n  padding-left: 300px; }\n\n.ag-rtl .ag-toolpanel-indent-30 {\n  padding-right: 300px; }\n\n.ag-ltr .ag-row-group-indent-30 {\n  padding-left: 300px; }\n\n.ag-rtl .ag-row-group-indent-30 {\n  padding-right: 300px; }\n\n.ag-ltr .ag-toolpanel-indent-31 {\n  padding-left: 310px; }\n\n.ag-rtl .ag-toolpanel-indent-31 {\n  padding-right: 310px; }\n\n.ag-ltr .ag-row-group-indent-31 {\n  padding-left: 310px; }\n\n.ag-rtl .ag-row-group-indent-31 {\n  padding-right: 310px; }\n\n.ag-ltr .ag-toolpanel-indent-32 {\n  padding-left: 320px; }\n\n.ag-rtl .ag-toolpanel-indent-32 {\n  padding-right: 320px; }\n\n.ag-ltr .ag-row-group-indent-32 {\n  padding-left: 320px; }\n\n.ag-rtl .ag-row-group-indent-32 {\n  padding-right: 320px; }\n\n.ag-ltr .ag-toolpanel-indent-33 {\n  padding-left: 330px; }\n\n.ag-rtl .ag-toolpanel-indent-33 {\n  padding-right: 330px; }\n\n.ag-ltr .ag-row-group-indent-33 {\n  padding-left: 330px; }\n\n.ag-rtl .ag-row-group-indent-33 {\n  padding-right: 330px; }\n\n.ag-ltr .ag-toolpanel-indent-34 {\n  padding-left: 340px; }\n\n.ag-rtl .ag-toolpanel-indent-34 {\n  padding-right: 340px; }\n\n.ag-ltr .ag-row-group-indent-34 {\n  padding-left: 340px; }\n\n.ag-rtl .ag-row-group-indent-34 {\n  padding-right: 340px; }\n\n.ag-ltr .ag-toolpanel-indent-35 {\n  padding-left: 350px; }\n\n.ag-rtl .ag-toolpanel-indent-35 {\n  padding-right: 350px; }\n\n.ag-ltr .ag-row-group-indent-35 {\n  padding-left: 350px; }\n\n.ag-rtl .ag-row-group-indent-35 {\n  padding-right: 350px; }\n\n.ag-ltr .ag-toolpanel-indent-36 {\n  padding-left: 360px; }\n\n.ag-rtl .ag-toolpanel-indent-36 {\n  padding-right: 360px; }\n\n.ag-ltr .ag-row-group-indent-36 {\n  padding-left: 360px; }\n\n.ag-rtl .ag-row-group-indent-36 {\n  padding-right: 360px; }\n\n.ag-ltr .ag-toolpanel-indent-37 {\n  padding-left: 370px; }\n\n.ag-rtl .ag-toolpanel-indent-37 {\n  padding-right: 370px; }\n\n.ag-ltr .ag-row-group-indent-37 {\n  padding-left: 370px; }\n\n.ag-rtl .ag-row-group-indent-37 {\n  padding-right: 370px; }\n\n.ag-ltr .ag-toolpanel-indent-38 {\n  padding-left: 380px; }\n\n.ag-rtl .ag-toolpanel-indent-38 {\n  padding-right: 380px; }\n\n.ag-ltr .ag-row-group-indent-38 {\n  padding-left: 380px; }\n\n.ag-rtl .ag-row-group-indent-38 {\n  padding-right: 380px; }\n\n.ag-ltr .ag-toolpanel-indent-39 {\n  padding-left: 390px; }\n\n.ag-rtl .ag-toolpanel-indent-39 {\n  padding-right: 390px; }\n\n.ag-ltr .ag-row-group-indent-39 {\n  padding-left: 390px; }\n\n.ag-rtl .ag-row-group-indent-39 {\n  padding-right: 390px; }\n\n.ag-ltr .ag-toolpanel-indent-40 {\n  padding-left: 400px; }\n\n.ag-rtl .ag-toolpanel-indent-40 {\n  padding-right: 400px; }\n\n.ag-ltr .ag-row-group-indent-40 {\n  padding-left: 400px; }\n\n.ag-rtl .ag-row-group-indent-40 {\n  padding-right: 400px; }\n\n.ag-ltr .ag-toolpanel-indent-41 {\n  padding-left: 410px; }\n\n.ag-rtl .ag-toolpanel-indent-41 {\n  padding-right: 410px; }\n\n.ag-ltr .ag-row-group-indent-41 {\n  padding-left: 410px; }\n\n.ag-rtl .ag-row-group-indent-41 {\n  padding-right: 410px; }\n\n.ag-ltr .ag-toolpanel-indent-42 {\n  padding-left: 420px; }\n\n.ag-rtl .ag-toolpanel-indent-42 {\n  padding-right: 420px; }\n\n.ag-ltr .ag-row-group-indent-42 {\n  padding-left: 420px; }\n\n.ag-rtl .ag-row-group-indent-42 {\n  padding-right: 420px; }\n\n.ag-ltr .ag-toolpanel-indent-43 {\n  padding-left: 430px; }\n\n.ag-rtl .ag-toolpanel-indent-43 {\n  padding-right: 430px; }\n\n.ag-ltr .ag-row-group-indent-43 {\n  padding-left: 430px; }\n\n.ag-rtl .ag-row-group-indent-43 {\n  padding-right: 430px; }\n\n.ag-ltr .ag-toolpanel-indent-44 {\n  padding-left: 440px; }\n\n.ag-rtl .ag-toolpanel-indent-44 {\n  padding-right: 440px; }\n\n.ag-ltr .ag-row-group-indent-44 {\n  padding-left: 440px; }\n\n.ag-rtl .ag-row-group-indent-44 {\n  padding-right: 440px; }\n\n.ag-ltr .ag-toolpanel-indent-45 {\n  padding-left: 450px; }\n\n.ag-rtl .ag-toolpanel-indent-45 {\n  padding-right: 450px; }\n\n.ag-ltr .ag-row-group-indent-45 {\n  padding-left: 450px; }\n\n.ag-rtl .ag-row-group-indent-45 {\n  padding-right: 450px; }\n\n.ag-ltr .ag-toolpanel-indent-46 {\n  padding-left: 460px; }\n\n.ag-rtl .ag-toolpanel-indent-46 {\n  padding-right: 460px; }\n\n.ag-ltr .ag-row-group-indent-46 {\n  padding-left: 460px; }\n\n.ag-rtl .ag-row-group-indent-46 {\n  padding-right: 460px; }\n\n.ag-ltr .ag-toolpanel-indent-47 {\n  padding-left: 470px; }\n\n.ag-rtl .ag-toolpanel-indent-47 {\n  padding-right: 470px; }\n\n.ag-ltr .ag-row-group-indent-47 {\n  padding-left: 470px; }\n\n.ag-rtl .ag-row-group-indent-47 {\n  padding-right: 470px; }\n\n.ag-ltr .ag-toolpanel-indent-48 {\n  padding-left: 480px; }\n\n.ag-rtl .ag-toolpanel-indent-48 {\n  padding-right: 480px; }\n\n.ag-ltr .ag-row-group-indent-48 {\n  padding-left: 480px; }\n\n.ag-rtl .ag-row-group-indent-48 {\n  padding-right: 480px; }\n\n.ag-ltr .ag-toolpanel-indent-49 {\n  padding-left: 490px; }\n\n.ag-rtl .ag-toolpanel-indent-49 {\n  padding-right: 490px; }\n\n.ag-ltr .ag-row-group-indent-49 {\n  padding-left: 490px; }\n\n.ag-rtl .ag-row-group-indent-49 {\n  padding-right: 490px; }\n\n.ag-tool-panel {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: reverse;\n  -ms-flex-direction: row-reverse;\n  flex-direction: row-reverse;\n  height: 100%; }\n  .ag-tool-panel .ag-side-buttons {\n    width: 20px; }\n    .ag-tool-panel .ag-side-buttons button {\n      display: block;\n      -webkit-transform: rotate(90deg) translateY(-20px);\n      transform: rotate(90deg) translateY(-20px);\n      -webkit-transform-origin: left top 0;\n      transform-origin: left top 0;\n      white-space: nowrap;\n      outline: none; }\n  .ag-tool-panel .panel-container {\n    width: 180px; }\n  .ag-tool-panel.full-width .panel-container {\n    width: 200px; }\n\n.ag-rtl .ag-tool-panel .ag-side-buttons button {\n  -webkit-transform: rotate(-90deg) translatex(20px);\n  transform: rotate(-90deg) translatex(20px);\n  -webkit-transform-origin: right bottom 0;\n  transform-origin: right bottom 0; }\n"; });
-define('text!ag-grid/dist/styles/ag-theme-balham.css', ['module'], function(module) { module.exports = ".ag-theme-balham {\n  background-color: white;\n  color: #000;\n  font: 400 12px -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen-Sans, Ubuntu, Cantarell, \"Helvetica Neue\", sans-serif; }\n  .ag-theme-balham .ag-header,\n  .ag-theme-balham .ag-row,\n  .ag-theme-balham .ag-header-cell,\n  .ag-theme-balham .ag-header-group-cell,\n  .ag-theme-balham .ag-rich-select-value,\n  .ag-theme-balham .ag-root {\n    box-sizing: border-box; }\n  .ag-theme-balham .ag-menu, .ag-theme-balham .ag-theme-balham.ag-dnd-ghost, .ag-theme-balham .ag-cell-inline-editing, .ag-theme-balham .ag-popup-editor, .ag-theme-balham .ag-select-agg-func-popup, .ag-theme-balham .ag-overlay-loading-center {\n    border: 1px solid #BDC3C7; }\n  .ag-theme-balham .ag-tab-header .ag-tab {\n    border: 1px solid transparent;\n    border-bottom-width: 0;\n    display: inline-block;\n    margin: 4px;\n    margin-bottom: 0;\n    padding: 4px 8px; }\n  .ag-theme-balham .ag-tab-header .ag-tab.ag-tab-selected {\n    background-color: white;\n    border-bottom: 2px solid #0091EA;\n    border-bottom: 2px solid white;\n    border-color: #BDC3C7; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-1 {\n    padding-left: 20px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-1 {\n    padding-right: 20px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-1 {\n    padding-left: 28px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-1 {\n    padding-right: 28px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-2 {\n    padding-left: 40px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-2 {\n    padding-right: 40px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-2 {\n    padding-left: 56px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-2 {\n    padding-right: 56px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-3 {\n    padding-left: 60px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-3 {\n    padding-right: 60px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-3 {\n    padding-left: 84px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-3 {\n    padding-right: 84px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-4 {\n    padding-left: 80px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-4 {\n    padding-right: 80px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-4 {\n    padding-left: 112px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-4 {\n    padding-right: 112px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-5 {\n    padding-left: 100px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-5 {\n    padding-right: 100px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-5 {\n    padding-left: 140px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-5 {\n    padding-right: 140px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-6 {\n    padding-left: 120px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-6 {\n    padding-right: 120px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-6 {\n    padding-left: 168px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-6 {\n    padding-right: 168px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-7 {\n    padding-left: 140px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-7 {\n    padding-right: 140px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-7 {\n    padding-left: 196px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-7 {\n    padding-right: 196px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-8 {\n    padding-left: 160px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-8 {\n    padding-right: 160px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-8 {\n    padding-left: 224px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-8 {\n    padding-right: 224px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-9 {\n    padding-left: 180px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-9 {\n    padding-right: 180px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-9 {\n    padding-left: 252px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-9 {\n    padding-right: 252px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-10 {\n    padding-left: 200px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-10 {\n    padding-right: 200px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-10 {\n    padding-left: 280px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-10 {\n    padding-right: 280px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-11 {\n    padding-left: 220px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-11 {\n    padding-right: 220px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-11 {\n    padding-left: 308px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-11 {\n    padding-right: 308px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-12 {\n    padding-left: 240px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-12 {\n    padding-right: 240px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-12 {\n    padding-left: 336px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-12 {\n    padding-right: 336px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-13 {\n    padding-left: 260px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-13 {\n    padding-right: 260px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-13 {\n    padding-left: 364px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-13 {\n    padding-right: 364px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-14 {\n    padding-left: 280px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-14 {\n    padding-right: 280px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-14 {\n    padding-left: 392px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-14 {\n    padding-right: 392px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-15 {\n    padding-left: 300px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-15 {\n    padding-right: 300px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-15 {\n    padding-left: 420px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-15 {\n    padding-right: 420px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-16 {\n    padding-left: 320px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-16 {\n    padding-right: 320px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-16 {\n    padding-left: 448px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-16 {\n    padding-right: 448px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-17 {\n    padding-left: 340px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-17 {\n    padding-right: 340px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-17 {\n    padding-left: 476px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-17 {\n    padding-right: 476px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-18 {\n    padding-left: 360px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-18 {\n    padding-right: 360px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-18 {\n    padding-left: 504px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-18 {\n    padding-right: 504px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-19 {\n    padding-left: 380px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-19 {\n    padding-right: 380px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-19 {\n    padding-left: 532px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-19 {\n    padding-right: 532px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-20 {\n    padding-left: 400px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-20 {\n    padding-right: 400px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-20 {\n    padding-left: 560px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-20 {\n    padding-right: 560px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-21 {\n    padding-left: 420px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-21 {\n    padding-right: 420px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-21 {\n    padding-left: 588px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-21 {\n    padding-right: 588px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-22 {\n    padding-left: 440px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-22 {\n    padding-right: 440px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-22 {\n    padding-left: 616px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-22 {\n    padding-right: 616px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-23 {\n    padding-left: 460px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-23 {\n    padding-right: 460px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-23 {\n    padding-left: 644px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-23 {\n    padding-right: 644px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-24 {\n    padding-left: 480px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-24 {\n    padding-right: 480px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-24 {\n    padding-left: 672px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-24 {\n    padding-right: 672px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-25 {\n    padding-left: 500px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-25 {\n    padding-right: 500px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-25 {\n    padding-left: 700px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-25 {\n    padding-right: 700px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-26 {\n    padding-left: 520px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-26 {\n    padding-right: 520px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-26 {\n    padding-left: 728px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-26 {\n    padding-right: 728px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-27 {\n    padding-left: 540px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-27 {\n    padding-right: 540px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-27 {\n    padding-left: 756px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-27 {\n    padding-right: 756px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-28 {\n    padding-left: 560px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-28 {\n    padding-right: 560px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-28 {\n    padding-left: 784px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-28 {\n    padding-right: 784px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-29 {\n    padding-left: 580px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-29 {\n    padding-right: 580px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-29 {\n    padding-left: 812px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-29 {\n    padding-right: 812px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-30 {\n    padding-left: 600px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-30 {\n    padding-right: 600px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-30 {\n    padding-left: 840px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-30 {\n    padding-right: 840px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-31 {\n    padding-left: 620px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-31 {\n    padding-right: 620px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-31 {\n    padding-left: 868px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-31 {\n    padding-right: 868px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-32 {\n    padding-left: 640px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-32 {\n    padding-right: 640px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-32 {\n    padding-left: 896px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-32 {\n    padding-right: 896px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-33 {\n    padding-left: 660px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-33 {\n    padding-right: 660px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-33 {\n    padding-left: 924px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-33 {\n    padding-right: 924px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-34 {\n    padding-left: 680px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-34 {\n    padding-right: 680px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-34 {\n    padding-left: 952px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-34 {\n    padding-right: 952px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-35 {\n    padding-left: 700px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-35 {\n    padding-right: 700px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-35 {\n    padding-left: 980px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-35 {\n    padding-right: 980px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-36 {\n    padding-left: 720px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-36 {\n    padding-right: 720px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-36 {\n    padding-left: 1008px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-36 {\n    padding-right: 1008px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-37 {\n    padding-left: 740px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-37 {\n    padding-right: 740px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-37 {\n    padding-left: 1036px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-37 {\n    padding-right: 1036px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-38 {\n    padding-left: 760px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-38 {\n    padding-right: 760px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-38 {\n    padding-left: 1064px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-38 {\n    padding-right: 1064px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-39 {\n    padding-left: 780px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-39 {\n    padding-right: 780px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-39 {\n    padding-left: 1092px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-39 {\n    padding-right: 1092px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-40 {\n    padding-left: 800px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-40 {\n    padding-right: 800px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-40 {\n    padding-left: 1120px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-40 {\n    padding-right: 1120px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-41 {\n    padding-left: 820px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-41 {\n    padding-right: 820px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-41 {\n    padding-left: 1148px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-41 {\n    padding-right: 1148px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-42 {\n    padding-left: 840px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-42 {\n    padding-right: 840px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-42 {\n    padding-left: 1176px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-42 {\n    padding-right: 1176px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-43 {\n    padding-left: 860px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-43 {\n    padding-right: 860px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-43 {\n    padding-left: 1204px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-43 {\n    padding-right: 1204px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-44 {\n    padding-left: 880px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-44 {\n    padding-right: 880px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-44 {\n    padding-left: 1232px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-44 {\n    padding-right: 1232px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-45 {\n    padding-left: 900px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-45 {\n    padding-right: 900px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-45 {\n    padding-left: 1260px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-45 {\n    padding-right: 1260px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-46 {\n    padding-left: 920px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-46 {\n    padding-right: 920px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-46 {\n    padding-left: 1288px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-46 {\n    padding-right: 1288px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-47 {\n    padding-left: 940px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-47 {\n    padding-right: 940px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-47 {\n    padding-left: 1316px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-47 {\n    padding-right: 1316px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-48 {\n    padding-left: 960px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-48 {\n    padding-right: 960px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-48 {\n    padding-left: 1344px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-48 {\n    padding-right: 1344px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-49 {\n    padding-left: 980px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-49 {\n    padding-right: 980px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-49 {\n    padding-left: 1372px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-49 {\n    padding-right: 1372px; }\n  .ag-theme-balham .ag-rtl .ag-cell-first-right-pinned {\n    border-left: 1px solid #BDC3C7; }\n  .ag-theme-balham .ag-ltr .ag-cell-first-right-pinned {\n    border-left: 1px solid #BDC3C7; }\n  .ag-theme-balham .ag-rtl .ag-cell-last-left-pinned {\n    border-right: 1px solid #BDC3C7; }\n  .ag-theme-balham .ag-ltr .ag-cell-last-left-pinned {\n    border-right: 1px solid #BDC3C7; }\n  .ag-theme-balham .ag-value-change-delta {\n    padding-right: 2px; }\n  .ag-theme-balham .ag-value-change-delta-up {\n    color: #43a047; }\n  .ag-theme-balham .ag-value-change-delta-down {\n    color: #e53935; }\n  .ag-theme-balham .ag-value-change-value {\n    background-color: transparent;\n    border-radius: 1px;\n    padding-left: 1px;\n    padding-right: 1px;\n    transition: background-color 1s; }\n  .ag-theme-balham .ag-value-change-value-highlight {\n    background-color: rgba(22, 160, 133, 0.5);\n    transition: background-color 0.1s; }\n  .ag-theme-balham .ag-header {\n    background-color: #f5f7f7;\n    color: rgba(0, 0, 0, 0.54);\n    font: 600 12px -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen-Sans, Ubuntu, Cantarell, \"Helvetica Neue\", sans-serif; }\n  .ag-theme-balham .ag-header-row {\n    border-bottom: 1px solid #BDC3C7;\n    box-sizing: border-box; }\n  .ag-theme-balham .ag-row {\n    border-bottom: 1px solid #BDC3C7;\n    box-sizing: border-box; }\n  .ag-theme-balham .ag-row-odd {\n    background-color: #fcfdfe; }\n  .ag-theme-balham .ag-row-even {\n    background-color: white; }\n  .ag-theme-balham .ag-row-hover {\n    background-color: #ECF0F1; }\n  .ag-theme-balham .ag-numeric-cell {\n    text-align: right; }\n  .ag-theme-balham .ag-header-cell-label {\n    display: flex;\n    float: left;\n    height: 100%;\n    width: calc(100% - 16px); }\n    .ag-theme-balham .ag-header-cell-label span {\n      height: 100%; }\n    .ag-theme-balham .ag-header-cell-label > span {\n      float: left; }\n    .ag-theme-balham .ag-header-cell-label .ag-header-icon {\n      background-position-y: 10px;\n      background-size: 14px 14px;\n      height: 100%;\n      margin: 0;\n      margin-left: 4px;\n      opacity: 0.87; }\n    .ag-theme-balham .ag-header-cell-label .ag-header-cell-text {\n      overflow: hidden;\n      text-overflow: ellipsis;\n      white-space: nowrap; }\n  .ag-theme-balham .ag-numeric-header .ag-header-cell-label {\n    flex-direction: row-reverse;\n    float: right; }\n    .ag-theme-balham .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-theme-balham .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-theme-balham .ag-header-cell,\n  .ag-theme-balham .ag-header-group-cell {\n    line-height: 32px;\n    padding-left: 12px;\n    padding-right: 12px; }\n  .ag-theme-balham .ag-cell {\n    line-height: 26px;\n    padding-left: 12px;\n    padding-right: 12px;\n    border: 1px solid transparent;\n    padding-left: 11px;\n    padding-right: 11px; }\n  .ag-theme-balham .ag-row-drag {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMy41IDIuNXYxbTAgMnYxbTAgMnYxbTMtN3YxbTAgMnYxbTAgMnYxbTMtN3YxbTAgMnYxbTAgMnYxbTMtN3YxbTAgMnYxbTAgMnYxIiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    background-position-x: left;\n    background-position-y: 4px;\n    float: left;\n    height: 100%;\n    width: 28px; }\n  .ag-theme-balham .ag-column-drag {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMy41IDIuNXYxbTAgMnYxbTAgMnYxbTMtN3YxbTAgMnYxbTAgMnYxbTMtN3YxbTAgMnYxbTAgMnYxbTMtN3YxbTAgMnYxbTAgMnYxIiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    background-position-x: left;\n    background-position-y: 4px !important;\n    float: left;\n    height: 100%;\n    width: 20px; }\n  .ag-theme-balham .ag-row-dragging {\n    opacity: 0.5;\n    z-index: 10000; }\n  .ag-theme-balham .ag-cell-focus {\n    border: 1px solid #0091EA;\n    outline: initial; }\n  .ag-theme-balham .ag-header-cell-resize {\n    position: absolute;\n    right: -4px;\n    width: 8px;\n    z-index: 4; }\n    .ag-theme-balham .ag-header-cell-resize::after {\n      border-right: 1px solid #BDC3C7;\n      box-sizing: content-box;\n      content: \"resize\";\n      display: block;\n      height: 16px;\n      margin-top: 8px;\n      overflow: hidden;\n      text-indent: 4px;\n      width: 4px; }\n  .ag-theme-balham .ag-icon-aggregation {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTEwLjUgNlY0LjVoLTV2LjUzMmExIDEgMCAwIDAgLjM2Ljc2OGwxLjcxOCAxLjQzMmExIDEgMCAwIDEgMCAxLjUzNkw1Ljg2IDEwLjJhMSAxIDAgMCAwLS4zNi43Njh2LjUzMmg1VjEwIi8+PHJlY3QgeD0iMS41IiB5PSIxLjUiIHdpZHRoPSIxMyIgaGVpZ2h0PSIxMyIgcng9IjIiLz48L2c+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-arrows {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNy41IDE0VjNNMiA4LjVoMTFtLTcuNSA0bDIgMiAyLTJtMC04bC0yLTItMiAybS0yIDJsLTIgMiAyIDJtOCAwbDItMi0yLTIiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-asc {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNy41IDExVjNtLTMgNS41bDMgMyAzLTMiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-checkbox-checked-readonly {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHg9IjEiIHk9IjEiIHdpZHRoPSIxNCIgaGVpZ2h0PSIxNCIgcng9IjIiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBvcGFjaXR5PSIuNSI+PHVzZSBmaWxsPSIjRkZGIiB4bGluazpocmVmPSIjYSIvPjxyZWN0IHN0cm9rZT0iIzdGOEM4RCIgeD0iMS41IiB5PSIxLjUiIHdpZHRoPSIxMyIgaGVpZ2h0PSIxMyIgcng9IjIiLz48cGF0aCBzdHJva2U9IiM3RjhDOEQiIGQ9Ik0xMiA1bC01LjUgNS41TDQgOCIvPjwvZz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-checkbox-checked {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHg9IjEiIHk9IjEiIHdpZHRoPSIxNCIgaGVpZ2h0PSIxNCIgcng9IjIiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjN0Y4QzhEIiB4PSIxLjUiIHk9IjEuNSIgd2lkdGg9IjEzIiBoZWlnaHQ9IjEzIiByeD0iMiIvPjxwYXRoIHN0cm9rZT0iIzdGOEM4RCIgZD0iTTEyIDVsLTUuNSA1LjVMNCA4Ii8+PC9nPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-checkbox-indeterminate-readonly {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHg9IjEiIHk9IjEiIHdpZHRoPSIxNCIgaGVpZ2h0PSIxNCIgcng9IjIiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBvcGFjaXR5PSIuNSI+PHVzZSBmaWxsPSIjRkZGIiB4bGluazpocmVmPSIjYSIvPjxyZWN0IHN0cm9rZT0iIzdGOEM4RCIgeD0iMS41IiB5PSIxLjUiIHdpZHRoPSIxMyIgaGVpZ2h0PSIxMyIgcng9IjIiLz48cGF0aCBkPSJNNCA4LjVoOCIgc3Ryb2tlPSIjN0Y4QzhEIi8+PC9nPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-checkbox-indeterminate {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHg9IjEiIHk9IjEiIHdpZHRoPSIxNCIgaGVpZ2h0PSIxNCIgcng9IjIiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjN0Y4QzhEIiB4PSIxLjUiIHk9IjEuNSIgd2lkdGg9IjEzIiBoZWlnaHQ9IjEzIiByeD0iMiIvPjxwYXRoIGQ9Ik00IDguNWg4IiBzdHJva2U9IiM3RjhDOEQiLz48L2c+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-checkbox-unchecked-readonly {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHg9IjEiIHk9IjEiIHdpZHRoPSIxNCIgaGVpZ2h0PSIxNCIgcng9IjIiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBvcGFjaXR5PSIuNSI+PHVzZSBmaWxsPSIjRkZGIiB4bGluazpocmVmPSIjYSIvPjxyZWN0IHN0cm9rZT0iIzdGOEM4RCIgeD0iMS41IiB5PSIxLjUiIHdpZHRoPSIxMyIgaGVpZ2h0PSIxMyIgcng9IjIiLz48L2c+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-checkbox-unchecked {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHg9IjEiIHk9IjEiIHdpZHRoPSIxNCIgaGVpZ2h0PSIxNCIgcng9IjIiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjN0Y4QzhEIiB4PSIxLjUiIHk9IjEuNSIgd2lkdGg9IjEzIiBoZWlnaHQ9IjEzIiByeD0iMiIvPjwvZz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-column {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMy41IDMuNXY4aDN2LTh6IiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-columns {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNi41IDMuNXY4bTMtOHY4bTMtOHY4bS05LTh2OCIgc3Ryb2tlPSIjN0Y4QzhEIiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIi8+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-contracted {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSA0TDUgOGw0IDQiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-copy {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHJlY3QgeD0iNC41IiB5PSI0LjUiIHdpZHRoPSI4IiBoZWlnaHQ9IjkiIHJ4PSIyIi8+PHBhdGggZD0iTTExIDIuNUg0LjVhMiAyIDAgMCAwLTIgMlYxMyIvPjwvZz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-cut {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNi4zNDggNC45NDhjLjE2MS0uMzUuMjUyLS43MzUuMjUyLTEuMTQ4YTIuOCAyLjggMCAxIDAtNS42IDAgMi44IDIuOCAwIDAgMCAyLjggMi44Yy40MTMgMCAuNzk4LS4wOTEgMS4xNDgtLjI1Mkw2LjYgOCA0Ljk0OCA5LjY1MkEyLjcyOCAyLjcyOCAwIDAgMCAzLjggOS40YTIuOCAyLjggMCAxIDAgMCA1LjYgMi44IDIuOCAwIDAgMCAyLjgtMi44YzAtLjQxMy0uMDkxLS43OTgtLjI1Mi0xLjE0OEw4IDkuNGw0LjkgNC45SDE1di0uN0w2LjM0OCA0Ljk0OHpNMy44IDUuMmExLjQgMS40IDAgMSAxIDAtMi44IDEuNCAxLjQgMCAwIDEgMCAyLjh6bTAgOC40YTEuNCAxLjQgMCAxIDEgMC0yLjggMS40IDEuNCAwIDAgMSAwIDIuOHpNOCA4LjM1QS4zNDcuMzQ3IDAgMCAxIDcuNjUgOGMwLS4xOTYuMTU0LS4zNS4zNS0uMzUuMTk2IDAgLjM1LjE1NC4zNS4zNSAwIC4xOTYtLjE1NC4zNS0uMzUuMzV6bTQuOS02LjY1TDguNyA1LjlsMS40IDEuNEwxNSAyLjR2LS43aC0yLjF6IiBmaWxsPSIjN0Y4QzhEIi8+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-desc {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNy41IDEyVjRtMyAyLjVsLTMtMy0zIDMiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-expanded {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNiAxMmw0LTQtNC00IiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-eye-slash {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTggMy42MjVBNi44OTkgNi44OTkgMCAwIDAgMS41ODMgOCA2Ljg5OSA2Ljg5OSAwIDAgMCA4IDEyLjM3NSA2Ljg5OSA2Ljg5OSAwIDAgMCAxNC40MTcgOCA2Ljg5OSA2Ljg5OSAwIDAgMCA4IDMuNjI1eiIvPjxwYXRoIGQ9Ik04IDEwLjkxN2EyLjkxOCAyLjkxOCAwIDAgMSAwLTUuODM0IDIuOTE4IDIuOTE4IDAgMCAxIDAgNS44MzR6Ii8+PHBhdGggZD0iTTMuNSAzLjVsOSA5IiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIi8+PC9nPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-eye {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTggMy42MjVBNi44OTkgNi44OTkgMCAwIDAgMS41ODMgOCA2Ljg5OSA2Ljg5OSAwIDAgMCA4IDEyLjM3NSA2Ljg5OSA2Ljg5OSAwIDAgMCAxNC40MTcgOCA2Ljg5OSA2Ljg5OSAwIDAgMCA4IDMuNjI1eiIvPjxwYXRoIGQ9Ik04IDEwLjkxN2EyLjkxOCAyLjkxOCAwIDAgMSAwLTUuODM0IDIuOTE4IDIuOTE4IDAgMCAxIDAgNS44MzR6Ii8+PC9nPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-filter {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMy41IDMuNWg5di41ODZhMSAxIDAgMCAxLS4yOTMuNzA3TDkuMjkzIDcuNzA3QTEgMSAwIDAgMCA5IDguNDE0VjEwbC0yIDEuNVY4LjQxNGExIDEgMCAwIDAtLjI5My0uNzA3TDMuNzkzIDQuNzkzYTEgMSAwIDAgMS0uMjkzLS43MDdWMy41eiIgc3Ryb2tlPSIjN0Y4QzhEIiBmaWxsPSJub25lIi8+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-group {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTMuNSA1LjVoMW0xIDJoMW0yIDBoNG0tNyAyaDFtMiAwaDRtLTYtNGg2IiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIi8+PHJlY3QgeD0iMS41IiB5PSIxLjUiIHdpZHRoPSIxMyIgaGVpZ2h0PSIxMyIgcng9IjIiLz48L2c+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-indeterminate {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTggNC42MjVjLTIuOTE3IDAtNS40MDguODE0LTYuNDE3IDMuMzc1IDEuMDEgMi41NiAzLjUgMy4zNzUgNi40MTcgMy4zNzVzNS40MDgtLjgxNCA2LjQxNy0zLjM3NWMtMS4wMS0yLjU2LTMuNS0zLjM3NS02LjQxNy0zLjM3NXoiLz48cGF0aCBkPSJNOCA5LjkxN0M2LjM5IDkuOTE3IDUuMDgzIDkuNjEgNS4wODMgOFM2LjM5IDYuMDgzIDggNi4wODNjMS42MSAwIDIuOTE3LjMwNyAyLjkxNyAxLjkxN1M5LjYxIDkuOTE3IDggOS45MTd6Ii8+PC9nPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-left {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMi41IDguNWw0LTRMOCA2IDYuNSA3LjVoN3YyaC03TDggMTFsLTEuNSAxLjV6IiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-loading {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSI+PHBhdGggZD0iTTcuNSAxMC41djMiIG9wYWNpdHk9Ii44Ii8+PHBhdGggZD0iTTEwLjUgNy41aDMiIG9wYWNpdHk9Ii42Ii8+PHBhdGggZD0iTTEuNSA3LjVoMyIvPjxwYXRoIGQ9Ik03LjUgMS41djMiIG9wYWNpdHk9Ii40Ii8+PHBhdGggZD0iTTkuNSA1LjVMMTIgMyIgb3BhY2l0eT0iLjUiLz48cGF0aCBkPSJNOS41IDkuNUwxMiAxMiIgb3BhY2l0eT0iLjciLz48cGF0aCBkPSJNNS41IDkuNUwzIDEyIiBvcGFjaXR5PSIuOSIvPjxwYXRoIGQ9Ik01LjUgNS41TDMgMyIgb3BhY2l0eT0iLjMiLz48L2c+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-menu {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMy41IDQuNWg5bS05IDNoOW0tOSAzaDkiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-minus {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMi41IDYuNWgxMXYyaC0xMXoiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-none {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTEuNSAxMlY0bTMgMi41bC0zLTMtMyAzbS00IDQuNVYzbS0zIDUuNWwzIDMgMy0zIiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-not-allowed {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNS45IDExLjAxMkEzLjc1IDMuNzUgMCAwIDAgMTEuMDEyIDUuOWwtNS4xMTQgNS4xMTN6TTQuNDg3IDkuNjAxTDkuNiA0LjQ4OEEzLjc1IDMuNzUgMCAwIDAgNC40ODggOS42ek03Ljc1IDEzLjVhNS43NSA1Ljc1IDAgMSAxIDAtMTEuNSA1Ljc1IDUuNzUgMCAwIDEgMCAxMS41eiIgc3Ryb2tlPSIjN0Y4QzhEIiBmaWxsPSJub25lIi8+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-paste {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAgM2MwLS41LS41LTEuNS0yLTEuNVM2IDIuNSA2IDNINGEyIDIgMCAwIDAtMiAydjdhMiAyIDAgMCAwIDIgMmg4YTIgMiAwIDAgMCAyLTJWNWEyIDIgMCAwIDAtMi0yaC0yem0tMiAuMjczYy4zNjcgMCAuNjY3LjI4Ni42NjcuNjM2IDAgLjM1LS4zLjYzNi0uNjY3LjYzNi0uMzY3IDAtLjY2Ny0uMjg2LS42NjctLjYzNiAwLS4zNS4zLS42MzYuNjY3LS42MzZ6TTEyIDEzSDRhMSAxIDAgMCAxLTEtMVY1YTEgMSAwIDAgMSAxLTFoMXYyaDZWNGgxYTEgMSAwIDAgMSAxIDF2N2ExIDEgMCAwIDEtMSAxeiIgZmlsbD0iIzdGOEM4RCIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-pin {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMi41IDEzLjVsNC00TTE0IDZjLS4zOS41MjktLjcyNC44NjItMSAxcy0uNjEuMTM4LTEgMGwtMiAyYy4xMzguOTIuMTM4IDEuNTg2IDAgMi0uMTM4LjQxNC0uNDcxLjc0OC0xIDFMNCA3Yy4wOC0uNDcxLjQxNC0uODA1IDEtMSAuNTg2LS4xOTUgMS4yNTItLjE5NSAyIDBsMi0yYy0uMTk1LS4yNzYtLjE5NS0uNjEgMC0xcy41MjktLjcyNCAxLTFsNCA0eiIgc3Ryb2tlPSIjN0Y4QzhEIiBmaWxsPSJub25lIi8+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-pivot {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTEzLjUgNC41aC05bTAgMHY5IiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIi8+PHBhdGggZD0iTTcuNSAxMi41bC0xLTEgMS0xbTUtM2wtMS0xLTEgMSIvPjxwYXRoIGQ9Ik00LjUgMTEuNWgtMm02LTl2Mm0tMy0ydjJtNi0ydjIiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiLz48cGF0aCBkPSJNMTEuNSA2LjV2M2EyIDIgMCAwIDEtMiAyaC0zIi8+PHBhdGggZD0iTTQuNSA4LjVoLTJtMi0zaC0yIiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIi8+PHJlY3QgeD0iMS41IiB5PSIxLjUiIHdpZHRoPSIxMyIgaGVpZ2h0PSIxMyIgcng9IjIiLz48L2c+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-plus {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMi41IDYuNWg0di00aDJ2NGg0djJoLTR2NGgtMnYtNGgtNHoiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-right {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTMuNSA3LjVsLTQgNEw4IDEwbDEuNS0xLjVoLTd2LTJoN0w4IDVsMS41LTEuNXoiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-small-left {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOCA0TDQgOGw0IDQiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-small-right {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOCAxMmw0LTQtNC00IiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-small-up {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIgOEw4IDQgNCA4IiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-small-down {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNCA4bDQgNCA0LTQiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-tick {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIgNmwtNS41IDUuNUw0IDkiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-cross {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAuNSA1LjVsLTYgNm0wLTZsNiA2IiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-tree-open {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNCA3bDQgNCA0LTQiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-tree-closed {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNiAxMmw0LTQtNC00IiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-tree-indeterminate {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMy41IDcuNWg5IiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-header-cell-menu-button .ag-icon-menu {\n    display: block;\n    height: 32px; }\n  .ag-theme-balham .ag-icon-checkbox-checked:empty {\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHg9IjEiIHk9IjEiIHdpZHRoPSIxNCIgaGVpZ2h0PSIxNCIgcng9IjIiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDA5MUVBIiB4PSIxLjUiIHk9IjEuNSIgd2lkdGg9IjEzIiBoZWlnaHQ9IjEzIiByeD0iMiIvPjxwYXRoIHN0cm9rZT0iIzAwOTFFQSIgZD0iTTEyIDVsLTUuNSA1LjVMNCA4Ii8+PC9nPjwvc3ZnPg==); }\n  .ag-theme-balham .ag-menu {\n    background: white;\n    border-radius: 2px;\n    box-shadow: none;\n    padding: 4px;\n    padding: 0;\n    z-index: 5; }\n    .ag-theme-balham .ag-menu .ag-menu-list {\n      cursor: default;\n      margin-bottom: 4px;\n      margin-top: 4px;\n      width: 100%; }\n    .ag-theme-balham .ag-menu .ag-menu-option {\n      line-height: 16px;\n      padding-left: 8px;\n      padding-right: 8px; }\n      .ag-theme-balham .ag-menu .ag-menu-option > span {\n        display: table-cell;\n        vertical-align: middle; }\n    .ag-theme-balham .ag-menu .ag-menu-option-active {\n      background: #ECF0F1; }\n    .ag-theme-balham .ag-menu .ag-menu-option-disabled {\n      opacity: 0.5; }\n    .ag-theme-balham .ag-menu .ag-menu-option-icon {\n      padding-left: 4px;\n      padding-right: 4px; }\n      .ag-theme-balham .ag-menu .ag-menu-option-icon span {\n        height: 16px;\n        line-height: 0;\n        margin-top: 4px; }\n    .ag-theme-balham .ag-menu .ag-menu-option-shortcut {\n      padding-left: 8px; }\n    .ag-theme-balham .ag-menu .ag-menu-separator {\n      margin-left: -4px; }\n      .ag-theme-balham .ag-menu .ag-menu-separator > span {\n        background-image: url(\"data:image/svg+xml;utf8,<svg width='1' height='8px' viewBox='0 0 1 8px' xmlns='http://www.w3.org/2000/svg'> <line x1='0' y1='4px' x2='1' y2='4px' stroke-width='1' stroke='#BDC3C7'/> </svg>\");\n        height: 8px; }\n    .ag-theme-balham .ag-menu .ag-menu-option-popup-pointer {\n      width: 24px; }\n  .ag-theme-balham.ag-dnd-ghost {\n    background: white;\n    border-radius: 2px;\n    box-shadow: none;\n    padding: 4px;\n    border: 1px solid #BDC3C7;\n    color: rgba(0, 0, 0, 0.54);\n    font: 600 12px -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen-Sans, Ubuntu, Cantarell, \"Helvetica Neue\", sans-serif;\n    height: 32px !important;\n    line-height: 32px;\n    margin: 0;\n    padding: 0 8px;\n    transform: translateY(8px);\n    z-index: 5; }\n    .ag-theme-balham.ag-dnd-ghost span,\n    .ag-theme-balham.ag-dnd-ghost div {\n      float: left;\n      height: 100%;\n      margin: 0;\n      padding: 0; }\n    .ag-theme-balham.ag-dnd-ghost .ag-dnd-ghost-icon {\n      margin-right: 4px;\n      opacity: 0.87; }\n  .ag-theme-balham .ag-tab-header {\n    background: #f5f7f7;\n    min-width: 220px;\n    width: 100%; }\n    .ag-theme-balham .ag-tab-header .ag-tab {\n      border-bottom: 2px solid transparent;\n      height: 16px;\n      text-align: center;\n      vertical-align: middle; }\n      .ag-theme-balham .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-filter {\n        background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMy41IDMuNWg5di41ODZhMSAxIDAgMCAxLS4yOTMuNzA3TDkuMjkzIDcuNzA3QTEgMSAwIDAgMCA5IDguNDE0VjEwbC0yIDEuNVY4LjQxNGExIDEgMCAwIDAtLjI5My0uNzA3TDMuNzkzIDQuNzkzYTEgMSAwIDAgMS0uMjkzLS43MDdWMy41eiIgc3Ryb2tlPSIjMDA5MUVBIiBmaWxsPSJub25lIi8+PC9zdmc+);\n        display: inline-block; }\n      .ag-theme-balham .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-columns {\n        background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNi41IDMuNXY4bTMtOHY4bTMtOHY4bS05LTh2OCIgc3Ryb2tlPSIjMDA5MUVBIiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIi8+PC9zdmc+);\n        display: inline-block; }\n      .ag-theme-balham .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-menu {\n        background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMy41IDQuNWg5bS05IDNoOW0tOSAzaDkiIHN0cm9rZT0iIzAwOTFFQSIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIvPjwvc3ZnPg==);\n        display: inline-block; }\n  .ag-theme-balham .ag-tab-body {\n    padding: 4px 0; }\n    .ag-theme-balham .ag-tab-body .ag-filter-select {\n      margin: 4px;\n      width: calc(100% - 8px); }\n    .ag-theme-balham .ag-tab-body .ag-menu-list {\n      margin-bottom: 0;\n      margin-top: 0; }\n      .ag-theme-balham .ag-tab-body .ag-menu-list > div:first-child > span {\n        padding-top: 0; }\n      .ag-theme-balham .ag-tab-body .ag-menu-list > div:last-child > span {\n        padding-bottom: 0; }\n      .ag-theme-balham .ag-tab-body .ag-menu-list > div:last-child > .ag-menu-option-popup-pointer {\n        background-position-y: 0; }\n  .ag-theme-balham .ag-filter-select {\n    margin: 4px;\n    width: calc(100% - 8px); }\n  .ag-theme-balham .ag-filter input[type=\"text\"],\n  .ag-theme-balham .ag-filter input[type=\"date\"] {\n    padding-left: 4px; }\n  .ag-theme-balham .ag-filter label {\n    display: block;\n    padding-left: 4px; }\n  .ag-theme-balham .ag-filter .ag-set-filter-list {\n    height: 182px;\n    padding-top: 4px; }\n  .ag-theme-balham .ag-filter .ag-filter-header-container {\n    box-sizing: border-box;\n    height: 28px; }\n  .ag-theme-balham .ag-filter .ag-filter-header-container:nth-child(2) {\n    border-bottom: 1px solid #BDC3C7; }\n  .ag-theme-balham .ag-filter .ag-filter-checkbox {\n    float: left;\n    height: 28px;\n    margin-right: 4px;\n    padding-top: 2px; }\n  .ag-theme-balham .ag-filter .ag-filter-value {\n    height: 28px;\n    line-height: 14px; }\n  .ag-theme-balham .ag-filter .ag-filter-apply-panel {\n    display: flex;\n    justify-content: flex-end;\n    padding: 4px;\n    padding-top: 8px; }\n    .ag-theme-balham .ag-filter .ag-filter-apply-panel button + button {\n      margin-left: 8px; }\n  .ag-theme-balham .ag-column-select-panel .ag-column-select-column-group,\n  .ag-theme-balham .ag-column-select-panel .ag-column-select-column {\n    height: 16px;\n    line-height: 16px;\n    margin-left: 0; }\n    .ag-theme-balham .ag-column-select-panel .ag-column-select-column-group span,\n    .ag-theme-balham .ag-column-select-panel .ag-column-select-column span {\n      float: left;\n      height: 100%; }\n    .ag-theme-balham .ag-column-select-panel .ag-column-select-column-group .ag-column-select-indent,\n    .ag-theme-balham .ag-column-select-panel .ag-column-select-column .ag-column-select-indent {\n      width: 8px; }\n    .ag-theme-balham .ag-column-select-panel .ag-column-select-column-group .ag-column-select-checkbox,\n    .ag-theme-balham .ag-column-select-panel .ag-column-select-column-group .ag-column-group-icons,\n    .ag-theme-balham .ag-column-select-panel .ag-column-select-column .ag-column-select-checkbox,\n    .ag-theme-balham .ag-column-select-panel .ag-column-select-column .ag-column-group-icons {\n      margin-right: 4px;\n      margin-left: 4px; }\n  .ag-theme-balham .ag-column-select-panel .ag-column-container {\n    padding-top: 4px; }\n  .ag-theme-balham .ag-column-select-panel .ag-column-select-column.ag-toolpanel-add-group-indent {\n    margin-left: 24px; }\n  .ag-theme-balham .ag-column-tool-panel {\n    display: flex; }\n  .ag-theme-balham .ag-filter-body {\n    flex-grow: 1;\n    flex-shrink: 1;\n    padding-right: 4px; }\n  .ag-theme-balham .ag-column-tool-panel-item button {\n    font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen-Sans, Ubuntu, Cantarell, \"Helvetica Neue\", sans-serif;\n    font-size: 12px;\n    height: 100%; }\n  .ag-theme-balham .ag-filter-filter {\n    margin-bottom: 4px; }\n  .ag-theme-balham .ag-column-select-header {\n    border-bottom: 1px solid #BDC3C7;\n    box-sizing: border-box;\n    height: 32px;\n    padding-top: 4px; }\n    .ag-theme-balham .ag-column-select-header label {\n      display: block;\n      padding-left: 4px; }\n      .ag-theme-balham .ag-column-select-header label .ag-filter-checkbox {\n        float: left;\n        margin-right: 4px; }\n    .ag-theme-balham .ag-column-select-header .ag-column-tool-panel a {\n      margin: 0 4px;\n      padding-top: 2px; }\n  .ag-theme-balham .ag-group-child-count::before {\n    content: \" \"; }\n  .ag-theme-balham .ag-column-panel {\n    border-right: 0; }\n    .ag-theme-balham .ag-column-panel .ag-pivot-mode {\n      border-bottom: 1px solid #BDC3C7;\n      box-sizing: border-box;\n      height: 32px;\n      line-height: 32px; }\n      .ag-theme-balham .ag-column-panel .ag-pivot-mode span {\n        float: left;\n        height: 100%; }\n      .ag-theme-balham .ag-column-panel .ag-pivot-mode .ag-pivot-mode-select {\n        margin-left: 4px; }\n        .ag-theme-balham .ag-column-panel .ag-pivot-mode .ag-pivot-mode-select .ag-checkbox-label {\n          margin-left: 4px; }\n    .ag-theme-balham .ag-column-panel .ag-column-select-panel {\n      border-bottom: 1px solid #BDC3C7;\n      padding-bottom: 3px;\n      padding-top: 0; }\n    .ag-theme-balham .ag-column-panel .ag-column-drop {\n      border-bottom: 1px solid #BDC3C7;\n      clear: both;\n      overflow: auto;\n      padding: 4px 0;\n      padding-bottom: 8px; }\n      .ag-theme-balham .ag-column-panel .ag-column-drop .ag-icon {\n        float: left;\n        height: 20px;\n        margin: 0 4px; }\n      .ag-theme-balham .ag-column-panel .ag-column-drop .ag-column-drop-title {\n        clear: right;\n        float: left;\n        height: 20px;\n        line-height: 20px;\n        width: calc(100% - 24px); }\n      .ag-theme-balham .ag-column-panel .ag-column-drop .ag-column-drop-empty-message {\n        clear: both;\n        color: rgba(0, 0, 0, 0.38);\n        font: 600 12px -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen-Sans, Ubuntu, Cantarell, \"Helvetica Neue\", sans-serif;\n        line-height: 8px;\n        padding-left: 16px;\n        padding-right: 4px; }\n  .ag-theme-balham .ag-filter-icon:empty {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMy41IDMuNWg5di41ODZhMSAxIDAgMCAxLS4yOTMuNzA3TDkuMjkzIDcuNzA3QTEgMSAwIDAgMCA5IDguNDE0VjEwbC0yIDEuNVY4LjQxNGExIDEgMCAwIDAtLjI5My0uNzA3TDMuNzkzIDQuNzkzYTEgMSAwIDAgMS0uMjkzLS43MDdWMy41eiIgc3Ryb2tlPSIjN0Y4QzhEIiBmaWxsPSJub25lIi8+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px; }\n  .ag-theme-balham .ag-sort-ascending-icon:empty {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNy41IDExVjNtLTMgNS41bDMgMyAzLTMiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px; }\n  .ag-theme-balham .ag-sort-descending-icon:empty {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNy41IDEyVjRtMyAyLjVsLTMtMy0zIDMiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px; }\n  .ag-theme-balham .ag-sort-none-icon:empty {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTEuNSAxMlY0bTMgMi41bC0zLTMtMyAzbS00IDQuNVYzbS0zIDUuNWwzIDMgMy0zIiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px; }\n  .ag-theme-balham .ag-numeric-header .ag-header-cell-label .ag-header-icon {\n    margin-left: 0;\n    margin-right: 4px; }\n  .ag-theme-balham .ag-paging-panel {\n    align-items: center;\n    border-top: 1px solid #BDC3C7;\n    color: rgba(0, 0, 0, 0.54);\n    display: flex;\n    height: 32px;\n    justify-content: flex-end;\n    padding: 0 12px; }\n    .ag-theme-balham .ag-paging-panel > span {\n      margin-left: 16px; }\n    .ag-theme-balham .ag-paging-panel button[ref=\"btFirst\"] {\n      background-color: transparent;\n      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIgNEw4IDhsNCA0TTQuNSA0djgiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n      background-position: center;\n      background-repeat: no-repeat;\n      background-size: 16px 16px;\n      height: 16px;\n      opacity: 0.87;\n      width: 16px;\n      overflow: hidden;\n      text-indent: 100%;\n      appearance: none;\n      border: 0;\n      opacity: 0.54;\n      padding: 0; }\n      .ag-theme-balham .ag-paging-panel button[ref=\"btFirst\"][disabled] {\n        opacity: 0.38; }\n    .ag-theme-balham .ag-paging-panel button[ref=\"btPrevious\"] {\n      background-color: transparent;\n      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSA0TDUgOGw0IDQiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n      background-position: center;\n      background-repeat: no-repeat;\n      background-size: 16px 16px;\n      height: 16px;\n      opacity: 0.87;\n      width: 16px;\n      overflow: hidden;\n      text-indent: 100%;\n      appearance: none;\n      border: 0;\n      opacity: 0.54;\n      padding: 0; }\n      .ag-theme-balham .ag-paging-panel button[ref=\"btPrevious\"][disabled] {\n        opacity: 0.38; }\n    .ag-theme-balham .ag-paging-panel button[ref=\"btLast\"] {\n      background-color: transparent;\n      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNCAxMmw0LTQtNC00bTcuNSAwdjgiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n      background-position: center;\n      background-repeat: no-repeat;\n      background-size: 16px 16px;\n      height: 16px;\n      opacity: 0.87;\n      width: 16px;\n      overflow: hidden;\n      text-indent: 100%;\n      appearance: none;\n      border: 0;\n      opacity: 0.54;\n      padding: 0; }\n      .ag-theme-balham .ag-paging-panel button[ref=\"btLast\"][disabled] {\n        opacity: 0.38; }\n    .ag-theme-balham .ag-paging-panel button[ref=\"btNext\"] {\n      background-color: transparent;\n      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNiAxMmw0LTQtNC00IiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiLz48L3N2Zz4=);\n      background-position: center;\n      background-repeat: no-repeat;\n      background-size: 16px 16px;\n      height: 16px;\n      opacity: 0.87;\n      width: 16px;\n      overflow: hidden;\n      text-indent: 100%;\n      appearance: none;\n      border: 0;\n      opacity: 0.54;\n      padding: 0; }\n      .ag-theme-balham .ag-paging-panel button[ref=\"btNext\"][disabled] {\n        opacity: 0.38; }\n  .ag-theme-balham .ag-row-selected {\n    background-color: #b7e4ff; }\n  .ag-theme-balham .ag-cell-range-selected:not(.ag-cell-focus) {\n    background-color: rgba(0, 145, 234, 0.2); }\n  .ag-theme-balham .ag-cell-inline-editing {\n    background: white;\n    border-radius: 2px;\n    box-shadow: none;\n    padding: 4px;\n    background: #f5f7f7;\n    height: 40px;\n    line-height: normal;\n    padding: 12px;\n    z-index: 2; }\n    .ag-theme-balham .ag-cell-inline-editing select {\n      height: auto; }\n  .ag-theme-balham .ag-popup-editor {\n    background: white;\n    border-radius: 2px;\n    box-shadow: none;\n    padding: 4px;\n    background: #f5f7f7;\n    padding: 0; }\n    .ag-theme-balham .ag-popup-editor .ag-large-textarea textarea {\n      height: auto;\n      padding: 12px; }\n  .ag-theme-balham .ag-rich-select {\n    background-color: #f5f7f7;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNCA3bDQgNCA0LTQiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position-x: calc(100% - 4px);\n    background-position-y: 8px;\n    background-repeat: no-repeat; }\n    .ag-theme-balham .ag-rich-select .ag-rich-select-list {\n      height: 182px; }\n    .ag-theme-balham .ag-rich-select .ag-rich-select-value {\n      height: 28px;\n      line-height: 28px;\n      padding-left: 12px; }\n    .ag-theme-balham .ag-rich-select .ag-virtual-list-item {\n      cursor: default;\n      height: 28px;\n      line-height: 28px; }\n      .ag-theme-balham .ag-rich-select .ag-virtual-list-item:hover {\n        background-color: #ECF0F1; }\n    .ag-theme-balham .ag-rich-select .ag-rich-select-row {\n      padding-left: 12px; }\n    .ag-theme-balham .ag-rich-select .ag-rich-select-row-selected {\n      background-color: #b7e4ff; }\n  .ag-theme-balham .ag-floating-filter-body {\n    float: left;\n    height: 100%;\n    margin-right: 0;\n    width: calc(100% - 24px); }\n    .ag-theme-balham .ag-floating-filter-body input {\n      box-sizing: border-box; }\n  .ag-theme-balham .ag-floating-filter-full-body input {\n    box-sizing: border-box; }\n  .ag-theme-balham .ag-floating-filter-button {\n    float: right;\n    line-height: 16px;\n    margin-top: 10px; }\n    .ag-theme-balham .ag-floating-filter-button button {\n      appearance: none;\n      background: transparent;\n      border: 0;\n      height: 16px;\n      padding: 0;\n      width: 16px; }\n  .ag-theme-balham .ag-cell-label-container {\n    height: 100%; }\n  .ag-theme-balham .ag-header-group-cell-label {\n    height: 100%; }\n    .ag-theme-balham .ag-header-group-cell-label span {\n      float: left;\n      height: 100%; }\n  .ag-theme-balham .ag-header-select-all {\n    height: 100%;\n    margin-right: 12px; }\n    .ag-theme-balham .ag-header-select-all span {\n      height: 100%; }\n  .ag-theme-balham .ag-header-select-all:not(.ag-hidden) + .ag-cell-label-container {\n    float: left;\n    width: calc(100% - 16px - 12px); }\n  .ag-theme-balham .ag-selection-checkbox span,\n  .ag-theme-balham .ag-group-expanded span,\n  .ag-theme-balham .ag-group-contracted span {\n    margin-right: 12px; }\n  .ag-theme-balham .ag-selection-checkbox span {\n    position: relative;\n    top: 2px; }\n  .ag-theme-balham .ag-group-expanded .ag-icon-contracted:empty {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNCA3bDQgNCA0LTQiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px; }\n  .ag-theme-balham .ag-column-drop-horizontal {\n    background-color: #f5f7f7;\n    height: 28px;\n    line-height: 16px;\n    padding-left: 12px; }\n    .ag-theme-balham .ag-column-drop-horizontal.ag-width-half {\n      margin-bottom: -3px; }\n    .ag-theme-balham .ag-column-drop-horizontal span {\n      float: left;\n      height: 100%; }\n    .ag-theme-balham .ag-column-drop-horizontal > div:first-child {\n      float: left;\n      height: 100%; }\n    .ag-theme-balham .ag-column-drop-horizontal .ag-icon-group,\n    .ag-theme-balham .ag-column-drop-horizontal .ag-icon-pivot {\n      margin-right: 12px; }\n    .ag-theme-balham .ag-column-drop-horizontal .ag-right-arrow {\n      background-color: transparent;\n      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTMuNSA3LjVsLTQgNEw4IDEwbDEuNS0xLjVoLTd2LTJoN0w4IDVsMS41LTEuNXoiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n      background-position: center;\n      background-repeat: no-repeat;\n      background-size: 16px 16px;\n      height: 16px;\n      opacity: 0.87;\n      width: 16px; }\n    .ag-theme-balham .ag-column-drop-horizontal .ag-left-arrow {\n      background-color: transparent;\n      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMi41IDguNWw0LTRMOCA2IDYuNSA3LjVoN3YyaC03TDggMTFsLTEuNSAxLjV6IiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiLz48L3N2Zz4=);\n      background-position: center;\n      background-repeat: no-repeat;\n      background-size: 16px 16px;\n      height: 16px;\n      opacity: 0.87;\n      width: 16px; }\n    .ag-theme-balham .ag-column-drop-horizontal .ag-left-arrow,\n    .ag-theme-balham .ag-column-drop-horizontal .ag-right-arrow {\n      overflow: hidden;\n      text-indent: 100%;\n      height: 100%;\n      margin: 0 4px;\n      opacity: 0.54; }\n    .ag-theme-balham .ag-column-drop-horizontal .ag-column-drop-empty-message {\n      height: 100%;\n      line-height: 28px;\n      opacity: 0.38; }\n  .ag-theme-balham .ag-column-drop-cell {\n    background: #dde4e6;\n    border-radius: 16px;\n    box-sizing: border-box;\n    height: 16px !important;\n    margin-top: 4px;\n    padding: 0 2px; }\n    .ag-theme-balham .ag-column-drop-cell .ag-column-drop-cell-text {\n      height: 100%;\n      line-height: 16px;\n      margin: 0 4px; }\n    .ag-theme-balham .ag-column-drop-cell .ag-column-drop-cell-button {\n      background-color: transparent;\n      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTEwLjUgNC41bC02IDYiLz48Y2lyY2xlIGN4PSI3LjUiIGN5PSI3LjUiIHI9IjUuNSIvPjxwYXRoIGQ9Ik00LjUgNC41bDYgNiIvPjwvZz48L3N2Zz4=);\n      background-position: center;\n      background-repeat: no-repeat;\n      background-size: 16px 16px;\n      height: 16px;\n      opacity: 0.87;\n      width: 16px;\n      overflow: hidden;\n      text-indent: 100%;\n      height: 100%;\n      margin: 0 2px;\n      opacity: 0.54; }\n      .ag-theme-balham .ag-column-drop-cell .ag-column-drop-cell-button:hover {\n        opacity: 0.87; }\n    .ag-theme-balham .ag-column-drop-cell .ag-column-drag {\n      width: 16px;\n      margin-left: 8px;\n      margin-top: 2px; }\n  .ag-theme-balham .ag-select-agg-func-popup {\n    background: white;\n    border-radius: 2px;\n    box-shadow: none;\n    padding: 4px;\n    background: white;\n    height: 70px;\n    padding: 0; }\n    .ag-theme-balham .ag-select-agg-func-popup .ag-virtual-list-item {\n      cursor: default;\n      line-height: 20px;\n      padding-left: 8px; }\n  .ag-theme-balham .ag-set-filter-list,\n  .ag-theme-balham .ag-menu-column-select-wrapper {\n    width: auto; }\n  .ag-theme-balham .ag-column-drop-vertical > .ag-column-drop-cell {\n    float: left;\n    margin-bottom: 4px;\n    margin-left: 4px;\n    margin-top: 0; }\n  .ag-theme-balham .ag-cell-data-changed {\n    background-color: rgba(22, 160, 133, 0.5) !important; }\n  .ag-theme-balham .ag-cell-data-changed-animation {\n    background-color: transparent;\n    transition: background-color 1s; }\n  .ag-theme-balham .ag-stub-cell {\n    padding-left: 12px;\n    padding-top: 4px; }\n    .ag-theme-balham .ag-stub-cell .ag-loading-icon {\n      float: left;\n      height: 100%; }\n    .ag-theme-balham .ag-stub-cell .ag-loading-text {\n      float: left;\n      height: 100%;\n      margin-left: 4px;\n      margin-top: 4px; }\n  .ag-theme-balham .ag-rtl .ag-numeric-cell {\n    text-align: left; }\n  .ag-theme-balham .ag-rtl .ag-header-cell-menu-button {\n    float: left; }\n  .ag-theme-balham .ag-rtl .ag-header-cell-label {\n    float: right;\n    width: calc(100% - 16px); }\n    .ag-theme-balham .ag-rtl .ag-header-cell-label > span {\n      float: right; }\n    .ag-theme-balham .ag-rtl .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n  .ag-theme-balham .ag-rtl .ag-numeric-header .ag-header-cell-menu-button {\n    float: right; }\n  .ag-theme-balham .ag-rtl .ag-numeric-header .ag-header-cell-label {\n    float: left; }\n    .ag-theme-balham .ag-rtl .ag-numeric-header .ag-header-cell-label > span {\n      float: left; }\n  .ag-theme-balham .ag-rtl .ag-column-panel .ag-pivot-mode span {\n    float: right; }\n  .ag-theme-balham .ag-rtl .ag-column-panel .ag-pivot-mode .ag-pivot-mode-select {\n    margin-right: 4px; }\n    .ag-theme-balham .ag-rtl .ag-column-panel .ag-pivot-mode .ag-pivot-mode-select .ag-checkbox-label {\n      margin-right: 4px; }\n  .ag-theme-balham .ag-rtl .ag-column-panel .ag-column-drop .ag-icon {\n    float: right; }\n  .ag-theme-balham .ag-rtl .ag-column-panel .ag-column-drop .ag-column-drop-title {\n    clear: left;\n    float: right; }\n  .ag-theme-balham .ag-rtl .ag-column-panel .ag-column-drop .ag-column-drop-empty-message {\n    padding-left: 4px;\n    padding-right: 16px; }\n  .ag-theme-balham .ag-rtl .ag-filter-checkbox {\n    float: right;\n    margin-left: 4px; }\n  .ag-theme-balham .ag-rtl .ag-column-select-panel .ag-column-select-column-group span,\n  .ag-theme-balham .ag-rtl .ag-column-select-panel .ag-column-select-column span {\n    float: right; }\n  .ag-theme-balham .ag-rtl .ag-column-select-panel .ag-column-select-column-group .ag-column-select-checkbox,\n  .ag-theme-balham .ag-rtl .ag-column-select-panel .ag-column-select-column-group .ag-column-group-icons,\n  .ag-theme-balham .ag-rtl .ag-column-select-panel .ag-column-select-column .ag-column-select-checkbox,\n  .ag-theme-balham .ag-rtl .ag-column-select-panel .ag-column-select-column .ag-column-group-icons {\n    margin-left: 4px;\n    margin-right: 4px; }\n  .ag-theme-balham .ag-rtl .ag-column-select-panel .ag-column-select-column.ag-toolpanel-add-group-indent {\n    margin-left: 0;\n    margin-right: 24px; }\n  .ag-theme-balham .ag-rtl .ag-icon-tree-closed {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSA0TDUgOGw0IDQiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px; }\n  .ag-theme-balham .ag-rtl .ag-header-group-cell-label {\n    height: 100%; }\n    .ag-theme-balham .ag-rtl .ag-header-group-cell-label span {\n      float: right;\n      height: 100%; }\n  .ag-theme-balham .ag-rtl .ag-header-select-all:not(.ag-hidden) + .ag-cell-label-container {\n    float: right; }\n  .ag-theme-balham .ag-rtl .ag-header-select-all {\n    margin-left: 12px;\n    margin-right: 0; }\n  .ag-theme-balham .ag-rtl .ag-selection-checkbox span,\n  .ag-theme-balham .ag-rtl .ag-group-expanded span,\n  .ag-theme-balham .ag-rtl .ag-group-contracted span {\n    margin-left: 12px;\n    margin-right: 0; }\n  .ag-theme-balham .ag-rtl .ag-column-drop-horizontal {\n    padding-right: 12px; }\n    .ag-theme-balham .ag-rtl .ag-column-drop-horizontal span {\n      float: right; }\n    .ag-theme-balham .ag-rtl .ag-column-drop-horizontal > div:first-child {\n      float: right; }\n    .ag-theme-balham .ag-rtl .ag-column-drop-horizontal .ag-icon-group,\n    .ag-theme-balham .ag-rtl .ag-column-drop-horizontal .ag-icon-pivot {\n      margin-left: 12px;\n      margin-right: 0; }\n    .ag-theme-balham .ag-rtl .ag-column-drop-horizontal .ag-right-arrow {\n      background-color: transparent;\n      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTMuNSA3LjVsLTQgNEw4IDEwbDEuNS0xLjVoLTd2LTJoN0w4IDVsMS41LTEuNXoiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n      background-position: center;\n      background-repeat: no-repeat;\n      background-size: 16px 16px;\n      height: 16px;\n      opacity: 0.87;\n      width: 16px;\n      height: 100%; }\n    .ag-theme-balham .ag-rtl .ag-column-drop-horizontal .ag-left-arrow {\n      background-color: transparent;\n      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMi41IDguNWw0LTRMOCA2IDYuNSA3LjVoN3YyaC03TDggMTFsLTEuNSAxLjV6IiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiLz48L3N2Zz4=);\n      background-position: center;\n      background-repeat: no-repeat;\n      background-size: 16px 16px;\n      height: 16px;\n      opacity: 0.87;\n      width: 16px;\n      height: 100%; }\n  .ag-theme-balham .ag-rtl .ag-floating-filter-body {\n    float: right;\n    margin-left: 0; }\n  .ag-theme-balham .ag-rtl .ag-floating-filter-button {\n    float: left; }\n  .ag-theme-balham .ag-rtl .ag-header .ag-header-cell-resize {\n    left: -4px;\n    right: auto; }\n  .ag-theme-balham .ag-rtl .ag-header .ag-header-cell-resize::after {\n    border-left: 1px solid #BDC3C7;\n    border-right: 0; }\n  .ag-theme-balham .ag-rtl .ag-column-select-header .ag-filter-body {\n    margin-left: 4px;\n    margin-right: 0; }\n  .ag-theme-balham .ag-rtl .ag-column-drag {\n    background-position-x: right; }\n  .ag-theme-balham .ag-status-bar {\n    background: white;\n    border: 1px solid #BDC3C7;\n    border-top: 0;\n    color: rgba(0, 0, 0, 0.38);\n    display: flex;\n    font: 600 12px -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen-Sans, Ubuntu, Cantarell, \"Helvetica Neue\", sans-serif;\n    justify-content: flex-end;\n    padding: 8px 16px; }\n    .ag-theme-balham .ag-status-bar .ag-status-bar-item {\n      margin-right: 8px; }\n      .ag-theme-balham .ag-status-bar .ag-status-bar-item span:nth-child(1)::after {\n        content: \":\"; }\n      .ag-theme-balham .ag-status-bar .ag-status-bar-item span:nth-child(2) {\n        color: #000; }\n  .ag-theme-balham .ag-details-row {\n    box-sizing: border-box;\n    padding: 20px; }\n  .ag-theme-balham .ag-overlay-loading-wrapper {\n    background-color: rgba(255, 255, 255, 0.5); }\n  .ag-theme-balham .ag-overlay-loading-center {\n    background: white;\n    border-radius: 2px;\n    box-shadow: none;\n    padding: 4px; }\n  .ag-theme-balham .ag-tool-panel {\n    background-color: #f5f7f7;\n    border-right: 1px solid #BDC3C7;\n    border-top: 1px solid #BDC3C7; }\n    .ag-theme-balham .ag-tool-panel .ag-side-buttons {\n      border-bottom: 1px solid #BDC3C7; }\n      .ag-theme-balham .ag-tool-panel .ag-side-buttons button {\n        background: transparent;\n        border: 0;\n        border-right: 1px solid #BDC3C7;\n        color: #000;\n        height: 20px; }\n    .ag-theme-balham .ag-tool-panel .ag-panel-container {\n      border-right: 1px solid #BDC3C7;\n      box-sizing: border-box; }\n    .ag-theme-balham .ag-tool-panel.full-width .ag-panel-container {\n      border-right: 0; }\n    .ag-theme-balham .ag-tool-panel .ag-column-drop {\n      min-height: 50px; }\n  .ag-theme-balham .ag-rtl .ag-tool-panel .ag-panel-container {\n    border-left: 1px solid #BDC3C7;\n    border-right: 0; }\n  .ag-theme-balham .ag-rtl .ag-tool-panel.full-width .ag-panel-container {\n    border-left: 0; }\n  .ag-theme-balham .ag-rtl .ag-tool-panel .ag-side-buttons button {\n    border-left: 1px solid #BDC3C7;\n    border-right: 0; }\n  .ag-theme-balham .ag-column-name-filter {\n    width: 100%;\n    box-sizing: border-box; }\n  .ag-theme-balham .sass-variables::after {\n    content: '{ \"autoSizePadding\": \"12px\", \"headerHeight\": \"32px\", \"groupPaddingSize\": \"28px\", \"footerPaddingAddition\": \"16px\", \"virtualItemHeight\": \"28px\", \"aggFuncPopupHeight\": \"98px\", \"checkboxIndentWidth\": \"20px\", \"leafNodePadding\": \"12px\", \"rowHeight\": \"28px\", \"gridSize\": \"4px\", \"iconSize\": \"16px\" }';\n    display: none; }\n  .ag-theme-balham .ag-header {\n    background-color: #f5f7f7;\n    border-bottom: 1px solid #BDC3C7; }\n  .ag-theme-balham .ag-cell-highlight {\n    background-color: #0091EA !important; }\n  .ag-theme-balham .ag-header-cell-resize {\n    right: -3px; }\n  .ag-theme-balham .ag-rtl .ag-header .ag-header-cell-resize {\n    left: -4px; }\n  .ag-theme-balham .ag-header-cell-resize::after {\n    height: 16px;\n    margin-top: 8px; }\n  .ag-theme-balham .ag-header-cell::after,\n  .ag-theme-balham .ag-header-group-cell::after {\n    border-right: 1px solid rgba(189, 195, 199, 0.5);\n    content: \" \";\n    height: 16px;\n    margin-top: 8px;\n    position: absolute;\n    right: 0;\n    text-indent: -2000px;\n    top: 0; }\n  .ag-theme-balham [ref=\"north\"] .ag-column-drop {\n    border: 1px solid #BDC3C7;\n    border-bottom: 0; }\n  .ag-theme-balham [ref=\"north\"] .ag-column-drop.ag-width-half:first-child {\n    border-right: 0; }\n  .ag-theme-balham .ag-row {\n    border-bottom-color: #d9dcde; }\n  .ag-theme-balham .ag-row-selected {\n    border-bottom-color: #b7e4ff; }\n  .ag-theme-balham .ag-row-drag {\n    background-position-y: center; }\n  .ag-theme-balham .ag-column-drag {\n    background-position-y: center; }\n  .ag-theme-balham .ag-column-drop-cell {\n    height: 24px !important; }\n    .ag-theme-balham .ag-column-drop-cell .ag-column-drop-cell-button {\n      box-sizing: border-box;\n      height: calc(100% - 4px);\n      margin-bottom: 2px;\n      margin-top: 2px; }\n    .ag-theme-balham .ag-column-drop-cell .ag-column-drop-cell-button:hover {\n      opacity: 1; }\n  .ag-theme-balham .ag-column-drop-vertical .ag-column-drop-cell {\n    display: block;\n    float: none;\n    margin-left: 8px;\n    margin-right: 8px; }\n    .ag-theme-balham .ag-column-drop-vertical .ag-column-drop-cell .ag-column-drop-cell-text {\n      line-height: 24px;\n      margin-left: 8px; }\n  .ag-theme-balham .ag-column-drop-horizontal {\n    background-color: #f5f7f7;\n    height: 32px; }\n    .ag-theme-balham .ag-column-drop-horizontal .ag-column-drop-empty-message {\n      line-height: 32px; }\n    .ag-theme-balham .ag-column-drop-horizontal .ag-column-drop-cell-text {\n      line-height: 24px;\n      margin-left: 8px; }\n  .ag-theme-balham .ag-filter .ag-filter-header-container {\n    height: 24px; }\n  .ag-theme-balham .ag-root {\n    border: 1px solid #BDC3C7; }\n  .ag-theme-balham .ag-tab {\n    box-sizing: initial; }\n  .ag-theme-balham .ag-filter .ag-filter-value {\n    line-height: 20px; }\n  .ag-theme-balham .ag-column-panel {\n    border-right: 1px solid #BDC3C7; }\n    .ag-theme-balham .ag-column-panel .ag-column-select-panel {\n      padding-bottom: 8px; }\n      .ag-theme-balham .ag-column-panel .ag-column-select-panel .ag-column-select-column-group,\n      .ag-theme-balham .ag-column-panel .ag-column-select-panel .ag-column-select-column {\n        height: 20px;\n        line-height: 20px; }\n    .ag-theme-balham .ag-column-panel .ag-column-drop {\n      padding-bottom: 8px;\n      padding-top: 8px; }\n      .ag-theme-balham .ag-column-panel .ag-column-drop .ag-icon {\n        margin-bottom: 4px; }\n      .ag-theme-balham .ag-column-panel .ag-column-drop .ag-column-drop-title {\n        display: inline-block;\n        float: none;\n        margin-bottom: 4px; }\n      .ag-theme-balham .ag-column-panel .ag-column-drop .ag-column-drop-empty-message {\n        height: 16px;\n        line-height: 16px;\n        padding-left: 24px; }\n  .ag-theme-balham .ag-rtl .ag-tool-panel,\n  .ag-theme-balham .ag-rtl .ag-column-panel {\n    border-left: 1px solid #BDC3C7;\n    border-right: 0; }\n  .ag-theme-balham .ag-icon-expanded,\n  .ag-theme-balham .ag-icon-contracted {\n    transform: translateY(2px); }\n  .ag-theme-balham .ag-rtl .ag-icon-expanded {\n    transform: translateY(2px) rotate(180deg); }\n  .ag-theme-balham .ag-menu-option {\n    height: 28px;\n    line-height: 28px; }\n  .ag-theme-balham .ag-column-select-panel .ag-column-select-column-group,\n  .ag-theme-balham .ag-column-select-panel .ag-column-select-column {\n    height: 20px;\n    line-height: 20px; }\n  .ag-theme-balham .ag-filter-filter {\n    margin-left: 4px;\n    margin-right: 4px;\n    width: calc(100% - 8px); }\n  .ag-theme-balham .ag-tab-header {\n    border-bottom: 1px solid #BDC3C7; }\n    .ag-theme-balham .ag-tab-header .ag-tab {\n      margin-bottom: -2px; }\n    .ag-theme-balham .ag-tab-header .ag-tab.ag-tab-selected {\n      background-color: white;\n      border-bottom-color: transparent; }\n  .ag-theme-balham .ag-tab-body,\n  .ag-theme-balham .ag-popup-editor,\n  .ag-theme-balham .ag-menu {\n    background-color: white;\n    color: #000; }\n  .ag-theme-balham .ag-cell-inline-editing {\n    height: 28px;\n    padding: 0; }\n    .ag-theme-balham .ag-cell-inline-editing input {\n      box-sizing: border-box; }\n  .ag-theme-balham .ag-details-row {\n    background-color: white; }\n  .ag-theme-balham .ag-overlay-loading-wrapper {\n    background-color: rgba(255, 255, 255, 0.5); }\n  .ag-theme-balham .ag-overlay-loading-center {\n    background-color: #fff;\n    border: 1px solid #BDC3C7;\n    color: #000;\n    padding: 16px; }\n  .ag-theme-balham .ag-cell-range-selected-1:not(.ag-cell-focus) {\n    background-color: rgba(0, 145, 234, 0.3); }\n  .ag-theme-balham .ag-cell-range-selected-2:not(.ag-cell-focus) {\n    background-color: rgba(0, 145, 234, 0.4); }\n  .ag-theme-balham .ag-cell-range-selected-3:not(.ag-cell-focus) {\n    background-color: rgba(0, 145, 234, 0.5); }\n  .ag-theme-balham .ag-cell-range-selected-4:not(.ag-cell-focus) {\n    background-color: rgba(0, 145, 234, 0.6); }\n  .ag-theme-balham .ag-rich-select-value {\n    border-bottom: 1px solid #BDC3C7; }\n  .ag-theme-balham .ag-filter-apply-panel {\n    border-top: 1px solid #BDC3C7; }\n  .ag-theme-balham .ag-header-cell-moving {\n    background-color: white; }\n"; });
-define('ag-grid-enterprise/main',['require','exports','module','./dist/lib/toolPanel/columnsSelect/columnSelectComp','./dist/lib/toolPanel/columnsSelect/toolPanelColumnComp','./dist/lib/toolPanel/columnsSelect/toolPanelGroupComp','./dist/lib/rowStages/aggregationStage','./dist/lib/rowStages/groupStage','./dist/lib/setFilter/setFilter','./dist/lib/setFilter/setFilterModel','./dist/lib/statusBar/statusBar','./dist/lib/statusBar/statusItem','./dist/lib/clipboardService','./dist/lib/enterpriseBoot','./dist/lib/menu/enterpriseMenu','./dist/lib/menu/menuItemComponent','./dist/lib/menu/menuList','./dist/lib/rangeController','./dist/lib/toolPanel/columnDrop/rowGroupColumnsPanel','./dist/lib/menu/contextMenu','./dist/lib/rowModels/viewport/viewportRowModel','./dist/lib/rendering/richSelect/richSelectCellEditor','./dist/lib/rendering/richSelect/richSelectRow','./dist/lib/rendering/virtualList','./dist/lib/toolPanel/columnDrop/abstractColumnDropPanel','./dist/lib/toolPanel/columnDrop/pivotColumnsPanel','./dist/lib/toolPanel/toolPanelComp','./dist/lib/licenseManager','./dist/lib/rowStages/pivotStage','./dist/lib/rowStages/pivotColDefService','./dist/lib/toolPanel/columnDrop/pivotModePanel','./dist/lib/aggregation/aggFuncService','./dist/lib/license/md5','./dist/lib/setFilter/setFilterListItem','./dist/lib/toolPanel/columnDrop/columnComponent','./dist/lib/toolPanel/columnDrop/valueColumnsPanel','./dist/lib/pivotCompFactory','./dist/lib/rowGroupCompFactory','./dist/lib/excelCreator','./dist/lib/excelXmlFactory','ag-grid/main','./dist/lib/menu/enterpriseMenu','./dist/lib/rangeController','./dist/lib/clipboardService','./dist/lib/rowStages/groupStage','./dist/lib/rowStages/aggregationStage','./dist/lib/enterpriseBoot','./dist/lib/statusBar/statusBar','./dist/lib/menu/contextMenu','./dist/lib/rowModels/viewport/viewportRowModel','./dist/lib/toolPanel/columnDrop/pivotColumnsPanel','./dist/lib/toolPanel/toolPanelComp','./dist/lib/rowGroupCompFactory','./dist/lib/licenseManager','./dist/lib/license/md5','./dist/lib/rowStages/pivotStage','./dist/lib/rowStages/pivotColDefService','./dist/lib/aggregation/aggFuncService','./dist/lib/pivotCompFactory','./dist/lib/menu/menuItemMapper','./dist/lib/excelCreator','./dist/lib/excelXmlFactory','./dist/lib/rowModels/enterprise/enterpriseRowModel','./dist/lib/toolPanel/columnsSelect/columnSelectHeaderComp','./dist/lib/toolPanel/columnsSelect/columnContainerComp','./dist/lib/toolPanel/columnsSelect/horizontalResizeComp'],function (require, exports, module) {// ag-grid-enterprise v17.0.0
+define('text!ag-grid/dist/styles/ag-grid.css', ['module'], function(module) { module.exports = "ag-grid-angular {\n  display: block; }\n\nag-grid-ng2 {\n  display: block; }\n\nag-grid {\n  display: block; }\n\nag-grid-polymer {\n  display: block; }\n\nag-grid-aurelia {\n  display: block; }\n\n.ag-rtl {\n  direction: rtl; }\n\n.ag-ltr {\n  direction: ltr; }\n\n.ag-select-agg-func-popup {\n  position: absolute; }\n\n.ag-body-no-select {\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-root {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  /* was getting some 'should be there' scrolls, this sorts it out */\n  overflow: hidden;\n  /* set to relative, so absolute popups appear relative to this */\n  position: relative; }\n\n.ag-layout-normal .ag-root {\n  height: 100%; }\n\n.ag-font-style {\n  cursor: default;\n  /* disable user mouse selection */\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-layout-for-print {\n  display: block;\n  white-space: nowrap; }\n\n.ag-layout-for-print .ag-row,\n.ag-layout-for-print .ag-cell {\n  page-break-inside: avoid !important; }\n\n.ag-layout-normal {\n  height: 100%; }\n\n.ag-popup-backdrop {\n  height: 100%;\n  left: 0;\n  position: fixed;\n  top: 0;\n  width: 100%; }\n\n.ag-header {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  white-space: nowrap;\n  width: 100%; }\n\n.ag-layout-normal .ag-header {\n  left: 0;\n  position: absolute;\n  top: 0; }\n\n.ag-pinned-left-header {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  float: left;\n  height: 100%;\n  overflow: hidden; }\n\n.ag-pinned-right-header {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  float: right;\n  height: 100%;\n  overflow: hidden; }\n\n.ag-header-viewport {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  height: 100%;\n  overflow: hidden; }\n\n.ag-layout-normal .ag-header-row {\n  position: absolute; }\n\n.ag-layout-normal .ag-header-container {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  height: 100%;\n  position: relative;\n  white-space: nowrap; }\n\n.ag-layout-auto-height .ag-header-row {\n  position: absolute; }\n\n.ag-layout-auto-height .ag-header-container {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  height: 100%;\n  position: relative;\n  white-space: nowrap; }\n\n.ag-layout-for-print .ag-header-container {\n  white-space: nowrap; }\n\n.ag-header-overlay {\n  display: block;\n  position: absolute; }\n\n.ag-header-cell {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  height: 100%;\n  position: absolute;\n  vertical-align: bottom; }\n\n.ag-floating-filter {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  position: absolute; }\n\n.ag-floating-filter-body {\n  height: 20px;\n  margin-right: 25px; }\n\n.ag-floating-filter-full-body {\n  height: 20px;\n  width: 100%; }\n\n.ag-floating-filter-input {\n  width: 100%; }\n\n.ag-floating-filter-input:-moz-read-only {\n  background-color: #eee; }\n\n.ag-floating-filter-input:read-only {\n  background-color: #eee; }\n\n.ag-floating-filter-menu {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-dnd-ghost {\n  background: #e5e5e5;\n  border: 1px solid black;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  cursor: move;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  line-height: 1.4;\n  overflow: hidden;\n  padding: 3px;\n  position: absolute;\n  text-overflow: ellipsis;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-dnd-ghost-icon {\n  display: inline-block;\n  float: left;\n  padding: 2px; }\n\n.ag-dnd-ghost-label {\n  display: inline-block; }\n\n.ag-header-group-cell {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  height: 100%;\n  overflow: hidden;\n  position: absolute;\n  text-overflow: ellipsis; }\n\n.ag-header-group-cell-label {\n  overflow: hidden;\n  text-overflow: ellipsis;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex; }\n\n.ag-header-cell-label {\n  overflow: hidden;\n  text-overflow: ellipsis; }\n\n.ag-header-cell-resize {\n  cursor: col-resize;\n  height: 100%;\n  width: 4px; }\n\n.ag-ltr .ag-header-cell-resize {\n  float: right; }\n\n.ag-ltr .ag-pinned-right-header .ag-header-cell-resize {\n  float: left; }\n\n.ag-rtl .ag-header-cell-resize {\n  float: left; }\n\n.ag-rtl .ag-pinned-left-header .ag-header-cell-resize {\n  float: right; }\n\n.ag-ltr .ag-header-select-all {\n  float: left; }\n\n.ag-rtl .ag-header-select-all {\n  float: right; }\n\n.ag-header-expand-icon {\n  padding-left: 4px; }\n\n.ag-header-cell-menu-button {\n  float: right; }\n\n.ag-overlay-panel {\n  display: table;\n  height: 100%;\n  pointer-events: none;\n  width: 100%; }\n\n.ag-overlay-wrapper {\n  display: table-cell;\n  text-align: center;\n  vertical-align: middle; }\n\n.ag-bl-overlay {\n  height: 100%;\n  left: 0;\n  pointer-events: none;\n  position: absolute;\n  top: 0;\n  width: 100%; }\n\n.ag-bl-full-height {\n  height: 100%;\n  overflow: hidden;\n  position: relative; }\n\n.ag-bl-west {\n  float: left; }\n\n.ag-bl-full-height-west {\n  height: 100%; }\n\n.ag-bl-east {\n  float: right; }\n\n.ag-bl-full-height-east {\n  height: 100%; }\n\n.ag-bl-full-height-center {\n  height: 100%; }\n\n.ag-bl-normal {\n  height: 100%;\n  position: relative; }\n\n.ag-bl-normal-center-row {\n  height: 100%;\n  overflow: hidden; }\n\n.ag-bl-normal-west {\n  float: left;\n  height: 100%; }\n\n.ag-bl-normal-east {\n  float: right;\n  height: 100%; }\n\n.ag-column-panel {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  overflow-y: auto; }\n\n.ag-column-panel-center {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  max-height: 100vh;\n  min-height: 400px;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -ms-flex-direction: column;\n  flex-direction: column;\n  -webkit-box-flex: 1;\n  -ms-flex-positive: 1;\n  flex-grow: 1;\n  overflow-x: hidden; }\n\n.ag-bl-normal-center {\n  height: 100%; }\n\n.ag-bl-dont-fill {\n  position: relative; }\n\n.ag-body {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  width: 100%; }\n\n.ag-layout-normal .ag-body {\n  height: 100%;\n  position: absolute; }\n\n.ag-floating-top {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  white-space: nowrap;\n  width: 100%; }\n\n.ag-layout-normal .ag-floating-top {\n  left: 0;\n  position: absolute; }\n\n.ag-pinned-left-floating-top {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  float: left;\n  overflow: hidden;\n  position: relative; }\n\n.ag-layout-normal .ag-pinned-left-floating-top {\n  height: 100%; }\n\n.ag-pinned-right-floating-top {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  float: right;\n  overflow: hidden;\n  position: relative; }\n\n.ag-layout-normal .ag-pinned-right-floating-top {\n  height: 100%; }\n\n.ag-floating-top-viewport {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden; }\n\n.ag-layout-normal .ag-floating-top-viewport {\n  height: 100%; }\n\n.ag-floating-top-container {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap; }\n\n.ag-floating-bottom {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  white-space: nowrap;\n  width: 100%; }\n\n.ag-layout-normal .ag-floating-bottom {\n  left: 0;\n  position: absolute; }\n\n.ag-pinned-left-floating-bottom {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  float: left;\n  overflow: hidden;\n  position: relative; }\n\n.ag-layout-normal .ag-pinned-left-floating-bottom {\n  height: 100%; }\n\n.ag-pinned-right-floating-bottom {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  float: right;\n  overflow: hidden;\n  position: relative; }\n\n.ag-layout-normal .ag-pinned-right-floating-bottom {\n  height: 100%; }\n\n.ag-floating-bottom-viewport {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden; }\n\n.ag-layout-normal .ag-floating-bottom-viewport {\n  height: 100%; }\n\n.ag-floating-bottom-container {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap; }\n\n.ag-hacked-scroll .ag-pinned-left-cols-viewport {\n  float: left; }\n\n.ag-pinned-left-cols-container {\n  display: inline-block;\n  position: relative; }\n\n.ag-hacked-scroll .ag-pinned-right-cols-viewport {\n  float: right; }\n\n.ag-ltr .ag-hacked-scroll .ag-pinned-right-cols-viewport {\n  overflow-x: hidden;\n  overflow-y: auto; }\n\n.ag-ltr .ag-hacked-scroll .ag-pinned-left-cols-viewport {\n  overflow: hidden; }\n\n.ag-rtl .ag-hacked-scroll .ag-pinned-right-cols-viewport {\n  overflow: hidden; }\n\n.ag-rtl .ag-hacked-scroll .ag-pinned-left-cols-viewport {\n  overflow-x: hidden;\n  overflow-y: auto; }\n\n.ag-native-scroll .ag-pinned-right-cols-viewport {\n  float: right;\n  overflow-x: hidden;\n  overflow-y: auto; }\n\n.ag-native-scroll .ag-pinned-left-cols-viewport {\n  float: left;\n  overflow-x: hidden;\n  overflow-y: auto; }\n\n.ag-hide-scroll-bar {\n  margin-right: -16px;\n  overflow-y: scroll;\n  overflow-x: hidden; }\n\n.ag-pinned-right-cols-container {\n  display: inline-block;\n  position: relative; }\n\n.ag-layout-normal .ag-body-viewport-wrapper {\n  height: 100%; }\n\n.ag-body-viewport {\n  overflow-x: auto;\n  overflow-y: auto; }\n\n.ag-layout-normal .ag-body-viewport {\n  height: 100%; }\n\n.ag-full-width-viewport {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline;\n  height: 100%;\n  left: 0;\n  pointer-events: none;\n  position: absolute;\n  top: 0;\n  width: 100%; }\n\n.ag-hacked-scroll .ag-full-width-viewport {\n  overflow: hidden; }\n\n.ag-native-scroll .ag-full-width-viewport {\n  overflow-y: auto;\n  overflow-x: hidden; }\n\n.ag-full-width-container {\n  overflow: hidden;\n  position: relative;\n  width: 100%; }\n\n.ag-floating-bottom-full-width-container {\n  display: inline;\n  height: 100%;\n  left: 0;\n  overflow: hidden;\n  pointer-events: none;\n  position: absolute;\n  top: 0;\n  width: 100%; }\n\n.ag-floating-top-full-width-container {\n  display: inline;\n  height: 100%;\n  left: 0;\n  overflow: hidden;\n  pointer-events: none;\n  position: absolute;\n  top: 0;\n  width: 100%; }\n\n.ag-full-width-row {\n  overflow: hidden;\n  pointer-events: all; }\n\n.ag-layout-normal .ag-body-container {\n  display: inline-block;\n  margin-bottom: -2px;\n  position: relative; }\n\n.ag-layout-auto-height .ag-body-container {\n  display: block;\n  position: relative; }\n\n.ag-row-animation .ag-row {\n  -webkit-transition: height 0.4s, background-color 0.1s, opacity 0.2s, -webkit-transform 0.4s;\n  transition: height 0.4s, background-color 0.1s, opacity 0.2s, -webkit-transform 0.4s;\n  transition: transform 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;\n  transition: transform 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s, -webkit-transform 0.4s; }\n\n.ag-row-no-animation .ag-row {\n  -webkit-transition: background-color 0.1s;\n  transition: background-color 0.1s; }\n\n.ag-row {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box; }\n\n.ag-layout-normal .ag-row {\n  position: absolute;\n  white-space: nowrap;\n  width: 100%; }\n\n.ag-layout-auto-height .ag-row {\n  position: relative;\n  white-space: nowrap;\n  width: 100%; }\n\n.ag-layout-for-print .ag-row {\n  position: relative; }\n\n.ag-column-moving .ag-cell {\n  -webkit-transition: left 0.2s;\n  transition: left 0.2s; }\n\n.ag-column-moving .ag-header-cell {\n  -webkit-transition: left 0.2s;\n  transition: left 0.2s; }\n\n.ag-column-moving .ag-header-group-cell {\n  -webkit-transition: left 0.2s, width 0.2s;\n  transition: left 0.2s, width 0.2s; }\n\n.ag-column-drop {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  width: 100%; }\n\n.ag-column-drop-vertical {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -ms-flex-direction: column;\n  flex-direction: column;\n  -webkit-box-flex: 1;\n  -ms-flex-positive: 1;\n  flex-grow: 1;\n  height: 50px;\n  overflow: hidden; }\n  .ag-column-drop-vertical .ag-column-drop-list {\n    -webkit-box-flex: 1;\n    -ms-flex-positive: 1;\n    flex-grow: 1;\n    height: 20px;\n    overflow-x: auto; }\n  .ag-column-drop-vertical .ag-column-drop-cell {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex; }\n    .ag-column-drop-vertical .ag-column-drop-cell .ag-column-drop-cell-text {\n      overflow: hidden;\n      -webkit-box-flex: 1;\n      -ms-flex: 1;\n      flex: 1;\n      text-overflow: ellipsis;\n      white-space: nowrap; }\n  .ag-column-drop-vertical .ag-column-drop-empty-message {\n    display: block; }\n  .ag-column-drop-vertical .ag-column-drop-cell-button {\n    line-height: 16px; }\n\n.ag-ltr .ag-column-drop-vertical .ag-column-drop-cell-button {\n  float: right; }\n\n.ag-rtl .ag-column-drop-vertical .ag-column-drop-cell-button {\n  float: left; }\n\n.ag-column-drop-horizontal {\n  white-space: nowrap; }\n  .ag-column-drop-horizontal .ag-column-drop-cell {\n    display: inline-block; }\n  .ag-column-drop-horizontal .ag-column-drop-empty-message {\n    display: inline-block; }\n  .ag-column-drop-horizontal .ag-column-drop-list {\n    height: 100%; }\n\n.ag-cell {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: absolute;\n  text-overflow: ellipsis;\n  white-space: nowrap; }\n\n.ag-cell-with-height {\n  height: 100%; }\n\n.ag-value-slide-out {\n  margin-right: 5px;\n  opacity: 1;\n  -webkit-transition: opacity 3s, margin-right 3s;\n  transition: opacity 3s, margin-right 3s;\n  -webkit-transition-timing-function: linear;\n  transition-timing-function: linear; }\n\n.ag-value-slide-out-end {\n  margin-right: 10px;\n  opacity: 0; }\n\n.ag-opacity-zero {\n  opacity: 0; }\n\n.ag-cell-edit-input {\n  height: 100%;\n  width: 100%; }\n\n.ag-group-cell-entire-row {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  height: 100%;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  width: 100%; }\n\n.ag-footer-cell-entire-row {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  height: 100%;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  width: 100%; }\n\n.ag-large .ag-root {\n  font-size: 20px; }\n\n.ag-popup-editor {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-menu {\n  max-height: 100%;\n  overflow-y: auto;\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-menu-column-select-wrapper {\n  height: 300px;\n  overflow: auto;\n  width: 200px; }\n\n.ag-menu-list {\n  border-collapse: collapse;\n  display: table; }\n\n.ag-menu-option {\n  display: table-row; }\n\n.ag-menu-option-text {\n  display: table-cell; }\n\n.ag-menu-option-shortcut {\n  display: table-cell; }\n\n.ag-menu-option-icon {\n  display: table-cell; }\n\n.ag-menu-option-popup-pointer {\n  display: table-cell; }\n\n.ag-menu-separator {\n  display: table-row; }\n\n.ag-menu-separator-cell {\n  display: table-cell; }\n\n.ag-virtual-list-viewport {\n  height: 100%;\n  overflow-x: auto;\n  width: 100%; }\n\n.ag-virtual-list-container {\n  overflow: hidden;\n  position: relative; }\n\n.ag-rich-select {\n  cursor: default;\n  outline: none; }\n\n.ag-rich-select-row {\n  white-space: nowrap; }\n\n.ag-rich-select-list {\n  height: 200px;\n  width: 200px; }\n\n.ag-set-filter-list {\n  height: 200px;\n  width: 200px; }\n\n.ag-set-filter-item {\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap; }\n\n.ag-virtual-list-item {\n  position: absolute;\n  width: 100%; }\n  .ag-virtual-list-item span:empty:not(.ag-icon) {\n    border-left: 1px solid transparent; }\n\n.ag-filter-filter {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  width: 100%; }\n\n.ag-floating-filter-body input {\n  height: 19px;\n  margin: 0;\n  width: 100%; }\n\n.ag-floating-filter-full-body input {\n  height: 19px;\n  margin: 0;\n  width: 100%; }\n\n.ag-filter-select {\n  margin: 4px 4px 0 4px;\n  width: 110px; }\n\n.ag-list-selection {\n  cursor: default;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-column-panel {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  cursor: default;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  width: 200px; }\n\n.ag-layout-normal .ag-column-panel {\n  height: 100%; }\n\n.ag-layout-normal .ag-column-panel-center {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -ms-flex-direction: column;\n  flex-direction: column;\n  height: 100%; }\n\n.ag-column-container {\n  -webkit-box-flex: 1;\n  -ms-flex-positive: 1;\n  flex-grow: 1;\n  height: 50px;\n  overflow: auto; }\n\n.ag-column-select-indent {\n  display: inline-block; }\n\n.ag-ltr .ag-column-select-column {\n  margin-left: 16px; }\n\n.ag-rtl .ag-column-select-column {\n  margin-right: 16px; }\n\n.ag-column-select-column,\n.ag-column-select-column-group {\n  -webkit-box-align: stretch;\n  -ms-flex-align: stretch;\n  align-items: stretch;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -ms-flex-direction: row;\n  flex-direction: row;\n  -ms-flex-wrap: nowrap;\n  flex-wrap: nowrap;\n  text-overflow: ellipsis;\n  white-space: nowrap; }\n  .ag-column-select-column .ag-column-select-label,\n  .ag-column-select-column .ag-column-select-column-group-label,\n  .ag-column-select-column-group .ag-column-select-label,\n  .ag-column-select-column-group .ag-column-select-column-group-label {\n    -webkit-box-flex: 1;\n    -ms-flex-positive: 1;\n    flex-grow: 1;\n    -ms-flex-negative: 1;\n    flex-shrink: 1;\n    overflow: hidden;\n    text-overflow: ellipsis; }\n  .ag-column-select-column .ag-column-drag,\n  .ag-column-select-column-group .ag-column-drag {\n    min-width: 16px;\n    -webkit-box-flex: 0;\n    -ms-flex-positive: 0;\n    flex-grow: 0;\n    -ms-flex-negative: 0;\n    flex-shrink: 0; }\n\n.ag-column-select-panel {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n  -ms-flex-direction: column;\n  flex-direction: column;\n  overflow: hidden; }\n\n.ag-tool-panel .ag-column-select-panel {\n  -webkit-box-flex: 4;\n  -ms-flex-positive: 4;\n  flex-grow: 4; }\n\n.ag-tool-panel-horizontal-resize {\n  cursor: col-resize;\n  height: 100%;\n  position: absolute;\n  top: 0;\n  width: 5px;\n  z-index: 1; }\n\n.ag-rtl .ag-tool-panel-horizontal-resize {\n  float: right;\n  -webkit-transform: translateX(3px);\n  transform: translateX(3px); }\n\n.ag-ltr .ag-tool-panel-horizontal-resize {\n  float: left;\n  -webkit-transform: translateX(-3px);\n  transform: translateX(-3px); }\n\n.ag-menu-column-select-wrapper .ag-column-select-panel {\n  height: 100%; }\n\n.ag-hidden {\n  display: none !important; }\n\n.ag-visibility-hidden {\n  visibility: hidden !important; }\n\n.ag-faded {\n  opacity: 0.3; }\n\n.ag-width-half {\n  display: inline-block;\n  width: 50%; }\n\n.ag-shake-left-to-right {\n  -webkit-animation-direction: alternate;\n  animation-direction: alternate;\n  -webkit-animation-duration: 0.2s;\n  animation-duration: 0.2s;\n  -webkit-animation-iteration-count: infinite;\n  animation-iteration-count: infinite;\n  -webkit-animation-name: ag-shake-left-to-right;\n  animation-name: ag-shake-left-to-right; }\n\n@-webkit-keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px; }\n  to {\n    padding-left: 2px;\n    padding-right: 6px; } }\n\n@keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px; }\n  to {\n    padding-left: 2px;\n    padding-right: 6px; } }\n\n/* icons are used outside of the grid root (in the ghost) */\n.ag-icon-aggregation {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOS41IDIuNWgtNmwyIDMuNS0yIDMuNWg2IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZT0iIzAwMCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-arrows {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgNmwtMS40MSAxLjQxTDE2LjE3IDlINHYyaDEyLjE3bC0xLjU4IDEuNTlMMTYgMTRsNC00eiIvPjxwYXRoIGQ9Ik00IDZsMS40MSAxLjQxTDMuODMgOUgxNnYySDMuODNsMS41OCAxLjU5TDQgMTRsLTQtNHoiLz48cGF0aCBkPSJNNiAxNmwxLjQxLTEuNDFMOSAxNi4xN1Y0aDJ2MTIuMTdsMS41OS0xLjU4TDE0IDE2bC00IDR6Ii8+PHBhdGggZD0iTTE0IDRsLTEuNDEgMS40MUwxMSAzLjgzVjE2SDlWMy44M0w3LjQxIDUuNDEgNiA0bDQtNHoiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-asc {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-checkbox-checked-readonly {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik05IDNMNiA4LjVsLTIuNS0yIi8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-checkbox-checked {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik05IDNMNiA4LjVsLTIuNS0yIi8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-checkbox-indeterminate-readonly {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNNCA1aDR2Mkg0eiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-checkbox-indeterminate {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNNCA1aDR2Mkg0eiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-checkbox-unchecked-readonly {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-checkbox-unchecked {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-column {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDR2Mkgxem0wIDNoNHY3SDF6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-columns {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDR2Mkgxem02IDBoNHYySDd6TTEgNWg0djJIMXptNiAwaDR2Mkg3ek0xIDloNHYySDF6bTYgMGg0djJIN3oiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-contracted {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxyZWN0IHN0cm9rZS1vcGFjaXR5PSIuNSIgc3Ryb2tlPSIjMDAwIiB4PSIxLjUiIHk9IjEuNSIgd2lkdGg9IjkiIGhlaWdodD0iOSIgcng9IjEiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNOSA1djJIM1Y1eiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-copy {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTQuNSA0LjVoNXY1aC01eiIvPjxwYXRoIGQ9Ik03LjUgMi41aC01djVoMnYyaDV2LTVoLTJ2LTJ6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-cut {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTMgMy4xMmMuNjY3LjA3OCAzIDEuNzQ1IDcgNS0uMzI2LjIwNC0uNjU5LjIwNC0xIDAtLjM0MS0uMjA2LTEuNjc0LTEuMjA2LTQtMyAwIC42NjYtLjY2Ny42NjYtMiAwLTItMS0xLTIuMTIgMC0yeiIvPjxwYXRoIGQ9Ik0zIDguMjY0Yy42NjctLjA4IDMtMS43NDYgNy01LS4zMjYtLjIwNS0uNjU5LS4yMDUtMSAwLS4zNDEuMjA0LTEuNjc0IDEuMjA0LTQgMyAwLS42NjctLjY2Ny0uNjY3LTIgMC0yIDEtMSAyLjExOSAwIDJ6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-desc {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-expanded {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxyZWN0IHN0cm9rZS1vcGFjaXR5PSIuNSIgc3Ryb2tlPSIjMDAwIiB4PSIxLjUiIHk9IjEuNSIgd2lkdGg9IjkiIGhlaWdodD0iOSIgcng9IjEiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNNSAzaDJ2Nkg1eiIvPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik05IDV2MkgzVjV6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-eye-slash {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zLjAwMSAzLjkwOEwzIDRhMyAzIDAgMSAwIDUuOTk5LS4wOTJBNS4yNDggNS4yNDggMCAwIDAgNiAzYy0xLjEgMC0yLjEuMzAzLTIuOTk5LjkwOHoiIGZpbGw9IiMwMDAiLz48cGF0aCBkPSJNNCA0LjVjLjY2Ny0uMzMzIDEuNjY3LS41IDMtLjUiIHN0cm9rZT0iIzk3OTc5NyIvPjxwYXRoIGQ9Ik0xIDZjMS4zMzMtMiAzLTMgNS0zczMuNjY3IDEgNSAzQzkuNjY3IDggOCA5IDYgOVMyLjMzMyA4IDEgNnoiIHN0cm9rZT0iIzAwMCIvPjxwYXRoIGQ9Ik00LjAwNCAyLjgzNWw0Ljk5MiA2LjMzIiBzdHJva2U9IiMwMDAiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiLz48cGF0aCBkPSJNMy4wMDQgMi44MzVsNC45OTIgNi4zMyIgc3Ryb2tlPSIjRkZGIiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIi8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-eye {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zLjAwMSAzLjkwOEwzIDRhMyAzIDAgMSAwIDUuOTk5LS4wOTJBNS4yNDggNS4yNDggMCAwIDAgNiAzYy0xLjEgMC0yLjEuMzAzLTIuOTk5LjkwOHoiIGZpbGw9IiMwMDAiLz48cGF0aCBkPSJNNCA0LjVjLjY2Ny0uMzMzIDEuNjY3LS41IDMtLjUiIHN0cm9rZT0iIzk3OTc5NyIvPjxwYXRoIGQ9Ik0xIDZjMS4zMzMtMiAzLTMgNS0zczMuNjY3IDEgNSAzQzkuNjY3IDggOCA5IDYgOVMyLjMzMyA4IDEgNnoiIHN0cm9rZT0iIzAwMCIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-filter {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAyaDEwTDcgNnY1TDUgOVY2TDEgMnptNCA0djFoMlY2SDV6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-group {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNSAxLjVoM3YyaC0zem0wIDRoM3YyaC0zem0wIDRoM3YyaC0zeiIvPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik0yIDNoMXY4SDJ6bTEgM2g0djFIM3ptMi00aDN2MUg1eiIvPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik0yIDEwaDV2MUgyeiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTEuNSAxLjVoM3YyaC0zeiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-indeterminate {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zLjA1NiA0LjU4MWEzLjAwMSAzLjAwMSAwIDAgMCA1Ljg4OCAwQzguMDU5IDQuMTk0IDcuMDc4IDQgNiA0Yy0xLjA3OCAwLTIuMDYuMTk0LTIuOTQ0LjU4MXoiIGZpbGw9IiMwMDAiLz48cGF0aCBkPSJNNCA1LjVjLjY2Ny0uMzMzIDEuNjY3LS41IDMtLjUiIHN0cm9rZT0iIzk3OTc5NyIvPjxwYXRoIGQ9Ik0xIDZjMS4zMzMtMS4zMzMgMy0yIDUtMnMzLjY2Ny42NjcgNSAyQzkuNjY3IDcuMzMzIDggOCA2IDhzLTMuNjY3LS42NjctNS0yeiIgc3Ryb2tlPSIjMDAwIi8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-left {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01LjUgMS41aDJ2OWgtMnoiLz48cGF0aCBkPSJNNy45OTMgNC43VjIuOTkzaC02djZIMy43VjQuN2g0LjI5M3oiIGlkPSJiIi8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGcgdHJhbnNmb3JtPSJyb3RhdGUoOTAgNi41IDYpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNNiAyaDF2OEg2eiIvPjwvZz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtNDUgNC45OTMgNS45OTMpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNiIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNNy40OTMgNC4ydi0uNzA3aC01djVIMy4yVjQuMmg0LjI5M3oiLz48L2c+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-loading {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDFoMnYzSDV6Ii8+PHBhdGggaWQ9ImIiIGQ9Ik01IDhoMnYzSDV6Ii8+PHBhdGggaWQ9ImMiIGQ9Ik0xIDVoM3YySDF6Ii8+PHBhdGggaWQ9ImQiIGQ9Ik04IDVoM3YySDh6Ii8+PHBhdGggaWQ9ImUiIGQ9Ik00IDBoMnYzSDR6Ii8+PHBhdGggaWQ9ImYiIGQ9Ik00IDdoMnYzSDR6Ii8+PHBhdGggaWQ9ImciIGQ9Ik0wIDRoM3YySDB6Ii8+PHBhdGggaWQ9ImgiIGQ9Ik03IDRoM3YySDd6Ii8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYSIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTUuNSAxLjVoMXYyaC0xeiIvPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiM5Nzk3OTciIGQ9Ik01LjUgOC41aDF2MmgtMXoiLz48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNjIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNMS41IDUuNWgydjFoLTJ6Ii8+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjZCIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTguNSA1LjVoMnYxaC0yeiIvPjxnIG9wYWNpdHk9Ii43MTQiPjxnIHRyYW5zZm9ybT0icm90YXRlKDQ1IDQuMjkzIDYuNzA3KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjZSIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTQuNS41aDF2MmgtMXoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNC4yOTMgNi43MDcpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNmIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNNC41IDcuNWgxdjJoLTF6Ii8+PC9nPjxnIHRyYW5zZm9ybT0icm90YXRlKDQ1IDQuMjkzIDYuNzA3KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjZyIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTS41IDQuNWgydjFoLTJ6Ii8+PC9nPjxnIHRyYW5zZm9ybT0icm90YXRlKDQ1IDQuMjkzIDYuNzA3KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjaCIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTcuNSA0LjVoMnYxaC0yeiIvPjwvZz48L2c+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-menu {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-minus {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiA1aDh2MkgyeiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-none {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-not-allowed {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGNpcmNsZSBjeD0iNiIgY3k9IjYiIHI9IjQiLz48cGF0aCBkPSJNOC41IDMuNUwzLjQwMSA4LjU5OSIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-paste {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTIuNSAyLjVoN3Y3aC03eiIvPjxwYXRoIGQ9Ik02LjUgMS41aC0xdjJoLTF2MWgzdi0xaC0xdi0yeiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-pin {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik0zIDJoNnYxSDh2NGwyIDFIN2wtMSAzLTEtM0gybDItMVYzSDN6Ii8+PHBhdGggZmlsbC1vcGFjaXR5PSIuNSIgZmlsbD0iI0ZGRiIgZD0iTTUgM2gxdjRINXoiLz48cGF0aCBmaWxsLW9wYWNpdHk9Ii4yOCIgZmlsbD0iI0ZGRiIgZD0iTTQgM2gxdjNINHoiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-pivot {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHJlY3QgeD0iMS41IiB5PSIxLjUiIHdpZHRoPSI5IiBoZWlnaHQ9IjkiIHJ4PSIxIi8+PHBhdGggZD0iTTEwLjUgMy41aC05bTItMnY5IiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIi8+PHBhdGggZD0iTTcuNSA2LjVsMS0xIDEgMW0tMyAxbC0xIDEgMSAxIi8+PHBhdGggZD0iTTguNSA1LjV2M2gtMyIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-plus {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik01IDJoMnY4SDV6Ii8+PHBhdGggZD0iTTIgNWg4djJIMnoiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-right {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik00LjUgMS41aDJ2OWgtMnoiLz48cGF0aCBkPSJNOS45OTMgNC43VjIuOTkzaC02djZINS43VjQuN2g0LjI5M3oiIGlkPSJiIi8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGcgdHJhbnNmb3JtPSJyb3RhdGUoOTAgNS41IDYpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNNSAyaDF2OEg1eiIvPjwvZz48ZyB0cmFuc2Zvcm09InNjYWxlKC0xIDEpIHJvdGF0ZSgtNDUgMCAyMi44NzQpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNiIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNOS40OTMgNC4ydi0uNzA3aC01djVINS4yVjQuMmg0LjI5M3oiLz48L2c+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-small-left {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMyA2bDQtNHY4eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-small-right {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNSAybDQgNC00IDR6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-small-up {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiA3bDQtNCA0IDR6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-small-down {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiA1aDhMNiA5eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-tick {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMS41IDUuNWwzIDMgNi02IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZT0iIzAwMCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-cross {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiAxMGw4LThtMCA4TDIgMiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-tree-open {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiA1aDhMNiA5eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-tree-closed {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNSAybDQgNC00IDR6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-tree-indeterminate {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiA1aDh2MkgyeiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.loading-filter {\n  background-color: #e6e6e6;\n  height: 100%;\n  padding: 5px;\n  position: absolute;\n  top: 34px;\n  width: 100%;\n  z-index: 1; }\n\n.ag-details-row {\n  height: 100%;\n  width: 100%; }\n\n.ag-details-grid {\n  height: 100%;\n  width: 100%; }\n\n.ag-column-select-header {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n  -ms-flex-direction: row;\n  flex-direction: row; }\n\n.ag-ltr .ag-toolpanel-indent-1 {\n  padding-left: 10px; }\n\n.ag-rtl .ag-toolpanel-indent-1 {\n  padding-right: 10px; }\n\n.ag-ltr .ag-row-group-indent-1 {\n  padding-left: 10px; }\n\n.ag-rtl .ag-row-group-indent-1 {\n  padding-right: 10px; }\n\n.ag-ltr .ag-toolpanel-indent-2 {\n  padding-left: 20px; }\n\n.ag-rtl .ag-toolpanel-indent-2 {\n  padding-right: 20px; }\n\n.ag-ltr .ag-row-group-indent-2 {\n  padding-left: 20px; }\n\n.ag-rtl .ag-row-group-indent-2 {\n  padding-right: 20px; }\n\n.ag-ltr .ag-toolpanel-indent-3 {\n  padding-left: 30px; }\n\n.ag-rtl .ag-toolpanel-indent-3 {\n  padding-right: 30px; }\n\n.ag-ltr .ag-row-group-indent-3 {\n  padding-left: 30px; }\n\n.ag-rtl .ag-row-group-indent-3 {\n  padding-right: 30px; }\n\n.ag-ltr .ag-toolpanel-indent-4 {\n  padding-left: 40px; }\n\n.ag-rtl .ag-toolpanel-indent-4 {\n  padding-right: 40px; }\n\n.ag-ltr .ag-row-group-indent-4 {\n  padding-left: 40px; }\n\n.ag-rtl .ag-row-group-indent-4 {\n  padding-right: 40px; }\n\n.ag-ltr .ag-toolpanel-indent-5 {\n  padding-left: 50px; }\n\n.ag-rtl .ag-toolpanel-indent-5 {\n  padding-right: 50px; }\n\n.ag-ltr .ag-row-group-indent-5 {\n  padding-left: 50px; }\n\n.ag-rtl .ag-row-group-indent-5 {\n  padding-right: 50px; }\n\n.ag-ltr .ag-toolpanel-indent-6 {\n  padding-left: 60px; }\n\n.ag-rtl .ag-toolpanel-indent-6 {\n  padding-right: 60px; }\n\n.ag-ltr .ag-row-group-indent-6 {\n  padding-left: 60px; }\n\n.ag-rtl .ag-row-group-indent-6 {\n  padding-right: 60px; }\n\n.ag-ltr .ag-toolpanel-indent-7 {\n  padding-left: 70px; }\n\n.ag-rtl .ag-toolpanel-indent-7 {\n  padding-right: 70px; }\n\n.ag-ltr .ag-row-group-indent-7 {\n  padding-left: 70px; }\n\n.ag-rtl .ag-row-group-indent-7 {\n  padding-right: 70px; }\n\n.ag-ltr .ag-toolpanel-indent-8 {\n  padding-left: 80px; }\n\n.ag-rtl .ag-toolpanel-indent-8 {\n  padding-right: 80px; }\n\n.ag-ltr .ag-row-group-indent-8 {\n  padding-left: 80px; }\n\n.ag-rtl .ag-row-group-indent-8 {\n  padding-right: 80px; }\n\n.ag-ltr .ag-toolpanel-indent-9 {\n  padding-left: 90px; }\n\n.ag-rtl .ag-toolpanel-indent-9 {\n  padding-right: 90px; }\n\n.ag-ltr .ag-row-group-indent-9 {\n  padding-left: 90px; }\n\n.ag-rtl .ag-row-group-indent-9 {\n  padding-right: 90px; }\n\n.ag-ltr .ag-toolpanel-indent-10 {\n  padding-left: 100px; }\n\n.ag-rtl .ag-toolpanel-indent-10 {\n  padding-right: 100px; }\n\n.ag-ltr .ag-row-group-indent-10 {\n  padding-left: 100px; }\n\n.ag-rtl .ag-row-group-indent-10 {\n  padding-right: 100px; }\n\n.ag-ltr .ag-toolpanel-indent-11 {\n  padding-left: 110px; }\n\n.ag-rtl .ag-toolpanel-indent-11 {\n  padding-right: 110px; }\n\n.ag-ltr .ag-row-group-indent-11 {\n  padding-left: 110px; }\n\n.ag-rtl .ag-row-group-indent-11 {\n  padding-right: 110px; }\n\n.ag-ltr .ag-toolpanel-indent-12 {\n  padding-left: 120px; }\n\n.ag-rtl .ag-toolpanel-indent-12 {\n  padding-right: 120px; }\n\n.ag-ltr .ag-row-group-indent-12 {\n  padding-left: 120px; }\n\n.ag-rtl .ag-row-group-indent-12 {\n  padding-right: 120px; }\n\n.ag-ltr .ag-toolpanel-indent-13 {\n  padding-left: 130px; }\n\n.ag-rtl .ag-toolpanel-indent-13 {\n  padding-right: 130px; }\n\n.ag-ltr .ag-row-group-indent-13 {\n  padding-left: 130px; }\n\n.ag-rtl .ag-row-group-indent-13 {\n  padding-right: 130px; }\n\n.ag-ltr .ag-toolpanel-indent-14 {\n  padding-left: 140px; }\n\n.ag-rtl .ag-toolpanel-indent-14 {\n  padding-right: 140px; }\n\n.ag-ltr .ag-row-group-indent-14 {\n  padding-left: 140px; }\n\n.ag-rtl .ag-row-group-indent-14 {\n  padding-right: 140px; }\n\n.ag-ltr .ag-toolpanel-indent-15 {\n  padding-left: 150px; }\n\n.ag-rtl .ag-toolpanel-indent-15 {\n  padding-right: 150px; }\n\n.ag-ltr .ag-row-group-indent-15 {\n  padding-left: 150px; }\n\n.ag-rtl .ag-row-group-indent-15 {\n  padding-right: 150px; }\n\n.ag-ltr .ag-toolpanel-indent-16 {\n  padding-left: 160px; }\n\n.ag-rtl .ag-toolpanel-indent-16 {\n  padding-right: 160px; }\n\n.ag-ltr .ag-row-group-indent-16 {\n  padding-left: 160px; }\n\n.ag-rtl .ag-row-group-indent-16 {\n  padding-right: 160px; }\n\n.ag-ltr .ag-toolpanel-indent-17 {\n  padding-left: 170px; }\n\n.ag-rtl .ag-toolpanel-indent-17 {\n  padding-right: 170px; }\n\n.ag-ltr .ag-row-group-indent-17 {\n  padding-left: 170px; }\n\n.ag-rtl .ag-row-group-indent-17 {\n  padding-right: 170px; }\n\n.ag-ltr .ag-toolpanel-indent-18 {\n  padding-left: 180px; }\n\n.ag-rtl .ag-toolpanel-indent-18 {\n  padding-right: 180px; }\n\n.ag-ltr .ag-row-group-indent-18 {\n  padding-left: 180px; }\n\n.ag-rtl .ag-row-group-indent-18 {\n  padding-right: 180px; }\n\n.ag-ltr .ag-toolpanel-indent-19 {\n  padding-left: 190px; }\n\n.ag-rtl .ag-toolpanel-indent-19 {\n  padding-right: 190px; }\n\n.ag-ltr .ag-row-group-indent-19 {\n  padding-left: 190px; }\n\n.ag-rtl .ag-row-group-indent-19 {\n  padding-right: 190px; }\n\n.ag-ltr .ag-toolpanel-indent-20 {\n  padding-left: 200px; }\n\n.ag-rtl .ag-toolpanel-indent-20 {\n  padding-right: 200px; }\n\n.ag-ltr .ag-row-group-indent-20 {\n  padding-left: 200px; }\n\n.ag-rtl .ag-row-group-indent-20 {\n  padding-right: 200px; }\n\n.ag-ltr .ag-toolpanel-indent-21 {\n  padding-left: 210px; }\n\n.ag-rtl .ag-toolpanel-indent-21 {\n  padding-right: 210px; }\n\n.ag-ltr .ag-row-group-indent-21 {\n  padding-left: 210px; }\n\n.ag-rtl .ag-row-group-indent-21 {\n  padding-right: 210px; }\n\n.ag-ltr .ag-toolpanel-indent-22 {\n  padding-left: 220px; }\n\n.ag-rtl .ag-toolpanel-indent-22 {\n  padding-right: 220px; }\n\n.ag-ltr .ag-row-group-indent-22 {\n  padding-left: 220px; }\n\n.ag-rtl .ag-row-group-indent-22 {\n  padding-right: 220px; }\n\n.ag-ltr .ag-toolpanel-indent-23 {\n  padding-left: 230px; }\n\n.ag-rtl .ag-toolpanel-indent-23 {\n  padding-right: 230px; }\n\n.ag-ltr .ag-row-group-indent-23 {\n  padding-left: 230px; }\n\n.ag-rtl .ag-row-group-indent-23 {\n  padding-right: 230px; }\n\n.ag-ltr .ag-toolpanel-indent-24 {\n  padding-left: 240px; }\n\n.ag-rtl .ag-toolpanel-indent-24 {\n  padding-right: 240px; }\n\n.ag-ltr .ag-row-group-indent-24 {\n  padding-left: 240px; }\n\n.ag-rtl .ag-row-group-indent-24 {\n  padding-right: 240px; }\n\n.ag-ltr .ag-toolpanel-indent-25 {\n  padding-left: 250px; }\n\n.ag-rtl .ag-toolpanel-indent-25 {\n  padding-right: 250px; }\n\n.ag-ltr .ag-row-group-indent-25 {\n  padding-left: 250px; }\n\n.ag-rtl .ag-row-group-indent-25 {\n  padding-right: 250px; }\n\n.ag-ltr .ag-toolpanel-indent-26 {\n  padding-left: 260px; }\n\n.ag-rtl .ag-toolpanel-indent-26 {\n  padding-right: 260px; }\n\n.ag-ltr .ag-row-group-indent-26 {\n  padding-left: 260px; }\n\n.ag-rtl .ag-row-group-indent-26 {\n  padding-right: 260px; }\n\n.ag-ltr .ag-toolpanel-indent-27 {\n  padding-left: 270px; }\n\n.ag-rtl .ag-toolpanel-indent-27 {\n  padding-right: 270px; }\n\n.ag-ltr .ag-row-group-indent-27 {\n  padding-left: 270px; }\n\n.ag-rtl .ag-row-group-indent-27 {\n  padding-right: 270px; }\n\n.ag-ltr .ag-toolpanel-indent-28 {\n  padding-left: 280px; }\n\n.ag-rtl .ag-toolpanel-indent-28 {\n  padding-right: 280px; }\n\n.ag-ltr .ag-row-group-indent-28 {\n  padding-left: 280px; }\n\n.ag-rtl .ag-row-group-indent-28 {\n  padding-right: 280px; }\n\n.ag-ltr .ag-toolpanel-indent-29 {\n  padding-left: 290px; }\n\n.ag-rtl .ag-toolpanel-indent-29 {\n  padding-right: 290px; }\n\n.ag-ltr .ag-row-group-indent-29 {\n  padding-left: 290px; }\n\n.ag-rtl .ag-row-group-indent-29 {\n  padding-right: 290px; }\n\n.ag-ltr .ag-toolpanel-indent-30 {\n  padding-left: 300px; }\n\n.ag-rtl .ag-toolpanel-indent-30 {\n  padding-right: 300px; }\n\n.ag-ltr .ag-row-group-indent-30 {\n  padding-left: 300px; }\n\n.ag-rtl .ag-row-group-indent-30 {\n  padding-right: 300px; }\n\n.ag-ltr .ag-toolpanel-indent-31 {\n  padding-left: 310px; }\n\n.ag-rtl .ag-toolpanel-indent-31 {\n  padding-right: 310px; }\n\n.ag-ltr .ag-row-group-indent-31 {\n  padding-left: 310px; }\n\n.ag-rtl .ag-row-group-indent-31 {\n  padding-right: 310px; }\n\n.ag-ltr .ag-toolpanel-indent-32 {\n  padding-left: 320px; }\n\n.ag-rtl .ag-toolpanel-indent-32 {\n  padding-right: 320px; }\n\n.ag-ltr .ag-row-group-indent-32 {\n  padding-left: 320px; }\n\n.ag-rtl .ag-row-group-indent-32 {\n  padding-right: 320px; }\n\n.ag-ltr .ag-toolpanel-indent-33 {\n  padding-left: 330px; }\n\n.ag-rtl .ag-toolpanel-indent-33 {\n  padding-right: 330px; }\n\n.ag-ltr .ag-row-group-indent-33 {\n  padding-left: 330px; }\n\n.ag-rtl .ag-row-group-indent-33 {\n  padding-right: 330px; }\n\n.ag-ltr .ag-toolpanel-indent-34 {\n  padding-left: 340px; }\n\n.ag-rtl .ag-toolpanel-indent-34 {\n  padding-right: 340px; }\n\n.ag-ltr .ag-row-group-indent-34 {\n  padding-left: 340px; }\n\n.ag-rtl .ag-row-group-indent-34 {\n  padding-right: 340px; }\n\n.ag-ltr .ag-toolpanel-indent-35 {\n  padding-left: 350px; }\n\n.ag-rtl .ag-toolpanel-indent-35 {\n  padding-right: 350px; }\n\n.ag-ltr .ag-row-group-indent-35 {\n  padding-left: 350px; }\n\n.ag-rtl .ag-row-group-indent-35 {\n  padding-right: 350px; }\n\n.ag-ltr .ag-toolpanel-indent-36 {\n  padding-left: 360px; }\n\n.ag-rtl .ag-toolpanel-indent-36 {\n  padding-right: 360px; }\n\n.ag-ltr .ag-row-group-indent-36 {\n  padding-left: 360px; }\n\n.ag-rtl .ag-row-group-indent-36 {\n  padding-right: 360px; }\n\n.ag-ltr .ag-toolpanel-indent-37 {\n  padding-left: 370px; }\n\n.ag-rtl .ag-toolpanel-indent-37 {\n  padding-right: 370px; }\n\n.ag-ltr .ag-row-group-indent-37 {\n  padding-left: 370px; }\n\n.ag-rtl .ag-row-group-indent-37 {\n  padding-right: 370px; }\n\n.ag-ltr .ag-toolpanel-indent-38 {\n  padding-left: 380px; }\n\n.ag-rtl .ag-toolpanel-indent-38 {\n  padding-right: 380px; }\n\n.ag-ltr .ag-row-group-indent-38 {\n  padding-left: 380px; }\n\n.ag-rtl .ag-row-group-indent-38 {\n  padding-right: 380px; }\n\n.ag-ltr .ag-toolpanel-indent-39 {\n  padding-left: 390px; }\n\n.ag-rtl .ag-toolpanel-indent-39 {\n  padding-right: 390px; }\n\n.ag-ltr .ag-row-group-indent-39 {\n  padding-left: 390px; }\n\n.ag-rtl .ag-row-group-indent-39 {\n  padding-right: 390px; }\n\n.ag-ltr .ag-toolpanel-indent-40 {\n  padding-left: 400px; }\n\n.ag-rtl .ag-toolpanel-indent-40 {\n  padding-right: 400px; }\n\n.ag-ltr .ag-row-group-indent-40 {\n  padding-left: 400px; }\n\n.ag-rtl .ag-row-group-indent-40 {\n  padding-right: 400px; }\n\n.ag-ltr .ag-toolpanel-indent-41 {\n  padding-left: 410px; }\n\n.ag-rtl .ag-toolpanel-indent-41 {\n  padding-right: 410px; }\n\n.ag-ltr .ag-row-group-indent-41 {\n  padding-left: 410px; }\n\n.ag-rtl .ag-row-group-indent-41 {\n  padding-right: 410px; }\n\n.ag-ltr .ag-toolpanel-indent-42 {\n  padding-left: 420px; }\n\n.ag-rtl .ag-toolpanel-indent-42 {\n  padding-right: 420px; }\n\n.ag-ltr .ag-row-group-indent-42 {\n  padding-left: 420px; }\n\n.ag-rtl .ag-row-group-indent-42 {\n  padding-right: 420px; }\n\n.ag-ltr .ag-toolpanel-indent-43 {\n  padding-left: 430px; }\n\n.ag-rtl .ag-toolpanel-indent-43 {\n  padding-right: 430px; }\n\n.ag-ltr .ag-row-group-indent-43 {\n  padding-left: 430px; }\n\n.ag-rtl .ag-row-group-indent-43 {\n  padding-right: 430px; }\n\n.ag-ltr .ag-toolpanel-indent-44 {\n  padding-left: 440px; }\n\n.ag-rtl .ag-toolpanel-indent-44 {\n  padding-right: 440px; }\n\n.ag-ltr .ag-row-group-indent-44 {\n  padding-left: 440px; }\n\n.ag-rtl .ag-row-group-indent-44 {\n  padding-right: 440px; }\n\n.ag-ltr .ag-toolpanel-indent-45 {\n  padding-left: 450px; }\n\n.ag-rtl .ag-toolpanel-indent-45 {\n  padding-right: 450px; }\n\n.ag-ltr .ag-row-group-indent-45 {\n  padding-left: 450px; }\n\n.ag-rtl .ag-row-group-indent-45 {\n  padding-right: 450px; }\n\n.ag-ltr .ag-toolpanel-indent-46 {\n  padding-left: 460px; }\n\n.ag-rtl .ag-toolpanel-indent-46 {\n  padding-right: 460px; }\n\n.ag-ltr .ag-row-group-indent-46 {\n  padding-left: 460px; }\n\n.ag-rtl .ag-row-group-indent-46 {\n  padding-right: 460px; }\n\n.ag-ltr .ag-toolpanel-indent-47 {\n  padding-left: 470px; }\n\n.ag-rtl .ag-toolpanel-indent-47 {\n  padding-right: 470px; }\n\n.ag-ltr .ag-row-group-indent-47 {\n  padding-left: 470px; }\n\n.ag-rtl .ag-row-group-indent-47 {\n  padding-right: 470px; }\n\n.ag-ltr .ag-toolpanel-indent-48 {\n  padding-left: 480px; }\n\n.ag-rtl .ag-toolpanel-indent-48 {\n  padding-right: 480px; }\n\n.ag-ltr .ag-row-group-indent-48 {\n  padding-left: 480px; }\n\n.ag-rtl .ag-row-group-indent-48 {\n  padding-right: 480px; }\n\n.ag-ltr .ag-toolpanel-indent-49 {\n  padding-left: 490px; }\n\n.ag-rtl .ag-toolpanel-indent-49 {\n  padding-right: 490px; }\n\n.ag-ltr .ag-row-group-indent-49 {\n  padding-left: 490px; }\n\n.ag-rtl .ag-row-group-indent-49 {\n  padding-right: 490px; }\n\n.ag-tool-panel {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: reverse;\n  -ms-flex-direction: row-reverse;\n  flex-direction: row-reverse;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box; }\n  .ag-tool-panel .ag-side-buttons {\n    width: 20px; }\n    .ag-tool-panel .ag-side-buttons button {\n      display: block;\n      -webkit-transform: rotate(90deg) translateY(-20px);\n      transform: rotate(90deg) translateY(-20px);\n      -webkit-transform-origin: left top 0;\n      transform-origin: left top 0;\n      white-space: nowrap;\n      outline: none; }\n  .ag-tool-panel .panel-container {\n    width: 180px; }\n  .ag-tool-panel.full-width .panel-container {\n    width: 200px; }\n\n.ag-rtl .ag-tool-panel .ag-side-buttons button {\n  -webkit-transform: rotate(-90deg) translatex(20px);\n  transform: rotate(-90deg) translatex(20px);\n  -webkit-transform-origin: right bottom 0;\n  transform-origin: right bottom 0; }\n\n.ag-row-focus {\n  z-index: 1; }\n"; });
+define('text!ag-grid/dist/styles/ag-theme-balham.css', ['module'], function(module) { module.exports = ".ag-theme-balham {\n  background-color: white;\n  color: #000;\n  font: 400 12px -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen-Sans, Ubuntu, Cantarell, \"Helvetica Neue\", sans-serif; }\n  .ag-theme-balham .ag-header,\n  .ag-theme-balham .ag-row,\n  .ag-theme-balham .ag-header-cell,\n  .ag-theme-balham .ag-header-group-cell,\n  .ag-theme-balham .ag-rich-select-value,\n  .ag-theme-balham .ag-root {\n    box-sizing: border-box; }\n  .ag-theme-balham .ag-menu, .ag-theme-balham .ag-theme-balham.ag-dnd-ghost, .ag-theme-balham .ag-cell-inline-editing, .ag-theme-balham .ag-popup-editor, .ag-theme-balham .ag-select-agg-func-popup, .ag-theme-balham .ag-overlay-loading-center {\n    border: 1px solid #BDC3C7; }\n  .ag-theme-balham .ag-tab-header .ag-tab {\n    border: 1px solid transparent;\n    border-bottom-width: 0;\n    display: inline-block;\n    margin: 4px;\n    margin-bottom: 0;\n    padding: 4px 8px; }\n  .ag-theme-balham .ag-tab-header .ag-tab.ag-tab-selected {\n    background-color: white;\n    border-bottom: 2px solid #0091EA;\n    border-bottom: 2px solid white;\n    border-color: #BDC3C7; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-1 {\n    padding-left: 20px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-1 {\n    padding-right: 20px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-1 {\n    padding-left: 28px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-1 {\n    padding-right: 28px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-2 {\n    padding-left: 40px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-2 {\n    padding-right: 40px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-2 {\n    padding-left: 56px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-2 {\n    padding-right: 56px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-3 {\n    padding-left: 60px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-3 {\n    padding-right: 60px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-3 {\n    padding-left: 84px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-3 {\n    padding-right: 84px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-4 {\n    padding-left: 80px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-4 {\n    padding-right: 80px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-4 {\n    padding-left: 112px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-4 {\n    padding-right: 112px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-5 {\n    padding-left: 100px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-5 {\n    padding-right: 100px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-5 {\n    padding-left: 140px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-5 {\n    padding-right: 140px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-6 {\n    padding-left: 120px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-6 {\n    padding-right: 120px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-6 {\n    padding-left: 168px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-6 {\n    padding-right: 168px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-7 {\n    padding-left: 140px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-7 {\n    padding-right: 140px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-7 {\n    padding-left: 196px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-7 {\n    padding-right: 196px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-8 {\n    padding-left: 160px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-8 {\n    padding-right: 160px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-8 {\n    padding-left: 224px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-8 {\n    padding-right: 224px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-9 {\n    padding-left: 180px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-9 {\n    padding-right: 180px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-9 {\n    padding-left: 252px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-9 {\n    padding-right: 252px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-10 {\n    padding-left: 200px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-10 {\n    padding-right: 200px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-10 {\n    padding-left: 280px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-10 {\n    padding-right: 280px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-11 {\n    padding-left: 220px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-11 {\n    padding-right: 220px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-11 {\n    padding-left: 308px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-11 {\n    padding-right: 308px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-12 {\n    padding-left: 240px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-12 {\n    padding-right: 240px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-12 {\n    padding-left: 336px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-12 {\n    padding-right: 336px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-13 {\n    padding-left: 260px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-13 {\n    padding-right: 260px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-13 {\n    padding-left: 364px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-13 {\n    padding-right: 364px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-14 {\n    padding-left: 280px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-14 {\n    padding-right: 280px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-14 {\n    padding-left: 392px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-14 {\n    padding-right: 392px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-15 {\n    padding-left: 300px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-15 {\n    padding-right: 300px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-15 {\n    padding-left: 420px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-15 {\n    padding-right: 420px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-16 {\n    padding-left: 320px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-16 {\n    padding-right: 320px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-16 {\n    padding-left: 448px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-16 {\n    padding-right: 448px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-17 {\n    padding-left: 340px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-17 {\n    padding-right: 340px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-17 {\n    padding-left: 476px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-17 {\n    padding-right: 476px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-18 {\n    padding-left: 360px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-18 {\n    padding-right: 360px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-18 {\n    padding-left: 504px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-18 {\n    padding-right: 504px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-19 {\n    padding-left: 380px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-19 {\n    padding-right: 380px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-19 {\n    padding-left: 532px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-19 {\n    padding-right: 532px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-20 {\n    padding-left: 400px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-20 {\n    padding-right: 400px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-20 {\n    padding-left: 560px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-20 {\n    padding-right: 560px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-21 {\n    padding-left: 420px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-21 {\n    padding-right: 420px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-21 {\n    padding-left: 588px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-21 {\n    padding-right: 588px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-22 {\n    padding-left: 440px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-22 {\n    padding-right: 440px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-22 {\n    padding-left: 616px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-22 {\n    padding-right: 616px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-23 {\n    padding-left: 460px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-23 {\n    padding-right: 460px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-23 {\n    padding-left: 644px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-23 {\n    padding-right: 644px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-24 {\n    padding-left: 480px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-24 {\n    padding-right: 480px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-24 {\n    padding-left: 672px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-24 {\n    padding-right: 672px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-25 {\n    padding-left: 500px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-25 {\n    padding-right: 500px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-25 {\n    padding-left: 700px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-25 {\n    padding-right: 700px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-26 {\n    padding-left: 520px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-26 {\n    padding-right: 520px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-26 {\n    padding-left: 728px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-26 {\n    padding-right: 728px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-27 {\n    padding-left: 540px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-27 {\n    padding-right: 540px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-27 {\n    padding-left: 756px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-27 {\n    padding-right: 756px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-28 {\n    padding-left: 560px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-28 {\n    padding-right: 560px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-28 {\n    padding-left: 784px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-28 {\n    padding-right: 784px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-29 {\n    padding-left: 580px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-29 {\n    padding-right: 580px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-29 {\n    padding-left: 812px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-29 {\n    padding-right: 812px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-30 {\n    padding-left: 600px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-30 {\n    padding-right: 600px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-30 {\n    padding-left: 840px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-30 {\n    padding-right: 840px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-31 {\n    padding-left: 620px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-31 {\n    padding-right: 620px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-31 {\n    padding-left: 868px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-31 {\n    padding-right: 868px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-32 {\n    padding-left: 640px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-32 {\n    padding-right: 640px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-32 {\n    padding-left: 896px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-32 {\n    padding-right: 896px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-33 {\n    padding-left: 660px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-33 {\n    padding-right: 660px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-33 {\n    padding-left: 924px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-33 {\n    padding-right: 924px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-34 {\n    padding-left: 680px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-34 {\n    padding-right: 680px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-34 {\n    padding-left: 952px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-34 {\n    padding-right: 952px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-35 {\n    padding-left: 700px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-35 {\n    padding-right: 700px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-35 {\n    padding-left: 980px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-35 {\n    padding-right: 980px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-36 {\n    padding-left: 720px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-36 {\n    padding-right: 720px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-36 {\n    padding-left: 1008px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-36 {\n    padding-right: 1008px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-37 {\n    padding-left: 740px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-37 {\n    padding-right: 740px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-37 {\n    padding-left: 1036px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-37 {\n    padding-right: 1036px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-38 {\n    padding-left: 760px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-38 {\n    padding-right: 760px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-38 {\n    padding-left: 1064px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-38 {\n    padding-right: 1064px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-39 {\n    padding-left: 780px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-39 {\n    padding-right: 780px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-39 {\n    padding-left: 1092px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-39 {\n    padding-right: 1092px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-40 {\n    padding-left: 800px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-40 {\n    padding-right: 800px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-40 {\n    padding-left: 1120px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-40 {\n    padding-right: 1120px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-41 {\n    padding-left: 820px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-41 {\n    padding-right: 820px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-41 {\n    padding-left: 1148px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-41 {\n    padding-right: 1148px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-42 {\n    padding-left: 840px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-42 {\n    padding-right: 840px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-42 {\n    padding-left: 1176px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-42 {\n    padding-right: 1176px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-43 {\n    padding-left: 860px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-43 {\n    padding-right: 860px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-43 {\n    padding-left: 1204px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-43 {\n    padding-right: 1204px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-44 {\n    padding-left: 880px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-44 {\n    padding-right: 880px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-44 {\n    padding-left: 1232px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-44 {\n    padding-right: 1232px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-45 {\n    padding-left: 900px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-45 {\n    padding-right: 900px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-45 {\n    padding-left: 1260px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-45 {\n    padding-right: 1260px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-46 {\n    padding-left: 920px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-46 {\n    padding-right: 920px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-46 {\n    padding-left: 1288px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-46 {\n    padding-right: 1288px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-47 {\n    padding-left: 940px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-47 {\n    padding-right: 940px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-47 {\n    padding-left: 1316px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-47 {\n    padding-right: 1316px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-48 {\n    padding-left: 960px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-48 {\n    padding-right: 960px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-48 {\n    padding-left: 1344px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-48 {\n    padding-right: 1344px; }\n  .ag-theme-balham .ag-ltr .ag-toolpanel-indent-49 {\n    padding-left: 980px; }\n  .ag-theme-balham .ag-rtl .ag-toolpanel-indent-49 {\n    padding-right: 980px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-indent-49 {\n    padding-left: 1372px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-indent-49 {\n    padding-right: 1372px; }\n  .ag-theme-balham .ag-ltr .ag-row-group-leaf-indent {\n    margin-left: 28px; }\n  .ag-theme-balham .ag-rtl .ag-row-group-leaf-indent {\n    margin-right: 28px; }\n  .ag-theme-balham .ag-rtl .ag-cell-first-right-pinned {\n    border-left: 1px solid #BDC3C7; }\n  .ag-theme-balham .ag-ltr .ag-cell-first-right-pinned {\n    border-left: 1px solid #BDC3C7; }\n  .ag-theme-balham .ag-rtl .ag-cell-last-left-pinned {\n    border-right: 1px solid #BDC3C7; }\n  .ag-theme-balham .ag-ltr .ag-cell-last-left-pinned {\n    border-right: 1px solid #BDC3C7; }\n  .ag-theme-balham .ag-value-change-delta {\n    padding-right: 2px; }\n  .ag-theme-balham .ag-value-change-delta-up {\n    color: #43a047; }\n  .ag-theme-balham .ag-value-change-delta-down {\n    color: #e53935; }\n  .ag-theme-balham .ag-value-change-value {\n    background-color: transparent;\n    border-radius: 1px;\n    padding-left: 1px;\n    padding-right: 1px;\n    transition: background-color 1s; }\n  .ag-theme-balham .ag-value-change-value-highlight {\n    background-color: rgba(22, 160, 133, 0.5);\n    transition: background-color 0.1s; }\n  .ag-theme-balham .ag-header {\n    background-color: #f5f7f7;\n    color: rgba(0, 0, 0, 0.54);\n    font: 600 12px -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen-Sans, Ubuntu, Cantarell, \"Helvetica Neue\", sans-serif; }\n  .ag-theme-balham .ag-header-row {\n    border-bottom: 1px solid #BDC3C7;\n    box-sizing: border-box; }\n  .ag-theme-balham .ag-row {\n    border-bottom: 1px solid #BDC3C7;\n    box-sizing: border-box; }\n  .ag-theme-balham .ag-row-odd {\n    background-color: #fcfdfe; }\n  .ag-theme-balham .ag-row-even {\n    background-color: white; }\n  .ag-theme-balham .ag-row-hover {\n    background-color: #ECF0F1; }\n  .ag-theme-balham .ag-numeric-cell {\n    text-align: right; }\n  .ag-theme-balham .ag-header-cell-label {\n    display: flex;\n    float: left;\n    height: 100%;\n    width: calc(100% - 16px); }\n    .ag-theme-balham .ag-header-cell-label span {\n      height: 100%; }\n    .ag-theme-balham .ag-header-cell-label > span {\n      float: left; }\n    .ag-theme-balham .ag-header-cell-label .ag-header-icon {\n      background-position-y: 10px;\n      background-size: 14px 14px;\n      height: 100%;\n      margin: 0;\n      margin-left: 4px;\n      opacity: 0.87; }\n    .ag-theme-balham .ag-header-cell-label .ag-header-cell-text {\n      overflow: hidden;\n      text-overflow: ellipsis;\n      white-space: nowrap; }\n  .ag-theme-balham .ag-numeric-header .ag-header-cell-label {\n    flex-direction: row-reverse;\n    float: right; }\n    .ag-theme-balham .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-theme-balham .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-theme-balham .ag-header-group-text {\n    overflow: hidden;\n    text-overflow: ellipsis;\n    white-space: nowrap; }\n  .ag-theme-balham .ag-header-cell,\n  .ag-theme-balham .ag-header-group-cell {\n    line-height: 32px;\n    padding-left: 12px;\n    padding-right: 12px; }\n  .ag-theme-balham .ag-cell {\n    line-height: 26px;\n    padding-left: 12px;\n    padding-right: 12px;\n    border: 1px solid transparent;\n    padding-left: 11px;\n    padding-right: 11px; }\n  .ag-theme-balham .ag-row-drag {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMy41IDIuNXYxbTAgMnYxbTAgMnYxbTMtN3YxbTAgMnYxbTAgMnYxbTMtN3YxbTAgMnYxbTAgMnYxbTMtN3YxbTAgMnYxbTAgMnYxIiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    background-position-x: left;\n    background-position-y: 4px;\n    float: left;\n    height: 100%;\n    width: 28px; }\n  .ag-theme-balham .ag-column-drag {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMy41IDIuNXYxbTAgMnYxbTAgMnYxbTMtN3YxbTAgMnYxbTAgMnYxbTMtN3YxbTAgMnYxbTAgMnYxbTMtN3YxbTAgMnYxbTAgMnYxIiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    background-position-x: left;\n    background-position-y: 4px !important;\n    height: 100%;\n    min-width: 20px; }\n  .ag-theme-balham .ag-row-dragging {\n    opacity: 0.5;\n    z-index: 10000; }\n  .ag-theme-balham .ag-cell-focus {\n    border: 1px solid #0091EA;\n    outline: initial; }\n  .ag-theme-balham .ag-header-cell-resize {\n    position: absolute;\n    right: -4px;\n    width: 8px;\n    z-index: 4; }\n    .ag-theme-balham .ag-header-cell-resize::after {\n      border-right: 1px solid #BDC3C7;\n      box-sizing: content-box;\n      content: \"resize\";\n      display: block;\n      height: 16px;\n      margin-top: 8px;\n      overflow: hidden;\n      text-indent: 4px;\n      width: 4px; }\n  .ag-theme-balham .ag-icon-aggregation {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTEwLjUgNlY0LjVoLTV2LjUzMmExIDEgMCAwIDAgLjM2Ljc2OGwxLjcxOCAxLjQzMmExIDEgMCAwIDEgMCAxLjUzNkw1Ljg2IDEwLjJhMSAxIDAgMCAwLS4zNi43Njh2LjUzMmg1VjEwIi8+PHJlY3QgeD0iMS41IiB5PSIxLjUiIHdpZHRoPSIxMyIgaGVpZ2h0PSIxMyIgcng9IjIiLz48L2c+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-arrows {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNy41IDE0VjNNMiA4LjVoMTFtLTcuNSA0bDIgMiAyLTJtMC04bC0yLTItMiAybS0yIDJsLTIgMiAyIDJtOCAwbDItMi0yLTIiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-asc {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNy41IDEyVjRtMyAyLjVsLTMtMy0zIDMiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-checkbox-checked-readonly {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHg9IjEiIHk9IjEiIHdpZHRoPSIxNCIgaGVpZ2h0PSIxNCIgcng9IjIiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBvcGFjaXR5PSIuNSI+PHVzZSBmaWxsPSIjRkZGIiB4bGluazpocmVmPSIjYSIvPjxyZWN0IHN0cm9rZT0iIzdGOEM4RCIgeD0iMS41IiB5PSIxLjUiIHdpZHRoPSIxMyIgaGVpZ2h0PSIxMyIgcng9IjIiLz48cGF0aCBzdHJva2U9IiM3RjhDOEQiIGQ9Ik0xMiA1bC01LjUgNS41TDQgOCIvPjwvZz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-checkbox-checked {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHg9IjEiIHk9IjEiIHdpZHRoPSIxNCIgaGVpZ2h0PSIxNCIgcng9IjIiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjN0Y4QzhEIiB4PSIxLjUiIHk9IjEuNSIgd2lkdGg9IjEzIiBoZWlnaHQ9IjEzIiByeD0iMiIvPjxwYXRoIHN0cm9rZT0iIzdGOEM4RCIgZD0iTTEyIDVsLTUuNSA1LjVMNCA4Ii8+PC9nPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-checkbox-indeterminate-readonly {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHg9IjEiIHk9IjEiIHdpZHRoPSIxNCIgaGVpZ2h0PSIxNCIgcng9IjIiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBvcGFjaXR5PSIuNSI+PHVzZSBmaWxsPSIjRkZGIiB4bGluazpocmVmPSIjYSIvPjxyZWN0IHN0cm9rZT0iIzdGOEM4RCIgeD0iMS41IiB5PSIxLjUiIHdpZHRoPSIxMyIgaGVpZ2h0PSIxMyIgcng9IjIiLz48cGF0aCBkPSJNNCA4LjVoOCIgc3Ryb2tlPSIjN0Y4QzhEIi8+PC9nPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-checkbox-indeterminate {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHg9IjEiIHk9IjEiIHdpZHRoPSIxNCIgaGVpZ2h0PSIxNCIgcng9IjIiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjN0Y4QzhEIiB4PSIxLjUiIHk9IjEuNSIgd2lkdGg9IjEzIiBoZWlnaHQ9IjEzIiByeD0iMiIvPjxwYXRoIGQ9Ik00IDguNWg4IiBzdHJva2U9IiM3RjhDOEQiLz48L2c+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-checkbox-unchecked-readonly {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHg9IjEiIHk9IjEiIHdpZHRoPSIxNCIgaGVpZ2h0PSIxNCIgcng9IjIiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBvcGFjaXR5PSIuNSI+PHVzZSBmaWxsPSIjRkZGIiB4bGluazpocmVmPSIjYSIvPjxyZWN0IHN0cm9rZT0iIzdGOEM4RCIgeD0iMS41IiB5PSIxLjUiIHdpZHRoPSIxMyIgaGVpZ2h0PSIxMyIgcng9IjIiLz48L2c+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-checkbox-unchecked {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHg9IjEiIHk9IjEiIHdpZHRoPSIxNCIgaGVpZ2h0PSIxNCIgcng9IjIiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjN0Y4QzhEIiB4PSIxLjUiIHk9IjEuNSIgd2lkdGg9IjEzIiBoZWlnaHQ9IjEzIiByeD0iMiIvPjwvZz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-column {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMy41IDMuNXY4aDN2LTh6IiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-columns {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNi41IDMuNXY4bTMtOHY4bTMtOHY4bS05LTh2OCIgc3Ryb2tlPSIjN0Y4QzhEIiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIi8+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-contracted {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSA0TDUgOGw0IDQiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-copy {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHJlY3QgeD0iNC41IiB5PSI0LjUiIHdpZHRoPSI4IiBoZWlnaHQ9IjkiIHJ4PSIyIi8+PHBhdGggZD0iTTExIDIuNUg0LjVhMiAyIDAgMCAwLTIgMlYxMyIvPjwvZz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-cut {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNi4zNDggNC45NDhjLjE2MS0uMzUuMjUyLS43MzUuMjUyLTEuMTQ4YTIuOCAyLjggMCAxIDAtNS42IDAgMi44IDIuOCAwIDAgMCAyLjggMi44Yy40MTMgMCAuNzk4LS4wOTEgMS4xNDgtLjI1Mkw2LjYgOCA0Ljk0OCA5LjY1MkEyLjcyOCAyLjcyOCAwIDAgMCAzLjggOS40YTIuOCAyLjggMCAxIDAgMCA1LjYgMi44IDIuOCAwIDAgMCAyLjgtMi44YzAtLjQxMy0uMDkxLS43OTgtLjI1Mi0xLjE0OEw4IDkuNGw0LjkgNC45SDE1di0uN0w2LjM0OCA0Ljk0OHpNMy44IDUuMmExLjQgMS40IDAgMSAxIDAtMi44IDEuNCAxLjQgMCAwIDEgMCAyLjh6bTAgOC40YTEuNCAxLjQgMCAxIDEgMC0yLjggMS40IDEuNCAwIDAgMSAwIDIuOHpNOCA4LjM1QS4zNDcuMzQ3IDAgMCAxIDcuNjUgOGMwLS4xOTYuMTU0LS4zNS4zNS0uMzUuMTk2IDAgLjM1LjE1NC4zNS4zNSAwIC4xOTYtLjE1NC4zNS0uMzUuMzV6bTQuOS02LjY1TDguNyA1LjlsMS40IDEuNEwxNSAyLjR2LS43aC0yLjF6IiBmaWxsPSIjN0Y4QzhEIi8+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-desc {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNy41IDExVjNtLTMgNS41bDMgMyAzLTMiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-expanded {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNiAxMmw0LTQtNC00IiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-eye-slash {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTggMy42MjVBNi44OTkgNi44OTkgMCAwIDAgMS41ODMgOCA2Ljg5OSA2Ljg5OSAwIDAgMCA4IDEyLjM3NSA2Ljg5OSA2Ljg5OSAwIDAgMCAxNC40MTcgOCA2Ljg5OSA2Ljg5OSAwIDAgMCA4IDMuNjI1eiIvPjxwYXRoIGQ9Ik04IDEwLjkxN2EyLjkxOCAyLjkxOCAwIDAgMSAwLTUuODM0IDIuOTE4IDIuOTE4IDAgMCAxIDAgNS44MzR6Ii8+PHBhdGggZD0iTTMuNSAzLjVsOSA5IiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIi8+PC9nPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-eye {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTggMy42MjVBNi44OTkgNi44OTkgMCAwIDAgMS41ODMgOCA2Ljg5OSA2Ljg5OSAwIDAgMCA4IDEyLjM3NSA2Ljg5OSA2Ljg5OSAwIDAgMCAxNC40MTcgOCA2Ljg5OSA2Ljg5OSAwIDAgMCA4IDMuNjI1eiIvPjxwYXRoIGQ9Ik04IDEwLjkxN2EyLjkxOCAyLjkxOCAwIDAgMSAwLTUuODM0IDIuOTE4IDIuOTE4IDAgMCAxIDAgNS44MzR6Ii8+PC9nPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-filter {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMy41IDMuNWg5di41ODZhMSAxIDAgMCAxLS4yOTMuNzA3TDkuMjkzIDcuNzA3QTEgMSAwIDAgMCA5IDguNDE0VjEwbC0yIDEuNVY4LjQxNGExIDEgMCAwIDAtLjI5My0uNzA3TDMuNzkzIDQuNzkzYTEgMSAwIDAgMS0uMjkzLS43MDdWMy41eiIgc3Ryb2tlPSIjN0Y4QzhEIiBmaWxsPSJub25lIi8+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-group {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTMuNSA1LjVoMW0xIDJoMW0yIDBoNG0tNyAyaDFtMiAwaDRtLTYtNGg2IiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIi8+PHJlY3QgeD0iMS41IiB5PSIxLjUiIHdpZHRoPSIxMyIgaGVpZ2h0PSIxMyIgcng9IjIiLz48L2c+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-indeterminate {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTggNC42MjVjLTIuOTE3IDAtNS40MDguODE0LTYuNDE3IDMuMzc1IDEuMDEgMi41NiAzLjUgMy4zNzUgNi40MTcgMy4zNzVzNS40MDgtLjgxNCA2LjQxNy0zLjM3NWMtMS4wMS0yLjU2LTMuNS0zLjM3NS02LjQxNy0zLjM3NXoiLz48cGF0aCBkPSJNOCA5LjkxN0M2LjM5IDkuOTE3IDUuMDgzIDkuNjEgNS4wODMgOFM2LjM5IDYuMDgzIDggNi4wODNjMS42MSAwIDIuOTE3LjMwNyAyLjkxNyAxLjkxN1M5LjYxIDkuOTE3IDggOS45MTd6Ii8+PC9nPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-left {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMi41IDguNWw0LTRMOCA2IDYuNSA3LjVoN3YyaC03TDggMTFsLTEuNSAxLjV6IiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-loading {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSI+PHBhdGggZD0iTTcuNSAxMC41djMiIG9wYWNpdHk9Ii44Ii8+PHBhdGggZD0iTTEwLjUgNy41aDMiIG9wYWNpdHk9Ii42Ii8+PHBhdGggZD0iTTEuNSA3LjVoMyIvPjxwYXRoIGQ9Ik03LjUgMS41djMiIG9wYWNpdHk9Ii40Ii8+PHBhdGggZD0iTTkuNSA1LjVMMTIgMyIgb3BhY2l0eT0iLjUiLz48cGF0aCBkPSJNOS41IDkuNUwxMiAxMiIgb3BhY2l0eT0iLjciLz48cGF0aCBkPSJNNS41IDkuNUwzIDEyIiBvcGFjaXR5PSIuOSIvPjxwYXRoIGQ9Ik01LjUgNS41TDMgMyIgb3BhY2l0eT0iLjMiLz48L2c+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-menu {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMy41IDQuNWg5bS05IDNoOW0tOSAzaDkiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-minus {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMi41IDYuNWgxMXYyaC0xMXoiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-none {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTEuNSAxMlY0bTMgMi41bC0zLTMtMyAzbS00IDQuNVYzbS0zIDUuNWwzIDMgMy0zIiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-not-allowed {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNS45IDExLjAxMkEzLjc1IDMuNzUgMCAwIDAgMTEuMDEyIDUuOWwtNS4xMTQgNS4xMTN6TTQuNDg3IDkuNjAxTDkuNiA0LjQ4OEEzLjc1IDMuNzUgMCAwIDAgNC40ODggOS42ek03Ljc1IDEzLjVhNS43NSA1Ljc1IDAgMSAxIDAtMTEuNSA1Ljc1IDUuNzUgMCAwIDEgMCAxMS41eiIgc3Ryb2tlPSIjN0Y4QzhEIiBmaWxsPSJub25lIi8+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-paste {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAgM2MwLS41LS41LTEuNS0yLTEuNVM2IDIuNSA2IDNINGEyIDIgMCAwIDAtMiAydjdhMiAyIDAgMCAwIDIgMmg4YTIgMiAwIDAgMCAyLTJWNWEyIDIgMCAwIDAtMi0yaC0yem0tMiAuMjczYy4zNjcgMCAuNjY3LjI4Ni42NjcuNjM2IDAgLjM1LS4zLjYzNi0uNjY3LjYzNi0uMzY3IDAtLjY2Ny0uMjg2LS42NjctLjYzNiAwLS4zNS4zLS42MzYuNjY3LS42MzZ6TTEyIDEzSDRhMSAxIDAgMCAxLTEtMVY1YTEgMSAwIDAgMSAxLTFoMXYyaDZWNGgxYTEgMSAwIDAgMSAxIDF2N2ExIDEgMCAwIDEtMSAxeiIgZmlsbD0iIzdGOEM4RCIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-pin {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMi41IDEzLjVsNC00TTE0IDZjLS4zOS41MjktLjcyNC44NjItMSAxcy0uNjEuMTM4LTEgMGwtMiAyYy4xMzguOTIuMTM4IDEuNTg2IDAgMi0uMTM4LjQxNC0uNDcxLjc0OC0xIDFMNCA3Yy4wOC0uNDcxLjQxNC0uODA1IDEtMSAuNTg2LS4xOTUgMS4yNTItLjE5NSAyIDBsMi0yYy0uMTk1LS4yNzYtLjE5NS0uNjEgMC0xcy41MjktLjcyNCAxLTFsNCA0eiIgc3Ryb2tlPSIjN0Y4QzhEIiBmaWxsPSJub25lIi8+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-pivot {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTEzLjUgNC41aC05bTAgMHY5IiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIi8+PHBhdGggZD0iTTcuNSAxMi41bC0xLTEgMS0xbTUtM2wtMS0xLTEgMSIvPjxwYXRoIGQ9Ik00LjUgMTEuNWgtMm02LTl2Mm0tMy0ydjJtNi0ydjIiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiLz48cGF0aCBkPSJNMTEuNSA2LjV2M2EyIDIgMCAwIDEtMiAyaC0zIi8+PHBhdGggZD0iTTQuNSA4LjVoLTJtMi0zaC0yIiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIi8+PHJlY3QgeD0iMS41IiB5PSIxLjUiIHdpZHRoPSIxMyIgaGVpZ2h0PSIxMyIgcng9IjIiLz48L2c+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-plus {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMi41IDYuNWg0di00aDJ2NGg0djJoLTR2NGgtMnYtNGgtNHoiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-right {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTMuNSA3LjVsLTQgNEw4IDEwbDEuNS0xLjVoLTd2LTJoN0w4IDVsMS41LTEuNXoiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-small-left {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOCA0TDQgOGw0IDQiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-small-right {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOCAxMmw0LTQtNC00IiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-small-up {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIgOEw4IDQgNCA4IiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-small-down {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNCA4bDQgNCA0LTQiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-tick {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIgNmwtNS41IDUuNUw0IDkiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-cross {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAuNSA1LjVsLTYgNm0wLTZsNiA2IiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-tree-open {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNCA3bDQgNCA0LTQiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-tree-closed {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNiAxMmw0LTQtNC00IiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-icon-tree-indeterminate {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMy41IDcuNWg5IiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    display: inline-block; }\n  .ag-theme-balham .ag-header-cell-menu-button .ag-icon-menu {\n    display: block;\n    height: 32px; }\n  .ag-theme-balham .ag-icon-checkbox-checked:empty {\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHg9IjEiIHk9IjEiIHdpZHRoPSIxNCIgaGVpZ2h0PSIxNCIgcng9IjIiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDA5MUVBIiB4PSIxLjUiIHk9IjEuNSIgd2lkdGg9IjEzIiBoZWlnaHQ9IjEzIiByeD0iMiIvPjxwYXRoIHN0cm9rZT0iIzAwOTFFQSIgZD0iTTEyIDVsLTUuNSA1LjVMNCA4Ii8+PC9nPjwvc3ZnPg==); }\n  .ag-theme-balham .ag-menu {\n    background: white;\n    border-radius: 2px;\n    box-shadow: none;\n    padding: 4px;\n    padding: 0;\n    z-index: 5; }\n    .ag-theme-balham .ag-menu .ag-menu-list {\n      cursor: default;\n      margin-bottom: 4px;\n      margin-top: 4px;\n      width: 100%; }\n    .ag-theme-balham .ag-menu .ag-menu-option {\n      line-height: 16px;\n      padding-left: 8px;\n      padding-right: 8px; }\n      .ag-theme-balham .ag-menu .ag-menu-option > span {\n        display: table-cell;\n        vertical-align: middle; }\n    .ag-theme-balham .ag-menu .ag-menu-option-active {\n      background: #ECF0F1; }\n    .ag-theme-balham .ag-menu .ag-menu-option-disabled {\n      opacity: 0.5; }\n    .ag-theme-balham .ag-menu .ag-menu-option-icon {\n      padding-left: 4px;\n      padding-right: 4px; }\n      .ag-theme-balham .ag-menu .ag-menu-option-icon span {\n        height: 16px;\n        line-height: 0;\n        margin-top: 4px; }\n    .ag-theme-balham .ag-menu .ag-menu-option-shortcut {\n      padding-left: 8px; }\n    .ag-theme-balham .ag-menu .ag-menu-separator {\n      margin-left: -4px; }\n      .ag-theme-balham .ag-menu .ag-menu-separator > span {\n        background-image: url(\"data:image/svg+xml;utf8,<svg width='1' height='8px' viewBox='0 0 1 8px' xmlns='http://www.w3.org/2000/svg'> <line x1='0' y1='4px' x2='1' y2='4px' stroke-width='1' stroke='#BDC3C7'/> </svg>\");\n        height: 8px; }\n    .ag-theme-balham .ag-menu .ag-menu-option-popup-pointer {\n      width: 24px; }\n  .ag-theme-balham.ag-dnd-ghost {\n    background: white;\n    border-radius: 2px;\n    box-shadow: none;\n    padding: 4px;\n    border: 1px solid #BDC3C7;\n    color: rgba(0, 0, 0, 0.54);\n    font: 600 12px -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen-Sans, Ubuntu, Cantarell, \"Helvetica Neue\", sans-serif;\n    height: 32px !important;\n    line-height: 32px;\n    margin: 0;\n    padding: 0 8px;\n    transform: translateY(8px);\n    z-index: 5; }\n    .ag-theme-balham.ag-dnd-ghost span,\n    .ag-theme-balham.ag-dnd-ghost div {\n      float: left;\n      height: 100%;\n      margin: 0;\n      padding: 0; }\n    .ag-theme-balham.ag-dnd-ghost .ag-dnd-ghost-icon {\n      margin-right: 4px;\n      opacity: 0.87; }\n  .ag-theme-balham .ag-tab-header {\n    background: #f5f7f7;\n    min-width: 220px;\n    width: 100%; }\n    .ag-theme-balham .ag-tab-header .ag-tab {\n      border-bottom: 2px solid transparent;\n      height: 16px;\n      text-align: center;\n      vertical-align: middle; }\n      .ag-theme-balham .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-filter {\n        background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMy41IDMuNWg5di41ODZhMSAxIDAgMCAxLS4yOTMuNzA3TDkuMjkzIDcuNzA3QTEgMSAwIDAgMCA5IDguNDE0VjEwbC0yIDEuNVY4LjQxNGExIDEgMCAwIDAtLjI5My0uNzA3TDMuNzkzIDQuNzkzYTEgMSAwIDAgMS0uMjkzLS43MDdWMy41eiIgc3Ryb2tlPSIjMDA5MUVBIiBmaWxsPSJub25lIi8+PC9zdmc+);\n        display: inline-block; }\n      .ag-theme-balham .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-columns {\n        background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNi41IDMuNXY4bTMtOHY4bTMtOHY4bS05LTh2OCIgc3Ryb2tlPSIjMDA5MUVBIiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIi8+PC9zdmc+);\n        display: inline-block; }\n      .ag-theme-balham .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-menu {\n        background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMy41IDQuNWg5bS05IDNoOW0tOSAzaDkiIHN0cm9rZT0iIzAwOTFFQSIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIvPjwvc3ZnPg==);\n        display: inline-block; }\n  .ag-theme-balham .ag-tab-body {\n    padding: 4px 0; }\n    .ag-theme-balham .ag-tab-body .ag-filter-select {\n      margin: 4px;\n      width: calc(100% - 8px); }\n    .ag-theme-balham .ag-tab-body .ag-menu-list {\n      margin-bottom: 0;\n      margin-top: 0; }\n      .ag-theme-balham .ag-tab-body .ag-menu-list > div:first-child > span {\n        padding-top: 0; }\n      .ag-theme-balham .ag-tab-body .ag-menu-list > div:last-child > span {\n        padding-bottom: 0; }\n      .ag-theme-balham .ag-tab-body .ag-menu-list > div:last-child > .ag-menu-option-popup-pointer {\n        background-position-y: 0; }\n  .ag-theme-balham .ag-filter-select {\n    margin: 4px;\n    width: calc(100% - 8px); }\n  .ag-theme-balham .ag-filter input[type=\"text\"],\n  .ag-theme-balham .ag-filter input[type=\"date\"] {\n    padding-left: 4px; }\n  .ag-theme-balham .ag-filter label {\n    display: block;\n    padding-left: 4px; }\n  .ag-theme-balham .ag-filter .ag-set-filter-list {\n    height: 182px;\n    padding-top: 4px; }\n  .ag-theme-balham .ag-filter .ag-filter-header-container {\n    box-sizing: border-box;\n    height: 28px; }\n  .ag-theme-balham .ag-filter .ag-filter-header-container:nth-child(2) {\n    border-bottom: 1px solid #BDC3C7; }\n  .ag-theme-balham .ag-filter .ag-filter-checkbox {\n    float: left;\n    height: 28px;\n    margin-right: 4px;\n    padding-top: 2px; }\n  .ag-theme-balham .ag-filter .ag-filter-value {\n    height: 28px;\n    line-height: 14px; }\n  .ag-theme-balham .ag-filter .ag-filter-apply-panel {\n    display: flex;\n    justify-content: flex-end;\n    padding: 4px;\n    padding-top: 8px; }\n    .ag-theme-balham .ag-filter .ag-filter-apply-panel button + button {\n      margin-left: 8px; }\n  .ag-theme-balham .ag-column-select-panel .ag-column-select-column-group,\n  .ag-theme-balham .ag-column-select-panel .ag-column-select-column {\n    height: 16px;\n    line-height: 16px;\n    margin-left: 0; }\n    .ag-theme-balham .ag-column-select-panel .ag-column-select-column-group span,\n    .ag-theme-balham .ag-column-select-panel .ag-column-select-column span {\n      float: left;\n      height: 100%; }\n    .ag-theme-balham .ag-column-select-panel .ag-column-select-column-group .ag-column-select-indent,\n    .ag-theme-balham .ag-column-select-panel .ag-column-select-column .ag-column-select-indent {\n      width: 8px; }\n    .ag-theme-balham .ag-column-select-panel .ag-column-select-column-group .ag-column-select-checkbox,\n    .ag-theme-balham .ag-column-select-panel .ag-column-select-column-group .ag-column-group-icons,\n    .ag-theme-balham .ag-column-select-panel .ag-column-select-column .ag-column-select-checkbox,\n    .ag-theme-balham .ag-column-select-panel .ag-column-select-column .ag-column-group-icons {\n      margin-left: 4px;\n      margin-right: 4px; }\n  .ag-theme-balham .ag-column-select-panel .ag-column-container {\n    padding-top: 4px; }\n  .ag-theme-balham .ag-column-select-panel .ag-column-select-column.ag-toolpanel-add-group-indent {\n    margin-left: 24px; }\n  .ag-theme-balham .ag-column-tool-panel {\n    display: flex; }\n  .ag-theme-balham .ag-filter-body {\n    flex-grow: 1;\n    flex-shrink: 1;\n    padding-right: 4px; }\n  .ag-theme-balham .ag-column-tool-panel-item button {\n    font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen-Sans, Ubuntu, Cantarell, \"Helvetica Neue\", sans-serif;\n    font-size: 12px;\n    height: 100%; }\n  .ag-theme-balham .ag-filter-filter {\n    margin-bottom: 4px; }\n  .ag-theme-balham .ag-column-select-header {\n    border-bottom: 1px solid #BDC3C7;\n    box-sizing: border-box;\n    height: 32px;\n    padding-top: 4px; }\n    .ag-theme-balham .ag-column-select-header label {\n      display: block;\n      padding-left: 4px; }\n      .ag-theme-balham .ag-column-select-header label .ag-filter-checkbox {\n        float: left;\n        margin-right: 4px; }\n    .ag-theme-balham .ag-column-select-header .ag-column-tool-panel a {\n      margin: 0 4px;\n      padding-top: 2px; }\n  .ag-theme-balham .ag-group-child-count::before {\n    content: \" \"; }\n  .ag-theme-balham .ag-column-panel {\n    border-right: 0; }\n    .ag-theme-balham .ag-column-panel .ag-pivot-mode {\n      border-bottom: 1px solid #BDC3C7;\n      box-sizing: border-box;\n      height: 32px;\n      line-height: 32px; }\n      .ag-theme-balham .ag-column-panel .ag-pivot-mode span {\n        float: left;\n        height: 100%; }\n      .ag-theme-balham .ag-column-panel .ag-pivot-mode .ag-pivot-mode-select {\n        margin-left: 4px; }\n        .ag-theme-balham .ag-column-panel .ag-pivot-mode .ag-pivot-mode-select .ag-checkbox-label {\n          margin-left: 4px; }\n    .ag-theme-balham .ag-column-panel .ag-column-select-panel {\n      border-bottom: 1px solid #BDC3C7;\n      padding-bottom: 3px;\n      padding-top: 0; }\n    .ag-theme-balham .ag-column-panel .ag-column-drop {\n      border-bottom: 1px solid #BDC3C7;\n      clear: both;\n      overflow: auto;\n      padding: 4px 0;\n      padding-bottom: 8px; }\n      .ag-theme-balham .ag-column-panel .ag-column-drop .ag-icon {\n        float: left;\n        height: 20px;\n        margin: 0 4px; }\n      .ag-theme-balham .ag-column-panel .ag-column-drop .ag-column-drop-title {\n        clear: right;\n        float: left;\n        height: 20px;\n        line-height: 20px;\n        width: calc(100% - 24px); }\n      .ag-theme-balham .ag-column-panel .ag-column-drop .ag-column-drop-empty-message {\n        clear: both;\n        color: rgba(0, 0, 0, 0.38);\n        font: 600 12px -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen-Sans, Ubuntu, Cantarell, \"Helvetica Neue\", sans-serif;\n        line-height: 8px;\n        padding-left: 16px;\n        padding-right: 4px; }\n      .ag-theme-balham .ag-column-panel .ag-column-drop:last-child {\n        border-bottom: 0; }\n  .ag-theme-balham .ag-filter-icon:empty {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMy41IDMuNWg5di41ODZhMSAxIDAgMCAxLS4yOTMuNzA3TDkuMjkzIDcuNzA3QTEgMSAwIDAgMCA5IDguNDE0VjEwbC0yIDEuNVY4LjQxNGExIDEgMCAwIDAtLjI5My0uNzA3TDMuNzkzIDQuNzkzYTEgMSAwIDAgMS0uMjkzLS43MDdWMy41eiIgc3Ryb2tlPSIjN0Y4QzhEIiBmaWxsPSJub25lIi8+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px; }\n  .ag-theme-balham .ag-sort-ascending-icon:empty {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNy41IDEyVjRtMyAyLjVsLTMtMy0zIDMiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px; }\n  .ag-theme-balham .ag-sort-descending-icon:empty {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNy41IDExVjNtLTMgNS41bDMgMyAzLTMiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px; }\n  .ag-theme-balham .ag-sort-none-icon:empty {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTEuNSAxMlY0bTMgMi41bC0zLTMtMyAzbS00IDQuNVYzbS0zIDUuNWwzIDMgMy0zIiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px; }\n  .ag-theme-balham .ag-numeric-header .ag-header-cell-label .ag-header-icon {\n    margin-left: 0;\n    margin-right: 4px; }\n  .ag-theme-balham .ag-paging-panel {\n    align-items: center;\n    border-top: 1px solid #BDC3C7;\n    color: rgba(0, 0, 0, 0.54);\n    display: flex;\n    height: 32px;\n    justify-content: flex-end;\n    padding: 0 12px; }\n    .ag-theme-balham .ag-paging-panel > span {\n      margin-left: 16px; }\n  .ag-theme-balham button[ref=\"btFirst\"] {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIgNEw4IDhsNCA0TTQuNSA0djgiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    overflow: hidden;\n    text-indent: 100%;\n    appearance: none;\n    border: 0;\n    opacity: 0.54;\n    padding: 0; }\n    .ag-theme-balham button[ref=\"btFirst\"][disabled] {\n      opacity: 0.38; }\n  .ag-theme-balham button[ref=\"btPrevious\"] {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSA0TDUgOGw0IDQiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    overflow: hidden;\n    text-indent: 100%;\n    appearance: none;\n    border: 0;\n    opacity: 0.54;\n    padding: 0; }\n    .ag-theme-balham button[ref=\"btPrevious\"][disabled] {\n      opacity: 0.38; }\n  .ag-theme-balham button[ref=\"btLast\"] {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNCAxMmw0LTQtNC00bTcuNSAwdjgiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    overflow: hidden;\n    text-indent: 100%;\n    appearance: none;\n    border: 0;\n    opacity: 0.54;\n    padding: 0; }\n    .ag-theme-balham button[ref=\"btLast\"][disabled] {\n      opacity: 0.38; }\n  .ag-theme-balham button[ref=\"btNext\"] {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNiAxMmw0LTQtNC00IiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px;\n    overflow: hidden;\n    text-indent: 100%;\n    appearance: none;\n    border: 0;\n    opacity: 0.54;\n    padding: 0; }\n    .ag-theme-balham button[ref=\"btNext\"][disabled] {\n      opacity: 0.38; }\n  .ag-theme-balham .ag-rtl button[ref=\"btFirst\"] {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNCAxMmw0LTQtNC00bTcuNSAwdjgiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px; }\n  .ag-theme-balham .ag-rtl button[ref=\"btPrevious\"] {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNiAxMmw0LTQtNC00IiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px; }\n  .ag-theme-balham .ag-rtl button[ref=\"btLast\"] {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIgNEw4IDhsNCA0TTQuNSA0djgiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px; }\n  .ag-theme-balham .ag-rtl button[ref=\"btNext\"] {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSA0TDUgOGw0IDQiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px; }\n  .ag-theme-balham .ag-row-selected {\n    background-color: #b7e4ff; }\n  .ag-theme-balham .ag-cell-range-selected:not(.ag-cell-focus) {\n    background-color: rgba(0, 145, 234, 0.2); }\n  .ag-theme-balham .ag-cell-inline-editing {\n    background: white;\n    border-radius: 2px;\n    box-shadow: none;\n    padding: 4px;\n    background: #f5f7f7;\n    height: 40px;\n    line-height: normal;\n    padding: 12px;\n    z-index: 2; }\n    .ag-theme-balham .ag-cell-inline-editing select {\n      height: auto; }\n  .ag-theme-balham .ag-popup-editor {\n    background: white;\n    border-radius: 2px;\n    box-shadow: none;\n    padding: 4px;\n    background: #f5f7f7;\n    padding: 0;\n    z-index: 1; }\n    .ag-theme-balham .ag-popup-editor .ag-large-textarea textarea {\n      height: auto;\n      padding: 12px; }\n  .ag-theme-balham .ag-rich-select {\n    background-color: #f5f7f7;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNCA3bDQgNCA0LTQiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position-x: calc(100% - 4px);\n    background-position-y: 8px;\n    background-repeat: no-repeat; }\n    .ag-theme-balham .ag-rich-select .ag-rich-select-list {\n      height: 182px; }\n    .ag-theme-balham .ag-rich-select .ag-rich-select-value {\n      height: 28px;\n      line-height: 28px;\n      padding-left: 12px; }\n    .ag-theme-balham .ag-rich-select .ag-virtual-list-item {\n      cursor: default;\n      height: 28px;\n      line-height: 28px; }\n      .ag-theme-balham .ag-rich-select .ag-virtual-list-item:hover {\n        background-color: #ECF0F1; }\n    .ag-theme-balham .ag-rich-select .ag-rich-select-row {\n      padding-left: 12px; }\n    .ag-theme-balham .ag-rich-select .ag-rich-select-row-selected {\n      background-color: #b7e4ff; }\n  .ag-theme-balham .ag-floating-filter-body {\n    float: left;\n    height: 100%;\n    margin-right: 0;\n    width: calc(100% - 24px); }\n    .ag-theme-balham .ag-floating-filter-body input {\n      box-sizing: border-box; }\n  .ag-theme-balham .ag-floating-filter-full-body input {\n    box-sizing: border-box; }\n  .ag-theme-balham .ag-floating-filter-button {\n    float: right;\n    line-height: 16px;\n    margin-top: 10px; }\n    .ag-theme-balham .ag-floating-filter-button button {\n      appearance: none;\n      background: transparent;\n      border: 0;\n      height: 16px;\n      padding: 0;\n      width: 16px; }\n  .ag-theme-balham .ag-cell-label-container {\n    height: 100%; }\n  .ag-theme-balham .ag-header-group-cell-label {\n    height: 100%; }\n    .ag-theme-balham .ag-header-group-cell-label span {\n      float: left;\n      height: 100%; }\n  .ag-theme-balham .ag-header-select-all {\n    height: 100%;\n    margin-right: 12px; }\n    .ag-theme-balham .ag-header-select-all span {\n      height: 100%; }\n  .ag-theme-balham .ag-header-select-all:not(.ag-hidden) + .ag-cell-label-container {\n    float: left;\n    width: calc(100% - 16px - 12px); }\n  .ag-theme-balham .ag-selection-checkbox span,\n  .ag-theme-balham .ag-group-expanded span,\n  .ag-theme-balham .ag-group-contracted span {\n    margin-right: 12px; }\n  .ag-theme-balham .ag-selection-checkbox span {\n    position: relative;\n    top: 2px; }\n  .ag-theme-balham .ag-group-expanded .ag-icon-contracted:empty {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNCA3bDQgNCA0LTQiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px; }\n  .ag-theme-balham .ag-column-drop-horizontal {\n    background-color: #f5f7f7;\n    height: 28px;\n    line-height: 16px;\n    padding-left: 12px; }\n    .ag-theme-balham .ag-column-drop-horizontal.ag-width-half {\n      margin-bottom: -3px; }\n    .ag-theme-balham .ag-column-drop-horizontal span {\n      float: left;\n      height: 100%; }\n    .ag-theme-balham .ag-column-drop-horizontal > div:first-child {\n      float: left;\n      height: 100%; }\n    .ag-theme-balham .ag-column-drop-horizontal .ag-icon-group,\n    .ag-theme-balham .ag-column-drop-horizontal .ag-icon-pivot {\n      margin-right: 12px; }\n    .ag-theme-balham .ag-column-drop-horizontal .ag-right-arrow {\n      background-color: transparent;\n      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTMuNSA3LjVsLTQgNEw4IDEwbDEuNS0xLjVoLTd2LTJoN0w4IDVsMS41LTEuNXoiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n      background-position: center;\n      background-repeat: no-repeat;\n      background-size: 16px 16px;\n      height: 16px;\n      opacity: 0.87;\n      width: 16px; }\n    .ag-theme-balham .ag-column-drop-horizontal .ag-left-arrow {\n      background-color: transparent;\n      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMi41IDguNWw0LTRMOCA2IDYuNSA3LjVoN3YyaC03TDggMTFsLTEuNSAxLjV6IiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiLz48L3N2Zz4=);\n      background-position: center;\n      background-repeat: no-repeat;\n      background-size: 16px 16px;\n      height: 16px;\n      opacity: 0.87;\n      width: 16px; }\n    .ag-theme-balham .ag-column-drop-horizontal .ag-left-arrow,\n    .ag-theme-balham .ag-column-drop-horizontal .ag-right-arrow {\n      overflow: hidden;\n      text-indent: 100%;\n      height: 100%;\n      margin: 0 4px;\n      opacity: 0.54; }\n    .ag-theme-balham .ag-column-drop-horizontal .ag-column-drop-empty-message {\n      height: 100%;\n      line-height: 28px;\n      opacity: 0.38; }\n  .ag-theme-balham .ag-column-drop-cell {\n    background: #dde4e6;\n    border-radius: 16px;\n    box-sizing: border-box;\n    height: 16px !important;\n    margin-top: 4px;\n    padding: 0 2px; }\n    .ag-theme-balham .ag-column-drop-cell .ag-column-drop-cell-text {\n      height: 100%;\n      line-height: 16px;\n      margin: 0 4px; }\n    .ag-theme-balham .ag-column-drop-cell .ag-column-drop-cell-button {\n      background-color: transparent;\n      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTEwLjUgNC41bC02IDYiLz48Y2lyY2xlIGN4PSI3LjUiIGN5PSI3LjUiIHI9IjUuNSIvPjxwYXRoIGQ9Ik00LjUgNC41bDYgNiIvPjwvZz48L3N2Zz4=);\n      background-position: center;\n      background-repeat: no-repeat;\n      background-size: 16px 16px;\n      height: 16px;\n      opacity: 0.87;\n      width: 16px;\n      overflow: hidden;\n      text-indent: 100%;\n      min-width: 16px;\n      height: 100%;\n      margin: 0 2px;\n      opacity: 0.54; }\n      .ag-theme-balham .ag-column-drop-cell .ag-column-drop-cell-button:hover {\n        opacity: 0.87; }\n    .ag-theme-balham .ag-column-drop-cell .ag-column-drag {\n      margin-left: 8px;\n      margin-top: 2px;\n      width: 16px; }\n  .ag-theme-balham .ag-select-agg-func-popup {\n    background: white;\n    border-radius: 2px;\n    box-shadow: none;\n    padding: 4px;\n    background: white;\n    height: 70px;\n    padding: 0; }\n    .ag-theme-balham .ag-select-agg-func-popup .ag-virtual-list-item {\n      cursor: default;\n      line-height: 20px;\n      padding-left: 8px; }\n  .ag-theme-balham .ag-set-filter-list,\n  .ag-theme-balham .ag-menu-column-select-wrapper {\n    width: auto; }\n  .ag-theme-balham .ag-column-drop-vertical > .ag-column-drop-cell {\n    float: left;\n    margin-bottom: 4px;\n    margin-left: 4px;\n    margin-top: 0; }\n  .ag-theme-balham .ag-cell-data-changed {\n    background-color: rgba(22, 160, 133, 0.5) !important; }\n  .ag-theme-balham .ag-cell-data-changed-animation {\n    background-color: transparent;\n    transition: background-color 1s; }\n  .ag-theme-balham .ag-stub-cell {\n    padding-left: 12px;\n    padding-top: 4px; }\n    .ag-theme-balham .ag-stub-cell .ag-loading-icon {\n      float: left;\n      height: 100%; }\n    .ag-theme-balham .ag-stub-cell .ag-loading-text {\n      float: left;\n      height: 100%;\n      margin-left: 4px;\n      margin-top: 4px; }\n  .ag-theme-balham .ag-rtl .ag-numeric-cell {\n    text-align: left; }\n  .ag-theme-balham .ag-rtl .ag-header-cell-menu-button {\n    float: left; }\n  .ag-theme-balham .ag-rtl .ag-header-cell-label {\n    float: right;\n    width: calc(100% - 16px); }\n    .ag-theme-balham .ag-rtl .ag-header-cell-label > span {\n      float: right; }\n    .ag-theme-balham .ag-rtl .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n  .ag-theme-balham .ag-rtl .ag-numeric-header .ag-header-cell-menu-button {\n    float: right; }\n  .ag-theme-balham .ag-rtl .ag-numeric-header .ag-header-cell-label {\n    float: left; }\n    .ag-theme-balham .ag-rtl .ag-numeric-header .ag-header-cell-label > span {\n      float: left; }\n  .ag-theme-balham .ag-rtl .ag-column-panel .ag-pivot-mode span {\n    float: right; }\n  .ag-theme-balham .ag-rtl .ag-column-panel .ag-pivot-mode .ag-pivot-mode-select {\n    margin-right: 4px; }\n    .ag-theme-balham .ag-rtl .ag-column-panel .ag-pivot-mode .ag-pivot-mode-select .ag-checkbox-label {\n      margin-right: 4px; }\n  .ag-theme-balham .ag-rtl .ag-column-panel .ag-column-drop .ag-icon {\n    float: right; }\n  .ag-theme-balham .ag-rtl .ag-column-panel .ag-column-drop .ag-column-drop-title {\n    clear: left;\n    float: right; }\n  .ag-theme-balham .ag-rtl .ag-column-panel .ag-column-drop .ag-column-drop-empty-message {\n    padding-left: 4px;\n    padding-right: 16px; }\n  .ag-theme-balham .ag-rtl .ag-filter-checkbox {\n    float: right;\n    margin-left: 4px; }\n  .ag-theme-balham .ag-rtl .ag-column-select-panel .ag-column-select-column-group span,\n  .ag-theme-balham .ag-rtl .ag-column-select-panel .ag-column-select-column span {\n    float: right; }\n  .ag-theme-balham .ag-rtl .ag-column-select-panel .ag-column-select-column-group .ag-column-select-checkbox,\n  .ag-theme-balham .ag-rtl .ag-column-select-panel .ag-column-select-column-group .ag-column-group-icons,\n  .ag-theme-balham .ag-rtl .ag-column-select-panel .ag-column-select-column .ag-column-select-checkbox,\n  .ag-theme-balham .ag-rtl .ag-column-select-panel .ag-column-select-column .ag-column-group-icons {\n    margin-left: 4px;\n    margin-right: 4px; }\n  .ag-theme-balham .ag-rtl .ag-column-select-panel .ag-column-select-column.ag-toolpanel-add-group-indent {\n    margin-left: 0;\n    margin-right: 24px; }\n  .ag-theme-balham .ag-rtl .ag-icon-tree-closed {\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSA0TDUgOGw0IDQiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 16px 16px;\n    height: 16px;\n    opacity: 0.87;\n    width: 16px; }\n  .ag-theme-balham .ag-rtl .ag-header-group-cell-label {\n    height: 100%; }\n    .ag-theme-balham .ag-rtl .ag-header-group-cell-label span {\n      float: right;\n      height: 100%; }\n  .ag-theme-balham .ag-rtl .ag-header-select-all:not(.ag-hidden) + .ag-cell-label-container {\n    float: right; }\n  .ag-theme-balham .ag-rtl .ag-header-select-all {\n    margin-left: 12px;\n    margin-right: 0; }\n  .ag-theme-balham .ag-rtl .ag-selection-checkbox span,\n  .ag-theme-balham .ag-rtl .ag-group-expanded span,\n  .ag-theme-balham .ag-rtl .ag-group-contracted span {\n    margin-left: 12px;\n    margin-right: 0; }\n  .ag-theme-balham .ag-rtl .ag-column-drop-horizontal {\n    padding-right: 12px; }\n    .ag-theme-balham .ag-rtl .ag-column-drop-horizontal span {\n      float: right; }\n    .ag-theme-balham .ag-rtl .ag-column-drop-horizontal > div:first-child {\n      float: right; }\n    .ag-theme-balham .ag-rtl .ag-column-drop-horizontal .ag-icon-group,\n    .ag-theme-balham .ag-rtl .ag-column-drop-horizontal .ag-icon-pivot {\n      margin-left: 12px;\n      margin-right: 0; }\n    .ag-theme-balham .ag-rtl .ag-column-drop-horizontal .ag-right-arrow {\n      background-color: transparent;\n      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTMuNSA3LjVsLTQgNEw4IDEwbDEuNS0xLjVoLTd2LTJoN0w4IDVsMS41LTEuNXoiIHN0cm9rZT0iIzdGOEM4RCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==);\n      background-position: center;\n      background-repeat: no-repeat;\n      background-size: 16px 16px;\n      height: 16px;\n      opacity: 0.87;\n      width: 16px;\n      height: 100%; }\n    .ag-theme-balham .ag-rtl .ag-column-drop-horizontal .ag-left-arrow {\n      background-color: transparent;\n      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMi41IDguNWw0LTRMOCA2IDYuNSA3LjVoN3YyaC03TDggMTFsLTEuNSAxLjV6IiBzdHJva2U9IiM3RjhDOEQiIGZpbGw9Im5vbmUiLz48L3N2Zz4=);\n      background-position: center;\n      background-repeat: no-repeat;\n      background-size: 16px 16px;\n      height: 16px;\n      opacity: 0.87;\n      width: 16px;\n      height: 100%; }\n  .ag-theme-balham .ag-rtl .ag-floating-filter-body {\n    float: right;\n    margin-left: 0; }\n  .ag-theme-balham .ag-rtl .ag-floating-filter-button {\n    float: left; }\n  .ag-theme-balham .ag-rtl .ag-header .ag-header-cell-resize {\n    left: -4px;\n    right: auto; }\n  .ag-theme-balham .ag-rtl .ag-header .ag-header-cell-resize::after {\n    border-left: 1px solid #BDC3C7;\n    border-right: 0; }\n  .ag-theme-balham .ag-rtl .ag-column-select-header .ag-filter-body {\n    margin-left: 4px;\n    margin-right: 0; }\n  .ag-theme-balham .ag-rtl .ag-column-drag {\n    background-position-x: right; }\n  .ag-theme-balham .ag-status-bar {\n    background: white;\n    border: 1px solid #BDC3C7;\n    border-top: 0;\n    color: rgba(0, 0, 0, 0.38);\n    display: flex;\n    font: 600 12px -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen-Sans, Ubuntu, Cantarell, \"Helvetica Neue\", sans-serif;\n    justify-content: flex-end;\n    padding: 8px 16px; }\n    .ag-theme-balham .ag-status-bar .ag-status-bar-item {\n      margin-right: 8px; }\n      .ag-theme-balham .ag-status-bar .ag-status-bar-item span:nth-child(1)::after {\n        content: \":\"; }\n      .ag-theme-balham .ag-status-bar .ag-status-bar-item span:nth-child(2) {\n        color: #000; }\n  .ag-theme-balham .ag-details-row {\n    box-sizing: border-box;\n    padding: 20px; }\n  .ag-theme-balham .ag-overlay-loading-wrapper {\n    background-color: rgba(255, 255, 255, 0.5); }\n  .ag-theme-balham .ag-overlay-loading-center {\n    background: white;\n    border-radius: 2px;\n    box-shadow: none;\n    padding: 4px; }\n  .ag-theme-balham .ag-tool-panel {\n    background-color: #f5f7f7;\n    border-right: 1px solid #BDC3C7;\n    border-top: 1px solid #BDC3C7; }\n    .ag-theme-balham .ag-tool-panel .ag-side-buttons {\n      border-bottom: 1px solid #BDC3C7; }\n      .ag-theme-balham .ag-tool-panel .ag-side-buttons button {\n        background: transparent;\n        border: 0;\n        border-right: 1px solid #BDC3C7;\n        color: #000;\n        height: 20px; }\n    .ag-theme-balham .ag-tool-panel .ag-panel-container {\n      border-right: 1px solid #BDC3C7;\n      box-sizing: border-box; }\n    .ag-theme-balham .ag-tool-panel.full-width .ag-panel-container {\n      border-right: 0; }\n    .ag-theme-balham .ag-tool-panel .ag-column-drop {\n      min-height: 50px; }\n  .ag-theme-balham .ag-rtl .ag-tool-panel .ag-panel-container {\n    border-left: 1px solid #BDC3C7;\n    border-right: 0; }\n  .ag-theme-balham .ag-rtl .ag-tool-panel.full-width .ag-panel-container {\n    border-left: 0; }\n  .ag-theme-balham .ag-rtl .ag-tool-panel .ag-side-buttons button {\n    border-left: 1px solid #BDC3C7;\n    border-right: 0; }\n  .ag-theme-balham .ag-column-name-filter {\n    box-sizing: border-box;\n    width: 100%; }\n  .ag-theme-balham .sass-variables::after {\n    content: '{ \"autoSizePadding\": \"12px\", \"headerHeight\": \"32px\", \"groupPaddingSize\": \"28px\", \"footerPaddingAddition\": \"16px\", \"virtualItemHeight\": \"28px\", \"aggFuncPopupHeight\": \"98px\", \"checkboxIndentWidth\": \"20px\", \"leafNodePadding\": \"12px\", \"rowHeight\": \"28px\", \"gridSize\": \"4px\", \"iconSize\": \"16px\" }';\n    display: none; }\n  .ag-theme-balham .ag-header {\n    background-color: #f5f7f7;\n    border-bottom: 1px solid #BDC3C7; }\n  .ag-theme-balham .ag-cell-highlight {\n    background-color: #0091EA !important; }\n  .ag-theme-balham .ag-header-cell-resize {\n    right: -3px; }\n  .ag-theme-balham .ag-rtl .ag-header .ag-header-cell-resize {\n    left: -4px; }\n  .ag-theme-balham .ag-header-cell-resize::after {\n    height: 16px;\n    margin-top: 8px; }\n  .ag-theme-balham .ag-header-cell::after,\n  .ag-theme-balham .ag-header-group-cell::after {\n    border-right: 1px solid rgba(189, 195, 199, 0.5);\n    content: \" \";\n    height: 16px;\n    margin-top: 8px;\n    position: absolute;\n    right: 0;\n    text-indent: -2000px;\n    top: 0; }\n  .ag-theme-balham [ref=\"north\"] .ag-column-drop {\n    border: 1px solid #BDC3C7;\n    border-bottom: 0; }\n  .ag-theme-balham [ref=\"north\"] .ag-column-drop.ag-width-half:first-child {\n    border-right: 0; }\n  .ag-theme-balham .ag-row {\n    border-bottom-color: #d9dcde; }\n  .ag-theme-balham .ag-row-selected {\n    border-bottom-color: #b7e4ff; }\n  .ag-theme-balham .ag-row-drag {\n    background-position-y: center; }\n  .ag-theme-balham .ag-column-drag {\n    background-position-y: center; }\n  .ag-theme-balham .ag-column-drop-cell {\n    height: 24px !important; }\n    .ag-theme-balham .ag-column-drop-cell .ag-column-drop-cell-button {\n      box-sizing: border-box;\n      height: calc(100% - 4px);\n      margin-bottom: 2px;\n      margin-top: 2px; }\n    .ag-theme-balham .ag-column-drop-cell .ag-column-drop-cell-button:hover {\n      opacity: 1; }\n  .ag-theme-balham .ag-column-drop-vertical .ag-column-drop-cell {\n    margin-left: 8px;\n    margin-right: 8px; }\n    .ag-theme-balham .ag-column-drop-vertical .ag-column-drop-cell .ag-column-drop-cell-text {\n      line-height: 24px;\n      margin-left: 8px; }\n  .ag-theme-balham .ag-column-drop-horizontal {\n    background-color: #f5f7f7;\n    height: 32px; }\n    .ag-theme-balham .ag-column-drop-horizontal .ag-column-drop-empty-message {\n      line-height: 32px; }\n    .ag-theme-balham .ag-column-drop-horizontal .ag-column-drop-cell-text {\n      line-height: 24px;\n      margin-left: 8px; }\n  .ag-theme-balham .ag-filter .ag-filter-header-container {\n    height: 24px; }\n  .ag-theme-balham .ag-root {\n    border: 1px solid #BDC3C7; }\n  .ag-theme-balham .ag-tab {\n    box-sizing: initial; }\n  .ag-theme-balham .ag-filter .ag-filter-value {\n    line-height: 20px; }\n  .ag-theme-balham .ag-column-panel {\n    border-right: 1px solid #BDC3C7;\n    border-bottom: 1px solid #BDC3C7; }\n    .ag-theme-balham .ag-column-panel .ag-column-select-panel {\n      padding-bottom: 8px; }\n      .ag-theme-balham .ag-column-panel .ag-column-select-panel .ag-column-select-column-group,\n      .ag-theme-balham .ag-column-panel .ag-column-select-panel .ag-column-select-column {\n        height: 20px;\n        line-height: 20px; }\n    .ag-theme-balham .ag-column-panel .ag-column-drop {\n      padding-bottom: 8px;\n      padding-top: 8px; }\n      .ag-theme-balham .ag-column-panel .ag-column-drop .ag-icon {\n        margin-bottom: 4px; }\n      .ag-theme-balham .ag-column-panel .ag-column-drop .ag-column-drop-title {\n        display: inline-block;\n        float: none;\n        margin-bottom: 4px; }\n      .ag-theme-balham .ag-column-panel .ag-column-drop .ag-column-drop-empty-message {\n        height: 16px;\n        line-height: 16px;\n        padding-left: 24px; }\n  .ag-theme-balham .ag-rtl .ag-tool-panel,\n  .ag-theme-balham .ag-rtl .ag-column-panel {\n    border-left: 1px solid #BDC3C7;\n    border-right: 0; }\n  .ag-theme-balham .ag-icon-expanded,\n  .ag-theme-balham .ag-icon-contracted {\n    transform: translateY(2px); }\n  .ag-theme-balham .ag-rtl .ag-icon-expanded {\n    transform: translateY(2px) rotate(180deg); }\n  .ag-theme-balham .ag-menu-option {\n    height: 28px;\n    line-height: 28px; }\n  .ag-theme-balham .ag-column-select-panel .ag-column-select-column-group,\n  .ag-theme-balham .ag-column-select-panel .ag-column-select-column {\n    height: 20px;\n    line-height: 20px; }\n  .ag-theme-balham .ag-filter-filter {\n    margin-left: 4px;\n    margin-right: 4px;\n    width: calc(100% - 8px); }\n  .ag-theme-balham .ag-tab-header {\n    border-bottom: 1px solid #BDC3C7; }\n    .ag-theme-balham .ag-tab-header .ag-tab {\n      margin-bottom: -2px; }\n    .ag-theme-balham .ag-tab-header .ag-tab.ag-tab-selected {\n      background-color: white;\n      border-bottom-color: transparent; }\n  .ag-theme-balham .ag-tab-body,\n  .ag-theme-balham .ag-popup-editor,\n  .ag-theme-balham .ag-menu {\n    background-color: white;\n    color: #000; }\n  .ag-theme-balham .ag-cell-inline-editing {\n    height: 28px;\n    padding: 0; }\n    .ag-theme-balham .ag-cell-inline-editing input {\n      box-sizing: border-box; }\n  .ag-theme-balham .ag-details-row {\n    background-color: white; }\n  .ag-theme-balham .ag-overlay-loading-wrapper {\n    background-color: rgba(255, 255, 255, 0.5); }\n  .ag-theme-balham .ag-overlay-loading-center {\n    background-color: #fff;\n    border: 1px solid #BDC3C7;\n    color: #000;\n    padding: 16px; }\n  .ag-theme-balham .ag-cell-range-selected-1:not(.ag-cell-focus) {\n    background-color: rgba(0, 145, 234, 0.3); }\n  .ag-theme-balham .ag-cell-range-selected-2:not(.ag-cell-focus) {\n    background-color: rgba(0, 145, 234, 0.4); }\n  .ag-theme-balham .ag-cell-range-selected-3:not(.ag-cell-focus) {\n    background-color: rgba(0, 145, 234, 0.5); }\n  .ag-theme-balham .ag-cell-range-selected-4:not(.ag-cell-focus) {\n    background-color: rgba(0, 145, 234, 0.6); }\n  .ag-theme-balham .ag-rich-select-value {\n    border-bottom: 1px solid #BDC3C7; }\n  .ag-theme-balham .ag-filter-apply-panel {\n    border-top: 1px solid #BDC3C7; }\n  .ag-theme-balham .ag-header-cell-moving {\n    background-color: white; }\n"; });
+define('ag-grid-enterprise/main',['require','exports','module','./dist/lib/toolPanel/columnsSelect/columnSelectComp','./dist/lib/toolPanel/columnsSelect/toolPanelColumnComp','./dist/lib/toolPanel/columnsSelect/toolPanelGroupComp','./dist/lib/rowStages/aggregationStage','./dist/lib/rowStages/groupStage','./dist/lib/setFilter/setFilter','./dist/lib/setFilter/setFilterModel','./dist/lib/statusBar/statusBar','./dist/lib/statusBar/statusItem','./dist/lib/clipboardService','./dist/lib/enterpriseBoot','./dist/lib/menu/enterpriseMenu','./dist/lib/menu/menuItemComponent','./dist/lib/menu/menuList','./dist/lib/rangeController','./dist/lib/toolPanel/columnDrop/rowGroupColumnsPanel','./dist/lib/menu/contextMenu','./dist/lib/rowModels/viewport/viewportRowModel','./dist/lib/rendering/richSelect/richSelectCellEditor','./dist/lib/rendering/richSelect/richSelectRow','./dist/lib/rendering/virtualList','./dist/lib/toolPanel/columnDrop/abstractColumnDropPanel','./dist/lib/toolPanel/columnDrop/pivotColumnsPanel','./dist/lib/toolPanel/toolPanelComp','./dist/lib/licenseManager','./dist/lib/rowStages/pivotStage','./dist/lib/rowStages/pivotColDefService','./dist/lib/toolPanel/columnDrop/pivotModePanel','./dist/lib/aggregation/aggFuncService','./dist/lib/license/md5','./dist/lib/setFilter/setFilterListItem','./dist/lib/toolPanel/columnDrop/columnComponent','./dist/lib/toolPanel/columnDrop/valueColumnsPanel','./dist/lib/pivotCompFactory','./dist/lib/rowGroupCompFactory','./dist/lib/excelCreator','./dist/lib/excelXmlFactory','ag-grid/main','./dist/lib/menu/enterpriseMenu','./dist/lib/rangeController','./dist/lib/clipboardService','./dist/lib/rowStages/groupStage','./dist/lib/rowStages/aggregationStage','./dist/lib/enterpriseBoot','./dist/lib/statusBar/statusBar','./dist/lib/menu/contextMenu','./dist/lib/rowModels/viewport/viewportRowModel','./dist/lib/toolPanel/columnDrop/pivotColumnsPanel','./dist/lib/toolPanel/toolPanelComp','./dist/lib/rowGroupCompFactory','./dist/lib/licenseManager','./dist/lib/license/md5','./dist/lib/rowStages/pivotStage','./dist/lib/rowStages/pivotColDefService','./dist/lib/aggregation/aggFuncService','./dist/lib/pivotCompFactory','./dist/lib/menu/menuItemMapper','./dist/lib/excelCreator','./dist/lib/excelXmlFactory','./dist/lib/rowModels/enterprise/enterpriseRowModel','./dist/lib/toolPanel/columnsSelect/columnSelectHeaderComp','./dist/lib/toolPanel/columnsSelect/columnContainerComp','./dist/lib/toolPanel/columnsSelect/horizontalResizeComp'],function (require, exports, module) {// ag-grid-enterprise v17.1.1
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var columnSelectComp_1 = require("./dist/lib/toolPanel/columnsSelect/columnSelectComp");
