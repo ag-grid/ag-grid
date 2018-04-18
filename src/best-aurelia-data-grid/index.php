@@ -148,28 +148,29 @@ import {GridOptions, GridApi, ColumnApi} from "ag-grid";</snippet>
         follows:
     </p>
 
-    <snippet>
-     {
-        "name": "vendor-bundle.js",
-        "prepend": [
-          "node_modules/bluebird/js/browser/bluebird.core.js",
-          "scripts/require.js"
-        ],
-        "dependencies": [
-          "aurelia-binding",
-          "aurelia-bootstrapper",
-          ...other dependencies...
-          {
-            "name": "ag-grid",
-            "path": "../node_modules/ag-grid",
-            "main": "main"
-          },
-          {
-            "name": "ag-grid-aurelia",
-            "path": "../../ag-grid-aurelia",
-            "main": "main"
-          }
-        ]</snippet>
+<snippet>
+{
+    "name": "vendor-bundle.js",
+    "prepend": [
+        "node_modules/bluebird/js/browser/bluebird.core.js",
+        "scripts/require.js"
+    ],
+    "dependencies": [
+      "aurelia-binding",
+      "aurelia-bootstrapper",
+      ...other dependencies...
+      {
+        "name": "ag-grid",
+        "path": "../node_modules/ag-grid",
+        "main": "main"
+      },
+      {
+        "name": "ag-grid-aurelia",
+        "path": "../../ag-grid-aurelia",
+        "main": "main"
+      }
+    ]
+}</snippet>
 
     <p>
         All the above items are specific to Aurelia and is intended to point
@@ -290,7 +291,8 @@ import {GridOptions, GridApi, ColumnApi} from "ag-grid";</snippet>
 
 <h3 id="column-definition">Column Definition</h3>
 <snippet>
-&lt;ag-grid-column header-name="Name" field="name" width.bind="150" pinned.bind="true"&gt;&lt;/ag-grid-column&gt;</snippet>
+&lt;ag-grid-column header-name="Name" field="name" width.bind="150" pinned.bind="true"&gt;
+&lt;/ag-grid-column&gt;</snippet>
 
 <p>This example declares a simple Column Definition, specifying header name, field and width.</p>
 
@@ -339,9 +341,12 @@ private getCountryFilterParams():any {
 <p>To specify a Grouped Column, you can nest a column defintion:</p>
 <snippet>
 &lt;ag-grid-column header-name="IT Skills"&gt;
-&lt;ag-grid-column header-name="Skills" width.bind="125" suppress-sorting.bind="true" cell-renderer.bind="skillsCellRenderer" filter.bind="getSkillFilter()"&gt;&lt;/ag-grid-column&gt;
-&lt;ag-grid-column header-name="Proficiency" field="proficiency" width.bind="120"
-                cell-renderer.bind="percentCellRenderer" filter.bind="getProficiencyFilter()"&gt;&lt;/ag-grid-column&gt;
+    &lt;ag-grid-column header-name="Skills" width.bind="125" suppress-sorting.bind="true"
+                    cell-renderer.bind="skillsCellRenderer" filter.bind="getSkillFilter()"&gt;
+    &lt;/ag-grid-column&gt;
+    &lt;ag-grid-column header-name="Proficiency" field="proficiency" width.bind="120"
+                    cell-renderer.bind="percentCellRenderer" filter.bind="getProficiencyFilter()"&gt;
+    &lt;/ag-grid-column&gt;
 &lt;/ag-grid-column&gt;</snippet>
 <p>In this example we have a parent Column of "IT Skills", with two child columns.</p>
 
