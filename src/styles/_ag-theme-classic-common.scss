@@ -57,15 +57,13 @@
         opacity: 0.3;
     }
 
-    [ref="north"] {
-        .ag-column-drop {
-            border: 1px solid $border-color;
-            border-bottom: 0;
-        }
+    .ag-column-drop-horizontal.ag-column-drop {
+        border: 1px solid $border-color;
+        border-bottom: 0;
+    }
 
-        .ag-column-drop:last-child {
-            border-left: 0;
-        }
+    .ag-column-drop-horizontal.ag-column-drop:last-child {
+        border-left: 0;
     }
 
     .ag-header {

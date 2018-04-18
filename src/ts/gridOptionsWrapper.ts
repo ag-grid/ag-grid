@@ -298,16 +298,8 @@ export class GridOptionsWrapper {
     public isRowDragManaged() { return isTrue(this.gridOptions.rowDragManaged); }
     public isSuppressRowDrag() { return isTrue(this.gridOptions.suppressRowDrag); }
 
-    public isForPrint() {
-        let isForPrint = this.gridOptions.domLayout === 'forPrint';
-        if (isForPrint && !this.forPrintWarningGiven){
-            console.warn(`ag-grid: Since v17.1.0 domLayout: 'forPrint' has been deprecated. Please use instead auto height: https://www.ag-grid.com/javascript-grid-width-and-height/#autoHeight`)
-            this.forPrintWarningGiven = true
-        }
-        return isForPrint;
-    }
     public isAutoHeight() { return this.gridOptions.domLayout === 'autoHeight'; }
-    public isNormalDomLayout() { return !this.isForPrint() && !this.isAutoHeight(); }
+    public isNormalDomLayout() { return !this.isAutoHeight(); }
 
     public isSuppressHorizontalScroll() { return isTrue(this.gridOptions.suppressHorizontalScroll); }
     public isSuppressLoadingOverlay() { return isTrue(this.gridOptions.suppressLoadingOverlay); }
@@ -462,7 +454,6 @@ export class GridOptionsWrapper {
     public getNavigateToNextCellFunc(): (params: NavigateToNextCellParams)=>GridCellDef { return this.gridOptions.navigateToNextCell; }
     public getTabToNextCellFunc(): (params: TabToNextCellParams)=>GridCellDef { return this.gridOptions.tabToNextCell; }
 
-    public isNativeScroll(): boolean { return false; }
     public isTreeData(): boolean { return isTrue(this.gridOptions.treeData); }
     public isValueCache(): boolean { return isTrue(this.gridOptions.valueCache); }
     public isValueCacheNeverExpires(): boolean { return isTrue(this.gridOptions.valueCacheNeverExpires); }
@@ -733,7 +724,9 @@ export class GridOptionsWrapper {
         if (options.angularCompileHeaders) {
             console.warn(`ag-grid: since version 15.x, angularCompileHeaders is gone, please see the getting started for Angular 1 docs to see how to do headers in Angular 1.x.`);
         }
-
+        if (options.domLayout==='forPrint') {
+            console.warn(`ag-grid: since version 18.x, forPrint is no longer supported, as same can be achieved using autoHeight (and set the grid width accordingly). please use autoHeight instead.`);
+        }
     }
 
     public getLocaleTextFunc() {

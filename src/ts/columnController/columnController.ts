@@ -532,11 +532,11 @@ export class ColumnController {
 
     // used by:
     // + angularGrid -> setting pinned body width
-    // todo: this needs to be cached
+    // note: this should be cached
     public getPinnedLeftContainerWidth() {
         return this.getWidthOfColsInList(this.displayedLeftColumns);
     }
-    // todo: this needs to be cached
+    // note: this should be cached
     public getPinnedRightContainerWidth() {
         return this.getWidthOfColsInList(this.displayedRightColumns);
     }
@@ -2304,7 +2304,7 @@ export class ColumnController {
 
     private updateDisplayedCenterVirtualColumns(): {[key: string]: boolean} {
 
-        let skipVirtualisation = this.gridOptionsWrapper.isSuppressColumnVirtualisation() || this.gridOptionsWrapper.isForPrint();
+        let skipVirtualisation = this.gridOptionsWrapper.isSuppressColumnVirtualisation();
         if (skipVirtualisation) {
             // no virtualisation, so don't filter
             this.allDisplayedCenterVirtualColumns = this.displayedCenterColumns;

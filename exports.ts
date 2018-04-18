@@ -97,7 +97,6 @@ export {MoveColumnController} from "./dist/lib/headerRendering/moveColumnControl
 export {StandardMenuFactory} from "./dist/lib/headerRendering/standardMenu";
 
 // layout
-export {BorderLayout} from "./dist/lib/layout/borderLayout";
 export {TabbedLayout} from "./dist/lib/layout/tabbedLayout";
 export {VerticalStack} from "./dist/lib/layout/verticalStack";
 export {TabbedItem} from "./dist/lib/layout/tabbedLayout"
@@ -266,7 +265,7 @@ export {AgEvent, AgGridEvent, ModelUpdatedEvent, ColumnPivotModeChangedEvent, Vi
     RowDataChangedEvent, RowDataUpdatedEvent, PinnedRowDataChangedEvent, SelectionChangedEvent, FilterChangedEvent,
     FilterModifiedEvent, SortChangedEvent, GridReadyEvent, DragStartedEvent, DragStoppedEvent,
     DisplayedColumnsWidthChangedEvent, ColumnHoverChangedEvent, BodyHeightChangedEvent, ComponentStateChangedEvent,
-    GridSizeChangedEvent, ViewportChangedEvent, RangeSelectionChangedEvent, ColumnGroupOpenedEvent, ItemsAddedEvent,
+    ViewportChangedEvent, RangeSelectionChangedEvent, ColumnGroupOpenedEvent, ItemsAddedEvent,
     BodyScrollEvent, FlashCellsEvent, PaginationChangedEvent, CellFocusedEvent, ColumnEvent, ColumnResizedEvent,
     ColumnPivotChangedEvent, ColumnRowGroupChangedEvent, ColumnValueChangedEvent, ColumnMovedEvent, ColumnVisibleEvent,
     ColumnPinnedEvent, RowEvent, RowGroupOpenedEvent, RowValueChangedEvent, RowSelectedEvent, VirtualRowRemovedEvent,

@@ -76,11 +76,6 @@ export interface RowDragEndEvent extends RowDragEvent {}
 export interface RowDragMoveEvent extends RowDragEvent {}
 export interface RowDragLeaveEvent extends RowDragEvent {}
 
-export interface GridSizeChangedEvent extends AgGridEvent {
-    clientWidth: number;
-    clientHeight: number;
-}
-
 export interface ViewportChangedEvent extends AgGridEvent {
     firstRow: number;
     lastRow: number;

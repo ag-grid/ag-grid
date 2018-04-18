@@ -24,7 +24,7 @@ import {
     ColumnValueChangedEvent, ColumnValueChangeRequestEvent, ColumnVisibleEvent, DisplayedColumnsChangedEvent,
     DragStartedEvent, DragStoppedEvent,
     FilterChangedEvent, FilterModifiedEvent,
-    GridColumnsChangedEvent, GridReadyEvent, GridSizeChangedEvent, ModelUpdatedEvent,
+    GridColumnsChangedEvent, GridReadyEvent, ModelUpdatedEvent,
     NewColumnsLoadedEvent, PaginationChangedEvent, PinnedRowDataChangedEvent, RangeSelectionChangedEvent,
     RowClickedEvent, RowDataChangedEvent,
     RowDoubleClickedEvent,
@@ -364,7 +364,6 @@ export interface GridOptions {
     onRowClicked?(event?: RowClickedEvent): void;
     onRowDoubleClicked?(event?: RowDoubleClickedEvent): void;
     onGridReady?(event?: GridReadyEvent): void;
-    onGridSizeChanged?(event?: GridSizeChangedEvent): void;
     onViewportChanged?(event?: ViewportChangedEvent): void;
     onDragStarted?(event?: DragStartedEvent): void;
     onDragStopped?(event?: DragStoppedEvent): void;
@@ -373,6 +372,8 @@ export interface GridOptions {
     onRowDragMove?(event? : DraggingEvent): void;
     onRowDragLeave?(event? : DraggingEvent): void;
     onRowDragEnd?(event? : DraggingEvent): void;
+    // deprecated
+    onGridSizeChanged?(event?: any): void;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *

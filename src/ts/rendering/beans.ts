@@ -71,12 +71,10 @@ export class Beans {
     @Autowired('filterManager') public filterManager: FilterManager;
     @Autowired('heightScaler') public heightScaler: HeightScaler;
 
-    public forPrint: boolean;
     public doingMasterDetail: boolean;
 
     @PostConstruct
     private postConstruct(): void {
-        this.forPrint = this.gridOptionsWrapper.isForPrint();
         this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
     }
 }

@@ -26,27 +26,20 @@ export class HeaderRenderer {
     private childContainers: HeaderContainer[];
 
     private eHeaderViewport: HTMLElement;
-    private eHeaderOverlay: HTMLElement;
 
     @PostConstruct
     private init() {
         this.eHeaderViewport = this.gridPanel.getHeaderViewport();
-        this.eHeaderOverlay = this.gridPanel.getHeaderOverlay();
 
         this.centerContainer = new HeaderContainer(this.gridPanel.getHeaderContainer(), this.gridPanel.getHeaderViewport(), null);
         this.childContainers = [this.centerContainer];
 
-        if (!this.gridOptionsWrapper.isForPrint()) {
-            this.pinnedLeftContainer = new HeaderContainer(this.gridPanel.getPinnedLeftHeader(), null, Column.PINNED_LEFT);
-            this.pinnedRightContainer = new HeaderContainer(this.gridPanel.getPinnedRightHeader(), null, Column.PINNED_RIGHT);
-            this.childContainers.push(this.pinnedLeftContainer);
-            this.childContainers.push(this.pinnedRightContainer);
-        }
+        this.pinnedLeftContainer = new HeaderContainer(this.gridPanel.getPinnedLeftHeader(), null, Column.PINNED_LEFT);
+        this.pinnedRightContainer = new HeaderContainer(this.gridPanel.getPinnedRightHeader(), null, Column.PINNED_RIGHT);
+        this.childContainers.push(this.pinnedLeftContainer);
+        this.childContainers.push(this.pinnedRightContainer);
 
         this.childContainers.forEach( container => this.context.wireBean(container) );
-
-        // when grid columns change, it means the number of rows in the header has changed and it's all new columns
-        this.eventService.addEventListener(Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
 
         // shotgun way to get labels to change, eg from sum(amount) to avg(amount)
         this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshHeader.bind(this));
@@ -74,34 +67,13 @@ export class HeaderRenderer {
         this.childContainers.forEach( container => container.destroy() );
     }
 
-    private onGridColumnsChanged(): void {
-        this.setHeight();
-    }
-
     public refreshHeader() {
-
-        this.setHeight();
-
         this.childContainers.forEach( container => container.refresh() );
-
         this.setPinnedColContainerWidth();
     }
 
-    private setHeight(): void {
-        // if forPrint, overlay is missing
-        if (this.eHeaderOverlay) {
-            let rowHeight = this.gridOptionsWrapper.getHeaderHeight();
-            // we can probably get rid of this when we no longer need the overlay
-            let dept = this.columnController.getHeaderRowCount();
-            this.eHeaderOverlay.style.height = rowHeight + 'px';
-            this.eHeaderOverlay.style.top = ((dept-1) * rowHeight) + 'px';
-        }
-    }
 
     public setPinnedColContainerWidth() {
-        // pinned col doesn't exist when doing forPrint
-        if (this.gridOptionsWrapper.isForPrint()) { return; }
-
         let pinnedLeftWidthWithScroll = this.scrollVisibleService.getPinnedLeftWithScrollWidth();
         let pinnedRightWidthWithScroll = this.scrollVisibleService.getPinnedRightWithScrollWidth();
 

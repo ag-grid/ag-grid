@@ -460,11 +460,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public setPinned(pinned: string|boolean): void {
-        // pinning is not allowed when doing 'forPrint'
-        if (this.gridOptionsWrapper.isForPrint()) {
-            return;
-        }
-
         if (pinned===true || pinned===Column.PINNED_LEFT) {
             this.pinned = Column.PINNED_LEFT;
         } else if (pinned===Column.PINNED_RIGHT) {
@@ -472,9 +467,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         } else {
             this.pinned = null;
         }
-
-        // console.log(`setColumnsPinned ${this.getColId()} ${this.pinned}`);
-
     }
 
     public setFirstRightPinned(firstRightPinned: boolean, source: ColumnEventType = "api"): void {

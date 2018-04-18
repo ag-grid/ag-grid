@@ -242,7 +242,7 @@ export class RowComp extends Component {
 
     private getInitialRowTopStyle() {
         let rowTopStyle = '';
-        let setRowTop = !this.beans.forPrint && !this.beans.gridOptionsWrapper.isAutoHeight();
+        let setRowTop = !this.beans.gridOptionsWrapper.isAutoHeight();
         if (setRowTop) {
             // if sliding in, we take the old row top. otherwise we just set the current row top.
             let pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
@@ -340,12 +340,10 @@ export class RowComp extends Component {
         let centerCols = this.beans.columnController.getAllDisplayedCenterVirtualColumnsForRow(this.rowNode);
         this.createRowContainer(this.bodyContainerComp, centerCols, eRow => this.eBodyRow = eRow);
 
-        if (!this.beans.forPrint) {
-            let leftCols = this.beans.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
-            let rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
-            this.createRowContainer(this.pinnedRightContainerComp, rightCols, eRow => this.ePinnedRightRow = eRow);
-            this.createRowContainer(this.pinnedLeftContainerComp, leftCols, eRow => this.ePinnedLeftRow = eRow);
-        }
+        let leftCols = this.beans.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
+        let rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
+        this.createRowContainer(this.pinnedRightContainerComp, rightCols, eRow => this.ePinnedRightRow = eRow);
+        this.createRowContainer(this.pinnedLeftContainerComp, leftCols, eRow => this.ePinnedLeftRow = eRow);
     }
 
     private createFullWidthRows(type: string, name: string): void {
@@ -388,26 +386,11 @@ export class RowComp extends Component {
                 null, type, name,
                 (eRow: HTMLElement) => {
                     this.eFullWidthRow = eRow;
-                    // and fake the mouse wheel for the fullWidth container
-                    if (!this.beans.forPrint) {
-                        this.addMouseWheelListenerToFullWidthRow();
-                    }
                 },
                 (cellRenderer: ICellRendererComp) => {
                     this.fullWidthRowComponent = cellRenderer;
                 });
         }
-    }
-
-    private addMouseWheelListenerToFullWidthRow(): void {
-
-        if (this.beans.gridOptionsWrapper.isNativeScroll()) { return; }
-
-        let mouseWheelListener = this.beans.gridPanel.genericMouseWheelListener.bind(this.beans.gridPanel);
-        // IE9, Chrome, Safari, Opera
-        this.addDestroyableEventListener(this.eFullWidthRow, 'mousewheel', mouseWheelListener);
-        // Firefox
-        this.addDestroyableEventListener(this.eFullWidthRow, 'DOMMouseScroll', mouseWheelListener);
     }
 
     private setAnimateFlags(animateIn: boolean): void {
@@ -1318,7 +1301,7 @@ export class RowComp extends Component {
 
     private onTopChanged(): void {
         // top is not used in forPrint, as the rows are just laid out naturally
-        let doNotSetRowTop = this.beans.forPrint || this.beans.gridOptionsWrapper.isAutoHeight();
+        let doNotSetRowTop = this.beans.gridOptionsWrapper.isAutoHeight();
         if (doNotSetRowTop) { return; }
 
         this.setRowTop(this.rowNode.rowTop);

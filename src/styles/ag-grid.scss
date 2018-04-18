@@ -40,35 +40,46 @@ ag-grid-aurelia {
     user-select: none;
 }
 
+.ag-root-wrapper {
+    position: relative; // set to relative, so absolute popups appear relative to this
+}
+
+.ag-root-wrapper.ag-layout-normal {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.ag-root-wrapper-body {
+    display: flex;
+    flex-direction: row;
+}
+
+.ag-layout-normal .ag-root-wrapper-body {
+    flex-grow: 1;
+    height: 0px;
+    min-height: 0px;
+}
+
 .ag-root {
     box-sizing: border-box;
-
-    /* was getting some 'should be there' scrolls, this sorts it out */
-    overflow: hidden;
-
-    /* set to relative, so absolute popups appear relative to this */
-    position: relative;
+    overflow: hidden; // was getting some 'should be there' scrolls, this sorts it out
+    position: relative; // set to relative, so absolute popups appear relative to this
+    display: inline-block;
+    width: 0px;
+    min-width: 0px;
+    flex: 1;
 }
 
 .ag-layout-normal .ag-root {
     height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .ag-font-style {
     cursor: default;
-
-    /* disable user mouse selection */
-    user-select: none;
-}
-
-.ag-layout-for-print {
-    display: block;
-    white-space: nowrap;
-}
-
-.ag-layout-for-print .ag-row,
-.ag-layout-for-print .ag-cell {
-    page-break-inside: avoid !important;
+    user-select: none; // disable user mouse selection
 }
 
 .ag-layout-normal {
@@ -77,7 +88,7 @@ ag-grid-aurelia {
 
 .ag-layout-auto-height {
 }
-//
+
 .ag-popup-backdrop {
     height: 100%;
     left: 0;
@@ -88,15 +99,15 @@ ag-grid-aurelia {
 
 .ag-header {
     box-sizing: border-box;
-    overflow: hidden;
+    //overflow: hidden;
     white-space: nowrap;
     width: 100%;
 }
 
 .ag-layout-normal .ag-header {
-    left: 0;
-    position: absolute;
-    top: 0;
+    //left: 0;
+    //position: absolute;
+    //top: 0;
 }
 
 .ag-pinned-left-header {
@@ -140,10 +151,6 @@ ag-grid-aurelia {
     box-sizing: border-box;
     height: 100%;
     position: relative;
-    white-space: nowrap;
-}
-
-.ag-layout-for-print .ag-header-container {
     white-space: nowrap;
 }
 
@@ -279,6 +286,15 @@ ag-grid-aurelia {
     float: right;
 }
 
+.ag-overlay {
+    height: 100%;
+    left: 0;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+
 .ag-overlay-panel {
     display: table;
     height: 100%;
@@ -292,63 +308,9 @@ ag-grid-aurelia {
     vertical-align: middle;
 }
 
-.ag-bl-overlay {
-    height: 100%;
-    left: 0;
-    pointer-events: none;
-    position: absolute;
-    top: 0;
-    width: 100%;
-}
-
 .ag-overlay-loading-center {
 }
 //
-.ag-bl-full-height {
-    height: 100%;
-    overflow: hidden;
-    position: relative;
-}
-
-.ag-bl-west {
-    float: left;
-}
-
-.ag-bl-full-height-west {
-    height: 100%;
-}
-
-.ag-bl-east {
-    float: right;
-}
-
-.ag-bl-full-height-east {
-    height: 100%;
-}
-
-.ag-bl-full-height-center {
-    height: 100%;
-}
-
-.ag-bl-normal {
-    height: 100%;
-    position: relative;
-}
-
-.ag-bl-normal-center-row {
-    height: 100%;
-    overflow: hidden;
-}
-
-.ag-bl-normal-west {
-    float: left;
-    height: 100%;
-}
-
-.ag-bl-normal-east {
-    float: right;
-    height: 100%;
-}
 
 .ag-column-panel {
     display: flex;
@@ -364,34 +326,42 @@ ag-grid-aurelia {
     overflow-x: hidden;
 }
 
-.ag-bl-normal-center {
-    height: 100%;
-}
-
-.ag-bl-dont-fill {
-    position: relative;
-}
-
 .ag-body {
     box-sizing: border-box;
-    width: 100%;
 }
 
 .ag-layout-normal .ag-body {
-    height: 100%;
-    position: absolute;
+    flex: 1;
+    height: 0px; // that's the min height, 'flex 1' then extends it to take all available space
+    min-height: 0px; // min-height needed for firefox
+    display: flex;
+    position: relative;
 }
+
+.ag-layout-auto-height .ag-body {
+    display: flex;
+    flex-direction: row;
+    //position: absolute;
+}
+
+// we want the pinned left to always be on the left, and the pinned right
+// always to be on the right. hence we do row-reverse for rtl, otherwise having
+// RTL applied will reverse the order of the flex layout (and invert what's left and right)
+.ag-layout-normal.ag-rtl .ag-body { flex-direction: row-reverse; }
+.ag-layout-normal.ag-ltr .ag-body { flex-direction: row; }
+
+.ag-layout-auto-height.ag-rtl .ag-body { flex-direction: row-reverse; }
+.ag-layout-auto-height.ag-ltr .ag-body { flex-direction: row; }
 
 .ag-floating-top {
     box-sizing: border-box;
     overflow: hidden;
     white-space: nowrap;
     width: 100%;
+    position: relative;
 }
 
 .ag-layout-normal .ag-floating-top {
-    left: 0;
-    position: absolute;
 }
 
 .ag-pinned-left-floating-top {
@@ -439,11 +409,10 @@ ag-grid-aurelia {
     overflow: hidden;
     white-space: nowrap;
     width: 100%;
+    position: relative;
 }
 
 .ag-layout-normal .ag-floating-bottom {
-    left: 0;
-    position: absolute;
 }
 
 .ag-pinned-left-floating-bottom {
@@ -483,11 +452,6 @@ ag-grid-aurelia {
     box-sizing: border-box;
     position: relative;
     white-space: nowrap;
-    //height 100%
-}
-
-.ag-hacked-scroll .ag-pinned-left-cols-viewport {
-    float: left;
 }
 
 .ag-pinned-left-cols-container {
@@ -495,48 +459,16 @@ ag-grid-aurelia {
     position: relative;
 }
 
-.ag-hacked-scroll .ag-pinned-right-cols-viewport {
-    float: right;
-}
-// for LTR, we show scrolls on the right pinned only
-.ag-ltr .ag-hacked-scroll .ag-pinned-right-cols-viewport {
+.ag-pinned-right-cols-viewport {
+    height: 100%;
     overflow-x: hidden;
     overflow-y: auto;
 }
 
-.ag-ltr .ag-hacked-scroll .ag-pinned-left-cols-viewport {
-    overflow: hidden;
-}
-// for RTL, other way around, we show scrolls on left only
-.ag-rtl .ag-hacked-scroll .ag-pinned-right-cols-viewport {
-    overflow: hidden;
-}
-
-.ag-rtl .ag-hacked-scroll .ag-pinned-left-cols-viewport {
+.ag-pinned-left-cols-viewport {
+    height: 100%;
     overflow-x: hidden;
     overflow-y: auto;
-}
-
-.ag-native-scroll .ag-pinned-right-cols-viewport {
-    float: right;
-    overflow-x: hidden;
-    overflow-y: auto;
-}
-
-.ag-native-scroll .ag-pinned-left-cols-viewport {
-    float: left;
-    overflow-x: hidden;
-    overflow-y: auto;
-}
-
-.ag-hide-scroll-bar::-webkit-scrollbar {
-    //display: none;
-}
-
-.ag-hide-scroll-bar {
-    margin-right: -16px;
-    overflow-y: scroll;
-    overflow-x: hidden;
 }
 
 .ag-pinned-right-cols-container {
@@ -544,8 +476,29 @@ ag-grid-aurelia {
     position: relative;
 }
 
+.ag-layout-normal .ag-pinned-left-cols-viewport-wrapper {
+    height: 100%;
+    overflow: hidden;
+}
+
+.ag-layout-normal .ag-pinned-right-cols-viewport-wrapper {
+    height: 100%;
+    overflow: hidden;
+}
+
 .ag-layout-normal .ag-body-viewport-wrapper {
     height: 100%;
+    width: 0px; // mind width, flex grows the center to fit
+    min-width: 0px; // width didn't do the trick in firefox, so needed min-width also
+    flex: 1;
+    overflow: hidden;
+}
+
+.ag-layout-auto-height .ag-body-viewport-wrapper {
+    width: 0px; // mind width, flex grows the center to fit
+    min-width: 0px; // width didn't do the trick in firefox, so needed min-width also
+    flex: 1;
+    overflow: hidden;
 }
 
 .ag-body-viewport {
@@ -557,28 +510,27 @@ ag-grid-aurelia {
     height: 100%;
 }
 
+.ag-full-width-viewport-wrapper {
+    height: 100%;
+    width: 100%;
+    display: inline-block;
+    pointer-events: none;
+    overflow: hidden;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    box-sizing: border-box;
+}
+
 .ag-full-width-viewport {
     box-sizing: border-box;
-    display: inline;
     height: 100%;
-    left: 0;
     // because the full width container is an overlay over the rest of the grid, we cannot
     // have it consume mouse events, otherwise no mouse events would be allowed on the
     // rest of the grid
     pointer-events: none;
-    // we want this panel to be on top of the others
-    position: absolute;
-    top: 0;
-    width: 100%;
-}
-
-.ag-hacked-scroll .ag-full-width-viewport {
-    overflow: hidden;
-}
-
-.ag-native-scroll .ag-full-width-viewport {
-    overflow-y: auto;
     overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .ag-full-width-container {
@@ -650,11 +602,6 @@ ag-grid-aurelia {
     position: relative; // height relative so that the cell takes the height when set to 100%
     white-space: nowrap;
     width: 100%;
-}
-
-.ag-layout-for-print .ag-row {
-    //    white-space: nowrap
-    position: relative; // need at least some position for the cell height to work
 }
 
 .ag-column-moving {

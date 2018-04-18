@@ -9,10 +9,9 @@ import {GridPanel} from "./gridPanel/gridPanel";
 import {Logger, LoggerFactory} from "./logger";
 import {Constants} from "./constants";
 import {PopupService} from "./widgets/popupService";
-import {Events, GridSizeChangedEvent} from "./events";
+import {Events} from "./events";
 import {Utils as _} from "./utils";
-import {BorderLayout} from "./layout/borderLayout";
-import {PreDestroy, Bean, Qualifier, Autowired, PostConstruct, Optional, Context} from "./context/context";
+import {Autowired, Bean, Context, Optional, PostConstruct, PreDestroy, Qualifier} from "./context/context";
 import {IRowModel} from "./interfaces/iRowModel";
 import {FocusedCellController} from "./focusedCellController";
 import {Component} from "./widgets/component";
@@ -24,6 +23,8 @@ import {IToolPanel} from "./interfaces/iToolPanel";
 
 @Bean('gridCore')
 export class GridCore {
+
+    private static TEMPLATE = '<div class="ag-root-wrapper"></div>';
 
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -57,7 +58,7 @@ export class GridCore {
     private finished: boolean;
     private doingVirtualPaging: boolean;
 
-    private eRootPanel: BorderLayout;
+    private eGridWrapper: HTMLElement;
 
     private logger: Logger;
 
@@ -72,48 +73,40 @@ export class GridCore {
 
         let eSouthPanel = this.createSouthPanel();
 
-        let eastPanel: HTMLElement;
-        let westPanel: HTMLElement;
-        if (this.toolPanelComp && !this.gridOptionsWrapper.isForPrint()) {
-            // if we are doing RTL, then the tool panel appears on the left
-            if (this.gridOptionsWrapper.isEnableRtl()) {
-                westPanel = this.toolPanelComp.getGui();
-            } else {
-                eastPanel = this.toolPanelComp.getGui();
-            }
+        let eColumnDropZone = this.createNorthPanel();
+
+        this.eGridWrapper = _.loadTemplate(GridCore.TEMPLATE);
+
+        if (eColumnDropZone) {
+            this.eGridWrapper.appendChild(eColumnDropZone);
         }
 
-        let createTopPanelGui = this.createNorthPanel();
+        let eCenter = _.loadTemplate(`<div class="ag-root-wrapper-body"></div>`);
+        eCenter.appendChild(this.gridPanel.getGui());
+        if (this.toolPanelComp) {
+            eCenter.appendChild(this.toolPanelComp.getGui());
+        }
 
-        this.eRootPanel = new BorderLayout({
-            center: this.gridPanel.getLayout(),
-            east: eastPanel,
-            west: westPanel,
-            north: createTopPanelGui,
-            south: eSouthPanel,
-            forPrint: this.gridOptionsWrapper.isForPrint(),
-            autoHeight: this.gridOptionsWrapper.isAutoHeight(),
-            name: 'eRootPanel'
-        });
+        this.eGridWrapper.appendChild(eCenter);
+
+        if (eSouthPanel) {
+            this.eGridWrapper.appendChild(eSouthPanel);
+        }
 
         // parts of the CSS need to know if we are in 'for print' mode or not,
         // so we add a class to allow applying CSS based on this.
-        if (this.gridOptionsWrapper.isForPrint()) {
-            _.addCssClass(this.eRootPanel.getGui(), 'ag-layout-for-print');
-            // kept to limit breaking changes, ag-no-scrolls was renamed to ag-layout-for-print
-            _.addCssClass(this.eRootPanel.getGui(), 'ag-no-scrolls');
-        } else if (this.gridOptionsWrapper.isAutoHeight()) {
-            _.addCssClass(this.eRootPanel.getGui(), 'ag-layout-auto-height');
+        if (this.gridOptionsWrapper.isAutoHeight()) {
+            _.addCssClass(this.eGridWrapper, 'ag-layout-auto-height');
         } else {
-            _.addCssClass(this.eRootPanel.getGui(), 'ag-layout-normal');
+            _.addCssClass(this.eGridWrapper, 'ag-layout-normal');
             // kept to limit breaking changes, ag-scrolls was renamed to ag-layout-normal
-            _.addCssClass(this.eRootPanel.getGui(), 'ag-scrolls');
+            _.addCssClass(this.eGridWrapper, 'ag-scrolls');
         }
 
         // see what the grid options are for default of toolbar
         this.showToolPanel(this.gridOptionsWrapper.isShowToolPanel());
 
-        this.eGridDiv.appendChild(this.eRootPanel.getGui());
+        this.eGridDiv.appendChild(this.eGridWrapper);
 
         // if using angular, watch for quickFilter changes
         if (this.$scope) {
@@ -121,15 +114,11 @@ export class GridCore {
             this.destroyFunctions.push(quickFilterUnregisterFn);
         }
 
-        if (!this.gridOptionsWrapper.isForPrint()) {
-            this.addWindowResizeListener();
-        }
+        this.addWindowResizeListener();
 
         // important to set rtl before doLayout, as setting the RTL class impacts the scroll position,
         // which doLayout indirectly depends on
         this.addRtlSupport();
-
-        this.doLayout();
 
         this.finished = false;
         this.periodicallyDoLayout();
@@ -144,9 +133,9 @@ export class GridCore {
 
     private addRtlSupport(): void {
         if (this.gridOptionsWrapper.isEnableRtl()) {
-            _.addCssClass(this.eRootPanel.getGui(), 'ag-rtl');
+            _.addCssClass(this.eGridWrapper, 'ag-rtl');
         } else {
-            _.addCssClass(this.eRootPanel.getGui(), 'ag-ltr');
+            _.addCssClass(this.eGridWrapper, 'ag-ltr');
         }
     }
 
@@ -186,7 +175,7 @@ export class GridCore {
     }
 
     public getRootGui(): HTMLElement {
-        return this.eRootPanel.getGui();
+        return this.eGridWrapper;
     }
 
     private createSouthPanel(): HTMLElement {
@@ -197,9 +186,7 @@ export class GridCore {
 
         let statusBarEnabled = this.statusBar && this.gridOptionsWrapper.isEnableStatusBar();
         let isPaging = this.gridOptionsWrapper.isPagination();
-        let paginationPanelEnabled = isPaging
-            && !this.gridOptionsWrapper.isForPrint()
-            && !this.gridOptionsWrapper.isSuppressPaginationPanel();
+        let paginationPanelEnabled = isPaging && !this.gridOptionsWrapper.isSuppressPaginationPanel();
 
         if (!statusBarEnabled && !paginationPanelEnabled) {
             return null;
@@ -236,12 +223,10 @@ export class GridCore {
         } else {
             this.rowGroupComp.setVisible(false);
         }
-
-        this.eRootPanel.doLayout();
     }
 
     private addWindowResizeListener(): void {
-        let eventListener = this.doLayout.bind(this);
+        let eventListener = this.gridPanel.checkViewportSize.bind(this.gridPanel);
         window.addEventListener('resize', eventListener);
         this.destroyFunctions.push(() => window.removeEventListener('resize', eventListener));
     }
@@ -252,8 +237,7 @@ export class GridCore {
             // if interval is negative, this stops the layout from happening
             if (intervalMillis > 0) {
                 this.frameworkFactory.setTimeout(() => {
-                        this.doLayout();
-                        this.gridPanel.periodicallyCheck();
+                        this.gridPanel.checkViewportSize();
                         this.periodicallyDoLayout();
                 }, intervalMillis);
             } else {
@@ -276,7 +260,8 @@ export class GridCore {
 
         this.toolPanelComp.init();
         this.toolPanelComp.showToolPanel(show);
-        this.eRootPanel.doLayout();
+
+        this.gridPanel.checkViewportSize();
     }
 
     public isToolPanelShowing() {
@@ -287,7 +272,7 @@ export class GridCore {
     private destroy() {
         this.finished = true;
 
-        this.eGridDiv.removeChild(this.eRootPanel.getGui());
+        this.eGridDiv.removeChild(this.eGridWrapper);
         this.logger.log('Grid DOM removed');
 
         this.destroyFunctions.forEach(func => func());
@@ -320,32 +305,6 @@ export class GridCore {
         }
         if (indexToSelect >= 0) {
             this.gridPanel.ensureIndexVisible(indexToSelect, position);
-        }
-    }
-
-    public doLayout() {
-        // need to do layout first, as drawVirtualRows and setPinnedColHeight
-        // need to know the result of the resizing of the panels.
-        let sizeChanged = this.eRootPanel.doLayout();
-        // not sure why, this is a hack, but if size changed, it may need to be called
-        // again - as the size change can change whether scrolls are visible or not (i think).
-        // to see why, take this second 'doLayout' call out, and see example in docs for
-        // width & height, the grid will flicker as it doesn't get laid out correctly with
-        // one call to doLayout()
-        if (sizeChanged) {
-            this.eRootPanel.doLayout();
-        }
-        // both of the two below should be done in gridPanel, the gridPanel should register 'resize' to the panel
-        if (sizeChanged) {
-            this.rowRenderer.redrawAfterScroll();
-            let event: GridSizeChangedEvent = {
-                type: Events.EVENT_GRID_SIZE_CHANGED,
-                clientWidth: this.eRootPanel.getGui().clientWidth,
-                clientHeight: this.eRootPanel.getGui().clientHeight,
-                api: this.gridApi,
-                columnApi: this.columnApi
-            };
-            this.eventService.dispatchEvent(event);
         }
     }
 }

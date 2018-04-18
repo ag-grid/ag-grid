@@ -59,7 +59,7 @@ export class HeightScaler extends BeanStub {
     public update(): void {
         if (!this.scaling) { return; }
 
-        let newScrollY = this.gridPanel.getPrimaryScrollViewport().scrollTop;
+        let newScrollY = this.gridPanel.getVScrollPosition().top;
         let newBodyHeight = this.getUiBodyHeight();
 
         let atLeastOneChanged = newScrollY!==this.scrollY || newBodyHeight!==this.uiBodyHeight;
