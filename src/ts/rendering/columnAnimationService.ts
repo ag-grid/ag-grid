@@ -62,12 +62,12 @@ export class ColumnAnimationService {
         // by the time the 'wait' func executes
         this.animationThreadCount++;
         let animationThreadCountCopy = this.animationThreadCount;
-        _.addCssClass(this.gridPanel.getRoot(), 'ag-column-moving');
+        _.addCssClass(this.gridPanel.getGui(), 'ag-column-moving');
 
         this.executeLaterFuncs.push(()=> {
             // only remove the class if this thread was the last one to update it
             if (this.animationThreadCount===animationThreadCountCopy) {
-                _.removeCssClass(this.gridPanel.getRoot(), 'ag-column-moving');
+                _.removeCssClass(this.gridPanel.getGui(), 'ag-column-moving');
             }
         });
     }

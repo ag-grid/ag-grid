@@ -4,7 +4,16 @@ import {ColumnController} from "../columnController/columnController";
 import {ColumnApi} from "../columnController/columnApi";
 import {RowRenderer} from "../rendering/rowRenderer";
 import {Logger, LoggerFactory} from "../logger";
-import {Bean, Qualifier, Autowired, PostConstruct, Optional, PreDestroy, Context} from "../context/context";
+import {
+    Bean,
+    Qualifier,
+    Autowired,
+    PostConstruct,
+    Optional,
+    PreDestroy,
+    Context,
+    PreConstruct
+} from "../context/context";
 import {EventService} from "../eventService";
 import {BodyHeightChangedEvent, BodyScrollEvent, Events} from "../events";
 import {DragService, DragListenerParams} from "../dragAndDrop/dragService";
@@ -38,6 +47,7 @@ import {DragAndDropService} from "../dragAndDrop/dragAndDropService";
 import {RowDragFeature} from "./rowDragFeature";
 import {HeightScaler} from "../rendering/heightScaler";
 import {IOverlayWrapperComp} from "../rendering/overlays/overlayWrapperComponent";
+import {Component} from "../widgets/component";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -119,7 +129,7 @@ export type RowContainerComponentNames =
 export type RowContainerComponents = { [K in RowContainerComponentNames]: RowContainerComponent };
 
 @Bean('gridPanel')
-export class GridPanel extends BeanStub {
+export class GridPanel extends Component {
 
     @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -151,10 +161,7 @@ export class GridPanel extends BeanStub {
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('heightScaler') private heightScaler: HeightScaler;
 
-    private logger: Logger;
-
     private eBodyViewport: HTMLElement;
-    private eRoot: HTMLElement;
     private eBody: HTMLElement;
 
     private rowContainerComponents: RowContainerComponents;
@@ -219,13 +226,16 @@ export class GridPanel extends BeanStub {
     private lastVScrollElement: HTMLElement;
     private lastVScrollTime: number;
 
-    public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('GridPanel');
+    constructor() {
+        super(GRID_PANEL_NORMAL_TEMPLATE);
+    }
+
+    @PreConstruct
+    public preConstruct() {
         // makes code below more readable if we pull 'forPrint' out
         this.autoHeight = this.gridOptionsWrapper.isAutoHeight();
         this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
-        this.loadTemplate();
         this.findElements();
     }
 
@@ -273,10 +283,6 @@ export class GridPanel extends BeanStub {
         }
     }
 
-    public getGui(): HTMLElement {
-        return this.eRoot;
-    }
-
     @PostConstruct
     private init() {
 
@@ -318,7 +324,7 @@ export class GridPanel extends BeanStub {
 
     private setupOverlay(): void {
         this.overlayWrapper = this.componentRecipes.newOverlayWrapperComponent();
-        this.eOverlay = this.queryHtmlElement('[ref="eOverlay"]');
+        this.eOverlay = this.queryForHtmlElement('[ref="eOverlay"]');
         this.overlayWrapper.hideOverlay(this.eOverlay);
     }
 
@@ -381,7 +387,7 @@ export class GridPanel extends BeanStub {
     // if we do not do this, then the user can select a pic in the grid (eg an image in a custom cell renderer)
     // and then that will start the browser native drag n' drop, which messes up with our own drag and drop.
     private disableBrowserDragging(): void {
-        this.eRoot.addEventListener('dragstart', (event: MouseEvent)=> {
+        this.getGui().addEventListener('dragstart', (event: MouseEvent)=> {
             if (event.target instanceof HTMLImageElement) {
                 event.preventDefault();
                 return false;
@@ -713,7 +719,6 @@ export class GridPanel extends BeanStub {
         // if for print or auto height, everything is always visible
         if (this.gridOptionsWrapper.isAutoHeight()) { return; }
 
-        this.logger.log('ensureIndexVisible: ' + index);
         let rowCount = this.paginationProxy.getTotalRowCount();
         if (typeof index !== 'number' || index < 0 || index >= rowCount) {
             console.warn('invalid row index for ensureIndexVisible: ' + index);
@@ -807,19 +812,19 @@ export class GridPanel extends BeanStub {
         let params: SetScrollsVisibleParams = {
             vBody: false,
             hBody: false,
-            vPinnedLeft: false,
-            vPinnedRight: false
+            vLeft: false,
+            vRight: false
         };
 
         if (this.enableRtl) {
             if (this.columnController.isPinningLeft()) {
-                params.vPinnedLeft = _.isVerticalScrollShowing(this.eLeftViewport);
+                params.vLeft = _.isVerticalScrollShowing(this.eLeftViewport);
             } else {
                 params.vBody = _.isVerticalScrollShowing(this.eBodyViewport);
             }
         } else {
             if (this.columnController.isPinningRight()) {
-                params.vPinnedRight = _.isVerticalScrollShowing(this.eRightViewport);
+                params.vRight = _.isVerticalScrollShowing(this.eRightViewport);
             } else {
                 params.vBody = _.isVerticalScrollShowing(this.eBodyViewport);
             }
@@ -1017,10 +1022,6 @@ export class GridPanel extends BeanStub {
         return this.eHeaderContainer;
     }
 
-    public getRoot() {
-        return this.eRoot;
-    }
-
     public getPinnedLeftHeader() {
         return this.ePinnedLeftHeader;
     }
@@ -1029,48 +1030,40 @@ export class GridPanel extends BeanStub {
         return this.ePinnedRightHeader;
     }
 
-    private queryHtmlElement(selector: string): HTMLElement {
-        return <HTMLElement> this.eRoot.querySelector(selector);
-    }
-
-    private loadTemplate(): void {
-        this.eRoot = <HTMLElement> _.loadTemplate(GRID_PANEL_NORMAL_TEMPLATE);
-    }
-
     private findElements() {
 
-        this.eBody = this.queryHtmlElement('.ag-body');
-        this.eBodyContainer = this.queryHtmlElement('.ag-body-container');
-        this.eBodyViewport = this.queryHtmlElement('.ag-body-viewport');
-        this.eBodyViewportWrapper = this.queryHtmlElement('.ag-body-viewport-wrapper');
-        this.eFullWidthContainer = this.queryHtmlElement('.ag-full-width-container');
-        this.eFullWidthViewport = this.queryHtmlElement('.ag-full-width-viewport');
-        this.eFullWidthViewportWrapper = this.queryHtmlElement('.ag-full-width-viewport-wrapper');
-        this.eLeftContainer = this.queryHtmlElement('.ag-pinned-left-cols-container');
-        this.eRightContainer = this.queryHtmlElement('.ag-pinned-right-cols-container');
-        this.eLeftViewport = this.queryHtmlElement('.ag-pinned-left-cols-viewport');
-        this.eLeftViewportWrapper = this.queryHtmlElement('.ag-pinned-left-cols-viewport-wrapper');
-        this.eRightViewport = this.queryHtmlElement('.ag-pinned-right-cols-viewport');
-        this.eRightViewportWrapper = this.queryHtmlElement('.ag-pinned-right-cols-viewport-wrapper');
-        this.ePinnedLeftHeader = this.queryHtmlElement('.ag-pinned-left-header');
-        this.ePinnedRightHeader = this.queryHtmlElement('.ag-pinned-right-header');
-        this.eHeader = this.queryHtmlElement('.ag-header');
-        this.eHeaderContainer = this.queryHtmlElement('.ag-header-container');
-        this.eHeaderViewport = this.queryHtmlElement('.ag-header-viewport');
+        this.eBody = this.queryForHtmlElement('.ag-body');
+        this.eBodyContainer = this.queryForHtmlElement('.ag-body-container');
+        this.eBodyViewport = this.queryForHtmlElement('.ag-body-viewport');
+        this.eBodyViewportWrapper = this.queryForHtmlElement('.ag-body-viewport-wrapper');
+        this.eFullWidthContainer = this.queryForHtmlElement('.ag-full-width-container');
+        this.eFullWidthViewport = this.queryForHtmlElement('.ag-full-width-viewport');
+        this.eFullWidthViewportWrapper = this.queryForHtmlElement('.ag-full-width-viewport-wrapper');
+        this.eLeftContainer = this.queryForHtmlElement('.ag-pinned-left-cols-container');
+        this.eRightContainer = this.queryForHtmlElement('.ag-pinned-right-cols-container');
+        this.eLeftViewport = this.queryForHtmlElement('.ag-pinned-left-cols-viewport');
+        this.eLeftViewportWrapper = this.queryForHtmlElement('.ag-pinned-left-cols-viewport-wrapper');
+        this.eRightViewport = this.queryForHtmlElement('.ag-pinned-right-cols-viewport');
+        this.eRightViewportWrapper = this.queryForHtmlElement('.ag-pinned-right-cols-viewport-wrapper');
+        this.ePinnedLeftHeader = this.queryForHtmlElement('.ag-pinned-left-header');
+        this.ePinnedRightHeader = this.queryForHtmlElement('.ag-pinned-right-header');
+        this.eHeader = this.queryForHtmlElement('.ag-header');
+        this.eHeaderContainer = this.queryForHtmlElement('.ag-header-container');
+        this.eHeaderViewport = this.queryForHtmlElement('.ag-header-viewport');
 
-        this.eFloatingTop = this.queryHtmlElement('.ag-floating-top');
-        this.eLeftFloatingTop = this.queryHtmlElement('.ag-pinned-left-floating-top');
-        this.eRightFloatingTop = this.queryHtmlElement('.ag-pinned-right-floating-top');
-        this.eFloatingTopContainer = this.queryHtmlElement('.ag-floating-top-container');
-        this.eFloatingTopViewport = this.queryHtmlElement('.ag-floating-top-viewport');
-        this.eFloatingTopFullWidthContainer = this.queryHtmlElement('.ag-floating-top-full-width-container');
+        this.eFloatingTop = this.queryForHtmlElement('.ag-floating-top');
+        this.eLeftFloatingTop = this.queryForHtmlElement('.ag-pinned-left-floating-top');
+        this.eRightFloatingTop = this.queryForHtmlElement('.ag-pinned-right-floating-top');
+        this.eFloatingTopContainer = this.queryForHtmlElement('.ag-floating-top-container');
+        this.eFloatingTopViewport = this.queryForHtmlElement('.ag-floating-top-viewport');
+        this.eFloatingTopFullWidthContainer = this.queryForHtmlElement('.ag-floating-top-full-width-container');
 
-        this.eFloatingBottom = this.queryHtmlElement('.ag-floating-bottom');
-        this.eLeftFloatingBottom = this.queryHtmlElement('.ag-pinned-left-floating-bottom');
-        this.eRightFloatingBottom = this.queryHtmlElement('.ag-pinned-right-floating-bottom');
-        this.eFloatingBottomContainer = this.queryHtmlElement('.ag-floating-bottom-container');
-        this.eFloatingBottomViewport = this.queryHtmlElement('.ag-floating-bottom-viewport');
-        this.eFloatingBottomFullWidthContainer = this.queryHtmlElement('.ag-floating-bottom-full-width-container');
+        this.eFloatingBottom = this.queryForHtmlElement('.ag-floating-bottom');
+        this.eLeftFloatingBottom = this.queryForHtmlElement('.ag-pinned-left-floating-bottom');
+        this.eRightFloatingBottom = this.queryForHtmlElement('.ag-pinned-right-floating-bottom');
+        this.eFloatingBottomContainer = this.queryForHtmlElement('.ag-floating-bottom-container');
+        this.eFloatingBottomViewport = this.queryForHtmlElement('.ag-floating-bottom-viewport');
+        this.eFloatingBottomFullWidthContainer = this.queryForHtmlElement('.ag-floating-bottom-full-width-container');
 
         this.eAllCellContainers = [
             this.eLeftContainer, this.eRightContainer, this.eBodyContainer,
