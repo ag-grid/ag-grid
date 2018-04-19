@@ -31,6 +31,7 @@ export class GridCore extends Component {
             <div class="ag-root-wrapper-body">
                 <ag-grid-comp ref="gridPanel"></ag-grid-comp>
             </div>
+            <ag-pagination></ag-pagination>
         </div>`;
 
     private static TEMPLATE_ENTERPRISE =
@@ -40,6 +41,8 @@ export class GridCore extends Component {
                 <ag-grid-comp ref="gridPanel"></ag-grid-comp>
                 <ag-tool-panel ref="toolPanel"></ag-tool-panel>
             </div>
+            <ag-status-bar ref="statusBar"></ag-status-bar>
+            <ag-pagination></ag-pagination>
         </div>`;
 
     @Autowired('enterprise') private enterprise: boolean;
@@ -66,8 +69,8 @@ export class GridCore extends Component {
 
     @Optional('rowGroupCompFactory') private rowGroupCompFactory: ICompFactory;
     @Optional('pivotCompFactory') private pivotCompFactory: ICompFactory;
-    @Optional('statusBar') private statusBar: IStatusBar;
 
+    @RefSelector('statusBar') private statusBar: IStatusBar;
     @RefSelector('gridPanel') private gridPanel: GridPanel;
     @RefSelector('toolPanel') private toolPanelComp: IToolPanel;
 
@@ -89,11 +92,9 @@ export class GridCore extends Component {
         this.setTemplate(template);
         this.instantiate(this.context);
 
-        this.toolPanelComp.registerGridComp(this.gridPanel);
-
-        let eSouthPanel = this.createSouthPanel();
-        if (eSouthPanel) {
-            this.getGui().appendChild(eSouthPanel);
+        if (this.enterprise) {
+            this.toolPanelComp.registerGridComp(this.gridPanel);
+            this.statusBar.registerGridPanel(this.gridPanel);
         }
 
         // parts of the CSS need to know if we are in 'for print' mode or not,
@@ -132,41 +133,12 @@ export class GridCore extends Component {
     }
 
     private addRtlSupport(): void {
-        if (this.gridOptionsWrapper.isEnableRtl()) {
-            _.addCssClass(this.getGui(), 'ag-rtl');
-        } else {
-            _.addCssClass(this.getGui(), 'ag-ltr');
-        }
+        let cssClass = this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr';
+        _.addCssClass(this.getGui(), cssClass);
     }
 
     public getRootGui(): HTMLElement {
         return this.getGui();
-    }
-
-    private createSouthPanel(): HTMLElement {
-
-        let statusBarEnabled = this.statusBar && this.gridOptionsWrapper.isEnableStatusBar();
-        let isPaging = this.gridOptionsWrapper.isPagination();
-        let paginationPanelEnabled = isPaging && !this.gridOptionsWrapper.isSuppressPaginationPanel();
-
-        if (!statusBarEnabled && !paginationPanelEnabled) {
-            return null;
-        }
-
-        let eSouthPanel = document.createElement('div');
-        if (statusBarEnabled) {
-            eSouthPanel.appendChild(this.statusBar.getGui());
-            this.statusBar.registerGridPanel(this.gridPanel);
-        }
-
-        if (paginationPanelEnabled) {
-            let paginationComp = new PaginationComp();
-            this.context.wireBean(paginationComp);
-            eSouthPanel.appendChild(paginationComp.getGui());
-            this.addDestroyFunc(paginationComp.destroy.bind(paginationComp));
-        }
-
-        return eSouthPanel;
     }
 
     private periodicallyDoLayout() {

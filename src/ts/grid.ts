@@ -73,8 +73,8 @@ import {AnimationFrameService} from "./misc/animationFrameService";
 import {NavigationService} from "./gridPanel/navigationService";
 import {HeightScaler} from "./rendering/heightScaler";
 import {SelectableService} from "./rowNodes/selectableService";
-import {SmallComponent} from "./widgets/testingSandbox";
 import {AutoHeightCalculator} from "./rendering/autoHeightCalculator";
+import {PaginationComp} from "./rowModels/pagination/paginationComp";
 
 export interface GridParams {
     // used by Web Components
@@ -168,9 +168,9 @@ export class Grid {
             {componentName: 'AgCheckbox', theClass: AgCheckbox},
             {componentName: 'AgHeaderColumnDrop', theClass: HeaderColumnDropComp},
             {componentName: 'AgGridComp', theClass: GridPanel},
+            {componentName: 'AgPagination', theClass: PaginationComp},
             // niall put the below in for testing some PoC code, niall will
             // remove this comment and code when PoC is over
-            , {componentName: 'AgSmallComponent', theClass: SmallComponent}
         ];
 
         if (Grid.enterpriseComponents) {
