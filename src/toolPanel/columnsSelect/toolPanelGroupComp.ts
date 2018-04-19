@@ -38,7 +38,6 @@ export class ToolPanelGroupComp extends Component implements BaseColumnItem{
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('context') private context: Context;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('eventService') private eventService: EventService;

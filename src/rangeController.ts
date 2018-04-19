@@ -32,7 +32,6 @@ import {
 export class RangeController implements IRangeController {
 
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
@@ -46,6 +45,8 @@ export class RangeController implements IRangeController {
 
     private logger: Logger;
 
+    private gridPanel: GridPanel;
+
     private cellRanges: RangeSelection[];
     private activeRange: RangeSelection;
     private lastMouseEvent: MouseEvent;
@@ -55,6 +56,11 @@ export class RangeController implements IRangeController {
     private dragging = false;
 
     private autoScrollService: AutoScrollService;
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
+        this.autoScrollService = new AutoScrollService(this.gridPanel, this.gridOptionsWrapper);
+    }
 
     @PostConstruct
     private init(): void {
@@ -66,8 +72,6 @@ export class RangeController implements IRangeController {
         this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.clearSelection.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearSelection.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.clearSelection.bind(this));
-
-        this.autoScrollService = new AutoScrollService(this.gridPanel, this.gridOptionsWrapper);
     }
 
     public setRangeToCell(cell: GridCell): void {

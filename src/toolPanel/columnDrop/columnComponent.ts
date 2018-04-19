@@ -42,7 +42,6 @@ export class ColumnComponent extends Component {
 
     @Autowired('dragAndDropService') dragAndDropService: DragAndDropService;
     @Autowired('columnController') columnController: ColumnController;
-    @Autowired('gridPanel') gridPanel: GridPanel;
     @Autowired('context') context: Context;
     @Autowired('popupService') popupService: PopupService;
     @Autowired('aggFuncService') aggFuncService: AggFuncService;

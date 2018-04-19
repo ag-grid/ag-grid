@@ -1,9 +1,20 @@
-import {GridPanel, Autowired, Component, PostConstruct, HorizontalResizeService} from "ag-grid";
+import {
+    Autowired,
+    Component,
+    Events,
+    GridOptionsWrapper,
+    GridPanel,
+    HorizontalResizeService,
+    PostConstruct,
+    ViewportImpactedEvent,
+    EventService
+} from "ag-grid";
 
 export class HorizontalResizeComp extends Component {
 
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('eventService') private eventService: EventService;
 
     private startingWidth: number;
 
@@ -38,6 +49,11 @@ export class HorizontalResizeComp extends Component {
             newWidth = 100;
         }
         this.props.componentToResize.getGui().style.width = newWidth + 'px';
-        this.gridPanel.checkViewportSize();
+        let e: ViewportImpactedEvent = {
+            type: Events.EVENT_VIEWPORT_IMPACTED,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi()
+        };
+        this.eventService.dispatchEvent(e);
     }
 }
