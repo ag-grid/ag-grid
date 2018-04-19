@@ -9,7 +9,7 @@ import {GridPanel} from "./gridPanel/gridPanel";
 import {Logger, LoggerFactory} from "./logger";
 import {Constants} from "./constants";
 import {PopupService} from "./widgets/popupService";
-import {Events, ViewportImpactedEvent} from "./events";
+import {Events} from "./events";
 import {Utils as _} from "./utils";
 import {Autowired, Bean, Context, Optional, PostConstruct, PreDestroy} from "./context/context";
 import {IRowModel} from "./interfaces/iRowModel";
@@ -21,6 +21,7 @@ import {PaginationComp} from "./rowModels/pagination/paginationComp";
 import {GridApi} from "./gridApi";
 import {IToolPanel} from "./interfaces/iToolPanel";
 import {RefSelector} from "./widgets/componentAnnotations";
+import {IStatusBar} from "./interfaces/iStatusBar";
 
 @Bean('gridCore')
 export class GridCore extends Component {
@@ -65,7 +66,7 @@ export class GridCore extends Component {
 
     @Optional('rowGroupCompFactory') private rowGroupCompFactory: ICompFactory;
     @Optional('pivotCompFactory') private pivotCompFactory: ICompFactory;
-    @Optional('statusBar') private statusBar: Component;
+    @Optional('statusBar') private statusBar: IStatusBar;
 
     @RefSelector('gridPanel') private gridPanel: GridPanel;
     @RefSelector('toolPanel') private toolPanelComp: IToolPanel;
@@ -84,12 +85,13 @@ export class GridCore extends Component {
 
         this.logger = this.loggerFactory.create('GridCore');
 
-        let eSouthPanel = this.createSouthPanel();
-
         let template = this.enterprise ? GridCore.TEMPLATE_ENTERPRISE : GridCore.TEMPLATE_NORMAL;
         this.setTemplate(template);
         this.instantiate(this.context);
 
+        this.toolPanelComp.registerGridComp(this.gridPanel);
+
+        let eSouthPanel = this.createSouthPanel();
         if (eSouthPanel) {
             this.getGui().appendChild(eSouthPanel);
         }
@@ -154,6 +156,7 @@ export class GridCore extends Component {
         let eSouthPanel = document.createElement('div');
         if (statusBarEnabled) {
             eSouthPanel.appendChild(this.statusBar.getGui());
+            this.statusBar.registerGridPanel(this.gridPanel);
         }
 
         if (paginationPanelEnabled) {
@@ -173,7 +176,7 @@ export class GridCore extends Component {
             if (intervalMillis > 0) {
                 this.frameworkFactory.setTimeout(() => {
                     // this gets grid to resize immediately, rather than waiting for next 500ms
-                    this.dispatchViewImpacted();
+                    this.gridPanel.checkViewportAndScrolls();
                     this.periodicallyDoLayout();
                 }, intervalMillis);
             } else {
@@ -197,16 +200,7 @@ export class GridCore extends Component {
         this.toolPanelComp.init();
         this.toolPanelComp.showToolPanel(show);
 
-        this.dispatchViewImpacted();
-    }
-
-    private dispatchViewImpacted(): void {
-        let event = <ViewportImpactedEvent> {
-            type: Events.EVENT_VIEWPORT_IMPACTED,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi()
-        };
-        this.eventService.dispatchEvent(event);
+        this.gridPanel.checkViewportAndScrolls();
     }
 
     public isToolPanelShowing() {

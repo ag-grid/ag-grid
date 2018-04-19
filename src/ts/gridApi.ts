@@ -752,12 +752,7 @@ export class GridApi {
     }
 
     public doLayout() {
-        let e = <ViewportImpactedEvent> {
-            type: Events.EVENT_VIEWPORT_IMPACTED,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi()
-        };
-        this.eventService.dispatchEvent(e);
+        this.gridPanel.checkViewportAndScrolls();
     }
 
     public resetRowHeights() {

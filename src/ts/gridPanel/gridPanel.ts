@@ -342,7 +342,7 @@ export class GridPanel extends Component {
     }
 
     private addWindowResizeListener(): void {
-        this.addDestroyableEventListener(window, 'resize', this.onViewportImpacted.bind(this));
+        this.addDestroyableEventListener(window, 'resize', this.checkViewportAndScrolls.bind(this));
     }
 
     private setupOverlay(): void {
@@ -427,7 +427,7 @@ export class GridPanel extends Component {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_VIEWPORT_IMPACTED, this.onViewportImpacted.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_VIEWPORT_IMPACTED, this.checkViewportAndScrolls.bind(this));
 
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
@@ -818,7 +818,7 @@ export class GridPanel extends Component {
     // and also to check size and position of viewport for row and column virtualisation.
     // one day, instead of having to be called, maybe we can use this pattern:
     // https://github.com/sdecima/javascript-detect-element-resize/blob/master/detect-element-resize.js
-    public onViewportImpacted(): void {
+    public checkViewportAndScrolls(): void {
 
         // results in updating anything that depends on scroll showing
         this.updateScrollVisibleService();
