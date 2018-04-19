@@ -2,7 +2,6 @@ import {ToolPanelVisibleChanged, Events, ViewportImpactedEvent, EventService, Au
 import {IToolPanel} from "ag-grid";
 import {ColumnPanel} from "./columnPanel";
 
-@Bean("toolPanelComp")
 export class ToolPanelComp extends Component implements IToolPanel {
 
     @Autowired("context") private context: Context;

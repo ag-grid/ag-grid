@@ -27,7 +27,7 @@ import {HorizontalResizeComp} from "./toolPanel/columnsSelect/horizontalResizeCo
 
 let rowModelTypes = {viewport: ViewportRowModel, enterprise: EnterpriseRowModel};
 
-Grid.setEnterpriseBeans([ToolPanelComp, EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, RowGroupCompFactory, PivotCompFactory,
+Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, RowGroupCompFactory, PivotCompFactory,
     PivotColumnsPanel, RangeController, ClipboardService, PivotStage, PivotColDefService,
     ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService,
     StatusBar, LicenseManager, MD5, MenuItemMapper], rowModelTypes);
@@ -35,5 +35,6 @@ Grid.setEnterpriseBeans([ToolPanelComp, EnterpriseMenuFactory, ExcelCreator, Exc
 Grid.setEnterpriseComponents([
     {componentName: 'AgColumnSelectHeader', theClass: ColumnSelectHeaderComp},
     {componentName: 'AgColumnContainer', theClass: ColumnContainerComp},
-    {componentName: 'AgHorizontalResize', theClass: HorizontalResizeComp}
+    {componentName: 'AgHorizontalResize', theClass: HorizontalResizeComp},
+    {componentName: 'AgToolPanel', theClass: ToolPanelComp},
 ]);
