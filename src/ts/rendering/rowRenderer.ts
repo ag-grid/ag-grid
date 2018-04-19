@@ -35,11 +35,11 @@ import {ICellEditorComp} from "./cellEditors/iCellEditor";
 
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {
+
     @Autowired("paginationProxy") private paginationProxy: PaginationProxy;
     @Autowired("columnController") private columnController: ColumnController;
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired("gridCore") private gridCore: GridCore;
-    @Autowired("gridPanel") private gridPanel: GridPanel;
     @Autowired("$scope") private $scope: any;
     @Autowired("expressionService") private expressionService: ExpressionService;
     @Autowired("templateService") private templateService: TemplateService;
@@ -56,6 +56,8 @@ export class RowRenderer extends BeanStub {
     @Autowired("heightScaler") private heightScaler: HeightScaler;
     @Autowired("animationFrameService") private animationFrameService: AnimationFrameService;
     @Optional("rangeController") private rangeController: IRangeController;
+
+    private gridPanel: GridPanel;
 
     private firstRenderedRow: number;
     private lastRenderedRow: number;
@@ -85,8 +87,9 @@ export class RowRenderer extends BeanStub {
         this.logger = loggerFactory.create("RowRenderer");
     }
 
-    @PostConstruct
-    public init(): void {
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
+
         this.autoHeight = this.gridOptionsWrapper.isAutoHeight();
 
         this.rowContainers = this.gridPanel.getRowContainers();

@@ -120,7 +120,6 @@ export type RowContainerComponentNames =
 
 export type RowContainerComponents = { [K in RowContainerComponentNames]: RowContainerComponent };
 
-@Bean('gridPanel')
 export class GridPanel extends Component {
 
     @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
@@ -331,6 +330,7 @@ export class GridPanel extends Component {
         this.autoWidthCalculator.registerGridComp(this);
         this.paginationAutoPageSizeService.registerGridComp(this);
         this.beans.registerGridComp(this);
+        this.rowRenderer.registerGridComp(this);
         if (this.rangeController) {
             this.rangeController.registerGridComp(this);
         }
@@ -353,7 +353,7 @@ export class GridPanel extends Component {
 
     private addRowDragListener(): void {
 
-        let rowDragFeature = new RowDragFeature(this.eBody);
+        let rowDragFeature = new RowDragFeature(this.eBody, this);
         this.context.wireBean(rowDragFeature);
 
         this.dragAndDropService.addDropTarget(rowDragFeature);

@@ -37,11 +37,8 @@ export class RowDragFeature implements DropTarget {
 
     private lastDraggingEvent: DraggingEvent;
 
-    constructor(eContainer: HTMLElement) {
+    constructor(eContainer: HTMLElement, gridPanel: GridPanel) {
         this.eContainer = eContainer;
-    }
-
-    public registerGridComp(gridPanel: GridPanel): void {
         this.gridPanel = gridPanel;
     }
 

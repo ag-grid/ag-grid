@@ -20,6 +20,7 @@ import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {PaginationComp} from "./rowModels/pagination/paginationComp";
 import {GridApi} from "./gridApi";
 import {IToolPanel} from "./interfaces/iToolPanel";
+import {RefSelector} from "./widgets/componentAnnotations";
 
 @Bean('gridCore')
 export class GridCore extends Component {
@@ -27,6 +28,7 @@ export class GridCore extends Component {
     private static TEMPLATE_NORMAL =
         `<div class="ag-root-wrapper">
             <div class="ag-root-wrapper-body">
+                <ag-grid-comp ref="gridPanel"></ag-grid-comp>
             </div>
         </div>`;
 
@@ -34,6 +36,7 @@ export class GridCore extends Component {
         `<div class="ag-root-wrapper">
             <ag-header-column-drop></ag-header-column-drop>
             <div class="ag-root-wrapper-body">
+                <ag-grid-comp ref="gridPanel"></ag-grid-comp>
             </div>
         </div>`;
 
@@ -47,7 +50,6 @@ export class GridCore extends Component {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
 
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
     @Autowired('$scope') private $scope: any;
@@ -64,6 +66,8 @@ export class GridCore extends Component {
     @Optional('pivotCompFactory') private pivotCompFactory: ICompFactory;
     @Optional('toolPanelComp') private toolPanelComp: IToolPanel;
     @Optional('statusBar') private statusBar: Component;
+
+    @RefSelector('gridPanel') private gridPanel: GridPanel;
 
     private finished: boolean;
     private doingVirtualPaging: boolean;
@@ -86,12 +90,10 @@ export class GridCore extends Component {
         this.instantiate(this.context);
 
         let eCenter = this.queryForHtmlElement('.ag-root-wrapper-body');
-        eCenter.appendChild(this.gridPanel.getGui());
 
         if (this.toolPanelComp) {
             eCenter.appendChild(this.toolPanelComp.getGui());
         }
-        this.getGui().appendChild(eCenter);
 
         if (eSouthPanel) {
             this.getGui().appendChild(eSouthPanel);

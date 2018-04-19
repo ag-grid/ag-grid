@@ -167,6 +167,7 @@ export class Grid {
         let components = [
             {componentName: 'AgCheckbox', theClass: AgCheckbox},
             {componentName: 'AgHeaderColumnDrop', theClass: HeaderColumnDropComp},
+            {componentName: 'AgGridComp', theClass: GridPanel},
             // niall put the below in for testing some PoC code, niall will
             // remove this comment and code when PoC is over
             , {componentName: 'AgSmallComponent', theClass: SmallComponent}
@@ -186,7 +187,7 @@ export class Grid {
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
                 FilterManager, ColumnController, PaginationProxy, RowRenderer, HeaderRenderer, ExpressionService,
                 BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService,
-                NavigationService, GridPanel, PopupService, ValueCache, ValueService, AlignedGridsService,
+                NavigationService, PopupService, ValueCache, ValueService, AlignedGridsService,
                 LoggerFactory, ColumnUtils, AutoWidthCalculator, PopupService, GridCore, StandardMenuFactory,
                 DragAndDropService, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService, RowNodeFactory,
