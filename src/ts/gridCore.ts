@@ -37,6 +37,7 @@ export class GridCore extends Component {
             <ag-header-column-drop></ag-header-column-drop>
             <div class="ag-root-wrapper-body">
                 <ag-grid-comp ref="gridPanel"></ag-grid-comp>
+                <ag-tool-panel ref="toolPanel"></ag-tool-panel>
             </div>
         </div>`;
 
@@ -64,10 +65,10 @@ export class GridCore extends Component {
 
     @Optional('rowGroupCompFactory') private rowGroupCompFactory: ICompFactory;
     @Optional('pivotCompFactory') private pivotCompFactory: ICompFactory;
-    @Optional('toolPanelComp') private toolPanelComp: IToolPanel;
     @Optional('statusBar') private statusBar: Component;
 
     @RefSelector('gridPanel') private gridPanel: GridPanel;
+    @RefSelector('toolPanel') private toolPanelComp: IToolPanel;
 
     private finished: boolean;
     private doingVirtualPaging: boolean;
@@ -88,12 +89,6 @@ export class GridCore extends Component {
         let template = this.enterprise ? GridCore.TEMPLATE_ENTERPRISE : GridCore.TEMPLATE_NORMAL;
         this.setTemplate(template);
         this.instantiate(this.context);
-
-        let eCenter = this.queryForHtmlElement('.ag-root-wrapper-body');
-
-        if (this.toolPanelComp) {
-            eCenter.appendChild(this.toolPanelComp.getGui());
-        }
 
         if (eSouthPanel) {
             this.getGui().appendChild(eSouthPanel);
