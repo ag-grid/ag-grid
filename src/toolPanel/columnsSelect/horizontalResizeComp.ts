@@ -3,7 +3,6 @@ import {
     Component,
     Events,
     GridOptionsWrapper,
-    GridPanel,
     HorizontalResizeService,
     PostConstruct,
     ViewportImpactedEvent,

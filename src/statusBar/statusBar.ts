@@ -1,6 +1,6 @@
 import {EventService, Component, Autowired, PostConstruct, Events, _,
-    GridRow, RowNode, Constants, PinnedRowModel, IRowModel, ValueService,
-    CellNavigationService, Bean, Context, GridOptionsWrapper, ViewportImpactedEvent} from 'ag-grid/main';
+    GridRow, RowNode, Constants, PinnedRowModel, IRowModel, ValueService, GridPanel,
+    CellNavigationService, Bean, Context, GridOptionsWrapper} from 'ag-grid/main';
 import {StatusItem} from "./statusItem";
 import {RangeController} from "../rangeController";
 
@@ -20,6 +20,8 @@ export class StatusBar extends Component {
     @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
+    private gridPanel: GridPanel;
+
     private statusItemSum: StatusItem;
     private statusItemCount: StatusItem;
     private statusItemMin: StatusItem;
@@ -31,6 +33,10 @@ export class StatusBar extends Component {
 
     constructor() {
         super(StatusBar.TEMPLATE);
+    }
+
+    public registerGridPanel(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
     }
 
     @PostConstruct
@@ -168,12 +174,7 @@ export class StatusBar extends Component {
 
         if (this.isVisible()!==gotResult) {
             this.setVisible(gotResult);
-            let e: ViewportImpactedEvent = {
-                type: Events.EVENT_VIEWPORT_IMPACTED,
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi()
-            };
-            this.eventService.dispatchEvent(e);
+            this.gridPanel.checkViewportAndScrolls();
         }
     }
 

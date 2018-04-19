@@ -1,4 +1,14 @@
-import {ToolPanelVisibleChanged, Events, ViewportImpactedEvent, EventService, Autowired, Bean, Component, Context, GridPanel, GridOptionsWrapper, PostConstruct} from "ag-grid/main";
+import {
+    Autowired,
+    Component,
+    Context,
+    Events,
+    EventService,
+    GridOptionsWrapper,
+    GridPanel,
+    PostConstruct,
+    ToolPanelVisibleChanged
+} from "ag-grid/main";
 import {IToolPanel} from "ag-grid";
 import {ColumnPanel} from "./columnPanel";
 
@@ -17,6 +27,10 @@ export class ToolPanelComp extends Component implements IToolPanel {
 
     constructor() {
         super(`<div class="ag-tool-panel"/>`);
+    }
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.buttonComp.registerGridComp(gridPanel);
     }
 
     @PostConstruct
@@ -65,9 +79,15 @@ class PanelSelectComp extends Component {
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired("eventService") private eventService: EventService;
 
+    private gridPanel: GridPanel;
+
     constructor(columnPanel: ColumnPanel) {
         super();
         this.columnPanel = columnPanel;
+    }
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
     }
 
     private createTemplate() {
@@ -86,12 +106,7 @@ class PanelSelectComp extends Component {
             this.columnPanel.setVisible(!this.columnPanel.isVisible());
             // this gets grid to resize immediately, rather than waiting
             // for next 500ms
-            let e: ViewportImpactedEvent = {
-                type: Events.EVENT_VIEWPORT_IMPACTED,
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi()
-            };
-            this.eventService.dispatchEvent(e);
+            this.gridPanel.checkViewportAndScrolls();
         });
 
         let showButtons = !this.gridOptionsWrapper.isToolPanelSuppressSideButtons();
