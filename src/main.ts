@@ -30,11 +30,12 @@ let rowModelTypes = {viewport: ViewportRowModel, enterprise: EnterpriseRowModel}
 Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, RowGroupCompFactory, PivotCompFactory,
     PivotColumnsPanel, RangeController, ClipboardService, PivotStage, PivotColDefService,
     ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService,
-    StatusBar, LicenseManager, MD5, MenuItemMapper], rowModelTypes);
+    LicenseManager, MD5, MenuItemMapper], rowModelTypes);
 
 Grid.setEnterpriseComponents([
     {componentName: 'AgColumnSelectHeader', theClass: ColumnSelectHeaderComp},
     {componentName: 'AgColumnContainer', theClass: ColumnContainerComp},
     {componentName: 'AgHorizontalResize', theClass: HorizontalResizeComp},
     {componentName: 'AgToolPanel', theClass: ToolPanelComp},
+    {componentName: 'AgStatusBar', theClass: StatusBar},
 ]);

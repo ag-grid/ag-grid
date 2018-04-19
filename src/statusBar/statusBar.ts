@@ -4,12 +4,9 @@ import {EventService, Component, Autowired, PostConstruct, Events, _,
 import {StatusItem} from "./statusItem";
 import {RangeController} from "../rangeController";
 
-@Bean('statusBar')
 export class StatusBar extends Component {
 
-    private static TEMPLATE =
-        '<div class="ag-status-bar">' +
-        '</div>';
+    private static TEMPLATE = '<div class="ag-status-bar"></div>';
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('rangeController') private rangeController: RangeController;
@@ -43,6 +40,8 @@ export class StatusBar extends Component {
     private init(): void {
         // we want to hide until the first aggregation comes in
         this.setVisible(false);
+
+        if (!this.gridOptionsWrapper.isEnableStatusBar()) { return; }
 
         this.createStatusItems();
         this.eventService.addEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
