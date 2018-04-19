@@ -9,12 +9,17 @@ import {_} from "../utils";
 @Bean('autoHeightCalculator')
 export class AutoHeightCalculator {
 
-    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('beans') private beans: Beans;
     @Autowired("$scope") private $scope: any;
     @Autowired("columnController") private columnController: ColumnController;
 
+    private gridPanel: GridPanel;
+
     private eDummyContainer: HTMLElement;
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
+    }
 
     public getPreferredHeightForRow(rowNode: RowNode): number {
 

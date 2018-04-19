@@ -19,7 +19,6 @@ export class HeaderContainer {
     @Autowired('$scope') private $scope: any;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
 
@@ -38,13 +37,16 @@ export class HeaderContainer {
         this.eViewport = eViewport;
     }
 
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.setupDragAndDrop(gridPanel);
+    }
+
     public forEachHeaderElement(callback: (renderedHeaderElement: Component)=>void): void {
         this.headerRowComps.forEach( headerRowComp => headerRowComp.forEachHeaderElement(callback) );
     }
 
     @PostConstruct
     private init(): void {
-        this.setupDragAndDrop();
         // if value changes, then if not pivoting, we at least need to change the label eg from sum() to avg(),
         // if pivoting, then the columns have changed
         this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
@@ -105,10 +107,11 @@ export class HeaderContainer {
         this.onGridColumnsChanged();
     }
 
-    private setupDragAndDrop(): void {
+    private setupDragAndDrop(gridComp: GridPanel): void {
         let dropContainer = this.eViewport ? this.eViewport : this.eContainer;
         let bodyDropTarget = new BodyDropTarget(this.pinned, dropContainer);
-        this.context.wireBean(bodyDropTarget );
+        this.context.wireBean(bodyDropTarget);
+        bodyDropTarget.registerGridComp(gridComp);
     }
 
     private removeHeaderRowComps(): void {

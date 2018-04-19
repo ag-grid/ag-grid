@@ -9,9 +9,9 @@ import {GridPanel} from "./gridPanel/gridPanel";
 import {Logger, LoggerFactory} from "./logger";
 import {Constants} from "./constants";
 import {PopupService} from "./widgets/popupService";
-import {Events} from "./events";
+import {Events, ViewportImpactedEvent} from "./events";
 import {Utils as _} from "./utils";
-import {Autowired, Bean, Context, Optional, PostConstruct, PreDestroy, Qualifier} from "./context/context";
+import {Autowired, Bean, Context, Optional, PostConstruct, PreDestroy} from "./context/context";
 import {IRowModel} from "./interfaces/iRowModel";
 import {FocusedCellController} from "./focusedCellController";
 import {Component} from "./widgets/component";
@@ -121,8 +121,6 @@ export class GridCore extends Component {
             this.addDestroyFunc(quickFilterUnregisterFn);
         }
 
-        this.addWindowResizeListener();
-
         // important to set rtl before doLayout, as setting the RTL class impacts the scroll position,
         // which doLayout indirectly depends on
         this.addRtlSupport();
@@ -171,20 +169,15 @@ export class GridCore extends Component {
         return eSouthPanel;
     }
 
-    private addWindowResizeListener(): void {
-        let eventListener = this.gridPanel.checkViewportSize.bind(this.gridPanel);
-        window.addEventListener('resize', eventListener);
-        this.addDestroyFunc(() => window.removeEventListener('resize', eventListener));
-    }
-
     private periodicallyDoLayout() {
         if (!this.finished) {
             let intervalMillis = this.gridOptionsWrapper.getLayoutInterval();
             // if interval is negative, this stops the layout from happening
             if (intervalMillis > 0) {
                 this.frameworkFactory.setTimeout(() => {
-                        this.gridPanel.checkViewportSize();
-                        this.periodicallyDoLayout();
+                    // this gets grid to resize immediately, rather than waiting for next 500ms
+                    this.dispatchViewImpacted();
+                    this.periodicallyDoLayout();
                 }, intervalMillis);
             } else {
                 // if user provided negative number, we still do the check every 5 seconds,
@@ -207,7 +200,16 @@ export class GridCore extends Component {
         this.toolPanelComp.init();
         this.toolPanelComp.showToolPanel(show);
 
-        this.gridPanel.checkViewportSize();
+        this.dispatchViewImpacted();
+    }
+
+    private dispatchViewImpacted(): void {
+        let event = <ViewportImpactedEvent> {
+            type: Events.EVENT_VIEWPORT_IMPACTED,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi()
+        };
+        this.eventService.dispatchEvent(event);
     }
 
     public isToolPanelShowing() {

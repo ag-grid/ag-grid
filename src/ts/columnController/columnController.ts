@@ -57,7 +57,6 @@ export class ColumnController {
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('context') private context: Context;
     @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
     @Autowired('autoGroupColService') private autoGroupColService: AutoGroupColService;

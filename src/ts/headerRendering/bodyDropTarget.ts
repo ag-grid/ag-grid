@@ -19,9 +19,10 @@ enum DropType { ColumnMove, Pivot }
 export class BodyDropTarget implements DropTarget {
 
     @Autowired('context') private context: Context;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnController') private columnController: ColumnController;
+
+    private gridPanel: GridPanel;
 
     private pinned: string;
 
@@ -35,9 +36,23 @@ export class BodyDropTarget implements DropTarget {
 
     private currentDropListener: DropListener;
 
+    private moveColumnController: MoveColumnController;
+
     constructor(pinned: string, eContainer: HTMLElement) {
         this.pinned = pinned;
         this.eContainer = eContainer;
+    }
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
+
+        this.moveColumnController.registerGridComp(gridPanel);
+
+        switch (this.pinned) {
+            case Column.PINNED_LEFT: this.eSecondaryContainers = this.gridPanel.getDropTargetLeftContainers(); break;
+            case Column.PINNED_RIGHT: this.eSecondaryContainers = this.gridPanel.getDropTargetPinnedRightContainers(); break;
+            default: this.eSecondaryContainers = this.gridPanel.getDropTargetBodyContainers(); break;
+        }
     }
 
     public isInterestedIn(type: DragSourceType): boolean {
@@ -56,20 +71,14 @@ export class BodyDropTarget implements DropTarget {
     @PostConstruct
     private init(): void {
 
-        let moveColumnController = new MoveColumnController(this.pinned, this.eContainer);
-        this.context.wireBean(moveColumnController);
+        this.moveColumnController = new MoveColumnController(this.pinned, this.eContainer);
+        this.context.wireBean(this.moveColumnController);
 
         let bodyDropPivotTarget = new BodyDropPivotTarget(this.pinned);
         this.context.wireBean(bodyDropPivotTarget);
 
-        this.dropListeners[DropType.ColumnMove] = moveColumnController;
+        this.dropListeners[DropType.ColumnMove] = this.moveColumnController;
         this.dropListeners[DropType.Pivot] = bodyDropPivotTarget;
-
-        switch (this.pinned) {
-            case Column.PINNED_LEFT: this.eSecondaryContainers = this.gridPanel.getDropTargetLeftContainers(); break;
-            case Column.PINNED_RIGHT: this.eSecondaryContainers = this.gridPanel.getDropTargetPinnedRightContainers(); break;
-            default: this.eSecondaryContainers = this.gridPanel.getDropTargetBodyContainers(); break;
-        }
 
         this.dragAndDropService.addDropTarget(this);
     }

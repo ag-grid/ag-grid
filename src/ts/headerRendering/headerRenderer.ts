@@ -14,10 +14,11 @@ export class HeaderRenderer {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('context') private context: Context;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
+
+    private gridPanel: GridPanel;
 
     private pinnedLeftContainer: HeaderContainer;
     private pinnedRightContainer: HeaderContainer;
@@ -27,8 +28,9 @@ export class HeaderRenderer {
 
     private eHeaderViewport: HTMLElement;
 
-    @PostConstruct
-    private init() {
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
+
         this.eHeaderViewport = this.gridPanel.getHeaderViewport();
 
         this.centerContainer = new HeaderContainer(this.gridPanel.getHeaderContainer(), this.gridPanel.getHeaderViewport(), null);
@@ -40,6 +42,10 @@ export class HeaderRenderer {
         this.childContainers.push(this.pinnedRightContainer);
 
         this.childContainers.forEach( container => this.context.wireBean(container) );
+
+        this.centerContainer.registerGridComp(gridPanel);
+        this.pinnedLeftContainer.registerGridComp(gridPanel);
+        this.pinnedRightContainer.registerGridComp(gridPanel);
 
         // shotgun way to get labels to change, eg from sum(amount) to avg(amount)
         this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshHeader.bind(this));

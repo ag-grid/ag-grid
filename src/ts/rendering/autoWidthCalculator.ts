@@ -12,8 +12,13 @@ export class AutoWidthCalculator {
 
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('headerRenderer') private headerRenderer: HeaderRenderer;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+
+    private gridPanel: GridPanel;
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
+    }
 
     // this is the trick: we create a dummy container and clone all the cells
     // into the dummy, then check the dummy's width. then destroy the dummy

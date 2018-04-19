@@ -16,7 +16,6 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 @Bean('navigationService')
 export class NavigationService {
 
-    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
@@ -26,10 +25,15 @@ export class NavigationService {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private scrollWidth: number;
+    private gridPanel: GridPanel;
 
     @PostConstruct
     private init(): void {
         this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
+    }
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
     }
 
     public handlePageScrollingKey(event: KeyboardEvent): boolean {

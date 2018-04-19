@@ -7,14 +7,19 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 @Bean('animationFrameService')
 export class AnimationFrameService {
 
-    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+
+    private gridPanel: GridPanel;
 
     private p1Tasks = new LinkedList<()=>void>();
     private p2Tasks = new LinkedList<()=>void>();
     private ticking = false;
 
     private useAnimationFrame: boolean;
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
+    }
 
     @PostConstruct
     private init(): void {

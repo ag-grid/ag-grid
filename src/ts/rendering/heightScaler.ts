@@ -14,7 +14,8 @@ import {_} from "../utils";
 export class HeightScaler extends BeanStub {
 
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
+
+    private gridPanel: GridPanel;
 
     private maxDivHeight: number;
 
@@ -46,6 +47,10 @@ export class HeightScaler extends BeanStub {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.update.bind(this));
         this.scrollBarWidth = _.getScrollbarWidth();
         this.maxDivHeight = _.getMaxDivHeight();
+    }
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
     }
 
     public isScaling(): boolean {

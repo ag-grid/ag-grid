@@ -46,11 +46,13 @@ export class BeanStub implements IEventEmitter {
         }
     }
 
-    public addDestroyableEventListener(eElement: HTMLElement|IEventEmitter|GridOptionsWrapper, event: string, listener: (event?: any)=>void): void {
+    public addDestroyableEventListener(eElement: Window|HTMLElement|IEventEmitter|GridOptionsWrapper, event: string, listener: (event?: any)=>void): void {
         if (this.destroyed) { return; }
 
         if (eElement instanceof HTMLElement) {
             _.addSafePassiveEventListener((<HTMLElement>eElement), event, listener);
+        } else if (eElement instanceof Window) {
+            (<Window>eElement).addEventListener(event, listener);
         } else if (eElement instanceof GridOptionsWrapper) {
             (<GridOptionsWrapper>eElement).addEventListener(event, listener);
         } else {
@@ -60,6 +62,8 @@ export class BeanStub implements IEventEmitter {
         this.destroyFunctions.push( ()=> {
             if (eElement instanceof HTMLElement) {
                 (<HTMLElement>eElement).removeEventListener(event, listener);
+            } else if (eElement instanceof Window) {
+                (<Window>eElement).removeEventListener(event, listener);
             } else if (eElement instanceof GridOptionsWrapper) {
                 (<GridOptionsWrapper>eElement).removeEventListener(event, listener);
             } else {

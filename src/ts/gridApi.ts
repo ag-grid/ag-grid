@@ -44,12 +44,13 @@ import {ImmutableService} from "./rowModels/inMemory/immutableService";
 import {ValueCache} from "./valueService/valueCache";
 import {AlignedGridsService} from "./alignedGridsService";
 import {PinnedRowModel} from "./rowModels/pinnedRowModel";
-import {AgEvent, ColumnEventType} from "./events";
+import {AgEvent, ColumnEventType, ViewportImpactedEvent} from "./events";
 import {IToolPanel} from "./interfaces/iToolPanel";
 import {GridOptions} from "./entities/gridOptions";
 import {IContextMenuFactory} from "./interfaces/iContextMenuFactory";
 import {ICellRendererComp} from "./rendering/cellRenderers/iCellRenderer";
 import {ICellEditorComp} from "./rendering/cellEditors/iCellEditor";
+import {Events} from "./eventKeys";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -97,7 +98,6 @@ export class GridApi {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
     @Autowired('eventService') private eventService: EventService;
@@ -117,11 +117,17 @@ export class GridApi {
     @Autowired('valueCache') private valueCache: ValueCache;
     @Optional('toolPanelComp') private toolPanelComp: IToolPanel;
 
+    private gridPanel: GridPanel;
+
     private inMemoryRowModel: InMemoryRowModel;
     private infinitePageRowModel: InfiniteRowModel;
     private enterpriseRowModel: IEnterpriseRowModel;
 
     private detailGridInfoMap: {[id: string]: DetailGridInfo} = {};
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
+    }
 
     @PostConstruct
     private init(): void {
@@ -746,7 +752,12 @@ export class GridApi {
     }
 
     public doLayout() {
-        this.gridPanel.checkViewportSize();
+        let e = <ViewportImpactedEvent> {
+            type: Events.EVENT_VIEWPORT_IMPACTED,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi()
+        };
+        this.eventService.dispatchEvent(e);
     }
 
     public resetRowHeights() {

@@ -6,8 +6,9 @@ import {Utils as _} from "../utils";
 @Bean('columnAnimationService')
 export class ColumnAnimationService {
 
-    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('gridPanel') gridPanel: GridPanel;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+
+    private gridPanel: GridPanel;
 
     private executeNextFuncs: Function[] = [];
     private executeLaterFuncs: Function[] = [];
@@ -15,6 +16,10 @@ export class ColumnAnimationService {
     private active = false;
 
     private animationThreadCount = 0;
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
+    }
 
     public isActive(): boolean {
         return this.active;
@@ -62,12 +67,12 @@ export class ColumnAnimationService {
         // by the time the 'wait' func executes
         this.animationThreadCount++;
         let animationThreadCountCopy = this.animationThreadCount;
-        _.addCssClass(this.gridPanel.getGui(), 'ag-column-moving');
+        this.gridPanel.setColumnMovingCss(true);
 
         this.executeLaterFuncs.push(()=> {
             // only remove the class if this thread was the last one to update it
             if (this.animationThreadCount===animationThreadCountCopy) {
-                _.removeCssClass(this.gridPanel.getGui(), 'ag-column-moving');
+                this.gridPanel.setColumnMovingCss(false);
             }
         });
     }

@@ -1,6 +1,6 @@
 import {Column} from "../entities/column";
-import {ColDef} from "../entities/colDef";
 import {GridCell} from "../entities/gridCell";
+import {GridPanel} from "../gridPanel/gridPanel";
 
 export interface IRangeController {
     clearSelection(): void;
@@ -15,6 +15,7 @@ export interface IRangeController {
     addRange(rangeSelection: AddRangeSelectionParams): void;
     extendRangeInDirection(cell: GridCell, key: number): boolean;
     extendRangeToCell(cell: GridCell): void;
+    registerGridComp(gridPanel: GridPanel): void;
 }
 
 export interface RangeSelection {

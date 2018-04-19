@@ -16,20 +16,22 @@ import {GridApi} from "../gridApi";
 @Bean('paginationAutoPageSizeService')
 export class PaginationAutoPageSizeService extends BeanStub {
 
-    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
 
-    private notActive(): boolean {
-        return !this.gridOptionsWrapper.isPaginationAutoPageSize();
-    }
+    private gridPanel: GridPanel;
 
-    @PostConstruct
-    private postConstruct() {
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
+
         this.addDestroyableEventListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.onBodyHeightChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
         this.checkPageSize();
+    }
+
+    private notActive(): boolean {
+        return !this.gridOptionsWrapper.isPaginationAutoPageSize();
     }
 
     private onScrollVisibilityChanged(): void {
@@ -61,7 +63,6 @@ export class PaginationAutoPageSizeService extends BeanStub {
 export class PaginationProxy extends BeanStub implements IRowModel {
 
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('selectionController') private selectionController: SelectionController;

@@ -28,7 +28,7 @@ import {IFrameworkFactory} from "../interfaces/iFrameworkFactory";
 import {Column} from "../entities/column";
 import {RowContainerComponent} from "../rendering/rowContainerComponent";
 import {RowNode} from "../entities/rowNode";
-import {PaginationProxy} from "../rowModels/paginationProxy";
+import {PaginationAutoPageSizeService, PaginationProxy} from "../rowModels/paginationProxy";
 import {PopupEditorWrapper} from "../rendering/cellEditors/popupEditorWrapper";
 import {AlignedGridsService} from "../alignedGridsService";
 import {PinnedRowModel} from "../rowModels/pinnedRowModel";
@@ -45,6 +45,11 @@ import {RowDragFeature} from "./rowDragFeature";
 import {HeightScaler} from "../rendering/heightScaler";
 import {IOverlayWrapperComp} from "../rendering/overlays/overlayWrapperComponent";
 import {Component} from "../widgets/component";
+import {HeaderRenderer} from "../headerRendering/headerRenderer";
+import {AutoHeightCalculator} from "../rendering/autoHeightCalculator";
+import {ColumnAnimationService} from "../rendering/columnAnimationService";
+import {AutoWidthCalculator} from "../rendering/autoWidthCalculator";
+import {Beans} from "../rendering/beans";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -127,6 +132,12 @@ export class GridPanel extends Component {
     @Autowired('context') private context: Context;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Autowired('navigationService') private navigationService: NavigationService;
+    @Autowired('headerRenderer') private headerRenderer: HeaderRenderer;
+    @Autowired('autoHeightCalculator') private autoHeightCalculator: AutoHeightCalculator;
+    @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
+    @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
+    @Autowired('paginationAutoPageSizeService') private paginationAutoPageSizeService: PaginationAutoPageSizeService;
+    @Autowired('beans') private beans: Beans;
 
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -307,6 +318,31 @@ export class GridPanel extends Component {
         }
 
         this.onDisplayedColumnsWidthChanged();
+        this.addWindowResizeListener();
+
+        this.gridApi.registerGridComp(this);
+        this.alignedGridsService.registerGridComp(this);
+        this.headerRenderer.registerGridComp(this);
+        this.animationFrameService.registerGridComp(this);
+        this.navigationService.registerGridComp(this);
+        this.heightScaler.registerGridComp(this);
+        this.autoHeightCalculator.registerGridComp(this);
+        this.columnAnimationService.registerGridComp(this);
+        this.autoWidthCalculator.registerGridComp(this);
+        this.paginationAutoPageSizeService.registerGridComp(this);
+        this.beans.registerGridComp(this);
+        if (this.rangeController) {
+            this.rangeController.registerGridComp(this);
+        }
+    }
+
+    // used by ColumnAnimationService
+    public setColumnMovingCss(moving: boolean): void {
+        this.addOrRemoveCssClass('ag-column-moving', moving);
+    }
+
+    private addWindowResizeListener(): void {
+        this.addDestroyableEventListener(window, 'resize', this.onViewportImpacted.bind(this));
     }
 
     private setupOverlay(): void {
@@ -390,15 +426,13 @@ export class GridPanel extends Component {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setBodyAndHeaderHeights.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataChanged.bind(this));
-
         this.addDestroyableEventListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_VIEWPORT_IMPACTED, this.onViewportImpacted.bind(this));
 
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
-
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
-
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
     }
 
@@ -782,7 +816,9 @@ export class GridPanel extends Component {
 
     // gets called every 500 ms. we use this to check visibility of scrollbars in the grid panel,
     // and also to check size and position of viewport for row and column virtualisation.
-    public checkViewportSize(): void {
+    // one day, instead of having to be called, maybe we can use this pattern:
+    // https://github.com/sdecima/javascript-detect-element-resize/blob/master/detect-element-resize.js
+    public onViewportImpacted(): void {
 
         // results in updating anything that depends on scroll showing
         this.updateScrollVisibleService();

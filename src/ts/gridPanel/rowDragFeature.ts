@@ -19,10 +19,11 @@ export class RowDragFeature implements DropTarget {
     // this feature is only created when row model in InMemory, so we can type it as InMemory
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('eventService') private eventService: EventService;
+
+    private gridPanel: GridPanel;
 
     private inMemoryRowModel: InMemoryRowModel;
 
@@ -38,6 +39,10 @@ export class RowDragFeature implements DropTarget {
 
     constructor(eContainer: HTMLElement) {
         this.eContainer = eContainer;
+    }
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
     }
 
     @PostConstruct
