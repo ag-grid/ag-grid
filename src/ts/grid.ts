@@ -21,7 +21,7 @@ import {AutoWidthCalculator} from "./rendering/autoWidthCalculator";
 import {HorizontalResizeService} from "./headerRendering/horizontalResizeService";
 import {Context} from "./context/context";
 import {CsvCreator} from "./csvCreator";
-import {GridCore, HeaderColumnDropComp} from "./gridCore";
+import {GridCore} from "./gridCore";
 import {StandardMenuFactory} from "./headerRendering/standardMenu";
 import {DragAndDropService} from "./dragAndDrop/dragAndDropService";
 import {DragService} from "./dragAndDrop/dragService";
@@ -29,7 +29,7 @@ import {SortController} from "./sortController";
 import {FocusedCellController} from "./focusedCellController";
 import {MouseEventService} from "./gridPanel/mouseEventService";
 import {CellNavigationService} from "./cellNavigationService";
-import {NumberSequence, Utils as _} from "./utils";
+import {Utils as _} from "./utils";
 import {FilterStage} from "./rowModels/inMemory/filterStage";
 import {SortStage} from "./rowModels/inMemory/sortStage";
 import {FlattenStage} from "./rowModels/inMemory/flattenStage";
@@ -166,7 +166,6 @@ export class Grid {
 
         let components = [
             {componentName: 'AgCheckbox', theClass: AgCheckbox},
-            {componentName: 'AgHeaderColumnDrop', theClass: HeaderColumnDropComp},
             {componentName: 'AgGridComp', theClass: GridPanel},
             {componentName: 'AgPagination', theClass: PaginationComp},
             // niall put the below in for testing some PoC code, niall will
