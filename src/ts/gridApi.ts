@@ -1,6 +1,5 @@
 import {CsvCreator} from "./csvCreator";
 import {RowRenderer} from "./rendering/rowRenderer";
-import {HeaderRenderer} from "./headerRendering/headerRenderer";
 import {FilterManager} from "./filter/filterManager";
 import {ColumnController} from "./columnController/columnController";
 import {ColumnApi} from "./columnController/columnApi";
@@ -51,6 +50,7 @@ import {IContextMenuFactory} from "./interfaces/iContextMenuFactory";
 import {ICellRendererComp} from "./rendering/cellRenderers/iCellRenderer";
 import {ICellEditorComp} from "./rendering/cellEditors/iCellEditor";
 import {Events} from "./eventKeys";
+import {HeaderRootComp} from "./headerRendering/headerRootComp";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -93,7 +93,6 @@ export class GridApi {
     @Optional('excelCreator') private excelCreator: IExcelCreator;
     @Autowired('gridCore') private gridCore: GridCore;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('headerRenderer') private headerRenderer: HeaderRenderer;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('selectionController') private selectionController: SelectionController;
@@ -118,6 +117,7 @@ export class GridApi {
     @Optional('toolPanelComp') private toolPanelComp: IToolPanel;
 
     private gridPanel: GridPanel;
+    private headerRootComp: HeaderRootComp;
 
     private inMemoryRowModel: InMemoryRowModel;
     private infinitePageRowModel: InfiniteRowModel;
@@ -127,6 +127,10 @@ export class GridApi {
 
     public registerGridComp(gridPanel: GridPanel): void {
         this.gridPanel = gridPanel;
+    }
+
+    public registerHeaderRootComp(headerRootComp: HeaderRootComp): void {
+        this.headerRootComp = headerRootComp;
     }
 
     @PostConstruct
@@ -408,7 +412,7 @@ export class GridApi {
     }
 
     public refreshHeader() {
-        this.headerRenderer.refreshHeader();
+        this.headerRootComp.refreshHeader();
         this.gridPanel.setBodyAndHeaderHeights();
     }
 

@@ -45,25 +45,19 @@ import {RowDragFeature} from "./rowDragFeature";
 import {HeightScaler} from "../rendering/heightScaler";
 import {IOverlayWrapperComp} from "../rendering/overlays/overlayWrapperComponent";
 import {Component} from "../widgets/component";
-import {HeaderRenderer} from "../headerRendering/headerRenderer";
 import {AutoHeightCalculator} from "../rendering/autoHeightCalculator";
 import {ColumnAnimationService} from "../rendering/columnAnimationService";
 import {AutoWidthCalculator} from "../rendering/autoWidthCalculator";
 import {Beans} from "../rendering/beans";
 import {RefSelector} from "../widgets/componentAnnotations";
+import {HeaderRootComp} from "../headerRendering/headerRootComp";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
 
 const GRID_PANEL_NORMAL_TEMPLATE =
     `<div class="ag-root ag-font-style" role="grid">
-        <div class="ag-header" ref="eHeader" role="row">
-            <div class="ag-pinned-left-header" ref="ePinnedLeftHeader" role="presentation"></div>
-            <div class="ag-pinned-right-header" ref="ePinnedRightHeader" role="presentation"></div>
-            <div class="ag-header-viewport" ref="eHeaderViewport" role="presentation">
-                <div class="ag-header-container" ref="eHeaderContainer" role="presentation"></div>
-            </div>
-        </div>
+        <ag-header-root ref="headerRoot"></ag-header-root>
         <div class="ag-floating-top" ref="eFloatingTop" role="presentation">
             <div class="ag-pinned-left-floating-top" ref="eLeftFloatingTop" role="presentation"></div>
             <div class="ag-pinned-right-floating-top" ref="eRightFloatingTop" role="presentation"></div>
@@ -132,7 +126,6 @@ export class GridPanel extends Component {
     @Autowired('context') private context: Context;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Autowired('navigationService') private navigationService: NavigationService;
-    @Autowired('headerRenderer') private headerRenderer: HeaderRenderer;
     @Autowired('autoHeightCalculator') private autoHeightCalculator: AutoHeightCalculator;
     @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
@@ -153,6 +146,7 @@ export class GridPanel extends Component {
     @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('heightScaler') private heightScaler: HeightScaler;
+    @Autowired('enterprise') private enterprise: boolean;
 
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
@@ -173,13 +167,6 @@ export class GridPanel extends Component {
     @RefSelector('eRightViewport') private eRightViewport: HTMLElement;
     @RefSelector('eRightViewportWrapper') private eRightViewportWrapper: HTMLElement;
 
-    @RefSelector('ePinnedLeftHeader') private ePinnedLeftHeader: HTMLElement;
-    @RefSelector('ePinnedRightHeader') private ePinnedRightHeader: HTMLElement;
-
-    @RefSelector('eHeaderContainer') private eHeaderContainer: HTMLElement;
-    @RefSelector('eHeader') private eHeader: HTMLElement;
-    @RefSelector('eHeaderViewport') private eHeaderViewport: HTMLElement;
-
     @RefSelector('eFloatingTop') private eFloatingTop: HTMLElement;
     @RefSelector('eLeftFloatingTop') private eLeftFloatingTop: HTMLElement;
     @RefSelector('eRightFloatingTop') private eRightFloatingTop: HTMLElement;
@@ -193,6 +180,8 @@ export class GridPanel extends Component {
     @RefSelector('eFloatingBottomContainer') private eFloatingBottomContainer: HTMLElement;
     @RefSelector('eFloatingBottomViewport') private eFloatingBottomViewport: HTMLElement;
     @RefSelector('eFloatingBottomFullWidthContainer') private eFloatingBottomFullWidthContainer: HTMLElement;
+
+    @RefSelector('headerRoot') headerRootComp: HeaderRootComp;
 
     private rowContainerComponents: RowContainerComponents;
     private eAllCellContainers: HTMLElement[];
@@ -274,6 +263,8 @@ export class GridPanel extends Component {
     @PostConstruct
     private init() {
 
+        this.instantiate(this.context);
+
         // makes code below more readable if we pull 'forPrint' out
         this.autoHeight = this.gridOptionsWrapper.isAutoHeight();
         this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
@@ -288,7 +279,6 @@ export class GridPanel extends Component {
         this.addDragListeners();
 
         this.addScrollListener();
-        this.addPreventHeaderScroll();
 
         if (this.gridOptionsWrapper.isSuppressHorizontalScroll()) {
             this.eBodyViewport.style.overflowX = 'hidden';
@@ -320,7 +310,7 @@ export class GridPanel extends Component {
 
         this.gridApi.registerGridComp(this);
         this.alignedGridsService.registerGridComp(this);
-        this.headerRenderer.registerGridComp(this);
+        this.headerRootComp.registerGridComp(this);
         this.animationFrameService.registerGridComp(this);
         this.navigationService.registerGridComp(this);
         this.heightScaler.registerGridComp(this);
@@ -501,6 +491,8 @@ export class GridPanel extends Component {
         this.addDestroyableEventListener(this.eLeftViewport, 'contextmenu', listener);
     }
 
+
+    // + rangeController
     public getBodyClientRect(): ClientRect {
         if (this.eBody) {
             return this.eBody.getBoundingClientRect();
@@ -546,8 +538,7 @@ export class GridPanel extends Component {
         }
     }
 
-    // gets called by rowRenderer when new data loaded, as it will want to scroll
-    // to the top
+    // gets called by rowRenderer when new data loaded, as it will want to scroll to the top
     public scrollToTop(): void {
        this.eBodyViewport.scrollTop = 0;
     }
@@ -716,14 +707,14 @@ export class GridPanel extends Component {
     }
 
     private onCtrlAndV(event: KeyboardEvent): boolean {
-        if (!this.rangeController) { return; }
+        if (!this.enterprise) { return; }
 
         this.clipboardService.pasteFromClipboard();
         return false;
     }
 
     private onCtrlAndD(event: KeyboardEvent): boolean {
-        if (!this.clipboardService) { return; }
+        if (!this.enterprise) { return; }
         this.clipboardService.copyRangeDown();
         event.preventDefault();
         return false;
@@ -1028,28 +1019,12 @@ export class GridPanel extends Component {
         return [this.eBodyContainer, this.eFloatingTopContainer, this.eFloatingBottomContainer];
     }
 
-    public getBodyViewport() {
-        return this.eBodyViewport;
-    }
-
     public getDropTargetLeftContainers(): HTMLElement[] {
         return [this.eLeftViewport, this.eLeftFloatingBottom, this.eLeftFloatingTop];
     }
 
     public getDropTargetPinnedRightContainers(): HTMLElement[] {
         return [this.eRightViewport, this.eRightFloatingBottom, this.eRightFloatingTop];
-    }
-
-    public getHeaderContainer() {
-        return this.eHeaderContainer;
-    }
-
-    public getPinnedLeftHeader() {
-        return this.ePinnedLeftHeader;
-    }
-
-    public getPinnedRightHeader() {
-        return this.ePinnedRightHeader;
     }
 
     private buildRowContainerComponents() {
@@ -1110,10 +1085,6 @@ export class GridPanel extends Component {
 
     public getRowContainers(): RowContainerComponents {
         return this.rowContainerComponents;
-    }
-
-    public getHeaderViewport(): HTMLElement {
-        return this.eHeaderViewport;
     }
 
     public onDisplayedColumnsChanged(): void {
@@ -1233,7 +1204,7 @@ export class GridPanel extends Component {
         let showLeftPinned = this.columnController.isPinningLeft();
         if (showLeftPinned !== this.pinningLeft) {
             this.pinningLeft = showLeftPinned;
-            _.setVisible(this.ePinnedLeftHeader, showLeftPinned);
+            this.headerRootComp.setLeftVisible(showLeftPinned);
             _.setVisible(this.eLeftViewportWrapper, showLeftPinned);
             changeDetected = true;
             if (showLeftPinned) {
@@ -1245,7 +1216,7 @@ export class GridPanel extends Component {
         let showRightPinned = this.columnController.isPinningRight();
         if (showRightPinned !== this.pinningRight) {
             this.pinningRight = showRightPinned;
-            _.setVisible(this.ePinnedRightHeader, showRightPinned);
+            this.headerRootComp.setRightVisible(showRightPinned);
             _.setVisible(this.eRightViewportWrapper, showRightPinned);
             if (showRightPinned) {
                 // because the viewport was not visible, it was not keeping previous scrollTop values
@@ -1302,8 +1273,6 @@ export class GridPanel extends Component {
         let groupHeight: number;
         let headerHeight: number;
         if (!this.columnController.isPivotMode()) {
-            _.removeCssClass(this.eHeader, 'ag-pivot-on');
-            _.addCssClass(this.eHeader, 'ag-pivot-off');
             if (this.gridOptionsWrapper.isFloatingFilter()) {
                 headerRowCount ++;
             }
@@ -1311,8 +1280,6 @@ export class GridPanel extends Component {
             groupHeight = this.gridOptionsWrapper.getGroupHeaderHeight();
             headerHeight = this.gridOptionsWrapper.getHeaderHeight();
         } else {
-            _.removeCssClass(this.eHeader, 'ag-pivot-off');
-            _.addCssClass(this.eHeader, 'ag-pivot-on');
             numberOfFloating = 0;
             groupHeight = this.gridOptionsWrapper.getPivotGroupHeaderHeight();
             headerHeight = this.gridOptionsWrapper.getPivotHeaderHeight();
@@ -1324,8 +1291,7 @@ export class GridPanel extends Component {
         totalHeaderHeight += numberOfGroups * groupHeight;
         totalHeaderHeight += headerHeight;
 
-        this.eHeader.style.height = totalHeaderHeight + 'px';
-        this.eHeader.style.minHeight = totalHeaderHeight + 'px';
+        this.headerRootComp.setHeight(totalHeaderHeight);
 
         // if we are doing auto-height, we only size the header, we don't size the
         // other parts as we use the normal browser layout for that
@@ -1379,23 +1345,6 @@ export class GridPanel extends Component {
         this.setVerticalScrollPosition(oldScrollPosition + pixels);
         let newScrollPosition = this.eBodyViewport.scrollTop;
         return newScrollPosition - oldScrollPosition;
-    }
-
-    // if the user is in floating filter and hits tab a few times, the header can
-    // end up scrolling to show items off the screen, leaving the grid and header
-    // and the grid columns no longer in sync.
-    private addPreventHeaderScroll() {
-        this.addDestroyableEventListener(this.eHeaderViewport, 'scroll', ()=> {
-            // if the header scrolls, the header will be out of sync. so we reset the
-            // header scroll, and then scroll the body, which will in turn set the offset
-            // on the header, giving the impression that the header scrolled as expected.
-            let scrollLeft = this.eHeaderViewport.scrollLeft;
-            if (scrollLeft!==0) {
-                this.scrollHorizontally(scrollLeft);
-                this.eHeaderViewport.scrollLeft = 0;
-            }
-        });
-
     }
 
     private addScrollListener() {
@@ -1521,7 +1470,7 @@ export class GridPanel extends Component {
         let scrollLeft = this.getBodyViewportScrollLeft();
         let offset = this.enableRtl ? scrollLeft : -scrollLeft;
 
-        this.eHeaderContainer.style.left = offset + 'px';
+        this.headerRootComp.setHorizontalScroll(offset);
         this.eFloatingBottomContainer.style.left = offset + 'px';
         this.eFloatingTopContainer.style.left = offset + 'px';
     }

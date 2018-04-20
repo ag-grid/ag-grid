@@ -90,7 +90,7 @@ export {BodyDropPivotTarget} from "./dist/lib/headerRendering/bodyDropPivotTarge
 export {BodyDropTarget} from "./dist/lib/headerRendering/bodyDropTarget";
 export {CssClassApplier} from "./dist/lib/headerRendering/cssClassApplier";
 export {HeaderContainer} from "./dist/lib/headerRendering/headerContainer";
-export {HeaderRenderer} from "./dist/lib/headerRendering/headerRenderer";
+export {HeaderRootComp} from "./dist/lib/headerRendering/headerRootComp";
 export {HeaderRowComp} from "./dist/lib/headerRendering/headerRowComp";
 export {HorizontalResizeService} from "./dist/lib/headerRendering/horizontalResizeService";
 export {MoveColumnController} from "./dist/lib/headerRendering/moveColumnController";

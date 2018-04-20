@@ -4,7 +4,7 @@ import {SelectionController} from "./selectionController";
 import {ColumnApi} from "./columnController/columnApi";
 import {ColumnController} from "./columnController/columnController";
 import {RowRenderer} from "./rendering/rowRenderer";
-import {HeaderRenderer} from "./headerRendering/headerRenderer";
+import {HeaderRootComp} from "./headerRendering/headerRootComp";
 import {FilterManager} from "./filter/filterManager";
 import {ValueService} from "./valueService/valueService";
 import {EventService} from "./eventService";
@@ -167,6 +167,7 @@ export class Grid {
         let components = [
             {componentName: 'AgCheckbox', theClass: AgCheckbox},
             {componentName: 'AgGridComp', theClass: GridPanel},
+            {componentName: 'AgHeaderRoot', theClass: HeaderRootComp},
             {componentName: 'AgPagination', theClass: PaginationComp},
             // niall put the below in for testing some PoC code, niall will
             // remove this comment and code when PoC is over
@@ -184,7 +185,7 @@ export class Grid {
                 ComponentProvider, ComponentResolver, ComponentRecipes, HeightScaler, AutoHeightCalculator,
                 CellRendererFactory, HorizontalResizeService, PinnedRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
-                FilterManager, ColumnController, PaginationProxy, RowRenderer, HeaderRenderer, ExpressionService,
+                FilterManager, ColumnController, PaginationProxy, RowRenderer, ExpressionService,
                 BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService,
                 NavigationService, PopupService, ValueCache, ValueService, AlignedGridsService,
                 LoggerFactory, ColumnUtils, AutoWidthCalculator, PopupService, GridCore, StandardMenuFactory,
