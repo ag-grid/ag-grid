@@ -50,56 +50,57 @@ import {AutoHeightCalculator} from "../rendering/autoHeightCalculator";
 import {ColumnAnimationService} from "../rendering/columnAnimationService";
 import {AutoWidthCalculator} from "../rendering/autoWidthCalculator";
 import {Beans} from "../rendering/beans";
+import {RefSelector} from "../widgets/componentAnnotations";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
 
 const GRID_PANEL_NORMAL_TEMPLATE =
     `<div class="ag-root ag-font-style" role="grid">
-        <div class="ag-header" role="row">
-            <div class="ag-pinned-left-header" role="presentation"></div>
-            <div class="ag-pinned-right-header" role="presentation"></div>
-            <div class="ag-header-viewport" role="presentation">
-                <div class="ag-header-container" role="presentation"></div>
+        <div class="ag-header" ref="eHeader" role="row">
+            <div class="ag-pinned-left-header" ref="ePinnedLeftHeader" role="presentation"></div>
+            <div class="ag-pinned-right-header" ref="ePinnedRightHeader" role="presentation"></div>
+            <div class="ag-header-viewport" ref="eHeaderViewport" role="presentation">
+                <div class="ag-header-container" ref="eHeaderContainer" role="presentation"></div>
             </div>
         </div>
-        <div class="ag-floating-top" role="presentation">
-            <div class="ag-pinned-left-floating-top" role="presentation"></div>
-            <div class="ag-pinned-right-floating-top" role="presentation"></div>
-            <div class="ag-floating-top-viewport" role="presentation">
-                <div class="ag-floating-top-container" role="presentation"></div>
+        <div class="ag-floating-top" ref="eFloatingTop" role="presentation">
+            <div class="ag-pinned-left-floating-top" ref="eLeftFloatingTop" role="presentation"></div>
+            <div class="ag-pinned-right-floating-top" ref="eRightFloatingTop" role="presentation"></div>
+            <div class="ag-floating-top-viewport" ref="eFloatingTopViewport" role="presentation">
+                <div class="ag-floating-top-container" ref="eFloatingTopContainer" role="presentation"></div>
             </div>
-            <div class="ag-floating-top-full-width-container" role="presentation"></div>
+            <div class="ag-floating-top-full-width-container" ref="eFloatingTopFullWidthContainer" role="presentation"></div>
         </div>
-        <div class="ag-body" role="presentation">
-            <div class="ag-pinned-left-cols-viewport-wrapper" role="presentation">
-                <div class="ag-pinned-left-cols-viewport" role="presentation">
-                    <div class="ag-pinned-left-cols-container" role="presentation"></div>
+        <div class="ag-body" ref="eBody" role="presentation">
+            <div class="ag-pinned-left-cols-viewport-wrapper" ref="eLeftViewportWrapper" role="presentation">
+                <div class="ag-pinned-left-cols-viewport" ref="eLeftViewport" role="presentation">
+                    <div class="ag-pinned-left-cols-container" ref="eLeftContainer" role="presentation"></div>
                 </div>
             </div>
             <div class="ag-body-viewport-wrapper" role="presentation">
-                <div class="ag-body-viewport" role="presentation">
-                    <div class="ag-body-container" role="presentation"></div>
+                <div class="ag-body-viewport" ref="eBodyViewport" role="presentation">
+                    <div class="ag-body-container" ref="eBodyContainer" role="presentation"></div>
                 </div>
             </div>
-            <div class="ag-pinned-right-cols-viewport-wrapper" role="presentation">
-                <div class="ag-pinned-right-cols-viewport" role="presentation">
-                    <div class="ag-pinned-right-cols-container" role="presentation"></div>
+            <div class="ag-pinned-right-cols-viewport-wrapper" ref="eRightViewportWrapper" role="presentation">
+                <div class="ag-pinned-right-cols-viewport" ref="eRightViewport" role="presentation">
+                    <div class="ag-pinned-right-cols-container" ref="eRightContainer" role="presentation"></div>
                 </div>
             </div>
-            <div class="ag-full-width-viewport-wrapper" role="presentation">
-                <div class="ag-full-width-viewport" role="presentation">
-                    <div class="ag-full-width-container" role="presentation"></div>
+            <div class="ag-full-width-viewport-wrapper" ref="eFullWidthViewportWrapper" role="presentation">
+                <div class="ag-full-width-viewport" ref="eFullWidthViewport" role="presentation">
+                    <div class="ag-full-width-container" ref="eFullWidthContainer" role="presentation"></div>
                 </div>
             </div>
         </div>
-        <div class="ag-floating-bottom" role="presentation">
-            <div class="ag-pinned-left-floating-bottom" role="presentation"></div>
-            <div class="ag-pinned-right-floating-bottom" role="presentation"></div>
-            <div class="ag-floating-bottom-viewport" role="presentation">
-                <div class="ag-floating-bottom-container" role="presentation"></div>
+        <div class="ag-floating-bottom" ref="eFloatingBottom" role="presentation">
+            <div class="ag-pinned-left-floating-bottom" ref="eLeftFloatingBottom" role="presentation"></div>
+            <div class="ag-pinned-right-floating-bottom" ref="eRightFloatingBottom" role="presentation"></div>
+            <div class="ag-floating-bottom-viewport" ref="eFloatingBottomViewport" role="presentation">
+                <div class="ag-floating-bottom-container" ref="eFloatingBottomContainer" role="presentation"></div>
             </div>
-            <div class="ag-floating-bottom-full-width-container" role="presentation"></div>
+            <div class="ag-floating-bottom-full-width-container" ref="eFloatingBottomFullWidthContainer" role="presentation"></div>
         </div>
         <div class="ag-overlay" ref="eOverlay"></div>
     </div>`;
@@ -137,63 +138,63 @@ export class GridPanel extends Component {
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
     @Autowired('paginationAutoPageSizeService') private paginationAutoPageSizeService: PaginationAutoPageSizeService;
     @Autowired('beans') private beans: Beans;
-
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
-
-    @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('dragService') private dragService: DragService;
     @Autowired('selectionController') private selectionController: SelectionController;
-    @Optional('clipboardService') private clipboardService: IClipboardService;
     @Autowired('csvCreator') private csvCreator: CsvCreator;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Autowired('$scope') private $scope: any;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
-    @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
     @Autowired('frameworkFactory') private frameworkFactory: IFrameworkFactory;
     @Autowired('valueService') private  valueService: ValueService;
     @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('heightScaler') private heightScaler: HeightScaler;
 
-    private eBodyViewport: HTMLElement;
-    private eBody: HTMLElement;
+    @Optional('rangeController') private rangeController: IRangeController;
+    @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
+    @Optional('clipboardService') private clipboardService: IClipboardService;
+
+    @RefSelector('eBody') private eBody: HTMLElement;
+    @RefSelector('eBodyViewport') private eBodyViewport: HTMLElement;
+    @RefSelector('eBodyContainer') private eBodyContainer: HTMLElement;
+    @RefSelector('eLeftContainer') private eLeftContainer: HTMLElement;
+    @RefSelector('eRightContainer') private eRightContainer: HTMLElement;
+
+    @RefSelector('eFullWidthViewportWrapper') private eFullWidthViewportWrapper: HTMLElement;
+    @RefSelector('eFullWidthViewport') private eFullWidthViewport: HTMLElement;
+    @RefSelector('eFullWidthContainer') private eFullWidthContainer: HTMLElement;
+
+    @RefSelector('eLeftViewport') private eLeftViewport: HTMLElement;
+    @RefSelector('eLeftViewportWrapper') private eLeftViewportWrapper: HTMLElement;
+    @RefSelector('eRightViewport') private eRightViewport: HTMLElement;
+    @RefSelector('eRightViewportWrapper') private eRightViewportWrapper: HTMLElement;
+
+    @RefSelector('ePinnedLeftHeader') private ePinnedLeftHeader: HTMLElement;
+    @RefSelector('ePinnedRightHeader') private ePinnedRightHeader: HTMLElement;
+
+    @RefSelector('eHeaderContainer') private eHeaderContainer: HTMLElement;
+    @RefSelector('eHeader') private eHeader: HTMLElement;
+    @RefSelector('eHeaderViewport') private eHeaderViewport: HTMLElement;
+
+    @RefSelector('eFloatingTop') private eFloatingTop: HTMLElement;
+    @RefSelector('eLeftFloatingTop') private eLeftFloatingTop: HTMLElement;
+    @RefSelector('eRightFloatingTop') private eRightFloatingTop: HTMLElement;
+    @RefSelector('eFloatingTopContainer') private eFloatingTopContainer: HTMLElement;
+    @RefSelector('eFloatingTopViewport') private eFloatingTopViewport: HTMLElement;
+    @RefSelector('eFloatingTopFullWidthContainer') private eFloatingTopFullWidthContainer: HTMLElement;
+
+    @RefSelector('eFloatingBottom') private eFloatingBottom: HTMLElement;
+    @RefSelector('eLeftFloatingBottom') private eLeftFloatingBottom: HTMLElement;
+    @RefSelector('eRightFloatingBottom') private eRightFloatingBottom: HTMLElement;
+    @RefSelector('eFloatingBottomContainer') private eFloatingBottomContainer: HTMLElement;
+    @RefSelector('eFloatingBottomViewport') private eFloatingBottomViewport: HTMLElement;
+    @RefSelector('eFloatingBottomFullWidthContainer') private eFloatingBottomFullWidthContainer: HTMLElement;
 
     private rowContainerComponents: RowContainerComponents;
-
-    private eBodyContainer: HTMLElement;
-    private eLeftContainer: HTMLElement;
-    private eRightContainer: HTMLElement;
-    private eFullWidthViewportWrapper: HTMLElement;
-    private eFullWidthViewport: HTMLElement;
-    private eFullWidthContainer: HTMLElement;
-    private eLeftViewport: HTMLElement;
-    private eLeftViewportWrapper: HTMLElement;
-    private eRightViewport: HTMLElement;
-    private eRightViewportWrapper: HTMLElement;
-    private eBodyViewportWrapper: HTMLElement;
-
-    private eHeaderContainer: HTMLElement;
-    private ePinnedLeftHeader: HTMLElement;
-    private ePinnedRightHeader: HTMLElement;
-    private eHeader: HTMLElement;
-    private eHeaderViewport: HTMLElement;
-
-    private eFloatingTop: HTMLElement;
-    private eLeftFloatingTop: HTMLElement;
-    private eRightFloatingTop: HTMLElement;
-    private eFloatingTopContainer: HTMLElement;
-    private eFloatingTopViewport: HTMLElement;
-    private eFloatingTopFullWidthContainer: HTMLElement;
-
-    private eFloatingBottom: HTMLElement;
-    private eLeftFloatingBottom: HTMLElement;
-    private eRightFloatingBottom: HTMLElement;
-    private eFloatingBottomContainer: HTMLElement;
-    private eFloatingBottomViewport: HTMLElement;
-    private eFloatingBottomFullWidthContainer: HTMLElement;
 
     private eAllCellContainers: HTMLElement[];
 
@@ -233,7 +234,11 @@ export class GridPanel extends Component {
         this.autoHeight = this.gridOptionsWrapper.isAutoHeight();
         this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
-        this.findElements();
+
+        this.suppressScrollOnFloatingRow();
+        this.setupRowAnimationCssClass();
+
+        this.buildRowContainerComponents();
     }
 
     public getVScrollPosition(): {top: number, bottom: number} {
@@ -1053,40 +1058,7 @@ export class GridPanel extends Component {
         return this.ePinnedRightHeader;
     }
 
-    private findElements() {
-
-        this.eBody = this.queryForHtmlElement('.ag-body');
-        this.eBodyContainer = this.queryForHtmlElement('.ag-body-container');
-        this.eBodyViewport = this.queryForHtmlElement('.ag-body-viewport');
-        this.eBodyViewportWrapper = this.queryForHtmlElement('.ag-body-viewport-wrapper');
-        this.eFullWidthContainer = this.queryForHtmlElement('.ag-full-width-container');
-        this.eFullWidthViewport = this.queryForHtmlElement('.ag-full-width-viewport');
-        this.eFullWidthViewportWrapper = this.queryForHtmlElement('.ag-full-width-viewport-wrapper');
-        this.eLeftContainer = this.queryForHtmlElement('.ag-pinned-left-cols-container');
-        this.eRightContainer = this.queryForHtmlElement('.ag-pinned-right-cols-container');
-        this.eLeftViewport = this.queryForHtmlElement('.ag-pinned-left-cols-viewport');
-        this.eLeftViewportWrapper = this.queryForHtmlElement('.ag-pinned-left-cols-viewport-wrapper');
-        this.eRightViewport = this.queryForHtmlElement('.ag-pinned-right-cols-viewport');
-        this.eRightViewportWrapper = this.queryForHtmlElement('.ag-pinned-right-cols-viewport-wrapper');
-        this.ePinnedLeftHeader = this.queryForHtmlElement('.ag-pinned-left-header');
-        this.ePinnedRightHeader = this.queryForHtmlElement('.ag-pinned-right-header');
-        this.eHeader = this.queryForHtmlElement('.ag-header');
-        this.eHeaderContainer = this.queryForHtmlElement('.ag-header-container');
-        this.eHeaderViewport = this.queryForHtmlElement('.ag-header-viewport');
-
-        this.eFloatingTop = this.queryForHtmlElement('.ag-floating-top');
-        this.eLeftFloatingTop = this.queryForHtmlElement('.ag-pinned-left-floating-top');
-        this.eRightFloatingTop = this.queryForHtmlElement('.ag-pinned-right-floating-top');
-        this.eFloatingTopContainer = this.queryForHtmlElement('.ag-floating-top-container');
-        this.eFloatingTopViewport = this.queryForHtmlElement('.ag-floating-top-viewport');
-        this.eFloatingTopFullWidthContainer = this.queryForHtmlElement('.ag-floating-top-full-width-container');
-
-        this.eFloatingBottom = this.queryForHtmlElement('.ag-floating-bottom');
-        this.eLeftFloatingBottom = this.queryForHtmlElement('.ag-pinned-left-floating-bottom');
-        this.eRightFloatingBottom = this.queryForHtmlElement('.ag-pinned-right-floating-bottom');
-        this.eFloatingBottomContainer = this.queryForHtmlElement('.ag-floating-bottom-container');
-        this.eFloatingBottomViewport = this.queryForHtmlElement('.ag-floating-bottom-viewport');
-        this.eFloatingBottomFullWidthContainer = this.queryForHtmlElement('.ag-floating-bottom-full-width-container');
+    private buildRowContainerComponents() {
 
         this.eAllCellContainers = [
             this.eLeftContainer, this.eRightContainer, this.eBodyContainer,
@@ -1108,9 +1080,6 @@ export class GridPanel extends Component {
             floatingBottomPinnedRight: new RowContainerComponent({eContainer: this.eRightFloatingBottom}),
             floatingBottomFullWith: new RowContainerComponent({eContainer: this.eFloatingBottomFullWidthContainer, hideWhenNoChildren: true}),
         };
-
-        this.suppressScrollOnFloatingRow();
-        this.setupRowAnimationCssClass();
 
         _.iterateObject(this.rowContainerComponents, (key: string, container: RowContainerComponent)=> {
             if (container) {
