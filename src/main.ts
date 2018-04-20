@@ -24,6 +24,7 @@ import {EnterpriseRowModel} from "./rowModels/enterprise/enterpriseRowModel";
 import {ColumnSelectHeaderComp} from "./toolPanel/columnsSelect/columnSelectHeaderComp";
 import {ColumnContainerComp} from "./toolPanel/columnsSelect/columnContainerComp";
 import {HorizontalResizeComp} from "./toolPanel/columnsSelect/horizontalResizeComp";
+import {HeaderColumnDropComp} from "./toolPanel/columnDrop/headerColumnDropComp";
 
 let rowModelTypes = {viewport: ViewportRowModel, enterprise: EnterpriseRowModel};
 
@@ -38,4 +39,5 @@ Grid.setEnterpriseComponents([
     {componentName: 'AgHorizontalResize', theClass: HorizontalResizeComp},
     {componentName: 'AgToolPanel', theClass: ToolPanelComp},
     {componentName: 'AgStatusBar', theClass: StatusBar},
+    {componentName: 'AgHeaderColumnDrop', theClass: HeaderColumnDropComp},
 ]);
