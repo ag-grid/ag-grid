@@ -195,7 +195,6 @@ export class GridPanel extends Component {
     @RefSelector('eFloatingBottomFullWidthContainer') private eFloatingBottomFullWidthContainer: HTMLElement;
 
     private rowContainerComponents: RowContainerComponents;
-
     private eAllCellContainers: HTMLElement[];
 
     private eOverlay: HTMLElement;
@@ -226,19 +225,6 @@ export class GridPanel extends Component {
 
     constructor() {
         super(GRID_PANEL_NORMAL_TEMPLATE);
-    }
-
-    @PreConstruct
-    public preConstruct() {
-        // makes code below more readable if we pull 'forPrint' out
-        this.autoHeight = this.gridOptionsWrapper.isAutoHeight();
-        this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
-        this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
-
-        this.suppressScrollOnFloatingRow();
-        this.setupRowAnimationCssClass();
-
-        this.buildRowContainerComponents();
     }
 
     public getVScrollPosition(): {top: number, bottom: number} {
@@ -288,7 +274,15 @@ export class GridPanel extends Component {
     @PostConstruct
     private init() {
 
+        // makes code below more readable if we pull 'forPrint' out
+        this.autoHeight = this.gridOptionsWrapper.isAutoHeight();
+        this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
+        this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
         this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
+
+        this.suppressScrollOnFloatingRow();
+        this.setupRowAnimationCssClass();
+        this.buildRowContainerComponents();
 
         this.addEventListeners();
         this.addDragListeners();

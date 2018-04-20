@@ -20,10 +20,6 @@ export class RowContainerComponent {
     private eContainer: HTMLElement;
     private eViewport: HTMLElement;
 
-    // used for testing - for when we want to do something different in the body.
-    // see code commented out in 'setHeight' method
-    private body: boolean;
-
     // full width containers only show when no children, because they float above the normal rows,
     // it adds complexity that can be confusing when inspecting the dom when they are not needed.
     private hideWhenNoChildren: boolean;
