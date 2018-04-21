@@ -6,7 +6,7 @@ import {ColumnSelectComp} from "./columnsSelect/columnSelectComp";
 import {PivotColumnsPanel} from "./columnDrop/pivotColumnsPanel";
 import {RefSelector} from "ag-grid";
 
-export class ColumnPanel extends Component {
+export class ToolPanelColumnComp extends Component {
 
     private static TEMPLATE =
         `<div class="ag-column-panel">
@@ -22,13 +22,14 @@ export class ColumnPanel extends Component {
 
     private childDestroyFuncs: Function[] = [];
 
+    // referenced in template
     private componentToResize = this;
 
     @RefSelector('eColumnPanelCenter')
     private eCenterPanel: HTMLElement;
 
     constructor() {
-        super(ColumnPanel.TEMPLATE);
+        super(ToolPanelColumnComp.TEMPLATE);
     }
 
     // lazy initialise the panel
