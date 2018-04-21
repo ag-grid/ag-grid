@@ -169,9 +169,7 @@ export class GridCore extends Component {
             return;
         }
 
-        this.toolPanelComp.init();
         this.toolPanelComp.showToolPanel(show);
-
         this.gridPanel.checkViewportAndScrolls();
     }
 

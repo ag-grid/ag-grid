@@ -50,7 +50,7 @@ export class BodyDropTarget implements DropTarget {
 
         switch (this.pinned) {
             case Column.PINNED_LEFT: this.eSecondaryContainers = this.gridPanel.getDropTargetLeftContainers(); break;
-            case Column.PINNED_RIGHT: this.eSecondaryContainers = this.gridPanel.getDropTargetPinnedRightContainers(); break;
+            case Column.PINNED_RIGHT: this.eSecondaryContainers = this.gridPanel.getDropTargetRightContainers(); break;
             default: this.eSecondaryContainers = this.gridPanel.getDropTargetBodyContainers(); break;
         }
     }
