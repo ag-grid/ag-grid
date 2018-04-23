@@ -23,18 +23,11 @@ export class ScrollVisibleService {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    private scrollWidth: number;
-
     private bodyHorizontalScrollShowing: boolean;
     private bodyVerticalScrollShowing: boolean;
 
     private leftVerticalScrollShowing: boolean;
     private rightVerticalScrollShowing: boolean;
-
-    @PostConstruct
-    private postConstruct(): void {
-        this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
-    }
 
     public setScrollsVisible(params: SetScrollsVisibleParams): void {
 
