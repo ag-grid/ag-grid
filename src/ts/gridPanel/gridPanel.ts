@@ -58,13 +58,13 @@ import {HeaderRootComp} from "../headerRendering/headerRootComp";
 const GRID_PANEL_NORMAL_TEMPLATE =
     `<div class="ag-root ag-font-style" role="grid">
         <ag-header-root ref="headerRoot"></ag-header-root>
-        <div class="ag-floating-top" ref="eFloatingTop" role="presentation">
-            <div class="ag-pinned-left-floating-top" ref="eLeftFloatingTop" role="presentation"></div>
-            <div class="ag-pinned-right-floating-top" ref="eRightFloatingTop" role="presentation"></div>
-            <div class="ag-floating-top-viewport" ref="eFloatingTopViewport" role="presentation">
-                <div class="ag-floating-top-container" ref="eFloatingTopContainer" role="presentation"></div>
+        <div class="ag-floating-top" ref="eTop" role="presentation">
+            <div class="ag-pinned-left-floating-top" ref="eLeftTop" role="presentation"></div>
+            <div class="ag-floating-top-viewport" ref="eTopViewport" role="presentation">
+                <div class="ag-floating-top-container" ref="eTopContainer" role="presentation"></div>
             </div>
-            <div class="ag-floating-top-full-width-container" ref="eFloatingTopFullWidthContainer" role="presentation"></div>
+            <div class="ag-pinned-right-floating-top" ref="eRightTop" role="presentation"></div>
+            <div class="ag-floating-top-full-width-container" ref="eTopFullWidthContainer" role="presentation"></div>
         </div>
         <div class="ag-body" ref="eBody" role="presentation">
             <div class="ag-pinned-left-cols-viewport-wrapper" ref="eLeftViewportWrapper" role="presentation">
@@ -88,13 +88,13 @@ const GRID_PANEL_NORMAL_TEMPLATE =
                 </div>
             </div>
         </div>
-        <div class="ag-floating-bottom" ref="eFloatingBottom" role="presentation">
-            <div class="ag-pinned-left-floating-bottom" ref="eLeftFloatingBottom" role="presentation"></div>
-            <div class="ag-pinned-right-floating-bottom" ref="eRightFloatingBottom" role="presentation"></div>
-            <div class="ag-floating-bottom-viewport" ref="eFloatingBottomViewport" role="presentation">
-                <div class="ag-floating-bottom-container" ref="eFloatingBottomContainer" role="presentation"></div>
+        <div class="ag-floating-bottom" ref="eBottom" role="presentation">
+            <div class="ag-pinned-left-floating-bottom" ref="eLeftBottom" role="presentation"></div>
+            <div class="ag-floating-bottom-viewport" ref="eBottomViewport" role="presentation">
+                <div class="ag-floating-bottom-container" ref="eBottomContainer" role="presentation"></div>
             </div>
-            <div class="ag-floating-bottom-full-width-container" ref="eFloatingBottomFullWidthContainer" role="presentation"></div>
+            <div class="ag-pinned-right-floating-bottom" ref="eRightBottom" role="presentation"></div>
+            <div class="ag-floating-bottom-full-width-container" ref="eBottomFullWidthContainer" role="presentation"></div>
         </div>
         <div class="ag-overlay" ref="eOverlay"></div>
     </div>`;
@@ -167,19 +167,19 @@ export class GridPanel extends Component {
     @RefSelector('eRightViewport') private eRightViewport: HTMLElement;
     @RefSelector('eRightViewportWrapper') private eRightViewportWrapper: HTMLElement;
 
-    @RefSelector('eFloatingTop') private eFloatingTop: HTMLElement;
-    @RefSelector('eLeftFloatingTop') private eLeftFloatingTop: HTMLElement;
-    @RefSelector('eRightFloatingTop') private eRightFloatingTop: HTMLElement;
-    @RefSelector('eFloatingTopContainer') private eFloatingTopContainer: HTMLElement;
-    @RefSelector('eFloatingTopViewport') private eFloatingTopViewport: HTMLElement;
-    @RefSelector('eFloatingTopFullWidthContainer') private eFloatingTopFullWidthContainer: HTMLElement;
+    @RefSelector('eTop') private eTop: HTMLElement;
+    @RefSelector('eLeftTop') private eLeftTop: HTMLElement;
+    @RefSelector('eRightTop') private eRightTop: HTMLElement;
+    @RefSelector('eTopContainer') private eTopContainer: HTMLElement;
+    @RefSelector('eTopViewport') private eTopViewport: HTMLElement;
+    @RefSelector('eTopFullWidthContainer') private eTopFullWidthContainer: HTMLElement;
 
-    @RefSelector('eFloatingBottom') private eFloatingBottom: HTMLElement;
-    @RefSelector('eLeftFloatingBottom') private eLeftFloatingBottom: HTMLElement;
-    @RefSelector('eRightFloatingBottom') private eRightFloatingBottom: HTMLElement;
-    @RefSelector('eFloatingBottomContainer') private eFloatingBottomContainer: HTMLElement;
-    @RefSelector('eFloatingBottomViewport') private eFloatingBottomViewport: HTMLElement;
-    @RefSelector('eFloatingBottomFullWidthContainer') private eFloatingBottomFullWidthContainer: HTMLElement;
+    @RefSelector('eBottom') private eBottom: HTMLElement;
+    @RefSelector('eLeftBottom') private eLeftBottom: HTMLElement;
+    @RefSelector('eRightBottom') private eRightBottom: HTMLElement;
+    @RefSelector('eBottomContainer') private eBottomContainer: HTMLElement;
+    @RefSelector('eBottomViewport') private eBottomViewport: HTMLElement;
+    @RefSelector('eBottomFullWidthContainer') private eBottomFullWidthContainer: HTMLElement;
 
     @RefSelector('headerRoot') headerRootComp: HeaderRootComp;
 
@@ -432,7 +432,7 @@ export class GridPanel extends Component {
         }
 
         let containers = [this.eLeftContainer, this.eRightContainer, this.eBodyContainer,
-            this.eFloatingTop, this.eFloatingBottom];
+            this.eTop, this.eBottom];
 
         containers.forEach(container => {
             let params: DragListenerParams = {
@@ -1016,22 +1016,22 @@ export class GridPanel extends Component {
     }
 
     public getDropTargetBodyContainers(): HTMLElement[] {
-        return [this.eBodyViewport, this.eFloatingTopViewport, this.eFloatingBottomViewport];
+        return [this.eBodyViewport, this.eTopViewport, this.eBottomViewport];
     }
 
     public getDropTargetLeftContainers(): HTMLElement[] {
-        return [this.eLeftViewport, this.eLeftFloatingBottom, this.eLeftFloatingTop];
+        return [this.eLeftViewport, this.eLeftBottom, this.eLeftTop];
     }
 
     public getDropTargetRightContainers(): HTMLElement[] {
-        return [this.eRightViewport, this.eRightFloatingBottom, this.eRightFloatingTop];
+        return [this.eRightViewport, this.eRightBottom, this.eRightTop];
     }
 
     private buildRowContainerComponents() {
 
         this.eAllCellContainers = [
             this.eLeftContainer, this.eRightContainer, this.eBodyContainer,
-            this.eFloatingTop, this.eFloatingBottom, this.eFullWidthContainer];
+            this.eTop, this.eBottom, this.eFullWidthContainer];
 
         this.rowContainerComponents = {
             body: new RowContainerComponent({eContainer: this.eBodyContainer, eViewport: this.eBodyViewport}),
@@ -1039,15 +1039,15 @@ export class GridPanel extends Component {
             pinnedLeft: new RowContainerComponent({eContainer: this.eLeftContainer, eViewport: this.eLeftViewport}),
             pinnedRight: new RowContainerComponent({eContainer: this.eRightContainer, eViewport: this.eRightViewport}),
 
-            floatingTop: new RowContainerComponent({eContainer: this.eFloatingTopContainer}),
-            floatingTopPinnedLeft: new RowContainerComponent({eContainer: this.eLeftFloatingTop}),
-            floatingTopPinnedRight: new RowContainerComponent({eContainer: this.eRightFloatingTop}),
-            floatingTopFullWidth: new RowContainerComponent({eContainer: this.eFloatingTopFullWidthContainer, hideWhenNoChildren: true}),
+            floatingTop: new RowContainerComponent({eContainer: this.eTopContainer}),
+            floatingTopPinnedLeft: new RowContainerComponent({eContainer: this.eLeftTop}),
+            floatingTopPinnedRight: new RowContainerComponent({eContainer: this.eRightTop}),
+            floatingTopFullWidth: new RowContainerComponent({eContainer: this.eTopFullWidthContainer, hideWhenNoChildren: true}),
 
-            floatingBottom: new RowContainerComponent({eContainer: this.eFloatingBottomContainer}),
-            floatingBottomPinnedLeft: new RowContainerComponent({eContainer: this.eLeftFloatingBottom}),
-            floatingBottomPinnedRight: new RowContainerComponent({eContainer: this.eRightFloatingBottom}),
-            floatingBottomFullWith: new RowContainerComponent({eContainer: this.eFloatingBottomFullWidthContainer, hideWhenNoChildren: true}),
+            floatingBottom: new RowContainerComponent({eContainer: this.eBottomContainer}),
+            floatingBottomPinnedLeft: new RowContainerComponent({eContainer: this.eLeftBottom}),
+            floatingBottomPinnedRight: new RowContainerComponent({eContainer: this.eRightBottom}),
+            floatingBottomFullWith: new RowContainerComponent({eContainer: this.eBottomFullWidthContainer, hideWhenNoChildren: true}),
         };
 
         _.iterateObject(this.rowContainerComponents, (key: string, container: RowContainerComponent)=> {
@@ -1076,11 +1076,11 @@ export class GridPanel extends Component {
     // scroll the column into view. we do not want this, the pinned sections should never scroll.
     // so we listen to scrolls on these containers and reset the scroll if we find one.
     private suppressScrollOnFloatingRow(): void {
-        let resetTopScroll = () => this.eFloatingTopViewport.scrollLeft = 0;
-        let resetBottomScroll = () => this.eFloatingTopViewport.scrollLeft = 0;
+        let resetTopScroll = () => this.eTopViewport.scrollLeft = 0;
+        let resetBottomScroll = () => this.eTopViewport.scrollLeft = 0;
 
-        this.addDestroyableEventListener(this.eFloatingTopViewport, 'scroll', resetTopScroll);
-        this.addDestroyableEventListener(this.eFloatingBottomViewport, 'scroll', resetBottomScroll);
+        this.addDestroyableEventListener(this.eTopViewport, 'scroll', resetTopScroll);
+        this.addDestroyableEventListener(this.eBottomViewport, 'scroll', resetBottomScroll);
     }
 
     public getRowContainers(): RowContainerComponents {
@@ -1123,8 +1123,8 @@ export class GridPanel extends Component {
     private setCenterWidth(): void {
         let widthPx = this.columnController.getBodyContainerWidth() + 'px';
         this.eBodyContainer.style.width = widthPx;
-        this.eFloatingBottomContainer.style.width = widthPx;
-        this.eFloatingTopContainer.style.width = widthPx;
+        this.eBottomContainer.style.width = widthPx;
+        this.eTopContainer.style.width = widthPx;
     }
 
     private setPinnedLeftWidth(): void {
@@ -1155,8 +1155,8 @@ export class GridPanel extends Component {
         this.setElementWidth(this.eLeftViewport, viewportWidth);
         this.setElementWidth(this.eLeftContainer, widthOfCols);
 
-        this.setElementWidth(this.eLeftFloatingBottom, wrapperWidth);
-        this.setElementWidth(this.eLeftFloatingTop, wrapperWidth);
+        this.setElementWidth(this.eLeftBottom, wrapperWidth);
+        this.setElementWidth(this.eLeftTop, wrapperWidth);
     }
 
     private setPinnedRightWidth(): void {
@@ -1187,8 +1187,8 @@ export class GridPanel extends Component {
         this.setElementWidth(this.eRightViewport, viewportWidth);
         this.setElementWidth(this.eRightContainer, pinnedRightWidth);
 
-        this.setElementWidth(this.eRightFloatingBottom, wrapperWidth);
-        this.setElementWidth(this.eRightFloatingTop, wrapperWidth);
+        this.setElementWidth(this.eRightBottom, wrapperWidth);
+        this.setElementWidth(this.eRightTop, wrapperWidth);
     }
 
     private setElementWidth(element: HTMLElement, width: number): void {
@@ -1302,10 +1302,10 @@ export class GridPanel extends Component {
         let floatingTopHeight = this.pinnedRowModel.getPinnedTopTotalHeight();
         let floatingBottomHeight = this.pinnedRowModel.getPinnedBottomTotalHeight();
 
-        this.eFloatingTop.style.minHeight = floatingTopHeight + 'px';
-        this.eFloatingTop.style.height = floatingTopHeight + 'px';
-        this.eFloatingBottom.style.minHeight = floatingBottomHeight + 'px';
-        this.eFloatingBottom.style.height = floatingBottomHeight + 'px';
+        this.eTop.style.minHeight = floatingTopHeight + 'px';
+        this.eTop.style.height = floatingTopHeight + 'px';
+        this.eBottom.style.minHeight = floatingBottomHeight + 'px';
+        this.eBottom.style.height = floatingBottomHeight + 'px';
 
         this.checkBodyHeight();
     }
@@ -1471,8 +1471,8 @@ export class GridPanel extends Component {
         let offset = this.enableRtl ? scrollLeft : -scrollLeft;
 
         this.headerRootComp.setHorizontalScroll(offset);
-        this.eFloatingBottomContainer.style.left = offset + 'px';
-        this.eFloatingTopContainer.style.left = offset + 'px';
+        this.eBottomContainer.style.left = offset + 'px';
+        this.eTopContainer.style.left = offset + 'px';
     }
 
     private synchroniseVerticalScrollPositions(position: number): void {

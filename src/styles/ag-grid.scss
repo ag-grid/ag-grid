@@ -105,14 +105,6 @@ ag-grid-aurelia {
     display: flex;
 }
 
-// we don't want right and left pinned flipped when doing RTL
-.ag-ltr .ag-header {
-    flex-direction: row;
-}
-.ag-rtl .ag-header {
-    flex-direction: row-reverse;
-}
-
 .ag-pinned-left-header {
     box-sizing: border-box;
     display: inline-block;
@@ -357,12 +349,23 @@ ag-grid-aurelia {
 .ag-layout-auto-height.ag-rtl .ag-body { flex-direction: row-reverse; }
 .ag-layout-auto-height.ag-ltr .ag-body { flex-direction: row; }
 
+.ag-layout-normal.ag-rtl .ag-floating-top { flex-direction: row-reverse; }
+.ag-layout-normal.ag-ltr .ag-floating-top { flex-direction: row; }
+
+.ag-layout-normal.ag-rtl .ag-floating-bottom { flex-direction: row-reverse; }
+.ag-layout-normal.ag-ltr .ag-floating-bottom { flex-direction: row; }
+
+// we don't want right and left pinned flipped when doing RTL
+.ag-ltr .ag-header { flex-direction: row; }
+.ag-rtl .ag-header { flex-direction: row-reverse; }
+
 .ag-floating-top {
     box-sizing: border-box;
     overflow: hidden;
     white-space: nowrap;
     width: 100%;
     position: relative;
+    display: flex;
 }
 
 .ag-layout-normal .ag-floating-top {
@@ -371,7 +374,6 @@ ag-grid-aurelia {
 .ag-pinned-left-floating-top {
     box-sizing: border-box;
     display: inline-block;
-    float: left;
     overflow: hidden;
     position: relative; // otherwise the % width of children is not relative to this element
 }
@@ -383,7 +385,6 @@ ag-grid-aurelia {
 .ag-pinned-right-floating-top {
     box-sizing: border-box;
     display: inline-block;
-    float: right;
     overflow: hidden;
     position: relative; // otherwise the % width of children is not relative to this element
 }
@@ -395,6 +396,9 @@ ag-grid-aurelia {
 .ag-floating-top-viewport {
     box-sizing: border-box;
     overflow: hidden;
+    width: 0px;
+    min-width: 0px;
+    flex: 1;
 }
 
 .ag-layout-normal .ag-floating-top-viewport {
@@ -414,6 +418,7 @@ ag-grid-aurelia {
     white-space: nowrap;
     width: 100%;
     position: relative;
+    display: flex;
 }
 
 .ag-layout-normal .ag-floating-bottom {
@@ -422,34 +427,23 @@ ag-grid-aurelia {
 .ag-pinned-left-floating-bottom {
     box-sizing: border-box;
     display: inline-block;
-    float: left;
     overflow: hidden;
     position: relative; // otherwise the % width of children is not relative to this element
-}
-
-.ag-layout-normal .ag-pinned-left-floating-bottom {
-    height: 100%;
 }
 
 .ag-pinned-right-floating-bottom {
     box-sizing: border-box;
     display: inline-block;
-    float: right;
     overflow: hidden;
     position: relative; // otherwise the % width of children is not relative to this element
-}
-
-.ag-layout-normal .ag-pinned-right-floating-bottom {
-    height: 100%;
 }
 
 .ag-floating-bottom-viewport {
     box-sizing: border-box;
     overflow: hidden;
-}
-
-.ag-layout-normal .ag-floating-bottom-viewport {
-    height: 100%;
+    flex: 1;
+    width: 0px;
+    min-width: 0px;
 }
 
 .ag-floating-bottom-container {
