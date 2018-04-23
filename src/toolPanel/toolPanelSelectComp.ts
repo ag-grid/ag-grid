@@ -10,8 +10,11 @@ export class ToolPanelSelectComp extends Component {
 
     private gridPanel: GridPanel;
 
-    constructor(columnPanel: ToolPanelColumnComp) {
+    constructor() {
         super(`<div class="ag-side-buttons"></div>`);
+    }
+
+    public registerColumnComp(columnPanel: ToolPanelColumnComp): void {
         this.columnPanel = columnPanel;
     }
 

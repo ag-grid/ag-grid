@@ -35,8 +35,9 @@ export class ToolPanelComp extends Component implements IToolPanel {
     }
 
     @PostConstruct
-    private PostConstruct(): void {
+    private postConstruct(): void {
         this.instantiate(this.context);
+        this.toolPanelSelectComp.registerColumnComp(this.columnComp);
     }
 
     public refresh(): void {
