@@ -108,7 +108,7 @@ export class RangeController implements IRangeController {
         });
     }
 
-    // returns true if successful, false if not sucessful
+    // returns true if successful, false if not successful
     public extendRangeInDirection(startCell: GridCell, key: number): boolean {
 
         let oneRangeExists = _.exists(this.cellRanges) || this.cellRanges.length === 1;
