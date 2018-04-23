@@ -70,18 +70,18 @@ export class HeaderContainer {
     }
 
     private onColumnResized(): void {
-        this.setWidthIfPinnedContainer();
+        this.setWidthOfPinnedContainer();
     }
 
     private onDisplayedColumnsChanged(): void {
-        this.setWidthIfPinnedContainer();
+        this.setWidthOfPinnedContainer();
     }
 
     private onScrollVisibilityChanged(): void {
-        this.setWidthIfPinnedContainer();
+        this.setWidthOfPinnedContainer();
     }
 
-    private setWidthIfPinnedContainer(): void {
+    private setWidthOfPinnedContainer(): void {
         if (this.pinned === Column.PINNED_LEFT) {
             let pinnedLeftWidthWithScroll = this.scrollVisibleService.getPinnedLeftWithScrollWidth();
             this.eContainer.style.width = pinnedLeftWidthWithScroll + 'px';

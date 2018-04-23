@@ -57,13 +57,13 @@ export class ScrollVisibleService {
             };
             this.eventService.dispatchEvent(event);
         }
-
     }
 
     public isVBodyShowing(): boolean {
         return this.vBody;
     }
 
+    // pagination service - to know page height
     public isHBodyShowing(): boolean {
         return this.hBody;
     }

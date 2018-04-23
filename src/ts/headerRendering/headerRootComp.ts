@@ -18,10 +18,10 @@ export class HeaderRootComp extends Component {
     private static TEMPLATE =
         `<div class="ag-header" role="row">
             <div class="ag-pinned-left-header" ref="ePinnedLeftHeader" role="presentation"></div>
-            <div class="ag-pinned-right-header" ref="ePinnedRightHeader" role="presentation"></div>
             <div class="ag-header-viewport" ref="eHeaderViewport" role="presentation">
                 <div class="ag-header-container" ref="eHeaderContainer" role="presentation"></div>
             </div>
+            <div class="ag-pinned-right-header" ref="ePinnedRightHeader" role="presentation"></div>
         </div>`;
 
     @RefSelector('ePinnedLeftHeader') private ePinnedLeftHeader: HTMLElement;
@@ -75,10 +75,7 @@ export class HeaderRootComp extends Component {
         // shotgun way to get labels to change, eg from sum(amount) to avg(amount)
         this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshHeader.bind(this));
 
-        // for resized, the individual cells take care of this, so don't need to refresh everything
-        this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.setPinnedColContainerWidth.bind(this));
-        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.setPinnedColContainerWidth.bind(this));
-        this.eventService.addEventListener(Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
+        // for setting ag-pivot-on / ag-pivot-off CSS classes
         this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
 
         this.addPreventHeaderScroll();
@@ -92,10 +89,6 @@ export class HeaderRootComp extends Component {
         this.eHeaderContainer.style.left = offset + 'px';
     }
 
-    private onScrollVisibilityChanged(): void {
-        this.setPinnedColContainerWidth();
-    }
-
     public forEachHeaderElement(callback: (renderedHeaderElement: Component)=>void): void {
         this.childContainers.forEach( childContainer => childContainer.forEachHeaderElement(callback) );
     }
@@ -107,21 +100,10 @@ export class HeaderRootComp extends Component {
 
     public refreshHeader() {
         this.childContainers.forEach( container => container.refresh() );
-        this.setPinnedColContainerWidth();
-    }
-
-    public setPinnedColContainerWidth() {
-        let pinnedLeftWidthWithScroll = this.scrollVisibleService.getPinnedLeftWithScrollWidth();
-        let pinnedRightWidthWithScroll = this.scrollVisibleService.getPinnedRightWithScrollWidth();
-
-        this.eHeaderViewport.style.marginLeft = pinnedLeftWidthWithScroll + 'px';
-        this.eHeaderViewport.style.marginRight = pinnedRightWidthWithScroll + 'px';
     }
 
     private onPivotModeChanged(): void {
-
         let pivotMode = this.columnController.isPivotMode();
-
         _.addOrRemoveCssClass(this.getGui(),'ag-pivot-on', pivotMode);
         _.addOrRemoveCssClass(this.getGui(),'ag-pivot-off', !pivotMode);
     }

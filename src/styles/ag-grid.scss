@@ -102,18 +102,20 @@ ag-grid-aurelia {
     //overflow: hidden;
     white-space: nowrap;
     width: 100%;
+    display: flex;
 }
 
-.ag-layout-normal .ag-header {
-    //left: 0;
-    //position: absolute;
-    //top: 0;
+// we don't want right and left pinned flipped when doing RTL
+.ag-ltr .ag-header {
+    flex-direction: row;
+}
+.ag-rtl .ag-header {
+    flex-direction: row-reverse;
 }
 
 .ag-pinned-left-header {
     box-sizing: border-box;
     display: inline-block;
-    float: left;
     height: 100%;
     overflow: hidden;
 }
@@ -121,7 +123,6 @@ ag-grid-aurelia {
 .ag-pinned-right-header {
     box-sizing: border-box;
     display: inline-block;
-    float: right;
     height: 100%;
     overflow: hidden;
 }
@@ -130,6 +131,9 @@ ag-grid-aurelia {
     box-sizing: border-box;
     height: 100%;
     overflow: hidden;
+    width: 0px;
+    min-width: 0px;
+    flex: 1;
 }
 
 .ag-layout-normal .ag-header-row {
