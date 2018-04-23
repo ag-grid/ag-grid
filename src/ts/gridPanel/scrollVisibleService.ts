@@ -8,10 +8,9 @@ import {GridApi} from "../gridApi";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
 export interface SetScrollsVisibleParams {
-    vBody: boolean;
-    hBody: boolean;
-    vLeft: boolean;
-    vRight: boolean;
+    bodyHorizontalScrollShowing: boolean;
+    leftVerticalScrollShowing: boolean;
+    rightVerticalScrollShowing: boolean;
 }
 
 @Bean('scrollVisibleService')
@@ -25,11 +24,10 @@ export class ScrollVisibleService {
 
     private scrollWidth: number;
 
-    private vBody: boolean;
-    private hBody: boolean;
+    private bodyHorizontalScrollShowing: boolean;
 
-    private vLeft: boolean;
-    private vRight: boolean;
+    private leftVerticalScrollShowing: boolean;
+    private rightVerticalScrollShowing: boolean;
 
     @PostConstruct
     private postConstruct(): void {
@@ -39,16 +37,14 @@ export class ScrollVisibleService {
     public setScrollsVisible(params: SetScrollsVisibleParams): void {
 
         let atLeastOneDifferent =
-            this.vBody !== params.vBody
-            || this.hBody !== params.hBody
-            || this.vLeft !== params.vLeft
-            || this.vRight !== params.vRight;
+            this.bodyHorizontalScrollShowing !== params.bodyHorizontalScrollShowing ||
+            this.leftVerticalScrollShowing !== params.leftVerticalScrollShowing ||
+            this.rightVerticalScrollShowing !== params.rightVerticalScrollShowing;
 
         if (atLeastOneDifferent) {
-            this.vBody = params.vBody;
-            this.hBody = params.hBody;
-            this.vLeft = params.vLeft;
-            this.vRight = params.vRight;
+            this.bodyHorizontalScrollShowing = params.bodyHorizontalScrollShowing;
+            this.leftVerticalScrollShowing = params.leftVerticalScrollShowing;
+            this.rightVerticalScrollShowing = params.rightVerticalScrollShowing;
 
             let event: ScrollVisibilityChangedEvent = {
                 type: Events.EVENT_SCROLL_VISIBILITY_CHANGED,
@@ -59,28 +55,19 @@ export class ScrollVisibleService {
         }
     }
 
-    public isVBodyShowing(): boolean {
-        return this.vBody;
-    }
-
     // pagination service - to know page height
-    public isHBodyShowing(): boolean {
-        return this.hBody;
+    public isBodyHorizontalScrollShowing(): boolean {
+        return this.bodyHorizontalScrollShowing;
     }
 
-    public getPinnedLeftWithScrollWidth(): number {
-        let result = this.columnController.getPinnedLeftContainerWidth();
-        if (this.vLeft) {
-            result += this.scrollWidth;
-        }
-        return result;
+    // + header container
+    public isLeftVerticalScrollShowing(): boolean {
+        return this.leftVerticalScrollShowing;
     }
 
-    public getPinnedRightWithScrollWidth(): number {
-        let result = this.columnController.getPinnedRightContainerWidth();
-        if (this.vRight) {
-            result += this.scrollWidth;
-        }
-        return result;
+    // + header container
+    public isRightVerticalScrollShowing(): boolean {
+        return this.rightVerticalScrollShowing;
     }
+
 }

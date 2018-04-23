@@ -1060,7 +1060,7 @@ export class Utils {
         // force scrollbars
         outer.style.overflow = "scroll";
 
-        // add innerdiv
+        // add inner div
         let inner = document.createElement("div");
         inner.style.width = "100%";
         outer.appendChild(inner);

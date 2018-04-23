@@ -823,27 +823,20 @@ export class GridPanel extends Component {
     private updateScrollVisibleService(): void {
 
         let params: SetScrollsVisibleParams = {
-            vBody: false,
-            hBody: false,
-            vLeft: false,
-            vRight: false
+            bodyHorizontalScrollShowing: false,
+            leftVerticalScrollShowing: false,
+            rightVerticalScrollShowing: false
         };
 
-        if (this.enableRtl) {
-            if (this.columnController.isPinningLeft()) {
-                params.vLeft = _.isVerticalScrollShowing(this.eLeftViewport);
-            } else {
-                params.vBody = _.isVerticalScrollShowing(this.eBodyViewport);
-            }
-        } else {
-            if (this.columnController.isPinningRight()) {
-                params.vRight = _.isVerticalScrollShowing(this.eRightViewport);
-            } else {
-                params.vBody = _.isVerticalScrollShowing(this.eBodyViewport);
-            }
+        if (this.enableRtl && this.columnController.isPinningLeft()) {
+            params.leftVerticalScrollShowing = _.isVerticalScrollShowing(this.eLeftViewport);
         }
 
-        params.hBody = this.isHorizontalScrollShowing();
+        if (!this.enableRtl && this.columnController.isPinningRight()) {
+            params.rightVerticalScrollShowing = _.isVerticalScrollShowing(this.eRightViewport);
+        }
+
+        params.bodyHorizontalScrollShowing = this.isHorizontalScrollShowing();
 
         this.scrollVisibleService.setScrollsVisible(params);
     }
