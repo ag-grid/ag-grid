@@ -9,6 +9,7 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
 export interface SetScrollsVisibleParams {
     bodyHorizontalScrollShowing: boolean;
+    bodyVerticalScrollShowing: boolean;
     leftVerticalScrollShowing: boolean;
     rightVerticalScrollShowing: boolean;
 }
@@ -25,6 +26,7 @@ export class ScrollVisibleService {
     private scrollWidth: number;
 
     private bodyHorizontalScrollShowing: boolean;
+    private bodyVerticalScrollShowing: boolean;
 
     private leftVerticalScrollShowing: boolean;
     private rightVerticalScrollShowing: boolean;
@@ -37,11 +39,13 @@ export class ScrollVisibleService {
     public setScrollsVisible(params: SetScrollsVisibleParams): void {
 
         let atLeastOneDifferent =
+            this.bodyVerticalScrollShowing !== params.bodyVerticalScrollShowing ||
             this.bodyHorizontalScrollShowing !== params.bodyHorizontalScrollShowing ||
             this.leftVerticalScrollShowing !== params.leftVerticalScrollShowing ||
             this.rightVerticalScrollShowing !== params.rightVerticalScrollShowing;
 
         if (atLeastOneDifferent) {
+            this.bodyVerticalScrollShowing = params.bodyVerticalScrollShowing;
             this.bodyHorizontalScrollShowing = params.bodyHorizontalScrollShowing;
             this.leftVerticalScrollShowing = params.leftVerticalScrollShowing;
             this.rightVerticalScrollShowing = params.rightVerticalScrollShowing;
@@ -55,17 +59,17 @@ export class ScrollVisibleService {
         }
     }
 
-    // pagination service - to know page height
+    // used by pagination service - to know page height
     public isBodyHorizontalScrollShowing(): boolean {
         return this.bodyHorizontalScrollShowing;
     }
 
-    // + header container
+    // used by header container
     public isLeftVerticalScrollShowing(): boolean {
         return this.leftVerticalScrollShowing;
     }
 
-    // + header container
+    // used by header container
     public isRightVerticalScrollShowing(): boolean {
         return this.rightVerticalScrollShowing;
     }

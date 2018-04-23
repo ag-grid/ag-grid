@@ -224,6 +224,7 @@ export class GridPanel extends Component {
         return result;
     }
 
+    // used by range controller
     public getHScrollPosition(): {left: number, right: number} {
         let result = {
             left: this.eBodyViewport.scrollLeft,
@@ -823,6 +824,7 @@ export class GridPanel extends Component {
     private updateScrollVisibleService(): void {
 
         let params: SetScrollsVisibleParams = {
+            bodyVerticalScrollShowing: false,
             bodyHorizontalScrollShowing: false,
             leftVerticalScrollShowing: false,
             rightVerticalScrollShowing: false
