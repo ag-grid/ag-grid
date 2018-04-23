@@ -280,6 +280,7 @@ export class GridOptionsWrapper {
             return result;
         }
     }
+    public isSuppressRowHoverHighlight() { return isTrue(this.gridOptions.suppressRowHoverHighlight); }
     public isGroupSelectsFiltered() { return isTrue(this.gridOptions.groupSelectsFiltered); }
     public isGroupHideOpenParents() { return isTrue(this.gridOptions.groupHideOpenParents); }
     // if we are doing hideOpenParents, then we always have groupMultiAutoColumn, otherwise hideOpenParents would not work

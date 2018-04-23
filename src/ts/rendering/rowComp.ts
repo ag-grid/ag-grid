@@ -1181,7 +1181,12 @@ export class RowComp extends Component {
 
         // step 2 - listen for changes on row node (which any eRow can trigger)
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_MOUSE_ENTER, ()=> {
-            _.addCssClass(eRow, 'ag-row-hover');
+            // if hover turned off, we don't add the class. we do this here so that if the application
+            // toggles this property mid way, we remove the hover form the last row, but we stop
+            // adding hovers from that point onwards.
+            if (!this.beans.gridOptionsWrapper.isSuppressRowHoverHighlight()) {
+                _.addCssClass(eRow, 'ag-row-hover');
+            }
         });
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_MOUSE_LEAVE, ()=> {
             _.removeCssClass(eRow, 'ag-row-hover');

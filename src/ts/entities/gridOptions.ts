@@ -64,6 +64,7 @@ export interface GridOptions {
     toolPanelSuppressColumnExpandAll?: boolean;
     contractColumnSelection?: boolean;
     suppressRowClickSelection?: boolean;
+    suppressRowHoverHighlight?: boolean;
     suppressCellSelection?: boolean;
     sortingOrder?: string[];
     suppressMultiSort?: boolean;
