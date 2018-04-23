@@ -134,6 +134,7 @@ module.exports = (cb, scope) =>     {
             let angularComponentFileNames = extractComponentFileNames(angularScripts, '_angular');
             let appComponentTS, appModuleTS;
             try {
+                console.log(`./src/${section}/${example}`);
                 source = vanillaToAngular(sources, options, angularComponentFileNames);
                 appComponentTS = prettier.format(source, {printWidth: 120, parser: 'typescript'});
                 appModuleTS = prettier.format(appModuleAngular(angularComponentFileNames), {
