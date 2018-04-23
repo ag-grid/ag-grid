@@ -16,7 +16,12 @@ function onGridReadyTemplate(readyCode: string, resizeToFit: boolean, data: { ur
     }
 
     if (data) {
-        getData = `this.http.get(${data.url}).subscribe( data => ${data.callback});`
+        if(data.callback.indexOf('api.setRowData') !== -1) {
+            const setRowDataBlock = data.callback.replace("params.api.setRowData(data);", "this.rowData = data");
+            getData = `this.http.get(${data.url}).subscribe( data => ${setRowDataBlock} );`;
+        } else {
+            getData = `this.http.get(${data.url}).subscribe( data => ${data.callback});`
+        }
     }
 
     return `
@@ -92,6 +97,10 @@ function appComponentTemplate(bindings, componentFileNames) {
     const eventHandlers = bindings.eventHandlers.map(event => event.handler).map(removeFunction);
 
     eventAttributes.push('(gridReady)="onGridReady($event)"');
+
+    if(bindings.data) {
+        console.log("Example applies");
+    }
     additional.push(onGridReadyTemplate(bindings.onGridReady, bindings.resizeToFit, bindings.data));
 
     const style = bindings.gridSettings.noStyle ? '' : `style="width: ${bindings.gridSettings.width}; height: ${bindings.gridSettings.height};"`;
@@ -100,6 +109,7 @@ function appComponentTemplate(bindings, componentFileNames) {
     #agGrid
     ${style}
     id="myGrid"
+    [rowData]="rowData"
     class="${bindings.gridSettings.theme}"
     ${propertyAttributes.concat(eventAttributes).join('\n    ')}
     ></ag-grid-angular>`;
@@ -132,6 +142,7 @@ ${imports.join('\n')}
 export class AppComponent {
     private gridApi;
     private gridColumnApi;
+    private rowData: any[];
 
     ${propertyVars.join('\n')}
 

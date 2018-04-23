@@ -139,12 +139,6 @@ var gridOptions = {
     //columnDefs: [],
     //singleClickEdit: true,
     // suppressClickEdit: true,
-    //rowData: [
-    //    {name: 'Niall'},
-    //    {name: 'Eamon'},
-    //    {name: 'Kevin'},
-    //    {name: 'Brian'}
-    //],
     enterMovesDownAfterEdit: true,
     enterMovesDown: true,
     // domLayout: 'autoHeight',
@@ -158,11 +152,12 @@ var gridOptions = {
     //suppressMovableColumns: true,
     //groupIncludeFooter: true,
     suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
+    // suppressRowHoverHighlight: true,
     // suppressTouch: true,
     // suppressDragLeaveHidesColumns: true,
     // suppressMakeColumnVisibleAfterUnGroup: true,
-    //unSortIcon: true,
-    //     enableRtl: true,
+    // unSortIcon: true,
+    // enableRtl: true,
     multiSortKey: 'ctrl',
     animateRows: true,
     enableColResize: true, //one of [true, false]

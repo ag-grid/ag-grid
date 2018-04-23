@@ -48,7 +48,7 @@ var gridOptions = {
     columnDefs: getColumnDefs(),
     rowData: rowData,
     pinnedTopRowData: pinnedTopRowData,
-    pinnedBottomRowData: pinnedTopRowData,
+    pinnedBottomRowData: pinnedBottomRowData,
     isFullWidthCell: function(rowNode) {
         // in this example, we check the fullWidth attribute that we set
         // while creating the data. what check you do to decide if you

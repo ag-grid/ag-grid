@@ -548,6 +548,12 @@ include '../documentation-main/documentation_header.php';
                 its calculations.
             </td>
         </tr>
+        <tr>
+            <th>suppressRowHoverHighlight</th>
+            <td>
+                Set to true to not highlight rows by adding the <code>ag-row-hover</code> CSS class.
+            </td>
+        </tr>
         </table>
 <h2>Localisation</h2>
     <table class="table content reference">
