@@ -168,7 +168,7 @@ meta_and_links($title, $keywords, $description, false);
 
                         <footer>
                             <strong>Robin Cote</strong>
-                            <span class="position">Senior Systems Developer, Investment Solutions Group, Healthcare of Ontario Pension Plan</span> 
+                            <span class="position">Solutions Architect, Investment Solutions Group, Healthcare of Ontario Pension Plan</span>
                         </footer>
                     </blockquote>
                 </div>
