@@ -4,14 +4,17 @@ import {ComponentStateChangedEvent, Events} from '../events';
 import {PropertyKeys} from '../propertyKeys';
 import {Utils as _} from '../utils';
 import {ColumnApi} from '../columnController/columnApi';
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
-export class
-ComponentUtil {
+export class ComponentUtil {
     // all the events are populated in here AFTER this class (at the bottom of the file).
     public static EVENTS: string[] = [];
 
     // function below fills this with onXXX methods, based on the above events
     private static EVENT_CALLBACKS: string[];
+
+    // function below fills this with methods names, with no "on" prefix
+    private static EVENT_CALLBACKS_NO_PREFIX: string[];
 
     public static STRING_PROPERTIES = PropertyKeys.STRING_PROPERTIES;
 
@@ -30,8 +33,11 @@ ComponentUtil {
     public static getEventCallbacks(): string[] {
         if (!ComponentUtil.EVENT_CALLBACKS) {
             ComponentUtil.EVENT_CALLBACKS = [];
+            ComponentUtil.EVENT_CALLBACKS_NO_PREFIX = [];
+
             ComponentUtil.EVENTS.forEach((eventName: string) => {
                 ComponentUtil.EVENT_CALLBACKS.push(ComponentUtil.getCallbackForEvent(eventName));
+                ComponentUtil.EVENT_CALLBACKS_NO_PREFIX.push(eventName);
             });
         }
         return ComponentUtil.EVENT_CALLBACKS;
@@ -68,6 +74,13 @@ ComponentUtil {
         ComponentUtil.getEventCallbacks().forEach(funcName => {
             if (typeof component[funcName] !== 'undefined') {
                 pGridOptions[funcName] = component[funcName];
+            }
+        });
+
+        // purely for event deprecation checks (for frameworks - wouldn't apply for non-fw versions)
+        ComponentUtil.EVENT_CALLBACKS_NO_PREFIX.forEach(funcName => {
+            if (typeof component[funcName] !== 'undefined') {
+                GridOptionsWrapper.checkEventDeprecation(funcName);
             }
         });
 
@@ -201,7 +214,7 @@ ComponentUtil {
     }
 }
 
-_.iterateObject<any>(Events, function(key, value) {
+_.iterateObject<any>(Events, function (key, value) {
     ComponentUtil.EVENTS.push(value);
 });
 
