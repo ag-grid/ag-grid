@@ -11,7 +11,10 @@ import {
     ViewContainerRef,
     ViewEncapsulation
 } from "@angular/core";
-import {ColumnApi, ComponentUtil, Grid, GridApi, GridOptions, GridParams, Promise} from "ag-grid/main";
+
+import {GridOptionsWrapper, Events, ColumnApi, ComponentUtil, Grid, GridApi, GridOptions, GridParams, Promise} from "ag-grid";
+import {Utils as _} from 'ag-grid';
+
 import {Ng2FrameworkFactory} from "./ng2FrameworkFactory";
 import {AgGridColumn} from "./agGridColumn";
 import {Ng2FrameworkComponentWrapper} from "./ng2FrameworkComponentWrapper";
@@ -54,24 +57,16 @@ export class AgGridNg2 implements AfterViewInit {
                 private _componentFactoryResolver: ComponentFactoryResolver) {
         this._nativeElement = elementDef.nativeElement;
 
-        // create all the events generically. this is done generically so that
-        // if the list of grid events change, we don't need to change this code.
-        this.createComponentEvents();
-
         this.ng2FrameworkFactory.setViewContainerRef(this.viewContainerRef);
 
         this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef);
         this.frameworkComponentWrapper.setComponentFactoryResolver(this._componentFactoryResolver);
     }
 
-    private createComponentEvents() {
-        ComponentUtil.EVENTS.forEach((eventName) => {
-            (<any>this)[eventName] = new EventEmitter();
-        });
-    }
-
     ngAfterViewInit(): void {
-        this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
+        this.checkForDeprecatedEvents();
+
+        this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this, true);
 
         this.gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
@@ -121,6 +116,14 @@ export class AgGridNg2 implements AfterViewInit {
                 this.api.destroy();
             }
         }
+    }
+
+    private checkForDeprecatedEvents() {
+        _.iterateObject<any>(Events,  (key, eventName) => {
+            if(this[eventName] && (<EventEmitter<any>>this[eventName]).observers.length > 0) {
+                GridOptionsWrapper.checkEventDeprecation(eventName);
+            }
+        });
     }
 
     private globalEventListener(eventType: string, event: any): void {
@@ -444,6 +447,5 @@ export class AgGridNg2 implements AfterViewInit {
     @Output() public columnValueChangeRequest: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnAggFuncChangeRequest: EventEmitter<any> = new EventEmitter<any>();
     // @END@
-
 }
 
