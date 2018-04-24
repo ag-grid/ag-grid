@@ -37,7 +37,7 @@ var gridOptions = {
         {
             headerName: "Exterior Colour",
             field: "exteriorColour",
-            cellEditor: 'agRichSelect',
+            cellEditor: 'agRichSelectCellEditor',
             cellEditorParams: {
                 values: extractValues(colourMappings),
                 cellRenderer: colorCellRenderer

@@ -98,9 +98,6 @@ function appComponentTemplate(bindings, componentFileNames) {
 
     eventAttributes.push('(gridReady)="onGridReady($event)"');
 
-    if(bindings.data) {
-        console.log("Example applies");
-    }
     additional.push(onGridReadyTemplate(bindings.onGridReady, bindings.resizeToFit, bindings.data));
 
     const style = bindings.gridSettings.noStyle ? '' : `style="width: ${bindings.gridSettings.width}; height: ${bindings.gridSettings.height};"`;

@@ -15,6 +15,7 @@ var columnDefs = [
         width: 100,
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
+            cellHeight: 50,
             values: ['Ireland', 'USA']
         }
     },
@@ -25,7 +26,10 @@ var columnDefs = [
             var selectedCountry = params.data.country;
             var allowedCities = countyToCityMap[selectedCountry];
             return {
-                values: allowedCities
+                values: allowedCities,
+                formatValue: function(value) {
+                    return value + ' (' + selectedCountry + ')';
+                }
             };
         }
     },

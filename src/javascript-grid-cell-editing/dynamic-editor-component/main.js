@@ -20,7 +20,7 @@ var columnDefs = [
             };
 
             if (params.data.type === 'gender') return {
-                component: 'agRichSelect',
+                component: 'agRichSelectCellEditor',
                 params: {values: ['Male', 'Female']}
             };
 

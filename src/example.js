@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     gridDiv = document.querySelector('#myGrid');
 
+    // agGrid.LicenseManager.setLicenseKey("Adcore_Desarrollo_y_Comunicación_S.L_Siturweb_1Devs1_SaaS_18_April_2019__MTU1NTU0MjAwMDAwMA==3c5a3b0fcc94ec4a5bd5452284b614df")
     new agGrid.Grid(gridDiv, gridOptions);
     createData();
 });
@@ -391,7 +392,7 @@ var defaultCols = [
                 // rowGroupIndex: 1,
                 enableRowGroup: true,
                 enablePivot: true,
-                cellEditor: 'agRichSelect',
+                cellEditor: 'agRichSelectCellEditor',
                 cellEditorParams: {
                     cellRenderer: 'countryCellRenderer',
                     values: ["Argentina", "Brazil", "Colombia", "France", "Germany", "Greece", "Iceland", "Ireland",
