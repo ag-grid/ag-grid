@@ -43,7 +43,7 @@ export class ComponentUtil {
         return ComponentUtil.EVENT_CALLBACKS;
     }
 
-    public static copyAttributesToGridOptions(gridOptions: GridOptions, component: any): GridOptions {
+    public static copyAttributesToGridOptions(gridOptions: GridOptions, component: any, skipEventDeprecationCheck: boolean = false): GridOptions {
         checkForDeprecated(component);
         // create empty grid options if none were passed
         if (typeof gridOptions !== 'object') {
@@ -78,11 +78,17 @@ export class ComponentUtil {
         });
 
         // purely for event deprecation checks (for frameworks - wouldn't apply for non-fw versions)
-        ComponentUtil.EVENT_CALLBACKS_NO_PREFIX.forEach(funcName => {
-            if (typeof component[funcName] !== 'undefined') {
-                GridOptionsWrapper.checkEventDeprecation(funcName);
-            }
-        });
+        if (!skipEventDeprecationCheck) {
+            ComponentUtil.EVENT_CALLBACKS_NO_PREFIX.forEach(funcName => {
+                // react uses onXXX...not sure why this is diff to the other frameworks
+                const onMethodName = ComponentUtil.getCallbackForEvent(funcName);
+
+                if (typeof component[funcName] !== 'undefined' ||
+                    typeof component[onMethodName] !== 'undefined') {
+                    GridOptionsWrapper.checkEventDeprecation(funcName);
+                }
+            });
+        }
 
         return gridOptions;
     }
