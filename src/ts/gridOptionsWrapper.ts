@@ -500,7 +500,6 @@ export class GridOptionsWrapper {
     }
 
     public static checkEventDeprecation(eventName: string): void {
-        // Note: If you add a new event here, please update PropertyKeys.DEPRECATED_EVENTS too
         if (eventName === Events.DEPRECATED_EVENT_GRID_SIZE_CHANGED) {
             console.warn(`ag-Grid: Since ag-Grid v18 event ${Events.DEPRECATED_EVENT_GRID_SIZE_CHANGED} no longer exists.`);
         }
