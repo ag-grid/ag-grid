@@ -200,6 +200,7 @@ export class GridPanel extends Component {
     private enableRtl: boolean;
     private autoHeight: boolean;
     private scrollWidth: number;
+    private scrollClipWidth: number;
 
     // used to track if pinned panels are showing, so we can turn them off if not
     private pinningRight: boolean;
@@ -271,6 +272,11 @@ export class GridPanel extends Component {
         this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
         this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
+
+        // if the browser is Windows based, then the scrollbars take up space, and we clip by
+        // the width of the scrollbar. however if the scroll bars do not take up space (iOS)
+        // then they overlay on top of the div, so we clip some extra blank space instead.
+        this.scrollClipWidth = this.scrollWidth > 0 ? this.scrollWidth : 20;
 
         this.suppressScrollOnFloatingRow();
         this.setupRowAnimationCssClass();
@@ -412,7 +418,6 @@ export class GridPanel extends Component {
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setBodyAndHeaderHeights.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataChanged.bind(this));
@@ -819,12 +824,17 @@ export class GridPanel extends Component {
 
         // check for virtual columns for ColumnController
         this.onHorizontalViewportChanged();
+
+        this.setPinnedLeftWidth();
+        this.setPinnedRightWidth();
+        this.setBottomPaddingOnPinned();
+        this.hideVerticalScrollOnCenter();
+        this.hideFullWidthViewportScrollbars();
     }
 
     private updateScrollVisibleService(): void {
 
         let params: SetScrollsVisibleParams = {
-            bodyVerticalScrollShowing: false,
             bodyHorizontalScrollShowing: false,
             leftVerticalScrollShowing: false,
             rightVerticalScrollShowing: false
@@ -1101,14 +1111,6 @@ export class GridPanel extends Component {
         }
     }
 
-    private onScrollVisibilityChanged(): void {
-        this.setPinnedLeftWidth();
-        this.setPinnedRightWidth();
-        this.setBottomPaddingOnPinned();
-        this.hideVerticalScrollOnCenter();
-        this.hideFullWidthViewportScrollbars();
-    }
-
     private setWidthsOfContainers(): void {
         this.setCenterWidth();
         this.setPinnedLeftWidth();
@@ -1126,6 +1128,7 @@ export class GridPanel extends Component {
 
         let widthOfCols = this.columnController.getPinnedLeftContainerWidth();
         let widthOfColsAndScroll = widthOfCols + this.scrollWidth;
+        let widthOfColsAndClippedScroll = widthOfCols + this.scrollClipWidth;
 
         let viewportWidth: number;
         let wrapperWidth: number;
@@ -1137,7 +1140,7 @@ export class GridPanel extends Component {
                 wrapperWidth = widthOfColsAndScroll;
             } else {
                 // hide the scroll
-                viewportWidth = widthOfColsAndScroll;
+                viewportWidth = widthOfColsAndClippedScroll;
                 wrapperWidth = widthOfCols;
             }
         } else {
@@ -1156,8 +1159,9 @@ export class GridPanel extends Component {
 
     private setPinnedRightWidth(): void {
 
-        let pinnedRightWidth = this.columnController.getPinnedRightContainerWidth();
-        let pinnedRightWidthWithScroll = pinnedRightWidth + this.scrollWidth;
+        let widthOfCols = this.columnController.getPinnedRightContainerWidth();
+        let widthOfColsAndScroll = widthOfCols + this.scrollWidth;
+        let widthOfColsAndClippedScroll = widthOfCols + this.scrollClipWidth;
 
         let viewportWidth: number;
         let wrapperWidth: number;
@@ -1165,22 +1169,22 @@ export class GridPanel extends Component {
         if (_.isVerticalScrollShowing(this.eRightViewport)) {
             if (!this.enableRtl) {
                 // show the scroll
-                viewportWidth = pinnedRightWidthWithScroll;
-                wrapperWidth = pinnedRightWidthWithScroll;
+                viewportWidth = widthOfColsAndScroll;
+                wrapperWidth = widthOfColsAndScroll;
             } else {
                 // hide the scroll
-                viewportWidth = pinnedRightWidthWithScroll;
-                wrapperWidth = pinnedRightWidth;
+                viewportWidth = widthOfColsAndClippedScroll;
+                wrapperWidth = widthOfCols;
             }
         } else {
             // no scroll
-            viewportWidth = pinnedRightWidth;
-            wrapperWidth = pinnedRightWidth;
+            viewportWidth = widthOfCols;
+            wrapperWidth = widthOfCols;
         }
 
         this.setElementWidth(this.eRightViewportWrapper, wrapperWidth);
         this.setElementWidth(this.eRightViewport, viewportWidth);
-        this.setElementWidth(this.eRightContainer, pinnedRightWidth);
+        this.setElementWidth(this.eRightContainer, widthOfCols);
 
         this.setElementWidth(this.eRightBottom, wrapperWidth);
         this.setElementWidth(this.eRightTop, wrapperWidth);

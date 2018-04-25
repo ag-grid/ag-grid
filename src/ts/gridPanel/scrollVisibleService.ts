@@ -9,7 +9,6 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
 export interface SetScrollsVisibleParams {
     bodyHorizontalScrollShowing: boolean;
-    bodyVerticalScrollShowing: boolean;
     leftVerticalScrollShowing: boolean;
     rightVerticalScrollShowing: boolean;
 }
@@ -24,7 +23,6 @@ export class ScrollVisibleService {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private bodyHorizontalScrollShowing: boolean;
-    private bodyVerticalScrollShowing: boolean;
 
     private leftVerticalScrollShowing: boolean;
     private rightVerticalScrollShowing: boolean;
@@ -32,13 +30,11 @@ export class ScrollVisibleService {
     public setScrollsVisible(params: SetScrollsVisibleParams): void {
 
         let atLeastOneDifferent =
-            this.bodyVerticalScrollShowing !== params.bodyVerticalScrollShowing ||
             this.bodyHorizontalScrollShowing !== params.bodyHorizontalScrollShowing ||
             this.leftVerticalScrollShowing !== params.leftVerticalScrollShowing ||
             this.rightVerticalScrollShowing !== params.rightVerticalScrollShowing;
 
         if (atLeastOneDifferent) {
-            this.bodyVerticalScrollShowing = params.bodyVerticalScrollShowing;
             this.bodyHorizontalScrollShowing = params.bodyHorizontalScrollShowing;
             this.leftVerticalScrollShowing = params.leftVerticalScrollShowing;
             this.rightVerticalScrollShowing = params.rightVerticalScrollShowing;
