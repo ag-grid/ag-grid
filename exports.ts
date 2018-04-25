@@ -183,7 +183,7 @@ export {CsvCreator, BaseCreator} from "./dist/lib/csvCreator";
 export {Downloader} from "./dist/lib/downloader";
 export {Grid, GridParams} from "./dist/lib/grid";
 export {GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo} from "./dist/lib/gridApi";
-export {Events} from "./dist/lib/events";
+export {Events} from "./dist/lib/eventKeys";
 export {FocusedCellController} from "./dist/lib/focusedCellController";
 export {defaultGroupComparator} from "./dist/lib/functions";
 export {GridOptionsWrapper} from "./dist/lib/gridOptionsWrapper";
