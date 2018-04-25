@@ -243,35 +243,24 @@ var gridOptions = {
     onGridReady: function (params) {
         params.api.sizeColumnsToFit();
     },
-    onCellValueChanged: function (params) {
-        var colId = params.column.getId();
-        if (colId === 'country') {
+    onCellValueChanged: onCellValueChanged
+};
 
-            var selectedCountry = params.data.country;
-            var selectedCity = params.data.city;
+function onCellValueChanged(params) {
+    var colId = params.column.getId();
+    if (colId === 'country') {
 
-            var allowedCities = countyToCityMap[selectedCountry];
-            var cityMismatch = allowedCities.indexOf(selectedCity) < 0;
+        var selectedCountry = params.data.country;
+        var selectedCity = params.data.city;
 
-            if (cityMismatch) {
-                params.node.setDataValue('city', null);
-            }
+        var allowedCities = countyToCityMap[selectedCountry];
+        var cityMismatch = allowedCities.indexOf(selectedCity) < 0;
+
+        if (cityMismatch) {
+            params.node.setDataValue('city', null);
         }
     }
-};
-
-function GenderCellRenderer() {
 }
-
-GenderCellRenderer.prototype.init = function (params) {
-    this.eGui = document.createElement('span');
-    var img = params.value === 'Male' ? 'male.png' : 'female.png';
-    this.eGui.innerHTML = '<img src="../images/' + img + '"/> ' + params.value;
-};
-
-GenderCellRenderer.prototype.getGui = function () {
-    return this.eGui;
-};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
