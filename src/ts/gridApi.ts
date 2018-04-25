@@ -474,11 +474,7 @@ export class GridApi {
     }
 
     public getRowNode(id: string): RowNode {
-        if (_.missing(this.inMemoryRowModel)) {
-            console.warn('ag-Grid: cannot call getRowNode unless using normal row model');
-            return;
-        }
-        return this.inMemoryRowModel.getRowNode(id);
+        return this.rowModel.getRowNode(id);
     }
 
     public expandAll() {

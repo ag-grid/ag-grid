@@ -9,6 +9,10 @@ export interface IRowModel {
 
     /** Returns the rowNode at the given index. */
     getRow(index: number): RowNode;
+
+    /** Returns the rowNode for given id. */
+    getRowNode(id: string): RowNode;
+
     /** Returns the first and last rows to render. */
     getPageFirstRow(): number;
     getPageLastRow(): number;

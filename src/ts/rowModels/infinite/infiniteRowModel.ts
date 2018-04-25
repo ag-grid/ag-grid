@@ -261,6 +261,16 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
         return this.infiniteCache ? this.infiniteCache.getRow(rowIndex) : null;
     }
 
+    public getRowNode(id: string): RowNode {
+        let result: RowNode = null;
+        this.forEachNode(rowNode => {
+            if(rowNode.id === id) {
+                result = rowNode;
+            }
+        });
+        return result;
+    }
+
     public forEachNode(callback: (rowNode: RowNode, index: number)=> void): void {
         if (this.infiniteCache) {
             this.infiniteCache.forEachNodeDeep(callback, new NumberSequence());
