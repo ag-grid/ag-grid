@@ -142,6 +142,16 @@ export class ViewportRowModel implements IRowModel {
         return this.rowNodesByIndex[rowIndex];
     }
 
+    public getRowNode(id: string): RowNode {
+        let result: RowNode = null;
+        this.forEachNode(rowNode => {
+            if(rowNode.id === id) {
+                result = rowNode;
+            }
+        });
+        return result;
+    }
+
     public getPageFirstRow(): number {
         return 0;
     }

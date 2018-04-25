@@ -443,6 +443,16 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         return lastInRange.parent.childrenCache.getRowNodesInRange(firstInRange, lastInRange);
     }
 
+    public getRowNode(id: string): RowNode {
+        let result: RowNode = null;
+        this.forEachNode(rowNode => {
+            if(rowNode.id === id) {
+                result = rowNode;
+            }
+        });
+        return result;
+    }
+
     public getBlockState(): any {
         if (this.rowNodeBlockLoader) {
             return this.rowNodeBlockLoader.getBlockState();
