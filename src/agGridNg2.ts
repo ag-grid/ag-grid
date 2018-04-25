@@ -381,6 +381,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public contractColumnSelection : any = undefined;
     @Input() public suppressEnterpriseResetOnNewColumns : any = undefined;
     @Input() public enableOldSetFilterModel : any = undefined;
+    @Input() public suppressRowHoverHighlight : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();
@@ -438,6 +439,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Output() public scrollVisibilityChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnHoverChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public flashCells: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public viewportImpacted: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDragEnter: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDragMove: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDragLeave: EventEmitter<any> = new EventEmitter<any>();
