@@ -874,9 +874,9 @@ export class GridPanel extends Component {
 
         // if browser does not have scrollbars that take up space (eg iOS) then we don't need
         // to adjust the sizes of the container for scrollbars
-        if (this.scrollWidth <= 0) { return; }
+        // if (this.scrollWidth <= 0) { return; }
 
-        let scrollWidthPx = this.scrollWidth > 0 ? this.scrollWidth + 'px' : '';
+        let scrollWidthPx = this.scrollClipWidth > 0 ? this.scrollWidth + 'px' : '';
 
         // if horizontal scroll is showing, we add padding to bottom so
         // fullWidth container is not spreading over the scroll
@@ -1241,7 +1241,7 @@ export class GridPanel extends Component {
 
         let hideScroll = neverShowScroll && scrollActive;
 
-        let margin = hideScroll ? '-' + this.scrollWidth + 'px' : '';
+        let margin = hideScroll ? '-' + this.scrollClipWidth + 'px' : '';
 
         if (this.enableRtl) {
             this.eBodyViewport.style.marginLeft = margin;
@@ -1364,7 +1364,7 @@ export class GridPanel extends Component {
 
         let now = new Date().getTime();
         let diff = now - this.lastVScrollTime;
-        let elementIsNotControllingTheScroll = source!==this.lastVScrollElement && diff < 100;
+        let elementIsNotControllingTheScroll = source!==this.lastVScrollElement && diff < 500;
         if (elementIsNotControllingTheScroll) { return; }
 
         this.lastVScrollElement = source;
