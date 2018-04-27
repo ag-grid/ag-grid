@@ -46,7 +46,7 @@ export class RowContainerComponent {
 
     @PostConstruct
     private postConstruct(): void {
-        this.domOrder = this.gridOptionsWrapper.isEnsureDomOrder() && !this.gridOptionsWrapper.isForPrint();
+        this.domOrder = this.gridOptionsWrapper.isAutoHeight() || (this.gridOptionsWrapper.isEnsureDomOrder() && !this.gridOptionsWrapper.isForPrint());
         this.checkVisibility();
     }
 
