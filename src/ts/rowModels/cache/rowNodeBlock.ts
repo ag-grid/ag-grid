@@ -31,9 +31,9 @@ export abstract class RowNodeBlock extends BeanStub {
 
     private lastAccessed: number;
 
-    private blockNumber: number;
-    private startRow: number;
-    private endRow: number;
+    private readonly blockNumber: number;
+    private readonly startRow: number;
+    private readonly endRow: number;
     public rowNodes: RowNode[];
 
     // because the framework cannot wire beans in parent classes, this is a hack
@@ -62,7 +62,7 @@ export abstract class RowNodeBlock extends BeanStub {
     // belongs to
     public abstract getNodeIdPrefix(): string;
 
-    constructor(blockNumber: number, rowNodeCacheParams: RowNodeCacheParams) {
+    protected constructor(blockNumber: number, rowNodeCacheParams: RowNodeCacheParams) {
         super();
 
         this.rowNodeCacheParams = rowNodeCacheParams;
@@ -122,8 +122,10 @@ export abstract class RowNodeBlock extends BeanStub {
         return this.lastAccessed;
     }
 
-    public getRowUsingLocalIndex(rowIndex: number): RowNode {
-        this.lastAccessed = this.rowNodeCacheParams.lastAccessedSequence.next();
+    public getRowUsingLocalIndex(rowIndex: number, dontTouchLastAccessed = false): RowNode {
+        if (!dontTouchLastAccessed) {
+            this.lastAccessed = this.rowNodeCacheParams.lastAccessedSequence.next();
+        }
         let localIndex = rowIndex - this.startRow;
         return this.rowNodes[localIndex];
     }

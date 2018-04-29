@@ -42,7 +42,7 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
 
     public abstract getRow(rowIndex: number): RowNode;
 
-    constructor(cacheParams: P) {
+    protected constructor(cacheParams: P) {
         super();
         this.virtualRowCount = cacheParams.initialRowCount;
         this.cacheParams = cacheParams;

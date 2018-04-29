@@ -37,9 +37,9 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
         this.getRow(0);
     }
 
-    private moveItemsDown(page: InfiniteBlock, moveFromIndex: number, moveCount: number): void {
-        let startRow = page.getStartRow();
-        let endRow = page.getEndRow();
+    private moveItemsDown(block: InfiniteBlock, moveFromIndex: number, moveCount: number): void {
+        let startRow = block.getStartRow();
+        let endRow = block.getEndRow();
         let indexOfLastRowToMove = moveFromIndex + moveCount;
 
         // all rows need to be moved down below the insertion index
@@ -53,10 +53,10 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
             let nodeForThisIndex = this.getRow(indexOfNodeWeWant, true);
 
             if (nodeForThisIndex) {
-                page.setRowNode(currentRowIndex, nodeForThisIndex);
+                block.setRowNode(currentRowIndex, nodeForThisIndex);
             } else {
-                page.setBlankRowNode(currentRowIndex);
-                page.setDirty();
+                block.setBlankRowNode(currentRowIndex);
+                block.setDirty();
             }
         }
     }
@@ -86,7 +86,7 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
         // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
 
         let newNodes: RowNode[] = [];
-        this.forEachBlockInReverseOrder( (block: InfiniteBlock) => {
+        this.forEachBlockInReverseOrder( block => {
             let pageEndRow = block.getEndRow();
 
             // if the insertion is after this page, then this page is not impacted

@@ -1027,6 +1027,22 @@ export class GridApi {
         }
     }
 
+    public removeFromEnterpriseCache(route: string[], items: any[]): void {
+        if (this.enterpriseRowModel) {
+            this.enterpriseRowModel.removeFromCache(route, items);
+        } else {
+            console.warn(`ag-Grid: api.removeFromEnterpriseCache is only available when rowModelType='enterprise'.`);
+        }
+    }
+
+    public addToEnterpriseCache(route: string[], items: any[], index: number): void {
+        if (this.enterpriseRowModel) {
+            this.enterpriseRowModel.addToCache(route, items, index);
+        } else {
+            console.warn(`ag-Grid: api.addToEnterpriseCache is only available when rowModelType='enterprise'.`);
+        }
+    }
+
     public getVirtualRowCount(): number {
         console.warn('ag-Grid: getVirtualRowCount() is now called getInfiniteRowCount(), please call getInfiniteRowCount() instead');
         return this.getInfiniteRowCount();
