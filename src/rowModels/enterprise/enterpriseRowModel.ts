@@ -428,14 +428,26 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         }
     }
 
-    public purgeCache(route: string[] = []): void {
+    private executeOnCache(route: string[], callback: (cache: EnterpriseCache)=>void) {
         if (this.rootNode && this.rootNode.childrenCache) {
             let topLevelCache = <EnterpriseCache> this.rootNode.childrenCache;
             let cacheToPurge = topLevelCache.getChildCache(route);
             if (cacheToPurge) {
-                cacheToPurge.purgeCache();
+                callback(cacheToPurge);
             }
         }
+    }
+
+    public purgeCache(route: string[] = []): void {
+        this.executeOnCache(route, cache => cache.purgeCache() );
+    }
+
+    public removeFromCache(route: string[], items: any[]): void {
+        this.executeOnCache(route, cache => cache.removeFromCache(items) );
+    }
+
+    public addToCache(route: string[], items: any[], index: number): void {
+        this.executeOnCache(route, cache => cache.addToCache(items, index) );
     }
 
     public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {

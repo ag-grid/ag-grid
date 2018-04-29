@@ -13,7 +13,10 @@ import {
     RowNode,
     RowNodeCache,
     RowNodeCacheParams,
-    RowBounds
+    RowBounds,
+    GridOptionsWrapper,
+    RowDataUpdatedEvent,
+    Events
 } from "ag-grid";
 import {EnterpriseBlock} from "./enterpriseBlock";
 
@@ -30,13 +33,14 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     // this will always be zero for the top level cache only,
     // all the other ones change as the groups open and close
     private displayIndexStart = 0;
     private displayIndexEnd = 0; // not sure if setting this one to zero is necessary
 
-    private parentRowNode: RowNode;
+    private readonly parentRowNode: RowNode;
 
     private cacheTop = 0;
     private cacheHeight: number;
@@ -214,7 +218,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
     }
 
     // gets called in a) init() above and b) by the grid
-    public getRow(displayRowIndex: number): RowNode {
+    public getRow(displayRowIndex: number, dontCreatePage = false): RowNode {
 
         // this can happen if asking for a row that doesn't exist in the model,
         // eg if a cell range is selected, and the user filters so rows no longer
@@ -235,6 +239,11 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
                 beforeBlock = currentBlock;
             }
         });
+
+        // when we are moving rows around, we don't want to trigger loads
+        if (_.missing(block) && dontCreatePage) {
+            return null;
+        }
 
         // if block not found, we need to load it
         if (_.missing(block)) {
@@ -336,6 +345,139 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
         return pixel >= this.cacheTop  && pixel < (this.cacheTop + this.cacheHeight);
     }
 
+    public removeFromCache(items: any[]): void {
 
+        // create map of id's for quick lookup
+        let itemsToDeleteById: {[id: string]: any} = {};
+        let idForNodeFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
+        items.forEach( item => {
+            let id = idForNodeFunc(item);
+            itemsToDeleteById[id] = item;
+        });
+
+        let deletedCount = 0;
+
+        this.forEachBlockInOrder( block => {
+            let startRow = block.getStartRow();
+            let endRow = block.getEndRow();
+
+            for (let rowIndex = startRow; rowIndex<endRow; rowIndex++) {
+
+                let rowNode = block.getRowUsingLocalIndex(rowIndex, true);
+                if (!rowNode) { continue; }
+
+                let deleteThisRow = !!itemsToDeleteById[rowNode.id];
+                if (deleteThisRow) {
+                    block.setRowNode(rowIndex, rowNode);
+                    deletedCount++;
+                    block.setDirty();
+                    continue;
+                }
+
+                // if rows were deleted, then we need to move this row node to
+                // it's new location
+                if (deletedCount>0) {
+                    block.setDirty();
+                    let newIndex = rowIndex - deletedCount;
+
+                    let blockId = Math.floor(newIndex / this.cacheParams.blockSize);
+                    let blockToInsert = this.getBlock(blockId);
+                    if (blockToInsert) {
+                        blockToInsert.setRowNode(newIndex, rowNode);
+                    }
+                }
+            }
+
+        });
+
+        if (this.isMaxRowFound()) {
+            this.hack_setVirtualRowCount(this.getVirtualRowCount() - deletedCount);
+        }
+
+        this.onCacheUpdated();
+
+        let event: RowDataUpdatedEvent = {
+            type: Events.EVENT_ROW_DATA_UPDATED,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi()
+        };
+
+        this.eventService.dispatchEvent(event);
+    }
+
+    public addToCache(items: any[], indexToInsert: number): void {
+        let newNodes: RowNode[] = [];
+        this.forEachBlockInReverseOrder( block => {
+            let pageEndRow = block.getEndRow();
+
+            // if the insertion is after this page, then this page is not impacted
+            if (pageEndRow <= indexToInsert) {
+                return;
+            }
+
+            this.moveItemsDown(block, indexToInsert, items.length);
+            let newNodesThisPage = this.insertItems(block, indexToInsert, items);
+            newNodesThisPage.forEach(rowNode => newNodes.push(rowNode));
+        });
+
+        if (this.isMaxRowFound()) {
+            this.hack_setVirtualRowCount(this.getVirtualRowCount() + items.length);
+        }
+
+        this.onCacheUpdated();
+
+        let event: RowDataUpdatedEvent = {
+            type: Events.EVENT_ROW_DATA_UPDATED,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi()
+        };
+
+        this.eventService.dispatchEvent(event);
+    }
+
+    private moveItemsDown(block: EnterpriseBlock, moveFromIndex: number, moveCount: number): void {
+        let startRow = block.getStartRow();
+        let endRow = block.getEndRow();
+        let indexOfLastRowToMove = moveFromIndex + moveCount;
+
+        // all rows need to be moved down below the insertion index
+        for (let currentRowIndex = endRow - 1; currentRowIndex >= startRow; currentRowIndex--) {
+            // don't move rows at or before the insertion index
+            if (currentRowIndex < indexOfLastRowToMove) {
+                continue;
+            }
+
+            let indexOfNodeWeWant = currentRowIndex - moveCount;
+            let nodeForThisIndex = this.getRow(indexOfNodeWeWant, true);
+
+            if (nodeForThisIndex) {
+                block.setRowNode(currentRowIndex, nodeForThisIndex);
+            } else {
+                block.setBlankRowNode(currentRowIndex);
+                block.setDirty();
+            }
+        }
+    }
+
+    private insertItems(block: EnterpriseBlock, indexToInsert: number, items: any[]): RowNode[] {
+        let pageStartRow = block.getStartRow();
+        let pageEndRow = block.getEndRow();
+        let newRowNodes: RowNode[] = [];
+
+        // next stage is insert the rows into this page, if applicable
+        for (let index = 0; index < items.length; index++) {
+            let rowIndex = indexToInsert + index;
+
+            let currentRowInThisPage = rowIndex >= pageStartRow && rowIndex < pageEndRow;
+
+            if (currentRowInThisPage) {
+                let dataItem = items[index];
+                let newRowNode = block.setNewData(rowIndex, dataItem);
+                newRowNodes.push(newRowNode);
+            }
+        }
+
+        return newRowNodes;
+    }
 }
 
