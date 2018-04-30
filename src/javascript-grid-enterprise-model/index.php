@@ -8,6 +8,9 @@ include '../documentation-main/documentation_header.php';
 
 <h1 class="heading-enterprise"> Enterprise Row Model </h1>
 
+
+<?= example('Infinite Scroll', 'infinite-scroll', 'generated', array("enterprise" => 1)) ?>
+
 <p class="lead">
     The Enterprise Row Model is arguably the most powerful of the row models in ag-Grid
     and presents the ultimate 'big data' user experience, allowing the user to
