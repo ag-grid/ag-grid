@@ -361,6 +361,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
             let startRow = block.getStartRow();
             let endRow = block.getEndRow();
 
+            let deletedCountFromThisBlock = 0;
             for (let rowIndex = startRow; rowIndex<endRow; rowIndex++) {
 
                 let rowNode = block.getRowUsingLocalIndex(rowIndex, true);
@@ -368,7 +369,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
 
                 let deleteThisRow = !!itemsToDeleteById[rowNode.id];
                 if (deleteThisRow) {
-                    block.setRowNode(rowIndex, rowNode);
+                    deletedCountFromThisBlock++;
                     deletedCount++;
                     block.setDirty();
                     continue;
@@ -388,6 +389,11 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
                 }
             }
 
+            if (deletedCountFromThisBlock>0) {
+                for (let i = deletedCountFromThisBlock; i>0; i--) {
+                    block.setBlankRowNode(endRow-i);
+                }
+            }
         });
 
         if (this.isMaxRowFound()) {

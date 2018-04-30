@@ -444,6 +444,7 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
 
     public removeFromCache(route: string[], items: any[]): void {
         this.executeOnCache(route, cache => cache.removeFromCache(items) );
+        this.rowNodeBlockLoader.checkBlockToLoad();
     }
 
     public addToCache(route: string[], items: any[], index: number): void {
