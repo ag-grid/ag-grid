@@ -17,17 +17,19 @@ export class RowContainerComponent {
 
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 
-    private eContainer: HTMLElement;
-    private eViewport: HTMLElement;
+    private readonly eContainer: HTMLElement;
+    private readonly eViewport: HTMLElement;
 
     // full width containers only show when no children, because they float above the normal rows,
     // it adds complexity that can be confusing when inspecting the dom when they are not needed.
-    private hideWhenNoChildren: boolean;
+    private readonly hideWhenNoChildren: boolean;
     private childCount = 0;
     private visible: boolean;
 
     private rowTemplatesToAdd: string[] = [];
     private afterGuiAttachedCallbacks: Function[] = [];
+
+    private scrollTop: number;
 
     // we ensure the rows are in the dom in the order in which they appear on screen when the
     // user requests this via gridOptions.ensureDomOrder. this is typically used for screen readers.
@@ -38,6 +40,10 @@ export class RowContainerComponent {
         this.eContainer = params.eContainer;
         this.eViewport = params.eViewport;
         this.hideWhenNoChildren = params.hideWhenNoChildren;
+    }
+
+    public setVerticalScrollPosition(verticalScrollPosition: number): void {
+        this.scrollTop = verticalScrollPosition;
     }
 
     @PostConstruct
@@ -114,6 +120,16 @@ export class RowContainerComponent {
         if (this.visible !== visible) {
             this.visible = visible;
             _.setVisible(eGui, visible);
+            // if we are showing the viewport, then the scroll is always zero,
+            // so we need to align with the other sections (ie if this is full
+            // width container, and first time showing a full width row, we need to
+            // scroll it so full width rows are show in right place alongside the
+            // body rows). without this, there was an issue with 'loading rows' for
+            // enterprise row model, as loading rows are full width, and they were
+            // not getting displayed in the right location when rows were expanded.
+            if (visible && this.eViewport) {
+                this.eViewport.scrollTop = this.scrollTop;
+            }
         }
     }
 }

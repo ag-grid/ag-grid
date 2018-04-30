@@ -1492,6 +1492,13 @@ export class GridPanel extends Component {
             this.eFullWidthViewport.scrollTop = position;
         }
 
+        // the row containers need to remember the scroll position, as if they are made
+        // hidden / shown, the scroll position is lost
+        this.rowContainerComponents.body.setVerticalScrollPosition(position);
+        this.rowContainerComponents.pinnedLeft.setVerticalScrollPosition(position);
+        this.rowContainerComponents.pinnedRight.setVerticalScrollPosition(position);
+        this.rowContainerComponents.fullWidth.setVerticalScrollPosition(position);
+
         this.redrawRowsAfterScroll();
     }
 
