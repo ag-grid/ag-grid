@@ -204,7 +204,7 @@ var DragService = (function () {
         this.onCommonMove(mouseEvent, this.mouseStartEvent);
     };
     DragService.prototype.onTouchUp = function (touchEvent) {
-        var touch = this.getFirstActiveTouch(touchEvent.changedTouches);
+        var touch = this.getFirstActiveTouch(touchEvent.targetTouches);
         // i haven't worked this out yet, but there is no matching touch
         // when we get the touch up event. to get around this, we swap in
         // the last touch. this is a hack to 'get it working' while we
