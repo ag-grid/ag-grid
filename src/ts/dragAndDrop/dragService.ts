@@ -241,7 +241,7 @@ export class DragService {
     }
 
     public onTouchUp(touchEvent: TouchEvent): void {
-        let touch = this.getFirstActiveTouch(touchEvent.targetTouches);
+        let touch = this.getFirstActiveTouch(touchEvent.changedTouches);
 
         // i haven't worked this out yet, but there is no matching touch
         // when we get the touch up event. to get around this, we swap in
