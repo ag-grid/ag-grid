@@ -218,7 +218,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
     }
 
     // gets called in a) init() above and b) by the grid
-    public getRow(displayRowIndex: number, dontCreatePage = false): RowNode {
+    public getRow(displayRowIndex: number, dontCreateBlock = false): RowNode {
 
         // this can happen if asking for a row that doesn't exist in the model,
         // eg if a cell range is selected, and the user filters so rows no longer
@@ -241,7 +241,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
         });
 
         // when we are moving rows around, we don't want to trigger loads
-        if (_.missing(block) && dontCreatePage) {
+        if (_.missing(block) && dontCreateBlock) {
             return null;
         }
 
