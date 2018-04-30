@@ -405,9 +405,6 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     }
 
     public onExpandOrContract(): void {
-
-        console.log(`onExpandOrContract`);
-
         // must use the displayedGroup, so if data was dragged down, we expand the parent, not this row
         let rowNode: RowNode = this.displayedGroup;
 
