@@ -11,33 +11,61 @@ import {IDateComp} from "../rendering/dateComponent";
 import {IEnterpriseDatasource} from "../interfaces/iEnterpriseDatasource";
 import {CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams} from "../exportParams";
 import {
-    CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditingStartedEvent, CellEditingStoppedEvent,
-    CellFocusedEvent, CellMouseDownEvent,
+    CellClickedEvent,
+    CellContextMenuEvent,
+    CellDoubleClickedEvent,
+    CellEditingStartedEvent,
+    CellEditingStoppedEvent,
+    CellFocusedEvent,
+    CellMouseDownEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
     CellValueChangedEvent,
     ColumnAggFuncChangeRequestEvent,
-    ColumnEverythingChangedEvent, ColumnGroupOpenedEvent, ColumnMovedEvent, ColumnPinnedEvent, ColumnPivotChangedEvent,
+    ColumnEverythingChangedEvent,
+    ColumnGroupOpenedEvent,
+    ColumnMovedEvent,
+    ColumnPinnedEvent,
+    ColumnPivotChangedEvent,
     ColumnPivotChangeRequestEvent,
-    ColumnPivotModeChangedEvent, ColumnResizedEvent,
-    ColumnRowGroupChangedEvent, ColumnRowGroupChangeRequestEvent,
-    ColumnValueChangedEvent, ColumnValueChangeRequestEvent, ColumnVisibleEvent, DisplayedColumnsChangedEvent,
-    DragStartedEvent, DragStoppedEvent,
-    FilterChangedEvent, FilterModifiedEvent,
-    GridColumnsChangedEvent, GridReadyEvent, ModelUpdatedEvent,
-    NewColumnsLoadedEvent, PaginationChangedEvent, PinnedRowDataChangedEvent, RangeSelectionChangedEvent,
-    RowClickedEvent, RowDataChangedEvent,
+    ColumnPivotModeChangedEvent,
+    ColumnResizedEvent,
+    ColumnRowGroupChangedEvent,
+    ColumnRowGroupChangeRequestEvent,
+    ColumnValueChangedEvent,
+    ColumnValueChangeRequestEvent,
+    ColumnVisibleEvent,
+    DisplayedColumnsChangedEvent,
+    DragStartedEvent,
+    DragStoppedEvent,
+    FilterChangedEvent,
+    FilterModifiedEvent,
+    GridColumnsChangedEvent,
+    GridReadyEvent,
+    ModelUpdatedEvent,
+    NewColumnsLoadedEvent,
+    PaginationChangedEvent,
+    PinnedRowDataChangedEvent,
+    RangeSelectionChangedEvent,
+    RowClickedEvent,
+    RowDataChangedEvent,
     RowDoubleClickedEvent,
-    RowEditingStartedEvent, RowEditingStoppedEvent,
-    RowGroupOpenedEvent, RowSelectedEvent, RowValueChangedEvent, SelectionChangedEvent, SortChangedEvent,
+    RowDragEvent,
+    RowEditingStartedEvent,
+    RowEditingStoppedEvent,
+    RowGroupOpenedEvent,
+    RowSelectedEvent,
+    RowValueChangedEvent,
+    SelectionChangedEvent,
+    SortChangedEvent,
     ViewportChangedEvent,
-    VirtualColumnsChangedEvent, VirtualRowRemovedEvent
+    VirtualColumnsChangedEvent,
+    VirtualRowRemovedEvent
 } from "../events";
 import {IComponent} from "../interfaces/iComponent";
 import {AgGridRegisteredComponentInput} from "../components/framework/componentProvider";
-import {ILoadingOverlayComp, ILoadingOverlayParams} from "../rendering/overlays/loadingOverlayComponent";
-import {INoRowsOverlayComp, INoRowsOverlayParams} from "../rendering/overlays/noRowsOverlayComponent";
-import {DraggingEvent} from "../dragAndDrop/dragAndDropService";
+import {ILoadingOverlayComp} from "../rendering/overlays/loadingOverlayComponent";
+import {INoRowsOverlayComp} from "../rendering/overlays/noRowsOverlayComponent";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
@@ -369,10 +397,10 @@ export interface GridOptions {
     onDragStarted?(event?: DragStartedEvent): void;
     onDragStopped?(event?: DragStoppedEvent): void;
     onPaginationChanged?(event?: PaginationChangedEvent): void;
-    onRowDragEnter?(event? : DraggingEvent): void;
-    onRowDragMove?(event? : DraggingEvent): void;
-    onRowDragLeave?(event? : DraggingEvent): void;
-    onRowDragEnd?(event? : DraggingEvent): void;
+    onRowDragEnter?(event? : RowDragEvent): void;
+    onRowDragMove?(event? : RowDragEvent): void;
+    onRowDragLeave?(event? : RowDragEvent): void;
+    onRowDragEnd?(event? : RowDragEvent): void;
     // deprecated
     onGridSizeChanged?(event?: any): void;
 
