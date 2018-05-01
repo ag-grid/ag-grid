@@ -125,13 +125,12 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     }
 
     private onSortChanged(): void {
-        let sortModel = this.sortController.getSortModel();
-        let groupColumnsSorted = this.autoGroupColumnIndex(sortModel) > -1;
-        if (groupColumnsSorted) {
-            this.reset();
-        } else if (this.cacheExists()) {
+        if (this.cacheExists()) {
+            let sortModel = this.extractSortModel();
+            let rowGroupColIds = this.columnController.getRowGroupColumns().map(col => col.getId());
+
             let enterpriseCache = <EnterpriseCache> this.rootNode.childrenCache;
-            enterpriseCache.refreshGroupLeafs(sortModel);
+            enterpriseCache.refreshCache(sortModel, rowGroupColIds);
         }
     }
 
@@ -477,7 +476,14 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         let sortModel = this.sortController.getSortModel();
         let rowGroupCols = this.toValueObjects(this.columnController.getRowGroupColumns());
 
-        let autoGroupIndex = this.autoGroupColumnIndex(sortModel);
+        // find index of auto group column in sort model
+        let autoGroupIndex = -1;
+        for (let i = 0; i < sortModel.length; ++i) {
+            if (sortModel[i].colId === 'ag-Grid-AutoColumn') {
+                autoGroupIndex = i;
+                break;
+            }
+        }
 
         // replace auto column with individual group columns
         if (autoGroupIndex > -1) {
@@ -494,21 +500,18 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
 
             // insert individual group columns
             for (let i = 0; i < individualGroupCols.length; i++) {
-                sortModel.splice(autoGroupIndex++, 0, individualGroupCols[i]);
+                let individualGroupCol = individualGroupCols[i];
+
+                // don't add individual group column if non group column already exists as it gets precedence
+                let sameNonGroupColumnExists = sortModel.some(sm => sm.colId === individualGroupCol.colId);
+                if (sameNonGroupColumnExists) continue;
+
+                sortModel.splice(autoGroupIndex++, 0, individualGroupCol);
             }
         }
 
         return sortModel;
     };
-
-    private autoGroupColumnIndex(sortModel: any) {
-        for (let i = 0; i < sortModel.length; ++i) {
-            if (sortModel[i].colId === 'ag-Grid-AutoColumn') {
-                return i;
-            }
-        }
-        return -1;
-    }
 
     private cacheExists(): boolean {
         return _.exists(this.rootNode) && _.exists(this.rootNode.childrenCache);

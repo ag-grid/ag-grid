@@ -487,24 +487,43 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
         return newRowNodes;
     }
 
-    public refreshGroupLeafs(sortModel: {colId: string, sort: string}[]) {
+    public refreshCache(sortModel: {colId: string, sort: string}[], rowGroupColIds: string[]) {
         let shouldPurgeCache = false;
+        let sortColIds = sortModel.map(sm => sm.colId);
+
         this.forEachBlockInOrder(block => {
+
             if (block.isGroupLevel()) {
+                let groupField = block.getGroupField();
+                let rowGroupBlock = rowGroupColIds.indexOf(groupField) > -1;
+                let sortingByGroup = sortColIds.indexOf(groupField) > -1;
+
+                if (rowGroupBlock && sortingByGroup) {
+                    // need to refresh block using updated new sort model
+                    block.updateSortModel(sortModel);
+                    shouldPurgeCache = true;
+                }
+
                 let callback = (rowNode: RowNode) => {
                     let nextCache = (<EnterpriseCache> rowNode.childrenCache);
-                    if (nextCache) nextCache.refreshGroupLeafs(sortModel);
+                    if (nextCache) nextCache.refreshCache(sortModel, rowGroupColIds);
                 };
+
                 block.forEachNodeShallow(callback, new NumberSequence(), this.getVirtualRowCount());
+
             } else {
+                // blocks containing leaf nodes need to be refreshed with new sort model
                 block.updateSortModel(sortModel);
                 shouldPurgeCache = true;
             }
         });
 
-        if (shouldPurgeCache) {
+        // if sort has been removed we also need to refresh cache
+        let cacheSortModelChanged = this.cacheParams.sortModel !== sortModel;
+        this.cacheParams.sortModel = sortModel;
+
+        if (shouldPurgeCache || cacheSortModelChanged) {
             this.purgeCache();
         }
     }
 }
-

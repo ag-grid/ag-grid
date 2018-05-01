@@ -442,4 +442,8 @@ export class EnterpriseBlock extends RowNodeBlock {
     public isGroupLevel(): boolean {
         return this.groupLevel;
     }
+
+    public getGroupField(): string {
+        return this.groupField;
+    }
 }
