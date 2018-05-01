@@ -372,6 +372,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
                     deletedCountFromThisBlock++;
                     deletedCount++;
                     block.setDirty();
+                    rowNode.clearRowTop();
                     continue;
                 }
 
