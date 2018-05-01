@@ -485,5 +485,25 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
 
         return newRowNodes;
     }
+
+    public refreshGroupLeafs(sortModel: {colId: string, sort: string}[]) {
+        let shouldPurgeCache = false;
+        this.forEachBlockInOrder(block => {
+            if (block.isGroupLevel()) {
+                let callback = (rowNode: RowNode) => {
+                    let nextCache = (<EnterpriseCache> rowNode.childrenCache);
+                    if (nextCache) nextCache.refreshGroupLeafs(sortModel);
+                };
+                block.forEachNodeShallow(callback, new NumberSequence(), this.getVirtualRowCount());
+            } else {
+                block.updateSortModel(sortModel);
+                shouldPurgeCache = true;
+            }
+        });
+
+        if (shouldPurgeCache) {
+            this.purgeCache();
+        }
+    }
 }
 

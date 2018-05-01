@@ -83,14 +83,6 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         this.logger = loggerFactory.create('EnterpriseRowModel');
     }
 
-    public isLastRowFound(): boolean {
-        if (_.exists(this.rootNode) && _.exists(this.rootNode.childrenCache)) {
-            return this.rootNode.childrenCache.isMaxRowFound();
-        } else {
-            return false;
-        }
-    }
-
     private addEventListeners(): void {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
@@ -101,6 +93,20 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
+    }
+
+    public setDatasource(datasource: IEnterpriseDatasource): void {
+        this.destroyDatasource();
+        this.datasource = datasource;
+        this.reset();
+    }
+
+    public isLastRowFound(): boolean {
+        if (this.cacheExists()) {
+            return this.rootNode.childrenCache.isMaxRowFound();
+        } else {
+            return false;
+        }
     }
 
     private onColumnEverything(): void {
@@ -119,7 +125,14 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     }
 
     private onSortChanged(): void {
-        this.reset();
+        let sortModel = this.sortController.getSortModel();
+        let groupColumnsSorted = this.autoGroupColumnIndex(sortModel) > -1;
+        if (groupColumnsSorted) {
+            this.reset();
+        } else if (this.cacheExists()) {
+            let enterpriseCache = <EnterpriseCache> this.rootNode.childrenCache;
+            enterpriseCache.refreshGroupLeafs(sortModel);
+        }
     }
 
     private onValueChanged(): void {
@@ -215,12 +228,6 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
             this.rowNodeBlockLoader.destroy();
             this.rowNodeBlockLoader = null;
         }
-    }
-
-    public setDatasource(datasource: IEnterpriseDatasource): void {
-        this.destroyDatasource();
-        this.datasource = datasource;
-        this.reset();
     }
 
     private toValueObjects(columns: Column[]): ColumnVO[] {
@@ -323,8 +330,7 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     }
 
     public updateRowIndexesAndBounds(): void {
-        let cacheExists = _.exists(this.rootNode) && _.exists(this.rootNode.childrenCache);
-        if (cacheExists) {
+        if (this.cacheExists()) {
             // NOTE: should not be casting here, the RowModel should use IEnterpriseRowModel interface?
             let enterpriseCache = <EnterpriseCache> this.rootNode.childrenCache;
             this.resetRowTops(enterpriseCache);
@@ -346,8 +352,7 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     }
 
     public getRow(index: number): RowNode {
-        let cacheExists = _.exists(this.rootNode) && _.exists(this.rootNode.childrenCache);
-        if (cacheExists) {
+        if (this.cacheExists()) {
             return this.rootNode.childrenCache.getRow(index);
         } else {
             return null;
@@ -359,9 +364,8 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     }
 
     public getPageLastRow(): number {
-        let cacheExists = _.exists(this.rootNode) && _.exists(this.rootNode.childrenCache);
         let lastRow: number;
-        if (cacheExists) {
+        if (this.cacheExists()) {
             // NOTE: should not be casting here, the RowModel should use IEnterpriseRowModel interface?
             let enterpriseCache = <EnterpriseCache> this.rootNode.childrenCache;
             lastRow = enterpriseCache.getDisplayIndexEnd() - 1;
@@ -377,10 +381,7 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     }
 
     public getRowBounds(index: number): RowBounds {
-
-        let cacheMissing = _.missing(this.rootNode) || _.missing(this.rootNode.childrenCache);
-
-        if (cacheMissing) {
+        if (!this.cacheExists()) {
             return {
                 rowTop: 0,
                 rowHeight: this.rowHeight
@@ -392,22 +393,16 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     }
 
     public getRowIndexAtPixel(pixel: number): number {
-
         if (pixel === 0) return 0;
 
-        let cacheMissing = _.missing(this.rootNode) || _.missing(this.rootNode.childrenCache);
-
-        if (cacheMissing) return 0;
+        if (!this.cacheExists()) return 0;
 
         let enterpriseCache = <EnterpriseCache> this.rootNode.childrenCache;
-        let result = enterpriseCache.getRowIndexAtPixel(pixel);
-
-        return result;
+        return enterpriseCache.getRowIndexAtPixel(pixel);
     }
 
     public getCurrentPageHeight(): number {
-        let pageHeight = this.rowHeight * this.getRowCount();
-        return pageHeight;
+        return this.rowHeight * this.getRowCount();
     }
 
     public isEmpty(): boolean {
@@ -423,13 +418,13 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     }
 
     public forEachNode(callback: (rowNode: RowNode)=>void): void {
-        if (this.rootNode && this.rootNode.childrenCache) {
+        if (this.cacheExists()) {
             this.rootNode.childrenCache.forEachNodeDeep(callback, new NumberSequence());
         }
     }
 
     private executeOnCache(route: string[], callback: (cache: EnterpriseCache)=>void) {
-        if (this.rootNode && this.rootNode.childrenCache) {
+        if (this.cacheExists()) {
             let topLevelCache = <EnterpriseCache> this.rootNode.childrenCache;
             let cacheToPurge = topLevelCache.getChildCache(route);
             if (cacheToPurge) {
@@ -482,34 +477,40 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         let sortModel = this.sortController.getSortModel();
         let rowGroupCols = this.toValueObjects(this.columnController.getRowGroupColumns());
 
-        // find index of auto group column in sort model
-        let index = -1;
-        for (let i = 0; i < sortModel.length; ++i) {
-            if (sortModel[i].colId === 'ag-Grid-AutoColumn') {
-                index = i;
-                break;
-            }
-        }
+        let autoGroupIndex = this.autoGroupColumnIndex(sortModel);
 
         // replace auto column with individual group columns
-        if (index > -1) {
+        if (autoGroupIndex > -1) {
             let individualGroupCols =
                 rowGroupCols.map(group => {
                     return {
                         colId: group.field,
-                        sort: sortModel[index].sort
+                        sort: sortModel[autoGroupIndex].sort
                     }
                 });
 
             // remove auto group column
-            sortModel.splice(index, 1);
+            sortModel.splice(autoGroupIndex, 1);
 
             // insert individual group columns
             for (let i = 0; i < individualGroupCols.length; i++) {
-                sortModel.splice(index++, 0, individualGroupCols[i]);
+                sortModel.splice(autoGroupIndex++, 0, individualGroupCols[i]);
             }
         }
 
         return sortModel;
     };
+
+    private autoGroupColumnIndex(sortModel: any) {
+        for (let i = 0; i < sortModel.length; ++i) {
+            if (sortModel[i].colId === 'ag-Grid-AutoColumn') {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private cacheExists(): boolean {
+        return _.exists(this.rootNode) && _.exists(this.rootNode.childrenCache);
+    }
 }

@@ -411,6 +411,10 @@ export class EnterpriseBlock extends RowNodeBlock {
         return params;
     }
 
+    public updateSortModel(sortModel: {colId: string, sort: string}[]) {
+        this.params.sortModel = sortModel;
+    }
+
     public isDisplayIndexInBlock(displayIndex: number): boolean {
         return displayIndex >= this.displayIndexStart && displayIndex < this.displayIndexEnd;
     }
@@ -433,5 +437,9 @@ export class EnterpriseBlock extends RowNodeBlock {
 
     public getBlockTop(): number {
         return this.blockTop;
+    }
+
+    public isGroupLevel(): boolean {
+        return this.groupLevel;
     }
 }
