@@ -80,7 +80,7 @@ var gridOptions = {
     enableColResize: true,
     enableSorting: true,
     enableFilter: true,
-    domLayout: 'autoHeight',
+    gridAutoHeight: true,
     onGridReady: function() {
         document.querySelector('#currentRowCount').innerHTML = 5;
     }
