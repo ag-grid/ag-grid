@@ -408,7 +408,7 @@ class AutoScrollService {
     public check(mouseEvent: MouseEvent): void {
 
         // we don't do ticking if grid is auto height
-        if (this.gridOptionsWrapper.isAutoHeight()) { return; }
+        if (this.gridOptionsWrapper.isGridAutoHeight()) { return; }
 
         let rect: ClientRect = this.gridPanel.getBodyClientRect();
 
