@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Datagrid for Angular. Packed with features that your users need with the performance you expect.";
+$pageTitle = "Datagrid for Angular. Packed with features and the performance you expect.";
 $pageDescription = "A feature rich data grid designed for Enterprise applications. Easily integrate with Angular to deliver filtering, grouping, aggregation, pivoting and much more. Try our Community version now or take a free 2 month trial of Enterprise Version.";
 $pageGroup = "basics";
 include '../landing-pages/header.php';
@@ -88,19 +88,19 @@ include '../landing-pages/header.php';
 
 <h2>How Do I Get Started?</h2>
 
-<p>We have put together a detailed guide on <a href="../react-getting-started/">Getting Started with React and ag-Grid</a>. This covers getting up and running with ag-Grid Community and then adding ag-Grid Enterprise.</p>
+<p>We have put together a detailed guide on <a href="https://www.ag-grid.com/angular-getting-started/">Getting Started with Angular and ag-Grid</a>. This covers getting up and running with ag-Grid Community and then adding ag-Grid Enterprise.</p>
 
 <h2>What About Detailed Guides and Examples?</h2>
 
 <p>We have created a number of more detailed guides as follows:</p>
 
 <ul>
-    <li><a href="../react-more-details/">ag-Grid React Overview</a></li>
-    <li><a href="../react-redux-integration-pt1/">Redux Integration - Part 1</a></li>
-    <li><a href="../react-redux-integration-pt2/">Redux Integration - Part 2</a></li>
+    <li><a href="https://www.ag-grid.com/angular-more-details/">ag-Grid Angular Overview</a></li>
+    <li><a href="https://www.ag-grid.com/example-angular-rxjs/">Angular Component using RxJs Example</a></li>
+    <li><a href="</a></li>
 </ul>
 
-<p>In addition to the above, you can find a <a href="../example-react-redux/">live example of ag-Grid / Redux integration</a> in our examples section.</p>
+<p></p>
 
 </div>
 

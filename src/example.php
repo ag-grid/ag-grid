@@ -28,52 +28,57 @@ meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance
 <div id="example-toolbar">
     <div>
         <div>
+            <span>Data Size:</span>
+            <select onchange="onDataSizeChanged(this.value)" id="data-size"
+                    style="color: #333;">
+                <option value=".1x22">100 Rows, 22 Cols</option>
+                <option value="1x22">1,000 Rows, 22 Cols</option>
+                <option value="10x100">10,000 Rows, 100 Cols</option>
+                <option value="100x22">100,000 Rows, 22 Cols</option>
+            </select>
 
-            <div style="padding: 5px 5px 6px 5px;">
+            <span id="message" style="margin-left: 10px;">
+                <i class="fa fa-spinner fa-pulse fa-fw margin-bottom"></i>
+            </span>
+        </div>
+        <div>
+            <span class="hide-when-small">Theme:</span>
 
-                <!-- First row of header, has table options -->
-                <div style="padding: 4px;">
-                    <input placeholder="Filter..." type="text"
-                           oninput="onFilterChanged(this.value)"
-                           ondblclick="filterDoubleClicked(event)"
-                           class="hide-when-small"
-                           style="color: #333; width: 150px;"
-                    />
-
-                    <span style="padding-left: 20px;">Data Size:</span>
-                    <select onchange="onDataSizeChanged(this.value)"
-                            style="color: #333;">
-                        <option value=".1x22">100 Rows, 22 Cols</option>
-                        <option value="1x22">1,000 Rows, 22 Cols</option>
-                        <option value="10x100">10,000 Rows, 100 Cols</option>
-                        <option value="100x22">100,000 Rows, 22 Cols</option>
-                    </select>
-
-                    <span style="padding-left: 20px;" class="hide-when-small">Theme:</span>
-
-                    <select onchange="onThemeChanged(this.value)" style="width: 90px; color: #333;"
-                            class="hide-when-small">
-                        <option value="">-none-</option>
-                        <option value="ag-theme-balham" selected>Balham</option>
-                        <option value="ag-theme-balham-dark">Balham (dark)</option>
-                        <option value="ag-theme-material">Material</option>
-                    </select>
-
-                    <span id="message" style="margin-left: 10px;">
-                        <i class="fa fa-spinner fa-pulse fa-fw margin-bottom"></i>
-                        <span id="messageText"></span>
-                    </span>
-
-                </div>
-            </div>
-
+            <select onchange="onThemeChanged(this.value)" style="width: 90px; color: #333;"
+                    class="hide-when-small">
+                <option value="">-none-</option>
+                <option value="ag-theme-balham" selected>Balham</option>
+                <option value="ag-theme-balham-dark">Balham (dark)</option>
+                <option value="ag-theme-material">Material</option>
+            </select>
         </div>
 
-        <div>
+        <div id="features-overlay" style="flex: 0;  margin-left: auto;">
+            <a style=" white-space: nowrap;" href="#" @click.prevent="toggleTutorial">Walk me through the features</a>
+            <router-view></router-view>
+        </div>
+
+        <div style="flex: 0; align-self: flex-end; white-space: nowrap;">
             <a href="#" id="videoLink" data-toggle="modal" data-target="#videoModal">Take video tour</a>
         </div>
     </div>
 </div>
+
+<div id="search-toolbar">
+    <div class="row">
+        <label for="global-filter" style="margin-right: 1rem; transform:translatey(5px);">Filter:</label>
+        <input 
+           placeholder="Type text from any column..." type="text"
+           oninput="onFilterChanged(this.value)"
+           ondblclick="filterDoubleClicked(event)"
+           class="hide-when-small"
+           id="global-filter"
+           style="flex: 1"
+        />
+    </div>
+</div>
+
+<span id="messageText"></span>
 
 <!-- The table div -->
 <div id="grid-wrapper" style="padding: 1rem;">
@@ -115,5 +120,11 @@ meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
 <script src="dist/homepage.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+<script src="tutorial.js"></script>
+
+
+
 </body>
 </html>
