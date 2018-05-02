@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Aurelia Datagrid: Packed with features that your users need with the performance you expect";
+$pageTitle = "Aurelia Datagrid: Packed with features and the performance you expect";
 $pageDescription = "A feature rich data grid designed for Enterprise applications. Easily integrate with Aurelia to deliver filtering, grouping, aggregation, pivoting and much more. Try our Community version now or take a free 2 month trial of Enterprise Version.";
 $pageKeyboards = "Aurelia Datagrid";
 $pageGroup = "basics";
