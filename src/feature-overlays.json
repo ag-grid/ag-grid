@@ -1,0 +1,50 @@
+[
+    {
+        "title": "Performance",
+        "slides": [
+            { 
+                "content": "ag-Grid is designed to be performant with large amounts of data. To stress-test the demo, select '100,000 rows' from the Data dropdown" ,
+                "highlightSelector": ""#example-toolbar > div > div:nth-child(1) > div > div > select:nth-child(3)"
+            }
+        ]
+
+    }, 
+    {
+        "title": "Grouping / Aggregation", 
+        "slides": [
+            {
+                "content": "ag-Grid allows the end-user to group the data by specific columns. To group the data, drag the 'Country' column header to the row group area.",
+                "highlightSelector": [
+                    "#myGrid > div > div:nth-child(1) > div.ag-column-drop.ag-font-style.ag-column-drop-horizontal.ag-column-drop-row-group > span",
+                    "#myGrid > div > div.ag-root-wrapper-body > div.ag-root.ag-font-style > div.ag-header > div.ag-header-viewport > div > div:nth-child(2) > div:nth-child(3) > div.ag-cell-label-container.ag-header-cell-sorted-none > div"
+                ]
+            }, 
+            {
+                "content": "Alternatively, you can group by dragging a column from the tool panel to the tool panel row group area.",
+                "highlightSelector": [
+                    "#myGrid > div > div.ag-root-wrapper-body > div.ag-tool-panel > div.ag-column-panel > div.ag-column-panel-center > div.ag-column-select-panel > div.ag-column-container > div:nth-child(4) > span.ag-column-drag",
+                    "#myGrid > div > div.ag-root-wrapper-body > div.ag-tool-panel > div.ag-column-panel > div.ag-column-panel-center > div.ag-column-drop.ag-font-style.ag-column-drop-vertical.ag-column-drop-row-group > span"
+                ]
+            }, 
+            {
+                "content": "Once grouped, you can display aggregation values for given column. To aggregate a given column, drag a column to the aggregation area.",
+                "highlightSelector": [
+                    "#myGrid > div > div.ag-root-wrapper-body > div.ag-tool-panel > div.ag-column-panel > div.ag-column-panel-center > div.ag-column-select-panel > div.ag-column-container > div:nth-child(15) > span.ag-column-drag",
+                    "#myGrid > div > div.ag-root-wrapper-body > div.ag-tool-panel > div.ag-column-panel > div.ag-column-panel-center > div.ag-column-drop.ag-font-style.ag-column-drop-vertical.ag-column-drop-values > span"
+                ]
+            },
+            {
+                "content": "You can also select value aggregation function for a given column from the column menu (visible on mouse over)",
+                "highlightSelector": "#myGrid > div > div.ag-root-wrapper-body > div.ag-root.ag-font-style > div.ag-header > div.ag-header-viewport > div > div:nth-child(2) > div:nth-child(6) > div.ag-cell-label-container.ag-header-cell-sorted-none > span"
+            }
+        ]
+    }, 
+    {
+        "title": "Filtering",
+        "slides": [
+            {
+                "content": "ag-Grid comes with an extensive set of built-in column filter types. "
+            }
+        ]
+    }
+]
