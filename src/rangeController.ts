@@ -407,10 +407,8 @@ class AutoScrollService {
 
     public check(mouseEvent: MouseEvent): void {
 
-        // we don't do ticking if doing forPrint or autoHeight
-        if (!this.gridOptionsWrapper.isNormalDomLayout()) {
-            return;
-        }
+        // we don't do ticking if grid is auto height
+        if (this.gridOptionsWrapper.isAutoHeight()) { return; }
 
         let rect: ClientRect = this.gridPanel.getBodyClientRect();
 
