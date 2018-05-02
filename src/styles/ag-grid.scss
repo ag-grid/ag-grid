@@ -82,13 +82,6 @@ ag-grid-aurelia {
     user-select: none; // disable user mouse selection
 }
 
-.ag-layout-normal {
-    height: 100%;
-}
-
-.ag-layout-auto-height {
-}
-
 .ag-popup-backdrop {
     height: 100%;
     left: 0;
@@ -128,22 +121,11 @@ ag-grid-aurelia {
     flex: 1;
 }
 
-.ag-layout-normal .ag-header-row {
+.ag-header-row {
     position: absolute;
 }
 
-.ag-layout-normal .ag-header-container {
-    box-sizing: border-box;
-    height: 100%;
-    position: relative;
-    white-space: nowrap;
-}
-
-.ag-layout-auto-height .ag-header-row {
-    position: absolute;
-}
-
-.ag-layout-auto-height .ag-header-container {
+.ag-header-container {
     box-sizing: border-box;
     height: 100%;
     position: relative;
@@ -315,45 +297,39 @@ ag-grid-aurelia {
 
 .ag-column-panel-center {
     display: flex;
-    max-height: 100vh;
     min-height: 400px;
     flex-direction: column;
     flex-grow: 1;
     overflow-x: hidden;
+    max-height: 100vh;
+}
+
+.ag-layout-auto-height .ag-column-panel-center {
+}
+
+.ag-layout-normal .ag-column-panel-center {
 }
 
 .ag-body {
     box-sizing: border-box;
+    display: flex;
+    position: relative; // needed so rows translate is relative to this container
 }
 
 .ag-layout-normal .ag-body {
     flex: 1;
     height: 0px; // that's the min height, 'flex 1' then extends it to take all available space
     min-height: 0px; // min-height needed for firefox
-    display: flex;
-    position: relative;
-}
-
-.ag-layout-auto-height .ag-body {
-    display: flex;
-    flex-direction: row;
-    //position: absolute;
 }
 
 // we want the pinned left to always be on the left, and the pinned right
 // always to be on the right. hence we do row-reverse for rtl, otherwise having
 // RTL applied will reverse the order of the flex layout (and invert what's left and right)
-.ag-layout-normal.ag-rtl .ag-body { flex-direction: row-reverse; }
-.ag-layout-normal.ag-ltr .ag-body { flex-direction: row; }
+ag-rtl .ag-body { flex-direction: row-reverse; }
+ag-ltr .ag-body { flex-direction: row; }
 
-.ag-layout-auto-height.ag-rtl .ag-body { flex-direction: row-reverse; }
-.ag-layout-auto-height.ag-ltr .ag-body { flex-direction: row; }
-
-.ag-layout-normal.ag-rtl .ag-floating-top { flex-direction: row-reverse; }
-.ag-layout-normal.ag-ltr .ag-floating-top { flex-direction: row; }
-
-.ag-layout-normal.ag-rtl .ag-floating-bottom { flex-direction: row-reverse; }
-.ag-layout-normal.ag-ltr .ag-floating-bottom { flex-direction: row; }
+.ag-rtl .ag-floating-top { flex-direction: row-reverse; }
+.ag-ltr .ag-floating-top { flex-direction: row; }
 
 // we don't want right and left pinned flipped when doing RTL
 .ag-ltr .ag-header { flex-direction: row; }
@@ -368,9 +344,6 @@ ag-grid-aurelia {
     display: flex;
 }
 
-.ag-layout-normal .ag-floating-top {
-}
-
 .ag-pinned-left-floating-top {
     box-sizing: border-box;
     display: inline-block;
@@ -378,19 +351,11 @@ ag-grid-aurelia {
     position: relative; // otherwise the % width of children is not relative to this element
 }
 
-.ag-layout-normal .ag-pinned-left-floating-top {
-    height: 100%;
-}
-
 .ag-pinned-right-floating-top {
     box-sizing: border-box;
     display: inline-block;
     overflow: hidden;
     position: relative; // otherwise the % width of children is not relative to this element
-}
-
-.ag-layout-normal .ag-pinned-right-floating-top {
-    height: 100%;
 }
 
 .ag-floating-top-viewport {
@@ -409,7 +374,6 @@ ag-grid-aurelia {
     box-sizing: border-box;
     position: relative;
     white-space: nowrap;
-    //height: 100%
 }
 
 .ag-floating-bottom {
@@ -419,9 +383,6 @@ ag-grid-aurelia {
     width: 100%;
     position: relative;
     display: flex;
-}
-
-.ag-layout-normal .ag-floating-bottom {
 }
 
 .ag-pinned-left-floating-bottom {
@@ -474,25 +435,13 @@ ag-grid-aurelia {
     position: relative;
 }
 
-.ag-layout-normal .ag-pinned-left-cols-viewport-wrapper {
+.ag-pinned-left-cols-viewport-wrapper {
     height: 100%;
     overflow: hidden;
 }
 
-.ag-layout-normal .ag-pinned-right-cols-viewport-wrapper {
+.ag-body-viewport-wrapper {
     height: 100%;
-    overflow: hidden;
-}
-
-.ag-layout-normal .ag-body-viewport-wrapper {
-    height: 100%;
-    width: 0px; // mind width, flex grows the center to fit
-    min-width: 0px; // width didn't do the trick in firefox, so needed min-width also
-    flex: 1;
-    overflow: hidden;
-}
-
-.ag-layout-auto-height .ag-body-viewport-wrapper {
     width: 0px; // mind width, flex grows the center to fit
     min-width: 0px; // width didn't do the trick in firefox, so needed min-width also
     flex: 1;
@@ -567,16 +516,12 @@ ag-grid-aurelia {
     pointer-events: all;
 }
 
-.ag-layout-normal .ag-body-container {
+.ag-body-container {
     display: inline-block;
     margin-bottom: -2px;
     position: relative;
 }
 
-.ag-layout-auto-height .ag-body-container {
-    display: block;
-    position: relative;
-}
 // for animations, allows rows to slide up and down,
 .ag-row-animation .ag-row {
     transition: transform 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;
@@ -588,16 +533,7 @@ ag-grid-aurelia {
 
 .ag-row {
     box-sizing: border-box;
-}
-
-.ag-layout-normal .ag-row {
     position: absolute;
-    white-space: nowrap;
-    width: 100%;
-}
-
-.ag-layout-auto-height .ag-row {
-    position: relative; // height relative so that the cell takes the height when set to 100%
     white-space: nowrap;
     width: 100%;
 }
@@ -885,15 +821,9 @@ ag-grid-aurelia {
     width: 200px;
 }
 
-.ag-layout-normal .ag-column-panel {
-    height: 100%;
-}
-
-.ag-layout-normal .ag-column-panel-center {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
+//.ag-layout-normal .ag-column-panel {
+//    height: 100%;
+//}
 
 .ag-column-container {
     flex-grow: 1;
@@ -1090,7 +1020,6 @@ $row-group-indent-size: 10px !default;
 .ag-tool-panel {
     display: flex;
     flex-direction: row-reverse;
-    height: 100%;
     box-sizing: border-box;
 
     .ag-side-buttons {

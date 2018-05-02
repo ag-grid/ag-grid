@@ -241,18 +241,18 @@ export class RowComp extends Component {
     }
 
     private getInitialRowTopStyle() {
-        let rowTopStyle = '';
-        let setRowTop = !this.beans.gridOptionsWrapper.isAutoHeight();
-        if (setRowTop) {
+        // let rowTopStyle = '';
+        // let setRowTop = !this.beans.gridOptionsWrapper.isAutoHeight();
+        // if (setRowTop) {
             // if sliding in, we take the old row top. otherwise we just set the current row top.
             let pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
             let afterPaginationPixels = this.applyPaginationOffset(pixels);
             let afterScalingPixels = this.beans.heightScaler.getRealPixelPosition(afterPaginationPixels);
 
             // if not setting row top, then below is empty string
-            rowTopStyle = `transform: translateY(${afterScalingPixels}px); `;
-        }
-        return rowTopStyle;
+            return `transform: translateY(${afterScalingPixels}px); `;
+        // }
+        // return rowTopStyle;
     }
 
     private getRowBusinessKey(): string {
@@ -1305,10 +1305,6 @@ export class RowComp extends Component {
     }
 
     private onTopChanged(): void {
-        // top is not used in forPrint, as the rows are just laid out naturally
-        let doNotSetRowTop = this.beans.gridOptionsWrapper.isAutoHeight();
-        if (doNotSetRowTop) { return; }
-
         this.setRowTop(this.rowNode.rowTop);
     }
 

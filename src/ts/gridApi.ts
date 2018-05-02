@@ -723,6 +723,10 @@ export class GridApi {
         this.doLayout();
     }
 
+    public setGridAutoHeight(gridAutoHeight: boolean) {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GRID_AUTO_HEIGHT, gridAutoHeight);
+    }
+
     public setGroupHeaderHeight(headerHeight: number) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, headerHeight);
         this.doLayout();

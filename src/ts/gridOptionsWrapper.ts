@@ -300,9 +300,6 @@ export class GridOptionsWrapper {
     public isRowDragManaged() { return isTrue(this.gridOptions.rowDragManaged); }
     public isSuppressRowDrag() { return isTrue(this.gridOptions.suppressRowDrag); }
 
-    public isAutoHeight() { return this.isGridAutoHeight(); }
-    public isNormalDomLayout() { return !this.isGridAutoHeight(); }
-
     public isGridAutoHeight() { return isTrue(this.gridOptions.gridAutoHeight); }
 
     public isSuppressHorizontalScroll() { return isTrue(this.gridOptions.suppressHorizontalScroll); }
@@ -336,11 +333,7 @@ export class GridOptionsWrapper {
 
     public getIsFullWidthCellFunc(): (rowNode: RowNode)=> boolean { return this.gridOptions.isFullWidthCell; }
     public getFullWidthCellRendererParams() { return this.gridOptions.fullWidthCellRendererParams; }
-    public isEmbedFullWidthRows() {
-        // if autoHeight, we always embed fullWidth rows, otherwise we let the user decide
-        return this.isAutoHeight() || isTrue(this.gridOptions.embedFullWidthRows);
-    }
-
+    public isEmbedFullWidthRows() { return isTrue(this.gridOptions.embedFullWidthRows); }
     public getBusinessKeyForNodeFunc() { return this.gridOptions.getBusinessKeyForNode; }
     public getApi(): GridApi { return this.gridOptions.api; }
     public getColumnApi(): ColumnApi { return this.gridOptions.columnApi; }

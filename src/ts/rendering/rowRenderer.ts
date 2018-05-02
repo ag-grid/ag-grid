@@ -68,8 +68,6 @@ export class RowRenderer extends BeanStub {
     private floatingTopRowComps: RowComp[] = [];
     private floatingBottomRowComps: RowComp[] = [];
 
-    private autoHeight: boolean;
-
     private rowContainers: RowContainerComponents;
 
     private pinningLeft: boolean;
@@ -89,8 +87,6 @@ export class RowRenderer extends BeanStub {
 
     public registerGridComp(gridPanel: GridPanel): void {
         this.gridPanel = gridPanel;
-
-        this.autoHeight = this.gridOptionsWrapper.isAutoHeight();
 
         this.rowContainers = this.gridPanel.getRowContainers();
         this.addDestroyableEventListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
@@ -274,12 +270,8 @@ export class RowRenderer extends BeanStub {
 
         this.scrollToTopIfNewData(params);
 
-        // never keep rendered rows if doing forPrint or autoHeight, as we do not use 'top' to
-        // position the rows (it uses normal flow), so we have to remove
-        // all rows and insert them again from scratch
-        let rowsUsingFlow = this.autoHeight;
-        let recycleRows = rowsUsingFlow ? false : params.recycleRows;
-        let animate = rowsUsingFlow ? false : params.animate && this.gridOptionsWrapper.isAnimateRows();
+        let recycleRows = params.recycleRows;
+        let animate = params.animate && this.gridOptionsWrapper.isAnimateRows();
 
         let rowsToRecycle: { [key: string]: RowComp } = this.binRowComps(recycleRows);
 

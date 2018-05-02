@@ -732,7 +732,7 @@ export class GridPanel extends Component {
     //    if row is already in view, grid does not scroll
     public ensureIndexVisible(index: any, position?: string) {
         // if for print or auto height, everything is always visible
-        if (this.gridOptionsWrapper.isAutoHeight()) { return; }
+        if (this.gridOptionsWrapper.isGridAutoHeight()) { return; }
 
         let rowCount = this.paginationProxy.getTotalRowCount();
         if (typeof index !== 'number' || index < 0 || index >= rowCount) {
