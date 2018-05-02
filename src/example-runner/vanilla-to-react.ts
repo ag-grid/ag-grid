@@ -77,13 +77,14 @@ function indexTemplate(bindings, componentFilenames) {
         additionalInReady.push('params.api.sizeColumnsToFit();');
     }
 
-    const agGridTag = `<div style={{
-                boxSizing: 'border-box', 
-                height: '${bindings.gridSettings.height}', 
-                width: '${bindings.gridSettings.width}'}} 
-                className="${bindings.gridSettings.theme}">
-            <AgGridReact
+    const agGridTag = `<div 
                 id="myGrid"
+                style={{
+                    boxSizing: 'border-box', 
+                    height: '${bindings.gridSettings.height}', 
+                    width: '${bindings.gridSettings.width}'}} 
+                    className="${bindings.gridSettings.theme}">
+            <AgGridReact
                 ${componentAttributes.join('\n')}
             />
             </div>`;
