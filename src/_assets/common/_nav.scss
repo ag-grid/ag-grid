@@ -17,7 +17,11 @@
     $logo-scale: 6;
 
     #logo {
-        @extend .text-hide;
+        font: 0/0 a;
+        color: transparent;
+        text-shadow: none;
+        background-color: transparent;
+        border: 0;
 
         background-image: url("../svg/logo.svg?color1=%23FFFFFF");
         background-repeat: no-repeat;
@@ -60,7 +64,7 @@
         }
 
         .medium {
-            background-image: url('../svg/medium.svg');
+            background-image: url("../svg/medium.svg");
             background-position-x: right;
             background-position-y: 8px;
             background-repeat: no-repeat;
