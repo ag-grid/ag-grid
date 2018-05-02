@@ -92,6 +92,8 @@ export class GridOptionsWrapper {
     public static PROP_SUPPRESS_ROW_DRAG = 'suppressRowDrag';
     public static PROP_POPUP_PARENT = 'popupParent';
 
+    public static PROP_GRID_AUTO_HEIGHT = 'gridAutoHeight';
+
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
@@ -105,7 +107,6 @@ export class GridOptionsWrapper {
     private propertyEventService: EventService = new EventService();
 
     private domDataKey = '__AG_'+Math.random().toString();
-    private forPrintWarningGiven = false;
 
     private agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
         this.gridOptions.api = gridApi;
@@ -299,8 +300,10 @@ export class GridOptionsWrapper {
     public isRowDragManaged() { return isTrue(this.gridOptions.rowDragManaged); }
     public isSuppressRowDrag() { return isTrue(this.gridOptions.suppressRowDrag); }
 
-    public isAutoHeight() { return this.gridOptions.domLayout === 'autoHeight'; }
-    public isNormalDomLayout() { return !this.isAutoHeight(); }
+    public isAutoHeight() { return this.isGridAutoHeight(); }
+    public isNormalDomLayout() { return !this.isGridAutoHeight(); }
+
+    public isGridAutoHeight() { return isTrue(this.gridOptions.gridAutoHeight); }
 
     public isSuppressHorizontalScroll() { return isTrue(this.gridOptions.suppressHorizontalScroll); }
     public isSuppressLoadingOverlay() { return isTrue(this.gridOptions.suppressLoadingOverlay); }
@@ -737,6 +740,10 @@ export class GridOptionsWrapper {
         }
         if (options.domLayout==='forPrint') {
             console.warn(`ag-grid: since version 18.x, forPrint is no longer supported, as same can be achieved using autoHeight (and set the grid width accordingly). please use autoHeight instead.`);
+        }
+        if (options.domLayout==='autoHeight') {
+            console.warn(`ag-grid: since version 19.x, domLayout is gone, instead if doing auto-height, set gridAutoHeight=true.`);
+            options.gridAutoHeight = true;
         }
     }
 

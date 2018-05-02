@@ -97,15 +97,8 @@ export class GridCore extends Component {
             this.statusBar.registerGridPanel(this.gridPanel);
         }
 
-        // parts of the CSS need to know if we are in 'for print' mode or not,
-        // so we add a class to allow applying CSS based on this.
-        if (this.gridOptionsWrapper.isAutoHeight()) {
-            _.addCssClass(this.getGui(), 'ag-layout-auto-height');
-        } else {
-            _.addCssClass(this.getGui(), 'ag-layout-normal');
-            // kept to limit breaking changes, ag-scrolls was renamed to ag-layout-normal
-            _.addCssClass(this.getGui(), 'ag-scrolls');
-        }
+        this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_GRID_AUTO_HEIGHT, this.addLayoutClass.bind(this));
+        this.addLayoutClass();
 
         // see what the grid options are for default of toolbar
         this.showToolPanel(this.gridOptionsWrapper.isShowToolPanel());
@@ -130,6 +123,16 @@ export class GridCore extends Component {
         this.periodicallyDoLayout();
 
         this.logger.log('ready');
+    }
+
+    private addLayoutClass(): void {
+        // parts of the CSS need to know if we are in 'for print' mode or not,
+        // so we add a class to allow applying CSS based on this.
+        let autoHeight = this.gridOptionsWrapper.isGridAutoHeight();
+        this.addOrRemoveCssClass('ag-layout-auto-height', autoHeight);
+        this.addOrRemoveCssClass('ag-layout-normal', !autoHeight);
+        // kept ag-scrolls to limit breaking changes, ag-scrolls was renamed to ag-layout-normal
+        this.addOrRemoveCssClass('ag-scrolls', !autoHeight);
     }
 
     private addRtlSupport(): void {

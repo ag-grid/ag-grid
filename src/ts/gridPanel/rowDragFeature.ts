@@ -102,7 +102,7 @@ export class RowDragFeature implements DropTarget {
     }
 
     private normaliseForScroll(pixel: number): number {
-        let gridPanelHasScrolls = this.gridOptionsWrapper.isNormalDomLayout();
+        let gridPanelHasScrolls = !this.gridOptionsWrapper.isGridAutoHeight();
         if (gridPanelHasScrolls) {
             let pixelRange = this.gridPanel.getVScrollPosition();
             return pixel + pixelRange.top;

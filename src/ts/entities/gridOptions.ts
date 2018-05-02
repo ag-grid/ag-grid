@@ -167,6 +167,7 @@ export interface GridOptions {
     maxConcurrentDatasourceRequests?: number;
     maxBlocksInCache?: number;
     purgeClosedRowNodes?: boolean;
+    gridAutoHeight?: boolean;
     domLayout?: string;
     suppressChangeDetection?: boolean;
     aggregateOnlyChangedColumns?: boolean;

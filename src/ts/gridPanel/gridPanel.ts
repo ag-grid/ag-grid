@@ -198,7 +198,6 @@ export class GridPanel extends Component {
 
     // properties we use a lot, so keep reference
     private enableRtl: boolean;
-    private autoHeight: boolean;
     private scrollWidth: number;
     private scrollClipWidth: number;
 
@@ -268,7 +267,6 @@ export class GridPanel extends Component {
         this.instantiate(this.context);
 
         // makes code below more readable if we pull 'forPrint' out
-        this.autoHeight = this.gridOptionsWrapper.isAutoHeight();
         this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
         this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
@@ -1291,12 +1289,6 @@ export class GridPanel extends Component {
         totalHeaderHeight += headerHeight;
 
         this.headerRootComp.setHeight(totalHeaderHeight);
-
-        // if we are doing auto-height, we only size the header, we don't size the
-        // other parts as we use the normal browser layout for that
-        if (this.autoHeight) {
-            return;
-        }
 
         let floatingTopHeight = this.pinnedRowModel.getPinnedTopTotalHeight();
         let floatingBottomHeight = this.pinnedRowModel.getPinnedBottomTotalHeight();
