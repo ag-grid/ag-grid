@@ -100,7 +100,7 @@ include '../landing-pages/header.php';
     <li><a href="</a></li>
 </ul>
 
-<p>In addition to the above, you can find a <a href="../example-react-redux/">live example of ag-Grid / Redux integration</a> in our examples section.</p>
+<p></p>
 
 </div>
 
