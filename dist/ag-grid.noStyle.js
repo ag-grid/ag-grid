@@ -8,7 +8,7 @@
 		exports["agGrid"] = factory();
 	else
 		root["agGrid"] = factory();
-})(this, function() {
+})(typeof self !== 'undefined' ? self : this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -21908,7 +21908,13 @@ var GridSerializer = (function () {
         }
         this.pinnedRowModel.forEachPinnedTopRow(processRow);
         if (isPivotMode) {
-            this.rowModel.forEachPivotNode(processRow);
+            if (this.rowModel.forEachPivotNode) {
+                this.rowModel.forEachPivotNode(processRow);
+            }
+            else {
+                //Must be enterprise, so we can just loop through all the nodes
+                this.rowModel.forEachNode(processRow);
+            }
         }
         else {
             // onlySelectedAllPages: user doing pagination and wants selected items from
