@@ -251,7 +251,12 @@ export class GridSerializer {
         this.pinnedRowModel.forEachPinnedTopRow(processRow);
 
         if (isPivotMode) {
-            (<InMemoryRowModel>this.rowModel).forEachPivotNode(processRow);
+            if ((<any>this.rowModel).forEachPivotNode){
+                (<InMemoryRowModel>this.rowModel).forEachPivotNode(processRow);
+            } else{
+                //Must be enterprise, so we can just loop through all the nodes
+                this.rowModel.forEachNode(processRow);
+            }
         } else {
             // onlySelectedAllPages: user doing pagination and wants selected items from
             // other pages, so cannot use the standard row model as it won't have rows from
