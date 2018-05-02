@@ -3,15 +3,15 @@ fetch('feature-overlays.json').then((response) => response.json()).then( data =>
     const Bar = { template: `
     <div>
     <div id="markers">
-         <svg id="mySVG" width="100vw" height="100vh" style="position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none;">
+         <svg id="mySVG" width="100vw" height="100vh" style="position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; width: 100vw; height: 100vh">
             <defs>
-                <mask id="myMask" x="0" y="0" width="100vw" height="100vh" >
-                    <rect width="100vw" height="100vh" fill="white"/>
-                    <rect v-for="marker in markers" v-bind:style="markerStyle(marker)" fill="black" rx="50%"/>
+                <mask id="myMask" x="0" y="0" width="100%" height="100%" >
+                    <rect width="100%" height="100%" fill="white"/>
+                    <rect v-for="marker in markers" v-bind:x="markerStyle(marker).x" v-bind:y="markerStyle(marker).y" v-bind:width="markerStyle(marker).width" v-bind:height="markerStyle(marker).height" fill="black" rx="50%"/>
                 </mask>
             </defs>
 
-            <rect x="0" y="0" width="100vw" height="100vh" fill="rgba(0, 0, 0, 0.5)" mask="url(#myMask)"></rect>
+            <rect x="0" y="0" width="100%" height="100%" fill="rgba(0, 0, 0, 0.5)" mask="url(#myMask)"></rect>
         </svg>
     </div>
     <div class="modal fade show" tabindex="-1" role="dialog" style="display: block; pointer-events: none">
@@ -162,5 +162,5 @@ fetch('feature-overlays.json').then((response) => response.json()).then( data =>
                 }
             }
         }).$mount("#features-overlay")
-    }, 300);
+    }, 1300);
 })
