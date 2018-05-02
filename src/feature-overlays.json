@@ -47,7 +47,34 @@
         "url": "filtering",
         "slides": [
             {
-                "content": "ag-Grid comes with an extensive set of built-in column filter types. "
+                "content": "ag-Grid comes with an extensive set of built-in column filter types. The floating filter row provides quick access to the UI.",
+                "markers": [
+                    "#myGrid > div > div.ag-root-wrapper-body > div.ag-root.ag-font-style > div.ag-header > div.ag-header-viewport > div > div:nth-child(3) > div:nth-child(1)"
+                ]
+            },
+            {
+                "content": "An additional UI for filtering is provided in the column menu. Hover the column, press the hamburger icon, then select the second tab.",
+                "markers": [
+                    "#myGrid > div > div.ag-root-wrapper-body > div.ag-root.ag-font-style > div.ag-header > div.ag-header-viewport > div > div:nth-child(2) > div:nth-child(3) > div.ag-cell-label-container > span"
+                ]
+            },
+            {
+                "content": "You can also do global filtering (search like) using the grid API and an external textbox.",
+                "markers": ["#search-toolbar > div > label"]
+            }
+        ]
+    },
+    {
+        "title": "Editing",
+        "url": "editing",
+        "slides": [
+            {
+                "content": "ag-Grid allows the user to edit the data right inside the grid - double click any cell to edit its value. ",
+                "markers": [
+                    "#myGrid > div > div.ag-root-wrapper-body > div.ag-root.ag-font-style > div.ag-body.ag-row-animation > div.ag-body-viewport-wrapper > div > div > div.ag-row.ag-row-even.ag-row-level-0:nth-child(2) > div.ag-cell:nth-child(1)",
+                    "#myGrid > div > div.ag-root-wrapper-body > div.ag-root.ag-font-style > div.ag-body.ag-row-animation > div.ag-body-viewport-wrapper > div > div > div.ag-row.ag-row-even.ag-row-level-0:nth-child(2) > div.ag-cell:nth-child(2)",
+                    "#myGrid > div > div.ag-root-wrapper-body > div.ag-root.ag-font-style > div.ag-body.ag-row-animation > div.ag-body-viewport-wrapper > div > div > div.ag-row.ag-row-even.ag-row-level-0:nth-child(2) > div.ag-cell:nth-child(3)"
+                ]
             }
         ]
     }
