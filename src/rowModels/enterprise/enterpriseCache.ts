@@ -518,12 +518,21 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
             }
         });
 
-        // if sort has been removed we also need to refresh cache
-        let cacheSortModelChanged = this.cacheParams.sortModel !== sortModel;
-        this.cacheParams.sortModel = sortModel;
+        let groupSortRemoved = this.groupSortRemoved(sortModel, rowGroupColIds);
+        if (groupSortRemoved) {
+            this.cacheParams.sortModel = sortModel;
+        }
 
-        if (shouldPurgeCache || cacheSortModelChanged) {
+        if (shouldPurgeCache || groupSortRemoved) {
             this.purgeCache();
         }
+    }
+
+    private groupSortRemoved(sortModel: { colId: string; sort: string }[], rowGroupColIds: string[]): boolean {
+        let cacheSortModelChanged = this.cacheParams.sortModel !== sortModel;
+        let existingSortCols = this.cacheParams.sortModel.map((sm: { colId: string, sort: string }) => sm.colId);
+        let existingGroupColumn = rowGroupColIds.some(v=> existingSortCols.indexOf(v) >= 0);
+
+        return cacheSortModelChanged && existingGroupColumn;
     }
 }
