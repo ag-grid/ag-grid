@@ -2,9 +2,10 @@
     {
         "title": "Performance",
         "url": "performance",
+        "img": "features-overview/performance.gif",
         "slides": [
             {
-                "content": "ag-Grid is designed to be performant with large amounts of data. <br><br> To stress-test the demo, select '100,000 rows' from the Data dropdown.",
+                "content": "ag-Grid is designed to be performant with large amounts of data. To stress-test the demo, select '100,000 rows' from the Data dropdown.",
                 "markers": [{ "selector": "#data-size" }]
             }
         ]
@@ -12,6 +13,7 @@
     {
         "title": "Grouping / Aggregation",
         "url": "grouping-aggregation",
+        "img": "features-overview/grouping-aggregation.gif",
         "slides": [
             {
                 "content": "ag-Grid allows the end-user to group the data by specific columns. To group the data, drag the 'Country' column header to the row group area.",
@@ -65,6 +67,7 @@
     {
         "title": "Filtering",
         "url": "filtering",
+        "img": "features-overview/filtering.gif",
         "slides": [
             {
                 "content": "ag-Grid comes with an extensive set of built-in column filter types. The floating filter row provides quick access to the UI.",
@@ -93,6 +96,7 @@
     {
         "title": "Editing",
         "url": "editing",
+        "img": "features-overview/editing.gif",
         "slides": [
             {
                 "content": "ag-Grid allows the user to edit the data right inside the grid - double click any cell to edit its value. ",

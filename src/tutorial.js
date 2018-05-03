@@ -4,7 +4,7 @@ fetch('feature-overlays.json').then((response) => response.json()).then( data =>
     <div>
     <div id="markers">
 
-	<div v-for="marker in markers" v-bind:style="arrowStyle(marker.selector, marker.type)">⬆</div>
+	<div v-for="marker in markers" v-bind:style="arrowStyle(marker.selector, marker.type)" v-bind:class="markerClass(marker.type)">⬆</div>
     <!--
          <svg id="mySVG" width="100vw" height="100vh" style="position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; width: 100vw; height: 100vh">
             <defs>
@@ -31,6 +31,7 @@ fetch('feature-overlays.json').then((response) => response.json()).then( data =>
               </div>
               <div class="modal-body">
                 <h3 v-html="title"></h3>
+                <div class="text-center my-2"><img v-bind:src="currentSectionImage" /></div>
                 <p v-html="content"></p>
               </div>
 
@@ -44,6 +45,14 @@ fetch('feature-overlays.json').then((response) => response.json()).then( data =>
     </div>
     `, 
         methods: {
+			markerClass: function(type) {
+				if (type == "oval") {
+                    return "oval";
+                } else {
+                    return "arrow";
+                }
+			},
+
 			arrowStyle: function(selector, type) {
                 try {
                     var rect = document.querySelector(selector).getBoundingClientRect();
@@ -103,6 +112,10 @@ fetch('feature-overlays.json').then((response) => response.json()).then( data =>
             }
         },
         computed: {
+            currentSectionImage: function() {
+                return this.currentSection.img;
+            },
+
             currentSectionUrl: {
                 get: function() {
                     return this.currentSection.url;

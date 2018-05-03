@@ -133,3 +133,32 @@ button[disabled] {
 .ag-theme-balham-dark .content-icon {
     margin-top: 4px;
 }
+
+.arrow {
+    animation: pulse 0.5s infinite;
+    animation-direction: alternate;
+}
+
+@keyframes pulse {
+    0% {
+        transform: translatey(0px);
+    }
+    100% {
+        transform: translatey(20px);
+    }
+}
+
+.oval {
+    // animation: zoom-in 2s infinite;
+}
+
+@keyframes zoom-in {
+    0% {
+        transform: scale(2, 2);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(1, 1);
+        opacity: 1;
+    }
+}
