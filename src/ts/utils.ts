@@ -1132,7 +1132,7 @@ export class Utils {
     static isUserAgentIPad(): boolean {
         if (this.isIPad === undefined) {
             // taken from https://davidwalsh.name/detect-ipad
-            this.isIPad = navigator.userAgent.match(/iPad/i) != null;
+            this.isIPad = navigator.userAgent.match(/iPad|iPhone/i) != null;
         }
         return this.isIPad;
     }
