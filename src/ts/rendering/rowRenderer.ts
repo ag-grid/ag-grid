@@ -1103,6 +1103,16 @@ export class RowRenderer extends BeanStub {
                 return null;
             }
 
+            // if editing, but cell not editable, skip cell. we do this before we do all of
+            // the 'ensure index visible' and 'flush all frames', otherwise if we are skipping
+            // a bunch of cells (eg 10 rows) then all the work on ensuring cell visible is useless
+            // (except for the last one) which causes grid to stall for a while.
+            if (startEditing) {
+                let rowNode = this.paginationProxy.getRow(nextCell.rowIndex);
+                let cellIsEditable = nextCell.column.isCellEditable(rowNode);
+                if (!cellIsEditable) { continue; }
+            }
+
             // this scrolls the row into view
             let cellIsNotFloating = _.missing(nextCell.floating);
             if (cellIsNotFloating) {
@@ -1129,11 +1139,6 @@ export class RowRenderer extends BeanStub {
             // if next cell is fullWidth row, then no rendered cell,
             // as fullWidth rows have no cells, so we skip it
             if (_.missing(nextCellComp)) {
-                continue;
-            }
-
-            // if editing, but cell not editable, skip cell
-            if (startEditing && !nextCellComp.isCellEditable()) {
                 continue;
             }
 
