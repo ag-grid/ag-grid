@@ -45,6 +45,8 @@ fetch('feature-overlays.json').then((response) => response.json()).then( data =>
     `, 
         methods: {
 			arrowStyle: function(selector, type) {
+                try {
+                    var rect = document.querySelector(selector).getBoundingClientRect();
                     var rect = document.querySelector(selector).getBoundingClientRect();
                     var padding = 20;
 
@@ -78,6 +80,10 @@ fetch('feature-overlays.json').then((response) => response.json()).then( data =>
                         */
                     }
                 }
+                } catch {
+                    console.error(`Can't find ${selector}`)
+                }
+
             },
 
             markerStyle: function(selector) {
