@@ -3,6 +3,9 @@ fetch('feature-overlays.json').then((response) => response.json()).then( data =>
     const Bar = { template: `
     <div>
     <div id="markers">
+
+	<div v-for="marker in markers" v-bind:style="arrowStyle(marker.selector, marker.type)">⬆</div>
+    <!--
          <svg id="mySVG" width="100vw" height="100vh" style="position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; width: 100vw; height: 100vh">
             <defs>
                 <mask id="myMask" x="0" y="0" width="100%" height="100%" >
@@ -11,8 +14,9 @@ fetch('feature-overlays.json').then((response) => response.json()).then( data =>
                 </mask>
             </defs>
 
-            <rect x="0" y="0" width="100%" height="100%" fill="rgba(0, 0, 0, 0.5)" mask="url(#myMask)"></rect>
+            <rect x="0" y="0" width="100%" height="100%" fill="rgba(255, 255, 255, 0.5)" mask="url(#myMask)"></rect>
         </svg>
+        -->
     </div>
     <div class="modal fade show" tabindex="-1" role="dialog" style="display: block; pointer-events: none">
           <div class="modal-dialog modal-dialog-centered" role="document">
@@ -40,6 +44,42 @@ fetch('feature-overlays.json').then((response) => response.json()).then( data =>
     </div>
     `, 
         methods: {
+			arrowStyle: function(selector, type) {
+                    var rect = document.querySelector(selector).getBoundingClientRect();
+                    var padding = 20;
+
+                if (type == "oval") {
+                    return { 
+                        top: rect.top - padding + "px",
+                        left: rect.left - padding + "px",
+                        position: "fixed",
+                        textIndent: '-20000px',
+                        overflow: 'hidden',
+                        borderRadius: "50%",
+                        border: "2px solid red",
+                        zIndex: 20,
+                        width: rect.width + padding * 2 + "px",
+                        height: rect.height + padding * 2 + "px",
+                        pointerEvents: "none"
+                    }
+                } else {
+                    return { 
+                        top: rect.top + rect.height / 2 - 12 + "px",
+                        left: rect.left + rect.width / 2 - 24 + "px",
+                        position: "fixed",
+                        fontSize: "48px",
+                        color: "red",
+                        zIndex: 20,
+                        pointerEvents: "none"
+                        /*
+                        x: rect.left - padding + "px",
+                        width: rect.width + padding * 2 + "px",
+                        height: rect.height + padding * 2 + "px",
+                        */
+                    }
+                }
+            },
+
             markerStyle: function(selector) {
                 try {
                     var rect = document.querySelector(selector).getBoundingClientRect();
