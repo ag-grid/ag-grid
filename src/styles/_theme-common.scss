@@ -4,13 +4,13 @@
 - rich select colors {
  */
 
-$ag-icons-path: './icons/' !default;
-$ag-icons-filter: 'initial' !default;
+$ag-icons-path: "./icons/" !default;
+$ag-icons-filter: "initial" !default;
 
 @mixin icon-background($icon) {
     width: 12px;
     height: 12px;
-    background: transparent url('#{$ag-icons-path}#{$icon}.svg') center no-repeat;
+    background: transparent url("#{$ag-icons-path}#{$icon}.svg") center no-repeat;
     background-size: 12px 12px;
     filter: $ag-icons-filter;
 }
@@ -22,7 +22,7 @@ $ag-icons-filter: 'initial' !default;
 $cell-padding: 2px;
 $checkbox-horizontal-margin: 4px;
 $tool-panel-box-padding: 4px 4px 10px 4px;
- 
+
 .ag-#{$ag-style} {
     .ag-numeric-cell {
         text-align: right;
@@ -40,7 +40,7 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
         .ag-header-cell-text {
             white-space: nowrap;
             overflow: hidden;
-            text-overflow: ellipsis; 
+            text-overflow: ellipsis;
         }
     }
 
@@ -94,7 +94,8 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
         background-color: transparent;
         transition: background-color 1s;
     }
-    .ag-cell {}
+    .ag-cell {
+    }
     //
     .ag-cell-not-inline-editing {
         padding: $ag-cell-padding;
@@ -134,11 +135,19 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
     $row-group-indent-size: 10px;
     // indentation loop
     @for $i from 1 to 50 {
-        .ag-ltr .ag-toolpanel-indent-#{$i} { padding-left: $i * $toolpanel-indent-size; }
-        .ag-rtl .ag-toolpanel-indent-#{$i} { padding-right: $i * $toolpanel-indent-size; }
+        .ag-ltr .ag-toolpanel-indent-#{$i} {
+            padding-left: $i * $toolpanel-indent-size;
+        }
+        .ag-rtl .ag-toolpanel-indent-#{$i} {
+            padding-right: $i * $toolpanel-indent-size;
+        }
 
-        .ag-ltr .ag-row-group-indent-#{$i} { padding-left: $i * $row-group-indent-size; }
-        .ag-rtl .ag-row-group-indent-#{$i} { padding-right: $i * $row-group-indent-size; }
+        .ag-ltr .ag-row-group-indent-#{$i} {
+            padding-left: $i * $row-group-indent-size;
+        }
+        .ag-rtl .ag-row-group-indent-#{$i} {
+            padding-right: $i * $row-group-indent-size;
+        }
     }
 
     // we use rtl and ltr below, even though it's the same style, so it propertly
@@ -202,10 +211,12 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
     .ag-large-text {
         border: $ag-border-1;
     }
-    .ag-large-textarea {}
+    .ag-large-textarea {
+    }
     //
     // HEADER SECTION
-    .ag-header-select-all, .ag-header-cell-menu-button {
+    .ag-header-select-all,
+    .ag-header-cell-menu-button {
         margin-top: 3px;
         line-height: 1rem;
     }
@@ -239,17 +250,17 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
     }
     .ag-sort-ascending-icon:empty {
         display: inline-block;
-        @include icon-background('asc');
+        @include icon-background("asc");
     }
 
     .ag-sort-descending-icon:empty {
         display: inline-block;
-        @include icon-background('desc');
+        @include icon-background("desc");
     }
 
     .ag-sort-none-icon:empty {
         display: inline-block;
-        @include icon-background('none');
+        @include icon-background("none");
     }
 
     .ag-layout-for-print .ag-header-container {
@@ -266,7 +277,7 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
         opacity: 0.5;
     }
     .ag-header-cell-moving {
-        background-color: rgb(190,190,190);
+        background-color: rgb(190, 190, 190);
     }
     .ag-ltr .ag-header-group-cell {
         border-right: $ag-border-1;
@@ -293,7 +304,7 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
     }
 
     .ag-header-cell-menu-button:empty {
-        @include icon-background('menu');
+        @include icon-background("menu");
     }
 
     .ag-ltr .ag-pinned-right-header {
@@ -435,7 +446,8 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
     .ag-menu-separator {
         border-top: 1px solid $ag-separator-color;
     }
-    .ag-menu-option {}
+    .ag-menu-option {
+    }
     //
     .ag-menu-option-active {
         background-color: $ag-menu-option-active-color;
@@ -482,7 +494,6 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
         padding: $tool-panel-box-padding;
     }
     .ag-filter-header-container {
-        
     }
     .ag-ltr .ag-selection-checkbox {
         padding-right: $checkbox-horizontal-margin;
@@ -647,14 +658,14 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
     }
 
     .ag-sort-order {
-        margin-left: .5em;
-        font-size: 0.80em;
+        margin-left: 0.5em;
+        font-size: 0.8em;
         &::before {
-            content: '(';
+            content: "(";
         }
 
         &::after {
-            content: ')';
+            content: ")";
         }
     }
 
@@ -663,4 +674,3 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
         box-sizing: border-box;
     }
 }
-
