@@ -43,9 +43,8 @@ function toId($str) {
 }
 ?>
 <div id="documentation">
-    <div id="app">
-
-    <section id="content" class="skip-left-nav">
+    <div>
+    <section id="content" class="skip-left-nav features-overview">
         <div class="container">
             <h1>Features Overview</h1>
         </div>
@@ -56,7 +55,7 @@ function toId($str) {
                 <?php foreach ($group['items'] as $index => $item) { ?>
                 <div class="row mb-5">
                     <div class="col-sm-7 <?= ($index % 2 == 0 ? 'order-1' : 'order-0') ?>">
-                        <h4 class="" id="<?=toId($item['title']) ?>"><?= $item['title'] ?></h4>
+                        <h4 class="mt-0" id="<?=toId($item['title']) ?>"><?= $item['title'] ?></h4>
                         <p class=""><?= $item['description'] ?></p>
 
                         <ul class="list-unstyled">
@@ -66,7 +65,7 @@ function toId($str) {
                         </ul>
                     </div>
 
-                    <div class="col-sm-5">
+                    <div class="col-sm-5 <?= ($index % 2 == 0 ? 'text-left' : 'text-right') ?>">
                         <img src="<?=$item['img'] ?>" height="180" width="320">
                     </div>
                 </div>
