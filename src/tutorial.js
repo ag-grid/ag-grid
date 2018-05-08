@@ -31,7 +31,6 @@ fetch('feature-overlays.json').then((response) => response.json()).then( data =>
               </div>
               <div class="modal-body">
                 <h3 v-html="title"></h3>
-                <div class="text-center my-2"><img v-bind:src="currentSectionImage" /></div>
                 <p v-html="content"></p>
               </div>
 
@@ -66,8 +65,8 @@ fetch('feature-overlays.json').then((response) => response.json()).then( data =>
                         position: "fixed",
                         textIndent: '-20000px',
                         overflow: 'hidden',
-                        borderRadius: "50%",
-                        border: "2px solid red",
+                        boxShadow: "rgb(255, 0, 0) 0 0 7px 5px",
+                        borderRadius: "3px",
                         zIndex: 20,
                         width: rect.width + padding * 2 + "px",
                         height: rect.height + padding * 2 + "px",
@@ -91,6 +90,9 @@ fetch('feature-overlays.json').then((response) => response.json()).then( data =>
                 }
                 } catch {
                     console.error(`Can't find ${selector}`)
+                    return {
+                        display: "none"
+                    }
                 }
 
             },
@@ -147,7 +149,7 @@ fetch('feature-overlays.json').then((response) => response.json()).then( data =>
             },
 
             title: function() {
-                return this.currentSection.title;
+                return `${this.currentSection.title}${this.currentSection.slides.length == 1 ? '' : ` (${this.currentSlide + 1}/${this.currentSection.slides.length})`}`;
             },
 
             showNextSlide: function() {
