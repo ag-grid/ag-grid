@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Web Component Datagrid. Packed with features and the performance you expect";
+$pageTitle = "Web Component Datagrid | Packed with features and performance";
 $pageDescription = "A feature rich data grid designed for Enterprise applications. Easily integrate with Web Components to deliver filtering, grouping, aggregation, pivoting and much more. Try our Community version now or take a free 2 month trial of Enterprise Version.";
 $pageKeyboards = "Web Component Grid";
 $pageGroup = "basics";

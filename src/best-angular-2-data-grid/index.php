@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Datagrid for Angular. Packed with features and the performance you expect.";
+$pageTitle = "Angular Datagrid | Packed with features and performance.";
 $pageDescription = "A feature rich data grid designed for Enterprise applications. Easily integrate with Angular to deliver filtering, grouping, aggregation, pivoting and much more. Try our Community version now or take a free 2 month trial of Enterprise Version.";
 $pageGroup = "basics";
 include '../landing-pages/header.php';
@@ -100,7 +100,7 @@ include '../landing-pages/header.php';
     <li><a href="</a></li>
 </ul>
 
-<p></p>
+<p>In addition to the above, you can find a <a href="../example-react-redux/">live example of ag-Grid / Redux integration</a> in our examples section.</p>
 
 </div>
 
