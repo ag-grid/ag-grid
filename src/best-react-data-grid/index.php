@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "React Datagrid | Packed with features and performance.";
-$pageDescription = "ag-Grid is designed for React 16. Lots of features with Enterprise grade performance. We have just launched Version 17 and our product is available in two versions. ag-Grid Community is free and open source while ag-Grid Enterprise can be trialled for two months without obligation. We have detailed React tutorials and How To guides and sample code for all of our features.";
+$pageDescription = "ag-Grid is designed for React 16.3.1. Lots of features with Enterprise grade performance. We have just launched Version 17.1 and our product is available in two versions. ag-Grid Community is free and open source while ag-Grid Enterprise can be trialled for two months without obligation.";
 $pageGroup = "basics";
 include '../landing-pages/header.php';
 ?>
