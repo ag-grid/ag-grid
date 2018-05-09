@@ -63,12 +63,23 @@ button[disabled] {
 
 #example-toolbar {
     @extend .container-fluid;
+    background: $blue-4;
+    border-bottom: 1px solid $blue-3;
+    margin-bottom: 2rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
 
     > div {
         @extend .full-width-row, .row;
 
-        > div:first-child {
-            @extend .col-md-9;
+        > div {
+            @extend .col-md-3;
+        }
+
+        #features-overlay {
+            > a {
+                @extend .text-right;
+            }
         }
 
         > div:last-child {
@@ -77,10 +88,19 @@ button[disabled] {
             a {
                 background: transparent url("./youtube.svg") left center no-repeat;
                 float: right;
-                margin-top: 0.8rem;
                 padding-left: 2rem;
             }
         }
+    }
+}
+
+#search-toolbar {
+    @extend .container-fluid;
+
+    > .row {
+        max-width: $max-width;
+        margin-left: auto;
+        margin-right: auto;
     }
 }
 
@@ -112,4 +132,33 @@ button[disabled] {
 .ag-theme-balham .content-icon,
 .ag-theme-balham-dark .content-icon {
     margin-top: 4px;
+}
+
+.arrow {
+    animation: pulse 0.5s infinite;
+    animation-direction: alternate;
+}
+
+@keyframes pulse {
+    0% {
+        transform: translatey(0px);
+    }
+    100% {
+        transform: translatey(20px);
+    }
+}
+
+.oval {
+    // animation: zoom-in 2s infinite;
+}
+
+@keyframes zoom-in {
+    0% {
+        transform: scale(2, 2);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(1, 1);
+        opacity: 1;
+    }
 }

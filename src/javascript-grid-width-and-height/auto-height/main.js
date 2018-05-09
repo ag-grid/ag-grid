@@ -43,6 +43,20 @@ function cbFloatingRows() {
     }
 }
 
+function setAutoHeight() {
+    gridOptions.api.setGridAutoHeight(true);
+    // auto height will get the grid to fill the height of the contents,
+    // so the grid div should have no height set, the height is dynamic.
+    document.querySelector('#myGrid').style.height = '';
+}
+
+function setFixedHeight() {
+    gridOptions.api.setGridAutoHeight(false);
+    // when auto height is off, the grid ahs a fixed height, and then the grid
+    // will provide scrollbars if the data does not fit into it.
+    document.querySelector('#myGrid').style.height = '400px';
+}
+
 var columnDefs = [
     {
         headerName: 'Core',
@@ -80,7 +94,8 @@ var gridOptions = {
     enableColResize: true,
     enableSorting: true,
     enableFilter: true,
-    domLayout: 'autoHeight',
+    gridAutoHeight: true,
+    animateRows: true,
     onGridReady: function() {
         document.querySelector('#currentRowCount').innerHTML = 5;
     }
