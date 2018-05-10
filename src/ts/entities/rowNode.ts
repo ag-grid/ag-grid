@@ -750,7 +750,8 @@ export class RowNode implements IEventEmitter {
                 updatedCount += children[i].setSelectedParams({
                     newValue: newValue,
                     clearSelection: false,
-                    tailingNodeInSequence: true
+                    tailingNodeInSequence: true,
+                    groupSelectsFiltered: groupSelectsFiltered
                 });
         }
         return updatedCount;
