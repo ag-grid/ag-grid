@@ -45,6 +45,7 @@ meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance
             <span class="hide-when-small">Theme:</span>
 
             <select onchange="onThemeChanged(this.value)" style="width: 90px; color: #333;"
+                    id="grid-theme"
                     class="hide-when-small">
                 <option value="">-none-</option>
                 <option value="ag-theme-balham" selected>Balham</option>

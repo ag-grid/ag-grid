@@ -2,7 +2,6 @@
     {
         "title": "Performance",
         "url": "performance",
-        "img": "features-overview/performance.gif",
         "slides": [
             {
                 "content": "ag-Grid is designed to be performant with large amounts of data. To stress-test the demo, select '100,000 rows' from the Data dropdown.",
@@ -13,7 +12,6 @@
     {
         "title": "Grouping / Aggregation",
         "url": "grouping-aggregation",
-        "img": "features-overview/grouping-aggregation.gif",
         "slides": [
             {
                 "content": "ag-Grid allows the end-user to group the data by specific columns. To group the data, drag the 'Country' column header to the row group area.",
@@ -67,7 +65,6 @@
     {
         "title": "Filtering",
         "url": "filtering",
-        "img": "features-overview/filtering.gif",
         "slides": [
             {
                 "content": "ag-Grid comes with an extensive set of built-in column filter types. The floating filter row provides quick access to the UI.",
@@ -96,7 +93,6 @@
     {
         "title": "Editing",
         "url": "editing",
-        "img": "features-overview/editing.gif",
         "slides": [
             {
                 "content": "ag-Grid allows the user to edit the data right inside the grid - double click any cell to edit its value. ",
@@ -112,6 +108,87 @@
                     {
                         "selector":
                             "#myGrid > div > div.ag-root-wrapper-body > div.ag-root.ag-font-style > div.ag-body.ag-row-animation > div.ag-body-viewport-wrapper > div > div > div.ag-row.ag-row-even.ag-row-level-0:nth-child(2) > div.ag-cell:nth-child(3)"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Customizable Appearance",
+        "url": "customizable-appearance",
+        "slides": [
+            {
+                "content":
+                    "Ag-Grid ships several different themes. Pick one that matches your project look and feel, and fully customise so that the grid is consistent with your application. To preview the themes available, select one from the dropdown.",
+                "markers": [
+                    {
+                        "selector": "#grid-theme"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Pivoting",
+        "url": "pivoting",
+        "slides": [
+            {
+                "content":
+                    "Pivoting allows you to make columns out of values by pivoting on the data, similar to Pivot Tables in Excel. To start pivoting, check the 'pivot mode' checkbox, then click the Next button. ",
+                "markers": [
+                    {
+                        "selector": "#myGrid > div > div.ag-root-wrapper-body > div.ag-tool-panel > div.ag-column-panel > div.ag-column-panel-center > div.ag-pivot-mode"
+                    }
+                ]
+            },
+            {
+                "content": "Next, drag the country column to the column labels drop area and click the Next button.",
+                "markers": [
+                    {
+                        "selector":
+                            "#myGrid > div > div.ag-root-wrapper-body > div.ag-tool-panel > div.ag-column-panel > div.ag-column-panel-center > div.ag-column-select-panel > div.ag-column-container > div:nth-child(4) > span.ag-column-drag"
+                    },
+                    {
+                        "selector": "#myGrid > div > div:nth-child(1) > div.ag-column-drop.ag-font-style.ag-column-drop-horizontal.ag-column-drop-pivot.ag-width-half > span",
+                        "type": "oval"
+                    }
+                ]
+            },
+            {
+                "content": "Next, drag one of the Monthly breakdowns columns to the values drop area.",
+                "markers": [
+                    {
+                        "selector":
+                            "#myGrid > div > div.ag-root-wrapper-body > div.ag-tool-panel > div.ag-column-panel > div.ag-column-panel-center > div.ag-column-select-panel > div.ag-column-container > div:nth-child(15) > span.ag-column-drag"
+                    },
+                    {
+                        "selector":
+                            "#myGrid > div > div.ag-root-wrapper-body > div.ag-tool-panel > div.ag-column-panel > div.ag-column-panel-center > div.ag-column-drop.ag-font-style.ag-column-drop-vertical.ag-column-drop-values",
+                        "type": "oval"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Data Export",
+        "url": "data-export",
+        "slides": [
+            {
+                "content": "You can export the contents of the grid to CSV or Excel. Right click anywhere on the contents and select export &gt; CSV Export or Excel Export.",
+                "markers": []
+            }
+        ]
+    },
+    {
+        "title": "Row Reordering",
+        "url": "row-reordering",
+        "slides": [
+            {
+                "content": "You can reorder rows in the grid by dragging a row by its handle and dropping at the desired location between the other rows.",
+                "markers": [
+                    {
+                        "selector": "#myGrid div.ag-row:nth-child(3) span.ag-row-drag"
                     }
                 ]
             }
