@@ -97,10 +97,7 @@ include '../landing-pages/header.php';
 <ul>
     <li><a href="https://www.ag-grid.com/angular-more-details/">ag-Grid Angular Overview</a></li>
     <li><a href="https://www.ag-grid.com/example-angular-rxjs/">Angular Component using RxJs Example</a></li>
-    <li><a href="</a></li>
 </ul>
-
-<p>In addition to the above, you can find a <a href="../example-react-redux/">live example of ag-Grid / Redux integration</a> in our examples section.</p>
 
 </div>
 
