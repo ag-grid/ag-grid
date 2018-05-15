@@ -25,7 +25,7 @@ ComponentUtil.EVENTS.forEach((eventName) => {
 });
 
 export default Vue.extend({
-    template: '<div></div>',
+    render: (h) => h('div'),
     props: props,
     data() {
         return {
