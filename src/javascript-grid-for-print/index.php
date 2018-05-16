@@ -133,12 +133,33 @@ eGridDiv.style.width = preferredWidth + 'px';
     <h2>Fitting Contents to Page</h2>
 
     <p>
-        The grid does not try to fit contents to the printed page. It also does not try to paginate by placing
-        headers at the top of each printable page. This is because doing so is impossible for the grid.
-        The web page is not aware of what the dimension of the printed page is, this is a restriction of the browser.
-        Getting the grid to fit onto the page, or paginate across printed pages, cannot be solved by the grid
-        and is left to the application to try - however we advise against it. If you want to print data across
-        pages the best option is to export to Excel and print from Excel.
+        It is not possible for a web page to know about the dimensions of the paper it is getting printed on.
+        For this reason, you may have the following issues when printing:
+    </p>
+
+    <ul>
+        <li>
+            The grid may be clipped horizontally if the grid does not fit horizontally on the printed page and
+            the print setup does not cater for the web page exceeding the width fo the printable area.
+        </li>
+        <li>
+            The grid will be split across pages vertically with no consideration towards page height, grid height
+            or row height. This will have the following effect:
+            <ul>
+                <li>
+                    The grid header will only appear once. It will not appear at the start of each printed page.
+                </li>
+                <li>
+                    The grid rows may be cut mid way through the row.
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+    <p>
+        These are restrictions with printing web pages in general. It is not something that can be solved by a grid
+        component. If you need better support for printing, especially around splitting the grid across multiple
+        printed pages, then it's best export the data to CSV or Excel and print in another non-web based application.
     </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>
