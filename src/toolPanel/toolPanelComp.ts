@@ -30,6 +30,10 @@ export class ToolPanelComp extends Component implements IToolPanel {
               </div>`);
     }
 
+    public getPreferredWidth(): number {
+        return this.getGui().clientWidth;
+    }
+
     public registerGridComp(gridPanel: GridPanel): void {
         this.toolPanelSelectComp.registerGridComp(gridPanel);
     }
