@@ -8,7 +8,7 @@ import {
     GridPanel,
     PostConstruct,
     RefSelector,
-    ToolPanelVisibleChanged
+    ToolPanelVisibleChangedEvent
 } from "ag-grid/main";
 import {IToolPanel} from "ag-grid";
 import {ToolPanelColumnComp} from "./toolPanelColumnComp";
@@ -50,7 +50,7 @@ export class ToolPanelComp extends Component implements IToolPanel {
 
     public showToolPanel(show: boolean): void {
         this.columnComp.setVisible(show);
-        let event: ToolPanelVisibleChanged = {
+        let event: ToolPanelVisibleChangedEvent = {
             type: Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi()
