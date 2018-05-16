@@ -29,8 +29,8 @@ export interface AgGridEvent extends AgEvent {
     columnApi: ColumnApi;
 }
 
-export interface ToolPanelVisibleChanged extends AgGridEvent {}
-export interface AnimationQueueEmpty extends AgGridEvent {}
+export interface ToolPanelVisibleChangedEvent extends AgGridEvent {}
+export interface AnimationQueueEmptyEvent extends AgGridEvent {}
 export interface ColumnPivotModeChangedEvent extends AgGridEvent {}
 export interface VirtualColumnsChangedEvent extends AgGridEvent {}
 export interface ColumnEverythingChangedEvent extends AgGridEvent {

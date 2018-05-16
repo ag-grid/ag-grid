@@ -3,7 +3,7 @@ import {Autowired, Bean, PostConstruct} from "../context/context";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {LinkedList} from "./linkedList";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {AnimationQueueEmpty} from "../events";
+import {AnimationQueueEmptyEvent} from "../events";
 import {Events} from "../eventKeys";
 import {EventService} from "../eventService";
 
@@ -87,7 +87,7 @@ export class AnimationFrameService {
 
     private stopTicking(): void {
         this.ticking = false;
-        let event: AnimationQueueEmpty = {
+        let event: AnimationQueueEmptyEvent = {
             type: Events.EVENT_ANIMATION_QUEUE_EMPTY,
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             api: this.gridOptionsWrapper.getApi()
