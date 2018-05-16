@@ -135,6 +135,14 @@ export class GridCore extends Component {
         this.addOrRemoveCssClass('ag-scrolls', !autoHeight);
     }
 
+    public getPreferredWidth(): number {
+        let widthForCols = this.columnController.getBodyContainerWidth()
+            + this.columnController.getPinnedLeftContainerWidth()
+            + this.columnController.getPinnedRightContainerWidth();
+        let widthForToolpanel = this.toolPanelComp ? this.toolPanelComp.getPreferredWidth() : 0;
+        return widthForCols + widthForToolpanel;
+    }
+
     private addRtlSupport(): void {
         let cssClass = this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr';
         _.addCssClass(this.getGui(), cssClass);

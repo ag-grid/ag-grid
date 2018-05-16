@@ -51,6 +51,7 @@ import {ICellRendererComp} from "./rendering/cellRenderers/iCellRenderer";
 import {ICellEditorComp} from "./rendering/cellEditors/iCellEditor";
 import {Events} from "./eventKeys";
 import {HeaderRootComp} from "./headerRendering/headerRootComp";
+import {AnimationFrameService} from "./misc/animationFrameService";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -115,6 +116,7 @@ export class GridApi {
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Optional('toolPanelComp') private toolPanelComp: IToolPanel;
+    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
 
     private gridPanel: GridPanel;
     private headerRootComp: HeaderRootComp;
@@ -473,6 +475,10 @@ export class GridApi {
         this.inMemoryRowModel.refreshModel(modelParams);
     }
 
+    public isAnimationFrameQueueEmpty(): boolean {
+        return this.animationFrameService.isQueueEmpty();
+    }
+
     public getRowNode(id: string): RowNode {
         return this.rowModel.getRowNode(id);
     }
@@ -725,6 +731,10 @@ export class GridApi {
 
     public setGridAutoHeight(gridAutoHeight: boolean) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GRID_AUTO_HEIGHT, gridAutoHeight);
+    }
+
+    public getPreferredWidth(): number {
+        return this.gridCore.getPreferredWidth();
     }
 
     public setGroupHeaderHeight(headerHeight: number) {

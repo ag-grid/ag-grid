@@ -112,6 +112,8 @@ export class Events {
     /** Main body of grid has scrolled, either horizontally or vertically */
     public static EVENT_BODY_SCROLL = 'bodyScroll';
 
+    public static EVENT_ANIMATION_QUEUE_EMPTY = 'animationQueueEmpty';
+
     public static EVENT_HEIGHT_SCALE_CHANGED = 'heightScaleChanged';
 
     /** The displayed page for pagination has changed. For example the data was filtered or sorted,

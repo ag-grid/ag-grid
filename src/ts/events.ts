@@ -30,6 +30,7 @@ export interface AgGridEvent extends AgEvent {
 }
 
 export interface ToolPanelVisibleChanged extends AgGridEvent {}
+export interface AnimationQueueEmpty extends AgGridEvent {}
 export interface ColumnPivotModeChangedEvent extends AgGridEvent {}
 export interface VirtualColumnsChangedEvent extends AgGridEvent {}
 export interface ColumnEverythingChangedEvent extends AgGridEvent {

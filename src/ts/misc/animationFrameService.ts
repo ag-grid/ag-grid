@@ -3,11 +3,15 @@ import {Autowired, Bean, PostConstruct} from "../context/context";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {LinkedList} from "./linkedList";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {AnimationQueueEmpty} from "../events";
+import {Events} from "../eventKeys";
+import {EventService} from "../eventService";
 
 @Bean('animationFrameService')
 export class AnimationFrameService {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('eventService') private eventService: EventService;
 
     private gridPanel: GridPanel;
 
@@ -77,8 +81,18 @@ export class AnimationFrameService {
         if (gridPanelNeedsAFrame || !this.p1Tasks.isEmpty() || !this.p2Tasks.isEmpty()) {
             this.requestFrame();
         } else {
-            this.ticking = false;
+            this.stopTicking();
         }
+    }
+
+    private stopTicking(): void {
+        this.ticking = false;
+        let event: AnimationQueueEmpty = {
+            type: Events.EVENT_ANIMATION_QUEUE_EMPTY,
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            api: this.gridOptionsWrapper.getApi()
+        };
+        this.eventService.dispatchEvent(event);
     }
 
     public flushAllFrames(): void {
@@ -105,5 +119,9 @@ export class AnimationFrameService {
         } else {
             setTimeout(callback, 0);
         }
+    }
+
+    public isQueueEmpty(): boolean {
+        return this.ticking;
     }
 }

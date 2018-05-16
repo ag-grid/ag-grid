@@ -184,6 +184,10 @@ export class ComponentUtil {
             api.setSuppressRowDrag(ComponentUtil.toBoolean(changes.suppressRowDrag.currentValue));
         }
 
+        if (changes.gridAutoHeight) {
+            api.setGridAutoHeight(ComponentUtil.toBoolean(changes.gridAutoHeight.currentValue));
+        }
+
         // copy changes into an event for dispatch
         let event: ComponentStateChangedEvent = {
             type: Events.EVENT_COMPONENT_STATE_CHANGED,
