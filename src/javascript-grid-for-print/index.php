@@ -134,7 +134,7 @@ eGridDiv.style.width = preferredWidth + 'px';
 
     <p>
         It is not possible for a web page to know about the dimensions of the paper it is getting printed on.
-        For this reason, you may have the following issues when printing:
+        For this reason, you will have the following issues when printing grids that span pages:
     </p>
 
     <ul>
