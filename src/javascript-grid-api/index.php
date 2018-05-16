@@ -553,6 +553,12 @@ include '../documentation-main/documentation_header.php';
                 Sets the gridAutoHeight property.
             </td>
         </tr>
+        <tr>
+            <th>isAnimationFrameQueueEmpty()</th>
+            <td>
+                Returns true if the grid has animation frames to execute.
+            </td>
+        </tr>
     </table>
 
 <?php include '../documentation-main/documentation_footer.php';?>
