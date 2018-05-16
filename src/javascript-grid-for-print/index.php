@@ -130,7 +130,7 @@ eGridDiv.style.width = preferredWidth + 'px';
         and then print from another non-web based application.
     </p>
 
-    <h2>Fitting Contents to Page</h2>
+    <h2 id="printing-constraints">Printing Constraints</h2>
 
     <p>
         It is not possible for a web page to know about the dimensions of the paper it is getting printed on.
