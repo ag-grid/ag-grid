@@ -195,6 +195,8 @@ export class RowNode implements IEventEmitter {
 
         this.valueCache.onDataChanged();
 
+        this.checkRowSelectable();
+
         let event: DataChangedEvent = this.createDataChangedEvent(data, oldData, false);
         this.dispatchLocalEvent(event);
     }
@@ -224,6 +226,8 @@ export class RowNode implements IEventEmitter {
     public updateData(data: any): void {
         let oldData = this.data;
         this.data = data;
+
+        this.checkRowSelectable();
 
         let event: DataChangedEvent = this.createDataChangedEvent(data, oldData, true);
         this.dispatchLocalEvent(event);
@@ -263,10 +267,10 @@ export class RowNode implements IEventEmitter {
 
         this.selectionController.syncInRowNode(this, oldNode);
 
+        this.checkRowSelectable();
+
         let event: DataChangedEvent = this.createDataChangedEvent(data, oldData, false);
         this.dispatchLocalEvent(event);
-
-        this.checkRowSelectable();
     }
 
     private checkRowSelectable() {
