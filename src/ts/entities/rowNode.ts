@@ -195,10 +195,21 @@ export class RowNode implements IEventEmitter {
 
         this.valueCache.onDataChanged();
 
+        this.updateDataOnDetailNode();
+
         this.checkRowSelectable();
 
         let event: DataChangedEvent = this.createDataChangedEvent(data, oldData, false);
         this.dispatchLocalEvent(event);
+    }
+
+    // when we are doing master / detail, the detail node is lazy created, but then kept around.
+    // so if we show / hide the detail, the same detail rowNode is used. so we need to keep the data
+    // in sync, otherwise expand/collapse of the detail would still show the old values.
+    private updateDataOnDetailNode(): void {
+        if (this.detailNode) {
+            this.detailNode.data = this.data;
+        }
     }
 
     private createDataChangedEvent(newData: any, oldData: any, update: boolean): DataChangedEvent {
@@ -227,7 +238,11 @@ export class RowNode implements IEventEmitter {
         let oldData = this.data;
         this.data = data;
 
+        this.updateDataOnDetailNode();
+
         this.checkRowSelectable();
+
+        this.updateDataOnDetailNode();
 
         let event: DataChangedEvent = this.createDataChangedEvent(data, oldData, true);
         this.dispatchLocalEvent(event);
@@ -262,6 +277,7 @@ export class RowNode implements IEventEmitter {
 
         let oldData = this.data;
         this.data = data;
+        this.updateDataOnDetailNode();
 
         this.setId(id);
 
