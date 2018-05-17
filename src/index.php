@@ -223,18 +223,9 @@ meta_and_links($title, $keywords, $description, false);
         </section>
     </div>
 
-    <div id="stage-feature-highlights">
-        <h2>Feature Highlights</h2>
-
-        <div id="feature-content">
-            <aside>
-                <div class="scroll-wrapper">
-                </div>
-            </aside>
-            <section>
-            <?php include 'roadshow/roadshow.php' ?>
-            </section>
-        </div>
+    <div id="stage-show-me-more">
+        <h2>Show Me More!</h2>
+        <a href="/features-overview/" class="btn btn-primary btn-lg">Sure! Let's Go to the Features Overview &rarr;</a>
     </div>
 
     <?= globalAgGridScript(true, true) ?>

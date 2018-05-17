@@ -79,6 +79,9 @@ button[disabled] {
         #features-overlay {
             > a {
                 @extend .text-right;
+                background: transparent url("./feature-walkthrough.svg") left center no-repeat;
+                float: right;
+                padding-left: 2rem;
             }
         }
 
