@@ -1,8 +1,8 @@
 <style>
-.number { text-align: right; }
-.ag-row-level-0 { font-weight: bold; }
-.ag-row-level-1 { color: lightblue; }
-.ag-row-level-2 { color: lightyellow; }
+#live-stream-updates-grid .number { text-align: right; }
+#live-stream-updates-grid .ag-row-level-0 { font-weight: bold; }
+#live-stream-updates-grid .ag-row-level-1 { color: lightblue; }
+#live-stream-updates-grid .ag-row-level-2 { color: lightyellow; }
 </style>
 
 <div class="container-fluid blackish text-light pt-2" id="dashboard-demo">
