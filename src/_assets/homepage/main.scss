@@ -398,6 +398,21 @@
     }
 }
 
+#stage-show-me-more {
+    padding-top: 3rem;
+    margin-bottom: 0;
+    border-bottom: 0;
+    @extend .pb-5;
+    & > h2 {
+        @extend .display-4, .text-center, .full-width-row, .mb-5;
+    }
+
+    & > a {
+        @extend .btn, .btn-link, .btn-lg, .mx-auto, .d-block;
+        width: 25%;
+    }
+}
+
 #stage-feature-highlights {
     padding-top: 3rem;
     margin-bottom: 0;
