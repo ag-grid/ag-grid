@@ -22,16 +22,13 @@ Don't worry if your project has a different configuration. Ag-Grid and its Vue w
 Let's follow the <a href="https://github.com/angular/angular-cli#installation">Vue CLI instructions</a> - run the following in your terminal:</p>
 
 <snippet language="sh">
-npm install -g vue-cli
-vue init webpack my-project    # see note below
+npm install -g @vue/cli
+vue create my-project    # accept the defaults for all prompts
 cd my-project
-npm run dev
+npm run serve
 </snippet>
 
-<div class="note">You can accept the defaults for all prompts, with the exception of <code>vue-router</code>, <code>ESLint</code>, <code>unit tests</code> and <code>Nightwatch</code>. We won't be using these
-in our example, so you can select "No" when prompted for any of the above.</div>
-
-<p>If everything goes well, <code>npm run dev</code> has started the web server. You can open the default app at <a href="http://localhost:8080" target="_blank">localhost:8080</a>.</p>
+<p>If everything goes well, <code>npm run serve</code> has started the web server. You can open the default app at <a href="http://localhost:8080" target="_blank">localhost:8080</a>.</p>
 
 <p>As a next step, let's add the ag-Grid NPM packages. run the following command in <code>my-project</code> (you may need a new instance of the terminal):</p>
 
@@ -59,7 +56,6 @@ The grid ships several different themes; pick one that matches your project desi
 &lt;template&gt;
     &lt;ag-grid-vue style="width: 500px; height: 500px;"
                  class="ag-theme-balham"
-                 :gridOptions="gridOptions"
                  :columnDefs="columnDefs"
                  :rowData="rowData"&gt;
     &lt;/ag-grid-vue&gt;
@@ -76,13 +72,12 @@ The grid ships several different themes; pick one that matches your project desi
         name: 'App',
         data() {
             return {
-                gridOptions: {},
                 columnDefs: null,
                 rowData: null
             }
         },
         components: {
-            'ag-grid-vue': AgGridVue
+            AgGridVue
         },
         beforeMount() {
             this.columnDefs = [
@@ -122,7 +117,6 @@ As you may have already noticed, the CSS class matches the name of CSS file we i
 <snippet language="html">
 &lt;ag-grid-vue style="width: 500px; height: 500px;"
              class="ag-theme-balham"
-             :gridOptions="gridOptions"
              :columnDefs="columnDefs"
              :rowData="rowData"
 
@@ -139,7 +133,6 @@ As you may have already noticed, the CSS class matches the name of CSS file we i
 <snippet language="html">
 &lt;ag-grid-vue style="width: 500px; height: 500px;"
              class="ag-theme-balham"
-             :gridOptions="gridOptions"
              :columnDefs="columnDefs"
              :rowData="rowData"
 
@@ -151,8 +144,6 @@ As you may have already noticed, the CSS class matches the name of CSS file we i
 <p>With this property set, the grid will display a small column menu icon when you hover the header. Pressing it will display a popup with filtering UI which lets you choose the kind of filter and the text that you want to filter by.</p>
 
 <img class="img-fluid" src="../getting-started/step2.png" alt="ag-Grid sorting and filtering" />
-
-<h2>Fetch Remote Data</h2>
 
 <h2>Fetch Remote Data</h2>
 
@@ -190,7 +181,6 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 &lt;template&gt;
     &lt;ag-grid-vue style="width: 500px; height: 500px;"
                  class="ag-theme-balham"
-                 :gridOptions="gridOptions"
                  :columnDefs="columnDefs"
                  :rowData="rowData"
                  :enableSorting="true"
@@ -206,13 +196,12 @@ We will leave the flag toggle state and persistence to the backend team. On our 
         name: 'App',
         data() {
             return {
-                gridOptions: {},
                 columnDefs: null,
                 rowData: null
             }
         },
         components: {
-            'ag-grid-vue': AgGridVue
+            AgGridVue
         },
         beforeMount() {
             this.columnDefs = [
@@ -237,7 +226,6 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 <snippet language="html">
 &lt;ag-grid-vue style="width: 500px; height: 500px;"
              class="ag-theme-balham"
-             :gridOptions="gridOptions"
              :columnDefs="columnDefs"
              :rowData="rowData"
 
@@ -263,7 +251,6 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 
         &lt;ag-grid-vue style="width: 500px; height: 500px;"
                      class="ag-theme-balham"
-                     :gridOptions="gridOptions"
                      :columnDefs="columnDefs"
                      :rowData="rowData"
                      :enableSorting="true"
@@ -282,13 +269,12 @@ We will leave the flag toggle state and persistence to the backend team. On our 
         name: 'App',
         data() {
             return {
-                gridOptions: {},
                 columnDefs: null,
                 rowData: null
             }
         },
         components: {
-            'ag-grid-vue': AgGridVue
+            AgGridVue
         },
         methods: {
             onGridReady(params) {
@@ -377,7 +363,6 @@ import App from './App'
         &lt;button @click="getSelectedRows()"&gt;Get Selected Rows&lt;/button&gt;
         &lt;ag-grid-vue style="width: 500px; height: 500px;"
                      class="ag-theme-balham"
-                     :gridOptions="gridOptions"
                      :columnDefs="columnDefs"
                      :rowData="rowData"
                      :enableSorting="true"
@@ -396,7 +381,6 @@ import App from './App'
         name: 'App',
         data() {
             return {
-                gridOptions: {},
                 columnDefs: null,
                 rowData: null,
                 gridApi: null,
@@ -405,7 +389,7 @@ import App from './App'
             }
         },
         components: {
-            'ag-grid-vue': AgGridVue
+            AgGridVue
         },
         methods: {
             onGridReady(params) {
