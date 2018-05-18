@@ -292,10 +292,7 @@ export class SetFloatingFilterComp extends InputTextFloatingFilterComp<Serialize
 
     asParentModel(): SerializedSetFilter {
         if (this.eColumnFloatingFilter.value == null || this.eColumnFloatingFilter.value === '') {
-            return {
-                values: [],
-                filterType: 'set'
-            };
+            return null;
         }
         return {
             values: this.eColumnFloatingFilter.value.split(","),
