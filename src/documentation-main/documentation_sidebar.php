@@ -43,7 +43,7 @@
             <dd class="date">June 2-3<br> Berlin, Germany</dd>
             <dd></dd>
             <dt><a href="https://angularconnect.com/" target="_blank" rel="noopener">Angular Connect</a></dt>
-            <dd class="date">May 7–9<br> London, England</dd>
+            <dd class="date">November 6-7<br> London, England</dd>
             <dd>Platinum Sponsor</dd>
         </dl>
   </div>
