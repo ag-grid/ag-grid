@@ -391,6 +391,15 @@ var defaultCols = [
                 // pivotIndex: 1,
                 // rowGroupIndex: 1,
                 enableRowGroup: true,
+                // rowSpan: function(params) {
+                //     if (params.data && params.data.country==='Ireland') {
+                //         return 2;
+                //     } else if (params.data && params.data.country==='France') {
+                //         return 3;
+                //     } else {
+                //         return 1;
+                //     }
+                // },
                 enablePivot: true,
                 cellEditor: 'agRichSelectCellEditor',
                 cellEditorParams: {
