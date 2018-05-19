@@ -246,6 +246,8 @@ export interface ColDef extends AbstractColDef {
 
     colSpan?: (params: ColSpanParams) => number;
 
+    rowSpan?: (params: RowSpanParams) => number;
+
     /** Set to true if this col should not be allowed take new values from teh clipboard . */
     suppressPaste?: boolean | IsColumnFunc;
 
@@ -369,6 +371,8 @@ export interface ValueParserParams extends NewValueParams {}
 export interface ValueFormatterParams extends BaseWithValueColDefParams {}
 
 export interface ColSpanParams extends BaseColDefParams {}
+
+export interface RowSpanParams extends BaseColDefParams {}
 
 export interface SuppressKeyboardEventParams extends IsColumnFuncParams {
     // the keyboard event the grid received
