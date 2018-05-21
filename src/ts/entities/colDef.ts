@@ -119,7 +119,7 @@ export interface ColDef extends AbstractColDef {
     maxWidth?: number;
 
     /** True if this column should stretch rows height to fit contents */
-    autoHeight?: number;
+    autoHeight?: boolean;
 
     /** Class to use for the cell. Can be string, array of strings, or function. */
     cellClass?: string | string[]| ((cellClassParams: CellClassParams) => string | string[]);
