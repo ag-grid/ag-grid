@@ -47,6 +47,16 @@ export interface ColumnResizeSet {
     width: number;
 }
 
+export interface ColumnState {
+    colId: string,
+    hide: boolean,
+    aggFunc: string | IAggFunc,
+    width: number,
+    pivotIndex: number,
+    pinned: string,
+    rowGroupIndex: number
+}
+
 @Bean('columnController')
 export class ColumnController {
 
@@ -1374,11 +1384,11 @@ export class ColumnController {
         return result;
     }
 
-    private createStateItemFromColumn(column: Column): any {
+    private createStateItemFromColumn(column: Column): ColumnState {
         let rowGroupIndex = column.isRowGroupActive() ? this.rowGroupColumns.indexOf(column) : null;
         let pivotIndex = column.isPivotActive() ? this.pivotColumns.indexOf(column) : null;
         let aggFunc = column.isValueActive() ? column.getAggFunc() : null;
-        let resultItem = {
+        return {
             colId: column.getColId(),
             hide: !column.isVisible(),
             aggFunc: aggFunc,
@@ -1387,15 +1397,14 @@ export class ColumnController {
             pinned: column.getPinned(),
             rowGroupIndex: rowGroupIndex
         };
-        return resultItem;
     }
 
-    public getColumnState(): any[] {
+    public getColumnState(): ColumnState[] {
         if (_.missing(this.primaryColumns)) {
-            return <any>[];
+            return [];
         }
 
-        let columnStateList = this.primaryColumns.map(this.createStateItemFromColumn.bind(this));
+        let columnStateList: ColumnState[] = this.primaryColumns.map(this.createStateItemFromColumn.bind(this));
 
         if (!this.pivotMode) {
             this.orderColumnStateList(columnStateList);
@@ -1434,7 +1443,7 @@ export class ColumnController {
         this.setColumnState(state, source);
     }
 
-    public setColumnState(columnState: any[], source: ColumnEventType = "api"): boolean {
+    public setColumnState(columnState: ColumnState[], source: ColumnEventType = "api"): boolean {
         if (_.missingOrEmpty(this.primaryColumns)) {
             return false;
         }

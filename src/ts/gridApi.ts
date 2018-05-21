@@ -1057,6 +1057,15 @@ export class GridApi {
         }
     }
 
+    public isEnterpriseCacheFinishedLoading(): boolean {
+        if (this.enterpriseRowModel) {
+            return this.enterpriseRowModel.finishedLoading();
+        } else {
+            console.warn(`ag-Grid: api.isEnterpriseCacheFinishedLoading is only available when rowModelType='enterprise'.`);
+            return false;
+        }
+    }
+
     public getVirtualRowCount(): number {
         console.warn('ag-Grid: getVirtualRowCount() is now called getInfiniteRowCount(), please call getInfiniteRowCount() instead');
         return this.getInfiniteRowCount();
