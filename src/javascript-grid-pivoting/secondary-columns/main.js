@@ -1,6 +1,6 @@
 var columnDefs = [
-    {headerName: "Country", field: "country", width: 120, rowGroup: true},
-    {headerName: "Year", field: "year", width: 90, pivot: true, pivotComparator: MyYearPivotComparator},
+    {headerName: "Country", field: "country", width: 120, rowGroup: true, enableRowGroup: true},
+    {headerName: "Year", field: "year", width: 90, pivot: true, enablePivot: true, pivotComparator: MyYearPivotComparator},
     {headerName: "Date", field: "date", width: 110},
     {headerName: "Sport", field: "sport", width: 110},
     {headerName: "Gold", field: "gold", width: 100, aggFunc: 'sum'},
