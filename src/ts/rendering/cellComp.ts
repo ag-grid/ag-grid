@@ -136,8 +136,6 @@ export class CellComp extends Component {
 
         let stylesForRowSpanning = this.getStylesForRowSpanning();
 
-        console.log(`stylesForRowSpanning`, stylesForRowSpanning);
-
         if (this.usingWrapper) {
             wrapperStartTemplate = '<span ref="eCellWrapper" class="ag-cell-wrapper"><span ref="eCellValue" class="ag-cell-value">';
             wrapperEndTemplate = '</span></span>';
