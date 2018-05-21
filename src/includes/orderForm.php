@@ -125,16 +125,4 @@ Thank you.
     </form>
 </div>
 
-<div>
-    <p class="text-center">
-        <strong>An evaluation license for ag-Grid Enterprise is granted to anyone wishing evaluate ag-Grid Enterprise. All we ask in return is the following:</strong>
-    </p>
 
-<p class="text-center">
-You agree to use the Evaluation License only for evaluation of ag-Grid Enterprise.
-<br>
-You do not enter production with ag-Grid Enterprise.
-<br>
-You limit your trial to two months (after that, either uninstall or purchase).
-</p>
-</div>
