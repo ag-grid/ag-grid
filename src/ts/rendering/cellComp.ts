@@ -1099,8 +1099,10 @@ export class CellComp extends Component {
     // to allow the text editor full access to the entire cell
     private setInlineEditingClass(): void {
         let editingInline = this.editingCell && !this.cellEditorInPopup;
-        _.addOrRemoveCssClass(this.getGui(), 'ag-cell-inline-editing', editingInline);
-        _.addOrRemoveCssClass(this.getGui(), 'ag-cell-not-inline-editing', !editingInline);
+        _.addOrRemoveCssClass(this.getGui(), "ag-cell-inline-editing", editingInline);
+        _.addOrRemoveCssClass(this.getGui(), "ag-cell-not-inline-editing", !editingInline);
+        _.addOrRemoveCssClass(<HTMLElement>this.getGui().parentNode, "ag-row-inline-editing", editingInline);
+        _.addOrRemoveCssClass(<HTMLElement>this.getGui().parentNode, "ag-row-not-inline-editing", !editingInline);
     }
 
     private createCellEditorParams(keyPress: number, charPress: string, cellStartedEdit: boolean): ICellEditorParams {
