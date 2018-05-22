@@ -336,7 +336,7 @@ export class AppComponent implements OnInit {
 <p>The only thing we have to add is a button that gets the selected data and sends it to the server. To do this, we need the following change:</p> 
 
 <snippet language="html">
-&lt;button (click)="getSelectedRows()"&lt;Get Selected Rows&lt;/button&gt;
+&lt;button (click)="getSelectedRows()"&gt;Get Selected Rows&lt;/button&gt;
 
 &lt;ag-grid-angular 
     #agGrid

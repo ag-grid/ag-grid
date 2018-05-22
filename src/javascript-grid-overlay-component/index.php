@@ -31,7 +31,7 @@ interface ILoadingOverlayComp {
 </snippet>
 
 <snippet>
-interface IFilterParams {
+interface ILoadingOverlayCompParams {
 
     // an optional template for the loading rows overlay
     loadingRowsTemplate?: string
@@ -87,7 +87,10 @@ interface INoRowsOverlayParams {
 
 <ul class="content">
     <li><b>Custom Loading Overlay Renderer</b> is supplied by name via <code>gridOptions.loadingOverlayComponent</code>.</li>
+    <li><b>Custom Loading Overlay Renderer Parameters</b> are supplied using <code>gridOptions.loadingOverlayComponentParams</code>.</li>
+
     <li><b>Custom No Rows Overlay Renderer</b> is supplied by name via <code>gridOptions.noRowsOverlayComponent</code>.</li>
+    <li><b>Custom No Rows Overlay Renderer Parameters</b> are supplied using <code>gridOptions.noRowsOverlayComponentParams</code>.</li>
 </ul>
 
 <?= example('Custom Overlay Components', 'custom-overlay-components', 'generated', array('enterprise' => false, 'extras' => array('fontawesome')) ) ?>
