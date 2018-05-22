@@ -64,16 +64,24 @@ import {EnterpriseRowModel} from "./dist/lib/rowModels/enterprise/enterpriseRowM
 import {ColumnSelectHeaderComp} from "./dist/lib/toolPanel/columnsSelect/columnSelectHeaderComp";
 import {ColumnContainerComp} from "./dist/lib/toolPanel/columnsSelect/columnContainerComp";
 import {HorizontalResizeComp} from "./dist/lib/toolPanel/columnsSelect/horizontalResizeComp";
+import {ToolPanelSelectComp} from "./dist/lib/toolPanel/toolPanelSelectComp";
+import {ToolPanelColumnComp} from "./dist/lib/toolPanel/toolPanelColumnComp";
+import {HeaderColumnDropComp} from "./dist/lib/toolPanel/columnDrop/headerColumnDropComp";
 
 let rowModelTypes = {viewport: ViewportRowModel, enterprise: EnterpriseRowModel};
 
-Grid.setEnterpriseBeans([ToolPanelComp, EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, RowGroupCompFactory, PivotCompFactory,
+Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, RowGroupCompFactory, PivotCompFactory,
     PivotColumnsPanel, RangeController, ClipboardService, PivotStage, PivotColDefService,
     ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService,
-    StatusBar, LicenseManager, MD5, MenuItemMapper], rowModelTypes);
+    LicenseManager, MD5, MenuItemMapper], rowModelTypes)
 
 Grid.setEnterpriseComponents([
     {componentName: 'AgColumnSelectHeader', theClass: ColumnSelectHeaderComp},
     {componentName: 'AgColumnContainer', theClass: ColumnContainerComp},
-    {componentName: 'AgHorizontalResize', theClass: HorizontalResizeComp}
+    {componentName: 'AgHorizontalResize', theClass: HorizontalResizeComp},
+    {componentName: 'AgToolPanel', theClass: ToolPanelComp},
+    {componentName: 'AgStatusBar', theClass: StatusBar},
+    {componentName: 'AgHeaderColumnDrop', theClass: HeaderColumnDropComp},
+    {componentName: 'AgToolPanelColumnComp', theClass: ToolPanelColumnComp},
+    {componentName: 'AgToolPanelSelectComp', theClass: ToolPanelSelectComp},
 ]);
