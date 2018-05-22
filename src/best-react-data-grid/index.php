@@ -103,9 +103,6 @@ include '../landing-pages/header.php';
 
 <p>In addition to the above, you can find a <a href="../example-react-redux/">live example of ag-Grid / Redux integration</a> in our examples section.</p>
 
-<br>
-<a href="/start-trial.php"><button type="button" class="btn btn-primary btn-lg btn-block">Begin your React Grid Trial Now</button><a/>
-
 </div>
 
 <?php include '../landing-pages/footer.php'; ?>

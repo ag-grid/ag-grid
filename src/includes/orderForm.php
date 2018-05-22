@@ -19,60 +19,29 @@
         <div class="hide"><input type="hidden" value="Web Form" name="WebToContact[source_detail]" id="WebToContact_source_detail"/></div>
         <div class="hide"><input type="hidden" value="Primary - Contact" name="WebToContact[type]" id="WebToContact_type"/></div>
 
-<div>
-  <form>  
-  <div class="row"> 
-    <div class="col" class="row-6">
-      <input for="webToContact" type="text" class="form-control" placeholder="First name">
-    </div>
-    <div class="col">
-      <input for="webToContact" type="text" class="form-control" placeholder="Last name">
-    </div>
-  </div>
-  <div class="row" style="margin-top: -15px;">
-    <div class="col">
-      <input for="WebToContact_company_name" type="text" class="form-control" placeholder="Company Name">
-    </div>
-    <div class="col">
-      <input for="WebToContact_email" type="text" class="form-control" placeholder="Email">
-    </div>
-  </div>
-
-
-</form>
-</div>
-
-<!-- <div>
-    <form>
-  <div class="row">
-    <div class="col">
-      <input for="WebToContact_company_name" type="text" class="form-control" placeholder="Company Name">
-    </div>
-    <div class="col">
-      <input for="WebToContact_email" type="text" class="form-control" placeholder="Email">
-    </div>
-  </div>
-</form>
- -->
-
-        <div class="form-group" style="margin-top: 10px"> 
-           <select for="WebToContact[_cf_NXMIJJ]" class="form-control">
-  <option>Please select which Framework you are using, if applicable</option>
-  <option>Angular 2</option>
-  <option>React</option>
-  <option>Javascript</option>
-  <option>Angularjs</option>
-  <option>Vuejs</option>
-  <option>Web Components</option>
-  <option>Aurelia</option>
-  <option>Polymer</option>
-</select>
+        <div class="form-group" style="margin-top: 10px">
+            <label for="WebToContact_first_name">First Name</label>
+            <input maxlength="100" class="form-control" placeholder="First Name" type="text" value="" name="WebToContact[first_name]" id="WebToContact_first_name"/>
         </div>
-
-
- 
+        <div class="form-group">
+            <label for="WebToContact_last_name">Last Name</label>
+            <input maxlength="100" class="form-control" placeholder="Last Name" type="text" value="" name="WebToContact[last_name]" id="WebToContact_last_name"/>
+        </div>
+        <div class="form-group">
+            <label for="WebToContact_company_name">Company Name</label>
+            <input maxlength="100" class="form-control" placeholder="Company Name" type="text" value="" name="WebToContact[company_name]" id="WebToContact_company_name"/>
+        </div>
+        <div class="form-group" style="margin-top: 10px"> 
+        <label for="WebToContact[_cf_NXMIJJ]">Please let us know which Framework you are using, if applicable, this helps us provide better support.</label> 
+        <input maxlength="100" class="form-control" placeholder="Framework e.g. Angular, React, Vue.js, Polymer, Aurelia." type="text" value="" name="WebToContact[_cf_NXMIJJ]" id="WebToContact__cf_NXMIJJ" /> 
+        </div>
+        <div class="form-group">
+            <label for="WebToContact_email">Email</label>
+            <input maxlength="100" class="form-control" placeholder="Email" type="text" value="" name="WebToContact[email]" id="WebToContact_email"/>
+        </div>
         <div class="form-group">
             <?php if ($startTrial) { ?>
+                <label for="WebToContact_message">Your message to us below.</label>
             <?php } else { ?>
                 <label for="WebToContact_message">Your message to us below. If ordering, please provide the following information:</label>
                 <ul>
@@ -117,24 +86,10 @@ Thank you.
 
         <div class="form-group text-right" style="margin-top: 10px;">
             <?php if ($startTrial) { ?>
-                <input id="btn_submit" name="btn_submit" type="submit" class="btn btn-primary btn-lg btn-block" value="Begin Trial"/>
+                <input id="btn_submit" name="btn_submit" type="submit" class="btn btn-primary" value="Request Trial"/>
             <?php } else { ?>
                 <input id="btn_submit" name="btn_submit" type="submit" class="btn btn-primary" value="Send your info to ag-Grid"/>
             <?php } ?>
         </div>
     </form>
-</div>
-
-<div>
-    <p class="text-center">
-        <strong>An evaluation license for ag-Grid Enterprise is granted to anyone wishing evaluate ag-Grid Enterprise. All we ask in return is the following:</strong>
-    </p>
-
-<p class="text-center">
-You agree to use the Evaluation License only for evaluation of ag-Grid Enterprise.
-<br>
-You do not enter production with ag-Grid Enterprise.
-<br>
-You limit your trial to two months (after that, either uninstall or purchase).
-</p>
 </div>
