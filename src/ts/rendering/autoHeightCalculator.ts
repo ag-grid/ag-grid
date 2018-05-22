@@ -38,9 +38,10 @@ export class AutoHeightCalculator {
 
         let cellComps: CellComp[] = [];
         let cols = this.columnController.getAllAutoRowHeightCols();
+        console.log();
         cols.forEach( col => {
             let cellComp = new CellComp(
-                null,
+                this.$scope,
                 this.beans,
                 col,
                 rowNode,
