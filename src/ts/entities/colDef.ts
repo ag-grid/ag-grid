@@ -44,7 +44,7 @@ export interface ColGroupDef extends AbstractColDef {
     /** If true, group cannot be broken up by column moving, child columns will always appear side by side, however you can rearrange child columns within the group */
     marryChildren?: boolean;
     /** The custom header group component to be used for rendering the component header. If none specified the default ag-Grid is used**/
-    headerGroupComponent?: {new(): IHeaderGroupComp};
+    headerGroupComponent?: string | {new(): IHeaderGroupComp};
     /** The custom header group component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default ag-Grid is used**/
     headerGroupComponentFramework?: {new (): any};
     /** The custom header group component to be used for rendering the component header. If none specified the default ag-Grid is used**/
