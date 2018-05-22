@@ -25,15 +25,7 @@ var gridOptions = {
     },
 
     loadingOverlayComponent: 'customLoadingOverlay',
-    loadingOverlayComponentParams: {
-      loadingMessage: 'One moment please...'
-    },
-    noRowsOverlayComponent: 'customNoRowsOverlay',
-    noRowsOverlayComponentParams: {
-      noRowsMessageFunc: function() {
-          return 'Sorry - no rows! at: ' + new Date();
-      }
-    }
+    noRowsOverlayComponent: 'customNoRowsOverlay'
 };
 
 function onBtShowLoading() {
