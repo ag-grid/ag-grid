@@ -3,7 +3,7 @@ export class PropertyKeys {
         'sortingOrder', 'rowClass', 'rowSelection', 'overlayLoadingTemplate',
         'overlayNoRowsTemplate', 'quickFilterText', 'rowModelType',
         'editType', 'domLayout', 'clipboardDeliminator', 'rowGroupPanelShow',
-        'multiSortKey'];
+        'multiSortKey', 'pivotColumnGroupTotals', 'pivotRowTotals'];
 
     public static OBJECT_PROPERTIES = [
         'components', 'frameworkComponents', 'rowStyle', 'context', 'autoGroupColumnDef', 'groupColumnDef', 'localeText',

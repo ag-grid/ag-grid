@@ -239,7 +239,8 @@ export class GridOptionsWrapper {
     public getContext() { return this.gridOptions.context; }
     public isPivotMode() { return isTrue(this.gridOptions.pivotMode); }
     public isPivotTotals() { return isTrue(this.gridOptions.pivotTotals); }
-
+    public getPivotColumnGroupTotals() { return this.gridOptions.pivotColumnGroupTotals; }
+    public getPivotRowTotals() { return this.gridOptions.pivotRowTotals; }
     public isRowModelInfinite() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_INFINITE; }
     public isRowModelViewport() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT; }
     public isRowModelEnterprise() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_ENTERPRISE; }

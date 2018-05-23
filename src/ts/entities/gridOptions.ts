@@ -144,7 +144,9 @@ export interface GridOptions {
     suppressFocusAfterRefresh?: boolean;
     rowModelType?: string;
     pivotMode?: boolean;
-    pivotTotals?: boolean;
+    pivotTotals?: boolean; //deprecated
+    pivotColumnGroupTotals?: string;
+    pivotRowTotals?: string;
     suppressEnterpriseResetOnNewColumns?: boolean;
     enableRangeSelection?: boolean;
     suppressMultiRangeSelection?: boolean;
