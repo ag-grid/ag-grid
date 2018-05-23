@@ -112,7 +112,7 @@ export class PivotColDefService {
                                    pivotColumnDefs: ColDef[],
                                    columnIdSequence: NumberSequence) {
 
-        if(!this.gridOptionsWrapper.isPivotTotals() && !this.gridOptionsWrapper.getPivotColumnGroupTotals()) return;
+        if(!this.gridOptionsWrapper.getPivotColumnGroupTotals()) return;
 
         let insertAfter = this.gridOptionsWrapper.getPivotColumnGroupTotals() === 'after';
 
