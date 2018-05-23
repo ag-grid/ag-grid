@@ -319,6 +319,21 @@ include '../documentation-main/documentation_header.php';
                 column becoming visible again when un-grouping.
             </td>
         </tr>
+        <tr>
+            <th>pivotColumnGroupTotals</th>
+            <td>When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups. The positioning
+                of this total column is defined with the values: 'before' / 'after'.
+                See <a href="../javascript-grid-pivoting/#pivotColumnGroupTotals">Pivot Column Group Totals</a>.
+            </td>
+        </tr>
+
+        <tr>
+            <th>pivotRowTotals</th>
+            <td>When set and the grid is in pivot mode, automatically calculated totals will appear for each value column.
+                The positioning of this total column is defined with the values: 'before' / 'after'.
+                See <a href="../javascript-grid-pivoting/#pivotRowTotals">Pivot Row Totals</a>.
+            </td>
+        </tr>
 
 
         </table>
