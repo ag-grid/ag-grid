@@ -736,8 +736,12 @@ export class GridOptionsWrapper {
             console.warn(`ag-grid: since version 18.x, forPrint is no longer supported, as same can be achieved using autoHeight (and set the grid width accordingly). please use autoHeight instead.`);
         }
         if (options.domLayout==='autoHeight') {
-            console.warn(`ag-grid: since version 19.x, domLayout is gone, instead if doing auto-height, set gridAutoHeight=true.`);
+            console.warn(`ag-grid: since version 18.x, domLayout is gone, instead if doing auto-height, set gridAutoHeight=true.`);
             options.gridAutoHeight = true;
+        }
+        if (options.pivotTotals) {
+            console.warn(`ag-grid: since version 18.x, pivotTotals has been removed, instead if using pivotTotals, set pivotColumnGroupTotals='before'|'after'.`);
+            options.pivotColumnGroupTotals = 'before';
         }
     }
 
