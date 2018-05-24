@@ -420,11 +420,6 @@ export class Utils {
     }
 
     static isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
-        console.dir(event);
-        console.log(event.key);
-        console.log(event.keyCode);
-        console.log(event.charCode);
-        console.log(event.which);
         let pressedChar = String.fromCharCode(event.charCode);
 
         // newline is an exception, as it counts as a printable character, but we don't
