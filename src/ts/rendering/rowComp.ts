@@ -241,18 +241,16 @@ export class RowComp extends Component {
     }
 
     private getInitialRowTopStyle() {
-        // let rowTopStyle = '';
-        // let setRowTop = !this.beans.gridOptionsWrapper.isAutoHeight();
-        // if (setRowTop) {
-            // if sliding in, we take the old row top. otherwise we just set the current row top.
-            let pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
-            let afterPaginationPixels = this.applyPaginationOffset(pixels);
-            let afterScalingPixels = this.beans.heightScaler.getRealPixelPosition(afterPaginationPixels);
+        // if sliding in, we take the old row top. otherwise we just set the current row top.
+        let pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
+        let afterPaginationPixels = this.applyPaginationOffset(pixels);
+        let afterScalingPixels = this.beans.heightScaler.getRealPixelPosition(afterPaginationPixels);
 
-            // if not setting row top, then below is empty string
+        if (this.beans.gridOptionsWrapper.isSuppressRowTransform()) {
+            return `top: ${afterScalingPixels}px; `;
+        } else {
             return `transform: translateY(${afterScalingPixels}px); `;
-        // }
-        // return rowTopStyle;
+        }
     }
 
     private getRowBusinessKey(): string {
@@ -1333,7 +1331,11 @@ export class RowComp extends Component {
             let afterScalingPixels = this.beans.heightScaler.getRealPixelPosition(afterPaginationPixels);
 
             let topPx = afterScalingPixels + "px";
-            this.eAllRowContainers.forEach( row => row.style.transform = `translateY(${topPx})` );
+            if (this.beans.gridOptionsWrapper.isSuppressRowTransform()) {
+                this.eAllRowContainers.forEach( row => row.style.top = `${topPx}` );
+            } else {
+                this.eAllRowContainers.forEach( row => row.style.transform = `translateY(${topPx})` );
+            }
         }
     }
 

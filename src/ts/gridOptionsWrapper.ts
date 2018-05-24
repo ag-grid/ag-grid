@@ -271,6 +271,7 @@ export class GridOptionsWrapper {
     public isToolPanelSuppressColumnExpandAll() { return isTrue(this.gridOptions.toolPanelSuppressColumnExpandAll); }
 
     public isSuppressTouch() { return isTrue(this.gridOptions.suppressTouch); }
+    public isSuppressRowTransform() { return isTrue(this.gridOptions.suppressRowTransform); }
     public useAsyncEvents() { return !isTrue(this.gridOptions.suppressAsyncEvents); }
     public isEnableCellChangeFlash() { return isTrue(this.gridOptions.enableCellChangeFlash); }
     public isGroupSelectsChildren() {

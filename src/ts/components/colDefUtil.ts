@@ -111,6 +111,7 @@ export class ColDefUtil {
         'pivotComparator',
         'suppressKeyboardEvent',
         'colSpan',
+        'rowSpan',
         'getQuickFilterText',
         'newValueHandler',
         'onCellValueChanged',

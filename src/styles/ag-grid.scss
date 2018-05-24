@@ -535,7 +535,7 @@ ag-ltr .ag-body { flex-direction: row; }
 
 // for animations, allows rows to slide up and down,
 .ag-row-animation .ag-row {
-    transition: transform 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;
+    transition: transform 0.4s, top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;
 }
 
 .ag-row-no-animation .ag-row {
