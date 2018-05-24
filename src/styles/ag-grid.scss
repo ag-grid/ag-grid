@@ -310,6 +310,17 @@ ag-grid-aurelia {
 .ag-layout-normal .ag-column-panel-center {
 }
 
+// for when auto height is used but there is no row data
+.ag-layout-auto-height .ag-root {
+    min-height: 50px;
+}
+
+// for when auto height is used but there is no row data
+.ag-layout-auto-height .ag-overlay-no-rows-wrapper {
+    padding-top: 30px;
+}
+
+
 .ag-body {
     box-sizing: border-box;
     display: flex;
