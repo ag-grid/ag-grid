@@ -134,6 +134,7 @@ var gridOptions = {
     rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
     pivotTotals: true,
+    // suppressRowTransform: true,
     //minColWidth: 50,
     //maxColWidth: 300,
 //    rowBuffer: 10,

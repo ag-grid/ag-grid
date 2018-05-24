@@ -814,6 +814,14 @@ include '../documentation-main/documentation_header.php';
                 exist.
             </td>
         </tr>
+        <tr>
+            <th>suppressRowTransform</th>
+            <td>
+                Uses CSS 'top' instead of CSS 'transform' for positioning rows. Useful if the transform
+                function is causing issues such as used in
+                <a href="../javascript-grid-row-spanning/">row spanning</a>.
+            </td>
+        </tr>
     </table>
 
 

@@ -234,6 +234,10 @@
                 "url": "javascript-grid-column-spanning/"
             },
             {
+                "title": "Row Spanning",
+                "url": "javascript-grid-row-spanning/"
+            },
+            {
                 "title": "Column Pinning",
                 "url": "javascript-grid-pinning/"
             },
