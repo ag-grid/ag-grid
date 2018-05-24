@@ -311,7 +311,7 @@ ag-grid-aurelia {
 }
 
 // for when auto height is used but there is no row data
-.ag-layout-auto-height .ag-root {
+.ag-layout-auto-height .ag-body-container {
     min-height: 50px;
 }
 
