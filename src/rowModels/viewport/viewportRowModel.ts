@@ -201,11 +201,17 @@ export class ViewportRowModel implements IRowModel {
         if (firstNodeOutOfRange || lastNodeOutOfRange) { return []; }
 
         let result: RowNode[] = [];
-        for (let i = firstIndex; i<=lastIndex; i++) {
+
+        let startIndex = firstIndex <= lastIndex ? firstIndex : lastIndex;
+        let endIndex = firstIndex <= lastIndex ? lastIndex : firstIndex;
+
+        for (let i = startIndex; i<=endIndex; i++) {
             result.push(this.rowNodesByIndex[i]);
         }
+
         return result;
     }
+
 
     public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
         let callbackCount = 0;
