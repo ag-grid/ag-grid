@@ -710,8 +710,9 @@ cellRendererParams: {
     <note>
         The properties <code>groupRemoveSingleChildren</code>, <code>groupRemoveLowestSingleChildren</code>
         and <code>groupHideOpenParents</code> are mutually exclusive, you can only pick one.
-        Technically it doesn't make sense to mix these. Mixing these three will put you down a
-        black hole so deep not even Stephen Hawking will be able to save you.
+        Technically it doesn't make sense to mix these. They don't work together as the logic for removing single
+        children clashes with the logic for hiding open parents. Both want to remove parents at different times
+        and for different reasons.
     </note>
 
     <h2 id="suppress-group-row">Suppress Group Row</h2>

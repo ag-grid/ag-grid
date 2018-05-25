@@ -129,6 +129,17 @@
         ]
     },
     {
+        "title": "Range Selection",
+        "url": "range-selection",
+        "slides": [
+            {
+                "content":
+                    "Ag-grid allows you to mark areas of the grid and copy/paste the data from them, just like you would do in Excel. To select an area, click and drag accross several cells.",
+                "markers": [{ "selector": "#myGrid  .ag-row:nth-child(3) > .ag-cell:nth-child(2)" }, { "selector": "#myGrid .ag-row:nth-child(5) > .ag-cell:nth-child(3)" }]
+            }
+        ]
+    },
+    {
         "title": "Pivoting",
         "url": "pivoting",
         "slides": [

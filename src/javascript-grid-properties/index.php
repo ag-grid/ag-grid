@@ -648,17 +648,9 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true to allow <a href="../javascript-grid-cell-expressions/#cell-expressions">cell expressions</a>.</td>
         </tr>
         <tr>
-            <th>domLayout</th>
-            <td>Set <a href="../javascript-grid-width-and-height/#dom-layout">domLayout</a> to
-                <a href="../javascript-grid-width-and-height/#autoHeight">autoHeight</a> or
-                <a href="../javascript-grid-for-print/">forPrint</a>.
-                By default, grid will fit width and height of the provided
-                div. Use
-                <a href="../javascript-grid-width-and-height/#autoHeight">autoHeight</a>
-                so that are is no vertical scrollbar and the grid auto-sizes to fit the rows.
-                Use
-                <a href="../javascript-grid-for-print/">forPrint</a>
-                to remove both horizontal and vertical scrolls for a grid that is printer friendly.
+            <th>gridAutoHeight</th>
+            <td>
+                Set to true to enable <a href="../javascript-grid-width-and-height/#auto-height">Grid Auto Height</a>.
             </td>
         </tr>
 

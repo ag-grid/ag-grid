@@ -55,7 +55,7 @@ function toId($str) {
                 <?php foreach ($group['items'] as $index => $item) { ?>
                 <div class="row mb-5">
                     <div class="col-sm-7 <?= ($index % 2 == 0 ? 'order-1' : 'order-0') ?>">
-                        <h4 class="mt-0" id="<?=toId($item['title']) ?>"><?= $item['title'] ?></h4>
+                        <h3 class="mt-0" id="<?=toId($item['title']) ?>"><?= $item['title'] ?></h3>
                         <p class=""><?= $item['description'] ?></p>
 
                         <ul class="list-unstyled">

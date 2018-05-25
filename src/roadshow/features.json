@@ -505,10 +505,10 @@
         "url": "javascript-grid-overlays/"
     },
     {
-        "title": "Layout For Print",
+        "title": "Printing",
         "enterprise": false,
         "description":
-            "Use <span class=\"feature-highlight\">For Print</span> to have the grid render without using\nany scrollbars. This is useful for printing the grid, where all rows should be printed, not just what's\nvisible on the screen.",
+            "Remove all scrolling in the grid to make it ready for printing.",
         "src": null,
         "snippet": null,
         "level": 0,
