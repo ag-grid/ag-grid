@@ -133,6 +133,8 @@ export class ColumnController {
     // primate columns that have colDef.autoHeight set
     private autoRowHeightColumns: Column[];
 
+    private suppressColumnVirtualisation: boolean;
+
     private rowGroupColumns: Column[] = [];
     private valueColumns: Column[] = [];
     private pivotColumns: Column[] = [];
@@ -165,6 +167,8 @@ export class ColumnController {
     @PostConstruct
     public init(): void {
         let pivotMode = this.gridOptionsWrapper.isPivotMode();
+        this.suppressColumnVirtualisation = this.gridOptionsWrapper.isSuppressColumnVirtualisation();
+
         if (this.isPivotSettingAllowed(pivotMode)) {
             this.pivotMode = pivotMode;
         }
@@ -526,8 +530,11 @@ export class ColumnController {
 
         let emptySpaceBeforeColumn = (col: Column) => col.getLeft() > this.viewportLeft;
 
+        // if doing column virtualisation, then we filter based on the viewport.
+        let filterCallback = this.suppressColumnVirtualisation ? null : this.isColumnInViewport.bind(this);
+
         return this.getDisplayedColumnsForRow(rowNode, this.displayedCenterColumns,
-            this.isColumnInViewport.bind(this), emptySpaceBeforeColumn);
+            filterCallback, emptySpaceBeforeColumn);
     }
 
     private isColumnInViewport(col: Column): boolean {
@@ -2312,8 +2319,7 @@ export class ColumnController {
 
     private updateDisplayedCenterVirtualColumns(): {[key: string]: boolean} {
 
-        let skipVirtualisation = this.gridOptionsWrapper.isSuppressColumnVirtualisation();
-        if (skipVirtualisation) {
+        if (this.suppressColumnVirtualisation) {
             // no virtualisation, so don't filter
             this.allDisplayedCenterVirtualColumns = this.displayedCenterColumns;
         } else {
