@@ -10,7 +10,7 @@ export interface IRangeController {
     onDragStop(): void;
     onDragging(mouseEvent: MouseEvent): void;
     getCellRanges(): RangeSelection[];
-    setRangeToCell(cell: GridCell): void;
+    setRangeToCell(cell: GridCell, appendRange?: boolean): void;
     setRange(rangeSelection: AddRangeSelectionParams): void;
     addRange(rangeSelection: AddRangeSelectionParams): void;
     extendRangeInDirection(cell: GridCell, key: number): boolean;

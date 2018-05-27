@@ -1366,7 +1366,8 @@ export class CellComp extends Component {
             } else {
                 let cellAlreadyInRange = this.beans.rangeController.isCellInAnyRange(thisCell);
                 if (!cellAlreadyInRange) {
-                    this.beans.rangeController.setRangeToCell(thisCell);
+                    let ctrlKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
+                    this.beans.rangeController.setRangeToCell(thisCell, ctrlKeyPressed);
                 }
             }
         }
