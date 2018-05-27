@@ -35,7 +35,7 @@ gridOptions.columnDefs = [
 
     <p>
         As you can see in the example below, as soon as there is at least one active row group, the grid will provide an
-        additional column for displaying the groups in a tree structure, with expand/collapse navigation.
+        additional column for displaying the groups in a tree structure with expand/collapse navigation.
     </p>
 
     <ul class="content">
