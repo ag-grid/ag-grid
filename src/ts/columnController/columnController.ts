@@ -951,8 +951,8 @@ export class ColumnController {
         if (atLeastOneColChanged || finished) {
             let event: ColumnResizedEvent = {
                 type: Events.EVENT_COLUMN_RESIZED,
-                columns: changedCols,
-                column: changedCols.length === 1 ? changedCols[0] : null,
+                columns: allCols,
+                column: allCols.length === 1 ? allCols[0] : null,
                 finished: finished,
                 api: this.gridApi,
                 columnApi: this.columnApi,
