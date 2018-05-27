@@ -223,7 +223,8 @@
             },
             {
                 "title": "Range Selection",
-                "url": "javascript-grid-range-selection/"
+                "url": "javascript-grid-range-selection/",
+                "enterprise": true
             },
             {
                 "title": "Grid Size",
