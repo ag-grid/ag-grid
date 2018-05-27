@@ -395,6 +395,24 @@ var defaultCols = [
                 // pivotIndex: 1,
                 // rowGroupIndex: 1,
                 enableRowGroup: true,
+                // colSpan: function(params) {
+                //     if (params.data && params.data.country==='Ireland') {
+                //         return 2;
+                //     } else if (params.data && params.data.country==='France') {
+                //         return 3;
+                //     } else {
+                //         return 1;
+                //     }
+                // },
+                // cellStyle: function(params) {
+                //     if (params.data && params.data.country==='Ireland') {
+                //         return {backgroundColor: 'red'};
+                //     } else if (params.data && params.data.country==='France') {
+                //         return {backgroundColor: 'green'};
+                //     } else {
+                //         return null;
+                //     }
+                // },
                 // rowSpan: function(params) {
                 //     if (params.data && params.data.country==='Ireland') {
                 //         return 2;
