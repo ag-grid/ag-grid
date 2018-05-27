@@ -74,7 +74,7 @@ export class RangeController implements IRangeController {
         this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.clearSelection.bind(this));
     }
 
-    public setRangeToCell(cell: GridCell): void {
+    public setRangeToCell(cell: GridCell, appendRange = false): void {
         if (!this.gridOptionsWrapper.isEnableRangeSelection()) { return; }
 
         let columns = this.updateSelectedColumns(cell.column, cell.column);
@@ -87,7 +87,10 @@ export class RangeController implements IRangeController {
             end: new GridCell(gridCellDef),
             columns: columns
         };
-        this.cellRanges = [];
+        // if not appending, then clear previous range selections
+        if (!appendRange) {
+            this.cellRanges = [];
+        }
         this.cellRanges.push(newRange);
         this.activeRange = null;
         this.dispatchChangedEvent(true, false);
