@@ -78,7 +78,9 @@ export class ToolPanelGroupComp extends Component implements BaseColumnItem{
 
         let eText = this.queryForHtmlElement('#eText');
 
-        this.displayName = this.columnGroup.getColGroupDef() ? this.columnGroup.getColGroupDef().headerName : null;
+        // this.displayName = this.columnGroup.getColGroupDef() ? this.columnGroup.getColGroupDef().headerName : null;
+        this.displayName = this.columnController.getDisplayNameForOriginalColumnGroup(null, this.columnGroup, 'toolPanel');
+
         if (Utils.missing(this.displayName)) {
             this.displayName = '>>'
         }
