@@ -256,6 +256,9 @@ var gridOptions = {
     onColumnVisible: function (event) {
         console.log("Callback onColumnVisible:", event);
     },
+    onColumnResized: function (event) {
+        console.log("Callback onColumnResized:", event);
+    },
     onCellValueChanged: function (params) {
         console.log("Callback onCellValueChanged:", params);
     },
