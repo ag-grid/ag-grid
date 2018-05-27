@@ -43,17 +43,17 @@ meta_and_links($title, $keywords, $description, false);
 
                 <ul id="homepage-highlights">
                     <li>
-                        Over <strong>1,200</strong> Companies
+                        Over <strong>1,500</strong> Companies
                         use ag-Grid Enterprise.
                     </li>
 
                     <li>
-                        Over <strong>20%</strong> of the Fortune 500
+                        Over <strong>25%</strong> of the Fortune 500
                         use ag-Grid Enterprise.
                     </li>
 
                     <li>
-                        Over <strong>140,000</strong> 
+                        Over <strong>150,000</strong>
                         Downloads per month.
                     </li>
                 </ul>

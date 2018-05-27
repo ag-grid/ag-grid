@@ -67,6 +67,9 @@
         rowGroupPanelShow: "always",
         pivotPanelShow: "always",
         suppressAggFuncInHeader: true,
+        autoGroupColumnDef: {
+            width: 200
+        },
         getRowNodeId: function(data) {
             return data.trade;
         },
@@ -78,83 +81,8 @@
         }
     };
 
-    function onStartStress() {
-        worker.postMessage("startStress");
-    }
-
     function onStartLoad() {
         worker.postMessage("startLoad");
-    }
-
-    function onShowToolPanel() {
-        gridOptions.api.showToolPanel(true);
-    }
-
-    function onHideToolPanel() {
-        gridOptions.api.showToolPanel(false);
-    }
-
-    function onColumnsGroup() {
-        gridOptions.columnApi.setPivotMode(false);
-        gridOptions.columnApi.setColumnState([
-            { colId: "product", hide: true, width: 120, rowGroupIndex: 0 },
-            { colId: "portfolio", hide: true, width: 120, rowGroupIndex: 1 },
-            { colId: "book", hide: true, width: 120, rowGroupIndex: 2 },
-            { colId: "trade", width: 100 },
-            { colId: "dealType", width: 120 },
-            { colId: "bidFlag", width: 100 },
-            { colId: "current", aggFunc: "sum", width: 150 },
-            { colId: "previous", aggFunc: "sum", width: 150 },
-            { colId: "pl1", aggFunc: "sum", width: 150 },
-            { colId: "pl2", aggFunc: "sum", width: 150 },
-            { colId: "gainDx", aggFunc: "sum", width: 150 },
-            { colId: "sxPx", aggFunc: "sum", width: 150 },
-            { colId: "_99Out", aggFunc: "sum", width: 150 },
-            { colId: "submitterID", aggFunc: "sum", width: 150 },
-            { colId: "submitterDealID", aggFunc: "sum", width: 150 }
-        ]);
-    }
-
-    function onColumnsPivot() {
-        gridOptions.columnApi.setPivotMode(true);
-        gridOptions.columnApi.setColumnState([
-            { colId: "product", hide: true, width: 120, rowGroupIndex: 0 },
-            { colId: "portfolio", width: 120, pivotIndex: 0 },
-            { colId: "book", hide: true, width: 120, rowGroupIndex: 1 },
-            { colId: "trade", width: 100 },
-            { colId: "dealType", width: 120 },
-            { colId: "bidFlag", width: 100 },
-            { colId: "current", aggFunc: "sum", width: 150 },
-            { colId: "previous", aggFunc: "sum", width: 150 },
-            { colId: "pl1", width: 150 },
-            { colId: "pl2", width: 150 },
-            { colId: "gainDx", width: 150 },
-            { colId: "sxPx", width: 150 },
-            { colId: "_99Out", width: 150 },
-            { colId: "submitterID", width: 150 },
-            { colId: "submitterDealID", width: 150 }
-        ]);
-    }
-
-    function onColumnsFlat() {
-        gridOptions.columnApi.setPivotMode(false);
-        gridOptions.columnApi.setColumnState([
-            { colId: "product", width: 120 },
-            { colId: "portfolio", width: 120 },
-            { colId: "book", width: 120 },
-            { colId: "trade", width: 100 },
-            { colId: "dealType", width: 120 },
-            { colId: "bidFlag", width: 100 },
-            { colId: "current", width: 150 },
-            { colId: "previous", width: 150 },
-            { colId: "pl1", width: 150 },
-            { colId: "pl2", width: 150 },
-            { colId: "gainDx", width: 150 },
-            { colId: "sxPx", width: 150 },
-            { colId: "_99Out", width: 150 },
-            { colId: "submitterID", width: 150 },
-            { colId: "submitterDealID", width: 150 }
-        ]);
     }
 
     var testStartTime;
@@ -185,7 +113,7 @@
     }
 
     function logTestStart(messageCount, updateCount, interval) {
-        let message = messageCount
+        var message = messageCount
             ? "Sending " + messageCount + " messages at once with " + updateCount + " record updates each."
             : "Sending 1 message with " +
               updateCount +
@@ -231,6 +159,19 @@
         new agGrid.Grid(eGridDiv, gridOptions);
         startWorker();
         onStartLoad();
+
+        setTimeout( function() {
+            gridOptions.api.getDisplayedRowAtIndex(2).setExpanded(true);
+        }, 800);
+        setTimeout( function() {
+            gridOptions.api.getDisplayedRowAtIndex(8).setExpanded(true);
+        }, 1200);
+        setTimeout( function() {
+            gridOptions.api.getDisplayedRowAtIndex(9).setExpanded(true);
+        }, 1600);
+        setTimeout( function() {
+            gridOptions.api.getDisplayedRowAtIndex(10).setExpanded(true);
+        }, 2000);
     }
 
     if (document.readyState == "complete") {

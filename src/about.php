@@ -43,7 +43,7 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
             </p>
 
             <p>
-                Today, <strong>ag-Grid</strong> is a self-funded, bootstrapped company with over 1,200 customers in 65 countries. Our product has resonated in the market - as our users face the same challenges Niall did - and this has been central to our rapid growth. And we’re not stopping here: we are working on the next great features to continue our mission.
+                Today, <strong>ag-Grid</strong> is a self-funded, bootstrapped company with over 1,500 customers in 65 countries. Our product has resonated in the market - as our users face the same challenges Niall did - and this has been central to our rapid growth. And we’re not stopping here: we are working on the next great features to continue our mission.
             </p>
 
             <h2> Our Principles</h2>
