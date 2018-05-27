@@ -88,7 +88,7 @@ export class RangeController implements IRangeController {
             columns: columns
         };
         // if not appending, then clear previous range selections
-        if (!appendRange) {
+        if (!appendRange || _.missing(this.cellRanges)) {
             this.cellRanges = [];
         }
         this.cellRanges.push(newRange);
