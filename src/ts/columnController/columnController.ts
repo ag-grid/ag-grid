@@ -1633,7 +1633,7 @@ export class ColumnController {
     }
 
     public getDisplayNameForColumn(column: Column, location: string, includeAggFunc = false): string {
-        let headerName = this.getHeaderName(column.getColDef(), column, null, location);
+        let headerName = this.getHeaderName(column.getColDef(), column, null, null, location);
         if (includeAggFunc) {
             return this.wrapHeaderNameWithAggFunc(column, headerName);
         } else {
@@ -1641,17 +1641,22 @@ export class ColumnController {
         }
     }
 
-    public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string {
-        let colGroupDef = columnGroup.getOriginalColumnGroup().getColGroupDef();
+    public getDisplayNameForOriginalColumnGroup(columnGroup: ColumnGroup, originalColumnGroup: OriginalColumnGroup, location: string): string {
+        let colGroupDef = originalColumnGroup.getColGroupDef();
         if (colGroupDef) {
-            return this.getHeaderName(colGroupDef, null, columnGroup, location);
+            return this.getHeaderName(colGroupDef, null, columnGroup, originalColumnGroup, location);
         } else {
             return null;
         }
     }
 
+    public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string {
+        return this.getDisplayNameForOriginalColumnGroup(columnGroup, columnGroup.getOriginalColumnGroup(), location);
+    }
+
     // location is where the column is going to appear, ie who is calling us
-    private getHeaderName(colDef: AbstractColDef, column: Column, columnGroup: ColumnGroup, location: string): string {
+    private getHeaderName(colDef: AbstractColDef, column: Column, columnGroup: ColumnGroup,
+                          originalColumnGroup: OriginalColumnGroup, location: string): string {
         let headerValueGetter = colDef.headerValueGetter;
 
         if (headerValueGetter) {
@@ -1659,6 +1664,7 @@ export class ColumnController {
                 colDef: colDef,
                 column: column,
                 columnGroup: columnGroup,
+                originalColumnGroup: originalColumnGroup,
                 location: location,
                 api: this.gridOptionsWrapper.getApi(),
                 context: this.gridOptionsWrapper.getContext()
