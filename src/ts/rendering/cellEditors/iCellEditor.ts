@@ -36,36 +36,37 @@ export interface ICellEditorComp extends ICellEditor, IComponent<ICellEditorPara
 
 }
 
-/** Gets called once after editor is created. Params contains teh following:
- value: current value of the cell
- keyPress: key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable characters appear here
- charPress: the string that started the edit, eg 'a' if letter a was pressed, or 'A' if shift + letter a
- - only printable characters appear here
- column: grid column
- node: grid row node
- api: grid api
- columnApi: grid column api
- context: grid context
- onKeyDown: callback to tell grid a key was pressed - useful to pass control key events (tab, arrows etc) back to grid - however you do
- not need to call this as the grid is already listening for the events as they propagate. this is only required if
- you are preventing event propagation
- stopRowOrCellEdit: call this if you want to stop editing the cell (eg if you are doing your own edit and are happy with the selection)
- */
 export interface ICellEditorParams {
+    // current value of the cell
     value: any;
+    // key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable characters appear here
     keyPress: number;
+    // the string that started the edit, eg 'a' if letter a was pressed, or 'A' if shift + letter a - only printable characters appear here
     charPress: string;
+    // grid column
     column: Column;
+    // grid row node
     node: RowNode;
+    // editing row index
     rowIndex: number,
+    // grid API
     api: GridApi;
+    // column API
     columnApi: ColumnApi;
+    // If doing full row edit, this is true if the cell is the one that started the edit (eg it is the cell the use double clicked on, or pressed a key on etc).
     cellStartedEdit: boolean;
+    // the grid's context object
     context: any;
+    // angular 1 scope - null if not using angular 1, this is legacy and not used if not using angular 1
     $scope: any;
+    // callback to tell grid a key was pressed - useful to pass control key events (tab, arrows etc) back to grid - however you do
     onKeyDown: (event: KeyboardEvent)=>void;
-    stopEditing: ()=>void;
+    // Callback to tell grid to stop editing the current cell. pass 'false' to prevent navigation moving to the next cell if grid property enterMovesDownAfterEdit=true
+    stopEditing: (suppressNavigateAfterEdit?: boolean)=>void;
+    // A reference to the DOM element representing the grid cell that your component will live inside. Useful if you want to add event listeners or classes at this level. This is the DOM element that gets browser focus when selecting cells.
     eGridCell: HTMLElement;
+    // Utility function to parse a value using the column's colDef.valueParser
     parseValue: (value: any) => any;
+    // Utility function to format a value using the column's colDef.valueFormatter
     formatValue: (value: any) => any;
 }

@@ -1128,10 +1128,12 @@ export class CellComp extends Component {
 
     // cell editors call this, when they want to stop for reasons other
     // than what we pick up on. eg selecting from a dropdown ends editing.
-    private stopEditingAndFocus(): void {
+    private stopEditingAndFocus(suppressNavigateAfterEdit = false): void {
         this.stopRowOrCellEdit();
         this.focusCell(true);
-        this.navigateAfterEdit();
+        if (!suppressNavigateAfterEdit) {
+            this.navigateAfterEdit();
+        }
     }
 
     private parseValue(newValue: any): any {
@@ -1366,7 +1368,8 @@ export class CellComp extends Component {
             } else {
                 let cellAlreadyInRange = this.beans.rangeController.isCellInAnyRange(thisCell);
                 if (!cellAlreadyInRange) {
-                    this.beans.rangeController.setRangeToCell(thisCell);
+                    let ctrlKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
+                    this.beans.rangeController.setRangeToCell(thisCell, ctrlKeyPressed);
                 }
             }
         }

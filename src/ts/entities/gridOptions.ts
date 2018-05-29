@@ -229,6 +229,7 @@ export interface GridOptions {
     groupSelectsChildren?: boolean;
     groupSelectsFiltered?: boolean;
     groupIncludeFooter?: boolean;
+    groupIncludeTotalFooter?: boolean;
     groupUseEntireRow?: boolean;
     groupRemoveSingleChildren?: boolean;
     groupRemoveLowestSingleChildren?: boolean;

@@ -133,6 +133,8 @@ export class ColumnController {
     // primate columns that have colDef.autoHeight set
     private autoRowHeightColumns: Column[];
 
+    private suppressColumnVirtualisation: boolean;
+
     private rowGroupColumns: Column[] = [];
     private valueColumns: Column[] = [];
     private pivotColumns: Column[] = [];
@@ -165,6 +167,8 @@ export class ColumnController {
     @PostConstruct
     public init(): void {
         let pivotMode = this.gridOptionsWrapper.isPivotMode();
+        this.suppressColumnVirtualisation = this.gridOptionsWrapper.isSuppressColumnVirtualisation();
+
         if (this.isPivotSettingAllowed(pivotMode)) {
             this.pivotMode = pivotMode;
         }
@@ -526,8 +530,11 @@ export class ColumnController {
 
         let emptySpaceBeforeColumn = (col: Column) => col.getLeft() > this.viewportLeft;
 
+        // if doing column virtualisation, then we filter based on the viewport.
+        let filterCallback = this.suppressColumnVirtualisation ? null : this.isColumnInViewport.bind(this);
+
         return this.getDisplayedColumnsForRow(rowNode, this.displayedCenterColumns,
-            this.isColumnInViewport.bind(this), emptySpaceBeforeColumn);
+            filterCallback, emptySpaceBeforeColumn);
     }
 
     private isColumnInViewport(col: Column): boolean {
@@ -951,8 +958,8 @@ export class ColumnController {
         if (atLeastOneColChanged || finished) {
             let event: ColumnResizedEvent = {
                 type: Events.EVENT_COLUMN_RESIZED,
-                columns: changedCols,
-                column: changedCols.length === 1 ? changedCols[0] : null,
+                columns: allCols,
+                column: allCols.length === 1 ? allCols[0] : null,
                 finished: finished,
                 api: this.gridApi,
                 columnApi: this.columnApi,
@@ -1626,7 +1633,7 @@ export class ColumnController {
     }
 
     public getDisplayNameForColumn(column: Column, location: string, includeAggFunc = false): string {
-        let headerName = this.getHeaderName(column.getColDef(), column, null, location);
+        let headerName = this.getHeaderName(column.getColDef(), column, null, null, location);
         if (includeAggFunc) {
             return this.wrapHeaderNameWithAggFunc(column, headerName);
         } else {
@@ -1634,17 +1641,22 @@ export class ColumnController {
         }
     }
 
-    public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string {
-        let colGroupDef = columnGroup.getOriginalColumnGroup().getColGroupDef();
+    public getDisplayNameForOriginalColumnGroup(columnGroup: ColumnGroup, originalColumnGroup: OriginalColumnGroup, location: string): string {
+        let colGroupDef = originalColumnGroup.getColGroupDef();
         if (colGroupDef) {
-            return this.getHeaderName(colGroupDef, null, columnGroup, location);
+            return this.getHeaderName(colGroupDef, null, columnGroup, originalColumnGroup, location);
         } else {
             return null;
         }
     }
 
+    public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string {
+        return this.getDisplayNameForOriginalColumnGroup(columnGroup, columnGroup.getOriginalColumnGroup(), location);
+    }
+
     // location is where the column is going to appear, ie who is calling us
-    private getHeaderName(colDef: AbstractColDef, column: Column, columnGroup: ColumnGroup, location: string): string {
+    private getHeaderName(colDef: AbstractColDef, column: Column, columnGroup: ColumnGroup,
+                          originalColumnGroup: OriginalColumnGroup, location: string): string {
         let headerValueGetter = colDef.headerValueGetter;
 
         if (headerValueGetter) {
@@ -1652,6 +1664,7 @@ export class ColumnController {
                 colDef: colDef,
                 column: column,
                 columnGroup: columnGroup,
+                originalColumnGroup: originalColumnGroup,
                 location: location,
                 api: this.gridOptionsWrapper.getApi(),
                 context: this.gridOptionsWrapper.getContext()
@@ -2312,8 +2325,7 @@ export class ColumnController {
 
     private updateDisplayedCenterVirtualColumns(): {[key: string]: boolean} {
 
-        let skipVirtualisation = this.gridOptionsWrapper.isSuppressColumnVirtualisation();
-        if (skipVirtualisation) {
+        if (this.suppressColumnVirtualisation) {
             // no virtualisation, so don't filter
             this.allDisplayedCenterVirtualColumns = this.displayedCenterColumns;
         } else {
