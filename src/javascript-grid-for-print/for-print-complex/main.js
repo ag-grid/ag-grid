@@ -15,45 +15,49 @@ var countries = ['UK', 'Spain', 'France', 'Ireland', 'USA'];
 
 var printPending = false;
 
-var rowData = [];
-for (var i = 0; i<200; i++) {
-    var item = {
-        model: models[Math.floor(Math.random()*models.length)],
-        color: colors[Math.floor(Math.random()*colors.length)],
-        country: countries[Math.floor(Math.random()*countries.length)],
-        year: 2018 - Math.floor(Math.random() * 20),
-        price: 20000 + ((Math.floor(Math.random() * 100)*100))
-    };
-    rowData.push(item);
+function createRowData() {
+    var rowData = [];
+    for (var i = 0; i<200; i++) {
+        var item = {
+            model: models[Math.floor(Math.random()*models.length)],
+            color: colors[Math.floor(Math.random()*colors.length)],
+            country: countries[Math.floor(Math.random()*countries.length)],
+            year: 2018 - Math.floor(Math.random() * 20),
+            price: 20000 + ((Math.floor(Math.random() * 100)*100))
+        };
+        rowData.push(item);
+    }
+    return rowData;
 }
+
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: rowData,
+    rowData: createRowData(),
     onAnimationQueueEmpty: onAnimationQueueEmpty
 };
 
 function onBtPrint() {
-    setPrinterFriendly();
+    setPrinterFriendly(gridOptions.api);
     printPending = true;
 
     if (gridOptions.api.isAnimationFrameQueueEmpty()) {
-        onAnimationQueueEmpty();
+        onAnimationQueueEmpty({api: gridOptions.api});
     }
 }
 
-function onAnimationQueueEmpty() {
+function onAnimationQueueEmpty(event) {
     if (printPending) {
         printPending = false;
         print();
-        setNormal();
+        setNormal(event.api);
     }
 }
 
-function setPrinterFriendly() {
+function setPrinterFriendly(api) {
     var eGridDiv = document.querySelector('.my-grid');
 
-    var preferredWidth = gridOptions.api.getPreferredWidth();
+    var preferredWidth = api.getPreferredWidth();
 
     // add 2 pixels for the grid border
     preferredWidth += 2;
@@ -61,16 +65,16 @@ function setPrinterFriendly() {
     eGridDiv.style.width = preferredWidth + 'px';
     eGridDiv.style.height = '';
 
-    gridOptions.api.setGridAutoHeight(true);
+    api.setGridAutoHeight(true);
 }
 
-function setNormal() {
+function setNormal(api) {
     var eGridDiv = document.querySelector('.my-grid');
 
     eGridDiv.style.width = '400px';
     eGridDiv.style.height = '200px';
 
-    gridOptions.api.setGridAutoHeight(false);
+    api.setGridAutoHeight(false);
 }
 
 // setup the grid after the page has finished loading
