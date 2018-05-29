@@ -283,6 +283,7 @@ export class GridOptionsWrapper {
             return result;
         }
     }
+
     public isSuppressRowHoverHighlight() { return isTrue(this.gridOptions.suppressRowHoverHighlight); }
     public isGroupSelectsFiltered() { return isTrue(this.gridOptions.groupSelectsFiltered); }
     public isGroupHideOpenParents() { return isTrue(this.gridOptions.groupHideOpenParents); }
@@ -291,6 +292,7 @@ export class GridOptionsWrapper {
     public isGroupRemoveSingleChildren() { return isTrue(this.gridOptions.groupRemoveSingleChildren); }
     public isGroupRemoveLowestSingleChildren() { return isTrue(this.gridOptions.groupRemoveLowestSingleChildren); }
     public isGroupIncludeFooter() { return isTrue(this.gridOptions.groupIncludeFooter); }
+    public isGroupIncludeTotalFooter() { return isTrue(this.gridOptions.groupIncludeTotalFooter); }
     public isGroupSuppressBlankHeader() { return isTrue(this.gridOptions.groupSuppressBlankHeader); }
     public isSuppressRowClickSelection() { return isTrue(this.gridOptions.suppressRowClickSelection); }
     public isSuppressCellSelection() { return isTrue(this.gridOptions.suppressCellSelection); }
