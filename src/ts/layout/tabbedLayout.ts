@@ -11,8 +11,8 @@ export class TabbedLayout {
 
     private static TEMPLATE =
         '<div>'+
-            '<div id="tabHeader" class="ag-tab-header"></div>'+
-            '<div id="tabBody" class="ag-tab-body"></div>'+
+            '<div ref="tabHeader" class="ag-tab-header"></div>'+
+            '<div ref="tabBody" class="ag-tab-body"></div>'+
         '</div>';
 
     private items: TabbedItemWrapper[] = [];
@@ -23,8 +23,8 @@ export class TabbedLayout {
         this.eGui = document.createElement('div');
         this.eGui.innerHTML = TabbedLayout.TEMPLATE;
 
-        this.eHeader = <HTMLElement> this.eGui.querySelector('#tabHeader');
-        this.eBody = <HTMLElement> this.eGui.querySelector('#tabBody');
+        this.eHeader = <HTMLElement> this.eGui.querySelector('[ref="tabHeader"]');
+        this.eBody = <HTMLElement> this.eGui.querySelector('[ref="tabBody"]');
 
         _.addCssClass(this.eGui, params.cssClass);
 
