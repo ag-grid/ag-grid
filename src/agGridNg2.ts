@@ -297,6 +297,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public groupSuppressAutoColumn : any = undefined;
     @Input() public groupSelectsChildren : any = undefined;
     @Input() public groupIncludeFooter : any = undefined;
+    @Input() public groupIncludeTotalFooter : any = undefined;
     @Input() public groupUseEntireRow : any = undefined;
     @Input() public groupSuppressRow : any = undefined;
     @Input() public groupSuppressBlankHeader : any = undefined;
@@ -367,6 +368,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public pivotColumnGroupTotals : any = undefined;
     @Input() public pivotRowTotals : any = undefined;
     @Input() public suppressChangeDetection : any = undefined;
+    @Input() public suppressRowTransform : any = undefined;
     @Input() public valueCache : any = undefined;
     @Input() public valueCacheNeverExpires : any = undefined;
     @Input() public aggregateOnlyChangedColumns : any = undefined;
