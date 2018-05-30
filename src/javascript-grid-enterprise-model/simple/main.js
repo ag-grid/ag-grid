@@ -18,7 +18,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     enableColResize: true,
     // use the enterprise row model
-    rowModelType: 'enterprise',
+    rowModelType: 'serverSide',
     // bring back data 50 rows at a time
     cacheBlockSize: 50,
     // don't show the grouping in a panel at the top
