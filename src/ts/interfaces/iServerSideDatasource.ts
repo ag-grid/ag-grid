@@ -4,7 +4,7 @@
 import {RowNode} from "../entities/rowNode";
 import {ColumnVO} from "./iColumnVO";
 
-export interface IEnterpriseGetRowsRequest {
+export interface IServerSideGetRowsRequest {
     // columns that are currently row grouped
     startRow: number;
     // columns that are currently row grouped
@@ -25,10 +25,10 @@ export interface IEnterpriseGetRowsRequest {
     sortModel: any;
 }
 
-export interface IEnterpriseGetRowsParams {
+export interface IServerSideGetRowsParams {
 
     // details for the request,
-    request: IEnterpriseGetRowsRequest;
+    request: IServerSideGetRowsRequest;
 
     // the parent row node. is the RootNode (level -1) if request is top level.
     // this is NOT part fo the request as it cannot be serialised to JSON (a rowNode has methods)
@@ -41,8 +41,8 @@ export interface IEnterpriseGetRowsParams {
     failCallback(): void;
 }
 
-// datasource for Enterprise Row Model
-export interface IEnterpriseDatasource {
-    getRows(params: IEnterpriseGetRowsParams): void;
+// datasource for Server Side Row Model
+export interface IServerSideDatasource {
+    getRows(params: IServerSideGetRowsParams): void;
     destroy?(): void;
 }

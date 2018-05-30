@@ -149,14 +149,25 @@ export {ClientSideRowModel, RowNodeTransaction} from "./dist/lib/rowModels/clien
 export {ChangedPath} from "./dist/lib/rowModels/clientSide/changedPath";
 export {ClientSideNodeManager} from "./dist/lib/rowModels/clientSide/clientSideNodeManager";
 export {InfiniteRowModel} from "./dist/lib/rowModels/infinite/infiniteRowModel";
-export {IEnterpriseGetRowsParams} from "./dist/lib/interfaces/iEnterpriseDatasource";
-export {IEnterpriseGetRowsRequest} from "./dist/lib/interfaces/iEnterpriseDatasource";
 export {InfiniteCacheParams} from "./dist/lib/rowModels/infinite/infiniteCache";
 export {RowNodeBlock} from "./dist/lib/rowModels/cache/rowNodeBlock";
 export {RowNodeBlockLoader} from "./dist/lib/rowModels/cache/rowNodeBlockLoader";
+
+export {ColumnVO} from "./dist/lib/interfaces/iColumnVO";
+
+export {IEnterpriseGetRowsParams} from "./dist/lib/interfaces/iEnterpriseDatasource";
+export {IEnterpriseGetRowsRequest} from "./dist/lib/interfaces/iEnterpriseDatasource";
+export {IEnterpriseDatasource} from "./dist/lib/interfaces/iEnterpriseDatasource";
 export {IEnterpriseRowModel} from "./dist/lib/interfaces/iEnterpriseRowModel";
 export {IEnterpriseCache} from "./dist/lib/interfaces/iEnterpriseCache";
-export {IEnterpriseDatasource, ColumnVO} from "./dist/lib/interfaces/iEnterpriseDatasource";
+
+export {IServerSideDatasource} from "./dist/lib/interfaces/iServerSideDatasource";
+export {IServerSideGetRowsParams} from "./dist/lib/interfaces/iServerSideDatasource";
+export {IServerSideGetRowsRequest} from "./dist/lib/interfaces/iServerSideDatasource";
+
+export {IServerSideRowModel} from "./dist/lib/interfaces/iServerSideRowModel";
+export {IServerSideCache} from "./dist/lib/interfaces/iServerSideCache";
+
 export {IToolPanel} from "./dist/lib/interfaces/iToolPanel";
 export {RowNodeCache, RowNodeCacheParams} from "./dist/lib/rowModels/cache/rowNodeCache";
 export {IGetRowsParams, IDatasource} from "./dist/lib/rowModels/iDatasource";
