@@ -443,7 +443,7 @@
                 "url": "javascript-grid-row-node/"
             },
             {
-                "title": "In Memory",
+                "title": "Client Side",
                 "url": "javascript-grid-in-memory/"
             },
             {
@@ -451,7 +451,7 @@
                 "url": "javascript-grid-infinite-scrolling/"
             },
             {
-                "title": "Enterprise",
+                "title": "Server Side",
                 "url": "javascript-grid-enterprise-model/",
                 "enterprise": true
             },

@@ -1,37 +1,39 @@
 <?php
-$pageTitle = "ag-Grid Row Models: The Enterprise Row Model";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Enterprise Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of server side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
-$pageKeyboards = "ag-Grid Enterprise Row Model";
+$pageTitle = "ag-Grid Row Models: The Server Side Row Model";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server Side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of server side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
+$pageKeyboards = "ag-Grid Server Side Row Model";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise"> Enterprise Row Model </h1>
+<h1 class="heading-enterprise"> Server Side Model </h1>
 
 
-<?= example('Infinite Scroll', 'infinite-scroll', 'generated', array("enterprise" => 1)) ?>
+<!--<h2>Infinite Scroll</h2>-->
+<!---->
+<?//= example('Infinite Scroll', 'infinite-scroll', 'generated', array("enterprise" => 1)) ?>
 
 <p class="lead">
-    The Enterprise Row Model is arguably the most powerful of the row models in ag-Grid
+    The Server Side Row Model is arguably the most powerful of the row models in ag-Grid
     and presents the ultimate 'big data' user experience, allowing the user to
     navigate through very large data sets using a mixture of server side grouping and aggregation
     while using infinite scrolling to bring the data back in blocks to the client.
 </p>
 
-<h2>Enterprise Row Model Features</h2>
+<h2>Server Side Row Model Features</h2>
 
 <p>
-    The best way to learn what the Enterprise Model does is to break it down into the core features.
+    The best way to learn what the Server Side Row Model does is to break it down into the core features.
     You may benefit from the combination of all these
     features or just be interested in a subset. The features of the
-    enterprise row model are:
+    Server Side Row Model are:
 </p>
 
     <ul class="content">
         <li>
             <b>Lazy Loading of Groups:</b> The grid will load the top level rows only. Children
             of groups are only loaded when the user expands the group. Some applications may use
-            the Enterprise Row Model for this one feature alone e.g. you might have a managers database table,
+            the Server Side Row Model for this one feature alone e.g. you might have a managers database table,
             you can display a list of all managers, then click 'expand' on the manager and the grid
             will then request to get the 'employees' for that manager.
         </li>
@@ -48,7 +50,7 @@ include '../documentation-main/documentation_header.php';
             of that group are also loaded in blocks). This allows viewing very large datasets in the browser by
             only bringing back data one block at a time. This feature reuses the logic from the
             <a href="../javascript-grid-infinite-scrolling/">Infinite Scrolling</a> row model, so understanding
-            how that row model works will help you in understanding this part of the enterprise row model.
+            how that row model works will help you in understanding this part of the Server Side Row Model.
         </li>
         <li>
             <b>Slice and Dice:</b> Assuming your server side can build the data query, you can allow the user
@@ -70,7 +72,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-// datasource for enterprise row model
+// datasource for Server Side Row Model
 interface IEnterpriseDatasource {
 
     // grid calls this to get rows
@@ -254,7 +256,7 @@ export interface ColumnVO {
     </ul>
 
 <note>
-    When filtering using the Enterprise Row Model it's important to specify the filter parameter: <code>newRowsAction: 'keep'</code>.
+    When filtering using the Server Side Row Model it's important to specify the filter parameter: <code>newRowsAction: 'keep'</code>.
     This is to prevent the filter from being reset as data is loaded into the grid.
 </note>
 
@@ -285,8 +287,8 @@ export interface ColumnVO {
 <p>
     To understand <a href="../javascript-grid-pivoting/#pivot-mode">Pivot Mode</a> and
     <a href="../javascript-grid-pivoting/#secondary-columns">Secondary Columns</a> please refer to
-    the relevant sections on <a href="../javascript-grid-pivoting/">Pivoting in In Memory Row Model</a>.
-    The concepts mean the same in both In Memory Row Model and the Enterprise Row Model.
+    the relevant sections on <a href="../javascript-grid-pivoting/">Pivoting in Client Side Row Model</a>.
+    The concepts mean the same in both Client Side Row Model and the Server Side Row Model.
 </p>
 
 <p>
@@ -314,7 +316,7 @@ export interface ColumnVO {
 </p>
 
 <p>
-    If you do not want pivot in your enterprise row model grid, then you can remove it from the tool
+    If you do not want pivot in your Server Side Row Model grid, then you can remove it from the tool
     panel by setting <code>toolPanelSuppressPivotMode=true</code> and
     <code>toolPanelSuppressValues=true</code>.
 </p>
@@ -322,7 +324,7 @@ export interface ColumnVO {
 <h2>Example - Slice and Dice - Real Server</h2>
 
 <p>
-    It is not possible to put up a full end to end example of the Enterprise row model
+    It is not possible to put up a full end to end example of the Server Side Row Model
     on the documentation website, as we cannot host servers on our website.
     Instead we have put a full end to end example
     in Github at <a href="https://github.com/ag-grid/ag-grid-enterprise-mysql-example/">
@@ -358,10 +360,10 @@ export interface ColumnVO {
     customer demand, we may provide connectors to server sides stores.
 </note>
 
-<h2>Selection with Enterprise Row Model</h2>
+<h2>Selection with Server Side Row Model</h2>
 
 <p>
-    Selecting rows and groups in the enterprise row model is supported.
+    Selecting rows and groups in the Server Side Row Model is supported.
     Just set the property <code>rowSelection</code> to either <code>single</code>
     or <code>multiple</code> as with any other row model.
 </p>
@@ -457,14 +459,14 @@ gridOptions.getChildCount = function(data) {
 <h2>Dynamic Row Height</h2>
 
 <p>
-    To enable <a href="../javascript-grid-row-height/#">Dynamic Row Height</a> when using the enterprise row model you need to provide an implementation
+    To enable <a href="../javascript-grid-row-height/#">Dynamic Row Height</a> when using the Server Side Row Model you need to provide an implementation
     for the 'getRowHeight' Grid Options property. This is demonstrated in the example below:
 </p>
 
 <?= example('Dynamic Row Height Example', 'dynamic-row-height', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
 <note>
-    Purging the cache and dynamic row heights do not work together for the Enterprise Row Model.
+    Purging the cache and dynamic row heights do not work together for the Server Side Row Model.
     If you are using dynamic row height, ensure 'maxBlocksInCache' is not set.
 </note>
 
@@ -477,8 +479,8 @@ gridOptions.getChildCount = function(data) {
 </p>
 
 <p>
-    This is different to the <a href="../javascript-grid-in-memory/">In Memory Row Model</a> where the
-    grid height can be changed. For Enterprise Row Model the row height cannot be changed once it is set.
+    This is different to the <a href="../javascript-grid-in-memory/">Client Side Row Model</a> where the
+    grid height can be changed. For Server Side Row Model the row height cannot be changed once it is set.
 </p>
 
 <p>
@@ -493,11 +495,11 @@ gridOptions.getChildCount = function(data) {
 <?= example('Auto Row Height Example', 'auto-row-height', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
 <note>
-    Purging the cache and auto row heights do not work together for the Enterprise Row Model.
+    Purging the cache and auto row heights do not work together for the Server Side Row Model.
     If you are using auto row height, ensure 'maxBlocksInCache' is not set.
 </note>
 
-<h2>Enterprise Model API</h2>
+<h2>Server Side Model API</h2>
 
 <p>
     The grid has the following API to allow you to interact with the enterprise cache.
@@ -552,10 +554,10 @@ gridOptions.getChildCount = function(data) {
 
 <?= example('API example', 'api', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
-<h2>Pagination with Enterprise Row Model</h2>
+<h2>Pagination with Server Side Row Model</h2>
 
 <p>
-    To enable pagination when using the enterprise row model, all you have to do is turning pagination on with
+    To enable pagination when using the Server Side Row Model, all you have to do is turning pagination on with
     <code>pagination=true</code>. Find an example below:
 </p>
 
@@ -564,9 +566,9 @@ gridOptions.getChildCount = function(data) {
 <h2>CRUD</h2>
 
 <p>
-    The enterprise row model acts as a cache against the original store of data which typically
+    The Server Side Row Model acts as a cache against the original store of data which typically
     resides on the server side of an application. To add or remove records, the pattern is to update
-    the original data set (typically on the server) and then get the enterprise row model to
+    the original data set (typically on the server) and then get the Server Side Row Model to
     refresh.
 </p>
 
@@ -580,6 +582,6 @@ gridOptions.getChildCount = function(data) {
         <li>All operations are done outside of the grid and the grid is then told to refresh.</li>
     </ul>
 
-<?= example('Enterprise Row Model & CRUD', 'crud', 'generated', array("enterprise" => 1)) ?>
+<?= example('Server Side Row Model & CRUD', 'crud', 'generated', array("enterprise" => 1)) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
