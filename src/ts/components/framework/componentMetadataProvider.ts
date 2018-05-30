@@ -81,6 +81,11 @@ export class ComponentMetadataProvider {
                 optionalMethodList: ['afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
+            groupRowRenderer:{
+                mandatoryMethodList: [],
+                optionalMethodList: ['afterGuiAttached'],
+                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
+            },
             filter:{
                 mandatoryMethodList: ['isFilterActive','doesFilterPass','getModel','setModel'],
                 optionalMethodList: ['afterGuiAttached','onNewRowsLoaded','getModelAsString','onFloatingFilterChanged', 'afterGuiAttached']
