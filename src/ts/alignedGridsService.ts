@@ -18,19 +18,16 @@ import {Autowired} from "./context/context";
 import {PostConstruct} from "./context/context";
 import {OriginalColumnGroup} from "./entities/originalColumnGroup";
 
-let counter = 0;
-
 @Bean('alignedGridsService')
 export class AlignedGridsService {
 
-    private instanceId = counter++;
-
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('eventService') private eventService: EventService;
 
     private logger: Logger;
+
+    private gridPanel: GridPanel;
 
     // flag to mark if we are consuming. to avoid cyclic events (ie other grid firing back to master
     // while processing a master event) we mark this if consuming an event, and if we are, then
@@ -39,6 +36,10 @@ export class AlignedGridsService {
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('AlignedGridsService');
+    }
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
     }
 
     @PostConstruct

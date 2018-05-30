@@ -42,7 +42,7 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
 
     public abstract getRow(rowIndex: number): RowNode;
 
-    constructor(cacheParams: P) {
+    protected constructor(cacheParams: P) {
         super();
         this.virtualRowCount = cacheParams.initialRowCount;
         this.cacheParams = cacheParams;
@@ -110,7 +110,7 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
             blocksForPurging.push(block);
         });
 
-        // todo: need to verify that this sorts items in the right order
+        // note: need to verify that this sorts items in the right order
         blocksForPurging.sort( (a: T, b: T) => b.getLastAccessed() - a.getLastAccessed());
 
         // we remove (maxBlocksInCache - 1) as we already excluded the 'just created' page.

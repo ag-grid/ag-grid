@@ -22,7 +22,7 @@ export class ComponentMetadataProvider {
         this.componentMetaData = {
             dateComponent: {
                 mandatoryMethodList: ['getDate', 'setDate'],
-                optionalMethodList: []
+                optionalMethodList: ['afterGuiAttached']
             },
             detailCellRenderer: {
                 mandatoryMethodList: [],
@@ -77,6 +77,11 @@ export class ComponentMetadataProvider {
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
             groupRowInnerRenderer:{
+                mandatoryMethodList: [],
+                optionalMethodList: ['afterGuiAttached'],
+                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
+            },
+            groupRowRenderer:{
                 mandatoryMethodList: [],
                 optionalMethodList: ['afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)

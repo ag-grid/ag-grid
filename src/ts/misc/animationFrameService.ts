@@ -3,18 +3,27 @@ import {Autowired, Bean, PostConstruct} from "../context/context";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {LinkedList} from "./linkedList";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {AnimationQueueEmptyEvent} from "../events";
+import {Events} from "../eventKeys";
+import {EventService} from "../eventService";
 
 @Bean('animationFrameService')
 export class AnimationFrameService {
 
-    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('eventService') private eventService: EventService;
+
+    private gridPanel: GridPanel;
 
     private p1Tasks = new LinkedList<()=>void>();
     private p2Tasks = new LinkedList<()=>void>();
     private ticking = false;
 
     private useAnimationFrame: boolean;
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
+    }
 
     @PostConstruct
     private init(): void {
@@ -72,8 +81,18 @@ export class AnimationFrameService {
         if (gridPanelNeedsAFrame || !this.p1Tasks.isEmpty() || !this.p2Tasks.isEmpty()) {
             this.requestFrame();
         } else {
-            this.ticking = false;
+            this.stopTicking();
         }
+    }
+
+    private stopTicking(): void {
+        this.ticking = false;
+        let event: AnimationQueueEmptyEvent = {
+            type: Events.EVENT_ANIMATION_QUEUE_EMPTY,
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            api: this.gridOptionsWrapper.getApi()
+        };
+        this.eventService.dispatchEvent(event);
     }
 
     public flushAllFrames(): void {
@@ -100,5 +119,9 @@ export class AnimationFrameService {
         } else {
             setTimeout(callback, 0);
         }
+    }
+
+    public isQueueEmpty(): boolean {
+        return this.ticking;
     }
 }

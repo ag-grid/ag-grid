@@ -14,7 +14,7 @@ import {Autowired, Context} from "../context/context";
 import {IRowModel} from "../interfaces/iRowModel";
 import {Constants} from "../constants";
 import {Utils as _} from "../utils";
-import {InMemoryRowModel} from "../rowModels/inMemory/inMemoryRowModel";
+import {ClientSideRowModel} from "../rowModels/clientSide/clientSideRowModel";
 import {RowNodeCache, RowNodeCacheParams} from "../rowModels/cache/rowNodeCache";
 import {RowNodeBlock} from "../rowModels/cache/rowNodeBlock";
 import {IEventEmitter} from "../interfaces/iEventEmitter";
@@ -195,8 +195,21 @@ export class RowNode implements IEventEmitter {
 
         this.valueCache.onDataChanged();
 
+        this.updateDataOnDetailNode();
+
+        this.checkRowSelectable();
+
         let event: DataChangedEvent = this.createDataChangedEvent(data, oldData, false);
         this.dispatchLocalEvent(event);
+    }
+
+    // when we are doing master / detail, the detail node is lazy created, but then kept around.
+    // so if we show / hide the detail, the same detail rowNode is used. so we need to keep the data
+    // in sync, otherwise expand/collapse of the detail would still show the old values.
+    private updateDataOnDetailNode(): void {
+        if (this.detailNode) {
+            this.detailNode.data = this.data;
+        }
     }
 
     private createDataChangedEvent(newData: any, oldData: any, update: boolean): DataChangedEvent {
@@ -224,6 +237,12 @@ export class RowNode implements IEventEmitter {
     public updateData(data: any): void {
         let oldData = this.data;
         this.data = data;
+
+        this.updateDataOnDetailNode();
+
+        this.checkRowSelectable();
+
+        this.updateDataOnDetailNode();
 
         let event: DataChangedEvent = this.createDataChangedEvent(data, oldData, true);
         this.dispatchLocalEvent(event);
@@ -258,15 +277,16 @@ export class RowNode implements IEventEmitter {
 
         let oldData = this.data;
         this.data = data;
+        this.updateDataOnDetailNode();
 
         this.setId(id);
 
         this.selectionController.syncInRowNode(this, oldNode);
 
+        this.checkRowSelectable();
+
         let event: DataChangedEvent = this.createDataChangedEvent(data, oldData, false);
         this.dispatchLocalEvent(event);
-
-        this.checkRowSelectable();
     }
 
     private checkRowSelectable() {
@@ -713,8 +733,8 @@ export class RowNode implements IEventEmitter {
     private calculatedSelectedForAllGroupNodes(): void {
         // we have to make sure we do this dept first, as parent nodes
         // will have dependencies on the children having correct values
-        let inMemoryRowModel = <InMemoryRowModel> this.rowModel;
-        inMemoryRowModel.getTopLevelNodes().forEach( topLevelNode => {
+        let clientSideRowModel = <ClientSideRowModel> this.rowModel;
+        clientSideRowModel.getTopLevelNodes().forEach( topLevelNode => {
             if (topLevelNode.group) {
                 topLevelNode.depthFirstSearch( childNode => {
                     if (childNode.group) {

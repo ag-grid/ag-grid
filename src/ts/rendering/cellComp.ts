@@ -73,6 +73,7 @@ export class CellComp extends Component {
     private value: any;
     private valueFormatted: any;
     private colsSpanning: Column[];
+    private rowSpan: number;
 
     private tooltip: any;
 
@@ -111,6 +112,7 @@ export class CellComp extends Component {
         this.setUsingWrapper();
         this.chooseCellRenderer();
         this.setupColSpan();
+        this.rowSpan = this.column.getRowSpan(this.rowNode);
     }
 
     public getCreateTemplate(): string {
@@ -132,6 +134,8 @@ export class CellComp extends Component {
         let stylesFromColDef = this.preProcessStylesFromColDef();
         let cssClasses = this.getInitialCssClasses();
 
+        let stylesForRowSpanning = this.getStylesForRowSpanning();
+
         if (this.usingWrapper) {
             wrapperStartTemplate = '<span ref="eCellWrapper" class="ag-cell-wrapper"><span ref="eCellValue" class="ag-cell-value">';
             wrapperEndTemplate = '</span></span>';
@@ -145,13 +149,22 @@ export class CellComp extends Component {
         templateParts.push(` col-id="${colIdSanitised}"`);
         templateParts.push(` class="${cssClasses.join(' ')}"`);
         templateParts.push(tooltipSanitised ? ` title="${tooltipSanitised}"` : ``);
-        templateParts.push(` style="width: ${width}px; left: ${left}px; ${stylesFromColDef}" >`);
+        templateParts.push(` style="width: ${width}px; left: ${left}px; ${stylesFromColDef} ${stylesForRowSpanning}" >`);
         templateParts.push(wrapperStartTemplate);
         templateParts.push(valueSanitised);
         templateParts.push(wrapperEndTemplate);
         templateParts.push(`</div>`);
 
         return templateParts.join('');
+    }
+
+    private getStylesForRowSpanning(): string {
+        if (this.rowSpan===1) { return ''; }
+
+        let singleRowHeight = this.beans.gridOptionsWrapper.getRowHeightAsNumber();
+        let totalRowHeight = singleRowHeight * this.rowSpan;
+
+        return `height: ${totalRowHeight}px; z-index: 1;`;
     }
 
     public afterAttached(): void {
@@ -1084,8 +1097,10 @@ export class CellComp extends Component {
     // to allow the text editor full access to the entire cell
     private setInlineEditingClass(): void {
         let editingInline = this.editingCell && !this.cellEditorInPopup;
-        _.addOrRemoveCssClass(this.getGui(), 'ag-cell-inline-editing', editingInline);
-        _.addOrRemoveCssClass(this.getGui(), 'ag-cell-not-inline-editing', !editingInline);
+        _.addOrRemoveCssClass(this.getGui(), "ag-cell-inline-editing", editingInline);
+        _.addOrRemoveCssClass(this.getGui(), "ag-cell-not-inline-editing", !editingInline);
+        _.addOrRemoveCssClass(<HTMLElement>this.getGui().parentNode, "ag-row-inline-editing", editingInline);
+        _.addOrRemoveCssClass(<HTMLElement>this.getGui().parentNode, "ag-row-not-inline-editing", !editingInline);
     }
 
     private createCellEditorParams(keyPress: number, charPress: string, cellStartedEdit: boolean): ICellEditorParams {
@@ -1113,10 +1128,12 @@ export class CellComp extends Component {
 
     // cell editors call this, when they want to stop for reasons other
     // than what we pick up on. eg selecting from a dropdown ends editing.
-    private stopEditingAndFocus(): void {
+    private stopEditingAndFocus(suppressNavigateAfterEdit = false): void {
         this.stopRowOrCellEdit();
         this.focusCell(true);
-        this.navigateAfterEdit();
+        if (!suppressNavigateAfterEdit) {
+            this.navigateAfterEdit();
+        }
     }
 
     private parseValue(newValue: any): any {
@@ -1351,7 +1368,8 @@ export class CellComp extends Component {
             } else {
                 let cellAlreadyInRange = this.beans.rangeController.isCellInAnyRange(thisCell);
                 if (!cellAlreadyInRange) {
-                    this.beans.rangeController.setRangeToCell(thisCell);
+                    let ctrlKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
+                    this.beans.rangeController.setRangeToCell(thisCell, ctrlKeyPressed);
                 }
             }
         }

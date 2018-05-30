@@ -35,11 +35,11 @@ import {ICellEditorComp} from "./cellEditors/iCellEditor";
 
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {
+
     @Autowired("paginationProxy") private paginationProxy: PaginationProxy;
     @Autowired("columnController") private columnController: ColumnController;
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired("gridCore") private gridCore: GridCore;
-    @Autowired("gridPanel") private gridPanel: GridPanel;
     @Autowired("$scope") private $scope: any;
     @Autowired("expressionService") private expressionService: ExpressionService;
     @Autowired("templateService") private templateService: TemplateService;
@@ -57,6 +57,8 @@ export class RowRenderer extends BeanStub {
     @Autowired("animationFrameService") private animationFrameService: AnimationFrameService;
     @Optional("rangeController") private rangeController: IRangeController;
 
+    private gridPanel: GridPanel;
+
     private firstRenderedRow: number;
     private lastRenderedRow: number;
 
@@ -65,9 +67,6 @@ export class RowRenderer extends BeanStub {
     private rowCompsByIndex: { [key: string]: RowComp } = {};
     private floatingTopRowComps: RowComp[] = [];
     private floatingBottomRowComps: RowComp[] = [];
-
-    private forPrint: boolean;
-    private autoHeight: boolean;
 
     private rowContainers: RowContainerComponents;
 
@@ -86,15 +85,15 @@ export class RowRenderer extends BeanStub {
         this.logger = loggerFactory.create("RowRenderer");
     }
 
-    @PostConstruct
-    public init(): void {
-        this.forPrint = this.gridOptionsWrapper.isForPrint();
-        this.autoHeight = this.gridOptionsWrapper.isAutoHeight();
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
 
         this.rowContainers = this.gridPanel.getRowContainers();
         this.addDestroyableEventListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_BODY_SCROLL, this.redrawAfterScroll.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.redrawAfterScroll.bind(this));
 
         this.redrawAfterModelUpdate();
     }
@@ -267,18 +266,12 @@ export class RowRenderer extends BeanStub {
 
         let focusedCell: GridCell = this.getCellToRestoreFocusToAfterRefresh(params);
 
-        if (!this.forPrint) {
-            this.sizeContainerToPageHeight();
-        }
+        this.sizeContainerToPageHeight();
 
         this.scrollToTopIfNewData(params);
 
-        // never keep rendered rows if doing forPrint or autoHeight, as we do not use 'top' to
-        // position the rows (it uses normal flow), so we have to remove
-        // all rows and insert them again from scratch
-        let rowsUsingFlow = this.forPrint || this.autoHeight;
-        let recycleRows = rowsUsingFlow ? false : params.recycleRows;
-        let animate = rowsUsingFlow ? false : params.animate && this.gridOptionsWrapper.isAnimateRows();
+        let recycleRows = params.recycleRows;
+        let animate = params.animate && this.gridOptionsWrapper.isAnimateRows();
 
         let rowsToRecycle: { [key: string]: RowComp } = this.binRowComps(recycleRows);
 
@@ -546,7 +539,7 @@ export class RowRenderer extends BeanStub {
     }
 
     // gets called when rows don't change, but viewport does, so after:
-    // 1) size of grid changed
+    // 1) height of grid body changes, ie number of displayed rows has changed
     // 2) grid scrolled to new position
     // 3) ensure index visible (which is a scroll)
     public redrawAfterScroll() {
@@ -654,12 +647,15 @@ export class RowRenderer extends BeanStub {
         // if either of the pinned panels has shown / hidden, then need to redraw the fullWidth bits when
         // embedded, as what appears in each section depends on whether we are pinned or not
         let rowsToRemove: string[] = [];
-        this.forEachRowComp((id: string, rowComp: RowComp) => {
+
+        _.iterateObject(this.rowCompsByIndex, (id: string, rowComp: RowComp) => {
             if (rowComp.isFullWidth()) {
                 let rowIndex = rowComp.getRowNode().rowIndex;
                 rowsToRemove.push(rowIndex.toString());
             }
         });
+
+        this.refreshFloatingRowComps();
         this.removeRowComps(rowsToRemove);
         this.redrawAfterScroll();
     }
@@ -726,6 +722,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private workOutFirstAndLastRowsToRender(): void {
+
         let newFirst: number;
         let newLast: number;
 
@@ -736,40 +733,35 @@ export class RowRenderer extends BeanStub {
             let pageFirstRow = this.paginationProxy.getPageFirstRow();
             let pageLastRow = this.paginationProxy.getPageLastRow();
 
-            if (this.forPrint) {
-                newFirst = pageFirstRow;
-                newLast = pageLastRow;
-            } else {
-                let pixelOffset = this.paginationProxy ? this.paginationProxy.getPixelOffset() : 0;
-                let heightOffset = this.heightScaler.getOffset();
+            let pixelOffset = this.paginationProxy ? this.paginationProxy.getPixelOffset() : 0;
+            let heightOffset = this.heightScaler.getOffset();
 
-                let bodyVRange = this.gridPanel.getVScrollPosition();
-                let topPixel = bodyVRange.top;
-                let bottomPixel = bodyVRange.bottom;
+            let bodyVRange = this.gridPanel.getVScrollPosition();
+            let topPixel = bodyVRange.top;
+            let bottomPixel = bodyVRange.bottom;
 
-                let realPixelTop = topPixel + pixelOffset + heightOffset;
-                let realPixelBottom = bottomPixel + pixelOffset + heightOffset;
+            let realPixelTop = topPixel + pixelOffset + heightOffset;
+            let realPixelBottom = bottomPixel + pixelOffset + heightOffset;
 
-                let first = this.paginationProxy.getRowIndexAtPixel(realPixelTop);
-                let last = this.paginationProxy.getRowIndexAtPixel(realPixelBottom);
+            let first = this.paginationProxy.getRowIndexAtPixel(realPixelTop);
+            let last = this.paginationProxy.getRowIndexAtPixel(realPixelBottom);
 
-                //add in buffer
-                let buffer = this.gridOptionsWrapper.getRowBuffer();
-                first = first - buffer;
-                last = last + buffer;
+            //add in buffer
+            let buffer = this.gridOptionsWrapper.getRowBuffer();
+            first = first - buffer;
+            last = last + buffer;
 
-                // adjust, in case buffer extended actual size
-                if (first < pageFirstRow) {
-                    first = pageFirstRow;
-                }
-
-                if (last > pageLastRow) {
-                    last = pageLastRow;
-                }
-
-                newFirst = first;
-                newLast = last;
+            // adjust, in case buffer extended actual size
+            if (first < pageFirstRow) {
+                first = pageFirstRow;
             }
+
+            if (last > pageLastRow) {
+                last = pageLastRow;
+            }
+
+            newFirst = first;
+            newLast = last;
         }
 
         let firstDiffers = newFirst !== this.firstRenderedRow;
@@ -1111,6 +1103,16 @@ export class RowRenderer extends BeanStub {
                 return null;
             }
 
+            // if editing, but cell not editable, skip cell. we do this before we do all of
+            // the 'ensure index visible' and 'flush all frames', otherwise if we are skipping
+            // a bunch of cells (eg 10 rows) then all the work on ensuring cell visible is useless
+            // (except for the last one) which causes grid to stall for a while.
+            if (startEditing) {
+                let rowNode = this.paginationProxy.getRow(nextCell.rowIndex);
+                let cellIsEditable = nextCell.column.isCellEditable(rowNode);
+                if (!cellIsEditable) { continue; }
+            }
+
             // this scrolls the row into view
             let cellIsNotFloating = _.missing(nextCell.floating);
             if (cellIsNotFloating) {
@@ -1137,11 +1139,6 @@ export class RowRenderer extends BeanStub {
             // if next cell is fullWidth row, then no rendered cell,
             // as fullWidth rows have no cells, so we skip it
             if (_.missing(nextCellComp)) {
-                continue;
-            }
-
-            // if editing, but cell not editable, skip cell
-            if (startEditing && !nextCellComp.isCellEditable()) {
                 continue;
             }
 

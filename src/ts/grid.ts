@@ -4,7 +4,7 @@ import {SelectionController} from "./selectionController";
 import {ColumnApi} from "./columnController/columnApi";
 import {ColumnController} from "./columnController/columnController";
 import {RowRenderer} from "./rendering/rowRenderer";
-import {HeaderRenderer} from "./headerRendering/headerRenderer";
+import {HeaderRootComp} from "./headerRendering/headerRootComp";
 import {FilterManager} from "./filter/filterManager";
 import {ValueService} from "./valueService/valueService";
 import {EventService} from "./eventService";
@@ -29,14 +29,14 @@ import {SortController} from "./sortController";
 import {FocusedCellController} from "./focusedCellController";
 import {MouseEventService} from "./gridPanel/mouseEventService";
 import {CellNavigationService} from "./cellNavigationService";
-import {NumberSequence, Utils as _} from "./utils";
-import {FilterStage} from "./rowModels/inMemory/filterStage";
-import {SortStage} from "./rowModels/inMemory/sortStage";
-import {FlattenStage} from "./rowModels/inMemory/flattenStage";
+import {Utils as _} from "./utils";
+import {FilterStage} from "./rowModels/clientSide/filterStage";
+import {SortStage} from "./rowModels/clientSide/sortStage";
+import {FlattenStage} from "./rowModels/clientSide/flattenStage";
 import {CellEditorFactory} from "./rendering/cellEditorFactory";
 import {Events, GridReadyEvent} from "./events";
 import {InfiniteRowModel} from "./rowModels/infinite/infiniteRowModel";
-import {InMemoryRowModel} from "./rowModels/inMemory/inMemoryRowModel";
+import {ClientSideRowModel} from "./rowModels/clientSide/clientSideRowModel";
 import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {CellRendererService} from "./rendering/cellRendererService";
 import {ValueFormatterService} from "./rendering/valueFormatterService";
@@ -55,7 +55,7 @@ import {FilterService} from "./rowNodes/filterService";
 import {RowNodeFactory} from "./rowNodes/rowNodeFactory";
 import {AutoGroupColService} from "./columnController/autoGroupColService";
 import {PaginationAutoPageSizeService, PaginationProxy} from "./rowModels/paginationProxy";
-import {ImmutableService} from "./rowModels/inMemory/immutableService";
+import {ImmutableService} from "./rowModels/clientSide/immutableService";
 import {IRowModel} from "./interfaces/iRowModel";
 import {Constants} from "./constants";
 import {ValueCache} from "./valueService/valueCache";
@@ -73,8 +73,8 @@ import {AnimationFrameService} from "./misc/animationFrameService";
 import {NavigationService} from "./gridPanel/navigationService";
 import {HeightScaler} from "./rendering/heightScaler";
 import {SelectableService} from "./rowNodes/selectableService";
-import {SmallComponent} from "./widgets/testingSandbox";
 import {AutoHeightCalculator} from "./rendering/autoHeightCalculator";
+import {PaginationComp} from "./rowModels/pagination/paginationComp";
 
 export interface GridParams {
     // used by Web Components
@@ -100,11 +100,11 @@ export class Grid {
     private static frameworkBeans: any[];
     private static enterpriseComponents: any[];
 
-    // the default is InMemoryRowModel, which is also used for pagination.
+    // the default is ClientSideRowModel, which is also used for pagination.
     // the enterprise adds viewport to this list.
     private static RowModelClasses: any = {
         infinite: InfiniteRowModel,
-        inMemory: InMemoryRowModel
+        clientSide: ClientSideRowModel
     };
 
     public static setEnterpriseBeans(enterpriseBeans: any[], rowModelClasses: any): void {
@@ -165,10 +165,12 @@ export class Grid {
         }
 
         let components = [
-            {componentName: 'AgCheckbox', theClass: AgCheckbox}
+            {componentName: 'AgCheckbox', theClass: AgCheckbox},
+            {componentName: 'AgGridComp', theClass: GridPanel},
+            {componentName: 'AgHeaderRoot', theClass: HeaderRootComp},
+            {componentName: 'AgPagination', theClass: PaginationComp},
             // niall put the below in for testing some PoC code, niall will
             // remove this comment and code when PoC is over
-            , {componentName: 'AgSmallComponent', theClass: SmallComponent}
         ];
 
         if (Grid.enterpriseComponents) {
@@ -179,19 +181,19 @@ export class Grid {
             overrideBeans: overrideBeans,
             seed: seed,
             //Careful with the order of the beans here, there are dependencies between them that need to be kept
-            beans: [rowModelClass, PaginationAutoPageSizeService, GridApi, ComponentProvider, AgComponentUtils, ComponentMetadataProvider,
+            beans: [rowModelClass, Beans, PaginationAutoPageSizeService, GridApi, ComponentProvider, AgComponentUtils, ComponentMetadataProvider,
                 ComponentProvider, ComponentResolver, ComponentRecipes, HeightScaler, AutoHeightCalculator,
                 CellRendererFactory, HorizontalResizeService, PinnedRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
-                FilterManager, ColumnController, PaginationProxy, RowRenderer, HeaderRenderer, ExpressionService,
+                FilterManager, ColumnController, PaginationProxy, RowRenderer, ExpressionService,
                 BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService,
-                NavigationService, GridPanel, PopupService, ValueCache, ValueService, AlignedGridsService,
+                NavigationService, PopupService, ValueCache, ValueService, AlignedGridsService,
                 LoggerFactory, ColumnUtils, AutoWidthCalculator, PopupService, GridCore, StandardMenuFactory,
                 DragAndDropService, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService, RowNodeFactory,
                 CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService,
                 ColumnHoverService, ColumnAnimationService, SortService, SelectableService, AutoGroupColService, ImmutableService,
-                ChangeDetectionService, Environment, Beans, AnimationFrameService, SortController],
+                ChangeDetectionService, Environment, AnimationFrameService, SortController],
             components: components,
             debug: !!gridOptions.debug
         };
@@ -224,9 +226,9 @@ export class Grid {
             columnController.setColumnDefs(columnDefs, "gridInitializing");
         }
 
-        if (_.exists(rowData) && rowModel.getType()===Constants.ROW_MODEL_TYPE_IN_MEMORY) {
-            let inMemoryRowModel = <InMemoryRowModel> rowModel;
-            inMemoryRowModel.setRowData(rowData);
+        if (_.exists(rowData) && rowModel.getType()===Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            let clientSideRowModel = <ClientSideRowModel> rowModel;
+            clientSideRowModel.setRowData(rowData);
         }
     }
 
@@ -248,8 +250,8 @@ export class Grid {
                 return rowModelClass;
             } else {
                 if (rowModelType==='normal') {
-                    console.warn(`ag-Grid: normal rowModel deprecated. Should now be called inMemory rowModel instead.`);
-                    return InMemoryRowModel;
+                    console.warn(`ag-Grid: normal rowModel deprecated. Should now be called clientSide rowModel instead.`);
+                    return ClientSideRowModel;
                 }
                 console.error('ag-Grid: could not find matching row model for rowModelType ' + rowModelType);
                 if (rowModelType==='viewport') {
@@ -260,7 +262,7 @@ export class Grid {
                 }
             }
         }
-        return InMemoryRowModel;
+        return ClientSideRowModel;
     };
 
     public destroy(): void {

@@ -44,7 +44,7 @@ export interface ColGroupDef extends AbstractColDef {
     /** If true, group cannot be broken up by column moving, child columns will always appear side by side, however you can rearrange child columns within the group */
     marryChildren?: boolean;
     /** The custom header group component to be used for rendering the component header. If none specified the default ag-Grid is used**/
-    headerGroupComponent?: {new(): IHeaderGroupComp};
+    headerGroupComponent?: string | {new(): IHeaderGroupComp};
     /** The custom header group component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default ag-Grid is used**/
     headerGroupComponentFramework?: {new (): any};
     /** The custom header group component to be used for rendering the component header. If none specified the default ag-Grid is used**/
@@ -119,7 +119,7 @@ export interface ColDef extends AbstractColDef {
     maxWidth?: number;
 
     /** True if this column should stretch rows height to fit contents */
-    autoHeight?: number;
+    autoHeight?: boolean;
 
     /** Class to use for the cell. Can be string, array of strings, or function. */
     cellClass?: string | string[]| ((cellClassParams: CellClassParams) => string | string[]);
@@ -246,6 +246,8 @@ export interface ColDef extends AbstractColDef {
 
     colSpan?: (params: ColSpanParams) => number;
 
+    rowSpan?: (params: RowSpanParams) => number;
+
     /** Set to true if this col should not be allowed take new values from teh clipboard . */
     suppressPaste?: boolean | IsColumnFunc;
 
@@ -369,6 +371,8 @@ export interface ValueParserParams extends NewValueParams {}
 export interface ValueFormatterParams extends BaseWithValueColDefParams {}
 
 export interface ColSpanParams extends BaseColDefParams {}
+
+export interface RowSpanParams extends BaseColDefParams {}
 
 export interface SuppressKeyboardEventParams extends IsColumnFuncParams {
     // the keyboard event the grid received

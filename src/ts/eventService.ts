@@ -57,20 +57,9 @@ export class EventService implements IEventEmitter {
     }
 
     public addEventListener(eventType: string, listener: Function, async = false): void {
-        if (! this.assertNotDeprecated(eventType)) return;
-
         let listenerList = this.getListenerList(eventType, async);
         if (listenerList.indexOf(listener)<0) {
             listenerList.push(listener);
-        }
-    }
-
-    private assertNotDeprecated(eventType:string):boolean{
-        if (eventType==='floatingRowDataChanged') {
-            console.warn('ag-Grid: floatingRowDataChanged is now called pinnedRowDataChanged');
-            return false;
-        } else {
-            return true;
         }
     }
 
@@ -78,7 +67,6 @@ export class EventService implements IEventEmitter {
     // as the model may need to update before the view works on the info. if you register
     // via this method, you get notified before the view parts
     public addModalPriorityEventListener(eventType: string, listener: Function, async = false): void {
-        if (! this.assertNotDeprecated(eventType)) return;
         this.addEventListener(eventType + EventService.PRIORITY, listener, async);
     }
 

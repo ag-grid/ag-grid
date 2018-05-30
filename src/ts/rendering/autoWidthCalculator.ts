@@ -2,18 +2,27 @@ import {RowRenderer} from "./rowRenderer";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {Column} from "../entities/column";
 import {Autowired, Bean} from "../context/context";
-import {HeaderRenderer} from "../headerRendering/headerRenderer";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {HeaderWrapperComp} from "../headerRendering/header/headerWrapperComp";
 import {Component} from "../widgets/component";
+import {HeaderRootComp} from "../headerRendering/headerRootComp";
 
 @Bean('autoWidthCalculator')
 export class AutoWidthCalculator {
 
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('headerRenderer') private headerRenderer: HeaderRenderer;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+
+    private gridPanel: GridPanel;
+    private headerRootComp: HeaderRootComp;
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
+    }
+
+    public registerHeaderRootComp(headerRootComp: HeaderRootComp): void {
+        this.headerRootComp = headerRootComp;
+    }
 
     // this is the trick: we create a dummy container and clone all the cells
     // into the dummy, then check the dummy's width. then destroy the dummy
@@ -63,7 +72,7 @@ export class AutoWidthCalculator {
         let comp: Component = null;
 
         // find the rendered header cell
-        this.headerRenderer.forEachHeaderElement( headerElement => {
+        this.headerRootComp.forEachHeaderElement( headerElement => {
             if (headerElement instanceof HeaderWrapperComp) {
                 let headerWrapperComp = <HeaderWrapperComp> headerElement;
                 if (headerWrapperComp.getColumn() === column) {
