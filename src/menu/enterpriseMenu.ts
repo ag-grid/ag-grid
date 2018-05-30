@@ -321,7 +321,7 @@ export class EnterpriseMenu extends BeanStub {
         let isPrimary = this.column.isPrimary();
         let pivotModeOn = this.columnController.isPivotMode();
 
-        let isInMemoryRowModel = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_IN_MEMORY;
+        let isInMemoryRowModel = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
 
         let usingTreeData = this.gridOptionsWrapper.isTreeData();
 
