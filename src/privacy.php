@@ -7,7 +7,7 @@ gtm_data_layer('about');
 <html lang="en">
 <head lang="en">
 <?php
-meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-Grid", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is the story of ag-Grid and explains our mission, where we came from and who we are.", true);
+meta_and_links("Privacy Policy", "About ag-Grid", "We take your privacy very seiously at ag-Grid. This page outlines our privacy policy which we have updated in light of GDPR.", true);
 ?>
 <link rel="stylesheet" href="dist/homepage.css">
 </head>
@@ -27,11 +27,11 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
             <!DOCTYPE html>
 <html>
 <head id="top of page">
-	<title>ag-Grid Privacy Policy</title>
+	<title>Privacy Policy</title>
 </head>
 <body>
-  <div id="introduction" class="text-center">
-<h1 class="text-center">ag-Grid Privacy Policy</h1>
+  <div id="introduction" class="text-left">
+<h1 class="text-left">ag-Grid Privacy Policy</h1>
 <hr>
 <h4>Effective Date: May 17, 2018</h4>
 <br><br>
@@ -44,7 +44,7 @@ This policy serves as a guide and reference point for how we may collect and use
 We strongly recommend you read our policy and understand what we collect, how we collect it, what we do with it, how we protect it, and your rights regarding information, <strong>before</strong> you use or access any of our services. 
 </p>
 <br>
-<div class="list-group" class="text-center">
+<div class="list-group" class="text-left">
   <a href="#" class="list-group-item list-group-item-action active">
     Guide
   </a>
@@ -89,13 +89,13 @@ Our full details are:
  <br>
 Full name of legal entity: <strong>ag-Grid Ltd.</strong> 
  <br>
-Email address: <a href="mailto:info@ag-grid.com" target="_top">info@ag-grid.com.</a>
+Email address: <a href="mailto:info@ag-grid.com" target="_top">info@ag-grid.com</a>
  <br>
 Postal address: <strong>The Treehouse, 2-10 Balham Station Road, London, SW12 9SG</strong>
  <br><br>
   
 It is very important that the information we hold about you is accurate and up to date. Please let us know if at any time your personal information changes by emailing us at 
-<a href="mailto:info@ag-grid.com" target="_top">info@ag-grid.com.</a>
+<a href="mailto:info@ag-grid.com" target="_top">info@ag-grid.com</a>
 </p>
 </p>
 	</li>
@@ -131,7 +131,7 @@ We do not collect any Sensitive Data about you. Sensitive data refers to data th
 
 Where we are required to collect personal data by law, or under the terms of the contract between us and you do not provide us with that data when requested, we may not be able to perform the contract (for example, to deliver goods or services to you). If you don’t provide us with the requested data, we may have to cancel a product or service you have ordered but if we do, we will notify you at the time.
 <br><br>
-We will only use your personal data for a purpose it was collected for or a reasonably compatible purpose if necessary. For more information on this please email us at <a href="mailto:info@ag-grid.com" target="_top">info@ag-grid.com.</a>
+We will only use your personal data for a purpose it was collected for or a reasonably compatible purpose if necessary. For more information on this please email us at <a href="mailto:info@ag-grid.com" target="_top">info@ag-grid.com</a>
 .  In case we need to use your details for an unrelated new purpose we will let you know and explain the legal grounds for processing.
  <br><br>
 We may process your personal data without your knowledge or consent where this is required or permitted by law.
@@ -162,7 +162,7 @@ Under the Privacy and Electronic Communications Regulations, we may send you mar
  <br><br>
 Before we share your personal data with any third party for their own marketing purposes we will get your express consent.
 <br><br>
-You can ask us or third parties to stop sending you marketing messages at any time [by logging into the website and checking or unchecking relevant boxes to adjust your marketing preferences] OR [by following the opt-out links on any marketing message sent to you or] OR by emailing us at <a href="mailto:info@ag-grid.com" target="_top">info@ag-grid.com</a> at any time.[AMEND AS APPROPRIATE]
+You can ask us or third parties to stop sending you marketing messages at any time by following the opt-out links on any marketing message sent to you or by emailing us at <a href="mailto:info@ag-grid.com" target="_top">info@ag-grid.com</a> at any time.
 <br><br>
 If you opt out of receiving marketing communications this opt-out does not apply to personal data provided as a result of other transactions, such as purchases, warranty registrations etc. 
 
@@ -180,8 +180,6 @@ Professional advisers including lawyers, bankers, auditors and insurers
 <br><br>
 Government bodies that require us to report processing activities.
 <br><br>
-[INSERT DETAILS OF ANY OTHER THIRD PARTIES, FOR EXAMPLE, MARKET RESEARCHERS, FRAUD PREVENTION AGENCIES, PRICE COMPARISON SITES ETC].
-<br><br>
 Third parties to whom we sell, transfer, or merge parts of our business or our assets. 
 <br><br>We require all third parties to whom we transfer your data to respect the security of your personal data and to treat it in accordance with the law. We only allow such third parties to process your personal data for specified purposes and in accordance with our instructions.
 </p>
@@ -189,7 +187,7 @@ Third parties to whom we sell, transfer, or merge parts of our business or our a
 	<br>
 	<h3 id="intl-transfers">6. International Transfers</h3>
 	<hr>
-<p><h4>Countries outside of the European Economic Area <strong>(EEA)</strong>do not always offer the same levels of protection to your personal data, so European law has prohibited transfers of personal data outside of the EEA unless the transfer meets certain criteria.
+<p>Countries outside of the European Economic Area <strong>(EEA)</strong>do not always offer the same levels of protection to your personal data, so European law has prohibited transfers of personal data outside of the EEA unless the transfer meets certain criteria.
 <br> <br>
 Many of our third parties service providers are based outside the European Economic Area <strong>(EEA)</strong> so their processing of your personal data will involve a transfer of data outside the EEA.
  <br><br>

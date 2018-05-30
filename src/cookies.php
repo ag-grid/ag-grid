@@ -7,7 +7,8 @@ gtm_data_layer('about');
 <html lang="en">
 <head lang="en">
 <?php
-meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-Grid", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is the story of ag-Grid and explains our mission, where we came from and who we are.", true);
+meta_and_links("Cookies Policy", "About ag-Grid", "This page outlines our policy in relation to
+  the cookies that we collect on our website.", true);
 ?>
 <link rel="stylesheet" href="dist/homepage.css">
 </head>
@@ -28,11 +29,11 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
 <html>
 
 <head id="top of page">
-	<title>ag-Grid Privacy Policy</title>
+	<title>Cookie Policy</title>
 </head>
 <body class="text-center">
   <div id="introduction">
-<h1 class="text-center">ag-Grid's Cookies Policy</h1>
+<h1 class="text-center">Cookie Policy</h1>
 <hr>
 <h4>Effective Date: May 17, 2018</h4>
 <br><br>
@@ -41,14 +42,14 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
   <a href="#" class="list-group-item list-group-item-action active">
     Cookies Guide
   </a>
-  <a href="#intro-privacy" class="list-group-item list-group-item-action">What's a Cookie?</a>
+  <a href="#intro-privacy" class="list-group-item list-group-item-action">What is a Cookie?</a>
   <a href="#cookies-how-we-use" class="list-group-item list-group-item-action">How Do We Use Cookies?</a>
 </body>
 
 <div class="text-left">
 <ol>
 	<br><br>
-		<h3 id="intro-privacy">What's a cookie?</h3>
+		<h3 id="intro-privacy">What is a Cookie?</h3>
 		<hr>
 		<p>
 			A <strong>"cookie"</strong> is a piece of information that is stored on your computer's hard drive and which records how you move your way around a website so that, when you revisit that website, it can present tailored options based on the information stored about your last visit. Cookies can also be used to analyse traffic and for advertising and marketing purposes. 
@@ -66,19 +67,22 @@ If you want to check or change what types of cookies you accept, this can usuall
   <br><br>
 <strong>COOKIES ARE EITHER:</strong> 
 <br><br>
-<strong>Session cookies |</strong> these are only stored on your computer during your web session and are automatically deleted when you close your browser – they usually store an anonymous session ID allowing you to browse a website without having to log in to each page, but they do not collect any personal data from your computer; or
+<strong>Session cookies:</strong> these are only stored on your computer during your web session and are automatically deleted when you close your browser – they usually store an anonymous session ID allowing you to browse a website without having to log in to each page, but they do not collect any personal data from your computer; or
 <br><br>
-<strong>Persistent cookies |</strong> a persistent cookie is stored as a file on your computer and it remains there when you close your web browser. The cookie can be read by the website that created it when you visit that website again. [We use persistent cookies for Google Analytics.]
+<strong>Persistent cookies:</strong> a persistent cookie is stored as a file on your computer and it remains there when you close your web browser. The cookie can be read by the website that created it when you visit that website again. We use persistent cookies for Google Analytics.
   <br><br>
 
 <strong><p class="text-uppercase">Cookies can also be categorised as follows:</strong></p>
 <br>
-<strong>Strictly necessary cookies |</strong> These cookies are essential to enable you to use the website effectively, such as when buying a product and / or service, and therefore cannot be turned off. Without these cookies, the services available to you on our website cannot be provided. These cookies do not gather information about you that could be used for marketing or remembering where you have been on the internet.
+<strong>Strictly necessary cookies:</strong> These cookies are essential to enable you to use the website effectively, such as when buying a product and / or service, and therefore cannot be turned off. Without these cookies, the services available to you on our website cannot be provided. These cookies do not gather information about you that could be used for marketing or remembering where you have been on the internet.
 <br><br>
-<strong>Performance cookies |</strong> These cookies enable us to monitor and improve the performance of our website. For example, they allow us to count visits, identify traffic sources and see which parts of the site are most popular.
+<strong>Performance cookies:</strong> These cookies enable us to monitor and improve the performance of our website. For example, they allow us to count visits, identify traffic sources and see which parts of the site are most popular.
 <br><br>
-<strong>Functionality cookies |</strong> These cookies allow our website to remember choices you make and provide enhanced features. For instance, we may be able to provide you with news or updates relevant to the services you use. They may also be used to provide services you have requested such as viewing a video or commenting on a blog. The information these cookies collect is usually anonymised.
-<br><br>
-[Please note that third parties who advertise on our website (including, for example, advertising networks and providers of external services like web traffic analysis services) may also use cookies, over which we have no control. These cookies are likely to be analytical/performance cookies or targeting cookies] [NOTE: DELETE THIS PARAGRAPH IF YOU DO NOT ALLOW THIRD PARTIES TO ADVERTISE ON YOUR SITE]
+<strong>Functionality cookies:</strong> These cookies allow our website to remember choices you make and provide enhanced features. For instance, we may be able to provide you with news or updates relevant to the services you use. They may also be used to provide services you have requested such as viewing a video or commenting on a blog. The information these cookies collect is usually anonymised.
 </p>
 </div>
+
+<?php include_once("./includes/footer.php"); ?>
+<?php include_once("./includes/analytics.php"); ?>
+</body>
+</html>
