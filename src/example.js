@@ -133,7 +133,8 @@ var gridOptions = {
     //     suppressMultiRangeSelection: true,
     rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
-    pivotTotals: true,
+    pivotColumnGroupTotals: 'before',
+    pivotRowTotals: 'before',
     // suppressRowTransform: true,
     //minColWidth: 50,
     //maxColWidth: 300,
