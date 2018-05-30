@@ -140,7 +140,7 @@ export class RowNode implements IEventEmitter {
     public rowGroupColumn: Column;
     /** Groups only - The key for the group eg Ireland, UK, USA */
     public key: any;
-    /** Used by enterprise row model, true if this row node is a stub */
+    /** Used by server side row model, true if this row node is a stub */
     public stub: boolean;
 
     /** All user provided nodes */
@@ -158,7 +158,7 @@ export class RowNode implements IEventEmitter {
     /** Children mapped by the pivot columns */
     public childrenMapped: {[key: string]: any} = {};
 
-    /** Enterprise Row Model Only - the children are in an infinite cache */
+    /** Server Side Row Model Only - the children are in an infinite cache */
     public childrenCache: RowNodeCache<RowNodeBlock,RowNodeCacheParams>;
 
     /** Groups only - True if group is expanded, otherwise false */
@@ -476,7 +476,7 @@ export class RowNode implements IEventEmitter {
     }
 
     public hasChildren(): boolean {
-        // we need to return true when this.group=true, as this is used by enterprise row model
+        // we need to return true when this.group=true, as this is used by server side row model
         // (as children are lazy loaded and stored in a cache anyway). otherwise we return true
         // if children exist.
         return this.group || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);

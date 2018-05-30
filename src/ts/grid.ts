@@ -244,21 +244,25 @@ export class Grid {
 
     private getRowModelClass(gridOptions: GridOptions): any {
         let rowModelType = gridOptions.rowModelType;
+
+        //TODO: improve
+        rowModelType = rowModelType === 'enterprise' ? Constants.ROW_MODEL_TYPE_SERVER_SIDE : rowModelType;
+
         if (_.exists(rowModelType)) {
             let rowModelClass = Grid.RowModelClasses[rowModelType];
             if (_.exists(rowModelClass)) {
                 return rowModelClass;
             } else {
                 if (rowModelType==='normal') {
-                    console.warn(`ag-Grid: normal rowModel deprecated. Should now be called clientSide rowModel instead.`);
+                    console.warn(`ag-Grid: normal rowModel deprecated. Should now be called client side row model instead.`);
                     return ClientSideRowModel;
                 }
                 console.error('ag-Grid: could not find matching row model for rowModelType ' + rowModelType);
-                if (rowModelType==='viewport') {
+                if (rowModelType===Constants.ROW_MODEL_TYPE_VIEWPORT) {
                     console.error('ag-Grid: rowModelType viewport is only available in ag-Grid Enterprise');
                 }
-                if (rowModelType==='enterprise') {
-                    console.error('ag-Grid: rowModelType viewport is only available in ag-Grid Enterprise');
+                if (rowModelType===Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
+                    console.error('ag-Grid: rowModelType server side is only available in ag-Grid Enterprise');
                 }
             }
         }
