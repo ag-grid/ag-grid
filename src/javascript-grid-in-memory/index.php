@@ -1,15 +1,15 @@
 <?php
-$pageTitle = "ag-Grid Row Models: In Memory Row Model";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the simplest one is the In Memory model. We recommend using this as a default.";
+$pageTitle = "ag-Grid Row Models: Client Side Row Model";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the simplest one is the Client Side model. We recommend using this as a default.";
 $pageKeyboards = "ag-Grid data row model";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1>In Memory Row Model</h1>
+    <h1>Client Side Row Model</h1>
 
     <p>
-        The simplest row model to use is the In Memory Row Model. This row model takes
+        The simplest row model to use is the Client Side Row Model. This row model takes
         all of the data to be displayed and provides the following features inside the grid:
 </p>
         <ul class="content">
@@ -23,21 +23,21 @@ include '../documentation-main/documentation_header.php';
     <note>* Grouping, Aggregation and Pivoting are available in ag-Grid Enterprise only.</note>
 
     <p>
-        The in memory row model is the default row model for ag-Grid and used in all the examples
+        The Client Side Row Model is the default row model for ag-Grid and used in all the examples
         (unless the example is explicitly demonstrating another row model). As such, the usage
-        of the in memory row model is not explained in detail here. Please refer to the main
-        parts of the grid documentation in how the features work with the in memory row model.
+        of the in Client Side Row Model is not explained in detail here. Please refer to the main
+        parts of the grid documentation in how the features work with the Client Side Row Model.
     </p>
 
     <h2>How It Works</h2>
 
     <p>
-        You do not need to know how the in memory row model works, however it can be helpful
+        You do not need to know how the Client Side Row Model works, however it can be helpful
         for those who are interested.
     </p>
 
     <p>
-        The in memory row model is responsible for working out how to display the rows inside the grid.
+        The Client Side Row Model is responsible for working out how to display the rows inside the grid.
         It has a complex data structure, representing the data in difference states. The states are as follows:
     </p>
 

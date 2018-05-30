@@ -619,9 +619,21 @@ cellRendererParams: {
     </p>
 
     <p>
-        The example below uses <a href="../javascript-grid-aggregation/">aggregation</a> which is explained in
-        the next section but included here as footer rows only make sense when used with aggregation.
+        It is also possible to include a 'grand' total footer for all groups using the property <code>groupIncludeTotalFooter</code>.
+        This property can be used along side <code>groupIncludeFooter</code> to produce totals at all group levels or
+        used independently.
     </p>
+
+    <p>
+        The example below uses <a href="../javascript-grid-aggregation/">aggregation</a> which is explained in
+        the next section but included here as footer rows only make sense when used with aggregation. In this example
+        notice:
+    </p>
+
+    <ul class="content">
+        <li><code>gridOptions.groupIncludeFooter = true</code> -  includes group totals within each group level.</li>
+        <li><code>gridOptions.groupIncludeTotalFooter = true</code> -  includes a 'grand' total across all groups.</li>
+    </ul>
 
     <?= example('Group Footers', 'grouping-footers', 'generated', array("enterprise" => 1)) ?>
 
