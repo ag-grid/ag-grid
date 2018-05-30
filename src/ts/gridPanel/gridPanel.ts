@@ -1,4 +1,5 @@
 import {Utils as _} from "../utils";
+import { observeResize } from "../resizeObserver";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnController} from "../columnController/columnController";
 import {ColumnApi} from "../columnController/columnApi";
@@ -328,6 +329,12 @@ export class GridPanel extends Component {
         if (this.rangeController) {
             this.rangeController.registerGridComp(this);
         }
+
+        const unsubscribeFromResize = observeResize(this.eBodyViewport, ( target ) => { console.log(target) });
+
+        this.addDestroyFunc(() => {
+          unsubscribeFromResize();
+        })
     }
 
     // used by ColumnAnimationService
