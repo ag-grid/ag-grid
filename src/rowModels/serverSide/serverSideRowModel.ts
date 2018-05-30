@@ -413,7 +413,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public getType(): string {
-        return Constants.ROW_MODEL_TYPE_ENTERPRISE;
+        return Constants.ROW_MODEL_TYPE_SERVER_SIDE;
     }
 
     public forEachNode(callback: (rowNode: RowNode)=>void): void {
