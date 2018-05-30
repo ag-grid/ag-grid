@@ -3,7 +3,7 @@ let requestAnimationFrame$1 = (function() {
         return requestAnimationFrame.bind(window);
     }
 
-    return function(callback) {
+    return function(callback: (arg: any) => any) {
         return setTimeout(function() {
             return callback(Date.now());
         }, 1000 / 60);
@@ -12,7 +12,7 @@ let requestAnimationFrame$1 = (function() {
 
 let trailingTimeout = 2;
 
-let throttle = function(callback, delay) {
+let throttle = function(callback: () => void, delay: number) {
     let leadingCall = false;
     let trailingCall = false;
     let lastCallTime = 0;
@@ -58,7 +58,7 @@ let REFRESH_DELAY = 20;
 
 let mutationObserverSupported = typeof MutationObserver !== "undefined";
 
-let getWindowOf = function(target) {
+let getWindowOf = function(target: HTMLElement) {
     let ownerGlobal = target && target.ownerDocument && target.ownerDocument.defaultView;
 
     return ownerGlobal || window;
@@ -66,28 +66,30 @@ let getWindowOf = function(target) {
 
 let emptyRect = createRectInit(0, 0, 0, 0);
 
-function toFloat(value) {
+function toFloat(value: string) {
     return parseFloat(value) || 0;
 }
 
-function getBordersSize(styles, start, end) {
-    let positions = [];
-    let len = arguments.length - 1;
-
-    while (len-- > 0) {
-        positions[len] = arguments[len + 1];
-    }
+function getBordersSize(styles: CSSStyleDeclaration, start: string, end: string) {
+    let positions = [start, end];
 
     return positions.reduce(function(size, position) {
-        let value = styles["border-" + position + "-width"];
-
+        let value: string = styles.getPropertyValue("border-" + position + "-width");
         return size + toFloat(value);
     }, 0);
 }
 
-function getPaddings(styles) {
+interface Paddings {
+    [property: string]: number;
+    top: number;
+    left: number;
+    right: number;
+    bottom: number;
+}
+
+function getPaddings(styles: CSSStyleDeclaration) {
     let positions = ["top", "right", "bottom", "left"];
-    let paddings = {
+    let paddings: Paddings = {
         top: null,
         left: null,
         right: null,
@@ -97,7 +99,7 @@ function getPaddings(styles) {
     for (let i = 0, list = positions; i < list.length; i += 1) {
         let position = list[i];
 
-        let value = styles["padding-" + position];
+        let value = styles.getPropertyValue("padding-" + position);
 
         paddings[position] = toFloat(value);
     }
@@ -105,7 +107,7 @@ function getPaddings(styles) {
     return paddings;
 }
 
-function getHTMLElementContentRect(target) {
+function getHTMLElementContentRect(target: HTMLElement) {
     let clientWidth = target.clientWidth;
     let clientHeight = target.clientHeight;
 
@@ -144,11 +146,11 @@ function getHTMLElementContentRect(target) {
     return createRectInit(paddings.left, paddings.top, width, height);
 }
 
-function getContentRect(target) {
+function getContentRect(target: HTMLElement) {
     return getHTMLElementContentRect(target);
 }
 
-function createReadOnlyRect(ref) {
+function createReadOnlyRect(ref: any) {
     let x = ref.x;
     let y = ref.y;
     let width = ref.width;
@@ -171,22 +173,22 @@ function createReadOnlyRect(ref) {
     return rect;
 }
 
-function createRectInit(x, y, width, height) {
+function createRectInit(x: number, y: number, width: number, height: number) {
     return { x: x, y: y, width: width, height: height };
 }
 
 class ResizeObserverController {
     connected_ = false;
     mutationEventsAdded_ = false;
-    mutationsObserver_ = null;
-    observers_ = [];
-    callback_ = null;
+    mutationsObserver_: MutationObserver = null;
+    observers_: ResizeObserverSPI[] = [];
+    callback_: (arg: any) => void = null;
 
     constructor() {
         this.refresh = throttle(this.refresh.bind(this), REFRESH_DELAY);
     }
 
-    addObserver(observer) {
+    addObserver(observer: ResizeObserverSPI) {
         if (this.observers_.indexOf(observer) == -1) {
             this.observers_.push(observer);
         }
@@ -197,7 +199,7 @@ class ResizeObserverController {
         }
     }
 
-    removeObserver(observer) {
+    removeObserver(observer: ResizeObserverSPI) {
         let observers = this.observers_;
         let index = observers.indexOf(observer);
 
@@ -284,7 +286,7 @@ class ResizeObserverController {
     }
 }
 
-let defineConfigurable = function(target, props) {
+let defineConfigurable = function(target: HTMLElement, props: any) {
     for (let i = 0, list = Object.keys(props); i < list.length; i += 1) {
         let key = list[i];
 
@@ -302,9 +304,9 @@ let defineConfigurable = function(target, props) {
 class ResizeObservation {
     broadcastWidth = 0;
     broadcastHeight = 0;
-    contentRect_ = null;
+    contentRect_: any = null;
 
-    constructor(public target) {
+    constructor(public target: HTMLElement) {
         this.contentRect_ = createRectInit(0, 0, 0, 0);
     }
 
@@ -327,12 +329,12 @@ class ResizeObservation {
 }
 
 class ResizeObserverSPI {
-    observation = null;
-    callback_ = null;
-    controller_ = null;
-    callbackCtx_ = null;
+    observation: ResizeObservation = null;
+    callback_: (arg: any) => void = null;
+    controller_: ResizeObserverController = null;
+    callbackCtx_: any = null;
 
-    constructor(callback, controller, callbackCtx) {
+    constructor(callback: (arg: any) => void, controller: ResizeObserverController, callbackCtx: any) {
         this.observation = null;
 
         if (typeof callback !== "function") {
@@ -344,7 +346,7 @@ class ResizeObserverSPI {
         this.callbackCtx_ = callbackCtx;
     }
 
-    observe(target) {
+    observe(target: HTMLElement) {
         this.observation = new ResizeObservation(target);
 
         this.controller_.addObserver(this);
@@ -383,7 +385,7 @@ class ResizeObserverSPI {
 class ResizeObserverFallback {
     observer_: ResizeObserverSPI;
 
-    constructor(callback) {
+    constructor(callback: (arg: any) => void) {
         let controller = ResizeObserverController.getInstance();
         let observer = new ResizeObserverSPI(callback, controller, this);
 
@@ -399,9 +401,9 @@ class ResizeObserverFallback {
     }
 }
 
-export function observeResize(element: HTMLElement, callback: (any) => void) {
+export function observeResize(element: HTMLElement, callback: (arg: any) => void) {
     if ((<any>window).ResizeObserver) {
-        const ro = new (<any>window).ResizeObserver((entries, observer) => {
+        const ro = new (<any>window).ResizeObserver((entries: any[], observer: any) => {
             for (const entry of entries) {
                 callback(entry);
             }
@@ -412,7 +414,7 @@ export function observeResize(element: HTMLElement, callback: (any) => void) {
             ro.disconnect();
         };
     } else {
-        const ro = new ResizeObserverFallback((entry, observer) => {
+        const ro = new ResizeObserverFallback((entry: any) => {
             callback(entry);
         });
         ro.observe(element);
