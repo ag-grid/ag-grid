@@ -14,7 +14,7 @@ import {Autowired, Context} from "../context/context";
 import {IRowModel} from "../interfaces/iRowModel";
 import {Constants} from "../constants";
 import {Utils as _} from "../utils";
-import {InMemoryRowModel} from "../rowModels/inMemory/inMemoryRowModel";
+import {ClientSideRowModel} from "../rowModels/clientSide/clientSideRowModel";
 import {RowNodeCache, RowNodeCacheParams} from "../rowModels/cache/rowNodeCache";
 import {RowNodeBlock} from "../rowModels/cache/rowNodeBlock";
 import {IEventEmitter} from "../interfaces/iEventEmitter";
@@ -733,8 +733,8 @@ export class RowNode implements IEventEmitter {
     private calculatedSelectedForAllGroupNodes(): void {
         // we have to make sure we do this dept first, as parent nodes
         // will have dependencies on the children having correct values
-        let inMemoryRowModel = <InMemoryRowModel> this.rowModel;
-        inMemoryRowModel.getTopLevelNodes().forEach( topLevelNode => {
+        let clientSideRowModel = <ClientSideRowModel> this.rowModel;
+        clientSideRowModel.getTopLevelNodes().forEach( topLevelNode => {
             if (topLevelNode.group) {
                 topLevelNode.depthFirstSearch( childNode => {
                     if (childNode.group) {

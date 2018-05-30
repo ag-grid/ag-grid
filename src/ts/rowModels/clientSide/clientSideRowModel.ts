@@ -10,7 +10,7 @@ import {Events, ModelUpdatedEvent, RowDataChangedEvent, RowDataUpdatedEvent} fro
 import {Autowired, Bean, Context, Optional, PostConstruct} from "../../context/context";
 import {SelectionController} from "../../selectionController";
 import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
-import {InMemoryNodeManager} from "./inMemoryNodeManager";
+import {ClientSideNodeManager} from "./clientSideNodeManager";
 import {ChangedPath} from "./changedPath";
 import {ValueService} from "../../valueService/valueService";
 import {ValueCache} from "../../valueService/valueCache";
@@ -59,7 +59,7 @@ export interface BatchTransactionItem {
 }
 
 @Bean('rowModel')
-export class InMemoryRowModel {
+export class ClientSideRowModel {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @Autowired('columnController') private columnController: ColumnController;
@@ -88,7 +88,7 @@ export class InMemoryRowModel {
 
     private rowsToDisplay: RowNode[]; // the rows mapped to rows to display
 
-    private nodeManager: InMemoryNodeManager;
+    private nodeManager: ClientSideNodeManager;
 
     private rowDataTransactionBatch: BatchTransactionItem[];
 
@@ -111,7 +111,7 @@ export class InMemoryRowModel {
         this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, refreshMapFunc);
 
         this.rootNode = new RowNode();
-        this.nodeManager = new InMemoryNodeManager(this.rootNode, this.gridOptionsWrapper,
+        this.nodeManager = new ClientSideNodeManager(this.rootNode, this.gridOptionsWrapper,
             this.context, this.eventService, this.columnController);
 
         this.context.wireBean(this.rootNode);
@@ -177,7 +177,7 @@ export class InMemoryRowModel {
     }
 
     public getType(): string {
-        return Constants.ROW_MODEL_TYPE_IN_MEMORY;
+        return Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
     }
 
     private onValueChanged(): void {
@@ -339,7 +339,7 @@ export class InMemoryRowModel {
 
 
     public setDatasource(datasource: any): void {
-        console.error('ag-Grid: should never call setDatasource on inMemoryRowController');
+        console.error('ag-Grid: should never call setDatasource on clientSideRowController');
     }
 
     public getTopLevelNodes() {

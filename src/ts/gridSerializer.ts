@@ -21,7 +21,7 @@ import {GroupInstanceIdCreator} from "./columnController/groupInstanceIdCreator"
 import {ColumnGroupChild} from "./entities/columnGroupChild";
 import {ColumnGroup} from "./entities/columnGroup";
 import {GridApi} from "./gridApi";
-import {InMemoryRowModel} from "./rowModels/inMemory/inMemoryRowModel";
+import {ClientSideRowModel} from "./rowModels/clientSide/clientSideRowModel";
 import {PinnedRowModel} from "./rowModels/pinnedRowModel";
 
 /**
@@ -206,7 +206,7 @@ export class GridSerializer {
 
         // when in pivot mode, we always render cols on screen, never 'all columns'
         let isPivotMode = this.columnController.isPivotMode();
-        let rowModelNormal = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_IN_MEMORY;
+        let rowModelNormal = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
 
         let onlySelectedNonStandardModel = !rowModelNormal && onlySelected;
 
@@ -252,7 +252,7 @@ export class GridSerializer {
 
         if (isPivotMode) {
             if ((<any>this.rowModel).forEachPivotNode){
-                (<InMemoryRowModel>this.rowModel).forEachPivotNode(processRow);
+                (<ClientSideRowModel>this.rowModel).forEachPivotNode(processRow);
             } else{
                 //Must be enterprise, so we can just loop through all the nodes
                 this.rowModel.forEachNode(processRow);
@@ -273,7 +273,7 @@ export class GridSerializer {
                 // the selection model even when just using selected, so that the result is the order
                 // of the rows appearing on the screen.
                 if (rowModelNormal){
-                    (<InMemoryRowModel>this.rowModel).forEachNodeAfterFilterAndSort(processRow);
+                    (<ClientSideRowModel>this.rowModel).forEachNodeAfterFilterAndSort(processRow);
                 } else {
                     this.rowModel.forEachNode(processRow);
                 }

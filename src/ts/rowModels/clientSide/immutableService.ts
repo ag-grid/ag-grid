@@ -1,5 +1,5 @@
 import {Autowired, Bean, PostConstruct} from "../../context/context";
-import {InMemoryRowModel, RowDataTransaction} from "./inMemoryRowModel";
+import {ClientSideRowModel, RowDataTransaction} from "./clientSideRowModel";
 import {IRowModel} from "../../interfaces/iRowModel";
 import {Constants} from "../../constants";
 import {_} from "../../utils";
@@ -12,20 +12,20 @@ export class ImmutableService {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    private inMemoryRowModel: InMemoryRowModel;
+    private clientSideRowModel: ClientSideRowModel;
 
     @PostConstruct
     private postConstruct(): void {
-        if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_IN_MEMORY) {
-            this.inMemoryRowModel = <InMemoryRowModel> this.rowModel;
+        if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            this.clientSideRowModel = <ClientSideRowModel> this.rowModel;
         }
     }
 
     // converts the setRowData() command to a transaction
     public createTransactionForRowData(data: any[]): [RowDataTransaction, {[id:string]: number}] {
 
-        if (_.missing(this.inMemoryRowModel)) {
-            console.error('ag-Grid: ImmutableService only works with InMemoryRowModel');
+        if (_.missing(this.clientSideRowModel)) {
+            console.error('ag-Grid: ImmutableService only works with ClientSideRowModel');
             return;
         }
 
@@ -42,7 +42,7 @@ export class ImmutableService {
             add: []
         };
 
-        let existingNodesMap: {[id:string]: RowNode} = this.inMemoryRowModel.getCopyOfNodesMap();
+        let existingNodesMap: {[id:string]: RowNode} = this.clientSideRowModel.getCopyOfNodesMap();
 
         let orderMap: {[id:string]: number} = {};
 

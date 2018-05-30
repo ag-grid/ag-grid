@@ -5,10 +5,10 @@ import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {Context, PostConstruct} from "../../context/context";
 import {GetNodeChildDetails, IsRowMaster} from "../../entities/gridOptions";
 import {EventService} from "../../eventService";
-import {RowDataTransaction, RowNodeTransaction} from "./inMemoryRowModel";
+import {RowDataTransaction, RowNodeTransaction} from "./clientSideRowModel";
 import {ColumnController} from "../../columnController/columnController";
 
-export class InMemoryNodeManager {
+export class ClientSideNodeManager {
 
 
     private static TOP_LEVEL = 0;
@@ -43,7 +43,7 @@ export class InMemoryNodeManager {
 
         this.rootNode.group = true;
         this.rootNode.level = -1;
-        this.rootNode.id = InMemoryNodeManager.ROOT_NODE_ID;
+        this.rootNode.id = ClientSideNodeManager.ROOT_NODE_ID;
         this.rootNode.allLeafChildren = [];
         this.rootNode.childrenAfterGroup = [];
         this.rootNode.childrenAfterSort = [];
@@ -91,7 +91,7 @@ export class InMemoryNodeManager {
         }
 
         // kick off recursion
-        let result = this.recursiveFunction(rowData, null, InMemoryNodeManager.TOP_LEVEL);
+        let result = this.recursiveFunction(rowData, null, ClientSideNodeManager.TOP_LEVEL);
 
         if (this.doingLegacyTreeData) {
             this.rootNode.childrenAfterGroup = result;
@@ -155,7 +155,7 @@ export class InMemoryNodeManager {
 
     private addRowNode(data: any, index?: number): RowNode {
 
-        let newNode = this.createNode(data, null, InMemoryNodeManager.TOP_LEVEL);
+        let newNode = this.createNode(data, null, ClientSideNodeManager.TOP_LEVEL);
 
         if (_.exists(index)) {
             _.insertIntoArray(this.rootNode.allLeafChildren, newNode, index);
@@ -324,7 +324,7 @@ export class InMemoryNodeManager {
         // go through the items backwards, otherwise they get added in reverse order
         for (let i = rowData.length - 1; i >= 0; i--) {
             let data = rowData[i];
-            let newNode = this.createNode(data, null, InMemoryNodeManager.TOP_LEVEL);
+            let newNode = this.createNode(data, null, ClientSideNodeManager.TOP_LEVEL);
             _.insertIntoArray(nodeList, newNode, index);
             newNodes.push(newNode);
         }

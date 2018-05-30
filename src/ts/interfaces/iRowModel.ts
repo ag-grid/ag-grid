@@ -37,11 +37,11 @@ export interface IRowModel {
      * uses to know if there are rows to render or not. */
     isRowsToRender(): boolean;
 
-    /** Returns all rows in range that should be selected. If there is a gap in range (non InMemoryRowModel) then
+    /** Returns all rows in range that should be selected. If there is a gap in range (non ClientSideRowModel) then
      *  then no rows should be returned  */
     getNodesInRangeForSelection(first: RowNode, last: RowNode): RowNode[];
 
-    /** Iterate through each node. What this does depends on the model type. For inMemory, goes through
+    /** Iterate through each node. What this does depends on the model type. For clientSide, goes through
      * all nodes. For pagination, goes through current page. For virtualPage, goes through what's loaded in memory. */
     forEachNode(callback: (rowNode: RowNode)=>void): void;
 
@@ -51,7 +51,7 @@ export interface IRowModel {
     /**
      * It tells us if this row model knows about the last row that it can produce. This is used by the
      * PaginationPanel, if last row is not found, then the 'last' button is disabled and the last page is
-     * not shown. This is always true for InMemoryRowModel. It toggles for InfiniteRowModel.
+     * not shown. This is always true for ClientSideRowModel. It toggles for InfiniteRowModel.
      */
     isLastRowFound(): boolean;
 

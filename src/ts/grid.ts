@@ -30,13 +30,13 @@ import {FocusedCellController} from "./focusedCellController";
 import {MouseEventService} from "./gridPanel/mouseEventService";
 import {CellNavigationService} from "./cellNavigationService";
 import {Utils as _} from "./utils";
-import {FilterStage} from "./rowModels/inMemory/filterStage";
-import {SortStage} from "./rowModels/inMemory/sortStage";
-import {FlattenStage} from "./rowModels/inMemory/flattenStage";
+import {FilterStage} from "./rowModels/clientSide/filterStage";
+import {SortStage} from "./rowModels/clientSide/sortStage";
+import {FlattenStage} from "./rowModels/clientSide/flattenStage";
 import {CellEditorFactory} from "./rendering/cellEditorFactory";
 import {Events, GridReadyEvent} from "./events";
 import {InfiniteRowModel} from "./rowModels/infinite/infiniteRowModel";
-import {InMemoryRowModel} from "./rowModels/inMemory/inMemoryRowModel";
+import {ClientSideRowModel} from "./rowModels/clientSide/clientSideRowModel";
 import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {CellRendererService} from "./rendering/cellRendererService";
 import {ValueFormatterService} from "./rendering/valueFormatterService";
@@ -55,7 +55,7 @@ import {FilterService} from "./rowNodes/filterService";
 import {RowNodeFactory} from "./rowNodes/rowNodeFactory";
 import {AutoGroupColService} from "./columnController/autoGroupColService";
 import {PaginationAutoPageSizeService, PaginationProxy} from "./rowModels/paginationProxy";
-import {ImmutableService} from "./rowModels/inMemory/immutableService";
+import {ImmutableService} from "./rowModels/clientSide/immutableService";
 import {IRowModel} from "./interfaces/iRowModel";
 import {Constants} from "./constants";
 import {ValueCache} from "./valueService/valueCache";
@@ -100,11 +100,11 @@ export class Grid {
     private static frameworkBeans: any[];
     private static enterpriseComponents: any[];
 
-    // the default is InMemoryRowModel, which is also used for pagination.
+    // the default is ClientSideRowModel, which is also used for pagination.
     // the enterprise adds viewport to this list.
     private static RowModelClasses: any = {
         infinite: InfiniteRowModel,
-        inMemory: InMemoryRowModel
+        clientSide: ClientSideRowModel
     };
 
     public static setEnterpriseBeans(enterpriseBeans: any[], rowModelClasses: any): void {
@@ -226,9 +226,9 @@ export class Grid {
             columnController.setColumnDefs(columnDefs, "gridInitializing");
         }
 
-        if (_.exists(rowData) && rowModel.getType()===Constants.ROW_MODEL_TYPE_IN_MEMORY) {
-            let inMemoryRowModel = <InMemoryRowModel> rowModel;
-            inMemoryRowModel.setRowData(rowData);
+        if (_.exists(rowData) && rowModel.getType()===Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            let clientSideRowModel = <ClientSideRowModel> rowModel;
+            clientSideRowModel.setRowData(rowData);
         }
     }
 
@@ -250,8 +250,8 @@ export class Grid {
                 return rowModelClass;
             } else {
                 if (rowModelType==='normal') {
-                    console.warn(`ag-Grid: normal rowModel deprecated. Should now be called inMemory rowModel instead.`);
-                    return InMemoryRowModel;
+                    console.warn(`ag-Grid: normal rowModel deprecated. Should now be called clientSide rowModel instead.`);
+                    return ClientSideRowModel;
                 }
                 console.error('ag-Grid: could not find matching row model for rowModelType ' + rowModelType);
                 if (rowModelType==='viewport') {
@@ -262,7 +262,7 @@ export class Grid {
                 }
             }
         }
-        return InMemoryRowModel;
+        return ClientSideRowModel;
     };
 
     public destroy(): void {

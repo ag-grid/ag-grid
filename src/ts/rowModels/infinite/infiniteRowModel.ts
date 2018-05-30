@@ -14,7 +14,7 @@ import {InfiniteCache, InfiniteCacheParams} from "./infiniteCache";
 import {BeanStub} from "../../context/beanStub";
 import {RowNodeCache} from "../cache/rowNodeCache";
 import {RowNodeBlockLoader} from "../cache/rowNodeBlockLoader";
-import {RowDataTransaction} from "../inMemory/inMemoryRowModel";
+import {RowDataTransaction} from "../clientSide/clientSideRowModel";
 import {GridApi} from "../../gridApi";
 import {ColumnApi} from "../../columnController/columnApi";
 

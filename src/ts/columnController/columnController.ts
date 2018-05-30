@@ -1160,7 +1160,7 @@ export class ColumnController {
         return this.pivotColumns ? this.pivotColumns : [];
     }
 
-    // + inMemoryRowModel
+    // + clientSideRowModel
     public isPivotActive(): boolean {
         return this.pivotColumns && this.pivotColumns.length > 0 && this.pivotMode;
     }
@@ -1191,7 +1191,7 @@ export class ColumnController {
     }
 
     // used by:
-    // + inMemoryRowController -> sorting, building quick filter text
+    // + clientSideRowController -> sorting, building quick filter text
     // + headerRenderer -> sorting (clearing icon)
     public getAllPrimaryColumns(): Column[] {
         return this.primaryColumns;

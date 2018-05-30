@@ -1626,8 +1626,8 @@ export class Utils {
         eBox.appendChild(eMessage);
     }
 
-    // gets called by: a) InMemoryRowNodeManager and b) GroupStage to do sorting.
-    // when in InMemoryRowNodeManager we always have indexes (as this sorts the items the
+    // gets called by: a) ClientSideNodeManager and b) GroupStage to do sorting.
+    // when in ClientSideNodeManager we always have indexes (as this sorts the items the
     // user provided) but when in GroupStage, the nodes can contain filler nodes that
     // don't have order id's
     static sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: { [id: string]: number }): void {

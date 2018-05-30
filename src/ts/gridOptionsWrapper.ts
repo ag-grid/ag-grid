@@ -246,7 +246,7 @@ export class GridOptionsWrapper {
     public isRowModelEnterprise() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_ENTERPRISE; }
     public isRowModelDefault() {
         return _.missing(this.gridOptions.rowModelType) ||
-            this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_IN_MEMORY ||
+            this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE ||
             this.gridOptions.rowModelType === Constants.DEPRECATED_ROW_MODEL_TYPE_NORMAL;
     }
 
@@ -745,6 +745,10 @@ export class GridOptionsWrapper {
         if (options.pivotTotals) {
             console.warn(`ag-grid: since version 18.x, pivotTotals has been removed, instead if using pivotTotals, set pivotColumnGroupTotals='before'|'after'.`);
             options.pivotColumnGroupTotals = 'before';
+        }
+        if (options.rowModelType==='inMemory') {
+            console.warn(`ag-grid: since version 18.x, The In Memory Row Model has been renamed to the Client Side Row Model, set rowModelType='clientSide' instead.`);
+            options.rowModelType = 'clientSide';
         }
     }
 

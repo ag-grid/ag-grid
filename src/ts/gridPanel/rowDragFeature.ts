@@ -3,7 +3,7 @@ import {
     VDirection
 } from "../dragAndDrop/dragAndDropService";
 import {Autowired, Optional, PostConstruct} from "../context/context";
-import {InMemoryRowModel} from "../rowModels/inMemory/inMemoryRowModel";
+import {ClientSideRowModel} from "../rowModels/clientSide/clientSideRowModel";
 import {FocusedCellController} from "../focusedCellController";
 import {IRangeController} from "../interfaces/iRangeController";
 import {GridPanel} from "./gridPanel";
@@ -16,7 +16,7 @@ import {IRowModel} from "../interfaces/iRowModel";
 export class RowDragFeature implements DropTarget {
 
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    // this feature is only created when row model in InMemory, so we can type it as InMemory
+    // this feature is only created when row model is ClientSide, so we can type it as ClientSide
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -25,7 +25,7 @@ export class RowDragFeature implements DropTarget {
 
     private gridPanel: GridPanel;
 
-    private inMemoryRowModel: InMemoryRowModel;
+    private clientSideRowModel: ClientSideRowModel;
 
     private eContainer: HTMLElement;
 
@@ -45,7 +45,7 @@ export class RowDragFeature implements DropTarget {
     @PostConstruct
     private postConstruct(): void {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
-            this.inMemoryRowModel = <InMemoryRowModel> this.rowModel;
+            this.clientSideRowModel = <ClientSideRowModel> this.rowModel;
         }
     }
 
@@ -91,7 +91,7 @@ export class RowDragFeature implements DropTarget {
 
     private doManagedDrag(draggingEvent: DraggingEvent, pixel: number): void {
         let rowNode = draggingEvent.dragItem.rowNode;
-        let rowWasMoved = this.inMemoryRowModel.ensureRowAtPixel(rowNode, pixel);
+        let rowWasMoved = this.clientSideRowModel.ensureRowAtPixel(rowNode, pixel);
 
         if (rowWasMoved) {
             this.focusedCellController.clearFocusedCell();

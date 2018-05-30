@@ -139,15 +139,15 @@ export {ValueFormatterService} from "./dist/lib/rendering/valueFormatterService"
 export {TextFormatter} from "./dist/lib/filter/textFilter";
 
 // rowControllers/inMemory
-export {FilterStage} from "./dist/lib/rowModels/inMemory/filterStage";
-export {FlattenStage} from "./dist/lib/rowModels/inMemory/flattenStage";
-export {SortStage} from "./dist/lib/rowModels/inMemory/sortStage";
+export {FilterStage} from "./dist/lib/rowModels/clientSide/filterStage";
+export {FlattenStage} from "./dist/lib/rowModels/clientSide/flattenStage";
+export {SortStage} from "./dist/lib/rowModels/clientSide/sortStage";
 
 // row models
 export {PinnedRowModel} from "./dist/lib/rowModels/pinnedRowModel";
-export {InMemoryRowModel, RowNodeTransaction} from "./dist/lib/rowModels/inMemory/inMemoryRowModel";
-export {ChangedPath} from "./dist/lib/rowModels/inMemory/changedPath";
-export {InMemoryNodeManager} from "./dist/lib/rowModels/inMemory/inMemoryNodeManager";
+export {ClientSideRowModel, RowNodeTransaction} from "./dist/lib/rowModels/clientSide/clientSideRowModel";
+export {ChangedPath} from "./dist/lib/rowModels/clientSide/changedPath";
+export {ClientSideNodeManager} from "./dist/lib/rowModels/clientSide/clientSideNodeManager";
 export {InfiniteRowModel} from "./dist/lib/rowModels/infinite/infiniteRowModel";
 export {IEnterpriseGetRowsParams} from "./dist/lib/interfaces/iEnterpriseDatasource";
 export {IEnterpriseGetRowsRequest} from "./dist/lib/interfaces/iEnterpriseDatasource";
