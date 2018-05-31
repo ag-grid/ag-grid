@@ -233,7 +233,7 @@ public class EnterpriseGetRowsRequest implements Serializable {
 
     <p>
         We will discuss this in detail throughout this guide, however for more details see:
-        <a href="/javascript-grid-server-side-model/#enterprise-datasource">Server-side Datasource</a>.
+        <a href="/javascript-grid-server-side-model/#server-side-datasource">Server-side Datasource</a>.
     </p>
 
     <h2 id="service-controller">Service Controller</h2>

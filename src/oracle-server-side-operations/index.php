@@ -273,7 +273,7 @@ public class EnterpriseGetRowsResponse {
 </snippet>
     <p>
         We will discuss these in detail throughout this guide, however for more details see:
-        <a href="/javascript-grid-server-side-model/#enterprise-datasource">Server-side Datasource</a>
+        <a href="/javascript-grid-server-side-model/#server-side-datasource">Server-side Datasource</a>
     </p>
 
     <h2 id="service-controller">Service Controller</h2>
