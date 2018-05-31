@@ -17,12 +17,12 @@
     - Edit the first, second and third column
 
 ## lazy loading
-    - Use https://www.ag-grid.com/javascript-grid-enterprise-model/#example-simple
+    - Use https://www.ag-grid.com/javascript-grid-server-side-model/#example-simple
     - Scroll so that the loader is visible
     - Expand one group to show loading
 
 ## Server Side Operations
-    - Use https://www.ag-grid.com/javascript-grid-enterprise-model/#example-slice-and-dice
+    - Use https://www.ag-grid.com/javascript-grid-server-side-model/#example-slice-and-dice
     - Scroll 
     - Sort
     - NC - Grouping, aggregation, pivoting
@@ -116,7 +116,7 @@
     - Hide name
 
 ## Pagination
-    - Use https://www.ag-grid.com/javascript-grid-enterprise-model/#example-pagination
+    - Use https://www.ag-grid.com/javascript-grid-server-side-model/#example-pagination
     - Page till the end
 
 ## Sorting

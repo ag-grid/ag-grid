@@ -24,6 +24,8 @@ var gridOptions = {
     toolPanelSuppressValues: true,
     toolPanelSuppressRowGroups: true,
     toolPanelSuppressSideButtons: true,
+    cacheBlockSize: 10,
+    rowBuffer: 0,
     getRowNodeId: function(item) {
         return item.id;
     },
@@ -77,6 +79,15 @@ function removeRows(start, count) {
     var rowsToRemove = allOfTheData.slice(start, start + count);
     allOfTheData.splice(start, count);
     gridOptions.api.removeFromEnterpriseCache(null, rowsToRemove);
+}
+
+
+function add() {
+  addRows(0,1)
+}
+
+function remove() {
+  removeRows(0, 1)
 }
 
 function addRows(index, count) {

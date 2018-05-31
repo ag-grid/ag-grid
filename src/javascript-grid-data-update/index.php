@@ -10,7 +10,7 @@ include '../documentation-main/documentation_header.php';
 
     <note>
         Note that this is only applicable if you are using the <a href="../javascript-grid-in-memory">Client-side Row Model</a>.
-        If you are using <a href="../javascript-grid-viewport">viewport</a> or <a href="../javascript-grid-enterprise-model">Server-side</a>
+        If you are using <a href="../javascript-grid-viewport">viewport</a> or <a href="../javascript-grid-server-side-model">Server-side</a>
         the data would be passed to the grid through a datasource and the specifics on how to
         update each model would be explained in their respective docs.
     </note>
@@ -290,7 +290,7 @@ include '../documentation-main/documentation_header.php';
     <a href="../javascript-grid-infinite-scrolling">Infinite Row Model</a> supports 'add'
     only (see the infinite docs for examples). The
     <a href="../javascript-grid-viewport">Viewport Row Model</a> and
-    <a href="../javascript-grid-enterprise-model">Server-side Row Model</a> do not support
+    <a href="../javascript-grid-server-side-model">Server-side Row Model</a> do not support
     transaction updates.
 </p>
 

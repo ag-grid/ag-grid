@@ -536,7 +536,7 @@ var masterGridOptions = {
 <p>
     The master grid (i.e. the top level grid) in Master / Detail can only be using the
     <a href="../javascript-grid-in-memory/">Client-side</a> row model.
-    It is not supported with <a href="../javascript-grid-enterprise-model/">Server-side</a>,
+    It is not supported with <a href="../javascript-grid-server-side-model/">Server-side</a>,
     <a href="../javascript-grid-viewport">Viewport</a> or
     <a href="../javascript-grid-infinite-scrolling">Infinite</a> row models. This is because
     all of these row models have their own unique way of loading data which would clash with

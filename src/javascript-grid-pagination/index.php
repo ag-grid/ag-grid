@@ -27,7 +27,7 @@ include '../documentation-main/documentation_header.php';
     <p>To see the specifics of pagination on the
     other row models check the relevant documentation for <a href="../javascript-grid-infinite-scrolling/#pagination">Infinite Row Model</a>,
     <a href="../javascript-grid-viewport/#pagination">Viewport Row Model</a> and
-    <a href="../javascript-grid-enterprise-model/#pagination">Server-side Row Model</a>.</p>
+    <a href="../javascript-grid-server-side-model/#pagination">Server-side Row Model</a>.</p>
 
     <h2 id="paginationFeatures">Features While Using Pagination</h2>
 

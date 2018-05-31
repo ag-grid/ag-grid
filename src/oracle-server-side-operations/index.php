@@ -68,7 +68,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        This is precisely the problem the <a href="/javascript-grid-enterprise-model/">Server-side Row Model</a> addresses,
+        This is precisely the problem the <a href="/javascript-grid-server-side-model/">Server-side Row Model</a> addresses,
         along with delegating server-side operations such as filtering, sorting, grouping and pivoting.
     </p>
 
@@ -273,7 +273,7 @@ public class EnterpriseGetRowsResponse {
 </snippet>
     <p>
         We will discuss these in detail throughout this guide, however for more details see:
-        <a href="/javascript-grid-enterprise-model/#enterprise-datasource">Server-side Datasource</a>
+        <a href="/javascript-grid-server-side-model/#enterprise-datasource">Server-side Datasource</a>
     </p>
 
     <h2 id="service-controller">Service Controller</h2>

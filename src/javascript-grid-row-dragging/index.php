@@ -80,7 +80,7 @@ colDef = {
             <li>
                 Works with <a href="../javascript-grid-in-memory/">Client-side</a> row model only and
                 not with the <a href="../javascript-grid-infinite-scrolling/">Infinite</a>,
-                <a href="../javascript-grid-enterprise-model/">Server-side</a> or
+                <a href="../javascript-grid-server-side-model/">Server-side</a> or
                 <a href="../javascript-grid-viewport/">Viewport</a> row models.
             </li>
             <li>
@@ -415,7 +415,7 @@ colDef = {
     <p>
         Unmanaged row dragging will work with any of the row models
         <a href="../javascript-grid-infinite-scrolling/">Infinite</a>,
-        <a href="../javascript-grid-enterprise-model/">Enterprise</a> and
+        <a href="../javascript-grid-server-side-model/">Server-side</a> and
         <a href="../javascript-grid-viewport/">Viewport</a>.
         With non-managed, the implementation of what happens when a particular drag happens is up
         to your application.

@@ -11,7 +11,7 @@ include '../documentation-main/documentation_header.php';
     <h1>Infinite Row Model</h1>
 
     <note>
-        If you are an enterprise user you should consider using the <a href="../javascript-grid-enterprise-model/">Server-side row model</a>
+        If you are an enterprise user you should consider using the <a href="../javascript-grid-server-side-model/">Server-side row model</a>
         instead of the infinite row model. It offers the same functionality with many more features.<br><br>
         The differences between row models can be found in our <a href="../javascript-grid-row-models/">row models summary page</a>
     </note>
@@ -213,7 +213,7 @@ interface IGetRowsParams {
         Aggregation and grouping are not available in infinite scrolling.
         This is because to do such would require the grid knowing the entire data set,
         which is not possible when using the infinite row model. If you need aggregation and / or
-        grouping for large datasets, check the <a href="../javascript-grid-enterprise-model/">Server-side
+        grouping for large datasets, check the <a href="../javascript-grid-server-side-model/">Server-side
         Row Model</a> for doing aggregations on the Server-side.
     </p>
 

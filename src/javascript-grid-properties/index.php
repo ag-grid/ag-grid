@@ -94,7 +94,7 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>enableServerSideSorting</th>
             <td>Set to true when using <a href="../javascript-grid-infinite-scrolling/">Infinite</a>,
-                <a href="../javascript-grid-enterprise-model/">Server-side</a> or
+                <a href="../javascript-grid-server-side-model/">Server-side</a> or
                 <a href="../javascript-grid-viewport/">Viewport</a> Row Models to enable
                 <a href="../javascript-grid-sorting/">Row Sorting</a>. Clicking a column header will
                 result in your datasource getting asked for the data again with the new sort order.</td>
@@ -107,7 +107,7 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>enableServerSideFilter</th>
             <td>Set to true when using <a href="../javascript-grid-infinite-scrolling/">Infinite</a>,
-                <a href="../javascript-grid-enterprise-model/">Server-side</a> or
+                <a href="../javascript-grid-server-side-model/">Server-side</a> or
                 <a href="../javascript-grid-viewport/">Viewport</a> Row Models to enable
                 <a href="../javascript-grid-filtering/">Row Filtering</a>.
                 A change in filter will result in your datasource getting asked for the

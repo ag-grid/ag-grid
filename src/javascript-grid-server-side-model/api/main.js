@@ -1,16 +1,16 @@
-function countries () {
-    return ['United States','Russia','Australia','Canada','Norway','China','Zimbabwe',
-        'Netherlands','South Korea','Croatia','France','Japan','Hungary','Germany','Poland','South Africa',
-        'Sweden','Ukraine','Italy','Czech Republic','Austria','Finland','Romania', 'Great Britain','Jamaica',
-        'Singapore','Belarus','Chile','Spain','Tunisia','Brazil','Slovakia','Costa Rica','Bulgaria','Switzerland',
-        'New Zealand','Estonia','Kenya','Ethiopia','Trinidad and Tobago','Turkey','Morocco','Bahamas','Slovenia',
-        'Armenia','Azerbaijan','India', 'Puerto Rico','Egypt','Kazakhstan','Iran','Georgia','Lithuania','Cuba',
-        'Colombia','Mongolia','Uzbekistan','North Korea','Tajikistan', 'Kyrgyzstan','Greece','Macedonia','Moldova',
-        'Chinese Taipei','Indonesia','Thailand','Vietnam','Latvia','Venezuela','Mexico','Nigeria', 'Qatar','Serbia',
-        'Serbia and Montenegro','Hong Kong','Denmark','Portugal','Argentina','Afghanistan','Gabon','Dominican Republic',
-        'Belgium', 'Kuwait','United Arab Emirates','Cyprus','Israel','Algeria','Montenegro','Iceland','Paraguay',
-        'Cameroon','Saudi Arabia','Ireland','Malaysia', 'Uruguay','Togo','Mauritius','Syria','Botswana','Guatemala',
-        'Bahrain','Grenada','Uganda','Sudan','Ecuador','Panama','Eritrea','Sri Lanka', 'Mozambique','Barbados'];
+function countries() {
+return ['United States','Russia','Australia','Canada','Norway','China','Zimbabwe',
+    'Netherlands','South Korea','Croatia','France','Japan','Hungary','Germany','Poland','South Africa',
+    'Sweden','Ukraine','Italy','Czech Republic','Austria','Finland','Romania', 'Great Britain','Jamaica',
+    'Singapore','Belarus','Chile','Spain','Tunisia','Brazil','Slovakia','Costa Rica','Bulgaria','Switzerland',
+    'New Zealand','Estonia','Kenya','Ethiopia','Trinidad and Tobago','Turkey','Morocco','Bahamas','Slovenia',
+    'Armenia','Azerbaijan','India', 'Puerto Rico','Egypt','Kazakhstan','Iran','Georgia','Lithuania','Cuba',
+    'Colombia','Mongolia','Uzbekistan','North Korea','Tajikistan', 'Kyrgyzstan','Greece','Macedonia','Moldova',
+    'Chinese Taipei','Indonesia','Thailand','Vietnam','Latvia','Venezuela','Mexico','Nigeria', 'Qatar','Serbia',
+    'Serbia and Montenegro','Hong Kong','Denmark','Portugal','Argentina','Afghanistan','Gabon','Dominican Republic',
+    'Belgium', 'Kuwait','United Arab Emirates','Cyprus','Israel','Algeria','Montenegro','Iceland','Paraguay',
+    'Cameroon','Saudi Arabia','Ireland','Malaysia', 'Uruguay','Togo','Mauritius','Syria','Botswana','Guatemala',
+    'Bahrain','Grenada','Uganda','Sudan','Ecuador','Panama','Eritrea','Sri Lanka', 'Mozambique','Barbados']
 }
 
 var columnDefs = [
@@ -31,7 +31,6 @@ var columnDefs = [
     {headerName: "Silver", field: "silver", aggFunc: 'sum', suppressFilter: true, enableValue: true},
     {headerName: "Bronze", field: "bronze", aggFunc: 'sum', suppressFilter: true, enableValue: true}
 ];
-
 var gridOptions = {
     defaultColDef: {
         width: 100,
@@ -44,6 +43,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     enableColResize: true,
     rowModelType: 'serverSide',
+    rowGroupPanelShow: 'always',
     enableFilter: true,
     animateRows: true,
     debug: true,
@@ -54,44 +54,30 @@ var gridOptions = {
     // restrict to 2 server side calls concurrently
     maxConcurrentDatasourceRequests: 2,
     cacheBlockSize: 100,
-    // maxBlocksInCache: 2,
-    groupUseEntireRow: true,
+    maxBlocksInCache: 2,
     purgeClosedRowNodes: true,
-    groupRowInnerRenderer: GroupInnerRenderer,
+    getChildCount: function(data) {
+        // return back a random value, demonstrates how this can be set.
+        // in a real application, the child count would be set on the
+        // data item, and this method could simply be "return data.childCount"
+        return Math.round((Math.random() * 100) + 1);
+    },
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     },
-    getRowHeight: function (params) {
-        // top level group gets height of 50
-        if (params.node.level === 0) {
-            return 40;
-        } else {
-            return 25;
-        }
-    },
     icons: {
-        groupLoading: '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/javascript-grid-enterprise-model/spinner.gif" style="width:22px;height:22px;">'
+        groupLoading: '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/javascript-grid-server-side-model/spinner.gif" style="width:22px;height:22px;">'
     }
 };
 
-function GroupInnerRenderer() {}
-
-GroupInnerRenderer.prototype.init = function(params) {
-    var cssClass = params.node.level === 0 ? 'group-inner-renderer-country' : 'group-inner-renderer-year';
-    var template = '<span class="'+cssClass+'">'+params.value+'</span>';
-    this.eGui  = loadTemplate(template);
-};
-
-GroupInnerRenderer.prototype.getGui = function() {
-    return this.eGui;
-};
-
-function loadTemplate(template) {
-    var tempDiv = document.createElement('div');
-    tempDiv.innerHTML = template;
-    return tempDiv.firstChild;
+function purgeCache(route) {
+    gridOptions.api.purgeServerSideCache(route);
 }
 
+function getBlockState() {
+    var blockState = gridOptions.api.getCacheBlockState();
+    console.log(blockState);
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
@@ -103,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
     agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinners.json'})
         .then( function(data) {
                 var fakeServer = new FakeServer(data);
-                var datasource = new ServerSideDatasource(fakeServer);
+                var datasource = new ServerSideDatasource(fakeServer, gridOptions);
                 gridOptions.api.setServerSideDatasource(datasource);
             }
         );
