@@ -70,24 +70,26 @@ function toFloat(value: string) {
     return parseFloat(value) || 0;
 }
 
-function getBordersSize(styles: any, start: string, end: string) {
-    let positions = [];
-    let len = arguments.length - 1;
-
-    while (len-- > 0) {
-        positions[len] = arguments[len + 1];
-    }
+function getBordersSize(styles: CSSStyleDeclaration, start: string, end: string) {
+    let positions = [start, end];
 
     return positions.reduce(function(size, position) {
-        let value = styles["border-" + position + "-width"];
-
+        let value: string = styles.getPropertyValue("border-" + position + "-width");
         return size + toFloat(value);
     }, 0);
 }
 
-function getPaddings(styles: any) {
+interface Paddings {
+    [property: string]: number;
+    top: number;
+    left: number;
+    right: number;
+    bottom: number;
+}
+
+function getPaddings(styles: CSSStyleDeclaration) {
     let positions = ["top", "right", "bottom", "left"];
-    let paddings: any = {
+    let paddings: Paddings = {
         top: null,
         left: null,
         right: null,
@@ -97,7 +99,7 @@ function getPaddings(styles: any) {
     for (let i = 0, list = positions; i < list.length; i += 1) {
         let position = list[i];
 
-        let value = styles["padding-" + position];
+        let value = styles.getPropertyValue("padding-" + position);
 
         paddings[position] = toFloat(value);
     }
@@ -414,7 +416,7 @@ export function observeResize(element: HTMLElement, callback: (entry: any) => vo
             ro.disconnect();
         };
     } else {
-        const ro = new ResizeObserverFallback((entry, observer) => {
+        const ro = new ResizeObserverFallback((entry: any) => {
             callback(entry);
         });
         ro.observe(element);

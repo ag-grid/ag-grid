@@ -32,8 +32,8 @@ import {CsvExportParams} from "./exportParams";
 import {ExcelExportParams, IExcelCreator} from "./interfaces/iExcelCreator";
 import {IDatasource} from "./rowModels/iDatasource";
 import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
+import {IServerSideDatasource} from "./interfaces/iServerSideDatasource";
 import {PaginationProxy} from "./rowModels/paginationProxy";
-import {IEnterpriseRowModel} from "./interfaces/iEnterpriseRowModel";
 import {
     ClientSideRowModel,
     RefreshModelParams,
@@ -51,6 +51,7 @@ import {ICellRendererComp} from "./rendering/cellRenderers/iCellRenderer";
 import {ICellEditorComp} from "./rendering/cellEditors/iCellEditor";
 import {HeaderRootComp} from "./headerRendering/headerRootComp";
 import {AnimationFrameService} from "./misc/animationFrameService";
+import {IServerSideRowModel} from "./interfaces/iServerSideRowModel";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -122,7 +123,7 @@ export class GridApi {
 
     private clientSideRowModel: ClientSideRowModel;
     private infinitePageRowModel: InfiniteRowModel;
-    private enterpriseRowModel: IEnterpriseRowModel;
+    private serverSideRowModel: IServerSideRowModel;
 
     private detailGridInfoMap: {[id: string]: DetailGridInfo} = {};
 
@@ -143,8 +144,8 @@ export class GridApi {
             case Constants.ROW_MODEL_TYPE_INFINITE:
                 this.infinitePageRowModel = <InfiniteRowModel> this.rowModel;
                 break;
-            case Constants.ROW_MODEL_TYPE_ENTERPRISE:
-                this.enterpriseRowModel = <IEnterpriseRowModel> this.rowModel;
+            case Constants.ROW_MODEL_TYPE_SERVER_SIDE:
+                this.serverSideRowModel = <IServerSideRowModel> this.rowModel;
                 break;
         }
     }
@@ -195,12 +196,12 @@ export class GridApi {
         this.excelCreator.exportDataAsExcel(params)
     }
 
-    public setEnterpriseDatasource(datasource: IEnterpriseDatasource) {
-        if (this.gridOptionsWrapper.isRowModelEnterprise()) {
+    public setEnterpriseDatasource(datasource: IServerSideDatasource | IEnterpriseDatasource) {
+        if (this.gridOptionsWrapper.isRowModelServerSide()) {
             // should really have an IEnterpriseRowModel interface, so we are not casting to any
             (<any>this.rowModel).setDatasource(datasource);
         } else {
-            console.warn(`ag-Grid: you can only use an enterprise datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_ENTERPRISE}'`)
+            console.warn(`ag-Grid: you can only use an enterprise datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_SERVER_SIDE}'`)
         }
     }
 
@@ -1033,24 +1034,24 @@ export class GridApi {
     }
 
     public purgeEnterpriseCache(route?: string[]): void {
-        if (this.enterpriseRowModel) {
-            this.enterpriseRowModel.purgeCache(route);
+        if (this.serverSideRowModel) {
+            this.serverSideRowModel.purgeCache(route);
         } else {
             console.warn(`ag-Grid: api.purgeEnterpriseCache is only available when rowModelType='enterprise'.`);
         }
     }
 
     public removeFromEnterpriseCache(route: string[], items: any[]): void {
-        if (this.enterpriseRowModel) {
-            this.enterpriseRowModel.removeFromCache(route, items);
+        if (this.serverSideRowModel) {
+            this.serverSideRowModel.removeFromCache(route, items);
         } else {
             console.warn(`ag-Grid: api.removeFromEnterpriseCache is only available when rowModelType='enterprise'.`);
         }
     }
 
     public addToEnterpriseCache(route: string[], items: any[], index: number): void {
-        if (this.enterpriseRowModel) {
-            this.enterpriseRowModel.addToCache(route, items, index);
+        if (this.serverSideRowModel) {
+            this.serverSideRowModel.addToCache(route, items, index);
         } else {
             console.warn(`ag-Grid: api.addToEnterpriseCache is only available when rowModelType='enterprise'.`);
         }
@@ -1103,8 +1104,8 @@ export class GridApi {
     public getCacheBlockState(): any {
         if (this.infinitePageRowModel) {
             return this.infinitePageRowModel.getBlockState();
-        } else if (this.enterpriseRowModel) {
-            return this.enterpriseRowModel.getBlockState();
+        } else if (this.serverSideRowModel) {
+            return this.serverSideRowModel.getBlockState();
         } else {
             console.warn(`ag-Grid: api.getCacheBlockState() is only available when rowModelType='infinite' or rowModelType='enterprise'.`);
         }

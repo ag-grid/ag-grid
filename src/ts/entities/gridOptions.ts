@@ -9,6 +9,7 @@ import {IDatasource} from "../rowModels/iDatasource";
 import {GridCellDef} from "./gridCell";
 import {IDateComp} from "../rendering/dateComponent";
 import {IEnterpriseDatasource} from "../interfaces/iEnterpriseDatasource";
+import {IServerSideDatasource} from "../interfaces/iServerSideDatasource";
 import {CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams} from "../exportParams";
 import {
     CellClickedEvent,
@@ -285,6 +286,8 @@ export interface GridOptions {
     datasource?: IDatasource;
     viewportDatasource?: IViewportDatasource;
     enterpriseDatasource?: IEnterpriseDatasource;
+    serverSideDatasource?: IServerSideDatasource;
+
     // in properties
     headerHeight?: number;
     pivotHeaderHeight?: number;

@@ -250,8 +250,8 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
     // gets called 1) row count changed 2) cache purged 3) items inserted
     protected onCacheUpdated(): void {
         if (this.isActive()) {
-            // this results in both row models (infinite and enterprise) firing ModelUpdated,
-            // however enterprise also updates the row indexes first
+            // this results in both row models (infinite and server side) firing ModelUpdated,
+            // however server side row model also updates the row indexes first
             let event: CacheUpdatedEvent = {
                 type: RowNodeCache.EVENT_CACHE_UPDATED
             };

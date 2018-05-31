@@ -142,7 +142,7 @@ export class GridOptionsWrapper {
             if (!this.isRowSelectionMulti()) {
                 console.warn(`ag-Grid: rowSelection must be 'multiple' for groupSelectsChildren to make sense`);
             }
-            if (this.isRowModelEnterprise()) {
+            if (this.isRowModelServerSide()) {
                 console.warn('ag-Grid: group selects children is NOT support for Enterprise Row Model. ' +
                     'This is because the rows are lazy loaded, so selecting a group is not possible as' +
                     'the grid has no way of knowing what the children are.');
@@ -243,7 +243,7 @@ export class GridOptionsWrapper {
     public getPivotRowTotals() { return this.gridOptions.pivotRowTotals; }
     public isRowModelInfinite() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_INFINITE; }
     public isRowModelViewport() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT; }
-    public isRowModelEnterprise() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_ENTERPRISE; }
+    public isRowModelServerSide() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_SERVER_SIDE; }
     public isRowModelDefault() {
         return _.missing(this.gridOptions.rowModelType) ||
             this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE ||
@@ -749,6 +749,10 @@ export class GridOptionsWrapper {
         if (options.rowModelType==='inMemory') {
             console.warn(`ag-grid: since version 18.x, The In Memory Row Model has been renamed to the Client Side Row Model, set rowModelType='clientSide' instead.`);
             options.rowModelType = 'clientSide';
+        }
+        if (options.rowModelType==='enterprise') {
+            console.warn(`ag-grid: since version 18.x, The Enterprise Row Model has been renamed to the Server Side Row Model, set rowModelType='serverSide' instead.`);
+            options.rowModelType = 'serverSide';
         }
     }
 

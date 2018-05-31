@@ -125,7 +125,7 @@ export class RowContainerComponent {
             // width container, and first time showing a full width row, we need to
             // scroll it so full width rows are show in right place alongside the
             // body rows). without this, there was an issue with 'loading rows' for
-            // enterprise row model, as loading rows are full width, and they were
+            // server side row model, as loading rows are full width, and they were
             // not getting displayed in the right location when rows were expanded.
             if (visible && this.eViewport) {
                 this.eViewport.scrollTop = this.scrollTop;
