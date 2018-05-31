@@ -87,7 +87,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr>
             <th>enableSorting</th>
-            <td>Set to true when using <a href="../javascript-grid-in-memory/">Client-side</a> Row Model to enable
+            <td>Set to true when using <a href="../javascript-grid-client-side-model/">Client-side</a> Row Model to enable
                 <a href="../javascript-grid-sorting/">Row Sorting</a>. Clicking a column header will cause the grid
                 to sort the data.</td>
         </tr>
@@ -101,7 +101,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>enableFilter</th>
-            <td>Set to true when using <a href="../javascript-grid-in-memory/">Client-side</a> Row Model to enable
+            <td>Set to true when using <a href="../javascript-grid-client-side-model/">Client-side</a> Row Model to enable
                 <a href="../javascript-grid-filtering/">Row Filtering</a>.</td>
         </tr>
         <tr>
@@ -383,11 +383,11 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>rowData</th>
-            <td><a href="../javascript-grid-in-memory/">Client-side</a> Row Model only - set the data to be displayed as rows in the grid.</td>
+            <td><a href="../javascript-grid-client-side-model/">Client-side</a> Row Model only - set the data to be displayed as rows in the grid.</td>
         </tr>
         <tr>
             <th>deltaRowDataMode</th>
-            <td><a href="../javascript-grid-in-memory/">Client-side</a> Row Model only - enables <a href="../javascript-grid-data-update/#delta-row-data">delta row data mode</a>, for compatibility with immutable stores.</td>
+            <td><a href="../javascript-grid-client-side-model/">Client-side</a> Row Model only - enables <a href="../javascript-grid-data-update/#delta-row-data">delta row data mode</a>, for compatibility with immutable stores.</td>
         </tr>
         <tr>
             <th>pinnedTopRowData</th>

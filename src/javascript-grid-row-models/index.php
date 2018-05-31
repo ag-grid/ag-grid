@@ -40,7 +40,7 @@ include '../documentation-main/documentation_header.php';
                 
     </p>
 
-    <p> <a href="../javascript-grid-in-memory/">Go to Client-side Row Model</a> </p>
+    <p> <a href="../javascript-grid-client-side-model/">Go to Client-side Row Model</a> </p>
     </div>
 </div>
 <div class="docs-homepage-section-preview">
@@ -116,7 +116,7 @@ include '../documentation-main/documentation_header.php';
 
         <ul class="content">
             <li>
-                If you are not sure, use default <b><a href="../javascript-grid-in-memory/">Client-side</a></b>.
+                If you are not sure, use default <b><a href="../javascript-grid-client-side-model/">Client-side</a></b>.
                 The grid can handle massive (100k+) amounts of data. The grid will only
                 render what's visible on the screen (40 rows approximately, depending on your screen size) even if you have thousands of rows returned from your
                 server. You will not kill the grid with too much data - rather your browser will run out of memory before
@@ -469,7 +469,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Grid Datasource</h2>
 
     <p>
-        The <a href="../javascript-grid-in-memory/">Client-side</a> row model does not need a datasource.
+        The <a href="../javascript-grid-client-side-model/">Client-side</a> row model does not need a datasource.
         <a href="../javascript-grid-infinite-scrolling/">Infinite</a>,
         <a href="../javascript-grid-viewport/">Viewport</a> and
         <a href="../javascript-grid-server-side-model/">Server-side</a> all use a datasource. The documentation

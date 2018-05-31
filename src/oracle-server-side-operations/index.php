@@ -46,7 +46,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The simplest approach is to send all row data to the browser in response to a single request at initialisation.
-        For this use case the <a href="/oracle-server-side-operations/">Client-side Row Model</a> has been designed.
+        For this use case the <a href="/javascript-grid-client-side-model/">Client-side Row Model</a> has been designed.
 
      <p>
         This scenario is illustrated below where 10,000 records are loaded directly into the browser:

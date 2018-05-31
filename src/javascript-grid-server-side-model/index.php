@@ -478,7 +478,7 @@ gridOptions.getChildCount = function(data) {
 </p>
 
 <p>
-    This is different to the <a href="../javascript-grid-in-memory/">Client-side Row Model</a> where the
+    This is different to the <a href="../javascript-grid-client-side-model/">Client-side Row Model</a> where the
     grid height can be changed. For Server-side Row Model the row height cannot be changed once it is set.
 </p>
 

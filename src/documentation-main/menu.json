@@ -444,7 +444,7 @@
             },
             {
                 "title": "Client-side",
-                "url": "javascript-grid-in-memory/"
+                "url": "javascript-grid-client-side-model/"
             },
             {
                 "title": "Infinite Scrolling",

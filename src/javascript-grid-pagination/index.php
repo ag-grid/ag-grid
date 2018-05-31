@@ -21,7 +21,7 @@ include '../documentation-main/documentation_header.php';
     <h2 id="clientPagination">Supported Row Models</h2>
 
     <p>Pagination in ag-Grid is supported in <a href="../javascript-grid-row-models/">all the different row models</a>.
-        The <a href="../javascript-grid-in-memory/">Client-side Row Model</a> (the default
+        The <a href="../javascript-grid-client-side-model/">Client-side Row Model</a> (the default
         row model) is used for the examples on this page.</p>
 
     <p>To see the specifics of pagination on the
@@ -136,7 +136,7 @@ include '../documentation-main/documentation_header.php';
         </p>
         <p>
             If you were slicing manually the data in your Datasource to mimic pagination done in the browser only,
-            we recommend that you use the default <a href="../javascript-grid-in-memory/">Client-side Row Model</a> and
+            we recommend that you use the default <a href="../javascript-grid-client-side-model/">Client-side Row Model</a> and
             set the row data as normal and then set grid property <code>pagination=true</code>.
         </p>
     </note>

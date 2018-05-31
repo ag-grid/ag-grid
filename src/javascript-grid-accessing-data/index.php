@@ -59,7 +59,7 @@ var rowNode = api.getRowNode('55');
 rowNode.setSelected(true);</snippet>
 
     <p>
-        Accessing the rowNode by ID is available in the <a href="../javascript-grid-in-memory/">Client-side
+        Accessing the rowNode by ID is available in the <a href="../javascript-grid-client-side-model/">Client-side
         Row Model</a> only.
     </p>
 
@@ -96,7 +96,7 @@ api.forEachLeafNode( function(rowNode, index) {
 });</snippet>
 
     <p>
-        All of the methods above work with the <a href="../javascript-grid-in-memory/">Client-side
+        All of the methods above work with the <a href="../javascript-grid-client-side-model/">Client-side
         Row Model</a>. For all the other row models (<a href="../javascript-grid-viewport/">Viewport</a>,
         <a href="../javascript-grid-infinite-scrolling/">Infinite</a> and
         <a href="../javascript-grid-server-side-model/">Server-side</a>) the only method that is supported
