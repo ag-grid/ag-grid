@@ -222,8 +222,8 @@ colDef = {
 
     <p>
         To <b>manually</b> run aggregation change detection to re-compute the aggregated values,
-        then call <a href="../javascript-grid-data-update/index.php#refreshInMemoryRowModel">
-            api.refreshInMemoryRowModel('aggregate')</a>.
+        then call <a href="../javascript-grid-data-update/index.php#refreshClientSideRowModel">
+            api.refreshClientSideRowModel('aggregate')</a>.
     </p>
 
     <h2 id="sorting-filtering-grouping">Change Detection and Sorting, Filtering, Grouping</h2>

@@ -87,27 +87,27 @@ include '../documentation-main/documentation_header.php';
 
         <tr>
             <th>enableSorting</th>
-            <td>Set to true when using <a href="../javascript-grid-in-memory/">In Memory</a> Row Model to enable
+            <td>Set to true when using <a href="../javascript-grid-in-memory/">Client-side</a> Row Model to enable
                 <a href="../javascript-grid-sorting/">Row Sorting</a>. Clicking a column header will cause the grid
                 to sort the data.</td>
         </tr>
         <tr>
             <th>enableServerSideSorting</th>
-            <td>Set to true when using <a href="../javascript-grid-in-memory/">Infinite</a>,
-                <a href="../javascript-grid-in-memory/">Enterprise</a> or
+            <td>Set to true when using <a href="../javascript-grid-infinite-scrolling/">Infinite</a>,
+                <a href="../javascript-grid-enterprise-model/">Server-side</a> or
                 <a href="../javascript-grid-viewport/">Viewport</a> Row Models to enable
                 <a href="../javascript-grid-sorting/">Row Sorting</a>. Clicking a column header will
                 result in your datasource getting asked for the data again with the new sort order.</td>
         </tr>
         <tr>
             <th>enableFilter</th>
-            <td>Set to true when using <a href="../javascript-grid-in-memory/">In Memory</a> Row Model to enable
+            <td>Set to true when using <a href="../javascript-grid-in-memory/">Client-side</a> Row Model to enable
                 <a href="../javascript-grid-filtering/">Row Filtering</a>.</td>
         </tr>
         <tr>
             <th>enableServerSideFilter</th>
-            <td>Set to true when using <a href="../javascript-grid-in-memory/">Infinite</a>,
-                <a href="../javascript-grid-in-memory/">Enterprise</a> or
+            <td>Set to true when using <a href="../javascript-grid-infinite-scrolling/">Infinite</a>,
+                <a href="../javascript-grid-enterprise-model/">Server-side</a> or
                 <a href="../javascript-grid-viewport/">Viewport</a> Row Models to enable
                 <a href="../javascript-grid-filtering/">Row Filtering</a>.
                 A change in filter will result in your datasource getting asked for the
@@ -379,15 +379,15 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>rowModelType</th>
             <td>Sets the <a href="../javascript-grid-row-models/">Row Model</a> type.
-                Defaults to 'inMemory'. Valid options are [inMemory,infinite,viewport,enterprise].</td>
+                Defaults to 'clientSide'. Valid options are [clientSide,infinite,viewport,serverSide].</td>
         </tr>
         <tr>
             <th>rowData</th>
-            <td><a href="../javascript-grid-in-memory/">In Memory</a> row model only - set the data to be displayed as rows in the grid.</td>
+            <td><a href="../javascript-grid-in-memory/">Client-side</a> Row Model only - set the data to be displayed as rows in the grid.</td>
         </tr>
         <tr>
             <th>deltaRowDataMode</th>
-            <td><a href="../javascript-grid-in-memory/">In Memory</a> row model only - enables <a href="../javascript-grid-data-update/#delta-row-data">delta row data mode</a>, for compatibility with immutable stores.</td>
+            <td><a href="../javascript-grid-in-memory/">Client-side</a> Row Model only - enables <a href="../javascript-grid-data-update/#delta-row-data">delta row data mode</a>, for compatibility with immutable stores.</td>
         </tr>
         <tr>
             <th>pinnedTopRowData</th>

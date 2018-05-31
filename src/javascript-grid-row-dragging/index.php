@@ -78,9 +78,9 @@ colDef = {
     <p> The logic for managed dragging is simple and has the following constraints:</p>
         <ul class="content">
             <li>
-                Works with <a href="../javascript-grid-in-memory/">In Memory</a> row model only and
+                Works with <a href="../javascript-grid-in-memory/">Client-side</a> row model only and
                 not with the <a href="../javascript-grid-infinite-scrolling/">Infinite</a>,
-                <a href="../javascript-grid-enterprise-model/">Enterprise</a> or
+                <a href="../javascript-grid-enterprise-model/">Server-side</a> or
                 <a href="../javascript-grid-viewport/">Viewport</a> row models.
             </li>
             <li>

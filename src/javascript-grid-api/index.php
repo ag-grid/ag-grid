@@ -59,9 +59,9 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>refreshInMemoryRowModel(params)</th>
+            <th>refreshClientSideRowModel(params)</th>
             <td>
-                Gets the In Memory Row Model to refresh, executing the grouping, filtering and sorting again.
+                Gets the Client-side Row Model to refresh, executing the grouping, filtering and sorting again.
             </td>
         </tr>
 
