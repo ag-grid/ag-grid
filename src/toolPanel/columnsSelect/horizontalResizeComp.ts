@@ -5,7 +5,6 @@ import {
     GridOptionsWrapper,
     HorizontalResizeService,
     PostConstruct,
-    ViewportImpactedEvent,
     EventService
 } from "ag-grid";
 
