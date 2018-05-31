@@ -449,6 +449,11 @@ export class GridApi {
         this.clientSideRowModel.refreshModel({step: Constants.STEP_MAP});
     }
 
+    public refreshInMemoryRowModel(step?: string): any {
+        console.warn(`ag-grid: since version 18.x, api.refreshInMemoryRowModel() should be replaced with api.refreshClientSideRowModel()`);
+        this.refreshClientSideRowModel(step);
+    }
+
     public refreshClientSideRowModel(step?: string): any {
         if (_.missing(this.clientSideRowModel)) { console.log('cannot call refreshClientSideRowModel unless using normal row model') }
 
@@ -1038,29 +1043,35 @@ export class GridApi {
         }
     }
 
+    // DEPRECATED
     public purgeEnterpriseCache(route?: string[]): void {
+        console.warn(`ag-grid: since version 18.x, api.purgeEnterpriseCache() should be replaced with api.purgeServerSideCache()`);
+        this.purgeServerSideCache(route);
+    }
+
+    public purgeServerSideCache(route?: string[]): void {
         if (this.serverSideRowModel) {
             this.serverSideRowModel.purgeCache(route);
         } else {
-            console.warn(`ag-Grid: api.purgeEnterpriseCache is only available when rowModelType='enterprise'.`);
+            console.warn(`ag-Grid: api.purgeServerSideCache is only available when rowModelType='enterprise'.`);
         }
     }
 
-    public removeFromEnterpriseCache(route: string[], items: any[]): void {
-        if (this.serverSideRowModel) {
-            this.serverSideRowModel.removeFromCache(route, items);
-        } else {
-            console.warn(`ag-Grid: api.removeFromEnterpriseCache is only available when rowModelType='enterprise'.`);
-        }
-    }
-
-    public addToEnterpriseCache(route: string[], items: any[], index: number): void {
-        if (this.serverSideRowModel) {
-            this.serverSideRowModel.addToCache(route, items, index);
-        } else {
-            console.warn(`ag-Grid: api.addToEnterpriseCache is only available when rowModelType='enterprise'.`);
-        }
-    }
+    // public removeFromEnterpriseCache(route: string[], items: any[]): void {
+    //     if (this.serverSideRowModel) {
+    //         this.serverSideRowModel.removeFromCache(route, items);
+    //     } else {
+    //         console.warn(`ag-Grid: api.removeFromEnterpriseCache is only available when rowModelType='enterprise'.`);
+    //     }
+    // }
+    //
+    // public addToEnterpriseCache(route: string[], items: any[], index: number): void {
+    //     if (this.serverSideRowModel) {
+    //         this.serverSideRowModel.addToCache(route, items, index);
+    //     } else {
+    //         console.warn(`ag-Grid: api.addToEnterpriseCache is only available when rowModelType='enterprise'.`);
+    //     }
+    // }
 
     public getVirtualRowCount(): number {
         console.warn('ag-Grid: getVirtualRowCount() is now called getInfiniteRowCount(), please call getInfiniteRowCount() instead');
@@ -1112,7 +1123,7 @@ export class GridApi {
         } else if (this.serverSideRowModel) {
             return this.serverSideRowModel.getBlockState();
         } else {
-            console.warn(`ag-Grid: api.getCacheBlockState() is only available when rowModelType='infinite' or rowModelType='enterprise'.`);
+            console.warn(`ag-Grid: api.getCacheBlockState() is only available when rowModelType='infinite' or rowModelType='serverSide'.`);
         }
     }
 
