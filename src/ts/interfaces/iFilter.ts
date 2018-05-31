@@ -52,6 +52,7 @@ export interface SerializedFilter {
     filterType: string;
 }
 
+
 export interface IFilterComp extends IFilter, IComponent<IFilterParams> {
 }
 
