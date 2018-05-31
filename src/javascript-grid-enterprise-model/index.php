@@ -62,7 +62,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-<h2>Enterprise Datasource</h2>
+<h2>Server-side Datasource</h2>
 
 <p>
     Similar to the <a href="../javascript-grid-infinite-scrolling/">Infinite Scrolling</a> and
@@ -72,10 +72,10 @@ include '../documentation-main/documentation_header.php';
 
 <snippet>
 // datasource for Server-side Row Model
-interface IEnterpriseDatasource {
+interface IServerSideDatasource {
 
     // grid calls this to get rows
-    getRows(params: IEnterpriseGetRowsParams): void;
+    getRows(params: IServerSideGetRowsParams): void;
 
     // optional destroy method, if your datasource has state it needs to clean up
     destroy?(): void;
@@ -89,10 +89,10 @@ interface IEnterpriseDatasource {
 </p>
 
 <snippet>
-interface IEnterpriseGetRowsParams {
+interface IServerSideGetRowsParams {
 
     // details for the request, simple object, can be converted to JSON
-    request: IEnterpriseGetRowsRequest;
+    request: IServerSideGetRowsRequest;
 
     // the parent row node. is the RootNode (level -1) if request is top level.
     // this is NOT part fo the request as it cannot be serialised to JSON (a rowNode has methods)
@@ -114,7 +114,7 @@ interface IEnterpriseGetRowsParams {
 </p>
 
 <snippet>
-interface IEnterpriseGetRowsRequest {
+interface IServerSideGetRowsRequest {
 
     // row group columns
     rowGroupCols: ColumnVO[];
@@ -501,7 +501,7 @@ gridOptions.getChildCount = function(data) {
 <h2>Server-side Model API</h2>
 
 <p>
-    The grid has the following API to allow you to interact with the enterprise cache.
+    The grid has the following API to allow you to interact with the server-side cache.
 </p>
 
 <table class="table reference">

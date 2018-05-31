@@ -24,7 +24,7 @@ include '../documentation-main/documentation_header.php';
         differ in how the data is loaded. You can load all the data and hand it
         over to the grid (Client-side Row Model) or you can keep most of the data on the server
         and lazy-load based on what is currently visible to the user (Infinite,
-        Viewport and Server Side Row Models).
+        Viewport and Server-side Row Models).
     </p>
     <p>
         The following is a summary of the different row models:
@@ -61,14 +61,14 @@ include '../documentation-main/documentation_header.php';
 </div>
 <div class="docs-homepage-section-preview">
     <div>
-    <h2 class="heading-enterprise">Server Side</h2>
+    <h2 class="heading-enterprise">Server-side</h2>
     <p>
-        the Server Side Row Model builds on Infinite. It also lazy loads the data as the user scrolls down. In addition it
-        allows lazy loading of grouped data with server side grouping and aggregation.
-        Advanced users will use Server Side Row Model to do ad-hoc slice and dice of data with server side aggregations.
+        the Server-side Row Model builds on Infinite. It also lazy loads the data as the user scrolls down. In addition it
+        allows lazy loading of grouped data with server-side grouping and aggregation.
+        Advanced users will use Server-side Row Model to do ad-hoc slice and dice of data with server-side aggregations.
     </p>
 
-    <p> <a href="../javascript-grid-enterprise-model/">Go to Server Side Row Model</a> </p>
+    <p> <a href="../javascript-grid-enterprise-model/">Go to Server-side Row Model</a> </p>
     </div>
 </div>
 <div class="docs-homepage-section-preview">
@@ -101,9 +101,9 @@ include '../documentation-main/documentation_header.php';
             </li>
             <li>
                 If using <b>ag-Grid Enterprise</b>, use <b>Client-side Row Model</b> if you want to load all
-                your data into the browser, or <b>Server Side Row Model</b> if you want to load it in blocks.
-                Server Side Row Model is Infinite Row Model plus more. So if you are an
-                ag-Grid Enterprise customer, you should prefer Server Side Row Model over Infinite Row Model.
+                your data into the browser, or <b>Server-side Row Model</b> if you want to load it in blocks.
+                Server-side Row Model is Infinite Row Model plus more. So if you are an
+                ag-Grid Enterprise customer, you should prefer Server-side Row Model over Infinite Row Model.
             </li>
             <li>
                 Don't use <b>Viewport Row Model</b> unless you understand what its advantages are and when
@@ -128,20 +128,20 @@ include '../documentation-main/documentation_header.php';
             <li>
                 If you do not want to shift all the data from your server to your client, as the amount of data is too
                 large to shift over the network or to extract from the underlying datasource, then use either infinite,
-                server side or viewport. Each one takes data from the server in different ways.
+                server-side or viewport. Each one takes data from the server in different ways.
             </li>
             <li>
                 Use <b><a href="../javascript-grid-infinite-scrolling/">Infinite</a></b> or
-                <b><a href="../javascript-grid-enterprise-model/">Server Side</a></b>
+                <b><a href="../javascript-grid-enterprise-model/">Server-side</a></b>
                 to bring back a list of data one block at a time from the server.
                 As the user scrolls the grid will ask for more rows.
-                Server Side has more features than Infinite and will allow row grouping, aggregation,
+                Server-side has more features than Infinite and will allow row grouping, aggregation,
                 lazy loading of groups and slice and dice of data.
             </li>
             <li>
                 Use <b><a href="../javascript-grid-viewport/">Viewport</a></b> if you want the server to know exactly what the user is looking at.
                 This is best when you have a large amount of changing data and want to push updates
-                to the client when the server side data changes. Knowing exactly what the user is looking
+                to the client when the server-side data changes. Knowing exactly what the user is looking
                 at means you only have to push updates to the relevant users. All the row models can receive
                 updates however only the Viewport row model provides the server with the information of the rows
                 the users currently sees on screen without scrolling.</li>
@@ -160,7 +160,7 @@ include '../documentation-main/documentation_header.php';
             <th>Feature</th>
             <th>Client-side</th>
             <th>Infinite</th>
-            <th>Server Side</th>
+            <th>Server-side</th>
             <th>Viewport</th>
         </tr>
         <tr class="item-row">
@@ -472,7 +472,7 @@ include '../documentation-main/documentation_header.php';
         The <a href="../javascript-grid-in-memory/">Client-side</a> row model does not need a datasource.
         <a href="../javascript-grid-infinite-scrolling/">Infinite</a>,
         <a href="../javascript-grid-viewport/">Viewport</a> and
-        <a href="../javascript-grid-enterprise-model/">Server Side</a> all use a datasource. The documentation
+        <a href="../javascript-grid-enterprise-model/">Server-side</a> all use a datasource. The documentation
         on each row model type explains how to configure the datasource for the particular row model.
     </p>
 
