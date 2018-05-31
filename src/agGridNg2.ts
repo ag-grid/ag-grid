@@ -169,7 +169,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public localeText : any = undefined;
     @Input() public icons : any = undefined;
     @Input() public datasource : any = undefined;
-    @Input() public enterpriseDatasource : any = undefined;
+    @Input() public serverSideDatasource : any = undefined;
     @Input() public viewportDatasource : any = undefined;
     @Input() public groupRowRendererParams : any = undefined;
     @Input() public aggFuncs : any = undefined;
