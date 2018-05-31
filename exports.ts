@@ -155,12 +155,6 @@ export {RowNodeBlockLoader} from "./dist/lib/rowModels/cache/rowNodeBlockLoader"
 
 export {ColumnVO} from "./dist/lib/interfaces/iColumnVO";
 
-export {IEnterpriseGetRowsParams} from "./dist/lib/interfaces/iEnterpriseDatasource";
-export {IEnterpriseGetRowsRequest} from "./dist/lib/interfaces/iEnterpriseDatasource";
-export {IEnterpriseDatasource} from "./dist/lib/interfaces/iEnterpriseDatasource";
-export {IEnterpriseRowModel} from "./dist/lib/interfaces/iEnterpriseRowModel";
-export {IEnterpriseCache} from "./dist/lib/interfaces/iEnterpriseCache";
-
 export {IServerSideDatasource} from "./dist/lib/interfaces/iServerSideDatasource";
 export {IServerSideGetRowsParams} from "./dist/lib/interfaces/iServerSideDatasource";
 export {IServerSideGetRowsRequest} from "./dist/lib/interfaces/iServerSideDatasource";

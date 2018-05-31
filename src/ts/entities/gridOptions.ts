@@ -8,7 +8,6 @@ import {ColDef, ColGroupDef, IAggFunc} from "./colDef";
 import {IDatasource} from "../rowModels/iDatasource";
 import {GridCellDef} from "./gridCell";
 import {IDateComp} from "../rendering/dateComponent";
-import {IEnterpriseDatasource} from "../interfaces/iEnterpriseDatasource";
 import {IServerSideDatasource} from "../interfaces/iServerSideDatasource";
 import {CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams} from "../exportParams";
 import {
@@ -285,7 +284,6 @@ export interface GridOptions {
     columnTypes?: {[key: string]: ColDef};
     datasource?: IDatasource;
     viewportDatasource?: IViewportDatasource;
-    enterpriseDatasource?: IEnterpriseDatasource;
     serverSideDatasource?: IServerSideDatasource;
 
     // in properties

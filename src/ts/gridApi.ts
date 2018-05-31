@@ -31,7 +31,6 @@ import {IFilterComp} from "./interfaces/iFilter";
 import {CsvExportParams} from "./exportParams";
 import {ExcelExportParams, IExcelCreator} from "./interfaces/iExcelCreator";
 import {IDatasource} from "./rowModels/iDatasource";
-import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
 import {IServerSideDatasource} from "./interfaces/iServerSideDatasource";
 import {PaginationProxy} from "./rowModels/paginationProxy";
 import {
@@ -196,7 +195,13 @@ export class GridApi {
         this.excelCreator.exportDataAsExcel(params)
     }
 
-    public setEnterpriseDatasource(datasource: IServerSideDatasource | IEnterpriseDatasource) {
+    // DEPRECATED
+    public setEnterpriseDatasource(datasource: IServerSideDatasource) {
+        console.warn(`ag-grid: since version 18.x, api.setEnterpriseDatasource() should be replaced with api.setServerSideDatasource()`);
+        this.setServerSideDatasource(datasource);
+    }
+
+    public setServerSideDatasource(datasource: IServerSideDatasource) {
         if (this.gridOptionsWrapper.isRowModelServerSide()) {
             // should really have an IEnterpriseRowModel interface, so we are not casting to any
             (<any>this.rowModel).setDatasource(datasource);
