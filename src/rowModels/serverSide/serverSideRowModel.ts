@@ -60,7 +60,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         this.addEventListeners();
 
-        let datasource = this.gridOptionsWrapper.getEnterpriseDatasource();
+        let datasource = this.gridOptionsWrapper.getServerSideDatasource();
         if (_.exists(datasource)) {
             this.setDatasource(datasource);
         }
