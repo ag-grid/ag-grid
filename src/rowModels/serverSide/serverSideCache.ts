@@ -4,8 +4,8 @@ import {
     ColumnVO,
     Context,
     EventService,
-    IEnterpriseCache,
-    IEnterpriseDatasource,
+    IServerSideCache,
+    IServerSideDatasource,
     LoggerFactory,
     NumberSequence,
     PostConstruct,
@@ -18,18 +18,18 @@ import {
     RowDataUpdatedEvent,
     Events
 } from "ag-grid";
-import {EnterpriseBlock} from "./enterpriseBlock";
+import {ServerSideBlock} from "./serverSideBlock";
 
-export interface EnterpriseCacheParams extends RowNodeCacheParams {
+export interface ServerSideCacheParams extends RowNodeCacheParams {
     rowGroupCols: ColumnVO[];
     valueCols: ColumnVO[];
     pivotCols: ColumnVO[];
     pivotMode: boolean;
-    datasource: IEnterpriseDatasource;
+    datasource: IServerSideDatasource;
     lastAccessedSequence: NumberSequence;
 }
 
-export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCacheParams> implements IEnterpriseCache {
+export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCacheParams> implements IServerSideCache {
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
@@ -47,13 +47,13 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
 
     private blockHeights: {[blockId: number]: number} = {};
 
-    constructor(cacheParams: EnterpriseCacheParams, parentRowNode: RowNode) {
+    constructor(cacheParams: ServerSideCacheParams, parentRowNode: RowNode) {
         super(cacheParams);
         this.parentRowNode = parentRowNode;
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('EnterpriseCache');
+        this.logger = loggerFactory.create('ServerSideCache');
     }
 
     @PostConstruct
@@ -67,7 +67,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
         // we return null if row not found
         let result: RowBounds;
         let blockFound = false;
-        let lastBlock: EnterpriseBlock;
+        let lastBlock: ServerSideBlock;
 
         this.forEachBlockInOrder( block => {
             if (blockFound) return;
@@ -108,7 +108,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
         return result;
     }
 
-    protected destroyBlock(block: EnterpriseBlock): void {
+    protected destroyBlock(block: ServerSideBlock): void {
         super.destroyBlock(block);
     }
 
@@ -118,7 +118,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
         // we return null if row not found
         let result: number;
         let blockFound = false;
-        let lastBlock: EnterpriseBlock;
+        let lastBlock: ServerSideBlock;
 
         this.forEachBlockInOrder( block => {
             if (blockFound) return;
@@ -174,7 +174,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
 
         let lastBlockId = -1;
 
-        this.forEachBlockInOrder( (currentBlock: EnterpriseBlock, blockId: number)=> {
+        this.forEachBlockInOrder( (currentBlock: ServerSideBlock, blockId: number)=> {
 
             // if we skipped blocks, then we need to skip the row indexes. we assume that all missing
             // blocks are made up of closed RowNodes only (if they were groups), as we never expire from
@@ -226,9 +226,9 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
         if (!this.isDisplayIndexInCache(displayRowIndex)) { return null; }
 
         // if we have the block, then this is the block
-        let block: EnterpriseBlock = null;
+        let block: ServerSideBlock = null;
         // this is the last block that we have BEFORE the right block
-        let beforeBlock: EnterpriseBlock = null;
+        let beforeBlock: ServerSideBlock = null;
 
         this.forEachBlockInOrder( currentBlock => {
             if (currentBlock.isDisplayIndexInBlock(displayRowIndex)) {
@@ -293,9 +293,9 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
         return rowNode;
     }
 
-    private createBlock(blockNumber: number, displayIndex: number, nextRowTop: {value: number}): EnterpriseBlock {
+    private createBlock(blockNumber: number, displayIndex: number, nextRowTop: {value: number}): ServerSideBlock {
 
-        let newBlock = new EnterpriseBlock(blockNumber, this.parentRowNode, this.cacheParams, this);
+        let newBlock = new ServerSideBlock(blockNumber, this.parentRowNode, this.cacheParams, this);
         this.context.wireBean(newBlock);
 
         let displayIndexSequence = new NumberSequence(displayIndex);
@@ -316,25 +316,25 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
         return displayIndex >= this.displayIndexStart && displayIndex < this.displayIndexEnd;
     }
 
-    public getChildCache(keys: string[]): EnterpriseCache {
+    public getChildCache(keys: string[]): ServerSideCache {
         if (_.missingOrEmpty(keys)) { return this; }
 
         let nextKey = keys[0];
 
-        let nextEnterpriseCache: EnterpriseCache = null;
+        let nextServerSideCache: ServerSideCache = null;
 
         this.forEachBlockInOrder(block => {
             // callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number
             block.forEachNodeShallow( rowNode => {
                 if (rowNode.key === nextKey) {
-                    nextEnterpriseCache = <EnterpriseCache> rowNode.childrenCache;
+                    nextServerSideCache = <ServerSideCache> rowNode.childrenCache;
                 }
             }, new NumberSequence(), this.getVirtualRowCount());
         });
 
-        if (nextEnterpriseCache) {
+        if (nextServerSideCache) {
             let keyListForNextLevel = keys.slice(1, keys.length);
-            return nextEnterpriseCache.getChildCache(keyListForNextLevel);
+            return nextServerSideCache.getChildCache(keyListForNextLevel);
         } else {
             return null;
         }
@@ -442,7 +442,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
         this.eventService.dispatchEvent(event);
     }
 
-    private moveItemsDown(block: EnterpriseBlock, moveFromIndex: number, moveCount: number): void {
+    private moveItemsDown(block: ServerSideBlock, moveFromIndex: number, moveCount: number): void {
         let startRow = block.getStartRow();
         let endRow = block.getEndRow();
         let indexOfLastRowToMove = moveFromIndex + moveCount;
@@ -466,7 +466,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
         }
     }
 
-    private insertItems(block: EnterpriseBlock, indexToInsert: number, items: any[]): RowNode[] {
+    private insertItems(block: ServerSideBlock, indexToInsert: number, items: any[]): RowNode[] {
         let pageStartRow = block.getStartRow();
         let pageEndRow = block.getEndRow();
         let newRowNodes: RowNode[] = [];
@@ -505,7 +505,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
                 }
 
                 let callback = (rowNode: RowNode) => {
-                    let nextCache = (<EnterpriseCache> rowNode.childrenCache);
+                    let nextCache = (<ServerSideCache> rowNode.childrenCache);
                     if (nextCache) nextCache.refreshCache(sortModel, rowGroupColIds);
                 };
 

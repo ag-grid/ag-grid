@@ -60,7 +60,7 @@ import {PivotCompFactory} from "./dist/lib/pivotCompFactory";
 import {MenuItemMapper} from "./dist/lib/menu/menuItemMapper";
 import {ExcelCreator} from "./dist/lib/excelCreator";
 import {ExcelXmlFactory} from "./dist/lib/excelXmlFactory";
-import {EnterpriseRowModel} from "./dist/lib/rowModels/enterprise/enterpriseRowModel";
+import {ServerSideRowModel} from "./dist/lib/rowModels/serverSide/serverSideRowModel";
 import {ColumnSelectHeaderComp} from "./dist/lib/toolPanel/columnsSelect/columnSelectHeaderComp";
 import {ColumnContainerComp} from "./dist/lib/toolPanel/columnsSelect/columnContainerComp";
 import {HorizontalResizeComp} from "./dist/lib/toolPanel/columnsSelect/horizontalResizeComp";
@@ -68,12 +68,12 @@ import {ToolPanelSelectComp} from "./dist/lib/toolPanel/toolPanelSelectComp";
 import {ToolPanelColumnComp} from "./dist/lib/toolPanel/toolPanelColumnComp";
 import {HeaderColumnDropComp} from "./dist/lib/toolPanel/columnDrop/headerColumnDropComp";
 
-let rowModelTypes = {viewport: ViewportRowModel, enterprise: EnterpriseRowModel};
+let rowModelTypes = {viewport: ViewportRowModel, enterprise: ServerSideRowModel};
 
 Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, RowGroupCompFactory, PivotCompFactory,
     PivotColumnsPanel, RangeController, ClipboardService, PivotStage, PivotColDefService,
     ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService,
-    LicenseManager, MD5, MenuItemMapper], rowModelTypes)
+    LicenseManager, MD5, MenuItemMapper], rowModelTypes);
 
 Grid.setEnterpriseComponents([
     {componentName: 'AgColumnSelectHeader', theClass: ColumnSelectHeaderComp},

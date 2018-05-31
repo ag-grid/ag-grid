@@ -20,7 +20,7 @@ import {PivotCompFactory} from "./pivotCompFactory";
 import {MenuItemMapper} from "./menu/menuItemMapper";
 import {ExcelCreator} from "./excelCreator";
 import {ExcelXmlFactory} from "./excelXmlFactory";
-import {EnterpriseRowModel} from "./rowModels/enterprise/enterpriseRowModel";
+import {ServerSideRowModel} from "./rowModels/serverSide/serverSideRowModel";
 import {ColumnSelectHeaderComp} from "./toolPanel/columnsSelect/columnSelectHeaderComp";
 import {ColumnContainerComp} from "./toolPanel/columnsSelect/columnContainerComp";
 import {HorizontalResizeComp} from "./toolPanel/columnsSelect/horizontalResizeComp";
@@ -28,7 +28,7 @@ import {HeaderColumnDropComp} from "./toolPanel/columnDrop/headerColumnDropComp"
 import {ToolPanelColumnComp} from "./toolPanel/toolPanelColumnComp";
 import {ToolPanelSelectComp} from "./toolPanel/toolPanelSelectComp";
 
-let rowModelTypes = {viewport: ViewportRowModel, enterprise: EnterpriseRowModel};
+let rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
 
 Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, RowGroupCompFactory, PivotCompFactory,
     PivotColumnsPanel, RangeController, ClipboardService, PivotStage, PivotColDefService,

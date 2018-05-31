@@ -12,8 +12,8 @@ import {
     EventService,
     FilterManager,
     GridOptionsWrapper,
-    IEnterpriseDatasource,
-    IEnterpriseRowModel,
+    IServerSideDatasource,
+    IServerSideRowModel,
     Logger,
     LoggerFactory,
     ModelUpdatedEvent,
@@ -30,10 +30,10 @@ import {
     RowDataChangedEvent,
     PreDestroy
 } from "ag-grid";
-import {EnterpriseCache, EnterpriseCacheParams} from "./enterpriseCache";
+import {ServerSideCache, ServerSideCacheParams} from "./serverSideCache";
 
 @Bean('rowModel')
-export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel {
+export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;
@@ -45,11 +45,11 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     @Autowired('columnApi') private columnApi: ColumnApi;
 
     private rootNode: RowNode;
-    private datasource: IEnterpriseDatasource;
+    private datasource: IServerSideDatasource;
 
     private rowHeight: number;
 
-    private cacheParams: EnterpriseCacheParams;
+    private cacheParams: ServerSideCacheParams;
 
     private logger: Logger;
 
@@ -80,7 +80,7 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('EnterpriseRowModel');
+        this.logger = loggerFactory.create('ServerSideRowModel');
     }
 
     private addEventListeners(): void {
@@ -95,7 +95,7 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
     }
 
-    public setDatasource(datasource: IEnterpriseDatasource): void {
+    public setDatasource(datasource: IServerSideDatasource): void {
         this.destroyDatasource();
         this.datasource = datasource;
         this.reset();
@@ -129,8 +129,8 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
             let sortModel = this.extractSortModel();
             let rowGroupColIds = this.columnController.getRowGroupColumns().map(col => col.getId());
 
-            let enterpriseCache = <EnterpriseCache> this.rootNode.childrenCache;
-            enterpriseCache.refreshCache(sortModel, rowGroupColIds);
+            let serverSideCache = <ServerSideCache> this.rootNode.childrenCache;
+            serverSideCache.refreshCache(sortModel, rowGroupColIds);
         }
     }
 
@@ -238,7 +238,7 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         });
     }
 
-    private createCacheParams(): EnterpriseCacheParams {
+    private createCacheParams(): ServerSideCacheParams {
 
         let rowGroupColumnVos = this.toValueObjects(this.columnController.getRowGroupColumns());
         let valueColumnVos = this.toValueObjects(this.columnController.getValueColumns());
@@ -248,18 +248,18 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         let maxBlocksInCache = this.gridOptionsWrapper.getMaxBlocksInCache();
 
         if (dynamicRowHeight && maxBlocksInCache >= 0 ) {
-            console.warn('ag-Grid: Enterprise Row Model does not support Dynamic Row Height and Cache Purging. ' +
+            console.warn('ag-Grid: Server Side Row Model does not support Dynamic Row Height and Cache Purging. ' +
                 'Either a) remove getRowHeight() callback or b) remove maxBlocksInCache property. Purging has been disabled.');
             maxBlocksInCache = undefined;
         }
 
         if (maxBlocksInCache >= 0 && this.columnController.isAutoRowHeightActive()) {
-            console.warn('ag-Grid: Enterprise Row Model does not support Auto Row Height and Cache Purging. ' +
+            console.warn('ag-Grid: Server Side Row Model does not support Auto Row Height and Cache Purging. ' +
                 'Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.');
             maxBlocksInCache = undefined;
         }
 
-        let params: EnterpriseCacheParams = {
+        let params: ServerSideCacheParams = {
             // the columns the user has grouped and aggregated by
             valueCols: valueColumnVos,
             rowGroupCols: rowGroupColumnVos,
@@ -306,7 +306,7 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     }
 
     private createNodeCache(rowNode: RowNode): void {
-        let cache = new EnterpriseCache(this.cacheParams, rowNode);
+        let cache = new ServerSideCache(this.cacheParams, rowNode);
         this.context.wireBean(cache);
 
         cache.addEventListener(RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
@@ -330,14 +330,14 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
 
     public updateRowIndexesAndBounds(): void {
         if (this.cacheExists()) {
-            // NOTE: should not be casting here, the RowModel should use IEnterpriseRowModel interface?
-            let enterpriseCache = <EnterpriseCache> this.rootNode.childrenCache;
-            this.resetRowTops(enterpriseCache);
-            this.setDisplayIndexes(enterpriseCache);
+            // NOTE: should not be casting here, the RowModel should use IServerSideRowModel interface?
+            let serverSideCache = <ServerSideCache> this.rootNode.childrenCache;
+            this.resetRowTops(serverSideCache);
+            this.setDisplayIndexes(serverSideCache);
         }
     }
 
-    private setDisplayIndexes(cache: EnterpriseCache): void {
+    private setDisplayIndexes(cache: ServerSideCache): void {
         let numberSequence = new NumberSequence();
         let nextRowTop = {value: 0};
         cache.setDisplayIndexes(numberSequence, nextRowTop);
@@ -345,7 +345,7 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
 
     // resetting row tops is needed for animation, as part of the operation is saving the old location,
     // which is needed for rows that are transitioning in
-    private resetRowTops(cache: EnterpriseCache): void {
+    private resetRowTops(cache: ServerSideCache): void {
         let numberSequence = new NumberSequence();
         cache.forEachNodeDeep( rowNode => rowNode.clearRowTop(), numberSequence);
     }
@@ -365,9 +365,9 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     public getPageLastRow(): number {
         let lastRow: number;
         if (this.cacheExists()) {
-            // NOTE: should not be casting here, the RowModel should use IEnterpriseRowModel interface?
-            let enterpriseCache = <EnterpriseCache> this.rootNode.childrenCache;
-            lastRow = enterpriseCache.getDisplayIndexEnd() - 1;
+            // NOTE: should not be casting here, the RowModel should use IServerSideRowModel interface?
+            let serverSideCache = <ServerSideCache> this.rootNode.childrenCache;
+            lastRow = serverSideCache.getDisplayIndexEnd() - 1;
         } else {
             lastRow = 0;
         }
@@ -387,8 +387,8 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
             };
         }
 
-        let enterpriseCache = <EnterpriseCache> this.rootNode.childrenCache;
-        return enterpriseCache.getRowBounds(index);
+        let serverSideCache = <ServerSideCache> this.rootNode.childrenCache;
+        return serverSideCache.getRowBounds(index);
     }
 
     public getRowIndexAtPixel(pixel: number): number {
@@ -396,8 +396,8 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
 
         if (!this.cacheExists()) return 0;
 
-        let enterpriseCache = <EnterpriseCache> this.rootNode.childrenCache;
-        return enterpriseCache.getRowIndexAtPixel(pixel);
+        let serverSideCache = <ServerSideCache> this.rootNode.childrenCache;
+        return serverSideCache.getRowIndexAtPixel(pixel);
     }
 
     public getCurrentPageHeight(): number {
@@ -413,7 +413,7 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     }
 
     public getType(): string {
-        return Constants.ROW_MODEL_TYPE_ENTERPRISE;
+        return Constants.ROW_MODEL_TYPE_SERVER_SIDE;
     }
 
     public forEachNode(callback: (rowNode: RowNode)=>void): void {
@@ -422,9 +422,9 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         }
     }
 
-    private executeOnCache(route: string[], callback: (cache: EnterpriseCache)=>void) {
+    private executeOnCache(route: string[], callback: (cache: ServerSideCache)=>void) {
         if (this.cacheExists()) {
-            let topLevelCache = <EnterpriseCache> this.rootNode.childrenCache;
+            let topLevelCache = <ServerSideCache> this.rootNode.childrenCache;
             let cacheToPurge = topLevelCache.getChildCache(route);
             if (cacheToPurge) {
                 callback(cacheToPurge);
