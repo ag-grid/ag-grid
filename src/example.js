@@ -689,12 +689,12 @@ function createRowItem(row, colCount) {
         bought: booleanValues[row % booleanValues.length]
     };
 
-    rowItem.bankBalance = ((Math.round(pseudoRandom() * 10000000)) / 100) - 3000;
+    rowItem.bankBalance = (Math.round(pseudoRandom() * 100000)) - 3000;
     rowItem.rating = (Math.round(pseudoRandom() * 5));
 
     var totalWinnings = 0;
     months.forEach(function (month) {
-        var value = ((Math.round(pseudoRandom() * 10000000)) / 100) - 20;
+        var value = (Math.round(pseudoRandom() * 100000)) - 20;
         rowItem[month.toLocaleLowerCase()] = value;
         totalWinnings += value;
     });
