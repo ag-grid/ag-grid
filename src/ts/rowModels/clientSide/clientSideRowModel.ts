@@ -658,7 +658,7 @@ export class ClientSideRowModel {
 
         let rowNodeTran = this.nodeManager.updateRowData(rowDataTran, rowNodeOrder);
 
-        this.commonUpdateRowData([rowNodeTran]);
+        this.commonUpdateRowData([rowNodeTran], rowNodeOrder);
 
         return rowNodeTran;
     }

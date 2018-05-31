@@ -340,10 +340,6 @@ export class GridPanel extends Component {
         this.addOrRemoveCssClass('ag-column-moving', moving);
     }
 
-    // private addWindowResizeListener(): void {
-    //     this.addDestroyableEventListener(window, 'resize', this.checkViewportAndScrolls.bind(this));
-    // }
-
     private setupOverlay(): void {
         this.overlayWrapper = this.componentRecipes.newOverlayWrapperComponent();
         this.eOverlay = this.queryForHtmlElement('[ref="eOverlay"]');
