@@ -245,7 +245,7 @@ export class Grid {
     private getRowModelClass(gridOptions: GridOptions): any {
         let rowModelType = gridOptions.rowModelType;
 
-        //TODO: improve
+        //TODO: temporary measure before 'enterprise' is completely removed (similar handling in gridOptionsWrapper is also required)
         rowModelType = rowModelType === 'enterprise' ? Constants.ROW_MODEL_TYPE_SERVER_SIDE : rowModelType;
 
         if (_.exists(rowModelType)) {
