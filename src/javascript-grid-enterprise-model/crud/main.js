@@ -17,7 +17,7 @@ var gridOptions = {
     rowSelection: 'single',
     columnDefs: columnDefs,
     enableColResize: true,
-    rowModelType: 'enterprise',
+    rowModelType: 'serverSide',
     icons: {
         groupLoading: '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/javascript-grid-enterprise-model/spinner.gif" style="width:22px;height:22px;">'
     }
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
     agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinners.json'}).then(function(data) {
         rowDataServerSide = data;
         var datasource = new MyDatasource();
-        gridOptions.api.setEnterpriseDatasource(datasource);
+        gridOptions.api.setServerSideDatasource(datasource);
     });
 });
 
@@ -45,7 +45,7 @@ function onBtRemove() {
 
     rowDataServerSide.splice(selectedRow.rowIndex, 1);
 
-    gridOptions.api.purgeEnterpriseCache();
+    gridOptions.api.purgeServerSideCache();
 }
 
 function onBtAdd() {
@@ -61,5 +61,5 @@ function onBtAdd() {
     });
     newItemCount++;
 
-    gridOptions.api.purgeEnterpriseCache();
+    gridOptions.api.purgeServerSideCache();
 }

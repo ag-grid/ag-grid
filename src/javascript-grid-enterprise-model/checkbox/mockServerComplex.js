@@ -1,10 +1,10 @@
-function EnterpriseDatasource(fakeServer, gridOptions) {
+function ServerSideDatasource(fakeServer, gridOptions) {
     this.fakeServer = fakeServer;
     this.gridOptions = gridOptions;
 }
 
-EnterpriseDatasource.prototype.getRows = function(params) {
-    // console.log('EnterpriseDatasource.getRows: params = ', params);
+ServerSideDatasource.prototype.getRows = function(params) {
+    // console.log('ServerSideDatasource.getRows: params = ', params);
     var that = this;
     this.fakeServer.getData(params.request,
         function successCallback(resultForGrid, lastRow, secondaryCols) {
@@ -15,7 +15,7 @@ EnterpriseDatasource.prototype.getRows = function(params) {
         });
 };
 
-EnterpriseDatasource.prototype.buildSecondaryColumnDefinitions = function(valueCols) {
+ServerSideDatasource.prototype.buildSecondaryColumnDefinitions = function(valueCols) {
     if (valueCols) {
         return valueCols.map( function(col) {
             return {

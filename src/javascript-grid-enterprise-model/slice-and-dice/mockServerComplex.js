@@ -1,10 +1,10 @@
-function EnterpriseDatasource(fakeServer, gridOptions) {
+function ServerSideDatasource(fakeServer, gridOptions) {
     this.fakeServer = fakeServer;
     this.gridOptions = gridOptions;
 }
 
-EnterpriseDatasource.prototype.getRows = function(params) {
-    // console.log('EnterpriseDatasource.getRows: params = ', params);
+ServerSideDatasource.prototype.getRows = function(params) {
+    // console.log('ServerSideDatasource.getRows: params = ', params);
     var that = this;
     this.fakeServer.getData(params.request,
         function successCallback(resultForGrid, lastRow, secondaryColDefs) {
@@ -17,7 +17,7 @@ EnterpriseDatasource.prototype.getRows = function(params) {
 // the cols would reset every time data comes back from the server (which means col
 // width, positioning etc would be lost every time we eg expand a group, or load another
 // block by scrolling down).
-EnterpriseDatasource.prototype.setSecondaryColsIntoGrid = function(secondaryColDefs) {
+ServerSideDatasource.prototype.setSecondaryColsIntoGrid = function(secondaryColDefs) {
     var colDefHash = this.createColsHash(secondaryColDefs);
     if (this.colDefHash !== colDefHash) {
         this.gridOptions.columnApi.setSecondaryColumns(secondaryColDefs);
@@ -25,7 +25,7 @@ EnterpriseDatasource.prototype.setSecondaryColsIntoGrid = function(secondaryColD
     }
 };
 
-EnterpriseDatasource.prototype.createColsHash = function(colDefs) {
+ServerSideDatasource.prototype.createColsHash = function(colDefs) {
     if (!colDefs) { return null; }
     var parts = [];
     var that = this;

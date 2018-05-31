@@ -42,7 +42,7 @@ var gridOptions = {
     rowBuffer: 0,
     columnDefs: columnDefs,
     enableColResize: true,
-    rowModelType: 'enterprise',
+    rowModelType: 'serverSide',
     rowGroupPanelShow: 'always',
     enableFilter: true,
     animateRows: true,
@@ -71,7 +71,7 @@ var gridOptions = {
 };
 
 function purgeCache(route) {
-    gridOptions.api.purgeEnterpriseCache(route);
+    gridOptions.api.purgeServerSideCache(route);
 }
 
 function getBlockState() {
@@ -89,8 +89,8 @@ document.addEventListener('DOMContentLoaded', function() {
     agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinners.json'})
         .then( function(data) {
                 var fakeServer = new FakeServer(data);
-                var datasource = new EnterpriseDatasource(fakeServer, gridOptions);
-                gridOptions.api.setEnterpriseDatasource(datasource);
+                var datasource = new ServerSideDatasource(fakeServer, gridOptions);
+                gridOptions.api.setServerSideDatasource(datasource);
             }
         );
 });

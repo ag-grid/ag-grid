@@ -43,7 +43,7 @@ var gridOptions = {
     rowBuffer: 0,
     columnDefs: columnDefs,
     enableColResize: true,
-    rowModelType: 'enterprise',
+    rowModelType: 'serverSide',
     enableFilter: true,
     animateRows: true,
     debug: true,
@@ -103,8 +103,8 @@ document.addEventListener('DOMContentLoaded', function() {
     agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinners.json'})
         .then( function(data) {
                 var fakeServer = new FakeServer(data);
-                var datasource = new EnterpriseDatasource(fakeServer);
-                gridOptions.api.setEnterpriseDatasource(datasource);
+                var datasource = new ServerSideDatasource(fakeServer);
+                gridOptions.api.setServerSideDatasource(datasource);
             }
         );
 });

@@ -1,9 +1,9 @@
-function EnterpriseDatasource(fakeServer) {
+function ServerSideDatasource(fakeServer) {
     this.fakeServer = fakeServer;
 }
 
-EnterpriseDatasource.prototype.getRows = function(params) {
-    console.log('EnterpriseDatasource.getRows: params = ', params);
+ServerSideDatasource.prototype.getRows = function(params) {
+    console.log('ServerSideDatasource.getRows: params = ', params);
 
     var request = params.request;
 

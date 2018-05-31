@@ -62,7 +62,6 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-
 <h2>Enterprise Datasource</h2>
 
 <p>

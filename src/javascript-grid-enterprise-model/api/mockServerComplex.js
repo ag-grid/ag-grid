@@ -1,10 +1,10 @@
-function EnterpriseDatasource(fakeServer, gridOptions) {
+function ServerSideDatasource(fakeServer, gridOptions) {
     this.fakeServer = fakeServer;
     this.gridOptions = gridOptions;
 }
 
-EnterpriseDatasource.prototype.getRows = function(params) {
-    // console.log('EnterpriseDatasource.getRows: params = ', params);
+ServerSideDatasource.prototype.getRows = function(params) {
+    // console.log('ServerSideDatasource.getRows: params = ', params);
     var that = this;
     this.fakeServer.getData(params.request,
         function successCallback(resultForGrid, lastRow, secondaryColDefs) {
@@ -17,7 +17,7 @@ EnterpriseDatasource.prototype.getRows = function(params) {
 // the cols would reset every time data comes back from the server (which means col
 // width, positioning etc would be lost every time we eg expand a group, or load another
 // block by scrolling down).
-EnterpriseDatasource.prototype.setSecondaryColsIntoGrid = function(secondaryColDefs) {
+ServerSideDatasource.prototype.setSecondaryColsIntoGrid = function(secondaryColDefs) {
     var colDefHash = this.createColsHash(secondaryColDefs);
     if (this.colDefHash !== colDefHash) {
         this.gridOptions.columnApi.setSecondaryColumns(secondaryColDefs);
@@ -25,7 +25,7 @@ EnterpriseDatasource.prototype.setSecondaryColsIntoGrid = function(secondaryColD
     }
 };
 
-EnterpriseDatasource.prototype.createColsHash = function(colDefs) {
+ServerSideDatasource.prototype.createColsHash = function(colDefs) {
     if (!colDefs) { return null; }
     var parts = [];
     var that = this;
@@ -220,9 +220,9 @@ FakeServer.prototype.iterateObject = function(object, callback) {
 };
 
 // function does pivoting. this is very funky logic, doing pivoting and creating secondary columns on the fly.
-// if you are using the ag-Grid Enterprise Row Model, remember this would all be done on your server side with a
+// if you are using the ag-Grid Server-side Row Model, remember this would all be done on your server side with a
 // database or something that does pivoting for you - this messy code is just for demo purposes on how to use
-// ag-Gird, it's not supposed to be beautiful production quality code.
+// ag-Grid, it's not supposed to be beautiful production quality code.
 FakeServer.prototype.pivot = function(pivotCols, rowGroupCols, valueCols, data) {
     // assume 1 pivot col and 1 value col for this example
 

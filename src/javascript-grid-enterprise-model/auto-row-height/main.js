@@ -31,9 +31,9 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     enableColResize: true,
-    rowModelType: 'enterprise',
+    rowModelType: 'serverSide',
     animateRows: true,
-    enterpriseDatasource: new SimpleDatasource(),
+    serverSideDatasource: new SimpleDatasource(),
     icons: {
         groupLoading: '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/javascript-grid-enterprise-model/spinner.gif" style="width:22px;height:22px;">'
     }

@@ -16,7 +16,7 @@ var gridOptions = {
   rowBuffer: 0,
   columnDefs: columnDefs,
   enableColResize: true,
-  rowModelType: 'enterprise',
+  rowModelType: 'serverSide',
   rowGroupPanelShow: 'always',
   animateRows: true,
   enableSorting: true,
@@ -29,7 +29,7 @@ var gridOptions = {
     return !rowNode.group;
   },
   suppressRowClickSelection: true,
-  // groupSelectsChildren: true, // not supported for Enterprise Model
+  // groupSelectsChildren: true, // not supported for Server Side Row Model
   // restrict to 2 server side calls concurrently
   maxConcurrentDatasourceRequests: 2,
   cacheBlockSize: 100,
@@ -61,8 +61,8 @@ document.addEventListener('DOMContentLoaded', function() {
   agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinners.json'})
     .then( function(data) {
         var fakeServer = new FakeServer(data);
-        var datasource = new EnterpriseDatasource(fakeServer, gridOptions);
-        gridOptions.api.setEnterpriseDatasource(datasource);
+        var datasource = new ServerSideDatasource(fakeServer, gridOptions);
+        gridOptions.api.setServerSideDatasource(datasource);
       }
     );
 });
