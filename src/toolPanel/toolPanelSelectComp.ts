@@ -29,9 +29,6 @@ export class ToolPanelSelectComp extends Component {
         let btShow = this.getRefElement("toggle-button");
         this.addDestroyableEventListener(btShow, 'click', () => {
             this.columnPanel.setVisible(!this.columnPanel.isVisible());
-            // this gets grid to resize immediately, rather than waiting
-            // for next 500ms
-            this.gridPanel.checkViewportAndScrolls();
         });
 
         let showButtons = !this.gridOptionsWrapper.isToolPanelSuppressSideButtons();

@@ -1,6 +1,21 @@
-import {EventService, Component, Autowired, PostConstruct, Events, _,
-    GridRow, RowNode, Constants, PinnedRowModel, IRowModel, ValueService, GridPanel,
-    CellNavigationService, Bean, Context, GridOptionsWrapper} from 'ag-grid/main';
+import {
+    _,
+    Autowired,
+    CellNavigationService,
+    Component,
+    Constants,
+    Context,
+    Events,
+    EventService,
+    GridOptionsWrapper,
+    GridPanel,
+    GridRow,
+    IRowModel,
+    PinnedRowModel,
+    PostConstruct,
+    RowNode,
+    ValueService
+} from 'ag-grid/main';
 import {StatusItem} from "./statusItem";
 import {RangeController} from "../rangeController";
 
@@ -173,7 +188,6 @@ export class StatusBar extends Component {
 
         if (this.isVisible()!==gotResult) {
             this.setVisible(gotResult);
-            this.gridPanel.checkViewportAndScrolls();
         }
     }
 

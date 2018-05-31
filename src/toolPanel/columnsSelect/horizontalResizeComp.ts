@@ -48,11 +48,5 @@ export class HorizontalResizeComp extends Component {
             newWidth = 100;
         }
         this.props.componentToResize.getGui().style.width = newWidth + 'px';
-        let e: ViewportImpactedEvent = {
-            type: Events.EVENT_VIEWPORT_IMPACTED,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi()
-        };
-        this.eventService.dispatchEvent(e);
     }
 }
