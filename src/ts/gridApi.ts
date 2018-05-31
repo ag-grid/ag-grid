@@ -35,21 +35,20 @@ import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
 import {PaginationProxy} from "./rowModels/paginationProxy";
 import {IEnterpriseRowModel} from "./interfaces/iEnterpriseRowModel";
 import {
-    BatchTransactionItem,
-    ClientSideRowModel, RefreshModelParams, RowDataTransaction,
+    ClientSideRowModel,
+    RefreshModelParams,
+    RowDataTransaction,
     RowNodeTransaction
 } from "./rowModels/clientSide/clientSideRowModel";
 import {ImmutableService} from "./rowModels/clientSide/immutableService";
 import {ValueCache} from "./valueService/valueCache";
 import {AlignedGridsService} from "./alignedGridsService";
 import {PinnedRowModel} from "./rowModels/pinnedRowModel";
-import {AgEvent, ColumnEventType, ViewportImpactedEvent} from "./events";
+import {AgEvent, ColumnEventType} from "./events";
 import {IToolPanel} from "./interfaces/iToolPanel";
-import {GridOptions} from "./entities/gridOptions";
 import {IContextMenuFactory} from "./interfaces/iContextMenuFactory";
 import {ICellRendererComp} from "./rendering/cellRenderers/iCellRenderer";
 import {ICellEditorComp} from "./rendering/cellEditors/iCellEditor";
-import {Events} from "./eventKeys";
 import {HeaderRootComp} from "./headerRendering/headerRootComp";
 import {AnimationFrameService} from "./misc/animationFrameService";
 

@@ -7,9 +7,7 @@ import {FilterManager} from "./filter/filterManager";
 import {EventService} from "./eventService";
 import {GridPanel} from "./gridPanel/gridPanel";
 import {Logger, LoggerFactory} from "./logger";
-import {Constants} from "./constants";
 import {PopupService} from "./widgets/popupService";
-import {Events} from "./events";
 import {Utils as _} from "./utils";
 import {Autowired, Bean, Context, Optional, PostConstruct, PreDestroy} from "./context/context";
 import {IRowModel} from "./interfaces/iRowModel";
@@ -17,7 +15,6 @@ import {FocusedCellController} from "./focusedCellController";
 import {Component} from "./widgets/component";
 import {ICompFactory} from "./interfaces/iCompFactory";
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
-import {PaginationComp} from "./rowModels/pagination/paginationComp";
 import {GridApi} from "./gridApi";
 import {IToolPanel} from "./interfaces/iToolPanel";
 import {RefSelector} from "./widgets/componentAnnotations";
@@ -120,7 +117,6 @@ export class GridCore extends Component {
 
         this.finished = false;
         this.addDestroyFunc( () => this.finished = true );
-        this.periodicallyDoLayout();
 
         this.logger.log('ready');
     }
@@ -152,26 +148,6 @@ export class GridCore extends Component {
         return this.getGui();
     }
 
-    private periodicallyDoLayout() {
-        if (!this.finished) {
-            let intervalMillis = this.gridOptionsWrapper.getLayoutInterval();
-            // if interval is negative, this stops the layout from happening
-            if (intervalMillis > 0) {
-                this.frameworkFactory.setTimeout(() => {
-                    // this gets grid to resize immediately, rather than waiting for next 500ms
-                    this.gridPanel.checkViewportAndScrolls();
-                    this.periodicallyDoLayout();
-                }, intervalMillis);
-            } else {
-                // if user provided negative number, we still do the check every 5 seconds,
-                // in case the user turns the number positive again
-                this.frameworkFactory.setTimeout(() => {
-                        this.periodicallyDoLayout();
-                }, 5000);
-            }
-        }
-    }
-
     public showToolPanel(show: any) {
         if (!this.toolPanelComp) {
             if (show) {
@@ -181,7 +157,6 @@ export class GridCore extends Component {
         }
 
         this.toolPanelComp.showToolPanel(show);
-        this.gridPanel.checkViewportAndScrolls();
     }
 
     public isToolPanelShowing() {

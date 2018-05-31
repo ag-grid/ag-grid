@@ -312,7 +312,7 @@ export class GridPanel extends Component {
         }
 
         this.onDisplayedColumnsWidthChanged();
-        this.addWindowResizeListener();
+        // this.addWindowResizeListener();
 
         this.gridApi.registerGridComp(this);
         this.alignedGridsService.registerGridComp(this);
@@ -330,11 +330,13 @@ export class GridPanel extends Component {
             this.rangeController.registerGridComp(this);
         }
 
-        const unsubscribeFromResize = observeResize(this.eBodyViewport, ( target ) => { console.log(target) });
+        const unsubscribeFromResize = observeResize(this.eBodyViewport, ()=> {
+            console.log(`observeResize ${this.eBodyViewport.clientWidth}, ${this.eBodyViewport.clientHeight}`);
+            // this.checkViewportAndScrolls.bind(this);
+            this.checkViewportAndScrolls();
+        });
 
-        this.addDestroyFunc(() => {
-          unsubscribeFromResize();
-        })
+        this.addDestroyFunc(() => unsubscribeFromResize() );
     }
 
     // used by ColumnAnimationService
@@ -342,9 +344,9 @@ export class GridPanel extends Component {
         this.addOrRemoveCssClass('ag-column-moving', moving);
     }
 
-    private addWindowResizeListener(): void {
-        this.addDestroyableEventListener(window, 'resize', this.checkViewportAndScrolls.bind(this));
-    }
+    // private addWindowResizeListener(): void {
+    //     this.addDestroyableEventListener(window, 'resize', this.checkViewportAndScrolls.bind(this));
+    // }
 
     private setupOverlay(): void {
         this.overlayWrapper = this.componentRecipes.newOverlayWrapperComponent();
@@ -427,7 +429,6 @@ export class GridPanel extends Component {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_VIEWPORT_IMPACTED, this.checkViewportAndScrolls.bind(this));
 
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
@@ -501,7 +502,6 @@ export class GridPanel extends Component {
         this.addDestroyableEventListener(this.eRightViewport, 'contextmenu', listener);
         this.addDestroyableEventListener(this.eLeftViewport, 'contextmenu', listener);
     }
-
 
     // + rangeController
     public getBodyClientRect(): ClientRect {
@@ -815,10 +815,8 @@ export class GridPanel extends Component {
         return _.isVerticalScrollShowing(this.eBodyViewport);
     }
 
-    // gets called every 500 ms. we use this to check visibility of scrollbars in the grid panel,
-    // and also to check size and position of viewport for row and column virtualisation.
-    // one day, instead of having to be called, maybe we can use this pattern:
-    // https://github.com/sdecima/javascript-detect-element-resize/blob/master/detect-element-resize.js
+    // gets called every time the viewport size changes. we use this to check visibility of scrollbars
+    // in the grid panel, and also to check size and position of viewport for row and column virtualisation.
     public checkViewportAndScrolls(): void {
 
         // results in updating anything that depends on scroll showing

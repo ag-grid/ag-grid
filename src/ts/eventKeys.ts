@@ -132,8 +132,6 @@ export class Events {
     public static EVENT_SCROLL_VISIBILITY_CHANGED = 'scrollVisibilityChanged';
     public static EVENT_COLUMN_HOVER_CHANGED = 'columnHoverChanged';
     public static EVENT_FLASH_CELLS = 'flashCells';
-    // when something happens that impacts the viewport, eg tool panel resized
-    public static EVENT_VIEWPORT_IMPACTED = 'viewportImpacted';
 
     public static EVENT_ROW_DRAG_ENTER = 'rowDragEnter';
     public static EVENT_ROW_DRAG_MOVE = 'rowDragMove';

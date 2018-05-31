@@ -246,8 +246,6 @@ export interface ColumnValueChangeRequestEvent extends ColumnRequestEvent {}
 export interface ColumnAggFuncChangeRequestEvent extends ColumnRequestEvent {
     aggFunc: any
 }
-export interface ViewportImpactedEvent extends AgGridEvent {
-}
 
 // not documented, for internal use only
 export interface ScrollVisibilityChangedEvent extends AgGridEvent {}
