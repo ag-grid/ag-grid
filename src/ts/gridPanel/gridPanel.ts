@@ -330,11 +330,7 @@ export class GridPanel extends Component {
             this.rangeController.registerGridComp(this);
         }
 
-        const unsubscribeFromResize = observeResize(this.eBodyViewport, ()=> {
-            console.log(`observeResize ${this.eBodyViewport.clientWidth}, ${this.eBodyViewport.clientHeight}`);
-            // this.checkViewportAndScrolls.bind(this);
-            this.checkViewportAndScrolls();
-        });
+        const unsubscribeFromResize = observeResize(this.eBodyViewport, this.checkViewportAndScrolls.bind(this) );
 
         this.addDestroyFunc(() => unsubscribeFromResize() );
     }
