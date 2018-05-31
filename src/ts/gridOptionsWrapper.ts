@@ -25,7 +25,7 @@ import {IViewportDatasource} from "./interfaces/iViewportDatasource";
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {IDatasource} from "./rowModels/iDatasource";
 import {GridCellDef} from "./entities/gridCell";
-import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
+import {IServerSideDatasource} from "./interfaces/iServerSideDatasource";
 import {BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams} from "./exportParams";
 import {AgEvent} from "./events";
 import {Environment} from "./environment";
@@ -143,7 +143,7 @@ export class GridOptionsWrapper {
                 console.warn(`ag-Grid: rowSelection must be 'multiple' for groupSelectsChildren to make sense`);
             }
             if (this.isRowModelServerSide()) {
-                console.warn('ag-Grid: group selects children is NOT support for Enterprise Row Model. ' +
+                console.warn('ag-Grid: group selects children is NOT support for Server Side Row Model. ' +
                     'This is because the rows are lazy loaded, so selecting a group is not possible as' +
                     'the grid has no way of knowing what the children are.');
             }
@@ -373,7 +373,7 @@ export class GridOptionsWrapper {
     public getColumnTypes(): {[key: string]: ColDef} { return this.gridOptions.columnTypes; }
     public getDatasource(): IDatasource { return this.gridOptions.datasource; }
     public getViewportDatasource(): IViewportDatasource { return this.gridOptions.viewportDatasource; }
-    public getEnterpriseDatasource(): IEnterpriseDatasource { return this.gridOptions.enterpriseDatasource; }
+    public getServerSideDatasource(): IServerSideDatasource { return this.gridOptions.serverSideDatasource; }
     public isEnableSorting() { return isTrue(this.gridOptions.enableSorting) || isTrue(this.gridOptions.enableServerSideSorting); }
     public isAccentedSort() { return isTrue(this.gridOptions.accentedSort) }
     public isEnableCellExpressions() { return isTrue(this.gridOptions.enableCellExpressions); }
