@@ -1,12 +1,12 @@
 <?php
-$pageTitle = "ag-Grid Row Models: The Server Side Row Model";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server Side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of server side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
-$pageKeyboards = "ag-Grid Server Side Row Model";
+$pageTitle = "ag-Grid Row Models: The Server-side Row Model";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of Server-side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
+$pageKeyboards = "ag-Grid Server-side Row Model";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise"> Server Side Model </h1>
+<h1 class="heading-enterprise"> Server-side Row Model </h1>
 
 
 <!--<h2>Infinite Scroll</h2>-->
@@ -14,31 +14,31 @@ include '../documentation-main/documentation_header.php';
 <?//= example('Infinite Scroll', 'infinite-scroll', 'generated', array("enterprise" => 1)) ?>
 
 <p class="lead">
-    The Server Side Row Model is arguably the most powerful of the row models in ag-Grid
+    The Server-side Row Model is arguably the most powerful of the row models in ag-Grid
     and presents the ultimate 'big data' user experience, allowing the user to
-    navigate through very large data sets using a mixture of server side grouping and aggregation
+    navigate through very large data sets using a mixture of Server-side grouping and aggregation
     while using infinite scrolling to bring the data back in blocks to the client.
 </p>
 
-<h2>Server Side Row Model Features</h2>
+<h2>Server-side Row Model Features</h2>
 
 <p>
-    The best way to learn what the Server Side Row Model does is to break it down into the core features.
+    The best way to learn what the Server-side Row Model does is to break it down into the core features.
     You may benefit from the combination of all these
     features or just be interested in a subset. The features of the
-    Server Side Row Model are:
+    Server-side Row Model are:
 </p>
 
     <ul class="content">
         <li>
             <b>Lazy Loading of Groups:</b> The grid will load the top level rows only. Children
             of groups are only loaded when the user expands the group. Some applications may use
-            the Server Side Row Model for this one feature alone e.g. you might have a managers database table,
+            the Server-side Row Model for this one feature alone e.g. you might have a managers database table,
             you can display a list of all managers, then click 'expand' on the manager and the grid
             will then request to get the 'employees' for that manager.
         </li>
         <li>
-            <b>Server Side Grouping, Pivot and Aggregation:</b> Because the data is coming back from the server one group
+            <b>Server-side Grouping, Pivot and Aggregation:</b> Because the data is coming back from the server one group
             level at a time, this allows you to do aggregation on the server, returning back the aggregated
             results for the top level parent rows. For example you could include 'employee count' as an attribute
             on the returned manager record, to say how many employees a manager manages.
@@ -50,13 +50,13 @@ include '../documentation-main/documentation_header.php';
             of that group are also loaded in blocks). This allows viewing very large datasets in the browser by
             only bringing back data one block at a time. This feature reuses the logic from the
             <a href="../javascript-grid-infinite-scrolling/">Infinite Scrolling</a> row model, so understanding
-            how that row model works will help you in understanding this part of the Server Side Row Model.
+            how that row model works will help you in understanding this part of the Server-side Row Model.
         </li>
         <li>
-            <b>Slice and Dice:</b> Assuming your server side can build the data query, you can allow the user
+            <b>Slice and Dice:</b> Assuming your server-side can build the data query, you can allow the user
             to use the ag-Grid UI to drag columns around to select what columns you want to group by and aggregate
             on. What the user selects will then be forwarded to your datasource as part of the request. This feature
-            is advanced and will require some difficult server side coding from you, however if done correctly then
+            is advanced and will require some difficult server-side coding from you, however if done correctly then
             your users will have an experience of slicing and dicing large data in real time, something previously
             only available in expensive reporting tools, now you can embed it into your JavaScript application.
         </li>
@@ -72,7 +72,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-// datasource for Server Side Row Model
+// datasource for Server-side Row Model
 interface IEnterpriseDatasource {
 
     // grid calls this to get rows
@@ -140,7 +140,7 @@ interface IEnterpriseGetRowsRequest {
 }
 
 // we pass a VO (Value Object) of the column and not the column itself,
-// so the data can be converted to a JSON string and passed to server side
+// so the data can be converted to a JSON string and passed to server-side
 export interface ColumnVO {
     id: string;
     displayName: string;
@@ -166,7 +166,7 @@ export interface ColumnVO {
 </p>
 
 <p>
-    In your application, your server side would know where to get the data based
+    In your application, your server-side would know where to get the data based
     on what the user is looking for, eg it could go to a relational database
     table to get the list of countries and then a web service to get the winners
     for the country as the user expands the group (a web service to get the winners
@@ -190,7 +190,7 @@ export interface ColumnVO {
             the aggregation function via the column menu. The server just assumes if grouping,
             then these columns should be aggregated using a sum function.
         </li>
-        <li><b>Sorting:</b> The sorting is done on the server side.
+        <li><b>Sorting:</b> The sorting is done on the server-side.
             For example, sort by Athlete, then expand a group and you will
             see Athlete is sorted. </li>
     </ul>
@@ -213,7 +213,7 @@ export interface ColumnVO {
 <p>
     A mock data store running inside the browser is used in the below example. The purpose
     of the mock server is to demonstrate the interaction between the grid and the server.
-    For your application, your server side would need to understand the requests
+    For your application, your server-side would need to understand the requests
     from the client and build SQL (or the SQL equivalent if using a no-SQL data store)
     to run the relevant query against the data store.
 </p>
@@ -251,12 +251,12 @@ export interface ColumnVO {
             In addition to grouping, aggregation and pivot, the example also demonstrates filtering.
             The columns <b>Country</b> and <b>Year</b> have grid provided filters. The column <b>Age</b>
             has an example provided custom filter. You can use whatever filter you want, as long as
-            your server side knows what to do with it.
+            your server-side knows what to do with it.
         </li>
     </ul>
 
 <note>
-    When filtering using the Server Side Row Model it's important to specify the filter parameter: <code>newRowsAction: 'keep'</code>.
+    When filtering using the Server-side Row Model it's important to specify the filter parameter: <code>newRowsAction: 'keep'</code>.
     This is to prevent the filter from being reset as data is loaded into the grid.
 </note>
 
@@ -265,7 +265,7 @@ export interface ColumnVO {
 <h2>Pivoting Challenges</h2>
 
 <p>
-    Achieving pivot on the server side is difficult. If you manage to implement it, you deserve lots of credit from
+    Achieving pivot on the server-side is difficult. If you manage to implement it, you deserve lots of credit from
     your team and possibly a few hugs (disclaimer, we are not responsible for any inappropriate hugs you try). Here
     are some quick references on how you can achieve pivot in different relational databases:
     All databases will either implement pivot (like Oracle) or require you to fake it (like MySQL).
@@ -287,8 +287,8 @@ export interface ColumnVO {
 <p>
     To understand <a href="../javascript-grid-pivoting/#pivot-mode">Pivot Mode</a> and
     <a href="../javascript-grid-pivoting/#secondary-columns">Secondary Columns</a> please refer to
-    the relevant sections on <a href="../javascript-grid-pivoting/">Pivoting in Client Side Row Model</a>.
-    The concepts mean the same in both Client Side Row Model and the Server Side Row Model.
+    the relevant sections on <a href="../javascript-grid-pivoting/">Pivoting in Client-side Row Model</a>.
+    The concepts mean the same in both Client-side Row Model and the Server-side Row Model.
 </p>
 
 <p>
@@ -316,7 +316,7 @@ export interface ColumnVO {
 </p>
 
 <p>
-    If you do not want pivot in your Server Side Row Model grid, then you can remove it from the tool
+    If you do not want pivot in your Server-side Row Model grid, then you can remove it from the tool
     panel by setting <code>toolPanelSuppressPivotMode=true</code> and
     <code>toolPanelSuppressValues=true</code>.
 </p>
@@ -324,7 +324,7 @@ export interface ColumnVO {
 <h2>Example - Slice and Dice - Real Server</h2>
 
 <p>
-    It is not possible to put up a full end to end example of the Server Side Row Model
+    It is not possible to put up a full end to end example of the Server-side Row Model
     on the documentation website, as we cannot host servers on our website.
     Instead we have put a full end to end example
     in Github at <a href="https://github.com/ag-grid/ag-grid-enterprise-mysql-example/">
@@ -352,18 +352,18 @@ export interface ColumnVO {
 </p>
 
 <note>
-    The example is provided to show what logic you will need on the server side. It is
+    The example is provided to show what logic you will need on the server-side. It is
     provided 'as is' and we hope you find it useful. It is not provided as part of the
     ag-Grid Enterprise product, and as such it is not something we intend to enhance
-    and support. It is our intention for ag-Grid users to create their own server side
+    and support. It is our intention for ag-Grid users to create their own server-side
     connectors to connect into their bespoke data stores. In the future, depending on
-    customer demand, we may provide connectors to server sides stores.
+    customer demand, we may provide connectors to server-side stores.
 </note>
 
-<h2>Selection with Server Side Row Model</h2>
+<h2>Selection with Server-side Row Model</h2>
 
 <p>
-    Selecting rows and groups in the Server Side Row Model is supported.
+    Selecting rows and groups in the Server-side Row Model is supported.
     Just set the property <code>rowSelection</code> to either <code>single</code>
     or <code>multiple</code> as with any other row model.
 </p>
@@ -459,14 +459,14 @@ gridOptions.getChildCount = function(data) {
 <h2>Dynamic Row Height</h2>
 
 <p>
-    To enable <a href="../javascript-grid-row-height/#">Dynamic Row Height</a> when using the Server Side Row Model you need to provide an implementation
+    To enable <a href="../javascript-grid-row-height/#">Dynamic Row Height</a> when using the Server-side Row Model you need to provide an implementation
     for the 'getRowHeight' Grid Options property. This is demonstrated in the example below:
 </p>
 
 <?= example('Dynamic Row Height Example', 'dynamic-row-height', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
 <note>
-    Purging the cache and dynamic row heights do not work together for the Server Side Row Model.
+    Purging the cache and dynamic row heights do not work together for the Server-side Row Model.
     If you are using dynamic row height, ensure 'maxBlocksInCache' is not set.
 </note>
 
@@ -479,8 +479,8 @@ gridOptions.getChildCount = function(data) {
 </p>
 
 <p>
-    This is different to the <a href="../javascript-grid-in-memory/">Client Side Row Model</a> where the
-    grid height can be changed. For Server Side Row Model the row height cannot be changed once it is set.
+    This is different to the <a href="../javascript-grid-in-memory/">Client-side Row Model</a> where the
+    grid height can be changed. For Server-side Row Model the row height cannot be changed once it is set.
 </p>
 
 <p>
@@ -495,11 +495,11 @@ gridOptions.getChildCount = function(data) {
 <?= example('Auto Row Height Example', 'auto-row-height', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
 <note>
-    Purging the cache and auto row heights do not work together for the Server Side Row Model.
+    Purging the cache and auto row heights do not work together for the Server-side Row Model.
     If you are using auto row height, ensure 'maxBlocksInCache' is not set.
 </note>
 
-<h2>Server Side Model API</h2>
+<h2>Server-side Model API</h2>
 
 <p>
     The grid has the following API to allow you to interact with the enterprise cache.
@@ -554,10 +554,10 @@ gridOptions.getChildCount = function(data) {
 
 <?= example('API example', 'api', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
-<h2>Pagination with Server Side Row Model</h2>
+<h2>Pagination with Server-side Row Model</h2>
 
 <p>
-    To enable pagination when using the Server Side Row Model, all you have to do is turning pagination on with
+    To enable pagination when using the Server-side Row Model, all you have to do is turning pagination on with
     <code>pagination=true</code>. Find an example below:
 </p>
 
@@ -566,9 +566,9 @@ gridOptions.getChildCount = function(data) {
 <h2>CRUD</h2>
 
 <p>
-    The Server Side Row Model acts as a cache against the original store of data which typically
-    resides on the server side of an application. To add or remove records, the pattern is to update
-    the original data set (typically on the server) and then get the Server Side Row Model to
+    The Server-side Row Model acts as a cache against the original store of data which typically
+    resides on the server-side of an application. To add or remove records, the pattern is to update
+    the original data set (typically on the server) and then get the Server-side Row Model to
     refresh.
 </p>
 
@@ -582,6 +582,6 @@ gridOptions.getChildCount = function(data) {
         <li>All operations are done outside of the grid and the grid is then told to refresh.</li>
     </ul>
 
-<?= example('Server Side Row Model & CRUD', 'crud', 'generated', array("enterprise" => 1)) ?>
+<?= example('Server-side Row Model & CRUD', 'crud', 'generated', array("enterprise" => 1)) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

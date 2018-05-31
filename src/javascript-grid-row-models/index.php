@@ -22,7 +22,7 @@ include '../documentation-main/documentation_header.php';
     <p class="lead">
         Depending on your needs, the grid can be configured with different row models. The row models
         differ in how the data is loaded. You can load all the data and hand it
-        over to the grid (Client Side Row Model) or you can keep most of the data on the server
+        over to the grid (Client-side Row Model) or you can keep most of the data on the server
         and lazy-load based on what is currently visible to the user (Infinite,
         Viewport and Server Side Row Models).
     </p>
@@ -32,7 +32,7 @@ include '../documentation-main/documentation_header.php';
 
 <div class="docs-homepage-section-preview">
     <div>
-    <h2>Client Side</h2>
+    <h2>Client-side</h2>
     <p>
 
                     This is the default. The grid will load all of the data into the grid in one go.
@@ -40,7 +40,7 @@ include '../documentation-main/documentation_header.php';
                 
     </p>
 
-    <p> <a href="../javascript-grid-in-memory/">Go to Client Side Row Model</a> </p>
+    <p> <a href="../javascript-grid-in-memory/">Go to Client-side Row Model</a> </p>
     </div>
 </div>
 <div class="docs-homepage-section-preview">
@@ -96,11 +96,11 @@ include '../documentation-main/documentation_header.php';
 </p>
         <ul class="content">
             <li>
-                If using <b>ag-Grid Free</b>, use <b>Client Side Row Model</b> if you want to load all
+                If using <b>ag-Grid Free</b>, use <b>Client-side Row Model</b> if you want to load all
                 your data into the browser, or <b>Infinite Row Model</b> if you want to load it in blocks.
             </li>
             <li>
-                If using <b>ag-Grid Enterprise</b>, use <b>Client Side Row Model</b> if you want to load all
+                If using <b>ag-Grid Enterprise</b>, use <b>Client-side Row Model</b> if you want to load all
                 your data into the browser, or <b>Server Side Row Model</b> if you want to load it in blocks.
                 Server Side Row Model is Infinite Row Model plus more. So if you are an
                 ag-Grid Enterprise customer, you should prefer Server Side Row Model over Infinite Row Model.
@@ -116,13 +116,13 @@ include '../documentation-main/documentation_header.php';
 
         <ul class="content">
             <li>
-                If you are not sure, use default <b><a href="../javascript-grid-in-memory/">Client Side</a></b>.
+                If you are not sure, use default <b><a href="../javascript-grid-in-memory/">Client-side</a></b>.
                 The grid can handle massive (100k+) amounts of data. The grid will only
                 render what's visible on the screen (40 rows approximately, depending on your screen size) even if you have thousands of rows returned from your
                 server. You will not kill the grid with too much data - rather your browser will run out of memory before
-                the grid gets into problems. So if you are unsure, go with Client Side row model first and only change if you need to.
-                With Client Side, you get sorting, filtering, grouping, pivoting and aggregation all done for you by the grid.
-                All of the examples in the documentation use the Client Side model unless specified
+                the grid gets into problems. So if you are unsure, go with Client-side row model first and only change if you need to.
+                With Client-side, you get sorting, filtering, grouping, pivoting and aggregation all done for you by the grid.
+                All of the examples in the documentation use the Client-side model unless specified
                 otherwise.
             </li>
             <li>
@@ -158,7 +158,7 @@ include '../documentation-main/documentation_header.php';
     <table class="row-model-table reference">
         <tr class="first-row">
             <th>Feature</th>
-            <th>Client Side</th>
+            <th>Client-side</th>
             <th>Infinite</th>
             <th>Server Side</th>
             <th>Viewport</th>
@@ -443,7 +443,7 @@ include '../documentation-main/documentation_header.php';
             <li>
                 You can configure the grid to use any of the provided <b>Row Models</b> - that's why RowModel is in
                 italics, it means it's an interface, the concrete implementation is what you decide when configuring the grid.
-                The RowModel contains a list of RowNodes. The RowModel may have a list of all the RowNodes (Client Side Row Model) or have
+                The RowModel contains a list of RowNodes. The RowModel may have a list of all the RowNodes (Client-side Row Model) or have
                 a DataSource where it can lazy load RowNodes
             </li>
             <li>
@@ -469,7 +469,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Grid Datasource</h2>
 
     <p>
-        The <a href="../javascript-grid-in-memory/">Client Side</a> row model does not need a datasource.
+        The <a href="../javascript-grid-in-memory/">Client-side</a> row model does not need a datasource.
         <a href="../javascript-grid-infinite-scrolling/">Infinite</a>,
         <a href="../javascript-grid-viewport/">Viewport</a> and
         <a href="../javascript-grid-enterprise-model/">Server Side</a> all use a datasource. The documentation
