@@ -34,7 +34,9 @@ import {
     ColumnApi,
     GridApi,
     RowValueChangedEvent,
-    ProcessHeaderForExportParams
+    ProcessHeaderForExportParams,
+    PasteStartEvent,
+    PasteEndEvent
 } from "ag-grid/main";
 import {RangeController} from "./rangeController";
 
@@ -76,6 +78,14 @@ export class ClipboardService implements IClipboardService {
     public pasteFromClipboard(): void {
         this.logger.log('pasteFromClipboard');
 
+        let pasteStartEvent: PasteStartEvent = {
+            type: Events.EVENT_PASTE_START,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            source: 'clipboard'
+        };
+        this.eventService.dispatchEvent(pasteStartEvent);
+
         this.executeOnTempElement(
             (textArea: HTMLTextAreaElement)=> {
                 textArea.focus();
@@ -89,6 +99,14 @@ export class ClipboardService implements IClipboardService {
                 let singleCellInClipboard = parsedData.length == 1 && parsedData[0].length == 1;
                 this.rangeController.isMoreThanOneCell() && !singleCellInClipboard ?
                     this.pasteToRange(data) : this.pasteToSingleCell(data);
+
+                let pasteStartEvent: PasteEndEvent = {
+                    type: Events.EVENT_PASTE_END,
+                    api: this.gridOptionsWrapper.getApi(),
+                    columnApi: this.gridOptionsWrapper.getColumnApi(),
+                    source: 'clipboard'
+                };
+                this.eventService.dispatchEvent(pasteStartEvent);
             }
         );
     }
@@ -192,6 +210,13 @@ export class ClipboardService implements IClipboardService {
     public copyRangeDown(): void {
         if (this.rangeController.isEmpty()) { return; }
 
+        this.eventService.dispatchEvent( <PasteStartEvent> {
+            type: Events.EVENT_PASTE_START,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            source: 'rangeDown'
+        });
+
         let cellsToFlash = <any>{};
         let firstRowValues: any[] = null;
 
@@ -238,6 +263,13 @@ export class ClipboardService implements IClipboardService {
         this.dispatchFlashCells(cellsToFlash);
 
         this.fireRowChanged(updatedRowNodes);
+
+        this.eventService.dispatchEvent( <PasteEndEvent> {
+            type: Events.EVENT_PASTE_END,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            source: 'rangeDown'
+        });
     }
 
     private fireRowChanged(rowNodes: RowNode[]): void {
