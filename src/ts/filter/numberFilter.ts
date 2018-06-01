@@ -1,7 +1,7 @@
 import {Utils as _} from "../utils";
-import {IFilterParams, SerializedFilter} from "../interfaces/iFilter";
+import {SerializedFilter} from "../interfaces/iFilter";
 import {QuerySelector} from "../widgets/componentAnnotations";
-import {BaseFilter, Comparator, IScalarFilterParams, ScalarBaseFilter} from "./baseFilter";
+import {BaseFilter, Comparator, FilterConditionType, ScalarBaseFilter} from "./baseFilter";
 import {INumberFilterParams} from "./textFilter";
 
 export interface SerializedNumberFilter extends SerializedFilter {
@@ -13,14 +13,22 @@ export interface SerializedNumberFilter extends SerializedFilter {
 export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, SerializedNumberFilter> {
     @QuerySelector('#filterNumberToPanel')
     private eNumberToPanel: HTMLElement;
+    @QuerySelector('#filterNumberToPanelCondition')
+    private eNumberToConditionPanel: HTMLElement;
 
     filterNumber: any;
     filterNumberTo: any;
 
+    filterNumberCondition: any;
+    filterNumberConditionTo: any;
+
     @QuerySelector('#filterToText')
     private eFilterToTextField: HTMLInputElement;
+    @QuerySelector('#filterToConditionText')
+    private eFilterToConditionText: HTMLInputElement;
 
     private eFilterTextField: HTMLInputElement;
+    private eFilterTextConditionField: HTMLInputElement;
     public static LESS_THAN = 'lessThan';//3;
 
     modelFromFloatingFilter(from: string): SerializedNumberFilter {
@@ -37,27 +45,43 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
             BaseFilter.GREATER_THAN, BaseFilter.GREATER_THAN_OR_EQUAL, BaseFilter.IN_RANGE];
     }
 
-    public bodyTemplate(): string {
+    public bodyTemplate(type:FilterConditionType): string {
         let translate = this.translate.bind(this);
+        let fieldId = type == FilterConditionType.MAIN ? "filterText" : "filterConditionText";
+        let filterNumberToPanelId = type == FilterConditionType.MAIN ? "filterNumberToPanel" : "filterNumberToPanelCondition";
+        let fieldToId = type == FilterConditionType.MAIN ? "filterToText" : "filterToConditionText";
         return `<div class="ag-filter-body">
             <div>
-                <input class="ag-filter-filter" id="filterText" type="text" placeholder="${translate('filterOoo')}"/>
+                <input class="ag-filter-filter" id="${fieldId}" type="text" placeholder="${translate('filterOoo')}"/>
             </div>
-             <div class="ag-filter-number-to" id="filterNumberToPanel">
-                <input class="ag-filter-filter" id="filterToText" type="text" placeholder="${translate('filterOoo')}"/>
+             <div class="ag-filter-number-to" id="${filterNumberToPanelId}">
+                <input class="ag-filter-filter" id="${fieldToId}" type="text" placeholder="${translate('filterOoo')}"/>
             </div>
         </div>`;
     }
 
-    public initialiseFilterBodyUi() {
-        super.initialiseFilterBodyUi();
-        this.filterNumber = null;
-        this.eFilterTextField = this.queryForHtmlInputElement("#filterText");
+    public initialiseFilterBodyUi(type:FilterConditionType) {
+        super.initialiseFilterBodyUi(type);
+        if (type === FilterConditionType.MAIN){
+            this.eFilterTextField = this.queryForHtmlInputElement("#filterText");
+            this.addFilterChangedEventListeners( type, this.eFilterTextField, this.eFilterToTextField);
+        } else {
+            this.eFilterTextConditionField = this.queryForHtmlInputElement("#filterConditionText");
+            this.addFilterChangedEventListeners(type, this.eFilterTextConditionField, this.eFilterToConditionText);
+        }
+    }
+
+    private addFilterChangedEventListeners(type:FilterConditionType, filterElement: HTMLInputElement, filterToElement: HTMLInputElement) {
+        if (type === FilterConditionType.MAIN){
+            this.filterNumber = null;
+        } else {
+            this.filterNumberCondition = null;
+        }
 
         let debounceMs = this.getDebounceMs(this.filterParams);
-        let toDebounce: ()=>void = _.debounce(this.onTextFieldsChanged.bind(this), debounceMs);
-        this.addDestroyableEventListener(this.eFilterTextField, "input", toDebounce);
-        this.addDestroyableEventListener(this.eFilterToTextField, "input", toDebounce);
+        let toDebounce: () => void = _.debounce(()=>this.onTextFieldsChanged(type, filterElement, filterToElement), debounceMs);
+        this.addDestroyableEventListener(filterElement, "input", toDebounce);
+        this.addDestroyableEventListener(filterToElement, "input", toDebounce);
     }
 
     public afterGuiAttached() {
@@ -72,20 +96,35 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         };
     }
 
-    private onTextFieldsChanged() {
-        let newFilter = this.stringToFloat(this.eFilterTextField.value);
-        let newFilterTo = this.stringToFloat(this.eFilterToTextField.value);
-        if (this.filterNumber !== newFilter || this.filterNumberTo !== newFilterTo) {
-            this.filterNumber = newFilter;
-            this.filterNumberTo = newFilterTo;
-            this.onFilterChanged();
+    private onTextFieldsChanged(type:FilterConditionType, filterElement: HTMLInputElement, filterToElement: HTMLInputElement) {
+        let newFilter = this.stringToFloat(filterElement.value);
+        let newFilterTo = this.stringToFloat(filterToElement.value);
+
+        if (type === FilterConditionType.MAIN){
+            if (this.filterNumber !== newFilter || this.filterNumberTo !== newFilterTo) {
+                this.filterNumber = newFilter;
+                this.filterNumberTo = newFilterTo;
+                this.onFilterChanged();
+            }
+        } else {
+            if (this.filterNumberCondition !== newFilter || this.filterNumberConditionTo !== newFilterTo) {
+                this.filterNumberCondition = newFilter;
+                this.filterNumberConditionTo = newFilterTo;
+                this.onFilterChanged();
+            }
         }
     }
 
-    public filterValues(): number|number[] {
-        return this.filter !== BaseFilter.IN_RANGE ?
-            this.asNumber(this.filterNumber):
-            [this.asNumber(this.filterNumber), this.asNumber(this.filterNumberTo)];
+    public filterValues(type:FilterConditionType): number|number[] {
+        if (type === FilterConditionType.MAIN){
+            return this.filter !== BaseFilter.IN_RANGE ?
+                this.asNumber(this.filterNumber):
+                [this.asNumber(this.filterNumber), this.asNumber(this.filterNumberTo)];
+        }
+
+        return this.filterCondition !== BaseFilter.IN_RANGE ?
+            this.asNumber(this.filterNumberCondition):
+            [this.asNumber(this.filterNumberCondition), this.asNumber(this.filterNumberConditionTo)];
     }
 
     private asNumber(value: any): number {
@@ -106,57 +145,75 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         return newFilter;
     }
 
-    public setFilter(filter: any) {
+    public setFilter(filter: any, type:FilterConditionType) {
         filter = _.makeNull(filter);
 
         if (filter !== null && !(typeof filter === 'number')) {
             filter = parseFloat(filter);
         }
-        this.filterNumber = filter;
-        this.eFilterTextField.value = filter;
+        if (type === FilterConditionType.MAIN) {
+            this.filterNumber = filter;
+            this.eFilterTextField.value = filter;
+        } else {
+            this.filterNumberCondition = filter;
+            this.eFilterTextConditionField.value = filter;
+        }
     }
 
-    public setFilterTo(filter: any) {
+    public setFilterTo(filter: any, type:FilterConditionType) {
         filter = _.makeNull(filter);
 
         if (filter !== null && !(typeof filter === 'number')) {
             filter = parseFloat(filter);
         }
-        this.filterNumberTo = filter;
-        this.eFilterToTextField.value = filter;
+        if (type === FilterConditionType.MAIN) {
+            this.filterNumberTo = filter;
+            this.eFilterToTextField.value = filter;
+        } else {
+            this.filterNumberConditionTo = filter;
+            this.eFilterToConditionText.value = filter;
+        }
     }
 
-    public getFilter() {
-        return this.filterNumber;
+    public getFilter(type:FilterConditionType) {
+        return type === FilterConditionType.MAIN ? this.filterNumber : this.filterNumberCondition;
     }
 
-    public serialize(): SerializedNumberFilter {
+    public serialize(type:FilterConditionType): SerializedNumberFilter {
+        let filter = type === FilterConditionType.MAIN ? this.filter : this.filterCondition;
+        let filterNumber = type === FilterConditionType.MAIN ? this.filterNumber : this.filterNumberCondition;
+        let filterNumberTo = type === FilterConditionType.MAIN ? this.filterNumberTo : this.filterNumberConditionTo;
         return {
-            type: this.filter ? this.filter : this.defaultFilter,
-            filter: this.filterNumber,
-            filterTo: this.filterNumberTo,
+            type: filter ? filter : this.defaultFilter,
+            filter: filterNumber,
+            filterTo: filterNumberTo,
             filterType: 'number'
         };
     }
 
-    public parse(model: SerializedNumberFilter): void {
-        this.setFilterType(model.type);
-        this.setFilter(model.filter);
-        this.setFilterTo(model.filterTo);
+    public parse(model: SerializedNumberFilter, type:FilterConditionType): void {
+        this.setFilterType(model.type, type);
+        this.setFilter(model.filter, type);
+        this.setFilterTo(model.filterTo, type);
     }
 
-    public refreshFilterBodyUi(): void {
-        let visible = this.filter === NumberFilter.IN_RANGE;
-        _.setVisible(this.eNumberToPanel, visible);
+    public refreshFilterBodyUi(type:FilterConditionType): void {
+        let filterType = type === FilterConditionType.MAIN ? this.filter : this.filterCondition;
+        let panel = type === FilterConditionType.MAIN ? this.eNumberToPanel : this.eNumberToConditionPanel;
+
+        if (!panel) return;
+
+        let visible = filterType === NumberFilter.IN_RANGE;
+        _.setVisible(panel, visible);
     }
 
     public resetState(): void {
-        this.setFilterType(this.defaultFilter);
-        this.setFilter(null);
-        this.setFilterTo(null);
+        this.setFilterType(this.defaultFilter, FilterConditionType.MAIN);
+        this.setFilter(null, FilterConditionType.MAIN);
+        this.setFilterTo(null, FilterConditionType.MAIN);
     }
 
-    public setType(filterType: string): void {
-        this.setFilterType(filterType);
+    public setType(filterType: string, type:FilterConditionType): void {
+        this.setFilterType(filterType, type);
     }
 }

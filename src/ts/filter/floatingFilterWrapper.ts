@@ -13,6 +13,7 @@ import {HoverFeature} from "../headerRendering/hoverFeature";
 import {Events} from "../events";
 import {EventService} from "../eventService";
 import {ColumnHoverService} from "../rendering/columnHoverService";
+import {CombinedFilter} from "./baseFilter";
 
 export interface IFloatingFilterWrapperParams<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> {
     column: Column;
@@ -129,10 +130,18 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
         });
     }
 
-    onParentModelChanged(parentModel: M): void {
-        this.floatingFilterCompPromise.then(floatingFilterComp=> {
-            floatingFilterComp.onParentModelChanged(parentModel);
-        });
+    onParentModelChanged(parentModel: M | CombinedFilter<M>): void {
+        if (parentModel){
+            let mainModel:M = null;
+            if ((<CombinedFilter<M>>parentModel).operator) {
+                mainModel = (<CombinedFilter<M>>parentModel).main
+            } else {
+                mainModel = <M>parentModel;
+            }
+            this.floatingFilterCompPromise.then(floatingFilterComp=> {
+                floatingFilterComp.onParentModelChanged(mainModel);
+            });
+        }
     }
 
     private showParentFilter() {
