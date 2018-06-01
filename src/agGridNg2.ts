@@ -450,6 +450,9 @@ export class AgGridNg2 implements AfterViewInit {
     @Output() public rowDragMove: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDragLeave: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDragEnd: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public pasteStart: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public pasteEnd: EventEmitter<any> = new EventEmitter<any>();
+
     @Output() public columnRowGroupChangeRequest: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnPivotChangeRequest: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnValueChangeRequest: EventEmitter<any> = new EventEmitter<any>();
