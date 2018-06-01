@@ -63,6 +63,9 @@ export class Events {
     /** Model was updated - grid updates the drawn rows when this happens */
     public static EVENT_MODEL_UPDATED = 'modelUpdated';
 
+    public static EVENT_PASTE_START = 'pasteStart';
+    public static EVENT_PASTE_END = 'pasteEnd';
+
     public static EVENT_CELL_CLICKED = 'cellClicked';
     public static EVENT_CELL_DOUBLE_CLICKED = 'cellDoubleClicked';
     public static EVENT_CELL_MOUSE_DOWN = 'cellMouseDown';

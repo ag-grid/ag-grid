@@ -77,6 +77,14 @@ export interface RowDragEndEvent extends RowDragEvent {}
 export interface RowDragMoveEvent extends RowDragEvent {}
 export interface RowDragLeaveEvent extends RowDragEvent {}
 
+export interface PasteStartEvent extends AgGridEvent {
+    source: string;
+}
+
+export interface PasteEndEvent extends AgGridEvent {
+    source: string;
+}
+
 export interface ViewportChangedEvent extends AgGridEvent {
     firstRow: number;
     lastRow: number;
