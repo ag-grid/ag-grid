@@ -45,6 +45,8 @@ import {
     ModelUpdatedEvent,
     NewColumnsLoadedEvent,
     PaginationChangedEvent,
+    PasteStartEvent,
+    PasteEndEvent,
     PinnedRowDataChangedEvent,
     RangeSelectionChangedEvent,
     RowClickedEvent,
@@ -407,6 +409,8 @@ export interface GridOptions {
     onRowDragMove?(event: RowDragEvent): void;
     onRowDragLeave?(event: RowDragEvent): void;
     onRowDragEnd?(event: RowDragEvent): void;
+    onPasteStart?(event: PasteStartEvent): void;
+    onPasteEnd?(event: PasteEndEvent): void;
     // deprecated
     onGridSizeChanged?(event: any): void;
 
