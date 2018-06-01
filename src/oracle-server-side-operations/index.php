@@ -42,11 +42,11 @@ include '../documentation-main/documentation_header.php';
         answer to this question, instead just select the appropriate Row Model used by the grid.
     </p>
 
-    <h4>In-Memory Row Model</h4>
+    <h4>Client-side Row Model</h4>
 
     <p>
         The simplest approach is to send all row data to the browser in response to a single request at initialisation.
-        For this use case the <a href="/oracle-server-side-operations/">In-Memory Row Model</a> has been designed.
+        For this use case the <a href="/javascript-grid-client-side-model/">Client-side Row Model</a> has been designed.
 
      <p>
         This scenario is illustrated below where 10,000 records are loaded directly into the browser:
@@ -55,11 +55,11 @@ include '../documentation-main/documentation_header.php';
     <p><img src="in-memory-row-model.png" width="90%" style="border: 1px solid grey"/></p>
 
     <p>
-        The In-Memory Row Model only renders the rows currently visible, so the upper limit of rows is governed by the
+        The Client-side Row Model only renders the rows currently visible, so the upper limit of rows is governed by the
         browsers memory footprint and data transfer time, rather than any restrictions inside the grid.
     </p>
 
-    <h4>Enterprise Row Model</h4>
+    <h4>Server-side Row Model</h4>
 
     <p>
         However many real world applications contain much larger data sets, often involving millions of records. In this
@@ -68,12 +68,12 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        This is precisely the problem the <a href="/javascript-grid-enterprise-model/">Enterprise Row Model</a> addresses,
+        This is precisely the problem the <a href="/javascript-grid-server-side-model/">Server-side Row Model</a> addresses,
         along with delegating server-side operations such as filtering, sorting, grouping and pivoting.
     </p>
 
     <p>
-        The following diagram shows the approach used by the Enterprise Row Model. Here there are 10 million records,
+        The following diagram shows the approach used by the Server-side Row Model. Here there are 10 million records,
         however the number of records is only constrained by the limits of the server-side:
     </p>
 
@@ -90,7 +90,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        Throughout the rest of this guide we will demonstrate the power of the Enterprise Row Model with the aid of a
+        Throughout the rest of this guide we will demonstrate the power of the Server-side Row Model with the aid of a
         Java service connected to an oracle database.
     </p>
 
@@ -221,7 +221,7 @@ CREATE TABLE trade
 
     <p>To test the application point your browser to: <code>localhost:9090</code></p>
 
-    <h2 id="enterprise-datasource">Enterprise Row Model Interfaces</h2>
+    <h2 id="enterprise-datasource">Server-side Row Model Interfaces</h2>
 
     <p>Our Java service will use the following request and response objects:</p>
 
@@ -273,7 +273,7 @@ public class EnterpriseGetRowsResponse {
 </snippet>
     <p>
         We will discuss these in detail throughout this guide, however for more details see:
-        <a href="/javascript-grid-enterprise-model/#enterprise-datasource">Enterprise Datasource</a>
+        <a href="/javascript-grid-server-side-model/#server-side-datasource">Server-side Datasource</a>
     </p>
 
     <h2 id="service-controller">Service Controller</h2>
@@ -586,7 +586,7 @@ private String limitSql() {
     <h2 id="conclusion">Conclusion</h2>
 
     <p>
-        In this guide we presented a reference implementation for integrating the Enterprise Row Model with a Java
+        In this guide we presented a reference implementation for integrating the Server-side Row Model with a Java
         service connected to an Oracle database. This included all necessary configuration and install instructions.
     </p>
 

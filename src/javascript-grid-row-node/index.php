@@ -48,7 +48,7 @@ include '../documentation-main/documentation_header.php';
         <li><b>key:</b> The key for the grouping eg Ireland, UK, USA.</li>
         <li><b>field:</b> The field (string) we are grouping on eg 'country'.</li>
         <li><b>rowGroupColumn:</b> The row group column used for this group, eg the Country column instance.</li>
-        <li><b>rowGroupIndex:</b> If doing in memory grouping, this is the index of the group column this cell is for.
+        <li><b>rowGroupIndex:</b> If doing in memory (Client-side) grouping, this is the index of the group column this cell is for.
             This will always be the same as the level, unless we are collapsing groups ie <code>groupRemoveSingleChildren=true</code></li>
         <li><b>expanded:</b> True if group is expanded, otherwise false.</li>
         <li><b>footer:</b> True if row is a footer. Footers  have group = true and footer = true.</li>

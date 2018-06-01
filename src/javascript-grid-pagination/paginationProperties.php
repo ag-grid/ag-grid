@@ -32,9 +32,9 @@ $paginationProperties = [
 
 $paginationApi = [
     ['paginationIsLastPageFound()',
-        '<p>Returns true when last page known. This will always be true if you are using the in memory row model
+        '<p>Returns true when last page known. This will always be true if you are using the Client-side Row Model
         for pagination.</p>
-        <p>Returns false when last page now known. This only happens when using infinite scrolling row model.</p>'],
+        <p>Returns false when last page now known. This only happens when using Infinite Scrolling Row Model.</p>'],
     ['paginationGetPageSize()',
         '<p>How many rows ag-Grid is showing per page.</p>'],
     ['paginationSetPageSize(newPageSize)',

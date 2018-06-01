@@ -271,7 +271,7 @@ colDef = {
 
     <p>
         If the data changes after the aggregation is done, you can tell the grid to recompute the aggregates
-        through the api method <code>refreshInMemoryRowModel('aggregate')</code>.
+        through the api method <code>refreshClientSideRowModel('aggregate')</code>.
     </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

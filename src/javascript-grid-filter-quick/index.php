@@ -123,7 +123,7 @@ colDef = {
 <h2>Server Side Data</h2>
 
 <p>
-    Quick Filters only make sense with client side data (i.e. when using the In Memory row model).
+    Quick Filters only make sense with client side data (i.e. when using the Client-side row model).
     For the other row models (<a href="../javascript-grid-pagination/">pagination</a>,
     <a href="../javascript-grid-virtual-paging/">infinite scrolling</a> etc) you would need to implement your own server side sorting to
     replicate Quick Filter functionality.

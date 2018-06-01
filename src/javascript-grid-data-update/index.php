@@ -9,8 +9,8 @@ include '../documentation-main/documentation_header.php';
     <h1>Updating Data</h1>
 
     <note>
-        Note that this is only applicable if you are using the <a href="../javascript-grid-in-memory">in memory row model</a>.
-        If you are using <a href="../javascript-grid-viewport">viewport</a> or <a href="../javascript-grid-enterprise-model">enterprise</a>
+        Note that this is only applicable if you are using the <a href="../javascript-grid-client-side-model">Client-side Row Model</a>.
+        If you are using <a href="../javascript-grid-viewport">viewport</a> or <a href="../javascript-grid-server-side-model">Server-side</a>
         the data would be passed to the grid through a datasource and the specifics on how to
         update each model would be explained in their respective docs.
     </note>
@@ -70,23 +70,23 @@ include '../documentation-main/documentation_header.php';
         (explained below) does update the sorting, filtering and grouping.
     </note>
 
-    <p id="refreshInMemoryRowModel">
-        If you are using <a href="../javascript-grid-in-memory/">In Memory Row Model</a>
+    <p id="refreshClientSideRowModel">
+        If you are using <a href="../javascript-grid-client-side-model/">Client-side Row Model</a>
         and you want to get the grid to update it's sort or filter etc after the update
-        is done, then you must call <code>api.refreshInMemoryRowModel(step)</code>
+        is done, then you must call <code>api.refreshClientSideRowModel(step)</code>
         where step can be one of the following: group, filter, map, aggregate,
         sort, pivot.
     </p>
 
     <note>
-        <p>The <a href="../javascript-grid-in-memory/">In Memory Row Model</a> has stages as follows:</p>
+        <p>The <a href="../javascript-grid-client-side-model/">Client-side Row Model</a> has stages as follows:</p>
         <ul class="content">
             <li>
                 Group &rArr; Filter &rArr; Pivot &rArr; Aggregate &rArr; Sort &rArr; Map<br/>
             </li>
         </ul>
         <p>
-            That means, if you call <code>api.refreshInMemoryRowModel('filter')</code>, it will
+            That means, if you call <code>api.refreshClientSideRowModel('filter')</code>, it will
             also execute pivot, aggregate, sort and map.
         </p>
     </note>
@@ -100,9 +100,9 @@ include '../documentation-main/documentation_header.php';
     <ul class="content">
         <li><b>Set Price on Toyota:</b> The price value is updated on the Toyota row and the grid refreshes the cell.</li>
         <li><b>Set Data on Ford:</b> The entire data is set on the Ford row and the grid refreshes the entire row.</li>
-        <li><b>Sort:</b> Re-runs the sort in the In Memory Row Model - to see this in action, sort the data first, then
+        <li><b>Sort:</b> Re-runs the sort in the Client-side Row Model - to see this in action, sort the data first, then
         edit the data so the sort is broken, then hit this button to fix the sort.</li>
-        <li><b>Filter:</b> Re-runs the filter in the In Memory Row Model - to see this in action, filter the data first, then
+        <li><b>Filter:</b> Re-runs the filter in the Client-side Row Model - to see this in action, filter the data first, then
         edit the data so the filter is broken (ie a row is present that should not be present), then hit this button to fix the filter.</li>
     </ul>
 
@@ -197,7 +197,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The method <code>api.setRowData()</code> works with the
-        <a href="../javascript-grid-in-memory">In Memory Row Model</a> only. All of the other
+        <a href="../javascript-grid-client-side-model">Client-side Row Model</a> only. All of the other
         row models use a data source and hence it doesn't make sense.
     </p>
 
@@ -285,12 +285,12 @@ include '../documentation-main/documentation_header.php';
 <h3>Supported Row Models</h3>
 
 <p>
-    The <a href="../javascript-grid-in-memory">In Memory Row Model</a> fully supports the
+    The <a href="../javascript-grid-client-side-model">Client-side Row Model</a> fully supports the
     <code>api.updateRowData()</code> call. The
     <a href="../javascript-grid-infinite-scrolling">Infinite Row Model</a> supports 'add'
     only (see the infinite docs for examples). The
     <a href="../javascript-grid-viewport">Viewport Row Model</a> and
-    <a href="../javascript-grid-enterprise-model">Enterprise Row Model</a> do not support
+    <a href="../javascript-grid-server-side-model">Server-side Row Model</a> do not support
     transaction updates.
 </p>
 
