@@ -89,6 +89,47 @@ include '../documentation-main/documentation_header.php';
         the target audience for this feature resides.
     </p>
 
+    <h2 id="events">Clipboard Events</h2>
+
+    <p>
+        The following events are relevant to clipboard operations:
+        <ul>
+            <li>
+                <code>pasteStart</code>: Paste event has started.
+            </li>
+            <li>
+                <code>pasteEnd</code>: Paste event has ended.
+            </li>
+            <li>
+                <code>cellValueChanged</code>: A cells value has changed. Typically happens after editing but also
+                if cell value is changed as a result of paste operation.
+            </li>
+        </ul>
+    </p>
+
+    <p>
+        For a paste operation the events will be fired as:
+        <ol>
+            <li>
+                One <code>pasteStart</code> event.
+            </li>
+            <li>
+                Many <code>cellValueChanged</code> events.
+            </li>
+            <li>
+                One <code>pasteEnd</code> event.
+            </li>
+        </ol>
+        If the application is doing work each time it receives a <code>cellValueChanged</code>, you can use
+        the <code>pasteStart</code> and
+        <code>pasteEnd</code> events to suspend the applications work and then do the work for all cells impacted
+        by the paste operation after the paste operation.
+    </p>
+
+    <p>
+        There are no events for paste to clipboard as this does not update the grids data.
+    </p>
+
     <h2>Clipboard Example</h2>
 
     <p>
@@ -98,6 +139,10 @@ include '../documentation-main/documentation_header.php';
         <li>Copy with the Context Menu or 'Ctrl & C'.</li>
         <li>Paste with 'Ctrl & V'.</li>
         <li>Copy with the provided buttons.</li>
+        <li>
+            Notice for paste that events <code>pasteStart</code>, <code>pasteEnd</code> and
+            <code>cellValueChanged</code> are logged to the console.
+        </li>
     </ul>
 
     <p>The example has both row click selection and range selection enabled. You probably won't do

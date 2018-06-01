@@ -17,7 +17,16 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     enableRangeSelection: true,
-    rowSelection: 'multiple'
+    rowSelection: 'multiple',
+    onCellValueChanged: function (params) {
+        console.log("Callback onCellValueChanged:", params);
+    },
+    onPasteStart: function (params) {
+        console.log('Callback onPasteStart:' ,params);
+    },
+    onPasteEnd: function (params) {
+        console.log('Callback onPasteEnd:' ,params);
+    }
 };
 
 function onBtCopyRows() {

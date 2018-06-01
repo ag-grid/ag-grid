@@ -277,6 +277,12 @@ var gridOptions = {
     onCellFocused: function (params) {
         // console.log('Callback onCellFocused: ' + params.rowIndex + " - " + params.colIndex);
     },
+    onPasteStart: function (params) {
+        console.log('Callback onPasteStart:' ,params);
+    },
+    onPasteEnd: function (params) {
+        console.log('Callback onPasteEnd:' ,params);
+    },
     onGridReady: function (event) {
         console.log('Callback onGridReady: api = ' + event.api);
         //event.api.addGlobalListener(function(type, event) {

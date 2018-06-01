@@ -98,6 +98,12 @@ include '../documentation-main/documentation_header.php';
                 <a href="../javascript-grid-cell-editing/#start-stop-editing-events">Full Row Editing</a> only.
             </td>
         </tr>
+        <tr>
+            <th>pasteStart, pasteEnd</th>
+            <td>Paste operation has started / ended. See
+                <a href="../javascript-grid-clipboard/#events">Clipboard Events</a>.
+            </td>
+        </tr>
 
     </table>
 <h2>Sort & Filter</h2>
