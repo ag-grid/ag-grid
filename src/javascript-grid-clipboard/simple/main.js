@@ -37,6 +37,14 @@ function onBtCopyRange() {
     gridOptions.api.copySelectedRangeToClipboard();
 }
 
+function onPasteOff() {
+    gridOptions.api.setSuppressClipboardPaste(true);
+}
+
+function onPasteOn() {
+    gridOptions.api.setSuppressClipboardPaste(false);
+}
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
