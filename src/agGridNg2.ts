@@ -252,6 +252,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public getBusinessKeyForNode : any = undefined;
     @Input() public sendToClipboard : any = undefined;
     @Input() public navigateToNextCell : any = undefined;
+    @Input() public processDataFromClipboard : any = undefined;
     @Input() public tabToNextCell : any = undefined;
     @Input() public getDetailRowData : any = undefined;
     @Input() public processCellFromClipboard : any = undefined;
@@ -335,6 +336,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public suppressCopyRowsToClipboard : any = undefined;
     @Input() public pivotMode : any = undefined;
     @Input() public suppressAggFuncInHeader : any = undefined;
+    @Input() public suppressClipboardPaste : any = undefined;
     @Input() public suppressColumnVirtualisation : any = undefined;
     @Input() public suppressAggAtRootLevel : any = undefined;
     @Input() public suppressFocusAfterRefresh : any = undefined;
