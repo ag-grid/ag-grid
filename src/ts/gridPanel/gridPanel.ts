@@ -712,7 +712,10 @@ export class GridPanel extends Component {
     private onCtrlAndV(event: KeyboardEvent): boolean {
         if (!this.enterprise) { return; }
 
+        if (this.gridOptionsWrapper.isSuppressClipboardPaste()) { return; }
+
         this.clipboardService.pasteFromClipboard();
+
         return false;
     }
 

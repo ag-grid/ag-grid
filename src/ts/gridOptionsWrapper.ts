@@ -9,7 +9,7 @@ import {
     NavigateToNextCellParams,
     NodeChildDetails,
     PaginationNumberFormatterParams,
-    PostProcessPopupParams,
+    PostProcessPopupParams, ProcessDataFromClipboardParams,
     TabToNextCellParams
 } from "./entities/gridOptions";
 import {EventService} from "./eventService";
@@ -83,6 +83,7 @@ export class GridOptionsWrapper {
     public static PROP_GROUP_REMOVE_SINGLE_CHILDREN = 'groupRemoveSingleChildren';
     public static PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN = 'groupRemoveLowestSingleChildren';
     public static PROP_PIVOT_HEADER_HEIGHT = 'pivotHeaderHeight';
+    public static PROP_SUPPRESS_CLIPBOARD_PASTE = 'suppressClipboardPaste';
 
     public static PROP_GROUP_HEADER_HEIGHT = 'groupHeaderHeight';
     public static PROP_PIVOT_GROUP_HEADER_HEIGHT = 'pivotGroupHeaderHeight';
@@ -384,10 +385,11 @@ export class GridOptionsWrapper {
     public isSuppressContextMenu() { return isTrue(this.gridOptions.suppressContextMenu); }
     public isAllowContextMenuWithControlKey() { return isTrue(this.gridOptions.allowContextMenuWithControlKey); }
     public isSuppressCopyRowsToClipboard() { return isTrue(this.gridOptions.suppressCopyRowsToClipboard); }
+    public isSuppressClipboardPaste() { return isTrue(this.gridOptions.suppressClipboardPaste); }
     public isEnableFilter() { return isTrue(this.gridOptions.enableFilter) || isTrue(this.gridOptions.enableServerSideFilter); }
     public isPagination() { return isTrue(this.gridOptions.pagination); }
     public isSuppressEnterpriseResetOnNewColumns() { return isTrue(this.gridOptions.suppressEnterpriseResetOnNewColumns); }
-
+    public getProcessDataFromClipboardFunc(): ((params: ProcessDataFromClipboardParams)=>string[][]) { return this.gridOptions.processDataFromClipboard;}
     public getBatchUpdateWaitMillis(): number {
         return _.exists(this.gridOptions.batchUpdateWaitMillis) ? this.gridOptions.batchUpdateWaitMillis : Constants.BATCH_WAIT_MILLIS;
     }

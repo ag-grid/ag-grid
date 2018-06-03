@@ -188,6 +188,10 @@ export class ComponentUtil {
             api.setGridAutoHeight(ComponentUtil.toBoolean(changes.gridAutoHeight.currentValue));
         }
 
+        if (changes.suppressClipboardPaste) {
+            api.setSuppressClipboardPaste(ComponentUtil.toBoolean(changes.suppressClipboardPaste.currentValue));
+        }
+
         // copy changes into an event for dispatch
         let event: ComponentStateChangedEvent = {
             type: Events.EVENT_COMPONENT_STATE_CHANGED,

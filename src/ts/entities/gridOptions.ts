@@ -141,6 +141,7 @@ export interface GridOptions {
     suppressFieldDotNotation?: boolean;
     suppressCopyRowsToClipboard?: boolean;
     clipboardDeliminator?: string;
+    suppressClipboardPaste?: boolean;
     suppressAggFuncInHeader?: boolean;
     suppressAggAtRootLevel?: boolean;
     suppressFocusAfterRefresh?: boolean;
@@ -318,6 +319,7 @@ export interface GridOptions {
     rowClassRules?: { [cssClassName: string]: (Function | string) };
     getRowHeight?: Function;
     sendToClipboard?: (params: any)=>void;
+    processDataFromClipboard?: (params: ProcessDataFromClipboardParams)=>string[][];
     navigateToNextCell?: (params: NavigateToNextCellParams)=>GridCellDef;
     tabToNextCell?: (params: TabToNextCellParams)=>GridCellDef;
     getDocument?: ()=> Document;
@@ -536,4 +538,8 @@ export interface PostProcessPopupParams {
 
 export interface PaginationNumberFormatterParams {
     value: number;
+}
+
+export interface ProcessDataFromClipboardParams {
+    data: string[][];
 }

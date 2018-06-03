@@ -771,6 +771,10 @@ export class GridApi {
         this.gridCore.showToolPanel(show);
     }
 
+    public setSuppressClipboardPaste(value: boolean): void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_SUPPRESS_CLIPBOARD_PASTE, value);
+    }
+
     public isToolPanelShowing() {
         return this.gridCore.isToolPanelShowing();
     }
