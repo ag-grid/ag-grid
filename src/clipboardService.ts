@@ -78,14 +78,6 @@ export class ClipboardService implements IClipboardService {
     public pasteFromClipboard(): void {
         this.logger.log('pasteFromClipboard');
 
-        let pasteStartEvent: PasteStartEvent = {
-            type: Events.EVENT_PASTE_START,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
-            source: 'clipboard'
-        };
-        this.eventService.dispatchEvent(pasteStartEvent);
-
         this.executeOnTempElement(
             (textArea: HTMLTextAreaElement)=> {
                 textArea.focus();
@@ -96,23 +88,35 @@ export class ClipboardService implements IClipboardService {
 
                 let parsedData: string[][] = this.dataToArray(data);
 
+                let userFunc = this.gridOptionsWrapper.getProcessDataFromClipboardFunc();
+                if (userFunc) {
+                    parsedData = userFunc({data: parsedData});
+                }
+
+                if (Utils.missingOrEmpty(parsedData)) return;
+
+                this.eventService.dispatchEvent(<PasteStartEvent> {
+                    type: Events.EVENT_PASTE_START,
+                    api: this.gridOptionsWrapper.getApi(),
+                    columnApi: this.gridOptionsWrapper.getColumnApi(),
+                    source: 'clipboard'
+                });
+
                 let singleCellInClipboard = parsedData.length == 1 && parsedData[0].length == 1;
                 this.rangeController.isMoreThanOneCell() && !singleCellInClipboard ?
-                    this.pasteToRange(data) : this.pasteToSingleCell(data);
+                    this.pasteToRange(parsedData) : this.pasteToSingleCell(parsedData);
 
-                let pasteStartEvent: PasteEndEvent = {
+                this.eventService.dispatchEvent(<PasteEndEvent> {
                     type: Events.EVENT_PASTE_END,
                     api: this.gridOptionsWrapper.getApi(),
                     columnApi: this.gridOptionsWrapper.getColumnApi(),
                     source: 'clipboard'
-                };
-                this.eventService.dispatchEvent(pasteStartEvent);
+                });
             }
         );
     }
 
-    private pasteToRange(data: string) {
-        let clipboardData: any[][] = this.dataToArray(data);
+    private pasteToRange(clipboardData: string[][]) {
 
         // remove extra empty row which is inserted when clipboard has more than one row
         if (clipboardData.length > 1) clipboardData.pop();
@@ -165,16 +169,10 @@ export class ClipboardService implements IClipboardService {
         this.fireRowChanged(updatedRowNodes);
     }
 
-    private pasteToSingleCell(data: string) {
-        if (Utils.missingOrEmpty(data)) { return; }
+    private pasteToSingleCell(parsedData: string[][]) {
 
         let focusedCell = this.focusedCellController.getFocusedCell();
         if (!focusedCell) { return; }
-
-        let parsedData: string[][] = this.dataToArray(data);
-        if (!parsedData) {
-            return;
-        }
 
         // remove last row if empty, excel puts empty last row in
         let lastLine = parsedData[parsedData.length - 1];
