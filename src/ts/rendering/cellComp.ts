@@ -1096,6 +1096,15 @@ export class CellComp extends Component {
     // if we are editing inline, then we don't have the padding in the cell (set in the themes)
     // to allow the text editor full access to the entire cell
     private setInlineEditingClass(): void {
+
+        // ag-cell-inline-editing - appears when user is inline editing
+        // ag-cell-not-inline-editing - appears when user is no inline editing
+        // ag-cell-popup-editing - appears when user is editing cell in popup (appears on the cell, not on the popup)
+
+        // note: one of {ag-cell-inline-editing, ag-cell-not-inline-editing} is always present, they toggle.
+        //       however {ag-cell-popup-editing} shows when popup, so you have both {ag-cell-popup-editing}
+        //       and {ag-cell-not-inline-editing} showing at the same time.
+
         let editingInline = this.editingCell && !this.cellEditorInPopup;
         let popupEditorShowing = this.editingCell && this.cellEditorInPopup;
         _.addOrRemoveCssClass(this.getGui(), "ag-cell-inline-editing", editingInline);
