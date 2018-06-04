@@ -50,6 +50,11 @@ $rowGroupingProperties = [
         'See <a href="../javascript-grid-grouping/#grouping-footers">Grouping Footers</a>.'
     ],
     [
+        'groupIncludeTotalFooter',
+        'Set to true to show a \'grand\' total group footer across all groups.',
+        'See <a href="../javascript-grid-grouping/#grouping-footers">Grouping Footers</a>.'
+    ],
+    [
         'groupSuppressBlankHeader',
         'If true, and showing footer, aggregate data will be displayed at both the header and footer levels always. This stops the possibly undesirable behaviour of the header details \'jumping\' to the footer on expand.'
     ],
