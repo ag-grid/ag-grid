@@ -79,6 +79,10 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
         this.params = params;
 
+        if (this.gridOptionsWrapper.isGroupIncludeTotalFooter()) {
+            this.assignBlankValueToGroupFooterCell(params);
+        }
+
         let embeddedRowMismatch = this.isEmbeddedRowMismatch();
         // This allows for empty strings to appear as groups since
         // it will only return for null or undefined.
@@ -94,6 +98,12 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         this.addCheckboxIfNeeded();
         this.addValueElement();
         this.setupIndent();
+    }
+
+    private assignBlankValueToGroupFooterCell(params: GroupCellRendererParams) {
+        if (!params.value && params.node.level == -1) {
+            params.value = '';
+        }
     }
 
     // if we are doing embedded full width rows, we only show the renderer when

@@ -43,7 +43,6 @@ export class FlattenStage implements IRowNodeStage {
         // don't show total footer when showRootNode is true (i.e. in pivot mode and no groups)
         let includeGroupTotalFooter = !showRootNode && this.gridOptionsWrapper.isGroupIncludeTotalFooter();
         if (includeGroupTotalFooter) {
-            rootNode.groupData = {"ag-Grid-AutoColumn": ''};
             this.ensureFooterNodeExists(rootNode);
             this.addRowNodeToRowsToDisplay(rootNode.sibling, result, nextRowTop, 0);
         }
