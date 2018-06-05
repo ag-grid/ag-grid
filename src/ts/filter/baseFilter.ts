@@ -339,12 +339,14 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values
  */
-export abstract class ComparableBaseFilter<T, P extends IFilterParams, M> extends BaseFilter<T, P, M> {
+export abstract class ComparableBaseFilter<T, P extends IComparableFilterParams, M> extends BaseFilter<T, P, M> {
     @QuerySelector('#filterType')
     private eTypeSelector: HTMLSelectElement;
 
     @QuerySelector('#filterConditionType')
     private eTypeConditionSelector: HTMLSelectElement;
+
+    private suppressAndOrCondition: boolean;
 
     public abstract getApplicableFilterTypes(): string[];
     public abstract filterValues(type:FilterConditionType): T | T[];
@@ -371,7 +373,7 @@ export abstract class ComparableBaseFilter<T, P extends IFilterParams, M> extend
     }
 
     public acceptsBooleanLogic (): boolean{
-        return true;
+        return this.suppressAndOrCondition !== true;
     }
 
     public generateFilterHeader(type:FilterConditionType): string {
@@ -463,7 +465,11 @@ export interface NullComparator {
     greaterThan?: boolean;
 }
 
-export interface IScalarFilterParams extends IFilterParams {
+export interface IComparableFilterParams extends IFilterParams {
+    suppressAndOrCondition: boolean
+}
+
+export interface IScalarFilterParams extends IComparableFilterParams {
     inRangeInclusive?: boolean;
     nullComparator?: NullComparator;
 }

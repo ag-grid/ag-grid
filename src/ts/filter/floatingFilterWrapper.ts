@@ -132,14 +132,16 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
 
     onParentModelChanged(parentModel: M | CombinedFilter<M>): void {
         if (parentModel){
+            let combinedFilter:CombinedFilter<M>= undefined;
             let mainModel:M = null;
             if ((<CombinedFilter<M>>parentModel).operator) {
-                mainModel = (<CombinedFilter<M>>parentModel).main
+                combinedFilter = (<CombinedFilter<M>>parentModel);
+                mainModel = combinedFilter.main
             } else {
                 mainModel = <M>parentModel;
             }
             this.floatingFilterCompPromise.then(floatingFilterComp=> {
-                floatingFilterComp.onParentModelChanged(mainModel);
+                floatingFilterComp.onParentModelChanged(mainModel, combinedFilter);
             });
         }
     }
