@@ -101,6 +101,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     }
 
     private assignBlankValueToGroupFooterCell(params: GroupCellRendererParams) {
+        // this is not ideal, but it was the only way we could get footer working for the root node
         if (!params.value && params.node.level == -1) {
             params.value = '';
         }
