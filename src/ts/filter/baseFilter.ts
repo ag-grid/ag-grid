@@ -15,9 +15,9 @@ export enum FilterConditionType {
 }
 
 export interface CombinedFilter <T> {
-    main: T,
     operator: string,
-    condition: T
+    condition1: T,
+    condition2: T
 }
 
 const DEFAULT_TRANSLATIONS: {[name: string]: string}= {
@@ -170,8 +170,8 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
                 return this.serialize(FilterConditionType.MAIN);
             } else {
                 return {
-                    main: this.serialize(FilterConditionType.MAIN),
-                    condition: this.serialize(FilterConditionType.CONDITION),
+                    condition1: this.serialize(FilterConditionType.MAIN),
+                    condition2: this.serialize(FilterConditionType.CONDITION),
                     operator: this.conditionValue
                 }
             }
@@ -185,8 +185,8 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
             return this.serialize(FilterConditionType.MAIN);
         } else {
             return {
-                main: this.serialize(FilterConditionType.MAIN),
-                condition: this.serialize(FilterConditionType.CONDITION),
+                condition1: this.serialize(FilterConditionType.MAIN),
+                condition2: this.serialize(FilterConditionType.CONDITION),
                 operator: this.conditionValue
             }
         }
@@ -194,12 +194,12 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
 
     public setModel(model: M | CombinedFilter<M>): void {
         if (model) {
-            if (!this.isFilterConditionActive (FilterConditionType.CONDITION)){
+            if (!(<CombinedFilter<M>>model).operator){
                 this.parse (<M>model, FilterConditionType.MAIN);
             } else {
                 let asCombinedFilter = <CombinedFilter<M>>model;
-                this.parse ((asCombinedFilter).main, FilterConditionType.MAIN);
-                this.parse ((asCombinedFilter).condition, FilterConditionType.CONDITION);
+                this.parse ((asCombinedFilter).condition1, FilterConditionType.MAIN);
+                this.parse ((asCombinedFilter).condition2, FilterConditionType.CONDITION);
 
                 this.conditionValue = asCombinedFilter.operator;
             }
@@ -238,9 +238,13 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
             this.eConditionWrapper = _.loadTemplate(this.createConditionTemplate(FilterConditionType.CONDITION));
             this.eFilterBodyWrapper.appendChild(this.eConditionWrapper);
             this.wireQuerySelectors();
-            this.initialiseFilterBodyUi(FilterConditionType.CONDITION);
-            let andButton: HTMLElement = <HTMLElement>this.eConditionWrapper.querySelector('#and');
-            let orButton: HTMLElement = <HTMLElement>this.eConditionWrapper.querySelector('#or');
+            let andButton: HTMLInputElement = <HTMLInputElement>this.eConditionWrapper.querySelector('.and');
+            let orButton: HTMLInputElement = <HTMLInputElement>this.eConditionWrapper.querySelector('.or');
+            this.conditionValue = this.conditionValue == null ? 'AND' : this.conditionValue;
+
+            andButton.checked = this.conditionValue === 'AND';
+            orButton.checked = this.conditionValue === 'OR';
+
             this.addDestroyableEventListener(andButton, 'change', () => {
                 this.conditionValue = 'AND';
                 this.onFilterChanged()
@@ -249,7 +253,7 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
                 this.conditionValue = 'OR';
                 this.onFilterChanged()
             });
-            this.conditionValue = 'AND';
+            this.initialiseFilterBodyUi(FilterConditionType.CONDITION);
         } else if (filterCondition && !this.isFilterActive()) {
             this.eFilterBodyWrapper.removeChild(this.eConditionWrapper);
             this.eConditionWrapper = null;
@@ -267,8 +271,8 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
             this.setModel(casted ? casted.model : null);
         } else {
             let combinedFilter :CombinedFilter<M> = {
-                main: casted.model,
-                condition: this.serialize(FilterConditionType.CONDITION),
+                condition1: casted.model,
+                condition2: this.serialize(FilterConditionType.CONDITION),
                 operator: this.conditionValue
             };
             this.setModel(combinedFilter);
@@ -308,8 +312,8 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
 
     private createConditionTemplate (type:FilterConditionType): string{
         return `<div class="ag-filter-condition">
-            <input type="radio" id="and" name="booleanLogic" value="AND" checked="checked"> AND
-            <input type="radio" id="or" name="booleanLogic" value="OR"> OR
+            <input type="radio" class="and" name="booleanLogic" value="AND" checked="checked"> AND
+            <input type="radio" class="or" name="booleanLogic" value="OR"> OR
             <div>${this.createConditionBody(type)}</div>
         </div>`;
     }
@@ -445,9 +449,11 @@ export abstract class ComparableBaseFilter<T, P extends IComparableFilterParams,
 
     public setFilterType(filterType: string, type:FilterConditionType): void {
         if (type === FilterConditionType.MAIN){
+            if (!this.eTypeSelector) return;
             this.filter = filterType;
             this.eTypeSelector.value = filterType;
         } else {
+            if (!this.eTypeConditionSelector) return;
             this.filterCondition = filterType;
             this.eTypeConditionSelector.value = filterType;
 

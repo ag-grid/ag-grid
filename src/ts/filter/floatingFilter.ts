@@ -72,7 +72,7 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
 
     onParentModelChanged(parentModel: M,combinedFilter?: CombinedFilter<M>): void {
         if (combinedFilter!=null) {
-            this.eColumnFloatingFilter.value = `${this.parseAsText(combinedFilter.main)} ${combinedFilter.operator} ${this.parseAsText(combinedFilter.condition)}`;
+            this.eColumnFloatingFilter.value = `${this.parseAsText(combinedFilter.condition1)} ${combinedFilter.operator} ${this.parseAsText(combinedFilter.condition2)}`;
             this.eColumnFloatingFilter.readOnly = true;
             this.lastKnownModel = null;
             this.eColumnFloatingFilter.title = this.eColumnFloatingFilter.value;
@@ -255,7 +255,7 @@ export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<Serial
     }
 
     parseAsText(model: SerializedNumberFilter): string {
-        if (model.type === 'inRange'){
+        if (model.type && model.type === 'inRange'){
             let number: number = this.asNumber(model.filter);
             let numberTo: number = this.asNumber(model.filterTo);
             return (number ? number + '' : '') +
