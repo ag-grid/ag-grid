@@ -12,7 +12,7 @@ include '../getting-started/header.php';
 If your project does not use one of the JavaScript frameworks that ag-Grid supports, or you are curious to understand how the grid works in its pure form, this guide is for you!
 </p> 
 
-<p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing React project, and configure some of the essential features of it. We will show you some of the fundamentals of the grid (passing properties, using the API, etc).</p>
+<p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing JavaScript project, and configure some of the essential features of it. We will show you some of the fundamentals of the grid (passing properties, using the API, etc).</p>
 
 <h2>The Project Setup</h2>
 
