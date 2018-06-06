@@ -1262,7 +1262,9 @@ export class Utils {
 
         function recursiveSearchNodes(nodes: RowNode[]): void {
             nodes.forEach((node: RowNode) => {
-                if (node.group) {
+
+                // also checking for children for tree data
+                if (node.group || node.hasChildren()) {
                     keyParts.push(node.key);
                     let key = keyParts.join('|');
                     callback(node, key);
