@@ -136,7 +136,7 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
             let mainModel:M = null;
             if ((<CombinedFilter<M>>parentModel).operator) {
                 combinedFilter = (<CombinedFilter<M>>parentModel);
-                mainModel = combinedFilter.main
+                mainModel = combinedFilter.condition1
             } else {
                 mainModel = <M>parentModel;
             }

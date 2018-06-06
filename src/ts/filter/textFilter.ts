@@ -109,6 +109,8 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
     public initialiseFilterBodyUi(type:FilterConditionType) {
         super.initialiseFilterBodyUi(type);
         this.addFilterChangedListener(type);
+        this.setFilter(this.filterConditionText, FilterConditionType.CONDITION);
+        this.setFilterType(this.filterCondition, FilterConditionType.CONDITION);
     }
 
     private addFilterChangedListener(type:FilterConditionType) {
@@ -185,6 +187,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         filter = _.makeNull(filter);
 
         if (type === FilterConditionType.MAIN) {
+            if (!this.eFilterTextField) return;
             if (filter) {
                 this.filterText = this.formatter(filter);
                 this.eFilterTextField.value = filter;
@@ -193,6 +196,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
                 this.eFilterTextField.value = null;
             }
         } else {
+            if (!this.eFilterConditionTextField) return;
             if (filter) {
                 this.filterConditionText = this.formatter(filter);
                 this.eFilterConditionTextField.value = filter;
