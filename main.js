@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.1.0
+// ag-grid-enterprise v17.1.1
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var columnSelectComp_1 = require("./dist/lib/toolPanel/columnsSelect/columnSelectComp");
@@ -99,17 +99,25 @@ var pivotCompFactory_2 = require("./dist/lib/pivotCompFactory");
 var menuItemMapper_1 = require("./dist/lib/menu/menuItemMapper");
 var excelCreator_2 = require("./dist/lib/excelCreator");
 var excelXmlFactory_2 = require("./dist/lib/excelXmlFactory");
-var enterpriseRowModel_1 = require("./dist/lib/rowModels/enterprise/enterpriseRowModel");
+var serverSideRowModel_1 = require("./dist/lib/rowModels/serverSide/serverSideRowModel");
 var columnSelectHeaderComp_1 = require("./dist/lib/toolPanel/columnsSelect/columnSelectHeaderComp");
 var columnContainerComp_1 = require("./dist/lib/toolPanel/columnsSelect/columnContainerComp");
 var horizontalResizeComp_1 = require("./dist/lib/toolPanel/columnsSelect/horizontalResizeComp");
-var rowModelTypes = { viewport: viewportRowModel_2.ViewportRowModel, enterprise: enterpriseRowModel_1.EnterpriseRowModel };
-main_1.Grid.setEnterpriseBeans([toolPanelComp_2.ToolPanelComp, enterpriseMenu_2.EnterpriseMenuFactory, excelCreator_2.ExcelCreator, excelXmlFactory_2.ExcelXmlFactory, rowGroupCompFactory_2.RowGroupCompFactory, pivotCompFactory_2.PivotCompFactory,
+var toolPanelSelectComp_1 = require("./dist/lib/toolPanel/toolPanelSelectComp");
+var toolPanelColumnComp_2 = require("./dist/lib/toolPanel/toolPanelColumnComp");
+var headerColumnDropComp_1 = require("./dist/lib/toolPanel/columnDrop/headerColumnDropComp");
+var rowModelTypes = { viewport: viewportRowModel_2.ViewportRowModel, enterprise: serverSideRowModel_1.ServerSideRowModel };
+main_1.Grid.setEnterpriseBeans([enterpriseMenu_2.EnterpriseMenuFactory, excelCreator_2.ExcelCreator, excelXmlFactory_2.ExcelXmlFactory, rowGroupCompFactory_2.RowGroupCompFactory, pivotCompFactory_2.PivotCompFactory,
     pivotColumnsPanel_2.PivotColumnsPanel, rangeController_2.RangeController, clipboardService_2.ClipboardService, pivotStage_2.PivotStage, pivotColDefService_2.PivotColDefService,
     contextMenu_2.ContextMenuFactory, groupStage_2.GroupStage, aggregationStage_2.AggregationStage, enterpriseBoot_2.EnterpriseBoot, aggFuncService_2.AggFuncService,
-    statusBar_2.StatusBar, licenseManager_2.LicenseManager, md5_2.MD5, menuItemMapper_1.MenuItemMapper], rowModelTypes);
+    licenseManager_2.LicenseManager, md5_2.MD5, menuItemMapper_1.MenuItemMapper], rowModelTypes);
 main_1.Grid.setEnterpriseComponents([
     { componentName: 'AgColumnSelectHeader', theClass: columnSelectHeaderComp_1.ColumnSelectHeaderComp },
     { componentName: 'AgColumnContainer', theClass: columnContainerComp_1.ColumnContainerComp },
-    { componentName: 'AgHorizontalResize', theClass: horizontalResizeComp_1.HorizontalResizeComp }
+    { componentName: 'AgHorizontalResize', theClass: horizontalResizeComp_1.HorizontalResizeComp },
+    { componentName: 'AgToolPanel', theClass: toolPanelComp_2.ToolPanelComp },
+    { componentName: 'AgStatusBar', theClass: statusBar_2.StatusBar },
+    { componentName: 'AgHeaderColumnDrop', theClass: headerColumnDropComp_1.HeaderColumnDropComp },
+    { componentName: 'AgToolPanelColumnComp', theClass: toolPanelColumnComp_2.ToolPanelColumnComp },
+    { componentName: 'AgToolPanelSelectComp', theClass: toolPanelSelectComp_1.ToolPanelSelectComp },
 ]);
