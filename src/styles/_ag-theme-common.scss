@@ -612,6 +612,13 @@
     // Value Set Filter
     ////////////////////////////////////////
     .ag-filter {
+        input[type="radio"] {
+            margin: 0 0 0 4px;
+            width: 12px;
+            height: 17px;
+            vertical-align: top;
+        }
+
         input[type="text"],
         input[type="date"] {
             @include textbox($params);
