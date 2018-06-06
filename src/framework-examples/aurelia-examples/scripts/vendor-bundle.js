@@ -7062,7 +7062,7 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
     }
 
     Conditional.prototype.evaluate = function evaluate(scope, lookupFunctions) {
-      return !!this.condition.evaluate(scope, lookupFunctions) ? this.yes.evaluate(scope, lookupFunctions) : this.no.evaluate(scope, lookupFunctions);
+      return !!this.condition2.evaluate(scope, lookupFunctions) ? this.yes.evaluate(scope, lookupFunctions) : this.no.evaluate(scope, lookupFunctions);
     };
 
     Conditional.prototype.accept = function accept(visitor) {
@@ -7070,8 +7070,8 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
     };
 
     Conditional.prototype.connect = function connect(binding, scope) {
-      this.condition.connect(binding, scope);
-      if (this.condition.evaluate(scope)) {
+      this.condition2.connect(binding, scope);
+      if (this.condition2.evaluate(scope)) {
         this.yes.connect(binding, scope);
       } else {
         this.no.connect(binding, scope);
@@ -7765,7 +7765,7 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
       };
 
       Unparser.prototype.visitConditional = function visitConditional(conditional) {
-        conditional.condition.accept(this);
+        conditional.condition2.accept(this);
         this.write('?');
         conditional.yes.accept(this);
         this.write(':');
@@ -7914,7 +7914,7 @@ define('aurelia-binding',['exports', 'aurelia-logging', 'aurelia-pal', 'aurelia-
     };
 
     ExpressionCloner.prototype.visitConditional = function visitConditional(conditional) {
-      return new Conditional(conditional.condition.accept(this), conditional.yes.accept(this), conditional.no.accept(this));
+      return new Conditional(conditional.condition2.accept(this), conditional.yes.accept(this), conditional.no.accept(this));
     };
 
     ExpressionCloner.prototype.visitAccessThis = function visitAccessThis(access) {
@@ -23912,7 +23912,7 @@ define('aurelia-templating-resources/if',['exports', 'aurelia-templating', 'aure
 
     If.prototype.bind = function bind(bindingContext, overrideContext) {
       _IfCore.prototype.bind.call(this, bindingContext, overrideContext);
-      if (this.condition) {
+      if (this.condition2) {
         this._show();
       } else {
         this._hide();
@@ -23941,8 +23941,8 @@ define('aurelia-templating-resources/if',['exports', 'aurelia-templating', 'aure
         this.animating = true;
         promise.then(function () {
           _this2.animating = false;
-          if (_this2.condition !== _this2.showing) {
-            _this2._update(_this2.condition);
+          if (_this2.condition2 !== _this2.showing) {
+            _this2._update(_this2.condition2);
           }
         });
       }
@@ -24114,7 +24114,7 @@ define('aurelia-templating-resources/else',['exports', 'aurelia-templating', 'au
     Else.prototype.bind = function bind(bindingContext, overrideContext) {
       _IfCore.prototype.bind.call(this, bindingContext, overrideContext);
 
-      if (this.ifVm.condition) {
+      if (this.ifVm.condition2) {
         this._hide();
       } else {
         this._show();
