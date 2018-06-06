@@ -1,6 +1,12 @@
 import {Utils as _} from "../utils";
 import {IFilterParams, IDoesFilterPassParams, SerializedFilter} from "../interfaces/iFilter";
-import {ComparableBaseFilter, BaseFilter, IScalarFilterParams, FilterConditionType} from "./baseFilter";
+import {
+    ComparableBaseFilter,
+    BaseFilter,
+    IScalarFilterParams,
+    FilterConditionType,
+    IComparableFilterParams
+} from "./baseFilter";
 import {QuerySelector} from "../widgets/componentAnnotations";
 
 export interface SerializedTextFilter extends SerializedFilter {
@@ -20,7 +26,7 @@ export interface INumberFilterParams extends IScalarFilterParams {
     debounceMs?: number;
 }
 
-export interface ITextFilterParams extends IFilterParams {
+export interface ITextFilterParams extends IComparableFilterParams {
     textCustomComparator?: TextComparator;
     debounceMs?: number;
     caseSensitive?: boolean;

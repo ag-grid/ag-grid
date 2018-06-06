@@ -3,11 +3,11 @@ import {Component} from "../widgets/component";
 import {IDateComp, IDateParams} from "../rendering/dateComponent";
 import {QuerySelector} from "../widgets/componentAnnotations";
 import {Utils} from "../utils";
-import {BaseFilter, Comparator, FilterConditionType, ScalarBaseFilter} from "./baseFilter";
+import {BaseFilter, Comparator, FilterConditionType, IComparableFilterParams, ScalarBaseFilter} from "./baseFilter";
 import {Autowired} from "../context/context";
 import {ComponentRecipes} from "../components/framework/componentRecipes";
 
-export interface IDateFilterParams extends IFilterParams {
+export interface IDateFilterParams extends IComparableFilterParams {
     comparator?: IDateComparatorFunc;
     browserDatePicker?: boolean;
 }
