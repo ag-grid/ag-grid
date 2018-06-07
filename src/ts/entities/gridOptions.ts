@@ -11,6 +11,7 @@ import {IDateComp} from "../rendering/dateComponent";
 import {IServerSideDatasource} from "../interfaces/iServerSideDatasource";
 import {CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams} from "../exportParams";
 import {
+    BodyScrollEvent,
     CellClickedEvent,
     CellContextMenuEvent,
     CellDoubleClickedEvent,
@@ -413,6 +414,7 @@ export interface GridOptions {
     onRowDragEnd?(event: RowDragEvent): void;
     onPasteStart?(event: PasteStartEvent): void;
     onPasteEnd?(event: PasteEndEvent): void;
+    onBodyScroll?(event: BodyScrollEvent): void;
     // deprecated
     onGridSizeChanged?(event: any): void;
 
