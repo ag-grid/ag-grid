@@ -68,16 +68,14 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         } else {
             this.eFilterTextConditionField = this.queryForHtmlInputElement("#filterConditionText");
             this.addFilterChangedEventListeners(type, this.eFilterTextConditionField, this.eFilterToConditionText);
+
+            this.setFilter(this.filterNumberCondition, FilterConditionType.CONDITION);
+            this.setFilterTo(this.filterNumberConditionTo, FilterConditionType.CONDITION);
+            this.setFilterType(this.filterCondition, FilterConditionType.CONDITION);
         }
     }
 
     private addFilterChangedEventListeners(type:FilterConditionType, filterElement: HTMLInputElement, filterToElement: HTMLInputElement) {
-        if (type === FilterConditionType.MAIN){
-            this.filterNumber = null;
-        } else {
-            this.filterNumberCondition = null;
-        }
-
         let debounceMs = this.getDebounceMs(this.filterParams);
         let toDebounce: () => void = _.debounce(()=>this.onTextFieldsChanged(type, filterElement, filterToElement), debounceMs);
         this.addDestroyableEventListener(filterElement, "input", toDebounce);
@@ -153,9 +151,13 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         }
         if (type === FilterConditionType.MAIN) {
             this.filterNumber = filter;
+
+            if (!this.eFilterTextField) return;
             this.eFilterTextField.value = filter;
         } else {
             this.filterNumberCondition = filter;
+
+            if (!this.eFilterTextConditionField) return;
             this.eFilterTextConditionField.value = filter;
         }
     }
@@ -168,9 +170,13 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         }
         if (type === FilterConditionType.MAIN) {
             this.filterNumberTo = filter;
+
+            if (!this.eFilterToTextField) return;
             this.eFilterToTextField.value = filter;
         } else {
             this.filterNumberConditionTo = filter;
+
+            if (!this.eFilterToConditionText) return;
             this.eFilterToConditionText.value = filter;
         }
     }
@@ -211,6 +217,10 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         this.setFilterType(this.defaultFilter, FilterConditionType.MAIN);
         this.setFilter(null, FilterConditionType.MAIN);
         this.setFilterTo(null, FilterConditionType.MAIN);
+
+        this.setFilterType(this.defaultFilter, FilterConditionType.CONDITION);
+        this.setFilter(null, FilterConditionType.CONDITION);
+        this.setFilterTo(null, FilterConditionType.CONDITION);
     }
 
     public setType(filterType: string, type:FilterConditionType): void {

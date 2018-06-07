@@ -195,6 +195,7 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
     public setModel(model: M | CombinedFilter<M>): void {
         if (model) {
             if (!(<CombinedFilter<M>>model).operator){
+                this.resetState();
                 this.parse (<M>model, FilterConditionType.MAIN);
             } else {
                 let asCombinedFilter = <CombinedFilter<M>>model;
@@ -238,12 +239,7 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
             this.eConditionWrapper = _.loadTemplate(this.createConditionTemplate(FilterConditionType.CONDITION));
             this.eFilterBodyWrapper.appendChild(this.eConditionWrapper);
             this.wireQuerySelectors();
-            let andButton: HTMLInputElement = <HTMLInputElement>this.eConditionWrapper.querySelector('.and');
-            let orButton: HTMLInputElement = <HTMLInputElement>this.eConditionWrapper.querySelector('.or');
-            this.conditionValue = this.conditionValue == null ? 'AND' : this.conditionValue;
-
-            andButton.checked = this.conditionValue === 'AND';
-            orButton.checked = this.conditionValue === 'OR';
+            let {andButton, orButton} = this.refreshOperatorUi();
 
             this.addDestroyableEventListener(andButton, 'change', () => {
                 this.conditionValue = 'AND';
@@ -259,7 +255,20 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
             this.eConditionWrapper = null;
         } else {
             this.refreshFilterBodyUi(FilterConditionType.CONDITION);
+            if (this.eConditionWrapper){
+                this.refreshOperatorUi();
+            }
         }
+    }
+
+    private refreshOperatorUi() {
+        let andButton: HTMLInputElement = <HTMLInputElement>this.eConditionWrapper.querySelector('.and');
+        let orButton: HTMLInputElement = <HTMLInputElement>this.eConditionWrapper.querySelector('.or');
+        this.conditionValue = this.conditionValue == null ? 'AND' : this.conditionValue;
+
+        andButton.checked = this.conditionValue === 'AND';
+        orButton.checked = this.conditionValue === 'OR';
+        return {andButton, orButton};
     }
 
     public onFloatingFilterChanged(change: FloatingFilterChange): boolean {
@@ -312,8 +321,8 @@ export abstract class  BaseFilter<T, P extends IFilterParams, M> extends Compone
 
     private createConditionTemplate (type:FilterConditionType): string{
         return `<div class="ag-filter-condition">
-            <label style="display: inline" for="andId"> AND</label><input id="andId" type="radio" class="and" name="booleanLogic" value="AND" checked="checked">
-            <label style="display: inline" for="orId">OR</label><input id="orId" type="radio" class="or" name="booleanLogic" value="OR">
+            <input id="andId" type="radio" class="and" name="booleanLogic" value="AND" checked="checked" /><label style="display: inline" for="andId">AND</label>
+            <input id="orId" type="radio" class="or" name="booleanLogic" value="OR" /><label style="display: inline" for="orId">OR</label>
             <div>${this.createConditionBody(type)}</div>
         </div>`;
     }
@@ -403,10 +412,11 @@ export abstract class ComparableBaseFilter<T, P extends IComparableFilterParams,
     }
 
     public initialiseFilterBodyUi(type:FilterConditionType) {
-        this.setFilterType(this.filter, type);
         if (type === FilterConditionType.MAIN) {
+            this.setFilterType(this.filter, type);
             this.addDestroyableEventListener(this.eTypeSelector, "change", ()=>this.onFilterTypeChanged (type));
         } else {
+            this.setFilterType(this.filterCondition, type);
             this.addDestroyableEventListener(this.eTypeConditionSelector, "change", ()=>this.onFilterTypeChanged (type));
         }
     }
@@ -449,12 +459,14 @@ export abstract class ComparableBaseFilter<T, P extends IComparableFilterParams,
 
     public setFilterType(filterType: string, type:FilterConditionType): void {
         if (type === FilterConditionType.MAIN){
-            if (!this.eTypeSelector) return;
             this.filter = filterType;
+
+            if (!this.eTypeSelector) return;
             this.eTypeSelector.value = filterType;
         } else {
-            if (!this.eTypeConditionSelector) return;
             this.filterCondition = filterType;
+
+            if (!this.eTypeConditionSelector) return;
             this.eTypeConditionSelector.value = filterType;
 
         }

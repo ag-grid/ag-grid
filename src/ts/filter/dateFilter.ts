@@ -45,8 +45,9 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     private eDateToConditionPanel: HTMLElement;
 
     private dateFrom: Date;
-
     private dateTo: Date;
+    private dateFromCondition: Date;
+    private dateToCondition: Date;
 
     public modelFromFloatingFilter(from: string): SerializedDateFilter {
         return {
@@ -76,6 +77,16 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     public initialiseFilterBodyUi(type:FilterConditionType): void {
         super.initialiseFilterBodyUi(type);
         this.createComponents(type);
+
+        if (type === FilterConditionType.MAIN){
+            this.setDateFrom_date(this.dateFrom, FilterConditionType.MAIN);
+            this.setDateTo_date(this.dateTo, FilterConditionType.MAIN);
+            this.setFilterType(this.filterCondition, FilterConditionType.MAIN);
+        } else {
+            this.setDateFrom_date(this.dateFromCondition, FilterConditionType.CONDITION);
+            this.setDateTo_date(this.dateToCondition, FilterConditionType.CONDITION);
+            this.setFilterType(this.filterCondition, FilterConditionType.CONDITION);
+        }
     }
 
     private createComponents (type:FilterConditionType){
@@ -105,14 +116,14 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
                 }
             }
         });
-        this.componentRecipes.newDateComponent(dateComponentParams).then(dateFromComponent => {
+        this.componentRecipes.newDateComponent(dateComponentParams).then(dateComponent => {
             if (type === FilterConditionType.MAIN) {
-                this.dateFromComponent = dateFromComponent;
+                this.dateFromComponent = dateComponent;
             } else {
-                this.dateFromConditionComponent = dateFromComponent;
+                this.dateFromConditionComponent = dateComponent;
             }
 
-            let dateFromElement = dateFromComponent.getGui();
+            let dateFromElement = dateComponent.getGui();
 
             if (type === FilterConditionType.MAIN) {
                 this.eDateFromPanel.appendChild(dateFromElement);
@@ -129,19 +140,28 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     }
 
     private onDateChanged(type:FilterConditionType): void {
-        this.dateFrom = DateFilter.removeTimezone(this.dateFromComponent.getDate());
-        this.dateTo = DateFilter.removeTimezone(this.dateToComponent.getDate());
+        if (type === FilterConditionType.MAIN){
+            this.dateFrom = DateFilter.removeTimezone(this.dateFromComponent.getDate());
+            this.dateTo = DateFilter.removeTimezone(this.dateToComponent.getDate());
+        } else {
+            this.dateFromCondition = DateFilter.removeTimezone(this.dateFromComponent.getDate());
+            this.dateToCondition = DateFilter.removeTimezone(this.dateToComponent.getDate());
+        }
         this.onFilterChanged();
     }
 
-    public refreshFilterBodyUi(): void {
-        let visible = this.filter === BaseFilter.IN_RANGE;
-        Utils.setVisible(this.eDateToPanel, visible);
-
-        if (this.dateFromConditionComponent) {
-            let visible = this.filterCondition === BaseFilter.IN_RANGE;
-            Utils.setVisible(this.eDateToConditionPanel, visible);
+    public refreshFilterBodyUi(type:FilterConditionType): void {
+        let panel: HTMLElement;
+        if (type === FilterConditionType.MAIN){
+            panel = this.eDateToPanel;
+        } else {
+            panel = this.eDateToConditionPanel;
         }
+
+        if (!panel) return;
+
+        let visible = this.filterCondition === BaseFilter.IN_RANGE;
+        Utils.setVisible(panel, visible);
     }
 
     public comparator(): Comparator<Date> {
@@ -199,25 +219,57 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         return this.filter;
     }
 
-    public setDateFrom(date: string): void {
-        this.dateFrom = Utils.parseYyyyMmDdToDate(date, "-");
-        this.dateFromComponent.setDate(this.dateFrom);
+    public setDateFrom(date: string, type:FilterConditionType): void {
+        let parsedDate = Utils.parseYyyyMmDdToDate(date, "-");
+        this.setDateFrom_date(parsedDate, type);
     }
 
-    public setDateTo(date: string): void {
-        this.dateTo = Utils.parseYyyyMmDdToDate(date, "-");
-        this.dateToComponent.setDate(this.dateTo);
+    private setDateFrom_date(parsedDate:Date, type: FilterConditionType) {
+        if (type === FilterConditionType.MAIN) {
+            this.dateFrom = parsedDate;
+
+            if (!this.dateFromComponent) return;
+            this.dateFromComponent.setDate(this.dateFrom);
+        } else {
+            this.dateFromCondition = parsedDate;
+
+            if (!this.dateFromConditionComponent) return;
+            this.dateFromConditionComponent.setDate(this.dateFromCondition);
+        }
+    }
+
+    public setDateTo(date: string, type:FilterConditionType): void {
+        let parsedDate = Utils.parseYyyyMmDdToDate(date, "-");
+        this.setDateTo_date(parsedDate, type);
+    }
+
+    private setDateTo_date(parsedDate:Date, type: FilterConditionType) {
+        if (type === FilterConditionType.MAIN){
+            this.dateTo = parsedDate;
+
+            if (!this.dateToComponent) return;
+            this.dateToComponent.setDate(this.dateTo);
+        } else {
+            this.dateToCondition = parsedDate;
+
+            if (!this.dateToConditionComponent) return;
+            this.dateToConditionComponent.setDate(this.dateToCondition);
+        }
     }
 
     public resetState(): void {
-        this.setDateFrom(null);
-        this.setDateTo(null);
+        this.setDateFrom(null, FilterConditionType.MAIN);
+        this.setDateTo(null, FilterConditionType.MAIN);
+        this.setFilterType(this.defaultFilter, FilterConditionType.MAIN);
+
+        this.setDateFrom(null, FilterConditionType.CONDITION);
+        this.setDateTo(null, FilterConditionType.CONDITION);
         this.setFilterType(this.defaultFilter, FilterConditionType.MAIN);
     }
 
-    public parse(model: SerializedDateFilter): void {
-        this.setDateFrom(model.dateFrom);
-        this.setDateTo(model.dateTo);
+    public parse(model: SerializedDateFilter, type:FilterConditionType): void {
+        this.setDateFrom(model.dateFrom, type);
+        this.setDateTo(model.dateTo, type);
         this.setFilterType(model.type, FilterConditionType.MAIN);
     }
 
