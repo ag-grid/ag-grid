@@ -8,11 +8,6 @@ include '../documentation-main/documentation_header.php';
 
 <h1 class="heading-enterprise"> Server-side Row Model </h1>
 
-
-<!--<h2>Infinite Scroll</h2>-->
-<!---->
-<?//= example('Infinite Scroll', 'infinite-scroll', 'generated', array("enterprise" => 1)) ?>
-
 <p class="lead">
     The Server-side Row Model is arguably the most powerful of the row models in ag-Grid
     and presents the ultimate 'big data' user experience, allowing the user to
@@ -172,6 +167,29 @@ export interface ColumnVO {
 <p>
     For this reason it is best use Server-side row model on data that is not changing, or a snapshot of the data.
 </p>
+
+
+<h2>Example - Infinite Scroll</h2>
+
+<p>
+    The simplest use case for the Server-side Row Model is to perform infinite scrolling without grouping.
+</p>
+
+<p>
+    The example below demonstrates the following:
+</p>
+
+<ul class="content">
+    <li><b>Enabling Server-side Row Model: </b> via the grid options property: <code>rowModelType = 'serverSide'</code>.</li>
+    <li><b>Lazy-loading:</b> with the grid options property: <code>cacheBlockSize = 100</code> data will be fetched
+        in blocks of 100 rows at a time.
+    </li>
+    <li><b>Auto Purge Cache:</b> to limit the amount of data cached in the grid you can set <code>maxBlocksInCache</code>
+    via the gridOptions.</li>
+</ul>
+
+<?= example('Infinite Scroll', 'infinite-scroll', 'generated', array("enterprise" => 1)) ?>
+
 
 <h2>Example - Pre-defined Grouping - Mocked Server</h2>
 
