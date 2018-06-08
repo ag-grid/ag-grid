@@ -306,6 +306,7 @@ export class SetFloatingFilterComp extends InputTextFloatingFilterComp<Serialize
     }
 
     asFloatingFilterText(parentModel: string[] | SerializedSetFilter): string {
+        this.eColumnFloatingFilter.readOnly = true;
         if(!parentModel) return '';
 
         // also supporting old filter model for backwards compatibility

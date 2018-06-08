@@ -130,8 +130,8 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         this.eFilterTextField.focus();
     }
 
-    public filterValues(): string {
-        return this.filterText;
+    public filterValues(type:FilterConditionType): string {
+        return type === FilterConditionType.MAIN ? this.filterText : this.filterConditionText;
     }
 
     public individualFilterPasses (params: IDoesFilterPassParams, type:FilterConditionType): boolean {
