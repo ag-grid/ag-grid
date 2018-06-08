@@ -270,7 +270,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     public parse(model: SerializedDateFilter, type:FilterConditionType): void {
         this.setDateFrom(model.dateFrom, type);
         this.setDateTo(model.dateTo, type);
-        this.setFilterType(model.type, FilterConditionType.MAIN);
+        this.setFilterType(model.type, type);
     }
 
     public setType(filterType: string, type:FilterConditionType): void {
