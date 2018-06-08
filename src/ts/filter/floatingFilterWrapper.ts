@@ -21,11 +21,12 @@ export interface IFloatingFilterWrapperParams<M, F extends FloatingFilterChange,
     suppressFilterButton: boolean;
 }
 
-export interface IFloatingFilterWrapper <M> {
+export interface IFloatingFilterWrapper<M> {
     onParentModelChanged(parentModel: M): void;
 }
 
-export interface IFloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends IFloatingFilterWrapper<M>, IComponent<P> { }
+export interface IFloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends IFloatingFilterWrapper<M>, IComponent<P> {
+}
 
 export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends Component implements IFloatingFilterWrapperComp<M, F, PC, P> {
 
@@ -64,6 +65,7 @@ export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, P
     }
 
     abstract onParentModelChanged(parentModel: M): void;
+
     abstract enrichBody(body: HTMLElement): void;
 
     private setupWidth(): void {
@@ -105,7 +107,7 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
     }
 
     enrichBody(body: HTMLElement): void {
-        this.floatingFilterCompPromise.then(floatingFilterComp=> {
+        this.floatingFilterCompPromise.then(floatingFilterComp => {
             let floatingFilterBody: HTMLElement = <HTMLElement>body.querySelector('.ag-floating-filter-body');
             let floatingFilterCompUi = floatingFilterComp.getGui();
             if (this.suppressFilterButton) {
@@ -131,19 +133,17 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
     }
 
     onParentModelChanged(parentModel: M | CombinedFilter<M>): void {
-        if (parentModel){
-            let combinedFilter:CombinedFilter<M>= undefined;
-            let mainModel:M = null;
-            if ((<CombinedFilter<M>>parentModel).operator) {
-                combinedFilter = (<CombinedFilter<M>>parentModel);
-                mainModel = combinedFilter.condition1
-            } else {
-                mainModel = <M>parentModel;
-            }
-            this.floatingFilterCompPromise.then(floatingFilterComp=> {
-                floatingFilterComp.onParentModelChanged(mainModel, combinedFilter);
-            });
+        let combinedFilter: CombinedFilter<M> = undefined;
+        let mainModel: M = null;
+        if (parentModel && (<CombinedFilter<M>>parentModel).operator) {
+            combinedFilter = (<CombinedFilter<M>>parentModel);
+            mainModel = combinedFilter.condition1
+        } else {
+            mainModel = <M>parentModel;
         }
+        this.floatingFilterCompPromise.then(floatingFilterComp => {
+            floatingFilterComp.onParentModelChanged(mainModel, combinedFilter);
+        });
     }
 
     private showParentFilter() {
