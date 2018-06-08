@@ -152,15 +152,18 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
 
     public refreshFilterBodyUi(type:FilterConditionType): void {
         let panel: HTMLElement;
+        let filterTypeValue: string;
         if (type === FilterConditionType.MAIN){
             panel = this.eDateToPanel;
+            filterTypeValue = this.filter;
         } else {
             panel = this.eDateToConditionPanel;
+            filterTypeValue = this.filterCondition;
         }
 
         if (!panel) return;
 
-        let visible = this.filterCondition === BaseFilter.IN_RANGE;
+        let visible = filterTypeValue === BaseFilter.IN_RANGE;
         Utils.setVisible(panel, visible);
     }
 
