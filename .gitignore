@@ -9,8 +9,6 @@ npm-debug.log
 update_from_source.sh
 .DS_Store
 
-aot/
-dist/
 module.tgz
 /src/*.ngsummary.json
 /src/*.ngfactory.ts
