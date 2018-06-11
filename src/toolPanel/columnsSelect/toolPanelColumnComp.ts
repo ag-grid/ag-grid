@@ -39,7 +39,6 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem{
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('context') private context: Context;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;

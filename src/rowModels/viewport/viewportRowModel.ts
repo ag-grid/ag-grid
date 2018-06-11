@@ -142,6 +142,16 @@ export class ViewportRowModel implements IRowModel {
         return this.rowNodesByIndex[rowIndex];
     }
 
+    public getRowNode(id: string): RowNode {
+        let result: RowNode = null;
+        this.forEachNode(rowNode => {
+            if(rowNode.id === id) {
+                result = rowNode;
+            }
+        });
+        return result;
+    }
+
     public getPageFirstRow(): number {
         return 0;
     }
@@ -191,11 +201,17 @@ export class ViewportRowModel implements IRowModel {
         if (firstNodeOutOfRange || lastNodeOutOfRange) { return []; }
 
         let result: RowNode[] = [];
-        for (let i = firstIndex; i<=lastIndex; i++) {
+
+        let startIndex = firstIndex <= lastIndex ? firstIndex : lastIndex;
+        let endIndex = firstIndex <= lastIndex ? lastIndex : firstIndex;
+
+        for (let i = startIndex; i<=endIndex; i++) {
             result.push(this.rowNodesByIndex[i]);
         }
+
         return result;
     }
+
 
     public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
         let callbackCount = 0;

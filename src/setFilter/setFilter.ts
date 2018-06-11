@@ -390,6 +390,10 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[] | 
         this.model.setModel(null, true);
         this.selectEverything();
     }
+
+    isFilterConditionActive(): boolean {
+        return false;
+    }
 }
 
 class ModelWrapper implements VirtualListModel {

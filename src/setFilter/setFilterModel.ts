@@ -8,8 +8,7 @@ import {
     Utils,
     Column, ValueFormatterService, _
 } from "ag-grid/main";
-import {Constants, ExternalPromise, InMemoryRowModel, IRowModel, Promise} from 'ag-grid';
-
+import {Constants, ExternalPromise, ClientSideRowModel, IRowModel, Promise} from 'ag-grid';
 
 // we cannot have 'null' as a key in a JavaScript map,
 // it needs to be a string. so we use this string for
@@ -25,7 +24,7 @@ export class SetFilterModel {
     private colDef: ColDef;
     private filterParams: ISetFilterParams;
 
-    private inMemoryRowModel: InMemoryRowModel;
+    private clientSideRowModel: ClientSideRowModel;
     private valueGetter: any;
     private allUniqueValues: string[]; // all values in the table
     private availableUniqueValues: string[]; // all values not filtered by other rows
@@ -71,8 +70,8 @@ export class SetFilterModel {
         this.valueFormatterService = valueFormatterService;
         this.column = column;
 
-        if (rowModel.getType()===Constants.ROW_MODEL_TYPE_IN_MEMORY) {
-            this.inMemoryRowModel = <InMemoryRowModel> rowModel;
+        if (rowModel.getType()===Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            this.clientSideRowModel = <ClientSideRowModel> rowModel;
         }
 
         this.filterParams = this.colDef.filterParams ? <ISetFilterParams> this.colDef.filterParams : <ISetFilterParams>{};
@@ -224,12 +223,12 @@ export class SetFilterModel {
         let uniqueCheck = <any>{};
         let result = <any>[];
 
-        if (!this.inMemoryRowModel) {
+        if (!this.clientSideRowModel) {
             console.error('ag-Grid: Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values');
             return [];
         }
 
-        this.inMemoryRowModel.forEachLeafNode( (node: any)=> {
+        this.clientSideRowModel.forEachLeafNode( (node: any)=> {
             // only pull values from rows that have data. this means we skip filler group nodes.
             if (!node.data) { return; }
 

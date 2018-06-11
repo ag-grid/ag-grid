@@ -4,8 +4,8 @@ import {
     ColumnVO,
     Context,
     EventService,
-    IEnterpriseCache,
-    IEnterpriseDatasource,
+    IServerSideCache,
+    IServerSideDatasource,
     LoggerFactory,
     NumberSequence,
     PostConstruct,
@@ -13,43 +13,47 @@ import {
     RowNode,
     RowNodeCache,
     RowNodeCacheParams,
-    RowBounds
+    RowBounds,
+    GridOptionsWrapper,
+    RowDataUpdatedEvent,
+    Events
 } from "ag-grid";
-import {EnterpriseBlock} from "./enterpriseBlock";
+import {ServerSideBlock} from "./serverSideBlock";
 
-export interface EnterpriseCacheParams extends RowNodeCacheParams {
+export interface ServerSideCacheParams extends RowNodeCacheParams {
     rowGroupCols: ColumnVO[];
     valueCols: ColumnVO[];
     pivotCols: ColumnVO[];
     pivotMode: boolean;
-    datasource: IEnterpriseDatasource;
+    datasource: IServerSideDatasource;
     lastAccessedSequence: NumberSequence;
 }
 
-export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCacheParams> implements IEnterpriseCache {
+export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCacheParams> implements IServerSideCache {
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     // this will always be zero for the top level cache only,
     // all the other ones change as the groups open and close
     private displayIndexStart = 0;
     private displayIndexEnd = 0; // not sure if setting this one to zero is necessary
 
-    private parentRowNode: RowNode;
+    private readonly parentRowNode: RowNode;
 
     private cacheTop = 0;
     private cacheHeight: number;
 
     private blockHeights: {[blockId: number]: number} = {};
 
-    constructor(cacheParams: EnterpriseCacheParams, parentRowNode: RowNode) {
+    constructor(cacheParams: ServerSideCacheParams, parentRowNode: RowNode) {
         super(cacheParams);
         this.parentRowNode = parentRowNode;
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('EnterpriseCache');
+        this.logger = loggerFactory.create('ServerSideCache');
     }
 
     @PostConstruct
@@ -63,7 +67,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
         // we return null if row not found
         let result: RowBounds;
         let blockFound = false;
-        let lastBlock: EnterpriseBlock;
+        let lastBlock: ServerSideBlock;
 
         this.forEachBlockInOrder( block => {
             if (blockFound) return;
@@ -97,14 +101,14 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
             }
         }
 
-        //TODO: what about purged blocks
+        // NOTE: what about purged blocks
 
         this.logger.log(`getRowBounds(${index}), result = ${result}`);
 
         return result;
     }
 
-    protected destroyBlock(block: EnterpriseBlock): void {
+    protected destroyBlock(block: ServerSideBlock): void {
         super.destroyBlock(block);
     }
 
@@ -114,7 +118,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
         // we return null if row not found
         let result: number;
         let blockFound = false;
-        let lastBlock: EnterpriseBlock;
+        let lastBlock: ServerSideBlock;
 
         this.forEachBlockInOrder( block => {
             if (blockFound) return;
@@ -151,7 +155,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
             result = lastAllowedIndex;
         }
 
-        //TODO: purged
+        //NOTE: purged
 
         this.logger.log(`getRowIndexAtPixel(${pixel}) result = ${result}`);
 
@@ -170,7 +174,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
 
         let lastBlockId = -1;
 
-        this.forEachBlockInOrder( (currentBlock: EnterpriseBlock, blockId: number)=> {
+        this.forEachBlockInOrder( (currentBlock: ServerSideBlock, blockId: number)=> {
 
             // if we skipped blocks, then we need to skip the row indexes. we assume that all missing
             // blocks are made up of closed RowNodes only (if they were groups), as we never expire from
@@ -214,7 +218,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
     }
 
     // gets called in a) init() above and b) by the grid
-    public getRow(displayRowIndex: number): RowNode {
+    public getRow(displayRowIndex: number, dontCreateBlock = false): RowNode {
 
         // this can happen if asking for a row that doesn't exist in the model,
         // eg if a cell range is selected, and the user filters so rows no longer
@@ -222,9 +226,9 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
         if (!this.isDisplayIndexInCache(displayRowIndex)) { return null; }
 
         // if we have the block, then this is the block
-        let block: EnterpriseBlock = null;
+        let block: ServerSideBlock = null;
         // this is the last block that we have BEFORE the right block
-        let beforeBlock: EnterpriseBlock = null;
+        let beforeBlock: ServerSideBlock = null;
 
         this.forEachBlockInOrder( currentBlock => {
             if (currentBlock.isDisplayIndexInBlock(displayRowIndex)) {
@@ -235,6 +239,11 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
                 beforeBlock = currentBlock;
             }
         });
+
+        // when we are moving rows around, we don't want to trigger loads
+        if (_.missing(block) && dontCreateBlock) {
+            return null;
+        }
 
         // if block not found, we need to load it
         if (_.missing(block)) {
@@ -284,9 +293,9 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
         return rowNode;
     }
 
-    private createBlock(blockNumber: number, displayIndex: number, nextRowTop: {value: number}): EnterpriseBlock {
+    private createBlock(blockNumber: number, displayIndex: number, nextRowTop: {value: number}): ServerSideBlock {
 
-        let newBlock = new EnterpriseBlock(blockNumber, this.parentRowNode, this.cacheParams, this);
+        let newBlock = new ServerSideBlock(blockNumber, this.parentRowNode, this.cacheParams, this);
         this.context.wireBean(newBlock);
 
         let displayIndexSequence = new NumberSequence(displayIndex);
@@ -307,25 +316,25 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
         return displayIndex >= this.displayIndexStart && displayIndex < this.displayIndexEnd;
     }
 
-    public getChildCache(keys: string[]): EnterpriseCache {
+    public getChildCache(keys: string[]): ServerSideCache {
         if (_.missingOrEmpty(keys)) { return this; }
 
         let nextKey = keys[0];
 
-        let nextEnterpriseCache: EnterpriseCache = null;
+        let nextServerSideCache: ServerSideCache = null;
 
         this.forEachBlockInOrder(block => {
             // callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number
             block.forEachNodeShallow( rowNode => {
                 if (rowNode.key === nextKey) {
-                    nextEnterpriseCache = <EnterpriseCache> rowNode.childrenCache;
+                    nextServerSideCache = <ServerSideCache> rowNode.childrenCache;
                 }
             }, new NumberSequence(), this.getVirtualRowCount());
         });
 
-        if (nextEnterpriseCache) {
+        if (nextServerSideCache) {
             let keyListForNextLevel = keys.slice(1, keys.length);
-            return nextEnterpriseCache.getChildCache(keyListForNextLevel);
+            return nextServerSideCache.getChildCache(keyListForNextLevel);
         } else {
             return null;
         }
@@ -336,6 +345,194 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
         return pixel >= this.cacheTop  && pixel < (this.cacheTop + this.cacheHeight);
     }
 
+    public removeFromCache(items: any[]): void {
 
+        // create map of id's for quick lookup
+        let itemsToDeleteById: {[id: string]: any} = {};
+        let idForNodeFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
+        items.forEach( item => {
+            let id = idForNodeFunc(item);
+            itemsToDeleteById[id] = item;
+        });
+
+        let deletedCount = 0;
+
+        this.forEachBlockInOrder( block => {
+            let startRow = block.getStartRow();
+            let endRow = block.getEndRow();
+
+            let deletedCountFromThisBlock = 0;
+            for (let rowIndex = startRow; rowIndex<endRow; rowIndex++) {
+
+                let rowNode = block.getRowUsingLocalIndex(rowIndex, true);
+                if (!rowNode) { continue; }
+
+                let deleteThisRow = !!itemsToDeleteById[rowNode.id];
+                if (deleteThisRow) {
+                    deletedCountFromThisBlock++;
+                    deletedCount++;
+                    block.setDirty();
+                    rowNode.clearRowTop();
+                    continue;
+                }
+
+                // if rows were deleted, then we need to move this row node to
+                // it's new location
+                if (deletedCount>0) {
+                    block.setDirty();
+                    let newIndex = rowIndex - deletedCount;
+
+                    let blockId = Math.floor(newIndex / this.cacheParams.blockSize);
+                    let blockToInsert = this.getBlock(blockId);
+                    if (blockToInsert) {
+                        blockToInsert.setRowNode(newIndex, rowNode);
+                    }
+                }
+            }
+
+            if (deletedCountFromThisBlock>0) {
+                for (let i = deletedCountFromThisBlock; i>0; i--) {
+                    block.setBlankRowNode(endRow-i);
+                }
+            }
+        });
+
+        if (this.isMaxRowFound()) {
+            this.hack_setVirtualRowCount(this.getVirtualRowCount() - deletedCount);
+        }
+
+        this.onCacheUpdated();
+
+        let event: RowDataUpdatedEvent = {
+            type: Events.EVENT_ROW_DATA_UPDATED,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi()
+        };
+
+        this.eventService.dispatchEvent(event);
+    }
+
+    public addToCache(items: any[], indexToInsert: number): void {
+        let newNodes: RowNode[] = [];
+        this.forEachBlockInReverseOrder( block => {
+            let pageEndRow = block.getEndRow();
+
+            // if the insertion is after this page, then this page is not impacted
+            if (pageEndRow <= indexToInsert) {
+                return;
+            }
+
+            this.moveItemsDown(block, indexToInsert, items.length);
+            let newNodesThisPage = this.insertItems(block, indexToInsert, items);
+            newNodesThisPage.forEach(rowNode => newNodes.push(rowNode));
+        });
+
+        if (this.isMaxRowFound()) {
+            this.hack_setVirtualRowCount(this.getVirtualRowCount() + items.length);
+        }
+
+        this.onCacheUpdated();
+
+        let event: RowDataUpdatedEvent = {
+            type: Events.EVENT_ROW_DATA_UPDATED,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi()
+        };
+
+        this.eventService.dispatchEvent(event);
+    }
+
+    private moveItemsDown(block: ServerSideBlock, moveFromIndex: number, moveCount: number): void {
+        let startRow = block.getStartRow();
+        let endRow = block.getEndRow();
+        let indexOfLastRowToMove = moveFromIndex + moveCount;
+
+        // all rows need to be moved down below the insertion index
+        for (let currentRowIndex = endRow - 1; currentRowIndex >= startRow; currentRowIndex--) {
+            // don't move rows at or before the insertion index
+            if (currentRowIndex < indexOfLastRowToMove) {
+                continue;
+            }
+
+            let indexOfNodeWeWant = currentRowIndex - moveCount;
+            let nodeForThisIndex = this.getRow(indexOfNodeWeWant, true);
+
+            if (nodeForThisIndex) {
+                block.setRowNode(currentRowIndex, nodeForThisIndex);
+            } else {
+                block.setBlankRowNode(currentRowIndex);
+                block.setDirty();
+            }
+        }
+    }
+
+    private insertItems(block: ServerSideBlock, indexToInsert: number, items: any[]): RowNode[] {
+        let pageStartRow = block.getStartRow();
+        let pageEndRow = block.getEndRow();
+        let newRowNodes: RowNode[] = [];
+
+        // next stage is insert the rows into this page, if applicable
+        for (let index = 0; index < items.length; index++) {
+            let rowIndex = indexToInsert + index;
+
+            let currentRowInThisPage = rowIndex >= pageStartRow && rowIndex < pageEndRow;
+
+            if (currentRowInThisPage) {
+                let dataItem = items[index];
+                let newRowNode = block.setNewData(rowIndex, dataItem);
+                newRowNodes.push(newRowNode);
+            }
+        }
+
+        return newRowNodes;
+    }
+
+    public refreshCache(sortModel: {colId: string, sort: string}[], rowGroupColIds: string[]) {
+        let shouldPurgeCache = false;
+        let sortColIds = sortModel.map(sm => sm.colId);
+
+        this.forEachBlockInOrder(block => {
+
+            if (block.isGroupLevel()) {
+                let groupField = block.getGroupField();
+                let rowGroupBlock = rowGroupColIds.indexOf(groupField) > -1;
+                let sortingByGroup = sortColIds.indexOf(groupField) > -1;
+
+                if (rowGroupBlock && sortingByGroup) {
+                    // need to refresh block using updated new sort model
+                    block.updateSortModel(sortModel);
+                    shouldPurgeCache = true;
+                }
+
+                let callback = (rowNode: RowNode) => {
+                    let nextCache = (<ServerSideCache> rowNode.childrenCache);
+                    if (nextCache) nextCache.refreshCache(sortModel, rowGroupColIds);
+                };
+
+                block.forEachNodeShallow(callback, new NumberSequence(), this.getVirtualRowCount());
+
+            } else {
+                // blocks containing leaf nodes need to be refreshed with new sort model
+                block.updateSortModel(sortModel);
+                shouldPurgeCache = true;
+            }
+        });
+
+        let groupSortRemoved = this.groupSortRemoved(sortModel, rowGroupColIds);
+        if (groupSortRemoved) {
+            this.cacheParams.sortModel = sortModel;
+        }
+
+        if (shouldPurgeCache || groupSortRemoved) {
+            this.purgeCache();
+        }
+    }
+
+    private groupSortRemoved(sortModel: { colId: string; sort: string }[], rowGroupColIds: string[]): boolean {
+        let cacheSortModelChanged = this.cacheParams.sortModel !== sortModel;
+        let existingSortCols = this.cacheParams.sortModel.map((sm: { colId: string, sort: string }) => sm.colId);
+        let existingGroupColumn = rowGroupColIds.some(v=> existingSortCols.indexOf(v) >= 0);
+
+        return cacheSortModelChanged && existingGroupColumn;
+    }
 }
-

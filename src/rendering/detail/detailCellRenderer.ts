@@ -42,7 +42,6 @@ export class DetailCellRenderer extends Component {
             this.createDetailsGrid(params);
             this.registerDetailWithMaster(params.node);
             this.loadRowData(params);
-            this.setupGrabMouseWheelEvent();
 
             setTimeout(() => this.detailGridOptions.api.doLayout(), 0);
         } else {
@@ -58,20 +57,6 @@ export class DetailCellRenderer extends Component {
         if (_.exists(theme)) {
             _.addCssClass(this.eDetailGrid, theme);
         }
-    }
-
-    private setupGrabMouseWheelEvent(): void {
-
-        if (this.gridOptionsWrapper.isNativeScroll()) { return; }
-
-        let mouseWheelListener = (event: WheelEvent) => {
-            event.stopPropagation();
-        };
-
-        // event is 'mousewheel' for IE9, Chrome, Safari, Opera
-        this.eDetailGrid.addEventListener('mousewheel', mouseWheelListener);
-        // event is 'DOMMouseScroll' Firefox
-        this.eDetailGrid.addEventListener('DOMMouseScroll', mouseWheelListener);
     }
 
     private registerDetailWithMaster(rowNode: RowNode): void {

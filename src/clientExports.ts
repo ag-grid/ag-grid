@@ -1,5 +1,4 @@
 import {ColumnSelectComp} from "./toolPanel/columnsSelect/columnSelectComp";
-import {ToolPanelColumnComp} from "./toolPanel/columnsSelect/toolPanelColumnComp";
 import {ToolPanelGroupComp} from "./toolPanel/columnsSelect/toolPanelGroupComp";
 import {AggregationStage} from "./rowStages/aggregationStage";
 import {GroupStage} from "./rowStages/groupStage";
@@ -21,7 +20,7 @@ import {RichSelectRow} from "./rendering/richSelect/richSelectRow";
 import {VirtualList} from "./rendering/virtualList";
 import {AbstractColumnDropPanel} from "./toolPanel/columnDrop/abstractColumnDropPanel";
 import {PivotColumnsPanel} from "./toolPanel/columnDrop/pivotColumnsPanel";
-import {ColumnPanel} from "./toolPanel/columnPanel";
+import {ToolPanelColumnComp} from "./toolPanel/toolPanelColumnComp";
 import {LicenseManager} from "./licenseManager";
 import {PivotStage} from "./rowStages/pivotStage";
 import {PivotColDefService} from "./rowStages/pivotColDefService";
@@ -35,7 +34,6 @@ import {PivotCompFactory} from "./pivotCompFactory";
 import {RowGroupCompFactory} from "./rowGroupCompFactory";
 import {ExcelCreator} from "./excelCreator";
 import {ExcelXmlFactory} from "./excelXmlFactory";
-
 
 export function populateClientExports(exports: any): void {
 
@@ -70,9 +68,9 @@ export function populateClientExports(exports: any): void {
     exports.RowGroupColumnsPanel = RowGroupColumnsPanel;
     exports.ValuesColumnPanel = ValuesColumnPanel;
 
-    exports.ToolPanelComp = ColumnPanel;
+    exports.ToolPanelColumnComp = ToolPanelColumnComp;
 
-    exports.ColumnSelectPanel = ColumnSelectComp;
+    exports.ColumnSelectComp = ColumnSelectComp;
     exports.RenderedColumn = ToolPanelColumnComp;
     exports.RenderedGroup = ToolPanelGroupComp;
 
