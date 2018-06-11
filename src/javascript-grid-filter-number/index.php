@@ -51,6 +51,8 @@ colDef: {
         will be immediately triggered</li>
     <li><code>nullComparator:</code> If specified, it will be used to specify if null values should be included when filtering.
     See: <a href="../javascript-grid-filtering#nullFiltering">Null filtering</a></li>
+    <li><code>suppressAndOrCondition</code> If true, the filter won't offer the ability to add an additional filter
+        condition</li>
 </ul>
 
 <p>The parameters for the filter must be specified in the property filterParams inside the column definition object</p>
@@ -100,6 +102,33 @@ ageFilterComponent.onFilterChanged()</snippet></p>
     <li><code>filter:</code> The actual filter number to apply, or the start of the range if the filter type is inRange</li>
     <li><code>filterTo:</code> The end range of the filter if the filter type is inRange, otherwise has no effect.</li>
 </ul>
+
+<h3>Combined filter AND/OR</h3>
+
+<p>The number filter supports specifying an additional filter condition, if that is the case, then the filter model looks like
+    this</p>
+
+<p><snippet>
+{
+    condition1:{
+        type:'lessThan',
+        filter:'30'
+    },
+    condition2:{
+        type:'greaterThan',
+        filter:'60'
+    },
+    // one of 'AND' / 'OR'
+    operator:'AND'
+
+)
+</snippet></p>
+
+<p>Note that in this scenario, <code>condition1</code> and <code>condition2</code> each contains the individual model for
+    the filter condition and <code>operator</code> takes one of 'AND' or 'OR'</p>
+
+<p>It can be forced for a column to only ever have one condition for filtering by passing to the column <code>
+    filterParams.suppressAndOrCondition = true</code></p>
 
 <h2>Floating Number Filter</h2>
 <p>
