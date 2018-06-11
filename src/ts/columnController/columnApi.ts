@@ -1,6 +1,6 @@
 import {ColDef, ColGroupDef} from "../entities/colDef";
 import {ColumnGroupChild} from "../entities/columnGroupChild";
-import {ColumnController} from "./columnController";
+import {ColumnController, ColumnState} from "./columnController";
 import {OriginalColumnGroup} from "../entities/originalColumnGroup";
 import {ColumnGroup} from "../entities/columnGroup";
 import {Column} from "../entities/column";
@@ -20,8 +20,8 @@ export class ColumnApi {
     public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string { return this.columnController.getDisplayNameForColumnGroup(columnGroup, location); }
 
     public getColumn(key: any): Column { return this.columnController.getPrimaryColumn(key); }
-    public setColumnState(columnState: any): boolean { return this.columnController.setColumnState(columnState, 'api'); }
-    public getColumnState(): any[] { return this.columnController.getColumnState(); }
+    public setColumnState(columnState: ColumnState[]): boolean { return this.columnController.setColumnState(columnState, 'api'); }
+    public getColumnState(): ColumnState[] { return this.columnController.getColumnState(); }
     public resetColumnState(): void { this.columnController.resetColumnState('api'); }
     public getColumnGroupState(): {groupId: string, open: boolean}[] {return this.columnController.getColumnGroupState();}
     public setColumnGroupState(stateItems: ({groupId: string, open: boolean})[]): void {this.columnController.setColumnGroupState(stateItems, 'api');}
@@ -110,11 +110,11 @@ export class ColumnApi {
         this.columnController.setColumnVisible(colId, !hide, 'api');
     }
 
-    public setState(columnState: any): boolean {
+    public setState(columnState: ColumnState[]): boolean {
         console.error('ag-Grid: setState is deprecated, use setColumnState');
         return this.setColumnState(columnState);
     }
-    public getState(): any[] {
+    public getState(): ColumnState[] {
         console.error('ag-Grid: getState is deprecated, use getColumnState');
         return this.getColumnState();
     }

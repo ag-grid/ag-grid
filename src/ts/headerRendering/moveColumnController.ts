@@ -16,9 +16,10 @@ export class MoveColumnController implements DropListener {
 
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+
+    private gridPanel: GridPanel;
 
     private needToMoveLeft = false;
     private needToMoveRight = false;
@@ -38,10 +39,14 @@ export class MoveColumnController implements DropListener {
 
     private eContainer: HTMLElement;
 
-    public constructor(pinned: string, eContainer: HTMLElement) {
+    constructor(pinned: string, eContainer: HTMLElement) {
         this.pinned = pinned;
         this.eContainer = eContainer;
         this.centerContainer = !_.exists(pinned);
+    }
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
     }
 
     @PostConstruct

@@ -16,7 +16,6 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 @Bean('navigationService')
 export class NavigationService {
 
-    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
@@ -26,10 +25,15 @@ export class NavigationService {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private scrollWidth: number;
+    private gridPanel: GridPanel;
 
     @PostConstruct
     private init(): void {
         this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
+    }
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
     }
 
     public handlePageScrollingKey(event: KeyboardEvent): boolean {
@@ -93,8 +97,8 @@ export class NavigationService {
 
     private onPageDown(gridCell: GridCellDef): void {
 
-        let viewport: HTMLElement = this.gridPanel.getPrimaryScrollViewport();
-        let pixelsInOnePage = viewport.offsetHeight;
+        let scrollPosition = this.gridPanel.getVScrollPosition();
+        let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
 
         if (this.gridPanel.isHorizontalScrollShowing()) {
             pixelsInOnePage -= this.scrollWidth;
@@ -102,7 +106,7 @@ export class NavigationService {
 
         let pagingPixelOffset = this.paginationProxy.getPixelOffset();
 
-        let currentPageBottomPixel = viewport.scrollTop + pixelsInOnePage;
+        let currentPageBottomPixel = scrollPosition.top + pixelsInOnePage;
         let currentPageBottomRow = this.paginationProxy.getRowIndexAtPixel(currentPageBottomPixel + pagingPixelOffset);
         let scrollIndex = currentPageBottomRow;
 
@@ -120,8 +124,8 @@ export class NavigationService {
 
     private onPageUp(gridCell: GridCellDef): void {
 
-        let viewport: HTMLElement = this.gridPanel.getPrimaryScrollViewport();
-        let pixelsInOnePage = viewport.offsetHeight;
+        let scrollPosition = this.gridPanel.getVScrollPosition();
+        let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
 
         if (this.gridPanel.isHorizontalScrollShowing()) {
             pixelsInOnePage -= this.scrollWidth;
@@ -129,7 +133,7 @@ export class NavigationService {
 
         let pagingPixelOffset = this.paginationProxy.getPixelOffset();
 
-        let currentPageTopPixel = viewport.scrollTop;
+        let currentPageTopPixel = scrollPosition.top;
         let currentPageTopRow = this.paginationProxy.getRowIndexAtPixel(currentPageTopPixel + pagingPixelOffset);
         let scrollIndex = currentPageTopRow;
 

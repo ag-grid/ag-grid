@@ -1,4 +1,3 @@
-
 import {Autowired, Bean, Context, Optional, PostConstruct} from "../context/context";
 import {ColumnApi} from "../columnController/columnApi";
 import {ColumnController} from "../columnController/columnController";
@@ -22,10 +21,8 @@ import {StylingService} from "../styling/stylingService";
 import {ColumnHoverService} from "./columnHoverService";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {PaginationProxy} from "../rowModels/paginationProxy";
-import {ComponentRecipes} from "../components/framework/componentRecipes";
 import {AnimationFrameService} from "../misc/animationFrameService";
 import {ComponentResolver} from "../components/framework/componentResolver";
-import {_} from "../utils";
 import {DragAndDropService} from "../dragAndDrop/dragAndDropService";
 import {SortController} from "../sortController";
 import {FilterManager} from "../filter/filterManager";
@@ -40,7 +37,6 @@ import {HeightScaler} from "./heightScaler";
 export class Beans {
 
     @Autowired('paginationProxy') public paginationProxy: PaginationProxy;
-    @Autowired('gridPanel') public gridPanel: GridPanel;
     @Autowired('context') public context: Context;
     @Autowired('columnApi') public columnApi: ColumnApi;
     @Autowired('gridApi') public gridApi: GridApi;
@@ -71,12 +67,16 @@ export class Beans {
     @Autowired('filterManager') public filterManager: FilterManager;
     @Autowired('heightScaler') public heightScaler: HeightScaler;
 
-    public forPrint: boolean;
     public doingMasterDetail: boolean;
+
+    public gridPanel: GridPanel;
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
+    }
 
     @PostConstruct
     private postConstruct(): void {
-        this.forPrint = this.gridOptionsWrapper.isForPrint();
         this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
     }
 }

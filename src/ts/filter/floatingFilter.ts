@@ -12,6 +12,7 @@ import {Constants} from "../constants";
 import {Column} from "../entities/column";
 import {GridApi} from "../gridApi";
 import {SerializedSetFilter} from "../interfaces/iSerializedSetFilter";
+import {CombinedFilter} from "./baseFilter";
 
 export interface FloatingFilterChange {
 }
@@ -26,7 +27,7 @@ export interface IFloatingFilterParams<M, F extends FloatingFilterChange> {
 }
 
 export interface IFloatingFilter<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> {
-    onParentModelChanged(parentModel: M): void;
+    onParentModelChanged(parentModel: M, combinedModel?:CombinedFilter<M>): void;
 }
 
 export interface IFloatingFilterComp<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> extends IFloatingFilter<M, F, P>, IComponent<P> {
@@ -61,13 +62,26 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
         if (columnDef.filterParams && columnDef.filterParams.filterOptions && columnDef.filterParams.filterOptions.length === 1 && columnDef.filterParams.filterOptions[0] === 'inRange') {
             this.eColumnFloatingFilter.readOnly = true;
         }
+
     }
 
     abstract asParentModel(): M;
 
     abstract asFloatingFilterText(parentModel: M): string;
+    abstract parseAsText(model: M): string;
 
-    onParentModelChanged(parentModel: M): void {
+    onParentModelChanged(parentModel: M,combinedFilter?: CombinedFilter<M>): void {
+        if (combinedFilter!=null) {
+            this.eColumnFloatingFilter.value = `${this.parseAsText(combinedFilter.condition1)} ${combinedFilter.operator} ${this.parseAsText(combinedFilter.condition2)}`;
+            this.eColumnFloatingFilter.readOnly = true;
+            this.lastKnownModel = null;
+            this.eColumnFloatingFilter.title = this.eColumnFloatingFilter.value;
+            this.eColumnFloatingFilter.style.cursor = 'default';
+            return;
+        } else {
+            this.eColumnFloatingFilter.readOnly = false;
+        }
+
         if (this.equalModels(this.lastKnownModel, parentModel)) {
             // ensure column floating filter text is blanked out when both ranges are empty
             if(!this.lastKnownModel && !parentModel) {
@@ -80,6 +94,7 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
         if (incomingTextValue === this.eColumnFloatingFilter.value) { return; }
 
         this.eColumnFloatingFilter.value = incomingTextValue;
+        this.eColumnFloatingFilter.title = ''
     }
 
     syncUpWithParentFilter(e: KeyboardEvent): void {
@@ -132,6 +147,10 @@ export class TextFloatingFilterComp extends InputTextFloatingFilterComp<Serializ
             filter: this.eColumnFloatingFilter.value,
             filterType: 'text'
         };
+    }
+
+    parseAsText(model: SerializedTextFilter): string {
+        return this.asFloatingFilterText(model);
     }
 }
 
@@ -217,27 +236,35 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
 
 export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<SerializedNumberFilter, IFloatingFilterParams<SerializedNumberFilter, BaseFloatingFilterChange<SerializedNumberFilter>>> {
 
-    asFloatingFilterText(parentModel: SerializedNumberFilter): string {
-        let rawParentModel = this.currentParentModel();
-        if (parentModel == null && rawParentModel == null) { return ''; }
-        if (parentModel == null && rawParentModel != null && rawParentModel.type !== 'inRange') {
+    asFloatingFilterText(toParse: SerializedNumberFilter): string {
+        let currentParentModel = this.currentParentModel();
+        if (toParse == null && currentParentModel == null) { return ''; }
+        if (toParse == null && currentParentModel != null && currentParentModel.type !== 'inRange') {
             this.eColumnFloatingFilter.readOnly = false;
             return '';
         }
 
-        if (rawParentModel != null && rawParentModel.type === 'inRange') {
+        if (currentParentModel != null && currentParentModel.type === 'inRange') {
             this.eColumnFloatingFilter.readOnly = true;
-            let number: number = this.asNumber(rawParentModel.filter);
-            let numberTo: number = this.asNumber(rawParentModel.filterTo);
+            return this.parseAsText(currentParentModel);
+        }
+
+        this.eColumnFloatingFilter.readOnly = false;
+        return this.parseAsText(toParse);
+
+    }
+
+    parseAsText(model: SerializedNumberFilter): string {
+        if (model.type && model.type === 'inRange'){
+            let number: number = this.asNumber(model.filter);
+            let numberTo: number = this.asNumber(model.filterTo);
             return (number ? number + '' : '') +
                 '-' +
                 (numberTo ? numberTo + '' : '');
         }
 
-        let number: number = this.asNumber(parentModel.filter);
-        this.eColumnFloatingFilter.readOnly = false;
+        let number: number = this.asNumber(model.filter);
         return number != null ? number + '' : '';
-
     }
 
     asParentModel(): SerializedNumberFilter {
@@ -279,6 +306,7 @@ export class SetFloatingFilterComp extends InputTextFloatingFilterComp<Serialize
     }
 
     asFloatingFilterText(parentModel: string[] | SerializedSetFilter): string {
+        this.eColumnFloatingFilter.readOnly = true;
         if(!parentModel) return '';
 
         // also supporting old filter model for backwards compatibility
@@ -288,6 +316,10 @@ export class SetFloatingFilterComp extends InputTextFloatingFilterComp<Serialize
 
         let arrayToDisplay = values.length > 10 ? values.slice(0, 10).concat('...') : values;
         return `(${values.length}) ${arrayToDisplay.join(",")}`;
+    }
+
+    parseAsText(model: SerializedSetFilter): string {
+        return this.asFloatingFilterText(model);
     }
 
     asParentModel(): SerializedSetFilter {
@@ -320,6 +352,10 @@ export class ReadModelAsStringFloatingFilterComp extends InputTextFloatingFilter
 
     asFloatingFilterText(parentModel: string): string {
         return parentModel;
+    }
+
+    parseAsText(model: string): string {
+        return model;
     }
 
     asParentModel(): string {

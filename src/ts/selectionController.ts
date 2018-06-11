@@ -11,7 +11,7 @@ import {IRowModel} from "./interfaces/iRowModel";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {PostConstruct} from "./context/context";
 import {Constants} from "./constants";
-import {InMemoryRowModel} from "./rowModels/inMemory/inMemoryRowModel";
+import {ClientSideRowModel} from "./rowModels/clientSide/clientSideRowModel";
 import {ColumnApi} from "./columnController/columnApi";
 import {GridApi} from "./gridApi";
 
@@ -88,11 +88,11 @@ export class SelectionController {
 
     // should only be called if groupSelectsChildren=true
     public updateGroupsFromChildrenSelections(): void {
-        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_IN_MEMORY) {
+        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             console.warn('updateGroupsFromChildrenSelections not available when rowModel is not normal');
         }
-        let inMemoryRowModel = <InMemoryRowModel> this.rowModel;
-        inMemoryRowModel.getTopLevelNodes().forEach( (rowNode: RowNode) => {
+        let clientSideRowModel = <ClientSideRowModel> this.rowModel;
+        clientSideRowModel.getTopLevelNodes().forEach( (rowNode: RowNode) => {
             rowNode.depthFirstSearch( (rowNode)=> {
                 if (rowNode.group) {
                     rowNode.calculateSelectedFromChildren();
@@ -184,13 +184,13 @@ export class SelectionController {
     // where groups don't actually appear in the selection normally.
     public getBestCostNodeSelection() {
 
-        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_IN_MEMORY) {
+        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             console.warn('getBestCostNodeSelection is only avilable when using normal row model');
         }
 
-        let inMemoryRowModel = <InMemoryRowModel> this.rowModel;
+        let clientSideRowModel = <ClientSideRowModel> this.rowModel;
 
-        let topLevelNodes = inMemoryRowModel.getTopLevelNodes();
+        let topLevelNodes = clientSideRowModel.getTopLevelNodes();
 
         if (topLevelNodes===null) {
             console.warn('selectAll not available doing rowModel=virtual');
@@ -237,15 +237,15 @@ export class SelectionController {
     public deselectAllRowNodes(justFiltered = false) {
 
         let callback = (rowNode: RowNode) => rowNode.selectThisNode(false);
-        let rowModelInMemory = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_IN_MEMORY;
+        let rowModelClientSide = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
 
         if (justFiltered) {
-            if (!rowModelInMemory) {
+            if (!rowModelClientSide) {
                 console.error('ag-Grid: selecting just filtered only works with In Memory Row Model');
                 return;
             }
-            let inMemoryRowModel = <InMemoryRowModel> this.rowModel;
-            inMemoryRowModel.forEachNodeAfterFilter(callback);
+            let clientSideRowModel = <ClientSideRowModel> this.rowModel;
+            clientSideRowModel.forEachNodeAfterFilter(callback);
         } else {
             _.iterateObject(this.selectedNodes, (id: string, rowNode: RowNode) => {
                 // remember the reference can be to null, as we never 'delete' from the map
@@ -258,7 +258,7 @@ export class SelectionController {
         }
 
         // the above does not clean up the parent rows if they are selected
-        if (rowModelInMemory && this.groupSelectsChildren) {
+        if (rowModelClientSide && this.groupSelectsChildren) {
             this.updateGroupsFromChildrenSelections();
         }
 
@@ -272,21 +272,21 @@ export class SelectionController {
     }
 
     public selectAllRowNodes(justFiltered = false) {
-        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_IN_MEMORY) {
+        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             throw `selectAll only available with normal row model, ie not ${this.rowModel.getType()}`;
         }
 
-        let inMemoryRowModel = <InMemoryRowModel> this.rowModel;
+        let clientSideRowModel = <ClientSideRowModel> this.rowModel;
         let callback = (rowNode: RowNode) => rowNode.selectThisNode(true);
 
         if (justFiltered) {
-            inMemoryRowModel.forEachNodeAfterFilter(callback);
+            clientSideRowModel.forEachNodeAfterFilter(callback);
         } else {
-            inMemoryRowModel.forEachNode(callback);
+            clientSideRowModel.forEachNode(callback);
         }
 
         // the above does not clean up the parent rows if they are selected
-        if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_IN_MEMORY && this.groupSelectsChildren) {
+        if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_CLIENT_SIDE && this.groupSelectsChildren) {
             this.updateGroupsFromChildrenSelections();
         }
 

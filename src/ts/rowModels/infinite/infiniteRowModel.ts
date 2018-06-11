@@ -14,7 +14,7 @@ import {InfiniteCache, InfiniteCacheParams} from "./infiniteCache";
 import {BeanStub} from "../../context/beanStub";
 import {RowNodeCache} from "../cache/rowNodeCache";
 import {RowNodeBlockLoader} from "../cache/rowNodeBlockLoader";
-import {RowDataTransaction} from "../inMemory/inMemoryRowModel";
+import {RowDataTransaction} from "../clientSide/clientSideRowModel";
 import {GridApi} from "../../gridApi";
 import {ColumnApi} from "../../columnController/columnApi";
 
@@ -259,6 +259,16 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
 
     public getRow(rowIndex: number): RowNode {
         return this.infiniteCache ? this.infiniteCache.getRow(rowIndex) : null;
+    }
+
+    public getRowNode(id: string): RowNode {
+        let result: RowNode = null;
+        this.forEachNode(rowNode => {
+            if(rowNode.id === id) {
+                result = rowNode;
+            }
+        });
+        return result;
     }
 
     public forEachNode(callback: (rowNode: RowNode, index: number)=> void): void {

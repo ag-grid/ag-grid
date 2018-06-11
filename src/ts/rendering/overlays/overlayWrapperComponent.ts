@@ -63,13 +63,13 @@ export class OverlayWrapperComponent extends Component implements IOverlayWrappe
 
     public hideOverlay(eOverlayWrapper: HTMLElement): void {
         _.removeAllChildren(eOverlayWrapper);
-        eOverlayWrapper.style.display = 'none';
+        _.setVisible(eOverlayWrapper, false);
     }
 
     private showOverlay(eOverlayWrapper: HTMLElement, overlay: HTMLElement): void {
         if (overlay) {
             _.removeAllChildren(eOverlayWrapper);
-            eOverlayWrapper.style.display = '';
+            _.setVisible(eOverlayWrapper, true);
             eOverlayWrapper.appendChild(overlay);
         } else {
             console.warn('ag-Grid: unknown overlay');

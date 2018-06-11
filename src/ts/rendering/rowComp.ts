@@ -241,18 +241,16 @@ export class RowComp extends Component {
     }
 
     private getInitialRowTopStyle() {
-        let rowTopStyle = '';
-        let setRowTop = !this.beans.forPrint && !this.beans.gridOptionsWrapper.isAutoHeight();
-        if (setRowTop) {
-            // if sliding in, we take the old row top. otherwise we just set the current row top.
-            let pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
-            let afterPaginationPixels = this.applyPaginationOffset(pixels);
-            let afterScalingPixels = this.beans.heightScaler.getRealPixelPosition(afterPaginationPixels);
+        // if sliding in, we take the old row top. otherwise we just set the current row top.
+        let pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
+        let afterPaginationPixels = this.applyPaginationOffset(pixels);
+        let afterScalingPixels = this.beans.heightScaler.getRealPixelPosition(afterPaginationPixels);
 
-            // if not setting row top, then below is empty string
-            rowTopStyle = `transform: translateY(${afterScalingPixels}px); `;
+        if (this.beans.gridOptionsWrapper.isSuppressRowTransform()) {
+            return `top: ${afterScalingPixels}px; `;
+        } else {
+            return `transform: translateY(${afterScalingPixels}px); `;
         }
-        return rowTopStyle;
     }
 
     private getRowBusinessKey(): string {
@@ -340,12 +338,10 @@ export class RowComp extends Component {
         let centerCols = this.beans.columnController.getAllDisplayedCenterVirtualColumnsForRow(this.rowNode);
         this.createRowContainer(this.bodyContainerComp, centerCols, eRow => this.eBodyRow = eRow);
 
-        if (!this.beans.forPrint) {
-            let leftCols = this.beans.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
-            let rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
-            this.createRowContainer(this.pinnedRightContainerComp, rightCols, eRow => this.ePinnedRightRow = eRow);
-            this.createRowContainer(this.pinnedLeftContainerComp, leftCols, eRow => this.ePinnedLeftRow = eRow);
-        }
+        let leftCols = this.beans.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
+        let rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
+        this.createRowContainer(this.pinnedRightContainerComp, rightCols, eRow => this.ePinnedRightRow = eRow);
+        this.createRowContainer(this.pinnedLeftContainerComp, leftCols, eRow => this.ePinnedLeftRow = eRow);
     }
 
     private createFullWidthRows(type: string, name: string): void {
@@ -388,26 +384,11 @@ export class RowComp extends Component {
                 null, type, name,
                 (eRow: HTMLElement) => {
                     this.eFullWidthRow = eRow;
-                    // and fake the mouse wheel for the fullWidth container
-                    if (!this.beans.forPrint) {
-                        this.addMouseWheelListenerToFullWidthRow();
-                    }
                 },
                 (cellRenderer: ICellRendererComp) => {
                     this.fullWidthRowComponent = cellRenderer;
                 });
         }
-    }
-
-    private addMouseWheelListenerToFullWidthRow(): void {
-
-        if (this.beans.gridOptionsWrapper.isNativeScroll()) { return; }
-
-        let mouseWheelListener = this.beans.gridPanel.genericMouseWheelListener.bind(this.beans.gridPanel);
-        // IE9, Chrome, Safari, Opera
-        this.addDestroyableEventListener(this.eFullWidthRow, 'mousewheel', mouseWheelListener);
-        // Firefox
-        this.addDestroyableEventListener(this.eFullWidthRow, 'DOMMouseScroll', mouseWheelListener);
     }
 
     private setAnimateFlags(animateIn: boolean): void {
@@ -1198,7 +1179,12 @@ export class RowComp extends Component {
 
         // step 2 - listen for changes on row node (which any eRow can trigger)
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_MOUSE_ENTER, ()=> {
-            _.addCssClass(eRow, 'ag-row-hover');
+            // if hover turned off, we don't add the class. we do this here so that if the application
+            // toggles this property mid way, we remove the hover form the last row, but we stop
+            // adding hovers from that point onwards.
+            if (!this.beans.gridOptionsWrapper.isSuppressRowHoverHighlight()) {
+                _.addCssClass(eRow, 'ag-row-hover');
+            }
         });
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_MOUSE_LEAVE, ()=> {
             _.removeCssClass(eRow, 'ag-row-hover');
@@ -1317,10 +1303,6 @@ export class RowComp extends Component {
     }
 
     private onTopChanged(): void {
-        // top is not used in forPrint, as the rows are just laid out naturally
-        let doNotSetRowTop = this.beans.forPrint || this.beans.gridOptionsWrapper.isAutoHeight();
-        if (doNotSetRowTop) { return; }
-
         this.setRowTop(this.rowNode.rowTop);
     }
 
@@ -1349,7 +1331,11 @@ export class RowComp extends Component {
             let afterScalingPixels = this.beans.heightScaler.getRealPixelPosition(afterPaginationPixels);
 
             let topPx = afterScalingPixels + "px";
-            this.eAllRowContainers.forEach( row => row.style.transform = `translateY(${topPx})` );
+            if (this.beans.gridOptionsWrapper.isSuppressRowTransform()) {
+                this.eAllRowContainers.forEach( row => row.style.top = `${topPx}` );
+            } else {
+                this.eAllRowContainers.forEach( row => row.style.transform = `translateY(${topPx})` );
+            }
         }
     }
 

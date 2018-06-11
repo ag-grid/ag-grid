@@ -19,7 +19,6 @@ export class HeaderContainer {
     @Autowired('$scope') private $scope: any;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
 
@@ -30,6 +29,8 @@ export class HeaderContainer {
 
     private pinned: string;
 
+    private scrollWidth: number;
+
     private dropTarget: DropTarget;
 
     constructor(eContainer: HTMLElement, eViewport: HTMLElement, pinned: string) {
@@ -38,13 +39,18 @@ export class HeaderContainer {
         this.eViewport = eViewport;
     }
 
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.setupDragAndDrop(gridPanel);
+    }
+
     public forEachHeaderElement(callback: (renderedHeaderElement: Component)=>void): void {
         this.headerRowComps.forEach( headerRowComp => headerRowComp.forEachHeaderElement(callback) );
     }
 
     @PostConstruct
     private init(): void {
-        this.setupDragAndDrop();
+        this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
+
         // if value changes, then if not pivoting, we at least need to change the label eg from sum() to avg(),
         // if pivoting, then the columns have changed
         this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
@@ -68,24 +74,40 @@ export class HeaderContainer {
     }
 
     private onColumnResized(): void {
-        this.setWidthIfPinnedContainer();
+        this.setWidthOfPinnedContainer();
     }
 
     private onDisplayedColumnsChanged(): void {
-        this.setWidthIfPinnedContainer();
+        this.setWidthOfPinnedContainer();
     }
 
     private onScrollVisibilityChanged(): void {
-        this.setWidthIfPinnedContainer();
+        this.setWidthOfPinnedContainer();
     }
 
-    private setWidthIfPinnedContainer(): void {
-        if (this.pinned === Column.PINNED_LEFT) {
-            let pinnedLeftWidthWithScroll = this.scrollVisibleService.getPinnedLeftWithScrollWidth();
-            this.eContainer.style.width = pinnedLeftWidthWithScroll + 'px';
-        } else if (this.pinned === Column.PINNED_RIGHT) {
-            let pinnedRightWidthWithScroll = this.scrollVisibleService.getPinnedRightWithScrollWidth();
-            this.eContainer.style.width = pinnedRightWidthWithScroll + 'px';
+    private setWidthOfPinnedContainer(): void {
+
+        let pinningLeft = this.pinned === Column.PINNED_LEFT;
+        let pinningRight = this.pinned === Column.PINNED_RIGHT;
+
+        if (pinningLeft || pinningRight) {
+
+            // size to fit all columns
+            let width = pinningLeft ?
+                this.columnController.getPinnedLeftContainerWidth()
+                : this.columnController.getPinnedRightContainerWidth();
+
+            // if there is a scroll showing (and taking up space, so Windows, and not iOS)
+            // in the body, then we add extra space to keep header aligned with the body,
+            // as body width fits the cols and the scrollbar
+            let addPaddingForScrollbar = pinningLeft ?
+                this.scrollVisibleService.isLeftVerticalScrollShowing()
+                : this.scrollVisibleService.isRightVerticalScrollShowing();
+            if (addPaddingForScrollbar) {
+                width += this.scrollWidth;
+            }
+
+            this.eContainer.style.width = width + 'px';
         }
     }
 
@@ -105,10 +127,11 @@ export class HeaderContainer {
         this.onGridColumnsChanged();
     }
 
-    private setupDragAndDrop(): void {
+    private setupDragAndDrop(gridComp: GridPanel): void {
         let dropContainer = this.eViewport ? this.eViewport : this.eContainer;
         let bodyDropTarget = new BodyDropTarget(this.pinned, dropContainer);
-        this.context.wireBean(bodyDropTarget );
+        this.context.wireBean(bodyDropTarget);
+        bodyDropTarget.registerGridComp(gridComp);
     }
 
     private removeHeaderRowComps(): void {

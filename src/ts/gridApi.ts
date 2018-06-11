@@ -1,6 +1,5 @@
 import {CsvCreator} from "./csvCreator";
 import {RowRenderer} from "./rendering/rowRenderer";
-import {HeaderRenderer} from "./headerRendering/headerRenderer";
 import {FilterManager} from "./filter/filterManager";
 import {ColumnController} from "./columnController/columnController";
 import {ColumnApi} from "./columnController/columnApi";
@@ -32,24 +31,26 @@ import {IFilterComp} from "./interfaces/iFilter";
 import {CsvExportParams} from "./exportParams";
 import {ExcelExportParams, IExcelCreator} from "./interfaces/iExcelCreator";
 import {IDatasource} from "./rowModels/iDatasource";
-import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
+import {IServerSideDatasource} from "./interfaces/iServerSideDatasource";
 import {PaginationProxy} from "./rowModels/paginationProxy";
-import {IEnterpriseRowModel} from "./interfaces/iEnterpriseRowModel";
 import {
-    BatchTransactionItem,
-    InMemoryRowModel, RefreshModelParams, RowDataTransaction,
+    ClientSideRowModel,
+    RefreshModelParams,
+    RowDataTransaction,
     RowNodeTransaction
-} from "./rowModels/inMemory/inMemoryRowModel";
-import {ImmutableService} from "./rowModels/inMemory/immutableService";
+} from "./rowModels/clientSide/clientSideRowModel";
+import {ImmutableService} from "./rowModels/clientSide/immutableService";
 import {ValueCache} from "./valueService/valueCache";
 import {AlignedGridsService} from "./alignedGridsService";
 import {PinnedRowModel} from "./rowModels/pinnedRowModel";
 import {AgEvent, ColumnEventType} from "./events";
 import {IToolPanel} from "./interfaces/iToolPanel";
-import {GridOptions} from "./entities/gridOptions";
 import {IContextMenuFactory} from "./interfaces/iContextMenuFactory";
 import {ICellRendererComp} from "./rendering/cellRenderers/iCellRenderer";
 import {ICellEditorComp} from "./rendering/cellEditors/iCellEditor";
+import {HeaderRootComp} from "./headerRendering/headerRootComp";
+import {AnimationFrameService} from "./misc/animationFrameService";
+import {IServerSideRowModel} from "./interfaces/iServerSideRowModel";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -92,12 +93,10 @@ export class GridApi {
     @Optional('excelCreator') private excelCreator: IExcelCreator;
     @Autowired('gridCore') private gridCore: GridCore;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('headerRenderer') private headerRenderer: HeaderRenderer;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
     @Autowired('eventService') private eventService: EventService;
@@ -116,24 +115,36 @@ export class GridApi {
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Optional('toolPanelComp') private toolPanelComp: IToolPanel;
+    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
 
-    private inMemoryRowModel: InMemoryRowModel;
+    private gridPanel: GridPanel;
+    private headerRootComp: HeaderRootComp;
+
+    private clientSideRowModel: ClientSideRowModel;
     private infinitePageRowModel: InfiniteRowModel;
-    private enterpriseRowModel: IEnterpriseRowModel;
+    private serverSideRowModel: IServerSideRowModel;
 
     private detailGridInfoMap: {[id: string]: DetailGridInfo} = {};
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
+    }
+
+    public registerHeaderRootComp(headerRootComp: HeaderRootComp): void {
+        this.headerRootComp = headerRootComp;
+    }
 
     @PostConstruct
     private init(): void {
         switch (this.rowModel.getType()) {
-            case Constants.ROW_MODEL_TYPE_IN_MEMORY:
-                this.inMemoryRowModel = <InMemoryRowModel> this.rowModel;
+            case Constants.ROW_MODEL_TYPE_CLIENT_SIDE:
+                this.clientSideRowModel = <ClientSideRowModel> this.rowModel;
                 break;
             case Constants.ROW_MODEL_TYPE_INFINITE:
                 this.infinitePageRowModel = <InfiniteRowModel> this.rowModel;
                 break;
-            case Constants.ROW_MODEL_TYPE_ENTERPRISE:
-                this.enterpriseRowModel = <IEnterpriseRowModel> this.rowModel;
+            case Constants.ROW_MODEL_TYPE_SERVER_SIDE:
+                this.serverSideRowModel = <IServerSideRowModel> this.rowModel;
                 break;
         }
     }
@@ -184,12 +195,18 @@ export class GridApi {
         this.excelCreator.exportDataAsExcel(params)
     }
 
-    public setEnterpriseDatasource(datasource: IEnterpriseDatasource) {
-        if (this.gridOptionsWrapper.isRowModelEnterprise()) {
+    // DEPRECATED
+    public setEnterpriseDatasource(datasource: IServerSideDatasource) {
+        console.warn(`ag-grid: since version 18.x, api.setEnterpriseDatasource() should be replaced with api.setServerSideDatasource()`);
+        this.setServerSideDatasource(datasource);
+    }
+
+    public setServerSideDatasource(datasource: IServerSideDatasource) {
+        if (this.gridOptionsWrapper.isRowModelServerSide()) {
             // should really have an IEnterpriseRowModel interface, so we are not casting to any
             (<any>this.rowModel).setDatasource(datasource);
         } else {
-            console.warn(`ag-Grid: you can only use an enterprise datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_ENTERPRISE}'`)
+            console.warn(`ag-Grid: you can only use an enterprise datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_SERVER_SIDE}'`)
         }
     }
 
@@ -216,10 +233,10 @@ export class GridApi {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
             if (this.gridOptionsWrapper.isDeltaRowDataMode()) {
                 let [transaction, orderIdMap] = this.immutableService.createTransactionForRowData(rowData);
-                this.inMemoryRowModel.updateRowData(transaction, orderIdMap);
+                this.clientSideRowModel.updateRowData(transaction, orderIdMap);
             } else {
                 this.selectionController.reset();
-                this.inMemoryRowModel.setRowData(rowData);
+                this.clientSideRowModel.setRowData(rowData);
             }
         } else {
             console.log('cannot call setRowData unless using normal row model');
@@ -402,7 +419,7 @@ export class GridApi {
     }
 
     public refreshHeader() {
-        this.headerRenderer.refreshHeader();
+        this.headerRootComp.refreshHeader();
         this.gridPanel.setBodyAndHeaderHeights();
     }
 
@@ -423,17 +440,22 @@ export class GridApi {
     }
 
     public onGroupExpandedOrCollapsed(deprecated_refreshFromIndex?: any) {
-        if (_.missing(this.inMemoryRowModel)) { console.log('ag-Grid: cannot call onGroupExpandedOrCollapsed unless using normal row model') }
+        if (_.missing(this.clientSideRowModel)) { console.log('ag-Grid: cannot call onGroupExpandedOrCollapsed unless using normal row model') }
         if (_.exists(deprecated_refreshFromIndex)) { console.log('ag-Grid: api.onGroupExpandedOrCollapsed - refreshFromIndex parameter is no longer used, the grid will refresh all rows'); }
         // we don't really want the user calling this if one one rowNode was expanded, instead they should be
         // calling rowNode.setExpanded(boolean) - this way we do a 'keepRenderedRows=false' so that the whole
         // grid gets refreshed again - otherwise the row with the rowNodes that were changed won't get updated,
         // and thus the expand icon in the group cell won't get 'opened' or 'closed'.
-        this.inMemoryRowModel.refreshModel({step: Constants.STEP_MAP});
+        this.clientSideRowModel.refreshModel({step: Constants.STEP_MAP});
     }
 
     public refreshInMemoryRowModel(step?: string): any {
-        if (_.missing(this.inMemoryRowModel)) { console.log('cannot call refreshInMemoryRowModel unless using normal row model') }
+        console.warn(`ag-grid: since version 18.x, api.refreshInMemoryRowModel() should be replaced with api.refreshClientSideRowModel()`);
+        this.refreshClientSideRowModel(step);
+    }
+
+    public refreshClientSideRowModel(step?: string): any {
+        if (_.missing(this.clientSideRowModel)) { console.log('cannot call refreshClientSideRowModel unless using normal row model') }
 
         let paramsStep = Constants.STEP_EVERYTHING;
         let stepsMapped: any = {
@@ -460,31 +482,31 @@ export class GridApi {
             keepEditingRows: true
         };
 
-        this.inMemoryRowModel.refreshModel(modelParams);
+        this.clientSideRowModel.refreshModel(modelParams);
+    }
+
+    public isAnimationFrameQueueEmpty(): boolean {
+        return this.animationFrameService.isQueueEmpty();
     }
 
     public getRowNode(id: string): RowNode {
-        if (_.missing(this.inMemoryRowModel)) {
-            console.warn('ag-Grid: cannot call getRowNode unless using normal row model');
-            return;
-        }
-        return this.inMemoryRowModel.getRowNode(id);
+        return this.rowModel.getRowNode(id);
     }
 
     public expandAll() {
-        if (_.missing(this.inMemoryRowModel)) {
+        if (_.missing(this.clientSideRowModel)) {
             console.warn('ag-Grid: cannot call expandAll unless using normal row model');
             return;
         }
-        this.inMemoryRowModel.expandOrCollapseAll(true);
+        this.clientSideRowModel.expandOrCollapseAll(true);
     }
 
     public collapseAll() {
-        if (_.missing(this.inMemoryRowModel)) {
+        if (_.missing(this.clientSideRowModel)) {
             console.warn('ag-Grid: cannot call collapseAll unless using normal row model');
             return;
         }
-        this.inMemoryRowModel.expandOrCollapseAll(false);
+        this.clientSideRowModel.expandOrCollapseAll(false);
     }
 
     public addVirtualRowListener(eventName: string, rowIndex: number, callback: Function) {
@@ -555,16 +577,12 @@ export class GridApi {
     }
 
     public recomputeAggregates(): void {
-        if (_.missing(this.inMemoryRowModel)) { console.warn('cannot call recomputeAggregates unless using normal row model') }
-        console.warn(`recomputeAggregates is deprecated, please call api.refreshInMemoryRowModel('aggregate') instead`);
-        this.inMemoryRowModel.refreshModel({step: Constants.STEP_AGGREGATE});
+        if (_.missing(this.clientSideRowModel)) { console.warn('cannot call recomputeAggregates unless using normal row model') }
+        console.warn(`recomputeAggregates is deprecated, please call api.refreshClientSideRowModel('aggregate') instead`);
+        this.clientSideRowModel.refreshModel({step: Constants.STEP_AGGREGATE});
     }
 
     public sizeColumnsToFit() {
-        if (this.gridOptionsWrapper.isForPrint()) {
-            console.warn('ag-grid: sizeColumnsToFit does not work when forPrint=true');
-            return;
-        }
         this.gridPanel.sizeColumnsToFit();
     }
 
@@ -625,8 +643,8 @@ export class GridApi {
     }
 
     public forEachLeafNode(callback: (rowNode: RowNode)=>void ) {
-        if (_.missing(this.inMemoryRowModel)) { console.log('cannot call forEachNode unless using normal row model') }
-        this.inMemoryRowModel.forEachLeafNode(callback);
+        if (_.missing(this.clientSideRowModel)) { console.log('cannot call forEachNode unless using normal row model') }
+        this.clientSideRowModel.forEachLeafNode(callback);
     }
 
     public forEachNode(callback: (rowNode: RowNode)=>void ) {
@@ -634,13 +652,13 @@ export class GridApi {
     }
 
     public forEachNodeAfterFilter(callback: (rowNode: RowNode)=>void) {
-        if (_.missing(this.inMemoryRowModel)) { console.log('cannot call forEachNodeAfterFilter unless using normal row model') }
-        this.inMemoryRowModel.forEachNodeAfterFilter(callback);
+        if (_.missing(this.clientSideRowModel)) { console.log('cannot call forEachNodeAfterFilter unless using normal row model') }
+        this.clientSideRowModel.forEachNodeAfterFilter(callback);
     }
 
     public forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode)=>void) {
-        if (_.missing(this.inMemoryRowModel)) { console.log('cannot call forEachNodeAfterFilterAndSort unless using normal row model') }
-        this.inMemoryRowModel.forEachNodeAfterFilterAndSort(callback);
+        if (_.missing(this.clientSideRowModel)) { console.log('cannot call forEachNodeAfterFilterAndSort unless using normal row model') }
+        this.clientSideRowModel.forEachNodeAfterFilterAndSort(callback);
     }
 
     public getFilterApiForColDef(colDef: any): any {
@@ -721,6 +739,14 @@ export class GridApi {
         this.doLayout();
     }
 
+    public setGridAutoHeight(gridAutoHeight: boolean) {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GRID_AUTO_HEIGHT, gridAutoHeight);
+    }
+
+    public getPreferredWidth(): number {
+        return this.gridCore.getPreferredWidth();
+    }
+
     public setGroupHeaderHeight(headerHeight: number) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, headerHeight);
         this.doLayout();
@@ -745,22 +771,21 @@ export class GridApi {
         this.gridCore.showToolPanel(show);
     }
 
+    public setSuppressClipboardPaste(value: boolean): void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_SUPPRESS_CLIPBOARD_PASTE, value);
+    }
+
     public isToolPanelShowing() {
         return this.gridCore.isToolPanelShowing();
     }
 
     public doLayout() {
-        this.gridCore.doLayout();
-        // if the column is not visible, then made visible, it will be right size, but the
-        // correct virtual columns will not be displayed. the setLeftAndRightBounds() gets
-        // called when size changes. however when size is not changed, then wrong cols are shown.
-        // this was to fix https://ag-grid.atlassian.net/browse/AG-1081
-        this.gridPanel.setLeftAndRightBounds();
+        this.gridPanel.checkViewportAndScrolls();
     }
 
     public resetRowHeights() {
-        if (_.exists(this.inMemoryRowModel)) {
-            this.inMemoryRowModel.resetRowHeights();
+        if (_.exists(this.clientSideRowModel)) {
+            this.clientSideRowModel.resetRowHeights();
         }
     }
 
@@ -773,8 +798,8 @@ export class GridApi {
     }
 
     public onRowHeightChanged() {
-        if (_.exists(this.inMemoryRowModel)) {
-            this.inMemoryRowModel.onRowHeightChanged();
+        if (_.exists(this.clientSideRowModel)) {
+            this.clientSideRowModel.onRowHeightChanged();
         }
     }
 
@@ -946,12 +971,12 @@ export class GridApi {
 
     public updateRowData(rowDataTransaction: RowDataTransaction): RowNodeTransaction {
         let res: RowNodeTransaction = null;
-        if (this.inMemoryRowModel) {
-            res = this.inMemoryRowModel.updateRowData(rowDataTransaction);
+        if (this.clientSideRowModel) {
+            res = this.clientSideRowModel.updateRowData(rowDataTransaction);
         } else if (this.infinitePageRowModel) {
             this.infinitePageRowModel.updateRowData(rowDataTransaction);
         } else {
-            console.error('ag-Grid: updateRowData() only works with InMemoryRowModel and InfiniteRowModel.');
+            console.error('ag-Grid: updateRowData() only works with ClientSideRowModel and InfiniteRowModel.');
         }
 
         // do change detection for all present cells
@@ -963,11 +988,11 @@ export class GridApi {
     }
 
     public batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction)=>void): void {
-        if (!this.inMemoryRowModel) {
-            console.error('ag-Grid: api.batchUpdateRowData() only works with InMemoryRowModel.');
+        if (!this.clientSideRowModel) {
+            console.error('ag-Grid: api.batchUpdateRowData() only works with ClientSideRowModel.');
             return;
         }
-        this.inMemoryRowModel.batchUpdateRowData(rowDataTransaction, callback);
+        this.clientSideRowModel.batchUpdateRowData(rowDataTransaction, callback);
     }
 
     public insertItemsAtIndex(index: number, items: any[], skipRefresh = false): void {
@@ -1022,13 +1047,35 @@ export class GridApi {
         }
     }
 
+    // DEPRECATED
     public purgeEnterpriseCache(route?: string[]): void {
-        if (this.enterpriseRowModel) {
-            this.enterpriseRowModel.purgeCache(route);
+        console.warn(`ag-grid: since version 18.x, api.purgeEnterpriseCache() should be replaced with api.purgeServerSideCache()`);
+        this.purgeServerSideCache(route);
+    }
+
+    public purgeServerSideCache(route?: string[]): void {
+        if (this.serverSideRowModel) {
+            this.serverSideRowModel.purgeCache(route);
         } else {
-            console.warn(`ag-Grid: api.purgeEnterpriseCache is only available when rowModelType='enterprise'.`);
+            console.warn(`ag-Grid: api.purgeServerSideCache is only available when rowModelType='enterprise'.`);
         }
     }
+
+    // public removeFromEnterpriseCache(route: string[], items: any[]): void {
+    //     if (this.serverSideRowModel) {
+    //         this.serverSideRowModel.removeFromCache(route, items);
+    //     } else {
+    //         console.warn(`ag-Grid: api.removeFromEnterpriseCache is only available when rowModelType='enterprise'.`);
+    //     }
+    // }
+    //
+    // public addToEnterpriseCache(route: string[], items: any[], index: number): void {
+    //     if (this.serverSideRowModel) {
+    //         this.serverSideRowModel.addToCache(route, items, index);
+    //     } else {
+    //         console.warn(`ag-Grid: api.addToEnterpriseCache is only available when rowModelType='enterprise'.`);
+    //     }
+    // }
 
     public getVirtualRowCount(): number {
         console.warn('ag-Grid: getVirtualRowCount() is now called getInfiniteRowCount(), please call getInfiniteRowCount() instead');
@@ -1077,10 +1124,10 @@ export class GridApi {
     public getCacheBlockState(): any {
         if (this.infinitePageRowModel) {
             return this.infinitePageRowModel.getBlockState();
-        } else if (this.enterpriseRowModel) {
-            return this.enterpriseRowModel.getBlockState();
+        } else if (this.serverSideRowModel) {
+            return this.serverSideRowModel.getBlockState();
         } else {
-            console.warn(`ag-Grid: api.getCacheBlockState() is only available when rowModelType='infinite' or rowModelType='enterprise'.`);
+            console.warn(`ag-Grid: api.getCacheBlockState() is only available when rowModelType='infinite' or rowModelType='serverSide'.`);
         }
     }
 

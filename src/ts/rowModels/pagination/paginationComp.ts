@@ -34,7 +34,15 @@ export class PaginationComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
+
         this.setTemplate(this.getTemplate());
+
+        let isPaging = this.gridOptionsWrapper.isPagination();
+        let paginationPanelEnabled = isPaging && !this.gridOptionsWrapper.isSuppressPaginationPanel();
+        if (!paginationPanelEnabled) {
+            this.setVisible(false);
+            return;
+        }
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
 

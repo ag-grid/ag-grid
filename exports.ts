@@ -90,14 +90,13 @@ export {BodyDropPivotTarget} from "./dist/lib/headerRendering/bodyDropPivotTarge
 export {BodyDropTarget} from "./dist/lib/headerRendering/bodyDropTarget";
 export {CssClassApplier} from "./dist/lib/headerRendering/cssClassApplier";
 export {HeaderContainer} from "./dist/lib/headerRendering/headerContainer";
-export {HeaderRenderer} from "./dist/lib/headerRendering/headerRenderer";
+export {HeaderRootComp} from "./dist/lib/headerRendering/headerRootComp";
 export {HeaderRowComp} from "./dist/lib/headerRendering/headerRowComp";
 export {HorizontalResizeService} from "./dist/lib/headerRendering/horizontalResizeService";
 export {MoveColumnController} from "./dist/lib/headerRendering/moveColumnController";
 export {StandardMenuFactory} from "./dist/lib/headerRendering/standardMenu";
 
 // layout
-export {BorderLayout} from "./dist/lib/layout/borderLayout";
 export {TabbedLayout} from "./dist/lib/layout/tabbedLayout";
 export {VerticalStack} from "./dist/lib/layout/verticalStack";
 export {TabbedItem} from "./dist/lib/layout/tabbedLayout"
@@ -140,24 +139,29 @@ export {ValueFormatterService} from "./dist/lib/rendering/valueFormatterService"
 export {TextFormatter} from "./dist/lib/filter/textFilter";
 
 // rowControllers/inMemory
-export {FilterStage} from "./dist/lib/rowModels/inMemory/filterStage";
-export {FlattenStage} from "./dist/lib/rowModels/inMemory/flattenStage";
-export {SortStage} from "./dist/lib/rowModels/inMemory/sortStage";
+export {FilterStage} from "./dist/lib/rowModels/clientSide/filterStage";
+export {FlattenStage} from "./dist/lib/rowModels/clientSide/flattenStage";
+export {SortStage} from "./dist/lib/rowModels/clientSide/sortStage";
 
 // row models
 export {PinnedRowModel} from "./dist/lib/rowModels/pinnedRowModel";
-export {InMemoryRowModel, RowNodeTransaction} from "./dist/lib/rowModels/inMemory/inMemoryRowModel";
-export {ChangedPath} from "./dist/lib/rowModels/inMemory/changedPath";
-export {InMemoryNodeManager} from "./dist/lib/rowModels/inMemory/inMemoryNodeManager";
+export {ClientSideRowModel, RowNodeTransaction} from "./dist/lib/rowModels/clientSide/clientSideRowModel";
+export {ChangedPath} from "./dist/lib/rowModels/clientSide/changedPath";
+export {ClientSideNodeManager} from "./dist/lib/rowModels/clientSide/clientSideNodeManager";
 export {InfiniteRowModel} from "./dist/lib/rowModels/infinite/infiniteRowModel";
-export {IEnterpriseGetRowsParams} from "./dist/lib/interfaces/iEnterpriseDatasource";
-export {IEnterpriseGetRowsRequest} from "./dist/lib/interfaces/iEnterpriseDatasource";
 export {InfiniteCacheParams} from "./dist/lib/rowModels/infinite/infiniteCache";
 export {RowNodeBlock} from "./dist/lib/rowModels/cache/rowNodeBlock";
 export {RowNodeBlockLoader} from "./dist/lib/rowModels/cache/rowNodeBlockLoader";
-export {IEnterpriseRowModel} from "./dist/lib/interfaces/iEnterpriseRowModel";
-export {IEnterpriseCache} from "./dist/lib/interfaces/iEnterpriseCache";
-export {IEnterpriseDatasource, ColumnVO} from "./dist/lib/interfaces/iEnterpriseDatasource";
+
+export {ColumnVO} from "./dist/lib/interfaces/iColumnVO";
+
+export {IServerSideDatasource} from "./dist/lib/interfaces/iServerSideDatasource";
+export {IServerSideGetRowsParams} from "./dist/lib/interfaces/iServerSideDatasource";
+export {IServerSideGetRowsRequest} from "./dist/lib/interfaces/iServerSideDatasource";
+
+export {IServerSideRowModel} from "./dist/lib/interfaces/iServerSideRowModel";
+export {IServerSideCache} from "./dist/lib/interfaces/iServerSideCache";
+
 export {IToolPanel} from "./dist/lib/interfaces/iToolPanel";
 export {RowNodeCache, RowNodeCacheParams} from "./dist/lib/rowModels/cache/rowNodeCache";
 export {IGetRowsParams, IDatasource} from "./dist/lib/rowModels/iDatasource";
@@ -184,7 +188,7 @@ export {CsvCreator, BaseCreator} from "./dist/lib/csvCreator";
 export {Downloader} from "./dist/lib/downloader";
 export {Grid, GridParams} from "./dist/lib/grid";
 export {GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo} from "./dist/lib/gridApi";
-export {Events} from "./dist/lib/events";
+export {Events} from "./dist/lib/eventKeys";
 export {FocusedCellController} from "./dist/lib/focusedCellController";
 export {defaultGroupComparator} from "./dist/lib/functions";
 export {GridOptionsWrapper} from "./dist/lib/gridOptionsWrapper";
@@ -266,7 +270,7 @@ export {AgEvent, AgGridEvent, ModelUpdatedEvent, ColumnPivotModeChangedEvent, Vi
     RowDataChangedEvent, RowDataUpdatedEvent, PinnedRowDataChangedEvent, SelectionChangedEvent, FilterChangedEvent,
     FilterModifiedEvent, SortChangedEvent, GridReadyEvent, DragStartedEvent, DragStoppedEvent,
     DisplayedColumnsWidthChangedEvent, ColumnHoverChangedEvent, BodyHeightChangedEvent, ComponentStateChangedEvent,
-    GridSizeChangedEvent, ViewportChangedEvent, RangeSelectionChangedEvent, ColumnGroupOpenedEvent, ItemsAddedEvent,
+    ViewportChangedEvent, RangeSelectionChangedEvent, ColumnGroupOpenedEvent, ItemsAddedEvent,
     BodyScrollEvent, FlashCellsEvent, PaginationChangedEvent, CellFocusedEvent, ColumnEvent, ColumnResizedEvent,
     ColumnPivotChangedEvent, ColumnRowGroupChangedEvent, ColumnValueChangedEvent, ColumnMovedEvent, ColumnVisibleEvent,
     ColumnPinnedEvent, RowEvent, RowGroupOpenedEvent, RowValueChangedEvent, RowSelectedEvent, VirtualRowRemovedEvent,
@@ -274,5 +278,6 @@ export {AgEvent, AgGridEvent, ModelUpdatedEvent, ColumnPivotModeChangedEvent, Vi
     CellMouseDownEvent, CellDoubleClickedEvent, CellMouseOverEvent, CellMouseOutEvent, CellContextMenuEvent, CellEditingStartedEvent,
     CellEditingStoppedEvent, CellValueChangedEvent, ColumnRequestEvent, ColumnRowGroupChangeRequestEvent,
     ColumnPivotChangeRequestEvent, ColumnValueChangeRequestEvent, ColumnAggFuncChangeRequestEvent, ScrollVisibilityChangedEvent,
-    RowDragEvent, RowDragLeaveEvent, RowDragEnterEvent, RowDragEndEvent, RowDragMoveEvent, ToolPanelVisibleChanged}
+    RowDragEvent, RowDragLeaveEvent, RowDragEnterEvent, RowDragEndEvent, RowDragMoveEvent, ToolPanelVisibleChangedEvent,
+    PasteEndEvent, PasteStartEvent}
     from "./dist/lib/events";

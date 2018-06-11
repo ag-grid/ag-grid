@@ -42,8 +42,8 @@ export class Constants {
 
     static ROW_MODEL_TYPE_INFINITE = 'infinite';
     static ROW_MODEL_TYPE_VIEWPORT = 'viewport';
-    static ROW_MODEL_TYPE_IN_MEMORY = 'inMemory';
-    static ROW_MODEL_TYPE_ENTERPRISE = 'enterprise';
+    static ROW_MODEL_TYPE_CLIENT_SIDE = 'clientSide';
+    static ROW_MODEL_TYPE_SERVER_SIDE = 'serverSide';
 
     static DEPRECATED_ROW_MODEL_TYPE_NORMAL= 'normal';
 

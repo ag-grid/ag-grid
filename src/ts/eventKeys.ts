@@ -63,6 +63,9 @@ export class Events {
     /** Model was updated - grid updates the drawn rows when this happens */
     public static EVENT_MODEL_UPDATED = 'modelUpdated';
 
+    public static EVENT_PASTE_START = 'pasteStart';
+    public static EVENT_PASTE_END = 'pasteEnd';
+
     public static EVENT_CELL_CLICKED = 'cellClicked';
     public static EVENT_CELL_DOUBLE_CLICKED = 'cellDoubleClicked';
     public static EVENT_CELL_MOUSE_DOWN = 'cellMouseDown';
@@ -93,8 +96,9 @@ export class Events {
     /** Gets called once after the grid has finished initialising. */
     public static EVENT_GRID_READY = 'gridReady';
     /** Width of height of the main grid div has changed. Grid listens for this and does layout of grid if it's
-     * changed, so always filling the space it was given. */
-    public static EVENT_GRID_SIZE_CHANGED = 'gridSizeChanged';
+     * changed, so always filling the space it was given.
+     * DEPRECATED - now that BorderLayout is no longer used, this doesn't make sense. */
+    public static DEPRECATED_EVENT_GRID_SIZE_CHANGED = 'gridSizeChanged';
     /** The indexes of the rows rendered has changed, eg user has scrolled to a new vertical position. */
     public static EVENT_VIEWPORT_CHANGED = 'viewportChanged';
     /** A column drag has started, either resizing a column or moving a column. */
@@ -110,6 +114,8 @@ export class Events {
 
     /** Main body of grid has scrolled, either horizontally or vertically */
     public static EVENT_BODY_SCROLL = 'bodyScroll';
+
+    public static EVENT_ANIMATION_QUEUE_EMPTY = 'animationQueueEmpty';
 
     public static EVENT_HEIGHT_SCALE_CHANGED = 'heightScaleChanged';
 

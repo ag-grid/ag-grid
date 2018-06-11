@@ -29,7 +29,8 @@ export interface AgGridEvent extends AgEvent {
     columnApi: ColumnApi;
 }
 
-export interface ToolPanelVisibleChanged extends AgGridEvent {}
+export interface ToolPanelVisibleChangedEvent extends AgGridEvent {}
+export interface AnimationQueueEmptyEvent extends AgGridEvent {}
 export interface ColumnPivotModeChangedEvent extends AgGridEvent {}
 export interface VirtualColumnsChangedEvent extends AgGridEvent {}
 export interface ColumnEverythingChangedEvent extends AgGridEvent {
@@ -76,9 +77,12 @@ export interface RowDragEndEvent extends RowDragEvent {}
 export interface RowDragMoveEvent extends RowDragEvent {}
 export interface RowDragLeaveEvent extends RowDragEvent {}
 
-export interface GridSizeChangedEvent extends AgGridEvent {
-    clientWidth: number;
-    clientHeight: number;
+export interface PasteStartEvent extends AgGridEvent {
+    source: string;
+}
+
+export interface PasteEndEvent extends AgGridEvent {
+    source: string;
 }
 
 export interface ViewportChangedEvent extends AgGridEvent {
