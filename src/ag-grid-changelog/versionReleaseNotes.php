@@ -1,3 +1,39 @@
+<div class="note" style="display: none" fixVersionNote id="fix_version_18_0_0">
+    <p>Release 18.0.0 Overview</p>
+
+    <ul>
+        <li>
+            AG-1844
+            Grid is now laid out using CSS Flex. Before this the grid had it's own layout mechanism
+            called Border Layout. This had the following disadvantages:
+            <ul>
+                <li>
+                    The grid had a timer (layout interval) where every 500ms it was checking the width and
+                    height of the grid and then laying out contents again if the width or height changed.
+                </li>
+                <li>
+                    Extra DIV elements were required for the layout.
+                </li>
+            </ul>
+            The new mechanism no longer uses the layout interval so the grid is no longer polling every 500ms.
+            The DOM is also now cleaner as the extra div's associated with the border layout are now gone.
+        </li>
+        <li>
+            AG-1807
+            New strategy for <a href="../javascript-grid-for-print/">Printing</a> using auto-height.
+        </li>
+        <li>
+            AG-1350
+            Added support for <a href="../javascript-grid-row-spanning/">Row Spanning</a>.
+        </li>
+        <li>
+            AG-1768
+            Now possible to switch between <a href="../javascript-grid-width-and-height/#auto-height">Auto Height</a>
+            and Normal Height dynamically.
+        </li>
+    </ul>
+</div>
+
 <div class="note" style="display: none" fixVersionNote id="fix_version_17_1_0">
     <p>Release 17.1.0 Overview</p>
 
