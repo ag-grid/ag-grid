@@ -82,7 +82,7 @@ var defaultCols = [
     },
     {
         headerName: "Country", field: "country", width: 200, editable: true,
-        cellEditor: 'agRichSelect',
+        cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
             values: ["Argentina", "Brazil", "Colombia", "France", "Germany", "Greece", "Iceland", "Ireland",
                 "Italy", "Malta", "Portugal", "Norway", "Peru", "Spain", "Sweden", "United Kingdom",

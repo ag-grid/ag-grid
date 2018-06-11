@@ -59,6 +59,8 @@ colDef: {
         browser providing a decent out of the box date picker). If this property is true, the browser date picker will
         be used regardless of the browser type.
     </li>
+    <li><code>suppressAndOrCondition</code> If true, the filter won't offer the ability to add an additional filter
+        condition</li>
 </ul>
 
 
@@ -163,6 +165,33 @@ gridOptions.api.onFilterChanged()</snippet></p>
     <li><code>date:</code> The actual filter date to apply, or the start of the range if the filter type is inRange</li>
     <li><code>dateTo:</code> The end range of the filter if the filter type is inRange, otherwise has no effect.</li>
 </ul>
+
+<h3>Combined filter AND/OR</h3>
+
+<p>The date filter supports specifying an additional filter condition, if that is the case, then the filter model looks like
+    this</p>
+
+<p><snippet>
+{
+    condition1:{
+        type:'lessThan',
+        dateFrom:'2008-08-24'
+    },
+    condition2:{
+        type:'greaterThan',
+        dateFrom:'2008-08-24'
+    },
+    // one of 'AND' / 'OR'
+    operator:'OR'
+
+)
+</snippet></p>
+
+<p>Note that in this scenario, <code>condition1</code> and <code>condition2</code> each contains the individual model for
+    the filter condition and <code>operator</code> takes one of 'AND' or 'OR'</p>
+
+<p>It can be forced for a column to only ever have one condition for filtering by passing to the column <code>
+    filterParams.suppressAndOrCondition = true</code></p>
 
 
 <h2>Floating Date Filter</h2>

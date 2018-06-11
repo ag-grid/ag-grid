@@ -98,6 +98,12 @@ include '../documentation-main/documentation_header.php';
                 <a href="../javascript-grid-cell-editing/#start-stop-editing-events">Full Row Editing</a> only.
             </td>
         </tr>
+        <tr>
+            <th>pasteStart, pasteEnd</th>
+            <td>Paste operation has started / ended. See
+                <a href="../javascript-grid-clipboard/#events">Clipboard Events</a>.
+            </td>
+        </tr>
 
     </table>
 <h2>Sort & Filter</h2>
@@ -248,10 +254,6 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>gridSizeChanged</th>
-            <td>The grid had to lay out again because it changed size.</td>
-        </tr>
-        <tr>
             <th>pinnedRowDataChanged</th>
             <td>The client has set new pinned row data into the grid</td>
         </tr>
@@ -296,6 +298,16 @@ include '../documentation-main/documentation_header.php';
                 change.
             </td>
         </tr>
+        <tr>
+            <th>animationQueueEmpty</th>
+            <td>
+                The grid draws rows and cells using animation frames. This event gets fired when the animation
+                frame queue is empty. Used normally in conjunction with <code>api.isAnimationFrameQueueEmpty()</code>
+                so user can check if animation frame is pending, and if yes then can be notified when no animation
+                frames are pending. Useful if your application needs to know when drawing of the grid is no longer
+                pending, eg for sending to a printer.
+            </td>
+        </tr>
     </table>
 
     <h2 id="properties-and-hierarchy">Event Properties & Hierarchy</h2>
@@ -337,16 +349,13 @@ CellValueChangedEvent {
         ├── ColumnPivotModeChangedEvent <span class="event-properties">{}</span>
         ├── ColumnEverythingChangedEvent <span class="event-properties">{}</span>
         ├── DisplayedColumnsChangedEvent <span class="event-properties">{}</span>
-        ├── toolPanelVisibleChanged <span class="event-properties">{}</span>
+        ├── ToolPanelVisibleChangedEvent <span class="event-properties">{}</span>
+        ├── AnimationQueueEmptyEvent <span class="event-properties">{}</span>
         ├── CellFocusedEvent <span class="event-properties">{
         │       <span class="event-attribute">rowIndex</span>: number, // the row index of the focused cell
         │       <span class="event-attribute">column</span>: Column, // the column of the focused cell
         │       <span class="event-attribute">rowPinned</span>: string, // either 'top', 'bottom' or undefined/null (if not pinned)
         │       <span class="event-attribute">forceBrowserFocus</span>: boolean // whether browser focus is also set (false when editing)
-        │     }</span>
-        ├── GridSizeChangedEvent <span class="event-properties">{
-        │       <span class="event-attribute">clientWidth</span>: number, // new width in pixels of the grid
-        │       <span class="event-attribute">clientHeight</span>: number // new height in pixels of the grid
         │     }</span>
         ├── ViewportChangedEvent <span class="event-properties">{
         │       <span class="event-attribute">firstRow</span>: number, // the index of the first rendered row

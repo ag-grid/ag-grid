@@ -1,11 +1,11 @@
 var columnDefs = [
-    {headerName: 'Gold', field: 'gold', width: 100, aggFunc: 'sum'},
-    {headerName: 'Silver', field: 'silver', width: 100, aggFunc: 'sum'},
-    {headerName: 'Bronze', field: 'bronze', width: 100, aggFunc: 'sum'},
-    {headerName: 'Total', field: 'total', width: 100, aggFunc: 'sum'},
-    {headerName: 'Age', field: 'age', width: 90},
-    {headerName: 'Date', field: 'date', width: 110},
-    {headerName: 'Sport', field: 'sport', width: 110},
+    {headerName: 'Gold', field: 'gold', aggFunc: 'sum'},
+    {headerName: 'Silver', field: 'silver', aggFunc: 'sum'},
+    {headerName: 'Bronze', field: 'bronze', aggFunc: 'sum'},
+    {headerName: 'Total', field: 'total', aggFunc: 'sum'},
+    {headerName: 'Age', field: 'age'},
+    {headerName: 'Date', field: 'date'},
+    {headerName: 'Sport', field: 'sport'},
 
     {field: 'country', rowGroup: true, hide: true},
     {field: 'year', rowGroup: true, hide: true}
@@ -13,14 +13,19 @@ var columnDefs = [
 
 var gridOptions = {
     columnDefs: columnDefs,
+    defaultColDef: {
+      width: 150
+    },
     enableRangeSelection: true,
     enableSorting: true,
+    enableColResize: true,
     autoGroupColumnDef: {
         headerName: 'Athlete',
-        width: 200,
+        width: 300,
         field: 'athlete'
     },
     groupIncludeFooter: true,
+    groupIncludeTotalFooter: true,
     animateRows: true
 };
 

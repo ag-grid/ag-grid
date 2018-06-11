@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "JavaScript Datagrid with 63 features and breakneck performance";
+$pageTitle = "JavaScript Datagrid | Packed with features and performance";
 $pageDescription = "ag-Grid is built in plain JavaScript so it is the natural choice for a datagrid or datatables in your application. Easily deliver filtering, grouping, aggregation, pivoting and much more. Try our Community version now or take a free 2 month trial of Enterprise Version. We've just released Version 17 - take it for a test drive.";
 $pageKeyboards = "JavaScript Datagrid";
 $pageGroup = "basics";

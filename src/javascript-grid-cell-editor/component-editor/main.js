@@ -4,7 +4,7 @@ var columnDefs = [
         field: "name",
         width: 300,
         editable: true,
-        cellEditor: 'agRichSelect',
+        cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
             values: [
                 "Bob",

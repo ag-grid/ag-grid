@@ -133,13 +133,13 @@ function irelandAndUk() {
     countryFilterComponent.selectNothing();
     countryFilterComponent.selectValue('Ireland');
     countryFilterComponent.selectValue('Great Britain');
-    countryFilterComponent.onFilterChanged();
+    gridOptions.api.onFilterChanged();
 }
 
 function clearCountryFilter() {
     var countryFilterComponent = gridOptions.api.getFilterInstance('country');
     countryFilterComponent.selectEverything();
-    countryFilterComponent.onFilterChanged();
+    gridOptions.api.onFilterChanged();
 }
 
 function destroyCountryFilter() {
@@ -156,24 +156,58 @@ function endingStan() {
             countryFilterComponent.selectValue(value);
         }
     }
-    countryFilterComponent.onFilterChanged();
+    gridOptions.api.onFilterChanged();
 }
 
 function setCountryModel() {
     var countryFilterComponent = gridOptions.api.getFilterInstance('country');
     var model = ['Algeria','Argentina'];
     countryFilterComponent.setModel(model);
-    countryFilterComponent.onFilterChanged();
+    gridOptions.api.onFilterChanged();
 }
 
 function printCountryModel() {
     var countryFilterComponent = gridOptions.api.getFilterInstance('country');
     var model = countryFilterComponent.getModel();
-    if (model && model.values) {
+    if (model) {
         console.log('Country model is: [' + model.values.join(',') + ']');
     } else {
         console.log('Country model filter is not active');
     }
+}
+
+function sportStartsWithS() {
+    var sportsFilterComponent = gridOptions.api.getFilterInstance('sport');
+    sportsFilterComponent.setModel({
+        type: 'startsWith',
+        filter: 's'
+    });
+    gridOptions.api.onFilterChanged();
+}
+
+function sportEndsWithG() {
+    var sportsFilterComponent = gridOptions.api.getFilterInstance('sport');
+    sportsFilterComponent.setModel({
+        type: 'endsWith',
+        filter: 'g'
+    });
+    gridOptions.api.onFilterChanged();
+}
+
+function sportsCombined() {
+    var sportsFilterComponent = gridOptions.api.getFilterInstance('sport');
+    sportsFilterComponent.setModel({
+        condition2:{
+            type: 'endsWith',
+            filter: 'g'
+        },
+        condition1: {
+            type: 'startsWith',
+            filter: 's'
+        },
+        operator: 'AND'
+    });
+    gridOptions.api.onFilterChanged();
 }
 
 function ageBelow25() {
@@ -183,7 +217,7 @@ function ageBelow25() {
         filter: 25,
         filterTo: null
     });
-    ageFilterComponent.onFilterChanged();
+    gridOptions.api.onFilterChanged();
 }
 
 function ageAbove30() {
@@ -193,7 +227,25 @@ function ageAbove30() {
         filter: 30,
         filterTo: null
     });
-    ageFilterComponent.onFilterChanged();
+    gridOptions.api.onFilterChanged();
+}
+
+function ageBelow25OrAbove30() {
+    var ageFilterComponent = gridOptions.api.getFilterInstance('age');
+    ageFilterComponent.setModel({
+        condition1:{
+            type: 'greaterThan',
+            filter: 30,
+            filterTo: null
+        },
+        operator: 'OR',
+        condition2:{
+            type: 'lessThan',
+            filter: 25,
+            filterTo: null
+        }
+    });
+    gridOptions.api.onFilterChanged();
 }
 
 function ageBetween25And30() {
@@ -203,13 +255,13 @@ function ageBetween25And30() {
         filter: 25,
         filterTo: 30
     });
-    ageFilterComponent.onFilterChanged();
+    gridOptions.api.onFilterChanged();
 }
 
 function clearAgeFilter() {
     var ageFilterComponent = gridOptions.api.getFilterInstance('age');
     ageFilterComponent.setModel(null);
-    ageFilterComponent.onFilterChanged();
+    gridOptions.api.onFilterChanged();
 }
 
 function after2010(){
@@ -219,7 +271,7 @@ function after2010(){
         dateFrom: '2010-01-01',
         dateTo: null
     });
-    dateFilterComponent.onFilterChanged();
+    gridOptions.api.onFilterChanged();
 }
 
 function before2012(){
@@ -229,14 +281,33 @@ function before2012(){
         dateFrom: '2012-01-01',
         dateTo: null
     });
-    dateFilterComponent.onFilterChanged();
+    gridOptions.api.onFilterChanged();
+}
+
+function dateCombined(){
+    var dateFilterComponent = gridOptions.api.getFilterInstance('date');
+    dateFilterComponent.setModel({
+        condition1:{
+            type: 'lessThan',
+            dateFrom: '2012-01-01',
+            dateTo: null
+        },
+        condition2:{
+            type: 'greaterThan',
+            dateFrom: '2010-01-01',
+            dateTo: null
+        },
+        operator: 'OR'
+    });
+    gridOptions.api.onFilterChanged();
 }
 
 function clearDateFilter(){
     var dateFilterComponent = gridOptions.api.getFilterInstance('date');
-    dateFilterComponent.setDateFrom(null);
-    dateFilterComponent.onFilterChanged();
+    dateFilterComponent.setModel(null);
+    gridOptions.api.onFilterChanged();
 }
+
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

@@ -21,12 +21,12 @@
 
 <div class="card">
   <div class="card-body">
-    <h5 class="card-title"><a href="https://medium.com/ag-grid/how-to-test-for-the-best-html5-grid-for-streaming-updates-53545bb9256a">Streaming Updates in JavaScript Datagrids</a></h5>
+    <h5 class="card-title"><a href="https://medium.com/ag-grid/data-visualisation-for-enterprise-with-angular-and-d3-54165a2778a6">Data Visualisation for Enterprise with Angular and D3</a></h5>
     <h6 class="card-subtitle mb-2 text-muted">Mar 7</h6>
-    <p class="card-text">A walkthrough on how to process over 150,000 updates per second with ag-Grid.</p>
+    <p class="card-text">'Data Visualisation is something I’m really passionate about. I’ve worked in large financial institutions for the majority of my career and during that time I’ve repeatedly encountered user requirements to display raw data in tabular format.'</p>
 
     <p class="text-right">
-        <a class="learn-more" href="https://medium.com/ag-grid/how-to-test-for-the-best-html5-grid-for-streaming-updates-53545bb9256a">Full Article</a>
+        <a class="learn-more" href="https://medium.com/ag-grid/data-visualisation-for-enterprise-with-angular-and-d3-54165a2778a6">Full Article</a>
     </p>
   </div>
 </div>
@@ -36,15 +36,15 @@
 <div class="card">
   <div class="card-body">
         <dl id="upcoming-events">
-            <dt><a href="https://react.amsterdam/" target="_blank" rel="noopener">React Amsterdam</a></dt>
-            <dd class="date">April 13<br> Kromhouthal, Amsterdam</dd>
-            <dd>Gold Sponsor</dd>
-            <dt><a href="https://www.ng-conf.org/" target="_blank" rel="noopener">NG Conf</a></dt>
-            <dd class="date">April 18–20<br> Salt Lake City, UT</dd>
-            <dd>Platinum Sponsor</dd>
             <dt><a href="https://www.microsoft.com/en-us/build" target="_blank" rel="noopener">Microsoft Build</a></dt>
-            <dd class="date">May 7–9<br> Seattle, WA</dd>
+            <dd class="date">May 7-9<br> Seattle, WA</dd>
             <dd>Silver Sponsor</dd>
+            <dt><a href="http://jsconf.com/" target="_blank" rel="noopener">JS Conf</a></dt>
+            <dd class="date">June 2-3<br> Berlin, Germany</dd>
+            <dd></dd>
+            <dt><a href="https://angularconnect.com/" target="_blank" rel="noopener">Angular Connect</a></dt>
+            <dd class="date">November 6-7<br> London, England</dd>
+            <dd>Platinum Sponsor</dd>
         </dl>
   </div>
 </div>

@@ -47,7 +47,7 @@ meta_and_links("ag-Grid: Customer Testimonials", "ag-Grid Javascript Grid Testim
         <p>Remarkable speed and extensibility, ag-Grid is the best web feature-rich BI tool on the market.</p>
         <footer>
             Robin Cote
-            <span class="position">Senior Systems Developer, Investment Solutions Group, Healthcare of Ontario Pension Plan</span>
+            <span class="position">Solutions Architect, Investment Solutions Group, Healthcare of Ontario Pension Plan</span>
         </footer>
     </blockquote>
 

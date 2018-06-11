@@ -29,11 +29,11 @@ var gridOptions = {
 };
 
 function updateSort() {
-    gridOptions.api.refreshInMemoryRowModel('sort');
+    gridOptions.api.refreshClientSideRowModel('sort');
 }
 
 function updateFilter() {
-    gridOptions.api.refreshInMemoryRowModel('filter');
+    gridOptions.api.refreshClientSideRowModel('filter');
 }
 
 function setPriceOnToyota() {

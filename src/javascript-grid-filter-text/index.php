@@ -58,6 +58,8 @@ colDef:{
         will be immediately triggered</li>
     <li><code>caseSensitive</code> If true, the text filtering will be case sensitive, if not specified or false, the filtering
     will be case insensitive</li>
+    <li><code>suppressAndOrCondition</code> If true, the filter won't offer the ability to add an additional filter
+        condition</li>
     </ul>
 
 <p>The parameters for the filter must be specified in the property filterParams inside the column definition object</p>
@@ -206,6 +208,33 @@ athleteFilterComponent.onFilterChanged()</snippet></p>
     <li><b>filter:</b> The actual filter text to apply.</li>
 </ul>
 
+<h3>Combined filter AND/OR</h3>
+
+<p>The text filter supports specifying an additional filter condition, if that is the case, then the filter model looks like
+this</p>
+
+<p><snippet>
+{
+    condition1:{
+        type:'endsWith',
+        filter:'thing'
+    },
+    condition2:{
+        type:'startsWith',
+        filter:'some'
+    },
+    // one of 'AND' / 'OR'
+    operator:'AND'
+
+)
+</snippet></p>
+
+<p>Note that in this scenario, <code>condition1</code> and <code>condition2</code> each contains the individual model for
+the filter condition and <code>operator</code> takes one of 'AND' or 'OR'</p>
+
+<p>It can be forced for a column to only ever have one condition for filtering by passing to the column <code>
+filterParams.suppressAndOrCondition = true</code></p>
+
 <h2>Floating Text Filter</h2>
 
 <p>
@@ -236,6 +265,7 @@ athleteFilterComponent.onFilterChanged()</snippet></p>
     <li>The athlete column has a debounce of 0ms <code>debounceMs:0</code> in the column filter menu. The floating filter
     has the default 500ms</li>
     <li>The athlete column filter is case sensitive, note that it has the following flag: <code>caseSensitive:true</code></li>
+    <li>The athlete column filter has the AND/OR additional filter suppressed, note that it has the following flag: <code>suppressAndOrCondition:true</code></li>
     <li>The country column has only one filter option: <code>filterOptions=['contains']</code></li>
     <li>The country column has a <code>textCustomComparator</code> so that there are aliases that can be entered in the filter
     ie: if you filter using the text 'usa' it will match United States or 'holland' will match 'Netherlands'</li>

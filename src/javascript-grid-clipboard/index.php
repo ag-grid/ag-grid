@@ -89,6 +89,55 @@ include '../documentation-main/documentation_header.php';
         the target audience for this feature resides.
     </p>
 
+    <h2>Toggle Paste On / Off</h2>
+
+    <p>
+        Pasting is on by default as long as cells are editable (non-editable cells cannot be modified, even
+        with a paste operation). To turn paste operations off, set grid property
+        <code>suppressClipboardPaste=true</code>.
+    </p>
+
+    <h2 id="events">Clipboard Events</h2>
+
+    <p>
+        The following events are relevant to clipboard operations:
+        <ul>
+            <li>
+                <code>pasteStart</code>: Paste event has started.
+            </li>
+            <li>
+                <code>pasteEnd</code>: Paste event has ended.
+            </li>
+            <li>
+                <code>cellValueChanged</code>: A cells value has changed. Typically happens after editing but also
+                if cell value is changed as a result of paste operation.
+            </li>
+        </ul>
+    </p>
+
+    <p>
+        For a paste operation the events will be fired as:
+        <ol>
+            <li>
+                One <code>pasteStart</code> event.
+            </li>
+            <li>
+                Many <code>cellValueChanged</code> events.
+            </li>
+            <li>
+                One <code>pasteEnd</code> event.
+            </li>
+        </ol>
+        If the application is doing work each time it receives a <code>cellValueChanged</code>, you can use
+        the <code>pasteStart</code> and
+        <code>pasteEnd</code> events to suspend the applications work and then do the work for all cells impacted
+        by the paste operation after the paste operation.
+    </p>
+
+    <p>
+        There are no events for paste to clipboard as this does not update the grids data.
+    </p>
+
     <h2>Clipboard Example</h2>
 
     <p>
@@ -98,6 +147,11 @@ include '../documentation-main/documentation_header.php';
         <li>Copy with the Context Menu or 'Ctrl & C'.</li>
         <li>Paste with 'Ctrl & V'.</li>
         <li>Copy with the provided buttons.</li>
+        <li>
+            Notice for paste that events <code>pasteStart</code>, <code>pasteEnd</code> and
+            <code>cellValueChanged</code> are logged to the console.
+        </li>
+        <li>Buttons 'Toggle Paste On' and 'Toggle Paste Off' turn pasting on and off.</li>
     </ul>
 
     <p>The example has both row click selection and range selection enabled. You probably won't do
@@ -129,27 +183,75 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Processing Clipboard Data</h2>
 
-    <p>If you wish to process the data before pasting into or out of the Grid, you can use the following call backs to
-        do so: </p>
+    <p>
+        It is possible to process clipboard data before pasting it into the grid. This can be done either 1) on
+        individual cells or 2) the whole paste operation. The following callbacks allow this:
+    </p>
 
-    <ul class="content">
+    <ol class="content">
         <li>
-            <code>processCellForClipboard(params):</code>
-            Allows you to process cells for the clipboard. Handy if you have date objects that you
-            need to have a particular format if importing into Excel.
+            Individual Cells:
+            <ul>
+                <li>
+                    <code>processCellForClipboard(params):</code>
+                    Allows you to process cells for the clipboard. Handy if you have date objects that you
+                    need to have a particular format if importing into Excel.
+                </li>
+                <li>
+                    <code>processHeaderForClipboard(params):</code>
+                    Allows you to process header values for the clipboard.
+                </li>
+                <li>
+                    <code>processCellFromClipboard(params):</code>
+                    Allows you to process cells from the clipboard.
+                    Handy if you have for example number fields and want to block non-numbers from getting into the grid.
+                </li>
+            </ul>
         </li>
         <li>
-            <code>processHeaderForClipboard(params):</code>
-            Allows you to process header values for the clipboard.
+            Whole Paste Operation
+            <ul>
+                <li><code>processDataFromClipboard(params):</code> Allows complete control of the paste operation,
+                including cancelling the operation (so nothing happens) or replacing the data with other data.</li>
+            </ul>
         </li>
-        <li>
-            <code>processCellFromClipboard(params):</code>Allows you to process cells from the clipboard.
-            Handy if you have for example number fields and want to block non-numbers from getting into the grid.
-        </li>
-    </ul>
+    </ol>
+
+    <h3>Processing Individual Cells</h3>
+
+    <p>The interfaces and parameters for processing individual cells are as follows:</p>
+    <snippet>
+// for processing cell during a copy / cut operation
+processCellForClipboard(params: ProcessCellForExportParams): any;
+
+// for processing header cell during a copy / cut operation
+processHeaderForClipboard?params: ProcessHeaderForExportParams): any;
+
+// for processing a cell during a paste operation
+processCellFromClipboard(params: ProcessCellForExportParams): any;
+
+// for processCellForClipboard and processCellFromClipboard
+export interface ProcessCellForExportParams {
+    value: any, // the value to paste
+    node: RowNode, // the row node
+    column: Column, // the column
+    api: GridApi, // the grid's API
+    columnApi: ColumnApi, // the grids column API
+    context: any, // the context object
+    type: string // clipboard, dragCopy (ctrl+D), export
+}
+
+// for processHeaderForClipboard
+export interface ProcessHeaderForExportParams {
+    column: Column, // the column
+    api: GridApi, // the api
+    columnApi: ColumnApi, // the column aPI
+    context: any // the context object
+}
+    </snippet>
 
     <p>
-        The three callbacks above are demonstrated in the example below. Not the following:
+        These three callbacks above are demonstrated in the example below. Note the following:
         <ul>
             <li>
                 When cells are copied to the clipboard, values are prefixed with 'C-'.
@@ -167,6 +269,52 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <?= example('Example Process', 'process', 'generated', array("enterprise" => true)) ?>
+
+    <h3>Processing Whole Paste Operation</h3>
+
+    <p>The interface and parameters for processing the whole paste operation is as follows:</p>
+
+    <snippet>
+// for processing data from the clipboard
+processDataFromClipboard(params: ProcessDataFromClipboardParams)=>string[][];
+
+// params for processDataFromClipboard
+export interface ProcessDataFromClipboardParams {
+    data: string[][]; // 2d array of all cells from the clipboard
+}
+    </snippet>
+
+    <p>
+        In summary the <code>processDataFromClipboard</code> takes a 2d array of data that was taken from
+        the clipboard and the method returns a 2d array of data to be used. For the method to have no impact,
+        it should return the 2d array it was provided. The method is free to return back anything it wants,
+        as long as it is a 2d array of strings.
+    </p>
+
+    <p>
+        The example below demonstrates <code>processDataFromClipboard</code>. Note the following:
+    </p>
+
+    <ul>
+        <li>
+            Paste data with no cells starting with 'Red' or 'Yellow' works as normal. This is achieved
+            by <code>processDataFromClipboard</code> returning the 2d array it was provided with.
+        </li>
+        <li>
+            Pasting any data where a cell starts with 'Red' will result in always 2x2 cells getting pasted
+            with contents <code>[ ['Orange', 'Orange'], ['Grey', 'Grey'] ]</code>. To see this, copy and
+            paste some 'Red' cells from column F.
+            This is achieved by <code>processDataFromClipboard</code> returning the same 2d array always
+            regardless of the data from the clipboard.
+        </li>
+        <li>
+            Pasting any data where a cell starts with 'Yellow' will result in the paste operation getting
+            cancelled. To see this, copy and paste some 'Yellow' cells from column G. This is achieved by
+            <code>processDataFromClipboard</code> returning null.
+        </li>
+    </ul>
+
+    <?= example('Example Process All', 'process-all', 'generated', array("enterprise" => true)) ?>
 
     <h2>Changing the Deliminator</h2>
 

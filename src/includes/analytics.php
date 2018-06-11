@@ -6,6 +6,7 @@
 
     ga('create', 'UA-60553231-2', 'auto');
     ga('send', 'pageview');
+    ga('set', 'anonymizeIp', true);
 
     // workaround script for Google Site Search
     _gaq = {}; 

@@ -1,40 +1,60 @@
 var columnDefs = [
-    {headerName: "Make", field: "make"},
-    {headerName: "Model", field: "model"},
-    {headerName: "Price", field: "price", filter: "number"}
+    {field: 'model'},
+    {field: 'color'},
+    {field: 'price', valueFormatter: '"$" + value.toLocaleString()'},
+    {field: 'year'},
+    {field: 'country'}
 ];
 
-var rowData = [
-    {make: "Toyota", model: "Celica", price: 35000},
-    {make: "Ford", model: "Mondeo", price: 32000},
-    {make: "Ford", model: "Focus", price: 27000},
-    {make: "BMW", model: "M5", price: 38000},
-    {make: "Phantom", model: "Speed Car", price: 120000},
-    {make: "Porsche", model: "Boxter", price: 72000},
-    {make: "Toyota", model: "Celica", price: 35000},
-    {make: "Ford", model: "Mondeo", price: 32000},
-    {make: "Ford", model: "Focus", price: 27000},
-    {make: "BMW", model: "M5", price: 38000},
-    {make: "Phantom", model: "Speed Car", price: 120000},
-    {make: "Porsche", model: "Boxter", price: 72000},
-    {make: "Porsche", model: "Boxter", price: 72000},
-    {make: "Porsche", model: "Boxter", price: 72000},
-    {make: "Porsche", model: "Boxter", price: 72000},
-    {make: "Porsche", model: "Boxter", price: 72000}
-];
+var models = ['Mercedes-AMG C63','BMW M2','Audi TT Roadster','Mazda MX-5','BMW M3','Porsche 718 Boxster','Porsche 718 Cayman'];
+var colors = ['Red','Black','Green','White','Blue'];
+var countries = ['UK', 'Spain', 'France', 'Ireland', 'USA'];
+
+function createRowData() {
+    var rowData = [];
+    for (var i = 0; i<200; i++) {
+        var item = {
+            model: models[Math.floor(Math.random()*models.length)],
+            color: colors[Math.floor(Math.random()*colors.length)],
+            country: countries[Math.floor(Math.random()*countries.length)],
+            year: 2018 - Math.floor(Math.random() * 20),
+            price: 20000 + ((Math.floor(Math.random() * 100)*100))
+        };
+        rowData.push(item);
+    }
+    return rowData;
+}
 
 var gridOptions = {
     columnDefs: columnDefs,
-    enableColResize: true, //one of [true, false]
-    enableSorting: true, //one of [true, false]
-    enableFilter: true, //one of [true, false]
-    rowSelection: "single",
-    domLayout: "forPrint"
+    rowData: createRowData()
 };
+
+function onBtPrinterFriendly() {
+    var eGridDiv = document.querySelector('.my-grid');
+
+    var preferredWidth = gridOptions.api.getPreferredWidth();
+
+    // add 2 pixels for the grid border
+    preferredWidth += 2;
+
+    eGridDiv.style.width = preferredWidth + 'px';
+    eGridDiv.style.height = '';
+
+    gridOptions.api.setGridAutoHeight(true);
+}
+
+function onBtNormal() {
+    var eGridDiv = document.querySelector('.my-grid');
+
+    eGridDiv.style.width = '400px';
+    eGridDiv.style.height = '200px';
+
+    gridOptions.api.setGridAutoHeight(false);
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-    gridOptions.api.setRowData(rowData);
 });

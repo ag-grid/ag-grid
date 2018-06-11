@@ -24,7 +24,7 @@ var columnDefs = [
             }
         }
     }},
-    {headerName: "Sport", field: "sport", width: 110},
+    {headerName: "Sport", field: "sport", width: 110, filter: 'agTextColumnFilter'},
     {headerName: "Gold", field: "gold", width: 100, filter: 'agNumberColumnFilter'},
     {headerName: "Silver", field: "silver", width: 100, filter: 'agNumberColumnFilter'},
     {headerName: "Bronze", field: "bronze", width: 100, filter: 'agNumberColumnFilter'},
@@ -90,6 +90,40 @@ function printCountryModel() {
     }
 }
 
+function sportStartsWithS() {
+    var sportsFilterComponent = gridOptions.api.getFilterInstance('sport');
+    sportsFilterComponent.setModel({
+        type: 'startsWith',
+        filter: 's'
+    });
+    gridOptions.api.onFilterChanged();
+}
+
+function sportEndsWithG() {
+    var sportsFilterComponent = gridOptions.api.getFilterInstance('sport');
+    sportsFilterComponent.setModel({
+        type: 'endsWith',
+        filter: 'g'
+    });
+    gridOptions.api.onFilterChanged();
+}
+
+function sportsCombined() {
+    var sportsFilterComponent = gridOptions.api.getFilterInstance('sport');
+    sportsFilterComponent.setModel({
+        condition2:{
+            type: 'endsWith',
+            filter: 'g'
+        },
+        condition1: {
+            type: 'startsWith',
+            filter: 's'
+        },
+        operator: 'AND'
+    });
+    gridOptions.api.onFilterChanged();
+}
+
 function ageBelow25() {
     var ageFilterComponent = gridOptions.api.getFilterInstance('age');
     ageFilterComponent.setModel({
@@ -106,6 +140,24 @@ function ageAbove30() {
         type: 'greaterThan',
         filter: 30,
         filterTo: null
+    });
+    gridOptions.api.onFilterChanged();
+}
+
+function ageBelow25OrAbove30() {
+    var ageFilterComponent = gridOptions.api.getFilterInstance('age');
+    ageFilterComponent.setModel({
+        condition1:{
+            type: 'greaterThan',
+            filter: 30,
+            filterTo: null
+        },
+        operator: 'OR',
+        condition2:{
+            type: 'lessThan',
+            filter: 25,
+            filterTo: null
+        }
     });
     gridOptions.api.onFilterChanged();
 }
@@ -142,6 +194,24 @@ function before2012(){
         type: 'lessThan',
         dateFrom: '2012-01-01',
         dateTo: null
+    });
+    gridOptions.api.onFilterChanged();
+}
+
+function dateCombined(){
+    var dateFilterComponent = gridOptions.api.getFilterInstance('date');
+    dateFilterComponent.setModel({
+        condition1:{
+            type: 'lessThan',
+            dateFrom: '2012-01-01',
+            dateTo: null
+        },
+        condition2:{
+            type: 'greaterThan',
+            dateFrom: '2010-01-01',
+            dateTo: null
+        },
+        operator: 'OR'
     });
     gridOptions.api.onFilterChanged();
 }

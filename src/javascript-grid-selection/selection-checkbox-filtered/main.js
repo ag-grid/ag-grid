@@ -1,6 +1,6 @@
 var columnDefs = [
     {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0},
-    {headerName: "Sport", field: "sport", width: 110},
+    {headerName: "Sport", field: "sport", width: 110, rowGroupIndex: 1},
     {headerName: "Age", field: "age", width: 90, aggFunc: 'sum'},
     {headerName: "Year", field: "year", width: 90},
     {headerName: "Date", field: "date", width: 110},
@@ -28,7 +28,12 @@ var gridOptions = {
 };
 
 function filterSwimming() {
-    gridOptions.api.setFilterModel({sport: ['Swimming']});
+   gridOptions.api.setFilterModel({sport: ['Swimming']});
+}
+
+
+function ages16And20() {
+   gridOptions.api.setFilterModel({age: ['16','20']});
 }
 
 function clearFilter() {

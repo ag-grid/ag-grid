@@ -58,7 +58,7 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>getChildCount(data)</th>
             <td>
-                For <a href="../javascript-grid-enterprise-model/">Enterprise Row Model</a> only. Allows
+                For <a href="../javascript-grid-server-side-model/">Server-side Row Model</a> only. Allows
                 setting the child count for a group row.
             </td>
         </tr>

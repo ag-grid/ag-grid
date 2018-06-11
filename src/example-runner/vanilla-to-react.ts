@@ -46,17 +46,26 @@ function indexTemplate(bindings, componentFilenames) {
     const additionalInReady = [];
 
     if (bindings.data) {
-        additionalInReady.push(`
-        const httpRequest = new XMLHttpRequest();
-        const updateData = (data) => ${bindings.data.callback};
+        let setRowDataBlock = bindings.data.callback;
+        if(bindings.data.callback.indexOf('api.setRowData') !== -1) {
+            propertyAssignments.push('rowData: []');
+            componentAttributes.push('rowData={this.state.rowData}');
 
-        httpRequest.open('GET', ${bindings.data.url});
-        httpRequest.send();
-        httpRequest.onreadystatechange = () => {
-            if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                updateData(JSON.parse(httpRequest.responseText));
-            }
-        };`);
+            setRowDataBlock = bindings.data.callback.replace("params.api.setRowData(data);", "this.setState({ rowData: data });");
+        }
+
+        additionalInReady.push(`
+            const httpRequest = new XMLHttpRequest();
+            const updateData = (data) => ${setRowDataBlock};
+    
+            httpRequest.open('GET', ${bindings.data.url});
+            httpRequest.send();
+            httpRequest.onreadystatechange = () => {
+                if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+                    updateData(JSON.parse(httpRequest.responseText));
+                }
+            };`);
+
     }
 
     if (bindings.onGridReady) {
@@ -68,13 +77,14 @@ function indexTemplate(bindings, componentFilenames) {
         additionalInReady.push('params.api.sizeColumnsToFit();');
     }
 
-    const agGridTag = `<div style={{
-                boxSizing: 'border-box', 
-                height: '${bindings.gridSettings.height}', 
-                width: '${bindings.gridSettings.width}'}} 
-                className="${bindings.gridSettings.theme}">
-            <AgGridReact
+    const agGridTag = `<div 
                 id="myGrid"
+                style={{
+                    boxSizing: 'border-box', 
+                    height: '${bindings.gridSettings.height}', 
+                    width: '${bindings.gridSettings.width}'}} 
+                    className="${bindings.gridSettings.theme}">
+            <AgGridReact
                 ${componentAttributes.join('\n')}
             />
             </div>`;

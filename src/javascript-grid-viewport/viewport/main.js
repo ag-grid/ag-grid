@@ -41,7 +41,6 @@ var columnDefs = [
 ];
 
 var gridOptions = {
-    enableRangeSelection: true,
     enableColResize: true,
     debug: true,
     columnDefs: columnDefs,

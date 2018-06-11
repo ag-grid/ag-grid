@@ -221,7 +221,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
     <?= example('Sorting With Pivot', 'sorting', 'generated', array("enterprise" => 1)) ?>
 
 
-    <h2 id="totalPivotColumns">Total Pivot Columns</h2>
+    <h2 id="pivotColumnGroupTotals">Pivot Column Group Totals</h2>
     <p>
         When in pivot mode you can also include automatically calculated total pivot columns. These total columns will use the provided
         aggregation function on the value columns to 'roll-up' each group level.
@@ -232,23 +232,56 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
     </p>
 
     <p>
-        To turn total columns on for pivoting, set property <code>gridOption.pivotTotals=true</code>.
+        To enable total columns set <code>gridOptions.pivotColumnGroupTotals = 'before' | 'after'</code>. The
+        values <code>before</code> and <code>after</code> are used to control the relative position of the total column
+        when the group is expanded.
     </p>
 
     <note>
-        All value columns must use the same aggregation function for the total column to make sense, otherwise the
-        total column will not be included.
+        <code>gridOptions.pivotTotals = true</code> has now been deprecated in favour of the new property
+        <code>gridOptions.pivotColumnGroupTotals = 'before' | 'after'</code>.
     </note>
 
     <p>
-       The example below demonstrates pivot totals as follows:
+        All value columns must use the same aggregation function for the total column to make sense, otherwise the
+        total column will not be included.
+    </p>
+
+    <p>
+       The example below demonstrates Pivot Column Group Totals as follows:
     </p>
        <ul class="content">
-           <li>Pivot totals added on ['sport', 'year'] columns.</li>
+           <li>Pivot Column Group Totals added on ['sport', 'year'] columns.</li>
            <li>Expanding pivot groups reveals columns that make up totals.</li>
        </ul>
 
-    <?= example('Total Pivot Columns', 'totals', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Pivot Column Group Totals', 'totals', 'generated', array("enterprise" => 1)) ?>
+
+    <h2 id="pivotRowTotals">Pivot Row Totals</h2>
+
+    <p>
+        When in pivot mode you can also include automatically calculated Row Total Columns. These total columns will use
+        the provided aggregation function on the value columns to 'roll-up' each group level.
+    </p>
+
+    <p>
+        To enable Pivot Row Totals, declare the following property: <code>gridOption.pivotRowTotals = 'before' | 'after'</code>.
+        The values <code>before</code> and <code>after</code> are used to control the position of the row total columns
+        relative to the other pivot columns.
+    </p>
+
+    <p>
+        The example below demonstrates Pivot Row Totals as follows:
+    </p>
+    <ul class="content">
+        <li>Pivot Row Totals are positioned before the other pivot group columns using:
+            <code>gridOption.pivotRowTotals = 'before'</code>.</li>
+        <li>Pivot Row Totals are added for each of the value columns: 'gold', 'silver' and 'bronze'. </li>
+        <li>Pivot Column Group Total are also added using: <code>gridOptions.pivotColumnGroupTotals = 'after'</code>.</li>
+        <li>Expanding pivot column groups reveals the in the last position as 'after' is used.</li>
+    </ul>
+
+    <?= example('Pivot Row Totals', 'row-totals', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Saving & Restoring Column State with Pivot</h2>
 

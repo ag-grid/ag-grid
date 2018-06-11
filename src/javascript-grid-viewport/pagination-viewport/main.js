@@ -47,7 +47,6 @@ var gridOptions = {
     enableColResize: true,
     debug: true,
     columnDefs: columnDefs,
-    rowSelection: 'multiple',
     rowModelType: 'viewport',
     pagination: true,
     paginationAutoPageSize: true,

@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     gridDiv = document.querySelector('#myGrid');
 
+    // agGrid.LicenseManager.setLicenseKey("Adcore_Desarrollo_y_Comunicación_S.L_Siturweb_1Devs1_SaaS_18_April_2019__MTU1NTU0MjAwMDAwMA==3c5a3b0fcc94ec4a5bd5452284b614df")
     new agGrid.Grid(gridDiv, gridOptions);
     createData();
 });
@@ -132,21 +133,19 @@ var gridOptions = {
     //     suppressMultiRangeSelection: true,
     rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
-    pivotTotals: true,
+    pivotColumnGroupTotals: 'before',
+    pivotRowTotals: 'before',
+    // suppressRowTransform: true,
     //minColWidth: 50,
     //maxColWidth: 300,
-    rowBuffer: 10,
+//    rowBuffer: 10,
     //columnDefs: [],
     //singleClickEdit: true,
     // suppressClickEdit: true,
-    //rowData: [
-    //    {name: 'Niall'},
-    //    {name: 'Eamon'},
-    //    {name: 'Kevin'},
-    //    {name: 'Brian'}
-    //],
     enterMovesDownAfterEdit: true,
     enterMovesDown: true,
+    // domLayout: 'autoHeight',
+    // domLayout: 'forPrint',
     // groupUseEntireRow: true, //one of [true, false]
     //        groupDefaultExpanded: 9999, //one of [true, false], or an integer if greater than 1
     //            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
@@ -156,11 +155,12 @@ var gridOptions = {
     //suppressMovableColumns: true,
     //groupIncludeFooter: true,
     suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
+    // suppressRowHoverHighlight: true,
     // suppressTouch: true,
     // suppressDragLeaveHidesColumns: true,
     // suppressMakeColumnVisibleAfterUnGroup: true,
-    //unSortIcon: true,
-    //     enableRtl: true,
+    // unSortIcon: true,
+    // enableRtl: true,
     multiSortKey: 'ctrl',
     animateRows: true,
     enableColResize: true, //one of [true, false]
@@ -182,6 +182,7 @@ var gridOptions = {
     autoGroupColumnDef: groupColumn,
     //suppressCellSelection: true,
     //suppressMultiSort: true,
+    // scrollbarWidth: 20,
     showToolPanel: true,//window.innerWidth > 1000,
     // toolPanelSuppressColumnFilter: true,
     // toolPanelSuppressColumnSelectAll: true,
@@ -228,8 +229,16 @@ var gridOptions = {
     // rowHoverClass: true,
     // layoutInterval: -1,
     // suppressAnimationFrame: true,
-    //     pinnedTopRowData: [{},{},{}],
-    //     pinnedBottomRowData: [{},{},{}],
+    //     pinnedTopRowData: [
+    //         {name: 'Mr Pinned Top 1', language: 'English', country: 'Ireland', continent:"Europe", game:{name:"Hare and Hounds",bought:"true"}, totalWinnings: 342424, bankBalance:75700.9,rating:2,jan:20478.54,feb:2253.06,mar:39308.65,apr:98710.13,may:96186.55,jun:91925.91,jul:1149.47,aug:32493.69,sep:19279.44,oct:21624.14,nov:71239.81,dec:80031.35},
+    //         {name: 'Mr Pinned Top 2', language: 'English', country: 'Ireland', continent:"Europe", game:{name:"Hare and Hounds",bought:"true"}, totalWinnings: 342424, bankBalance:75700.9,rating:2,jan:20478.54,feb:2253.06,mar:39308.65,apr:98710.13,may:96186.55,jun:91925.91,jul:1149.47,aug:32493.69,sep:19279.44,oct:21624.14,nov:71239.81,dec:80031.35},
+    //         {name: 'Mr Pinned Top 3', language: 'English', country: 'Ireland', continent:"Europe", game:{name:"Hare and Hounds",bought:"true"}, totalWinnings: 342424, bankBalance:75700.9,rating:2,jan:20478.54,feb:2253.06,mar:39308.65,apr:98710.13,may:96186.55,jun:91925.91,jul:1149.47,aug:32493.69,sep:19279.44,oct:21624.14,nov:71239.81,dec:80031.35},
+    //         ],
+    //     pinnedBottomRowData: [
+    //         {name: 'Mr Pinned Bottom 1', language: 'English', country: 'Ireland', continent:"Europe", game:{name:"Hare and Hounds",bought:"true"}, totalWinnings: 342424, bankBalance:75700.9,rating:2,jan:20478.54,feb:2253.06,mar:39308.65,apr:98710.13,may:96186.55,jun:91925.91,jul:1149.47,aug:32493.69,sep:19279.44,oct:21624.14,nov:71239.81,dec:80031.35},
+    //         {name: 'Mr Pinned Bottom 2', language: 'English', country: 'Ireland', continent:"Europe", game:{name:"Hare and Hounds",bought:"true"}, totalWinnings: 342424, bankBalance:75700.9,rating:2,jan:20478.54,feb:2253.06,mar:39308.65,apr:98710.13,may:96186.55,jun:91925.91,jul:1149.47,aug:32493.69,sep:19279.44,oct:21624.14,nov:71239.81,dec:80031.35},
+    //         {name: 'Mr Pinned Bottom 3', language: 'English', country: 'Ireland', continent:"Europe", game:{name:"Hare and Hounds",bought:"true"}, totalWinnings: 342424, bankBalance:75700.9,rating:2,jan:20478.54,feb:2253.06,mar:39308.65,apr:98710.13,may:96186.55,jun:91925.91,jul:1149.47,aug:32493.69,sep:19279.44,oct:21624.14,nov:71239.81,dec:80031.35},
+    //     ],
     // callback when row clicked
     //     stopEditingWhenGridLosesFocus: true,
     onRowClicked: function (params) {
@@ -248,6 +257,9 @@ var gridOptions = {
     onColumnVisible: function (event) {
         console.log("Callback onColumnVisible:", event);
     },
+    onColumnResized: function (event) {
+        console.log("Callback onColumnResized:", event);
+    },
     onCellValueChanged: function (params) {
         console.log("Callback onCellValueChanged:", params);
     },
@@ -265,14 +277,17 @@ var gridOptions = {
     onCellFocused: function (params) {
         // console.log('Callback onCellFocused: ' + params.rowIndex + " - " + params.colIndex);
     },
+    onPasteStart: function (params) {
+        console.log('Callback onPasteStart:' ,params);
+    },
+    onPasteEnd: function (params) {
+        console.log('Callback onPasteEnd:' ,params);
+    },
     onGridReady: function (event) {
         console.log('Callback onGridReady: api = ' + event.api);
         //event.api.addGlobalListener(function(type, event) {
         //    console.log('event ' + type);
         //});
-    },
-    onGridSizeChanged: function (event) {
-        console.log('Callback onGridSizeChanged: clientWidth = ' + event.clientWidth + ', clientHeight = ' + event.clientHeight);
     },
     onRowGroupOpened: function (event) {
         console.log('Callback onRowGroupOpened: node = ' + event.node.key + ', ' + event.node.expanded);
@@ -387,8 +402,35 @@ var defaultCols = [
                 // pivotIndex: 1,
                 // rowGroupIndex: 1,
                 enableRowGroup: true,
+                // colSpan: function(params) {
+                //     if (params.data && params.data.country==='Ireland') {
+                //         return 2;
+                //     } else if (params.data && params.data.country==='France') {
+                //         return 3;
+                //     } else {
+                //         return 1;
+                //     }
+                // },
+                // cellStyle: function(params) {
+                //     if (params.data && params.data.country==='Ireland') {
+                //         return {backgroundColor: 'red'};
+                //     } else if (params.data && params.data.country==='France') {
+                //         return {backgroundColor: 'green'};
+                //     } else {
+                //         return null;
+                //     }
+                // },
+                // rowSpan: function(params) {
+                //     if (params.data && params.data.country==='Ireland') {
+                //         return 2;
+                //     } else if (params.data && params.data.country==='France') {
+                //         return 3;
+                //     } else {
+                //         return 1;
+                //     }
+                // },
                 enablePivot: true,
-                cellEditor: 'agRichSelect',
+                cellEditor: 'agRichSelectCellEditor',
                 cellEditorParams: {
                     cellRenderer: 'countryCellRenderer',
                     values: ["Argentina", "Brazil", "Colombia", "France", "Germany", "Greece", "Iceland", "Ireland",
@@ -653,12 +695,12 @@ function createRowItem(row, colCount) {
         bought: booleanValues[row % booleanValues.length]
     };
 
-    rowItem.bankBalance = ((Math.round(pseudoRandom() * 10000000)) / 100) - 3000;
+    rowItem.bankBalance = (Math.round(pseudoRandom() * 100000)) - 3000;
     rowItem.rating = (Math.round(pseudoRandom() * 5));
 
     var totalWinnings = 0;
     months.forEach(function (month) {
-        var value = ((Math.round(pseudoRandom() * 10000000)) / 100) - 20;
+        var value = (Math.round(pseudoRandom() * 100000)) - 20;
         rowItem[month.toLocaleLowerCase()] = value;
         totalWinnings += value;
     });

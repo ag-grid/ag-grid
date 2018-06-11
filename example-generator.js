@@ -152,7 +152,6 @@ module.exports = (cb, scope) =>     {
                 // vue is still new - only process examples marked as tested and good to go
                 // when all examples have been tested this check can be removed
                 if(options.processVue) {
-                    console.log(`Processing Vue Example ${example}`);
                     source = vanillaToVue(sources, options, extractComponentFileNames(vueScripts, '_vue'));
                     mainApp = prettier.format(source, {printWidth: 120});
                 }

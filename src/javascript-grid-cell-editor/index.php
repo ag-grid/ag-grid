@@ -58,6 +58,68 @@ interface ICellEditorComp {
 </snippet>
 
 <p>
+    The params object provided to the init method of the cell editor has the following interface:
+</p>
+
+<snippet>
+interface ICellEditorParams {
+
+    // current value of the cell
+    value: any;
+
+    // key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable characters appear here
+    keyPress: number;
+
+    // the string that started the edit, eg 'a' if letter a was pressed, or 'A' if shift + letter a
+    // - only printable characters appear here
+    charPress: string;
+
+    // grid column
+    column: Column;
+
+    // grid row node
+    node: RowNode;
+
+    // editing row index
+    rowIndex: number,
+
+    // grid API
+    api: GridApi;
+
+    // column API
+    columnApi: ColumnApi;
+
+    // If doing full row edit, this is true if the cell is the one that started the edit (eg it is the cell the
+    // use double clicked on, or pressed a key on etc).
+    cellStartedEdit: boolean;
+
+    // the grid's context object
+    context: any;
+
+    // angular 1 scope - null if not using angular 1, this is legacy and not used if not using angular 1
+    $scope: any;
+
+    // callback to tell grid a key was pressed - useful to pass control key events (tab, arrows etc)
+    // back to grid - however you do
+    onKeyDown: (event: KeyboardEvent)=>void;
+
+    // Callback to tell grid to stop editing the current cell. pass 'false' to prevent navigation moving
+    // to the next cell if grid property enterMovesDownAfterEdit=true
+    stopEditing: (suppressNavigateAfterEdit?: boolean)=>void;
+
+    // A reference to the DOM element representing the grid cell that your component will live inside. Useful if you
+    // want to add event listeners or classes at this level. This is the DOM element that gets browser focus when selecting cells.
+    eGridCell: HTMLElement;
+
+    // Utility function to parse a value using the column's colDef.valueParser
+    parseValue: (value: any) => any;
+
+    // Utility function to format a value using the column's colDef.valueFormatter
+    formatValue: (value: any) => any;
+}
+</snippet>
+
+<p>
     Below is a simple example of Cell Editor:
 </p>
 
@@ -100,89 +162,6 @@ MyCellEditor.prototype.isPopup = function() {
     return false;
 };
 </snippet>
-
-<h2>Cell Editor Params</h2>
-
-<p>
-    The Cell Editor component takes parameters in its init() method and contain the following:
-</p>
-
-<table class="table reference">
-    <tr>
-        <th>Value</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <th>value</th>
-        <td>The initial data value to be edited.</td>
-    </tr>
-    <tr>
-        <th>keyPress</th>
-        <td>If editing was started by a function key press, contains the key code.</td>
-    </tr>
-    <tr>
-        <th>charPress</th>
-        <td>If editing was started by a printable character, contains the string of the printable character.</td>
-    </tr>
-    <tr>
-        <th>column</th>
-        <td>The column the cell belongs to.</td>
-    </tr>
-    <tr>
-        <th>node</th>
-        <td>The row node the row is rendering.</td>
-    </tr>
-    <tr>
-        <th>api</th>
-        <td>Grid API</td>
-    </tr>
-    <tr>
-        <th>columnApi</th>
-        <td>Column API</td>
-    </tr>
-    <tr>
-        <th>context</th>
-        <td>Grid context</td>
-    </tr>
-    <tr>
-        <th>$scope</th>
-        <td>If compiling to Angular, is the row's child scope, otherwise null.</td>
-    </tr>
-    <tr>
-        <th>onKeyDown</th>
-        <td>Callback to tell grid a key was pressed - useful to pass control key events (tab, arrows etc) back to grid -
-            however you do
-            not need to call this as the grid is already listening for the events as they propagate. This is only
-            required if
-            you are preventing event propagation.
-        </td>
-    </tr>
-    <tr>
-        <th>stopEditing</th>
-        <td>Callback to tell grid to stop editing the current cell.</td>
-    </tr>
-    <tr>
-        <th>eGridCell</th>
-        <td>A reference to the DOM element representing the grid cell that your component will live inside.
-            Useful if you want to add event listeners or classes at this level. This is the DOM element that
-            gets browser focus when selecting cells.
-        </td>
-    </tr>
-    <tr>
-        <th>cellStartedEdit</th>
-        <td>
-            If doing full row edit, this is true if the cell is the one that started the edit (eg it is
-            the cell the use double clicked on, or pressed a key on etc).
-        </td>
-    </tr>
-    <tr>
-        <th>useFormatter</th>
-        <td>
-            This is useful when using reference data and you want to show display text rather than the underlying
-            code value. If true, the formatter provided on the ColDef will format the value prior to editing.
-        </td>
-    </tr>
-</table>
 
 <h2 id="complementing-cell-editor-params">Complementing Cell Editor Params</h2>
 

@@ -1,0 +1,28 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>ag-Grid Feature Overview</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+        <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+        <style type="text/css" media="screen">
+            dl {
+                font-size: 0.8rem;
+                position: sticky;
+                height: 100vh;
+                top: 0;
+                overflow: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app">
+            <button @click="toggleTutorial">Features Tutorial</button>
+            <router-view></router-view>
+        </div>
+
+        <script charset="utf-8" src="tutorial.js"></script>
+    </div>
+</body>
+</html>
