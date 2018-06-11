@@ -1,4 +1,4 @@
-import {_, Autowired, Component, Context, GridApi, GridOptionsWrapper} from "ag-grid/main";
+import {Events, ToolPanelVisibleChangedEvent, _, Autowired, Component, Context, GridApi, GridOptionsWrapper, EventService} from "ag-grid/main";
 import {PivotModePanel} from "./columnDrop/pivotModePanel";
 import {ValuesColumnPanel} from "./columnDrop/valueColumnsPanel";
 import {RowGroupColumnsPanel} from "./columnDrop/rowGroupColumnsPanel";
@@ -17,6 +17,7 @@ export class ToolPanelColumnComp extends Component {
     @Autowired("context") private context: Context;
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired("gridApi") private gridApi: GridApi;
+    @Autowired("eventService") private eventService: EventService;
 
     private initialised = false;
 
@@ -38,6 +39,13 @@ export class ToolPanelColumnComp extends Component {
         if (visible && !this.initialised) {
             this.init();
         }
+
+        let event: ToolPanelVisibleChangedEvent = {
+            type: Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi()
+        };
+        this.eventService.dispatchEvent(event);
     }
 
     public init(): void {
