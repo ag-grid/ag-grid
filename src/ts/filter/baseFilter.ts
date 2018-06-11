@@ -377,6 +377,7 @@ export abstract class ComparableBaseFilter<T, P extends IComparableFilterParams,
 
     public init(params: P) {
         super.init(params);
+        this.suppressAndOrCondition = params.suppressAndOrCondition;
     }
 
     public customInit() {
