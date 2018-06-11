@@ -1,5 +1,5 @@
 import Vue from "vue";
-import {ComponentUtil, Grid} from "ag-grid/main";
+import {ComponentUtil, Grid} from "ag-grid";
 import {VueFrameworkFactory} from "./vueFrameworkFactory";
 import {VueFrameworkComponentWrapper} from "./vueFrameworkComponentWrapper";
 
@@ -12,7 +12,6 @@ const props = {
     }
 };
 ComponentUtil.ALL_PROPERTIES.forEach((propertyName) => {
-    // props.push(propertyName);
     props[propertyName] = {};
 
     watchedProperties[propertyName] = function (val, oldVal) {
@@ -20,12 +19,13 @@ ComponentUtil.ALL_PROPERTIES.forEach((propertyName) => {
     };
 });
 ComponentUtil.EVENTS.forEach((eventName) => {
-    // props.push(eventName);
     props[eventName] = {};
 });
 
 export default Vue.extend({
-    template: '<div></div>',
+    render: function (h) {
+        return h('div');
+    },
     props: props,
     data() {
         return {
@@ -43,8 +43,6 @@ export default Vue.extend({
             let emitter = this[eventType];
             if (emitter) {
                 emitter(event);
-            } else {
-                // the app isn't listening for this - ignore it
             }
         },
         processChanges(propertyName, val, oldVal) {
@@ -75,7 +73,7 @@ export default Vue.extend({
     watch: watchedProperties,
     destroyed() {
         if (this._initialised) {
-            if(this.gridOptions.api) {
+            if (this.gridOptions.api) {
                 this.gridOptions.api.destroy();
             }
             this._destroyed = true;
