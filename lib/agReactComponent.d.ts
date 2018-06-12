@@ -1,4 +1,4 @@
-// ag-grid-react v17.1.0
+// ag-grid-react v18.0.0
 import { AgReactFrameworkComponent } from "./interfaces";
 import { Promise } from 'ag-grid';
 export declare class AgReactComponent implements AgReactFrameworkComponent<any> {
