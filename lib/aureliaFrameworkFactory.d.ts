@@ -1,4 +1,4 @@
-// ag-grid-aurelia v17.1.0
+// ag-grid-aurelia v18.0.0
 import { Container, ViewResources } from "aurelia-framework";
 import { IFrameworkFactory } from "ag-grid/main";
 export declare class AureliaFrameworkFactory implements IFrameworkFactory {
@@ -7,5 +7,4 @@ export declare class AureliaFrameworkFactory implements IFrameworkFactory {
     private _baseFrameworkFactory;
     setContainer(container: Container): void;
     setViewResources(viewResources: ViewResources): void;
-    setTimeout(action: any, timeout?: any): void;
 }

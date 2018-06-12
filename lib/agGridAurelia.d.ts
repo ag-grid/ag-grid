@@ -1,4 +1,4 @@
-// ag-grid-aurelia v17.1.0
+// ag-grid-aurelia v18.0.0
 import { ComponentAttached, ComponentDetached, Container, TaskQueue, ViewResources } from "aurelia-framework";
 import { ColumnApi, GridApi, GridOptions } from "ag-grid/main";
 import { AureliaFrameworkFactory } from "./aureliaFrameworkFactory";
@@ -30,5 +30,5 @@ export declare class AgGridAurelia implements ComponentAttached, ComponentDetach
      */
     propertyChanged(propertyName: string, newValue: any, oldValue: any): void;
     detached(): void;
-    private globalEventListener(eventType, event);
+    private globalEventListener;
 }
