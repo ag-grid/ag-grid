@@ -47,10 +47,7 @@ var gridOptions = {
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-
-    console.log("here");
     agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/latest/src/javascript-grid-master-detail/filtering-with-sort/data/data.json'}).then(function(data) {
-        console.log("and here");
         gridOptions.api.setRowData(data);
     });
 });
