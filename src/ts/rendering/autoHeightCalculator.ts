@@ -9,12 +9,17 @@ import {_} from "../utils";
 @Bean('autoHeightCalculator')
 export class AutoHeightCalculator {
 
-    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('beans') private beans: Beans;
     @Autowired("$scope") private $scope: any;
     @Autowired("columnController") private columnController: ColumnController;
 
+    private gridPanel: GridPanel;
+
     private eDummyContainer: HTMLElement;
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
+    }
 
     public getPreferredHeightForRow(rowNode: RowNode): number {
 
@@ -33,9 +38,10 @@ export class AutoHeightCalculator {
 
         let cellComps: CellComp[] = [];
         let cols = this.columnController.getAllAutoRowHeightCols();
+        console.log();
         cols.forEach( col => {
             let cellComp = new CellComp(
-                null,
+                this.$scope,
                 this.beans,
                 col,
                 rowNode,

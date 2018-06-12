@@ -1,9 +1,9 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../entities/rowNode";
-import { RowNodeTransaction } from "../rowModels/inMemory/inMemoryRowModel";
-import { ChangedPath } from "../rowModels/inMemory/changedPath";
+import { RowNodeTransaction } from "../rowModels/clientSide/clientSideRowModel";
+import { ChangedPath } from "../rowModels/clientSide/changedPath";
 export interface StageExecuteParams {
     rowNode: RowNode;
     rowNodeTransaction?: RowNodeTransaction;

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ExternalPromise, Promise } from "../utils";
@@ -62,6 +62,7 @@ export declare class FilterManager {
     destroy(): void;
 }
 export interface FilterWrapper {
+    compiledElement: any;
     column: Column;
     filterPromise: Promise<IFilterComp>;
     scope: any;

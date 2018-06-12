@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Context } from "../context/context";
@@ -37,7 +37,6 @@ import { HeightScaler } from "./heightScaler";
  * and CellComp need. Not autowiring all the cells gives performance improvement. */
 export declare class Beans {
     paginationProxy: PaginationProxy;
-    gridPanel: GridPanel;
     context: Context;
     columnApi: ColumnApi;
     gridApi: GridApi;
@@ -67,7 +66,8 @@ export declare class Beans {
     sortController: SortController;
     filterManager: FilterManager;
     heightScaler: HeightScaler;
-    forPrint: boolean;
     doingMasterDetail: boolean;
+    gridPanel: GridPanel;
+    registerGridComp(gridPanel: GridPanel): void;
     private postConstruct();
 }

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -86,7 +86,7 @@ var RowNodeCache = (function (_super) {
             }
             blocksForPurging.push(block);
         });
-        // todo: need to verify that this sorts items in the right order
+        // note: need to verify that this sorts items in the right order
         blocksForPurging.sort(function (a, b) { return b.getLastAccessed() - a.getLastAccessed(); });
         // we remove (maxBlocksInCache - 1) as we already excluded the 'just created' page.
         // in other words, after the splice operation below, we have taken out the blocks
@@ -211,8 +211,8 @@ var RowNodeCache = (function (_super) {
     // gets called 1) row count changed 2) cache purged 3) items inserted
     RowNodeCache.prototype.onCacheUpdated = function () {
         if (this.isActive()) {
-            // this results in both row models (infinite and enterprise) firing ModelUpdated,
-            // however enterprise also updates the row indexes first
+            // this results in both row models (infinite and server side) firing ModelUpdated,
+            // however server side row model also updates the row indexes first
             var event_1 = {
                 type: RowNodeCache.EVENT_CACHE_UPDATED
             };

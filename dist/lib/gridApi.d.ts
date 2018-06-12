@@ -1,7 +1,8 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnApi } from "./columnController/columnApi";
+import { GridPanel } from "./gridPanel/gridPanel";
 import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
 import { RowNode } from "./entities/rowNode";
 import { Column } from "./entities/column";
@@ -13,12 +14,13 @@ import { IFilterComp } from "./interfaces/iFilter";
 import { CsvExportParams } from "./exportParams";
 import { ExcelExportParams } from "./interfaces/iExcelCreator";
 import { IDatasource } from "./rowModels/iDatasource";
-import { IEnterpriseDatasource } from "./interfaces/iEnterpriseDatasource";
-import { RowDataTransaction, RowNodeTransaction } from "./rowModels/inMemory/inMemoryRowModel";
+import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
+import { RowDataTransaction, RowNodeTransaction } from "./rowModels/clientSide/clientSideRowModel";
 import { AlignedGridsService } from "./alignedGridsService";
 import { AgEvent, ColumnEventType } from "./events";
 import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
 import { ICellEditorComp } from "./rendering/cellEditors/iCellEditor";
+import { HeaderRootComp } from "./headerRendering/headerRootComp";
 export interface StartEditingCellParams {
     rowIndex: number;
     colKey: string | Column;
@@ -53,12 +55,10 @@ export declare class GridApi {
     private excelCreator;
     private gridCore;
     private rowRenderer;
-    private headerRenderer;
     private filterManager;
     private columnController;
     private selectionController;
     private gridOptionsWrapper;
-    private gridPanel;
     private valueService;
     private alignedGridsService;
     private eventService;
@@ -77,10 +77,15 @@ export declare class GridApi {
     private cellEditorFactory;
     private valueCache;
     private toolPanelComp;
-    private inMemoryRowModel;
+    private animationFrameService;
+    private gridPanel;
+    private headerRootComp;
+    private clientSideRowModel;
     private infinitePageRowModel;
-    private enterpriseRowModel;
+    private serverSideRowModel;
     private detailGridInfoMap;
+    registerGridComp(gridPanel: GridPanel): void;
+    registerHeaderRootComp(headerRootComp: HeaderRootComp): void;
     private init();
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     __getAlignedGridService(): AlignedGridsService;
@@ -92,7 +97,8 @@ export declare class GridApi {
     exportDataAsCsv(params?: CsvExportParams): void;
     getDataAsExcel(params?: ExcelExportParams): string;
     exportDataAsExcel(params?: ExcelExportParams): void;
-    setEnterpriseDatasource(datasource: IEnterpriseDatasource): void;
+    setEnterpriseDatasource(datasource: IServerSideDatasource): void;
+    setServerSideDatasource(datasource: IServerSideDatasource): void;
     setDatasource(datasource: IDatasource): void;
     setViewportDatasource(viewportDatasource: IViewportDatasource): void;
     setRowData(rowData: any[]): void;
@@ -129,6 +135,8 @@ export declare class GridApi {
     getModel(): IRowModel;
     onGroupExpandedOrCollapsed(deprecated_refreshFromIndex?: any): void;
     refreshInMemoryRowModel(step?: string): any;
+    refreshClientSideRowModel(step?: string): any;
+    isAnimationFrameQueueEmpty(): boolean;
     getRowNode(id: string): RowNode;
     expandAll(): void;
     collapseAll(): void;
@@ -183,11 +191,14 @@ export declare class GridApi {
     setFocusedCell(rowIndex: number, colKey: string | Column, floating?: string): void;
     setSuppressRowDrag(value: boolean): void;
     setHeaderHeight(headerHeight: number): void;
+    setGridAutoHeight(gridAutoHeight: boolean): void;
+    getPreferredWidth(): number;
     setGroupHeaderHeight(headerHeight: number): void;
     setFloatingFiltersHeight(headerHeight: number): void;
     setPivotGroupHeaderHeight(headerHeight: number): void;
     setPivotHeaderHeight(headerHeight: number): void;
     showToolPanel(show: any): void;
+    setSuppressClipboardPaste(value: boolean): void;
     isToolPanelShowing(): boolean;
     doLayout(): void;
     resetRowHeights(): void;
@@ -237,6 +248,7 @@ export declare class GridApi {
     purgeInfinitePageCache(): void;
     purgeInfiniteCache(): void;
     purgeEnterpriseCache(route?: string[]): void;
+    purgeServerSideCache(route?: string[]): void;
     getVirtualRowCount(): number;
     getInfiniteRowCount(): number;
     isMaxRowFound(): boolean;

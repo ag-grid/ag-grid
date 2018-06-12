@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,7 +19,6 @@ var dragAndDropService_1 = require("../dragAndDrop/dragAndDropService");
 var context_1 = require("../context/context");
 var moveColumnController_1 = require("./moveColumnController");
 var column_1 = require("../entities/column");
-var gridPanel_1 = require("../gridPanel/gridPanel");
 var bodyDropPivotTarget_1 = require("./bodyDropPivotTarget");
 var columnController_1 = require("../columnController/columnController");
 var DropType;
@@ -33,6 +32,21 @@ var BodyDropTarget = (function () {
         this.pinned = pinned;
         this.eContainer = eContainer;
     }
+    BodyDropTarget.prototype.registerGridComp = function (gridPanel) {
+        this.gridPanel = gridPanel;
+        this.moveColumnController.registerGridComp(gridPanel);
+        switch (this.pinned) {
+            case column_1.Column.PINNED_LEFT:
+                this.eSecondaryContainers = this.gridPanel.getDropTargetLeftContainers();
+                break;
+            case column_1.Column.PINNED_RIGHT:
+                this.eSecondaryContainers = this.gridPanel.getDropTargetRightContainers();
+                break;
+            default:
+                this.eSecondaryContainers = this.gridPanel.getDropTargetBodyContainers();
+                break;
+        }
+    };
     BodyDropTarget.prototype.isInterestedIn = function (type) {
         // not interested in row drags
         return type === dragAndDropService_1.DragSourceType.HeaderCell || type === dragAndDropService_1.DragSourceType.ToolPanel;
@@ -44,23 +58,12 @@ var BodyDropTarget = (function () {
         return this.eContainer;
     };
     BodyDropTarget.prototype.init = function () {
-        var moveColumnController = new moveColumnController_1.MoveColumnController(this.pinned, this.eContainer);
-        this.context.wireBean(moveColumnController);
+        this.moveColumnController = new moveColumnController_1.MoveColumnController(this.pinned, this.eContainer);
+        this.context.wireBean(this.moveColumnController);
         var bodyDropPivotTarget = new bodyDropPivotTarget_1.BodyDropPivotTarget(this.pinned);
         this.context.wireBean(bodyDropPivotTarget);
-        this.dropListeners[DropType.ColumnMove] = moveColumnController;
+        this.dropListeners[DropType.ColumnMove] = this.moveColumnController;
         this.dropListeners[DropType.Pivot] = bodyDropPivotTarget;
-        switch (this.pinned) {
-            case column_1.Column.PINNED_LEFT:
-                this.eSecondaryContainers = this.gridPanel.getDropTargetLeftContainers();
-                break;
-            case column_1.Column.PINNED_RIGHT:
-                this.eSecondaryContainers = this.gridPanel.getDropTargetPinnedRightContainers();
-                break;
-            default:
-                this.eSecondaryContainers = this.gridPanel.getDropTargetBodyContainers();
-                break;
-        }
         this.dragAndDropService.addDropTarget(this);
     };
     BodyDropTarget.prototype.getIconName = function () {
@@ -108,10 +111,6 @@ var BodyDropTarget = (function () {
         context_1.Autowired('context'),
         __metadata("design:type", context_1.Context)
     ], BodyDropTarget.prototype, "context", void 0);
-    __decorate([
-        context_1.Autowired('gridPanel'),
-        __metadata("design:type", gridPanel_1.GridPanel)
-    ], BodyDropTarget.prototype, "gridPanel", void 0);
     __decorate([
         context_1.Autowired('dragAndDropService'),
         __metadata("design:type", dragAndDropService_1.DragAndDropService)

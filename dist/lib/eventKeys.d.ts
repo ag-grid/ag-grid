@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class Events {
@@ -44,6 +44,8 @@ export declare class Events {
     static EVENT_TOOL_PANEL_VISIBLE_CHANGED: string;
     /** Model was updated - grid updates the drawn rows when this happens */
     static EVENT_MODEL_UPDATED: string;
+    static EVENT_PASTE_START: string;
+    static EVENT_PASTE_END: string;
     static EVENT_CELL_CLICKED: string;
     static EVENT_CELL_DOUBLE_CLICKED: string;
     static EVENT_CELL_MOUSE_DOWN: string;
@@ -67,8 +69,9 @@ export declare class Events {
     /** Gets called once after the grid has finished initialising. */
     static EVENT_GRID_READY: string;
     /** Width of height of the main grid div has changed. Grid listens for this and does layout of grid if it's
-     * changed, so always filling the space it was given. */
-    static EVENT_GRID_SIZE_CHANGED: string;
+     * changed, so always filling the space it was given.
+     * DEPRECATED - now that BorderLayout is no longer used, this doesn't make sense. */
+    static DEPRECATED_EVENT_GRID_SIZE_CHANGED: string;
     /** The indexes of the rows rendered has changed, eg user has scrolled to a new vertical position. */
     static EVENT_VIEWPORT_CHANGED: string;
     /** A column drag has started, either resizing a column or moving a column. */
@@ -81,6 +84,7 @@ export declare class Events {
     static EVENT_CELL_EDITING_STOPPED: string;
     /** Main body of grid has scrolled, either horizontally or vertically */
     static EVENT_BODY_SCROLL: string;
+    static EVENT_ANIMATION_QUEUE_EMPTY: string;
     static EVENT_HEIGHT_SCALE_CHANGED: string;
     /** The displayed page for pagination has changed. For example the data was filtered or sorted,
      * or the user has moved to a different page. */

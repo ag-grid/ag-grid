@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -387,6 +387,7 @@ var FilterManager = (function () {
             column: column,
             filterPromise: null,
             scope: null,
+            compiledElement: null,
             guiPromise: utils_1.Promise.external()
         };
         filterWrapper.scope = this.gridOptionsWrapper.isAngularCompileFilters() ? this.$scope.$new() : null;
@@ -412,7 +413,8 @@ var FilterManager = (function () {
             }
             eFilterGui.appendChild(guiFromFilter);
             if (filterWrapper.scope) {
-                _this.$compile(eFilterGui)(filterWrapper.scope);
+                var compiledElement = _this.$compile(eFilterGui)(filterWrapper.scope);
+                filterWrapper.compiledElement = compiledElement;
                 setTimeout(function () { return filterWrapper.scope.$apply(); }, 0);
             }
             filterWrapper.guiPromise.resolve(eFilterGui);
@@ -439,6 +441,9 @@ var FilterManager = (function () {
             }
             filterWrapper.column.setFilterActive(false, source);
             if (filterWrapper.scope) {
+                if (filterWrapper.compiledElement) {
+                    filterWrapper.compiledElement.remove();
+                }
                 filterWrapper.scope.$destroy();
             }
             delete _this.allFilters[filterWrapper.column.getColId()];

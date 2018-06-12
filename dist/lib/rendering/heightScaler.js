@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,7 +29,6 @@ var beanStub_1 = require("../context/beanStub");
 var context_1 = require("../context/context");
 var eventService_1 = require("../eventService");
 var eventKeys_1 = require("../eventKeys");
-var gridPanel_1 = require("../gridPanel/gridPanel");
 var utils_1 = require("../utils");
 /**
  * This class solves the 'max height' problem, where the user might want to show more data than
@@ -50,6 +49,9 @@ var HeightScaler = (function (_super) {
         this.scrollBarWidth = utils_1._.getScrollbarWidth();
         this.maxDivHeight = utils_1._.getMaxDivHeight();
     };
+    HeightScaler.prototype.registerGridComp = function (gridPanel) {
+        this.gridPanel = gridPanel;
+    };
     HeightScaler.prototype.isScaling = function () {
         return this.scaling;
     };
@@ -60,7 +62,7 @@ var HeightScaler = (function (_super) {
         if (!this.scaling) {
             return;
         }
-        var newScrollY = this.gridPanel.getPrimaryScrollViewport().scrollTop;
+        var newScrollY = this.gridPanel.getVScrollPosition().top;
         var newBodyHeight = this.getUiBodyHeight();
         var atLeastOneChanged = newScrollY !== this.scrollY || newBodyHeight !== this.uiBodyHeight;
         if (atLeastOneChanged) {
@@ -129,10 +131,6 @@ var HeightScaler = (function (_super) {
         context_1.Autowired('eventService'),
         __metadata("design:type", eventService_1.EventService)
     ], HeightScaler.prototype, "eventService", void 0);
-    __decorate([
-        context_1.Autowired('gridPanel'),
-        __metadata("design:type", gridPanel_1.GridPanel)
-    ], HeightScaler.prototype, "gridPanel", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

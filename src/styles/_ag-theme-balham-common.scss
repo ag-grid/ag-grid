@@ -83,15 +83,13 @@ $disabled-foreground-color-opacity: 0.38 !default;
         top: 0;
     }
 
-    [ref="north"] {
-        .ag-column-drop {
-            border: 1px solid $border-color;
-            border-bottom: 0;
-        }
+    .ag-column-drop-horizontal.ag-column-drop {
+        border: 1px solid $border-color;
+        border-bottom: 0;
+    }
 
-        .ag-column-drop.ag-width-half:first-child {
-            border-right: 0;
-        }
+    .ag-column-drop-horizontal.ag-column-drop.ag-width-half:first-child {
+        border-right: 0;
     }
 
     .ag-row {

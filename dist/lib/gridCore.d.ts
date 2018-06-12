@@ -1,8 +1,12 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { LoggerFactory } from "./logger";
-export declare class GridCore {
+import { Component } from "./widgets/component";
+export declare class GridCore extends Component {
+    private static TEMPLATE_NORMAL;
+    private static TEMPLATE_ENTERPRISE;
+    private enterprise;
     private gridOptions;
     private gridOptionsWrapper;
     private rowModel;
@@ -11,39 +15,31 @@ export declare class GridCore {
     private rowRenderer;
     private filterManager;
     private eventService;
-    private gridPanel;
     private eGridDiv;
     private $scope;
     private quickFilterOnScope;
     private popupService;
     private focusedCellController;
     private context;
+    loggerFactory: LoggerFactory;
     private columnApi;
     private gridApi;
     private rowGroupCompFactory;
     private pivotCompFactory;
-    private toolPanelComp;
     private statusBar;
-    private rowGroupComp;
-    private pivotComp;
+    private gridPanel;
+    private toolPanelComp;
     private finished;
     private doingVirtualPaging;
-    private eRootPanel;
     private logger;
-    private destroyFunctions;
-    constructor(loggerFactory: LoggerFactory);
+    constructor();
     init(): void;
+    private addLayoutClass();
+    getPreferredWidth(): number;
     private addRtlSupport();
-    private createNorthPanel();
-    private onDropPanelVisible();
     getRootGui(): HTMLElement;
-    private createSouthPanel();
-    private onRowGroupChanged();
-    private addWindowResizeListener();
-    private periodicallyDoLayout();
     showToolPanel(show: any): void;
     isToolPanelShowing(): boolean;
-    private destroy();
+    destroy(): void;
     ensureNodeVisible(comparator: any, position?: string): void;
-    doLayout(): void;
 }

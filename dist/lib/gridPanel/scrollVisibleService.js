@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,25 +16,23 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
-var utils_1 = require("../utils");
 var eventService_1 = require("../eventService");
 var events_1 = require("../events");
 var columnController_1 = require("../columnController/columnController");
 var columnApi_1 = require("../columnController/columnApi");
 var gridApi_1 = require("../gridApi");
+var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var ScrollVisibleService = (function () {
     function ScrollVisibleService() {
     }
     ScrollVisibleService.prototype.setScrollsVisible = function (params) {
-        var atLeastOneDifferent = this.vBody !== params.vBody
-            || this.hBody !== params.hBody
-            || this.vPinnedLeft !== params.vPinnedLeft
-            || this.vPinnedRight !== params.vPinnedRight;
+        var atLeastOneDifferent = this.bodyHorizontalScrollShowing !== params.bodyHorizontalScrollShowing ||
+            this.leftVerticalScrollShowing !== params.leftVerticalScrollShowing ||
+            this.rightVerticalScrollShowing !== params.rightVerticalScrollShowing;
         if (atLeastOneDifferent) {
-            this.vBody = params.vBody;
-            this.hBody = params.hBody;
-            this.vPinnedLeft = params.vPinnedLeft;
-            this.vPinnedRight = params.vPinnedRight;
+            this.bodyHorizontalScrollShowing = params.bodyHorizontalScrollShowing;
+            this.leftVerticalScrollShowing = params.leftVerticalScrollShowing;
+            this.rightVerticalScrollShowing = params.rightVerticalScrollShowing;
             var event_1 = {
                 type: events_1.Events.EVENT_SCROLL_VISIBILITY_CHANGED,
                 api: this.gridApi,
@@ -43,37 +41,17 @@ var ScrollVisibleService = (function () {
             this.eventService.dispatchEvent(event_1);
         }
     };
-    ScrollVisibleService.prototype.isVBodyShowing = function () {
-        return this.vBody;
+    // used by pagination service - to know page height
+    ScrollVisibleService.prototype.isBodyHorizontalScrollShowing = function () {
+        return this.bodyHorizontalScrollShowing;
     };
-    ScrollVisibleService.prototype.isHBodyShowing = function () {
-        return this.hBody;
+    // used by header container
+    ScrollVisibleService.prototype.isLeftVerticalScrollShowing = function () {
+        return this.leftVerticalScrollShowing;
     };
-    ScrollVisibleService.prototype.isVPinnedLeftShowing = function () {
-        return this.vPinnedLeft;
-    };
-    ScrollVisibleService.prototype.isVPinnedRightShowing = function () {
-        return this.vPinnedRight;
-    };
-    ScrollVisibleService.prototype.getPinnedLeftWidth = function () {
-        return this.columnController.getPinnedLeftContainerWidth();
-    };
-    ScrollVisibleService.prototype.getPinnedLeftWithScrollWidth = function () {
-        var result = this.getPinnedLeftWidth();
-        if (this.vPinnedLeft) {
-            result += utils_1.Utils.getScrollbarWidth();
-        }
-        return result;
-    };
-    ScrollVisibleService.prototype.getPinnedRightWidth = function () {
-        return this.columnController.getPinnedRightContainerWidth();
-    };
-    ScrollVisibleService.prototype.getPinnedRightWithScrollWidth = function () {
-        var result = this.getPinnedRightWidth();
-        if (this.vPinnedRight) {
-            result += utils_1.Utils.getScrollbarWidth();
-        }
-        return result;
+    // used by header container
+    ScrollVisibleService.prototype.isRightVerticalScrollShowing = function () {
+        return this.rightVerticalScrollShowing;
     };
     __decorate([
         context_1.Autowired('eventService'),
@@ -91,6 +69,10 @@ var ScrollVisibleService = (function () {
         context_1.Autowired('gridApi'),
         __metadata("design:type", gridApi_1.GridApi)
     ], ScrollVisibleService.prototype, "gridApi", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], ScrollVisibleService.prototype, "gridOptionsWrapper", void 0);
     ScrollVisibleService = __decorate([
         context_1.Bean('scrollVisibleService')
     ], ScrollVisibleService);

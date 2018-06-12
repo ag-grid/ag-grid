@@ -31,9 +31,9 @@ export abstract class RowNodeBlock extends BeanStub {
 
     private lastAccessed: number;
 
-    private blockNumber: number;
-    private startRow: number;
-    private endRow: number;
+    private readonly blockNumber: number;
+    private readonly startRow: number;
+    private readonly endRow: number;
     public rowNodes: RowNode[];
 
     // because the framework cannot wire beans in parent classes, this is a hack
@@ -46,14 +46,14 @@ export abstract class RowNodeBlock extends BeanStub {
     // gets base class to load, based on what the datasource type is
     protected abstract loadFromDatasource(): void;
 
-    // how we set the data and id is also dependent ton the base class, as the enterprise
-    // model is concerned with groups (so has to set keys for the group)
+    // how we set the data and id is also dependent ton the base class, as the server side row model
+    // is concerned with groups (so has to set keys for the group)
     protected abstract setDataAndId(rowNode: RowNode, data: any, index: number): void;
 
     // this gets the row using display indexes. for infinite scrolling, the
     // local index is the same as the display index, so the override just calls
-    // getRowUsingLocalIndex(). however for enterprise, they are different, hence
-    // enterprise does logic before calling getRowUsingLocalIndex().
+    // getRowUsingLocalIndex(). however for server side row model, they are different, hence
+    // server side row model does logic before calling getRowUsingLocalIndex().
     public abstract getRow(displayIndex: number): RowNode;
 
     // returns the node id prefix, which is essentially the id of the cache
@@ -62,7 +62,7 @@ export abstract class RowNodeBlock extends BeanStub {
     // belongs to
     public abstract getNodeIdPrefix(): string;
 
-    constructor(blockNumber: number, rowNodeCacheParams: RowNodeCacheParams) {
+    protected constructor(blockNumber: number, rowNodeCacheParams: RowNodeCacheParams) {
         super();
 
         this.rowNodeCacheParams = rowNodeCacheParams;
@@ -98,7 +98,7 @@ export abstract class RowNodeBlock extends BeanStub {
     private forEachNode(callback: (rowNode: RowNode, index: number)=> void, sequence: NumberSequence, rowCount: number, deep: boolean): void {
         this.forEachNodeCallback( (rowNode: RowNode) => {
             callback(rowNode, sequence.next());
-            // this will only every happen for enterprise row model, as infinite
+            // this will only every happen for server side row model, as infinite
             // row model doesn't have groups
             if (deep && rowNode.childrenCache) {
                 rowNode.childrenCache.forEachNodeDeep(callback, sequence);
@@ -122,8 +122,10 @@ export abstract class RowNodeBlock extends BeanStub {
         return this.lastAccessed;
     }
 
-    public getRowUsingLocalIndex(rowIndex: number): RowNode {
-        this.lastAccessed = this.rowNodeCacheParams.lastAccessedSequence.next();
+    public getRowUsingLocalIndex(rowIndex: number, dontTouchLastAccessed = false): RowNode {
+        if (!dontTouchLastAccessed) {
+            this.lastAccessed = this.rowNodeCacheParams.lastAccessedSequence.next();
+        }
         let localIndex = rowIndex - this.startRow;
         return this.rowNodes[localIndex];
     }

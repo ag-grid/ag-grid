@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -58,12 +58,12 @@ var OverlayWrapperComponent = (function (_super) {
     };
     OverlayWrapperComponent.prototype.hideOverlay = function (eOverlayWrapper) {
         utils_1.Utils.removeAllChildren(eOverlayWrapper);
-        eOverlayWrapper.style.display = 'none';
+        utils_1.Utils.setVisible(eOverlayWrapper, false);
     };
     OverlayWrapperComponent.prototype.showOverlay = function (eOverlayWrapper, overlay) {
         if (overlay) {
             utils_1.Utils.removeAllChildren(eOverlayWrapper);
-            eOverlayWrapper.style.display = '';
+            utils_1.Utils.setVisible(eOverlayWrapper, true);
             eOverlayWrapper.appendChild(overlay);
         }
         else {

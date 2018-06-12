@@ -3,9 +3,9 @@ import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
 import {Autowired, Bean, PostConstruct} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {ChangedPath} from "../rowModels/inMemory/changedPath";
+import {ChangedPath} from "../rowModels/clientSide/changedPath";
 import {IRowModel} from "../interfaces/iRowModel";
-import {InMemoryRowModel} from "../rowModels/inMemory/inMemoryRowModel";
+import {ClientSideRowModel} from "../rowModels/clientSide/clientSideRowModel";
 import {RowRenderer} from "../rendering/rowRenderer";
 import {EventService} from "../eventService";
 import {Constants} from "../constants";
@@ -20,12 +20,12 @@ export class ChangeDetectionService extends BeanStub {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('eventService') private eventService: EventService;
 
-    private inMemoryRowModel: InMemoryRowModel;
+    private clientSideRowModel: ClientSideRowModel;
 
     @PostConstruct
     private init(): void {
-        if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_IN_MEMORY) {
-            this.inMemoryRowModel = <InMemoryRowModel> this.rowModel;
+        if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            this.clientSideRowModel = <ClientSideRowModel> this.rowModel;
         }
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged.bind(this));
@@ -39,11 +39,11 @@ export class ChangeDetectionService extends BeanStub {
         if (this.gridOptionsWrapper.isSuppressChangeDetection()) { return; }
 
         // step 1 of change detection is to update the aggregated values
-        if (this.inMemoryRowModel && !rowNode.isRowPinned()) {
+        if (this.clientSideRowModel && !rowNode.isRowPinned()) {
             let onlyChangedColumns = this.gridOptionsWrapper.isAggregateOnlyChangedColumns();
             let changedPath = new ChangedPath(onlyChangedColumns);
             changedPath.addParentNode(rowNode.parent, [column]);
-            this.inMemoryRowModel.doAggregate(changedPath);
+            this.clientSideRowModel.doAggregate(changedPath);
         }
 
         // step 2 of change detection is to refresh the cells

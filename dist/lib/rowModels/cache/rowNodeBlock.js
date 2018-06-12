@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -55,7 +55,7 @@ var RowNodeBlock = (function (_super) {
     RowNodeBlock.prototype.forEachNode = function (callback, sequence, rowCount, deep) {
         this.forEachNodeCallback(function (rowNode) {
             callback(rowNode, sequence.next());
-            // this will only every happen for enterprise row model, as infinite
+            // this will only every happen for server side row model, as infinite
             // row model doesn't have groups
             if (deep && rowNode.childrenCache) {
                 rowNode.childrenCache.forEachNodeDeep(callback, sequence);
@@ -74,8 +74,11 @@ var RowNodeBlock = (function (_super) {
     RowNodeBlock.prototype.getLastAccessed = function () {
         return this.lastAccessed;
     };
-    RowNodeBlock.prototype.getRowUsingLocalIndex = function (rowIndex) {
-        this.lastAccessed = this.rowNodeCacheParams.lastAccessedSequence.next();
+    RowNodeBlock.prototype.getRowUsingLocalIndex = function (rowIndex, dontTouchLastAccessed) {
+        if (dontTouchLastAccessed === void 0) { dontTouchLastAccessed = false; }
+        if (!dontTouchLastAccessed) {
+            this.lastAccessed = this.rowNodeCacheParams.lastAccessedSequence.next();
+        }
         var localIndex = rowIndex - this.startRow;
         return this.rowNodes[localIndex];
     };

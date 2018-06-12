@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -47,6 +47,9 @@ var BeanStub = (function () {
         if (eElement instanceof HTMLElement) {
             utils_1._.addSafePassiveEventListener(eElement, event, listener);
         }
+        else if (eElement instanceof Window) {
+            eElement.addEventListener(event, listener);
+        }
         else if (eElement instanceof gridOptionsWrapper_1.GridOptionsWrapper) {
             eElement.addEventListener(event, listener);
         }
@@ -55,6 +58,9 @@ var BeanStub = (function () {
         }
         this.destroyFunctions.push(function () {
             if (eElement instanceof HTMLElement) {
+                eElement.removeEventListener(event, listener);
+            }
+            else if (eElement instanceof Window) {
                 eElement.removeEventListener(event, listener);
             }
             else if (eElement instanceof gridOptionsWrapper_1.GridOptionsWrapper) {

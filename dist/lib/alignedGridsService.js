@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20,7 +20,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
 var columnController_1 = require("./columnController/columnController");
-var gridPanel_1 = require("./gridPanel/gridPanel");
 var eventService_1 = require("./eventService");
 var logger_1 = require("./logger");
 var events_1 = require("./events");
@@ -28,10 +27,8 @@ var context_1 = require("./context/context");
 var context_2 = require("./context/context");
 var context_3 = require("./context/context");
 var context_4 = require("./context/context");
-var counter = 0;
 var AlignedGridsService = (function () {
     function AlignedGridsService() {
-        this.instanceId = counter++;
         // flag to mark if we are consuming. to avoid cyclic events (ie other grid firing back to master
         // while processing a master event) we mark this if consuming an event, and if we are, then
         // we don't fire back any events.
@@ -39,6 +36,9 @@ var AlignedGridsService = (function () {
     }
     AlignedGridsService.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('AlignedGridsService');
+    };
+    AlignedGridsService.prototype.registerGridComp = function (gridPanel) {
+        this.gridPanel = gridPanel;
     };
     AlignedGridsService.prototype.init = function () {
         this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
@@ -205,10 +205,6 @@ var AlignedGridsService = (function () {
         context_3.Autowired('columnController'),
         __metadata("design:type", columnController_1.ColumnController)
     ], AlignedGridsService.prototype, "columnController", void 0);
-    __decorate([
-        context_3.Autowired('gridPanel'),
-        __metadata("design:type", gridPanel_1.GridPanel)
-    ], AlignedGridsService.prototype, "gridPanel", void 0);
     __decorate([
         context_3.Autowired('eventService'),
         __metadata("design:type", eventService_1.EventService)

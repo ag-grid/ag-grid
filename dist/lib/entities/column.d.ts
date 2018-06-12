@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroupChild } from "./columnGroupChild";
@@ -122,7 +122,9 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     getId(): string;
     getDefinition(): AbstractColDef;
     getActualWidth(): number;
+    private createBaseColDefParams(rowNode);
     getColSpan(rowNode: RowNode): number;
+    getRowSpan(rowNode: RowNode): number;
     setActualWidth(actualWidth: number, source?: ColumnEventType): void;
     isGreaterThanMax(width: number): boolean;
     getMinWidth(): number;

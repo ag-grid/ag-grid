@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -328,10 +328,6 @@ var Column = (function () {
         this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_FILTER_CHANGED, source));
     };
     Column.prototype.setPinned = function (pinned) {
-        // pinning is not allowed when doing 'forPrint'
-        if (this.gridOptionsWrapper.isForPrint()) {
-            return;
-        }
         if (pinned === true || pinned === Column.PINNED_LEFT) {
             this.pinned = Column.PINNED_LEFT;
         }
@@ -341,7 +337,6 @@ var Column = (function () {
         else {
             this.pinned = null;
         }
-        // console.log(`setColumnsPinned ${this.getColId()} ${this.pinned}`);
     };
     Column.prototype.setFirstRightPinned = function (firstRightPinned, source) {
         if (source === void 0) { source = "api"; }
@@ -404,24 +399,44 @@ var Column = (function () {
     Column.prototype.getActualWidth = function () {
         return this.actualWidth;
     };
+    Column.prototype.createBaseColDefParams = function (rowNode) {
+        var params = {
+            node: rowNode,
+            data: rowNode.data,
+            colDef: this.colDef,
+            column: this,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            context: this.gridOptionsWrapper.getContext()
+        };
+        return params;
+    };
     Column.prototype.getColSpan = function (rowNode) {
         if (utils_1.Utils.missing(this.colDef.colSpan)) {
             return 1;
         }
         else {
-            var params = {
-                node: rowNode,
-                data: rowNode.data,
-                colDef: this.colDef,
-                column: this,
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi(),
-                context: this.gridOptionsWrapper.getContext()
-            };
+            var params = this.createBaseColDefParams(rowNode);
             var colSpan = this.colDef.colSpan(params);
             // colSpan must be number equal to or greater than 1
             if (colSpan > 1) {
                 return colSpan;
+            }
+            else {
+                return 1;
+            }
+        }
+    };
+    Column.prototype.getRowSpan = function (rowNode) {
+        if (utils_1.Utils.missing(this.colDef.rowSpan)) {
+            return 1;
+        }
+        else {
+            var params = this.createBaseColDefParams(rowNode);
+            var rowSpan = this.colDef.rowSpan(params);
+            // rowSpan must be number equal to or greater than 1
+            if (rowSpan > 1) {
+                return rowSpan;
             }
             else {
                 return 1;

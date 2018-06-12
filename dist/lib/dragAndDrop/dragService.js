@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -204,7 +204,7 @@ var DragService = (function () {
         this.onCommonMove(mouseEvent, this.mouseStartEvent);
     };
     DragService.prototype.onTouchUp = function (touchEvent) {
-        var touch = this.getFirstActiveTouch(touchEvent.targetTouches);
+        var touch = this.getFirstActiveTouch(touchEvent.changedTouches);
         // i haven't worked this out yet, but there is no matching touch
         // when we get the touch up event. to get around this, we swap in
         // the last touch. this is a hack to 'get it working' while we

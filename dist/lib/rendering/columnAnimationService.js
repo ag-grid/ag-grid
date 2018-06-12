@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,8 +17,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
-var gridPanel_1 = require("../gridPanel/gridPanel");
-var utils_1 = require("../utils");
 var ColumnAnimationService = (function () {
     function ColumnAnimationService() {
         this.executeNextFuncs = [];
@@ -26,6 +24,9 @@ var ColumnAnimationService = (function () {
         this.active = false;
         this.animationThreadCount = 0;
     }
+    ColumnAnimationService.prototype.registerGridComp = function (gridPanel) {
+        this.gridPanel = gridPanel;
+    };
     ColumnAnimationService.prototype.isActive = function () {
         return this.active;
     };
@@ -74,11 +75,11 @@ var ColumnAnimationService = (function () {
         // by the time the 'wait' func executes
         this.animationThreadCount++;
         var animationThreadCountCopy = this.animationThreadCount;
-        utils_1.Utils.addCssClass(this.gridPanel.getRoot(), 'ag-column-moving');
+        this.gridPanel.setColumnMovingCss(true);
         this.executeLaterFuncs.push(function () {
             // only remove the class if this thread was the last one to update it
             if (_this.animationThreadCount === animationThreadCountCopy) {
-                utils_1.Utils.removeCssClass(_this.gridPanel.getRoot(), 'ag-column-moving');
+                _this.gridPanel.setColumnMovingCss(false);
             }
         });
     };
@@ -97,10 +98,6 @@ var ColumnAnimationService = (function () {
         context_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
     ], ColumnAnimationService.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('gridPanel'),
-        __metadata("design:type", gridPanel_1.GridPanel)
-    ], ColumnAnimationService.prototype, "gridPanel", void 0);
     ColumnAnimationService = __decorate([
         context_1.Bean('columnAnimationService')
     ], ColumnAnimationService);

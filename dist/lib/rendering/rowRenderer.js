@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,7 +30,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("../utils");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
-var gridPanel_1 = require("../gridPanel/gridPanel");
 var expressionService_1 = require("../valueService/expressionService");
 var templateService_1 = require("../templateService");
 var valueService_1 = require("../valueService/valueService");
@@ -73,13 +72,14 @@ var RowRenderer = (function (_super) {
     RowRenderer.prototype.agWire = function (loggerFactory) {
         this.logger = loggerFactory.create("RowRenderer");
     };
-    RowRenderer.prototype.init = function () {
-        this.forPrint = this.gridOptionsWrapper.isForPrint();
-        this.autoHeight = this.gridOptionsWrapper.isAutoHeight();
+    RowRenderer.prototype.registerGridComp = function (gridPanel) {
+        this.gridPanel = gridPanel;
         this.rowContainers = this.gridPanel.getRowContainers();
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_BODY_SCROLL, this.redrawAfterScroll.bind(this));
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_BODY_HEIGHT_CHANGED, this.redrawAfterScroll.bind(this));
         this.redrawAfterModelUpdate();
     };
     RowRenderer.prototype.onPageLoaded = function (refreshEvent) {
@@ -197,16 +197,10 @@ var RowRenderer = (function (_super) {
         if (params === void 0) { params = {}; }
         this.getLockOnRefresh();
         var focusedCell = this.getCellToRestoreFocusToAfterRefresh(params);
-        if (!this.forPrint) {
-            this.sizeContainerToPageHeight();
-        }
+        this.sizeContainerToPageHeight();
         this.scrollToTopIfNewData(params);
-        // never keep rendered rows if doing forPrint or autoHeight, as we do not use 'top' to
-        // position the rows (it uses normal flow), so we have to remove
-        // all rows and insert them again from scratch
-        var rowsUsingFlow = this.forPrint || this.autoHeight;
-        var recycleRows = rowsUsingFlow ? false : params.recycleRows;
-        var animate = rowsUsingFlow ? false : params.animate && this.gridOptionsWrapper.isAnimateRows();
+        var recycleRows = params.recycleRows;
+        var animate = params.animate && this.gridOptionsWrapper.isAnimateRows();
         var rowsToRecycle = this.binRowComps(recycleRows);
         this.redraw(rowsToRecycle, animate);
         if (!params.onlyBody) {
@@ -436,7 +430,7 @@ var RowRenderer = (function (_super) {
         });
     };
     // gets called when rows don't change, but viewport does, so after:
-    // 1) size of grid changed
+    // 1) height of grid body changes, ie number of displayed rows has changed
     // 2) grid scrolled to new position
     // 3) ensure index visible (which is a scroll)
     RowRenderer.prototype.redrawAfterScroll = function () {
@@ -528,12 +522,13 @@ var RowRenderer = (function (_super) {
         // if either of the pinned panels has shown / hidden, then need to redraw the fullWidth bits when
         // embedded, as what appears in each section depends on whether we are pinned or not
         var rowsToRemove = [];
-        this.forEachRowComp(function (id, rowComp) {
+        utils_1.Utils.iterateObject(this.rowCompsByIndex, function (id, rowComp) {
             if (rowComp.isFullWidth()) {
                 var rowIndex = rowComp.getRowNode().rowIndex;
                 rowsToRemove.push(rowIndex.toString());
             }
         });
+        this.refreshFloatingRowComps();
         this.removeRowComps(rowsToRemove);
         this.redrawAfterScroll();
     };
@@ -602,34 +597,28 @@ var RowRenderer = (function (_super) {
         else {
             var pageFirstRow = this.paginationProxy.getPageFirstRow();
             var pageLastRow = this.paginationProxy.getPageLastRow();
-            if (this.forPrint) {
-                newFirst = pageFirstRow;
-                newLast = pageLastRow;
+            var pixelOffset = this.paginationProxy ? this.paginationProxy.getPixelOffset() : 0;
+            var heightOffset = this.heightScaler.getOffset();
+            var bodyVRange = this.gridPanel.getVScrollPosition();
+            var topPixel = bodyVRange.top;
+            var bottomPixel = bodyVRange.bottom;
+            var realPixelTop = topPixel + pixelOffset + heightOffset;
+            var realPixelBottom = bottomPixel + pixelOffset + heightOffset;
+            var first = this.paginationProxy.getRowIndexAtPixel(realPixelTop);
+            var last = this.paginationProxy.getRowIndexAtPixel(realPixelBottom);
+            //add in buffer
+            var buffer = this.gridOptionsWrapper.getRowBuffer();
+            first = first - buffer;
+            last = last + buffer;
+            // adjust, in case buffer extended actual size
+            if (first < pageFirstRow) {
+                first = pageFirstRow;
             }
-            else {
-                var pixelOffset = this.paginationProxy ? this.paginationProxy.getPixelOffset() : 0;
-                var heightOffset = this.heightScaler.getOffset();
-                var bodyVRange = this.gridPanel.getVScrollPosition();
-                var topPixel = bodyVRange.top;
-                var bottomPixel = bodyVRange.bottom;
-                var realPixelTop = topPixel + pixelOffset + heightOffset;
-                var realPixelBottom = bottomPixel + pixelOffset + heightOffset;
-                var first = this.paginationProxy.getRowIndexAtPixel(realPixelTop);
-                var last = this.paginationProxy.getRowIndexAtPixel(realPixelBottom);
-                //add in buffer
-                var buffer = this.gridOptionsWrapper.getRowBuffer();
-                first = first - buffer;
-                last = last + buffer;
-                // adjust, in case buffer extended actual size
-                if (first < pageFirstRow) {
-                    first = pageFirstRow;
-                }
-                if (last > pageLastRow) {
-                    last = pageLastRow;
-                }
-                newFirst = first;
-                newLast = last;
+            if (last > pageLastRow) {
+                last = pageLastRow;
             }
+            newFirst = first;
+            newLast = last;
         }
         var firstDiffers = newFirst !== this.firstRenderedRow;
         var lastDiffers = newLast !== this.lastRenderedRow;
@@ -905,6 +894,17 @@ var RowRenderer = (function (_super) {
             if (!nextCell) {
                 return null;
             }
+            // if editing, but cell not editable, skip cell. we do this before we do all of
+            // the 'ensure index visible' and 'flush all frames', otherwise if we are skipping
+            // a bunch of cells (eg 10 rows) then all the work on ensuring cell visible is useless
+            // (except for the last one) which causes grid to stall for a while.
+            if (startEditing) {
+                var rowNode = this.paginationProxy.getRow(nextCell.rowIndex);
+                var cellIsEditable = nextCell.column.isCellEditable(rowNode);
+                if (!cellIsEditable) {
+                    continue;
+                }
+            }
             // this scrolls the row into view
             var cellIsNotFloating = utils_1.Utils.missing(nextCell.floating);
             if (cellIsNotFloating) {
@@ -926,10 +926,6 @@ var RowRenderer = (function (_super) {
             // if next cell is fullWidth row, then no rendered cell,
             // as fullWidth rows have no cells, so we skip it
             if (utils_1.Utils.missing(nextCellComp)) {
-                continue;
-            }
-            // if editing, but cell not editable, skip cell
-            if (startEditing && !nextCellComp.isCellEditable()) {
                 continue;
             }
             if (nextCellComp.isSuppressNavigable()) {
@@ -961,10 +957,6 @@ var RowRenderer = (function (_super) {
         context_1.Autowired("gridCore"),
         __metadata("design:type", gridCore_1.GridCore)
     ], RowRenderer.prototype, "gridCore", void 0);
-    __decorate([
-        context_1.Autowired("gridPanel"),
-        __metadata("design:type", gridPanel_1.GridPanel)
-    ], RowRenderer.prototype, "gridPanel", void 0);
     __decorate([
         context_1.Autowired("$scope"),
         __metadata("design:type", Object)
@@ -1035,12 +1027,6 @@ var RowRenderer = (function (_super) {
         __metadata("design:paramtypes", [logger_1.LoggerFactory]),
         __metadata("design:returntype", void 0)
     ], RowRenderer.prototype, "agWire", null);
-    __decorate([
-        context_1.PostConstruct,
-        __metadata("design:type", Function),
-        __metadata("design:paramtypes", []),
-        __metadata("design:returntype", void 0)
-    ], RowRenderer.prototype, "init", null);
     __decorate([
         context_1.PreDestroy,
         __metadata("design:type", Function),

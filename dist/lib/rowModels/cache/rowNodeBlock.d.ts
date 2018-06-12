@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { NumberSequence } from "../../utils";
@@ -26,9 +26,9 @@ export declare abstract class RowNodeBlock extends BeanStub {
     private version;
     private state;
     private lastAccessed;
-    private blockNumber;
-    private startRow;
-    private endRow;
+    private readonly blockNumber;
+    private readonly startRow;
+    private readonly endRow;
     rowNodes: RowNode[];
     private beans;
     private rowNodeCacheParams;
@@ -36,7 +36,7 @@ export declare abstract class RowNodeBlock extends BeanStub {
     protected abstract setDataAndId(rowNode: RowNode, data: any, index: number): void;
     abstract getRow(displayIndex: number): RowNode;
     abstract getNodeIdPrefix(): string;
-    constructor(blockNumber: number, rowNodeCacheParams: RowNodeCacheParams);
+    protected constructor(blockNumber: number, rowNodeCacheParams: RowNodeCacheParams);
     isAnyNodeOpen(rowCount: number): boolean;
     private forEachNodeCallback(callback, rowCount);
     private forEachNode(callback, sequence, rowCount, deep);
@@ -44,7 +44,7 @@ export declare abstract class RowNodeBlock extends BeanStub {
     forEachNodeShallow(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number): void;
     getVersion(): number;
     getLastAccessed(): number;
-    getRowUsingLocalIndex(rowIndex: number): RowNode;
+    getRowUsingLocalIndex(rowIndex: number, dontTouchLastAccessed?: boolean): RowNode;
     protected init(beans: RowNodeBlockBeans): void;
     getStartRow(): number;
     getEndRow(): number;

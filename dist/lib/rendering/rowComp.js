@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -170,17 +170,16 @@ var RowComp = (function (_super) {
         }
     };
     RowComp.prototype.getInitialRowTopStyle = function () {
-        var rowTopStyle = '';
-        var setRowTop = !this.beans.forPrint && !this.beans.gridOptionsWrapper.isAutoHeight();
-        if (setRowTop) {
-            // if sliding in, we take the old row top. otherwise we just set the current row top.
-            var pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
-            var afterPaginationPixels = this.applyPaginationOffset(pixels);
-            var afterScalingPixels = this.beans.heightScaler.getRealPixelPosition(afterPaginationPixels);
-            // if not setting row top, then below is empty string
-            rowTopStyle = "transform: translateY(" + afterScalingPixels + "px); ";
+        // if sliding in, we take the old row top. otherwise we just set the current row top.
+        var pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
+        var afterPaginationPixels = this.applyPaginationOffset(pixels);
+        var afterScalingPixels = this.beans.heightScaler.getRealPixelPosition(afterPaginationPixels);
+        if (this.beans.gridOptionsWrapper.isSuppressRowTransform()) {
+            return "top: " + afterScalingPixels + "px; ";
         }
-        return rowTopStyle;
+        else {
+            return "transform: translateY(" + afterScalingPixels + "px); ";
+        }
     };
     RowComp.prototype.getRowBusinessKey = function () {
         if (typeof this.beans.gridOptionsWrapper.getBusinessKeyForNodeFunc() === 'function') {
@@ -260,12 +259,10 @@ var RowComp = (function (_super) {
         var _this = this;
         var centerCols = this.beans.columnController.getAllDisplayedCenterVirtualColumnsForRow(this.rowNode);
         this.createRowContainer(this.bodyContainerComp, centerCols, function (eRow) { return _this.eBodyRow = eRow; });
-        if (!this.beans.forPrint) {
-            var leftCols = this.beans.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
-            var rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
-            this.createRowContainer(this.pinnedRightContainerComp, rightCols, function (eRow) { return _this.ePinnedRightRow = eRow; });
-            this.createRowContainer(this.pinnedLeftContainerComp, leftCols, function (eRow) { return _this.ePinnedLeftRow = eRow; });
-        }
+        var leftCols = this.beans.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
+        var rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
+        this.createRowContainer(this.pinnedRightContainerComp, rightCols, function (eRow) { return _this.ePinnedRightRow = eRow; });
+        this.createRowContainer(this.pinnedLeftContainerComp, leftCols, function (eRow) { return _this.ePinnedLeftRow = eRow; });
     };
     RowComp.prototype.createFullWidthRows = function (type, name) {
         var _this = this;
@@ -293,24 +290,10 @@ var RowComp = (function (_super) {
             // let previousFullWidth = ensureDomOrder ? this.lastPlacedElements.eFullWidth : null;
             this.createFullWidthRowContainer(this.fullWidthContainerComp, null, null, type, name, function (eRow) {
                 _this.eFullWidthRow = eRow;
-                // and fake the mouse wheel for the fullWidth container
-                if (!_this.beans.forPrint) {
-                    _this.addMouseWheelListenerToFullWidthRow();
-                }
             }, function (cellRenderer) {
                 _this.fullWidthRowComponent = cellRenderer;
             });
         }
-    };
-    RowComp.prototype.addMouseWheelListenerToFullWidthRow = function () {
-        if (this.beans.gridOptionsWrapper.isNativeScroll()) {
-            return;
-        }
-        var mouseWheelListener = this.beans.gridPanel.genericMouseWheelListener.bind(this.beans.gridPanel);
-        // IE9, Chrome, Safari, Opera
-        this.addDestroyableEventListener(this.eFullWidthRow, 'mousewheel', mouseWheelListener);
-        // Firefox
-        this.addDestroyableEventListener(this.eFullWidthRow, 'DOMMouseScroll', mouseWheelListener);
     };
     RowComp.prototype.setAnimateFlags = function (animateIn) {
         if (animateIn) {
@@ -1003,7 +986,12 @@ var RowComp = (function (_super) {
         this.addDestroyableEventListener(eRow, 'mouseleave', function () { return _this.rowNode.onMouseLeave(); });
         // step 2 - listen for changes on row node (which any eRow can trigger)
         this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_MOUSE_ENTER, function () {
-            utils_1._.addCssClass(eRow, 'ag-row-hover');
+            // if hover turned off, we don't add the class. we do this here so that if the application
+            // toggles this property mid way, we remove the hover form the last row, but we stop
+            // adding hovers from that point onwards.
+            if (!_this.beans.gridOptionsWrapper.isSuppressRowHoverHighlight()) {
+                utils_1._.addCssClass(eRow, 'ag-row-hover');
+            }
         });
         this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_MOUSE_LEAVE, function () {
             utils_1._.removeCssClass(eRow, 'ag-row-hover');
@@ -1104,11 +1092,6 @@ var RowComp = (function (_super) {
         }
     };
     RowComp.prototype.onTopChanged = function () {
-        // top is not used in forPrint, as the rows are just laid out naturally
-        var doNotSetRowTop = this.beans.forPrint || this.beans.gridOptionsWrapper.isAutoHeight();
-        if (doNotSetRowTop) {
-            return;
-        }
         this.setRowTop(this.rowNode.rowTop);
     };
     // applies pagination offset, eg if on second page, and page height is 500px, then removes
@@ -1136,7 +1119,12 @@ var RowComp = (function (_super) {
             var afterPaginationPixels = this.applyPaginationOffset(pixels);
             var afterScalingPixels = this.beans.heightScaler.getRealPixelPosition(afterPaginationPixels);
             var topPx_1 = afterScalingPixels + "px";
-            this.eAllRowContainers.forEach(function (row) { return row.style.transform = "translateY(" + topPx_1 + ")"; });
+            if (this.beans.gridOptionsWrapper.isSuppressRowTransform()) {
+                this.eAllRowContainers.forEach(function (row) { return row.style.top = "" + topPx_1; });
+            }
+            else {
+                this.eAllRowContainers.forEach(function (row) { return row.style.transform = "translateY(" + topPx_1 + ")"; });
+            }
         }
     };
     // we clear so that the functions are never executed twice

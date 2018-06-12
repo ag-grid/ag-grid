@@ -1,6 +1,14 @@
 import {ColumnGroupChild} from "./columnGroupChild";
 import {OriginalColumnGroupChild} from "./originalColumnGroupChild";
-import {AbstractColDef, ColDef, ColSpanParams, IAggFunc, IsColumnFunc, IsColumnFuncParams} from "./colDef";
+import {
+    AbstractColDef,
+    BaseColDefParams,
+    ColDef,
+    ColSpanParams,
+    IAggFunc,
+    IsColumnFunc,
+    IsColumnFuncParams, RowSpanParams
+} from "./colDef";
 import {EventService} from "../eventService";
 import {Utils as _} from "../utils";
 import {Autowired, PostConstruct} from "../context/context";
@@ -460,11 +468,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public setPinned(pinned: string|boolean): void {
-        // pinning is not allowed when doing 'forPrint'
-        if (this.gridOptionsWrapper.isForPrint()) {
-            return;
-        }
-
         if (pinned===true || pinned===Column.PINNED_LEFT) {
             this.pinned = Column.PINNED_LEFT;
         } else if (pinned===Column.PINNED_RIGHT) {
@@ -472,9 +475,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         } else {
             this.pinned = null;
         }
-
-        // console.log(`setColumnsPinned ${this.getColId()} ${this.pinned}`);
-
     }
 
     public setFirstRightPinned(firstRightPinned: boolean, source: ColumnEventType = "api"): void {
@@ -551,23 +551,43 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.actualWidth;
     }
 
+    private createBaseColDefParams(rowNode: RowNode): BaseColDefParams {
+        let params: BaseColDefParams = {
+            node: rowNode,
+            data: rowNode.data,
+            colDef: this.colDef,
+            column: this,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            context: this.gridOptionsWrapper.getContext()
+        };
+        return params;
+    }
+
     public getColSpan(rowNode: RowNode): number {
         if (_.missing(this.colDef.colSpan)) {
             return 1;
         } else {
-            let params: ColSpanParams = {
-                node: rowNode,
-                data: rowNode.data,
-                colDef: this.colDef,
-                column: this,
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi(),
-                context: this.gridOptionsWrapper.getContext()
-            };
+            let params: ColSpanParams = this.createBaseColDefParams(rowNode);
             let colSpan = this.colDef.colSpan(params);
             // colSpan must be number equal to or greater than 1
             if (colSpan > 1) {
                 return colSpan;
+            } else {
+                return 1;
+            }
+        }
+    }
+
+    public getRowSpan(rowNode: RowNode): number {
+        if (_.missing(this.colDef.rowSpan)) {
+            return 1;
+        } else {
+            let params: RowSpanParams = this.createBaseColDefParams(rowNode);
+            let rowSpan = this.colDef.rowSpan(params);
+            // rowSpan must be number equal to or greater than 1
+            if (rowSpan > 1) {
+                return rowSpan;
             } else {
                 return 1;
             }

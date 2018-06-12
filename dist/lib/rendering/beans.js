@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34,7 +34,6 @@ var cellRendererService_1 = require("./cellRendererService");
 var valueFormatterService_1 = require("./valueFormatterService");
 var stylingService_1 = require("../styling/stylingService");
 var columnHoverService_1 = require("./columnHoverService");
-var gridPanel_1 = require("../gridPanel/gridPanel");
 var paginationProxy_1 = require("../rowModels/paginationProxy");
 var animationFrameService_1 = require("../misc/animationFrameService");
 var componentResolver_1 = require("../components/framework/componentResolver");
@@ -50,18 +49,16 @@ var heightScaler_1 = require("./heightScaler");
 var Beans = (function () {
     function Beans() {
     }
+    Beans.prototype.registerGridComp = function (gridPanel) {
+        this.gridPanel = gridPanel;
+    };
     Beans.prototype.postConstruct = function () {
-        this.forPrint = this.gridOptionsWrapper.isForPrint();
         this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
     };
     __decorate([
         context_1.Autowired('paginationProxy'),
         __metadata("design:type", paginationProxy_1.PaginationProxy)
     ], Beans.prototype, "paginationProxy", void 0);
-    __decorate([
-        context_1.Autowired('gridPanel'),
-        __metadata("design:type", gridPanel_1.GridPanel)
-    ], Beans.prototype, "gridPanel", void 0);
     __decorate([
         context_1.Autowired('context'),
         __metadata("design:type", context_1.Context)

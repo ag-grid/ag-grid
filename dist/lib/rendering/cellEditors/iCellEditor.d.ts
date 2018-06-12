@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../../entities/column";
@@ -29,21 +29,6 @@ export interface ICellEditor {
 }
 export interface ICellEditorComp extends ICellEditor, IComponent<ICellEditorParams> {
 }
-/** Gets called once after editor is created. Params contains teh following:
- value: current value of the cell
- keyPress: key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable characters appear here
- charPress: the string that started the edit, eg 'a' if letter a was pressed, or 'A' if shift + letter a
- - only printable characters appear here
- column: grid column
- node: grid row node
- api: grid api
- columnApi: grid column api
- context: grid context
- onKeyDown: callback to tell grid a key was pressed - useful to pass control key events (tab, arrows etc) back to grid - however you do
- not need to call this as the grid is already listening for the events as they propagate. this is only required if
- you are preventing event propagation
- stopRowOrCellEdit: call this if you want to stop editing the cell (eg if you are doing your own edit and are happy with the selection)
- */
 export interface ICellEditorParams {
     value: any;
     keyPress: number;
@@ -57,7 +42,7 @@ export interface ICellEditorParams {
     context: any;
     $scope: any;
     onKeyDown: (event: KeyboardEvent) => void;
-    stopEditing: () => void;
+    stopEditing: (suppressNavigateAfterEdit?: boolean) => void;
     eGridCell: HTMLElement;
     parseValue: (value: any) => any;
     formatValue: (value: any) => any;

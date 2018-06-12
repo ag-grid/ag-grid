@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,15 +16,19 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
-var gridPanel_1 = require("../gridPanel/gridPanel");
 var linkedList_1 = require("./linkedList");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var eventKeys_1 = require("../eventKeys");
+var eventService_1 = require("../eventService");
 var AnimationFrameService = (function () {
     function AnimationFrameService() {
         this.p1Tasks = new linkedList_1.LinkedList();
         this.p2Tasks = new linkedList_1.LinkedList();
         this.ticking = false;
     }
+    AnimationFrameService.prototype.registerGridComp = function (gridPanel) {
+        this.gridPanel = gridPanel;
+    };
     AnimationFrameService.prototype.init = function () {
         this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
     };
@@ -75,8 +79,17 @@ var AnimationFrameService = (function () {
             this.requestFrame();
         }
         else {
-            this.ticking = false;
+            this.stopTicking();
         }
+    };
+    AnimationFrameService.prototype.stopTicking = function () {
+        this.ticking = false;
+        var event = {
+            type: eventKeys_1.Events.EVENT_ANIMATION_QUEUE_EMPTY,
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            api: this.gridOptionsWrapper.getApi()
+        };
+        this.eventService.dispatchEvent(event);
     };
     AnimationFrameService.prototype.flushAllFrames = function () {
         if (!this.useAnimationFrame) {
@@ -107,14 +120,17 @@ var AnimationFrameService = (function () {
             setTimeout(callback, 0);
         }
     };
-    __decorate([
-        context_1.Autowired('gridPanel'),
-        __metadata("design:type", gridPanel_1.GridPanel)
-    ], AnimationFrameService.prototype, "gridPanel", void 0);
+    AnimationFrameService.prototype.isQueueEmpty = function () {
+        return this.ticking;
+    };
     __decorate([
         context_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
     ], AnimationFrameService.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('eventService'),
+        __metadata("design:type", eventService_1.EventService)
+    ], AnimationFrameService.prototype, "eventService", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

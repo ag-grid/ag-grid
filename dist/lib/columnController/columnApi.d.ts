@@ -1,8 +1,9 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColDef, ColGroupDef } from "../entities/colDef";
 import { ColumnGroupChild } from "../entities/columnGroupChild";
+import { ColumnState } from "./columnController";
 import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 import { ColumnGroup } from "../entities/columnGroup";
 import { Column } from "../entities/column";
@@ -15,8 +16,8 @@ export declare class ColumnApi {
     getDisplayNameForColumn(column: Column, location: string): string;
     getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string;
     getColumn(key: any): Column;
-    setColumnState(columnState: any): boolean;
-    getColumnState(): any[];
+    setColumnState(columnState: ColumnState[]): boolean;
+    getColumnState(): ColumnState[];
     resetColumnState(): void;
     getColumnGroupState(): {
         groupId: string;
@@ -81,8 +82,8 @@ export declare class ColumnApi {
     columnGroupOpened(group: OriginalColumnGroup | string, newValue: boolean): void;
     hideColumns(colIds: any, hide: any): void;
     hideColumn(colId: any, hide: any): void;
-    setState(columnState: any): boolean;
-    getState(): any[];
+    setState(columnState: ColumnState[]): boolean;
+    getState(): ColumnState[];
     resetState(): void;
     getAggregationColumns(): Column[];
     removeAggregationColumn(colKey: (string | Column)): void;

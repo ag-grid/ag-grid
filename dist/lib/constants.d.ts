@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class Constants {
@@ -38,8 +38,8 @@ export declare class Constants {
     static KEY_PAGE_END: number;
     static ROW_MODEL_TYPE_INFINITE: string;
     static ROW_MODEL_TYPE_VIEWPORT: string;
-    static ROW_MODEL_TYPE_IN_MEMORY: string;
-    static ROW_MODEL_TYPE_ENTERPRISE: string;
+    static ROW_MODEL_TYPE_CLIENT_SIDE: string;
+    static ROW_MODEL_TYPE_SERVER_SIDE: string;
     static DEPRECATED_ROW_MODEL_TYPE_NORMAL: string;
     static ALWAYS: string;
     static ONLY_WHEN_GROUPING: string;

@@ -1,17 +1,18 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { GridPanel } from "./gridPanel/gridPanel";
 import { AgEvent, ColumnEvent } from "./events";
 import { Column } from "./entities/column";
 export declare class AlignedGridsService {
-    private instanceId;
     private gridOptionsWrapper;
     private columnController;
-    private gridPanel;
     private eventService;
     private logger;
+    private gridPanel;
     private consuming;
     private setBeans(loggerFactory);
+    registerGridComp(gridPanel: GridPanel): void;
     init(): void;
     private fireEvent(callback);
     private onEvent(callback);

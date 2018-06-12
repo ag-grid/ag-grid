@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20,7 +20,6 @@ var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var context_1 = require("../context/context");
 var dragAndDropService_1 = require("../dragAndDrop/dragAndDropService");
 var columnController_1 = require("../columnController/columnController");
-var gridPanel_1 = require("../gridPanel/gridPanel");
 var eventService_1 = require("../eventService");
 var events_1 = require("../events");
 var headerRowComp_1 = require("./headerRowComp");
@@ -34,11 +33,14 @@ var HeaderContainer = (function () {
         this.pinned = pinned;
         this.eViewport = eViewport;
     }
+    HeaderContainer.prototype.registerGridComp = function (gridPanel) {
+        this.setupDragAndDrop(gridPanel);
+    };
     HeaderContainer.prototype.forEachHeaderElement = function (callback) {
         this.headerRowComps.forEach(function (headerRowComp) { return headerRowComp.forEachHeaderElement(callback); });
     };
     HeaderContainer.prototype.init = function () {
-        this.setupDragAndDrop();
+        this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
         // if value changes, then if not pivoting, we at least need to change the label eg from sum() to avg(),
         // if pivoting, then the columns have changed
         this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
@@ -58,22 +60,32 @@ var HeaderContainer = (function () {
         this.onGridColumnsChanged();
     };
     HeaderContainer.prototype.onColumnResized = function () {
-        this.setWidthIfPinnedContainer();
+        this.setWidthOfPinnedContainer();
     };
     HeaderContainer.prototype.onDisplayedColumnsChanged = function () {
-        this.setWidthIfPinnedContainer();
+        this.setWidthOfPinnedContainer();
     };
     HeaderContainer.prototype.onScrollVisibilityChanged = function () {
-        this.setWidthIfPinnedContainer();
+        this.setWidthOfPinnedContainer();
     };
-    HeaderContainer.prototype.setWidthIfPinnedContainer = function () {
-        if (this.pinned === column_1.Column.PINNED_LEFT) {
-            var pinnedLeftWidthWithScroll = this.scrollVisibleService.getPinnedLeftWithScrollWidth();
-            this.eContainer.style.width = pinnedLeftWidthWithScroll + 'px';
-        }
-        else if (this.pinned === column_1.Column.PINNED_RIGHT) {
-            var pinnedRightWidthWithScroll = this.scrollVisibleService.getPinnedRightWithScrollWidth();
-            this.eContainer.style.width = pinnedRightWidthWithScroll + 'px';
+    HeaderContainer.prototype.setWidthOfPinnedContainer = function () {
+        var pinningLeft = this.pinned === column_1.Column.PINNED_LEFT;
+        var pinningRight = this.pinned === column_1.Column.PINNED_RIGHT;
+        if (pinningLeft || pinningRight) {
+            // size to fit all columns
+            var width = pinningLeft ?
+                this.columnController.getPinnedLeftContainerWidth()
+                : this.columnController.getPinnedRightContainerWidth();
+            // if there is a scroll showing (and taking up space, so Windows, and not iOS)
+            // in the body, then we add extra space to keep header aligned with the body,
+            // as body width fits the cols and the scrollbar
+            var addPaddingForScrollbar = pinningLeft ?
+                this.scrollVisibleService.isLeftVerticalScrollShowing()
+                : this.scrollVisibleService.isRightVerticalScrollShowing();
+            if (addPaddingForScrollbar) {
+                width += this.scrollWidth;
+            }
+            this.eContainer.style.width = width + 'px';
         }
     };
     HeaderContainer.prototype.destroy = function () {
@@ -89,10 +101,11 @@ var HeaderContainer = (function () {
     HeaderContainer.prototype.refresh = function () {
         this.onGridColumnsChanged();
     };
-    HeaderContainer.prototype.setupDragAndDrop = function () {
+    HeaderContainer.prototype.setupDragAndDrop = function (gridComp) {
         var dropContainer = this.eViewport ? this.eViewport : this.eContainer;
         var bodyDropTarget = new bodyDropTarget_1.BodyDropTarget(this.pinned, dropContainer);
         this.context.wireBean(bodyDropTarget);
+        bodyDropTarget.registerGridComp(gridComp);
     };
     HeaderContainer.prototype.removeHeaderRowComps = function () {
         this.headerRowComps.forEach(function (headerRowComp) {
@@ -141,10 +154,6 @@ var HeaderContainer = (function () {
         context_1.Autowired('columnController'),
         __metadata("design:type", columnController_1.ColumnController)
     ], HeaderContainer.prototype, "columnController", void 0);
-    __decorate([
-        context_1.Autowired('gridPanel'),
-        __metadata("design:type", gridPanel_1.GridPanel)
-    ], HeaderContainer.prototype, "gridPanel", void 0);
     __decorate([
         context_1.Autowired('eventService'),
         __metadata("design:type", eventService_1.EventService)

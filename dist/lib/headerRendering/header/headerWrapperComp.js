@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -146,8 +146,7 @@ var HeaderWrapperComp = (function (_super) {
         var _this = this;
         var suppressMove = this.gridOptionsWrapper.isSuppressMovableColumns()
             || this.column.getColDef().suppressMovable
-            || this.column.isLockPosition()
-            || this.gridOptionsWrapper.isForPrint();
+            || this.column.isLockPosition();
         if (suppressMove) {
             return;
         }

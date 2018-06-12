@@ -1,23 +1,24 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { DraggingEvent, DragSourceType, DropTarget } from "../dragAndDrop/dragAndDropService";
+import { GridPanel } from "./gridPanel";
 export declare class RowDragFeature implements DropTarget {
     private dragAndDropService;
     private rowModel;
     private focusedCellController;
-    private gridPanel;
     private gridOptionsWrapper;
     private rangeController;
     private eventService;
-    private inMemoryRowModel;
+    private gridPanel;
+    private clientSideRowModel;
     private eContainer;
     private needToMoveUp;
     private needToMoveDown;
     private movingIntervalId;
     private intervalCount;
     private lastDraggingEvent;
-    constructor(eContainer: HTMLElement);
+    constructor(eContainer: HTMLElement, gridPanel: GridPanel);
     private postConstruct();
     getContainer(): HTMLElement;
     isInterestedIn(type: DragSourceType): boolean;

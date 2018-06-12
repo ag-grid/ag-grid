@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
@@ -14,17 +14,18 @@ export interface RowContainerComponentParams {
  */
 export declare class RowContainerComponent {
     gridOptionsWrapper: GridOptionsWrapper;
-    private eContainer;
-    private eViewport;
-    private body;
-    private hideWhenNoChildren;
+    private readonly eContainer;
+    private readonly eViewport;
+    private readonly hideWhenNoChildren;
     private childCount;
     private visible;
     private rowTemplatesToAdd;
     private afterGuiAttachedCallbacks;
+    private scrollTop;
     private domOrder;
     private lastPlacedElement;
     constructor(params: RowContainerComponentParams);
+    setVerticalScrollPosition(verticalScrollPosition: number): void;
     private postConstruct();
     getRowElement(compId: number): HTMLElement;
     setHeight(height: number): void;

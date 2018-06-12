@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14,8 +14,8 @@ var TabbedLayout = (function () {
         this.params = params;
         this.eGui = document.createElement('div');
         this.eGui.innerHTML = TabbedLayout.TEMPLATE;
-        this.eHeader = this.eGui.querySelector('#tabHeader');
-        this.eBody = this.eGui.querySelector('#tabBody');
+        this.eHeader = this.eGui.querySelector('[ref="tabHeader"]');
+        this.eBody = this.eGui.querySelector('[ref="tabBody"]');
         utils_1.Utils.addCssClass(this.eGui, params.cssClass);
         if (params.items) {
             params.items.forEach(function (item) { return _this.addItem(item); });
@@ -97,8 +97,8 @@ var TabbedLayout = (function () {
         return this.eGui;
     };
     TabbedLayout.TEMPLATE = '<div>' +
-        '<div id="tabHeader" class="ag-tab-header"></div>' +
-        '<div id="tabBody" class="ag-tab-body"></div>' +
+        '<div ref="tabHeader" class="ag-tab-header"></div>' +
+        '<div ref="tabBody" class="ag-tab-body"></div>' +
         '</div>';
     return TabbedLayout;
 }());

@@ -1,23 +1,23 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
 import { IRowModel } from "../interfaces/iRowModel";
 import { RowNode } from "../entities/rowNode";
+import { GridPanel } from "../gridPanel/gridPanel";
 export declare class PaginationAutoPageSizeService extends BeanStub {
-    private gridPanel;
     private eventService;
     private gridOptionsWrapper;
     private scrollVisibleService;
+    private gridPanel;
+    registerGridComp(gridPanel: GridPanel): void;
     private notActive();
-    private postConstruct();
     private onScrollVisibilityChanged();
     private onBodyHeightChanged();
     private checkPageSize();
 }
 export declare class PaginationProxy extends BeanStub implements IRowModel {
     private rowModel;
-    private gridPanel;
     private eventService;
     private gridOptionsWrapper;
     private selectionController;
@@ -38,6 +38,7 @@ export declare class PaginationProxy extends BeanStub implements IRowModel {
     goToPage(page: number): void;
     getPixelOffset(): number;
     getRow(index: number): RowNode;
+    getRowNode(id: string): RowNode;
     getRowIndexAtPixel(pixel: number): number;
     getCurrentPageHeight(): number;
     isRowPresent(rowNode: RowNode): boolean;

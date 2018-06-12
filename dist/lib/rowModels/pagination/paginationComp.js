@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,6 +41,12 @@ var PaginationComp = (function (_super) {
     }
     PaginationComp.prototype.postConstruct = function () {
         this.setTemplate(this.getTemplate());
+        var isPaging = this.gridOptionsWrapper.isPagination();
+        var paginationPanelEnabled = isPaging && !this.gridOptionsWrapper.isSuppressPaginationPanel();
+        if (!paginationPanelEnabled) {
+            this.setVisible(false);
+            return;
+        }
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
         this.addDestroyableEventListener(this.btFirst, 'click', this.onBtFirst.bind(this));
         this.addDestroyableEventListener(this.btLast, 'click', this.onBtLast.bind(this));

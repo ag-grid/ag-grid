@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -40,12 +40,14 @@ export declare class CellComp extends Component {
     private value;
     private valueFormatted;
     private colsSpanning;
+    private rowSpan;
     private tooltip;
     private scope;
     private cellEditorVersion;
     private cellRendererVersion;
     constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: RowComp, autoHeightCell: boolean);
     getCreateTemplate(): string;
+    private getStylesForRowSpanning();
     afterAttached(): void;
     private onColumnHover();
     private onCellChanged(event);
@@ -109,7 +111,7 @@ export declare class CellComp extends Component {
     private onPopupEditorClosed();
     private setInlineEditingClass();
     private createCellEditorParams(keyPress, charPress, cellStartedEdit);
-    private stopEditingAndFocus();
+    private stopEditingAndFocus(suppressNavigateAfterEdit?);
     private parseValue(newValue);
     focusCell(forceBrowserFocus?: boolean): void;
     setFocusInOnEditor(): void;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -386,7 +386,11 @@ var Utils = (function () {
         if (exports._.exists(event.key)) {
             // modern browser will implement key, so we return if key is length 1, eg if it is 'a' for the
             // a key, or '2' for the '2' key. non-printable characters have names, eg 'Enter' or 'Backspace'.
-            return event.key.length === 1;
+            var printableCharacter = event.key.length === 1;
+            // IE11 & Edge treat the numpad del key differently - with numlock on we get "Del" for key,
+            // so this addition checks if its IE11/Edge and handles that specific case the same was as all other browers
+            var numpadDelWithNumlockOnForEdgeOrIe = Utils.isNumpadDelWithNumlockOnForEdgeOrIe(event);
+            return printableCharacter || numpadDelWithNumlockOnForEdgeOrIe;
         }
         else {
             // otherwise, for older browsers, we test against a list of characters, which doesn't include
@@ -936,7 +940,7 @@ var Utils = (function () {
         var widthNoScroll = outer.offsetWidth;
         // force scrollbars
         outer.style.overflow = "scroll";
-        // add innerdiv
+        // add inner div
         var inner = document.createElement("div");
         inner.style.width = "100%";
         outer.appendChild(inner);
@@ -995,7 +999,7 @@ var Utils = (function () {
     Utils.isUserAgentIPad = function () {
         if (this.isIPad === undefined) {
             // taken from https://davidwalsh.name/detect-ipad
-            this.isIPad = navigator.userAgent.match(/iPad/i) != null;
+            this.isIPad = navigator.userAgent.match(/iPad|iPhone/i) != null;
         }
         return this.isIPad;
     };
@@ -1102,7 +1106,8 @@ var Utils = (function () {
         recursiveSearchNodes(nodes);
         function recursiveSearchNodes(nodes) {
             nodes.forEach(function (node) {
-                if (node.group) {
+                // also checking for children for tree data
+                if (node.group || node.hasChildren()) {
                     keyParts.push(node.key);
                     var key = keyParts.join('|');
                     callback(node, key);
@@ -1436,8 +1441,8 @@ var Utils = (function () {
         }
         eBox.appendChild(eMessage);
     };
-    // gets called by: a) InMemoryRowNodeManager and b) GroupStage to do sorting.
-    // when in InMemoryRowNodeManager we always have indexes (as this sorts the items the
+    // gets called by: a) ClientSideNodeManager and b) GroupStage to do sorting.
+    // when in ClientSideNodeManager we always have indexes (as this sorts the items the
     // user provided) but when in GroupStage, the nodes can contain filler nodes that
     // don't have order id's
     Utils.sortRowNodesByOrder = function (rowNodes, rowNodeOrder) {
@@ -1508,7 +1513,16 @@ var Utils = (function () {
         }
         return v;
     };
+    Utils.isNumpadDelWithNumlockOnForEdgeOrIe = function (event) {
+        if (Utils.isBrowserEdge() || Utils.isBrowserIE()) {
+            return event.key === Utils.NUMPAD_DEL_NUMLOCK_ON_KEY &&
+                event.charCode === Utils.NUMPAD_DEL_NUMLOCK_ON_CHARCODE;
+        }
+        return false;
+    };
     Utils.PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\\|<>?:@~{}';
+    Utils.NUMPAD_DEL_NUMLOCK_ON_KEY = 'Del';
+    Utils.NUMPAD_DEL_NUMLOCK_ON_CHARCODE = 46;
     Utils.doOnceFlags = {};
     // static prepend(parent: HTMLElement, child: HTMLElement): void {
     //     if (this.exists(parent.firstChild)) {

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -81,11 +81,11 @@ var SelectionController = (function () {
     };
     // should only be called if groupSelectsChildren=true
     SelectionController.prototype.updateGroupsFromChildrenSelections = function () {
-        if (this.rowModel.getType() !== constants_1.Constants.ROW_MODEL_TYPE_IN_MEMORY) {
+        if (this.rowModel.getType() !== constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             console.warn('updateGroupsFromChildrenSelections not available when rowModel is not normal');
         }
-        var inMemoryRowModel = this.rowModel;
-        inMemoryRowModel.getTopLevelNodes().forEach(function (rowNode) {
+        var clientSideRowModel = this.rowModel;
+        clientSideRowModel.getTopLevelNodes().forEach(function (rowNode) {
             rowNode.depthFirstSearch(function (rowNode) {
                 if (rowNode.group) {
                     rowNode.calculateSelectedFromChildren();
@@ -171,11 +171,11 @@ var SelectionController = (function () {
     // Designed for use with 'children' as the group selection type,
     // where groups don't actually appear in the selection normally.
     SelectionController.prototype.getBestCostNodeSelection = function () {
-        if (this.rowModel.getType() !== constants_1.Constants.ROW_MODEL_TYPE_IN_MEMORY) {
+        if (this.rowModel.getType() !== constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             console.warn('getBestCostNodeSelection is only avilable when using normal row model');
         }
-        var inMemoryRowModel = this.rowModel;
-        var topLevelNodes = inMemoryRowModel.getTopLevelNodes();
+        var clientSideRowModel = this.rowModel;
+        var topLevelNodes = clientSideRowModel.getTopLevelNodes();
         if (topLevelNodes === null) {
             console.warn('selectAll not available doing rowModel=virtual');
             return;
@@ -215,14 +215,14 @@ var SelectionController = (function () {
     SelectionController.prototype.deselectAllRowNodes = function (justFiltered) {
         if (justFiltered === void 0) { justFiltered = false; }
         var callback = function (rowNode) { return rowNode.selectThisNode(false); };
-        var rowModelInMemory = this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_IN_MEMORY;
+        var rowModelClientSide = this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
         if (justFiltered) {
-            if (!rowModelInMemory) {
+            if (!rowModelClientSide) {
                 console.error('ag-Grid: selecting just filtered only works with In Memory Row Model');
                 return;
             }
-            var inMemoryRowModel = this.rowModel;
-            inMemoryRowModel.forEachNodeAfterFilter(callback);
+            var clientSideRowModel = this.rowModel;
+            clientSideRowModel.forEachNodeAfterFilter(callback);
         }
         else {
             utils_1.Utils.iterateObject(this.selectedNodes, function (id, rowNode) {
@@ -235,7 +235,7 @@ var SelectionController = (function () {
             this.reset();
         }
         // the above does not clean up the parent rows if they are selected
-        if (rowModelInMemory && this.groupSelectsChildren) {
+        if (rowModelClientSide && this.groupSelectsChildren) {
             this.updateGroupsFromChildrenSelections();
         }
         var event = {
@@ -247,19 +247,19 @@ var SelectionController = (function () {
     };
     SelectionController.prototype.selectAllRowNodes = function (justFiltered) {
         if (justFiltered === void 0) { justFiltered = false; }
-        if (this.rowModel.getType() !== constants_1.Constants.ROW_MODEL_TYPE_IN_MEMORY) {
+        if (this.rowModel.getType() !== constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             throw "selectAll only available with normal row model, ie not " + this.rowModel.getType();
         }
-        var inMemoryRowModel = this.rowModel;
+        var clientSideRowModel = this.rowModel;
         var callback = function (rowNode) { return rowNode.selectThisNode(true); };
         if (justFiltered) {
-            inMemoryRowModel.forEachNodeAfterFilter(callback);
+            clientSideRowModel.forEachNodeAfterFilter(callback);
         }
         else {
-            inMemoryRowModel.forEachNode(callback);
+            clientSideRowModel.forEachNode(callback);
         }
         // the above does not clean up the parent rows if they are selected
-        if (this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_IN_MEMORY && this.groupSelectsChildren) {
+        if (this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE && this.groupSelectsChildren) {
             this.updateGroupsFromChildrenSelections();
         }
         var event = {

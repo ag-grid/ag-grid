@@ -1,6 +1,7 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { GridPanel } from "../gridPanel/gridPanel";
 import { Component } from "../widgets/component";
 export declare class HeaderContainer {
     private gridOptionsWrapper;
@@ -8,15 +9,16 @@ export declare class HeaderContainer {
     private $scope;
     private dragAndDropService;
     private columnController;
-    private gridPanel;
     private eventService;
     private scrollVisibleService;
     private eContainer;
     private eViewport;
     private headerRowComps;
     private pinned;
+    private scrollWidth;
     private dropTarget;
     constructor(eContainer: HTMLElement, eViewport: HTMLElement, pinned: string);
+    registerGridComp(gridPanel: GridPanel): void;
     forEachHeaderElement(callback: (renderedHeaderElement: Component) => void): void;
     private init();
     private onColumnRowGroupChanged();
@@ -24,11 +26,11 @@ export declare class HeaderContainer {
     private onColumnResized();
     private onDisplayedColumnsChanged();
     private onScrollVisibilityChanged();
-    private setWidthIfPinnedContainer();
+    private setWidthOfPinnedContainer();
     destroy(): void;
     private onGridColumnsChanged();
     refresh(): void;
-    private setupDragAndDrop();
+    private setupDragAndDrop(gridComp);
     private removeHeaderRowComps();
     private createHeaderRowComps();
 }

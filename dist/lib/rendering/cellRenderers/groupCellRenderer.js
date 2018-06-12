@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -47,6 +47,9 @@ var GroupCellRenderer = (function (_super) {
     }
     GroupCellRenderer.prototype.init = function (params) {
         this.params = params;
+        if (this.gridOptionsWrapper.isGroupIncludeTotalFooter()) {
+            this.assignBlankValueToGroupFooterCell(params);
+        }
         var embeddedRowMismatch = this.isEmbeddedRowMismatch();
         // This allows for empty strings to appear as groups since
         // it will only return for null or undefined.
@@ -60,6 +63,12 @@ var GroupCellRenderer = (function (_super) {
         this.addCheckboxIfNeeded();
         this.addValueElement();
         this.setupIndent();
+    };
+    GroupCellRenderer.prototype.assignBlankValueToGroupFooterCell = function (params) {
+        // this is not ideal, but it was the only way we could get footer working for the root node
+        if (!params.value && params.node.level == -1) {
+            params.value = '';
+        }
     };
     // if we are doing embedded full width rows, we only show the renderer when
     // in the body, or if pinning in the pinned section, or if pinning and RTL,
@@ -333,7 +342,6 @@ var GroupCellRenderer = (function (_super) {
         }
     };
     GroupCellRenderer.prototype.onExpandOrContract = function () {
-        console.log("onExpandOrContract");
         // must use the displayedGroup, so if data was dragged down, we expand the parent, not this row
         var rowNode = this.displayedGroup;
         rowNode.setExpanded(!rowNode.expanded);

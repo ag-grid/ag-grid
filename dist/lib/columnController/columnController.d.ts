@@ -1,9 +1,9 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroup } from "../entities/columnGroup";
 import { Column } from "../entities/column";
-import { ColDef, ColGroupDef } from "../entities/colDef";
+import { ColDef, ColGroupDef, IAggFunc } from "../entities/colDef";
 import { ColumnGroupChild } from "../entities/columnGroupChild";
 import { OriginalColumnGroupChild } from "../entities/originalColumnGroupChild";
 import { ColumnEventType } from "../events";
@@ -14,6 +14,15 @@ export interface ColumnResizeSet {
     ratios: number[];
     width: number;
 }
+export interface ColumnState {
+    colId: string;
+    hide: boolean;
+    aggFunc: string | IAggFunc;
+    width: number;
+    pivotIndex: number;
+    pinned: string;
+    rowGroupIndex: number;
+}
 export declare class ColumnController {
     private gridOptionsWrapper;
     private expressionService;
@@ -22,7 +31,6 @@ export declare class ColumnController {
     private autoWidthCalculator;
     private eventService;
     private columnUtils;
-    private gridPanel;
     private context;
     private columnAnimationService;
     private autoGroupColService;
@@ -57,6 +65,7 @@ export declare class ColumnController {
     private allDisplayedCenterVirtualColumns;
     private colSpanActive;
     private autoRowHeightColumns;
+    private suppressColumnVirtualisation;
     private rowGroupColumns;
     private valueColumns;
     private pivotColumns;
@@ -169,10 +178,10 @@ export declare class ColumnController {
     isPinningRight(): boolean;
     getPrimaryAndSecondaryAndAutoColumns(): Column[];
     private createStateItemFromColumn(column);
-    getColumnState(): any[];
+    getColumnState(): ColumnState[];
     private orderColumnStateList(columnStateList);
     resetColumnState(source?: ColumnEventType): void;
-    setColumnState(columnState: any[], source?: ColumnEventType): boolean;
+    setColumnState(columnState: ColumnState[], source?: ColumnEventType): boolean;
     private sortColumnListUsingIndexes(indexes, colA, colB);
     private syncColumnWithNoState(column, source);
     private syncColumnWithStateItem(column, stateItem, rowGroupIndexes, pivotIndexes, source);
@@ -185,8 +194,9 @@ export declare class ColumnController {
     private getAutoColumn(key);
     private columnsMatch(column, key);
     getDisplayNameForColumn(column: Column, location: string, includeAggFunc?: boolean): string;
+    getDisplayNameForOriginalColumnGroup(columnGroup: ColumnGroup, originalColumnGroup: OriginalColumnGroup, location: string): string;
     getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string;
-    private getHeaderName(colDef, column, columnGroup, location);
+    private getHeaderName(colDef, column, columnGroup, originalColumnGroup, location);
     private wrapHeaderNameWithAggFunc(column, headerName);
     getColumnGroup(colId: string | ColumnGroup, instanceId?: number): ColumnGroup;
     setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source?: ColumnEventType): void;

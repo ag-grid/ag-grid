@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22,7 +22,6 @@ var mouseEventService_1 = require("./mouseEventService");
 var paginationProxy_1 = require("../rowModels/paginationProxy");
 var focusedCellController_1 = require("../focusedCellController");
 var utils_1 = require("../utils");
-var gridPanel_1 = require("./gridPanel");
 var animationFrameService_1 = require("../misc/animationFrameService");
 var columnController_1 = require("../columnController/columnController");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
@@ -31,6 +30,9 @@ var NavigationService = (function () {
     }
     NavigationService.prototype.init = function () {
         this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
+    };
+    NavigationService.prototype.registerGridComp = function (gridPanel) {
+        this.gridPanel = gridPanel;
     };
     NavigationService.prototype.handlePageScrollingKey = function (event) {
         var key = event.which || event.keyCode;
@@ -87,13 +89,13 @@ var NavigationService = (function () {
         return processed;
     };
     NavigationService.prototype.onPageDown = function (gridCell) {
-        var viewport = this.gridPanel.getPrimaryScrollViewport();
-        var pixelsInOnePage = viewport.offsetHeight;
+        var scrollPosition = this.gridPanel.getVScrollPosition();
+        var pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
         if (this.gridPanel.isHorizontalScrollShowing()) {
             pixelsInOnePage -= this.scrollWidth;
         }
         var pagingPixelOffset = this.paginationProxy.getPixelOffset();
-        var currentPageBottomPixel = viewport.scrollTop + pixelsInOnePage;
+        var currentPageBottomPixel = scrollPosition.top + pixelsInOnePage;
         var currentPageBottomRow = this.paginationProxy.getRowIndexAtPixel(currentPageBottomPixel + pagingPixelOffset);
         var scrollIndex = currentPageBottomRow;
         var currentCellPixel = this.paginationProxy.getRow(gridCell.rowIndex).rowTop;
@@ -109,13 +111,13 @@ var NavigationService = (function () {
         this.navigateTo(scrollIndex, 'top', null, focusIndex, gridCell.column);
     };
     NavigationService.prototype.onPageUp = function (gridCell) {
-        var viewport = this.gridPanel.getPrimaryScrollViewport();
-        var pixelsInOnePage = viewport.offsetHeight;
+        var scrollPosition = this.gridPanel.getVScrollPosition();
+        var pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
         if (this.gridPanel.isHorizontalScrollShowing()) {
             pixelsInOnePage -= this.scrollWidth;
         }
         var pagingPixelOffset = this.paginationProxy.getPixelOffset();
-        var currentPageTopPixel = viewport.scrollTop;
+        var currentPageTopPixel = scrollPosition.top;
         var currentPageTopRow = this.paginationProxy.getRowIndexAtPixel(currentPageTopPixel + pagingPixelOffset);
         var scrollIndex = currentPageTopRow;
         var currentRowNode = this.paginationProxy.getRow(gridCell.rowIndex);
@@ -174,10 +176,6 @@ var NavigationService = (function () {
         var rowIndexToScrollTo = homeKey ? 0 : this.paginationProxy.getPageLastRow();
         this.navigateTo(rowIndexToScrollTo, null, columnToSelect, rowIndexToScrollTo, columnToSelect);
     };
-    __decorate([
-        context_1.Autowired('gridPanel'),
-        __metadata("design:type", gridPanel_1.GridPanel)
-    ], NavigationService.prototype, "gridPanel", void 0);
     __decorate([
         context_1.Autowired('mouseEventService'),
         __metadata("design:type", mouseEventService_1.MouseEventService)

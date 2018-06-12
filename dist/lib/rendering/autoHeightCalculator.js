@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15,7 +15,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var gridPanel_1 = require("../gridPanel/gridPanel");
 var context_1 = require("../context/context");
 var beans_1 = require("./beans");
 var cellComp_1 = require("./cellComp");
@@ -24,6 +23,9 @@ var utils_1 = require("../utils");
 var AutoHeightCalculator = (function () {
     function AutoHeightCalculator() {
     }
+    AutoHeightCalculator.prototype.registerGridComp = function (gridPanel) {
+        this.gridPanel = gridPanel;
+    };
     AutoHeightCalculator.prototype.getPreferredHeightForRow = function (rowNode) {
         var _this = this;
         if (!this.eDummyContainer) {
@@ -38,8 +40,9 @@ var AutoHeightCalculator = (function () {
         eBodyContainer.appendChild(this.eDummyContainer);
         var cellComps = [];
         var cols = this.columnController.getAllAutoRowHeightCols();
+        console.log();
         cols.forEach(function (col) {
-            var cellComp = new cellComp_1.CellComp(null, _this.beans, col, rowNode, null, true);
+            var cellComp = new cellComp_1.CellComp(_this.$scope, _this.beans, col, rowNode, null, true);
             cellComp.setParentRow(_this.eDummyContainer);
             cellComps.push(cellComp);
         });
@@ -68,10 +71,6 @@ var AutoHeightCalculator = (function () {
         utils_1._.removeAllChildren(this.eDummyContainer);
         return maxCellHeight;
     };
-    __decorate([
-        context_1.Autowired('gridPanel'),
-        __metadata("design:type", gridPanel_1.GridPanel)
-    ], AutoHeightCalculator.prototype, "gridPanel", void 0);
     __decorate([
         context_1.Autowired('beans'),
         __metadata("design:type", beans_1.Beans)

@@ -42,7 +42,7 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
 
     public abstract getRow(rowIndex: number): RowNode;
 
-    constructor(cacheParams: P) {
+    protected constructor(cacheParams: P) {
         super();
         this.virtualRowCount = cacheParams.initialRowCount;
         this.cacheParams = cacheParams;
@@ -110,7 +110,7 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
             blocksForPurging.push(block);
         });
 
-        // todo: need to verify that this sorts items in the right order
+        // note: need to verify that this sorts items in the right order
         blocksForPurging.sort( (a: T, b: T) => b.getLastAccessed() - a.getLastAccessed());
 
         // we remove (maxBlocksInCache - 1) as we already excluded the 'just created' page.
@@ -250,8 +250,8 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
     // gets called 1) row count changed 2) cache purged 3) items inserted
     protected onCacheUpdated(): void {
         if (this.isActive()) {
-            // this results in both row models (infinite and enterprise) firing ModelUpdated,
-            // however enterprise also updates the row indexes first
+            // this results in both row models (infinite and server side) firing ModelUpdated,
+            // however server side row model also updates the row indexes first
             let event: CacheUpdatedEvent = {
                 type: RowNodeCache.EVENT_CACHE_UPDATED
             };

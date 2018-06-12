@@ -453,6 +453,7 @@ export class FilterManager {
             column: column,
             filterPromise: null,
             scope: <any> null,
+            compiledElement: null,
             guiPromise: Promise.external<HTMLElement>()
         };
 
@@ -486,7 +487,8 @@ export class FilterManager {
             eFilterGui.appendChild(guiFromFilter);
 
             if (filterWrapper.scope) {
-                this.$compile(eFilterGui)(filterWrapper.scope);
+                const compiledElement = this.$compile(eFilterGui)(filterWrapper.scope);
+                filterWrapper.compiledElement = compiledElement;
                 setTimeout( () => filterWrapper.scope.$apply(), 0);
             }
 
@@ -515,6 +517,9 @@ export class FilterManager {
             }
             filterWrapper.column.setFilterActive(false, source);
             if (filterWrapper.scope) {
+                if (filterWrapper.compiledElement) {
+                    filterWrapper.compiledElement.remove();
+                }
                 filterWrapper.scope.$destroy();
             }
             delete this.allFilters[filterWrapper.column.getColId()];
@@ -531,6 +536,7 @@ export class FilterManager {
 }
 
 export interface FilterWrapper {
+    compiledElement: any;
     column: Column;
     filterPromise: Promise<IFilterComp>;
     scope: any;

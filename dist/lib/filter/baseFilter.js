@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,6 +30,11 @@ var componentAnnotations_1 = require("../widgets/componentAnnotations");
 var context_1 = require("../context/context");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var utils_1 = require("../utils");
+var FilterConditionType;
+(function (FilterConditionType) {
+    FilterConditionType[FilterConditionType["MAIN"] = 0] = "MAIN";
+    FilterConditionType[FilterConditionType["CONDITION"] = 1] = "CONDITION";
+})(FilterConditionType = exports.FilterConditionType || (exports.FilterConditionType = {}));
 var DEFAULT_TRANSLATIONS = {
     loadingOoo: 'Loading...',
     equals: 'Equals',
@@ -73,6 +78,7 @@ var BaseFilter = (function (_super) {
         }
         this.customInit();
         this.filter = this.defaultFilter;
+        this.filterCondition = this.defaultFilter;
         this.clearActive = params.clearButton === true;
         //Allowing for old param property apply, even though is not advertised through the interface
         this.applyActive = ((params.applyButton === true) || (params.apply === true));
@@ -89,8 +95,8 @@ var BaseFilter = (function (_super) {
         var anyButtonVisible = this.applyActive || this.clearActive;
         utils_1._.setVisible(this.eButtonsPanel, anyButtonVisible);
         this.instantiate(this.context);
-        this.initialiseFilterBodyUi();
-        this.refreshFilterBodyUi();
+        this.initialiseFilterBodyUi(FilterConditionType.MAIN);
+        this.refreshFilterBodyUi(FilterConditionType.MAIN);
     };
     BaseFilter.prototype.onClearButton = function () {
         this.setModel(null);
@@ -113,23 +119,52 @@ var BaseFilter = (function (_super) {
     };
     BaseFilter.prototype.getModel = function () {
         if (this.isFilterActive()) {
-            return this.serialize();
+            if (!this.isFilterConditionActive(FilterConditionType.CONDITION)) {
+                return this.serialize(FilterConditionType.MAIN);
+            }
+            else {
+                return {
+                    condition1: this.serialize(FilterConditionType.MAIN),
+                    condition2: this.serialize(FilterConditionType.CONDITION),
+                    operator: this.conditionValue
+                };
+            }
         }
         else {
             return null;
         }
     };
     BaseFilter.prototype.getNullableModel = function () {
-        return this.serialize();
+        if (!this.isFilterConditionActive(FilterConditionType.CONDITION)) {
+            return this.serialize(FilterConditionType.MAIN);
+        }
+        else {
+            return {
+                condition1: this.serialize(FilterConditionType.MAIN),
+                condition2: this.serialize(FilterConditionType.CONDITION),
+                operator: this.conditionValue
+            };
+        }
     };
     BaseFilter.prototype.setModel = function (model) {
         if (model) {
-            this.parse(model);
+            if (!model.operator) {
+                this.resetState();
+                this.parse(model, FilterConditionType.MAIN);
+            }
+            else {
+                var asCombinedFilter = model;
+                this.parse((asCombinedFilter).condition1, FilterConditionType.MAIN);
+                this.parse((asCombinedFilter).condition2, FilterConditionType.CONDITION);
+                this.conditionValue = asCombinedFilter.operator;
+            }
         }
         else {
             this.resetState();
         }
-        this.refreshFilterBodyUi();
+        this.redrawCondition();
+        this.refreshFilterBodyUi(FilterConditionType.MAIN);
+        this.refreshFilterBodyUi(FilterConditionType.CONDITION);
     };
     BaseFilter.prototype.doOnFilterChanged = function (applyNow) {
         if (applyNow === void 0) { applyNow = false; }
@@ -140,26 +175,98 @@ var BaseFilter = (function (_super) {
         if (shouldFilter) {
             this.filterParams.filterChangedCallback();
         }
-        this.refreshFilterBodyUi();
+        this.refreshFilterBodyUi(FilterConditionType.MAIN);
+        this.refreshFilterBodyUi(FilterConditionType.CONDITION);
         return shouldFilter;
     };
     BaseFilter.prototype.onFilterChanged = function (applyNow) {
         if (applyNow === void 0) { applyNow = false; }
         this.doOnFilterChanged(applyNow);
+        this.redrawCondition();
+        this.refreshFilterBodyUi(FilterConditionType.MAIN);
+        this.refreshFilterBodyUi(FilterConditionType.CONDITION);
+    };
+    BaseFilter.prototype.redrawCondition = function () {
+        var _this = this;
+        var filterCondition = this.eFilterBodyWrapper.querySelector('.ag-filter-condition');
+        if (!filterCondition && this.isFilterActive() && this.acceptsBooleanLogic()) {
+            this.eConditionWrapper = utils_1._.loadTemplate(this.createConditionTemplate(FilterConditionType.CONDITION));
+            this.eFilterBodyWrapper.appendChild(this.eConditionWrapper);
+            this.wireQuerySelectors();
+            var _a = this.refreshOperatorUi(), andButton = _a.andButton, orButton = _a.orButton;
+            this.addDestroyableEventListener(andButton, 'change', function () {
+                _this.conditionValue = 'AND';
+                _this.onFilterChanged();
+            });
+            this.addDestroyableEventListener(orButton, 'change', function () {
+                _this.conditionValue = 'OR';
+                _this.onFilterChanged();
+            });
+            this.initialiseFilterBodyUi(FilterConditionType.CONDITION);
+        }
+        else if (filterCondition && !this.isFilterActive()) {
+            this.eFilterBodyWrapper.removeChild(this.eConditionWrapper);
+            this.eConditionWrapper = null;
+        }
+        else {
+            this.refreshFilterBodyUi(FilterConditionType.CONDITION);
+            if (this.eConditionWrapper) {
+                this.refreshOperatorUi();
+            }
+        }
+    };
+    BaseFilter.prototype.refreshOperatorUi = function () {
+        var andButton = this.eConditionWrapper.querySelector('.and');
+        var orButton = this.eConditionWrapper.querySelector('.or');
+        this.conditionValue = this.conditionValue == null ? 'AND' : this.conditionValue;
+        andButton.checked = this.conditionValue === 'AND';
+        orButton.checked = this.conditionValue === 'OR';
+        return { andButton: andButton, orButton: orButton };
     };
     BaseFilter.prototype.onFloatingFilterChanged = function (change) {
         //It has to be of the type FloatingFilterWithApplyChange if it gets here
         var casted = change;
-        this.setModel(casted ? casted.model : null);
+        if (casted == null) {
+            this.setModel(null);
+        }
+        else if (!this.isFilterConditionActive(FilterConditionType.CONDITION)) {
+            this.setModel(casted ? casted.model : null);
+        }
+        else {
+            var combinedFilter = {
+                condition1: casted.model,
+                condition2: this.serialize(FilterConditionType.CONDITION),
+                operator: this.conditionValue
+            };
+            this.setModel(combinedFilter);
+        }
         return this.doOnFilterChanged(casted ? casted.apply : false);
     };
-    BaseFilter.prototype.generateFilterHeader = function () {
+    BaseFilter.prototype.generateFilterHeader = function (type) {
         return '';
     };
     BaseFilter.prototype.generateTemplate = function () {
         var translate = this.translate.bind(this);
-        var body = this.bodyTemplate();
-        return "<div>\n                    " + this.generateFilterHeader() + "\n                    " + body + "\n                    <div class=\"ag-filter-apply-panel\" id=\"applyPanel\">\n                        <button type=\"button\" id=\"clearButton\">" + translate('clearFilter') + "</button>\n                        <button type=\"button\" id=\"applyButton\">" + translate('applyFilter') + "</button>\n                    </div>\n                </div>";
+        var mainConditionBody = this.createConditionBody(FilterConditionType.MAIN);
+        var bodyWithBooleanLogic = !this.acceptsBooleanLogic() ?
+            mainConditionBody :
+            this.wrapCondition(mainConditionBody);
+        return "<div>\n                    <div class='ag-filter-body-wrapper'>" + bodyWithBooleanLogic + "</div>\n                    <div class=\"ag-filter-apply-panel\" id=\"applyPanel\">\n                        <button type=\"button\" id=\"clearButton\">" + translate('clearFilter') + "</button>\n                        <button type=\"button\" id=\"applyButton\">" + translate('applyFilter') + "</button>\n                    </div>\n                </div>";
+    };
+    BaseFilter.prototype.acceptsBooleanLogic = function () {
+        return false;
+    };
+    BaseFilter.prototype.wrapCondition = function (mainCondition) {
+        if (!this.isFilterActive())
+            return mainCondition;
+        return "" + mainCondition + this.createConditionTemplate(FilterConditionType.CONDITION);
+    };
+    BaseFilter.prototype.createConditionTemplate = function (type) {
+        return "<div class=\"ag-filter-condition\">\n            <input id=\"andId\" type=\"radio\" class=\"and\" name=\"booleanLogic\" value=\"AND\" checked=\"checked\" /><label style=\"display: inline\" for=\"andId\">AND</label>\n            <input id=\"orId\" type=\"radio\" class=\"or\" name=\"booleanLogic\" value=\"OR\" /><label style=\"display: inline\" for=\"orId\">OR</label>\n            <div>" + this.createConditionBody(type) + "</div>\n        </div>";
+    };
+    BaseFilter.prototype.createConditionBody = function (type) {
+        var body = this.bodyTemplate(type);
+        return this.generateFilterHeader(type) + body;
     };
     BaseFilter.prototype.translate = function (toTranslate) {
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
@@ -188,6 +295,10 @@ var BaseFilter = (function (_super) {
         __metadata("design:type", HTMLElement)
     ], BaseFilter.prototype, "eButtonsPanel", void 0);
     __decorate([
+        componentAnnotations_1.QuerySelector('.ag-filter-body-wrapper'),
+        __metadata("design:type", HTMLElement)
+    ], BaseFilter.prototype, "eFilterBodyWrapper", void 0);
+    __decorate([
         componentAnnotations_1.QuerySelector('#applyButton'),
         __metadata("design:type", HTMLElement)
     ], BaseFilter.prototype, "eApplyButton", void 0);
@@ -214,16 +325,27 @@ var ComparableBaseFilter = (function (_super) {
     function ComparableBaseFilter() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    ComparableBaseFilter.prototype.doesFilterPass = function (params) {
+        var mainFilterResult = this.individualFilterPasses(params, FilterConditionType.MAIN);
+        if (this.eTypeConditionSelector == null) {
+            return mainFilterResult;
+        }
+        var auxFilterResult = this.individualFilterPasses(params, FilterConditionType.CONDITION);
+        return this.conditionValue === 'AND' ? mainFilterResult && auxFilterResult : mainFilterResult || auxFilterResult;
+    };
     ComparableBaseFilter.prototype.init = function (params) {
         _super.prototype.init.call(this, params);
-        this.addDestroyableEventListener(this.eTypeSelector, "change", this.onFilterTypeChanged.bind(this));
+        this.suppressAndOrCondition = params.suppressAndOrCondition;
     };
     ComparableBaseFilter.prototype.customInit = function () {
         if (!this.defaultFilter) {
             this.defaultFilter = this.getDefaultType();
         }
     };
-    ComparableBaseFilter.prototype.generateFilterHeader = function () {
+    ComparableBaseFilter.prototype.acceptsBooleanLogic = function () {
+        return this.suppressAndOrCondition !== true;
+    };
+    ComparableBaseFilter.prototype.generateFilterHeader = function (type) {
         var _this = this;
         var defaultFilterTypes = this.getApplicableFilterTypes();
         var restrictedFilterTypes = this.filterParams.filterOptions;
@@ -233,16 +355,30 @@ var ComparableBaseFilter = (function (_super) {
             return "<option value=\"" + filterType + "\">" + localeFilterName + "</option>";
         });
         var readOnly = optionsHtml.length == 1 ? 'disabled' : '';
+        var id = type == FilterConditionType.MAIN ? 'filterType' : 'filterConditionType';
         return optionsHtml.length <= 0 ?
             '' :
-            "<div>\n                <select class=\"ag-filter-select\" id=\"filterType\" " + readOnly + ">\n                    " + optionsHtml.join('') + "\n                </select>\n            </div>";
+            "<div>\n                <select class=\"ag-filter-select\" id=\"" + id + "\" " + readOnly + ">\n                    " + optionsHtml.join('') + "\n                </select>\n            </div>";
     };
-    ComparableBaseFilter.prototype.initialiseFilterBodyUi = function () {
-        this.setFilterType(this.filter);
+    ComparableBaseFilter.prototype.initialiseFilterBodyUi = function (type) {
+        var _this = this;
+        if (type === FilterConditionType.MAIN) {
+            this.setFilterType(this.filter, type);
+            this.addDestroyableEventListener(this.eTypeSelector, "change", function () { return _this.onFilterTypeChanged(type); });
+        }
+        else {
+            this.setFilterType(this.filterCondition, type);
+            this.addDestroyableEventListener(this.eTypeConditionSelector, "change", function () { return _this.onFilterTypeChanged(type); });
+        }
     };
-    ComparableBaseFilter.prototype.onFilterTypeChanged = function () {
-        this.filter = this.eTypeSelector.value;
-        this.refreshFilterBodyUi();
+    ComparableBaseFilter.prototype.onFilterTypeChanged = function (type) {
+        if (type === FilterConditionType.MAIN) {
+            this.filter = this.eTypeSelector.value;
+        }
+        else {
+            this.filterCondition = this.eTypeConditionSelector.value;
+        }
+        this.refreshFilterBodyUi(type);
         // we check if filter is active, so that if user changes the type (eg from 'less than' to 'equals'),
         // well this doesn't matter if the user has no value in the text field, so don't fire 'onFilterChanged'.
         // this means we don't refresh the grid when the type changes if no value is present.
@@ -251,7 +387,7 @@ var ComparableBaseFilter = (function (_super) {
         }
     };
     ComparableBaseFilter.prototype.isFilterActive = function () {
-        var rawFilterValues = this.filterValues();
+        var rawFilterValues = this.filterValues(FilterConditionType.MAIN);
         if (this.filter === BaseFilter.IN_RANGE) {
             var filterValueArray = rawFilterValues;
             return filterValueArray[0] != null && filterValueArray[1] != null;
@@ -260,14 +396,31 @@ var ComparableBaseFilter = (function (_super) {
             return rawFilterValues != null;
         }
     };
-    ComparableBaseFilter.prototype.setFilterType = function (filterType) {
-        this.filter = filterType;
-        this.eTypeSelector.value = filterType;
+    ComparableBaseFilter.prototype.setFilterType = function (filterType, type) {
+        if (type === FilterConditionType.MAIN) {
+            this.filter = filterType;
+            if (!this.eTypeSelector)
+                return;
+            this.eTypeSelector.value = filterType;
+        }
+        else {
+            this.filterCondition = filterType;
+            if (!this.eTypeConditionSelector)
+                return;
+            this.eTypeConditionSelector.value = filterType;
+        }
+    };
+    ComparableBaseFilter.prototype.isFilterConditionActive = function (type) {
+        return this.filterValues(type) != null;
     };
     __decorate([
         componentAnnotations_1.QuerySelector('#filterType'),
         __metadata("design:type", HTMLSelectElement)
     ], ComparableBaseFilter.prototype, "eTypeSelector", void 0);
+    __decorate([
+        componentAnnotations_1.QuerySelector('#filterConditionType'),
+        __metadata("design:type", HTMLSelectElement)
+    ], ComparableBaseFilter.prototype, "eTypeConditionSelector", void 0);
     return ComparableBaseFilter;
 }(BaseFilter));
 exports.ComparableBaseFilter = ComparableBaseFilter;
@@ -320,36 +473,39 @@ var ScalarBaseFilter = (function (_super) {
         }
         return ScalarBaseFilter.DEFAULT_NULL_COMPARATOR[reducedType];
     };
-    ScalarBaseFilter.prototype.doesFilterPass = function (params) {
+    ScalarBaseFilter.prototype.individualFilterPasses = function (params, type) {
+        return this.doIndividualFilterPasses(params, type, type === FilterConditionType.MAIN ? this.filter : this.filterCondition);
+    };
+    ScalarBaseFilter.prototype.doIndividualFilterPasses = function (params, type, filter) {
         var value = this.filterParams.valueGetter(params.node);
-        var comparator = this.nullComparator(this.filter);
-        var rawFilterValues = this.filterValues();
+        var comparator = this.nullComparator(filter);
+        var rawFilterValues = this.filterValues(type);
         var from = Array.isArray(rawFilterValues) ? rawFilterValues[0] : rawFilterValues;
         if (from == null) {
-            return true;
+            return type === FilterConditionType.MAIN ? true : this.conditionValue === 'AND';
         }
         var compareResult = comparator(from, value);
-        if (this.filter === BaseFilter.EQUALS) {
+        if (filter === BaseFilter.EQUALS) {
             return compareResult === 0;
         }
-        if (this.filter === BaseFilter.GREATER_THAN) {
+        if (filter === BaseFilter.GREATER_THAN) {
             return compareResult > 0;
         }
-        if (this.filter === BaseFilter.GREATER_THAN_OR_EQUAL) {
+        if (filter === BaseFilter.GREATER_THAN_OR_EQUAL) {
             return compareResult >= 0;
         }
-        if (this.filter === BaseFilter.LESS_THAN_OR_EQUAL) {
+        if (filter === BaseFilter.LESS_THAN_OR_EQUAL) {
             return compareResult <= 0;
         }
-        if (this.filter === BaseFilter.LESS_THAN) {
+        if (filter === BaseFilter.LESS_THAN) {
             return compareResult < 0;
         }
-        if (this.filter === BaseFilter.NOT_EQUAL) {
+        if (filter === BaseFilter.NOT_EQUAL) {
             return compareResult != 0;
         }
         //From now on the type is a range and rawFilterValues must be an array!
         var compareToResult = comparator(rawFilterValues[1], value);
-        if (this.filter === BaseFilter.IN_RANGE) {
+        if (filter === BaseFilter.IN_RANGE) {
             if (!this.filterParams.inRangeInclusive) {
                 return compareResult > 0 && compareToResult < 0;
             }
@@ -357,7 +513,7 @@ var ScalarBaseFilter = (function (_super) {
                 return compareResult >= 0 && compareToResult <= 0;
             }
         }
-        throw new Error('Unexpected type of date filter!: ' + this.filter);
+        throw new Error('Unexpected type of filter!: ' + filter);
     };
     ScalarBaseFilter.DEFAULT_NULL_COMPARATOR = {
         equals: false,

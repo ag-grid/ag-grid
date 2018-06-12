@@ -221,9 +221,7 @@ export class HeaderGroupWrapperComp extends Component {
             }
         });
 
-        let result = childSuppressesMoving
-            || this.gridOptionsWrapper.isSuppressMovableColumns()
-            || this.gridOptionsWrapper.isForPrint();
+        let result = childSuppressesMoving || this.gridOptionsWrapper.isSuppressMovableColumns();
 
         return result;
     }

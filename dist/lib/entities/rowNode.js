@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39,8 +39,18 @@ var RowNode = (function () {
         var oldData = this.data;
         this.data = data;
         this.valueCache.onDataChanged();
+        this.updateDataOnDetailNode();
+        this.checkRowSelectable();
         var event = this.createDataChangedEvent(data, oldData, false);
         this.dispatchLocalEvent(event);
+    };
+    // when we are doing master / detail, the detail node is lazy created, but then kept around.
+    // so if we show / hide the detail, the same detail rowNode is used. so we need to keep the data
+    // in sync, otherwise expand/collapse of the detail would still show the old values.
+    RowNode.prototype.updateDataOnDetailNode = function () {
+        if (this.detailNode) {
+            this.detailNode.data = this.data;
+        }
     };
     RowNode.prototype.createDataChangedEvent = function (newData, oldData, update) {
         return {
@@ -65,6 +75,9 @@ var RowNode = (function () {
     RowNode.prototype.updateData = function (data) {
         var oldData = this.data;
         this.data = data;
+        this.updateDataOnDetailNode();
+        this.checkRowSelectable();
+        this.updateDataOnDetailNode();
         var event = this.createDataChangedEvent(data, oldData, true);
         this.dispatchLocalEvent(event);
     };
@@ -96,11 +109,12 @@ var RowNode = (function () {
         var oldNode = utils_1.Utils.exists(this.id) ? this.createDaemonNode() : null;
         var oldData = this.data;
         this.data = data;
+        this.updateDataOnDetailNode();
         this.setId(id);
         this.selectionController.syncInRowNode(this, oldNode);
+        this.checkRowSelectable();
         var event = this.createDataChangedEvent(data, oldData, false);
         this.dispatchLocalEvent(event);
-        this.checkRowSelectable();
     };
     RowNode.prototype.checkRowSelectable = function () {
         var isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc();
@@ -280,7 +294,7 @@ var RowNode = (function () {
         }
     };
     RowNode.prototype.hasChildren = function () {
-        // we need to return true when this.group=true, as this is used by enterprise row model
+        // we need to return true when this.group=true, as this is used by server side row model
         // (as children are lazy loaded and stored in a cache anyway). otherwise we return true
         // if children exist.
         return this.group || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
@@ -504,8 +518,8 @@ var RowNode = (function () {
     RowNode.prototype.calculatedSelectedForAllGroupNodes = function () {
         // we have to make sure we do this dept first, as parent nodes
         // will have dependencies on the children having correct values
-        var inMemoryRowModel = this.rowModel;
-        inMemoryRowModel.getTopLevelNodes().forEach(function (topLevelNode) {
+        var clientSideRowModel = this.rowModel;
+        clientSideRowModel.getTopLevelNodes().forEach(function (topLevelNode) {
             if (topLevelNode.group) {
                 topLevelNode.depthFirstSearch(function (childNode) {
                     if (childNode.group) {
@@ -537,7 +551,8 @@ var RowNode = (function () {
             updatedCount += children[i].setSelectedParams({
                 newValue: newValue,
                 clearSelection: false,
-                tailingNodeInSequence: true
+                tailingNodeInSequence: true,
+                groupSelectsFiltered: groupSelectsFiltered
             });
         }
         return updatedCount;

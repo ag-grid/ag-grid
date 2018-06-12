@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -51,6 +51,8 @@ var Events = (function () {
     Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED = 'toolPanelVisibleChanged';
     /** Model was updated - grid updates the drawn rows when this happens */
     Events.EVENT_MODEL_UPDATED = 'modelUpdated';
+    Events.EVENT_PASTE_START = 'pasteStart';
+    Events.EVENT_PASTE_END = 'pasteEnd';
     Events.EVENT_CELL_CLICKED = 'cellClicked';
     Events.EVENT_CELL_DOUBLE_CLICKED = 'cellDoubleClicked';
     Events.EVENT_CELL_MOUSE_DOWN = 'cellMouseDown';
@@ -74,8 +76,9 @@ var Events = (function () {
     /** Gets called once after the grid has finished initialising. */
     Events.EVENT_GRID_READY = 'gridReady';
     /** Width of height of the main grid div has changed. Grid listens for this and does layout of grid if it's
-     * changed, so always filling the space it was given. */
-    Events.EVENT_GRID_SIZE_CHANGED = 'gridSizeChanged';
+     * changed, so always filling the space it was given.
+     * DEPRECATED - now that BorderLayout is no longer used, this doesn't make sense. */
+    Events.DEPRECATED_EVENT_GRID_SIZE_CHANGED = 'gridSizeChanged';
     /** The indexes of the rows rendered has changed, eg user has scrolled to a new vertical position. */
     Events.EVENT_VIEWPORT_CHANGED = 'viewportChanged';
     /** A column drag has started, either resizing a column or moving a column. */
@@ -88,6 +91,7 @@ var Events = (function () {
     Events.EVENT_CELL_EDITING_STOPPED = 'cellEditingStopped';
     /** Main body of grid has scrolled, either horizontally or vertically */
     Events.EVENT_BODY_SCROLL = 'bodyScroll';
+    Events.EVENT_ANIMATION_QUEUE_EMPTY = 'animationQueueEmpty';
     Events.EVENT_HEIGHT_SCALE_CHANGED = 'heightScaleChanged';
     /** The displayed page for pagination has changed. For example the data was filtered or sorted,
      * or the user has moved to a different page. */

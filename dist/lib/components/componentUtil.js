@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9,19 +9,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var events_1 = require("../events");
 var propertyKeys_1 = require("../propertyKeys");
 var utils_1 = require("../utils");
+var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var ComponentUtil = (function () {
     function ComponentUtil() {
     }
     ComponentUtil.getEventCallbacks = function () {
         if (!ComponentUtil.EVENT_CALLBACKS) {
             ComponentUtil.EVENT_CALLBACKS = [];
+            ComponentUtil.EVENT_CALLBACKS_NO_PREFIX = [];
             ComponentUtil.EVENTS.forEach(function (eventName) {
                 ComponentUtil.EVENT_CALLBACKS.push(ComponentUtil.getCallbackForEvent(eventName));
+                ComponentUtil.EVENT_CALLBACKS_NO_PREFIX.push(eventName);
             });
         }
         return ComponentUtil.EVENT_CALLBACKS;
     };
-    ComponentUtil.copyAttributesToGridOptions = function (gridOptions, component) {
+    ComponentUtil.copyAttributesToGridOptions = function (gridOptions, component, skipEventDeprecationCheck) {
+        if (skipEventDeprecationCheck === void 0) { skipEventDeprecationCheck = false; }
         checkForDeprecated(component);
         // create empty grid options if none were passed
         if (typeof gridOptions !== 'object') {
@@ -54,6 +58,17 @@ var ComponentUtil = (function () {
                 pGridOptions[funcName] = component[funcName];
             }
         });
+        // purely for event deprecation checks (for frameworks - wouldn't apply for non-fw versions)
+        if (!skipEventDeprecationCheck) {
+            ComponentUtil.EVENT_CALLBACKS_NO_PREFIX.forEach(function (funcName) {
+                // react uses onXXX...not sure why this is diff to the other frameworks
+                var onMethodName = ComponentUtil.getCallbackForEvent(funcName);
+                if (typeof component[funcName] !== 'undefined' ||
+                    typeof component[onMethodName] !== 'undefined') {
+                    gridOptionsWrapper_1.GridOptionsWrapper.checkEventDeprecation(funcName);
+                }
+            });
+        }
         return gridOptions;
     };
     ComponentUtil.getCallbackForEvent = function (eventName) {
@@ -130,6 +145,12 @@ var ComponentUtil = (function () {
         }
         if (changes.suppressRowDrag) {
             api.setSuppressRowDrag(ComponentUtil.toBoolean(changes.suppressRowDrag.currentValue));
+        }
+        if (changes.gridAutoHeight) {
+            api.setGridAutoHeight(ComponentUtil.toBoolean(changes.gridAutoHeight.currentValue));
+        }
+        if (changes.suppressClipboardPaste) {
+            api.setSuppressClipboardPaste(ComponentUtil.toBoolean(changes.suppressClipboardPaste.currentValue));
         }
         // copy changes into an event for dispatch
         var event = {

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -102,8 +102,8 @@ var cssClassApplier_1 = require("./dist/lib/headerRendering/cssClassApplier");
 exports.CssClassApplier = cssClassApplier_1.CssClassApplier;
 var headerContainer_1 = require("./dist/lib/headerRendering/headerContainer");
 exports.HeaderContainer = headerContainer_1.HeaderContainer;
-var headerRenderer_1 = require("./dist/lib/headerRendering/headerRenderer");
-exports.HeaderRenderer = headerRenderer_1.HeaderRenderer;
+var headerRootComp_1 = require("./dist/lib/headerRendering/headerRootComp");
+exports.HeaderRootComp = headerRootComp_1.HeaderRootComp;
 var headerRowComp_1 = require("./dist/lib/headerRendering/headerRowComp");
 exports.HeaderRowComp = headerRowComp_1.HeaderRowComp;
 var horizontalResizeService_1 = require("./dist/lib/headerRendering/horizontalResizeService");
@@ -113,8 +113,6 @@ exports.MoveColumnController = moveColumnController_1.MoveColumnController;
 var standardMenu_1 = require("./dist/lib/headerRendering/standardMenu");
 exports.StandardMenuFactory = standardMenu_1.StandardMenuFactory;
 // layout
-var borderLayout_1 = require("./dist/lib/layout/borderLayout");
-exports.BorderLayout = borderLayout_1.BorderLayout;
 var tabbedLayout_1 = require("./dist/lib/layout/tabbedLayout");
 exports.TabbedLayout = tabbedLayout_1.TabbedLayout;
 var verticalStack_1 = require("./dist/lib/layout/verticalStack");
@@ -163,21 +161,21 @@ exports.RowRenderer = rowRenderer_1.RowRenderer;
 var valueFormatterService_1 = require("./dist/lib/rendering/valueFormatterService");
 exports.ValueFormatterService = valueFormatterService_1.ValueFormatterService;
 // rowControllers/inMemory
-var filterStage_1 = require("./dist/lib/rowModels/inMemory/filterStage");
+var filterStage_1 = require("./dist/lib/rowModels/clientSide/filterStage");
 exports.FilterStage = filterStage_1.FilterStage;
-var flattenStage_1 = require("./dist/lib/rowModels/inMemory/flattenStage");
+var flattenStage_1 = require("./dist/lib/rowModels/clientSide/flattenStage");
 exports.FlattenStage = flattenStage_1.FlattenStage;
-var sortStage_1 = require("./dist/lib/rowModels/inMemory/sortStage");
+var sortStage_1 = require("./dist/lib/rowModels/clientSide/sortStage");
 exports.SortStage = sortStage_1.SortStage;
 // row models
 var pinnedRowModel_1 = require("./dist/lib/rowModels/pinnedRowModel");
 exports.PinnedRowModel = pinnedRowModel_1.PinnedRowModel;
-var inMemoryRowModel_1 = require("./dist/lib/rowModels/inMemory/inMemoryRowModel");
-exports.InMemoryRowModel = inMemoryRowModel_1.InMemoryRowModel;
-var changedPath_1 = require("./dist/lib/rowModels/inMemory/changedPath");
+var clientSideRowModel_1 = require("./dist/lib/rowModels/clientSide/clientSideRowModel");
+exports.ClientSideRowModel = clientSideRowModel_1.ClientSideRowModel;
+var changedPath_1 = require("./dist/lib/rowModels/clientSide/changedPath");
 exports.ChangedPath = changedPath_1.ChangedPath;
-var inMemoryNodeManager_1 = require("./dist/lib/rowModels/inMemory/inMemoryNodeManager");
-exports.InMemoryNodeManager = inMemoryNodeManager_1.InMemoryNodeManager;
+var clientSideNodeManager_1 = require("./dist/lib/rowModels/clientSide/clientSideNodeManager");
+exports.ClientSideNodeManager = clientSideNodeManager_1.ClientSideNodeManager;
 var infiniteRowModel_1 = require("./dist/lib/rowModels/infinite/infiniteRowModel");
 exports.InfiniteRowModel = infiniteRowModel_1.InfiniteRowModel;
 var rowNodeBlock_1 = require("./dist/lib/rowModels/cache/rowNodeBlock");
@@ -216,8 +214,8 @@ var grid_1 = require("./dist/lib/grid");
 exports.Grid = grid_1.Grid;
 var gridApi_1 = require("./dist/lib/gridApi");
 exports.GridApi = gridApi_1.GridApi;
-var events_1 = require("./dist/lib/events");
-exports.Events = events_1.Events;
+var eventKeys_1 = require("./dist/lib/eventKeys");
+exports.Events = eventKeys_1.Events;
 var focusedCellController_1 = require("./dist/lib/focusedCellController");
 exports.FocusedCellController = focusedCellController_1.FocusedCellController;
 var functions_1 = require("./dist/lib/functions");

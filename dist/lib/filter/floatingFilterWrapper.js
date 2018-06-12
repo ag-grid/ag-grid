@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -128,8 +128,17 @@ var FloatingFilterWrapperComp = (function (_super) {
         });
     };
     FloatingFilterWrapperComp.prototype.onParentModelChanged = function (parentModel) {
+        var combinedFilter = undefined;
+        var mainModel = null;
+        if (parentModel && parentModel.operator) {
+            combinedFilter = parentModel;
+            mainModel = combinedFilter.condition1;
+        }
+        else {
+            mainModel = parentModel;
+        }
         this.floatingFilterCompPromise.then(function (floatingFilterComp) {
-            floatingFilterComp.onParentModelChanged(parentModel);
+            floatingFilterComp.onParentModelChanged(mainModel, combinedFilter);
         });
     };
     FloatingFilterWrapperComp.prototype.showParentFilter = function () {

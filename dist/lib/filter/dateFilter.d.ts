@@ -1,11 +1,11 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { IFilterParams, SerializedFilter } from "../interfaces/iFilter";
+import { SerializedFilter } from "../interfaces/iFilter";
 import { Component } from "../widgets/component";
-import { IDateParams, IDateComp } from "../rendering/dateComponent";
-import { Comparator, ScalarBaseFilter } from "./baseFilter";
-export interface IDateFilterParams extends IFilterParams {
+import { IDateComp, IDateParams } from "../rendering/dateComponent";
+import { Comparator, FilterConditionType, IComparableFilterParams, ScalarBaseFilter } from "./baseFilter";
+export interface IDateFilterParams extends IComparableFilterParams {
     comparator?: IDateComparatorFunc;
     browserDatePicker?: boolean;
 }
@@ -20,29 +20,38 @@ export interface SerializedDateFilter extends SerializedFilter {
 export declare class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, SerializedDateFilter> {
     private dateToComponent;
     private dateFromComponent;
+    private dateToConditionComponent;
+    private dateFromConditionComponent;
     private componentRecipes;
     private eDateFromPanel;
+    private eDateFromConditionPanel;
     private eDateToPanel;
+    private eDateToConditionPanel;
     private dateFrom;
     private dateTo;
+    private dateFromCondition;
+    private dateToCondition;
     modelFromFloatingFilter(from: string): SerializedDateFilter;
     getApplicableFilterTypes(): string[];
-    bodyTemplate(): string;
-    initialiseFilterBodyUi(): void;
-    private onDateChanged();
-    refreshFilterBodyUi(): void;
+    bodyTemplate(type: FilterConditionType): string;
+    initialiseFilterBodyUi(type: FilterConditionType): void;
+    private createComponents(type);
+    private onDateChanged(type);
+    refreshFilterBodyUi(type: FilterConditionType): void;
     comparator(): Comparator<Date>;
     private defaultComparator(filterDate, cellValue);
-    serialize(): SerializedDateFilter;
-    filterValues(): Date | Date[];
+    serialize(type: FilterConditionType): SerializedDateFilter;
+    filterValues(type: FilterConditionType): Date | Date[];
     getDateFrom(): string;
     getDateTo(): string;
     getFilterType(): string;
-    setDateFrom(date: string): void;
-    setDateTo(date: string): void;
+    setDateFrom(date: string, type: FilterConditionType): void;
+    private setDateFrom_date(parsedDate, type);
+    setDateTo(date: string, type: FilterConditionType): void;
+    private setDateTo_date(parsedDate, type);
     resetState(): void;
-    parse(model: SerializedDateFilter): void;
-    setType(filterType: string): void;
+    parse(model: SerializedDateFilter, type: FilterConditionType): void;
+    setType(filterType: string, type: FilterConditionType): void;
     static removeTimezone(from: Date): Date;
 }
 export declare class DefaultDateComponent extends Component implements IDateComp {

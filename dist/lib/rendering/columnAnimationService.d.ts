@@ -1,15 +1,15 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { GridPanel } from "../gridPanel/gridPanel";
 export declare class ColumnAnimationService {
-    gridOptionsWrapper: GridOptionsWrapper;
-    gridPanel: GridPanel;
+    private gridOptionsWrapper;
+    private gridPanel;
     private executeNextFuncs;
     private executeLaterFuncs;
     private active;
     private animationThreadCount;
+    registerGridComp(gridPanel: GridPanel): void;
     isActive(): boolean;
     start(): void;
     finish(): void;

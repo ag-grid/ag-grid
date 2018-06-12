@@ -1,5 +1,5 @@
 import {RowNode} from "../entities/rowNode";
-import {InMemoryNodeManager} from "../rowModels/inMemory/inMemoryNodeManager";
+import {ClientSideNodeManager} from "../rowModels/clientSide/clientSideNodeManager";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {EventService} from "../eventService";
 import {Context, Bean, Autowired} from "../context/context";
@@ -15,7 +15,7 @@ export class RowNodeFactory {
 
     public create(data: any[]): RowNode {
         let rootNode: RowNode = new RowNode();
-        let nodeManager: InMemoryNodeManager = new InMemoryNodeManager(rootNode, this.gridOptionsWrapper,
+        let nodeManager: ClientSideNodeManager = new ClientSideNodeManager(rootNode, this.gridOptionsWrapper,
             this.context, this.eventService, this.columnController);
         this.context.wireBean(rootNode);
         nodeManager.setRowData(data);

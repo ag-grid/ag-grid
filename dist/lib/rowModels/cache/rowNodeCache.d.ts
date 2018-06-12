@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { NumberSequence } from "../../utils";
@@ -35,7 +35,7 @@ export declare abstract class RowNodeCache<T extends RowNodeBlock, P extends Row
     private blockCount;
     protected logger: Logger;
     abstract getRow(rowIndex: number): RowNode;
-    constructor(cacheParams: P);
+    protected constructor(cacheParams: P);
     destroy(): void;
     protected init(): void;
     isActive(): boolean;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,7 +27,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
-var changedPath_1 = require("../rowModels/inMemory/changedPath");
+var changedPath_1 = require("../rowModels/clientSide/changedPath");
 var rowRenderer_1 = require("../rendering/rowRenderer");
 var eventService_1 = require("../eventService");
 var constants_1 = require("../constants");
@@ -39,8 +39,8 @@ var ChangeDetectionService = (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     ChangeDetectionService.prototype.init = function () {
-        if (this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_IN_MEMORY) {
-            this.inMemoryRowModel = this.rowModel;
+        if (this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            this.clientSideRowModel = this.rowModel;
         }
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged.bind(this));
     };
@@ -52,11 +52,11 @@ var ChangeDetectionService = (function (_super) {
             return;
         }
         // step 1 of change detection is to update the aggregated values
-        if (this.inMemoryRowModel && !rowNode.isRowPinned()) {
+        if (this.clientSideRowModel && !rowNode.isRowPinned()) {
             var onlyChangedColumns = this.gridOptionsWrapper.isAggregateOnlyChangedColumns();
             var changedPath = new changedPath_1.ChangedPath(onlyChangedColumns);
             changedPath.addParentNode(rowNode.parent, [column]);
-            this.inMemoryRowModel.doAggregate(changedPath);
+            this.clientSideRowModel.doAggregate(changedPath);
         }
         // step 2 of change detection is to refresh the cells
         this.rowRenderer.refreshCells();

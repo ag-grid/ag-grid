@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31,7 +31,6 @@ var events_1 = require("../events");
 var utils_1 = require("../utils");
 var context_1 = require("../context/context");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
-var gridPanel_1 = require("../gridPanel/gridPanel");
 var scrollVisibleService_1 = require("../gridPanel/scrollVisibleService");
 var selectionController_1 = require("../selectionController");
 var columnApi_1 = require("../columnController/columnApi");
@@ -41,13 +40,14 @@ var PaginationAutoPageSizeService = (function (_super) {
     function PaginationAutoPageSizeService() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    PaginationAutoPageSizeService.prototype.notActive = function () {
-        return !this.gridOptionsWrapper.isPaginationAutoPageSize();
-    };
-    PaginationAutoPageSizeService.prototype.postConstruct = function () {
+    PaginationAutoPageSizeService.prototype.registerGridComp = function (gridPanel) {
+        this.gridPanel = gridPanel;
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_BODY_HEIGHT_CHANGED, this.onBodyHeightChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
         this.checkPageSize();
+    };
+    PaginationAutoPageSizeService.prototype.notActive = function () {
+        return !this.gridOptionsWrapper.isPaginationAutoPageSize();
     };
     PaginationAutoPageSizeService.prototype.onScrollVisibilityChanged = function () {
         this.checkPageSize();
@@ -61,7 +61,7 @@ var PaginationAutoPageSizeService = (function (_super) {
         }
         var rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         var bodyHeight = this.gridPanel.getBodyHeight();
-        if (this.scrollVisibleService.isHBodyShowing()) {
+        if (this.scrollVisibleService.isBodyHorizontalScrollShowing()) {
             bodyHeight = bodyHeight - this.gridOptionsWrapper.getScrollbarWidth();
         }
         if (bodyHeight > 0) {
@@ -69,10 +69,6 @@ var PaginationAutoPageSizeService = (function (_super) {
             this.gridOptionsWrapper.setProperty('paginationPageSize', newPageSize);
         }
     };
-    __decorate([
-        context_1.Autowired('gridPanel'),
-        __metadata("design:type", gridPanel_1.GridPanel)
-    ], PaginationAutoPageSizeService.prototype, "gridPanel", void 0);
     __decorate([
         context_1.Autowired('eventService'),
         __metadata("design:type", eventService_1.EventService)
@@ -85,12 +81,6 @@ var PaginationAutoPageSizeService = (function (_super) {
         context_1.Autowired('scrollVisibleService'),
         __metadata("design:type", scrollVisibleService_1.ScrollVisibleService)
     ], PaginationAutoPageSizeService.prototype, "scrollVisibleService", void 0);
-    __decorate([
-        context_1.PostConstruct,
-        __metadata("design:type", Function),
-        __metadata("design:paramtypes", []),
-        __metadata("design:returntype", void 0)
-    ], PaginationAutoPageSizeService.prototype, "postConstruct", null);
     PaginationAutoPageSizeService = __decorate([
         context_1.Bean('paginationAutoPageSizeService')
     ], PaginationAutoPageSizeService);
@@ -153,6 +143,9 @@ var PaginationProxy = (function (_super) {
     };
     PaginationProxy.prototype.getRow = function (index) {
         return this.rowModel.getRow(index);
+    };
+    PaginationProxy.prototype.getRowNode = function (id) {
+        return this.rowModel.getRowNode(id);
     };
     PaginationProxy.prototype.getRowIndexAtPixel = function (pixel) {
         return this.rowModel.getRowIndexAtPixel(pixel);
@@ -280,10 +273,6 @@ var PaginationProxy = (function (_super) {
         context_1.Autowired('rowModel'),
         __metadata("design:type", Object)
     ], PaginationProxy.prototype, "rowModel", void 0);
-    __decorate([
-        context_1.Autowired('gridPanel'),
-        __metadata("design:type", gridPanel_1.GridPanel)
-    ], PaginationProxy.prototype, "gridPanel", void 0);
     __decorate([
         context_1.Autowired('eventService'),
         __metadata("design:type", eventService_1.EventService)

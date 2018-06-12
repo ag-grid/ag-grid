@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,7 +16,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var rowNode_1 = require("../entities/rowNode");
-var inMemoryNodeManager_1 = require("../rowModels/inMemory/inMemoryNodeManager");
+var clientSideNodeManager_1 = require("../rowModels/clientSide/clientSideNodeManager");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var eventService_1 = require("../eventService");
 var context_1 = require("../context/context");
@@ -26,7 +26,7 @@ var RowNodeFactory = (function () {
     }
     RowNodeFactory.prototype.create = function (data) {
         var rootNode = new rowNode_1.RowNode();
-        var nodeManager = new inMemoryNodeManager_1.InMemoryNodeManager(rootNode, this.gridOptionsWrapper, this.context, this.eventService, this.columnController);
+        var nodeManager = new clientSideNodeManager_1.ClientSideNodeManager(rootNode, this.gridOptionsWrapper, this.context, this.eventService, this.columnController);
         this.context.wireBean(rootNode);
         nodeManager.setRowData(data);
         return rootNode;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,14 +16,18 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var rowRenderer_1 = require("./rowRenderer");
-var gridPanel_1 = require("../gridPanel/gridPanel");
 var context_1 = require("../context/context");
-var headerRenderer_1 = require("../headerRendering/headerRenderer");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var headerWrapperComp_1 = require("../headerRendering/header/headerWrapperComp");
 var AutoWidthCalculator = (function () {
     function AutoWidthCalculator() {
     }
+    AutoWidthCalculator.prototype.registerGridComp = function (gridPanel) {
+        this.gridPanel = gridPanel;
+    };
+    AutoWidthCalculator.prototype.registerHeaderRootComp = function (headerRootComp) {
+        this.headerRootComp = headerRootComp;
+    };
     // this is the trick: we create a dummy container and clone all the cells
     // into the dummy, then check the dummy's width. then destroy the dummy
     // as we don't need it any more.
@@ -62,7 +66,7 @@ var AutoWidthCalculator = (function () {
     AutoWidthCalculator.prototype.getHeaderCellForColumn = function (column) {
         var comp = null;
         // find the rendered header cell
-        this.headerRenderer.forEachHeaderElement(function (headerElement) {
+        this.headerRootComp.forEachHeaderElement(function (headerElement) {
             if (headerElement instanceof headerWrapperComp_1.HeaderWrapperComp) {
                 var headerWrapperComp = headerElement;
                 if (headerWrapperComp.getColumn() === column) {
@@ -102,14 +106,6 @@ var AutoWidthCalculator = (function () {
         context_1.Autowired('rowRenderer'),
         __metadata("design:type", rowRenderer_1.RowRenderer)
     ], AutoWidthCalculator.prototype, "rowRenderer", void 0);
-    __decorate([
-        context_1.Autowired('headerRenderer'),
-        __metadata("design:type", headerRenderer_1.HeaderRenderer)
-    ], AutoWidthCalculator.prototype, "headerRenderer", void 0);
-    __decorate([
-        context_1.Autowired('gridPanel'),
-        __metadata("design:type", gridPanel_1.GridPanel)
-    ], AutoWidthCalculator.prototype, "gridPanel", void 0);
     __decorate([
         context_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)

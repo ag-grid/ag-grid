@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -131,7 +131,7 @@ var SelectAllFeature = (function (_super) {
     };
     SelectAllFeature.prototype.checkRightRowModelType = function () {
         var rowModelType = this.rowModel.getType();
-        var rowModelMatches = rowModelType === constants_1.Constants.ROW_MODEL_TYPE_IN_MEMORY;
+        var rowModelMatches = rowModelType === constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
         if (!rowModelMatches) {
             console.log("ag-Grid: selectAllCheckbox is only available if using normal row model, you are using " + rowModelType);
         }
@@ -163,8 +163,8 @@ var SelectAllFeature = (function (_super) {
             });
         }
         if (result) {
-            if (this.gridOptionsWrapper.isRowModelEnterprise()) {
-                console.warn('headerCheckboxSelection is not supported for Enterprise Row Model');
+            if (this.gridOptionsWrapper.isRowModelServerSide()) {
+                console.warn('headerCheckboxSelection is not supported for Server Side Row Model');
                 return false;
             }
             if (this.gridOptionsWrapper.isRowModelInfinite()) {

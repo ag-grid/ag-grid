@@ -14,7 +14,7 @@ import {Autowired, Context} from "../context/context";
 import {IRowModel} from "../interfaces/iRowModel";
 import {Constants} from "../constants";
 import {Utils as _} from "../utils";
-import {InMemoryRowModel} from "../rowModels/inMemory/inMemoryRowModel";
+import {ClientSideRowModel} from "../rowModels/clientSide/clientSideRowModel";
 import {RowNodeCache, RowNodeCacheParams} from "../rowModels/cache/rowNodeCache";
 import {RowNodeBlock} from "../rowModels/cache/rowNodeBlock";
 import {IEventEmitter} from "../interfaces/iEventEmitter";
@@ -140,7 +140,7 @@ export class RowNode implements IEventEmitter {
     public rowGroupColumn: Column;
     /** Groups only - The key for the group eg Ireland, UK, USA */
     public key: any;
-    /** Used by enterprise row model, true if this row node is a stub */
+    /** Used by server side row model, true if this row node is a stub */
     public stub: boolean;
 
     /** All user provided nodes */
@@ -158,7 +158,7 @@ export class RowNode implements IEventEmitter {
     /** Children mapped by the pivot columns */
     public childrenMapped: {[key: string]: any} = {};
 
-    /** Enterprise Row Model Only - the children are in an infinite cache */
+    /** Server Side Row Model Only - the children are in an infinite cache */
     public childrenCache: RowNodeCache<RowNodeBlock,RowNodeCacheParams>;
 
     /** Groups only - True if group is expanded, otherwise false */
@@ -195,8 +195,21 @@ export class RowNode implements IEventEmitter {
 
         this.valueCache.onDataChanged();
 
+        this.updateDataOnDetailNode();
+
+        this.checkRowSelectable();
+
         let event: DataChangedEvent = this.createDataChangedEvent(data, oldData, false);
         this.dispatchLocalEvent(event);
+    }
+
+    // when we are doing master / detail, the detail node is lazy created, but then kept around.
+    // so if we show / hide the detail, the same detail rowNode is used. so we need to keep the data
+    // in sync, otherwise expand/collapse of the detail would still show the old values.
+    private updateDataOnDetailNode(): void {
+        if (this.detailNode) {
+            this.detailNode.data = this.data;
+        }
     }
 
     private createDataChangedEvent(newData: any, oldData: any, update: boolean): DataChangedEvent {
@@ -224,6 +237,12 @@ export class RowNode implements IEventEmitter {
     public updateData(data: any): void {
         let oldData = this.data;
         this.data = data;
+
+        this.updateDataOnDetailNode();
+
+        this.checkRowSelectable();
+
+        this.updateDataOnDetailNode();
 
         let event: DataChangedEvent = this.createDataChangedEvent(data, oldData, true);
         this.dispatchLocalEvent(event);
@@ -258,15 +277,16 @@ export class RowNode implements IEventEmitter {
 
         let oldData = this.data;
         this.data = data;
+        this.updateDataOnDetailNode();
 
         this.setId(id);
 
         this.selectionController.syncInRowNode(this, oldNode);
 
+        this.checkRowSelectable();
+
         let event: DataChangedEvent = this.createDataChangedEvent(data, oldData, false);
         this.dispatchLocalEvent(event);
-
-        this.checkRowSelectable();
     }
 
     private checkRowSelectable() {
@@ -456,7 +476,7 @@ export class RowNode implements IEventEmitter {
     }
 
     public hasChildren(): boolean {
-        // we need to return true when this.group=true, as this is used by enterprise row model
+        // we need to return true when this.group=true, as this is used by server side row model
         // (as children are lazy loaded and stored in a cache anyway). otherwise we return true
         // if children exist.
         return this.group || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
@@ -713,8 +733,8 @@ export class RowNode implements IEventEmitter {
     private calculatedSelectedForAllGroupNodes(): void {
         // we have to make sure we do this dept first, as parent nodes
         // will have dependencies on the children having correct values
-        let inMemoryRowModel = <InMemoryRowModel> this.rowModel;
-        inMemoryRowModel.getTopLevelNodes().forEach( topLevelNode => {
+        let clientSideRowModel = <ClientSideRowModel> this.rowModel;
+        clientSideRowModel.getTopLevelNodes().forEach( topLevelNode => {
             if (topLevelNode.group) {
                 topLevelNode.depthFirstSearch( childNode => {
                     if (childNode.group) {
@@ -750,7 +770,8 @@ export class RowNode implements IEventEmitter {
                 updatedCount += children[i].setSelectedParams({
                     newValue: newValue,
                     clearSelection: false,
-                    tailingNodeInSequence: true
+                    tailingNodeInSequence: true,
+                    groupSelectsFiltered
                 });
         }
         return updatedCount;

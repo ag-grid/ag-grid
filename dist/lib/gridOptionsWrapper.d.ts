@@ -1,15 +1,15 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
-import { GetContextMenuItems, GetMainMenuItems, GetRowNodeIdFunc, GridOptions, IsRowMaster, IsRowSelectable, NavigateToNextCellParams, NodeChildDetails, PaginationNumberFormatterParams, PostProcessPopupParams, TabToNextCellParams } from "./entities/gridOptions";
+import { GetContextMenuItems, GetMainMenuItems, GetRowNodeIdFunc, GridOptions, IsRowMaster, IsRowSelectable, NavigateToNextCellParams, NodeChildDetails, PaginationNumberFormatterParams, PostProcessPopupParams, ProcessDataFromClipboardParams, TabToNextCellParams } from "./entities/gridOptions";
 import { GridApi } from "./gridApi";
 import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
 import { ColumnApi } from "./columnController/columnApi";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { IDatasource } from "./rowModels/iDatasource";
 import { GridCellDef } from "./entities/gridCell";
-import { IEnterpriseDatasource } from "./interfaces/iEnterpriseDatasource";
+import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
 import { BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "./exportParams";
 import { AgEvent } from "./events";
 export interface PropertyChangedEvent extends AgEvent {
@@ -22,11 +22,13 @@ export declare class GridOptionsWrapper {
     static PROP_GROUP_REMOVE_SINGLE_CHILDREN: string;
     static PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN: string;
     static PROP_PIVOT_HEADER_HEIGHT: string;
+    static PROP_SUPPRESS_CLIPBOARD_PASTE: string;
     static PROP_GROUP_HEADER_HEIGHT: string;
     static PROP_PIVOT_GROUP_HEADER_HEIGHT: string;
     static PROP_FLOATING_FILTERS_HEIGHT: string;
     static PROP_SUPPRESS_ROW_DRAG: string;
     static PROP_POPUP_PARENT: string;
+    static PROP_GRID_AUTO_HEIGHT: string;
     private gridOptions;
     private columnController;
     private eventService;
@@ -38,7 +40,6 @@ export declare class GridOptionsWrapper {
     private autoHeightCalculator;
     private propertyEventService;
     private domDataKey;
-    private forPrintWarningGiven;
     private agWire(gridApi, columnApi);
     private destroy();
     init(): void;
@@ -55,9 +56,11 @@ export declare class GridOptionsWrapper {
     getContext(): any;
     isPivotMode(): boolean;
     isPivotTotals(): boolean;
+    getPivotColumnGroupTotals(): string;
+    getPivotRowTotals(): string;
     isRowModelInfinite(): boolean;
     isRowModelViewport(): boolean;
-    isRowModelEnterprise(): boolean;
+    isRowModelServerSide(): boolean;
     isRowModelDefault(): boolean;
     isFullRowEdit(): boolean;
     isSuppressFocusAfterRefresh(): boolean;
@@ -72,15 +75,18 @@ export declare class GridOptionsWrapper {
     isToolPanelSuppressColumnSelectAll(): boolean;
     isToolPanelSuppressColumnExpandAll(): boolean;
     isSuppressTouch(): boolean;
+    isSuppressRowTransform(): boolean;
     useAsyncEvents(): boolean;
     isEnableCellChangeFlash(): boolean;
     isGroupSelectsChildren(): boolean;
+    isSuppressRowHoverHighlight(): boolean;
     isGroupSelectsFiltered(): boolean;
     isGroupHideOpenParents(): boolean;
     isGroupMultiAutoColumn(): boolean;
     isGroupRemoveSingleChildren(): boolean;
     isGroupRemoveLowestSingleChildren(): boolean;
     isGroupIncludeFooter(): boolean;
+    isGroupIncludeTotalFooter(): boolean;
     isGroupSuppressBlankHeader(): boolean;
     isSuppressRowClickSelection(): boolean;
     isSuppressCellSelection(): boolean;
@@ -91,9 +97,7 @@ export declare class GridOptionsWrapper {
     isSuppressScrollOnNewData(): boolean;
     isRowDragManaged(): boolean;
     isSuppressRowDrag(): boolean;
-    isForPrint(): boolean;
-    isAutoHeight(): boolean;
-    isNormalDomLayout(): boolean;
+    isGridAutoHeight(): boolean;
     isSuppressHorizontalScroll(): boolean;
     isSuppressLoadingOverlay(): boolean;
     isSuppressNoRowsOverlay(): boolean;
@@ -161,7 +165,7 @@ export declare class GridOptionsWrapper {
     };
     getDatasource(): IDatasource;
     getViewportDatasource(): IViewportDatasource;
-    getEnterpriseDatasource(): IEnterpriseDatasource;
+    getServerSideDatasource(): IServerSideDatasource;
     isEnableSorting(): boolean;
     isAccentedSort(): boolean;
     isEnableCellExpressions(): boolean;
@@ -172,9 +176,11 @@ export declare class GridOptionsWrapper {
     isSuppressContextMenu(): boolean;
     isAllowContextMenuWithControlKey(): boolean;
     isSuppressCopyRowsToClipboard(): boolean;
+    isSuppressClipboardPaste(): boolean;
     isEnableFilter(): boolean;
     isPagination(): boolean;
     isSuppressEnterpriseResetOnNewColumns(): boolean;
+    getProcessDataFromClipboardFunc(): ((params: ProcessDataFromClipboardParams) => string[][]);
     getBatchUpdateWaitMillis(): number;
     isEnableServerSideFilter(): boolean;
     isEnableServerSideSorting(): boolean;
@@ -220,7 +226,6 @@ export declare class GridOptionsWrapper {
     getRowNodeIdFunc(): GetRowNodeIdFunc;
     getNavigateToNextCellFunc(): (params: NavigateToNextCellParams) => GridCellDef;
     getTabToNextCellFunc(): (params: TabToNextCellParams) => GridCellDef;
-    isNativeScroll(): boolean;
     isTreeData(): boolean;
     isValueCache(): boolean;
     isValueCacheNeverExpires(): boolean;
@@ -238,6 +243,7 @@ export declare class GridOptionsWrapper {
     getClipboardDeliminator(): string;
     setProperty(key: string, value: any): void;
     addEventListener(key: string, listener: Function): void;
+    static checkEventDeprecation(eventName: string): void;
     removeEventListener(key: string, listener: Function): void;
     getAutoSizePadding(): number;
     getHeaderHeight(): number;

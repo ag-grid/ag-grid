@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgEvent } from "../events";
@@ -111,7 +111,7 @@ export declare class RowNode implements IEventEmitter {
     rowGroupColumn: Column;
     /** Groups only - The key for the group eg Ireland, UK, USA */
     key: any;
-    /** Used by enterprise row model, true if this row node is a stub */
+    /** Used by server side row model, true if this row node is a stub */
     stub: boolean;
     /** All user provided nodes */
     allLeafChildren: RowNode[];
@@ -127,7 +127,7 @@ export declare class RowNode implements IEventEmitter {
     childrenMapped: {
         [key: string]: any;
     };
-    /** Enterprise Row Model Only - the children are in an infinite cache */
+    /** Server Side Row Model Only - the children are in an infinite cache */
     childrenCache: RowNodeCache<RowNodeBlock, RowNodeCacheParams>;
     /** Groups only - True if group is expanded, otherwise false */
     expanded: boolean;
@@ -155,6 +155,7 @@ export declare class RowNode implements IEventEmitter {
     private selected;
     private eventService;
     setData(data: any): void;
+    private updateDataOnDetailNode();
     private createDataChangedEvent(newData, oldData, update);
     private createLocalRowEvent(type);
     updateData(data: any): void;

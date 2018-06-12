@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -56,6 +56,7 @@ var CellComp = (function (_super) {
         _this.setUsingWrapper();
         _this.chooseCellRenderer();
         _this.setupColSpan();
+        _this.rowSpan = _this.column.getRowSpan(_this.rowNode);
         return _this;
     }
     CellComp.prototype.getCreateTemplate = function () {
@@ -72,6 +73,7 @@ var CellComp = (function (_super) {
         var wrapperEndTemplate;
         var stylesFromColDef = this.preProcessStylesFromColDef();
         var cssClasses = this.getInitialCssClasses();
+        var stylesForRowSpanning = this.getStylesForRowSpanning();
         if (this.usingWrapper) {
             wrapperStartTemplate = '<span ref="eCellWrapper" class="ag-cell-wrapper"><span ref="eCellValue" class="ag-cell-value">';
             wrapperEndTemplate = '</span></span>';
@@ -84,12 +86,20 @@ var CellComp = (function (_super) {
         templateParts.push(" col-id=\"" + colIdSanitised + "\"");
         templateParts.push(" class=\"" + cssClasses.join(' ') + "\"");
         templateParts.push(tooltipSanitised ? " title=\"" + tooltipSanitised + "\"" : "");
-        templateParts.push(" style=\"width: " + width + "px; left: " + left + "px; " + stylesFromColDef + "\" >");
+        templateParts.push(" style=\"width: " + width + "px; left: " + left + "px; " + stylesFromColDef + " " + stylesForRowSpanning + "\" >");
         templateParts.push(wrapperStartTemplate);
         templateParts.push(valueSanitised);
         templateParts.push(wrapperEndTemplate);
         templateParts.push("</div>");
         return templateParts.join('');
+    };
+    CellComp.prototype.getStylesForRowSpanning = function () {
+        if (this.rowSpan === 1) {
+            return '';
+        }
+        var singleRowHeight = this.beans.gridOptionsWrapper.getRowHeightAsNumber();
+        var totalRowHeight = singleRowHeight * this.rowSpan;
+        return "height: " + totalRowHeight + "px; z-index: 1;";
     };
     CellComp.prototype.afterAttached = function () {
         var querySelector = "[comp-id=\"" + this.getCompId() + "\"]";
@@ -888,9 +898,19 @@ var CellComp = (function (_super) {
     // if we are editing inline, then we don't have the padding in the cell (set in the themes)
     // to allow the text editor full access to the entire cell
     CellComp.prototype.setInlineEditingClass = function () {
+        // ag-cell-inline-editing - appears when user is inline editing
+        // ag-cell-not-inline-editing - appears when user is no inline editing
+        // ag-cell-popup-editing - appears when user is editing cell in popup (appears on the cell, not on the popup)
+        // note: one of {ag-cell-inline-editing, ag-cell-not-inline-editing} is always present, they toggle.
+        //       however {ag-cell-popup-editing} shows when popup, so you have both {ag-cell-popup-editing}
+        //       and {ag-cell-not-inline-editing} showing at the same time.
         var editingInline = this.editingCell && !this.cellEditorInPopup;
-        utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-inline-editing', editingInline);
-        utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-not-inline-editing', !editingInline);
+        var popupEditorShowing = this.editingCell && this.cellEditorInPopup;
+        utils_1._.addOrRemoveCssClass(this.getGui(), "ag-cell-inline-editing", editingInline);
+        utils_1._.addOrRemoveCssClass(this.getGui(), "ag-cell-not-inline-editing", !editingInline);
+        utils_1._.addOrRemoveCssClass(this.getGui(), "ag-cell-popup-editing", popupEditorShowing);
+        utils_1._.addOrRemoveCssClass(this.getGui().parentNode, "ag-row-inline-editing", editingInline);
+        utils_1._.addOrRemoveCssClass(this.getGui().parentNode, "ag-row-not-inline-editing", !editingInline);
     };
     CellComp.prototype.createCellEditorParams = function (keyPress, charPress, cellStartedEdit) {
         var params = {
@@ -915,10 +935,13 @@ var CellComp = (function (_super) {
     };
     // cell editors call this, when they want to stop for reasons other
     // than what we pick up on. eg selecting from a dropdown ends editing.
-    CellComp.prototype.stopEditingAndFocus = function () {
+    CellComp.prototype.stopEditingAndFocus = function (suppressNavigateAfterEdit) {
+        if (suppressNavigateAfterEdit === void 0) { suppressNavigateAfterEdit = false; }
         this.stopRowOrCellEdit();
         this.focusCell(true);
-        this.navigateAfterEdit();
+        if (!suppressNavigateAfterEdit) {
+            this.navigateAfterEdit();
+        }
     };
     CellComp.prototype.parseValue = function (newValue) {
         var params = {
@@ -1137,7 +1160,8 @@ var CellComp = (function (_super) {
             else {
                 var cellAlreadyInRange = this.beans.rangeController.isCellInAnyRange(thisCell);
                 if (!cellAlreadyInRange) {
-                    this.beans.rangeController.setRangeToCell(thisCell);
+                    var ctrlKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
+                    this.beans.rangeController.setRangeToCell(thisCell, ctrlKeyPressed);
                 }
             }
         }

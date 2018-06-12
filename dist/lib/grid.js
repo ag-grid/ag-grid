@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,7 +11,7 @@ var selectionController_1 = require("./selectionController");
 var columnApi_1 = require("./columnController/columnApi");
 var columnController_1 = require("./columnController/columnController");
 var rowRenderer_1 = require("./rendering/rowRenderer");
-var headerRenderer_1 = require("./headerRendering/headerRenderer");
+var headerRootComp_1 = require("./headerRendering/headerRootComp");
 var filterManager_1 = require("./filter/filterManager");
 var valueService_1 = require("./valueService/valueService");
 var eventService_1 = require("./eventService");
@@ -37,13 +37,13 @@ var focusedCellController_1 = require("./focusedCellController");
 var mouseEventService_1 = require("./gridPanel/mouseEventService");
 var cellNavigationService_1 = require("./cellNavigationService");
 var utils_1 = require("./utils");
-var filterStage_1 = require("./rowModels/inMemory/filterStage");
-var sortStage_1 = require("./rowModels/inMemory/sortStage");
-var flattenStage_1 = require("./rowModels/inMemory/flattenStage");
+var filterStage_1 = require("./rowModels/clientSide/filterStage");
+var sortStage_1 = require("./rowModels/clientSide/sortStage");
+var flattenStage_1 = require("./rowModels/clientSide/flattenStage");
 var cellEditorFactory_1 = require("./rendering/cellEditorFactory");
 var events_1 = require("./events");
 var infiniteRowModel_1 = require("./rowModels/infinite/infiniteRowModel");
-var inMemoryRowModel_1 = require("./rowModels/inMemory/inMemoryRowModel");
+var clientSideRowModel_1 = require("./rowModels/clientSide/clientSideRowModel");
 var cellRendererFactory_1 = require("./rendering/cellRendererFactory");
 var cellRendererService_1 = require("./rendering/cellRendererService");
 var valueFormatterService_1 = require("./rendering/valueFormatterService");
@@ -61,7 +61,7 @@ var filterService_1 = require("./rowNodes/filterService");
 var rowNodeFactory_1 = require("./rowNodes/rowNodeFactory");
 var autoGroupColService_1 = require("./columnController/autoGroupColService");
 var paginationProxy_1 = require("./rowModels/paginationProxy");
-var immutableService_1 = require("./rowModels/inMemory/immutableService");
+var immutableService_1 = require("./rowModels/clientSide/immutableService");
 var constants_1 = require("./constants");
 var valueCache_1 = require("./valueService/valueCache");
 var changeDetectionService_1 = require("./valueService/changeDetectionService");
@@ -78,8 +78,8 @@ var animationFrameService_1 = require("./misc/animationFrameService");
 var navigationService_1 = require("./gridPanel/navigationService");
 var heightScaler_1 = require("./rendering/heightScaler");
 var selectableService_1 = require("./rowNodes/selectableService");
-var testingSandbox_1 = require("./widgets/testingSandbox");
 var autoHeightCalculator_1 = require("./rendering/autoHeightCalculator");
+var paginationComp_1 = require("./rowModels/pagination/paginationComp");
 var Grid = (function () {
     function Grid(eGridDiv, gridOptions, params) {
         if (!eGridDiv) {
@@ -115,11 +115,10 @@ var Grid = (function () {
             utils_1.Utils.assign(seed, params.seedBeanInstances);
         }
         var components = [
-            { componentName: 'AgCheckbox', theClass: agCheckbox_1.AgCheckbox }
-            // niall put the below in for testing some PoC code, niall will
-            // remove this comment and code when PoC is over
-            ,
-            { componentName: 'AgSmallComponent', theClass: testingSandbox_1.SmallComponent }
+            { componentName: 'AgCheckbox', theClass: agCheckbox_1.AgCheckbox },
+            { componentName: 'AgGridComp', theClass: gridPanel_1.GridPanel },
+            { componentName: 'AgHeaderRoot', theClass: headerRootComp_1.HeaderRootComp },
+            { componentName: 'AgPagination', theClass: paginationComp_1.PaginationComp },
         ];
         if (Grid.enterpriseComponents) {
             components = components.concat(Grid.enterpriseComponents);
@@ -128,19 +127,19 @@ var Grid = (function () {
             overrideBeans: overrideBeans,
             seed: seed,
             //Careful with the order of the beans here, there are dependencies between them that need to be kept
-            beans: [rowModelClass, paginationProxy_1.PaginationAutoPageSizeService, gridApi_1.GridApi, componentProvider_1.ComponentProvider, agComponentUtils_1.AgComponentUtils, componentMetadataProvider_1.ComponentMetadataProvider,
+            beans: [rowModelClass, beans_1.Beans, paginationProxy_1.PaginationAutoPageSizeService, gridApi_1.GridApi, componentProvider_1.ComponentProvider, agComponentUtils_1.AgComponentUtils, componentMetadataProvider_1.ComponentMetadataProvider,
                 componentProvider_1.ComponentProvider, componentResolver_1.ComponentResolver, componentRecipes_1.ComponentRecipes, heightScaler_1.HeightScaler, autoHeightCalculator_1.AutoHeightCalculator,
                 cellRendererFactory_1.CellRendererFactory, horizontalResizeService_1.HorizontalResizeService, pinnedRowModel_1.PinnedRowModel, dragService_1.DragService,
                 displayedGroupCreator_1.DisplayedGroupCreator, eventService_1.EventService, gridOptionsWrapper_1.GridOptionsWrapper, selectionController_1.SelectionController,
-                filterManager_1.FilterManager, columnController_1.ColumnController, paginationProxy_1.PaginationProxy, rowRenderer_1.RowRenderer, headerRenderer_1.HeaderRenderer, expressionService_1.ExpressionService,
+                filterManager_1.FilterManager, columnController_1.ColumnController, paginationProxy_1.PaginationProxy, rowRenderer_1.RowRenderer, expressionService_1.ExpressionService,
                 balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder, csvCreator_1.CsvCreator, downloader_1.Downloader, xmlFactory_1.XmlFactory, gridSerializer_1.GridSerializer, templateService_1.TemplateService,
-                navigationService_1.NavigationService, gridPanel_1.GridPanel, popupService_1.PopupService, valueCache_1.ValueCache, valueService_1.ValueService, alignedGridsService_1.AlignedGridsService,
+                navigationService_1.NavigationService, popupService_1.PopupService, valueCache_1.ValueCache, valueService_1.ValueService, alignedGridsService_1.AlignedGridsService,
                 logger_1.LoggerFactory, columnUtils_1.ColumnUtils, autoWidthCalculator_1.AutoWidthCalculator, popupService_1.PopupService, gridCore_1.GridCore, standardMenu_1.StandardMenuFactory,
                 dragAndDropService_1.DragAndDropService, columnApi_1.ColumnApi, focusedCellController_1.FocusedCellController, mouseEventService_1.MouseEventService,
                 cellNavigationService_1.CellNavigationService, filterStage_1.FilterStage, sortStage_1.SortStage, flattenStage_1.FlattenStage, filterService_1.FilterService, rowNodeFactory_1.RowNodeFactory,
                 cellEditorFactory_1.CellEditorFactory, cellRendererService_1.CellRendererService, valueFormatterService_1.ValueFormatterService, stylingService_1.StylingService, scrollVisibleService_1.ScrollVisibleService,
                 columnHoverService_1.ColumnHoverService, columnAnimationService_1.ColumnAnimationService, sortService_1.SortService, selectableService_1.SelectableService, autoGroupColService_1.AutoGroupColService, immutableService_1.ImmutableService,
-                changeDetectionService_1.ChangeDetectionService, environment_1.Environment, beans_1.Beans, animationFrameService_1.AnimationFrameService, sortController_1.SortController],
+                changeDetectionService_1.ChangeDetectionService, environment_1.Environment, animationFrameService_1.AnimationFrameService, sortController_1.SortController],
             components: components,
             debug: !!gridOptions.debug
         };
@@ -176,9 +175,9 @@ var Grid = (function () {
         if (utils_1.Utils.exists(columnDefs)) {
             columnController.setColumnDefs(columnDefs, "gridInitializing");
         }
-        if (utils_1.Utils.exists(rowData) && rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_IN_MEMORY) {
-            var inMemoryRowModel = rowModel;
-            inMemoryRowModel.setRowData(rowData);
+        if (utils_1.Utils.exists(rowData) && rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            var clientSideRowModel = rowModel;
+            clientSideRowModel.setRowData(rowData);
         }
     };
     Grid.prototype.dispatchGridReadyEvent = function (gridOptions) {
@@ -192,6 +191,8 @@ var Grid = (function () {
     };
     Grid.prototype.getRowModelClass = function (gridOptions) {
         var rowModelType = gridOptions.rowModelType;
+        //TODO: temporary measure before 'enterprise' is completely removed (similar handling in gridOptionsWrapper is also required)
+        rowModelType = rowModelType === 'enterprise' ? constants_1.Constants.ROW_MODEL_TYPE_SERVER_SIDE : rowModelType;
         if (utils_1.Utils.exists(rowModelType)) {
             var rowModelClass = Grid.RowModelClasses[rowModelType];
             if (utils_1.Utils.exists(rowModelClass)) {
@@ -199,29 +200,29 @@ var Grid = (function () {
             }
             else {
                 if (rowModelType === 'normal') {
-                    console.warn("ag-Grid: normal rowModel deprecated. Should now be called inMemory rowModel instead.");
-                    return inMemoryRowModel_1.InMemoryRowModel;
+                    console.warn("ag-Grid: normal rowModel deprecated. Should now be called client side row model instead.");
+                    return clientSideRowModel_1.ClientSideRowModel;
                 }
                 console.error('ag-Grid: could not find matching row model for rowModelType ' + rowModelType);
-                if (rowModelType === 'viewport') {
+                if (rowModelType === constants_1.Constants.ROW_MODEL_TYPE_VIEWPORT) {
                     console.error('ag-Grid: rowModelType viewport is only available in ag-Grid Enterprise');
                 }
-                if (rowModelType === 'enterprise') {
-                    console.error('ag-Grid: rowModelType viewport is only available in ag-Grid Enterprise');
+                if (rowModelType === constants_1.Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
+                    console.error('ag-Grid: rowModelType server side is only available in ag-Grid Enterprise');
                 }
             }
         }
-        return inMemoryRowModel_1.InMemoryRowModel;
+        return clientSideRowModel_1.ClientSideRowModel;
     };
     ;
     Grid.prototype.destroy = function () {
         this.context.destroy();
     };
-    // the default is InMemoryRowModel, which is also used for pagination.
+    // the default is ClientSideRowModel, which is also used for pagination.
     // the enterprise adds viewport to this list.
     Grid.RowModelClasses = {
         infinite: infiniteRowModel_1.InfiniteRowModel,
-        inMemory: inMemoryRowModel_1.InMemoryRowModel
+        clientSide: clientSideRowModel_1.ClientSideRowModel
     };
     return Grid;
 }());

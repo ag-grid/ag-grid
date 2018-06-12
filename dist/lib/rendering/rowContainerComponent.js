@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,8 +32,11 @@ var RowContainerComponent = (function () {
         this.eViewport = params.eViewport;
         this.hideWhenNoChildren = params.hideWhenNoChildren;
     }
+    RowContainerComponent.prototype.setVerticalScrollPosition = function (verticalScrollPosition) {
+        this.scrollTop = verticalScrollPosition;
+    };
     RowContainerComponent.prototype.postConstruct = function () {
-        this.domOrder = this.gridOptionsWrapper.isEnsureDomOrder() && !this.gridOptionsWrapper.isForPrint();
+        this.domOrder = this.gridOptionsWrapper.isEnsureDomOrder();
         this.checkVisibility();
     };
     RowContainerComponent.prototype.getRowElement = function (compId) {
@@ -92,6 +95,16 @@ var RowContainerComponent = (function () {
         if (this.visible !== visible) {
             this.visible = visible;
             utils_1.Utils.setVisible(eGui, visible);
+            // if we are showing the viewport, then the scroll is always zero,
+            // so we need to align with the other sections (ie if this is full
+            // width container, and first time showing a full width row, we need to
+            // scroll it so full width rows are show in right place alongside the
+            // body rows). without this, there was an issue with 'loading rows' for
+            // server side row model, as loading rows are full width, and they were
+            // not getting displayed in the right location when rows were expanded.
+            if (visible && this.eViewport) {
+                this.eViewport.scrollTop = this.scrollTop;
+            }
         }
     };
     __decorate([

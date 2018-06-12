@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -236,11 +236,12 @@ var HeaderRowComp = (function (_super) {
             column: column,
             currentParentModel: function () {
                 var filterComponentPromise = _this.filterManager.getFilterComponent(column);
-                return filterComponentPromise.resolveNow(null, function (filter) {
+                var wholeParentFilter = filterComponentPromise.resolveNow(null, function (filter) {
                     return (filter.getNullableModel) ?
                         filter.getNullableModel() :
                         filter.getModel();
                 });
+                return wholeParentFilter.operator != null ? wholeParentFilter.condition1 : wholeParentFilter;
             },
             onFloatingFilterChanged: function (change) {
                 var captureModelChangedResolveFunc;

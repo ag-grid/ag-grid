@@ -9,7 +9,7 @@ import {
     NavigateToNextCellParams,
     NodeChildDetails,
     PaginationNumberFormatterParams,
-    PostProcessPopupParams,
+    PostProcessPopupParams, ProcessDataFromClipboardParams,
     TabToNextCellParams
 } from "./entities/gridOptions";
 import {EventService} from "./eventService";
@@ -25,7 +25,7 @@ import {IViewportDatasource} from "./interfaces/iViewportDatasource";
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {IDatasource} from "./rowModels/iDatasource";
 import {GridCellDef} from "./entities/gridCell";
-import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
+import {IServerSideDatasource} from "./interfaces/iServerSideDatasource";
 import {BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams} from "./exportParams";
 import {AgEvent} from "./events";
 import {Environment} from "./environment";
@@ -83,6 +83,7 @@ export class GridOptionsWrapper {
     public static PROP_GROUP_REMOVE_SINGLE_CHILDREN = 'groupRemoveSingleChildren';
     public static PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN = 'groupRemoveLowestSingleChildren';
     public static PROP_PIVOT_HEADER_HEIGHT = 'pivotHeaderHeight';
+    public static PROP_SUPPRESS_CLIPBOARD_PASTE = 'suppressClipboardPaste';
 
     public static PROP_GROUP_HEADER_HEIGHT = 'groupHeaderHeight';
     public static PROP_PIVOT_GROUP_HEADER_HEIGHT = 'pivotGroupHeaderHeight';
@@ -91,6 +92,8 @@ export class GridOptionsWrapper {
 
     public static PROP_SUPPRESS_ROW_DRAG = 'suppressRowDrag';
     public static PROP_POPUP_PARENT = 'popupParent';
+
+    public static PROP_GRID_AUTO_HEIGHT = 'gridAutoHeight';
 
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('columnController') private columnController: ColumnController;
@@ -105,7 +108,6 @@ export class GridOptionsWrapper {
     private propertyEventService: EventService = new EventService();
 
     private domDataKey = '__AG_'+Math.random().toString();
-    private forPrintWarningGiven = false;
 
     private agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
         this.gridOptions.api = gridApi;
@@ -141,8 +143,8 @@ export class GridOptionsWrapper {
             if (!this.isRowSelectionMulti()) {
                 console.warn(`ag-Grid: rowSelection must be 'multiple' for groupSelectsChildren to make sense`);
             }
-            if (this.isRowModelEnterprise()) {
-                console.warn('ag-Grid: group selects children is NOT support for Enterprise Row Model. ' +
+            if (this.isRowModelServerSide()) {
+                console.warn('ag-Grid: group selects children is NOT support for Server Side Row Model. ' +
                     'This is because the rows are lazy loaded, so selecting a group is not possible as' +
                     'the grid has no way of knowing what the children are.');
             }
@@ -238,13 +240,14 @@ export class GridOptionsWrapper {
     public getContext() { return this.gridOptions.context; }
     public isPivotMode() { return isTrue(this.gridOptions.pivotMode); }
     public isPivotTotals() { return isTrue(this.gridOptions.pivotTotals); }
-
+    public getPivotColumnGroupTotals() { return this.gridOptions.pivotColumnGroupTotals; }
+    public getPivotRowTotals() { return this.gridOptions.pivotRowTotals; }
     public isRowModelInfinite() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_INFINITE; }
     public isRowModelViewport() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT; }
-    public isRowModelEnterprise() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_ENTERPRISE; }
+    public isRowModelServerSide() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_SERVER_SIDE; }
     public isRowModelDefault() {
         return _.missing(this.gridOptions.rowModelType) ||
-            this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_IN_MEMORY ||
+            this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE ||
             this.gridOptions.rowModelType === Constants.DEPRECATED_ROW_MODEL_TYPE_NORMAL;
     }
 
@@ -269,6 +272,7 @@ export class GridOptionsWrapper {
     public isToolPanelSuppressColumnExpandAll() { return isTrue(this.gridOptions.toolPanelSuppressColumnExpandAll); }
 
     public isSuppressTouch() { return isTrue(this.gridOptions.suppressTouch); }
+    public isSuppressRowTransform() { return isTrue(this.gridOptions.suppressRowTransform); }
     public useAsyncEvents() { return !isTrue(this.gridOptions.suppressAsyncEvents); }
     public isEnableCellChangeFlash() { return isTrue(this.gridOptions.enableCellChangeFlash); }
     public isGroupSelectsChildren() {
@@ -280,6 +284,8 @@ export class GridOptionsWrapper {
             return result;
         }
     }
+
+    public isSuppressRowHoverHighlight() { return isTrue(this.gridOptions.suppressRowHoverHighlight); }
     public isGroupSelectsFiltered() { return isTrue(this.gridOptions.groupSelectsFiltered); }
     public isGroupHideOpenParents() { return isTrue(this.gridOptions.groupHideOpenParents); }
     // if we are doing hideOpenParents, then we always have groupMultiAutoColumn, otherwise hideOpenParents would not work
@@ -287,6 +293,7 @@ export class GridOptionsWrapper {
     public isGroupRemoveSingleChildren() { return isTrue(this.gridOptions.groupRemoveSingleChildren); }
     public isGroupRemoveLowestSingleChildren() { return isTrue(this.gridOptions.groupRemoveLowestSingleChildren); }
     public isGroupIncludeFooter() { return isTrue(this.gridOptions.groupIncludeFooter); }
+    public isGroupIncludeTotalFooter() { return isTrue(this.gridOptions.groupIncludeTotalFooter); }
     public isGroupSuppressBlankHeader() { return isTrue(this.gridOptions.groupSuppressBlankHeader); }
     public isSuppressRowClickSelection() { return isTrue(this.gridOptions.suppressRowClickSelection); }
     public isSuppressCellSelection() { return isTrue(this.gridOptions.suppressCellSelection); }
@@ -298,16 +305,7 @@ export class GridOptionsWrapper {
     public isRowDragManaged() { return isTrue(this.gridOptions.rowDragManaged); }
     public isSuppressRowDrag() { return isTrue(this.gridOptions.suppressRowDrag); }
 
-    public isForPrint() {
-        let isForPrint = this.gridOptions.domLayout === 'forPrint';
-        if (isForPrint && !this.forPrintWarningGiven){
-            console.warn(`ag-grid: Since v17.1.0 domLayout: 'forPrint' has been deprecated. Please use instead auto height: https://www.ag-grid.com/javascript-grid-width-and-height/#autoHeight`)
-            this.forPrintWarningGiven = true
-        }
-        return isForPrint;
-    }
-    public isAutoHeight() { return this.gridOptions.domLayout === 'autoHeight'; }
-    public isNormalDomLayout() { return !this.isForPrint() && !this.isAutoHeight(); }
+    public isGridAutoHeight() { return isTrue(this.gridOptions.gridAutoHeight); }
 
     public isSuppressHorizontalScroll() { return isTrue(this.gridOptions.suppressHorizontalScroll); }
     public isSuppressLoadingOverlay() { return isTrue(this.gridOptions.suppressLoadingOverlay); }
@@ -340,11 +338,7 @@ export class GridOptionsWrapper {
 
     public getIsFullWidthCellFunc(): (rowNode: RowNode)=> boolean { return this.gridOptions.isFullWidthCell; }
     public getFullWidthCellRendererParams() { return this.gridOptions.fullWidthCellRendererParams; }
-    public isEmbedFullWidthRows() {
-        // if autoHeight, we always embed fullWidth rows, otherwise we let the user decide
-        return this.isAutoHeight() || isTrue(this.gridOptions.embedFullWidthRows);
-    }
-
+    public isEmbedFullWidthRows() { return isTrue(this.gridOptions.embedFullWidthRows); }
     public getBusinessKeyForNodeFunc() { return this.gridOptions.getBusinessKeyForNode; }
     public getApi(): GridApi { return this.gridOptions.api; }
     public getColumnApi(): ColumnApi { return this.gridOptions.columnApi; }
@@ -380,7 +374,7 @@ export class GridOptionsWrapper {
     public getColumnTypes(): {[key: string]: ColDef} { return this.gridOptions.columnTypes; }
     public getDatasource(): IDatasource { return this.gridOptions.datasource; }
     public getViewportDatasource(): IViewportDatasource { return this.gridOptions.viewportDatasource; }
-    public getEnterpriseDatasource(): IEnterpriseDatasource { return this.gridOptions.enterpriseDatasource; }
+    public getServerSideDatasource(): IServerSideDatasource { return this.gridOptions.serverSideDatasource; }
     public isEnableSorting() { return isTrue(this.gridOptions.enableSorting) || isTrue(this.gridOptions.enableServerSideSorting); }
     public isAccentedSort() { return isTrue(this.gridOptions.accentedSort) }
     public isEnableCellExpressions() { return isTrue(this.gridOptions.enableCellExpressions); }
@@ -391,10 +385,11 @@ export class GridOptionsWrapper {
     public isSuppressContextMenu() { return isTrue(this.gridOptions.suppressContextMenu); }
     public isAllowContextMenuWithControlKey() { return isTrue(this.gridOptions.allowContextMenuWithControlKey); }
     public isSuppressCopyRowsToClipboard() { return isTrue(this.gridOptions.suppressCopyRowsToClipboard); }
+    public isSuppressClipboardPaste() { return isTrue(this.gridOptions.suppressClipboardPaste); }
     public isEnableFilter() { return isTrue(this.gridOptions.enableFilter) || isTrue(this.gridOptions.enableServerSideFilter); }
     public isPagination() { return isTrue(this.gridOptions.pagination); }
     public isSuppressEnterpriseResetOnNewColumns() { return isTrue(this.gridOptions.suppressEnterpriseResetOnNewColumns); }
-
+    public getProcessDataFromClipboardFunc(): ((params: ProcessDataFromClipboardParams)=>string[][]) { return this.gridOptions.processDataFromClipboard;}
     public getBatchUpdateWaitMillis(): number {
         return _.exists(this.gridOptions.batchUpdateWaitMillis) ? this.gridOptions.batchUpdateWaitMillis : Constants.BATCH_WAIT_MILLIS;
     }
@@ -462,7 +457,6 @@ export class GridOptionsWrapper {
     public getNavigateToNextCellFunc(): (params: NavigateToNextCellParams)=>GridCellDef { return this.gridOptions.navigateToNextCell; }
     public getTabToNextCellFunc(): (params: TabToNextCellParams)=>GridCellDef { return this.gridOptions.tabToNextCell; }
 
-    public isNativeScroll(): boolean { return false; }
     public isTreeData(): boolean { return isTrue(this.gridOptions.treeData); }
     public isValueCache(): boolean { return isTrue(this.gridOptions.valueCache); }
     public isValueCacheNeverExpires(): boolean { return isTrue(this.gridOptions.valueCacheNeverExpires); }
@@ -503,7 +497,17 @@ export class GridOptionsWrapper {
     }
 
     public addEventListener(key: string, listener: Function): void {
+        GridOptionsWrapper.checkEventDeprecation(key);
         this.propertyEventService.addEventListener(key, listener);
+    }
+
+    public static checkEventDeprecation(eventName: string): void {
+        if (eventName === Events.DEPRECATED_EVENT_GRID_SIZE_CHANGED) {
+            console.warn(`ag-Grid: Since ag-Grid v18 event ${Events.DEPRECATED_EVENT_GRID_SIZE_CHANGED} no longer exists.`);
+        }
+        if (eventName === 'floatingRowDataChanged') {
+            console.warn('ag-Grid: floatingRowDataChanged is now called pinnedRowDataChanged');
+        }
     }
 
     public removeEventListener(key: string, listener: Function): void {
@@ -733,7 +737,25 @@ export class GridOptionsWrapper {
         if (options.angularCompileHeaders) {
             console.warn(`ag-grid: since version 15.x, angularCompileHeaders is gone, please see the getting started for Angular 1 docs to see how to do headers in Angular 1.x.`);
         }
-
+        if (options.domLayout==='forPrint') {
+            console.warn(`ag-grid: since version 18.x, forPrint is no longer supported, as same can be achieved using autoHeight (and set the grid width accordingly). please use autoHeight instead.`);
+        }
+        if (options.domLayout==='autoHeight') {
+            console.warn(`ag-grid: since version 18.x, domLayout is gone, instead if doing auto-height, set gridAutoHeight=true.`);
+            options.gridAutoHeight = true;
+        }
+        if (options.pivotTotals) {
+            console.warn(`ag-grid: since version 18.x, pivotTotals has been removed, instead if using pivotTotals, set pivotColumnGroupTotals='before'|'after'.`);
+            options.pivotColumnGroupTotals = 'before';
+        }
+        if (options.rowModelType==='inMemory') {
+            console.warn(`ag-grid: since version 18.x, The In Memory Row Model has been renamed to the Client Side Row Model, set rowModelType='clientSide' instead.`);
+            options.rowModelType = 'clientSide';
+        }
+        if (options.rowModelType==='enterprise') {
+            console.warn(`ag-grid: since version 18.x, The Enterprise Row Model has been renamed to the Server Side Row Model, set rowModelType='serverSide' instead.`);
+            options.rowModelType = 'serverSide';
+        }
     }
 
     public getLocaleTextFunc() {

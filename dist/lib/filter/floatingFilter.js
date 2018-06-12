@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -52,7 +52,18 @@ var InputTextFloatingFilterComp = (function (_super) {
             this.eColumnFloatingFilter.readOnly = true;
         }
     };
-    InputTextFloatingFilterComp.prototype.onParentModelChanged = function (parentModel) {
+    InputTextFloatingFilterComp.prototype.onParentModelChanged = function (parentModel, combinedFilter) {
+        if (combinedFilter != null) {
+            this.eColumnFloatingFilter.value = this.parseAsText(combinedFilter.condition1) + " " + combinedFilter.operator + " " + this.parseAsText(combinedFilter.condition2);
+            this.eColumnFloatingFilter.readOnly = true;
+            this.lastKnownModel = null;
+            this.eColumnFloatingFilter.title = this.eColumnFloatingFilter.value;
+            this.eColumnFloatingFilter.style.cursor = 'default';
+            return;
+        }
+        else {
+            this.eColumnFloatingFilter.readOnly = false;
+        }
         if (this.equalModels(this.lastKnownModel, parentModel)) {
             // ensure column floating filter text is blanked out when both ranges are empty
             if (!this.lastKnownModel && !parentModel) {
@@ -66,6 +77,7 @@ var InputTextFloatingFilterComp = (function (_super) {
             return;
         }
         this.eColumnFloatingFilter.value = incomingTextValue;
+        this.eColumnFloatingFilter.title = '';
     };
     InputTextFloatingFilterComp.prototype.syncUpWithParentFilter = function (e) {
         var model = this.asParentModel();
@@ -129,6 +141,9 @@ var TextFloatingFilterComp = (function (_super) {
             filter: this.eColumnFloatingFilter.value,
             filterType: 'text'
         };
+    };
+    TextFloatingFilterComp.prototype.parseAsText = function (model) {
+        return this.asFloatingFilterText(model);
     };
     return TextFloatingFilterComp;
 }(InputTextFloatingFilterComp));
@@ -216,25 +231,31 @@ var NumberFloatingFilterComp = (function (_super) {
     function NumberFloatingFilterComp() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    NumberFloatingFilterComp.prototype.asFloatingFilterText = function (parentModel) {
-        var rawParentModel = this.currentParentModel();
-        if (parentModel == null && rawParentModel == null) {
+    NumberFloatingFilterComp.prototype.asFloatingFilterText = function (toParse) {
+        var currentParentModel = this.currentParentModel();
+        if (toParse == null && currentParentModel == null) {
             return '';
         }
-        if (parentModel == null && rawParentModel != null && rawParentModel.type !== 'inRange') {
+        if (toParse == null && currentParentModel != null && currentParentModel.type !== 'inRange') {
             this.eColumnFloatingFilter.readOnly = false;
             return '';
         }
-        if (rawParentModel != null && rawParentModel.type === 'inRange') {
+        if (currentParentModel != null && currentParentModel.type === 'inRange') {
             this.eColumnFloatingFilter.readOnly = true;
-            var number_1 = this.asNumber(rawParentModel.filter);
-            var numberTo = this.asNumber(rawParentModel.filterTo);
+            return this.parseAsText(currentParentModel);
+        }
+        this.eColumnFloatingFilter.readOnly = false;
+        return this.parseAsText(toParse);
+    };
+    NumberFloatingFilterComp.prototype.parseAsText = function (model) {
+        if (model.type && model.type === 'inRange') {
+            var number_1 = this.asNumber(model.filter);
+            var numberTo = this.asNumber(model.filterTo);
             return (number_1 ? number_1 + '' : '') +
                 '-' +
                 (numberTo ? numberTo + '' : '');
         }
-        var number = this.asNumber(parentModel.filter);
-        this.eColumnFloatingFilter.readOnly = false;
+        var number = this.asNumber(model.filter);
         return number != null ? number + '' : '';
     };
     NumberFloatingFilterComp.prototype.asParentModel = function () {
@@ -282,6 +303,7 @@ var SetFloatingFilterComp = (function (_super) {
         this.eColumnFloatingFilter.readOnly = true;
     };
     SetFloatingFilterComp.prototype.asFloatingFilterText = function (parentModel) {
+        this.eColumnFloatingFilter.readOnly = true;
         if (!parentModel)
             return '';
         // also supporting old filter model for backwards compatibility
@@ -291,6 +313,9 @@ var SetFloatingFilterComp = (function (_super) {
         }
         var arrayToDisplay = values.length > 10 ? values.slice(0, 10).concat('...') : values;
         return "(" + values.length + ") " + arrayToDisplay.join(",");
+    };
+    SetFloatingFilterComp.prototype.parseAsText = function (model) {
+        return this.asFloatingFilterText(model);
     };
     SetFloatingFilterComp.prototype.asParentModel = function () {
         if (this.eColumnFloatingFilter.value == null || this.eColumnFloatingFilter.value === '') {
@@ -324,6 +349,9 @@ var ReadModelAsStringFloatingFilterComp = (function (_super) {
     };
     ReadModelAsStringFloatingFilterComp.prototype.asFloatingFilterText = function (parentModel) {
         return parentModel;
+    };
+    ReadModelAsStringFloatingFilterComp.prototype.parseAsText = function (model) {
+        return model;
     };
     ReadModelAsStringFloatingFilterComp.prototype.asParentModel = function () {
         return null;

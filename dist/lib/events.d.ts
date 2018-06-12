@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
@@ -28,7 +28,9 @@ export interface AgGridEvent extends AgEvent {
     api: GridApi;
     columnApi: ColumnApi;
 }
-export interface ToolPanelVisibleChanged extends AgGridEvent {
+export interface ToolPanelVisibleChangedEvent extends AgGridEvent {
+}
+export interface AnimationQueueEmptyEvent extends AgGridEvent {
 }
 export interface ColumnPivotModeChangedEvent extends AgGridEvent {
 }
@@ -90,9 +92,11 @@ export interface RowDragMoveEvent extends RowDragEvent {
 }
 export interface RowDragLeaveEvent extends RowDragEvent {
 }
-export interface GridSizeChangedEvent extends AgGridEvent {
-    clientWidth: number;
-    clientHeight: number;
+export interface PasteStartEvent extends AgGridEvent {
+    source: string;
+}
+export interface PasteEndEvent extends AgGridEvent {
+    source: string;
 }
 export interface ViewportChangedEvent extends AgGridEvent {
     firstRow: number;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -61,20 +61,9 @@ var EventService = (function () {
     };
     EventService.prototype.addEventListener = function (eventType, listener, async) {
         if (async === void 0) { async = false; }
-        if (!this.assertNotDeprecated(eventType))
-            return;
         var listenerList = this.getListenerList(eventType, async);
         if (listenerList.indexOf(listener) < 0) {
             listenerList.push(listener);
-        }
-    };
-    EventService.prototype.assertNotDeprecated = function (eventType) {
-        if (eventType === 'floatingRowDataChanged') {
-            console.warn('ag-Grid: floatingRowDataChanged is now called pinnedRowDataChanged');
-            return false;
-        }
-        else {
-            return true;
         }
     };
     // for some events, it's important that the model gets to hear about them before the view,
@@ -82,8 +71,6 @@ var EventService = (function () {
     // via this method, you get notified before the view parts
     EventService.prototype.addModalPriorityEventListener = function (eventType, listener, async) {
         if (async === void 0) { async = false; }
-        if (!this.assertNotDeprecated(eventType))
-            return;
         this.addEventListener(eventType + EventService_1.PRIORITY, listener, async);
     };
     EventService.prototype.addGlobalListener = function (listener, async) {

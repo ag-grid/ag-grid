@@ -1,8 +1,8 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { IFilterParams, IDoesFilterPassParams, SerializedFilter } from "../interfaces/iFilter";
-import { ComparableBaseFilter, IScalarFilterParams } from "./baseFilter";
+import { IDoesFilterPassParams, SerializedFilter } from "../interfaces/iFilter";
+import { ComparableBaseFilter, IScalarFilterParams, FilterConditionType, IComparableFilterParams } from "./baseFilter";
 export interface SerializedTextFilter extends SerializedFilter {
     filter: string;
     type: string;
@@ -16,14 +16,16 @@ export interface TextFormatter {
 export interface INumberFilterParams extends IScalarFilterParams {
     debounceMs?: number;
 }
-export interface ITextFilterParams extends IFilterParams {
+export interface ITextFilterParams extends IComparableFilterParams {
     textCustomComparator?: TextComparator;
     debounceMs?: number;
     caseSensitive?: boolean;
 }
 export declare class TextFilter extends ComparableBaseFilter<string, ITextFilterParams, SerializedTextFilter> {
     private eFilterTextField;
+    private eFilterConditionTextField;
     private filterText;
+    private filterConditionText;
     private comparator;
     private formatter;
     static DEFAULT_FORMATTER: TextFormatter;
@@ -33,17 +35,19 @@ export declare class TextFilter extends ComparableBaseFilter<string, ITextFilter
     customInit(): void;
     modelFromFloatingFilter(from: string): SerializedTextFilter;
     getApplicableFilterTypes(): string[];
-    bodyTemplate(): string;
-    initialiseFilterBodyUi(): void;
-    refreshFilterBodyUi(): void;
+    bodyTemplate(type: FilterConditionType): string;
+    initialiseFilterBodyUi(type: FilterConditionType): void;
+    private addFilterChangedListener(type);
+    refreshFilterBodyUi(type: FilterConditionType): void;
     afterGuiAttached(): void;
-    filterValues(): string;
-    doesFilterPass(params: IDoesFilterPassParams): boolean;
-    private onFilterTextFieldChanged();
-    setFilter(filter: string): void;
+    filterValues(type: FilterConditionType): string;
+    individualFilterPasses(params: IDoesFilterPassParams, type: FilterConditionType): boolean;
+    private checkIndividualFilter(params, filterType, filterText);
+    private onFilterTextFieldChanged(type);
+    setFilter(filter: string, type: FilterConditionType): void;
     getFilter(): string;
     resetState(): void;
-    serialize(): SerializedTextFilter;
-    parse(model: SerializedTextFilter): void;
-    setType(filterType: string): void;
+    serialize(type: FilterConditionType): SerializedTextFilter;
+    parse(model: SerializedTextFilter, type: FilterConditionType): void;
+    setType(filterType: string, type: FilterConditionType): void;
 }

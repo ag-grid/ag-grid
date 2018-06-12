@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,17 +18,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var dragAndDropService_1 = require("../dragAndDrop/dragAndDropService");
 var context_1 = require("../context/context");
 var focusedCellController_1 = require("../focusedCellController");
-var gridPanel_1 = require("./gridPanel");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var eventService_1 = require("../eventService");
 var eventKeys_1 = require("../eventKeys");
 var RowDragFeature = (function () {
-    function RowDragFeature(eContainer) {
+    function RowDragFeature(eContainer, gridPanel) {
         this.eContainer = eContainer;
+        this.gridPanel = gridPanel;
     }
     RowDragFeature.prototype.postConstruct = function () {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
-            this.inMemoryRowModel = this.rowModel;
+            this.clientSideRowModel = this.rowModel;
         }
     };
     RowDragFeature.prototype.getContainer = function () {
@@ -64,7 +64,7 @@ var RowDragFeature = (function () {
     };
     RowDragFeature.prototype.doManagedDrag = function (draggingEvent, pixel) {
         var rowNode = draggingEvent.dragItem.rowNode;
-        var rowWasMoved = this.inMemoryRowModel.ensureRowAtPixel(rowNode, pixel);
+        var rowWasMoved = this.clientSideRowModel.ensureRowAtPixel(rowNode, pixel);
         if (rowWasMoved) {
             this.focusedCellController.clearFocusedCell();
             if (this.rangeController) {
@@ -73,7 +73,7 @@ var RowDragFeature = (function () {
         }
     };
     RowDragFeature.prototype.normaliseForScroll = function (pixel) {
-        var gridPanelHasScrolls = this.gridOptionsWrapper.isNormalDomLayout();
+        var gridPanelHasScrolls = !this.gridOptionsWrapper.isGridAutoHeight();
         if (gridPanelHasScrolls) {
             var pixelRange = this.gridPanel.getVScrollPosition();
             return pixel + pixelRange.top;
@@ -190,10 +190,6 @@ var RowDragFeature = (function () {
         context_1.Autowired('focusedCellController'),
         __metadata("design:type", focusedCellController_1.FocusedCellController)
     ], RowDragFeature.prototype, "focusedCellController", void 0);
-    __decorate([
-        context_1.Autowired('gridPanel'),
-        __metadata("design:type", gridPanel_1.GridPanel)
-    ], RowDragFeature.prototype, "gridPanel", void 0);
     __decorate([
         context_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)

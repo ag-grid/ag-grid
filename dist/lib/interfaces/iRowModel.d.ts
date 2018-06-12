@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../entities/rowNode";
@@ -9,6 +9,8 @@ export interface RowBounds {
 export interface IRowModel {
     /** Returns the rowNode at the given index. */
     getRow(index: number): RowNode;
+    /** Returns the rowNode for given id. */
+    getRowNode(id: string): RowNode;
     /** Returns the first and last rows to render. */
     getPageFirstRow(): number;
     getPageLastRow(): number;
@@ -29,10 +31,10 @@ export interface IRowModel {
     /** Returns true if no rows (either no rows at all, or the rows are filtered out). This is what the grid
      * uses to know if there are rows to render or not. */
     isRowsToRender(): boolean;
-    /** Returns all rows in range that should be selected. If there is a gap in range (non InMemoryRowModel) then
+    /** Returns all rows in range that should be selected. If there is a gap in range (non ClientSideRowModel) then
      *  then no rows should be returned  */
     getNodesInRangeForSelection(first: RowNode, last: RowNode): RowNode[];
-    /** Iterate through each node. What this does depends on the model type. For inMemory, goes through
+    /** Iterate through each node. What this does depends on the model type. For clientSide, goes through
      * all nodes. For pagination, goes through current page. For virtualPage, goes through what's loaded in memory. */
     forEachNode(callback: (rowNode: RowNode) => void): void;
     /** The base class returns the type. We use this instead of 'instanceof' as the client might provide
@@ -41,7 +43,7 @@ export interface IRowModel {
     /**
      * It tells us if this row model knows about the last row that it can produce. This is used by the
      * PaginationPanel, if last row is not found, then the 'last' button is disabled and the last page is
-     * not shown. This is always true for InMemoryRowModel. It toggles for InfiniteRowModel.
+     * not shown. This is always true for ClientSideRowModel. It toggles for InfiniteRowModel.
      */
     isLastRowFound(): boolean;
 }

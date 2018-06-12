@@ -18,6 +18,7 @@ import {FloatingFilterChange, IFloatingFilterParams} from "../filter/floatingFil
 import {ComponentRecipes} from "../components/framework/componentRecipes";
 import {IFilterComp} from "../interfaces/iFilter";
 import {GridApi} from "../gridApi";
+import {CombinedFilter} from "../filter/baseFilter";
 
 export enum HeaderRowType {
     COLUMN_GROUP, COLUMN, FLOATING_FILTER
@@ -259,11 +260,12 @@ export class HeaderRowComp extends Component {
             column: column,
             currentParentModel: (): M => {
                 let filterComponentPromise: Promise<IFilterComp> = <any>this.filterManager.getFilterComponent(column);
-                return filterComponentPromise.resolveNow(null, (filter: any) =>
+                let wholeParentFilter: CombinedFilter<M> | M= filterComponentPromise.resolveNow(null, (filter: any) =>
                     (filter.getNullableModel) ?
                         filter.getNullableModel() :
                         filter.getModel()
                 );
+                return (<CombinedFilter<M>>wholeParentFilter).operator != null ? (<CombinedFilter<M>>wholeParentFilter).condition1 : <M>wholeParentFilter;
             },
             onFloatingFilterChanged: (change: F | M): boolean => {
                 let captureModelChangedResolveFunc: (modelChanged: boolean) => void;

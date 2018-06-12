@@ -28,35 +28,63 @@ ag-grid-aurelia {
   -ms-user-select: none;
   user-select: none; }
 
+.ag-root-wrapper {
+  position: relative; }
+
+.ag-root-wrapper.ag-layout-normal {
+  height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column; }
+
+.ag-root-wrapper-body {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row; }
+
+.ag-layout-normal .ag-root-wrapper-body {
+  -webkit-box-flex: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  height: 0px;
+  min-height: 0px; }
+
 .ag-root {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  /* was getting some 'should be there' scrolls, this sorts it out */
   overflow: hidden;
-  /* set to relative, so absolute popups appear relative to this */
-  position: relative; }
+  position: relative;
+  display: inline-block;
+  width: 0px;
+  min-width: 0px;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1; }
 
 .ag-layout-normal .ag-root {
-  height: 100%; }
+  height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column; }
 
 .ag-font-style {
   cursor: default;
-  /* disable user mouse selection */
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none; }
-
-.ag-layout-for-print {
-  display: block;
-  white-space: nowrap; }
-
-.ag-layout-for-print .ag-row,
-.ag-layout-for-print .ag-cell {
-  page-break-inside: avoid !important; }
-
-.ag-layout-normal {
-  height: 100%; }
 
 .ag-popup-backdrop {
   height: 100%;
@@ -68,20 +96,16 @@ ag-grid-aurelia {
 .ag-header {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  overflow: hidden;
   white-space: nowrap;
-  width: 100%; }
-
-.ag-layout-normal .ag-header {
-  left: 0;
-  position: absolute;
-  top: 0; }
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex; }
 
 .ag-pinned-left-header {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   display: inline-block;
-  float: left;
   height: 100%;
   overflow: hidden; }
 
@@ -89,7 +113,6 @@ ag-grid-aurelia {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   display: inline-block;
-  float: right;
   height: 100%;
   overflow: hidden; }
 
@@ -97,29 +120,21 @@ ag-grid-aurelia {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   height: 100%;
-  overflow: hidden; }
+  overflow: hidden;
+  width: 0px;
+  min-width: 0px;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1; }
 
-.ag-layout-normal .ag-header-row {
+.ag-header-row {
   position: absolute; }
 
-.ag-layout-normal .ag-header-container {
+.ag-header-container {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   height: 100%;
   position: relative;
-  white-space: nowrap; }
-
-.ag-layout-auto-height .ag-header-row {
-  position: absolute; }
-
-.ag-layout-auto-height .ag-header-container {
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  height: 100%;
-  position: relative;
-  white-space: nowrap; }
-
-.ag-layout-for-print .ag-header-container {
   white-space: nowrap; }
 
 .ag-header-overlay {
@@ -239,6 +254,14 @@ ag-grid-aurelia {
 .ag-header-cell-menu-button {
   float: right; }
 
+.ag-overlay {
+  height: 100%;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  width: 100%; }
+
 .ag-overlay-panel {
   display: table;
   height: 100%;
@@ -250,50 +273,6 @@ ag-grid-aurelia {
   text-align: center;
   vertical-align: middle; }
 
-.ag-bl-overlay {
-  height: 100%;
-  left: 0;
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  width: 100%; }
-
-.ag-bl-full-height {
-  height: 100%;
-  overflow: hidden;
-  position: relative; }
-
-.ag-bl-west {
-  float: left; }
-
-.ag-bl-full-height-west {
-  height: 100%; }
-
-.ag-bl-east {
-  float: right; }
-
-.ag-bl-full-height-east {
-  height: 100%; }
-
-.ag-bl-full-height-center {
-  height: 100%; }
-
-.ag-bl-normal {
-  height: 100%;
-  position: relative; }
-
-.ag-bl-normal-center-row {
-  height: 100%;
-  overflow: hidden; }
-
-.ag-bl-normal-west {
-  float: left;
-  height: 100%; }
-
-.ag-bl-normal-east {
-  float: right;
-  height: 100%; }
-
 .ag-column-panel {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -304,7 +283,6 @@ ag-grid-aurelia {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  max-height: 100vh;
   min-height: 400px;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
@@ -313,60 +291,100 @@ ag-grid-aurelia {
   -webkit-box-flex: 1;
   -ms-flex-positive: 1;
   flex-grow: 1;
-  overflow-x: hidden; }
+  overflow-x: hidden;
+  max-height: 100vh; }
 
-.ag-bl-normal-center {
-  height: 100%; }
+.ag-layout-auto-height .ag-body-container {
+  min-height: 50px; }
 
-.ag-bl-dont-fill {
-  position: relative; }
+.ag-layout-auto-height .ag-overlay-no-rows-wrapper {
+  padding-top: 30px; }
 
 .ag-body {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  width: 100%; }
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  position: relative; }
 
 .ag-layout-normal .ag-body {
-  height: 100%;
-  position: absolute; }
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  height: 0px;
+  min-height: 0px; }
+
+ag-rtl .ag-body {
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: reverse;
+  -ms-flex-direction: row-reverse;
+  flex-direction: row-reverse; }
+
+ag-ltr .ag-body {
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row; }
+
+.ag-rtl .ag-floating-top {
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: reverse;
+  -ms-flex-direction: row-reverse;
+  flex-direction: row-reverse; }
+
+.ag-ltr .ag-floating-top {
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row; }
+
+.ag-ltr .ag-header {
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row; }
+
+.ag-rtl .ag-header {
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: reverse;
+  -ms-flex-direction: row-reverse;
+  flex-direction: row-reverse; }
 
 .ag-floating-top {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   overflow: hidden;
   white-space: nowrap;
-  width: 100%; }
-
-.ag-layout-normal .ag-floating-top {
-  left: 0;
-  position: absolute; }
+  width: 100%;
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex; }
 
 .ag-pinned-left-floating-top {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   display: inline-block;
-  float: left;
   overflow: hidden;
   position: relative; }
-
-.ag-layout-normal .ag-pinned-left-floating-top {
-  height: 100%; }
 
 .ag-pinned-right-floating-top {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   display: inline-block;
-  float: right;
   overflow: hidden;
   position: relative; }
-
-.ag-layout-normal .ag-pinned-right-floating-top {
-  height: 100%; }
 
 .ag-floating-top-viewport {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  overflow: hidden; }
+  overflow: hidden;
+  width: 0px;
+  min-width: 0px;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1; }
 
 .ag-layout-normal .ag-floating-top-viewport {
   height: 100%; }
@@ -382,41 +400,35 @@ ag-grid-aurelia {
   box-sizing: border-box;
   overflow: hidden;
   white-space: nowrap;
-  width: 100%; }
-
-.ag-layout-normal .ag-floating-bottom {
-  left: 0;
-  position: absolute; }
+  width: 100%;
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex; }
 
 .ag-pinned-left-floating-bottom {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   display: inline-block;
-  float: left;
   overflow: hidden;
   position: relative; }
-
-.ag-layout-normal .ag-pinned-left-floating-bottom {
-  height: 100%; }
 
 .ag-pinned-right-floating-bottom {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   display: inline-block;
-  float: right;
   overflow: hidden;
   position: relative; }
-
-.ag-layout-normal .ag-pinned-right-floating-bottom {
-  height: 100%; }
 
 .ag-floating-bottom-viewport {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  overflow: hidden; }
-
-.ag-layout-normal .ag-floating-bottom-viewport {
-  height: 100%; }
+  overflow: hidden;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  width: 0px;
+  min-width: 0px; }
 
 .ag-floating-bottom-container {
   -webkit-box-sizing: border-box;
@@ -424,51 +436,36 @@ ag-grid-aurelia {
   position: relative;
   white-space: nowrap; }
 
-.ag-hacked-scroll .ag-pinned-left-cols-viewport {
-  float: left; }
-
 .ag-pinned-left-cols-container {
   display: inline-block;
   position: relative; }
 
-.ag-hacked-scroll .ag-pinned-right-cols-viewport {
-  float: right; }
-
-.ag-ltr .ag-hacked-scroll .ag-pinned-right-cols-viewport {
+.ag-pinned-right-cols-viewport {
+  height: 100%;
   overflow-x: hidden;
   overflow-y: auto; }
 
-.ag-ltr .ag-hacked-scroll .ag-pinned-left-cols-viewport {
-  overflow: hidden; }
-
-.ag-rtl .ag-hacked-scroll .ag-pinned-right-cols-viewport {
-  overflow: hidden; }
-
-.ag-rtl .ag-hacked-scroll .ag-pinned-left-cols-viewport {
+.ag-pinned-left-cols-viewport {
+  height: 100%;
   overflow-x: hidden;
   overflow-y: auto; }
-
-.ag-native-scroll .ag-pinned-right-cols-viewport {
-  float: right;
-  overflow-x: hidden;
-  overflow-y: auto; }
-
-.ag-native-scroll .ag-pinned-left-cols-viewport {
-  float: left;
-  overflow-x: hidden;
-  overflow-y: auto; }
-
-.ag-hide-scroll-bar {
-  margin-right: -16px;
-  overflow-y: scroll;
-  overflow-x: hidden; }
 
 .ag-pinned-right-cols-container {
   display: inline-block;
   position: relative; }
 
-.ag-layout-normal .ag-body-viewport-wrapper {
-  height: 100%; }
+.ag-pinned-left-cols-viewport-wrapper {
+  height: 100%;
+  overflow: hidden; }
+
+.ag-body-viewport-wrapper {
+  height: 100%;
+  width: 0px;
+  min-width: 0px;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  overflow: hidden; }
 
 .ag-body-viewport {
   overflow-x: auto;
@@ -477,23 +474,25 @@ ag-grid-aurelia {
 .ag-layout-normal .ag-body-viewport {
   height: 100%; }
 
+.ag-full-width-viewport-wrapper {
+  height: 100%;
+  width: 100%;
+  display: inline-block;
+  pointer-events: none;
+  overflow: hidden;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box; }
+
 .ag-full-width-viewport {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  display: inline;
   height: 100%;
-  left: 0;
   pointer-events: none;
-  position: absolute;
-  top: 0;
-  width: 100%; }
-
-.ag-hacked-scroll .ag-full-width-viewport {
-  overflow: hidden; }
-
-.ag-native-scroll .ag-full-width-viewport {
-  overflow-y: auto;
-  overflow-x: hidden; }
+  overflow-x: hidden;
+  overflow-y: auto; }
 
 .ag-full-width-container {
   overflow: hidden;
@@ -524,20 +523,16 @@ ag-grid-aurelia {
   overflow: hidden;
   pointer-events: all; }
 
-.ag-layout-normal .ag-body-container {
+.ag-body-container {
   display: inline-block;
   margin-bottom: -2px;
   position: relative; }
 
-.ag-layout-auto-height .ag-body-container {
-  display: block;
-  position: relative; }
-
 .ag-row-animation .ag-row {
-  -webkit-transition: height 0.4s, background-color 0.1s, opacity 0.2s, -webkit-transform 0.4s;
-  transition: height 0.4s, background-color 0.1s, opacity 0.2s, -webkit-transform 0.4s;
-  transition: transform 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;
-  transition: transform 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s, -webkit-transform 0.4s; }
+  -webkit-transition: top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s, -webkit-transform 0.4s;
+  transition: top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s, -webkit-transform 0.4s;
+  transition: transform 0.4s, top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;
+  transition: transform 0.4s, top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s, -webkit-transform 0.4s; }
 
 .ag-row-no-animation .ag-row {
   -webkit-transition: background-color 0.1s;
@@ -545,20 +540,10 @@ ag-grid-aurelia {
 
 .ag-row {
   -webkit-box-sizing: border-box;
-  box-sizing: border-box; }
-
-.ag-layout-normal .ag-row {
+  box-sizing: border-box;
   position: absolute;
   white-space: nowrap;
   width: 100%; }
-
-.ag-layout-auto-height .ag-row {
-  position: relative;
-  white-space: nowrap;
-  width: 100%; }
-
-.ag-layout-for-print .ag-row {
-  position: relative; }
 
 .ag-column-moving .ag-cell {
   -webkit-transition: left 0.2s;
@@ -798,19 +783,6 @@ ag-grid-aurelia {
   user-select: none;
   width: 200px; }
 
-.ag-layout-normal .ag-column-panel {
-  height: 100%; }
-
-.ag-layout-normal .ag-column-panel-center {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  height: 100%; }
-
 .ag-column-container {
   -webkit-box-flex: 1;
   -ms-flex-positive: 1;
@@ -959,7 +931,7 @@ ag-grid-aurelia {
 
 .ag-icon-asc {
   display: inline-block;
-  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;
+  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;
   background-size: 12px 12px;
   -webkit-filter: "initial";
   filter: "initial";
@@ -1067,7 +1039,7 @@ ag-grid-aurelia {
 
 .ag-icon-desc {
   display: inline-block;
-  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;
+  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;
   background-size: 12px 12px;
   -webkit-filter: "initial";
   filter: "initial";
@@ -1930,7 +1902,6 @@ ag-grid-aurelia {
   -webkit-box-direction: reverse;
   -ms-flex-direction: row-reverse;
   flex-direction: row-reverse;
-  height: 100%;
   -webkit-box-sizing: border-box;
   box-sizing: border-box; }
   .ag-tool-panel .ag-side-buttons {
@@ -1954,5 +1925,5 @@ ag-grid-aurelia {
   -webkit-transform-origin: right bottom 0;
   transform-origin: right bottom 0; }
 
-.ag-row-focus {
+.ag-row-inline-editing {
   z-index: 1; }

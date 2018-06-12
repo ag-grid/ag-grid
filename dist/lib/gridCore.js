@@ -1,10 +1,20 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -13,9 +23,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
@@ -26,185 +33,71 @@ var filterManager_1 = require("./filter/filterManager");
 var eventService_1 = require("./eventService");
 var gridPanel_1 = require("./gridPanel/gridPanel");
 var logger_1 = require("./logger");
-var constants_1 = require("./constants");
 var popupService_1 = require("./widgets/popupService");
-var events_1 = require("./events");
 var utils_1 = require("./utils");
-var borderLayout_1 = require("./layout/borderLayout");
 var context_1 = require("./context/context");
 var focusedCellController_1 = require("./focusedCellController");
 var component_1 = require("./widgets/component");
-var paginationComp_1 = require("./rowModels/pagination/paginationComp");
 var gridApi_1 = require("./gridApi");
-var GridCore = (function () {
-    function GridCore(loggerFactory) {
-        this.destroyFunctions = [];
-        this.logger = loggerFactory.create('GridCore');
+var componentAnnotations_1 = require("./widgets/componentAnnotations");
+var GridCore = (function (_super) {
+    __extends(GridCore, _super);
+    function GridCore() {
+        return _super.call(this) || this;
     }
+    GridCore_1 = GridCore;
     GridCore.prototype.init = function () {
         var _this = this;
-        var eSouthPanel = this.createSouthPanel();
-        var eastPanel;
-        var westPanel;
-        if (this.toolPanelComp && !this.gridOptionsWrapper.isForPrint()) {
-            // if we are doing RTL, then the tool panel appears on the left
-            if (this.gridOptionsWrapper.isEnableRtl()) {
-                westPanel = this.toolPanelComp.getGui();
-            }
-            else {
-                eastPanel = this.toolPanelComp.getGui();
-            }
+        this.logger = this.loggerFactory.create('GridCore');
+        var template = this.enterprise ? GridCore_1.TEMPLATE_ENTERPRISE : GridCore_1.TEMPLATE_NORMAL;
+        this.setTemplate(template);
+        this.instantiate(this.context);
+        if (this.enterprise) {
+            this.toolPanelComp.registerGridComp(this.gridPanel);
+            this.statusBar.registerGridPanel(this.gridPanel);
         }
-        var createTopPanelGui = this.createNorthPanel();
-        this.eRootPanel = new borderLayout_1.BorderLayout({
-            center: this.gridPanel.getLayout(),
-            east: eastPanel,
-            west: westPanel,
-            north: createTopPanelGui,
-            south: eSouthPanel,
-            forPrint: this.gridOptionsWrapper.isForPrint(),
-            autoHeight: this.gridOptionsWrapper.isAutoHeight(),
-            name: 'eRootPanel'
-        });
-        // parts of the CSS need to know if we are in 'for print' mode or not,
-        // so we add a class to allow applying CSS based on this.
-        if (this.gridOptionsWrapper.isForPrint()) {
-            utils_1.Utils.addCssClass(this.eRootPanel.getGui(), 'ag-layout-for-print');
-            // kept to limit breaking changes, ag-no-scrolls was renamed to ag-layout-for-print
-            utils_1.Utils.addCssClass(this.eRootPanel.getGui(), 'ag-no-scrolls');
-        }
-        else if (this.gridOptionsWrapper.isAutoHeight()) {
-            utils_1.Utils.addCssClass(this.eRootPanel.getGui(), 'ag-layout-auto-height');
-        }
-        else {
-            utils_1.Utils.addCssClass(this.eRootPanel.getGui(), 'ag-layout-normal');
-            // kept to limit breaking changes, ag-scrolls was renamed to ag-layout-normal
-            utils_1.Utils.addCssClass(this.eRootPanel.getGui(), 'ag-scrolls');
-        }
+        this.gridOptionsWrapper.addEventListener(gridOptionsWrapper_1.GridOptionsWrapper.PROP_GRID_AUTO_HEIGHT, this.addLayoutClass.bind(this));
+        this.addLayoutClass();
         // see what the grid options are for default of toolbar
         this.showToolPanel(this.gridOptionsWrapper.isShowToolPanel());
-        this.eGridDiv.appendChild(this.eRootPanel.getGui());
+        this.eGridDiv.appendChild(this.getGui());
+        this.addDestroyFunc(function () {
+            _this.eGridDiv.removeChild(_this.getGui());
+        });
         // if using angular, watch for quickFilter changes
         if (this.$scope) {
             var quickFilterUnregisterFn = this.$scope.$watch(this.quickFilterOnScope, function (newFilter) { return _this.filterManager.setQuickFilter(newFilter); });
-            this.destroyFunctions.push(quickFilterUnregisterFn);
-        }
-        if (!this.gridOptionsWrapper.isForPrint()) {
-            this.addWindowResizeListener();
+            this.addDestroyFunc(quickFilterUnregisterFn);
         }
         // important to set rtl before doLayout, as setting the RTL class impacts the scroll position,
         // which doLayout indirectly depends on
         this.addRtlSupport();
-        this.doLayout();
         this.finished = false;
-        this.periodicallyDoLayout();
-        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
-        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this));
-        this.onRowGroupChanged();
+        this.addDestroyFunc(function () { return _this.finished = true; });
         this.logger.log('ready');
     };
+    GridCore.prototype.addLayoutClass = function () {
+        // parts of the CSS need to know if we are in 'for print' mode or not,
+        // so we add a class to allow applying CSS based on this.
+        var autoHeight = this.gridOptionsWrapper.isGridAutoHeight();
+        this.addOrRemoveCssClass('ag-layout-auto-height', autoHeight);
+        this.addOrRemoveCssClass('ag-layout-normal', !autoHeight);
+        // kept ag-scrolls to limit breaking changes, ag-scrolls was renamed to ag-layout-normal
+        this.addOrRemoveCssClass('ag-scrolls', !autoHeight);
+    };
+    GridCore.prototype.getPreferredWidth = function () {
+        var widthForCols = this.columnController.getBodyContainerWidth()
+            + this.columnController.getPinnedLeftContainerWidth()
+            + this.columnController.getPinnedRightContainerWidth();
+        var widthForToolpanel = this.toolPanelComp ? this.toolPanelComp.getPreferredWidth() : 0;
+        return widthForCols + widthForToolpanel;
+    };
     GridCore.prototype.addRtlSupport = function () {
-        if (this.gridOptionsWrapper.isEnableRtl()) {
-            utils_1.Utils.addCssClass(this.eRootPanel.getGui(), 'ag-rtl');
-        }
-        else {
-            utils_1.Utils.addCssClass(this.eRootPanel.getGui(), 'ag-ltr');
-        }
-    };
-    GridCore.prototype.createNorthPanel = function () {
-        var _this = this;
-        if (!this.gridOptionsWrapper.isEnterprise()) {
-            return null;
-        }
-        var topPanelGui = document.createElement('div');
-        var dropPanelVisibleListener = this.onDropPanelVisible.bind(this);
-        this.rowGroupComp = this.rowGroupCompFactory.create();
-        this.pivotComp = this.pivotCompFactory.create();
-        topPanelGui.appendChild(this.rowGroupComp.getGui());
-        topPanelGui.appendChild(this.pivotComp.getGui());
-        this.rowGroupComp.addEventListener(component_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
-        this.pivotComp.addEventListener(component_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
-        this.destroyFunctions.push(function () {
-            _this.rowGroupComp.removeEventListener(component_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
-            _this.pivotComp.removeEventListener(component_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
-        });
-        this.onDropPanelVisible();
-        return topPanelGui;
-    };
-    GridCore.prototype.onDropPanelVisible = function () {
-        var bothVisible = this.rowGroupComp.isVisible() && this.pivotComp.isVisible();
-        this.rowGroupComp.addOrRemoveCssClass('ag-width-half', bothVisible);
-        this.pivotComp.addOrRemoveCssClass('ag-width-half', bothVisible);
+        var cssClass = this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr';
+        utils_1.Utils.addCssClass(this.getGui(), cssClass);
     };
     GridCore.prototype.getRootGui = function () {
-        return this.eRootPanel.getGui();
-    };
-    GridCore.prototype.createSouthPanel = function () {
-        if (!this.statusBar && this.gridOptionsWrapper.isEnableStatusBar()) {
-            console.warn('ag-Grid: status bar is only available in ag-Grid-Enterprise');
-        }
-        var statusBarEnabled = this.statusBar && this.gridOptionsWrapper.isEnableStatusBar();
-        var isPaging = this.gridOptionsWrapper.isPagination();
-        var paginationPanelEnabled = isPaging
-            && !this.gridOptionsWrapper.isForPrint()
-            && !this.gridOptionsWrapper.isSuppressPaginationPanel();
-        if (!statusBarEnabled && !paginationPanelEnabled) {
-            return null;
-        }
-        var eSouthPanel = document.createElement('div');
-        if (statusBarEnabled) {
-            eSouthPanel.appendChild(this.statusBar.getGui());
-        }
-        if (paginationPanelEnabled) {
-            var paginationComp = new paginationComp_1.PaginationComp();
-            this.context.wireBean(paginationComp);
-            eSouthPanel.appendChild(paginationComp.getGui());
-            this.destroyFunctions.push(paginationComp.destroy.bind(paginationComp));
-        }
-        return eSouthPanel;
-    };
-    GridCore.prototype.onRowGroupChanged = function () {
-        if (!this.rowGroupComp) {
-            return;
-        }
-        var rowGroupPanelShow = this.gridOptionsWrapper.getRowGroupPanelShow();
-        if (rowGroupPanelShow === constants_1.Constants.ALWAYS) {
-            this.rowGroupComp.setVisible(true);
-        }
-        else if (rowGroupPanelShow === constants_1.Constants.ONLY_WHEN_GROUPING) {
-            var grouping = !this.columnController.isRowGroupEmpty();
-            this.rowGroupComp.setVisible(grouping);
-        }
-        else {
-            this.rowGroupComp.setVisible(false);
-        }
-        this.eRootPanel.doLayout();
-    };
-    GridCore.prototype.addWindowResizeListener = function () {
-        var eventListener = this.doLayout.bind(this);
-        window.addEventListener('resize', eventListener);
-        this.destroyFunctions.push(function () { return window.removeEventListener('resize', eventListener); });
-    };
-    GridCore.prototype.periodicallyDoLayout = function () {
-        var _this = this;
-        if (!this.finished) {
-            var intervalMillis = this.gridOptionsWrapper.getLayoutInterval();
-            // if interval is negative, this stops the layout from happening
-            if (intervalMillis > 0) {
-                this.frameworkFactory.setTimeout(function () {
-                    _this.doLayout();
-                    _this.gridPanel.periodicallyCheck();
-                    _this.periodicallyDoLayout();
-                }, intervalMillis);
-            }
-            else {
-                // if user provided negative number, we still do the check every 5 seconds,
-                // in case the user turns the number positive again
-                this.frameworkFactory.setTimeout(function () {
-                    _this.periodicallyDoLayout();
-                }, 5000);
-            }
-        }
+        return this.getGui();
     };
     GridCore.prototype.showToolPanel = function (show) {
         if (!this.toolPanelComp) {
@@ -213,18 +106,15 @@ var GridCore = (function () {
             }
             return;
         }
-        this.toolPanelComp.init();
         this.toolPanelComp.showToolPanel(show);
-        this.eRootPanel.doLayout();
     };
     GridCore.prototype.isToolPanelShowing = function () {
         return this.toolPanelComp.isToolPanelShowing();
     };
+    // need to override, as parent class isn't marked with PreDestroy
     GridCore.prototype.destroy = function () {
-        this.finished = true;
-        this.eGridDiv.removeChild(this.eRootPanel.getGui());
+        _super.prototype.destroy.call(this);
         this.logger.log('Grid DOM removed');
-        this.destroyFunctions.forEach(function (func) { return func(); });
     };
     // Valid values for position are bottom, middle and top
     GridCore.prototype.ensureNodeVisible = function (comparator, position) {
@@ -257,31 +147,12 @@ var GridCore = (function () {
             this.gridPanel.ensureIndexVisible(indexToSelect, position);
         }
     };
-    GridCore.prototype.doLayout = function () {
-        // need to do layout first, as drawVirtualRows and setPinnedColHeight
-        // need to know the result of the resizing of the panels.
-        var sizeChanged = this.eRootPanel.doLayout();
-        // not sure why, this is a hack, but if size changed, it may need to be called
-        // again - as the size change can change whether scrolls are visible or not (i think).
-        // to see why, take this second 'doLayout' call out, and see example in docs for
-        // width & height, the grid will flicker as it doesn't get laid out correctly with
-        // one call to doLayout()
-        if (sizeChanged) {
-            this.eRootPanel.doLayout();
-        }
-        // both of the two below should be done in gridPanel, the gridPanel should register 'resize' to the panel
-        if (sizeChanged) {
-            this.rowRenderer.redrawAfterScroll();
-            var event_1 = {
-                type: events_1.Events.EVENT_GRID_SIZE_CHANGED,
-                clientWidth: this.eRootPanel.getGui().clientWidth,
-                clientHeight: this.eRootPanel.getGui().clientHeight,
-                api: this.gridApi,
-                columnApi: this.columnApi
-            };
-            this.eventService.dispatchEvent(event_1);
-        }
-    };
+    GridCore.TEMPLATE_NORMAL = "<div class=\"ag-root-wrapper\">\n            <div class=\"ag-root-wrapper-body\">\n                <ag-grid-comp ref=\"gridPanel\"></ag-grid-comp>\n            </div>\n            <ag-pagination></ag-pagination>\n        </div>";
+    GridCore.TEMPLATE_ENTERPRISE = "<div class=\"ag-root-wrapper\">\n            <ag-header-column-drop></ag-header-column-drop>\n            <div class=\"ag-root-wrapper-body\">\n                <ag-grid-comp ref=\"gridPanel\"></ag-grid-comp>\n                <ag-tool-panel ref=\"toolPanel\"></ag-tool-panel>\n            </div>\n            <ag-status-bar ref=\"statusBar\"></ag-status-bar>\n            <ag-pagination></ag-pagination>\n        </div>";
+    __decorate([
+        context_1.Autowired('enterprise'),
+        __metadata("design:type", Boolean)
+    ], GridCore.prototype, "enterprise", void 0);
     __decorate([
         context_1.Autowired('gridOptions'),
         __metadata("design:type", Object)
@@ -315,10 +186,6 @@ var GridCore = (function () {
         __metadata("design:type", eventService_1.EventService)
     ], GridCore.prototype, "eventService", void 0);
     __decorate([
-        context_1.Autowired('gridPanel'),
-        __metadata("design:type", gridPanel_1.GridPanel)
-    ], GridCore.prototype, "gridPanel", void 0);
-    __decorate([
         context_1.Autowired('eGridDiv'),
         __metadata("design:type", HTMLElement)
     ], GridCore.prototype, "eGridDiv", void 0);
@@ -343,6 +210,10 @@ var GridCore = (function () {
         __metadata("design:type", context_1.Context)
     ], GridCore.prototype, "context", void 0);
     __decorate([
+        context_1.Autowired('loggerFactory'),
+        __metadata("design:type", logger_1.LoggerFactory)
+    ], GridCore.prototype, "loggerFactory", void 0);
+    __decorate([
         context_1.Autowired('columnApi'),
         __metadata("design:type", columnApi_1.ColumnApi)
     ], GridCore.prototype, "columnApi", void 0);
@@ -359,13 +230,17 @@ var GridCore = (function () {
         __metadata("design:type", Object)
     ], GridCore.prototype, "pivotCompFactory", void 0);
     __decorate([
-        context_1.Optional('toolPanelComp'),
+        componentAnnotations_1.RefSelector('statusBar'),
+        __metadata("design:type", Object)
+    ], GridCore.prototype, "statusBar", void 0);
+    __decorate([
+        componentAnnotations_1.RefSelector('gridPanel'),
+        __metadata("design:type", gridPanel_1.GridPanel)
+    ], GridCore.prototype, "gridPanel", void 0);
+    __decorate([
+        componentAnnotations_1.RefSelector('toolPanel'),
         __metadata("design:type", Object)
     ], GridCore.prototype, "toolPanelComp", void 0);
-    __decorate([
-        context_1.Optional('statusBar'),
-        __metadata("design:type", component_1.Component)
-    ], GridCore.prototype, "statusBar", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),
@@ -378,11 +253,11 @@ var GridCore = (function () {
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], GridCore.prototype, "destroy", null);
-    GridCore = __decorate([
+    GridCore = GridCore_1 = __decorate([
         context_1.Bean('gridCore'),
-        __param(0, context_1.Qualifier('loggerFactory')),
-        __metadata("design:paramtypes", [logger_1.LoggerFactory])
+        __metadata("design:paramtypes", [])
     ], GridCore);
     return GridCore;
-}());
+    var GridCore_1;
+}(component_1.Component));
 exports.GridCore = GridCore;

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -16,6 +16,8 @@ export declare class Utils {
     private static isFirefox;
     private static isIPad;
     private static PRINTABLE_CHARACTERS;
+    private static NUMPAD_DEL_NUMLOCK_ON_KEY;
+    private static NUMPAD_DEL_NUMLOCK_ON_CHARCODE;
     private static doOnceFlags;
     static doOnce(func: () => void, key: string): void;
     static areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, pixelCount: number): boolean;
@@ -269,6 +271,7 @@ export declare class Utils {
     static fuzzySuggestions(inputValue: string, validValues: string[], allSuggestions: string[]): string[];
     static get_bigrams(from: string): any[];
     static string_similarity: (str1: string, str2: string) => number;
+    private static isNumpadDelWithNumlockOnForEdgeOrIe(event);
 }
 export declare class NumberSequence {
     private nextValue;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -119,6 +119,7 @@ var ColDefUtil = (function () {
         'pivotComparator',
         'suppressKeyboardEvent',
         'colSpan',
+        'rowSpan',
         'getQuickFilterText',
         'newValueHandler',
         'onCellValueChanged',

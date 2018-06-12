@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -50,9 +50,9 @@ var InfiniteCache = (function (_super) {
         // so we need this to kick things off, otherwise grid would never call getRow()
         this.getRow(0);
     };
-    InfiniteCache.prototype.moveItemsDown = function (page, moveFromIndex, moveCount) {
-        var startRow = page.getStartRow();
-        var endRow = page.getEndRow();
+    InfiniteCache.prototype.moveItemsDown = function (block, moveFromIndex, moveCount) {
+        var startRow = block.getStartRow();
+        var endRow = block.getEndRow();
         var indexOfLastRowToMove = moveFromIndex + moveCount;
         // all rows need to be moved down below the insertion index
         for (var currentRowIndex = endRow - 1; currentRowIndex >= startRow; currentRowIndex--) {
@@ -63,11 +63,11 @@ var InfiniteCache = (function (_super) {
             var indexOfNodeWeWant = currentRowIndex - moveCount;
             var nodeForThisIndex = this.getRow(indexOfNodeWeWant, true);
             if (nodeForThisIndex) {
-                page.setRowNode(currentRowIndex, nodeForThisIndex);
+                block.setRowNode(currentRowIndex, nodeForThisIndex);
             }
             else {
-                page.setBlankRowNode(currentRowIndex);
-                page.setDirty();
+                block.setBlankRowNode(currentRowIndex);
+                block.setDirty();
             }
         }
     };
@@ -135,8 +135,8 @@ var InfiniteCache = (function (_super) {
         this.postCreateBlock(newBlock);
         return newBlock;
     };
-    // we have this on infinite row model only, not enterprise row model,
-    // because for enterprise, it would leave the children in inconsistent
+    // we have this on infinite row model only, not server side row model,
+    // because for server side, it would leave the children in inconsistent
     // state - eg if a node had children, but after the refresh it had data
     // for a different row, then the children would be with the wrong row node.
     InfiniteCache.prototype.refreshCache = function () {

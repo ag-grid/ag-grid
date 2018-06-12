@@ -1,6 +1,7 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { GridPanel } from "../gridPanel/gridPanel";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
 import { CellComp } from "./cellComp";
@@ -15,7 +16,6 @@ export declare class RowRenderer extends BeanStub {
     private columnController;
     private gridOptionsWrapper;
     private gridCore;
-    private gridPanel;
     private $scope;
     private expressionService;
     private templateService;
@@ -32,20 +32,19 @@ export declare class RowRenderer extends BeanStub {
     private heightScaler;
     private animationFrameService;
     private rangeController;
+    private gridPanel;
     private firstRenderedRow;
     private lastRenderedRow;
     private rowCompsByIndex;
     private floatingTopRowComps;
     private floatingBottomRowComps;
-    private forPrint;
-    private autoHeight;
     private rowContainers;
     private pinningLeft;
     private pinningRight;
     private refreshInProgress;
     private logger;
     agWire(loggerFactory: LoggerFactory): void;
-    init(): void;
+    registerGridComp(gridPanel: GridPanel): void;
     private onPageLoaded(refreshEvent?);
     getAllCellsForColumn(column: Column): HTMLElement[];
     refreshFloatingRowComps(): void;

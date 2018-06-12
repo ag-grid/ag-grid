@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21,7 +21,6 @@ var columnController_1 = require("../columnController/columnController");
 var column_1 = require("../entities/column");
 var utils_1 = require("../utils");
 var dragAndDropService_1 = require("../dragAndDrop/dragAndDropService");
-var gridPanel_1 = require("../gridPanel/gridPanel");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var MoveColumnController = (function () {
     function MoveColumnController(pinned, eContainer) {
@@ -31,6 +30,9 @@ var MoveColumnController = (function () {
         this.eContainer = eContainer;
         this.centerContainer = !utils_1.Utils.exists(pinned);
     }
+    MoveColumnController.prototype.registerGridComp = function (gridPanel) {
+        this.gridPanel = gridPanel;
+    };
     MoveColumnController.prototype.init = function () {
         this.logger = this.loggerFactory.create('MoveColumnController');
     };
@@ -343,10 +345,6 @@ var MoveColumnController = (function () {
         context_1.Autowired('columnController'),
         __metadata("design:type", columnController_1.ColumnController)
     ], MoveColumnController.prototype, "columnController", void 0);
-    __decorate([
-        context_1.Autowired('gridPanel'),
-        __metadata("design:type", gridPanel_1.GridPanel)
-    ], MoveColumnController.prototype, "gridPanel", void 0);
     __decorate([
         context_1.Autowired('dragAndDropService'),
         __metadata("design:type", dragAndDropService_1.DragAndDropService)

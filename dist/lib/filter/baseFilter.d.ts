@@ -1,14 +1,23 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../widgets/component";
-import { IFilterComp, IDoesFilterPassParams, IFilterParams } from "../interfaces/iFilter";
+import { IDoesFilterPassParams, IFilterComp, IFilterParams } from "../interfaces/iFilter";
 import { Context } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { FloatingFilterChange } from "./floatingFilter";
 import { INumberFilterParams, ITextFilterParams } from "./textFilter";
 export interface Comparator<T> {
     (left: T, right: T): number;
+}
+export declare enum FilterConditionType {
+    MAIN = 0,
+    CONDITION = 1,
+}
+export interface CombinedFilter<T> {
+    operator: string;
+    condition1: T;
+    condition2: T;
 }
 /**
  * T(ype) The type of this filter. ie in DateFilter T=Date
@@ -37,10 +46,14 @@ export declare abstract class BaseFilter<T, P extends IFilterParams, M> extends 
     applyActive: boolean;
     defaultFilter: string;
     filter: string;
+    filterCondition: string;
     private eButtonsPanel;
+    private eFilterBodyWrapper;
     private eApplyButton;
     private eClearButton;
     context: Context;
+    private eConditionWrapper;
+    conditionValue: string;
     gridOptionsWrapper: GridOptionsWrapper;
     init(params: P): void;
     onClearButton(): void;
@@ -48,47 +61,63 @@ export declare abstract class BaseFilter<T, P extends IFilterParams, M> extends 
     abstract isFilterActive(): boolean;
     abstract modelFromFloatingFilter(from: string): M;
     abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
-    abstract bodyTemplate(): string;
+    abstract bodyTemplate(type: FilterConditionType): string;
     abstract resetState(): void;
-    abstract serialize(): M;
-    abstract parse(toParse: M): void;
-    abstract refreshFilterBodyUi(): void;
-    abstract initialiseFilterBodyUi(): void;
+    abstract serialize(type: FilterConditionType): M;
+    abstract parse(toParse: M, type: FilterConditionType): void;
+    abstract refreshFilterBodyUi(type: FilterConditionType): void;
+    abstract initialiseFilterBodyUi(type: FilterConditionType): void;
+    abstract isFilterConditionActive(type: FilterConditionType): boolean;
     floatingFilter(from: string): void;
     onNewRowsLoaded(): void;
-    getModel(): M;
-    getNullableModel(): M;
-    setModel(model: M): void;
+    getModel(): M | CombinedFilter<M>;
+    getNullableModel(): M | CombinedFilter<M>;
+    setModel(model: M | CombinedFilter<M>): void;
     private doOnFilterChanged(applyNow?);
     onFilterChanged(applyNow?: boolean): void;
+    private redrawCondition();
+    private refreshOperatorUi();
     onFloatingFilterChanged(change: FloatingFilterChange): boolean;
-    generateFilterHeader(): string;
+    generateFilterHeader(type: FilterConditionType): string;
     private generateTemplate();
+    acceptsBooleanLogic(): boolean;
+    wrapCondition(mainCondition: string): string;
+    private createConditionTemplate(type);
+    private createConditionBody(type);
     translate(toTranslate: string): string;
     getDebounceMs(filterParams: ITextFilterParams | INumberFilterParams): number;
 }
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values
  */
-export declare abstract class ComparableBaseFilter<T, P extends IFilterParams, M> extends BaseFilter<T, P, M> {
+export declare abstract class ComparableBaseFilter<T, P extends IComparableFilterParams, M> extends BaseFilter<T, P, M> {
     private eTypeSelector;
+    private eTypeConditionSelector;
+    private suppressAndOrCondition;
     abstract getApplicableFilterTypes(): string[];
-    abstract filterValues(): T | T[];
+    abstract filterValues(type: FilterConditionType): T | T[];
+    abstract individualFilterPasses(params: IDoesFilterPassParams, type: FilterConditionType): boolean;
+    doesFilterPass(params: IDoesFilterPassParams): boolean;
     init(params: P): void;
     customInit(): void;
-    generateFilterHeader(): string;
-    initialiseFilterBodyUi(): void;
+    acceptsBooleanLogic(): boolean;
+    generateFilterHeader(type: FilterConditionType): string;
+    initialiseFilterBodyUi(type: FilterConditionType): void;
     abstract getDefaultType(): string;
-    private onFilterTypeChanged();
+    private onFilterTypeChanged(type);
     isFilterActive(): boolean;
-    setFilterType(filterType: string): void;
+    setFilterType(filterType: string, type: FilterConditionType): void;
+    isFilterConditionActive(type: FilterConditionType): boolean;
 }
 export interface NullComparator {
     equals?: boolean;
     lessThan?: boolean;
     greaterThan?: boolean;
 }
-export interface IScalarFilterParams extends IFilterParams {
+export interface IComparableFilterParams extends IFilterParams {
+    suppressAndOrCondition: boolean;
+}
+export interface IScalarFilterParams extends IComparableFilterParams {
     inRangeInclusive?: boolean;
     nullComparator?: NullComparator;
 }
@@ -102,5 +131,6 @@ export declare abstract class ScalarBaseFilter<T, P extends IScalarFilterParams,
     private nullComparator(type);
     getDefaultType(): string;
     private translateNull(type);
-    doesFilterPass(params: IDoesFilterPassParams): boolean;
+    individualFilterPasses(params: IDoesFilterPassParams, type: FilterConditionType): boolean;
+    private doIndividualFilterPasses(params, type, filter);
 }

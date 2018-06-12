@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33,7 +33,6 @@ var events_1 = require("../events");
 var originalColumnGroup_1 = require("../entities/originalColumnGroup");
 var groupInstanceIdCreator_1 = require("./groupInstanceIdCreator");
 var context_1 = require("../context/context");
-var gridPanel_1 = require("../gridPanel/gridPanel");
 var columnAnimationService_1 = require("../rendering/columnAnimationService");
 var autoGroupColService_1 = require("./autoGroupColService");
 var valueCache_1 = require("../valueService/valueCache");
@@ -70,6 +69,7 @@ var ColumnController = (function () {
     }
     ColumnController.prototype.init = function () {
         var pivotMode = this.gridOptionsWrapper.isPivotMode();
+        this.suppressColumnVirtualisation = this.gridOptionsWrapper.isSuppressColumnVirtualisation();
         if (this.isPivotSettingAllowed(pivotMode)) {
             this.pivotMode = pivotMode;
         }
@@ -399,7 +399,9 @@ var ColumnController = (function () {
             return this.allDisplayedCenterVirtualColumns;
         }
         var emptySpaceBeforeColumn = function (col) { return col.getLeft() > _this.viewportLeft; };
-        return this.getDisplayedColumnsForRow(rowNode, this.displayedCenterColumns, this.isColumnInViewport.bind(this), emptySpaceBeforeColumn);
+        // if doing column virtualisation, then we filter based on the viewport.
+        var filterCallback = this.suppressColumnVirtualisation ? null : this.isColumnInViewport.bind(this);
+        return this.getDisplayedColumnsForRow(rowNode, this.displayedCenterColumns, filterCallback, emptySpaceBeforeColumn);
     };
     ColumnController.prototype.isColumnInViewport = function (col) {
         var columnLeft = col.getLeft();
@@ -410,11 +412,11 @@ var ColumnController = (function () {
     };
     // used by:
     // + angularGrid -> setting pinned body width
-    // todo: this needs to be cached
+    // note: this should be cached
     ColumnController.prototype.getPinnedLeftContainerWidth = function () {
         return this.getWidthOfColsInList(this.displayedLeftColumns);
     };
-    // todo: this needs to be cached
+    // note: this should be cached
     ColumnController.prototype.getPinnedRightContainerWidth = function () {
         return this.getWidthOfColsInList(this.displayedRightColumns);
     };
@@ -755,8 +757,8 @@ var ColumnController = (function () {
         if (atLeastOneColChanged || finished) {
             var event_3 = {
                 type: events_1.Events.EVENT_COLUMN_RESIZED,
-                columns: changedCols,
-                column: changedCols.length === 1 ? changedCols[0] : null,
+                columns: allCols,
+                column: allCols.length === 1 ? allCols[0] : null,
                 finished: finished,
                 api: this.gridApi,
                 columnApi: this.columnApi,
@@ -934,7 +936,7 @@ var ColumnController = (function () {
     ColumnController.prototype.getPivotColumns = function () {
         return this.pivotColumns ? this.pivotColumns : [];
     };
-    // + inMemoryRowModel
+    // + clientSideRowModel
     ColumnController.prototype.isPivotActive = function () {
         return this.pivotColumns && this.pivotColumns.length > 0 && this.pivotMode;
     };
@@ -961,7 +963,7 @@ var ColumnController = (function () {
         }
     };
     // used by:
-    // + inMemoryRowController -> sorting, building quick filter text
+    // + clientSideRowController -> sorting, building quick filter text
     // + headerRenderer -> sorting (clearing icon)
     ColumnController.prototype.getAllPrimaryColumns = function () {
         return this.primaryColumns;
@@ -1151,7 +1153,7 @@ var ColumnController = (function () {
         var rowGroupIndex = column.isRowGroupActive() ? this.rowGroupColumns.indexOf(column) : null;
         var pivotIndex = column.isPivotActive() ? this.pivotColumns.indexOf(column) : null;
         var aggFunc = column.isValueActive() ? column.getAggFunc() : null;
-        var resultItem = {
+        return {
             colId: column.getColId(),
             hide: !column.isVisible(),
             aggFunc: aggFunc,
@@ -1160,7 +1162,6 @@ var ColumnController = (function () {
             pinned: column.getPinned(),
             rowGroupIndex: rowGroupIndex
         };
-        return resultItem;
     };
     ColumnController.prototype.getColumnState = function () {
         if (utils_1.Utils.missing(this.primaryColumns)) {
@@ -1362,7 +1363,7 @@ var ColumnController = (function () {
     };
     ColumnController.prototype.getDisplayNameForColumn = function (column, location, includeAggFunc) {
         if (includeAggFunc === void 0) { includeAggFunc = false; }
-        var headerName = this.getHeaderName(column.getColDef(), column, null, location);
+        var headerName = this.getHeaderName(column.getColDef(), column, null, null, location);
         if (includeAggFunc) {
             return this.wrapHeaderNameWithAggFunc(column, headerName);
         }
@@ -1370,23 +1371,27 @@ var ColumnController = (function () {
             return headerName;
         }
     };
-    ColumnController.prototype.getDisplayNameForColumnGroup = function (columnGroup, location) {
-        var colGroupDef = columnGroup.getOriginalColumnGroup().getColGroupDef();
+    ColumnController.prototype.getDisplayNameForOriginalColumnGroup = function (columnGroup, originalColumnGroup, location) {
+        var colGroupDef = originalColumnGroup.getColGroupDef();
         if (colGroupDef) {
-            return this.getHeaderName(colGroupDef, null, columnGroup, location);
+            return this.getHeaderName(colGroupDef, null, columnGroup, originalColumnGroup, location);
         }
         else {
             return null;
         }
     };
+    ColumnController.prototype.getDisplayNameForColumnGroup = function (columnGroup, location) {
+        return this.getDisplayNameForOriginalColumnGroup(columnGroup, columnGroup.getOriginalColumnGroup(), location);
+    };
     // location is where the column is going to appear, ie who is calling us
-    ColumnController.prototype.getHeaderName = function (colDef, column, columnGroup, location) {
+    ColumnController.prototype.getHeaderName = function (colDef, column, columnGroup, originalColumnGroup, location) {
         var headerValueGetter = colDef.headerValueGetter;
         if (headerValueGetter) {
             var params = {
                 colDef: colDef,
                 column: column,
                 columnGroup: columnGroup,
+                originalColumnGroup: originalColumnGroup,
                 location: location,
                 api: this.gridOptionsWrapper.getApi(),
                 context: this.gridOptionsWrapper.getContext()
@@ -1991,8 +1996,7 @@ var ColumnController = (function () {
         });
     };
     ColumnController.prototype.updateDisplayedCenterVirtualColumns = function () {
-        var skipVirtualisation = this.gridOptionsWrapper.isSuppressColumnVirtualisation() || this.gridOptionsWrapper.isForPrint();
-        if (skipVirtualisation) {
+        if (this.suppressColumnVirtualisation) {
             // no virtualisation, so don't filter
             this.allDisplayedCenterVirtualColumns = this.displayedCenterColumns;
         }
@@ -2244,10 +2248,6 @@ var ColumnController = (function () {
         context_1.Autowired('columnUtils'),
         __metadata("design:type", columnUtils_1.ColumnUtils)
     ], ColumnController.prototype, "columnUtils", void 0);
-    __decorate([
-        context_1.Autowired('gridPanel'),
-        __metadata("design:type", gridPanel_1.GridPanel)
-    ], ColumnController.prototype, "gridPanel", void 0);
     __decorate([
         context_1.Autowired('context'),
         __metadata("design:type", context_1.Context)

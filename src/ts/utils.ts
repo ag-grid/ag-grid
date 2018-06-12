@@ -48,6 +48,9 @@ export class Utils {
 
     private static PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\\|<>?:@~{}';
 
+    private static NUMPAD_DEL_NUMLOCK_ON_KEY = 'Del';
+    private static NUMPAD_DEL_NUMLOCK_ON_CHARCODE = 46;
+
     private static doOnceFlags: {[key: string]: boolean} = {};
 
     // if the key was passed before, then doesn't execute the func
@@ -430,7 +433,13 @@ export class Utils {
         if (_.exists(event.key)) {
             // modern browser will implement key, so we return if key is length 1, eg if it is 'a' for the
             // a key, or '2' for the '2' key. non-printable characters have names, eg 'Enter' or 'Backspace'.
-            return event.key.length === 1;
+            const printableCharacter = event.key.length === 1;
+
+            // IE11 & Edge treat the numpad del key differently - with numlock on we get "Del" for key,
+            // so this addition checks if its IE11/Edge and handles that specific case the same was as all other browers
+            const numpadDelWithNumlockOnForEdgeOrIe = Utils.isNumpadDelWithNumlockOnForEdgeOrIe(event);
+
+            return printableCharacter || numpadDelWithNumlockOnForEdgeOrIe;
         } else {
             // otherwise, for older browsers, we test against a list of characters, which doesn't include
             // accents for non-English, but don't care much, as most users are on modern browsers
@@ -1060,7 +1069,7 @@ export class Utils {
         // force scrollbars
         outer.style.overflow = "scroll";
 
-        // add innerdiv
+        // add inner div
         let inner = document.createElement("div");
         inner.style.width = "100%";
         outer.appendChild(inner);
@@ -1132,7 +1141,7 @@ export class Utils {
     static isUserAgentIPad(): boolean {
         if (this.isIPad === undefined) {
             // taken from https://davidwalsh.name/detect-ipad
-            this.isIPad = navigator.userAgent.match(/iPad/i) != null;
+            this.isIPad = navigator.userAgent.match(/iPad|iPhone/i) != null;
         }
         return this.isIPad;
     }
@@ -1253,7 +1262,9 @@ export class Utils {
 
         function recursiveSearchNodes(nodes: RowNode[]): void {
             nodes.forEach((node: RowNode) => {
-                if (node.group) {
+
+                // also checking for children for tree data
+                if (node.group || node.hasChildren()) {
                     keyParts.push(node.key);
                     let key = keyParts.join('|');
                     callback(node, key);
@@ -1617,8 +1628,8 @@ export class Utils {
         eBox.appendChild(eMessage);
     }
 
-    // gets called by: a) InMemoryRowNodeManager and b) GroupStage to do sorting.
-    // when in InMemoryRowNodeManager we always have indexes (as this sorts the items the
+    // gets called by: a) ClientSideNodeManager and b) GroupStage to do sorting.
+    // when in ClientSideNodeManager we always have indexes (as this sorts the items the
     // user provided) but when in GroupStage, the nodes can contain filler nodes that
     // don't have order id's
     static sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: { [id: string]: number }): void {
@@ -1731,6 +1742,15 @@ export class Utils {
         }
         return 0.0;
     };
+
+    private static isNumpadDelWithNumlockOnForEdgeOrIe(event: KeyboardEvent) {
+        if(Utils.isBrowserEdge() || Utils.isBrowserIE()) {
+            return event.key === Utils.NUMPAD_DEL_NUMLOCK_ON_KEY &&
+                event.charCode === Utils.NUMPAD_DEL_NUMLOCK_ON_CHARCODE;
+        }
+
+        return false;
+    }
 }
 
 export class NumberSequence {

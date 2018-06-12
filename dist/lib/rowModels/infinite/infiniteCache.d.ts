@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v17.1.1
+// Type definitions for ag-grid v18.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../../entities/rowNode";
@@ -16,7 +16,7 @@ export declare class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteC
     constructor(params: InfiniteCacheParams);
     private setBeans(loggerFactory);
     protected init(): void;
-    private moveItemsDown(page, moveFromIndex, moveCount);
+    private moveItemsDown(block, moveFromIndex, moveCount);
     private insertItems(block, indexToInsert, items);
     insertItemsAtIndex(indexToInsert: number, items: any[]): void;
     getRow(rowIndex: number, dontCreatePage?: boolean): RowNode;

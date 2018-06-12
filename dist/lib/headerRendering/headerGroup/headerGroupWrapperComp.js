@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -188,9 +188,7 @@ var HeaderGroupWrapperComp = (function (_super) {
                 childSuppressesMoving = true;
             }
         });
-        var result = childSuppressesMoving
-            || this.gridOptionsWrapper.isSuppressMovableColumns()
-            || this.gridOptionsWrapper.isForPrint();
+        var result = childSuppressesMoving || this.gridOptionsWrapper.isSuppressMovableColumns();
         return result;
     };
     HeaderGroupWrapperComp.prototype.setupWidth = function () {

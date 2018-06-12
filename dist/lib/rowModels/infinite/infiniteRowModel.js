@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v17.1.1
+ * @version v18.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -227,6 +227,15 @@ var InfiniteRowModel = (function (_super) {
     };
     InfiniteRowModel.prototype.getRow = function (rowIndex) {
         return this.infiniteCache ? this.infiniteCache.getRow(rowIndex) : null;
+    };
+    InfiniteRowModel.prototype.getRowNode = function (id) {
+        var result = null;
+        this.forEachNode(function (rowNode) {
+            if (rowNode.id === id) {
+                result = rowNode;
+            }
+        });
+        return result;
     };
     InfiniteRowModel.prototype.forEachNode = function (callback) {
         if (this.infiniteCache) {

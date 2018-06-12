@@ -47,6 +47,16 @@ export interface ColumnResizeSet {
     width: number;
 }
 
+export interface ColumnState {
+    colId: string,
+    hide: boolean,
+    aggFunc: string | IAggFunc,
+    width: number,
+    pivotIndex: number,
+    pinned: string,
+    rowGroupIndex: number
+}
+
 @Bean('columnController')
 export class ColumnController {
 
@@ -57,7 +67,6 @@ export class ColumnController {
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('context') private context: Context;
     @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
     @Autowired('autoGroupColService') private autoGroupColService: AutoGroupColService;
@@ -124,6 +133,8 @@ export class ColumnController {
     // primate columns that have colDef.autoHeight set
     private autoRowHeightColumns: Column[];
 
+    private suppressColumnVirtualisation: boolean;
+
     private rowGroupColumns: Column[] = [];
     private valueColumns: Column[] = [];
     private pivotColumns: Column[] = [];
@@ -156,6 +167,8 @@ export class ColumnController {
     @PostConstruct
     public init(): void {
         let pivotMode = this.gridOptionsWrapper.isPivotMode();
+        this.suppressColumnVirtualisation = this.gridOptionsWrapper.isSuppressColumnVirtualisation();
+
         if (this.isPivotSettingAllowed(pivotMode)) {
             this.pivotMode = pivotMode;
         }
@@ -517,8 +530,11 @@ export class ColumnController {
 
         let emptySpaceBeforeColumn = (col: Column) => col.getLeft() > this.viewportLeft;
 
+        // if doing column virtualisation, then we filter based on the viewport.
+        let filterCallback = this.suppressColumnVirtualisation ? null : this.isColumnInViewport.bind(this);
+
         return this.getDisplayedColumnsForRow(rowNode, this.displayedCenterColumns,
-            this.isColumnInViewport.bind(this), emptySpaceBeforeColumn);
+            filterCallback, emptySpaceBeforeColumn);
     }
 
     private isColumnInViewport(col: Column): boolean {
@@ -532,11 +548,11 @@ export class ColumnController {
 
     // used by:
     // + angularGrid -> setting pinned body width
-    // todo: this needs to be cached
+    // note: this should be cached
     public getPinnedLeftContainerWidth() {
         return this.getWidthOfColsInList(this.displayedLeftColumns);
     }
-    // todo: this needs to be cached
+    // note: this should be cached
     public getPinnedRightContainerWidth() {
         return this.getWidthOfColsInList(this.displayedRightColumns);
     }
@@ -942,8 +958,8 @@ export class ColumnController {
         if (atLeastOneColChanged || finished) {
             let event: ColumnResizedEvent = {
                 type: Events.EVENT_COLUMN_RESIZED,
-                columns: changedCols,
-                column: changedCols.length === 1 ? changedCols[0] : null,
+                columns: allCols,
+                column: allCols.length === 1 ? allCols[0] : null,
                 finished: finished,
                 api: this.gridApi,
                 columnApi: this.columnApi,
@@ -1144,7 +1160,7 @@ export class ColumnController {
         return this.pivotColumns ? this.pivotColumns : [];
     }
 
-    // + inMemoryRowModel
+    // + clientSideRowModel
     public isPivotActive(): boolean {
         return this.pivotColumns && this.pivotColumns.length > 0 && this.pivotMode;
     }
@@ -1175,7 +1191,7 @@ export class ColumnController {
     }
 
     // used by:
-    // + inMemoryRowController -> sorting, building quick filter text
+    // + clientSideRowController -> sorting, building quick filter text
     // + headerRenderer -> sorting (clearing icon)
     public getAllPrimaryColumns(): Column[] {
         return this.primaryColumns;
@@ -1375,11 +1391,11 @@ export class ColumnController {
         return result;
     }
 
-    private createStateItemFromColumn(column: Column): any {
+    private createStateItemFromColumn(column: Column): ColumnState {
         let rowGroupIndex = column.isRowGroupActive() ? this.rowGroupColumns.indexOf(column) : null;
         let pivotIndex = column.isPivotActive() ? this.pivotColumns.indexOf(column) : null;
         let aggFunc = column.isValueActive() ? column.getAggFunc() : null;
-        let resultItem = {
+        return {
             colId: column.getColId(),
             hide: !column.isVisible(),
             aggFunc: aggFunc,
@@ -1388,15 +1404,14 @@ export class ColumnController {
             pinned: column.getPinned(),
             rowGroupIndex: rowGroupIndex
         };
-        return resultItem;
     }
 
-    public getColumnState(): any[] {
+    public getColumnState(): ColumnState[] {
         if (_.missing(this.primaryColumns)) {
-            return <any>[];
+            return [];
         }
 
-        let columnStateList = this.primaryColumns.map(this.createStateItemFromColumn.bind(this));
+        let columnStateList: ColumnState[] = this.primaryColumns.map(this.createStateItemFromColumn.bind(this));
 
         if (!this.pivotMode) {
             this.orderColumnStateList(columnStateList);
@@ -1435,7 +1450,7 @@ export class ColumnController {
         this.setColumnState(state, source);
     }
 
-    public setColumnState(columnState: any[], source: ColumnEventType = "api"): boolean {
+    public setColumnState(columnState: ColumnState[], source: ColumnEventType = "api"): boolean {
         if (_.missingOrEmpty(this.primaryColumns)) {
             return false;
         }
@@ -1618,7 +1633,7 @@ export class ColumnController {
     }
 
     public getDisplayNameForColumn(column: Column, location: string, includeAggFunc = false): string {
-        let headerName = this.getHeaderName(column.getColDef(), column, null, location);
+        let headerName = this.getHeaderName(column.getColDef(), column, null, null, location);
         if (includeAggFunc) {
             return this.wrapHeaderNameWithAggFunc(column, headerName);
         } else {
@@ -1626,17 +1641,22 @@ export class ColumnController {
         }
     }
 
-    public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string {
-        let colGroupDef = columnGroup.getOriginalColumnGroup().getColGroupDef();
+    public getDisplayNameForOriginalColumnGroup(columnGroup: ColumnGroup, originalColumnGroup: OriginalColumnGroup, location: string): string {
+        let colGroupDef = originalColumnGroup.getColGroupDef();
         if (colGroupDef) {
-            return this.getHeaderName(colGroupDef, null, columnGroup, location);
+            return this.getHeaderName(colGroupDef, null, columnGroup, originalColumnGroup, location);
         } else {
             return null;
         }
     }
 
+    public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string {
+        return this.getDisplayNameForOriginalColumnGroup(columnGroup, columnGroup.getOriginalColumnGroup(), location);
+    }
+
     // location is where the column is going to appear, ie who is calling us
-    private getHeaderName(colDef: AbstractColDef, column: Column, columnGroup: ColumnGroup, location: string): string {
+    private getHeaderName(colDef: AbstractColDef, column: Column, columnGroup: ColumnGroup,
+                          originalColumnGroup: OriginalColumnGroup, location: string): string {
         let headerValueGetter = colDef.headerValueGetter;
 
         if (headerValueGetter) {
@@ -1644,6 +1664,7 @@ export class ColumnController {
                 colDef: colDef,
                 column: column,
                 columnGroup: columnGroup,
+                originalColumnGroup: originalColumnGroup,
                 location: location,
                 api: this.gridOptionsWrapper.getApi(),
                 context: this.gridOptionsWrapper.getContext()
@@ -2304,8 +2325,7 @@ export class ColumnController {
 
     private updateDisplayedCenterVirtualColumns(): {[key: string]: boolean} {
 
-        let skipVirtualisation = this.gridOptionsWrapper.isSuppressColumnVirtualisation() || this.gridOptionsWrapper.isForPrint();
-        if (skipVirtualisation) {
+        if (this.suppressColumnVirtualisation) {
             // no virtualisation, so don't filter
             this.allDisplayedCenterVirtualColumns = this.displayedCenterColumns;
         } else {
