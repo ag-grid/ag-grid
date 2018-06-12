@@ -1,5 +1,5 @@
-// ag-grid-enterprise v17.1.1
-import { PopupService, Component, ColumnController, Context, EventService, DragAndDropService, GridPanel, GridOptionsWrapper, DropTarget, Column, AgEvent } from "ag-grid/main";
+// ag-grid-enterprise v18.0.0
+import { PopupService, Component, ColumnController, Context, EventService, DragAndDropService, GridOptionsWrapper, DropTarget, Column, AgEvent } from "ag-grid/main";
 import { AggFuncService } from "../../aggregation/aggFuncService";
 export interface ColumnRemoveEvent extends AgEvent {
 }
@@ -8,7 +8,6 @@ export declare class ColumnComponent extends Component {
     private static TEMPLATE;
     dragAndDropService: DragAndDropService;
     columnController: ColumnController;
-    gridPanel: GridPanel;
     context: Context;
     popupService: PopupService;
     aggFuncService: AggFuncService;

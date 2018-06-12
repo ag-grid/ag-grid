@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.1.1
+// ag-grid-enterprise v18.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -37,7 +37,8 @@ var ToolPanelGroupComp = (function (_super) {
         this.setTemplate(ToolPanelGroupComp.TEMPLATE);
         this.instantiate(this.context);
         var eText = this.queryForHtmlElement('#eText');
-        this.displayName = this.columnGroup.getColGroupDef() ? this.columnGroup.getColGroupDef().headerName : null;
+        // this.displayName = this.columnGroup.getColGroupDef() ? this.columnGroup.getColGroupDef().headerName : null;
+        this.displayName = this.columnController.getDisplayNameForOriginalColumnGroup(null, this.columnGroup, 'toolPanel');
         if (main_1.Utils.missing(this.displayName)) {
             this.displayName = '>>';
         }
@@ -290,10 +291,6 @@ var ToolPanelGroupComp = (function (_super) {
         main_1.Autowired('columnController'),
         __metadata("design:type", main_1.ColumnController)
     ], ToolPanelGroupComp.prototype, "columnController", void 0);
-    __decorate([
-        main_1.Autowired('gridPanel'),
-        __metadata("design:type", main_1.GridPanel)
-    ], ToolPanelGroupComp.prototype, "gridPanel", void 0);
     __decorate([
         main_1.Autowired('context'),
         __metadata("design:type", main_1.Context)

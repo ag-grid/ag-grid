@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.1.1
+// ag-grid-enterprise v18.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||

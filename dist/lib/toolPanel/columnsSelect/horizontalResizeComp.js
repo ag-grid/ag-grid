@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.1.1
+// ag-grid-enterprise v18.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -44,16 +44,19 @@ var HorizontalResizeComp = (function (_super) {
             newWidth = 100;
         }
         this.props.componentToResize.getGui().style.width = newWidth + 'px';
-        this.gridCore.doLayout();
     };
     __decorate([
         ag_grid_1.Autowired('horizontalResizeService'),
         __metadata("design:type", ag_grid_1.HorizontalResizeService)
     ], HorizontalResizeComp.prototype, "horizontalResizeService", void 0);
     __decorate([
-        ag_grid_1.Autowired('gridCore'),
-        __metadata("design:type", ag_grid_1.GridCore)
-    ], HorizontalResizeComp.prototype, "gridCore", void 0);
+        ag_grid_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_1.GridOptionsWrapper)
+    ], HorizontalResizeComp.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        ag_grid_1.Autowired('eventService'),
+        __metadata("design:type", ag_grid_1.EventService)
+    ], HorizontalResizeComp.prototype, "eventService", void 0);
     __decorate([
         ag_grid_1.PostConstruct,
         __metadata("design:type", Function),

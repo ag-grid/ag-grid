@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.1.1
+// ag-grid-enterprise v18.0.0
 import { RowNode, Component, GridOptions, ICellRendererParams } from "ag-grid/main";
 export declare class DetailCellRenderer extends Component {
     private static TEMPLATE;
@@ -10,7 +10,6 @@ export declare class DetailCellRenderer extends Component {
     private rowId;
     init(params: IDetailCellRendererParams): void;
     private addThemeToDetailGrid();
-    private setupGrabMouseWheelEvent();
     private registerDetailWithMaster(rowNode);
     private selectAndSetTemplate(params);
     private createDetailsGrid(params);

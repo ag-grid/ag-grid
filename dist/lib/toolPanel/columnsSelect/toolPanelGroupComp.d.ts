@@ -1,11 +1,10 @@
-// ag-grid-enterprise v17.1.1
+// ag-grid-enterprise v18.0.0
 import { Component, OriginalColumnGroup } from "ag-grid/main";
 import { BaseColumnItem } from "./columnSelectComp";
 export declare class ToolPanelGroupComp extends Component implements BaseColumnItem {
     private static TEMPLATE;
     private gridOptionsWrapper;
     private columnController;
-    private gridPanel;
     private context;
     private dragAndDropService;
     private eventService;

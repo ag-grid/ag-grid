@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.1.1
+// ag-grid-enterprise v18.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -258,7 +258,7 @@ var EnterpriseMenu = (function (_super) {
         var allowRowGroup = this.column.isAllowRowGroup();
         var isPrimary = this.column.isPrimary();
         var pivotModeOn = this.columnController.isPivotMode();
-        var isInMemoryRowModel = this.rowModel.getType() === ag_grid_1.Constants.ROW_MODEL_TYPE_IN_MEMORY;
+        var isInMemoryRowModel = this.rowModel.getType() === ag_grid_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
         var usingTreeData = this.gridOptionsWrapper.isTreeData();
         var allowValueAgg = 
         // if primary, then only allow aggValue if grouping and it's a value columns

@@ -151,7 +151,7 @@ export class AggregationStage implements IRowNodeStage {
                     aggResults.push(result[colId]);
                 });
 
-                result[totalColDef.colId] = this.aggregateValues(aggResults, totalColDef.aggFunc);
+                result[totalColDef.colId] = this.aggregateValues(aggResults, totalColDef.pivotValueColumn.getAggFunc());
             });
 
         return result;

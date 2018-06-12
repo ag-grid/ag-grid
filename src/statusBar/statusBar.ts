@@ -1,15 +1,27 @@
-import {EventService, Component, Autowired, PostConstruct, Events, _,
-    GridRow, RowNode, Constants, PinnedRowModel, IRowModel, ValueService, GridCore,
-    CellNavigationService, Bean, Context, GridOptionsWrapper} from 'ag-grid/main';
+import {
+    _,
+    Autowired,
+    CellNavigationService,
+    Component,
+    Constants,
+    Context,
+    Events,
+    EventService,
+    GridOptionsWrapper,
+    GridPanel,
+    GridRow,
+    IRowModel,
+    PinnedRowModel,
+    PostConstruct,
+    RowNode,
+    ValueService
+} from 'ag-grid/main';
 import {StatusItem} from "./statusItem";
 import {RangeController} from "../rangeController";
 
-@Bean('statusBar')
 export class StatusBar extends Component {
 
-    private static TEMPLATE =
-        '<div class="ag-status-bar">' +
-        '</div>';
+    private static TEMPLATE = '<div class="ag-status-bar"></div>';
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('rangeController') private rangeController: RangeController;
@@ -19,7 +31,8 @@ export class StatusBar extends Component {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('gridCore') private gridCore: GridCore;
+
+    private gridPanel: GridPanel;
 
     private statusItemSum: StatusItem;
     private statusItemCount: StatusItem;
@@ -34,10 +47,16 @@ export class StatusBar extends Component {
         super(StatusBar.TEMPLATE);
     }
 
+    public registerGridPanel(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
+    }
+
     @PostConstruct
     private init(): void {
         // we want to hide until the first aggregation comes in
         this.setVisible(false);
+
+        if (!this.gridOptionsWrapper.isEnableStatusBar()) { return; }
 
         this.createStatusItems();
         this.eventService.addEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
@@ -169,7 +188,6 @@ export class StatusBar extends Component {
 
         if (this.isVisible()!==gotResult) {
             this.setVisible(gotResult);
-            this.gridCore.doLayout();
         }
     }
 

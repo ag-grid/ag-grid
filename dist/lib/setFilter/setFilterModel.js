@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.1.1
+// ag-grid-enterprise v18.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
@@ -23,8 +23,8 @@ var SetFilterModel = (function () {
         this.isLoadingFunc = isLoadingFunc;
         this.valueFormatterService = valueFormatterService;
         this.column = column;
-        if (rowModel.getType() === ag_grid_1.Constants.ROW_MODEL_TYPE_IN_MEMORY) {
-            this.inMemoryRowModel = rowModel;
+        if (rowModel.getType() === ag_grid_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            this.clientSideRowModel = rowModel;
         }
         this.filterParams = this.colDef.filterParams ? this.colDef.filterParams : {};
         if (main_1.Utils.exists(this.filterParams) && main_1.Utils.exists(this.filterParams.values)) {
@@ -162,11 +162,11 @@ var SetFilterModel = (function () {
         var _this = this;
         var uniqueCheck = {};
         var result = [];
-        if (!this.inMemoryRowModel) {
+        if (!this.clientSideRowModel) {
             console.error('ag-Grid: Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values');
             return [];
         }
-        this.inMemoryRowModel.forEachLeafNode(function (node) {
+        this.clientSideRowModel.forEachLeafNode(function (node) {
             // only pull values from rows that have data. this means we skip filler group nodes.
             if (!node.data) {
                 return;

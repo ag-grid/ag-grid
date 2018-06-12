@@ -1,5 +1,5 @@
-// ag-grid-enterprise v17.1.1
-import { Component } from 'ag-grid/main';
+// ag-grid-enterprise v18.0.0
+import { Component, GridPanel } from 'ag-grid/main';
 export declare class StatusBar extends Component {
     private static TEMPLATE;
     private eventService;
@@ -10,7 +10,7 @@ export declare class StatusBar extends Component {
     private rowModel;
     private context;
     private gridOptionsWrapper;
-    private gridCore;
+    private gridPanel;
     private statusItemSum;
     private statusItemCount;
     private statusItemMin;
@@ -19,6 +19,7 @@ export declare class StatusBar extends Component {
     private aggregationsComponent;
     private infoLabel;
     constructor();
+    registerGridPanel(gridPanel: GridPanel): void;
     private init();
     private createStatusItems();
     private forEachStatusItem(callback);

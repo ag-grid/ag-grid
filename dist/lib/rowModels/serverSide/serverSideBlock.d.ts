@@ -1,7 +1,7 @@
-// ag-grid-enterprise v17.1.1
+// ag-grid-enterprise v18.0.0
 import { NumberSequence, RowNodeBlock, RowNode, RowBounds } from "ag-grid";
-import { EnterpriseCache, EnterpriseCacheParams } from "./enterpriseCache";
-export declare class EnterpriseBlock extends RowNodeBlock {
+import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
+export declare class ServerSideBlock extends RowNodeBlock {
     private context;
     private rowRenderer;
     private columnController;
@@ -21,7 +21,7 @@ export declare class EnterpriseBlock extends RowNodeBlock {
     private groupField;
     private rowGroupColumn;
     private nodeIdPrefix;
-    constructor(pageNumber: number, parentRowNode: RowNode, params: EnterpriseCacheParams, parentCache: EnterpriseCache);
+    constructor(pageNumber: number, parentRowNode: RowNode, params: ServerSideCacheParams, parentCache: ServerSideCache);
     private createNodeIdPrefix();
     protected createIdForIndex(index: number): string;
     getNodeIdPrefix(): string;
@@ -43,10 +43,16 @@ export declare class EnterpriseBlock extends RowNodeBlock {
     }): void;
     private forEachRowNode(virtualRowCount, callback);
     private createLoadParams();
+    updateSortModel(sortModel: {
+        colId: string;
+        sort: string;
+    }[]): void;
     isDisplayIndexInBlock(displayIndex: number): boolean;
     isBlockBefore(displayIndex: number): boolean;
     getDisplayIndexStart(): number;
     getDisplayIndexEnd(): number;
     getBlockHeight(): number;
     getBlockTop(): number;
+    isGroupLevel(): boolean;
+    getGroupField(): string;
 }

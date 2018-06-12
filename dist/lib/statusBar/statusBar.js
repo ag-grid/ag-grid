@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.1.1
+// ag-grid-enterprise v18.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -26,15 +26,20 @@ var rangeController_1 = require("../rangeController");
 var StatusBar = (function (_super) {
     __extends(StatusBar, _super);
     function StatusBar() {
-        var _this = _super.call(this, StatusBar_1.TEMPLATE) || this;
+        var _this = _super.call(this, StatusBar.TEMPLATE) || this;
         _this.aggregationsComponent = new main_1.Component('<div class="ag-status-bar-aggregations"></div>');
         _this.infoLabel = new main_1.Component("<div class=\"ag-status-bar-info-label\"></div>");
         return _this;
     }
-    StatusBar_1 = StatusBar;
+    StatusBar.prototype.registerGridPanel = function (gridPanel) {
+        this.gridPanel = gridPanel;
+    };
     StatusBar.prototype.init = function () {
         // we want to hide until the first aggregation comes in
         this.setVisible(false);
+        if (!this.gridOptionsWrapper.isEnableStatusBar()) {
+            return;
+        }
         this.createStatusItems();
         this.eventService.addEventListener(main_1.Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
         this.eventService.addEventListener(main_1.Events.EVENT_MODEL_UPDATED, this.onRangeSelectionChanged.bind(this));
@@ -139,7 +144,6 @@ var StatusBar = (function (_super) {
         this.statusItemAvg.setVisible(gotNumberResult);
         if (this.isVisible() !== gotResult) {
             this.setVisible(gotResult);
-            this.gridCore.doLayout();
         }
     };
     StatusBar.prototype.getRowNode = function (gridRow) {
@@ -152,8 +156,7 @@ var StatusBar = (function (_super) {
                 return this.rowModel.getRow(gridRow.rowIndex);
         }
     };
-    StatusBar.TEMPLATE = '<div class="ag-status-bar">' +
-        '</div>';
+    StatusBar.TEMPLATE = '<div class="ag-status-bar"></div>';
     __decorate([
         main_1.Autowired('eventService'),
         __metadata("design:type", main_1.EventService)
@@ -187,20 +190,11 @@ var StatusBar = (function (_super) {
         __metadata("design:type", main_1.GridOptionsWrapper)
     ], StatusBar.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_1.Autowired('gridCore'),
-        __metadata("design:type", main_1.GridCore)
-    ], StatusBar.prototype, "gridCore", void 0);
-    __decorate([
         main_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], StatusBar.prototype, "init", null);
-    StatusBar = StatusBar_1 = __decorate([
-        main_1.Bean('statusBar'),
-        __metadata("design:paramtypes", [])
-    ], StatusBar);
     return StatusBar;
-    var StatusBar_1;
 }(main_1.Component));
 exports.StatusBar = StatusBar;

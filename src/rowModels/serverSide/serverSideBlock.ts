@@ -3,8 +3,8 @@ import {
     Autowired,
     Context,
     RowRenderer,
-    IEnterpriseGetRowsParams,
-    IEnterpriseGetRowsRequest,
+    IServerSideGetRowsParams,
+    IServerSideGetRowsRequest,
     Logger,
     NumberSequence,
     PostConstruct,
@@ -19,9 +19,9 @@ import {
     RowBounds
 } from "ag-grid";
 
-import {EnterpriseCache, EnterpriseCacheParams} from "./enterpriseCache";
+import {ServerSideCache, ServerSideCacheParams} from "./serverSideCache";
 
-export class EnterpriseBlock extends RowNodeBlock {
+export class ServerSideBlock extends RowNodeBlock {
 
     @Autowired('context') private context: Context;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -37,8 +37,8 @@ export class EnterpriseBlock extends RowNodeBlock {
     private blockTop: number;
     private blockHeight: number;
 
-    private params: EnterpriseCacheParams;
-    private parentCache: EnterpriseCache;
+    private params: ServerSideCacheParams;
+    private parentCache: ServerSideCache;
 
     private parentRowNode: RowNode;
 
@@ -49,7 +49,7 @@ export class EnterpriseBlock extends RowNodeBlock {
     private rowGroupColumn: Column;
     private nodeIdPrefix: string;
 
-    constructor(pageNumber: number, parentRowNode: RowNode, params: EnterpriseCacheParams, parentCache: EnterpriseCache) {
+    constructor(pageNumber: number, parentRowNode: RowNode, params: ServerSideCacheParams, parentCache: ServerSideCache) {
         super(pageNumber, params);
         this.params = params;
         this.parentRowNode = parentRowNode;
@@ -115,7 +115,7 @@ export class EnterpriseBlock extends RowNodeBlock {
                 return currentRowNode;
             }
 
-            let childrenCache = <EnterpriseCache> currentRowNode.childrenCache;
+            let childrenCache = <ServerSideCache> currentRowNode.childrenCache;
             if (currentRowNode.rowIndex === displayRowIndex) {
                 return currentRowNode;
             } else if (currentRowNode.expanded && childrenCache && childrenCache.isDisplayIndexInCache(displayRowIndex)) {
@@ -129,7 +129,7 @@ export class EnterpriseBlock extends RowNodeBlock {
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('EnterpriseBlock');
+        this.logger = loggerFactory.create('ServerSideBlock');
     }
 
     @PostConstruct
@@ -154,7 +154,7 @@ export class EnterpriseBlock extends RowNodeBlock {
 
         if (_.exists(data)) {
             // if the user is not providing id's, then we build an id based on the index.
-            // for infinite scrolling, the index is used on it's own. for enterprise,
+            // for infinite scrolling, the index is used on it's own. for Server Side Row Model,
             // we combine the index with the level and group key, so that the id is
             // unique across the set.
             //
@@ -174,10 +174,10 @@ export class EnterpriseBlock extends RowNodeBlock {
                 rowNode.key = this.valueService.getValue(this.rowGroupColumn, rowNode);
                 if (rowNode.key===null || rowNode.key===undefined) {
                     _.doOnce( ()=> {
-                        console.warn(`null and undefined values are not allowed for enterprise row model keys`);
+                        console.warn(`null and undefined values are not allowed for server side row model keys`);
                         if (this.rowGroupColumn) { console.warn(`column = ${this.rowGroupColumn.getId()}`)}
                         console.warn(`data is `, rowNode.data);
-                    }, 'EnterpriseBlock-CannotHaveNullOrUndefinedForKey');
+                    }, 'ServerSideBlock-CannotHaveNullOrUndefinedForKey');
                 }
             }
         } else {
@@ -280,15 +280,15 @@ export class EnterpriseBlock extends RowNodeBlock {
                 }
 
                 if (rowNode.group && rowNode.expanded && _.exists(rowNode.childrenCache)) {
-                    let enterpriseCache = <EnterpriseCache> rowNode.childrenCache;
-                    if (enterpriseCache.isDisplayIndexInCache(index)) {
-                        return enterpriseCache.getRowBounds(index);
+                    let serverSideCache = <ServerSideCache> rowNode.childrenCache;
+                    if (serverSideCache.isDisplayIndexInCache(index)) {
+                        return serverSideCache.getRowBounds(index);
                     }
                 }
             }
         }
 
-        console.error(`ag-Grid: looking for invalid row index in Enterprise Row Model, index=${index}`);
+        console.error(`ag-Grid: looking for invalid row index in Server Side Row Model, index=${index}`);
 
         return null;
     }
@@ -311,15 +311,15 @@ export class EnterpriseBlock extends RowNodeBlock {
                 }
 
                 if (rowNode.group && rowNode.expanded && _.exists(rowNode.childrenCache)) {
-                    let enterpriseCache = <EnterpriseCache> rowNode.childrenCache;
-                    if (enterpriseCache.isPixelInRange(pixel)) {
-                        return enterpriseCache.getRowIndexAtPixel(pixel);
+                    let serverSideCache = <ServerSideCache> rowNode.childrenCache;
+                    if (serverSideCache.isPixelInRange(pixel)) {
+                        return serverSideCache.getRowIndexAtPixel(pixel);
                     }
                 }
             }
         }
 
-        console.warn(`ag-Grid: invalid pixel range for enterprise block ${pixel}`);
+        console.warn(`ag-Grid: invalid pixel range for server side block ${pixel}`);
         return 0;
     }
 
@@ -329,8 +329,8 @@ export class EnterpriseBlock extends RowNodeBlock {
 
             let hasChildCache = rowNode.group && _.exists(rowNode.childrenCache);
             if (hasChildCache) {
-                let enterpriseCache = <EnterpriseCache> rowNode.childrenCache;
-                enterpriseCache.clearRowTops();
+                let serverSideCache = <ServerSideCache> rowNode.childrenCache;
+                serverSideCache.clearRowTops();
             }
         });
     }
@@ -352,13 +352,13 @@ export class EnterpriseBlock extends RowNodeBlock {
 
             let hasChildCache = rowNode.group && _.exists(rowNode.childrenCache);
             if (hasChildCache) {
-                let enterpriseCache = <EnterpriseCache> rowNode.childrenCache;
+                let serverSideCache = <ServerSideCache> rowNode.childrenCache;
                 if (rowNode.expanded) {
-                    enterpriseCache.setDisplayIndexes(displayIndexSeq, nextRowTop);
+                    serverSideCache.setDisplayIndexes(displayIndexSeq, nextRowTop);
                 } else {
                     // we need to clear the row tops, as the row renderer depends on
                     // this to know if the row should be faded out
-                    enterpriseCache.clearRowTops();
+                    serverSideCache.clearRowTops();
                 }
             }
         });
@@ -386,10 +386,10 @@ export class EnterpriseBlock extends RowNodeBlock {
         }
     }
 
-    private createLoadParams(): IEnterpriseGetRowsParams {
+    private createLoadParams(): IServerSideGetRowsParams {
         let groupKeys = this.createGroupKeys(this.parentRowNode);
 
-        let request: IEnterpriseGetRowsRequest = {
+        let request: IServerSideGetRowsRequest = {
             startRow: this.getStartRow(),
             endRow: this.getEndRow(),
             rowGroupCols: this.params.rowGroupCols,
@@ -401,7 +401,7 @@ export class EnterpriseBlock extends RowNodeBlock {
             sortModel: this.params.sortModel
         };
 
-        let params = <IEnterpriseGetRowsParams> {
+        let params = <IServerSideGetRowsParams> {
             successCallback: this.pageLoaded.bind(this, this.getVersion()),
             failCallback: this.pageLoadFailed.bind(this),
             request: request,
@@ -409,6 +409,10 @@ export class EnterpriseBlock extends RowNodeBlock {
         };
 
         return params;
+    }
+
+    public updateSortModel(sortModel: {colId: string, sort: string}[]) {
+        this.params.sortModel = sortModel;
     }
 
     public isDisplayIndexInBlock(displayIndex: number): boolean {
@@ -433,5 +437,13 @@ export class EnterpriseBlock extends RowNodeBlock {
 
     public getBlockTop(): number {
         return this.blockTop;
+    }
+
+    public isGroupLevel(): boolean {
+        return this.groupLevel;
+    }
+
+    public getGroupField(): string {
+        return this.groupField;
     }
 }

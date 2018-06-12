@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.1.1
+// ag-grid-enterprise v18.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -36,7 +36,6 @@ var DetailCellRenderer = (function (_super) {
             this.createDetailsGrid(params);
             this.registerDetailWithMaster(params.node);
             this.loadRowData(params);
-            this.setupGrabMouseWheelEvent();
             setTimeout(function () { return _this.detailGridOptions.api.doLayout(); }, 0);
         }
         else {
@@ -51,18 +50,6 @@ var DetailCellRenderer = (function (_super) {
         if (main_1._.exists(theme)) {
             main_1._.addCssClass(this.eDetailGrid, theme);
         }
-    };
-    DetailCellRenderer.prototype.setupGrabMouseWheelEvent = function () {
-        if (this.gridOptionsWrapper.isNativeScroll()) {
-            return;
-        }
-        var mouseWheelListener = function (event) {
-            event.stopPropagation();
-        };
-        // event is 'mousewheel' for IE9, Chrome, Safari, Opera
-        this.eDetailGrid.addEventListener('mousewheel', mouseWheelListener);
-        // event is 'DOMMouseScroll' Firefox
-        this.eDetailGrid.addEventListener('DOMMouseScroll', mouseWheelListener);
     };
     DetailCellRenderer.prototype.registerDetailWithMaster = function (rowNode) {
         var _this = this;

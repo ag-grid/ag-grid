@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.1.1
+// ag-grid-enterprise v18.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -24,9 +24,9 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_1 = require("ag-grid");
-var EnterpriseBlock = (function (_super) {
-    __extends(EnterpriseBlock, _super);
-    function EnterpriseBlock(pageNumber, parentRowNode, params, parentCache) {
+var ServerSideBlock = (function (_super) {
+    __extends(ServerSideBlock, _super);
+    function ServerSideBlock(pageNumber, parentRowNode, params, parentCache) {
         var _this = _super.call(this, pageNumber, params) || this;
         _this.params = params;
         _this.parentRowNode = parentRowNode;
@@ -36,7 +36,7 @@ var EnterpriseBlock = (function (_super) {
         _this.leafGroup = _this.level === (params.rowGroupCols.length - 1);
         return _this;
     }
-    EnterpriseBlock.prototype.createNodeIdPrefix = function () {
+    ServerSideBlock.prototype.createNodeIdPrefix = function () {
         var parts = [];
         var rowNode = this.parentRowNode;
         // pull keys from all parent nodes, but do not include the root node
@@ -48,7 +48,7 @@ var EnterpriseBlock = (function (_super) {
             this.nodeIdPrefix = parts.reverse().join('-') + '-';
         }
     };
-    EnterpriseBlock.prototype.createIdForIndex = function (index) {
+    ServerSideBlock.prototype.createIdForIndex = function (index) {
         if (ag_grid_1._.exists(this.nodeIdPrefix)) {
             return this.nodeIdPrefix + index.toString();
         }
@@ -56,10 +56,10 @@ var EnterpriseBlock = (function (_super) {
             return index.toString();
         }
     };
-    EnterpriseBlock.prototype.getNodeIdPrefix = function () {
+    ServerSideBlock.prototype.getNodeIdPrefix = function () {
         return this.nodeIdPrefix;
     };
-    EnterpriseBlock.prototype.getRow = function (displayRowIndex) {
+    ServerSideBlock.prototype.getRow = function (displayRowIndex) {
         // do binary search of tree
         // http://oli.me.uk/2013/06/08/searching-javascript-arrays-with-a-binary-search/
         var bottomPointer = this.getStartRow();
@@ -94,10 +94,10 @@ var EnterpriseBlock = (function (_super) {
             }
         }
     };
-    EnterpriseBlock.prototype.setBeans = function (loggerFactory) {
-        this.logger = loggerFactory.create('EnterpriseBlock');
+    ServerSideBlock.prototype.setBeans = function (loggerFactory) {
+        this.logger = loggerFactory.create('ServerSideBlock');
     };
-    EnterpriseBlock.prototype.init = function () {
+    ServerSideBlock.prototype.init = function () {
         if (this.groupLevel) {
             var groupColVo = this.params.rowGroupCols[this.level];
             this.groupField = groupColVo.field;
@@ -109,12 +109,12 @@ var EnterpriseBlock = (function (_super) {
             rowRenderer: this.rowRenderer
         });
     };
-    EnterpriseBlock.prototype.setDataAndId = function (rowNode, data, index) {
+    ServerSideBlock.prototype.setDataAndId = function (rowNode, data, index) {
         var _this = this;
         rowNode.stub = false;
         if (ag_grid_1._.exists(data)) {
             // if the user is not providing id's, then we build an id based on the index.
-            // for infinite scrolling, the index is used on it's own. for enterprise,
+            // for infinite scrolling, the index is used on it's own. for Server Side Row Model,
             // we combine the index with the level and group key, so that the id is
             // unique across the set.
             //
@@ -132,12 +132,12 @@ var EnterpriseBlock = (function (_super) {
                 rowNode.key = this.valueService.getValue(this.rowGroupColumn, rowNode);
                 if (rowNode.key === null || rowNode.key === undefined) {
                     ag_grid_1._.doOnce(function () {
-                        console.warn("null and undefined values are not allowed for enterprise row model keys");
+                        console.warn("null and undefined values are not allowed for server side row model keys");
                         if (_this.rowGroupColumn) {
                             console.warn("column = " + _this.rowGroupColumn.getId());
                         }
                         console.warn("data is ", rowNode.data);
-                    }, 'EnterpriseBlock-CannotHaveNullOrUndefinedForKey');
+                    }, 'ServerSideBlock-CannotHaveNullOrUndefinedForKey');
                 }
             }
         }
@@ -150,13 +150,13 @@ var EnterpriseBlock = (function (_super) {
             this.setChildCountIntoRowNode(rowNode);
         }
     };
-    EnterpriseBlock.prototype.setChildCountIntoRowNode = function (rowNode) {
+    ServerSideBlock.prototype.setChildCountIntoRowNode = function (rowNode) {
         var getChildCount = this.gridOptionsWrapper.getChildCountFunc();
         if (getChildCount) {
             rowNode.allChildrenCount = getChildCount(rowNode.data);
         }
     };
-    EnterpriseBlock.prototype.setGroupDataIntoRowNode = function (rowNode) {
+    ServerSideBlock.prototype.setGroupDataIntoRowNode = function (rowNode) {
         var _this = this;
         var groupDisplayCols = this.columnController.getGroupDisplayColumns();
         groupDisplayCols.forEach(function (col) {
@@ -169,14 +169,14 @@ var EnterpriseBlock = (function (_super) {
             }
         });
     };
-    EnterpriseBlock.prototype.loadFromDatasource = function () {
+    ServerSideBlock.prototype.loadFromDatasource = function () {
         var _this = this;
         var params = this.createLoadParams();
         setTimeout(function () {
             _this.params.datasource.getRows(params);
         }, 0);
     };
-    EnterpriseBlock.prototype.createBlankRowNode = function (rowIndex) {
+    ServerSideBlock.prototype.createBlankRowNode = function (rowIndex) {
         var rowNode = _super.prototype.createBlankRowNode.call(this, rowIndex);
         rowNode.group = this.groupLevel;
         rowNode.leafGroup = this.leafGroup;
@@ -192,7 +192,7 @@ var EnterpriseBlock = (function (_super) {
         }
         return rowNode;
     };
-    EnterpriseBlock.prototype.createGroupKeys = function (groupNode) {
+    ServerSideBlock.prototype.createGroupKeys = function (groupNode) {
         var keys = [];
         var pointer = groupNode;
         while (pointer.level >= 0) {
@@ -202,10 +202,10 @@ var EnterpriseBlock = (function (_super) {
         keys.reverse();
         return keys;
     };
-    EnterpriseBlock.prototype.isPixelInRange = function (pixel) {
+    ServerSideBlock.prototype.isPixelInRange = function (pixel) {
         return pixel >= this.blockTop && pixel < (this.blockTop + this.blockHeight);
     };
-    EnterpriseBlock.prototype.getRowBounds = function (index, virtualRowCount) {
+    ServerSideBlock.prototype.getRowBounds = function (index, virtualRowCount) {
         var start = this.getStartRow();
         var end = this.getEndRow();
         for (var i = start; i <= end; i++) {
@@ -223,17 +223,17 @@ var EnterpriseBlock = (function (_super) {
                     };
                 }
                 if (rowNode.group && rowNode.expanded && ag_grid_1._.exists(rowNode.childrenCache)) {
-                    var enterpriseCache = rowNode.childrenCache;
-                    if (enterpriseCache.isDisplayIndexInCache(index)) {
-                        return enterpriseCache.getRowBounds(index);
+                    var serverSideCache = rowNode.childrenCache;
+                    if (serverSideCache.isDisplayIndexInCache(index)) {
+                        return serverSideCache.getRowBounds(index);
                     }
                 }
             }
         }
-        console.error("ag-Grid: looking for invalid row index in Enterprise Row Model, index=" + index);
+        console.error("ag-Grid: looking for invalid row index in Server Side Row Model, index=" + index);
         return null;
     };
-    EnterpriseBlock.prototype.getRowIndexAtPixel = function (pixel, virtualRowCount) {
+    ServerSideBlock.prototype.getRowIndexAtPixel = function (pixel, virtualRowCount) {
         var start = this.getStartRow();
         var end = this.getEndRow();
         for (var i = start; i <= end; i++) {
@@ -248,27 +248,27 @@ var EnterpriseBlock = (function (_super) {
                     return rowNode.rowIndex;
                 }
                 if (rowNode.group && rowNode.expanded && ag_grid_1._.exists(rowNode.childrenCache)) {
-                    var enterpriseCache = rowNode.childrenCache;
-                    if (enterpriseCache.isPixelInRange(pixel)) {
-                        return enterpriseCache.getRowIndexAtPixel(pixel);
+                    var serverSideCache = rowNode.childrenCache;
+                    if (serverSideCache.isPixelInRange(pixel)) {
+                        return serverSideCache.getRowIndexAtPixel(pixel);
                     }
                 }
             }
         }
-        console.warn("ag-Grid: invalid pixel range for enterprise block " + pixel);
+        console.warn("ag-Grid: invalid pixel range for server side block " + pixel);
         return 0;
     };
-    EnterpriseBlock.prototype.clearRowTops = function (virtualRowCount) {
+    ServerSideBlock.prototype.clearRowTops = function (virtualRowCount) {
         this.forEachRowNode(virtualRowCount, function (rowNode) {
             rowNode.clearRowTop();
             var hasChildCache = rowNode.group && ag_grid_1._.exists(rowNode.childrenCache);
             if (hasChildCache) {
-                var enterpriseCache = rowNode.childrenCache;
-                enterpriseCache.clearRowTops();
+                var serverSideCache = rowNode.childrenCache;
+                serverSideCache.clearRowTops();
             }
         });
     };
-    EnterpriseBlock.prototype.setDisplayIndexes = function (displayIndexSeq, virtualRowCount, nextRowTop) {
+    ServerSideBlock.prototype.setDisplayIndexes = function (displayIndexSeq, virtualRowCount, nextRowTop) {
         this.displayIndexStart = displayIndexSeq.peek();
         this.blockTop = nextRowTop.value;
         this.forEachRowNode(virtualRowCount, function (rowNode) {
@@ -278,21 +278,21 @@ var EnterpriseBlock = (function (_super) {
             nextRowTop.value += rowNode.rowHeight;
             var hasChildCache = rowNode.group && ag_grid_1._.exists(rowNode.childrenCache);
             if (hasChildCache) {
-                var enterpriseCache = rowNode.childrenCache;
+                var serverSideCache = rowNode.childrenCache;
                 if (rowNode.expanded) {
-                    enterpriseCache.setDisplayIndexes(displayIndexSeq, nextRowTop);
+                    serverSideCache.setDisplayIndexes(displayIndexSeq, nextRowTop);
                 }
                 else {
                     // we need to clear the row tops, as the row renderer depends on
                     // this to know if the row should be faded out
-                    enterpriseCache.clearRowTops();
+                    serverSideCache.clearRowTops();
                 }
             }
         });
         this.displayIndexEnd = displayIndexSeq.peek();
         this.blockHeight = nextRowTop.value - this.blockTop;
     };
-    EnterpriseBlock.prototype.forEachRowNode = function (virtualRowCount, callback) {
+    ServerSideBlock.prototype.forEachRowNode = function (virtualRowCount, callback) {
         var start = this.getStartRow();
         var end = this.getEndRow();
         for (var i = start; i <= end; i++) {
@@ -307,7 +307,7 @@ var EnterpriseBlock = (function (_super) {
             }
         }
     };
-    EnterpriseBlock.prototype.createLoadParams = function () {
+    ServerSideBlock.prototype.createLoadParams = function () {
         var groupKeys = this.createGroupKeys(this.parentRowNode);
         var request = {
             startRow: this.getStartRow(),
@@ -328,56 +328,65 @@ var EnterpriseBlock = (function (_super) {
         };
         return params;
     };
-    EnterpriseBlock.prototype.isDisplayIndexInBlock = function (displayIndex) {
+    ServerSideBlock.prototype.updateSortModel = function (sortModel) {
+        this.params.sortModel = sortModel;
+    };
+    ServerSideBlock.prototype.isDisplayIndexInBlock = function (displayIndex) {
         return displayIndex >= this.displayIndexStart && displayIndex < this.displayIndexEnd;
     };
-    EnterpriseBlock.prototype.isBlockBefore = function (displayIndex) {
+    ServerSideBlock.prototype.isBlockBefore = function (displayIndex) {
         return displayIndex >= this.displayIndexEnd;
     };
-    EnterpriseBlock.prototype.getDisplayIndexStart = function () {
+    ServerSideBlock.prototype.getDisplayIndexStart = function () {
         return this.displayIndexStart;
     };
-    EnterpriseBlock.prototype.getDisplayIndexEnd = function () {
+    ServerSideBlock.prototype.getDisplayIndexEnd = function () {
         return this.displayIndexEnd;
     };
-    EnterpriseBlock.prototype.getBlockHeight = function () {
+    ServerSideBlock.prototype.getBlockHeight = function () {
         return this.blockHeight;
     };
-    EnterpriseBlock.prototype.getBlockTop = function () {
+    ServerSideBlock.prototype.getBlockTop = function () {
         return this.blockTop;
+    };
+    ServerSideBlock.prototype.isGroupLevel = function () {
+        return this.groupLevel;
+    };
+    ServerSideBlock.prototype.getGroupField = function () {
+        return this.groupField;
     };
     __decorate([
         ag_grid_1.Autowired('context'),
         __metadata("design:type", ag_grid_1.Context)
-    ], EnterpriseBlock.prototype, "context", void 0);
+    ], ServerSideBlock.prototype, "context", void 0);
     __decorate([
         ag_grid_1.Autowired('rowRenderer'),
         __metadata("design:type", ag_grid_1.RowRenderer)
-    ], EnterpriseBlock.prototype, "rowRenderer", void 0);
+    ], ServerSideBlock.prototype, "rowRenderer", void 0);
     __decorate([
         ag_grid_1.Autowired('columnController'),
         __metadata("design:type", ag_grid_1.ColumnController)
-    ], EnterpriseBlock.prototype, "columnController", void 0);
+    ], ServerSideBlock.prototype, "columnController", void 0);
     __decorate([
         ag_grid_1.Autowired('valueService'),
         __metadata("design:type", ag_grid_1.ValueService)
-    ], EnterpriseBlock.prototype, "valueService", void 0);
+    ], ServerSideBlock.prototype, "valueService", void 0);
     __decorate([
         ag_grid_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", ag_grid_1.GridOptionsWrapper)
-    ], EnterpriseBlock.prototype, "gridOptionsWrapper", void 0);
+    ], ServerSideBlock.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         __param(0, ag_grid_1.Qualifier('loggerFactory')),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [ag_grid_1.LoggerFactory]),
         __metadata("design:returntype", void 0)
-    ], EnterpriseBlock.prototype, "setBeans", null);
+    ], ServerSideBlock.prototype, "setBeans", null);
     __decorate([
         ag_grid_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
-    ], EnterpriseBlock.prototype, "init", null);
-    return EnterpriseBlock;
+    ], ServerSideBlock.prototype, "init", null);
+    return ServerSideBlock;
 }(ag_grid_1.RowNodeBlock));
-exports.EnterpriseBlock = EnterpriseBlock;
+exports.ServerSideBlock = ServerSideBlock;

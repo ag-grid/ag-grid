@@ -1,6 +1,6 @@
-// ag-grid-enterprise v17.1.1
-import { BeanStub, IEnterpriseDatasource, IEnterpriseRowModel, RowNode, RowBounds } from "ag-grid";
-export declare class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel {
+// ag-grid-enterprise v18.0.0
+import { BeanStub, IServerSideDatasource, IServerSideRowModel, RowNode, RowBounds } from "ag-grid";
+export declare class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
     private gridOptionsWrapper;
     private eventService;
     private context;
@@ -19,8 +19,9 @@ export declare class EnterpriseRowModel extends BeanStub implements IEnterpriseR
     destroy(): void;
     private destroyDatasource();
     private setBeans(loggerFactory);
-    isLastRowFound(): boolean;
     private addEventListeners();
+    setDatasource(datasource: IServerSideDatasource): void;
+    isLastRowFound(): boolean;
     private onColumnEverything();
     private onFilterChanged();
     private onSortChanged();
@@ -32,7 +33,6 @@ export declare class EnterpriseRowModel extends BeanStub implements IEnterpriseR
     private reset();
     private createNewRowNodeBlockLoader();
     private destroyRowNodeBlockLoader();
-    setDatasource(datasource: IEnterpriseDatasource): void;
     private toValueObjects(columns);
     private createCacheParams();
     private createNodeCache(rowNode);
@@ -51,9 +51,14 @@ export declare class EnterpriseRowModel extends BeanStub implements IEnterpriseR
     isRowsToRender(): boolean;
     getType(): string;
     forEachNode(callback: (rowNode: RowNode) => void): void;
+    private executeOnCache(route, callback);
     purgeCache(route?: string[]): void;
+    removeFromCache(route: string[], items: any[]): void;
+    addToCache(route: string[], items: any[], index: number): void;
     getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[];
+    getRowNode(id: string): RowNode;
     getBlockState(): any;
     isRowPresent(rowNode: RowNode): boolean;
     private extractSortModel();
+    private cacheExists();
 }

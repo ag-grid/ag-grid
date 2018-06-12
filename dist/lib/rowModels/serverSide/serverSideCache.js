@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.1.1
+// ag-grid-enterprise v18.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -24,10 +24,10 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_1 = require("ag-grid");
-var enterpriseBlock_1 = require("./enterpriseBlock");
-var EnterpriseCache = (function (_super) {
-    __extends(EnterpriseCache, _super);
-    function EnterpriseCache(cacheParams, parentRowNode) {
+var serverSideBlock_1 = require("./serverSideBlock");
+var ServerSideCache = (function (_super) {
+    __extends(ServerSideCache, _super);
+    function ServerSideCache(cacheParams, parentRowNode) {
         var _this = _super.call(this, cacheParams) || this;
         // this will always be zero for the top level cache only,
         // all the other ones change as the groups open and close
@@ -38,13 +38,13 @@ var EnterpriseCache = (function (_super) {
         _this.parentRowNode = parentRowNode;
         return _this;
     }
-    EnterpriseCache.prototype.setBeans = function (loggerFactory) {
-        this.logger = loggerFactory.create('EnterpriseCache');
+    ServerSideCache.prototype.setBeans = function (loggerFactory) {
+        this.logger = loggerFactory.create('ServerSideCache');
     };
-    EnterpriseCache.prototype.init = function () {
+    ServerSideCache.prototype.init = function () {
         _super.prototype.init.call(this);
     };
-    EnterpriseCache.prototype.getRowBounds = function (index) {
+    ServerSideCache.prototype.getRowBounds = function (index) {
         var _this = this;
         this.logger.log("getRowBounds(" + index + ")");
         // we return null if row not found
@@ -79,14 +79,14 @@ var EnterpriseCache = (function (_super) {
                 rowTop: nextRowTop + rowsBetween * this.cacheParams.rowHeight
             };
         }
-        //TODO: what about purged blocks
+        // NOTE: what about purged blocks
         this.logger.log("getRowBounds(" + index + "), result = " + result);
         return result;
     };
-    EnterpriseCache.prototype.destroyBlock = function (block) {
+    ServerSideCache.prototype.destroyBlock = function (block) {
         _super.prototype.destroyBlock.call(this, block);
     };
-    EnterpriseCache.prototype.getRowIndexAtPixel = function (pixel) {
+    ServerSideCache.prototype.getRowIndexAtPixel = function (pixel) {
         var _this = this;
         this.logger.log("getRowIndexAtPixel(" + pixel + ")");
         // we return null if row not found
@@ -123,15 +123,15 @@ var EnterpriseCache = (function (_super) {
         if (result > lastAllowedIndex) {
             result = lastAllowedIndex;
         }
-        //TODO: purged
+        //NOTE: purged
         this.logger.log("getRowIndexAtPixel(" + pixel + ") result = " + result);
         return result;
     };
-    EnterpriseCache.prototype.clearRowTops = function () {
+    ServerSideCache.prototype.clearRowTops = function () {
         var _this = this;
         this.forEachBlockInOrder(function (block) { return block.clearRowTops(_this.getVirtualRowCount()); });
     };
-    EnterpriseCache.prototype.setDisplayIndexes = function (displayIndexSeq, nextRowTop) {
+    ServerSideCache.prototype.setDisplayIndexes = function (displayIndexSeq, nextRowTop) {
         var _this = this;
         this.displayIndexStart = displayIndexSeq.peek();
         this.cacheTop = nextRowTop.value;
@@ -173,8 +173,9 @@ var EnterpriseCache = (function (_super) {
         this.cacheHeight = nextRowTop.value - this.cacheTop;
     };
     // gets called in a) init() above and b) by the grid
-    EnterpriseCache.prototype.getRow = function (displayRowIndex) {
+    ServerSideCache.prototype.getRow = function (displayRowIndex, dontCreateBlock) {
         var _this = this;
+        if (dontCreateBlock === void 0) { dontCreateBlock = false; }
         // this can happen if asking for a row that doesn't exist in the model,
         // eg if a cell range is selected, and the user filters so rows no longer
         // exist
@@ -195,6 +196,10 @@ var EnterpriseCache = (function (_super) {
                 beforeBlock = currentBlock;
             }
         });
+        // when we are moving rows around, we don't want to trigger loads
+        if (ag_grid_1._.missing(block) && dontCreateBlock) {
+            return null;
+        }
         // if block not found, we need to load it
         if (ag_grid_1._.missing(block)) {
             var blockNumber = void 0;
@@ -234,72 +239,234 @@ var EnterpriseCache = (function (_super) {
         var rowNode = block.getRow(displayRowIndex);
         return rowNode;
     };
-    EnterpriseCache.prototype.createBlock = function (blockNumber, displayIndex, nextRowTop) {
-        var newBlock = new enterpriseBlock_1.EnterpriseBlock(blockNumber, this.parentRowNode, this.cacheParams, this);
+    ServerSideCache.prototype.createBlock = function (blockNumber, displayIndex, nextRowTop) {
+        var newBlock = new serverSideBlock_1.ServerSideBlock(blockNumber, this.parentRowNode, this.cacheParams, this);
         this.context.wireBean(newBlock);
         var displayIndexSequence = new ag_grid_1.NumberSequence(displayIndex);
         newBlock.setDisplayIndexes(displayIndexSequence, this.getVirtualRowCount(), nextRowTop);
         this.postCreateBlock(newBlock);
         return newBlock;
     };
-    EnterpriseCache.prototype.getDisplayIndexEnd = function () {
+    ServerSideCache.prototype.getDisplayIndexEnd = function () {
         return this.displayIndexEnd;
     };
-    EnterpriseCache.prototype.isDisplayIndexInCache = function (displayIndex) {
+    ServerSideCache.prototype.isDisplayIndexInCache = function (displayIndex) {
         if (this.getVirtualRowCount() === 0) {
             return false;
         }
         return displayIndex >= this.displayIndexStart && displayIndex < this.displayIndexEnd;
     };
-    EnterpriseCache.prototype.getChildCache = function (keys) {
+    ServerSideCache.prototype.getChildCache = function (keys) {
         var _this = this;
         if (ag_grid_1._.missingOrEmpty(keys)) {
             return this;
         }
         var nextKey = keys[0];
-        var nextEnterpriseCache = null;
+        var nextServerSideCache = null;
         this.forEachBlockInOrder(function (block) {
             // callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number
             block.forEachNodeShallow(function (rowNode) {
                 if (rowNode.key === nextKey) {
-                    nextEnterpriseCache = rowNode.childrenCache;
+                    nextServerSideCache = rowNode.childrenCache;
                 }
             }, new ag_grid_1.NumberSequence(), _this.getVirtualRowCount());
         });
-        if (nextEnterpriseCache) {
+        if (nextServerSideCache) {
             var keyListForNextLevel = keys.slice(1, keys.length);
-            return nextEnterpriseCache.getChildCache(keyListForNextLevel);
+            return nextServerSideCache.getChildCache(keyListForNextLevel);
         }
         else {
             return null;
         }
     };
-    EnterpriseCache.prototype.isPixelInRange = function (pixel) {
+    ServerSideCache.prototype.isPixelInRange = function (pixel) {
         if (this.getVirtualRowCount() === 0) {
             return false;
         }
         return pixel >= this.cacheTop && pixel < (this.cacheTop + this.cacheHeight);
     };
+    ServerSideCache.prototype.removeFromCache = function (items) {
+        var _this = this;
+        // create map of id's for quick lookup
+        var itemsToDeleteById = {};
+        var idForNodeFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
+        items.forEach(function (item) {
+            var id = idForNodeFunc(item);
+            itemsToDeleteById[id] = item;
+        });
+        var deletedCount = 0;
+        this.forEachBlockInOrder(function (block) {
+            var startRow = block.getStartRow();
+            var endRow = block.getEndRow();
+            var deletedCountFromThisBlock = 0;
+            for (var rowIndex = startRow; rowIndex < endRow; rowIndex++) {
+                var rowNode = block.getRowUsingLocalIndex(rowIndex, true);
+                if (!rowNode) {
+                    continue;
+                }
+                var deleteThisRow = !!itemsToDeleteById[rowNode.id];
+                if (deleteThisRow) {
+                    deletedCountFromThisBlock++;
+                    deletedCount++;
+                    block.setDirty();
+                    rowNode.clearRowTop();
+                    continue;
+                }
+                // if rows were deleted, then we need to move this row node to
+                // it's new location
+                if (deletedCount > 0) {
+                    block.setDirty();
+                    var newIndex = rowIndex - deletedCount;
+                    var blockId = Math.floor(newIndex / _this.cacheParams.blockSize);
+                    var blockToInsert = _this.getBlock(blockId);
+                    if (blockToInsert) {
+                        blockToInsert.setRowNode(newIndex, rowNode);
+                    }
+                }
+            }
+            if (deletedCountFromThisBlock > 0) {
+                for (var i = deletedCountFromThisBlock; i > 0; i--) {
+                    block.setBlankRowNode(endRow - i);
+                }
+            }
+        });
+        if (this.isMaxRowFound()) {
+            this.hack_setVirtualRowCount(this.getVirtualRowCount() - deletedCount);
+        }
+        this.onCacheUpdated();
+        var event = {
+            type: ag_grid_1.Events.EVENT_ROW_DATA_UPDATED,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi()
+        };
+        this.eventService.dispatchEvent(event);
+    };
+    ServerSideCache.prototype.addToCache = function (items, indexToInsert) {
+        var _this = this;
+        var newNodes = [];
+        this.forEachBlockInReverseOrder(function (block) {
+            var pageEndRow = block.getEndRow();
+            // if the insertion is after this page, then this page is not impacted
+            if (pageEndRow <= indexToInsert) {
+                return;
+            }
+            _this.moveItemsDown(block, indexToInsert, items.length);
+            var newNodesThisPage = _this.insertItems(block, indexToInsert, items);
+            newNodesThisPage.forEach(function (rowNode) { return newNodes.push(rowNode); });
+        });
+        if (this.isMaxRowFound()) {
+            this.hack_setVirtualRowCount(this.getVirtualRowCount() + items.length);
+        }
+        this.onCacheUpdated();
+        var event = {
+            type: ag_grid_1.Events.EVENT_ROW_DATA_UPDATED,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi()
+        };
+        this.eventService.dispatchEvent(event);
+    };
+    ServerSideCache.prototype.moveItemsDown = function (block, moveFromIndex, moveCount) {
+        var startRow = block.getStartRow();
+        var endRow = block.getEndRow();
+        var indexOfLastRowToMove = moveFromIndex + moveCount;
+        // all rows need to be moved down below the insertion index
+        for (var currentRowIndex = endRow - 1; currentRowIndex >= startRow; currentRowIndex--) {
+            // don't move rows at or before the insertion index
+            if (currentRowIndex < indexOfLastRowToMove) {
+                continue;
+            }
+            var indexOfNodeWeWant = currentRowIndex - moveCount;
+            var nodeForThisIndex = this.getRow(indexOfNodeWeWant, true);
+            if (nodeForThisIndex) {
+                block.setRowNode(currentRowIndex, nodeForThisIndex);
+            }
+            else {
+                block.setBlankRowNode(currentRowIndex);
+                block.setDirty();
+            }
+        }
+    };
+    ServerSideCache.prototype.insertItems = function (block, indexToInsert, items) {
+        var pageStartRow = block.getStartRow();
+        var pageEndRow = block.getEndRow();
+        var newRowNodes = [];
+        // next stage is insert the rows into this page, if applicable
+        for (var index = 0; index < items.length; index++) {
+            var rowIndex = indexToInsert + index;
+            var currentRowInThisPage = rowIndex >= pageStartRow && rowIndex < pageEndRow;
+            if (currentRowInThisPage) {
+                var dataItem = items[index];
+                var newRowNode = block.setNewData(rowIndex, dataItem);
+                newRowNodes.push(newRowNode);
+            }
+        }
+        return newRowNodes;
+    };
+    ServerSideCache.prototype.refreshCache = function (sortModel, rowGroupColIds) {
+        var _this = this;
+        var shouldPurgeCache = false;
+        var sortColIds = sortModel.map(function (sm) { return sm.colId; });
+        this.forEachBlockInOrder(function (block) {
+            if (block.isGroupLevel()) {
+                var groupField = block.getGroupField();
+                var rowGroupBlock = rowGroupColIds.indexOf(groupField) > -1;
+                var sortingByGroup = sortColIds.indexOf(groupField) > -1;
+                if (rowGroupBlock && sortingByGroup) {
+                    // need to refresh block using updated new sort model
+                    block.updateSortModel(sortModel);
+                    shouldPurgeCache = true;
+                }
+                var callback = function (rowNode) {
+                    var nextCache = rowNode.childrenCache;
+                    if (nextCache)
+                        nextCache.refreshCache(sortModel, rowGroupColIds);
+                };
+                block.forEachNodeShallow(callback, new ag_grid_1.NumberSequence(), _this.getVirtualRowCount());
+            }
+            else {
+                // blocks containing leaf nodes need to be refreshed with new sort model
+                block.updateSortModel(sortModel);
+                shouldPurgeCache = true;
+            }
+        });
+        var groupSortRemoved = this.groupSortRemoved(sortModel, rowGroupColIds);
+        if (groupSortRemoved) {
+            this.cacheParams.sortModel = sortModel;
+        }
+        if (shouldPurgeCache || groupSortRemoved) {
+            this.purgeCache();
+        }
+    };
+    ServerSideCache.prototype.groupSortRemoved = function (sortModel, rowGroupColIds) {
+        var cacheSortModelChanged = this.cacheParams.sortModel !== sortModel;
+        var existingSortCols = this.cacheParams.sortModel.map(function (sm) { return sm.colId; });
+        var existingGroupColumn = rowGroupColIds.some(function (v) { return existingSortCols.indexOf(v) >= 0; });
+        return cacheSortModelChanged && existingGroupColumn;
+    };
     __decorate([
         ag_grid_1.Autowired('eventService'),
         __metadata("design:type", ag_grid_1.EventService)
-    ], EnterpriseCache.prototype, "eventService", void 0);
+    ], ServerSideCache.prototype, "eventService", void 0);
     __decorate([
         ag_grid_1.Autowired('context'),
         __metadata("design:type", ag_grid_1.Context)
-    ], EnterpriseCache.prototype, "context", void 0);
+    ], ServerSideCache.prototype, "context", void 0);
+    __decorate([
+        ag_grid_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_1.GridOptionsWrapper)
+    ], ServerSideCache.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         __param(0, ag_grid_1.Qualifier('loggerFactory')),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [ag_grid_1.LoggerFactory]),
         __metadata("design:returntype", void 0)
-    ], EnterpriseCache.prototype, "setBeans", null);
+    ], ServerSideCache.prototype, "setBeans", null);
     __decorate([
         ag_grid_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
-    ], EnterpriseCache.prototype, "init", null);
-    return EnterpriseCache;
+    ], ServerSideCache.prototype, "init", null);
+    return ServerSideCache;
 }(ag_grid_1.RowNodeCache));
-exports.EnterpriseCache = EnterpriseCache;
+exports.ServerSideCache = ServerSideCache;

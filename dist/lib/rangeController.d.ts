@@ -1,8 +1,7 @@
-// ag-grid-enterprise v17.1.1
-import { IRangeController, RangeSelection, GridCell, AddRangeSelectionParams } from "ag-grid/main";
+// ag-grid-enterprise v18.0.0
+import { IRangeController, GridPanel, RangeSelection, GridCell, AddRangeSelectionParams } from "ag-grid/main";
 export declare class RangeController implements IRangeController {
     private loggerFactory;
-    private gridPanel;
     private rowModel;
     private eventService;
     private columnController;
@@ -14,14 +13,16 @@ export declare class RangeController implements IRangeController {
     private gridApi;
     private cellNavigationService;
     private logger;
+    private gridPanel;
     private cellRanges;
     private activeRange;
     private lastMouseEvent;
     private bodyScrollListener;
     private dragging;
     private autoScrollService;
+    registerGridComp(gridPanel: GridPanel): void;
     private init();
-    setRangeToCell(cell: GridCell): void;
+    setRangeToCell(cell: GridCell, appendRange?: boolean): void;
     extendRangeToCell(toCell: GridCell): void;
     extendRangeInDirection(startCell: GridCell, key: number): boolean;
     setRange(rangeSelection: AddRangeSelectionParams): void;

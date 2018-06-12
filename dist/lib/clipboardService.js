@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.1.1
+// ag-grid-enterprise v18.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -28,14 +28,31 @@ var ClipboardService = (function () {
             if (main_1.Utils.missingOrEmpty(data))
                 return;
             var parsedData = _this.dataToArray(data);
+            var userFunc = _this.gridOptionsWrapper.getProcessDataFromClipboardFunc();
+            if (userFunc) {
+                parsedData = userFunc({ data: parsedData });
+            }
+            if (main_1.Utils.missingOrEmpty(parsedData))
+                return;
+            _this.eventService.dispatchEvent({
+                type: main_1.Events.EVENT_PASTE_START,
+                api: _this.gridOptionsWrapper.getApi(),
+                columnApi: _this.gridOptionsWrapper.getColumnApi(),
+                source: 'clipboard'
+            });
             var singleCellInClipboard = parsedData.length == 1 && parsedData[0].length == 1;
             _this.rangeController.isMoreThanOneCell() && !singleCellInClipboard ?
-                _this.pasteToRange(data) : _this.pasteToSingleCell(data);
+                _this.pasteToRange(parsedData) : _this.pasteToSingleCell(parsedData);
+            _this.eventService.dispatchEvent({
+                type: main_1.Events.EVENT_PASTE_END,
+                api: _this.gridOptionsWrapper.getApi(),
+                columnApi: _this.gridOptionsWrapper.getColumnApi(),
+                source: 'clipboard'
+            });
         });
     };
-    ClipboardService.prototype.pasteToRange = function (data) {
+    ClipboardService.prototype.pasteToRange = function (clipboardData) {
         var _this = this;
-        var clipboardData = this.dataToArray(data);
         // remove extra empty row which is inserted when clipboard has more than one row
         if (clipboardData.length > 1)
             clipboardData.pop();
@@ -78,16 +95,9 @@ var ClipboardService = (function () {
         this.dispatchFlashCells(cellsToFlash);
         this.fireRowChanged(updatedRowNodes);
     };
-    ClipboardService.prototype.pasteToSingleCell = function (data) {
-        if (main_1.Utils.missingOrEmpty(data)) {
-            return;
-        }
+    ClipboardService.prototype.pasteToSingleCell = function (parsedData) {
         var focusedCell = this.focusedCellController.getFocusedCell();
         if (!focusedCell) {
-            return;
-        }
-        var parsedData = this.dataToArray(data);
-        if (!parsedData) {
             return;
         }
         // remove last row if empty, excel puts empty last row in
@@ -118,6 +128,12 @@ var ClipboardService = (function () {
         if (this.rangeController.isEmpty()) {
             return;
         }
+        this.eventService.dispatchEvent({
+            type: main_1.Events.EVENT_PASTE_START,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            source: 'rangeDown'
+        });
         var cellsToFlash = {};
         var firstRowValues = null;
         var updatedRowNodes = [];
@@ -159,6 +175,12 @@ var ClipboardService = (function () {
         this.rowRenderer.refreshCells({ rowNodes: updatedRowNodes, columns: updatedColumnIds });
         this.dispatchFlashCells(cellsToFlash);
         this.fireRowChanged(updatedRowNodes);
+        this.eventService.dispatchEvent({
+            type: main_1.Events.EVENT_PASTE_END,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            source: 'rangeDown'
+        });
     };
     ClipboardService.prototype.fireRowChanged = function (rowNodes) {
         var _this = this;

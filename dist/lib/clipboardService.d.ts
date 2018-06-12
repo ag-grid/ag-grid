@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.1.1
+// ag-grid-enterprise v18.0.0
 import { IClipboardService, Column } from "ag-grid/main";
 export declare class ClipboardService implements IClipboardService {
     private csvCreator;
@@ -20,8 +20,8 @@ export declare class ClipboardService implements IClipboardService {
     private logger;
     private init();
     pasteFromClipboard(): void;
-    private pasteToRange(data);
-    private pasteToSingleCell(data);
+    private pasteToRange(clipboardData);
+    private pasteToSingleCell(parsedData);
     copyRangeDown(): void;
     private fireRowChanged(rowNodes);
     private multipleCellRange(clipboardGridData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, updatedColumnIds, type);

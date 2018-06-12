@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.1.1
+// ag-grid-enterprise v18.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -16,6 +16,10 @@ var RangeController = (function () {
         this.bodyScrollListener = this.onBodyScroll.bind(this);
         this.dragging = false;
     }
+    RangeController.prototype.registerGridComp = function (gridPanel) {
+        this.gridPanel = gridPanel;
+        this.autoScrollService = new AutoScrollService(this.gridPanel, this.gridOptionsWrapper);
+    };
     RangeController.prototype.init = function () {
         this.logger = this.loggerFactory.create('RangeController');
         this.eventService.addEventListener(main_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.clearSelection.bind(this));
@@ -24,9 +28,9 @@ var RangeController = (function () {
         this.eventService.addEventListener(main_1.Events.EVENT_COLUMN_PINNED, this.clearSelection.bind(this));
         this.eventService.addEventListener(main_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearSelection.bind(this));
         this.eventService.addEventListener(main_1.Events.EVENT_COLUMN_VISIBLE, this.clearSelection.bind(this));
-        this.autoScrollService = new AutoScrollService(this.gridPanel, this.gridOptionsWrapper);
     };
-    RangeController.prototype.setRangeToCell = function (cell) {
+    RangeController.prototype.setRangeToCell = function (cell, appendRange) {
+        if (appendRange === void 0) { appendRange = false; }
         if (!this.gridOptionsWrapper.isEnableRangeSelection()) {
             return;
         }
@@ -40,7 +44,10 @@ var RangeController = (function () {
             end: new main_1.GridCell(gridCellDef),
             columns: columns
         };
-        this.cellRanges = [];
+        // if not appending, then clear previous range selections
+        if (!appendRange || main_1._.missing(this.cellRanges)) {
+            this.cellRanges = [];
+        }
         this.cellRanges.push(newRange);
         this.activeRange = null;
         this.dispatchChangedEvent(true, false);
@@ -57,7 +64,7 @@ var RangeController = (function () {
             columnEnd: toCell.column
         });
     };
-    // returns true if successful, false if not sucessful
+    // returns true if successful, false if not successful
     RangeController.prototype.extendRangeInDirection = function (startCell, key) {
         var oneRangeExists = main_1._.exists(this.cellRanges) || this.cellRanges.length === 1;
         var previousSelectionStart = oneRangeExists ? this.cellRanges[0].start : null;
@@ -290,10 +297,6 @@ var RangeController = (function () {
         __metadata("design:type", main_1.LoggerFactory)
     ], RangeController.prototype, "loggerFactory", void 0);
     __decorate([
-        main_1.Autowired('gridPanel'),
-        __metadata("design:type", main_1.GridPanel)
-    ], RangeController.prototype, "gridPanel", void 0);
-    __decorate([
         main_1.Autowired('rowModel'),
         __metadata("design:type", Object)
     ], RangeController.prototype, "rowModel", void 0);
@@ -352,8 +355,8 @@ var AutoScrollService = (function () {
         this.gridOptionsWrapper = gridOptionsWrapper;
     }
     AutoScrollService.prototype.check = function (mouseEvent) {
-        // we don't do ticking if doing forPrint or autoHeight
-        if (!this.gridOptionsWrapper.isNormalDomLayout()) {
+        // we don't do ticking if grid is auto height
+        if (this.gridOptionsWrapper.isGridAutoHeight()) {
             return;
         }
         var rect = this.gridPanel.getBodyClientRect();

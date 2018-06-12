@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.1.1
+// ag-grid-enterprise v18.0.0
 import { ColDef, Column, ValueFormatterService } from "ag-grid/main";
 import { IRowModel } from 'ag-grid';
 export declare enum SetFilterModelValuesType {
@@ -9,7 +9,7 @@ export declare enum SetFilterModelValuesType {
 export declare class SetFilterModel {
     private colDef;
     private filterParams;
-    private inMemoryRowModel;
+    private clientSideRowModel;
     private valueGetter;
     private allUniqueValues;
     private availableUniqueValues;

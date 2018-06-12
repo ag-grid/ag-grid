@@ -34,7 +34,9 @@ import {
     ColumnApi,
     GridApi,
     RowValueChangedEvent,
-    ProcessHeaderForExportParams
+    ProcessHeaderForExportParams,
+    PasteStartEvent,
+    PasteEndEvent
 } from "ag-grid/main";
 import {RangeController} from "./rangeController";
 
@@ -86,15 +88,35 @@ export class ClipboardService implements IClipboardService {
 
                 let parsedData: string[][] = this.dataToArray(data);
 
+                let userFunc = this.gridOptionsWrapper.getProcessDataFromClipboardFunc();
+                if (userFunc) {
+                    parsedData = userFunc({data: parsedData});
+                }
+
+                if (Utils.missingOrEmpty(parsedData)) return;
+
+                this.eventService.dispatchEvent(<PasteStartEvent> {
+                    type: Events.EVENT_PASTE_START,
+                    api: this.gridOptionsWrapper.getApi(),
+                    columnApi: this.gridOptionsWrapper.getColumnApi(),
+                    source: 'clipboard'
+                });
+
                 let singleCellInClipboard = parsedData.length == 1 && parsedData[0].length == 1;
                 this.rangeController.isMoreThanOneCell() && !singleCellInClipboard ?
-                    this.pasteToRange(data) : this.pasteToSingleCell(data);
+                    this.pasteToRange(parsedData) : this.pasteToSingleCell(parsedData);
+
+                this.eventService.dispatchEvent(<PasteEndEvent> {
+                    type: Events.EVENT_PASTE_END,
+                    api: this.gridOptionsWrapper.getApi(),
+                    columnApi: this.gridOptionsWrapper.getColumnApi(),
+                    source: 'clipboard'
+                });
             }
         );
     }
 
-    private pasteToRange(data: string) {
-        let clipboardData: any[][] = this.dataToArray(data);
+    private pasteToRange(clipboardData: string[][]) {
 
         // remove extra empty row which is inserted when clipboard has more than one row
         if (clipboardData.length > 1) clipboardData.pop();
@@ -147,16 +169,10 @@ export class ClipboardService implements IClipboardService {
         this.fireRowChanged(updatedRowNodes);
     }
 
-    private pasteToSingleCell(data: string) {
-        if (Utils.missingOrEmpty(data)) { return; }
+    private pasteToSingleCell(parsedData: string[][]) {
 
         let focusedCell = this.focusedCellController.getFocusedCell();
         if (!focusedCell) { return; }
-
-        let parsedData: string[][] = this.dataToArray(data);
-        if (!parsedData) {
-            return;
-        }
 
         // remove last row if empty, excel puts empty last row in
         let lastLine = parsedData[parsedData.length - 1];
@@ -191,6 +207,13 @@ export class ClipboardService implements IClipboardService {
 
     public copyRangeDown(): void {
         if (this.rangeController.isEmpty()) { return; }
+
+        this.eventService.dispatchEvent( <PasteStartEvent> {
+            type: Events.EVENT_PASTE_START,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            source: 'rangeDown'
+        });
 
         let cellsToFlash = <any>{};
         let firstRowValues: any[] = null;
@@ -238,6 +261,13 @@ export class ClipboardService implements IClipboardService {
         this.dispatchFlashCells(cellsToFlash);
 
         this.fireRowChanged(updatedRowNodes);
+
+        this.eventService.dispatchEvent( <PasteEndEvent> {
+            type: Events.EVENT_PASTE_END,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            source: 'rangeDown'
+        });
     }
 
     private fireRowChanged(rowNodes: RowNode[]): void {

@@ -1,8 +1,7 @@
-// ag-grid-enterprise v17.1.1
+// ag-grid-enterprise v18.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var columnSelectComp_1 = require("./toolPanel/columnsSelect/columnSelectComp");
-var toolPanelColumnComp_1 = require("./toolPanel/columnsSelect/toolPanelColumnComp");
 var toolPanelGroupComp_1 = require("./toolPanel/columnsSelect/toolPanelGroupComp");
 var aggregationStage_1 = require("./rowStages/aggregationStage");
 var groupStage_1 = require("./rowStages/groupStage");
@@ -24,7 +23,7 @@ var richSelectRow_1 = require("./rendering/richSelect/richSelectRow");
 var virtualList_1 = require("./rendering/virtualList");
 var abstractColumnDropPanel_1 = require("./toolPanel/columnDrop/abstractColumnDropPanel");
 var pivotColumnsPanel_1 = require("./toolPanel/columnDrop/pivotColumnsPanel");
-var columnPanel_1 = require("./toolPanel/columnPanel");
+var toolPanelColumnComp_1 = require("./toolPanel/toolPanelColumnComp");
 var licenseManager_1 = require("./licenseManager");
 var pivotStage_1 = require("./rowStages/pivotStage");
 var pivotColDefService_1 = require("./rowStages/pivotColDefService");
@@ -62,8 +61,8 @@ function populateClientExports(exports) {
     exports.PivotModePanel = pivotModePanel_1.PivotModePanel;
     exports.RowGroupColumnsPanel = rowGroupColumnsPanel_1.RowGroupColumnsPanel;
     exports.ValuesColumnPanel = valueColumnsPanel_1.ValuesColumnPanel;
-    exports.ToolPanelComp = columnPanel_1.ColumnPanel;
-    exports.ColumnSelectPanel = columnSelectComp_1.ColumnSelectComp;
+    exports.ToolPanelColumnComp = toolPanelColumnComp_1.ToolPanelColumnComp;
+    exports.ColumnSelectComp = columnSelectComp_1.ColumnSelectComp;
     exports.RenderedColumn = toolPanelColumnComp_1.ToolPanelColumnComp;
     exports.RenderedGroup = toolPanelGroupComp_1.ToolPanelGroupComp;
     exports.ViewportRowModel = viewportRowModel_1.ViewportRowModel;

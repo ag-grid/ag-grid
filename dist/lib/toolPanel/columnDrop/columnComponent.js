@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.1.1
+// ag-grid-enterprise v18.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -170,10 +170,6 @@ var ColumnComponent = (function (_super) {
         main_1.Autowired('columnController'),
         __metadata("design:type", main_1.ColumnController)
     ], ColumnComponent.prototype, "columnController", void 0);
-    __decorate([
-        main_1.Autowired('gridPanel'),
-        __metadata("design:type", main_1.GridPanel)
-    ], ColumnComponent.prototype, "gridPanel", void 0);
     __decorate([
         main_1.Autowired('context'),
         __metadata("design:type", main_1.Context)

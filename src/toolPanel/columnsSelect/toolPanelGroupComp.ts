@@ -38,7 +38,6 @@ export class ToolPanelGroupComp extends Component implements BaseColumnItem{
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('context') private context: Context;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('eventService') private eventService: EventService;
@@ -79,7 +78,9 @@ export class ToolPanelGroupComp extends Component implements BaseColumnItem{
 
         let eText = this.queryForHtmlElement('#eText');
 
-        this.displayName = this.columnGroup.getColGroupDef() ? this.columnGroup.getColGroupDef().headerName : null;
+        // this.displayName = this.columnGroup.getColGroupDef() ? this.columnGroup.getColGroupDef().headerName : null;
+        this.displayName = this.columnController.getDisplayNameForOriginalColumnGroup(null, this.columnGroup, 'toolPanel');
+
         if (Utils.missing(this.displayName)) {
             this.displayName = '>>'
         }

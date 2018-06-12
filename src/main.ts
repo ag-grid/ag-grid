@@ -20,20 +20,28 @@ import {PivotCompFactory} from "./pivotCompFactory";
 import {MenuItemMapper} from "./menu/menuItemMapper";
 import {ExcelCreator} from "./excelCreator";
 import {ExcelXmlFactory} from "./excelXmlFactory";
-import {EnterpriseRowModel} from "./rowModels/enterprise/enterpriseRowModel";
+import {ServerSideRowModel} from "./rowModels/serverSide/serverSideRowModel";
 import {ColumnSelectHeaderComp} from "./toolPanel/columnsSelect/columnSelectHeaderComp";
 import {ColumnContainerComp} from "./toolPanel/columnsSelect/columnContainerComp";
 import {HorizontalResizeComp} from "./toolPanel/columnsSelect/horizontalResizeComp";
+import {HeaderColumnDropComp} from "./toolPanel/columnDrop/headerColumnDropComp";
+import {ToolPanelColumnComp} from "./toolPanel/toolPanelColumnComp";
+import {ToolPanelSelectComp} from "./toolPanel/toolPanelSelectComp";
 
-let rowModelTypes = {viewport: ViewportRowModel, enterprise: EnterpriseRowModel};
+let rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
 
-Grid.setEnterpriseBeans([ToolPanelComp, EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, RowGroupCompFactory, PivotCompFactory,
+Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, RowGroupCompFactory, PivotCompFactory,
     PivotColumnsPanel, RangeController, ClipboardService, PivotStage, PivotColDefService,
     ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService,
-    StatusBar, LicenseManager, MD5, MenuItemMapper], rowModelTypes);
+    LicenseManager, MD5, MenuItemMapper], rowModelTypes);
 
 Grid.setEnterpriseComponents([
     {componentName: 'AgColumnSelectHeader', theClass: ColumnSelectHeaderComp},
     {componentName: 'AgColumnContainer', theClass: ColumnContainerComp},
-    {componentName: 'AgHorizontalResize', theClass: HorizontalResizeComp}
+    {componentName: 'AgHorizontalResize', theClass: HorizontalResizeComp},
+    {componentName: 'AgToolPanel', theClass: ToolPanelComp},
+    {componentName: 'AgStatusBar', theClass: StatusBar},
+    {componentName: 'AgHeaderColumnDrop', theClass: HeaderColumnDropComp},
+    {componentName: 'AgToolPanelColumnComp', theClass: ToolPanelColumnComp},
+    {componentName: 'AgToolPanelSelectComp', theClass: ToolPanelSelectComp},
 ]);

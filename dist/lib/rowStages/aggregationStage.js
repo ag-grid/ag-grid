@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.1.1
+// ag-grid-enterprise v18.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -123,7 +123,7 @@ var AggregationStage = (function () {
             totalColDef.pivotTotalColumnIds.forEach(function (colId) {
                 aggResults.push(result[colId]);
             });
-            result[totalColDef.colId] = _this.aggregateValues(aggResults, totalColDef.aggFunc);
+            result[totalColDef.colId] = _this.aggregateValues(aggResults, totalColDef.pivotValueColumn.getAggFunc());
         });
         return result;
     };

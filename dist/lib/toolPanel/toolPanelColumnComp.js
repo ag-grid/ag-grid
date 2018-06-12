@@ -1,4 +1,4 @@
-// ag-grid-enterprise v17.1.1
+// ag-grid-enterprise v18.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -27,23 +27,24 @@ var rowGroupColumnsPanel_1 = require("./columnDrop/rowGroupColumnsPanel");
 var columnSelectComp_1 = require("./columnsSelect/columnSelectComp");
 var pivotColumnsPanel_1 = require("./columnDrop/pivotColumnsPanel");
 var ag_grid_1 = require("ag-grid");
-var ColumnPanel = (function (_super) {
-    __extends(ColumnPanel, _super);
-    function ColumnPanel() {
-        var _this = _super.call(this, ColumnPanel.TEMPLATE) || this;
+var ToolPanelColumnComp = (function (_super) {
+    __extends(ToolPanelColumnComp, _super);
+    function ToolPanelColumnComp() {
+        var _this = _super.call(this, ToolPanelColumnComp.TEMPLATE) || this;
         _this.initialised = false;
         _this.childDestroyFuncs = [];
+        // referenced in template
         _this.componentToResize = _this;
         return _this;
     }
     // lazy initialise the panel
-    ColumnPanel.prototype.setVisible = function (visible) {
+    ToolPanelColumnComp.prototype.setVisible = function (visible) {
         _super.prototype.setVisible.call(this, visible);
         if (visible && !this.initialised) {
             this.init();
         }
     };
-    ColumnPanel.prototype.init = function () {
+    ToolPanelColumnComp.prototype.init = function () {
         this.instantiate(this.context);
         if (!this.gridOptionsWrapper.isToolPanelSuppressPivotMode()) {
             this.addComponent(new pivotModePanel_1.PivotModePanel());
@@ -60,41 +61,41 @@ var ColumnPanel = (function (_super) {
         }
         this.initialised = true;
     };
-    ColumnPanel.prototype.addComponent = function (component) {
+    ToolPanelColumnComp.prototype.addComponent = function (component) {
         this.context.wireBean(component);
         this.eCenterPanel.appendChild(component.getGui());
         this.childDestroyFuncs.push(component.destroy.bind(component));
     };
-    ColumnPanel.prototype.destroyChildren = function () {
+    ToolPanelColumnComp.prototype.destroyChildren = function () {
         this.childDestroyFuncs.forEach(function (func) { return func(); });
         this.childDestroyFuncs.length = 0;
         main_1._.removeAllChildren(this.eCenterPanel);
     };
-    ColumnPanel.prototype.refresh = function () {
+    ToolPanelColumnComp.prototype.refresh = function () {
         this.destroyChildren();
         this.init();
     };
-    ColumnPanel.prototype.destroy = function () {
+    ToolPanelColumnComp.prototype.destroy = function () {
         this.destroyChildren();
         _super.prototype.destroy.call(this);
     };
-    ColumnPanel.TEMPLATE = "<div class=\"ag-column-panel\">\n            <ag-horizontal-resize class=\"ag-tool-panel-horizontal-resize\" [component-to-resize]=\"componentToResize\"></ag-horizontal-resize>\n            <div class=\"ag-column-panel-center\" ref=\"eColumnPanelCenter\"></div>\n        </div>";
+    ToolPanelColumnComp.TEMPLATE = "<div class=\"ag-column-panel\">\n            <ag-horizontal-resize class=\"ag-tool-panel-horizontal-resize\" [component-to-resize]=\"componentToResize\"></ag-horizontal-resize>\n            <div class=\"ag-column-panel-center\" ref=\"eColumnPanelCenter\"></div>\n        </div>";
     __decorate([
         main_1.Autowired("context"),
         __metadata("design:type", main_1.Context)
-    ], ColumnPanel.prototype, "context", void 0);
+    ], ToolPanelColumnComp.prototype, "context", void 0);
     __decorate([
         main_1.Autowired("gridOptionsWrapper"),
         __metadata("design:type", main_1.GridOptionsWrapper)
-    ], ColumnPanel.prototype, "gridOptionsWrapper", void 0);
+    ], ToolPanelColumnComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         main_1.Autowired("gridApi"),
         __metadata("design:type", main_1.GridApi)
-    ], ColumnPanel.prototype, "gridApi", void 0);
+    ], ToolPanelColumnComp.prototype, "gridApi", void 0);
     __decorate([
         ag_grid_1.RefSelector('eColumnPanelCenter'),
         __metadata("design:type", HTMLElement)
-    ], ColumnPanel.prototype, "eCenterPanel", void 0);
-    return ColumnPanel;
+    ], ToolPanelColumnComp.prototype, "eCenterPanel", void 0);
+    return ToolPanelColumnComp;
 }(main_1.Component));
-exports.ColumnPanel = ColumnPanel;
+exports.ToolPanelColumnComp = ToolPanelColumnComp;

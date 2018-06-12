@@ -32,7 +32,6 @@ import {
 export class RangeController implements IRangeController {
 
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
@@ -46,6 +45,8 @@ export class RangeController implements IRangeController {
 
     private logger: Logger;
 
+    private gridPanel: GridPanel;
+
     private cellRanges: RangeSelection[];
     private activeRange: RangeSelection;
     private lastMouseEvent: MouseEvent;
@@ -55,6 +56,11 @@ export class RangeController implements IRangeController {
     private dragging = false;
 
     private autoScrollService: AutoScrollService;
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
+        this.autoScrollService = new AutoScrollService(this.gridPanel, this.gridOptionsWrapper);
+    }
 
     @PostConstruct
     private init(): void {
@@ -66,11 +72,9 @@ export class RangeController implements IRangeController {
         this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.clearSelection.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearSelection.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.clearSelection.bind(this));
-
-        this.autoScrollService = new AutoScrollService(this.gridPanel, this.gridOptionsWrapper);
     }
 
-    public setRangeToCell(cell: GridCell): void {
+    public setRangeToCell(cell: GridCell, appendRange = false): void {
         if (!this.gridOptionsWrapper.isEnableRangeSelection()) { return; }
 
         let columns = this.updateSelectedColumns(cell.column, cell.column);
@@ -83,7 +87,10 @@ export class RangeController implements IRangeController {
             end: new GridCell(gridCellDef),
             columns: columns
         };
-        this.cellRanges = [];
+        // if not appending, then clear previous range selections
+        if (!appendRange || _.missing(this.cellRanges)) {
+            this.cellRanges = [];
+        }
         this.cellRanges.push(newRange);
         this.activeRange = null;
         this.dispatchChangedEvent(true, false);
@@ -104,7 +111,7 @@ export class RangeController implements IRangeController {
         });
     }
 
-    // returns true if successful, false if not sucessful
+    // returns true if successful, false if not successful
     public extendRangeInDirection(startCell: GridCell, key: number): boolean {
 
         let oneRangeExists = _.exists(this.cellRanges) || this.cellRanges.length === 1;
@@ -403,10 +410,8 @@ class AutoScrollService {
 
     public check(mouseEvent: MouseEvent): void {
 
-        // we don't do ticking if doing forPrint or autoHeight
-        if (!this.gridOptionsWrapper.isNormalDomLayout()) {
-            return;
-        }
+        // we don't do ticking if grid is auto height
+        if (this.gridOptionsWrapper.isGridAutoHeight()) { return; }
 
         let rect: ClientRect = this.gridPanel.getBodyClientRect();
 
