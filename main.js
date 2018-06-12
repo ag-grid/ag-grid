@@ -1,4 +1,4 @@
-// ag-grid-enterprise v18.0.0
+// ag-grid-enterprise v18.0.1
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var columnSelectComp_1 = require("./dist/lib/toolPanel/columnsSelect/columnSelectComp");
@@ -106,7 +106,7 @@ var horizontalResizeComp_1 = require("./dist/lib/toolPanel/columnsSelect/horizon
 var toolPanelSelectComp_1 = require("./dist/lib/toolPanel/toolPanelSelectComp");
 var toolPanelColumnComp_2 = require("./dist/lib/toolPanel/toolPanelColumnComp");
 var headerColumnDropComp_1 = require("./dist/lib/toolPanel/columnDrop/headerColumnDropComp");
-var rowModelTypes = { viewport: viewportRowModel_2.ViewportRowModel, enterprise: serverSideRowModel_1.ServerSideRowModel };
+var rowModelTypes = { viewport: viewportRowModel_2.ViewportRowModel, serverSide: serverSideRowModel_1.ServerSideRowModel };
 main_1.Grid.setEnterpriseBeans([enterpriseMenu_2.EnterpriseMenuFactory, excelCreator_2.ExcelCreator, excelXmlFactory_2.ExcelXmlFactory, rowGroupCompFactory_2.RowGroupCompFactory, pivotCompFactory_2.PivotCompFactory,
     pivotColumnsPanel_2.PivotColumnsPanel, rangeController_2.RangeController, clipboardService_2.ClipboardService, pivotStage_2.PivotStage, pivotColDefService_2.PivotColDefService,
     contextMenu_2.ContextMenuFactory, groupStage_2.GroupStage, aggregationStage_2.AggregationStage, enterpriseBoot_2.EnterpriseBoot, aggFuncService_2.AggFuncService,

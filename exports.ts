@@ -68,7 +68,7 @@ import {ToolPanelSelectComp} from "./dist/lib/toolPanel/toolPanelSelectComp";
 import {ToolPanelColumnComp} from "./dist/lib/toolPanel/toolPanelColumnComp";
 import {HeaderColumnDropComp} from "./dist/lib/toolPanel/columnDrop/headerColumnDropComp";
 
-let rowModelTypes = {viewport: ViewportRowModel, enterprise: ServerSideRowModel};
+let rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
 
 Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, RowGroupCompFactory, PivotCompFactory,
     PivotColumnsPanel, RangeController, ClipboardService, PivotStage, PivotColDefService,
