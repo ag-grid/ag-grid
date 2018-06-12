@@ -3,16 +3,21 @@
 
 <div class="card card-highlight">
   <div class="card-body">
-    <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=17.1.0">Version 17.1 Released</a></h5>
-    <h6 class="card-subtitle mb-2 text-muted">Apr 13</h6>
+    <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=18.0.0">Version 18.0 Released</a></h5>
+    <h6 class="card-subtitle mb-2 text-muted">Jun 12</h6>
     <p class="card-text">
-        Minor release including 60 bug fixes and changes in total. Check the new guides on connecting to
-        <a class="learn-more" href="../oracle-server-side-operations/">Oracle</a> and
-        <a class="learn-more" href="../spark-server-side-operations/">Apache Spark</a>.
+        Major release with many new features like:
+        <ul>
+        <li><a class="learn-more" href="../javascript-grid-filtering/">Column filters now support AND/OR logic</a></li>
+        <li><a class="learn-more" href="../javascript-grid-row-spanning/">Support for row spanning</a>.</li>
+        <li><a class="learn-more" href="../javascript-grid-grouping/#grouping-footers"> Support for 'grand' total across all groups.</a>.</li>
+        <li><a class="learn-more" href="../javascript-grid-pivoting/#pivotRowTotals/">Pivot supports row totals</a>.</li>
+        <li><a class="learn-more" href="../javascript-grid-for-print/">New strategy for Printing using auto-height.</a>.</li>
+        </ul>
     </p>
 
     <p class="text-right">
-        <a class="learn-more" href="../ag-grid-changelog/?fixVersion=17.1.0">Change Log</a>
+        <a class="learn-more" href="../ag-grid-changelog/?fixVersion=18.0.0">Change Log</a>
     </p>
   </div>
 </div>
@@ -30,6 +35,7 @@
     </p>
   </div>
 </div>
+
 
 <p>Upcoming events we will<br> be attending and sponsoring:</p>
 

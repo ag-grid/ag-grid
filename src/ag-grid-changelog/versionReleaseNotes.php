@@ -52,6 +52,24 @@
             AG-865
             The Server-side Row Model now preserves group state after sorting has been performed.
         </li>
+        <li>
+            <p>AG-424
+            Text, Number and Date filters now support two filter conditions instead of just one. The user through the UI
+            can decide which sort of logic to apply: 'AND'/'OR'</p>
+
+            <p>This also means that the model for the filter changes when two conditions are applied.</p>
+
+            <p>The ability to add an additional filter condition can be suppressed with
+            <code>filterParams.suppressAndOrCondition = true</code></p>
+
+            <p>The documentation of each filter has been updated to reflect these changes accordingly:
+
+            <ul>
+                <li><a href="../javascript-grid-filter-text/">text filter</a></li>
+                <li><a href="../javascript-grid-filter-number/">number filter</a></li>
+                <li><a href="../javascript-grid-filter-date/">date filter</a></li>
+            </ul></p>
+        </li>
     </ul>
 </div>
 

@@ -13,8 +13,7 @@ var gridOptions = {
 
     enableColResize: true,
     pivotMode: true,
-    pivotTotals: true,
-    sizeColumnsToFit: true
+    pivotColumnGroupTotals: 'before'
 };
 
 
