@@ -52,18 +52,6 @@
             AG-865
             The Server-side Row Model now preserves group state after sorting has been performed.
         </li>
-        <li>
-            AG-1741
-            Allow for both autoHeight to be used when using AngularJS with angularCompileRows.
-        </li>
-        <li>
-            AG-1796
-            Ensure "No Rows" Overlay does not overlap headers when using autoHeight when the grid is empty.
-        </li>
-        <li>
-            AG-1771
-            Fix memory leak when using AngularJS with angularCompileFilters.
-        </li>
     </ul>
 </div>
 
