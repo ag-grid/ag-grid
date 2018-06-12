@@ -5,6 +5,7 @@ export declare class ToolPanelColumnComp extends Component {
     private context;
     private gridOptionsWrapper;
     private gridApi;
+    private eventService;
     private initialised;
     private childDestroyFuncs;
     private componentToResize;

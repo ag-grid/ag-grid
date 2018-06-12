@@ -41994,7 +41994,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    LicenseManager.setLicenseKey = function (licenseKey) {
 	        LicenseManager_1.licenseKey = licenseKey;
 	    };
-	    LicenseManager.RELEASE_INFORMATION = 'MTUyMzU0NTI1NDE5Ng==';
+	    LicenseManager.RELEASE_INFORMATION = 'MTUyODcxMzg1Nzk1Mg==';
 	    __decorate([
 	        main_1.Autowired('md5'),
 	        __metadata("design:type", md5_1.MD5)
@@ -43870,12 +43870,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    ToolPanelComp.prototype.showToolPanel = function (show) {
 	        this.columnComp.setVisible(show);
-	        var event = {
-	            type: main_1.Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
-	            api: this.gridOptionsWrapper.getApi(),
-	            columnApi: this.gridOptionsWrapper.getColumnApi()
-	        };
-	        this.eventService.dispatchEvent(event);
 	    };
 	    ToolPanelComp.prototype.isToolPanelShowing = function () {
 	        return this.columnComp.isVisible();
@@ -43960,6 +43954,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (visible && !this.initialised) {
 	            this.init();
 	        }
+	        var event = {
+	            type: main_1.Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
+	            api: this.gridOptionsWrapper.getApi(),
+	            columnApi: this.gridOptionsWrapper.getColumnApi()
+	        };
+	        this.eventService.dispatchEvent(event);
 	    };
 	    ToolPanelColumnComp.prototype.init = function () {
 	        this.instantiate(this.context);
@@ -44009,6 +44009,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        main_1.Autowired("gridApi"),
 	        __metadata("design:type", main_1.GridApi)
 	    ], ToolPanelColumnComp.prototype, "gridApi", void 0);
+	    __decorate([
+	        main_1.Autowired("eventService"),
+	        __metadata("design:type", main_1.EventService)
+	    ], ToolPanelColumnComp.prototype, "eventService", void 0);
 	    __decorate([
 	        ag_grid_1.RefSelector('eColumnPanelCenter'),
 	        __metadata("design:type", HTMLElement)
