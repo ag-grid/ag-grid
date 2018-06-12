@@ -63,8 +63,4 @@ export class VueFrameworkFactory {
             return this._baseFrameworkFactory.colDefFilter(colDef);
         }
     }
-
-    setTimeout(action, timeout) {
-        this._baseFrameworkFactory.setTimeout(action, timeout);
-    }
 }

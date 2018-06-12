@@ -85,11 +85,6 @@ var VueFrameworkFactory = exports.VueFrameworkFactory = function () {
                 return this._baseFrameworkFactory.colDefFilter(colDef);
             }
         }
-    }, {
-        key: "setTimeout",
-        value: function setTimeout(action, timeout) {
-            this._baseFrameworkFactory.setTimeout(action, timeout);
-        }
     }]);
 
     return VueFrameworkFactory;

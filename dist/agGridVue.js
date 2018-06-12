@@ -8,7 +8,7 @@ var _vue = require("vue");
 
 var _vue2 = _interopRequireDefault(_vue);
 
-var _main = require("ag-grid/main");
+var _agGrid = require("ag-grid");
 
 var _vueFrameworkFactory = require("./vueFrameworkFactory");
 
@@ -24,21 +24,21 @@ var props = {
         }
     }
 };
-_main.ComponentUtil.ALL_PROPERTIES.forEach(function (propertyName) {
-    // props.push(propertyName);
+_agGrid.ComponentUtil.ALL_PROPERTIES.forEach(function (propertyName) {
     props[propertyName] = {};
 
     watchedProperties[propertyName] = function (val, oldVal) {
         this.processChanges(propertyName, val, oldVal);
     };
 });
-_main.ComponentUtil.EVENTS.forEach(function (eventName) {
-    // props.push(eventName);
+_agGrid.ComponentUtil.EVENTS.forEach(function (eventName) {
     props[eventName] = {};
 });
 
 exports.default = _vue2.default.extend({
-    template: '<div></div>',
+    render: function render(h) {
+        return h('div');
+    },
     props: props,
     data: function data() {
         return {
@@ -57,22 +57,20 @@ exports.default = _vue2.default.extend({
             var emitter = this[eventType];
             if (emitter) {
                 emitter(event);
-            } else {
-                // the app isn't listening for this - ignore it
             }
         },
         processChanges: function processChanges(propertyName, val, oldVal) {
             if (this._initialised) {
                 var changes = {};
                 changes[propertyName] = { currentValue: val, previousValue: oldVal };
-                _main.ComponentUtil.processOnChange(changes, this.gridOptions, this.gridOptions.api, this.gridOptions.columnApi);
+                _agGrid.ComponentUtil.processOnChange(changes, this.gridOptions, this.gridOptions.api, this.gridOptions.columnApi);
             }
         }
     },
     mounted: function mounted() {
         var frameworkComponentWrapper = new _vueFrameworkComponentWrapper.VueFrameworkComponentWrapper(this);
         var vueFrameworkFactory = new _vueFrameworkFactory.VueFrameworkFactory(this.$el, this);
-        var gridOptions = _main.ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
+        var gridOptions = _agGrid.ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
 
         var gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
@@ -82,7 +80,7 @@ exports.default = _vue2.default.extend({
             }
         };
 
-        new _main.Grid(this.$el, gridOptions, gridParams);
+        new _agGrid.Grid(this.$el, gridOptions, gridParams);
 
         this._initialised = true;
     },
