@@ -1,5 +1,5 @@
 import {Injectable, NgZone, ViewContainerRef} from "@angular/core";
-import {BaseFrameworkFactory, ColDef, IFilterComp, IFrameworkFactory} from "ag-grid/main";
+import {BaseFrameworkFactory, IFrameworkFactory} from "ag-grid/main";
 import {BaseComponentFactory} from "./baseComponentFactory";
 
 @Injectable()
@@ -13,13 +13,5 @@ export class Ng2FrameworkFactory implements IFrameworkFactory {
 
     public setViewContainerRef(viewContainerRef: ViewContainerRef): void {
         this._viewContainerRef = viewContainerRef;
-    }
-
-    public setTimeout(action: any, timeout?: any): void {
-        this._ngZone.runOutsideAngular(() => {
-            setTimeout(() => {
-                action();
-            }, timeout);
-        });
     }
 }

@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var main_1 = require("ag-grid/main");
+var ag_grid_1 = require("ag-grid");
+var ag_grid_2 = require("ag-grid");
 var ng2FrameworkFactory_1 = require("./ng2FrameworkFactory");
 var agGridColumn_1 = require("./agGridColumn");
 var ng2FrameworkComponentWrapper_1 = require("./ng2FrameworkComponentWrapper");
@@ -14,7 +15,7 @@ var AgGridNg2 = (function () {
         this._initialised = false;
         this._destroyed = false;
         // in order to ensure firing of gridReady is deterministic
-        this._fullyReady = new main_1.Promise(function (resolve) {
+        this._fullyReady = new ag_grid_1.Promise(function (resolve) {
             resolve(true);
         });
         // @START@
@@ -34,7 +35,7 @@ var AgGridNg2 = (function () {
         this.localeText = undefined;
         this.icons = undefined;
         this.datasource = undefined;
-        this.enterpriseDatasource = undefined;
+        this.serverSideDatasource = undefined;
         this.viewportDatasource = undefined;
         this.groupRowRendererParams = undefined;
         this.aggFuncs = undefined;
@@ -117,6 +118,7 @@ var AgGridNg2 = (function () {
         this.getBusinessKeyForNode = undefined;
         this.sendToClipboard = undefined;
         this.navigateToNextCell = undefined;
+        this.processDataFromClipboard = undefined;
         this.tabToNextCell = undefined;
         this.getDetailRowData = undefined;
         this.processCellFromClipboard = undefined;
@@ -162,6 +164,7 @@ var AgGridNg2 = (function () {
         this.groupSuppressAutoColumn = undefined;
         this.groupSelectsChildren = undefined;
         this.groupIncludeFooter = undefined;
+        this.groupIncludeTotalFooter = undefined;
         this.groupUseEntireRow = undefined;
         this.groupSuppressRow = undefined;
         this.groupSuppressBlankHeader = undefined;
@@ -199,6 +202,7 @@ var AgGridNg2 = (function () {
         this.suppressCopyRowsToClipboard = undefined;
         this.pivotMode = undefined;
         this.suppressAggFuncInHeader = undefined;
+        this.suppressClipboardPaste = undefined;
         this.suppressColumnVirtualisation = undefined;
         this.suppressAggAtRootLevel = undefined;
         this.suppressFocusAfterRefresh = undefined;
@@ -229,7 +233,10 @@ var AgGridNg2 = (function () {
         this.ensureDomOrder = undefined;
         this.accentedSort = undefined;
         this.pivotTotals = undefined;
+        this.pivotColumnGroupTotals = undefined;
+        this.pivotRowTotals = undefined;
         this.suppressChangeDetection = undefined;
+        this.suppressRowTransform = undefined;
         this.valueCache = undefined;
         this.valueCacheNeverExpires = undefined;
         this.aggregateOnlyChangedColumns = undefined;
@@ -246,6 +253,8 @@ var AgGridNg2 = (function () {
         this.contractColumnSelection = undefined;
         this.suppressEnterpriseResetOnNewColumns = undefined;
         this.enableOldSetFilterModel = undefined;
+        this.suppressRowHoverHighlight = undefined;
+        this.gridAutoHeight = undefined;
         this.columnEverythingChanged = new core_1.EventEmitter();
         this.newColumnsLoaded = new core_1.EventEmitter();
         this.columnPivotModeChanged = new core_1.EventEmitter();
@@ -294,6 +303,7 @@ var AgGridNg2 = (function () {
         this.cellEditingStarted = new core_1.EventEmitter();
         this.cellEditingStopped = new core_1.EventEmitter();
         this.bodyScroll = new core_1.EventEmitter();
+        this.animationQueueEmpty = new core_1.EventEmitter();
         this.heightScaleChanged = new core_1.EventEmitter();
         this.paginationChanged = new core_1.EventEmitter();
         this.componentStateChanged = new core_1.EventEmitter();
@@ -302,30 +312,25 @@ var AgGridNg2 = (function () {
         this.scrollVisibilityChanged = new core_1.EventEmitter();
         this.columnHoverChanged = new core_1.EventEmitter();
         this.flashCells = new core_1.EventEmitter();
+        this.viewportImpacted = new core_1.EventEmitter();
         this.rowDragEnter = new core_1.EventEmitter();
         this.rowDragMove = new core_1.EventEmitter();
         this.rowDragLeave = new core_1.EventEmitter();
         this.rowDragEnd = new core_1.EventEmitter();
+        this.pasteStart = new core_1.EventEmitter();
+        this.pasteEnd = new core_1.EventEmitter();
         this.columnRowGroupChangeRequest = new core_1.EventEmitter();
         this.columnPivotChangeRequest = new core_1.EventEmitter();
         this.columnValueChangeRequest = new core_1.EventEmitter();
         this.columnAggFuncChangeRequest = new core_1.EventEmitter();
         this._nativeElement = elementDef.nativeElement;
-        // create all the events generically. this is done generically so that
-        // if the list of grid events change, we don't need to change this code.
-        this.createComponentEvents();
         this.ng2FrameworkFactory.setViewContainerRef(this.viewContainerRef);
         this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef);
         this.frameworkComponentWrapper.setComponentFactoryResolver(this._componentFactoryResolver);
     }
-    AgGridNg2.prototype.createComponentEvents = function () {
-        var _this = this;
-        main_1.ComponentUtil.EVENTS.forEach(function (eventName) {
-            _this[eventName] = new core_1.EventEmitter();
-        });
-    };
     AgGridNg2.prototype.ngAfterViewInit = function () {
-        this.gridOptions = main_1.ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
+        this.checkForDeprecatedEvents();
+        this.gridOptions = ag_grid_1.ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this, true);
         this.gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
             frameworkFactory: this.ng2FrameworkFactory,
@@ -339,7 +344,7 @@ var AgGridNg2 = (function () {
                 return column.toColDef();
             });
         }
-        new main_1.Grid(this._nativeElement, this.gridOptions, this.gridParams);
+        new ag_grid_1.Grid(this._nativeElement, this.gridOptions, this.gridParams);
         if (this.gridOptions.api) {
             this.api = this.gridOptions.api;
         }
@@ -354,7 +359,7 @@ var AgGridNg2 = (function () {
     };
     AgGridNg2.prototype.ngOnChanges = function (changes) {
         if (this._initialised) {
-            main_1.ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
+            ag_grid_1.ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
         }
     };
     AgGridNg2.prototype.ngOnDestroy = function () {
@@ -366,6 +371,14 @@ var AgGridNg2 = (function () {
                 this.api.destroy();
             }
         }
+    };
+    AgGridNg2.prototype.checkForDeprecatedEvents = function () {
+        var _this = this;
+        ag_grid_2.Utils.iterateObject(ag_grid_1.Events, function (key, eventName) {
+            if (_this[eventName] && _this[eventName].observers.length > 0) {
+                ag_grid_1.GridOptionsWrapper.checkEventDeprecation(eventName);
+            }
+        });
     };
     AgGridNg2.prototype.globalEventListener = function (eventType, event) {
         // if we are tearing down, don't emit angular events, as this causes
@@ -433,7 +446,7 @@ AgGridNg2.propDecorators = {
     'localeText': [{ type: core_1.Input },],
     'icons': [{ type: core_1.Input },],
     'datasource': [{ type: core_1.Input },],
-    'enterpriseDatasource': [{ type: core_1.Input },],
+    'serverSideDatasource': [{ type: core_1.Input },],
     'viewportDatasource': [{ type: core_1.Input },],
     'groupRowRendererParams': [{ type: core_1.Input },],
     'aggFuncs': [{ type: core_1.Input },],
@@ -516,6 +529,7 @@ AgGridNg2.propDecorators = {
     'getBusinessKeyForNode': [{ type: core_1.Input },],
     'sendToClipboard': [{ type: core_1.Input },],
     'navigateToNextCell': [{ type: core_1.Input },],
+    'processDataFromClipboard': [{ type: core_1.Input },],
     'tabToNextCell': [{ type: core_1.Input },],
     'getDetailRowData': [{ type: core_1.Input },],
     'processCellFromClipboard': [{ type: core_1.Input },],
@@ -561,6 +575,7 @@ AgGridNg2.propDecorators = {
     'groupSuppressAutoColumn': [{ type: core_1.Input },],
     'groupSelectsChildren': [{ type: core_1.Input },],
     'groupIncludeFooter': [{ type: core_1.Input },],
+    'groupIncludeTotalFooter': [{ type: core_1.Input },],
     'groupUseEntireRow': [{ type: core_1.Input },],
     'groupSuppressRow': [{ type: core_1.Input },],
     'groupSuppressBlankHeader': [{ type: core_1.Input },],
@@ -598,6 +613,7 @@ AgGridNg2.propDecorators = {
     'suppressCopyRowsToClipboard': [{ type: core_1.Input },],
     'pivotMode': [{ type: core_1.Input },],
     'suppressAggFuncInHeader': [{ type: core_1.Input },],
+    'suppressClipboardPaste': [{ type: core_1.Input },],
     'suppressColumnVirtualisation': [{ type: core_1.Input },],
     'suppressAggAtRootLevel': [{ type: core_1.Input },],
     'suppressFocusAfterRefresh': [{ type: core_1.Input },],
@@ -628,7 +644,10 @@ AgGridNg2.propDecorators = {
     'ensureDomOrder': [{ type: core_1.Input },],
     'accentedSort': [{ type: core_1.Input },],
     'pivotTotals': [{ type: core_1.Input },],
+    'pivotColumnGroupTotals': [{ type: core_1.Input },],
+    'pivotRowTotals': [{ type: core_1.Input },],
     'suppressChangeDetection': [{ type: core_1.Input },],
+    'suppressRowTransform': [{ type: core_1.Input },],
     'valueCache': [{ type: core_1.Input },],
     'valueCacheNeverExpires': [{ type: core_1.Input },],
     'aggregateOnlyChangedColumns': [{ type: core_1.Input },],
@@ -645,6 +664,8 @@ AgGridNg2.propDecorators = {
     'contractColumnSelection': [{ type: core_1.Input },],
     'suppressEnterpriseResetOnNewColumns': [{ type: core_1.Input },],
     'enableOldSetFilterModel': [{ type: core_1.Input },],
+    'suppressRowHoverHighlight': [{ type: core_1.Input },],
+    'gridAutoHeight': [{ type: core_1.Input },],
     'columnEverythingChanged': [{ type: core_1.Output },],
     'newColumnsLoaded': [{ type: core_1.Output },],
     'columnPivotModeChanged': [{ type: core_1.Output },],
@@ -693,6 +714,7 @@ AgGridNg2.propDecorators = {
     'cellEditingStarted': [{ type: core_1.Output },],
     'cellEditingStopped': [{ type: core_1.Output },],
     'bodyScroll': [{ type: core_1.Output },],
+    'animationQueueEmpty': [{ type: core_1.Output },],
     'heightScaleChanged': [{ type: core_1.Output },],
     'paginationChanged': [{ type: core_1.Output },],
     'componentStateChanged': [{ type: core_1.Output },],
@@ -701,10 +723,13 @@ AgGridNg2.propDecorators = {
     'scrollVisibilityChanged': [{ type: core_1.Output },],
     'columnHoverChanged': [{ type: core_1.Output },],
     'flashCells': [{ type: core_1.Output },],
+    'viewportImpacted': [{ type: core_1.Output },],
     'rowDragEnter': [{ type: core_1.Output },],
     'rowDragMove': [{ type: core_1.Output },],
     'rowDragLeave': [{ type: core_1.Output },],
     'rowDragEnd': [{ type: core_1.Output },],
+    'pasteStart': [{ type: core_1.Output },],
+    'pasteEnd': [{ type: core_1.Output },],
     'columnRowGroupChangeRequest': [{ type: core_1.Output },],
     'columnPivotChangeRequest': [{ type: core_1.Output },],
     'columnValueChangeRequest': [{ type: core_1.Output },],

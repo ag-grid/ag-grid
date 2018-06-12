@@ -12,13 +12,6 @@ var Ng2FrameworkFactory = (function () {
     Ng2FrameworkFactory.prototype.setViewContainerRef = function (viewContainerRef) {
         this._viewContainerRef = viewContainerRef;
     };
-    Ng2FrameworkFactory.prototype.setTimeout = function (action, timeout) {
-        this._ngZone.runOutsideAngular(function () {
-            setTimeout(function () {
-                action();
-            }, timeout);
-        });
-    };
     return Ng2FrameworkFactory;
 }());
 Ng2FrameworkFactory.decorators = [

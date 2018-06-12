@@ -148,6 +148,7 @@ AgGridColumn.propDecorators = {
     'enableCellChangeFlash': [{ type: core_1.Input },],
     'rowDrag': [{ type: core_1.Input },],
     'autoHeight': [{ type: core_1.Input },],
+    'rowSpan': [{ type: core_1.Input },],
 };
 exports.AgGridColumn = AgGridColumn;
 //# sourceMappingURL=agGridColumn.js.map

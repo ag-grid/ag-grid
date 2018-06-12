@@ -54,5 +54,5 @@ exports.AgGridColumnNgFactory = i0.ɵccf('ag-grid-column', i1.AgGridColumn, View
     suppressResize: 'suppressResize', suppressAutoSize: 'suppressAutoSize', enableRowGroup: 'enableRowGroup',
     enablePivot: 'enablePivot', enableValue: 'enableValue', editable: 'editable', suppressPaste: 'suppressPaste',
     suppressNavigable: 'suppressNavigable', enableCellChangeFlash: 'enableCellChangeFlash',
-    rowDrag: 'rowDrag', autoHeight: 'autoHeight' }, {}, []);
+    rowDrag: 'rowDrag', autoHeight: 'autoHeight', rowSpan: 'rowSpan' }, {}, []);
 //# sourceMappingURL=agGridColumn.ngfactory.js.map
