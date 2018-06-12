@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "Angular Datagrid. 59 Features with Lightning Performance.";
-$pageDescription = "ag-Grid is feature rich datagrid designed for Angular. Version 17 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that your users expect. Our Community version is free and open source or take a 2 month trial of ag-Grid Enterprise.";
+$pageTitle = "AngularJS Datagrid | Packed with features and performance.";
+$pageDescription = "ag-Grid is a feature rich datagrid designed for Angular. Version 17 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that you expect. Our Community version is free and open source or take a 2 month trial of ag-Grid Enterprise.";
 $pageKeyboards = "Angular Grid";
 $pageGroup = "basics";
 include '../getting-started/header.php';
@@ -219,13 +219,19 @@ var module = angular.module("example", ["agGrid"]);</snippet>
         The Price column has an Angular 1 Cell Renderer.
     </li>
     <li>
+        The Date column has an Angular 1 Cell Editor (using the <a href="https://angular-ui.github.io/bootstrap/">AngularJS UI Bootstrap Directive</a>).
+    </li>
+    <li>
+        The Date column has an Angular 1 Date Filter (using the <a href="https://angular-ui.github.io/bootstrap/">AngularJS UI Bootstrap Directive</a>).
+    </li>
+    <li>
         Each component creates it's own $scope in the <code>init</code>
         method and destroys it in the <code>destroy</code> method.
     </li>
 </ul>
 </p>
 
-<?= example('Components', 'components', 'vanilla', array("exampleHeight" => 250, 'extras' => array('angularjs1'))) ?>
+<?= example('Components', 'components', 'vanilla', array("exampleHeight" => 400, 'extras' => array('angularjs1', 'ui-bootstrap'))) ?>
 
 <note>
     Creating child scopes and managing AngularJS compiling is part of the AngularJS

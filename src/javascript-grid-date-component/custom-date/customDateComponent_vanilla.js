@@ -53,7 +53,7 @@ CustomDateComponent.prototype.getDate = function () {
 };
 
 CustomDateComponent.prototype.setDate = function (date) {
-    if (date === null) {
+    if (!date) {
         this.eDD.value = '';
         this.eMM.value = '';
         this.eYYYY.value = '';

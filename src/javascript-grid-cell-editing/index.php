@@ -455,7 +455,11 @@ colDef.cellEditorParams = {
             <code>cellHeight</code>: The row height, in pixels, of each value.
         </li>
         <li>
-            <code>cellRenderer</code>: The cell renderer to use to draw each value.
+            <code>formatValue</code>: A callback function that allows you to change the displayed value for simple data.
+        </li>
+        <li>
+            <code>cellRenderer</code>: The cell renderer to use to draw each value. Cell renderers are useful to rendering rich
+            html values, or when processing complex data.
             See <a href="../javascript-grid-cell-rendering-components/">Cell Rendering Components</a>
             for creating custom cell renderers.
         </li>
@@ -491,8 +495,10 @@ cellEditorParams: function(params) {
         Below shows an example with dynamic editor parameters. The following can be noted:
         <ul>
             <li>Column <b>Gender</b> uses a cell renderer for both the grid and the editor.</li>
-            <li>Column <b>Country</b> allows country selection. If the selection doesn't match the city, the city cell is cleared.</li>
-            <li>Column <b>City</b> uses dynamic parameters to display values for the selected country.</li>
+            <li>Column <b>Country</b> allows country selection, with <code>cellHeight</code> being used to make each entry 50px height.
+                If the selection doesn't match the city, the city cell is cleared.</li>
+            <li>Column <b>City</b> uses dynamic parameters to display values for the selected country, and uses <code>formatValue</code>
+                to add the selected city's country as a suffix.</li>
             <li>Column <b>Address</b> uses the rich text area editor.</li>
         </ul>
     </p>

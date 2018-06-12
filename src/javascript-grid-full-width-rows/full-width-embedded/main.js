@@ -63,12 +63,17 @@ var gridOptions = {
         var cssClass;
         var message;
 
-        if (params.node.floating) {
+        console.log(params);
+
+        if (params.node.rowPinned==='top') {
             cssClass = 'example-full-width-floating-row';
-            message = 'Floating full width row at index ' + params.rowIndex;
+            message = 'Top, index = ' + params.rowIndex + ', pinned = ' + params.pinned;
+        } else if (params.node.rowPinned==='bottom') {
+            cssClass = 'example-full-width-floating-row';
+            message = 'Middle, index = ' + params.rowIndex + ', pinned = ' + params.pinned;
         } else {
             cssClass = 'example-full-width-row';
-            message = 'Normal full width row at index' + params.rowIndex;
+            message = 'Normal, index = ' + params.rowIndex + ', pinned = ' + params.pinned;
         }
 
         var eDiv = document.createElement('div');

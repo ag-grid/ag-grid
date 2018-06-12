@@ -9,7 +9,11 @@ function getFunctionName(code) {
     return matches && matches.length === 2 ?  matches[1] : null;
 }
 
-function onGridReadyTemplate(readyCode: string, resizeToFit: boolean, data: { url: string, callback: string }) {
+function onGridReadyTemplate(readyCode: string,
+                             resizeToFit: boolean,
+                             propertyAttributes: string[],
+                             propertyVars: string[],
+                             data: { url: string, callback: string }) {
     let resize = '', getData = '';
 
     if (!readyCode) {
@@ -21,9 +25,17 @@ function onGridReadyTemplate(readyCode: string, resizeToFit: boolean, data: { ur
     }
 
     if (data) {
+        let setRowDataBlock = data.callback;
+        if(data.callback.indexOf('api.setRowData') !== -1) {
+            propertyAttributes.push(':rowData="rowData"');
+            propertyVars.push('rowData: []');
+
+            setRowDataBlock = data.callback.replace("params.api.setRowData(data);", "this.rowData = data;");
+        }
+
         getData = `
             const httpRequest = new XMLHttpRequest();
-            const updateData = (data) => ${data.callback};
+            const updateData = (data) => ${setRowDataBlock};
     
             httpRequest.open('GET', ${data.url});
             httpRequest.send();
@@ -81,9 +93,9 @@ function componentTemplate(bindings, componentFileNames) {
         });
     }
 
-    const propertyAttributes = [];
-    const propertyVars = [];
     const propertyAssignments = [];
+    const propertyVars = [];
+    const propertyAttributes = [];
 
     const utilMethodNames = bindings.utils.map(getFunctionName);
     bindings.properties
@@ -110,7 +122,7 @@ function componentTemplate(bindings, componentFileNames) {
     const eventHandlers = bindings.eventHandlers.map(event => event.handler).map(removeFunction);
     const utilsMethods = bindings.utils.map(removeFunction);
 
-    additional.push(onGridReadyTemplate(bindings.onGridReady, bindings.resizeToFit, bindings.data));
+    additional.push(onGridReadyTemplate(bindings.onGridReady, bindings.resizeToFit, propertyAttributes, propertyVars, bindings.data));
 
     const style = bindings.gridSettings.noStyle ? '' : `style="width: ${bindings.gridSettings.width}; height: ${bindings.gridSettings.height};"`;
 

@@ -179,6 +179,16 @@
         "url": "javascript-grid-column-spanning/"
     },
     {
+        "title": "Row Spanning",
+        "enterprise": false,
+        "description": "<span class=\"feature-highlight\">Row Spanning</span> allows cells to span rows, similar to cell span in Excel",
+        "src": "javascript-grid-features/images/rowSpanning.gif",
+        "snippet":
+            "colDef = {\n    field: 'country',\n    rowSpan: function(params) {\n        // span 2 rows for Russia, otherwise 1\n        var country = params.data.country;\n        return country==='Russia' ? 2 : 1;\n    }\n    ...\n};",
+        "level": 0,
+        "url": "javascript-grid-row-spanning/"
+    },
+    {
         "title": "Column Moving",
         "enterprise": false,
         "description":
@@ -495,10 +505,10 @@
         "url": "javascript-grid-overlays/"
     },
     {
-        "title": "Layout For Print",
+        "title": "Printing",
         "enterprise": false,
         "description":
-            "Use <span class=\"feature-highlight\">For Print</span> to have the grid render without using\nany scrollbars. This is useful for printing the grid, where all rows should be printed, not just what's\nvisible on the screen.",
+            "Remove all scrolling in the grid to make it ready for printing.",
         "src": null,
         "snippet": null,
         "level": 0,

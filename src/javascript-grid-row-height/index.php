@@ -14,11 +14,11 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <note>
-        Changing the row height is only supported in the <a href="../javascript-grid-in-memory/">in memory</a>
+        Changing the row height is only supported in the <a href="../javascript-grid-client-side-model/">Client-side</a>
         row model. You cannot use variable row height when using
         <a href="../javascript-grid-virtual-paging/">virtual paging</a>,
         <a href="../javascript-grid-viewport/">viewport</a> or
-        <a href="../javascript-grid-enterprise-model/">enterprise</a> row models.
+        <a href="../javascript-grid-server-side-model/">Server-side</a> row models.
         This is because these row models need to work out the position of rows that are not loaded and hence need to
         assume the row height is fixed.
     </note>
@@ -70,7 +70,6 @@ gridOptions.getRowHeight = function(params) {
         It uses the <code>getRowHeight()</code> callback to achieve this.
     </p>
 
-    <?= example('Row Height Simple', 'row-height-simple', 'generated') ?>
 
     <h2>Row Height More Complex Example</h2>
 
@@ -82,7 +81,6 @@ gridOptions.getRowHeight = function(params) {
         the contents of the cell.
     </p>
 
-    <?= example('Row Height Complex', 'row-height-complex', 'generated') ?>
 
     <h2>Auto Row Height</h2>
 
@@ -203,7 +201,6 @@ gridOptions.getRowHeight = function(params) {
     height is an ag-Grid free feature, we just demonstrate it against groups and normal
     rows below.</p>
 
-    <?= example('Changing Row Height', 'row-height-change', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Height for Pinned Rows</h2>
 

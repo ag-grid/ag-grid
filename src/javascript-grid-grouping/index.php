@@ -34,8 +34,8 @@ gridOptions.columnDefs = [
     <h2 id="auto-column-group">Auto Column Group</h2>
 
     <p>
-        As you can see in the example below, as soon as there is at least on active row group, the grid will provide an
-        additional column for displaying the groups in a tree structure, with expand/collapse navigation.
+        As you can see in the example below, as soon as there is at least one active row group, the grid will provide an
+        additional column for displaying the groups in a tree structure with expand/collapse navigation.
     </p>
 
     <ul class="content">
@@ -619,9 +619,21 @@ cellRendererParams: {
     </p>
 
     <p>
-        The example below uses <a href="../javascript-grid-aggregation/">aggregation</a> which is explained in
-        the next section but included here as footer rows only make sense when used with aggregation.
+        It is also possible to include a 'grand' total footer for all groups using the property <code>groupIncludeTotalFooter</code>.
+        This property can be used along side <code>groupIncludeFooter</code> to produce totals at all group levels or
+        used independently.
     </p>
+
+    <p>
+        The example below uses <a href="../javascript-grid-aggregation/">aggregation</a> which is explained in
+        the next section but included here as footer rows only make sense when used with aggregation. In this example
+        notice:
+    </p>
+
+    <ul class="content">
+        <li><code>gridOptions.groupIncludeFooter = true</code> -  includes group totals within each group level.</li>
+        <li><code>gridOptions.groupIncludeTotalFooter = true</code> -  includes a 'grand' total across all groups.</li>
+    </ul>
 
     <?= example('Group Footers', 'grouping-footers', 'generated', array("enterprise" => 1)) ?>
 
@@ -710,8 +722,9 @@ cellRendererParams: {
     <note>
         The properties <code>groupRemoveSingleChildren</code>, <code>groupRemoveLowestSingleChildren</code>
         and <code>groupHideOpenParents</code> are mutually exclusive, you can only pick one.
-        Technically it doesn't make sense to mix these. Mixing these three will put you down a
-        black hole so deep not even Stephen Hawking will be able to save you.
+        Technically it doesn't make sense to mix these. They don't work together as the logic for removing single
+        children clashes with the logic for hiding open parents. Both want to remove parents at different times
+        and for different reasons.
     </note>
 
     <h2 id="suppress-group-row">Suppress Group Row</h2>

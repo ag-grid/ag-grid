@@ -11,8 +11,8 @@ include '../documentation-main/documentation_header.php';
     <h1>Infinite Row Model</h1>
 
     <note>
-        If you are an enterprise user you should consider using the <a href="../javascript-grid-enterprise-model/">enterprise row model</a> instead of the infinite
-        row model. It offers the same functionality with many more features.<br><br>
+        If you are an enterprise user you should consider using the <a href="../javascript-grid-server-side-model/">Server-side row model</a>
+        instead of the infinite row model. It offers the same functionality with many more features.<br><br>
         The differences between row models can be found in our <a href="../javascript-grid-row-models/">row models summary page</a>
     </note>
 
@@ -124,10 +124,10 @@ interface IGetRowsParams {
     // The first row index to NOT get.
     endRow: number;
 
-    // If doing server side sorting, contains the sort model
+    // If doing Server-side sorting, contains the sort model
     sortModel: any,
 
-    // If doing server side filtering, contains the filter model
+    // If doing Server-side filtering, contains the filter model
     filterModel: any;
 
     // The grid context object
@@ -165,7 +165,7 @@ interface IGetRowsParams {
                 successCallback() or failCallback() should be called exactly once.
             </li>
             <li>
-                The <b>filterModel()</b> and <b>sortModel()</b> are passed for doing server side sorting and filtering.
+                The <b>filterModel()</b> and <b>sortModel()</b> are passed for doing Server-side sorting and filtering.
             </li>
             <li>
                 The <a href="../javascript-grid-context/"><b>context</b></a> is just passed as is
@@ -213,15 +213,15 @@ interface IGetRowsParams {
         Aggregation and grouping are not available in infinite scrolling.
         This is because to do such would require the grid knowing the entire data set,
         which is not possible when using the infinite row model. If you need aggregation and / or
-        grouping for large datasets, check the <a href="../javascript-grid-enterprise-model/">Enterprise
-        Row Model</a> for doing aggregations on the server side.
+        grouping for large datasets, check the <a href="../javascript-grid-server-side-model/">Server-side
+        Row Model</a> for doing aggregations on the Server-side.
     </p>
 
     <h3>Sorting & Filtering</h3>
 
     <p>
         The grid cannot do sorting or filtering for you, as it does not have all of the data. 
-        Sorting or filtering must be done on the server side. For this reason, if the sort or filter
+        Sorting or filtering must be done on the Server-side. For this reason, if the sort or filter
         changes, the grid will use the datasource to get the data again and provide the sort and filter
         state to you.
     </p>
@@ -240,7 +240,7 @@ interface IGetRowsParams {
     <p>
         Selection works on the rows in infinite scrolling by using the ID of the row node. If you do not
         provide ids for the row nodes, the index of the row node will be used. Using the index of the
-        row breaks down when (server side) filtering or sorting, as these change the index of the rows.
+        row breaks down when (Server-side) filtering or sorting, as these change the index of the rows.
         For this reason, if you do not provide your own ids, then selection is cleared if sort or
         filter is changed.
     </p>
@@ -263,7 +263,7 @@ gridOptions.getRowNodeId: function(item) {
     <h3>Example - Sorting, Filtering and Selection</h3>
 
     <p>
-        The following example extends the example above by adding server side sorting, filtering and
+        The following example extends the example above by adding Server-side sorting, filtering and
         persistent selection.
     </p>
 
@@ -286,7 +286,7 @@ gridOptions.getRowNodeId: function(item) {
     </p>
 
     <note>
-        The example below uses ag-Grid-Enterprise, this is to demonstrate the set filter with server side
+        The example below uses ag-Grid-Enterprise, this is to demonstrate the set filter with Server-side
         filtering, ag-Grid-Enterprise is not required for infinite scrolling.
     </note>
 
@@ -294,7 +294,7 @@ gridOptions.getRowNodeId: function(item) {
           This is to prevent the filter from being reset.
     </note>
 
-    <?= example('Server Side Sorting And Filtering', 'server-side', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Server-side Sorting And Filtering', 'server-side', 'generated', array("enterprise" => 1)) ?>
 
     <note>
         When performing multiple row selections using shift-click, it is possible that not all rows are available in
@@ -536,7 +536,7 @@ loadingSpinnerColumn = {
             <b>Print Cache State</b>: Debugging method, to see the state of the cache.
         </li>
         <li>
-            <b>Set Prices High & Set Prices Low</b>: Sets the prices ON THE SERVER SIDE to either high or low prices.
+            <b>Set Prices High & Set Prices Low</b>: Sets the prices ON THE Server-side to either high or low prices.
             This will not impact the grid until after a block cache is loaded. Use these buttons to then further
             test the refresh and purge methods.
         </li>
@@ -617,7 +617,7 @@ loadingSpinnerColumn = {
 
     <p>
         The infinite row model does not use <a href="../javascript-grid-overlays/">overlays</a>
-        like the In Memory Row Model. The does not
+        like the Client-side Row Model. The does not
         use 'loading' overlay as rows load in blocks as it would be wrong to hide all the grid
         because some rows are getting loaded. The grid does not use 'no rows' overlay as the
         'no rows' could be because you have a filter set, and a grid with a filter shows an empty

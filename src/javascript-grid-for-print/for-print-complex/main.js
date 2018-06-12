@@ -1,88 +1,81 @@
-// create array with each entry one letter of alphabet, et ['A','B'...]
-function alphabet() {
-    return 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-}
+var columnDefs = [
+    {field: 'model'},
+    {field: 'color'},
+    {field: 'color'},
+    {field: 'color'},
+    {field: 'color'},
+    {field: 'price', valueFormatter: '"$" + value.toLocaleString()'},
+    {field: 'year'},
+    {field: 'country'}
+];
 
-function createData(count, prefix) {
+var models = ['Mercedes-AMG C63','BMW M2','Audi TT Roadster','Mazda MX-5','BMW M3','Porsche 718 Boxster','Porsche 718 Cayman'];
+var colors = ['Red','Black','Green','White','Blue'];
+var countries = ['UK', 'Spain', 'France', 'Ireland', 'USA'];
+
+var printPending = false;
+
+function createRowData() {
     var rowData = [];
-    for (var i = 0; i < count; i++) {
-        var item = {};
-        // mark every third row as full width. how you mark the row is up to you,
-        // in this example the example code (not the grid code) looks at the
-        // fullWidth attribute in the isFullWidthCell() callback. how you determine
-        // if a row is full width or not is totally up to you.
-        item.fullWidth = i % 3 === 2;
-        // put in a column for each letter of the alphabet
-        alphabet().forEach(function(letter) {
-            item[letter] = prefix + ' (' + letter + ',' + i + ')';
-        });
+    for (var i = 0; i<200; i++) {
+        var item = {
+            model: models[Math.floor(Math.random()*models.length)],
+            color: colors[Math.floor(Math.random()*colors.length)],
+            country: countries[Math.floor(Math.random()*countries.length)],
+            year: 2018 - Math.floor(Math.random() * 20),
+            price: 20000 + ((Math.floor(Math.random() * 100)*100))
+        };
         rowData.push(item);
     }
     return rowData;
 }
 
-function createColumnDefs() {
-    var columnDefs = [];
-    alphabet().forEach(function(letter) {
-        var colDef = {
-            headerName: letter,
-            field: letter,
-            width: 100
-        };
-        if (letter === 'A') {
-            colDef.pinned = 'left';
-        }
-        if (letter === 'Z') {
-            colDef.pinned = 'right';
-        }
-        columnDefs.push(colDef);
-    });
-    return columnDefs;
-}
 
 var gridOptions = {
-    domLayout: 'forPrint',
-    columnDefs: createColumnDefs(),
-    rowData: createData(20, 'body'),
-    pinnedTopRowData: createData(3, 'pinned'),
-    pinnedBottomRowData: createData(3, 'pinned'),
-    isFullWidthCell: function(rowNode) {
-        // in this example, we check the fullWidth attribute that we set
-        // while creating the data. what check you do to decide if you
-        // want a row full width is up to you, as long as you return a boolean
-        // for this method.
-        return rowNode.data.fullWidth;
-    },
-    // see ag-Grid docs cellRenderer for details on how to build cellRenderers
-    // this is a simple function cellRenderer, returns plain HTML, not a component
-    fullWidthCellRenderer: function(params) {
-        // pinned rows will have node.floating set to either 'top' or 'bottom' - see docs for floating
-        var cssClass;
-        var message;
-
-        if (params.node.rowPinned) {
-            cssClass = 'example-full-width-floating-row';
-            message = 'Pinned full width row at index ' + params.rowIndex;
-        } else {
-            cssClass = 'example-full-width-row';
-            message = 'Normal full width row at index' + params.rowIndex;
-        }
-
-        var template = '<div class="' + cssClass + '"><button onclick="window.alert(\'Clicked!!\')">Click</button> ' + message + '</div>';
-
-        return template;
-    },
-    getRowHeight: function(params) {
-        // you can have normal rows and full width rows any height that you want
-        var isBodyRow = params.node.floating === undefined;
-        var isFullWidth = params.node.data.fullWidth;
-        if (isBodyRow && isFullWidth) {
-            return 55;
-        } else {
-            return 25;
-        }
-    }
+    columnDefs: columnDefs,
+    rowData: createRowData(),
+    onAnimationQueueEmpty: onAnimationQueueEmpty
 };
+
+function onBtPrint() {
+    setPrinterFriendly(gridOptions.api);
+    printPending = true;
+
+    if (gridOptions.api.isAnimationFrameQueueEmpty()) {
+        onAnimationQueueEmpty({api: gridOptions.api});
+    }
+}
+
+function onAnimationQueueEmpty(event) {
+    if (printPending) {
+        printPending = false;
+        print();
+        setNormal(event.api);
+    }
+}
+
+function setPrinterFriendly(api) {
+    var eGridDiv = document.querySelector('.my-grid');
+
+    var preferredWidth = api.getPreferredWidth();
+
+    // add 2 pixels for the grid border
+    preferredWidth += 2;
+
+    eGridDiv.style.width = preferredWidth + 'px';
+    eGridDiv.style.height = '';
+
+    api.setGridAutoHeight(true);
+}
+
+function setNormal(api) {
+    var eGridDiv = document.querySelector('.my-grid');
+
+    eGridDiv.style.width = '400px';
+    eGridDiv.style.height = '200px';
+
+    api.setGridAutoHeight(false);
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

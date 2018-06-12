@@ -87,27 +87,27 @@ include '../documentation-main/documentation_header.php';
 
         <tr>
             <th>enableSorting</th>
-            <td>Set to true when using <a href="../javascript-grid-in-memory/">In Memory</a> Row Model to enable
+            <td>Set to true when using <a href="../javascript-grid-client-side-model/">Client-side</a> Row Model to enable
                 <a href="../javascript-grid-sorting/">Row Sorting</a>. Clicking a column header will cause the grid
                 to sort the data.</td>
         </tr>
         <tr>
             <th>enableServerSideSorting</th>
-            <td>Set to true when using <a href="../javascript-grid-in-memory/">Infinite</a>,
-                <a href="../javascript-grid-in-memory/">Enterprise</a> or
+            <td>Set to true when using <a href="../javascript-grid-infinite-scrolling/">Infinite</a>,
+                <a href="../javascript-grid-server-side-model/">Server-side</a> or
                 <a href="../javascript-grid-viewport/">Viewport</a> Row Models to enable
                 <a href="../javascript-grid-sorting/">Row Sorting</a>. Clicking a column header will
                 result in your datasource getting asked for the data again with the new sort order.</td>
         </tr>
         <tr>
             <th>enableFilter</th>
-            <td>Set to true when using <a href="../javascript-grid-in-memory/">In Memory</a> Row Model to enable
+            <td>Set to true when using <a href="../javascript-grid-client-side-model/">Client-side</a> Row Model to enable
                 <a href="../javascript-grid-filtering/">Row Filtering</a>.</td>
         </tr>
         <tr>
             <th>enableServerSideFilter</th>
-            <td>Set to true when using <a href="../javascript-grid-in-memory/">Infinite</a>,
-                <a href="../javascript-grid-in-memory/">Enterprise</a> or
+            <td>Set to true when using <a href="../javascript-grid-infinite-scrolling/">Infinite</a>,
+                <a href="../javascript-grid-server-side-model/">Server-side</a> or
                 <a href="../javascript-grid-viewport/">Viewport</a> Row Models to enable
                 <a href="../javascript-grid-filtering/">Row Filtering</a>.
                 A change in filter will result in your datasource getting asked for the
@@ -319,6 +319,21 @@ include '../documentation-main/documentation_header.php';
                 column becoming visible again when un-grouping.
             </td>
         </tr>
+        <tr>
+            <th>pivotColumnGroupTotals</th>
+            <td>When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups. The positioning
+                of this total column is defined with the values: 'before' / 'after'.
+                See <a href="../javascript-grid-pivoting/#pivotColumnGroupTotals">Pivot Column Group Totals</a>.
+            </td>
+        </tr>
+
+        <tr>
+            <th>pivotRowTotals</th>
+            <td>When set and the grid is in pivot mode, automatically calculated totals will appear for each value column.
+                The positioning of this total column is defined with the values: 'before' / 'after'.
+                See <a href="../javascript-grid-pivoting/#pivotRowTotals">Pivot Row Totals</a>.
+            </td>
+        </tr>
 
 
         </table>
@@ -364,15 +379,15 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>rowModelType</th>
             <td>Sets the <a href="../javascript-grid-row-models/">Row Model</a> type.
-                Defaults to 'inMemory'. Valid options are [inMemory,infinite,viewport,enterprise].</td>
+                Defaults to 'clientSide'. Valid options are [clientSide,infinite,viewport,serverSide].</td>
         </tr>
         <tr>
             <th>rowData</th>
-            <td><a href="../javascript-grid-in-memory/">In Memory</a> row model only - set the data to be displayed as rows in the grid.</td>
+            <td><a href="../javascript-grid-client-side-model/">Client-side</a> Row Model only - set the data to be displayed as rows in the grid.</td>
         </tr>
         <tr>
             <th>deltaRowDataMode</th>
-            <td><a href="../javascript-grid-in-memory/">In Memory</a> row model only - enables <a href="../javascript-grid-data-update/#delta-row-data">delta row data mode</a>, for compatibility with immutable stores.</td>
+            <td><a href="../javascript-grid-client-side-model/">Client-side</a> Row Model only - enables <a href="../javascript-grid-data-update/#delta-row-data">delta row data mode</a>, for compatibility with immutable stores.</td>
         </tr>
         <tr>
             <th>pinnedTopRowData</th>
@@ -548,6 +563,12 @@ include '../documentation-main/documentation_header.php';
                 its calculations.
             </td>
         </tr>
+        <tr>
+            <th>suppressRowHoverHighlight</th>
+            <td>
+                Set to true to not highlight rows by adding the <code>ag-row-hover</code> CSS class.
+            </td>
+        </tr>
         </table>
 <h2>Localisation</h2>
     <table class="table content reference">
@@ -627,17 +648,9 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true to allow <a href="../javascript-grid-cell-expressions/#cell-expressions">cell expressions</a>.</td>
         </tr>
         <tr>
-            <th>domLayout</th>
-            <td>Set <a href="../javascript-grid-width-and-height/#dom-layout">domLayout</a> to
-                <a href="../javascript-grid-width-and-height/#autoHeight">autoHeight</a> or
-                <a href="../javascript-grid-for-print/">forPrint</a>.
-                By default, grid will fit width and height of the provided
-                div. Use
-                <a href="../javascript-grid-width-and-height/#autoHeight">autoHeight</a>
-                so that are is no vertical scrollbar and the grid auto-sizes to fit the rows.
-                Use
-                <a href="../javascript-grid-for-print/">forPrint</a>
-                to remove both horizontal and vertical scrolls for a grid that is printer friendly.
+            <th>gridAutoHeight</th>
+            <td>
+                Set to true to enable <a href="../javascript-grid-width-and-height/#auto-height">Grid Auto Height</a>.
             </td>
         </tr>
 
@@ -791,6 +804,14 @@ include '../documentation-main/documentation_header.php';
             <td>
                 Disables showing a warning message in the console if using a gridOptions or colDef property that doesn't
                 exist.
+            </td>
+        </tr>
+        <tr>
+            <th>suppressRowTransform</th>
+            <td>
+                Uses CSS 'top' instead of CSS 'transform' for positioning rows. Useful if the transform
+                function is causing issues such as used in
+                <a href="../javascript-grid-row-spanning/">row spanning</a>.
             </td>
         </tr>
     </table>

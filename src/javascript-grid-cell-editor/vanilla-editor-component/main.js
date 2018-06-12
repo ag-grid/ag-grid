@@ -42,7 +42,7 @@ var columnDefs = [
         width: 90,
         editable: true,
         cellRenderer: 'genderCellRenderer',
-        cellEditor: 'agRichSelect',
+        cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
             cellRenderer: 'genderCellRenderer',
             values: ['Male', 'Female']
@@ -68,7 +68,7 @@ var columnDefs = [
         field: "country",
         width: 100,
         cellRenderer: 'countryCellRenderer',
-        cellEditor: 'agRichSelect',
+        cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
             cellRenderer: 'countryCellRenderer',
             values: [

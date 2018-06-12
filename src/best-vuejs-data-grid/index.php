@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "ag-Grid: The Best VueJS Datagrid in the World";
+$pageTitle = "VueJS Datagrid | Packed with features and performance";
 $pageDescription = "A feature rich data grid designed for Enterprise applications. Easily integrate with Vue to deliver filtering, grouping, aggregation, pivoting and much more. Try our Community version now or take a free 2 month trial of Enterprise Version.";
 $pageKeyboards = "VueJS Grid";
 $pageGroup = "basics";

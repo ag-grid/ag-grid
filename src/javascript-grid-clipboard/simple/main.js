@@ -17,7 +17,16 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     enableRangeSelection: true,
-    rowSelection: 'multiple'
+    rowSelection: 'multiple',
+    onCellValueChanged: function (params) {
+        console.log("Callback onCellValueChanged:", params);
+    },
+    onPasteStart: function (params) {
+        console.log('Callback onPasteStart:' ,params);
+    },
+    onPasteEnd: function (params) {
+        console.log('Callback onPasteEnd:' ,params);
+    }
 };
 
 function onBtCopyRows() {
@@ -26,6 +35,14 @@ function onBtCopyRows() {
 
 function onBtCopyRange() {
     gridOptions.api.copySelectedRangeToClipboard();
+}
+
+function onPasteOff() {
+    gridOptions.api.setSuppressClipboardPaste(true);
+}
+
+function onPasteOn() {
+    gridOptions.api.setSuppressClipboardPaste(false);
 }
 
 // setup the grid after the page has finished loading

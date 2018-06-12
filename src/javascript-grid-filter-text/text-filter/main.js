@@ -16,7 +16,8 @@ var columnDefs = [
             return r;
         },
         debounceMs:0,
-        caseSensitive:true
+        caseSensitive:true,
+        suppressAndOrCondition:true
     }},
     {headerName: "Country", field: "country", width: 120, filterParams:{
         filterOptions:['contains'],

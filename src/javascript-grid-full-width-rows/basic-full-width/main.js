@@ -48,7 +48,7 @@ var gridOptions = {
     columnDefs: getColumnDefs(),
     rowData: rowData,
     pinnedTopRowData: pinnedTopRowData,
-    pinnedBottomRowData: pinnedTopRowData,
+    pinnedBottomRowData: pinnedBottomRowData,
     isFullWidthCell: function(rowNode) {
         // in this example, we check the fullWidth attribute that we set
         // while creating the data. what check you do to decide if you
@@ -82,7 +82,7 @@ var gridOptions = {
             // params.api.onRowHeightChanged();
         });
 
-        return eDiv;
+        return eDiv.firstChild;
     },
     getRowHeight: function(params) {
         // you can have normal rows and full width rows any height that you want

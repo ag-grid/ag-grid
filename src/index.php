@@ -10,8 +10,7 @@ $version = 'latest';
 <html lang="en">
 <head>
 <?php
-$title = 'ag-Grid: Datagrid with 63 Features and Lightning Performance';
-$keywords = 'javascript data grid react angularjs angular 2 web components aurelia';
+$title = 'ag-Grid: Datagrid packed with features that your users need with the performance you expect.';
 $description = 'ag-Grid is feature rich datagrid designed for the major JavaScript Frameworks. Version 17 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that your users expect. Our Community version is free and open source or take a 2 month trial of ag-Grid Enterprise.';
 meta_and_links($title, $keywords, $description, false);
 ?>
@@ -44,17 +43,17 @@ meta_and_links($title, $keywords, $description, false);
 
                 <ul id="homepage-highlights">
                     <li>
-                        Over <strong>1,200</strong> Companies
+                        Over <strong>1,500</strong> Companies
                         use ag-Grid Enterprise.
                     </li>
 
                     <li>
-                        Over <strong>20%</strong> of the Fortune 500
+                        Over <strong>25%</strong> of the Fortune 500
                         use ag-Grid Enterprise.
                     </li>
 
                     <li>
-                        Over <strong>140,000</strong> 
+                        Over <strong>150,000</strong>
                         Downloads per month.
                     </li>
                 </ul>
@@ -168,7 +167,7 @@ meta_and_links($title, $keywords, $description, false);
 
                         <footer>
                             <strong>Robin Cote</strong>
-                            <span class="position">Senior Systems Developer, Investment Solutions Group, Healthcare of Ontario Pension Plan</span> 
+                            <span class="position">Solutions Architect, Investment Solutions Group, Healthcare of Ontario Pension Plan</span>
                         </footer>
                     </blockquote>
                 </div>
@@ -224,18 +223,9 @@ meta_and_links($title, $keywords, $description, false);
         </section>
     </div>
 
-    <div id="stage-feature-highlights">
-        <h2>Feature Highlights</h2>
-
-        <div id="feature-content">
-            <aside>
-                <div class="scroll-wrapper">
-                </div>
-            </aside>
-            <section>
-            <?php include 'roadshow/roadshow.php' ?>
-            </section>
-        </div>
+    <div id="stage-show-me-more">
+        <h2>Show Me More!</h2>
+        <a href="/features-overview/" class="btn btn-primary btn-lg">Sure! Let's Go to the Features Overview &rarr;</a>
     </div>
 
     <?= globalAgGridScript(true, true) ?>

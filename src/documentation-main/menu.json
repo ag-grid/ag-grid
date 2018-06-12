@@ -223,7 +223,8 @@
             },
             {
                 "title": "Range Selection",
-                "url": "javascript-grid-range-selection/"
+                "url": "javascript-grid-range-selection/",
+                "enterprise": true
             },
             {
                 "title": "Grid Size",
@@ -232,6 +233,10 @@
             {
                 "title": "Column Spanning",
                 "url": "javascript-grid-column-spanning/"
+            },
+            {
+                "title": "Row Spanning",
+                "url": "javascript-grid-row-spanning/"
             },
             {
                 "title": "Column Pinning",
@@ -366,7 +371,7 @@
                 "url": "javascript-grid-overlays/"
             },
             {
-                "title": "Layout For Print",
+                "title": "Printing",
                 "url": "javascript-grid-for-print/"
             },
             {
@@ -438,16 +443,16 @@
                 "url": "javascript-grid-row-node/"
             },
             {
-                "title": "In Memory",
-                "url": "javascript-grid-in-memory/"
+                "title": "Client-side",
+                "url": "javascript-grid-client-side-model/"
             },
             {
                 "title": "Infinite Scrolling",
                 "url": "javascript-grid-infinite-scrolling/"
             },
             {
-                "title": "Enterprise",
-                "url": "javascript-grid-enterprise-model/",
+                "title": "Server-side",
+                "url": "javascript-grid-server-side-model/",
                 "enterprise": true
             },
             {

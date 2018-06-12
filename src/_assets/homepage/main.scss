@@ -16,6 +16,7 @@
 @import "../pages/pipeline.scss";
 @import "../pages/changelog.scss";
 @import "../pages/blog.scss";
+@import "../pages/features-overview.scss";
 @import "../docs/example-runner.scss";
 
 .stretch-contents {
@@ -394,6 +395,21 @@
 
     #demo-1 {
         height: 710px;
+    }
+}
+
+#stage-show-me-more {
+    padding-top: 3rem;
+    margin-bottom: 0;
+    border-bottom: 0;
+    @extend .pb-5;
+    & > h2 {
+        @extend .display-4, .text-center, .full-width-row, .mb-5;
+    }
+
+    & > a {
+        @extend .btn, .btn-link, .btn-lg, .mx-auto, .d-block;
+        width: 25%;
     }
 }
 

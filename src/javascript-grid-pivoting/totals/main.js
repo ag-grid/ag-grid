@@ -2,9 +2,9 @@ var gridOptions = {
     columnDefs: [
         {headerName: "Athlete", field: "athlete",  minWidth: 150},
         {headerName: "Age", field: "age", minWidth: 50, filter: 'agNumberColumnFilter'},
-        {headerName: "Country", field: "country", width: 120, rowGroup: true},
-        {headerName: "Sport", field: "sport", width: 110, pivot: true},
-        {headerName: "Year", field: "year", width: 90, pivot: true},
+        {headerName: "Country", field: "country", width: 120, rowGroup: true, enableRowGroup:true},
+        {headerName: "Sport", field: "sport", width: 110, pivot: true, enablePivot:true},
+        {headerName: "Year", field: "year", width: 90, pivot: true, enablePivot:true},
         {headerName: "Date", field: "date", width: 110},
         {headerName: "Gold", field: "gold", width: 150, aggFunc: 'sum'},
         {headerName: "Silver", field: "silver", width: 150, aggFunc: 'sum'},
@@ -13,8 +13,7 @@ var gridOptions = {
 
     enableColResize: true,
     pivotMode: true,
-    pivotTotals: true,
-    sizeColumnsToFit: true
+    pivotColumnGroupTotals: 'before'
 };
 
 
