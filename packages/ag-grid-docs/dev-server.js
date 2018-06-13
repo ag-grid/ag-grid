@@ -111,7 +111,7 @@ function launchTSCCheck() {
         lnk('../ag-grid/src/ts', '_dev/ag-grid/dist', {force: true, type: linkType, rename: 'lib'});
         lnk('../ag-grid-enterprise/', '_dev', {force: true, type: linkType});
         lnk('../ag-grid-react/', '_dev', {force: true, type: linkType});
-        lnk('../ag-grid-angular/exports.ts', '_dev/ag-grid-angular/', {force: true, type: linkType, rename: 'main.ts'}); -- just before the ag-grid-angular line
+        lnk('../ag-grid-angular/exports.ts', '_dev/ag-grid-angular/', {force: true, type: linkType, rename: 'main.ts'});
         lnk('../ag-grid-angular/', '_dev', {force: true, type: linkType});
         lnk('../ag-grid-vue/', '_dev', {force: true, type: linkType});
     }

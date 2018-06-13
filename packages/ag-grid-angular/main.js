@@ -10,4 +10,4 @@ __export(require("./dist/baseComponentFactory"));
 __export(require("./dist/ng2ComponentFactory"));
 __export(require("./dist/ng2FrameworkFactory"));
 __export(require("./dist/ng2FrameworkComponentWrapper"));
-//# sourceMappingURL=main.js.map
+//# sourceMappingURL=exports.js.map
