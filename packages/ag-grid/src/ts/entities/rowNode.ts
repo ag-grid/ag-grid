@@ -413,6 +413,10 @@ export class RowNode implements IEventEmitter {
 
         let event: RowGroupOpenedEvent = this.createGlobalRowEvent(Events.EVENT_ROW_GROUP_OPENED);
         this.mainEventService.dispatchEvent(event);
+
+        if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
+            this.gridApi.redrawRows({rowNodes: [this]});
+        }
     }
 
     private createGlobalRowEvent(type: string): RowEvent {
