@@ -29,8 +29,38 @@ gulp.task('ngc-src', (callback) => {
     return ngc('./tsconfig-src.json', callback);
 });
 
+gulp.task('clean-build-main', ['build-main'], (callback) => {
+    // post build cleanup
+    return del(['./aot', 'exports.js*', 'exports.d.ts', 'exports.metadata.json'], callback);
+});
+
+gulp.task('build-main', ['ngc-main'], (callback) => {
+    // this is here to facilitate the case where ag-grid-angular is symlinked into another project
+    // if we have main.ts and leave it as that the the project that depends on ag-grid-angular (again, only if symlinked)
+    // will complain about node_modules/ag-grid-angular/main.ts not being part of the source files
+    gulp.src("./exports.js")
+        .pipe(rename(('main.js')))
+        .pipe(gulp.dest("./"));
+    gulp.src("./exports.d.ts")
+        .pipe(rename(('main.d.ts')))
+        .pipe(gulp.dest("./"));
+    return gulp.src("./exports.metadata.json")
+        .pipe(rename(('main.metadata.json')))
+        .pipe(gulp.dest("./"))
+});
+
 gulp.task('ngc-main', (callback) => {
-    return ngc('./tsconfig-main.json', callback);
+    return gulp
+        .src('./exports.ts')
+        .pipe(ngc('./tsconfig-main.json', callback));
+});
+
+gulp.task('watch', ['clean-build-main'], () => {
+    gulp.watch([
+        './node_modules/ag-grid/dist/**/*', './node_modules/ag-grid/main.js',
+        './node_modules/ag-grid-enterprise/dist/**/*', './node_modules/ag-grid-enterprise/main.js',
+        './src/**/*'
+    ], ['clean-ngc']);
 });
 
 // the main release task - clean, compile and add header template
@@ -41,17 +71,3 @@ gulp.task('release', ['clean-ngc'], function () {
         .pipe(gulp.dest('./dist/'));
 });
 
-gulp.task('watch', ['clean-ngc'], () => {
-    gulp.watch([
-        './node_modules/ag-grid/dist/**/*', './node_modules/ag-grid/main.js',
-        './node_modules/ag-grid-enterprise/dist/**/*', './node_modules/ag-grid-enterprise/main.js',
-        './src/**/*'
-    ], ['clean-ngc']);
-});
-
-gulp.task('publishForCI', () => {
-    return gulp.src("./ag-grid-angular*.tgz")
-        .pipe(rename("ag-grid-angular.tgz"))
-        .pipe(gulp.dest("c:/ci/ag-grid-angular/"));
-
-});

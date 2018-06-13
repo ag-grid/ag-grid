@@ -10,5 +10,9 @@ update_from_source.sh
 .DS_Store
 
 module.tgz
-/src/*.ngsummary.json
-/src/*.ngfactory.ts
+src/*.ngsummary.json
+src/*.ngfactory.ts
+src/**/*.d.ts
+src/**/*.js
+src/**/*.js.map
+src/**/*.metadata.json

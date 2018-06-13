@@ -24,6 +24,7 @@
     "vue": "^2.0.0"
   },
   "devDependencies": {
+    "ag-grid": "^18.0.0",
     "vue": "^2.0.0",
     "babel-core": "^6.0.0",
     "babel-loader": "^6.0.0",

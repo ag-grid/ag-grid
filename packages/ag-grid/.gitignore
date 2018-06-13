@@ -24,3 +24,5 @@ ag-grid.iml
 package-lock.json
 module.tgz
 
+dist/lib/**/*ngsummary.json
+*ngsummary.json

@@ -12,9 +12,6 @@
     "suppressImplicitAnyIndexErrors": true,
     "lib": ["dom","es2015"]
   },
-  "files": [
-    "main.ts"
-  ],
   "angularCompilerOptions": {
     /* will delete this dir after build - it's in a diff dir to prevent poluting the dist dir*/
     "genDir": "aot"

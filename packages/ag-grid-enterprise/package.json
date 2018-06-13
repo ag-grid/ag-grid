@@ -26,6 +26,7 @@
   },
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
+    "ag-grid": "^18.0.0",
     "gulp": "3.9.0",
     "gulp-typescript": "2.10.0",
     "gulp-clean": "0.3.1",

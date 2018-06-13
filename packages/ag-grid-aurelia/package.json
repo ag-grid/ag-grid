@@ -25,6 +25,7 @@
   },
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
+    "ag-grid": "^18.0.0",
     "@types/core-js": "^0.9.34",
     "gulp": "3.9.1",
     "gulp-header": "1.7.0",
