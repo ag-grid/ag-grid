@@ -1,0 +1,47 @@
+// ag-grid-enterprise v18.0.1
+import { Component, OriginalColumnGroup } from "ag-grid/main";
+import { BaseColumnItem } from "./columnSelectComp";
+export declare class ToolPanelGroupComp extends Component implements BaseColumnItem {
+    private static TEMPLATE;
+    private gridOptionsWrapper;
+    private columnController;
+    private context;
+    private dragAndDropService;
+    private eventService;
+    private cbSelect;
+    private eDragHandle;
+    private columnGroup;
+    private expanded;
+    private columnDept;
+    private eGroupClosedIcon;
+    private eGroupOpenedIcon;
+    private expandedCallback;
+    private allowDragging;
+    private displayName;
+    private processingColumnStateChange;
+    private selectionCallback;
+    constructor(columnGroup: OriginalColumnGroup, columnDept: number, expandedCallback: () => void, allowDragging: boolean, expandByDefault: boolean);
+    init(): void;
+    private addVisibilityListenersToAllChildren();
+    private setupDragging();
+    private createDragItem();
+    private setupExpandContract();
+    private onLabelClicked();
+    private onCheckboxChanged(event);
+    private onChangeCommon(nextState);
+    private actionUnCheckedReduce(columns);
+    private actionCheckedReduce(columns);
+    private onColumnStateChanged();
+    private workOutReadOnlyValue();
+    private workOutSelectedValue();
+    private isColumnVisible(column, pivotMode);
+    private onExpandOrContractClicked();
+    private setOpenClosedIcons();
+    isExpanded(): boolean;
+    getDisplayName(): string;
+    onSelectAllChanged(value: boolean): void;
+    isSelected(): boolean;
+    isSelectable(): boolean;
+    isExpandable(): boolean;
+    setExpanded(value: boolean): void;
+}
