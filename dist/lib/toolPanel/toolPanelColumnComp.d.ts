@@ -1,10 +1,11 @@
-// ag-grid-enterprise v18.0.0
+// ag-grid-enterprise v18.0.1
 import { Component } from "ag-grid/main";
 export declare class ToolPanelColumnComp extends Component {
     private static TEMPLATE;
     private context;
     private gridOptionsWrapper;
     private gridApi;
+    private eventService;
     private initialised;
     private childDestroyFuncs;
     private componentToResize;

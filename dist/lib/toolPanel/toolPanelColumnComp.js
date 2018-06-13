@@ -1,4 +1,4 @@
-// ag-grid-enterprise v18.0.0
+// ag-grid-enterprise v18.0.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -43,6 +43,12 @@ var ToolPanelColumnComp = (function (_super) {
         if (visible && !this.initialised) {
             this.init();
         }
+        var event = {
+            type: main_1.Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi()
+        };
+        this.eventService.dispatchEvent(event);
     };
     ToolPanelColumnComp.prototype.init = function () {
         this.instantiate(this.context);
@@ -92,6 +98,10 @@ var ToolPanelColumnComp = (function (_super) {
         main_1.Autowired("gridApi"),
         __metadata("design:type", main_1.GridApi)
     ], ToolPanelColumnComp.prototype, "gridApi", void 0);
+    __decorate([
+        main_1.Autowired("eventService"),
+        __metadata("design:type", main_1.EventService)
+    ], ToolPanelColumnComp.prototype, "eventService", void 0);
     __decorate([
         ag_grid_1.RefSelector('eColumnPanelCenter'),
         __metadata("design:type", HTMLElement)
