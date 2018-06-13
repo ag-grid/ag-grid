@@ -1,0 +1,1 @@
+export { default as AgGridVue }from "./dist/agGridVue"
