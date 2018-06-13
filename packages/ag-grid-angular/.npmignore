@@ -1,0 +1,8 @@
+# for https://github.com/ceolter/ag-grid-angular/issues/108
+main.ts
+
+!aot/
+!dist/
+
+src/*.module.ngfactory.ts
+src/*.module.ngsummary.json
