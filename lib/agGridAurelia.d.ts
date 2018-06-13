@@ -30,5 +30,5 @@ export declare class AgGridAurelia implements ComponentAttached, ComponentDetach
      */
     propertyChanged(propertyName: string, newValue: any, oldValue: any): void;
     detached(): void;
-    private globalEventListener;
+    private globalEventListener(eventType, event);
 }
