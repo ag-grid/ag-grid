@@ -1,0 +1,21 @@
+<div style="height: 100%; padding-top: 35px; box-sizing: border-box;">
+    <div id="myGrid" style="height: 100%;" class="ag-theme-balham"></div>
+</div>
+
+<div style="position: absolute; top: 0; left: 0;">
+    <button onclick="addFiveItems(true)">Append Items</button>
+    <button onclick="addFiveItems(false)">Prepend Items</button>
+    <button onclick="reverseItems()">Reverse</button>
+    <button onclick="removeSelected()">Remove Selected</button>
+    <button onclick="updatePrices()">Update Prices</button>
+
+    <button id="groupingOn" onclick="onGroupingEnabled(true)">Grouping On</button>
+    <button id="groupingOff" onclick="onGroupingEnabled(false)">Grouping Off</button>
+    <span style="padding: 10px;"/>
+    <span style="border: 1px solid lightgrey; padding: 8px;">
+        Group:
+        <button onclick="setSelectedToGroup('A')">A</button>
+        <button onclick="setSelectedToGroup('B')">B</button>
+        <button onclick="setSelectedToGroup('C')">C</button>
+    </span>
+</div>

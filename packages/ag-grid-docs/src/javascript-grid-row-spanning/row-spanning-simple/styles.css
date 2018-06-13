@@ -1,0 +1,12 @@
+
+.cell-span {
+    background-color: #00e5ff;
+}
+
+.ag-theme-balham .ag-row-even {
+    background-color: unset;
+}
+
+.ag-theme-balham .ag-row-odd {
+    background-color: unset;
+}

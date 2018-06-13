@@ -1,0 +1,17 @@
+<div style="height: 100%; padding-top: 50px; box-sizing: border-box;">
+    <div id="myGrid" style="height: 100%;" class="ag-theme-balham"></div>
+</div>
+
+<div style="position: absolute; top: 0px; left: 0px;">
+    <div>
+        <button class="bt-action" onclick="onAddRow('For Sale')">Add For Sale</button>
+        <button class="bt-action" onclick="onAddRow('In Workshop')">Add In Workshop</button>
+        <button class="bt-action" onclick="onRemoveSelected()">Remove Selected</button>
+        <button class="bt-action" onclick="onMoveToGroup('For Sale')">Move to For Sale</button>
+    </div>
+    <div style="margin-top: 4px;">
+        <button class="bt-action" onclick="onMoveToGroup('In Workshop')">Move to In Workshop</button>
+        <button class="bt-action" onclick="onMoveToGroup('Sold')">Move to Sold</button>
+        <button class="bt-action" onclick="getRowData()">Get Row Data</button>
+    </div>
+</div>

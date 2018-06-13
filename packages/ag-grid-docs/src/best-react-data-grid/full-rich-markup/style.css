@@ -1,0 +1,124 @@
+html, body {
+    height: 100%;
+}
+
+.customHeaderMenuButton {
+    margin-left: 4px;
+    float: left;
+}
+
+.customHeaderLabel {
+    margin-left: 5px;
+    float: left;
+}
+
+.customSortDownLabel {
+    float: left;
+    margin-left: 10px;
+}
+
+.customSortUpLabel {
+    float: left;
+    margin-left: 3px;
+}
+
+.customSortRemoveLabel {
+    float: left;
+    font-size: 11px;
+    margin-left: 3px;
+}
+
+.active {
+    color: cornflowerblue;
+}
+
+.hidden {
+    display: none;
+}
+
+.customHeaderLabel {
+    margin-left: 5px;
+    float: left;
+}
+
+.customExpandButton {
+    float: right;
+    margin-left: 3px;
+}
+
+.expanded {
+    animation-name: toExpanded;
+    animation-duration: 1s;
+    -ms-transform: rotate(180deg); /* IE 9 */
+    -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
+    transform: rotate(180deg);
+}
+
+.collapsed {
+    color: cornflowerblue;
+    animation-name: toCollapsed;
+    animation-duration: 1s;
+    -ms-transform: rotate(0deg); /* IE 9 */
+    -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */
+    transform: rotate(0deg);
+}
+
+@keyframes toExpanded {
+    from {
+        color: cornflowerblue;
+        -ms-transform: rotate(0deg); /* IE 9 */
+        -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */
+        transform: rotate(0deg);
+    }
+    to {
+        color: black;
+        -ms-transform: rotate(180deg); /* IE 9 */
+        -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
+        transform: rotate(180deg);
+    }
+}
+
+@keyframes toCollapsed {
+    from {
+        color: black;
+        -ms-transform: rotate(180deg); /* IE 9 */
+        -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
+        transform: rotate(180deg);
+    }
+    to {
+        color: cornflowerblue;
+        -ms-transform: rotate(0deg); /* IE 9 */
+        -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */
+        transform: rotate(0deg);
+    }
+}
+
+.ag-cell {
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+}
+
+label {
+    font-weight: normal !important;
+}
+
+.div-percent-bar {
+    display: inline-block;
+    height: 20px;
+    position: relative;
+}
+
+.div-percent-value {
+    position: absolute;
+    padding-left: 4px;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.div-outer-div {
+    display: inline-block;
+    height: 100%;
+    width: 100%;
+}
+
+

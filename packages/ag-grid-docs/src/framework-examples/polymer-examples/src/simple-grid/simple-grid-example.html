@@ -1,0 +1,39 @@
+<dom-module id="simple-grid-example">
+    <template id="template">
+        <link rel="stylesheet" href="../bower_components/ag-grid/dist/styles/ag-grid.css">
+        <link rel="stylesheet" href="../bower_components/ag-grid/dist/styles/ag-theme-balham.css">
+
+        <div style="width: 800px;">
+            <h1>Simple ag-Grid Polymer Example</h1>
+            <ag-grid-polymer style="width: 100%; height: 350px; display: block;"
+                             class="ag-theme-balham"
+                             rowData="{{rowData}}"
+                             columnDefs="{{columnDefs}}"></ag-grid-polymer>
+        </div>
+    </template>
+
+    <script>
+        class SimpleGridExample extends Polymer.Element {
+            static get is() {
+                return "simple-grid-example";
+            }
+
+            constructor() {
+                super();
+
+                this.columnDefs = [
+                    {headerName: "Make", field: "make", width: 266},
+                    {headerName: "Model", field: "model", width: 266},
+                    {headerName: "Price", field: "price", width: 266}
+                ];
+
+                this.rowData = [
+                    {make: "Toyota", model: "Celica", price: 35000},
+                    {make: "Ford", model: "Mondeo", price: 32000},
+                    {make: "Porsche", model: "Boxter", price: 72000}
+                ];
+            }
+        }
+        customElements.define(SimpleGridExample.is, SimpleGridExample);
+    </script>
+</dom-module>

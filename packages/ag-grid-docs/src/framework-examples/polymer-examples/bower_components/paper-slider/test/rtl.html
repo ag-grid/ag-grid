@@ -1,0 +1,107 @@
+<!doctype html>
+<!--
+@license
+Copyright (c) 2017 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>paper-slider test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+  <link rel="import" href="../paper-slider.html">
+</head>
+<body>
+
+  <test-fixture id="rtlProgress">
+    <template>
+      <paper-slider value="50" dir="rtl"></paper-slider>
+    </template>
+  </test-fixture>
+
+  <script>
+    suite('<paper-slider>', function() {
+      var slider;
+
+      setup(function() {
+        slider = fixture('rtlProgress');
+      });
+
+      test('snap to the correct value on tapping', function(done) {
+        var cursor = MockInteractions.topLeftOfNode(slider.$.sliderBar);
+        cursor.x += slider.$.sliderBar.getBoundingClientRect().width * 0.9;
+
+        slider.min = 0;
+        slider.max = 2;
+        slider.step = 1;
+        slider.value = 2;
+
+        MockInteractions.down(slider.$.sliderBar, cursor);
+
+        flush(function() {
+          assert.equal(slider.value, slider.min);
+          done();
+        });
+      });
+
+      test('tracking', function(done) {
+        var sliderWidth = slider.$.sliderBar.getBoundingClientRect().width;
+        slider.min = 0;
+        slider.max = 2;
+        slider.step = 1;
+        slider.value = 2;
+
+        MockInteractions.track(slider.$.sliderBar, sliderWidth * 0.9, 0);
+
+        flush(function() {
+          assert.equal(slider.value, slider.min);
+          done();
+        });
+      });
+
+      test('slider increments on up key', function() {
+        var oldValue = slider.value;
+        var up = MockInteractions.keyboardEventFor('keydown', 38);
+        slider.dispatchEvent(up);
+        assert.equal(oldValue + slider.step, slider.value);
+        assert.isTrue(up.defaultPrevented);
+      });
+
+      test('slider increments on left key', function() {
+        var oldValue = slider.value;
+        var up = MockInteractions.keyboardEventFor('keydown', 37);
+        slider.dispatchEvent(up);
+        assert.equal(oldValue + slider.step, slider.value);
+        assert.isTrue(up.defaultPrevented);
+      });
+
+      test('slider decrements on right key', function() {
+        var oldValue = slider.value;
+        var down = MockInteractions.keyboardEventFor('keydown', 39);
+        slider.dispatchEvent(down);
+        assert.equal(oldValue - slider.step, slider.value);
+        assert.isTrue(down.defaultPrevented);
+      });
+
+      test('slider decrements on down key', function() {
+        var oldValue = slider.value;
+        var down = MockInteractions.keyboardEventFor('keydown', 40);
+        slider.dispatchEvent(down);
+        assert.equal(oldValue - slider.step, slider.value);
+        assert.isTrue(down.defaultPrevented);
+      });
+    });
+
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,31 @@
+<div id="myGrid" class="ag-theme-balham" style="height: 100%"></div>
+
+<style>
+    .example-full-width-floating-row {
+        background-color: #2aabd2;
+        border: 2px solid darkblue;
+        /* we want the border to be kept within the row height */
+        box-sizing: border-box;
+        /* get the row to fill the available height */
+        height: 100%;
+        /* grid sets white-space to one line, need to reset for wrapping the text*/
+        white-space: normal;
+    }
+    .example-full-width-row {
+        background-color: #bbffbb;
+        border: 2px solid #22ff22;
+        /* we want the border to be kept within the row height */
+        box-sizing: border-box;
+        /* get the row to fill the available height */
+        height: 100%;
+        /* grid sets white-space to one line, need to reset for wrapping the text*/
+        white-space: normal;
+    }
+    /* to help highlight the example, shade blue to top and bottom floating*/
+    .ag-floating-top .ag-row {
+        background-color: lightblue !important;
+    }
+    .ag-floating-bottom .ag-row {
+        background-color: lightblue !important;
+    }
+</style>

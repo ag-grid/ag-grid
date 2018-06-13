@@ -1,0 +1,15 @@
+<div class="bs-example bs-example-tabs" style="margin-top: 20px">
+    <ul class="nav nav-tabs">
+        <li ng-class="active"><a ng-click="selectedTab='source'">Source Code</a></li>
+    </ul>
+
+    <div style="margin-top: 5px" class="tab-pane">
+        <nav class="nav nav-pills">
+            <a ng-repeat="extraPage in extraPages" ng-class="{'nav-link': true, 'nav-item': true, active: isActivePage(extraPage)}" ng-click="setActivePage(extraPage)">{{extraPage}}</a>
+        </nav>
+
+        <div ng-style="iframeStyle" style="overflow: auto;"  ng-bind-html="extraPageContent[extraPage]">
+
+        </div>
+    </div>
+</div>

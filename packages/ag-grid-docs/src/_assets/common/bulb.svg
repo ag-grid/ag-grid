@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.1 (47250) - http://www.bohemiancoding.com/sketch -->
+    <title>bulb</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Logo" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="bulb" stroke="#FFC107" stroke-width="2">
+            <path d="M20,45 L30.5,42" id="Path-5-Copy"></path>
+            <path d="M45.5,20 L40.5,20" id="Path-11-Copy"></path>
+            <path d="M30.5,36 C30,31 37,29 37,21 C37,13 30,10 25,10 C20,10 13.5,13 13.5,21 C13.5,29 20.5,32 20.5,37.5 C19,40.5 30.5,36 30.5,36 Z" id="Path-4"></path>
+            <path d="M20,42 L30.5,39" id="Path-5"></path>
+            <path d="M28.5,46.5 C26.1666667,48.1666667 24,48.1666667 22,46.5" id="Path-9"></path>
+            <path d="M12,31 L9.5,33" id="Path-10"></path>
+            <path d="M9.5,20 L4.5,20" id="Path-11"></path>
+            <path d="M38,31 L41,33" id="Path-12"></path>
+            <path d="M36,11 L40,7" id="Path-13"></path>
+            <path d="M25,6.5 L25,1" id="Path-14"></path>
+            <path d="M14,11 L10,7.5" id="Path-15"></path>
+        </g>
+    </g>
+</svg>

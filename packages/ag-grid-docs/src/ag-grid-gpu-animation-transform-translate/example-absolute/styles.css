@@ -1,0 +1,28 @@
+.row {
+    height: 25px;
+    box-sizing: border-box;
+    position: absolute;
+    width: 100%;
+    transition: top 0.5s;
+}
+
+.cell {
+    display: block;
+    position: absolute;
+    width: 40px;
+    padding: 2px;
+    border-bottom: 1px solid lightgrey;
+    border-right: 1px solid lightgrey;
+    box-sizing: border-box;
+}
+
+body {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+
+    t-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}

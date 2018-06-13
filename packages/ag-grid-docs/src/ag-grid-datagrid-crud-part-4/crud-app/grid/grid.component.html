@@ -1,0 +1,28 @@
+<div>
+    <button (click)="insertNewRow()" [disabled]="editInProgress" class="action-button">Insert New Row</button>
+    <button (click)="deleteSelectedRows()" [disabled]="!rowsSelected() || editInProgress" class="action-button">Delete
+        Selected Row
+    </button>
+</div>
+<div>
+    <ag-grid-angular style="width: 100%; height: 00px;"
+                     class="ag-theme-balham"
+
+                     [columnDefs]="columnDefs"
+                     [rowData]="rowData"
+
+                     rowSelection="multiple"
+
+                     suppressRowClickSelection
+                     suppressHorizontalScroll
+                     suppressClickEdit
+
+                     (gridReady)="onGridReady($event)"
+                     (rowDoubleClicked)="onRowDoubleClicked($event)">
+    </ag-grid-angular>
+</div>
+
+<ng-template [ngIf]="editInProgress">
+    <app-athlete-edit-screen [athlete]="athleteBeingEdited"
+                             (onAthleteSaved)="onAthleteSaved($event)"></app-athlete-edit-screen>
+</ng-template>

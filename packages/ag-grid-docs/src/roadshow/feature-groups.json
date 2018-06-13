@@ -1,0 +1,87 @@
+[
+    {
+        "group": "Enterprise Grade Features",
+        "items": [
+            "Aggregation",
+            "Clipboard",
+            "Column Menu",
+            "Context Menu",
+            "Excel Export",
+            "Grouping Rows",
+            "Master / Detail",
+            "Pivoting",
+            "Range Selection",
+            "Set Filter",
+            "Status Bar",
+            "Tool Panel",
+            "Tree Data"
+        ]
+    },
+    {
+        "group": "Core Grid Features",
+        "items": [
+            "Accessibility",
+            "Aligned Grids",
+            "Cell Editing",
+            "Column Filter",
+            "Column Groups",
+            "Column Moving",
+            "Column Pinning",
+            "Column Resizing",
+            "CSV Export",
+            "Custom Filter",
+            "Date Filter",
+            "External Filter",
+            "Keyboard Navigation",
+            "Printing",
+            "Number Filter",
+            "Pagination",
+            "Quick Filter",
+            "Row Selection",
+            "Row Sorting",
+            "Row Dragging",
+            "Text Filter",
+            "Touch Support"
+        ]
+    },
+    {
+        "group": "Configuration",
+        "items": ["Column Definitions", "Grid Size"]
+    },
+    {
+        "group": "Styling & Appearance",
+        "items": [
+            "Animation",
+            "Cell Rendering",
+            "Cell Styling",
+            "Column Headers",
+            "Column Spanning",
+            "Custom Icons",
+            "Full Width Rows",
+            "Internationalisation",
+            "Overlays",
+            "Row Height",
+            "Row Pinning",
+            "RTL"
+        ]
+    },
+    {
+        "group": "Working with Data",
+        "items": [
+            "Accessing Data",
+            "Change Detection",
+            "Expressions",
+            "Reference Data",
+            "Setters and Parsers",
+            "Updating Data",
+            "Value Cache",
+            "Value Getters & Value Formatters",
+            "Value Handlers",
+            "View Refresh"
+        ]
+    },
+    {
+        "group": "Performance",
+        "items": ["Performance"]
+    }
+]

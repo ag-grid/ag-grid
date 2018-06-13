@@ -1,0 +1,73 @@
+.content-list {
+    padding-inline-start: 1rem;
+    padding-block-start: 0;
+
+    li {
+        margin-bottom: 0.5rem;
+    }
+}
+
+.heading-enterprise {
+    &:after {
+        @include enterprise-icon;
+        margin-left: 6px;
+    }
+}
+
+.inline-container {
+    @extend .container-fluid;
+    margin: 0;
+    padding: 0;
+
+    .row {
+        margin: 0;
+        padding: 0;
+        @extend .no-gutters;
+    }
+}
+
+h2.small-block {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.figure {
+    display: block;
+    margin: 1rem auto;
+    text-align: center;
+}
+
+dl.content {
+    dd {
+        margin-bottom: 1em;
+    }
+
+    dt code {
+        margin-left: 1em;
+    }
+}
+
+.theme-table td,
+.theme-table th {
+    padding-left: 2em;
+}
+
+h1 + p.lead {
+    margin-top: 2rem;
+    line-height: 1.8;
+    margin-bottom: 2rem;
+}
+
+h2 {
+    font-size: 1.7rem;
+}
+
+h3 {
+    font-size: 1.5rem;
+    font-weight: 400;
+}
+
+h4 {
+    font-size: 1.3rem;
+    font-weight: 300;
+}

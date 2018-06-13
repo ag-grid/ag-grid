@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "declaration": true,
+        "sourceMap": true,
+        "target": "es5",
+        "lib": [ "es5", "es6", "dom" ],
+        "noImplicitAny": false,
+        "baseUrl": ".",
+        "paths": {
+            "ag-grid": ["./_dev/ag-grid/main.ts"],
+            "ag-grid/main": ["./_dev/ag-grid/main.ts"]
+        }
+    },
+
+    "include": [ 
+        "./src/_assets/**/*.ts", 
+        "./_dev/ag-grid/dist/lib/**/*.ts",
+        "./_dev/ag-grid-enterprise/src/**/*.ts",
+        "./_dev/ag-grid-angular/src/**/*.ts",
+        "./_dev/ag-grid-react/src/**/*.ts"
+    ],
+
+    "exclude": [ "node_modules" ]
+}

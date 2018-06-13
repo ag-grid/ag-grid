@@ -1,0 +1,18 @@
+$note-background-size: 30px;
+.note {
+    padding: 1rem;
+    padding-left: calc(#{$note-background-size} + 2rem);
+    background-image: url("../common/bulb.svg");
+    background-repeat: no-repeat;
+    background-position-x: 1rem;
+    background-position-y: 1rem;
+    background-size: $note-background-size $note-background-size;
+    // background-color: lighten($yellow, 3);
+    background-color: $gray-100;
+    color: $gray-800;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    min-height: calc(#{$note-background-size} + 2rem);
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+}

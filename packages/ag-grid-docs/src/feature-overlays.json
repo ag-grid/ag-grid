@@ -1,0 +1,208 @@
+[
+    {
+        "title": "Performance",
+        "url": "performance",
+        "slides": [
+            {
+                "content": "ag-Grid is designed to be performant with large amounts of data. To stress-test the demo, select '100,000 rows' from the Data dropdown.",
+                "markers": [{ "selector": "#data-size" }]
+            }
+        ]
+    },
+    {
+        "title": "Grouping / Aggregation",
+        "url": "grouping-aggregation",
+        "slides": [
+            {
+                "content": "ag-Grid allows the end-user to group the data by specific columns. To group the data, drag the 'Country' column header to the row group area.",
+                "markers": [
+                    { "selector": "#myGrid > div > div:nth-child(1) > div.ag-column-drop.ag-font-style.ag-column-drop-horizontal.ag-column-drop-row-group > span", "type": "oval" },
+                    {
+                        "selector":
+                            "#myGrid > div > div.ag-root-wrapper-body > div.ag-root.ag-font-style > div.ag-header > div.ag-header-viewport > div > div:nth-child(2) > div:nth-child(3) > div.ag-cell-label-container.ag-header-cell-sorted-none > div"
+                    }
+                ]
+            },
+            {
+                "content": "Alternatively, you can group by dragging a column from the tool panel to the tool panel row group area.",
+                "markers": [
+                    {
+                        "selector":
+                            "#myGrid > div > div.ag-root-wrapper-body > div.ag-tool-panel > div.ag-column-panel > div.ag-column-panel-center > div.ag-column-select-panel > div.ag-column-container > div:nth-child(4) > span.ag-column-drag"
+                    },
+                    {
+                        "selector":
+                            "#myGrid > div > div.ag-root-wrapper-body > div.ag-tool-panel > div.ag-column-panel > div.ag-column-panel-center > div.ag-column-drop.ag-font-style.ag-column-drop-vertical.ag-column-drop-row-group > span",
+                        "type": "oval"
+                    }
+                ]
+            },
+            {
+                "content": "Once grouped, you can display aggregation values for given column. To aggregate a given column, drag a column to the aggregation area.",
+                "markers": [
+                    {
+                        "selector":
+                            "#myGrid > div > div.ag-root-wrapper-body > div.ag-tool-panel > div.ag-column-panel > div.ag-column-panel-center > div.ag-column-select-panel > div.ag-column-container > div:nth-child(15) > span.ag-column-drag"
+                    },
+                    {
+                        "selector":
+                            "#myGrid > div > div.ag-root-wrapper-body > div.ag-tool-panel > div.ag-column-panel > div.ag-column-panel-center > div.ag-column-drop.ag-font-style.ag-column-drop-vertical.ag-column-drop-values > span",
+                        "type": "oval"
+                    }
+                ]
+            },
+            {
+                "content": "You can also select value aggregation function for a given column from the column menu (visible on mouse over)",
+                "markers": [
+                    {
+                        "selector":
+                            "#myGrid > div > div.ag-root-wrapper-body > div.ag-root.ag-font-style > div.ag-header > div.ag-header-viewport > div > div:nth-child(2) > div:nth-child(6) > div.ag-cell-label-container.ag-header-cell-sorted-none > span"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Filtering",
+        "url": "filtering",
+        "slides": [
+            {
+                "content": "ag-Grid comes with an extensive set of built-in column filter types. The floating filter row provides quick access to the UI.",
+                "markers": [
+                    {
+                        "selector":
+                            "#myGrid > div > div.ag-root-wrapper-body > div.ag-root.ag-font-style > div.ag-header > div.ag-header-viewport > div > div:nth-child(3) > div:nth-child(1)"
+                    }
+                ]
+            },
+            {
+                "content": "An additional UI for filtering is provided in the column menu. Hover the column, press the hamburger icon, then select the second tab.",
+                "markers": [
+                    {
+                        "selector":
+                            "#myGrid > div > div.ag-root-wrapper-body > div.ag-root.ag-font-style > div.ag-header > div.ag-header-viewport > div > div:nth-child(2) > div:nth-child(3) > div.ag-cell-label-container > span"
+                    }
+                ]
+            },
+            {
+                "content": "You can also do global filtering (search like) using the grid API and an external textbox.",
+                "markers": [{ "selector": "#search-toolbar > div > label" }]
+            }
+        ]
+    },
+    {
+        "title": "Editing",
+        "url": "editing",
+        "slides": [
+            {
+                "content": "ag-Grid allows the user to edit the data right inside the grid - double click any cell to edit its value. ",
+                "markers": [
+                    {
+                        "selector":
+                            "#myGrid > div > div.ag-root-wrapper-body > div.ag-root.ag-font-style > div.ag-body.ag-row-animation > div.ag-body-viewport-wrapper > div > div > div.ag-row.ag-row-even.ag-row-level-0:nth-child(2) > div.ag-cell:nth-child(1)"
+                    },
+                    {
+                        "selector":
+                            "#myGrid > div > div.ag-root-wrapper-body > div.ag-root.ag-font-style > div.ag-body.ag-row-animation > div.ag-body-viewport-wrapper > div > div > div.ag-row.ag-row-even.ag-row-level-0:nth-child(2) > div.ag-cell:nth-child(2)"
+                    },
+                    {
+                        "selector":
+                            "#myGrid > div > div.ag-root-wrapper-body > div.ag-root.ag-font-style > div.ag-body.ag-row-animation > div.ag-body-viewport-wrapper > div > div > div.ag-row.ag-row-even.ag-row-level-0:nth-child(2) > div.ag-cell:nth-child(3)"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Customizable Appearance",
+        "url": "customizable-appearance",
+        "slides": [
+            {
+                "content":
+                    "Ag-Grid ships several different themes. Pick one that matches your project look and feel, and fully customise so that the grid is consistent with your application. To preview the themes available, select one from the dropdown.",
+                "markers": [
+                    {
+                        "selector": "#grid-theme"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Range Selection",
+        "url": "range-selection",
+        "slides": [
+            {
+                "content":
+                    "Ag-grid allows you to mark areas of the grid and copy/paste the data from them, just like you would do in Excel. To select an area, click and drag accross several cells.",
+                "markers": [{ "selector": "#myGrid  .ag-row:nth-child(3) > .ag-cell:nth-child(2)" }, { "selector": "#myGrid .ag-row:nth-child(5) > .ag-cell:nth-child(3)" }]
+            }
+        ]
+    },
+    {
+        "title": "Pivoting",
+        "url": "pivoting",
+        "slides": [
+            {
+                "content":
+                    "Pivoting allows you to make columns out of values by pivoting on the data, similar to Pivot Tables in Excel. To start pivoting, check the 'pivot mode' checkbox, then click the Next button. ",
+                "markers": [
+                    {
+                        "selector": "#myGrid > div > div.ag-root-wrapper-body > div.ag-tool-panel > div.ag-column-panel > div.ag-column-panel-center > div.ag-pivot-mode"
+                    }
+                ]
+            },
+            {
+                "content": "Next, drag the country column to the column labels drop area and click the Next button.",
+                "markers": [
+                    {
+                        "selector":
+                            "#myGrid > div > div.ag-root-wrapper-body > div.ag-tool-panel > div.ag-column-panel > div.ag-column-panel-center > div.ag-column-select-panel > div.ag-column-container > div:nth-child(4) > span.ag-column-drag"
+                    },
+                    {
+                        "selector": "#myGrid > div > div:nth-child(1) > div.ag-column-drop.ag-font-style.ag-column-drop-horizontal.ag-column-drop-pivot.ag-width-half > span",
+                        "type": "oval"
+                    }
+                ]
+            },
+            {
+                "content": "Next, drag one of the Monthly breakdowns columns to the values drop area.",
+                "markers": [
+                    {
+                        "selector":
+                            "#myGrid > div > div.ag-root-wrapper-body > div.ag-tool-panel > div.ag-column-panel > div.ag-column-panel-center > div.ag-column-select-panel > div.ag-column-container > div:nth-child(15) > span.ag-column-drag"
+                    },
+                    {
+                        "selector":
+                            "#myGrid > div > div.ag-root-wrapper-body > div.ag-tool-panel > div.ag-column-panel > div.ag-column-panel-center > div.ag-column-drop.ag-font-style.ag-column-drop-vertical.ag-column-drop-values",
+                        "type": "oval"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Data Export",
+        "url": "data-export",
+        "slides": [
+            {
+                "content": "You can export the contents of the grid to CSV or Excel. Right click anywhere on the contents and select export &gt; CSV Export or Excel Export.",
+                "markers": []
+            }
+        ]
+    },
+    {
+        "title": "Row Reordering",
+        "url": "row-reordering",
+        "slides": [
+            {
+                "content": "You can reorder rows in the grid by dragging a row by its handle and dropping at the desired location between the other rows.",
+                "markers": [
+                    {
+                        "selector": "#myGrid div.ag-row:nth-child(3) span.ag-row-drag"
+                    }
+                ]
+            }
+        ]
+    }
+]

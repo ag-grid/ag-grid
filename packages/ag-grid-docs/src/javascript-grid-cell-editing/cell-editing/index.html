@@ -1,0 +1,25 @@
+<div style="height: 100%; padding-top: 30px; box-sizing: border-box;">
+<div id="myGrid" style="height: 100%;" class="ag-theme-balham"></div>
+</div>
+<style>
+    button { font-size: 12px; }
+</style>
+<div style="position: absolute; top: 0; left: 0;">
+    <div style="padding: 2px;">
+        <button onclick="onBtStartEditing()">edit (0)</button>
+        <button onclick="onBtStartEditing(46)">edit (0, Delete)</button>
+        <button onclick="onBtStartEditing(null, 'T')">edit (0, 'T')</button>
+        <button onclick="onBtStartEditing(null, null, 'top')">edit (0, Top)</button>
+        <button onclick="onBtStartEditing(null, null, 'bottom')">edit (0, Bottom)</button>
+        &nbsp;
+        &nbsp;
+        &nbsp;
+        <button onclick="onBtStopEditing()">stop ()</button>
+        <button onclick="onBtNextCell()">next ()</button>
+        <button onclick="onBtPreviousCell()">previous ()</button>
+        &nbsp;
+        &nbsp;
+        &nbsp;
+        <button onclick="onBtWhich()">which ()</button>
+    </div>
+</div>

@@ -1,0 +1,261 @@
+$grey-50: #fafafa;
+$grey-100: #f5f5f5;
+$grey-200: #eeeeee;
+$grey-300: #e0e0e0;
+$grey-400: #bdbdbd;
+$grey-500: #9e9e9e;
+$grey-700: #616161;
+
+$light-blue-500: #03a9f4;
+$light-blue-700: #0288d1;
+
+$unit: 4px;
+$font-size: 14px;
+
+$primary-tab-background: $grey-100;
+$primary-tab-border: $grey-400;
+
+$secondary-tab-background: $grey-50;
+$selected-tab-background: $secondary-tab-background;
+
+$vertical-pad: $unit * 2;
+$horizontal-pad: $unit * 3;
+$border-radius: $unit;
+
+@mixin round-the-top {
+    border-top-right-radius: $border-radius;
+    border-top-left-radius: $border-radius;
+}
+
+.example-runner {
+    margin-bottom: 1em;
+
+    .fa {
+        color: $grey-400;
+    }
+
+    a {
+        color: $light-blue-700;
+    }
+
+    ul[role='tablist'] {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        background: $primary-tab-background;
+        font-size: $font-size;
+        padding-top: $vertical-pad;
+        @include round-the-top;
+        border-bottom: 1px solid $primary-tab-border;
+
+        li {
+            list-style: none;
+            margin: 0;
+            margin-bottom: -1px;
+            padding: 1px 1px 0 1px;
+            @include round-the-top;
+
+            > a {
+                @include round-the-top;
+                padding: $vertical-pad $horizontal-pad;
+                display: block;
+                &:hover,
+                &:focus {
+                    text-decoration: none;
+                    color: $light-blue-500;
+                }
+            }
+
+            &.active {
+                padding: 0;
+                border: 1px solid $primary-tab-border;
+                border-bottom: 1px solid white;
+                color: $light-blue-500;
+
+                > a {
+                    background: white;
+                }
+
+                .fa {
+                    color: $grey-700;
+                }
+            }
+        }
+
+        &.primary > li:first-child {
+            flex: 1;
+            font-size: $font-size + 2;
+            a {
+                padding-top: $vertical-pad - 2;
+                color: $grey-700;
+                &:hover {
+                    color: $light-blue-700;
+                }
+            }
+        }
+    }
+
+    .code-browser {
+        display: flex;
+        max-width: gg
+    }
+
+    ul.secondary {
+        background-color: $secondary-tab-background;
+        border-bottom-left-radius: $border-radius;
+        border-bottom: 0;
+        padding-top: 0;
+        font-size: $font-size - 2;
+        flex-direction: column;
+        min-width: 190px;
+        overflow: auto;
+        height: 450px;
+
+        .fa {
+            width: 12px;
+        }
+
+        li {
+            border: 0;
+            padding: 0;
+
+            > a {
+                background-color: $primary-tab-background;
+            }
+        }
+
+        li.active {
+            border: none;
+            border-radius: 0;
+
+            > a {
+                background-color: white;
+                border-radius: 0;
+            }
+        }
+
+        li.separator {
+            margin-top: $unit * 5;
+            padding-left: $horizontal-pad;
+            padding-bottom: $unit;
+            border-bottom: 1px solid $grey-300;
+            color: $grey-400;
+            margin-bottom: 0;
+        }
+    }
+
+    .loading-placeholder, .iframe-placeholder {
+        height: 450px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .tab-contents {
+        background-color: white;
+        border-bottom-left-radius: $border-radius;
+        border-bottom-right-radius: $border-radius;
+
+        .result {
+            padding: $vertical-pad $horizontal-pad;
+            position: relative;
+        }
+
+        iframe, .iframe-placeholder {
+            height: 500px;
+            width: 100%;
+            background-color: transparent;
+            border: 0;
+            margin: 0;
+        }
+    }
+
+    pre {
+        flex: 1;
+        background: white;
+        border: none;
+        height: 450px;
+        overflow: auto;
+        font-size: 0.7rem;
+        padding: 1rem;
+        margin: 0;
+
+        code {
+            word-break: break-all;
+            // word-wrap: normal;
+            white-space: pre;
+            width: 100%;
+        }
+    }
+
+    .result-in-new-tab {
+        position: absolute;
+        right: $horizontal-pad;
+        background-color: transparent;
+        border: 0;
+
+        &:hover .fa {
+            color: $grey-500;
+        }
+    }
+
+    .framework-chooser {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 1em;
+
+        > span {
+            line-height: 38px;
+            margin-right: 1em;
+        }
+
+        .dropdown-menu {
+            right: 0;
+            left: auto;
+        }
+    }
+
+    .runner-item {
+        height: 25px;
+        display: inline-block;
+        line-height: 25px;
+        width: 150px;
+        text-align: left;
+        padding-left: 40px;
+    }
+
+    li .runner-item {
+        box-sizing: border-box;
+        padding-left: 52px;
+        background-position: 12px center;
+        padding-top: .5em;
+        padding-bottom: .5em;
+        height: 40px;
+        width: 185px;
+    }
+
+    .runner-item-angular {
+        background: transparent url('../_assets/fw-logos/angular.svg') 0px center no-repeat;
+        background-size: 25px 25px;
+    }
+
+    .runner-item-vanilla {
+        background: transparent url('../_assets/fw-logos/javascript.svg') 0px center no-repeat;
+        background-size: 25px 25px;
+    }
+
+    .runner-item-react {
+        background: transparent url('../_assets/fw-logos/react.svg') 0px center no-repeat;
+        background-size: 25px 25px;
+    }
+
+    .runner-item-vue {
+        background: transparent url('../_assets/fw-logos/vue.svg') 0px center no-repeat;
+        background-size: 25px 25px;
+    }
+
+    .example-wrapper {
+        border-radius: $border-radius;
+        border: 1px solid $primary-tab-border;
+    }
+}

@@ -1,0 +1,62 @@
+#page-pipeline {
+  .nav-item:not(:first-child) {
+    margin-left: 0.5rem;
+  }
+
+  .inner-nav {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+
+    .nav-item a {
+      color: darken($teal, 10);
+    }
+
+    .nav-item:first-child a {
+      color: $blue-2;
+    }
+
+    .nav-link {
+      border-color: $border-color;
+    }
+
+    .nav-link.active {
+      border-bottom-color: white;
+      margin-bottom: -1px;
+    }
+  }
+
+  table.aui th {
+    border-top: 0;
+  }
+
+  .global-search-pane {
+    input {
+      @extend .form-control;
+      font-size: 1.1rem;
+      width: 75%;
+    }
+  }
+
+  .global-report-search-results {
+    margin-bottom: 1rem;
+  }
+
+  .issue-row-alternate {
+    background-color: $gray-100;
+  }
+
+  .jira-more-info {
+    display: none;
+  }
+
+  .search-highlight {
+    background-color: lightgreen;
+  }
+
+  .report-link {
+    -webkit-transition:  background-color 0.65s linear;
+    -moz-transition:  background-color 0.65s linear;
+    -o-transition:  background-color 0.65s linear;
+    transition:  background-color 0.65s linear;
+  }
+}

@@ -1,0 +1,70 @@
+.ag-cell-label-container{
+    /*Necessary to allow for text to grow vertically*/
+    height: 100%;
+}
+
+.ag-header-cell-label {
+    /*Necessary to allow for text to grow vertically*/
+    height: 100%;
+    padding:0 !important;
+}
+
+.ag-header-cell-label .ag-header-cell-text{
+    /*Force the width corresponding at how much widht
+    we need once the text is layed out vertically*/
+    width: 55px;
+    writing-mode: vertical-lr;
+    line-height: 2em;
+    margin-top: 60px;
+}
+
+.ag-pivot-off .ag-header-group-cell{
+    font-size: 50px;
+}
+
+.ag-pivot-on .ag-header-group-cell {
+    font-size: 10px;
+    color: green;
+}
+
+.ag-pivot-off .ag-header-cell-label{
+    color:#8a6d3b;
+}
+
+.ag-pivot-on .ag-header-cell-label{
+    font-size: 10px;
+    height: 90px;
+    padding-top: 36px;
+    margin-left: 0px;
+    color:#1b6d85;
+    font-weight: bold;
+}
+
+.ag-pivot-on .ag-header-cell-label .ag-header-cell-text{
+    /*There is empty space left at the top from the menu and sort
+    icons not used*/
+    margin-top: 25px;
+}
+
+/*Floating filters*/
+.ag-floating-filter-body{
+    height:50px
+}
+
+.ag-floating-filter-body input{
+    height:49px
+}
+
+.ag-floating-filter-button{
+    margin-top: -49px;
+}
+
+.ag-floating-filter-button button {
+    height:49px
+}
+
+.ag-floating-filter-body input {
+    font-size: 15px;
+    font-weight: bold;
+}
+

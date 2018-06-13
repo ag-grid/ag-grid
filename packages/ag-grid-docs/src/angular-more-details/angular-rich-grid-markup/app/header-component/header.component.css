@@ -1,0 +1,34 @@
+.customHeaderMenuButton {
+    float: left;
+}
+
+.customHeaderLabel {
+    float: left;
+}
+
+.customSortDownLabel {
+    float: left;
+}
+
+.customSortUpLabel {
+    float: left;
+}
+
+.customSortRemoveLabel {
+    float: left;
+    font-size: 11px;
+}
+
+.active {
+    color: cornflowerblue;
+}
+
+.hidden {
+    display: none;
+}
+
+.fa-times, .fa-long-arrow-up, .fa-long-arrow-down, .fa-bars, .customExpandButton {
+    display: inline-block;
+    margin-top: 14px;
+    margin-left: 5px;
+}

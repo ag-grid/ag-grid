@@ -1,0 +1,12 @@
+{
+  "local-dev": false,
+  "update-local-data": false,
+  "username": "",
+  "password": "",
+  "cache-lifetime-minutes": 30,
+  "overrides": {
+    "changelog": {
+      "cache-lifetime-minutes": -1
+    }
+  }
+}

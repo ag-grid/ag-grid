@@ -1,0 +1,82 @@
+#nav {
+    @extend .bg-light;
+
+    background-image: linear-gradient(to top left, $blue-2, $blue-1);
+    box-shadow: inset 0 -8px 121px -50px $blue-1;
+    padding-bottom: 2rem;
+
+    nav {
+        @extend .navbar, .navbar-expand-sm, .navbar-light, .full-width-row;
+    }
+
+    &.compact {
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    $logo-scale: 6;
+
+    #logo {
+        font: 0/0 a;
+        color: transparent;
+        text-shadow: none;
+        background-color: transparent;
+        border: 0;
+
+        background-image: url("../svg/logo.svg?color1=%23FFFFFF");
+        background-repeat: no-repeat;
+        background-size: 100%;
+        display: inline-block;
+        height: 248px / $logo-scale;
+        margin-top: 6px;
+        min-width: 40px;
+        width: 500px / $logo-scale;
+    }
+
+    #navbar-toggle {
+        @extend .navbar-toggler;
+
+        span {
+            @extend .navbar-toggler-icon;
+        }
+    }
+
+    #main-nav ul {
+        @extend .navbar-nav, .ml-md-auto;
+
+        li {
+            @extend .nav-item, .ml-3;
+
+            a {
+                color: lighten($blue-3, 10);
+                display: block;
+                padding: 0.5rem 1rem;
+            }
+
+            a:hover {
+                color: $white;
+                text-decoration: none;
+            }
+
+            &.active a {
+                color: $white;
+            }
+        }
+
+        .medium {
+            background-image: url("../svg/medium.svg");
+            background-position-x: right;
+            background-position-y: 8px;
+            background-repeat: no-repeat;
+
+            padding-right: 20px;
+        }
+
+        #trial a {
+            @extend .rounded;
+
+            background-color: $offwhite;
+            color: $blue-2 !important;
+        }
+    }
+}

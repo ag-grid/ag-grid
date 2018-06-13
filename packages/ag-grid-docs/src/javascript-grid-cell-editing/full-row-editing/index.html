@@ -1,0 +1,15 @@
+<style>
+    /* if you want to highlight the editing row, you can make use of the ag-row-editing class, it gets put onto
+       the row that is currently in edit mode. */
+    .ag-row-editing {
+        background-color: #5bc0de !important;
+    }
+</style>
+
+<div style="height: 100%; padding-top: 30px; box-sizing: border-box;">
+    <div id="myGrid" style="height: 100%;" class="ag-theme-balham"></div>
+</div>
+<div style="position: absolute; top: 0; left: 0;">
+    <button style="font-size: 12px" onclick="onBtStartEditing()">Start Editing Line 2</button>
+    <button style="font-size: 12px" onclick="onBtStopEditing()">Stop Editing</button>
+</div>

@@ -1,0 +1,558 @@
+@import "../common/vars.scss";
+@import "../common/bootstrap.scss";
+@import "../common/syntax-highlight.scss";
+@import "../common/grid.scss";
+@import "../common/content.scss";
+@import "../common/nav.scss";
+@import "../common/footer.scss";
+@import "../common/roadshow.scss";
+@import "../common/note.scss";
+@import "./example-runner.scss";
+@import "./legacy.scss";
+@import "./algolia.scss";
+
+#documentation {
+    @extend .container-fluid;
+
+    & > div {
+        @extend .row, .full-width-row;
+
+        aside {
+            @extend .col-lg-2;
+
+            font-size: 90%;
+
+            ul {
+                list-style: none;
+            }
+        }
+
+        & > section {
+            @extend .col-md;
+
+            background-color: $white;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        & > section.skip-in-page-nav {
+            padding-right: 15px;
+        }
+
+        & > section.skip-left-nav {
+            padding-left: 0;
+        }
+
+        #side-nav,
+        & > section {
+            padding-bottom: 3rem;
+            padding-top: 3rem;
+        }
+
+        #side-nav-toggle {
+            @extend .d-block, .d-lg-none, .navbar-toggler;
+
+            float: right;
+
+            span {
+                @extend .navbar-toggler-icon;
+
+                background-image: $navbar-light-toggler-icon-bg;
+            }
+        }
+
+        #side-nav {
+            min-width: 250px;
+
+            li {
+                margin-bottom: 0.5rem;
+            }
+
+            span {
+                cursor: pointer;
+            }
+
+            // a tad more convulted way to set whitespace, due to menu collapse / expand animation
+            a + ul,
+            span + ul {
+                & > li:first-child {
+                    margin-top: 0.5rem;
+                }
+
+                & > li:last-child {
+                    margin-bottom: 1rem;
+                }
+            }
+
+            a {
+                color: $gray-700;
+
+                &:hover {
+                    color: $blue-2;
+                    text-decoration: none;
+                }
+
+                &.active {
+                    color: $blue-2;
+                    font-weight: 500;
+                }
+            }
+
+            ul {
+                padding-start: 0;
+                padding-inline-start: 0;
+                a {
+                    // color: $gray-600;
+                }
+            }
+
+            ul ul ul {
+                font-size: 95%;
+                font-weight: 200;
+                padding-left: 0.5rem;
+            }
+
+            ul ul ul ul {
+                padding-left: 1rem;
+            }
+        }
+
+        #side-nav-container {
+            @extend .d-lg-block;
+            // @include media-breakpoint-up(lg) { @extend .d-block; }
+
+            /*
+            @extend .d-none, .d-lg-block;
+
+            &.show {
+                @extend .d-block;
+            }
+            */
+        }
+
+        #side-nav-container > ul ul {
+            height: 0;
+            overflow: hidden;
+            width: 100%;
+            // transition: height 0.3s ease-out;
+        }
+        #side-nav-container > ul ul li {
+            span,
+            a.has-children {
+                &::after {
+                    color: $gray-600;
+                    content: "❯ ";
+                    display: inline-block;
+                    float: right;
+                    font-size: 60%;
+                    line-height: 1.4rem;
+                    margin-right: 1rem;
+                    transform: rotate(90deg);
+                    transition: transform 0.3s ease-out;
+                }
+            }
+
+            &.expanded {
+                span,
+                a.has-children {
+                    &::after {
+                        transform: rotate(-90deg);
+                    }
+                }
+            }
+        }
+
+        #side-nav-container li.expanded > ul {
+            height: auto;
+        }
+
+        #side-nav-container > ul > li > a,
+        #side-nav-container > ul > li > span {
+            font-size: 115%;
+            font-weight: 500;
+        }
+
+        #side-nav-container:not(.flat) > ul {
+            > li > a::after,
+            > li > span::after {
+                color: $gray-600;
+                content: "❯ ";
+                display: inline-block;
+                float: right;
+                font-size: 80%;
+                line-height: 1.8rem;
+                margin-right: 1rem;
+                transform: rotate(90deg);
+                transition: transform 0.3s ease-out;
+            }
+
+            > li.expanded > a::after,
+            > li.expanded > span::after {
+                transform: rotate(-90deg);
+            }
+        }
+
+        #side-nav-container.flat .misc a {
+            font-size: 90%;
+        }
+
+        #side-nav-container .learn-more {
+            color: $primary;
+        }
+
+        #side-nav-container .card-highlight {
+            background-color: $blue-4;
+        }
+
+        #side-bar-announcements {
+            margin-top: 3rem;
+            border-top: 1px solid $border-color;
+
+            > p {
+                margin-top: 2rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        #upcoming-events {
+            a {
+                color: $primary;
+            }
+
+            dd.date {
+                @extend .text-muted;
+                font-size: 0.7rem;
+            }
+
+            dt:not(:first-child) {
+                margin-top: 1.5rem;
+            }
+        }
+
+        #side-nav-container .card {
+            h5 {
+                font-size: 1rem;
+            }
+
+            h6 {
+                font-size: 0.9rem;
+            }
+
+            p {
+                font-size: 0.8rem;
+            }
+        }
+
+        #doc-nav {
+            display: none;
+            font-size: 90%;
+            height: 100vh;
+            overflow: auto;
+            padding-left: 0;
+
+            > ul {
+                border-left: 1px solid $border-color;
+                padding-start: 2rem;
+                padding-inline-start: 2rem;
+            }
+
+            > ul > li:first-child {
+                margin-top: 3rem;
+            }
+
+            > ul > li:last-child {
+                margin-bottom: 3rem;
+            }
+
+            ul {
+                li {
+                    margin-bottom: 0.5rem;
+
+                    a {
+                        color: $gray-600;
+                        display: block;
+
+                        &:hover {
+                            color: $primary;
+                        }
+                    }
+
+                    &.level-1 {
+                        font-size: 115%;
+                        font-weight: 500;
+                    }
+
+                    &.level-3 {
+                        font-size: 95%;
+                        font-weight: 200;
+                        padding-left: 0.5rem;
+                    }
+
+                    &.level-4 {
+                        font-size: 90%;
+                        font-weight: 200;
+                        padding-left: 1.5rem;
+                    }
+                }
+            }
+
+            @media (min-width: 1024px) {
+                align-self: flex-start;
+                display: block;
+                flex: 0 0 100% / 12 * 2.5;
+                max-width: 100% / 12 * 2.5;
+                padding-left: 2rem;
+                position: sticky;
+                top: 0;
+            }
+
+            @media (min-width: 1920px) {
+                display: block;
+                left: calc(50% + #{$max-width / 2});
+                max-width: unset;
+                padding-left: 3rem;
+                position: fixed;
+                top: auto;
+                width: calc((100vw - #{$max-width}) / 2);
+            }
+
+            a {
+                display: block;
+
+                &:hover {
+                    text-decoration: none;
+                }
+
+                &.current-section {
+                    color: $blue-2;
+
+                    &::before {
+                        border-left: 1px solid $blue-2;
+                        content: "\00a0";
+                        left: -1px;
+                        position: absolute;
+                    }
+                }
+            }
+        }
+    }
+
+    h1 .anchorjs-link {
+        display: none;
+    }
+    // docs homepage
+    .docs-homepage-section-preview {
+        border: 1px solid $border-color;
+        border-top-width: 0;
+        padding: 1rem;
+
+        &:first-of-type {
+            @extend .mt-3;
+            // border-top: 1px solid $border-color;
+            border-top-width: 1px;
+        }
+
+        // this does not work for some reason
+        // &:last-of-type {
+        //     @extend .mb-4;
+        //     color: red;
+        // }
+
+        &:nth-of-type(2n-1) {
+            background-color: $offwhite;
+        }
+
+        &:first-child {
+            margin-top: 0 !important;
+        }
+
+        h2 {
+            @extend h4;
+            margin-top: 0 !important;
+            margin-bottom: 1rem !important;
+        }
+
+        p:last-child {
+            @extend .text-right;
+            margin-bottom: 0 !important;
+
+            a {
+                @extend .btn, .btn-primary;
+            }
+        }
+    }
+
+    #get-started-frameworks {
+        margin-left: -1rem;
+        margin-right: -1rem;
+        padding: 0;
+        margin-top: 2rem;
+    }
+
+    #get-started-frameworks > div > div {
+        @extend .col-md-3, .mb-4;
+    }
+
+    // get started overview
+    .get-started-framework {
+        @extend .card, .bg-light;
+
+        > a:first-child {
+            @extend .card-header;
+
+            background-position-x: center;
+            background-position-y: center;
+            background-repeat: no-repeat;
+            background-size: 6rem 6rem;
+            height: 15rem;
+            overflow: hidden;
+            text-indent: -10000px;
+        }
+
+        div:nth-child(2) {
+            @extend .card-body;
+        }
+
+        h2 {
+            @extend .card-title, h4;
+        }
+
+        p:first-child {
+            @extend .card-text;
+        }
+
+        p:last-child {
+            @extend .text-right, .card-text;
+
+            a {
+                @extend .btn, .btn-primary;
+            }
+        }
+    }
+
+    $frameworks: angular react polymer vue javascript angularjs aurelia webcomponents;
+
+    @each $framework in $frameworks {
+        .get-started-framework.card-#{$framework} > a:first-child {
+            background-image: url("../fw-logos/#{$framework}.svg");
+        }
+    }
+
+    .get-started-framework.card-javascript > a:first-child {
+        background-color: #f8df1e;
+    }
+
+    .get-started-framework.card-react > a:first-child {
+        background-color: #282c34;
+    }
+
+    .get-started-framework.card-angular > a:first-child {
+        background-color: #1976d3;
+    }
+
+    .get-started-framework.card-angularjs > a:first-child {
+        background-color: #273238;
+    }
+
+    .get-started-framework.card-polymer > a:first-child {
+        background-color: darken(#f4f5f6, 0);
+    }
+
+    .get-started-framework.card-vue > a:first-child {
+        background-color: darken(#fcfcff, 0);
+    }
+
+    .get-started-framework.card-aurelia > a:first-child {
+        background-color: darken(#f4f4f4, 0);
+    }
+
+    .get-started-framework.card-webcomponents > a:first-child {
+        background-color: darken(#f9f9fa, 0);
+    }
+
+    p > img:only-child {
+        display: block;
+        margin: auto;
+    }
+
+    ul.content,
+    ol.content {
+        li {
+            margin-bottom: 0.5rem;
+        }
+    }
+
+    #content img.img-fluid {
+        margin-bottom: 1rem;
+    }
+
+    #content {
+        h2,
+        h3,
+        h4 {
+            margin-top: 2rem;
+        }
+    }
+}
+
+.new-marker {
+    color: $red;
+    display: inline-block;
+    font-size: 0.7em;
+    transform: translate(3px, -6px);
+}
+
+#feature-roadshow {
+    @extend .container;
+
+    @include roadshow;
+}
+
+table.reference {
+    border-collapse: collapse;
+    margin-bottom: 3rem;
+    width: 100%;
+
+    th:first-child,
+    td:first-child {
+        width: 40%;
+    }
+
+    td,
+    th {
+        border-bottom: 1px solid $border-color;
+        border-top: 1px solid $border-color;
+        padding: 0.5rem 1rem;
+        vertical-align: top;
+    }
+
+    tr:nth-child(2n -1) {
+        td:not([colspan="2"]),
+        th {
+            background-color: $offwhite;
+        }
+    }
+}
+
+.event-hierarchy {
+    font-size: 0.8rem;
+    font-weight: bold;
+    white-space: pre-wrap;
+    width: 100%;
+}
+
+.event-properties {
+    color: darkgreen;
+    font-weight: normal;
+}
+
+.event-attribute {
+    color: darkorchid;
+    font-weight: bold;
+}
+
+.feature-roadshow-heading {
+    @extend .display-2, .text-center;
+
+    margin-top: 4rem;
+}

@@ -1,0 +1,703 @@
+.list-group-item .list-group-item-heading {
+    color: #337ab7 !important;
+}
+
+.list-group-item .list-group-item-heading:hover {
+    text-decoration: underline;
+}
+
+.framework-select-item {
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin: 20px;
+    color: #111;
+    font-size: 20px;
+    text-align: center;
+    display: inline-block;
+    /*background-color: aliceblue;*/
+}
+.framework-select-item:hover {
+    background-color: #eee;
+}
+.framework-select-item-parent:hover {
+    text-decoration: none;
+}
+.framework-select-item-small {
+    padding: 4px;
+    margin: 4px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    color: #111;
+    font-size: 20px;
+    text-align: center;
+    display: inline-block;
+    /*background-color: aliceblue;*/
+}
+.framework-select-item-small:hover {
+    background-color: #eee;
+    text-decoration: none;
+}
+.framework-select-label {
+    margin-top: 15px;
+}
+.framework-select-list {
+    text-align: center;
+}
+.framework-select-small-title {
+    text-align: center;
+    font-size: 16px;
+    padding-bottom: 10px;
+}
+.framework-select-big-title {
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.select-item {
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    color: #111;
+    /*background-color: aliceblue;*/
+    margin-bottom: 20px;
+}
+.select-item:hover {
+    background-color: #eee;
+    text-decoration: none;
+}
+.select-label {
+}
+
+
+.todo-box {
+    border: 1px solid lightgrey;
+    background: repeating-linear-gradient(45deg, transparent, transparent 10px, #eee 10px, #fff 20px);
+    text-align: center;
+    font-weight: bold;
+    font-size: 20px;
+    padding: 20px;
+}
+
+.event-hierarchy {
+    font-weight: bold;
+}
+.event-properties {
+    font-weight: normal;
+    color: darkgreen;
+}
+.event-attribute {
+    font-weight: bold;
+    color: darkorchid;
+}
+
+.feature-summary-item:nth-child(odd) {
+    background-color: #f6f8fa;
+}
+
+.feature-summary-item {
+    border: 1px solid transparent;
+}
+
+.feature-summary-item a {
+}
+
+.first-h1 {
+    margin-top: 0px;
+}
+
+.documentationContainer {
+    margin-top: 20px;
+    position: relative;
+}
+
+.bigTitle {
+    font-size: 20px;
+    font-weight: bold;
+    padding-top: 20px;
+    padding-bottom: 10px;
+}
+
+.smallTitle {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.inline {
+    border: 1px solid darkgrey;
+    display: inline-block;
+    padding: 5px;
+    margin: 5px;
+}
+
+.block {
+    border: 1px solid darkgrey;
+    padding: 5px;
+    margin: 5px;
+}
+
+.agClass {
+    font-weight: bold;
+    color: black;
+}
+
+.agAttr {
+    font-weight: bold;
+    color: blue;
+}
+
+.agPos {
+    font-weight: bold;
+    color: darkgreen;
+}
+
+.codeBlock {
+    border: 1px solid darkgrey;
+    padding: 5px;
+    margin: 5px;
+    color: grey;
+}
+
+.sidebarLink {
+    padding: 2px 4px 2px 10px;
+    /* border-bottom: 1px solid #e8e8e8; */
+    display: block;
+    color: #888;
+    font-size: 14px;
+}
+
+.sidebarLink:hover {
+    text-decoration: none;
+    color: #333;
+    transition: all .3s ease-in-out;
+}
+
+.sidebarLinkSelected {
+    padding: 2px 4px 2px 10px;
+    display: block;
+    font-weight: bold;
+    color: #333;
+    font-size: 14px;
+    border-radius: 3px;
+}
+
+.sidebarLink-indent1, .sidebarLink-indent2 {
+    font-style: italic;
+}
+
+.codeComment {
+    color: darkgreen;
+}
+
+.codeHighlight {
+    background-color: #bde2e5;
+}
+
+/* collapsable sidebar items */
+.docsMenu-header {
+    cursor: pointer;
+    display: block;
+    position: relative;
+    border: 1px solid #e8e8e8;
+    border-radius: 3px;
+    padding: 10px;
+    margin-top: 10px;
+//  transition: all .3 s ease-in-out;
+}
+
+.docsMenu-header h4 {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+    position: relative;
+    padding-left: 16px;
+}
+
+.docsMenu-header h4 img {
+    position: absolute;
+    top: -2px;
+    left: -5px;
+    width: 20px;
+}
+
+.docsMenu-header .fa {
+    position: absolute;
+    top: 12px;
+    right: 10px;
+    font-size: 13px;
+    transition: all .3s ease-in-out;
+    color: #999;
+}
+
+.docsMenu-header.active, .docsMenu-header.toggleActive, .docsMenu-header:hover {
+    background: #eee;
+}
+
+.docsMenu-header.active .fa, .docsMenu-header.toggleActive .fa {
+    transform: rotate(90deg)
+}
+
+.docsMenu-header + div {
+    max-height: 0;
+    overflow: hidden;
+    transition: all .5s ease-in-out;
+    margin: 5px 0 10px;
+}
+
+.docsMenu-header.active + div, .docsMenu-header.toggleActive + div {
+    max-height: 1000px;
+}
+
+.docsMenu-header.docsMenu-header_feature.active + div, .docsMenu-header.docsMenu-header_feature.toggleActive + div {
+    max-height: 2000px;
+}
+
+/* collapsable normal doc items */
+.collapsableDocs {
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.collapsableDocs-header {
+    cursor: pointer;
+    display: block;
+    position: relative;
+    padding: 4px;
+}
+
+.collapsableDocs-header .fa {
+    position: absolute;
+    top: 14px;
+    right: 10px;
+    font-size: 12px;
+    transition: all .3s ease-in-out;
+    color: #999;
+}
+
+.collapsableDocs-header.active .fa {
+    transform: rotate(90deg)
+}
+
+.collapsableDocs-header + div {
+    max-height: 0;
+    overflow: hidden;
+    transition: all .5s ease-in-out;
+}
+
+.collapsableDocs-header.active + div {
+    max-height: 7000px;
+}
+
+.collapsableDocs-header.collapsableDocs-header_feature.active + div {
+    max-height: 7000px;
+    border: 1px solid lightgrey;
+}
+
+.collapsableDocs-content {
+    padding: 5px;
+}
+
+#frameworkContext {
+    width: 100%;
+    margin: 5px 0 10px;
+}
+
+.header-row .documentation-h2 {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.contentBlock {
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.column-items {
+    display: block;
+    width: 100%;
+}
+
+.column-links {
+    font-size: 20px;
+    text-decoration: none !important;
+}
+
+a.column-links:hover {
+    color: red;
+}
+
+.tooltip-inner {
+    max-width: 350px;
+    width: 350px;
+}
+
+input[collapsible] {
+    display: none;
+    visibility: hidden;
+}
+
+label[collapsible] {
+    text-align: center;
+}
+
+label[collapsible]::before {
+    font-family: Consolas, monaco, monospace;
+    font-weight: bold;
+    font-size: 15px;
+    content: "+";
+    vertical-align: text-top;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 3px;
+    background: radial-gradient(ellipse at center, #CCC 50%, transparent 50%);
+}
+
+/* Getting Started Section - Start */
+#angularChild {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.5s;
+    color: #FFF;
+}
+
+#angularParent:checked ~ #angularChild {
+    height: 120px;
+}
+
+#angularParent:checked ~ label[collapsible]::before {
+    content: "-";
+}
+
+#reactChild {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.5s;
+    color: #FFF;
+}
+
+#reactParent:checked ~ #reactChild {
+    height: 50px;
+}
+
+#reactParent:checked ~ label[collapsible]::before {
+    content: "-";
+}
+
+#jsChild {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.5s;
+    color: #FFF;
+}
+
+#jsParent:checked ~ #jsChild {
+    height: 50px;
+}
+
+#jsParent:checked ~ label[collapsible]::before {
+    content: "-";
+}
+
+#vueChild {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.5s;
+    color: #FFF;
+}
+
+#vueParent:checked ~ #vueChild {
+    height: 50px;
+}
+
+#vueParent:checked ~ label[collapsible]::before {
+    content: "-";
+}
+
+#aureliaChild {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.5s;
+    color: #FFF;
+}
+
+#aureliaParent:checked ~ #aureliaChild {
+    height: 50px;
+}
+
+#aureliaParent:checked ~ label[collapsible]::before {
+    content: "-";
+}
+
+#angularJsChild {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.5s;
+    color: #FFF;
+}
+
+#angularJsParent:checked ~ #angularJsChild {
+    height: 50px;
+}
+
+#angularJsParent:checked ~ label[collapsible]::before {
+    content: "-";
+}
+
+#wcChild {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.5s;
+    color: #FFF;
+}
+
+#wcParent:checked ~ #wcChild {
+    height: 50px;
+}
+
+#wcParent:checked ~ label[collapsible]::before {
+    content: "-";
+}
+
+/* Getting Started Section - End */
+
+/*
+* === Google Custom search in docs ===
+*/
+
+#documentationSearch {
+    margin-bottom: 10px;
+}
+
+@media only screen and (min-width: 992px) {
+    #documentationSearch {
+        width: 250px;
+        height: 25px;
+        padding: 0px 0 0 0px;
+        position: absolute;
+        top: 10px;
+    }
+}
+
+#documentationSearch .gsc-search-box-tools .gsc-search-box .gsc-input {
+    font-size: 13px;
+    color: #333;
+}
+
+#documentationSearch .documentationSearch-spinner {
+    display: none;
+    margin: 5px 0 0 0;
+}
+
+#documentationSearch .documentationSearch-spinner.active {
+    display: block;
+}
+
+cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
+    width: auto !important;
+    height: auto !important;
+    border-color: #474747;
+    background-color: #474747;
+    background-image: none;
+    filter: none;
+}
+
+.gsc-search-box-tools .gsc-search-box .gsc-input {
+    padding-right: 5px !important;
+}
+
+.cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
+    margin-top: 5px !important;
+    padding: 5px 27px 6px 27px;
+}
+
+/*
+* === Framework Dropdown ===
+*/
+.frameworkBox {
+    margin-bottom: 15px;
+}
+
+.frameworkDropdownButton {
+    width: 100%;
+    position: relative;
+    text-align: left;
+    padding-left: 35px;
+    margin: 0;
+}
+
+.frameworkDropdownButton.active + ul {
+    display: block;
+    width: 300px;
+}
+
+.frameworkDropdownButton img {
+    position: absolute;
+    top: 7px;
+    left: 9px;
+}
+
+.frameworkDropdownButton .caret {
+    margin-left: 0;
+    position: absolute;
+    right: 10px;
+    top: 14px;
+    font-size: 34px;
+}
+
+.frameworkDropdownButton .caret {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 2px;
+    vertical-align: middle;
+    border-top: 6px dashed;
+    border-top: 4px solid \9;
+    border-right: 6px solid transparent;
+    border-left: 6px solid transparent;
+}
+
+.frameworkHeading {
+    font-size: 12px;
+    padding: 8px;
+    margin: 0px 0 -5px 0;
+    border-radius: 3px;
+    border: 0px solid #e8e8e8;
+    background: #EEE;
+    text-align: left;
+    position: relative;
+}
+
+.frameworkContainer {
+    background: #EEE;
+    padding: 5px;
+    border-radius: 3px;
+}
+
+.frameworkDropdownButton .web-components {
+    font-size: 11px;
+}
+
+.frameworkBox .dropdown-menu li {
+    background-color: #fff;
+    padding: 2px 0px;
+}
+
+@media only screen and (max-width: 768px) {
+
+    .frameworkBox .dropdown-menu li {
+        padding: 2px 10px 2px 10px;
+    }
+
+}
+
+.frameworkBox .dropdown-menu li.frameworkDropdownText {
+    padding: 8px 20px 10px 20px;
+    margin: 0px;
+    margin-top: -5px;
+    background-color: #eee;
+}
+
+.frameworkBox .dropdown-menu .divider {
+    margin: 0;
+    padding: 0 0 8px;
+}
+
+.all-frameworks {
+    padding-left: 48px !important;
+}
+
+.frameworkDropdown-link img {
+    margin-right: 5px;
+}
+
+.frameworkDropdownButton.frameworkAllButton {
+    padding-left: 12px;
+}
+
+.backgroundGradient {
+    background: #539bd6; /* Old browsers */
+    background: -moz-linear-gradient(top, #539bd6 0%, #c3d6e5 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, #539bd6 0%, #c3d6e5 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, #539bd6 0%, #c3d6e5 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#539bd6', endColorstr='#c3d6e5', GradientType=0);
+    padding: 20px;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    /*padding: 20px;*/
+}
+
+.section-icon-container {
+    float: left;
+    height: 80px;
+    display: inline-block;
+    padding-right: 20px;
+    padding-top: 10px;
+}
+
+.float-parent {
+    display: inline-block;
+}
+
+.expandAll, .expandAll:visited, .expandAll:active, .expandAll:focus {
+    color: #333;
+    font-size: 13px;
+    display: block;
+    text-decoration: none;
+}
+
+.expandAll:hover {
+    color: #000;
+    text-decoration: none;
+}
+
+.documentationHeader {
+    margin: 0 0 20px;
+}
+
+.expandAll {
+    transition: all 1s ease-in-out;
+}
+
+.expandAll .fa {
+    color: #999;
+}
+
+/* override bootstrap mobile styles */
+
+@media only screen and (max-width: 768px) {
+
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1000;
+        display: none;
+        float: left;
+        min-width: 160px;
+        padding: 5px 0;
+        margin: 2px 0 0;
+        font-size: 14px;
+        text-align: left;
+        list-style: none;
+        background-color: #fff;
+        -webkit-background-clip: padding-box;
+        background-clip: padding-box;
+        border: 1px solid rgba(0, 0, 0, .15);
+        border-radius: 4px;
+        -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+    }
+
+}
+
+.nline-block{
+    display: inline-block;
+}

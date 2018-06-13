@@ -1,0 +1,31 @@
+<div class="input-panel">
+    <div style="display: inline-block">
+        <div style="float: left">
+            Name: <input [(ngModel)]="name"/>
+        </div>
+        <div style="float: left; padding-left: 10px">
+            Country:
+            <select [(ngModel)]="country" [compareWith]="countryComparator">
+                <option disabled selected>Country...</option>
+                <option *ngFor="let country of countries" [ngValue]="country">{{ country.name }}</option>
+            </select>
+        </div>
+    </div>
+    <div>
+        <button (click)="insertNewResult()" class="action-button">Insert New Result</button>
+        <ag-grid-angular style="width: 100%; height: 200px;"
+                         class="ag-theme-balham"
+
+                         [columnDefs]="columnDefs"
+                         [rowData]="rowData"
+
+                         (gridReady)="onGridReady($event)"
+                         (rowValueChanged)="onRowValueChanged($event)">
+        </ag-grid-angular>
+    </div>
+    <div class="submit-pane">
+        <button (click)="saveAthlete()" [disabled]="!isValidAthlete()" class="action-button" style="float: right">Save
+            Athlete
+        </button>
+    </div>
+</div>

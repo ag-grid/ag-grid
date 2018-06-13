@@ -1,0 +1,30 @@
+<html lang="en">
+    <head>
+        <title>Memory Test</title>
+    </head>
+    <body>
+        <div>
+            <button onclick="createRecords()">Create Records</button>
+        </div>
+        <div>
+            This is a small test with <span id="count">0</span> records.
+        </div>
+    </body>
+</html>
+
+<script>
+    var rowData = [];
+    function createRecords() {
+        console.log('starting create records');
+        for (var rowCount = 0; rowCount<100000; rowCount++) {
+            var row = {};
+            for (var colCount = 0; colCount<20; colCount++) {
+                row[colCount] = Math.random().toString();
+            }
+            rowData.push(row);
+        }
+        console.log('finishing create records');
+        document.querySelector('#count').innerText = rowData.length;
+        console.log('sample record is ' + JSON.stringify(rowData[0]));
+    }
+</script>

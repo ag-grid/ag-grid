@@ -1,0 +1,3 @@
+/webcomponents*.js binary
+/webcomponents*.js.map binary
+/webcomponents-loader.js -binary

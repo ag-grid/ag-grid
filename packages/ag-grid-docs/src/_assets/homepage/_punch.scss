@@ -1,0 +1,162 @@
+@keyframes doodle-drop {
+    from {
+        opacity: 0;
+        transform: translateY(-1em);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+%animated-drop {
+    animation-name: doodle-drop;
+    animation-duration: 1s;
+    animation-iteration-count: 1;
+    animation-fill-mode: both;
+    animation-delay: 1s;
+}
+
+#punch {
+    @extend .full-width-row, .row, .mt-5;
+    color: $white;
+    & > div:nth-child(1) {
+        @extend .col-lg-6;
+    }
+
+    & > div:nth-child(2) {
+        @extend .col-lg-5, .ml-auto;
+    }
+
+    img {
+        @extend .img-fluid;
+    }
+
+    %shadow {
+        text-shadow: 1px 1px 20px $blue-1;
+    }
+
+    h2 {
+        @extend %shadow;
+        @extend .display-4;
+        @extend .mb-4;
+    }
+
+    #demo-screenshot {
+        width: 100%;
+        margin-left: auto;
+        display: block;
+    }
+
+    #homepage-highlights {
+        @extend .pt-3, .display-5;
+        list-style-type: none;
+        padding-left: 0;
+
+        li {
+            @extend .mb-4, %shadow, %animated-drop;
+        }
+
+        li:nth-child(1) {
+            animation-delay: 0.5s;
+        }
+
+        li:nth-child(2) {
+            animation-delay: 0.7s;
+        }
+
+        li:nth-child(3) {
+            animation-delay: 0.9s;
+        }
+
+        strong {
+            // @extend .text-primary;
+            font-weight: 700;
+        }
+    }
+
+    #enterprise-cta,
+    #free-cta {
+        @extend .py-2, .px-4;
+        @extend .btn, .mt-3;
+        @extend %animated-drop;
+    }
+
+    #free-cta {
+        @extend .btn-outline-light, .mr-4;
+    }
+
+    #free-cta:hover {
+        color: $blue-2;
+        background-color: $offwhite;
+    }
+
+    #enterprise-cta {
+        @extend .btn-light;
+        color: $blue-2;
+        box-shadow: 1px 1px 20px lighten($blue-1, 10);
+    }
+
+    #enterprise-cta:hover {
+        background-color: $offwhite;
+        color: $blue-2;
+    }
+
+    #doodle-container > div {
+        position: absolute;
+        opacity: 0;
+        @extend %animated-drop;
+
+        @include media-breakpoint-down(md) {
+            display: none;
+        }
+    }
+
+    #doodle-container {
+        #doodle-editing {
+            top: 0;
+            left: 0;
+            animation-delay: 1s;
+        }
+
+        #doodle-tree-data {
+            top: -50px;
+            left: 420px;
+            animation-delay: 1.1s;
+        }
+
+        #doodle-quick-filter {
+            top: 200px;
+            animation-delay: 1.2s;
+        }
+
+        #doodle-column-menu {
+            top: 140px;
+            left: 300px;
+            animation-delay: 1.3s;
+        }
+
+        #doodle-range-selection {
+            top: 140px;
+            left: 540px;
+            animation-delay: 1.4s;
+        }
+
+        #doodle-misc {
+            right: -100%;
+            animation-delay: 1.6s;
+        }
+
+        #doodle-context-menu {
+            top: 240px;
+            left: 20px;
+            animation-delay: 1.8s;
+        }
+
+        #doodle-checkbox-selection {
+            top: 300px;
+            left: 400px;
+            animation-delay: 2s;
+        }
+    }
+}

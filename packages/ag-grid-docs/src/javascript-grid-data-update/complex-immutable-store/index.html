@@ -1,0 +1,26 @@
+<style>
+    .number {
+        text-align: right;
+    }
+    .ag-row-level-0 {
+        font-weight: bold;
+    }
+    .ag-row-level-1 {
+        color: darkblue;
+    }
+    .ag-row-level-2 {
+        color: darkgreen;
+    }
+</style>
+
+<body style="position: relative;">
+
+<div style="height: 100%; padding-top: 35px; box-sizing: border-box;">
+    <div id="myGrid" style="height: 100%;" class="ag-theme-balham"></div>
+</div>
+
+<div style="position: absolute; top: 0px; left: 0px;">
+    <button onclick="updateUsingTransactionHandler()">Update Using Transaction</button>
+    <button onclick="updateUsingTransactionImmutableStore()">Update Using Deltas</button>
+    <button onclick="toggleFeed()" id="toggleInterval">&#9658; Start Feed</button>
+</div>
