@@ -965,11 +965,15 @@ export class GridPanel extends Component {
     }
 
     public showLoadingOverlay() {
-        this.overlayWrapper.showLoadingOverlay(this.eOverlay);
+        if (!this.gridOptionsWrapper.isSuppressLoadingOverlay()) {
+            this.overlayWrapper.showLoadingOverlay(this.eOverlay);
+        }
     }
 
     public showNoRowsOverlay() {
-        this.overlayWrapper.showNoRowsOverlay(this.eOverlay);
+        if (!this.gridOptionsWrapper.isSuppressNoRowsOverlay()) {
+            this.overlayWrapper.showNoRowsOverlay(this.eOverlay);
+        }
     }
 
     public hideOverlay() {
