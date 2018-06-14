@@ -17,6 +17,15 @@ git rm --cached -r packages/ag-grid-aurelia-example/scripts/
 git rm -r packages/ag-grid-enterprise/dist/
 git rm --cached -r packages/ag-grid-enterprise/dist/
 
+git rm --cached packages/ag-grid/dist/ag-grid.js
+git rm --cached packages/ag-grid/dist/ag-grid.min.js
+git rm --cached packages/ag-grid/dist/ag-grid.min.noStyle.js
+git rm --cached packages/ag-grid/dist/ag-grid.noStyle.js
+git rm packages/ag-grid/dist/ag-grid.js
+git rm packages/ag-grid/dist/ag-grid.min.js
+git rm packages/ag-grid/dist/ag-grid.min.noStyle.js
+git rm packages/ag-grid/dist/ag-grid.noStyle.js
+
 #git update-index --skip-worktree dist/
 #git update-index --skip-worktree packages/ag-grid-angular/dist/
 #git update-index --skip-worktree packages/ag-grid-angular/main.js.map
