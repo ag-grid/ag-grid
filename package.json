@@ -1,5 +1,14 @@
 {
-	"devDependencies": {
-		"lerna": "^2.11.0"
-	}
+    "scripts": {
+        "initSubModules": "./scripts/initialiseSubModules.sh",
+        "initLatest": "npm run initSubModules && ./scripts/switchToBranch.sh latest",
+        "initMaster": "npm run initSubModules && ./scripts/switchToBranch.sh master",
+        "lernaBootstrap": "lerna bootstrap",
+        "build": "lerna run build",
+        "lernaInit": "npm run lernaBootstrap && npm run build",
+        "init": "npm run initLatest && npm run lernaInit"
+    },
+    "devDependencies": {
+        "lerna": "^2.11.0"
+    }
 }
