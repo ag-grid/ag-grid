@@ -2,12 +2,19 @@
 
 # to be run in the root directory, and this only really makes sense when NOT ON MASTER!
 
+git rm -r packages/ag-grid/dist/lib/
 git rm --cached -r packages/ag-grid/dist/lib/
+git rm -r packages/ag-grid-angular/aot/
 git rm --cached -r packages/ag-grid-angular/aot/
+git rm -r packages/ag-grid-angular/dist/
 git rm --cached -r packages/ag-grid-angular/dist/
+git rm -r packages/ag-grid-angular/main.js.map
 git rm --cached -r packages/ag-grid-angular/main.js.map
+git rm -r packages/ag-grid-aurelia/lib/
 git rm --cached -r packages/ag-grid-aurelia/lib/
+git rm -r packages/ag-grid-aurelia-example/scripts/
 git rm --cached -r packages/ag-grid-aurelia-example/scripts/
+git rm -r packages/ag-grid-enterprise/dist/
 git rm --cached -r packages/ag-grid-enterprise/dist/
 
 #git update-index --skip-worktree dist/
