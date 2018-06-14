@@ -8584,6 +8584,9 @@ var RowNode = (function () {
         }
         var event = this.createGlobalRowEvent(events_1.Events.EVENT_ROW_GROUP_OPENED);
         this.mainEventService.dispatchEvent(event);
+        if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
+            this.gridApi.redrawRows({ rowNodes: [this] });
+        }
     };
     RowNode.prototype.createGlobalRowEvent = function (type) {
         var event = {
@@ -8827,7 +8830,7 @@ var RowNode = (function () {
         var updatedCount = 0;
         var groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
         var lastSelectedNode = this.selectionController.getLastSelectedNode();
-        var nodesToSelect = this.rowModel.getNodesInRangeForSelection(lastSelectedNode, this);
+        var nodesToSelect = this.rowModel.getNodesInRangeForSelection(this, lastSelectedNode);
         nodesToSelect.forEach(function (rowNode) {
             if (rowNode.group && groupsSelectChildren) {
                 return;
@@ -23524,9 +23527,6 @@ var GroupCellRenderer = (function (_super) {
         // must use the displayedGroup, so if data was dragged down, we expand the parent, not this row
         var rowNode = this.displayedGroup;
         rowNode.setExpanded(!rowNode.expanded);
-        if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
-            this.params.api.redrawRows({ rowNodes: [rowNode] });
-        }
     };
     GroupCellRenderer.prototype.isExpandable = function () {
         var rowNode = this.params.node;

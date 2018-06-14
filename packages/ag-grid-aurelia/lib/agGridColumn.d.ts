@@ -13,6 +13,6 @@ export declare class AgGridColumn {
     constructor();
     hasChildColumns(): boolean;
     toColDef(): ColDef;
-    private static getChildColDefs(childColumns);
-    private createColDefFromGridColumn();
+    private static getChildColDefs;
+    private createColDefFromGridColumn;
 }

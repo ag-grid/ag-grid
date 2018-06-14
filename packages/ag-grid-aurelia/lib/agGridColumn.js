@@ -91,6 +91,7 @@ var AgGridColumn = /** @class */ (function () {
         return colDef;
     };
     ;
+    var AgGridColumn_1;
     __decorate([
         aurelia_framework_1.children('ag-grid-column'),
         __metadata("design:type", Array)
@@ -145,6 +146,5 @@ var AgGridColumn = /** @class */ (function () {
         __metadata("design:paramtypes", [])
     ], AgGridColumn);
     return AgGridColumn;
-    var AgGridColumn_1;
 }());
 exports.AgGridColumn = AgGridColumn;

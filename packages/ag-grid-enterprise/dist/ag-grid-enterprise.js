@@ -14569,6 +14569,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        var event = this.createGlobalRowEvent(events_1.Events.EVENT_ROW_GROUP_OPENED);
 	        this.mainEventService.dispatchEvent(event);
+	        if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
+	            this.gridApi.redrawRows({ rowNodes: [this] });
+	        }
 	    };
 	    RowNode.prototype.createGlobalRowEvent = function (type) {
 	        var event = {
@@ -14812,7 +14815,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var updatedCount = 0;
 	        var groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
 	        var lastSelectedNode = this.selectionController.getLastSelectedNode();
-	        var nodesToSelect = this.rowModel.getNodesInRangeForSelection(lastSelectedNode, this);
+	        var nodesToSelect = this.rowModel.getNodesInRangeForSelection(this, lastSelectedNode);
 	        nodesToSelect.forEach(function (rowNode) {
 	            if (rowNode.group && groupsSelectChildren) {
 	                return;
@@ -21941,9 +21944,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // must use the displayedGroup, so if data was dragged down, we expand the parent, not this row
 	        var rowNode = this.displayedGroup;
 	        rowNode.setExpanded(!rowNode.expanded);
-	        if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
-	            this.params.api.redrawRows({ rowNodes: [rowNode] });
-	        }
 	    };
 	    GroupCellRenderer.prototype.isExpandable = function () {
 	        var rowNode = this.params.node;
@@ -46904,8 +46904,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../../../css-loader/index.js!./ag-grid.css", function() {
-				var newContent = require("!!../../../css-loader/index.js!./ag-grid.css");
+			module.hot.accept("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./ag-grid.css", function() {
+				var newContent = require("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./ag-grid.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -47254,8 +47254,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../../../css-loader/index.js!./theme-fresh.css", function() {
-				var newContent = require("!!../../../css-loader/index.js!./theme-fresh.css");
+			module.hot.accept("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./theme-fresh.css", function() {
+				var newContent = require("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./theme-fresh.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -47294,8 +47294,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../../../css-loader/index.js!./theme-dark.css", function() {
-				var newContent = require("!!../../../css-loader/index.js!./theme-dark.css");
+			module.hot.accept("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./theme-dark.css", function() {
+				var newContent = require("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./theme-dark.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -47334,8 +47334,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../../../css-loader/index.js!./theme-blue.css", function() {
-				var newContent = require("!!../../../css-loader/index.js!./theme-blue.css");
+			module.hot.accept("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./theme-blue.css", function() {
+				var newContent = require("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./theme-blue.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -47374,8 +47374,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../../../css-loader/index.js!./theme-material.css", function() {
-				var newContent = require("!!../../../css-loader/index.js!./theme-material.css");
+			module.hot.accept("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./theme-material.css", function() {
+				var newContent = require("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./theme-material.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -47414,8 +47414,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../../../css-loader/index.js!./theme-bootstrap.css", function() {
-				var newContent = require("!!../../../css-loader/index.js!./theme-bootstrap.css");
+			module.hot.accept("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./theme-bootstrap.css", function() {
+				var newContent = require("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./theme-bootstrap.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -47454,8 +47454,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../../../css-loader/index.js!./ag-theme-fresh.css", function() {
-				var newContent = require("!!../../../css-loader/index.js!./ag-theme-fresh.css");
+			module.hot.accept("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./ag-theme-fresh.css", function() {
+				var newContent = require("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./ag-theme-fresh.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -47494,8 +47494,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../../../css-loader/index.js!./ag-theme-dark.css", function() {
-				var newContent = require("!!../../../css-loader/index.js!./ag-theme-dark.css");
+			module.hot.accept("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./ag-theme-dark.css", function() {
+				var newContent = require("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./ag-theme-dark.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -47534,8 +47534,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../../../css-loader/index.js!./ag-theme-blue.css", function() {
-				var newContent = require("!!../../../css-loader/index.js!./ag-theme-blue.css");
+			module.hot.accept("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./ag-theme-blue.css", function() {
+				var newContent = require("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./ag-theme-blue.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -47574,8 +47574,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../../../css-loader/index.js!./ag-theme-material.css", function() {
-				var newContent = require("!!../../../css-loader/index.js!./ag-theme-material.css");
+			module.hot.accept("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./ag-theme-material.css", function() {
+				var newContent = require("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./ag-theme-material.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -47614,8 +47614,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../../../css-loader/index.js!./ag-theme-bootstrap.css", function() {
-				var newContent = require("!!../../../css-loader/index.js!./ag-theme-bootstrap.css");
+			module.hot.accept("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./ag-theme-bootstrap.css", function() {
+				var newContent = require("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./ag-theme-bootstrap.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -47654,8 +47654,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../../../css-loader/index.js!./ag-theme-balham.css", function() {
-				var newContent = require("!!../../../css-loader/index.js!./ag-theme-balham.css");
+			module.hot.accept("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./ag-theme-balham.css", function() {
+				var newContent = require("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./ag-theme-balham.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -47694,8 +47694,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../../../css-loader/index.js!./ag-theme-balham-dark.css", function() {
-				var newContent = require("!!../../../css-loader/index.js!./ag-theme-balham-dark.css");
+			module.hot.accept("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./ag-theme-balham-dark.css", function() {
+				var newContent = require("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./ag-theme-balham-dark.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});

@@ -7,9 +7,9 @@ node_modules
 
 # latest only
 dist
-packages/ag-grid/dist
-packages/ag-grid-angular/aot
-packages/ag-grid-angular/dist
+packages/ag-grid/dist/**
+packages/ag-grid-angular/aot/**
+packages/ag-grid-angular/dist/**
 packages/ag-grid-angular/main.js.map
-packages/ag-grid-aurelia/lib
-packages/ag-grid-enterprise/dist
+packages/ag-grid-aurelia/lib/**
+packages/ag-grid-enterprise/dist/**
