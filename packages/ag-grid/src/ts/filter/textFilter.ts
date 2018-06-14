@@ -147,7 +147,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
 
     private checkIndividualFilter (params: IDoesFilterPassParams, filterType:string, filterText: string) {
         let value = this.filterParams.valueGetter(params.node);
-        if (!value) {
+        if (value === undefined || value === null) {
             return filterType === BaseFilter.NOT_EQUAL || filterType === BaseFilter.NOT_CONTAINS;
         }
         let valueFormatted: string = this.formatter(value);
