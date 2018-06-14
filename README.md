@@ -7,50 +7,25 @@ ag-Grid
 
 "ag" stands for AGnostic
 
-#### Install with Bower
-```sh
-$ bower install ag-grid
-```
+This project contains all of the core projects for ag-Grid.
 
-#### Install with Npm
-```sh
-$ npm install ag-grid
-```
+Please refer to each of the respective sub-projects for more information on each:
 
-See [www.ag-grid.com](http://www.ag-grid.com) for overview and documentation.
+[ag-grid: Core ag-Grid Project](./packages/ag-grid/README.md)
+[ag-grid-enterprise: ag-Grid Enterprise Project](./packages/ag-grid-enterprise/README.md)
+[ag-grid-angular: ag-Grid Angular Project](./packages/ag-grid-angular/README.md)
+[ag-grid-react: ag-Grid React Project](./packages/ag-grid-react/README.md)
+[ag-grid-vue: ag-Grid Vue Project](./packages/ag-grid-vue/README.md)
+[ag-grid-aurelia: ag-Grid Aurelia Project](./packages/ag-grid-aurelia/README.md)
 
-Frameworks Supported
-====================
-Framework specific Getting Started guides:
+For full working examples (including Polymer and Webcomponents) please refer to [www.ag-grid.com](https://www.ag-grid.com) 
 
-[Angular 1](https://www.ag-grid.com/best-angularjs-data-grid/) | [Angular 2](https://www.ag-grid.com/best-angular-2-data-grid/) | [Aurelia](https://www.ag-grid.com/best-aurelia-data-grid/) | [Javascript](https://www.ag-grid.com/best-javascript-data-grid/) | [React](https://www.ag-grid.com/best-react-data-grid/) | [TypeScript](https://www.ag-grid.com/ag-grid-typescript-webpack-2/) | [VueJS](https://www.ag-grid.com/best-vuejs-data-grid/) | [Web Components](https://www.ag-grid.com/best-web-component-data-grid/)
+For example projects, please refer to the following repositories:
 
-Building
-==============
-
-To build:
-- `npm install`
-- `npm install gulp -g`
-- `bower install`
-- `gulp` or `gulp release`
-
-Default gulp task is for development. It includes source maps, does not include minification, and starts a watch.
-
-'release' gulp task does minification and no source maps. This is for releasing.
-
-Folder Structure
-==============
-The new build has the following structure:
-- **\src** -> contains source files (TypeScript and CSS), don't touch these!
-- **\dist** -> contains distribution files
-- **\dist\ag-grid.js and \dist\ag-grid.min.js** -> use these if not using a package manager and put ag-Grid on
-the global scope. The new JavaScript distribution files contain the CSS for the grid, no need to reference
-separately.
-- **\dist\styles** -> contains CSS files, used if doing your own bundling.
-- **\dist\lib** -> contains compiles JavaScript files in CommonJS format.
-- **\main.js** -> CommonJS root file, reference this file if importing project via CommonJS.
-- **\main.d.ts** -> CommonJS root definition file.
-
+[ag-Grid Angular CLI Example](https://github.com/ag-grid/ag-grid-angular-cli-example/)
+[ag-Grid React Example](https://github.com/ag-grid/ag-grid-react-example/)
+[ag-Grid Vue Example](https://github.com/ag-grid/ag-grid-vue-example/)
+[ag-Grid Aurelia Example](https://github.com/ag-grid/ag-grid-aurelia-example/)
 
 Asking Questions
 ==============
