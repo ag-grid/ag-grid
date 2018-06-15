@@ -1,6 +1,6 @@
 [submodule "packages/ag-grid-angular-cli-example"]
 	path = packages/ag-grid-angular-cli-example
-	url = git@github.com:ag-grid/ag-grid-angular-cli-example.git
+	url = https://github.com/ag-grid/ag-grid-angular-cli-example.git
         branch = latest
 [submodule "packages/ag-grid-react-example"]
 	path = packages/ag-grid-react-example
