@@ -70,7 +70,9 @@ export class SortController {
         this.columnController.getPrimaryAndSecondaryAndAutoColumns().forEach( (columnToClear: Column)=> {
             // Do not clear if either holding shift, or if column in question was clicked
             if (!(columnToClear === columnToSkip)) {
-                columnToClear.setSort(null, source);
+                // setting to 'undefined' as null means 'none' rather than cleared, otherwise issue will arise
+                // if sort order is: ['desc', null , 'asc'], as it will start at null rather than 'desc'.
+                columnToClear.setSort(undefined, source);
             }
         });
     }
