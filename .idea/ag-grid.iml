@@ -5,6 +5,7 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular-cli-example/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular-cli-example/tmp" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-aurelia-example/scripts" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-aurelia/lib" />
