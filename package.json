@@ -6,6 +6,7 @@
         "lernaBootstrap": "lerna bootstrap",
         "build": "lerna run build",
         "lernaInit": "npm run lernaBootstrap && npm run build",
+        "initIntelliJ": "cp .idea/workspace.xml.default .idea/workspace.xml",
         "init": "npm run initLatest && npm run lernaInit"
     },
     "devDependencies": {

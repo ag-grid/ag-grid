@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JavaScriptLibraryMappings">
+    <file url="PROJECT" libraries="{ag-grid/packages/ag-grid-angular-cli-example/node_modules, ag-grid/packages/ag-grid-aurelia-example/node_modules, ag-grid/packages/ag-grid-aurelia/node_modules, ag-grid/packages/ag-grid-dev/node_modules, ag-grid/packages/ag-grid-docs/node_modules, tsconfig$roots}" />
+  </component>
+</project>
