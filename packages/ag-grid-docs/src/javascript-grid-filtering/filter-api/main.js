@@ -35,11 +35,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
     enableFilter: true,
-    enableSorting: true,
-
-    // these hide enterprise features, so they are not confusing
-    // you if using ag-Grid standard
-    suppressMenu: true
+    enableSorting: true
 };
 
 function irelandAndUk() {
