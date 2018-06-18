@@ -1,6 +1,6 @@
 {
     "name": "ag-grid-docs",
-  "version": "18.0.0",
+    "version": "18.0.0",
     "description": "Documentation for ag-Grid",
     "scripts": {
         "postinstall": "webdriver-manager update",
@@ -89,6 +89,7 @@
         "gulp-livereload": "3.8.1",
         "gulp-replace": "^0.6.1",
         "gulp-uncss": "1.0.6",
+        "gulp-run": "^1.7.1",
         "http-server": "0.10.0",
         "lazyload": "^2.0.0-beta.2",
         "loader-utils": "^1.1.0",
