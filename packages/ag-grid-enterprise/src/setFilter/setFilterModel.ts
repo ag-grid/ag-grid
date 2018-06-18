@@ -439,9 +439,10 @@ export class SetFilterModel {
 
     public setModel(model: string[], isSelectAll = false): void {
         if (this.areValuesSync()){
-            this.setSyncModel(model, isSelectAll)
+            this.setSyncModel(model, isSelectAll);
         } else {
             this.filterValuesExternalPromise.promise.then(values=>{
+                this.setSyncModel(model, isSelectAll);
                 this.modelUpdatedFunc(values, model);
             })
         }
