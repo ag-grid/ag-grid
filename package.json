@@ -1,8 +1,8 @@
 {
     "scripts": {
-        "initSubModules": "./scripts/initialiseSubModules.sh",
-        "initLatest": "npm run initSubModules && ./scripts/switchToBranch.sh latest",
-        "initMaster": "npm run initSubModules && ./scripts/switchToBranch.sh master",
+        "initSubModules": "sh ./scripts/initialiseSubModules.sh",
+        "initLatest": "npm run initSubModules && sh ./scripts/switchToBranch.sh latest",
+        "initMaster": "npm run initSubModules && sh ./scripts/switchToBranch.sh master",
         "updateDependencies": "lerna bootstrap",
         "build": "lerna run build",
         "buildCore": "lerna run build --scope ag-grid --scope ag-grid-enterprise --scope ag-grid-angular --scope ag-grid-react --scope ag-grid-vue --scope ag-grid-aurelia",

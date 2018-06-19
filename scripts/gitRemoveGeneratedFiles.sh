@@ -9,27 +9,26 @@ then
     exit 1
 fi
 
-git rm -r packages/ag-grid/dist/lib/
 git rm --cached -r packages/ag-grid/dist/lib/
-git rm -r packages/ag-grid-angular/aot/
 git rm --cached -r packages/ag-grid-angular/aot/
-git rm -r packages/ag-grid-angular/dist/
 git rm --cached -r packages/ag-grid-angular/dist/
-git rm -r packages/ag-grid-angular/main.js.map
-git rm --cached -r packages/ag-grid-angular/main.js.map
-git rm -r packages/ag-grid-aurelia/lib/
+git rm --cached packages/ag-grid-angular/main.js.map
 git rm --cached -r packages/ag-grid-aurelia/lib/
-git rm -r packages/ag-grid-aurelia-example/scripts/
 git rm --cached -r packages/ag-grid-aurelia-example/scripts/
-git rm -r packages/ag-grid-enterprise/dist/
 git rm --cached -r packages/ag-grid-enterprise/dist/
+git rm --cached -r packages/ag-grid-react/lib/**
+git rm --cached packages/ag-grid-react/umd/ag-grid-react.min.js
+git rm --cached -r packages/ag-grid-vue/lib/**
+git rm --cached packages/ag-grid-vue/main.js
 
+git rm --cached packages/ag-grid-enterprise/main.d.ts
+git rm --cached packages/ag-grid-enterprise/main.js
+
+git rm --cached -r packages/ag-grid/dist/styles/*.css
+git rm --cached packages/ag-grid/ag-grid.d.ts
+git rm --cached packages/ag-grid/ag-grid.js
 git rm --cached packages/ag-grid/dist/ag-grid.js
 git rm --cached packages/ag-grid/dist/ag-grid.min.js
 git rm --cached packages/ag-grid/dist/ag-grid.min.noStyle.js
 git rm --cached packages/ag-grid/dist/ag-grid.noStyle.js
-git rm packages/ag-grid/dist/ag-grid.js
-git rm packages/ag-grid/dist/ag-grid.min.js
-git rm packages/ag-grid/dist/ag-grid.min.noStyle.js
-git rm packages/ag-grid/dist/ag-grid.noStyle.js
 

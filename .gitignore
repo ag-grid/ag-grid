@@ -3,18 +3,29 @@
 
 .DS_Store
 lerna-debug.log
+npm-debug.log
 node_modules
 
 # latest only
 dist
 packages/ag-grid/dist/**
+packages/ag-grid/dist/main.d.ts
+packages/ag-grid/dist/main.js
 packages/ag-grid/dist/ag-grid.js
 packages/ag-grid/dist/ag-grid.min.js
 packages/ag-grid/dist/ag-grid.min.noStyle.js
 packages/ag-grid/dist/ag-grid.noStyle.js
+packages/ag-grid/dist/styles/*.css
+
+packages/ag-grid-enterprise/main.d.ts
+packages/ag-grid-enterprise/main.js
 
 packages/ag-grid-angular/aot/**
 packages/ag-grid-angular/dist/**
 packages/ag-grid-angular/main.js.map
 packages/ag-grid-aurelia/lib/**
 packages/ag-grid-enterprise/dist/**
+packages/ag-grid-react/lib/**
+packages/ag-grid-react/umd/ag-grid-react.min.js
+packages/ag-grid-vue/lib/**
+packages/ag-grid-vue/main.js
