@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular-cli-example/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular-cli-example/tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-aurelia-example/scripts" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-aurelia/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/.cache-loader" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/.vscode" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/_dev" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-enterprise/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react-example/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react/.vscode" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react/umd" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue-example/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid/.cache-loader" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid/dist" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="tsconfig$roots" level="project" />
+  </component>
+  <component name="TemplatesService">
+    <option name="TEMPLATE_FOLDERS">
+      <list>
+        <option value="$MODULE_DIR$/packages/ag-grid/node_modules/uri-templates" />
+      </list>
+    </option>
+  </component>
+</module>

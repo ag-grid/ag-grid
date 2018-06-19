@@ -749,7 +749,7 @@ export class CellComp extends Component {
     private afterCellRendererCreated(cellRendererVersion: number, cellRenderer: ICellRendererComp): void {
 
         // see if daemon
-        if (cellRendererVersion !== this.cellRendererVersion) {
+        if (!this.isAlive() || (cellRendererVersion !== this.cellRendererVersion)) {
             if (cellRenderer.destroy) {
                 cellRenderer.destroy();
             }

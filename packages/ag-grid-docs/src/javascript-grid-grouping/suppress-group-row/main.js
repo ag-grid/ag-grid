@@ -21,10 +21,11 @@ function getColumnDefs() {
             cellClassRules: classRules,
             rowGroup: true,
             cellStyle: function(params) {
-                // color red for the first group
-                if (params.node.parent.parent.firstChild) {
-                    return {color: 'red'};
-                }
+              // color red for the first group
+              var firstGroup = params.node.parent.parent;
+              if (firstGroup && firstGroup.firstChild) {
+                return {color: 'red'};
+              }
             }
         },
         {

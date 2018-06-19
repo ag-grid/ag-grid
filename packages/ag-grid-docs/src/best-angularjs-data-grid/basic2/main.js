@@ -199,7 +199,7 @@
         }
 
         function countryCellRenderer(params) {
-            var flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/flags/" + COUNTRY_CODES[params.value] + ".png'>";
+            var flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='https://raw.githubusercontent.com/ag-grid/packages/ag-grid-docs/master/src/images/flags/" + COUNTRY_CODES[params.value] + ".png'>";
             return flag + " " + params.value;
         }
 

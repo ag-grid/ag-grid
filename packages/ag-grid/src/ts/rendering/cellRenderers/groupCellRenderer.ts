@@ -420,10 +420,6 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         let rowNode: RowNode = this.displayedGroup;
 
         rowNode.setExpanded(!rowNode.expanded);
-
-        if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
-            this.params.api.redrawRows({rowNodes: [rowNode]});
-        }
     }
 
     private isExpandable(): boolean {

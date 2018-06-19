@@ -153,6 +153,10 @@ include '../documentation-main/documentation_header.php';
                 if not then cellRenderer.</td>
         </tr>
         <tr>
+            <th>cellRendererSelector<br/>cellEditorSelector</th>
+            <td>Callback to select which cell renderer / cell editor to be used for a given row within the same column.</td>
+        </tr>
+        <tr>
             <th>cellEditor<br/>cellEditorFramework</th>
             <td>cellEditor to use for this column.</td>
         </tr>
