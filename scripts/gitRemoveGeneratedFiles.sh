@@ -32,6 +32,20 @@ git rm --cached packages/ag-grid/dist/ag-grid.min.js
 git rm --cached packages/ag-grid/dist/ag-grid.min.noStyle.js
 git rm --cached packages/ag-grid/dist/ag-grid.noStyle.js
 
+git rm --cached packages/ag-grid-vue/dist/agGridVue.js
+git rm --cached packages/ag-grid-vue/dist/vueComponentFactory.js
+git rm --cached packages/ag-grid-vue/dist/vueFrameworkComponentWrapper.js
+git rm --cached packages/ag-grid-vue/dist/vueFrameworkFactory.js
+git rm --cached packages/ag-grid/main.d.ts
+git rm --cached packages/ag-grid/main.js
+
+#git rm -r packages/ag-grid-vue/dist/agGridVue.js
+#git rm -r packages/ag-grid-vue/dist/vueComponentFactory.js
+#git rm -r packages/ag-grid-vue/dist/vueFrameworkComponentWrapper.js
+#git rm -r packages/ag-grid-vue/dist/vueFrameworkFactory.js
+#git rm -r packages/ag-grid/main.d.ts
+#git rm -r packages/ag-grid/main.js
+
 #git rm -r packages/ag-grid/dist/lib/
 #git rm -r packages/ag-grid-angular/aot/
 #git rm -r packages/ag-grid-angular/dist/

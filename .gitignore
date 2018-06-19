@@ -9,8 +9,8 @@ node_modules
 # latest only
 dist
 packages/ag-grid/dist/**
-packages/ag-grid/dist/main.d.ts
-packages/ag-grid/dist/main.js
+packages/ag-grid/main.d.ts
+packages/ag-grid/main.js
 packages/ag-grid/dist/ag-grid.js
 packages/ag-grid/dist/ag-grid.min.js
 packages/ag-grid/dist/ag-grid.min.noStyle.js
