@@ -330,9 +330,12 @@ export class GridPanel extends Component {
             this.rangeController.registerGridComp(this);
         }
 
-        const unsubscribeFromResize = observeResize(this.eBodyViewport, this.checkViewportAndScrolls.bind(this) );
-
+        const unsubscribeFromResize = observeResize(this.eBodyViewport, this.onBodyViewportResized.bind(this) );
         this.addDestroyFunc(() => unsubscribeFromResize() );
+    }
+
+    private onBodyViewportResized(): void {
+        this.checkViewportAndScrolls();
     }
 
     // used by ColumnAnimationService

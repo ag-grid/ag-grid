@@ -502,9 +502,6 @@ export class GridOptionsWrapper {
     }
 
     public static checkEventDeprecation(eventName: string): void {
-        if (eventName === Events.DEPRECATED_EVENT_GRID_SIZE_CHANGED) {
-            console.warn(`ag-Grid: Since ag-Grid v18 event ${Events.DEPRECATED_EVENT_GRID_SIZE_CHANGED} no longer exists.`);
-        }
         if (eventName === 'floatingRowDataChanged') {
             console.warn('ag-Grid: floatingRowDataChanged is now called pinnedRowDataChanged');
         }

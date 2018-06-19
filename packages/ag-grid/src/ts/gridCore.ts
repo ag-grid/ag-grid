@@ -19,6 +19,8 @@ import {GridApi} from "./gridApi";
 import {IToolPanel} from "./interfaces/iToolPanel";
 import {RefSelector} from "./widgets/componentAnnotations";
 import {IStatusBar} from "./interfaces/iStatusBar";
+import {observeResize} from "./resizeObserver";
+import {BodyHeightChangedEvent, Events, GridSizeChangedEvent} from "./events";
 
 @Bean('gridCore')
 export class GridCore extends Component {
@@ -119,6 +121,20 @@ export class GridCore extends Component {
         this.addDestroyFunc( () => this.finished = true );
 
         this.logger.log('ready');
+
+        const unsubscribeFromResize = observeResize(this.eGridDiv, this.onGridSizeChanged.bind(this) );
+        this.addDestroyFunc(() => unsubscribeFromResize() );
+    }
+
+    private onGridSizeChanged(): void {
+        let event: GridSizeChangedEvent = {
+            type: Events.EVENT_GRID_SIZE_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            clientWidth: this.eGridDiv.clientWidth,
+            clientHeight: this.eGridDiv.clientHeight
+        };
+        this.eventService.dispatchEvent(event);
     }
 
     private addLayoutClass(): void {

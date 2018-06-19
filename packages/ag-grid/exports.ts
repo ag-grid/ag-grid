@@ -1,5 +1,7 @@
 // to satisfy server side compilation
 
+import {GridSizeChangedEvent} from "./src/ts/events";
+
 declare let global: any;
 let globalObj = typeof global === 'undefined' ? {} : global;
 globalObj.HTMLElement = typeof HTMLElement === 'undefined' ? {} : HTMLElement;
@@ -279,5 +281,5 @@ export {AgEvent, AgGridEvent, ModelUpdatedEvent, ColumnPivotModeChangedEvent, Vi
     CellEditingStoppedEvent, CellValueChangedEvent, ColumnRequestEvent, ColumnRowGroupChangeRequestEvent,
     ColumnPivotChangeRequestEvent, ColumnValueChangeRequestEvent, ColumnAggFuncChangeRequestEvent, ScrollVisibilityChangedEvent,
     RowDragEvent, RowDragLeaveEvent, RowDragEnterEvent, RowDragEndEvent, RowDragMoveEvent, ToolPanelVisibleChangedEvent,
-    PasteEndEvent, PasteStartEvent}
+    PasteEndEvent, PasteStartEvent, GridSizeChangedEvent}
     from "./dist/lib/events";

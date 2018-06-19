@@ -250,6 +250,9 @@ var gridOptions = {
     onRowDoubleClicked: function (params) {
         // console.log("Callback onRowDoubleClicked: " + params.data.name + " - " + params.event);
     },
+    onGridSizeChanged: function (params) {
+        console.log("Callback onGridSizeChanged: ", params);
+    },
     // callback when cell clicked
     onCellClicked: function (params) {
         // console.log("Callback onCellClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);

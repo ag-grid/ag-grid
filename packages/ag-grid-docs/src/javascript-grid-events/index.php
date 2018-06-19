@@ -239,6 +239,12 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
+            <th>gridSizeChanged</th>
+            <td>
+                The size of the grid DIV has changed. In other words, the grid was resized.
+            </td>
+        </tr>
+        <tr>
             <th>modelUpdated</th>
             <td>Displayed rows have changed. Happens following sort, filter or tree expand / collapse events.</td>
         </tr>
@@ -360,6 +366,10 @@ CellValueChangedEvent {
         ├── ViewportChangedEvent <span class="event-properties">{
         │       <span class="event-attribute">firstRow</span>: number, // the index of the first rendered row
         │       <span class="event-attribute">lastRow</span>: number // the index of the last rendered row
+        │     }</span>
+        ├── GridSizeChangedEvent <span class="event-properties">{
+        │       <span class="event-attribute">clientWidth</span>: number, // the grids DIV's clientWidth
+        │       <span class="event-attribute">clientHeight</span>: number // the grids DIV's clientHeight
         │     }</span>
         ├── RangeSelectionChangedEvent <span class="event-properties">{
         │       <span class="event-attribute">started</span>: boolean, // true for first event in a sequence of dragging events
