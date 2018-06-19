@@ -106,12 +106,13 @@ function serveAndWatchVue(app) {
 function launchTSCCheck() {
     if (!fs.existsSync('_dev')) {
         console.log('_dev not present, creating links...');
+        mkdirp('_dev/ag-grid/dist');
 
         if(WINDOWS) {
-            run('./create-windows-links.bat').exec();
+            console.log('creating window links...');
+            run('create-windows-links.bat').exec();
         } else {
             const linkType = 'symbolic';
-            mkdirp('_dev/ag-grid/dist');
             lnk('../ag-grid/exports.ts', '_dev/ag-grid/', {force: true, type: linkType, rename: 'main.ts'});
             lnk('../ag-grid/src/ts', '_dev/ag-grid/dist', {force: true, type: linkType, rename: 'lib'});
             lnk('../ag-grid-enterprise/', '_dev', {force: true, type: linkType});
