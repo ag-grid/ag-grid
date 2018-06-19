@@ -29,3 +29,9 @@ packages/ag-grid-react/lib/**
 packages/ag-grid-react/umd/ag-grid-react.min.js
 packages/ag-grid-vue/lib/**
 packages/ag-grid-vue/main.js
+
+packages/ag-grid-angular/exports.d.ts
+packages/ag-grid-angular/exports.js
+packages/ag-grid-angular/exports.js.map
+packages/ag-grid-angular/exports.metadata.json
+
