@@ -19,3 +19,5 @@ screenshots
 
 !src/best-vuejs-data-grid/rich-grid/dist
 !src/framework-examples/vue-examples/dist
+
+package-lock.json
