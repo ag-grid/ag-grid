@@ -161,7 +161,7 @@ export class GridOptionsWrapper {
 
         this.gridOptions.columnDefs.forEach(colDef=>{
             let userProperties: string [] = Object.getOwnPropertyNames(colDef);
-            let validProperties: string [] = ColDefUtil.ALL_PROPERTIES;
+            let validProperties: string [] = ColDefUtil.ALL_PROPERTIES.concat(ColDefUtil.FRAMEWORK_PROPERTIES);
 
             this.checkProperties(
                 userProperties,
@@ -175,7 +175,7 @@ export class GridOptionsWrapper {
 
     private checkGridOptionsProperties() {
         let userProperties: string [] = Object.getOwnPropertyNames(this.gridOptions);
-        let validProperties: string [] = PropertyKeys.ALL_PROPERTIES;
+        let validProperties: string [] = PropertyKeys.ALL_PROPERTIES.concat(PropertyKeys.FRAMEWORK_PROPERTIES);
         Object.keys(Events).forEach(it=>validProperties.push (ComponentUtil.getCallbackForEvent((<any>Events)[it])));
         let validPropertiesAndExceptions: string [] = validProperties.concat('api', 'columnApi');
 
