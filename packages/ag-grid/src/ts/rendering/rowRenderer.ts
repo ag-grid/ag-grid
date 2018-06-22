@@ -186,7 +186,12 @@ export class RowRenderer extends BeanStub {
     }
 
     private onPinnedRowDataChanged(): void {
-        this.redrawAfterModelUpdate();
+        // recycling rows in order to ensure cell editing is not cancelled
+        let params: RefreshViewParams = {
+            recycleRows: true
+        };
+
+        this.redrawAfterModelUpdate(params);
     }
 
     private onModelUpdated(refreshEvent: ModelUpdatedEvent): void {
