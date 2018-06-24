@@ -47,8 +47,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The example below shows setting the grid size and then changing it as the user
-        selects the buttons. Notice that the example calls <code>api.doLayout()</code> after
-        the resize to avoid a flicker.
+        selects the buttons.
     </p>
 
     <?= example('Width & Height', 'width-and-height', 'multi', array( 'exampleHeight' => 600 )) ?>

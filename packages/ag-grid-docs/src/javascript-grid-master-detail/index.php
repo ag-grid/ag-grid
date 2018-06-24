@@ -564,23 +564,4 @@ var masterGridOptions = {
     has child rows in addition to having Master / Detail at the same row.
 </p>
 
-<h3 id="layouts">Layouts</h3>
-
-<p>
-    It is not possible to mix <a href="../javascript-grid-width-and-height/#dom-layout">DOM layout</a>
-    for master detail. This is because the layout is a CSS setting that would be inherited by all
-    grids contained with the master grid. So if your master grid was 'for-print', then all child grids
-    would pick up the 'for-print' layout.
-</p>
-
-<p>
-    When using Master / Detail and <a href="../javascript-grid-for-print/">for-print</a>,
-    then all detail grids need to use for-print.
-</p>
-
-<p>
-    When using Master / Detail and <a href="../javascript-grid-width-and-height/#autoHeight">auto-height</a>,
-    then all detail grids need to use auto-height.
-</p>
-
 <?php include '../documentation-main/documentation_footer.php';?>

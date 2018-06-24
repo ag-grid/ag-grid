@@ -277,6 +277,13 @@ export class GridPanel extends Component {
         // then they overlay on top of the div, so we clip some extra blank space instead.
         this.scrollClipWidth = this.scrollWidth > 0 ? this.scrollWidth : 20;
 
+        // all of these element have different CSS when layout changes
+        this.gridOptionsWrapper.addLayoutElement(this.getGui());
+        this.gridOptionsWrapper.addLayoutElement(this.eBody);
+        this.gridOptionsWrapper.addLayoutElement(this.eBodyViewport);
+        this.gridOptionsWrapper.addLayoutElement(this.eTopViewport);
+        this.gridOptionsWrapper.addLayoutElement(this.eBodyContainer);
+
         this.suppressScrollOnFloatingRow();
         this.setupRowAnimationCssClass();
         this.buildRowContainerComponents();

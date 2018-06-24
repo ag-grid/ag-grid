@@ -109,6 +109,8 @@ export class GridOptionsWrapper {
 
     private domDataKey = '__AG_'+Math.random().toString();
 
+    private layoutElements: HTMLElement[] = [];
+
     private agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
         this.gridOptions.api = gridApi;
         this.gridOptions.columnApi = columnApi;
@@ -154,6 +156,7 @@ export class GridOptionsWrapper {
             console.warn('ag-Grid: groupRemoveSingleChildren and groupHideOpenParents do not work with each other, you need to pick one. And don\'t ask us how to us these together on our support forum either you will get the same answer!');
         }
 
+        this.addEventListener(GridOptionsWrapper.PROP_GRID_AUTO_HEIGHT, this.updateLayoutClasses.bind(this));
     }
 
     private checkColumnDefProperties() {
@@ -494,6 +497,21 @@ export class GridOptionsWrapper {
             };
             this.propertyEventService.dispatchEvent(event);
         }
+    }
+
+    // this logic is repeated in lots of places. any element that had different CSS
+    // dependent on the layout needs to have the layout class added ot it.
+    public addLayoutElement(element: HTMLElement): void {
+        this.layoutElements.push(element);
+        this.updateLayoutClasses();
+    }
+
+    private updateLayoutClasses(): void {
+        let autoHeight = this.isGridAutoHeight();
+        this.layoutElements.forEach( e => {
+            _.addOrRemoveCssClass(e, 'ag-layout-auto-height', autoHeight);
+            _.addOrRemoveCssClass(e, 'ag-layout-normal', !autoHeight);
+        });
     }
 
     public addEventListener(key: string, listener: Function): void {
