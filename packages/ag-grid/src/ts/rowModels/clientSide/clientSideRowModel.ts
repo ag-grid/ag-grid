@@ -112,7 +112,7 @@ export class ClientSideRowModel {
 
         this.rootNode = new RowNode();
         this.nodeManager = new ClientSideNodeManager(this.rootNode, this.gridOptionsWrapper,
-            this.context, this.eventService, this.columnController);
+            this.context, this.eventService, this.columnController, this.gridApi, this.columnApi);
 
         this.context.wireBean(this.rootNode);
     }
