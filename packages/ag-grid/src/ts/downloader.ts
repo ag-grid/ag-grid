@@ -13,12 +13,12 @@ export class Downloader {
             window.navigator.msSaveOrOpenBlob(blobObject, fileName);
         } else {
             // Chrome
-            const element = document.createElement("a");
-            const blob = new Blob([content], {type: "octet/stream"});
+            const element = document.createElement('a');
+            const blob = new Blob([content], {type: 'octet/stream'});
             const url = window.URL.createObjectURL(blob);
-            element.setAttribute("href", url);
-            element.setAttribute("download", fileName);
-            element.style.display = "none";
+            element.setAttribute('href', url);
+            element.setAttribute('download', fileName);
+            element.style.display = 'none';
             document.body.appendChild(element);
             element.click();
             window.URL.revokeObjectURL(url);
