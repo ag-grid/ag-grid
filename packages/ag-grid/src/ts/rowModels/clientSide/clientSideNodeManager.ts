@@ -2,7 +2,7 @@
 import {RowNode} from "../../entities/rowNode";
 import {Utils as _} from "../../utils";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {Context, PostConstruct} from "../../context/context";
+import {Autowired, Context} from "../../context/context";
 import {GetNodeChildDetails, IsRowMaster} from "../../entities/gridOptions";
 import {EventService} from "../../eventService";
 import {RowDataTransaction, RowNodeTransaction} from "./clientSideRowModel";
@@ -10,9 +10,9 @@ import {ColumnController} from "../../columnController/columnController";
 import {Events, SelectionChangedEvent} from "../../events";
 import {GridApi} from "../../gridApi";
 import {ColumnApi} from "../../columnController/columnApi";
+import {SelectionController} from "../../selectionController";
 
 export class ClientSideNodeManager {
-
 
     private static TOP_LEVEL = 0;
 
@@ -21,6 +21,7 @@ export class ClientSideNodeManager {
     private context: Context;
     private eventService: EventService;
     private columnController: ColumnController;
+    private selectionController: SelectionController;
 
     private nextId = 0;
 
@@ -40,7 +41,8 @@ export class ClientSideNodeManager {
     private gridApi: GridApi;
 
     constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, context: Context, eventService: EventService,
-                columnController: ColumnController, gridApi: GridApi, columnApi: ColumnApi) {
+                columnController: ColumnController, gridApi: GridApi, columnApi: ColumnApi,
+                selectionController: SelectionController) {
         this.rootNode = rootNode;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.context = context;
@@ -48,6 +50,7 @@ export class ClientSideNodeManager {
         this.columnController = columnController;
         this.gridApi = gridApi;
         this.columnApi = columnApi;
+        this.selectionController = selectionController;
 
         this.rootNode.group = true;
         this.rootNode.level = -1;
@@ -152,6 +155,7 @@ export class ClientSideNodeManager {
             });
 
             if (anyNodesSelected) {
+                this.selectionController.updateGroupsFromChildrenSelections();
                 let event: SelectionChangedEvent = {
                     type: Events.EVENT_SELECTION_CHANGED,
                     api: this.gridApi,

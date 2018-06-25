@@ -41,7 +41,6 @@ export class SelectionController {
         } else {
             this.logger.log('dont know what to do here');
         }
-
     }
 
     @PostConstruct
@@ -88,9 +87,11 @@ export class SelectionController {
 
     // should only be called if groupSelectsChildren=true
     public updateGroupsFromChildrenSelections(): void {
-        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            console.warn('updateGroupsFromChildrenSelections not available when rowModel is not normal');
-        }
+        // we only do this when group selection state depends on selected children
+        if (!this.gridOptionsWrapper.isGroupSelectsChildren()) { return; }
+        // also only do it if CSRM (code should never allow this anyway)
+        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_CLIENT_SIDE) { return; }
+
         let clientSideRowModel = <ClientSideRowModel> this.rowModel;
         clientSideRowModel.getTopLevelNodes().forEach( (rowNode: RowNode) => {
             rowNode.depthFirstSearch( (rowNode)=> {
@@ -111,7 +112,7 @@ export class SelectionController {
         _.iterateObject(this.selectedNodes, (key: string, otherRowNode: RowNode)=> {
             if (otherRowNode && otherRowNode.id !== rowNodeToKeepSelected.id) {
                 let rowNode = this.selectedNodes[otherRowNode.id];
-                updatedCount += rowNode.setSelectedParams({newValue: false, clearSelection: false, tailingNodeInSequence: true});
+                updatedCount += rowNode.setSelectedParams({newValue: false, clearSelection: false, suppressFinishActions: true});
                 if (this.groupSelectsChildren && otherRowNode.parent) {
                     groupsToRefresh[otherRowNode.parent.id] = otherRowNode.parent;
                 }

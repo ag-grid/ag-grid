@@ -52,7 +52,6 @@ import {ColumnHoverService} from "./rendering/columnHoverService";
 import {ColumnAnimationService} from "./rendering/columnAnimationService";
 import {SortService} from "./rowNodes/sortService";
 import {FilterService} from "./rowNodes/filterService";
-import {RowNodeFactory} from "./rowNodes/rowNodeFactory";
 import {AutoGroupColService} from "./columnController/autoGroupColService";
 import {PaginationAutoPageSizeService, PaginationProxy} from "./rowModels/paginationProxy";
 import {ImmutableService} from "./rowModels/clientSide/immutableService";
@@ -190,10 +189,10 @@ export class Grid {
                 NavigationService, PopupService, ValueCache, ValueService, AlignedGridsService,
                 LoggerFactory, ColumnUtils, AutoWidthCalculator, PopupService, GridCore, StandardMenuFactory,
                 DragAndDropService, ColumnApi, FocusedCellController, MouseEventService,
-                CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService, RowNodeFactory,
+                CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService,
                 CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService,
-                ColumnHoverService, ColumnAnimationService, SortService, SelectableService, AutoGroupColService, ImmutableService,
-                ChangeDetectionService, Environment, AnimationFrameService, SortController],
+                ColumnHoverService, ColumnAnimationService, SortService, SelectableService, AutoGroupColService,
+                ImmutableService, ChangeDetectionService, Environment, AnimationFrameService, SortController],
             components: components,
             debug: !!gridOptions.debug
         };

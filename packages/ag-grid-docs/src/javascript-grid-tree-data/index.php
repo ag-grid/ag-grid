@@ -251,7 +251,7 @@ var rowData = [
     <p>
         The property <code>groupSelectsChildren</code> does not work with tree data. This is because
         groups in tree data are rows passed by the application that may or may not have children - a
-        group is simple a normal row that has another row as a child. Given groups and leaf nodes
+        group is simply a normal row that has another row as a child. Given groups and leaf nodes
         are logically identical, it is not possible to treat them differently in selection.
     </p>
 

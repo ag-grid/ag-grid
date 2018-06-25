@@ -27,7 +27,7 @@ export interface SetSelectedParams {
     // whether to remove other selections after this selection is done
     clearSelection?: boolean;
     // true when action is NOT on this node, ie user clicked a group and this is the child of a group
-    tailingNodeInSequence?: boolean;
+    suppressFinishActions?: boolean;
     // gets used when user shif-selects a range
     rangeSelect?: boolean;
     // used in group selection, if true, filtered out children will not be selected
@@ -525,6 +525,7 @@ export class RowNode implements IEventEmitter {
     }
 
     // + rowController.updateGroupsInSelection()
+    // + selectionController.calculatedSelectedForAllGroupNodes()
     public calculateSelectedFromChildren(): void {
         let atLeastOneSelected = false;
         let atLeastOneDeSelected = false;
@@ -565,22 +566,15 @@ export class RowNode implements IEventEmitter {
         this.selectThisNode(newSelectedValue);
     }
 
-    private calculateSelectedFromChildrenBubbleUp(): void {
-        this.calculateSelectedFromChildren();
-        if (this.parent) {
-            this.parent.calculateSelectedFromChildrenBubbleUp();
-        }
-    }
-
     public setSelectedInitialValue(selected: boolean): void {
         this.selected = selected;
     }
 
-    public setSelected(newValue: boolean, clearSelection: boolean = false, tailingNodeInSequence: boolean = false) {
+    public setSelected(newValue: boolean, clearSelection: boolean = false, suppressFinishActions: boolean = false) {
         this.setSelectedParams({
             newValue: newValue,
             clearSelection: clearSelection,
-            tailingNodeInSequence: tailingNodeInSequence,
+            suppressFinishActions: suppressFinishActions,
             rangeSelect: false
         });
     }
@@ -596,7 +590,7 @@ export class RowNode implements IEventEmitter {
 
         let newValue = params.newValue === true;
         let clearSelection = params.clearSelection === true;
-        let tailingNodeInSequence = params.tailingNodeInSequence === true;
+        let suppressFinishActions = params.suppressFinishActions === true;
         let rangeSelect = params.rangeSelect === true;
         // groupSelectsFiltered only makes sense when group selects children
         let groupSelectsFiltered = groupSelectsChildren && (params.groupSelectsFiltered === true);
@@ -643,32 +637,17 @@ export class RowNode implements IEventEmitter {
         }
 
         // clear other nodes if not doing multi select
-        let actionWasOnThisNode = !tailingNodeInSequence;
-        if (actionWasOnThisNode) {
+        if (!suppressFinishActions) {
 
-            if (newValue && (clearSelection || !this.gridOptionsWrapper.isRowSelectionMulti())) {
+            let clearOtherNodes = newValue && (clearSelection || !this.gridOptionsWrapper.isRowSelectionMulti());
+            if (clearOtherNodes) {
                 updatedCount += this.selectionController.clearOtherNodes(this);
             }
 
             // only if we selected something, then update groups and fire events
             if (updatedCount>0) {
 
-                // update groups
-                if (groupSelectsFiltered) {
-                    // if the group was selecting filtered, then all nodes above and or below
-                    // this node could have check, unchecked or intermediate, so easiest is to
-                    // recalculate selected state for all group nodes
-                    this.calculatedSelectedForAllGroupNodes();
-                } else {
-                    // if no selecting filtered, then everything below the group node was either
-                    // selected or not selected, no intermediate, so no need to check items below
-                    // this one, just the parents all the way up to the root
-                    if (groupSelectsChildren && this.parent) {
-                        this.parent.calculateSelectedFromChildrenBubbleUp();
-                    }
-                }
-
-                // fire events
+                this.selectionController.updateGroupsFromChildrenSelections();
 
                 // this is the very end of the 'action node', so we are finished all the updates,
                 // include any parent / child changes that this method caused
@@ -709,9 +688,7 @@ export class RowNode implements IEventEmitter {
             }
         });
 
-        if (groupsSelectChildren) {
-            this.calculatedSelectedForAllGroupNodes();
-        }
+        this.selectionController.updateGroupsFromChildrenSelections();
 
         let event: SelectionChangedEvent = {
             type: Events.EVENT_SELECTION_CHANGED,
@@ -732,22 +709,6 @@ export class RowNode implements IEventEmitter {
             parentNode = parentNode.parent;
         }
         return false;
-    }
-
-    private calculatedSelectedForAllGroupNodes(): void {
-        // we have to make sure we do this dept first, as parent nodes
-        // will have dependencies on the children having correct values
-        let clientSideRowModel = <ClientSideRowModel> this.rowModel;
-        clientSideRowModel.getTopLevelNodes().forEach( topLevelNode => {
-            if (topLevelNode.group) {
-                topLevelNode.depthFirstSearch( childNode => {
-                    if (childNode.group) {
-                        childNode.calculateSelectedFromChildren();
-                    }
-                });
-                topLevelNode.calculateSelectedFromChildren();
-            }
-        });
     }
 
     public selectThisNode(newValue: boolean): boolean {
@@ -774,7 +735,7 @@ export class RowNode implements IEventEmitter {
                 updatedCount += children[i].setSelectedParams({
                     newValue: newValue,
                     clearSelection: false,
-                    tailingNodeInSequence: true,
+                    suppressFinishActions: true,
                     groupSelectsFiltered
                 });
         }
