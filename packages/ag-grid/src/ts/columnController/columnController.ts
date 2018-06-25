@@ -49,12 +49,12 @@ export interface ColumnResizeSet {
 
 export interface ColumnState {
     colId: string,
-    hide: boolean,
-    aggFunc: string | IAggFunc,
-    width: number,
-    pivotIndex: number,
-    pinned: string,
-    rowGroupIndex: number
+    hide?: boolean,
+    aggFunc?: string | IAggFunc,
+    width?: number,
+    pivotIndex?: number,
+    pinned?: boolean | string | "left" | "right",
+    rowGroupIndex?: number
 }
 
 @Bean('columnController')
@@ -1470,7 +1470,7 @@ export class ColumnController {
         let pivotIndexes: { [key: string]: number } = {};
 
         if (columnState) {
-            columnState.forEach((stateItem: any) => {
+            columnState.forEach((stateItem: ColumnState) => {
                 let column = this.getPrimaryColumn(stateItem.colId);
                 if (!column) {
                     console.warn('ag-grid: column ' + stateItem.colId + ' not found');
@@ -1528,7 +1528,7 @@ export class ColumnController {
         column.setValueActive(false, source);
     }
 
-    private syncColumnWithStateItem(column: Column, stateItem: any,
+    private syncColumnWithStateItem(column: Column, stateItem: ColumnState,
                                     rowGroupIndexes: {[key: string]: number},
                                     pivotIndexes: {[key: string]: number},
                                     source: ColumnEventType): void {
