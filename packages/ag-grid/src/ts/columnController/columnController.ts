@@ -1411,7 +1411,8 @@ export class ColumnController {
             return [];
         }
 
-        let columnStateList: ColumnState[] = this.primaryColumns.map(this.createStateItemFromColumn.bind(this));
+        let columnStateList: ColumnState[]
+            = <ColumnState[]> this.primaryColumns.map(this.createStateItemFromColumn.bind(this));
 
         if (!this.pivotMode) {
             this.orderColumnStateList(columnStateList);
