@@ -605,14 +605,6 @@ export class GridOptionsWrapper {
         }
     }
 
-    public getLayoutInterval(): number {
-        if (typeof this.gridOptions.layoutInterval === 'number') {
-            return this.gridOptions.layoutInterval;
-        } else {
-            return Constants.LAYOUT_INTERVAL;
-        }
-    }
-
     public getMinColWidth() {
         if (this.gridOptions.minColWidth > GridOptionsWrapper.MIN_COL_WIDTH) {
             return this.gridOptions.minColWidth;
@@ -770,6 +762,9 @@ export class GridOptionsWrapper {
         if (options.rowModelType==='enterprise') {
             console.warn(`ag-grid: since version 18.x, The Enterprise Row Model has been renamed to the Server Side Row Model, set rowModelType='serverSide' instead.`);
             options.rowModelType = 'serverSide';
+        }
+        if (options.layoutInterval) {
+            console.warn(`ag-grid: since version 18.x, layoutInterval is no longer a property. This is because the grid now uses CSS Flex for layout.`);
         }
     }
 

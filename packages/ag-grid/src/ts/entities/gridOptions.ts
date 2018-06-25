@@ -167,7 +167,6 @@ export interface GridOptions {
     cacheQuickFilter?: boolean;
     aggFuncs?: {[key: string]: IAggFunc};
     suppressColumnVirtualisation?: boolean;
-    layoutInterval?: number;
     functionsReadOnly?: boolean;
     functionsPassive?: boolean;
     maxConcurrentDatasourceRequests?: number;

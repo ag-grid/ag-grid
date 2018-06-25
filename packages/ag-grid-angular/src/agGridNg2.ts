@@ -210,7 +210,6 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public maxColWidth : any = undefined;
     @Input() public viewportRowModelPageSize : any = undefined;
     @Input() public viewportRowModelBufferSize : any = undefined;
-    @Input() public layoutInterval : any = undefined;
     @Input() public autoSizePadding : any = undefined;
     @Input() public maxBlocksInCache : any = undefined;
     @Input() public maxConcurrentDatasourceRequests : any = undefined;
