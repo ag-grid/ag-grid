@@ -470,6 +470,12 @@ masterGridOptions.getRowHeight = function (params) {
 
 <?= example('Dynamic Detail Row Height', 'dynamic-detail-row-height', 'generated', array("processVue" => true, "enterprise" => 1)) ?>
 
+
+<note>
+    The example above also uses <a href="../javascript-grid-row-height/#auto-row-height/">Auto Row Height</a>
+    to ensure the detail grid height is sized correctly for the number of rows it contains.
+</note>
+
 <h2>Filtering and Sorting</h2>
 <p>
     There are no specific configurations for filtering and sorting with Master / Detail but as there are multiple grids
