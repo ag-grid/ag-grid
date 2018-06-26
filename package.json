@@ -7,6 +7,10 @@
         "updateDependencies": "lerna bootstrap",
         "build": "lerna run build",
         "buildCore": "lerna run build --scope ag-grid --scope ag-grid-enterprise --scope ag-grid-angular --scope ag-grid-react --scope ag-grid-vue --scope ag-grid-aurelia",
+        "buildAngular": "lerna run build --scope ag-grid --scope ag-grid-angular",
+        "buildVue": "lerna run build --scope ag-grid --scope ag-grid-vue",
+        "buildReact": "lerna run build --scope ag-grid --scope ag-grid-react",
+        "buildAurelia": "lerna run build --scope ag-grid --scope ag-grid-aurelia",
         "updateAndRebuild": "npm run updateDependencies && npm run build",
         "initIntelliJ": "cp .idea/workspace.xml.default .idea/workspace.xml",
         "init": "npm run initLatest && npm run updateAndRebuild"
