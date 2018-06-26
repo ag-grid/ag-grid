@@ -6,7 +6,6 @@ $pageGroup = "basics";
 include '../getting-started/header.php';
 ?>
 
-
 <div>
 
 <h1>Get Started with ag-Grid in Your React Project</h1>
@@ -15,12 +14,12 @@ include '../getting-started/header.php';
 ag-Grid supports React through a <strong>wrapper component</strong>. The React wrapper lets you use ag-Grid in your application like any other React component &ndash; you pass configuration through properties and handle events through callbacks. 
 You can even use React components to customize the grid UI and cell contents / behavior.</p> 
 
-<p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing React project, and configure some of the essential features of it. We will show you some of the fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the grid's visual appearance using Sass variables.</p>
+<p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing React project, and configure some of the <a href="https://www.ag-grid.com/features-overview/">essential features of it</a>. We will show you some of the fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the grid's visual appearance using Sass variables.</p>
 
 <h2>Add ag-Grid to Your Project</h2>
 
 <p>For the purposes of this tutorial, we are going to scaffold a react app with <a href="https://github.com/facebook/create-react-app">create-react-app</a>. 
-Don't worry if your project has a different configuration. Ag-Grid and the React wrapper are distributed as NPM packages, which should work with any common React project module bundler setup. 
+Don't worry if your project has a different configuration. ag-Grid and the React wrapper are distributed as NPM packages, which should work with any common React project module bundler setup. 
 Let's follow the <a href="https://github.com/facebook/create-react-app#quick-overview">create-react-app instructions</a> - run the following commands in your terminal:</p>
 
 <snippet language="sh">
@@ -99,7 +98,7 @@ import 'ag-grid/dist/styles/ag-theme-balham.css';
 </code></pre>
 
 <p>The three lines above import the <code>AgGridReact</code> component, the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-balham.css</code>). 
-The grid ships several different themes; pick one that matches your project design. You can customize it further with Sass variables, a technique which we will cover further down the road.</p>
+The grid ships <a href="https://www.ag-grid.com/javascript-grid-styling/">several different themes</a>; pick one that matches your project design. You can customize it further with Sass variables, a technique which we will cover further down the road.</p>
 
 <snippet language="jsx">
 constructor(props) {
@@ -121,7 +120,7 @@ constructor(props) {
 }
 </snippet>
 
-<p>The code above presents two essential configuration properties of the grid - <strong>the column definitions</strong> (<code>columnDefs</code>) and the data (<code>rowData</code>). In our case, the column definitions contain three columns; 
+<p>The code above presents two essential configuration properties of the grid - <a href="https://www.ag-grid.com/javascript-grid-column-definitions/"><strong>the column definitions</strong></a> (<code>columnDefs</code>) and the data (<code>rowData</code>). In our case, the column definitions contain three columns; 
 each column entry specifies the header label and the data field to be displayed in the body of the table.</p> 
 
 <p>The actual data is defined in the <code>rowData</code> as an array of objects. Notice that the fields of the objects match the <code>field</code> values in the <code>columnDefs</code> configuration object.</p> 
@@ -259,7 +258,7 @@ Hopefully you will forgive us this shortcut for the sake of keeping the article 
 
 <div class="note">Grouping is a feature exclusive to the enterprise version of ag-Grid.</div>
 
-<p>In addition to filtering and sorting, grouping is another  effective way for the user to make sense out of large amounts of data. In our case, the data is not that much. Let's switch to a slightly larger data set:</p>
+<p>In addition to filtering and sorting, <a href="https://www.ag-grid.com/javascript-grid-grouping/">grouping</a> is another  effective way for the user to make sense out of large amounts of data. In our case, the data is not that much. Let's switch to a slightly larger data set:</p>
 
 <snippet language="diff">
      componentDidMount() {
@@ -326,7 +325,7 @@ this.state = {
 
 <p>The last thing which we are going to do is to change the grid look and feel by modifying some of the theme's Sass variables.</p> 
 
-<p>By default, ag-Grid ships a set of pre-built theme stylesheets. If we want to tweak the colors and the fonts of theme, we should add a Sass preprocessor to our project, override the theme variable values, and refer the ag-grid Sass files instead of the pre-built stylesheets so that the variable overrides are applied.</p>
+<p>By default, ag-Grid ships a set of <a href="https://www.ag-grid.com/javascript-grid-styling/"> pre-built theme stylesheets</a>. If we want to tweak the colors and the fonts of theme, we should add a Sass preprocessor to our project, override the theme variable values, and refer the ag-grid Sass files instead of the pre-built stylesheets so that the variable overrides are applied.</p>
 
 <p>Adding Sass Preprocessor to create-react-app is well documented - follow the steps <a href="https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#adding-a-css-preprocessor-sass-less-etc">outlined in the respective help section</a>.</p> 
 
@@ -358,7 +357,7 @@ In fact, by specifying the icons path, we also made our first theme override! We
 
 <p>If everything is configured correctly, the second row of the grid will get slightly darker. Congratulations! 
 You now know now bend the grid look to your will - there are a few dozens more Sass variables that let you control the font family and size, border color, 
-header background color and even the amount of spacing in the cells and columns. The full Sass variable list is available in the themes documentation section.</p> 
+header background color and even the amount of spacing in the cells and columns. The <a href="https://www.ag-grid.com/javascript-grid-styling/#customizing-sass-variables"> full Sass variable list</a> is available in the themes documentation section.</p> 
 
 <h2>Summary</h2> 
 
@@ -369,23 +368,23 @@ While doing so, we learned how to configure the grid, how to access its API obje
 
 <h2>Next Steps</h2> 
 
-<p>You are hungry for more? Head over to the <a href="../react-more-details/">React guides section</a> for more in-depth information about the angular flavor of ag-Grid. To learn more about the features used in this tutorial, you can go through the following help articles:</p>
+<p>You are hungry for more? Head over to the <a href="../react-more-details/">React guides section</a> for more in-depth information about the React flavor of ag-Grid. To learn more about the features used in this tutorial, you can go through the following help articles:</p>
 
 <p>You can go through the following help articles to learn more about the features we enabled:</p>
 
-<ul>
-    <li><a href="../javascript-grid-sorting/">Sorting</a></li>
-    <li><a href="../javascript-grid-filtering/">Filtering</a></li>
-    <li><a href="../javascript-grid-grouping/">Grouping</a></li>
-    <li><a href="../javascript-grid-selection/">Selection</a></li>
-    <li><a href="../javascript-grid-styling/#customizing-sass-variables">Customizing themes with Sass</a></li>
-</ul>
-
+<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-sorting/" role="button">Sorting</a>
+<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-filtering/" role="button">Filtering</a>
+<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-grouping/" role="button">Grouping</a>
+<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-selection/" role="button">Selection</a>
+<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-styling/#customizing-sass-variables" role="button">Customize Themes with Sass</a>
+<br><br>
 <p>In addition to that, if you are using Redux, make sure to check out the <a href="../react-redux-integration-pt1/">Integrating ag-Grid with Redux guide</a>.</p>
 
 <p><b id="f1">1</b> This is not exactly true. ag-Grid's core, as well as the framework wrappers are written in TypeScript. This provides nice strong typing and compile-time checks for our TypeScript users, while not giving the Babel/Vanilla users any disadvantage.  <a href="#a1">↩</a></p>
 
 </div>
-
+<div>
+  <a href="https://www.ag-grid.com/start-trial.php"><button type="button" class="btn btn-primary btn-lg btn-block">Start Free Trial</button></a>
+</div>
 
 <?php include '../getting-started/footer.php'; ?>
