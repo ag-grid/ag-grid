@@ -21,6 +21,10 @@ git rm --cached packages/ag-grid-react/umd/ag-grid-react.min.js
 git rm --cached -r packages/ag-grid-vue/lib/**
 git rm --cached packages/ag-grid-vue/main.js
 
+git rm --cached packages/ag-grid-angular/main.js
+git rm --cached packages/ag-grid-angular/main.d.ts
+git rm --cached packages/ag-grid-angular/main.metadata.json
+
 git rm --cached packages/ag-grid-enterprise/main.d.ts
 git rm --cached packages/ag-grid-enterprise/main.js
 
