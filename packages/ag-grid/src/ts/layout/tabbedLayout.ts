@@ -61,6 +61,12 @@ export class TabbedLayout {
             }
         });
 
+        // finally check the parent tabs are no wider, as if they
+        // are, then these are the min width and not the child tabs
+        if (minWidth<this.eGui.offsetWidth) {
+            minWidth = this.eGui.offsetWidth;
+        }
+
         this.eGui.removeChild(eDummyContainer);
 
         return minWidth;
