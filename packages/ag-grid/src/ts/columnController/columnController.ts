@@ -2134,9 +2134,9 @@ export class ColumnController {
             this.orderGridColsLikeLastPrimary();
         }
 
-        this.putFixedColumnsFirst();
-
         this.addAutoGroupToGridColumns();
+
+        this.putFixedColumnsFirst();
 
         this.setupQuickFilterColumns();
 
