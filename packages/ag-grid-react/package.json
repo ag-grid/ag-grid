@@ -43,7 +43,6 @@
     "prop-types": "15.6.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
-    "react-dom-factories": "^1.0.0",
     "rollup": "^0.55.3",
     "rollup-plugin-commonjs": "^8.3.0",
     "rollup-plugin-typescript": "^0.8.1",
@@ -55,7 +54,6 @@
   "peerDependencies": {
     "ag-grid": "^18.0.0",
     "react": "^15.5.0 || ^16.0.0",
-    "react-dom": "^15.5.0 || ^16.0.0",
-    "react-dom-factories": "^1.0.0"
+    "react-dom": "^15.5.0 || ^16.0.0"
   }
 }

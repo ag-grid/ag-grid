@@ -45,7 +45,6 @@ gulp.task('umd', () => {
             file: 'my-file.umd.js',
             format: 'umd',
             globals: {
-                'react-dom-factories': 'ReactDOMFactories',
                 react: 'React',
                 'react-dom': 'ReactDOM',
                 'prop-types': 'PropTypes',
