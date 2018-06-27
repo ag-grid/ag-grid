@@ -26,12 +26,14 @@
 
 <div class="card">
   <div class="card-body">
-    <h5 class="card-title"><a href="https://medium.com/ag-grid/data-visualisation-for-enterprise-with-angular-and-d3-54165a2778a6">Data Visualisation for Enterprise with Angular and D3</a></h5>
-    <h6 class="card-subtitle mb-2 text-muted">Mar 7</h6>
-    <p class="card-text">'Data Visualisation is something I’m really passionate about. I’ve worked in large financial institutions for the majority of my career and during that time I’ve repeatedly encountered user requirements to display raw data in tabular format.'</p>
+    <h5 class="card-title"><a href="https://medium.com/ag-grid/version-18-of-ag-grid-is-now-available-cc3f39a12441>Data Visualisation for Enterprise with Angular and D3</a></h5>
+    <h6 class="card-subtitle mb-2 text-muted">Introducing Version 18 of ag-Grid</h6>
+    <p class="card-text">'Version 18 consists of a major features changes, so besides bug fixes and enhancing performance, we have added a number of interesting changes.
+
+Read our blog below covering all changes.'</p>
 
     <p class="text-right">
-        <a class="learn-more" href="https://medium.com/ag-grid/data-visualisation-for-enterprise-with-angular-and-d3-54165a2778a6">Full Article</a>
+        <a class="learn-more" href="https://medium.com/ag-grid/version-18-of-ag-grid-is-now-available-cc3f39a12441">Full Article</a>
     </p>
   </div>
 </div>
@@ -42,12 +44,10 @@
 <div class="card">
   <div class="card-body">
         <dl id="upcoming-events">
-            <dt><a href="https://www.microsoft.com/en-us/build" target="_blank" rel="noopener">Microsoft Build</a></dt>
-            <dd class="date">May 7-9<br> Seattle, WA</dd>
-            <dd>Silver Sponsor</dd>
-            <dt><a href="http://jsconf.com/" target="_blank" rel="noopener">JS Conf</a></dt>
-            <dd class="date">June 2-3<br> Berlin, Germany</dd>
-            <dd></dd>
+            <dt><a href="https://www.meetup.com/halfstack/events/251086685/" target="_blank" rel="noopener">Halfstack Meetup | ag-Grid & Dojo 2</a></dt>
+            <dd class="date">July 10<br> London, England</dd>
+            <p class="card-text">Our CEO, Niall Crosby will be talking at the Half Stack London meet up.
+                <br>Having brought ag-Grid to the market, Niall looks back and talks about the design decisions that were made to make ag-Grid the project that it is today.</p>
             <dt><a href="https://angularconnect.com/" target="_blank" rel="noopener">Angular Connect</a></dt>
             <dd class="date">November 6-7<br> London, England</dd>
             <dd>Platinum Sponsor</dd>
