@@ -128,9 +128,16 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         if (this.cacheExists()) {
             let sortModel = this.extractSortModel();
             let rowGroupColIds = this.columnController.getRowGroupColumns().map(col => col.getId());
-
             let serverSideCache = <ServerSideCache> this.rootNode.childrenCache;
-            serverSideCache.refreshCache(sortModel, rowGroupColIds);
+
+            if (this.isSortingWithValueColumn(sortModel)) {
+                this.reset();
+            } else {
+                let refreshed = serverSideCache.refreshCache(sortModel, rowGroupColIds);
+                if (!refreshed) {
+                    this.reset();
+                }
+            }
         }
     }
 
@@ -512,6 +519,18 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         return sortModel;
     };
+
+    private isSortingWithValueColumn(sortModel: { colId: string; sort: string }[]): boolean {
+        let valueColIds = this.columnController.getValueColumns().map(col => col.getColId());
+
+        for (let i = 0; i < sortModel.length; i++) {
+            if (valueColIds.indexOf(sortModel[i].colId) > -1) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     private cacheExists(): boolean {
         return _.exists(this.rootNode) && _.exists(this.rootNode.childrenCache);

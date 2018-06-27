@@ -487,7 +487,8 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
         return newRowNodes;
     }
 
-    public refreshCache(sortModel: {colId: string, sort: string}[], rowGroupColIds: string[]) {
+    public refreshCache(sortModel: {colId: string, sort: string}[], rowGroupColIds: string[]): boolean {
+        let refreshed = false;
         let shouldPurgeCache = false;
         let sortColIds = sortModel.map(sm => sm.colId);
 
@@ -501,12 +502,15 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
                 if (rowGroupBlock && sortingByGroup) {
                     // need to refresh block using updated new sort model
                     block.updateSortModel(sortModel);
-                    shouldPurgeCache = true;
                 }
 
                 let callback = (rowNode: RowNode) => {
                     let nextCache = (<ServerSideCache> rowNode.childrenCache);
-                    if (nextCache) nextCache.refreshCache(sortModel, rowGroupColIds);
+                    if (nextCache) {
+                        if (nextCache.refreshCache(sortModel, rowGroupColIds)) {
+                            refreshed = true;
+                        }
+                    }
                 };
 
                 block.forEachNodeShallow(callback, new NumberSequence(), this.getVirtualRowCount());
@@ -524,8 +528,11 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
         }
 
         if (shouldPurgeCache || groupSortRemoved) {
+            refreshed = true;
             this.purgeCache();
         }
+
+        return refreshed;
     }
 
     private groupSortRemoved(sortModel: { colId: string; sort: string }[], rowGroupColIds: string[]): boolean {
