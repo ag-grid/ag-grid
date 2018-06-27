@@ -6,6 +6,8 @@ $pageGroup = "basics";
 include '../getting-started/header.php';
 ?>
 
+<script type="text/javascript" src="//downloads.mailchimp.com/js/signup-forms/popup/embed.js" data-dojo-config="usePlainJson: true, isDebug: false"></script><script type="text/javascript">require(["mojo/signup-forms/Loader"], function(L) { L.start({"baseUrl":"mc.us11.list-manage.com","uuid":"9b44b788c97fa5b498fbbc9b5","lid":"b7d8f8f05f"}) })</script>
+
 <div>
 
 <h1>Get Started with ag-Grid in Your React Project</h1>
@@ -383,6 +385,10 @@ While doing so, we learned how to configure the grid, how to access its API obje
 <p><b id="f1">1</b> This is not exactly true. ag-Grid's core, as well as the framework wrappers are written in TypeScript. This provides nice strong typing and compile-time checks for our TypeScript users, while not giving the Babel/Vanilla users any disadvantage.  <a href="#a1">↩</a></p>
 
 </div>
+<div>
+  <a href="https://github.com/ag-grid/ag-grid-react"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
+</div>
+<br>
 <div>
   <a href="https://www.ag-grid.com/start-trial.php"><button type="button" class="btn btn-primary btn-lg btn-block">Start Free Trial</button></a>
 </div>
