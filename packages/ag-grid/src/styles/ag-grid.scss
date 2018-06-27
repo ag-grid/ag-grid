@@ -601,6 +601,7 @@ ag-grid-aurelia {
 
 .ag-column-drop-horizontal {
     white-space: nowrap;
+    overflow: hidden;
 
     .ag-column-drop-cell {
         display: inline-block;
