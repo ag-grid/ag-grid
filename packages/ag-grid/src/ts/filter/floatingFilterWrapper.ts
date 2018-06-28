@@ -6,7 +6,7 @@ import {SetLeftFeature} from "../rendering/features/setLeftFeature";
 import {IFloatingFilterParams, IFloatingFilterComp, FloatingFilterChange} from "./floatingFilter";
 import {Component} from "../widgets/component";
 import {RefSelector} from "../widgets/componentAnnotations";
-import {IAfterGuiAttachedParams, IComponent} from "../interfaces/iComponent";
+import {IComponent} from "../interfaces/iComponent";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {Beans} from "../rendering/beans";
 import {HoverFeature} from "../headerRendering/hoverFeature";

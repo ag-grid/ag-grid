@@ -47,7 +47,7 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
     lastKnownModel: M = null;
 
     constructor() {
-        super(`<div><input  ref="eColumnFloatingFilter" class="ag-floating-filter-input"></div>`);
+        super(`<div><input ref="eColumnFloatingFilter" class="ag-floating-filter-input"></div>`);
     }
 
     init(params: P): void {
@@ -177,9 +177,19 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
         let body: HTMLElement = _.loadTemplate(`<div></div>`);
         this.dateComponentPromise.then(dateComponent=> {
             body.appendChild(dateComponent.getGui());
+
+            const columnDef = (<any>params.column.getDefinition());
+            const isInRange = (columnDef.filterParams &&
+                columnDef.filterParams.filterOptions &&
+                columnDef.filterParams.filterOptions.length === 1 &&
+                columnDef.filterParams.filterOptions[0] === 'inRange');
+
+            if(dateComponent.eDateInput) {
+                dateComponent.eDateInput.disabled = isInRange;
+            }
         });
         this.setTemplateFromElement(body);
-    }
+        }
 
     private onDateChanged(): void {
         let parentModel: SerializedDateFilter = this.currentParentModel();
@@ -229,8 +239,29 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
                 dateComponent.setDate(null);
                 return;
             }
+
+            this.enrichDateInput(parentModel.type,
+                parentModel.dateFrom,
+                parentModel.dateTo,
+                dateComponent);
+
             dateComponent.setDate(_.parseYyyyMmDdToDate(parentModel.dateFrom, '-'));
         });
+    }
+
+    private enrichDateInput(type: string,
+                            dateFrom: string,
+                            dateTo: string,
+                            dateComponent: any) {
+        if (dateComponent.eDateInput) {
+            if (type === 'inRange') {
+                dateComponent.eDateInput.title = `${dateFrom} to ${dateTo}`;
+                dateComponent.eDateInput.disabled = true;
+            } else {
+                dateComponent.eDateInput.title = '';
+                dateComponent.eDateInput.disabled = true;
+            }
+        }
     }
 }
 
