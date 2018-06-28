@@ -819,6 +819,17 @@ include '../documentation-main/documentation_header.php';
                 <a href="../javascript-grid-row-spanning/">row spanning</a>.
             </td>
         </tr>
+
+
+        <tr>
+            <th>serverSideSortingAlwaysResets</th>
+            <td>
+                When true, a full reset will be performed when sorting using the
+                <a href="../javascript-grid-server-side-model/">Server-side Row Model</a>.
+            </td>
+        </tr>
+
+
     </table>
 
 
