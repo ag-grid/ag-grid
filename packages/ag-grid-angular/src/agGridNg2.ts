@@ -153,6 +153,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public gridOptions: GridOptions;
 
     // @START@
+    @Input() public colResizeDefault : any = undefined;
     @Input() public slaveGrids : any = undefined;
     @Input() public alignedGrids : any = undefined;
     @Input() public rowData : any = undefined;

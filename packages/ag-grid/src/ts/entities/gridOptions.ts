@@ -107,6 +107,7 @@ export interface GridOptions {
     rowBuffer?: number;
     enableRtl?: boolean;
     enableColResize?: boolean;
+    colResizeDefault?: string;
     enableCellExpressions?: boolean;
     enableSorting?: boolean;
     enableServerSideSorting?: boolean;

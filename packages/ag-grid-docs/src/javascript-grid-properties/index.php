@@ -33,6 +33,11 @@ include '../documentation-main/documentation_header.php';
                 at a columns headers edge.</td>
         </tr>
         <tr>
+            <th>colResizeDefault</th>
+            <td>Set to 'shift' to have shift-resize as the default resize operation (same as user holding
+                down 'shift' while resizing).</td>
+        </tr>
+        <tr>
             <th>suppressAutoSize</th>
             <td>Suppresses <a href="../javascript-grid-resizing/#auto-size-columns">auto-sizing columns</a> for columns.
                 In other words, double clicking a columns headers edge will not auto-size.</td>

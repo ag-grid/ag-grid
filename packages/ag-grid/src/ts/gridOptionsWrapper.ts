@@ -348,6 +348,7 @@ export class GridOptionsWrapper {
     public isDeltaRowDataMode() { return isTrue(this.gridOptions.deltaRowDataMode); }
     public isEnsureDomOrder() { return isTrue(this.gridOptions.ensureDomOrder); }
     public isEnableColResize() { return isTrue(this.gridOptions.enableColResize); }
+    public getColResizeDefault() { return this.gridOptions.colResizeDefault; }
     public isSingleClickEdit() { return isTrue(this.gridOptions.singleClickEdit); }
     public isSuppressClickEdit() { return isTrue(this.gridOptions.suppressClickEdit); }
     public isStopEditingWhenGridLosesFocus() { return isTrue(this.gridOptions.stopEditingWhenGridLosesFocus); }

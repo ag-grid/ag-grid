@@ -10,7 +10,7 @@ export class PropertyKeys {
         'icons', 'datasource', 'serverSideDatasource', 'viewportDatasource', 'groupRowRendererParams', 'aggFuncs',
         'fullWidthCellRendererParams', 'defaultColGroupDef', 'defaultColDef', 'defaultExportParams', 'columnTypes',
         'rowClassRules', 'detailGridOptions', 'detailCellRendererParams', 'loadingOverlayComponentParams',
-        'noRowsOverlayComponentParams', 'popupParent'
+        'noRowsOverlayComponentParams', 'popupParent', 'colResizeDefault'
         //,'cellRenderers','cellEditors'
     ];
 

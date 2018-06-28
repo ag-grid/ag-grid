@@ -772,7 +772,7 @@ export class ColumnController {
     public setColumnWidth(
             key: string|Column, // @key - the column who's size we want to change
             newWidth: number, // @newWidth - width in pixels
-            takeFromAdjacent: boolean, // @takeFromAdjacent - if user has 'shift' pressed, then pixels are taken from adjacent column
+            shiftKey: boolean, // @takeFromAdjacent - if user has 'shift' pressed, then pixels are taken from adjacent column
             finished: boolean, // @finished - ends up in the event, tells the user if more events are to come
             source: ColumnEventType = "api"): void {
 
@@ -789,7 +789,13 @@ export class ColumnController {
             columns: [col]
         });
 
-        if (takeFromAdjacent) {
+        // if user wants to do shift resize by default, then we invert the shift operation
+        let defaultIsShift = this.gridOptionsWrapper.getColResizeDefault() === 'shift';
+        if (defaultIsShift) {
+            shiftKey = !shiftKey;
+        }
+
+        if (shiftKey) {
             let otherCol = this.getDisplayedColAfter(col);
             if (!otherCol) { return; }
 
