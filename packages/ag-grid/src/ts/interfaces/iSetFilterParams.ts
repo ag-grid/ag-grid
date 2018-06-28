@@ -25,4 +25,5 @@ export interface ISetFilterParams extends IFilterParams {
     selectAllOnMiniFilter: boolean;
     comparator?: (a: any, b: any) => number;
     debounceMs?: number;
+    miniFilterSearchByRefDataKey?: boolean;
 }
