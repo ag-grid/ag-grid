@@ -478,6 +478,8 @@ export class GridOptionsWrapper {
     // public getCellRenderers(): {[key: string]: {new(): ICellRenderer} | ICellRendererFunc} { return this.gridOptions.cellRenderers; }
     // public getCellEditors(): {[key: string]: {new(): ICellEditor}} { return this.gridOptions.cellEditors; }
 
+    public isServerSideSortingAlwaysResets() { return isTrue(this.gridOptions.serverSideSortingAlwaysResets); }
+
     public getPostSortFunc(): (rowNodes: RowNode[]) => void { return this.gridOptions.postSort; }
 
     public getClipboardDeliminator() {

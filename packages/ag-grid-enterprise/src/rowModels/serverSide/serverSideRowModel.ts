@@ -130,13 +130,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             let rowGroupColIds = this.columnController.getRowGroupColumns().map(col => col.getId());
             let serverSideCache = <ServerSideCache> this.rootNode.childrenCache;
 
-            if (this.isSortingWithValueColumn(sortModel)) {
+            if (this.gridOptionsWrapper.isServerSideSortingAlwaysResets() || this.isSortingWithValueColumn(sortModel)) {
                 this.reset();
             } else {
-                let refreshed = serverSideCache.refreshCache(sortModel, rowGroupColIds);
-                if (!refreshed) {
-                    this.reset();
-                }
+                serverSideCache.refreshCache(sortModel, rowGroupColIds);
             }
         }
     }

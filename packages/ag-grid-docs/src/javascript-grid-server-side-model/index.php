@@ -232,6 +232,11 @@ export interface ColumnVO {
             see Athlete is sorted. </li>
     </ul>
 
+    <note>
+        Set <code>gridOptions.serverSideSortingAlwaysResets = true</code> to always force a full reset when sorting,
+        however this will only be required for certain edge case scenario's.
+    </note>
+
 <?= example('Simple Example', 'simple', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
 <h2>Example - Slice and Dice - Mocked Server</h2>

@@ -207,6 +207,7 @@ export interface GridOptions {
     maxColWidth?: number;
 
     suppressPropertyNamesCheck?: boolean;
+    serverSideSortingAlwaysResets?: boolean;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
