@@ -328,7 +328,7 @@ export class SetFilterModel {
                         this.valueFormatterService.formatValue(this.column, null, null, displayedValue);
 
                     if (matchesFn(displayedValue) || matchesFn(formattedValue)) {
-                        this.displayedValues.push(displayedValue);
+                        this.displayedValues.push(value);
                     }
                 }
             }
