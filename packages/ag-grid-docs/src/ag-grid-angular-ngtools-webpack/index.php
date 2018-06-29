@@ -558,9 +558,9 @@ if (process.env.ENV === 'production') {
         <p>Now we can either run <code>npm start</code> to run the development setup, or <code>npm run build</code> for the production build.
             In the case of the production build the generated files will be under the <code>dist/</code> folder.</p>
 
-        <p>If we now run our applicatiom with the above code we will see this:</p>
+        <p>If we now run our application with the above code we will see this:</p>
 
-        <img src="../images/webpack_app.png" style="width: 100%">
+        <img src="../images/webpack_app.png" alt="Webpack Application" style="width: 100%">
 
         <h3>Override ag-Grid CSS</h3>
         <p>There are many ways to override the CSS with Webpack, but if you use the configuration above then you can override ag-Grid CSS as follows:</p>

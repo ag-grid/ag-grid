@@ -1,4 +1,4 @@
-<?php
+fi<?php
 $pageTitle = "ag-Grid Reference: Building with Angular Cli";
 $pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. This page details how to build ag-Grid using Angular CLI.";
 $pageKeyboards = "Angular CLI";
@@ -176,7 +176,7 @@ ng serve</snippet>
 
 <p>The results of which will be:</p>
 
-<img src="../images/angularcli_final.png" style="width: 500px">
+<img src="../images/angularcli_final.png" alt="Angular CLI Final" style="width: 500px">
 
 <p>And that's it! Of course there is much more you can do with Angular CLI, but the above should illustrate how
     quick

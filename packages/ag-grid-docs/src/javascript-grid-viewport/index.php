@@ -52,7 +52,7 @@ include '../documentation-main/documentation_header.php';
         will 'get' data from the source. If / when the data changes, the source will 'push' the data to the
         viewport if it knows the viewport is displaying that data.
     </p>
-    <img src="./viewport.png" class="img-fluid"/>
+    <img src="./viewport.png" class="img-fluid" alt="Viewport Conneced to Dataset"/>
 
     <note>
         It is the responsibility of the grid to display the data. It is the responsibility of the application

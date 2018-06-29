@@ -92,7 +92,7 @@ ng serve
 
             <p>You can now navigate to <code>http://localhost:4200/</code> and see the results of the scaffolding:</p>
 
-            <img src="angular-cli-default.png"
+            <img src="angular-cli-default.png" alt="Angular CLI" 
                  style="border: solid 1px lightgrey;border-radius: 5px;width: 100%;margin-bottom: 15px">
 
             <h2>Development</h2>
@@ -120,7 +120,7 @@ ng serve
 
             <p>We'll make use of a simple Application architecture in the frontend:</p>
 
-            <img src="front-end-arch.png" width="100%"/>
+            <img src="front-end-arch.png" width="100%" alt="Front End Architecture"/>
 
             <p>As a first pass let's attempt to retrieve all Olympic Data from the server. In order to do that we're
                 going to break our front end application into further packages: one for our <code>model</code> and
@@ -227,7 +227,7 @@ export class AppComponent implements OnInit {
             <p>Ok, great - we should be good to go now right? Unfortunately not - if we run both the front and backend
                 as it stands we'll get the following error: </p>
 
-            <img src="./cors.png" width="100%">
+            <img src="./cors.png" width="100%" alt="Error">
 
             <p>The problem here is that our Angular application is running in <code>localhost:4200</code>, but our
                 backend
@@ -277,7 +277,7 @@ ng serve
             <p>Once both have started you can navigate to <a href="localhost:4200" target="_blank">localhost:4200</a>.
                 You should see something like this: </p>
 
-            <img src="./first-call.png" style="width:100%; margin-bottom: 15px">
+            <img src="./first-call.png" style="width:100%; margin-bottom: 15px" alt="localhost:4200">
 
             <p>Great, good progress so far - we now know we can call the backend successfully!</p>
 
@@ -443,7 +443,7 @@ export class GridComponent implements OnInit {
 
             <p>With this in place we can now run our application...but we don't see quite what we're hoping for:</p>
 
-            <img src="./grid-first-pass.png" width="100%">
+            <img src="./grid-first-pass.png" width="100%" alt="datagrid">
 
             <p>The reason for this is pretty simple - both <code>Country</code> and <code>Results</code> are complex
                 data.
@@ -469,7 +469,7 @@ private createColumnDefs() {
                 <code>results</code>,
                 where we return the <code>country name</code> and <code>results length</code> respectively.</p>
 
-            <img src="./grid-second-pass.png" width="100%">
+            <img src="./grid-second-pass.png" width="100%" alt="grid second pass">
 
             <show-sources example=""
                           sources="{

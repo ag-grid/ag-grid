@@ -457,7 +457,7 @@ if (process.env.ENV === 'production') {
 
     <p>If we now run our applicatiom with the above code we will see this:</p>
 
-    <img src="../images/seed.png" style="width: 100%">
+    <img src="../images/seed.png" style="width: 100%" alt="Grid Example">
 
     <h3>Override ag-Grid CSS</h3>
     <p>There are many ways to override the CSS with Webpack, but if you use the configuration above then you can override ag-Grid CSS as follows:</p>

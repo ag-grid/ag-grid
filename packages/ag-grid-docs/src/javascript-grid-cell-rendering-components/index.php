@@ -239,7 +239,7 @@ In other words, <code>new()</code>, <code>init()</code>, <code>getGui()</code> a
     <code>colDef.cellRenderer</code>.
 </p>
 
-<img class="img-fluid" src="../javascript-grid-value-getters/valueGetterFlow.svg"/>
+<img class="img-fluid" src="../javascript-grid-value-getters/valueGetterFlow.svg"/ alt="Value Getter Flow">
 
 <h2>Complementing Cell Renderer Params</h2>
 
