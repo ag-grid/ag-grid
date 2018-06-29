@@ -39,8 +39,6 @@ npm i --save ag-grid-enterprise</snippet>
 
     <p>The application in the example is a very simple one, consisting of a single Module, a single Component and a bootstrap file, as well a few utility files for vendor & polyfills.</p>
 
-    <note>You can either create the project by hand, or check it out from our Angular Seed Repo in <a href="https://github.com/ag-grid/ag-grid-angular-seed">GitHub.</a></note>
-
     <p>The resulting project structure will look like this:</p>
 <snippet>
 └── ag-grid-webpack2
