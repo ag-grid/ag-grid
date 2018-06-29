@@ -6,10 +6,7 @@ exports.AgCellTemplate = require('./lib/agTemplate').AgCellTemplate;
 exports.AgEditorTemplate = require('./lib/agTemplate').AgEditorTemplate;
 exports.AgFullWidthRowTemplate = require('./lib/agTemplate').AgFullWidthRowTemplate;
 exports.AgFilterTemplate = require('./lib/agTemplate').AgFilterTemplate;
-exports.AureliaCellRendererComponent = require('./lib/aureliaCellRendererComponent').AureliaCellRendererComponent;
-exports.AureliaComponentFactory = require('./lib/aureliaComponentFactory').AureliaComponentFactory;
 exports.AureliaFrameworkFactory = require('./lib/aureliaFrameworkFactory').AureliaFrameworkFactory;
-exports.BaseAureliaEditor = require('./lib/editorViewModels').BaseAureliaEditor;
 
 function configure(config) {
     config.globalResources(

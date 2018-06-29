@@ -83,5 +83,6 @@ export class PropertyKeys {
 
      // used when doing property checks - this causes noise when using frameworks which can add their own fw specific
      // properties to coldefs, gridOptions etc
-     public static FRAMEWORK_PROPERTIES = ['__ob__'];
+     public static FRAMEWORK_PROPERTIES = ['__ob__', '__metadata__', 'mappedColumnProperties', 'hasChildColumns',
+         'toColDef', 'createColDefFromGridColumn'];
 }
