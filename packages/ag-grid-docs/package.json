@@ -54,7 +54,7 @@
         "mkdir-p": "0.0.7",
         "mkdirp": "^0.5.1",
         "moment": "^2.20.1",
-        "prettier": "^1.10.2",
+        "prettier": "1.12.1",
         "puppeteer": "^1.0.0",
         "ts-node": "^3.3.0",
         "typescript-require": "^0.2.9-1",
