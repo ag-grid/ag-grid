@@ -45,7 +45,7 @@ function getColumnDefs() {
 
 function countryCellRenderer(params) {
     var flag =
-        '<img border="0" width="15" height="10" src="https://raw.githubusercontent.com/ag-grid/packages/ag-grid-docs/master/src/images/flags/' +
+        '<img border="0" width="15" height="10" src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/flags/' +
         params.data.code +
         '.png">';
     return '<span style="cursor: default;">' + flag + ' ' + params.value + '</span>';
