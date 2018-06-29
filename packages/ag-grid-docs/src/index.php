@@ -228,6 +228,8 @@ meta_and_links($title, $keywords, $description, false);
         <a href="/features-overview/" class="btn btn-primary btn-lg">Sure! Let's Go to the Features Overview &rarr;</a>
     </div>
 
+<script type="text/javascript" src="//downloads.mailchimp.com/js/signup-forms/popup/embed.js" data-dojo-config="usePlainJson: true, isDebug: false"></script><script type="text/javascript">require(["mojo/signup-forms/Loader"], function(L) { L.start({"baseUrl":"mc.us11.list-manage.com","uuid":"9b44b788c97fa5b498fbbc9b5","lid":"8ef6be7af9"}) })</script>
+
     <?= globalAgGridScript(true, true) ?>
     <script src="dist/homepage.js"></script>
     <!-- Used by the dashboard demo -->
