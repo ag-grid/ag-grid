@@ -55,6 +55,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     private rowNodeBlockLoader: RowNodeBlockLoader;
 
+    private sortModel: {colId: string, sort: string}[];
+
     @PostConstruct
     private postConstruct(): void {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
@@ -124,16 +126,43 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.reset();
     }
 
+    // returns back all the cols that were effected by the sorting. eg if we were sorting by col A,
+    // and now we are sorting by col B, the list of impacted cols should be A and B. so if a cache
+    // is impacted by sorting on A or B then it needs to be refreshed. this includes where the cache
+    // was previously sorted by A and then the A sort now needs to be cleared.
+    private createColIdsFromLists(
+                            newSortModel: {colId: string, sort: string}[],
+                            oldSortModel: {colId: string, sort: string}[]): string[] {
+
+        let res: string[] = [];
+
+        [newSortModel, oldSortModel].forEach( sortModel => {
+            if (sortModel) {
+                let ids = sortModel.map(sm => sm.colId);
+                res = res.concat(ids);
+            }
+        });
+
+        return res;
+    }
+
     private onSortChanged(): void {
+
+        let newSortModel = this.extractSortModel();
+        let columnsImpactedBySorting = this.createColIdsFromLists(newSortModel, this.sortModel);
+        this.sortModel = newSortModel;
+
         if (this.cacheExists()) {
-            let sortModel = this.extractSortModel();
             let rowGroupColIds = this.columnController.getRowGroupColumns().map(col => col.getId());
             let serverSideCache = <ServerSideCache> this.rootNode.childrenCache;
 
-            if (this.gridOptionsWrapper.isServerSideSortingAlwaysResets() || this.isSortingWithValueColumn(sortModel)) {
+            let sortingWithValueCol = this.isSortingWithValueColumn(columnsImpactedBySorting);
+
+            let sortAlwaysResets = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
+            if (sortAlwaysResets || sortingWithValueCol) {
                 this.reset();
             } else {
-                serverSideCache.refreshCache(sortModel, rowGroupColIds);
+                serverSideCache.refreshCache(this.sortModel, columnsImpactedBySorting, rowGroupColIds);
             }
         }
     }
@@ -517,11 +546,12 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         return sortModel;
     };
 
-    private isSortingWithValueColumn(sortModel: { colId: string; sort: string }[]): boolean {
+    private isSortingWithValueColumn(columnsImpactedBySorting: string[]): boolean {
         let valueColIds = this.columnController.getValueColumns().map(col => col.getColId());
 
-        for (let i = 0; i < sortModel.length; i++) {
-            if (valueColIds.indexOf(sortModel[i].colId) > -1) {
+        for (let i = 0; i < columnsImpactedBySorting.length; i++) {
+            let sortColId = columnsImpactedBySorting[i];
+            if (valueColIds.indexOf(sortColId) > -1) {
                 return true;
             }
         }

@@ -233,8 +233,11 @@ export interface ColumnVO {
     </ul>
 
     <note>
-        Set <code>gridOptions.serverSideSortingAlwaysResets = true</code> to always force a full reset when sorting,
-        however this will only be required for certain edge case scenario's.
+        When the grid sort changes, only impacted rows will get re-loaded. For example if grouping by Country
+        and sort by Athlete changes, the top level Country groups will not get re-loaded as sorting by Athlete
+        will not impact the top level groups.
+        To avoid this and always refresh top level groups regardless of which column was sorted,
+        set grid property <code>serverSideSortingAlwaysResets = true</code>.
     </note>
 
 <?= example('Simple Example', 'simple', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
