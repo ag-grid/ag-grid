@@ -196,7 +196,7 @@ FakeServer.prototype.filterList = function(data, filterModel) {
         }
 
         if (filterModel.country) {
-            if (filterModel.country.indexOf(item.country)<0) {
+            if (filterModel.country.values.indexOf(item.country)<0) {
                 continue;
             }
         }

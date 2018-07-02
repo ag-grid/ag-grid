@@ -282,7 +282,7 @@ export interface ColumnVO {
             the data in the correct structure.
         </li>
         <li>
-            Columns <strong>Gold, Silver</strong> and <strong>Bronze</strong> all have <code>enablePivot=true</code> which means
+            Columns <strong>Athlete, Age, Country, Year</strong> and <strong>Sport</strong> all have <code>enablePivot=true</code> which means
             they can be pivoted on when <strong>Pivot Mode</strong> is active. To pivot you drag the column to the <strong>Pivot</strong>
             section.
         </li>
