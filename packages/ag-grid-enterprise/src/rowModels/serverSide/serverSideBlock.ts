@@ -411,10 +411,6 @@ export class ServerSideBlock extends RowNodeBlock {
         return params;
     }
 
-    public updateSortModel(sortModel: {colId: string, sort: string}[]) {
-        this.params.sortModel = sortModel;
-    }
-
     public isDisplayIndexInBlock(displayIndex: number): boolean {
         return displayIndex >= this.displayIndexStart && displayIndex < this.displayIndexEnd;
     }

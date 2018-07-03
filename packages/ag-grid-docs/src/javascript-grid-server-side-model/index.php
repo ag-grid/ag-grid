@@ -120,7 +120,7 @@ interface IServerSideGetRowsRequest {
     // pivot columns
     pivotCols: ColumnVO[];
 
-    // true if pivot mode is one, otherwise false
+    // true if pivot mode is on, otherwise false
     pivotMode: boolean;
 
     // what groups the user is viewing
@@ -233,8 +233,11 @@ export interface ColumnVO {
     </ul>
 
     <note>
-        Set <code>gridOptions.serverSideSortingAlwaysResets = true</code> to always force a full reset when sorting,
-        however this will only be required for certain edge case scenario's.
+        When the grid sort changes, only impacted rows will get re-loaded. For example if grouping by Country
+        and sort by Athlete changes, the top level Country groups will not get re-loaded as sorting by Athlete
+        will not impact the top level groups.
+        To avoid this and always refresh top level groups regardless of which column was sorted,
+        set grid property <code>serverSideSortingAlwaysResets = true</code>.
     </note>
 
 <?= example('Simple Example', 'simple', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
@@ -282,7 +285,7 @@ export interface ColumnVO {
             the data in the correct structure.
         </li>
         <li>
-            Columns <strong>Gold, Silver</strong> and <strong>Bronze</strong> all have <code>enablePivot=true</code> which means
+            Columns <strong>Athlete, Age, Country, Year</strong> and <strong>Sport</strong> all have <code>enablePivot=true</code> which means
             they can be pivoted on when <strong>Pivot Mode</strong> is active. To pivot you drag the column to the <strong>Pivot</strong>
             section.
         </li>
