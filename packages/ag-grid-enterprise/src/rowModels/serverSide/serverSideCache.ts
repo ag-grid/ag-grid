@@ -487,55 +487,37 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
         return newRowNodes;
     }
 
-    public refreshCache(sortModel: {colId: string, sort: string}[],
-                        columnsImpactedBySorting: string[],
-                        rowGroupColIds: string[]): void {
-        let shouldPurgeCache = false;
+    public refreshCacheAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void {
+        let level = this.parentRowNode.level + 1;
+        let grouping = level < this.cacheParams.rowGroupCols.length;
 
-        this.forEachBlockInOrder(block => {
+        let shouldPurgeCache:  boolean;
+        if (grouping) {
+            let groupColVo = this.cacheParams.rowGroupCols[level];
+            let groupField = groupColVo.field;
 
-            if (block.isGroupLevel()) {
-                let groupField = block.getGroupField();
-                let rowGroupBlock = rowGroupColIds.indexOf(groupField) > -1;
-                let sortingByGroup = columnsImpactedBySorting.indexOf(groupField) > -1;
+            let rowGroupBlock = rowGroupColIds.indexOf(groupField) > -1;
+            let sortingByGroup = changedColumnsInSort.indexOf(groupField) > -1;
 
-                if (rowGroupBlock && sortingByGroup) {
-                    // need to refresh block using updated new sort model
-                    block.updateSortModel(sortModel);
-                    shouldPurgeCache = true;
-                }
-
-                let callback = (rowNode: RowNode) => {
-                    let nextCache = (<ServerSideCache> rowNode.childrenCache);
-                    if (nextCache) {
-                        nextCache.refreshCache(sortModel, columnsImpactedBySorting, rowGroupColIds);
-                    }
-                };
-
-                block.forEachNodeShallow(callback, new NumberSequence(), this.getVirtualRowCount());
-
-            } else {
-                // blocks containing leaf nodes need to be refreshed with new sort model
-                block.updateSortModel(sortModel);
-                shouldPurgeCache = true;
-            }
-        });
-
-        let groupSortRemoved = this.groupSortRemoved(sortModel, rowGroupColIds);
-        if (groupSortRemoved) {
-            this.cacheParams.sortModel = sortModel;
+            shouldPurgeCache = rowGroupBlock && sortingByGroup;
+        } else {
+            shouldPurgeCache = true;
         }
 
-        if (shouldPurgeCache || groupSortRemoved) {
+        if (shouldPurgeCache) {
             this.purgeCache();
+        } else {
+            this.forEachBlockInOrder(block => {
+                if (block.isGroupLevel()) {
+                    let callback = (rowNode: RowNode) => {
+                        let nextCache = (<ServerSideCache> rowNode.childrenCache);
+                        if (nextCache) {
+                            nextCache.refreshCacheAfterSort(changedColumnsInSort, rowGroupColIds);
+                        }
+                    };
+                    block.forEachNodeShallow(callback, new NumberSequence(), this.getVirtualRowCount());
+                }
+            });
         }
-    }
-
-    private groupSortRemoved(sortModel: { colId: string; sort: string }[], rowGroupColIds: string[]): boolean {
-        let cacheSortModelChanged = this.cacheParams.sortModel !== sortModel;
-        let existingSortCols = this.cacheParams.sortModel.map((sm: { colId: string, sort: string }) => sm.colId);
-        let existingGroupColumn = rowGroupColIds.some(v=> existingSortCols.indexOf(v) >= 0);
-
-        return cacheSortModelChanged && existingGroupColumn;
     }
 }
