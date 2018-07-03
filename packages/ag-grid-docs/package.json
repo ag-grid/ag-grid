@@ -1,6 +1,6 @@
 {
     "name": "ag-grid-docs",
-  "version": "18.1.0",
+    "version": "18.1.0",
     "description": "Documentation for ag-Grid",
     "scripts": {
         "postinstall": "webdriver-manager update",
@@ -29,6 +29,7 @@
     "bugs": {
         "url": "https://github.com/ag-grid/ag-grid-docs/issues"
     },
+    "private": true,
     "homepage": "http://www.ag-grid.com/",
     "dependencies": {
         "@types/angular": "^1.6.32",
@@ -88,8 +89,8 @@
         "gulp-inline-source": "2.1.0",
         "gulp-livereload": "3.8.1",
         "gulp-replace": "^0.6.1",
-        "gulp-uncss": "1.0.6",
         "gulp-run": "^1.7.1",
+        "gulp-uncss": "1.0.6",
         "http-server": "0.10.0",
         "lazyload": "^2.0.0-beta.2",
         "loader-utils": "^1.1.0",

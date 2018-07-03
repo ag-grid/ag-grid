@@ -9,6 +9,7 @@
   "keywords": [],
   "author": "Niall Crosby <niall.crosby@ag-grid.com>",
   "homepage": "http://www.ag-grid.com/",
+  "private": true,
   "devDependencies": {
     "autoprefixer": "^7.1.2",
     "bootstrap": "3.3.6",
