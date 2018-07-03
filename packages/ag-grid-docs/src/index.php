@@ -67,7 +67,7 @@ meta_and_links($title, $keywords, $description, false);
     <div id="stage-frameworks">
         <section id="news-flash">
             <div>
-                April 12th, 2018: <a href="./ag-grid-changelog/?fixVersion=17.1.0">Version 17.1</a> released featuring 60 changes, features and bug fixes.
+                July 3rd, 2018: <a href="./ag-grid-changelog/?fixVersion=18.1.0">Version 18.1</a> minor releases, focused on bug fixes.
             </div>
         </section>
 
