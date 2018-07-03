@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-aurelia",
-  "version": "18.0.0",
+  "version": "18.1.0",
   "description": "ag-Grid Aurelia Component",
   "main": "./main.js",
   "typings": "./main.d.ts",
@@ -25,7 +25,7 @@
   },
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
-    "ag-grid": "^18.0.0",
+    "ag-grid": "^18.1.0",
     "@types/core-js": "^0.9.34",
     "gulp": "3.9.1",
     "gulp-header": "1.7.0",
