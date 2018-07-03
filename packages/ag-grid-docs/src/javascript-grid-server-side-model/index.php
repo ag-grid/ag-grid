@@ -120,7 +120,7 @@ interface IServerSideGetRowsRequest {
     // pivot columns
     pivotCols: ColumnVO[];
 
-    // true if pivot mode is one, otherwise false
+    // true if pivot mode is on, otherwise false
     pivotMode: boolean;
 
     // what groups the user is viewing
