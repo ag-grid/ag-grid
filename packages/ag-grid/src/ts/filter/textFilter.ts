@@ -147,14 +147,12 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
 
     private checkIndividualFilter (params: IDoesFilterPassParams, filterType:string, filterText: string) {
         let value = this.filterParams.valueGetter(params.node);
-        if (!value) {
+        if (value == null || value === undefined) {
             return filterType === BaseFilter.NOT_EQUAL || filterType === BaseFilter.NOT_CONTAINS;
         }
         let valueFormatted: string = this.formatter(value);
         return this.comparator (filterType, valueFormatted, filterText);
     }
-
-
 
     private onFilterTextFieldChanged(type:FilterConditionType) {
         let value:string = type === FilterConditionType.MAIN ? this.eFilterTextField.value : this.eFilterConditionTextField.value;
