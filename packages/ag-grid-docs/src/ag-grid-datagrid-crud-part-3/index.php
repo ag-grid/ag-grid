@@ -69,9 +69,6 @@ include('../includes/mediaHeader.php');
                 make
                 use of the <a href="https://cli.angular.io/">Angular CLI</a>, which we'll make use of here.</p>
 
-            <p>For a quick standalone guide on getting up an running with ag-Grid, Angular and Angular CLI please see <a
-                        href="../ag-grid-angular-angularcli/">here</a>.</p>
-
             <h3>Scaffolding with Angular CLI</h3>
 
             <p>First things first, let's install Angular CLI. In our case we're going to install it globally as it's

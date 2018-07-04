@@ -202,7 +202,7 @@ this.params.context.componentParent</snippet>
 
     <ul class="content">
         <li>
-            <a href="/ag-grid-angular-angularcli"> Angular CLI</a>
+            <a href="/angular-getting-started"> Angular CLI</a>
         </li>
         <li>
             <a href="/ag-grid-angular-webpack"> Webpack</a>
@@ -307,9 +307,6 @@ private getCountryFilterParams():any {
     </p>
 
     <h2 id="aggrid-angular-testing">Testing ag-Grid Angular Applications with Karma & Jasmine</h2>
-
-    <p>In our <a href="https://github.com/ag-grid/ag-grid-angular-seed">Angular Seed Repo</a> we provide working
-        examples of how to test your Angular project with Karma & Jasmine.</p>
 
     <p>As with your actual application, you need to ensure you <code>import</code> the <code>AgGridModule</code> when
         specifying your tests:</p>
