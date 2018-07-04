@@ -146,8 +146,10 @@ export class ClipboardService implements IClipboardService {
             columns.forEach( (column: Column, index: number) => {
                 if (!column.isCellEditable(rowNode)) return;
 
-                // ignore columns we don't have data for - happens when to range is bigger than copied data range
-                if (index >= currentRowData.length) return;
+                // repeat data for columns we don't have data for - happens when to range is bigger than copied data range
+                if (index >= currentRowData.length) {
+                    index = index % currentRowData.length;
+                }
 
                 let firstRowValue = currentRowData[index];
                 let processCellFromClipboardFunc = this.gridOptionsWrapper.getProcessCellFromClipboardFunc();
