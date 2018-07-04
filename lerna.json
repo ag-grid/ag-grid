@@ -3,5 +3,10 @@
   "packages": [
     "packages/*"
   ],
+  "command": {
+    "bootstrap": {
+      "npmClientArgs": ["--no-package-lock"]
+    }
+  },
   "version": "18.1.0"
 }
