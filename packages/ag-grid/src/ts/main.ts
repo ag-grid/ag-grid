@@ -74,7 +74,7 @@ export {RowNode} from "./entities/rowNode";
 
 // filter
 export {BaseFilter} from "./filter/baseFilter";
-export {DateFilter} from "./filter/dateFilter";
+export {DateFilter, SerializedDateFilter} from "./filter/dateFilter";
 export {FilterManager, FilterWrapper} from "./filter/filterManager";
 export {NumberFilter} from "./filter/numberFilter";
 export {TextFilter,SerializedTextFilter} from "./filter/textFilter";
