@@ -52,6 +52,7 @@ import {
     RangeSelectionChangedEvent,
     RowClickedEvent,
     RowDataChangedEvent,
+    RowDataUpdatedEvent,
     RowDoubleClickedEvent,
     RowDragEvent,
     RowEditingStartedEvent,
@@ -375,6 +376,7 @@ export interface GridOptions {
     onVirtualColumnsChanged?(event: VirtualColumnsChangedEvent): void;
     onRowGroupOpened?(event: RowGroupOpenedEvent): void;
     onRowDataChanged?(event: RowDataChangedEvent): void;
+    onRowDataUpdated?(event: RowDataUpdatedEvent): void;
     onPinnedRowDataChanged?(event: PinnedRowDataChangedEvent): void;
     onRangeSelectionChanged?(event: RangeSelectionChangedEvent): void;
     onColumnRowGroupChangeRequest?(event: ColumnRowGroupChangeRequestEvent): void;

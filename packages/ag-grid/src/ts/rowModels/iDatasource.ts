@@ -23,7 +23,7 @@ export interface IGetRowsParams {
     /** Callback to call for the result when successful. */
     successCallback(rowsThisBlock: any[], lastRow?: number): void;
 
-    /** Callback to call for the result when successful. */
+    /** Callback to call when the request fails. */
     failCallback(): void;
 
     /** If doing server side sorting, contains the sort model */
