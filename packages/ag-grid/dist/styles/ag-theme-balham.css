@@ -533,7 +533,10 @@
   .ag-theme-balham .ag-row-dragging {
     opacity: 0.5;
     z-index: 10000; }
-  .ag-theme-balham .ag-cell-focus {
+  .ag-theme-balham .ag-ltr .ag-cell-focus {
+    border: 1px solid #0091EA;
+    outline: initial; }
+  .ag-theme-balham .ag-rtl .ag-cell-focus {
     border: 1px solid #0091EA;
     outline: initial; }
   .ag-theme-balham .ag-header-cell-resize {

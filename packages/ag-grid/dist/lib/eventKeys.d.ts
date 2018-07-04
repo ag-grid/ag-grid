@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v18.0.1
+// Type definitions for ag-grid v18.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class Events {
@@ -69,9 +69,8 @@ export declare class Events {
     /** Gets called once after the grid has finished initialising. */
     static EVENT_GRID_READY: string;
     /** Width of height of the main grid div has changed. Grid listens for this and does layout of grid if it's
-     * changed, so always filling the space it was given.
-     * DEPRECATED - now that BorderLayout is no longer used, this doesn't make sense. */
-    static DEPRECATED_EVENT_GRID_SIZE_CHANGED: string;
+     * changed, so always filling the space it was given. */
+    static EVENT_GRID_SIZE_CHANGED: string;
     /** The indexes of the rows rendered has changed, eg user has scrolled to a new vertical position. */
     static EVENT_VIEWPORT_CHANGED: string;
     /** A column drag has started, either resizing a column or moving a column. */

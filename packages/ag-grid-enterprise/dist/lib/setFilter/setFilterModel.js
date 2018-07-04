@@ -1,4 +1,4 @@
-// ag-grid-enterprise v18.0.1
+// ag-grid-enterprise v18.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
@@ -218,6 +218,7 @@ var SetFilterModel = (function () {
         return this.miniFilter;
     };
     SetFilterModel.prototype.processMiniFilter = function () {
+        var _this = this;
         // if no filter, just use the unique values
         if (this.miniFilter === null) {
             this.displayedValues = this.availableUniqueValues;
@@ -228,22 +229,31 @@ var SetFilterModel = (function () {
         var miniFilter = this.formatter(this.miniFilter);
         // make upper case to have search case insensitive
         var miniFilterUpperCase = miniFilter.toUpperCase();
-        for (var i = 0, l = this.availableUniqueValues.length; i < l; i++) {
-            var value = this.availableUniqueValues[i];
-            if (value) {
-                var displayedValue = this.formatter(value.toString());
-                //This function encapsulates the logic to check if a string matches the mini filter
-                var matchesFn = function (valueToCheck) {
-                    if (valueToCheck === null) {
-                        return false;
+        //This function encapsulates the logic to check if a string matches the mini filter
+        var matchesFn = function (valueToCheck) {
+            if (valueToCheck == null) {
+                return false;
+            }
+            // allow for case insensitive searches, make both filter and value uppercase
+            var valueUpperCase = valueToCheck.toUpperCase();
+            return valueUpperCase.indexOf(miniFilterUpperCase) >= 0;
+        };
+        if (this.filterParams.miniFilterSearchByRefDataKey) {
+            Object.keys(this.colDef.refData).forEach(function (key) {
+                if (matchesFn(key)) {
+                    _this.displayedValues.push(_this.colDef.refData[key]);
+                }
+            });
+        }
+        else {
+            for (var i = 0, l = this.availableUniqueValues.length; i < l; i++) {
+                var value = this.availableUniqueValues[i];
+                if (value) {
+                    var displayedValue = this.formatter(value.toString());
+                    var formattedValue = this.valueFormatterService.formatValue(this.column, null, null, displayedValue);
+                    if (matchesFn(displayedValue) || matchesFn(formattedValue)) {
+                        this.displayedValues.push(value);
                     }
-                    // allow for case insensitive searches, make both filter and value uppercase
-                    var valueUpperCase = valueToCheck.toUpperCase();
-                    return valueUpperCase.indexOf(miniFilterUpperCase) >= 0;
-                };
-                var formattedValue = this.valueFormatterService.formatValue(this.column, null, null, displayedValue);
-                if (matchesFn(displayedValue) || matchesFn(formattedValue)) {
-                    this.displayedValues.push(displayedValue);
                 }
             }
         }
@@ -362,6 +372,7 @@ var SetFilterModel = (function () {
         }
         else {
             this.filterValuesExternalPromise.promise.then(function (values) {
+                _this.setSyncModel(model, isSelectAll);
                 _this.modelUpdatedFunc(values, model);
             });
         }

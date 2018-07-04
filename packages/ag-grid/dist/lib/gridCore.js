@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v18.0.1
+ * @version v18.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -40,6 +40,8 @@ var focusedCellController_1 = require("./focusedCellController");
 var component_1 = require("./widgets/component");
 var gridApi_1 = require("./gridApi");
 var componentAnnotations_1 = require("./widgets/componentAnnotations");
+var resizeObserver_1 = require("./resizeObserver");
+var events_1 = require("./events");
 var GridCore = (function (_super) {
     __extends(GridCore, _super);
     function GridCore() {
@@ -56,8 +58,7 @@ var GridCore = (function (_super) {
             this.toolPanelComp.registerGridComp(this.gridPanel);
             this.statusBar.registerGridPanel(this.gridPanel);
         }
-        this.gridOptionsWrapper.addEventListener(gridOptionsWrapper_1.GridOptionsWrapper.PROP_GRID_AUTO_HEIGHT, this.addLayoutClass.bind(this));
-        this.addLayoutClass();
+        this.gridOptionsWrapper.addLayoutElement(this.getGui());
         // see what the grid options are for default of toolbar
         this.showToolPanel(this.gridOptionsWrapper.isShowToolPanel());
         this.eGridDiv.appendChild(this.getGui());
@@ -75,15 +76,19 @@ var GridCore = (function (_super) {
         this.finished = false;
         this.addDestroyFunc(function () { return _this.finished = true; });
         this.logger.log('ready');
+        this.gridOptionsWrapper.addLayoutElement(this.eRootWrapperBody);
+        var unsubscribeFromResize = resizeObserver_1.observeResize(this.eGridDiv, this.onGridSizeChanged.bind(this));
+        this.addDestroyFunc(function () { return unsubscribeFromResize(); });
     };
-    GridCore.prototype.addLayoutClass = function () {
-        // parts of the CSS need to know if we are in 'for print' mode or not,
-        // so we add a class to allow applying CSS based on this.
-        var autoHeight = this.gridOptionsWrapper.isGridAutoHeight();
-        this.addOrRemoveCssClass('ag-layout-auto-height', autoHeight);
-        this.addOrRemoveCssClass('ag-layout-normal', !autoHeight);
-        // kept ag-scrolls to limit breaking changes, ag-scrolls was renamed to ag-layout-normal
-        this.addOrRemoveCssClass('ag-scrolls', !autoHeight);
+    GridCore.prototype.onGridSizeChanged = function () {
+        var event = {
+            type: events_1.Events.EVENT_GRID_SIZE_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            clientWidth: this.eGridDiv.clientWidth,
+            clientHeight: this.eGridDiv.clientHeight
+        };
+        this.eventService.dispatchEvent(event);
     };
     GridCore.prototype.getPreferredWidth = function () {
         var widthForCols = this.columnController.getBodyContainerWidth()
@@ -147,8 +152,8 @@ var GridCore = (function (_super) {
             this.gridPanel.ensureIndexVisible(indexToSelect, position);
         }
     };
-    GridCore.TEMPLATE_NORMAL = "<div class=\"ag-root-wrapper\">\n            <div class=\"ag-root-wrapper-body\">\n                <ag-grid-comp ref=\"gridPanel\"></ag-grid-comp>\n            </div>\n            <ag-pagination></ag-pagination>\n        </div>";
-    GridCore.TEMPLATE_ENTERPRISE = "<div class=\"ag-root-wrapper\">\n            <ag-header-column-drop></ag-header-column-drop>\n            <div class=\"ag-root-wrapper-body\">\n                <ag-grid-comp ref=\"gridPanel\"></ag-grid-comp>\n                <ag-tool-panel ref=\"toolPanel\"></ag-tool-panel>\n            </div>\n            <ag-status-bar ref=\"statusBar\"></ag-status-bar>\n            <ag-pagination></ag-pagination>\n        </div>";
+    GridCore.TEMPLATE_NORMAL = "<div class=\"ag-root-wrapper\">\n            <div class=\"ag-root-wrapper-body\" ref=\"rootWrapperBody\">\n                <ag-grid-comp ref=\"gridPanel\"></ag-grid-comp>\n            </div>\n            <ag-pagination></ag-pagination>\n        </div>";
+    GridCore.TEMPLATE_ENTERPRISE = "<div class=\"ag-root-wrapper\">\n            <ag-header-column-drop></ag-header-column-drop>\n            <div ref=\"rootWrapperBody\" class=\"ag-root-wrapper-body\">\n                <ag-grid-comp ref=\"gridPanel\"></ag-grid-comp>\n                <ag-tool-panel ref=\"toolPanel\"></ag-tool-panel>\n            </div>\n            <ag-status-bar ref=\"statusBar\"></ag-status-bar>\n            <ag-pagination></ag-pagination>\n        </div>";
     __decorate([
         context_1.Autowired('enterprise'),
         __metadata("design:type", Boolean)
@@ -241,6 +246,10 @@ var GridCore = (function (_super) {
         componentAnnotations_1.RefSelector('toolPanel'),
         __metadata("design:type", Object)
     ], GridCore.prototype, "toolPanelComp", void 0);
+    __decorate([
+        componentAnnotations_1.RefSelector('rootWrapperBody'),
+        __metadata("design:type", HTMLElement)
+    ], GridCore.prototype, "eRootWrapperBody", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

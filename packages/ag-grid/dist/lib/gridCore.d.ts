@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v18.0.1
+// Type definitions for ag-grid v18.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { LoggerFactory } from "./logger";
@@ -29,12 +29,13 @@ export declare class GridCore extends Component {
     private statusBar;
     private gridPanel;
     private toolPanelComp;
+    private eRootWrapperBody;
     private finished;
     private doingVirtualPaging;
     private logger;
     constructor();
     init(): void;
-    private addLayoutClass();
+    private onGridSizeChanged();
     getPreferredWidth(): number;
     private addRtlSupport();
     getRootGui(): HTMLElement;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v18.0.1
+ * @version v18.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -596,7 +596,7 @@ var ColumnController = (function () {
     };
     ColumnController.prototype.setColumnWidth = function (key, // @key - the column who's size we want to change
         newWidth, // @newWidth - width in pixels
-        takeFromAdjacent, // @takeFromAdjacent - if user has 'shift' pressed, then pixels are taken from adjacent column
+        shiftKey, // @takeFromAdjacent - if user has 'shift' pressed, then pixels are taken from adjacent column
         finished, // @finished - ends up in the event, tells the user if more events are to come
         source) {
         if (source === void 0) { source = "api"; }
@@ -610,7 +610,12 @@ var ColumnController = (function () {
             ratios: [1],
             columns: [col]
         });
-        if (takeFromAdjacent) {
+        // if user wants to do shift resize by default, then we invert the shift operation
+        var defaultIsShift = this.gridOptionsWrapper.getColResizeDefault() === 'shift';
+        if (defaultIsShift) {
+            shiftKey = !shiftKey;
+        }
+        if (shiftKey) {
             var otherCol = this.getDisplayedColAfter(col);
             if (!otherCol) {
                 return;
@@ -1824,8 +1829,8 @@ var ColumnController = (function () {
             // likewise if changing in/out of pivot mode, we want to maintain the order of the primary cols
             this.orderGridColsLikeLastPrimary();
         }
-        this.putFixedColumnsFirst();
         this.addAutoGroupToGridColumns();
+        this.putFixedColumnsFirst();
         this.setupQuickFilterColumns();
         this.clearDisplayedColumns();
         this.colSpanActive = this.checkColSpanActiveInCols(this.gridColumns);

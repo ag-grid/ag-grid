@@ -1,4 +1,4 @@
-// ag-grid-enterprise v18.0.1
+// ag-grid-enterprise v18.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -22,6 +22,7 @@ var AbstractColumnDropPanel = (function (_super) {
         _this.childColumnComponents = [];
         _this.horizontal = horizontal;
         _this.valueColumn = valueColumn;
+        _this.eColumnDropList = main_1._.loadTemplate('<div class="ag-column-drop-list"></div>');
         return _this;
     }
     AbstractColumnDropPanel.prototype.isHorizontal = function () {
@@ -39,6 +40,7 @@ var AbstractColumnDropPanel = (function (_super) {
         this.guiDestroyFunctions.length = 0;
         this.childColumnComponents.length = 0;
         main_1.Utils.removeAllChildren(this.getGui());
+        main_1.Utils.removeAllChildren(this.eColumnDropList);
     };
     AbstractColumnDropPanel.prototype.init = function (params) {
         this.params = params;
@@ -225,10 +227,20 @@ var AbstractColumnDropPanel = (function (_super) {
         }
     };
     AbstractColumnDropPanel.prototype.refreshGui = function () {
+        // we reset the scroll position after the refresh.
+        // if we don't do this, then the list will always scroll to the top
+        // each time we refresh it. this is because part of the refresh empties
+        // out the list which sets scroll to zero. so the user could be just
+        // reordering the list - we want to prevent the resetting of the scroll.
+        // this is relevant for vertical display only (as horizontal has no scroll)
+        var scrollTop = this.eColumnDropList.scrollTop;
         this.destroyGui();
         this.addIconAndTitleToGui();
         this.addEmptyMessageToGui();
         this.addColumnsToGui();
+        if (!this.isHorizontal()) {
+            this.eColumnDropList.scrollTop = scrollTop;
+        }
     };
     AbstractColumnDropPanel.prototype.getNonGhostColumns = function () {
         var _this = this;
@@ -267,15 +279,13 @@ var AbstractColumnDropPanel = (function (_super) {
                 itemsToAddToGui.push(columnComponent);
             });
         }
-        var eContainer = document.createElement('div');
-        main_1._.addCssClass(eContainer, 'ag-column-drop-list');
-        this.getGui().appendChild(eContainer);
+        this.getGui().appendChild(this.eColumnDropList);
         itemsToAddToGui.forEach(function (columnComponent, index) {
             var needSeparator = index !== 0;
             if (needSeparator) {
-                _this.addArrow(eContainer);
+                _this.addArrow(_this.eColumnDropList);
             }
-            eContainer.appendChild(columnComponent.getGui());
+            _this.eColumnDropList.appendChild(columnComponent.getGui());
         });
     };
     AbstractColumnDropPanel.prototype.createColumnComponent = function (column, ghost) {

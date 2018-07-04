@@ -1,4 +1,4 @@
-// ag-grid-react v18.0.0
+// ag-grid-react v18.1.0
 /// <reference types="react" />
 import { Component } from "react";
 import * as AgGrid from "ag-grid";
@@ -15,7 +15,7 @@ export declare class AgGridReact extends Component<AgGridReactProps, {}> {
     columnApi: AgGrid.ColumnApi;
     protected eGridDiv: HTMLElement;
     constructor(props: any, state: any);
-    render(): any;
+    render(): React.ReactElement<any>;
     createStyleForDiv(): any;
     componentDidMount(): void;
     shouldComponentUpdate(): boolean;

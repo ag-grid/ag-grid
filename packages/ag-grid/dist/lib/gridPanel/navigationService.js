@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v18.0.1
+ * @version v18.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,6 +27,7 @@ var columnController_1 = require("../columnController/columnController");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var NavigationService = (function () {
     function NavigationService() {
+        this.timeLastPageEventProcessed = 0;
     }
     NavigationService.prototype.init = function () {
         this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
@@ -88,7 +89,25 @@ var NavigationService = (function () {
         }
         return processed;
     };
+    // the page up/down keys caused a problem, in that if the user
+    // held the page up/down key down, lots of events got generated,
+    // which clogged up the event queue (as they take time to process)
+    // which in turn froze the grid. Logic below makes sure we wait 100ms
+    // between processing the page up/down events, so when user has finger
+    // held down on key, we ignore page up/down events until 100ms has passed,
+    // which effectively empties the queue of page up/down events.
+    NavigationService.prototype.isTimeSinceLastPageEventToRecent = function () {
+        var now = new Date().getTime();
+        var diff = now - this.timeLastPageEventProcessed;
+        return (diff < 100);
+    };
+    NavigationService.prototype.setTimeLastPageEventProcessed = function () {
+        this.timeLastPageEventProcessed = new Date().getTime();
+    };
     NavigationService.prototype.onPageDown = function (gridCell) {
+        if (this.isTimeSinceLastPageEventToRecent()) {
+            return;
+        }
         var scrollPosition = this.gridPanel.getVScrollPosition();
         var pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
         if (this.gridPanel.isHorizontalScrollShowing()) {
@@ -109,8 +128,12 @@ var NavigationService = (function () {
             scrollIndex = pageLastRow;
         }
         this.navigateTo(scrollIndex, 'top', null, focusIndex, gridCell.column);
+        this.setTimeLastPageEventProcessed();
     };
     NavigationService.prototype.onPageUp = function (gridCell) {
+        if (this.isTimeSinceLastPageEventToRecent()) {
+            return;
+        }
         var scrollPosition = this.gridPanel.getVScrollPosition();
         var pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
         if (this.gridPanel.isHorizontalScrollShowing()) {
@@ -131,6 +154,7 @@ var NavigationService = (function () {
             scrollIndex = firstRow;
         }
         this.navigateTo(scrollIndex, 'bottom', null, focusIndex, gridCell.column);
+        this.setTimeLastPageEventProcessed();
     };
     // common logic to navigate. takes parameters:
     // scrollIndex - what row to vertically scroll to

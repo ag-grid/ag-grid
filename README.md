@@ -12,15 +12,10 @@ This project contains all of the core projects for ag-Grid.
 Please refer to each of the respective sub-projects for more information on each:
 
 [ag-grid: Core ag-Grid Project](./packages/ag-grid/README.md)
-
 [ag-grid-enterprise: ag-Grid Enterprise Project](./packages/ag-grid-enterprise/README.md)
-
 [ag-grid-angular: ag-Grid Angular Project](./packages/ag-grid-angular/README.md)
-
 [ag-grid-react: ag-Grid React Project](./packages/ag-grid-react/README.md)
-
 [ag-grid-vue: ag-Grid Vue Project](./packages/ag-grid-vue/README.md)
-
 [ag-grid-aurelia: ag-Grid Aurelia Project](./packages/ag-grid-aurelia/README.md)
 
 For full working examples (including Polymer and Webcomponents) please refer to [www.ag-grid.com](https://www.ag-grid.com) 
@@ -28,11 +23,8 @@ For full working examples (including Polymer and Webcomponents) please refer to 
 For example projects, please refer to the following repositories:
 
 [ag-Grid Angular CLI Example](https://github.com/ag-grid/ag-grid-angular-cli-example/)
-
 [ag-Grid React Example](https://github.com/ag-grid/ag-grid-react-example/)
-
 [ag-Grid Vue Example](https://github.com/ag-grid/ag-grid-vue-example/)
-
 [ag-Grid Aurelia Example](https://github.com/ag-grid/ag-grid-aurelia-example/)
 
 Asking Questions

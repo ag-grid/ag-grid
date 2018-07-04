@@ -1,4 +1,4 @@
-// ag-grid-enterprise v18.0.1
+// ag-grid-enterprise v18.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -327,9 +327,6 @@ var ServerSideBlock = (function (_super) {
             parentNode: this.parentRowNode
         };
         return params;
-    };
-    ServerSideBlock.prototype.updateSortModel = function (sortModel) {
-        this.params.sortModel = sortModel;
     };
     ServerSideBlock.prototype.isDisplayIndexInBlock = function (displayIndex) {
         return displayIndex >= this.displayIndexStart && displayIndex < this.displayIndexEnd;

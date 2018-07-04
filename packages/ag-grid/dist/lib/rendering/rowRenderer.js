@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v18.0.1
+ * @version v18.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -129,7 +129,11 @@ var RowRenderer = (function (_super) {
         this.flushContainers(rowComps);
     };
     RowRenderer.prototype.onPinnedRowDataChanged = function () {
-        this.redrawAfterModelUpdate();
+        // recycling rows in order to ensure cell editing is not cancelled
+        var params = {
+            recycleRows: true
+        };
+        this.redrawAfterModelUpdate(params);
     };
     RowRenderer.prototype.onModelUpdated = function (refreshEvent) {
         var params = {

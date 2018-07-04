@@ -36,6 +36,8 @@ export class NavigationService {
         this.gridPanel = gridPanel;
     }
 
+    private timeLastPageEventProcessed = 0;
+
     public handlePageScrollingKey(event: KeyboardEvent): boolean {
 
         let key = event.which || event.keyCode;
@@ -95,7 +97,26 @@ export class NavigationService {
         return processed;
     }
 
+    // the page up/down keys caused a problem, in that if the user
+    // held the page up/down key down, lots of events got generated,
+    // which clogged up the event queue (as they take time to process)
+    // which in turn froze the grid. Logic below makes sure we wait 100ms
+    // between processing the page up/down events, so when user has finger
+    // held down on key, we ignore page up/down events until 100ms has passed,
+    // which effectively empties the queue of page up/down events.
+    private isTimeSinceLastPageEventToRecent(): boolean {
+        let now = new Date().getTime();
+        let diff = now - this.timeLastPageEventProcessed;
+        return (diff < 100);
+    }
+
+    private setTimeLastPageEventProcessed(): void {
+        this.timeLastPageEventProcessed = new Date().getTime();
+    }
+
     private onPageDown(gridCell: GridCellDef): void {
+
+        if (this.isTimeSinceLastPageEventToRecent()) { return; }
 
         let scrollPosition = this.gridPanel.getVScrollPosition();
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
@@ -120,9 +141,13 @@ export class NavigationService {
         if (scrollIndex > pageLastRow) { scrollIndex = pageLastRow; }
 
         this.navigateTo(scrollIndex, 'top', null, focusIndex, gridCell.column);
+
+        this.setTimeLastPageEventProcessed();
     }
 
     private onPageUp(gridCell: GridCellDef): void {
+
+        if (this.isTimeSinceLastPageEventToRecent()) { return; }
 
         let scrollPosition = this.gridPanel.getVScrollPosition();
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
@@ -147,6 +172,8 @@ export class NavigationService {
         if (scrollIndex < firstRow) { scrollIndex = firstRow; }
 
         this.navigateTo(scrollIndex, 'bottom', null, focusIndex, gridCell.column);
+
+        this.setTimeLastPageEventProcessed();
     }
 
     // common logic to navigate. takes parameters:

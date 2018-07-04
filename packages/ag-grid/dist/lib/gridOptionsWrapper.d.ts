@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v18.0.1
+// Type definitions for ag-grid v18.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
@@ -40,6 +40,7 @@ export declare class GridOptionsWrapper {
     private autoHeightCalculator;
     private propertyEventService;
     private domDataKey;
+    private layoutElements;
     private agWire(gridApi, columnApi);
     private destroy();
     init(): void;
@@ -136,6 +137,7 @@ export declare class GridOptionsWrapper {
     isDeltaRowDataMode(): boolean;
     isEnsureDomOrder(): boolean;
     isEnableColResize(): boolean;
+    getColResizeDefault(): string;
     isSingleClickEdit(): boolean;
     isSuppressClickEdit(): boolean;
     isStopEditingWhenGridLosesFocus(): boolean;
@@ -239,9 +241,12 @@ export declare class GridOptionsWrapper {
     getProcessCellFromClipboardFunc(): (params: ProcessCellForExportParams) => any;
     getViewportRowModelPageSize(): number;
     getViewportRowModelBufferSize(): number;
+    isServerSideSortingAlwaysResets(): boolean;
     getPostSortFunc(): (rowNodes: RowNode[]) => void;
     getClipboardDeliminator(): string;
     setProperty(key: string, value: any): void;
+    addLayoutElement(element: HTMLElement): void;
+    private updateLayoutClasses();
     addEventListener(key: string, listener: Function): void;
     static checkEventDeprecation(eventName: string): void;
     removeEventListener(key: string, listener: Function): void;
@@ -254,7 +259,6 @@ export declare class GridOptionsWrapper {
     isExternalFilterPresent(): boolean;
     doesExternalFilterPass(node: RowNode): boolean;
     getDocument(): Document;
-    getLayoutInterval(): number;
     getMinColWidth(): number;
     getMaxColWidth(): number;
     getColWidth(): number;

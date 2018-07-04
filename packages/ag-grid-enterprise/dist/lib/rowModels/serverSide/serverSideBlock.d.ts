@@ -1,4 +1,4 @@
-// ag-grid-enterprise v18.0.1
+// ag-grid-enterprise v18.1.0
 import { NumberSequence, RowNodeBlock, RowNode, RowBounds } from "ag-grid";
 import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
 export declare class ServerSideBlock extends RowNodeBlock {
@@ -43,10 +43,6 @@ export declare class ServerSideBlock extends RowNodeBlock {
     }): void;
     private forEachRowNode(virtualRowCount, callback);
     private createLoadParams();
-    updateSortModel(sortModel: {
-        colId: string;
-        sort: string;
-    }[]): void;
     isDisplayIndexInBlock(displayIndex: number): boolean;
     isBlockBefore(displayIndex: number): boolean;
     getDisplayIndexStart(): number;

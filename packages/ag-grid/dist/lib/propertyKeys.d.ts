@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v18.0.1
+// Type definitions for ag-grid v18.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class PropertyKeys {
@@ -9,4 +9,5 @@ export declare class PropertyKeys {
     static BOOLEAN_PROPERTIES: string[];
     static FUNCTION_PROPERTIES: string[];
     static ALL_PROPERTIES: string[];
+    static FRAMEWORK_PROPERTIES: string[];
 }

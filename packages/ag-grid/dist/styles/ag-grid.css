@@ -50,7 +50,7 @@ ag-grid-aurelia {
   -ms-flex-direction: row;
   flex-direction: row; }
 
-.ag-layout-normal .ag-root-wrapper-body {
+.ag-layout-normal.ag-root-wrapper-body {
   -webkit-box-flex: 1;
   -ms-flex-positive: 1;
   flex-grow: 1;
@@ -69,7 +69,7 @@ ag-grid-aurelia {
   -ms-flex: 1;
   flex: 1; }
 
-.ag-layout-normal .ag-root {
+.ag-layout-normal.ag-root {
   height: 100%;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -294,10 +294,10 @@ ag-grid-aurelia {
   overflow-x: hidden;
   max-height: 100vh; }
 
-.ag-layout-auto-height .ag-body-container {
+.ag-layout-auto-height.ag-body-container {
   min-height: 50px; }
 
-.ag-layout-auto-height .ag-overlay-no-rows-wrapper {
+.ag-layout-auto-height.ag-overlay-no-rows-wrapper {
   padding-top: 30px; }
 
 .ag-body {
@@ -308,20 +308,20 @@ ag-grid-aurelia {
   display: flex;
   position: relative; }
 
-.ag-layout-normal .ag-body {
+.ag-layout-normal.ag-body {
   -webkit-box-flex: 1;
   -ms-flex: 1;
   flex: 1;
   height: 0px;
   min-height: 0px; }
 
-ag-rtl .ag-body {
+.ag-rtl .ag-body {
   -webkit-box-orient: horizontal;
   -webkit-box-direction: reverse;
   -ms-flex-direction: row-reverse;
   flex-direction: row-reverse; }
 
-ag-ltr .ag-body {
+.ag-ltr .ag-body {
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
   -ms-flex-direction: row;
@@ -386,7 +386,7 @@ ag-ltr .ag-body {
   -ms-flex: 1;
   flex: 1; }
 
-.ag-layout-normal .ag-floating-top-viewport {
+.ag-layout-normal.ag-floating-top-viewport {
   height: 100%; }
 
 .ag-floating-top-container {
@@ -471,7 +471,7 @@ ag-ltr .ag-body {
   overflow-x: auto;
   overflow-y: auto; }
 
-.ag-layout-normal .ag-body-viewport {
+.ag-layout-normal.ag-body-viewport {
   height: 100%; }
 
 .ag-full-width-viewport-wrapper {
@@ -604,7 +604,8 @@ ag-ltr .ag-body {
   float: left; }
 
 .ag-column-drop-horizontal {
-  white-space: nowrap; }
+  white-space: nowrap;
+  overflow: hidden; }
   .ag-column-drop-horizontal .ag-column-drop-cell {
     display: inline-block; }
   .ag-column-drop-horizontal .ag-column-drop-empty-message {
@@ -662,9 +663,6 @@ ag-ltr .ag-body {
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%; }
-
-.ag-large .ag-root {
-  font-size: 20px; }
 
 .ag-popup-editor {
   position: absolute;

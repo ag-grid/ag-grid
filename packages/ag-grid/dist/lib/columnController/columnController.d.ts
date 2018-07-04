@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v18.0.1
+// Type definitions for ag-grid v18.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroup } from "../entities/columnGroup";
@@ -16,12 +16,12 @@ export interface ColumnResizeSet {
 }
 export interface ColumnState {
     colId: string;
-    hide: boolean;
-    aggFunc: string | IAggFunc;
-    width: number;
-    pivotIndex: number;
-    pinned: string;
-    rowGroupIndex: number;
+    hide?: boolean;
+    aggFunc?: string | IAggFunc;
+    width?: number;
+    pivotIndex?: number;
+    pinned?: boolean | string | "left" | "right";
+    rowGroupIndex?: number;
 }
 export declare class ColumnController {
     private gridOptionsWrapper;
@@ -139,7 +139,7 @@ export declare class ColumnController {
     removeValueColumns(keys: (string | Column)[], source?: ColumnEventType): void;
     private normaliseColumnWidth(column, newWidth);
     private getPrimaryOrGridColumn(key);
-    setColumnWidth(key: string | Column, newWidth: number, takeFromAdjacent: boolean, finished: boolean, source?: ColumnEventType): void;
+    setColumnWidth(key: string | Column, newWidth: number, shiftKey: boolean, finished: boolean, source?: ColumnEventType): void;
     private checkMinAndMaxWidthsForSet(columnResizeSet);
     resizeColumnSets(resizeSets: ColumnResizeSet[], finished: boolean, source: ColumnEventType): void;
     setColumnAggFunc(column: Column, aggFunc: string, source?: ColumnEventType): void;

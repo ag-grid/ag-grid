@@ -1,4 +1,4 @@
-// ag-grid-enterprise v18.0.1
+// ag-grid-enterprise v18.1.0
 import { BeanStub, IServerSideDatasource, IServerSideRowModel, RowNode, RowBounds } from "ag-grid";
 export declare class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
     private gridOptionsWrapper;
@@ -24,6 +24,7 @@ export declare class ServerSideRowModel extends BeanStub implements IServerSideR
     isLastRowFound(): boolean;
     private onColumnEverything();
     private onFilterChanged();
+    private findChangedColumnsInSort(newSortModel, oldSortModel);
     private onSortChanged();
     private onValueChanged();
     private onColumnRowGroupChanged();
@@ -60,5 +61,6 @@ export declare class ServerSideRowModel extends BeanStub implements IServerSideR
     getBlockState(): any;
     isRowPresent(rowNode: RowNode): boolean;
     private extractSortModel();
+    private isSortingWithValueColumn(changedColumnsInSort);
     private cacheExists();
 }

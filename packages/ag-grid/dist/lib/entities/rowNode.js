@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v18.0.1
+ * @version v18.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -241,6 +241,9 @@ var RowNode = (function () {
         }
         var event = this.createGlobalRowEvent(events_1.Events.EVENT_ROW_GROUP_OPENED);
         this.mainEventService.dispatchEvent(event);
+        if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
+            this.gridApi.redrawRows({ rowNodes: [this] });
+        }
     };
     RowNode.prototype.createGlobalRowEvent = function (type) {
         var event = {
@@ -331,6 +334,7 @@ var RowNode = (function () {
         callback(this);
     };
     // + rowController.updateGroupsInSelection()
+    // + selectionController.calculatedSelectedForAllGroupNodes()
     RowNode.prototype.calculateSelectedFromChildren = function () {
         var atLeastOneSelected = false;
         var atLeastOneDeSelected = false;
@@ -370,22 +374,16 @@ var RowNode = (function () {
         }
         this.selectThisNode(newSelectedValue);
     };
-    RowNode.prototype.calculateSelectedFromChildrenBubbleUp = function () {
-        this.calculateSelectedFromChildren();
-        if (this.parent) {
-            this.parent.calculateSelectedFromChildrenBubbleUp();
-        }
-    };
     RowNode.prototype.setSelectedInitialValue = function (selected) {
         this.selected = selected;
     };
-    RowNode.prototype.setSelected = function (newValue, clearSelection, tailingNodeInSequence) {
+    RowNode.prototype.setSelected = function (newValue, clearSelection, suppressFinishActions) {
         if (clearSelection === void 0) { clearSelection = false; }
-        if (tailingNodeInSequence === void 0) { tailingNodeInSequence = false; }
+        if (suppressFinishActions === void 0) { suppressFinishActions = false; }
         this.setSelectedParams({
             newValue: newValue,
             clearSelection: clearSelection,
-            tailingNodeInSequence: tailingNodeInSequence,
+            suppressFinishActions: suppressFinishActions,
             rangeSelect: false
         });
     };
@@ -397,7 +395,7 @@ var RowNode = (function () {
         var groupSelectsChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
         var newValue = params.newValue === true;
         var clearSelection = params.clearSelection === true;
-        var tailingNodeInSequence = params.tailingNodeInSequence === true;
+        var suppressFinishActions = params.suppressFinishActions === true;
         var rangeSelect = params.rangeSelect === true;
         // groupSelectsFiltered only makes sense when group selects children
         var groupSelectsFiltered = groupSelectsChildren && (params.groupSelectsFiltered === true);
@@ -438,29 +436,14 @@ var RowNode = (function () {
             updatedCount += this.selectChildNodes(newValue, groupSelectsFiltered);
         }
         // clear other nodes if not doing multi select
-        var actionWasOnThisNode = !tailingNodeInSequence;
-        if (actionWasOnThisNode) {
-            if (newValue && (clearSelection || !this.gridOptionsWrapper.isRowSelectionMulti())) {
+        if (!suppressFinishActions) {
+            var clearOtherNodes = newValue && (clearSelection || !this.gridOptionsWrapper.isRowSelectionMulti());
+            if (clearOtherNodes) {
                 updatedCount += this.selectionController.clearOtherNodes(this);
             }
             // only if we selected something, then update groups and fire events
             if (updatedCount > 0) {
-                // update groups
-                if (groupSelectsFiltered) {
-                    // if the group was selecting filtered, then all nodes above and or below
-                    // this node could have check, unchecked or intermediate, so easiest is to
-                    // recalculate selected state for all group nodes
-                    this.calculatedSelectedForAllGroupNodes();
-                }
-                else {
-                    // if no selecting filtered, then everything below the group node was either
-                    // selected or not selected, no intermediate, so no need to check items below
-                    // this one, just the parents all the way up to the root
-                    if (groupSelectsChildren && this.parent) {
-                        this.parent.calculateSelectedFromChildrenBubbleUp();
-                    }
-                }
-                // fire events
+                this.selectionController.updateGroupsFromChildrenSelections();
                 // this is the very end of the 'action node', so we are finished all the updates,
                 // include any parent / child changes that this method caused
                 var event_1 = {
@@ -484,7 +467,7 @@ var RowNode = (function () {
         var updatedCount = 0;
         var groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
         var lastSelectedNode = this.selectionController.getLastSelectedNode();
-        var nodesToSelect = this.rowModel.getNodesInRangeForSelection(lastSelectedNode, this);
+        var nodesToSelect = this.rowModel.getNodesInRangeForSelection(this, lastSelectedNode);
         nodesToSelect.forEach(function (rowNode) {
             if (rowNode.group && groupsSelectChildren) {
                 return;
@@ -494,9 +477,7 @@ var RowNode = (function () {
                 updatedCount++;
             }
         });
-        if (groupsSelectChildren) {
-            this.calculatedSelectedForAllGroupNodes();
-        }
+        this.selectionController.updateGroupsFromChildrenSelections();
         var event = {
             type: events_1.Events.EVENT_SELECTION_CHANGED,
             api: this.gridApi,
@@ -514,21 +495,6 @@ var RowNode = (function () {
             parentNode = parentNode.parent;
         }
         return false;
-    };
-    RowNode.prototype.calculatedSelectedForAllGroupNodes = function () {
-        // we have to make sure we do this dept first, as parent nodes
-        // will have dependencies on the children having correct values
-        var clientSideRowModel = this.rowModel;
-        clientSideRowModel.getTopLevelNodes().forEach(function (topLevelNode) {
-            if (topLevelNode.group) {
-                topLevelNode.depthFirstSearch(function (childNode) {
-                    if (childNode.group) {
-                        childNode.calculateSelectedFromChildren();
-                    }
-                });
-                topLevelNode.calculateSelectedFromChildren();
-            }
-        });
     };
     RowNode.prototype.selectThisNode = function (newValue) {
         if (!this.selectable || this.selected === newValue)
@@ -551,7 +517,7 @@ var RowNode = (function () {
             updatedCount += children[i].setSelectedParams({
                 newValue: newValue,
                 clearSelection: false,
-                tailingNodeInSequence: true,
+                suppressFinishActions: true,
                 groupSelectsFiltered: groupSelectsFiltered
             });
         }

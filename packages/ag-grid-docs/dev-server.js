@@ -2,6 +2,7 @@ const os = require('os');
 const fs = require('fs');
 const cp = require('child_process');
 const path = require('path');
+const run = require('gulp-run');
 const express = require('express');
 const realWebpack = require('webpack');
 const proxy = require('express-http-proxy');
@@ -105,15 +106,25 @@ function serveAndWatchVue(app) {
 function launchTSCCheck() {
     if (!fs.existsSync('_dev')) {
         console.log('_dev not present, creating links...');
-        const linkType = 'symbolic';
         mkdirp('_dev/ag-grid/dist');
-        lnk('../ag-grid/exports.ts', '_dev/ag-grid/', {force: true, type: linkType, rename: 'main.ts'});
-        lnk('../ag-grid/src/ts', '_dev/ag-grid/dist', {force: true, type: linkType, rename: 'lib'});
-        lnk('../ag-grid-enterprise/', '_dev', {force: true, type: linkType});
-        lnk('../ag-grid-react/', '_dev', {force: true, type: linkType});
-        lnk('../ag-grid-angular/exports.ts', '_dev/ag-grid-angular/', {force: true, type: linkType, rename: 'main.ts'});
-        lnk('../ag-grid-angular/', '_dev', {force: true, type: linkType});
-        lnk('../ag-grid-vue/', '_dev', {force: true, type: linkType});
+
+        if(WINDOWS) {
+            console.log('creating window links...');
+            run('create-windows-links.bat').exec();
+        } else {
+            const linkType = 'symbolic';
+            lnk('../ag-grid/exports.ts', '_dev/ag-grid/', {force: true, type: linkType, rename: 'main.ts'});
+            lnk('../ag-grid/src/ts', '_dev/ag-grid/dist', {force: true, type: linkType, rename: 'lib'});
+            lnk('../ag-grid-enterprise/', '_dev', {force: true, type: linkType});
+            lnk('../ag-grid-react/', '_dev', {force: true, type: linkType});
+            lnk('../ag-grid-angular/exports.ts', '_dev/ag-grid-angular/', {
+                force: true,
+                type: linkType,
+                rename: 'main.ts'
+            });
+            lnk('../ag-grid-angular/', '_dev', {force: true, type: linkType});
+            lnk('../ag-grid-vue/', '_dev', {force: true, type: linkType});
+        }
     }
 
     const tscPath = WINDOWS ? 'node_modules\\.bin\\tsc.cmd' : 'node_modules/.bin/tsc';

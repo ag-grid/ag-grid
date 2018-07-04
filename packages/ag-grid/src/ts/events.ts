@@ -63,6 +63,11 @@ export interface DragEvent extends AgGridEvent {
 export interface DragStartedEvent extends DragEvent {}
 export interface DragStoppedEvent extends DragEvent {}
 
+export interface GridSizeChangedEvent extends AgGridEvent {
+    clientWidth: number;
+    clientHeight: number;
+}
+
 export interface RowDragEvent extends AgGridEvent {
     node: RowNode,
     y: number,

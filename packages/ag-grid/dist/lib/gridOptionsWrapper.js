@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v18.0.1
+ * @version v18.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -67,6 +67,7 @@ var GridOptionsWrapper = (function () {
     function GridOptionsWrapper() {
         this.propertyEventService = new eventService_1.EventService();
         this.domDataKey = '__AG_' + Math.random().toString();
+        this.layoutElements = [];
     }
     GridOptionsWrapper_1 = GridOptionsWrapper;
     GridOptionsWrapper.prototype.agWire = function (gridApi, columnApi) {
@@ -104,6 +105,7 @@ var GridOptionsWrapper = (function () {
         if (this.isGroupRemoveSingleChildren() && this.isGroupHideOpenParents()) {
             console.warn('ag-Grid: groupRemoveSingleChildren and groupHideOpenParents do not work with each other, you need to pick one. And don\'t ask us how to us these together on our support forum either you will get the same answer!');
         }
+        this.addEventListener(GridOptionsWrapper_1.PROP_GRID_AUTO_HEIGHT, this.updateLayoutClasses.bind(this));
     };
     GridOptionsWrapper.prototype.checkColumnDefProperties = function () {
         var _this = this;
@@ -111,13 +113,13 @@ var GridOptionsWrapper = (function () {
             return;
         this.gridOptions.columnDefs.forEach(function (colDef) {
             var userProperties = Object.getOwnPropertyNames(colDef);
-            var validProperties = colDefUtil_1.ColDefUtil.ALL_PROPERTIES;
+            var validProperties = colDefUtil_1.ColDefUtil.ALL_PROPERTIES.concat(colDefUtil_1.ColDefUtil.FRAMEWORK_PROPERTIES);
             _this.checkProperties(userProperties, validProperties, validProperties, 'colDef', 'https://www.ag-grid.com/javascript-grid-column-properties/');
         });
     };
     GridOptionsWrapper.prototype.checkGridOptionsProperties = function () {
         var userProperties = Object.getOwnPropertyNames(this.gridOptions);
-        var validProperties = propertyKeys_1.PropertyKeys.ALL_PROPERTIES;
+        var validProperties = propertyKeys_1.PropertyKeys.ALL_PROPERTIES.concat(propertyKeys_1.PropertyKeys.FRAMEWORK_PROPERTIES);
         Object.keys(eventKeys_1.Events).forEach(function (it) { return validProperties.push(componentUtil_1.ComponentUtil.getCallbackForEvent(eventKeys_1.Events[it])); });
         var validPropertiesAndExceptions = validProperties.concat('api', 'columnApi');
         this.checkProperties(userProperties, validPropertiesAndExceptions, validProperties, 'gridOptions', 'https://www.ag-grid.com/javascript-grid-properties/');
@@ -257,6 +259,7 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.isDeltaRowDataMode = function () { return isTrue(this.gridOptions.deltaRowDataMode); };
     GridOptionsWrapper.prototype.isEnsureDomOrder = function () { return isTrue(this.gridOptions.ensureDomOrder); };
     GridOptionsWrapper.prototype.isEnableColResize = function () { return isTrue(this.gridOptions.enableColResize); };
+    GridOptionsWrapper.prototype.getColResizeDefault = function () { return this.gridOptions.colResizeDefault; };
     GridOptionsWrapper.prototype.isSingleClickEdit = function () { return isTrue(this.gridOptions.singleClickEdit); };
     GridOptionsWrapper.prototype.isSuppressClickEdit = function () { return isTrue(this.gridOptions.suppressClickEdit); };
     GridOptionsWrapper.prototype.isStopEditingWhenGridLosesFocus = function () { return isTrue(this.gridOptions.stopEditingWhenGridLosesFocus); };
@@ -378,6 +381,7 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.getViewportRowModelBufferSize = function () { return zeroOrGreater(this.gridOptions.viewportRowModelBufferSize, DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE); };
     // public getCellRenderers(): {[key: string]: {new(): ICellRenderer} | ICellRendererFunc} { return this.gridOptions.cellRenderers; }
     // public getCellEditors(): {[key: string]: {new(): ICellEditor}} { return this.gridOptions.cellEditors; }
+    GridOptionsWrapper.prototype.isServerSideSortingAlwaysResets = function () { return isTrue(this.gridOptions.serverSideSortingAlwaysResets); };
     GridOptionsWrapper.prototype.getPostSortFunc = function () { return this.gridOptions.postSort; };
     GridOptionsWrapper.prototype.getClipboardDeliminator = function () {
         return utils_1.Utils.exists(this.gridOptions.clipboardDeliminator) ? this.gridOptions.clipboardDeliminator : '\t';
@@ -395,14 +399,24 @@ var GridOptionsWrapper = (function () {
             this.propertyEventService.dispatchEvent(event_1);
         }
     };
+    // this logic is repeated in lots of places. any element that had different CSS
+    // dependent on the layout needs to have the layout class added ot it.
+    GridOptionsWrapper.prototype.addLayoutElement = function (element) {
+        this.layoutElements.push(element);
+        this.updateLayoutClasses();
+    };
+    GridOptionsWrapper.prototype.updateLayoutClasses = function () {
+        var autoHeight = this.isGridAutoHeight();
+        this.layoutElements.forEach(function (e) {
+            utils_1.Utils.addOrRemoveCssClass(e, 'ag-layout-auto-height', autoHeight);
+            utils_1.Utils.addOrRemoveCssClass(e, 'ag-layout-normal', !autoHeight);
+        });
+    };
     GridOptionsWrapper.prototype.addEventListener = function (key, listener) {
         GridOptionsWrapper_1.checkEventDeprecation(key);
         this.propertyEventService.addEventListener(key, listener);
     };
     GridOptionsWrapper.checkEventDeprecation = function (eventName) {
-        if (eventName === eventKeys_1.Events.DEPRECATED_EVENT_GRID_SIZE_CHANGED) {
-            console.warn("ag-Grid: Since ag-Grid v18 event " + eventKeys_1.Events.DEPRECATED_EVENT_GRID_SIZE_CHANGED + " no longer exists.");
-        }
         if (eventName === 'floatingRowDataChanged') {
             console.warn('ag-Grid: floatingRowDataChanged is now called pinnedRowDataChanged');
         }
@@ -482,14 +496,6 @@ var GridOptionsWrapper = (function () {
         }
         else {
             return document;
-        }
-    };
-    GridOptionsWrapper.prototype.getLayoutInterval = function () {
-        if (typeof this.gridOptions.layoutInterval === 'number') {
-            return this.gridOptions.layoutInterval;
-        }
-        else {
-            return constants_1.Constants.LAYOUT_INTERVAL;
         }
     };
     GridOptionsWrapper.prototype.getMinColWidth = function () {
@@ -647,6 +653,9 @@ var GridOptionsWrapper = (function () {
         if (options.rowModelType === 'enterprise') {
             console.warn("ag-grid: since version 18.x, The Enterprise Row Model has been renamed to the Server Side Row Model, set rowModelType='serverSide' instead.");
             options.rowModelType = 'serverSide';
+        }
+        if (options.layoutInterval) {
+            console.warn("ag-grid: since version 18.x, layoutInterval is no longer a property. This is because the grid now uses CSS Flex for layout.");
         }
     };
     GridOptionsWrapper.prototype.getLocaleTextFunc = function () {

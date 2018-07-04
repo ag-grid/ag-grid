@@ -1,4 +1,4 @@
-// ag-grid-aurelia v18.0.0
+// ag-grid-aurelia v18.1.0
 import { ColDef } from "ag-grid/main";
 import { AgCellTemplate, AgEditorTemplate, AgFilterTemplate, AgHeaderGroupTemplate, AgHeaderTemplate, AgPinnedRowTemplate } from "./agTemplate";
 export declare class AgGridColumn {
@@ -13,6 +13,6 @@ export declare class AgGridColumn {
     constructor();
     hasChildColumns(): boolean;
     toColDef(): ColDef;
-    private static getChildColDefs(childColumns);
-    private createColDefFromGridColumn();
+    private static getChildColDefs;
+    private createColDefFromGridColumn;
 }

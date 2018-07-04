@@ -19,13 +19,15 @@ import {GridApi} from "./gridApi";
 import {IToolPanel} from "./interfaces/iToolPanel";
 import {RefSelector} from "./widgets/componentAnnotations";
 import {IStatusBar} from "./interfaces/iStatusBar";
+import {observeResize} from "./resizeObserver";
+import {BodyHeightChangedEvent, Events, GridSizeChangedEvent} from "./events";
 
 @Bean('gridCore')
 export class GridCore extends Component {
 
     private static TEMPLATE_NORMAL =
         `<div class="ag-root-wrapper">
-            <div class="ag-root-wrapper-body">
+            <div class="ag-root-wrapper-body" ref="rootWrapperBody">
                 <ag-grid-comp ref="gridPanel"></ag-grid-comp>
             </div>
             <ag-pagination></ag-pagination>
@@ -34,7 +36,7 @@ export class GridCore extends Component {
     private static TEMPLATE_ENTERPRISE =
         `<div class="ag-root-wrapper">
             <ag-header-column-drop></ag-header-column-drop>
-            <div class="ag-root-wrapper-body">
+            <div ref="rootWrapperBody" class="ag-root-wrapper-body">
                 <ag-grid-comp ref="gridPanel"></ag-grid-comp>
                 <ag-tool-panel ref="toolPanel"></ag-tool-panel>
             </div>
@@ -70,6 +72,7 @@ export class GridCore extends Component {
     @RefSelector('statusBar') private statusBar: IStatusBar;
     @RefSelector('gridPanel') private gridPanel: GridPanel;
     @RefSelector('toolPanel') private toolPanelComp: IToolPanel;
+    @RefSelector('rootWrapperBody') private eRootWrapperBody: HTMLElement;
 
     private finished: boolean;
     private doingVirtualPaging: boolean;
@@ -94,8 +97,7 @@ export class GridCore extends Component {
             this.statusBar.registerGridPanel(this.gridPanel);
         }
 
-        this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_GRID_AUTO_HEIGHT, this.addLayoutClass.bind(this));
-        this.addLayoutClass();
+        this.gridOptionsWrapper.addLayoutElement(this.getGui());
 
         // see what the grid options are for default of toolbar
         this.showToolPanel(this.gridOptionsWrapper.isShowToolPanel());
@@ -119,16 +121,22 @@ export class GridCore extends Component {
         this.addDestroyFunc( () => this.finished = true );
 
         this.logger.log('ready');
+
+        this.gridOptionsWrapper.addLayoutElement(this.eRootWrapperBody);
+
+        const unsubscribeFromResize = observeResize(this.eGridDiv, this.onGridSizeChanged.bind(this) );
+        this.addDestroyFunc(() => unsubscribeFromResize() );
     }
 
-    private addLayoutClass(): void {
-        // parts of the CSS need to know if we are in 'for print' mode or not,
-        // so we add a class to allow applying CSS based on this.
-        let autoHeight = this.gridOptionsWrapper.isGridAutoHeight();
-        this.addOrRemoveCssClass('ag-layout-auto-height', autoHeight);
-        this.addOrRemoveCssClass('ag-layout-normal', !autoHeight);
-        // kept ag-scrolls to limit breaking changes, ag-scrolls was renamed to ag-layout-normal
-        this.addOrRemoveCssClass('ag-scrolls', !autoHeight);
+    private onGridSizeChanged(): void {
+        let event: GridSizeChangedEvent = {
+            type: Events.EVENT_GRID_SIZE_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            clientWidth: this.eGridDiv.clientWidth,
+            clientHeight: this.eGridDiv.clientHeight
+        };
+        this.eventService.dispatchEvent(event);
     }
 
     public getPreferredWidth(): number {

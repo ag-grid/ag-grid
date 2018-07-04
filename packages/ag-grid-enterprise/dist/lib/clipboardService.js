@@ -1,4 +1,4 @@
-// ag-grid-enterprise v18.0.1
+// ag-grid-enterprise v18.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -474,7 +474,12 @@ var ClipboardService = (function () {
                 element.value = data;
                 element.select();
                 element.focus();
-                return document.execCommand('copy');
+                var result = document.execCommand('copy');
+                if (!result) {
+                    console.warn('ag-grid: Browser did not allow document.execCommand(\'copy\'). Ensure ' +
+                        'api.copySelectedRowsToClipboard() is invoked via a user event, i.e. button click, otherwise ' +
+                        'the browser will prevent it for security reasons.');
+                }
             });
         }
     };
@@ -489,11 +494,10 @@ var ClipboardService = (function () {
         var guiRoot = this.gridCore.getRootGui();
         guiRoot.appendChild(eTempInput);
         try {
-            var result = callbackNow(eTempInput);
-            this.logger.log('Clipboard operation result: ' + result);
+            callbackNow(eTempInput);
         }
         catch (err) {
-            this.logger.log('Browser doesn\t support document.execComment(\'copy\') for clipboard operations');
+            console.warn('ag-grid: Browser does not support document.execCommand(\'copy\') for clipboard operations');
         }
         //It needs 100 otherwise OS X seemed to not always be able to paste... Go figure...
         if (callbackAfter) {

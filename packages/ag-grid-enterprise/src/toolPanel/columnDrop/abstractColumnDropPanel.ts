@@ -62,6 +62,12 @@ export abstract class AbstractColumnDropPanel extends Component {
     private horizontal: boolean;
     private valueColumn: boolean;
 
+    // when this component is refreshed, we rip out all DOM elements and build it up
+    // again from scratch. one exception is eColumnDropList, as we want to maintain the
+    // scroll position between the refreshes, so we create one instance of it here and
+    // reuse it.
+    private eColumnDropList: HTMLElement;
+
     protected abstract isColumnDroppable(column: Column): boolean;
     protected abstract updateColumns(columns: Column[]): void;
     protected abstract getExistingColumns(): Column[];
@@ -71,6 +77,8 @@ export abstract class AbstractColumnDropPanel extends Component {
         super(`<div class="ag-column-drop ag-font-style ag-column-drop-${horizontal?'horizontal':'vertical'} ag-column-drop-${name}"></div>`);
         this.horizontal = horizontal;
         this.valueColumn = valueColumn;
+
+        this.eColumnDropList = _.loadTemplate('<div class="ag-column-drop-list"></div>');
     }
 
     public isHorizontal(): boolean {
@@ -91,6 +99,7 @@ export abstract class AbstractColumnDropPanel extends Component {
         this.guiDestroyFunctions.length = 0;
         this.childColumnComponents.length = 0;
         Utils.removeAllChildren(this.getGui());
+        Utils.removeAllChildren(this.eColumnDropList);
     }
 
     public init(params: AbstractColumnDropPanelParams): void {
@@ -308,11 +317,24 @@ export abstract class AbstractColumnDropPanel extends Component {
     }
 
     public refreshGui(): void {
+
+        // we reset the scroll position after the refresh.
+        // if we don't do this, then the list will always scroll to the top
+        // each time we refresh it. this is because part of the refresh empties
+        // out the list which sets scroll to zero. so the user could be just
+        // reordering the list - we want to prevent the resetting of the scroll.
+        // this is relevant for vertical display only (as horizontal has no scroll)
+        let scrollTop = this.eColumnDropList.scrollTop;
+
         this.destroyGui();
 
         this.addIconAndTitleToGui();
         this.addEmptyMessageToGui();
         this.addColumnsToGui();
+
+        if (!this.isHorizontal()) {
+            this.eColumnDropList.scrollTop = scrollTop;
+        }
     }
 
     private getNonGhostColumns(): Column[] {
@@ -352,16 +374,14 @@ export abstract class AbstractColumnDropPanel extends Component {
             });
         }
 
-        let eContainer = document.createElement('div');
-        _.addCssClass(eContainer, 'ag-column-drop-list');
-        this.getGui().appendChild(eContainer);
+        this.getGui().appendChild(this.eColumnDropList);
 
         itemsToAddToGui.forEach( (columnComponent: ColumnComponent, index: number) => {
             let needSeparator = index!==0;
             if (needSeparator) {
-                this.addArrow(eContainer);
+                this.addArrow(this.eColumnDropList);
             }
-            eContainer.appendChild(columnComponent.getGui());
+            this.eColumnDropList.appendChild(columnComponent.getGui());
         });
 
     }

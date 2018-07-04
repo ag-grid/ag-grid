@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v18.0.1
+// Type definitions for ag-grid v18.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
@@ -52,6 +52,7 @@ export interface GridOptions {
     rowBuffer?: number;
     enableRtl?: boolean;
     enableColResize?: boolean;
+    colResizeDefault?: string;
     enableCellExpressions?: boolean;
     enableSorting?: boolean;
     enableServerSideSorting?: boolean;
@@ -113,7 +114,6 @@ export interface GridOptions {
         [key: string]: IAggFunc;
     };
     suppressColumnVirtualisation?: boolean;
-    layoutInterval?: number;
     functionsReadOnly?: boolean;
     functionsPassive?: boolean;
     maxConcurrentDatasourceRequests?: number;
@@ -147,6 +147,7 @@ export interface GridOptions {
     minColWidth?: number;
     maxColWidth?: number;
     suppressPropertyNamesCheck?: boolean;
+    serverSideSortingAlwaysResets?: boolean;
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/

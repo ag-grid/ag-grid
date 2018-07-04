@@ -277,6 +277,13 @@ export class GridPanel extends Component {
         // then they overlay on top of the div, so we clip some extra blank space instead.
         this.scrollClipWidth = this.scrollWidth > 0 ? this.scrollWidth : 20;
 
+        // all of these element have different CSS when layout changes
+        this.gridOptionsWrapper.addLayoutElement(this.getGui());
+        this.gridOptionsWrapper.addLayoutElement(this.eBody);
+        this.gridOptionsWrapper.addLayoutElement(this.eBodyViewport);
+        this.gridOptionsWrapper.addLayoutElement(this.eTopViewport);
+        this.gridOptionsWrapper.addLayoutElement(this.eBodyContainer);
+
         this.suppressScrollOnFloatingRow();
         this.setupRowAnimationCssClass();
         this.buildRowContainerComponents();
@@ -330,9 +337,12 @@ export class GridPanel extends Component {
             this.rangeController.registerGridComp(this);
         }
 
-        const unsubscribeFromResize = observeResize(this.eBodyViewport, this.checkViewportAndScrolls.bind(this) );
-
+        const unsubscribeFromResize = observeResize(this.eBodyViewport, this.onBodyViewportResized.bind(this) );
         this.addDestroyFunc(() => unsubscribeFromResize() );
+    }
+
+    private onBodyViewportResized(): void {
+        this.checkViewportAndScrolls();
     }
 
     // used by ColumnAnimationService
@@ -965,11 +975,15 @@ export class GridPanel extends Component {
     }
 
     public showLoadingOverlay() {
-        this.overlayWrapper.showLoadingOverlay(this.eOverlay);
+        if (!this.gridOptionsWrapper.isSuppressLoadingOverlay()) {
+            this.overlayWrapper.showLoadingOverlay(this.eOverlay);
+        }
     }
 
     public showNoRowsOverlay() {
-        this.overlayWrapper.showNoRowsOverlay(this.eOverlay);
+        if (!this.gridOptionsWrapper.isSuppressNoRowsOverlay()) {
+            this.overlayWrapper.showNoRowsOverlay(this.eOverlay);
+        }
     }
 
     public hideOverlay() {

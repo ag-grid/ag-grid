@@ -19,6 +19,7 @@ var AgGridNg2 = (function () {
             resolve(true);
         });
         // @START@
+        this.colResizeDefault = undefined;
         this.slaveGrids = undefined;
         this.alignedGrids = undefined;
         this.rowData = undefined;
@@ -76,7 +77,6 @@ var AgGridNg2 = (function () {
         this.maxColWidth = undefined;
         this.viewportRowModelPageSize = undefined;
         this.viewportRowModelBufferSize = undefined;
-        this.layoutInterval = undefined;
         this.autoSizePadding = undefined;
         this.maxBlocksInCache = undefined;
         this.maxConcurrentDatasourceRequests = undefined;
@@ -255,6 +255,7 @@ var AgGridNg2 = (function () {
         this.enableOldSetFilterModel = undefined;
         this.suppressRowHoverHighlight = undefined;
         this.gridAutoHeight = undefined;
+        this.serverSideSortingAlwaysResets = undefined;
         this.columnEverythingChanged = new core_1.EventEmitter();
         this.newColumnsLoaded = new core_1.EventEmitter();
         this.columnPivotModeChanged = new core_1.EventEmitter();
@@ -430,6 +431,7 @@ AgGridNg2.ctorParameters = function () { return [
 AgGridNg2.propDecorators = {
     'columns': [{ type: core_1.ContentChildren, args: [agGridColumn_1.AgGridColumn,] },],
     'gridOptions': [{ type: core_1.Input },],
+    'colResizeDefault': [{ type: core_1.Input },],
     'slaveGrids': [{ type: core_1.Input },],
     'alignedGrids': [{ type: core_1.Input },],
     'rowData': [{ type: core_1.Input },],
@@ -487,7 +489,6 @@ AgGridNg2.propDecorators = {
     'maxColWidth': [{ type: core_1.Input },],
     'viewportRowModelPageSize': [{ type: core_1.Input },],
     'viewportRowModelBufferSize': [{ type: core_1.Input },],
-    'layoutInterval': [{ type: core_1.Input },],
     'autoSizePadding': [{ type: core_1.Input },],
     'maxBlocksInCache': [{ type: core_1.Input },],
     'maxConcurrentDatasourceRequests': [{ type: core_1.Input },],
@@ -666,6 +667,7 @@ AgGridNg2.propDecorators = {
     'enableOldSetFilterModel': [{ type: core_1.Input },],
     'suppressRowHoverHighlight': [{ type: core_1.Input },],
     'gridAutoHeight': [{ type: core_1.Input },],
+    'serverSideSortingAlwaysResets': [{ type: core_1.Input },],
     'columnEverythingChanged': [{ type: core_1.Output },],
     'newColumnsLoaded': [{ type: core_1.Output },],
     'columnPivotModeChanged': [{ type: core_1.Output },],

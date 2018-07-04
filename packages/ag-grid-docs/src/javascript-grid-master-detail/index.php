@@ -470,6 +470,12 @@ masterGridOptions.getRowHeight = function (params) {
 
 <?= example('Dynamic Detail Row Height', 'dynamic-detail-row-height', 'generated', array("processVue" => true, "enterprise" => 1)) ?>
 
+
+<note>
+    The example above also uses <a href="../javascript-grid-row-height/#auto-row-height/">Auto Row Height</a>
+    to ensure the detail grid height is sized correctly for the number of rows it contains.
+</note>
+
 <h2>Filtering and Sorting</h2>
 <p>
     There are no specific configurations for filtering and sorting with Master / Detail but as there are multiple grids
@@ -562,25 +568,6 @@ var masterGridOptions = {
     This is because the concept of tree data conflicts with Master / Detail, in that in tree
     data, any row can expand to show child rows, which would result in a clash when a row
     has child rows in addition to having Master / Detail at the same row.
-</p>
-
-<h3 id="layouts">Layouts</h3>
-
-<p>
-    It is not possible to mix <a href="../javascript-grid-width-and-height/#dom-layout">DOM layout</a>
-    for master detail. This is because the layout is a CSS setting that would be inherited by all
-    grids contained with the master grid. So if your master grid was 'for-print', then all child grids
-    would pick up the 'for-print' layout.
-</p>
-
-<p>
-    When using Master / Detail and <a href="../javascript-grid-for-print/">for-print</a>,
-    then all detail grids need to use for-print.
-</p>
-
-<p>
-    When using Master / Detail and <a href="../javascript-grid-width-and-height/#autoHeight">auto-height</a>,
-    then all detail grids need to use auto-height.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

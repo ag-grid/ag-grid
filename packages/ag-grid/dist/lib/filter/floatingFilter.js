@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v18.0.1
+ * @version v18.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35,7 +35,7 @@ var constants_1 = require("../constants");
 var InputTextFloatingFilterComp = (function (_super) {
     __extends(InputTextFloatingFilterComp, _super);
     function InputTextFloatingFilterComp() {
-        var _this = _super.call(this, "<div><input  ref=\"eColumnFloatingFilter\" class=\"ag-floating-filter-input\"></div>") || this;
+        var _this = _super.call(this, "<div><input ref=\"eColumnFloatingFilter\" class=\"ag-floating-filter-input\"></div>") || this;
         _this.lastKnownModel = null;
         return _this;
     }
@@ -49,20 +49,20 @@ var InputTextFloatingFilterComp = (function (_super) {
         this.addDestroyableEventListener(this.eColumnFloatingFilter, 'keydown', toDebounce);
         var columnDef = params.column.getDefinition();
         if (columnDef.filterParams && columnDef.filterParams.filterOptions && columnDef.filterParams.filterOptions.length === 1 && columnDef.filterParams.filterOptions[0] === 'inRange') {
-            this.eColumnFloatingFilter.readOnly = true;
+            this.eColumnFloatingFilter.disabled = true;
         }
     };
     InputTextFloatingFilterComp.prototype.onParentModelChanged = function (parentModel, combinedFilter) {
         if (combinedFilter != null) {
             this.eColumnFloatingFilter.value = this.parseAsText(combinedFilter.condition1) + " " + combinedFilter.operator + " " + this.parseAsText(combinedFilter.condition2);
-            this.eColumnFloatingFilter.readOnly = true;
+            this.eColumnFloatingFilter.disabled = true;
             this.lastKnownModel = null;
             this.eColumnFloatingFilter.title = this.eColumnFloatingFilter.value;
             this.eColumnFloatingFilter.style.cursor = 'default';
             return;
         }
         else {
-            this.eColumnFloatingFilter.readOnly = false;
+            this.eColumnFloatingFilter.disabled = false;
         }
         if (this.equalModels(this.lastKnownModel, parentModel)) {
             // ensure column floating filter text is blanked out when both ranges are empty
@@ -168,6 +168,14 @@ var DateFloatingFilterComp = (function (_super) {
         var body = utils_1._.loadTemplate("<div></div>");
         this.dateComponentPromise.then(function (dateComponent) {
             body.appendChild(dateComponent.getGui());
+            var columnDef = params.column.getDefinition();
+            var isInRange = (columnDef.filterParams &&
+                columnDef.filterParams.filterOptions &&
+                columnDef.filterParams.filterOptions.length === 1 &&
+                columnDef.filterParams.filterOptions[0] === 'inRange');
+            if (dateComponent.eDateInput) {
+                dateComponent.eDateInput.disabled = isInRange;
+            }
         });
         this.setTemplateFromElement(body);
     };
@@ -210,14 +218,28 @@ var DateFloatingFilterComp = (function (_super) {
         };
     };
     DateFloatingFilterComp.prototype.onParentModelChanged = function (parentModel) {
+        var _this = this;
         this.lastKnownModel = parentModel;
         this.dateComponentPromise.then(function (dateComponent) {
             if (!parentModel || !parentModel.dateFrom) {
                 dateComponent.setDate(null);
                 return;
             }
+            _this.enrichDateInput(parentModel.type, parentModel.dateFrom, parentModel.dateTo, dateComponent);
             dateComponent.setDate(utils_1._.parseYyyyMmDdToDate(parentModel.dateFrom, '-'));
         });
+    };
+    DateFloatingFilterComp.prototype.enrichDateInput = function (type, dateFrom, dateTo, dateComponent) {
+        if (dateComponent.eDateInput) {
+            if (type === 'inRange') {
+                dateComponent.eDateInput.title = dateFrom + " to " + dateTo;
+                dateComponent.eDateInput.disabled = true;
+            }
+            else {
+                dateComponent.eDateInput.title = '';
+                dateComponent.eDateInput.disabled = true;
+            }
+        }
     };
     __decorate([
         context_1.Autowired('componentRecipes'),
@@ -237,14 +259,14 @@ var NumberFloatingFilterComp = (function (_super) {
             return '';
         }
         if (toParse == null && currentParentModel != null && currentParentModel.type !== 'inRange') {
-            this.eColumnFloatingFilter.readOnly = false;
+            this.eColumnFloatingFilter.disabled = false;
             return '';
         }
         if (currentParentModel != null && currentParentModel.type === 'inRange') {
-            this.eColumnFloatingFilter.readOnly = true;
+            this.eColumnFloatingFilter.disabled = true;
             return this.parseAsText(currentParentModel);
         }
-        this.eColumnFloatingFilter.readOnly = false;
+        this.eColumnFloatingFilter.disabled = false;
         return this.parseAsText(toParse);
     };
     NumberFloatingFilterComp.prototype.parseAsText = function (model) {
@@ -300,10 +322,10 @@ var SetFloatingFilterComp = (function (_super) {
     }
     SetFloatingFilterComp.prototype.init = function (params) {
         _super.prototype.init.call(this, params);
-        this.eColumnFloatingFilter.readOnly = true;
+        this.eColumnFloatingFilter.disabled = true;
     };
     SetFloatingFilterComp.prototype.asFloatingFilterText = function (parentModel) {
-        this.eColumnFloatingFilter.readOnly = true;
+        this.eColumnFloatingFilter.disabled = true;
         if (!parentModel)
             return '';
         // also supporting old filter model for backwards compatibility
@@ -342,7 +364,7 @@ var ReadModelAsStringFloatingFilterComp = (function (_super) {
     }
     ReadModelAsStringFloatingFilterComp.prototype.init = function (params) {
         _super.prototype.init.call(this, params);
-        this.eColumnFloatingFilter.readOnly = true;
+        this.eColumnFloatingFilter.disabled = true;
     };
     ReadModelAsStringFloatingFilterComp.prototype.onParentModelChanged = function (parentModel) {
         this.eColumnFloatingFilter.value = this.asFloatingFilterText(this.currentParentModel());

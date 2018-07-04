@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v18.0.1
+ * @version v18.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -126,6 +126,12 @@ var GridPanel = (function (_super) {
         // the width of the scrollbar. however if the scroll bars do not take up space (iOS)
         // then they overlay on top of the div, so we clip some extra blank space instead.
         this.scrollClipWidth = this.scrollWidth > 0 ? this.scrollWidth : 20;
+        // all of these element have different CSS when layout changes
+        this.gridOptionsWrapper.addLayoutElement(this.getGui());
+        this.gridOptionsWrapper.addLayoutElement(this.eBody);
+        this.gridOptionsWrapper.addLayoutElement(this.eBodyViewport);
+        this.gridOptionsWrapper.addLayoutElement(this.eTopViewport);
+        this.gridOptionsWrapper.addLayoutElement(this.eBodyContainer);
         this.suppressScrollOnFloatingRow();
         this.setupRowAnimationCssClass();
         this.buildRowContainerComponents();
@@ -169,8 +175,11 @@ var GridPanel = (function (_super) {
         if (this.rangeController) {
             this.rangeController.registerGridComp(this);
         }
-        var unsubscribeFromResize = resizeObserver_1.observeResize(this.eBodyViewport, this.checkViewportAndScrolls.bind(this));
+        var unsubscribeFromResize = resizeObserver_1.observeResize(this.eBodyViewport, this.onBodyViewportResized.bind(this));
         this.addDestroyFunc(function () { return unsubscribeFromResize(); });
+    };
+    GridPanel.prototype.onBodyViewportResized = function () {
+        this.checkViewportAndScrolls();
     };
     // used by ColumnAnimationService
     GridPanel.prototype.setColumnMovingCss = function (moving) {
@@ -728,10 +737,14 @@ var GridPanel = (function (_super) {
         this.onHorizontalViewportChanged();
     };
     GridPanel.prototype.showLoadingOverlay = function () {
-        this.overlayWrapper.showLoadingOverlay(this.eOverlay);
+        if (!this.gridOptionsWrapper.isSuppressLoadingOverlay()) {
+            this.overlayWrapper.showLoadingOverlay(this.eOverlay);
+        }
     };
     GridPanel.prototype.showNoRowsOverlay = function () {
-        this.overlayWrapper.showNoRowsOverlay(this.eOverlay);
+        if (!this.gridOptionsWrapper.isSuppressNoRowsOverlay()) {
+            this.overlayWrapper.showNoRowsOverlay(this.eOverlay);
+        }
     };
     GridPanel.prototype.hideOverlay = function () {
         this.overlayWrapper.hideOverlay(this.eOverlay);

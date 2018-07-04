@@ -149,6 +149,7 @@ export class VirtualList extends Component {
         let eDiv = document.createElement('div');
         Utils.addCssClass(eDiv, 'ag-virtual-list-item');
         eDiv.style.top = (this.rowHeight * rowIndex) + "px";
+        eDiv.style.lineHeight = this.rowHeight + "px";
 
         let rowComponent = this.componentCreator(value);
         eDiv.appendChild(rowComponent.getGui());

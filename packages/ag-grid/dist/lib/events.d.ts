@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v18.0.1
+// Type definitions for ag-grid v18.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
@@ -75,6 +75,10 @@ export interface DragEvent extends AgGridEvent {
 export interface DragStartedEvent extends DragEvent {
 }
 export interface DragStoppedEvent extends DragEvent {
+}
+export interface GridSizeChangedEvent extends AgGridEvent {
+    clientWidth: number;
+    clientHeight: number;
 }
 export interface RowDragEvent extends AgGridEvent {
     node: RowNode;

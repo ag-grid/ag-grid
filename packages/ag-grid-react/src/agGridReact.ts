@@ -1,12 +1,19 @@
-import * as DOM from "react-dom-factories";
-import * as React from "react";
-import { Component } from "react";
+import {Component, createElement} from "react";
 import * as PropTypes from "prop-types";
 import * as AgGrid from "ag-grid";
-import { Autowired, BaseComponentWrapper, Bean, FrameworkComponentWrapper, IComponent, WrapableInterface, Promise, GridOptions } from "ag-grid";
+import {
+    Autowired,
+    BaseComponentWrapper,
+    Bean,
+    FrameworkComponentWrapper,
+    GridOptions,
+    IComponent,
+    Promise,
+    WrapableInterface
+} from "ag-grid";
 
-import { AgGridColumn } from "./agGridColumn";
-import { AgReactComponent } from "./agReactComponent";
+import {AgGridColumn} from "./agGridColumn";
+import {AgReactComponent} from "./agReactComponent";
 
 export interface AgGridReactProps extends GridOptions {
     gridOptions?: GridOptions;
@@ -26,7 +33,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     }
 
     render() {
-        return DOM.div({
+        return createElement<any>("div", {
             style: this.createStyleForDiv(),
             ref: e => {
                 this.eGridDiv = e;
@@ -35,7 +42,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     }
 
     createStyleForDiv() {
-        const style: any = { height: "100%" };
+        const style: any = {height: "100%"};
         // allow user to override styles
         const containerStyle = this.props.containerStyle;
         if (containerStyle) {
@@ -127,7 +134,12 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         }
 
         if (Array.isArray(value)) {
-            return value.slice();
+            // shallow copy the array - this will typically be either rowData or columnDefs
+            const arrayCopy = [];
+            for (let i = 0; i < value.length; i++) {
+                arrayCopy.push(this.copy(value[i]));
+            }
+            return arrayCopy;
         }
 
         // for anything without keys (boolean, string etc).
@@ -137,7 +149,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         }
 
         return [{}, value].reduce((r, o) => {
-            Object.keys(o).forEach(function(k) {
+            Object.keys(o).forEach(function (k) {
                 r[k] = o[k];
             });
             return r;
@@ -178,7 +190,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
             if (newA) {
                 a.areEquivPropertyTracking = [];
             } else if (
-                a.areEquivPropertyTracking.some(function(other) {
+                a.areEquivPropertyTracking.some(function (other) {
                     return other === b;
                 })
             )
@@ -236,8 +248,9 @@ function addProperties(listOfProps: string[], propType: any) {
 class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterface> implements FrameworkComponentWrapper {
     @Autowired("agGridReact") private agGridReact: AgGridReact;
 
-    createWrapper(ReactComponent: { new (): any }): WrapableInterface {
+    createWrapper(ReactComponent: { new(): any }): WrapableInterface {
         let _self = this;
+
         class DynamicAgReactComponent extends AgReactComponent implements IComponent<any>, WrapableInterface {
             constructor() {
                 super(ReactComponent, _self.agGridReact);

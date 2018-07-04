@@ -1,4 +1,4 @@
-// ag-grid-aurelia v18.0.0
+// ag-grid-aurelia v18.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -84,6 +84,10 @@ var AgGridColumn = /** @class */ (function () {
     AgGridColumn.prototype.createColDefFromGridColumn = function () {
         var colDef = {};
         for (var prop in this) {
+            // only map this property if it's been actually been set
+            if (this[prop] === undefined) {
+                continue;
+            }
             var colDefProperty = this.mappedColumnProperties[prop] ? this.mappedColumnProperties[prop] : prop;
             colDef[colDefProperty] = this[prop];
         }
@@ -91,6 +95,7 @@ var AgGridColumn = /** @class */ (function () {
         return colDef;
     };
     ;
+    var AgGridColumn_1;
     __decorate([
         aurelia_framework_1.children('ag-grid-column'),
         __metadata("design:type", Array)
@@ -145,6 +150,5 @@ var AgGridColumn = /** @class */ (function () {
         __metadata("design:paramtypes", [])
     ], AgGridColumn);
     return AgGridColumn;
-    var AgGridColumn_1;
 }());
 exports.AgGridColumn = AgGridColumn;

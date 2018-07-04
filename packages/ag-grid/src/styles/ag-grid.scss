@@ -55,7 +55,7 @@ ag-grid-aurelia {
     flex-direction: row;
 }
 
-.ag-layout-normal .ag-root-wrapper-body {
+.ag-layout-normal.ag-root-wrapper-body {
     flex-grow: 1;
     height: 0px;
     min-height: 0px;
@@ -71,7 +71,7 @@ ag-grid-aurelia {
     flex: 1;
 }
 
-.ag-layout-normal .ag-root {
+.ag-layout-normal.ag-root {
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -286,10 +286,6 @@ ag-grid-aurelia {
     vertical-align: middle;
 }
 
-.ag-overlay-loading-center {
-}
-//
-
 .ag-column-panel {
     display: flex;
     overflow-y: auto;
@@ -304,19 +300,13 @@ ag-grid-aurelia {
     max-height: 100vh;
 }
 
-.ag-layout-auto-height .ag-column-panel-center {
-}
-
-.ag-layout-normal .ag-column-panel-center {
-}
-
 // for when auto height is used but there is no row data
-.ag-layout-auto-height .ag-body-container {
+.ag-layout-auto-height.ag-body-container {
     min-height: 50px;
 }
 
 // for when auto height is used but there is no row data
-.ag-layout-auto-height .ag-overlay-no-rows-wrapper {
+.ag-layout-auto-height.ag-overlay-no-rows-wrapper {
     padding-top: 30px;
 }
 
@@ -327,7 +317,7 @@ ag-grid-aurelia {
     position: relative; // needed so rows translate is relative to this container
 }
 
-.ag-layout-normal .ag-body {
+.ag-layout-normal.ag-body {
     flex: 1;
     height: 0px; // that's the min height, 'flex 1' then extends it to take all available space
     min-height: 0px; // min-height needed for firefox
@@ -336,8 +326,8 @@ ag-grid-aurelia {
 // we want the pinned left to always be on the left, and the pinned right
 // always to be on the right. hence we do row-reverse for rtl, otherwise having
 // RTL applied will reverse the order of the flex layout (and invert what's left and right)
-ag-rtl .ag-body { flex-direction: row-reverse; }
-ag-ltr .ag-body { flex-direction: row; }
+.ag-rtl .ag-body { flex-direction: row-reverse; }
+.ag-ltr .ag-body { flex-direction: row; }
 
 .ag-rtl .ag-floating-top { flex-direction: row-reverse; }
 .ag-ltr .ag-floating-top { flex-direction: row; }
@@ -377,7 +367,7 @@ ag-ltr .ag-body { flex-direction: row; }
     flex: 1;
 }
 
-.ag-layout-normal .ag-floating-top-viewport {
+.ag-layout-normal.ag-floating-top-viewport {
     height: 100%;
 }
 
@@ -464,7 +454,7 @@ ag-ltr .ag-body { flex-direction: row; }
     overflow-y: auto; // if we are pinning to the right, overflow y will be hidden
 }
 
-.ag-layout-normal .ag-body-viewport {
+.ag-layout-normal.ag-body-viewport {
     height: 100%;
 }
 
@@ -611,6 +601,7 @@ ag-ltr .ag-body { flex-direction: row; }
 
 .ag-column-drop-horizontal {
     white-space: nowrap;
+    overflow: hidden;
 
     .ag-column-drop-cell {
         display: inline-block;
@@ -685,10 +676,6 @@ ag-ltr .ag-body { flex-direction: row; }
     white-space: nowrap;
     //position: absolute // took this out because of https://github.com/ag-grid/angular-grid/issues/115
     width: 100%;
-}
-
-.ag-large .ag-root {
-    font-size: 20px;
 }
 
 .ag-popup-editor {
@@ -831,10 +818,6 @@ ag-ltr .ag-body { flex-direction: row; }
     user-select: none;
     width: 200px;
 }
-
-//.ag-layout-normal .ag-column-panel {
-//    height: 100%;
-//}
 
 .ag-column-container {
     flex-grow: 1;

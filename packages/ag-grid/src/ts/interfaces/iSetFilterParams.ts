@@ -1,10 +1,6 @@
 import {IFilterParams} from "./iFilter";
 import {ICellRendererComp, ICellRendererFunc} from "../rendering/cellRenderers/iCellRenderer";
 import {ColDef} from "../entities/colDef";
-import {Column} from "../entities/column";
-import {GridApi} from "../gridApi";
-import {RowNode} from "../entities/rowNode";
-import {ColumnApi} from "../columnController/columnApi";
 
 export interface SetFilterValuesFuncParams {
     success: (values: string[])=>void;
@@ -25,4 +21,5 @@ export interface ISetFilterParams extends IFilterParams {
     selectAllOnMiniFilter: boolean;
     comparator?: (a: any, b: any) => number;
     debounceMs?: number;
+    miniFilterSearchByRefDataKey?: boolean;
 }

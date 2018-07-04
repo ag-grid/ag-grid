@@ -509,7 +509,10 @@
   .ag-theme-material .ag-row-dragging {
     opacity: 0.5;
     z-index: 10000; }
-  .ag-theme-material .ag-cell-focus {
+  .ag-theme-material .ag-ltr .ag-cell-focus {
+    border: 1px solid #3f51b5;
+    outline: initial; }
+  .ag-theme-material .ag-rtl .ag-cell-focus {
     border: 1px solid #3f51b5;
     outline: initial; }
   .ag-theme-material .ag-header-cell-resize {

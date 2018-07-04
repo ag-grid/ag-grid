@@ -109,6 +109,8 @@ export class GridOptionsWrapper {
 
     private domDataKey = '__AG_'+Math.random().toString();
 
+    private layoutElements: HTMLElement[] = [];
+
     private agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
         this.gridOptions.api = gridApi;
         this.gridOptions.columnApi = columnApi;
@@ -154,6 +156,7 @@ export class GridOptionsWrapper {
             console.warn('ag-Grid: groupRemoveSingleChildren and groupHideOpenParents do not work with each other, you need to pick one. And don\'t ask us how to us these together on our support forum either you will get the same answer!');
         }
 
+        this.addEventListener(GridOptionsWrapper.PROP_GRID_AUTO_HEIGHT, this.updateLayoutClasses.bind(this));
     }
 
     private checkColumnDefProperties() {
@@ -161,7 +164,7 @@ export class GridOptionsWrapper {
 
         this.gridOptions.columnDefs.forEach(colDef=>{
             let userProperties: string [] = Object.getOwnPropertyNames(colDef);
-            let validProperties: string [] = ColDefUtil.ALL_PROPERTIES;
+            let validProperties: string [] = ColDefUtil.ALL_PROPERTIES.concat(ColDefUtil.FRAMEWORK_PROPERTIES);
 
             this.checkProperties(
                 userProperties,
@@ -175,7 +178,7 @@ export class GridOptionsWrapper {
 
     private checkGridOptionsProperties() {
         let userProperties: string [] = Object.getOwnPropertyNames(this.gridOptions);
-        let validProperties: string [] = PropertyKeys.ALL_PROPERTIES;
+        let validProperties: string [] = PropertyKeys.ALL_PROPERTIES.concat(PropertyKeys.FRAMEWORK_PROPERTIES);
         Object.keys(Events).forEach(it=>validProperties.push (ComponentUtil.getCallbackForEvent((<any>Events)[it])));
         let validPropertiesAndExceptions: string [] = validProperties.concat('api', 'columnApi');
 
@@ -345,6 +348,7 @@ export class GridOptionsWrapper {
     public isDeltaRowDataMode() { return isTrue(this.gridOptions.deltaRowDataMode); }
     public isEnsureDomOrder() { return isTrue(this.gridOptions.ensureDomOrder); }
     public isEnableColResize() { return isTrue(this.gridOptions.enableColResize); }
+    public getColResizeDefault() { return this.gridOptions.colResizeDefault; }
     public isSingleClickEdit() { return isTrue(this.gridOptions.singleClickEdit); }
     public isSuppressClickEdit() { return isTrue(this.gridOptions.suppressClickEdit); }
     public isStopEditingWhenGridLosesFocus() { return isTrue(this.gridOptions.stopEditingWhenGridLosesFocus); }
@@ -475,6 +479,8 @@ export class GridOptionsWrapper {
     // public getCellRenderers(): {[key: string]: {new(): ICellRenderer} | ICellRendererFunc} { return this.gridOptions.cellRenderers; }
     // public getCellEditors(): {[key: string]: {new(): ICellEditor}} { return this.gridOptions.cellEditors; }
 
+    public isServerSideSortingAlwaysResets() { return isTrue(this.gridOptions.serverSideSortingAlwaysResets); }
+
     public getPostSortFunc(): (rowNodes: RowNode[]) => void { return this.gridOptions.postSort; }
 
     public getClipboardDeliminator() {
@@ -496,15 +502,27 @@ export class GridOptionsWrapper {
         }
     }
 
+    // this logic is repeated in lots of places. any element that had different CSS
+    // dependent on the layout needs to have the layout class added ot it.
+    public addLayoutElement(element: HTMLElement): void {
+        this.layoutElements.push(element);
+        this.updateLayoutClasses();
+    }
+
+    private updateLayoutClasses(): void {
+        let autoHeight = this.isGridAutoHeight();
+        this.layoutElements.forEach( e => {
+            _.addOrRemoveCssClass(e, 'ag-layout-auto-height', autoHeight);
+            _.addOrRemoveCssClass(e, 'ag-layout-normal', !autoHeight);
+        });
+    }
+
     public addEventListener(key: string, listener: Function): void {
         GridOptionsWrapper.checkEventDeprecation(key);
         this.propertyEventService.addEventListener(key, listener);
     }
 
     public static checkEventDeprecation(eventName: string): void {
-        if (eventName === Events.DEPRECATED_EVENT_GRID_SIZE_CHANGED) {
-            console.warn(`ag-Grid: Since ag-Grid v18 event ${Events.DEPRECATED_EVENT_GRID_SIZE_CHANGED} no longer exists.`);
-        }
         if (eventName === 'floatingRowDataChanged') {
             console.warn('ag-Grid: floatingRowDataChanged is now called pinnedRowDataChanged');
         }
@@ -587,14 +605,6 @@ export class GridOptionsWrapper {
             return result;
         } else {
             return document;
-        }
-    }
-
-    public getLayoutInterval(): number {
-        if (typeof this.gridOptions.layoutInterval === 'number') {
-            return this.gridOptions.layoutInterval;
-        } else {
-            return Constants.LAYOUT_INTERVAL;
         }
     }
 
@@ -755,6 +765,9 @@ export class GridOptionsWrapper {
         if (options.rowModelType==='enterprise') {
             console.warn(`ag-grid: since version 18.x, The Enterprise Row Model has been renamed to the Server Side Row Model, set rowModelType='serverSide' instead.`);
             options.rowModelType = 'serverSide';
+        }
+        if (options.layoutInterval) {
+            console.warn(`ag-grid: since version 18.x, layoutInterval is no longer a property. This is because the grid now uses CSS Flex for layout.`);
         }
     }
 

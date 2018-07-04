@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v18.0.1
+ * @version v18.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -74,7 +74,9 @@ var SortController = (function () {
         this.columnController.getPrimaryAndSecondaryAndAutoColumns().forEach(function (columnToClear) {
             // Do not clear if either holding shift, or if column in question was clicked
             if (!(columnToClear === columnToSkip)) {
-                columnToClear.setSort(null, source);
+                // setting to 'undefined' as null means 'none' rather than cleared, otherwise issue will arise
+                // if sort order is: ['desc', null , 'asc'], as it will start at null rather than 'desc'.
+                columnToClear.setSort(undefined, source);
             }
         });
     };

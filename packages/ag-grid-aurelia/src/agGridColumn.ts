@@ -132,6 +132,11 @@ export class AgGridColumn {
     private createColDefFromGridColumn(): ColDef {
         let colDef: ColDef = {};
         for (let prop in this) {
+            // only map this property if it's been actually been set
+            if(this[prop] === undefined) {
+                continue;
+            }
+
             let colDefProperty = this.mappedColumnProperties[prop] ? this.mappedColumnProperties[prop] : prop;
             (<any>colDef)[colDefProperty] = (<any>this)[prop];
         }

@@ -177,7 +177,29 @@ var actions = [
 
 var apiGridInitialised = false;
 
-// setup the grid after the page has finished loading
+// from actual demo page (/javascript-grid-animation)
+document.addEventListener('DOMContentLoaded', function () {
+    if (apiGridInitialised) { return; }
+    apiGridInitialised = true;
+
+    var gridDiv = document.querySelector("#myGrid") || document.querySelector("#animationGrid");
+
+    new agGrid.Grid(gridDiv, gridOptions);
+
+    agGrid.simpleHttpRequest({ url: "https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json" }).then(function(data) {
+        gridOptions.api.setRowData(data);
+        setTimeout(function() {
+            gridOptions.api.sizeColumnsToFit();
+        }, 1000);
+
+        eTitle = document.querySelector("#animationAction");
+        eCountdown = document.querySelector("#animationCountdown");
+        startInterval(gridOptions.api, gridOptions.columnApi);
+    });
+});
+
+
+// from homepage (ag-grid.com)
 function initApiGrid() {
     if (apiGridInitialised) { return; }
     apiGridInitialised = true;
@@ -198,7 +220,7 @@ function initApiGrid() {
     });
 }
 
-if (document.readyState == "complete") {
+if (document.readyState === "complete") {
     initApiGrid();
 } else {
     // to cover scenarios of using this demo on the main webpage, and also the documentation pages,

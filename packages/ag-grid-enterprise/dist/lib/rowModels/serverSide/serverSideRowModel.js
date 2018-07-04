@@ -1,4 +1,4 @@
-// ag-grid-enterprise v18.0.1
+// ag-grid-enterprise v18.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -87,12 +87,50 @@ var ServerSideRowModel = (function (_super) {
     ServerSideRowModel.prototype.onFilterChanged = function () {
         this.reset();
     };
+    // returns back all the cols that were effected by the sorting. eg if we were sorting by col A,
+    // and now we are sorting by col B, the list of impacted cols should be A and B. so if a cache
+    // is impacted by sorting on A or B then it needs to be refreshed. this includes where the cache
+    // was previously sorted by A and then the A sort now needs to be cleared.
+    ServerSideRowModel.prototype.findChangedColumnsInSort = function (newSortModel, oldSortModel) {
+        var allColsInBothSorts = [];
+        [newSortModel, oldSortModel].forEach(function (sortModel) {
+            if (sortModel) {
+                var ids = sortModel.map(function (sm) { return sm.colId; });
+                allColsInBothSorts = allColsInBothSorts.concat(ids);
+            }
+        });
+        var differentSorts = function (oldSortItem, newSortItem) {
+            var oldSort = oldSortItem ? oldSortItem.sort : null;
+            var newSort = newSortItem ? newSortItem.sort : null;
+            return oldSort !== newSort;
+        };
+        var differentIndexes = function (oldSortItem, newSortItem) {
+            var oldIndex = oldSortModel.indexOf(oldSortItem);
+            var newIndex = newSortModel.indexOf(newSortItem);
+            return oldIndex !== newIndex;
+        };
+        return allColsInBothSorts.filter(function (colId) {
+            var oldSortItem = ag_grid_1._.find(oldSortModel, function (sm) { return sm.colId === colId; });
+            var newSortItem = ag_grid_1._.find(newSortModel, function (sm) { return sm.colId === colId; });
+            return differentSorts(oldSortItem, newSortItem) || differentIndexes(oldSortItem, newSortItem);
+        });
+    };
     ServerSideRowModel.prototype.onSortChanged = function () {
+        var newSortModel = this.extractSortModel();
+        var oldSortModel = this.cacheParams.sortModel;
+        var changedColumnsInSort = this.findChangedColumnsInSort(newSortModel, oldSortModel);
+        this.cacheParams.sortModel = newSortModel;
         if (this.cacheExists()) {
-            var sortModel = this.extractSortModel();
             var rowGroupColIds = this.columnController.getRowGroupColumns().map(function (col) { return col.getId(); });
             var serverSideCache = this.rootNode.childrenCache;
-            serverSideCache.refreshCache(sortModel, rowGroupColIds);
+            var sortingWithValueCol = this.isSortingWithValueColumn(changedColumnsInSort);
+            var sortAlwaysResets = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
+            if (sortAlwaysResets || sortingWithValueCol) {
+                this.reset();
+            }
+            else {
+                serverSideCache.refreshCacheAfterSort(changedColumnsInSort, rowGroupColIds);
+            }
         }
     };
     ServerSideRowModel.prototype.onValueChanged = function () {
@@ -422,6 +460,16 @@ var ServerSideRowModel = (function (_super) {
         return sortModel;
     };
     ;
+    ServerSideRowModel.prototype.isSortingWithValueColumn = function (changedColumnsInSort) {
+        var valueColIds = this.columnController.getValueColumns().map(function (col) { return col.getColId(); });
+        for (var i = 0; i < changedColumnsInSort.length; i++) {
+            var sortColId = changedColumnsInSort[i];
+            if (valueColIds.indexOf(sortColId) > -1) {
+                return true;
+            }
+        }
+        return false;
+    };
     ServerSideRowModel.prototype.cacheExists = function () {
         return ag_grid_1._.exists(this.rootNode) && ag_grid_1._.exists(this.rootNode.childrenCache);
     };

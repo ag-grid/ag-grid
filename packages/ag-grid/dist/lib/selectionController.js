@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v18.0.1
+ * @version v18.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -81,8 +81,13 @@ var SelectionController = (function () {
     };
     // should only be called if groupSelectsChildren=true
     SelectionController.prototype.updateGroupsFromChildrenSelections = function () {
+        // we only do this when group selection state depends on selected children
+        if (!this.gridOptionsWrapper.isGroupSelectsChildren()) {
+            return;
+        }
+        // also only do it if CSRM (code should never allow this anyway)
         if (this.rowModel.getType() !== constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            console.warn('updateGroupsFromChildrenSelections not available when rowModel is not normal');
+            return;
         }
         var clientSideRowModel = this.rowModel;
         clientSideRowModel.getTopLevelNodes().forEach(function (rowNode) {
@@ -103,7 +108,7 @@ var SelectionController = (function () {
         utils_1.Utils.iterateObject(this.selectedNodes, function (key, otherRowNode) {
             if (otherRowNode && otherRowNode.id !== rowNodeToKeepSelected.id) {
                 var rowNode = _this.selectedNodes[otherRowNode.id];
-                updatedCount += rowNode.setSelectedParams({ newValue: false, clearSelection: false, tailingNodeInSequence: true });
+                updatedCount += rowNode.setSelectedParams({ newValue: false, clearSelection: false, suppressFinishActions: true });
                 if (_this.groupSelectsChildren && otherRowNode.parent) {
                     groupsToRefresh[otherRowNode.parent.id] = otherRowNode.parent;
                 }

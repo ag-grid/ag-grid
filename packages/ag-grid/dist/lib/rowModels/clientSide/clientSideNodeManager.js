@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v18.0.1
+ * @version v18.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -8,8 +8,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var rowNode_1 = require("../../entities/rowNode");
 var utils_1 = require("../../utils");
+var events_1 = require("../../events");
 var ClientSideNodeManager = (function () {
-    function ClientSideNodeManager(rootNode, gridOptionsWrapper, context, eventService, columnController) {
+    function ClientSideNodeManager(rootNode, gridOptionsWrapper, context, eventService, columnController, gridApi, columnApi, selectionController) {
         this.nextId = 0;
         // when user is provide the id's, we also keep a map of ids to row nodes for convenience
         this.allNodesMap = {};
@@ -18,6 +19,9 @@ var ClientSideNodeManager = (function () {
         this.context = context;
         this.eventService = eventService;
         this.columnController = columnController;
+        this.gridApi = gridApi;
+        this.columnApi = columnApi;
+        this.selectionController = selectionController;
         this.rootNode.group = true;
         this.rootNode.level = -1;
         this.rootNode.id = ClientSideNodeManager.ROOT_NODE_ID;
@@ -95,16 +99,31 @@ var ClientSideNodeManager = (function () {
             }
         }
         if (utils_1.Utils.exists(remove)) {
+            var anyNodesSelected_1 = false;
             remove.forEach(function (item) {
-                var removedRowNode = _this.updatedRowNode(item, false);
+                var rowNode = _this.lookupRowNode(item);
+                if (rowNode && rowNode.isSelected()) {
+                    anyNodesSelected_1 = true;
+                }
+                var removedRowNode = _this.updatedRowNode(rowNode, item, false);
                 if (removedRowNode) {
                     rowNodeTransaction.remove.push(removedRowNode);
                 }
             });
+            if (anyNodesSelected_1) {
+                this.selectionController.updateGroupsFromChildrenSelections();
+                var event_1 = {
+                    type: events_1.Events.EVENT_SELECTION_CHANGED,
+                    api: this.gridApi,
+                    columnApi: this.columnApi
+                };
+                this.eventService.dispatchEvent(event_1);
+            }
         }
         if (utils_1.Utils.exists(update)) {
             update.forEach(function (item) {
-                var updatedRowNode = _this.updatedRowNode(item, true);
+                var rowNode = _this.lookupRowNode(item);
+                var updatedRowNode = _this.updatedRowNode(rowNode, item, true);
                 if (updatedRowNode) {
                     rowNodeTransaction.update.push(updatedRowNode);
                 }
@@ -125,7 +144,7 @@ var ClientSideNodeManager = (function () {
         }
         return newNode;
     };
-    ClientSideNodeManager.prototype.updatedRowNode = function (data, update) {
+    ClientSideNodeManager.prototype.lookupRowNode = function (data) {
         var rowNodeIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
         var rowNode;
         if (utils_1.Utils.exists(rowNodeIdFunc)) {
@@ -145,13 +164,17 @@ var ClientSideNodeManager = (function () {
                 return null;
             }
         }
+        return rowNode;
+    };
+    ClientSideNodeManager.prototype.updatedRowNode = function (rowNode, data, update) {
         if (update) {
             // do update
             rowNode.updateData(data);
         }
         else {
-            // do delete
-            rowNode.setSelected(false);
+            // do delete - setting 'tailingNodeInSequence = true' to ensure EVENT_SELECTION_CHANGED is not raised for
+            // each row node updated, instead it is raised once by the calling code if any selected nodes exist.
+            rowNode.setSelected(false, false, true);
             // so row renderer knows to fade row out (and not reposition it)
             rowNode.clearRowTop();
             utils_1.Utils.removeFromArray(this.rootNode.allLeafChildren, rowNode);

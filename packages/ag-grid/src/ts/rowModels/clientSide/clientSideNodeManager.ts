@@ -2,14 +2,17 @@
 import {RowNode} from "../../entities/rowNode";
 import {Utils as _} from "../../utils";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {Context, PostConstruct} from "../../context/context";
+import {Autowired, Context} from "../../context/context";
 import {GetNodeChildDetails, IsRowMaster} from "../../entities/gridOptions";
 import {EventService} from "../../eventService";
 import {RowDataTransaction, RowNodeTransaction} from "./clientSideRowModel";
 import {ColumnController} from "../../columnController/columnController";
+import {Events, SelectionChangedEvent} from "../../events";
+import {GridApi} from "../../gridApi";
+import {ColumnApi} from "../../columnController/columnApi";
+import {SelectionController} from "../../selectionController";
 
 export class ClientSideNodeManager {
-
 
     private static TOP_LEVEL = 0;
 
@@ -18,6 +21,7 @@ export class ClientSideNodeManager {
     private context: Context;
     private eventService: EventService;
     private columnController: ColumnController;
+    private selectionController: SelectionController;
 
     private nextId = 0;
 
@@ -33,13 +37,20 @@ export class ClientSideNodeManager {
 
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
     private allNodesMap: {[id:string]: RowNode} = {};
+    private columnApi: ColumnApi;
+    private gridApi: GridApi;
 
-    constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, context: Context, eventService: EventService, columnController: ColumnController) {
+    constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, context: Context, eventService: EventService,
+                columnController: ColumnController, gridApi: GridApi, columnApi: ColumnApi,
+                selectionController: SelectionController) {
         this.rootNode = rootNode;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.context = context;
         this.eventService = eventService;
         this.columnController = columnController;
+        this.gridApi = gridApi;
+        this.columnApi = columnApi;
+        this.selectionController = selectionController;
 
         this.rootNode.group = true;
         this.rootNode.level = -1;
@@ -129,17 +140,35 @@ export class ClientSideNodeManager {
         }
 
         if (_.exists(remove)) {
+            let anyNodesSelected = false;
+
             remove.forEach( item => {
-                let removedRowNode: RowNode = this.updatedRowNode(item, false);
+                let rowNode = this.lookupRowNode(item);
+                if (rowNode && rowNode.isSelected()) {
+                    anyNodesSelected = true;
+                }
+
+                let removedRowNode: RowNode = this.updatedRowNode(rowNode, item,false);
                 if (removedRowNode) {
                     rowNodeTransaction.remove.push(removedRowNode);
                 }
             });
+
+            if (anyNodesSelected) {
+                this.selectionController.updateGroupsFromChildrenSelections();
+                let event: SelectionChangedEvent = {
+                    type: Events.EVENT_SELECTION_CHANGED,
+                    api: this.gridApi,
+                    columnApi: this.columnApi
+                };
+                this.eventService.dispatchEvent(event);
+            }
         }
 
         if (_.exists(update)) {
             update.forEach( item => {
-                let updatedRowNode: RowNode = this.updatedRowNode(item, true);
+                let rowNode = this.lookupRowNode(item);
+                let updatedRowNode: RowNode = this.updatedRowNode(rowNode, item,true);
                 if (updatedRowNode) {
                     rowNodeTransaction.update.push(updatedRowNode);
                 }
@@ -166,7 +195,7 @@ export class ClientSideNodeManager {
         return newNode;
     }
 
-    private updatedRowNode(data: any, update: boolean): RowNode {
+    private lookupRowNode(data: any): RowNode {
         let rowNodeIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
 
         let rowNode: RowNode;
@@ -187,14 +216,21 @@ export class ClientSideNodeManager {
             }
         }
 
+        return rowNode;
+    }
+
+    private updatedRowNode(rowNode: RowNode, data: any, update: boolean): RowNode {
         if (update) {
             // do update
             rowNode.updateData(data);
         } else {
-            // do delete
-            rowNode.setSelected(false);
+            // do delete - setting 'tailingNodeInSequence = true' to ensure EVENT_SELECTION_CHANGED is not raised for
+            // each row node updated, instead it is raised once by the calling code if any selected nodes exist.
+            rowNode.setSelected(false, false, true);
+
             // so row renderer knows to fade row out (and not reposition it)
             rowNode.clearRowTop();
+
             _.removeFromArray(this.rootNode.allLeafChildren, rowNode);
             this.allNodesMap[rowNode.id] = undefined;
         }

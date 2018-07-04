@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-angular",
-  "version": "18.0.1",
+  "version": "18.1.0",
   "description": "ag-Grid Angular Component",
   "main": "main.js",
   "typings": "main.d.ts",
@@ -36,32 +36,32 @@
   },
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
-    "ag-grid": "^18.0.0",
+    "@angular/compiler": ">=2.1.x - 4.x",
+    "@angular/compiler-cli": "2.1.x - 4.x",
+    "@angular/core": "2.1.x - 4.x",
+    "ag-grid": "^18.1.0",
+    "core-js": "^2.4.1",
     "del": "2.2.x",
     "gulp": "3.9.x",
     "gulp-header": "1.8.x",
     "gulp-ngc": "0.1.x",
+    "gulp-rename": "1.2.2",
     "gulp-typescript": "3.1.x",
     "merge2": "0.3.6",
+    "replace-in-file": "^3.1.0",
     "rimraf": "2.5.x",
     "run-sequence": "1.2.x",
-    "typescript": "2.2.x",
-    "gulp-rename": "1.2.2",
-    "@angular/compiler": ">=2.1.x - 4.x",
-    "@angular/compiler-cli": "2.1.x - 4.x",
-    "@angular/core": "2.1.x - 4.x",
     "rxjs": ">=5.0.0-beta.12 && < 6.0.0",
-    "zone.js": ">=0.6.x",
-    "core-js": "^2.4.1",
-    "replace-in-file": "^3.1.0"
+    "typescript": "2.2.x",
+    "zone.js": ">=0.6.x"
   },
   "peerDependencies": {
-    "ag-grid": "^18.0.0",
     "@angular/compiler": ">=2.1.x",
     "@angular/compiler-cli": ">=2.1.x",
     "@angular/core": ">=2.1.x",
+    "ag-grid": "^18.1.0",
+    "core-js": "^2.4.1",
     "rxjs": ">=5.0.0-beta.12",
-    "zone.js": ">=0.6.x",
-    "core-js": "^2.4.1"
+    "zone.js": ">=0.6.x"
   }
 }

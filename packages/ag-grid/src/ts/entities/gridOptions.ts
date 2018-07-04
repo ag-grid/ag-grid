@@ -107,6 +107,7 @@ export interface GridOptions {
     rowBuffer?: number;
     enableRtl?: boolean;
     enableColResize?: boolean;
+    colResizeDefault?: string;
     enableCellExpressions?: boolean;
     enableSorting?: boolean;
     enableServerSideSorting?: boolean;
@@ -167,7 +168,6 @@ export interface GridOptions {
     cacheQuickFilter?: boolean;
     aggFuncs?: {[key: string]: IAggFunc};
     suppressColumnVirtualisation?: boolean;
-    layoutInterval?: number;
     functionsReadOnly?: boolean;
     functionsPassive?: boolean;
     maxConcurrentDatasourceRequests?: number;
@@ -208,6 +208,7 @@ export interface GridOptions {
     maxColWidth?: number;
 
     suppressPropertyNamesCheck?: boolean;
+    serverSideSortingAlwaysResets?: boolean;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *

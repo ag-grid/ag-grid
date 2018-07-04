@@ -301,25 +301,35 @@ export class SetFilterModel {
         // make upper case to have search case insensitive
         const miniFilterUpperCase = miniFilter.toUpperCase();
 
-        for (let i = 0, l = this.availableUniqueValues.length; i < l; i++) {
-            let value = this.availableUniqueValues[i];
-            if (value){
-                const displayedValue = this.formatter(value.toString());
+        //This function encapsulates the logic to check if a string matches the mini filter
+        let matchesFn: any = (valueToCheck:string): boolean => {
+            if (valueToCheck == null) {
+                return false;
+            }
+            // allow for case insensitive searches, make both filter and value uppercase
+            const valueUpperCase = valueToCheck.toUpperCase();
 
-                //This function encapsulates the logic to check if a string matches the mini filter
-                let matchesFn: any = (valueToCheck:string):boolean=>{
-                    if (valueToCheck === null) {
-                        return false;
+            return valueUpperCase.indexOf(miniFilterUpperCase) >= 0;
+        };
+
+        if (this.filterParams.miniFilterSearchByRefDataKey) {
+            Object.keys(this.colDef.refData).forEach(key => {
+                if (matchesFn(key)) {
+                    this.displayedValues.push(this.colDef.refData[key]);
+                }
+            });
+        } else {
+            for (let i = 0, l = this.availableUniqueValues.length; i < l; i++) {
+                let value = this.availableUniqueValues[i];
+                if (value) {
+                    const displayedValue = this.formatter(value.toString());
+
+                    let formattedValue: string =
+                        this.valueFormatterService.formatValue(this.column, null, null, displayedValue);
+
+                    if (matchesFn(displayedValue) || matchesFn(formattedValue)) {
+                        this.displayedValues.push(value);
                     }
-                    // allow for case insensitive searches, make both filter and value uppercase
-                    const valueUpperCase = valueToCheck.toUpperCase();
-
-                    return valueUpperCase.indexOf(miniFilterUpperCase) >= 0;
-                };
-
-                let formattedValue:string = this.valueFormatterService.formatValue(this.column, null, null, displayedValue);
-                if (matchesFn(displayedValue) || matchesFn(formattedValue)) {
-                    this.displayedValues.push(displayedValue);
                 }
             }
         }
@@ -439,9 +449,10 @@ export class SetFilterModel {
 
     public setModel(model: string[], isSelectAll = false): void {
         if (this.areValuesSync()){
-            this.setSyncModel(model, isSelectAll)
+            this.setSyncModel(model, isSelectAll);
         } else {
             this.filterValuesExternalPromise.promise.then(values=>{
+                this.setSyncModel(model, isSelectAll);
                 this.modelUpdatedFunc(values, model);
             })
         }

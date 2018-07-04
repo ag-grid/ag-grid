@@ -10,7 +10,7 @@ export class PropertyKeys {
         'icons', 'datasource', 'serverSideDatasource', 'viewportDatasource', 'groupRowRendererParams', 'aggFuncs',
         'fullWidthCellRendererParams', 'defaultColGroupDef', 'defaultColDef', 'defaultExportParams', 'columnTypes',
         'rowClassRules', 'detailGridOptions', 'detailCellRendererParams', 'loadingOverlayComponentParams',
-        'noRowsOverlayComponentParams', 'popupParent'
+        'noRowsOverlayComponentParams', 'popupParent', 'colResizeDefault'
         //,'cellRenderers','cellEditors'
     ];
 
@@ -24,7 +24,7 @@ export class PropertyKeys {
         'rowHeight', 'detailRowHeight','rowBuffer', 'colWidth', 'headerHeight', 'groupHeaderHeight',
         'floatingFiltersHeight', 'pivotHeaderHeight', 'pivotGroupHeaderHeight', 'groupDefaultExpanded',
         'minColWidth', 'maxColWidth', 'viewportRowModelPageSize', 'viewportRowModelBufferSize',
-        'layoutInterval', 'autoSizePadding', 'maxBlocksInCache', 'maxConcurrentDatasourceRequests',
+        'autoSizePadding', 'maxBlocksInCache', 'maxConcurrentDatasourceRequests',
         'cacheOverflowSize', 'paginationPageSize', 'cacheBlockSize', 'infiniteInitialRowCount',
         'scrollbarWidth', 'paginationStartPage', 'infiniteBlockSize', 'batchUpdateWaitMillis'
     ];
@@ -58,7 +58,8 @@ export class PropertyKeys {
         'suppressExcelExport', 'suppressCsvExport', 'treeData', 'masterDetail', 'suppressMultiRangeSelection',
         'enterMovesDownAfterEdit', 'enterMovesDown', 'suppressPropertyNamesCheck', 'rowMultiSelectWithClick',
         'contractColumnSelection', 'suppressEnterpriseResetOnNewColumns', 'enableOldSetFilterModel',
-        'suppressRowHoverHighlight', 'gridAutoHeight', 'suppressRowTransform', 'suppressClipboardPaste'
+        'suppressRowHoverHighlight', 'gridAutoHeight', 'suppressRowTransform', 'suppressClipboardPaste',
+        'serverSideSortingAlwaysResets'
     ];
 
     public static FUNCTION_PROPERTIES = ['localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
@@ -79,4 +80,9 @@ export class PropertyKeys {
         .concat(PropertyKeys.NUMBER_PROPERTIES)
         .concat(PropertyKeys.FUNCTION_PROPERTIES)
         .concat(PropertyKeys.BOOLEAN_PROPERTIES);
+
+     // used when doing property checks - this causes noise when using frameworks which can add their own fw specific
+     // properties to coldefs, gridOptions etc
+     public static FRAMEWORK_PROPERTIES = ['__ob__', '__metadata__', 'mappedColumnProperties', 'hasChildColumns',
+         'toColDef', 'createColDefFromGridColumn'];
 }

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v18.0.1
+ * @version v18.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -58,7 +58,6 @@ var columnHoverService_1 = require("./rendering/columnHoverService");
 var columnAnimationService_1 = require("./rendering/columnAnimationService");
 var sortService_1 = require("./rowNodes/sortService");
 var filterService_1 = require("./rowNodes/filterService");
-var rowNodeFactory_1 = require("./rowNodes/rowNodeFactory");
 var autoGroupColService_1 = require("./columnController/autoGroupColService");
 var paginationProxy_1 = require("./rowModels/paginationProxy");
 var immutableService_1 = require("./rowModels/clientSide/immutableService");
@@ -136,10 +135,10 @@ var Grid = (function () {
                 navigationService_1.NavigationService, popupService_1.PopupService, valueCache_1.ValueCache, valueService_1.ValueService, alignedGridsService_1.AlignedGridsService,
                 logger_1.LoggerFactory, columnUtils_1.ColumnUtils, autoWidthCalculator_1.AutoWidthCalculator, popupService_1.PopupService, gridCore_1.GridCore, standardMenu_1.StandardMenuFactory,
                 dragAndDropService_1.DragAndDropService, columnApi_1.ColumnApi, focusedCellController_1.FocusedCellController, mouseEventService_1.MouseEventService,
-                cellNavigationService_1.CellNavigationService, filterStage_1.FilterStage, sortStage_1.SortStage, flattenStage_1.FlattenStage, filterService_1.FilterService, rowNodeFactory_1.RowNodeFactory,
+                cellNavigationService_1.CellNavigationService, filterStage_1.FilterStage, sortStage_1.SortStage, flattenStage_1.FlattenStage, filterService_1.FilterService,
                 cellEditorFactory_1.CellEditorFactory, cellRendererService_1.CellRendererService, valueFormatterService_1.ValueFormatterService, stylingService_1.StylingService, scrollVisibleService_1.ScrollVisibleService,
-                columnHoverService_1.ColumnHoverService, columnAnimationService_1.ColumnAnimationService, sortService_1.SortService, selectableService_1.SelectableService, autoGroupColService_1.AutoGroupColService, immutableService_1.ImmutableService,
-                changeDetectionService_1.ChangeDetectionService, environment_1.Environment, animationFrameService_1.AnimationFrameService, sortController_1.SortController],
+                columnHoverService_1.ColumnHoverService, columnAnimationService_1.ColumnAnimationService, sortService_1.SortService, selectableService_1.SelectableService, autoGroupColService_1.AutoGroupColService,
+                immutableService_1.ImmutableService, changeDetectionService_1.ChangeDetectionService, environment_1.Environment, animationFrameService_1.AnimationFrameService, sortController_1.SortController],
             components: components,
             debug: !!gridOptions.debug
         };

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v18.0.1
+ * @version v18.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -49,6 +49,12 @@ var OverlayWrapperComponent = (function (_super) {
     OverlayWrapperComponent.prototype.showNoRowsOverlay = function (eOverlayWrapper) {
         var _this = this;
         this.setTemplate(OverlayWrapperComponent.NO_ROWS_WRAPPER_OVERLAY_TEMPLATE);
+        // we don't use gridOptionsWrapper.addLayoutElement here because this component
+        // is passive, we don't want to add a new element each time it is created.
+        var eNoRowsOverlayWrapper = this.getRefElement('noRowsOverlayWrapper');
+        var autoHeight = this.gridOptionsWrapper.isGridAutoHeight();
+        utils_1.Utils.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-auto-height', autoHeight);
+        utils_1.Utils.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-normal', !autoHeight);
         this.componentRecipes.newNoRowsOverlayComponent().then(function (renderer) {
             var noRowsOverlayWrapper = _this.getRefElement("noRowsOverlayWrapper");
             utils_1.Utils.removeAllChildren(noRowsOverlayWrapper);

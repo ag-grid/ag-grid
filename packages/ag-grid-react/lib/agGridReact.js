@@ -1,4 +1,4 @@
-// ag-grid-react v18.0.0
+// ag-grid-react v18.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -20,7 +20,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var DOM = require("react-dom-factories");
 var react_1 = require("react");
 var PropTypes = require("prop-types");
 var AgGrid = require("ag-grid");
@@ -37,7 +36,7 @@ var AgGridReact = /** @class */ (function (_super) {
     }
     AgGridReact.prototype.render = function () {
         var _this = this;
-        return DOM.div({
+        return react_1.createElement("div", {
             style: this.createStyleForDiv(),
             ref: function (e) {
                 _this.eGridDiv = e;
@@ -125,7 +124,12 @@ var AgGridReact = /** @class */ (function (_super) {
             return value;
         }
         if (Array.isArray(value)) {
-            return value.slice();
+            // shallow copy the array - this will typically be either rowData or columnDefs
+            var arrayCopy = [];
+            for (var i = 0; i < value.length; i++) {
+                arrayCopy.push(this.copy(value[i]));
+            }
+            return arrayCopy;
         }
         // for anything without keys (boolean, string etc).
         // Object.keys - chrome will swallow them, IE will fail (correctly, imho)

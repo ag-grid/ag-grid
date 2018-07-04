@@ -153,6 +153,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public gridOptions: GridOptions;
 
     // @START@
+    @Input() public colResizeDefault : any = undefined;
     @Input() public slaveGrids : any = undefined;
     @Input() public alignedGrids : any = undefined;
     @Input() public rowData : any = undefined;
@@ -210,7 +211,6 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public maxColWidth : any = undefined;
     @Input() public viewportRowModelPageSize : any = undefined;
     @Input() public viewportRowModelBufferSize : any = undefined;
-    @Input() public layoutInterval : any = undefined;
     @Input() public autoSizePadding : any = undefined;
     @Input() public maxBlocksInCache : any = undefined;
     @Input() public maxConcurrentDatasourceRequests : any = undefined;
@@ -389,6 +389,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public enableOldSetFilterModel : any = undefined;
     @Input() public suppressRowHoverHighlight : any = undefined;
     @Input() public gridAutoHeight : any = undefined;
+    @Input() public serverSideSortingAlwaysResets : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();

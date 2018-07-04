@@ -530,7 +530,10 @@
   .ag-theme-blue .ag-row-dragging {
     opacity: 0.5;
     z-index: 10000; }
-  .ag-theme-blue .ag-cell-focus {
+  .ag-theme-blue .ag-ltr .ag-cell-focus {
+    border: 1px solid black;
+    outline: initial; }
+  .ag-theme-blue .ag-rtl .ag-cell-focus {
     border: 1px solid black;
     outline: initial; }
   .ag-theme-blue .ag-header-cell-resize {

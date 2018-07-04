@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v18.0.1
+ * @version v18.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -43,6 +43,11 @@ var TabbedLayout = (function () {
                 minWidth = eDummyContainer.offsetWidth;
             }
         });
+        // finally check the parent tabs are no wider, as if they
+        // are, then these are the min width and not the child tabs
+        if (minWidth < this.eGui.offsetWidth) {
+            minWidth = this.eGui.offsetWidth;
+        }
         this.eGui.removeChild(eDummyContainer);
         return minWidth;
     };

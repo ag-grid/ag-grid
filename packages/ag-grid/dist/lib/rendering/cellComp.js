@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v18.0.1
+ * @version v18.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -605,7 +605,7 @@ var CellComp = (function (_super) {
     };
     CellComp.prototype.afterCellRendererCreated = function (cellRendererVersion, cellRenderer) {
         // see if daemon
-        if (cellRendererVersion !== this.cellRendererVersion) {
+        if (!this.isAlive() || (cellRendererVersion !== this.cellRendererVersion)) {
             if (cellRenderer.destroy) {
                 cellRenderer.destroy();
             }

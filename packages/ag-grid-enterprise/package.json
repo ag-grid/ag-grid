@@ -1,13 +1,13 @@
 {
   "name": "ag-grid-enterprise",
-  "version": "18.0.1",
+  "version": "18.1.0",
   "description": "ag-Grid Enterprise Features",
   "main": "main.js",
   "types": "main.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "watchWebpack": "webpack --watch",
-    "build":"gulp release"
+    "build": "gulp release"
   },
   "repository": {
     "type": "git",
@@ -26,21 +26,20 @@
   },
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
-    "ag-grid": "^18.0.0",
-    "gulp": "3.9.0",
-    "gulp-typescript": "2.10.0",
-    "gulp-clean": "0.3.1",
-    "typescript": "2.4.1",
-    "gulp-header": "1.7.0",
-    "merge2": "0.3.6",
-    "webpack-stream": "3.1.0",
-    "webpack": "2.2.1",
-    "style-loader": "0.13.0",
+    "ag-grid": "^18.1.0",
     "css-loader": "0.23.1",
-    "gulp-rename": "1.2.2"
+    "gulp": "3.9.0",
+    "gulp-clean": "0.3.1",
+    "gulp-header": "1.7.0",
+    "gulp-rename": "1.2.2",
+    "gulp-typescript": "2.10.0",
+    "merge2": "0.3.6",
+    "style-loader": "0.13.0",
+    "typescript": "2.4.1",
+    "webpack": "2.2.1",
+    "webpack-stream": "3.1.0"
   },
   "peerDependencies": {
     "ag-grid": "^18.0.0"
-  },
-  "dependencies": {}
+  }
 }

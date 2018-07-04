@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v18.0.1
+ * @version v18.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -345,9 +345,6 @@ var GroupCellRenderer = (function (_super) {
         // must use the displayedGroup, so if data was dragged down, we expand the parent, not this row
         var rowNode = this.displayedGroup;
         rowNode.setExpanded(!rowNode.expanded);
-        if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
-            this.params.api.redrawRows({ rowNodes: [rowNode] });
-        }
     };
     GroupCellRenderer.prototype.isExpandable = function () {
         var rowNode = this.params.node;

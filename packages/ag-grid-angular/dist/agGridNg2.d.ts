@@ -23,6 +23,7 @@ export declare class AgGridNg2 implements AfterViewInit {
     private checkForDeprecatedEvents();
     private globalEventListener(eventType, event);
     gridOptions: GridOptions;
+    colResizeDefault: any;
     slaveGrids: any;
     alignedGrids: any;
     rowData: any;
@@ -80,7 +81,6 @@ export declare class AgGridNg2 implements AfterViewInit {
     maxColWidth: any;
     viewportRowModelPageSize: any;
     viewportRowModelBufferSize: any;
-    layoutInterval: any;
     autoSizePadding: any;
     maxBlocksInCache: any;
     maxConcurrentDatasourceRequests: any;
@@ -259,6 +259,7 @@ export declare class AgGridNg2 implements AfterViewInit {
     enableOldSetFilterModel: any;
     suppressRowHoverHighlight: any;
     gridAutoHeight: any;
+    serverSideSortingAlwaysResets: any;
     columnEverythingChanged: EventEmitter<any>;
     newColumnsLoaded: EventEmitter<any>;
     columnPivotModeChanged: EventEmitter<any>;

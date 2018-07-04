@@ -1,4 +1,4 @@
-// ag-grid-enterprise v18.0.1
+// ag-grid-enterprise v18.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -402,46 +402,37 @@ var ServerSideCache = (function (_super) {
         }
         return newRowNodes;
     };
-    ServerSideCache.prototype.refreshCache = function (sortModel, rowGroupColIds) {
+    ServerSideCache.prototype.refreshCacheAfterSort = function (changedColumnsInSort, rowGroupColIds) {
         var _this = this;
-        var shouldPurgeCache = false;
-        var sortColIds = sortModel.map(function (sm) { return sm.colId; });
-        this.forEachBlockInOrder(function (block) {
-            if (block.isGroupLevel()) {
-                var groupField = block.getGroupField();
-                var rowGroupBlock = rowGroupColIds.indexOf(groupField) > -1;
-                var sortingByGroup = sortColIds.indexOf(groupField) > -1;
-                if (rowGroupBlock && sortingByGroup) {
-                    // need to refresh block using updated new sort model
-                    block.updateSortModel(sortModel);
-                    shouldPurgeCache = true;
-                }
-                var callback = function (rowNode) {
-                    var nextCache = rowNode.childrenCache;
-                    if (nextCache)
-                        nextCache.refreshCache(sortModel, rowGroupColIds);
-                };
-                block.forEachNodeShallow(callback, new ag_grid_1.NumberSequence(), _this.getVirtualRowCount());
-            }
-            else {
-                // blocks containing leaf nodes need to be refreshed with new sort model
-                block.updateSortModel(sortModel);
-                shouldPurgeCache = true;
-            }
-        });
-        var groupSortRemoved = this.groupSortRemoved(sortModel, rowGroupColIds);
-        if (groupSortRemoved) {
-            this.cacheParams.sortModel = sortModel;
+        var level = this.parentRowNode.level + 1;
+        var grouping = level < this.cacheParams.rowGroupCols.length;
+        var shouldPurgeCache;
+        if (grouping) {
+            var groupColVo = this.cacheParams.rowGroupCols[level];
+            var groupField = groupColVo.field;
+            var rowGroupBlock = rowGroupColIds.indexOf(groupField) > -1;
+            var sortingByGroup = changedColumnsInSort.indexOf(groupField) > -1;
+            shouldPurgeCache = rowGroupBlock && sortingByGroup;
         }
-        if (shouldPurgeCache || groupSortRemoved) {
+        else {
+            shouldPurgeCache = true;
+        }
+        if (shouldPurgeCache) {
             this.purgeCache();
         }
-    };
-    ServerSideCache.prototype.groupSortRemoved = function (sortModel, rowGroupColIds) {
-        var cacheSortModelChanged = this.cacheParams.sortModel !== sortModel;
-        var existingSortCols = this.cacheParams.sortModel.map(function (sm) { return sm.colId; });
-        var existingGroupColumn = rowGroupColIds.some(function (v) { return existingSortCols.indexOf(v) >= 0; });
-        return cacheSortModelChanged && existingGroupColumn;
+        else {
+            this.forEachBlockInOrder(function (block) {
+                if (block.isGroupLevel()) {
+                    var callback = function (rowNode) {
+                        var nextCache = rowNode.childrenCache;
+                        if (nextCache) {
+                            nextCache.refreshCacheAfterSort(changedColumnsInSort, rowGroupColIds);
+                        }
+                    };
+                    block.forEachNodeShallow(callback, new ag_grid_1.NumberSequence(), _this.getVirtualRowCount());
+                }
+            });
+        }
     };
     __decorate([
         ag_grid_1.Autowired('eventService'),

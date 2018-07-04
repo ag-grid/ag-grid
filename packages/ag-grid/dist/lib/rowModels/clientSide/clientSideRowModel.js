@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v18.0.1
+ * @version v18.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -56,7 +56,7 @@ var ClientSideRowModel = (function () {
         this.gridOptionsWrapper.addEventListener(gridOptionsWrapper_1.GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, refreshMapFunc);
         this.gridOptionsWrapper.addEventListener(gridOptionsWrapper_1.GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, refreshMapFunc);
         this.rootNode = new rowNode_1.RowNode();
-        this.nodeManager = new clientSideNodeManager_1.ClientSideNodeManager(this.rootNode, this.gridOptionsWrapper, this.context, this.eventService, this.columnController);
+        this.nodeManager = new clientSideNodeManager_1.ClientSideNodeManager(this.rootNode, this.gridOptionsWrapper, this.context, this.eventService, this.columnController, this.gridApi, this.columnApi, this.selectionController);
         this.context.wireBean(this.rootNode);
     };
     // returns false if row was moved, otherwise true

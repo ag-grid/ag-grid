@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v18.0.1
+// Type definitions for ag-grid v18.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowContainerComponent } from "../rendering/rowContainerComponent";
@@ -99,6 +99,7 @@ export declare class GridPanel extends Component {
     private showOrHideOverlay();
     private onNewColumnsLoaded();
     private init();
+    private onBodyViewportResized();
     setColumnMovingCss(moving: boolean): void;
     private setupOverlay();
     private addRowDragListener();

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v18.0.1
+// Type definitions for ag-grid v18.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgEvent } from "../events";
@@ -10,7 +10,7 @@ import { DetailGridInfo } from "../gridApi";
 export interface SetSelectedParams {
     newValue: boolean;
     clearSelection?: boolean;
-    tailingNodeInSequence?: boolean;
+    suppressFinishActions?: boolean;
     rangeSelect?: boolean;
     groupSelectsFiltered?: boolean;
 }
@@ -190,14 +190,12 @@ export declare class RowNode implements IEventEmitter {
     isSelected(): boolean;
     depthFirstSearch(callback: (rowNode: RowNode) => void): void;
     calculateSelectedFromChildren(): void;
-    private calculateSelectedFromChildrenBubbleUp();
     setSelectedInitialValue(selected: boolean): void;
-    setSelected(newValue: boolean, clearSelection?: boolean, tailingNodeInSequence?: boolean): void;
+    setSelected(newValue: boolean, clearSelection?: boolean, suppressFinishActions?: boolean): void;
     isRowPinned(): boolean;
     setSelectedParams(params: SetSelectedParams): number;
     private doRowRangeSelection();
     isParentOfNode(potentialParent: RowNode): boolean;
-    private calculatedSelectedForAllGroupNodes();
     selectThisNode(newValue: boolean): boolean;
     private selectChildNodes(newValue, groupSelectsFiltered);
     addEventListener(eventType: string, listener: Function): void;

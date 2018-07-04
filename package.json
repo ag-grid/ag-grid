@@ -1,5 +1,21 @@
 {
-	"devDependencies": {
-		"lerna": "^2.11.0"
-	}
+    "scripts": {
+        "initSubModules": "sh ./scripts/initialiseSubModules.sh",
+        "initLatest": "npm run initSubModules && sh ./scripts/switchToBranch.sh latest",
+        "initMaster": "npm run initSubModules && sh ./scripts/switchToBranch.sh master",
+        "updateExamples": "sh ./scripts/updateSubModules.sh",
+        "updateDependencies": "lerna bootstrap",
+        "build": "lerna run build",
+        "buildCore": "lerna run build --scope ag-grid --scope ag-grid-enterprise --scope ag-grid-angular --scope ag-grid-react --scope ag-grid-vue --scope ag-grid-aurelia",
+        "buildAngular": "lerna run build --scope ag-grid --scope ag-grid-angular",
+        "buildVue": "lerna run build --scope ag-grid --scope ag-grid-vue",
+        "buildReact": "lerna run build --scope ag-grid --scope ag-grid-react",
+        "buildAurelia": "lerna run build --scope ag-grid --scope ag-grid-aurelia",
+        "updateAndRebuild": "npm run updateDependencies && npm run build",
+        "initIntelliJ": "cp .idea/workspace.xml.default .idea/workspace.xml",
+        "init": "npm run initLatest && npm run updateAndRebuild"
+    },
+    "devDependencies": {
+        "lerna": "^2.11.0"
+    }
 }

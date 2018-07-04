@@ -83,7 +83,7 @@ function extractMoreInformationMap($data)
 <div class="info-page" id="page-pipeline">
     <div class="row">
         <section>
-            <h1>Next Release Target: TBD - 15.0.0 just released</h1>
+            <h1>Next Release Target: TBD - 18.1.0 just released</h1>
 
             <div class="note">
                 <p>

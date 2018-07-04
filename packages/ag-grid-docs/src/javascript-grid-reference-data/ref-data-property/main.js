@@ -32,6 +32,11 @@ var gridOptions = {
             cellEditorParams: {
                 values: extractValues(carMappings)
             },
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                // set to true to search by key rather than displayed text!
+                miniFilterSearchByRefDataKey: false
+             },
             refData: carMappings
         },
         {
@@ -40,11 +45,15 @@ var gridOptions = {
             cellEditor: 'agRichSelectCellEditor',
             cellEditorParams: {
                 values: extractValues(colourMappings),
-                cellRenderer: colorCellRenderer
+                cellRenderer: colorCellRenderer,
+                // set to true to search by key rather than display value!
+                miniFilterSearchByRefDataKey: false
             },
             filter: 'agSetColumnFilter',
             filterParams: {
-                cellRenderer: filterColorCellRenderer
+                cellRenderer: filterColorCellRenderer,
+                // set to true to search by key rather than display value!
+                miniFilterSearchByRefDataKey: false
             },
             refData: colourMappings,
             cellRenderer: colorCellRenderer
@@ -54,7 +63,9 @@ var gridOptions = {
             field: "interiorColour",
             filter: 'agSetColumnFilter',
             filterParams: {
-                cellRenderer: filterColorCellRenderer
+                cellRenderer: filterColorCellRenderer,
+                // set to true to search by key rather than display value!
+                miniFilterSearchByRefDataKey: false
             },
             refData: colourMappings,
             cellRenderer: colorCellRenderer

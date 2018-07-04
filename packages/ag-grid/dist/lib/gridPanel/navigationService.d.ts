@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v18.0.1
+// Type definitions for ag-grid v18.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridPanel } from "./gridPanel";
@@ -14,7 +14,10 @@ export declare class NavigationService {
     private gridPanel;
     private init();
     registerGridComp(gridPanel: GridPanel): void;
+    private timeLastPageEventProcessed;
     handlePageScrollingKey(event: KeyboardEvent): boolean;
+    private isTimeSinceLastPageEventToRecent();
+    private setTimeLastPageEventProcessed();
     private onPageDown(gridCell);
     private onPageUp(gridCell);
     private navigateTo(scrollIndex, scrollType, scrollColumn, focusIndex, focusColumn);

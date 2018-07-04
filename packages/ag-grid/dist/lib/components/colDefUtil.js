@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v18.0.1
+ * @version v18.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -136,6 +136,10 @@ var ColDefUtil = (function () {
         .concat(ColDefUtil.NUMBER_PROPERTIES)
         .concat(ColDefUtil.FUNCTION_PROPERTIES)
         .concat(ColDefUtil.BOOLEAN_PROPERTIES);
+    // used when doing property checks - this causes noise when using frameworks which can add their own fw specific
+    // properties to coldefs, gridOptions etc
+    ColDefUtil.FRAMEWORK_PROPERTIES = ['__ob__', '__metadata__', 'mappedColumnProperties', 'hasChildColumns',
+        'toColDef', 'createColDefFromGridColumn'];
     return ColDefUtil;
 }());
 exports.ColDefUtil = ColDefUtil;

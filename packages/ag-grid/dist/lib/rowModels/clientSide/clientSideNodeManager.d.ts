@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v18.0.1
+// Type definitions for ag-grid v18.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../../entities/rowNode";
@@ -7,6 +7,9 @@ import { Context } from "../../context/context";
 import { EventService } from "../../eventService";
 import { RowDataTransaction, RowNodeTransaction } from "./clientSideRowModel";
 import { ColumnController } from "../../columnController/columnController";
+import { GridApi } from "../../gridApi";
+import { ColumnApi } from "../../columnController/columnApi";
+import { SelectionController } from "../../selectionController";
 export declare class ClientSideNodeManager {
     private static TOP_LEVEL;
     private rootNode;
@@ -14,6 +17,7 @@ export declare class ClientSideNodeManager {
     private context;
     private eventService;
     private columnController;
+    private selectionController;
     private nextId;
     private static ROOT_NODE_ID;
     private getNodeChildDetails;
@@ -23,7 +27,9 @@ export declare class ClientSideNodeManager {
     private doingLegacyTreeData;
     private doingMasterDetail;
     private allNodesMap;
-    constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, context: Context, eventService: EventService, columnController: ColumnController);
+    private columnApi;
+    private gridApi;
+    constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, context: Context, eventService: EventService, columnController: ColumnController, gridApi: GridApi, columnApi: ColumnApi, selectionController: SelectionController);
     postConstruct(): void;
     getCopyOfNodesMap(): {
         [id: string]: RowNode;
@@ -34,7 +40,8 @@ export declare class ClientSideNodeManager {
         [id: string]: number;
     }): RowNodeTransaction;
     private addRowNode(data, index?);
-    private updatedRowNode(data, update);
+    private lookupRowNode(data);
+    private updatedRowNode(rowNode, data, update);
     private recursiveFunction(rowData, parent, level);
     private createNode(dataItem, parent, level);
     private isExpanded(level);

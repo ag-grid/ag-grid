@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v18.0.1
+ * @version v18.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -76,9 +76,8 @@ var Events = (function () {
     /** Gets called once after the grid has finished initialising. */
     Events.EVENT_GRID_READY = 'gridReady';
     /** Width of height of the main grid div has changed. Grid listens for this and does layout of grid if it's
-     * changed, so always filling the space it was given.
-     * DEPRECATED - now that BorderLayout is no longer used, this doesn't make sense. */
-    Events.DEPRECATED_EVENT_GRID_SIZE_CHANGED = 'gridSizeChanged';
+     * changed, so always filling the space it was given. */
+    Events.EVENT_GRID_SIZE_CHANGED = 'gridSizeChanged';
     /** The indexes of the rows rendered has changed, eg user has scrolled to a new vertical position. */
     Events.EVENT_VIEWPORT_CHANGED = 'viewportChanged';
     /** A column drag has started, either resizing a column or moving a column. */
