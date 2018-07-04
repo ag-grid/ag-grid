@@ -631,10 +631,15 @@ cellEditorParams: function(params) {
         Single Click Editing
     </h3>
     <p>
-        To change the default so that a single click starts editing, set the property <code>singleClickEdit=true</code>.
+        To change the default so that a single click starts editing, set the property <code>gridOptions.singleClickEdit=true</code>.
         This is useful when you want a cell to enter edit mode as soon as you click on it, similar to the experience
         you get when inside Excel.
     </p>
+
+    <p>
+        It is also possible to define single click editing on a per column basis using: <code>colDef.singleClickEdit = true</code>.
+    </p>
+
     <h3>
         No Click Editing
     </h3>
