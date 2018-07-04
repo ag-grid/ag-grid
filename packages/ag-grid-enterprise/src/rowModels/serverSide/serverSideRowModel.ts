@@ -124,13 +124,63 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.reset();
     }
 
-    private onSortChanged(): void {
-        if (this.cacheExists()) {
-            let sortModel = this.extractSortModel();
-            let rowGroupColIds = this.columnController.getRowGroupColumns().map(col => col.getId());
+    // returns back all the cols that were effected by the sorting. eg if we were sorting by col A,
+    // and now we are sorting by col B, the list of impacted cols should be A and B. so if a cache
+    // is impacted by sorting on A or B then it needs to be refreshed. this includes where the cache
+    // was previously sorted by A and then the A sort now needs to be cleared.
+    private findChangedColumnsInSort(
+                            newSortModel: {colId: string, sort: string}[],
+                            oldSortModel: {colId: string, sort: string}[]): string[] {
 
+
+        let allColsInBothSorts: string[] = [];
+
+        [newSortModel, oldSortModel].forEach( sortModel => {
+            if (sortModel) {
+                let ids = sortModel.map(sm => sm.colId);
+                allColsInBothSorts = allColsInBothSorts.concat(ids);
+            }
+        });
+
+        let differentSorts = (oldSortItem: any, newSortItem: any) => {
+            let oldSort = oldSortItem ? oldSortItem.sort : null;
+            let newSort = newSortItem ? newSortItem.sort : null;
+            return oldSort !== newSort;
+        };
+
+        let differentIndexes = (oldSortItem: any, newSortItem: any) => {
+            let oldIndex = oldSortModel.indexOf(oldSortItem);
+            let newIndex = newSortModel.indexOf(newSortItem);
+            return oldIndex !== newIndex;
+        };
+
+        return allColsInBothSorts.filter( colId => {
+            let oldSortItem = _.find(oldSortModel, sm => sm.colId === colId);
+            let newSortItem = _.find(newSortModel, sm => sm.colId === colId);
+            return differentSorts(oldSortItem, newSortItem) || differentIndexes(oldSortItem, newSortItem);
+        });
+    }
+
+    private onSortChanged(): void {
+
+        let newSortModel = this.extractSortModel();
+        let oldSortModel = this.cacheParams.sortModel;
+        let changedColumnsInSort = this.findChangedColumnsInSort(newSortModel, oldSortModel);
+
+        this.cacheParams.sortModel = newSortModel;
+
+        if (this.cacheExists()) {
+            let rowGroupColIds = this.columnController.getRowGroupColumns().map(col => col.getId());
             let serverSideCache = <ServerSideCache> this.rootNode.childrenCache;
-            serverSideCache.refreshCache(sortModel, rowGroupColIds);
+
+            let sortingWithValueCol = this.isSortingWithValueColumn(changedColumnsInSort);
+
+            let sortAlwaysResets = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
+            if (sortAlwaysResets || sortingWithValueCol) {
+                this.reset();
+            } else {
+                serverSideCache.refreshCacheAfterSort(changedColumnsInSort, rowGroupColIds);
+            }
         }
     }
 
@@ -512,6 +562,19 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         return sortModel;
     };
+
+    private isSortingWithValueColumn(changedColumnsInSort: string[]): boolean {
+        let valueColIds = this.columnController.getValueColumns().map(col => col.getColId());
+
+        for (let i = 0; i < changedColumnsInSort.length; i++) {
+            let sortColId = changedColumnsInSort[i];
+            if (valueColIds.indexOf(sortColId) > -1) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     private cacheExists(): boolean {
         return _.exists(this.rootNode) && _.exists(this.rootNode.childrenCache);

@@ -20,6 +20,6 @@ if (HMR) {
     require("webpack-hot-middleware/client?path=/dev/ag-grid-enterprise-bundle/__webpack_hmr&reload=true");
 }
 
-export * from "../../../../ag-grid/exports";
+export * from "../../../../ag-grid/src/ts/main";
 
 import "../../../../ag-grid-enterprise/src/main.ts";

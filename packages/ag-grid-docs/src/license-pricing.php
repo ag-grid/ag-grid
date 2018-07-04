@@ -57,8 +57,6 @@ s.parentNode.insertBefore(b, s);})();
 ?>
 </header>
 
-<script type="text/javascript" src="//downloads.mailchimp.com/js/signup-forms/popup/embed.js" data-dojo-config="usePlainJson: true, isDebug: false"></script><script type="text/javascript">require(["mojo/signup-forms/Loader"], function(L) { L.start({"baseUrl":"mc.us11.list-manage.com","uuid":"9b44b788c97fa5b498fbbc9b5","lid":"9353cf87ce"}) })</script>
-
 <div class="info-page">
     <div class="row">
         <section>
@@ -66,8 +64,8 @@ s.parentNode.insertBefore(b, s);})();
             <div id="thankyou" style="display: none"> Thank you for contacting ag-Grid. We'll be in contact shortly.  </div>
 
             <h1>ag-Grid Pricing</h1> 
-<hr>
-            <p class="lead">ag-Grid comes in two versions &ndash; <strong>Community</strong> and <strong>Enterprise</strong>. Let's go over the differences between the two, so you can pick the one that is most suitable for your project.</p>
+
+            <p class="lead">Ag-Grid comes in two versions &ndash; <strong>Community</strong> and <strong>Enterprise</strong>. Let's go over the differences between the two, so you can pick the one that is most suitable for your project.</p>
 <!--
             <p class="lead">Ag-Grid comes in two versions &ndash; <strong>Community</strong> and <strong>Enterprise</strong>. The document outlines the important differences between the two.</p>
                 <p class="lead">The Community eddition is <strong>MIT licensed</strong>, supports all major JavaScript frameworks, includes all essential datagrid features and can be used free of charge.</p> 
@@ -271,15 +269,6 @@ We offer three flavors &ndash; <strong>Single Application Developer</strong>, <s
                 <dd>
                     <p>
                         Yes. Get in touch and tell us what you are looking for. We are always open to dicussion and will propose what we think is fair.
-                    </p>
-                </dd>
-
-                <dt>Why do we collect your data?</dt>
-                <dd>
-                    <p>
-                        We collect your information from the enquiry form to add to our form and use it to be able to send you the license key.
-                        <br>
-                        Refer to our <a href="https://www.ag-grid.com/privacy.php">privacy policy</a> for more information. 
                     </p>
                 </dd>
                 </dl>

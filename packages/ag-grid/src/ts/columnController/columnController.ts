@@ -49,12 +49,12 @@ export interface ColumnResizeSet {
 
 export interface ColumnState {
     colId: string,
-    hide: boolean,
-    aggFunc: string | IAggFunc,
-    width: number,
-    pivotIndex: number,
-    pinned: string,
-    rowGroupIndex: number
+    hide?: boolean,
+    aggFunc?: string | IAggFunc,
+    width?: number,
+    pivotIndex?: number,
+    pinned?: boolean | string | "left" | "right",
+    rowGroupIndex?: number
 }
 
 @Bean('columnController')
@@ -772,7 +772,7 @@ export class ColumnController {
     public setColumnWidth(
             key: string|Column, // @key - the column who's size we want to change
             newWidth: number, // @newWidth - width in pixels
-            takeFromAdjacent: boolean, // @takeFromAdjacent - if user has 'shift' pressed, then pixels are taken from adjacent column
+            shiftKey: boolean, // @takeFromAdjacent - if user has 'shift' pressed, then pixels are taken from adjacent column
             finished: boolean, // @finished - ends up in the event, tells the user if more events are to come
             source: ColumnEventType = "api"): void {
 
@@ -789,7 +789,13 @@ export class ColumnController {
             columns: [col]
         });
 
-        if (takeFromAdjacent) {
+        // if user wants to do shift resize by default, then we invert the shift operation
+        let defaultIsShift = this.gridOptionsWrapper.getColResizeDefault() === 'shift';
+        if (defaultIsShift) {
+            shiftKey = !shiftKey;
+        }
+
+        if (shiftKey) {
             let otherCol = this.getDisplayedColAfter(col);
             if (!otherCol) { return; }
 
@@ -1411,7 +1417,8 @@ export class ColumnController {
             return [];
         }
 
-        let columnStateList: ColumnState[] = this.primaryColumns.map(this.createStateItemFromColumn.bind(this));
+        let columnStateList: ColumnState[]
+            = <ColumnState[]> this.primaryColumns.map(this.createStateItemFromColumn.bind(this));
 
         if (!this.pivotMode) {
             this.orderColumnStateList(columnStateList);
@@ -1470,7 +1477,7 @@ export class ColumnController {
         let pivotIndexes: { [key: string]: number } = {};
 
         if (columnState) {
-            columnState.forEach((stateItem: any) => {
+            columnState.forEach((stateItem: ColumnState) => {
                 let column = this.getPrimaryColumn(stateItem.colId);
                 if (!column) {
                     console.warn('ag-grid: column ' + stateItem.colId + ' not found');
@@ -1528,7 +1535,7 @@ export class ColumnController {
         column.setValueActive(false, source);
     }
 
-    private syncColumnWithStateItem(column: Column, stateItem: any,
+    private syncColumnWithStateItem(column: Column, stateItem: ColumnState,
                                     rowGroupIndexes: {[key: string]: number},
                                     pivotIndexes: {[key: string]: number},
                                     source: ColumnEventType): void {
@@ -2133,9 +2140,9 @@ export class ColumnController {
             this.orderGridColsLikeLastPrimary();
         }
 
-        this.putFixedColumnsFirst();
-
         this.addAutoGroupToGridColumns();
+
+        this.putFixedColumnsFirst();
 
         this.setupQuickFilterColumns();
 

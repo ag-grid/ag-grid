@@ -301,10 +301,7 @@ include '../documentation-main/documentation_header.php';
             <th>autoHeight</th>
             <td>Set to true to have the grid calculate height of row based on contents of this column.</td>
         </tr>
-        <tr>
-            <th>singleClickEdit</th>
-            <td>Set to true to have cells under this column enter edit mode after single click.</td>
-        </tr>
+
 
         <tr class="title-row">
             <!-- TITLE ROW -->

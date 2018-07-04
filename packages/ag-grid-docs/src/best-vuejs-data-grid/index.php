@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "VueJS Datagrid | Packed with features and performance";
-$pageDescription = "A feature rich data grid designed for Enterprise applications. Easily integrate with Vue to deliver filtering, grouping, aggregation, pivoting and much more. Version 18 is out now. Try our Community version now or take a free 2 month trial of Enterprise Version.";
+$pageDescription = "A feature rich data grid designed for Enterprise applications. Easily integrate with Vue to deliver filtering, grouping, aggregation, pivoting and much more. Try our Community version now or take a free 2 month trial of Enterprise Version.";
 $pageKeyboards = "VueJS Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
     <h2 id="ag-grid-vuejs-features">ag-Grid VueJS Features</h2>
 
     <p>
-        <a href="https://www.ag-grid.com/features-overview/">Every feature</a> of ag-Grid is available when using the ag-Grid VueJS Component. The VueJS Component wraps
+        Every feature of ag-Grid is available when using the ag-Grid VueJS Component. The VueJS Component wraps
         the functionality of ag-Grid, it doesn't duplicate, so there will be no difference between core ag-Grid and
         VueJS ag-Grid when it comes to features.
     </p>
@@ -259,7 +259,7 @@ this.columnDefs = [
 
 <h2 id="parent_child">Child to Parent Communication</h2>
 
-<p>There are a variety of ways to manage component communication in Vue (shared service, local variables etc), but
+<p>There are a variety of ways to manage component communication in Angular (shared service, local variables etc), but
     you
     often need a simple way to let a "parent" component know that something has happened on a "child" component. In this
     case
@@ -334,21 +334,12 @@ components: {
     is explained in the section on each.
 </p>
 
-<h2 id="next-steps">Next Steps</h2>
+<h2 id="next-steps">Next Steps...</h2>
 
 <p>
-    Learn how to get started with ag-Grid in your Vue project <a href="https://www.ag-grid.com/vue-getting-started/">here</a>.
-    <br><br>
-    Ready to try ag-Grid in your project? Download ag-Grid Community edition or trial ag-Grid Enterprise for free.
+    Now you can go to <a href="../javascript-grid-interfacing-overview/">interfacing</a>
+    to learn about accessing all the features of the grid.
 </p>
-
-<div>
-  <a href="https://github.com/ag-grid/ag-grid-angular"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
-</div>
-<br>
-<div>
-  <a href="https://www.ag-grid.com/start-trial.php"><button type="button" class="btn btn-primary btn-lg btn-block">Start Free Trial</button></a>
-</div>
 
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

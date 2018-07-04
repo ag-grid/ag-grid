@@ -62,7 +62,7 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
 
                     <div class="col-md-4">
                         <div>
-                            <img src='images/team/niall.jpg' alt="Niall Crosby, CEO"/>
+                            <img src='images/team/niall.jpg'/>
                         </div>
                         <h3>Niall Crosby</h3>
                         <h4>CEO / CTO</h4>
@@ -73,7 +73,7 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
 
                     <div class="col-md-4">
                         <div>
-                            <img src='images/team/sean.jpg' alt="Sean Landsman, Lead Developer"/>
+                            <img src='images/team/sean.jpg'/>
                         </div>
                         <h3>Sean Landsman</h3>
                         <h4>Lead Developer, <br> Frameworks</h4>
@@ -84,7 +84,7 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
 
                     <div class="col-md-4">
                         <div>
-                            <img src='images/team/alberto.jpg' alt="Alberto Gutierrez, Lead Developer"/>
+                            <img src='images/team/alberto.jpg'/>
                         </div>
                         <h3>Alberto Gutierrez</h3>
                         <h4>Lead Developer, <br> Data Internals</h4>
@@ -102,7 +102,7 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
 
                     <div class="col-md-4">
                         <div>
-                            <img src='images/team/rob.jpg' alt="Rob Clarke, Lead Developer"/>
+                            <img src='images/team/rob.jpg'/>
                         </div>
                         <h3>Rob Clarke</h3>
                         <h4>Lead Developer, <br> Enterprise Applications</h4>
@@ -115,7 +115,7 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
 
                     <div class="col-md-4">
                         <div>
-                            <img src='images/team/petyo.jpg' alt="Petyo Ivanov, Lead Developer"/>
+                            <img src='images/team/petyo.jpg'/>
                         </div>
                         <h3>Petyo Ivanov</h3>
                         <h4>Lead Developer, UI</h4>
@@ -128,7 +128,7 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
 
                     <div class="col-md-4">
                         <div>
-                            <img src='images/team/Rod.png' alt="Rod Smith, Support Engineer"/>
+                            <img src='images/team/Rod.png'/>
                         </div>
                         <h3>Rod Smith</h3>
                         <h4>Support Engineer</h4>
@@ -150,7 +150,7 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
 
                     <div class="col-md-4">
                         <div>
-                            <img src='images/team/john.jpg' alt="John Masterson, COO"/>
+                            <img src='images/team/john.jpg'/>
                         </div>
                         <h3>John Masterson</h3>
                         <h4>COO</h4>
@@ -164,7 +164,7 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
                     
                     <div class="col-md-4">
                         <div>
-                            <img src='images/team/Fahad.jpg' alt="Fahad Ahmad, Digital Marketing Executive"/>
+                            <img src='images/team/Fahad.jpg'/>
                         </div>
                         <h3>Fahad Ahmad</h3>
                         <h4>Digital Marketing Executive</h4>
@@ -184,7 +184,7 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
 
                     <div class="col-md-4">
                         <div>
-                            <img src='images/team/bas.jpg' alt="Bas Rahman, Customer Experience Team"/>
+                            <img src='images/team/bas.jpg'/>
                         </div>
                         <h3>Bas Rahman</h3>
                         <h4>Customer Experience Team</h4>
@@ -197,7 +197,7 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
 
                     <div class="col-md-4">
                         <div>
-                            <img src='images/team/dimple.jpg' alt="Dimple Unalkat, Customer Experience Team"/>
+                            <img src='images/team/dimple.jpg'/>
                         </div>
                         <h3>Dimple Unalkat</h3>
                         <h4>Customer Experience Team</h4>

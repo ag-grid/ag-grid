@@ -5,10 +5,14 @@
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
   "main": "main.js",
-  "bugs": {
-    "url": "https://github.com/ag-grid/ag-grid-vue/issues"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ag-grid/ag-grid.git"
   },
-  "homepage": "https://github.com/ag-grid/ag-grid-vue#readme",
+  "bugs": {
+    "url": "https://github.com/ag-grid/ag-grid/issues"
+  },
+  "homepage": "http://www.ag-grid.com/",
   "scripts": {
     "build": "gulp"
   },

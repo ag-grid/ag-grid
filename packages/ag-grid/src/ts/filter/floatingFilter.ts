@@ -47,7 +47,7 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
     lastKnownModel: M = null;
 
     constructor() {
-        super(`<div><input  ref="eColumnFloatingFilter" class="ag-floating-filter-input"></div>`);
+        super(`<div><input ref="eColumnFloatingFilter" class="ag-floating-filter-input"></div>`);
     }
 
     init(params: P): void {
@@ -60,7 +60,7 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
         this.addDestroyableEventListener(this.eColumnFloatingFilter, 'keydown', toDebounce);
         let columnDef = (<any>params.column.getDefinition());
         if (columnDef.filterParams && columnDef.filterParams.filterOptions && columnDef.filterParams.filterOptions.length === 1 && columnDef.filterParams.filterOptions[0] === 'inRange') {
-            this.eColumnFloatingFilter.readOnly = true;
+            this.eColumnFloatingFilter.disabled = true;
         }
 
     }
@@ -73,13 +73,13 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
     onParentModelChanged(parentModel: M,combinedFilter?: CombinedFilter<M>): void {
         if (combinedFilter!=null) {
             this.eColumnFloatingFilter.value = `${this.parseAsText(combinedFilter.condition1)} ${combinedFilter.operator} ${this.parseAsText(combinedFilter.condition2)}`;
-            this.eColumnFloatingFilter.readOnly = true;
+            this.eColumnFloatingFilter.disabled = true;
             this.lastKnownModel = null;
             this.eColumnFloatingFilter.title = this.eColumnFloatingFilter.value;
             this.eColumnFloatingFilter.style.cursor = 'default';
             return;
         } else {
-            this.eColumnFloatingFilter.readOnly = false;
+            this.eColumnFloatingFilter.disabled = false;
         }
 
         if (this.equalModels(this.lastKnownModel, parentModel)) {
@@ -177,9 +177,19 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
         let body: HTMLElement = _.loadTemplate(`<div></div>`);
         this.dateComponentPromise.then(dateComponent=> {
             body.appendChild(dateComponent.getGui());
+
+            const columnDef = (<any>params.column.getDefinition());
+            const isInRange = (columnDef.filterParams &&
+                columnDef.filterParams.filterOptions &&
+                columnDef.filterParams.filterOptions.length === 1 &&
+                columnDef.filterParams.filterOptions[0] === 'inRange');
+
+            if(dateComponent.eDateInput) {
+                dateComponent.eDateInput.disabled = isInRange;
+            }
         });
         this.setTemplateFromElement(body);
-    }
+        }
 
     private onDateChanged(): void {
         let parentModel: SerializedDateFilter = this.currentParentModel();
@@ -229,8 +239,29 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
                 dateComponent.setDate(null);
                 return;
             }
+
+            this.enrichDateInput(parentModel.type,
+                parentModel.dateFrom,
+                parentModel.dateTo,
+                dateComponent);
+
             dateComponent.setDate(_.parseYyyyMmDdToDate(parentModel.dateFrom, '-'));
         });
+    }
+
+    private enrichDateInput(type: string,
+                            dateFrom: string,
+                            dateTo: string,
+                            dateComponent: any) {
+        if (dateComponent.eDateInput) {
+            if (type === 'inRange') {
+                dateComponent.eDateInput.title = `${dateFrom} to ${dateTo}`;
+                dateComponent.eDateInput.disabled = true;
+            } else {
+                dateComponent.eDateInput.title = '';
+                dateComponent.eDateInput.disabled = true;
+            }
+        }
     }
 }
 
@@ -240,16 +271,16 @@ export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<Serial
         let currentParentModel = this.currentParentModel();
         if (toParse == null && currentParentModel == null) { return ''; }
         if (toParse == null && currentParentModel != null && currentParentModel.type !== 'inRange') {
-            this.eColumnFloatingFilter.readOnly = false;
+            this.eColumnFloatingFilter.disabled = false;
             return '';
         }
 
         if (currentParentModel != null && currentParentModel.type === 'inRange') {
-            this.eColumnFloatingFilter.readOnly = true;
+            this.eColumnFloatingFilter.disabled = true;
             return this.parseAsText(currentParentModel);
         }
 
-        this.eColumnFloatingFilter.readOnly = false;
+        this.eColumnFloatingFilter.disabled = false;
         return this.parseAsText(toParse);
 
     }
@@ -302,11 +333,11 @@ export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<Serial
 export class SetFloatingFilterComp extends InputTextFloatingFilterComp<SerializedSetFilter, IFloatingFilterParams<SerializedSetFilter, BaseFloatingFilterChange<SerializedSetFilter>>> {
     init(params: IFloatingFilterParams<SerializedSetFilter, BaseFloatingFilterChange<SerializedSetFilter>>): void {
         super.init(params);
-        this.eColumnFloatingFilter.readOnly = true;
+        this.eColumnFloatingFilter.disabled = true;
     }
 
     asFloatingFilterText(parentModel: string[] | SerializedSetFilter): string {
-        this.eColumnFloatingFilter.readOnly = true;
+        this.eColumnFloatingFilter.disabled = true;
         if(!parentModel) return '';
 
         // also supporting old filter model for backwards compatibility
@@ -343,7 +374,7 @@ export class SetFloatingFilterComp extends InputTextFloatingFilterComp<Serialize
 export class ReadModelAsStringFloatingFilterComp extends InputTextFloatingFilterComp<string, IFloatingFilterParams<string, BaseFloatingFilterChange<string>>> {
     init(params: IFloatingFilterParams<string, BaseFloatingFilterChange<string>>): void {
         super.init(params);
-        this.eColumnFloatingFilter.readOnly = true;
+        this.eColumnFloatingFilter.disabled = true;
     }
 
     onParentModelChanged(parentModel: any): void {

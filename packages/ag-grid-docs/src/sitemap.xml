@@ -571,12 +571,6 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/ag-grid-angular-angularcli/</loc>
-    <lastmod>2018-03-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
     <loc>https://www.ag-grid.com/javascript-grid-row-models/</loc>
     <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
@@ -662,12 +656,6 @@
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-rtl/</loc>
-    <lastmod>2018-03-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://www.ag-grid.com/ag-grid-react-datagrid/</loc>
     <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>

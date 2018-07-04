@@ -22,10 +22,6 @@ include '../jira_reports/jira_utilities.php';
     ?>
 </header>
 
-<div class="homepage">
-    <h1 style="text-align: center;">ag-Grid Changelog</h1>
-</div>
-
 <?php
 function extractFixVersions($data)
 {
@@ -111,7 +107,6 @@ $keyToMoreInfo = $moreInformationMap['more_info'];
 $keyToBreakingChanges = $moreInformationMap['breaking'];
 $keyToDeprecations = $moreInformationMap['deprecation'];
 ?>
-
 
 <div class="info-page" id="page-changelog">
     <div class="row">

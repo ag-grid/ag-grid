@@ -1422,7 +1422,7 @@ export class CellComp extends Component {
             setTimeout( ()=> colDef.onCellClicked(cellClickedEvent), 0);
         }
 
-        let editOnSingleClick = (this.beans.gridOptionsWrapper.isSingleClickEdit() || colDef.singleClickEdit)
+        let editOnSingleClick = this.beans.gridOptionsWrapper.isSingleClickEdit()
             && !this.beans.gridOptionsWrapper.isSuppressClickEdit();
         if (editOnSingleClick) {
             this.startRowOrCellEdit();

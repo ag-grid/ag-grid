@@ -6,21 +6,19 @@ $pageGroup = "basics";
 include '../getting-started/header.php';
 ?>
 
-<script type="text/javascript" src="//downloads.mailchimp.com/js/signup-forms/popup/embed.js" data-dojo-config="usePlainJson: true, isDebug: false"></script><script type="text/javascript">require(["mojo/signup-forms/Loader"], function(L) { L.start({"baseUrl":"mc.us11.list-manage.com","uuid":"9b44b788c97fa5b498fbbc9b5","lid":"b7d8f8f05f"}) })</script>
-
 <h1>Get Started with ag-Grid in Your Angular Project</h1>
 
 <p class="lead">The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid engine is implemented in TypeScript with zero dependencies. 
 ag-Grid supports Angular through a <strong>wrapper component</strong>. The wrapper lets you use ag-Grid in your application like any other Angular component &ndash; you pass configuration through property bindings and handle events through event bindings. 
 You can even use Angular components to customize the grid UI and cell contents / behavior.</p> 
 
-<p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing Angular project, and configure some of the <a href="https://www.ag-grid.com/features-overview/">essential features of it</a>. 
+<p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing Angular project, and configure some of the essential features of it. 
 We will show you some of the fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the grid's visual appearance using Sass variables.</p>
 
 <h2>Add ag-Grid to Your Project</h2>
 
 <p>For the purposes of this tutorial, we are going to scaffold an Angular app with <a href="https://cli.angular.io/">angular CLI</a>. 
-Don't worry if your project has a different configuration. ag-Grid and its Angular wrapper are distributed as NPM packages, which should work with any common Angular project module bundler setup. 
+Don't worry if your project has a different configuration. Ag-Grid and its Angular wrapper are distributed as NPM packages, which should work with any common Angular project module bundler setup. 
 Let's follow the <a href="https://github.com/angular/angular-cli#installation">Angular CLI instructions</a> - run the following in your terminal:</p>
 
 <snippet language="sh">
@@ -97,7 +95,7 @@ export class AppComponent {
 }
 </snippet>
 
-<p>The code above presents two essential configuration properties of the grid - <a href="https://www.ag-grid.com/javascript-grid-column-definitions/"><strong>the column definitions</strong></a> (<code>columnDefs</code>) and the data (<code>rowData</code>). In our case, the column definitions contain three columns; 
+<p>The code above presents two essential configuration properties of the grid - <strong>the column definitions</strong> (<code>columnDefs</code>) and the data (<code>rowData</code>). In our case, the column definitions contain three columns; 
 each column entry specifies the header label and the data field to be displayed in the body of the table.</p> 
 
 <p>Finally, let's add the component definition to our template. Edit <code>app/app.component.html</code> and remove the scaffold code:</p>
@@ -138,7 +136,7 @@ As you may have already noticed, the CSS class matches the name of CSS file we i
 
 <p>After adding the property, you should be able to sort the grid by clicking on the column headers. Clicking on a header toggles through ascending, descending and no-sort.</p>
 
-<p>Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to imagine how a real-world application may have hundreds (or even hundreds of thousands!) or rows, with many columns. In a data set like this <a href="https://www.ag-grid.com/javascript-grid-filtering/">filtering</a> is your friend.</p>
+<p>Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to imagine how a real-world application may have hundreds (or even hundreds of thousands!) or rows, with many columns. In a data set like this filtering is your friend.</p>
 
 <p>As with sorting, enabling filtering is as easy as setting the <code>enableFilter</code> property:</p>
 
@@ -267,7 +265,7 @@ export class AppComponent implements OnInit {
 }
 </snippet>
 
-<p>Next, let's enable <a href="https://www.ag-grid.com/javascript-grid-selection/#multi-row-selection">multiple row selection</a>, so that the user can pick many rows:</p>
+<p>Next, let's enable multiple row selection, so that the user can pick many rows:</p>
 
 <snippet language="html">
 &lt;ag-grid-angular 
@@ -284,7 +282,7 @@ export class AppComponent implements OnInit {
 
 <div class="note">We took a bit of a shortcut here, by not binding the property value. Without <code>[]</code>, the assignment will pass the attribute value as a string, which is fine for our purposes.</div>
 
-<p>Great! Now the first column contains a checkbox that, when clicked, selects the row. The only thing we have to add is a button that gets the selected data and sends it to the server. To do this, we are going to use the <a href="https://www.ag-grid.com/javascript-grid-api/">ag-Grid API</a> - we will access it through the component instance. </p> 
+<p>Great! Now the first column contains a checkbox that, when clicked, selects the row. The only thing we have to add is a button that gets the selected data and sends it to the server. To do this, we are going to use the ag-Grid API - we will access it through the component instance. </p> 
 
 <snippet language="html">
 &lt;ag-grid-angular 
@@ -396,11 +394,11 @@ export class AppComponent implements OnInit {
 <p>Well, we cheated a bit. Calling <code>alert</code> is not exactly a call to our backend. 
 Hopefully you will forgive us this shortcut for the sake of keeping the article short and simple. Of course, you can substitute that bit with a real-world application logic after you are done with the tutorial.</p> 
 
-<h2>Grouping (Enterprise)</h2>
+<h2>Grouping (enterprise)</h2>
 
 <div class="note">Grouping is a feature exclusive to the enterprise version of ag-Grid.</div>
 
-<p>In addition to filtering and sorting, <a href="https://www.ag-grid.com/javascript-grid-grouping/">grouping</a> is another  effective way for the user to make sense out of large amounts of data. In our case, the data is not that much. Let's switch to a slightly larger data set:</p>
+<p>In addition to filtering and sorting, grouping is another  effective way for the user to make sense out of large amounts of data. In our case, the data is not that much. Let's switch to a slightly larger data set:</p>
 
 <snippet language="diff">
 ngOnInit() {
@@ -487,7 +485,7 @@ The grouping documentation section contains plenty of real-world runnable exampl
 
 <p>The last thing which we are going to do is to change the grid look and feel by modifying some of the theme's Sass variables.</p> 
 
-<p>By default, ag-Grid ships a <a href="https://www.ag-grid.com/javascript-grid-styling/">set of pre-built theme stylesheets</a>. If we want to tweak the colors and the fonts of theme, we should add a Sass preprocessor to our project, 
+<p>By default, ag-Grid ships a set of pre-built theme stylesheets. If we want to tweak the colors and the fonts of theme, we should add a Sass preprocessor to our project, 
 override the theme variable values, and refer the ag-grid Sass files instead of the pre-built stylesheets so that the variable overrides are applied.</p>
 
 <p>Thankfully, Angular CLI has done most of the heavy lifting for us. Remember that  we bootstrapped our project with <code>--style scss</code>? Everything we need to do now is to change the paths in <code>src/styles.scss</code>:</p>
@@ -511,31 +509,27 @@ In fact, by specifying the icons path, we also made our first theme override! We
 
 <p>If everything is configured correctly, the second row of the grid will get slightly darker. Congratulations! 
 You now know now bend the grid look to your will - there are a few dozens more Sass variables that let you control the font family and size, border color, 
-header background color and even the amount of spacing in the cells and columns. The full <a href="https://www.ag-grid.com/javascript-grid-styling/#customizing-sass-variables">Sass variable list</a> is available in the themes documentation section.</p> 
+header background color and even the amount of spacing in the cells and columns. The full Sass variable list is available in the themes documentation section.</p> 
 
 <h2>Summary</h2> 
 
 <p>With this tutorial, we managed to accomplish a lot. Starting from the humble beginnings of a three row / column setup, we now have a grid that supports sorting, filtering, binding to remote data, selection and even grouping! 
 While doing so, we learned how to configure the grid, how to access its API object, and how to change the styling of the component.</p> 
 
-<p>That's just scratching the surface, though. The grid has <a href="https://www.ag-grid.com/features-overview/"> a lot more features to offer</a>; the abilities to customize cells and headers with custom components allow for almost infinite possible configurations. </p>
+<p>That's just scratching the surface, though. The grid has a lot more features to offer; the abilities to customize cells and headers with custom components allow for almost infinite possible configurations. </p>
 
 <h2>Next Steps</h2> 
 
-<p>You are hungry for more? Head over to the <a href="../angular-more-details/">Angular guides section</a> for more in-depth information about the Angular flavor of ag-Grid.  To learn more about the features used in this tutorial, you can go through the following help articles:</p>
+<p>You are hungry for more? Head over to the <a href="../angular-more-details/">Angular guides section</a> for more in-depth information about the angular flavor of ag-Grid.  To learn more about the features used in this tutorial, you can go through the following help articles:</p>
 
-<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-sorting/" role="button">Sorting</a>
-<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-filtering/" role="button">Filtering</a>
-<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-grouping/" role="button">Grouping</a>
-<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-selection/" role="button">Selection</a>
-<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-styling/#customizing-sass-variables" role="button">Customize Themes with Sass</a>
-<br><br>
-<div>
-  <a href="https://github.com/ag-grid/ag-grid-angular"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
-</div>
-<br>
-<div>
-  <a href="https://www.ag-grid.com/start-trial.php"><button type="button" class="btn btn-primary btn-lg btn-block">Start Free Trial</button></a>
-</div>
+<ul>
+    <li><a href="../javascript-grid-sorting/">Sorting</a></li>
+    <li><a href="../javascript-grid-filtering/">Filtering</a></li>
+    <li><a href="../javascript-grid-grouping/">Grouping</a></li>
+    <li><a href="../javascript-grid-selection/">Selection</a></li>
+    <li><a href="../javascript-grid-styling/#customizing-sass-variables">Customizing themes with Sass</a></li>
+</ul>
+
+
 
 <?php include '../getting-started/footer.php'; ?>

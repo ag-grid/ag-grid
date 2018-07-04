@@ -29,7 +29,7 @@ meta_and_links("Cookies Policy", "About ag-Grid", "This page outlines our policy
 <html>
 
 <head id="top of page">
-  <title>Cookie Policy</title>
+	<title>Cookie Policy</title>
 </head>
 <body class="text-center">
   <div id="introduction">
@@ -48,11 +48,11 @@ meta_and_links("Cookies Policy", "About ag-Grid", "This page outlines our policy
 
 <div class="text-left">
 <ol>
-  <br><br>
-    <h3 id="intro-privacy">What is a Cookie?</h3>
-    <hr>
-    <p>
-      A <strong>"cookie"</strong> is a piece of information that is stored on your computer's hard drive and which records how you move your way around a website so that, when you revisit that website, it can present tailored options based on the information stored about your last visit. Cookies can also be used to analyse traffic and for advertising and marketing purposes. 
+	<br><br>
+		<h3 id="intro-privacy">What is a Cookie?</h3>
+		<hr>
+		<p>
+			A <strong>"cookie"</strong> is a piece of information that is stored on your computer's hard drive and which records how you move your way around a website so that, when you revisit that website, it can present tailored options based on the information stored about your last visit. Cookies can also be used to analyse traffic and for advertising and marketing purposes. 
   <br><br>
 Cookies are used by nearly all websites and do not harm your system. 
 <br><br>

@@ -263,9 +263,6 @@ export interface ColDef extends AbstractColDef {
      * Return false if the values are the same (ie no update). */
     newValueHandler?: (params: any)=>boolean;
 
-    /** If true, this cell will be in editing mode after first click. */
-    singleClickEdit?: boolean;
-
     /** Cell template to use for cell. Useful for AngularJS cells. */
     template?: string;
 

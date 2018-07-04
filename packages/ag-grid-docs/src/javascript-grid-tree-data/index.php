@@ -198,7 +198,7 @@ var rowData = [
         Also note that as filtering is performed across all group levels, a group will be included if:
         <dl style="margin-left: 25px;">
             <dd>a) it has any children, or</dd>
-            <dd>b) it's data passes the filter</dd>
+            <dd>b) its data passes the filter</dd>
         </dl>
     </p>
 
@@ -226,7 +226,7 @@ var rowData = [
     <h2 id="only-one-column">Pivot and Row Grouping with Tree Data</h2>
 
     <p>
-        It is not possible to do pivot or row grouping while using tree data. This means all the functions
+            It is not possible to do pivot or row grouping while using tree data. This means all the functions
         related to pivot (eg colDef.pivot, or pivot in the tool panel) and row grouping (eg colDef.rowGroup, or
         row group in the tool panel) will be disabled.
     </p>
@@ -251,7 +251,7 @@ var rowData = [
     <p>
         The property <code>groupSelectsChildren</code> does not work with tree data. This is because
         groups in tree data are rows passed by the application that may or may not have children - a
-        group is simple a normal row that has another row as a child. Given groups and leaf nodes
+        group is simply a normal row that has another row as a child. Given groups and leaf nodes
         are logically identical, it is not possible to treat them differently in selection.
     </p>
 

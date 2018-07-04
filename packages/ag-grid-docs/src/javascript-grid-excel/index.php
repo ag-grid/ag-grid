@@ -432,7 +432,7 @@ var gridOptions = {
     </p>
 
     <p>
-        <img src="/images/excel_error.png" class="img-fluid" alt="Excel Error">
+        <img src="/images/excel_error.png" class="img-fluid">
     </p>
 
     </p>

@@ -6,8 +6,6 @@ define('skipInPageNav', true);
 include 'documentation_header.php';
 ?>
 
-
-
 <div class="docs-homepage-section-preview">
     <div>
     <h2>How Do I?</h2>
@@ -91,5 +89,6 @@ include 'documentation_header.php';
     <p> <a href="../javascript-grid-examples/">Go to Examples</a> </p>
     </div>
 </div>
+
 
 <?php include 'documentation_footer.php'; ?>

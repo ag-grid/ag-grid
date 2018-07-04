@@ -61,7 +61,7 @@ var gridOptions = {
     enableColResize: true,
     enableSorting: true,
     enableFilter: true,
-    domLayout: 'autoHeight'
+    gridAutoHeight: true
 };
 
 function createRow(index) {

@@ -28,24 +28,24 @@
         </li>
         <li>
             AG-1768
-            Now possible to switch between <a href="https://www.ag-grid.com/javascript-grid-width-and-height/#auto-height">Auto Height</a>
+            Now possible to switch between <a href="../javascript-grid-width-and-height/#auto-height">Auto Height</a>
             and Normal Height dynamically.
         </li>
         <li>
             AG-678
-            <a href="https://www.ag-grid.com/javascript-grid-grouping/#grouping-footers">Grouping Footers</a> now provides an option for
+            <a href="../javascript-grid-grouping/#grouping-footers">Grouping Footers</a> now provides an option for
             a 'grand' total across all groups.
         </li>
         <li>
             AG-1793
-            When in pivot mode you can now include <a href="https://www.ag-grid.com/javascript-grid-pivoting/#pivotRowTotals">Pivot Row Totals</a>
+            When in pivot mode you can now include <a href="../javascript-grid-pivoting/#pivotRowTotals">Pivot Row Totals</a>
         </li>
         <li>
             AG-1569
             To help clarify Row Model usage, we have renamed as follows:
             <ul>
-                <li>In-Memory Row Model -> <a href="https://www.ag-grid.com/javascript-grid-client-side-model/">Client-side Row Model</a></li>
-                <li>Enterprise Row Model -> <a href="https://www.ag-grid.com/javascript-grid-server-side-model/">Server-side Row Model</a></li>
+                <li>In-Memory Row Model -> <a href="../javascript-grid-client-side-model/">Client-side Row Model</a></li>
+                <li>Enterprise Row Model -> <a href="../javascript-grid-server-side-model/">Server-side Row Model</a></li>
             </ul>
         </li>
         <li>
@@ -88,7 +88,7 @@
             “Ireland” in the country column.
         </li>
         <li>
-            AG-1405 – Support for <a href="https://www.ag-grid.com/javascript-grid-row-height/#auto-row-height">
+            AG-1405 – Support for <a href="../javascript-grid-row-height/#auto-row-height">
                 automatic text wrapping</a>.
         </li>
         <li>

@@ -12,7 +12,7 @@ include '../getting-started/header.php';
 ag-Grid supports Vue through a <strong>wrapper component</strong>. The wrapper lets you use ag-Grid in your application like any other Vue component &ndash; you pass configuration through property bindings and handle events through event bindings. 
 You can even use Vue components to customize the grid UI and cell contents / behavior.</p> 
 
-<p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing Vue project, and configure some of the <a href="https://www.ag-grid.com/features-overview/">essential features</a> of it. 
+<p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing Vue project, and configure some of the essential features of it. 
 We will show you some of the fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the grid's visual appearance using Sass variables.</p>
 
 <h2>Add ag-Grid to Your Project</h2>
@@ -96,7 +96,7 @@ The grid ships several different themes; pick one that matches your project desi
 &lt;/script&gt;
 </snippet>
 
-<p>The code above presents two essential configuration properties of the grid - <a href="https://www.ag-grid.com/javascript-grid-column-definitions/"><strong>the column definitions</strong></a> (<code>columnDefs</code>) and the data (<code>rowData</code>). In our case, the column definitions contain three columns; 
+<p>The code above presents two essential configuration properties of the grid - <strong>the column definitions</strong> (<code>columnDefs</code>) and the data (<code>rowData</code>). In our case, the column definitions contain three columns; 
 each column entry specifies the header label and the data field to be displayed in the body of the table.</p> 
 
 <p>This is the ag-grid component definition, with two property bindings - <code>rowData</code> and <code>columnDefs</code>. The component also accepts the standard DOM <code>style</code> and <code>class</code>. 
@@ -126,7 +126,7 @@ As you may have already noticed, the CSS class matches the name of CSS file we i
 
 <p>After adding the property, you should be able to sort the grid by clicking on the column headers. Clicking on a header toggles through ascending, descending and no-sort.</p>
 
-<p>Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to imagine how a real-world application may have hundreds (or even hundreds of thousands!) or rows, with many columns. In a data set like this <a href="https://www.ag-grid.com/javascript-grid-filtering/">filtering</a> is your friend.</p>
+<p>Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to imagine how a real-world application may have hundreds (or even hundreds of thousands!) or rows, with many columns. In a data set like this filtering is your friend.</p>
 
 <p>As with sorting, enabling filtering is as easy as setting the <code>enableFilter</code> property:</p>
 
@@ -221,7 +221,7 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 &lt;/style&gt;
 </snippet>
 
-<p>Next, let's enable <a href="https://www.ag-grid.com/javascript-grid-selection/#multi-row-selection">multiple row selection</a>, so that the user can pick many rows:</p>
+<p>Next, let's enable multiple row selection, so that the user can pick many rows:</p>
 
 <snippet language="html">
 &lt;ag-grid-vue style="width: 500px; height: 500px;"
@@ -240,7 +240,7 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 <div class="note">We took a bit of a shortcut here, by not binding the property value. Without <code>[]</code>, the assignment will pass the attribute value as a string, which is fine for our purposes.</div>
 
 <p>Great! Now the first column contains a checkbox that, when clicked, selects the row. The only thing we have to add is a button that gets the selected data and sends it to the server. To do this, we are
-    going to use the <a href="https://www.ag-grid.com/javascript-grid-api/">ag-Grid API</a> - we will store a reference to both the grid and column API's in the <code>gridReady</code> event</p>
+    going to use the ag-Grid API - we will store a reference to both the grid and column API's in the <code>gridReady</code> event</p>
 
 <p>To test this we'll add a button that gets the selected data and sends it to the server. Let's go ahead and make these changes:</p>
 
@@ -313,7 +313,7 @@ Hopefully you will forgive us this shortcut for the sake of keeping the article 
 
 <div class="note">Grouping is a feature exclusive to the enterprise version of ag-Grid.</div>
 
-<p>In addition to filtering and sorting, <a href="https://www.ag-grid.com/javascript-grid-grouping/">grouping</a> is another  effective way for the user to make sense out of large amounts of data. In our case, the data is not that much. Let's switch to a slightly larger data set:</p>
+<p>In addition to filtering and sorting, grouping is another  effective way for the user to make sense out of large amounts of data. In our case, the data is not that much. Let's switch to a slightly larger data set:</p>
 
 <snippet language="diff">
 beforeMount() {
@@ -440,7 +440,7 @@ The grouping documentation section contains plenty of real-world runnable exampl
 
 <p>The last thing which we are going to do is to change the grid look and feel by modifying some of the theme's Sass variables.</p> 
 
-<p>By default, ag-Grid ships a set of <a href="https://www.ag-grid.com/javascript-grid-styling/">pre-built theme stylesheets</a>. If we want to tweak the colors and the fonts of theme, we should add a Sass preprocessor to our project, 
+<p>By default, ag-Grid ships a set of pre-built theme stylesheets. If we want to tweak the colors and the fonts of theme, we should add a Sass preprocessor to our project, 
 override the theme variable values, and refer the ag-grid Sass files instead of the pre-built stylesheets so that the variable overrides are applied.</p>
 
 <p>The <code>vue cli</code> did a lot of for us (<code>vue init webpack my-project</code>), including providing support for Sass. Let's switch to using the provided ag-Grid SCSS files - first, let's create a new
@@ -474,32 +474,27 @@ In fact, by specifying the icons path, we also made our first theme override! We
 
 <p>If everything is configured correctly, the second row of the grid will get slightly darker. Congratulations! 
 You now know now bend the grid look to your will - there are a few dozens more Sass variables that let you control the font family and size, border color, 
-header background color and even the amount of spacing in the cells and columns. The full <a href="https://www.ag-grid.com/javascript-grid-styling/#customizing-sass-variables">Sass variable list</a> is available in the themes documentation section.</p> 
+header background color and even the amount of spacing in the cells and columns. The full Sass variable list is available in the themes documentation section.</p> 
 
 <h2>Summary</h2> 
 
 <p>With this tutorial, we managed to accomplish a lot. Starting from the humble beginnings of a three row / column setup, we now have a grid that supports sorting, filtering, binding to remote data, selection and even grouping! 
 While doing so, we learned how to configure the grid, how to access its API object, and how to change the styling of the component.</p> 
 
-<p>That's just scratching the surface, though. The grid has a lot more <a href="https://www.ag-grid.com/features-overview/">features to offer</a>; the abilities to customize cells and headers with custom components allow for almost infinite possible configurations. </p>
+<p>That's just scratching the surface, though. The grid has a lot more features to offer; the abilities to customize cells and headers with custom components allow for almost infinite possible configurations. </p>
 
 <h2>Next Steps</h2> 
 
-<p>You are hungry for more? Head over to the <a href="../best-vuejs-data-grid/">Vue guides section</a> for more in-depth information about the Vue flavor of ag-Grid.  To learn more about the features used in this tutorial, you can go through the following help articles:</p>
+<p>You are hungry for more? Head over to the <a href="../best-vuejs-data-grid/">Vue guides section</a> for more in-depth information about the angular flavor of ag-Grid.  To learn more about the features used in this tutorial, you can go through the following help articles:</p>
 
-<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-sorting/" role="button">Sorting</a>
-<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-filtering/" role="button">Filtering</a>
-<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-grouping/" role="button">Grouping</a>
-<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-selection/" role="button">Selection</a>
-<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-styling/#customizing-sass-variables" role="button">Customize Themes with Sass</a>
-<br><br>
-<div>
-  <a href="https://github.com/ag-grid/ag-grid-angular"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
-</div>
-<br>
-<div>
-  <a href="https://www.ag-grid.com/start-trial.php"><button type="button" class="btn btn-primary btn-lg btn-block">Start Free Trial</button></a>
-</div>
+<ul>
+    <li><a href="../javascript-grid-sorting/">Sorting</a></li>
+    <li><a href="../javascript-grid-filtering/">Filtering</a></li>
+    <li><a href="../javascript-grid-grouping/">Grouping</a></li>
+    <li><a href="../javascript-grid-selection/">Selection</a></li>
+    <li><a href="../javascript-grid-styling/#customizing-sass-variables">Customizing themes with Sass</a></li>
+</ul>
+
 
 
 <?php include '../getting-started/footer.php'; ?>

@@ -20,4 +20,4 @@ import "../../../../ag-grid/src/styles/ag-theme-bootstrap.scss";
 import "../../../../ag-grid/src/styles/ag-theme-balham.scss";
 import "../../../../ag-grid/src/styles/ag-theme-balham-dark.scss";
 
-export * from "../../../../ag-grid/exports";
+export * from "../../../../ag-grid/src/ts/main";

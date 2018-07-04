@@ -31,7 +31,7 @@ if (!d.getElementById(id)) {
             }(document, 'script', 'twitter-wjs');</script>
             </div>
 
-            <img src="cover-pivot.png" class="large-cover-img" alt="Pivot Table" />
+            <img src="cover-pivot.png" class="large-cover-img"/>
 
 <div class="row">
 <div class="col-md-8">

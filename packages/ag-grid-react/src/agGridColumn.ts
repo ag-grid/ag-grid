@@ -1,6 +1,5 @@
-import * as DOM from 'react-dom-factories';
 import * as React from "react";
-import {Component, ReactChild, ReactElement} from "react";
+import {Component, ReactElement} from "react";
 import * as PropTypes from "prop-types";
 import * as AgGrid from "ag-grid";
 import {ColDef, ColGroupDef} from "ag-grid";

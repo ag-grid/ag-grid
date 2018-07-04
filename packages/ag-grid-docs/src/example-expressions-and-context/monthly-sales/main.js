@@ -105,10 +105,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
     var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://rawgit.com/ag-grid/packages/ag-grid-docs/master/src/sample-data/monthlySales.json');
+    httpRequest.open('GET', 'https://rawgit.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/sample-data/monthlySales.json');
     httpRequest.send();
     httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);
             gridOptions.api.sizeColumnsToFit();

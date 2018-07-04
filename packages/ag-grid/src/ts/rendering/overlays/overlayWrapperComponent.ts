@@ -1,6 +1,6 @@
 import {Utils as _} from '../../utils';
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {Autowired} from "../../context/context";
+import {Autowired, PostConstruct} from "../../context/context";
 import {Component} from "../../widgets/component";
 import {IComponent} from "../../interfaces/iComponent";
 import {ComponentRecipes} from "../../components/framework/componentRecipes";
@@ -51,6 +51,13 @@ export class OverlayWrapperComponent extends Component implements IOverlayWrappe
 
     public showNoRowsOverlay(eOverlayWrapper: HTMLElement): void {
         this.setTemplate(OverlayWrapperComponent.NO_ROWS_WRAPPER_OVERLAY_TEMPLATE);
+
+        // we don't use gridOptionsWrapper.addLayoutElement here because this component
+        // is passive, we don't want to add a new element each time it is created.
+        let eNoRowsOverlayWrapper = this.getRefElement('noRowsOverlayWrapper');
+        let autoHeight = this.gridOptionsWrapper.isGridAutoHeight();
+        _.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-auto-height', autoHeight);
+        _.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-normal', !autoHeight);
 
         this.componentRecipes.newNoRowsOverlayComponent().then(renderer => {
             let noRowsOverlayWrapper: HTMLElement = this.getRefElement("noRowsOverlayWrapper");
