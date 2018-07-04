@@ -64,7 +64,7 @@ include '../getting-started/header.php';
     ag-Grid-Enterprise is also distributed as both a self contained bundle and also via a CommonJS package.
 </p>
 
-<p>As with the ag-Grid example, all we need to do is reference the ag-grid-enterprise dependency and we're good
+<p>As with the <a href="https://www.ag-grid.com/example.php">ag-Grid example</a>, all we need to do is reference the ag-grid-enterprise dependency and we're good
     to go:</p>
 <snippet language="html">
 &lt;html&gt;
@@ -202,7 +202,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 <p>
     ag-Grid does not provide direct support for it's <a href="../javascript-grid-components/">components</a> and
     AngularJS 1.x. If you want to put custom
-    AngularJS 1.x components into ag-Grid, follow the instructions for plain JavaScript component. You will
+    AngularJS 1.x components into ag-Grid, follow the <a href="https://www.ag-grid.com/javascript-getting-started/">instructions for plain JavaScript component</a>. You will
     then need to manage creating and destroying child scopes yourself inside the <code>init()</code> and
     <code>destroy()</code> methods.
 </p>
@@ -256,7 +256,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     Angular version 1.x.
 </p>
 <p>
-    When Angular is turned on in ag-Grid, every time a row is inserted, a new child
+    When <a href="https://www.ag-grid.com/angular-getting-started/">Angular is turned on in ag-Grid</a>, every time a row is inserted, a new child
     Angular Scope is created for that row. This scope gets the row attached to it
     so it's available to any Angular logic inside the cell.
 </p>
@@ -300,7 +300,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 <h2 id="cell-templates">Cell Templates</h2>
 
 <p>
-    Cell Templates allow you to specify templates to use to render your cells. This is handy
+    <a href="https://www.ag-grid.com/javascript-grid-cell-rendering-components/#angular-cell-render-components">Cell Templates</a> allow you to specify templates to use to render your cells. This is handy
     if you want to put JavaScript markup with AngularJS 1.x bindings as the cells.
     Cell templates are specified in the column definition by providing a template as a
     string or a templateUrl to load the template from the server.
@@ -334,8 +334,15 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 <h2 id="next-steps">Next Steps</h2>
 
 <p>
-    Now you can go to <a href="../javascript-grid-interfacing-overview/">interfacing</a>
-    to learn about accessing all the features of the grid.
+    Ready to try ag-Grid in your project? Download ag-Grid Community edition or trial ag-Grid Enterprise for free.
 </p>
+
+<div>
+  <a href="https://github.com/ag-grid/ag-grid-angular"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
+</div>
+<br>
+<div>
+  <a href="https://www.ag-grid.com/start-trial.php"><button type="button" class="btn btn-primary btn-lg btn-block">Start Free Trial</button></a>
+</div>
 
 <?php include '../getting-started/footer.php'; ?>
