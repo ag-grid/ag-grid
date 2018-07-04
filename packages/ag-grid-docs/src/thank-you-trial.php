@@ -26,10 +26,13 @@ meta_and_links("ag-Grid: Thanks, we will be in touch.", "ag-Grid Javascript Grid
             <h1>
                 Thank you!
             </h1>
-
+<hr>
             <p>
                 We appreciate you getting in touch. We have received your request and we will be back in touch shortly with an Evaluation license key that lets you try out the product for two months.
             </p>
+       <h2>
+           Survey
+       </h2>
             <p>
                 In the meantime, why not take a look at some of the other parts of our website that might be of interest:
             <ul>
@@ -47,6 +50,17 @@ meta_and_links("ag-Grid: Thanks, we will be in touch.", "ag-Grid Javascript Grid
                 </li>
             </ul>
             </p>
+
+<h2>Follow ag-Grid</h2>
+<p>
+    Twitter<br> 
+    Facebook<br>
+    Linkedin<br>
+    Medium<br>
+    Reddit<br>
+    Github
+</p>
+
         </section>
     </div>
 </div>
