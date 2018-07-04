@@ -51,7 +51,7 @@
     "gulp-jasmine": "2.2.1",
     "gulp-postcss": "^7.0.0",
     "gulp-rename": "1.2.2",
-    "gulp-replace": "0.5.4",
+    "gulp-replace": "^0.5.4",
     "gulp-sass": "^3.1.0",
     "gulp-sourcemaps": "1.5.2",
     "gulp-stylus": "2.2.0",
