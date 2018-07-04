@@ -99,7 +99,7 @@ interface IViewportDatasourceParams {
     <h2>Example Sequence</h2>
 
     <p>
-        Reading the interfaces will look confusing if you are looking at the for the first time as the different
+        Reading the interfaces will look confusing if you are looking at them for the first time as the different
         parts don't make sense individually, it's how they all work together that creates the magic. So to
         explain, the following is a sequence of what may happen.
     </p>
