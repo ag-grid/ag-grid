@@ -15,7 +15,7 @@ export class Downloader {
         } else {
             // Chrome
             const element = document.createElement("a");
-            const blob = new Blob([content], {type: "octet/stream"});
+            const blob = new Blob(["\ufeff", content], {type: "octet/stream"});
             const url = window.URL.createObjectURL(blob);
             element.setAttribute("href", url);
             element.setAttribute("download", fileName);
