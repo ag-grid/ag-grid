@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-dev",
-  "version": "18.0.0",
+  "version": "18.1.0",
   "description": "Development project for all the other projects, contains a master gulp build file for dev purposes",
   "repository": {
     "type": "git",
@@ -9,6 +9,7 @@
   "keywords": [],
   "author": "Niall Crosby <niall.crosby@ag-grid.com>",
   "homepage": "http://www.ag-grid.com/",
+  "private": true,
   "devDependencies": {
     "autoprefixer": "^7.1.2",
     "bootstrap": "3.3.6",
