@@ -1,5 +1,6 @@
 .idea/workspace.xml
 .idea/tasks.xml
+/.idea/atlassian-ide-plugin.xml
 
 .DS_Store
 lerna-debug.log
