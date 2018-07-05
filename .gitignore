@@ -8,7 +8,7 @@ npm-debug.log
 node_modules
 
 # latest only
-dist
+
 packages/ag-grid/dist/**
 packages/ag-grid/main.d.ts
 packages/ag-grid/main.js
