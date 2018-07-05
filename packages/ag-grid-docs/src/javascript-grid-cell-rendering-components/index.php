@@ -312,11 +312,6 @@ colDef.cellRenderer = function(params) {
 </p>
 
 <p>
-    If using a framework such as React or Angular for your cell renderers then you must provide a
-    cell renderer component. There is no function equivalent for the frameworks such as React and Angular.
-</p>
-
-<p>
     Below are some simple examples of cell renderers provided as simple functions:
 </p>
 

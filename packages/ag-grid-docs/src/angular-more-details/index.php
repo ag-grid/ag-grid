@@ -284,7 +284,7 @@ private getCountryFilterParams():any {
 
     <h2 id="example-rich-grid-using-markup">Example: Rich Grid using Markup</h2>
     <p>
-        The example below shows the same rich grid as the example above, but with configuration done via Markup.
+        The example below shows a rich grid example above with configuration done via Markup.
     </p>
     <?= example('ag-Grid in Angular with Markup', 'angular-rich-grid-markup', 'angular', array( "enterprise" => 1, "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome", "bootstrap" ) )); ?>
 
