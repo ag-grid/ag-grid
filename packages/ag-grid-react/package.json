@@ -30,8 +30,8 @@
   },
   "devDependencies": {
     "@types/ag-grid": "3.2.0",
-    "@types/react": "^16.0.20",
-    "@types/react-dom": "^16.0.2",
+    "@types/react": "^16.4.0",
+    "@types/react-dom": "^16.0.0",
     "ag-grid": "^18.1.0",
     "gulp": "3.9.x",
     "gulp-debug": "^3.2.0",
@@ -48,7 +48,7 @@
     "rollup-plugin-typescript": "^0.8.1",
     "rollup-plugin-uglify": "^3.0.0",
     "rollup-stream": "^1.24.1",
-    "typescript": "2.5.x",
+    "typescript": "2.9.2",
     "vinyl-source-stream": "^2.0.0"
   },
   "peerDependencies": {

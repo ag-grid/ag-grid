@@ -144,14 +144,15 @@ export class ClientSideNodeManager {
 
             remove.forEach( item => {
                 let rowNode = this.lookupRowNode(item);
-                if (rowNode && rowNode.isSelected()) {
+
+                if (!rowNode) { return; }
+
+                if (rowNode.isSelected()) {
                     anyNodesSelected = true;
                 }
 
-                let removedRowNode: RowNode = this.updatedRowNode(rowNode, item,false);
-                if (removedRowNode) {
-                    rowNodeTransaction.remove.push(removedRowNode);
-                }
+                this.updatedRowNode(rowNode, item,false);
+                rowNodeTransaction.remove.push(rowNode);
             });
 
             if (anyNodesSelected) {
@@ -168,10 +169,11 @@ export class ClientSideNodeManager {
         if (_.exists(update)) {
             update.forEach( item => {
                 let rowNode = this.lookupRowNode(item);
-                let updatedRowNode: RowNode = this.updatedRowNode(rowNode, item,true);
-                if (updatedRowNode) {
-                    rowNodeTransaction.update.push(updatedRowNode);
-                }
+
+                if (!rowNode) { return; }
+
+                this.updatedRowNode(rowNode, item,true);
+                rowNodeTransaction.update.push(rowNode);
             });
         }
 
@@ -219,7 +221,7 @@ export class ClientSideNodeManager {
         return rowNode;
     }
 
-    private updatedRowNode(rowNode: RowNode, data: any, update: boolean): RowNode {
+    private updatedRowNode(rowNode: RowNode, data: any, update: boolean): void {
         if (update) {
             // do update
             rowNode.updateData(data);
@@ -234,8 +236,6 @@ export class ClientSideNodeManager {
             _.removeFromArray(this.rootNode.allLeafChildren, rowNode);
             this.allNodesMap[rowNode.id] = undefined;
         }
-
-        return rowNode;
     }
 
     private recursiveFunction(rowData: any[], parent: RowNode, level: number): RowNode[] {

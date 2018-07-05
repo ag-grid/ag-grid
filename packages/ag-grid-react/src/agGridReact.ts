@@ -1,4 +1,4 @@
-import {Component, createElement} from "react";
+import * as React from "react";
 import * as PropTypes from "prop-types";
 import * as AgGrid from "ag-grid";
 import {
@@ -19,7 +19,7 @@ export interface AgGridReactProps extends GridOptions {
     gridOptions?: GridOptions;
 }
 
-export class AgGridReact extends Component<AgGridReactProps, {}> {
+export class AgGridReact extends React.Component<AgGridReactProps, {}> {
     static propTypes: any;
 
     gridOptions: AgGrid.GridOptions;
@@ -33,7 +33,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     }
 
     render() {
-        return createElement<any>("div", {
+        return React.createElement<any>("div", {
             style: this.createStyleForDiv(),
             ref: e => {
                 this.eGridDiv = e;
