@@ -4,10 +4,13 @@ import * as PropTypes from "prop-types";
 import * as AgGrid from "ag-grid";
 import {ColDef, ColGroupDef} from "ag-grid";
 
-export interface AgGridColumnProps extends ColDef, ColGroupDef {
+export interface AgGridColumnProps extends ColDef {
 }
 
-export class AgGridColumn extends Component<AgGridColumnProps, {}> {
+export interface AgGridColumnGroupProps extends ColGroupDef {
+}
+
+export class AgGridColumn extends Component<AgGridColumnProps | AgGridColumnGroupProps, {}> {
     constructor(public props: any, public state: any) {
         super(props, state);
     }
