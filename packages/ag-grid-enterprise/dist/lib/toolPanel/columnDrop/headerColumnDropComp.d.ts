@@ -1,4 +1,4 @@
-// ag-grid-enterprise v18.1.0
+// ag-grid-enterprise v18.1.1
 import { Component } from "ag-grid";
 export declare class HeaderColumnDropComp extends Component {
     private gridOptionsWrapper;
