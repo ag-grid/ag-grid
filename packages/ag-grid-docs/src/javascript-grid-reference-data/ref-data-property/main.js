@@ -33,10 +33,6 @@ var gridOptions = {
                 values: extractValues(carMappings)
             },
             filter: 'agSetColumnFilter',
-            filterParams: {
-                // set to true to search by key rather than displayed text!
-                miniFilterSearchByRefDataKey: false
-             },
             refData: carMappings
         },
         {
@@ -45,15 +41,11 @@ var gridOptions = {
             cellEditor: 'agRichSelectCellEditor',
             cellEditorParams: {
                 values: extractValues(colourMappings),
-                cellRenderer: colorCellRenderer,
-                // set to true to search by key rather than display value!
-                miniFilterSearchByRefDataKey: false
+                cellRenderer: colorCellRenderer
             },
             filter: 'agSetColumnFilter',
             filterParams: {
-                cellRenderer: colorCellRenderer,
-                // set to true to search by key rather than display value!
-                miniFilterSearchByRefDataKey: false
+                cellRenderer: colorCellRenderer
             },
             refData: colourMappings,
             cellRenderer: colorCellRenderer
@@ -63,15 +55,10 @@ var gridOptions = {
             field: "interiorColour",
             filter: 'agSetColumnFilter',
             filterParams: {
-                cellRenderer: colorCellRenderer,
-                // set to true to search by key rather than display value!
-                miniFilterSearchByRefDataKey: false
+                cellRenderer: colorCellRenderer
             },
             refData: colourMappings,
-            cellRenderer: colorCellRenderer,
-            valueSetter: function(params) {
-                return params.newValue ? params.newValue : params.oldValue;
-            }
+            cellRenderer: colorCellRenderer
         },
         {
             headerName: "Retail Price",
@@ -126,6 +113,7 @@ function numberValueSetter(params) {
 function removeSpaces(str) {
     return str ? str.replace(/\s/g, '') : str;
 }
+
 
 // wait for the document to be loaded, otherwise
 // ag-Grid will not find the div in the document.
