@@ -33,10 +33,6 @@ var gridOptions = {
                 values: extractValues(carMappings)
             },
             filter: 'agSetColumnFilter',
-            filterParams: {
-                // set to true to search by key rather than displayed text!
-                miniFilterSearchByRefDataKey: false
-             },
             refData: carMappings
         },
         {
@@ -45,15 +41,11 @@ var gridOptions = {
             cellEditor: 'agRichSelectCellEditor',
             cellEditorParams: {
                 values: extractValues(colourMappings),
-                cellRenderer: colorCellRenderer,
-                // set to true to search by key rather than display value!
-                miniFilterSearchByRefDataKey: false
+                cellRenderer: colorCellRenderer
             },
             filter: 'agSetColumnFilter',
             filterParams: {
-                cellRenderer: filterColorCellRenderer,
-                // set to true to search by key rather than display value!
-                miniFilterSearchByRefDataKey: false
+                cellRenderer: colorCellRenderer
             },
             refData: colourMappings,
             cellRenderer: colorCellRenderer
@@ -63,9 +55,7 @@ var gridOptions = {
             field: "interiorColour",
             filter: 'agSetColumnFilter',
             filterParams: {
-                cellRenderer: filterColorCellRenderer,
-                // set to true to search by key rather than display value!
-                miniFilterSearchByRefDataKey: false
+                cellRenderer: colorCellRenderer
             },
             refData: colourMappings,
             cellRenderer: colorCellRenderer
@@ -106,11 +96,6 @@ function colorCellRenderer(params) {
     return "<span style='color:" + removeSpaces(params.valueFormatted) + "'>" + params.valueFormatted + "</span>";
 }
 
-function filterColorCellRenderer(params) {
-    console.log(params);
-    return "<span style='color:" + removeSpaces(params.value) + "'>" + params.value + "</span>";
-}
-
 function currencyFormatter(params) {
     var value = Math.floor(params.value);
     if (isNaN(value)) return "";
@@ -126,8 +111,9 @@ function numberValueSetter(params) {
 }
 
 function removeSpaces(str) {
-    return str.replace(/\s/g, '');
+    return str ? str.replace(/\s/g, '') : str;
 }
+
 
 // wait for the document to be loaded, otherwise
 // ag-Grid will not find the div in the document.
