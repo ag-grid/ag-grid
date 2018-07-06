@@ -184,7 +184,4 @@ cellEditorParams: {
 
     <?= example('Ref Data Property', 'ref-data-property', 'generated', array("enterprise" => 1)) ?>
 
-    <note>When using the 'refData' property it is also possible to search using the set filters mini filter by code using:
-        <code>filterParams.miniFilterSearchByRefDataKey = true</code>.</note>
-
 <?php include '../documentation-main/documentation_footer.php';?>

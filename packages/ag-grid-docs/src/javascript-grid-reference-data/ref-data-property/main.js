@@ -51,7 +51,7 @@ var gridOptions = {
             },
             filter: 'agSetColumnFilter',
             filterParams: {
-                cellRenderer: filterColorCellRenderer,
+                cellRenderer: colorCellRenderer,
                 // set to true to search by key rather than display value!
                 miniFilterSearchByRefDataKey: false
             },
@@ -63,12 +63,15 @@ var gridOptions = {
             field: "interiorColour",
             filter: 'agSetColumnFilter',
             filterParams: {
-                cellRenderer: filterColorCellRenderer,
+                cellRenderer: colorCellRenderer,
                 // set to true to search by key rather than display value!
                 miniFilterSearchByRefDataKey: false
             },
             refData: colourMappings,
-            cellRenderer: colorCellRenderer
+            cellRenderer: colorCellRenderer,
+            valueSetter: function(params) {
+                return params.newValue ? params.newValue : params.oldValue;
+            }
         },
         {
             headerName: "Retail Price",
@@ -106,11 +109,6 @@ function colorCellRenderer(params) {
     return "<span style='color:" + removeSpaces(params.valueFormatted) + "'>" + params.valueFormatted + "</span>";
 }
 
-function filterColorCellRenderer(params) {
-    console.log(params);
-    return "<span style='color:" + removeSpaces(params.value) + "'>" + params.value + "</span>";
-}
-
 function currencyFormatter(params) {
     var value = Math.floor(params.value);
     if (isNaN(value)) return "";
@@ -126,7 +124,7 @@ function numberValueSetter(params) {
 }
 
 function removeSpaces(str) {
-    return str.replace(/\s/g, '');
+    return str ? str.replace(/\s/g, '') : str;
 }
 
 // wait for the document to be loaded, otherwise

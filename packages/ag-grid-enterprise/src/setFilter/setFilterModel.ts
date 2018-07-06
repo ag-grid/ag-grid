@@ -238,10 +238,6 @@ export class SetFilterModel {
                 value = this.colDef.keyCreator( {value: value} );
             }
 
-            if (this.colDef.refData) {
-                value = this.colDef.refData[value];
-            }
-
             if (value === "" || value === undefined) {
                 value = null;
             }
@@ -312,24 +308,16 @@ export class SetFilterModel {
             return valueUpperCase.indexOf(miniFilterUpperCase) >= 0;
         };
 
-        if (this.filterParams.miniFilterSearchByRefDataKey) {
-            Object.keys(this.colDef.refData).forEach(key => {
-                if (matchesFn(key)) {
-                    this.displayedValues.push(this.colDef.refData[key]);
-                }
-            });
-        } else {
-            for (let i = 0, l = this.availableUniqueValues.length; i < l; i++) {
-                let value = this.availableUniqueValues[i];
-                if (value) {
-                    const displayedValue = this.formatter(value.toString());
+        for (let i = 0, l = this.availableUniqueValues.length; i < l; i++) {
+            let value = this.availableUniqueValues[i];
+            if (value) {
+                const displayedValue = this.formatter(value.toString());
 
-                    let formattedValue: string =
-                        this.valueFormatterService.formatValue(this.column, null, null, displayedValue);
+                let formattedValue: string =
+                    this.valueFormatterService.formatValue(this.column, null, null, displayedValue);
 
-                    if (matchesFn(displayedValue) || matchesFn(formattedValue)) {
-                        this.displayedValues.push(value);
-                    }
+                if (matchesFn(displayedValue) || matchesFn(formattedValue)) {
+                    this.displayedValues.push(value);
                 }
             }
         }

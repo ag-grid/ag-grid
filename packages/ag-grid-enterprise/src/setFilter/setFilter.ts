@@ -173,10 +173,6 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[] | 
             value = this.filterParams.colDef.keyCreator({value: value});
         }
 
-        if (this.filterParams.colDef.refData) {
-            value = this.filterParams.colDef.refData[value];
-        }
-
         value = Utils.makeNull(value);
 
         if (Array.isArray(value)) {
