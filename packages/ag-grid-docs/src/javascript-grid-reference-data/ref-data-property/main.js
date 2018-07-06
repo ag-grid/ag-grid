@@ -58,10 +58,7 @@ var gridOptions = {
                 cellRenderer: colorCellRenderer
             },
             refData: colourMappings,
-            cellRenderer: colorCellRenderer,
-            valueSetter: function(params) {
-                return params.newValue ? params.newValue : params.oldValue;
-            }
+            cellRenderer: colorCellRenderer
         },
         {
             headerName: "Retail Price",
