@@ -34779,13 +34779,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var anyNodesSelected_1 = false;
 	            remove.forEach(function (item) {
 	                var rowNode = _this.lookupRowNode(item);
-	                if (rowNode && rowNode.isSelected()) {
+	                if (!rowNode) {
+	                    return;
+	                }
+	                if (rowNode.isSelected()) {
 	                    anyNodesSelected_1 = true;
 	                }
-	                var removedRowNode = _this.updatedRowNode(rowNode, item, false);
-	                if (removedRowNode) {
-	                    rowNodeTransaction.remove.push(removedRowNode);
-	                }
+	                _this.updatedRowNode(rowNode, item, false);
+	                rowNodeTransaction.remove.push(rowNode);
 	            });
 	            if (anyNodesSelected_1) {
 	                this.selectionController.updateGroupsFromChildrenSelections();
@@ -34800,10 +34801,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (utils_1.Utils.exists(update)) {
 	            update.forEach(function (item) {
 	                var rowNode = _this.lookupRowNode(item);
-	                var updatedRowNode = _this.updatedRowNode(rowNode, item, true);
-	                if (updatedRowNode) {
-	                    rowNodeTransaction.update.push(updatedRowNode);
+	                if (!rowNode) {
+	                    return;
 	                }
+	                _this.updatedRowNode(rowNode, item, true);
+	                rowNodeTransaction.update.push(rowNode);
 	            });
 	        }
 	        if (rowNodeOrder) {
@@ -34857,7 +34859,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            utils_1.Utils.removeFromArray(this.rootNode.allLeafChildren, rowNode);
 	            this.allNodesMap[rowNode.id] = undefined;
 	        }
-	        return rowNode;
 	    };
 	    ClientSideNodeManager.prototype.recursiveFunction = function (rowData, parent, level) {
 	        var _this = this;
@@ -40723,9 +40724,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (this.filterParams.colDef.keyCreator) {
 	            value = this.filterParams.colDef.keyCreator({ value: value });
 	        }
-	        if (this.filterParams.colDef.refData) {
-	            value = this.filterParams.colDef.refData[value];
-	        }
 	        value = main_1.Utils.makeNull(value);
 	        if (Array.isArray(value)) {
 	            for (var i = 0; i < value.length; i++) {
@@ -41127,9 +41125,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (_this.colDef.keyCreator) {
 	                value = _this.colDef.keyCreator({ value: value });
 	            }
-	            if (_this.colDef.refData) {
-	                value = _this.colDef.refData[value];
-	            }
 	            if (value === "" || value === undefined) {
 	                value = null;
 	            }
@@ -41170,7 +41165,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return this.miniFilter;
 	    };
 	    SetFilterModel.prototype.processMiniFilter = function () {
-	        var _this = this;
 	        // if no filter, just use the unique values
 	        if (this.miniFilter === null) {
 	            this.displayedValues = this.availableUniqueValues;
@@ -41190,22 +41184,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var valueUpperCase = valueToCheck.toUpperCase();
 	            return valueUpperCase.indexOf(miniFilterUpperCase) >= 0;
 	        };
-	        if (this.filterParams.miniFilterSearchByRefDataKey) {
-	            Object.keys(this.colDef.refData).forEach(function (key) {
-	                if (matchesFn(key)) {
-	                    _this.displayedValues.push(_this.colDef.refData[key]);
-	                }
-	            });
-	        }
-	        else {
-	            for (var i = 0, l = this.availableUniqueValues.length; i < l; i++) {
-	                var value = this.availableUniqueValues[i];
-	                if (value) {
-	                    var displayedValue = this.formatter(value.toString());
-	                    var formattedValue = this.valueFormatterService.formatValue(this.column, null, null, displayedValue);
-	                    if (matchesFn(displayedValue) || matchesFn(formattedValue)) {
-	                        this.displayedValues.push(value);
-	                    }
+	        for (var i = 0, l = this.availableUniqueValues.length; i < l; i++) {
+	            var value = this.availableUniqueValues[i];
+	            if (value) {
+	                var displayedValue = this.formatter(value.toString());
+	                var formattedValue = this.valueFormatterService.formatValue(this.column, null, null, displayedValue);
+	                if (matchesFn(displayedValue) || matchesFn(formattedValue)) {
+	                    this.displayedValues.push(value);
 	                }
 	            }
 	        }
@@ -42063,7 +42048,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    LicenseManager.setLicenseKey = function (licenseKey) {
 	        LicenseManager_1.licenseKey = licenseKey;
 	    };
-	    LicenseManager.RELEASE_INFORMATION = 'MTUyODcxMzg1Nzk1Mg==';
+	    LicenseManager.RELEASE_INFORMATION = 'MTUzMDYxMzQyMDg2Nw==';
 	    __decorate([
 	        main_1.Autowired('md5'),
 	        __metadata("design:type", md5_1.MD5)

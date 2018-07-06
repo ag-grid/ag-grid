@@ -133,9 +133,6 @@ var SetFilter = (function (_super) {
         if (this.filterParams.colDef.keyCreator) {
             value = this.filterParams.colDef.keyCreator({ value: value });
         }
-        if (this.filterParams.colDef.refData) {
-            value = this.filterParams.colDef.refData[value];
-        }
         value = main_1.Utils.makeNull(value);
         if (Array.isArray(value)) {
             for (var i = 0; i < value.length; i++) {

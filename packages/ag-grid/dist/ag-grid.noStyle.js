@@ -32236,13 +32236,14 @@ var ClientSideNodeManager = (function () {
             var anyNodesSelected_1 = false;
             remove.forEach(function (item) {
                 var rowNode = _this.lookupRowNode(item);
-                if (rowNode && rowNode.isSelected()) {
+                if (!rowNode) {
+                    return;
+                }
+                if (rowNode.isSelected()) {
                     anyNodesSelected_1 = true;
                 }
-                var removedRowNode = _this.updatedRowNode(rowNode, item, false);
-                if (removedRowNode) {
-                    rowNodeTransaction.remove.push(removedRowNode);
-                }
+                _this.updatedRowNode(rowNode, item, false);
+                rowNodeTransaction.remove.push(rowNode);
             });
             if (anyNodesSelected_1) {
                 this.selectionController.updateGroupsFromChildrenSelections();
@@ -32257,10 +32258,11 @@ var ClientSideNodeManager = (function () {
         if (utils_1.Utils.exists(update)) {
             update.forEach(function (item) {
                 var rowNode = _this.lookupRowNode(item);
-                var updatedRowNode = _this.updatedRowNode(rowNode, item, true);
-                if (updatedRowNode) {
-                    rowNodeTransaction.update.push(updatedRowNode);
+                if (!rowNode) {
+                    return;
                 }
+                _this.updatedRowNode(rowNode, item, true);
+                rowNodeTransaction.update.push(rowNode);
             });
         }
         if (rowNodeOrder) {
@@ -32314,7 +32316,6 @@ var ClientSideNodeManager = (function () {
             utils_1.Utils.removeFromArray(this.rootNode.allLeafChildren, rowNode);
             this.allNodesMap[rowNode.id] = undefined;
         }
-        return rowNode;
     };
     ClientSideNodeManager.prototype.recursiveFunction = function (rowData, parent, level) {
         var _this = this;

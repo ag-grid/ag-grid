@@ -175,9 +175,6 @@ var SetFilterModel = (function () {
             if (_this.colDef.keyCreator) {
                 value = _this.colDef.keyCreator({ value: value });
             }
-            if (_this.colDef.refData) {
-                value = _this.colDef.refData[value];
-            }
             if (value === "" || value === undefined) {
                 value = null;
             }
@@ -218,7 +215,6 @@ var SetFilterModel = (function () {
         return this.miniFilter;
     };
     SetFilterModel.prototype.processMiniFilter = function () {
-        var _this = this;
         // if no filter, just use the unique values
         if (this.miniFilter === null) {
             this.displayedValues = this.availableUniqueValues;
@@ -238,22 +234,13 @@ var SetFilterModel = (function () {
             var valueUpperCase = valueToCheck.toUpperCase();
             return valueUpperCase.indexOf(miniFilterUpperCase) >= 0;
         };
-        if (this.filterParams.miniFilterSearchByRefDataKey) {
-            Object.keys(this.colDef.refData).forEach(function (key) {
-                if (matchesFn(key)) {
-                    _this.displayedValues.push(_this.colDef.refData[key]);
-                }
-            });
-        }
-        else {
-            for (var i = 0, l = this.availableUniqueValues.length; i < l; i++) {
-                var value = this.availableUniqueValues[i];
-                if (value) {
-                    var displayedValue = this.formatter(value.toString());
-                    var formattedValue = this.valueFormatterService.formatValue(this.column, null, null, displayedValue);
-                    if (matchesFn(displayedValue) || matchesFn(formattedValue)) {
-                        this.displayedValues.push(value);
-                    }
+        for (var i = 0, l = this.availableUniqueValues.length; i < l; i++) {
+            var value = this.availableUniqueValues[i];
+            if (value) {
+                var displayedValue = this.formatter(value.toString());
+                var formattedValue = this.valueFormatterService.formatValue(this.column, null, null, displayedValue);
+                if (matchesFn(displayedValue) || matchesFn(formattedValue)) {
+                    this.displayedValues.push(value);
                 }
             }
         }
