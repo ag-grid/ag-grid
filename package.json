@@ -2,9 +2,12 @@
     "scripts": {
         "initSubModules": "sh ./scripts/initialiseSubModules.sh",
         "initLatest": "npm run initSubModules && sh ./scripts/switchToBranch.sh latest",
+        "initMarketing": "git checkout marketing && npm run updateCoreDependencies && npm run buildCore",
         "initMaster": "npm run initSubModules && sh ./scripts/switchToBranch.sh master",
         "updateExamples": "sh ./scripts/updateSubModules.sh",
         "updateDependencies": "lerna bootstrap",
+        "updateCoreDependencies": "lerna bootstrap --scope ag-grid --scope ag-grid-enterprise --scope ag-grid-angular --scope ag-grid-react --scope ag-grid-vue --scope ag-grid-aurelia",
+        "resetNonDocs": "git checkout packages/ag-grid && git checkout packages/ag-grid && git checkout packages/ag-grid-angular && git checkout packages/ag-grid-react && git checkout packages/ag-grid-aurelia && git checkout packages/ag-grid-vue ",
         "build": "lerna run build",
         "buildCore": "lerna run build --scope ag-grid --scope ag-grid-enterprise --scope ag-grid-angular --scope ag-grid-react --scope ag-grid-vue --scope ag-grid-aurelia",
         "buildAngular": "lerna run build --scope ag-grid --scope ag-grid-angular",
