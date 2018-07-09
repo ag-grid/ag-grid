@@ -226,9 +226,9 @@ CREATE TABLE trade
     <p>Our Java service will use the following request and response objects:</p>
 
 <snippet>
-// src/main/java/com/ag/grid/enterprise/oracle/demo/request/EnterpriseGetRowsRequest.java
+// src/main/java/com/ag/grid/enterprise/oracle/demo/request/ServerSideGetRowsRequest.java
 
-public class EnterpriseGetRowsRequest implements Serializable {
+public class ServerSideGetRowsRequest implements Serializable {
 
     private int startRow, endRow;
 
@@ -258,9 +258,9 @@ public class EnterpriseGetRowsRequest implements Serializable {
 </snippet>
 
 <snippet>
-// src/main/java/com/ag/grid/enterprise/oracle/demo/response/EnterpriseGetRowsResponse.java
+// src/main/java/com/ag/grid/enterprise/oracle/demo/response/ServerSideGetRowsResponse.java
 
-public class EnterpriseGetRowsResponse {
+public class ServerSideGetRowsResponse {
 
     private List&lt;Map&lt;String, Object>> data;
 
@@ -297,7 +297,7 @@ public class TradeController {
 
     @RequestMapping(method = POST, value = "/getRows")
     @ResponseBody
-    public EnterpriseGetRowsResponse getRows(@RequestBody EnterpriseGetRowsRequest request) {
+    public ServerSideGetRowsResponse getRows(@RequestBody ServerSideGetRowsRequest request) {
         return tradeDao.getData(request);
     }
 }
@@ -336,7 +336,7 @@ public class TradeDao {
         queryBuilder = new OracleSqlQueryBuilder();
     }
 
-    public EnterpriseGetRowsResponse getData(EnterpriseGetRowsRequest request) {
+    public ServerSideGetRowsResponse getData(ServerSideGetRowsRequest request) {
         String tableName = "trade"; // could be supplied in request as a lookup key?
 
         // first obtain the pivot values from the DB for the requested pivot columns
@@ -389,7 +389,7 @@ public class SetColumnFilter extends ColumnFilter {
 }
 </snippet>
 
-<p>These filters are supplied per column in the <code>EnterpriseGetRowsRequest</code> via the following property:</p>
+<p>These filters are supplied per column in the <code>ServerSideGetRowsRequest</code> via the following property:</p>
 
 <snippet>
     Map&lt;String, ColumnFilter> filterModel;
@@ -427,7 +427,7 @@ public abstract class ColumnFilter {
     <h2 id="sorting">Sorting</h2>
 
     <p>
-        The <code>EnterpriseGetRowsRequest</code> contains the following attribute to determine which columns to sort by:
+        The <code>ServerSideGetRowsRequest</code> contains the following attribute to determine which columns to sort by:
     </p>
 
     <snippet>
@@ -498,7 +498,7 @@ sum (
     field names such as: <code>Financial_Buy_CURRENTVALUE</code>.
 </p>
 <p>
-    These will need to be returned to the grid in the <code>EnterpriseGetRowsResponse</code> in the following property:
+    These will need to be returned to the grid in the <code>ServerSideGetRowsResponse</code> in the following property:
 </p>
 
 <snippet>
@@ -564,7 +564,7 @@ gridOptions.columnApi.setSecondaryColumns(secondaryColDefs);
     <h2 id="infinite-scrolling">Infinite Scrolling</h2>
 
     <p>
-        The <code>EnterpriseGetRowsRequest</code> contains the following attribute to determine the range to return:
+        The <code>ServerSideGetRowsRequest</code> contains the following attribute to determine the range to return:
     </p>
 
 <snippet>
