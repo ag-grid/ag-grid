@@ -599,6 +599,59 @@ gridOptions.getChildCount = function(data) {
 
 <?= example('API example', 'api', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
+<h2>Preserving Group State</h2>
+
+<p>
+    It may be necessary to expand groups to a desired initial state or to restore the grid to a previous state after
+    purging / reloading data.
+</p>
+
+<p>
+    This can be achieved by expanding row nodes as blocks are loaded in the
+    <a href="../javascript-grid-server-side-model/#server-side-datasource/">Server-side Datasource</a>. The following
+    snippet outlines a possible approach:
+</p>
+
+<snippet>
+function getRows(params) {
+
+    // 1) get data from server
+    var response = getServerResponse(params.request);
+
+    // 2) call the success callback
+    params.successCallback(response.rowsThisBlock, response.lastRow);
+
+    // 3) to preserve group state we expand any previously expanded groups for this block
+    rowsInThisBlock.forEach(row => {
+        if (expandedGroupIds.indexOf(row.id) > -1) {
+            gridOptions.api.getRowNode(row.id).setExpanded(true);
+        }
+    });
+}
+</snippet>
+
+<p>
+    Notice that in step 3, newly loaded row nodes for the current block are expanded if they are defined in <code>expandedGroupIds</code>,
+    which is an array of group keys maintained by the application. This will have a cascading effect as expanding a
+    group will cause new block(s) to load.
+</p>
+
+<p>
+    In order to easily look up group row nodes, implementing the following callback is recommended: <code>gridOptions.getRowNodeId()</code>.
+</p>
+
+<p>
+    In the example below, the following can be noted:
+    <ul>
+       <li>The grid has an initial expanded group state where:
+          <code>expandedGroupIds = ["Russia", "Russia-2002", "Ireland", "Ireland-2008"]</code></li>
+       <li>The group state is updated in <code>expandedGroupIds</code> by using listening to the grid event: <code>RowGroupOpened</code>.</li>
+       <li>Clicking the 'Purge Caches' button reloads data. Notice that the group state has been preserved.</li>
+    </ul>
+</p>
+
+<?= example('Preserve Group State', 'preserve-group-state', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
+
 <h2>Pagination with Server-side Row Model</h2>
 
 <p>
