@@ -57,52 +57,60 @@ Use the setup instructions below or go through [a 5-minute-quickstart guide](htt
 
 #### Install dependencies
 
-    $ npm install --save ag-grid ag-grid-vue
+```console
+$ npm install --save ag-grid ag-grid-vue
+```
 
 #### Import the grid and styles
 
-    import {AgGridVue} from "ag-grid-vue";
-    
-    import 'ag-grid/dist/styles/ag-grid.css';
-    import 'ag-grid/dist/styles/ag-theme-balham.css';
+```js
+import {AgGridVue} from "ag-grid-vue";
+
+import 'ag-grid/dist/styles/ag-grid.css';
+import 'ag-grid/dist/styles/ag-theme-balham.css';
+```
 
 ### Set the grid's configuration in a parent component
 
-    export default {
-        name: 'App',
-        data() {
-            return {
-                columnDefs: null,
-                rowData: null
-            }
-        },
-        components: {
-            AgGridVue
-        },
-        beforeMount() {
-            this.columnDefs = [
-                {headerName: 'Make', field: 'make'},
-                {headerName: 'Model', field: 'model'},
-                {headerName: 'Price', field: 'price'}
-            ];
-
-            this.rowData = [
-                {make: 'Toyota', model: 'Celica', price: 35000},
-                {make: 'Ford', model: 'Mondeo', price: 32000},
-                {make: 'Porsche', model: 'Boxter', price: 72000}
-            ];
+```js
+export default {
+    name: 'App',
+    data() {
+        return {
+            columnDefs: null,
+            rowData: null
         }
+    },
+    components: {
+        AgGridVue
+    },
+    beforeMount() {
+        this.columnDefs = [
+            {headerName: 'Make', field: 'make'},
+            {headerName: 'Model', field: 'model'},
+            {headerName: 'Price', field: 'price'}
+        ];
+
+        this.rowData = [
+            {make: 'Toyota', model: 'Celica', price: 35000},
+            {make: 'Ford', model: 'Mondeo', price: 32000},
+            {make: 'Porsche', model: 'Boxter', price: 72000}
+        ];
     }
+}
+```
 
 ### Render the grid as the `AgGridVue` child component
 
-	<template>
-		<ag-grid-vue style="width: 500px; height: 500px;"
-					 class="ag-theme-balham"
-					 :columnDefs="columnDefs"
-					 :rowData="rowData">
-		</ag-grid-vue>
-	</template>
+```vue
+<template>
+  <ag-grid-vue style="width: 500px; height: 500px;"
+         class="ag-theme-balham"
+         :columnDefs="columnDefs"
+         :rowData="rowData">
+  </ag-grid-vue>
+</template>
+```
 
 Issue Reporting
 ----------
