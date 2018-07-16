@@ -23,11 +23,8 @@ function tscTask() {
     ]);
 }
 
-gulp.task('publishForCI', () => {
-    return gulp
-        .src('./ag-grid-react*.tgz')
-        .pipe(rename('ag-grid-react.tgz'))
-        .pipe(gulp.dest('c:/ci/ag-grid-react/'));
+gulp.task('watch', ['commonjs'], () => {
+    gulp.watch('./src/*', ['commonjs']);
 });
 
 var typescript = require('rollup-plugin-typescript');
