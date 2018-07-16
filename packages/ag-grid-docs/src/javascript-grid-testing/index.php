@@ -88,7 +88,7 @@ Here we specify the Jasmine testing framework as well as our test to run.</snipp
 
     <p>For this test we'll testing a simple <a href="https://www.ag-grid.com/example-runner/vanilla.php?section=javascript-getting-started&example=hello-world">JavaScript based grid</a> which can be found at the Getting Started -> JavaScript Section:</p>
 
-    <img src="../images/example-js.png" class="img-fluid">
+    <img src="../images/example-js.png" class="img-fluid" alt="ag-Grid Example">
 
     <h2>Checking Headers</h2>
 

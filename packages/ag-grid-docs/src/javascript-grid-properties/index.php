@@ -5,6 +5,9 @@ $pageKeyboards = "javascript data grid ag-Grid properties";
 $pageGroup = "reference";
 include '../documentation-main/documentation_header.php';
 ?>
+
+<script type="text/javascript" src="//downloads.mailchimp.com/js/signup-forms/popup/embed.js" data-dojo-config="usePlainJson: true, isDebug: false"></script><script type="text/javascript">require(["mojo/signup-forms/Loader"], function(L) { L.start({"baseUrl":"mc.us11.list-manage.com","uuid":"9b44b788c97fa5b498fbbc9b5","lid":"9353cf87ce"}) })</script>
+
     <h1>Grid Properties</h1>
 
     <p class="lead">
@@ -31,11 +34,6 @@ include '../documentation-main/documentation_header.php';
             <th>enableColResize</th>
             <td>Set to true to allow <a href="../javascript-grid-resizing/">column resizing</a> by dragging the mouse
                 at a columns headers edge.</td>
-        </tr>
-        <tr>
-            <th>colResizeDefault</th>
-            <td>Set to 'shift' to have shift-resize as the default resize operation (same as user holding
-                down 'shift' while resizing).</td>
         </tr>
         <tr>
             <th>suppressAutoSize</th>
@@ -819,17 +817,6 @@ include '../documentation-main/documentation_header.php';
                 <a href="../javascript-grid-row-spanning/">row spanning</a>.
             </td>
         </tr>
-
-
-        <tr>
-            <th>serverSideSortingAlwaysResets</th>
-            <td>
-                When true, a full reset will be performed when sorting using the
-                <a href="../javascript-grid-server-side-model/">Server-side Row Model</a>.
-            </td>
-        </tr>
-
-
     </table>
 
 

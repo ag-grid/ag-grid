@@ -1,10 +1,12 @@
 <?php
 $pageTitle = "AngularJS Datagrid | Packed with features and performance.";
-$pageDescription = "ag-Grid is a feature rich datagrid designed for Angular. Version 17 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that you expect. Our Community version is free and open source or take a 2 month trial of ag-Grid Enterprise.";
+$pageDescription = "ag-Grid is a feature rich datagrid designed for AngularJS. Version 18 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that you expect. Our Community version is free and open source or take a 2 month trial of ag-Grid Enterprise.";
 $pageKeyboards = "Angular Grid";
 $pageGroup = "basics";
 include '../getting-started/header.php';
 ?>
+
+<script type="text/javascript" src="//downloads.mailchimp.com/js/signup-forms/popup/embed.js" data-dojo-config="usePlainJson: true, isDebug: false"></script><script type="text/javascript">require(["mojo/signup-forms/Loader"], function(L) { L.start({"baseUrl":"mc.us11.list-manage.com","uuid":"9b44b788c97fa5b498fbbc9b5","lid":"b7d8f8f05f"}) })</script>
 
 <div>
     <h1 class="first-h1" id="implementing-the-angularjs-datagrid">
@@ -32,7 +34,7 @@ include '../getting-started/header.php';
 
 <table class="content">
     <tr>
-        <td style="padding: 10px;"><img src="../images/bower.png"/></td>
+        <td style="padding: 10px;"><img src="../images/bower.png" alt="Bower Install ag-Grid" /></td>
         <td>
             <b>Bower</b><br/>
             <code>bower install ag-grid-enterprise</code>
@@ -40,7 +42,7 @@ include '../getting-started/header.php';
 
         <td style="width: 20px;"/>
 
-        <td style="padding: 10px;"><img src="../images/npm.png"/></td>
+        <td style="padding: 10px;"><img src="../images/npm.png" alt="NPM install ag-Grid" /></td>
         <td>
             <b>NPM</b><br/>
             <code>npm install ag-grid-enterprise</code>
@@ -48,7 +50,7 @@ include '../getting-started/header.php';
 
         <td style="width: 20px;"/>
 
-        <td style="padding: 10px;"><img src="../images/github.png"/></td>
+        <td style="padding: 10px;"><img src="../images/github.png" alt="Github install ag-Grid" /></td>
         <td>
             <b>Github</b><br/>
             Download from <a href="https://github.com/ag-grid/ag-grid-enterprise">Github</a>

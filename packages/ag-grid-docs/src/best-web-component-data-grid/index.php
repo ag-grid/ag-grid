@@ -10,7 +10,7 @@ include '../getting-started/header.php';
 
     <h1 id="implementing-the-web-components-datagrid">
         <img src="../images/svg/docs/getting_started.svg" width="50" />
-        <img style="vertical-align: middle" src="../images/webComponents.png" height="25px"/>
+        <img style="vertical-align: middle" src="../images/webComponents.png" height="25px" alt="Web Components"/>
         Web Component Grid
     </h1>
 
@@ -52,7 +52,7 @@ include '../getting-started/header.php';
 
     <table>
         <tr>
-            <td style="padding: 10px;"><img src="../images/bower.png"/></td>
+            <td style="padding: 10px;"><img src="../images/bower.png" alt="Bower install ag-Grid" /></td>
             <td>
                 <b>Bower</b><br/>
                 bower install ag-grid-webcomponent
@@ -60,7 +60,7 @@ include '../getting-started/header.php';
 
             <td style="width: 20px;"/>
 
-            <td style="padding: 10px;"><img src="../images/npm.png"/></td>
+            <td style="padding: 10px;"><img src="../images/npm.png" alt="NPM install ag-Grid" /></td>
             <td>
                 <b>NPM</b><br/>
                 npm install ag-grid-webcomponent
@@ -68,7 +68,7 @@ include '../getting-started/header.php';
 
             <td style="width: 20px;"/>
 
-            <td style="padding: 10px;"><img src="../images/github.png"/></td>
+            <td style="padding: 10px;"><img src="../images/github.png" alt="Github install ag-Grid" /></td>
             <td>
                 <b>Github</b><br/>
                 Download from <a href="https://github.com/ag-grid/ag-grid-webcomponent">Github</a>

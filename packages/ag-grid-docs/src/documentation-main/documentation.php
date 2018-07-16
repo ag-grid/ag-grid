@@ -92,5 +92,4 @@ include 'documentation_header.php';
     </div>
 </div>
 
-
 <?php include 'documentation_footer.php'; ?>

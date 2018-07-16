@@ -11,11 +11,11 @@ $version = 'latest';
 <head>
 <?php
 $title = 'ag-Grid: Datagrid packed with features that your users need with the performance you expect.';
-$description = 'ag-Grid is feature rich datagrid designed for the major JavaScript Frameworks. Version 17 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that your users expect. Our Community version is free and open source or take a 2 month trial of ag-Grid Enterprise.';
+$description = 'ag-Grid is feature rich datagrid designed for the major JavaScript Frameworks. Version 18 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that your users expect. Our Community version is free and open source or take a 2 month trial of ag-Grid Enterprise.';
 meta_and_links($title, $keywords, $description, false);
 ?>
-<link rel="stylesheet" href="dist/homepage.css">
-</head>
+
+</head><link rel="stylesheet" href="dist/homepage.css">
 
 <body>
     <header id="nav">
@@ -59,7 +59,7 @@ meta_and_links($title, $keywords, $description, false);
                 </ul>
 
                 <a href="/javascript-grid-getting-started/" id="free-cta">Use Free Version</a>
-                <a href="/start-trial.php" id="enterprise-cta">Try Enterprise Version</a>
+                <a href="/start-trial.php" id="enterprise-cta">Trial Enterprise Version</a>
             </div>
         </section>
     </header>
@@ -67,7 +67,7 @@ meta_and_links($title, $keywords, $description, false);
     <div id="stage-frameworks">
         <section id="news-flash">
             <div>
-                6th July 2018: <a href="./ag-grid-changelog/?fixVersion=18.1.1">Version 18.1.1</a> patch releases, focused on bug fixes.
+                July 3rd, 2018: <a href="./ag-grid-changelog/?fixVersion=18.1.0">Version 18.1</a> minor releases, focused on bug fixes.
             </div>
         </section>
 
@@ -80,6 +80,7 @@ meta_and_links($title, $keywords, $description, false);
                     <small></small>
                 </h2>
                 <p>With Zero Dependencies.</p>
+                <a class="btn btn-outline-primary" href="../javascript-grid-getting-started/" role="button" style="margin-left: 320px">See all Frameworks</a>
             </div>
 
             <div>
@@ -156,7 +157,6 @@ meta_and_links($title, $keywords, $description, false);
         </section>
 </div>
 
-
     <div id="stage-testimonials">
         <section>
             <div>
@@ -184,6 +184,8 @@ meta_and_links($title, $keywords, $description, false);
                             <!--img src="./assets/customers/andrew-taft.jpg" alt="Andrew Taft" /-->
                             <strong>Andrew Taft</strong> 
                             <span class="position">Head of Product Development at Insight Technology Group</span> 
+                            <br><br>
+                            <a class="btn btn-outline-primary" href="https://www.ag-grid.com/testimonials.php" role="button" style="margin-left: 50px">See Our Customers</a>
                         </footer>
                     </blockquote>
                 </div>
@@ -203,7 +205,6 @@ meta_and_links($title, $keywords, $description, false);
                     </blockquote>
                 </div>
             </div>
-
         </section>
     </div>
 
@@ -224,9 +225,11 @@ meta_and_links($title, $keywords, $description, false);
     </div>
 
     <div id="stage-show-me-more">
-        <h2>Show Me More!</h2>
+        <h2>Show Me More</h2>
         <a href="/features-overview/" class="btn btn-primary btn-lg">Sure! Let's Go to the Features Overview &rarr;</a>
     </div>
+
+<script type="text/javascript" src="//downloads.mailchimp.com/js/signup-forms/popup/embed.js" data-dojo-config="usePlainJson: true, isDebug: false"></script><script type="text/javascript">require(["mojo/signup-forms/Loader"], function(L) { L.start({"baseUrl":"mc.us11.list-manage.com","uuid":"9b44b788c97fa5b498fbbc9b5","lid":"8ef6be7af9"}) })</script>
 
     <?= globalAgGridScript(true, true) ?>
     <script src="dist/homepage.js"></script>

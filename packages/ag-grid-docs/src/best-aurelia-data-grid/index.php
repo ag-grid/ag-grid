@@ -23,7 +23,7 @@ include '../getting-started/header.php';
 
     <table>
         <tr>
-            <td style="padding: 10px;"><img src="../images/npm.png"/></td>
+            <td style="padding: 10px;"><img src="../images/npm.png" alt="NPM install ag-Grid" /></td>
             <td>
                 <b>NPM</b><br/>
                 npm install ag-grid-enterprise
@@ -31,7 +31,7 @@ include '../getting-started/header.php';
 
             <td style="width: 20px;"/>
 
-            <td style="padding: 10px;"><img src="../images/github.png"/></td>
+            <td style="padding: 10px;"><img src="../images/github.png" alt="Github install ag-Grid"/></td>
             <td>
                 <b>Github</b><br/>
                 Download from <a href="https://github.com/ag-grid/ag-grid-enterprise">Github</a>

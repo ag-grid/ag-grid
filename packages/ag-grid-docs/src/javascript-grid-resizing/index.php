@@ -123,27 +123,6 @@ include '../documentation-main/documentation_header.php';
         column adjacent to it. This means the total width for all columns will be constant.
     </p>
 
-    <p>
-        You can also change the default behaviour for resizing. Set grid property
-        <code>colResizeDefault='shift'</code> to have shift resizing as default and
-        normal resizing to happen when <i>shift</i> key is pressed.
-    </p>
-
-    <p>
-        In the example below, note the following:
-        <ul>
-            <li>
-                Grid property <code>colResizeDefault='shift'</code> so default column
-                resizing will behave as if <i>shift</i> key is pressed.
-            </li>
-            <li>
-                Holding down <i>shift</i> will then resize the normal default way.
-            </li>
-        </ul>
-    </p>
-
-    <?= example('Shift Resizing', 'shift-resizing', 'generated') ?>
-
     <h2>Resizing Groups</h2>
 
     <p>

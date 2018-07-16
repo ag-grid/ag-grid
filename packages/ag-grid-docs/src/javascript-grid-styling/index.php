@@ -202,13 +202,13 @@ include '../documentation-main/documentation_header.php';
             ag-header <br/>
             <div class='inline'>
                 ag-pinned-header <br/>
-                <img src="pinnedHeader.png"/>
+                <img src="pinnedHeader.png" alt="ag-Grid Pinned Header" />
             </div>
             <div class='inline'>
                 ag-header-viewport <br/>
                 <div class='inline'>
                     ag-header-container <br/>
-                    <img src="header.png"/>
+                    <img src="header.png" alt="ag-Grid Header Container" />
                 </div>
             </div>
         </div>
@@ -219,7 +219,7 @@ include '../documentation-main/documentation_header.php';
                 ag-pinned-cols-viewport <br/>
                 <div class='inline'>
                     ag-pinned-cols-container <br/>
-                    <img src="pinnedBody.png"/>
+                    <img src="pinnedBody.png" alt="ag-Grid Pinned Column Container" />
                 </div>
             </div>
             <div class='inline'>
@@ -228,7 +228,7 @@ include '../documentation-main/documentation_header.php';
                     ag-body-viewport <br/>
                     <div class='inline'>
                         ag-body-container <br/>
-                        <img src="body.png"/>
+                        <img src="body.png" alt="ag-Grid Body Container" />
                     </div>
                 </div>
             </div>

@@ -54,60 +54,30 @@ meta_and_links("Current Opportunities at ag-Grid", "ag-Grid jobs", "We are looki
         <div class="job">
             <div class="col-md-12">
                 <h3>Current Opportunities</h3>
-                <h4>Javascript Developer</h4>
+                <h4> JavaScript Support Engineer</h4>
                 <p class="lead">London, UK.</p>
 
-                <p> <b>What we offer</b> </p>
+                <p>
+                    ag-Grid has over 1,000 customers that require assistance using ag-Grid. As a JavaScript Support Engineer, you will become expert in ag-Grid and associated JavaScript libraries (React, Angular etc.) to ensure customers with queries are assisted. You will create and improve our documentation and video content to ensure our customers are well educated about our product. Through this role, you will be dealing directly with the development teams of the world's largest companies while also keeping up to date with current JavaScript frameworks and emerging technologies.
+                </p>
+                <p> <b>Responsibilities of Role</b> </p>
 
                 <ul class="content">
-                    <li>Excellent opportunity to join a new leading company in the market</li>
-                    <li>Flat hierarchy no BS</li>
-                    <li>You will have the opportunity to be a key member of the company</li>
-                    <li>We work with ALL frameworks, so it's up to you to decide where you want to become an expert</li>
-                    <li>We are huge in the community, we sponsor 10+ conferences and we give talks, you could become a speaker for ag-Grid or represent the company in conferences</li>
-                    <li>You will learn how to build Enterprise-grade software that handles the sort of requirements that only 1% of the programmers know how to deal with</li>
-                    <li>Competitive salary
+                    <li>Become expert in ag-Grid and JavaScript frameworks such as Angular and React.</li>
+                    <li>Address customer issues with ag-Grid, both standalone, and with frameworks such as Angular and React.</li>
+                    <li>Stay up to date on latest JavaScript framework changes.</li>
+                    <li>Improve our learning resources for our customers.</li>
+                    <li>Become actively involved in strategies to deliver better customer support.</li>
                 </ul>
 
-                <p> <b>What we are looking for</b> </p>
+                <p><b>Skills</b></p>
 
                 <ul class="content">
-                    <li>Developer with 2-3 years experience looking to be given the opportunity to grow.</li>
-                    <li>Strong on core computer science abstract topics. In ag-Grid you will have to learn about low level performance optimisations, complex algorithms, software patterns...</li>
-                    <li>Passionate about software. You will be asked to come up with your own ideas and approaches to improve the product</li>
-                </ul>
-
-                <p><b>Where you will start from</b></p>
-
-                <ul class="content">
-                    <li>Helping us build a knowledge base, doing so, you will be creating complex grids with graphs, charts.</li>
-                    <li>Fixing bugs and taking ownership of the smaller feature requests</li>
-                    <li>Helping us in conferences either by becoming a speaker or by representing ag-Grid as an sponsor</li>
-                </ul>
-
-                <p><b>What you need to have</b></p>
-
-                <ul class="content">
-                    <li>You need to be able to work from London
-                    <li>You need to know Javascript (2 years experience)
-                    <li>You DON'T need to know about other technologies that we use in ag-Grid, but it is a plus if you have some experience in: <ul>
-                        <li>Typescript</li>
-                        <li>Angular</li>
-                        <li>React</li>
-                        <li>Vue</li>
-                        <li>Aurelia</li>
-                        <li>Polymer</li>
-                        <li>npm</li>
-                        <li>Webpack</li>
-                        </ul>
-                    </li>
-                    <li>You must be strong on core computer science, you should be answer with confidence questions like: <ul>
-                        <li>How would you model a tree?</li>
-                        <li>How would you write an algorithm that walks a tree?</li>
-                        <li>Can you create your own publish/subscriber model?</li>
-                        <li>What is the difference between object oriented programming and functional programming?</li>
-                    </ul>
-                    </li>
+                    <li>Experience with JavaScript.</li>
+                    <li>Experience with frameworks such as Angular and React desirable.</li>
+                    <li>Experience with JavaScript grid libraries desirable.</li>
+                    <li>Excellent communication skills.</li>
+                    <li>Excellent problem solving skills.</li>
                 </ul>
                 
                 <h3>How to Apply</h3>

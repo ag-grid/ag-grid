@@ -6,6 +6,8 @@ $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
+<script type="text/javascript" src="//downloads.mailchimp.com/js/signup-forms/popup/embed.js" data-dojo-config="usePlainJson: true, isDebug: false"></script><script type="text/javascript">require(["mojo/signup-forms/Loader"], function(L) { L.start({"baseUrl":"mc.us11.list-manage.com","uuid":"9b44b788c97fa5b498fbbc9b5","lid":"b7d8f8f05f"}) })</script>
+
 <div>
 
     <h1>ag-Grid Angular Overview</h1>
@@ -284,7 +286,7 @@ private getCountryFilterParams():any {
 
     <h2 id="example-rich-grid-using-markup">Example: Rich Grid using Markup</h2>
     <p>
-        The example below shows a rich grid example above with configuration done via Markup.
+        The example below shows the same rich grid as the example above, but with configuration done via Markup.
     </p>
     <?= example('ag-Grid in Angular with Markup', 'angular-rich-grid-markup', 'angular', array( "enterprise" => 1, "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome", "bootstrap" ) )); ?>
 

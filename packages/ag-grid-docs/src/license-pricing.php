@@ -57,6 +57,8 @@ s.parentNode.insertBefore(b, s);})();
 ?>
 </header>
 
+<script type="text/javascript" src="//downloads.mailchimp.com/js/signup-forms/popup/embed.js" data-dojo-config="usePlainJson: true, isDebug: false"></script><script type="text/javascript">require(["mojo/signup-forms/Loader"], function(L) { L.start({"baseUrl":"mc.us11.list-manage.com","uuid":"9b44b788c97fa5b498fbbc9b5","lid":"9353cf87ce"}) })</script>
+
 <div class="info-page">
     <div class="row">
         <section>
@@ -99,7 +101,7 @@ s.parentNode.insertBefore(b, s);})();
                             <h3 class="h5 card-subtitle mb-2 text-muted">Commercial License</h3>
                             <ul class="card-text">
                                 <li>All Community features + </li>
-                                <li><strong>A premium set of enteprise oriented features</strong></li>
+                                <li><strong>A premium set of enterprise oriented features</strong></li>
                                 <li><strong>Dedicated support</strong></li> 
                             </ul>
                           </div>

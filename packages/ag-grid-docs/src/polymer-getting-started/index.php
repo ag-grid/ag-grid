@@ -31,7 +31,7 @@ include '../getting-started/header.php';
 
     <snippet language="sh">
 # clone the ag-Grid Polymer seed project
-git clone https://github.com/seanlandsman/ag-grid-polymer-seed
+git clone https://github.com/ag-grid/ag-grid-polymer-seed
 cd ag-grid-polymer-seed
 
 # install the project dependencies

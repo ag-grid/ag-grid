@@ -17,8 +17,6 @@ meta_and_links($title, $keywords, $description, false);
 <link rel="stylesheet" href="dist/homepage.css">
 </head>
 
-<script type="text/javascript" src="//downloads.mailchimp.com/js/signup-forms/popup/embed.js" data-dojo-config="usePlainJson: true, isDebug: false"></script><script type="text/javascript">require(["mojo/signup-forms/Loader"], function(L) { L.start({"baseUrl":"mc.us11.list-manage.com","uuid":"9b44b788c97fa5b498fbbc9b5","lid":"9353cf87ce"}) })</script>
-
 <body>
     <header id="nav">
         <?php include 'includes/navbar.php' ?>
@@ -69,7 +67,7 @@ meta_and_links($title, $keywords, $description, false);
     <div id="stage-frameworks">
         <section id="news-flash">
             <div>
-                April 12th, 2018: <a href="./ag-grid-changelog/?fixVersion=17.1.0">Version 17.1</a> released featuring 60 changes, features and bug fixes.
+                July 3rd, 2018: <a href="./ag-grid-changelog/?fixVersion=18.1.0">Version 18.1</a> minor releases, focused on bug fixes.
             </div>
         </section>
 
@@ -82,6 +80,7 @@ meta_and_links($title, $keywords, $description, false);
                     <small></small>
                 </h2>
                 <p>With Zero Dependencies.</p>
+                <a class="btn btn-outline-primary" href="../javascript-grid-getting-started/" role="button" style="margin-left: 320px">See all Frameworks</a>
             </div>
 
             <div>
@@ -158,7 +157,6 @@ meta_and_links($title, $keywords, $description, false);
         </section>
 </div>
 
-
     <div id="stage-testimonials">
         <section>
             <div>
@@ -185,9 +183,9 @@ meta_and_links($title, $keywords, $description, false);
                         <footer>
                             <!--img src="./assets/customers/andrew-taft.jpg" alt="Andrew Taft" /-->
                             <strong>Andrew Taft</strong> 
-                            <span class="position">Head of Product Development at Insight Technology Group</span>
+                            <span class="position">Head of Product Development at Insight Technology Group</span> 
                             <br><br>
-                            <a class="btn btn-primary btn-block" href="https://www.ag-grid.com/testimonials.php" role="button">See Our Customers</a>
+                            <a class="btn btn-outline-primary" href="https://www.ag-grid.com/testimonials.php" role="button" style="margin-left: 50px">See Our Customers</a>
                         </footer>
                     </blockquote>
                 </div>
@@ -206,9 +204,7 @@ meta_and_links($title, $keywords, $description, false);
                         </footer>
                     </blockquote>
                 </div>
-
             </div>
-
         </section>
     </div>
 
@@ -228,42 +224,40 @@ meta_and_links($title, $keywords, $description, false);
         </section>
     </div>
 
+    <div id="stage-show-me-more">
+        <h2>Show Me More</h2>
+
 <div class="card-deck">
- 
   <div class="card">
-    <img class="card-img-top" src="_assets/homepage/featuresoverview.jpg" alt="Card image cap">
+    <img class="card-img-top" src="_assets/customers/features-overview.png" alt="Card image cap">
     <div class="card-body">
       <h5 class="card-title">Features Overview</h5>
-      <p class="card-text">Overview of our 100+ features. Click here to find out more about our extensive set of features.</p>
-  </div>
-  <div>
-      <button type="button" class="btn btn-primary btn-block">Take Me There</button>
+      <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
     </div>
   </div>
-
-    <div class="card">
-    <img class="card-img-top" src="_assets/homepage/featuresoverview.jpg" alt="Card image cap">
-    <div class="card-body">
-      <h5 class="card-title">Documentation</h5>
-      <p class="card-text">Refer to our extensive Documentation for a better understanding of ag-Grid.</p>
-  </div>
-  <div>
-      <button type="button" class="btn btn-primary btn-block">Take Me There</button>
-    </div>
-  </div>
-  
   <div class="card">
-    <img class="card-img-top" src="_assets/homepage/test.jpg" alt="Card image cap">
+    <img class="card-img-top" src="..." alt="Card image cap">
     <div class="card-body">
       <h5 class="card-title">Demo</h5>
-      <p class="card-text">Try the ag-Grid Demo.</p>
+      <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
+      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
     </div>
-<button type="button" class="btn btn-primary">Take Me There</button>
+  </div>
+  <div class="card">
+    <img class="card-img-top" src="..." alt="Card image cap">
+    <div class="card-body">
+      <h5 class="card-title">Blog</h5>
+      <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
+      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
     </div>
   </div>
 </div>
-
+    </div>
 <br><br>
+
+<script type="text/javascript" src="//downloads.mailchimp.com/js/signup-forms/popup/embed.js" data-dojo-config="usePlainJson: true, isDebug: false"></script><script type="text/javascript">require(["mojo/signup-forms/Loader"], function(L) { L.start({"baseUrl":"mc.us11.list-manage.com","uuid":"9b44b788c97fa5b498fbbc9b5","lid":"8ef6be7af9"}) })</script>
+
     <?= globalAgGridScript(true, true) ?>
     <script src="dist/homepage.js"></script>
     <!-- Used by the dashboard demo -->
