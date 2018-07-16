@@ -28,57 +28,27 @@ ag-Grid is a feature rich datagrid designed for Angular.<br>
 <br><hr>
 <div><br>
                     <h1 class="text-center" style="background-color: #f9fcff;padding-top: 30px;padding-bottom: 30px;margin-top: -30px">Features You Need   |      Performance You Expect</h1>
-
-        <div class="row" style="margin-top: -20px">
-            <div style="margin-bottom: : 10px" class="col-md-4">
-                <h2>Core and Enterprise Features</h2>
-                    <ul class="content-list">
-                        <li>
-                            Everything you'd expect from an Angular datagrid. Sorting, filtering, row grouping. Available in ag-Grid Community.
-                        </li>
-                        <li>
-                            A more powerful set of advanced features designed for Enterprise Applications. Pivoting, Aggregation, Clipboard, Master/Detail, Tree Data
-                        </li>
-                            </li><hr>
-                            <button style="margin-top: 25px" type="button" class="btn btn-outline-primary btn-block">Features Overview</button>
-                       
-                    </ul>
-            </div>
+                    
+                        <h2 class="text-center">Core Features</h2>
+                   <br>
+                   <p class="text-center">Everything you'd expect from a Angular datagrid. Sorting, filtering, row grouping. 
+                    <br>Available in ag-Grid Community.</p>
+                    <div class="container-fluid">
+                    <div class="row">
+            <img src="sorting.gif" height="180" width="320" style="margin-right: 50px">
+                        <img src="selection.gif" height="180" width="320">
+                                    <img src="filtering.gif" height="180" width="320">
+                                </div>
+                            </div>
+                                                        <h2 class="text-center">Enterprise Features</h2>
+                   <br>
+                   <p class="text-center">A more powerful set of advanced features designed for Enterprise Applications. 
+                   <br>Pivoting, Aggregation, Clipboard, Master/Detail, Tree Data.
+                                       <div class="row">
             <img src="sorting.gif" height="180" width="320">
-            <div class="col-md-4">
-                <h2>Performance</h2>
-                    <ul class="content-list">
-                        <li>
-                            Features are useless without performance. 
-                        </li>
-                        <li>
-                            We find that the browser runs out of steam before the grid, easily handles 100,000 rows.
-                        </li>
-                        <li>
-                            For larger datasets, use one of our other Row Models designed to handle Big Data.
-                        </li>
-                    </ul><hr>
-                    <button style="margin-top: 40px" type="button" class="btn btn-outline-primary btn-block">ag-Grid Performance Demo</button>
-            </div>
-
-            <div class="col-md-4">
-                <h2>Detailed Documentation</h2>
-                    <ul class="content-list">
-                        <li>
-                           In depth guides which you can follow to implement specific features.
-                        </li>
-                        <li>
-                            Articles covering our Row Models, Themes and Angular Components.
-                        </li>
-                        <li>
-                            Library of Examples which you can use as a basis for your implementation of ag-Grid.
-                            <hr>
-                        </li>
-                    </ul>
-                    <button type="button" class="btn btn-outline-primary btn-block">Documentation</button>
-            </div>
-        </div>
-    </div>
+                        <img src="selection.gif" height="180" width="320">
+                                    <img src="filtering.gif" height="180" width="320">
+                                </div>
 <hr><br>
 <h1 class="text-center" class="text-white" class="first-h1" style="background-color: #f9fcff;padding-top: 30px;padding-bottom: 30px;margin-top: -30px">Pick The Best Version For You</h1>
 <br>
