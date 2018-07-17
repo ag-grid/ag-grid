@@ -211,6 +211,12 @@ export interface GridOptions {
     suppressPropertyNamesCheck?: boolean;
     serverSideSortingAlwaysResets?: boolean;
 
+    // manually supply the redux store - only really necessary if using redux and portals
+    // (in which case reactNext should probably be true...)
+    reduxStore?:  any;
+    // in effect whether or not to use React Portals for processing React Components within the grid
+    reactNext?:  boolean;
+
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/

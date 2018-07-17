@@ -10,8 +10,8 @@ export class PropertyKeys {
         'icons', 'datasource', 'serverSideDatasource', 'viewportDatasource', 'groupRowRendererParams', 'aggFuncs',
         'fullWidthCellRendererParams', 'defaultColGroupDef', 'defaultColDef', 'defaultExportParams', 'columnTypes',
         'rowClassRules', 'detailGridOptions', 'detailCellRendererParams', 'loadingOverlayComponentParams',
-        'noRowsOverlayComponentParams', 'popupParent', 'colResizeDefault'
-        //,'cellRenderers','cellEditors'
+        'noRowsOverlayComponentParams', 'popupParent', 'colResizeDefault', 'reduxStore'
+
     ];
 
     public static ARRAY_PROPERTIES = [
@@ -59,7 +59,7 @@ export class PropertyKeys {
         'enterMovesDownAfterEdit', 'enterMovesDown', 'suppressPropertyNamesCheck', 'rowMultiSelectWithClick',
         'contractColumnSelection', 'suppressEnterpriseResetOnNewColumns', 'enableOldSetFilterModel',
         'suppressRowHoverHighlight', 'gridAutoHeight', 'suppressRowTransform', 'suppressClipboardPaste',
-        'serverSideSortingAlwaysResets'
+        'serverSideSortingAlwaysResets', 'reactNext'
     ];
 
     public static FUNCTION_PROPERTIES = ['localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
