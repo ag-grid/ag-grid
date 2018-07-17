@@ -114,6 +114,7 @@ export class AgGridColumn {
     @Input() public pivotComparator: any;
     @Input() public suppressKeyboardEvent: any;
     @Input() public colSpan: any;
+    @Input() public rowSpan: any;
     @Input() public getQuickFilterText: any;
     @Input() public newValueHandler: any;
     @Input() public onCellValueChanged: any;
@@ -153,7 +154,6 @@ export class AgGridColumn {
     @Input() public enableCellChangeFlash: any;
     @Input() public rowDrag: any;
     @Input() public autoHeight: any;
-    @Input() public rowSpan: any;
     // @END@
 
 }

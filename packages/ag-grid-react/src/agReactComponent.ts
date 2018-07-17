@@ -11,8 +11,8 @@ export class AgReactComponent implements AgReactFrameworkComponent<any> {
     private eParentElement: HTMLElement;
     private componentInstance: any;
 
-    private readonly reactComponent: any;
-    private readonly parentComponent: AgGridReact;
+    private reactComponent: any;
+    private parentComponent: AgGridReact;
 
     constructor(reactComponent: any, parentComponent?: AgGridReact) {
         this.reactComponent = reactComponent;
