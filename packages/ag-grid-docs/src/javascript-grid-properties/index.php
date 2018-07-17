@@ -88,6 +88,13 @@ include '../documentation-main/documentation_header.php';
             <td>Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column def is included as the first column definition in the grid. If not grouping,
                 this column is not included.</td>
         </tr>
+        <tr>
+            <th>suppressSetColumnStateEvents</th>
+            <td>
+                Set to true to suppress column events being raised when <code>columnApi.setColumnState(state)</code> and
+                <code>columnApi.resetColumnState()</code> are invoked.
+            </td>
+        </tr>
     </table>
     <h2>Sort & Filter</h2>
     <table class="table content reference">
