@@ -276,6 +276,8 @@ export class GridOptionsWrapper {
 
     public isSuppressTouch() { return isTrue(this.gridOptions.suppressTouch); }
     public isSuppressRowTransform() { return isTrue(this.gridOptions.suppressRowTransform); }
+    public isSuppressSetColumnStateEvents() { return isTrue(this.gridOptions.suppressSetColumnStateEvents); }
+
     public useAsyncEvents() { return !isTrue(this.gridOptions.suppressAsyncEvents); }
     public isEnableCellChangeFlash() { return isTrue(this.gridOptions.enableCellChangeFlash); }
     public isGroupSelectsChildren() {

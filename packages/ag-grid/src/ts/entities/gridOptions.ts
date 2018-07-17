@@ -182,6 +182,7 @@ export interface GridOptions {
     valueCacheNeverExpires?: boolean;
     batchUpdateWaitMillis?: number;
     suppressRowTransform?: boolean;
+    suppressSetColumnStateEvents?: boolean;
 
     cacheOverflowSize?: number;
     infiniteInitialRowCount?: number;

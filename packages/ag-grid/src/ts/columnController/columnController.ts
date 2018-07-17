@@ -32,7 +32,6 @@ import {
 import {OriginalColumnGroup} from "../entities/originalColumnGroup";
 import {GroupInstanceIdCreator} from "./groupInstanceIdCreator";
 import {Autowired, Bean, Context, Optional, PostConstruct, Qualifier} from "../context/context";
-import {GridPanel} from "../gridPanel/gridPanel";
 import {IAggFuncService} from "../interfaces/iAggFuncService";
 import {ColumnAnimationService} from "../rendering/columnAnimationService";
 import {AutoGroupColService} from "./autoGroupColService";
@@ -1454,6 +1453,7 @@ export class ColumnController {
                 });
             });
         }
+
         this.setColumnState(state, source);
     }
 
@@ -1461,6 +1461,8 @@ export class ColumnController {
         if (_.missingOrEmpty(this.primaryColumns)) {
             return false;
         }
+
+        let columnStateBefore = this.getColumnState();
 
         this.autoGroupsNeedBuilding = true;
 
@@ -1517,7 +1519,154 @@ export class ColumnController {
         };
         this.eventService.dispatchEvent(event);
 
+        this.raiseColumnEvents(columnStateBefore, source);
+
         return success;
+    }
+
+    private raiseColumnEvents(columnStateBefore: ColumnState[], source: ColumnEventType) {
+        if (this.gridOptionsWrapper.isSuppressSetColumnStateEvents()) return;
+
+        let columnStateAfter = this.getColumnState();
+
+        // raises generic ColumnEvents where all columns are returned rather than what has changed
+        let raiseEventWithAllColumns = (eventType: string, idMapper: (cs: ColumnState) => string, columns: Column[]) => {
+            let unchanged = _.compareArrays(columnStateBefore.map(idMapper).sort(), columnStateAfter.map(idMapper).sort());
+
+            if (unchanged) return;
+
+            // returning all columns rather than what has changed!
+            let event: ColumnEvent = {
+                type: eventType,
+                columns: columns,
+                column: columns.length === 1 ? columns[0] : null,
+                api: this.gridApi,
+                columnApi: this.columnApi,
+                source: source
+            };
+
+            this.eventService.dispatchEvent(event);
+        };
+
+        // determines which columns have changed according to supplied predicate
+        let getChangedColumns = (changedPredicate: (cs: ColumnState, c: Column) => boolean): Column[] =>  {
+            let changedColumns: Column[] = [];
+
+            let columnStateBeforeMap: {[colId: string]: ColumnState} = {};
+            columnStateBefore.forEach(col => {
+                columnStateBeforeMap[col.colId] = col;
+            });
+
+            this.allDisplayedColumns.forEach(column => {
+                let colStateBefore = columnStateBeforeMap[column.getColId()];
+                if (!colStateBefore || changedPredicate(colStateBefore, column)) {
+                    changedColumns.push(column);
+                }
+            });
+
+            return changedColumns;
+        };
+
+        // generic ColumnEvents which return current column list
+        let valueColumnIdMapper = (cs: ColumnState) => cs.colId + '-' + cs.aggFunc;
+        raiseEventWithAllColumns(Events.EVENT_COLUMN_VALUE_CHANGED, valueColumnIdMapper, this.valueColumns);
+
+        let pivotColumnIdMapper = (cs: ColumnState) => cs.colId + '-' + cs.pivotIndex;
+        raiseEventWithAllColumns(Events.EVENT_COLUMN_PIVOT_CHANGED, pivotColumnIdMapper, this.pivotColumns);
+
+        let rowGroupColumnIdMapper = (cs: ColumnState) => cs.colId + '-' + cs.rowGroupIndex;
+        raiseEventWithAllColumns(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, rowGroupColumnIdMapper, this.rowGroupColumns);
+
+        // specific ColumnEvents which return what's changed
+        let pinnedChangePredicate = (cs: ColumnState, c: Column) => cs.pinned !== c.getPinned();
+        this.raiseColumnPinnedEvent(getChangedColumns(pinnedChangePredicate), source);
+
+        let visibilityChangePredicate = (cs: ColumnState, c: Column) => cs.hide === c.isVisible();
+        this.raiseColumnVisibleEvent(getChangedColumns(visibilityChangePredicate), source);
+
+        let resizeChangePredicate = (cs: ColumnState, c: Column) => cs.width !== c.getActualWidth();
+        this.raiseColumnResizeEvent(getChangedColumns(resizeChangePredicate), source);
+
+        // special handling for moved column events
+        this.raiseColumnMovedEvent(columnStateBefore, source);
+    }
+
+    private raiseColumnPinnedEvent(changedColumns: Column[], source: ColumnEventType) {
+        if (changedColumns.length > 0) {
+            let event: ColumnPinnedEvent = {
+                type: Events.EVENT_COLUMN_PINNED,
+                pinned: undefined,
+                columns: changedColumns,
+                column: null,
+                api: this.gridApi,
+                columnApi: this.columnApi,
+                source: source
+            };
+
+            this.eventService.dispatchEvent(event);
+        }
+    }
+
+    private raiseColumnVisibleEvent(changedColumns: Column[], source: ColumnEventType) {
+        if (changedColumns.length > 0) {
+            let event: ColumnVisibleEvent = {
+                type: Events.EVENT_COLUMN_VISIBLE,
+                visible: undefined,
+                columns: changedColumns,
+                column: null,
+                api: this.gridApi,
+                columnApi: this.columnApi,
+                source: source
+            };
+            this.eventService.dispatchEvent(event);
+        }
+    }
+
+    private raiseColumnResizeEvent(changedColumns: Column[], source: ColumnEventType) {
+        if (changedColumns.length > 0) {
+            let event: ColumnResizedEvent = {
+                type: Events.EVENT_COLUMN_RESIZED,
+                columns: changedColumns,
+                column: null,
+                finished: true,
+                api: this.gridApi,
+                columnApi: this.columnApi,
+                source: source
+            };
+            this.eventService.dispatchEvent(event);
+        }
+    }
+
+    private raiseColumnMovedEvent(columnStateBefore: ColumnState[], source: ColumnEventType) {
+        let movedColumns: Column[] = [];
+
+        let columnStateAfter = this.getColumnState();
+        for (let i = 0; i < columnStateAfter.length; i++) {
+            let before = columnStateBefore[i];
+            let after = columnStateAfter[i];
+
+            // don't consider column if reintroduced or hidden
+            if (!before || after.hide) continue;
+
+            if (before.colId !== after.colId) {
+                let predicate = (column: Column) => column.getColId() === after.colId;
+                let movedColumn = _.find(this.allDisplayedColumns, predicate);
+                movedColumns.push(movedColumn);
+            }
+        }
+
+        if (movedColumns.length > 0) {
+            let event: ColumnMovedEvent = {
+                type: Events.EVENT_COLUMN_MOVED,
+                columns: movedColumns,
+                column: null,
+                toIndex: undefined,
+                api: this.gridApi,
+                columnApi: this.columnApi,
+                source: source
+            };
+            this.eventService.dispatchEvent(event);
+        }
     }
 
     private sortColumnListUsingIndexes(indexes: {[key: string]: number}, colA: Column, colB: Column): number {
