@@ -84,7 +84,7 @@ include '../documentation-main/documentation_header.php';
         The flow diagram below shows the flow of a value after it is edited using the UI.
     </p>
 
-    <img src="valueSetterFlow.svg" class="img-fluid">
+    <img src="valueSetterFlow.svg" class="img-fluid" alt="Value Setter Flow">
 
     <h2 id="value-setter">Value Setter</h2>
 

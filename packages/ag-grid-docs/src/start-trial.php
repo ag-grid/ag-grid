@@ -23,9 +23,19 @@ meta_and_links("ag-Grid: Free 2 Month Trial", "Free Trial of ag-Grid JavaScrpt D
 <div class="info-page">
     <div class="row">
         <section>
-            <h1>
-                ag-Grid Enterprise Evaluation License
-            </h1>
+           <style>
+img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+</style>
+            <img src="https://ci6.googleusercontent.com/proxy/Ud-khzT51bLnOIwvW6to_TeNlUXx4LSL_akqjv6bQOHBsaanwQpFEJ_0Uwf71osI5CHmlbPeBsAXWB8DOptDGMDmB0qKNIzgNZBrwCMhOSfogpQRebu9WiDTBs5C6AFadiS7haYdKoQ9gjTc8GuI1bvzxS4RxJfb0C6wNpc=s0-d-e1-ft#https://gallery.mailchimp.com/9b44b788c97fa5b498fbbc9b5/images/7ec4f43a-0f1e-4035-8681-661fd64865a4.png" alt="ag-Grid Logo" width="135" height="150" align="middle">
+            <br>
+          <h1 class="text-center" style="margin-top: -5px">Enterprise Evaluation License</h1>
+
 
             <p>
                 An evaluation license for ag-Grid Enterprise is granted to anyone wishing evaluate ag-Grid Enterprise.
@@ -40,8 +50,10 @@ meta_and_links("ag-Grid: Free 2 Month Trial", "Free Trial of ag-Grid JavaScrpt D
                 <li>
                     You complete the form below - we will then email you back with a trial license key.
                 </li>
+                <li>You agree to the collection of your data which is added to our CRM and used to send the License Key.</li>
             </ul>
             </p>
+          <hr>
 
     <?php $startTrial = true; ?>
     <?php include("includes/orderForm.php"); ?>

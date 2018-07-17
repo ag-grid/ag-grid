@@ -26,7 +26,7 @@ include '../documentation-main/documentation_header.php';
         <tr>
 
 
-            <td style="padding: 10px;"><img src="../images/npm.png"/></td>
+            <td style="padding: 10px;"><img src="../images/npm.png" alt="NPM install ag-Grid" /></td>
             <td>
                 <b>NPM</b><br/>
                 <code>npm install ag-grid</code>
@@ -34,7 +34,7 @@ include '../documentation-main/documentation_header.php';
 
             <td style="width: 20px;">&nbsp;</td>
 
-            <td style="padding: 10px;"><img src="../images/github.png"/></td>
+            <td style="padding: 10px;"><img src="../images/github.png" alt="Github install ag-Gridinstall ag-Grid" /></td>
             <td>
                 <b>Github</b><br/>
                 Download from <a href="https://github.com/ag-grid/ag-grid">Github</a>
@@ -42,7 +42,7 @@ include '../documentation-main/documentation_header.php';
 
             <td style="width: 20px;">&nbsp;</td>
 
-            <td style="padding: 10px;"><img src="../images/bower.png"/></td>
+            <td style="padding: 10px;"><img src="../images/bower.png" alt="Bower install ag-Grid" /></td>
             <td>
                 <b>Bower</b><br/>
                 <code>bower install ag-grid</code>

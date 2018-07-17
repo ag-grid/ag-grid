@@ -275,7 +275,7 @@ module.exports = {
 
     <p>If we now run our application with the above code we will see this:</p>
 
-    <img src="../images/seed.png" style="width: 100%">
+    <img src="../images/seed.png" style="width: 100%" alt="Datagrid">
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

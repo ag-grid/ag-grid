@@ -47,7 +47,8 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The example below shows setting the grid size and then changing it as the user
-        selects the buttons.
+        selects the buttons. Notice that the example calls <code>api.doLayout()</code> after
+        the resize to avoid a flicker.
     </p>
 
     <?= example('Width & Height', 'width-and-height', 'multi', array( 'exampleHeight' => 600 )) ?>
@@ -112,15 +113,6 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Auto Height', 'auto-height', 'generated', array("enterprise" => 1, "noStyle" => 1)) ?>
 
-    <h2>Min Height with Auto Height</h2>
-
-    <p>
-        There is a minimum height of 50px for displaying the rows for auto-height.
-        This is for aesthetic purposes, in particular to allow room to show the
-        'no rows' message when no rows are in the grid - otherwise this message
-        would be overlaying on top of the header which does not look well.
-    </p>
-
     <h2>Max Height with Auto Height</h2>
 
     <p>
@@ -130,7 +122,7 @@ include '../documentation-main/documentation_header.php';
     <note>
         Users ask is it possible to set a max height when using auto-height? The answer is no.
         If using auto-height, the grid is set up to work in a different way. It is not possible to switch.
-        If you do need to switch, you will need to turn auto-height off.
+        If you do need to switch, you will need to change to a new instance of the grid.
     </note>
 
 <?php include '../documentation-main/documentation_footer.php';?>

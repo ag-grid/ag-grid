@@ -155,7 +155,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        <img src="./screenshot.png"/>
+        <img src="./screenshot.png" alt="ag-Grid Tool Panel Section" />
     </p>
 
     <h2>Suppress Sections</h2>

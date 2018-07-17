@@ -73,7 +73,7 @@ eRow.style.top = '500px';
 
         <p>
             Below shows an example data grid (which can be though of as a simple representation of
-            <a href="http://www.ag-grid.com/">ag-Grid</a>). Hitting the 'Shuffle Rows' button will
+            <a href="https://www.ag-grid.com/">ag-Grid</a>). Hitting the 'Shuffle Rows' button will
             reverse the order of the rows akin to row sorting in a data grid. The rows are positioned
             using <code>position: absolute</code> and <code>style.top</code>.
             Notice how smooth the animation is (or is not) which we will compare with the next example.

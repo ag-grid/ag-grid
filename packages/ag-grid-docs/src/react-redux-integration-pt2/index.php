@@ -21,7 +21,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        <img src="redux-file-browser.png" width="90%" style="border: 1px solid black"/>
+        <img src="redux-file-browser.png" width="90%" style="border: 1px solid black" alt="Redux File Browser" />
     </p>
 
     <note>This section assumes the reader has already covered <a href="../react-redux-integration-pt1/">Redux Integration Part 1</a>

@@ -35,6 +35,8 @@ npm i --save ag-grid-enterprise</snippet>
 
     <p>Our application will be a very simple one, consisting of a single Module, a single Component and a bootstrap file, as well a few utility & configuration files.</p>
 
+    <note>You can either create the project by hand, or check it out from our Angular Seed Repo in <a href="https://github.com/ag-grid/ag-grid-angular-seed">GitHub.</a></note>
+
     <p>The resulting project structure will look like this:</p>
 <snippet>
 ag-grid-systemjs
@@ -256,7 +258,7 @@ platformBrowserDynamic().bootstrapModule(AppModule);</snippet>
 
     <p>We can now run <code>npm start</code> to run the development setup.</p>
 
-    <img src="../images/seed.png" style="width: 100%">
+    <img src="../images/seed.png" style="width: 100%" alt="Grid Example">
 
     <h3 id="aotCompilation">For Ahead-of-Time (AOT) Compilation</h3>
 
@@ -439,7 +441,7 @@ cp ./node_modules/ag-grid/dist/styles/ag-theme-balham.css aot/</snippet>
 "build:aot": "gulp ngc && gulp aot-bundle",
 "lite:aot": "lite-server -c aot/bs-config.json",</snippet>
 
-    <img src="../images/seed.png" style="width: 100%">
+    <img src="../images/seed.png" style="width: 100%" alt="Grid Example">
 
     <p>
         All the above items are specific to either Angular, SystemJS or SystemJS Builder. The above is intended to point

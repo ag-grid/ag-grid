@@ -424,7 +424,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        <img src="./rowmodels.svg" class="img-fluid">
+        <img src="./rowmodels.svg" class="img-fluid" alt="Diagram of Major Classes involved with the Row Models">
     </p>
 
     <p>
