@@ -10,57 +10,80 @@ include '../landing-pages/header.php';
 <link rel="stylesheet" href="dist/homepage.css" style="max-width: 200px">   
 
 <div>
-    <h1 class="text-center" class="text-white" class="first-h1" style="background-color: #f9fcff;padding-top: 40px;padding-bottom: 40px;margin-top: -30px">ag-Grid: World's Leading Angular Datagrid</h1>
+    <h1 class="text-center" class="text-white" class="first-h1">ag-Grid: World's Leading Angular Datagrid</h1>
     <hr>
-    <p class="lead">
-ag-Grid is a feature rich datagrid designed for Angular.<br>
-        Integrate seamlessly with Angular to deliver core and enterprise features with the performance that you expect.<br>
+    <p class="text-center">
+ag-Grid is a feature rich datagrid designed for Angular. 
+<br>Integrate seamlessly with Angular 2+ to deliver core and enterprise features with the performance that you expect.<br>
         Close relationship with the Angular team means we support Angular's latest versions. <br>
-        This page covers the versions of ag-Grid, key benefits and outlines the resources available to quickly add a Angular datagrid or datatable to your Angular application.   
+        This page covers the versions, key benefits and outlines the resources available to quickly add a Angular datagrid or datatable to your Angular application.   
     </p>
 
 </div>
 <hr><br>
-<h1 class="text-center" class="text-white" class="first-h1" style="background-color: #f9fcff;padding-top: 30px;padding-bottom: 30px;margin-top: -30px">ag-Grid in Angular</h1>
+<div>
+<h1 class="text-center" class="text-white" class="first-h1" style="background-color: #f8fbff;padding-top: 30px;padding-bottom: 30px;margin-top: -30px">ag-Grid in Angular</h1>
 <br>
         <h6 class="text-center" style="margin-bottom: 15px">Test ag-Grid's features and performance level in the Angular Grid Example.</h6>
     <?= example('ag-Grid in Angular', 'rich-grid-example', 'angular', array( "enterprise" => 1, "exampleHeight" => 300 , "exampleWidth" => 300, "showResult" => true, "extras" => array( "fontawesome" ) )); ?>
-<br><hr>
-<div><br>
-                    <h1 class="text-center" style="background-color: #f9fcff;padding-top: 30px;padding-bottom: 30px;margin-top: -30px">Features You Need   |      Performance You Expect</h1>
-                    
-                        <h2 class="text-center">Core Features</h2>
-                   <br>
-                   <p class="text-center">Everything you'd expect from a Angular datagrid. Sorting, filtering, row grouping. 
-                    <br>Available in ag-Grid Community.</p>
-                    <div class="container-fluid">
-                    <div class="row">
-            <img src="sorting.gif" height="180" width="320" style="margin-right: 50px">
-                        <img src="selection.gif" height="180" width="320">
-                                    <img src="filtering.gif" height="180" width="320">
-                                </div>
-                            </div>
-                                                        <h2 class="text-center">Enterprise Features</h2>
-                   <br>
-                   <p class="text-center">A more powerful set of advanced features designed for Enterprise Applications. 
-                   <br>Pivoting, Aggregation, Clipboard, Master/Detail, Tree Data.
-                                       <div class="row">
-            <img src="sorting.gif" height="180" width="320">
-                        <img src="selection.gif" height="180" width="320">
-                                    <img src="filtering.gif" height="180" width="320">
-                                </div>
-<hr><br>
-<h1 class="text-center" class="text-white" class="first-h1" style="background-color: #f9fcff;padding-top: 30px;padding-bottom: 30px;margin-top: -30px">Pick The Best Version For You</h1>
+    <button type="button" class="btn btn-outline-primary btn-sm btn-block" style="padding: auto;">Get Started</button>
 <br>
+</div>
+<hr>
+<div>
+    <br>
+                    <h1 class="text-center" style="background-color: #f8fbff;padding-top: 30px;padding-bottom: 30px;margin-top: -30px;margin-bottom: -20px">Features You Need   |      Performance You Expect</h1>
+                    
+                        <h2 class="text-center" style="margin-bottom: -10px">Core</h2><hr style="width: 80px">
+                   <br>
+                   <p class="text-center" style="margin-top: -30px;">Everything you'd expect from a Angular datagrid.
+                    <br>Available in ag-Grid Community.
+<br>
+    <a href="">Github</a> | <a href="">NPM</a>
+                </p>
+
+<div class="container">
+  <div class="row">
+    <div class="col"><img src="sorting.gif"></div>
+    <div class="col"><img src="filtering.gif"></div>
+    <div class="col"><img src="selection.gif"></div>
+</div>
+</div>
+<br>
+                                                        <h2 class="text-center">Enterprise<hr style="width: 80px"></h2>
+                   <br>
+                   <p class="text-center" style="margin-top: -30px">A more powerful set of advanced features designed for Enterprise Applications. 
+<br>
+                   Availalbe in ag-Grid Enterprise.</p><br><br>          
+
+                   <div class="container" style="margin-top: -30px">
+  <div class="row">
+
+    <div class="col"><img src="selection.gif"></div>
+    <div class="col"><img src="tree-data.gif"></div>
+    <div class="col"><img src="pivoting.gif"></div>
+</div>
+</div>
+</div>
+<button style="margin-top: 40px" type="button" class="btn btn-outline-primary btn-sm btn-block" style="padding: auto;">See all our Features</button> 
+<br>
+<br>
+<hr style="margin-top: -35px"><br>
+
+<div>
+<h1 class="text-center" class="text-white" class="first-h1" style=" margin-top: -20px;background-color: #fbfbfb;padding-top: 20px;padding-bottom: 20px">Pick The Best Version For You</h1>
+<br><br>
     <div style="margin-top: -25px">
         <div class="row">
             <div class="col-md-6">
-                <h3>ag-Grid Community | Trusted by the Community</h3>
+                <h3>Trusted by the Community</h3>
                 <hr>
+                <div style="background-color: aliceblue">
                                 <p><strong>2M Downloads
                     <br>
                     150,000 Downloads Per Month</strong>
                 </p>
+            </div>
                 <hr>
                 <p>
                     Free and Open Source Angular datagrid.
@@ -73,12 +96,14 @@ ag-Grid is a feature rich datagrid designed for Angular.<br>
             </div>
 
             <div class="col-md-6">
-                <h3>ag-Grid Enterprise | Built for the Enterprise</h3>
+                <h3>Built for the Enterprise</h3>
                 <hr>
-                                <p><strong>Over 1,500 Companies use ag-Grid Enterprise
+                                <div style="background-color: aliceblue">
+                                <p><strong>Over 1,500 Companies use Enterprise
                     <br>
-                    Over 25% of FT-500 Companies use ag-Grid Enterprise</strong>
+                    Over 25% of FT-500 Companies use Enterprise</strong>
                 </p>
+            </div>
                 <hr>
                 <p>
                     Designed for Enterprise Applications.<br>
@@ -89,6 +114,7 @@ ag-Grid is a feature rich datagrid designed for Angular.<br>
             </div>
         </div>
     </div>
+</div>
 <hr>
 
 <h2>How Do I Get Started?</h2>
