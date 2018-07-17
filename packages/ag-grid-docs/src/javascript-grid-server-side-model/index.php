@@ -231,6 +231,13 @@ export interface ColumnVO {
             For example, sort by Athlete, then expand a group and you will
             see Athlete is sorted. </li>
     </ul>
+    <note>
+        When the grid sort changes, only impacted rows will get reloaded. For example if grouping by Country
+        and sort by Athlete changes, the top level Country groups will not get reloaded as sorting by Athlete
+        will not impact the top level groups.
+        To avoid this and always refresh top level groups regardless of which column was sorted,
+        set grid property <code>serverSideSortingAlwaysResets = true</code>.
+    </note>
 
 <?= example('Simple Example', 'simple', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
@@ -277,7 +284,7 @@ export interface ColumnVO {
             the data in the correct structure.
         </li>
         <li>
-            Columns <strong>Gold, Silver</strong> and <strong>Bronze</strong> all have <code>enablePivot=true</code> which means
+            Columns <strong>Athlete, Age, Country, Year</strong> and <strong>Sport</strong> all have <code>enablePivot=true</code> which means
             they can be pivoted on when <strong>Pivot Mode</strong> is active. To pivot you drag the column to the <strong>Pivot</strong>
             section.
         </li>

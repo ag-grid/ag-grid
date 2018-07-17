@@ -241,7 +241,7 @@ public class ServerSideGetRowsRequest implements Serializable {
     // pivot columns
     private List&lt;ColumnVO> pivotCols;
 
-    // true if pivot mode is one, otherwise false
+    // true if pivot mode is on, otherwise false
     private boolean pivotMode;
 
     // what groups the user is viewing

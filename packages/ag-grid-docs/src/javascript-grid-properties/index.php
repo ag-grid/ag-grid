@@ -36,6 +36,12 @@ include '../documentation-main/documentation_header.php';
                 at a columns headers edge.</td>
         </tr>
         <tr>
+            <th>colResizeDefault</th>
+            <td>Set to 'shift' to have shift-resize as the default resize operation (same as user holding
+                down 'shift' while resizing).
+            </td>
+        </tr>
+        <tr>
             <th>suppressAutoSize</th>
             <td>Suppresses <a href="../javascript-grid-resizing/#auto-size-columns">auto-sizing columns</a> for columns.
                 In other words, double clicking a columns headers edge will not auto-size.</td>
@@ -815,6 +821,13 @@ include '../documentation-main/documentation_header.php';
                 Uses CSS 'top' instead of CSS 'transform' for positioning rows. Useful if the transform
                 function is causing issues such as used in
                 <a href="../javascript-grid-row-spanning/">row spanning</a>.
+            </td>
+        </tr>
+        <tr>
+            <th>serverSideSortingAlwaysResets</th>
+            <td>
+                When true, a full reset will be performed when sorting using the
+                <a href="../javascriptgridserversidemodel/">Serverside Row Model</a>.
             </td>
         </tr>
     </table>

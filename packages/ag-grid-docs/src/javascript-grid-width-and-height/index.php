@@ -115,6 +115,15 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Max Height with Auto Height</h2>
 
+    <h2>Min Height with Auto Height</h2>
+
+    <p>
+        There is a minimum height of 50px for displaying the rows for autoheight.
+        This is for aesthetic purposes, in particular to allow room to show the
+        'no rows' message when no rows are in the grid otherwise this message
+        would be overlaying on top of the header which does not look well.
+    </p>
+
     <p>
         It is not possible to specify a max height when using auto-height.
     </p>
@@ -122,7 +131,7 @@ include '../documentation-main/documentation_header.php';
     <note>
         Users ask is it possible to set a max height when using auto-height? The answer is no.
         If using auto-height, the grid is set up to work in a different way. It is not possible to switch.
-        If you do need to switch, you will need to change to a new instance of the grid.
+        If you do need to switch, you will need to turn auto-height off.
     </note>
 
 <?php include '../documentation-main/documentation_footer.php';?>
