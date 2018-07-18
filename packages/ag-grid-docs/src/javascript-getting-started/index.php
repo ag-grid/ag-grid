@@ -12,7 +12,7 @@ include '../getting-started/header.php';
 If your project does not use one of the JavaScript frameworks that ag-Grid supports, or you are curious to understand how the grid works in its pure form, this guide is for you!
 </p> 
 
-<p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing JavaScript project, and configure some of the essential features of it. We will show you some of the fundamentals of the grid (passing properties, using the API, etc).</p>
+<p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing JavaScript project, and configure some of the <a href="../features-overview" target="_blank">essential features</a> of it. We will show you some of the fundamentals of the grid (passing properties, using the API, etc).</p>
 
 <h2>The Project Setup</h2>
 
@@ -102,7 +102,7 @@ The grid ships several different themes; pick one that matches your project desi
 &lt;/html&gt;
 </snippet>
 
-<p>The variables above present two essential configuration properties of the grid - <strong>the column definitions</strong> (<code>columnDefs</code>) and the data (<code>rowData</code>). In our case, the column definitions contain three columns; 
+<p>The variables above present two essential configuration properties of the grid - <a href="https://www.ag-grid.com/javascript-grid-column-definitions/" target="_blank"><strong>the column definitions</strong></a> (<code>columnDefs</code>) and the data (<code>rowData</code>). In our case, the column definitions contain three columns; 
 each column entry specifies the header label and the data field to be displayed in the body of the table.</p> 
 
 <p>The actual data is defined in the <code>rowData</code> as an array of objects. Notice that the fields of the objects match the <code>field</code> values in the <code>columnDefs</code> configuration object.</p> 
@@ -199,7 +199,7 @@ Notice that the actual data fetching is performed outside of the grid component 
 
 <p>Here, we replaced the <code>rowData</code> assignment  with a data fetch from a remote service. The remote data is the same as the one we initially had, so you should not notice any actual changes to the grid.</p>
 
-<p>Notice that we also did something new - we accessed the grid Api instance through the <code>gridOptions.api</code>. The api object exposes plethora of methods that allow us to implement complex scenarios with the grid.</p>
+<p>Notice that we also did something new - we accessed the <a href="../javascript-grid-api">grid Api</a> instance through the <code>gridOptions.api</code>. The api object exposes plethora of methods that allow us to implement complex scenarios with the grid.</p>
 <h2>Enable Selection</h2> 
 
 <p>Being a programmer is a hectic job. Just when we thought that we are done with our assignment, the manager shows up with a fresh set of requirements! 
@@ -256,7 +256,7 @@ Hopefully you will forgive us this shortcut for the sake of keeping the article 
 
 <div class="note">Grouping is a feature exclusive to the enterprise version of ag-Grid.</div>
 
-<p>In addition to filtering and sorting, grouping is another  effective way for the user to make sense out of large amounts of data. In our case, the data is not that much. Let's switch to a slightly larger data set:</p>
+<p>In addition to filtering and sorting, <a href="../javascript-grid-grouping">grouping</a> is another  effective way for the user to make sense out of large amounts of data. In our case, the data is not that much. Let's switch to a slightly larger data set:</p>
 
 <snippet language="diff">
 -        fetch('https://api.myjson.com/bins/15psn9')
@@ -371,23 +371,31 @@ var gridOptions = {
 
 <h2>Summary</h2> 
 
-<p>With this tutorial, we managed to accomplish a lot. Starting from the humble beginnings of a three row / column setup, we now have a grid that supports sorting, filtering, binding to remote data, selection and even grouping! 
+<p>With this Javascript datagrid tutorial, we managed to accomplish a lot. Starting from the humble beginnings of a three row / column setup, we now have a grid that supports sorting, filtering, binding to remote data, selection and even grouping! 
 While doing so, we learned how to configure the grid and how how to use its api object to call methods.</p> 
 
 <p>That's just scratching the surface, though. The grid has a lot more features to offer; the abilities to customize cells and headers with custom components allow for almost infinite possible configurations. </p>
 
 <h2>Next Steps</h2> 
 
-<p>The best thing you can check after the tutorial is the <a href="../javascript-grid-features/">features overview</a>. It provides an extensive review of what you can achieve with ag-Grid. In addition, you can go through the following help articles to learn more about the features we enabled:</p>
+<p>The best thing you can check after the Javascript grid tutorial is the <a href="../javascript-grid-features/">features overview</a>. It provides an extensive review of what you can achieve with ag-Grid. In addition, you can go through the following help articles to learn more about the features we enabled:</p>
 
-<ul>
-    <li><a href="../javascript-grid-sorting/">Sorting</a></li>
-    <li><a href="../javascript-grid-filtering/">Filtering</a></li>
-    <li><a href="../javascript-grid-grouping/">Grouping</a></li>
-    <li><a href="../javascript-grid-selection/">Selection</a></li>
-</ul>
-
+<div>
+<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-sorting/" role="button">Sorting</a>
+<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-filtering/" role="button">Filtering</a>
+<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-grouping/" role="button">Grouping</a>
+<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-selection/" role="button">Selection</a>
+</div>
+<br>
 <p><b id="f1">1</b> This is not exactly true. ag-Grid's core, as well as the framework wrappers are written in TypeScript. This provides nice strong typing and compile-time checks for our TypeScript users, while not giving the Babel/Vanilla users any disadvantage.  <a href="#a1">↩</a></p>
+</div>
+
+<div>
+  <a href="https://github.com/ag-grid/ag-grid-angular"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
+</div>
+<br>
+<div>
+  <a href="https://www.ag-grid.com/start-trial.php"><button type="button" class="btn btn-primary btn-lg btn-block">Start Free Trial</button></a>
 </div>
 
 <?php include '../getting-started/footer.php'; ?>
