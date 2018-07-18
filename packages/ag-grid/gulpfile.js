@@ -43,6 +43,7 @@ gulp.task('webpack', ['tsc', 'scss'], webpackTask.bind(null, false, true));
 gulp.task('scss-watch', ['scss-no-clean'], scssWatch);
 gulp.task('scss-no-clean', scssTask);
 
+gulp.task('tsc-no-clean', tscSrcTask);
 gulp.task('tsc', ['tsc-src'], tscMainTask);
 gulp.task('tsc-src', ['cleanDist'], tscSrcTask);
 gulp.task('tsc-main', ['cleanMain'], tscMainTask);
@@ -51,17 +52,14 @@ gulp.task('scss', ['cleanDist'], scssTask);
 gulp.task('cleanDist', cleanDist);
 gulp.task('cleanMain', cleanMain);
 
-gulp.task('cleanForCI', ['cleanDist', 'cleanMain']);
-
-gulp.task('publishForCI', () => {
-    return gulp.src("./ag-grid-*.tgz")
-        .pipe(rename("ag-grid.tgz"))
-        .pipe(gulp.dest("c:/ci/ag-grid/"));
-
-});
+gulp.task('tsc-watch', ['tsc-no-clean'], tscWatch);
 
 function scssWatch() {
     gulp.watch('./src/styles/!**/!*', ['scss-no-clean']);
+}
+
+function tscWatch() {
+    gulp.watch('./src/ts/**/*', ['tsc-no-clean']);
 }
 
 function cleanDist() {

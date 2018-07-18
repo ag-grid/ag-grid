@@ -32,6 +32,16 @@ gulp.task('tsc-main', ['cleanMain'], tscMainTask);
 gulp.task('cleanDist', cleanDist);
 gulp.task('cleanMain', cleanMain);
 
+gulp.task('watch', ['tsc'], tscWatch);
+
+function tscWatch() {
+    gulp.watch([
+            './node_modules/ag-grid/dist/lib/**/*',
+            './src/**/*'
+        ],
+        ['tsc']);
+}
+
 function cleanDist() {
     return gulp
         .src('dist', {read: false})
@@ -130,10 +140,3 @@ function webpackTask(minify, styles) {
         .pipe(header(bundleTemplate, {pkg: pkg}))
         .pipe(gulp.dest('./dist/'));
 }
-
-gulp.task('publishForCI', () => {
-    return gulp.src("./ag-grid-enterprise*.tgz")
-        .pipe(rename("ag-grid-enterprise.tgz"))
-        .pipe(gulp.dest("c:/ci/ag-grid-enterprise/"));
-
-});

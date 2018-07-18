@@ -4,10 +4,8 @@ const header = require('gulp-header');
 const merge = require('merge2');
 const pkg = require('./package.json');
 const tsConfig = 'tsconfig.json';
-const rename = require('gulp-rename');
 
 const headerTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
-
 const tsProject = gulpTypescript.createProject(tsConfig);
 
 gulp.task('default', ['commonjs', 'umd']);
@@ -30,11 +28,11 @@ gulp.task('watch', ['commonjs'], () => {
         ['commonjs']);
 });
 
-var typescript = require('rollup-plugin-typescript');
+const typescript = require('rollup-plugin-typescript');
 const commonjs = require('rollup-plugin-commonjs');
-var uglify = require('rollup-plugin-uglify');
-var rollup = require('rollup-stream');
-var source = require('vinyl-source-stream');
+const uglify = require('rollup-plugin-uglify');
+const rollup = require('rollup-stream');
+const source = require('vinyl-source-stream');
 
 gulp.task('umd', () => {
     return rollup({
@@ -51,7 +49,7 @@ gulp.task('umd', () => {
                 'ag-grid': 'agGrid'
             }
         },
-        plugins: [typescript(), commonjs(), 
+        plugins: [typescript(), commonjs(),
             uglify()
         ]
     })
