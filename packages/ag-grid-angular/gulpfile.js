@@ -31,7 +31,7 @@ gulp.task('ngc-src', (callback) => {
 
 gulp.task('clean-build-main', ['build-main'], (callback) => {
     // post build cleanup
-    return del(['./aot', 'exports.js*', 'exports.d.ts', 'exports.metadata.json'], callback);
+    return del(['./aot', 'exports.js*', 'exports.d.ts', 'exports.metadata.json', './src/*.js*', './src/*.d.ts', './src/*.metadata.*'], callback);
 });
 
 gulp.task('build-main', ['ngc-main'], (callback) => {

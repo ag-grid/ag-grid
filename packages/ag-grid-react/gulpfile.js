@@ -24,7 +24,10 @@ function tscTask() {
 }
 
 gulp.task('watch', ['commonjs'], () => {
-    gulp.watch('./src/*', ['commonjs']);
+    gulp.watch([
+        './src/*',
+        './node_modules/ag-grid/dist/lib/**/*'],
+        ['commonjs']);
 });
 
 var typescript = require('rollup-plugin-typescript');
