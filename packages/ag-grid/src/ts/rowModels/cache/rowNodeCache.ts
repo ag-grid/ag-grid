@@ -28,6 +28,11 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
 
     public static EVENT_CACHE_UPDATED = 'cacheUpdated';
 
+    // this property says how many empty blocks should be in a cache, eg if scrolls down fast and creates 10
+    // blocks all for loading, the grid will only load the last 2 - it will assume the blocks the user quickly
+    // scrolled over are not needed to be loaded.
+    private static MAX_EMPTY_BLOCKS_TO_KEEP = 2;
+
     private virtualRowCount: number;
     private maxRowFound = false;
 
@@ -93,11 +98,6 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
     }
 
     private purgeBlocksIfNeeded(blockToExclude: T): void {
-        // no purge if user didn't give maxBlocksInCache
-        if (_.missing(this.cacheParams.maxBlocksInCache)) { return; }
-        // no purge if block count is less than max allowed
-        if (this.blockCount <= this.cacheParams.maxBlocksInCache) { return; }
-
         // put all candidate blocks into a list for sorting
         let blocksForPurging: T[] = [];
         this.forEachBlockInOrder( (block: T)=> {
@@ -116,19 +116,29 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
         // we remove (maxBlocksInCache - 1) as we already excluded the 'just created' page.
         // in other words, after the splice operation below, we have taken out the blocks
         // we want to keep, which means we are left with blocks that we can potentially purge
-        let blocksToKeep = this.cacheParams.maxBlocksInCache - 1;
-        blocksForPurging.splice(0, blocksToKeep);
+        let maxBlocksProvided = this.cacheParams.maxBlocksInCache > 0;
+        let blocksToKeep = maxBlocksProvided ? this.cacheParams.maxBlocksInCache - 1 : null;
+        let emptyBlocksToKeep = RowNodeCache.MAX_EMPTY_BLOCKS_TO_KEEP - 1;
 
-        // try and purge each block
-        blocksForPurging.forEach( block => {
-            // we never purge blocks if they are open, as purging them would mess up with
-            // our indexes, it would be very messy to restore the purged block to it's
-            // previous state if it had open children (and what if open children of open
-            // children, jeeeesus, just thinking about it freaks me out) so best is have a
-            // rule, if block is open, we never purge.
-            if (block.isAnyNodeOpen(this.virtualRowCount)) { return; }
-            // at this point, block is not needed, and no open nodes, so burn baby burn
-            this.removeBlockFromCache(block);
+        blocksForPurging.forEach( (block: T, index: number) => {
+
+            let purgeBecauseBlockEmpty = block.getState() === RowNodeBlock.STATE_DIRTY && index >= emptyBlocksToKeep;
+
+            let purgeBecauseCacheFull = index >= blocksToKeep;
+
+            if (purgeBecauseBlockEmpty || purgeBecauseCacheFull) {
+
+                // we never purge blocks if they are open, as purging them would mess up with
+                // our indexes, it would be very messy to restore the purged block to it's
+                // previous state if it had open children (and what if open children of open
+                // children, jeeeesus, just thinking about it freaks me out) so best is have a
+                // rule, if block is open, we never purge.
+                if (block.isAnyNodeOpen(this.virtualRowCount)) { return; }
+                // at this point, block is not needed, and no open nodes, so burn baby burn
+                this.removeBlockFromCache(block);
+
+            }
+
         });
     }
 

@@ -213,6 +213,8 @@ export class GridPanel extends Component {
     private lastVScrollElement: HTMLElement;
     private lastVScrollTime: number;
 
+    private printLayout: boolean;
+
     constructor() {
         super(GRID_PANEL_NORMAL_TEMPLATE);
     }
@@ -267,10 +269,10 @@ export class GridPanel extends Component {
 
         this.instantiate(this.context);
 
-        // makes code below more readable if we pull 'forPrint' out
         this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
         this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
+        this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_FOR_PRINT;
 
         // if the browser is Windows based, then the scrollbars take up space, and we clip by
         // the width of the scrollbar. however if the scroll bars do not take up space (iOS)
@@ -339,6 +341,15 @@ export class GridPanel extends Component {
 
         const unsubscribeFromResize = observeResize(this.eBodyViewport, this.onBodyViewportResized.bind(this) );
         this.addDestroyFunc(() => unsubscribeFromResize() );
+    }
+
+    private onDomLayoutChanged(): void {
+        let newPrintLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_FOR_PRINT;
+
+        if (this.printLayout !== newPrintLayout) {
+            this.printLayout = newPrintLayout;
+            this.setWidthsOfContainers();
+        }
     }
 
     private onBodyViewportResized(): void {
@@ -437,6 +448,7 @@ export class GridPanel extends Component {
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
+        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
     }
 
     private addDragListeners(): void {
@@ -744,7 +756,7 @@ export class GridPanel extends Component {
     //    if row is already in view, grid does not scroll
     public ensureIndexVisible(index: any, position?: string) {
         // if for print or auto height, everything is always visible
-        if (this.gridOptionsWrapper.isGridAutoHeight()) { return; }
+        if (this.printLayout) { return; }
 
         let rowCount = this.paginationProxy.getTotalRowCount();
         if (typeof index !== 'number' || index < 0 || index >= rowCount) {
@@ -1028,6 +1040,7 @@ export class GridPanel extends Component {
         }
     }
 
+    // used by autoWidthCalculator and autoHeightCalculator
     public getBodyContainer(): HTMLElement {
         return this.eBodyContainer;
     }
@@ -1130,13 +1143,30 @@ export class GridPanel extends Component {
     }
 
     private setCenterWidth(): void {
-        let widthPx = this.columnController.getBodyContainerWidth() + 'px';
+        let width = this.columnController.getBodyContainerWidth();
+
+        if (this.printLayout) {
+            let pinnedContainerWidths = this.columnController.getPinnedLeftContainerWidth()
+                + this.columnController.getPinnedRightContainerWidth();
+            width += pinnedContainerWidths;
+        }
+
+        let widthPx = width + 'px';
         this.eBodyContainer.style.width = widthPx;
         this.eBottomContainer.style.width = widthPx;
         this.eTopContainer.style.width = widthPx;
     }
 
     private setPinnedLeftWidth(): void {
+
+        if (this.printLayout) {
+            this.setElementWidth(this.eLeftViewportWrapper, 0);
+            this.setElementWidth(this.eLeftViewport, 0);
+            this.setElementWidth(this.eLeftContainer, 0);
+            this.setElementWidth(this.eLeftBottom, 0);
+            this.setElementWidth(this.eLeftTop, 0);
+            return;
+        }
 
         let widthOfCols = this.columnController.getPinnedLeftContainerWidth();
         let widthOfColsAndScroll = widthOfCols + this.scrollWidth;
@@ -1170,6 +1200,15 @@ export class GridPanel extends Component {
     }
 
     private setPinnedRightWidth(): void {
+
+        if (this.printLayout) {
+            this.setElementWidth(this.eRightViewportWrapper, 0);
+            this.setElementWidth(this.eRightViewport, 0);
+            this.setElementWidth(this.eRightContainer, 0);
+            this.setElementWidth(this.eRightBottom, 0);
+            this.setElementWidth(this.eRightTop, 0);
+            return;
+        }
 
         let widthOfCols = this.columnController.getPinnedRightContainerWidth();
         let widthOfColsAndScroll = widthOfCols + this.scrollWidth;

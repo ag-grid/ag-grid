@@ -1,6 +1,7 @@
 import {Utils as _} from "../utils";
 import {Autowired, PostConstruct} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {Constants} from "../constants";
 
 export interface RowContainerComponentParams {
     eContainer: HTMLElement;
@@ -48,8 +49,15 @@ export class RowContainerComponent {
 
     @PostConstruct
     private postConstruct(): void {
-        this.domOrder = this.gridOptionsWrapper.isEnsureDomOrder();
+        this.checkDomOrder();
         this.checkVisibility();
+        this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_DOM_LAYOUT, this.checkDomOrder.bind(this));
+    }
+
+    private checkDomOrder(): void {
+        let domOrder = this.gridOptionsWrapper.isEnsureDomOrder();
+        let forPrint = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_FOR_PRINT;
+        this.domOrder = domOrder || forPrint;
     }
 
     public getRowElement(compId: number): HTMLElement {
@@ -57,7 +65,11 @@ export class RowContainerComponent {
     }
 
     public setHeight(height: number): void {
-        this.eContainer.style.height = height + "px";
+        if (height===null || height===undefined) {
+            this.eContainer.style.height = '';
+        } else {
+            this.eContainer.style.height = height + "px";
+        }
     }
 
     public flushRowTemplates(): void {

@@ -81,6 +81,9 @@ export class RowRenderer extends BeanStub {
 
     private logger: Logger;
 
+    private printLayout: boolean;
+    private embedFullWidthRows: boolean;
+
     public agWire(@Qualifier("loggerFactory") loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create("RowRenderer");
     }
@@ -94,8 +97,28 @@ export class RowRenderer extends BeanStub {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_BODY_SCROLL, this.redrawAfterScroll.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.redrawAfterScroll.bind(this));
+        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
+
+        this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_FOR_PRINT;
+        this.embedFullWidthRows = this.printLayout || this.gridOptionsWrapper.isEmbedFullWidthRows();
 
         this.redrawAfterModelUpdate();
+    }
+
+    private onDomLayoutChanged(): void {
+        let forPrint = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_FOR_PRINT;
+        let embedFullWidthRows = forPrint || this.gridOptionsWrapper.isEmbedFullWidthRows();
+
+        // if moving towards or away from forPrint, means we need to destroy all rows, as rows are not laid
+        // out using absolute positioning when doing forPrint
+        let destroyRows = embedFullWidthRows !== this.embedFullWidthRows || this.printLayout !== forPrint;
+
+        this.printLayout = forPrint;
+        this.embedFullWidthRows = embedFullWidthRows;
+
+        if (destroyRows) {
+            this.redrawAfterModelUpdate();
+        }
     }
 
     private onPageLoaded(refreshEvent?: ModelUpdatedEvent): void {
@@ -174,7 +197,9 @@ export class RowRenderer extends BeanStub {
                     node,
                     this.beans,
                     false,
-                    false
+                    false,
+                    this.printLayout,
+                    this.embedFullWidthRows
                 );
 
                 rowComp.init();
@@ -275,7 +300,9 @@ export class RowRenderer extends BeanStub {
 
         this.scrollToTopIfNewData(params);
 
-        let recycleRows = params.recycleRows;
+        // never recycle rows when forPrint, we draw each row again from scratch. this is because forPrint
+        // uses normal dom layout to put cells into dom - it doesn't allow reordering rows.
+        let recycleRows = !this.printLayout && params.recycleRows;
         let animate = params.animate && this.gridOptionsWrapper.isAnimateRows();
 
         let rowsToRecycle: { [key: string]: RowComp } = this.binRowComps(recycleRows);
@@ -300,9 +327,23 @@ export class RowRenderer extends BeanStub {
     }
 
     private sizeContainerToPageHeight(): void {
+
+        let containers: RowContainerComponent[] = [
+            this.rowContainers.body,
+            this.rowContainers.fullWidth,
+            this.rowContainers.pinnedLeft,
+            this.rowContainers.pinnedRight
+        ];
+
+        if (this.printLayout) {
+            containers.forEach( container => container.setHeight(null) );
+            return;
+        }
+
         let containerHeight = this.paginationProxy.getCurrentPageHeight();
         // we need at least 1 pixel for the horizontal scroll to work. so if there are now rows,
-        // we still want the scroll to be present, otherwise there would be no way to access the columns
+        // we still want the scroll to be present, otherwise there would be no way to scroll the header
+        // which might be needed us user wants to access columns
         // on the RHS - and if that was where the filter was that cause no rows to be presented, there
         // is no way to remove the filter.
         if (containerHeight === 0) {
@@ -313,10 +354,7 @@ export class RowRenderer extends BeanStub {
 
         let realHeight = this.heightScaler.getUiContainerHeight();
 
-        this.rowContainers.body.setHeight(realHeight);
-        this.rowContainers.fullWidth.setHeight(realHeight);
-        this.rowContainers.pinnedLeft.setHeight(realHeight);
-        this.rowContainers.pinnedRight.setHeight(realHeight);
+        containers.forEach( container => container.setHeight(realHeight) );
     }
 
     private getLockOnRefresh(): void {
@@ -614,7 +652,8 @@ export class RowRenderer extends BeanStub {
 
         _.executeNextVMTurn(nextVmTurnFunctions);
 
-        if (afterScroll && !this.gridOptionsWrapper.isSuppressAnimationFrame()) {
+        let useAnimationFrame = afterScroll && !this.gridOptionsWrapper.isSuppressAnimationFrame() && !this.printLayout;
+        if (useAnimationFrame) {
             this.beans.taskQueue.addP2Task(this.destroyRowComps.bind(this, rowsToRecycle, animate));
         } else {
             this.destroyRowComps(rowsToRecycle, animate);
@@ -640,7 +679,7 @@ export class RowRenderer extends BeanStub {
         if (atLeastOneChanged) {
             this.pinningLeft = pinningLeft;
             this.pinningRight = pinningRight;
-            if (this.gridOptionsWrapper.isEmbedFullWidthRows()) {
+            if (this.embedFullWidthRows) {
                 this.redrawFullWidthEmbeddedRows();
             }
         }
@@ -825,7 +864,17 @@ export class RowRenderer extends BeanStub {
     }
 
     private createRowComp(rowNode: RowNode, animate: boolean, afterScroll: boolean): RowComp {
-        let useAnimationFrameForCreate = afterScroll && !this.gridOptionsWrapper.isSuppressAnimationFrame();
+
+        let suppressAnimationFrame = this.gridOptionsWrapper.isSuppressAnimationFrame();
+
+        // we don't use animations frames for printing, so the user can put the grid into print mode
+        // and immediately print - otherwise the user would have to wait for the rows to draw in the background
+        // (via the animation frames) which is awkward to do from code.
+
+        // we only do the animation frames after scrolling, as this is where we want the smooth user experience.
+        // having animation frames for other times makes the grid look 'jumpy'.
+
+        let useAnimationFrameForCreate = afterScroll && !suppressAnimationFrame && !this.printLayout;
 
         let rowComp = new RowComp(
             this.$scope,
@@ -836,7 +885,9 @@ export class RowRenderer extends BeanStub {
             rowNode,
             this.beans,
             animate,
-            useAnimationFrameForCreate
+            useAnimationFrameForCreate,
+            this.printLayout,
+            this.embedFullWidthRows
         );
 
         rowComp.init();

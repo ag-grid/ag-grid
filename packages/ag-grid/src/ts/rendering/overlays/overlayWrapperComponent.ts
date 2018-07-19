@@ -4,6 +4,7 @@ import {Autowired, PostConstruct} from "../../context/context";
 import {Component} from "../../widgets/component";
 import {IComponent} from "../../interfaces/iComponent";
 import {ComponentRecipes} from "../../components/framework/componentRecipes";
+import {Constants} from "../../constants";
 
 export interface IOverlayWrapperParams {}
 
@@ -55,9 +56,15 @@ export class OverlayWrapperComponent extends Component implements IOverlayWrappe
         // we don't use gridOptionsWrapper.addLayoutElement here because this component
         // is passive, we don't want to add a new element each time it is created.
         let eNoRowsOverlayWrapper = this.getRefElement('noRowsOverlayWrapper');
-        let autoHeight = this.gridOptionsWrapper.isGridAutoHeight();
-        _.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-auto-height', autoHeight);
-        _.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-normal', !autoHeight);
+
+        let domLayout = this.gridOptionsWrapper.getDomLayout();
+        let domLayoutAutoHeight = domLayout === Constants.DOM_LAYOUT_AUTO_HEIGHT;
+        let domLayoutForPrint = domLayout === Constants.DOM_LAYOUT_FOR_PRINT;
+        let domLayoutNormal = domLayout === Constants.DOM_LAYOUT_NORMAL;
+
+        _.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-auto-height', domLayoutAutoHeight);
+        _.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-normal', domLayoutNormal);
+        _.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-for-print', domLayoutForPrint);
 
         this.componentRecipes.newNoRowsOverlayComponent().then(renderer => {
             let noRowsOverlayWrapper: HTMLElement = this.getRefElement("noRowsOverlayWrapper");

@@ -185,10 +185,11 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
         this.destroyCache();
 
         let maxConcurrentRequests = this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests();
+        let blockLoadDebounceMillis = this.gridOptionsWrapper.getBlockLoadDebounceMillis();
 
         // there is a bi-directional dependency between the loader and the cache,
         // so we create loader here, and then pass dependencies in setDependencies() method later
-        this.rowNodeBlockLoader = new RowNodeBlockLoader(maxConcurrentRequests);
+        this.rowNodeBlockLoader = new RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis);
         this.context.wireBean(this.rowNodeBlockLoader);
 
         let cacheSettings = <InfiniteCacheParams> {

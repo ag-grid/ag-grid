@@ -12,6 +12,7 @@ import {EventService} from "../eventService";
 import {RowDragEvent} from "../events";
 import {Events} from "../eventKeys";
 import {IRowModel} from "../interfaces/iRowModel";
+import {Constants} from "../constants";
 
 export class RowDragFeature implements DropTarget {
 
@@ -102,7 +103,7 @@ export class RowDragFeature implements DropTarget {
     }
 
     private normaliseForScroll(pixel: number): number {
-        let gridPanelHasScrolls = !this.gridOptionsWrapper.isGridAutoHeight();
+        let gridPanelHasScrolls = this.gridOptionsWrapper.getDomLayout()===Constants.DOM_LAYOUT_NORMAL;
         if (gridPanelHasScrolls) {
             let pixelRange = this.gridPanel.getVScrollPosition();
             return pixel + pixelRange.top;

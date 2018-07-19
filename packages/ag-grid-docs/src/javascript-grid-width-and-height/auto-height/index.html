@@ -10,10 +10,10 @@
         <span style="background-color: #00e5ff; width: 15px; height: 15px; border: 1px solid #888; display: inline-block; position: relative; top: 2px;"></span>
         Pinned Rows
     </label>
-    &nbsp;
-    &nbsp;
+    <br/>
     <button onclick="setAutoHeight()">Auto Height</button>
     <button onclick="setFixedHeight()">Fixed Height</button>
+    <button onclick="setForPrint()">For Print</button>
     &nbsp;
     &nbsp;
     Row Count = <span id="currentRowCount"></span>
@@ -21,7 +21,7 @@
 
 <div id="myGrid" class="ag-theme-balham"></div>
 
-<div style="border: 10px solid #eee; padding: 10px; margin-top: 10px;">
+<div style="border: 10px solid #eee; padding: 10px; margin-top: 20px;">
     <p style="color: #333; text-align: center;">
         This text is under the grid and should move up and down as the height of the grid changes.
     </p>

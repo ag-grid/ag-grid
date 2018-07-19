@@ -188,6 +188,7 @@ export interface GridOptions {
     infiniteInitialRowCount?: number;
     paginationPageSize?: number;
     cacheBlockSize?: number;
+    blockLoadDebounceMillis?: number;
     paginationAutoPageSize?: boolean;
     paginationStartPage?: number;
     suppressPaginationPanel?: boolean;
@@ -253,7 +254,6 @@ export interface GridOptions {
     //Deprecated in v11.0 substituted by autoGroupColumnDef
     groupColumnDef?: ColDef;
     autoGroupColumnDef?: ColDef;
-    // deprecated - should use domLayout
     forPrint?: boolean;
     enableOldSetFilterModel?: boolean;
 

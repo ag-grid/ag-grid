@@ -38,7 +38,6 @@ export class AutoHeightCalculator {
 
         let cellComps: CellComp[] = [];
         let cols = this.columnController.getAllAutoRowHeightCols();
-        console.log();
         cols.forEach( col => {
             let cellComp = new CellComp(
                 this.$scope,
@@ -46,7 +45,8 @@ export class AutoHeightCalculator {
                 col,
                 rowNode,
                 null,
-                true);
+                true,
+                false);
             cellComp.setParentRow(this.eDummyContainer);
             cellComps.push(cellComp);
         });

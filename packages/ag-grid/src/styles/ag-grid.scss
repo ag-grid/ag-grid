@@ -310,7 +310,6 @@ ag-grid-aurelia {
     padding-top: 30px;
 }
 
-
 .ag-body {
     box-sizing: border-box;
     display: flex;
@@ -449,9 +448,15 @@ ag-grid-aurelia {
     overflow: hidden;
 }
 
-.ag-body-viewport {
+// layout-auto-height has x (horizontal) scrolls (but no y)
+.ag-layout-auto-height.ag-body-viewport {
     overflow-x: auto;
-    overflow-y: auto; // if we are pinning to the right, overflow y will be hidden
+}
+
+// layout-normal should have x and y scrolls
+.ag-layout-normal.ag-body-viewport {
+    overflow-x: auto;
+    overflow-y: auto;
 }
 
 .ag-layout-normal.ag-body-viewport {
@@ -518,10 +523,15 @@ ag-grid-aurelia {
 }
 
 .ag-body-container {
-    display: inline-block;
     margin-bottom: -2px;
     position: relative;
 }
+
+// for lay out normal, we use inline-block, however for layout-printing, we do NOT use
+// inline-block. this is because inline-block does not work with page-break (to stop rows
+// getting spread across printed pages).
+.ag-layout-auto-height.ag-body-container { display: inline-block; }
+.ag-layout-normal.ag-body-container { display: inline-block; }
 
 // for animations, allows rows to slide up and down,
 .ag-row-animation .ag-row {
@@ -534,9 +544,17 @@ ag-grid-aurelia {
 
 .ag-row {
     box-sizing: border-box;
-    position: absolute;
     white-space: nowrap;
     width: 100%;
+    page-break-inside: avoid;
+}
+
+.ag-row-position-absolute {
+    position: absolute;
+}
+
+.ag-row-position-relative {
+    position: relative;
 }
 
 .ag-column-moving {
@@ -626,6 +644,10 @@ ag-grid-aurelia {
     position: absolute;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.ag-cell-for-print {
+    page-break-inside: avoid;
 }
 
 .ag-cell-with-height {

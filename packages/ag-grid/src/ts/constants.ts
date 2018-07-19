@@ -53,5 +53,7 @@ export class Constants {
     static PINNED_TOP = 'top';
     static PINNED_BOTTOM = 'bottom';
 
+    static DOM_LAYOUT_NORMAL = 'normal';
+    static DOM_LAYOUT_FOR_PRINT = 'forPrint';
+    static DOM_LAYOUT_AUTO_HEIGHT = 'autoHeight';
 }
-

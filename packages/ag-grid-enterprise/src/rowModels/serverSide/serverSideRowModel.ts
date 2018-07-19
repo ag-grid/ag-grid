@@ -268,7 +268,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     private createNewRowNodeBlockLoader(): void {
         this.destroyRowNodeBlockLoader();
         let maxConcurrentRequests = this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests();
-        this.rowNodeBlockLoader = new RowNodeBlockLoader(maxConcurrentRequests);
+        let blockLoadDebounceMillis = this.gridOptionsWrapper.getBlockLoadDebounceMillis();
+        this.rowNodeBlockLoader = new RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis);
         this.context.wireBean(this.rowNodeBlockLoader);
     }
 

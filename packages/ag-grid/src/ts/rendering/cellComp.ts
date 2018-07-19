@@ -79,6 +79,8 @@ export class CellComp extends Component {
 
     private scope: null;
 
+    private readonly printLayout: boolean;
+
     // every time we go into edit mode, or back again, this gets incremented.
     // it's the components way of dealing with the async nature of framework components,
     // so if a framework component takes a while to be created, we know if the object
@@ -88,7 +90,8 @@ export class CellComp extends Component {
     private cellEditorVersion = 0;
     private cellRendererVersion = 0;
 
-    constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: RowComp, autoHeightCell: boolean) {
+    constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: RowComp,
+                autoHeightCell: boolean, printLayout: boolean) {
         super();
         this.scope = scope;
         this.beans = beans;
@@ -96,6 +99,7 @@ export class CellComp extends Component {
         this.rowNode = rowNode;
         this.rowComp = rowComp;
         this.autoHeightCell = autoHeightCell;
+        this.printLayout = printLayout;
 
         this.createGridCellVo();
 
@@ -120,7 +124,7 @@ export class CellComp extends Component {
         let col = this.column;
 
         let width = this.getCellWidth();
-        let left = col.getLeft();
+        let left = this.modifyLeftForPrintLayout(col.getLeft());
 
         let valueToRender = this.getInitialValueToRender();
         let valueSanitised = _.get(this.column, 'colDef.template', null) ? valueToRender : _.escape(valueToRender);
@@ -323,6 +327,10 @@ export class CellComp extends Component {
         // if using the wrapper, this class goes on the wrapper instead
         if (!this.usingWrapper) {
             cssClasses.push('ag-cell-value');
+        }
+
+        if (this.beans.gridOptionsWrapper.getDomLayout()===Constants.DOM_LAYOUT_FOR_PRINT) {
+            cssClasses.push('ag-cell-for-print');
         }
 
         return cssClasses;
@@ -1492,8 +1500,24 @@ export class CellComp extends Component {
     }
 
     private onLeftChanged(): void {
-        let left = this.getCellLeft();
+        let left = this.modifyLeftForPrintLayout(this.getCellLeft());
         this.getGui().style.left = left + 'px';
+    }
+
+    private modifyLeftForPrintLayout(leftPosition: number): number {
+        if (!this.printLayout) { return leftPosition; }
+
+        if (this.column.getPinned() === Column.PINNED_LEFT) {
+            return leftPosition;
+        } else if (this.column.getPinned() === Column.PINNED_RIGHT) {
+            let leftWidth = this.beans.columnController.getPinnedLeftContainerWidth();
+            let bodyWidth = this.beans.columnController.getBodyContainerWidth();
+            return leftWidth + bodyWidth + leftPosition;
+        } else {
+            // is in body
+            let leftWidth = this.beans.columnController.getPinnedLeftContainerWidth();
+            return leftWidth + leftPosition;
+        }
     }
 
     private onWidthChanged(): void {

@@ -740,7 +740,12 @@ export class GridApi {
     }
 
     public setGridAutoHeight(gridAutoHeight: boolean) {
-        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GRID_AUTO_HEIGHT, gridAutoHeight);
+        console.warn('api.setGridAutoHeight(boolean) is deprecated, please use api.setDomLayout() instead');
+        this.setDomLayout(gridAutoHeight ? 'autoHeight' : 'normal');
+    }
+
+    public setDomLayout(domLayout: string) {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_DOM_LAYOUT, domLayout);
     }
 
     public getPreferredWidth(): number {

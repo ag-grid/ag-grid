@@ -93,7 +93,7 @@ export class GridOptionsWrapper {
     public static PROP_SUPPRESS_ROW_DRAG = 'suppressRowDrag';
     public static PROP_POPUP_PARENT = 'popupParent';
 
-    public static PROP_GRID_AUTO_HEIGHT = 'gridAutoHeight';
+    public static PROP_DOM_LAYOUT = 'domLayout';
 
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('columnController') private columnController: ColumnController;
@@ -156,7 +156,7 @@ export class GridOptionsWrapper {
             console.warn('ag-Grid: groupRemoveSingleChildren and groupHideOpenParents do not work with each other, you need to pick one. And don\'t ask us how to us these together on our support forum either you will get the same answer!');
         }
 
-        this.addEventListener(GridOptionsWrapper.PROP_GRID_AUTO_HEIGHT, this.updateLayoutClasses.bind(this));
+        this.addEventListener(GridOptionsWrapper.PROP_DOM_LAYOUT, this.updateLayoutClasses.bind(this));
     }
 
     private checkColumnDefProperties() {
@@ -310,7 +310,14 @@ export class GridOptionsWrapper {
     public isRowDragManaged() { return isTrue(this.gridOptions.rowDragManaged); }
     public isSuppressRowDrag() { return isTrue(this.gridOptions.suppressRowDrag); }
 
-    public isGridAutoHeight() { return isTrue(this.gridOptions.gridAutoHeight); }
+    // returns either 'forPrint', 'autoHeight' or 'normal' (normal is the default)
+    public getDomLayout(): string {
+        switch (this.gridOptions.domLayout) {
+            case Constants.DOM_LAYOUT_FOR_PRINT: return Constants.DOM_LAYOUT_FOR_PRINT;
+            case Constants.DOM_LAYOUT_AUTO_HEIGHT: return Constants.DOM_LAYOUT_AUTO_HEIGHT;
+            default: return Constants.DOM_LAYOUT_NORMAL;
+        }
+    }
 
     public isSuppressHorizontalScroll() { return isTrue(this.gridOptions.suppressHorizontalScroll); }
     public isSuppressLoadingOverlay() { return isTrue(this.gridOptions.suppressLoadingOverlay); }
@@ -335,6 +342,7 @@ export class GridOptionsWrapper {
     public getRowClassFunc() { return this.gridOptions.getRowClass; }
     public rowClassRules() { return this.gridOptions.rowClassRules; }
     public getPopupParent() { return this.gridOptions.popupParent; }
+    public getBlockLoadDebounceMillis() { return this.gridOptions.blockLoadDebounceMillis; }
     public getPostProcessPopupFunc(): (params: PostProcessPopupParams)=>void { return this.gridOptions.postProcessPopup; }
     public getDoesDataFlowerFunc(): (data: any)=>boolean { return this.gridOptions.doesDataFlower; }
     public getPaginationNumberFormatterFunc(): (params: PaginationNumberFormatterParams)=>string { return this.gridOptions.paginationNumberFormatter; }
@@ -512,10 +520,15 @@ export class GridOptionsWrapper {
     }
 
     private updateLayoutClasses(): void {
-        let autoHeight = this.isGridAutoHeight();
+        let domLayout = this.getDomLayout();
+        let domLayoutAutoHeight = domLayout === Constants.DOM_LAYOUT_AUTO_HEIGHT;
+        let domLayoutForPrint = domLayout === Constants.DOM_LAYOUT_FOR_PRINT;
+        let domLayoutNormal = domLayout === Constants.DOM_LAYOUT_NORMAL;
+
         this.layoutElements.forEach( e => {
-            _.addOrRemoveCssClass(e, 'ag-layout-auto-height', autoHeight);
-            _.addOrRemoveCssClass(e, 'ag-layout-normal', !autoHeight);
+            _.addOrRemoveCssClass(e, 'ag-layout-auto-height', domLayoutAutoHeight);
+            _.addOrRemoveCssClass(e, 'ag-layout-normal', domLayoutNormal);
+            _.addOrRemoveCssClass(e, 'ag-layout-for-print', domLayoutForPrint);
         });
     }
 
@@ -706,9 +719,9 @@ export class GridOptionsWrapper {
         if (options.paginationOverflowSize) {
             console.warn('ag-grid: since version 10.0.x paginationOverflowSize is now called cacheOverflowSize');
         }
-        if (options.forPrint) {
-            console.warn('ag-grid: since version 10.1.x, use property domLayout="forPrint" instead of forPrint=true');
-        }
+        // if (options.forPrint) {
+        //     console.warn('ag-grid: since version 10.1.x, use property domLayout="forPrint" instead of forPrint=true');
+        // }
         if (options.suppressMenuFilterPanel) {
             console.warn(`ag-grid: since version 11.0.x, use property colDef.menuTabs=['generalMenuTab','columnsMenuTab'] instead of suppressMenuFilterPanel=true`);
         }
@@ -749,13 +762,6 @@ export class GridOptionsWrapper {
         if (options.angularCompileHeaders) {
             console.warn(`ag-grid: since version 15.x, angularCompileHeaders is gone, please see the getting started for Angular 1 docs to see how to do headers in Angular 1.x.`);
         }
-        if (options.domLayout==='forPrint') {
-            console.warn(`ag-grid: since version 18.x, forPrint is no longer supported, as same can be achieved using autoHeight (and set the grid width accordingly). please use autoHeight instead.`);
-        }
-        if (options.domLayout==='autoHeight') {
-            console.warn(`ag-grid: since version 18.x, domLayout is gone, instead if doing auto-height, set gridAutoHeight=true.`);
-            options.gridAutoHeight = true;
-        }
         if (options.pivotTotals) {
             console.warn(`ag-grid: since version 18.x, pivotTotals has been removed, instead if using pivotTotals, set pivotColumnGroupTotals='before'|'after'.`);
             options.pivotColumnGroupTotals = 'before';
@@ -770,6 +776,10 @@ export class GridOptionsWrapper {
         }
         if (options.layoutInterval) {
             console.warn(`ag-grid: since version 18.x, layoutInterval is no longer a property. This is because the grid now uses CSS Flex for layout.`);
+        }
+        if (options.gridAutoHeight) {
+            console.warn(`ag-grid: since version 19.x, gridAutoHeight is gone, please use domLayout=autoHeight instead`);
+            options.domLayout = 'autoHeight';
         }
     }
 

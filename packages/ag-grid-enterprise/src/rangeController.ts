@@ -25,7 +25,8 @@ import {
     ColumnApi,
     GridApi,
     CellNavigationService,
-    _
+    _,
+    Constants
 } from "ag-grid/main";
 
 @Bean('rangeController')
@@ -411,7 +412,7 @@ class AutoScrollService {
     public check(mouseEvent: MouseEvent): void {
 
         // we don't do ticking if grid is auto height
-        if (this.gridOptionsWrapper.isGridAutoHeight()) { return; }
+        if (this.gridOptionsWrapper.getDomLayout()!==Constants.DOM_LAYOUT_NORMAL) { return; }
 
         let rect: ClientRect = this.gridPanel.getBodyClientRect();
 

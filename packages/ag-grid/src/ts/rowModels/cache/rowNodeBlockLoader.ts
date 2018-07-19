@@ -5,18 +5,24 @@ import {_} from "../../utils";
 
 export class RowNodeBlockLoader {
 
+    private readonly maxConcurrentRequests: number;
+
+    private readonly checkBlockToLoadDebounce: ()=>void;
+
     private activeBlockLoadsCount = 0;
 
     private blocks: RowNodeBlock[] = [];
-
-    private maxConcurrentRequests: number;
 
     private logger: Logger;
 
     private active = true;
 
-    constructor(maxConcurrentRequests: number) {
+    constructor(maxConcurrentRequests: number, blockLoadDebounceMillis: number) {
         this.maxConcurrentRequests = maxConcurrentRequests;
+
+        if (blockLoadDebounceMillis>0) {
+            this.checkBlockToLoadDebounce = _.debounce( this.performCheckBlocksToLoad.bind(this), blockLoadDebounceMillis);
+        }
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
@@ -40,6 +46,14 @@ export class RowNodeBlockLoader {
     }
 
     public checkBlockToLoad(): void {
+        if (this.checkBlockToLoadDebounce) {
+            this.checkBlockToLoadDebounce();
+        } else {
+            this.performCheckBlocksToLoad();
+        }
+    }
+
+    private performCheckBlocksToLoad(): void {
         if (!this.active) { return; }
 
         this.printCacheStatus();

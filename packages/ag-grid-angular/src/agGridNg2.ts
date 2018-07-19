@@ -393,6 +393,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public serverSideSortingAlwaysResets : any = undefined;
     @Input() public reactNext : any = undefined;
     @Input() public suppressSetColumnStateEvents : any = undefined;
+    @Input() public blockLoadDebounceMillis : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();
