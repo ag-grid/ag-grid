@@ -99,14 +99,14 @@ export class RowRenderer extends BeanStub {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.redrawAfterScroll.bind(this));
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
 
-        this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_FOR_PRINT;
+        this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
         this.embedFullWidthRows = this.printLayout || this.gridOptionsWrapper.isEmbedFullWidthRows();
 
         this.redrawAfterModelUpdate();
     }
 
     private onDomLayoutChanged(): void {
-        let forPrint = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_FOR_PRINT;
+        let forPrint = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
         let embedFullWidthRows = forPrint || this.gridOptionsWrapper.isEmbedFullWidthRows();
 
         // if moving towards or away from forPrint, means we need to destroy all rows, as rows are not laid

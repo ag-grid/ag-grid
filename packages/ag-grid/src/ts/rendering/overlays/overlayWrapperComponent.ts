@@ -59,7 +59,7 @@ export class OverlayWrapperComponent extends Component implements IOverlayWrappe
 
         let domLayout = this.gridOptionsWrapper.getDomLayout();
         let domLayoutAutoHeight = domLayout === Constants.DOM_LAYOUT_AUTO_HEIGHT;
-        let domLayoutForPrint = domLayout === Constants.DOM_LAYOUT_FOR_PRINT;
+        let domLayoutForPrint = domLayout === Constants.DOM_LAYOUT_PRINT;
         let domLayoutNormal = domLayout === Constants.DOM_LAYOUT_NORMAL;
 
         _.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-auto-height', domLayoutAutoHeight);

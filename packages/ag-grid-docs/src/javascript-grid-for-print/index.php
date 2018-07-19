@@ -9,112 +9,125 @@ include '../documentation-main/documentation_header.php';
     <h1>Printing</h1>
 
     <p class="lead">
-        When printing an instance of the grid, it is best to remove all scrollbars, to enable
-        each cell to be printed. This section explains how to achieve this.
+        This section explains how to user the Print Layout feature of the grid.
     </p>
 
     <p>
-        Removing all scrollbars is done in two steps. The first is adjusting the height to fit the rows.
-        The second is adjusting the width to fix the columns.
-    </p>
-
-    <h2>Adjusting the Height</h2>
-
-    <p>
-        In order to print all the grid's rows you need all the rows to be visible without scrolling.
-        This is done by adjusting the grid's height.
-    </p>
-    <p>
-        To adjust the height to fit the rows, call the api method <code>api.setGridAutoHeight(true)</code>.
-        This uses <a href="../javascript-grid-width-and-height/#auto-height">Grid Auto Height</a> feature
-        to allow the grid to automatically size itself to fit the height.
-    </p>
-
-    <snippet>
-// example setting the grid to auto-height for printing
-api.setGridAutoHeight(true)
-
-// and then un-set again after printing is complete
-api.setGridAutoHeight(false)
-    </snippet>
-
-    <h2>Adjusting the Width</h2>
-
-    <p>
-        In order to print all the grid's columns you need all the columns to be visible without scrolling.
-        This is done by adjusting the grid's width.
+        A grid using print layout will not use any scrollbars so all cells will get printed.
+        In other words, the grid will auto-size to fit all contents.
     </p>
 
     <p>
-        There is no automatic way to adjust the grids with to fit the columns similar to adjusting the height
-        to fit rows. This is due to the DOM having different rules for fitting content vertically and horizontally.
-    </p>
-
-    <p>
-        To get the preferred width of the grid to fit columns, call the api method <code>api.getPreferredWidth()</code>.
-        This will return a number value that you should then use to set the grid's width. You may need to add some pixels
-        to cater for grid borders.
-    </p>
-
-    <snippet>
-// set the width of the grid to match the preferred width
-var preferredWidth = gridOptions.api.getPreferredWidth();
-
-// add 2 pixels for the grid border
-preferredWidth += 2;
-
-// set the width onto the grid DOM element
-eGridDiv.style.width = preferredWidth + 'px';
-
-    </snippet>
-
-    <h2>Example Changing Width and Height</h2>
-
-    <p>
-        Below shows adjusting the width and height to fit the grids rows and columns. Note the following:
+        The example below shows print layout. The following can be noted:
         <ul>
-            <li>Clicking 'Printer Friendly' will lay the grid out such that all rows are columns are visible
-            without using any grid scrolling (although the browser / iFrame may need scrolling).</li>
-            <li>Clicking 'Normal' will set the grid back to it's original size using grid scrolling to view
-            all the rows and columns.</li>
+            <li>
+                Pressing the button 'Printer Friendly Layout' turns the grid
+                into print layout and removes all scrolls.
+            </li>
+            <li>
+                Pressing the button 'Normal Layout' returns the grid back
+                to normal.
+            </li>
         </ul>
     </p>
 
     <?= example('For Print Simple', 'for-print-simple', 'generated') ?>
 
-    <h2>Example Full Printing</h2>
+    <h2>Toggling Print Layout</h2>
 
     <p>
-        Below shows using the techniques described as well as getting the web page to print.
-        There is one additional concern when changing the width and height of the grid: After you finish
-        setting the width and the height of the gird, due to the grid's use of animation frames, the grid
-        will not be drawn and ready to print for a time after the width and height are set. To get
-        around this use the method <code>api.isAnimationFrameQueueEmpty()</code> (to know if the grid has
-        animation frames pending) and event <code>animationQueueEmpty</code> to be notified when no longer
-        animation frames are pending.
+        Print layout can be turned on by setting the property <code>domLayout='print'</code>
+        or by calling the grid API <code>setDomLayout('print')</code>. Similarly the layout
+        can be set back to normal by unsetting the <code>domLayout</code> property or
+        calling the grid API <code>setDomLayout(null)</code>.
+    </p>
+
+<snippet>
+    // setting the grid layout to 'print'
+    api.setDomLayout('print');
+
+    // resetting the layout back to normal
+    api.setDomLayout(null);
+</snippet>
+
+    <h2>Toggling Grid Size</h2>
+
+    <h3>Grid Height</h3>
+
+    <p>
+        The grid height is automatically set by the grid when in print layout. For this to work
+        the application should <b>not</b> set a height onto the grid component. If moving from
+        normal layout to print layout and height is set for normal layout, then this height must
+        be removed. This can be seen in the simple example above.
+    </p>
+
+    <h3>Grid Width</h3>
+
+    <p>
+        The grid width is <b>not</b> automatically set. The grid will assume the width of the grid
+        is set by the application. To assist with this, the grid provides the API call
+        <code>getPreferredWidth()</code> which returns the number of pixels the grid needs to
+        render all the currently visible columns.
     </p>
 
     <p>
-        In the example below, when print is pressed, the following happens:
-        <ol>
-            <li>
-                The grid's width and height are set to show all rows and columns.
-            </li>
-            <li>
-                The application waits for the grid's animation frames to finish, so all rows and columns are
-                drawn into the DOM.
-            </li>
-            <li>
-                The once animation frames are complete, the grid calls <code>window.print()</code> to
-                print the page.
-            </li>
-            <li>
-                Once printing is finished, the grid's width and height are set back to the original sizes.
-            </li>
-        </ol>
+        It is up to the application to set the width of the grid to fit all columns.
     </p>
 
-    <?= example('For Print Complex', 'for-print-complex', 'generated') ?>
+<snippet>
+    // set the width of the grid to match the preferred width
+    var preferredWidth = gridOptions.api.getPreferredWidth();
+
+    // add 2 pixels for the grid border. this depends on how you have styled the grid.
+    preferredWidth += 2;
+
+    // set the width onto the grid DOM element
+    eGridDiv.style.width = preferredWidth + 'px';
+</snippet>
+
+    <note>
+        The grid deals with adjusting the height and width differently. The grid can manage the height by
+        itself but needs application help for the width. This is due to the DOM having different rules for
+        fitting content vertically and horizontally.
+    </note>
+
+    <h2>Page Break</h2>
+
+    <p>
+        When in print layout all cells will have the CSS property <code>page-break-inside: avoid</code>
+        so cells will not be split across pages (eg the top half of the cell on one printed page with the
+        other half on another printed page).
+    </p>
+
+    <h2>Detailed Printing Example</h2>
+
+    <p>
+        Below shows a more detailed example and also automatically shows the print dialog.
+        From the example, the following can be noted:
+        <ul>
+            <li>
+                When 'Print' is pressed, the grid will do the following:
+                <ul>
+                    <li>Set the grid into print layout.</li>
+                    <li>Remove the height setting from the grid to allow the grid to auto-fit it's height.</li>
+                    <li>Adjust the width of the grid to match it's preferred width.</li>
+                    <li>Wait for two seconds (to allow the browser to redraw with the new settings) and
+                        then bring up the print dialog.</li>
+                    <li>Set the grid back to normal when the print dialog is closed.</li>
+                </ul>
+            </li>
+            <li>
+                The first column 'ID' is pinned. When in print layout, the column is not pinned
+                as pinning makes no sense when there are no horizontal scrolls.
+            </li>
+            <li>
+                The data is grouped and the group row spans the width of the grid. This group row
+                is included in print layout as normal.
+            </li>
+        </ul>
+    </p>
+
+    <?= example('For Print Complex', 'for-print-complex', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Don't Print Large Data</h2>
 
@@ -128,38 +141,6 @@ eGridDiv.style.width = preferredWidth + 'px';
     <p>
         If you want to allow printing large data sets it's best to get your users to export to CSV or Excel
         and then print from another non-web based application.
-    </p>
-
-    <h2 id="printing-constraints">Printing Constraints</h2>
-
-    <p>
-        It is not possible for a web page to know about the dimensions of the paper it is getting printed on.
-        For this reason, you will have the following issues when printing grids that span pages:
-    </p>
-
-    <ul>
-        <li>
-            The grid may be clipped horizontally if the grid does not fit horizontally on the printed page and
-            the print setup does not cater for the web page exceeding the width fo the printable area.
-        </li>
-        <li>
-            The grid will be split across pages vertically with no consideration towards page height, grid height
-            or row height. This will have the following effect:
-            <ul>
-                <li>
-                    The grid header will only appear once. It will not appear at the start of each printed page.
-                </li>
-                <li>
-                    The grid rows may be cut mid way through the row.
-                </li>
-            </ul>
-        </li>
-    </ul>
-
-    <p>
-        These are restrictions with printing web pages in general. It is not something that can be solved by a grid
-        component. If you need better support for printing, especially around splitting the grid across multiple
-        printed pages, then it's best export the data to CSV or Excel and print in another non-web based application.
     </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>
