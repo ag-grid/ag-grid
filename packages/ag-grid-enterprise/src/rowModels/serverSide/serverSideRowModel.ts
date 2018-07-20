@@ -162,6 +162,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     private onSortChanged(): void {
+        if (!this.cacheExists()) return;
 
         let newSortModel = this.extractSortModel();
         let oldSortModel = this.cacheParams.sortModel;
@@ -169,18 +170,16 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         this.cacheParams.sortModel = newSortModel;
 
-        if (this.cacheExists()) {
-            let rowGroupColIds = this.columnController.getRowGroupColumns().map(col => col.getId());
-            let serverSideCache = <ServerSideCache> this.rootNode.childrenCache;
+        let rowGroupColIds = this.columnController.getRowGroupColumns().map(col => col.getId());
+        let serverSideCache = <ServerSideCache> this.rootNode.childrenCache;
 
-            let sortingWithValueCol = this.isSortingWithValueColumn(changedColumnsInSort);
+        let sortingWithValueCol = this.isSortingWithValueColumn(changedColumnsInSort);
 
-            let sortAlwaysResets = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
-            if (sortAlwaysResets || sortingWithValueCol) {
-                this.reset();
-            } else {
-                serverSideCache.refreshCacheAfterSort(changedColumnsInSort, rowGroupColIds);
-            }
+        let sortAlwaysResets = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
+        if (sortAlwaysResets || sortingWithValueCol) {
+            this.reset();
+        } else {
+            serverSideCache.refreshCacheAfterSort(changedColumnsInSort, rowGroupColIds);
         }
     }
 
