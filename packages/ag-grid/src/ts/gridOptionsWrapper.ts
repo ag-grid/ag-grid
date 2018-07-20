@@ -312,10 +312,19 @@ export class GridOptionsWrapper {
 
     // returns either 'forPrint', 'autoHeight' or 'normal' (normal is the default)
     public getDomLayout(): string {
-        switch (this.gridOptions.domLayout) {
-            case Constants.DOM_LAYOUT_FOR_PRINT: return Constants.DOM_LAYOUT_FOR_PRINT;
-            case Constants.DOM_LAYOUT_AUTO_HEIGHT: return Constants.DOM_LAYOUT_AUTO_HEIGHT;
-            default: return Constants.DOM_LAYOUT_NORMAL;
+
+        let domLayout = this.gridOptions.domLayout;
+
+        if (domLayout === Constants.DOM_LAYOUT_PRINT
+                || domLayout===Constants.DOM_LAYOUT_AUTO_HEIGHT
+                || domLayout === Constants.DOM_LAYOUT_NORMAL) {
+            return domLayout;
+        } else if (domLayout===null || domLayout===undefined) {
+            return Constants.DOM_LAYOUT_NORMAL;
+        } else {
+            _.doOnce( () => console.warn(`ag-Grid: ${this.gridOptions.domLayout} is not a valid valid for DOM Layout, valid values are ${Constants.DOM_LAYOUT_NORMAL}, ${Constants.DOM_LAYOUT_AUTO_HEIGHT} and ${Constants.DOM_LAYOUT_PRINT}`),
+                'warn about dom layout values');
+            return Constants.DOM_LAYOUT_NORMAL;
         }
     }
 
@@ -522,7 +531,7 @@ export class GridOptionsWrapper {
     private updateLayoutClasses(): void {
         let domLayout = this.getDomLayout();
         let domLayoutAutoHeight = domLayout === Constants.DOM_LAYOUT_AUTO_HEIGHT;
-        let domLayoutForPrint = domLayout === Constants.DOM_LAYOUT_FOR_PRINT;
+        let domLayoutForPrint = domLayout === Constants.DOM_LAYOUT_PRINT;
         let domLayoutNormal = domLayout === Constants.DOM_LAYOUT_NORMAL;
 
         this.layoutElements.forEach( e => {

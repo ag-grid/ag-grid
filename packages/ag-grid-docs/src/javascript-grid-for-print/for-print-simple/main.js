@@ -31,6 +31,7 @@ var gridOptions = {
 };
 
 function onBtPrinterFriendly() {
+
     var eGridDiv = document.querySelector('.my-grid');
 
     var preferredWidth = gridOptions.api.getPreferredWidth();
@@ -41,16 +42,18 @@ function onBtPrinterFriendly() {
     eGridDiv.style.width = preferredWidth + 'px';
     eGridDiv.style.height = '';
 
-    gridOptions.api.setGridAutoHeight(true);
+    gridOptions.api.setDomLayout('print');
 }
 
 function onBtNormal() {
+
     var eGridDiv = document.querySelector('.my-grid');
 
     eGridDiv.style.width = '400px';
     eGridDiv.style.height = '200px';
 
-    gridOptions.api.setGridAutoHeight(false);
+    // the default is 'normal', so setDomLayout(null) has same impact as setDomLayout('normal')
+    gridOptions.api.setDomLayout(null);
 }
 
 // setup the grid after the page has finished loading

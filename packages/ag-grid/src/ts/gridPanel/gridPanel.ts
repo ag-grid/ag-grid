@@ -272,7 +272,7 @@ export class GridPanel extends Component {
         this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
         this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
-        this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_FOR_PRINT;
+        this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
 
         // if the browser is Windows based, then the scrollbars take up space, and we clip by
         // the width of the scrollbar. however if the scroll bars do not take up space (iOS)
@@ -344,7 +344,7 @@ export class GridPanel extends Component {
     }
 
     private onDomLayoutChanged(): void {
-        let newPrintLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_FOR_PRINT;
+        let newPrintLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
 
         if (this.printLayout !== newPrintLayout) {
             this.printLayout = newPrintLayout;

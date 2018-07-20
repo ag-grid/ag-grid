@@ -34,14 +34,13 @@ export class HeaderRowComp extends Component {
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
 
-    private dept: number;
-    private pinned: string;
+    private readonly dept: number;
+    private readonly pinned: string;
+
+    private readonly dropTarget: DropTarget;
+    private readonly type: HeaderRowType;
 
     private headerComps: { [key: string]: IComponent<any> } = {};
-
-    private dropTarget: DropTarget;
-
-    private type: HeaderRowType;
 
     constructor(dept: number, type: HeaderRowType, pinned: string, dropTarget: DropTarget) {
         super(`<div class="ag-header-row" role="presentation"/>`);
