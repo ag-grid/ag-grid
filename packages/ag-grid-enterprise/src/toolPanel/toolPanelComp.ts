@@ -7,7 +7,7 @@ import {
     GridPanel,
     PostConstruct,
     RefSelector
-} from "ag-grid/main";
+} from "ag-grid";
 import {IToolPanel} from "ag-grid";
 import {ToolPanelColumnComp} from "./toolPanelColumnComp";
 import {ToolPanelSelectComp} from "./toolPanelSelectComp";
@@ -53,5 +53,4 @@ export class ToolPanelComp extends Component implements IToolPanel {
     public isToolPanelShowing(): boolean {
         return this.columnComp.isVisible();
     }
-
 }

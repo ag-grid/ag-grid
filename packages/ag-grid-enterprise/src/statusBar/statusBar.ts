@@ -14,14 +14,26 @@ import {
     PinnedRowModel,
     PostConstruct,
     RowNode,
-    ValueService
-} from 'ag-grid/main';
-import {StatusItem} from "./statusItem";
+    ValueService,
+    RefSelector
+} from 'ag-grid';
 import {RangeController} from "../rangeController";
+import {SumAggregationComp} from "./sumAggregationComp";
 
 export class StatusBar extends Component {
 
-    private static TEMPLATE = '<div class="ag-status-bar"></div>';
+/*
+<!--<ag-status-bar-sum-count-comp></ag-status-bar-sum-count-comp>-->
+<!--<ag-status-bar-sum-min-comp></ag-status-bar-sum-min-comp>-->
+<!--<ag-status-bar-sum-max-comp></ag-status-bar-sum-max-comp>-->
+<!--<ag-status-bar-sum-avg-comp></ag-status-bar-sum-avg-comp>-->
+<!--<ag-status-bar-sum-info-comp></ag-status-bar-sum-info-comp>-->
+*/
+    private static TEMPLATE = `<div class="ag-status-bar">
+            <div class="ag-status-bar-aggregations">
+                <ag-sum-aggregation-comp ref="sumAggregationComp"></ag-sum-aggregation-comp>
+            </div>
+        </div>`;
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('rangeController') private rangeController: RangeController;
@@ -32,59 +44,57 @@ export class StatusBar extends Component {
     @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
+    @RefSelector('sumAggregationComp') private sumAggregationComp: SumAggregationComp;
+    // @RefSelector('countAggregationComp') private countAggregationComp: CountAggregationComp;
+
     private gridPanel: GridPanel;
 
-    private statusItemSum: StatusItem;
-    private statusItemCount: StatusItem;
-    private statusItemMin: StatusItem;
-    private statusItemMax: StatusItem;
-    private statusItemAvg: StatusItem;
+    // private statusItemMin: AggregationComp;
+    // private statusItemMax: AggregationComp;
+    // private statusItemAvg: AggregationComp;
 
-    private aggregationsComponent = new Component('<div class="ag-status-bar-aggregations"></div>');
-    private infoLabel = new Component(`<div class="ag-status-bar-info-label"></div>`);
+    // private aggregationsComponent = new Component('<div class="ag-status-bar-aggregations"></div>');
+    // private infoLabel = new Component(`<div class="ag-status-bar-info-label"></div>`);
 
     constructor() {
         super(StatusBar.TEMPLATE);
     }
 
+    // spl what is this for?
     public registerGridPanel(gridPanel: GridPanel): void {
         this.gridPanel = gridPanel;
     }
 
+
     @PostConstruct
-    private init(): void {
+    private postConstruct(): void {
+        this.instantiate(this.context);
+
+        // spl todo - put this in the aggr components
         // we want to hide until the first aggregation comes in
-        this.setVisible(false);
+        this.setVisible(this.gridOptionsWrapper.isEnableStatusBar());
 
-        if (!this.gridOptionsWrapper.isEnableStatusBar()) { return; }
-
-        this.createStatusItems();
+        // this.createStatusItems();
         this.eventService.addEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
         this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, this.onRangeSelectionChanged.bind(this));
     }
 
-    private createStatusItems(): void {
-        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-
-        this.statusItemSum = new StatusItem(localeTextFunc('sum', 'Sum'));
-        this.statusItemCount = new StatusItem(localeTextFunc('count', 'Count'));
-        this.statusItemMin = new StatusItem(localeTextFunc('min', 'Min'));
-        this.statusItemMax = new StatusItem(localeTextFunc('max', 'Max'));
-        this.statusItemAvg = new StatusItem(localeTextFunc('average', 'Average'));
-
-        this.forEachStatusItem( (statusItem) => {
-            this.context.wireBean(statusItem);
-            this.aggregationsComponent.appendChild(statusItem);
-            statusItem.setVisible(false);
-        });
-
-        this.appendChild(this.infoLabel);
-        this.appendChild(this.aggregationsComponent);
-    }
-
-    private forEachStatusItem(callback: (statusItem: StatusItem)=>void): void {
-        [this.statusItemAvg, this.statusItemCount, this.statusItemMin, this.statusItemMax, this.statusItemSum].forEach(callback);
-    }
+    // private createStatusItems(): void {
+    //     let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+    //
+    //     this.statusItemMin = new AggregationComp(localeTextFunc('min', 'Min'));
+    //     this.statusItemMax = new AggregationComp(localeTextFunc('max', 'Max'));
+    //     this.statusItemAvg = new AggregationComp(localeTextFunc('average', 'Average'));
+    //
+    //     this.forEachStatusItem( (statusItem) => {
+    //         this.context.wireBean(statusItem);
+    //         this.aggregationsComponent.appendChild(statusItem);
+    //         statusItem.setVisible(false);
+    //     });
+    //
+    //     this.appendChild(this.infoLabel);
+    //     this.appendChild(this.aggregationsComponent);
+    // }
 
     private onRangeSelectionChanged(): void {
         let cellRanges = this.rangeController.getCellRanges();
@@ -99,7 +109,7 @@ export class StatusBar extends Component {
 
         if (!_.missingOrEmpty(cellRanges)) {
 
-            cellRanges.forEach( (cellRange)=> {
+            cellRanges.forEach((cellRange) => {
 
                 // get starting and ending row, remember rowEnd could be before rowStart
                 let startRow = cellRange.start.getGridRow();
@@ -113,9 +123,11 @@ export class StatusBar extends Component {
                 while (true) {
 
                     let finishedAllRows = _.missing(currentRow) || lastRow.before(currentRow);
-                    if (finishedAllRows) { break; }
+                    if (finishedAllRows) {
+                        break;
+                    }
 
-                    cellRange.columns.forEach( (column) => {
+                    cellRange.columns.forEach((column) => {
 
                         // we only want to include each cell once, in case a cell is in multiple ranges
                         let cellId = currentRow.getGridCell(column).createId();
@@ -125,7 +137,9 @@ export class StatusBar extends Component {
                         cellsSoFar[cellId] = true;
 
                         let rowNode = this.getRowNode(currentRow);
-                        if (_.missing(rowNode)) { return; }
+                        if (_.missing(rowNode)) {
+                            return;
+                        }
 
                         let value = this.valueService.getValue(column, rowNode);
 
@@ -169,24 +183,24 @@ export class StatusBar extends Component {
         let gotNumberResult = numberCount > 1;
 
         // we should count even if no numbers
-        if (gotResult) {
-            this.statusItemCount.setValue(count);
-        }
-        this.statusItemCount.setVisible(gotResult);
-
+        // if (gotResult) {
+        //     this.countAggregationComp.setValue(count);
+        // }
+        // this.countAggregationComp.setVisible(gotResult);
+        //
         // if numbers, then show the number items
         if (gotNumberResult) {
-            this.statusItemSum.setValue(sum);
-            this.statusItemMin.setValue(min);
-            this.statusItemMax.setValue(max);
-            this.statusItemAvg.setValue(sum / numberCount);
+            this.sumAggregationComp.setValue(sum);
+        //     this.statusItemMin.setValue(min);
+        //     this.statusItemMax.setValue(max);
+        //     this.statusItemAvg.setValue(sum / numberCount);
         }
-        this.statusItemSum.setVisible(gotNumberResult);
-        this.statusItemMin.setVisible(gotNumberResult);
-        this.statusItemMax.setVisible(gotNumberResult);
-        this.statusItemAvg.setVisible(gotNumberResult);
+        this.sumAggregationComp.setVisible(gotNumberResult);
+        // this.statusItemMin.setVisible(gotNumberResult);
+        // this.statusItemMax.setVisible(gotNumberResult);
+        // this.statusItemAvg.setVisible(gotNumberResult);
 
-        if (this.isVisible()!==gotResult) {
+        if (this.isVisible() !== gotResult) {
             this.setVisible(gotResult);
         }
     }

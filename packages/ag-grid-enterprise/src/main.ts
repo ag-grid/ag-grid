@@ -6,7 +6,6 @@ export {GroupStage} from "./rowStages/groupStage";
 export {SetFilter} from "./setFilter/setFilter";
 export {SetFilterModel} from "./setFilter/setFilterModel";
 export {StatusBar} from "./statusBar/statusBar";
-export {StatusItem} from "./statusBar/statusItem";
 export {ClipboardService} from "./clipboardService";
 export {EnterpriseBoot} from "./enterpriseBoot";
 export {EnterpriseMenu} from "./menu/enterpriseMenu";
@@ -65,6 +64,8 @@ import {HorizontalResizeComp} from "./toolPanel/columnsSelect/horizontalResizeCo
 import {HeaderColumnDropComp} from "./toolPanel/columnDrop/headerColumnDropComp";
 import {ToolPanelColumnComp} from "./toolPanel/toolPanelColumnComp";
 import {ToolPanelSelectComp} from "./toolPanel/toolPanelSelectComp";
+import {SumAggregationComp} from "./statusBar/sumAggregationComp";
+import {StatusBarComponent} from "./statusBar/statusBarComponent";
 
 let rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
 
@@ -79,6 +80,11 @@ Grid.setEnterpriseComponents([
     {componentName: 'AgHorizontalResize', theClass: HorizontalResizeComp},
     {componentName: 'AgToolPanel', theClass: ToolPanelComp},
     {componentName: 'AgStatusBar', theClass: StatusBar},
+
+
+    {componentName: 'AgAggregationComp', theClass: StatusBarComponent},
+    {componentName: 'AgSumAggregationComp', theClass: SumAggregationComp},
+
     {componentName: 'AgHeaderColumnDrop', theClass: HeaderColumnDropComp},
     {componentName: 'AgToolPanelColumnComp', theClass: ToolPanelColumnComp},
     {componentName: 'AgToolPanelSelectComp', theClass: ToolPanelSelectComp},
