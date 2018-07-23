@@ -51,11 +51,6 @@ export class StatusBar extends Component {
         super(StatusBar.TEMPLATE);
     }
 
-    // noinspection JSUnusedGlobalSymbols
-    // noinspection JSUnusedLocalSymbols
-    public registerGridPanel(gridPanel: GridPanel): void {
-    }
-
     @PostConstruct
     private postConstruct(): void {
         this.instantiate(this.context);

@@ -94,7 +94,6 @@ export class GridCore extends Component {
 
         if (this.enterprise) {
             this.toolPanelComp.registerGridComp(this.gridPanel);
-            this.statusBar.registerGridPanel(this.gridPanel);
         }
 
         this.gridOptionsWrapper.addLayoutElement(this.getGui());
