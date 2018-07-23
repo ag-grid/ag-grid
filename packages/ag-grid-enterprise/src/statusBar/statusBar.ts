@@ -18,23 +18,17 @@ import {
     RefSelector
 } from 'ag-grid';
 import {RangeController} from "../rangeController";
-import {SumAggregationComp} from "./sumAggregationComp";
-import {CountAggregationComp} from "./countAggregationComp";
-import {MinAggregationComp} from "./minAggregationComp";
-import {MaxAggregationComp} from "./maxAggregationComp";
-import {AvgAggregationComp} from "./avgAggregationComp";
+import {AggregationValueComponent} from "./aggregationValueComponent";
 
 export class StatusBar extends Component {
 
-    /* spl todo: info bar - not needed? whats it for */
     private static TEMPLATE = `<div class="ag-status-bar">
-            <ag-info-status-bar-comp></ag-info-status-bar-comp>
             <div class="ag-status-bar-aggregations">
-                <ag-avg-aggregation-comp ref="avgAggregationComp"></ag-avg-aggregation-comp>
-                <ag-count-aggregation-comp ref="countAggregationComp"></ag-count-aggregation-comp>
-                <ag-min-aggregation-comp ref="minAggregationComp"></ag-min-aggregation-comp>
-                <ag-max-aggregation-comp ref="maxAggregationComp"></ag-max-aggregation-comp>
-                <ag-sum-aggregation-comp ref="sumAggregationComp"></ag-sum-aggregation-comp>
+                <ag-avg-aggregation-comp key="average" default-value="Average" ref="avgAggregationComp"></ag-avg-aggregation-comp>
+                <ag-count-aggregation-comp key="count" default-value="Count" ref="countAggregationComp"></ag-count-aggregation-comp>
+                <ag-min-aggregation-comp key="min" default-value="Min" ref="minAggregationComp"></ag-min-aggregation-comp>
+                <ag-max-aggregation-comp key="max" default-value="Max" ref="maxAggregationComp"></ag-max-aggregation-comp>
+                <ag-sum-aggregation-comp key="sum" default-value="Sum" ref="sumAggregationComp"></ag-sum-aggregation-comp>
             </div>
         </div>`;
 
@@ -47,21 +41,19 @@ export class StatusBar extends Component {
     @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    @RefSelector('sumAggregationComp') private sumAggregationComp: SumAggregationComp;
-    @RefSelector('countAggregationComp') private countAggregationComp: CountAggregationComp;
-    @RefSelector('minAggregationComp') private minAggregationComp: MinAggregationComp;
-    @RefSelector('maxAggregationComp') private maxAggregationComp: MaxAggregationComp;
-    @RefSelector('avgAggregationComp') private avgAggregationComp: AvgAggregationComp;
-
-    private gridPanel: GridPanel;
+    @RefSelector('sumAggregationComp') private sumAggregationComp: AggregationValueComponent;
+    @RefSelector('countAggregationComp') private countAggregationComp: AggregationValueComponent;
+    @RefSelector('minAggregationComp') private minAggregationComp: AggregationValueComponent;
+    @RefSelector('maxAggregationComp') private maxAggregationComp: AggregationValueComponent;
+    @RefSelector('avgAggregationComp') private avgAggregationComp: AggregationValueComponent;
 
     constructor() {
         super(StatusBar.TEMPLATE);
     }
 
-    // spl todo: what is this for?
+    // noinspection JSUnusedGlobalSymbols
+    // noinspection JSUnusedLocalSymbols
     public registerGridPanel(gridPanel: GridPanel): void {
-        this.gridPanel = gridPanel;
     }
 
     @PostConstruct

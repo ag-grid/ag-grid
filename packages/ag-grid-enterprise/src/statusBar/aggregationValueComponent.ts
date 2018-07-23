@@ -1,6 +1,6 @@
 import {Autowired, Component, Context, GridOptionsWrapper, PostConstruct, Utils as _} from 'ag-grid';
 
-export class BaseStatusBarComponent extends Component {
+export class AggregationValueComponent extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
 
@@ -9,10 +9,12 @@ export class BaseStatusBarComponent extends Component {
             <span id="_value"></span>
         </span>`;
 
+    private props: { key: string, defaultValue: string };
+
     private lbValue: HTMLElement;
 
     constructor(private key: any, private defaultValue: any) {
-        super(BaseStatusBarComponent.TEMPLATE);
+        super(AggregationValueComponent.TEMPLATE);
     }
 
     @PostConstruct
@@ -20,8 +22,10 @@ export class BaseStatusBarComponent extends Component {
         // we want to hide until the first value comes in
         this.setVisible(false);
 
-        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        this.queryForHtmlElement('#_label').innerHTML = localeTextFunc(this.key, this.defaultValue);
+        if (this.props) {
+            let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            this.queryForHtmlElement('#_label').innerHTML = localeTextFunc(this.props.key, this.props.defaultValue);
+        }
 
         this.lbValue = this.queryForHtmlElement('#_value');
     }

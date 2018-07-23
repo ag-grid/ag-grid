@@ -64,12 +64,7 @@ import {HorizontalResizeComp} from "./toolPanel/columnsSelect/horizontalResizeCo
 import {HeaderColumnDropComp} from "./toolPanel/columnDrop/headerColumnDropComp";
 import {ToolPanelColumnComp} from "./toolPanel/toolPanelColumnComp";
 import {ToolPanelSelectComp} from "./toolPanel/toolPanelSelectComp";
-import {InfoStatusBarComponent} from "./statusBar/infoStatusBarComponent";
-import {SumAggregationComp} from "./statusBar/sumAggregationComp";
-import {CountAggregationComp} from "./statusBar/countAggregationComp";
-import {MinAggregationComp} from "./statusBar/minAggregationComp";
-import {MaxAggregationComp} from "./statusBar/maxAggregationComp";
-import {AvgAggregationComp} from "./statusBar/avgAggregationComp";
+import {AggregationValueComponent} from "./statusBar/aggregationValueComponent";
 
 let rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
 
@@ -86,12 +81,11 @@ Grid.setEnterpriseComponents([
     {componentName: 'AgStatusBar', theClass: StatusBar},
 
 
-    {componentName: 'AgInfoStatusBarComp', theClass: InfoStatusBarComponent},
-    {componentName: 'AgSumAggregationComp', theClass: SumAggregationComp},
-    {componentName: 'AgCountAggregationComp', theClass: CountAggregationComp},
-    {componentName: 'AgMinAggregationComp', theClass: MinAggregationComp},
-    {componentName: 'AgMaxAggregationComp', theClass: MaxAggregationComp},
-    {componentName: 'AgAvgAggregationComp', theClass: AvgAggregationComp},
+    {componentName: 'AgSumAggregationComp', theClass: AggregationValueComponent},
+    {componentName: 'AgCountAggregationComp', theClass: AggregationValueComponent},
+    {componentName: 'AgMinAggregationComp', theClass: AggregationValueComponent},
+    {componentName: 'AgMaxAggregationComp', theClass: AggregationValueComponent},
+    {componentName: 'AgAvgAggregationComp', theClass: AggregationValueComponent},
 
     {componentName: 'AgHeaderColumnDrop', theClass: HeaderColumnDropComp},
     {componentName: 'AgToolPanelColumnComp', theClass: ToolPanelColumnComp},
