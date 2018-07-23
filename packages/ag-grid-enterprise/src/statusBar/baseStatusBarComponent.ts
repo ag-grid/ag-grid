@@ -1,6 +1,6 @@
 import {Autowired, Component, Context, GridOptionsWrapper, PostConstruct, Utils as _} from 'ag-grid';
 
-export class StatusBarComponent extends Component {
+export class BaseStatusBarComponent extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
 
@@ -12,11 +12,12 @@ export class StatusBarComponent extends Component {
     private lbValue: HTMLElement;
 
     constructor(private key: any, private defaultValue: any) {
-        super(StatusBarComponent.TEMPLATE);
+        super(BaseStatusBarComponent.TEMPLATE);
     }
 
     @PostConstruct
     public postConstruct(): void {
+        // we want to hide until the first value comes in
         this.setVisible(false);
 
         let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();

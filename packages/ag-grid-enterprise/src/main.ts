@@ -64,8 +64,12 @@ import {HorizontalResizeComp} from "./toolPanel/columnsSelect/horizontalResizeCo
 import {HeaderColumnDropComp} from "./toolPanel/columnDrop/headerColumnDropComp";
 import {ToolPanelColumnComp} from "./toolPanel/toolPanelColumnComp";
 import {ToolPanelSelectComp} from "./toolPanel/toolPanelSelectComp";
+import {InfoStatusBarComponent} from "./statusBar/infoStatusBarComponent";
 import {SumAggregationComp} from "./statusBar/sumAggregationComp";
-import {StatusBarComponent} from "./statusBar/statusBarComponent";
+import {CountAggregationComp} from "./statusBar/countAggregationComp";
+import {MinAggregationComp} from "./statusBar/minAggregationComp";
+import {MaxAggregationComp} from "./statusBar/maxAggregationComp";
+import {AvgAggregationComp} from "./statusBar/avgAggregationComp";
 
 let rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
 
@@ -82,8 +86,12 @@ Grid.setEnterpriseComponents([
     {componentName: 'AgStatusBar', theClass: StatusBar},
 
 
-    {componentName: 'AgAggregationComp', theClass: StatusBarComponent},
+    {componentName: 'AgInfoStatusBarComp', theClass: InfoStatusBarComponent},
     {componentName: 'AgSumAggregationComp', theClass: SumAggregationComp},
+    {componentName: 'AgCountAggregationComp', theClass: CountAggregationComp},
+    {componentName: 'AgMinAggregationComp', theClass: MinAggregationComp},
+    {componentName: 'AgMaxAggregationComp', theClass: MaxAggregationComp},
+    {componentName: 'AgAvgAggregationComp', theClass: AvgAggregationComp},
 
     {componentName: 'AgHeaderColumnDrop', theClass: HeaderColumnDropComp},
     {componentName: 'AgToolPanelColumnComp', theClass: ToolPanelColumnComp},

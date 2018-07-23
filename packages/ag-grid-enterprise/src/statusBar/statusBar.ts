@@ -19,18 +19,21 @@ import {
 } from 'ag-grid';
 import {RangeController} from "../rangeController";
 import {SumAggregationComp} from "./sumAggregationComp";
+import {CountAggregationComp} from "./countAggregationComp";
+import {MinAggregationComp} from "./minAggregationComp";
+import {MaxAggregationComp} from "./maxAggregationComp";
+import {AvgAggregationComp} from "./avgAggregationComp";
 
 export class StatusBar extends Component {
 
-/*
-<!--<ag-status-bar-sum-count-comp></ag-status-bar-sum-count-comp>-->
-<!--<ag-status-bar-sum-min-comp></ag-status-bar-sum-min-comp>-->
-<!--<ag-status-bar-sum-max-comp></ag-status-bar-sum-max-comp>-->
-<!--<ag-status-bar-sum-avg-comp></ag-status-bar-sum-avg-comp>-->
-<!--<ag-status-bar-sum-info-comp></ag-status-bar-sum-info-comp>-->
-*/
+    /* spl todo: info bar - not needed? whats it for */
     private static TEMPLATE = `<div class="ag-status-bar">
+            <ag-info-status-bar-comp></ag-info-status-bar-comp>
             <div class="ag-status-bar-aggregations">
+                <ag-avg-aggregation-comp ref="avgAggregationComp"></ag-avg-aggregation-comp>
+                <ag-count-aggregation-comp ref="countAggregationComp"></ag-count-aggregation-comp>
+                <ag-min-aggregation-comp ref="minAggregationComp"></ag-min-aggregation-comp>
+                <ag-max-aggregation-comp ref="maxAggregationComp"></ag-max-aggregation-comp>
                 <ag-sum-aggregation-comp ref="sumAggregationComp"></ag-sum-aggregation-comp>
             </div>
         </div>`;
@@ -45,56 +48,31 @@ export class StatusBar extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @RefSelector('sumAggregationComp') private sumAggregationComp: SumAggregationComp;
-    // @RefSelector('countAggregationComp') private countAggregationComp: CountAggregationComp;
+    @RefSelector('countAggregationComp') private countAggregationComp: CountAggregationComp;
+    @RefSelector('minAggregationComp') private minAggregationComp: MinAggregationComp;
+    @RefSelector('maxAggregationComp') private maxAggregationComp: MaxAggregationComp;
+    @RefSelector('avgAggregationComp') private avgAggregationComp: AvgAggregationComp;
 
     private gridPanel: GridPanel;
-
-    // private statusItemMin: AggregationComp;
-    // private statusItemMax: AggregationComp;
-    // private statusItemAvg: AggregationComp;
-
-    // private aggregationsComponent = new Component('<div class="ag-status-bar-aggregations"></div>');
-    // private infoLabel = new Component(`<div class="ag-status-bar-info-label"></div>`);
 
     constructor() {
         super(StatusBar.TEMPLATE);
     }
 
-    // spl what is this for?
+    // spl todo: what is this for?
     public registerGridPanel(gridPanel: GridPanel): void {
         this.gridPanel = gridPanel;
     }
-
 
     @PostConstruct
     private postConstruct(): void {
         this.instantiate(this.context);
 
-        // spl todo - put this in the aggr components
-        // we want to hide until the first aggregation comes in
         this.setVisible(this.gridOptionsWrapper.isEnableStatusBar());
 
-        // this.createStatusItems();
         this.eventService.addEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
         this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, this.onRangeSelectionChanged.bind(this));
     }
-
-    // private createStatusItems(): void {
-    //     let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-    //
-    //     this.statusItemMin = new AggregationComp(localeTextFunc('min', 'Min'));
-    //     this.statusItemMax = new AggregationComp(localeTextFunc('max', 'Max'));
-    //     this.statusItemAvg = new AggregationComp(localeTextFunc('average', 'Average'));
-    //
-    //     this.forEachStatusItem( (statusItem) => {
-    //         this.context.wireBean(statusItem);
-    //         this.aggregationsComponent.appendChild(statusItem);
-    //         statusItem.setVisible(false);
-    //     });
-    //
-    //     this.appendChild(this.infoLabel);
-    //     this.appendChild(this.aggregationsComponent);
-    // }
 
     private onRangeSelectionChanged(): void {
         let cellRanges = this.rangeController.getCellRanges();
@@ -183,22 +161,22 @@ export class StatusBar extends Component {
         let gotNumberResult = numberCount > 1;
 
         // we should count even if no numbers
-        // if (gotResult) {
-        //     this.countAggregationComp.setValue(count);
-        // }
-        // this.countAggregationComp.setVisible(gotResult);
-        //
+        if (gotResult) {
+            this.countAggregationComp.setValue(count);
+        }
+        this.countAggregationComp.setVisible(gotResult);
+
         // if numbers, then show the number items
         if (gotNumberResult) {
             this.sumAggregationComp.setValue(sum);
-        //     this.statusItemMin.setValue(min);
-        //     this.statusItemMax.setValue(max);
-        //     this.statusItemAvg.setValue(sum / numberCount);
+            this.minAggregationComp.setValue(min);
+            this.maxAggregationComp.setValue(max);
+            this.avgAggregationComp.setValue(sum / numberCount);
         }
         this.sumAggregationComp.setVisible(gotNumberResult);
-        // this.statusItemMin.setVisible(gotNumberResult);
-        // this.statusItemMax.setVisible(gotNumberResult);
-        // this.statusItemAvg.setVisible(gotNumberResult);
+        this.minAggregationComp.setVisible(gotNumberResult);
+        this.maxAggregationComp.setVisible(gotNumberResult);
+        this.avgAggregationComp.setVisible(gotNumberResult);
 
         if (this.isVisible() !== gotResult) {
             this.setVisible(gotResult);
