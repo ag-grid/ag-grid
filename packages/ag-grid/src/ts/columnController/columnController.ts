@@ -538,10 +538,12 @@ export class ColumnController {
     }
 
     private isColumnInViewport(col: Column): boolean {
+        let columnBuffer = this.gridOptionsWrapper.getColumnBuffer();
+
         let columnLeft = col.getLeft();
         let columnRight = col.getLeft() + col.getActualWidth();
-        let columnToMuchLeft = columnLeft < this.viewportLeft && columnRight < this.viewportLeft;
-        let columnToMuchRight = columnLeft > this.viewportRight && columnRight > this.viewportRight;
+        let columnToMuchLeft = columnLeft < ( this.viewportLeft - columnBuffer ) && columnRight < ( this.viewportLeft - columnBuffer );
+        let columnToMuchRight = columnLeft > ( this.viewportRight + columnBuffer ) && columnRight > ( this.viewportRight + columnBuffer );
 
         return !columnToMuchLeft && !columnToMuchRight;
     }

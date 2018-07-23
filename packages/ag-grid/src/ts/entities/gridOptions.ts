@@ -106,6 +106,7 @@ export interface GridOptions {
     suppressTabbing?: boolean;
     unSortIcon?: boolean;
     rowBuffer?: number;
+    columnBuffer? :number;
     enableRtl?: boolean;
     enableColResize?: boolean;
     colResizeDefault?: string;

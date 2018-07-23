@@ -8,6 +8,7 @@ export class Constants {
     static STEP_PIVOT = 5;
 
     static ROW_BUFFER_SIZE = 10;
+    static COL_BUFFER_SIZE = 0;
     static LAYOUT_INTERVAL = 500;
     static BATCH_WAIT_MILLIS = 50;
 
@@ -54,4 +55,3 @@ export class Constants {
     static PINNED_BOTTOM = 'bottom';
 
 }
-
