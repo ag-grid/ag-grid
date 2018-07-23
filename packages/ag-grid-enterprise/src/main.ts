@@ -42,7 +42,6 @@ import {ClipboardService} from "./clipboardService";
 import {GroupStage} from "./rowStages/groupStage";
 import {AggregationStage} from "./rowStages/aggregationStage";
 import {EnterpriseBoot} from "./enterpriseBoot";
-import {StatusBar} from "./statusBar/statusBar";
 import {ContextMenuFactory} from "./menu/contextMenu";
 import {ViewportRowModel} from "./rowModels/viewport/viewportRowModel";
 import {PivotColumnsPanel} from "./toolPanel/columnDrop/pivotColumnsPanel";
@@ -64,6 +63,9 @@ import {HorizontalResizeComp} from "./toolPanel/columnsSelect/horizontalResizeCo
 import {HeaderColumnDropComp} from "./toolPanel/columnDrop/headerColumnDropComp";
 import {ToolPanelColumnComp} from "./toolPanel/toolPanelColumnComp";
 import {ToolPanelSelectComp} from "./toolPanel/toolPanelSelectComp";
+
+import {StatusBar} from "./statusBar/statusBar";
+import {AggregationPanelComp} from "./statusBar/aggregationPanelComp";
 import {AggregationValueComponent} from "./statusBar/aggregationValueComponent";
 
 let rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
@@ -78,9 +80,9 @@ Grid.setEnterpriseComponents([
     {componentName: 'AgColumnContainer', theClass: ColumnContainerComp},
     {componentName: 'AgHorizontalResize', theClass: HorizontalResizeComp},
     {componentName: 'AgToolPanel', theClass: ToolPanelComp},
+
     {componentName: 'AgStatusBar', theClass: StatusBar},
-
-
+    {componentName: 'AgAggregationPanelComp', theClass: AggregationPanelComp},
     {componentName: 'AgSumAggregationComp', theClass: AggregationValueComponent},
     {componentName: 'AgCountAggregationComp', theClass: AggregationValueComponent},
     {componentName: 'AgMinAggregationComp', theClass: AggregationValueComponent},

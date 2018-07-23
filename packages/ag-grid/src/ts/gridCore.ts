@@ -20,7 +20,7 @@ import {IToolPanel} from "./interfaces/iToolPanel";
 import {RefSelector} from "./widgets/componentAnnotations";
 import {IStatusBar} from "./interfaces/iStatusBar";
 import {observeResize} from "./resizeObserver";
-import {BodyHeightChangedEvent, Events, GridSizeChangedEvent} from "./events";
+import {Events, GridSizeChangedEvent} from "./events";
 
 @Bean('gridCore')
 export class GridCore extends Component {
@@ -102,13 +102,13 @@ export class GridCore extends Component {
         this.showToolPanel(this.gridOptionsWrapper.isShowToolPanel());
 
         this.eGridDiv.appendChild(this.getGui());
-        this.addDestroyFunc( () => {
+        this.addDestroyFunc(() => {
             this.eGridDiv.removeChild(this.getGui());
         });
 
         // if using angular, watch for quickFilter changes
         if (this.$scope) {
-            let quickFilterUnregisterFn = this.$scope.$watch(this.quickFilterOnScope, (newFilter: any) => this.filterManager.setQuickFilter(newFilter) );
+            let quickFilterUnregisterFn = this.$scope.$watch(this.quickFilterOnScope, (newFilter: any) => this.filterManager.setQuickFilter(newFilter));
             this.addDestroyFunc(quickFilterUnregisterFn);
         }
 
@@ -117,14 +117,14 @@ export class GridCore extends Component {
         this.addRtlSupport();
 
         this.finished = false;
-        this.addDestroyFunc( () => this.finished = true );
+        this.addDestroyFunc(() => this.finished = true);
 
         this.logger.log('ready');
 
         this.gridOptionsWrapper.addLayoutElement(this.eRootWrapperBody);
 
-        const unsubscribeFromResize = observeResize(this.eGridDiv, this.onGridSizeChanged.bind(this) );
-        this.addDestroyFunc(() => unsubscribeFromResize() );
+        const unsubscribeFromResize = observeResize(this.eGridDiv, this.onGridSizeChanged.bind(this));
+        this.addDestroyFunc(() => unsubscribeFromResize());
     }
 
     private onGridSizeChanged(): void {

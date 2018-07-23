@@ -39,14 +39,6 @@ let DEFAULT_DETAIL_ROW_HEIGHT = 300;
 let DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
 let DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
 
-let legacyThemes = [
-    'ag-fresh',
-    'ag-bootstrap',
-    'ag-blue',
-    'ag-dark',
-    'ag-material'
-];
-
 function isTrue(value: any): boolean {
     return value === true || value === 'true';
 }
@@ -458,6 +450,14 @@ export class GridOptionsWrapper {
     public isSuppressParentsInRowNodes() { return isTrue(this.gridOptions.suppressParentsInRowNodes); }
     public isEnableStatusBar() { return isTrue(this.gridOptions.enableStatusBar); }
     public isAlwaysShowStatusBar() { return isTrue(this.gridOptions.alwaysShowStatusBar); }
+    public isShowAggregationPanel() {
+        let showAggregationPanel = this.isEnableStatusBar();
+        if (this.gridOptions.statusPanel && this.gridOptions.statusPanel.components) {
+            const aggregationPanelConfig = _.find(this.gridOptions.statusPanel.components, (item) => item.component === 'agAggregationPanelComp');
+            showAggregationPanel = _.exists(aggregationPanelConfig)
+        }
+        return isTrue(showAggregationPanel);
+    }
     public isFunctionsReadOnly() { return isTrue(this.gridOptions.functionsReadOnly); }
     public isFloatingFilter(): boolean { return this.gridOptions.floatingFilter; }
     public isEnableOldSetFilterModel(): boolean { return isTrue(this.gridOptions.enableOldSetFilterModel); }

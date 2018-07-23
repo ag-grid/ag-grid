@@ -96,6 +96,14 @@ function suppressColumnMoveAnimation() {
 }
 
 var gridOptions = {
+    statusPanel : {
+        // components: [{
+        //     // component: 'agAggregationPanelComp',
+        //     // componentParams : {
+        //     //     aggFuncs: ['agCountAggregationComp', 'agSumAggregationComp', 'agMinAggregationComp', 'agMaxAggregationComp', 'agAvgAggregationComp']
+        //     // }
+        // }]
+    },
     components: {
         personFilter: PersonFilter,
         personFloatingFilterComponent: PersonFloatingFilterComponent,

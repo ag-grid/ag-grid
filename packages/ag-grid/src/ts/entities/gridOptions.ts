@@ -219,6 +219,15 @@ export interface GridOptions {
     // in effect whether or not to use React Portals for processing React Components within the grid
     reactNext?:  boolean;
 
+    statusPanel? : {
+        components: [{
+            component: string;
+            componentParams?: {
+                aggFuncs: string[];
+            }
+        }]
+    }
+
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
