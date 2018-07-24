@@ -238,20 +238,8 @@ class ResizeObserverController {
 
         window.addEventListener("resize", this.refresh);
 
-        if (mutationObserverSupported) {
-            this.mutationsObserver_ = new MutationObserver(this.refresh);
-
-            this.mutationsObserver_.observe(document, {
-                attributes: true,
-                childList: true,
-                characterData: true,
-                subtree: true
-            });
-        } else {
-            document.addEventListener("DOMSubtreeModified", this.refresh);
-
-            this.mutationEventsAdded_ = true;
-        }
+        document.addEventListener("DOMSubtreeModified", this.refresh);
+        this.mutationEventsAdded_ = true;
 
         this.connected_ = true;
     }
