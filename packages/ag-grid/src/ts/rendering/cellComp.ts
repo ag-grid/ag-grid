@@ -192,6 +192,15 @@ export class CellComp extends Component {
         this.addDestroyableEventListener(this.column, Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, this.onFirstRightPinnedChanged.bind(this));
         this.addDestroyableEventListener(this.column, Column.EVENT_LAST_LEFT_PINNED_CHANGED, this.onLastLeftPinnedChanged.bind(this));
 
+        // only for printLayout - because we are rendering all the cells in the same row, regardless of pinned state,
+        // then changing the width of the containers will impact left position. eg the center cols all have their
+        // left position adjusted by the width of the left pinned column, so if the pinned left column width changes,
+        // all the center cols need to be shifted to accommodate this. when in normal layout, the pinned cols are
+        // in different containers so doesn't impact.
+        if (this.printLayout) {
+            this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onLeftChanged.bind(this));
+        }
+
         // if not doing enterprise, then range selection service would be missing
         // so need to check before trying to use it
         if (this.rangeSelectionEnabled) {
@@ -330,7 +339,7 @@ export class CellComp extends Component {
         }
 
         if (this.beans.gridOptionsWrapper.getDomLayout()===Constants.DOM_LAYOUT_PRINT) {
-            cssClasses.push('ag-cell-for-print');
+            cssClasses.push('ag-cell-layout-print');
         }
 
         return cssClasses;

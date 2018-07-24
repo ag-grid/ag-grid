@@ -55,9 +55,7 @@ export class RowContainerComponent {
     }
 
     private checkDomOrder(): void {
-        let domOrder = this.gridOptionsWrapper.isEnsureDomOrder();
-        let forPrint = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
-        this.domOrder = domOrder || forPrint;
+        this.domOrder = this.gridOptionsWrapper.isEnsureDomOrder();
     }
 
     public getRowElement(compId: number): HTMLElement {

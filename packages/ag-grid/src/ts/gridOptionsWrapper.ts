@@ -302,7 +302,7 @@ export class GridOptionsWrapper {
     public isRowDragManaged() { return isTrue(this.gridOptions.rowDragManaged); }
     public isSuppressRowDrag() { return isTrue(this.gridOptions.suppressRowDrag); }
 
-    // returns either 'forPrint', 'autoHeight' or 'normal' (normal is the default)
+    // returns either 'print', 'autoHeight' or 'normal' (normal is the default)
     public getDomLayout(): string {
 
         let domLayout = this.gridOptions.domLayout;
@@ -531,13 +531,13 @@ export class GridOptionsWrapper {
     private updateLayoutClasses(): void {
         let domLayout = this.getDomLayout();
         let domLayoutAutoHeight = domLayout === Constants.DOM_LAYOUT_AUTO_HEIGHT;
-        let domLayoutForPrint = domLayout === Constants.DOM_LAYOUT_PRINT;
+        let domLayoutPrint = domLayout === Constants.DOM_LAYOUT_PRINT;
         let domLayoutNormal = domLayout === Constants.DOM_LAYOUT_NORMAL;
 
         this.layoutElements.forEach( e => {
             _.addOrRemoveCssClass(e, 'ag-layout-auto-height', domLayoutAutoHeight);
             _.addOrRemoveCssClass(e, 'ag-layout-normal', domLayoutNormal);
-            _.addOrRemoveCssClass(e, 'ag-layout-for-print', domLayoutForPrint);
+            _.addOrRemoveCssClass(e, 'ag-layout-print', domLayoutPrint);
         });
     }
 

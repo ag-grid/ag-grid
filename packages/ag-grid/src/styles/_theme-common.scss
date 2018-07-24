@@ -263,7 +263,7 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
         @include icon-background("none");
     }
 
-    .ag-layout-for-print .ag-header-container {
+    .ag-layout-print .ag-header-container {
         background: $ag-header-background-1;
         border-bottom: $ag-border-1;
     }

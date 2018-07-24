@@ -1,7 +1,7 @@
 var columnDefs = [
     {field: 'group', rowGroup: true, hide: true},
     {field: 'id', pinned: 'left', width: 60},
-    {field: 'model', width: 150},
+    {field: 'model', pinned: 'right', width: 150},
     {field: 'color', width: 100},
     {field: 'price', valueFormatter: '"$" + value.toLocaleString()', width: 100},
     {field: 'year', width: 100},
@@ -16,7 +16,7 @@ function createRowData() {
     var rowData = [];
     for (var i = 0; i<200; i++) {
         var item = {
-            id: i,
+            id: i + 1,
             group: 'Group ' + (Math.floor(i / 20) + 1),
             model: models[Math.floor(Math.random()*models.length)],
             color: colors[Math.floor(Math.random()*colors.length)],
@@ -30,12 +30,15 @@ function createRowData() {
 }
 
 var gridOptions = {
+    defaultColDef: {
+    },
     columnDefs: columnDefs,
     rowData: createRowData(),
     enableSorting: true,
     animateRows: true,
     toolPanelSuppressSideButtons: true,
     groupUseEntireRow: true,
+    enableRtl: true,
     onGridReady: function(params) {
         params.api.expandAll();
     }
@@ -78,3 +81,10 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 });
+
+function niall() {
+    ['country','model'].forEach( function(id) {
+        var col = gridOptions.columnApi.getColumn(id);
+        console.log(id + ' = ' + col.getLeft());
+    });
+}

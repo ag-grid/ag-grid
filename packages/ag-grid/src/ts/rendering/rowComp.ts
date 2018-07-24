@@ -141,7 +141,7 @@ export class RowComp extends Component {
                 beans: Beans,
                 animateIn: boolean,
                 useAnimationFrameForCreate: boolean,
-                forPrint: boolean,
+                printLayout: boolean,
                 embedFullWidth: boolean) {
         super();
         this.parentScope = parentScope;
@@ -154,7 +154,7 @@ export class RowComp extends Component {
         this.rowIsEven = this.rowNode.rowIndex % 2 === 0;
         this.paginationPage = this.beans.paginationProxy.getCurrentPage();
         this.useAnimationFrameForCreate = useAnimationFrameForCreate;
-        this.printLayout = forPrint;
+        this.printLayout = printLayout;
         this.embedFullWidth = embedFullWidth;
 
         this.setAnimateFlags(animateIn);
@@ -248,7 +248,7 @@ export class RowComp extends Component {
     }
 
     private getInitialRowTopStyle() {
-        // forPrint uses normal flow layout for row positioning
+        // print layout uses normal flow layout for row positioning
         if (this.printLayout) { return ''; }
 
         // if sliding in, we take the old row top. otherwise we just set the current row top.
@@ -956,7 +956,7 @@ export class RowComp extends Component {
         _.pushAll(classes, this.processClassesFromGridOptions());
         _.pushAll(classes, this.preProcessRowClassRules());
 
-        // we use absolute position unless we are doing forPrint
+        // we use absolute position unless we are doing print layout
         classes.push(this.printLayout ? 'ag-row-position-relative' : 'ag-row-position-absolute');
 
         return classes;
@@ -1372,7 +1372,7 @@ export class RowComp extends Component {
     }
 
     private setRowTop(pixels: number): void {
-        // forPrint uses normal flow layout for row positioning
+        // print layout uses normal flow layout for row positioning
         if (this.printLayout) { return; }
 
         // need to make sure rowTop is not null, as this can happen if the node was once

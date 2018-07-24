@@ -59,12 +59,12 @@ export class OverlayWrapperComponent extends Component implements IOverlayWrappe
 
         let domLayout = this.gridOptionsWrapper.getDomLayout();
         let domLayoutAutoHeight = domLayout === Constants.DOM_LAYOUT_AUTO_HEIGHT;
-        let domLayoutForPrint = domLayout === Constants.DOM_LAYOUT_PRINT;
+        let domLayoutPrint = domLayout === Constants.DOM_LAYOUT_PRINT;
         let domLayoutNormal = domLayout === Constants.DOM_LAYOUT_NORMAL;
 
         _.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-auto-height', domLayoutAutoHeight);
         _.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-normal', domLayoutNormal);
-        _.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-for-print', domLayoutForPrint);
+        _.addOrRemoveCssClass(eNoRowsOverlayWrapper, 'ag-layout-print', domLayoutPrint);
 
         this.componentRecipes.newNoRowsOverlayComponent().then(renderer => {
             let noRowsOverlayWrapper: HTMLElement = this.getRefElement("noRowsOverlayWrapper");

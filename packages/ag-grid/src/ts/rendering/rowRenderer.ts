@@ -106,14 +106,14 @@ export class RowRenderer extends BeanStub {
     }
 
     private onDomLayoutChanged(): void {
-        let forPrint = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
-        let embedFullWidthRows = forPrint || this.gridOptionsWrapper.isEmbedFullWidthRows();
+        let printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+        let embedFullWidthRows = printLayout || this.gridOptionsWrapper.isEmbedFullWidthRows();
 
-        // if moving towards or away from forPrint, means we need to destroy all rows, as rows are not laid
-        // out using absolute positioning when doing forPrint
-        let destroyRows = embedFullWidthRows !== this.embedFullWidthRows || this.printLayout !== forPrint;
+        // if moving towards or away from print layout, means we need to destroy all rows, as rows are not laid
+        // out using absolute positioning when doing print layout
+        let destroyRows = embedFullWidthRows !== this.embedFullWidthRows || this.printLayout !== printLayout;
 
-        this.printLayout = forPrint;
+        this.printLayout = printLayout;
         this.embedFullWidthRows = embedFullWidthRows;
 
         if (destroyRows) {
@@ -300,7 +300,7 @@ export class RowRenderer extends BeanStub {
 
         this.scrollToTopIfNewData(params);
 
-        // never recycle rows when forPrint, we draw each row again from scratch. this is because forPrint
+        // never recycle rows when print layout, we draw each row again from scratch. this is because print layout
         // uses normal dom layout to put cells into dom - it doesn't allow reordering rows.
         let recycleRows = !this.printLayout && params.recycleRows;
         let animate = params.animate && this.gridOptionsWrapper.isAnimateRows();
@@ -635,6 +635,12 @@ export class RowRenderer extends BeanStub {
         let indexesToDraw = this.calculateIndexesToDraw();
 
         this.removeRowCompsNotToDraw(indexesToDraw);
+
+        // never animate when doing print layout - as we want to get things ready to print as quickly as possible,
+        // otherwise we risk the printer printing a row that's half faded (half way through fading in)
+        if (this.printLayout) {
+            animate = false;
+        }
 
         // add in new rows
         let nextVmTurnFunctions: Function[] = [];
