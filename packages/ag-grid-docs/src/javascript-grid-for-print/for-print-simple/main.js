@@ -1,5 +1,6 @@
 var columnDefs = [
-    {field: 'model'},
+    {headerName: 'ID', valueGetter: 'node.rowIndex + 1', width: 70},
+    {field: 'model', width: 150},
     {field: 'color'},
     {field: 'price', valueFormatter: '"$" + value.toLocaleString()'},
     {field: 'year'},
@@ -27,7 +28,10 @@ function createRowData() {
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: createRowData()
+    rowData: createRowData(),
+    defaultColDef: {
+        width: 100
+    }
 };
 
 function onBtPrinterFriendly() {

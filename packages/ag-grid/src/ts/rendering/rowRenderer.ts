@@ -779,6 +779,9 @@ export class RowRenderer extends BeanStub {
         if (!this.paginationProxy.isRowsToRender()) {
             newFirst = 0;
             newLast = -1; // setting to -1 means nothing in range
+        } else if (this.printLayout) {
+            newFirst = this.paginationProxy.getPageFirstRow();
+            newLast = this.paginationProxy.getPageLastRow();
         } else {
             let pageFirstRow = this.paginationProxy.getPageFirstRow();
             let pageLastRow = this.paginationProxy.getPageLastRow();

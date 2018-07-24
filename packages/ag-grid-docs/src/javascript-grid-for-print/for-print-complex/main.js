@@ -38,18 +38,19 @@ var gridOptions = {
     animateRows: true,
     toolPanelSuppressSideButtons: true,
     groupUseEntireRow: true,
-    enableRtl: true,
     onGridReady: function(params) {
         params.api.expandAll();
     }
 };
 
 function onBtPrint() {
-    setPrinterFriendly(gridOptions.api);
+    var gridApi = gridOptions.api;
+
+    setPrinterFriendly(gridApi);
 
     setTimeout( function( ) {
         print();
-        setNormal(gridOptions.api);
+        setNormal(gridApi);
     }, 2000);
 }
 
