@@ -314,7 +314,7 @@ export class GridOptionsWrapper {
         } else if (domLayout===null || domLayout===undefined) {
             return Constants.DOM_LAYOUT_NORMAL;
         } else {
-            _.doOnce( () => console.warn(`ag-Grid: ${this.gridOptions.domLayout} is not a valid valid for DOM Layout, valid values are ${Constants.DOM_LAYOUT_NORMAL}, ${Constants.DOM_LAYOUT_AUTO_HEIGHT} and ${Constants.DOM_LAYOUT_PRINT}`),
+            _.doOnce( () => console.warn(`ag-Grid: ${this.gridOptions.domLayout} is not valid for DOM Layout, valid values are ${Constants.DOM_LAYOUT_NORMAL}, ${Constants.DOM_LAYOUT_AUTO_HEIGHT} and ${Constants.DOM_LAYOUT_PRINT}`),
                 'warn about dom layout values');
             return Constants.DOM_LAYOUT_NORMAL;
         }
