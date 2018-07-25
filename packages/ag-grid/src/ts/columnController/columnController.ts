@@ -2668,11 +2668,11 @@ export class ColumnController {
         let groupInstanceIdCreator = new GroupInstanceIdCreator();
 
         this.displayedLeftColumnTree = this.displayedGroupCreator.createDisplayedGroups(
-            leftVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, this.displayedLeftColumnTree);
+            leftVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, Column.PINNED_LEFT, this.displayedLeftColumnTree);
         this.displayedRightColumnTree = this.displayedGroupCreator.createDisplayedGroups(
-            rightVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, this.displayedRightColumnTree);
+            rightVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, Column.PINNED_RIGHT, this.displayedRightColumnTree);
         this.displayedCentreColumnTree = this.displayedGroupCreator.createDisplayedGroups(
-            centerVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, this.displayedCentreColumnTree);
+            centerVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, null, this.displayedCentreColumnTree);
     }
 
     private updateOpenClosedVisibilityInColumnGroups(): void {

@@ -17,4 +17,5 @@ export interface ColumnGroupChild extends IEventEmitter {
     setParent(parent: ColumnGroup): void;
     isEmptyGroup(): boolean;
     isMoving(): boolean;
+    getPinned(): string;
 }

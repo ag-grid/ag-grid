@@ -32,9 +32,10 @@ export class ColumnGroup implements ColumnGroupChild {
     // depends on the open/closed state of the group, only displaying columns are stored here
     private displayedChildren: ColumnGroupChild[] = [];
 
-    private groupId: string;
-    private instanceId: number;
-    private originalColumnGroup: OriginalColumnGroup;
+    private readonly groupId: string;
+    private readonly instanceId: number;
+    private readonly originalColumnGroup: OriginalColumnGroup;
+    private readonly pinned: string;
 
     // private moving = false
     private left: number;
@@ -43,10 +44,11 @@ export class ColumnGroup implements ColumnGroupChild {
 
     private parent: ColumnGroup;
 
-    constructor(originalColumnGroup: OriginalColumnGroup, groupId: string, instanceId: number) {
+    constructor(originalColumnGroup: OriginalColumnGroup, groupId: string, instanceId: number, pinned: string) {
         this.groupId = groupId;
         this.instanceId = instanceId;
         this.originalColumnGroup = originalColumnGroup;
+        this.pinned = pinned;
     }
 
     // as the user is adding and removing columns, the groups are recalculated.
@@ -125,6 +127,10 @@ export class ColumnGroup implements ColumnGroupChild {
             this.left = left;
             this.localEventService.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_LEFT_CHANGED));
         }
+    }
+
+    public getPinned(): string {
+        return this.pinned;
     }
 
     private createAgEvent(type: string): AgEvent {

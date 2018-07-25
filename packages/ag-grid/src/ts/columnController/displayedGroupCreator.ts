@@ -23,6 +23,8 @@ export class DisplayedGroupCreator {
         balancedColumnTree: OriginalColumnGroupChild[],
         // create's unique id's for the group
         groupInstanceIdCreator: GroupInstanceIdCreator,
+        // whether it's left, right or center col
+        pinned: string,
         // we try to reuse old groups if we can, to allow gui to do animation
         oldDisplayedGroups?: ColumnGroupChild[]): ColumnGroupChild[] {
 
@@ -44,7 +46,8 @@ export class DisplayedGroupCreator {
             for (let i = 0; i<currentOriginalPath.length; i++) {
                 if (firstColumn || currentOriginalPath[i]!==previousOriginalPath[i]) {
                     // new group needed
-                    let newGroup = this.createColumnGroup(currentOriginalPath[i], groupInstanceIdCreator, oldColumnsMapped);
+                    let newGroup = this.createColumnGroup(currentOriginalPath[i], groupInstanceIdCreator,
+                        oldColumnsMapped, pinned);
                     currentRealPath[i] = newGroup;
                     // if top level, add to result, otherwise add to parent
                     if (i==0) {
@@ -79,7 +82,8 @@ export class DisplayedGroupCreator {
 
     private createColumnGroup(originalGroup: OriginalColumnGroup,
                               groupInstanceIdCreator: GroupInstanceIdCreator,
-                              oldColumnsMapped: {[key: string]: ColumnGroup}): ColumnGroup {
+                              oldColumnsMapped: {[key: string]: ColumnGroup},
+                              pinned: string): ColumnGroup {
 
         let groupId = originalGroup.getGroupId();
         let instanceId = groupInstanceIdCreator.getInstanceIdForKey(groupId);
@@ -98,7 +102,7 @@ export class DisplayedGroupCreator {
             // clean out the old column group here, as we will be adding children into it again
             columnGroup.reset();
         } else {
-            columnGroup = new ColumnGroup(originalGroup, groupId, instanceId);
+            columnGroup = new ColumnGroup(originalGroup, groupId, instanceId, pinned);
             this.context.wireBean(columnGroup);
         }
 

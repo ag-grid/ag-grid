@@ -73,7 +73,7 @@ const GRID_PANEL_NORMAL_TEMPLATE =
                     <div class="ag-pinned-left-cols-container" ref="eLeftContainer" role="presentation"></div>
                 </div>
             </div>
-            <div class="ag-body-viewport-wrapper" role="presentation">
+            <div class="ag-body-viewport-wrapper" ref="eBodyViewportWrapper" role="presentation">
                 <div class="ag-body-viewport" ref="eBodyViewport" role="presentation">
                     <div class="ag-body-container" ref="eBodyContainer" role="presentation"></div>
                 </div>
@@ -156,6 +156,7 @@ export class GridPanel extends Component {
     @RefSelector('eBody') private eBody: HTMLElement;
     @RefSelector('eBodyViewport') private eBodyViewport: HTMLElement;
     @RefSelector('eBodyContainer') private eBodyContainer: HTMLElement;
+    @RefSelector('eBodyViewportWrapper') private eBodyViewportWrapper: HTMLElement;
     @RefSelector('eLeftContainer') private eLeftContainer: HTMLElement;
     @RefSelector('eRightContainer') private eRightContainer: HTMLElement;
 
@@ -285,6 +286,7 @@ export class GridPanel extends Component {
         this.gridOptionsWrapper.addLayoutElement(this.eBodyViewport);
         this.gridOptionsWrapper.addLayoutElement(this.eTopViewport);
         this.gridOptionsWrapper.addLayoutElement(this.eBodyContainer);
+        this.gridOptionsWrapper.addLayoutElement(this.eBodyViewportWrapper);
 
         this.suppressScrollOnFloatingRow();
         this.setupRowAnimationCssClass();
@@ -349,6 +351,10 @@ export class GridPanel extends Component {
         if (this.printLayout !== newPrintLayout) {
             this.printLayout = newPrintLayout;
             this.setWidthsOfContainers();
+            // pinned containers are always hidden for print layout
+            this.setPinnedContainersVisible();
+            // in case we have margins for hiding the scroll on body, this takes them out
+            this.hideVerticalScrollOnCenter();
         }
     }
 
@@ -1251,7 +1257,7 @@ export class GridPanel extends Component {
 
         let changeDetected = false;
 
-        let showLeftPinned = this.columnController.isPinningLeft();
+        let showLeftPinned = this.printLayout ? false : this.columnController.isPinningLeft();
         if (showLeftPinned !== this.pinningLeft) {
             this.pinningLeft = showLeftPinned;
             this.headerRootComp.setLeftVisible(showLeftPinned);
@@ -1263,7 +1269,7 @@ export class GridPanel extends Component {
             }
         }
 
-        let showRightPinned = this.columnController.isPinningRight();
+        let showRightPinned = this.printLayout ? false : this.columnController.isPinningRight();
         if (showRightPinned !== this.pinningRight) {
             this.pinningRight = showRightPinned;
             this.headerRootComp.setRightVisible(showRightPinned);
@@ -1288,7 +1294,7 @@ export class GridPanel extends Component {
             this.columnController.isPinningLeft()
             : this.columnController.isPinningRight();
 
-        let scrollActive = _.isVerticalScrollShowing(this.eBodyViewport);
+        let scrollActive = !this.printLayout && _.isVerticalScrollShowing(this.eBodyViewport);
 
         let hideScroll = neverShowScroll && scrollActive;
 
