@@ -56,8 +56,6 @@ let throttle = function(callback: ()=>void, delay: number) {
 
 let REFRESH_DELAY = 20;
 
-let mutationObserverSupported = typeof MutationObserver !== "undefined";
-
 let getWindowOf = function(target: HTMLElement) {
     let ownerGlobal = target && target.ownerDocument && target.ownerDocument.defaultView;
 

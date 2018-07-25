@@ -62,7 +62,7 @@ include '../documentation-main/documentation_header.php';
     <p>Columns can be defined in three ways: declaratively (i.e. via markup), via <code>GridOptions</code> or by binding to
         <code>columnDefs</code> on the <code>AgGridReact</code> component.</p>
 
-    <p>In all cases all <a href="">column definition properties</a> can be defined to make up a column definition.</p>
+    <p>In all cases all <a href="../javascript-grid-column-properties/">column definition properties</a> can be defined to make up a column definition.</p>
 
     <p>Defining columns declaratively:</p>
 
@@ -336,6 +336,75 @@ class TopMoversGrid extends Component {
 
     <p>As above, this call will result in ag-Grid believing that the rowData has changed each time the component renders as the filtering
         operation will return a new array each time. Again to alleviate this behaviour extract data that isn't likely to change and pre-process it only once.</p>
+
+    <h2 id="react-portals">React Portals</h2>
+
+    <p>Within ag-Grid we make use of <code>ReactDOM.unstable_renderSubtreeIntoContainer</code> to dynamically generate React components within the grid.</p>
+    <p>This has worked well and been reliable since ag-Grid was created, but it is marked as <code>unstable</code> and so could be removed by the React team at any time.</p>
+
+    <p>With React 16 <a href="https://reactjs.org/docs/portals.html">Portals</a> were introduced and these are the preferred way to create React components dynamically.</p>
+
+    <p>If you wish to try use this feature you'll need to enable it as follows:</p>
+
+    <snippet>
+// Grid Definition
+&lt;AgGridReact
+    reactNext={true}
+
+    ...other bindings
+    </snippet>
+
+    <h3 id="react-portal-redux">React Portals with Redux</h3>
+
+    <p>One of the downsides of using the React Portal functionality is that there are a few more steps required for the newly
+    created React components to be Redux aware.</p>
+
+    <h3>Make the Store Available to ag-Grid</h3>
+
+    <p>When using React Portals we need to explicity suplly the store to the dynamically created component. In order to
+        be able to do this you in turn need to supply the store to ag-Grid React via the React <code>context</code>:</p>
+
+    <snippet>
+// Grid Definition
+&lt;AgGridReact
+    reactNext={true}
+    reduxStore={this.context.store} // must be supplied when using redux with reactNext
+
+    ...other bindings
+    </snippet>
+
+    <p>To ensure the store is available on the context you need to add it to the parent component <code>contextTypes</code>:</p>
+
+    <snippet>
+GridComponent.contextTypes = {
+    store: PropTypes.object
+};
+</snippet>
+
+    <h3 id="higher-order-components">Higher Order Components</h3>
+
+    <p>If you use <code>connect</code> to use Redux, or if you're using a Higher Order Component to wrap the React component at all,
+        you'll also need to ensure the grid can get access to the newly created component. To do this you need to ensure <code>withRef</code>
+    is set:</p>
+
+    <snippet>
+export default connect(
+    (state) => {
+        return {
+            currencySymbol: state.currencySymbol,
+            exchangeRate: state.exchangeRate
+        }
+    },
+    null,
+    null,
+    { withRef: true } // must be supplied for react/redux when using GridOptions.reactNext
+)(PriceRenderer);
+    </snippet>
+
+    <h3>Working Example</h3>
+
+    <p>You can find a fully working example at our <a href="https://github.com/ag-grid/ag-grid-react-example/">ag Grid React Example</a>.
+        The Simple Redux Example makes use of <code>reactNext</code> together with <code>Redux</code>.</p>
 
     <h2 id="next-steps">Next Steps</h2>
 
