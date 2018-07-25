@@ -14,6 +14,7 @@
         "buildVue": "lerna run build --scope ag-grid --scope ag-grid-vue",
         "buildReact": "lerna run build --scope ag-grid --scope ag-grid-react",
         "buildAurelia": "lerna run build --scope ag-grid --scope ag-grid-aurelia",
+        "docs": "cd packages/ag-grid-docs && gulp serve",
         "updateAndRebuild": "npm run updateDependencies && npm run build",
         "initIntelliJ": "cp .idea/workspace.xml.default .idea/workspace.xml",
         "init": "npm run initLatest && npm run updateAndRebuild"
