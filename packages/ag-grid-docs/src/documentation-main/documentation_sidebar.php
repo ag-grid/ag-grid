@@ -4,6 +4,20 @@
 
     <div class="card card-highlight">
         <div class="card-body">
+            <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=18.1.2">Version 18.1.2 Released</a></h5>
+            <h6 class="card-subtitle mb-2 text-muted">July 25</h6>
+            <p class="card-text">
+                Patch release focused on bug fixes. For Details check our change log
+            </p>
+
+            <p class="text-right">
+                <a class="learn-more" href="../ag-grid-changelog/?fixVersion=18.1.2">Change Log</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="card card-highlight">
+        <div class="card-body">
             <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=18.1.0">Version 18.1 Released</a></h5>
             <h6 class="card-subtitle mb-2 text-muted">July 3</h6>
             <p class="card-text">
@@ -49,6 +63,19 @@
     <p>From our <a href="https://medium.com/ag-grid/">blog</a>:</p>
 
     <div class="card">
+        <div class="card-body">
+            <h5 class="card-title"><a
+                        href="https://medium.com/ag-grid/using-angular-forms-with-ag-grid-1efe00265535">
+                    Using ag-Grid and Angular Forms</a></h5>
+            <h6 class="card-subtitle mb-2 text-muted">Mar 7</h6>
+            <p class="card-text">'Learn how to use ag-Grid and Angular Forms - combine the best of both technologies'</p>
+
+            <p class="text-right">
+                <a class="learn-more"
+                   href="https://medium.com/ag-grid/using-angular-forms-with-ag-grid-1efe00265535">Full
+                    Article</a>
+            </p>
+        </div>
         <div class="card-body">
             <h5 class="card-title"><a
                     href="https://medium.com/ag-grid/data-visualisation-for-enterprise-with-angular-and-d3-54165a2778a6">Data
