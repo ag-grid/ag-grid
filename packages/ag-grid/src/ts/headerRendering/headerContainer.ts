@@ -118,13 +118,17 @@ export class HeaderContainer {
     // grid cols have changed - this also means the number of rows in the header can have
     // changed. so we remove all the old rows and insert new ones for a complete refresh
     private onGridColumnsChanged() {
+        this.removeAndCreateAllRowComps();
+    }
+
+    private removeAndCreateAllRowComps(): void {
         this.removeHeaderRowComps();
         this.createHeaderRowComps();
     }
 
     // we expose this for gridOptions.api.refreshHeader() to call
     public refresh(): void {
-        this.onGridColumnsChanged();
+        this.removeAndCreateAllRowComps();
     }
 
     private setupDragAndDrop(gridComp: GridPanel): void {

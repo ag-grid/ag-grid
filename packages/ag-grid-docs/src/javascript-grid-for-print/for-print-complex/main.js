@@ -56,23 +56,18 @@ function onBtPrint() {
 
 function setPrinterFriendly(api) {
     var eGridDiv = document.querySelector('.my-grid');
-
-    var preferredWidth = api.getPreferredWidth();
-
-    // add 2 pixels for the grid border
-    preferredWidth += 2;
-
-    eGridDiv.style.width = preferredWidth + 'px';
+    eGridDiv.style.width = '';
     eGridDiv.style.height = '';
+    eGridDiv.style.display = 'inline-block';
 
     api.setDomLayout('print');
 }
 
 function setNormal(api) {
     var eGridDiv = document.querySelector('.my-grid');
-
     eGridDiv.style.width = '600px';
     eGridDiv.style.height = '200px';
+    eGridDiv.style.display = '';
 
     api.setDomLayout(null);
 }

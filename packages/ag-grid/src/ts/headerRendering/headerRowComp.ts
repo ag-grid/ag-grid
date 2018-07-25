@@ -19,6 +19,7 @@ import {ComponentRecipes} from "../components/framework/componentRecipes";
 import {IFilterComp} from "../interfaces/iFilter";
 import {GridApi} from "../gridApi";
 import {CombinedFilter} from "../filter/baseFilter";
+import {Constants} from "../constants";
 
 export enum HeaderRowType {
     COLUMN_GROUP, COLUMN, FLOATING_FILTER
@@ -133,8 +134,26 @@ export class HeaderRowComp extends Component {
     }
 
     private setWidth(): void {
-        let mainRowWidth = this.columnController.getContainerWidth(this.pinned) + 'px';
-        this.getGui().style.width = mainRowWidth;
+        let width = this.getWidthForRow();
+        this.getGui().style.width = width + 'px';
+    }
+
+    private getWidthForRow(): number {
+        let printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+
+        if (printLayout) {
+            let centerRow = _.missing(this.pinned);
+            if (centerRow) {
+                return this.columnController.getContainerWidth(Column.PINNED_RIGHT)
+                    + this.columnController.getContainerWidth(Column.PINNED_LEFT)
+                    + this.columnController.getContainerWidth(null);
+            } else {
+                return 0;
+            }
+        } else {
+            // if not printing, just return the width as normal
+            return this.columnController.getContainerWidth(this.pinned);
+        }
     }
 
     private onGridColumnsChanged(): void {
@@ -151,17 +170,43 @@ export class HeaderRowComp extends Component {
         this.setWidth();
     }
 
+    private getItemsAtDept(): ColumnGroupChild[] {
+        let printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+
+        if (printLayout) {
+            // for print layout, we add all columns into the center
+            let centerContainer = _.missing(this.pinned);
+            if (centerContainer) {
+                let result: ColumnGroupChild[] = [];
+                [Column.PINNED_LEFT, null, Column.PINNED_RIGHT].forEach( pinned => {
+                    let items = this.columnController.getVirtualHeaderGroupRow(
+                        pinned,
+                        this.type == HeaderRowType.FLOATING_FILTER ?
+                            this.dept - 1 :
+                            this.dept
+                    );
+                    result = result.concat(items);
+                });
+                return result;
+            } else {
+                return [];
+            }
+        } else {
+            // when in normal layout, we add the columns for that container only
+            return this.columnController.getVirtualHeaderGroupRow(
+                this.pinned,
+                this.type == HeaderRowType.FLOATING_FILTER ?
+                    this.dept - 1 :
+                    this.dept
+            );
+        }
+    }
+
     private onVirtualColumnsChanged(): void {
 
         let currentChildIds = Object.keys(this.headerComps);
 
-        let itemsAtDepth = this.columnController.getVirtualHeaderGroupRow(
-            this.pinned,
-            this.type == HeaderRowType.FLOATING_FILTER ?
-                this.dept - 1 :
-                this.dept
-        );
-
+        let itemsAtDepth = this.getItemsAtDept();
         let ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
         let eBefore: HTMLElement;
 

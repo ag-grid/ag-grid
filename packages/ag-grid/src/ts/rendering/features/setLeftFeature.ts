@@ -9,10 +9,11 @@ import {ColumnAnimationService} from "../columnAnimationService";
 import {EventService} from "../../eventService";
 import {Events} from "../../events";
 import {Beans} from "../beans";
+import {Constants} from "../../constants";
 
 export class SetLeftFeature extends BeanStub {
 
-    private columnOrGroup: ColumnGroupChild;
+    private readonly columnOrGroup: ColumnGroupChild;
     private eCell: HTMLElement;
 
     private actualLeft: number;
@@ -23,12 +24,15 @@ export class SetLeftFeature extends BeanStub {
 
     private beans: Beans;
 
+    private readonly printLayout: boolean;
+
     constructor(columnOrGroup: ColumnGroupChild, eCell: HTMLElement, beans: Beans, colsSpanning?: Column[]) {
         super();
         this.columnOrGroup = columnOrGroup;
         this.eCell = eCell;
         this.colsSpanning = colsSpanning;
         this.beans = beans;
+        this.printLayout = beans.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
     }
 
     public setColsSpanning(colsSpanning: Column[]): void {
@@ -81,8 +85,26 @@ export class SetLeftFeature extends BeanStub {
     }
 
     private onLeftChanged(): void {
-        this.actualLeft = this.getColumnOrGroup().getLeft();
+        let colOrGroup = this.getColumnOrGroup();
+        let left = colOrGroup.getLeft();
+        this.actualLeft = this.modifyLeftForPrintLayout(colOrGroup, left);
         this.setLeft(this.actualLeft);
+    }
+
+    private modifyLeftForPrintLayout(colOrGroup: ColumnGroupChild, leftPosition: number): number {
+        if (!this.printLayout) { return leftPosition; }
+
+        if (colOrGroup.getPinned() === Column.PINNED_LEFT) {
+            return leftPosition;
+        } else if (colOrGroup.getPinned() === Column.PINNED_RIGHT) {
+            let leftWidth = this.beans.columnController.getPinnedLeftContainerWidth();
+            let bodyWidth = this.beans.columnController.getBodyContainerWidth();
+            return leftWidth + bodyWidth + leftPosition;
+        } else {
+            // is in body
+            let leftWidth = this.beans.columnController.getPinnedLeftContainerWidth();
+            return leftWidth + leftPosition;
+        }
     }
 
     private setLeft(value: number): void {

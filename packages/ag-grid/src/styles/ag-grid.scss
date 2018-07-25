@@ -42,39 +42,59 @@ ag-grid-aurelia {
 
 .ag-root-wrapper {
     position: relative; // set to relative, so absolute popups appear relative to this
-}
 
-.ag-root-wrapper.ag-layout-normal {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+    &.ag-layout-normal {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    &.ag-layout-print {
+        display: inline-block;
+    }
 }
 
 .ag-root-wrapper-body {
-    display: flex;
-    flex-direction: row;
-}
-
-.ag-layout-normal.ag-root-wrapper-body {
-    flex-grow: 1;
-    height: 0px;
-    min-height: 0px;
+    &.ag-layout-normal {
+        display: flex;
+        flex-direction: row;
+        flex-grow: 1;
+        height: 0px;
+        min-height: 0px;
+    }
+    &.ag-layout-auto-height {
+        display: flex;
+        flex-direction: row;
+    }
+    &.ag-layout-print {
+        display: inline-block;
+    }
 }
 
 .ag-root {
     box-sizing: border-box;
-    overflow: hidden; // was getting some 'should be there' scrolls, this sorts it out
     position: relative; // set to relative, so absolute popups appear relative to this
     display: inline-block;
-    width: 0px;
-    min-width: 0px;
-    flex: 1;
-}
 
-.ag-layout-normal.ag-root {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+    &.ag-layout-normal {
+        overflow: hidden; // was getting some 'shouldn't be there' scrolls, this sorts it out
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        width: 0px;
+        min-width: 0px;
+        flex: 1;
+    }
+
+    &.ag-layout-auto-height {
+        overflow: hidden; // was getting some 'shouldn't be there' scrolls, this sorts it out
+        width: 0px;
+        min-width: 0px;
+        flex: 1;
+    }
+
+    &.ag-layout-for-print {
+    }
 }
 
 .ag-font-style {
@@ -301,25 +321,33 @@ ag-grid-aurelia {
 }
 
 // for when auto height is used but there is no row data
-.ag-layout-auto-height.ag-body-container {
+.ag-body-container.ag-layout-auto-height {
     min-height: 50px;
 }
 
 // for when auto height is used but there is no row data
-.ag-layout-auto-height.ag-overlay-no-rows-wrapper {
+.ag-overlay-no-rows-wrapper.ag-layout-auto-height {
     padding-top: 30px;
 }
 
 .ag-body {
     box-sizing: border-box;
-    display: flex;
     position: relative; // needed so rows translate is relative to this container
-}
 
-.ag-layout-normal.ag-body {
-    flex: 1;
-    height: 0px; // that's the min height, 'flex 1' then extends it to take all available space
-    min-height: 0px; // min-height needed for firefox
+    &.ag-layout-print {
+        display: inline-block;
+    }
+
+    &.ag-layout-auto-height {
+        display: flex;
+    }
+
+    &.ag-layout-normal {
+        display: flex;
+        flex: 1;
+        height: 0px; // that's the min height, 'flex 1' then extends it to take all available space
+        min-height: 0px; // min-height needed for firefox
+    }
 }
 
 // we want the pinned left to always be on the left, and the pinned right
@@ -364,10 +392,10 @@ ag-grid-aurelia {
     width: 0px;
     min-width: 0px;
     flex: 1;
-}
 
-.ag-layout-normal.ag-floating-top-viewport {
-    height: 100%;
+    &.ag-layout-normal {
+        height: 100%;
+    }
 }
 
 .ag-floating-top-container {
@@ -441,26 +469,43 @@ ag-grid-aurelia {
 }
 
 .ag-body-viewport-wrapper {
-    height: 100%;
-    width: 0px; // mind width, flex grows the center to fit
-    min-width: 0px; // width didn't do the trick in firefox, so needed min-width also
-    flex: 1;
-    overflow: hidden;
+
+    &.ag-layout-auto-height {
+        overflow: hidden;
+        height: 100%;
+        width: 0px; // mind width, flex grows the center to fit
+        min-width: 0px; // width didn't do the trick in firefox, so needed min-width also
+        flex: 1;
+    }
+
+    &.ag-layout-normal {
+        height: 100%;
+        width: 0px; // mind width, flex grows the center to fit
+        min-width: 0px; // width didn't do the trick in firefox, so needed min-width also
+        flex: 1;
+    }
+
+    &.ag-layout-print {
+    }
 }
 
-// layout-auto-height has x (horizontal) scrolls (but no y)
-.ag-layout-auto-height.ag-body-viewport {
-    overflow-x: auto;
-}
+.ag-body-viewport {
 
-// layout-normal should have x and y scrolls
-.ag-layout-normal.ag-body-viewport {
-    overflow-x: auto;
-    overflow-y: auto;
-}
+    // layout-auto-height has x (horizontal) scrolls (but no y)
+    &.ag-layout-auto-height {
+        overflow-x: auto;
+    }
 
-.ag-layout-normal.ag-body-viewport {
-    height: 100%;
+    // layout-normal should have x and y scrolls
+    &.ag-layout-normal {
+        overflow-x: auto;
+        overflow-y: auto;
+        height: 100%;
+    }
+
+    &.ag-layout-print {
+        display: inline-block;
+    }
 }
 
 .ag-full-width-viewport-wrapper {
@@ -525,13 +570,17 @@ ag-grid-aurelia {
 .ag-body-container {
     margin-bottom: -2px;
     position: relative;
-}
 
-// for lay out normal, we use inline-block, however for layout-printing, we do NOT use
-// inline-block. this is because inline-block does not work with page-break (to stop rows
-// getting spread across printed pages).
-.ag-layout-auto-height.ag-body-container { display: inline-block; }
-.ag-layout-normal.ag-body-container { display: inline-block; }
+    // for lay out normal, we use inline-block, however for layout-printing, we do NOT use
+    // inline-block. this is because inline-block does not work with page-break (to stop rows
+    // getting spread across printed pages).
+    &.ag-layout-auto-height {
+        display: inline-block;
+    }
+    &.ag-layout-normal {
+        display: inline-block;
+    }
+}
 
 // for animations, allows rows to slide up and down,
 .ag-row-animation .ag-row {

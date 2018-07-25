@@ -12,6 +12,7 @@ import {RefSelector} from "../widgets/componentAnnotations";
 import {Utils as _} from "../utils";
 import {GridApi} from "../gridApi";
 import {AutoWidthCalculator} from "../rendering/autoWidthCalculator";
+import {Constants} from "../constants";
 
 export class HeaderRootComp extends Component {
 
@@ -45,6 +46,8 @@ export class HeaderRootComp extends Component {
 
     private gridPanel: GridPanel;
 
+    private printLayout: boolean;
+
     constructor() {
         super(HeaderRootComp.TEMPLATE);
     }
@@ -58,6 +61,8 @@ export class HeaderRootComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
+
+        this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
 
         this.gridApi.registerHeaderRootComp(this);
         this.autoWidthCalculator.registerHeaderRootComp(this);
@@ -75,12 +80,22 @@ export class HeaderRootComp extends Component {
         // shotgun way to get labels to change, eg from sum(amount) to avg(amount)
         this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshHeader.bind(this));
 
+        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
+
         // for setting ag-pivot-on / ag-pivot-off CSS classes
         this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
 
         this.addPreventHeaderScroll();
 
         if (this.columnController.isReady()) {
+            this.refreshHeader();
+        }
+    }
+
+    private onDomLayoutChanged(): void {
+        let newValue = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+        if (this.printLayout !== newValue) {
+            this.printLayout = newValue;
             this.refreshHeader();
         }
     }
