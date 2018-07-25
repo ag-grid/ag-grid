@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v18.1.1
+// Type definitions for ag-grid v18.1.2-beta.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
@@ -209,6 +209,8 @@ export interface ColDef extends AbstractColDef {
      * If false, then skips the UI refresh and no events are emitted.
      * Return false if the values are the same (ie no update). */
     newValueHandler?: (params: any) => boolean;
+    /** If true, this cell will be in editing mode after first click. */
+    singleClickEdit?: boolean;
     /** Cell template to use for cell. Useful for AngularJS cells. */
     template?: string;
     /** Cell template URL to load template from to use for cell. Useful for AngularJS cells. */

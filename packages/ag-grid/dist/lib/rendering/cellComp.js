@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v18.1.1
+ * @version v18.1.2-beta.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -1193,7 +1193,7 @@ var CellComp = (function (_super) {
             // to make callback async, do in a timeout
             setTimeout(function () { return colDef.onCellClicked(cellClickedEvent); }, 0);
         }
-        var editOnSingleClick = this.beans.gridOptionsWrapper.isSingleClickEdit()
+        var editOnSingleClick = (this.beans.gridOptionsWrapper.isSingleClickEdit() || colDef.singleClickEdit)
             && !this.beans.gridOptionsWrapper.isSuppressClickEdit();
         if (editOnSingleClick) {
             this.startRowOrCellEdit();

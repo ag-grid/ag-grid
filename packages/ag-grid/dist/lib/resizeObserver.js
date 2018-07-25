@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v18.1.1
+ * @version v18.1.2-beta.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -51,7 +51,6 @@ var throttle = function (callback, delay) {
     return proxy;
 };
 var REFRESH_DELAY = 20;
-var mutationObserverSupported = typeof MutationObserver !== "undefined";
 var getWindowOf = function (target) {
     var ownerGlobal = target && target.ownerDocument && target.ownerDocument.defaultView;
     return ownerGlobal || window;
@@ -185,19 +184,8 @@ var ResizeObserverController = (function () {
             return;
         }
         window.addEventListener("resize", this.refresh);
-        if (mutationObserverSupported) {
-            this.mutationsObserver_ = new MutationObserver(this.refresh);
-            this.mutationsObserver_.observe(document, {
-                attributes: true,
-                childList: true,
-                characterData: true,
-                subtree: true
-            });
-        }
-        else {
-            document.addEventListener("DOMSubtreeModified", this.refresh);
-            this.mutationEventsAdded_ = true;
-        }
+        document.addEventListener("DOMSubtreeModified", this.refresh);
+        this.mutationEventsAdded_ = true;
         this.connected_ = true;
     };
     ResizeObserverController.prototype.disconnect_ = function () {

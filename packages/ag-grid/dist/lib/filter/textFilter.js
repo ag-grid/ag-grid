@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v18.1.1
+ * @version v18.1.2-beta.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -96,7 +96,7 @@ var TextFilter = (function (_super) {
     };
     TextFilter.prototype.checkIndividualFilter = function (params, filterType, filterText) {
         var value = this.filterParams.valueGetter(params.node);
-        if (!value) {
+        if (value == null || value === undefined) {
             return filterType === baseFilter_1.BaseFilter.NOT_EQUAL || filterType === baseFilter_1.BaseFilter.NOT_CONTAINS;
         }
         var valueFormatted = this.formatter(value);

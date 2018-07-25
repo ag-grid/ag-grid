@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v18.1.1
+// Type definitions for ag-grid v18.1.2-beta.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export { BalancedColumnTreeBuilder } from "./dist/lib/columnController/balancedColumnTreeBuilder";
@@ -25,7 +25,7 @@ export { GridRow } from "./dist/lib/entities/gridRow";
 export { OriginalColumnGroup } from "./dist/lib/entities/originalColumnGroup";
 export { RowNode } from "./dist/lib/entities/rowNode";
 export { BaseFilter } from "./dist/lib/filter/baseFilter";
-export { DateFilter } from "./dist/lib/filter/dateFilter";
+export { DateFilter, SerializedDateFilter } from "./dist/lib/filter/dateFilter";
 export { FilterManager, FilterWrapper } from "./dist/lib/filter/filterManager";
 export { NumberFilter } from "./dist/lib/filter/numberFilter";
 export { TextFilter, SerializedTextFilter } from "./dist/lib/filter/textFilter";
