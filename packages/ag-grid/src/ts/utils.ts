@@ -51,11 +51,13 @@ export class Utils {
     private static NUMPAD_DEL_NUMLOCK_ON_KEY = 'Del';
     private static NUMPAD_DEL_NUMLOCK_ON_CHARCODE = 46;
 
-    private static doOnceFlags: {[key: string]: boolean} = {};
+    private static doOnceFlags: { [key: string]: boolean } = {};
 
     // if the key was passed before, then doesn't execute the func
-    static doOnce(func: ()=>void, key: string ) {
-        if (this.doOnceFlags[key]) { return; }
+    static doOnce(func: () => void, key: string) {
+        if (this.doOnceFlags[key]) {
+            return;
+        }
         func();
         this.doOnceFlags[key] = true;
     }
@@ -172,21 +174,23 @@ export class Utils {
         element.scrollLeft = value;
     }
 
-    static iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string)=>void): void {
-        if (!map) { return; }
+    static iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void {
+        if (!map) {
+            return;
+        }
         for (let i = 0; i < map.length; i++) {
             let attr = map[i];
             callback(attr.name, attr.value);
         }
     }
 
-    static iterateObject<T>(object: {[p:string]:T} | T[], callback: (key: string, value: T) => void) {
+    static iterateObject<T>(object: { [p: string]: T } | T[], callback: (key: string, value: T) => void) {
         if (this.missing(object)) {
             return;
         }
 
-        if (Array.isArray(object)){
-            object.forEach((value, index)=>{
+        if (Array.isArray(object)) {
+            object.forEach((value, index) => {
                 callback(index + '', value);
             })
         } else {
@@ -267,7 +271,9 @@ export class Utils {
 
                 let oldValue: any = dest[key];
 
-                if (oldValue === newValue) { return; }
+                if (oldValue === newValue) {
+                    return;
+                }
 
                 if (typeof oldValue === 'object' && typeof newValue === 'object') {
                     Utils.mergeDeep(oldValue, newValue);
@@ -428,7 +434,9 @@ export class Utils {
         // starts editing again with a blank value (two 'key down' events are fired). to
         // test this, remove the line below, edit a cell in chrome and hit ctrl+enter while editing.
         // https://ag-grid.atlassian.net/browse/AG-605
-        if (this.isKeyPressed(event, Constants.KEY_NEW_LINE)) { return false; }
+        if (this.isKeyPressed(event, Constants.KEY_NEW_LINE)) {
+            return false;
+        }
 
         if (_.exists(event.key)) {
             // modern browser will implement key, so we return if key is length 1, eg if it is 'a' for the
@@ -852,10 +860,12 @@ export class Utils {
         return res;
     }
 
-    static every<T>(items: T[], callback: (item: T)=>boolean): boolean {
-        if (!items || items.length===0) { return true; }
+    static every<T>(items: T[], callback: (item: T) => boolean): boolean {
+        if (!items || items.length === 0) {
+            return true;
+        }
 
-        for (let i = 0; i<items.length; i++) {
+        for (let i = 0; i < items.length; i++) {
             if (!callback(items[i])) {
                 return false;
             }
@@ -1670,8 +1680,8 @@ export class Utils {
         inputValues: string[],
         validValues: string[],
         allSuggestions: string[]
-    ) : {[p:string]: string[]}{
-        let fuzzyMatches: {[p:string]: string[]} = {};
+    ): { [p: string]: string[] } {
+        let fuzzyMatches: { [p: string]: string[] } = {};
         let invalidInputs: string [] = inputValues.filter(inputValue =>
             !validValues.some(
                 (validValue) => validValue === inputValue
@@ -1691,7 +1701,7 @@ export class Utils {
         inputValue: string,
         validValues: string[],
         allSuggestions: string[]
-    ) : string[]{
+    ): string[] {
         let thisSuggestions: string [] = allSuggestions.slice(0);
         thisSuggestions.sort((suggestedValueLeft, suggestedValueRight) => {
                 let leftDifference = _.string_similarity(suggestedValueLeft.toLowerCase(), inputValue.toLowerCase());
@@ -1702,14 +1712,13 @@ export class Utils {
             }
         );
 
-         return thisSuggestions;
+        return thisSuggestions;
     }
-
 
 
     //Algorithm to do fuzzy search
     //https://stackoverflow.com/questions/23305000/javascript-fuzzy-search-that-makes-sense
-    static get_bigrams (from:string) {
+    static get_bigrams(from: string) {
         var i, j, ref, s, v;
         s = from.toLowerCase();
         v = new Array(s.length - 1);
@@ -1720,7 +1729,7 @@ export class Utils {
         return v;
     }
 
-    static string_similarity = function(str1:string, str2:string) {
+    static string_similarity = function (str1: string, str2: string) {
         var hit_count, j, k, len, len1, pairs1, pairs2, union, x, y;
         if (str1.length > 0 && str2.length > 0) {
             pairs1 = Utils.get_bigrams(str1);
@@ -1744,7 +1753,7 @@ export class Utils {
     };
 
     private static isNumpadDelWithNumlockOnForEdgeOrIe(event: KeyboardEvent) {
-        if(Utils.isBrowserEdge() || Utils.isBrowserIE()) {
+        if (Utils.isBrowserEdge() || Utils.isBrowserIE()) {
             return event.key === Utils.NUMPAD_DEL_NUMLOCK_ON_KEY &&
                 event.charCode === Utils.NUMPAD_DEL_NUMLOCK_ON_CHARCODE;
         }
@@ -1780,73 +1789,73 @@ export class NumberSequence {
 
 export let _ = Utils;
 
-export type ResolveAndRejectCallback<T> = (resolve:(value:T)=>void, reject:(params:any)=>void)=>void;
+export type ResolveAndRejectCallback<T> = (resolve: (value: T) => void, reject: (params: any) => void) => void;
 
 export enum PromiseStatus {
     IN_PROGRESS, RESOLVED
 }
 
 export interface ExternalPromise<T> {
-    resolve:(value:T)=>void,
-    promise:Promise<T>
+    resolve: (value: T) => void,
+    promise: Promise<T>
 }
 
 export class Promise<T> {
-    private status:PromiseStatus = PromiseStatus.IN_PROGRESS;
-    private resolution:T = null;
-    private listOfWaiters: ((value:T)=>void)[] = [];
+    private status: PromiseStatus = PromiseStatus.IN_PROGRESS;
+    private resolution: T = null;
+    private listOfWaiters: ((value: T) => void)[] = [];
 
 
-    static all<T> (toCombine:Promise<T>[]): Promise<T[]>{
-        return new Promise(resolve=>{
-            let combinedValues:T[] = [];
-            let remainingToResolve:number = toCombine.length;
-            toCombine.forEach((source, index)=> {
-                source.then(sourceResolved=>{
-                    remainingToResolve --;
+    static all<T>(toCombine: Promise<T>[]): Promise<T[]> {
+        return new Promise(resolve => {
+            let combinedValues: T[] = [];
+            let remainingToResolve: number = toCombine.length;
+            toCombine.forEach((source, index) => {
+                source.then(sourceResolved => {
+                    remainingToResolve--;
                     combinedValues[index] = sourceResolved;
-                    if (remainingToResolve == 0){
+                    if (remainingToResolve == 0) {
                         resolve(combinedValues);
                     }
                 });
-                combinedValues.push(null);
+                combinedValues.push(null);  // spl todo: review with Alberto - why?
             });
         });
     }
 
-    static resolve<T> (value:T): Promise<T>{
-        return new Promise<T>(resolve=>resolve(value));
+    static resolve<T>(value: T): Promise<T> {
+        return new Promise<T>(resolve => resolve(value));
     }
 
-    static external<T> ():ExternalPromise<T>{
-        let capture: (value:T)=> void;
-        let promise:Promise<T> = new Promise<T>((resolve)=>{
+    static external<T>(): ExternalPromise<T> {
+        let capture: (value: T) => void;
+        let promise: Promise<T> = new Promise<T>((resolve) => {
             capture = resolve
         });
         return <ExternalPromise<T>>{
             promise: promise,
-            resolve: (value:T):void => {
+            resolve: (value: T): void => {
                 capture(value)
             }
         };
     }
 
-    constructor (
-        callback:ResolveAndRejectCallback<T>
-    ){
+    constructor(
+        callback: ResolveAndRejectCallback<T>
+    ) {
         callback(this.onDone.bind(this), this.onReject.bind(this))
     }
 
-    public then(func: (result: any)=>void) {
-        if (this.status === PromiseStatus.IN_PROGRESS){
+    public then(func: (result: any) => void) {
+        if (this.status === PromiseStatus.IN_PROGRESS) {
             this.listOfWaiters.push(func);
         } else {
             func(this.resolution);
         }
     }
 
-    public firstOneOnly(func: (result: any)=>void) {
-        if (this.status === PromiseStatus.IN_PROGRESS){
+    public firstOneOnly(func: (result: any) => void) {
+        if (this.status === PromiseStatus.IN_PROGRESS) {
             if (this.listOfWaiters.length === 0) {
                 this.listOfWaiters.push(func);
             }
@@ -1855,27 +1864,27 @@ export class Promise<T> {
         }
     }
 
-    public map<Z> (adapter:(from:T)=>Z):Promise<Z>{
-        return new Promise<Z>((resolve)=>{
-            this.then(unmapped=>{
+    public map<Z>(adapter: (from: T) => Z): Promise<Z> {
+        return new Promise<Z>((resolve) => {
+            this.then(unmapped => {
                 resolve(adapter(unmapped))
             })
         });
     }
 
-    public resolveNow<Z> (ifNotResolvedValue:Z, ifResolved:(current:T)=>Z):Z{
+    public resolveNow<Z>(ifNotResolvedValue: Z, ifResolved: (current: T) => Z): Z {
         if (this.status == PromiseStatus.IN_PROGRESS) return ifNotResolvedValue;
 
         return ifResolved(this.resolution);
     }
 
-    private onDone (value:T):void {
+    private onDone(value: T): void {
         this.status = PromiseStatus.RESOLVED;
         this.resolution = value;
-        this.listOfWaiters.forEach(waiter=>waiter(value));
+        this.listOfWaiters.forEach(waiter => waiter(value));
     }
 
-    private onReject (params:any):void {
+    private onReject(params: any): void {
         console.warn('TBI');
     }
 }

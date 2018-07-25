@@ -20,7 +20,7 @@ import {
 import {RangeController} from "../rangeController";
 import {AggregationValueComponent} from "./aggregationValueComponent";
 
-export class AggregationPanelComp extends Component {
+export class AggregationComponent extends Component {
 
     private static TEMPLATE = `<div class="ag-status-bar-aggregations">
                 <ag-avg-aggregation-comp key="average" default-value="Average" ref="avgAggregationComp"></ag-avg-aggregation-comp>
@@ -47,7 +47,7 @@ export class AggregationPanelComp extends Component {
     @RefSelector('avgAggregationComp') private avgAggregationComp: AggregationValueComponent;
 
     constructor() {
-        super(AggregationPanelComp.TEMPLATE);
+        super(AggregationComponent.TEMPLATE);
     }
 
     @PostConstruct
@@ -58,35 +58,35 @@ export class AggregationPanelComp extends Component {
         this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, this.onRangeSelectionChanged.bind(this));
     }
 
-    private setAggregationComponentValue(componentName: string, value: number, visible: boolean) {
+    public init() {}
+
+    private setAggregationComponentValue(aggFuncName: string, value: number, visible: boolean) {
         // if the parent component (statusBar) has set our visibility to false, we don't override it
-        if (!this.isVisible() || !this.gridOptionsWrapper.isShowAggregationPanel()) {
+        if (!this.gridOptionsWrapper.isShowAggregationPanel()) {
             return;
         }
 
-        let aggregationValueComponent = this.getAggregationValueComponent(componentName);
+        let aggregationValueComponent = this.getAggregationValueComponent(aggFuncName);
         if (_.exists(aggregationValueComponent)) {
             aggregationValueComponent.setValue(value);
             aggregationValueComponent.setVisible(visible);
         }
     }
 
-    private getAggregationValueComponent(componentName: string): AggregationValueComponent {
-        // converts component registration name to internal ref name
-        // ie agCountAggregationComp -> countAggregationComp
-        let refComponentName = componentName.substr(2)
-            .replace(componentName.charAt(2), componentName.charAt(2).toLowerCase());
+    private getAggregationValueComponent(aggFuncName: string): AggregationValueComponent {
+        // converts user supplied agg name to our reference - eg: sum => sumAggregationComp
+        let refComponentName = `${aggFuncName}AggregationComp`;
 
         // if the user has specified the agAggregationPanelComp but no aggFuncs we show the all
         // if the user has specified the agAggregationPanelComp and aggFuncs, then we only show the aggFuncs listed
         let aggregationValueComponent: AggregationValueComponent = null;
-        const aggregationPanelConfig = _.find(this.gridOptions.statusPanel.components, componentName);
+        const aggregationPanelConfig = _.exists(this.gridOptions.statusPanel) ? _.find(this.gridOptions.statusPanel.components, aggFuncName) : null;
         if (_.exists(aggregationPanelConfig)) {
             // a little defensive here - if no componentParams show it, if componentParams we also expect aggFuncs
             if (!_.exists(aggregationPanelConfig.componentParams) ||
                 (_.exists(aggregationPanelConfig.componentParams) &&
                     _.exists(aggregationPanelConfig.componentParams.aggFuncs) &&
-                    _.exists(_.find(aggregationPanelConfig.componentParams.aggFuncs, (item) => item === componentName)))
+                    _.exists(_.find(aggregationPanelConfig.componentParams.aggFuncs, (item) => item === aggFuncName)))
             ) {
                 aggregationValueComponent = (<any>this)[refComponentName];
             }
@@ -187,13 +187,13 @@ export class AggregationPanelComp extends Component {
         let gotNumberResult = numberCount > 1;
 
         // we show count even if no numbers
-        this.setAggregationComponentValue('agCountAggregationComp', count, gotResult);
+        this.setAggregationComponentValue('count', count, gotResult);
 
         // show if numbers found
-        this.setAggregationComponentValue('agSumAggregationComp', sum, gotNumberResult);
-        this.setAggregationComponentValue('agMinAggregationComp', min, gotNumberResult);
-        this.setAggregationComponentValue('agMaxAggregationComp', max, gotNumberResult);
-        this.setAggregationComponentValue('agAvgAggregationComp', (sum / numberCount), gotNumberResult);
+        this.setAggregationComponentValue('sum', sum, gotNumberResult);
+        this.setAggregationComponentValue('min', min, gotNumberResult);
+        this.setAggregationComponentValue('max', max, gotNumberResult);
+        this.setAggregationComponentValue('avg', (sum / numberCount), gotNumberResult);
     }
 
     private getRowNode(gridRow: GridRow): RowNode {

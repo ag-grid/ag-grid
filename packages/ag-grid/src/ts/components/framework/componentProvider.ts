@@ -1,6 +1,6 @@
 import {TextCellEditor} from "../../rendering/cellEditors/textCellEditor";
 
-import {Autowired, Bean, PostConstruct} from "../../context/context";
+import {Autowired, Bean, Context, PostConstruct} from "../../context/context";
 import {IComponent} from "../../interfaces/iComponent";
 import {DateFilter, DefaultDateComponent} from "../../filter/dateFilter";
 import {HeaderComp} from "../../headerRendering/header/headerComp";
@@ -58,6 +58,9 @@ export class ComponentProvider {
 
     @Autowired('gridOptions')
     private gridOptions: GridOptions;
+
+    @Autowired('context')
+    private context: Context;
 
     private agGridDefaults: { [key: string]: AgGridRegisteredComponentInput<any> } = {
         //date
@@ -162,6 +165,13 @@ export class ComponentProvider {
 
     @PostConstruct
     private init(): void {
+        // spl todo: review with Alberto
+        const enterpriseDefaultComponents = this.context.getEnterpriseDefaultComponents();
+        if(enterpriseDefaultComponents) {
+            _.forEach(enterpriseDefaultComponents, (config) => {
+                this.registerDefaultComponent(config.componentName, config.theClass);
+            });
+        }
         if (this.gridOptions.components != null) {
             Object.keys(this.gridOptions.components).forEach(it => {
                 this.registerComponent(it, this.gridOptions.components[it]);

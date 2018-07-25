@@ -1,5 +1,7 @@
 // to satisfy server side compilation
 
+import {ComponentResolver} from "./components/framework/componentResolver";
+
 declare let global: any;
 let globalObj = typeof global === 'undefined' ? {} : global;
 globalObj.HTMLElement = typeof HTMLElement === 'undefined' ? {} : HTMLElement;
@@ -22,6 +24,7 @@ export {ComponentUtil} from "./components/componentUtil";
 
 export {ColDefUtil} from "./components/colDefUtil";
 export {ComponentProvider} from "./components/framework/componentProvider";
+export {ComponentResolver} from "./components/framework/componentResolver";
 export {initialiseAgGridWithAngular1} from "./components/agGridNg1";
 export {initialiseAgGridWithWebComponents} from "./components/agGridWebComponent";
 

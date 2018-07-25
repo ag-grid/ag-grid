@@ -10,7 +10,7 @@ export class PropertyKeys {
         'icons', 'datasource', 'serverSideDatasource', 'viewportDatasource', 'groupRowRendererParams', 'aggFuncs',
         'fullWidthCellRendererParams', 'defaultColGroupDef', 'defaultColDef', 'defaultExportParams', 'columnTypes',
         'rowClassRules', 'detailGridOptions', 'detailCellRendererParams', 'loadingOverlayComponentParams',
-        'noRowsOverlayComponentParams', 'popupParent', 'colResizeDefault', 'reduxStore'
+        'noRowsOverlayComponentParams', 'popupParent', 'colResizeDefault', 'reduxStore', 'statusPanel'
 
     ];
 
@@ -21,7 +21,7 @@ export class PropertyKeys {
     ];
 
     public static NUMBER_PROPERTIES = [
-        'rowHeight', 'detailRowHeight','rowBuffer', 'colWidth', 'headerHeight', 'groupHeaderHeight',
+        'rowHeight', 'detailRowHeight', 'rowBuffer', 'colWidth', 'headerHeight', 'groupHeaderHeight',
         'floatingFiltersHeight', 'pivotHeaderHeight', 'pivotGroupHeaderHeight', 'groupDefaultExpanded',
         'minColWidth', 'maxColWidth', 'viewportRowModelPageSize', 'viewportRowModelBufferSize',
         'autoSizePadding', 'maxBlocksInCache', 'maxConcurrentDatasourceRequests',
@@ -75,15 +75,15 @@ export class PropertyKeys {
         'detailCellRendererFramework', 'onGridReady', 'defaultGroupSortComparator', 'isRowMaster', 'isRowSelectable', 'postSort',
         'processHeaderForClipboard', 'paginationNumberFormatter', 'processDataFromClipboard'];
 
-     public static ALL_PROPERTIES = PropertyKeys.ARRAY_PROPERTIES
+    public static ALL_PROPERTIES = PropertyKeys.ARRAY_PROPERTIES
         .concat(PropertyKeys.OBJECT_PROPERTIES)
         .concat(PropertyKeys.STRING_PROPERTIES)
         .concat(PropertyKeys.NUMBER_PROPERTIES)
         .concat(PropertyKeys.FUNCTION_PROPERTIES)
         .concat(PropertyKeys.BOOLEAN_PROPERTIES);
 
-     // used when doing property checks - this causes noise when using frameworks which can add their own fw specific
-     // properties to coldefs, gridOptions etc
-     public static FRAMEWORK_PROPERTIES = ['__ob__', '__metadata__', 'mappedColumnProperties', 'hasChildColumns',
-         'toColDef', 'createColDefFromGridColumn'];
+    // used when doing property checks - this causes noise when using frameworks which can add their own fw specific
+    // properties to coldefs, gridOptions etc
+    public static FRAMEWORK_PROPERTIES = ['__ob__', '__metadata__', 'mappedColumnProperties', 'hasChildColumns',
+        'toColDef', 'createColDefFromGridColumn'];
 }

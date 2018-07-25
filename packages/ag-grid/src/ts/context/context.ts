@@ -16,6 +16,7 @@ export interface ContextParams {
     seed: any;
     beans: any[];
     components: ComponentMeta[];
+    enterpriseDefaultComponents: any[],
     overrideBeans: any[];
     debug: boolean;
 }
@@ -264,6 +265,10 @@ export class Context {
 
     public getBean(name: string): any {
         return this.lookupBeanInstance("getBean", name, true);
+    }
+
+    public getEnterpriseDefaultComponents() : any[] {
+        return this.contextParams.enterpriseDefaultComponents;
     }
 
     public destroy(): void {

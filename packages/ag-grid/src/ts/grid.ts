@@ -98,6 +98,7 @@ export class Grid {
     private static enterpriseBeans: any[];
     private static frameworkBeans: any[];
     private static enterpriseComponents: any[];
+    private static enterpriseDefaultComponents: any[];
 
     // the default is ClientSideRowModel, which is also used for pagination.
     // the enterprise adds viewport to this list.
@@ -119,6 +120,10 @@ export class Grid {
 
     public static setFrameworkBeans(frameworkBeans: any[]): void {
         this.frameworkBeans = frameworkBeans;
+    }
+
+    public static setEnterpriseDefaultComponents(enterpriseDefaultComponents: any[]): void {
+        this.enterpriseDefaultComponents = enterpriseDefaultComponents;
     }
 
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams) {
@@ -168,8 +173,6 @@ export class Grid {
             {componentName: 'AgGridComp', theClass: GridPanel},
             {componentName: 'AgHeaderRoot', theClass: HeaderRootComp},
             {componentName: 'AgPagination', theClass: PaginationComp},
-            // niall put the below in for testing some PoC code, niall will
-            // remove this comment and code when PoC is over
         ];
 
         if (Grid.enterpriseComponents) {
@@ -194,6 +197,7 @@ export class Grid {
                 ColumnHoverService, ColumnAnimationService, SortService, SelectableService, AutoGroupColService,
                 ImmutableService, ChangeDetectionService, Environment, AnimationFrameService, SortController],
             components: components,
+            enterpriseDefaultComponents: Grid.enterpriseDefaultComponents,
             debug: !!gridOptions.debug
         };
 

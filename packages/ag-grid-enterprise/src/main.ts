@@ -65,7 +65,7 @@ import {ToolPanelColumnComp} from "./toolPanel/toolPanelColumnComp";
 import {ToolPanelSelectComp} from "./toolPanel/toolPanelSelectComp";
 
 import {StatusBar} from "./statusBar/statusBar";
-import {AggregationPanelComp} from "./statusBar/aggregationPanelComp";
+import {AggregationComponent} from "./statusBar/aggregationComponent"
 import {AggregationValueComponent} from "./statusBar/aggregationValueComponent";
 
 let rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
@@ -82,7 +82,6 @@ Grid.setEnterpriseComponents([
     {componentName: 'AgToolPanel', theClass: ToolPanelComp},
 
     {componentName: 'AgStatusBar', theClass: StatusBar},
-    {componentName: 'AgAggregationPanelComp', theClass: AggregationPanelComp},
     {componentName: 'AgSumAggregationComp', theClass: AggregationValueComponent},
     {componentName: 'AgCountAggregationComp', theClass: AggregationValueComponent},
     {componentName: 'AgMinAggregationComp', theClass: AggregationValueComponent},
@@ -92,4 +91,9 @@ Grid.setEnterpriseComponents([
     {componentName: 'AgHeaderColumnDrop', theClass: HeaderColumnDropComp},
     {componentName: 'AgToolPanelColumnComp', theClass: ToolPanelColumnComp},
     {componentName: 'AgToolPanelSelectComp', theClass: ToolPanelSelectComp},
+]);
+
+// spl todo: review with Alberto
+Grid.setEnterpriseDefaultComponents([
+    {componentName: 'agAggregationComponent', theClass: AggregationComponent},
 ]);

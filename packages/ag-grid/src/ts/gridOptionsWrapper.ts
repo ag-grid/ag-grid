@@ -453,7 +453,7 @@ export class GridOptionsWrapper {
     public isShowAggregationPanel() {
         let showAggregationPanel = this.isEnableStatusBar();
         if (this.gridOptions.statusPanel && this.gridOptions.statusPanel.components) {
-            const aggregationPanelConfig = _.find(this.gridOptions.statusPanel.components, (item) => item.component === 'agAggregationPanelComp');
+            const aggregationPanelConfig = _.find(this.gridOptions.statusPanel.components, (item) => item.component === 'agAggregationComponent');
             showAggregationPanel = _.exists(aggregationPanelConfig)
         }
         return isTrue(showAggregationPanel);
