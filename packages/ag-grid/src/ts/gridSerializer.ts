@@ -236,7 +236,8 @@ export class GridSerializer {
             let displayedGroups: ColumnGroupChild[] = this.displayedGroupCreator.createDisplayedGroups(
                 columnsToExport,
                 this.columnController.getGridBalancedTree(),
-                groupInstanceIdCreator
+                groupInstanceIdCreator,
+                null
             );
             this.recursivelyAddHeaderGroups(displayedGroups, gridSerializingSession);
         }
