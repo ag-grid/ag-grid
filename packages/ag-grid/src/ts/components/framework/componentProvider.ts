@@ -165,7 +165,6 @@ export class ComponentProvider {
 
     @PostConstruct
     private init(): void {
-        // spl todo: review with Alberto
         const enterpriseDefaultComponents = this.context.getEnterpriseDefaultComponents();
         if(enterpriseDefaultComponents) {
             _.forEach(enterpriseDefaultComponents, (config) => {

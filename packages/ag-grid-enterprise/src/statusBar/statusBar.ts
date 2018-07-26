@@ -44,7 +44,6 @@ export class StatusBar extends Component {
         const componentPromises: Promise<Component>[] = [];
         _.forEach(statusPanelComponents, (componentConfig) => {
 
-                // spl todo: can we find a common params interface
                 let params = {
                     api: this.gridOptionsWrapper.getApi(),
                     columnApi: this.gridOptionsWrapper.getColumnApi(),

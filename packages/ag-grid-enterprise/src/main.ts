@@ -93,7 +93,6 @@ Grid.setEnterpriseComponents([
     {componentName: 'AgToolPanelSelectComp', theClass: ToolPanelSelectComp},
 ]);
 
-// spl todo: review with Alberto
 Grid.setEnterpriseDefaultComponents([
     {componentName: 'agAggregationComponent', theClass: AggregationComponent},
 ]);
