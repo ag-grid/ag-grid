@@ -186,6 +186,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public popupParent : any = undefined;
     @Input() public colResizeDefault : any = undefined;
     @Input() public reduxStore : any = undefined;
+    @Input() public statusPanel : any = undefined;
     @Input() public sortingOrder : any = undefined;
     @Input() public rowClass : any = undefined;
     @Input() public rowSelection : any = undefined;
@@ -226,6 +227,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public paginationStartPage : any = undefined;
     @Input() public infiniteBlockSize : any = undefined;
     @Input() public batchUpdateWaitMillis : any = undefined;
+    @Input() public blockLoadDebounceMillis : any = undefined;
     @Input() public localeTextFunc : any = undefined;
     @Input() public groupRowInnerRenderer : any = undefined;
     @Input() public groupRowInnerRendererFramework : any = undefined;
@@ -393,7 +395,6 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public serverSideSortingAlwaysResets : any = undefined;
     @Input() public reactNext : any = undefined;
     @Input() public suppressSetColumnStateEvents : any = undefined;
-    @Input() public blockLoadDebounceMillis : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();
