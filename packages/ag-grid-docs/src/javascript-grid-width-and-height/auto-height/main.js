@@ -44,7 +44,7 @@ function cbFloatingRows() {
 }
 
 function setForPrint() {
-    gridOptions.api.setDomLayout('forPrint');
+    gridOptions.api.setDomLayout('print');
     document.querySelector('#myGrid').style.height = '';
 }
 

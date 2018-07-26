@@ -43,57 +43,40 @@ ag-grid-aurelia {
 .ag-root-wrapper {
     position: relative; // set to relative, so absolute popups appear relative to this
 
+    display: flex;
+    flex-direction: column;
+
     &.ag-layout-normal {
         height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-
-    &.ag-layout-print {
-        display: inline-block;
     }
 }
 
 .ag-root-wrapper-body {
+    display: flex;
+    flex-direction: row;
+
     &.ag-layout-normal {
-        display: flex;
-        flex-direction: row;
         flex-grow: 1;
         height: 0px;
         min-height: 0px;
-    }
-    &.ag-layout-auto-height {
-        display: flex;
-        flex-direction: row;
-    }
-    &.ag-layout-print {
-        display: inline-block;
     }
 }
 
 .ag-root {
     box-sizing: border-box;
     position: relative; // set to relative, so absolute popups appear relative to this
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
+
+    &.ag-layout-normal, &.ag-layout-auto-height {
+        overflow: hidden; // was getting some 'shouldn't be there' scrolls, this sorts it out
+        width: 0px;
+        min-width: 0px;
+        flex: 1;
+    }
 
     &.ag-layout-normal {
-        overflow: hidden; // was getting some 'shouldn't be there' scrolls, this sorts it out
         height: 100%;
-        display: flex;
-        flex-direction: column;
-        width: 0px;
-        min-width: 0px;
-        flex: 1;
-    }
-
-    &.ag-layout-auto-height {
-        overflow: hidden; // was getting some 'shouldn't be there' scrolls, this sorts it out
-        width: 0px;
-        min-width: 0px;
-        flex: 1;
-    }
-
-    &.ag-layout-for-print {
     }
 }
 
@@ -333,17 +316,9 @@ ag-grid-aurelia {
 .ag-body {
     box-sizing: border-box;
     position: relative; // needed so rows translate is relative to this container
-
-    &.ag-layout-print {
-        display: inline-block;
-    }
-
-    &.ag-layout-auto-height {
-        display: flex;
-    }
+    display: flex;
 
     &.ag-layout-normal {
-        display: flex;
         flex: 1;
         height: 0px; // that's the min height, 'flex 1' then extends it to take all available space
         min-height: 0px; // min-height needed for firefox
@@ -470,22 +445,15 @@ ag-grid-aurelia {
 
 .ag-body-viewport-wrapper {
 
+    &.ag-layout-auto-height, &.ag-layout-normal {
+        height: 100%;
+        width: 0px; // mind width, flex grows the center to fit
+        min-width: 0px; // width didn't do the trick in firefox, so needed min-width also
+        flex: 1;
+    }
+
     &.ag-layout-auto-height {
         overflow: hidden;
-        height: 100%;
-        width: 0px; // mind width, flex grows the center to fit
-        min-width: 0px; // width didn't do the trick in firefox, so needed min-width also
-        flex: 1;
-    }
-
-    &.ag-layout-normal {
-        height: 100%;
-        width: 0px; // mind width, flex grows the center to fit
-        min-width: 0px; // width didn't do the trick in firefox, so needed min-width also
-        flex: 1;
-    }
-
-    &.ag-layout-print {
     }
 }
 

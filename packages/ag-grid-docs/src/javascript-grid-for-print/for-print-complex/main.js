@@ -8,6 +8,8 @@ var columnDefs = [
     {field: 'country', width: 100}
 ];
 
+columnDefs = columnDefs.concat(columnDefs);
+
 var models = ['Mercedes-AMG C63','BMW M2','Audi TT Roadster','Mazda MX-5','BMW M3','Porsche 718 Boxster','Porsche 718 Cayman'];
 var colors = ['Red','Black','Green','White','Blue'];
 var countries = ['UK', 'Spain', 'France', 'Ireland', 'USA'];
@@ -77,10 +79,3 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 });
-
-function niall() {
-    ['country','model'].forEach( function(id) {
-        var col = gridOptions.columnApi.getColumn(id);
-        console.log(id + ' = ' + col.getLeft());
-    });
-}
