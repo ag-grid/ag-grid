@@ -43,11 +43,6 @@ function cbFloatingRows() {
     }
 }
 
-function setForPrint() {
-    gridOptions.api.setDomLayout('print');
-    document.querySelector('#myGrid').style.height = '';
-}
-
 function setAutoHeight() {
     gridOptions.api.setDomLayout('autoHeight');
     // auto height will get the grid to fill the height of the contents,

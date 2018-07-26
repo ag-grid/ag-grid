@@ -7,8 +7,6 @@ var columnDefs = [
     {field: 'country'}
 ];
 
-columnDefs = columnDefs.concat(columnDefs).concat(columnDefs).concat(columnDefs);
-
 var models = ['Mercedes-AMG C63','BMW M2','Audi TT Roadster','Mazda MX-5','BMW M3','Porsche 718 Boxster','Porsche 718 Cayman'];
 var colors = ['Red','Black','Green','White','Blue'];
 var countries = ['UK', 'Spain', 'France', 'Ireland', 'USA'];

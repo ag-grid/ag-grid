@@ -749,6 +749,7 @@ export class GridApi {
     }
 
     public getPreferredWidth(): number {
+        console.warn('ag-Grid: Since v19, getPreferredWidth() is deprecated. For printing, please check the print documentation, you no longer need to use getPreferredWidth()')
         return this.gridCore.getPreferredWidth();
     }
 

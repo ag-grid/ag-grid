@@ -28,6 +28,7 @@ export class ToolPanelComp extends Component implements IToolPanel {
               </div>`);
     }
 
+    // this was deprecated in v19, we can drop in v20
     public getPreferredWidth(): number {
         return this.getGui().clientWidth;
     }

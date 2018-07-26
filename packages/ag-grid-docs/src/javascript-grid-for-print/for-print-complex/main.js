@@ -1,14 +1,12 @@
 var columnDefs = [
     {field: 'group', rowGroup: true, hide: true},
     {field: 'id', pinned: 'left', width: 60},
-    {field: 'model', pinned: 'right', width: 150},
+    {field: 'model', width: 150},
     {field: 'color', width: 100},
     {field: 'price', valueFormatter: '"$" + value.toLocaleString()', width: 100},
     {field: 'year', width: 100},
     {field: 'country', width: 100}
 ];
-
-columnDefs = columnDefs.concat(columnDefs);
 
 var models = ['Mercedes-AMG C63','BMW M2','Audi TT Roadster','Mazda MX-5','BMW M3','Porsche 718 Boxster','Porsche 718 Cayman'];
 var colors = ['Red','Black','Green','White','Blue'];

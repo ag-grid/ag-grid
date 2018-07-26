@@ -13,8 +13,11 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        A grid using print layout will not use any scrollbars so all cells will get printed.
-        In other words, the grid will auto-size to fit all contents.
+        A grid using print layout will not use any scrollbars so all rows and columns
+        will get printed. The grid will auto-size width and height to fit all contents.
+        This means if the grid is printed on a printer all the cells will get included,
+        as apposed to printing a grid with scrollbars and only cells within the visible
+        area will get printed.
     </p>
 
     <p>
@@ -52,44 +55,26 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Toggling Grid Size</h2>
 
-    <h3>Grid Height</h3>
-
     <p>
-        The grid height is automatically set by the grid when in print layout. For this to work
-        the application should <b>not</b> set a height onto the grid component. If moving from
-        normal layout to print layout and height is set for normal layout, then this height must
-        be removed. This can be seen in the simple example above.
-    </p>
-
-    <h3>Grid Width</h3>
-
-    <p>
-        The grid width is <b>not</b> automatically set. The grid will assume the width of the grid
-        is set by the application. To assist with this, the grid provides the API call
-        <code>getPreferredWidth()</code> which returns the number of pixels the grid needs to
-        render all the currently visible columns.
+        The grid width and height will adjust automatically to fit the contents of all cells.
+        For this to work the application should <b>not</b> set a height onto the grid component.
+        If using print layout, make sure you have no width or height set for the grid.
     </p>
 
     <p>
-        It is up to the application to set the width of the grid to fit all columns.
+        For the grid width to fit, you need a CSS 'display' property capable of dynamic width.
+        For example, the default display for a div is <code>block</code> which results in 100%
+        width for the div. Changing the display to <code>inline-block</code> for example fixes
+        this.
     </p>
 
-<snippet>
-    // set the width of the grid to match the preferred width
-    var preferredWidth = gridOptions.api.getPreferredWidth();
-
-    // add 2 pixels for the grid border. this depends on how you have styled the grid.
-    preferredWidth += 2;
-
-    // set the width onto the grid DOM element
-    eGridDiv.style.width = preferredWidth + 'px';
-</snippet>
-
-    <note>
-        The grid deals with adjusting the height and width differently. The grid can manage the height by
-        itself but needs application help for the width. This is due to the DOM having different rules for
-        fitting content vertically and horizontally.
-    </note>
+    <p>
+        All the examples on this page do the following when in print layout:
+        <ul>
+            <li>CSS width and height settings are removed.</li>
+            <li>CSS display is set to 'inline-block'.</li>
+        </ul>
+    </p>
 
     <h2>Page Break</h2>
 
@@ -109,8 +94,7 @@ include '../documentation-main/documentation_header.php';
                 When 'Print' is pressed, the grid will do the following:
                 <ul>
                     <li>Set the grid into print layout.</li>
-                    <li>Remove the height setting from the grid to allow the grid to auto-fit it's height.</li>
-                    <li>Adjust the width of the grid to match it's preferred width.</li>
+                    <li>Remove the height and width settings from the grid to allow the grid to auto-fit it's size.</li>
                     <li>Wait for two seconds (to allow the browser to redraw with the new settings) and
                         then bring up the print dialog.</li>
                     <li>Set the grid back to normal when the print dialog is closed.</li>
@@ -141,6 +125,16 @@ include '../documentation-main/documentation_header.php';
     <p>
         If you want to allow printing large data sets it's best to get your users to export to CSV or Excel
         and then print from another non-web based application.
+    </p>
+
+    <h2>Don't Play with Print Layout Grids!</h2>
+
+    <p>
+        When the grid is in print layout, it will be rendering all cells without using row virtualisation.
+        This means that the grid will be slower given the amount of DOM it is rendering. Only use
+        print layout when you actually want to print. All of the functions (filtering, sorting, dragging columns
+        etc) will work, however the performance will be impacted if the data set is large and will frustrate
+        your users. For this reason it's best keeping print layout for when you actually want to print.
     </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>
