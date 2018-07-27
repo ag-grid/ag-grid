@@ -56,6 +56,8 @@ let throttle = function(callback: ()=>void, delay: number) {
 
 let REFRESH_DELAY = 20;
 
+let mutationObserverSupported = typeof MutationObserver !== "undefined";
+
 let getWindowOf = function(target: HTMLElement) {
     let ownerGlobal = target && target.ownerDocument && target.ownerDocument.defaultView;
 
@@ -236,8 +238,20 @@ class ResizeObserverController {
 
         window.addEventListener("resize", this.refresh);
 
-        document.addEventListener("DOMSubtreeModified", this.refresh);
-        this.mutationEventsAdded_ = true;
+        if (mutationObserverSupported) {
+            this.mutationsObserver_ = new MutationObserver(this.refresh);
+
+            this.mutationsObserver_.observe(document, {
+                attributes: true,
+                childList: true,
+                characterData: true,
+                subtree: true
+            });
+        } else {
+            document.addEventListener("DOMSubtreeModified", this.refresh);
+
+            this.mutationEventsAdded_ = true;
+        }
 
         this.connected_ = true;
     }
