@@ -359,6 +359,8 @@ export interface GridOptions {
     getNodeChildDetails?: GetNodeChildDetails;
     getDataPath?: GetDataPath;
     treeData?: boolean;
+    isServerSideGroup?: IsServerSideGroup;
+    getServerSideGroupKey?: GetServerSideGroupKey;
     getContextMenuItems?: GetContextMenuItems;
     getMainMenuItems?: GetMainMenuItems;
     getRowNodeId?: GetRowNodeIdFunc;
@@ -450,9 +452,13 @@ export interface GetDataPath {
     (data: any): string[];
 }
 
-// export interface IsGroup {
-//     (data: any): boolean;
-// }
+export interface IsServerSideGroup {
+    (dataItem: any): boolean;
+}
+
+export interface GetServerSideGroupKey {
+    (dataItem: any): string;
+}
 
 export interface GetNodeChildDetails {
     (dataItem: any): NodeChildDetails;

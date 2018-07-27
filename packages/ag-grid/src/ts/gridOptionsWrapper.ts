@@ -107,6 +107,7 @@ export class GridOptionsWrapper {
         this.gridOptions.api = gridApi;
         this.gridOptions.columnApi = columnApi;
         this.checkForDeprecated();
+        this.checkForViolations();
     }
 
     @PreDestroy
@@ -472,7 +473,8 @@ export class GridOptionsWrapper {
 
     public getNodeChildDetailsFunc(): ((dataItem: any)=> NodeChildDetails) { return this.gridOptions.getNodeChildDetails; }
     public getDataPathFunc(): ((dataItem: any) => string[]) { return this.gridOptions.getDataPath; }
-    // public getIsGroupFunc(): ((dataItem: any) => boolean) { return this.gridOptions.isGroup }
+    public getIsServerSideGroupFunc(): ((dataItem: any) => boolean) { return this.gridOptions.isServerSideGroup; }
+    public getServerSideGroupKeyFunc(): ((dataItem: any) => string) { return this.gridOptions.getServerSideGroupKey; }
     public getGroupRowAggNodesFunc() { return this.gridOptions.groupRowAggNodes; }
     public getContextMenuItemsFunc(): GetContextMenuItems { return this.gridOptions.getContextMenuItems; }
     public getMainMenuItemsFunc(): GetMainMenuItems { return this.gridOptions.getMainMenuItems; }
@@ -792,6 +794,29 @@ export class GridOptionsWrapper {
         }
     }
 
+    private checkForViolations() {
+        if (this.isTreeData()) this.treeDataViolations();
+    }
+
+    private treeDataViolations() {
+        if (this.isRowModelDefault()) {
+            if (_.missing(this.getDataPathFunc())) {
+                console.warn('ag-Grid: property usingTreeData=true with rowModel=clientSide, but you did not ' +
+                    'provide getDataPath function, please provide getDataPath function if using tree data.')
+            }
+        }
+        if (this.isRowModelServerSide()) {
+            if (_.missing(this.getIsServerSideGroupFunc())) {
+                console.warn('ag-Grid: property usingTreeData=true with rowModel=serverSide, but you did not ' +
+                    'provide isServerSideGroup function, please provide isServerSideGroup function if using tree data.')
+            }
+            if (_.missing(this.getServerSideGroupKeyFunc())) {
+                console.warn('ag-Grid: property usingTreeData=true with rowModel=serverSide, but you did not ' +
+                    'provide getServerSideGroupKey function, please provide getServerSideGroupKey function if using tree data.')
+            }
+        }
+    }
+
     public getLocaleTextFunc() {
         if (this.gridOptions.localeTextFunc) {
             return this.gridOptions.localeTextFunc;
@@ -806,6 +831,7 @@ export class GridOptionsWrapper {
             }
         };
     }
+
 
     // responsible for calling the onXXX functions on gridOptions
     public globalEventHandler(eventName: string, event?: any): void {
