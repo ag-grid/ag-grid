@@ -265,6 +265,8 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public postProcessPopup : any = undefined;
     @Input() public getChildCount : any = undefined;
     @Input() public getDataPath : any = undefined;
+    @Input() public isServerSideGroup : any = undefined;
+    @Input() public getServerSideGroupKey : any = undefined;
     @Input() public loadingOverlayComponent : any = undefined;
     @Input() public loadingOverlayComponentFramework : any = undefined;
     @Input() public noRowsOverlayComponent : any = undefined;

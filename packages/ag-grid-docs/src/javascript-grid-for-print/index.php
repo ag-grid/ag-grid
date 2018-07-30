@@ -15,7 +15,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         A grid using print layout will not use any scrollbars so all rows and columns
         will get printed. The grid will auto-size width and height to fit all contents.
-        This means if the grid is printed on a printer all the cells will get included,
+        This means if the grid is printed on paper all the cells will get included,
         as apposed to printing a grid with scrollbars and only cells within the visible
         area will get printed.
     </p>
@@ -57,15 +57,16 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The grid width and height will adjust automatically to fit the contents of all cells.
-        For this to work the application should <b>not</b> set a height onto the grid component.
+        For this to work the application should <b>not</b> set a width or height onto the grid component.
         If using print layout, make sure you have no width or height set for the grid.
     </p>
 
     <p>
         For the grid width to fit, you need a CSS 'display' property capable of dynamic width.
         For example, the default display for a div is <code>block</code> which results in 100%
-        width for the div. Changing the display to <code>inline-block</code> for example fixes
-        this.
+        width for the div. This will limit the grids width to the width of the browser.
+        Changing the display to <code>inline-block</code> for example fixes this and will allow
+        the grid to extend past the boundaries of the browser.
     </p>
 
     <p>
@@ -112,6 +113,25 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <?= example('For Print Complex', 'for-print-complex', 'generated', array("enterprise" => 1)) ?>
+
+    <h2>Animations & Redraw</h2>
+
+    <p>
+        When the grid is in print layout, the grid does <b>not</b> use absolute positioning for the rows,
+        rather the rows are laid out using normal flow. In other words normally the grid places each row
+        using exact pixel positioning - this makes things such as animation possible where the grid changes
+        the pixel position and uses CSS transition for the row to move to the new location. When in print
+        mode, the rows are laid out in the order they appear in the dom - this makes things such as page
+        breaks possible but removes the possibility of animations.
+    </p>
+
+    <p>
+        When in print layout the grid will redraw the entire grid any time there is a change to the rows.
+        If just one row is added / removed, or a filter or sort is applied, the entire DOM is removed and
+        all rows are inserted again rom top to bottom. This makes print layout best for non-interactive
+        grids (ie for printing) as you will loose animations and changes to the grid will be expensive
+        (the grid redraws everything on every change).
+    </p>
 
     <h2>Don't Print Large Data</h2>
 
