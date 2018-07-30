@@ -124,7 +124,7 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
 
             let purgeBecauseBlockEmpty = block.getState() === RowNodeBlock.STATE_DIRTY && index >= emptyBlocksToKeep;
 
-            let purgeBecauseCacheFull = index >= blocksToKeep;
+            let purgeBecauseCacheFull = maxBlocksProvided ? index >= blocksToKeep : false;
 
             if (purgeBecauseBlockEmpty || purgeBecauseCacheFull) {
 
