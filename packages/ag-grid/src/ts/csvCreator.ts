@@ -60,7 +60,8 @@ export class CsvSerializingSession extends BaseGridSerializingSession<string> {
             this.result += this.columnSeparator;
         }
 
-        this.result += header;
+        this.result += this.putInQuotes(header, this.suppressQuotes);
+
         for (let i = 1; i<= span; i++){
             this.result += this.columnSeparator + this.putInQuotes("", this.suppressQuotes);
         }
