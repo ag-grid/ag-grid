@@ -3,7 +3,7 @@ function ServerSideDatasource(fakeServer) {
 }
 
 ServerSideDatasource.prototype.getRows = function(params) {
-    // console.log('ServerSideDatasource.getRows: params = ', params);
+    console.log('ServerSideDatasource.getRows: params = ', params);
 
     var rows = this.fakeServer.getData(params.request);
 
@@ -22,17 +22,17 @@ FakeServer.prototype.getData = function(request) {
       return data.map(d => {
         return {
           group: !!d.underlings,
-          employeeId: d.employeeId,
+          employeeId: d.employeeId + "",
           employeeName: d.employeeName,
           employmentType: d.employmentType,
-          jobTitle: d.jobTitle
+          startDate: d.startDate
         }
       });
     }
 
     var key = groupKeys[0];
     for (var i = 0; i < data.length; i++) {
-      if (data[i].employeeId === key) {
+      if (data[i].employeeName === key) {
         return extractRowsFromData(groupKeys.slice(1), data[i].underlings.slice());
       }
     }

@@ -1,8 +1,8 @@
 var columnDefs = [
   {field: "employeeId", hide: true},
   {field: "employeeName", hide: true},
-  {field: "jobTitle"},
-  {field: "employmentType"}
+  {field: "employmentType"},
+  {field: "startDate"},
 ];
 
 var gridOptions = {
@@ -12,18 +12,21 @@ var gridOptions = {
   },
   autoGroupColumnDef: {
     cellRendererParams: {
-      innerRenderer: function(params) {
-        // display employeeName rather than group key (employeeId)
-        return params.data.employeeName;
-      }
+      // checkbox: true,
+      // innerRenderer: function(params) {
+      //   // display employeeName rather than group key (employeeId)
+      //   return params.data.employeeName;
+      // }
     }
   },
   rowModelType: 'serverSide',
   treeData: true,
   columnDefs: columnDefs,
   enableColResize: true,
+  rowSelection: 'multiple',
   animateRows: true,
-  cacheBlockSize: 5,
+  cacheBlockSize: 100,
+  maxBlocksInCache: 2,
   icons: {
     groupLoading: '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/javascript-grid-server-side-model/spinner.gif" style="width:22px;height:22px;">'
   },
@@ -33,20 +36,28 @@ var gridOptions = {
   },
   getServerSideGroupKey: function (dataItem) {
     // specify which group key to use
-    return dataItem.employeeId;
+    return dataItem.employeeName;
+  },
+  isRowSelectable: function(rowNode) {
+    return rowNode.data && rowNode.data.group;
+  },
+  onRowSelected: function (params) {
+    console.log("onRowSelected: ", params);
   },
   onGridReady: function (params) {
     // initialise with the first group arbitrarily expanded
     setTimeout(function() {
+      // expands first node
       params.api.getDisplayedRowAtIndex(0).setExpanded(true);
-    }, 1000);
+      // size columns to fit
+      params.api.sizeColumnsToFit();
+    }, 1500);
   }
 };
 
-function purgeCache() {
-  gridOptions.api.purgeServerSideCache([]);
+function purgeCache(route) {
+  gridOptions.api.purgeServerSideCache(route);
 }
-
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
