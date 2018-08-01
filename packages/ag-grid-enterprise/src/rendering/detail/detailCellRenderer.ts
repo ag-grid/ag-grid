@@ -141,9 +141,11 @@ export class DetailCellRenderer extends Component {
     }
 
     private setRowData(rowData: any[]): void {
-        this.detailGridOptions.api.setRowData(rowData);
+        // ensure detail grid api still exists (grid may be destroyed when async call tries to set data)
+        if (this.detailGridOptions.api) {
+            this.detailGridOptions.api.setRowData(rowData);
+        }
     }
-
 }
 
 export interface IDetailCellRendererParams extends ICellRendererParams {
