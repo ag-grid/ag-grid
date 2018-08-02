@@ -24,7 +24,7 @@
   "bugs": {
     "url": "https://github.com/ag-grid/ag-grid/issues"
   },
-  "homepage": "http://www.ag-grid.com/",
+  "homepage": "https://react.ag-grid.com",
   "dependencies": {
     "prop-types": "15.6.0"
   },

@@ -34,7 +34,7 @@
   "bugs": {
     "url": "https://github.com/ag-grid/ag-grid-angular/issues"
   },
-  "homepage": "http://www.ag-grid.com/",
+  "homepage": "https://angular.ag-grid.com",
   "devDependencies": {
     "@angular/compiler": ">=2.1.x - 4.x",
     "@angular/compiler-cli": "2.1.x - 4.x",
