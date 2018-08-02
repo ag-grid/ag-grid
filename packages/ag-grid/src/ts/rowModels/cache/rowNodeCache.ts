@@ -271,6 +271,11 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
 
     public purgeCache(): void {
         this.forEachBlockInOrder(block => this.removeBlockFromCache(block));
+
+        // re-initialise cache - this ensures a cache with no rows can reload when purged!
+        this.virtualRowCount = this.cacheParams.initialRowCount;
+        this.maxRowFound = false;
+
         this.onCacheUpdated();
     }
 
