@@ -43,7 +43,12 @@ export class DetailCellRenderer extends Component {
             this.registerDetailWithMaster(params.node);
             this.loadRowData(params);
 
-            setTimeout(() => this.detailGridOptions.api.doLayout(), 0);
+            setTimeout(() => {
+                // ensure detail grid api still exists (grid may be destroyed when async call tries to set data)
+                if (this.detailGridOptions.api) {
+                    this.detailGridOptions.api.doLayout();
+                }
+            },0);
         } else {
             console.warn('ag-Grid: reference to eDetailGrid was missing from the details template. ' +
                 'Please add ref="eDetailGrid" to the template.');
