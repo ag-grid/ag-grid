@@ -1,4 +1,5 @@
 import {PreDestroy, Bean, Qualifier, Autowired, PostConstruct, Optional, Context} from './context/context';
+import {_} from "./utils";
 
 let themeNames = ['fresh', 'dark', 'blue', 'bootstrap', 'material', 'balham-dark', 'balham'];
 const themes = themeNames.concat(themeNames.map(name => `theme-${name}`));
@@ -29,6 +30,7 @@ const HARD_CODED_SIZES: HardCodedSize = {
 
 @Bean('environment')
 export class Environment {
+
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
     private gridSize: number;
@@ -85,9 +87,19 @@ export class Environment {
         }
 
         if (themeMatch) {
-            return themeMatch[0];
+
+            const userTheme = themeMatch[0];
+
+            let oldThemes = ['ag-fresh','ag-dark','ag-blue','ag-material','ag-bootstrap'];
+            let usingOldTheme = oldThemes.indexOf(userTheme) >= 0;
+            if (usingOldTheme) {
+                let newTheme =  userTheme.replace('ag-', 'ag-theme-');
+                _.doOnce( ()=> console.warn(`ag-Grid: As of v19 old theme are no longer provided. Please replacement ${userTheme} with ${newTheme}.`), 'using-old-theme');
+            }
+
+            return userTheme;
         } else {
-            return 'ag-fresh';
+            return 'ag-theme-fresh';
         }
     }
 }
