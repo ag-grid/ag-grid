@@ -160,11 +160,11 @@ function tscReactExample() {
 
 function scssGrid() {
     // Uncompressed
-    return gulp.src(['../ag-grid/src/styles/*.scss', '!../ag-grid/src/styles/_theme-common.scss'])
+    return gulp.src(['../ag-grid/src/styles/*.scss'])
         .pipe(foreach(function(stream, file) {
             var currentTheme = path.basename(file.path, '.scss');
             var themeName = currentTheme.replace('theme-','');
-            return stream.pipe(gulpIf(currentTheme !== 'ag-grid', replace('ag-common','ag-' + themeName)))
+            return stream.pipe(gulpIf(currentTheme !== 'ag-grid', replace('ag-common','ag-' + themeName)));
         }))
         .pipe(named())
         .pipe(webpackStream({
