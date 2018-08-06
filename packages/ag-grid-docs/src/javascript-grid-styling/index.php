@@ -13,9 +13,8 @@ include '../documentation-main/documentation_header.php';
     <h2>Legacy Themes</h2>
 
     <p>
-    The 14.2.0 release (October 2017) included remakes of the themes with more consistent whitespace and <a href="#customizing-sass-variables">easier customization through Sass variables</a>.
-    The previous ones are still shipped, but deprecated and likely to be removed after several releases.
-    If you are using any of the themes below, give the new counterpart a try.
+    The v19 release retired the old themes that are no longer shipped with ag-Grid.
+    If you are using an old theme, you should change it to it's new version. See table below: 
     </p>
 
     <p>
@@ -40,14 +39,6 @@ include '../documentation-main/documentation_header.php';
             </tr>
         </table>
     </p>
-
-    <p>
-        If you move to a new theme you will notice the spacing is larger.
-        Customising the new theme to have less spacing (so it looks more like
-        an old theme) see the Github example
-        <a href="https://github.com/ag-grid/ag-grid-customise-theme">ag-grid-customise-theme</a>.
-    </p>
-
 </note>
 
     <p>
