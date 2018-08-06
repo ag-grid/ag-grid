@@ -161,4 +161,16 @@ include '../documentation-main/documentation_header.php';
         layout at all other times.
     </p>
 
+    <h2>Row Models</h2>
+
+    <p>
+        The only <a href="../javascript-grid-row-models/">Row Model</a> that print layout works with is
+        the default <a href="../javascript-grid-client-side-model/">Client Side</a> row model. It will
+        not work with the others (
+        <a href="../javascript-grid-infinite-scrolling/">Infinite</a></b>,
+        <a href="../javascript-grid-server-side-model/">Server-side</a> or
+        <a href="../javascript-grid-viewport/">Viewport</a>). This is because the grid will render the
+        entire data-set which goes against the philosophy of the other row models which lazy load data.
+    </p>
+
 <?php include '../documentation-main/documentation_footer.php';?>
