@@ -11,6 +11,7 @@ import {
 import {IToolPanel} from "ag-grid";
 import {ToolPanelColumnComp} from "./toolPanelColumnComp";
 import {ToolPanelSelectComp} from "./toolPanelSelectComp";
+import {ToolPanelFilterComp} from "./toolPanelFilterComp";
 
 export class ToolPanelComp extends Component implements IToolPanel {
 
@@ -20,11 +21,13 @@ export class ToolPanelComp extends Component implements IToolPanel {
 
     @RefSelector('toolPanelSelectComp') private toolPanelSelectComp: ToolPanelSelectComp;
     @RefSelector('columnComp') private columnComp: ToolPanelColumnComp;
+    @RefSelector('filterComp') private filterComp: ToolPanelFilterComp;
 
     constructor() {
         super(`<div class="ag-tool-panel">
                   <ag-tool-panel-select-comp ref="toolPanelSelectComp"></ag-tool-panel-select-comp>
                   <ag-tool-panel-column-comp ref="columnComp"></ag-tool-panel-column-comp>
+                  <ag-tool-panel-filter-comp ref="filterComp"></ag-tool-panel-filter-comp>
               </div>`);
     }
 
@@ -45,13 +48,17 @@ export class ToolPanelComp extends Component implements IToolPanel {
 
     public refresh(): void {
         this.columnComp.refresh();
+        this.filterComp.refresh();
     }
 
     public showToolPanel(show: boolean): void {
         this.columnComp.setVisible(show);
+        this.filterComp.setVisible(show);
     }
 
-    public isToolPanelShowing(): boolean {
-        return this.columnComp.isVisible();
+    public isToolPanelShowing
+
+    (): boolean {
+        return this.columnComp.isVisible() || this.filterComp.isVisible();
     }
 }
