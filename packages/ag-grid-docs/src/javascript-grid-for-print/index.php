@@ -119,8 +119,9 @@ include '../documentation-main/documentation_header.php';
     <p>
         When the grid is in print layout, the grid does <b>not</b> use absolute positioning for the rows,
         rather the rows are laid out using normal flow. In other words normally the grid places each row
-        using exact pixel positioning - this makes things such as animation possible where the grid changes
-        the pixel position and uses CSS transition for the row to move to the new location. When in print
+        using exact pixel positioning - this makes things such as row animation possible where the grid
+        moves the row by changing absolute pixel position and uses CSS transition for the row to animate
+        to the new location. This happens usually after filtering or sorting. When in print
         mode, the rows are laid out in the order they appear in the dom - this makes things such as page
         breaks possible but removes the possibility of animations.
     </p>
@@ -128,7 +129,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         When in print layout the grid will redraw the entire grid any time there is a change to the rows.
         If just one row is added / removed, or a filter or sort is applied, the entire DOM is removed and
-        all rows are inserted again rom top to bottom. This makes print layout best for non-interactive
+        all rows are inserted again from top to bottom. This makes print layout best for non-interactive
         grids (ie for printing) as you will loose animations and changes to the grid will be expensive
         (the grid redraws everything on every change).
     </p>
@@ -139,7 +140,9 @@ include '../documentation-main/documentation_header.php';
         Do not use this technique for printing if you are showing a large number of rows or columns.
         This is not a problem with the grid, it is a limitation on browsers on how much data they can
         easily display in one web page. If you try to render lots of data into the web page, the web page
-        will inevitably. ag-Grid normally gets around this problem by virtualising the rows and columns.
+        will create lots of DOM elements and will either slow things down or simply hang the browser.
+        ag-Grid gets around this problem by virtualising the rows and columns. However if you render the whole
+        grid, there is no possibility of virtualising the rows or columns.
     </p>
 
     <p>
@@ -147,14 +150,15 @@ include '../documentation-main/documentation_header.php';
         and then print from another non-web based application.
     </p>
 
-    <h2>Don't Play with Print Layout Grids!</h2>
+    <h2>Keep Print Layout for Print Only</h2>
 
     <p>
         When the grid is in print layout, it will be rendering all cells without using row virtualisation.
         This means that the grid will be slower given the amount of DOM it is rendering. Only use
         print layout when you actually want to print. All of the functions (filtering, sorting, dragging columns
         etc) will work, however the performance will be impacted if the data set is large and will frustrate
-        your users. For this reason it's best keeping print layout for when you actually want to print.
+        your users. For this reason it's best keeping print layout for printing only and normal (or auto-height)
+        layout at all other times.
     </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>
