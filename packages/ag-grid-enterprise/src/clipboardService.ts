@@ -574,7 +574,8 @@ export class ClipboardService implements IClipboardService {
             suppressQuotes: true,
             columnSeparator: deliminator,
             onlySelected: true,
-            processCellCallback: this.gridOptionsWrapper.getProcessCellForClipboardFunc()
+            processCellCallback: this.gridOptionsWrapper.getProcessCellForClipboardFunc(),
+            processHeaderCallback: this.gridOptionsWrapper.getProcessHeaderForClipboardFunc()
         };
 
         let data = this.csvCreator.getDataAsCsv(params);
