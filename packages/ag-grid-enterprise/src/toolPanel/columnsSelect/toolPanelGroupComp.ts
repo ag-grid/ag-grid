@@ -286,6 +286,10 @@ export class ToolPanelGroupComp extends Component implements BaseColumnItem{
         let hiddenChildCount = 0;
 
         this.columnGroup.getLeafColumns().forEach( (column: Column) => {
+
+            // ignore lock visible columns
+            if (column.isLockVisible()) { return; }
+
             if (this.isColumnVisible(column, pivotMode)) {
                 visibleChildCount++;
             } else {
