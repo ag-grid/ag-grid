@@ -10,6 +10,7 @@
         "variable-name": false,
         "callable-types": false,
         "align": false,
+        "curly": false,
         "no-empty": false,
         "triple-equals": false,
         "no-empty-interface": false,
