@@ -1416,8 +1416,13 @@ export class ColumnController {
             return [];
         }
 
-        let columnStateList: ColumnState[]
+        let primaryColumnState: ColumnState[]
             = <ColumnState[]> this.primaryColumns.map(this.createStateItemFromColumn.bind(this));
+
+        let groupAutoColumnState: ColumnState[]
+            = <ColumnState[]> this.groupAutoColumns.map(this.createStateItemFromColumn.bind(this));
+
+        let columnStateList = groupAutoColumnState.concat(primaryColumnState);
 
         if (!this.pivotMode) {
             this.orderColumnStateList(columnStateList);
@@ -1478,8 +1483,16 @@ export class ColumnController {
         let rowGroupIndexes: { [key: string]: number } = {};
         let pivotIndexes: { [key: string]: number } = {};
 
+        let autoGroupColumnStates: ColumnState[] = [];
         if (columnState) {
             columnState.forEach((stateItem: ColumnState) => {
+
+                // auto group columns are re-created so deferring syncing with ColumnState
+                if (_.exists(this.getAutoColumn(stateItem.colId))) {
+                    autoGroupColumnStates.push(stateItem);
+                    return;
+                }
+
                 let column = this.getPrimaryColumn(stateItem.colId);
                 if (!column) {
                     console.warn('ag-grid: column ' + stateItem.colId + ' not found');
@@ -1499,6 +1512,12 @@ export class ColumnController {
         this.pivotColumns.sort(this.sortColumnListUsingIndexes.bind(this, pivotIndexes));
 
         this.updateGridColumns();
+
+        // sync newly created auto group columns with ColumnState
+        autoGroupColumnStates.forEach(stateItem => {
+            let autoCol = this.getAutoColumn(stateItem.colId);
+            this.syncColumnWithStateItem(autoCol, stateItem, rowGroupIndexes, pivotIndexes, source);
+        });
 
         if (columnState) {
             let orderOfColIds = columnState.map(stateItem => stateItem.colId);
