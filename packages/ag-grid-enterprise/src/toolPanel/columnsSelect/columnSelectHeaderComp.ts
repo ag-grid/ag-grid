@@ -141,13 +141,16 @@ export class ColumnSelectHeaderComp extends Component {
 
     private setColumnsCheckedState(): void {
 
-        let columns = this.columnController.getAllPrimaryColumns();
+        let columns = this.columnController.getAllPrimaryColumns().filter(col => !col.isLockVisible())
         let pivotMode = this.columnController.isPivotMode();
 
         let checkedCount = 0;
         let uncheckedCount = 0;
 
         columns.forEach( col => {
+
+            // ignore lock visible columns
+            if (col.isLockVisible()) { return; }
 
             // not not count columns not in tool panel
             let colDef = col.getColDef();
