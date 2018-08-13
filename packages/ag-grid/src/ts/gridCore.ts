@@ -181,7 +181,7 @@ export class GridCore extends Component {
     // Valid values for position are bottom, middle and top
     public ensureNodeVisible(comparator: any, position: string = 'top') {
         if (this.doingVirtualPaging) {
-            throw 'Cannot use ensureNodeVisible when doing virtual paging, as we cannot check rows that are not in memory';
+            throw new Error('Cannot use ensureNodeVisible when doing virtual paging, as we cannot check rows that are not in memory');
         }
         // look for the node index we want to display
         let rowCount = this.rowModel.getPageLastRow() + 1;
@@ -208,4 +208,3 @@ export class GridCore extends Component {
         }
     }
 }
-

@@ -55,24 +55,23 @@ export interface GridSerializingSession<T> {
      */
     prepare(columnsToExport: Column[]) : void;
 
-
     /**
      * ROW METHODS
      */
     addCustomHeader(customHeader: T): void;
 
-    onNewHeaderGroupingRow ():RowSpanningAccumulator;
+    onNewHeaderGroupingRow():RowSpanningAccumulator;
 
-    onNewHeaderRow (): RowAccumulator;
+    onNewHeaderRow(): RowAccumulator;
 
-    onNewBodyRow (): RowAccumulator;
+    onNewBodyRow(): RowAccumulator;
 
     addCustomFooter(customFooter: T): void;
 
     /**
      * FINAL RESULT
      */
-    parse (): string;
+    parse(): string;
 }
 
 export interface RowAccumulator {
@@ -83,7 +82,7 @@ export interface RowSpanningAccumulator {
     onColumn(header: string, index: number, span:number):void;
 }
 
-export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T>{
+export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
     constructor(
         public columnController:ColumnController,
         public valueService:ValueService,
@@ -91,7 +90,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         public processCellCallback?:(params: ProcessCellForExportParams)=>string,
         public processHeaderCallback?:(params: ProcessHeaderForExportParams)=>string,
         public cellAndHeaderEscaper?:(rawValue:string)=>string
-    ){}
+    ) {}
 
     abstract prepare(columnsToExport: Column[]) : void;
 
@@ -99,13 +98,13 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
     abstract addCustomFooter(customFooter: T): void;
 
-    abstract onNewHeaderGroupingRow (): RowSpanningAccumulator;
+    abstract onNewHeaderGroupingRow(): RowSpanningAccumulator;
 
-    abstract onNewHeaderRow (): RowAccumulator;
+    abstract onNewHeaderRow(): RowAccumulator;
 
-    abstract onNewBodyRow (): RowAccumulator;
+    abstract onNewBodyRow(): RowAccumulator;
 
-    abstract parse (): string;
+    abstract parse(): string;
 
     public extractHeaderValue(column: Column): string {
         let nameForCol = this.getHeaderName(this.processHeaderCallback, column);
@@ -115,7 +114,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         return this.cellAndHeaderEscaper? this.cellAndHeaderEscaper(nameForCol) : nameForCol;
     }
 
-    public extractRowCellValue (column: Column, index: number, type: string, node?:RowNode){
+    public extractRowCellValue(column: Column, index: number, type: string, node?:RowNode) {
         let isRowGrouping = this.columnController.getRowGroupColumns().length > 0;
 
         let valueForCell: any;
@@ -145,7 +144,6 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         }
     }
 
-
     private createValueForGroupNode(node: RowNode): string {
         let keys = [node.key];
         while (node.parent) {
@@ -171,8 +169,6 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         }
     }
 }
-
-
 
 @Bean("gridSerializer")
 export class GridSerializer {
@@ -210,8 +206,8 @@ export class GridSerializer {
 
         let onlySelectedNonStandardModel = !rowModelNormal && onlySelected;
 
-
         let columnsToExport: Column[];
+
         if (_.existsAndNotEmpty(columnKeys)) {
             columnsToExport = this.columnController.getGridColumns(columnKeys);
         } else if (allColumns && !isPivotMode) {
@@ -242,19 +238,19 @@ export class GridSerializer {
             this.recursivelyAddHeaderGroups(displayedGroups, gridSerializingSession);
         }
 
-        if (!skipHeader){
+        if (!skipHeader) {
             let gridRowIterator = gridSerializingSession.onNewHeaderRow();
-            columnsToExport.forEach((column, index)=>{
-                gridRowIterator.onColumn (column, index, null)
+            columnsToExport.forEach((column, index)=> {
+                gridRowIterator.onColumn (column, index, null);
             });
         }
 
         this.pinnedRowModel.forEachPinnedTopRow(processRow);
 
         if (isPivotMode) {
-            if ((<any>this.rowModel).forEachPivotNode){
+            if ((<any>this.rowModel).forEachPivotNode) {
                 (<ClientSideRowModel>this.rowModel).forEachPivotNode(processRow);
-            } else{
+            } else {
                 //Must be enterprise, so we can just loop through all the nodes
                 this.rowModel.forEachNode(processRow);
             }
@@ -266,14 +262,14 @@ export class GridSerializer {
             // (eg viewport) then again rowmodel cannot be used, so need to use selected instead.
             if (onlySelectedAllPages || onlySelectedNonStandardModel) {
                 let selectedNodes = this.selectionController.getSelectedNodes();
-                selectedNodes.forEach((node:RowNode)=>{
-                    processRow(node)
+                selectedNodes.forEach((node:RowNode)=> {
+                    processRow(node);
                 });
             } else {
                 // here is everything else - including standard row model and selected. we don't use
                 // the selection model even when just using selected, so that the result is the order
                 // of the rows appearing on the screen.
-                if (rowModelNormal){
+                if (rowModelNormal) {
                     (<ClientSideRowModel>this.rowModel).forEachNodeAfterFilterAndSort(processRow);
                 } else {
                     this.rowModel.forEachNode(processRow);
@@ -332,7 +328,7 @@ export class GridSerializer {
         return gridSerializingSession.parse();
     }
 
-    recursivelyAddHeaderGroups<T> (displayedGroups:ColumnGroupChild[], gridSerializingSession:GridSerializingSession<T>):void{
+    recursivelyAddHeaderGroups<T>(displayedGroups:ColumnGroupChild[], gridSerializingSession:GridSerializingSession<T>):void {
         let directChildrenHeaderGroups:ColumnGroupChild[] = [];
         displayedGroups.forEach((columnGroupChild: ColumnGroupChild) => {
             let columnGroup: ColumnGroup = columnGroupChild as ColumnGroup;
@@ -344,7 +340,7 @@ export class GridSerializer {
             this.doAddHeaderHeader(gridSerializingSession, displayedGroups);
         }
 
-        if (directChildrenHeaderGroups && directChildrenHeaderGroups.length > 0){
+        if (directChildrenHeaderGroups && directChildrenHeaderGroups.length > 0) {
             this.recursivelyAddHeaderGroups(directChildrenHeaderGroups, gridSerializingSession);
         }
     }

@@ -34,7 +34,7 @@ export interface AnimationQueueEmptyEvent extends AgGridEvent {}
 export interface ColumnPivotModeChangedEvent extends AgGridEvent {}
 export interface VirtualColumnsChangedEvent extends AgGridEvent {}
 export interface ColumnEverythingChangedEvent extends AgGridEvent {
-    source: string
+    source: string;
 }
 export interface NewColumnsLoadedEvent extends AgGridEvent {}
 export interface GridColumnsChangedEvent extends AgGridEvent {}
@@ -69,12 +69,12 @@ export interface GridSizeChangedEvent extends AgGridEvent {
 }
 
 export interface RowDragEvent extends AgGridEvent {
-    node: RowNode,
-    y: number,
-    vDirection: string,
-    event: MouseEvent,
-    overIndex: number,
-    overNode: RowNode
+    node: RowNode;
+    y: number;
+    vDirection: string;
+    event: MouseEvent;
+    overIndex: number;
+    overNode: RowNode;
 }
 
 export interface RowDragEnterEvent extends RowDragEvent {}
@@ -101,11 +101,11 @@ export interface RangeSelectionChangedEvent extends AgGridEvent {
 }
 
 export interface ColumnGroupOpenedEvent extends AgGridEvent {
-    columnGroup: OriginalColumnGroup
+    columnGroup: OriginalColumnGroup;
 }
 
 export interface ItemsAddedEvent extends AgGridEvent {
-    items: RowNode[]
+    items: RowNode[];
 }
 
 export interface BodyScrollEvent extends AgGridEvent {
@@ -251,13 +251,13 @@ export interface CellValueChangedEvent extends CellEvent {
 // not documented, was put in for CS - more thought needed of how server side grouping / pivoting
 // is done and how these should be used before we fully document and share with the world.
 export interface ColumnRequestEvent extends AgGridEvent {
-    columns: Column[]
+    columns: Column[];
 }
 export interface ColumnRowGroupChangeRequestEvent extends ColumnRequestEvent {}
 export interface ColumnPivotChangeRequestEvent extends ColumnRequestEvent {}
 export interface ColumnValueChangeRequestEvent extends ColumnRequestEvent {}
 export interface ColumnAggFuncChangeRequestEvent extends ColumnRequestEvent {
-    aggFunc: any
+    aggFunc: any;
 }
 
 // not documented, for internal use only

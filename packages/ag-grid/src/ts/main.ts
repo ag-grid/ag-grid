@@ -102,7 +102,7 @@ export {StandardMenuFactory} from "./headerRendering/standardMenu";
 // layout
 export {TabbedLayout} from "./layout/tabbedLayout";
 export {VerticalStack} from "./layout/verticalStack";
-export {TabbedItem} from "./layout/tabbedLayout"
+export {TabbedItem} from "./layout/tabbedLayout";
 
 // misc
 export {simpleHttpRequest} from "./misc/simpleHttpRequest";
@@ -179,8 +179,8 @@ export {PopupService} from "./widgets/popupService";
 export {TouchListener, TapEvent, LongTapEvent} from "./widgets/touchListener";
 
 // range
-export {RangeSelection, AddRangeSelectionParams} from "./interfaces/iRangeController"
-export {IRangeController} from "./interfaces/iRangeController"
+export {RangeSelection, AddRangeSelectionParams} from "./interfaces/iRangeController";
+export {IRangeController} from "./interfaces/iRangeController";
 
 // root
 export {BaseFrameworkFactory} from "./baseFrameworkFactory";
@@ -207,21 +207,21 @@ export {ValueService} from "./valueService/valueService";
 export {ExpressionService} from "./valueService/expressionService";
 export {XmlFactory} from "./xmlFactory";
 export {GridSerializer, BaseGridSerializingSession, RowType} from "./gridSerializer";
-export {CsvExportParams, ExportParams} from "./exportParams"
-export {XmlElement} from "./xmlFactory"
+export {CsvExportParams, ExportParams} from "./exportParams";
+export {XmlElement} from "./xmlFactory";
 export {LoggerFactory} from "./logger";
-export {RowAccumulator, RowSpanningAccumulator} from "./gridSerializer"
+export {RowAccumulator, RowSpanningAccumulator} from "./gridSerializer";
 
 // uncatalogued
-export {IRowModel, RowBounds} from "./interfaces/iRowModel"
-export {IAggFuncService} from "./interfaces/iAggFuncService"
-export {IClipboardService} from "./interfaces/iClipboardService"
-export {IExcelCreator} from "./interfaces/iExcelCreator"
-export {IMenuFactory} from "./interfaces/iMenuFactory"
-export {IAggFunc, ColGroupDef} from "./entities/colDef"
-export {GridCellDef} from "./entities/gridCell"
-export {ColDef} from "./entities/colDef"
-export {ProcessCellForExportParams, ProcessHeaderForExportParams} from "./exportParams"
+export {IRowModel, RowBounds} from "./interfaces/iRowModel";
+export {IAggFuncService} from "./interfaces/iAggFuncService";
+export {IClipboardService} from "./interfaces/iClipboardService";
+export {IExcelCreator} from "./interfaces/iExcelCreator";
+export {IMenuFactory} from "./interfaces/iMenuFactory";
+export {IAggFunc, ColGroupDef} from "./entities/colDef";
+export {GridCellDef} from "./entities/gridCell";
+export {ColDef} from "./entities/colDef";
+export {ProcessCellForExportParams, ProcessHeaderForExportParams} from "./exportParams";
 export {
     GridOptions,
     GetContextMenuItemsParams,
@@ -239,15 +239,15 @@ export {
     NavigateToNextCellParams,
     TabToNextCellParams,
     PostProcessPopupParams
-} from "./entities/gridOptions"
-export {OriginalColumnGroupChild} from "./entities/originalColumnGroupChild"
-export {IViewportDatasource, IViewportDatasourceParams} from "./interfaces/iViewportDatasource"
-export {IContextMenuFactory} from "./interfaces/iContextMenuFactory"
-export {ICompFactory} from "./interfaces/iCompFactory"
-export {IRowNodeStage, StageExecuteParams} from "./interfaces/iRowNodeStage"
-export {IFilterParams, IDoesFilterPassParams, SerializedFilter} from "./interfaces/iFilter"
-export {ISetFilterParams, SetFilterValues, SetFilterValuesFunc, SetFilterValuesFuncParams} from "./interfaces/iSetFilterParams"
-export {SerializedSetFilter} from "./interfaces/iSerializedSetFilter"
+} from "./entities/gridOptions";
+export {OriginalColumnGroupChild} from "./entities/originalColumnGroupChild";
+export {IViewportDatasource, IViewportDatasourceParams} from "./interfaces/iViewportDatasource";
+export {IContextMenuFactory} from "./interfaces/iContextMenuFactory";
+export {ICompFactory} from "./interfaces/iCompFactory";
+export {IRowNodeStage, StageExecuteParams} from "./interfaces/iRowNodeStage";
+export {IFilterParams, IDoesFilterPassParams, SerializedFilter} from "./interfaces/iFilter";
+export {ISetFilterParams, SetFilterValues, SetFilterValuesFunc, SetFilterValuesFuncParams} from "./interfaces/iSetFilterParams";
+export {SerializedSetFilter} from "./interfaces/iSerializedSetFilter";
 export {IDateParams, IDate, IDateComp} from "./rendering/dateComponent";
 export {IAfterGuiAttachedParams, IComponent} from "./interfaces/iComponent";
 export {IFilter, IFilterComp} from "./interfaces/iFilter";

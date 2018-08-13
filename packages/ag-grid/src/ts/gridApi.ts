@@ -182,7 +182,7 @@ export class GridApi {
     }
 
     public exportDataAsCsv(params?: CsvExportParams): void {
-        this.csvCreator.exportDataAsCsv(params)
+        this.csvCreator.exportDataAsCsv(params);
     }
 
     public getDataAsExcel(params?: ExcelExportParams): string {
@@ -192,7 +192,7 @@ export class GridApi {
 
     public exportDataAsExcel(params?: ExcelExportParams): void {
         if (!this.excelCreator) { console.warn('ag-Grid: Excel export is only available in ag-Grid Enterprise'); }
-        this.excelCreator.exportDataAsExcel(params)
+        this.excelCreator.exportDataAsExcel(params);
     }
 
     // DEPRECATED
@@ -206,7 +206,7 @@ export class GridApi {
             // should really have an IEnterpriseRowModel interface, so we are not casting to any
             (<any>this.rowModel).setDatasource(datasource);
         } else {
-            console.warn(`ag-Grid: you can only use an enterprise datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_SERVER_SIDE}'`)
+            console.warn(`ag-Grid: you can only use an enterprise datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_SERVER_SIDE}'`);
         }
     }
 
@@ -214,7 +214,7 @@ export class GridApi {
         if (this.gridOptionsWrapper.isRowModelInfinite()) {
             (<InfiniteRowModel>this.rowModel).setDatasource(datasource);
         } else {
-            console.warn(`ag-Grid: you can only use a datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_INFINITE}'`)
+            console.warn(`ag-Grid: you can only use a datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_INFINITE}'`);
         }
     }
 
@@ -225,7 +225,7 @@ export class GridApi {
             // the enterprise implement it, rather than casting to 'any' here
             (<any>this.rowModel).setViewportDatasource(viewportDatasource);
         } else {
-            console.warn(`ag-Grid: you can only use a viewport datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIEWPORT}'`)
+            console.warn(`ag-Grid: you can only use a viewport datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIEWPORT}'`);
         }
     }
 
@@ -239,7 +239,7 @@ export class GridApi {
                 this.clientSideRowModel.setRowData(rowData);
             }
         } else {
-            console.log('cannot call setRowData unless using normal row model');
+            console.warn('cannot call setRowData unless using normal row model');
         }
     }
 
@@ -397,7 +397,7 @@ export class GridApi {
 
     // *** deprecated
     public rowDataChanged(rows:any) {
-        console.log('ag-Grid: rowDataChanged is deprecated, either call refreshView() to refresh everything, or call rowNode.setRowData(newData) to set value on a particular node')
+        console.warn('ag-Grid: rowDataChanged is deprecated, either call refreshView() to refresh everything, or call rowNode.setRowData(newData) to set value on a particular node');
         this.redrawRows();
     }
 
@@ -440,8 +440,8 @@ export class GridApi {
     }
 
     public onGroupExpandedOrCollapsed(deprecated_refreshFromIndex?: any) {
-        if (_.missing(this.clientSideRowModel)) { console.log('ag-Grid: cannot call onGroupExpandedOrCollapsed unless using normal row model') }
-        if (_.exists(deprecated_refreshFromIndex)) { console.log('ag-Grid: api.onGroupExpandedOrCollapsed - refreshFromIndex parameter is no longer used, the grid will refresh all rows'); }
+        if (_.missing(this.clientSideRowModel)) { console.warn('ag-Grid: cannot call onGroupExpandedOrCollapsed unless using normal row model'); }
+        if (_.exists(deprecated_refreshFromIndex)) { console.warn('ag-Grid: api.onGroupExpandedOrCollapsed - refreshFromIndex parameter is no longer used, the grid will refresh all rows'); }
         // we don't really want the user calling this if one one rowNode was expanded, instead they should be
         // calling rowNode.setExpanded(boolean) - this way we do a 'keepRenderedRows=false' so that the whole
         // grid gets refreshed again - otherwise the row with the rowNodes that were changed won't get updated,
@@ -455,7 +455,7 @@ export class GridApi {
     }
 
     public refreshClientSideRowModel(step?: string): any {
-        if (_.missing(this.clientSideRowModel)) { console.log('cannot call refreshClientSideRowModel unless using normal row model') }
+        if (_.missing(this.clientSideRowModel)) { console.warn('cannot call refreshClientSideRowModel unless using normal row model'); }
 
         let paramsStep = Constants.STEP_EVERYTHING;
         let stepsMapped: any = {
@@ -511,51 +511,51 @@ export class GridApi {
 
     public addVirtualRowListener(eventName: string, rowIndex: number, callback: Function) {
         if (typeof eventName !== 'string') {
-            console.log('ag-Grid: addVirtualRowListener is deprecated, please use addRenderedRowListener.');
+            console.warn('ag-Grid: addVirtualRowListener is deprecated, please use addRenderedRowListener.');
         }
         this.addRenderedRowListener(eventName, rowIndex, callback);
     }
 
     public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function) {
         if (eventName==='virtualRowSelected') {
-            console.log('ag-Grid: event virtualRowSelected is deprecated, to register for individual row ' +
-                'selection events, add a listener directly to the row node.');
+            console.warn(`ag-Grid: event virtualRowSelected is deprecated, to register for individual row
+                selection events, add a listener directly to the row node.`);
         }
         this.rowRenderer.addRenderedRowListener(eventName, rowIndex, callback);
     }
 
     public setQuickFilter(newFilter:any): void {
-        this.filterManager.setQuickFilter(newFilter)
+        this.filterManager.setQuickFilter(newFilter);
     }
 
     public selectIndex(index:any, tryMulti:any, suppressEvents:any) {
-        console.log('ag-Grid: do not use api for selection, call node.setSelected(value) instead');
+        console.warn('ag-Grid: do not use api for selection, call node.setSelected(value) instead');
         if (suppressEvents) {
-            console.log('ag-Grid: suppressEvents is no longer supported, stop listening for the event if you no longer want it');
+            console.warn('ag-Grid: suppressEvents is no longer supported, stop listening for the event if you no longer want it');
         }
         this.selectionController.selectIndex(index, tryMulti);
     }
 
     public deselectIndex(index: number, suppressEvents: boolean = false) {
-        console.log('ag-Grid: do not use api for selection, call node.setSelected(value) instead');
+        console.warn('ag-Grid: do not use api for selection, call node.setSelected(value) instead');
         if (suppressEvents) {
-            console.log('ag-Grid: suppressEvents is no longer supported, stop listening for the event if you no longer want it');
+            console.warn('ag-Grid: suppressEvents is no longer supported, stop listening for the event if you no longer want it');
         }
         this.selectionController.deselectIndex(index);
     }
 
     public selectNode(node: RowNode, tryMulti: boolean = false, suppressEvents: boolean = false) {
-        console.log('ag-Grid: API for selection is deprecated, call node.setSelected(value) instead');
+        console.warn('ag-Grid: API for selection is deprecated, call node.setSelected(value) instead');
         if (suppressEvents) {
-            console.log('ag-Grid: suppressEvents is no longer supported, stop listening for the event if you no longer want it');
+            console.warn('ag-Grid: suppressEvents is no longer supported, stop listening for the event if you no longer want it');
         }
         node.setSelectedParams({newValue: true, clearSelection: !tryMulti});
     }
 
     public deselectNode(node: RowNode, suppressEvents: boolean = false) {
-        console.log('ag-Grid: API for selection is deprecated, call node.setSelected(value) instead');
+        console.warn('ag-Grid: API for selection is deprecated, call node.setSelected(value) instead');
         if (suppressEvents) {
-            console.log('ag-Grid: suppressEvents is no longer supported, stop listening for the event if you no longer want it');
+            console.warn('ag-Grid: suppressEvents is no longer supported, stop listening for the event if you no longer want it');
         }
         node.setSelectedParams({newValue: false});
     }
@@ -577,7 +577,7 @@ export class GridApi {
     }
 
     public recomputeAggregates(): void {
-        if (_.missing(this.clientSideRowModel)) { console.warn('cannot call recomputeAggregates unless using normal row model') }
+        if (_.missing(this.clientSideRowModel)) { console.warn('cannot call recomputeAggregates unless using normal row model'); }
         console.warn(`recomputeAggregates is deprecated, please call api.refreshClientSideRowModel('aggregate') instead`);
         this.clientSideRowModel.refreshModel({step: Constants.STEP_AGGREGATE});
     }
@@ -599,7 +599,7 @@ export class GridApi {
     }
 
     public isNodeSelected(node:any) {
-        console.log('ag-Grid: no need to call api.isNodeSelected(), just call node.isSelected() instead');
+        console.warn('ag-Grid: no need to call api.isNodeSelected(), just call node.isSelected() instead');
         return node.isSelected();
     }
 
@@ -643,7 +643,7 @@ export class GridApi {
     }
 
     public forEachLeafNode(callback: (rowNode: RowNode)=>void ) {
-        if (_.missing(this.clientSideRowModel)) { console.log('cannot call forEachNode unless using normal row model') }
+        if (_.missing(this.clientSideRowModel)) { console.warn('cannot call forEachNode unless using normal row model'); }
         this.clientSideRowModel.forEachLeafNode(callback);
     }
 
@@ -652,12 +652,12 @@ export class GridApi {
     }
 
     public forEachNodeAfterFilter(callback: (rowNode: RowNode)=>void) {
-        if (_.missing(this.clientSideRowModel)) { console.log('cannot call forEachNodeAfterFilter unless using normal row model') }
+        if (_.missing(this.clientSideRowModel)) { console.warn('cannot call forEachNodeAfterFilter unless using normal row model'); }
         this.clientSideRowModel.forEachNodeAfterFilter(callback);
     }
 
     public forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode)=>void) {
-        if (_.missing(this.clientSideRowModel)) { console.log('cannot call forEachNodeAfterFilterAndSort unless using normal row model') }
+        if (_.missing(this.clientSideRowModel)) { console.warn('cannot call forEachNodeAfterFilterAndSort unless using normal row model'); }
         this.clientSideRowModel.forEachNodeAfterFilterAndSort(callback);
     }
 
@@ -749,7 +749,7 @@ export class GridApi {
     }
 
     public getPreferredWidth(): number {
-        console.warn('ag-Grid: Since v19, getPreferredWidth() is deprecated. For printing, please check the print documentation, you no longer need to use getPreferredWidth()')
+        console.warn('ag-Grid: Since v19, getPreferredWidth() is deprecated. For printing, please check the print documentation, you no longer need to use getPreferredWidth()');
         return this.gridCore.getPreferredWidth();
     }
 
@@ -862,7 +862,7 @@ export class GridApi {
         }
     }
 
-    public camelCaseToHumanReadable (camelCase:string):string{
+    public camelCaseToHumanReadable(camelCase:string):string {
         return _.camelCaseToHumanText(camelCase);
     }
 
@@ -1142,7 +1142,7 @@ export class GridApi {
     }
 
     public getFirstRenderedRow(): number {
-        console.log('in ag-Grid v12, getFirstRenderedRow() was renamed to getFirstDisplayedRow()');
+        console.warn('in ag-Grid v12, getFirstRenderedRow() was renamed to getFirstDisplayedRow()');
         return this.getFirstDisplayedRow();
     }
 
@@ -1151,7 +1151,7 @@ export class GridApi {
     }
 
     public getLastRenderedRow(): number {
-        console.log('in ag-Grid v12, getLastRenderedRow() was renamed to getLastDisplayedRow()');
+        console.warn('in ag-Grid v12, getLastRenderedRow() was renamed to getLastDisplayedRow()');
         return this.getLastDisplayedRow();
     }
 
