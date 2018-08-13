@@ -19,7 +19,7 @@ import {DragService, DragListenerParams} from "../dragAndDrop/dragService";
 import {IRangeController} from "../interfaces/iRangeController";
 import {Constants} from "../constants";
 import {SelectionController} from "../selectionController";
-import {CsvCreator} from "../csvCreator";
+import {CsvCreator} from "../exporter/csvCreator";
 import {MouseEventService} from "./mouseEventService";
 import {IClipboardService} from "../interfaces/iClipboardService";
 import {FocusedCellController} from "../focusedCellController";

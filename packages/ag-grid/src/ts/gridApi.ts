@@ -1,4 +1,4 @@
-import {CsvCreator} from "./csvCreator";
+import {CsvCreator} from "./exporter/csvCreator";
 import {RowRenderer} from "./rendering/rowRenderer";
 import {FilterManager} from "./filter/filterManager";
 import {ColumnController} from "./columnController/columnController";

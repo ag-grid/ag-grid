@@ -33,7 +33,6 @@ import {
 
 import {ExcelXmlFactory} from "./excelXmlFactory";
 
-
 export interface ExcelMixedStyle {
     key: string,
     excelID: string,

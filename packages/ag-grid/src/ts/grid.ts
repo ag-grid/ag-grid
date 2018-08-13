@@ -20,7 +20,7 @@ import {ColumnUtils} from "./columnController/columnUtils";
 import {AutoWidthCalculator} from "./rendering/autoWidthCalculator";
 import {HorizontalResizeService} from "./headerRendering/horizontalResizeService";
 import {Context} from "./context/context";
-import {CsvCreator} from "./csvCreator";
+import {CsvCreator} from "./exporter/csvCreator";
 import {GridCore} from "./gridCore";
 import {StandardMenuFactory} from "./headerRendering/standardMenu";
 import {DragAndDropService} from "./dragAndDrop/dragAndDropService";
@@ -88,7 +88,7 @@ export interface GridParams {
     frameworkFactory?: IFrameworkFactory;
 
     //bean instances to add to the context
-    seedBeanInstances?: {[key:string]:any}
+    seedBeanInstances?: {[key:string]:any};
 }
 
 export class Grid {
@@ -146,11 +146,11 @@ export class Grid {
 
         let overrideBeans:any[]= [];
 
-        if (Grid.enterpriseBeans){
+        if (Grid.enterpriseBeans) {
             overrideBeans = overrideBeans.concat(Grid.enterpriseBeans);
         }
 
-        if (Grid.frameworkBeans){
+        if (Grid.frameworkBeans) {
             overrideBeans = overrideBeans.concat(Grid.frameworkBeans);
         }
 
@@ -270,7 +270,7 @@ export class Grid {
             }
         }
         return ClientSideRowModel;
-    };
+    }
 
     public destroy(): void {
         this.context.destroy();

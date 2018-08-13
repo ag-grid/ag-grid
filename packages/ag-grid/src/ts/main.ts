@@ -192,7 +192,7 @@ export {BaseFrameworkFactory} from "./baseFrameworkFactory";
 export {CellNavigationService} from "./cellNavigationService";
 export {AlignedGridsService} from "./alignedGridsService";
 export {Constants} from "./constants";
-export {CsvCreator, BaseCreator} from "./csvCreator";
+export {CsvCreator, BaseCreator} from "./exporter/csvCreator";
 export {Downloader} from "./downloader";
 export {Grid, GridParams} from "./grid";
 export {GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo} from "./gridApi";

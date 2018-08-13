@@ -80,7 +80,7 @@ export class LicenseManager {
     }
 
     private static formatDate(date:any):string {
-        const monthNames:string [] = [
+        const monthNames:string[] = [
             'January', 'February', 'March',
             'April', 'May', 'June', 'July',
             'August', 'September', 'October',
