@@ -53,7 +53,7 @@ export class StatusBar extends Component {
                 componentPromises.push(
                     this.componentResolver.createAgGridComponent(null,
                         params,
-                        componentConfig.component,
+                        'statusBarComponent',
                         componentConfig.componentParams,
                         componentConfig.component)
                 );
