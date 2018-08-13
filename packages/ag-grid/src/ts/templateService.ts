@@ -27,7 +27,7 @@ export class TemplateService {
             this.waitingCallbacks[url] = callbackList;
             // and also need to do the http request
             let client = new XMLHttpRequest();
-            client.onload = function () {
+            client.onload = function() {
                 that.handleHttpResult(this, url);
             };
             client.open("GET", url);
@@ -46,7 +46,7 @@ export class TemplateService {
     handleHttpResult(httpResult: any, url: any) {
 
         if (httpResult.status !== 200 || httpResult.response === null) {
-            console.warn('Unable to get template error ' + httpResult.status + ' - ' + url);
+            console.warn(`Unable to get template error ${httpResult.status} - ${url}`);
             return;
         }
 
@@ -66,7 +66,7 @@ export class TemplateService {
 
         if (this.$scope) {
             let that = this;
-            setTimeout(function () {
+            setTimeout(function() {
                 that.$scope.$apply();
             }, 0);
         }

@@ -89,7 +89,7 @@ export class SortController {
         }
 
         if ( !Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
-            console.warn('ag-grid: sortingOrder must be an array with at least one element, currently it\'s ' + sortingOrder);
+            console.warn(`ag-grid: sortingOrder must be an array with at least one element, currently it\'s ${sortingOrder}`);
             return;
         }
 
@@ -120,7 +120,7 @@ export class SortController {
             return {
                 colId: column.getColId(),
                 sort: column.getSort()
-            }
+            };
         });
     }
 
@@ -167,10 +167,10 @@ export class SortController {
     public getColumnsWithSortingOrdered(): Column[] {
         // pull out all the columns that have sorting set
         let allColumnsIncludingAuto = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
-        let columnsWithSorting = <Column[]> _.filter(allColumnsIncludingAuto, (column:Column) => { return !!column.getSort();} );
+        let columnsWithSorting = <Column[]> _.filter(allColumnsIncludingAuto, (column:Column) => !!column.getSort());
 
         // put the columns in order of which one got sorted first
-        columnsWithSorting.sort( (a: any, b: any) => { return a.sortedAt - b.sortedAt} );
+        columnsWithSorting.sort( (a: any, b: any) => a.sortedAt - b.sortedAt);
 
         return columnsWithSorting;
     }
@@ -184,7 +184,7 @@ export class SortController {
             return {
                 inverter: ascending ? 1 : -1,
                 column: column
-            }
+            };
         });
     }
 }

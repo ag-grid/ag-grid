@@ -30,7 +30,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<string> {
         processHeaderCallback:(params: ProcessHeaderForExportParams)=>string,
         private suppressQuotes: boolean,
         private columnSeparator: string
-    ){
+    ) {
         super(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback);
     }
 
@@ -48,35 +48,35 @@ export class CsvSerializingSession extends BaseGridSerializingSession<string> {
     }
 
     public onNewHeaderGroupingRow(): RowSpanningAccumulator {
-        if(this.lineOpened) this.result += LINE_SEPARATOR;
+        if (this.lineOpened) this.result += LINE_SEPARATOR;
 
         return {
             onColumn: this.onNewHeaderGroupingRowColumn.bind(this)
         };
     }
 
-    private onNewHeaderGroupingRowColumn (header: string, index: number, span:number) {
+    private onNewHeaderGroupingRowColumn(header: string, index: number, span:number) {
         if (index != 0) {
             this.result += this.columnSeparator;
         }
 
         this.result += this.putInQuotes(header, this.suppressQuotes);
 
-        for (let i = 1; i<= span; i++){
+        for (let i = 1; i<= span; i++) {
             this.result += this.columnSeparator + this.putInQuotes("", this.suppressQuotes);
         }
         this.lineOpened = true;
     }
 
     public onNewHeaderRow(): RowAccumulator {
-        if(this.lineOpened) this.result += LINE_SEPARATOR;
+        if (this.lineOpened) this.result += LINE_SEPARATOR;
 
         return {
             onColumn:this.onNewHeaderRowColumn.bind(this)
         };
     }
 
-    private onNewHeaderRowColumn(column: Column, index: number, node?:RowNode):void{
+    private onNewHeaderRowColumn(column: Column, index: number, node?:RowNode):void {
             if (index != 0) {
                 this.result += this.columnSeparator;
             }
@@ -85,21 +85,20 @@ export class CsvSerializingSession extends BaseGridSerializingSession<string> {
     }
 
     public onNewBodyRow(): RowAccumulator {
-        if(this.lineOpened) this.result += LINE_SEPARATOR;
+        if (this.lineOpened) this.result += LINE_SEPARATOR;
 
         return {
             onColumn: this.onNewBodyRowColumn.bind(this)
         };
     }
 
-    private onNewBodyRowColumn (column: Column, index: number, node?:RowNode):void{
+    private onNewBodyRowColumn(column: Column, index: number, node?:RowNode):void {
         if (index != 0) {
             this.result += this.columnSeparator;
         }
         this.result += this.putInQuotes(this.extractRowCellValue(column, index, Constants.EXPORT_TYPE_CSV, node), this.suppressQuotes);
         this.lineOpened = true;
     }
-
 
     private putInQuotes(value: any, suppressQuotes: boolean): string {
         if (suppressQuotes) { return value; }
@@ -144,7 +143,7 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
     }
 
     public export(userParams?: P): string {
-        if (this.isExportSuppressed()){
+        if (this.isExportSuppressed()) {
             console.warn(`ag-grid: Export canceled. Export is not allowed as per your configuration.`);
             return "";
         }
@@ -153,7 +152,7 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
         let fileNamePresent = mergedParams && mergedParams.fileName && mergedParams.fileName.length !== 0;
         let fileName = fileNamePresent ? mergedParams.fileName : this.getDefaultFileName();
 
-        if (fileName.indexOf(".") === -1){
+        if (fileName.indexOf(".") === -1) {
             fileName = fileName + "." + this.getDefaultFileExtension();
         }
 
@@ -165,11 +164,11 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
         return data;
     }
 
-    public getData (params:P):string{
-        return this.getMergedParamsAndData(params).data
+    public getData(params:P): string {
+        return this.getMergedParamsAndData(params).data;
     }
 
-    private getMergedParamsAndData(userParams: P):{mergedParams:P, data:string} {
+    private getMergedParamsAndData(userParams: P):{mergedParams: P, data: string} {
         let mergedParams = this.mergeDefaultParams(userParams);
         let data = this.beans.gridSerializer.serialize(this.createSerializingSession(mergedParams), mergedParams);
         return {mergedParams, data};
@@ -182,15 +181,15 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
         _.assign(params, userParams);
         return params;
     }
-    public abstract createSerializingSession(params?: P):S;
-    public abstract getMimeType():string;
-    public abstract getDefaultFileName ():string;
-    public abstract getDefaultFileExtension ():string;
-    public abstract isExportSuppressed ():boolean;
+    public abstract createSerializingSession(params?: P): S;
+    public abstract getMimeType(): string;
+    public abstract getDefaultFileName(): string;
+    public abstract getDefaultFileExtension(): string;
+    public abstract isExportSuppressed(): boolean;
 }
 
 @Bean('csvCreator')
-export class CsvCreator extends BaseCreator<string, CsvSerializingSession, CsvExportParams>{
+export class CsvCreator extends BaseCreator<string, CsvSerializingSession, CsvExportParams> {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
@@ -212,13 +211,12 @@ export class CsvCreator extends BaseCreator<string, CsvSerializingSession, CsvEx
         return this.export(params);
     }
 
-    public getDataAsCsv (params?: CsvExportParams): string {
+    public getDataAsCsv(params?: CsvExportParams): string {
         return this.getData(params);
     }
 
-
     public getMimeType(): string {
-        return "text/csv;charset=utf-8;"
+        return 'text/csv;charset=utf-8;';
     }
 
     public getDefaultFileName(): string {
@@ -229,7 +227,7 @@ export class CsvCreator extends BaseCreator<string, CsvSerializingSession, CsvEx
         return 'csv';
     }
 
-    public createSerializingSession(params?:CsvExportParams): CsvSerializingSession{
+    public createSerializingSession(params?: CsvExportParams): CsvSerializingSession {
         return new CsvSerializingSession(
                 this.columnController,
                 this.valueService,
@@ -238,10 +236,10 @@ export class CsvCreator extends BaseCreator<string, CsvSerializingSession, CsvEx
                 params ? params.processHeaderCallback : null,
                 params && params.suppressQuotes,
                 (params && params.columnSeparator) || ','
-            )
+            );
     }
 
-    public isExportSuppressed ():boolean{
+    public isExportSuppressed(): boolean {
         return this.gridOptionsWrapper.isSuppressCsvExport();
     }
 }
