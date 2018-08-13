@@ -7,7 +7,7 @@ var columnDefs = [
 
 var gridOptions = {
   defaultColDef: {
-    width: 250,
+    width: 240,
     suppressFilter: true
   },
   autoGroupColumnDef: {
@@ -23,9 +23,6 @@ var gridOptions = {
   columnDefs: columnDefs,
   enableColResize: true,
   animateRows: true,
-  icons: {
-    groupLoading: '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/javascript-grid-server-side-model/spinner.gif" style="width:22px;height:22px;">'
-  },
   isServerSideGroup: function (dataItem) {
      // indicate if node is a group
      return dataItem.group;
@@ -47,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
   var gridDiv = document.querySelector('#myGrid');
   new agGrid.Grid(gridDiv, gridOptions);
 
-  agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/latest/packages/ag-grid-docs/src/javascript-grid-server-side-model/tree-data/data/data.json'}).then(function(data) {
+  agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/latest/packages/ag-grid-docs/src/javascript-grid-server-side-model-tree-data/tree-data/data/data.json'}).then(function(data) {
     var fakeServer = new FakeServer(data);
     var datasource = new ServerSideDatasource(fakeServer);
     gridOptions.api.setServerSideDatasource(datasource);
