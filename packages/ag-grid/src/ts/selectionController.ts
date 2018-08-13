@@ -94,9 +94,9 @@ export class SelectionController {
 
         let clientSideRowModel = <ClientSideRowModel> this.rowModel;
         clientSideRowModel.getTopLevelNodes().forEach( (rowNode: RowNode) => {
-            rowNode.depthFirstSearch( (rowNode)=> {
-                if (rowNode.group) {
-                    rowNode.calculateSelectedFromChildren();
+            rowNode.depthFirstSearch((node)=> {
+                if (node.group) {
+                    node.calculateSelectedFromChildren();
                 }
             });
         });
@@ -274,7 +274,7 @@ export class SelectionController {
 
     public selectAllRowNodes(justFiltered = false) {
         if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            throw `selectAll only available with normal row model, ie not ${this.rowModel.getType()}`;
+            throw new Error(`selectAll only available with normal row model, ie not ${this.rowModel.getType()}`);
         }
 
         let clientSideRowModel = <ClientSideRowModel> this.rowModel;

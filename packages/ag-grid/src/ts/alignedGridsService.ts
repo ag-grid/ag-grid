@@ -171,6 +171,7 @@ export class AlignedGridsService {
         // look up the equivalent from this (other) grid
         let masterColumn = colEvent.column;
         let otherColumn: Column;
+
         if (masterColumn) {
             otherColumn = this.columnController.getPrimaryColumn(masterColumn.getColId());
         }
@@ -186,24 +187,25 @@ export class AlignedGridsService {
         switch (colEvent.type) {
             case Events.EVENT_COLUMN_MOVED:
                 let movedEvent = <ColumnMovedEvent> colEvent;
-                this.logger.log('onColumnEvent-> processing '+colEvent.type+' toIndex = ' + movedEvent.toIndex);
+                this.logger.log(`onColumnEvent-> processing ${colEvent.type} toIndex = ${movedEvent.toIndex}`);
                 this.columnController.moveColumns(columnIds, movedEvent.toIndex, "alignedGridChanged");
                 break;
             case Events.EVENT_COLUMN_VISIBLE:
                 let visibleEvent = <ColumnVisibleEvent> colEvent;
-                this.logger.log('onColumnEvent-> processing '+colEvent.type+' visible = '+ visibleEvent.visible);
+                this.logger.log(`onColumnEvent-> processing ${colEvent.type} visible = ${visibleEvent.visible}`);
                 this.columnController.setColumnsVisible(columnIds, visibleEvent.visible, "alignedGridChanged");
                 break;
             case Events.EVENT_COLUMN_PINNED:
                 let pinnedEvent = <ColumnPinnedEvent> colEvent;
-                this.logger.log('onColumnEvent-> processing '+colEvent.type+' pinned = '+ pinnedEvent.pinned);
+                this.logger.log(`onColumnEvent-> processing ${colEvent.type} pinned = ${pinnedEvent.pinned}`);
                 this.columnController.setColumnsPinned(columnIds, pinnedEvent.pinned, "alignedGridChanged");
                 break;
             case Events.EVENT_COLUMN_RESIZED:
                 let resizedEvent = <ColumnResizedEvent> colEvent;
-                masterColumns.forEach( (masterColumn: Column)=> {
-                    this.logger.log('onColumnEvent-> processing '+colEvent.type+' actualWidth = '+ masterColumn.getActualWidth());
-                    this.columnController.setColumnWidth(masterColumn.getColId(), masterColumn.getActualWidth(), false, resizedEvent.finished, "alignedGridChanged");
+
+                masterColumns.forEach((column: Column)=> {
+                    this.logger.log(`onColumnEvent-> processing ${colEvent.type} actualWidth = ${column.getActualWidth()}`);
+                    this.columnController.setColumnWidth(column.getColId(), column.getActualWidth(), false, resizedEvent.finished, "alignedGridChanged");
                 });
                 break;
         }

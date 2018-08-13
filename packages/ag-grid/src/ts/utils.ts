@@ -15,7 +15,7 @@ export class Timer {
 
     public print(msg: string) {
         let duration = (new Date().getTime()) - this.timestamp;
-        console.log(`${msg} = ${duration}`);
+        console.info(`${msg} = ${duration}`);
         this.timestamp = new Date().getTime();
     }
 
@@ -150,7 +150,7 @@ export class Utils {
 
     static cleanNumber(value: any): number {
         if (typeof value === 'string') {
-            value = parseInt(value);
+            value = parseInt(value, 10);
         }
         if (typeof value === 'number') {
             value = Math.floor(value);
@@ -192,7 +192,7 @@ export class Utils {
         if (Array.isArray(object)) {
             object.forEach((value, index) => {
                 callback(index + '', value);
-            })
+            });
         } else {
             let keys = Object.keys(object);
             for (let i = 0; i < keys.length; i++) {
@@ -246,7 +246,7 @@ export class Utils {
 
     static filter<T>(array: T[], callback: (item: T) => boolean): T[] {
         let result: T[] = [];
-        array.forEach(function (item: T) {
+        array.forEach(function(item: T) {
             if (callback(item)) {
                 result.push(item);
             }
@@ -287,7 +287,7 @@ export class Utils {
     static assign(object: any, ...sources: any[]): any {
         sources.forEach(source => {
             if (this.exists(source)) {
-                this.iterateObject(source, function (key: string, value: any) {
+                this.iterateObject(source, function(key: string, value: any) {
                     object[key] = value;
                 });
             }
@@ -311,7 +311,7 @@ export class Utils {
 
     static serializeDateToYyyyMmDd(date: Date, separator: string): string {
         if (!date) return null;
-        return date.getFullYear() + separator + Utils.pad(date.getMonth() + 1, 2) + separator + Utils.pad(date.getDate(), 2)
+        return date.getFullYear() + separator + Utils.pad(date.getMonth() + 1, 2) + separator + Utils.pad(date.getDate(), 2);
     }
 
     static pad(num: number, totalStringSize: number): string {
@@ -377,7 +377,7 @@ export class Utils {
     }
 
     static toStrings<T>(array: T[]): string[] {
-        return this.map(array, function (item) {
+        return this.map(array, function(item) {
             if (item === undefined || item === null || !item.toString) {
                 return null;
             } else {
@@ -451,7 +451,7 @@ export class Utils {
         } else {
             // otherwise, for older browsers, we test against a list of characters, which doesn't include
             // accents for non-English, but don't care much, as most users are on modern browsers
-            return Utils.PRINTABLE_CHARACTERS.indexOf(pressedChar) >= 0
+            return Utils.PRINTABLE_CHARACTERS.indexOf(pressedChar) >= 0;
         }
     }
 
@@ -926,56 +926,55 @@ export class Utils {
     //     }
     // }
 
-
     static iconNameClassMap: { [key: string]: string } = {
-        'columnMovePin': 'pin',
-        'columnMoveAdd': 'plus',
-        'columnMoveHide': 'eye-slash',
-        'columnMoveMove': 'arrows',
-        'columnMoveLeft': 'left',
-        'columnMoveRight': 'right',
-        'columnMoveGroup': 'group',
-        'columnMoveValue': 'aggregation',
-        'columnMovePivot': 'pivot',
-        'dropNotAllowed': 'not-allowed',
-        'groupContracted': 'expanded',
-        'groupExpanded': 'contracted',
-        'checkboxChecked': 'checkbox-checked',
-        'checkboxUnchecked': 'checkbox-unchecked',
-        'checkboxIndeterminate': 'checkbox-indeterminate',
-        'checkboxCheckedReadOnly': 'checkbox-checked-readonly',
-        'checkboxUncheckedReadOnly': 'checkbox-unchecked-readonly',
-        'checkboxIndeterminateReadOnly': 'checkbox-indeterminate-readonly',
-        'groupLoading': 'loading',
-        'menu': 'menu',
-        'filter': 'filter',
-        'columns': 'columns',
-        'menuPin': 'pin',
-        'menuValue': 'aggregation',
-        'menuAddRowGroup': 'group',
-        'menuRemoveRowGroup': 'group',
-        'clipboardCopy': 'copy',
-        'clipboardCut': 'cut',
-        'clipboardPaste': 'paste',
-        'pivotPanel': 'pivot',
-        'rowGroupPanel': 'group',
-        'valuePanel': 'aggregation',
-        'columnGroupOpened': 'expanded',
-        'columnGroupClosed': 'contracted',
-        'columnSelectClosed': 'tree-closed',
-        'columnSelectOpen': 'tree-open',
+        columnMovePin: 'pin',
+        columnMoveAdd: 'plus',
+        columnMoveHide: 'eye-slash',
+        columnMoveMove: 'arrows',
+        columnMoveLeft: 'left',
+        columnMoveRight: 'right',
+        columnMoveGroup: 'group',
+        columnMoveValue: 'aggregation',
+        columnMovePivot: 'pivot',
+        dropNotAllowed: 'not-allowed',
+        groupContracted: 'expanded',
+        groupExpanded: 'contracted',
+        checkboxChecked: 'checkbox-checked',
+        checkboxUnchecked: 'checkbox-unchecked',
+        checkboxIndeterminate: 'checkbox-indeterminate',
+        checkboxCheckedReadOnly: 'checkbox-checked-readonly',
+        checkboxUncheckedReadOnly: 'checkbox-unchecked-readonly',
+        checkboxIndeterminateReadOnly: 'checkbox-indeterminate-readonly',
+        groupLoading: 'loading',
+        menu: 'menu',
+        filter: 'filter',
+        columns: 'columns',
+        menuPin: 'pin',
+        menuValue: 'aggregation',
+        menuAddRowGroup: 'group',
+        menuRemoveRowGroup: 'group',
+        clipboardCopy: 'copy',
+        clipboardCut: 'cut',
+        clipboardPaste: 'paste',
+        pivotPanel: 'pivot',
+        rowGroupPanel: 'group',
+        valuePanel: 'aggregation',
+        columnGroupOpened: 'expanded',
+        columnGroupClosed: 'contracted',
+        columnSelectClosed: 'tree-closed',
+        columnSelectOpen: 'tree-open',
         // from deprecated header, remove at some point
-        'sortAscending': 'asc',
-        'sortDescending': 'desc',
-        'sortUnSort': 'none'
-    }
+        sortAscending: 'asc',
+        sortDescending: 'desc',
+        sortUnSort: 'none'
+    };
 
     /**
      * If icon provided, use this (either a string, or a function callback).
      * if not, then use the default icon from the theme
      */
     static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column): HTMLElement {
-        const iconContents = this.createIconNoSpan(iconName, gridOptionsWrapper, column)
+        const iconContents = this.createIconNoSpan(iconName, gridOptionsWrapper, column);
         if (iconContents.className.indexOf('ag-icon') > -1) {
             return iconContents;
         } else {
@@ -1003,20 +1002,20 @@ export class Utils {
             } else if (typeof userProvidedIcon === 'string') {
                 rendererResult = userProvidedIcon;
             } else {
-                throw 'icon from grid options needs to be a string or a function';
+                throw new Error('icon from grid options needs to be a string or a function');
             }
             if (typeof rendererResult === 'string') {
                 return this.loadTemplate(rendererResult);
             } else if (this.isNodeOrElement(rendererResult)) {
                 return rendererResult;
             } else {
-                throw 'iconRenderer should return back a string or a dom object';
+                throw new Error('iconRenderer should return back a string or a dom object');
             }
         } else {
             const span = document.createElement('span');
             const cssClass = this.iconNameClassMap[iconName];
             if (!cssClass) {
-                throw new Error(`${iconName} did not find class`)
+                throw new Error(`${iconName} did not find class`);
             }
             span.setAttribute("class", "ag-icon ag-icon-" + cssClass);
             return span;
@@ -1124,7 +1123,7 @@ export class Utils {
             let anyWindow = <any> window;
             // taken from https://github.com/ag-grid/ag-grid/issues/550
             this.isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') > 0
-                || (function (p) {
+                || (function(p) {
                     return p.toString() === "[object SafariRemoteNotification]";
                 })
                 (!anyWindow.safari || anyWindow.safari.pushNotification);
@@ -1270,8 +1269,8 @@ export class Utils {
 
         recursiveSearchNodes(nodes);
 
-        function recursiveSearchNodes(nodes: RowNode[]): void {
-            nodes.forEach((node: RowNode) => {
+        function recursiveSearchNodes(currentNodes: RowNode[]): void {
+            currentNodes.forEach((node: RowNode) => {
 
                 // also checking for children for tree data
                 if (node.group || node.hasChildren()) {
@@ -1310,7 +1309,7 @@ export class Utils {
         let resParts: string[] = [];
         this.iterateObject(stylesToUse, (styleKey: string, styleValue: string) => {
             let styleKeyDashed = this.camelCaseToHyphen(styleKey);
-            resParts.push(`${styleKeyDashed}: ${styleValue};`)
+            resParts.push(`${styleKeyDashed}: ${styleValue};`);
         });
 
         return resParts.join(' ');
@@ -1329,7 +1328,7 @@ export class Utils {
             return toEscape;
         }
 
-        return toEscape.replace(reUnescapedHtml, chr => HTML_ESCAPES[chr])
+        return toEscape.replace(reUnescapedHtml, chr => HTML_ESCAPES[chr]);
     }
 
     // Taken from here: https://github.com/facebook/fixed-data-table/blob/master/src/vendor_upstream/dom/normalizeWheel.js
@@ -1509,17 +1508,17 @@ export class Utils {
         // 'private' variable for instance
         // The returned function will be able to reference this due to closure.
         // Each call to the returned function will share this common timer.
-        var timeout: any;
+        let timeout: any;
 
         // Calling debounce returns a new anonymous function
-        return function () {
+        return function() {
             // reference the context and args for the setTimeout function
-            var context = this,
-                args = arguments;
+            const context = this;
+            const args = arguments;
 
             // Should the function be called now? If immediate is true
             //   and not already in a timeout then the answer is: Yes
-            var callNow = immediate && !timeout;
+            const callNow = immediate && !timeout;
 
             // This is the basic debounce behaviour where you can call this
             //   function several times, but it will only execute once
@@ -1528,7 +1527,7 @@ export class Utils {
             clearTimeout(timeout);
 
             // Set the new timeout
-            timeout = setTimeout(function () {
+            timeout = setTimeout(function() {
 
                 // Inside the timeout function, clear the timeout variable
                 // which will let the next execution run when in 'immediate' mode
@@ -1546,7 +1545,7 @@ export class Utils {
             // Immediate mode and no wait timer? Execute the function..
             if (callNow) func.apply(context, args);
         };
-    };
+    }
 
     // a user once raised an issue - they said that when you opened a popup (eg context menu)
     // and then clicked on a selection checkbox, the popup wasn't closed. this is because the
@@ -1715,13 +1714,15 @@ export class Utils {
         return thisSuggestions;
     }
 
-
     //Algorithm to do fuzzy search
     //https://stackoverflow.com/questions/23305000/javascript-fuzzy-search-that-makes-sense
     static get_bigrams(from: string) {
-        var i, j, ref, s, v;
-        s = from.toLowerCase();
-        v = new Array(s.length - 1);
+        let s = from.toLowerCase();
+        let v = new Array(s.length - 1);
+        let i;
+        let j;
+        let ref;
+
         for (i = j = 0, ref = v.length; j <= ref; i = j += 1) {
             v[i] = s.slice(i, i + 2);
 
@@ -1729,17 +1730,20 @@ export class Utils {
         return v;
     }
 
-    static string_similarity = function (str1: string, str2: string) {
-        var hit_count, j, k, len, len1, pairs1, pairs2, union, x, y;
+    static string_similarity = function(str1: string, str2: string) {
         if (str1.length > 0 && str2.length > 0) {
-            pairs1 = Utils.get_bigrams(str1);
-            pairs2 = Utils.get_bigrams(str2);
-            union = pairs1.length + pairs2.length;
-            hit_count = 0;
+            let pairs1 = Utils.get_bigrams(str1);
+            let pairs2 = Utils.get_bigrams(str2);
+            let union = pairs1.length + pairs2.length;
+            let hit_count = 0;
+            let j;
+            let len;
             for (j = 0, len = pairs1.length; j < len; j++) {
-                x = pairs1[j];
+                let x = pairs1[j];
+                let k;
+                let len1;
                 for (k = 0, len1 = pairs2.length; k < len1; k++) {
-                    y = pairs2[k];
+                    let y = pairs2[k];
                     if (x === y) {
                         hit_count++;
                     }
@@ -1796,15 +1800,14 @@ export enum PromiseStatus {
 }
 
 export interface ExternalPromise<T> {
-    resolve: (value: T) => void,
-    promise: Promise<T>
+    resolve: (value: T) => void;
+    promise: Promise<T>;
 }
 
 export class Promise<T> {
     private status: PromiseStatus = PromiseStatus.IN_PROGRESS;
     private resolution: T = null;
     private listOfWaiters: ((value: T) => void)[] = [];
-
 
     static all<T>(toCombine: Promise<T>[]): Promise<T[]> {
         return new Promise(resolve => {
@@ -1830,12 +1833,12 @@ export class Promise<T> {
     static external<T>(): ExternalPromise<T> {
         let capture: (value: T) => void;
         let promise: Promise<T> = new Promise<T>((resolve) => {
-            capture = resolve
+            capture = resolve;
         });
         return <ExternalPromise<T>>{
             promise: promise,
             resolve: (value: T): void => {
-                capture(value)
+                capture(value);
             }
         };
     }
@@ -1843,7 +1846,7 @@ export class Promise<T> {
     constructor(
         callback: ResolveAndRejectCallback<T>
     ) {
-        callback(this.onDone.bind(this), this.onReject.bind(this))
+        callback(this.onDone.bind(this), this.onReject.bind(this));
     }
 
     public then(func: (result: any) => void) {
@@ -1867,8 +1870,8 @@ export class Promise<T> {
     public map<Z>(adapter: (from: T) => Z): Promise<Z> {
         return new Promise<Z>((resolve) => {
             this.then(unmapped => {
-                resolve(adapter(unmapped))
-            })
+                resolve(adapter(unmapped));
+            });
         });
     }
 

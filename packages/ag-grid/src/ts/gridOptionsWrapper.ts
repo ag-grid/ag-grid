@@ -155,7 +155,7 @@ export class GridOptionsWrapper {
     private checkColumnDefProperties() {
         if (this.gridOptions.columnDefs == null) return;
 
-        this.gridOptions.columnDefs.forEach(colDef=>{
+        this.gridOptions.columnDefs.forEach(colDef=> {
             let userProperties: string [] = Object.getOwnPropertyNames(colDef);
             let validProperties: string [] = ColDefUtil.ALL_PROPERTIES.concat(ColDefUtil.FRAMEWORK_PROPERTIES);
 
@@ -166,7 +166,7 @@ export class GridOptionsWrapper {
                 'colDef',
                 'https://www.ag-grid.com/javascript-grid-column-properties/'
             );
-        })
+        });
     }
 
     private checkGridOptionsProperties() {
@@ -184,7 +184,6 @@ export class GridOptionsWrapper {
         );
     }
 
-
     private checkProperties(
         userProperties: string[],
         validPropertiesAndExceptions: string[],
@@ -201,11 +200,11 @@ export class GridOptionsWrapper {
         let invalidPropertyKeys = Object.keys(invalidProperties);
         invalidPropertyKeys.forEach(invalidPropertyKey => {
             let fuzzySuggestions: string[] = invalidProperties [invalidPropertyKey];
-            console.warn(`ag-grid: invalid ${containerName} property '${invalidPropertyKey}' did you mean any of these: ${fuzzySuggestions.slice(0, 8).join(",")}`)
+            console.warn(`ag-grid: invalid ${containerName} property '${invalidPropertyKey}' did you mean any of these: ${fuzzySuggestions.slice(0, 8).join(",")}`);
         });
 
         if (invalidPropertyKeys.length > 0) {
-            console.warn(`ag-grid: to see all the valid ${containerName} properties please check: ${docsUrl}`)
+            console.warn(`ag-grid: to see all the valid ${containerName} properties please check: ${docsUrl}`);
         }
     }
 
@@ -392,7 +391,7 @@ export class GridOptionsWrapper {
     public getViewportDatasource(): IViewportDatasource { return this.gridOptions.viewportDatasource; }
     public getServerSideDatasource(): IServerSideDatasource { return this.gridOptions.serverSideDatasource; }
     public isEnableSorting() { return isTrue(this.gridOptions.enableSorting) || isTrue(this.gridOptions.enableServerSideSorting); }
-    public isAccentedSort() { return isTrue(this.gridOptions.accentedSort) }
+    public isAccentedSort() { return isTrue(this.gridOptions.accentedSort); }
     public isEnableCellExpressions() { return isTrue(this.gridOptions.enableCellExpressions); }
     public isEnableGroupEdit() { return isTrue(this.gridOptions.enableGroupEdit); }
     public isSuppressMiddleClickScrolls() { return isTrue(this.gridOptions.suppressMiddleClickScrolls); }
@@ -436,7 +435,7 @@ export class GridOptionsWrapper {
 
         _.doOnce(() => {
             if (usingMasterDetail && !this.enterprise) {
-                console.warn('ag-grid: Master Detail is an Enterprise feature of ag-Grid.')
+                console.warn('ag-grid: Master Detail is an Enterprise feature of ag-Grid.');
             }
         }, 'MasterDetailEnterpriseCheck');
 
@@ -455,7 +454,7 @@ export class GridOptionsWrapper {
         let showAggregationPanel = this.isEnableStatusBar();
         if (this.gridOptions.statusPanel && this.gridOptions.statusPanel.components) {
             const aggregationPanelConfig = _.find(this.gridOptions.statusPanel.components, (item) => item.component === 'agAggregationComponent');
-            showAggregationPanel = _.exists(aggregationPanelConfig)
+            showAggregationPanel = _.exists(aggregationPanelConfig);
         }
         return isTrue(showAggregationPanel);
     }
@@ -603,7 +602,6 @@ export class GridOptionsWrapper {
         }
     }
 
-
     public isExternalFilterPresent() {
         if (typeof this.gridOptions.isExternalFilterPresent === 'function') {
             return this.gridOptions.isExternalFilterPresent();
@@ -661,7 +659,7 @@ export class GridOptionsWrapper {
     public getRowBuffer() {
         if (typeof this.gridOptions.rowBuffer === 'number') {
             if (this.gridOptions.rowBuffer < 0) {
-                console.warn('ag-Grid: rowBuffer should not be negative')
+                console.warn('ag-Grid: rowBuffer should not be negative');
             }
             return this.gridOptions.rowBuffer;
         } else {
@@ -802,17 +800,17 @@ export class GridOptionsWrapper {
         if (this.isRowModelDefault()) {
             if (_.missing(this.getDataPathFunc())) {
                 console.warn('ag-Grid: property usingTreeData=true with rowModel=clientSide, but you did not ' +
-                    'provide getDataPath function, please provide getDataPath function if using tree data.')
+                    'provide getDataPath function, please provide getDataPath function if using tree data.');
             }
         }
         if (this.isRowModelServerSide()) {
             if (_.missing(this.getIsServerSideGroupFunc())) {
                 console.warn('ag-Grid: property usingTreeData=true with rowModel=serverSide, but you did not ' +
-                    'provide isServerSideGroup function, please provide isServerSideGroup function if using tree data.')
+                    'provide isServerSideGroup function, please provide isServerSideGroup function if using tree data.');
             }
             if (_.missing(this.getServerSideGroupKeyFunc())) {
                 console.warn('ag-Grid: property usingTreeData=true with rowModel=serverSide, but you did not ' +
-                    'provide getServerSideGroupKey function, please provide getServerSideGroupKey function if using tree data.')
+                    'provide getServerSideGroupKey function, please provide getServerSideGroupKey function if using tree data.');
             }
         }
     }
@@ -831,7 +829,6 @@ export class GridOptionsWrapper {
             }
         };
     }
-
 
     // responsible for calling the onXXX functions on gridOptions
     public globalEventHandler(eventName: string, event?: any): void {
@@ -906,7 +903,7 @@ export class GridOptionsWrapper {
     // Material data table has strict guidelines about whitespace, and these values are different than the ones
     // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
     private specialForNewMaterial(defaultValue: number, sassVariableName: string): number {
-        var theme = this.environment.getTheme();
+        const theme = this.environment.getTheme();
         if (theme.indexOf('ag-theme') === 0) {
             return this.environment.getSassVariable(theme, sassVariableName);
         } else {
