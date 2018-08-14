@@ -46,7 +46,7 @@ import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {ScrollVisibleService} from "./gridPanel/scrollVisibleService";
 import {Downloader} from "./downloader";
 import {XmlFactory} from "./xmlFactory";
-import {GridSerializer} from "./gridSerializer";
+import {GridSerializer} from "./exporter/gridSerializer";
 import {StylingService} from "./styling/stylingService";
 import {ColumnHoverService} from "./rendering/columnHoverService";
 import {ColumnAnimationService} from "./rendering/columnAnimationService";

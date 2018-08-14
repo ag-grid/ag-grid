@@ -1,4 +1,4 @@
-import {CsvExportParams, ExportParams} from "../exportParams";
+import {CsvExportParams, ExportParams} from "../exporter/exportParams";
 
 export interface ExcelWorksheet {
     name: string;

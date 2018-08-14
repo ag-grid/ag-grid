@@ -2,7 +2,7 @@ import {Bean, Autowired, PostConstruct} from "../context/context";
 import {
     GridSerializer, RowAccumulator, BaseGridSerializingSession, RowSpanningAccumulator,
     GridSerializingSession
-} from "../gridSerializer";
+} from "./gridSerializer";
 import {Downloader} from "../downloader";
 import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
@@ -12,7 +12,7 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {
     BaseExportParams, CsvExportParams, ExportParams, ProcessCellForExportParams,
     ProcessHeaderForExportParams
-} from "../exportParams";
+} from "./exportParams";
 import {Constants} from "../constants";
 import {_} from "../utils";
 

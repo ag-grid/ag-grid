@@ -26,7 +26,7 @@ import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {IDatasource} from "./rowModels/iDatasource";
 import {GridCellDef} from "./entities/gridCell";
 import {IServerSideDatasource} from "./interfaces/iServerSideDatasource";
-import {BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams} from "./exportParams";
+import {BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams} from "./exporter/exportParams";
 import {AgEvent} from "./events";
 import {Environment} from "./environment";
 import {PropertyKeys} from "./propertyKeys";
