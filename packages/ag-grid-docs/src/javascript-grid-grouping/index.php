@@ -727,16 +727,6 @@ cellRendererParams: {
         and for different reasons.
     </note>
 
-    <h2 id="suppress-group-row">Suppress Group Row</h2>
-
-    <p>
-        By suppressing the group row you don't give users the ability to close the groups by themselves,
-        but the rows are grouped and the other functionalities take the grouping into account.
-        Sorting, for example, will sort by group.
-    </p>
-
-    <?= example('Suppress Group Row', 'suppress-group-row', 'generated', array("enterprise" => 1)) ?>
-
     <h2 id="showRowGroup">Creating Your Own Group Display Columns</h2>
 
     <p>
