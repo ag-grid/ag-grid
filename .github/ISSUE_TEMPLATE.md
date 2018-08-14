@@ -4,29 +4,20 @@ IF YOU DON'T FILL OUT THE FOLLOWING INFORMATION WE MIGHT CLOSE YOUR ISSUE WITHOU
 
 **I'm submitting a ...**  (check one with "x")
 ```
-YES       [] bug report => see providing a reproducible scenario below
-NEVER     [] feature request => see providing a feature request
-COMMUNITY [] support request => see requesting support
+[] bug report => see 'Providing a Reproducible Scenario'
+[] feature request => do not use Github for feature requests, see 'Customers of ag-Grid'
+[] support request => see 'Requesting Community Support'
 ```
 
-**Requesting support**
-If you are a customer, please see providing a Feature Request, same policy applies for requesting support.
+**Customers of ag-Grid**
 
-If you are not a customer, note that ag-grid staff will label your issue as managed-by-the-community,  this means that ag-grid staff is not going to be actively looking into it, and it will get closed if inactive for more than one month, the community is welcome to help with this question/support issue
+If you are a customer you are entitled to use the ag-Grid's customer support system (powered by Zendesk). Please use this channel for guaranteed response from the ag-Grid team with regards bugs, feature requests and support.
 
+**Requesting Community Support**
 
-**Providing a Feature request**
-We offer two products:
+If you are not a customer of ag-Grid, ag-grid staff will label your issue as managed-by-the-community. This means that ag-Grid staff is not going to be actively looking into it and it will get closed if inactive for more than one month. The community is welcome to help with this question/support issue.
 
-ag-Grid - this is entirely free to use in line with our MIT license. (issues reported via GitHub)
-ag-Grid Enterprise - our commercial version which funds the development of both versions. (issues reported via zendesk)
-
-If you are a customer, you should be using ag-Grid Enterprise in which case you should have access to our customer support system (via zendesk), and that is the only channel where we accept feature requests.
-
-If you are an ag-Grid Enterprise Customer, please raise this in our Zendesk support system - contact info@ag-grid.com for access. This is our primary channel for Support.
-
-
-**Providing a reproducible scenario**
+**Providing a Reproducible Scenario**
 Accepted reproducible scenarios are
 - A description of the detailed steps to reproduce your behaviour in one of our examples in the docs.
 - A plunker
