@@ -186,10 +186,10 @@ include '../documentation-main/documentation_header.php';
         This is used if your application needs to do something after a value has been changed.
     </p>
     <p>
-        The <code>cellValueChanged</code> event contains the same parameters as <code>newValueHandler</code> with one difference,
+        The <code>cellValueChanged</code> event contains the same parameters as the <code>ValueSetter</code> with one difference,
         the <code>newValue</code>. If 'field' is in the column definition, the <code>newValue</code> contains the value
         in the data after the edit. So for example, if the <code>onCellValueChanged</code> converts the provided
-        string value into a number, then <code>newValue</code> for <code>newValueHandler</code> will have the string, and
+        string value into a number, then <code>newValue</code> for <code>ValueSetter</code> will have the string, and
         <code>newValue</code> for <code>onCellValueChanged</code> will have the number.
     </p>
 
