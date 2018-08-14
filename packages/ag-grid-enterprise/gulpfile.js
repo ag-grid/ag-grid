@@ -36,10 +36,10 @@ gulp.task('watch', ['tsc'], tscWatch);
 
 function tscWatch() {
     gulp.watch([
-            './node_modules/ag-grid/dist/lib/**/*',
-            './src/**/*'
-        ],
-        ['tsc']);
+        './node_modules/ag-grid/dist/lib/**/*',
+        './src/**/*'
+    ],
+    ['tsc']);
 }
 
 function cleanDist() {
@@ -55,11 +55,11 @@ function cleanMain() {
 }
 
 function tscSrcTask() {
-    const project = gulpTypescript.createProject('./tsconfig.json', {typescript: typescript});
+    const tsProject = gulpTypescript.createProject('./tsconfig.json', {typescript: typescript});
 
     const tsResult = gulp
         .src('src/**/*.ts')
-        .pipe(gulpTypescript(project));
+        .pipe(tsProject());
 
     return merge([
         tsResult.dts
@@ -68,15 +68,15 @@ function tscSrcTask() {
         tsResult.js
             .pipe(header(headerTemplate, {pkg: pkg}))
             .pipe(gulp.dest('dist/lib'))
-    ])
+    ]);
 }
 
 function tscMainTask() {
-    const project = gulpTypescript.createProject('./tsconfig-main.json', {typescript: typescript});
+    const tsProject = gulpTypescript.createProject('./tsconfig-main.json', {typescript: typescript});
 
     const tsResult = gulp
         .src('./src/main.ts')
-        .pipe(gulpTypescript(project));
+        .pipe(tsProject());
 
     return merge([
         tsResult.dts
@@ -89,7 +89,7 @@ function tscMainTask() {
             .pipe(header(headerTemplate, {pkg: pkg}))
             .pipe(rename("main.js"))
             .pipe(gulp.dest('./'))
-    ])
+    ]);
 }
 
 function webpackTask(minify, styles) {

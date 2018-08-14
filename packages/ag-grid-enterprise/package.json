@@ -26,21 +26,22 @@
   },
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
-    "ag-grid": "^18.1.0",
-    "css-loader": "0.23.1",
-    "gulp": "3.9.0",
-    "gulp-clean": "0.3.1",
-    "gulp-header": "1.7.0",
-    "gulp-rename": "1.2.2",
+    "ag-grid": "^18.1.2",
+    "css-loader": "^1.0.0",
+    "gulp": "^3.9.1",
+    "gulp-clean": "^0.4.0",
+    "gulp-header": "^2.0.5",
+    "gulp-rename": "^1.4.0",
     "gulp-replace": "^1.0.0",
-    "gulp-typescript": "2.10.0",
-    "merge2": "0.3.6",
-    "style-loader": "0.13.0",
-    "typescript": "2.4.1",
-    "webpack": "2.2.1",
-    "webpack-stream": "3.1.0"
+    "gulp-typescript": "^4.0.2",
+    "merge2": "^1.2.2",
+    "style-loader": "^0.22.1",
+    "tslint": "^5.11.0",
+    "typescript": "2.9.2",
+    "webpack": "^3.12.0",
+    "webpack-stream": "^4.0.3"
   },
   "peerDependencies": {
-    "ag-grid": "^18.0.0"
+    "ag-grid": "^18.1.2"
   }
 }

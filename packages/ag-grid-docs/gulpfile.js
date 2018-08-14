@@ -1,15 +1,12 @@
 var gulp = require('gulp');
 var inlinesource = require('gulp-inline-source');
 
-var htmlmin = require('gulp-htmlmin');
 var uncss = require('gulp-uncss');
-const debug = require('gulp-debug');
 
 const cp = require('child_process');
 
 const webpack = require('webpack-stream');
 const named = require('vinyl-named');
-const path = require('path');
 
 const filter = require('gulp-filter');
 const gulpIf = require('gulp-if');
@@ -23,7 +20,6 @@ gulp.task('release', ['generate-examples', 'process-src', 'bundle-site', 'copy-f
 gulp.task('default', ['release']);
 
 gulp.task('bundle-site', () => {
-    const theWebpack = require('webpack')
     const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
     const webpackConfig = require('./webpack-config/site.js');
     webpackConfig.plugins.push( new UglifyJSPlugin({ sourceMap: true }) );
@@ -40,8 +36,6 @@ const PACKAGES_DIR = "dev";
 
 // the below caused errors if we tried to copy in from ag-grid and ag-grid-enterprise linked folders
 gulp.task('process-src', () => {
-    const version = require('../ag-grid/package.json').version;
-
     const phpFilter = filter('**/*.php', {restore: true});
     const bootstrapFilter = filter('src/dist/bootstrap/css/bootstrap.css', {
         restore: true
