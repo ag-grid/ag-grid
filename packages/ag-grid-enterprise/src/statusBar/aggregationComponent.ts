@@ -15,7 +15,8 @@ import {
     PostConstruct,
     RefSelector,
     RowNode,
-    ValueService
+    ValueService,
+    VisibleChangedEvent
 } from 'ag-grid';
 import {RangeController} from "../rangeController";
 import {AggregationValueComponent} from "./aggregationValueComponent";
@@ -58,7 +59,8 @@ export class AggregationComponent extends Component {
         this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, this.onRangeSelectionChanged.bind(this));
     }
 
-    public init() {}
+    public init() {
+    }
 
     private setAggregationComponentValue(aggFuncName: string, value: number, visible: boolean) {
         // if the parent component (statusBar) has set our visibility to false, we don't override it
@@ -194,6 +196,14 @@ export class AggregationComponent extends Component {
         this.setAggregationComponentValue('min', min, gotNumberResult);
         this.setAggregationComponentValue('max', max, gotNumberResult);
         this.setAggregationComponentValue('avg', (sum / numberCount), gotNumberResult);
+
+        // let the parent component know if any components are visible
+        let event: VisibleChangedEvent = {
+            type: Component.EVENT_VISIBLE_CHANGED,
+            visible: gotResult || gotNumberResult
+        };
+        this.dispatchEvent(event);
+
     }
 
     private getRowNode(gridRow: GridRow): RowNode {

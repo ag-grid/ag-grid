@@ -2,6 +2,7 @@
 
 import {ComponentResolver} from "./components/framework/componentResolver";
 import {IStatusBar, IStatusBarParams} from "./interfaces/iStatusBar";
+import {VisibleChangedEvent} from "./widgets/component";
 
 declare let global: any;
 let globalObj = typeof global === 'undefined' ? {} : global;
@@ -178,7 +179,7 @@ export {StylingService} from "./styling/stylingService";
 
 // widgets
 export {AgCheckbox} from "./widgets/agCheckbox";
-export {Component} from "./widgets/component";
+export {Component, VisibleChangedEvent} from "./widgets/component";
 export {PopupService} from "./widgets/popupService";
 export {TouchListener, TapEvent, LongTapEvent} from "./widgets/touchListener";
 
