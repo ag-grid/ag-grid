@@ -719,6 +719,7 @@ cellRendererParams: {
         only the filter is reapplied, the grouping is not reapplied.
     </note>
 
+
     <note>
         The properties <code>groupRemoveSingleChildren</code>, <code>groupRemoveLowestSingleChildren</code>
         and <code>groupHideOpenParents</code> are mutually exclusive, you can only pick one.
