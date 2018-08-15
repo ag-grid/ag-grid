@@ -1,7 +1,8 @@
 var gulp = require('gulp');
+var postcss = require('gulp-postcss');
+var uncss = require('postcss-uncss');
 var inlinesource = require('gulp-inline-source');
 
-var uncss = require('gulp-uncss');
 
 const cp = require('child_process');
 
@@ -41,10 +42,12 @@ gulp.task('process-src', () => {
         restore: true
     });
 
-    const uncssPipe = uncss({
-        html: ['src/**/*.php', 'src/**/*.html'],
-        ignore: ['.nav-pills > li.active > a', '.nav-pills > li.active > a:hover', '.nav-pills > li.active > a:focus']
-    });
+    const uncssPipe = [
+        uncss({
+            html: ['src/**/*.php', 'src/**/*.html'],
+            ignore: ['.nav-pills > li.active > a', '.nav-pills > li.active > a:hover', '.nav-pills > li.active > a:focus']
+        })
+    ];
 
     return (
         gulp
@@ -57,7 +60,7 @@ gulp.task('process-src', () => {
             // do uncss
             .pipe(bootstrapFilter)
             // .pipe(debug())
-            .pipe(gulpIf(!SKIP_INLINE, uncssPipe))
+            .pipe(gulpIf(!SKIP_INLINE, postcss(uncssPipe)))
             .pipe(bootstrapFilter.restore)
             .pipe(gulp.dest('./dist'))
     );
