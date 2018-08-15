@@ -150,8 +150,9 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         if (value == null || value === undefined) {
             return filterType === BaseFilter.NOT_EQUAL || filterType === BaseFilter.NOT_CONTAINS;
         }
+        let filterTextFormatted = this.formatter(filterText);
         let valueFormatted: string = this.formatter(value);
-        return this.comparator (filterType, valueFormatted, filterText);
+        return this.comparator (filterType, valueFormatted, filterTextFormatted);
     }
 
     private onFilterTextFieldChanged(type:FilterConditionType) {
