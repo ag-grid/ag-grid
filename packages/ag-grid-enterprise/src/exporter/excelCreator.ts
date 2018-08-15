@@ -34,9 +34,9 @@ import {
 import {ExcelXmlFactory} from "./excelXmlFactory";
 
 export interface ExcelMixedStyle {
-    key: string,
-    excelID: string,
-    result: ExcelStyle
+    key: string;
+    excelID: string;
+    result: ExcelStyle;
 }
 
 export class ExcelGridSerializingSession extends BaseGridSerializingSession<ExcelCell[][]> {
@@ -61,6 +61,7 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession<Exce
                 suppressTextAsCDATA:boolean) {
         super(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback, (raw: string) => raw);
         this.stylesByIds = {};
+
         if (!baseExcelStyles) {
             this.excelStyles = [];
         } else {
@@ -90,7 +91,7 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession<Exce
             it.getColDef().cellStyle;
             return {
                 width: it.getActualWidth()
-            }
+            };
         });
     }
 
@@ -123,7 +124,7 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession<Exce
         });
         return {
             onColumn: onNewColumnAccumulator.bind(this, this.rows.length, currentCells)()
-        }
+        };
     }
 
     onNewHeaderColumn(rowIndex: number, currentCells: ExcelCell[]): (column: Column, index: number, node?: RowNode) => void {
@@ -131,19 +132,19 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession<Exce
         return (column: Column, index: number, node?: RowNode) => {
             let nameForCol = this.extractHeaderValue(column);
             let styleIds: string[] = that.styleLinker(RowType.HEADER, rowIndex, index, nameForCol, column, null);
-            currentCells.push(this.createCell(styleIds.length > 0 ? styleIds[0] : null, 'String', nameForCol))
-        }
+            currentCells.push(this.createCell(styleIds.length > 0 ? styleIds[0] : null, 'String', nameForCol));
+        };
     }
 
     public parse(): string {
         function join(header: ExcelCell[][], body: ExcelRow[], footer: ExcelCell[][]): ExcelRow[] {
             let all: ExcelRow[] = [];
             if (header) {
-                header.forEach(rowArray => all.push({cells: rowArray}))
+                header.forEach(rowArray => all.push({cells: rowArray}));
             }
             body.forEach(it => all.push(it));
             if (footer) {
-                footer.forEach(rowArray => all.push({cells: rowArray}))
+                footer.forEach(rowArray => all.push({cells: rowArray}));
             }
             return all;
         }
@@ -155,7 +156,7 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession<Exce
                 rows: join(this.customHeader, this.rows, this.customFooter)
             }
         }];
-        return this.excelXmlFactory.createExcelXml(this.excelStyles, data)
+        return this.excelXmlFactory.createExcelXml(this.excelStyles, data);
     }
 
     onNewBodyColumn(rowIndex: number, currentCells: ExcelCell[]): (column: Column, index: number, node?: RowNode) => void {
@@ -174,8 +175,8 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession<Exce
                 excelStyleId = this.mixedStyles[key].excelID;
             }
             let type: ExcelDataType = Utils.isNumeric(valueForCell) ? 'Number' : 'String';
-            currentCells.push(that.createCell(excelStyleId, type, valueForCell))
-        }
+            currentCells.push(that.createCell(excelStyleId, type, valueForCell));
+        };
     }
 
     addNewMixedStyle(styleIds: string[]): void {
@@ -209,7 +210,6 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession<Exce
         return this.stylesByIds[styleId];
     }
 
-
     private createCell(styleId: string, type: ExcelDataType, value: string): ExcelCell {
         let actualStyle: ExcelStyle = this.stylesByIds[styleId];
         let styleExists: boolean = actualStyle != null;
@@ -230,7 +230,7 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession<Exce
                 case 'boolean':
                     return 'Boolean';
                 default:
-                    console.warn(`ag-grid: Unrecognized data type for excel export [${actualStyle.id}.dataType=${actualStyle.dataType}]`)
+                    console.warn(`ag-grid: Unrecognized data type for excel export [${actualStyle.id}.dataType=${actualStyle.dataType}]`);
             }
 
             return type;
@@ -238,12 +238,11 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession<Exce
 
         let typeTransformed: ExcelDataType = getType();
 
-        let massageText: (value:string)=> string = (value:string)=> {
+        let massageText: (value:string)=> string = (val:string)=> {
             return this.suppressTextAsCDATA ?
-                _.escape(value) :
-                `<![CDATA[${value}]]>`;
+                _.escape(val) :
+                `<![CDATA[${val}]]>`;
         };
-
 
         return {
             styleId: styleExists ? styleId : null,
@@ -323,16 +322,15 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], ExcelGridSerializin
             this.gridOptions.excelStyles,
             this.styleLinker.bind(this),
             params && params.suppressTextAsCDATA ? params.suppressTextAsCDATA : false
-        )
+        );
     }
-
 
     private styleLinker(rowType: RowType, rowIndex: number, colIndex: number, value: string, column: Column, node: RowNode): string[] {
         if ((rowType === RowType.HEADER) || (rowType === RowType.HEADER_GROUPING)) return ["header"];
         if (!this.gridOptions.excelStyles || this.gridOptions.excelStyles.length === 0) return null;
 
         let styleIds: string[] = this.gridOptions.excelStyles.map((it: ExcelStyle) => {
-            return it.id
+            return it.id;
         });
 
         let applicableStyles: string [] = [];
@@ -359,9 +357,8 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], ExcelGridSerializin
         });
     }
 
-    public isExportSuppressed ():boolean{
+    public isExportSuppressed():boolean {
         return this.gridOptionsWrapper.isSuppressExcelExport();
     }
 
 }
-

@@ -88,7 +88,7 @@ export class DetailCellRenderer extends Component {
 
         if (_.missing(paramsAny.template)) {
             // use default template
-            this.setTemplate(DetailCellRenderer.TEMPLATE)
+            this.setTemplate(DetailCellRenderer.TEMPLATE);
         } else {
             // use user provided template
             if (typeof paramsAny.template === 'string') {
@@ -99,7 +99,7 @@ export class DetailCellRenderer extends Component {
                 this.setTemplate(template);
             } else {
                 console.warn('ag-Grid: detailCellRendererParams.template should be function or string');
-                this.setTemplate(DetailCellRenderer.TEMPLATE)
+                this.setTemplate(DetailCellRenderer.TEMPLATE);
             }
         }
     }

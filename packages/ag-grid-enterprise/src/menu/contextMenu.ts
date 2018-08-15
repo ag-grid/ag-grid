@@ -64,8 +64,8 @@ export class ContextMenuFactory implements IContextMenuFactory {
             let suppressCsv = this.gridOptionsWrapper.isSuppressCsvExport();
             let onIPad = _.isUserAgentIPad();
             let anyExport: boolean = !onIPad && (!suppressExcel || !suppressCsv);
-            if (anyExport){
-                defaultMenuOptions.push('export')
+            if (anyExport) {
+                defaultMenuOptions.push('export');
             }
         } else {
             // if user clicks outside of a cell (eg below the rows, or not rows present)
@@ -131,7 +131,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
 
 }
 
-class ContextMenu extends Component implements IComponent<any>{
+class ContextMenu extends Component implements IComponent<any> {
 
     @Autowired('context') private context: Context;
     @Autowired('clipboardService') private clipboardService: ClipboardService;

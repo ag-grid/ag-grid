@@ -370,11 +370,11 @@ export class RangeController implements IRangeController {
         let toIndex = allColumns.indexOf(columnTo);
 
         if (fromIndex < 0) {
-            console.log('ag-Grid: column ' + columnFrom.getId() + ' is not visible');
+            console.warn('ag-Grid: column ' + columnFrom.getId() + ' is not visible');
             return null;
         }
         if (toIndex < 0) {
-            console.log('ag-Grid: column ' + columnTo.getId() + ' is not visible');
+            console.warn('ag-Grid: column ' + columnTo.getId() + ' is not visible');
             return null;
         }
 

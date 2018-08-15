@@ -65,7 +65,7 @@ import {ToolPanelColumnComp} from "./toolPanel/toolPanelColumnComp";
 import {ToolPanelSelectComp} from "./toolPanel/toolPanelSelectComp";
 
 import {StatusBar} from "./statusBar/statusBar";
-import {AggregationComponent} from "./statusBar/aggregationComponent"
+import {AggregationComponent} from "./statusBar/aggregationComponent";
 import {AggregationValueComponent} from "./statusBar/aggregationValueComponent";
 
 let rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};

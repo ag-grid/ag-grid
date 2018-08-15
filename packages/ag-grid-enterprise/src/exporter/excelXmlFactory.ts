@@ -22,23 +22,23 @@ export class ExcelXmlFactory {
 
     @Autowired('xmlFactory') private xmlFactory: XmlFactory;
 
-    public createExcelXml(styles: ExcelStyle[], worksheets: ExcelWorksheet[]) :string{
+    public createExcelXml(styles: ExcelStyle[], worksheets: ExcelWorksheet[]) :string {
         let documentProperties: XmlElement = this.documentProperties();
         let excelWorkbook = this.excelWorkbook();
 
         return this.excelXmlHeader() +
-            this.xmlFactory.createXml(this.workbook(documentProperties, excelWorkbook, styles, worksheets), boolean=>boolean?"1":"0");
+            this.xmlFactory.createXml(this.workbook(documentProperties, excelWorkbook, styles, worksheets), boolean => boolean ? '1': '0');
     }
 
-    private workbook(documentProperties: XmlElement, excelWorkbook: XmlElement, styles: ExcelStyle[], worksheets: ExcelWorksheet[]) : XmlElement{
+    private workbook(documentProperties: XmlElement, excelWorkbook: XmlElement, styles: ExcelStyle[], worksheets: ExcelWorksheet[]) : XmlElement {
         let children : XmlElement [] = [
             documentProperties,
             excelWorkbook,
             this.stylesXmlElement(styles)
         ];
-        Utils.map(worksheets, (it):XmlElement=>{
+        Utils.map(worksheets, (it):XmlElement => {
             return this.worksheetXmlElement (it);
-        }).forEach((it)=>{
+        }).forEach((it) => {
             children.push(it);
         });
 
@@ -62,7 +62,7 @@ export class ExcelXmlFactory {
         };
     }
 
-    private excelXmlHeader() : string{
+    private excelXmlHeader() : string {
         // need to take out the question mark, otherwise it bothers php when have < and ? beside each
         // other in a string, as php thinks it's a directive for php
         let QUESTION_MARK = '?';
@@ -70,18 +70,18 @@ export class ExcelXmlFactory {
             '<'+QUESTION_MARK+'mso-application progid="Excel.Sheet"'+QUESTION_MARK+'>' + LINE_SEPARATOR;
     }
 
-    private stylesXmlElement (styles:ExcelStyle[]):XmlElement{
+    private stylesXmlElement(styles:ExcelStyle[]):XmlElement {
         return {
             name:'Styles',
-            children:styles ? Utils.map(styles, (it)=>{
+            children:styles ? Utils.map(styles, (it) => {
                 return this.styleXmlElement (it);
             }): []
         };
     }
 
-    private styleXmlElement (style:ExcelStyle):XmlElement{
+    private styleXmlElement(style:ExcelStyle):XmlElement {
         let borders: XmlElement[] = [];
-        if (style.borders){
+        if (style.borders) {
             [
                 style.borders.borderBottom,
                 style.borders.borderLeft,
@@ -102,13 +102,13 @@ export class ExcelXmlFactory {
                             }
                         }]
                     }
-                })
+                });
             });
         }
 
         let children:XmlElement[] = [];
 
-        if (style.alignment){
+        if (style.alignment) {
             children.push({
                 name: "Alignment",
                 properties: {
@@ -126,17 +126,17 @@ export class ExcelXmlFactory {
                         }
                     }]
                 }
-            })
+            });
         }
 
-        if (style.borders){
+        if (style.borders) {
             children.push({
                 name: "Borders",
                 children: borders
             });
         }
 
-        if (style.font){
+        if (style.font) {
             children.push({
                 name: "Font",
                 properties: {
@@ -162,10 +162,10 @@ export class ExcelXmlFactory {
                         }
                     }]
                 }
-            })
+            });
         }
 
-        if (style.interior){
+        if (style.interior) {
             children.push({
                 name: "Interior",
                 properties: {
@@ -178,10 +178,10 @@ export class ExcelXmlFactory {
                         }
                     }]
                 }
-            })
+            });
         }
 
-        if (style.protection){
+        if (style.protection) {
             children.push({
                 name: "Protection",
                 properties: {
@@ -193,10 +193,10 @@ export class ExcelXmlFactory {
                         }
                     }]
                 }
-            })
+            });
         }
 
-        if (style.numberFormat){
+        if (style.numberFormat) {
             children.push({
                 name: "NumberFormat",
                 properties: {
@@ -207,9 +207,8 @@ export class ExcelXmlFactory {
                         }
                     }]
                 }
-            })
+            });
         }
-
 
         return {
             name: "Style",
@@ -224,20 +223,20 @@ export class ExcelXmlFactory {
             },
             children: children
 
-        }
+        };
     }
 
-    private worksheetXmlElement (worksheet:ExcelWorksheet):XmlElement{
+    private worksheetXmlElement(worksheet:ExcelWorksheet):XmlElement {
         let children:XmlElement[] = [];
-        Utils.map(worksheet.table.columns, (it):XmlElement=>{
+        Utils.map(worksheet.table.columns, (it):XmlElement => {
             return this.columnXmlElement (it);
-        }).forEach((it)=>{
+        }).forEach((it) => {
             children.push(it);
         });
 
-        Utils.map(worksheet.table.rows, (it):XmlElement=>{
+        Utils.map(worksheet.table.rows, (it):XmlElement => {
             return this.rowXmlElement (it);
-        }).forEach((it)=>{
+        }).forEach((it) => {
             children.push(it);
         });
 
@@ -258,7 +257,7 @@ export class ExcelXmlFactory {
         };
     }
 
-    private columnXmlElement (column:ExcelColumn): XmlElement {
+    private columnXmlElement(column:ExcelColumn): XmlElement {
         return {
             name:"Column",
             properties:{
@@ -272,11 +271,11 @@ export class ExcelXmlFactory {
         };
     }
 
-    private rowXmlElement (row:ExcelRow): XmlElement {
+    private rowXmlElement(row:ExcelRow): XmlElement {
         return {
             name: "Row",
-            children: Utils.map(row.cells, (it:ExcelCell):XmlElement=>{
-                return this.rowCellXmlElement (it)
+            children: Utils.map(row.cells, (it:ExcelCell):XmlElement => {
+                return this.rowCellXmlElement(it);
             })
         };
     }
@@ -286,11 +285,10 @@ export class ExcelXmlFactory {
         if (cell.mergeAcross) {
             properties['MergeAcross'] = cell.mergeAcross;
         }
-        if (cell.styleId)
-        {
+        if (cell.styleId) {
             properties['StyleID'] = cell.styleId;
-
         }
+
         return {
             name: "Cell",
             properties: {
@@ -311,11 +309,11 @@ export class ExcelXmlFactory {
                 },
                 textNode: cell.data.value
             }]
-        }
+        };
 
     }
 
-    private excelWorkbook() : XmlElement{
+    private excelWorkbook() : XmlElement {
         return {
             name: "ExcelWorkbook",
             properties: {
@@ -349,7 +347,7 @@ export class ExcelXmlFactory {
         };
     }
 
-    private documentProperties()  : XmlElement{
+    private documentProperties(): XmlElement {
         return {
             name: "DocumentProperties",
             properties: {
@@ -363,6 +361,5 @@ export class ExcelXmlFactory {
             }]
         };
     }
-
 
 }

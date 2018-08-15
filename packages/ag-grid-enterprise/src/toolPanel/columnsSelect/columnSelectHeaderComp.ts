@@ -1,6 +1,6 @@
 import {PreConstruct, _, Autowired, Component, Context, Events, GridOptionsWrapper, PostConstruct, RefSelector, ColumnController, EventService} from "ag-grid/main";
 
-export enum SELECTED_STATE {CHECKED, UNCHECKED, INDETERMINIATE};
+export enum SELECTED_STATE {CHECKED, UNCHECKED, INDETERMINIATE}
 
 export class ColumnSelectHeaderComp extends Component {
 
@@ -141,7 +141,7 @@ export class ColumnSelectHeaderComp extends Component {
 
     private setColumnsCheckedState(): void {
 
-        let columns = this.columnController.getAllPrimaryColumns().filter(col => !col.isLockVisible())
+        let columns = this.columnController.getAllPrimaryColumns().filter(col => !col.isLockVisible());
         let pivotMode = this.columnController.isPivotMode();
 
         let checkedCount = 0;
@@ -160,7 +160,7 @@ export class ColumnSelectHeaderComp extends Component {
             if (pivotMode) {
                 let noPivotModeOptionsAllowed = !col.isAllowPivot() && !col.isAllowRowGroup() && !col.isAllowValue();
                 if (noPivotModeOptionsAllowed) { return; }
-                checked = col.isValueActive() || col.isPivotActive() || col.isRowGroupActive()
+                checked = col.isValueActive() || col.isPivotActive() || col.isRowGroupActive();
             } else {
                 checked = col.isVisible();
             }

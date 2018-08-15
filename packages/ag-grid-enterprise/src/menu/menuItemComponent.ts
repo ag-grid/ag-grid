@@ -19,13 +19,14 @@ export class MenuItemComponent extends Component {
 
     // private instance = Math.random();
 
-    private static TEMPLATE =
-        '<div class="ag-menu-option">' +
-        '  <span id="eIcon" class="ag-menu-option-icon"></span>' +
-        '  <span id="eName" class="ag-menu-option-text"></span>' +
-        '  <span id="eShortcut" class="ag-menu-option-shortcut"></span>' +
-        '  <span id="ePopupPointer" class="ag-menu-option-popup-pointer"></span>' +
-        '</div>';
+    private static TEMPLATE = `
+        <div class="ag-menu-option">
+          <span id="eIcon" class="ag-menu-option-icon"></span>
+          <span id="eName" class="ag-menu-option-text"></span>
+          <span id="eShortcut" class="ag-menu-option-shortcut"></span>
+          <span id="ePopupPointer" class="ag-menu-option-popup-pointer"></span>
+        </div>
+    `;
 
     public static EVENT_ITEM_SELECTED = 'itemSelected';
 
@@ -47,7 +48,7 @@ export class MenuItemComponent extends Component {
             } else if (typeof this.params.icon === 'string') {
                 this.queryForHtmlElement('#eIcon').innerHTML = <string> this.params.icon;
             } else {
-                console.log('ag-Grid: menu item icon must be DOM node or string');
+                console.warn('ag-Grid: menu item icon must be DOM node or string');
             }
         } else {
             // if i didn't put space here, the alignment was messed up, probably
@@ -56,8 +57,8 @@ export class MenuItemComponent extends Component {
             this.queryForHtmlElement('#eIcon').innerHTML = '&nbsp;';
         }
 
-        if (this.params.tooltip){
-            this.getGui().setAttribute('title', this.params.tooltip)
+        if (this.params.tooltip) {
+            this.getGui().setAttribute('title', this.params.tooltip);
         }
 
         if (this.params.shortcut) {
@@ -82,8 +83,8 @@ export class MenuItemComponent extends Component {
             this.addGuiEventListener('click', this.onOptionSelected.bind(this));
         }
 
-        if (this.params.cssClasses){
-            this.params.cssClasses.forEach(it=>_.addCssClass(this.getGui(), it));
+        if (this.params.cssClasses) {
+            this.params.cssClasses.forEach(it => _.addCssClass(this.getGui(), it));
         }
     }
 

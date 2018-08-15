@@ -41,11 +41,11 @@ import {
 import {RangeController} from "./rangeController";
 
 interface RowCallback {
-    (gridRow: GridRow, rowNode: RowNode, columns: Column[], rangeIndex: number): void
+    (gridRow: GridRow, rowNode: RowNode, columns: Column[], rangeIndex: number): void;
 }
 
 interface ColumnCallback {
-    (columns: Column[]): void
+    (columns: Column[]): void;
 }
 
 @Bean('clipboardService')
@@ -143,15 +143,15 @@ export class ClipboardService implements IClipboardService {
 
             // otherwise we are not the first row, so copy
             updatedRowNodes.push(rowNode);
-            columns.forEach( (column: Column, index: number) => {
+            columns.forEach( (column: Column, idx: number) => {
                 if (!column.isCellEditable(rowNode)) return;
 
                 // repeat data for columns we don't have data for - happens when to range is bigger than copied data range
-                if (index >= currentRowData.length) {
-                    index = index % currentRowData.length;
+                if (idx >= currentRowData.length) {
+                    idx = idx % currentRowData.length;
                 }
 
-                let firstRowValue = currentRowData[index];
+                let firstRowValue = currentRowData[idx];
                 let processCellFromClipboardFunc = this.gridOptionsWrapper.getProcessCellFromClipboardFunc();
                 firstRowValue = this.userProcessCell(rowNode, column, firstRowValue, processCellFromClipboardFunc, Constants.EXPORT_TYPE_DRAG_COPY);
                 this.valueService.setValue(rowNode, column, firstRowValue);
@@ -328,7 +328,7 @@ export class ClipboardService implements IClipboardService {
                 if (column.isCellEditable(rowNode)) {
                     this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, updatedColumnIds, Constants.EXPORT_TYPE_CLIPBOARD);
                 }
-            })
+            });
         };
         this.iterateActiveRanges(false, rowCallback);
     }
@@ -501,7 +501,6 @@ export class ClipboardService implements IClipboardService {
 
         this.copyDataToClipboard(data);
 
-
         let cellId = focusedCell.createId();
         let cellsToFlash = {};
         (<any>cellsToFlash)[cellId] = true;
@@ -598,7 +597,7 @@ export class ClipboardService implements IClipboardService {
                 if (!result) {
                     console.warn('ag-grid: Browser did not allow document.execCommand(\'copy\'). Ensure ' +
                         'api.copySelectedRowsToClipboard() is invoked via a user event, i.e. button click, otherwise ' +
-                        'the browser will prevent it for security reasons.')
+                        'the browser will prevent it for security reasons.');
                 }
             });
         }

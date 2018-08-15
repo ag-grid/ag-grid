@@ -23,11 +23,12 @@ export class SetFilterListItem extends Component {
     @Autowired('cellRendererService') private cellRendererService: CellRendererService;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
 
-    private static TEMPLATE =
-        '<label class="ag-set-filter-item">'+
-        '<div class="ag-filter-checkbox"></div>'+
-        '<span class="ag-filter-value"></span>'+
-        '</label>';
+    private static TEMPLATE = `
+        <label class="ag-set-filter-item">
+        <div class="ag-filter-checkbox"></div>
+        <span class="ag-filter-value"></span>
+        </label>
+    `;
 
     private eCheckbox: HTMLElement;
     private eClickableArea: HTMLElement;
@@ -77,16 +78,16 @@ export class SetFilterListItem extends Component {
         this.updateCheckboxIcon();
     }
 
-    private updateCheckboxIcon (){
-        if (this.eCheckbox.children){
-            for (let i=0; i<this.eCheckbox.children.length; i++){
+    private updateCheckboxIcon() {
+        if (this.eCheckbox.children) {
+            for (let i=0; i<this.eCheckbox.children.length; i++) {
                 this.eCheckbox.removeChild(this.eCheckbox.children.item(i));
             }
         }
 
-        if (this.isSelected()){
+        if (this.isSelected()) {
             this.eCheckbox.appendChild(this.eCheckedIcon);
-        }else{
+        } else {
             this.eCheckbox.appendChild(this.eUncheckedIcon);
         }
     }
@@ -102,10 +103,10 @@ export class SetFilterListItem extends Component {
 
         if (!componentPromise) return;
 
-        componentPromise.then(component=>{
+        componentPromise.then(component => {
             if (component && component.destroy) {
                 this.addDestroyFunc(component.destroy.bind(component));
             }
-        })
+        });
     }
 }
