@@ -9,8 +9,41 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise"> Row Grouping </h1>
 
 <p class="lead">
-    This section covers Server-side Row Grouping using the Server-Side Row Model.
+    This section covers Server-side Row Grouping using the Server-side Row Model.
 </p>
+
+<p>
+    Perhaps the most compelling reason to choose the Server-side Row Model is to achieve lazy-loading of Row Groups.
+</p>
+
+
+<h2>
+    Server-side Get Rows Request
+</h2>
+
+
+<p>
+    The relevant <code>IServerSideGetRowsRequest</code> parameters for Row Grouping are as follows:
+</p>
+
+<snippet>
+IServerSideGetRowsRequest {
+
+    // row group columns
+    rowGroupCols: ColumnVO[];
+
+    // what groups the user is viewing
+    groupKeys: string[];
+
+    ... // other params
+}
+</snippet>
+
+<p>
+    Where <code>rowGroupCols</code> contains all the columns (dimensions) the grid is grouping on, i.e. 'Country', 'Year',
+    and <code>groupKeys</code> contains the list of group keys selected, i.e. ['Argentina', 2012].
+</p>
+
 
 <h2>Example - Pre-defined Grouping - Mocked Server</h2>
 

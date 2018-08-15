@@ -18,7 +18,6 @@ import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {GridApi} from "./gridApi";
 import {IToolPanel} from "./interfaces/iToolPanel";
 import {RefSelector} from "./widgets/componentAnnotations";
-import {IStatusBar} from "./interfaces/iStatusBar";
 import {observeResize} from "./resizeObserver";
 import {Events, GridSizeChangedEvent} from "./events";
 
@@ -69,7 +68,6 @@ export class GridCore extends Component {
     @Optional('rowGroupCompFactory') private rowGroupCompFactory: ICompFactory;
     @Optional('pivotCompFactory') private pivotCompFactory: ICompFactory;
 
-    @RefSelector('statusBar') private statusBar: IStatusBar;
     @RefSelector('gridPanel') private gridPanel: GridPanel;
     @RefSelector('toolPanel') private toolPanelComp: IToolPanel;
     @RefSelector('rootWrapperBody') private eRootWrapperBody: HTMLElement;

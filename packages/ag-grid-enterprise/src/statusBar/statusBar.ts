@@ -7,11 +7,10 @@ import {
     Context,
     GridOptions,
     GridOptionsWrapper,
-    Promise,
     PostConstruct,
+    Promise,
     RefSelector
 } from 'ag-grid';
-import {AggregationComponent} from "./aggregationComponent";
 
 export class StatusBar extends Component {
 
@@ -27,6 +26,11 @@ export class StatusBar extends Component {
 
     @RefSelector('panelComponents') private ePanelComponents: HTMLElement;
 
+    // used to determine if we show or hide the status bar (assuming isEnableStatusBar is set)
+    // we can't readily determine if a user supplied component is actually visible, so if a user supplied component exists
+    // we'll show the status bar regardless
+    private userSuppliedComponents = false;
+
     constructor() {
         super(StatusBar.TEMPLATE);
     }
@@ -36,6 +40,10 @@ export class StatusBar extends Component {
         const statusPanelComponents: any[] = [];
         if (this.gridOptions.statusPanel && this.gridOptions.statusPanel.components) {
             statusPanelComponents.push(...this.gridOptions.statusPanel.components);
+
+            this.userSuppliedComponents = this.gridOptions.statusPanel.components.map((componentConfig) => componentConfig.component)
+                .filter((componentName) => componentName !== 'agAggregationComponent')
+                .length > 0;
         } else {
             // if no components specified, we automatically include the aggregation panel
             statusPanelComponents.push({component: 'agAggregationComponent'})
@@ -53,7 +61,7 @@ export class StatusBar extends Component {
                 componentPromises.push(
                     this.componentResolver.createAgGridComponent(null,
                         params,
-                        componentConfig.component,
+                        'statusBarComponent',
                         componentConfig.componentParams,
                         componentConfig.component)
                 );
@@ -64,12 +72,22 @@ export class StatusBar extends Component {
         Promise.all(componentPromises)
             .then((resolvedPromises) => {
                 _.forEach(resolvedPromises, (component: Component) => {
-                    if(_.exists(component)) {
+                    if (_.exists(component)) {
+
+                        if (component.addEventListener && !this.userSuppliedComponents) {
+                            component.addEventListener(Component.EVENT_VISIBLE_CHANGED, this.onChildComponentChanged.bind(this));
+                        }
                         this.ePanelComponents.appendChild(component.getGui());
                     }
                 })
             });
 
         this.setVisible(this.gridOptionsWrapper.isEnableStatusBar());
+    }
+
+    private onChildComponentChanged(params: { type: string, visible: boolean}) {
+        this.setVisible(this.gridOptionsWrapper.isEnableStatusBar() &&
+            (this.userSuppliedComponents || params.visible)
+        );
     }
 }
