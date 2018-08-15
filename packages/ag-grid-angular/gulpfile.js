@@ -22,7 +22,7 @@ gulp.task('clean-ngc', (callback) => {
 });
 
 gulp.task('ngc', (callback) => {
-    return runSequence('ngc-src', 'ngc-main', callback)
+    return runSequence('ngc-src', 'ngc-main', callback);
 });
 
 gulp.task('ngc-src', (callback) => {
@@ -46,7 +46,7 @@ gulp.task('build-main', ['ngc-main'], (callback) => {
         .pipe(gulp.dest("./"));
     return gulp.src("./exports.metadata.json")
         .pipe(rename(('main.metadata.json')))
-        .pipe(gulp.dest("./"))
+        .pipe(gulp.dest("./"));
 });
 
 gulp.task('ngc-main', (callback) => {
@@ -57,10 +57,10 @@ gulp.task('ngc-main', (callback) => {
 
 gulp.task('watch', ['ngc-src'], () => {
     gulp.watch([
-            './src/*.ts',
-            './node_modules/ag-grid/dist/lib/**/*'
-        ],
-        ['ngc-src']);
+        './src/*.ts',
+        './node_modules/ag-grid/dist/lib/**/*'
+    ],
+    ['ngc-src']);
 });
 
 

@@ -1,15 +1,13 @@
 var gulp = require('gulp');
+var postcss = require('gulp-postcss');
+var uncss = require('postcss-uncss');
 var inlinesource = require('gulp-inline-source');
 
-var htmlmin = require('gulp-htmlmin');
-var uncss = require('gulp-uncss');
-const debug = require('gulp-debug');
 
 const cp = require('child_process');
 
 const webpack = require('webpack-stream');
 const named = require('vinyl-named');
-const path = require('path');
 
 const filter = require('gulp-filter');
 const gulpIf = require('gulp-if');
@@ -23,7 +21,6 @@ gulp.task('release', ['generate-examples', 'process-src', 'bundle-site', 'copy-f
 gulp.task('default', ['release']);
 
 gulp.task('bundle-site', () => {
-    const theWebpack = require('webpack')
     const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
     const webpackConfig = require('./webpack-config/site.js');
     webpackConfig.plugins.push( new UglifyJSPlugin({ sourceMap: true }) );
@@ -40,17 +37,17 @@ const PACKAGES_DIR = "dev";
 
 // the below caused errors if we tried to copy in from ag-grid and ag-grid-enterprise linked folders
 gulp.task('process-src', () => {
-    const version = require('../ag-grid/package.json').version;
-
     const phpFilter = filter('**/*.php', {restore: true});
     const bootstrapFilter = filter('src/dist/bootstrap/css/bootstrap.css', {
         restore: true
     });
 
-    const uncssPipe = uncss({
-        html: ['src/**/*.php', 'src/**/*.html'],
-        ignore: ['.nav-pills > li.active > a', '.nav-pills > li.active > a:hover', '.nav-pills > li.active > a:focus']
-    });
+    const uncssPipe = [
+        uncss({
+            html: ['src/**/*.php', 'src/**/*.html'],
+            ignore: ['.nav-pills > li.active > a', '.nav-pills > li.active > a:hover', '.nav-pills > li.active > a:focus']
+        })
+    ];
 
     return (
         gulp
@@ -63,7 +60,7 @@ gulp.task('process-src', () => {
             // do uncss
             .pipe(bootstrapFilter)
             // .pipe(debug())
-            .pipe(gulpIf(!SKIP_INLINE, uncssPipe))
+            .pipe(gulpIf(!SKIP_INLINE, postcss(uncssPipe)))
             .pipe(bootstrapFilter.restore)
             .pipe(gulp.dest('./dist'))
     );
