@@ -238,11 +238,7 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession<Exce
 
         let typeTransformed: ExcelDataType = getType();
 
-        let massageText: (value:string)=> string = (val:string)=> {
-            return this.suppressTextAsCDATA ?
-                _.escape(val) :
-                `<![CDATA[${val}]]>`;
-        };
+        let massageText = (val:string) =>  this.suppressTextAsCDATA ? _.escape(val) : `<![CDATA[${val}]]>`;
 
         return {
             styleId: styleExists ? styleId : null,
