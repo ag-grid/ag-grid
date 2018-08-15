@@ -5,20 +5,16 @@ var replace = require('gulp-replace');
 var gulpIf = require('gulp-if');
 var filter = require('gulp-filter');
 var merge = require('merge2');
-var foreach = require('gulp-foreach');
+var flatmap = require('gulp-flatmap');
 var liveReload = require('gulp-livereload');
 var named = require('vinyl-named');
 
 var gulpTypescript = require('gulp-typescript');
 var typescript = require('typescript');
 
-var webpack = require('webpack');
 var webpackStream = require('webpack-stream');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-var sass = require('gulp-sass');
-var postcss = require('gulp-postcss');
-var postcssScss = require('postcss-scss');
 var autoprefixer = require('autoprefixer');
 
 gulp.task('default', ['webpack'], watchTask);
@@ -78,12 +74,12 @@ function watchReactTask() {
 
 
 function tscGrid() {
-    var project = gulpTypescript.createProject('../ag-grid/tsconfig.json', {typescript: typescript});
+    var tsProject = gulpTypescript.createProject('../ag-grid/tsconfig.json', {typescript: typescript});
 
     var tsResult = gulp
         .src('../ag-grid/src/ts/**/*.ts')
         //.pipe(sourcemaps.init())
-        .pipe(project());
+        .pipe(tsProject());
 
     return merge([
         tsResult.dts
@@ -97,12 +93,12 @@ function tscGrid() {
 
 function tscEnterprise() {
 
-    var project = gulpTypescript.createProject('../ag-grid-enterprise/tsconfig.json', {typescript: typescript});
+    var tsProject = gulpTypescript.createProject('../ag-grid-enterprise/tsconfig.json', {typescript: typescript});
 
     var tsResult = gulp
         .src('../ag-grid-enterprise/src/**/*.ts')
         //.pipe(sourcemaps.init())
-        .pipe(project());
+        .pipe(tsProject());
 
     return merge([
         tsResult.dts
@@ -113,11 +109,11 @@ function tscEnterprise() {
 }
 
 function tscAngular() {
-    var project = gulpTypescript.createProject('../ag-grid-angular/tsconfig-gulp.json');
+    var tsProject = gulpTypescript.createProject('../ag-grid-angular/tsconfig-gulp.json');
 
     var tsResult = gulp
         .src('../ag-grid-angular/src/**/*.ts', {typescript: typescript})
-        .pipe(project());
+        .pipe(tsProject());
 
     return merge([
         tsResult.dts
@@ -129,11 +125,11 @@ function tscAngular() {
 
 
 function tscAngularExample() {
-    var project = gulpTypescript.createProject('../ag-grid-angular-example/systemjs_aot/tsconfig-gulp.json');
+    var tsProject = gulpTypescript.createProject('../ag-grid-angular-example/systemjs_aot/tsconfig-gulp.json');
 
     var tsResult = gulp
         .src('../ag-grid-angular-example/systemjs_aot/app/boot.ts', {typescript: typescript})
-        .pipe(project());
+        .pipe(tsProject());
 
     return merge([
         tsResult.dts
@@ -144,11 +140,11 @@ function tscAngularExample() {
 }
 
 function tscReactExample() {
-    var project = gulpTypescript.createProject('../ag-grid-react-example/src/tsconfig.json');
+    var tsProject = gulpTypescript.createProject('../ag-grid-react-example/src/tsconfig.json');
 
     var tsResult = gulp
         .src('../ag-grid-react-example/src/index.js', {typescript: typescript})
-        .pipe(project());
+        .pipe(tsProject());
 
     return merge([
         tsResult.dts
@@ -161,7 +157,7 @@ function tscReactExample() {
 function scssGrid() {
     // Uncompressed
     return gulp.src(['../ag-grid/src/styles/*.scss'])
-        .pipe(foreach(function(stream, file) {
+        .pipe(flatmap(function(stream, file) {
             var currentTheme = path.basename(file.path, '.scss');
             var themeName = currentTheme.replace('theme-','');
             return stream.pipe(gulpIf(currentTheme !== 'ag-grid', replace('ag-common','ag-' + themeName)));
