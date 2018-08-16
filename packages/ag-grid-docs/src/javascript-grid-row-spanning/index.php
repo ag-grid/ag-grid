@@ -125,7 +125,7 @@ interface RowSpanParams {
             'arrow down' key, the focus will go to a hidden cell.
         </li>
         <li>
-            Row span does not work with dynamic row height. The row span assumes default row height
+            Row span does not work with dynamic row height or auto-height. The row span assumes default row height
             is used when calculating how high the cell should be.
         </li>
         <li>
