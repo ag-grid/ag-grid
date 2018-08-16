@@ -848,7 +848,24 @@ export class ColumnController {
 
         let passMinMaxCheck = _.every(resizeSets, this.checkMinAndMaxWidthsForSet.bind(this));
 
-        if (!passMinMaxCheck) { return; }
+        if (!passMinMaxCheck) {
+            // even though we are not going to resize beyond min/max size, we still need to raise event when finished
+            if (finished) {
+                let columns = resizeSets && resizeSets.length > 0 ? resizeSets[0].columns : null;
+                let event: ColumnResizedEvent = {
+                    type: Events.EVENT_COLUMN_RESIZED,
+                    columns: columns,
+                    column: columns && columns.length === 1 ? columns[0] : null,
+                    finished: finished,
+                    api: this.gridApi,
+                    columnApi: this.columnApi,
+                    source: source
+                };
+                this.eventService.dispatchEvent(event);
+            }
+
+            return; // don't resize!
+        }
 
         let changedCols: Column[] = [];
         let allCols: Column[] = [];
