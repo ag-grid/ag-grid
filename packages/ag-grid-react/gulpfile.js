@@ -10,7 +10,7 @@ const tsProject = gulpTypescript.createProject(tsConfig);
 
 gulp.task('default', ['commonjs', 'umd']);
 
-gulp.task('commonjs', tscTask)
+gulp.task('commonjs', tscTask);
 
 function tscTask() {
     const tsResult = gulp.src('src/**/*.ts').pipe(tsProject());
@@ -25,7 +25,7 @@ gulp.task('watch', ['commonjs'], () => {
     gulp.watch([
         './src/*',
         './node_modules/ag-grid/dist/lib/**/*'],
-        ['commonjs']);
+    ['commonjs']);
 });
 
 const typescript = require('rollup-plugin-typescript');

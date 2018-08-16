@@ -7,7 +7,7 @@ gulp.task('default', ['src', 'exports']);
 gulp.task('src', () => {
     return gulp.src('src/*.js')
         .pipe(babel({
-            presets: ['es2015']
+            presets: ['env']
         }))
         .pipe(gulp.dest('dist/'));
 });
@@ -15,7 +15,7 @@ gulp.task('src', () => {
 gulp.task('exports', () => {
     return gulp.src('./exports.js')
         .pipe(babel({
-            presets: ['es2015']
+            presets: ['env']
         }))
         .pipe(rename('main.js'))
         .pipe(gulp.dest('./'));

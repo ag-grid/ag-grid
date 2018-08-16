@@ -25,6 +25,7 @@ var gridOptions = {
   toolPanelSuppressRowGroups: true,
   toolPanelSuppressSideButtons: true,
   cacheBlockSize: 75,
+  animateRows: true,
   getRowNodeId: function(item) {
     return item.id;
   },
@@ -35,10 +36,6 @@ var gridOptions = {
     } else {
       expandedGroupIds = expandedGroupIds.filter(grpId => !grpId.startsWith(id));
     }
-  },
-  animateRows: true,
-  icons: {
-    groupLoading: '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/javascript-grid-server-side-model/spinner.gif" style="width:22px;height:22px;">'
   }
 };
 
@@ -73,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var dataSource = {
       getRows: function (params) {
 
-        // To make the demo look real, wait for 500ms before returning
+        // To make the demo look real, wait for 200ms before returning
         setTimeout( function() {
 
           var response = getMockServerResponse(params.request);
@@ -88,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
           });
 
-        }, 500);
+        }, 200);
       }
     };
 

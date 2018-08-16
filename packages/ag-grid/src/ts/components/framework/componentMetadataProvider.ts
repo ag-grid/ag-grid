@@ -88,11 +88,15 @@ export class ComponentMetadataProvider {
             },
             filter:{
                 mandatoryMethodList: ['isFilterActive','doesFilterPass','getModel','setModel'],
-                optionalMethodList: ['afterGuiAttached','onNewRowsLoaded','getModelAsString','onFloatingFilterChanged', 'afterGuiAttached']
+                optionalMethodList: ['afterGuiAttached','onNewRowsLoaded','getModelAsString','onFloatingFilterChanged']
             },
             filterComponent:{
                 mandatoryMethodList: ['isFilterActive','doesFilterPass','getModel','setModel'],
-                optionalMethodList: ['afterGuiAttached','onNewRowsLoaded','getModelAsString','onFloatingFilterChanged', 'afterGuiAttached']
+                optionalMethodList: ['afterGuiAttached','onNewRowsLoaded','getModelAsString','onFloatingFilterChanged']
+            },
+            statusBarComponent:{
+                mandatoryMethodList: [],
+                optionalMethodList: ['afterGuiAttached']
             }
         }
     }

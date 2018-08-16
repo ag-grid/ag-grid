@@ -75,11 +75,11 @@ function cleanMain() {
 }
 
 function tscSrcTask() {
-    const project = gulpTypescript.createProject('./tsconfig.json', {typescript: typescript});
+    const tsProject = gulpTypescript.createProject('./tsconfig.json', {typescript: typescript});
 
     const tsResult = gulp
         .src('src/ts/**/*.ts')
-        .pipe(gulpTypescript(project));
+        .pipe(tsProject());
 
     return merge([
         tsResult.dts
@@ -88,15 +88,15 @@ function tscSrcTask() {
         tsResult.js
             .pipe(header(headerTemplate, {pkg: pkg}))
             .pipe(gulp.dest('dist/lib'))
-    ])
+    ]);
 }
 
 function tscMainTask() {
-    const project = gulpTypescript.createProject('./tsconfig-main.json', {typescript: typescript});
+    const tsProject = gulpTypescript.createProject('./tsconfig-main.json', {typescript: typescript});
 
     const tsResult = gulp
         .src('./src/ts/main.ts')
-        .pipe(gulpTypescript(project));
+        .pipe(tsProject());
 
     return merge([
         tsResult.dts
@@ -109,7 +109,7 @@ function tscMainTask() {
             .pipe(header(headerTemplate, {pkg: pkg}))
             .pipe(rename("main.js"))
             .pipe(gulp.dest('./'))
-    ])
+    ]);
 }
 
 function webpackTask(minify, styles) {

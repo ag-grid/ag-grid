@@ -1168,7 +1168,6 @@ function StatusBarComponent() {
 }
 
 StatusBarComponent.prototype.init = function (params) {
-    console.log('init', params);
     this.params = params;
 
     this.eGui = document.createElement('div');
@@ -1181,7 +1180,7 @@ StatusBarComponent.prototype.init = function (params) {
     this.eButton = document.createElement('button');
     this.eButton.setAttribute("style", 'margin-left: 5px; padding-top: 0; padding-bottom: 0');
 
-    this.buttonListener  =this.onButtonClicked.bind(this);
+    this.buttonListener = this.onButtonClicked.bind(this);
     this.eButton.addEventListener("click", this.buttonListener);
     this.eButton.innerHTML = 'Click Me';
 
