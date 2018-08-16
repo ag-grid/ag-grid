@@ -1,8 +1,8 @@
-import {ColDef} from "./entities/colDef";
-import {Column} from "./entities/column";
-import {RowNode} from "./entities/rowNode";
-import {GridApi} from "./gridApi";
-import {ColumnApi} from "./columnController/columnApi";
+import {ColDef} from "../entities/colDef";
+import {Column} from "../entities/column";
+import {RowNode} from "../entities/rowNode";
+import {GridApi} from "../gridApi";
+import {ColumnApi} from "../columnController/columnApi";
 
 export interface BaseExportParams {
     skipHeader?: boolean;

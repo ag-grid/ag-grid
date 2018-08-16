@@ -60,7 +60,7 @@ export class PivotColDefService {
 
             let createGroup = index !== levelsDeep;
             if (createGroup) {
-                let groupDef: ColGroupDef = {
+                const groupDef: ColGroupDef = {
                     children: [],
                     headerName: key,
                     pivotKeys: newPivotKeys,
@@ -72,8 +72,8 @@ export class PivotColDefService {
 
                 this.recursivelyAddGroup(groupDef.children, pivotColumnDefs, index+1, value, newPivotKeys, columnIdSequence, levelsDeep, primaryPivotColumns);
             } else {
-                let measureColumns = this.columnController.getValueColumns();
-                let valueGroup: ColGroupDef = {
+                const measureColumns = this.columnController.getValueColumns();
+                const valueGroup: ColGroupDef = {
                     children: [],
                     headerName: key,
                     pivotKeys: newPivotKeys,
@@ -85,13 +85,13 @@ export class PivotColDefService {
                 // impression that the grid is broken
                 if (measureColumns.length === 0) {
                     // this is the blank column, for when no value columns enabled.
-                    let colDef = this.createColDef(null, '-', newPivotKeys, columnIdSequence);
+                    const colDef = this.createColDef(null, '-', newPivotKeys, columnIdSequence);
                     valueGroup.children.push(colDef);
                     pivotColumnDefs.push(colDef);
                 } else {
                     measureColumns.forEach(measureColumn => {
-                        let columnName:string = this.columnController.getDisplayNameForColumn(measureColumn, 'header')
-                        let colDef = this.createColDef(measureColumn, columnName, newPivotKeys, columnIdSequence);
+                        const columnName:string = this.columnController.getDisplayNameForColumn(measureColumn, 'header');
+                        const colDef = this.createColDef(measureColumn, columnName, newPivotKeys, columnIdSequence);
                         colDef.columnGroupShow = 'open';
                         valueGroup.children.push(colDef);
                         pivotColumnDefs.push(colDef);
@@ -101,9 +101,9 @@ export class PivotColDefService {
             }
         });
         // sort by either user provided comparator, or our own one
-        let colDef = primaryPivotColumns[index-1].getColDef();
-        let userComparator = colDef.pivotComparator;
-        let comparator = this.headerNameComparator.bind(this, userComparator);
+        const colDef = primaryPivotColumns[index-1].getColDef();
+        const userComparator = colDef.pivotComparator;
+        const comparator = this.headerNameComparator.bind(this, userComparator);
 
         parentChildren.sort(comparator);
     }

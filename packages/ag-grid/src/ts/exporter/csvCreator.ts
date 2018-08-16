@@ -1,20 +1,20 @@
-import {Bean, Autowired, PostConstruct} from "./context/context";
+import {Bean, Autowired, PostConstruct} from "../context/context";
 import {
     GridSerializer, RowAccumulator, BaseGridSerializingSession, RowSpanningAccumulator,
     GridSerializingSession
 } from "./gridSerializer";
-import {Downloader} from "./downloader";
-import {Column} from "./entities/column";
-import {RowNode} from "./entities/rowNode";
-import {ColumnController} from "./columnController/columnController";
-import {ValueService} from "./valueService/valueService";
-import {GridOptionsWrapper} from "./gridOptionsWrapper";
+import {Downloader} from "../downloader";
+import {Column} from "../entities/column";
+import {RowNode} from "../entities/rowNode";
+import {ColumnController} from "../columnController/columnController";
+import {ValueService} from "../valueService/valueService";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {
     BaseExportParams, CsvExportParams, ExportParams, ProcessCellForExportParams,
     ProcessHeaderForExportParams
 } from "./exportParams";
-import {Constants} from "./constants";
-import {_} from "./utils";
+import {Constants} from "../constants";
+import {_} from "../utils";
 
 let LINE_SEPARATOR = '\r\n';
 

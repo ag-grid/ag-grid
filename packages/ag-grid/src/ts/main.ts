@@ -125,7 +125,7 @@ export {AnimateSlideCellRenderer} from "./rendering/cellRenderers/animateSlideCe
 export {GroupCellRenderer} from "./rendering/cellRenderers/groupCellRenderer";
 
 // status bar components
-export {IStatusBar, IStatusBarParams} from "./interfaces/iStatusBar"
+export {IStatusBar, IStatusBarParams} from "./interfaces/iStatusBar";
 
 // overlays
 export {ILoadingOverlayComp, ILoadingOverlayParams} from "./rendering/overlays/loadingOverlayComponent";
@@ -192,7 +192,7 @@ export {BaseFrameworkFactory} from "./baseFrameworkFactory";
 export {CellNavigationService} from "./cellNavigationService";
 export {AlignedGridsService} from "./alignedGridsService";
 export {Constants} from "./constants";
-export {CsvCreator, BaseCreator} from "./csvCreator";
+export {CsvCreator, BaseCreator} from "./exporter/csvCreator";
 export {Downloader} from "./downloader";
 export {Grid, GridParams} from "./grid";
 export {GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo} from "./gridApi";
@@ -211,11 +211,10 @@ export {Utils, NumberSequence, _, Promise, ExternalPromise} from "./utils";
 export {ValueService} from "./valueService/valueService";
 export {ExpressionService} from "./valueService/expressionService";
 export {XmlFactory} from "./xmlFactory";
-export {GridSerializer, BaseGridSerializingSession, RowType} from "./gridSerializer";
-export {CsvExportParams, ExportParams} from "./exportParams";
+export {GridSerializer, BaseGridSerializingSession, RowType, RowAccumulator, RowSpanningAccumulator} from "./exporter/gridSerializer";
+export {CsvExportParams, ExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams} from "./exporter/exportParams";
 export {XmlElement} from "./xmlFactory";
 export {LoggerFactory} from "./logger";
-export {RowAccumulator, RowSpanningAccumulator} from "./gridSerializer";
 
 // uncatalogued
 export {IRowModel, RowBounds} from "./interfaces/iRowModel";
@@ -226,7 +225,6 @@ export {IMenuFactory} from "./interfaces/iMenuFactory";
 export {IAggFunc, ColGroupDef} from "./entities/colDef";
 export {GridCellDef} from "./entities/gridCell";
 export {ColDef} from "./entities/colDef";
-export {ProcessCellForExportParams, ProcessHeaderForExportParams} from "./exportParams";
 export {
     GridOptions,
     GetContextMenuItemsParams,

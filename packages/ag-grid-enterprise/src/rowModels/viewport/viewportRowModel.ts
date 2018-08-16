@@ -106,7 +106,7 @@ export class ViewportRowModel implements IRowModel {
 
     public purgeRowsNotInViewport(): void {
         Object.keys(this.rowNodesByIndex).forEach(indexStr => {
-            let index = parseInt(indexStr);
+            let index = parseInt(indexStr, 10);
             if (index < this.firstRow || index > this.lastRow) {
                 delete this.rowNodesByIndex[index];
             }
@@ -212,11 +212,10 @@ export class ViewportRowModel implements IRowModel {
         return result;
     }
 
-
     public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
         let callbackCount = 0;
         Object.keys(this.rowNodesByIndex).forEach(indexStr => {
-            let index = parseInt(indexStr);
+            let index = parseInt(indexStr, 10);
             let rowNode: RowNode = this.rowNodesByIndex[index];
             callback(rowNode, callbackCount);
             callbackCount++;
@@ -225,7 +224,7 @@ export class ViewportRowModel implements IRowModel {
 
     private setRowData(rowData: {[key: number]: any}): void {
         Utils.iterateObject(rowData, (indexStr: string, dataItem: any) => {
-            let index = parseInt(indexStr);
+            let index = parseInt(indexStr, 10);
             // we should never keep rows that we didn't specifically ask for, this
             // guarantees the contract we have with the server.
             if (index >= this.firstRow && index <= this.lastRow) {

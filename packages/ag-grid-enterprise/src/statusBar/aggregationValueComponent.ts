@@ -4,8 +4,9 @@ export class AggregationValueComponent extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
 
-    private static TEMPLATE = `<span class="ag-status-bar-item">  
-            <span id="_label"></span>  
+    private static TEMPLATE =
+        `<span class="ag-status-bar-item">
+            <span id="_label"></span>
             <span id="_value"></span>
         </span>`;
 

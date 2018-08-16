@@ -23,7 +23,7 @@ import {
 interface GroupInfo {
     key: string; // e.g. 'Ireland'
     field: string; // e.g. 'country'
-    rowGroupColumn: Column
+    rowGroupColumn: Column;
 }
 
 interface GroupingDetails {
@@ -142,7 +142,7 @@ export class GroupStage implements IRowNodeStage {
         _.sortRowNodesByOrder(node.childrenAfterGroup, details.rowNodeOrder);
         node.childrenAfterGroup.forEach( childNode => {
             if (childNode.childrenAfterGroup) {
-                this.recursiveSortChildren(childNode, details)
+                this.recursiveSortChildren(childNode, details);
             }
         } );
     }

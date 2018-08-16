@@ -132,7 +132,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
                             newSortModel: {colId: string, sort: string}[],
                             oldSortModel: {colId: string, sort: string}[]): string[] {
 
-
         let allColsInBothSorts: string[] = [];
 
         [newSortModel, oldSortModel].forEach( sortModel => {
@@ -542,7 +541,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
                     return {
                         colId: group.field,
                         sort: sortModel[autoGroupIndex].sort
-                    }
+                    };
                 });
 
             // remove auto group column
@@ -561,7 +560,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }
 
         return sortModel;
-    };
+    }
 
     private isSortingWithValueColumn(changedColumnsInSort: string[]): boolean {
         let valueColIds = this.columnController.getValueColumns().map(col => col.getColId());

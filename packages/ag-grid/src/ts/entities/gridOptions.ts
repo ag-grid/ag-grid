@@ -9,7 +9,7 @@ import {IDatasource} from "../rowModels/iDatasource";
 import {GridCellDef} from "./gridCell";
 import {IDateComp} from "../rendering/dateComponent";
 import {IServerSideDatasource} from "../interfaces/iServerSideDatasource";
-import {CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams} from "../exportParams";
+import {CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams} from "../exporter/exportParams";
 import {
     BodyScrollEvent,
     CellClickedEvent,

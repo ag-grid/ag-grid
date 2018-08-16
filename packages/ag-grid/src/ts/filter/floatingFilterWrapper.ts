@@ -61,7 +61,7 @@ export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, P
 
     private onColumnHover(): void {
         let isHovered = this.columnHoverService.isHovered(this.column);
-        _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered)
+        _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
     }
 
     abstract onParentModelChanged(parentModel: M): void;
@@ -133,11 +133,11 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
     }
 
     onParentModelChanged(parentModel: M | CombinedFilter<M>): void {
-        let combinedFilter: CombinedFilter<M> = undefined;
+        let combinedFilter: CombinedFilter<M>;
         let mainModel: M = null;
         if (parentModel && (<CombinedFilter<M>>parentModel).operator) {
             combinedFilter = (<CombinedFilter<M>>parentModel);
-            mainModel = combinedFilter.condition1
+            mainModel = combinedFilter.condition1;
         } else {
             mainModel = <M>parentModel;
         }
