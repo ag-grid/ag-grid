@@ -450,7 +450,7 @@ export abstract class ComparableBaseFilter<T, P extends IComparableFilterParams,
 
     public isFilterActive(): boolean {
         let rawFilterValues = this.filterValues(FilterConditionType.MAIN);
-        if (this.filter === BaseFilter.IN_RANGE) {
+        if (rawFilterValues && this.filter === BaseFilter.IN_RANGE) {
             let filterValueArray = (<T[]>rawFilterValues);
             return filterValueArray[0] != null && filterValueArray[1] != null;
         } else {
