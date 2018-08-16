@@ -7,11 +7,10 @@ export interface VirtualListModel {
 
 export class VirtualList extends Component {
 
-    private static TEMPLATE = `
-        <div class="ag-virtual-list-viewport">
+    private static TEMPLATE =
+        `<div class="ag-virtual-list-viewport">
             <div class="ag-virtual-list-container"></div>
-        </div>
-    `;
+        </div>`;
 
     private model: VirtualListModel;
 

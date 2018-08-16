@@ -8,17 +8,15 @@ export class MenuList extends Component {
 
     // private instance = Math.random();
 
-    private static TEMPLATE =
-        '<div class="ag-menu-list"></div>';
+    private static TEMPLATE = '<div class="ag-menu-list"></div>';
 
-    private static SEPARATOR_TEMPLATE = `
-        <div class="ag-menu-separator">
-          <span class="ag-menu-separator-cell"></span>
-          <span class="ag-menu-separator-cell"></span>
-          <span class="ag-menu-separator-cell"></span>
-          <span class="ag-menu-separator-cell"></span>
-        </div>
-    `;
+    private static SEPARATOR_TEMPLATE =
+        `<div class="ag-menu-separator">
+            <span class="ag-menu-separator-cell"></span>
+            <span class="ag-menu-separator-cell"></span>
+            <span class="ag-menu-separator-cell"></span>
+            <span class="ag-menu-separator-cell"></span>
+        </div>`;
 
     private activeMenuItemParams: MenuItemDef;
     private activeMenuItem: MenuItemComponent;

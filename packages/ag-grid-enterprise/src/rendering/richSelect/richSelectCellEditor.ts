@@ -19,12 +19,11 @@ import {_} from "ag-grid";
 export class RichSelectCellEditor extends Component implements ICellEditor {
 
     // tab index is needed so we can focus, which is needed for keyboard events
-    private static TEMPLATE = `
-        <div class="ag-rich-select" tabindex="0">
+    private static TEMPLATE =
+        `<div class="ag-rich-select" tabindex="0">
             <div ref="eValue" class="ag-rich-select-value"></div>
             <div ref="eList" class="ag-rich-select-list"></div>
-        </div>
-    `;
+        </div>`;
 
     @Autowired('context') context: Context;
     @Autowired('cellRendererService') cellRendererService: CellRendererService;

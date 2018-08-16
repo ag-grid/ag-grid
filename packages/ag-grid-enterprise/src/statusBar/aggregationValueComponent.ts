@@ -4,12 +4,11 @@ export class AggregationValueComponent extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
 
-    private static TEMPLATE = `
-        <span class="ag-status-bar-item">
+    private static TEMPLATE =
+        `<span class="ag-status-bar-item">
             <span id="_label"></span>
             <span id="_value"></span>
-        </span>
-    `;
+        </span>`;
 
     private props: { key: string, defaultValue: string };
 

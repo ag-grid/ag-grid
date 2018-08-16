@@ -19,14 +19,13 @@ export class MenuItemComponent extends Component {
 
     // private instance = Math.random();
 
-    private static TEMPLATE = `
-        <div class="ag-menu-option">
-          <span id="eIcon" class="ag-menu-option-icon"></span>
-          <span id="eName" class="ag-menu-option-text"></span>
-          <span id="eShortcut" class="ag-menu-option-shortcut"></span>
-          <span id="ePopupPointer" class="ag-menu-option-popup-pointer"></span>
-        </div>
-    `;
+    private static TEMPLATE =
+        `<div class="ag-menu-option">
+            <span id="eIcon" class="ag-menu-option-icon"></span>
+            <span id="eName" class="ag-menu-option-text"></span>
+            <span id="eShortcut" class="ag-menu-option-shortcut"></span>
+            <span id="ePopupPointer" class="ag-menu-option-popup-pointer"></span>
+        </div>`;
 
     public static EVENT_ITEM_SELECTED = 'itemSelected';
 

@@ -23,12 +23,11 @@ export class SetFilterListItem extends Component {
     @Autowired('cellRendererService') private cellRendererService: CellRendererService;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
 
-    private static TEMPLATE = `
-        <label class="ag-set-filter-item">
-        <div class="ag-filter-checkbox"></div>
-        <span class="ag-filter-value"></span>
-        </label>
-    `;
+    private static TEMPLATE =
+        `<label class="ag-set-filter-item">
+            <div class="ag-filter-checkbox"></div>
+            <span class="ag-filter-value"></span>
+        </label>`;
 
     private eCheckbox: HTMLElement;
     private eClickableArea: HTMLElement;
