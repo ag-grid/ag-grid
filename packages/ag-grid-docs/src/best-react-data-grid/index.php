@@ -24,7 +24,7 @@ include '../landing-pages/header.php';
                 <hr>
                                 <p><strong>2M Downloads
                     <br>
-                    150,000 Downloads Per Month</strong>
+                    200,000 Downloads Per Month</strong>
                 </p>
                 <hr>
                 <p>

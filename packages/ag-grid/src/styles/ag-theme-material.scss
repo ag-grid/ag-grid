@@ -167,10 +167,6 @@ $params: (
         background-position-y: center;
     }
 
-    .ag-header-cell-resize {
-        right: -($grid-size) + 1px;
-    }
-
     // we do not want to color the range color when the cell is also focused
     .ag-cell-range-selected-1:not(.ag-cell-focus) {
         background-color: $range-selection-background-color;
