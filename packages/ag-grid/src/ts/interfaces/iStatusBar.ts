@@ -3,9 +3,9 @@ import {GridApi} from "../gridApi";
 import {ColumnApi} from "../columnController/columnApi";
 
 export interface IStatusBarParams {
-    api: GridApi,
-    columnApi: ColumnApi,
-    context: any,
+    api: GridApi;
+    columnApi: ColumnApi;
+    context: any;
 }
 
 export interface IStatusBar<IStatusBarParams> {

@@ -54,20 +54,20 @@ $disabled-foreground-color-opacity: 0.38 !default;
         border-bottom: 1px solid $border-color;
     }
 
+    .ag-pinned-right-header {
+        border-left: 1px solid $border-color;
+    }
+
+    .ag-pinned-left-header {
+        border-right: 1px solid $border-color;
+    }
+
     .ag-cell-highlight {
         background-color: $range-selection-highlight-color !important;
     }
 
-    .ag-header-cell-resize {
-        right: -($grid-size) + 1px;
-    }
-
-    .ag-rtl .ag-header .ag-header-cell-resize {
-        left: -($grid-size);
-    }
-
     .ag-header-cell-resize::after {
-        height: $header-height - $grid-size * 4;
+        height: 80%;
         margin-top: $grid-size * 2;
     }
 

@@ -186,8 +186,8 @@ export class AggregationStage implements IRowNodeStage {
 
     private getValuesPivotNonLeaf(rowNode: RowNode, colId: string): any[] {
         let values: any[] = [];
-        rowNode.childrenAfterFilter.forEach( (rowNode: RowNode) => {
-            let value = rowNode.aggData[colId];
+        rowNode.childrenAfterFilter.forEach( (node: RowNode) => {
+            let value = node.aggData[colId];
             values.push(value);
         });
         return values;

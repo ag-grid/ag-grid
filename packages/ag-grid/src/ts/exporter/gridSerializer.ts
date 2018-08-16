@@ -1,13 +1,13 @@
-import {Column} from "./entities/column";
-import {Autowired, Bean} from "./context/context";
-import {ColumnController} from "./columnController/columnController";
-import {Constants} from "./constants";
-import {IRowModel} from "./interfaces/iRowModel";
-import {Utils as _} from "./utils";
-import {RowNode} from "./entities/rowNode";
-import {SelectionController} from "./selectionController";
-import {ValueService} from "./valueService/valueService";
-import {GridOptionsWrapper} from "./gridOptionsWrapper";
+import {Column} from "../entities/column";
+import {Autowired, Bean} from "../context/context";
+import {ColumnController} from "../columnController/columnController";
+import {Constants} from "../constants";
+import {IRowModel} from "../interfaces/iRowModel";
+import {Utils as _} from "../utils";
+import {RowNode} from "../entities/rowNode";
+import {SelectionController} from "../selectionController";
+import {ValueService} from "../valueService/valueService";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {
     BaseExportParams,
     ExportParams,
@@ -15,14 +15,14 @@ import {
     ProcessHeaderForExportParams,
     ShouldRowBeSkippedParams
 } from "./exportParams";
-import {DisplayedGroupCreator} from "./columnController/displayedGroupCreator";
-import {BalancedColumnTreeBuilder} from "./columnController/balancedColumnTreeBuilder";
-import {GroupInstanceIdCreator} from "./columnController/groupInstanceIdCreator";
-import {ColumnGroupChild} from "./entities/columnGroupChild";
-import {ColumnGroup} from "./entities/columnGroup";
-import {GridApi} from "./gridApi";
-import {ClientSideRowModel} from "./rowModels/clientSide/clientSideRowModel";
-import {PinnedRowModel} from "./rowModels/pinnedRowModel";
+import {DisplayedGroupCreator} from "../columnController/displayedGroupCreator";
+import {BalancedColumnTreeBuilder} from "../columnController/balancedColumnTreeBuilder";
+import {GroupInstanceIdCreator} from "../columnController/groupInstanceIdCreator";
+import {ColumnGroupChild} from "../entities/columnGroupChild";
+import {ColumnGroup} from "../entities/columnGroup";
+import {GridApi} from "../gridApi";
+import {ClientSideRowModel} from "../rowModels/clientSide/clientSideRowModel";
+import {PinnedRowModel} from "../rowModels/pinnedRowModel";
 
 /**
  * This interface works in conjuction with the GridSerializer. When serializing a grid, an instance that implements this interface

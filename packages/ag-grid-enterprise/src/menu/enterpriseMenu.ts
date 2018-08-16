@@ -57,7 +57,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
                 mouseEvent: mouseEvent,
                 ePopup: menu.getGui()
             });
-            if (defaultTab){
+            if (defaultTab) {
                 menu.showTab(defaultTab);
             }
         }, defaultTab);
@@ -77,7 +77,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
                 minWidth: menu.getMinWidth(),
                 keepWithinBounds: true
             });
-            if (defaultTab){
+            if (defaultTab) {
                 menu.showTab(defaultTab);
             }
         }, defaultTab, restrictToTabs);
@@ -107,19 +107,19 @@ export class EnterpriseMenuFactory implements IMenuFactory {
             hidePopup: hidePopup
         });
 
-        if (!defaultTab){
+        if (!defaultTab) {
             menu.showTabBasedOnPreviousSelection();
         }
 
         menu.addEventListener(EnterpriseMenu.EVENT_TAB_SELECTED, (event: any) => {
-            this.lastSelectedTab = event.key
+            this.lastSelectedTab = event.key;
         } );
 
         column.setMenuVisible(true, "contextMenu");
 
         this.activeMenu = menu;
         menu.addEventListener(BeanStub.EVENT_DESTROYED, ()=> {
-            if (this.activeMenu===menu) {
+            if (this.activeMenu === menu) {
                 this.activeMenu = null;
             }
         });
@@ -216,7 +216,7 @@ export class EnterpriseMenu extends BeanStub {
         let isValid: boolean = true;
         let itemsToConsider: string[] = EnterpriseMenu.TABS_DEFAULT;
 
-        if (this.restrictTo != null){
+        if (this.restrictTo != null) {
             isValid = this.restrictTo.indexOf(menuTabName) > -1 ;
             itemsToConsider = this.restrictTo;
         }
@@ -228,11 +228,11 @@ export class EnterpriseMenu extends BeanStub {
         return isValid;
     }
 
-    private isNotSuppressed(menuTabName: string):boolean{
+    private isNotSuppressed(menuTabName: string):boolean {
         return this.includeChecks[menuTabName]();
     }
 
-    private createTab(name: string):TabbedItem{
+    private createTab(name: string):TabbedItem {
         return this.tabFactories[name]();
     }
 
@@ -244,14 +244,11 @@ export class EnterpriseMenu extends BeanStub {
     public showTab(toShow:string) {
         if (this.tabItemColumns && toShow === EnterpriseMenu.TAB_COLUMNS) {
             this.tabbedLayout.showItem(this.tabItemColumns);
-        }
-        else if (this.tabItemFilter && toShow === EnterpriseMenu.TAB_FILTER) {
+        } else if (this.tabItemFilter && toShow === EnterpriseMenu.TAB_FILTER) {
             this.tabbedLayout.showItem(this.tabItemFilter);
-        }
-        else if (this.tabItemGeneral && toShow === EnterpriseMenu.TAB_GENERAL) {
+        } else if (this.tabItemGeneral && toShow === EnterpriseMenu.TAB_GENERAL) {
             this.tabbedLayout.showItem(this.tabItemGeneral);
-        }
-        else {
+        } else {
             this.tabbedLayout.showFirstItem();
         }
     }
@@ -264,11 +261,11 @@ export class EnterpriseMenu extends BeanStub {
             case this.tabItemGeneral: key = EnterpriseMenu.TAB_GENERAL; break;
         }
         if (key) {
-            let event: TabSelectedEvent = {
+            let ev: TabSelectedEvent = {
                 type: EnterpriseMenu.EVENT_TAB_SELECTED,
                 key: key
             };
-            this.dispatchEvent(event);
+            this.dispatchEvent(ev);
         }
     }
 
@@ -409,7 +406,7 @@ export class EnterpriseMenu extends BeanStub {
         let filterWrapper:FilterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column);
 
         let afterFilterAttachedCallback: Function;
-        filterWrapper.filterPromise.then(filter=>{
+        filterWrapper.filterPromise.then(filter => {
             if (filter.afterGuiAttached) {
                 afterFilterAttachedCallback = filter.afterGuiAttached.bind(filter);
             }

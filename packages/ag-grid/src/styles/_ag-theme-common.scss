@@ -409,22 +409,7 @@
     // Resizing
     ////////////////////////////////////////
     .ag-header-cell-resize {
-        position: absolute;
-        right: -($grid-size);
         width: $grid-size * 2;
-        z-index: 4;
-
-        &::after {
-            border-right: 1px solid $border-color;
-            box-sizing: content-box;
-            content: "resize";
-            display: block;
-            height: $header-height - $grid-size * 4;
-            margin-top: $grid-size * 2;
-            overflow: hidden;
-            text-indent: $grid-size;
-            width: $grid-size;
-        }
     }
 
     ////////////////////////////////////////
@@ -1416,11 +1401,6 @@
 
         .ag-floating-filter-button {
             float: left;
-        }
-
-        .ag-header .ag-header-cell-resize {
-            left: -$grid-size;
-            right: auto;
         }
 
         .ag-header .ag-header-cell-resize::after {

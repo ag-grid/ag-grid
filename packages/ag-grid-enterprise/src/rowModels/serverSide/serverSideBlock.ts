@@ -188,7 +188,7 @@ export class ServerSideBlock extends RowNodeBlock {
                 if (rowNode.key===null || rowNode.key===undefined) {
                     _.doOnce( ()=> {
                         console.warn(`null and undefined values are not allowed for server side row model keys`);
-                        if (this.rowGroupColumn) { console.warn(`column = ${this.rowGroupColumn.getId()}`)}
+                        if (this.rowGroupColumn) { console.warn(`column = ${this.rowGroupColumn.getId()}`);}
                         console.warn(`data is `, rowNode.data);
                     }, 'ServerSideBlock-CannotHaveNullOrUndefinedForKey');
                 }

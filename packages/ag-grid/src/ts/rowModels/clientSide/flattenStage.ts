@@ -62,6 +62,9 @@ export class FlattenStage implements IRowNodeStage {
                 rowNode.sibling.clearRowTop();
             }
         }
+        if (rowNode.detailNode) {
+            rowNode.detailNode.clearRowTop();
+        }
     }
 
     private recursivelyAddToRowsToDisplay(rowsToFlatten: RowNode[], result: RowNode[],

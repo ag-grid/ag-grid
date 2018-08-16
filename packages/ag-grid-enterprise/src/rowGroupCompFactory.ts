@@ -5,12 +5,12 @@ import {RowGroupColumnsPanel} from "./toolPanel/columnDrop/rowGroupColumnsPanel"
 export class RowGroupCompFactory implements ICompFactory {
 
     @Autowired('context') private context: Context;
-    
+
     public create(): Component {
-        
+
         let rowGroupComp = new RowGroupColumnsPanel(true);
         this.context.wireBean(rowGroupComp);
-        
+
         return rowGroupComp;
     }
 }

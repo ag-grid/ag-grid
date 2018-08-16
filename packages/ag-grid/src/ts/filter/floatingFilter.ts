@@ -94,7 +94,7 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
         if (incomingTextValue === this.eColumnFloatingFilter.value) { return; }
 
         this.eColumnFloatingFilter.value = incomingTextValue;
-        this.eColumnFloatingFilter.title = ''
+        this.eColumnFloatingFilter.title = '';
     }
 
     syncUpWithParentFilter(e: KeyboardEvent): void {
@@ -286,15 +286,15 @@ export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<Serial
     }
 
     parseAsText(model: SerializedNumberFilter): string {
-        if (model.type && model.type === 'inRange'){
-            let number: number = this.asNumber(model.filter);
+        let number: number = this.asNumber(model.filter);
+
+        if (model.type && model.type === 'inRange') {
             let numberTo: number = this.asNumber(model.filterTo);
             return (number ? number + '' : '') +
                 '-' +
                 (numberTo ? numberTo + '' : '');
         }
 
-        let number: number = this.asNumber(model.filter);
         return number != null ? number + '' : '';
     }
 
@@ -363,7 +363,7 @@ export class SetFloatingFilterComp extends InputTextFloatingFilterComp<Serialize
         return {
             values: this.eColumnFloatingFilter.value.split(","),
             filterType: 'set'
-        }
+        };
     }
 
     equalModels(left: SerializedSetFilter, right: SerializedSetFilter): boolean {

@@ -46,7 +46,7 @@ export class StatusBar extends Component {
                 .length > 0;
         } else {
             // if no components specified, we automatically include the aggregation panel
-            statusPanelComponents.push({component: 'agAggregationComponent'})
+            statusPanelComponents.push({component: 'agAggregationComponent'});
         }
 
         const componentPromises: Promise<Component>[] = [];
@@ -79,7 +79,7 @@ export class StatusBar extends Component {
                         }
                         this.ePanelComponents.appendChild(component.getGui());
                     }
-                })
+                });
             });
 
         this.setVisible(this.gridOptionsWrapper.isEnableStatusBar());

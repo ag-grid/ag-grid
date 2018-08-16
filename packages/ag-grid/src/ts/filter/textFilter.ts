@@ -45,11 +45,13 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
     private formatter: TextFormatter;
     static DEFAULT_FORMATTER: TextFormatter = (from: string)=> {
         return from;
-    };
+    }
+
     static DEFAULT_LOWERCASE_FORMATTER: TextFormatter = (from: string)=> {
         if (from == null) { return null; }
         return from.toString().toLowerCase();
-    };
+    }
+
     static DEFAULT_COMPARATOR: TextComparator = (filter: string, value: any, filterText: string)=> {
         switch (filter) {
         case TextFilter.CONTAINS:
@@ -70,7 +72,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
             console.warn('invalid filter type ' + filter);
             return false;
         }
-    };
+    }
 
     public getDefaultType(): string {
         return BaseFilter.CONTAINS;
@@ -121,7 +123,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
     }
 
     public refreshFilterBodyUi(type:FilterConditionType) {
-        if (this.eFilterConditionTextField){
+        if (this.eFilterConditionTextField) {
             this.addFilterChangedListener(FilterConditionType.CONDITION);
         }
     }
@@ -134,7 +136,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         return type === FilterConditionType.MAIN ? this.filterText : this.filterConditionText;
     }
 
-    public individualFilterPasses (params: IDoesFilterPassParams, type:FilterConditionType): boolean {
+    public individualFilterPasses(params: IDoesFilterPassParams, type:FilterConditionType): boolean {
         let filterText:string = type == FilterConditionType.MAIN ? this.filterText : this.filterConditionText;
         let filter:string = type == FilterConditionType.MAIN ? this.filter : this.filterCondition;
 
@@ -145,7 +147,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         }
     }
 
-    private checkIndividualFilter (params: IDoesFilterPassParams, filterType:string, filterText: string) {
+    private checkIndividualFilter(params: IDoesFilterPassParams, filterType:string, filterText: string) {
         let value = this.filterParams.valueGetter(params.node);
         if (value == null || value === undefined) {
             return filterType === BaseFilter.NOT_EQUAL || filterType === BaseFilter.NOT_CONTAINS;
@@ -171,7 +173,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
             let previousLowerCase = current && this.filterParams.caseSensitive != true  ? current.toLowerCase() :
                 current;
 
-            if (type === FilterConditionType.MAIN){
+            if (type === FilterConditionType.MAIN) {
                 this.filterText = this.formatter(filterText);
 
             } else {

@@ -53,7 +53,7 @@ meta_and_links($title, $keywords, $description, false);
                     </li>
 
                     <li>
-                        Over <strong>150,000</strong>
+                        Over <strong>200,000</strong>
                         Downloads per month.
                     </li>
                 </ul>

@@ -40,7 +40,7 @@ export class ColumnContainerComp extends Component {
 
     public static TEMPLATE = `<div class="ag-column-container"></div>`;
 
-    constructor(){
+    constructor() {
         super(ColumnContainerComp.TEMPLATE);
     }
 
@@ -263,7 +263,7 @@ export class ColumnContainerComp extends Component {
     }
 
     public doSetSelectedAll(checked: boolean): void {
-        _.iterateObject(this.columnComps, (key, column)=>{
+        _.iterateObject(this.columnComps, (key, column)=> {
             column.onSelectAllChanged(checked);
         });
     }
