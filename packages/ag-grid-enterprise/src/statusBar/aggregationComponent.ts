@@ -7,19 +7,20 @@ import {
     Context,
     Events,
     EventService,
+    GridApi,
     GridOptions,
     GridOptionsWrapper,
     GridRow,
     IRowModel,
     PinnedRowModel,
+    PreConstruct,
     PostConstruct,
     RefSelector,
     RowNode,
-    ValueService,
-    VisibleChangedEvent
+    ValueService
 } from 'ag-grid';
 import {RangeController} from "../rangeController";
-import {AggregationValueComponent} from "./aggregationValueComponent";
+import {StatusBarValueComponent} from "./statusBarValueComponent";
 
 export class AggregationComponent extends Component {
 
@@ -40,20 +41,29 @@ export class AggregationComponent extends Component {
     @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptions') private gridOptions: GridOptions;
+    @Autowired('gridApi') private gridApi: GridApi;
 
-    @RefSelector('sumAggregationComp') private sumAggregationComp: AggregationValueComponent;
-    @RefSelector('countAggregationComp') private countAggregationComp: AggregationValueComponent;
-    @RefSelector('minAggregationComp') private minAggregationComp: AggregationValueComponent;
-    @RefSelector('maxAggregationComp') private maxAggregationComp: AggregationValueComponent;
-    @RefSelector('avgAggregationComp') private avgAggregationComp: AggregationValueComponent;
+    @RefSelector('sumAggregationComp') private sumAggregationComp: StatusBarValueComponent;
+    @RefSelector('countAggregationComp') private countAggregationComp: StatusBarValueComponent;
+    @RefSelector('minAggregationComp') private minAggregationComp: StatusBarValueComponent;
+    @RefSelector('maxAggregationComp') private maxAggregationComp: StatusBarValueComponent;
+    @RefSelector('avgAggregationComp') private avgAggregationComp: StatusBarValueComponent;
 
     constructor() {
         super(AggregationComponent.TEMPLATE);
     }
 
+    @PreConstruct
+    private preConstruct(): void {
+        this.instantiate(this.context);
+    }
     @PostConstruct
     private postConstruct(): void {
-        this.instantiate(this.context);
+        // this component is only really useful with client side rowmodel
+        if (this.gridApi.getModel().getType() !== 'clientSide') {
+            console.warn(`ag-Grid: agAggregationComponent should only be used with the client side row model.`);
+            return;
+        }
 
         this.eventService.addEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
         this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, this.onRangeSelectionChanged.bind(this));
@@ -63,25 +73,20 @@ export class AggregationComponent extends Component {
     }
 
     private setAggregationComponentValue(aggFuncName: string, value: number, visible: boolean) {
-        // if the parent component (statusBar) has set our visibility to false, we don't override it
-        if (!this.gridOptionsWrapper.isShowAggregationPanel()) {
-            return;
-        }
-
-        let aggregationValueComponent = this.getAggregationValueComponent(aggFuncName);
-        if (_.exists(aggregationValueComponent)) {
-            aggregationValueComponent.setValue(value);
-            aggregationValueComponent.setVisible(visible);
+        let statusBarValueComponent = this.getAggregationValueComponent(aggFuncName);
+        if (_.exists(statusBarValueComponent)) {
+            statusBarValueComponent.setValue(_.formatNumberTwoDecimalPlacesAndCommas(value));
+            statusBarValueComponent.setVisible(visible);
         }
     }
 
-    private getAggregationValueComponent(aggFuncName: string): AggregationValueComponent {
+    private getAggregationValueComponent(aggFuncName: string): StatusBarValueComponent {
         // converts user supplied agg name to our reference - eg: sum => sumAggregationComp
         let refComponentName = `${aggFuncName}AggregationComp`;
 
         // if the user has specified the agAggregationPanelComp but no aggFuncs we show the all
         // if the user has specified the agAggregationPanelComp and aggFuncs, then we only show the aggFuncs listed
-        let aggregationValueComponent: AggregationValueComponent = null;
+        let statusBarValueComponent: StatusBarValueComponent = null;
         const aggregationPanelConfig = _.exists(this.gridOptions.statusPanel) ? _.find(this.gridOptions.statusPanel.components, aggFuncName) : null;
         if (_.exists(aggregationPanelConfig)) {
             // a little defensive here - if no componentParams show it, if componentParams we also expect aggFuncs
@@ -90,16 +95,16 @@ export class AggregationComponent extends Component {
                     _.exists(aggregationPanelConfig.componentParams.aggFuncs) &&
                     _.exists(_.find(aggregationPanelConfig.componentParams.aggFuncs, (item) => item === aggFuncName)))
             ) {
-                aggregationValueComponent = (<any>this)[refComponentName];
+                statusBarValueComponent = (<any>this)[refComponentName];
             }
         } else {
             // components not specified - assume we can show this component
-            aggregationValueComponent = (<any>this)[refComponentName];
+            statusBarValueComponent = (<any>this)[refComponentName];
         }
 
         // either we can't find it (which would indicate a typo or similar user side), or the user has deliberately
         // not listed the component in aggFuncs
-        return aggregationValueComponent;
+        return statusBarValueComponent;
     }
 
     private onRangeSelectionChanged(): void {
@@ -185,7 +190,7 @@ export class AggregationComponent extends Component {
             });
         }
 
-        let gotResult = this.gridOptionsWrapper.isAlwaysShowStatusBar() || count > 1;
+        let gotResult = count > 1;
         let gotNumberResult = numberCount > 1;
 
         // we show count even if no numbers
@@ -196,14 +201,6 @@ export class AggregationComponent extends Component {
         this.setAggregationComponentValue('min', min, gotNumberResult);
         this.setAggregationComponentValue('max', max, gotNumberResult);
         this.setAggregationComponentValue('avg', (sum / numberCount), gotNumberResult);
-
-        // let the parent component know if any components are visible
-        let event: VisibleChangedEvent = {
-            type: Component.EVENT_VISIBLE_CHANGED,
-            visible: gotResult || gotNumberResult
-        };
-        this.dispatchEvent(event);
-
     }
 
     private getRowNode(gridRow: GridRow): RowNode {

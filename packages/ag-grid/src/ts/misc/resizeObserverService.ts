@@ -50,9 +50,7 @@ export class ResizeObserverService {
                         callback();
                     }
 
-                    // once sean has his bit done, we can replace line below
-                    // frameworkFactory.setTimeout(periodicallyCheckWidthAndHeight, 500);
-                    setTimeout(periodicallyCheckWidthAndHeight, 500);
+                    frameworkFactory.setTimeout(periodicallyCheckWidthAndHeight, 500);
                 }
             }
 
