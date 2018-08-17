@@ -18,8 +18,8 @@ import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {GridApi} from "./gridApi";
 import {IToolPanel} from "./interfaces/iToolPanel";
 import {RefSelector} from "./widgets/componentAnnotations";
-import {observeResize} from "./resizeObserver";
 import {Events, GridSizeChangedEvent} from "./events";
+import {ResizeObserverService} from "./misc/resizeObserverService";
 
 @Bean('gridCore')
 export class GridCore extends Component {
@@ -48,6 +48,7 @@ export class GridCore extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('frameworkFactory') private frameworkFactory: IFrameworkFactory;
+    @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -121,7 +122,8 @@ export class GridCore extends Component {
 
         this.gridOptionsWrapper.addLayoutElement(this.eRootWrapperBody);
 
-        const unsubscribeFromResize = observeResize(this.eGridDiv, this.onGridSizeChanged.bind(this));
+        const unsubscribeFromResize = this.resizeObserverService.observeResize(
+            this.eGridDiv, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(() => unsubscribeFromResize());
     }
 
