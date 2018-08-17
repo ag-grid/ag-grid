@@ -17,6 +17,9 @@ export class ResizeObserverService {
             return usePolyfill();
         }
 
+        // put in variable, so available to usePolyfill() function below
+        let frameworkFactory = this.frameworkFactory;
+
         function useBrowserResizeObserver(): ()=>void {
             const resizeObserver = new (<any>window).ResizeObserver(callback);
             resizeObserver.observe(element);
@@ -47,6 +50,8 @@ export class ResizeObserverService {
                         callback();
                     }
 
+                    // once sean has his bit done, we can replace line below
+                    // frameworkFactory.setTimeout(periodicallyCheckWidthAndHeight, 500);
                     setTimeout(periodicallyCheckWidthAndHeight, 500);
                 }
             }
