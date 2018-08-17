@@ -313,7 +313,10 @@ export class ClientSideNodeManager {
         }
         node.level = level;
         node.setDataAndId(dataItem, this.nextId.toString());
-
+        
+        if (this.allNodesMap[node.id]){
+            console.warn(`ag-grid: duplicate node id '${node.id}' detected from getRowNodeId callback, this could cause issues in your grid.`);
+        }
         this.allNodesMap[node.id] = node;
 
         this.nextId++;
