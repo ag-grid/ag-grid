@@ -1,21 +1,12 @@
 import {Utils as _} from "../utils";
-import { observeResize } from "../resizeObserver";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnController} from "../columnController/columnController";
 import {ColumnApi} from "../columnController/columnApi";
 import {RowRenderer} from "../rendering/rowRenderer";
-import {
-    Bean,
-    Autowired,
-    PostConstruct,
-    Optional,
-    PreDestroy,
-    Context,
-    PreConstruct
-} from "../context/context";
+import {Autowired, Bean, Context, Optional, PostConstruct, PreDestroy} from "../context/context";
 import {EventService} from "../eventService";
 import {BodyHeightChangedEvent, BodyScrollEvent, Events} from "../events";
-import {DragService, DragListenerParams} from "../dragAndDrop/dragService";
+import {DragListenerParams, DragService} from "../dragAndDrop/dragService";
 import {IRangeController} from "../interfaces/iRangeController";
 import {Constants} from "../constants";
 import {SelectionController} from "../selectionController";
@@ -24,7 +15,7 @@ import {MouseEventService} from "./mouseEventService";
 import {IClipboardService} from "../interfaces/iClipboardService";
 import {FocusedCellController} from "../focusedCellController";
 import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
-import {SetScrollsVisibleParams, ScrollVisibleService} from "./scrollVisibleService";
+import {ScrollVisibleService, SetScrollsVisibleParams} from "./scrollVisibleService";
 import {IFrameworkFactory} from "../interfaces/iFrameworkFactory";
 import {Column} from "../entities/column";
 import {RowContainerComponent} from "../rendering/rowContainerComponent";
@@ -52,6 +43,7 @@ import {AutoWidthCalculator} from "../rendering/autoWidthCalculator";
 import {Beans} from "../rendering/beans";
 import {RefSelector} from "../widgets/componentAnnotations";
 import {HeaderRootComp} from "../headerRendering/headerRootComp";
+import {ResizeObserverService} from "../misc/resizeObserverService";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -72,7 +64,7 @@ const GRID_PANEL_NORMAL_TEMPLATE =
                 <div class="ag-pinned-left-cols-viewport" ref="eLeftViewport" role="presentation">
                     <div class="ag-pinned-left-cols-container" ref="eLeftContainer" role="presentation"></div>
                 </div>
-            </div>
+            </div> 
             <div class="ag-body-viewport-wrapper" ref="eBodyViewportWrapper" role="presentation">
                 <div class="ag-body-viewport" ref="eBodyViewport" role="presentation">
                     <div class="ag-body-container" ref="eBodyContainer" role="presentation"></div>
@@ -148,6 +140,7 @@ export class GridPanel extends Component {
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('heightScaler') private heightScaler: HeightScaler;
     @Autowired('enterprise') private enterprise: boolean;
+    @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
@@ -341,7 +334,8 @@ export class GridPanel extends Component {
             this.rangeController.registerGridComp(this);
         }
 
-        const unsubscribeFromResize = observeResize(this.eBodyViewport, this.onBodyViewportResized.bind(this) );
+        const unsubscribeFromResize = this.resizeObserverService.observeResize(
+            this.eBodyViewport, this.onBodyViewportResized.bind(this) );
         this.addDestroyFunc(() => unsubscribeFromResize() );
     }
 

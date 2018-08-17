@@ -1426,10 +1426,11 @@
         display: flex;
         font: $secondary-font;
         justify-content: flex-end;
-        padding: $grid-size * 2 $grid-size * 4;
+        padding-right: $grid-size * 4;
 
         .ag-status-bar-item {
             margin-right: $grid-size * 2;
+            display: inline-block;
 
             span:nth-child(1)::after {
                 content: ":";
@@ -1445,7 +1446,21 @@
         display: inline-flex;
     }
 
+    .ag-status-bar-comp {
+        padding-top: $grid-size * 2;
+        padding-bottom: $grid-size * 2;
+    }
+
     .ag-status-bar-aggregations {
+    }
+
+    .ag-status-bar-row-count {
+    }
+
+    .ag-status-bar-selected-row-count {
+    }
+
+    .ag-blank-status-bar-component {
     }
 
     .ag-details-row {

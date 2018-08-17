@@ -1,21 +1,20 @@
-import {Autowired, Component, Context, GridOptionsWrapper, PostConstruct, Utils as _} from 'ag-grid';
+import {Autowired, Component, Context, GridOptionsWrapper, PostConstruct} from 'ag-grid';
 
-export class AggregationValueComponent extends Component {
+export class StatusBarValueComponent extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
 
-    private static TEMPLATE =
-        `<span class="ag-status-bar-item">
-            <span id="_label"></span>
+    private static TEMPLATE = `<div class="ag-status-bar-item ag-status-bar-comp">  
+            <span id="_label"></span>  
             <span id="_value"></span>
-        </span>`;
+        </div>`;
 
     private props: { key: string, defaultValue: string };
 
     private lbValue: HTMLElement;
 
-    constructor(private key: any, private defaultValue: any) {
-        super(AggregationValueComponent.TEMPLATE);
+    constructor() {
+        super(StatusBarValueComponent.TEMPLATE);
     }
 
     @PostConstruct
@@ -31,7 +30,7 @@ export class AggregationValueComponent extends Component {
         this.lbValue = this.queryForHtmlElement('#_value');
     }
 
-    public setValue(value: number): void {
-        this.lbValue.innerHTML = _.formatNumberTwoDecimalPlacesAndCommas(value);
+    public setValue(value: any): void {
+        this.lbValue.innerHTML = value;
     }
 }

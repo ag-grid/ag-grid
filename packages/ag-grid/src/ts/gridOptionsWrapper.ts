@@ -9,7 +9,8 @@ import {
     NavigateToNextCellParams,
     NodeChildDetails,
     PaginationNumberFormatterParams,
-    PostProcessPopupParams, ProcessDataFromClipboardParams,
+    PostProcessPopupParams,
+    ProcessDataFromClipboardParams,
     TabToNextCellParams
 } from "./entities/gridOptions";
 import {EventService} from "./eventService";
@@ -448,16 +449,7 @@ export class GridOptionsWrapper {
     public getOverlayNoRowsTemplate() { return this.gridOptions.overlayNoRowsTemplate; }
     public isSuppressAutoSize() { return isTrue(this.gridOptions.suppressAutoSize); }
     public isSuppressParentsInRowNodes() { return isTrue(this.gridOptions.suppressParentsInRowNodes); }
-    public isEnableStatusBar() { return isTrue(this.gridOptions.enableStatusBar); }
-    public isAlwaysShowStatusBar() { return isTrue(this.gridOptions.alwaysShowStatusBar); }
-    public isShowAggregationPanel() {
-        let showAggregationPanel = this.isEnableStatusBar();
-        if (this.gridOptions.statusPanel && this.gridOptions.statusPanel.components) {
-            const aggregationPanelConfig = _.find(this.gridOptions.statusPanel.components, (item) => item.component === 'agAggregationComponent');
-            showAggregationPanel = _.exists(aggregationPanelConfig);
-        }
-        return isTrue(showAggregationPanel);
-    }
+
     public isFunctionsReadOnly() { return isTrue(this.gridOptions.functionsReadOnly); }
     public isFloatingFilter(): boolean { return this.gridOptions.floatingFilter; }
     public isEnableOldSetFilterModel(): boolean { return isTrue(this.gridOptions.enableOldSetFilterModel); }
@@ -792,6 +784,28 @@ export class GridOptionsWrapper {
         if (options.gridAutoHeight) {
             console.warn(`ag-grid: since version 19.x, gridAutoHeight is gone, please use domLayout=autoHeight instead`);
             options.domLayout = 'autoHeight';
+        }
+        if(options.enableStatusBar) {
+            console.warn(`ag-grid: since version 19.x, enableStatusBar is gone, please specify statusPanel components`);
+            options.statusPanel = options.statusPanel ||
+                {
+                    components: [ { component: 'agAggregationComponent' } ]
+                };
+        }
+        if(options.alwaysShowStatusBar) {
+            console.warn(`ag-grid: since version 19.x, alwaysShowStatusBar is gone, please specify statusPanel components`);
+            const statusPanelConfig = options.statusPanel ||
+                {
+                    components: [
+                        { component: 'agAggregationComponent' },
+                        { component: 'agBlankStatusBarComponent' },
+                    ]
+                };
+
+            if(!_.find(statusPanelConfig.components, (component) => (<any>component).component === 'agBlankStatusBarComponent')) {
+                statusPanelConfig.components.push({component: 'agBlankStatusBarComponent'});
+            }
+            options.statusPanel = statusPanelConfig;
         }
     }
 
