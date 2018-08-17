@@ -377,31 +377,36 @@ export class GridPanel extends Component {
     }
 
     private addStopEditingWhenGridLosesFocus(): void {
-        if (this.gridOptionsWrapper.isStopEditingWhenGridLosesFocus()) {
-            this.addDestroyableEventListener(this.eBody, 'focusout', (event: FocusEvent)=> {
 
-                // this is the element the focus is moving to
-                let elementWithFocus = event.relatedTarget;
+        if (!this.gridOptionsWrapper.isStopEditingWhenGridLosesFocus()) { return; }
 
-                // see if the element the focus is going to is part of the grid
-                let clickInsideGrid = false;
-                let pointer: any = elementWithFocus;
+        let focusOutListener = (event: FocusEvent): void => {
 
-                while (_.exists(pointer) && !clickInsideGrid) {
+            // this is the element the focus is moving to
+            let elementWithFocus = event.relatedTarget;
 
-                    let isPopup = !!this.gridOptionsWrapper.getDomData(pointer, PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER);
-                    let isBody = this.eBody == pointer;
+            // see if the element the focus is going to is part of the grid
+            let clickInsideGrid = false;
+            let pointer: any = elementWithFocus;
 
-                    clickInsideGrid = isPopup || isBody;
+            while (_.exists(pointer) && !clickInsideGrid) {
 
-                    pointer = pointer.parentNode;
-                }
+                let isPopup = !!this.gridOptionsWrapper.getDomData(pointer, PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER);
+                let isBody = this.eBody === pointer || this.eBottom === pointer || this.eTop === pointer;
 
-                if (!clickInsideGrid) {
-                    this.rowRenderer.stopEditing();
-                }
-            });
-        }
+                clickInsideGrid = isPopup || isBody;
+
+                pointer = pointer.parentNode;
+            }
+
+            if (!clickInsideGrid) {
+                this.rowRenderer.stopEditing();
+            }
+        };
+
+        this.addDestroyableEventListener(this.eBody, 'focusout', focusOutListener);
+        this.addDestroyableEventListener(this.eTop, 'focusout', focusOutListener);
+        this.addDestroyableEventListener(this.eBottom, 'focusout', focusOutListener);
     }
 
     private addAngularApplyCheck(): void {
