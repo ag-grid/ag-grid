@@ -103,6 +103,7 @@ export class PopupService {
                             column?: Column,
                             rowNode?: RowNode,
                             minWidth?: number,
+                            minHeight?: number,
                             nudgeX?: number,
                             nudgeY?: number,
                             keepWithinBounds?: boolean}) {
@@ -113,6 +114,7 @@ export class PopupService {
         this.positionPopup({
             ePopup: params.ePopup,
             minWidth: params.minWidth,
+            minHeight: params.minHeight,
             nudgeX: params.nudgeX,
             nudgeY: params.nudgeY,
             x: sourceRect.left - parentRect.left,
@@ -168,6 +170,7 @@ export class PopupService {
     private positionPopup(params: {
                         ePopup: HTMLElement,
                         minWidth?: number,
+                        minHeight?: number,
                         nudgeX?: number,
                         nudgeY?: number,
                         x: number,
@@ -195,11 +198,13 @@ export class PopupService {
 
     }
 
-    private keepYWithinBounds(params: {ePopup: HTMLElement}, y: number): number {
+    private keepYWithinBounds(params: {ePopup: HTMLElement, minHeight?: number}, y: number): number {
         let parentRect = this.getPopupParent().getBoundingClientRect();
 
         let minHeight: number;
-        if (params.ePopup.clientHeight > 0) {
+        if (params.minHeight > 0) {
+            minHeight = params.minHeight;
+        } else if (params.ePopup.clientHeight > 0) {
             minHeight = params.ePopup.clientHeight;
         } else {
             minHeight = 200;

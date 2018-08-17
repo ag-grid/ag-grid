@@ -10,6 +10,7 @@
         "resetNonDocs": "git checkout packages/ag-grid && git checkout packages/ag-grid && git checkout packages/ag-grid-angular && git checkout packages/ag-grid-react && git checkout packages/ag-grid-aurelia && git checkout packages/ag-grid-vue ",
         "build": "lerna run build",
         "buildCore": "lerna run build --scope ag-grid --scope ag-grid-enterprise --scope ag-grid-angular --scope ag-grid-react --scope ag-grid-vue --scope ag-grid-aurelia",
+        "buildVanilla": "lerna run build --scope ag-grid --scope ag-grid-enterprise",
         "buildAngular": "lerna run build --scope ag-grid --scope ag-grid-angular",
         "buildVue": "lerna run build --scope ag-grid --scope ag-grid-vue",
         "buildReact": "lerna run build --scope ag-grid --scope ag-grid-react",
