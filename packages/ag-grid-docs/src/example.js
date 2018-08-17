@@ -98,9 +98,10 @@ function suppressColumnMoveAnimation() {
 var gridOptions = {
     statusPanel: {
         components: [
-            {
-                component: 'agAggregationComponent'
-           }
+            { component: 'agTotalRowCountComponent' },
+            { component: 'agFilteredRowCountComponent' },
+            { component: 'agSelectedRowCountComponent' },
+            { component: 'agAggregationComponent' }
         ]
     },
     components: {
