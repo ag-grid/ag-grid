@@ -14,13 +14,27 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     Perhaps the most compelling reason to choose the Server-side Row Model is to achieve lazy-loading of Row Groups.
+    This section will continue where <a href="../javascript-grid-server-side-model-infinite/">Infinite Scroll</a> left
+    off, to cover a more complex scenario which includes Server-side Row Grouping, Aggregation and Sorting.
 </p>
 
+<h2>Group Caches</h2>
 
-<h2>
-    Server-side Get Rows Request
-</h2>
+<p>
+    The <a href="../javascript-grid-server-side-model-infinite/#server-side-cache/">Server-side Cache</a> has already
+    been covered, however in when performing Row Grouping it is important to understand that each group node contains
+    a cache. This is illustrated in the following diagram:
+</p>
 
+<p>
+    <img src="groupCache.png" width="100%" height="100%" style="border: 1px  grey"/>
+</p>
+
+<p>When a group node is expanded, such as 'Australia' above, a cache will be created and blocks containing rows will be
+   loaded via the <a href="../javascript-grid-server-side-model/#server-side-datasource">Server-side Datasource</a>
+</p>
+
+<h2>Group Request Parameters</h2>
 
 <p>
     The relevant <code>IServerSideGetRowsRequest</code> parameters for Row Grouping are as follows:
@@ -107,11 +121,11 @@ IServerSideGetRowsRequest {
 </p>
 
 <snippet>
-    gridOptions.getChildCount = function(data) {
+gridOptions.getChildCount = function(data) {
     // in this example, the data has the child count
     // stored in the attribute 'childCount'.
     return data.childCount;
-    };
+};
 </snippet>
 
 
@@ -184,8 +198,7 @@ IServerSideGetRowsRequest {
 </p>
 
 <snippet>
-    function getRows(params) {
-
+function getRows(params) {
     // 1) get data from server
     var response = getServerResponse(params.request);
 
@@ -194,11 +207,11 @@ IServerSideGetRowsRequest {
 
     // 3) to preserve group state we expand any previously expanded groups for this block
     rowsInThisBlock.forEach(row => {
-    if (expandedGroupIds.indexOf(row.id) > -1) {
-    gridOptions.api.getRowNode(row.id).setExpanded(true);
-    }
+        if (expandedGroupIds.indexOf(row.id) > -1) {
+            gridOptions.api.getRowNode(row.id).setExpanded(true);
+        }
     });
-    }
+}
 </snippet>
 
 <p>

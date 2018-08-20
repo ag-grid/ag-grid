@@ -6,14 +6,14 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise"> Slice and Dice </h1>
+<h1 class="heading-enterprise"> Pivoting </h1>
 
 <p class="lead">
     In this section we add Server-side Pivoting to create an example with the ability to 'Slice and Dice' data using
     the Server-side Row model.
 </p>
 
-<h2>Slice and Dice</h2>
+<h2>Pivoting</h2>
 
 <p>
     Now that we have covered <a href="../javascript-grid-server-side-model-grouping/">Row Grouping</a> we are
