@@ -33,11 +33,15 @@ var gridOptions = {
     console.log("onRowSelected: ", params);
   },
   onGridReady: function (params) {
-    // initialise with the first group arbitrarily expanded
+    // initialise with the first 2 groups arbitrarily expanded
     setTimeout(function() {
       // expands first node
       params.api.getDisplayedRowAtIndex(0).setExpanded(true);
     }, 1500);
+    setTimeout(function() {
+      // expands second node
+      params.api.getDisplayedRowAtIndex(1).setExpanded(true);
+    }, 2000);
   }
 };
 

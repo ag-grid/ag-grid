@@ -35,7 +35,11 @@ var gridOptions = {
     // initialise with the first group arbitrarily expanded
     setTimeout(function() {
       params.api.getDisplayedRowAtIndex(0).setExpanded(true);
-    }, 1000);
+    }, 1500);
+    setTimeout(function() {
+      // expands second node
+      params.api.getDisplayedRowAtIndex(1).setExpanded(true);
+    }, 2000);
   }
 };
 

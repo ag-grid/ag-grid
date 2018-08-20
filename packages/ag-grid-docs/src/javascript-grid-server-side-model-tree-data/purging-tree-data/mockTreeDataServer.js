@@ -9,7 +9,7 @@ ServerSideDatasource.prototype.getRows = function(params) {
 
     setTimeout(function() {
       params.successCallback(rows, rows.length);
-    }, 500);
+    }, 200);
 };
 
 function FakeServer(allData) {
