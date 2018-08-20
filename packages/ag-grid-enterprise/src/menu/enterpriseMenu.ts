@@ -67,6 +67,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
     public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, defaultTab?:string, restrictToTabs?:string[]): void {
 
         this.showMenu(column, (menu: EnterpriseMenu)=> {
+            let minDims = menu.getMinDimensions();
             this.popupService.positionPopupUnderComponent({
                 column: column,
                 type: 'columnMenu',
@@ -74,7 +75,8 @@ export class EnterpriseMenuFactory implements IMenuFactory {
                 ePopup: menu.getGui(),
                 nudgeX: -9,
                 nudgeY: -26,
-                minWidth: menu.getMinWidth(),
+                minWidth: minDims.width,
+                minHeight: minDims.height,
                 keepWithinBounds: true
             });
             if (defaultTab) {
@@ -188,8 +190,8 @@ export class EnterpriseMenu extends BeanStub {
         this.restrictTo = restrictTo;
     }
 
-    public getMinWidth(): number {
-        return this.tabbedLayout.getMinWidth();
+    public getMinDimensions(): {width: number, height: number} {
+        return this.tabbedLayout.getMinDimensions();
     }
 
     @PostConstruct

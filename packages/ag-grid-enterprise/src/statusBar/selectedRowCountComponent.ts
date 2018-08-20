@@ -4,7 +4,7 @@ import {StatusBarValueComponent} from "./statusBarValueComponent";
 export class SelectedRowCountComponent extends Component {
 
     private static TEMPLATE = `<div class="ag-status-bar-selected-row-count">
-                <ag-selected-row-count-comp key="selectedRowCount" default-value="Selected Row Count" ref="selectedRowCountComp"></ag-selected-row-count-comp>
+                <ag-selected-row-count-comp key="selectedRowCount" default-value="Selected" ref="selectedRowCountComp"></ag-selected-row-count-comp>
             </div>`;
 
     @Autowired('eventService') private eventService: EventService;

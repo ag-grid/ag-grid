@@ -206,6 +206,7 @@ export class GridPanel extends Component {
 
     private lastVScrollElement: HTMLElement;
     private lastVScrollTime: number;
+    private recentScrolls: {[key: number]: boolean} = {}
 
     private printLayout: boolean;
 
@@ -376,31 +377,36 @@ export class GridPanel extends Component {
     }
 
     private addStopEditingWhenGridLosesFocus(): void {
-        if (this.gridOptionsWrapper.isStopEditingWhenGridLosesFocus()) {
-            this.addDestroyableEventListener(this.eBody, 'focusout', (event: FocusEvent)=> {
 
-                // this is the element the focus is moving to
-                let elementWithFocus = event.relatedTarget;
+        if (!this.gridOptionsWrapper.isStopEditingWhenGridLosesFocus()) { return; }
 
-                // see if the element the focus is going to is part of the grid
-                let clickInsideGrid = false;
-                let pointer: any = elementWithFocus;
+        let focusOutListener = (event: FocusEvent): void => {
 
-                while (_.exists(pointer) && !clickInsideGrid) {
+            // this is the element the focus is moving to
+            let elementWithFocus = event.relatedTarget;
 
-                    let isPopup = !!this.gridOptionsWrapper.getDomData(pointer, PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER);
-                    let isBody = this.eBody == pointer;
+            // see if the element the focus is going to is part of the grid
+            let clickInsideGrid = false;
+            let pointer: any = elementWithFocus;
 
-                    clickInsideGrid = isPopup || isBody;
+            while (_.exists(pointer) && !clickInsideGrid) {
 
-                    pointer = pointer.parentNode;
-                }
+                let isPopup = !!this.gridOptionsWrapper.getDomData(pointer, PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER);
+                let isBody = this.eBody === pointer || this.eBottom === pointer || this.eTop === pointer;
 
-                if (!clickInsideGrid) {
-                    this.rowRenderer.stopEditing();
-                }
-            });
-        }
+                clickInsideGrid = isPopup || isBody;
+
+                pointer = pointer.parentNode;
+            }
+
+            if (!clickInsideGrid) {
+                this.rowRenderer.stopEditing();
+            }
+        };
+
+        this.addDestroyableEventListener(this.eBody, 'focusout', focusOutListener);
+        this.addDestroyableEventListener(this.eTop, 'focusout', focusOutListener);
+        this.addDestroyableEventListener(this.eBottom, 'focusout', focusOutListener);
     }
 
     private addAngularApplyCheck(): void {
@@ -1409,8 +1415,22 @@ export class GridPanel extends Component {
 
         let now = new Date().getTime();
         let diff = now - this.lastVScrollTime;
-        let elementIsNotControllingTheScroll = source!==this.lastVScrollElement && diff < 500;
-        if (elementIsNotControllingTheScroll) { return; }
+
+        // recentScrolls: when one scrollable area is scrolling (eg center) then the
+        // other scroll areas are also scrolled (eg pinned left, pinned right, full width).
+        // we want to ignore events that are as a result of the other panels scrolling,
+        // eg if body scrolls to 100px, then we want to ignore the events coming from
+        // the other panels for 100px. if we don't do this, then we will end up with events
+        // interfering wih the scroll when there is a stream of events. this was most notable
+        // on IE, but impacted all browsers to some extent.
+
+        let clearRecentScrolls = diff > 500;
+        if (clearRecentScrolls) { this.recentScrolls = {}; }
+
+        let skipBecauseAlreadyScrolledToHere = this.recentScrolls[source.scrollTop] === true;
+        if (skipBecauseAlreadyScrolledToHere) { return; }
+
+        this.recentScrolls[source.scrollTop] = true;
 
         this.lastVScrollElement = source;
         this.lastVScrollTime = now;

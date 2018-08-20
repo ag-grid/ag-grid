@@ -98,9 +98,10 @@ function suppressColumnMoveAnimation() {
 var gridOptions = {
     statusPanel: {
         components: [
-            {
-                component: 'agAggregationComponent'
-           }
+            { component: 'agTotalRowCountComponent' },
+            { component: 'agFilteredRowCountComponent' },
+            { component: 'agSelectedRowCountComponent' },
+            { component: 'agAggregationComponent' }
         ]
     },
     components: {
@@ -122,6 +123,7 @@ var gridOptions = {
     },
     enableCellChangeFlash: true,
     rowDragManaged: true,
+    popupParent: document.body,
     // ensureDomOrder: true,
     // postProcessPopup: function(params) {
     //     console.log(params);

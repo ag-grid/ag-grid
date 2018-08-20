@@ -70,7 +70,8 @@ import {StatusBar} from "./statusBar/statusBar";
 import {AggregationComponent} from "./statusBar/aggregationComponent"
 import {StatusBarValueComponent} from "./statusBar/statusBarValueComponent";
 import {SelectedRowCountComponent} from "./statusBar/selectedRowCountComponent"
-import {RowCountComponent} from "./statusBar/rowCountComponent"
+import {TotalRowCountComponent} from "./statusBar/totalRowCountComponent"
+import {FilteredRowCountComponent} from "./statusBar/filteredRowCountComponent"
 import {BlankStatusBarComponent} from "./statusBar/blankStatusBarComponent"
 
 let rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
@@ -103,6 +104,7 @@ Grid.setEnterpriseComponents([
 Grid.setEnterpriseDefaultComponents([
     {componentName: 'agAggregationComponent', theClass: AggregationComponent},
     {componentName: 'agSelectedRowCountComponent', theClass: SelectedRowCountComponent},
-    {componentName: 'agRowCountComponent', theClass: RowCountComponent},
+    {componentName: 'agTotalRowCountComponent', theClass: TotalRowCountComponent},
+    {componentName: 'agFilteredRowCountComponent', theClass: FilteredRowCountComponent},
     {componentName: 'agBlankStatusBarComponent', theClass: BlankStatusBarComponent},
 ]);

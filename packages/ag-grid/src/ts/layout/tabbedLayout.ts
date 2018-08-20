@@ -37,8 +37,11 @@ export class TabbedLayout {
         this.afterAttachedParams = params;
     }
 
-    public getMinWidth(): number {
-        let eDummyContainer = document.createElement('span');
+    public getMinDimensions(): {width: number, height: number} {
+
+        let eDummyContainer = <HTMLElement> this.eGui.cloneNode(true);
+        let eDummyBody = <HTMLElement> eDummyContainer.querySelector('[ref="tabBody"]');
+
         // position fixed, so it isn't restricted to the boundaries of the parent
         eDummyContainer.style.position = 'fixed';
 
@@ -47,29 +50,33 @@ export class TabbedLayout {
         this.eGui.appendChild(eDummyContainer);
 
         let minWidth = 0;
+        let minHeight = 0;
 
         this.items.forEach( (itemWrapper: TabbedItemWrapper) => {
-            _.removeAllChildren(eDummyContainer);
+            _.removeAllChildren(eDummyBody);
 
             let eClone: HTMLElement = <HTMLElement> itemWrapper.tabbedItem.bodyPromise.resolveNow(null, body=>body.cloneNode(true));
             if (eClone == null) { return; }
 
-            eDummyContainer.appendChild(eClone);
+            eDummyBody.appendChild(eClone);
 
             if (minWidth<eDummyContainer.offsetWidth) {
                 minWidth = eDummyContainer.offsetWidth;
+            }
+            if (minHeight<eDummyContainer.offsetHeight) {
+                minHeight = eDummyContainer.offsetHeight;
             }
         });
 
         // finally check the parent tabs are no wider, as if they
         // are, then these are the min width and not the child tabs
-        if (minWidth<this.eGui.offsetWidth) {
-            minWidth = this.eGui.offsetWidth;
-        }
+        // if (minWidth<this.eGui.offsetWidth) {
+        //     minWidth = this.eGui.offsetWidth;
+        // }
 
         this.eGui.removeChild(eDummyContainer);
 
-        return minWidth;
+        return {height: minHeight, width: minWidth};
     }
 
     public showFirstItem(): void {
