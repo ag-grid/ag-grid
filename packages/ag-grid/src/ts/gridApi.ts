@@ -988,7 +988,7 @@ export class GridApi {
         // do change detection for all present cells
         if (!this.gridOptionsWrapper.isSuppressChangeDetection()) {
             this.rowRenderer.refreshCells();
-            this.rowRenderer.refreshFullWidthRows();
+            // this.rowRenderer.refreshFullWidthRows();
         }
 
         return res;
