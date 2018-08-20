@@ -23,6 +23,7 @@ import {ColumnGroup} from "../entities/columnGroup";
 import {GridApi} from "../gridApi";
 import {ClientSideRowModel} from "../rowModels/clientSide/clientSideRowModel";
 import {PinnedRowModel} from "../rowModels/pinnedRowModel";
+import {AutoGroupColService} from "../columnController/autoGroupColService";
 
 /**
  * This interface works in conjuction with the GridSerializer. When serializing a grid, an instance that implements this interface
@@ -211,7 +212,12 @@ export class GridSerializer {
         if (_.existsAndNotEmpty(columnKeys)) {
             columnsToExport = this.columnController.getGridColumns(columnKeys);
         } else if (allColumns && !isPivotMode) {
-            columnsToExport = this.columnController.getAllPrimaryColumns();
+            // add auto group column for tree data
+            columnsToExport = this.gridOptionsWrapper.isTreeData() ?
+                this.columnController.getGridColumns([AutoGroupColService.GROUP_AUTO_COLUMN_ID]) : [];
+
+            columnsToExport = columnsToExport.concat(this.columnController.getAllPrimaryColumns());
+
         } else {
             columnsToExport = this.columnController.getAllDisplayedColumns();
         }
