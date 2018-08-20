@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>When a group node is expanded, such as 'Australia' above, a cache will be created and blocks containing rows will be
-   loaded via the <a href="../javascript-grid-server-side-model-overview/#server-side-datasource">Server-side Datasource</a>
+   loaded via the <a href="../javascript-grid-server-side-model/#server-side-datasource">Server-side Datasource</a>
 </p>
 
 <h2>Group Request Parameters</h2>

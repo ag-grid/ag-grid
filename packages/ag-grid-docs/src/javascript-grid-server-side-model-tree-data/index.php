@@ -67,7 +67,7 @@ include '../documentation-main/documentation_header.php';
 <h2 id="supplying-tree-data">Supplying Tree Data</h2>
 
 <p>
-    Tree Data is supplied via the <a href="../javascript-grid-server-side-model-overview/#server-side-datasource">Server-side Datasource</a>
+    Tree Data is supplied via the <a href="../javascript-grid-server-side-model/#server-side-datasource">Server-side Datasource</a>
     just like flat data, however there are two additional gridOptions callbacks; <code>isServerSideGroup(dataItem)</code> and <code>getServerSideGroupKey(dataItem)</code>.
 </p>
 

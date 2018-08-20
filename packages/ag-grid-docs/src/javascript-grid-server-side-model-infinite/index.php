@@ -32,7 +32,7 @@ include '../documentation-main/documentation_header.php';
 <h2>Implementing the Server-side Datasource</h2>
 
 <p>
-    The previous section outlined the interfaces associated with the <a href="../javascript-grid-server-side-model-overview/#server-side-datasource">Server-side Datasource</a>.
+    The previous section outlined the interfaces associated with the <a href="../javascript-grid-server-side-model/#server-side-datasource">Server-side Datasource</a>.
     The following snippet outlines how to implement a <code>ServerSideDatasource</code> and then register it with the grid:
 </p>
 

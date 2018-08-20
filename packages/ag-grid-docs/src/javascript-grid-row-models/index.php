@@ -68,7 +68,7 @@ include '../documentation-main/documentation_header.php';
         Advanced users will use Server-side Row Model to do ad-hoc slice and dice of data with server-side aggregations.
     </p>
 
-    <p> <a href="../javascript-grid-server-side-model-overview/">Go to Server-side Row Model</a> </p>
+    <p> <a href="../javascript-grid-server-side-model/">Go to Server-side Row Model</a> </p>
     </div>
 </div>
 <div class="docs-homepage-section-preview">
@@ -132,7 +132,7 @@ include '../documentation-main/documentation_header.php';
             </li>
             <li>
                 Use <b><a href="../javascript-grid-infinite-scrolling/">Infinite</a></b> or
-                <b><a href="../javascript-grid-server-side-model-overview/">Server-side</a></b>
+                <b><a href="../javascript-grid-server-side-model/">Server-side</a></b>
                 to bring back a list of data one block at a time from the server.
                 As the user scrolls the grid will ask for more rows.
                 Server-side has more features than Infinite and will allow row grouping, aggregation,
@@ -472,7 +472,7 @@ include '../documentation-main/documentation_header.php';
         The <a href="../javascript-grid-client-side-model/">Client-side</a> row model does not need a datasource.
         <a href="../javascript-grid-infinite-scrolling/">Infinite</a>,
         <a href="../javascript-grid-viewport/">Viewport</a> and
-        <a href="../javascript-grid-server-side-model-overview/">Server-side</a> all use a datasource. The documentation
+        <a href="../javascript-grid-server-side-model/">Server-side</a> all use a datasource. The documentation
         on each row model type explains how to configure the datasource for the particular row model.
     </p>
 
