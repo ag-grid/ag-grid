@@ -451,11 +451,6 @@
                 "url": "javascript-grid-infinite-scrolling/"
             },
             {
-                "title": "Server-side (Old)",
-                "url": "javascript-grid-server-side-model/",
-                "enterprise": true
-            },
-            {
                 "title": "Server-side",
                 "url": "javascript-grid-server-side-model-overview/",
                 "enterprise": true,
@@ -469,8 +464,8 @@
                         "url": "javascript-grid-server-side-model-grouping/"
                     },
                     {
-                        "title": "Slice and Dice",
-                        "url": "javascript-grid-server-side-model-slice-and-dice/"
+                        "title": "Pivoting",
+                        "url": "javascript-grid-server-side-model-pivoting/"
                     },
                     {
                         "title": "Pagination",

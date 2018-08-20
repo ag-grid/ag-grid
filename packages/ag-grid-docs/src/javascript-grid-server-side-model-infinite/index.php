@@ -13,9 +13,8 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    To introduce how to implement the
-    <a href="../javascript-grid-server-side-model-overview/#server-side-datasource">Server-side Datasource</a> interface
-    outlined in the previous section, we will consider the simplest use case for the Server-side Row Model with no grouping or pivoting.
+    As a gentle introduction to the Server-side Row Model, this section will cover the simplest use case of infinite
+    scrolling without any grouping, filtering, sorting or pivoting.
 </p>
 
 <h2>Enabling Server-side Row Model</h2>
@@ -33,6 +32,7 @@ include '../documentation-main/documentation_header.php';
 <h2>Implementing the Server-side Datasource</h2>
 
 <p>
+    The previous section outlined the interfaces associated with the <a href="../javascript-grid-server-side-model-overview/#server-side-datasource">Server-side Datasource</a>.
     The following snippet outlines how to implement a <code>ServerSideDatasource</code> and then register it with the grid:
 </p>
 
@@ -50,7 +50,7 @@ ServerSideDatasource.prototype.getRows = function(params) {
         // call the success callback
         params.successCallback(response.rows, response.lastRow);
     } else {
-        // inform the grid request failed
+        // inform the grid the request failed
         params.failCallback();
     }
 };
@@ -61,10 +61,100 @@ var datasource = new ServerSideDatasource(server);
 gridOptions.api.setServerSideDatasource(datasource);
 </snippet>
 
+<h2>Server-side Cache</h2>
+
+<p>
+    At the heart of the Server-side Row Model lies the Server-side Cache. When there are no row groups, like in the
+    example covered in this section, a single cache will be associated with the root level node.
+</p>
+
+<p>
+    When the grid loads it will retrieve an initial number (as per configuration) of blocks containing rows. As the user
+    scrolls down, more blocks will be loaded via the server-side datasource.
+</p>
+
+<p>
+    The following illustration shows how the grid arranges rows in blocks which are in turn contained in a cache:
+</p>
+
+<p>
+    <img src="serverSideCache.png" width="75%" height="75%" style="border: 1px  grey"/>
+</p>
+
+<p>
+    To control the browser memory footprint, server-side blocks and their containing caches are lazy-loaded, and can
+    be configured to purge automatically or manually via API calls.
+</p>
+
+<h2>Cache Configuration</h2>
+
+<table class="table reference">
+    <tr>
+        <th>Property</th>
+        <th>Description</th>
+    </tr>
+    <tr id="property-overflow-size">
+        <th>cacheOverflowSize</th>
+        <td>
+            <p>When infinite scrolling is active, this says how many rows beyond the current last row
+                the scrolls should allow to scroll. For example, if 200 rows already loaded from server,
+                and overflowSize is 50, the scroll will allow scrolling to row 250. Default is 1.</p>
+        </td>
+    </tr>
+    <tr id="property-max-concurrent-requests">
+        <th>maxConcurrentDatasourceRequests</th>
+        <td><p>How many requests to hit the server with concurrently. If the max is reached, requests are queued.
+                Default is 1, thus by default, only one request will be active at any given time.</p></td>
+    </tr>
+    <tr id="property-max-blocks-in-cache">
+        <th>maxBlocksInCache</th>
+        <td>
+            <p>How many blocks to cache in the client. Default is no limit, so every requested
+                block is kept. Use this if you have memory concerns, so blocks least recently viewed are purged.
+                If used, make sure you have enough blocks in the cache to display one whole view of the table
+                (ie what's within the scrollable area), otherwise it won't work and an infinite loop of
+                requesting blocks will happen.</p>
+        </td>
+    </tr>
+    <tr id="property-pagination-initial-row-count">
+        <th>infiniteInitialRowCount</th>
+        <td>
+            <p>How many rows to initially allow the user to scroll to. This is handy if you expect large data sizes
+                and you want the scrollbar to cover many blocks before it has to start readjusting for the loading of
+                additional data.</p>
+        </td>
+    </tr>
+    <tr id="property-infinite-block-size">
+        <th>cacheBlockSize</th>
+        <td>
+            <p>How many rows for each block in the cache.</p>
+        </td>
+    </tr>
+
+    <tr id="property-infinite-purge-closed-row-nodes">
+        <th>purgeClosedRowNodes</th>
+        <td>
+            <p>When enabled, closing group row nodes will purges all caches beneath closed row nodes. This property only
+            applies when there is <a href="../javascript-grid-server-side-model-grouping/">Row Grouping</a>.</p>
+        </td>
+    </tr>
+
+    <tr id="property-infinite-purge-closed-row-nodes">
+        <th>serverSideSortingAlwaysResets</th>
+        <td>
+            <p>When enabled, always refreshes top level groups regardless of which column was sorted. This property only
+               applies when there is <a href="../javascript-grid-server-side-model-grouping/">Row Grouping</a>.</p>
+        </td>
+    </tr>
+
+
+
+</table>
+
 <h2>Example - Infinite Scroll</h2>
 
 <p>
-    The example below demonstrates the following:
+    The example below demonstrates infinite scrolling along with some of the above configuration options:
 </p>
 
 <ul class="content">
@@ -77,12 +167,6 @@ gridOptions.api.setServerSideDatasource(datasource);
 </ul>
 
 <?= example('Infinite Scroll', 'infinite-scroll', 'generated', array("enterprise" => 1)) ?>
-
-
-<p>
-    <h2 style="color: red">TODO: discuss cache configurations!</h2>
-</p>
-
 
 <p>
     Continue to the next section to see how to lazy load data with: <a href="../javascript-grid-server-side-model-grouping/">Row Grouping</a>.
