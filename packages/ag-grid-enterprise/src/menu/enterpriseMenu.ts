@@ -1,26 +1,26 @@
 import {
-    Utils,
-    Bean,
-    IMenuFactory,
+    AgEvent,
     Autowired,
-    Context,
-    PopupService,
-    GridOptionsWrapper,
+    Bean,
+    BeanStub,
     Column,
     ColumnController,
-    FilterManager,
-    MenuItemDef,
-    GridApi,
-    TabbedLayout,
-    EventService,
-    TabbedItem,
-    AgEvent,
-    IRowModel,
     Constants,
-    PostConstruct,
+    Context,
+    EventService,
+    FilterManager,
     FilterWrapper,
+    GridApi,
+    GridOptionsWrapper,
+    IMenuFactory,
+    IRowModel,
+    MenuItemDef,
+    PopupService,
+    PostConstruct,
     Promise,
-    BeanStub
+    TabbedItem,
+    TabbedLayout,
+    Utils
 } from "ag-grid";
 import {ColumnSelectComp} from "../toolPanel/columnsSelect/columnSelectComp";
 import {MenuList} from "./menuList";
@@ -405,7 +405,7 @@ export class EnterpriseMenu extends BeanStub {
 
     private createFilterPanel(): TabbedItem {
 
-        let filterWrapper:FilterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column);
+        let filterWrapper:FilterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'COLUMN_MENU');
 
         let afterFilterAttachedCallback: Function;
         filterWrapper.filterPromise.then(filter => {

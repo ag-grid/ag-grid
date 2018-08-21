@@ -9,11 +9,13 @@ import {Column} from "../entities/column";
 import {Autowired, Bean, Context, PostConstruct, PreDestroy} from "../context/context";
 import {IRowModel} from "../interfaces/iRowModel";
 import {EventService} from "../eventService";
-import {ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent} from "../events";
+import {ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent} from "../events";
 import {IDoesFilterPassParams, IFilterComp, IFilterParams} from "../interfaces/iFilter";
 import {ColDef, GetQuickFilterTextParams} from "../entities/colDef";
 import {GridApi} from "../gridApi";
 import {ComponentResolver} from "../components/framework/componentResolver";
+
+export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
 @Bean('filterManager')
 export class FilterManager {
@@ -80,7 +82,7 @@ export class FilterManager {
                     console.warn('Warning ag-grid setFilterModel - no column found for colId ' + colId);
                     return;
                 }
-                let filterWrapper = this.getOrCreateFilterWrapper(column);
+                let filterWrapper = this.getOrCreateFilterWrapper(column, 'NO_UI');
                 this.setModelOnFilterWrapper(filterWrapper.filterPromise, model[colId]);
                 allPromises.push(filterWrapper.filterPromise);
             });
@@ -380,17 +382,22 @@ export class FilterManager {
         };
     }
 
-    public getFilterComponent(column: Column): Promise<IFilterComp> {
-        let filterWrapper = this.getOrCreateFilterWrapper(column);
+    public getFilterComponent(column: Column, source: FilterRequestSource): Promise<IFilterComp> {
+        let filterWrapper = this.getOrCreateFilterWrapper(column, source);
         return filterWrapper.filterPromise;
     }
 
-    public getOrCreateFilterWrapper(column: Column): FilterWrapper {
+    public getOrCreateFilterWrapper(column: Column, source: FilterRequestSource): FilterWrapper {
         let filterWrapper: FilterWrapper = this.cachedFilter(column);
 
         if (!filterWrapper) {
-            filterWrapper = this.createFilterWrapper(column);
+            filterWrapper = this.createFilterWrapper(column, source);
             this.allFilters[column.getColId()] = filterWrapper;
+        } else {
+            if (source !== 'NO_UI'){
+                this.putIntoGui(filterWrapper, source);
+            }
+
         }
 
         return filterWrapper;
@@ -448,7 +455,7 @@ export class FilterManager {
         );
     }
 
-    private createFilterWrapper(column: Column): FilterWrapper {
+    private createFilterWrapper(column: Column, source: FilterRequestSource): FilterWrapper {
         let filterWrapper: FilterWrapper = {
             column: column,
             filterPromise: null,
@@ -461,12 +468,12 @@ export class FilterManager {
 
         filterWrapper.filterPromise = this.createFilterInstance(column, filterWrapper.scope);
 
-        this.putIntoGui(filterWrapper);
+        this.putIntoGui(filterWrapper, source);
 
         return filterWrapper;
     }
 
-    private putIntoGui(filterWrapper: FilterWrapper): void {
+    private putIntoGui(filterWrapper: FilterWrapper, source: FilterRequestSource): void {
         let eFilterGui = document.createElement('div');
         eFilterGui.className = 'ag-filter';
         filterWrapper.filterPromise.then(filter=> {
@@ -493,6 +500,18 @@ export class FilterManager {
             }
 
             filterWrapper.guiPromise.resolve(eFilterGui);
+
+
+            this.eventService.dispatchEvent(<FilterOpenedEvent>{
+                type: Events.EVENT_FILTER_OPENED,
+                column: filterWrapper.column,
+                source: source,
+                eGui: eFilterGui,
+                api: this.gridApi,
+                columnApi: this.columnApi
+
+            });
+
         });
     }
 

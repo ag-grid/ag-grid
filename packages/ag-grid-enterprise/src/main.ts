@@ -1,3 +1,5 @@
+import {ToolPanelAllFiltersComp} from "./toolPanel/filter/toolPanelAllFiltersComp";
+
 export {ColumnSelectComp} from "./toolPanel/columnsSelect/columnSelectComp";
 export {ToolPanelColumnComp} from "./toolPanel/columnsSelect/toolPanelColumnComp";
 export {ToolPanelGroupComp} from "./toolPanel/columnsSelect/toolPanelGroupComp";
@@ -95,6 +97,7 @@ Grid.setEnterpriseComponents([
 
     {componentName: 'AgHeaderColumnDrop', theClass: HeaderColumnDropComp},
     {componentName: 'AgToolPanelColumnComp', theClass: ToolPanelColumnComp},
+    {componentName: 'AgToolPanelAllFiltersComp', theClass: ToolPanelAllFiltersComp},
     {componentName: 'AgToolPanelSelectComp', theClass: ToolPanelSelectComp},
 ]);
 

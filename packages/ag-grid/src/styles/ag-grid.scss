@@ -1063,13 +1063,17 @@ $row-group-indent-size: 10px !default;
     .ag-side-buttons {
         width: 20px;
 
-        button {
-            display: block;
-            transform: rotate(90deg) translateY(-20px);
-            transform-origin: left top 0;
-            white-space: nowrap;
-            outline: none;
+        div {
+            height: 60px;
+            button {
+                display: block;
+                transform: rotate(90deg) translateY(-20px);
+                transform-origin: left top 0;
+                white-space: nowrap;
+                outline: none;
+            }
         }
+
     }
 
     .panel-container {

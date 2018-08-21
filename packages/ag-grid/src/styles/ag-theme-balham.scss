@@ -43,4 +43,10 @@ $value-change-value-highlight-background-color: transparentize(#16A085, 0.5) !de
 
 .ag-theme-balham {
     @include ag-theme-balham($params);
+
+    .ag-filter-toolpanel-body{
+        background-color: $background-color;
+    }
 }
+
+

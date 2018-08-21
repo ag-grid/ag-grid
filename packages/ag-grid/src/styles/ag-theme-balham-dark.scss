@@ -61,4 +61,9 @@ $value-change-value-highlight-background-color: transparentize(#16A085, 0.5) !de
     .ag-floating-filter-body input[readonly] {
         background: rgba(48, 46, 46, 0.3);
     }
+
+    .ag-filter-toolpanel-body{
+        background-color: $background-color;
+    }
 }
+

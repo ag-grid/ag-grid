@@ -6,17 +6,20 @@ import {ColDef} from "../../entities/colDef";
 import {IHeaderGroupComp, IHeaderGroupParams} from "../../headerRendering/headerGroup/headerGroupComp";
 import {IHeaderComp, IHeaderParams} from "../../headerRendering/header/headerComp";
 import {
-    IFloatingFilterComp, IFloatingFilterParams,
+    IFloatingFilterComp,
+    IFloatingFilterParams,
     ReadModelAsStringFloatingFilterComp
 } from "../../filter/floatingFilter";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {
-    EmptyFloatingFilterWrapperComp, FloatingFilterWrapperComp, IFloatingFilterWrapperComp,
+    EmptyFloatingFilterWrapperComp,
+    FloatingFilterWrapperComp,
+    IFloatingFilterWrapperComp,
     IFloatingFilterWrapperParams
 } from "../../filter/floatingFilterWrapper";
 import {Column} from "../../entities/column";
 import {IFilterComp} from "../../interfaces/iFilter";
-import {FilterManager} from "../../filter/filterManager";
+import {FilterManager, FilterRequestSource} from "../../filter/filterManager";
 import {ComponentResolver} from "./componentResolver";
 import {ICellRendererComp, ICellRendererParams} from "../../rendering/cellRenderers/iCellRenderer";
 import {GroupCellRendererParams} from "../../rendering/cellRenderers/groupCellRenderer";
@@ -162,7 +165,7 @@ export class ComponentRecipes {
 
             let rawModelFn = params.currentParentModel;
             params.currentParentModel = ():M=>{
-                let parentPromise:Promise<IFilterComp> = this.filterManager.getFilterComponent(column);
+                let parentPromise:Promise<IFilterComp> = this.filterManager.getFilterComponent(column, 'NO_UI');
                 return <any>parentPromise.resolveNow(null, parent=>parent.getModelAsString ? parent.getModelAsString(rawModelFn()) : null);
             };
             floatingFilterWrapperComponentParams.floatingFilterComp = Promise.resolve(this.componentResolver.createInternalAgGridComponent<IFloatingFilterComp<M, any, any>>(
