@@ -11,7 +11,7 @@ import {Events} from "../events";
 import {Promise, Utils as _} from "../utils";
 import {HeaderWrapperComp} from "./header/headerWrapperComp";
 import {HeaderGroupWrapperComp} from "./headerGroup/headerGroupWrapperComp";
-import {FilterManager} from "../filter/filterManager";
+import {FilterManager, FilterRequestSource} from "../filter/filterManager";
 import {IFloatingFilterWrapperComp} from "../filter/floatingFilterWrapper";
 import {IComponent} from "../interfaces/iComponent";
 import {FloatingFilterChange, IFloatingFilterParams} from "../filter/floatingFilter";
@@ -281,12 +281,12 @@ export class HeaderRowComp extends Component {
         );
 
         this.addDestroyableEventListener(column, Column.EVENT_FILTER_CHANGED, () => {
-            let filterComponentPromise: Promise<IFilterComp> = this.filterManager.getFilterComponent(column);
+            let filterComponentPromise: Promise<IFilterComp> = this.filterManager.getFilterComponent(column, 'NO_UI');
             floatingFilterWrapper.onParentModelChanged(filterComponentPromise.resolveNow(null, filter => filter.getModel()));
         });
         let cachedFilter = <any>this.filterManager.cachedFilter(column);
         if (cachedFilter) {
-            let filterComponentPromise: Promise<IFilterComp> = this.filterManager.getFilterComponent(column);
+            let filterComponentPromise: Promise<IFilterComp> = this.filterManager.getFilterComponent(column, 'NO_UI');
             floatingFilterWrapper.onParentModelChanged(filterComponentPromise.resolveNow(null, filter => filter.getModel()));
         }
 
@@ -303,7 +303,7 @@ export class HeaderRowComp extends Component {
             api: this.gridApi,
             column: column,
             currentParentModel: (): M => {
-                let filterComponentPromise: Promise<IFilterComp> = <any>this.filterManager.getFilterComponent(column);
+                let filterComponentPromise: Promise<IFilterComp> = <any>this.filterManager.getFilterComponent(column, 'NO_UI');
                 let wholeParentFilter: CombinedFilter<M> | M= filterComponentPromise.resolveNow(null, (filter: any) =>
                     (filter.getNullableModel) ?
                         filter.getNullableModel() :
@@ -316,7 +316,7 @@ export class HeaderRowComp extends Component {
                 let modelChanged: Promise<boolean> = new Promise((resolve) => {
                     captureModelChangedResolveFunc = resolve;
                 });
-                let filterComponentPromise: Promise<IFilterComp> = <any>this.filterManager.getFilterComponent(column);
+                let filterComponentPromise: Promise<IFilterComp> = <any>this.filterManager.getFilterComponent(column, 'NO_UI');
                 filterComponentPromise.then(filterComponent => {
                     if (filterComponent.onFloatingFilterChanged) {
                         //If going through this branch of code the user MUST

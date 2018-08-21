@@ -1,6 +1,6 @@
 import {CsvCreator} from "./exporter/csvCreator";
 import {RowRenderer} from "./rendering/rowRenderer";
-import {FilterManager} from "./filter/filterManager";
+import {FilterManager, FilterRequestSource} from "./filter/filterManager";
 import {ColumnController} from "./columnController/columnController";
 import {ColumnApi} from "./columnController/columnApi";
 import {SelectionController} from "./selectionController";
@@ -669,7 +669,7 @@ export class GridApi {
     public getFilterInstance(key: string|Column): IFilterComp {
         let column = this.columnController.getPrimaryColumn(key);
         if (column) {
-            return this.filterManager.getFilterComponent(column).resolveNow<IFilterComp>(null, filterComp=>filterComp);
+            return this.filterManager.getFilterComponent(column, 'NO_UI').resolveNow<IFilterComp>(null, filterComp=>filterComp);
         }
     }
 

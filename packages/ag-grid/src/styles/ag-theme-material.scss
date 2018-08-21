@@ -196,5 +196,9 @@ $params: (
             font-size: $secondary-font-size;
             font-weight: $secondary-font-weight;
         }
+
+        .ag-filter-toolpanel-body{
+            background-color: $background-color;
+        }
     }
 }

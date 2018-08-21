@@ -761,6 +761,38 @@
     .ag-column-panel {
         border-right: 0;
 
+        .ag-filter-panel{
+            width: 100%;
+
+            .ag-filter-toolpanel-instance {
+                color: $secondary-foreground-color;
+                font-weight: 600;
+                flex: auto;
+                flex-direction: column;
+                flex-wrap: nowrap;
+                display: flex;
+                flex-flow: column nowrap;
+                //border-bottom: 1px solid $border-color;
+                //padding: 7px;
+
+
+                .ag-filter-toolpanel-header {
+                    padding: 5px 0 5px 5px;
+                }
+
+
+            }
+            .ag-filter-body-wrapper {
+                padding-top: 5px;
+            }
+
+            .ag-filter-air{
+                border: 1px solid lightgray;
+                //padding: 5px 0 5px 0;
+                //margin: 0 5px 0 5px;
+            }
+        }
+
         .ag-pivot-mode {
             border-bottom: 1px solid $border-color;
             box-sizing: border-box;
@@ -1485,14 +1517,26 @@
         border-top: 1px solid $border-color;
 
         .ag-side-buttons {
-            border-bottom: 1px solid $border-color;
+            padding-top: 15px;
+            .ag-side-button {
+                background-color: white;
 
-            button {
-                background: transparent;
-                border: 0;
-                border-right: 1px solid $border-color;
-                color: $foreground-color;
-                height: 20px;
+                button {
+                    background: transparent;
+                    border: 0;
+                    color: $foreground-color;
+                    height: 20px;
+                    padding: 0;
+                    margin: 0;
+                }
+            }
+
+            .ag-selected {
+                background-color: $tool-panel-background-color;
+                margin-left: -1px;
+                border-top: 1px solid #BDC3C7;
+                border-right: 1px solid #BDC3C7;
+                border-bottom: 1px solid #BDC3C7;
             }
         }
 

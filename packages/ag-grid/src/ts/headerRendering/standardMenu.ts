@@ -1,4 +1,4 @@
-import {Bean, Autowired} from "../context/context";
+import {Autowired, Bean} from "../context/context";
 import {IMenuFactory} from "../interfaces/iMenuFactory";
 import {FilterManager, FilterWrapper} from "../filter/filterManager";
 import {Column} from "../entities/column";
@@ -48,7 +48,7 @@ export class StandardMenuFactory implements IMenuFactory {
     }
 
     public showPopup(column: Column,  positionCallback: (eMenu: HTMLElement)=>void): void {
-        let filterWrapper: FilterWrapper = this.filterManager.getOrCreateFilterWrapper(column);
+        let filterWrapper: FilterWrapper = this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
 
         let eMenu = document.createElement('div');
         _.addCssClass(eMenu, 'ag-menu');
