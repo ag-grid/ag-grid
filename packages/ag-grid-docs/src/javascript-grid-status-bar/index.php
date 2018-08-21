@@ -163,6 +163,23 @@ gridOptions: {
 
 <?= example('Status Panel Params', 'status-panel-params', 'generated', array("enterprise" => 1)) ?>
 
+<h2>Status Panel Height</h2>
+
+<p>
+    The status panel sizes it's height to fit content. That means when not components are visible, the
+    status panel will have zero height - it will not be shown.
+</p>
+
+<p>
+    The have the status panel with a fixed height, add CSS to the status panel div as follows:
+</p>
+
+<code>
+.ag-status-bar {
+    min-height: 35px;
+}
+</code>
+
 <h2>Aggregation Component</h2>
 <p>If you have multiple ranges selected (by holding down ctrl while dragging) and a cell is in multiple
 ranges, the cell will be only included once in the aggregation.</p>
