@@ -710,6 +710,18 @@ export class RowRenderer extends BeanStub {
         this.redrawAfterScroll();
     }
 
+    // public refreshFullWidthRows(): void {
+    //     let rowsToRemove: string[] = [];
+    //     _.iterateObject(this.rowCompsByIndex, (id: string, rowComp: RowComp) => {
+    //         if (rowComp.isFullWidth()) {
+    //             let rowIndex = rowComp.getRowNode().rowIndex;
+    //             rowsToRemove.push(rowIndex.toString());
+    //         }
+    //     });
+    //     this.removeRowComps(rowsToRemove);
+    //     this.redrawAfterScroll();
+    // }
+
     private createOrUpdateRowComp(rowIndex: number, rowsToRecycle: { [key: string]: RowComp }, animate: boolean, afterScroll: boolean): RowComp {
         let rowNode: RowNode;
 
