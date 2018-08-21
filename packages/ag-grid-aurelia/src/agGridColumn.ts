@@ -1,5 +1,5 @@
 import {autoinject, child, children, customElement, inlineView} from "aurelia-framework";
-import {ColDef} from "ag-grid/main";
+import {ColDef} from "ag-grid-community";
 import {
     AgCellTemplate,
     AgEditorTemplate,
