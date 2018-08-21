@@ -12,7 +12,7 @@ import {
     StageExecuteParams,
     IAggFunc,
     ChangedPath
-} from "ag-grid/main";
+} from "ag-grid-community";
 import {PivotStage} from "./pivotStage";
 import {AggFuncService} from "../aggregation/aggFuncService";
 

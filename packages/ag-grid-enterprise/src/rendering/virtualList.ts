@@ -1,4 +1,4 @@
-import {Environment, Autowired, Component, PostConstruct, Utils, GridOptionsWrapper} from "ag-grid/main";
+import {Environment, Autowired, Component, PostConstruct, Utils, GridOptionsWrapper} from "ag-grid-community";
 
 export interface VirtualListModel {
     getRowCount(): number;

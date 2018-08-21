@@ -13,7 +13,7 @@ import {
     Utils,
     ValueService,
     ChangedPath
-} from "ag-grid/main";
+} from "ag-grid-community";
 import {PivotColDefService} from "./pivotColDefService";
 
 @Bean('pivotStage')

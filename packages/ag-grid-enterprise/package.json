@@ -26,7 +26,7 @@
   },
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
-    "ag-grid": "^18.1.0",
+    "ag-grid-community": "^18.1.0",
     "css-loader": "^1.0.0",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.4.0",
@@ -42,6 +42,6 @@
     "webpack-stream": "^4.0.3"
   },
   "peerDependencies": {
-    "ag-grid": "^18.0.0"
+    "ag-grid-community": "^18.0.0"
   }
 }

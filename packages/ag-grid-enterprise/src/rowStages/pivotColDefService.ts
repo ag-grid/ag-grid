@@ -1,4 +1,4 @@
-import {GridOptionsWrapper, NumberSequence, Bean, Autowired, ColumnController, ColDef, ColGroupDef, Utils, Column} from "ag-grid/main";
+import {GridOptionsWrapper, NumberSequence, Bean, Autowired, ColumnController, ColDef, ColGroupDef, Utils, Column} from "ag-grid-community";
 
 export interface PivotColDefServiceResult {
     pivotColumnGroupDefs: (ColDef|ColGroupDef)[];

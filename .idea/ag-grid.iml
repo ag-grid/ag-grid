@@ -22,8 +22,8 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react/umd" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue-example/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid/.cache-loader" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-community/.cache-loader" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-community/dist" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

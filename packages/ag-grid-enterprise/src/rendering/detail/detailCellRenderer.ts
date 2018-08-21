@@ -11,7 +11,7 @@ import {
     GridOptionsWrapper,
     ICellRendererParams,
     Environment
-} from "ag-grid/main";
+} from "ag-grid-community";
 
 export class DetailCellRenderer extends Component {
 

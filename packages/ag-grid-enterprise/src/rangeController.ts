@@ -27,7 +27,7 @@ import {
     CellNavigationService,
     _,
     Constants
-} from "ag-grid/main";
+} from "ag-grid-community";
 
 @Bean('rangeController')
 export class RangeController implements IRangeController {

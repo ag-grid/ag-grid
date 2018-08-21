@@ -1,4 +1,4 @@
-import {BaseFrameworkFactory} from "ag-grid/main";
+import {BaseFrameworkFactory} from "ag-grid-community";
 import {VueComponentFactory} from "./vueComponentFactory";
 
 export class VueFrameworkFactory {

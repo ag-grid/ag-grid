@@ -17,7 +17,7 @@ import {
     GridApi,
     ColumnApi,
     ModelUpdatedEvent
-} from "ag-grid/main";
+} from "ag-grid-community";
 
 @Bean('rowModel')
 export class ViewportRowModel implements IRowModel {

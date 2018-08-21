@@ -1,4 +1,4 @@
-import {Autowired, Component, Context, Events, GridOptionsWrapper, PostConstruct, RefSelector} from "ag-grid/main";
+import {Autowired, Component, Context, Events, GridOptionsWrapper, PostConstruct, RefSelector} from "ag-grid-community";
 import {ColumnContainerComp} from "./columnContainerComp";
 import {ColumnSelectHeaderComp} from "./columnSelectHeaderComp";
 

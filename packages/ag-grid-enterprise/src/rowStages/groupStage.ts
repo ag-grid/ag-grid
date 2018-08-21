@@ -18,7 +18,7 @@ import {
     ChangedPath,
     GetDataPath,
     PostConstruct
-} from "ag-grid/main";
+} from "ag-grid-community";
 
 interface GroupInfo {
     key: string; // e.g. 'Ireland'

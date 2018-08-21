@@ -15,7 +15,7 @@ import {
     Column,
     DragSourceType,
     _
-} from "ag-grid/main";
+} from "ag-grid-community";
 import {ColumnComponent} from "./columnComponent";
 
 export interface AbstractColumnDropPanelParams {

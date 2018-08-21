@@ -1,5 +1,5 @@
-import {Bean, Autowired} from 'ag-grid/main';
-import {Utils} from 'ag-grid/main';
+import {Bean, Autowired} from 'ag-grid-community';
+import {Utils} from 'ag-grid-community';
 import {MD5} from './license/md5';
 
 @Bean('licenseManager')

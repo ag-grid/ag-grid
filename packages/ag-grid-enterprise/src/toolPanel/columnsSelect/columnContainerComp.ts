@@ -12,7 +12,7 @@ import {
     PostConstruct,
     Utils,
     GridOptionsWrapper
-} from "ag-grid/main";
+} from "ag-grid-community";
 import {ToolPanelGroupComp} from "./toolPanelGroupComp";
 import {ToolPanelColumnComp} from "./toolPanelColumnComp";
 import {BaseColumnItem} from "./columnSelectComp";

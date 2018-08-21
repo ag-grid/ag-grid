@@ -120,7 +120,7 @@ function webpackTask(minify, styles) {
     }
     const mainFile = styles ? './main-with-styles.js' : './main.js';
 
-    let fileName = 'ag-grid';
+    let fileName = 'ag-grid-community';
     fileName += minify ? '.min' : '';
     fileName += styles ? '' : '.noStyle';
     fileName += '.js';

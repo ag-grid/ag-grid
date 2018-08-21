@@ -18,7 +18,7 @@ import {
     RefSelector,
     RowNode,
     ValueService
-} from 'ag-grid';
+} from 'ag-grid-community';
 import {RangeController} from "../rangeController";
 import {StatusBarValueComponent} from "./statusBarValueComponent";
 

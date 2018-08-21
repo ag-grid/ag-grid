@@ -10,7 +10,7 @@ import {
     AgEvent,
     Promise,
     ICellRendererComp
-} from "ag-grid/main";
+} from "ag-grid-community";
 
 export interface SelectedEvent extends AgEvent {
 }

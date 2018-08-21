@@ -1,4 +1,4 @@
-import {Bean, Component} from 'ag-grid';
+import {Bean, Component} from 'ag-grid-community';
 
 @Bean('statusBarService')
 export class StatusBarService {

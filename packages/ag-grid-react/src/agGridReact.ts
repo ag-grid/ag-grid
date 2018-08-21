@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
-import * as AgGrid from "ag-grid";
+import * as AgGrid from "ag-grid-community";
 import {
     Autowired,
     BaseComponentWrapper,
@@ -10,7 +10,7 @@ import {
     IComponent,
     Promise,
     WrapableInterface
-} from "ag-grid";
+} from "ag-grid-community";
 
 import {AgGridColumn} from "./agGridColumn";
 import {AgReactComponent} from "./agReactComponent";

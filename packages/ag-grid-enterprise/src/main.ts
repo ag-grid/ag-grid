@@ -38,7 +38,7 @@ export {RowGroupCompFactory} from "./rowGroupCompFactory";
 export {ExcelCreator} from "./exporter/excelCreator";
 export {ExcelXmlFactory} from "./exporter/excelXmlFactory";
 
-import {Grid} from "ag-grid";
+import {Grid} from "ag-grid-community";
 import {EnterpriseMenuFactory} from "./menu/enterpriseMenu";
 import {RangeController} from "./rangeController";
 import {ClipboardService} from "./clipboardService";

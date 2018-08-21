@@ -58,7 +58,7 @@ gulp.task('ngc-main', (callback) => {
 gulp.task('watch', ['ngc-src'], () => {
     gulp.watch([
         './src/*.ts',
-        './node_modules/ag-grid/dist/lib/**/*'
+        './node_modules/ag-grid-community/dist/lib/**/*'
     ],
     ['ngc-src']);
 });

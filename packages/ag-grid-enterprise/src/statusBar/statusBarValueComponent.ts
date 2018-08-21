@@ -1,4 +1,4 @@
-import {Autowired, Component, Context, GridOptionsWrapper, PostConstruct} from 'ag-grid';
+import {Autowired, Component, Context, GridOptionsWrapper, PostConstruct} from 'ag-grid-community';
 
 export class StatusBarValueComponent extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;

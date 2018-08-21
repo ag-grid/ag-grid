@@ -1,4 +1,4 @@
-import {Events, GridOptionsWrapper, Constants, ColumnController, ICompFactory, Component, EventService, Autowired, Optional, PostConstruct} from "ag-grid";
+import {Events, GridOptionsWrapper, Constants, ColumnController, ICompFactory, Component, EventService, Autowired, Optional, PostConstruct} from "ag-grid-community";
 
 export class HeaderColumnDropComp extends Component {
 

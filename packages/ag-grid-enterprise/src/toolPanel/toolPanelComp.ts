@@ -6,9 +6,9 @@ import {
     GridOptionsWrapper,
     GridPanel,
     PostConstruct,
-    RefSelector
-} from "ag-grid";
-import {IToolPanel} from "ag-grid";
+    RefSelector,
+    IToolPanel
+} from "ag-grid-community";
 import {ToolPanelColumnComp} from "./toolPanelColumnComp";
 import {ToolPanelSelectComp} from "./toolPanelSelectComp";
 import {ToolPanelAllFiltersComp} from "./filter/toolPanelAllFiltersComp";

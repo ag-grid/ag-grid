@@ -1,4 +1,4 @@
-import {_, Autowired, Component, EventService, GridOptionsWrapper, GridPanel, PostConstruct} from "ag-grid";
+import {_, Autowired, Component, EventService, GridOptionsWrapper, GridPanel, PostConstruct} from "ag-grid-community";
 
 export class ToolPanelSelectComp extends Component {
 

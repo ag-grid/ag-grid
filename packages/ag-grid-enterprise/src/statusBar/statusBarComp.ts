@@ -10,7 +10,7 @@ import {
     GridOptionsWrapper,
     PostConstruct,
     RefSelector
-} from 'ag-grid';
+} from 'ag-grid-community';
 import {StatusBarService} from "./statusBarService";
 
 export class StatusBarComp extends Component {

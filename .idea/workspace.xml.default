@@ -71,7 +71,7 @@
       <find>\t\t\t</find>
       <find>ag-grid</find>
       <find>github</find>
-      <find>packages/ag-grid/dist/</find>
+      <find>packages/ag-grid-community/dist/</find>
     </findStrings>
     <replaceStrings>
       <replace>\n</replace>
@@ -93,7 +93,7 @@
         <option value="$PROJECT_DIR$/packages/ag-grid-aurelia-example/.gitignore" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/README.md" />
-        <option value="$PROJECT_DIR$/packages/ag-grid/README.md" />
+        <option value="$PROJECT_DIR$/packages/ag-grid-community/README.md" />
         <option value="$PROJECT_DIR$/scripts/gitRemoveGeneratedFiles.sh" />
       </list>
     </option>
@@ -123,7 +123,7 @@
     <handled-path value="$PROJECT_DIR$/packages/ag-grid-react/node_modules" />
     <handled-path value="$PROJECT_DIR$/packages/ag-grid-vue-example/node_modules" />
     <handled-path value="$PROJECT_DIR$/packages/ag-grid-vue/node_modules" />
-    <handled-path value="$PROJECT_DIR$/packages/ag-grid/node_modules" />
+    <handled-path value="$PROJECT_DIR$/packages/ag-grid-community/node_modules" />
   </component>
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths>
@@ -145,7 +145,7 @@
       <path value="$PROJECT_DIR$/packages/ag-grid-react/package.json" />
       <path value="$PROJECT_DIR$/packages/ag-grid-vue-example/package.json" />
       <path value="$PROJECT_DIR$/packages/ag-grid-vue/package.json" />
-      <path value="$PROJECT_DIR$/packages/ag-grid/package.json" />
+      <path value="$PROJECT_DIR$/packages/ag-grid-community/package.json" />
     </packageJsonPaths>
   </component>
   <component name="ProjectFrameBounds">
@@ -208,7 +208,7 @@
           <option name="mySupportsDeletion" value="false" />
           <option name="myCanBeAbsent" value="false" />
           <option name="myId" value="UPDATED" />
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/packages/ag-grid/src/ts/gridPanel/gridPanel.ts</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/packages/ag-grid-community/src/ts/gridPanel/gridPanel.ts</PATH>
         </FILE-GROUP>
         <FILE-GROUP>
           <option name="myUpdateName" value="Created" />
@@ -533,7 +533,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/packages/ag-grid/.gitignore">
+    <entry file="file://$PROJECT_DIR$/packages/ag-grid-community/.gitignore">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
@@ -543,7 +543,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/packages/ag-grid/README.md">
+    <entry file="file://$PROJECT_DIR$/packages/ag-grid-community/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="504">

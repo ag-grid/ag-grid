@@ -51,7 +51,7 @@ gulp.task('process-src', () => {
 
     return (
         gulp
-            .src(['./src/**/*', '!./src/dist/ag-grid/', '!./src/dist/ag-grid-enterprise/', `!${PACKAGES_DIR}`])
+            .src(['./src/**/*', '!./src/dist/ag-grid-community/', '!./src/dist/ag-grid-enterprise/', `!${PACKAGES_DIR}`])
             // inline the PHP part
             .pipe(phpFilter)
             // .pipe(debug())
@@ -67,7 +67,7 @@ gulp.task('process-src', () => {
 });
 
 gulp.task('populate-dev', () => {
-    const standard = gulp.src('../ag-grid/**/*.*', {base: '../ag-grid/'}).pipe(gulp.dest(`dist/${PACKAGES_DIR}/ag-grid`));
+    const standard = gulp.src('../ag-grid-community/**/*.*', {base: '../ag-grid-community/'}).pipe(gulp.dest(`dist/${PACKAGES_DIR}/ag-grid-community`));
 
     const enterprise = gulp.src('../ag-grid-enterprise/**/*.*', {base: '../ag-grid-enterprise/'}).pipe(gulp.dest(`dist/${PACKAGES_DIR}/ag-grid-enterprise`));
 
@@ -83,21 +83,12 @@ gulp.task('populate-dev', () => {
 });
 
 gulp.task('replace-to-cdn', () => {
-    const version = require('../ag-grid/package.json').version;
+    const version = require('../ag-grid-community/package.json').version;
 
     return gulp
         .src('./dist/config.php')
         .pipe(replace('$$LOCAL$$', version))
         .pipe(gulp.dest('./dist'));
-});
-
-gulp.task('copy-from-dist', () => {
-    return merge(
-        gulp.src(['../ag-grid/dist/ag-grid.js']).pipe(gulp.dest('./dist/dist/ag-grid/')),
-        gulp
-            .src(['../ag-grid-enterprise/dist/ag-grid-enterprise.js', '../ag-grid-enterprise/dist/ag-grid-enterprise.min.js'])
-            .pipe(gulp.dest('./dist/dist/ag-grid-enterprise'))
-    );
 });
 
 const generateExamples = require('./example-generator');
@@ -112,12 +103,4 @@ gulp.task('serve-preview', () => {
     process.on('exit', () => {
         php.kill();
     });
-});
-
-/* for ci */
-gulp.task('copy-ag-dependencies-to-dist', () => {
-    return merge(
-        gulp.src(['./node_modules/ag-grid/dist/ag-grid.js']).pipe(gulp.dest('./src/dist/ag-grid/')),
-        gulp.src(['./node_modules/ag-grid-enterprise/dist/ag-grid-enterprise.js']).pipe(gulp.dest('./src/dist/ag-grid-enterprise/'))
-    );
 });

@@ -1,10 +1,10 @@
-import {Events, ToolPanelVisibleChangedEvent, _, Autowired, Component, Context, GridApi, GridOptionsWrapper, EventService} from "ag-grid/main";
+import {Events, ToolPanelVisibleChangedEvent, _, Autowired, Component, Context, GridApi, GridOptionsWrapper, EventService} from "ag-grid-community";
 import {PivotModePanel} from "./columnDrop/pivotModePanel";
 import {ValuesColumnPanel} from "./columnDrop/valueColumnsPanel";
 import {RowGroupColumnsPanel} from "./columnDrop/rowGroupColumnsPanel";
 import {ColumnSelectComp} from "./columnsSelect/columnSelectComp";
 import {PivotColumnsPanel} from "./columnDrop/pivotColumnsPanel";
-import {RefSelector} from "ag-grid";
+import {RefSelector} from "ag-grid-community";
 
 export class ToolPanelColumnComp extends Component {
 

@@ -1,4 +1,4 @@
-import {GridOptionsWrapper, PostConstruct, MenuItemDef, Utils as _, Component, Autowired, AgEvent} from "ag-grid";
+import {GridOptionsWrapper, PostConstruct, MenuItemDef, Utils as _, Component, Autowired, AgEvent} from "ag-grid-community";
 
 export interface MenuItemSelectedEvent extends AgEvent {
     name: string;

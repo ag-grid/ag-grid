@@ -6,7 +6,7 @@ import {
     HorizontalResizeService,
     PostConstruct,
     EventService
-} from "ag-grid";
+} from "ag-grid-community";
 
 export class HorizontalResizeComp extends Component {
 

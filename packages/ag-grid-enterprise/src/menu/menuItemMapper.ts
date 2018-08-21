@@ -1,4 +1,4 @@
-import {ColumnController, MenuItemDef, Autowired, Utils, Bean, GridOptionsWrapper, GridApi, Column} from 'ag-grid';
+import {ColumnController, MenuItemDef, Autowired, Utils, Bean, GridOptionsWrapper, GridApi, Column} from 'ag-grid-community';
 import {ClipboardService} from "../clipboardService";
 import {AggFuncService} from "../aggregation/aggFuncService";
 

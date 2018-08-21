@@ -1,5 +1,5 @@
-import {XmlElement, XmlFactory} from 'ag-grid/main';
-import {Bean, Autowired} from 'ag-grid/main';
+import {XmlElement, XmlFactory} from 'ag-grid-community';
+import {Bean, Autowired} from 'ag-grid-community';
 import {
     Utils,
     ExcelStyle,
@@ -10,7 +10,7 @@ import {
     ExcelCell,
     ExcelData,
     ExcelDataType
-} from 'ag-grid/main';
+} from 'ag-grid-community';
 
 let LINE_SEPARATOR = '\r\n';
 

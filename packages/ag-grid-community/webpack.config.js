@@ -4,7 +4,7 @@ module.exports = {
         path: __dirname + "/dist",
         library: ["agGrid"],
         libraryTarget: "umd",
-        filename: "ag-grid.js"
+        filename: "ag-grid-community.js"
     },
     module: {
         loaders: [

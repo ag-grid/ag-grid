@@ -16,7 +16,7 @@ import {
     IHeaderParams,
     ILoadingOverlayParams,
     INoRowsOverlayParams
-} from "ag-grid/main";
+} from "ag-grid-community";
 
 export interface AgFrameworkComponent<T> {
     agInit(params:T) : void;

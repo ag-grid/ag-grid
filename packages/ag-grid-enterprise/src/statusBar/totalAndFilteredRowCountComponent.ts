@@ -1,4 +1,4 @@
-import {Autowired, Events, EventService, GridApi, PostConstruct} from 'ag-grid';
+import {Autowired, Events, EventService, GridApi, PostConstruct} from 'ag-grid-community';
 import {StatusBarValueComponent} from "./statusBarValueComponent";
 
 export class TotalAndFilteredRowCountComponent extends StatusBarValueComponent {

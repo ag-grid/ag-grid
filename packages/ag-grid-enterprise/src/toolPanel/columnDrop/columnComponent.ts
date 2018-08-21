@@ -23,7 +23,7 @@ import {
     AgEvent,
     TapEvent,
     RefSelector
-} from "ag-grid/main";
+} from "ag-grid-community";
 import {VirtualList} from "../../rendering/virtualList";
 import {AggFuncService} from "../../aggregation/aggFuncService";
 

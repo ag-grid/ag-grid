@@ -15,7 +15,7 @@ import {
     RefSelector,
     Utils,
     ValueService
-} from "ag-grid/main";
+} from "ag-grid-community";
 import {ColumnItem} from "../columnsSelect/columnContainerComp";
 import {ToolPanelFilterComp} from "./toolPanelFilterComp";
 

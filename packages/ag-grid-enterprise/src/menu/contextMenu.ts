@@ -20,7 +20,7 @@ import {
     IAfterGuiAttachedParams,
     _,
     BeanStub
-} from "ag-grid";
+} from "ag-grid-community";
 import {ClipboardService} from "../clipboardService";
 import {MenuItemComponent} from "./menuItemComponent";
 import {MenuList} from "./menuList";

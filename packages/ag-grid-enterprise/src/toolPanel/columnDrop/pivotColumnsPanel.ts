@@ -14,7 +14,7 @@ import {
     ColumnPivotChangeRequestEvent,
     ColumnApi,
     GridApi
-} from "ag-grid/main";
+} from "ag-grid-community";
 import {AbstractColumnDropPanel} from "./abstractColumnDropPanel";
 
 @Bean("pivotColumnsPanel")

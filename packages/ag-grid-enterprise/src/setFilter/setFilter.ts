@@ -9,7 +9,7 @@ import {
     Utils,
     RefSelector,
     Autowired, ValueFormatterService
-} from "ag-grid/main";
+} from "ag-grid-community";
 import {SetFilterModel, SetFilterModelValuesType} from "./setFilterModel";
 import {SetFilterListItem} from "./setFilterListItem";
 import {VirtualList, VirtualListModel} from "../rendering/virtualList";

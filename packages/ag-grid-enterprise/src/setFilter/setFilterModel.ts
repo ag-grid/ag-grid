@@ -6,9 +6,15 @@ import {
     TextFilter,
     TextFormatter,
     Utils,
-    Column, ValueFormatterService, _
-} from "ag-grid/main";
-import {Constants, ExternalPromise, ClientSideRowModel, IRowModel, Promise} from 'ag-grid';
+    Column,
+    ValueFormatterService,
+    _,
+    Constants,
+    ExternalPromise,
+    ClientSideRowModel,
+    IRowModel,
+    Promise
+} from "ag-grid-community";
 
 // we cannot have 'null' as a key in a JavaScript map,
 // it needs to be a string. so we use this string for

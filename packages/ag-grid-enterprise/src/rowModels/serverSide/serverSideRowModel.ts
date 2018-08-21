@@ -29,7 +29,7 @@ import {
     ColumnApi,
     RowDataChangedEvent,
     PreDestroy
-} from "ag-grid";
+} from "ag-grid-community";
 import {ServerSideCache, ServerSideCacheParams} from "./serverSideCache";
 
 @Bean('rowModel')

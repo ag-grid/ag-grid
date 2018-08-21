@@ -1,4 +1,4 @@
-import {PreConstruct, _, Autowired, Component, Context, Events, GridOptionsWrapper, PostConstruct, RefSelector, ColumnController, EventService} from "ag-grid/main";
+import {PreConstruct, _, Autowired, Component, Context, Events, GridOptionsWrapper, PostConstruct, RefSelector, ColumnController, EventService} from "ag-grid-community";
 
 export enum SELECTED_STATE {CHECKED, UNCHECKED, INDETERMINIATE}
 
