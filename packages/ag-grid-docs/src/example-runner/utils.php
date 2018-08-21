@@ -23,12 +23,12 @@ if (preg_match($archiveMatch, $_SERVER['PHP_SELF'], $matches)) {
 
 if (USE_LOCAL) {
 
-    define('AG_GRID_SCRIPT_PATH', "$prefix/ag-grid/dist/ag-grid.js");
+    define('AG_GRID_SCRIPT_PATH', "$prefix/ag-grid-community/dist/ag-grid-community.js");
     define('AG_GRID_ENTERPRISE_SCRIPT_PATH', "$prefix/ag-grid-enterprise-bundle/ag-grid-enterprise.js");
 
     $systemJsMap = array(
-        "ag-grid" => "$prefix/ag-grid/dist/ag-grid.js",
-        "ag-grid/main" => "$prefix/ag-grid/dist/ag-grid.js",
+        "ag-grid-community" => "$prefix/ag-grid-community/dist/ag-grid-community.js",
+        "ag-grid-community/main" => "$prefix/ag-grid-community/dist/ag-grid-community.js",
         "ag-grid-enterprise" => "$prefix/ag-grid-enterprise",
         "ag-grid-react" => "$prefix/ag-grid-react",
         "ag-grid-angular" => "$prefix/ag-grid-angular",
@@ -36,12 +36,12 @@ if (USE_LOCAL) {
     );
 // production mode, return from unpkg
 } else {
-    define('AG_GRID_SCRIPT_PATH', "https://unpkg.com/ag-grid@" . AG_GRID_VERSION . "/dist/ag-grid.min.js");
+    define('AG_GRID_SCRIPT_PATH', "https://unpkg.com/ag-grid-community@" . AG_GRID_VERSION . "/dist/ag-grid-community.min.js");
     define('AG_GRID_ENTERPRISE_SCRIPT_PATH', "https://unpkg.com/ag-grid-enterprise@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.min.js");
 
     $systemJsMap = array(
-        "ag-grid" => "https://unpkg.com/ag-grid@" . AG_GRID_VERSION . "/dist/ag-grid.js",
-        "ag-grid/main" => "https://unpkg.com/ag-grid@" . AG_GRID_VERSION . "/dist/ag-grid.js",
+        "ag-grid-community" => "https://unpkg.com/ag-grid-community@" . AG_GRID_VERSION . "/dist/ag-grid-community.js",
+        "ag-grid-community/main" => "https://unpkg.com/ag-grid-community@" . AG_GRID_VERSION . "/dist/ag-grid-community.js",
         "ag-grid-enterprise" => "https://unpkg.com/ag-grid-enterprise@" . AG_GRID_ENTERPRISE_VERSION . "/",
         "ag-grid-react" => "npm:ag-grid-react@" . AG_GRID_REACT_VERSION . "/",
         "ag-grid-angular" => "npm:ag-grid-angular@" . AG_GRID_ANGULAR_VERSION . "/",

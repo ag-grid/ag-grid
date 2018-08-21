@@ -29,7 +29,7 @@ import {
     ColumnApi,
     RowDataChangedEvent,
     PreDestroy
-} from "ag-grid";
+} from "ag-grid-community";
 import {ServerSideCache, ServerSideCacheParams} from "./serverSideCache";
 
 @Bean('rowModel')
@@ -132,7 +132,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
                             newSortModel: {colId: string, sort: string}[],
                             oldSortModel: {colId: string, sort: string}[]): string[] {
 
-
         let allColsInBothSorts: string[] = [];
 
         [newSortModel, oldSortModel].forEach( sortModel => {
@@ -162,6 +161,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     private onSortChanged(): void {
+        if (!this.cacheExists()) return;
 
         let newSortModel = this.extractSortModel();
         let oldSortModel = this.cacheParams.sortModel;
@@ -169,18 +169,16 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         this.cacheParams.sortModel = newSortModel;
 
-        if (this.cacheExists()) {
-            let rowGroupColIds = this.columnController.getRowGroupColumns().map(col => col.getId());
-            let serverSideCache = <ServerSideCache> this.rootNode.childrenCache;
+        let rowGroupColIds = this.columnController.getRowGroupColumns().map(col => col.getId());
+        let serverSideCache = <ServerSideCache> this.rootNode.childrenCache;
 
-            let sortingWithValueCol = this.isSortingWithValueColumn(changedColumnsInSort);
+        let sortingWithValueCol = this.isSortingWithValueColumn(changedColumnsInSort);
 
-            let sortAlwaysResets = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
-            if (sortAlwaysResets || sortingWithValueCol) {
-                this.reset();
-            } else {
-                serverSideCache.refreshCacheAfterSort(changedColumnsInSort, rowGroupColIds);
-            }
+        let sortAlwaysResets = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
+        if (sortAlwaysResets || sortingWithValueCol) {
+            this.reset();
+        } else {
+            serverSideCache.refreshCacheAfterSort(changedColumnsInSort, rowGroupColIds);
         }
     }
 
@@ -268,7 +266,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     private createNewRowNodeBlockLoader(): void {
         this.destroyRowNodeBlockLoader();
         let maxConcurrentRequests = this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests();
-        this.rowNodeBlockLoader = new RowNodeBlockLoader(maxConcurrentRequests);
+        let blockLoadDebounceMillis = this.gridOptionsWrapper.getBlockLoadDebounceMillis();
+        this.rowNodeBlockLoader = new RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis);
         this.context.wireBean(this.rowNodeBlockLoader);
     }
 
@@ -518,8 +517,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }
     }
 
+    // always returns true - this is used by the
     public isRowPresent(rowNode: RowNode): boolean {
-        return false;
+        let foundRowNode = this.getRowNode(rowNode.id);
+        return !!foundRowNode;
     }
 
     private extractSortModel(): { colId: string; sort: string }[] {
@@ -542,7 +543,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
                     return {
                         colId: group.field,
                         sort: sortModel[autoGroupIndex].sort
-                    }
+                    };
                 });
 
             // remove auto group column
@@ -561,7 +562,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }
 
         return sortModel;
-    };
+    }
 
     private isSortingWithValueColumn(changedColumnsInSort: string[]): boolean {
         let valueColIds = this.columnController.getValueColumns().map(col => col.getColId());

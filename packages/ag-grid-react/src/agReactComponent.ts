@@ -2,8 +2,8 @@ import {AgReactFrameworkComponent} from "./interfaces";
 import * as React from 'react';
 import {ReactPortal} from 'react';
 import * as ReactDOM from 'react-dom';
-import * as AgGrid from 'ag-grid';
-import {Promise} from 'ag-grid';
+import * as AgGrid from 'ag-grid-community';
+import {Promise} from 'ag-grid-community';
 import {AgGridReact} from "./agGridReact";
 
 export class AgReactComponent implements AgReactFrameworkComponent<any> {

@@ -1,4 +1,4 @@
-import {ColumnController, MenuItemDef, Autowired, Utils, Bean, GridOptionsWrapper, GridApi, Column} from 'ag-grid';
+import {ColumnController, MenuItemDef, Autowired, Utils, Bean, GridOptionsWrapper, GridApi, Column} from 'ag-grid-community';
 import {ClipboardService} from "../clipboardService";
 import {AggFuncService} from "../aggregation/aggFuncService";
 
@@ -120,11 +120,11 @@ export class MenuItemMapper {
             };
             case 'export':
                 let exportSubMenuItems:string[] = [];
-                if (!this.gridOptionsWrapper.isSuppressCsvExport()){
-                    exportSubMenuItems.push('csvExport')
+                if (!this.gridOptionsWrapper.isSuppressCsvExport()) {
+                    exportSubMenuItems.push('csvExport');
                 }
-                if (!this.gridOptionsWrapper.isSuppressExcelExport()){
-                    exportSubMenuItems.push('excelExport')
+                if (!this.gridOptionsWrapper.isSuppressExcelExport()) {
+                    exportSubMenuItems.push('excelExport');
                 }
                 return {
                     name: localeTextFunc('export', 'Export'),
@@ -140,7 +140,7 @@ export class MenuItemMapper {
             };
             case 'separator': return 'separator';
             default:
-                console.log(`ag-Grid: unknown menu item type ${key}`);
+                console.warn(`ag-Grid: unknown menu item type ${key}`);
                 return null;
         }
     }

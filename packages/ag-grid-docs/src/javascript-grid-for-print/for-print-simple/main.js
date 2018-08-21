@@ -1,5 +1,6 @@
 var columnDefs = [
-    {field: 'model'},
+    {headerName: 'ID', valueGetter: 'node.rowIndex + 1', width: 70},
+    {field: 'model', width: 150},
     {field: 'color'},
     {field: 'price', valueFormatter: '"$" + value.toLocaleString()'},
     {field: 'year'},
@@ -9,6 +10,7 @@ var columnDefs = [
 var models = ['Mercedes-AMG C63','BMW M2','Audi TT Roadster','Mazda MX-5','BMW M3','Porsche 718 Boxster','Porsche 718 Cayman'];
 var colors = ['Red','Black','Green','White','Blue'];
 var countries = ['UK', 'Spain', 'France', 'Ireland', 'USA'];
+
 
 function createRowData() {
     var rowData = [];
@@ -27,30 +29,31 @@ function createRowData() {
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: createRowData()
+    rowData: createRowData(),
+    defaultColDef: {
+        width: 100
+    }
 };
 
 function onBtPrinterFriendly() {
+
     var eGridDiv = document.querySelector('.my-grid');
-
-    var preferredWidth = gridOptions.api.getPreferredWidth();
-
-    // add 2 pixels for the grid border
-    preferredWidth += 2;
-
-    eGridDiv.style.width = preferredWidth + 'px';
+    eGridDiv.style.width  = '';
     eGridDiv.style.height = '';
+    eGridDiv.style.display = 'inline-block';
 
-    gridOptions.api.setGridAutoHeight(true);
+    gridOptions.api.setDomLayout('print');
 }
 
 function onBtNormal() {
-    var eGridDiv = document.querySelector('.my-grid');
 
+    var eGridDiv = document.querySelector('.my-grid');
     eGridDiv.style.width = '400px';
     eGridDiv.style.height = '200px';
+    eGridDiv.style.display = '';
 
-    gridOptions.api.setGridAutoHeight(false);
+    // the default is 'normal', so setDomLayout(null) has same impact as setDomLayout('normal')
+    gridOptions.api.setDomLayout(null);
 }
 
 // setup the grid after the page has finished loading

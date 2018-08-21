@@ -7,7 +7,7 @@ import {
     ICellRendererFunc,
     IsColumnFunc,
     RowNode
-} from "ag-grid/main";
+} from "ag-grid-community";
 
 @Component({
     selector: 'ag-grid-column',

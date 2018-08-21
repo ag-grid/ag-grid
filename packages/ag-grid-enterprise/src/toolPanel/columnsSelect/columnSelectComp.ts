@@ -1,4 +1,4 @@
-import {Autowired, Component, Context, Events, GridOptionsWrapper, PostConstruct, RefSelector} from "ag-grid/main";
+import {Autowired, Component, Context, Events, GridOptionsWrapper, PostConstruct, RefSelector} from "ag-grid-community";
 import {ColumnContainerComp} from "./columnContainerComp";
 import {ColumnSelectHeaderComp} from "./columnSelectHeaderComp";
 
@@ -22,7 +22,7 @@ export class ColumnSelectComp extends Component {
 
     private static TEMPLATE =
         `<div class="ag-column-select-panel">
-            <ag-column-select-header 
+            <ag-column-select-header
                 (expand-all)="onExpandAll"
                 (collapse-all)="onCollapseAll"
                 (select-all)="onSelectAll"
@@ -30,7 +30,7 @@ export class ColumnSelectComp extends Component {
                 (filter-changed)="onFilterChanged"
                 ref="eColumnSelectHeader">
             </ag-column-select-header>
-            <ag-column-container 
+            <ag-column-container
                 [allow-dragging]="allowDragging"
                 (group-expanded)="onGroupExpanded"
                 ref="eToolPanelColumnsContainerComp">
@@ -47,7 +47,6 @@ export class ColumnSelectComp extends Component {
     private columnContainerComp: ColumnContainerComp;
 
     private allowDragging: boolean;
-
 
     // we allow dragging in the toolPanel, but not when this component appears in the column menu
     constructor(allowDragging: boolean) {

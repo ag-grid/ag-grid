@@ -151,8 +151,8 @@ function componentTemplate(bindings, componentFileNames) {
 import Vue from "vue";
 import {AgGridVue} from "ag-grid-vue";
 
-// import "../node_modules/ag-grid/dist/styles/ag-grid.css";
-// import "../node_modules/ag-grid/dist/styles/${bindings.gridSettings.theme}";
+// import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
+// import "../node_modules/ag-grid-community/dist/styles/${bindings.gridSettings.theme}";
 
 ${imports.join('\n')}
 

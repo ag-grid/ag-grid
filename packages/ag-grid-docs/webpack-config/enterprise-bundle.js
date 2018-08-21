@@ -19,8 +19,8 @@ module.exports = merge(common, {
     },
     resolve: {
         alias: {
-            'ag-grid/main': path.resolve('./src/_assets/ts/ag-grid.ts'),
-            'ag-grid': path.resolve('./src/_assets/ts/ag-grid.ts')
+            'ag-grid-community/main': path.resolve('./src/_assets/ts/ag-grid-community.ts'),
+            'ag-grid-community': path.resolve('./src/_assets/ts/ag-grid-community.ts')
         },
         extensions: ['.ts', '.js']
     },

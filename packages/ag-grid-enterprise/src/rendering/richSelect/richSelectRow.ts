@@ -1,5 +1,5 @@
 
-import {_, Component, Utils, Autowired, CellRendererService, ICellRendererFunc, ICellRendererComp, ColDef, Promise} from "ag-grid/main";
+import {_, Component, Utils, Autowired, CellRendererService, ICellRendererFunc, ICellRendererComp, ColDef, Promise} from "ag-grid-community";
 
 export class RichSelectRow extends Component {
 

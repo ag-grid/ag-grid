@@ -662,9 +662,11 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true to allow <a href="../javascript-grid-cell-expressions/#cell-expressions">cell expressions</a>.</td>
         </tr>
         <tr>
-            <th>gridAutoHeight</th>
+            <th>domLayout</th>
             <td>
-                Set to true to enable <a href="../javascript-grid-width-and-height/#auto-height">Grid Auto Height</a>.
+                Set to 'normal', 'autoHeight' or 'print' to switch between layout options. The default is 'normal'.
+                See <a href="../javascript-grid-for-print/">Printing</a> and
+                <a href="../javascript-grid-width-and-height/#auto-height">Auto Height</a>.
             </td>
         </tr>
 

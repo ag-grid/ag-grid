@@ -10,7 +10,7 @@ include '../documentation-main/documentation_header.php';
 
     <p class="lead">
         Under normal usage, your application should set the width and height of the grid
-        using CSS styles. The grid will then fit the width you provide and provide scrolling
+        using CSS styles. The grid will then fit the width you provide and use scrolling
         inside the grid to allowing viewing all rows and columns.
     </p>
 
@@ -29,9 +29,12 @@ include '../documentation-main/documentation_header.php';
             If using % for your height, then make sure the container you are putting the grid into
             also has height specified, as the browser will fit the div according to a percentage of
             the parents height, and if the parent has no height, then this % will always be zero.
-            If your grid is not using all the space you think it should, then put a border on the grid's
+        </p>
+
+        <p>
+            If your grid is not the size you think it should be then put a border on the grid's
             div and see if that's the size you want (the grid will fill this div). If it is not the size
-            you want, then you have a CSS layout issue to solve outside of the grid.
+            you want, then you have a CSS layout issue in your application.
         </p>
 
     </note>
@@ -47,8 +50,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The example below shows setting the grid size and then changing it as the user
-        selects the buttons. Notice that the example calls <code>api.doLayout()</code> after
-        the resize to avoid a flicker.
+        selects the buttons.
     </p>
 
     <?= example('Width & Height', 'width-and-height', 'multi', array( 'exampleHeight' => 600 )) ?>
@@ -62,13 +64,13 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        To allow the grid to auto-size it's height to fit rows, set grid property <code>gridAutoHeight=true</code>.
+        To allow the grid to auto-size it's height to fit rows, set grid property <code>domLayout='autoHeight'</code>.
     </p>
 
     <p>
-        When <code>gridAutoHeight=true</code> then your application <b>should not</b> set height
+        When <code>domLayout='autoHeight'</code> then your application <b>should not</b> set height
         on the grid div, as the div should be allowed flow naturally to fit the grid contents.
-        When <code>gridAutoHeight=false</code> (the default) then your application <b>should</b>
+        When auto height is off then your application <b>should</b>
         set height on the grid div, as the grid will fill the div you provide it.
     </p>
 
@@ -102,7 +104,7 @@ include '../documentation-main/documentation_header.php';
         <li>Vertical scrolling will not happen, however horizontal scrolling, including pinned columns, will work as normal.</li>
         <li>
             It is possible to move the grid into and out of 'full height' mode by using the
-            <code>api.setGridAutoHeight()</code> or by changing the bound property <code>gridAutoHeight</code>.
+            <code>api.setDomLayout()</code> or by changing the bound property <code>domLayout</code>.
         </li>
     </ul>
 
@@ -113,7 +115,20 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Auto Height', 'auto-height', 'generated', array("enterprise" => 1, "noStyle" => 1)) ?>
 
-    <h2>Max Height with Auto Height</h2>
+    <h2>DOM Layout</h2>
+
+    <p>
+        There are three DOM Layout values the grid can have 'normal', 'autoHeight' and 'print'. They are used
+        as follows:
+        <ul>
+            <li><b>normal</b>: This is the default if nothing is specified. The grid fits the width and height
+            of the div you provide and scrolls in both directions.</li>
+            <li><b>fullHeight</b>: The grid's height is set to fit the number of rows so no vertical scrollbar
+                is provided by the grid. The grid scrolls horizontally as normal.</li>
+            <li><b>print</b>: No scroll bars are used and the grid renders all rows and columns. This layout
+            is explained in <a href="../javascript-grid-for-print/">Printing</a>.</li>
+        </ul>
+    </p>
 
     <h2>Min Height with Auto Height</h2>
 

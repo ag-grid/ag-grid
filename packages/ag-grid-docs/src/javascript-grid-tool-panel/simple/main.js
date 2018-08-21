@@ -2,7 +2,7 @@ var columnDefs = [
     {
         headerName: 'Athlete',
         children: [
-            { field: "athlete", width: 150},
+            { field: "athlete", width: 150, filter: 'agTextColumnFilter'},
             { field: "age", width: 90},
             { field: "country", width: 120}
         ]

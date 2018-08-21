@@ -1,4 +1,4 @@
-import {Bean, Autowired, PostConstruct} from "ag-grid/main";
+import {Bean, Autowired, PostConstruct} from "ag-grid-community";
 
 @Bean('md5')
 export class MD5 {

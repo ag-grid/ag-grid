@@ -18,12 +18,12 @@ import {
     ChangedPath,
     GetDataPath,
     PostConstruct
-} from "ag-grid/main";
+} from "ag-grid-community";
 
 interface GroupInfo {
     key: string; // e.g. 'Ireland'
     field: string; // e.g. 'country'
-    rowGroupColumn: Column
+    rowGroupColumn: Column;
 }
 
 interface GroupingDetails {
@@ -71,9 +71,6 @@ export class GroupStage implements IRowNodeStage {
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
         if (this.usingTreeData) {
             this.getDataPath = this.gridOptionsWrapper.getDataPathFunc();
-            if (_.missing(this.getDataPath)) {
-                console.warn('ag-Grid: property usingTreeData=true, but you did not provide getDataPath function, please provide getDataPath function if using tree data.')
-            }
         }
     }
 
@@ -145,7 +142,7 @@ export class GroupStage implements IRowNodeStage {
         _.sortRowNodesByOrder(node.childrenAfterGroup, details.rowNodeOrder);
         node.childrenAfterGroup.forEach( childNode => {
             if (childNode.childrenAfterGroup) {
-                this.recursiveSortChildren(childNode, details)
+                this.recursiveSortChildren(childNode, details);
             }
         } );
     }

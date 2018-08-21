@@ -15,6 +15,7 @@
             <ul>
                 <li><a href="http://stackoverflow.com/questions/tagged/ag-grid">Stack Overflow</a></li>
                 <li><a href="/license-pricing.php">License &amp; Pricing</a></li>
+                <li><a href="https://ag-grid.zendesk.com/">Support via Zendesk</a></li>
             </ul>
         </div>
         <div>

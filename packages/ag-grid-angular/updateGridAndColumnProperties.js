@@ -8,7 +8,7 @@ HTMLButtonElement = typeof HTMLButtonElement === 'undefined' ? function () {} : 
 MouseEvent = typeof MouseEvent === 'undefined' ? function () {} : MouseEvent;
 
 function getGridPropertiesAndEvents() {
-    const {ComponentUtil} = require("ag-grid");
+    const {ComponentUtil} = require("ag-grid-community");
 
     let result = '';
 
@@ -31,7 +31,7 @@ function getGridPropertiesAndEvents() {
 }
 
 function getGridColumnProperties() {
-    const {ColDefUtil} = require("ag-grid");
+    const {ColDefUtil} = require("ag-grid-community");
 
     // colDef properties that dont make sense in an angular context (or are private)
     const skippableProperties = ['template',

@@ -453,7 +453,42 @@
             {
                 "title": "Server-side",
                 "url": "javascript-grid-server-side-model/",
-                "enterprise": true
+                "enterprise": true,
+                "items": [
+                    {
+                        "title": "Infinite Scroll",
+                        "url": "javascript-grid-server-side-model-infinite/"
+                    },
+                    {
+                        "title": "Row Grouping",
+                        "url": "javascript-grid-server-side-model-grouping/"
+                    },
+                    {
+                        "title": "Pivoting",
+                        "url": "javascript-grid-server-side-model-pivoting/"
+                    },
+                    {
+                        "title": "Pagination",
+                        "url": "javascript-grid-server-side-model-pagination/"
+                    },
+                    {
+                        "title": "Row Selection",
+                        "url": "javascript-grid-server-side-model-selection/"
+                    },
+                    {
+                        "title": "Row Height",
+                        "url": "javascript-grid-server-side-model-row-height/"
+                    },
+                    {
+                        "title": "Tree Data",
+                        "url": "javascript-grid-server-side-model-tree-data/"
+                    },
+                    {
+
+                        "title": "CRUD",
+                        "url": "javascript-grid-server-side-model-crud/"
+                    }
+                ]
             },
             {
                 "title": "Viewport",
@@ -532,6 +567,10 @@
             {
                 "title": "Overlay Component",
                 "url": "javascript-grid-overlay-component/"
+            },
+            {
+                "title": "Status Bar Component",
+                "url": "javascript-grid-status-bar-component/"
             }
         ]
     },

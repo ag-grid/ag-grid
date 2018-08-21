@@ -1,4 +1,4 @@
-import {Autowired, Bean, CellEditorFactory, ComponentProvider, FilterManager, PostConstruct} from "ag-grid/main";
+import {Autowired, Bean, CellEditorFactory, ComponentProvider, FilterManager, PostConstruct} from "ag-grid-community";
 import {SetFilter} from "./setFilter/setFilter";
 import {RichSelectCellEditor} from "./rendering/richSelect/richSelectCellEditor";
 import {LicenseManager} from "./licenseManager";

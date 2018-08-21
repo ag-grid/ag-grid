@@ -6,7 +6,7 @@ import {
     IFilterComp,
     IFilterParams,
     IAfterGuiAttachedParams
-} from "ag-grid/main";
+} from "ag-grid-community";
 import {BaseComponentFactory} from "./baseComponentFactory";
 import {ICellRendererAngularComp, ICellEditorAngularComp, IFilterAngularComp, AgFrameworkComponent} from "./interfaces";
 

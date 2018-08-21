@@ -26,18 +26,18 @@
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
     "@types/core-js": "^0.9.34",
-    "ag-grid": "^18.1.0",
+    "ag-grid-community": "^18.1.0",
     "aurelia-framework": "1.x",
-    "gulp": "3.9.1",
-    "gulp-header": "1.7.0",
-    "gulp-typescript": "2.14.0",
-    "merge2": "0.3.6",
-    "reflect-metadata": "^0.1.3",
-    "systemjs": "0.19.27",
-    "typescript": "^2.0.3"
+    "gulp": "^4.0.0",
+    "gulp-header": "^2.0.5",
+    "gulp-typescript": "^4.0.2",
+    "merge2": "^1.2.2",
+    "reflect-metadata": "^0.1.12",
+    "systemjs": "^0.21.4",
+    "typescript": "^2.9.2"
   },
   "peerDependencies": {
-    "ag-grid": "^18.0.0",
+    "ag-grid-community": "^18.0.0",
     "aurelia-framework": "1.x"
   },
   "aurelia": {

@@ -20,10 +20,10 @@ import {
     Utils,
     RefSelector,
     _
-} from "ag-grid/main";
+} from "ag-grid-community";
 import {BaseColumnItem} from "./columnSelectComp";
 
-export class ToolPanelGroupComp extends Component implements BaseColumnItem{
+export class ToolPanelGroupComp extends Component implements BaseColumnItem {
 
     private static TEMPLATE =
         `<div class="ag-column-select-column-group">
@@ -82,7 +82,7 @@ export class ToolPanelGroupComp extends Component implements BaseColumnItem{
         this.displayName = this.columnController.getDisplayNameForOriginalColumnGroup(null, this.columnGroup, 'toolPanel');
 
         if (Utils.missing(this.displayName)) {
-            this.displayName = '>>'
+            this.displayName = '>>';
         }
 
         eText.innerHTML = this.displayName;
@@ -174,14 +174,14 @@ export class ToolPanelGroupComp extends Component implements BaseColumnItem{
             if (nextState) {
                 this.actionCheckedReduce(childColumns);
             } else {
-                this.actionUnCheckedReduce(childColumns)
+                this.actionUnCheckedReduce(childColumns);
             }
         } else {
             let allowedColumns = childColumns.filter( c => !c.isLockVisible() );
             this.columnController.setColumnsVisible(allowedColumns, nextState, "toolPanelUi");
         }
 
-        if (this.selectionCallback){
+        if (this.selectionCallback) {
             this.selectionCallback(this.isSelected());
         }
     }
@@ -252,7 +252,7 @@ export class ToolPanelGroupComp extends Component implements BaseColumnItem{
         let readOnlyValue = this.workOutReadOnlyValue();
         this.processingColumnStateChange = true;
         this.cbSelect.setSelected(selectedValue);
-        if (this.selectionCallback){
+        if (this.selectionCallback) {
             this.selectionCallback(this.isSelected());
         }
         this.cbSelect.setReadOnly(readOnlyValue);
@@ -286,6 +286,10 @@ export class ToolPanelGroupComp extends Component implements BaseColumnItem{
         let hiddenChildCount = 0;
 
         this.columnGroup.getLeafColumns().forEach( (column: Column) => {
+
+            // ignore lock visible columns
+            if (column.isLockVisible()) { return; }
+
             if (this.isColumnVisible(column, pivotMode)) {
                 visibleChildCount++;
             } else {
@@ -340,8 +344,8 @@ export class ToolPanelGroupComp extends Component implements BaseColumnItem{
         if (
             (value && !this.cbSelect.isSelected()) ||
             (! value && this.cbSelect.isSelected())
-        ){
-            if(!this.cbSelect.isReadOnly()){
+        ) {
+            if(!this.cbSelect.isReadOnly()) {
                 this.cbSelect.toggle();
             }
         }

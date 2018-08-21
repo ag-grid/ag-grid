@@ -1,27 +1,27 @@
 import {
-    Utils,
-    Bean,
-    IMenuFactory,
+    AgEvent,
     Autowired,
-    Context,
-    PopupService,
-    GridOptionsWrapper,
+    Bean,
+    BeanStub,
     Column,
     ColumnController,
-    FilterManager,
-    MenuItemDef,
-    GridApi,
-    TabbedLayout,
-    EventService,
-    TabbedItem,
-    AgEvent,
-    IRowModel,
     Constants,
-    PostConstruct,
+    Context,
+    EventService,
+    FilterManager,
     FilterWrapper,
+    GridApi,
+    GridOptionsWrapper,
+    IMenuFactory,
+    IRowModel,
+    MenuItemDef,
+    PopupService,
+    PostConstruct,
     Promise,
-    BeanStub
-} from "ag-grid";
+    TabbedItem,
+    TabbedLayout,
+    Utils
+} from "ag-grid-community";
 import {ColumnSelectComp} from "../toolPanel/columnsSelect/columnSelectComp";
 import {MenuList} from "./menuList";
 import {MenuItemComponent} from "./menuItemComponent";
@@ -57,7 +57,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
                 mouseEvent: mouseEvent,
                 ePopup: menu.getGui()
             });
-            if (defaultTab){
+            if (defaultTab) {
                 menu.showTab(defaultTab);
             }
         }, defaultTab);
@@ -67,6 +67,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
     public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, defaultTab?:string, restrictToTabs?:string[]): void {
 
         this.showMenu(column, (menu: EnterpriseMenu)=> {
+            let minDims = menu.getMinDimensions();
             this.popupService.positionPopupUnderComponent({
                 column: column,
                 type: 'columnMenu',
@@ -74,10 +75,11 @@ export class EnterpriseMenuFactory implements IMenuFactory {
                 ePopup: menu.getGui(),
                 nudgeX: -9,
                 nudgeY: -26,
-                minWidth: menu.getMinWidth(),
+                minWidth: minDims.width,
+                minHeight: minDims.height,
                 keepWithinBounds: true
             });
-            if (defaultTab){
+            if (defaultTab) {
                 menu.showTab(defaultTab);
             }
         }, defaultTab, restrictToTabs);
@@ -107,19 +109,19 @@ export class EnterpriseMenuFactory implements IMenuFactory {
             hidePopup: hidePopup
         });
 
-        if (!defaultTab){
+        if (!defaultTab) {
             menu.showTabBasedOnPreviousSelection();
         }
 
         menu.addEventListener(EnterpriseMenu.EVENT_TAB_SELECTED, (event: any) => {
-            this.lastSelectedTab = event.key
+            this.lastSelectedTab = event.key;
         } );
 
         column.setMenuVisible(true, "contextMenu");
 
         this.activeMenu = menu;
         menu.addEventListener(BeanStub.EVENT_DESTROYED, ()=> {
-            if (this.activeMenu===menu) {
+            if (this.activeMenu === menu) {
                 this.activeMenu = null;
             }
         });
@@ -188,8 +190,8 @@ export class EnterpriseMenu extends BeanStub {
         this.restrictTo = restrictTo;
     }
 
-    public getMinWidth(): number {
-        return this.tabbedLayout.getMinWidth();
+    public getMinDimensions(): {width: number, height: number} {
+        return this.tabbedLayout.getMinDimensions();
     }
 
     @PostConstruct
@@ -216,7 +218,7 @@ export class EnterpriseMenu extends BeanStub {
         let isValid: boolean = true;
         let itemsToConsider: string[] = EnterpriseMenu.TABS_DEFAULT;
 
-        if (this.restrictTo != null){
+        if (this.restrictTo != null) {
             isValid = this.restrictTo.indexOf(menuTabName) > -1 ;
             itemsToConsider = this.restrictTo;
         }
@@ -228,11 +230,11 @@ export class EnterpriseMenu extends BeanStub {
         return isValid;
     }
 
-    private isNotSuppressed(menuTabName: string):boolean{
+    private isNotSuppressed(menuTabName: string):boolean {
         return this.includeChecks[menuTabName]();
     }
 
-    private createTab(name: string):TabbedItem{
+    private createTab(name: string):TabbedItem {
         return this.tabFactories[name]();
     }
 
@@ -244,14 +246,11 @@ export class EnterpriseMenu extends BeanStub {
     public showTab(toShow:string) {
         if (this.tabItemColumns && toShow === EnterpriseMenu.TAB_COLUMNS) {
             this.tabbedLayout.showItem(this.tabItemColumns);
-        }
-        else if (this.tabItemFilter && toShow === EnterpriseMenu.TAB_FILTER) {
+        } else if (this.tabItemFilter && toShow === EnterpriseMenu.TAB_FILTER) {
             this.tabbedLayout.showItem(this.tabItemFilter);
-        }
-        else if (this.tabItemGeneral && toShow === EnterpriseMenu.TAB_GENERAL) {
+        } else if (this.tabItemGeneral && toShow === EnterpriseMenu.TAB_GENERAL) {
             this.tabbedLayout.showItem(this.tabItemGeneral);
-        }
-        else {
+        } else {
             this.tabbedLayout.showFirstItem();
         }
     }
@@ -264,11 +263,11 @@ export class EnterpriseMenu extends BeanStub {
             case this.tabItemGeneral: key = EnterpriseMenu.TAB_GENERAL; break;
         }
         if (key) {
-            let event: TabSelectedEvent = {
+            let ev: TabSelectedEvent = {
                 type: EnterpriseMenu.EVENT_TAB_SELECTED,
                 key: key
             };
-            this.dispatchEvent(event);
+            this.dispatchEvent(ev);
         }
     }
 
@@ -406,10 +405,10 @@ export class EnterpriseMenu extends BeanStub {
 
     private createFilterPanel(): TabbedItem {
 
-        let filterWrapper:FilterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column);
+        let filterWrapper:FilterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'COLUMN_MENU');
 
         let afterFilterAttachedCallback: Function;
-        filterWrapper.filterPromise.then(filter=>{
+        filterWrapper.filterPromise.then(filter => {
             if (filter.afterGuiAttached) {
                 afterFilterAttachedCallback = filter.afterGuiAttached.bind(filter);
             }

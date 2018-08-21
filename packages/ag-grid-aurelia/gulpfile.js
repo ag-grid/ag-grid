@@ -35,5 +35,5 @@ function tscTask() {
         tsResult.js
             .pipe(header(headerTemplate, { pkg : pkg }))
             .pipe(gulp.dest('lib'))
-    ])
+    ]);
 }

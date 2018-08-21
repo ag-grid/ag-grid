@@ -172,7 +172,7 @@ ag-Grid is a feature rich data grid <strong>built for Angular</strong>.
                 <div style="background-color: aliceblue">
                                 <p><strong>2M Downloads
                     <br>
-                    150,000 Downloads Per Month</strong>
+                    200,000 Downloads Per Month</strong>
                 </p>
             </div>
                 <hr>

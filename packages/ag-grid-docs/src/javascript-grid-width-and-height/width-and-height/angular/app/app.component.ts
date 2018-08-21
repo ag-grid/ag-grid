@@ -79,7 +79,5 @@ export class AppComponent {
             width: width, 
             height: height
         };
-
-        this.agGrid.api.doLayout()
     }
 }

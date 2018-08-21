@@ -15,7 +15,7 @@ import {
     ILoadingOverlayParams,
     INoRowsOverlayComp,
     INoRowsOverlayParams
-} from 'ag-grid';
+} from 'ag-grid-community';
 
 export interface AgReactFrameworkComponent<T> {
 

@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1>Pivoting</h1>
+    <h1 class="heading-enterprise">Pivoting</h1>
 
     <p>
         Pivoting allows you to take a columns values and turn them into columns. For example you can pivot on Country

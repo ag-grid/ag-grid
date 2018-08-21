@@ -23,10 +23,10 @@ import {
     Utils,
     RefSelector,
     _
-} from "ag-grid/main";
+} from "ag-grid-community";
 import {BaseColumnItem} from "./columnSelectComp";
 
-export class ToolPanelColumnComp extends Component implements BaseColumnItem{
+export class ToolPanelColumnComp extends Component implements BaseColumnItem {
 
     private static TEMPLATE =
         `<div class="ag-column-select-column">
@@ -107,6 +107,9 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem{
     }
 
     private onChangeCommon(nextState: boolean): void {
+        // ignore lock visible columns
+        if (this.column.isLockVisible()) { return; }
+
         // only want to action if the user clicked the checkbox, not is we are setting the checkbox because
         // of a change in the model
         if (this.processingColumnStateChange) { return; }
@@ -124,7 +127,7 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem{
             this.columnController.setColumnVisible(this.column, nextState, "columnMenu");
         }
 
-        if (this.selectionCallback){
+        if (this.selectionCallback) {
             this.selectionCallback(this.isSelected());
         }
     }
@@ -269,13 +272,13 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem{
             // if reducing, checkbox means column is one of pivot, value or group
             let anyFunctionActive = this.column.isAnyFunctionActive();
             this.cbSelect.setSelected(anyFunctionActive);
-            if (this.selectionCallback){
+            if (this.selectionCallback) {
                 this.selectionCallback(this.isSelected());
             }
         } else {
             // if not reducing, the checkbox tells us if column is visible or not
             this.cbSelect.setSelected(this.column.isVisible());
-            if (this.selectionCallback){
+            if (this.selectionCallback) {
                 this.selectionCallback(this.isSelected());
             }
         }
