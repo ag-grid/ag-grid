@@ -434,6 +434,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Output() public cellMouseOut: EventEmitter<any> = new EventEmitter<any>();
     @Output() public filterChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public filterModified: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public filterOpened: EventEmitter<any> = new EventEmitter<any>();
     @Output() public sortChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public virtualRowRemoved: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowClicked: EventEmitter<any> = new EventEmitter<any>();

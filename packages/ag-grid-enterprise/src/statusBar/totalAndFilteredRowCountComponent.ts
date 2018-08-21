@@ -1,13 +1,13 @@
 import {Autowired, Events, EventService, GridApi, PostConstruct} from 'ag-grid';
 import {StatusBarValueComponent} from "./statusBarValueComponent";
 
-export class FilteredRowCountComponent extends StatusBarValueComponent {
+export class TotalAndFilteredRowCountComponent extends StatusBarValueComponent {
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridApi') private gridApi: GridApi;
 
     constructor() {
-        super('filteredRowCount', 'Filtered');
+        super('rowAndFilteredCount', 'Rows');
     }
 
     @PostConstruct
@@ -16,11 +16,11 @@ export class FilteredRowCountComponent extends StatusBarValueComponent {
 
         // this component is only really useful with client side rowmodel
         if (this.gridApi.getModel().getType() !== 'clientSide') {
-            console.warn(`ag-Grid: agFilteredRowCountComponent should only be used with the client side row model.`);
+            console.warn(`ag-Grid: agTotalAndFilteredRowCountComponent should only be used with the client side row model.`);
             return;
         }
 
-        this.addCssClass('ag-status-bar-filtered-row-count');
+        this.addCssClass('ag-status-bar-total-and-filtered-row-count');
 
         this.setVisible(true);
 
@@ -29,10 +29,14 @@ export class FilteredRowCountComponent extends StatusBarValueComponent {
     }
 
     private onDataChanged() {
-        const totalRowCountValue = this.getTotalRowCountValue();
-        const filteredRowCountValue = this.getFilteredRowCountValue();
-        this.setValue(filteredRowCountValue);
-        this.setVisible(totalRowCountValue !== filteredRowCountValue);
+        let filteredRowCount = this.getFilteredRowCountValue();
+        let displayValue:any = this.getTotalRowCountValue();
+
+        if(filteredRowCount !== displayValue) {
+            displayValue = `${filteredRowCount} of ` + displayValue;
+        }
+
+        this.setValue(displayValue)
     }
 
     private getTotalRowCountValue(): number {

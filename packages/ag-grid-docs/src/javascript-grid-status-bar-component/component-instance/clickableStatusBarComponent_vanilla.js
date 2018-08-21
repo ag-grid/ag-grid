@@ -4,6 +4,8 @@ function ClickableStatusBarComponent() {
 ClickableStatusBarComponent.prototype.init = function (params) {
     this.params = params;
 
+    this.visible = true;
+
     this.eGui = document.createElement('div');
     this.eGui.setAttribute("style",
         'display: flex; justify-content: center; flex-direction: column;margin: 5px;' +
@@ -22,7 +24,7 @@ ClickableStatusBarComponent.prototype.init = function (params) {
     this.eButton.addEventListener("click", this.buttonListener);
     this.eButton.innerHTML = 'Click Me';
     content.appendChild(this.eButton);
-    
+
     this.eGui.appendChild(content);
 };
 
@@ -36,4 +38,14 @@ ClickableStatusBarComponent.prototype.destroy = function () {
 
 ClickableStatusBarComponent.prototype.onButtonClicked = function () {
     alert('Selected Row Count: ' + this.params.api.getSelectedRows().length)
+};
+
+ClickableStatusBarComponent.prototype.setVisible = function (visible) {
+    this.visible = visible;
+
+    this.eGui.style.display = this.visible ? 'flex' : 'none';
+};
+
+ClickableStatusBarComponent.prototype.isVisible = function () {
+    return this.visible;
 };

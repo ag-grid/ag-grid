@@ -80,7 +80,7 @@ export {RowNode} from "./entities/rowNode";
 // filter
 export {BaseFilter} from "./filter/baseFilter";
 export {DateFilter, SerializedDateFilter} from "./filter/dateFilter";
-export {FilterManager, FilterWrapper} from "./filter/filterManager";
+export {FilterManager, FilterWrapper, FilterRequestSource} from "./filter/filterManager";
 export {NumberFilter} from "./filter/numberFilter";
 export {TextFilter,SerializedTextFilter} from "./filter/textFilter";
 export {IFloatingFilter, IFloatingFilterParams} from "./filter/floatingFilter";
@@ -274,7 +274,7 @@ export {Environment} from "./environment";
 export {AgEvent, AgGridEvent, ModelUpdatedEvent, ColumnPivotModeChangedEvent, VirtualColumnsChangedEvent,
     ColumnEverythingChangedEvent, NewColumnsLoadedEvent, GridColumnsChangedEvent, DisplayedColumnsChangedEvent,
     RowDataChangedEvent, RowDataUpdatedEvent, PinnedRowDataChangedEvent, SelectionChangedEvent, FilterChangedEvent,
-    FilterModifiedEvent, SortChangedEvent, GridReadyEvent, DragStartedEvent, DragStoppedEvent,
+    FilterModifiedEvent, FilterOpenedEvent, SortChangedEvent, GridReadyEvent, DragStartedEvent, DragStoppedEvent,
     DisplayedColumnsWidthChangedEvent, ColumnHoverChangedEvent, BodyHeightChangedEvent, ComponentStateChangedEvent,
     ViewportChangedEvent, RangeSelectionChangedEvent, ColumnGroupOpenedEvent, ItemsAddedEvent,
     BodyScrollEvent, FlashCellsEvent, PaginationChangedEvent, CellFocusedEvent, ColumnEvent, ColumnResizedEvent,

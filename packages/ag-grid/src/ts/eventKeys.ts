@@ -84,6 +84,7 @@ export class Events {
 
     /** Filter was change but not applied. Only useful if apply buttons are used in filters. */
     public static EVENT_FILTER_MODIFIED = 'filterModified';
+    public static EVENT_FILTER_OPENED = 'filterOpened';
 
     public static EVENT_SORT_CHANGED = 'sortChanged';
 

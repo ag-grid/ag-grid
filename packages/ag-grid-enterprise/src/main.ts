@@ -1,3 +1,5 @@
+import {ToolPanelAllFiltersComp} from "./toolPanel/filter/toolPanelAllFiltersComp";
+
 export {ColumnSelectComp} from "./toolPanel/columnsSelect/columnSelectComp";
 export {ToolPanelColumnComp} from "./toolPanel/columnsSelect/toolPanelColumnComp";
 export {ToolPanelGroupComp} from "./toolPanel/columnsSelect/toolPanelGroupComp";
@@ -5,7 +7,8 @@ export {AggregationStage} from "./rowStages/aggregationStage";
 export {GroupStage} from "./rowStages/groupStage";
 export {SetFilter} from "./setFilter/setFilter";
 export {SetFilterModel} from "./setFilter/setFilterModel";
-export {StatusBar} from "./statusBar/statusBar";
+export {StatusBarComp} from "./statusBar/statusBarComp";
+export {StatusBarService} from "./statusBar/statusBarService";
 export {ClipboardService} from "./clipboardService";
 export {EnterpriseBoot} from "./enterpriseBoot";
 export {EnterpriseMenu} from "./menu/enterpriseMenu";
@@ -64,20 +67,21 @@ import {HeaderColumnDropComp} from "./toolPanel/columnDrop/headerColumnDropComp"
 import {ToolPanelColumnComp} from "./toolPanel/toolPanelColumnComp";
 import {ToolPanelSelectComp} from "./toolPanel/toolPanelSelectComp";
 
-import {StatusBar} from "./statusBar/statusBar";
+import {StatusBarService} from "./statusBar/statusBarService";
+import {StatusBarComp} from "./statusBar/statusBarComp";
 import {AggregationComponent} from "./statusBar/aggregationComponent"
 import {StatusBarValueComponent} from "./statusBar/statusBarValueComponent";
 import {SelectedRowCountComponent} from "./statusBar/selectedRowCountComponent"
 import {TotalRowCountComponent} from "./statusBar/totalRowCountComponent"
 import {FilteredRowCountComponent} from "./statusBar/filteredRowCountComponent"
-import {BlankStatusBarComponent} from "./statusBar/blankStatusBarComponent"
+import {TotalAndFilteredRowCountComponent} from "./statusBar/totalAndFilteredRowCountComponent"
 
 let rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
 
 Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, RowGroupCompFactory, PivotCompFactory,
     PivotColumnsPanel, RangeController, ClipboardService, PivotStage, PivotColDefService,
     ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService,
-    LicenseManager, MD5, MenuItemMapper], rowModelTypes);
+    LicenseManager, MD5, MenuItemMapper, StatusBarService], rowModelTypes);
 
 Grid.setEnterpriseComponents([
     {componentName: 'AgColumnSelectHeader', theClass: ColumnSelectHeaderComp},
@@ -85,7 +89,7 @@ Grid.setEnterpriseComponents([
     {componentName: 'AgHorizontalResize', theClass: HorizontalResizeComp},
     {componentName: 'AgToolPanel', theClass: ToolPanelComp},
 
-    {componentName: 'AgStatusBar', theClass: StatusBar},
+    {componentName: 'AgStatusBar', theClass: StatusBarComp},
     {componentName: 'AgSumAggregationComp', theClass: StatusBarValueComponent},
     {componentName: 'AgCountAggregationComp', theClass: StatusBarValueComponent},
     {componentName: 'AgMinAggregationComp', theClass: StatusBarValueComponent},
@@ -95,6 +99,7 @@ Grid.setEnterpriseComponents([
 
     {componentName: 'AgHeaderColumnDrop', theClass: HeaderColumnDropComp},
     {componentName: 'AgToolPanelColumnComp', theClass: ToolPanelColumnComp},
+    {componentName: 'AgToolPanelAllFiltersComp', theClass: ToolPanelAllFiltersComp},
     {componentName: 'AgToolPanelSelectComp', theClass: ToolPanelSelectComp},
 ]);
 
@@ -103,5 +108,5 @@ Grid.setEnterpriseDefaultComponents([
     {componentName: 'agSelectedRowCountComponent', theClass: SelectedRowCountComponent},
     {componentName: 'agTotalRowCountComponent', theClass: TotalRowCountComponent},
     {componentName: 'agFilteredRowCountComponent', theClass: FilteredRowCountComponent},
-    {componentName: 'agBlankStatusBarComponent', theClass: BlankStatusBarComponent},
+    {componentName: 'agTotalAndFilteredRowCountComponent', theClass: TotalAndFilteredRowCountComponent}
 ]);

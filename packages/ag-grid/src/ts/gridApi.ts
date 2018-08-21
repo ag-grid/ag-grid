@@ -114,8 +114,9 @@ export class GridApi {
     @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
     @Autowired('valueCache') private valueCache: ValueCache;
-    @Optional('toolPanelComp') private toolPanelComp: IToolPanel;
+    @Optional('toolPanelComp') private toolPanelComp: IToolPanel; // this can be removed
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
+    @Optional('statusBarService') private statusBarService: any;
 
     private gridPanel: GridPanel;
     private headerRootComp: HeaderRootComp;
@@ -316,6 +317,7 @@ export class GridApi {
     }
 
     public refreshToolPanel(): void {
+        console.log("this.toolPanelComp", this.toolPanelComp);
         if (this.toolPanelComp) {
             this.toolPanelComp.refresh();
         }
@@ -669,7 +671,7 @@ export class GridApi {
     public getFilterInstance(key: string|Column): IFilterComp {
         let column = this.columnController.getPrimaryColumn(key);
         if (column) {
-            return this.filterManager.getFilterComponent(column).resolveNow<IFilterComp>(null, filterComp=>filterComp);
+            return this.filterManager.getFilterComponent(column, 'NO_UI').resolveNow<IFilterComp>(null, filterComp=>filterComp);
         }
     }
 
@@ -682,6 +684,12 @@ export class GridApi {
         let column = this.columnController.getPrimaryColumn(key);
         if (column) {
             return this.filterManager.destroyFilter(column, "filterDestroyed");
+        }
+    }
+
+    public getStatusBarComponent(key: string) {
+        if (this.statusBarService) {
+            return this.statusBarService.getStatusBarComponent(key);
         }
     }
 

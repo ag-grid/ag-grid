@@ -28,7 +28,7 @@ interface IStatusBar&lt;IStatusBarParams&gt; {
 }
 </snippet>
 
-<h2 id="istatus-bar-params">IStatusBarParams</h2>
+ <h2 id="istatus-bar-params">IStatusBarParams</h2>
 <p>
     The method init(params) takes a params object with the items listed below. If the user provides
     params via the <code>statusParams</code> attribute (see <a href="#configure-components"></a> Configuring Status Bar
@@ -81,6 +81,36 @@ var gridOptions = {
     left to right.</p>
 
 <?= example('Status Bar Component', 'custom-component', 'generated', array("enterprise" => 1)) ?>
+
+
+<h2 id="accessing-status-bar-comp-instances">Accessing Status Bar Component Instances</h2>
+
+<p>
+    After the grid has created an instance of a status bar component it is possible to access that instance.
+    This is useful if you want to call a method that you provide on the status bar component that has nothing to do
+    with the operation of the grid. Accessing a status bar component is done using the grid API
+    <code>getStatusBarComponent(key)</code>.
+</p>
+
+<p>
+    If your are using a framework component then the returned object
+    is a wrapper and you can get the underlying status bar component using <code>getFrameworkComponentInstance()</code>
+</p>
+
+<snippet>
+// example - get status bar component
+let statusBarComponent = gridOptions.api.getStatusBarComponent('statusBarCompKey');
+if(statusBarComponent) {
+    componentInstance = statusBarComponent.getFrameworkComponentInstance();
+}
+</snippet>
+
+<p>
+    The example below shows using <code>getStatusBarComponent</code>:
+</p>
+
+<?= example('Get Status Bar Component Instance', 'component-instance', 'generated', array("enterprise" => 1)) ?>
+
 
 <?php 
 

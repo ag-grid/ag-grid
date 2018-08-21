@@ -1,37 +1,30 @@
-import {Autowired, GridApi, Component, Context, Events, EventService, PreConstruct, PostConstruct, RefSelector} from 'ag-grid';
+import {Autowired, Events, EventService, GridApi, PostConstruct} from 'ag-grid';
 import {StatusBarValueComponent} from "./statusBarValueComponent";
 
-export class SelectedRowCountComponent extends Component {
-
-    private static TEMPLATE = `<div class="ag-status-bar-selected-row-count">
-                <ag-selected-row-count-comp key="selectedRowCount" default-value="Selected" ref="selectedRowCountComp"></ag-selected-row-count-comp>
-            </div>`;
+export class SelectedRowCountComponent extends StatusBarValueComponent {
 
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('context') private context: Context;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    @RefSelector('selectedRowCountComp') private selectedRowCountComp: StatusBarValueComponent;
-
     constructor() {
-        super(SelectedRowCountComponent.TEMPLATE);
-    }
-
-    @PreConstruct
-    private preConstruct(): void {
-        this.instantiate(this.context);
+        super('selectedRowCount', 'Selected');
     }
 
     @PostConstruct
-    private postConstruct(): void {
+    protected postConstruct(): void {
+        super.postConstruct();
+
         // this component is only really useful with client side rowmodel
         if (this.gridApi.getModel().getType() !== 'clientSide') {
             console.warn(`ag-Grid: agSelectedRowCountComponent should only be used with the client side row model.`);
             return;
         }
 
-        this.selectedRowCountComp.setValue(this.gridApi.getSelectedRows().length);
-        this.selectedRowCountComp.setVisible(true);
+        this.addCssClass('ag-status-bar-selected-row-count');
+
+        const selectedRowCount = this.gridApi.getSelectedRows().length;
+        this.setValue(selectedRowCount);
+        this.setVisible(selectedRowCount > 0);
 
         let eventListener = this.onRowSelectionChanged.bind(this);
         this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, eventListener);
@@ -39,7 +32,9 @@ export class SelectedRowCountComponent extends Component {
     }
 
     private onRowSelectionChanged() {
-        this.selectedRowCountComp.setValue(this.gridApi.getSelectedRows().length);
+        const selectedRowCount = this.gridApi.getSelectedRows().length;
+        this.setValue(selectedRowCount);
+        this.setVisible(selectedRowCount > 0);
     }
 
     public init() {

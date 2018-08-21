@@ -4,6 +4,7 @@ import {ColDef} from "./entities/colDef";
 import {GridApi} from "./gridApi";
 import {ColumnApi} from "./columnController/columnApi";
 import {OriginalColumnGroup} from "./entities/originalColumnGroup";
+import {FilterRequestSource} from "./filter/filterManager";
 export { Events } from './eventKeys';
 
 export interface ModelUpdatedEvent extends AgGridEvent {
@@ -45,6 +46,12 @@ export interface PinnedRowDataChangedEvent extends AgGridEvent {}
 export interface SelectionChangedEvent extends AgGridEvent {}
 export interface FilterChangedEvent extends AgGridEvent {}
 export interface FilterModifiedEvent extends AgGridEvent {}
+export interface FilterOpenedEvent extends AgGridEvent {
+    column: Column;
+    source: FilterRequestSource;
+    eGui: HTMLElement;
+}
+
 export interface SortChangedEvent extends AgGridEvent {}
 export interface GridReadyEvent extends AgGridEvent {}
 export interface DisplayedColumnsWidthChangedEvent extends AgGridEvent {} // not documented

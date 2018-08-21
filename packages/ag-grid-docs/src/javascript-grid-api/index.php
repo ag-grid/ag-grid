@@ -433,7 +433,6 @@ include '../documentation-main/documentation_header.php';
     </table>
 <h2>Clipboard</h2>
     <table class="table reference">
-
         <tr>
             <th>copySelectedRangeToClipboard(includeHeaders)</th>
             <td>Copies the selected ranges to the clipboard.</td>
@@ -458,6 +457,13 @@ include '../documentation-main/documentation_header.php';
         <?php printPropertiesRows($headerHeightApi) ?>
 
     </table>
+<h2>Status Bar</h2>
+<table class="table reference">
+    <tr>
+        <th>getStatusBarComponent(key)</th>
+        <td>Returns the status bar component instance for key provided</td>.
+    </tr>
+</table>
 <h2>Miscellaneous</h2>
     <table class="table reference">
         <tr>

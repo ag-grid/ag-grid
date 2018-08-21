@@ -6,7 +6,7 @@ import {IFilterAngularComp} from "ag-grid-angular";
 @Component({
     selector: 'status-component',
     template: `
-        <div class="container">
+        <div class="container" *ngIf="visible">
             <div>
                 <span class="component">Status Bar Component <input type="button" (click)="onClick()" value="Click Me"/></span>
             </div>
@@ -33,6 +33,7 @@ import {IFilterAngularComp} from "ag-grid-angular";
 })
 export class ClickableStatusBarComponent implements IStatusBar {
     private params: IStatusBarParams;
+    private visible = true;
 
     agInit(params: IStatusBarParams): void {
         this.params = params;
@@ -40,5 +41,13 @@ export class ClickableStatusBarComponent implements IStatusBar {
 
     onClick() : void {
         alert('Selected Row Count: ' + this.params.api.getSelectedRows().length)
+    }
+
+    setVisible(visible: boolean) {
+        this.visible = visible;
+    }
+
+    isVisible(): boolean {
+        return this.visible;
     }
 }

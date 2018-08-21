@@ -30,6 +30,9 @@ include '../documentation-main/documentation_header.php';
         <code>agTotalRowCountComponent</code>: Provides the total row count.
     </li>
     <li>
+        <code>agTotalAndFilteredRowCountComponent</code>: Provides the total and filtered row count.
+    </li>
+    <li>
         <code>agFilteredRowCountComponent</code>: Provides the filtered row count.
     </li>
     <li>
@@ -45,9 +48,13 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     The status panel is configured using the <code>statusPanel</code> grid option.
-    The option takes a list of components identified by component name and additionally
+    The option takes a list of components identified by component name, alignment and additionally
     component parameters.
 </p>
+
+<p>If <code>align</code> is not specified the components will default to being aligned to the right.</p>
+<p><code>key</code> is useful for accessing status bar component instances - see <a href="#accessing-status-bar-comp-instances">below</a>
+for more information.</p>
 
 <p>
     The snippet below shows a status panel configured with the grid provided
@@ -58,15 +65,20 @@ include '../documentation-main/documentation_header.php';
 gridOptions: {
     statusPanel: {
         components: [
-            { component: 'agTotalRowCountComponent' },
-            { component: 'agFilteredRowCountComponent' },
-            { component: 'agSelectedRowCountComponent' },
-            { component: 'agAggregationComponent' }
+            { component: 'agTotalRowCountComponent', align: 'left', key: 'totalRowComponent' },
+            { component: 'agFilteredRowCountComponent, align: 'left' },
+            { component: 'agSelectedRowCountComponent', align: 'center' },
+            { component: 'agAggregationComponent', align: 'right' }
         ]
     }
     // ...other grid properties
 }
 </snippet>
+
+<h3>Component Alignment</h3>
+
+<p>Components can be aligned either to the <code>left</code>, in the <code>center</code> of the panel or on the
+    <code>right</code> (the default). Components within these alignments will be added in the order specified.</p>
 
 <h3>Simple Status Panel Example</h3>
 
@@ -74,7 +86,7 @@ gridOptions: {
     The example below shows a simply configured status panel. Note the following:
 <ul>
     <li>
-        The total row count is displayed by the <code>agTotalRowCountComponent</code> component.
+        The total row count is displayed by the <code>agTotalRowCountComponent</code> component, aligned to the lef1t.
     </li>
     <li>
         The row count after filtering is displayed by the <code>agFilteredRowCountComponent</code> component.
@@ -92,6 +104,14 @@ gridOptions: {
 </p>
 
 <?= example('Status Panel Simple', 'status-panel-simple', 'generated', array("enterprise" => 1)) ?>
+
+<h3 id="accessing-status-bar-comp-instances">Accessing Status Bar Component Instances</h3>
+
+<p>Accessing status bar component instances is possible using <code>api.getStatusBarComponent(key)</code>. The key will be the
+value provided in the component configuration (see above), but will default to the component name if not provided.</p>
+
+<p>See <a href="../javascript-grid-status-bar-component#accessing-status-bar-comp-instances">Accessing Status Bar
+        Component Instances</a> for more information.</p>
 
 <h2>Configuration with Component Parameters</h2>
 
