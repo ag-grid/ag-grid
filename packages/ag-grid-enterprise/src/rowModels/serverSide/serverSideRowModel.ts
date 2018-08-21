@@ -517,8 +517,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }
     }
 
+    // always returns true - this is used by the
     public isRowPresent(rowNode: RowNode): boolean {
-        return false;
+        let foundRowNode = this.getRowNode(rowNode.id);
+        return !!foundRowNode;
     }
 
     private extractSortModel(): { colId: string; sort: string }[] {
