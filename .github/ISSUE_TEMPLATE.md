@@ -11,7 +11,7 @@ IF YOU DON'T FILL OUT THE FOLLOWING INFORMATION WE MIGHT CLOSE YOUR ISSUE WITHOU
 
 **Customers of ag-Grid**
 
-If you are a customer you are entitled to use the ag-Grid's customer support system (powered by Zendesk). Please use this channel for guaranteed response from the ag-Grid team with regards bugs, feature requests and support.
+If you are a customer you are entitled to use the ag-Grid's customer support system (powered by Zendesk). Please use that channel for guaranteed response from the ag-Grid team with regards bugs, feature requests and support.
 
 **Requesting Community Support**
 
