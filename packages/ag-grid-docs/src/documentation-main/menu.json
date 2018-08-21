@@ -567,6 +567,10 @@
             {
                 "title": "Overlay Component",
                 "url": "javascript-grid-overlay-component/"
+            },
+            {
+                "title": "Status Bar Component",
+                "url": "javascript-grid-status-bar-component/"
             }
         ]
     },

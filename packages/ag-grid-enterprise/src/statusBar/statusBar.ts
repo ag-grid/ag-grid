@@ -16,7 +16,9 @@ import {
 export class StatusBar extends Component {
 
     private static TEMPLATE = `<div class="ag-status-bar">
-        <div ref="panelComponents" class="ag-status-bar-comps"></div>
+        <div ref="leftPanelComponents" class="ag-status-left-bar-comps"></div>
+        <div ref="centerPanelComponents" class="ag-status-center-bar-comps"></div>
+        <div ref="rightPanelComponents" class="ag-status-right-bar-comps"></div>
     </div>`;
 
     @Autowired('context') private context: Context;
@@ -26,7 +28,9 @@ export class StatusBar extends Component {
     @Autowired('componentResolver') private componentResolver: ComponentResolver;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    @RefSelector('panelComponents') private ePanelComponents: HTMLElement;
+    @RefSelector('leftPanelComponents') private eLeftPanelComponents: HTMLElement;
+    @RefSelector('centerPanelComponents') private eCenterPanelComponents: HTMLElement;
+    @RefSelector('rightPanelComponents') private eRightPanelComponents: HTMLElement;
 
     constructor() {
         super(StatusBar.TEMPLATE);
@@ -34,11 +38,22 @@ export class StatusBar extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        const statusPanelComponents: any[] = [];
         if (this.gridOptions.statusPanel && this.gridOptions.statusPanel.components) {
-            statusPanelComponents.push(...this.gridOptions.statusPanel.components);
-        }
+            let leftStatusPanelComponents = this.gridOptions.statusPanel.components
+                .filter((componentConfig) => componentConfig.align === 'left');
+            this.createAndRenderComponents(leftStatusPanelComponents, this.eLeftPanelComponents);
 
+            let centerStatusPanelComponents = this.gridOptions.statusPanel.components
+                .filter((componentConfig) => componentConfig.align === 'center');
+            this.createAndRenderComponents(centerStatusPanelComponents, this.eCenterPanelComponents);
+
+            let rightStatusPanelComponents = this.gridOptions.statusPanel.components
+                .filter((componentConfig) => (!componentConfig.align || componentConfig.align === 'right'));
+            this.createAndRenderComponents(rightStatusPanelComponents, this.eRightPanelComponents);
+        }
+    }
+
+    private createAndRenderComponents(statusPanelComponents: any[], ePanelComponent: HTMLElement) {
         const componentPromises: Promise<Component>[] = [];
         _.forEach(statusPanelComponents, (componentConfig) => {
 
@@ -63,11 +78,9 @@ export class StatusBar extends Component {
             .then((resolvedPromises) => {
                 _.forEach(resolvedPromises, (component: Component) => {
                     if (_.exists(component)) {
-                        this.ePanelComponents.appendChild(component.getGui());
+                        ePanelComponent.appendChild(component.getGui());
                     }
                 })
             });
-
-        this.setVisible(statusPanelComponents.length > 0);
     }
 }

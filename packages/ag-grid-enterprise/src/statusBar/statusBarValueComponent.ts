@@ -13,19 +13,22 @@ export class StatusBarValueComponent extends Component {
 
     private lbValue: HTMLElement;
 
-    constructor() {
+    constructor(private key: string, private defaultValue: string) {
         super(StatusBarValueComponent.TEMPLATE);
     }
 
     @PostConstruct
-    public postConstruct(): void {
+    protected postConstruct(): void {
+        if(this.props) {
+            this.key = this.props.key;
+            this.defaultValue = this.props.defaultValue;
+        }
+
         // we want to hide until the first value comes in
         this.setVisible(false);
 
-        if (this.props) {
-            let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-            this.queryForHtmlElement('#_label').innerHTML = localeTextFunc(this.props.key, this.props.defaultValue);
-        }
+        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        this.queryForHtmlElement('#_label').innerHTML = localeTextFunc(this.key, this.defaultValue);
 
         this.lbValue = this.queryForHtmlElement('#_value');
     }

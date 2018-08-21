@@ -1423,13 +1423,15 @@
         border: 1px solid $border-color;
         border-top: 0;
         color: $disabled-foreground-color;
-        display: flex;
         font: $secondary-font;
-        justify-content: flex-end;
+        display: flex;
+        justify-content: space-between;
         padding-right: $grid-size * 4;
+        padding-left: $grid-size * 4;
 
         .ag-status-bar-item {
-            margin-right: $grid-size * 2;
+            margin-left: $grid-size;
+            margin-right: $grid-size;
             display: inline-block;
 
             span:nth-child(1)::after {
@@ -1442,7 +1444,17 @@
         }
     }
 
-    .ag-status-bar-comps {
+    .ag-status-left-bar-comps {
+      display: inline-flex;
+    }
+
+    .ag-status-center-bar-comps {
+        text-align: center;
+        display: inline-flex;
+    }
+
+    .ag-status-right-bar-comps {
+        text-align: right;
         display: inline-flex;
     }
 
@@ -1464,6 +1476,9 @@
     }
 
     .ag-blank-status-bar-component {
+    }
+
+    .ag-status-bar-total-and-filtered-row-count{
     }
 
     .ag-details-row {

@@ -793,19 +793,7 @@ export class GridOptionsWrapper {
                 };
         }
         if(options.alwaysShowStatusBar) {
-            console.warn(`ag-grid: since version 19.x, alwaysShowStatusBar is gone, please specify statusPanel components`);
-            const statusPanelConfig = options.statusPanel ||
-                {
-                    components: [
-                        { component: 'agAggregationComponent' },
-                        { component: 'agBlankStatusBarComponent' },
-                    ]
-                };
-
-            if(!_.find(statusPanelConfig.components, (component) => (<any>component).component === 'agBlankStatusBarComponent')) {
-                statusPanelConfig.components.push({component: 'agBlankStatusBarComponent'});
-            }
-            options.statusPanel = statusPanelConfig;
+            console.warn(`ag-grid: since version 19.x, alwaysShowStatusBar is gone. Please specify a min-height on the ag-status-bar css class`);
         }
     }
 

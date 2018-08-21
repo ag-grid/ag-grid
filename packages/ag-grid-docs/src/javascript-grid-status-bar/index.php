@@ -30,6 +30,9 @@ include '../documentation-main/documentation_header.php';
         <code>agTotalRowCountComponent</code>: Provides the total row count.
     </li>
     <li>
+        <code>agTotalAndFilteredRowCountComponent</code>: Provides the total and filtered row count.
+    </li>
+    <li>
         <code>agFilteredRowCountComponent</code>: Provides the filtered row count.
     </li>
     <li>
@@ -45,9 +48,11 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     The status panel is configured using the <code>statusPanel</code> grid option.
-    The option takes a list of components identified by component name and additionally
+    The option takes a list of components identified by component name, alignment and additionally
     component parameters.
 </p>
+
+<p>If <code>align</code> is not specified the components will default to being aligned to the right.</p>
 
 <p>
     The snippet below shows a status panel configured with the grid provided
@@ -58,15 +63,20 @@ include '../documentation-main/documentation_header.php';
 gridOptions: {
     statusPanel: {
         components: [
-            { component: 'agTotalRowCountComponent' },
-            { component: 'agFilteredRowCountComponent' },
-            { component: 'agSelectedRowCountComponent' },
-            { component: 'agAggregationComponent' }
+            { component: 'agTotalRowCountComponent', align: 'left' },
+            { component: 'agFilteredRowCountComponent, align: 'left' },
+            { component: 'agSelectedRowCountComponent', align: 'center' },
+            { component: 'agAggregationComponent', align: 'right' }
         ]
     }
     // ...other grid properties
 }
 </snippet>
+
+<h3>Component Alignment</h3>
+
+<p>Components can be aligned either to the <code>left</code>, in the <code>center</code> of the panel or on the
+    <code>right</code> (the default). Components within these alignments will be added in the order specified.</p>
 
 <h3>Simple Status Panel Example</h3>
 
@@ -74,7 +84,7 @@ gridOptions: {
     The example below shows a simply configured status panel. Note the following:
 <ul>
     <li>
-        The total row count is displayed by the <code>agTotalRowCountComponent</code> component.
+        The total row count is displayed by the <code>agTotalRowCountComponent</code> component, aligned to the lef1t.
     </li>
     <li>
         The row count after filtering is displayed by the <code>agFilteredRowCountComponent</code> component.
