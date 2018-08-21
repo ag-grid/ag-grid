@@ -9,11 +9,11 @@ import {
     GridOptions,
     GridOptionsWrapper,
     PostConstruct,
-    Promise,
     RefSelector
 } from 'ag-grid';
+import {StatusBarService} from "./statusBarService";
 
-export class StatusBar extends Component {
+export class StatusBarComp extends Component {
 
     private static TEMPLATE = `<div class="ag-status-bar">
         <div ref="leftPanelComponents" class="ag-status-left-bar-comps"></div>
@@ -27,13 +27,14 @@ export class StatusBar extends Component {
     @Autowired('componentProvider') private componentProvider: ComponentProvider;
     @Autowired('componentResolver') private componentResolver: ComponentResolver;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('statusBarService') private statusBarService: StatusBarService;
 
     @RefSelector('leftPanelComponents') private eLeftPanelComponents: HTMLElement;
     @RefSelector('centerPanelComponents') private eCenterPanelComponents: HTMLElement;
     @RefSelector('rightPanelComponents') private eRightPanelComponents: HTMLElement;
 
     constructor() {
-        super(StatusBar.TEMPLATE);
+        super(StatusBarComp.TEMPLATE);
     }
 
     @PostConstruct
@@ -54,33 +55,26 @@ export class StatusBar extends Component {
     }
 
     private createAndRenderComponents(statusPanelComponents: any[], ePanelComponent: HTMLElement) {
-        const componentPromises: Promise<Component>[] = [];
         _.forEach(statusPanelComponents, (componentConfig) => {
-
                 let params = {
                     api: this.gridOptionsWrapper.getApi(),
                     columnApi: this.gridOptionsWrapper.getColumnApi(),
                     context: this.gridOptionsWrapper.getContext()
                 };
 
-                componentPromises.push(
-                    this.componentResolver.createAgGridComponent(null,
-                        params,
-                        'statusBarComponent',
-                        componentConfig.componentParams,
-                        componentConfig.component)
-                );
+                this.componentResolver.createAgGridComponent(null,
+                    params,
+                    'statusBarComponent',
+                    componentConfig.componentParams,
+                    componentConfig.component)
+                    .then((component: Component) => {
+                        // default to the component name if no key supplied
+                        let key = componentConfig.key || componentConfig.component;
+                        this.statusBarService.registerStatusBarComponent(key, component);
+
+                        ePanelComponent.appendChild(component.getGui());
+                    })
             }
         );
-
-        // we only add the child components on completion to retain the order supplied by the user
-        Promise.all(componentPromises)
-            .then((resolvedPromises) => {
-                _.forEach(resolvedPromises, (component: Component) => {
-                    if (_.exists(component)) {
-                        ePanelComponent.appendChild(component.getGui());
-                    }
-                })
-            });
     }
 }

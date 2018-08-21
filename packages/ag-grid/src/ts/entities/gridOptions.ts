@@ -222,6 +222,8 @@ export interface GridOptions {
     statusPanel? : {
         components: [{
             component: string;
+            align?: string,
+            key?: string,
             componentParams?: {
                 aggFuncs: string[];
             }

@@ -53,6 +53,8 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>If <code>align</code> is not specified the components will default to being aligned to the right.</p>
+<p><code>key</code> is useful for accessing status bar component instances - see <a href="#accessing-status-bar-comp-instances">below</a>
+for more information.</p>
 
 <p>
     The snippet below shows a status panel configured with the grid provided
@@ -63,7 +65,7 @@ include '../documentation-main/documentation_header.php';
 gridOptions: {
     statusPanel: {
         components: [
-            { component: 'agTotalRowCountComponent', align: 'left' },
+            { component: 'agTotalRowCountComponent', align: 'left', key: 'totalRowComponent' },
             { component: 'agFilteredRowCountComponent, align: 'left' },
             { component: 'agSelectedRowCountComponent', align: 'center' },
             { component: 'agAggregationComponent', align: 'right' }
@@ -102,6 +104,14 @@ gridOptions: {
 </p>
 
 <?= example('Status Panel Simple', 'status-panel-simple', 'generated', array("enterprise" => 1)) ?>
+
+<h3 id="accessing-status-bar-comp-instances">Accessing Status Bar Component Instances</h3>
+
+<p>Accessing status bar component instances is possible using <code>api.getStatusBarComponent(key)</code>. The key will be the
+value provided in the component configuration (see above), but will default to the component name if not provided.</p>
+
+<p>See <a href="../javascript-grid-status-bar-component#accessing-status-bar-comp-instances">Accessing Status Bar
+        Component Instances</a> for more information.</p>
 
 <h2>Configuration with Component Parameters</h2>
 
