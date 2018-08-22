@@ -1437,7 +1437,11 @@ export class ColumnController {
             = <ColumnState[]> this.primaryColumns.map(this.createStateItemFromColumn.bind(this));
 
         let groupAutoColumnState: ColumnState[]
-            = <ColumnState[]> this.groupAutoColumns.map(this.createStateItemFromColumn.bind(this));
+            = this.groupAutoColumns
+            // if groupAutoCols, then include them
+            ? <ColumnState[]> this.groupAutoColumns.map(this.createStateItemFromColumn.bind(this))
+            // otherwise no
+            : [];
 
         let columnStateList = groupAutoColumnState.concat(primaryColumnState);
 
