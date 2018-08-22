@@ -4,7 +4,7 @@ export class StatusBarValueComponent extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
 
-    private static TEMPLATE = `<div class="ag-status-bar-item ag-status-bar-comp">  
+    private static TEMPLATE = `<div class="ag-status-panel-item ag-status-panel-comp">  
             <span id="_label"></span>  
             <span id="_value"></span>
         </div>`;

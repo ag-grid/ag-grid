@@ -89,7 +89,7 @@ Grid.setEnterpriseComponents([
     {componentName: 'AgHorizontalResize', theClass: HorizontalResizeComp},
     {componentName: 'AgToolPanel', theClass: ToolPanelComp},
 
-    {componentName: 'AgStatusBar', theClass: StatusBarComp},
+    {componentName: 'AgStatusPanel', theClass: StatusBarComp},
     {componentName: 'AgSumAggregationComp', theClass: StatusBarValueComponent},
     {componentName: 'AgCountAggregationComp', theClass: StatusBarValueComponent},
     {componentName: 'AgMinAggregationComp', theClass: StatusBarValueComponent},

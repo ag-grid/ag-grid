@@ -793,7 +793,7 @@ export class GridOptionsWrapper {
                 };
         }
         if(options.alwaysShowStatusBar) {
-            console.warn(`ag-grid: since version 19.x, alwaysShowStatusBar is gone. Please specify a min-height on the ag-status-bar css class, eg .ag-status-bar {min-height: 35px; }`);
+            console.warn(`ag-grid: since version 19.x, alwaysShowStatusBar is gone. Please specify a min-height on the ag-status-panel css class, eg .ag-status-panel {min-height: 35px; }`);
         }
     }
 

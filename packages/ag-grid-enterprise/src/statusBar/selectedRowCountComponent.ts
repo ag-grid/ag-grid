@@ -20,7 +20,7 @@ export class SelectedRowCountComponent extends StatusBarValueComponent {
             return;
         }
 
-        this.addCssClass('ag-status-bar-selected-row-count');
+        this.addCssClass('ag-status-panel-selected-row-count');
 
         const selectedRowCount = this.gridApi.getSelectedRows().length;
         this.setValue(selectedRowCount);

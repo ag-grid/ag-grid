@@ -39,7 +39,7 @@ export class GridCore extends Component {
                 <ag-grid-comp ref="gridPanel"></ag-grid-comp>
                 <ag-tool-panel ref="toolPanel"></ag-tool-panel>
             </div>
-            <ag-status-bar ref="statusBar"></ag-status-bar>
+            <ag-status-panel ref="statusBar"></ag-status-panel>
             <ag-pagination></ag-pagination>
         </div>`;
 

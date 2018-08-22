@@ -24,7 +24,7 @@ import {StatusBarValueComponent} from "./statusBarValueComponent";
 
 export class AggregationComponent extends Component {
 
-    private static TEMPLATE = `<div class="ag-status-bar-aggregations">
+    private static TEMPLATE = `<div class="ag-status-panel-aggregations">
                 <ag-avg-aggregation-comp key="average" default-value="Average" ref="avgAggregationComp"></ag-avg-aggregation-comp>
                 <ag-count-aggregation-comp key="count" default-value="Count" ref="countAggregationComp"></ag-count-aggregation-comp>
                 <ag-min-aggregation-comp key="min" default-value="Min" ref="minAggregationComp"></ag-min-aggregation-comp>

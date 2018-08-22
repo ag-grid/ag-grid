@@ -20,7 +20,7 @@ export class FilteredRowCountComponent extends StatusBarValueComponent {
             return;
         }
 
-        this.addCssClass('ag-status-bar-filtered-row-count');
+        this.addCssClass('ag-status-panel-filtered-row-count');
 
         this.setVisible(true);
 

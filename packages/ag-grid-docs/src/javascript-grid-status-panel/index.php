@@ -169,7 +169,7 @@ gridOptions: {
 </p>
 
 <code>
-.ag-status-bar {
+.ag-status-panel {
     min-height: 35px;
 }
 </code>

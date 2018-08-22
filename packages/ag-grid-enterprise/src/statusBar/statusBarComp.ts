@@ -15,7 +15,7 @@ import {StatusBarService} from "./statusBarService";
 
 export class StatusBarComp extends Component {
 
-    private static TEMPLATE = `<div class="ag-status-bar">
+    private static TEMPLATE = `<div class="ag-status-panel">
         <div ref="leftPanelComponents" class="ag-status-left-bar-comps"></div>
         <div ref="centerPanelComponents" class="ag-status-center-bar-comps"></div>
         <div ref="rightPanelComponents" class="ag-status-right-bar-comps"></div>
