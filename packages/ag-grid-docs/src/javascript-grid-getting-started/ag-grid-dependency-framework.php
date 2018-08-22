@@ -9,7 +9,7 @@
                     <td><b>NPM</b></td>
                 </tr>
                 <tr>
-                    <td><code>npm install ag-grid</code></td>
+                    <td><code>npm install ag-grid-community</code></td>
                 </tr>
                 <tr>
                     <td><code>npm install ag-grid-<?= $frameworkChild ?></code></td>
@@ -26,10 +26,10 @@
                     <td><b>Github</b><br/></td>
                 </tr>
                 <tr>
-                    <td>Download ag-grid from <a href="https://github.com/ag-grid/ag-grid">Github</a></td>
+                    <td>Download ag-grid-community from <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-community">Github</a></td>
                 </tr>
                 <tr>
-                    <td>Download ag-grid-<?= $frameworkChild ?> from <a href="https://github.com/ag-grid/ag-grid-<?= $frameworkChild ?>">Github</a></td>
+                    <td>Download ag-grid-<?= $frameworkChild ?> from <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-<?= $frameworkChild ?>">Github</a></td>
                 </tr>
             </table>
         </td>

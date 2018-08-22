@@ -153,12 +153,12 @@ this.state = {
     <snippet>
 resolve: {
     alias: {
-        "ag-grid": path.resolve('./node_modules/ag-grid')
+        "ag-grid-community": path.resolve('./node_modules/ag-grid-community')
 </snippet>
     Once this is done, we can then access the two css files that we need as follows:
     <snippet>
-import 'ag-grid/dist/styles/ag-grid.css';
-import 'ag-grid-root/dist/styles/ag-theme-balham.css';</snippet>
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-balham.css';</snippet>
     You will also need to configure CSS loaders for Webpack - you can find a full working example of this in our <a
                 href="https://github.com/ag-grid/ag-grid-react-example">React Examples</a>  Repo on Github.
     </p>

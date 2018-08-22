@@ -71,7 +71,7 @@ export class AppComponent {
     }
 
     ngOnInit() {
-        this.http.get('https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json').subscribe(data => {
+        this.http.get('https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/olympicWinnersSmall.json').subscribe(data => {
             this.rowData = data;
             this.topGrid.api.sizeColumnsToFit();
 
