@@ -415,8 +415,8 @@
                 "enterprise": true
             },
             {
-                "title": "Status Bar",
-                "url": "javascript-grid-status-bar/",
+                "title": "Status Panel",
+                "url": "javascript-grid-status-panel/",
                 "enterprise": true
             },
             {
@@ -569,8 +569,8 @@
                 "url": "javascript-grid-overlay-component/"
             },
             {
-                "title": "Status Bar Component",
-                "url": "javascript-grid-status-bar-component/"
+                "title": "Status Panel Component",
+                "url": "javascript-grid-status-panel-component/"
             }
         ]
     },

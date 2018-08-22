@@ -771,13 +771,13 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>enableStatusBar</th>
             <td>
-                When true, the <a href="../javascript-grid-status-bar">status bar</a> appear at the bottom of the
+                When true, the <a href="../javascript-grid-status-panel">status panel</a> appear at the bottom of the
                 grid when cells are selected.
             </td>
         </tr>
         <tr>
             <th>alwaysShowStatusBar</th>
-            <td>When true, the <a href="../javascript-grid-status-bar">status bar</a> will always be displayed at
+            <td>When true, the <a href="../javascript-grid-status-panel">status panel</a> will always be displayed at
                 the bottom of the grid, when 'enableStatusBar' is also enabled</td>
         </tr>
         <tr>
