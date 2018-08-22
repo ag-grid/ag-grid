@@ -5,7 +5,7 @@
         <td style="padding: 10px;"><img src="../images/bower.png"/></td>
         <td>
             <b>Bower</b><br/>
-            bower install ag-grid
+            bower install ag-grid-community
         </td>
 
         <td style="width: 20px;"/>
@@ -13,7 +13,7 @@
         <td style="padding: 10px;"><img src="../images/npm.png"/></td>
         <td>
             <b>NPM</b><br/>
-            npm install ag-grid
+            npm install ag-grid-community
         </td>
 
         <td style="width: 20px;"/>

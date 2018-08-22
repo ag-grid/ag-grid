@@ -1,4 +1,4 @@
-import {IFilter, IFilterParams, IDoesFilterPassParams, RowNode, IAfterGuiAttachedParams} from "ag-grid/main";
+import {IFilter, IFilterParams, IDoesFilterPassParams, RowNode, IAfterGuiAttachedParams} from "ag-grid-community";
 
 export default class PartialMatchFilter implements IFilter {
   private params: IFilterParams;

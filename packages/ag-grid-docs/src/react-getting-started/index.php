@@ -34,7 +34,7 @@ npm start
 <p>As a next step, let's add the ag-Grid NPM packages. run the following command in <code>my-app</code> (you may need a new instance of the terminal):</p>
 
 <snippet language="sh">
-npm install --save ag-grid ag-grid-react react-dom-factories
+npm install --save ag-grid-community ag-grid-react react-dom-factories
 </snippet>
 
 <p>After a few seconds of waiting, you should be good to go. Let's get to the actual coding! Open <code>src/App.js</code> in your favorite text editor and change its contents to the following:</p>
@@ -279,8 +279,8 @@ Then, add the import to your file:
 
 <snippet language="diff">
   import { AgGridReact } from 'ag-grid-react';
-  import 'ag-grid/dist/styles/ag-grid.css';
-  import 'ag-grid/dist/styles/ag-theme-balham.css';
+  import 'ag-grid-community/dist/styles/ag-grid.css';
+  import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 + import 'ag-grid-enterprise';
 </snippet>
 

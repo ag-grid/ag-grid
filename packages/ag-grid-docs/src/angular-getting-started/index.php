@@ -35,7 +35,7 @@ ng serve
 <p>As a next step, let's add the ag-Grid NPM packages. run the following command in <code>my-app</code> (you may need a new instance of the terminal):</p>
 
 <snippet language="sh">
-npm install --save ag-grid ag-grid-angular
+npm install --save ag-grid-community ag-grid-angular
 </snippet>
 
 <p>After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first step, let's add the ag-Grid Angular module to our app module (<code>src/app.module.ts</code>):</p>

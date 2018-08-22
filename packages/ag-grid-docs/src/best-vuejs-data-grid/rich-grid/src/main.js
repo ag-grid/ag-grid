@@ -8,7 +8,7 @@ import "../node_modules/bootstrap/dist/css/bootstrap.css";
 import "ag-grid-enterprise";
 
 // only needed if you use ag-grid enterprise features
-// import {LicenseManager} from "ag-grid-enterprise/main";
+// import {LicenseManager} from "ag-grid-enterprise";
 // LicenseManager.setLicenseKey("your license key");
 
 import RichGridExample from "./rich-grid-example/RichGridExample.vue";
