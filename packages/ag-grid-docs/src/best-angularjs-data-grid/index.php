@@ -112,9 +112,9 @@ var AgGrid = require('ag-grid');
 require('ag-grid-enterprise');
 
 // ECMA 6 - using the system import method
-import {Grid} from 'ag-grid/main';
+import {Grid} from 'ag-grid-community';
 // only include this line if you want to use ag-grid-enterprise
-import 'ag-grid-enterprise/main';</snippet>
+import 'ag-grid-enterprise';</snippet>
 
 
 <h3 id="creating-the-angularjs-module">Creating the AngularJS 1.x Module</h3>

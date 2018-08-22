@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 
-import { GridOptions } from "ag-grid/main";
+import { GridOptions } from "ag-grid-community";
 import { MatCheckboxComponent } from "./mat-checkbox.component";
 import { MatInputComponent } from "./mat-input.component";
 import { MatRadioComponent } from "./mat-radio.component";

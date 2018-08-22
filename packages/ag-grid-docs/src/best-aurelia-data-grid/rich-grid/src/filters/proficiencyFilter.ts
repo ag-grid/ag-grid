@@ -1,4 +1,4 @@
-import {IFilter,IFilterParams} from "ag-grid/main";
+import {IFilter,IFilterParams} from "ag-grid-community";
 
 var FILTER_TITLE =
     '<div style="text-align: center; background: lightgray; width: 100%; display: block; border-bottom: 1px solid grey;">' +

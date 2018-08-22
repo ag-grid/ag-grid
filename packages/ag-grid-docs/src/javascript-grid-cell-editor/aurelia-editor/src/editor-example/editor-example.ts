@@ -2,7 +2,7 @@ import {autoinject, customElement} from 'aurelia-framework'
 
 import {GridOptions} from 'ag-grid';
 // only import this if you are using the ag-Grid-Enterprise
-import 'ag-grid-enterprise/main';
+import 'ag-grid-enterprise';
 
 @autoinject()
 @customElement('editor-example')

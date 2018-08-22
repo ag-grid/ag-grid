@@ -1,5 +1,5 @@
 import {Component, ViewEncapsulation} from "@angular/core";
-import {ColumnApi, GridApi, GridOptions} from "ag-grid/main";
+import {ColumnApi, GridApi, GridOptions} from "ag-grid-community";
 // only import this if you are using the ag-Grid-Enterprise
 import "ag-grid-enterprise";
 

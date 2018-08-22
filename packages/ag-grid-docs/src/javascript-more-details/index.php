@@ -29,7 +29,7 @@ include '../documentation-main/documentation_header.php';
             <td style="padding: 10px;"><img src="../images/npm.png" alt="NPM install ag-Grid" /></td>
             <td>
                 <b>NPM</b><br/>
-                <code>npm install ag-grid</code>
+                <code>npm install ag-grid-community</code>
             </td>
 
             <td style="width: 20px;">&nbsp;</td>
@@ -45,7 +45,7 @@ include '../documentation-main/documentation_header.php';
             <td style="padding: 10px;"><img src="../images/bower.png" alt="Bower install ag-Grid" /></td>
             <td>
                 <b>Bower</b><br/>
-                <code>bower install ag-grid</code>
+                <code>bower install ag-grid-community</code>
             </td>
         </tr>
     </table>

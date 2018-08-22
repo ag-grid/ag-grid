@@ -33,14 +33,14 @@ npm run serve
 <p>As a next step, let's add the ag-Grid NPM packages. run the following command in <code>my-project</code> (you may need a new instance of the terminal):</p>
 
 <snippet language="sh">
-npm install --save ag-grid ag-grid-vue
+npm install --save ag-grid-community ag-grid-vue
 </snippet>
 
 <p>After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first step, let's add the ag-Grid the ag-Grid styles - import them in <code>src/main.js</code>:</p>
 
 <snippet>
-import "../node_modules/ag-grid/dist/styles/ag-grid.css";
-import "../node_modules/ag-grid/dist/styles/ag-theme-balham.css";
+import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
+import "../node_modules/ag-grid-community/dist/styles/ag-theme-balham.css";
 </snippet>
 
 <p>The code above imports the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-balham.css</code>). 

@@ -141,7 +141,7 @@
         import "../node_modules/ag-grid/dist/styles/ag-theme-balham.css"
 
         // only needed if you're using enterprise features
-        import "ag-grid-enterprise/main";
+        import "ag-grid-enterprise";
     </snippet>
 
     <p>Importing of the CSS should be done before you use the ag-Grid Vue Component.</p>

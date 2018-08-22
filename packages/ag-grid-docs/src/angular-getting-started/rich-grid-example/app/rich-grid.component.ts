@@ -1,5 +1,5 @@
 import {Component, ViewEncapsulation} from "@angular/core";
-import {GridOptions} from "ag-grid/main";
+import {GridOptions} from "ag-grid-community";
 
 import ProficiencyFilter from "./filters/proficiencyFilter.ts";
 import SkillFilter from "./filters/skillFilter.ts";

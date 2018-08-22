@@ -6,7 +6,7 @@ import ProficiencyFilter from '../../filters/proficiencyFilter';
 
 import {ColumnApi, GridApi, GridOptions} from 'ag-grid';
 // only import this if you are using the ag-Grid-Enterprise
-import 'ag-grid-enterprise/main';
+import 'ag-grid-enterprise';
 
 @autoinject()
 @customElement('rich-grid-declarative')

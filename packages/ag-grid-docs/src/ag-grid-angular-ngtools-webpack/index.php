@@ -67,7 +67,7 @@ ag-grid-ngtools
 import {NgModule} from "@angular/core";
 import {BrowserModule} from "@angular/platform-browser";
 // ag-grid
-import {AgGridModule} from "ag-grid-angular/main";
+import {AgGridModule} from "ag-grid-angular";
 // application
 import {AppComponent} from "./app.component";
 
@@ -87,7 +87,7 @@ export class AppModule {
 // app/app.component.ts 
 import {Component} from "@angular/core";
 
-import {GridOptions} from "ag-grid/main";
+import {GridOptions} from "ag-grid-community";
 
 @Component({
     selector: 'my-app',
@@ -128,7 +128,7 @@ import {platformBrowserDynamic} from "@angular/platform-browser-dynamic";
 import {AppModule} from "./app.module";
 
 // for enterprise customers
-// import {LicenseManager} from "ag-grid-enterprise/main";
+// import {LicenseManager} from "ag-grid-enterprise";
 // LicenseManager.setLicenseKey("your license key");
 
 platformBrowserDynamic().bootstrapModule(AppModule);</snippet><snippet>
@@ -228,10 +228,10 @@ import 'rxjs';
 // ag-grid
 import 'ag-grid/dist/styles/ag-grid.css';
 import 'ag-grid/dist/styles/ag-theme-balham.css';
-import 'ag-grid-angular/main'
+import 'ag-grid-angular'
 
 // for ag-grid-enterprise users only 
-//import 'ag-grid-enterprise/main';</snippet>
+//import 'ag-grid-enterprise';</snippet>
 
     <h4>Webpack Development Configuration</h4>
 
@@ -418,10 +418,10 @@ import 'rxjs';
 // ag-grid
 import 'ag-grid/dist/styles/ag-grid.css';
 import 'ag-grid/dist/styles/ag-theme-balham.css';
-import 'ag-grid-angular/main'
+import 'ag-grid-angular'
 
 // for ag-grid-enterprise users only 
-//import 'ag-grid-enterprise/main';</snippet>
+//import 'ag-grid-enterprise';</snippet>
 
     <p>As we'll be pre-compiling our application, we can use the generated factory to bootstrap our application, which will result
     in much faster load times:</p>
@@ -432,7 +432,7 @@ import {platformBrowser} from "@angular/platform-browser";
 import {AppModuleNgFactory} from "../aot/app/app.module.ngfactory";
 
 // for enterprise customers
-// import {LicenseManager} from "ag-grid-enterprise/main";
+// import {LicenseManager} from "ag-grid-enterprise";
 // LicenseManager.setLicenseKey("your license key");
 
 platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);</snippet>
