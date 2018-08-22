@@ -4,13 +4,12 @@ This project is made up of many packages. There are two license types: MIT and C
 Each package has it's own license file explaining the license for that package.
 
 The following packages are MIT licensed:
++ ag-grid-community
 + ag-grid-angular
 + ag-grid-angular-cli-example
 + ag-grid-aurelia
 + ag-grid-aurelia-example
-+ ag-grid-community
 + ag-grid-docs
-+ ag-grid-enterprise
 + ag-grid-react
 + ag-grid-react-example
 + ag-grid-vue
@@ -18,3 +17,5 @@ The following packages are MIT licensed:
 
 The following packages are Commercial licensed:
 + ag-grid-enterprise
+
+To view the commercial license for ag-grid-enterprise, see the file packages/ag-grid-enterprise/LICENSE.md
