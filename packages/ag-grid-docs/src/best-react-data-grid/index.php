@@ -28,13 +28,13 @@ include '../landing-pages/header.php';
                 </p>
                 <hr>
                 <p>
-                    Free and Open Source Angular datagrid.
+                    Free and Open Source React datagrid.
                     <br>
                     Designed to meet all of your core requirements.
 <br>
                     Available via Github or NPM.
                 </p>
-                <a href="https://github.com/ag-grid/ag-grid-angular"><button type="button" class="btn btn-outline-primary btn-lg">Community Edition</button></a>
+                <a href="../react-getting-started"><button type="button" class="btn btn-outline-primary btn-lg">Community Edition</button></a>
             </div>
 
             <div class="col-md-6">
@@ -63,7 +63,7 @@ include '../landing-pages/header.php';
                 <h2>Core and Enterprise Features</h2>
                     <ul class="content-list">
                         <li>
-                            Everything you'd expect from an Angular datagrid. Sorting, filtering, row grouping. Available in ag-Grid Community.
+                            Everything you'd expect from an React datagrid. Sorting, filtering, row grouping. Available in ag-Grid Community.
                         </li>
                         <li>
                             A more powerful set of advanced features designed for Enterprise Applications. Pivoting, Aggregation, Clipboard, Master/Detail, Tree Data

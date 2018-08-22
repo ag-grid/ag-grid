@@ -742,7 +742,7 @@ function ratingRendererGeneral(value, forFilter) {
     var result = '<span>';
     for (var i = 0; i < 5; i++) {
         if (value > i) {
-            result += '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/goldStar.png"/>';
+            result += '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/goldStar.png"/>';
         }
     }
     if (forFilter && value === 0) {

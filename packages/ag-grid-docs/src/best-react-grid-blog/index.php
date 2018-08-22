@@ -231,7 +231,7 @@ include('../includes/mediaHeader.php');
 
             <p>So far we have created a basic grid with hardcoded data. Now it's time to extend our app into more realistic scenario and fetch our data from a remote JSON.</p>
 
-            <p>You can find the JSON file that is used in this tutorial <a href="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinners.json">here</a>.
+            <p>You can find the JSON file that is used in this tutorial <a href="https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/olympicWinners.json">here</a>.
             The JSON contains data about olympic winners in different sports. Every entry is specified with the following fields:</p>
 
             <ul>
@@ -285,7 +285,7 @@ include('../includes/mediaHeader.php');
 
             <pre><code class="language-javascript">
     componentDidMount() {
-        fetch('https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinners.json')
+        fetch('https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/olympicWinners.json')
         .then(result=&gt;result.json())
         .then(rowData=&gt;this.setState({rowData}))
     }

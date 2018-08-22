@@ -70,7 +70,7 @@ function getFullWidthCellRenderer() {
         var template =
             '<div class="full-width-panel">' +
             '  <div class="full-width-flag">' +
-            '    <img border="0" src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/largeFlags/' +
+            '    <img border="0" src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/largeFlags/' +
             data.code +
             '.png">' +
             '  </div>' +

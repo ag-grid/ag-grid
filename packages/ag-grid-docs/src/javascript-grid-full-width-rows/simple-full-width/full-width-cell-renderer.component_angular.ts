@@ -79,7 +79,7 @@ export class FullWidthCellRenderer implements IFilterAngularComp {
 
     agInit(params: IFilterParams): void {
         this.data = params.node.data;
-        this.flag = `https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/largeFlags/${this.data.code}.png`;
+        this.flag = `https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/largeFlags/${this.data.code}.png`;
     }
 
     mouseWheelListener(event) {

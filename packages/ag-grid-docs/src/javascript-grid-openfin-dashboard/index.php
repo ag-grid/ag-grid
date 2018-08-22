@@ -16,7 +16,7 @@ include '../documentation-main/documentation_header.php';
 
     <h2>A Trader Dashboard with Tear Out Windows</h2>
 
-    <p>In this example we host the full <a href="../ag-grid-trader-dashboard/">Trader Dashboard</a> within an OpenFin container,
+    <p>In this example we host the full Trader Dashboardwithin an OpenFin container,
     but also add the ability to <span style="font-style: italic">tear out</span> the Stock Detail panel from the top left.</p>
 
     <p>The following images show the default state of the application followed by the state of the application with the Detail

@@ -21,7 +21,7 @@
         <td style="padding: 10px;"><img src="../images/github.png"/></td>
         <td>
             <b>Github</b><br/>
-            Download from <a href="https://github.com/ag-grid/ag-grid">Github</a>
+            Download from <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-community">Github</a>
         </td>
     </tr>
 </table>
@@ -42,7 +42,7 @@
 <snippet language="html">
 &lt;html&gt;
 &lt;head&gt;
-    &lt;script src="path-to-ag-grid-/ag-grid.js"&gt;&lt;/script&gt;
+    &lt;script src="path-to-ag-grid/ag-grid-community.js"&gt;&lt;/script&gt;
     &lt;script src="example1.js"&gt;&lt;/script&gt;
 &lt;/head&gt;
 &lt;body&gt;
