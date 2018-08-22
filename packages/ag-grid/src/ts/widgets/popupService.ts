@@ -274,7 +274,8 @@ export class PopupService {
 
         let hidePopupOnKeyboardEvent = (event: KeyboardEvent) => {
             let key = event.which || event.keyCode;
-            if (key === Constants.KEY_ESCAPE) {
+            if (key === Constants.KEY_ESCAPE 
+                || key === Constants.KEY_ENTER) {
                 hidePopup(null);
             }
         };
@@ -294,6 +295,9 @@ export class PopupService {
 
             // if the event to close is actually the open event, then ignore it
             if (this.isEventSameChainAsOriginalEvent(click, mouseEvent, touchEvent)) { return; }
+
+            //If the event to close is fired by touch or mouse event but flag stopEditingWhenGridLosesFocus = false
+			if (this.isEventFiredAvoidingStopEditingWhenGridLosesFocus(mouseEvent, touchEvent, this.gridOptionsWrapper)) {return;}
 
             // this method should only be called once. the client can have different
             // paths, each one wanting to close, so this method may be called multiple times.
@@ -315,7 +319,8 @@ export class PopupService {
         // if we add these listeners now, then the current mouse
         // click will be included, which we don't want
         setTimeout(function() {
-            if (closeOnEsc) {
+            //When disabled stop editing when grid loses focus the enter key work as stop editing
+            if (closeOnEsc || this.gridOptionsWrapper.isStopEditingWhenGridLosesFocus()) {
                 eBody.addEventListener('keydown', hidePopupOnKeyboardEvent);
             }
             eBody.addEventListener('click', hidePopupOnMouseEvent);
@@ -325,6 +330,15 @@ export class PopupService {
 
         return hidePopup;
     }
+
+    private isEventFiredAvoidingStopEditingWhenGridLosesFocus(mouseEvent: MouseEvent, touchEvent: TouchEvent, gridOptionsWrapper: GridOptionsWrapper): boolean {
+        let event = mouseEvent ? mouseEvent : touchEvent;
+        if (event && !gridOptionsWrapper.isStopEditingWhenGridLosesFocus()) {
+            return true;
+        }
+        return false;
+    }
+
 
     private isEventFromCurrentPopup(mouseEvent: MouseEvent, touchEvent: TouchEvent, eChild: HTMLElement): boolean {
         let event = mouseEvent ? mouseEvent : touchEvent;
