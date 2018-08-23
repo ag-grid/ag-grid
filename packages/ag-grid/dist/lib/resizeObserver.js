@@ -51,6 +51,7 @@ var throttle = function (callback, delay) {
     return proxy;
 };
 var REFRESH_DELAY = 20;
+var mutationObserverSupported = typeof MutationObserver !== "undefined";
 var getWindowOf = function (target) {
     var ownerGlobal = target && target.ownerDocument && target.ownerDocument.defaultView;
     return ownerGlobal || window;
@@ -184,8 +185,19 @@ var ResizeObserverController = (function () {
             return;
         }
         window.addEventListener("resize", this.refresh);
-        document.addEventListener("DOMSubtreeModified", this.refresh);
-        this.mutationEventsAdded_ = true;
+        if (mutationObserverSupported) {
+            this.mutationsObserver_ = new MutationObserver(this.refresh);
+            this.mutationsObserver_.observe(document, {
+                attributes: true,
+                childList: true,
+                characterData: true,
+                subtree: true
+            });
+        }
+        else {
+            document.addEventListener("DOMSubtreeModified", this.refresh);
+            this.mutationEventsAdded_ = true;
+        }
         this.connected_ = true;
     };
     ResizeObserverController.prototype.disconnect_ = function () {
