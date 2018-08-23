@@ -7,8 +7,11 @@ import {ColDef, ColGroupDef} from "../../entities/colDef";
 import {_, Promise} from "../../utils";
 
 import {
-    AgGridComponentFunctionInput, AgGridRegisteredComponentInput, ComponentProvider,
-    RegisteredComponent, RegisteredComponentSource
+    AgGridComponentFunctionInput,
+    AgGridRegisteredComponentInput,
+    ComponentProvider,
+    RegisteredComponent,
+    RegisteredComponentSource
 } from "./componentProvider";
 import {AgComponentUtils} from "./agComponentUtils";
 import {ComponentMetadata, ComponentMetadataProvider} from "./componentMetadataProvider";
@@ -18,8 +21,9 @@ import {RowNode} from "../../entities/rowNode";
 import {Column} from "../../entities/column";
 import {GridApi} from "../../gridApi";
 import {ColumnApi} from "../../columnController/columnApi";
+import {ToolPanelComponentDef} from "../../entities/toolPanel";
 
-export type ComponentHolder = GridOptions | ColDef | ColGroupDef | ISetFilterParams | IRichCellEditorParams;
+export type ComponentHolder = GridOptions | ColDef | ColGroupDef | ISetFilterParams | IRichCellEditorParams | ToolPanelComponentDef;
 
 export type AgComponentPropertyInput<A extends IComponent<any>> = AgGridRegisteredComponentInput<A> | string;
 

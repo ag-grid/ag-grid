@@ -70,6 +70,7 @@ import {IComponent} from "../interfaces/iComponent";
 import {AgGridRegisteredComponentInput} from "../components/framework/componentProvider";
 import {ILoadingOverlayComp} from "../rendering/overlays/loadingOverlayComponent";
 import {INoRowsOverlayComp} from "../rendering/overlays/noRowsOverlayComponent";
+import {ToolPanelDef} from "./toolPanel";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
@@ -228,6 +229,8 @@ export interface GridOptions {
         }]
     }
 
+
+
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
@@ -302,6 +305,7 @@ export interface GridOptions {
     pinnedTopRowData?: any[];
     pinnedBottomRowData?: any[];
     showToolPanel?: boolean;
+    toolPanel?: ToolPanelDef;
     columnDefs?: (ColDef|ColGroupDef)[];
     columnTypes?: {[key: string]: ColDef};
     datasource?: IDatasource;

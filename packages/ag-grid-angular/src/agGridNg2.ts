@@ -331,6 +331,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public suppressAutoSize: any = undefined;
     @Input() public suppressParentsInRowNodes: any = undefined;
     @Input() public showToolPanel: any = undefined;
+    @Input() public toolPanel: any = undefined;
     @Input() public suppressColumnMoveAnimation: any = undefined;
     @Input() public suppressMovableColumns: any = undefined;
     @Input() public suppressFieldDotNotation: any = undefined;

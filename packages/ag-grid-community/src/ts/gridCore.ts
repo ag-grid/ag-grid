@@ -156,7 +156,7 @@ export class GridCore extends Component {
         return this.getGui();
     }
 
-    public showToolPanel(show: any) {
+    public showToolPanel(show:boolean | string) {
         if (!this.toolPanelComp) {
             if (show) {
                 console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');

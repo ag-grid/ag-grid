@@ -54,8 +54,8 @@ export class ToolPanelAllFiltersComp extends Component {
     public init(): void {
         this.instantiate(this.context);
         this.initialised = true;
+        this.eventService.addEventListener('newColumnsLoaded', ()=>this.onColumnsChanged());
         if (this.columnController.isReady()) {
-            this.eventService.addEventListener('newColumnsLoaded', ()=>this.onColumnsChanged());
             this.onColumnsChanged();
         }
     }

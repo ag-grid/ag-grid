@@ -783,7 +783,7 @@ export class GridApi {
         this.doLayout();
     }
 
-    public showToolPanel(show:any) {
+    public showToolPanel(show:boolean | string) {
         this.gridCore.showToolPanel(show);
     }
 

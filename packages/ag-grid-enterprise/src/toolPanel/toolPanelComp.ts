@@ -1,33 +1,39 @@
 import {
     Autowired,
-    Component,
+    Component, ComponentResolver,
     Context,
     EventService,
     GridOptionsWrapper,
     GridPanel,
+    IToolPanel,
     PostConstruct,
     RefSelector,
-    IToolPanel
+    ToolPanelDef,
+    ToolPanelComponentDef,
+    IComponent,
+    Promise, _
 } from "ag-grid-community";
-import {ToolPanelColumnComp} from "./toolPanelColumnComp";
 import {ToolPanelSelectComp} from "./toolPanelSelectComp";
-import {ToolPanelAllFiltersComp} from "./filter/toolPanelAllFiltersComp";
+
+export interface IToolPanelChildComp extends IComponent<any>{
+    refresh(): void
+}
 
 export class ToolPanelComp extends Component implements IToolPanel {
 
     @Autowired("context") private context: Context;
     @Autowired("eventService") private eventService: EventService;
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired("componentResolver") private componentResolver: ComponentResolver;
 
     @RefSelector('toolPanelSelectComp') private toolPanelSelectComp: ToolPanelSelectComp;
-    @RefSelector('columnComp') private columnComp: ToolPanelColumnComp;
-    @RefSelector('filterComp') private filterComp: ToolPanelAllFiltersComp;
+    // @RefSelector('columnComp') private columnComp: ToolPanelColumnComp;
+    // @RefSelector('filterComp') private filterComp: ToolPanelAllFiltersComp;
+    private panelComps: { [p: string]: IToolPanelChildComp & Component } = {};
 
     constructor() {
-        super(`<div class="ag-tool-panel">
+        super(`<div class="ag-tool-panel" ref="eToolPanel">
                   <ag-tool-panel-select-comp ref="toolPanelSelectComp"></ag-tool-panel-select-comp>
-                  <ag-tool-panel-column-comp ref="columnComp"></ag-tool-panel-column-comp>
-                  <ag-tool-panel-all-filters-comp ref="filterComp"></ag-tool-panel-all-filters-comp>
               </div>`);
     }
 
@@ -43,23 +49,82 @@ export class ToolPanelComp extends Component implements IToolPanel {
     @PostConstruct
     private postConstruct(): void {
         this.instantiate(this.context);
-        this.toolPanelSelectComp.registerPanelComp('columns', this.columnComp);
-        this.toolPanelSelectComp.registerPanelComp('filters', this.filterComp);
-        this.filterComp.setVisible(false);
+        let toolPanel: ToolPanelDef = this.gridOptionsWrapper.getToolPanel();
+        let allPromises: Promise<IComponent<any>>[] = [];
+        if (toolPanel.components) {
+            toolPanel.components.forEach((toolPanelComponentDef: ToolPanelComponentDef) => {
+                if (toolPanelComponentDef.key == null) {
+                    console.warn(`ag-grid: please review all your toolPanel components, it seems like at least one of them doesn't have a key`);
+                    return;
+                }
+                let componentPromise: Promise<IComponent<any>> = this.componentResolver.createAgGridComponent(
+                    toolPanelComponentDef,
+                    null,
+                    'component',
+                    null
+                );
+                if (componentPromise == null) {
+                    console.warn(`ag-grid: error processing tool panel component ${toolPanelComponentDef.key}. You need to specify either 'component' or 'componentFramework'`);
+                    return;
+                }
+                allPromises.push(componentPromise);
+                componentPromise.then(component => {
+                    this.panelComps [toolPanelComponentDef.key] = component;
+                });
+            });
+        }
+        Promise.all(allPromises).then(done => {
+            Object.keys(this.panelComps).forEach(key => {
+                let currentComp = this.panelComps[key];
+                this.getGui().appendChild(currentComp.getGui());
+                this.toolPanelSelectComp.registerPanelComp(key, currentComp);
+                currentComp.setVisible(false);
+            });
+        })
+        // this.toolPanelSelectComp.registerPanelComp('columns', this.columnComp);
+        // this.toolPanelSelectComp.registerPanelComp('filters', this.filterComp);
+        // this.filterComp.setVisible(false);
     }
 
     public refresh(): void {
-        this.columnComp.refresh();
-        this.filterComp.refresh();
+        // this.columnComp.refresh();
+        // this.filterComp.refresh();
+        Object.keys(this.panelComps).forEach(key => {
+            let currentComp = this.panelComps[key];
+            currentComp.refresh ();
+        });
     }
 
-    public showToolPanel(show: boolean): void {
-        this.columnComp.setVisible(show);
+    public showToolPanel(show: boolean | string): void {
+        let tabToShowHide: Component;
+        let visibility: boolean;
+        let keyOfTabToShowHide: string;
+        if (typeof show === 'string') {
+            visibility = true;
+            tabToShowHide = this.panelComps[show];
+            keyOfTabToShowHide = show;
+        } else {
+            visibility = show;
+            keyOfTabToShowHide = _.get(this.gridOptionsWrapper.getToolPanel(), 'defaultTab', null);
+            tabToShowHide = this.panelComps[keyOfTabToShowHide];
+        }
+
+        if (!tabToShowHide) {
+            console.warn (`ag-grid: unable to access the tool panel tab with the key: '${keyOfTabToShowHide}'`);
+            return;
+        }
+        tabToShowHide.setVisible(visibility);
     }
 
-    public isToolPanelShowing
 
-    (): boolean {
-        return this.columnComp.isVisible() || this.filterComp.isVisible();
+    public isToolPanelShowing(): boolean {
+        let anyShowing: boolean = false;
+        Object.keys(this.panelComps).forEach(key => {
+            let currentComp = this.panelComps[key];
+            if (currentComp.isVisible()) {
+                anyShowing = true;
+            }
+        });
+        return anyShowing;
     }
 }

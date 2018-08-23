@@ -105,6 +105,8 @@ Grid.setEnterpriseComponents([
 
 Grid.setEnterpriseDefaultComponents([
     {componentName: 'agAggregationComponent', theClass: AggregationComponent},
+    {componentName: 'agColumnsToolPanel', theClass: ToolPanelColumnComp},
+    {componentName: 'agFiltersToolPanel', theClass: ToolPanelAllFiltersComp},
     {componentName: 'agSelectedRowCountComponent', theClass: SelectedRowCountComponent},
     {componentName: 'agTotalRowCountComponent', theClass: TotalRowCountComponent},
     {componentName: 'agFilteredRowCountComponent', theClass: FilteredRowCountComponent},
