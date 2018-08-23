@@ -16,28 +16,31 @@ include '../documentation-main/documentation_header.php';
 <h2>Status Panel Component Interface</h2>
 
 <snippet>
-interface IStatusPanel&lt;IStatusPanelParams&gt; {
-    /** Return the DOM element of your component, this is what the grid puts into the DOM */
-    getGui(): HTMLElement;
+interface IStatus {
+    /** The init(params) method is called on the status panel component once.
+        See below for details on the parameters. */
+    init?(params: T): void;
 
-    /** Gets called once by grid when destroying the component - do any necessary cleanup here  */
+    /** A hook to perform any necessary operation just after the gui for this component has been
+        renderered in the screen. */
+    afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
+
+    /** Gets called when the grid is destroyed - if your status panel componetns needs to do any
+        cleanup, do it here */
     destroy?(): void;
-
-    /** The init(params) method is called on the component once. See below for details on the parameters. */
-    init?(params: IStatusPanelParams): Promise&lt;void&gt; | void;
 }
 </snippet>
 
- <h2 id="istatus-panel-params">IStatusPanelParams</h2>
+ <h2 id="istatus-panel-params">Status Panel Component Parameters</h2>
 <p>
     The method init(params) takes a params object with the items listed below. If the user provides
-    params via the <code>statusParams</code> attribute (see <a href="#configure-components"></a> Configuring Status Panel
+    params via the <code>componentParams</code> attribute (see <a href="#configure-components"></a> Configuring Status Panel
     Components below), these will be additionally added to the params object, overriding items of the same name if a name
     clash exists.
 </p>
 
 <snippet>
-interface IStatusPanelParams {
+interface IStatusParams {
     // The grid API
     api: GridApi,
 

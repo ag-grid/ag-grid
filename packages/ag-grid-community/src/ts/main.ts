@@ -1,8 +1,5 @@
 // to satisfy server side compilation
-
-import {ComponentResolver} from "./components/framework/componentResolver";
-import {IStatusBar, IStatusBarParams} from "./interfaces/iStatusBar";
-import {VisibleChangedEvent} from "./widgets/component";
+import {IStatusComp} from "./interfaces/iStatus";
 
 declare let global: any;
 let globalObj = typeof global === 'undefined' ? {} : global;
@@ -124,8 +121,9 @@ export {AnimateShowChangeCellRenderer} from "./rendering/cellRenderers/animateSh
 export {AnimateSlideCellRenderer} from "./rendering/cellRenderers/animateSlideCellRenderer";
 export {GroupCellRenderer} from "./rendering/cellRenderers/groupCellRenderer";
 
-// status bar components
-export {IStatusBar, IStatusBarParams} from "./interfaces/iStatusBar";
+// status panel components
+export {IStatus, IStatusComp, IStatusParams} from "./interfaces/iStatus";
+export {IStatusPanelService} from "./interfaces/iStatusPanelService";
 
 // overlays
 export {ILoadingOverlayComp, ILoadingOverlayParams} from "./rendering/overlays/loadingOverlayComponent";

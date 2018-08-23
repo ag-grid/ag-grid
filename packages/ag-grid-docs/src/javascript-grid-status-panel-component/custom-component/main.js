@@ -31,16 +31,15 @@ function createRowData() {
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: createRowData(),
-    enableStatusBar: true,
     enableRangeSelection: true,
     rowSelection: "multiple",
     components: {
-        statusBarComponent: ClickableStatusBarComponent
+        statusPanelComponent: ClickableStatusPanelComponent
     },
     statusPanel: {
         components: [
             {
-                component: 'statusBarComponent'
+                component: 'statusPanelComponent'
             },
             {
                 component: 'agAggregationComponent',

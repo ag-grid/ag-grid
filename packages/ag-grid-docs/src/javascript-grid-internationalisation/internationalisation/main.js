@@ -27,7 +27,11 @@ var gridOptions = {
     showToolPanel: true,
     pagination:true,
     rowGroupPanelShow: 'always',
-    enableStatusBar: true,
+    statusPanel: {
+        components: [
+            { component: 'agAggregationComponent' }
+        ]
+    },
     paginationPageSize: 500,
     enableRangeSelection: true,
     localeText: {

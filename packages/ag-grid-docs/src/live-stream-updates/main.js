@@ -59,7 +59,11 @@
             }
         },
         columnDefs: columnDefs,
-        enableStatusBar: true,
+        statusPanel: {
+            components: [
+                { component: 'agAggregationComponent' }
+            ]
+        },
         animateRows: true,
         enableColResize: true,
         enableRangeSelection: true,

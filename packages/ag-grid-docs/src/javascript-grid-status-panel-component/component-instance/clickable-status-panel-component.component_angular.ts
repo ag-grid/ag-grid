@@ -1,14 +1,14 @@
 import {Component, ViewChild, ViewContainerRef} from "@angular/core";
 
-import {IAfterGuiAttachedParams, IDoesFilterPassParams, RowNode, IStatusBar, IStatusBarParams} from "ag-grid";
+import {IAfterGuiAttachedParams, IDoesFilterPassParams, RowNode, IStatus, IStatusParams} from "ag-grid-community";
 import {IFilterAngularComp} from "ag-grid-angular";
 
 @Component({
     selector: 'status-component',
     template: `
-        <div class="container">
+        <div class="container" *ngIf="visible">
             <div>
-                <span class="component">Status Bar Component <input type="button" (click)="onClick()" value="Click Me"/></span>
+                <span class="component">Status Panel Component <input type="button" (click)="onClick()" value="Click Me"/></span>
             </div>
         </div>
     `, styles: [
@@ -31,14 +31,23 @@ import {IFilterAngularComp} from "ag-grid-angular";
         `
     ]
 })
-export class ClickableStatusBarComponent implements IStatusBar {
-    private params: IStatusBarParams;
+export class ClickableStatusPanelComponent implements IStatus {
+    private params: IStatusParams;
+    private visible = true;
 
-    agInit(params: IStatusBarParams): void {
+    agInit(params: IStatusParams): void {
         this.params = params;
     }
 
     onClick() : void {
         alert('Selected Row Count: ' + this.params.api.getSelectedRows().length)
+    }
+
+    setVisible(visible: boolean) {
+        this.visible = visible;
+    }
+
+    isVisible(): boolean {
+        return this.visible;
     }
 }

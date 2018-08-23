@@ -14,8 +14,11 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
-    enableStatusBar: true,
-    alwaysShowStatusBar: false, //status bar can be be fixed
+    statusPanel: {
+        components: [
+            { component: 'agAggregationComponent' }
+        ]
+    },
     enableRangeSelection: true
 };
 

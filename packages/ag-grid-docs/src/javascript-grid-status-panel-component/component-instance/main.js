@@ -28,13 +28,13 @@ function createRowData() {
     ];
 }
 
-function toggleStatusBarComp() {
-    let statusBarComponent = gridOptions.api.getStatusBarComponent('statusBarCompKey');
+function toggleStatusPanelComp() {
+    let statusPanelComponent = gridOptions.api.getStatusPanelComponent('statusPanelCompKey');
 
     // if using a framework component, you need to get the underlying framework component instance
-    let componentInstance = statusBarComponent;
-    if(statusBarComponent.getFrameworkComponentInstance) {
-        componentInstance = statusBarComponent.getFrameworkComponentInstance();
+    let componentInstance = statusPanelComponent;
+    if(statusPanelComponent.getFrameworkComponentInstance) {
+        componentInstance = statusPanelComponent.getFrameworkComponentInstance();
     }
 
     componentInstance.setVisible(!componentInstance.isVisible());
@@ -46,13 +46,13 @@ var gridOptions = {
     enableRangeSelection: true,
     rowSelection: "multiple",
     components: {
-        statusBarComponent: ClickableStatusBarComponent
+        statusPanelComponent: ClickableStatusPanelComponent
     },
     statusPanel: {
         components: [
             {
-                component: 'statusBarComponent',
-                key: 'statusBarCompKey'
+                component: 'statusPanelComponent',
+                key: 'statusPanelCompKey'
             },
             {
                 component: 'agAggregationComponent',

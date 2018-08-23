@@ -1,7 +1,7 @@
-function ClickableStatusBarComponent() {
+function ClickableStatusPanelComponent() {
 }
 
-ClickableStatusBarComponent.prototype.init = function (params) {
+ClickableStatusPanelComponent.prototype.init = function (params) {
     this.params = params;
 
     this.eGui = document.createElement('div');
@@ -12,7 +12,7 @@ ClickableStatusBarComponent.prototype.init = function (params) {
 
     var content = document.createElement('div');
     var span = document.createElement('span');
-    span.innerText = 'Status Bar Component';
+    span.innerText = 'Status Panel Component';
     content.appendChild(span);
 
     this.eButton = document.createElement('button');
@@ -26,14 +26,14 @@ ClickableStatusBarComponent.prototype.init = function (params) {
     this.eGui.appendChild(content);
 };
 
-ClickableStatusBarComponent.prototype.getGui = function () {
+ClickableStatusPanelComponent.prototype.getGui = function () {
     return this.eGui;
 };
 
-ClickableStatusBarComponent.prototype.destroy = function () {
+ClickableStatusPanelComponent.prototype.destroy = function () {
     this.eButton.removeEventListener("click", this.buttonListener);
 };
 
-ClickableStatusBarComponent.prototype.onButtonClicked = function () {
+ClickableStatusPanelComponent.prototype.onButtonClicked = function () {
     alert('Selected Row Count: ' + this.params.api.getSelectedRows().length)
 };

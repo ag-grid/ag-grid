@@ -88,7 +88,7 @@
 <snippet>
     // src/app/my-grid-application/my-grid-application.component.ts
     import {Component} from "@angular/core";
-    import {GridOptions} from "ag-grid";
+    import {GridOptions} from "ag-grid-community";
     import {RedComponentComponent} from "../red-component/red-component.component";
 
     @Component({

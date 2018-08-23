@@ -11,14 +11,14 @@ import {
     PostConstruct,
     RefSelector
 } from 'ag-grid-community';
-import {StatusBarService} from "./statusBarService";
+import {StatusPanelService} from "./statusPanelService";
 
-export class StatusBarComp extends Component {
+export class StatusPanelComp extends Component {
 
     private static TEMPLATE = `<div class="ag-status-panel">
-        <div ref="leftPanelComponents" class="ag-status-left-bar-comps"></div>
-        <div ref="centerPanelComponents" class="ag-status-center-bar-comps"></div>
-        <div ref="rightPanelComponents" class="ag-status-right-bar-comps"></div>
+        <div ref="leftPanelComponents" class="ag-status-left-panel-comps"></div>
+        <div ref="centerPanelComponents" class="ag-status-center-panel-comps"></div>
+        <div ref="rightPanelComponents" class="ag-status-right-panel-comps"></div>
     </div>`;
 
     @Autowired('context') private context: Context;
@@ -27,14 +27,14 @@ export class StatusBarComp extends Component {
     @Autowired('componentProvider') private componentProvider: ComponentProvider;
     @Autowired('componentResolver') private componentResolver: ComponentResolver;
     @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('statusBarService') private statusBarService: StatusBarService;
+    @Autowired('statusPanelService') private statusPanelService: StatusPanelService;
 
     @RefSelector('leftPanelComponents') private eLeftPanelComponents: HTMLElement;
     @RefSelector('centerPanelComponents') private eCenterPanelComponents: HTMLElement;
     @RefSelector('rightPanelComponents') private eRightPanelComponents: HTMLElement;
 
     constructor() {
-        super(StatusBarComp.TEMPLATE);
+        super(StatusPanelComp.TEMPLATE);
     }
 
     @PostConstruct
@@ -64,13 +64,13 @@ export class StatusBarComp extends Component {
 
                 this.componentResolver.createAgGridComponent(null,
                     params,
-                    'statusBarComponent',
+                    'statusPanelComponent',
                     componentConfig.componentParams,
                     componentConfig.component)
                     .then((component: Component) => {
                         // default to the component name if no key supplied
                         let key = componentConfig.key || componentConfig.component;
-                        this.statusBarService.registerStatusBarComponent(key, component);
+                        this.statusPanelService.registerStatusPanelComponent(key, component);
 
                         ePanelComponent.appendChild(component.getGui());
                     })

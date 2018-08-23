@@ -769,16 +769,8 @@ include '../documentation-main/documentation_header.php';
             <td>Allows <a href="../javascript-grid-context-menu">context menu</a> to show, even when ctrl key is held down.</td>
         </tr>
         <tr>
-            <th>enableStatusBar</th>
-            <td>
-                When true, the <a href="../javascript-grid-status-panel">status panel</a> appear at the bottom of the
-                grid when cells are selected.
-            </td>
-        </tr>
-        <tr>
-            <th>alwaysShowStatusBar</th>
-            <td>When true, the <a href="../javascript-grid-status-panel">status panel</a> will always be displayed at
-                the bottom of the grid, when 'enableStatusBar' is also enabled</td>
+            <th>statusPanel</th>
+            <td>Specifies the <a href="../javascript-grid-status-panel">status panel</a> components to use in the status panel.</td>
         </tr>
         <tr>
             <th>suppressTouch</th>

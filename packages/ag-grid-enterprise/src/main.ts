@@ -7,8 +7,8 @@ export {AggregationStage} from "./rowStages/aggregationStage";
 export {GroupStage} from "./rowStages/groupStage";
 export {SetFilter} from "./setFilter/setFilter";
 export {SetFilterModel} from "./setFilter/setFilterModel";
-export {StatusBarComp} from "./statusBar/statusBarComp";
-export {StatusBarService} from "./statusBar/statusBarService";
+export {StatusPanelComp} from "./statusPanel/statusPanelComp";
+export {StatusPanelService} from "./statusPanel/statusPanelService";
 export {ClipboardService} from "./clipboardService";
 export {EnterpriseBoot} from "./enterpriseBoot";
 export {EnterpriseMenu} from "./menu/enterpriseMenu";
@@ -67,21 +67,21 @@ import {HeaderColumnDropComp} from "./toolPanel/columnDrop/headerColumnDropComp"
 import {ToolPanelColumnComp} from "./toolPanel/toolPanelColumnComp";
 import {ToolPanelSelectComp} from "./toolPanel/toolPanelSelectComp";
 
-import {StatusBarService} from "./statusBar/statusBarService";
-import {StatusBarComp} from "./statusBar/statusBarComp";
-import {AggregationComponent} from "./statusBar/aggregationComponent"
-import {StatusBarValueComponent} from "./statusBar/statusBarValueComponent";
-import {SelectedRowCountComponent} from "./statusBar/selectedRowCountComponent"
-import {TotalRowCountComponent} from "./statusBar/totalRowCountComponent"
-import {FilteredRowCountComponent} from "./statusBar/filteredRowCountComponent"
-import {TotalAndFilteredRowCountComponent} from "./statusBar/totalAndFilteredRowCountComponent"
+import {StatusPanelService} from "./statusPanel/statusPanelService";
+import {StatusPanelComp} from "./statusPanel/statusPanelComp";
+import {AggregationComponent} from "./statusPanel/aggregationComponent"
+import {StatusPanelValueComponent} from "./statusPanel/statusPanelValueComponent";
+import {SelectedRowCountComponent} from "./statusPanel/selectedRowCountComponent"
+import {TotalRowCountComponent} from "./statusPanel/totalRowCountComponent"
+import {FilteredRowCountComponent} from "./statusPanel/filteredRowCountComponent"
+import {TotalAndFilteredRowCountComponent} from "./statusPanel/totalAndFilteredRowCountComponent"
 
 let rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
 
 Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, RowGroupCompFactory, PivotCompFactory,
     PivotColumnsPanel, RangeController, ClipboardService, PivotStage, PivotColDefService,
     ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService,
-    LicenseManager, MD5, MenuItemMapper, StatusBarService], rowModelTypes);
+    LicenseManager, MD5, MenuItemMapper, StatusPanelService], rowModelTypes);
 
 Grid.setEnterpriseComponents([
     {componentName: 'AgColumnSelectHeader', theClass: ColumnSelectHeaderComp},
@@ -89,13 +89,13 @@ Grid.setEnterpriseComponents([
     {componentName: 'AgHorizontalResize', theClass: HorizontalResizeComp},
     {componentName: 'AgToolPanel', theClass: ToolPanelComp},
 
-    {componentName: 'AgStatusPanel', theClass: StatusBarComp},
-    {componentName: 'AgSumAggregationComp', theClass: StatusBarValueComponent},
-    {componentName: 'AgCountAggregationComp', theClass: StatusBarValueComponent},
-    {componentName: 'AgMinAggregationComp', theClass: StatusBarValueComponent},
-    {componentName: 'AgMaxAggregationComp', theClass: StatusBarValueComponent},
-    {componentName: 'AgAvgAggregationComp', theClass: StatusBarValueComponent},
-    {componentName: 'AgSelectedRowCountComp', theClass: StatusBarValueComponent},
+    {componentName: 'AgStatusPanel', theClass: StatusPanelComp},
+    {componentName: 'AgSumAggregationComp', theClass: StatusPanelValueComponent},
+    {componentName: 'AgCountAggregationComp', theClass: StatusPanelValueComponent},
+    {componentName: 'AgMinAggregationComp', theClass: StatusPanelValueComponent},
+    {componentName: 'AgMaxAggregationComp', theClass: StatusPanelValueComponent},
+    {componentName: 'AgAvgAggregationComp', theClass: StatusPanelValueComponent},
+    {componentName: 'AgSelectedRowCountComp', theClass: StatusPanelValueComponent},
 
     {componentName: 'AgHeaderColumnDrop', theClass: HeaderColumnDropComp},
     {componentName: 'AgToolPanelColumnComp', theClass: ToolPanelColumnComp},

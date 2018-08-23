@@ -224,7 +224,7 @@ export class DragService {
         let touch = this.getFirstActiveTouch(touchEvent.touches);
         if (!touch) { return; }
 
-        // this.___statusBar.setInfoText(Math.random() + ' onTouchMove preventDefault stopPropagation');
+        // this.___statusPanel.setInfoText(Math.random() + ' onTouchMove preventDefault stopPropagation');
 
         // if we don't preview default, then the browser will try and do it's own touch stuff,
         // like do 'back button' (chrome does this) or scroll the page (eg drag column could  be confused

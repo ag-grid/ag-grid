@@ -44,7 +44,7 @@ export class PropertyKeys {
         'suppressFieldDotNotation', 'enableRangeSelection',
         'suppressTouch', 'suppressAsyncEvents', 'allowContextMenuWithControlKey',
         'suppressContextMenu', 'suppressMenuFilterPanel', 'suppressMenuMainPanel', 'suppressMenuColumnPanel',
-        'enableStatusBar', 'alwaysShowStatusBar', 'rememberGroupStateWhenNewData', 'enableCellChangeFlash', 'suppressDragLeaveHidesColumns',
+        'rememberGroupStateWhenNewData', 'enableCellChangeFlash', 'suppressDragLeaveHidesColumns',
         'suppressMiddleClickScrolls', 'suppressPreventDefaultOnMouseWheel', 'suppressUseColIdForGroups',
         'suppressCopyRowsToClipboard', 'pivotMode', 'suppressAggFuncInHeader', 'suppressColumnVirtualisation', 'suppressAggAtRootLevel',
         'suppressFocusAfterRefresh', 'functionsPassive', 'functionsReadOnly',

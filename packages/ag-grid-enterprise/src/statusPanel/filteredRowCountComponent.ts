@@ -1,7 +1,7 @@
 import {Autowired, Events, EventService, GridApi, PostConstruct} from 'ag-grid-community';
-import {StatusBarValueComponent} from "./statusBarValueComponent";
+import {StatusPanelValueComponent} from "./statusPanelValueComponent";
 
-export class FilteredRowCountComponent extends StatusBarValueComponent {
+export class FilteredRowCountComponent extends StatusPanelValueComponent {
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridApi') private gridApi: GridApi;

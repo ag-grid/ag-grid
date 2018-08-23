@@ -1,6 +1,6 @@
 import {Component, ViewChild, ViewContainerRef} from "@angular/core";
 
-import {IFilterParams} from "ag-grid";
+import {IFilterParams} from "ag-grid-community";
 import {IFilterAngularComp} from "ag-grid-angular";
 
 @Component({

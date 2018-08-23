@@ -4,7 +4,7 @@ import RefData from '../../data/refData';
 import SkillFilter from '../../filters/skillFilter';
 import ProficiencyFilter from '../../filters/proficiencyFilter';
 
-import {ColumnApi, GridApi, GridOptions} from 'ag-grid';
+import {ColumnApi, GridApi, GridOptions} from 'ag-grid-community';
 // only import this if you are using the ag-Grid-Enterprise
 import 'ag-grid-enterprise';
 

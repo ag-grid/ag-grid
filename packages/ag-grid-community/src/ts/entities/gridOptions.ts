@@ -114,8 +114,6 @@ export interface GridOptions {
     enableServerSideSorting?: boolean;
     enableFilter?: boolean;
     enableServerSideFilter?: boolean;
-    enableStatusBar?: boolean;
-    alwaysShowStatusBar?: boolean;
     enableGroupEdit?: boolean;
     enterMovesDownAfterEdit?: boolean;
     enterMovesDown?: boolean;

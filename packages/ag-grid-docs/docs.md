@@ -88,7 +88,7 @@
  - [ ] javascript-grid-clipboard/
  - [ ] javascript-grid-column-menu/
  - [ ] javascript-grid-context-menu/
- - [ ] javascript-grid-status-bar/
+ - [ ] javascript-grid-status-panel/
  - [ ] javascript-grid-set-license/
  - [ ] javascript-grid-context/
  - [ ] javascript-grid-row-models/

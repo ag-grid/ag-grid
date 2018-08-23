@@ -1,7 +1,7 @@
 import {Autowired, Events, EventService, GridApi, PostConstruct} from 'ag-grid-community';
-import {StatusBarValueComponent} from "./statusBarValueComponent";
+import {StatusPanelValueComponent} from "./statusPanelValueComponent";
 
-export class TotalRowCountComponent  extends StatusBarValueComponent {
+export class TotalRowCountComponent  extends StatusPanelValueComponent {
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -34,7 +34,7 @@ export class TotalRowCountComponent  extends StatusBarValueComponent {
 
     private getRowCountValue(): string {
         let totalRowCount = 0;
-        this.gridApi.forEachNode((node) => totalRowCount += 1);
+        this.gridApi.forEachLeafNode((node) => totalRowCount += 1);
 
         return `${totalRowCount}`;
     }

@@ -84,7 +84,7 @@ include '../documentation-main/documentation_header.php';
 var AgGrid = require('ag-grid');
 
 // ECMA 6 - using the system import method
-import {Grid} from 'ag-grid';
+import {Grid} from 'ag-grid-community';
 </snippet>
 
     <h2>Download ag-Grid-Enterprise</h2>
@@ -164,7 +164,7 @@ var AgGrid = require('ag-grid');
 require('ag-grid-enterprise');
 
 // ECMA 6 - using the system import method
-import {Grid} from 'ag-grid';
+import {Grid} from 'ag-grid-community';
 // only include this line if you want to use ag-grid-enterprise
 import 'ag-grid-enterprise';
 </snippet>

@@ -80,7 +80,7 @@ gridOptions: {
     The example below shows a simply configured status panel. Note the following:
 <ul>
     <li>
-        The total row count is displayed by the <code>agTotalRowCountComponent</code> component, aligned to the lef1t.
+        The total row count is displayed by the <code>agTotalRowCountComponent</code> component, aligned to the left.
     </li>
     <li>
         The row count after filtering is displayed by the <code>agFilteredRowCountComponent</code> component.
@@ -98,6 +98,41 @@ gridOptions: {
 </p>
 
 <?= example('Status Panel Simple', 'status-panel-simple', 'generated', array("enterprise" => 1)) ?>
+
+<h3>Configuring The Aggregation Component</h3>
+
+<p>If you have multiple ranges selected (by holding down ctrl while dragging) and a cell is in multiple
+    ranges, the cell will be only included once in the aggregation.</p>
+
+<p>If the cell does not contain a simple number value, then it will not be included in average, min max or sum,
+    however it will still be included in count.</p>
+
+<p>In the grid below, select a range by dragging the mouse over cells and notice the status panel
+    showing the aggregation values as you drag.</p>
+
+<?= example('Status Panel', 'status-panel', 'generated', array("enterprise" => 1)) ?>
+
+<p>By default all of the aggregations available will be displayed but you can configure the aggregation component to only
+    show a subset of the aggregations.</p>
+
+<p>In this code snippet we have configured the aggregation component to only show <code>min, max and average</code>:</p>
+
+<snippet>
+gridOptions: {
+    statusPanel: {
+        components: [
+            {
+                component: 'agAggregationComponent',
+                componentParams: {
+                    // possible values are: 'count', 'sum', 'min', 'max', 'avg'
+                    aggFuncs: ['min', 'max', 'average']
+                }
+            }
+        ]
+    }
+    // ...other grid properties
+}
+</snippet>
 
 <h3 id="accessing-status-panel-comp-instances">Accessing Status Panel Component Instances</h3>
 
@@ -173,25 +208,6 @@ gridOptions: {
     min-height: 35px;
 }
 </code>
-
-<h2>Aggregation Component</h2>
-<p>If you have multiple ranges selected (by holding down ctrl while dragging) and a cell is in multiple
-ranges, the cell will be only included once in the aggregation.</p>
-
-<p>If the cell does not contain a simple number value, then it will not be included in average, min max or sum,
-however it will still be included in count.</p>
-
-<p>In the grid below, select a range by dragging the mouse over cells and notice the status panel
-showing the aggregation values as you drag.</p>
-
-<?= example('Status Panel', 'status-panel', 'generated', array("enterprise" => 1)) ?>
-
-<p>By default all of the aggregations available will be displayed but you can configure the aggregation component to only
-show a subset of the aggregations.</p>
-
-<p>In this code snippet we have configured the aggregation component to only show <code>min, max and average</code>:</p>
-
-
 
 <p>To build your own status panel component please see the section on <a href="../javascript-grid-status-panel-component">
         Status Panel Components</a>.</p>
