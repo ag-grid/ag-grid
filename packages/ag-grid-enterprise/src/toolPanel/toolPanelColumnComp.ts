@@ -9,9 +9,9 @@ import {RefSelector} from "ag-grid-community";
 export class ToolPanelColumnComp extends Component {
 
     private static TEMPLATE =
-        `<div class="ag-column-panel">
+        `<div class="ag-tool-panel-item-wrapper">
             <ag-horizontal-resize class="ag-tool-panel-horizontal-resize" [component-to-resize]="componentToResize"></ag-horizontal-resize>
-            <div class="ag-column-panel-center" ref="eColumnPanelCenter"></div>
+            <div class="ag-column-panel-center ag-column-panel" ref="eColumnPanelCenter"></div>
         </div>`;
 
     @Autowired("context") private context: Context;

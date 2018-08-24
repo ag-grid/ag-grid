@@ -294,7 +294,7 @@ ag-grid-aurelia {
     vertical-align: middle;
 }
 
-.ag-column-panel {
+.ag-tool-panel-item-wrapper {
     display: flex;
     overflow-y: auto;
 }
@@ -856,7 +856,7 @@ ag-grid-aurelia {
     user-select: none;
 }
 
-.ag-column-panel {
+.ag-tool-panel-item-wrapper {
     box-sizing: border-box;
     cursor: default;
     user-select: none;
