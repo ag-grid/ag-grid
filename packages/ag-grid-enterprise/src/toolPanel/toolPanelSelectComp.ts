@@ -51,7 +51,7 @@ export class ToolPanelSelectComp extends Component {
         let keys = Object.keys(componentButtons);
         keys.forEach(key=>{
             let value: string = componentButtons[key];
-            html += `<div class="ag-side-button""><button type="button" ref="toggle-button-${key}">${translate(key, value)}</button></div>`
+            html += `<div class="ag-side-button""><button type="button" ref="toggle-button-${key}"><span>${translate(key, value)}</span></button></div>`
         });
 
         this.getGui().innerHTML = html;

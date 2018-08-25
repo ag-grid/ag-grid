@@ -68,7 +68,8 @@ ag-grid-aurelia {
     display: flex;
     flex-direction: column;
 
-    &.ag-layout-normal, &.ag-layout-auto-height {
+    &.ag-layout-normal,
+    &.ag-layout-auto-height {
         overflow: hidden; // was getting some 'shouldn't be there' scrolls, this sorts it out
         width: 0px;
         min-width: 0px;
@@ -333,15 +334,27 @@ ag-grid-aurelia {
 // we want the pinned left to always be on the left, and the pinned right
 // always to be on the right. hence we do row-reverse for rtl, otherwise having
 // RTL applied will reverse the order of the flex layout (and invert what's left and right)
-.ag-rtl .ag-body { flex-direction: row-reverse; }
-.ag-ltr .ag-body { flex-direction: row; }
+.ag-rtl .ag-body {
+    flex-direction: row-reverse;
+}
+.ag-ltr .ag-body {
+    flex-direction: row;
+}
 
-.ag-rtl .ag-floating-top { flex-direction: row-reverse; }
-.ag-ltr .ag-floating-top { flex-direction: row; }
+.ag-rtl .ag-floating-top {
+    flex-direction: row-reverse;
+}
+.ag-ltr .ag-floating-top {
+    flex-direction: row;
+}
 
 // we don't want right and left pinned flipped when doing RTL
-.ag-ltr .ag-header { flex-direction: row; }
-.ag-rtl .ag-header { flex-direction: row-reverse; }
+.ag-ltr .ag-header {
+    flex-direction: row;
+}
+.ag-rtl .ag-header {
+    flex-direction: row-reverse;
+}
 
 .ag-floating-top {
     box-sizing: border-box;
@@ -449,8 +462,8 @@ ag-grid-aurelia {
 }
 
 .ag-body-viewport-wrapper {
-
-    &.ag-layout-auto-height, &.ag-layout-normal {
+    &.ag-layout-auto-height,
+    &.ag-layout-normal {
         height: 100%;
         width: 0px; // mind width, flex grows the center to fit
         min-width: 0px; // width didn't do the trick in firefox, so needed min-width also
@@ -463,7 +476,6 @@ ag-grid-aurelia {
 }
 
 .ag-body-viewport {
-
     // layout-auto-height has x (horizontal) scrolls (but no y)
     &.ag-layout-auto-height {
         overflow-x: auto;
@@ -1064,16 +1076,17 @@ $row-group-indent-size: 10px !default;
         width: 20px;
 
         div {
-            height: 60px;
             button {
                 display: block;
-                transform: rotate(90deg) translateY(-20px);
-                transform-origin: left top 0;
                 white-space: nowrap;
                 outline: none;
+
+                span {
+                  writing-mode: tb;
+                  writing-mode: vertical-lr;
+                }
             }
         }
-
     }
 
     .panel-container {
@@ -1088,8 +1101,10 @@ $row-group-indent-size: 10px !default;
 .ag-rtl .ag-tool-panel {
     .ag-side-buttons {
         button {
-            transform: rotate(-90deg) translatex(20px);
-            transform-origin: right bottom 0;
+                span {
+                  writing-mode: tb-rl;
+                  writing-mode: vertical-rl;
+                }
         }
     }
 }
