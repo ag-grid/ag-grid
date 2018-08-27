@@ -148,7 +148,7 @@ export class CellComp extends Component {
         templateParts.push(` comp-id="${this.getCompId()}" `);
         templateParts.push(` col-id="${colIdSanitised}"`);
         templateParts.push(` class="${cssClasses.join(' ')}"`);
-        templateParts.push(tooltipSanitised ? ` title="${tooltipSanitised}"` : ``);
+        templateParts.push( (tooltipSanitised || tooltipSanitised === this.tooltip) ? ` title="${tooltipSanitised}"` : ``);
         templateParts.push(` style="width: ${width}px; left: ${left}px; ${stylesFromColDef} ${stylesForRowSpanning}" >`);
         templateParts.push(wrapperStartTemplate);
         templateParts.push(valueSanitised);
