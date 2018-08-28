@@ -34,7 +34,7 @@ import {PropertyKeys} from "./propertyKeys";
 import {ColDefUtil} from "./components/colDefUtil";
 import {Events} from "./eventKeys";
 import {AutoHeightCalculator} from "./rendering/autoHeightCalculator";
-import {ToolPanelDef} from "./entities/toolPanel";
+import {ToolPanelDef, ToolPanelDefLikeParser} from "./entities/toolPanel";
 
 let DEFAULT_ROW_HEIGHT = 25;
 let DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -1329,25 +1329,10 @@ export class GridOptionsWrapper {
         if (options.showToolPanel) {
             console.warn(`ag-grid: since version 19.x, showToolPanel is gone, please specify toolPanel components`);
             options.showToolPanel = undefined;
-            options.toolPanel = options.toolPanel ||
-                {
-                    components: [
-                    {
-                        key: 'filters',
-                        buttonLabel: 'Filters',
-                        iconKey: 'filters',
-                        component: 'agFiltersToolPanel',
-                    },
-                    {
-                        key: 'columns',
-                        buttonLabel: 'Columns',
-                        iconKey: 'columns',
-                        component: 'agColumnsToolPanel',
-                    },
-
-                    ],
-                    defaultTab: 'columns'
-                };
+            options.toolPanel = options.toolPanel || true;
+        }
+        if (options.toolPanel != null) {
+            options.toolPanel = ToolPanelDefLikeParser.parse(options.toolPanel)
         }
         if (options.enableStatusBar) {
             console.warn(`ag-grid: since version 19.x, showToolPanel is gone, please specify toolPanel components`);

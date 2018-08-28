@@ -189,17 +189,7 @@ var gridOptions = {
     //suppressCellSelection: true,
     //suppressMultiSort: true,
     // scrollbarWidth: 20,
-    toolPanel: {
-        components: [
-            {
-                key: 'filters',
-                buttonLabel: 'Filters',
-                iconKey: 'filters',
-                component: 'agFiltersToolPanel',
-            }
-        ],
-        defaultTab: 'filters'
-    },
+    toolPanel: true,
     // showToolPanel: true,//window.innerWidth > 1000,
     // toolPanelSuppressColumnFilter: true,
     // toolPanelSuppressColumnSelectAll: true,
