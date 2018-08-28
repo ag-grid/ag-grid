@@ -1,11 +1,10 @@
 import {
     Autowired,
     Component,
-    Events,
+    EventService,
     GridOptionsWrapper,
     HorizontalResizeService,
-    PostConstruct,
-    EventService
+    PostConstruct
 } from "ag-grid-community";
 
 export class HorizontalResizeComp extends Component {
@@ -16,7 +15,7 @@ export class HorizontalResizeComp extends Component {
 
     private startingWidth: number;
 
-    private props: {
+    props: {
         componentToResize: Component
     };
 
@@ -26,7 +25,6 @@ export class HorizontalResizeComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-
         let finishedWithResizeFunc = this.horizontalResizeService.addResizeBar({
             eResizeBar: this.getGui(),
             onResizeStart: this.onResizeStart.bind(this),

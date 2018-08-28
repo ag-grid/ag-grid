@@ -1,18 +1,23 @@
-import {Events, ToolPanelVisibleChangedEvent, _, Autowired, Component, Context, GridApi, GridOptionsWrapper, EventService} from "ag-grid-community";
+import {
+    _,
+    Autowired,
+    Component,
+    Context,
+    Events,
+    EventService,
+    GridApi,
+    GridOptionsWrapper,
+    ToolPanelVisibleChangedEvent
+} from "ag-grid-community";
 import {PivotModePanel} from "./columnDrop/pivotModePanel";
 import {ValuesColumnPanel} from "./columnDrop/valueColumnsPanel";
 import {RowGroupColumnsPanel} from "./columnDrop/rowGroupColumnsPanel";
 import {ColumnSelectComp} from "./columnsSelect/columnSelectComp";
 import {PivotColumnsPanel} from "./columnDrop/pivotColumnsPanel";
-import {RefSelector} from "ag-grid-community";
 
 export class ToolPanelColumnComp extends Component {
 
-    private static TEMPLATE =
-        `<div class="ag-tool-panel-item-wrapper">
-            <ag-horizontal-resize class="ag-tool-panel-horizontal-resize" [component-to-resize]="componentToResize"></ag-horizontal-resize>
-            <div class="ag-column-panel-center ag-column-panel" ref="eColumnPanelCenter"></div>
-        </div>`;
+    private static TEMPLATE =`<div class="ag-column-panel-center ag-column-panel"></div>`;
 
     @Autowired("context") private context: Context;
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
@@ -22,12 +27,6 @@ export class ToolPanelColumnComp extends Component {
     private initialised = false;
 
     private childDestroyFuncs: Function[] = [];
-
-    // referenced in template
-    private componentToResize = this;
-
-    @RefSelector('eColumnPanelCenter')
-    private eCenterPanel: HTMLElement;
 
     constructor() {
         super(ToolPanelColumnComp.TEMPLATE);
@@ -74,14 +73,14 @@ export class ToolPanelColumnComp extends Component {
 
     private addComponent(component: Component): void {
         this.context.wireBean(component);
-        this.eCenterPanel.appendChild(component.getGui());
+        this.getGui().appendChild(component.getGui());
         this.childDestroyFuncs.push(component.destroy.bind(component));
     }
 
     public destroyChildren(): void {
         this.childDestroyFuncs.forEach(func => func());
         this.childDestroyFuncs.length = 0;
-        _.removeAllChildren(this.eCenterPanel);
+        _.removeAllChildren(this.getGui());
     }
 
     public refresh(): void {

@@ -370,9 +370,9 @@ export class ComponentResolver {
      *  @param customInitParamsCb: A chance to customise the params passed to the init method. It receives what the current
      *  params are and the component that init is about to get called for
      */
-    public createInternalAgGridComponent<A extends IComponent<any>> (
+    public createInternalAgGridComponent<P, A extends IComponent<P>> (
         clazz:{new(): A},
-        agGridParams:any,
+        agGridParams:P,
         customInitParamsCb?:(params:any, component:A)=>any
     ): A{
         let internalComponent:A = <A>new clazz();
@@ -427,6 +427,8 @@ export class ComponentResolver {
         customInitParamsCb?:(params:any, component:A)=>any
     ):Promise<void> | void{
         this.context.wireBean(component);
+        if (component.init == null) return;
+
         if (customInitParamsCb == null){
             return component.init(agGridParams);
         } else {
