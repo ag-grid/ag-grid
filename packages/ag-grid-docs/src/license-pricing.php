@@ -124,7 +124,7 @@ We offer three flavors &ndash; <strong>Single Application Developer</strong>, <s
                 <div class="license">
                     <div class="card-body">
                         <h3>Single Application Developer</h3>
-                        <h4>&pound;495
+                        <h4>&dollar;750 USD
                             <span>per Developer</span>
                         </h4>
                         <p>Usage of ag-Grid Enterprise in a <br><strong>single application</strong></p>
@@ -147,7 +147,7 @@ We offer three flavors &ndash; <strong>Single Application Developer</strong>, <s
                     <div class="card-header"> Recommended </div>
                     <div class="card-body">
                         <h3>Multiple Application Developer</h3>
-                        <h4>&pound;795
+                        <h4>&dollar;1,200 USD
                             <span>per Developer</span>
                         </h4>
                         <p>Usage of ag-Grid Enterprise in <br><strong>multiple applications</strong></p>
