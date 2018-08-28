@@ -50,6 +50,12 @@ export class ToolPanelComp extends Component implements IToolPanel {
     private postConstruct(): void {
         this.instantiate(this.context);
         let toolPanel: ToolPanelDef = this.gridOptionsWrapper.getToolPanel();
+
+        if (toolPanel == null) {
+            this.getGui().removeChild(this.toolPanelSelectComp.getGui());
+            return;
+        }
+
         let allPromises: Promise<IComponent<any>>[] = [];
         if (toolPanel.components) {
             toolPanel.components.forEach((toolPanelComponentDef: ToolPanelComponentDef) => {

@@ -60,7 +60,11 @@ export class ToolPanelSelectComp extends Component {
             this.addButtonEvents(key);
         });
 
-        _.addOrRemoveCssClass(this.getRefElement(`toggle-button-columns`).parentElement, 'ag-selected', true);
+        let defaultButtonKey : string = _.get(this.gridOptionsWrapper.getToolPanel(), 'defaultTab', null);
+        let defaultButtonElement: HTMLElement = this.getRefElement(`toggle-button-${defaultButtonKey}`);
+        if (defaultButtonElement) {
+           _.addOrRemoveCssClass(defaultButtonElement.parentElement, 'ag-selected', true);
+        }
     }
 
     private addButtonEvents(boundKey: string) {
