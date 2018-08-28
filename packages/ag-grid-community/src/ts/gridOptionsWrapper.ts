@@ -296,11 +296,11 @@ export class GridOptionsWrapper {
     }
 
     public isShowToolPanel() {
-        return isTrue(this.gridOptions.toolPanel && Array.isArray(this.gridOptions.toolPanel.components));
+        return isTrue(this.gridOptions.toolPanel && Array.isArray(this.getToolPanel().components) );
     }
 
     public getToolPanel(): ToolPanelDef {
-        return this.gridOptions.toolPanel;
+        return (<ToolPanelDef>this.gridOptions.toolPanel);
     }
 
     public isToolPanelSuppressValues() {

@@ -14,6 +14,7 @@ import {
     Promise, _
 } from "ag-grid-community";
 import {ToolPanelSelectComp} from "./toolPanelSelectComp";
+import {ToolPanelWrapper, ToolPanelWrapperParams} from "./toolPanelWrapper";
 
 export interface IToolPanelChildComp extends IComponent<any>{
     refresh(): void
@@ -29,7 +30,7 @@ export class ToolPanelComp extends Component implements IToolPanel {
     @RefSelector('toolPanelSelectComp') private toolPanelSelectComp: ToolPanelSelectComp;
     // @RefSelector('columnComp') private columnComp: ToolPanelColumnComp;
     // @RefSelector('filterComp') private filterComp: ToolPanelAllFiltersComp;
-    private panelComps: { [p: string]: IToolPanelChildComp & Component } = {};
+    private panelComps: { [p: string]: ToolPanelWrapper } = {};
 
     constructor() {
         super(`<div class="ag-tool-panel" ref="eToolPanel">
@@ -75,7 +76,10 @@ export class ToolPanelComp extends Component implements IToolPanel {
                 }
                 allPromises.push(componentPromise);
                 componentPromise.then(component => {
-                    this.panelComps [toolPanelComponentDef.key] = component;
+                    let wrapper: ToolPanelWrapper = this.componentResolver.createInternalAgGridComponent<ToolPanelWrapperParams, ToolPanelWrapper>(ToolPanelWrapper, {
+                        innerComp: component
+                    });
+                    this.panelComps [toolPanelComponentDef.key] = wrapper;
                 });
             });
         }
@@ -102,17 +106,19 @@ export class ToolPanelComp extends Component implements IToolPanel {
     }
 
     public showToolPanel(show: boolean | string): void {
+        if (_.get(this.gridOptionsWrapper.getToolPanel(), 'components', []).length === 0) return;
+
         let tabToShowHide: Component;
         let visibility: boolean;
         let keyOfTabToShowHide: string;
-        if (typeof show === 'string') {
-            visibility = true;
-            tabToShowHide = this.panelComps[show];
-            keyOfTabToShowHide = show;
-        } else {
+        if (typeof show === 'boolean') {
             visibility = show;
             keyOfTabToShowHide = _.get(this.gridOptionsWrapper.getToolPanel(), 'defaultTab', null);
             tabToShowHide = this.panelComps[keyOfTabToShowHide];
+        } else {
+            visibility = true;
+            tabToShowHide = this.panelComps[show];
+            keyOfTabToShowHide = show;
         }
 
         if (!tabToShowHide) {
