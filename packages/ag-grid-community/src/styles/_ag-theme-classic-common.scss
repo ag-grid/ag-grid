@@ -97,7 +97,7 @@
         border: 1px solid $border-color;
     }
 
-    .ag-column-panel {
+    .ag-tool-panel-item-wrapper {
         border-right: 1px solid $border-color;
     }
 
@@ -109,7 +109,7 @@
         border-bottom-width: 0;
     }
 
-    .ag-column-panel .ag-column-drop .ag-column-drop-empty-message {
+    .ag-tool-panel-item-wrapper .ag-column-drop .ag-column-drop-empty-message {
         line-height: $header-height;
     }
 
@@ -198,7 +198,7 @@
         }
     }
 
-    .ag-column-panel .ag-column-drop .ag-column-drop-title {
+    .ag-tool-panel-item-wrapper .ag-column-drop .ag-column-drop-title {
         float: none;
     }
 

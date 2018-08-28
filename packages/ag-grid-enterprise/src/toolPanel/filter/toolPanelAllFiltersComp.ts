@@ -22,7 +22,7 @@ import {ToolPanelFilterComp} from "./toolPanelFilterComp";
 export class ToolPanelAllFiltersComp extends Component {
 
     private static TEMPLATE =
-        `<div class="ag-column-panel">
+        `<div class="ag-tool-panel-item-wrapper">
             <div class="ag-filter-panel" ref="ePanelContainer" />
         </div>`;
 
