@@ -1,22 +1,6 @@
 // if we don't do this, then the width and height of the grid would be ignored,
 // as there is no default display for the element ag-grid-a2 (as it's not a natural dom element)
-ag-grid-angular {
-    display: block;
-}
-
-ag-grid-ng2 {
-    display: block;
-}
-
-ag-grid {
-    display: block;
-}
-
-ag-grid-polymer {
-    display: block;
-}
-
-ag-grid-aurelia {
+ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     display: block;
 }
 
@@ -435,7 +419,7 @@ ag-grid-aurelia {
 }
 
 .ag-pinned-left-cols-container {
-    display: inline-block;
+    display: block;
     position: relative;
 }
 
@@ -452,7 +436,7 @@ ag-grid-aurelia {
 }
 
 .ag-pinned-right-cols-container {
-    display: inline-block;
+    display: block;
     position: relative;
 }
 
@@ -526,24 +510,20 @@ ag-grid-aurelia {
 
 .ag-floating-bottom-full-width-container {
     display: inline;
-    height: 100%;
     left: 0;
     overflow: hidden;
     pointer-events: none;
     position: absolute;
     top: 0;
-    width: 100%;
 }
 
 .ag-floating-top-full-width-container {
     display: inline;
-    height: 100%;
     left: 0;
     overflow: hidden;
     pointer-events: none;
     position: absolute;
     top: 0;
-    width: 100%;
 }
 
 .ag-full-width-row {
@@ -556,14 +536,10 @@ ag-grid-aurelia {
     margin-bottom: -2px;
     position: relative;
 
-    // for lay out normal, we use inline-block, however for layout-printing, we do NOT use
-    // inline-block. this is because inline-block does not work with page-break (to stop rows
-    // getting spread across printed pages).
-    &.ag-layout-auto-height {
-        display: inline-block;
-    }
-    &.ag-layout-normal {
-        display: inline-block;
+    // we do NOT use block with layout-print because it does not work with 
+    // page-break (to stop rows getting spread across printed pages).
+    &:not(.ag-layout-print) {
+        display: block;
     }
 }
 
@@ -860,9 +836,6 @@ ag-grid-aurelia {
     width: 110px;
 }
 
-.ag-paging-panel {
-}
-
 .ag-list-selection {
     cursor: default;
     user-select: none;
@@ -1101,10 +1074,10 @@ $row-group-indent-size: 10px !default;
 .ag-rtl .ag-tool-panel {
     .ag-side-buttons {
         button {
-                span {
-                  writing-mode: tb-rl;
-                  writing-mode: vertical-rl;
-                }
+            span {
+                writing-mode: tb-rl;
+                writing-mode: vertical-rl;
+            }
         }
     }
 }
