@@ -3,6 +3,7 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/packages/ag-grid-community/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular-cli-example/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular-cli-example/tmp" />
@@ -27,6 +28,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="tsconfig$roots" level="project" />
     <orderEntry type="library" name="tsconfig$roots" level="project" />
   </component>
   <component name="TemplatesService">
