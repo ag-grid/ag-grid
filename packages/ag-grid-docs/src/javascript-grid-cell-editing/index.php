@@ -13,8 +13,8 @@ include '../documentation-main/documentation_header.php';
         If your application is for showing data only, such as a reporting application, then you will not
         need to use cell editors. If you are editing your data like a spreadsheet, then you will
         need Cell Editors to do the editing.
-    </p>
-
+<br><br>
+<strong>Test ag-Grid's Cell Editing feature with Angular, React and Javascript.</strong></p>
     <p>
         You configure cell editors as part of the column definition and can be one of the following:
     </p>
