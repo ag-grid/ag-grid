@@ -205,8 +205,7 @@ export class GridPanel extends Component {
     private overlayWrapper: IOverlayWrapperComp;
 
     private lastVScrollElement: HTMLElement;
-    private lastVScrollTime: number;
-    private recentScrolls: {[key: number]: boolean} = {}
+    private recentScrolls: {[key: number]: number} = {}
 
     private printLayout: boolean;
 
@@ -1414,7 +1413,6 @@ export class GridPanel extends Component {
     private onAnyBodyScroll(source: HTMLElement): void {
 
         let now = new Date().getTime();
-        let diff = now - this.lastVScrollTime;
 
         // recentScrolls: when one scrollable area is scrolling (eg center) then the
         // other scroll areas are also scrolled (eg pinned left, pinned right, full width).
@@ -1424,16 +1422,12 @@ export class GridPanel extends Component {
         // interfering wih the scroll when there is a stream of events. this was most notable
         // on IE, but impacted all browsers to some extent.
 
-        let clearRecentScrolls = diff > 500;
-        if (clearRecentScrolls) { this.recentScrolls = {}; }
+        let lastTimeScrolledToHere = this.recentScrolls[source.scrollTop];
+        let scrolledToHereRecently = lastTimeScrolledToHere && ((now - lastTimeScrolledToHere)<250);
+        if (scrolledToHereRecently) { return; }
 
-        let skipBecauseAlreadyScrolledToHere = this.recentScrolls[source.scrollTop] === true;
-        if (skipBecauseAlreadyScrolledToHere) { return; }
-
-        this.recentScrolls[source.scrollTop] = true;
-
+        this.recentScrolls[source.scrollTop] = now;
         this.lastVScrollElement = source;
-        this.lastVScrollTime = now;
 
         let scrollTop: number = source.scrollTop;
 
