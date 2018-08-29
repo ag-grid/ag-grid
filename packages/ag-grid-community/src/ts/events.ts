@@ -102,6 +102,11 @@ export interface ViewportChangedEvent extends AgGridEvent {
     lastRow: number;
 }
 
+export interface FirstDataRendereredEvent extends AgGridEvent {
+    firstRow: number;
+    lastRow: number;
+}
+
 export interface RangeSelectionChangedEvent extends AgGridEvent {
     finished: boolean;
     started: boolean;

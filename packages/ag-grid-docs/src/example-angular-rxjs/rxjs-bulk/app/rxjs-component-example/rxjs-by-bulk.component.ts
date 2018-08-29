@@ -60,24 +60,24 @@ export class RxJsComponentByFullSet {
                 headerName: "Bid", field: "bid", width: 100,
                 cellClass: 'cell-number',
                 valueFormatter: this.numberFormatter,
-                cellRenderer:'agAnimateShowChangeCellRenderer'
+                cellRenderer: 'agAnimateShowChangeCellRenderer'
             },
             {
                 headerName: "Mid", field: "mid", width: 100,
                 cellClass: 'cell-number',
                 valueFormatter: this.numberFormatter,
-                cellRenderer:'agAnimateShowChangeCellRenderer'
+                cellRenderer: 'agAnimateShowChangeCellRenderer'
             },
             {
                 headerName: "Ask", field: "ask", width: 100,
                 cellClass: 'cell-number',
                 valueFormatter: this.numberFormatter,
-                cellRenderer:'agAnimateShowChangeCellRenderer'
+                cellRenderer: 'agAnimateShowChangeCellRenderer'
             },
             {
                 headerName: "Volume", field: "volume", width: 100,
                 cellClass: 'cell-number',
-                cellRenderer: 'animateSlide'
+                cellRenderer: 'agAnimateSlideCellRenderer'
             }
         ]
     }

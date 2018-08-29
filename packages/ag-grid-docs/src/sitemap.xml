@@ -259,12 +259,6 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/ag-grid-angular-ngtools-webpack/</loc>
-    <lastmod>2018-03-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
     <loc>https://www.ag-grid.com/index.php/</loc>
     <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>

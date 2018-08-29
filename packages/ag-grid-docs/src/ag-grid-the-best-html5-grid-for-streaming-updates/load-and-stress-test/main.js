@@ -62,9 +62,6 @@ var gridOptions = {
     getRowNodeId: function(data) { return data.trade; },
     defaultColDef: {
         width: 120
-    },
-    onGridReady: function(params) {
-        // gridOptions.api.sizeColumnsToFit();
     }
 };
 

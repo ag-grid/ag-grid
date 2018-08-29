@@ -26,6 +26,8 @@ export class EventService implements IEventEmitter {
     // events first, to give model and service objects preference over the view
     private static PRIORITY = '-P1';
 
+    private firedEvents: { [key: string]: boolean; } = {};
+
     // because this class is used both inside the context and outside the context, we do not
     // use autowired attributes, as that would be confusing, as sometimes the attributes
     // would be wired, and sometimes not.
@@ -97,6 +99,14 @@ export class EventService implements IEventEmitter {
         // console.log(`dispatching ${eventType}: ${event}`);
         this.dispatchToListeners(event, true);
         this.dispatchToListeners(event, false);
+
+        this.firedEvents[event.type] = true;
+    }
+
+    public dispatchEventOnce(event: AgEvent): void {
+        if(!this.firedEvents[event.type]) {
+            this.dispatchEvent(event);
+        }
     }
 
     private dispatchToListeners(event: AgEvent, async: boolean) {
