@@ -8,7 +8,7 @@ import { EventService } from "../eventService";
 import { RowComp } from "./rowComp";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
-import {FirstDataRendereredEvent, Events, ModelUpdatedEvent, ViewportChangedEvent} from "../events";
+import { FirstDataRenderedEvent, Events, ModelUpdatedEvent, ViewportChangedEvent} from "../events";
 import { Constants } from "../constants";
 import { CellComp } from "./cellComp";
 import { Autowired, Bean, Context, Optional, PreDestroy, Qualifier } from "../context/context";
@@ -845,8 +845,8 @@ export class RowRenderer extends BeanStub {
             this.eventService.dispatchEvent(event);
         }
 
-        if(this.paginationProxy.isRowsToRender()) {
-            let event: FirstDataRendereredEvent = {
+        if (this.paginationProxy.isRowsToRender()) {
+            let event: FirstDataRenderedEvent = {
                 type: Events.EVENT_FIRST_DATA_RENDERED,
                 firstRow: newFirst,
                 lastRow: newLast,

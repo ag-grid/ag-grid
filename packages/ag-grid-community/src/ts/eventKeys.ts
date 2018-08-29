@@ -101,7 +101,7 @@ export class Events {
     public static EVENT_GRID_SIZE_CHANGED = 'gridSizeChanged';
     /** The indexes of the rows rendered has changed, eg user has scrolled to a new vertical position. */
     public static EVENT_VIEWPORT_CHANGED = 'viewportChanged';
-    /** The indexes of the rows rendered for the first time (ie on async data load). */
+    /** Rows were rendered for the first time (ie on async data load). */
     public static EVENT_FIRST_DATA_RENDERED = 'firstDataRendered';
     /** A column drag has started, either resizing a column or moving a column. */
     public static EVENT_DRAG_STARTED = 'dragStarted';
