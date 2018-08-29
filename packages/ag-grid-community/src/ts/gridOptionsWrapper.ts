@@ -1326,10 +1326,19 @@ export class GridOptionsWrapper {
             console.warn(`ag-grid: since version 19.x, gridAutoHeight is gone, please use domLayout=autoHeight instead`);
             options.domLayout = 'autoHeight';
         }
-        if (options.showToolPanel) {
-            console.warn(`ag-grid: since version 19.x, showToolPanel is gone, please specify toolPanel components`);
+        if (options.showToolPanel === true) {
+            console.warn(`ag-grid: since version 19.x, showToolPanel is gone, please specify toolPanel components. See https://www.ag-grid.com/javascript-grid-tool-panel/`);
             options.showToolPanel = undefined;
             options.toolPanel = options.toolPanel || true;
+        }
+        if (options.showToolPanel === false) {
+            console.warn(`ag-grid: since version 19.x, showToolPanel is gone, please specify toolPanel components. See https://www.ag-grid.com/javascript-grid-tool-panel/`);
+            options.showToolPanel = undefined;
+            options.toolPanel = options.toolPanel || false;
+        }
+        if (options.toolPanel === undefined){
+            console.warn(`ag-grid: since version 19.x, you must specify explicitly if you want to show/hide the tool panel, please specify toolPanel components. See https://www.ag-grid.com/javascript-grid-tool-panel/`);
+            options.toolPanel = true;
         }
         if (options.toolPanel != null) {
             options.toolPanel = ToolPanelDefLikeParser.parse(options.toolPanel)
