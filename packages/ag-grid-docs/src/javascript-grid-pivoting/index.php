@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Pivot Tables: Enterprise Grade Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Pivoting. Make columns out of values by Pivoting on the data, similar to Pivot Tables in Excel. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "Pivoting: Make columns out of values by Pivoting on the data, similar to Pivot Tables in Excel. Pivoting allows you to take a columns values and turn them into columns. Enterprise feature of ag-Grid supporting Angular, React, Javascript and many more.";
 $pageKeyboards = "ag-Grid JavaScritp Grid Pivot";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
         at least one aggregation (value) active for the configuration to make sense. For example, if pivoting by country, you
         must provide something you are measuring such as 'gold medals per country'.
     </p>
-
+<strong>Test ag-Grid's Pivoting feature with Angular, React and Javascript.</strong></p>
     <h2>Pivot Mode</h2>
 
     <p>Pivot mode is required to be turned on for pivoting to work. When the grid is in pivot mode, the following
