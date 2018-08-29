@@ -37,7 +37,18 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     enableSorting: true,
-    toolPanel: true,
+    toolPanel: {
+        components: [
+            'columns',
+            {
+                key: 'filters',
+                buttonLabel: 'My Filters',
+                iconKey: 'checkboxChecked',
+                component: 'agFiltersToolPanel',
+            }
+        ],
+        defaultTab: 'filters'
+    },
     enableFilter: true
 };
 
