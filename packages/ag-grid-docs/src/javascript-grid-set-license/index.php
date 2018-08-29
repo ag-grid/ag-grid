@@ -61,7 +61,7 @@ enterprise.LicenseManager.setLicenseKey("your license key");
 import {platformBrowser} from "@angular/platform-browser";
 import {AppModuleNgFactory} from "../aot/app/app.module.ngfactory";
 
-import {LicenseManager} from "ag-grid-enterprise/main";
+import {LicenseManager} from "ag-grid-enterprise";
 LicenseManager.setLicenseKey("your license key");
 
 platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);
@@ -80,7 +80,7 @@ import {render} from "react-dom";
 import "ag-grid-root/dist/styles/ag-grid.css";
 import "ag-grid-root/dist/styles/ag-theme-balham.css";
 
-import {LicenseManager} from "ag-grid-enterprise/main";
+import {LicenseManager} from "ag-grid-enterprise";
 LicenseManager.setLicenseKey("your license key");
 
 import App from "./App";
@@ -105,8 +105,8 @@ import Vue from "vue";
 import "../node_modules/ag-grid/dist/styles/ag-grid.css";
 import "../node_modules/ag-grid/dist/styles/ag-theme-balham.css";
 
-import "ag-grid-enterprise/main";
-import {LicenseManager} from "ag-grid-enterprise/main";
+import "ag-grid-enterprise";
+import {LicenseManager} from "ag-grid-enterprise";
 
 LicenseManager.setLicenseKey("your license key");
 

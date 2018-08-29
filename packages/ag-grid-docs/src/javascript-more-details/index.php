@@ -29,7 +29,7 @@ include '../documentation-main/documentation_header.php';
             <td style="padding: 10px;"><img src="../images/npm.png" alt="NPM install ag-Grid" /></td>
             <td>
                 <b>NPM</b><br/>
-                <code>npm install ag-grid</code>
+                <code>npm install ag-grid-community</code>
             </td>
 
             <td style="width: 20px;">&nbsp;</td>
@@ -37,7 +37,7 @@ include '../documentation-main/documentation_header.php';
             <td style="padding: 10px;"><img src="../images/github.png" alt="Github install ag-Gridinstall ag-Grid" /></td>
             <td>
                 <b>Github</b><br/>
-                Download from <a href="https://github.com/ag-grid/ag-grid">Github</a>
+                Download from <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid">Github</a>
             </td>
 
             <td style="width: 20px;">&nbsp;</td>
@@ -45,7 +45,7 @@ include '../documentation-main/documentation_header.php';
             <td style="padding: 10px;"><img src="../images/bower.png" alt="Bower install ag-Grid" /></td>
             <td>
                 <b>Bower</b><br/>
-                <code>bower install ag-grid</code>
+                <code>bower install ag-grid-community</code>
             </td>
         </tr>
     </table>
@@ -84,7 +84,7 @@ include '../documentation-main/documentation_header.php';
 var AgGrid = require('ag-grid');
 
 // ECMA 6 - using the system import method
-import {Grid} from 'ag-grid';
+import {Grid} from 'ag-grid-community';
 </snippet>
 
     <h2>Download ag-Grid-Enterprise</h2>
@@ -164,7 +164,7 @@ var AgGrid = require('ag-grid');
 require('ag-grid-enterprise');
 
 // ECMA 6 - using the system import method
-import {Grid} from 'ag-grid';
+import {Grid} from 'ag-grid-community';
 // only include this line if you want to use ag-grid-enterprise
 import 'ag-grid-enterprise';
 </snippet>

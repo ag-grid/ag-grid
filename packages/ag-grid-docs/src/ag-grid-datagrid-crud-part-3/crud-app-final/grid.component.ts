@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ColDef, ColumnApi, GridApi} from 'ag-grid';
+import {ColDef, ColumnApi, GridApi} from 'ag-grid-community';
 import {AthleteService} from '../services/athlete.service';
 import {Athlete} from '../model/athlete.model';
 

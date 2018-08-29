@@ -22,9 +22,7 @@ import {ToolPanelFilterComp} from "./toolPanelFilterComp";
 export class ToolPanelAllFiltersComp extends Component {
 
     private static TEMPLATE =
-        `<div class="ag-column-panel">
-            <div class="ag-filter-panel" ref="ePanelContainer" />
-        </div>`;
+        `<div class="ag-filter-panel" ref="ePanelContainer" />`;
 
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired("context") private context: Context;
@@ -43,9 +41,6 @@ export class ToolPanelAllFiltersComp extends Component {
 
     private initialised = false;
 
-    @RefSelector('ePanelContainer')
-    private ePanelContainer: HTMLElement;
-
 
     constructor() {
         super(ToolPanelAllFiltersComp.TEMPLATE);
@@ -54,18 +49,18 @@ export class ToolPanelAllFiltersComp extends Component {
     public init(): void {
         this.instantiate(this.context);
         this.initialised = true;
+        this.eventService.addEventListener('newColumnsLoaded', ()=>this.onColumnsChanged());
         if (this.columnController.isReady()) {
-            this.eventService.addEventListener('newColumnsLoaded', ()=>this.onColumnsChanged());
             this.onColumnsChanged();
         }
     }
 
     public onColumnsChanged(): void {
-        this.ePanelContainer.innerHTML = '';
+        this.getGui().innerHTML = '';
         this.columnTree = this.columnController.getPrimaryColumnTree();
         let groupsExist = this.columnController.isPrimaryColumnGroupsPresent();
         this.recursivelyAddComps(this.columnTree, 0, groupsExist);
-        this.setTemplateFromElement(this.ePanelContainer.parentElement);
+        this.setTemplateFromElement(this.getGui());
     }
 
 
@@ -109,7 +104,7 @@ export class ToolPanelAllFiltersComp extends Component {
             column: column
         });
         this.context.wireBean(renderedFilter);
-        this.ePanelContainer.appendChild(renderedFilter.getGui());
+        this.getGui().appendChild(renderedFilter.getGui());
 
         // this.columnFilterComps[column.getId()] = renderedColumn;
     }

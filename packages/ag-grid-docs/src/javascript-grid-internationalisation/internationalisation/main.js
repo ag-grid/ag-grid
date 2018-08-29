@@ -27,7 +27,11 @@ var gridOptions = {
     showToolPanel: true,
     pagination:true,
     rowGroupPanelShow: 'always',
-    enableStatusBar: true,
+    statusPanel: {
+        components: [
+            { component: 'agAggregationComponent' }
+        ]
+    },
     paginationPageSize: 500,
     enableRangeSelection: true,
     localeText: {
@@ -141,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
     var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json');
+    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/olympicWinnersSmall.json');
     httpRequest.send();
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {

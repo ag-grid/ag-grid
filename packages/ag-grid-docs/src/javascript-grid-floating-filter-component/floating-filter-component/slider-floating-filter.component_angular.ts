@@ -1,6 +1,6 @@
 import {AfterViewInit, Component} from "@angular/core";
 
-import {IFloatingFilter, IFloatingFilterParams, SerializedNumberFilter} from "ag-grid";
+import {IFloatingFilter, IFloatingFilterParams, SerializedNumberFilter} from "ag-grid-community";
 import {AgFrameworkComponent} from "ag-grid-angular";
 
 export interface SliderFloatingFilterChange {

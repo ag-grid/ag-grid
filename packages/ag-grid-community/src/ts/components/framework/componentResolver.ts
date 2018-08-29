@@ -7,8 +7,11 @@ import {ColDef, ColGroupDef} from "../../entities/colDef";
 import {_, Promise} from "../../utils";
 
 import {
-    AgGridComponentFunctionInput, AgGridRegisteredComponentInput, ComponentProvider,
-    RegisteredComponent, RegisteredComponentSource
+    AgGridComponentFunctionInput,
+    AgGridRegisteredComponentInput,
+    ComponentProvider,
+    RegisteredComponent,
+    RegisteredComponentSource
 } from "./componentProvider";
 import {AgComponentUtils} from "./agComponentUtils";
 import {ComponentMetadata, ComponentMetadataProvider} from "./componentMetadataProvider";
@@ -18,8 +21,9 @@ import {RowNode} from "../../entities/rowNode";
 import {Column} from "../../entities/column";
 import {GridApi} from "../../gridApi";
 import {ColumnApi} from "../../columnController/columnApi";
+import {ToolPanelComponentDef} from "../../entities/toolPanel";
 
-export type ComponentHolder = GridOptions | ColDef | ColGroupDef | ISetFilterParams | IRichCellEditorParams;
+export type ComponentHolder = GridOptions | ColDef | ColGroupDef | ISetFilterParams | IRichCellEditorParams | ToolPanelComponentDef;
 
 export type AgComponentPropertyInput<A extends IComponent<any>> = AgGridRegisteredComponentInput<A> | string;
 
@@ -366,9 +370,9 @@ export class ComponentResolver {
      *  @param customInitParamsCb: A chance to customise the params passed to the init method. It receives what the current
      *  params are and the component that init is about to get called for
      */
-    public createInternalAgGridComponent<A extends IComponent<any>> (
+    public createInternalAgGridComponent<P, A extends IComponent<P>> (
         clazz:{new(): A},
-        agGridParams:any,
+        agGridParams:P,
         customInitParamsCb?:(params:any, component:A)=>any
     ): A{
         let internalComponent:A = <A>new clazz();
@@ -423,6 +427,8 @@ export class ComponentResolver {
         customInitParamsCb?:(params:any, component:A)=>any
     ):Promise<void> | void{
         this.context.wireBean(component);
+        if (component.init == null) return;
+
         if (customInitParamsCb == null){
             return component.init(agGridParams);
         } else {

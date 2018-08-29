@@ -1,5 +1,5 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {ColDef, ColumnApi, GridApi} from 'ag-grid';
+import {ColDef, ColumnApi, GridApi} from 'ag-grid-community';
 import {StaticDataService} from '../services/static-data.service';
 import {Result} from '../model/result.model';
 import {Sport} from '../model/sport.model';

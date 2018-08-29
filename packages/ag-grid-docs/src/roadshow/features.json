@@ -592,14 +592,14 @@
         "url": "javascript-grid-context-menu/"
     },
     {
-        "title": "Status Bar",
+        "title": "Status Panel",
         "enterprise": true,
         "description":
             "The <span class=\"feature-highlight\">Status Panel</span> appears on the bottom of the grid and shows \naggregations (sum, min, max etc.) when you select a range of cells using range selection. This is similar to what\nhappens in Excel.",
         "src": "javascript-grid-features/images/statusBar.gif",
         "snippet": null,
         "level": 0,
-        "url": "javascript-grid-status-bar/"
+        "url": "javascript-grid-status-panel/"
     },
     {
         "title": "License Key",

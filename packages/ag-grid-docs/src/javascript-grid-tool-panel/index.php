@@ -9,10 +9,14 @@ include '../documentation-main/documentation_header.php';
     <h1 class="heading-enterprise">Tool Panel</h1>
 
     <p class="lead">
-        The tool panel is a side panel that provides functions for managing columns inside the grid.
+        The tool panel is a side panel that provides functions for managing different areas of the grid. Out of the box
+        the grid provides with two side panels to manage the columns and the filters, but this can be customised with your
+        own components
     </p>
 
-    <h2>Showing the Tool Panel</h2>
+    <h2>Simple Example - Columns and Filters</h2>
+
+    <?= example('Tool Panel Simple', 'simple', 'generated', array("enterprise" => 1)) ?>
 
     <p>
         The tool panel can be shown in the following ways:
@@ -67,7 +71,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= example('Tool Panel Simple', 'simple', 'generated', array("enterprise" => 1)) ?>
+
 
     <note>
         Remember to mark the column definitions with <code>enableRowGroup</code> for grouping, <code>enablePivot</code>

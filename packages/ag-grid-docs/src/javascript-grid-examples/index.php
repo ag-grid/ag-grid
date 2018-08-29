@@ -9,14 +9,13 @@ include '../documentation-main/documentation_header.php';
 
 
 
-    <h1> Examples</h1>
+    <h1>Examples</h1>
 
     <p class="lead">In this section we show 
             complex examples combining different features of the grid 
             or using frameworks where the implementation is significantly different to
             the plain JavaScript version. For example how to build use Redux with React, or RxJS with Angular.
-
-</p>
+    </p>
 
 <p>
     If you are looking for a particular feature, please refer to the features section for details

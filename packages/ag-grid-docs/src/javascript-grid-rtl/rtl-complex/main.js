@@ -91,7 +91,11 @@ var gridOptions = {
     enableColResize: true, //one of [true, false]
     enableSorting: true, //one of [true, false]
     enableFilter: true, //one of [true, false]
-    enableStatusBar: true,
+    statusPanel: {
+        components: [
+            { component: 'agAggregationComponent' }
+        ]
+    },
     enableRangeSelection: true,
     rowSelection: "multiple", // one of ['single','multiple'], leave blank for no selection
     rowDeselection: true,
@@ -742,7 +746,7 @@ function ratingRendererGeneral(value, forFilter) {
     var result = '<span>';
     for (var i = 0; i < 5; i++) {
         if (value > i) {
-            result += '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/goldStar.png"/>';
+            result += '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/goldStar.png"/>';
         }
     }
     if (forFilter && value === 0) {

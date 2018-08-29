@@ -152,7 +152,11 @@ function reverseItems() {
 
 var gridOptions = {
     deltaRowDataMode: true,
-    enableStatusBar: true,
+    statusPanel: {
+        components: [
+            { component: 'agAggregationComponent' }
+        ]
+    },
     columnDefs: columnDefs,
     animateRows: true,
     enableColResize: true,

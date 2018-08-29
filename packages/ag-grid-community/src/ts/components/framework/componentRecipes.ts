@@ -168,7 +168,7 @@ export class ComponentRecipes {
                 let parentPromise:Promise<IFilterComp> = this.filterManager.getFilterComponent(column, 'NO_UI');
                 return <any>parentPromise.resolveNow(null, parent=>parent.getModelAsString ? parent.getModelAsString(rawModelFn()) : null);
             };
-            floatingFilterWrapperComponentParams.floatingFilterComp = Promise.resolve(this.componentResolver.createInternalAgGridComponent<IFloatingFilterComp<M, any, any>>(
+            floatingFilterWrapperComponentParams.floatingFilterComp = Promise.resolve(this.componentResolver.createInternalAgGridComponent<any, IFloatingFilterComp<M, any, any>>(
                 ReadModelAsStringFloatingFilterComp,
                 params
 
@@ -176,7 +176,7 @@ export class ComponentRecipes {
         }
 
 
-        return this.componentResolver.createInternalAgGridComponent<IFloatingFilterWrapperComp<any, any, any, any>> (
+        return this.componentResolver.createInternalAgGridComponent<any, IFloatingFilterWrapperComp<any, any, any, any>> (
             FloatingFilterWrapperComp,
             floatingFilterWrapperComponentParams
         );

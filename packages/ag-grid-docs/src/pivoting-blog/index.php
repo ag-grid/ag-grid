@@ -138,9 +138,9 @@ To find out more about pivoting, read the <a href="../javascript-grid-pivoting/"
 If you are in a mood for writing code you can download ag-Grid and build your own grid with pivoting.</p>
 
 <ul class="content">
-<li><strong>npm install ag-grid</strong></li>
+<li><strong>npm install ag-grid-community</strong></li>
 
-<li><strong>bower install ag-grid</strong></li>
+<li><strong>bower install ag-grid-community</strong></li>
 </ul>
 
     <div style="background-color: #eee; padding: 10px; display: inline-block;">

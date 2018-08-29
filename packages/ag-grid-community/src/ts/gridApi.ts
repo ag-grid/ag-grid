@@ -51,6 +51,8 @@ import {ICellEditorComp} from "./rendering/cellEditors/iCellEditor";
 import {HeaderRootComp} from "./headerRendering/headerRootComp";
 import {AnimationFrameService} from "./misc/animationFrameService";
 import {IServerSideRowModel} from "./interfaces/iServerSideRowModel";
+import {IStatusPanelService} from "./interfaces/iStatusPanelService";
+import {IStatus} from "./interfaces/iStatus";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -116,7 +118,7 @@ export class GridApi {
     @Autowired('valueCache') private valueCache: ValueCache;
     @Optional('toolPanelComp') private toolPanelComp: IToolPanel; // this can be removed
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Optional('statusBarService') private statusBarService: any;
+    @Optional('statusPanelService') private statusPanelService: IStatusPanelService;
 
     private gridPanel: GridPanel;
     private headerRootComp: HeaderRootComp;
@@ -687,9 +689,9 @@ export class GridApi {
         }
     }
 
-    public getStatusBarComponent(key: string) {
-        if (this.statusBarService) {
-            return this.statusBarService.getStatusBarComponent(key);
+    public getStatusPanelComponent(key: string) : IStatus {
+        if (this.statusPanelService) {
+            return this.statusPanelService.getStatusPanelComponent(key);
         }
     }
 
@@ -781,7 +783,7 @@ export class GridApi {
         this.doLayout();
     }
 
-    public showToolPanel(show:any) {
+    public showToolPanel(show:boolean | string) {
         this.gridCore.showToolPanel(show);
     }
 

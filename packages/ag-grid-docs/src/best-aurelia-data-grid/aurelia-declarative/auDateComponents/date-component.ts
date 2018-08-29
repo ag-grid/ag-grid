@@ -1,5 +1,5 @@
 import {customElement, inject} from "aurelia-framework";
-import {IDateParams} from "ag-grid";
+import {IDateParams} from "ag-grid-community";
 
 @customElement('ag-date-component')
 @inject(Element)

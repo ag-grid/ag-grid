@@ -1,4 +1,13 @@
-import {_, Autowired, Component, EventService, GridOptionsWrapper, GridPanel, PostConstruct} from "ag-grid-community";
+import {
+    _,
+    Autowired,
+    Component,
+    EventService,
+    GridOptionsWrapper,
+    GridPanel,
+    PostConstruct,
+    ToolPanelComponentDef
+} from "ag-grid-community";
 
 export class ToolPanelSelectComp extends Component {
 
@@ -23,10 +32,13 @@ export class ToolPanelSelectComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        this.createButtonsHtml ({
-            columns: 'Columns',
-            filters: 'Filters',
+        let buttons:{[p:string]: string} = {};
+        let componentDefs: ToolPanelComponentDef[] = _.get(this.gridOptionsWrapper.getToolPanel(), 'components', []);
+        componentDefs.forEach((componentDef:ToolPanelComponentDef)=>{
+            buttons[componentDef.key] = componentDef.buttonLabel;
         });
+
+        this.createButtonsHtml (buttons);
 
         let showButtons = !this.gridOptionsWrapper.isToolPanelSuppressSideButtons();
         this.setVisible(showButtons);
@@ -39,7 +51,7 @@ export class ToolPanelSelectComp extends Component {
         let keys = Object.keys(componentButtons);
         keys.forEach(key=>{
             let value: string = componentButtons[key];
-            html += `<div class="ag-side-button""><button type="button" ref="toggle-button-${key}">${translate(key, value)}</button></div>`
+            html += `<div class="ag-side-button""><button type="button" ref="toggle-button-${key}"><span>${translate(key, value)}</span></button></div>`
         });
 
         this.getGui().innerHTML = html;
@@ -48,7 +60,11 @@ export class ToolPanelSelectComp extends Component {
             this.addButtonEvents(key);
         });
 
-        _.addOrRemoveCssClass(this.getRefElement(`toggle-button-columns`).parentElement, 'ag-selected', true);
+        let defaultButtonKey : string = _.get(this.gridOptionsWrapper.getToolPanel(), 'defaultTab', null);
+        let defaultButtonElement: HTMLElement = this.getRefElement(`toggle-button-${defaultButtonKey}`);
+        if (defaultButtonElement) {
+           _.addOrRemoveCssClass(defaultButtonElement.parentElement, 'ag-selected', true);
+        }
     }
 
     private addButtonEvents(boundKey: string) {

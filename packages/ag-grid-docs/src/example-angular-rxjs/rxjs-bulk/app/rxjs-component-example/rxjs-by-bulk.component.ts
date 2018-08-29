@@ -1,6 +1,6 @@
 import {Component} from "@angular/core";
 
-import {GridOptions} from "ag-grid";
+import {GridOptions} from "ag-grid-community";
 import {MockServerService} from "./mockServer.service";
 
 @Component({

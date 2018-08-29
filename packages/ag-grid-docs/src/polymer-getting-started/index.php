@@ -23,6 +23,8 @@ include '../getting-started/header.php';
         <li>npm: Please see <a href="https://www.npmjs.com/get-npm">npm</a> for installation options</li>
     </ul>
 
+    <note>ag-Grid Version 18.x (and earlier) supports Polymer 2.x.<br/><br/> A future release of ag-Grid will support Polymer 3.</note>
+
     <h2>Scaffolding</h2>
 
     <p>To get started as quickly as possible we provide a <code>"Seed"</code> repo on Git that you can use. Let's clone

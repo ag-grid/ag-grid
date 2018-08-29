@@ -758,10 +758,10 @@
         content: " ";
     }
 
-    .ag-column-panel {
+    .ag-tool-panel-item-wrapper {
         border-right: 0;
 
-        .ag-filter-panel{
+        .ag-filter-panel {
             width: 100%;
 
             .ag-filter-toolpanel-instance {
@@ -775,20 +775,19 @@
                 //border-bottom: 1px solid $border-color;
                 //padding: 7px;
 
-
                 .ag-filter-toolpanel-header {
                     padding: 5px 0 5px 5px;
                 }
-
-
             }
             .ag-filter-body-wrapper {
                 padding-top: 5px;
             }
 
-            .ag-filter-air{
-                border: 1px solid lightgray;
-                //padding: 5px 0 5px 0;
+            .ag-filter-air {
+                border: 1px solid $border-color;
+                border-left: 0;
+                border-right: 0;
+                padding: $grid-size 0;
                 //margin: 0 5px 0 5px;
             }
         }
@@ -899,8 +898,18 @@
     }
 
     @if map-get($params, "use-icons-for-pager-buttons") {
-        $buttonIcons: (btFirst: first, btPrevious: previous, btLast: last, btNext: next);
-        $rtlButtonIcons: (btFirst: last, btPrevious: next, btLast: first, btNext: previous);
+        $buttonIcons: (
+            btFirst: first,
+            btPrevious: previous,
+            btLast: last,
+            btNext: next
+        );
+        $rtlButtonIcons: (
+            btFirst: last,
+            btPrevious: next,
+            btLast: first,
+            btNext: previous
+        );
 
         @each $ref, $icon in $buttonIcons {
             button[ref="#{$ref}"] {
@@ -1308,7 +1317,7 @@
             }
         }
 
-        .ag-column-panel {
+        .ag-tool-panel-item-wrapper {
             .ag-pivot-mode {
                 span {
                     float: right;
@@ -1450,7 +1459,7 @@
         }
     }
 
-    .ag-status-bar {
+    .ag-status-panel {
         background: $background-color;
         border: 1px solid $border-color;
         border-top: 0;
@@ -1461,7 +1470,7 @@
         padding-right: $grid-size * 4;
         padding-left: $grid-size * 4;
 
-        .ag-status-bar-item {
+        .ag-status-panel-item {
             margin-left: $grid-size;
             margin-right: $grid-size;
             display: inline-block;
@@ -1476,41 +1485,41 @@
         }
     }
 
-    .ag-status-left-bar-comps {
-      display: inline-flex;
+    .ag-status-left-panel-comps {
+        display: inline-flex;
     }
 
-    .ag-status-center-bar-comps {
+    .ag-status-center-panel-comps {
         text-align: center;
         display: inline-flex;
     }
 
-    .ag-status-right-bar-comps {
+    .ag-status-right-panel-comps {
         text-align: right;
         display: inline-flex;
     }
 
-    .ag-status-bar-comp {
+    .ag-status-panel-comp {
         padding-top: $grid-size * 2;
         padding-bottom: $grid-size * 2;
     }
 
-    .ag-status-bar-aggregations {
+    .ag-status-panel-aggregations {
     }
 
-    .ag-status-bar-total-row-count {
+    .ag-status-panel-total-row-count {
     }
 
-    .ag-status-bar-filtered-row-count {
+    .ag-status-panel-filtered-row-count {
     }
 
-    .ag-status-bar-selected-row-count {
+    .ag-status-panel-selected-row-count {
     }
 
-    .ag-blank-status-bar-component {
+    .ag-blank-status-panel-component {
     }
 
-    .ag-status-bar-total-and-filtered-row-count{
+    .ag-status-panel-total-and-filtered-row-count {
     }
 
     .ag-details-row {
@@ -1530,29 +1539,57 @@
         background-color: $tool-panel-background-color;
         border-right: 1px solid $border-color;
         border-top: 1px solid $border-color;
+        position: relative;
 
         .ag-side-buttons {
-            padding-top: 15px;
-            background-color: white;
-            .ag-side-button {
-                padding-top: 5px;
+            padding-top: $grid-size * 4;
+            background: $background-color;
+            border-bottom: 1px solid $border-color;
+            position: relative;
 
+            .ag-side-button {
                 button {
                     background: transparent;
                     border: 0;
                     color: $foreground-color;
-                    height: 20px;
-                    padding: 0;
+                    padding: $grid-size * 5 0 $grid-size * 4 0;
+                    width: 100%;
                     margin: 0;
+                    min-height: $grid-size * 18;
+                    border-width: 1px 0 1px 0;
+                    border-style: solid;
+                    border-color: transparent;
+                    background-position-y: $grid-size;
+                    background-position-x: center;
+                    background-repeat: no-repeat;
+
                 }
             }
 
             .ag-selected {
+              button {
                 background-color: $tool-panel-background-color;
                 margin-left: -1px;
-                border-top: 1px solid #BDC3C7;
-                border-right: 1px solid #BDC3C7;
-                border-bottom: 1px solid #BDC3C7;
+                padding-left: 1px;
+                width: calc(100% + 1px);
+                border-color: $border-color;
+              }
+            }
+
+            .ag-side-button:first-child button {
+                @include colorful-icon($icons-path, "filter", map-get($params, "icon-color"), map-get($params, "alt-icon-color"));
+              }
+
+            .ag-side-button.ag-selected:first-child button {
+              @include colorful-icon($icons-path, "filter", $primary-color, map-get($params, "alt-icon-color"));
+            }
+
+            .ag-side-button:nth-child(2) button {
+                @include colorful-icon($icons-path, "columns", map-get($params, "icon-color"), map-get($params, "alt-icon-color"));
+              }
+
+            .ag-side-button.ag-selected:nth-child(2) button {
+              @include colorful-icon($icons-path, "columns", $primary-color, map-get($params, "alt-icon-color"));
             }
         }
 
@@ -1578,11 +1615,6 @@
 
         &.full-width .ag-panel-container {
             border-left: 0;
-        }
-
-        .ag-side-buttons button {
-            border-left: 1px solid $border-color;
-            border-right: 0;
         }
     }
 

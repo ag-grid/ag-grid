@@ -39,7 +39,7 @@ export class GridCore extends Component {
                 <ag-grid-comp ref="gridPanel"></ag-grid-comp>
                 <ag-tool-panel ref="toolPanel"></ag-tool-panel>
             </div>
-            <ag-status-bar ref="statusBar"></ag-status-bar>
+            <ag-status-panel ref="statusPanel"></ag-status-panel>
             <ag-pagination></ag-pagination>
         </div>`;
 
@@ -156,7 +156,7 @@ export class GridCore extends Component {
         return this.getGui();
     }
 
-    public showToolPanel(show: any) {
+    public showToolPanel(show:boolean | string) {
         if (!this.toolPanelComp) {
             if (show) {
                 console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
