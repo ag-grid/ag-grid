@@ -249,6 +249,10 @@ include '../documentation-main/documentation_header.php';
             <td>Displayed rows have changed. Happens following sort, filter or tree expand / collapse events.</td>
         </tr>
         <tr>
+            <th>firstDataRendered</th>
+            <td>Fired the first time data is rendered into the grid.</td>
+        </tr>
+        <tr>
             <th>rowGroupOpened</th>
             <td>A row group was opened or closed.</td>
         </tr>
@@ -364,6 +368,10 @@ CellValueChangedEvent {
         │       <span class="event-attribute">forceBrowserFocus</span>: boolean // whether browser focus is also set (false when editing)
         │     }</span>
         ├── ViewportChangedEvent <span class="event-properties">{
+        │       <span class="event-attribute">firstRow</span>: number, // the index of the first rendered row
+        │       <span class="event-attribute">lastRow</span>: number // the index of the last rendered row
+        │     }</span>
+        ├── FirstDataRendereredEvent <span class="event-properties">{
         │       <span class="event-attribute">firstRow</span>: number, // the index of the first rendered row
         │       <span class="event-attribute">lastRow</span>: number // the index of the last rendered row
         │     }</span>

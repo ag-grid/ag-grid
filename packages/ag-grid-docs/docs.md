@@ -12,7 +12,6 @@
  - [ ] ag-grid-angular-angularcli/
  - [ ] ag-grid-angular-webpack/
  - [ ] ag-grid-angular-webpack-2/
- - [ ] ag-grid-angular-ngtools-webpack/
  - [ ] ag-grid-angular-systemjs/
  - [ ] best-polymer-data-grid/
  - [ ] polymer-getting-started/

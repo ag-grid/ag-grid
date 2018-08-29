@@ -8,10 +8,10 @@ import { EventService } from "../eventService";
 import { RowComp } from "./rowComp";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
-import { Events, ModelUpdatedEvent, ViewportChangedEvent } from "../events";
+import {FirstDataRendereredEvent, Events, ModelUpdatedEvent, ViewportChangedEvent} from "../events";
 import { Constants } from "../constants";
 import { CellComp } from "./cellComp";
-import { Autowired, Bean, Context, Optional, PostConstruct, PreDestroy, Qualifier } from "../context/context";
+import { Autowired, Bean, Context, Optional, PreDestroy, Qualifier } from "../context/context";
 import { GridCore } from "../gridCore";
 import { ColumnApi } from "../columnController/columnApi";
 import { ColumnController } from "../columnController/columnController";
@@ -29,7 +29,6 @@ import { PinnedRowModel } from "../rowModels/pinnedRowModel";
 import { Beans } from "./beans";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { HeightScaler } from "./heightScaler";
-import {Grid} from "../grid";
 import {ICellRendererComp} from "./cellRenderers/iCellRenderer";
 import {ICellEditorComp} from "./cellEditors/iCellEditor";
 
@@ -844,6 +843,18 @@ export class RowRenderer extends BeanStub {
             };
 
             this.eventService.dispatchEvent(event);
+        }
+
+        if(this.paginationProxy.isRowsToRender()) {
+            let event: FirstDataRendereredEvent = {
+                type: Events.EVENT_FIRST_DATA_RENDERED,
+                firstRow: newFirst,
+                lastRow: newLast,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+
+            this.eventService.dispatchEventOnce(event);
         }
     }
 

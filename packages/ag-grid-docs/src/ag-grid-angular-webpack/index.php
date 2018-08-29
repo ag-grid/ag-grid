@@ -96,7 +96,6 @@ export class AppComponent {
     private columnDefs:any[];
 
     constructor() {
-        // we pass an empty gridOptions in, so we can grab the api out
         this.gridOptions = &lt;GridOptions&gt;{
             onGridReady: () =&gt; {
                 this.gridOptions.api.sizeColumnsToFit();

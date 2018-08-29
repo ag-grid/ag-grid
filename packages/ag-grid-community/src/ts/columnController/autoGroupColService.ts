@@ -83,11 +83,20 @@ export class AutoGroupColService {
     }
 
     private generateDefaultColDef(rowGroupCol?: Column): ColDef {
+        let userAutoColDef: ColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
         let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+
         let defaultAutoColDef: ColDef = {
-            headerName: localeTextFunc('group', 'Group'),
-            cellRenderer: 'agGroupCellRenderer'
+            headerName: localeTextFunc('group', 'Group')
         };
+
+        let userHasProvidedGroupCellRenderer =
+            userAutoColDef && (userAutoColDef.cellRenderer || userAutoColDef.cellRendererFramework);
+
+        // only add the default group cell renderer if user hasn't provided one
+        if (!userHasProvidedGroupCellRenderer) {
+            defaultAutoColDef.cellRenderer = 'agGroupCellRenderer'
+        }
 
         // we never allow moving the group column
         // defaultAutoColDef.suppressMovable = true;
