@@ -38,7 +38,7 @@ ag-Grid is a feature rich data grid <strong>built for Angular</strong>.
                 <p>
                     Free and Open Source Angular data grid.
                 </p>
-                <a href="https://github.com/ag-grid/ag-grid-angular" target="_blank"><button type="button" class="btn btn-outline-primary btn-lg">Community Edition</button></a>
+                <a href="https://www.ag-grid.com/angular-getting-started/" target="_blank"><button type="button" class="btn btn-outline-primary btn-lg">Community Edition</button></a>
             </div>
 
             <div class="col-md-6">
@@ -96,7 +96,7 @@ ag-Grid is a feature rich data grid <strong>built for Angular</strong>.
 
                         <h2 class="text-center" style="margin-bottom: -10px"><strong>Core</strong></h2><hr style="width: 80px">
                    <br>
-                   <p class="text-center" style="margin-top: -30px;">Everything you'd expect from a Angular data grid.
+                   <p class="text-center" style="margin-top: -30px;"><strong>Everything you'd expect from a Angular data grid.</strong>
                     <br>Available in ag-Grid Community.
 <br>
     <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-angular" target="_blank">Github</a> | <a href="https://www.npmjs.com/package/ag-grid" target="_blank">NPM</a>
@@ -126,7 +126,7 @@ ag-Grid is a feature rich data grid <strong>built for Angular</strong>.
 <br>
                                                         <h2 class="text-center"><strong>Enterprise</strong><hr style="width: 80px;margin-top: 10px;"></h2>
                    <br>
-                   <p class="text-center" style="margin-top: -30px">A more powerful set of advanced features designed for Enterprise Applications.
+                   <p class="text-center" style="margin-top: -30px"><strong>A more powerful set of advanced features designed for Enterprise Applications.</strong>
 <br>
                    Availalbe in ag-Grid Enterprise.
                    <br>
@@ -221,7 +221,7 @@ ag-Grid is a feature rich data grid <strong>built for Angular</strong>.
 <br>
 <div>
   <a href="../angular-more-details/" class="btn btn-light" target="_blank">View our Angular Grid Overview</a><br>
-  <a href="../example-angular-rxjs/" class="btn btn-light" target="_blank">Angular Component using RXjs example</a>
+  <a href="../example-angular-rxjs/" class="btn btn-light" target="_blank">Angular Grid Component using RXjs example</a>
 </div>
     </div>
   </div>

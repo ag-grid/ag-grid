@@ -15,6 +15,7 @@ include '../documentation-main/documentation_header.php';
         The following simple example shows this, the only difference to this and previous
         examples is the <code>pagination=true</code> property.
     </p>
+            <p><strong>Test ag-Grid's Pagination feature with Angular, React and Javascript.</strong></p>
 
     <?= example('Client Paging', 'client-paging', 'generated', array("enterprise" => 1)) ?>
 

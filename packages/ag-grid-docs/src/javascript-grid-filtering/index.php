@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Column Filter: Core Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Column Filter. Column Filters appear in the column menu. The grid comes with filters out of the box: text, number, date and set filters. You can also create your own customer filter. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "Filtering: appears in the column menu. The grid comes with filters out of the box: text, number, date and set filters. You can also create your own custom filter. Core feature of ag-Grid supporting Angular, React, Javascript and many more.";
 $pageKeyboards = "ag-Grid Filtering";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -125,7 +125,7 @@ columnDefinition = {
             applying a different color background to this style.</li>
         <li>'suppressFilter' is set on Total to hide the filter on this column</li>
     </ul>
-
+<p><strong>Test ag-Grid's Filtering feature with Angular, React and Javascript</strong></p>
     <?= example('Built-In Filters', 'built-in-filters', 'generated') ?>
 
     <h2>Apply Function</h2>

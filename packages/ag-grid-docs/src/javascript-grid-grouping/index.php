@@ -9,7 +9,8 @@ include '../documentation-main/documentation_header.php';
 
     <p class="lead">
         This page shows how to group your rows. It starts off with Auto Column Groups, the simplest way to configure row
-        groups and then builds up into more advanced topics for row grouping.
+        groups and then builds up into more advanced topics for row grouping.<br>
+<strong>Test ag-Grid's Grouping feature with Angular, React and Javascript.</strong>
     </p>
 
     <h2 id="specifying-group-columns">Specifying Group Columns</h2>
