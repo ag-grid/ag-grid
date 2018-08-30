@@ -21,10 +21,10 @@ export interface IHeaderParams {
     showColumnMenu: (source:HTMLElement)=>void;
     progressSort: (multiSort?: boolean)=>void;
     setSort: (sort: string, multiSort?: boolean)=>void;
-    columnApi: ColumnApi,
-    api: GridApi,
-    context: any,
-    template: string
+    columnApi: ColumnApi;
+    api: GridApi;
+    context: any;
+    template: string;
 }
 
 export interface IHeader {
@@ -110,7 +110,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     private setupTap(): void {
         if (this.gridOptionsWrapper.isSuppressTouch()) { return; }
 
-        let touchListener = new TouchListener(this.getGui());
+        let touchListener = new TouchListener(this.getGui(), true);
 
         if (this.params.enableMenu) {
             let longTapListener = (event: LongTapEvent)=> {
@@ -127,7 +127,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, tapListener);
         }
 
-        this.addDestroyFunc( ()=> touchListener.destroy() );
+        this.addDestroyFunc(()=> touchListener.destroy());
     }
 
     private setupMenu(): void {

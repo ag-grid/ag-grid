@@ -132,11 +132,11 @@ export class TouchListener implements IEventEmitter {
             };
             this.eventService.dispatchEvent(event);
             this.checkForDoubleTap();
+        }
 
-            // stops the tap from also been processed as a mouse click
-            if (this.preventMouseClick) {
-                touchEvent.preventDefault();
-            }
+        // stops the tap from also been processed as a mouse click
+        if (this.preventMouseClick) {
+            touchEvent.preventDefault();
         }
 
         this.touching = false;
