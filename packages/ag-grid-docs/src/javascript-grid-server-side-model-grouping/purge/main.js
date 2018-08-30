@@ -57,7 +57,7 @@ var gridOptions = {
         // data item, and this method could simply be "return data.childCount"
         return Math.round((Math.random() * 100) + 1);
     },
-    onGridReady: function(params) {
+    onFirstDataRendered(params) {
         params.api.sizeColumnsToFit();
     },
     icons: {

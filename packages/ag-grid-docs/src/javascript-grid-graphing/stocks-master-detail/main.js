@@ -16,7 +16,7 @@ let gridOptions = {
     enableSorting: true,
     enableColResize: true,
     rowSelection: 'multiple',
-    onGridReady: function (params) {
+    onFirstDataRendered(params) {
         params.api.sizeColumnsToFit();
     },
     onSelectionChanged: function (params) {

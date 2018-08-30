@@ -19,6 +19,8 @@ var gridOptions = {
         params.api.forEachNode(function (node) {
             node.setExpanded(node.id === "1");
         });
+    },
+    onFirstDataRendered(params) {
         params.api.sizeColumnsToFit();
     }
 };

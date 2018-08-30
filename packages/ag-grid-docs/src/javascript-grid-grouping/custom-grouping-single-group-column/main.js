@@ -21,7 +21,7 @@ var gridOptions = {
     // we are defining the group columns, so tell the grid we don't
     // want it to auto-generate group columns for us
     groupSuppressAutoColumn: true,
-    onGridReady: function(params) {
+    onFirstDataRendered(params) {
         params.api.sizeColumnsToFit();
     }
 };

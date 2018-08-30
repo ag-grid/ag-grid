@@ -238,8 +238,10 @@ class SimpleGridExample extends Component {
     onGridReady(params) {
         this.gridApi = params.api;
         this.columnApi = params.columnApi;
+    }
 
-        this.gridApi.sizeColumnsToFit();
+    onFirstDataRendered(params) {
+       params.api.sizeColumnsToFit();
     }
 
     createColumnDefs() {
@@ -264,7 +266,8 @@ class SimpleGridExample extends Component {
                     rowData={this.props.rowData}
 
                     // events
-                    onGridReady={this.onGridReady}&gt;
+                    onGridReady={this.onGridReady}
+                    onFirstDataRendered={this.onFirstDataRendered}&gt;
                 &lt;/AgGridReact&gt;
             &lt;/div&gt;
         )

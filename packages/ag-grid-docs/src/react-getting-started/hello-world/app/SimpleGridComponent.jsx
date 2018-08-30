@@ -17,8 +17,10 @@ export default class extends Component {
     onGridReady(params) {
         this.gridApi = params.api;
         this.columnApi = params.columnApi;
+    }
 
-        this.gridApi.sizeColumnsToFit();
+    onFirstDataRendered(params) {
+        params.api.sizeColumnsToFit();
     }
 
     render() {
@@ -36,11 +38,13 @@ export default class extends Component {
 
                         // events
                         onGridReady={this.onGridReady}>
+                        onFirstDataRendered={this.onFirstDataRendered}>
+
 
                         {/*column definitions */}
-                        <AgGridColumn field="make"></AgGridColumn>
-                        <AgGridColumn field="model"></AgGridColumn>
-                        <AgGridColumn field="price"></AgGridColumn>
+                        <AgGridColumn field="make" />
+                        <AgGridColumn field="model" />
+                        <AgGridColumn field="price" />
                     </AgGridReact>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 var columnDefs = [
     // group cell renderer needed for expand / collapse icons
-    {field: 'name', cellRenderer:'agGroupCellRenderer'},
+    {field: 'name', cellRenderer: 'agGroupCellRenderer'},
     {field: 'account'},
     {field: 'calls'},
     {field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'"}
@@ -18,7 +18,7 @@ var gridOptions = {
                 {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
                 {field: 'switchCode'}
             ],
-            onGridReady: function(params) {
+            onFirstDataRendered(params) {
                 params.api.sizeColumnsToFit();
             }
         },
@@ -29,17 +29,17 @@ var gridOptions = {
             }, 1000);
         }
     },
-    onGridReady: function(params) {
+    onFirstDataRendered(params) {
         params.api.sizeColumnsToFit();
     }
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/latest/src/javascript-grid-master-detail/lazy-load-rows/data/data.json'}).then(function(data) {
+    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/latest/src/javascript-grid-master-detail/lazy-load-rows/data/data.json'}).then(function (data) {
         gridOptions.api.setRowData(data);
     });
 });

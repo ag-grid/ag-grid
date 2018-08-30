@@ -16,8 +16,8 @@ var gridOptions = {
     pivotPanelShow: 'always',
     pivotColumnGroupTotals: 'after',
     pivotRowTotals: 'before',
-    onGridReady: function(params) {
-      params.api.sizeColumnsToFit();
+    onFirstDataRendered(params) {
+        params.api.sizeColumnsToFit();
     },
     autoGroupColumnDef: {
       maxWidth: 300

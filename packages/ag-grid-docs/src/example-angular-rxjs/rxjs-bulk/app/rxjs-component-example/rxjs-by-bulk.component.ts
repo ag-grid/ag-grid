@@ -47,7 +47,10 @@ export class RxJsComponentByFullSet {
                         });
                     }
                 );
-                this.gridOptions.api.sizeColumnsToFit();
+            },
+
+            onFirstDataRendered(params) {
+                params.api.sizeColumnsToFit();
             }
         };
     }
