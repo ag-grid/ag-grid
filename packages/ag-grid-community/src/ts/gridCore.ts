@@ -20,6 +20,7 @@ import {IToolPanel} from "./interfaces/iToolPanel";
 import {RefSelector} from "./widgets/componentAnnotations";
 import {Events, GridSizeChangedEvent} from "./events";
 import {ResizeObserverService} from "./misc/resizeObserverService";
+import {ToolPanelDefLike, ToolPanelDefLikeParser} from "./entities/toolPanel";
 
 @Bean('gridCore')
 export class GridCore extends Component {
@@ -70,7 +71,7 @@ export class GridCore extends Component {
     @Optional('pivotCompFactory') private pivotCompFactory: ICompFactory;
 
     @RefSelector('gridPanel') private gridPanel: GridPanel;
-    @RefSelector('toolPanel') private toolPanelComp: IToolPanel;
+    @RefSelector('toolPanel') private toolPanelComp: IToolPanel & Component;
     @RefSelector('rootWrapperBody') private eRootWrapperBody: HTMLElement;
 
     private finished: boolean;
@@ -98,7 +99,7 @@ export class GridCore extends Component {
         this.gridOptionsWrapper.addLayoutElement(this.getGui());
 
         // see what the grid options are for default of toolbar
-        this.showToolPanel(this.gridOptionsWrapper.isShowToolPanel());
+        this.setToolPanelVisible(this.gridOptionsWrapper.isShowToolPanel());
 
         this.eGridDiv.appendChild(this.getGui());
         this.addDestroyFunc(() => {
@@ -156,7 +157,15 @@ export class GridCore extends Component {
         return this.getGui();
     }
 
-    public showToolPanel(show:boolean | string) {
+    public isToolPanelVisible(): boolean {
+        if (!this.toolPanelComp) {
+            return false;
+        }
+
+        return this.toolPanelComp.isVisible();
+    }
+
+    public setToolPanelVisible(show:boolean) {
         if (!this.toolPanelComp) {
             if (show) {
                 console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
@@ -164,7 +173,41 @@ export class GridCore extends Component {
             return;
         }
 
-        this.toolPanelComp.showToolPanel(show);
+        this.toolPanelComp.setVisible(show);
+    }
+
+    public closeToolPanel () {
+        if (!this.toolPanelComp) {
+            console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
+            return;
+        }
+
+        this.toolPanelComp.close();
+    }
+
+    public setToolPanel (def: ToolPanelDefLike): void {
+        this.eRootWrapperBody.removeChild(this.toolPanelComp.getGui());
+        this.gridOptions.toolPanel = ToolPanelDefLikeParser.parse(def);
+        this.toolPanelComp.reset ();
+        this.eRootWrapperBody.appendChild(this.toolPanelComp.getGui());
+    }
+
+    public getOpenedToolPanelItem (): string {
+        if (!this.toolPanelComp) {
+            return null;
+        }
+
+        return this.toolPanelComp.openedItem();
+    }
+
+
+    public openToolPanel (key:string) {
+        if (!this.toolPanelComp) {
+            console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
+            return;
+        }
+
+        this.toolPanelComp.openToolPanel(key);
     }
 
     public isToolPanelShowing() {

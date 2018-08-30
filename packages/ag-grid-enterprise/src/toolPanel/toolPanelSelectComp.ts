@@ -18,8 +18,10 @@ export class ToolPanelSelectComp extends Component {
 
     private gridPanel: GridPanel;
 
+    private static readonly TEMPLATE: string = `<div class="ag-side-buttons"></div>`;
+
     constructor() {
-        super(`<div class="ag-side-buttons"></div>`);
+        super(ToolPanelSelectComp.TEMPLATE);
     }
 
     public registerPanelComp(key: string, panelComponent: Component): void {
@@ -31,7 +33,7 @@ export class ToolPanelSelectComp extends Component {
     }
 
     @PostConstruct
-    private postConstruct(): void {
+    public postConstruct(): void {
         let buttons:{[p:string]: string} = {};
         let componentDefs: ToolPanelComponentDef[] = _.get(this.gridOptionsWrapper.getToolPanel(), 'components', []);
         componentDefs.forEach((componentDef:ToolPanelComponentDef)=>{
@@ -67,17 +69,39 @@ export class ToolPanelSelectComp extends Component {
         }
     }
 
-    private addButtonEvents(boundKey: string) {
-        let btShow = this.getRefElement(`toggle-button-${boundKey}`);
-        this.addDestroyableEventListener(btShow, 'click', () => {
-            Object.keys(this.panels).forEach(key=>{
-                let thisPanel = this.panels[key];
-                let clickingThisPanel = key === boundKey;
-                let showThisPanel = clickingThisPanel ? !thisPanel.isVisible() : false;
-                thisPanel.setVisible(showThisPanel);
-                let button: HTMLElement = this.getRefElement(`toggle-button-${key}`);
-                _.addOrRemoveCssClass(button.parentElement, 'ag-selected', showThisPanel);
-            })
-        });
+    private addButtonEvents(keyToProcess: string) {
+        let btShow = this.getRefElement(`toggle-button-${keyToProcess}`);
+        this.addDestroyableEventListener(btShow, 'click', () => this.onButtonPressed(keyToProcess));
+    }
+
+    private onButtonPressed (keyPressed: string): void{
+        Object.keys(this.panels).forEach(keyToProcess=>{
+            this.processKeyAfterKeyPressed(keyToProcess, keyPressed);
+        })
+    }
+
+    private processKeyAfterKeyPressed(keyToProcess: string, keyPressed: string) {
+        let panelToProcess = this.panels[keyToProcess];
+        let clickingThisPanel = keyToProcess === keyPressed;
+        let showThisPanel = clickingThisPanel ? !panelToProcess.isVisible() : false;
+        this.setPanelVisibility(keyToProcess, showThisPanel);
+    }
+
+    public setPanelVisibility(key: string, show: boolean) {
+        let panelToProcess = this.panels[key];
+
+        if (!panelToProcess) {
+            console.warn(`ag-grid: can't change the visibility for the non existing tool panel item [${key}]`)
+            return;
+        }
+
+        panelToProcess.setVisible(show);
+        let button: HTMLElement = this.getRefElement(`toggle-button-${key}`);
+        _.addOrRemoveCssClass(button.parentElement, 'ag-selected', show);
+    }
+
+    public clear () {
+        this.setTemplate(ToolPanelSelectComp.TEMPLATE);
+        this.panels = {};
     }
 }

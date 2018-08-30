@@ -21,7 +21,8 @@ var gridOptions = {
     },
     autoGroupColumnDef: {
       maxWidth: 300
-    }
+    },
+    toolPanel: true,
 };
 
 

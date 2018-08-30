@@ -1,40 +1,72 @@
 var columnDefs = [
-    {headerName: "Country", field: "country", width: 120, rowGroup: true, enableRowGroup:true},
-    {headerName: "Year", field: "year", width: 90, rowGroup: true, enableRowGroup:true, enablePivot:true},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100, aggFunc: 'sum'},
-    {headerName: "Silver", field: "silver", width: 100, aggFunc: 'sum'},
-    {headerName: "Bronze", field: "bronze", width: 100, aggFunc: 'sum'}
+    {
+        headerName: 'Athlete',
+        children: [
+            {field: "athlete", width: 150, filter: 'agTextColumnFilter'},
+            {field: "age", width: 90},
+            {field: "country", width: 120}
+        ]
+    },
+    {
+        headerName: 'Competition',
+        children: [
+            {field: "year", width: 90},
+            {field: "date", width: 110},
+        ]
+    },
+    {field: "sport", width: 110},
+    {
+        headerName: 'Medals',
+        children: [
+            {field: "gold", width: 100},
+            {field: "silver", width: 100},
+            {field: "bronze", width: 100},
+            {field: "total", width: 100}
+        ]
+    }
 ];
 
-function onBtNormal() {
-    gridOptions.columnApi.setPivotMode(false);
-    gridOptions.columnApi.setPivotColumns([]);
-    gridOptions.columnApi.setRowGroupColumns(['country','year']);
+function setToolPanelVisible(value) {
+    gridOptions.api.setToolPanelVisible(value)
 }
 
-function onBtPivotMode() {
-    gridOptions.columnApi.setPivotMode(true);
-    gridOptions.columnApi.setPivotColumns([]);
-    gridOptions.columnApi.setRowGroupColumns(['country','year']);
+function isToolPanelVisible() {
+    alert(gridOptions.api.isToolPanelVisible())
 }
 
-function onBtFullPivot() {
-    gridOptions.columnApi.setPivotMode(true);
-    gridOptions.columnApi.setPivotColumns(['year']);
-    gridOptions.columnApi.setRowGroupColumns(['country']);
+function openToolPanel (key) {
+    gridOptions.api.openToolPanel(key)
+}
+
+function closeToolPanel () {
+    gridOptions.api.closeToolPanel()
+}
+
+function getOpenedToolPanelItem () {
+    alert(gridOptions.api.getOpenedToolPanelItem())
+}
+
+function setToolPanel (def) {
+    gridOptions.api.setToolPanel (def);
 }
 
 var gridOptions = {
-    // set rowData to null or undefined to show loading panel by default
+    defaultColDef: {
+        // allow every column to be aggregated
+        enableValue: true,
+        // allow every column to be grouped
+        enableRowGroup: true,
+        // allow every column to be pivoted
+        enablePivot: true
+    },
     columnDefs: columnDefs,
-    enableColResize: true,
-    enableSorting: true
+    enableSorting: true,
+    toolPanel: true,
+    enableFilter: true
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
@@ -43,8 +75,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var httpRequest = new XMLHttpRequest();
     httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/olympicWinners.json');
     httpRequest.send();
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+    httpRequest.onreadystatechange = function () {
+        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);
         }

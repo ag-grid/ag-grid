@@ -11,7 +11,8 @@ var gridOptions = {
     enableColResize: true,
     enableSorting: true,
     suppressAggFuncInHeader: true,
-    pivotMode: true
+    pivotMode: true,
+    toolPanel: true,
 };
 
 function clearSort() {

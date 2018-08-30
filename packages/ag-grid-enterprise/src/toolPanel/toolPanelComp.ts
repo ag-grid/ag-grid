@@ -31,11 +31,12 @@ export class ToolPanelComp extends Component implements IToolPanel {
     // @RefSelector('columnComp') private columnComp: ToolPanelColumnComp;
     // @RefSelector('filterComp') private filterComp: ToolPanelAllFiltersComp;
     private panelComps: { [p: string]: ToolPanelWrapper } = {};
+    private static readonly TEMPLATE = `<div class="ag-tool-panel" ref="eToolPanel">
+              <ag-tool-panel-select-comp ref="toolPanelSelectComp"></ag-tool-panel-select-comp>
+          </div>`;
 
     constructor() {
-        super(`<div class="ag-tool-panel" ref="eToolPanel">
-                  <ag-tool-panel-select-comp ref="toolPanelSelectComp"></ag-tool-panel-select-comp>
-              </div>`);
+        super(ToolPanelComp.TEMPLATE);
     }
 
     // this was deprecated in v19, we can drop in v20
@@ -105,38 +106,66 @@ export class ToolPanelComp extends Component implements IToolPanel {
         });
     }
 
-    public showToolPanel(show: boolean | string): void {
+    public setVisible (show:boolean): void{
         if (_.get(this.gridOptionsWrapper.getToolPanel(), 'components', []).length === 0) return;
 
-        let tabToShowHide: Component;
-        let visibility: boolean;
-        let keyOfTabToShowHide: string;
-        if (typeof show === 'boolean') {
-            visibility = show;
-            keyOfTabToShowHide = _.get(this.gridOptionsWrapper.getToolPanel(), 'defaultTab', null);
-            tabToShowHide = this.panelComps[keyOfTabToShowHide];
-        } else {
-            visibility = true;
-            tabToShowHide = this.panelComps[show];
-            keyOfTabToShowHide = show;
+        super.setVisible(show);
+        if (show) {
+            let keyOfTabToShow: string = this.getActiveToolPanelItem();
+            keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : _.get(this.gridOptionsWrapper.getToolPanel(), 'defaultTab', null);
+            keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : this.gridOptionsWrapper.getToolPanel().components [0].key;
+            let tabToShow: Component = this.panelComps[keyOfTabToShow];
+            tabToShow.setVisible(true);
         }
+    }
 
-        if (!tabToShowHide) {
-            console.warn (`ag-grid: unable to access the tool panel tab with the key: '${keyOfTabToShowHide}'`);
+    public openToolPanel (key:string) {
+        let currentlyOpenedKey = this.getActiveToolPanelItem();
+        if (currentlyOpenedKey === key) return;
+
+        let tabToShow: Component = this.panelComps[key];
+        if (!tabToShow) {
+            console.warn(`ag-grid: invalid tab key [${key}] to open for the tool panel`);
             return;
         }
-        tabToShowHide.setVisible(visibility);
+
+        if (currentlyOpenedKey != null){
+            this.toolPanelSelectComp.setPanelVisibility(currentlyOpenedKey, false);
+        }
+        this.toolPanelSelectComp.setPanelVisibility(key, true);
+    }
+
+    public close (): void {
+        let currentlyOpenedKey = this.getActiveToolPanelItem();
+        if (!currentlyOpenedKey) return;
+
+        this.toolPanelSelectComp.setPanelVisibility(currentlyOpenedKey, false);
     }
 
 
     public isToolPanelShowing(): boolean {
-        let anyShowing: boolean = false;
+        return this.getActiveToolPanelItem() != null;
+    }
+
+    public getActiveToolPanelItem (): string {
+        let activeToolPanel: string = null;
         Object.keys(this.panelComps).forEach(key => {
             let currentComp = this.panelComps[key];
             if (currentComp.isVisible()) {
-                anyShowing = true;
+                activeToolPanel = key;
             }
         });
-        return anyShowing;
+        return activeToolPanel;
+    }
+
+    public openedItem(): string {
+        return this.getActiveToolPanelItem();
+    }
+
+    public reset (): void {
+        this.toolPanelSelectComp.clear ();
+        this.panelComps = {};
+        this.setTemplate(ToolPanelComp.TEMPLATE);
+        this.postConstruct();
     }
 }

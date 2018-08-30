@@ -53,6 +53,7 @@ import {AnimationFrameService} from "./misc/animationFrameService";
 import {IServerSideRowModel} from "./interfaces/iServerSideRowModel";
 import {IStatusPanelService} from "./interfaces/iStatusPanelService";
 import {IStatus} from "./interfaces/iStatus";
+import {ToolPanelDefLike} from "./entities/toolPanel";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -783,9 +784,34 @@ export class GridApi {
         this.doLayout();
     }
 
-    public showToolPanel(show:boolean | string) {
-        this.gridCore.showToolPanel(show);
+    public isToolPanelVisible() {
+        return this.gridCore.isToolPanelVisible();
     }
+
+    public setToolPanelVisible(show:boolean) {
+        this.gridCore.setToolPanelVisible(show);
+    }
+
+    public showToolPanel(show:boolean) {
+        console.warn(`ag-grid: from v19 api.showToolPanel has been deprecated in favour of api.setToolPanelVisible`);
+        this.setToolPanelVisible(show)
+    }
+
+    public openToolPanel (key: string) {
+        this.gridCore.openToolPanel(key);
+    };
+
+    public closeToolPanel () {
+        this.gridCore.closeToolPanel();
+    };
+
+    public getOpenedToolPanelItem (): string {
+        return this.gridCore.getOpenedToolPanelItem();
+    };
+
+    public setToolPanel (def: ToolPanelDefLike): void {
+        return this.gridCore.setToolPanel(def);
+    };
 
     public setSuppressClipboardPaste(value: boolean): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_SUPPRESS_CLIPBOARD_PASTE, value);

@@ -25,23 +25,23 @@ export interface ToolPanelDef {
 export type ToolPanelDefLike = FuzzyToolPanelDef | boolean | string | string [];
 
 export class ToolPanelDefLikeParser {
-    static readonly OOB_COLUMN_COMP = {
+    static readonly DEFAULT_COLUMN_COMP = {
         key: 'columns',
         buttonLabel: 'Columns',
         iconKey: 'columns',
         component: 'agColumnsToolPanel',
     };
 
-    static readonly OOB_FILTER_COMP = {
+    static readonly DEFAULT_FILTER_COMP = {
         key: 'filters',
         buttonLabel: 'Filters',
         iconKey: 'filters',
         component: 'agFiltersToolPanel',
     };
 
-    static readonly OOB_BY_KEY: {[p: string]: ToolPanelComponentDef} = {
-        columns: ToolPanelDefLikeParser.OOB_COLUMN_COMP,
-        filters: ToolPanelDefLikeParser.OOB_FILTER_COMP
+    static readonly DEFAULT_BY_KEY: {[p: string]: ToolPanelComponentDef} = {
+        columns: ToolPanelDefLikeParser.DEFAULT_COLUMN_COMP,
+        filters: ToolPanelDefLikeParser.DEFAULT_FILTER_COMP
     };
 
     static parse (toParse: ToolPanelDefLike): ToolPanelDef {
@@ -49,8 +49,8 @@ export class ToolPanelDefLikeParser {
         if (toParse === true) {
             return {
                 components: [
-                    ToolPanelDefLikeParser.OOB_COLUMN_COMP,
-                    ToolPanelDefLikeParser.OOB_FILTER_COMP,
+                    ToolPanelDefLikeParser.DEFAULT_COLUMN_COMP,
+                    ToolPanelDefLikeParser.DEFAULT_FILTER_COMP,
                 ],
                 defaultTab: 'columns'
             }
@@ -61,9 +61,9 @@ export class ToolPanelDefLikeParser {
         if (Array.isArray(toParse)) {
             let comps: ToolPanelComponentDef [] = [];
             toParse.forEach(key=>{
-                const lookupResult = ToolPanelDefLikeParser.OOB_BY_KEY [key];
+                const lookupResult = ToolPanelDefLikeParser.DEFAULT_BY_KEY [key];
                 if (! lookupResult) {
-                    console.warn(`ag-grid: the key ${key} is not a valid key for specifying a tool panel, valid keys are: ${Object.keys(ToolPanelDefLikeParser.OOB_BY_KEY).join(',')}`)
+                    console.warn(`ag-grid: the key ${key} is not a valid key for specifying a tool panel, valid keys are: ${Object.keys(ToolPanelDefLikeParser.DEFAULT_BY_KEY).join(',')}`)
                     return
                 }
 
@@ -94,9 +94,9 @@ export class ToolPanelDefLikeParser {
         from.forEach((it: ToolPanelComponentDefLike)=>{
             let toAdd: ToolPanelComponentDef = null;
             if (typeof it === 'string') {
-                const lookupResult = ToolPanelDefLikeParser.OOB_BY_KEY [it];
+                const lookupResult = ToolPanelDefLikeParser.DEFAULT_BY_KEY [it];
                 if (! lookupResult) {
-                    console.warn(`ag-grid: the key ${it} is not a valid key for specifying a tool panel, valid keys are: ${Object.keys(ToolPanelDefLikeParser.OOB_BY_KEY).join(',')}`)
+                    console.warn(`ag-grid: the key ${it} is not a valid key for specifying a tool panel, valid keys are: ${Object.keys(ToolPanelDefLikeParser.DEFAULT_BY_KEY).join(',')}`)
                     return;
                 }
 

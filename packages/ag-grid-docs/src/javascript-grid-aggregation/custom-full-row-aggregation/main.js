@@ -16,6 +16,7 @@ var gridOptions = {
     enableSorting: true,
     enableRangeSelection: true,
     groupRowAggNodes: groupRowAggNodes,
+    toolPanel: true,
     autoGroupColumnDef: {
         headerName: 'Athlete',
         field: 'athlete',

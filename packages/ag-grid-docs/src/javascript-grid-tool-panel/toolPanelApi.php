@@ -1,17 +1,26 @@
 <?php
 
 $toolPanelApi = [
-    ['showToolPanel',
-        'It takes a boolean or a string. <uL><li>If true, will show the default tab for the tool panel</li><li>If false, it will hide the tool panel tab.</li><li>If it is a string, it must match the key of a provided component (the default ones are "columns" and "filters"). It will swap the show/hide status for that tab key</li></ul>'
+    ['setToolPanelVisible',
+        'It will show/hide all the tool panel, including the side bar that holds the item buttoms'
     ],
-    ['isToolPanelShowing',
-        'Returns true if any tool panel tab is showing, otherwise false.'
+    ['isToolPanelVisible',
+        'Will return true if visible'
     ],
-    ['getActiveToolPanelItem',
+    ['openToolPanel',
+        'It takes a string that represents the key of the item to show open in the tool panel.'
+    ],
+    ['closeToolPanel',
+        'It will make sure that all the items are closed in the tool panel.'
+    ],
+    ['getOpenedToolPanelItem',
         'Returns the key of the currently shown tab if any, otherwise it returns null.'
     ],
-    ['setToolPanel',
+    ['setToolPanelDef',
         'It takes one of the different flavours that are <a href="../javascript-grid-tool-panel/">valid gridOptions.toolPanel configurations</a> and redraws the toolpanel accordingly..'
+    ],
+    ['getToolPanelDef',
+        'It returns the current fully fledge configuration that is used for the tool panel'
     ]
 ];
 ?>

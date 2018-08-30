@@ -4,7 +4,11 @@ import {GridPanel} from "../gridPanel/gridPanel";
 export interface IToolPanel extends IComponent<any> {
     registerGridComp(gridPanel: GridPanel): void;
     refresh(): void;
-    showToolPanel(show:boolean | string): void;
+    setVisible(show:boolean): void;
     isToolPanelShowing(): boolean;
     getPreferredWidth(): number;
+    openToolPanel (key:string): void;
+    close (): void;
+    reset (): void;
+    openedItem(): string;
 }

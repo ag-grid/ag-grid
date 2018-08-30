@@ -15,7 +15,8 @@ var gridOptions = {
     // set rowData to null or undefined to show loading panel by default
     showToolPanel: true,
     enableColResize: true,
-    columnDefs: columnDefs
+    columnDefs: columnDefs,
+    toolPanel: true,
 };
 
 var savedState;

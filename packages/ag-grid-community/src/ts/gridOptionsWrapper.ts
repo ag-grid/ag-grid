@@ -1336,10 +1336,6 @@ export class GridOptionsWrapper {
             options.showToolPanel = undefined;
             options.toolPanel = options.toolPanel || false;
         }
-        if (options.toolPanel === undefined){
-            console.warn(`ag-grid: since version 19.x, you must specify explicitly if you want to show/hide the tool panel, please specify toolPanel components. See https://www.ag-grid.com/javascript-grid-tool-panel/`);
-            options.toolPanel = true;
-        }
         if (options.toolPanel != null) {
             options.toolPanel = ToolPanelDefLikeParser.parse(options.toolPanel)
         }

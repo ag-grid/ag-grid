@@ -17,7 +17,7 @@ var gridOptions = {
     rowData: null,
     groupIncludeFooter: true,
     enableSorting: true,
-    showToolPanel: true,
+    toolPanel: true,
     toolPanelSuppressPivots: true,
     toolPanelSuppressPivotMode: true,
     autoGroupColumnDef: {headerName: "Athlete",
