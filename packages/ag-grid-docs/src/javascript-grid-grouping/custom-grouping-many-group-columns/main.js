@@ -29,7 +29,7 @@ var gridOptions = {
     // want it to auto-generate group columns for us
     groupSuppressAutoColumn: true,
     enableSorting:true,
-    onGridReady: function(params) {
+    onFirstDataRendered(params) {
         params.api.sizeColumnsToFit();
     }
 };

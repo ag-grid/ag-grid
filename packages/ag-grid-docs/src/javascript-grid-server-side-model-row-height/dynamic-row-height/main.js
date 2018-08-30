@@ -58,7 +58,7 @@ var gridOptions = {
     groupUseEntireRow: true,
     purgeClosedRowNodes: true,
     groupRowInnerRenderer: GroupInnerRenderer,
-    onGridReady: function(params) {
+    onFirstDataRendered(params) {
         params.api.sizeColumnsToFit();
     },
     getRowHeight: function (params) {

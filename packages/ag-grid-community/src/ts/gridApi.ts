@@ -238,6 +238,9 @@ export class GridApi {
             if (this.gridOptionsWrapper.isDeltaRowDataMode()) {
                 let [transaction, orderIdMap] = this.immutableService.createTransactionForRowData(rowData);
                 this.clientSideRowModel.updateRowData(transaction, orderIdMap);
+                // need to force updating of full width rows - note this wouldn't be necessary the full width cell comp listened
+                // to the data change event on the row node and refreshed itself.
+                this.rowRenderer.refreshFullWidthRows();
             } else {
                 this.selectionController.reset();
                 this.clientSideRowModel.setRowData(rowData);
@@ -1021,10 +1024,13 @@ export class GridApi {
             console.error('ag-Grid: updateRowData() only works with ClientSideRowModel and InfiniteRowModel.');
         }
 
+        // need to force updating of full width rows - note this wouldn't be necessary the full width cell comp listened
+        // to the data change event on the row node and refreshed itself.
+        this.rowRenderer.refreshFullWidthRows();
+
         // do change detection for all present cells
         if (!this.gridOptionsWrapper.isSuppressChangeDetection()) {
             this.rowRenderer.refreshCells();
-            // this.rowRenderer.refreshFullWidthRows();
         }
 
         return res;

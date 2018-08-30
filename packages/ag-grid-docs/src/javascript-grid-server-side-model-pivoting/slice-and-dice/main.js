@@ -63,7 +63,7 @@ var gridOptions = {
     cacheBlockSize: 100,
     maxBlocksInCache: 2,
     purgeClosedRowNodes: true,
-    onGridReady: function(params) {
+    onFirstDataRendered(params) {
         params.api.sizeColumnsToFit();
     }
 };

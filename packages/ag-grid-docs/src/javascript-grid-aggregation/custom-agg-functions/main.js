@@ -43,8 +43,13 @@ var gridOptions = {
 
         // this has nothing to do with aggregation, just get cols to fit width
         gridOptions.api.sizeColumnsToFit();
-    }
+    },
+    onFirstDataRendered: onFirstDataRendered
 };
+
+function onFirstDataRendered(params) {
+    params.api.sizeColumnsToFit();
+}
 
 function oneTwoThreeFunc(nodes) {
     // this is just an example, rather than working out an aggregation,

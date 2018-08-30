@@ -1047,6 +1047,10 @@
         }
     }
 
+    .ag-floating-filter-input {
+        line-height: normal;
+    }
+
     .ag-floating-filter-button {
         float: right;
         line-height: $icon-size;

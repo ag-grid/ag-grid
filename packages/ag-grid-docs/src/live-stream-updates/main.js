@@ -79,9 +79,6 @@
         },
         defaultColDef: {
             width: 120
-        },
-        onGridReady: function(params) {
-            // gridOptions.api.sizeColumnsToFit();
         }
     };
 

@@ -23,10 +23,7 @@ var gridOptions = {
     groupHideOpenParents: true,
     animateRows: true,
     enableColResize: true,
-    enableSorting: true,
-    onGridReady: function(params) {
-        // params.api.sizeColumnsToFit();
-    }
+    enableSorting: true
 };
 
 // setup the grid after the page has finished loading
