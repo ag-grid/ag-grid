@@ -116,7 +116,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-    Each component has itself the following properties
+    Each item has the following properties
     <table class="table reference">
 
             <?php include './toolPanelProperties.php' ?>
@@ -126,42 +126,129 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-    For instance <code>gridOptions.toolPanel = true</code> is the shortcut for:
+        The following snippet shows configuring the tool panel using a ToolPanelDef object:
     </p>
 
-<snippet>gridOptions.toolPanel = {
- items: [
-     {
-         key: 'columns',
-         buttonLabel: 'Columns',
-         iconKey: 'columns',
-         component: 'agColumnsToolPanel',
-     },
-     {
-         key: 'filters',
-         buttonLabel: 'Filters',
-         iconKey: 'filter',
-         component: 'agFiltersToolPanel',
-     }
- ],
- defaultItem: 'columns'
+<snippet>
+toolPanel = {
+    items: [
+        {
+            key: 'columns',
+            buttonLabel: 'Columns',
+            iconKey: 'columns',
+            component: 'agColumnsToolPanel',
+        },
+        {
+            key: 'filters',
+            buttonLabel: 'Filters',
+            iconKey: 'filter',
+            component: 'agFiltersToolPanel',
+        }
+    ],
+    defaultTab: 'filters'
+}
+</snippet>
+
+    <p>
+        The snippet above is demonstrated in the following example:
+    </p>
+
+<div style="padding: 20px; background: yellow; border: 2px solid green;">PUT IN EXAMPLE FOR ToolPanelDef</div>
+
+<h2>Configuration Shortcuts</h2>
+
+    <p>
+        The boolean and string configurations are actually shortcuts for the more details configuration.
+        When you use a shortcut, the grid replaces it with the equivalent long form of the configuration
+        using <code>ToolPanelDef</code>.
+    </p>
+
+    <p>
+        The following code snippet shows and example of the boolean shortcut and the equivalent
+        <code>ToolPanelDef</code> long form.
+    </p>
+
+    <snippet>
+// shortcut
+toolPanel = true;
+
+// equivalent detailed long form
+toolPanel = {
+    items: [
+        {
+            key: 'columns',
+            buttonLabel: 'Columns',
+            iconKey: 'columns',
+            component: 'agColumnsToolPanel',
+        },
+        {
+            key: 'filters',
+            buttonLabel: 'Filters',
+            iconKey: 'filter',
+            component: 'agFiltersToolPanel',
+        }
+    ],
+    defaultTab: 'columns'
+    }
 }
 </snippet>
 
 <p>
-    You can even use shortcuts inside the <code>toolPanel.conponents</code> array, you can use the strings 'columns' and 'filters'
-    to be used instead of the configuration described above. Below you can see the equivalent using shortcuts in <code>toolPanel.conponents</code>
+    The following code snippet shows and example of the string shortcut and the equivalent
+    <code>ToolPanelDef</code> long form.
 </p>
 
-<snippet>gridOptions.toolPanel = {
- items: ['columns','filters'],
- defaultItem: 'columns'
+<snippet>
+// shortcut
+toolPanel = 'filters';
+
+// equivalent detailed long form
+toolPanel = {
+    items: [
+        {
+            key: 'filters',
+            buttonLabel: 'Filters',
+            iconKey: 'filter',
+            component: 'agFiltersToolPanel',
+        }
+    ],
+    defaultTab: 'filters'
+    }
 }
 </snippet>
 
 <p>
-    The example below shows how fine tuning can be used to change the label or icon for the columns or filters tab. In this example, note
-    how the filters tab has been configured to have a slightly different look & feel (label & icon)
+    You can also use shortcuts inside the <code>toolPanel.items</code> array for specifying the Columns and Filters items.
+</p>
+
+<snippet>
+// shortcut
+toolPanel = {
+    items: ['columns','filters']
+};
+
+// equivalent detailed long form
+toolPanel = {
+    items: [
+        {
+            key: 'columns',
+            buttonLabel: 'Columns',
+            iconKey: 'columns',
+            component: 'agColumnsToolPanel',
+        },
+        {
+            key: 'filters',
+            buttonLabel: 'Filters',
+            iconKey: 'filter',
+            component: 'agFiltersToolPanel',
+        }
+    ],
+}
+</snippet>
+
+<p>
+    The example below shows how fine tuning can be used to change the label or icon for the columns or filters tab.
+    In this example, note how the filters tab has been configured to have a slightly different look & feel (label & icon)
 </p>
 
 <?= example('Tool Panel - Fine tuning', 'fineTuning', 'generated', array("enterprise" => 1)) ?>
