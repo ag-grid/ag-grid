@@ -693,7 +693,7 @@ export class GridApi {
         }
     }
 
-    public getStatusPanelComponent(key: string) : IStatus {
+    public getStatusPanelComponent(key: string) : IStatusPanelItem {
         if (this.statusPanelService) {
             return this.statusPanelService.getStatusPanelComponent(key);
         }
