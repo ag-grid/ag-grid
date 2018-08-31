@@ -1,4 +1,5 @@
 import {
+    _,
     AgCheckbox,
     Autowired,
     Column,
@@ -12,18 +13,15 @@ import {
     Events,
     EventService,
     GridOptionsWrapper,
-    GridPanel,
     OriginalColumnGroup,
     PostConstruct,
-    QuerySelector,
-    TouchListener,
-    Utils,
     RefSelector,
-    _
-} from "ag-grid-community";
+    TouchListener,
+    Utils
+} from "ag-grid-community/main";
 import {BaseColumnItem} from "./columnSelectComp";
 
-export class ToolPanelGroupComp extends Component implements BaseColumnItem {
+export class ColumnGroupComp extends Component implements BaseColumnItem {
 
     private static TEMPLATE =
         `<div class="ag-column-select-column-group">
@@ -72,7 +70,7 @@ export class ToolPanelGroupComp extends Component implements BaseColumnItem {
 
     @PostConstruct
     public init(): void {
-        this.setTemplate(ToolPanelGroupComp.TEMPLATE);
+        this.setTemplate(ColumnGroupComp.TEMPLATE);
 
         this.instantiate(this.context);
 

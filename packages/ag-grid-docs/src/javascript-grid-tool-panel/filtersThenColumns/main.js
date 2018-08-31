@@ -37,7 +37,7 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     enableSorting: true,
-    toolPanel: ['filters', 'columns'],
+    sideBar: ['filters', 'columns'],
     enableFilter: true
 };
 

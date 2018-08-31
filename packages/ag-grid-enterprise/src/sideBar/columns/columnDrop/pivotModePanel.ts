@@ -10,7 +10,7 @@ import {
     Context,
     AgCheckbox,
     PreConstruct
-} from "ag-grid-community";
+} from "ag-grid-community/main";
 
 
 export class PivotModePanel extends Component {

@@ -11,7 +11,7 @@ import {
     ColumnController,
     EventService,
     IComponent
-} from "ag-grid-community";
+} from "ag-grid-community/main";
 import {ToolPanelColumnCompParams} from "../toolPanelColumnComp";
 
 export enum SELECTED_STATE {CHECKED, UNCHECKED, INDETERMINIATE}

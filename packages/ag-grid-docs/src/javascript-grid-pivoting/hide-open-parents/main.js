@@ -34,7 +34,7 @@ var gridOptions = {
     groupMultiAutoColumn: true,
     animateRows: true,
     enableSorting: true,
-    toolPanel: true,
+    sideBar: true,
 };
 
 // setup the grid after the page has finished loading

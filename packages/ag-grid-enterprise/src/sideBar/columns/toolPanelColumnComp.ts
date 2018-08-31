@@ -8,7 +8,7 @@ import {
     GridApi,
     GridOptionsWrapper, IComponent,
     ToolPanelVisibleChangedEvent
-} from "ag-grid-community";
+} from "ag-grid-community/main";
 import {PivotModePanel} from "./columnDrop/pivotModePanel";
 import {ValuesColumnPanel} from "./columnDrop/valueColumnsPanel";
 import {RowGroupColumnsPanel} from "./columnDrop/rowGroupColumnsPanel";
@@ -25,7 +25,6 @@ export interface ToolPanelColumnCompParams {
     suppressColumnSelectAll: boolean;
     suppressColumnExpandAll: boolean;
     contractColumnSelection: boolean;
-    functionsReadOnly: boolean;
 }
 
 export class ToolPanelColumnComp extends Component implements IComponent<ToolPanelColumnCompParams>{
@@ -71,8 +70,7 @@ export class ToolPanelColumnComp extends Component implements IComponent<ToolPan
             suppressPivotMode: false,
             suppressRowGroups: false,
             suppressValues: false,
-            suppressPivots: false,
-            functionsReadOnly: false
+            suppressPivots: false
         };
         _.mergeDeep(defaultParams ,params)
         this.params = defaultParams;

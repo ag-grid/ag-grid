@@ -1,7 +1,7 @@
 import {IComponent} from "./iComponent";
 import {GridPanel} from "../gridPanel/gridPanel";
 
-export interface IToolPanel extends IComponent<any> {
+export interface ISideBar extends IComponent<any> {
     registerGridComp(gridPanel: GridPanel): void;
     refresh(): void;
     setVisible(show:boolean): void;

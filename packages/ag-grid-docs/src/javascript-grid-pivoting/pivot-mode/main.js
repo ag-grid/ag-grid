@@ -31,7 +31,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     enableColResize: true,
     enableSorting: true,
-    toolPanel: true,
+    sideBar: true,
 };
 
 // setup the grid after the page has finished loading

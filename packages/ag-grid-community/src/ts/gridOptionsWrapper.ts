@@ -34,7 +34,7 @@ import {PropertyKeys} from "./propertyKeys";
 import {ColDefUtil} from "./components/colDefUtil";
 import {Events} from "./eventKeys";
 import {AutoHeightCalculator} from "./rendering/autoHeightCalculator";
-import {ToolPanelDef, ToolPanelDefLikeParser, ToolPanelItemDef} from "./entities/toolPanel";
+import {SideBarDef, SideBarDefLikeParser, ToolPanelDef} from "./entities/sideBar";
 
 let DEFAULT_ROW_HEIGHT = 25;
 let DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -296,11 +296,11 @@ export class GridOptionsWrapper {
     }
 
     public isShowToolPanel() {
-        return isTrue(this.gridOptions.toolPanel && Array.isArray(this.getToolPanel().items) );
+        return isTrue(this.gridOptions.sideBar && Array.isArray(this.getSideBar().toolPanels) );
     }
 
-    public getToolPanel(): ToolPanelDef {
-        return (<ToolPanelDef>this.gridOptions.toolPanel);
+    public getSideBar(): SideBarDef {
+        return (<SideBarDef>this.gridOptions.sideBar);
     }
 
     // public isToolPanelSuppressValues() {
@@ -1329,15 +1329,15 @@ export class GridOptionsWrapper {
         if (options.showToolPanel === true) {
             console.warn(`ag-grid: since version 19.x, showToolPanel is gone, please specify toolPanel components. See https://www.ag-grid.com/javascript-grid-tool-panel/`);
             options.showToolPanel = undefined;
-            options.toolPanel = options.toolPanel || true;
+            options.sideBar = options.sideBar || true;
         }
         if (options.showToolPanel === false) {
             console.warn(`ag-grid: since version 19.x, showToolPanel is gone, please specify toolPanel components. See https://www.ag-grid.com/javascript-grid-tool-panel/`);
             options.showToolPanel = undefined;
-            options.toolPanel = options.toolPanel || false;
+            options.sideBar = options.sideBar || false;
         }
-        if (options.toolPanel != null) {
-            options.toolPanel = ToolPanelDefLikeParser.parse(options.toolPanel)
+        if (options.sideBar != null) {
+            options.sideBar = SideBarDefLikeParser.parse(options.sideBar)
         }
         let oldToolPanelProperties: {[p:string]: string} = {
             'toolPanelSuppressRowGroups': 'suppressRowGroups',
@@ -1367,7 +1367,7 @@ export class GridOptionsWrapper {
         });
 
         if (Object.keys(toolPanelColumnsCompProps).length > 0) {
-            let columnsDef: ToolPanelItemDef[] = <ToolPanelItemDef[]>(<ToolPanelDef>this.gridOptions.toolPanel).items.filter((it:ToolPanelItemDef)=>it.id === 'columns');
+            let columnsDef: ToolPanelDef[] = <ToolPanelDef[]>(<SideBarDef>this.gridOptions.sideBar).toolPanels.filter((it:ToolPanelDef)=>it.id === 'columns');
             if (columnsDef.length === 1){
                 _.mergeDeep(columnsDef[0], {
                     componentParams: toolPanelColumnsCompProps

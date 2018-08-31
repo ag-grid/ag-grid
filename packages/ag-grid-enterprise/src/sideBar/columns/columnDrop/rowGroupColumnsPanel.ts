@@ -13,7 +13,7 @@ import {
     ColumnRowGroupChangeRequestEvent,
     ColumnApi,
     GridApi
-} from "ag-grid-community";
+} from "ag-grid-community/main";
 import {AbstractColumnDropPanel} from "./abstractColumnDropPanel";
 
 export class RowGroupColumnsPanel extends AbstractColumnDropPanel {

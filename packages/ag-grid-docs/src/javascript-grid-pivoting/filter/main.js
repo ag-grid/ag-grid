@@ -53,7 +53,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     enableColResize: true,
     pivotMode: true,
-    toolPanel: true,
+    sideBar: true,
 };
 
 // setup the grid after the page has finished loading

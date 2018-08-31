@@ -14,8 +14,8 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     enableSorting: true,
-    toolPanel: {
-        items: [{
+    sideBar: {
+        toolPanels: [{
             id: 'columns',
             labelDefault: 'Columns',
             labelKey: 'columns',

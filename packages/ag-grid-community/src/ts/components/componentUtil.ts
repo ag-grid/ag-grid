@@ -192,8 +192,8 @@ export class ComponentUtil {
             api.setSuppressClipboardPaste(ComponentUtil.toBoolean(changes.suppressClipboardPaste.currentValue));
         }
 
-        if (changes.toolPanel) {
-            api.setToolPanel(changes.toolPanel.currentValue);
+        if (changes.sideBar) {
+            api.setSideBar(changes.sideBar.currentValue);
         }
 
         // copy changes into an event for dispatch

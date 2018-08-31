@@ -31,7 +31,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
     enableSorting: true,
-    showToolPanel: true,
+    sideBar: 'columns',
     enableFilter: true,
     rowGroupPanelShow: 'always'
 };

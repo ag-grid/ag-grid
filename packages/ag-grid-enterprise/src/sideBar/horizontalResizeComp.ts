@@ -5,7 +5,7 @@ import {
     GridOptionsWrapper,
     HorizontalResizeService,
     PostConstruct
-} from "ag-grid-community";
+} from "ag-grid-community/main";
 
 export class HorizontalResizeComp extends Component {
 

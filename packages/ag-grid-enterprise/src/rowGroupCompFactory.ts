@@ -1,5 +1,5 @@
 import {Bean, ICompFactory, Component, Autowired, Context} from "ag-grid-community";
-import {RowGroupColumnsPanel} from "./toolPanel/columnDrop/rowGroupColumnsPanel";
+import {RowGroupColumnsPanel} from "./sideBar/columns/columnDrop/rowGroupColumnsPanel";
 
 @Bean('rowGroupCompFactory')
 export class RowGroupCompFactory implements ICompFactory {

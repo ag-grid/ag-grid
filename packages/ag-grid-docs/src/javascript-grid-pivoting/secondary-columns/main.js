@@ -18,7 +18,7 @@ var gridOptions = {
     defaultColDef: {
         // NEW PIECE - add headerValueGetter
     },
-    toolPanel: true,
+    sideBar: true,
 
     // this is a callback that gets called on each column definition
     processSecondaryColDef: function(colDef) {

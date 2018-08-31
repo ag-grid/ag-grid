@@ -44,7 +44,7 @@ import {ValueCache} from "./valueService/valueCache";
 import {AlignedGridsService} from "./alignedGridsService";
 import {PinnedRowModel} from "./rowModels/pinnedRowModel";
 import {AgEvent, ColumnEventType} from "./events";
-import {IToolPanel} from "./interfaces/iToolPanel";
+import {ISideBar} from "./interfaces/ISideBar";
 import {IContextMenuFactory} from "./interfaces/iContextMenuFactory";
 import {ICellRendererComp} from "./rendering/cellRenderers/iCellRenderer";
 import {ICellEditorComp} from "./rendering/cellEditors/iCellEditor";
@@ -53,7 +53,7 @@ import {AnimationFrameService} from "./misc/animationFrameService";
 import {IServerSideRowModel} from "./interfaces/iServerSideRowModel";
 import {IStatusPanelService} from "./interfaces/iStatusPanelService";
 import {IStatusPanelItem} from "./interfaces/iStatusPanelItem";
-import {ToolPanelDef} from "./entities/toolPanel";
+import {SideBarDef} from "./entities/sideBar";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -117,7 +117,7 @@ export class GridApi {
     @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
     @Autowired('valueCache') private valueCache: ValueCache;
-    @Optional('toolPanelComp') private toolPanelComp: IToolPanel; // this can be removed
+    @Optional('sideBarComp') private sideBarComp: ISideBar; // this can be removed
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Optional('statusPanelService') private statusPanelService: IStatusPanelService;
 
@@ -323,9 +323,9 @@ export class GridApi {
     }
 
     public refreshToolPanel(): void {
-        console.log("this.toolPanelComp", this.toolPanelComp);
-        if (this.toolPanelComp) {
-            this.toolPanelComp.refresh();
+        console.log("this.toolPanelComp", this.sideBarComp);
+        if (this.sideBarComp) {
+            this.sideBarComp.refresh();
         }
     }
 
@@ -787,25 +787,25 @@ export class GridApi {
         this.doLayout();
     }
 
-    public isToolPanelVisible() {
-        return this.gridCore.isToolPanelVisible();
+    public isSideBarVisible() {
+        return this.gridCore.isSideBarVisible();
     }
 
-    public setToolPanelVisible(show:boolean) {
-        this.gridCore.setToolPanelVisible(show);
+    public setSideBarVisible(show:boolean) {
+        this.gridCore.setSideBarVisible(show);
     }
 
     public showToolPanel(show:boolean) {
-        console.warn(`ag-grid: from v19 api.showToolPanel has been deprecated in favour of api.setToolPanelVisible`);
-        this.setToolPanelVisible(show)
+        console.warn(`ag-grid: from v19 api.showToolPanel has been deprecated in favour of api.setSideBarVisible`);
+        this.setSideBarVisible(show)
     }
 
     public openToolPanel (key: string) {
         this.gridCore.openToolPanel(key);
     };
 
-    public closeToolPanel () {
-        this.gridCore.closeToolPanel();
+    public closeSideBar () {
+        this.gridCore.closeSideBar();
     };
 
     public getOpenedToolPanelItem (): string {
@@ -813,12 +813,12 @@ export class GridApi {
     };
 
 
-    public getToolPanel (): ToolPanelDef {
-        return this.gridCore.getToolPanel();
+    public getSideBar (): SideBarDef {
+        return this.gridCore.getSideBar();
     }
 
-    public setToolPanel (def: ToolPanelDef): void {
-        return this.gridCore.setToolPanel(def);
+    public setSideBar (def: SideBarDef): void {
+        return this.gridCore.setSideBar(def);
     };
 
     public setSuppressClipboardPaste(value: boolean): void {

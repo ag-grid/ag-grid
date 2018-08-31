@@ -27,11 +27,11 @@ var columnDefs = [
 ];
 
 function setToolPanelVisible(value) {
-    gridOptions.api.setToolPanelVisible(value)
+    gridOptions.api.setSideBarVisible(value)
 }
 
 function isToolPanelVisible() {
-    alert(gridOptions.api.isToolPanelVisible())
+    alert(gridOptions.api.isSideBarVisible())
 }
 
 function openToolPanel (key) {
@@ -39,7 +39,7 @@ function openToolPanel (key) {
 }
 
 function closeToolPanel () {
-    gridOptions.api.closeToolPanel()
+    gridOptions.api.closeSideBar()
 }
 
 function getOpenedToolPanelItem () {
@@ -47,11 +47,11 @@ function getOpenedToolPanelItem () {
 }
 
 function setToolPanel (def) {
-    gridOptions.api.setToolPanel (def);
+    gridOptions.api.setSideBar (def);
 }
 
 function getToolPanel () {
-    let toolPanel = gridOptions.api.getToolPanel ();
+    let toolPanel = gridOptions.api.getSideBar ();
     alert(JSON.stringify(toolPanel));
     console.log(toolPanel);
 }
@@ -71,7 +71,7 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     enableSorting: true,
-    toolPanel: true,
+    sideBar: true,
     enableFilter: true
 };
 

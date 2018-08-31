@@ -16,7 +16,7 @@ var gridOptions = {
     showToolPanel: true,
     enableColResize: true,
     columnDefs: columnDefs,
-    toolPanel: true,
+    sideBar: true,
 };
 function turnOffPivotMode() {
     gridOptions.columnApi.setPivotMode(false);

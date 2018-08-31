@@ -6,10 +6,10 @@ import {
     GridOptionsWrapper,
     GridPanel,
     PostConstruct,
-    ToolPanelItemDef
+    ToolPanelDef
 } from "ag-grid-community";
 
-export class ToolPanelSelectComp extends Component {
+export class SideBarSelectComp extends Component {
 
     private panels: {[key:string]:Component} = {};
     public defaultPanelKey: string = null;
@@ -22,7 +22,7 @@ export class ToolPanelSelectComp extends Component {
     private static readonly TEMPLATE: string = `<div class="ag-side-buttons"></div>`;
 
     constructor() {
-        super(ToolPanelSelectComp.TEMPLATE);
+        super(SideBarSelectComp.TEMPLATE);
     }
 
     public registerPanelComp(key: string, panelComponent: Component): void {
@@ -35,22 +35,22 @@ export class ToolPanelSelectComp extends Component {
 
     @PostConstruct
     public postConstruct(): void {
-        let buttons:{[p:string]: ToolPanelItemDef} = {};
-        let componentDefs: ToolPanelItemDef[] = _.get(this.gridOptionsWrapper.getToolPanel(), 'items', []);
-        componentDefs.forEach((componentDef:ToolPanelItemDef)=>{
-            buttons[componentDef.id] = componentDef;
+        let buttons:{[p:string]: ToolPanelDef} = {};
+        let toolPanels: ToolPanelDef[] = _.get(this.gridOptionsWrapper.getSideBar(), 'toolPanels', []);
+        toolPanels.forEach((toolPanel:ToolPanelDef)=>{
+            buttons[toolPanel.id] = toolPanel;
         });
 
         this.createButtonsHtml (buttons);
     }
 
-    private createButtonsHtml(componentButtons: {[p: string]: ToolPanelItemDef}): void {
+    private createButtonsHtml(componentButtons: {[p: string]: ToolPanelDef}): void {
         let translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         let html: string = '';
         let keys = Object.keys(componentButtons);
         keys.forEach(key=>{
-            let def: ToolPanelItemDef = componentButtons[key];
+            let def: ToolPanelDef = componentButtons[key];
             html += `<div class="ag-side-button""><button type="button" ref="toggle-button-${key}"><div><span class="ag-icon-${def.iconKey}"></span></div><span>${translate(def.labelKey, def.labelDefault)}</span></button></div>`
         });
 
@@ -60,7 +60,7 @@ export class ToolPanelSelectComp extends Component {
             this.addButtonEvents(key);
         });
 
-        this.defaultPanelKey = _.get(this.gridOptionsWrapper.getToolPanel(), 'defaultItem', null);
+        this.defaultPanelKey = _.get(this.gridOptionsWrapper.getSideBar(), 'defaultToolPanel', null);
         let defaultButtonElement: HTMLElement = this.getRefElement(`toggle-button-${this.defaultPanelKey}`);
         if (defaultButtonElement) {
            _.addOrRemoveCssClass(defaultButtonElement.parentElement, 'ag-selected', true);
@@ -99,7 +99,7 @@ export class ToolPanelSelectComp extends Component {
     }
 
     public clear () {
-        this.setTemplate(ToolPanelSelectComp.TEMPLATE);
+        this.setTemplate(SideBarSelectComp.TEMPLATE);
         this.panels = {};
     }
 }

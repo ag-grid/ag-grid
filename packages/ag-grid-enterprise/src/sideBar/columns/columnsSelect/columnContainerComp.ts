@@ -12,8 +12,8 @@ import {
     PostConstruct,
     Utils,
     GridOptionsWrapper, IComponent
-} from "ag-grid-community";
-import {ToolPanelGroupComp} from "./toolPanelGroupComp";
+} from "ag-grid-community/main";
+import {ColumnGroupComp} from "./columnGroupComp";
 import {ToolPanelColumnComp} from "./toolPanelColumnComp";
 import {BaseColumnItem} from "./columnSelectComp";
 import {SELECTED_STATE} from "./columnSelectHeaderComp";
@@ -80,7 +80,7 @@ export class ColumnContainerComp extends Component {
         }
 
         if (!columnGroup.isPadding()) {
-            let renderedGroup = new ToolPanelGroupComp(columnGroup,  dept, this.onGroupExpanded.bind(this),
+            let renderedGroup = new ColumnGroupComp(columnGroup,  dept, this.onGroupExpanded.bind(this),
                 this.props.allowDragging, this.expandGroupsByDefault);
             this.context.wireBean(renderedGroup);
             this.getGui().appendChild(renderedGroup.getGui());
@@ -111,7 +111,7 @@ export class ColumnContainerComp extends Component {
 
                 // only interested in groups
                 if (item instanceof OriginalColumnGroup) {
-                    let comp = <ToolPanelGroupComp> this.columnComps[item.getId()];
+                    let comp = <ColumnGroupComp> this.columnComps[item.getId()];
 
                     if (comp) {
                         if (comp.isExpanded()) {
@@ -252,7 +252,7 @@ export class ColumnContainerComp extends Component {
 
                 let childrenOpen: boolean;
                 if (comp) {
-                    let expanded = (<ToolPanelGroupComp>comp).isExpanded();
+                    let expanded = (<ColumnGroupComp>comp).isExpanded();
                     childrenOpen = parentGroupsOpen ? expanded : false;
                 } else {
                     childrenOpen = parentGroupsOpen;

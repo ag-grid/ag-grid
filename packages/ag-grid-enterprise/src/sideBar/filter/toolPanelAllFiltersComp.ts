@@ -16,7 +16,7 @@ import {
     Utils,
     ValueService
 } from "ag-grid-community";
-import {ColumnItem} from "../columnsSelect/columnContainerComp";
+import {ColumnItem} from "../columns/columnsSelect/columnContainerComp";
 import {ToolPanelFilterComp} from "./toolPanelFilterComp";
 
 export class ToolPanelAllFiltersComp extends Component {

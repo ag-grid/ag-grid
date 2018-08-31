@@ -16,11 +16,11 @@ import {Component} from "./widgets/component";
 import {ICompFactory} from "./interfaces/iCompFactory";
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {GridApi} from "./gridApi";
-import {IToolPanel} from "./interfaces/iToolPanel";
+import {ISideBar} from "./interfaces/ISideBar";
 import {RefSelector} from "./widgets/componentAnnotations";
 import {Events, GridSizeChangedEvent} from "./events";
 import {ResizeObserverService} from "./misc/resizeObserverService";
-import {ToolPanelDef, ToolPanelDefLikeParser} from "./entities/toolPanel";
+import {SideBarDef, SideBarDefLikeParser} from "./entities/sideBar";
 
 @Bean('gridCore')
 export class GridCore extends Component {
@@ -38,7 +38,7 @@ export class GridCore extends Component {
             <ag-header-column-drop></ag-header-column-drop>
             <div ref="rootWrapperBody" class="ag-root-wrapper-body">
                 <ag-grid-comp ref="gridPanel"></ag-grid-comp>
-                <ag-tool-panel ref="toolPanel"></ag-tool-panel>
+                <ag-side-bar ref="sideBar"></ag-side-bar>
             </div>
             <ag-status-panel ref="statusPanel"></ag-status-panel>
             <ag-pagination></ag-pagination>
@@ -71,7 +71,7 @@ export class GridCore extends Component {
     @Optional('pivotCompFactory') private pivotCompFactory: ICompFactory;
 
     @RefSelector('gridPanel') private gridPanel: GridPanel;
-    @RefSelector('toolPanel') private toolPanelComp: IToolPanel & Component;
+    @RefSelector('sideBar') private sideBarComp: ISideBar & Component;
     @RefSelector('rootWrapperBody') private eRootWrapperBody: HTMLElement;
 
     private finished: boolean;
@@ -93,13 +93,13 @@ export class GridCore extends Component {
         this.instantiate(this.context);
 
         if (this.enterprise) {
-            this.toolPanelComp.registerGridComp(this.gridPanel);
+            this.sideBarComp.registerGridComp(this.gridPanel);
         }
 
         this.gridOptionsWrapper.addLayoutElement(this.getGui());
 
         // see what the grid options are for default of toolbar
-        this.setToolPanelVisible(this.gridOptionsWrapper.isShowToolPanel());
+        this.setSideBarVisible(this.gridOptionsWrapper.isShowToolPanel());
 
         this.eGridDiv.appendChild(this.getGui());
         this.addDestroyFunc(() => {
@@ -144,7 +144,7 @@ export class GridCore extends Component {
         let widthForCols = this.columnController.getBodyContainerWidth()
             + this.columnController.getPinnedLeftContainerWidth()
             + this.columnController.getPinnedRightContainerWidth();
-        let widthForToolpanel = this.toolPanelComp ? this.toolPanelComp.getPreferredWidth() : 0;
+        let widthForToolpanel = this.sideBarComp ? this.sideBarComp.getPreferredWidth() : 0;
         return widthForCols + widthForToolpanel;
     }
 
@@ -157,65 +157,65 @@ export class GridCore extends Component {
         return this.getGui();
     }
 
-    public isToolPanelVisible(): boolean {
-        if (!this.toolPanelComp) {
+    public isSideBarVisible(): boolean {
+        if (!this.sideBarComp) {
             return false;
         }
 
-        return this.toolPanelComp.isVisible();
+        return this.sideBarComp.isVisible();
     }
 
-    public setToolPanelVisible(show:boolean) {
-        if (!this.toolPanelComp) {
+    public setSideBarVisible(show:boolean) {
+        if (!this.sideBarComp) {
             if (show) {
                 console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
             }
             return;
         }
 
-        this.toolPanelComp.setVisible(show);
+        this.sideBarComp.setVisible(show);
     }
 
-    public closeToolPanel () {
-        if (!this.toolPanelComp) {
+    public closeSideBar () {
+        if (!this.sideBarComp) {
             console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
             return;
         }
 
-        this.toolPanelComp.close();
+        this.sideBarComp.close();
     }
 
-    public getToolPanel (): ToolPanelDef {
-        return <ToolPanelDef>this.gridOptions.toolPanel;
+    public getSideBar (): SideBarDef {
+        return <SideBarDef>this.gridOptions.sideBar;
     }
 
-    public setToolPanel (def: ToolPanelDef | string | boolean): void {
-        this.eRootWrapperBody.removeChild(this.toolPanelComp.getGui());
-        this.gridOptions.toolPanel = ToolPanelDefLikeParser.parse(def);
-        this.toolPanelComp.reset ();
-        this.eRootWrapperBody.appendChild(this.toolPanelComp.getGui());
+    public setSideBar (def: SideBarDef | string | boolean): void {
+        this.eRootWrapperBody.removeChild(this.sideBarComp.getGui());
+        this.gridOptions.sideBar = SideBarDefLikeParser.parse(def);
+        this.sideBarComp.reset ();
+        this.eRootWrapperBody.appendChild(this.sideBarComp.getGui());
     }
 
     public getOpenedToolPanelItem (): string {
-        if (!this.toolPanelComp) {
+        if (!this.sideBarComp) {
             return null;
         }
 
-        return this.toolPanelComp.openedItem();
+        return this.sideBarComp.openedItem();
     }
 
 
     public openToolPanel (key:string) {
-        if (!this.toolPanelComp) {
+        if (!this.sideBarComp) {
             console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
             return;
         }
 
-        this.toolPanelComp.openToolPanel(key);
+        this.sideBarComp.openToolPanel(key);
     }
 
     public isToolPanelShowing() {
-        return this.toolPanelComp.isToolPanelShowing();
+        return this.sideBarComp.isToolPanelShowing();
     }
 
     // need to override, as parent class isn't marked with PreDestroy

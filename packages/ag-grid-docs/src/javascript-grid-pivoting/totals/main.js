@@ -14,7 +14,7 @@ var gridOptions = {
     enableColResize: true,
     pivotMode: true,
     pivotColumnGroupTotals: 'before',
-    toolPanel: true,
+    sideBar: true,
 };
 
 

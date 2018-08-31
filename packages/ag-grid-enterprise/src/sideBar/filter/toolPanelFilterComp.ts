@@ -10,7 +10,7 @@ import {
     Events,
     FilterOpenedEvent, GridApi, GridOptionsWrapper, ColumnController
 } from "ag-grid-community";
-import {SELECTED_STATE} from "../columnsSelect/columnSelectHeaderComp";
+import {SELECTED_STATE} from "../columns/columnsSelect/columnSelectHeaderComp";
 
 export interface ToolPanelFilterCompParams {
     column: Column

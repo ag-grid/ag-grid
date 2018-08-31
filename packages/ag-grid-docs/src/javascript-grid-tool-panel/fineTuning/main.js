@@ -37,8 +37,8 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     enableSorting: true,
-    toolPanel: {
-        items: [
+    sideBar: {
+        toolPanels: [
             'columns',
             {
                 id: 'filters',
@@ -54,7 +54,7 @@ var gridOptions = {
                 component: 'agFiltersToolPanel',
             },
         ],
-        defaultItem: 'filters'
+        defaultToolPanel: 'filters'
     },
     enableFilter: true,
     localeText: {

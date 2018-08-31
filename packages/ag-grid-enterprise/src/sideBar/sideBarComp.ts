@@ -5,29 +5,29 @@ import {
     EventService,
     GridOptionsWrapper,
     GridPanel,
-    IToolPanel,
+    ISideBar,
     PostConstruct,
     RefSelector,
+    SideBarDef,
     ToolPanelDef,
-    ToolPanelItemDef,
     IComponent,
     Promise, _
 } from "ag-grid-community";
-import {ToolPanelSelectComp} from "./toolPanelSelectComp";
+import {SideBarSelectComp} from "./sideBarSelectComp";
 import {ToolPanelWrapper, ToolPanelWrapperParams} from "./toolPanelWrapper";
 
 export interface IToolPanelChildComp extends IComponent<any>{
     refresh(): void
 }
 
-export class ToolPanelComp extends Component implements IToolPanel {
+export class SideBarComp extends Component implements ISideBar {
 
     @Autowired("context") private context: Context;
     @Autowired("eventService") private eventService: EventService;
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired("componentResolver") private componentResolver: ComponentResolver;
 
-    @RefSelector('toolPanelSelectComp') private toolPanelSelectComp: ToolPanelSelectComp;
+    @RefSelector('toolPanelSelectComp') private toolPanelSelectComp: SideBarSelectComp;
     // @RefSelector('columnComp') private columnComp: ToolPanelColumnComp;
     // @RefSelector('filterComp') private filterComp: ToolPanelAllFiltersComp;
     private panelComps: { [p: string]: ToolPanelWrapper } = {};
@@ -36,7 +36,7 @@ export class ToolPanelComp extends Component implements IToolPanel {
           </div>`;
 
     constructor() {
-        super(ToolPanelComp.TEMPLATE);
+        super(SideBarComp.TEMPLATE);
     }
 
     // this was deprecated in v19, we can drop in v20
@@ -51,28 +51,28 @@ export class ToolPanelComp extends Component implements IToolPanel {
     @PostConstruct
     private postConstruct(): void {
         this.instantiate(this.context);
-        let toolPanel: ToolPanelDef = this.gridOptionsWrapper.getToolPanel();
+        let sideBar: SideBarDef = this.gridOptionsWrapper.getSideBar();
 
-        if (toolPanel == null) {
+        if (sideBar == null) {
             this.getGui().removeChild(this.toolPanelSelectComp.getGui());
             return;
         }
 
         let allPromises: Promise<IComponent<any>>[] = [];
-        if (toolPanel.items) {
-            toolPanel.items.forEach((toolPanelComponentDef: ToolPanelItemDef) => {
-                if (toolPanelComponentDef.id == null) {
+        if (sideBar.toolPanels) {
+            sideBar.toolPanels.forEach((toolPanel: ToolPanelDef) => {
+                if (toolPanel.id == null) {
                     console.warn(`ag-grid: please review all your toolPanel components, it seems like at least one of them doesn't have an id`);
                     return;
                 }
                 let componentPromise: Promise<IComponent<any>> = this.componentResolver.createAgGridComponent(
-                    toolPanelComponentDef,
-                    toolPanelComponentDef.componentParams,
+                    toolPanel,
+                    toolPanel.componentParams,
                     'component',
                     null
                 );
                 if (componentPromise == null) {
-                    console.warn(`ag-grid: error processing tool panel component ${toolPanelComponentDef.id}. You need to specify either 'component' or 'componentFramework'`);
+                    console.warn(`ag-grid: error processing tool panel component ${toolPanel.id}. You need to specify either 'component' or 'componentFramework'`);
                     return;
                 }
                 allPromises.push(componentPromise);
@@ -80,7 +80,7 @@ export class ToolPanelComp extends Component implements IToolPanel {
                     let wrapper: ToolPanelWrapper = this.componentResolver.createInternalAgGridComponent<ToolPanelWrapperParams, ToolPanelWrapper>(ToolPanelWrapper, {
                         innerComp: component
                     });
-                    this.panelComps [toolPanelComponentDef.id] = wrapper;
+                    this.panelComps [toolPanel.id] = wrapper;
                 });
             });
         }
@@ -106,13 +106,13 @@ export class ToolPanelComp extends Component implements IToolPanel {
     }
 
     public setVisible (show:boolean): void{
-        if (_.get(this.gridOptionsWrapper.getToolPanel(), 'items', []).length === 0) return;
+        if (_.get(this.gridOptionsWrapper.getSideBar(), 'toolPanels', []).length === 0) return;
 
         super.setVisible(show);
         if (show) {
             let keyOfTabToShow: string = this.getActiveToolPanelItem();
-            keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : _.get(this.gridOptionsWrapper.getToolPanel(), 'defaultItem', null);
-            keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : (<ToolPanelItemDef[]>this.gridOptionsWrapper.getToolPanel().items) [0].id;
+            keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : _.get(this.gridOptionsWrapper.getSideBar(), 'defaultToolPanel', null);
+            keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : (<ToolPanelDef[]>this.gridOptionsWrapper.getSideBar().toolPanels) [0].id;
             let tabToShow: Component = this.panelComps[keyOfTabToShow];
             if (!tabToShow) {
                 console.warn(`ag-grid: can't set the visibility of the tool panel item [${keyOfTabToShow}] since it can't be found`);
@@ -168,7 +168,7 @@ export class ToolPanelComp extends Component implements IToolPanel {
     public reset (): void {
         this.toolPanelSelectComp.clear ();
         this.panelComps = {};
-        this.setTemplate(ToolPanelComp.TEMPLATE);
+        this.setTemplate(SideBarComp.TEMPLATE);
         this.postConstruct();
     }
 }

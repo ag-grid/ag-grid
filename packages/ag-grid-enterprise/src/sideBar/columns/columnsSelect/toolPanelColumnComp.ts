@@ -23,7 +23,7 @@ import {
     Utils,
     RefSelector,
     _
-} from "ag-grid-community";
+} from "ag-grid-community/main";
 import {BaseColumnItem} from "./columnSelectComp";
 
 export class ToolPanelColumnComp extends Component implements BaseColumnItem {

@@ -71,7 +71,7 @@ export {GridCell} from "./entities/gridCell";
 export {GridRow} from "./entities/gridRow";
 export {OriginalColumnGroup} from "./entities/originalColumnGroup";
 export {RowNode} from "./entities/rowNode";
-export {ToolPanelDef, ToolPanelItemDef} from "./entities/toolPanel";
+export {SideBarDef, ToolPanelDef} from "./entities/sideBar";
 
 // filter
 export {BaseFilter} from "./filter/baseFilter";
@@ -167,7 +167,7 @@ export {IServerSideGetRowsRequest} from "./interfaces/iServerSideDatasource";
 export {IServerSideRowModel} from "./interfaces/iServerSideRowModel";
 export {IServerSideCache} from "./interfaces/iServerSideCache";
 
-export {IToolPanel} from "./interfaces/iToolPanel";
+export {ISideBar} from "./interfaces/ISideBar";
 export {RowNodeCache, RowNodeCacheParams} from "./rowModels/cache/rowNodeCache";
 export {IGetRowsParams, IDatasource} from "./rowModels/iDatasource";
 

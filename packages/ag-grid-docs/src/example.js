@@ -189,7 +189,7 @@ var gridOptions = {
     //suppressCellSelection: true,
     //suppressMultiSort: true,
     // scrollbarWidth: 20,
-    toolPanel: true,
+    sideBar: true,
     // showToolPanel: true,//window.innerWidth > 1000,
     // toolPanelSuppressColumnFilter: true,
     // toolPanelSuppressColumnSelectAll: true,

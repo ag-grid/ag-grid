@@ -22,7 +22,7 @@ import {
     TabbedLayout,
     Utils
 } from "ag-grid-community";
-import {ColumnSelectComp} from "../toolPanel/columnsSelect/columnSelectComp";
+import {ColumnSelectComp} from "../sideBar/columns/columnsSelect/columnSelectComp";
 import {MenuList} from "./menuList";
 import {MenuItemComponent} from "./menuItemComponent";
 import {MenuItemMapper} from "./menuItemMapper";

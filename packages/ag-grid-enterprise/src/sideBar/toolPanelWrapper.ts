@@ -1,6 +1,6 @@
 import {Autowired, Component, ComponentResolver, IComponent} from "ag-grid-community";
-import {IToolPanelChildComp} from "./toolPanelComp";
-import {HorizontalResizeComp} from "./columnsSelect/horizontalResizeComp";
+import {IToolPanelChildComp} from "./sideBarComp";
+import {HorizontalResizeComp} from "./horizontalResizeComp";
 
 export interface ToolPanelWrapperParams {
     innerComp: IToolPanelChildComp & Component;

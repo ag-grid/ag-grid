@@ -12,7 +12,7 @@ var gridOptions = {
     enableSorting: true,
     suppressAggFuncInHeader: true,
     pivotMode: true,
-    toolPanel: true,
+    sideBar: true,
 };
 
 function clearSort() {
