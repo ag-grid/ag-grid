@@ -296,7 +296,7 @@ export class GridOptionsWrapper {
     }
 
     public isShowToolPanel() {
-        return isTrue(this.gridOptions.toolPanel && Array.isArray(this.getToolPanel().components) );
+        return isTrue(this.gridOptions.toolPanel && Array.isArray(this.getToolPanel().items) );
     }
 
     public getToolPanel(): ToolPanelDef {

@@ -1,6 +1,6 @@
 import {ICellRendererComp, ICellRendererFunc} from "../rendering/cellRenderers/iCellRenderer";
 
-export interface ToolPanelComponentDef {
+export interface ToolPanelItemDef {
     key: string,
     buttonLabel: string,
     // To allow binding this to an specific icon
@@ -11,8 +11,8 @@ export interface ToolPanelComponentDef {
 }
 
 export interface ToolPanelDef {
-    components?: (ToolPanelComponentDef | string) [];
-    defaultTab?: string;
+    items?: (ToolPanelItemDef | string) [];
+    defaultItem?: string;
 }
 
 export class ToolPanelDefLikeParser {
@@ -30,7 +30,7 @@ export class ToolPanelDefLikeParser {
         component: 'agFiltersToolPanel',
     };
 
-    static readonly DEFAULT_BY_KEY: {[p: string]: ToolPanelComponentDef} = {
+    static readonly DEFAULT_BY_KEY: {[p: string]: ToolPanelItemDef} = {
         columns: ToolPanelDefLikeParser.DEFAULT_COLUMN_COMP,
         filters: ToolPanelDefLikeParser.DEFAULT_FILTER_COMP
     };
@@ -39,18 +39,18 @@ export class ToolPanelDefLikeParser {
         if (toParse === false) return null;
         if (toParse === true) {
             return {
-                components: [
+                items: [
                     ToolPanelDefLikeParser.DEFAULT_COLUMN_COMP,
                     ToolPanelDefLikeParser.DEFAULT_FILTER_COMP,
                 ],
-                defaultTab: 'columns'
+                defaultItem: 'columns'
             }
         }
 
         if (typeof toParse === 'string') return ToolPanelDefLikeParser.parse([toParse]);
 
         if (Array.isArray(toParse)) {
-            let comps: ToolPanelComponentDef [] = [];
+            let comps: ToolPanelItemDef [] = [];
             toParse.forEach(key=>{
                 const lookupResult = ToolPanelDefLikeParser.DEFAULT_BY_KEY [key];
                 if (! lookupResult) {
@@ -66,24 +66,24 @@ export class ToolPanelDefLikeParser {
             }
 
             return {
-                components: comps,
-                defaultTab: comps[0].key
+                items: comps,
+                defaultItem: comps[0].key
             }
         }
 
         let result: ToolPanelDef = {
-            components: ToolPanelDefLikeParser.parseComponents(toParse.components),
-            defaultTab: toParse.defaultTab
+            items: ToolPanelDefLikeParser.parseComponents(toParse.items),
+            defaultItem: toParse.defaultItem
         };
 
         return result;
     }
 
-    static parseComponents (from: (ToolPanelComponentDef | string)[]) : ToolPanelComponentDef[] {
-        let result:ToolPanelComponentDef[] = [];
+    static parseComponents (from: (ToolPanelItemDef | string)[]) : ToolPanelItemDef[] {
+        let result:ToolPanelItemDef[] = [];
 
-        from.forEach((it: ToolPanelComponentDef | string)=>{
-            let toAdd: ToolPanelComponentDef = null;
+        from.forEach((it: ToolPanelItemDef | string)=>{
+            let toAdd: ToolPanelItemDef = null;
             if (typeof it === 'string') {
                 const lookupResult = ToolPanelDefLikeParser.DEFAULT_BY_KEY [it];
                 if (! lookupResult) {

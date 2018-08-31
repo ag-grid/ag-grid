@@ -21,9 +21,9 @@ import {RowNode} from "../../entities/rowNode";
 import {Column} from "../../entities/column";
 import {GridApi} from "../../gridApi";
 import {ColumnApi} from "../../columnController/columnApi";
-import {ToolPanelComponentDef} from "../../entities/toolPanel";
+import {ToolPanelItemDef} from "../../entities/toolPanel";
 
-export type ComponentHolder = GridOptions | ColDef | ColGroupDef | ISetFilterParams | IRichCellEditorParams | ToolPanelComponentDef;
+export type ComponentHolder = GridOptions | ColDef | ColGroupDef | ISetFilterParams | IRichCellEditorParams | ToolPanelItemDef;
 
 export type AgComponentPropertyInput<A extends IComponent<any>> = AgGridRegisteredComponentInput<A> | string;
 

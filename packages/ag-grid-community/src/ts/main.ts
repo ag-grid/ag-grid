@@ -71,7 +71,7 @@ export {GridCell} from "./entities/gridCell";
 export {GridRow} from "./entities/gridRow";
 export {OriginalColumnGroup} from "./entities/originalColumnGroup";
 export {RowNode} from "./entities/rowNode";
-export {ToolPanelDef, ToolPanelComponentDef} from "./entities/toolPanel";
+export {ToolPanelDef, ToolPanelItemDef} from "./entities/toolPanel";
 
 // filter
 export {BaseFilter} from "./filter/baseFilter";
