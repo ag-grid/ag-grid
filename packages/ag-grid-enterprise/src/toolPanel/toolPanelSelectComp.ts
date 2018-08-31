@@ -42,9 +42,6 @@ export class ToolPanelSelectComp extends Component {
         });
 
         this.createButtonsHtml (buttons);
-
-        let showButtons = !this.gridOptionsWrapper.isToolPanelSuppressSideButtons();
-        this.setVisible(showButtons);
     }
 
     private createButtonsHtml(componentButtons: {[p: string]: ToolPanelItemDef}): void {

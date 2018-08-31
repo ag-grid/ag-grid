@@ -429,7 +429,17 @@ export class EnterpriseMenu extends BeanStub {
         let eWrapperDiv = document.createElement('div');
         Utils.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
 
-        this.columnSelectPanel = new ColumnSelectComp(false);
+        this.columnSelectPanel = new ColumnSelectComp(false, {
+            suppressValues: false,
+            suppressPivots: false,
+            suppressRowGroups: false,
+            suppressPivotMode: false,
+            contractColumnSelection: false,
+            suppressColumnExpandAll: false,
+            suppressColumnFilter: false,
+            suppressColumnSelectAll: false,
+            suppressSideButtons: false
+        });
         this.context.wireBean(this.columnSelectPanel);
 
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());

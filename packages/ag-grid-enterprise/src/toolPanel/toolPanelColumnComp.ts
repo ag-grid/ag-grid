@@ -6,7 +6,7 @@ import {
     Events,
     EventService,
     GridApi,
-    GridOptionsWrapper,
+    GridOptionsWrapper, IComponent,
     ToolPanelVisibleChangedEvent
 } from "ag-grid-community";
 import {PivotModePanel} from "./columnDrop/pivotModePanel";
@@ -15,7 +15,20 @@ import {RowGroupColumnsPanel} from "./columnDrop/rowGroupColumnsPanel";
 import {ColumnSelectComp} from "./columnsSelect/columnSelectComp";
 import {PivotColumnsPanel} from "./columnDrop/pivotColumnsPanel";
 
-export class ToolPanelColumnComp extends Component {
+export interface ToolPanelColumnCompParams {
+    suppressRowGroups: boolean;
+    suppressValues: boolean;
+    suppressPivots: boolean;
+    suppressPivotMode: boolean;
+    suppressSideButtons: boolean;
+    suppressColumnFilter: boolean;
+    suppressColumnSelectAll: boolean;
+    suppressColumnExpandAll: boolean;
+    contractColumnSelection: boolean;
+    functionsReadOnly: boolean;
+}
+
+export class ToolPanelColumnComp extends Component implements IComponent<ToolPanelColumnCompParams>{
 
     private static TEMPLATE =`<div class="ag-column-panel-center ag-column-panel"></div>`;
 
@@ -25,6 +38,7 @@ export class ToolPanelColumnComp extends Component {
     @Autowired("eventService") private eventService: EventService;
 
     private initialised = false;
+    private params: ToolPanelColumnCompParams;
 
     private childDestroyFuncs: Function[] = [];
 
@@ -36,7 +50,7 @@ export class ToolPanelColumnComp extends Component {
     public setVisible(visible: boolean): void {
         super.setVisible(visible);
         if (visible && !this.initialised) {
-            this.init();
+            this.init(this.params);
         }
 
         let event: ToolPanelVisibleChangedEvent = {
@@ -47,24 +61,38 @@ export class ToolPanelColumnComp extends Component {
         this.eventService.dispatchEvent(event);
     }
 
-    public init(): void {
+    public init(params: ToolPanelColumnCompParams): void {
+        let defaultParams:ToolPanelColumnCompParams = {
+            suppressSideButtons: false,
+            suppressColumnSelectAll: false,
+            suppressColumnFilter: false,
+            suppressColumnExpandAll: false,
+            contractColumnSelection: false,
+            suppressPivotMode: false,
+            suppressRowGroups: false,
+            suppressValues: false,
+            suppressPivots: false,
+            functionsReadOnly: false
+        };
+        _.mergeDeep(defaultParams ,params)
+        this.params = defaultParams;
         this.instantiate(this.context);
 
-        if (!this.gridOptionsWrapper.isToolPanelSuppressPivotMode()) {
+        if (!this.params.suppressPivotMode) {
             this.addComponent(new PivotModePanel());
         }
 
-        this.addComponent(new ColumnSelectComp(true));
+        this.addComponent(new ColumnSelectComp(true, this.params));
 
-        if (!this.gridOptionsWrapper.isToolPanelSuppressRowGroups()) {
+        if (!this.params.suppressRowGroups) {
             this.addComponent(new RowGroupColumnsPanel(false));
         }
 
-        if (!this.gridOptionsWrapper.isToolPanelSuppressValues()) {
+        if (!this.params.suppressValues) {
             this.addComponent(new ValuesColumnPanel(false));
         }
 
-        if (!this.gridOptionsWrapper.isToolPanelSuppressPivots()) {
+        if (!this.params.suppressPivots) {
             this.addComponent(new PivotColumnsPanel(false));
         }
 
@@ -85,7 +113,7 @@ export class ToolPanelColumnComp extends Component {
 
     public refresh(): void {
         this.destroyChildren();
-        this.init();
+        this.init(this.params);
     }
 
     public destroy(): void {

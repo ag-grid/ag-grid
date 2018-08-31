@@ -11,12 +11,13 @@ import {
     OriginalColumnGroupChild,
     PostConstruct,
     Utils,
-    GridOptionsWrapper
+    GridOptionsWrapper, IComponent
 } from "ag-grid-community";
 import {ToolPanelGroupComp} from "./toolPanelGroupComp";
 import {ToolPanelColumnComp} from "./toolPanelColumnComp";
 import {BaseColumnItem} from "./columnSelectComp";
 import {SELECTED_STATE} from "./columnSelectHeaderComp";
+import {ToolPanelColumnCompParams} from "../toolPanelColumnComp";
 
 export type ColumnItem = BaseColumnItem & Component;
 
@@ -29,6 +30,7 @@ export class ColumnContainerComp extends Component {
 
     private props: {
         allowDragging: boolean;
+        params: ToolPanelColumnCompParams;
     };
 
     private columnTree: OriginalColumnGroupChild[];
@@ -47,7 +49,7 @@ export class ColumnContainerComp extends Component {
     @PostConstruct
     public init(): void {
         this.addDestroyableEventListener(this.globalEventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
-        this.expandGroupsByDefault = !this.gridOptionsWrapper.isContractColumnSelection();
+        this.expandGroupsByDefault = !this.props.params.contractColumnSelection;
         if (this.columnController.isReady()) {
             this.onColumnsChanged();
         }

@@ -17,7 +17,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         Below shows a simple example of the columns tool panel in action. The following should be noted:
         <ul>
-            <li>Grid property <code>toolPanel=true</code> which shows the tool panel by default.</li>
+            <li>Grid property <code>toolPanel='columns'</code> which shows only the columns tool panel.</li>
             <li>
                 Grid property <code>defaultColDef</code> has <code>enableValue</code>, <code>enableRowGroup</code>
                 and <code>enablePivot</code> set. This means all columns can be dragged to any of the
@@ -53,6 +53,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
+    <?= example('Tool Panel Simple', 'simple', 'generated', array("enterprise" => 1)) ?>
 
 
     <note>
@@ -148,19 +149,19 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         It is possible to remove items from the tool panel. Items are suppressed by setting one or more of the
-        following grid properties to true:
+        following componentParams whenever you are using the agColumnsToolPanel component properties to true:
     </p>
 
     <ul class="content">
-        <li><code>toolPanelSuppressRowGroups</code>: to suppress Row Groups section.</li>
-        <li><code>toolPanelSuppressValues</code>: to suppress Values section.</li>
-        <li><code>toolPanelSuppressPivots</code>: to suppress Column Labels (Pivot) section.</li>
-        <li><code>toolPanelSuppressPivotMode</code>: to suppress Pivot Mode section.</li>
+        <li><code>suppressRowGroups</code>: to suppress Row Groups section.</li>
+        <li><code>suppressValues</code>: to suppress Values section.</li>
+        <li><code>suppressPivots</code>: to suppress Column Labels (Pivot) section.</li>
+        <li><code>suppressPivotMode</code>: to suppress Pivot Mode section.</li>
+        <li><code>suppressColumnFilter</code>: To suppress Column Filter section.</li>
+        <li><code>suppressColumnSelectAll</code>: To suppress Select / Un-select all widget.</li>
+        <li><code>suppressColumnExpandAll</code>: To suppress Expand / Collapse all widget.</li>
 
-        <li><code>toolPanelSuppressSideButtons</code>: To suppress Side Buttons section.</li>
-        <li><code>toolPanelSuppressColumnFilter</code>: To suppress Column Filter section.</li>
-        <li><code>toolPanelSuppressColumnSelectAll</code>: To suppress Select / Un-select all widget.</li>
-        <li><code>toolPanelSuppressColumnExpandAll</code>: To suppress Expand / Collapse all widget.</li>
+        <li><code>suppressSideButtons</code>: NOT USED ANYMORE. To suppress Side Buttons section.</li>
     </ul>
 
     <p>
