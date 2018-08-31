@@ -1,15 +1,13 @@
 <?php
 
 $toolPanelProperties = [
-    ['components',
-        'A list of all the components that describe each of the tabs that we want to show in the tool panel in order of how they should be rendered (top to bottom)'
+    ['items',
+        'A list of all the tool panel items to display. The items will be displayed in provided order from top to bottom.'
     ],
     ['defaultTab',
-        'The key as specified in one of the provided components above to show opened by default when the tool panel is initialised'
+        'The item (identified by id) to open by default. If none specified, the tool panel is initially displayed closed.'
     ]
 ];
-
-
 
 $toolPanelComponentProperties = [
     ['key',

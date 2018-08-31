@@ -102,10 +102,11 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Tool Panel - Only filters', 'onlyFilters', 'generated', array("enterprise" => 1)) ?>
 
-    <h2>Columns and Filters - Fine tuning</h2>
+    <h2>ToolPanelDef Configuration</h2>
 
     <p>
-    The previous configurations are shortcuts for the full fledge configuration supported by the tool panel. With the tool panel you can configure:
+        The previous configurations are shortcuts for the full fledged configuration using a ToolPanelDef object.
+        The properties of ToolPanelDef are as follows:
     <table class="table reference">
 
         <?php include './toolPanelProperties.php' ?>
