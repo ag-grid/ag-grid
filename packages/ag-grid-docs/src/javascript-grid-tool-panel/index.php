@@ -130,7 +130,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
 <snippet>gridOptions.toolPanel = {
- components: [
+ items: [
      {
          key: 'columns',
          buttonLabel: 'Columns',
@@ -144,7 +144,7 @@ include '../documentation-main/documentation_header.php';
          component: 'agFiltersToolPanel',
      }
  ],
- defaultTab: 'columns'
+ defaultItem: 'columns'
 }
 </snippet>
 
@@ -154,8 +154,8 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>gridOptions.toolPanel = {
- components: ['columns','filters'],
- defaultTab: 'columns'
+ items: ['columns','filters'],
+ defaultItem: 'columns'
 }
 </snippet>
 
@@ -169,7 +169,7 @@ include '../documentation-main/documentation_header.php';
 <h2>Custom tabs</h2>
 
 <p>
-    You can now create even your own components, or overwrite the default columns and filters tabs. You can see the details for this on the
+    You can now create even your own items, or overwrite the default columns and filters tabs. You can see the details for this on the
     component doc page for tool panel link TBC
 </p>
 

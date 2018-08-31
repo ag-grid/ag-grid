@@ -4,7 +4,7 @@ $toolPanelProperties = [
     ['items',
         'A list of all the tool panel items to display. The items will be displayed in provided order from top to bottom.'
     ],
-    ['defaultTab',
+    ['defaultItem',
         'The item (identified by id) to open by default. If none specified, the tool panel is initially displayed closed.'
     ]
 ];

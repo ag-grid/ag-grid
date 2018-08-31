@@ -9,7 +9,7 @@ import {
     PostConstruct,
     RefSelector,
     ToolPanelDef,
-    ToolPanelComponentDef,
+    ToolPanelItemDef,
     IComponent,
     Promise, _
 } from "ag-grid-community";
@@ -59,8 +59,8 @@ export class ToolPanelComp extends Component implements IToolPanel {
         }
 
         let allPromises: Promise<IComponent<any>>[] = [];
-        if (toolPanel.components) {
-            toolPanel.components.forEach((toolPanelComponentDef: ToolPanelComponentDef) => {
+        if (toolPanel.items) {
+            toolPanel.items.forEach((toolPanelComponentDef: ToolPanelItemDef) => {
                 if (toolPanelComponentDef.key == null) {
                     console.warn(`ag-grid: please review all your toolPanel components, it seems like at least one of them doesn't have a key`);
                     return;
@@ -91,10 +91,9 @@ export class ToolPanelComp extends Component implements IToolPanel {
                 this.toolPanelSelectComp.registerPanelComp(key, currentComp);
                 currentComp.setVisible(false);
             });
+
+            this.toolPanelSelectComp.setPanelVisibility(this.toolPanelSelectComp.defaultPanelKey, true);
         })
-        // this.toolPanelSelectComp.registerPanelComp('columns', this.columnComp);
-        // this.toolPanelSelectComp.registerPanelComp('filters', this.filterComp);
-        // this.filterComp.setVisible(false);
     }
 
     public refresh(): void {
@@ -107,13 +106,13 @@ export class ToolPanelComp extends Component implements IToolPanel {
     }
 
     public setVisible (show:boolean): void{
-        if (_.get(this.gridOptionsWrapper.getToolPanel(), 'components', []).length === 0) return;
+        if (_.get(this.gridOptionsWrapper.getToolPanel(), 'items', []).length === 0) return;
 
         super.setVisible(show);
         if (show) {
             let keyOfTabToShow: string = this.getActiveToolPanelItem();
-            keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : _.get(this.gridOptionsWrapper.getToolPanel(), 'defaultTab', null);
-            keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : (<ToolPanelComponentDef[]>this.gridOptionsWrapper.getToolPanel().components) [0].key;
+            keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : _.get(this.gridOptionsWrapper.getToolPanel(), 'defaultItem', null);
+            keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : (<ToolPanelItemDef[]>this.gridOptionsWrapper.getToolPanel().items) [0].key;
             let tabToShow: Component = this.panelComps[keyOfTabToShow];
             tabToShow.setVisible(true);
         }
@@ -167,6 +166,5 @@ export class ToolPanelComp extends Component implements IToolPanel {
         this.panelComps = {};
         this.setTemplate(ToolPanelComp.TEMPLATE);
         this.postConstruct();
-        this.toolPanelSelectComp.setPanelVisibility(this.toolPanelSelectComp.defaultPanelKey, true);
     }
 }
