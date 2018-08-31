@@ -87,15 +87,15 @@ export interface GridOptions {
     ensureDomOrder?: boolean;
     deltaRowDataMode?: boolean;
     scrollbarWidth?: number;
-    toolPanelSuppressRowGroups?: boolean;
-    toolPanelSuppressValues?: boolean;
-    toolPanelSuppressPivots?: boolean;
-    toolPanelSuppressPivotMode?: boolean;
-    toolPanelSuppressSideButtons?: boolean;
-    toolPanelSuppressColumnFilter?: boolean;
-    toolPanelSuppressColumnSelectAll?: boolean;
-    toolPanelSuppressColumnExpandAll?: boolean;
-    contractColumnSelection?: boolean;
+    toolPanelSuppressRowGroups?: boolean; //deprecated
+    toolPanelSuppressValues?: boolean; //deprecated
+    toolPanelSuppressPivots?: boolean; //deprecated
+    toolPanelSuppressPivotMode?: boolean; //deprecated
+    toolPanelSuppressSideButtons?: boolean; //deprecated
+    toolPanelSuppressColumnFilter?: boolean; //deprecated
+    toolPanelSuppressColumnSelectAll?: boolean; //deprecated
+    toolPanelSuppressColumnExpandAll?: boolean; //deprecated
+    contractColumnSelection?: boolean; //deprecated
     suppressRowClickSelection?: boolean;
     suppressRowHoverHighlight?: boolean;
     suppressCellSelection?: boolean;
@@ -304,7 +304,7 @@ export interface GridOptions {
     rowData?: any[];
     pinnedTopRowData?: any[];
     pinnedBottomRowData?: any[];
-    showToolPanel?: boolean;
+    showToolPanel?: boolean; //deprecated
     sideBar?: SideBarDef | string | boolean;
     columnDefs?: (ColDef|ColGroupDef)[];
     columnTypes?: {[key: string]: ColDef};
