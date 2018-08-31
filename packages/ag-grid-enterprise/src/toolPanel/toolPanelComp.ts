@@ -167,5 +167,6 @@ export class ToolPanelComp extends Component implements IToolPanel {
         this.panelComps = {};
         this.setTemplate(ToolPanelComp.TEMPLATE);
         this.postConstruct();
+        this.toolPanelSelectComp.setPanelVisibility(this.toolPanelSelectComp.defaultPanelKey, true);
     }
 }

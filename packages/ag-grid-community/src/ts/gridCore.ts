@@ -20,7 +20,7 @@ import {IToolPanel} from "./interfaces/iToolPanel";
 import {RefSelector} from "./widgets/componentAnnotations";
 import {Events, GridSizeChangedEvent} from "./events";
 import {ResizeObserverService} from "./misc/resizeObserverService";
-import {ToolPanelDefLike, ToolPanelDefLikeParser} from "./entities/toolPanel";
+import {ToolPanelDef, ToolPanelDefLike, ToolPanelDefLikeParser} from "./entities/toolPanel";
 
 @Bean('gridCore')
 export class GridCore extends Component {
@@ -183,6 +183,10 @@ export class GridCore extends Component {
         }
 
         this.toolPanelComp.close();
+    }
+
+    public getToolPanel (): ToolPanelDef {
+        return <ToolPanelDef>this.gridOptions.toolPanel;
     }
 
     public setToolPanel (def: ToolPanelDefLike): void {

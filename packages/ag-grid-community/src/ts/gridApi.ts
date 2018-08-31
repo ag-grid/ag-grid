@@ -812,6 +812,11 @@ export class GridApi {
         return this.gridCore.getOpenedToolPanelItem();
     };
 
+
+    public getToolPanel (): void {
+        return this.gridCore.getToolPanel();
+    }
+
     public setToolPanel (def: ToolPanelDefLike): void {
         return this.gridCore.setToolPanel(def);
     };

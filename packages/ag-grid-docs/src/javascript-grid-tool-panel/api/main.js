@@ -50,6 +50,16 @@ function setToolPanel (def) {
     gridOptions.api.setToolPanel (def);
 }
 
+function getToolPanel () {
+    let toolPanel = gridOptions.api.getToolPanel ();
+    alert(${JSON.stringify(toolPanel)});
+    console.log(toolPanel);
+}
+
+function getOpenedToolPanelItem (){
+    alert (gridOptions.api.getOpenedToolPanelItem ());
+}
+
 var gridOptions = {
     defaultColDef: {
         // allow every column to be aggregated

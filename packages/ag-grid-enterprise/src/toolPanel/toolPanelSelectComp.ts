@@ -12,6 +12,7 @@ import {
 export class ToolPanelSelectComp extends Component {
 
     private panels: {[key:string]:Component} = {};
+    public defaultPanelKey: string = null;
 
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired("eventService") private eventService: EventService;
@@ -62,8 +63,8 @@ export class ToolPanelSelectComp extends Component {
             this.addButtonEvents(key);
         });
 
-        let defaultButtonKey : string = _.get(this.gridOptionsWrapper.getToolPanel(), 'defaultTab', null);
-        let defaultButtonElement: HTMLElement = this.getRefElement(`toggle-button-${defaultButtonKey}`);
+        this.defaultPanelKey = _.get(this.gridOptionsWrapper.getToolPanel(), 'defaultTab', null);
+        let defaultButtonElement: HTMLElement = this.getRefElement(`toggle-button-${this.defaultPanelKey}`);
         if (defaultButtonElement) {
            _.addOrRemoveCssClass(defaultButtonElement.parentElement, 'ag-selected', true);
         }
