@@ -35,7 +35,7 @@ export class ToolPanelDefLikeParser {
     static readonly DEFAULT_FILTER_COMP = {
         key: 'filters',
         buttonLabel: 'Filters',
-        iconKey: 'filters',
+        iconKey: 'filter',
         component: 'agFiltersToolPanel',
     };
 

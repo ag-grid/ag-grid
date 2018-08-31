@@ -1556,7 +1556,7 @@
                     background: transparent;
                     border: 0;
                     color: $foreground-color;
-                    padding: $grid-size * 5 0 $grid-size * 4 0;
+                    padding: 0 0 $grid-size * 4 0;
                     width: 100%;
                     margin: 0;
                     min-height: $grid-size * 18;
@@ -1580,21 +1580,6 @@
               }
             }
 
-            .ag-side-button:first-child button {
-                @include colorful-icon($icons-path, "filter", map-get($params, "icon-color"), map-get($params, "alt-icon-color"));
-              }
-
-            .ag-side-button.ag-selected:first-child button {
-              @include colorful-icon($icons-path, "filter", $primary-color, map-get($params, "alt-icon-color"));
-            }
-
-            .ag-side-button:nth-child(2) button {
-                @include colorful-icon($icons-path, "columns", map-get($params, "icon-color"), map-get($params, "alt-icon-color"));
-              }
-
-            .ag-side-button.ag-selected:nth-child(2) button {
-              @include colorful-icon($icons-path, "columns", $primary-color, map-get($params, "alt-icon-color"));
-            }
         }
 
         .ag-panel-container {

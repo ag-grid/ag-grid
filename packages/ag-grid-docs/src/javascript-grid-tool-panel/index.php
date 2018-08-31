@@ -107,7 +107,7 @@ include '../documentation-main/documentation_header.php';
      {
          key: 'filters',
          buttonLabel: 'Filters',
-         iconKey: 'filters',
+         iconKey: 'filter',
          component: 'agFiltersToolPanel',
      }
  ],

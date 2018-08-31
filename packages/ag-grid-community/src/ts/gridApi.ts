@@ -53,7 +53,7 @@ import {AnimationFrameService} from "./misc/animationFrameService";
 import {IServerSideRowModel} from "./interfaces/iServerSideRowModel";
 import {IStatusPanelService} from "./interfaces/iStatusPanelService";
 import {IStatus} from "./interfaces/iStatus";
-import {ToolPanelDefLike} from "./entities/toolPanel";
+import {ToolPanelDef, ToolPanelDefLike} from "./entities/toolPanel";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -813,7 +813,7 @@ export class GridApi {
     };
 
 
-    public getToolPanel (): void {
+    public getToolPanel (): ToolPanelDef {
         return this.gridCore.getToolPanel();
     }
 

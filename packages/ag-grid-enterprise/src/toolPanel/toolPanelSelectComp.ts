@@ -35,10 +35,10 @@ export class ToolPanelSelectComp extends Component {
 
     @PostConstruct
     public postConstruct(): void {
-        let buttons:{[p:string]: string} = {};
+        let buttons:{[p:string]: ToolPanelComponentDef} = {};
         let componentDefs: ToolPanelComponentDef[] = _.get(this.gridOptionsWrapper.getToolPanel(), 'components', []);
         componentDefs.forEach((componentDef:ToolPanelComponentDef)=>{
-            buttons[componentDef.key] = componentDef.buttonLabel;
+            buttons[componentDef.key] = componentDef;
         });
 
         this.createButtonsHtml (buttons);
@@ -47,14 +47,14 @@ export class ToolPanelSelectComp extends Component {
         this.setVisible(showButtons);
     }
 
-    private createButtonsHtml(componentButtons: {[p: string]: string}): void {
+    private createButtonsHtml(componentButtons: {[p: string]: ToolPanelComponentDef}): void {
         let translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         let html: string = '';
         let keys = Object.keys(componentButtons);
         keys.forEach(key=>{
-            let value: string = componentButtons[key];
-            html += `<div class="ag-side-button""><button type="button" ref="toggle-button-${key}"><span>${translate(key, value)}</span></button></div>`
+            let def: ToolPanelComponentDef = componentButtons[key];
+            html += `<div class="ag-side-button""><button type="button" ref="toggle-button-${key}"><div><span class="ag-icon-${def.iconKey}"></span></div><span>${translate(key, def.buttonLabel)}</span></button></div>`
         });
 
         this.getGui().innerHTML = html;
