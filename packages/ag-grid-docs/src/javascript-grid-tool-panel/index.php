@@ -9,66 +9,98 @@ include '../documentation-main/documentation_header.php';
     <h1 class="heading-enterprise">Tool Panel</h1>
 
     <p class="lead">
-        The tool panel is a side panel that provides functions for managing different areas of the grid. Out of the box
-        the grid provides with two side panels to manage the columns and the filters, but this can be customised with your
-        own components
+        The tool panel is a side panel that provides functions for managing different areas of the grid.
+        The tool panel has tabs for displaying different 'tool panel items'. The grid provides
+        two tool panel items out of the box as follows: 1) to
+        <a href="../javascript-grid-tool-panel-columns/">manage columns</a> and 2) to
+        <a href="../javascript-grid-tool-panel-filters/">manage filters</a>.
+        You can also create your own <a href="../javascript-grid-tool-panel-filters/">custom tool panel items</a>.
     </p>
 
-    <h2>Simple Example - Columns and Filters</h2>
+    <note>
+        <p>
+            Version 19 of ag-Grid received a major overhaul of the tool panel. It did not make sense to keep
+            with the older configuration options. The old property <code>showToolPanel</code> is no longer
+            used. The tool panel is also not included by default - if the tool panel is not configured, no
+            tool panel is shown.
+        </p>
+        <p>
+            If moving from an earlier version, set <code>toolPanel='columns'</code> to receive similar behaviour.
+        </p>
+    </note>
+
+    <h2>Configuring the Tool Panel</h2>
+
     <p>
-    The default tool panel provided in ag-grid contains two tabs, one to <a href="../javascript-grid-tool-panel-columns">manage columns</a> and one to
-    <a href="../javascript-grid-tool-panel-filters">manage filters</a>
+        The tool panel is configured using the grid property <code>toolPanel</code>. The property takes multiple
+        forms to allow easy configuration to more detailed (and more complex) configuration. The different forms
+        for the <code>toolPanel</code> property are as follows:
+    </p>
+
+    <table class="table reference">
+        <tr>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>undefined</td>
+            <td>No tool panel provided.</td>
+        </tr>
+        <tr>
+            <td>boolean</td>
+            <td>Set to true to display the tool panel with default configuration.</td>
+        </tr>
+        <tr>
+            <td>string</td>
+            <td>Set to 'columns' or 'filters' to display tool panel with just one of
+                Columns or Filters item.</td>
+        </tr>
+        <tr>
+            <td>ToolPanelDef</td>
+            <td>An object of type ToolPanelDef (explained below) to allow detailed configuration
+            of the tool panel, including providing custom components.</td>
+        </tr>
+    </table>
+
+    <h2>Boolean Configuration</h2>
+
+    <p>
+        The default tool panel contains tool panel items Columns and Filters. To use the default tool panel,
+        set the grid property <code>toolPanel=true</code>. The Columns item will be open by default
     </p>
 
     <p>
-    If you are happy to just show your tool panel like this, the minimum configuration needed is <code>gridOptions.toolPanel = true</code>
-    As shown in the example below.
+        The default configuration doesn't allow customisation of the tool panel. More detailed configurations
+        are explained below.
     </p>
 
-<snippet>toolPanel: true</snippet>
-
+    <p>
+        In the example below, note the following:
+        <ul>
+            <li>The grid property <code>toolPanel</code> is set to true.</li>
+            <li>The tool panel is displayed with tool panel items Columns and Filters.</li>
+            <li>The Columns item is displayed by default.</li>
+        </ul>
+    </p>
 
     <?= example('Tool Panel Simple', 'simple', 'generated', array("enterprise" => 1)) ?>
 
-    <note>
-        <p>
-         As of v19, we are not showing the tool panel by default.
-        </p>
-        <p>
-         If you were in the past showing the tool panel because you were not specifying any configuration explicitly,
-         and you want to keep showing the tool panel from v19, you must change your configuration to <code>gridOptions.toolPanel = true</code>
-         </p>
-    </note>
-
-    <note>
-        <p>
-             As of v19, we are also deprecating <code>gridOptions.showToolPanel = true</code> and <code>gridOptions.showToolPanel = false</code>
-         </p>
-
-        <p>
-             We encourage to change this respectively into <code>gridOptions.toolPanel = true</code> and <code>gridOptions.toolPanel = false</code>
-         </p>
-
-         Note that you will see a warning in the console if  you still use showToolPanel
-    </note>
-
-
-    <h2>Columns and Filters - Shortcuts</h2>
+    <h2>String Configuration</h2>
 
     <p>
-        There are several ways to fine tune exactly how you want you filters and columns tab to show.
-        <ul>
-                    <li>You can just show one tab by providing one of the two following keys: 'filters' and 'columns'. ie <code>gridOptions.toolPanel === 'filters'</code>
-                    or <code>gridOptions.toolPanel = 'columns'</code>. Note that the example below only shows filters</li>
-
-<?= example('Tool Panel - Only filters', 'onlyFilters', 'generated', array("enterprise" => 1)) ?>
-                    <li>
-                        You can also provide with an array of strings using the same keys a above: 'filters' and 'columns'. This is useful
-                        if you want to change the order of the tabs, the following example is showing first filters then columns: <code>gridOptions.toolPanel = ['filters','columns']</code>
-                    </li>
-<?= example('Tool Panel - Filters then Columns', 'filtersThenColumns', 'generated', array("enterprise" => 1)) ?>
-                </ul>
+        To display just one of the provided tool panel items, set either <code>toolPanel='columns'</code>
+        or <code>toolPanel='filters'</code>. This will display the desired item with default configuration.
     </p>
+
+    <p>
+        The example below demonstrates using the string configuration. Note the following:
+        <ul>
+            <li>The grid property <code>toolPanel</code> is set to 'filters'.</li>
+            <li>The tool panel is displayed showing only the Filters item.</li>
+        </ul>
+    </p>
+
+    <?= example('Tool Panel - Only filters', 'onlyFilters', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Columns and Filters - Fine tuning</h2>
 

@@ -52,7 +52,7 @@ function setToolPanel (def) {
 
 function getToolPanel () {
     let toolPanel = gridOptions.api.getToolPanel ();
-    alert(${JSON.stringify(toolPanel)});
+    alert(JSON.stringify(toolPanel));
     console.log(toolPanel);
 }
 

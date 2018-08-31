@@ -1,15 +1,24 @@
-<div style="height: 100%; padding-top: 35px; box-sizing: border-box;">
-    <div id="myGrid" style="height: 100%;" class="ag-theme-balham"></div>
-</div>
-<div style="position: absolute; top: 0px; left: 0px;">
-    <button onclick="setToolPanelVisible(true)">setToolPanelVisible (true)</button>
-    <button onclick="setToolPanelVisible(false)">setToolPanelVisible (false)</button>
-    <button onclick="isToolPanelVisible()">isToolPanelVisible ()</button>
-    <button onclick="openToolPanel('columns')">openToolPanel ('columns')</button>
-    <button onclick="openToolPanel('filters')">openToolPanel ('filters')</button>
-    <button onclick="getOpenedToolPanelItem()">getOpenedToolPanelItem ()</button>
-    <button onclick="closeToolPanel()">closeToolPanel ()</button>
-    <button onclick="setToolPanel(['filters','columns'])">setToolPanel (['filters','columns'])</button>
-    <button onclick="setToolPanel(['columns','filters'])">setToolPanel (['columns','filters'])</button>
-    <button onclick="getToolPanel()">getToolPanel()</button>
+<div style="display: flex; flex-direction: column; height: 100%;">
+
+    <div>
+        <button onclick="setToolPanelVisible(true)">setToolPanelVisible (true)</button>
+        <button onclick="setToolPanelVisible(false)">setToolPanelVisible (false)</button>
+        <button onclick="isToolPanelVisible()">isToolPanelVisible ()</button>
+        <button onclick="openToolPanel('columns')">openToolPanel ('columns')</button>
+        <button onclick="openToolPanel('filters')">openToolPanel ('filters')</button>
+        <button onclick="getOpenedToolPanelItem()">getOpenedToolPanelItem ()</button>
+        <button onclick="closeToolPanel()">closeToolPanel ()</button>
+        <button onclick="setToolPanel(['filters','columns'])">setToolPanel (['filters','columns'])</button>
+        <button onclick="setToolPanel(['columns','filters'])">setToolPanel (['columns','filters'])</button>
+        <button onclick="getToolPanel()">getToolPanel()</button>
+    </div>
+
+<!--
+    <div style="flex-grow: 1; height: 1px;">
+        <div id="myGrid" style="height: 100%;" class="ag-theme-balham"></div>
+    </div>
+-->
+
+    <div id="myGrid" style="flex-grow: 1; height: 1px;" class="ag-theme-balham"></div>
+
 </div>
