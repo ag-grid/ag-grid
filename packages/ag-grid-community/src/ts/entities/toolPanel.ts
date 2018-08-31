@@ -1,7 +1,7 @@
 import {ICellRendererComp, ICellRendererFunc} from "../rendering/cellRenderers/iCellRenderer";
 
 export interface ToolPanelItemDef {
-    key: string,
+    id: string,
     buttonLabel: string,
     // To allow binding this to an specific icon
     iconKey: string,
@@ -17,14 +17,14 @@ export interface ToolPanelDef {
 
 export class ToolPanelDefLikeParser {
     static readonly DEFAULT_COLUMN_COMP = {
-        key: 'columns',
+        id: 'columns',
         buttonLabel: 'Columns',
         iconKey: 'columns',
         component: 'agColumnsToolPanel',
     };
 
     static readonly DEFAULT_FILTER_COMP = {
-        key: 'filters',
+        id: 'filters',
         buttonLabel: 'Filters',
         iconKey: 'filter',
         component: 'agFiltersToolPanel',
@@ -67,7 +67,7 @@ export class ToolPanelDefLikeParser {
 
             return {
                 items: comps,
-                defaultItem: comps[0].key
+                defaultItem: comps[0].id
             }
         }
 

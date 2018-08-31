@@ -61,8 +61,8 @@ export class ToolPanelComp extends Component implements IToolPanel {
         let allPromises: Promise<IComponent<any>>[] = [];
         if (toolPanel.items) {
             toolPanel.items.forEach((toolPanelComponentDef: ToolPanelItemDef) => {
-                if (toolPanelComponentDef.key == null) {
-                    console.warn(`ag-grid: please review all your toolPanel components, it seems like at least one of them doesn't have a key`);
+                if (toolPanelComponentDef.id == null) {
+                    console.warn(`ag-grid: please review all your toolPanel components, it seems like at least one of them doesn't have an id`);
                     return;
                 }
                 let componentPromise: Promise<IComponent<any>> = this.componentResolver.createAgGridComponent(
@@ -72,7 +72,7 @@ export class ToolPanelComp extends Component implements IToolPanel {
                     null
                 );
                 if (componentPromise == null) {
-                    console.warn(`ag-grid: error processing tool panel component ${toolPanelComponentDef.key}. You need to specify either 'component' or 'componentFramework'`);
+                    console.warn(`ag-grid: error processing tool panel component ${toolPanelComponentDef.id}. You need to specify either 'component' or 'componentFramework'`);
                     return;
                 }
                 allPromises.push(componentPromise);
@@ -80,7 +80,7 @@ export class ToolPanelComp extends Component implements IToolPanel {
                     let wrapper: ToolPanelWrapper = this.componentResolver.createInternalAgGridComponent<ToolPanelWrapperParams, ToolPanelWrapper>(ToolPanelWrapper, {
                         innerComp: component
                     });
-                    this.panelComps [toolPanelComponentDef.key] = wrapper;
+                    this.panelComps [toolPanelComponentDef.id] = wrapper;
                 });
             });
         }
@@ -112,8 +112,12 @@ export class ToolPanelComp extends Component implements IToolPanel {
         if (show) {
             let keyOfTabToShow: string = this.getActiveToolPanelItem();
             keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : _.get(this.gridOptionsWrapper.getToolPanel(), 'defaultItem', null);
-            keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : (<ToolPanelItemDef[]>this.gridOptionsWrapper.getToolPanel().items) [0].key;
+            keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : (<ToolPanelItemDef[]>this.gridOptionsWrapper.getToolPanel().items) [0].id;
             let tabToShow: Component = this.panelComps[keyOfTabToShow];
+            if (!tabToShow) {
+                console.warn(`ag-grid: can't set the visibility of the tool panel item [${keyOfTabToShow}] since it can't be found`);
+                return;
+            }
             tabToShow.setVisible(true);
         }
     }

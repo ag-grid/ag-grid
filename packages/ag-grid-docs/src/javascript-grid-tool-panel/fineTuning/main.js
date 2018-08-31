@@ -41,7 +41,7 @@ var gridOptions = {
         items: [
             'columns',
             {
-                key: 'filters',
+                id: 'filters',
                 buttonLabel: 'My Filters',
                 iconKey: 'menu',
                 component: 'agFiltersToolPanel',

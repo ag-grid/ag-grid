@@ -38,7 +38,7 @@ export class ToolPanelSelectComp extends Component {
         let buttons:{[p:string]: ToolPanelItemDef} = {};
         let componentDefs: ToolPanelItemDef[] = _.get(this.gridOptionsWrapper.getToolPanel(), 'items', []);
         componentDefs.forEach((componentDef:ToolPanelItemDef)=>{
-            buttons[componentDef.key] = componentDef;
+            buttons[componentDef.id] = componentDef;
         });
 
         this.createButtonsHtml (buttons);
