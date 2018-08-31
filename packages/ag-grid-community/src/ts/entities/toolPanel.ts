@@ -10,19 +10,10 @@ export interface ToolPanelComponentDef {
     componentParams?: any;
 }
 
-export type ToolPanelComponentDefLike = ToolPanelComponentDef | string;
-
-export interface FuzzyToolPanelDef {
-    components?: ToolPanelComponentDefLike [];
-    defaultTab?: string;
-}
-
 export interface ToolPanelDef {
-    components?: ToolPanelComponentDef [];
+    components?: (ToolPanelComponentDef | string) [];
     defaultTab?: string;
 }
-
-export type ToolPanelDefLike = FuzzyToolPanelDef | boolean | string | string [];
 
 export class ToolPanelDefLikeParser {
     static readonly DEFAULT_COLUMN_COMP = {
@@ -44,7 +35,7 @@ export class ToolPanelDefLikeParser {
         filters: ToolPanelDefLikeParser.DEFAULT_FILTER_COMP
     };
 
-    static parse (toParse: ToolPanelDefLike): ToolPanelDef {
+    static parse (toParse: ToolPanelDef | string | string[] | boolean): ToolPanelDef {
         if (toParse === false) return null;
         if (toParse === true) {
             return {
@@ -88,10 +79,10 @@ export class ToolPanelDefLikeParser {
         return result;
     }
 
-    static parseComponents (from: ToolPanelComponentDefLike[]) : ToolPanelComponentDef[] {
+    static parseComponents (from: (ToolPanelComponentDef | string)[]) : ToolPanelComponentDef[] {
         let result:ToolPanelComponentDef[] = [];
 
-        from.forEach((it: ToolPanelComponentDefLike)=>{
+        from.forEach((it: ToolPanelComponentDef | string)=>{
             let toAdd: ToolPanelComponentDef = null;
             if (typeof it === 'string') {
                 const lookupResult = ToolPanelDefLikeParser.DEFAULT_BY_KEY [it];

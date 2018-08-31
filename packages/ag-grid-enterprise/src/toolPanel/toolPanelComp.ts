@@ -113,7 +113,7 @@ export class ToolPanelComp extends Component implements IToolPanel {
         if (show) {
             let keyOfTabToShow: string = this.getActiveToolPanelItem();
             keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : _.get(this.gridOptionsWrapper.getToolPanel(), 'defaultTab', null);
-            keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : this.gridOptionsWrapper.getToolPanel().components [0].key;
+            keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : (<ToolPanelComponentDef[]>this.gridOptionsWrapper.getToolPanel().components) [0].key;
             let tabToShow: Component = this.panelComps[keyOfTabToShow];
             tabToShow.setVisible(true);
         }
