@@ -34,7 +34,7 @@ export class PivotModePanel extends Component {
     }
 
     @PreConstruct
-    private init(): void {
+    public init(): void {
         this.setTemplate(this.createTemplate());
         this.instantiate(this.context);
 

@@ -67,7 +67,7 @@ export class ToolPanelComp extends Component implements IToolPanel {
                 }
                 let componentPromise: Promise<IComponent<any>> = this.componentResolver.createAgGridComponent(
                     toolPanelComponentDef,
-                    null,
+                    toolPanelComponentDef.componentParams,
                     'component',
                     null
                 );

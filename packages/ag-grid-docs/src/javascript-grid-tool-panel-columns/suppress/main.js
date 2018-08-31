@@ -14,16 +14,26 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     enableSorting: true,
-    showToolPanel: true,
+    toolPanel: {
+        items: [{
+            id: 'columns',
+            labelDefault: 'Columns',
+            labelKey: 'columns',
+            iconKey: 'columns',
+            component: 'agColumnsToolPanel',
+            componentParams: {
+                suppressRowGroups: true,
+                suppressValues: true,
+                suppressPivots: true,
+                suppressPivotMode: true,
+                suppressSideButtons: true,
+                suppressColumnFilter: true,
+                suppressColumnSelectAll: true,
+                suppressColumnExpandAll: true
+            }
+        }]
+    },
 
-    toolPanelSuppressRowGroups: true,
-    toolPanelSuppressValues: true,
-    toolPanelSuppressPivots: true,
-    toolPanelSuppressPivotMode: true,
-    toolPanelSuppressSideButtons: true,
-    toolPanelSuppressColumnFilter: true,
-    toolPanelSuppressColumnSelectAll: true,
-    toolPanelSuppressColumnExpandAll: true
 };
 
 // setup the grid after the page has finished loading

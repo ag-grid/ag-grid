@@ -34,7 +34,7 @@ import {PropertyKeys} from "./propertyKeys";
 import {ColDefUtil} from "./components/colDefUtil";
 import {Events} from "./eventKeys";
 import {AutoHeightCalculator} from "./rendering/autoHeightCalculator";
-import {ToolPanelDef, ToolPanelDefLikeParser} from "./entities/toolPanel";
+import {ToolPanelDef, ToolPanelDefLikeParser, ToolPanelItemDef} from "./entities/toolPanel";
 
 let DEFAULT_ROW_HEIGHT = 25;
 let DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -303,43 +303,43 @@ export class GridOptionsWrapper {
         return (<ToolPanelDef>this.gridOptions.toolPanel);
     }
 
-    public isToolPanelSuppressValues() {
-        return isTrue(this.gridOptions.toolPanelSuppressValues);
-    }
-
-    public isToolPanelSuppressPivots() {
-        // we don't allow pivots when doing tree data
-        return isTrue(this.gridOptions.toolPanelSuppressPivots) || this.isTreeData();
-    }
-
-    public isToolPanelSuppressRowGroups() {
-        // we don't allow row grouping when doing tree data
-        return isTrue(this.gridOptions.toolPanelSuppressRowGroups) || this.isTreeData();
-    }
-
-    public isToolPanelSuppressSideButtons() {
-        return isTrue(this.gridOptions.toolPanelSuppressSideButtons);
-    }
-
-    public isToolPanelSuppressPivotMode() {
-        return isTrue(this.gridOptions.toolPanelSuppressPivotMode) || this.isTreeData();
-    }
-
-    public isContractColumnSelection() {
-        return isTrue(this.gridOptions.contractColumnSelection);
-    }
-
-    public isToolPanelSuppressColumnFilter() {
-        return isTrue(this.gridOptions.toolPanelSuppressColumnFilter);
-    }
-
-    public isToolPanelSuppressColumnSelectAll() {
-        return isTrue(this.gridOptions.toolPanelSuppressColumnSelectAll);
-    }
-
-    public isToolPanelSuppressColumnExpandAll() {
-        return isTrue(this.gridOptions.toolPanelSuppressColumnExpandAll);
-    }
+    // public isToolPanelSuppressValues() {
+    //     return isTrue(this.gridOptions.toolPanelSuppressValues);
+    // }
+    //
+    // public isToolPanelSuppressPivots() {
+    //     // we don't allow pivots when doing tree data
+    //     return isTrue(this.gridOptions.toolPanelSuppressPivots) || this.isTreeData();
+    // }
+    //
+    // public isToolPanelSuppressRowGroups() {
+    //     // we don't allow row grouping when doing tree data
+    //     return isTrue(this.gridOptions.toolPanelSuppressRowGroups) || this.isTreeData();
+    // }
+    //
+    // public isToolPanelSuppressSideButtons() {
+    //     return isTrue(this.gridOptions.toolPanelSuppressSideButtons);
+    // }
+    //
+    // public isToolPanelSuppressPivotMode() {
+    //     return isTrue(this.gridOptions.toolPanelSuppressPivotMode) || this.isTreeData();
+    // }
+    //
+    // public isContractColumnSelection() {
+    //     return isTrue(this.gridOptions.contractColumnSelection);
+    // }
+    //
+    // public isToolPanelSuppressColumnFilter() {
+    //     return isTrue(this.gridOptions.toolPanelSuppressColumnFilter);
+    // }
+    //
+    // public isToolPanelSuppressColumnSelectAll() {
+    //     return isTrue(this.gridOptions.toolPanelSuppressColumnSelectAll);
+    // }
+    //
+    // public isToolPanelSuppressColumnExpandAll() {
+    //     return isTrue(this.gridOptions.toolPanelSuppressColumnExpandAll);
+    // }
 
     public isSuppressTouch() {
         return isTrue(this.gridOptions.suppressTouch);
@@ -1339,6 +1339,42 @@ export class GridOptionsWrapper {
         if (options.toolPanel != null) {
             options.toolPanel = ToolPanelDefLikeParser.parse(options.toolPanel)
         }
+        let oldToolPanelProperties: {[p:string]: string} = {
+            'toolPanelSuppressRowGroups': 'suppressRowGroups',
+            'toolPanelSuppressValues': 'suppressValues',
+            'toolPanelSuppressPivots': 'suppressPivots',
+            'toolPanelSuppressPivotMode': 'suppressPivotMode',
+            'toolPanelSuppressColumnFilter': 'suppressColumnFilter',
+            'toolPanelSuppressColumnSelectAll': 'suppressColumnSelectAll',
+            'toolPanelSuppressSideButtons': 'suppressSideButtons',
+            'toolPanelSuppressColumnExpandAll': 'suppressColumnExpandAll',
+            'contractColumnSelection': 'contractColumnSelection'
+        };
+
+        let toolPanelColumnsCompProps: any = {};
+        Object.keys(oldToolPanelProperties).forEach(key=>{
+            let translation: any = oldToolPanelProperties[key];
+            let value: any = (<any>this.gridOptions)[key];
+            if (value !== undefined) {
+                if (key === 'toolPanelSuppressSideButtons') {
+                    console.warn('ag-grid: since v19.0 toolPanelSuppressSideButtons has been completely removed. See https://www.ag-grid.com/javascript-grid-tool-panel/');
+                    return;
+                }
+
+                console.warn(`ag-grid: since v19.0 gridOptions.${key} is depreceted, please use gridOptions.toolPanel.items[columnsIndex].componentParams.${translation}`);
+                toolPanelColumnsCompProps [translation] = value;
+            }
+        });
+
+        if (Object.keys(toolPanelColumnsCompProps).length > 0) {
+            let columnsDef: ToolPanelItemDef[] = <ToolPanelItemDef[]>(<ToolPanelDef>this.gridOptions.toolPanel).items.filter((it:ToolPanelItemDef)=>it.id === 'columns');
+            if (columnsDef.length === 1){
+                _.mergeDeep(columnsDef[0], {
+                    componentParams: toolPanelColumnsCompProps
+                });
+            }
+        }
+
         if (options.enableStatusBar) {
             console.warn(`ag-grid: since version 19.x, showToolPanel is gone, please specify toolPanel components`);
             options.statusPanel = options.statusPanel ||

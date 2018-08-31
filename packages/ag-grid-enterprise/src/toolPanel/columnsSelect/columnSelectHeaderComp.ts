@@ -1,4 +1,18 @@
-import {PreConstruct, _, Autowired, Component, Context, Events, GridOptionsWrapper, PostConstruct, RefSelector, ColumnController, EventService} from "ag-grid-community";
+import {
+    PreConstruct,
+    _,
+    Autowired,
+    Component,
+    Context,
+    Events,
+    GridOptionsWrapper,
+    PostConstruct,
+    RefSelector,
+    ColumnController,
+    EventService,
+    IComponent
+} from "ag-grid-community";
+import {ToolPanelColumnCompParams} from "../toolPanelColumnComp";
 
 export enum SELECTED_STATE {CHECKED, UNCHECKED, INDETERMINIATE}
 
@@ -30,6 +44,11 @@ export class ColumnSelectHeaderComp extends Component {
     private expandState: SELECTED_STATE = SELECTED_STATE.CHECKED;
     private selectState: SELECTED_STATE = SELECTED_STATE.CHECKED;
 
+    private props: {
+        params: ToolPanelColumnCompParams;
+    };
+
+
     @PreConstruct
     private preConstruct(): void {
 
@@ -56,7 +75,7 @@ export class ColumnSelectHeaderComp extends Component {
     }
 
     @PostConstruct
-    public init(): void {
+    public init(params:ToolPanelColumnCompParams): void {
         this.instantiate(this.context);
         this.addEventListeners();
 
@@ -70,9 +89,9 @@ export class ColumnSelectHeaderComp extends Component {
     // we only show expand / collapse if we are showing columns
     private showOrHideOptions(): void {
 
-        let showFilter = !this.gridOptionsWrapper.isToolPanelSuppressColumnFilter();
-        let showSelect = !this.gridOptionsWrapper.isToolPanelSuppressColumnSelectAll();
-        let showExpand = !this.gridOptionsWrapper.isToolPanelSuppressColumnExpandAll();
+        let showFilter = !this.props.params.suppressColumnFilter;
+        let showSelect = !this.props.params.suppressColumnSelectAll;
+        let showExpand = !this.props.params.suppressColumnExpandAll;
 
         let groupsPresent = this.columnController.isPrimaryColumnGroupsPresent();
 
