@@ -135,12 +135,12 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        The following snippet shows configuring the tool panel using a ToolPanelDef object:
+        The following snippet shows configuring the tool panel using a SideBarDef object:
     </p>
 
 <snippet>
-toolPanel = {
-    items: [
+sideBar = {
+    toolPanels: [
         {
             key: 'columns',
             labelDefault: 'Columns',
@@ -156,7 +156,7 @@ toolPanel = {
             component: 'agFiltersToolPanel',
         }
     ],
-    defaultTab: 'filters'
+    defaultToolPanel: 'filters'
 }
 </snippet>
 
@@ -164,28 +164,28 @@ toolPanel = {
         The snippet above is demonstrated in the following example:
     </p>
 
-<div style="padding: 20px; background: yellow; border: 2px solid green;">PUT IN EXAMPLE FOR ToolPanelDef</div>
+<div style="padding: 20px; background: yellow; border: 2px solid green;">PUT IN EXAMPLE FOR SideBarDef</div>
 
 <h2 id="shortcuts">Configuration Shortcuts</h2>
 
     <p>
         The boolean and string configurations are actually shortcuts for the more details configuration.
         When you use a shortcut the grid replaces it with the equivalent long form of the configuration
-        using <code>ToolPanelDef</code>.
+        using <code>SideBarDef</code>.
     </p>
 
     <p>
         The following code snippet shows and example of the <code>boolean</code> shortcut and the equivalent
-        <code>ToolPanelDef</code> long form.
+        <code>SideBarDef</code> long form.
     </p>
 
     <snippet>
 // shortcut
-toolPanel = true;
+sideBar = true;
 
 // equivalent detailed long form
-toolPanel = {
-    items: [
+sideBar = {
+    toolPanels: [
         {
             key: 'columns',
             labelDefault: 'Columns',
@@ -201,23 +201,23 @@ toolPanel = {
             component: 'agFiltersToolPanel',
         }
     ],
-    defaultTab: 'columns'
+    defaultToolPanel: 'columns'
     }
 }
 </snippet>
 
 <p>
     The following code snippet shows and example of the <code>string</code> shortcut and the equivalent
-    <code>ToolPanelDef</code> long form.
+    <code>SideBarDef</code> long form.
 </p>
 
 <snippet>
 // shortcut
-toolPanel = 'filters';
+sideBar = 'filters';
 
 // equivalent detailed long form
-toolPanel = {
-    items: [
+sideBar = {
+    toolPanels: [
         {
             key: 'filters',
             labelDefault: 'Filters',
@@ -226,7 +226,7 @@ toolPanel = {
             component: 'agFiltersToolPanel',
         }
     ],
-    defaultTab: 'filters'
+    defaultToolPanel: 'filters'
     }
 }
 </snippet>
@@ -237,13 +237,13 @@ toolPanel = {
 
 <snippet>
 // shortcut
-toolPanel = {
-    items: ['columns','filters']
+sideBar = {
+    toolPanels: ['columns','filters']
 };
 
 // equivalent detailed long form
-toolPanel = {
-    items: [
+sideBar = {
+    toolPanels: [
         {
             key: 'columns',
             labelDefault: 'Columns',
@@ -265,7 +265,7 @@ toolPanel = {
 <h2>Customising Tool Panel Items</h2>
 
 <p>
-    If you are using the long form (providing a <code>ToolPanelDef</code> object) then it is possible to customise.
+    If you are using the long form (providing a <code>SideBarDef</code> object) then it is possible to customise.
     The example below shows changing the label and icon for the columns and filters tab.
 </p>
 
