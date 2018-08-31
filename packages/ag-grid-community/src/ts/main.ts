@@ -1,6 +1,4 @@
 // to satisfy server side compilation
-import {IStatusComp} from "./interfaces/iStatus";
-
 declare let global: any;
 let globalObj = typeof global === 'undefined' ? {} : global;
 globalObj.HTMLElement = typeof HTMLElement === 'undefined' ? {} : HTMLElement;
@@ -123,7 +121,7 @@ export {AnimateSlideCellRenderer} from "./rendering/cellRenderers/animateSlideCe
 export {GroupCellRenderer} from "./rendering/cellRenderers/groupCellRenderer";
 
 // status panel components
-export {IStatus, IStatusComp, IStatusParams} from "./interfaces/iStatus";
+export {IStatusPanelItem, IStatusPanelItemComp, IStatusPanelItemParams} from "./interfaces/IStatusPanelItem";
 export {IStatusPanelService} from "./interfaces/iStatusPanelService";
 
 // overlays

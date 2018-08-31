@@ -2,14 +2,14 @@ import {GridApi} from "../gridApi";
 import {ColumnApi} from "../columnController/columnApi";
 import {IComponent} from "./iComponent";
 
-export interface IStatusParams {
+export interface IStatusPanelItemParams {
     api: GridApi;
     columnApi: ColumnApi;
     context: any;
 }
 
-export interface IStatus {
+export interface IStatusPanelItem {
 }
 
-export interface IStatusComp extends IStatus, IComponent<IStatusParams> {
+export interface IStatusPanelItemComp extends IStatusPanelItem, IComponent<IStatusPanelItemParams> {
 }

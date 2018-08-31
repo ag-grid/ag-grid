@@ -52,7 +52,7 @@ import {HeaderRootComp} from "./headerRendering/headerRootComp";
 import {AnimationFrameService} from "./misc/animationFrameService";
 import {IServerSideRowModel} from "./interfaces/iServerSideRowModel";
 import {IStatusPanelService} from "./interfaces/iStatusPanelService";
-import {IStatus} from "./interfaces/iStatus";
+import {IStatusPanelItem} from "./interfaces/iStatusPanelItem";
 import {ToolPanelDef, ToolPanelDefLike} from "./entities/toolPanel";
 
 export interface StartEditingCellParams {
@@ -693,7 +693,7 @@ export class GridApi {
         }
     }
 
-    public getStatusPanelComponent(key: string) : IStatus {
+    public getStatusPanelComponent(key: string) : IStatusPanelItem {
         if (this.statusPanelService) {
             return this.statusPanelService.getStatusPanelComponent(key);
         }

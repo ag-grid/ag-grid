@@ -49,7 +49,7 @@ var gridOptions = {
         statusPanelComponent: ClickableStatusPanelComponent
     },
     statusPanel: {
-        components: [
+        items: [
             {
                 component: 'statusPanelComponent',
                 key: 'statusPanelCompKey'

@@ -89,7 +89,7 @@ var gridOptions = {
     rowData: getData(5),
     columnDefs: columnDefs,
     statusPanel: {
-        components: [
+        items: [
             { component: 'agAggregationComponent' }
         ]
     },

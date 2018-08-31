@@ -57,7 +57,7 @@ var gridOptions = {
     paginationPageSize: 10,
     columnDefs: columnDefs,
     statusPanel: {
-        components: [
+        items: [
             { component: 'agAggregationComponent' }
         ]
     },

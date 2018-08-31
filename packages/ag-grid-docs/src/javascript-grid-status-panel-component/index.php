@@ -16,7 +16,7 @@ include '../documentation-main/documentation_header.php';
 <h2>Status Panel Component Interface</h2>
 
 <snippet>
-interface IStatus {
+interface IStatusPanelItem {
     /** The init(params) method is called on the status panel component once.
         See below for details on the parameters. */
     init?(params: T): void;
@@ -40,7 +40,7 @@ interface IStatus {
 </p>
 
 <snippet>
-interface IStatusParams {
+interface IStatusPanelItemParams {
     // The grid API
     api: GridApi,
 
@@ -61,7 +61,7 @@ interface IStatusParams {
 <snippet>
 var gridOptions = {
     statusPanel: {
-        components: [
+        items: [
             {
                 component: 'statusPanelComponent'
             },

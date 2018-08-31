@@ -1,6 +1,6 @@
 import {Component, ViewChild, ViewContainerRef} from "@angular/core";
 
-import {IAfterGuiAttachedParams, IDoesFilterPassParams, RowNode, IStatus, IStatusParams} from "ag-grid-community";
+import {IAfterGuiAttachedParams, IDoesFilterPassParams, RowNode, IStatusPanelItem, IStatusPanelItemParams} from "ag-grid-community";
 import {IFilterAngularComp} from "ag-grid-angular";
 
 @Component({
@@ -31,11 +31,11 @@ import {IFilterAngularComp} from "ag-grid-angular";
         `
     ]
 })
-export class ClickableStatusPanelComponent implements IStatus {
-    private params: IStatusParams;
+export class ClickableStatusPanelComponent implements IStatusPanelItem {
+    private params: IStatusPanelItemParams;
     private visible = true;
 
-    agInit(params: IStatusParams): void {
+    agInit(params: IStatusPanelItemParams): void {
         this.params = params;
     }
 

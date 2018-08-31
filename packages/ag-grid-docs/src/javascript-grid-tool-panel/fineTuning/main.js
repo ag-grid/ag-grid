@@ -43,7 +43,7 @@ var gridOptions = {
             {
                 key: 'filters',
                 buttonLabel: 'My Filters',
-                iconKey: 'checkboxChecked',
+                iconKey: 'menu',
                 component: 'agFiltersToolPanel',
             }
         ],

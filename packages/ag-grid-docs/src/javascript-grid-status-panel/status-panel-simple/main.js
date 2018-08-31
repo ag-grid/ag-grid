@@ -16,7 +16,7 @@ var gridOptions = {
     rowData: null,
     enableRangeSelection: true,
     statusPanel: {
-        components: [
+        items: [
             { component: 'agTotalRowCountComponent', align: 'left' },
             { component: 'agFilteredRowCountComponent' },
             { component: 'agSelectedRowCountComponent' },
