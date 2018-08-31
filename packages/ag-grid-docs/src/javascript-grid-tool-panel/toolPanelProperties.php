@@ -1,29 +1,29 @@
 <?php
 
 $toolPanelProperties = [
-    ['items',
-        'A list of all the tool panel items to display. The items will be displayed in provided order from top to bottom.'
+    ['toolPanels',
+        'A list of all the panels to place in the side bar. The panels will be displayed in provided order from top to bottom.'
     ],
-    ['defaultItem',
-        'The item (identified by id) to open by default. If none specified, the tool panel is initially displayed closed.'
+    ['defaultToolPanel',
+        'The panel (identified by id) to open by default. If none specified, the side bar is initially displayed closed.'
     ]
 ];
 
 $toolPanelComponentProperties = [
     ['id',
-        'The unique id for this component, used in the API and everywhere else to refer to this component'
+        'The unique id for this panel. Used in the API and eleswhere to refer to the panel.'
     ],
     ['labelKey',
-        'The key used for i18n'
+        'The key used for i18n. This builds the text to disble in the tab button.'
     ],
     ['labelDefault',
-        'The default label if not labelKey provided or if labelKey i18n does not have any matching'
+        'The default label if labelKey is missing or does not map to a valid text.'
     ],
     ['iconKey',
-        'The <a href="../javascript-grid-icons/">key of the icon</a> to be used as a graphical aid on the side of the tool panel in the button to open/close it'
+        'The <a href="../javascript-grid-icons/">key of the icon</a> to be used as a graphical aid beside the label in the side bar.'
     ],
     ['component[framework/params]',
-        'The configuration to provide the actual component used to render the content of the tool panel the default ag-components are "agColumnsToolPanel" and "agFiltersToolPanel". You can provide in here your own custom tool panel tab LINK TBC'
+        'The component to use as the panel. The provided panels use components "agColumnsToolPanel" and "agFiltersToolPanel". To provide your own custom panel component, you reference it by name here.'
     ]
 ];
 ?>

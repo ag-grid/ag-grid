@@ -1,26 +1,26 @@
 <?php
 
 $toolPanelApi = [
-    ['setToolPanelVisible',
-        'It will show/hide all the tool panel, including the side bar that holds the item buttoms'
+    ['setSideBarVisible',
+        'It will show/hide the entire side bar, including and any displaying panel and the tab buttons.'
     ],
-    ['isToolPanelVisible',
-        'Will return true if visible'
+    ['isSideBarVisible',
+        'Returns true if visible.'
     ],
     ['openToolPanel',
-        'It takes a string that represents the key of the item to show open in the tool panel.'
+        'Opens a particular tool panel. Provide the ID of the rool panel to open.'
     ],
     ['closeToolPanel',
-        'It will make sure that all the items are closed in the tool panel.'
+        'Closes the currently open (if any) tool panel.'
     ],
-    ['getOpenedToolPanelItem',
-        'Returns the key of the currently shown tab if any, otherwise it returns null.'
+    ['getOpenedToolPanel',
+        'Returns the ID of the currently shown tool panel if any, otherwise null.'
     ],
-    ['setToolPanelDef',
-        'It takes one of the different flavours that are <a href="../javascript-grid-tool-panel/">valid gridOptions.toolPanel configurations</a> and redraws the toolpanel accordingly..'
+    ['setSideBar',
+        'Resets the side bar to the provided configuration. The parameter is the same as the sideBar grid property. The side bar is re-created from scratch with the new config.'
     ],
-    ['getToolPanelDef',
-        'It returns the current fully fledge configuration that is used for the tool panel'
+    ['getSideBar',
+        'Returns the current side bar configuration. If a short cut was used, returns the detailed long form.'
     ]
 ];
 ?>

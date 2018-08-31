@@ -9,32 +9,40 @@ include '../documentation-main/documentation_header.php';
     <h1 class="heading-enterprise">Tool Panels</h1>
 
     <p class="lead">
-        The tool panel is a side panel that provides functions for managing different areas of the grid.
-        The tool panel has tabs for displaying different 'tool panel items'. The grid provides
-        two tool panel items out of the box as follows: 1) to
-        <a href="../javascript-grid-tool-panel-columns/">manage columns</a> and 2) to
+        <b>Tool panels</b> are panels that sit in the <b>side bar</b> to the right of the grid.
+        The side bar allows access to the tool panels via buttons that work like tabs.
+    </p>
+    <p class="lead">
+        The grid provides two tool panels out of the box to a)
+        <a href="../javascript-grid-tool-panel-columns/">manage columns</a> and b)
         <a href="../javascript-grid-tool-panel-filters/">manage filters</a>.
-        You can also create your own <a href="../javascript-grid-tool-panel-filters/">custom tool panel items</a>.
+        You can also create your own <a href="../javascript-grid-tool-panel-filters/">custom tool panels</a>
+        that will sit alongside the provided ones.
+    </p>
+
+    <p>
+        The tool panels that sit inside the tool bar are referred to as simply 'panels' in the documentation
+        on this page.
     </p>
 
     <note>
         <p>
-            Version 19 of ag-Grid received a major overhaul of the tool panel. It did not make sense to keep
+            Version 19 of ag-Grid received a major overhaul of the tool panels. It did not make sense to keep
             with the older configuration options. The old property <code>showToolPanel</code> is no longer
             used. The tool panel is also not included by default - if the tool panel is not configured, no
             tool panel is shown.
         </p>
         <p>
-            If moving from an earlier version, set <code>toolPanel='columns'</code> to receive similar behaviour.
+            If moving from an earlier version, set <code>sideBar='columns'</code> to receive similar behaviour.
         </p>
     </note>
 
-    <h2>Configuring the Tool Panel</h2>
+    <h2>Configuring the Side Bar</h2>
 
     <p>
-        The tool panel is configured using the grid property <code>toolPanel</code>. The property takes multiple
-        forms to allow easy configuration to more detailed (and more complex) configuration. The different forms
-        for the <code>toolPanel</code> property are as follows:
+        The side bar is configured using the grid property <code>sideBar</code>. The property takes multiple
+        forms to allow easy configuration or more fine tuned configuration. The different forms
+        for the <code>sideBar</code> property are as follows:
     </p>
 
     <table class="table reference">
@@ -44,42 +52,43 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <td>undefined</td>
-            <td>No tool panel provided.</td>
+            <td>No side bar provided.</td>
         </tr>
         <tr>
             <td>boolean</td>
-            <td>Set to true to display the tool panel with default configuration.</td>
+            <td>Set to true to display the side bar with default configuration.</td>
         </tr>
         <tr>
             <td>string</td>
-            <td>Set to 'columns' or 'filters' to display tool panel with just one of
-                Columns or Filters item.</td>
+            <td>Set to 'columns' or 'filters' to display side bar with just one of
+                Columns or Filters panels.</td>
         </tr>
         <tr>
-            <td>ToolPanelDef<br/>(long form)</td>
-            <td>An object of type ToolPanelDef (explained below) to allow detailed configuration
-            of the tool panel, including providing custom components.</td>
+            <td>SideBarDef<br/>(long form)</td>
+            <td>An object of type SideBarDef (explained below) to allow detailed configuration
+            of the side bar. Use this to configure the panels (eg pass parameters to the
+                columns tool panel) or to include custom panels.</td>
         </tr>
     </table>
 
     <h3>Boolean Configuration</h3>
 
     <p>
-        The default tool panel contains tool panel items Columns and Filters. To use the default tool panel,
-        set the grid property <code>toolPanel=true</code>. The Columns item will be open by default
+        The default side bar contains the Columns and Filters panels. To use the default side bar,
+        set the grid property <code>sideBar=true</code>. The Columns panel will be open by default
     </p>
 
     <p>
-        The default configuration doesn't allow customisation of the tool panel. More detailed configurations
+        The default configuration doesn't allow customisation of the panels. More detailed configurations
         are explained below.
     </p>
 
     <p>
         In the example below, note the following:
         <ul>
-            <li>The grid property <code>toolPanel</code> is set to true.</li>
-            <li>The tool panel is displayed with tool panel items Columns and Filters.</li>
-            <li>The Columns item is displayed by default.</li>
+            <li>The grid property <code>sideBar</code> is set to true.</li>
+            <li>The side bar is displayed with panels Columns and Filters.</li>
+            <li>The Columns panel is displayed by default.</li>
         </ul>
     </p>
 
@@ -88,25 +97,25 @@ include '../documentation-main/documentation_header.php';
     <h3>String Configuration</h3>
 
     <p>
-        To display just one of the provided tool panel items, set either <code>toolPanel='columns'</code>
-        or <code>toolPanel='filters'</code>. This will display the desired item with default configuration.
+        To display just one of the provided panels, set either <code>sideBar='columns'</code>
+        or <code>sideBar='filters'</code>. This will display the desired item with default configuration.
     </p>
 
     <p>
         The example below demonstrates using the string configuration. Note the following:
         <ul>
-            <li>The grid property <code>toolPanel</code> is set to 'filters'.</li>
-            <li>The tool panel is displayed showing only the Filters item.</li>
+            <li>The grid property <code>sideBar</code> is set to 'filters'.</li>
+            <li>The side bar is displayed showing only the Filters panel.</li>
         </ul>
     </p>
 
     <?= example('Tool Panel - Only filters', 'onlyFilters', 'generated', array("enterprise" => 1)) ?>
 
-    <h3>ToolPanelDef Configuration</h3>
+    <h3>SideBarDef Configuration</h3>
 
     <p>
-        The previous configurations are shortcuts for the full fledged configuration using a ToolPanelDef object.
-        The properties of ToolPanelDef are as follows:
+        The previous configurations are shortcuts for the full fledged configuration using a SideBarDef object.
+        The properties of SideBarDef are as follows:
     <table class="table reference">
 
         <?php include './toolPanelProperties.php' ?>
@@ -116,7 +125,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-    Each item has the following properties
+    Each panel has the following properties
     <table class="table reference">
 
             <?php include './toolPanelProperties.php' ?>
