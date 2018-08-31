@@ -10,11 +10,14 @@ $toolPanelProperties = [
 ];
 
 $toolPanelComponentProperties = [
-    ['key',
-        'The unique key for this component, used in the API and everywhere else to refer to this component'
+    ['id',
+        'The unique id for this component, used in the API and everywhere else to refer to this component'
     ],
-    ['buttonLabel',
-        'The label text to be displayed on the side of the tool panel in the button to open/close it'
+    ['labelKey',
+        'The key used for i18n'
+    ],
+    ['labelDefault',
+        'The default label if not labelKey provided or if labelKey i18n does not have any matching'
     ],
     ['iconKey',
         'The <a href="../javascript-grid-icons/">key of the icon</a> to be used as a graphical aid on the side of the tool panel in the button to open/close it'

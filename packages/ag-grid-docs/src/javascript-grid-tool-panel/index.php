@@ -134,13 +134,15 @@ toolPanel = {
     items: [
         {
             key: 'columns',
-            buttonLabel: 'Columns',
+            labelDefault: 'Columns',
+            labelKey: 'columns',
             iconKey: 'columns',
             component: 'agColumnsToolPanel',
         },
         {
             key: 'filters',
-            buttonLabel: 'Filters',
+            labelDefault: 'Filters',
+            labelKey: 'filters',
             iconKey: 'filter',
             component: 'agFiltersToolPanel',
         }
@@ -177,13 +179,15 @@ toolPanel = {
     items: [
         {
             key: 'columns',
-            buttonLabel: 'Columns',
+            labelDefault: 'Columns',
+            labelKey: 'columns',
             iconKey: 'columns',
             component: 'agColumnsToolPanel',
         },
         {
             key: 'filters',
-            buttonLabel: 'Filters',
+            labelDefault: 'Filters',
+            labelKey: 'filters',
             iconKey: 'filter',
             component: 'agFiltersToolPanel',
         }
@@ -207,7 +211,8 @@ toolPanel = {
     items: [
         {
             key: 'filters',
-            buttonLabel: 'Filters',
+            labelDefault: 'Filters',
+            labelKey: 'filters',
             iconKey: 'filter',
             component: 'agFiltersToolPanel',
         }
@@ -232,13 +237,15 @@ toolPanel = {
     items: [
         {
             key: 'columns',
-            buttonLabel: 'Columns',
+            labelDefault: 'Columns',
+            labelKey: 'columns',
             iconKey: 'columns',
             component: 'agColumnsToolPanel',
         },
         {
             key: 'filters',
-            buttonLabel: 'Filters',
+            labelDefault: 'Filters',
+            labelKey: 'filters',
             iconKey: 'filter',
             component: 'agFiltersToolPanel',
         }
