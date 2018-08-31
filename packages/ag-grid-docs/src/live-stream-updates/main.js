@@ -60,7 +60,7 @@
         },
         columnDefs: columnDefs,
         statusPanel: {
-            components: [
+            items: [
                 { component: 'agAggregationComponent' }
             ]
         },

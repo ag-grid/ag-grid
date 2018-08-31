@@ -28,7 +28,7 @@ var gridOptions = {
     pagination:true,
     rowGroupPanelShow: 'always',
     statusPanel: {
-        components: [
+        items: [
             { component: 'agAggregationComponent' }
         ]
     },

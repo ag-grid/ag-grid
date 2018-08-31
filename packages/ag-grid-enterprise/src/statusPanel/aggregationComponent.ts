@@ -92,7 +92,7 @@ export class AggregationComponent extends Component {
         // if the user has specified the agAggregationPanelComp but no aggFuncs we show the all
         // if the user has specified the agAggregationPanelComp and aggFuncs, then we only show the aggFuncs listed
         let statusPanelValueComponent: StatusPanelValueComponent = null;
-        const aggregationPanelConfig = _.exists(this.gridOptions.statusPanel) ? _.find(this.gridOptions.statusPanel.components, aggFuncName) : null;
+        const aggregationPanelConfig = _.exists(this.gridOptions.statusPanel) ? _.find(this.gridOptions.statusPanel.items, aggFuncName) : null;
         if (_.exists(aggregationPanelConfig)) {
             // a little defensive here - if no componentParams show it, if componentParams we also expect aggFuncs
             if (!_.exists(aggregationPanelConfig.componentParams) ||

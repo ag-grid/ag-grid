@@ -39,16 +39,16 @@ export class StatusPanelComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        if (this.gridOptions.statusPanel && this.gridOptions.statusPanel.components) {
-            let leftStatusPanelComponents = this.gridOptions.statusPanel.components
+        if (this.gridOptions.statusPanel && this.gridOptions.statusPanel.items) {
+            let leftStatusPanelComponents = this.gridOptions.statusPanel.items
                 .filter((componentConfig) => componentConfig.align === 'left');
             this.createAndRenderComponents(leftStatusPanelComponents, this.eLeftPanelComponents);
 
-            let centerStatusPanelComponents = this.gridOptions.statusPanel.components
+            let centerStatusPanelComponents = this.gridOptions.statusPanel.items
                 .filter((componentConfig) => componentConfig.align === 'center');
             this.createAndRenderComponents(centerStatusPanelComponents, this.eCenterPanelComponents);
 
-            let rightStatusPanelComponents = this.gridOptions.statusPanel.components
+            let rightStatusPanelComponents = this.gridOptions.statusPanel.items
                 .filter((componentConfig) => (!componentConfig.align || componentConfig.align === 'right'));
             this.createAndRenderComponents(rightStatusPanelComponents, this.eRightPanelComponents);
         }

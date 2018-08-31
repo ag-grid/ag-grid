@@ -219,7 +219,7 @@ export interface GridOptions {
     reactNext?:  boolean;
 
     statusPanel? : {
-        components: [{
+        items: [{
             component: string;
             align?: string,
             key?: string,

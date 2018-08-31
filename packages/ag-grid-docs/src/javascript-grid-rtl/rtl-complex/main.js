@@ -92,7 +92,7 @@ var gridOptions = {
     enableSorting: true, //one of [true, false]
     enableFilter: true, //one of [true, false]
     statusPanel: {
-        components: [
+        items: [
             { component: 'agAggregationComponent' }
         ]
     },

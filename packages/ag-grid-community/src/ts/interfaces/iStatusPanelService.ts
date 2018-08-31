@@ -1,7 +1,7 @@
-import {IStatusComp} from "./iStatus";
+import {IStatusPanelItemComp} from "./iStatusPanelItem";
 
 export interface IStatusPanelService {
-    registerStatusPanelComponent(key: string, component: IStatusComp): void;
-    getStatusPanelComponent(key: string): IStatusComp;
+    registerStatusPanelComponent(key: string, component: IStatusPanelItemComp): void;
+    getStatusPanelComponent(key: string): IStatusPanelItemComp;
 
 }

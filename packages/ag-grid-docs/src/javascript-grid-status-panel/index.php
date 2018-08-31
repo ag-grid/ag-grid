@@ -58,7 +58,7 @@ for more information.</p>
 <snippet>
 gridOptions: {
     statusPanel: {
-        components: [
+        items: [
             { component: 'agTotalRowCountComponent', align: 'left', key: 'totalRowComponent' },
             { component: 'agFilteredRowCountComponent, align: 'left' },
             { component: 'agSelectedRowCountComponent', align: 'center' },
@@ -120,7 +120,7 @@ gridOptions: {
 <snippet>
 gridOptions: {
     statusPanel: {
-        components: [
+        items: [
             {
                 component: 'agAggregationComponent',
                 componentParams: {
@@ -159,7 +159,7 @@ value provided in the component configuration (see above), but will default to t
 <snippet>
 gridOptions: {
     statusPanel: {
-        components: [
+        items: [
             {
                 component: 'agAggregationComponent',
                 componentParams: {

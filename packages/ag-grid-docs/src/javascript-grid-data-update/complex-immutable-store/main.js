@@ -132,7 +132,7 @@ function createTradeId() {
         columnDefs: columnDefs,
         rowData: globalRowData,
         statusPanel: {
-            components: [
+            items: [
                 { component: 'agAggregationComponent' }
             ]
         },
