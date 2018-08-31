@@ -1,0 +1,13 @@
+
+.api-panel {
+    display: flex;
+    flex-direction: row;
+}
+
+.api-column {
+    flex-grow: 1;
+}
+
+.api-panel button {
+    margin: 2px;
+}

@@ -808,8 +808,8 @@ export class GridApi {
         this.gridCore.closeSideBar();
     };
 
-    public getOpenedToolPanelItem (): string {
-        return this.gridCore.getOpenedToolPanelItem();
+    public getOpenedToolPanel (): string {
+        return this.gridCore.getOpenedToolPanel();
     };
 
 

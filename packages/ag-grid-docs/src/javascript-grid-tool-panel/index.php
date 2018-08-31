@@ -12,17 +12,17 @@ include '../documentation-main/documentation_header.php';
         <b>Tool panels</b> are panels that sit in the <b>side bar</b> to the right of the grid.
         The side bar allows access to the tool panels via buttons that work like tabs.
     </p>
-    <p class="lead">
-        The grid provides two tool panels out of the box to a)
-        <a href="../javascript-grid-tool-panel-columns/">manage columns</a> and b)
+    <p>
+        The grid provides two tool panels out of the box to 1)
+        <a href="../javascript-grid-tool-panel-columns/">manage columns</a> and 2)
         <a href="../javascript-grid-tool-panel-filters/">manage filters</a>.
-        You can also create your own <a href="../javascript-grid-tool-panel-filters/">custom tool panels</a>
+        You can also create your own <a href="../javascript-grid-tool-panel-custom/">custom tool panels</a>
         that will sit alongside the provided ones.
     </p>
 
     <p>
-        The tool panels that sit inside the tool bar are referred to as simply 'panels' in the documentation
-        on this page.
+        The tool panels sit inside the side bar. For ease of reading, the tool panels are simply called
+        'panels' below.
     </p>
 
     <note>
@@ -41,7 +41,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The side bar is configured using the grid property <code>sideBar</code>. The property takes multiple
-        forms to allow easy configuration or more fine tuned configuration. The different forms
+        forms to allow easy configuration or more advanced configuration. The different forms
         for the <code>sideBar</code> property are as follows:
     </p>
 
@@ -67,7 +67,7 @@ include '../documentation-main/documentation_header.php';
             <td>SideBarDef<br/>(long form)</td>
             <td>An object of type SideBarDef (explained below) to allow detailed configuration
             of the side bar. Use this to configure the panels (eg pass parameters to the
-                columns tool panel) or to include custom panels.</td>
+                columns panel) or to include custom panels.</td>
         </tr>
     </table>
 
@@ -109,12 +109,13 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= example('Tool Panel - Only filters', 'onlyFilters', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Side Bar - Only filters', 'onlyFilters', 'generated', array("enterprise" => 1)) ?>
 
     <h3>SideBarDef Configuration</h3>
 
     <p>
         The previous configurations are shortcuts for the full fledged configuration using a SideBarDef object.
+        For full control over the configuration, you must provide a <code>SideBarDef</code> object.
         The properties of SideBarDef are as follows:
     <table class="table reference">
 
@@ -135,21 +136,21 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        The following snippet shows configuring the tool panel using a SideBarDef object:
+        The following snippet shows configuring the tool panel using a <code>SideBarDef</code> object:
     </p>
 
 <snippet>
 sideBar = {
     toolPanels: [
         {
-            key: 'columns',
+            id: 'columns',
             labelDefault: 'Columns',
             labelKey: 'columns',
             iconKey: 'columns',
             component: 'agColumnsToolPanel',
         },
         {
-            key: 'filters',
+            id: 'filters',
             labelDefault: 'Filters',
             labelKey: 'filters',
             iconKey: 'filter',
@@ -164,14 +165,14 @@ sideBar = {
         The snippet above is demonstrated in the following example:
     </p>
 
-<div style="padding: 20px; background: yellow; border: 2px solid green;">PUT IN EXAMPLE FOR SideBarDef</div>
+<?= example('SideBarDef', 'sideBarDef', 'generated', array("enterprise" => 1)) ?>
 
 <h2 id="shortcuts">Configuration Shortcuts</h2>
 
     <p>
-        The boolean and string configurations are actually shortcuts for the more details configuration.
+        The boolean and string configurations are shortcuts for more detailed configurations.
         When you use a shortcut the grid replaces it with the equivalent long form of the configuration
-        using <code>SideBarDef</code>.
+        by building the equivalent <code>SideBarDef</code>.
     </p>
 
     <p>
@@ -187,14 +188,14 @@ sideBar = true;
 sideBar = {
     toolPanels: [
         {
-            key: 'columns',
+            id: 'columns',
             labelDefault: 'Columns',
             labelKey: 'columns',
             iconKey: 'columns',
             component: 'agColumnsToolPanel',
         },
         {
-            key: 'filters',
+            id: 'filters',
             labelDefault: 'Filters',
             labelKey: 'filters',
             iconKey: 'filter',
@@ -219,7 +220,7 @@ sideBar = 'filters';
 sideBar = {
     toolPanels: [
         {
-            key: 'filters',
+            id: 'filters',
             labelDefault: 'Filters',
             labelKey: 'filters',
             iconKey: 'filter',
@@ -245,14 +246,14 @@ sideBar = {
 sideBar = {
     toolPanels: [
         {
-            key: 'columns',
+            id: 'columns',
             labelDefault: 'Columns',
             labelKey: 'columns',
             iconKey: 'columns',
             component: 'agColumnsToolPanel',
         },
         {
-            key: 'filters',
+            id: 'filters',
             labelDefault: 'Filters',
             labelKey: 'filters',
             iconKey: 'filter',
@@ -262,20 +263,53 @@ sideBar = {
 }
 </snippet>
 
-<h2>Customising Tool Panel Items</h2>
+<h2>Customising Tool Panels</h2>
 
 <p>
     If you are using the long form (providing a <code>SideBarDef</code> object) then it is possible to customise.
     The example below shows changing the label and icon for the columns and filters tab.
 </p>
 
-<?= example('Tool Panel - Fine tuning', 'fineTuning', 'generated', array("enterprise" => 1)) ?>
+<?= example('Side Bar Fine tuning', 'fineTuning', 'generated', array("enterprise" => 1)) ?>
 
-<h2>Custom tabs</h2>
+<h2>Providing Parameters to Tool Panels</h2>
 
 <p>
-    You can create and add your own tool panel items. You can see the details for this on the
-    component doc page for tool panel link TBC
+    Parameters are passed to tool panels via the <code>componentParams</code> object.
+    For example, the following code snippet sets <code>suppressRowGroups: true</code>
+    and <code>suppressValues: true</code> for the
+    <a href="../javascript-grid-tool-panel-columns/">columns</a> panel.
+</p>
+
+<snippet>
+sideBar = {
+    toolPanels: [{
+        id: 'columns',
+        labelDefault: 'Columns',
+        labelKey: 'columns',
+        iconKey: 'columns',
+        component: 'agColumnsToolPanel',
+        componentParams: {
+            suppressRowGroups: true,
+            suppressValues: true,
+        }
+    }]
+}
+</snippet>
+
+<p>
+    See the documentation for <a href="../javascript-grid-tool-panel-columns/">columns panel</a>
+    for the full list of possible parameters.
+</p>
+
+<h2>Custom Tool Panels</h2>
+
+<p>
+    The tool panels
+    <a href="../javascript-grid-tool-panel-columns/">columns</a> and
+    <a href="../javascript-grid-tool-panel-filters/">filters</a> come as part of the grid.
+    See <a href="../javascript-grid-tool-panel-custom/">custom tool panels</a> for creating your own
+    to either replace or work alongside the provided panels.
 </p>
 
 <h2>API</h2>
@@ -309,6 +343,6 @@ sideBar = {
     </li>
 </ul>
 
-<?= example('Tool Panel - API', 'api', 'generated', array("enterprise" => 1)) ?>
+<?= example('Tool Panel API', 'api', 'generated', array("enterprise" => 1)) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

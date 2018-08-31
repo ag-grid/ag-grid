@@ -14,15 +14,15 @@ $toolPanelComponentProperties = [
         'The unique id for this panel. Used in the API and eleswhere to refer to the panel.'
     ],
     ['labelKey',
-        'The key used for i18n. This builds the text to disble in the tab button.'
+        'The key used for <a href="../javascript-grid-internationalisation/">internationalisation</a> for displaying the label. The label is displayed in the tab button.'
     ],
     ['labelDefault',
-        'The default label if labelKey is missing or does not map to a valid text.'
+        'The default label if labelKey is missing or does not map to a valid text through internationalisation.'
     ],
     ['iconKey',
         'The <a href="../javascript-grid-icons/">key of the icon</a> to be used as a graphical aid beside the label in the side bar.'
     ],
-    ['component[framework/params]',
+    ['component,<br/>componentFramework,<br/>componentParams',
         'The component to use as the panel. The provided panels use components "agColumnsToolPanel" and "agFiltersToolPanel". To provide your own custom panel component, you reference it by name here.'
     ]
 ];

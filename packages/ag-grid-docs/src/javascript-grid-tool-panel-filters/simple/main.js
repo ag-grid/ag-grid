@@ -4,46 +4,16 @@ var columnDefs = [
     { field: "country", width: 120},
     { field: "year", width: 90 },
     { field: "date", width: 110 },
-    { field: "gold", width: 100 },
-    { field: "silver", width: 100 },
-    { field: "bronze", width: 100 },
-    { field: "total", width: 100 }
+    { field: "gold", width: 100, suppressFilter: true },
+    { field: "silver", width: 100, suppressFilter: true },
+    { field: "bronze", width: 100, suppressFilter: true },
+    { field: "total", width: 100, suppressFilter: true }
 ];
 
 var gridOptions = {
-    defaultColDef: {
-        // allow every column to be aggregated
-        enableValue: true,
-        // allow every column to be grouped
-        enableRowGroup: true,
-        // allow every column to be pivoted
-        enablePivot: true
-    },
     columnDefs: columnDefs,
-    enableSorting: true,
-    sideBar: {
-        toolPanels: [
-            'columns',
-            {
-                id: 'filters',
-                labelKey: 'filters',
-                iconKey: 'menu',
-                component: 'agFiltersToolPanel',
-            },
-            {
-                id: 'filters 2',
-                labelKey: 'filters',
-                labelDefault: 'Filters (labelDefault)',
-                iconKey: 'filter',
-                component: 'agFiltersToolPanel',
-            },
-        ],
-        defaultToolPanel: 'filters'
-    },
-    enableFilter: true,
-    localeText: {
-        filters: 'Filters (labelKey i18n)'
-    }
+    sideBar: 'filters',
+    enableFilter: true
 };
 
 // setup the grid after the page has finished loading

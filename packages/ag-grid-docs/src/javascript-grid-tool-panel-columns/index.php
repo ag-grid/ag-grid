@@ -9,13 +9,13 @@ include '../documentation-main/documentation_header.php';
     <h1 class="heading-enterprise">Columns Tool Panel</h1>
 
     <p class="lead">
-        The columns tool panel is a side panel provided out of the box by ag-grid hat provides functions for for managing columns inside the grid.
+        The columns tool panel provides functions for managing the grid's columns.
     </p>
 
     <h2>Simple Example</h2>
 
     <p>
-        Below shows a simple example of the columns tool panel in action. The following should be noted:
+        Below shows a simple example of the columns tool panel. The following can be noted:
         <ul>
             <li>Grid property <code>toolPanel='columns'</code> which shows only the columns tool panel.</li>
             <li>
@@ -59,17 +59,15 @@ include '../documentation-main/documentation_header.php';
     <note>
         Remember to mark the column definitions with <code>enableRowGroup</code> for grouping, <code>enablePivot</code>
         for pivoting and <code>enableValue</code> for aggregation. Otherwise you won't be able to drag and drop the
-        columns to the desired sections from the Tool Panel.
+        columns to the desired sections.
     </note>
 
     <h2>Selection Action</h2>
 
     <p>
-        Selecting columns means different things depending on whether the grid is on pivot mode or not
+        Selecting columns means different things depending on whether the grid is in pivot mode or not
         as follows:
     </p>
-
-    <h4>Selection - </h4>
 
     <ul>
         <li><b>Pivot Mode Off</b>:
@@ -83,10 +81,10 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <h2>Tool Panel Sections</h2>
+    <h2>Column Tool Panel Sections</h2>
 
     <p>
-        The tool panel is split into difference sections which are follows:
+        The column tool panel is split into difference sections which are follows:
 
         <ul>
             <li>
@@ -108,9 +106,6 @@ include '../documentation-main/documentation_header.php';
                  in the columns section.
             </li>
             <li>
-                <b>Side Button</b>: Shows and hides the tool panel.
-            </li>
-            <li>
                 <b>Select / Un-Select Column (or Group)</b>: Each column can be individually selected.
                 What selection means depends on pivot mode and is explained below*.
             </li>
@@ -121,7 +116,7 @@ include '../documentation-main/documentation_header.php';
                     <li>Row Groups Section</li>
                     <li>Values (Pivot) Section</li>
                     <li>Column Labels Section</li>
-                    <li>Onto the grid.</li>
+                    <li>Onto the grid</li>
                 </ol>
             </li>
             <li>
@@ -149,7 +144,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         It is possible to remove items from the tool panel. Items are suppressed by setting one or more of the
-        following componentParams whenever you are using the agColumnsToolPanel component properties to true:
+        following <code>componentParams</code> whenever you are using the agColumnsToolPanel component properties to true:
     </p>
 
     <ul class="content">
@@ -160,8 +155,6 @@ include '../documentation-main/documentation_header.php';
         <li><code>suppressColumnFilter</code>: To suppress Column Filter section.</li>
         <li><code>suppressColumnSelectAll</code>: To suppress Select / Un-select all widget.</li>
         <li><code>suppressColumnExpandAll</code>: To suppress Expand / Collapse all widget.</li>
-
-        <li><code>suppressSideButtons</code>: NOT USED ANYMORE. To suppress Side Buttons section.</li>
     </ul>
 
     <p>
@@ -187,7 +180,7 @@ include '../documentation-main/documentation_header.php';
     <?= example('Suppress Panels', 'suppress', 'generated', array("enterprise" => 1)) ?>
 
 
-    <h2>Styling Columns in Tool Panel</h2>
+    <h2>Styling Columns</h2>
 
     <p>
         You can add a CSS class to the columns in the tool panel by specifying <code>toolPanelHeaderClass</code>
@@ -210,19 +203,21 @@ colDefs = {
 
 <h2>Fixing Tool Panel Contents Height </h2>
 
-<p> By default, the tool panel panels stretch to fit the height of the grid, with maximum height set to <code>100vh</code>. To tweak the height of them, you can tweak the <code>.ag-column-panel-center</code> selector: </p>
+<p>
+    By default, the tool panel panels stretch to fit the height of the grid, with maximum height set to <code>100vh</code>. To tweak the height of them, you can tweak the <code>.ag-column-panel-center</code> selector:
+</p>
 
-    <snippet language="css">
-    .ag-column-panel-center {
-        /* increase the total max height of tool panel contents */
-        max-height: 2000px;
-    }
-    </snippet>
+<snippet language="css">
+.ag-column-panel-center {
+    /* increase the total max height of tool panel contents */
+    max-height: 2000px;
+}
+</snippet>
 
-    <h2>Tool Panel Example</h2>
+    <h2>Column Tool Panel Example</h2>
 
     <p>
-        The example below demonstrates the tool panel. Note the following:
+        The example below demonstrates the column tool panel using a mixture of items explained above. Note the following:
     </p>
 
     <ul class="content">

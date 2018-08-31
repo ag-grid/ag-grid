@@ -1,36 +1,20 @@
 var columnDefs = [
-    {
-        headerName: 'Athlete',
-        children: [
-            {field: "athlete", width: 150, filter: 'agTextColumnFilter'},
-            {field: "age", width: 90},
-            {field: "country", width: 120}
-        ]
-    },
-    {
-        headerName: 'Competition',
-        children: [
-            {field: "year", width: 90},
-            {field: "date", width: 110},
-        ]
-    },
-    {field: "sport", width: 110},
-    {
-        headerName: 'Medals',
-        children: [
-            {field: "gold", width: 100},
-            {field: "silver", width: 100},
-            {field: "bronze", width: 100},
-            {field: "total", width: 100}
-        ]
-    }
+    { field: "athlete", width: 150, filter: 'agTextColumnFilter'},
+    { field: "age", width: 90},
+    { field: "country", width: 120},
+    { field: "year", width: 90 },
+    { field: "date", width: 110 },
+    { field: "gold", width: 100 },
+    { field: "silver", width: 100 },
+    { field: "bronze", width: 100 },
+    { field: "total", width: 100 }
 ];
 
-function setToolPanelVisible(value) {
+function setSideBarVisible(value) {
     gridOptions.api.setSideBarVisible(value)
 }
 
-function isToolPanelVisible() {
+function isSideBarVisible() {
     alert(gridOptions.api.isSideBarVisible())
 }
 
@@ -38,19 +22,19 @@ function openToolPanel (key) {
     gridOptions.api.openToolPanel(key)
 }
 
-function closeToolPanel () {
+function closeSideBar () {
     gridOptions.api.closeSideBar()
 }
 
-function getOpenedToolPanelItem () {
-    alert(gridOptions.api.getOpenedToolPanelItem())
+function getOpenedToolPanel () {
+    alert(gridOptions.api.getOpenedToolPanel())
 }
 
-function setToolPanel (def) {
+function setSideBar (def) {
     gridOptions.api.setSideBar (def);
 }
 
-function getToolPanel () {
+function getSideBar () {
     let toolPanel = gridOptions.api.getSideBar ();
     alert(JSON.stringify(toolPanel));
     console.log(toolPanel);

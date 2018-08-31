@@ -23,27 +23,24 @@ var gridOptions = {
     enableSorting: true,
     sideBar: {
         toolPanels: [
-            'columns',
+            {
+                id: 'columns',
+                labelDefault: 'Columns',
+                labelKey: 'columns',
+                iconKey: 'columns',
+                component: 'agColumnsToolPanel',
+            },
             {
                 id: 'filters',
+                labelDefault: 'Filters',
                 labelKey: 'filters',
-                iconKey: 'menu',
-                component: 'agFiltersToolPanel',
-            },
-            {
-                id: 'filters 2',
-                labelKey: 'filters',
-                labelDefault: 'Filters (labelDefault)',
                 iconKey: 'filter',
                 component: 'agFiltersToolPanel',
-            },
+            }
         ],
         defaultToolPanel: 'filters'
     },
-    enableFilter: true,
-    localeText: {
-        filters: 'Filters (labelKey i18n)'
-    }
+    enableFilter: true
 };
 
 // setup the grid after the page has finished loading

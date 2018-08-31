@@ -196,7 +196,7 @@ export class GridCore extends Component {
         this.eRootWrapperBody.appendChild(this.sideBarComp.getGui());
     }
 
-    public getOpenedToolPanelItem (): string {
+    public getOpenedToolPanel (): string {
         if (!this.sideBarComp) {
             return null;
         }
