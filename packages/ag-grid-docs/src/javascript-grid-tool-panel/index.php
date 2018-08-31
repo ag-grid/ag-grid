@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1 class="heading-enterprise">Tool Panel</h1>
+    <h1 class="heading-enterprise">Tool Panels</h1>
 
     <p class="lead">
         The tool panel is a side panel that provides functions for managing different areas of the grid.
@@ -56,13 +56,13 @@ include '../documentation-main/documentation_header.php';
                 Columns or Filters item.</td>
         </tr>
         <tr>
-            <td>ToolPanelDef</td>
+            <td>ToolPanelDef<br/>(long form)</td>
             <td>An object of type ToolPanelDef (explained below) to allow detailed configuration
             of the tool panel, including providing custom components.</td>
         </tr>
     </table>
 
-    <h2>Boolean Configuration</h2>
+    <h3>Boolean Configuration</h3>
 
     <p>
         The default tool panel contains tool panel items Columns and Filters. To use the default tool panel,
@@ -85,7 +85,7 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Tool Panel Simple', 'simple', 'generated', array("enterprise" => 1)) ?>
 
-    <h2>String Configuration</h2>
+    <h3>String Configuration</h3>
 
     <p>
         To display just one of the provided tool panel items, set either <code>toolPanel='columns'</code>
@@ -102,7 +102,7 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Tool Panel - Only filters', 'onlyFilters', 'generated', array("enterprise" => 1)) ?>
 
-    <h2>ToolPanelDef Configuration</h2>
+    <h3>ToolPanelDef Configuration</h3>
 
     <p>
         The previous configurations are shortcuts for the full fledged configuration using a ToolPanelDef object.
@@ -157,16 +157,16 @@ toolPanel = {
 
 <div style="padding: 20px; background: yellow; border: 2px solid green;">PUT IN EXAMPLE FOR ToolPanelDef</div>
 
-<h2>Configuration Shortcuts</h2>
+<h2 id="shortcuts">Configuration Shortcuts</h2>
 
     <p>
         The boolean and string configurations are actually shortcuts for the more details configuration.
-        When you use a shortcut, the grid replaces it with the equivalent long form of the configuration
+        When you use a shortcut the grid replaces it with the equivalent long form of the configuration
         using <code>ToolPanelDef</code>.
     </p>
 
     <p>
-        The following code snippet shows and example of the boolean shortcut and the equivalent
+        The following code snippet shows and example of the <code>boolean</code> shortcut and the equivalent
         <code>ToolPanelDef</code> long form.
     </p>
 
@@ -198,7 +198,7 @@ toolPanel = {
 </snippet>
 
 <p>
-    The following code snippet shows and example of the string shortcut and the equivalent
+    The following code snippet shows and example of the <code>string</code> shortcut and the equivalent
     <code>ToolPanelDef</code> long form.
 </p>
 
@@ -249,13 +249,15 @@ toolPanel = {
             iconKey: 'filter',
             component: 'agFiltersToolPanel',
         }
-    ],
+    ]
 }
 </snippet>
 
+<h2>Customising Tool Panel Items</h2>
+
 <p>
-    The example below shows how fine tuning can be used to change the label or icon for the columns or filters tab.
-    In this example, note how the filters tab has been configured to have a slightly different look & feel (label & icon)
+    If you are using the long form (providing a <code>ToolPanelDef</code> object) then it is possible to customise.
+    The example below shows changing the label and icon for the columns and filters tab.
 </p>
 
 <?= example('Tool Panel - Fine tuning', 'fineTuning', 'generated', array("enterprise" => 1)) ?>
@@ -263,11 +265,15 @@ toolPanel = {
 <h2>Custom tabs</h2>
 
 <p>
-    You can now create even your own items, or overwrite the default columns and filters tabs. You can see the details for this on the
+    You can create and add your own tool panel items. You can see the details for this on the
     component doc page for tool panel link TBC
 </p>
 
 <h2>API</h2>
+
+<p>
+    The list below details all the API methods relevant to the tool panel.
+</p>
 
 <table class="table reference">
 
@@ -275,6 +281,24 @@ toolPanel = {
     <?php printPropertiesRows($toolPanelApi) ?>
 
 </table>
+
+<p>
+    The example below demonstrates different usages of the tool panel API methods.
+    The following can be noted:
+</p>
+
+<ul>
+    <li>
+        <b>Visibility Buttons:</b> These toggle visibility of the tool panel. Note that when you make <code>visible=false</code>,
+        the entire tool panel is hidden including the tabs. Make sure the tool panel is left visible before testing
+        the other API features so you can see the impact.
+    </li>
+    <li><b>Open / Close Buttons:</b> These open and close different tool panel items.</li>
+    <li>
+        <b>Reset:</b> These reset the tool panel to a new configuration. Notice that <a href="#shortcuts">shortcuts</a>
+        are provided as configuration however <code>getToolPanel()</code> returns back the long form.
+    </li>
+</ul>
 
 <?= example('Tool Panel - API', 'api', 'generated', array("enterprise" => 1)) ?>
 

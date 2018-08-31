@@ -1,15 +1,22 @@
 <div style="display: flex; flex-direction: column; height: 100%;">
 
     <div>
+        Visibility:
         <button onclick="setToolPanelVisible(true)">setToolPanelVisible (true)</button>
         <button onclick="setToolPanelVisible(false)">setToolPanelVisible (false)</button>
         <button onclick="isToolPanelVisible()">isToolPanelVisible ()</button>
+    </div>
+    <div>
+        Open / Close:
         <button onclick="openToolPanel('columns')">openToolPanel ('columns')</button>
         <button onclick="openToolPanel('filters')">openToolPanel ('filters')</button>
-        <button onclick="getOpenedToolPanelItem()">getOpenedToolPanelItem ()</button>
         <button onclick="closeToolPanel()">closeToolPanel ()</button>
+        <button onclick="getOpenedToolPanelItem()">getOpenedToolPanelItem ()</button>
+    </div>
+    <div>
+        Reset
         <button onclick="setToolPanel(['filters','columns'])">setToolPanel (['filters','columns'])</button>
-        <button onclick="setToolPanel(['columns','filters'])">setToolPanel (['columns','filters'])</button>
+        <button onclick="setToolPanel('columns')">setToolPanel ('columns')</button>
         <button onclick="getToolPanel()">getToolPanel()</button>
     </div>
 
