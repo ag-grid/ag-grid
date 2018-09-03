@@ -65,7 +65,7 @@ import {ColumnContainerComp} from "./sideBar/columns/columnsSelect/columnContain
 import {HorizontalResizeComp} from "./sideBar/horizontalResizeComp";
 import {HeaderColumnDropComp} from "./sideBar/columns/columnDrop/headerColumnDropComp";
 import {ColumnToolPanel} from "./sideBar/columns/columnToolPanel";
-import {SideBarSelectComp} from "./sideBar/sideBarSelectComp";
+import {SideBarButtonsComp} from "./sideBar/sideBarButtonsComp";
 
 import {StatusBarService} from "./statusBar/statusBarService";
 import {StatusBar} from "./statusBar/statusBar";
@@ -101,7 +101,7 @@ Grid.setEnterpriseComponents([
     {componentName: 'AgHeaderColumnDrop', theClass: HeaderColumnDropComp},
     {componentName: 'AgToolPanelColumnComp', theClass: ColumnToolPanel},
     {componentName: 'AgToolPanelAllFiltersComp', theClass: FiltersToolPanel},
-    {componentName: 'AgToolPanelSelectComp', theClass: SideBarSelectComp},
+    {componentName: 'AgSideBarButtons', theClass: SideBarButtonsComp},
 ]);
 
 Grid.setEnterpriseDefaultComponents([

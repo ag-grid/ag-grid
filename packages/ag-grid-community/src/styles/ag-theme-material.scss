@@ -184,7 +184,7 @@ $params: (
         background-color: darken($range-selection-background-color, 12);
     }
 
-    .ag-tool-panel {
+    .ag-side-bar {
         border-bottom: 0;
         border-right: 0;
         border-top: 0;
@@ -215,7 +215,7 @@ $params: (
         }
     }
 
-    .ag-rtl .ag-tool-panel {
+    .ag-rtl .ag-side-bar {
         .ag-side-buttons .ag-selected button {
           border-left: 0;
           margin-left: 0;

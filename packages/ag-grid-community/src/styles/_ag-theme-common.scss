@@ -758,7 +758,7 @@
         content: " ";
     }
 
-    .ag-tool-panel-item-wrapper {
+    .ag-tool-panel-wrapper {
         border-right: 0;
 
         .ag-filter-panel {
@@ -1321,7 +1321,7 @@
             }
         }
 
-        .ag-tool-panel-item-wrapper {
+        .ag-tool-panel-wrapper {
             .ag-pivot-mode {
                 span {
                     float: right;
@@ -1489,16 +1489,16 @@
         }
     }
 
-    .ag-status-left-panel-comps {
+    .ag-status-bar-left {
         display: inline-flex;
     }
 
-    .ag-status-center-panel-comps {
+    .ag-status-bar-center {
         text-align: center;
         display: inline-flex;
     }
 
-    .ag-status-right-panel-comps {
+    .ag-status-bar-right {
         text-align: right;
         display: inline-flex;
     }
@@ -1539,7 +1539,7 @@
         @include card($params);
     }
 
-    .ag-tool-panel {
+    .ag-side-bar {
         background-color: $tool-panel-background-color;
         border-right: 1px solid $border-color;
         border-top: 1px solid $border-color;
@@ -1556,7 +1556,7 @@
                     background: transparent;
                     border: 0;
                     color: $foreground-color;
-                    padding: 0 0 $grid-size * 4 0;
+                    padding: $grid-size * 2 0 $grid-size * 2 0;
                     width: 100%;
                     margin: 0;
                     min-height: $grid-size * 18;
@@ -1596,7 +1596,7 @@
         }
     }
 
-    .ag-rtl .ag-tool-panel {
+    .ag-rtl .ag-side-bar {
         .ag-panel-container {
             border-left: 1px solid $border-color;
             border-right: 0;

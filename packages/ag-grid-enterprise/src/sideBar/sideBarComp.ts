@@ -13,7 +13,7 @@ import {
     IComponent,
     Promise, _
 } from "ag-grid-community";
-import {SideBarSelectComp} from "./sideBarSelectComp";
+import {SideBarButtonsComp} from "./sideBarButtonsComp";
 import {ToolPanelWrapper, ToolPanelWrapperParams} from "./toolPanelWrapper";
 
 export interface IToolPanelChildComp extends IComponent<any>{
@@ -27,12 +27,13 @@ export class SideBarComp extends Component implements ISideBar {
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired("componentResolver") private componentResolver: ComponentResolver;
 
-    @RefSelector('toolPanelSelectComp') private toolPanelSelectComp: SideBarSelectComp;
+    @RefSelector('sideBarButtons') private sideBarButtonsComp: SideBarButtonsComp;
     // @RefSelector('columnComp') private columnComp: ToolPanelColumnComp;
     // @RefSelector('filterComp') private filterComp: ToolPanelAllFiltersComp;
     private panelComps: { [p: string]: ToolPanelWrapper } = {};
-    private static readonly TEMPLATE = `<div class="ag-tool-panel" ref="eToolPanel">
-              <ag-tool-panel-select-comp ref="toolPanelSelectComp"></ag-tool-panel-select-comp>
+
+    private static readonly TEMPLATE = `<div class="ag-side-bar">
+              <ag-side-bar-buttons ref="sideBarButtons">
           </div>`;
 
     constructor() {
@@ -45,7 +46,7 @@ export class SideBarComp extends Component implements ISideBar {
     }
 
     public registerGridComp(gridPanel: GridPanel): void {
-        this.toolPanelSelectComp.registerGridComp(gridPanel);
+        this.sideBarButtonsComp.registerGridComp(gridPanel);
     }
 
     @PostConstruct
@@ -54,7 +55,7 @@ export class SideBarComp extends Component implements ISideBar {
         let sideBar: SideBarDef = this.gridOptionsWrapper.getSideBar();
 
         if (sideBar == null) {
-            this.getGui().removeChild(this.toolPanelSelectComp.getGui());
+            this.getGui().removeChild(this.sideBarButtonsComp.getGui());
             return;
         }
 
@@ -88,11 +89,11 @@ export class SideBarComp extends Component implements ISideBar {
             Object.keys(this.panelComps).forEach(key => {
                 let currentComp = this.panelComps[key];
                 this.getGui().appendChild(currentComp.getGui());
-                this.toolPanelSelectComp.registerPanelComp(key, currentComp);
+                this.sideBarButtonsComp.registerPanelComp(key, currentComp);
                 currentComp.setVisible(false);
             });
 
-            this.toolPanelSelectComp.setPanelVisibility(this.toolPanelSelectComp.defaultPanelKey, true);
+            this.sideBarButtonsComp.setPanelVisibility(this.sideBarButtonsComp.defaultPanelKey, true);
         })
     }
 
@@ -133,16 +134,16 @@ export class SideBarComp extends Component implements ISideBar {
         }
 
         if (currentlyOpenedKey != null){
-            this.toolPanelSelectComp.setPanelVisibility(currentlyOpenedKey, false);
+            this.sideBarButtonsComp.setPanelVisibility(currentlyOpenedKey, false);
         }
-        this.toolPanelSelectComp.setPanelVisibility(key, true);
+        this.sideBarButtonsComp.setPanelVisibility(key, true);
     }
 
     public close (): void {
         let currentlyOpenedKey = this.getActiveToolPanelItem();
         if (!currentlyOpenedKey) return;
 
-        this.toolPanelSelectComp.setPanelVisibility(currentlyOpenedKey, false);
+        this.sideBarButtonsComp.setPanelVisibility(currentlyOpenedKey, false);
     }
 
 
@@ -166,7 +167,7 @@ export class SideBarComp extends Component implements ISideBar {
     }
 
     public reset (): void {
-        this.toolPanelSelectComp.clear ();
+        this.sideBarButtonsComp.clear ();
         this.panelComps = {};
         this.setTemplate(SideBarComp.TEMPLATE);
         this.postConstruct();

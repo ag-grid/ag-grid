@@ -13,9 +13,7 @@ export class ToolPanelWrapper extends Component implements IComponent<ToolPanelW
 
 
     private static TEMPLATE =
-        `<div class="ag-tool-panel-item-wrapper">
-            <!--<ag-horizontal-resize class="ag-tool-panel-horizontal-resize" [component-to-resize]="componentToResize"></ag-horizontal-resize>-->
-        </div>`;
+        `<div class="ag-tool-panel-wrapper"/>`;
 
     private componentToResize: Component;
 

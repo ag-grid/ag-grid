@@ -16,9 +16,9 @@ import {StatusBarService} from "./statusBarService";
 export class StatusBar extends Component {
 
     private static TEMPLATE = `<div class="ag-status-bar">
-        <div ref="leftPanelComponents" class="ag-status-left-bar-comps"></div>
-        <div ref="centerPanelComponents" class="ag-status-center-bar-comps"></div>
-        <div ref="rightPanelComponents" class="ag-status-right-bar-comps"></div>
+        <div ref="leftPanelComponents" class="ag-status-bar-left"></div>
+        <div ref="centerPanelComponents" class="ag-status-bar-center"></div>
+        <div ref="rightPanelComponents" class="ag-status-bar-right"></div>
     </div>`;
 
     @Autowired('context') private context: Context;

@@ -9,7 +9,7 @@ import {
     ToolPanelDef
 } from "ag-grid-community";
 
-export class SideBarSelectComp extends Component {
+export class SideBarButtonsComp extends Component {
 
     private panels: {[key:string]:Component} = {};
     public defaultPanelKey: string = null;
@@ -22,7 +22,7 @@ export class SideBarSelectComp extends Component {
     private static readonly TEMPLATE: string = `<div class="ag-side-buttons"></div>`;
 
     constructor() {
-        super(SideBarSelectComp.TEMPLATE);
+        super(SideBarButtonsComp.TEMPLATE);
     }
 
     public registerPanelComp(key: string, panelComponent: Component): void {
@@ -99,7 +99,7 @@ export class SideBarSelectComp extends Component {
     }
 
     public clear () {
-        this.setTemplate(SideBarSelectComp.TEMPLATE);
+        this.setTemplate(SideBarButtonsComp.TEMPLATE);
         this.panels = {};
     }
 }

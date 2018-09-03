@@ -166,7 +166,7 @@ $disabled-foreground-color-opacity: 0.38 !default;
     }
 
     // tool panel
-    .ag-tool-panel-item-wrapper {
+    .ag-tool-panel-wrapper {
         border-right: 1px solid $border-color;
         border-bottom: 1px solid $border-color;
 
@@ -202,8 +202,8 @@ $disabled-foreground-color-opacity: 0.38 !default;
         }
     }
 
-    .ag-rtl .ag-tool-panel,
-    .ag-rtl .ag-tool-panel-item-wrapper {
+    .ag-rtl .ag-side-bar,
+    .ag-rtl .ag-tool-panel-wrapper {
         border-left: 1px solid $border-color;
         border-right: 0;
     }
