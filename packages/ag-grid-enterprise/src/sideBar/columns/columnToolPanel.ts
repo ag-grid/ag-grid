@@ -6,7 +6,9 @@ import {
     Events,
     EventService,
     GridApi,
-    GridOptionsWrapper, IComponent,
+    GridOptionsWrapper,
+    IToolPanelParams,
+    IToolPanelComp,
     ToolPanelVisibleChangedEvent
 } from "ag-grid-community/main";
 import {PivotModePanel} from "./columnDrop/pivotModePanel";
@@ -15,7 +17,7 @@ import {RowGroupColumnsPanel} from "./columnDrop/rowGroupColumnsPanel";
 import {ColumnSelectComp} from "./columnsSelect/columnSelectComp";
 import {PivotColumnsPanel} from "./columnDrop/pivotColumnsPanel";
 
-export interface ToolPanelColumnCompParams {
+export interface ToolPanelColumnCompParams extends IToolPanelParams {
     suppressRowGroups: boolean;
     suppressValues: boolean;
     suppressPivots: boolean;
@@ -27,7 +29,7 @@ export interface ToolPanelColumnCompParams {
     contractColumnSelection: boolean;
 }
 
-export class ToolPanelColumnComp extends Component implements IComponent<ToolPanelColumnCompParams>{
+export class ColumnToolPanel extends Component implements IToolPanelComp {
 
     private static TEMPLATE =`<div class="ag-column-panel-center ag-column-panel"></div>`;
 
@@ -42,7 +44,7 @@ export class ToolPanelColumnComp extends Component implements IComponent<ToolPan
     private childDestroyFuncs: Function[] = [];
 
     constructor() {
-        super(ToolPanelColumnComp.TEMPLATE);
+        super(ColumnToolPanel.TEMPLATE);
     }
 
     // lazy initialise the panel

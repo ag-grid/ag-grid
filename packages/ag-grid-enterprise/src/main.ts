@@ -1,4 +1,4 @@
-import {ToolPanelAllFiltersComp} from "./sideBar/filter/toolPanelAllFiltersComp";
+import {FiltersToolPanel} from "./sideBar/filter/filtersToolPanel";
 
 export {ColumnSelectComp} from "./sideBar/columns/columnsSelect/columnSelectComp";
 export {ToolPanelColumnComp} from "./sideBar/columns/columnsSelect/toolPanelColumnComp";
@@ -64,7 +64,7 @@ import {ColumnSelectHeaderComp} from "./sideBar/columns/columnsSelect/columnSele
 import {ColumnContainerComp} from "./sideBar/columns/columnsSelect/columnContainerComp";
 import {HorizontalResizeComp} from "./sideBar/horizontalResizeComp";
 import {HeaderColumnDropComp} from "./sideBar/columns/columnDrop/headerColumnDropComp";
-import {ToolPanelColumnComp} from "./sideBar/columns/toolPanelColumnComp";
+import {ColumnToolPanel} from "./sideBar/columns/columnToolPanel";
 import {SideBarSelectComp} from "./sideBar/sideBarSelectComp";
 
 import {StatusBarService} from "./statusBar/statusBarService";
@@ -99,15 +99,15 @@ Grid.setEnterpriseComponents([
     {componentName: 'AgSelectedRowCountComp', theClass: NameValueComp},
 
     {componentName: 'AgHeaderColumnDrop', theClass: HeaderColumnDropComp},
-    {componentName: 'AgToolPanelColumnComp', theClass: ToolPanelColumnComp},
-    {componentName: 'AgToolPanelAllFiltersComp', theClass: ToolPanelAllFiltersComp},
+    {componentName: 'AgToolPanelColumnComp', theClass: ColumnToolPanel},
+    {componentName: 'AgToolPanelAllFiltersComp', theClass: FiltersToolPanel},
     {componentName: 'AgToolPanelSelectComp', theClass: SideBarSelectComp},
 ]);
 
 Grid.setEnterpriseDefaultComponents([
     {componentName: 'agAggregationComponent', theClass: AggregationComp},
-    {componentName: 'agColumnsToolPanel', theClass: ToolPanelColumnComp},
-    {componentName: 'agFiltersToolPanel', theClass: ToolPanelAllFiltersComp},
+    {componentName: 'agColumnsToolPanel', theClass: ColumnToolPanel},
+    {componentName: 'agFiltersToolPanel', theClass: FiltersToolPanel},
     {componentName: 'agSelectedRowCountComponent', theClass: SelectedComp},
     {componentName: 'agTotalRowCountComponent', theClass: TotalComp},
     {componentName: 'agFilteredRowCountComponent', theClass: FilteredComp},

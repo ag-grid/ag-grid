@@ -34,7 +34,7 @@ import {PropertyKeys} from "./propertyKeys";
 import {ColDefUtil} from "./components/colDefUtil";
 import {Events} from "./eventKeys";
 import {AutoHeightCalculator} from "./rendering/autoHeightCalculator";
-import {SideBarDef, SideBarDefLikeParser, ToolPanelDef} from "./entities/sideBar";
+import {SideBarDef, SideBarDefParser, ToolPanelDef} from "./entities/sideBar";
 
 let DEFAULT_ROW_HEIGHT = 25;
 let DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -1337,7 +1337,7 @@ export class GridOptionsWrapper {
             options.sideBar = options.sideBar || false;
         }
         if (options.sideBar != null) {
-            options.sideBar = SideBarDefLikeParser.parse(options.sideBar)
+            options.sideBar = SideBarDefParser.parse(options.sideBar)
         }
         let oldToolPanelProperties: {[p:string]: string} = {
             'toolPanelSuppressRowGroups': 'suppressRowGroups',

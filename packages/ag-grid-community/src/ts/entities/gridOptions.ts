@@ -223,8 +223,6 @@ export interface GridOptions {
         panels: StatusPanelDef[]
     }
 
-
-
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/

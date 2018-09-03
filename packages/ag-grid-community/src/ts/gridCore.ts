@@ -20,7 +20,7 @@ import {ISideBar} from "./interfaces/ISideBar";
 import {RefSelector} from "./widgets/componentAnnotations";
 import {Events, GridSizeChangedEvent} from "./events";
 import {ResizeObserverService} from "./misc/resizeObserverService";
-import {SideBarDef, SideBarDefLikeParser} from "./entities/sideBar";
+import {SideBarDef, SideBarDefParser} from "./entities/sideBar";
 
 @Bean('gridCore')
 export class GridCore extends Component {
@@ -191,7 +191,7 @@ export class GridCore extends Component {
 
     public setSideBar (def: SideBarDef | string | boolean): void {
         this.eRootWrapperBody.removeChild(this.sideBarComp.getGui());
-        this.gridOptions.sideBar = SideBarDefLikeParser.parse(def);
+        this.gridOptions.sideBar = SideBarDefParser.parse(def);
         this.sideBarComp.reset ();
         this.eRootWrapperBody.appendChild(this.sideBarComp.getGui());
     }

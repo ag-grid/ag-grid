@@ -1,7 +1,7 @@
 import {Autowired, Component, Context, GridOptionsWrapper, PostConstruct, RefSelector} from "ag-grid-community/main";
 import {ColumnContainerComp} from "./columnContainerComp";
 import {ColumnSelectHeaderComp} from "./columnSelectHeaderComp";
-import {ToolPanelColumnCompParams} from "../toolPanelColumnComp";
+import {ToolPanelColumnCompParams} from "../columnToolPanel";
 
 export interface BaseColumnItem {
 

@@ -124,6 +124,9 @@ export {GroupCellRenderer} from "./rendering/cellRenderers/groupCellRenderer";
 export {IStatusPanel, IStatusPanelComp, IStatusPanelParams} from "./interfaces/iStatusPanel";
 export {IStatusBarService} from "./interfaces/iStatusBarService";
 
+// tool panel components
+export {IToolPanel, IToolPanelComp, IToolPanelParams} from "./interfaces/iToolPanel";
+
 // overlays
 export {ILoadingOverlayComp, ILoadingOverlayParams} from "./rendering/overlays/loadingOverlayComponent";
 export {INoRowsOverlayComp, INoRowsOverlayParams} from "./rendering/overlays/noRowsOverlayComponent";

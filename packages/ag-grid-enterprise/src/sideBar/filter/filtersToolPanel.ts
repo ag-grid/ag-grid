@@ -12,14 +12,14 @@ import {
     IRowModel,
     OriginalColumnGroup,
     OriginalColumnGroupChild,
-    RefSelector,
+    IToolPanelComp,
     Utils,
     ValueService
 } from "ag-grid-community";
 import {ColumnItem} from "../columns/columnsSelect/columnContainerComp";
 import {ToolPanelFilterComp} from "./toolPanelFilterComp";
 
-export class ToolPanelAllFiltersComp extends Component {
+export class FiltersToolPanel extends Component implements IToolPanelComp {
 
     private static TEMPLATE =
         `<div class="ag-filter-panel" ref="ePanelContainer" />`;
@@ -43,7 +43,7 @@ export class ToolPanelAllFiltersComp extends Component {
 
 
     constructor() {
-        super(ToolPanelAllFiltersComp.TEMPLATE);
+        super(FiltersToolPanel.TEMPLATE);
     }
 
     public init(): void {
@@ -63,9 +63,7 @@ export class ToolPanelAllFiltersComp extends Component {
         this.setTemplateFromElement(this.getGui());
     }
 
-
     public refresh(): void {
-
     }
 
     // lazy initialise the panel
@@ -74,7 +72,6 @@ export class ToolPanelAllFiltersComp extends Component {
         if (visible && !this.initialised) {
             this.init();
         }
-
     }
 
     private destroyColumnFilterComps(): void {
@@ -108,5 +105,4 @@ export class ToolPanelAllFiltersComp extends Component {
 
         // this.columnFilterComps[column.getId()] = renderedColumn;
     }
-
 }

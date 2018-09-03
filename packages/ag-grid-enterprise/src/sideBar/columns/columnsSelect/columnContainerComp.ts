@@ -11,13 +11,13 @@ import {
     OriginalColumnGroupChild,
     PostConstruct,
     Utils,
-    GridOptionsWrapper, IComponent
+    GridOptionsWrapper,
 } from "ag-grid-community/main";
 import {ColumnGroupComp} from "./columnGroupComp";
 import {ToolPanelColumnComp} from "./toolPanelColumnComp";
 import {BaseColumnItem} from "./columnSelectComp";
 import {SELECTED_STATE} from "./columnSelectHeaderComp";
-import {ToolPanelColumnCompParams} from "../toolPanelColumnComp";
+import {ToolPanelColumnCompParams} from "../columnToolPanel";
 
 export type ColumnItem = BaseColumnItem & Component;
 

@@ -12,7 +12,7 @@ import {
     EventService,
     IComponent
 } from "ag-grid-community/main";
-import {ToolPanelColumnCompParams} from "../toolPanelColumnComp";
+import {ToolPanelColumnCompParams} from "../columnToolPanel";
 
 export enum SELECTED_STATE {CHECKED, UNCHECKED, INDETERMINIATE}
 
