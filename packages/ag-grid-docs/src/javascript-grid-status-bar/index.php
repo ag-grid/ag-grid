@@ -10,10 +10,15 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Status Bar</h1>
 
 <p class="lead">The status bar appears below the grid and holds components that
-    typically display information about the data in the grid.
-    You can add your own components to the status bar in addition to choosing
-    from grid provided components.
+    typically display information about the data in the grid.</p>
+
+<p>Within the Status Bar you can specify which Status Bar Panels you want to display. </p>
+
+<p>
+    Status Bar Panels allow you to add your own components to the grid's Status Bar. Use this when the provided
+    status bar panels do not meet your requirements.
 </p>
+
 
 <h2>Grid Provided Status Bar Components</h2>
 
@@ -58,11 +63,11 @@ for more information.</p>
 <snippet>
 gridOptions: {
     statusBar: {
-        items: [
-            { component: 'agTotalRowCountComponent', align: 'left', key: 'totalRowComponent' },
-            { component: 'agFilteredRowCountComponent, align: 'left' },
-            { component: 'agSelectedRowCountComponent', align: 'center' },
-            { component: 'agAggregationComponent', align: 'right' }
+        panels: [
+            { statusPanel: 'agTotalRowCountComponent', align: 'left', key: 'totalRowComponent' },
+            { statusPanel: 'agFilteredRowCountComponent, align: 'left' },
+            { statusPanel: 'agSelectedRowCountComponent', align: 'center' },
+            { statusPanel: 'agAggregationComponent', align: 'right' }
         ]
     }
     // ...other grid properties
@@ -99,7 +104,7 @@ gridOptions: {
 
 <?= example('Status Bar Simple', 'status-bar-simple', 'generated', array("enterprise" => 1)) ?>
 
-<h3>Configuring The Aggregation Component</h3>
+<h3>Configuring The Aggregation Panel</h3>
 
 <p>If you have multiple ranges selected (by holding down ctrl while dragging) and a cell is in multiple
     ranges, the cell will be only included once in the aggregation.</p>
@@ -120,10 +125,10 @@ gridOptions: {
 <snippet>
 gridOptions: {
     statusBar: {
-        items: [
+        panels: [
             {
-                component: 'agAggregationComponent',
-                componentParams: {
+                statusPanel: 'agAggregationComponent',
+                statusPanelParams: {
                     // possible values are: 'count', 'sum', 'min', 'max', 'avg'
                     aggFuncs: ['min', 'max', 'average']
                 }
@@ -159,10 +164,10 @@ value provided in the component configuration (see above), but will default to t
 <snippet>
 gridOptions: {
     statusBar: {
-        items: [
+        panels: [
             {
-                component: 'agAggregationComponent',
-                componentParams: {
+                statusPanel: 'agAggregationComponent',
+                statusPanelParams: {
                     // possible values are: 'count', 'sum', 'min', 'max', 'avg'
                     aggFuncs: ['sum', 'avg']
                 }
@@ -210,6 +215,6 @@ gridOptions: {
 </code>
 
 <p>To build your own status bar component please see the section on <a href="../javascript-grid-status-bar-component">
-        Status Bar Components</a>.</p>
+        Status Bar Panels (Components)</a>.</p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -20,7 +20,7 @@ export class TotalAndFilteredComp extends NameValueComp {
             return;
         }
 
-        this.addCssClass('ag-status-bar-total-and-filtered-row-count');
+        this.addCssClass('ag-status-panel-total-and-filtered-row-count');
 
         this.setVisible(true);
 

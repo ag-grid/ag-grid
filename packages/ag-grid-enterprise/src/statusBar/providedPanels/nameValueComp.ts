@@ -11,7 +11,7 @@ export class NameValueComp extends Component implements IStatusPanelComp {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
 
-    private static TEMPLATE = `<div class="ag-status-bar-item ag-status-bar-comp">  
+    private static TEMPLATE = `<div class="ag-status-panel ag-status-panel-comp">  
             <span id="_label"></span>  
             <span id="_value"></span>
         </div>`;

@@ -37,13 +37,13 @@ var gridOptions = {
         statusBarComponent: ClickableStatusBarComponent
     },
     statusBar: {
-        items: [
+        panels: [
             {
-                component: 'statusBarComponent'
+                statusPanel: 'statusBarComponent'
             },
             {
-                component: 'agAggregationComponent',
-                componentParams: {
+                statusPanel: 'agAggregationComponent',
+                statusPanelParams: {
                     aggFuncs: ['count', 'sum']
                 }
             }

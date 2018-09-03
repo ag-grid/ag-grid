@@ -16,10 +16,10 @@ var gridOptions = {
     rowData: null,
     enableRangeSelection: true,
     statusBar: {
-        items: [
+        panels: [
             {
-                component: 'agAggregationComponent',
-                componentParams: {
+                statusPanel: 'agAggregationComponent',
+                statusPanelParams: {
                     // possible values are: 'count', 'sum', 'min', 'max', 'avg'
                     aggFuncs: ['sum', 'avg']
                 }

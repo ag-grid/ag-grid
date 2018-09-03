@@ -5,18 +5,19 @@ import {ComponentMetadata, ComponentMetadataProvider} from "./componentMetadataP
 import {ComponentSource, ComponentType, ResolvedComponent} from "./componentResolver";
 import {ICellRendererComp, ICellRendererParams} from "../../rendering/cellRenderers/iCellRenderer";
 import {_} from "../../utils";
+import {IStatusPanelComp, IStatusPanelParams} from "../../interfaces/iStatusPanel";
 
 @Bean("agComponentUtils")
 export class AgComponentUtils {
     @Autowired("componentMetadataProvider")
-    private componentMetadataProvider:ComponentMetadataProvider;
+    private componentMetadataProvider: ComponentMetadataProvider;
 
-    public adaptFunction <A extends IComponent<any> & B, B>(
-        propertyName:string,
+    public adaptFunction<A extends IComponent<any> & B, B>(
+        propertyName: string,
         hardcodedJsFunction: AgGridComponentFunctionInput,
-        type:ComponentType,
-        source:ComponentSource
-    ):ResolvedComponent<A,B>{
+        type: ComponentType,
+        source: ComponentSource
+    ): ResolvedComponent<A, B> {
         if (hardcodedJsFunction == null) return {
             component: null,
             type: type,
@@ -24,11 +25,11 @@ export class AgComponentUtils {
             dynamicParams: null
         };
 
-        let metadata:ComponentMetadata = this.componentMetadataProvider.retrieve(propertyName);
-        if (metadata && metadata.functionAdapter){
+        let metadata: ComponentMetadata = this.componentMetadataProvider.retrieve(propertyName);
+        if (metadata && metadata.functionAdapter) {
             return {
                 type: type,
-                component: <{new(): A}>metadata.functionAdapter(hardcodedJsFunction),
+                component: <{ new(): A }>metadata.functionAdapter(hardcodedJsFunction),
                 source: source,
                 dynamicParams: null
             }
@@ -36,8 +37,8 @@ export class AgComponentUtils {
         return null;
     }
 
-    public adaptCellRendererFunction (callback:AgGridComponentFunctionInput):{new(): IComponent<any>}{
-        class Adapter implements ICellRendererComp{
+    public adaptCellRendererFunction(callback: AgGridComponentFunctionInput): { new(): IComponent<any> } {
+        class Adapter implements ICellRendererComp {
             private params: ICellRendererParams;
 
             refresh(params: any): boolean {
@@ -57,11 +58,32 @@ export class AgComponentUtils {
             init?(params: ICellRendererParams): void {
                 this.params = params;
             }
-
         }
+
         return Adapter;
     }
 
+    public adaptStatusPanelFunction(callback: AgGridComponentFunctionInput): { new(): IComponent<any> } {
+        class Adapter implements IStatusPanelComp {
+            private params: IStatusPanelParams;
+
+            getGui(): HTMLElement {
+                let callbackResult: string | HTMLElement = callback(this.params);
+                let type = typeof callbackResult;
+                if (type === 'string' || type === 'number' || type === 'boolean') {
+                    return _.loadTemplate('<span>' + callbackResult + '</span>');
+                } else {
+                    return <HTMLElement> callbackResult;
+                }
+            }
+
+            init?(params: ICellRendererParams): void {
+                this.params = params;
+            }
+        }
+
+        return Adapter;
+    }
 
     public doesImplementIComponent(candidate: AgGridRegisteredComponentInput<IComponent<any>>): boolean {
         if (!candidate) return false;

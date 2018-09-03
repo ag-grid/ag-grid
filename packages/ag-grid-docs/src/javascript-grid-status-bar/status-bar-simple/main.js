@@ -16,11 +16,11 @@ var gridOptions = {
     rowData: null,
     enableRangeSelection: true,
     statusBar: {
-        items: [
-            { component: 'agTotalRowCountComponent', align: 'left' },
-            { component: 'agFilteredRowCountComponent' },
-            { component: 'agSelectedRowCountComponent' },
-            { component: 'agAggregationComponent' }
+        panels: [
+            { statusPanel: 'agTotalRowCountComponent', align: 'left' },
+            { statusPanel: 'agFilteredRowCountComponent' },
+            { statusPanel: 'agSelectedRowCountComponent' },
+            { statusPanel: 'agAggregationComponent' }
         ]
     }
 };

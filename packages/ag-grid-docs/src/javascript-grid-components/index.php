@@ -45,6 +45,10 @@ include '../documentation-main/documentation_header.php';
             <a href="../javascript-grid-overlay-component/">Overlay Component</a>:
             To customise loading and no rows overlay components.
         </li>
+        <li>
+            <a href="../javascript-grid-status-bar-component/">Status Bar Component</a>:
+            For custom status bar components.
+        </li>
     </ul>
     The remainder of this page gives information that is common across all the component types.
 </p>
@@ -305,6 +309,12 @@ gridOptions = {
                 <td>Grid Option</td>
                 <td>dateComponent</td>
                 <td>dateComponent<b>Framework</b></td>
+            </tr>
+            <tr class="item-row">
+                <td>Status Bar Component</td>
+                <td>Grid Option -> Status Bar</td>
+                <td>statusPanelComponent</td>
+                <td>statusPanelComponent<b>Framework</b></td>
             </tr>
             <tr class="item-row">
                 <td>Cell Renderer</td>

@@ -3,10 +3,11 @@ import {ColumnApi} from "../columnController/columnApi";
 import {IComponent} from "./iComponent";
 
 export type StatusPanelDef = {
-    component: string;
+    statusPanel?: {new(): IStatusPanelComp} | string,
+    statusPanelFramework?: any,
     align?: string,
     key?: string,
-    componentParams?: {
+    statusPanelParams?: {
         aggFuncs: string[];
     }
 };
@@ -21,4 +22,8 @@ export interface IStatusPanel {
 }
 
 export interface IStatusPanelComp extends IStatusPanel, IComponent<IStatusPanelParams> {
+}
+
+export interface IStatusBarItemFunc {
+    (params: any): HTMLElement | string
 }

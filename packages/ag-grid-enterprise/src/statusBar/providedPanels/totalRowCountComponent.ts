@@ -20,7 +20,7 @@ export class TotalComp extends NameValueComp {
             return;
         }
 
-        this.addCssClass('ag-status-bar-total-row-count');
+        this.addCssClass('ag-status-panel-total-row-count');
 
         this.setVisible(true);
 

@@ -25,7 +25,7 @@ import {NameValueComp} from "./nameValueComp";
 
 export class AggregationComp extends Component implements IStatusPanelComp {
 
-    private static TEMPLATE = `<div class="ag-status-bar-aggregations">
+    private static TEMPLATE = `<div class="ag-status-panel-aggregations">
                 <ag-avg-aggregation-comp key="average" default-value="Average" ref="avgAggregationComp"></ag-avg-aggregation-comp>
                 <ag-count-aggregation-comp key="count" default-value="Count" ref="countAggregationComp"></ag-count-aggregation-comp>
                 <ag-min-aggregation-comp key="min" default-value="Min" ref="minAggregationComp"></ag-min-aggregation-comp>
@@ -95,11 +95,11 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         let statusBarValueComponent: NameValueComp = null;
         const aggregationPanelConfig = _.exists(this.gridOptions.statusBar) ? _.find(this.gridOptions.statusBar.panels, aggFuncName) : null;
         if (_.exists(aggregationPanelConfig)) {
-            // a little defensive here - if no componentParams show it, if componentParams we also expect aggFuncs
-            if (!_.exists(aggregationPanelConfig.componentParams) ||
-                (_.exists(aggregationPanelConfig.componentParams) &&
-                    _.exists(aggregationPanelConfig.componentParams.aggFuncs) &&
-                    _.exists(_.find(aggregationPanelConfig.componentParams.aggFuncs, (item) => item === aggFuncName)))
+            // a little defensive here - if no statusPanelParams show it, if componentParams we also expect aggFuncs
+            if (!_.exists(aggregationPanelConfig.statusPanelParams) ||
+                (_.exists(aggregationPanelConfig.statusPanelParams) &&
+                    _.exists(aggregationPanelConfig.statusPanelParams.aggFuncs) &&
+                    _.exists(_.find(aggregationPanelConfig.statusPanelParams.aggFuncs, (item) => item === aggFuncName)))
             ) {
                 statusBarValueComponent = (<any>this)[refComponentName];
             }

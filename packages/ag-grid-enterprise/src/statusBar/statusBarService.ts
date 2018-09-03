@@ -7,11 +7,11 @@ export class StatusBarService implements IStatusBarService {
 
     constructor() {}
 
-    public registerStatusPanelComponent(key: string, component: IStatusPanelComp): void {
+    public registerStatusPanel(key: string, component: IStatusPanelComp): void {
         this.allComponents[key] = component;
     }
 
-    public getStatusPanelComponent(key: string): IStatusPanelComp {
+    public getStatusPanel(key: string): IStatusPanelComp {
         return this.allComponents[key];
     }
 }

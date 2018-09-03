@@ -94,9 +94,10 @@ export class ComponentMetadataProvider {
                 mandatoryMethodList: ['isFilterActive','doesFilterPass','getModel','setModel'],
                 optionalMethodList: ['afterGuiAttached','onNewRowsLoaded','getModelAsString','onFloatingFilterChanged']
             },
-            statusBarComponent:{
+            statusPanel:{
                 mandatoryMethodList: [],
-                optionalMethodList: ['afterGuiAttached']
+                optionalMethodList: ['afterGuiAttached'],
+                functionAdapter: this.agComponentUtils.adaptStatusPanelFunction.bind(this.agComponentUtils)
             }
         }
     }

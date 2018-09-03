@@ -15,8 +15,8 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
     statusBar: {
-        items: [
-            { component: 'agAggregationComponent' }
+        panels: [
+            { statusPanel: 'agAggregationComponent' }
         ]
     },
     enableRangeSelection: true

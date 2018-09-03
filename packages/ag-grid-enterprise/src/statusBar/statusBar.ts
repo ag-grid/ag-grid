@@ -62,15 +62,14 @@ export class StatusBar extends Component {
                     context: this.gridOptionsWrapper.getContext()
                 };
 
-                this.componentResolver.createAgGridComponent(null,
+                this.componentResolver.createAgGridComponent(componentConfig,
                     params,
-                    'statusBarComponent',
-                    componentConfig.componentParams,
-                    componentConfig.component)
+                    'statusPanel',
+                    componentConfig.statusPanelParams)
                     .then((component: Component) => {
                         // default to the component name if no key supplied
                         let key = componentConfig.key || componentConfig.component;
-                        this.statusBarService.registerStatusPanelComponent(key, component);
+                        this.statusBarService.registerStatusPanel(key, component);
 
                         ePanelComponent.appendChild(component.getGui());
                     })

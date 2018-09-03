@@ -69,7 +69,7 @@ import {SideBarSelectComp} from "./sideBar/sideBarSelectComp";
 
 import {StatusBarService} from "./statusBar/statusBarService";
 import {StatusBar} from "./statusBar/statusBar";
-import {AggregationComp} from "./statusBar/providedPanels/aggregationComponent"
+import {AggregationComp} from "./statusBar/providedPanels/aggregationComp"
 
 import {NameValueComp} from "./statusBar/providedPanels/nameValueComp";
 import {SelectedComp} from "./statusBar/providedPanels/selectedComp"

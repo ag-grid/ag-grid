@@ -29,7 +29,7 @@ function createRowData() {
 }
 
 function toggleStatusBarComp() {
-    let statusBarComponent = gridOptions.api.getStatusPanelComponent('statusBarCompKey');
+    let statusBarComponent = gridOptions.api.getStatusPanel('statusBarCompKey');
 
     // if using a framework component, you need to get the underlying framework component instance
     let componentInstance = statusBarComponent;
@@ -49,14 +49,14 @@ var gridOptions = {
         statusBarComponent: ClickableStatusBarComponent
     },
     statusBar: {
-        items: [
+        panels: [
             {
-                component: 'statusBarComponent',
+                statusPanel: 'statusBarComponent',
                 key: 'statusBarCompKey'
             },
             {
-                component: 'agAggregationComponent',
-                componentParams: {
+                statusPanel: 'agAggregationComponent',
+                statusPanelParams: {
                     aggFuncs: ['count', 'sum']
                 }
             }
