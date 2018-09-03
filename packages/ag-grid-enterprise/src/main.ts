@@ -91,16 +91,12 @@ Grid.setEnterpriseComponents([
     {componentName: 'AgSideBar', theClass: SideBarComp},
 
     {componentName: 'AgStatusBar', theClass: StatusBar},
-    {componentName: 'AgSumAggregationComp', theClass: NameValueComp},
-    {componentName: 'AgCountAggregationComp', theClass: NameValueComp},
-    {componentName: 'AgMinAggregationComp', theClass: NameValueComp},
-    {componentName: 'AgMaxAggregationComp', theClass: NameValueComp},
-    {componentName: 'AgAvgAggregationComp', theClass: NameValueComp},
-    {componentName: 'AgSelectedRowCountComp', theClass: NameValueComp},
+    {componentName: 'AgSumAggregation', theClass: NameValueComp},
+    {componentName: 'AgCountAggregation', theClass: NameValueComp},
+    {componentName: 'AgMinAggregation', theClass: NameValueComp},
+    {componentName: 'AgMaxAggregation', theClass: NameValueComp},
+    {componentName: 'AgAvgAggregation', theClass: NameValueComp},
 
-    {componentName: 'AgHeaderColumnDrop', theClass: HeaderColumnDropComp},
-    {componentName: 'AgToolPanelColumnComp', theClass: ColumnToolPanel},
-    {componentName: 'AgToolPanelAllFiltersComp', theClass: FiltersToolPanel},
     {componentName: 'AgSideBarButtons', theClass: SideBarButtonsComp},
 ]);
 
