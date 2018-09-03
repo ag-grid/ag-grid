@@ -152,7 +152,7 @@ function reverseItems() {
 
 var gridOptions = {
     deltaRowDataMode: true,
-    statusPanel: {
+    statusBar: {
         items: [
             { component: 'agAggregationComponent' }
         ]

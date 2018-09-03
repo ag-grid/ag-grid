@@ -51,8 +51,8 @@ import {ICellEditorComp} from "./rendering/cellEditors/iCellEditor";
 import {HeaderRootComp} from "./headerRendering/headerRootComp";
 import {AnimationFrameService} from "./misc/animationFrameService";
 import {IServerSideRowModel} from "./interfaces/iServerSideRowModel";
-import {IStatusPanelService} from "./interfaces/iStatusPanelService";
-import {IStatusPanelItem} from "./interfaces/iStatusPanelItem";
+import {IStatusBarService} from "./interfaces/iStatusBarService";
+import {IStatusBarItem} from "./interfaces/iStatusBar";
 import {SideBarDef} from "./entities/sideBar";
 
 export interface StartEditingCellParams {
@@ -119,7 +119,7 @@ export class GridApi {
     @Autowired('valueCache') private valueCache: ValueCache;
     @Optional('sideBarComp') private sideBarComp: ISideBar; // this can be removed
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Optional('statusPanelService') private statusPanelService: IStatusPanelService;
+    @Optional('statusBarService') private statusBarService: IStatusBarService;
 
     private gridPanel: GridPanel;
     private headerRootComp: HeaderRootComp;
@@ -693,9 +693,9 @@ export class GridApi {
         }
     }
 
-    public getStatusPanelComponent(key: string) : IStatusPanelItem {
-        if (this.statusPanelService) {
-            return this.statusPanelService.getStatusPanelComponent(key);
+    public getStatusBarComponent(key: string) : IStatusBarItem {
+        if (this.statusBarService) {
+            return this.statusBarService.getStatusBarComponent(key);
         }
     }
 

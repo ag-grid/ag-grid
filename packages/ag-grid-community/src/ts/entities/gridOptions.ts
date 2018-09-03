@@ -70,6 +70,7 @@ import {IComponent} from "../interfaces/iComponent";
 import {AgGridRegisteredComponentInput} from "../components/framework/componentProvider";
 import {ILoadingOverlayComp} from "../rendering/overlays/loadingOverlayComponent";
 import {INoRowsOverlayComp} from "../rendering/overlays/noRowsOverlayComponent";
+import {StatusBarItemDef} from "../interfaces/iStatusBar";
 import {SideBarDef} from "./sideBar";
 
 /****************************************************************
@@ -218,15 +219,8 @@ export interface GridOptions {
     // in effect whether or not to use React Portals for processing React Components within the grid
     reactNext?:  boolean;
 
-    statusPanel? : {
-        items: [{
-            component: string;
-            align?: string,
-            key?: string,
-            componentParams?: {
-                aggFuncs: string[];
-            }
-        }]
+    statusBar? : {
+        items: StatusBarItemDef[]
     }
 
 

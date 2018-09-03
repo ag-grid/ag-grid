@@ -13,7 +13,7 @@ include '../documentation-main/documentation_header.php';
         Range selection allows Excel-like range selection of cells.
         Range selections are useful for visually highlighting data, copying data to the
         <a href="../javascript-grid-clipboard/">Clipboard</a>
-        or for doing aggregations using the <a href="../javascript-grid-status-panel/">Status Panel</a>.
+        or for doing aggregations using the <a href="../javascript-grid-status-bar/">Status Bar</a>.
     </p>
 
     <h2>Selecting Ranges</h2>

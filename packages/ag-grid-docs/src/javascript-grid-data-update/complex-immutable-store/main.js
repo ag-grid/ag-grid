@@ -131,7 +131,7 @@ function createTradeId() {
         deltaRowDataMode: true,
         columnDefs: columnDefs,
         rowData: globalRowData,
-        statusPanel: {
+        statusBar: {
             items: [
                 { component: 'agAggregationComponent' }
             ]

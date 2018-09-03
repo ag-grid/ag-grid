@@ -120,9 +120,9 @@ export {AnimateShowChangeCellRenderer} from "./rendering/cellRenderers/animateSh
 export {AnimateSlideCellRenderer} from "./rendering/cellRenderers/animateSlideCellRenderer";
 export {GroupCellRenderer} from "./rendering/cellRenderers/groupCellRenderer";
 
-// status panel components
-export {IStatusPanelItem, IStatusPanelItemComp, IStatusPanelItemParams} from "./interfaces/iStatusPanelItem";
-export {IStatusPanelService} from "./interfaces/iStatusPanelService";
+// status bar components
+export {IStatusBarItem, IStatusBarItemComp, IStatusBarItemParams} from "./interfaces/iStatusBar";
+export {IStatusBarService} from "./interfaces/iStatusBarService";
 
 // overlays
 export {ILoadingOverlayComp, ILoadingOverlayParams} from "./rendering/overlays/loadingOverlayComponent";

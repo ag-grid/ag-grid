@@ -27,7 +27,7 @@ var gridOptions = {
     showToolPanel: true,
     pagination:true,
     rowGroupPanelShow: 'always',
-    statusPanel: {
+    statusBar: {
         items: [
             { component: 'agAggregationComponent' }
         ]
@@ -97,7 +97,7 @@ var gridOptions = {
         pinLeft: 'laPin <<',
         pinRight: 'laPin >>',
         noPin: 'laDontPin <>',
-        // enterprise menu aggregation and status panel
+        // enterprise menu aggregation and status bar
         sum: 'laSum',
         min: 'laMin',
         max: 'laMax',

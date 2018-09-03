@@ -196,7 +196,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public popupParent : any = undefined;
     @Input() public colResizeDefault : any = undefined;
     @Input() public reduxStore : any = undefined;
-    @Input() public statusPanel : any = undefined;
+    @Input() public statusBar : any = undefined;
     @Input() public sideBar : any = undefined;
     @Input() public sortingOrder : any = undefined;
     @Input() public rowClass : any = undefined;

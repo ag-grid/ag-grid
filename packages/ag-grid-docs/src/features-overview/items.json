@@ -208,7 +208,7 @@
                 "title": "Rich UI",
                 "img": "rich-ui.gif",
                 "description":
-                    "The grid exposes its features through several modules - column headers and menus, context menu, tool panel, and status panel. Extend these further with your own custom bits when necessary.",
+                    "The grid exposes its features through several modules - column headers and menus, context menu, tool panel, and status bar. Extend these further with your own custom bits when necessary.",
                 "links": []
             },
             {

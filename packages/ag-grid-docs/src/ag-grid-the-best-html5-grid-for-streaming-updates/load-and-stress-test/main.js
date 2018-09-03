@@ -47,7 +47,7 @@ var gridOptions = {
         }
     },
     columnDefs: columnDefs,
-    statusPanel: {
+    statusBar: {
         items: [
             { component: 'agAggregationComponent' }
         ]

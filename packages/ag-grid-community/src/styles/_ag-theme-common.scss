@@ -1463,7 +1463,7 @@
         }
     }
 
-    .ag-status-panel {
+    .ag-status-bar {
         background: $background-color;
         border: 1px solid $border-color;
         border-top: 0;
@@ -1474,7 +1474,7 @@
         padding-right: $grid-size * 4;
         padding-left: $grid-size * 4;
 
-        .ag-status-panel-item {
+        .ag-status-bar-item {
             margin-left: $grid-size;
             margin-right: $grid-size;
             display: inline-block;
@@ -1489,41 +1489,41 @@
         }
     }
 
-    .ag-status-left-panel-comps {
+    .ag-status-left-bar-comps {
         display: inline-flex;
     }
 
-    .ag-status-center-panel-comps {
+    .ag-status-center-bar-comps {
         text-align: center;
         display: inline-flex;
     }
 
-    .ag-status-right-panel-comps {
+    .ag-status-right-bar-comps {
         text-align: right;
         display: inline-flex;
     }
 
-    .ag-status-panel-comp {
+    .ag-status-bar-comp {
         padding-top: $grid-size * 2;
         padding-bottom: $grid-size * 2;
     }
 
-    .ag-status-panel-aggregations {
+    .ag-status-bar-aggregations {
     }
 
-    .ag-status-panel-total-row-count {
+    .ag-status-bar-total-row-count {
     }
 
-    .ag-status-panel-filtered-row-count {
+    .ag-status-bar-filtered-row-count {
     }
 
-    .ag-status-panel-selected-row-count {
+    .ag-status-bar-selected-row-count {
     }
 
-    .ag-blank-status-panel-component {
+    .ag-blank-status-bar-component {
     }
 
-    .ag-status-panel-total-and-filtered-row-count {
+    .ag-status-bar-total-and-filtered-row-count {
     }
 
     .ag-details-row {

@@ -91,7 +91,7 @@ var gridOptions = {
     enableColResize: true, //one of [true, false]
     enableSorting: true, //one of [true, false]
     enableFilter: true, //one of [true, false]
-    statusPanel: {
+    statusBar: {
         items: [
             { component: 'agAggregationComponent' }
         ]

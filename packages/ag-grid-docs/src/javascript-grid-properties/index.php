@@ -769,8 +769,8 @@ include '../documentation-main/documentation_header.php';
             <td>Allows <a href="../javascript-grid-context-menu">context menu</a> to show, even when ctrl key is held down.</td>
         </tr>
         <tr>
-            <th>statusPanel</th>
-            <td>Specifies the <a href="../javascript-grid-status-panel">status panel</a> components to use in the status panel.</td>
+            <th>statusBar</th>
+            <td>Specifies the <a href="../javascript-grid-status-bar">status bar</a> components to use in the status bar.</td>
         </tr>
         <tr>
             <th>suppressTouch</th>

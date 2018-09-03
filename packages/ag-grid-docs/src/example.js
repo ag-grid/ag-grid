@@ -96,7 +96,7 @@ function suppressColumnMoveAnimation() {
 }
 
 var gridOptions = {
-    statusPanel: {
+    statusBar: {
         items: [
             { component: 'agTotalAndFilteredRowCountComponent', key: 'totalAndFilter', align: 'left' },
             { component: 'agSelectedRowCountComponent', align: 'left' },
