@@ -14,7 +14,7 @@ import {
     GridOptionsWrapper,
 } from "ag-grid-community/main";
 import {ColumnGroupComp} from "./columnGroupComp";
-import {ToolPanelColumnComp} from "./toolPanelColumnComp";
+import {ColumnItemComp} from "./columnItemComp";
 import {BaseColumnItem} from "./columnSelectComp";
 import {SELECTED_STATE} from "./columnSelectHeaderComp";
 import {ToolPanelColumnCompParams} from "../columnToolPanel";
@@ -148,7 +148,7 @@ export class ColumnContainerComp extends Component {
             return;
         }
 
-        let renderedColumn = new ToolPanelColumnComp(column, dept, this.props.allowDragging, groupsExist);
+        let renderedColumn = new ColumnItemComp(column, dept, this.props.allowDragging, groupsExist);
         this.context.wireBean(renderedColumn);
         this.getGui().appendChild(renderedColumn.getGui());
 

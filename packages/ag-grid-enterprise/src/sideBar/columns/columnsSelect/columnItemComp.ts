@@ -26,7 +26,7 @@ import {
 } from "ag-grid-community/main";
 import {BaseColumnItem} from "./columnSelectComp";
 
-export class ToolPanelColumnComp extends Component implements BaseColumnItem {
+export class ColumnItemComp extends Component implements BaseColumnItem {
 
     private static TEMPLATE =
         `<div class="ag-column-select-column">
@@ -68,7 +68,7 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
     @PostConstruct
     public init(): void {
 
-        this.setTemplate(ToolPanelColumnComp.TEMPLATE);
+        this.setTemplate(ColumnItemComp.TEMPLATE);
 
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
         this.eLabel.innerHTML = this.displayName;

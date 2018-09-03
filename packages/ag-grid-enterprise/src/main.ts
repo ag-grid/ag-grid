@@ -1,7 +1,7 @@
 import {FiltersToolPanel} from "./sideBar/filter/filtersToolPanel";
 
 export {ColumnSelectComp} from "./sideBar/columns/columnsSelect/columnSelectComp";
-export {ToolPanelColumnComp} from "./sideBar/columns/columnsSelect/toolPanelColumnComp";
+export {ColumnItemComp} from "./sideBar/columns/columnsSelect/columnItemComp";
 export {ColumnGroupComp} from "./sideBar/columns/columnsSelect/columnGroupComp";
 export {AggregationStage} from "./rowStages/aggregationStage";
 export {GroupStage} from "./rowStages/groupStage";
