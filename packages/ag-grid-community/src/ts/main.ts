@@ -121,7 +121,7 @@ export {AnimateSlideCellRenderer} from "./rendering/cellRenderers/animateSlideCe
 export {GroupCellRenderer} from "./rendering/cellRenderers/groupCellRenderer";
 
 // status bar components
-export {IStatusBarItem, IStatusBarItemComp, IStatusBarItemParams} from "./interfaces/iStatusBar";
+export {IStatusPanel, IStatusPanelComp, IStatusPanelParams} from "./interfaces/iStatusPanel";
 export {IStatusBarService} from "./interfaces/iStatusBarService";
 
 // overlays

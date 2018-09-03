@@ -1,18 +1,17 @@
-import {Bean, IStatusBarItemComp, IStatusBarService} from 'ag-grid-community';
+import {Bean, IStatusPanelComp, IStatusBarService} from 'ag-grid-community';
 
 @Bean('statusBarService')
 export class StatusBarService implements IStatusBarService {
 
-    private allComponents: { [p: string]: IStatusBarItemComp } = {};
+    private allComponents: { [p: string]: IStatusPanelComp } = {};
 
-    constructor() {
-    }
+    constructor() {}
 
-    public registerStatusBarComponent(key: string, component: IStatusBarItemComp): void {
+    public registerStatusPanelComponent(key: string, component: IStatusPanelComp): void {
         this.allComponents[key] = component;
     }
 
-    public getStatusBarComponent(key: string): IStatusBarItemComp {
+    public getStatusPanelComponent(key: string): IStatusPanelComp {
         return this.allComponents[key];
     }
 }

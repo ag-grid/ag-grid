@@ -2,7 +2,7 @@ import {GridApi} from "../gridApi";
 import {ColumnApi} from "../columnController/columnApi";
 import {IComponent} from "./iComponent";
 
-export type StatusBarItemDef = {
+export type StatusPanelDef = {
     component: string;
     align?: string,
     key?: string,
@@ -11,14 +11,14 @@ export type StatusBarItemDef = {
     }
 };
 
-export interface IStatusBarItemParams {
+export interface IStatusPanelParams {
     api: GridApi;
     columnApi: ColumnApi;
     context: any;
 }
 
-export interface IStatusBarItem {
+export interface IStatusPanel {
 }
 
-export interface IStatusBarItemComp extends IStatusBarItem, IComponent<IStatusBarItemParams> {
+export interface IStatusPanelComp extends IStatusPanel, IComponent<IStatusPanelParams> {
 }

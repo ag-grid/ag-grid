@@ -1,6 +1,13 @@
-import {Autowired, Component, Context, GridOptionsWrapper, PostConstruct} from 'ag-grid-community';
+import {
+    Autowired,
+    Component,
+    Context,
+    GridOptionsWrapper,
+    IStatusPanelComp,
+    PostConstruct
+} from 'ag-grid-community';
 
-export class StatusBarValueComponent extends Component {
+export class NameValueComp extends Component implements IStatusPanelComp {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
 
@@ -14,7 +21,7 @@ export class StatusBarValueComponent extends Component {
     private lbValue: HTMLElement;
 
     constructor(private key: string, private defaultValue: string) {
-        super(StatusBarValueComponent.TEMPLATE);
+        super(NameValueComp.TEMPLATE);
     }
 
     @PostConstruct

@@ -1376,8 +1376,8 @@ export class GridOptionsWrapper {
         }
 
         if (options.enableStatusBar) {
-            console.warn(`ag-grid: since version 19.x, showToolPanel is gone, please specify toolPanel components`);
-            options.statusPanel = options.statusPanel ||
+            console.warn(`ag-grid: since version 19.x, enableStatusBar is gone, please specify statusBar components`);
+            options.statusBar = options.statusBar ||
                 {
                     components: [{component: 'agAggregationComponent'}]
                 };

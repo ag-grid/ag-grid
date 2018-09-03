@@ -1,13 +1,13 @@
 import {Autowired, Events, EventService, GridApi, PostConstruct} from 'ag-grid-community';
-import {StatusBarValueComponent} from "./statusBarValueComponent";
+import {NameValueComp} from "./nameValueComp";
 
-export class TotalAndFilteredRowCountComponent extends StatusBarValueComponent {
+export class TotalComp extends NameValueComp {
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridApi') private gridApi: GridApi;
 
     constructor() {
-        super('rowAndFilteredCount', 'Rows');
+        super('rowCount', 'Total Rows');
     }
 
     @PostConstruct
@@ -20,7 +20,7 @@ export class TotalAndFilteredRowCountComponent extends StatusBarValueComponent {
             return;
         }
 
-        this.addCssClass('ag-status-bar-total-and-filtered-row-count');
+        this.addCssClass('ag-status-bar-total-row-count');
 
         this.setVisible(true);
 
@@ -29,29 +29,14 @@ export class TotalAndFilteredRowCountComponent extends StatusBarValueComponent {
     }
 
     private onDataChanged() {
-        let filteredRowCount = this.getFilteredRowCountValue();
-        let displayValue:any = this.getTotalRowCountValue();
-
-        if(filteredRowCount !== displayValue) {
-            displayValue = `${filteredRowCount} of ` + displayValue;
-        }
-
-        this.setValue(displayValue)
+        this.setValue(this.getRowCountValue())
     }
 
-    private getTotalRowCountValue(): number {
+    private getRowCountValue(): string {
         let totalRowCount = 0;
         this.gridApi.forEachLeafNode((node) => totalRowCount += 1);
-        return totalRowCount;
-    }
 
-    private getFilteredRowCountValue(): number {
-        let filteredRowCount = 0;
-        this.gridApi.forEachNodeAfterFilter((node) => {
-            if(!node.group) {
-                filteredRowCount += 1
-            }});
-        return filteredRowCount;
+        return `${totalRowCount}`;
     }
 
     public init() {

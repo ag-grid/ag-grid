@@ -17,12 +17,13 @@ import {
     PostConstruct,
     RefSelector,
     RowNode,
-    ValueService
+    ValueService,
+    IStatusPanelComp
 } from 'ag-grid-community';
-import {RangeController} from "../rangeController";
-import {StatusBarValueComponent} from "./statusBarValueComponent";
+import {RangeController} from "../../rangeController";
+import {NameValueComp} from "./nameValueComp";
 
-export class AggregationComponent extends Component {
+export class AggregationComp extends Component implements IStatusPanelComp {
 
     private static TEMPLATE = `<div class="ag-status-bar-aggregations">
                 <ag-avg-aggregation-comp key="average" default-value="Average" ref="avgAggregationComp"></ag-avg-aggregation-comp>
@@ -43,14 +44,14 @@ export class AggregationComponent extends Component {
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    @RefSelector('sumAggregationComp') private sumAggregationComp: StatusBarValueComponent;
-    @RefSelector('countAggregationComp') private countAggregationComp: StatusBarValueComponent;
-    @RefSelector('minAggregationComp') private minAggregationComp: StatusBarValueComponent;
-    @RefSelector('maxAggregationComp') private maxAggregationComp: StatusBarValueComponent;
-    @RefSelector('avgAggregationComp') private avgAggregationComp: StatusBarValueComponent;
+    @RefSelector('sumAggregationComp') private sumAggregationComp: NameValueComp;
+    @RefSelector('countAggregationComp') private countAggregationComp: NameValueComp;
+    @RefSelector('minAggregationComp') private minAggregationComp: NameValueComp;
+    @RefSelector('maxAggregationComp') private maxAggregationComp: NameValueComp;
+    @RefSelector('avgAggregationComp') private avgAggregationComp: NameValueComp;
 
     constructor() {
-        super(AggregationComponent.TEMPLATE);
+        super(AggregationComp.TEMPLATE);
     }
 
     @PreConstruct
@@ -85,14 +86,14 @@ export class AggregationComponent extends Component {
         }
     }
 
-    private getAggregationValueComponent(aggFuncName: string): StatusBarValueComponent {
+    private getAggregationValueComponent(aggFuncName: string): NameValueComp {
         // converts user supplied agg name to our reference - eg: sum => sumAggregationComp
         let refComponentName = `${aggFuncName}AggregationComp`;
 
         // if the user has specified the agAggregationPanelComp but no aggFuncs we show the all
         // if the user has specified the agAggregationPanelComp and aggFuncs, then we only show the aggFuncs listed
-        let statusBarValueComponent: StatusBarValueComponent = null;
-        const aggregationPanelConfig = _.exists(this.gridOptions.statusBar) ? _.find(this.gridOptions.statusBar.items, aggFuncName) : null;
+        let statusBarValueComponent: NameValueComp = null;
+        const aggregationPanelConfig = _.exists(this.gridOptions.statusBar) ? _.find(this.gridOptions.statusBar.panels, aggFuncName) : null;
         if (_.exists(aggregationPanelConfig)) {
             // a little defensive here - if no componentParams show it, if componentParams we also expect aggFuncs
             if (!_.exists(aggregationPanelConfig.componentParams) ||

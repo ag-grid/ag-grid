@@ -7,7 +7,7 @@ export {AggregationStage} from "./rowStages/aggregationStage";
 export {GroupStage} from "./rowStages/groupStage";
 export {SetFilter} from "./setFilter/setFilter";
 export {SetFilterModel} from "./setFilter/setFilterModel";
-export {StatusBarComp} from "./statusBar/statusBarComp";
+export {StatusBar} from "./statusBar/statusBar";
 export {StatusBarService} from "./statusBar/statusBarService";
 export {ClipboardService} from "./clipboardService";
 export {EnterpriseBoot} from "./enterpriseBoot";
@@ -68,13 +68,14 @@ import {ToolPanelColumnComp} from "./sideBar/columns/toolPanelColumnComp";
 import {SideBarSelectComp} from "./sideBar/sideBarSelectComp";
 
 import {StatusBarService} from "./statusBar/statusBarService";
-import {StatusBarComp} from "./statusBar/statusBarComp";
-import {AggregationComponent} from "./statusBar/aggregationComponent"
-import {StatusBarValueComponent} from "./statusBar/statusBarValueComponent";
-import {SelectedRowCountComponent} from "./statusBar/selectedRowCountComponent"
-import {TotalRowCountComponent} from "./statusBar/totalRowCountComponent"
-import {FilteredRowCountComponent} from "./statusBar/filteredRowCountComponent"
-import {TotalAndFilteredRowCountComponent} from "./statusBar/totalAndFilteredRowCountComponent"
+import {StatusBar} from "./statusBar/statusBar";
+import {AggregationComp} from "./statusBar/providedPanels/aggregationComponent"
+
+import {NameValueComp} from "./statusBar/providedPanels/nameValueComp";
+import {SelectedComp} from "./statusBar/providedPanels/selectedComp"
+import {TotalComp} from "./statusBar/providedPanels/totalRowCountComponent"
+import {FilteredComp} from "./statusBar/providedPanels/filteredComp"
+import {TotalAndFilteredComp} from "./statusBar/providedPanels/totalAndFilteredComp"
 
 let rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
 
@@ -89,13 +90,13 @@ Grid.setEnterpriseComponents([
     {componentName: 'AgHorizontalResize', theClass: HorizontalResizeComp},
     {componentName: 'AgSideBar', theClass: SideBarComp},
 
-    {componentName: 'AgStatusBar', theClass: StatusBarComp},
-    {componentName: 'AgSumAggregationComp', theClass: StatusBarValueComponent},
-    {componentName: 'AgCountAggregationComp', theClass: StatusBarValueComponent},
-    {componentName: 'AgMinAggregationComp', theClass: StatusBarValueComponent},
-    {componentName: 'AgMaxAggregationComp', theClass: StatusBarValueComponent},
-    {componentName: 'AgAvgAggregationComp', theClass: StatusBarValueComponent},
-    {componentName: 'AgSelectedRowCountComp', theClass: StatusBarValueComponent},
+    {componentName: 'AgStatusBar', theClass: StatusBar},
+    {componentName: 'AgSumAggregationComp', theClass: NameValueComp},
+    {componentName: 'AgCountAggregationComp', theClass: NameValueComp},
+    {componentName: 'AgMinAggregationComp', theClass: NameValueComp},
+    {componentName: 'AgMaxAggregationComp', theClass: NameValueComp},
+    {componentName: 'AgAvgAggregationComp', theClass: NameValueComp},
+    {componentName: 'AgSelectedRowCountComp', theClass: NameValueComp},
 
     {componentName: 'AgHeaderColumnDrop', theClass: HeaderColumnDropComp},
     {componentName: 'AgToolPanelColumnComp', theClass: ToolPanelColumnComp},
@@ -104,11 +105,11 @@ Grid.setEnterpriseComponents([
 ]);
 
 Grid.setEnterpriseDefaultComponents([
-    {componentName: 'agAggregationComponent', theClass: AggregationComponent},
+    {componentName: 'agAggregationComponent', theClass: AggregationComp},
     {componentName: 'agColumnsToolPanel', theClass: ToolPanelColumnComp},
     {componentName: 'agFiltersToolPanel', theClass: ToolPanelAllFiltersComp},
-    {componentName: 'agSelectedRowCountComponent', theClass: SelectedRowCountComponent},
-    {componentName: 'agTotalRowCountComponent', theClass: TotalRowCountComponent},
-    {componentName: 'agFilteredRowCountComponent', theClass: FilteredRowCountComponent},
-    {componentName: 'agTotalAndFilteredRowCountComponent', theClass: TotalAndFilteredRowCountComponent}
+    {componentName: 'agSelectedRowCountComponent', theClass: SelectedComp},
+    {componentName: 'agTotalRowCountComponent', theClass: TotalComp},
+    {componentName: 'agFilteredRowCountComponent', theClass: FilteredComp},
+    {componentName: 'agTotalAndFilteredRowCountComponent', theClass: TotalAndFilteredComp}
 ]);

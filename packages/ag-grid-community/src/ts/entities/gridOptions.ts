@@ -70,7 +70,7 @@ import {IComponent} from "../interfaces/iComponent";
 import {AgGridRegisteredComponentInput} from "../components/framework/componentProvider";
 import {ILoadingOverlayComp} from "../rendering/overlays/loadingOverlayComponent";
 import {INoRowsOverlayComp} from "../rendering/overlays/noRowsOverlayComponent";
-import {StatusBarItemDef} from "../interfaces/iStatusBar";
+import {StatusPanelDef} from "../interfaces/iStatusPanel";
 import {SideBarDef} from "./sideBar";
 
 /****************************************************************
@@ -220,7 +220,7 @@ export interface GridOptions {
     reactNext?:  boolean;
 
     statusBar? : {
-        items: StatusBarItemDef[]
+        panels: StatusPanelDef[]
     }
 
 
