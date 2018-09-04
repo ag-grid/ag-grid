@@ -15,24 +15,24 @@ export {EnterpriseMenu} from "./menu/enterpriseMenu";
 export {MenuItemComponent} from "./menu/menuItemComponent";
 export {MenuList} from "./menu/menuList";
 export {RangeController} from "./rangeController";
-export {RowGroupColumnsPanel} from "./sideBar/columns/columnDrop/rowGroupColumnsPanel";
+export {RowGroupDropZonePanel} from "./sideBar/columns/toolPanelSections/rowGroupDropZonePanel";
 export {ContextMenuFactory} from "./menu/contextMenu";
 export {ViewportRowModel} from "./rowModels/viewport/viewportRowModel";
 export {RichSelectCellEditor} from "./rendering/richSelect/richSelectCellEditor";
 export {RichSelectRow} from "./rendering/richSelect/richSelectRow";
 export {VirtualList} from "./rendering/virtualList";
-export {AbstractColumnDropPanel} from "./sideBar/columns/columnDrop/abstractColumnDropPanel";
-export {PivotColumnsPanel} from "./sideBar/columns/columnDrop/pivotColumnsPanel";
+export {BaseDropZonePanel} from "./sideBar/columns/toolPanelSections/common/baseDropZonePanel";
+export {PivotDropZonePanel} from "./sideBar/columns/toolPanelSections/pivotDropZonePanel";
 export {SideBarComp} from "./sideBar/sideBarComp";
 export {LicenseManager} from "./licenseManager";
 export {PivotStage} from "./rowStages/pivotStage";
 export {PivotColDefService} from "./rowStages/pivotColDefService";
-export {PivotModePanel} from "./sideBar/columns/columnDrop/pivotModePanel";
+export {PivotModePanel} from "./sideBar/columns/toolPanelSections/pivotModePanel";
 export {AggFuncService} from "./aggregation/aggFuncService";
 export {MD5} from "./license/md5";
 export {SetFilterListItem} from "./setFilter/setFilterListItem";
-export {ColumnComponent} from "./sideBar/columns/columnDrop/columnComponent";
-export {ValuesColumnPanel} from "./sideBar/columns/columnDrop/valueColumnsPanel";
+export {DropZoneColumnComp} from "./sideBar/columns/toolPanelSections/common/dropZoneColumnComp";
+export {ValuesDropZonePanel} from "./sideBar/columns/toolPanelSections/valueColumnsPanel";
 export {PivotCompFactory} from "./pivotCompFactory";
 export {RowGroupCompFactory} from "./rowGroupCompFactory";
 export {ExcelCreator} from "./exporter/excelCreator";
@@ -47,7 +47,6 @@ import {AggregationStage} from "./rowStages/aggregationStage";
 import {EnterpriseBoot} from "./enterpriseBoot";
 import {ContextMenuFactory} from "./menu/contextMenu";
 import {ViewportRowModel} from "./rowModels/viewport/viewportRowModel";
-import {PivotColumnsPanel} from "./sideBar/columns/columnDrop/pivotColumnsPanel";
 import {SideBarComp} from "./sideBar/sideBarComp";
 import {RowGroupCompFactory} from "./rowGroupCompFactory";
 import {LicenseManager} from "./licenseManager";
@@ -76,10 +75,11 @@ import {TotalRowsComp} from "./statusBar/providedPanels/totalRowsComp"
 import {FilteredRowsComp} from "./statusBar/providedPanels/filteredRowsComp"
 import {TotalAndFilteredRowsComp} from "./statusBar/providedPanels/totalAndFilteredRowsComp"
 
+
 let rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
 
 Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, RowGroupCompFactory,
-    PivotCompFactory, PivotColumnsPanel, RangeController, ClipboardService, PivotStage, PivotColDefService,
+    PivotCompFactory, RangeController, ClipboardService, PivotStage, PivotColDefService,
     ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService, LicenseManager, MD5,
     MenuItemMapper, StatusBarService], rowModelTypes);
 

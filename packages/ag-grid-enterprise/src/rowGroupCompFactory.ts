@@ -1,5 +1,5 @@
 import {Bean, ICompFactory, Component, Autowired, Context} from "ag-grid-community";
-import {RowGroupColumnsPanel} from "./sideBar/columns/columnDrop/rowGroupColumnsPanel";
+import {RowGroupDropZonePanel} from "./sideBar/columns/toolPanelSections/rowGroupDropZonePanel";
 
 @Bean('rowGroupCompFactory')
 export class RowGroupCompFactory implements ICompFactory {
@@ -8,7 +8,7 @@ export class RowGroupCompFactory implements ICompFactory {
 
     public create(): Component {
 
-        let rowGroupComp = new RowGroupColumnsPanel(true);
+        let rowGroupComp = new RowGroupDropZonePanel(true);
         this.context.wireBean(rowGroupComp);
 
         return rowGroupComp;

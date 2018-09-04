@@ -11,11 +11,11 @@ import {
     IToolPanelComp,
     ToolPanelVisibleChangedEvent
 } from "ag-grid-community/main";
-import {PivotModePanel} from "./columnDrop/pivotModePanel";
-import {ValuesColumnPanel} from "./columnDrop/valueColumnsPanel";
-import {RowGroupColumnsPanel} from "./columnDrop/rowGroupColumnsPanel";
 import {ColumnSelectComp} from "./columnsSelect/columnSelectComp";
-import {PivotColumnsPanel} from "./columnDrop/pivotColumnsPanel";
+import {PivotModePanel} from "./toolPanelSections/pivotModePanel";
+import {RowGroupDropZonePanel} from "./toolPanelSections/rowGroupDropZonePanel";
+import {ValuesDropZonePanel} from "./toolPanelSections/valueColumnsPanel";
+import {PivotDropZonePanel} from "./toolPanelSections/pivotDropZonePanel";
 
 export interface ToolPanelColumnCompParams extends IToolPanelParams {
     suppressRowGroups: boolean;
@@ -85,15 +85,15 @@ export class ColumnToolPanel extends Component implements IToolPanelComp {
         this.addComponent(new ColumnSelectComp(true, this.params));
 
         if (!this.params.suppressRowGroups) {
-            this.addComponent(new RowGroupColumnsPanel(false));
+            this.addComponent(new RowGroupDropZonePanel(false));
         }
 
         if (!this.params.suppressValues) {
-            this.addComponent(new ValuesColumnPanel(false));
+            this.addComponent(new ValuesDropZonePanel(false));
         }
 
         if (!this.params.suppressPivots) {
-            this.addComponent(new PivotColumnsPanel(false));
+            this.addComponent(new PivotDropZonePanel(false));
         }
 
         this.initialised = true;

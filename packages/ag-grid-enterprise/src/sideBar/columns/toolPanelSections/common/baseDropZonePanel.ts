@@ -16,16 +16,16 @@ import {
     DragSourceType,
     _
 } from "ag-grid-community/main";
-import {ColumnComponent} from "./columnComponent";
+import {DropZoneColumnComp} from "./dropZoneColumnComp";
 
-export interface AbstractColumnDropPanelParams {
+export interface BaseDropZonePanelParams {
     dragAndDropIcon:string;
     emptyMessage:string;
     title: string;
     icon: HTMLElement;
 }
 
-export interface AbstractColumnDropPanelBeans {
+export interface BaseDropZonePanelBeans {
     gridOptionsWrapper: GridOptionsWrapper;
     eventService: EventService;
     context: Context;
@@ -33,7 +33,7 @@ export interface AbstractColumnDropPanelBeans {
     dragAndDropService: DragAndDropService;
 }
 
-export abstract class AbstractColumnDropPanel extends Component {
+export abstract class BaseDropZonePanel extends Component {
 
     private static STATE_NOT_DRAGGING = 'notDragging';
     private static STATE_NEW_COLUMNS_IN = 'newColumnsIn';
@@ -42,7 +42,7 @@ export abstract class AbstractColumnDropPanel extends Component {
     private static CHAR_LEFT_ARROW = '&#8592;';
     private static CHAR_RIGHT_ARROW = '&#8594;';
 
-    private state = AbstractColumnDropPanel.STATE_NOT_DRAGGING;
+    private state = BaseDropZonePanel.STATE_NOT_DRAGGING;
 
     private logger: Logger;
     private dropTarget: DropTarget;
@@ -53,10 +53,10 @@ export abstract class AbstractColumnDropPanel extends Component {
 
     private guiDestroyFunctions: (()=>void)[] = [];
 
-    private params: AbstractColumnDropPanelParams;
-    private beans: AbstractColumnDropPanelBeans;
+    private params: BaseDropZonePanelParams;
+    private beans: BaseDropZonePanelBeans;
 
-    private childColumnComponents: ColumnComponent[] = [];
+    private childColumnComponents: DropZoneColumnComp[] = [];
     private insertIndex: number;
 
     private horizontal: boolean;
@@ -85,7 +85,7 @@ export abstract class AbstractColumnDropPanel extends Component {
         return this.horizontal;
     }
 
-    public setBeans(beans: AbstractColumnDropPanelBeans): void {
+    public setBeans(beans: BaseDropZonePanelBeans): void {
         this.beans = beans;
     }
 
@@ -102,7 +102,7 @@ export abstract class AbstractColumnDropPanel extends Component {
         Utils.removeAllChildren(this.eColumnDropList);
     }
 
-    public init(params: AbstractColumnDropPanelParams): void {
+    public init(params: BaseDropZonePanelParams): void {
         this.params = params;
 
         this.logger = this.beans.loggerFactory.create('AbstractColumnDropPanel');
@@ -205,9 +205,9 @@ export abstract class AbstractColumnDropPanel extends Component {
     }
 
     private checkDragStartedBySelf(draggingEvent: DraggingEvent): void {
-        if (this.state!==AbstractColumnDropPanel.STATE_NOT_DRAGGING) { return; }
+        if (this.state!==BaseDropZonePanel.STATE_NOT_DRAGGING) { return; }
 
-        this.state = AbstractColumnDropPanel.STATE_REARRANGE_COLUMNS;
+        this.state = BaseDropZonePanel.STATE_REARRANGE_COLUMNS;
 
         this.potentialDndColumns = draggingEvent.dragSource.dragItemCallback().columns;
         this.refreshGui();
@@ -229,7 +229,7 @@ export abstract class AbstractColumnDropPanel extends Component {
 
         // this will contain all columns that are potential drops
         let dragColumns: Column[] = draggingEvent.dragSource.dragItemCallback().columns;
-        this.state = AbstractColumnDropPanel.STATE_NEW_COLUMNS_IN;
+        this.state = BaseDropZonePanel.STATE_NEW_COLUMNS_IN;
 
         // take out columns that are not groupable
         let goodDragColumns = Utils.filter(dragColumns, this.isColumnDroppable.bind(this) );
@@ -250,7 +250,7 @@ export abstract class AbstractColumnDropPanel extends Component {
         // if the dragging started from us, we remove the group, however if it started
         // someplace else, then we don't, as it was only 'asking'
 
-        if (this.state===AbstractColumnDropPanel.STATE_REARRANGE_COLUMNS) {
+        if (this.state===BaseDropZonePanel.STATE_REARRANGE_COLUMNS) {
             let columns = draggingEvent.dragSource.dragItemCallback().columns;
             this.removeColumns(columns);
         }
@@ -260,13 +260,13 @@ export abstract class AbstractColumnDropPanel extends Component {
             this.refreshGui();
         }
 
-        this.state = AbstractColumnDropPanel.STATE_NOT_DRAGGING;
+        this.state = BaseDropZonePanel.STATE_NOT_DRAGGING;
     }
 
     private onDragStop(): void {
         if (this.potentialDndColumns) {
             let success: boolean;
-            if (this.state === AbstractColumnDropPanel.STATE_NEW_COLUMNS_IN) {
+            if (this.state === BaseDropZonePanel.STATE_NEW_COLUMNS_IN) {
                 this.addColumns(this.potentialDndColumns);
                 success = true;
             } else {
@@ -289,7 +289,7 @@ export abstract class AbstractColumnDropPanel extends Component {
             }
         }
 
-        this.state = AbstractColumnDropPanel.STATE_NOT_DRAGGING;
+        this.state = BaseDropZonePanel.STATE_NOT_DRAGGING;
     }
 
     private removeColumns(columnsToRemove: Column[]): void {
@@ -351,7 +351,7 @@ export abstract class AbstractColumnDropPanel extends Component {
     private addColumnsToGui(): void {
         let nonGhostColumns = this.getNonGhostColumns();
 
-        let itemsToAddToGui: ColumnComponent[] = [];
+        let itemsToAddToGui: DropZoneColumnComp[] = [];
 
         let addingGhosts = Utils.exists(this.potentialDndColumns);
 
@@ -376,7 +376,7 @@ export abstract class AbstractColumnDropPanel extends Component {
 
         this.getGui().appendChild(this.eColumnDropList);
 
-        itemsToAddToGui.forEach( (columnComponent: ColumnComponent, index: number) => {
+        itemsToAddToGui.forEach( (columnComponent: DropZoneColumnComp, index: number) => {
             let needSeparator = index!==0;
             if (needSeparator) {
                 this.addArrow(this.eColumnDropList);
@@ -386,9 +386,9 @@ export abstract class AbstractColumnDropPanel extends Component {
 
     }
 
-    private createColumnComponent(column: Column, ghost: boolean): ColumnComponent {
-        let columnComponent = new ColumnComponent(column, this.dropTarget, ghost, this.valueColumn);
-        columnComponent.addEventListener(ColumnComponent.EVENT_COLUMN_REMOVE, this.removeColumns.bind(this, [column]));
+    private createColumnComponent(column: Column, ghost: boolean): DropZoneColumnComp {
+        let columnComponent = new DropZoneColumnComp(column, this.dropTarget, ghost, this.valueColumn);
+        columnComponent.addEventListener(DropZoneColumnComp.EVENT_COLUMN_REMOVE, this.removeColumns.bind(this, [column]));
         this.beans.context.wireBean(columnComponent);
         this.guiDestroyFunctions.push( ()=> columnComponent.destroy() );
 
@@ -441,7 +441,7 @@ export abstract class AbstractColumnDropPanel extends Component {
             // for RTL it's a left arrow, otherwise it's a right arrow
             let enableRtl = this.beans.gridOptionsWrapper.isEnableRtl();
             let charCode = enableRtl ?
-                AbstractColumnDropPanel.CHAR_LEFT_ARROW : AbstractColumnDropPanel.CHAR_RIGHT_ARROW;
+                BaseDropZonePanel.CHAR_LEFT_ARROW : BaseDropZonePanel.CHAR_RIGHT_ARROW;
             let spanClass = enableRtl ? 'ag-left-arrow' : 'ag-right-arrow';
             let eArrow = document.createElement('span');
 

@@ -14,9 +14,9 @@ import {
     ColumnApi,
     GridApi
 } from "ag-grid-community/main";
-import {AbstractColumnDropPanel} from "./abstractColumnDropPanel";
+import {BaseDropZonePanel} from "./common/baseDropZonePanel";
 
-export class ValuesColumnPanel extends AbstractColumnDropPanel {
+export class ValuesDropZonePanel extends BaseDropZonePanel {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;

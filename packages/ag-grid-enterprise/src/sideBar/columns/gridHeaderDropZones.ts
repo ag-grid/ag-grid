@@ -1,6 +1,6 @@
 import {Events, GridOptionsWrapper, Constants, ColumnController, ICompFactory, Component, EventService, Autowired, Optional, PostConstruct} from "ag-grid-community/main";
 
-export class HeaderColumnDropComp extends Component {
+export class GridHeaderDropZones extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
