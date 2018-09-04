@@ -32,7 +32,7 @@ var gridOptions = {
         id: 'customStats',
         labelDefault: 'Custom Stats',
         labelKey: 'customStats',
-        iconKey: 'customStats',
+        iconKey: 'custom-stats',
         component: 'customStatsToolPanel',
       }
     ],
