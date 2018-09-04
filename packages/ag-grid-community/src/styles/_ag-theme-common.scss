@@ -792,7 +792,7 @@
             }
         }
 
-        .ag-pivot-mode {
+        .ag-pivot-mode-panel {
             border-bottom: 1px solid $border-color;
             box-sizing: border-box;
             height: $header-height;
@@ -1322,7 +1322,7 @@
         }
 
         .ag-tool-panel-wrapper {
-            .ag-pivot-mode {
+            .ag-pivot-mode-panel {
                 span {
                     float: right;
                 }

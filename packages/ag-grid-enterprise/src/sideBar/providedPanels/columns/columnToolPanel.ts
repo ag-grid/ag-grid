@@ -31,7 +31,7 @@ export interface ToolPanelColumnCompParams extends IToolPanelParams {
 
 export class ColumnToolPanel extends Component implements IToolPanelComp {
 
-    private static TEMPLATE =`<div class="ag-column-panel-center ag-column-panel"></div>`;
+    private static TEMPLATE =`<div class="ag-column-panel"></div>`;
 
     @Autowired("context") private context: Context;
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;

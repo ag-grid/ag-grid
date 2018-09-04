@@ -28,7 +28,7 @@ export class PivotModePanel extends Component {
 
     private createTemplate(): string {
         let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        return `<div class="ag-pivot-mode">
+        return `<div class="ag-pivot-mode-panel">
                 <ag-checkbox class="ag-pivot-mode-select" label="${localeTextFunc('pivotMode', 'Pivot Mode')}"></ag-checkbox>
             </div>`;
     }
