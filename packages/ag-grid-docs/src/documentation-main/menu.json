@@ -413,11 +413,6 @@
                         "title": "Filters Tool Panel",
                         "url": "javascript-grid-tool-panel-filters/",
                         "enterprise": true
-                    },
-                    {
-                        "title": "Custom Tool Panels",
-                        "url": "javascript-grid-tool-panel-custom/",
-                        "enterprise": true
                     }
                 ]
 
