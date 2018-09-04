@@ -1085,3 +1085,24 @@ $row-group-indent-size: 10px !default;
 .ag-row-inline-editing {
     z-index: 1;
 }
+
+.ag-status-bar {
+    display: flex;
+    justify-content: space-between;
+
+    .ag-status-panel {
+        display: inline-block;
+    }
+}
+
+.ag-status-bar-left {
+    display: inline-flex;
+}
+
+.ag-status-bar-center {
+    display: inline-flex;
+}
+
+.ag-status-bar-right {
+    display: inline-flex;
+}

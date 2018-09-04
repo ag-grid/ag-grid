@@ -1,18 +1,11 @@
-import {
-    Autowired,
-    Component,
-    Context,
-    GridOptionsWrapper,
-    PostConstruct
-} from 'ag-grid-community';
+import {Autowired, Component, Context, GridOptionsWrapper, PostConstruct} from 'ag-grid-community';
 
 export class NameValueComp extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
 
-    private static TEMPLATE = `<div class="ag-status-panel ag-status-panel-comp">  
-            <span id="_label"></span>  
-            <span id="_value"></span>
+    private static TEMPLATE = `<div class="ag-status-panel">  
+            <span id="_label"></span>:<span id="_value" class="ag-name-value-value"></span>
         </div>`;
 
     private props: { key: string, defaultValue: string };
@@ -25,7 +18,7 @@ export class NameValueComp extends Component {
 
     @PostConstruct
     protected postConstruct(): void {
-        if(this.props) {
+        if (this.props) {
             this.key = this.props.key;
             this.defaultValue = this.props.defaultValue;
         }
