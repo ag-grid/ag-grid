@@ -26,28 +26,24 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
 
 <div>
         <section>
-                        <p class="text-center">
-                            <h1 style="text-align: center;">
-                ag-Grid Conf
-                <hr>
-            </h1>
+                <p class="text-center">
+                    <h1 style="text-align: center;">
+                        ag-Grid Conf
+                    </h1>
 
             <div class="container">
   <div class="row">
-    <div class="col-sm"  style="text-align: center;"">
-            <h1 >
+    <div class="col-sm"  style="text-align: center;">
+            <h1>
                 London
             </h1>
             October 4th 2018
             <br>
             <a href="https://www.eventbrite.com/e/ag-grid-conf-london-tickets-49732217401" target="_blank"><button type="button" class="btn btn-primary btn-lg">Register for London</button></a>
     </div>
-    <div class="col-sm">
-                <h3 class="text-center"  style="text-align: center;""><br>
-
-Join us for an in-depth look at ag-Grid.
-
-            </h3>
+    <div class="col-sm" style="font-size: 20px; text-align: center;">
+        Where CTO's, Senior Developers, Developer and Product Managers serious about JavaScript data presentation
+        can learn more about ag-Grid and share their experiences with the ag-Grid team
     </div>
     <div class="col-sm"  style="text-align: center";>
             <h1 >
@@ -70,15 +66,11 @@ Join us for an in-depth look at ag-Grid.
 <br>
 <div style="max-width: : 100%">
     <h2 class="text-center" style="background-color: whitesmoke;padding-top: 10px">
-What To Expect
+Speakers
 </p>
         <hr>
     </h2>
 
-    <h3 class="text-center">
-        <strong>Speakers</strong>
-                        <p class="text-center"><font size=-1>The Brains</font></p>
-    </h3>
 <br>
                 <div class="inline-container team" align="center">
                 <div class="row">
@@ -88,7 +80,7 @@ What To Expect
                             <img src='images/team/niall.jpg' alt="Niall Crosby, CEO"/>
                         </div>
                         <h3>Niall Crosby</h3>
-                        <h4>CEO / CTO</h4>
+                        <h4>Founder, CEO & CTO, ag-Grid</h4>
 
                     </div>
 
@@ -97,7 +89,7 @@ What To Expect
                             <img src='images/team/sean.jpg' alt="Sean Landsman, Lead Developer"/>
                         </div>
                         <h3>Sean Landsman</h3>
-                        <h4>Lead Developer, <br> Frameworks</h4>
+                        <h4>JavaScript Frameworks Guru, ag-Grid</h4>
 
                     </div>
 
@@ -106,7 +98,7 @@ What To Expect
                             <img src='images/team/rob.jpg' alt="Alberto Gutierrez, Lead Developer"/>
                         </div>
                         <h3>Robert Clarke </h3>
-                        <h4>Lead Developer,<br> Enterprise Applications</h4>
+                        <h4>Enterprise Applications Guru, ag-Grid</h4>
 
                     </div>
 </div>
