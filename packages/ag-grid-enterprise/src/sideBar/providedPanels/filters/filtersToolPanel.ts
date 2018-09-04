@@ -76,13 +76,14 @@ export class FiltersToolPanel extends Component implements IToolPanelComp {
             if (child instanceof OriginalColumnGroup) {
                 this.recursivelyAddComps(child.getChildren(), dept, groupsExist);
             } else {
-                this.recursivelyAddColumnComps(<Column> child, dept, groupsExist);
+                this.recursivelyAddColumnComps(<Column> child);
             }
         });
     }
 
-    private recursivelyAddColumnComps(column: Column, dept: number, groupsExist: boolean): void {
-        if (column.getColDef() && column.getColDef().suppressToolPanel) {
+    private recursivelyAddColumnComps(column: Column): void {
+
+        if (column.getColDef() && column.getColDef().suppressFilter) {
             return;
         }
 
