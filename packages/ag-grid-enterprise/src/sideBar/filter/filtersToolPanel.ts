@@ -13,10 +13,9 @@ import {
     OriginalColumnGroup,
     OriginalColumnGroupChild,
     IToolPanelComp,
-    Utils,
     ValueService
 } from "ag-grid-community";
-import {ColumnItem} from "../columns/columnsSelect/columnContainerComp";
+
 import {ToolPanelFilterComp} from "./toolPanelFilterComp";
 
 export class FiltersToolPanel extends Component implements IToolPanelComp {
@@ -37,10 +36,8 @@ export class FiltersToolPanel extends Component implements IToolPanelComp {
     @Autowired('$scope') private $scope: any;
 
     private columnTree: OriginalColumnGroupChild[];
-    private columnFilterComps: { [key: string]: ColumnItem };
 
     private initialised = false;
-
 
     constructor() {
         super(FiltersToolPanel.TEMPLATE);
@@ -74,14 +71,6 @@ export class FiltersToolPanel extends Component implements IToolPanelComp {
         }
     }
 
-    private destroyColumnFilterComps(): void {
-        Utils.removeAllChildren(this.getGui());
-        if (this.columnFilterComps) {
-            Utils.iterateObject(this.columnFilterComps, (key: string, renderedItem: Component) => renderedItem.destroy());
-        }
-        this.columnFilterComps = {};
-    }
-
     private recursivelyAddComps(tree: OriginalColumnGroupChild[], dept: number, groupsExist: boolean): void {
         tree.forEach(child => {
             if (child instanceof OriginalColumnGroup) {
@@ -102,7 +91,5 @@ export class FiltersToolPanel extends Component implements IToolPanelComp {
         });
         this.context.wireBean(renderedFilter);
         this.getGui().appendChild(renderedFilter.getGui());
-
-        // this.columnFilterComps[column.getId()] = renderedColumn;
     }
 }

@@ -9,14 +9,13 @@ import {
     PostConstruct,
     RefSelector,
     ColumnController,
-    EventService,
-    IComponent
+    EventService
 } from "ag-grid-community/main";
-import {ToolPanelColumnCompParams} from "../columnToolPanel";
+import {ToolPanelColumnCompParams} from "../../columnToolPanel";
 
 export enum SELECTED_STATE {CHECKED, UNCHECKED, INDETERMINIATE}
 
-export class ColumnSelectHeaderComp extends Component {
+export class PrimaryColsHeaderPanel extends Component {
 
     @Autowired('context') private context: Context;
 

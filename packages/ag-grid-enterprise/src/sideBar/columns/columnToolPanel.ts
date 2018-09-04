@@ -11,11 +11,11 @@ import {
     IToolPanelComp,
     ToolPanelVisibleChangedEvent
 } from "ag-grid-community/main";
-import {ColumnSelectComp} from "./columnsSelect/columnSelectComp";
 import {PivotModePanel} from "./toolPanelSections/pivotModePanel";
 import {RowGroupDropZonePanel} from "./toolPanelSections/rowGroupDropZonePanel";
 import {ValuesDropZonePanel} from "./toolPanelSections/valueColumnsPanel";
 import {PivotDropZonePanel} from "./toolPanelSections/pivotDropZonePanel";
+import {PrimaryColsPanel} from "./toolPanelSections/primaryColsPanel/primaryColsPanel";
 
 export interface ToolPanelColumnCompParams extends IToolPanelParams {
     suppressRowGroups: boolean;
@@ -82,7 +82,7 @@ export class ColumnToolPanel extends Component implements IToolPanelComp {
             this.addComponent(new PivotModePanel());
         }
 
-        this.addComponent(new ColumnSelectComp(true, this.params));
+        this.addComponent(new PrimaryColsPanel(true, this.params));
 
         if (!this.params.suppressRowGroups) {
             this.addComponent(new RowGroupDropZonePanel(false));

@@ -1,8 +1,5 @@
 import {FiltersToolPanel} from "./sideBar/filter/filtersToolPanel";
 
-export {ColumnSelectComp} from "./sideBar/columns/columnsSelect/columnSelectComp";
-export {ColumnItemComp} from "./sideBar/columns/columnsSelect/columnItemComp";
-export {ColumnGroupComp} from "./sideBar/columns/columnsSelect/columnGroupComp";
 export {AggregationStage} from "./rowStages/aggregationStage";
 export {GroupStage} from "./rowStages/groupStage";
 export {SetFilter} from "./setFilter/setFilter";
@@ -59,8 +56,6 @@ import {MenuItemMapper} from "./menu/menuItemMapper";
 import {ExcelCreator} from "./exporter/excelCreator";
 import {ExcelXmlFactory} from "./exporter/excelXmlFactory";
 import {ServerSideRowModel} from "./rowModels/serverSide/serverSideRowModel";
-import {ColumnSelectHeaderComp} from "./sideBar/columns/columnsSelect/columnSelectHeaderComp";
-import {ColumnContainerComp} from "./sideBar/columns/columnsSelect/columnContainerComp";
 import {HorizontalResizeComp} from "./sideBar/horizontalResizeComp";
 import {ColumnToolPanel} from "./sideBar/columns/columnToolPanel";
 import {SideBarButtonsComp} from "./sideBar/sideBarButtonsComp";
@@ -74,6 +69,8 @@ import {SelectedRowsComp} from "./statusBar/providedPanels/selectedRowsComp"
 import {TotalRowsComp} from "./statusBar/providedPanels/totalRowsComp"
 import {FilteredRowsComp} from "./statusBar/providedPanels/filteredRowsComp"
 import {TotalAndFilteredRowsComp} from "./statusBar/providedPanels/totalAndFilteredRowsComp"
+import {PrimaryColsHeaderPanel} from "./sideBar/columns/toolPanelSections/primaryColsPanel/primaryColsHeaderPanel";
+import {PrimaryColsListPanel} from "./sideBar/columns/toolPanelSections/primaryColsPanel/primaryColsListPanel";
 
 
 let rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
@@ -84,8 +81,8 @@ Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, R
     MenuItemMapper, StatusBarService], rowModelTypes);
 
 Grid.setEnterpriseComponents([
-    {componentName: 'AgColumnSelectHeader', theClass: ColumnSelectHeaderComp},
-    {componentName: 'AgColumnContainer', theClass: ColumnContainerComp},
+    {componentName: 'AgColumnSelectHeader', theClass: PrimaryColsHeaderPanel},
+    {componentName: 'AgColumnContainer', theClass: PrimaryColsListPanel},
     {componentName: 'AgHorizontalResize', theClass: HorizontalResizeComp},
     {componentName: 'AgSideBar', theClass: SideBarComp},
 

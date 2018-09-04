@@ -1,7 +1,7 @@
 import {Autowired, Component, Context, GridOptionsWrapper, PostConstruct, RefSelector} from "ag-grid-community/main";
-import {ColumnContainerComp} from "./columnContainerComp";
-import {ColumnSelectHeaderComp} from "./columnSelectHeaderComp";
-import {ToolPanelColumnCompParams} from "../columnToolPanel";
+import {PrimaryColsListPanel} from "./primaryColsListPanel";
+import {PrimaryColsHeaderPanel} from "./primaryColsHeaderPanel";
+import {ToolPanelColumnCompParams} from "../../columnToolPanel";
 
 export interface BaseColumnItem {
 
@@ -19,7 +19,7 @@ export interface BaseColumnItem {
 
 }
 
-export class ColumnSelectComp extends Component {
+export class PrimaryColsPanel extends Component {
 
     private static TEMPLATE =
         `<div class="ag-column-select-panel">
@@ -44,17 +44,17 @@ export class ColumnSelectComp extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @RefSelector('eColumnSelectHeader')
-    private columnSelectHeaderComp: ColumnSelectHeaderComp;
+    private columnSelectHeaderComp: PrimaryColsHeaderPanel;
 
     @RefSelector('eToolPanelColumnsContainerComp')
-    private columnContainerComp: ColumnContainerComp;
+    private columnContainerComp: PrimaryColsListPanel;
 
     private allowDragging: boolean;
     private params: ToolPanelColumnCompParams;
 
     // we allow dragging in the toolPanel, but not when this component appears in the column menu
     constructor(allowDragging: boolean, params: ToolPanelColumnCompParams) {
-        super(ColumnSelectComp.TEMPLATE);
+        super(PrimaryColsPanel.TEMPLATE);
         this.allowDragging = allowDragging;
         this.params = params;
     }

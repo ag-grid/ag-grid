@@ -19,9 +19,9 @@ import {
     TouchListener,
     Utils
 } from "ag-grid-community/main";
-import {BaseColumnItem} from "./columnSelectComp";
+import {BaseColumnItem} from "./primaryColsPanel";
 
-export class ColumnGroupComp extends Component implements BaseColumnItem {
+export class ToolPanelColumnGroupComp extends Component implements BaseColumnItem {
 
     private static TEMPLATE =
         `<div class="ag-column-select-column-group">
@@ -70,7 +70,7 @@ export class ColumnGroupComp extends Component implements BaseColumnItem {
 
     @PostConstruct
     public init(): void {
-        this.setTemplate(ColumnGroupComp.TEMPLATE);
+        this.setTemplate(ToolPanelColumnGroupComp.TEMPLATE);
 
         this.instantiate(this.context);
 

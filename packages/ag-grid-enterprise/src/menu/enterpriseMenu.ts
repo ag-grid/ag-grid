@@ -22,10 +22,10 @@ import {
     TabbedLayout,
     Utils
 } from "ag-grid-community";
-import {ColumnSelectComp} from "../sideBar/columns/columnsSelect/columnSelectComp";
 import {MenuList} from "./menuList";
 import {MenuItemComponent} from "./menuItemComponent";
 import {MenuItemMapper} from "./menuItemMapper";
+import {PrimaryColsPanel} from "../sideBar/columns/toolPanelSections/primaryColsPanel/primaryColsPanel";
 
 export interface TabSelectedEvent extends AgEvent {
     key: string;
@@ -158,7 +158,7 @@ export class EnterpriseMenu extends BeanStub {
     private column: Column;
     private mainMenuList: MenuList;
 
-    private columnSelectPanel: ColumnSelectComp;
+    private columnSelectPanel: PrimaryColsPanel;
 
     private tabItemFilter: TabbedItem;
     private tabItemGeneral: TabbedItem;
@@ -429,7 +429,7 @@ export class EnterpriseMenu extends BeanStub {
         let eWrapperDiv = document.createElement('div');
         Utils.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
 
-        this.columnSelectPanel = new ColumnSelectComp(false, {
+        this.columnSelectPanel = new PrimaryColsPanel(false, {
             suppressValues: false,
             suppressPivots: false,
             suppressRowGroups: false,

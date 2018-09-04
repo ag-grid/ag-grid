@@ -13,15 +13,15 @@ import {
     Utils,
     GridOptionsWrapper,
 } from "ag-grid-community/main";
-import {ColumnGroupComp} from "./columnGroupComp";
-import {ColumnItemComp} from "./columnItemComp";
-import {BaseColumnItem} from "./columnSelectComp";
-import {SELECTED_STATE} from "./columnSelectHeaderComp";
-import {ToolPanelColumnCompParams} from "../columnToolPanel";
+import {ToolPanelColumnGroupComp} from "./toolPanelColumnGroupComp";
+import {ToolPanelColumnComp} from "./toolPanelColumnComp";
+import {BaseColumnItem} from "./primaryColsPanel";
+import {SELECTED_STATE} from "./primaryColsHeaderPanel";
+import {ToolPanelColumnCompParams} from "../../columnToolPanel";
 
 export type ColumnItem = BaseColumnItem & Component;
 
-export class ColumnContainerComp extends Component {
+export class PrimaryColsListPanel extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
@@ -43,7 +43,7 @@ export class ColumnContainerComp extends Component {
     public static TEMPLATE = `<div class="ag-column-container"></div>`;
 
     constructor() {
-        super(ColumnContainerComp.TEMPLATE);
+        super(PrimaryColsListPanel.TEMPLATE);
     }
 
     @PostConstruct
@@ -80,7 +80,7 @@ export class ColumnContainerComp extends Component {
         }
 
         if (!columnGroup.isPadding()) {
-            let renderedGroup = new ColumnGroupComp(columnGroup,  dept, this.onGroupExpanded.bind(this),
+            let renderedGroup = new ToolPanelColumnGroupComp(columnGroup,  dept, this.onGroupExpanded.bind(this),
                 this.props.allowDragging, this.expandGroupsByDefault);
             this.context.wireBean(renderedGroup);
             this.getGui().appendChild(renderedGroup.getGui());
@@ -111,7 +111,7 @@ export class ColumnContainerComp extends Component {
 
                 // only interested in groups
                 if (item instanceof OriginalColumnGroup) {
-                    let comp = <ColumnGroupComp> this.columnComps[item.getId()];
+                    let comp = <ToolPanelColumnGroupComp> this.columnComps[item.getId()];
 
                     if (comp) {
                         if (comp.isExpanded()) {
@@ -148,7 +148,7 @@ export class ColumnContainerComp extends Component {
             return;
         }
 
-        let renderedColumn = new ColumnItemComp(column, dept, this.props.allowDragging, groupsExist);
+        let renderedColumn = new ToolPanelColumnComp(column, dept, this.props.allowDragging, groupsExist);
         this.context.wireBean(renderedColumn);
         this.getGui().appendChild(renderedColumn.getGui());
 
@@ -252,7 +252,7 @@ export class ColumnContainerComp extends Component {
 
                 let childrenOpen: boolean;
                 if (comp) {
-                    let expanded = (<ColumnGroupComp>comp).isExpanded();
+                    let expanded = (<ToolPanelColumnGroupComp>comp).isExpanded();
                     childrenOpen = parentGroupsOpen ? expanded : false;
                 } else {
                     childrenOpen = parentGroupsOpen;
