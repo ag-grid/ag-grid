@@ -1,4 +1,4 @@
-import {FiltersToolPanel} from "./sideBar/filter/filtersToolPanel";
+import {FiltersToolPanel} from "./sideBar/providedPanels/filters/filtersToolPanel";
 
 export {AggregationStage} from "./rowStages/aggregationStage";
 export {GroupStage} from "./rowStages/groupStage";
@@ -12,24 +12,24 @@ export {EnterpriseMenu} from "./menu/enterpriseMenu";
 export {MenuItemComponent} from "./menu/menuItemComponent";
 export {MenuList} from "./menu/menuList";
 export {RangeController} from "./rangeController";
-export {RowGroupDropZonePanel} from "./sideBar/columns/toolPanelSections/rowGroupDropZonePanel";
+export {RowGroupDropZonePanel} from "./sideBar/providedPanels/columns/panels/rowGroupDropZonePanel";
 export {ContextMenuFactory} from "./menu/contextMenu";
 export {ViewportRowModel} from "./rowModels/viewport/viewportRowModel";
 export {RichSelectCellEditor} from "./rendering/richSelect/richSelectCellEditor";
 export {RichSelectRow} from "./rendering/richSelect/richSelectRow";
 export {VirtualList} from "./rendering/virtualList";
-export {BaseDropZonePanel} from "./sideBar/columns/toolPanelSections/common/baseDropZonePanel";
-export {PivotDropZonePanel} from "./sideBar/columns/toolPanelSections/pivotDropZonePanel";
+export {BaseDropZonePanel} from "./sideBar/providedPanels/columns/dropZone/baseDropZonePanel";
+export {PivotDropZonePanel} from "./sideBar/providedPanels/columns/panels/pivotDropZonePanel";
 export {SideBarComp} from "./sideBar/sideBarComp";
 export {LicenseManager} from "./licenseManager";
 export {PivotStage} from "./rowStages/pivotStage";
 export {PivotColDefService} from "./rowStages/pivotColDefService";
-export {PivotModePanel} from "./sideBar/columns/toolPanelSections/pivotModePanel";
+export {PivotModePanel} from "./sideBar/providedPanels/columns/panels/pivotModePanel";
 export {AggFuncService} from "./aggregation/aggFuncService";
 export {MD5} from "./license/md5";
 export {SetFilterListItem} from "./setFilter/setFilterListItem";
-export {DropZoneColumnComp} from "./sideBar/columns/toolPanelSections/common/dropZoneColumnComp";
-export {ValuesDropZonePanel} from "./sideBar/columns/toolPanelSections/valueColumnsPanel";
+export {DropZoneColumnComp} from "./sideBar/providedPanels/columns/dropZone/dropZoneColumnComp";
+export {ValuesDropZonePanel} from "./sideBar/providedPanels/columns/panels/valueDropZonePanel";
 export {PivotCompFactory} from "./pivotCompFactory";
 export {RowGroupCompFactory} from "./rowGroupCompFactory";
 export {ExcelCreator} from "./exporter/excelCreator";
@@ -57,7 +57,7 @@ import {ExcelCreator} from "./exporter/excelCreator";
 import {ExcelXmlFactory} from "./exporter/excelXmlFactory";
 import {ServerSideRowModel} from "./rowModels/serverSide/serverSideRowModel";
 import {HorizontalResizeComp} from "./sideBar/horizontalResizeComp";
-import {ColumnToolPanel} from "./sideBar/columns/columnToolPanel";
+import {ColumnToolPanel} from "./sideBar/providedPanels/columns/columnToolPanel";
 import {SideBarButtonsComp} from "./sideBar/sideBarButtonsComp";
 
 import {StatusBarService} from "./statusBar/statusBarService";
@@ -69,8 +69,8 @@ import {SelectedRowsComp} from "./statusBar/providedPanels/selectedRowsComp"
 import {TotalRowsComp} from "./statusBar/providedPanels/totalRowsComp"
 import {FilteredRowsComp} from "./statusBar/providedPanels/filteredRowsComp"
 import {TotalAndFilteredRowsComp} from "./statusBar/providedPanels/totalAndFilteredRowsComp"
-import {PrimaryColsHeaderPanel} from "./sideBar/columns/toolPanelSections/primaryColsPanel/primaryColsHeaderPanel";
-import {PrimaryColsListPanel} from "./sideBar/columns/toolPanelSections/primaryColsPanel/primaryColsListPanel";
+import {PrimaryColsHeaderPanel} from "./sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsHeaderPanel";
+import {PrimaryColsListPanel} from "./sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsListPanel";
 
 
 let rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};

@@ -15,7 +15,7 @@ import {
     ColumnApi,
     GridApi
 } from "ag-grid-community/main";
-import {BaseDropZonePanel} from "./common/baseDropZonePanel";
+import {BaseDropZonePanel} from "../dropZone/baseDropZonePanel";
 
 @Bean("pivotColumnsPanel")
 export class PivotDropZonePanel extends BaseDropZonePanel {

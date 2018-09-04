@@ -23,7 +23,3 @@ export interface IStatusPanel {
 
 export interface IStatusPanelComp extends IStatusPanel, IComponent<IStatusPanelParams> {
 }
-
-export interface IStatusBarItemFunc {
-    (params: any): HTMLElement | string
-}
