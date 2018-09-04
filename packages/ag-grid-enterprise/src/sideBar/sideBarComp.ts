@@ -93,7 +93,9 @@ export class SideBarComp extends Component implements ISideBar {
                 currentComp.setVisible(false);
             });
 
-            this.sideBarButtonsComp.setPanelVisibility(this.sideBarButtonsComp.defaultPanelKey, true);
+            if (_.exists(this.sideBarButtonsComp.defaultPanelKey)) {
+                this.sideBarButtonsComp.setPanelVisibility(this.sideBarButtonsComp.defaultPanelKey, true);
+            }
         })
     }
 

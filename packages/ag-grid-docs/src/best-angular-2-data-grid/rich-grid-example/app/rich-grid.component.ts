@@ -22,6 +22,19 @@ export class RichGridComponent {
     private api: GridApi;
     private columnApi: ColumnApi;
 
+    private sideBar = {
+        toolPanels: [{
+            id: 'columns',
+            labelDefault: 'Columns',
+            labelKey: 'columns',
+            iconKey: 'columns',
+            component: 'agColumnsToolPanel',
+            componentParams: {
+                suppressValues: true
+            }
+        }]
+    };
+
     constructor() {
         this.gridOptions = <GridOptions>{};
         this.rowData = this.createRowData();
