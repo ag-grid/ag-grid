@@ -1,6 +1,5 @@
 import {Bean, ICompFactory, Component, Autowired, Context} from "ag-grid-community";
-import {RowGroupColumnsPanel} from "./sideBar/columns/columnDrop/rowGroupColumnsPanel";
-import {PivotColumnsPanel} from "./sideBar/columns/columnDrop/pivotColumnsPanel";
+import {PivotDropZonePanel} from "./sideBar/columns/toolPanelSections/pivotDropZonePanel";
 
 @Bean('pivotCompFactory')
 export class PivotCompFactory implements ICompFactory {
@@ -9,7 +8,7 @@ export class PivotCompFactory implements ICompFactory {
 
     public create(): Component {
 
-        let pivotComp = new PivotColumnsPanel(true);
+        let pivotComp = new PivotDropZonePanel(true);
         this.context.wireBean(pivotComp);
 
         return pivotComp;

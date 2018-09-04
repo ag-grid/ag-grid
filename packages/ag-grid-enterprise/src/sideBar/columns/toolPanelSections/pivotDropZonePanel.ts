@@ -15,10 +15,10 @@ import {
     ColumnApi,
     GridApi
 } from "ag-grid-community/main";
-import {AbstractColumnDropPanel} from "./abstractColumnDropPanel";
+import {BaseDropZonePanel} from "./common/baseDropZonePanel";
 
 @Bean("pivotColumnsPanel")
-export class PivotColumnsPanel extends AbstractColumnDropPanel {
+export class PivotDropZonePanel extends BaseDropZonePanel {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
