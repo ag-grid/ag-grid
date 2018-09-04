@@ -29,10 +29,10 @@ import {BaseColumnItem} from "./primaryColsPanel";
 export class ToolPanelColumnComp extends Component implements BaseColumnItem {
 
     private static TEMPLATE =
-        `<div class="ag-column-select-column">
+        `<div class="ag-column-tool-panel-column">
             <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox" (change)="onCheckboxChanged"></ag-checkbox>
             <span class="ag-column-drag" ref="eDragHandle"></span>
-            <span class="ag-column-select-label" ref="eLabel" (click)="onLabelClicked"></span>
+            <span class="ag-column-tool-panel-column-label" ref="eLabel" (click)="onLabelClicked"></span>
         </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;

@@ -676,8 +676,8 @@
     // Column selector
     ////////////////////////////////////////
     .ag-column-select-panel {
-        .ag-column-select-column-group,
-        .ag-column-select-column {
+        .ag-column-tool-panel-column-group,
+        .ag-column-tool-panel-column {
             height: $grid-size * 4;
             line-height: $grid-size * 4;
             margin-left: 0;
@@ -698,11 +698,11 @@
             }
         }
 
-        .ag-column-container {
+        .ag-primary-cols-list-panel {
             padding-top: $grid-size;
         }
 
-        .ag-column-select-column.ag-toolpanel-add-group-indent {
+        .ag-column-tool-panel-column.ag-toolpanel-add-group-indent {
             margin-left: $icon-size + $grid-size * 2;
         }
     }
@@ -1337,8 +1337,8 @@
         }
 
         .ag-column-select-panel {
-            .ag-column-select-column-group,
-            .ag-column-select-column {
+            .ag-column-tool-panel-column-group,
+            .ag-column-tool-panel-column {
                 span {
                     float: right;
                 }
@@ -1350,7 +1350,7 @@
                 }
             }
 
-            .ag-column-select-column.ag-toolpanel-add-group-indent {
+            .ag-column-tool-panel-column.ag-toolpanel-add-group-indent {
                 margin-left: 0;
                 margin-right: $icon-size + $grid-size * 2;
             }

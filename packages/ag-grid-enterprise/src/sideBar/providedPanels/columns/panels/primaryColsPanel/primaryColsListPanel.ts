@@ -40,7 +40,7 @@ export class PrimaryColsListPanel extends Component {
 
     private expandGroupsByDefault: boolean;
 
-    public static TEMPLATE = `<div class="ag-column-container"></div>`;
+    public static TEMPLATE = `<div class="ag-primary-cols-list-panel"></div>`;
 
     constructor() {
         super(PrimaryColsListPanel.TEMPLATE);

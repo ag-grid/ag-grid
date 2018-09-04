@@ -857,7 +857,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     width: 200px;
 }
 
-.ag-column-container {
+.ag-primary-cols-list-panel {
     flex-grow: 1;
     height: 50px;
     overflow: auto;
@@ -867,16 +867,16 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     display: inline-block;
 }
 
-.ag-ltr .ag-column-select-column {
+.ag-ltr .ag-column-tool-panel-column {
     margin-left: 16px;
 }
 
-.ag-rtl .ag-column-select-column {
+.ag-rtl .ag-column-tool-panel-column {
     margin-right: 16px;
 }
 
-.ag-column-select-column,
-.ag-column-select-column-group {
+.ag-column-tool-panel-column,
+.ag-column-tool-panel-column-group {
     align-items: stretch;
     display: flex;
     flex-direction: row;
@@ -884,8 +884,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     text-overflow: ellipsis;
     white-space: nowrap;
 
-    .ag-column-select-label,
-    .ag-column-select-column-group-label {
+    .ag-column-tool-panel-column,
+    .ag-column-tool-panel-column-group {
         flex-grow: 1;
         flex-shrink: 1;
         overflow: hidden;

@@ -35,7 +35,7 @@ export class GridCore extends Component {
 
     private static TEMPLATE_ENTERPRISE =
         `<div class="ag-root-wrapper">
-            <ag-header-column-drop></ag-header-column-drop>
+            <ag-grid-header-drop-zones></ag-grid-header-drop-zones>
             <div ref="rootWrapperBody" class="ag-root-wrapper-body">
                 <ag-grid-comp ref="gridPanel"></ag-grid-comp>
                 <ag-side-bar ref="sideBar"></ag-side-bar>

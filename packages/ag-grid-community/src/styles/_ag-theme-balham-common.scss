@@ -173,8 +173,8 @@ $disabled-foreground-color-opacity: 0.38 !default;
         .ag-column-select-panel {
             padding-bottom: $grid-size * 2;
 
-            .ag-column-select-column-group,
-            .ag-column-select-column {
+            .ag-column-tool-panel-column-group,
+            .ag-column-tool-panel-column {
                 height: $grid-size * 5;
                 line-height: $grid-size * 5;
             }
@@ -225,8 +225,8 @@ $disabled-foreground-color-opacity: 0.38 !default;
     }
 
     .ag-column-select-panel {
-        .ag-column-select-column-group,
-        .ag-column-select-column {
+        .ag-column-tool-panel-column-group,
+        .ag-column-tool-panel-column {
             height: $grid-size * 5;
             line-height: $grid-size * 5;
         }

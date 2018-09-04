@@ -24,14 +24,14 @@ import {BaseColumnItem} from "./primaryColsPanel";
 export class ToolPanelColumnGroupComp extends Component implements BaseColumnItem {
 
     private static TEMPLATE =
-        `<div class="ag-column-select-column-group">
+        `<div class="ag-column-tool-panel-column-group">
             <span id="eColumnGroupIcons" class="ag-column-group-icons">
                 <span id="eGroupOpenedIcon" class="ag-column-group-closed-icon"></span>
                 <span id="eGroupClosedIcon" class="ag-column-group-opened-icon"></span>
             </span>
             <ag-checkbox ref="cbSelect" (change)="onCheckboxChanged" class="ag-column-select-checkbox"></ag-checkbox>
             <span class="ag-column-drag" ref="eDragHandle"></span>
-            <span id="eText" class="ag-column-select-column-group-label" (click)="onLabelClicked"></span>
+            <span id="eText" class="ag-column-tool-panel-column-group" (click)="onLabelClicked"></span>
         </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;

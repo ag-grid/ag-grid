@@ -17,7 +17,6 @@ import {
 } from "ag-grid-community/main";
 import {BaseDropZonePanel} from "../dropZone/baseDropZonePanel";
 
-@Bean("pivotColumnsPanel")
 export class PivotDropZonePanel extends BaseDropZonePanel {
 
     @Autowired('columnController') private columnController: ColumnController;

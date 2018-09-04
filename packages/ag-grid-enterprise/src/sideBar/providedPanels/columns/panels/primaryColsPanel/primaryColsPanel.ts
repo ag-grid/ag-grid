@@ -23,7 +23,7 @@ export class PrimaryColsPanel extends Component {
 
     private static TEMPLATE =
         `<div class="ag-column-select-panel">
-            <ag-primary-cols-header-panel
+            <ag-primary-cols-header
                 [params]="params"
                 (expand-all)="onExpandAll"
                 (collapse-all)="onCollapseAll"
@@ -31,13 +31,13 @@ export class PrimaryColsPanel extends Component {
                 (unselect-all)="onUnselectAll"
                 (filter-changed)="onFilterChanged"
                 ref="eColumnSelectHeader">
-            </ag-primary-cols-header-panel>
-            <ag-column-container
+            </ag-primary-cols-header>
+            <ag-primary-cols-list
                 [allow-dragging]="allowDragging"
                 [params]="params"
                 (group-expanded)="onGroupExpanded"
                 ref="eToolPanelColumnsContainerComp">
-            </ag-column-container>
+            </ag-primary-cols-list>
         </div>`;
 
     @Autowired('context') private context: Context;
