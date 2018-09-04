@@ -113,11 +113,6 @@ export class MenuItemMapper {
                 icon: Utils.createIconNoSpan('clipboardPaste', this.gridOptionsWrapper, null),
                 action: ()=> this.clipboardService.pasteFromClipboard()
             };
-            case 'toolPanel': return {
-                name: localeTextFunc('toolPanel', 'Tool Panel'),
-                checked: this.gridApi.isToolPanelShowing(),
-                action: ()=> this.gridApi.showToolPanel(!this.gridApi.isToolPanelShowing())
-            };
             case 'export':
                 let exportSubMenuItems:string[] = [];
                 if (!this.gridOptionsWrapper.isSuppressCsvExport()) {

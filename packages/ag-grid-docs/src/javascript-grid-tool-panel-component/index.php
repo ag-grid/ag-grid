@@ -36,14 +36,10 @@ interface IToolPanel {
 <snippet>
 interface IToolPanelParams {
 
-    // an optional template for the loading rows overlay
-    loadingRowsTemplate?: string
-
     // The grid API
     api: any;
 }
 </snippet>
-
 
     <h2>Custom Tool Panel Example</h2>
 

@@ -355,7 +355,6 @@ export class EnterpriseMenu extends BeanStub {
         }
         result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
         result.push('resetColumns');
-        result.push('toolPanel');
 
         // only add grouping expand/collapse if grouping in the InMemoryRowModel
 
