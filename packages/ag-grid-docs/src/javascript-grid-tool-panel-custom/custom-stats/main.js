@@ -52,7 +52,9 @@ function getCustomStatsToolPanel() {
     this.eGui = document.createElement('div');
     this.eGui.style.textAlign = "center";
 
-    params.api.addEventListener('modelUpdated', (params) => this.eGui.innerHTML = calculateStats(params));
+    // only render stats once rows have been loaded, i.e. onModelUpdated
+    var renderStats = () => this.eGui.innerHTML = calculateStats(params);
+    params.api.addEventListener('modelUpdated', renderStats());
   };
 
   CustomStatsToolPanel.prototype.getGui = function () {
