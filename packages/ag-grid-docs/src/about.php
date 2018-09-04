@@ -115,20 +115,18 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
 
                     <div class="col-md-4">
                         <div>
-                            <img src='images/team/petyo.jpg' alt="Petyo Ivanov, Lead Developer"/>
+                            <img src='images/team/Gil.jpg' alt="Guilhermo Lopes, Lead Developer"/>
                         </div>
-                        <h3>Petyo Ivanov</h3>
+                        <h3>Guilhermo Lopes</h3>
                         <h4>Lead Developer, UI</h4>
                         <p>
-                            With more than a decade of experience in front-end web technologies, Petyo ensures that ag-Grid
-                             takes advantage of industry best practice. He is also charged with improving the look and feel 
-                            of the grid and the overall user experience.
+
                         </p>
                     </div>
 
                     <div class="col-md-4">
                         <div>
-                            <img src='images/team/Rod.png' alt="Rod Smith, Support Engineer"/>
+                            <img src='images/team/Rod.jpg' alt="Rod Smith, Support Engineer"/>
                         </div>
                         <h3>Rod Smith</h3>
                         <h4>Support Engineer</h4>
@@ -137,6 +135,17 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
                             growing customer base through Zendesk. He is an experienced
                             Developer across many technologies and has become an expert
                             on ag-Grid and how it's used in our customers' applications.
+                        </p>
+                    </div>
+
+                                        <div class="col-md-4">
+                        <div>
+                            <img src='images/team/Robin.jpg' alt=" Robin Denton, Support Engineer"/>
+                        </div>
+                        <h3>Robin Denton</h3>
+                        <h4>Support Engineer</h4>
+                        <p>
+Robin joins the team to work on support for our growing customer base through Zendesk. He is the youngest developer in the company, and has worked in a variety of web & software development roles.
                         </p>
                     </div>
 
@@ -150,15 +159,12 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
 
                     <div class="col-md-4">
                         <div>
-                            <img src='images/team/john.jpg' alt="John Masterson, COO"/>
+                            <img src='images/team/Alex.jpg' alt="John Masterson, COO"/>
                         </div>
-                        <h3>John Masterson</h3>
+                        <h3>Alex Price</h3>
                         <h4>COO</h4>
                         <p>
-                            John was the first business focused hire at ag-Grid and joined in late 2016 to manage and grow the customer base. 
-                            As the company has grown, he has moved into the COO role but his focus remains on ensuring our customers receive
-                            best-in-class service. His background is in operations and product management always with an eye on the end user of technology.
-                            John heads up the customer team and is always available to deal with customer queries as well as building ag-Grid's infrastructure for growth.
+
                         </p>
                     </div>
                     
@@ -174,28 +180,8 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
                             using his expertise.
                         </p>
                     </div>
-                </div>
-            </div>
-            
-            <h2 id="customer_team"> The Customer Team</h2>
 
-            <div class="inline-container team">
-                <div class="row">
-
-                    <div class="col-md-4">
-                        <div>
-                            <img src='images/team/bas.jpg' alt="Bas Rahman, Customer Experience Team"/>
-                        </div>
-                        <h3>Bas Rahman</h3>
-                        <h4>Customer Experience Team</h4>
-                        <p>
-                            Bas joined the team to manage our evergrowing customer base - she has broad experience in dealing with customers 
-                            and internal stakeholders from previous roles in startups and consulting companies. Recently, Bas has been managing
-                            ag-Grid participation in conferences and making sure everything runs smoothly for these events.
-                        </p>
-                    </div>
-
-                    <div class="col-md-4">
+                <div class="col-md-4">
                         <div>
                             <img src='images/team/dimple.jpg' alt="Dimple Unalkat, Customer Experience Team"/>
                         </div>
@@ -207,8 +193,21 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
                             a number of important financial functions and is a specialist in customer retention.
                         </p>
                     </div>
+                                        <div class="col-md-4">
+                        <div>
+                            <img src='images/team/bas.jpg' alt="Bas Rahman, Customer Experience Team"/>
+                        </div>
+                        <h3>Bas Rahman</h3>
+                        <h4>Customer Experience Team</h4>
+                        <p>
+                            Bas joined the team to manage our evergrowing customer base - she has broad experience in dealing with customers 
+                            and internal stakeholders from previous roles in startups and consulting companies. Recently, Bas has been managing
+                            ag-Grid participation in conferences and making sure everything runs smoothly for these events.
+                        </p>
+                    </div>
                 </div>
             </div>
+        
 
             <h2 id="contact"> Contact Us </h2>
 
