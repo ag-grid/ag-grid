@@ -3,11 +3,10 @@ import {
     Component,
     Context,
     GridOptionsWrapper,
-    IStatusPanelComp,
     PostConstruct
 } from 'ag-grid-community';
 
-export class NameValueComp extends Component implements IStatusPanelComp {
+export class NameValueComp extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
 

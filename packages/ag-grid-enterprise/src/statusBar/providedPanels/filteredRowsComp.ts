@@ -3,11 +3,12 @@ import {
     Events,
     EventService,
     GridApi,
-    PostConstruct
+    PostConstruct,
+    IStatusPanelComp
 } from 'ag-grid-community';
 import {NameValueComp} from "./nameValueComp";
 
-export class FilteredComp extends NameValueComp {
+export class FilteredRowsComp extends NameValueComp implements IStatusPanelComp {
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridApi') private gridApi: GridApi;

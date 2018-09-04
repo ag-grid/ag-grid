@@ -63,7 +63,6 @@ import {ServerSideRowModel} from "./rowModels/serverSide/serverSideRowModel";
 import {ColumnSelectHeaderComp} from "./sideBar/columns/columnsSelect/columnSelectHeaderComp";
 import {ColumnContainerComp} from "./sideBar/columns/columnsSelect/columnContainerComp";
 import {HorizontalResizeComp} from "./sideBar/horizontalResizeComp";
-import {HeaderColumnDropComp} from "./sideBar/columns/columnDrop/headerColumnDropComp";
 import {ColumnToolPanel} from "./sideBar/columns/columnToolPanel";
 import {SideBarButtonsComp} from "./sideBar/sideBarButtonsComp";
 
@@ -72,17 +71,17 @@ import {StatusBar} from "./statusBar/statusBar";
 import {AggregationComp} from "./statusBar/providedPanels/aggregationComp"
 
 import {NameValueComp} from "./statusBar/providedPanels/nameValueComp";
-import {SelectedComp} from "./statusBar/providedPanels/selectedComp"
-import {TotalComp} from "./statusBar/providedPanels/totalRowCountComponent"
-import {FilteredComp} from "./statusBar/providedPanels/filteredComp"
-import {TotalAndFilteredComp} from "./statusBar/providedPanels/totalAndFilteredComp"
+import {SelectedRowsComp} from "./statusBar/providedPanels/selectedRowsComp"
+import {TotalRowsComp} from "./statusBar/providedPanels/totalRowsComp"
+import {FilteredRowsComp} from "./statusBar/providedPanels/filteredRowsComp"
+import {TotalAndFilteredRowsComp} from "./statusBar/providedPanels/totalAndFilteredRowsComp"
 
 let rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
 
-Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, RowGroupCompFactory, PivotCompFactory,
-    PivotColumnsPanel, RangeController, ClipboardService, PivotStage, PivotColDefService,
-    ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService,
-    LicenseManager, MD5, MenuItemMapper, StatusBarService], rowModelTypes);
+Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, RowGroupCompFactory,
+    PivotCompFactory, PivotColumnsPanel, RangeController, ClipboardService, PivotStage, PivotColDefService,
+    ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService, LicenseManager, MD5,
+    MenuItemMapper, StatusBarService], rowModelTypes);
 
 Grid.setEnterpriseComponents([
     {componentName: 'AgColumnSelectHeader', theClass: ColumnSelectHeaderComp},
@@ -104,8 +103,8 @@ Grid.setEnterpriseDefaultComponents([
     {componentName: 'agAggregationComponent', theClass: AggregationComp},
     {componentName: 'agColumnsToolPanel', theClass: ColumnToolPanel},
     {componentName: 'agFiltersToolPanel', theClass: FiltersToolPanel},
-    {componentName: 'agSelectedRowCountComponent', theClass: SelectedComp},
-    {componentName: 'agTotalRowCountComponent', theClass: TotalComp},
-    {componentName: 'agFilteredRowCountComponent', theClass: FilteredComp},
-    {componentName: 'agTotalAndFilteredRowCountComponent', theClass: TotalAndFilteredComp}
+    {componentName: 'agSelectedRowCountComponent', theClass: SelectedRowsComp},
+    {componentName: 'agTotalRowCountComponent', theClass: TotalRowsComp},
+    {componentName: 'agFilteredRowCountComponent', theClass: FilteredRowsComp},
+    {componentName: 'agTotalAndFilteredRowCountComponent', theClass: TotalAndFilteredRowsComp}
 ]);
