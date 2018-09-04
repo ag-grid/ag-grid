@@ -9,6 +9,7 @@ import {
     GridOptions,
     GridOptionsWrapper,
     PostConstruct,
+    Promise,
     RefSelector
 } from 'ag-grid-community';
 import {StatusBarService} from "./statusBarService";
@@ -39,22 +40,24 @@ export class StatusBar extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        if (this.gridOptions.statusBar && this.gridOptions.statusBar.panels) {
-            let leftStatusPanelComponents = this.gridOptions.statusBar.panels
+        if (this.gridOptions.statusBar && this.gridOptions.statusBar.statusPanels) {
+            let leftStatusPanelComponents = this.gridOptions.statusBar.statusPanels
                 .filter((componentConfig) => componentConfig.align === 'left');
             this.createAndRenderComponents(leftStatusPanelComponents, this.eLeftPanelComponents);
 
-            let centerStatusPanelComponents = this.gridOptions.statusBar.panels
+            let centerStatusPanelComponents = this.gridOptions.statusBar.statusPanels
                 .filter((componentConfig) => componentConfig.align === 'center');
             this.createAndRenderComponents(centerStatusPanelComponents, this.eCenterPanelComponents);
 
-            let rightStatusPanelComponents = this.gridOptions.statusBar.panels
+            let rightStatusPanelComponents = this.gridOptions.statusBar.statusPanels
                 .filter((componentConfig) => (!componentConfig.align || componentConfig.align === 'right'));
             this.createAndRenderComponents(rightStatusPanelComponents, this.eRightPanelComponents);
         }
     }
 
     private createAndRenderComponents(statusBarComponents: any[], ePanelComponent: HTMLElement) {
+        let componentDetails: { key: string; promise: Promise<any> }[] = [];
+
         _.forEach(statusBarComponents, (componentConfig) => {
                 let params = {
                     api: this.gridOptionsWrapper.getApi(),
@@ -62,18 +65,27 @@ export class StatusBar extends Component {
                     context: this.gridOptionsWrapper.getContext()
                 };
 
-                this.componentResolver.createAgGridComponent(componentConfig,
+                const promise = this.componentResolver.createAgGridComponent(componentConfig,
                     params,
                     'statusPanel',
-                    componentConfig.statusPanelParams)
-                    .then((component: Component) => {
-                        // default to the component name if no key supplied
-                        let key = componentConfig.key || componentConfig.component;
-                        this.statusBarService.registerStatusPanel(key, component);
+                    componentConfig.statusPanelParams);
 
-                        ePanelComponent.appendChild(component.getGui());
-                    })
+                componentDetails.push({
+                    // default to the component name if no key supplied
+                    key: componentConfig.key || componentConfig.statusPanel,
+                    promise
+                })
             }
         );
+
+        Promise.all(componentDetails.map((details) => details.promise))
+            .then((ignored: any) => {
+                _.forEach(componentDetails, (componentDetail) => {
+                    componentDetail.promise.then((component: Component) => {
+                        this.statusBarService.registerStatusPanel(componentDetail.key, component);
+                        ePanelComponent.appendChild(component.getGui());
+                    })
+                });
+            });
     }
 }

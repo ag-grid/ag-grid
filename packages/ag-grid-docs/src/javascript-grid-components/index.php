@@ -313,8 +313,8 @@ gridOptions = {
             <tr class="item-row">
                 <td>Status Bar Component</td>
                 <td>Grid Option -> Status Bar</td>
-                <td>statusPanelComponent</td>
-                <td>statusPanelComponent<b>Framework</b></td>
+                <td>statusPanel</td>
+                <td>statusPanel<b>Framework</b></td>
             </tr>
             <tr class="item-row">
                 <td>Cell Renderer</td>

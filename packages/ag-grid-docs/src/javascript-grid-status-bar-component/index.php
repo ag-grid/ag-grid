@@ -61,7 +61,7 @@ interface IStatusPanelParams {
 <snippet>
 var gridOptions = {
     statusBar: {
-        panels: [
+        statusPanels: [
             {
                 statusPanel: 'statusBarComponent'
             },
@@ -83,7 +83,7 @@ var gridOptions = {
 <p>Order is important here - the order of the components provided will determine the order in which they're rendered, from
     left to right.</p>
 
-<?= example('Status Bar Component', 'custom-component', 'generated', array("enterprise" => 1)) ?>
+<?= example('Status Bar Panel', 'custom-component', 'generated', array("enterprise" => 1)) ?>
 
 
 <h2 id="accessing-status-bar-comp-instances">Accessing Status Bar Panel Instances</h2>
@@ -112,7 +112,7 @@ if (statusBarComponent) {
     The example below shows using <code>getStatusPanel</code>:
 </p>
 
-<?= example('Get Status Bar Component Instance', 'component-instance', 'generated', array("enterprise" => 1)) ?>
+<?= example('Get Status Bar Panel Instance', 'component-instance', 'generated', array("enterprise" => 1)) ?>
 
 
 <?php 

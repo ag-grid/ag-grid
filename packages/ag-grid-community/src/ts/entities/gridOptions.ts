@@ -220,7 +220,7 @@ export interface GridOptions {
     reactNext?:  boolean;
 
     statusBar? : {
-        panels: StatusPanelDef[]
+        statusPanels: StatusPanelDef[]
     }
 
     /****************************************************************

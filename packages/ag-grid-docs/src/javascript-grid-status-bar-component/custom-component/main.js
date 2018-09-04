@@ -37,7 +37,7 @@ var gridOptions = {
         statusBarComponent: ClickableStatusBarComponent
     },
     statusBar: {
-        panels: [
+        statusPanels: [
             {
                 statusPanel: 'statusBarComponent'
             },
