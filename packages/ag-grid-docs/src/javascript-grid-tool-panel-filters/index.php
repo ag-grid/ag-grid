@@ -55,4 +55,11 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
+    <h2>Next Up</h2>
+
+    <p>
+        Now that we covered the provided Tool Panels, learn how to create
+        <a href="../javascript-grid-tool-panel-component/">Custom Tool Panel Components</a>.
+    </p>
+
 <?php include '../documentation-main/documentation_footer.php';?>

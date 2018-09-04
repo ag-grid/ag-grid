@@ -320,4 +320,11 @@ sideBar = {
 
 <?= example('Side Bar API', 'api', 'generated', array("enterprise" => 1)) ?>
 
+<h2>Next Up</h2>
+
+<p>
+    Now that we covered the Side bar, continue to the next section to learn about the <a href="../javascript-grid-tool-panel-columns/">Columns Tool Panel</a>.
+</p>
+
+
 <?php include '../documentation-main/documentation_footer.php';?>

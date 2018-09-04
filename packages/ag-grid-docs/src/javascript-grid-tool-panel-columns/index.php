@@ -250,6 +250,11 @@ colDefs = {
 
     <?= example('Read Only Example', 'read-only', 'generated', array("enterprise" => 1)) ?>
 
+    <h2>Next Up</h2>
+
+    <p>
+        Now that we covered the Columns Tool Panel, continue to the next section to learn about the <a href="../javascript-grid-tool-panel-filters/">Filters Tool Bar</a>.
+    </p>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

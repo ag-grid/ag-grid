@@ -9,21 +9,18 @@ include '../documentation-main/documentation_header.php';
     <h1 class="heading-enterprise">Tool Panels</h1>
 
     <p class="lead">
-        <b>Tool panels</b> are panels that sit in the <b>side bar</b> to the right of the grid.
-        The side bar allows access to the tool panels via buttons that work like tabs.
-    </p>
-    <p>
-        The grid provides two tool panels out of the box to 1)
-        <a href="../javascript-grid-tool-panel-columns/">manage columns</a> and 2)
-        <a href="../javascript-grid-tool-panel-filters/">manage filters</a>.
-        You can also create your own <a href="../javascript-grid-tool-panel-custom/">custom tool panels</a>
-        that will sit alongside the provided ones.
+        This section covers Tool Panels, available via the grids Side Bar, which allows for easy access to powerful grid
+        operations such as grouping, pivoting, and filtering. Custom Tool Panels can also be provided to the grid.
     </p>
 
+    <h2>Overview</h2>
+
     <p>
-        The tool panels sit inside the side bar. For ease of reading, the tool panels are simply called
-        'panels' below.
+        Tool Panels are panels that sit in the Side Bar to the right of the grid. The Side Bar allows access to the tool
+        panels via buttons that work like tabs. This is illustrated in the diagram below:
     </p>
+
+    <p><img src="sideBar.png"  width="90%"style="border: 1px solid grey"/></p>
 
     <note>
         <p>
@@ -36,6 +33,39 @@ include '../documentation-main/documentation_header.php';
             If moving from an earlier version, set <code>sideBar='columns'</code> to receive similar behaviour.
         </p>
     </note>
+
+    <h2>Provided Tool Panels</h2>
+
+    <p>
+        The grid provides the following Tool Panels:
+    </p>
+
+    <ul class="content">
+        <li><a href="../javascript-grid-tool-panel-columns/">Columns Tool Panel</a> - to control aggregations,
+            grouping and pivoting.</li>
+        <li><a href="../javascript-grid-tool-panel-filters/">Filters Tool Panel</a> - to perform multiple column filters.
+        </li>
+    </ul>
+
+    <p>
+        Follow the links above for more details on these provided Tool Panels.
+    </p>
+
+    <h2>Custom Tool Panel Components</h2>
+
+    <p>
+        In addition to the provided Tool Panels, it is also possible to provide custom Tool Panels.
+    </p>
+
+    <p>
+        For more details refer to the section: <a href="../javascript-grid-tool-panel-component/">Custom Tool Panel Components</a>.
+    </p>
+
+    <h2>Next Up</h2>
+
+    <p>
+        Before covering the Tool Panels in detail, continue to the next section to learn about the <a href="../javascript-grid-side-bar/">Side Bar</a>.
+    </p>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>
