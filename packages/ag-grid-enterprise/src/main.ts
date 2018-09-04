@@ -90,11 +90,7 @@ Grid.setEnterpriseComponents([
     {componentName: 'AgSideBar', theClass: SideBarComp},
 
     {componentName: 'AgStatusBar', theClass: StatusBar},
-    {componentName: 'AgSumAggregation', theClass: NameValueComp},
-    {componentName: 'AgCountAggregation', theClass: NameValueComp},
-    {componentName: 'AgMinAggregation', theClass: NameValueComp},
-    {componentName: 'AgMaxAggregation', theClass: NameValueComp},
-    {componentName: 'AgAvgAggregation', theClass: NameValueComp},
+    {componentName: 'AgNameValue', theClass: NameValueComp},
 
     {componentName: 'AgSideBarButtons', theClass: SideBarButtonsComp},
 ]);

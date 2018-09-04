@@ -26,11 +26,11 @@ import {NameValueComp} from "./nameValueComp";
 export class AggregationComp extends Component implements IStatusPanelComp {
 
     private static TEMPLATE = `<div class="ag-status-panel-aggregations">
-                <ag-avg-aggregation key="average" default-value="Average" ref="avgAggregationComp"></ag-avg-aggregation>
-                <ag-count-aggregation key="count" default-value="Count" ref="countAggregationComp"></ag-count-aggregation>
-                <ag-min-aggregation key="min" default-value="Min" ref="minAggregationComp"></ag-min-aggregation>
-                <ag-max-aggregation key="max" default-value="Max" ref="maxAggregationComp"></ag-max-aggregation>
-                <ag-sum-aggregation key="sum" default-value="Sum" ref="sumAggregationComp"></ag-sum-aggregation>
+                <ag-name-value key="average" default-value="Average" ref="avgAggregationComp"></ag-name-value>
+                <ag-name-value key="count" default-value="Count" ref="countAggregationComp"></ag-name-value>
+                <ag-name-value key="min" default-value="Min" ref="minAggregationComp"></ag-name-value>
+                <ag-name-value key="max" default-value="Max" ref="maxAggregationComp"></ag-name-value>
+                <ag-name-value key="sum" default-value="Sum" ref="sumAggregationComp"></ag-name-value>
             </div>`;
 
     @Autowired('eventService') private eventService: EventService;
