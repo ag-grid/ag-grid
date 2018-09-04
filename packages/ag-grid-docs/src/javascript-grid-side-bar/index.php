@@ -277,16 +277,6 @@ sideBar = {
     for the full list of possible parameters.
 </p>
 
-<h2>Custom Tool Panels</h2>
-
-<p>
-    The tool panels
-    <a href="../javascript-grid-tool-panel-columns/">columns</a> and
-    <a href="../javascript-grid-tool-panel-filters/">filters</a> come as part of the grid.
-    See <a href="../javascript-grid-tool-panel-custom/">custom tool panels</a> for creating your own
-    to either replace or work alongside the provided panels.
-</p>
-
 <h2>Side Bar API</h2>
 
 <p>
