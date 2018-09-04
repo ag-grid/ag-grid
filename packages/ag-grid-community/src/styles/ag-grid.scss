@@ -279,6 +279,15 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     vertical-align: middle;
 }
 
+.ag-primary-cols-header-panel .ag-column-name-filter {
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.ag-primary-cols-header-panel .ag-primary-cols-filter-wrapper {
+    width: 100%;
+}
+
 .ag-tool-panel-wrapper {
     display: flex;
     overflow-y: auto;
@@ -1013,7 +1022,7 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     width: 100%;
 }
 
-.ag-column-select-header {
+.ag-primary-cols-header-panel {
     display: flex;
     flex-direction: row;
 }

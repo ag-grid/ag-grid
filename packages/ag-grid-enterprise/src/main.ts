@@ -81,7 +81,7 @@ Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, R
     MenuItemMapper, StatusBarService], rowModelTypes);
 
 Grid.setEnterpriseComponents([
-    {componentName: 'AgColumnSelectHeader', theClass: PrimaryColsHeaderPanel},
+    {componentName: 'AgPrimaryColsHeaderPanel', theClass: PrimaryColsHeaderPanel},
     {componentName: 'AgColumnContainer', theClass: PrimaryColsListPanel},
     {componentName: 'AgHorizontalResize', theClass: HorizontalResizeComp},
     {componentName: 'AgSideBar', theClass: SideBarComp},

@@ -23,7 +23,7 @@ export class PrimaryColsPanel extends Component {
 
     private static TEMPLATE =
         `<div class="ag-column-select-panel">
-            <ag-column-select-header
+            <ag-primary-cols-header-panel
                 [params]="params"
                 (expand-all)="onExpandAll"
                 (collapse-all)="onCollapseAll"
@@ -31,7 +31,7 @@ export class PrimaryColsPanel extends Component {
                 (unselect-all)="onUnselectAll"
                 (filter-changed)="onFilterChanged"
                 ref="eColumnSelectHeader">
-            </ag-column-select-header>
+            </ag-primary-cols-header-panel>
             <ag-column-container
                 [allow-dragging]="allowDragging"
                 [params]="params"

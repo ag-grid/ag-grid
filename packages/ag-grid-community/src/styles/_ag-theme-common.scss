@@ -710,47 +710,25 @@
     ////////////////////////////////////////
     // Tool panel
     ////////////////////////////////////////
-    .ag-column-tool-panel {
-        display: flex;
-    }
-
-    .ag-filter-body {
-        flex-grow: 1;
-        flex-shrink: 1;
-        padding-right: $grid-size;
-    }
-
-    .ag-column-tool-panel-item {
-        button {
-            font-family: $font-family;
-            font-size: $font-size;
-            height: 100%;
-        }
-    }
 
     .ag-filter-filter {
         margin-bottom: $grid-size;
     }
 
-    .ag-column-select-header {
+    .ag-primary-cols-header-panel {
         border-bottom: 1px solid $border-color;
         box-sizing: border-box;
         height: $header-height;
         padding-top: $grid-size;
 
-        label {
-            display: block;
-            padding-left: $grid-size;
-
-            .ag-filter-checkbox {
-                float: left;
-                margin-right: $grid-size;
-            }
-        }
-
-        .ag-column-tool-panel a {
+        a {
             margin: 0 $grid-size;
             padding-top: $grid-size / 2;
+        }
+
+        .ag-filter-body {
+            margin-left: $grid-size;
+            margin-right: $grid-size;
         }
     }
 
@@ -1453,11 +1431,6 @@
             border-right: 0;
         }
 
-        .ag-column-select-header .ag-filter-body {
-            margin-left: $grid-size;
-            margin-right: 0;
-        }
-
         .ag-column-drag {
             background-position-x: right;
         }
@@ -1591,11 +1564,16 @@
         }
     }
 
-    .ag-column-name-filter {
+    .ag-primary-cols-filter {
         @include textbox($params);
 
         box-sizing: border-box;
         width: 100%;
+    }
+
+    .ag-primary-cols-filter-wrapper {
+        margin-left: $grid-size;
+        margin-right: $grid-size;
     }
 
     $exported: (

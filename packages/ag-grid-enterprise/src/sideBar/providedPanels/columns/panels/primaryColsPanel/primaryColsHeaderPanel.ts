@@ -36,7 +36,7 @@ export class PrimaryColsHeaderPanel extends Component {
 
     @RefSelector('eExpand') private eExpand: HTMLElement;
     @RefSelector('eSelect') private eSelect: HTMLElement;
-    @RefSelector('eFilter') private eFilter: HTMLElement;
+    @RefSelector('eFilterWrapper') private eFilterWrapper: HTMLElement;
 
     private onFilterTextChangedDebounced: ()=>void;
 
@@ -54,21 +54,19 @@ export class PrimaryColsHeaderPanel extends Component {
         let translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         this.setTemplate(
-        `<div class="ag-column-select-header">
-            <div class="ag-column-tool-panel">
-                <a href="javascript:void(0)" (click)="onExpandClicked" ref="eExpand">
-                    <span class="ag-icon ag-icon-tree-open" ref="eExpandChecked"></span>
-                    <span class="ag-icon ag-icon-tree-closed" ref="eExpandUnchecked"></span>
-                    <span class="ag-icon ag-icon ag-icon-tree-indeterminate" ref="eExpandIndeterminate"></span>
-                </a>
-                <a href="javascript:void(0)" class="ag-column-tool-panel-item" (click)="onSelectClicked" ref="eSelect">
-                    <span class="ag-icon ag-icon-checkbox-checked" ref="eSelectChecked"></span>
-                    <span class="ag-icon ag-icon-checkbox-unchecked" ref="eSelectUnchecked"></span>
-                    <span class="ag-icon ag-icon-checkbox-indeterminate" ref="eSelectIndeterminate"></span>
-                </a>
-            </div>
-            <div class="ag-filter-body" ref="eFilter">
-                <input class="ag-column-name-filter" ref="eFilterTextField" type="text" placeholder="${translate('filterOoo', 'Filter...')}" (input)="onFilterTextChanged">
+        `<div class="ag-primary-cols-header-panel">
+            <a href="javascript:void(0)" (click)="onExpandClicked" ref="eExpand">
+                <span class="ag-icon ag-icon-tree-open" ref="eExpandChecked"></span>
+                <span class="ag-icon ag-icon-tree-closed" ref="eExpandUnchecked"></span>
+                <span class="ag-icon ag-icon ag-icon-tree-indeterminate" ref="eExpandIndeterminate"></span>
+            </a>
+            <a href="javascript:void(0)" (click)="onSelectClicked" ref="eSelect">
+                <span class="ag-icon ag-icon-checkbox-checked" ref="eSelectChecked"></span>
+                <span class="ag-icon ag-icon-checkbox-unchecked" ref="eSelectUnchecked"></span>
+                <span class="ag-icon ag-icon-checkbox-indeterminate" ref="eSelectIndeterminate"></span>
+            </a>
+            <div class="ag-primary-cols-filter-wrapper" ref="eFilterWrapper">
+                <input class="ag-primary-cols-filter" ref="eFilterTextField" type="text" placeholder="${translate('filterOoo', 'Filter...')}" (input)="onFilterTextChanged">        
             </div>
         </div>`);
     }
@@ -94,7 +92,7 @@ export class PrimaryColsHeaderPanel extends Component {
 
         let groupsPresent = this.columnController.isPrimaryColumnGroupsPresent();
 
-        _.setVisible(this.eFilter, showFilter);
+        _.setVisible(this.eFilterWrapper, showFilter);
         _.setVisible(this.eSelect, showSelect);
         _.setVisible(this.eExpand, showExpand && groupsPresent);
     }
