@@ -17,9 +17,9 @@ import {StatusBarService} from "./statusBarService";
 export class StatusBar extends Component {
 
     private static TEMPLATE = `<div class="ag-status-bar">
-        <div ref="leftPanelComponents" class="ag-status-bar-left"></div>
-        <div ref="centerPanelComponents" class="ag-status-bar-center"></div>
-        <div ref="rightPanelComponents" class="ag-status-bar-right"></div>
+        <div ref="eStatusBarLeft" class="ag-status-bar-left"></div>
+        <div ref="eStatusBarCenter" class="ag-status-bar-center"></div>
+        <div ref="eStatusBarRight" class="ag-status-bar-right"></div>
     </div>`;
 
     @Autowired('context') private context: Context;
@@ -30,9 +30,9 @@ export class StatusBar extends Component {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('statusBarService') private statusBarService: StatusBarService;
 
-    @RefSelector('leftPanelComponents') private eLeftPanelComponents: HTMLElement;
-    @RefSelector('centerPanelComponents') private eCenterPanelComponents: HTMLElement;
-    @RefSelector('rightPanelComponents') private eRightPanelComponents: HTMLElement;
+    @RefSelector('eStatusBarLeft') private eStatusBarLeft: HTMLElement;
+    @RefSelector('eStatusBarCenter') private eStatusBarCenter: HTMLElement;
+    @RefSelector('eStatusBarRight') private eStatusBarRight: HTMLElement;
 
     constructor() {
         super(StatusBar.TEMPLATE);
@@ -43,15 +43,15 @@ export class StatusBar extends Component {
         if (this.gridOptions.statusBar && this.gridOptions.statusBar.statusPanels) {
             let leftStatusPanelComponents = this.gridOptions.statusBar.statusPanels
                 .filter((componentConfig) => componentConfig.align === 'left');
-            this.createAndRenderComponents(leftStatusPanelComponents, this.eLeftPanelComponents);
+            this.createAndRenderComponents(leftStatusPanelComponents, this.eStatusBarLeft);
 
             let centerStatusPanelComponents = this.gridOptions.statusBar.statusPanels
                 .filter((componentConfig) => componentConfig.align === 'center');
-            this.createAndRenderComponents(centerStatusPanelComponents, this.eCenterPanelComponents);
+            this.createAndRenderComponents(centerStatusPanelComponents, this.eStatusBarCenter);
 
             let rightStatusPanelComponents = this.gridOptions.statusBar.statusPanels
                 .filter((componentConfig) => (!componentConfig.align || componentConfig.align === 'right'));
-            this.createAndRenderComponents(rightStatusPanelComponents, this.eRightPanelComponents);
+            this.createAndRenderComponents(rightStatusPanelComponents, this.eStatusBarRight);
         }
     }
 
