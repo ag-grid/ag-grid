@@ -1336,9 +1336,7 @@ export class GridOptionsWrapper {
             options.showToolPanel = undefined;
             options.sideBar = options.sideBar || false;
         }
-        if (options.sideBar != null) {
-            options.sideBar = SideBarDefParser.parse(options.sideBar)
-        }
+
         let oldToolPanelProperties: {[p:string]: string} = {
             'toolPanelSuppressRowGroups': 'suppressRowGroups',
             'toolPanelSuppressValues': 'suppressValues',
@@ -1361,10 +1359,19 @@ export class GridOptionsWrapper {
                     return;
                 }
 
-                console.warn(`ag-grid: since v19.0 gridOptions.${key} is depreceted, please use gridOptions.toolPanel.items[columnsIndex].componentParams.${translation}`);
+                console.warn(`ag-grid: since v19.0 gridOptions.${key} is deprecated, please use gridOptions.sideBar.toolPanel[columnsIndex].componentParams.${translation}`);
                 toolPanelColumnsCompProps [translation] = value;
             }
         });
+
+        if(Object.keys(toolPanelColumnsCompProps).length > 0 && !_.exists(options.sideBar)) {
+            console.warn(`ag-grid: since version 19.x, sideBar is mandatory if using toolPanel related properties. See https://www.ag-grid.com/javascript-grid-tool-panel/`);
+            options.sideBar = true;
+        }
+
+        if (options.sideBar != null) {
+            options.sideBar = SideBarDefParser.parse(options.sideBar)
+        }
 
         if (Object.keys(toolPanelColumnsCompProps).length > 0) {
             let columnsDef: ToolPanelDef[] = <ToolPanelDef[]>(<SideBarDef>this.gridOptions.sideBar).toolPanels.filter((it:ToolPanelDef)=>it.id === 'columns');

@@ -245,7 +245,7 @@ export abstract class BaseDropZonePanel extends Component {
     protected isPotentialDndColumns(): boolean {
         return Utils.existsAndNotEmpty(this.potentialDndColumns);
     }
-    
+
     private onDragLeave(draggingEvent: DraggingEvent): void {
         // if the dragging started from us, we remove the group, however if it started
         // someplace else, then we don't, as it was only 'asking'

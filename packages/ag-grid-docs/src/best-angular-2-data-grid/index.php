@@ -5,8 +5,6 @@ $pageGroup = "basics";
 include '../landing-pages/header.php';
 ?>
 
-<link rel="stylesheet" href="dist/homepage.css">
-
 <div style="padding-top: 50px;padding-bottom: 50px;padding-right: 50px;padding-left: 50px;margin-top: -45px">
 
 <div>

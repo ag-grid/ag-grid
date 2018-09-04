@@ -11,15 +11,5 @@ include '../documentation-main/documentation_header.php';
         Create custom Tool Panels to augment or replace the provided Tool Panels in the Side Bar.
     </p>
 
-    <p>
-
-    </p>
-
-    <h2>Simple Example</h2>
-
-    <?= example('Custom Stats', 'custom-stats', 'generated', array('enterprise' => true, 'extras' => array('fontawesome')) ) ?>
-
-
-
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -14,7 +14,7 @@ import {
     ColumnApi,
     GridApi
 } from "ag-grid-community/main";
-import {BaseDropZonePanel} from "./common/baseDropZonePanel";
+import {BaseDropZonePanel} from "../dropZone/baseDropZonePanel";
 
 export class RowGroupDropZonePanel extends BaseDropZonePanel {
 
