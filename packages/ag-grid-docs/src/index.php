@@ -36,7 +36,7 @@ meta_and_links($title, $keywords, $description, false);
             <div>
                 <h1 title="ag-Grid">THE BEST
                     <br>
-                    HTML5 GRID
+                    JAVASCRIPT GRID
                     <br>
                     IN THE WORLD
                 </h1>
