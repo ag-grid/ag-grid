@@ -531,17 +531,19 @@ export class ColumnController {
         let emptySpaceBeforeColumn = (col: Column) => col.getLeft() > this.viewportLeft;
 
         // if doing column virtualisation, then we filter based on the viewport.
-        let filterCallback = this.suppressColumnVirtualisation ? null : this.isColumnInViewport.bind(this);
+        let filterCallback = this.suppressColumnVirtualisation ? null : this.isColumnInViewportOrBuffer.bind(this);
 
         return this.getDisplayedColumnsForRow(rowNode, this.displayedCenterColumns,
             filterCallback, emptySpaceBeforeColumn);
     }
 
-    private isColumnInViewport(col: Column): boolean {
+    private isColumnInViewportOrBuffer(col: Column): boolean {
+        let columnBuffer = this.gridOptionsWrapper.getColumnBuffer();
+
         let columnLeft = col.getLeft();
         let columnRight = col.getLeft() + col.getActualWidth();
-        let columnToMuchLeft = columnLeft < this.viewportLeft && columnRight < this.viewportLeft;
-        let columnToMuchRight = columnLeft > this.viewportRight && columnRight > this.viewportRight;
+        let columnToMuchLeft = columnLeft < ( this.viewportLeft - columnBuffer ) && columnRight < ( this.viewportLeft - columnBuffer );
+        let columnToMuchRight = columnLeft > ( this.viewportRight + columnBuffer ) && columnRight > ( this.viewportRight + columnBuffer );
 
         return !columnToMuchLeft && !columnToMuchRight;
     }
@@ -2420,7 +2422,7 @@ export class ColumnController {
     }
 
     private filterOutColumnsWithinViewport(): Column[] {
-        return _.filter(this.displayedCenterColumns, this.isColumnInViewport.bind(this));
+        return _.filter(this.displayedCenterColumns, this.isColumnInViewportOrBuffer.bind(this));
     }
 
     // called from api

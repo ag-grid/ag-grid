@@ -632,6 +632,17 @@ export class GridOptionsWrapper {
         }
     }
 
+    public getColumnBuffer() {
+      if (typeof this.gridOptions.columnBuffer === 'number') {
+        if (this.gridOptions.columnBuffer < 0) {
+          console.warn('ag-Grid: columnBuffer should not be negative')
+        }
+        return this.gridOptions.columnBuffer;
+      } else {
+        return Constants.COL_BUFFER_SIZE;
+      }
+    }
+
     public getRowBuffer() {
         if (typeof this.gridOptions.rowBuffer === 'number') {
             if (this.gridOptions.rowBuffer < 0) {
