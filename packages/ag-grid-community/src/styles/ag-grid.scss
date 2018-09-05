@@ -770,10 +770,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     display: table-cell;
 }
 
-.ag-filter {
-}
-//z-index: 100
-
 .ag-virtual-list-viewport {
     height: 100%;
     overflow-x: auto;
@@ -1115,3 +1111,5 @@ $row-group-indent-size: 10px !default;
 .ag-status-bar-right {
     display: inline-flex;
 }
+
+@import "./ag-grid-mobile";

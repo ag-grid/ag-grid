@@ -64,7 +64,7 @@ const GRID_PANEL_NORMAL_TEMPLATE =
                 <div class="ag-pinned-left-cols-viewport" ref="eLeftViewport" role="presentation">
                     <div class="ag-pinned-left-cols-container" ref="eLeftContainer" role="presentation"></div>
                 </div>
-            </div> 
+            </div>
             <div class="ag-body-viewport-wrapper" ref="eBodyViewportWrapper" role="presentation">
                 <div class="ag-body-viewport" ref="eBodyViewport" role="presentation">
                     <div class="ag-body-container" ref="eBodyContainer" role="presentation"></div>
@@ -205,7 +205,7 @@ export class GridPanel extends Component {
     private overlayWrapper: IOverlayWrapperComp;
 
     private lastVScrollElement: HTMLElement;
-    private recentScrolls: {[key: number]: number} = {}
+    private recentScrolls: {[key: number]: number} = {};
 
     private printLayout: boolean;
 
@@ -1397,7 +1397,7 @@ export class GridPanel extends Component {
     }
 
     private addScrollListener() {
-        this.addDestroyableEventListener(this.eBodyViewport, 'scroll', ()=> {
+        this.addDestroyableEventListener(this.eBodyViewport, 'scroll', (e)=> {
             this.onBodyHorizontalScroll();
             this.onAnyBodyScroll(this.eBodyViewport);
         });
@@ -1448,11 +1448,15 @@ export class GridPanel extends Component {
 
     private onBodyHorizontalScroll(): void {
 
-        let scrollLeft = this.eBodyViewport.scrollLeft;
+        const viewport = this.eBodyViewport;
+        const {scrollLeft, scrollWidth, clientWidth} = viewport;
+        const preventScroll = scrollLeft < 0 || (scrollLeft + clientWidth > scrollWidth);
+
+        if (preventScroll) return;
 
         if (this.nextScrollLeft !== scrollLeft) {
             this.nextScrollLeft = scrollLeft;
-            if (this.useAnimationFrame) {
+            if (this.useAnimationFrame && !this.animationFrameService.supportsOverflowScrolling) {
                 this.animationFrameService.schedule();
             } else {
                 this.doHorizontalScroll();

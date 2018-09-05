@@ -18,6 +18,7 @@ export class AnimationFrameService {
     private p1Tasks = new LinkedList<()=>void>();
     private p2Tasks = new LinkedList<()=>void>();
     private ticking = false;
+    public supportsOverflowScrolling: boolean;
 
     private useAnimationFrame: boolean;
 
@@ -28,6 +29,7 @@ export class AnimationFrameService {
     @PostConstruct
     private init(): void {
         this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
+        this.supportsOverflowScrolling = this.hasOverflowScrolling();
     }
 
     // this method is for our ag-Grid sanity only - if animation frames are turned off,
@@ -123,5 +125,33 @@ export class AnimationFrameService {
 
     public isQueueEmpty(): boolean {
         return this.ticking;
+    }
+
+    private hasOverflowScrolling() {
+        const prefixes: string[] = ['webkit', 'moz', 'o', 'ms'];
+        const div: HTMLElement = document.createElement('div');
+        const body: HTMLBodyElement = document.getElementsByTagName('body')[0];
+        let found: boolean = false;
+        let p: string;
+
+        body.appendChild(div);
+        div.setAttribute('style', prefixes.map(prefix => `-${prefix}-overflow-scrolling: touch`).concat('overflow-scrolling: touch').join(';'));
+
+        let computedStyle: CSSStyleDeclaration = window.getComputedStyle(div);
+
+        if ((<any>computedStyle)['overflowScrolling'] === 'touch') found = true;
+
+        if (!found) {
+            for (p of prefixes) {
+                if ((<any>computedStyle)[`${p}OverflowScrolling`] === 'touch') {
+                    found = true;
+                    break;
+                }
+            }
+        }
+
+        div.parentNode.removeChild(div);
+
+        return found;
     }
 }
