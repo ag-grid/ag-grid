@@ -4,7 +4,7 @@ import {MD5} from './license/md5';
 
 @Bean('licenseManager')
 export class LicenseManager {
-    private static RELEASE_INFORMATION:string = 'MTUzMDg3ODc3OTgxMA==';
+    private static RELEASE_INFORMATION:string = 'MTUzNjE0OTU5Nzk2OA==';
     private static licenseKey:string;
 
     @Autowired('md5') private md5:MD5;
