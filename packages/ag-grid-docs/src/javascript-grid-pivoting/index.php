@@ -18,7 +18,9 @@ include '../documentation-main/documentation_header.php';
         at least one aggregation (value) active for the configuration to make sense. For example, if pivoting by country, you
         must provide something you are measuring such as 'gold medals per country'.
     </p>
-<strong>Test ag-Grid's Pivoting feature with Angular, React and Javascript.</strong></p>
+
+    <p>As with all features, pivoting works with all frameworks the grid supports including Angular and React.</p></p>
+
     <h2>Pivot Mode</h2>
 
     <p>Pivot mode is required to be turned on for pivoting to work. When the grid is in pivot mode, the following
@@ -187,10 +189,14 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
 
     <h2>Filtering with Pivot</h2>
 
-    <p>Filtering is always on primary columns. It is not possible, nor would it make sense, to set a filter on a secondary column.</p>
+    <p>
+        Filtering is always on primary columns. It is not possible, nor would it make sense, to set a filter on a secondary column.
+    </p>
 
-    <p>If pivoting and a filter changes then the set of secondary columns is recalculated
-    based on the newly available columns and aggregation is recalculated.</p>
+    <p>
+        If pivoting and a filter changes then the set of secondary columns is recalculated
+        based on the newly available columns and aggregation is recalculated.
+    </p>
 
     <p>
         You can change the filter on primary columns using the API at all times, regardless of what columns
@@ -201,6 +207,12 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         Below demonstrates the impact of changing filter on pivoting. The pivot is executed on rowData after the
         filter is complete. Notice that the last option, 'USA and Canada Equestrian' has no 'Canada' in the result
         as there is no records for Canada and Equestrian.
+    </p>
+
+    <p>
+        Filters always belong to primary columns. When in pivot mode, filters are not accessible through the
+        column menu (as secondary columns are used), however filters can always be accessed through the filters
+        tool panel.
     </p>
 
     <?= example('Filtering With Pivot', 'filter', 'generated', array("enterprise" => 1)) ?>
