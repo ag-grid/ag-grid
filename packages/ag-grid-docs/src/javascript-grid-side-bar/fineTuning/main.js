@@ -27,23 +27,21 @@ var gridOptions = {
             {
                 id: 'filters',
                 labelKey: 'filters',
+                labelDefault: 'Filters',
                 iconKey: 'menu',
                 component: 'agFiltersToolPanel',
             },
             {
                 id: 'filters 2',
                 labelKey: 'filters',
-                labelDefault: 'Filters (labelDefault)',
+                labelDefault: 'Filters XXXXXXXX',
                 iconKey: 'filter',
                 component: 'agFiltersToolPanel',
             },
         ],
         defaultToolPanel: 'filters'
     },
-    enableFilter: true,
-    localeText: {
-        filters: 'Filters (labelKey i18n)'
-    }
+    enableFilter: true
 };
 
 // setup the grid after the page has finished loading
