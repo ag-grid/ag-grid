@@ -145,7 +145,6 @@ var gridOptions = {
     <p>
         The following examples demonstrates this configuration.
     </p>
-                <p><strong>Test ag-Grid's Column Definitions feature with Angular, React and Javascript.</strong></p>
 
 <?= example('Column Definition Example', 'column-definition', 'generated', array('enterprise' => 1, 'grid' => array('height' => '100%'))) ?>
 
