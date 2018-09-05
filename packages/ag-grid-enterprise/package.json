@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-enterprise",
-  "version": "18.1.1",
+  "version": "19.0.0",
   "description": "ag-Grid Enterprise Features",
   "main": "main.js",
   "types": "main.d.ts",
@@ -26,7 +26,7 @@
   },
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
-    "ag-grid-community": "^18.1.0",
+    "ag-grid-community": "^19.0.0",
     "css-loader": "^1.0.0",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.4.0",

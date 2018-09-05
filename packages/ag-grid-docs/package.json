@@ -1,6 +1,6 @@
 {
     "name": "ag-grid-docs",
-    "version": "18.1.1",
+  "version": "19.0.0",
     "description": "Documentation for ag-Grid",
     "scripts": {
         "postinstall": "webdriver-manager update",
