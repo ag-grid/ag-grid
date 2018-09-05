@@ -176,4 +176,10 @@ include '../documentation-main/documentation_header.php';
     customer demand, we may provide connectors to server-side stores.
 </note>
 
+<h2>Next Up</h2>
+
+<p>
+    Continue to the next section to learn about <a href="../javascript-grid-server-side-model-pagination/">Server-side Pagination</a>.
+</p>
+
 <?php include '../documentation-main/documentation_footer.php';?>

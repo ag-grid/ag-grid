@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise"> Pagination </h1>
 
 <p class="lead">
-    This section shows how to peform server-side pagination using theServer-side Row Model.
+    This section shows how to perform pagination using the Server-side Row Model.
 </p>
 
 <h2>Pagination with Server-side Row Model</h2>
@@ -20,5 +20,12 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <?= example('Pagination Example', 'pagination', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
+
+<h2>Next Up</h2>
+
+<p>
+    Continue to the next section to learn about <a href="../javascript-grid-server-side-model-selection/">Row Selection</a>
+    using the Server-side Row Model.
+</p>
 
 <?php include '../documentation-main/documentation_footer.php';?>
