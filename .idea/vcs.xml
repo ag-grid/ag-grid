@@ -2,9 +2,5 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/packages/ag-grid-angular-cli-example" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/packages/ag-grid-aurelia-example" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/packages/ag-grid-react-example" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/packages/ag-grid-vue-example" vcs="Git" />
   </component>
 </project>
