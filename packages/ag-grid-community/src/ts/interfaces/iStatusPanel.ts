@@ -3,13 +3,11 @@ import {ColumnApi} from "../columnController/columnApi";
 import {IComponent} from "./iComponent";
 
 export type StatusPanelDef = {
-    statusPanel?: {new(): IStatusPanelComp} | string,
+    statusPanel?: { new(): IStatusPanelComp } | string,
     statusPanelFramework?: any,
     align?: string,
     key?: string,
-    statusPanelParams?: {
-        aggFuncs: string[];
-    }
+    statusPanelParams?: any
 };
 
 export interface IStatusPanelParams {
