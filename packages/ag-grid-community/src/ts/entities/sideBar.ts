@@ -39,7 +39,7 @@ export class SideBarDefParser {
     };
 
     static parse (toParse: SideBarDef | string | string[] | boolean): SideBarDef {
-        if (toParse === false) return null;
+        if (!toParse) return null;
         if (toParse === true) {
             return {
                 toolPanels: [

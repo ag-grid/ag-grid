@@ -1,4 +1,4 @@
-<?php
+<?php 
 include_once 'includes/html-helpers.php';
 gtm_data_layer('about');
 ?>
@@ -14,7 +14,7 @@ gtm_data_layer('about');
 
 <body>
     <header id="nav" class="compact">
-        <?php
+        <?php 
         $version = 'latest';
         include './includes/navbar.php';
         ?>
@@ -32,7 +32,7 @@ gtm_data_layer('about');
                     </h1>
 
                     <p class="lead" align="center">
-                        Where CTO's, Senior Developers, Developers and Product Managers serious about JavaScript data presentation<br> can learn more about ag-Grid and share their experiences with the ag-Grid team.
+                        Where CTO's, Senior Developers, Developers and Product Managers serious about JavaScript data <br>presentation can learn more about ag-Grid and share their experiences with the ag-Grid team. 
                     </p>
 
                     <div class="container">
@@ -58,7 +58,7 @@ gtm_data_layer('about');
 
                 <br>
 
-                <h4 class="text-center">
+                <h4 class="text-center"> 
                     No charge, but you must register
                 </h4>
                 <div>
@@ -126,48 +126,56 @@ gtm_data_layer('about');
                 <table style="width:60%">
                   <tr style="background-color: #e2f2ff">
                     <th align="center">Time</th>
-                    <th>Conference Program</th>
-                </tr>
-                <tr>
-                    <td>3:00 - 3:50 PM</td>
-                    <td><strong>Technical look into ag-Grid's features with the Core team, followed by a Q&A</strong></td>
+                    <th>Conference Program</th> 
                 </tr>
                                 <tr>
-                    <td>3:50 - 4:00 PM</td>
+                    <td>2:00pm - 3:00pm</td>
+                    <td><strong>Meet the Technical Team & Networking</strong>
+                        <br>
+                    Networking, free time, chat to the ag-Grid team, ask anything</td>
+                </tr>
+                <tr>
+                    <td>3:00pm - 3:50pm</td>
+                    <td><strong>Overview of Tricky Features</strong>
+                        <br>
+                    Technical look into ag-Grid's features with the Core team, followed by a Q&A</td>
+                </tr>
+                                <tr>
+                    <td>3:50pm - 4:00pm</td>
                     <td>[Break]</td>
                 </tr>
                 <tr>
-                    <td style="background-color: whitesmoke">4:00 - 4:25 PM</td>
-                    <td style="background-color: whitesmoke"><strong>How ag-Grid Manages Complexity internally</strong>
+                    <td style="background-color: whitesmoke">4:00pm - 4:25pm</td>
+                    <td style="background-color: whitesmoke"><strong>ag-Grid - Complexity and Performance</strong>
                         <br>
-                        Looking at how ag-Grid built it's own IoC container and Component Library under the hood rather than relying on frameworks, and how it all integrates with all the frameworks.
+                        Looking at the challenges of building a component like ag-Grid, the internal framework ag-Grid now uses, and how to best squeeze ag-Grid for performance.
                     </td>
                 </tr>
                 <tr>
-                    <td>4:25 - 4:50 PM</td>
+                    <td>4:25pm - 4:50pm</td>
                     <td><strong>Big Data with the Server Side Row Model</strong>
                         <br>
-                        Explaining when and how to use the server side row model.
+                        Big data is no common place in industry, so how do you best show big data in ag-Grid? Introducing the Server Side Row Model, with examples connecting to Oracle and Apache Spark.
                     </td>
                 </tr>
                                                 <tr>
-                    <td>4:50 - 5:00 PM</td>
+                    <td>4:50pm - 5:00pm</td>
                     <td>[Break]</td>
                 </tr>
                 <tr>
                     <td style="background-color: whitesmoke">5:00 - 5:30 PM</td>
                     <td style="background-color: whitesmoke"><strong>Supporting the Frameworks</strong>
                         <br>
-                        Showing how we are committed to Angular, React and any future framework that gains popularity.
+                        Showing how ag-Grid is committed to the rapid changing world of JavaScript frameworks.
                     </tr>
                     <tr>
-                        <td>5:30 - 6:00 PM</td>
+                        <td>5:30pm - 6:00pm</td>
                         <td><strong>Origins of ag-Grid, Current State, and Roadmap</strong>
                             <br>
                             The story of ag-Grid, where we are, where we are going.
                         </tr>
                                             <tr>
-                        <td>6:00 - 8:00 PM</td>
+                        <td>6:00pm - 8:00pm</td>
                         <td><strong>Networking, Drinks, Bar Tab and Food.</strong>
                         </tr>
                     </table>
@@ -182,7 +190,7 @@ gtm_data_layer('about');
                     </h2>
 
 
-                    <head>
+                                       <head>
                         <style>
                         table, th, td {
                             border: 1px solid black;
@@ -197,62 +205,59 @@ gtm_data_layer('about');
                 <table style="width:60%">
                   <tr style="background-color: #e2f2ff">
                     <th align="center">Time</th>
-                    <th>Conference Program</th>
-                </tr>
-                <tr>
-                    <td>3:00 - 3:50 PM</td>
-                    <td><strong>Technical look into ag-Grid's features with the Core team, followed by a Q&A</strong></td>
+                    <th>Conference Program</th> 
                 </tr>
                                 <tr>
-                    <td>3:50 - 4:00 PM</td>
+                    <td>2:00pm - 3:00pm</td>
+                    <td><strong>Meet the Technical Team & Networking</strong>
+                        <br>
+                    Networking, free time, chat to the ag-Grid team, ask anything</td>
+                </tr>
+                <tr>
+                    <td>3:00pm - 3:50pm</td>
+                    <td><strong>Overview of Tricky Features</strong>
+                        <br>
+                    Technical look into ag-Grid's features with the Core team, followed by a Q&A</td>
+                </tr>
+                                <tr>
+                    <td>3:50pm - 4:00pm</td>
                     <td>[Break]</td>
                 </tr>
                 <tr>
-                    <td style="background-color: whitesmoke">4:00 - 4:25 PM</td>
-                    <td style="background-color: whitesmoke"><strong>How ag-Grid Manages Complexity internally</strong>
+                    <td style="background-color: whitesmoke">4:00pm - 4:25pm</td>
+                    <td style="background-color: whitesmoke"><strong>ag-Grid - Complexity and Performance</strong>
                         <br>
-                        Looking at how ag-Grid built it's own IoC container and Component Library under the hood rather than relying on frameworks, and how it all integrates with all the frameworks.
+                        Looking at the challenges of building a component like ag-Grid, the internal framework ag-Grid now uses, and how to best squeeze ag-Grid for performance.
                     </td>
                 </tr>
                 <tr>
-                    <td>4:25 - 4:50 PM</td>
+                    <td>4:25pm - 4:50pm</td>
                     <td><strong>Big Data with the Server Side Row Model</strong>
                         <br>
-                        Explaining when and how to use the server side row model.
+                        Big data is no common place in industry, so how do you best show big data in ag-Grid? Introducing the Server Side Row Model, with examples connecting to Oracle and Apache Spark.
                     </td>
                 </tr>
                                                 <tr>
-                    <td>4:50 - 5:00 PM</td>
+                    <td>4:50pm - 5:00pm</td>
                     <td>[Break]</td>
                 </tr>
                 <tr>
                     <td style="background-color: whitesmoke">5:00 - 5:30 PM</td>
                     <td style="background-color: whitesmoke"><strong>Supporting the Frameworks</strong>
                         <br>
-                        Showing how we are committed to Angular, React and any future framework that gains popularity.
+                        Showing how ag-Grid is committed to the rapid changing world of JavaScript frameworks.
                     </tr>
                     <tr>
-                        <td>5:30 - 6:00 PM</td>
+                        <td>5:30pm - 6:00pm</td>
                         <td><strong>Origins of ag-Grid, Current State, and Roadmap</strong>
                             <br>
                             The story of ag-Grid, where we are, where we are going.
                         </tr>
                                             <tr>
-                        <td>6:00 - 8:00 PM</td>
+                        <td>6:00pm - 8:00pm</td>
                         <td><strong>Networking, Drinks, Bar Tab and Food.</strong>
                         </tr>
                     </table>
-                    <head>
-                        <style>
-                        table, th, td {
-                            border: 1px solid black;
-                            border-collapse: collapse;
-                        }
-                        th, td {
-                            padding: 15px;
-                        }
-                    </style>
-                </head>
 
 
                     <br>

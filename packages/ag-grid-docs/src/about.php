@@ -159,12 +159,12 @@ Robin joins the team to work on support for our growing customer base through Ze
 
                     <div class="col-md-4">
                         <div>
-                            <img src='images/team/Alex.jpg' alt="John Masterson, COO"/>
+                            <img src='images/team/Alex.jpg' alt="Alex Price, COO"/>
                         </div>
                         <h3>Alex Price</h3>
                         <h4>COO</h4>
                         <p>
-
+Alex moved to the UK in August 2015 to pursue an MBA at the University of oxford. Since completing his degree, Alex has worked in startups in London and Silicon Valley. As operations manager his focus is on improving customer satisfaction and efficiencies with the the sales team. Having previously been head of operations at a manufacturing plant, Alex has a keen appreciation of systems and working with people. Alex heads up the customer team and is always available to deal with customer queries as well as scaling ag-Grid’s infrastructure for growth.
                         </p>
                     </div>
                     
