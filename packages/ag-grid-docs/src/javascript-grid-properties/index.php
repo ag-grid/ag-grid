@@ -348,45 +348,7 @@ include '../documentation-main/documentation_header.php';
                 See <a href="../javascript-grid-pivoting/#pivotRowTotals">Pivot Row Totals</a>.
             </td>
         </tr>
-
-
         </table>
-<h2>Tool Panel</h2>
-    <table class="table content reference">
-        <tr>
-            <th>toolPanelSuppressRowGroups, toolPanelSuppressValues, toolPanelSuppressPivots, toolPanelSuppressPivotMode</th>
-            <td>Set to true to hide the relevant sections in the <a href="../javascript-grid-tool-panel">Tool Panel</a>.
-            See example <a href="../javascript-grid-tool-panel/#suppressExample">Suppress Panels</a></td>
-        </tr>
-        <tr>
-            <th>showToolPanel</th>
-            <td>Set to true to show the <a href="../javascript-grid-tool-panel">Tool Panel</a> by default.</td>
-        </tr>
-        <tr>
-            <th>toolPanelSuppressSideButtons</th>
-            <td>
-                Set to true to hide the <a href="../javascript-grid-tool-panel">Tool Panel</a> side buttons for
-                opening / closing the tool panel.
-            </td>
-        </tr>
-        <tr>
-            <th>contractColumnSelection</th>
-            <td>Set to true to have column list contracted by default - only used if column groups exist.</td>
-        </tr>
-        <tr>
-            <th>toolPanelSuppressColumnFilter</th>
-            <td>Set to true to not show the 'column filter' component.</td>
-        </tr>
-        <tr>
-            <th>toolPanelSuppressColumnSelectAll</th>
-            <td>Set to true to not sure the column 'select all' component.</td>
-        </tr>
-        <tr>
-            <th>toolPanelSuppressColumnExpandAll</th>
-            <td>Set to true to not show the column 'expand all' component.</td>
-        </tr>
-    </table>
-
 
     <h2>Data & Row Models</h2>
     <table class="table content reference">

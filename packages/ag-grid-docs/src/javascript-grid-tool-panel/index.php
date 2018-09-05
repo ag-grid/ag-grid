@@ -20,7 +20,7 @@ include '../documentation-main/documentation_header.php';
         panels via buttons that work like tabs. This is illustrated in the diagram below:
     </p>
 
-    <p><img src="sideBar.png"  width="90%"style="border: 1px solid grey"/></p>
+    <p><img src="sideBar.png" width="90%" /></p>
 
     <note>
         <p>
