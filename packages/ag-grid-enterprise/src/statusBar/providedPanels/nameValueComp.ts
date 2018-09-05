@@ -4,7 +4,7 @@ export class NameValueComp extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
 
-    private static TEMPLATE = `<div class="ag-status-panel-aggregation-item">  
+    private static TEMPLATE = `<div class="ag-name-value">  
             <span ref="eLabel"></span>:&nbsp;<span ref="eValue" class="ag-name-value-value"></span>
         </div>`;
 

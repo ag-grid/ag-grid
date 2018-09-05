@@ -27,6 +27,7 @@ export class FilteredRowsComp extends NameValueComp implements IStatusPanelComp 
             return;
         }
 
+        this.addCssClass('ag-status-panel');
         this.addCssClass('ag-status-panel-filtered-row-count');
 
         this.setVisible(true);

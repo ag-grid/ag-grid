@@ -20,6 +20,7 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
             return;
         }
 
+        this.addCssClass('ag-status-panel');
         this.addCssClass('ag-status-panel-total-and-filtered-row-count');
 
         this.setVisible(true);

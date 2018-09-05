@@ -25,7 +25,7 @@ import {NameValueComp} from "./nameValueComp";
 
 export class AggregationComp extends Component implements IStatusPanelComp {
 
-    private static TEMPLATE = `<div class="ag-status-panel-aggregations">
+    private static TEMPLATE = `<div class="ag-status-panel ag-status-panel-aggregations">
                 <ag-name-value key="average" default-value="Average" ref="avgAggregationComp"></ag-name-value>
                 <ag-name-value key="count" default-value="Count" ref="countAggregationComp"></ag-name-value>
                 <ag-name-value key="min" default-value="Min" ref="minAggregationComp"></ag-name-value>

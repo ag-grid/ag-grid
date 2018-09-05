@@ -19,6 +19,7 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
             return;
         }
 
+        this.addCssClass('ag-status-panel');
         this.addCssClass('ag-status-panel-selected-row-count');
 
         const selectedRowCount = this.gridApi.getSelectedRows().length;

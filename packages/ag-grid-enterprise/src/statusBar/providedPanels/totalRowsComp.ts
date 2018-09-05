@@ -20,6 +20,7 @@ export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
             return;
         }
 
+        this.addCssClass('ag-status-panel');
         this.addCssClass('ag-status-panel-total-row-count');
 
         this.setVisible(true);
