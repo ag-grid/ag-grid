@@ -36,33 +36,33 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <td>string</td>
             <td>Set to 'columns' or 'filters' to display side bar with just one of
-                Columns or Filters panels.</td>
+                Columns or Filters tool panels.</td>
         </tr>
         <tr>
             <td>SideBarDef<br/>(long form)</td>
             <td>An object of type SideBarDef (explained below) to allow detailed configuration
-            of the side bar. Use this to configure the panels (eg pass parameters to the
-                columns panel) or to include custom panels.</td>
+            of the side bar. Use this to configure the provided tool panels (eg pass parameters to the
+                columns or filters panel) or to include custom tool panels.</td>
         </tr>
     </table>
 
     <h3>Boolean Configuration</h3>
 
     <p>
-        The default side bar contains the Columns and Filters panels. To use the default side bar,
+        The default side bar contains the Columns and Filters tool panels. To use the default side bar,
         set the grid property <code>sideBar=true</code>. The Columns panel will be open by default
     </p>
 
     <p>
-        The default configuration doesn't allow customisation of the panels. More detailed configurations
+        The default configuration doesn't allow customisation of the tool panels. More detailed configurations
         are explained below.
     </p>
 
     <p>
-        In the example below, note the following:
+        In the following example note the following:
         <ul>
             <li>The grid property <code>sideBar</code> is set to true.</li>
-            <li>The side bar is displayed with panels Columns and Filters.</li>
+            <li>The side bar is displayed with tool panels Columns and Filters.</li>
             <li>The Columns panel is displayed by default.</li>
         </ul>
     </p>
@@ -72,7 +72,7 @@ include '../documentation-main/documentation_header.php';
     <h3>String Configuration</h3>
 
     <p>
-        To display just one of the provided panels, set either <code>sideBar='columns'</code>
+        To display just one of the provided tool panels, set either <code>sideBar='columns'</code>
         or <code>sideBar='filters'</code>. This will display the desired item with default configuration.
     </p>
 
@@ -151,7 +151,7 @@ sideBar = {
     </p>
 
     <p>
-        The following code snippet shows and example of the <code>boolean</code> shortcut and the equivalent
+        The following code snippet shows an example of the <code>boolean</code> shortcut and the equivalent
         <code>SideBarDef</code> long form.
     </p>
 
@@ -253,7 +253,7 @@ sideBar = {
     Parameters are passed to tool panels via the <code>componentParams</code> object.
     For example, the following code snippet sets <code>suppressRowGroups: true</code>
     and <code>suppressValues: true</code> for the
-    <a href="../javascript-grid-tool-panel-columns/">columns</a> panel.
+    <a href="../javascript-grid-tool-panel-columns/">columns tool panel</a>.
 </p>
 
 <snippet>
@@ -273,8 +273,9 @@ sideBar = {
 </snippet>
 
 <p>
-    See the documentation for <a href="../javascript-grid-tool-panel-columns/">columns panel</a>
-    for the full list of possible parameters.
+    This example configures the columns tool panel. See the
+    <a href="../javascript-grid-tool-panel-columns/">columns tool panel</a>
+    documentation for the full list of possible parameters to this tool panel.
 </p>
 
 <h2>Side Bar API</h2>

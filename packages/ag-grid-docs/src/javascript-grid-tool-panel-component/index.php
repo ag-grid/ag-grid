@@ -9,8 +9,8 @@ include '../documentation-main/documentation_header.php';
     <h1 class="heading-enterprise">Tool Panel Component</h1>
 
     <p class="lead">
-        Custom Tool Panel Components can be included into the grids Side Bar. Implement these when the provided Tool
-        Panels do not meet your application requirements.
+        Custom Tool Panel Components can be included into the grids Side Bar. Implement these when you require
+        more Tool Panels to meet your application requirements.
     </p>
 
     <p>
@@ -47,7 +47,7 @@ interface IToolPanelParams {
     <h2>Registering Tool Panel Components</h2>
 
     <p>
-        Registering a Tool Panel components follows the same approach as any other custom component in the grid. For
+        Registering a Tool Panel component follows the same approach as any other custom components in the grid. For
         more details see:
         <a href="../javascript-grid-components/#registering-custom-components">Registering Custom Components</a>.
     </p>

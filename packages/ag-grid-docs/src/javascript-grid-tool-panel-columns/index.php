@@ -201,7 +201,7 @@ colDefs = {
 }</snippet>
     </p>
 
-<h2>Fixing Tool Panel Contents Height </h2>
+<h2>Changing Tool Panel Contents Height </h2>
 
 <p>
     By default, the tool panel panels stretch to fit the height of the grid, with maximum height set to <code>100vh</code>. To tweak the height of them, you can tweak the <code>.ag-column-panel-center</code> selector:
@@ -223,7 +223,7 @@ colDefs = {
     <ul class="content">
         <li>
             Columns <code>country, year, date and sport</code> all have <code>enableRowGroup=true</code>
-            and <code>enablePivot: true</code>. This means you can drag the columns to the group
+            and <code>enablePivot=true</code>. This means you can drag the columns to the group
             and pivot sections, but you cannot drag them to the values sections.
         </li>
         <li>

@@ -176,7 +176,7 @@ export class GridCore extends Component {
         this.sideBarComp.setVisible(show);
     }
 
-    public closeSideBar () {
+    public closeToolPanel () {
         if (!this.sideBarComp) {
             console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
             return;

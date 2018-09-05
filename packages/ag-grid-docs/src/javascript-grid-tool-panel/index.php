@@ -17,7 +17,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Tool Panels are panels that sit in the Side Bar to the right of the grid. The Side Bar allows access to the tool
-        panels via buttons that work like tabs. This is illustrated in the diagram below:
+        panels via buttons that work like tabs. The Side Bar and a Tool Panel are highlighted in the screen shot below.
     </p>
 
     <p><img src="sideBar.png" width="90%" /></p>
@@ -46,10 +46,6 @@ include '../documentation-main/documentation_header.php';
         <li><a href="../javascript-grid-tool-panel-filters/">Filters Tool Panel</a> - to perform multiple column filters.
         </li>
     </ul>
-
-    <p>
-        Follow the links above for more details on these provided Tool Panels.
-    </p>
 
     <h2>Custom Tool Panel Components</h2>
 

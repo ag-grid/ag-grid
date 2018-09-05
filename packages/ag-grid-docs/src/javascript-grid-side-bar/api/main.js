@@ -22,8 +22,8 @@ function openToolPanel (key) {
     gridOptions.api.openToolPanel(key)
 }
 
-function closeSideBar () {
-    gridOptions.api.closeSideBar()
+function closeToolPanel () {
+    gridOptions.api.closeToolPanel()
 }
 
 function getOpenedToolPanel () {
@@ -35,9 +35,9 @@ function setSideBar (def) {
 }
 
 function getSideBar () {
-    let toolPanel = gridOptions.api.getSideBar ();
-    alert(JSON.stringify(toolPanel));
-    console.log(toolPanel);
+    let sideBar = gridOptions.api.getSideBar ();
+    alert(JSON.stringify(sideBar));
+    console.log(sideBar);
 }
 
 function getOpenedToolPanelItem (){

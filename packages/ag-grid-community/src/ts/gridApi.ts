@@ -804,8 +804,8 @@ export class GridApi {
         this.gridCore.openToolPanel(key);
     };
 
-    public closeSideBar () {
-        this.gridCore.closeSideBar();
+    public closeToolPanel () {
+        this.gridCore.closeToolPanel();
     };
 
     public getOpenedToolPanel (): string {
