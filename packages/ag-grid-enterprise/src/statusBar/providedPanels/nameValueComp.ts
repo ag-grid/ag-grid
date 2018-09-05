@@ -1,16 +1,17 @@
-import {Autowired, Component, Context, GridOptionsWrapper, PostConstruct} from 'ag-grid-community';
+import {Autowired, Component, Context, GridOptionsWrapper, PostConstruct, RefSelector} from 'ag-grid-community';
 
 export class NameValueComp extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
 
-    private static TEMPLATE = `<div class="ag-status-panel">  
-            <span id="_label"></span>:<span id="_value" class="ag-name-value-value"></span>
+    private static TEMPLATE = `<div class="ag-status-panel-aggregation-item">  
+            <span ref="eLabel"></span>:&nbsp;<span ref="eValue" class="ag-name-value-value"></span>
         </div>`;
 
     private props: { key: string, defaultValue: string };
 
-    private lbValue: HTMLElement;
+    @RefSelector('eLabel') private eLabel: HTMLElement;
+    @RefSelector('eValue') private eValue: HTMLElement;
 
     constructor(private key: string, private defaultValue: string) {
         super(NameValueComp.TEMPLATE);
@@ -27,12 +28,10 @@ export class NameValueComp extends Component {
         this.setVisible(false);
 
         let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        this.queryForHtmlElement('#_label').innerHTML = localeTextFunc(this.key, this.defaultValue);
-
-        this.lbValue = this.queryForHtmlElement('#_value');
+        this.eLabel.innerHTML = localeTextFunc(this.key, this.defaultValue);
     }
 
     public setValue(value: any): void {
-        this.lbValue.innerHTML = value;
+        this.eValue.innerHTML = value;
     }
 }

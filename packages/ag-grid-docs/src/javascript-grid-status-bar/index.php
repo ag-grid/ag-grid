@@ -158,7 +158,7 @@ value provided in the component configuration (see above), but will default to t
 <p>
     The snippet below shows a status bar configured with the grid provided
     aggregation component only. The component is further configured to only
-    show sum and average functions.
+    show average and sum functions.
 </p>
 
 <snippet>
@@ -169,7 +169,7 @@ gridOptions: {
                 statusPanel: 'agAggregationComponent',
                 statusPanelParams: {
                     // possible values are: 'count', 'sum', 'min', 'max', 'avg'
-                    aggFuncs: ['sum', 'avg']
+                    aggFuncs: ['avg', 'sum']
                 }
             }
         ]
@@ -186,10 +186,10 @@ gridOptions: {
     <ul>
         <li>
             The component <code>agAggregationComponent</code> is provided with
-            parameters <code>aggFuncs: ['sum', 'avg']</code>.
+            parameters <code>aggFuncs: ['avg', 'sum']</code>.
         </li>
         <li>
-            When a range of numbers is selected, only <code>sum</code> and <code>avg</code>
+            When a range of numbers is selected, only <code>avg</code> and <code>sum</code>
             functions are displayed.
         </li>
     </ul>

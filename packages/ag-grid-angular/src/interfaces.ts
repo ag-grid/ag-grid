@@ -15,7 +15,8 @@ import {
     IHeaderGroupParams,
     IHeaderParams,
     ILoadingOverlayParams,
-    INoRowsOverlayParams
+    INoRowsOverlayParams,
+    IStatusPanelParams
 } from "ag-grid-community";
 
 export interface AgFrameworkComponent<T> {
@@ -38,3 +39,5 @@ export interface AgFilterComponent extends IFilterAngularComp {}
 
 export interface ILoadingOverlayAngularComp extends AgFrameworkComponent<ILoadingOverlayParams> {}
 export interface INoRowsOverlayAngularComp extends AgFrameworkComponent<INoRowsOverlayParams> {}
+
+export interface IStatusPanelAngularComp extends AgFrameworkComponent<IStatusPanelParams> {}
