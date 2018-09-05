@@ -115,9 +115,9 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
 
                     <div class="col-md-4">
                         <div>
-                            <img src='images/team/Gil.jpg' alt="Guilhermo Lopes, Lead Developer"/>
+                            <img src='images/team/gil.jpg' alt="Guilherme Lopes, Lead Developer"/>
                         </div>
-                        <h3>Guilhermo Lopes</h3>
+                        <h3>Guilherme Lopes</h3>
                         <h4>Lead Developer, UI</h4>
                         <p>
 
@@ -126,7 +126,7 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
 
                     <div class="col-md-4">
                         <div>
-                            <img src='images/team/Rod.jpg' alt="Rod Smith, Support Engineer"/>
+                            <img src='images/team/rod.jpg' alt="Rod Smith, Support Engineer"/>
                         </div>
                         <h3>Rod Smith</h3>
                         <h4>Support Engineer</h4>
@@ -140,7 +140,7 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
 
                                         <div class="col-md-4">
                         <div>
-                            <img src='images/team/Robin.jpg' alt=" Robin Denton, Support Engineer"/>
+                            <img src='images/team/robin.jpg' alt=" Robin Denton, Support Engineer"/>
                         </div>
                         <h3>Robin Denton</h3>
                         <h4>Support Engineer</h4>
@@ -159,7 +159,7 @@ Robin joins the team to work on support for our growing customer base through Ze
 
                     <div class="col-md-4">
                         <div>
-                            <img src='images/team/Alex.jpg' alt="Alex Price, COO"/>
+                            <img src='images/team/alex.jpg' alt="Alex Price, COO"/>
                         </div>
                         <h3>Alex Price</h3>
                         <h4>COO</h4>
@@ -170,7 +170,7 @@ Alex moved to the UK in August 2015 to pursue an MBA at the University of oxford
                     
                     <div class="col-md-4">
                         <div>
-                            <img src='images/team/Fahad.jpg' alt="Fahad Ahmad, Digital Marketing Executive"/>
+                            <img src='images/team/fahad.jpg' alt="Fahad Ahmad, Digital Marketing Executive"/>
                         </div>
                         <h3>Fahad Ahmad</h3>
                         <h4>Digital Marketing Executive</h4>
