@@ -91,6 +91,16 @@ gulp.task('replace-to-cdn', () => {
         .pipe(gulp.dest('./dist'));
 });
 
+gulp.task('copy-from-dist', () => {
+  return merge(
+    gulp.src(['../ag-grid-community/dist/ag-grid-community.js']).pipe(gulp.dest('./dist/dist/ag-grid-community/')),
+    gulp
+      .src(['../ag-grid-enterprise/dist/ag-grid-enterprise.js', '../ag-grid-enterprise/dist/ag-grid-enterprise.min.js'])
+      .pipe(gulp.dest('./dist/dist/ag-grid-enterprise'))
+  );
+});
+
+
 const generateExamples = require('./example-generator');
 gulp.task('serve', require('./dev-server'));
 gulp.task('generate-examples', generateExamples);
