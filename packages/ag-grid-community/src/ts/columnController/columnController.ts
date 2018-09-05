@@ -47,13 +47,13 @@ export interface ColumnResizeSet {
 }
 
 export interface ColumnState {
-    colId: string,
-    hide?: boolean,
-    aggFunc?: string | IAggFunc,
-    width?: number,
-    pivotIndex?: number,
-    pinned?: boolean | string | "left" | "right",
-    rowGroupIndex?: number
+    colId: string;
+    hide?: boolean;
+    aggFunc?: string | IAggFunc;
+    width?: number;
+    pivotIndex?: number;
+    pinned?: boolean | string | "left" | "right";
+    rowGroupIndex?: number;
 }
 
 @Bean('columnController')
@@ -496,7 +496,7 @@ export class ColumnController {
                     if (filterCallback(colForFilter)) filterPasses = true;
                 });
             } else {
-                filterPasses = true
+                filterPasses = true;
             }
 
             if (filterPasses) {
@@ -805,7 +805,7 @@ export class ColumnController {
                 width: otherColWidth,
                 ratios: [1],
                 columns: [otherCol]
-            })
+            });
         }
 
         this.resizeColumnSets(sets, finished, source);
