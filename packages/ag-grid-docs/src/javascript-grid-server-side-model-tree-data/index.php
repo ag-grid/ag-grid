@@ -144,4 +144,12 @@ var gridOptions = {
 
 <?= example('Purging Tree Data', 'purging-tree-data', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
+<h2>Next Up</h2>
+
+<p>
+    Continue to the next section to learn about <a href="../javascript-grid-server-side-model-crud/">CRUD Operations</a>
+    using the Server-side Row Model.
+</p>
+
+
 <?php include '../documentation-main/documentation_footer.php';?>
