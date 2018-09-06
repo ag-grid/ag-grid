@@ -56,7 +56,7 @@ var gridOptions = {
     debug: true,
     enableSorting: true,
     enableRangeSelection: true,
-    showToolPanel: true,
+    sideBar: true,
     suppressAggFuncInHeader: true,
     // restrict to 2 server side calls concurrently
     maxConcurrentDatasourceRequests: 2,

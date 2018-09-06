@@ -22,8 +22,20 @@ var gridOptions = {
     rowGroupPanelShow: 'never',
     enableSorting: true,
     functionsReadOnly: true,
-    toolPanelSuppressPivotMode: true,
-    toolPanelSuppressValues: true,
+    sideBar: {
+        toolPanels: [{
+          id: 'columns',
+          labelDefault: 'Columns',
+          labelKey: 'columns',
+          iconKey: 'columns',
+          toolPanel: 'agColumnsToolPanel',
+          toolPanelParams: {
+            suppressPivots: true,
+            suppressPivotMode: true,
+            suppressValues: true
+          }
+        }]
+    },
     animateRows: true,
     debug: true,
     pagination: true,
