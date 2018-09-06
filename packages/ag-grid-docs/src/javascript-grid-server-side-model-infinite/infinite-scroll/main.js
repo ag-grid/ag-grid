@@ -26,10 +26,9 @@ var gridOptions = {
     // only keep 10 blocks of rows
     maxBlocksInCache: 10,
 
-    debug: true,
     enableColResize: true,
     animateRows: true,
-    toolPanelSuppressSideButtons: true
+    debug: true
 };
 
 // setup the grid after the page has finished loading
@@ -50,46 +49,43 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-function ServerSideDatasource(fakeServer) {
-  this.fakeServer = fakeServer;
+function ServerSideDatasource(server) {
+  return {
+    getRows(params) {
+      // adding delay to simulate real sever call
+      setTimeout(function () {
+
+        var response = server.getResponse(params.request);
+
+        if (response.success) {
+          // call the success callback
+          params.successCallback(response.rows, response.lastRow);
+        } else {
+          // inform the grid request failed
+          params.failCallback();
+        }
+
+      }, 500);
+    }
+  };
 }
-
-ServerSideDatasource.prototype.getRows = function(params) {
-    var server = this.fakeServer;
-
-    // adding delay to simulate real sever call
-    setTimeout(function () {
-
-      var response = server.getResponse(params.request);
-
-      if (response.success) {
-        // call the success callback
-        params.successCallback(response.rows, response.lastRow);
-      } else {
-        // inform the grid request failed
-        params.failCallback();
-      }
-
-    }, 500);
-};
 
 function FakeServer(allData) {
-  this.data = allData;
-}
-
-FakeServer.prototype.getResponse = function (request) {
-
-  console.log('asking for rows: ' + request.startRow + ' to ' + request.endRow);
-
-  // take a slice of the total rows
-  var rowsThisPage = this.data.slice(request.startRow, request.endRow);
-
-  // if on or after the last page, work out the last row.
-  var lastRow = this.data.length <= request.endRow ? data.length : -1;
-
   return {
-    success: true,
-    rows: rowsThisPage,
-    lastRow: lastRow
+    getResponse(request) {
+      console.log('asking for rows: ' + request.startRow + ' to ' + request.endRow);
+
+      // take a slice of the total rows
+      var rowsThisPage = allData.slice(request.startRow, request.endRow);
+
+      // if on or after the last page, work out the last row.
+      var lastRow = allData.length <= request.endRow ? data.length : -1;
+
+      return {
+        success: true,
+        rows: rowsThisPage,
+        lastRow: lastRow
+      };
+    }
   };
-};
+}

@@ -49,8 +49,22 @@ var gridOptions = {
     debug: true,
     enableSorting: true,
     suppressAggFuncInHeader: true,
-    toolPanelSuppressPivotMode: true,
-    toolPanelSuppressValues: true,
+    sideBar: {
+        toolPanels: [
+          {
+            id: 'columns',
+            labelDefault: 'Columns',
+            labelKey: 'columns',
+            iconKey: 'columns',
+            toolPanel: 'agColumnsToolPanel',
+            toolPanelParams: {
+              suppressPivots: true,
+              suppressPivotMode: true,
+              suppressValues: true
+            }
+          }
+        ]
+    },
     // restrict to 2 server side calls concurrently
     maxConcurrentDatasourceRequests: 2,
     cacheBlockSize: 100,

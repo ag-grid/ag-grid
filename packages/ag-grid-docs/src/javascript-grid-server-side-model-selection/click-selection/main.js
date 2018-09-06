@@ -1,8 +1,8 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", enableRowGroup: true},
     {headerName: "Age", field: "age", enableRowGroup: true},
-    {headerName: "Country", field: "country", enableRowGroup: true, rowGroup: true},
-    {headerName: "Year", field: "year", enableRowGroup: true, rowGroup: true},
+    {headerName: "Country", field: "country", enableRowGroup: true, rowGroup: true, hide: true},
+    {headerName: "Year", field: "year", enableRowGroup: true, rowGroup: true, hide: true},
     {headerName: "Sport", field: "sport", enableRowGroup: true},
     {headerName: "Gold", field: "gold", aggFunc: 'sum'},
     {headerName: "Silver", field: "silver", aggFunc: 'sum'},
@@ -21,8 +21,20 @@ var gridOptions = {
     animateRows: true,
     debug: true,
     enableSorting: true,
-    toolPanelSuppressPivotMode: true,
-    toolPanelSuppressValues: true,
+    sideBar: {
+        toolPanels: [{
+          id: 'columns',
+          labelDefault: 'Columns',
+          labelKey: 'columns',
+          iconKey: 'columns',
+          toolPanel: 'agColumnsToolPanel',
+          toolPanelParams: {
+            suppressPivots: true,
+            suppressPivotMode: true,
+            suppressValues: true
+          }
+        }]
+    },
     suppressAggFuncInHeader: true,
     rowSelection: 'multiple',
     // restrict to 2 server side calls concurrently
