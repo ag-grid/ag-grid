@@ -338,10 +338,6 @@ export class CellComp extends Component {
             cssClasses.push('ag-cell-value');
         }
 
-        if (this.beans.gridOptionsWrapper.getDomLayout()===Constants.DOM_LAYOUT_PRINT) {
-            cssClasses.push('ag-cell-layout-print');
-        }
-
         return cssClasses;
     }
 
