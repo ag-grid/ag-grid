@@ -122,14 +122,14 @@ sideBar = {
             labelDefault: 'Columns',
             labelKey: 'columns',
             iconKey: 'columns',
-            component: 'agColumnsToolPanel',
+            toolPanel: 'agColumnsToolPanel',
         },
         {
             id: 'filters',
             labelDefault: 'Filters',
             labelKey: 'filters',
             iconKey: 'filter',
-            component: 'agFiltersToolPanel',
+            toolPanel: 'agFiltersToolPanel',
         }
     ],
     defaultToolPanel: 'filters'
@@ -167,14 +167,14 @@ sideBar = {
             labelDefault: 'Columns',
             labelKey: 'columns',
             iconKey: 'columns',
-            component: 'agColumnsToolPanel',
+            toolPanel: 'agColumnsToolPanel',
         },
         {
             id: 'filters',
             labelDefault: 'Filters',
             labelKey: 'filters',
             iconKey: 'filter',
-            component: 'agFiltersToolPanel',
+            toolPanel: 'agFiltersToolPanel',
         }
     ],
     defaultToolPanel: 'columns'
@@ -199,7 +199,7 @@ sideBar = {
             labelDefault: 'Filters',
             labelKey: 'filters',
             iconKey: 'filter',
-            component: 'agFiltersToolPanel',
+            toolPanel: 'agFiltersToolPanel',
         }
     ],
     defaultToolPanel: 'filters'
@@ -225,14 +225,14 @@ sideBar = {
             labelDefault: 'Columns',
             labelKey: 'columns',
             iconKey: 'columns',
-            component: 'agColumnsToolPanel',
+            toolPanel: 'agColumnsToolPanel',
         },
         {
             id: 'filters',
             labelDefault: 'Filters',
             labelKey: 'filters',
             iconKey: 'filter',
-            component: 'agFiltersToolPanel',
+            toolPanel: 'agFiltersToolPanel',
         }
     ]
 }
@@ -263,8 +263,8 @@ sideBar = {
         labelDefault: 'Columns',
         labelKey: 'columns',
         iconKey: 'columns',
-        component: 'agColumnsToolPanel',
-        componentParams: {
+        toolPanel: 'agColumnsToolPanel',
+        toolPanelParams: {
             suppressRowGroups: true,
             suppressValues: true,
         }

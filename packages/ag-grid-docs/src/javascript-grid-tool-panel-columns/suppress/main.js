@@ -20,8 +20,8 @@ var gridOptions = {
             labelDefault: 'Columns',
             labelKey: 'columns',
             iconKey: 'columns',
-            component: 'agColumnsToolPanel',
-            componentParams: {
+            toolPanel: 'agColumnsToolPanel',
+            toolPanelParams: {
                 suppressRowGroups: true,
                 suppressValues: true,
                 suppressPivots: true,
@@ -31,7 +31,8 @@ var gridOptions = {
                 suppressColumnSelectAll: true,
                 suppressColumnExpandAll: true
             }
-        }]
+        }],
+        defaultToolPanel: 'columns'
     },
 
 };

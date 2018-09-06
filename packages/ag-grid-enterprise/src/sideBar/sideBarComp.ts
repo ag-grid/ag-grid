@@ -28,8 +28,6 @@ export class SideBarComp extends Component implements ISideBar {
     @Autowired("componentResolver") private componentResolver: ComponentResolver;
 
     @RefSelector('sideBarButtons') private sideBarButtonsComp: SideBarButtonsComp;
-    // @RefSelector('columnComp') private columnComp: ToolPanelColumnComp;
-    // @RefSelector('filterComp') private filterComp: ToolPanelAllFiltersComp;
     private panelComps: { [p: string]: ToolPanelWrapper } = {};
 
     private static readonly TEMPLATE = `<div class="ag-side-bar">
@@ -68,12 +66,12 @@ export class SideBarComp extends Component implements ISideBar {
                 }
                 let componentPromise: Promise<IComponent<any>> = this.componentResolver.createAgGridComponent(
                     toolPanel,
-                    toolPanel.componentParams,
-                    'component',
+                    toolPanel.toolPanelParams,
+                    'toolPanel',
                     null
                 );
                 if (componentPromise == null) {
-                    console.warn(`ag-grid: error processing tool panel component ${toolPanel.id}. You need to specify either 'component' or 'componentFramework'`);
+                    console.warn(`ag-grid: error processing tool panel component ${toolPanel.id}. You need to specify either 'toolPanel' or 'toolPanelFramework'`);
                     return;
                 }
                 allPromises.push(componentPromise);
@@ -100,11 +98,9 @@ export class SideBarComp extends Component implements ISideBar {
     }
 
     public refresh(): void {
-        // this.columnComp.refresh();
-        // this.filterComp.refresh();
         Object.keys(this.panelComps).forEach(key => {
             let currentComp = this.panelComps[key];
-            currentComp.refresh ();
+            currentComp.refresh();
         });
     }
 
@@ -148,7 +144,6 @@ export class SideBarComp extends Component implements ISideBar {
         this.sideBarButtonsComp.setPanelVisibility(currentlyOpenedKey, false);
     }
 
-
     public isToolPanelShowing(): boolean {
         return this.getActiveToolPanelItem() != null;
     }
@@ -169,7 +164,7 @@ export class SideBarComp extends Component implements ISideBar {
     }
 
     public reset (): void {
-        this.sideBarButtonsComp.clear ();
+        this.sideBarButtonsComp.clear();
         this.panelComps = {};
         this.setTemplate(SideBarComp.TEMPLATE);
         this.postConstruct();

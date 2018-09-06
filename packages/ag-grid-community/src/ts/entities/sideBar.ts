@@ -1,4 +1,4 @@
-import {ICellRendererComp, ICellRendererFunc} from "../rendering/cellRenderers/iCellRenderer";
+import {IToolPanelComp} from "../interfaces/iToolPanel";
 
 export interface ToolPanelDef {
     id: string,
@@ -6,9 +6,9 @@ export interface ToolPanelDef {
     labelKey: string,
     // To allow binding this to an specific icon
     iconKey: string,
-    component?: {new(): ICellRendererComp} | ICellRendererFunc | string
-    componentFramework?: any;
-    componentParams?: any;
+    toolPanel?: {new(): IToolPanelComp} | string
+    toolPanelFramework?: any;
+    toolPanelParams?: any;
 }
 
 export interface SideBarDef {
@@ -22,7 +22,7 @@ export class SideBarDefParser {
         labelDefault: 'Columns',
         labelKey: 'columns',
         iconKey: 'columns',
-        component: 'agColumnsToolPanel',
+        toolPanel: 'agColumnsToolPanel',
     };
 
     static readonly DEFAULT_FILTER_COMP: ToolPanelDef = {
@@ -30,7 +30,7 @@ export class SideBarDefParser {
         labelDefault: 'Filters',
         labelKey: 'filters',
         iconKey: 'filter',
-        component: 'agFiltersToolPanel',
+        toolPanel: 'agFiltersToolPanel',
     };
 
     static readonly DEFAULT_BY_KEY: {[p: string]: ToolPanelDef} = {

@@ -63,28 +63,6 @@ export class AgComponentUtils {
         return Adapter;
     }
 
-    public adaptStatusPanelFunction(callback: AgGridComponentFunctionInput): { new(): IComponent<any> } {
-        class Adapter implements IStatusPanelComp {
-            private params: IStatusPanelParams;
-
-            getGui(): HTMLElement {
-                let callbackResult: string | HTMLElement = callback(this.params);
-                let type = typeof callbackResult;
-                if (type === 'string' || type === 'number' || type === 'boolean') {
-                    return _.loadTemplate('<span>' + callbackResult + '</span>');
-                } else {
-                    return <HTMLElement> callbackResult;
-                }
-            }
-
-            init?(params: ICellRendererParams): void {
-                this.params = params;
-            }
-        }
-
-        return Adapter;
-    }
-
     public doesImplementIComponent(candidate: AgGridRegisteredComponentInput<IComponent<any>>): boolean {
         if (!candidate) return false;
         return (<any>candidate).prototype && 'getGui' in (<any>candidate).prototype;

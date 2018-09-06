@@ -22,8 +22,8 @@ $toolPanelComponentProperties = [
     ['iconKey',
         'The <a href="../javascript-grid-icons/">key of the icon</a> to be used as a graphical aid beside the label in the side bar.'
     ],
-    ['component,<br/>componentFramework,<br/>componentParams',
-        'The component to use as the panel. The provided panels use components "agColumnsToolPanel" and "agFiltersToolPanel". To provide your own custom panel component, you reference it by name here.'
+    ['toolPanel,<br/>toolPanelFramework,<br/>toolPanelParams',
+        'The tool panel component to use as the panel. The provided panels use components "agColumnsToolPanel" and "agFiltersToolPanel". To provide your own custom panel component, you reference it by name here.'
     ]
 ];
 ?>

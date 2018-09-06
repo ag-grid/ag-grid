@@ -14,6 +14,8 @@ import {
     ILoadingOverlayParams,
     INoRowsOverlayParams,
     IStatusPanel,
+    IToolPanel,
+    IToolPanelParams,
     IAfterGuiAttachedParams,
     IStatusPanelParams
 } from 'ag-grid-community';
@@ -48,5 +50,8 @@ export interface ILoadingOverlayReactComp extends AgReactFrameworkComponent<ILoa
 export interface INoRowsOverlayReactComp extends AgReactFrameworkComponent<INoRowsOverlayParams> {
 }
 
-export interface IStatusPanelAngularComp extends IStatusPanel, AgReactFrameworkComponent<IStatusPanelParams> {
+export interface IStatusPanelReactComp extends IStatusPanel, AgReactFrameworkComponent<IStatusPanelParams> {
+}
+
+export interface IToolPanelReactComp extends IToolPanel, AgReactFrameworkComponent<IToolPanelParams> {
 }
