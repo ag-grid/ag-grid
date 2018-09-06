@@ -24,10 +24,20 @@ var gridOptions = {
     rowModelType: 'serverSide',
     // bring back data 50 rows at a time
     cacheBlockSize: 50,
-    // don't show the grouping in a panel at the top
-    rowGroupPanelShow: 'never',
-    toolPanelSuppressPivotMode: true,
-    toolPanelSuppressValues: true,
+    sideBar: {
+        toolPanels: [{
+            id: 'columns',
+            labelDefault: 'Columns',
+            labelKey: 'columns',
+            iconKey: 'columns',
+            toolPanel: 'agColumnsToolPanel',
+            toolPanelParams: {
+                suppressPivots: true,
+                suppressPivotMode: true,
+            }
+        }],
+        defaultToolPanel: 'columns'
+    },
     animateRows: true,
     debug: true,
     icons: {
