@@ -140,8 +140,8 @@ export class Utils {
             // Absolute value - for FF that reports RTL scrolls in negative numbers
             scrollLeft = Math.abs(scrollLeft);
 
-            // Get Chrome and Safari to return the same value as well
-            if (this.isBrowserSafari() || this.isBrowserChrome()) {
+            // Get Chrome to return the same value as well
+            if (this.isBrowserChrome()) {
                 scrollLeft = element.scrollWidth - element.clientWidth - scrollLeft;
             }
         }

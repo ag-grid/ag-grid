@@ -145,7 +145,7 @@ var gridOptions = {
     // suppressRowTransform: true,
     //minColWidth: 50,
     //maxColWidth: 300,
-//    rowBuffer: 10,
+    //    rowBuffer: 10,
     //columnDefs: [],
     //singleClickEdit: true,
     // suppressClickEdit: true,

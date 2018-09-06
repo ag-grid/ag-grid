@@ -1449,20 +1449,20 @@ export class GridPanel extends Component {
     private onBodyHorizontalScroll(): void {
 
         const supportsOverflowScrolling = this.animationFrameService.isSupportsOverflowScrolling();
-        const {scrollLeft, scrollWidth, clientWidth} = this.eBodyViewport;
+        const {scrollWidth, clientWidth} = this.eBodyViewport;
         // in chrome, fractions can be in the scroll left, eg 250.342234 - which messes up our 'scrollWentPastBounds'
         // formula. so we floor it to allow the formula to work.
-        const scrollLeftFloored = Math.floor(scrollLeft);
+        const scrollLeft = Math.floor(_.getScrollLeft(this.eBodyViewport, this.enableRtl));
 
         // touch devices allow elastic scroll - which temporally scrolls the panel outside of the viewport
         // (eg user uses touch to go to the left of the grid, but drags past the left, the rows will actually
         // scroll past the left until the user releases the mouse). when this happens, we want ignore the scroll,
         // as otherwise it was causing the rows and header to flicker.
-        const scrollWentPastBounds = scrollLeftFloored < 0 || (scrollLeftFloored + clientWidth > scrollWidth);
-        // if (scrollWentPastBounds) { return; }
+        const scrollWentPastBounds = scrollLeft < 0 || (scrollLeft + clientWidth > scrollWidth);
+        if (scrollWentPastBounds) { return; }
 
-        if (this.nextScrollLeft !== scrollLeftFloored) {
-            this.nextScrollLeft = scrollLeftFloored;
+        if (this.nextScrollLeft !== scrollLeft) {
+            this.nextScrollLeft = scrollLeft;
             // for touch devices, we found scrolling was jerky when combining overflow scrolling and ag-grid
             // animation frames. so if overflow scroll is supported (which means user is typically on a tab or phone)
             // we don't use the animation frame service for horizontal scrolling.
