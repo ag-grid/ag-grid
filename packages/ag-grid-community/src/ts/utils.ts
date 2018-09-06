@@ -140,8 +140,8 @@ export class Utils {
             // Absolute value - for FF that reports RTL scrolls in negative numbers
             scrollLeft = Math.abs(scrollLeft);
 
-            // Get Chrome and Safari to return the same value as well
-            if (this.isBrowserSafari() || this.isBrowserChrome()) {
+            // Get Chrome to return the same value as well
+            if (this.isBrowserChrome()) {
                 scrollLeft = element.scrollWidth - element.clientWidth - scrollLeft;
             }
         }
@@ -1089,6 +1089,34 @@ export class Utils {
         outer.parentNode.removeChild(outer);
 
         return widthNoScroll - widthWithScroll;
+    }
+
+    static hasOverflowScrolling(): boolean {
+        const prefixes: string[] = ['webkit', 'moz', 'o', 'ms'];
+        const div: HTMLElement = document.createElement('div');
+        const body: HTMLBodyElement = document.getElementsByTagName('body')[0];
+        let found: boolean = false;
+        let p: string;
+
+        body.appendChild(div);
+        div.setAttribute('style', prefixes.map(prefix => `-${prefix}-overflow-scrolling: touch`).concat('overflow-scrolling: touch').join(';'));
+
+        let computedStyle: CSSStyleDeclaration = window.getComputedStyle(div);
+
+        if ((<any>computedStyle)['overflowScrolling'] === 'touch') found = true;
+
+        if (!found) {
+            for (p of prefixes) {
+                if ((<any>computedStyle)[`${p}OverflowScrolling`] === 'touch') {
+                    found = true;
+                    break;
+                }
+            }
+        }
+
+        div.parentNode.removeChild(div);
+
+        return found;
     }
 
     static isKeyPressed(event: KeyboardEvent, keyToCheck: number) {

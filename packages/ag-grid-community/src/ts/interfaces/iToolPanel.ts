@@ -1,9 +1,10 @@
 import {IComponent} from "./iComponent";
 
-export interface IToolPanelParams {}
+export interface IToolPanelParams {
+}
 
 export interface IToolPanel {
-    refresh(): void;
+    refresh(): void
 }
 
 export interface IToolPanelComp extends IToolPanel, IComponent<IToolPanelParams>{}

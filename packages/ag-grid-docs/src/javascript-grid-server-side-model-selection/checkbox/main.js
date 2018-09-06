@@ -1,6 +1,5 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", enableRowGroup: true, hide: true},
-    {headerName: "Age", field: "age", enableRowGroup: true},
     {headerName: "Sport", field: "sport", enableRowGroup: true, width: 350, checkboxSelection: true},
     {headerName: "Year", field: "year", enableRowGroup: true, rowGroup: true},
     {headerName: "Gold", field: "gold", aggFunc: 'sum'},
@@ -22,8 +21,20 @@ var gridOptions = {
     enableSorting: true,
     debug: true,
     suppressAggFuncInHeader: true,
-    toolPanelSuppressPivotMode: true,
-    toolPanelSuppressValues: true,
+    sideBar: {
+        toolPanels: [{
+          id: 'columns',
+          labelDefault: 'Columns',
+          labelKey: 'columns',
+          iconKey: 'columns',
+          toolPanel: 'agColumnsToolPanel',
+          toolPanelParams: {
+            suppressPivots: true,
+            suppressPivotMode: true,
+            suppressValues: true
+          }
+        }]
+    },
     rowSelection: 'multiple',
     isRowSelectable: function (rowNode) {
         return !rowNode.group;

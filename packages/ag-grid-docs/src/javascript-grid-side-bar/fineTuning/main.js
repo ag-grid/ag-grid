@@ -29,14 +29,14 @@ var gridOptions = {
                 labelKey: 'filters',
                 labelDefault: 'Filters',
                 iconKey: 'menu',
-                component: 'agFiltersToolPanel',
+                toolPanel: 'agFiltersToolPanel',
             },
             {
                 id: 'filters 2',
                 labelKey: 'filters',
                 labelDefault: 'Filters XXXXXXXX',
                 iconKey: 'filter',
-                component: 'agFiltersToolPanel',
+                toolPanel: 'agFiltersToolPanel',
             },
         ],
         defaultToolPanel: 'filters'

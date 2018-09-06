@@ -64,7 +64,7 @@ const GRID_PANEL_NORMAL_TEMPLATE =
                 <div class="ag-pinned-left-cols-viewport" ref="eLeftViewport" role="presentation">
                     <div class="ag-pinned-left-cols-container" ref="eLeftContainer" role="presentation"></div>
                 </div>
-            </div> 
+            </div>
             <div class="ag-body-viewport-wrapper" ref="eBodyViewportWrapper" role="presentation">
                 <div class="ag-body-viewport" ref="eBodyViewport" role="presentation">
                     <div class="ag-body-container" ref="eBodyContainer" role="presentation"></div>
@@ -205,7 +205,7 @@ export class GridPanel extends Component {
     private overlayWrapper: IOverlayWrapperComp;
 
     private lastVScrollElement: HTMLElement;
-    private recentScrolls: {[key: number]: number} = {}
+    private recentScrolls: {[key: number]: number} = {};
 
     private printLayout: boolean;
 
@@ -1397,7 +1397,7 @@ export class GridPanel extends Component {
     }
 
     private addScrollListener() {
-        this.addDestroyableEventListener(this.eBodyViewport, 'scroll', ()=> {
+        this.addDestroyableEventListener(this.eBodyViewport, 'scroll', (e)=> {
             this.onBodyHorizontalScroll();
             this.onAnyBodyScroll(this.eBodyViewport);
         });
@@ -1448,14 +1448,28 @@ export class GridPanel extends Component {
 
     private onBodyHorizontalScroll(): void {
 
-        let scrollLeft = this.eBodyViewport.scrollLeft;
+        const supportsOverflowScrolling = this.animationFrameService.isSupportsOverflowScrolling();
+        const {scrollWidth, clientWidth} = this.eBodyViewport;
+        // in chrome, fractions can be in the scroll left, eg 250.342234 - which messes up our 'scrollWentPastBounds'
+        // formula. so we floor it to allow the formula to work.
+        const scrollLeft = Math.floor(_.getScrollLeft(this.eBodyViewport, this.enableRtl));
+
+        // touch devices allow elastic scroll - which temporally scrolls the panel outside of the viewport
+        // (eg user uses touch to go to the left of the grid, but drags past the left, the rows will actually
+        // scroll past the left until the user releases the mouse). when this happens, we want ignore the scroll,
+        // as otherwise it was causing the rows and header to flicker.
+        const scrollWentPastBounds = scrollLeft < 0 || (scrollLeft + clientWidth > scrollWidth);
+        if (scrollWentPastBounds) { return; }
 
         if (this.nextScrollLeft !== scrollLeft) {
             this.nextScrollLeft = scrollLeft;
-            if (this.useAnimationFrame) {
-                this.animationFrameService.schedule();
-            } else {
+            // for touch devices, we found scrolling was jerky when combining overflow scrolling and ag-grid
+            // animation frames. so if overflow scroll is supported (which means user is typically on a tab or phone)
+            // we don't use the animation frame service for horizontal scrolling.
+            if (!this.useAnimationFrame || supportsOverflowScrolling) {
                 this.doHorizontalScroll();
+            } else {
+                this.animationFrameService.schedule();
             }
         }
     }

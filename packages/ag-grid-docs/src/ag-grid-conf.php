@@ -234,7 +234,7 @@ gtm_data_layer('about');
                     <td>4:25pm - 4:50pm</td>
                     <td><strong>Big Data with the Server Side Row Model</strong>
                         <br>
-                        Big data is no common place in industry, so how do you best show big data in ag-Grid? Introducing the Server Side Row Model, with examples connecting to Oracle and Apache Spark.
+                        Big data is now common place in industry, so how do you best show big data in ag-Grid? Introducing the Server Side Row Model, with examples connecting to Oracle and Apache Spark.
                     </td>
                 </tr>
                                                 <tr>
@@ -285,7 +285,7 @@ gtm_data_layer('about');
                     </h3>
                     October 10th 2018
                     <br>
-                    <a href="https://www.eventbrite.com/e/ag-grid-conf-london-tickets-49732217401" target="_blank"><button type="button" class="btn btn-primary">Register for London</button></a>
+                    <a href="https://www.eventbrite.com/e/ag-grid-conf-london-tickets-49732217401" target="_blank"><button type="button" class="btn btn-primary">Register for New York</button></a>
                 </div>
                 <div class="col-sm">
                     <p class="text-center"  style="text-align: center;""><br>
@@ -300,7 +300,7 @@ gtm_data_layer('about');
                     </h3>
                     November 13th 2018
                     <br>
-                    <a href="https://www.eventbrite.com/e/ag-grid-conf-london-tickets-49732217401" target="_blank"><button type="button" class="btn btn-primary">Register for New York</button></a>
+                    <a href="https://www.eventbrite.com/e/ag-grid-conf-london-tickets-49732217401" target="_blank"><button type="button" class="btn btn-primary">Register for London</button></a>
                 </div>
             </div>
         </div>

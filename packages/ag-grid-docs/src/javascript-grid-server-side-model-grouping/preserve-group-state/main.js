@@ -19,11 +19,20 @@ var gridOptions = {
   enableColResize: true,
   // use the enterprise row model
   rowModelType: 'serverSide',
-  // don't show the grouping in a panel at the top
-  toolPanelSuppressPivotMode: true,
-  toolPanelSuppressValues: true,
-  toolPanelSuppressRowGroups: true,
-  toolPanelSuppressSideButtons: true,
+  sideBar: {
+    toolPanels: [{
+      id: 'columns',
+      labelDefault: 'Columns',
+      labelKey: 'columns',
+      iconKey: 'columns',
+      toolPanel: 'agColumnsToolPanel',
+      toolPanelParams: {
+        suppressPivots: true,
+        suppressPivotMode: true,
+        suppressValues: true
+      }
+    }]
+  },
   cacheBlockSize: 75,
   animateRows: true,
   getRowNodeId: function(item) {

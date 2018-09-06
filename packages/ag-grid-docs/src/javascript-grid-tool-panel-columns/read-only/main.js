@@ -16,7 +16,7 @@ var gridOptions = {
     rowData: null,
     pivotMode: true,
     enableSorting: true,
-    showToolPanel: true,
+    sideBar: 'columns',
     rowGroupPanelShow: 'always',
     pivotPanelShow: 'always',
     functionsReadOnly: true

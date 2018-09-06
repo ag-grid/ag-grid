@@ -9,7 +9,6 @@ export interface ComponentMetadata {
     functionAdapter?:(callback:AgGridComponentFunctionInput)=>{new(): IComponent<any>}
 }
 
-
 @Bean("componentMetadataProvider")
 export class ComponentMetadataProvider {
     private componentMetaData :{[key:string]:ComponentMetadata};
@@ -97,7 +96,10 @@ export class ComponentMetadataProvider {
             statusPanel:{
                 mandatoryMethodList: [],
                 optionalMethodList: ['afterGuiAttached'],
-                functionAdapter: this.agComponentUtils.adaptStatusPanelFunction.bind(this.agComponentUtils)
+            },
+            toolPanel:{
+                mandatoryMethodList: [],
+                optionalMethodList: ['refresh', 'afterGuiAttached']
             }
         }
     }

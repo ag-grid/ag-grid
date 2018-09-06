@@ -237,5 +237,10 @@ function getRows(params) {
 <?= example('Preserve Group State', 'preserve-group-state', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
 
+<h2>Next Up</h2>
+
+<p>
+    Continue to the next section to learn how to perform <a href="../javascript-grid-server-side-model-pivoting/">Server-side Pivoting</a>.
+</p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

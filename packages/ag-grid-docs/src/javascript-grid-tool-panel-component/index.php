@@ -15,7 +15,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         In this section we show the interfaces required to implement a custom Tool Panel Component along with details
-        on how to register it with the grid. An example of custom Tool Panel Component is also provided.
+        on how to register it with the grid. An example of a custom Tool Panel Component is also provided.
     </p>
 
     <h2>Tool Panel Interface</h2>
@@ -43,7 +43,6 @@ interface IToolPanelParams {
     api: any;
 }
 </snippet>
-
     <h2>Registering Tool Panel Components</h2>
 
     <p>

@@ -323,7 +323,6 @@ export class GridApi {
     }
 
     public refreshToolPanel(): void {
-        console.log("this.toolPanelComp", this.sideBarComp);
         if (this.sideBarComp) {
             this.sideBarComp.refresh();
         }

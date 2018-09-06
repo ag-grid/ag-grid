@@ -17,11 +17,6 @@ var gridOptions = {
   rowSelection: 'multiple',
   // use the enterprise row model
   rowModelType: 'serverSide',
-  // don't show the grouping in a panel at the top
-  toolPanelSuppressPivotMode: true,
-  toolPanelSuppressValues: true,
-  toolPanelSuppressRowGroups: true,
-  toolPanelSuppressSideButtons: true,
   cacheBlockSize: 75,
   animateRows: true,
   icons: {

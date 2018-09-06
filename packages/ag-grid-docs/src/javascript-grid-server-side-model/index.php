@@ -199,6 +199,8 @@ export interface ColumnVO {
     aggFunc: string;
 }</snippet>
 
+<h2>Next Up</h2>
+
 <p>
     To see how the above interfaces are implemented, continue to the next section: <a href="../javascript-grid-server-side-model-infinite/">Infinite Scroll</a>.
 </p>

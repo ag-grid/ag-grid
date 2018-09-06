@@ -60,10 +60,6 @@ function countryKeyCreator(params) {
     return key;
 }
 
-function onFilterChanged(value) {
-    gridOptions.api.setQuickFilter(value);
-}
-
 function patchData(data) {
     // hack the data, replace each country with an object of country name and code
     data.forEach(function(row) {

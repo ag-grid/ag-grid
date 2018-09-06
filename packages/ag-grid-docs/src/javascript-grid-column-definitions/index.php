@@ -145,7 +145,6 @@ var gridOptions = {
     <p>
         The following examples demonstrates this configuration.
     </p>
-                <p><strong>Test ag-Grid's Column Definitions feature with Angular, React and Javascript.</strong></p>
 
 <?= example('Column Definition Example', 'column-definition', 'generated', array('enterprise' => 1, 'grid' => array('height' => '100%'))) ?>
 
@@ -246,13 +245,8 @@ Examples of state include column visibility, width, row groups and values.
 </note>
 
 <h2 id="column-api-example">Column API Example</h2>
-<p>This section illustrates how to store and restore column state using the <a href="../javascript-grid-column-api/">Column API</a>.
+<p>The example below shows using the grid's <a href="../javascript-grid-column-api/">Column API</a>.
 </p>
-
-<ul class="content">
-    <li>hiding / showing columns as well as saving / restoring the entire state</li>
-    <li><b>registering for column events, the result of which are printed to the console.</b></li>
-</ul>
 
 <?= example('Column State Example', 'column-state', 'generated', array("enterprise" => 1)) ?>
 

@@ -6,6 +6,7 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {AnimationQueueEmptyEvent} from "../events";
 import {Events} from "../eventKeys";
 import {EventService} from "../eventService";
+import {_} from "../utils";
 
 @Bean('animationFrameService')
 export class AnimationFrameService {
@@ -18,6 +19,7 @@ export class AnimationFrameService {
     private p1Tasks = new LinkedList<()=>void>();
     private p2Tasks = new LinkedList<()=>void>();
     private ticking = false;
+    private supportsOverflowScrolling: boolean;
 
     private useAnimationFrame: boolean;
 
@@ -25,9 +27,14 @@ export class AnimationFrameService {
         this.gridPanel = gridPanel;
     }
 
+    public isSupportsOverflowScrolling(): boolean {
+        return this.supportsOverflowScrolling;
+    }
+
     @PostConstruct
     private init(): void {
         this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
+        this.supportsOverflowScrolling = _.hasOverflowScrolling();
     }
 
     // this method is for our ag-Grid sanity only - if animation frames are turned off,
@@ -124,4 +131,6 @@ export class AnimationFrameService {
     public isQueueEmpty(): boolean {
         return this.ticking;
     }
+
+
 }

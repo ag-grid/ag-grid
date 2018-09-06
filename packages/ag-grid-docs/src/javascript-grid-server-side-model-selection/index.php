@@ -6,7 +6,7 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise"> Server-side Row Model </h1>
+<h1 class="heading-enterprise"> Row Selection </h1>
 
 <p class="lead">
     Learn how to implementing Row Selection with the Server-side Row Model.
@@ -88,6 +88,13 @@ include '../documentation-main/documentation_header.php';
 <p>
     If you do not provide node id's, the grid will provide the id's for you,
     and will make sure they are unique.
+</p>
+
+<h2>Next Up</h2>
+
+<p>
+    Continue to the next section to learn about setting <a href="../javascript-grid-server-side-model-row-height/">Row Heights</a>
+    using the Server-side Row Model.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

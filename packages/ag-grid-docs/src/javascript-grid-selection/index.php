@@ -13,7 +13,10 @@ include '../documentation-main/documentation_header.php';
         hold down <code>ctrl</code> while clicking. Selecting a row and then holding down <code>shift</code>
         while clicking a second row will select the range.
     </p>
-                <p><strong>Test ag-Grid's Row Selection feature with Angular, React and Javascript.</strong></p>
+
+    <p>
+        Remember Row Selection works with all frameworks eg Angular and React as well as plain JavaScript.
+    </p>
 
     <p>
         Configure row selection with the following properties:
