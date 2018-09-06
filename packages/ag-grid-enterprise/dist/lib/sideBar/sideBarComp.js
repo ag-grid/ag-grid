@@ -27,8 +27,6 @@ var SideBarComp = /** @class */ (function (_super) {
     __extends(SideBarComp, _super);
     function SideBarComp() {
         var _this = _super.call(this, SideBarComp.TEMPLATE) || this;
-        // @RefSelector('columnComp') private columnComp: ToolPanelColumnComp;
-        // @RefSelector('filterComp') private filterComp: ToolPanelAllFiltersComp;
         _this.panelComps = {};
         return _this;
     }
@@ -54,9 +52,9 @@ var SideBarComp = /** @class */ (function (_super) {
                     console.warn("ag-grid: please review all your toolPanel components, it seems like at least one of them doesn't have an id");
                     return;
                 }
-                var componentPromise = _this.componentResolver.createAgGridComponent(toolPanel, toolPanel.componentParams, 'component', null);
+                var componentPromise = _this.componentResolver.createAgGridComponent(toolPanel, toolPanel.toolPanelParams, 'toolPanel', null);
                 if (componentPromise == null) {
-                    console.warn("ag-grid: error processing tool panel component " + toolPanel.id + ". You need to specify either 'component' or 'componentFramework'");
+                    console.warn("ag-grid: error processing tool panel component " + toolPanel.id + ". You need to specify either 'toolPanel' or 'toolPanelFramework'");
                     return;
                 }
                 allPromises.push(componentPromise);
@@ -82,8 +80,6 @@ var SideBarComp = /** @class */ (function (_super) {
     };
     SideBarComp.prototype.refresh = function () {
         var _this = this;
-        // this.columnComp.refresh();
-        // this.filterComp.refresh();
         Object.keys(this.panelComps).forEach(function (key) {
             var currentComp = _this.panelComps[key];
             currentComp.refresh();

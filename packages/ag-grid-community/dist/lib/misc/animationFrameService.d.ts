@@ -9,8 +9,10 @@ export declare class AnimationFrameService {
     private p1Tasks;
     private p2Tasks;
     private ticking;
+    private supportsOverflowScrolling;
     private useAnimationFrame;
     registerGridComp(gridPanel: GridPanel): void;
+    isSupportsOverflowScrolling(): boolean;
     private init;
     private verifyAnimationFrameOn;
     addP1Task(task: () => void): void;

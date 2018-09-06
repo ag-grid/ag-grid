@@ -112,8 +112,8 @@ var Utils = /** @class */ (function () {
         if (rtl) {
             // Absolute value - for FF that reports RTL scrolls in negative numbers
             scrollLeft = Math.abs(scrollLeft);
-            // Get Chrome and Safari to return the same value as well
-            if (this.isBrowserSafari() || this.isBrowserChrome()) {
+            // Get Chrome to return the same value as well
+            if (this.isBrowserChrome()) {
                 scrollLeft = element.scrollWidth - element.clientWidth - scrollLeft;
             }
         }
@@ -948,6 +948,29 @@ var Utils = /** @class */ (function () {
         // remove divs
         outer.parentNode.removeChild(outer);
         return widthNoScroll - widthWithScroll;
+    };
+    Utils.hasOverflowScrolling = function () {
+        var prefixes = ['webkit', 'moz', 'o', 'ms'];
+        var div = document.createElement('div');
+        var body = document.getElementsByTagName('body')[0];
+        var found = false;
+        var p;
+        body.appendChild(div);
+        div.setAttribute('style', prefixes.map(function (prefix) { return "-" + prefix + "-overflow-scrolling: touch"; }).concat('overflow-scrolling: touch').join(';'));
+        var computedStyle = window.getComputedStyle(div);
+        if (computedStyle['overflowScrolling'] === 'touch')
+            found = true;
+        if (!found) {
+            for (var _i = 0, prefixes_1 = prefixes; _i < prefixes_1.length; _i++) {
+                p = prefixes_1[_i];
+                if (computedStyle[p + "OverflowScrolling"] === 'touch') {
+                    found = true;
+                    break;
+                }
+            }
+        }
+        div.parentNode.removeChild(div);
+        return found;
     };
     Utils.isKeyPressed = function (event, keyToCheck) {
         var pressedKey = event.which || event.keyCode;

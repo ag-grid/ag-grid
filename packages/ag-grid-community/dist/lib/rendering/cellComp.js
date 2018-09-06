@@ -249,9 +249,6 @@ var CellComp = /** @class */ (function (_super) {
         if (!this.usingWrapper) {
             cssClasses.push('ag-cell-value');
         }
-        if (this.beans.gridOptionsWrapper.getDomLayout() === constants_1.Constants.DOM_LAYOUT_PRINT) {
-            cssClasses.push('ag-cell-layout-print');
-        }
         return cssClasses;
     };
     CellComp.prototype.getInitialValueToRender = function () {

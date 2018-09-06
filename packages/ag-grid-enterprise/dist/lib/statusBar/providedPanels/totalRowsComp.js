@@ -45,7 +45,7 @@ var TotalRowsComp = /** @class */ (function (_super) {
     };
     TotalRowsComp.prototype.getRowCountValue = function () {
         var totalRowCount = 0;
-        this.gridApi.forEachLeafNode(function (node) { return totalRowCount += 1; });
+        this.gridApi.forEachNode(function (node) { return totalRowCount += 1; });
         return "" + totalRowCount;
     };
     TotalRowsComp.prototype.init = function () {

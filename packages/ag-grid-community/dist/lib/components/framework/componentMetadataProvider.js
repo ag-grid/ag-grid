@@ -99,7 +99,10 @@ var ComponentMetadataProvider = /** @class */ (function () {
             statusPanel: {
                 mandatoryMethodList: [],
                 optionalMethodList: ['afterGuiAttached'],
-                functionAdapter: this.agComponentUtils.adaptStatusPanelFunction.bind(this.agComponentUtils)
+            },
+            toolPanel: {
+                mandatoryMethodList: [],
+                optionalMethodList: ['refresh', 'afterGuiAttached']
             }
         };
     };

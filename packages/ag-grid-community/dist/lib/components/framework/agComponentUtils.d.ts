@@ -10,8 +10,5 @@ export declare class AgComponentUtils {
     adaptCellRendererFunction(callback: AgGridComponentFunctionInput): {
         new (): IComponent<any>;
     };
-    adaptStatusPanelFunction(callback: AgGridComponentFunctionInput): {
-        new (): IComponent<any>;
-    };
     doesImplementIComponent(candidate: AgGridRegisteredComponentInput<IComponent<any>>): boolean;
 }

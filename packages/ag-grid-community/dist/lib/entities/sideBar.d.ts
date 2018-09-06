@@ -1,17 +1,17 @@
 // Type definitions for ag-grid-community v19.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { ICellRendererComp, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";
+import { IToolPanelComp } from "../interfaces/iToolPanel";
 export interface ToolPanelDef {
     id: string;
     labelDefault: string;
     labelKey: string;
     iconKey: string;
-    component?: {
-        new (): ICellRendererComp;
-    } | ICellRendererFunc | string;
-    componentFramework?: any;
-    componentParams?: any;
+    toolPanel?: {
+        new (): IToolPanelComp;
+    } | string;
+    toolPanelFramework?: any;
+    toolPanelParams?: any;
 }
 export interface SideBarDef {
     toolPanels?: (ToolPanelDef | string)[];

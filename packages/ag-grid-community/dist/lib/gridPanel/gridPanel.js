@@ -65,7 +65,7 @@ var headerRootComp_1 = require("../headerRendering/headerRootComp");
 var resizeObserverService_1 = require("../misc/resizeObserverService");
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
-var GRID_PANEL_NORMAL_TEMPLATE = "<div class=\"ag-root ag-font-style\" role=\"grid\">\n        <ag-header-root ref=\"headerRoot\"></ag-header-root>\n        <div class=\"ag-floating-top\" ref=\"eTop\" role=\"presentation\">\n            <div class=\"ag-pinned-left-floating-top\" ref=\"eLeftTop\" role=\"presentation\"></div>\n            <div class=\"ag-floating-top-viewport\" ref=\"eTopViewport\" role=\"presentation\">\n                <div class=\"ag-floating-top-container\" ref=\"eTopContainer\" role=\"presentation\"></div>\n            </div>\n            <div class=\"ag-pinned-right-floating-top\" ref=\"eRightTop\" role=\"presentation\"></div>\n            <div class=\"ag-floating-top-full-width-container\" ref=\"eTopFullWidthContainer\" role=\"presentation\"></div>\n        </div>\n        <div class=\"ag-body\" ref=\"eBody\" role=\"presentation\">\n            <div class=\"ag-pinned-left-cols-viewport-wrapper\" ref=\"eLeftViewportWrapper\" role=\"presentation\">\n                <div class=\"ag-pinned-left-cols-viewport\" ref=\"eLeftViewport\" role=\"presentation\">\n                    <div class=\"ag-pinned-left-cols-container\" ref=\"eLeftContainer\" role=\"presentation\"></div>\n                </div>\n            </div> \n            <div class=\"ag-body-viewport-wrapper\" ref=\"eBodyViewportWrapper\" role=\"presentation\">\n                <div class=\"ag-body-viewport\" ref=\"eBodyViewport\" role=\"presentation\">\n                    <div class=\"ag-body-container\" ref=\"eBodyContainer\" role=\"presentation\"></div>\n                </div>\n            </div>\n            <div class=\"ag-pinned-right-cols-viewport-wrapper\" ref=\"eRightViewportWrapper\" role=\"presentation\">\n                <div class=\"ag-pinned-right-cols-viewport\" ref=\"eRightViewport\" role=\"presentation\">\n                    <div class=\"ag-pinned-right-cols-container\" ref=\"eRightContainer\" role=\"presentation\"></div>\n                </div>\n            </div>\n            <div class=\"ag-full-width-viewport-wrapper\" ref=\"eFullWidthViewportWrapper\" role=\"presentation\">\n                <div class=\"ag-full-width-viewport\" ref=\"eFullWidthViewport\" role=\"presentation\">\n                    <div class=\"ag-full-width-container\" ref=\"eFullWidthContainer\" role=\"presentation\"></div>\n                </div>\n            </div>\n        </div>\n        <div class=\"ag-floating-bottom\" ref=\"eBottom\" role=\"presentation\">\n            <div class=\"ag-pinned-left-floating-bottom\" ref=\"eLeftBottom\" role=\"presentation\"></div>\n            <div class=\"ag-floating-bottom-viewport\" ref=\"eBottomViewport\" role=\"presentation\">\n                <div class=\"ag-floating-bottom-container\" ref=\"eBottomContainer\" role=\"presentation\"></div>\n            </div>\n            <div class=\"ag-pinned-right-floating-bottom\" ref=\"eRightBottom\" role=\"presentation\"></div>\n            <div class=\"ag-floating-bottom-full-width-container\" ref=\"eBottomFullWidthContainer\" role=\"presentation\"></div>\n        </div>\n        <div class=\"ag-overlay\" ref=\"eOverlay\"></div>\n    </div>";
+var GRID_PANEL_NORMAL_TEMPLATE = "<div class=\"ag-root ag-font-style\" role=\"grid\">\n        <ag-header-root ref=\"headerRoot\"></ag-header-root>\n        <div class=\"ag-floating-top\" ref=\"eTop\" role=\"presentation\">\n            <div class=\"ag-pinned-left-floating-top\" ref=\"eLeftTop\" role=\"presentation\"></div>\n            <div class=\"ag-floating-top-viewport\" ref=\"eTopViewport\" role=\"presentation\">\n                <div class=\"ag-floating-top-container\" ref=\"eTopContainer\" role=\"presentation\"></div>\n            </div>\n            <div class=\"ag-pinned-right-floating-top\" ref=\"eRightTop\" role=\"presentation\"></div>\n            <div class=\"ag-floating-top-full-width-container\" ref=\"eTopFullWidthContainer\" role=\"presentation\"></div>\n        </div>\n        <div class=\"ag-body\" ref=\"eBody\" role=\"presentation\">\n            <div class=\"ag-pinned-left-cols-viewport-wrapper\" ref=\"eLeftViewportWrapper\" role=\"presentation\">\n                <div class=\"ag-pinned-left-cols-viewport\" ref=\"eLeftViewport\" role=\"presentation\">\n                    <div class=\"ag-pinned-left-cols-container\" ref=\"eLeftContainer\" role=\"presentation\"></div>\n                </div>\n            </div>\n            <div class=\"ag-body-viewport-wrapper\" ref=\"eBodyViewportWrapper\" role=\"presentation\">\n                <div class=\"ag-body-viewport\" ref=\"eBodyViewport\" role=\"presentation\">\n                    <div class=\"ag-body-container\" ref=\"eBodyContainer\" role=\"presentation\"></div>\n                </div>\n            </div>\n            <div class=\"ag-pinned-right-cols-viewport-wrapper\" ref=\"eRightViewportWrapper\" role=\"presentation\">\n                <div class=\"ag-pinned-right-cols-viewport\" ref=\"eRightViewport\" role=\"presentation\">\n                    <div class=\"ag-pinned-right-cols-container\" ref=\"eRightContainer\" role=\"presentation\"></div>\n                </div>\n            </div>\n            <div class=\"ag-full-width-viewport-wrapper\" ref=\"eFullWidthViewportWrapper\" role=\"presentation\">\n                <div class=\"ag-full-width-viewport\" ref=\"eFullWidthViewport\" role=\"presentation\">\n                    <div class=\"ag-full-width-container\" ref=\"eFullWidthContainer\" role=\"presentation\"></div>\n                </div>\n            </div>\n        </div>\n        <div class=\"ag-floating-bottom\" ref=\"eBottom\" role=\"presentation\">\n            <div class=\"ag-pinned-left-floating-bottom\" ref=\"eLeftBottom\" role=\"presentation\"></div>\n            <div class=\"ag-floating-bottom-viewport\" ref=\"eBottomViewport\" role=\"presentation\">\n                <div class=\"ag-floating-bottom-container\" ref=\"eBottomContainer\" role=\"presentation\"></div>\n            </div>\n            <div class=\"ag-pinned-right-floating-bottom\" ref=\"eRightBottom\" role=\"presentation\"></div>\n            <div class=\"ag-floating-bottom-full-width-container\" ref=\"eBottomFullWidthContainer\" role=\"presentation\"></div>\n        </div>\n        <div class=\"ag-overlay\" ref=\"eOverlay\"></div>\n    </div>";
 var GridPanel = /** @class */ (function (_super) {
     __extends(GridPanel, _super);
     function GridPanel() {
@@ -1107,7 +1107,7 @@ var GridPanel = /** @class */ (function (_super) {
     };
     GridPanel.prototype.addScrollListener = function () {
         var _this = this;
-        this.addDestroyableEventListener(this.eBodyViewport, 'scroll', function () {
+        this.addDestroyableEventListener(this.eBodyViewport, 'scroll', function (e) {
             _this.onBodyHorizontalScroll();
             _this.onAnyBodyScroll(_this.eBodyViewport);
         });
@@ -1147,14 +1147,29 @@ var GridPanel = /** @class */ (function (_super) {
         }
     };
     GridPanel.prototype.onBodyHorizontalScroll = function () {
-        var scrollLeft = this.eBodyViewport.scrollLeft;
+        var supportsOverflowScrolling = this.animationFrameService.isSupportsOverflowScrolling();
+        var _a = this.eBodyViewport, scrollWidth = _a.scrollWidth, clientWidth = _a.clientWidth;
+        // in chrome, fractions can be in the scroll left, eg 250.342234 - which messes up our 'scrollWentPastBounds'
+        // formula. so we floor it to allow the formula to work.
+        var scrollLeft = Math.floor(utils_1.Utils.getScrollLeft(this.eBodyViewport, this.enableRtl));
+        // touch devices allow elastic scroll - which temporally scrolls the panel outside of the viewport
+        // (eg user uses touch to go to the left of the grid, but drags past the left, the rows will actually
+        // scroll past the left until the user releases the mouse). when this happens, we want ignore the scroll,
+        // as otherwise it was causing the rows and header to flicker.
+        var scrollWentPastBounds = scrollLeft < 0 || (scrollLeft + clientWidth > scrollWidth);
+        if (scrollWentPastBounds) {
+            return;
+        }
         if (this.nextScrollLeft !== scrollLeft) {
             this.nextScrollLeft = scrollLeft;
-            if (this.useAnimationFrame) {
-                this.animationFrameService.schedule();
+            // for touch devices, we found scrolling was jerky when combining overflow scrolling and ag-grid
+            // animation frames. so if overflow scroll is supported (which means user is typically on a tab or phone)
+            // we don't use the animation frame service for horizontal scrolling.
+            if (!this.useAnimationFrame || supportsOverflowScrolling) {
+                this.doHorizontalScroll();
             }
             else {
-                this.doHorizontalScroll();
+                this.animationFrameService.schedule();
             }
         }
     };

@@ -382,9 +382,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   overflow-y: auto;
   height: 100%; }
 
-.ag-body-viewport.ag-layout-print {
-  display: inline-block; }
-
 .ag-full-width-viewport-wrapper {
   height: 100%;
   width: 100%;
@@ -445,8 +442,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
 .ag-row {
   box-sizing: border-box;
   white-space: nowrap;
-  width: 100%;
-  page-break-inside: avoid; }
+  width: 100%; }
 
 .ag-row-position-absolute {
   position: absolute; }
@@ -512,9 +508,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   position: absolute;
   text-overflow: ellipsis;
   white-space: nowrap; }
-
-.ag-cell-layout-print {
-  page-break-inside: avoid; }
 
 .ag-cell-with-height {
   height: 100%; }
@@ -1788,7 +1781,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   display: flex;
   justify-content: space-between; }
   .ag-status-bar .ag-status-panel {
-    display: inline-block; }
+    display: inline-flex; }
 
 .ag-status-bar-left {
   display: inline-flex; }
@@ -1798,3 +1791,12 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
 
 .ag-status-bar-right {
   display: inline-flex; }
+
+@media print {
+  .ag-body-viewport {
+    display: block; }
+  .ag-row {
+    page-break-inside: avoid; } }
+
+.ag-body .ag-pinned-left-cols-viewport, .ag-body .ag-body-viewport, .ag-body .ag-pinned-right-cols-viewport {
+  -webkit-overflow-scrolling: touch; }

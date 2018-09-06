@@ -1574,12 +1574,8 @@
     padding-left: 16px; }
   .ag-theme-blue .ag-name-value-value {
     color: #222; }
-  .ag-theme-blue .ag-status-bar-left {
-    display: inline-flex; }
   .ag-theme-blue .ag-status-bar-center {
     text-align: center; }
-  .ag-theme-blue .ag-status-panel-aggregations {
-    display: inline-flex; }
   .ag-theme-blue .ag-name-value {
     margin-left: 4px;
     margin-right: 4px;

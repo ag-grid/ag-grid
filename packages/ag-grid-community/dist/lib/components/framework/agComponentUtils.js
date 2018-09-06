@@ -64,27 +64,6 @@ var AgComponentUtils = /** @class */ (function () {
         }());
         return Adapter;
     };
-    AgComponentUtils.prototype.adaptStatusPanelFunction = function (callback) {
-        var Adapter = /** @class */ (function () {
-            function Adapter() {
-            }
-            Adapter.prototype.getGui = function () {
-                var callbackResult = callback(this.params);
-                var type = typeof callbackResult;
-                if (type === 'string' || type === 'number' || type === 'boolean') {
-                    return utils_1._.loadTemplate('<span>' + callbackResult + '</span>');
-                }
-                else {
-                    return callbackResult;
-                }
-            };
-            Adapter.prototype.init = function (params) {
-                this.params = params;
-            };
-            return Adapter;
-        }());
-        return Adapter;
-    };
     AgComponentUtils.prototype.doesImplementIComponent = function (candidate) {
         if (!candidate)
             return false;

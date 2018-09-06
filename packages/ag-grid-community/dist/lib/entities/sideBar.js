@@ -71,14 +71,14 @@ var SideBarDefParser = /** @class */ (function () {
         labelDefault: 'Columns',
         labelKey: 'columns',
         iconKey: 'columns',
-        component: 'agColumnsToolPanel',
+        toolPanel: 'agColumnsToolPanel',
     };
     SideBarDefParser.DEFAULT_FILTER_COMP = {
         id: 'filters',
         labelDefault: 'Filters',
         labelKey: 'filters',
         iconKey: 'filter',
-        component: 'agFiltersToolPanel',
+        toolPanel: 'agFiltersToolPanel',
     };
     SideBarDefParser.DEFAULT_BY_KEY = {
         columns: SideBarDefParser.DEFAULT_COLUMN_COMP,

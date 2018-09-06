@@ -20,6 +20,7 @@ var linkedList_1 = require("./linkedList");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var eventKeys_1 = require("../eventKeys");
 var eventService_1 = require("../eventService");
+var utils_1 = require("../utils");
 var AnimationFrameService = /** @class */ (function () {
     function AnimationFrameService() {
         this.p1Tasks = new linkedList_1.LinkedList();
@@ -29,8 +30,12 @@ var AnimationFrameService = /** @class */ (function () {
     AnimationFrameService.prototype.registerGridComp = function (gridPanel) {
         this.gridPanel = gridPanel;
     };
+    AnimationFrameService.prototype.isSupportsOverflowScrolling = function () {
+        return this.supportsOverflowScrolling;
+    };
     AnimationFrameService.prototype.init = function () {
         this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
+        this.supportsOverflowScrolling = utils_1._.hasOverflowScrolling();
     };
     // this method is for our ag-Grid sanity only - if animation frames are turned off,
     // then no place in the code should be looking to add any work to be done in animation

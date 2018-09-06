@@ -50,7 +50,7 @@ var TotalAndFilteredRowsComp = /** @class */ (function (_super) {
     };
     TotalAndFilteredRowsComp.prototype.getTotalRowCountValue = function () {
         var totalRowCount = 0;
-        this.gridApi.forEachLeafNode(function (node) { return totalRowCount += 1; });
+        this.gridApi.forEachNode(function (node) { return totalRowCount += 1; });
         return totalRowCount;
     };
     TotalAndFilteredRowsComp.prototype.getFilteredRowCountValue = function () {

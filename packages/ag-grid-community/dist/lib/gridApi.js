@@ -222,7 +222,6 @@ var GridApi = /** @class */ (function () {
         return this.gridPanel.getVScrollPosition();
     };
     GridApi.prototype.refreshToolPanel = function () {
-        console.log("this.toolPanelComp", this.sideBarComp);
         if (this.sideBarComp) {
             this.sideBarComp.refresh();
         }

@@ -139,7 +139,7 @@ var LicenseManager = /** @class */ (function () {
         LicenseManager_1.licenseKey = licenseKey;
     };
     var LicenseManager_1;
-    LicenseManager.RELEASE_INFORMATION = 'MTUzMDg3ODc3OTgxMA==';
+    LicenseManager.RELEASE_INFORMATION = 'MTUzNjE0OTU5Nzk2OA==';
     __decorate([
         ag_grid_community_1.Autowired('md5'),
         __metadata("design:type", md5_1.MD5)

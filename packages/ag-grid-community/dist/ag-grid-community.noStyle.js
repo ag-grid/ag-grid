@@ -546,8 +546,8 @@ var Utils = /** @class */ (function () {
         if (rtl) {
             // Absolute value - for FF that reports RTL scrolls in negative numbers
             scrollLeft = Math.abs(scrollLeft);
-            // Get Chrome and Safari to return the same value as well
-            if (this.isBrowserSafari() || this.isBrowserChrome()) {
+            // Get Chrome to return the same value as well
+            if (this.isBrowserChrome()) {
                 scrollLeft = element.scrollWidth - element.clientWidth - scrollLeft;
             }
         }
@@ -1382,6 +1382,29 @@ var Utils = /** @class */ (function () {
         // remove divs
         outer.parentNode.removeChild(outer);
         return widthNoScroll - widthWithScroll;
+    };
+    Utils.hasOverflowScrolling = function () {
+        var prefixes = ['webkit', 'moz', 'o', 'ms'];
+        var div = document.createElement('div');
+        var body = document.getElementsByTagName('body')[0];
+        var found = false;
+        var p;
+        body.appendChild(div);
+        div.setAttribute('style', prefixes.map(function (prefix) { return "-" + prefix + "-overflow-scrolling: touch"; }).concat('overflow-scrolling: touch').join(';'));
+        var computedStyle = window.getComputedStyle(div);
+        if (computedStyle['overflowScrolling'] === 'touch')
+            found = true;
+        if (!found) {
+            for (var _i = 0, prefixes_1 = prefixes; _i < prefixes_1.length; _i++) {
+                p = prefixes_1[_i];
+                if (computedStyle[p + "OverflowScrolling"] === 'touch') {
+                    found = true;
+                    break;
+                }
+            }
+        }
+        div.parentNode.removeChild(div);
+        return found;
     };
     Utils.isKeyPressed = function (event, keyToCheck) {
         var pressedKey = event.which || event.keyCode;
@@ -6442,7 +6465,6 @@ var GridApi = /** @class */ (function () {
         return this.gridPanel.getVScrollPosition();
     };
     GridApi.prototype.refreshToolPanel = function () {
-        console.log("this.toolPanelComp", this.sideBarComp);
         if (this.sideBarComp) {
             this.sideBarComp.refresh();
         }
@@ -14897,9 +14919,6 @@ var CellComp = /** @class */ (function (_super) {
         if (!this.usingWrapper) {
             cssClasses.push('ag-cell-value');
         }
-        if (this.beans.gridOptionsWrapper.getDomLayout() === constants_1.Constants.DOM_LAYOUT_PRINT) {
-            cssClasses.push('ag-cell-layout-print');
-        }
         return cssClasses;
     };
     CellComp.prototype.getInitialValueToRender = function () {
@@ -16611,6 +16630,7 @@ var linkedList_1 = __webpack_require__(125);
 var gridOptionsWrapper_1 = __webpack_require__(2);
 var eventKeys_1 = __webpack_require__(26);
 var eventService_1 = __webpack_require__(3);
+var utils_1 = __webpack_require__(1);
 var AnimationFrameService = /** @class */ (function () {
     function AnimationFrameService() {
         this.p1Tasks = new linkedList_1.LinkedList();
@@ -16620,8 +16640,12 @@ var AnimationFrameService = /** @class */ (function () {
     AnimationFrameService.prototype.registerGridComp = function (gridPanel) {
         this.gridPanel = gridPanel;
     };
+    AnimationFrameService.prototype.isSupportsOverflowScrolling = function () {
+        return this.supportsOverflowScrolling;
+    };
     AnimationFrameService.prototype.init = function () {
         this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
+        this.supportsOverflowScrolling = utils_1._.hasOverflowScrolling();
     };
     // this method is for our ag-Grid sanity only - if animation frames are turned off,
     // then no place in the code should be looking to add any work to be done in animation
@@ -24589,27 +24613,6 @@ var AgComponentUtils = /** @class */ (function () {
         }());
         return Adapter;
     };
-    AgComponentUtils.prototype.adaptStatusPanelFunction = function (callback) {
-        var Adapter = /** @class */ (function () {
-            function Adapter() {
-            }
-            Adapter.prototype.getGui = function () {
-                var callbackResult = callback(this.params);
-                var type = typeof callbackResult;
-                if (type === 'string' || type === 'number' || type === 'boolean') {
-                    return utils_1._.loadTemplate('<span>' + callbackResult + '</span>');
-                }
-                else {
-                    return callbackResult;
-                }
-            };
-            Adapter.prototype.init = function (params) {
-                this.params = params;
-            };
-            return Adapter;
-        }());
-        return Adapter;
-    };
     AgComponentUtils.prototype.doesImplementIComponent = function (candidate) {
         if (!candidate)
             return false;
@@ -24733,7 +24736,10 @@ var ComponentMetadataProvider = /** @class */ (function () {
             statusPanel: {
                 mandatoryMethodList: [],
                 optionalMethodList: ['afterGuiAttached'],
-                functionAdapter: this.agComponentUtils.adaptStatusPanelFunction.bind(this.agComponentUtils)
+            },
+            toolPanel: {
+                mandatoryMethodList: [],
+                optionalMethodList: ['refresh', 'afterGuiAttached']
             }
         };
     };
@@ -24830,7 +24836,7 @@ var headerRootComp_1 = __webpack_require__(80);
 var resizeObserverService_1 = __webpack_require__(82);
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
-var GRID_PANEL_NORMAL_TEMPLATE = "<div class=\"ag-root ag-font-style\" role=\"grid\">\n        <ag-header-root ref=\"headerRoot\"></ag-header-root>\n        <div class=\"ag-floating-top\" ref=\"eTop\" role=\"presentation\">\n            <div class=\"ag-pinned-left-floating-top\" ref=\"eLeftTop\" role=\"presentation\"></div>\n            <div class=\"ag-floating-top-viewport\" ref=\"eTopViewport\" role=\"presentation\">\n                <div class=\"ag-floating-top-container\" ref=\"eTopContainer\" role=\"presentation\"></div>\n            </div>\n            <div class=\"ag-pinned-right-floating-top\" ref=\"eRightTop\" role=\"presentation\"></div>\n            <div class=\"ag-floating-top-full-width-container\" ref=\"eTopFullWidthContainer\" role=\"presentation\"></div>\n        </div>\n        <div class=\"ag-body\" ref=\"eBody\" role=\"presentation\">\n            <div class=\"ag-pinned-left-cols-viewport-wrapper\" ref=\"eLeftViewportWrapper\" role=\"presentation\">\n                <div class=\"ag-pinned-left-cols-viewport\" ref=\"eLeftViewport\" role=\"presentation\">\n                    <div class=\"ag-pinned-left-cols-container\" ref=\"eLeftContainer\" role=\"presentation\"></div>\n                </div>\n            </div> \n            <div class=\"ag-body-viewport-wrapper\" ref=\"eBodyViewportWrapper\" role=\"presentation\">\n                <div class=\"ag-body-viewport\" ref=\"eBodyViewport\" role=\"presentation\">\n                    <div class=\"ag-body-container\" ref=\"eBodyContainer\" role=\"presentation\"></div>\n                </div>\n            </div>\n            <div class=\"ag-pinned-right-cols-viewport-wrapper\" ref=\"eRightViewportWrapper\" role=\"presentation\">\n                <div class=\"ag-pinned-right-cols-viewport\" ref=\"eRightViewport\" role=\"presentation\">\n                    <div class=\"ag-pinned-right-cols-container\" ref=\"eRightContainer\" role=\"presentation\"></div>\n                </div>\n            </div>\n            <div class=\"ag-full-width-viewport-wrapper\" ref=\"eFullWidthViewportWrapper\" role=\"presentation\">\n                <div class=\"ag-full-width-viewport\" ref=\"eFullWidthViewport\" role=\"presentation\">\n                    <div class=\"ag-full-width-container\" ref=\"eFullWidthContainer\" role=\"presentation\"></div>\n                </div>\n            </div>\n        </div>\n        <div class=\"ag-floating-bottom\" ref=\"eBottom\" role=\"presentation\">\n            <div class=\"ag-pinned-left-floating-bottom\" ref=\"eLeftBottom\" role=\"presentation\"></div>\n            <div class=\"ag-floating-bottom-viewport\" ref=\"eBottomViewport\" role=\"presentation\">\n                <div class=\"ag-floating-bottom-container\" ref=\"eBottomContainer\" role=\"presentation\"></div>\n            </div>\n            <div class=\"ag-pinned-right-floating-bottom\" ref=\"eRightBottom\" role=\"presentation\"></div>\n            <div class=\"ag-floating-bottom-full-width-container\" ref=\"eBottomFullWidthContainer\" role=\"presentation\"></div>\n        </div>\n        <div class=\"ag-overlay\" ref=\"eOverlay\"></div>\n    </div>";
+var GRID_PANEL_NORMAL_TEMPLATE = "<div class=\"ag-root ag-font-style\" role=\"grid\">\n        <ag-header-root ref=\"headerRoot\"></ag-header-root>\n        <div class=\"ag-floating-top\" ref=\"eTop\" role=\"presentation\">\n            <div class=\"ag-pinned-left-floating-top\" ref=\"eLeftTop\" role=\"presentation\"></div>\n            <div class=\"ag-floating-top-viewport\" ref=\"eTopViewport\" role=\"presentation\">\n                <div class=\"ag-floating-top-container\" ref=\"eTopContainer\" role=\"presentation\"></div>\n            </div>\n            <div class=\"ag-pinned-right-floating-top\" ref=\"eRightTop\" role=\"presentation\"></div>\n            <div class=\"ag-floating-top-full-width-container\" ref=\"eTopFullWidthContainer\" role=\"presentation\"></div>\n        </div>\n        <div class=\"ag-body\" ref=\"eBody\" role=\"presentation\">\n            <div class=\"ag-pinned-left-cols-viewport-wrapper\" ref=\"eLeftViewportWrapper\" role=\"presentation\">\n                <div class=\"ag-pinned-left-cols-viewport\" ref=\"eLeftViewport\" role=\"presentation\">\n                    <div class=\"ag-pinned-left-cols-container\" ref=\"eLeftContainer\" role=\"presentation\"></div>\n                </div>\n            </div>\n            <div class=\"ag-body-viewport-wrapper\" ref=\"eBodyViewportWrapper\" role=\"presentation\">\n                <div class=\"ag-body-viewport\" ref=\"eBodyViewport\" role=\"presentation\">\n                    <div class=\"ag-body-container\" ref=\"eBodyContainer\" role=\"presentation\"></div>\n                </div>\n            </div>\n            <div class=\"ag-pinned-right-cols-viewport-wrapper\" ref=\"eRightViewportWrapper\" role=\"presentation\">\n                <div class=\"ag-pinned-right-cols-viewport\" ref=\"eRightViewport\" role=\"presentation\">\n                    <div class=\"ag-pinned-right-cols-container\" ref=\"eRightContainer\" role=\"presentation\"></div>\n                </div>\n            </div>\n            <div class=\"ag-full-width-viewport-wrapper\" ref=\"eFullWidthViewportWrapper\" role=\"presentation\">\n                <div class=\"ag-full-width-viewport\" ref=\"eFullWidthViewport\" role=\"presentation\">\n                    <div class=\"ag-full-width-container\" ref=\"eFullWidthContainer\" role=\"presentation\"></div>\n                </div>\n            </div>\n        </div>\n        <div class=\"ag-floating-bottom\" ref=\"eBottom\" role=\"presentation\">\n            <div class=\"ag-pinned-left-floating-bottom\" ref=\"eLeftBottom\" role=\"presentation\"></div>\n            <div class=\"ag-floating-bottom-viewport\" ref=\"eBottomViewport\" role=\"presentation\">\n                <div class=\"ag-floating-bottom-container\" ref=\"eBottomContainer\" role=\"presentation\"></div>\n            </div>\n            <div class=\"ag-pinned-right-floating-bottom\" ref=\"eRightBottom\" role=\"presentation\"></div>\n            <div class=\"ag-floating-bottom-full-width-container\" ref=\"eBottomFullWidthContainer\" role=\"presentation\"></div>\n        </div>\n        <div class=\"ag-overlay\" ref=\"eOverlay\"></div>\n    </div>";
 var GridPanel = /** @class */ (function (_super) {
     __extends(GridPanel, _super);
     function GridPanel() {
@@ -25872,7 +25878,7 @@ var GridPanel = /** @class */ (function (_super) {
     };
     GridPanel.prototype.addScrollListener = function () {
         var _this = this;
-        this.addDestroyableEventListener(this.eBodyViewport, 'scroll', function () {
+        this.addDestroyableEventListener(this.eBodyViewport, 'scroll', function (e) {
             _this.onBodyHorizontalScroll();
             _this.onAnyBodyScroll(_this.eBodyViewport);
         });
@@ -25912,14 +25918,29 @@ var GridPanel = /** @class */ (function (_super) {
         }
     };
     GridPanel.prototype.onBodyHorizontalScroll = function () {
-        var scrollLeft = this.eBodyViewport.scrollLeft;
+        var supportsOverflowScrolling = this.animationFrameService.isSupportsOverflowScrolling();
+        var _a = this.eBodyViewport, scrollWidth = _a.scrollWidth, clientWidth = _a.clientWidth;
+        // in chrome, fractions can be in the scroll left, eg 250.342234 - which messes up our 'scrollWentPastBounds'
+        // formula. so we floor it to allow the formula to work.
+        var scrollLeft = Math.floor(utils_1.Utils.getScrollLeft(this.eBodyViewport, this.enableRtl));
+        // touch devices allow elastic scroll - which temporally scrolls the panel outside of the viewport
+        // (eg user uses touch to go to the left of the grid, but drags past the left, the rows will actually
+        // scroll past the left until the user releases the mouse). when this happens, we want ignore the scroll,
+        // as otherwise it was causing the rows and header to flicker.
+        var scrollWentPastBounds = scrollLeft < 0 || (scrollLeft + clientWidth > scrollWidth);
+        if (scrollWentPastBounds) {
+            return;
+        }
         if (this.nextScrollLeft !== scrollLeft) {
             this.nextScrollLeft = scrollLeft;
-            if (this.useAnimationFrame) {
-                this.animationFrameService.schedule();
+            // for touch devices, we found scrolling was jerky when combining overflow scrolling and ag-grid
+            // animation frames. so if overflow scroll is supported (which means user is typically on a tab or phone)
+            // we don't use the animation frame service for horizontal scrolling.
+            if (!this.useAnimationFrame || supportsOverflowScrolling) {
+                this.doHorizontalScroll();
             }
             else {
-                this.doHorizontalScroll();
+                this.animationFrameService.schedule();
             }
         }
     };
@@ -30864,14 +30885,14 @@ var SideBarDefParser = /** @class */ (function () {
         labelDefault: 'Columns',
         labelKey: 'columns',
         iconKey: 'columns',
-        component: 'agColumnsToolPanel',
+        toolPanel: 'agColumnsToolPanel',
     };
     SideBarDefParser.DEFAULT_FILTER_COMP = {
         id: 'filters',
         labelDefault: 'Filters',
         labelKey: 'filters',
         iconKey: 'filter',
-        component: 'agFiltersToolPanel',
+        toolPanel: 'agFiltersToolPanel',
     };
     SideBarDefParser.DEFAULT_BY_KEY = {
         columns: SideBarDefParser.DEFAULT_COLUMN_COMP,

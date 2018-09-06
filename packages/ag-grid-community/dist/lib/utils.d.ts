@@ -117,6 +117,7 @@ export declare class Utils {
     static isVerticalScrollShowing(element: HTMLElement): boolean;
     static getMaxDivHeight(): number;
     static getScrollbarWidth(): number;
+    static hasOverflowScrolling(): boolean;
     static isKeyPressed(event: KeyboardEvent, keyToCheck: number): boolean;
     static setVisible(element: HTMLElement, visible: boolean): void;
     static setHidden(element: HTMLElement, hidden: boolean): void;
