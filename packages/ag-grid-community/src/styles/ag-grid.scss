@@ -480,10 +480,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
         overflow-y: auto;
         height: 100%;
     }
-
-    &.ag-layout-print {
-        display: inline-block;
-    }
 }
 
 .ag-full-width-viewport-wrapper {
@@ -565,7 +561,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     box-sizing: border-box;
     white-space: nowrap;
     width: 100%;
-    page-break-inside: avoid;
 }
 
 .ag-row-position-absolute {
@@ -1112,4 +1107,12 @@ $row-group-indent-size: 10px !default;
     display: inline-flex;
 }
 
+@media print {
+    .ag-body-viewport {
+        display: block;
+    }
+    .ag-row {
+        page-break-inside: avoid;
+    }
+}
 @import "./ag-grid-mobile";
