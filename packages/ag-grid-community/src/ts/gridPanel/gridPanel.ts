@@ -1459,7 +1459,7 @@ export class GridPanel extends Component {
         // scroll past the left until the user releases the mouse). when this happens, we want ignore the scroll,
         // as otherwise it was causing the rows and header to flicker.
         const scrollWentPastBounds = scrollLeftFloored < 0 || (scrollLeftFloored + clientWidth > scrollWidth);
-        if (scrollWentPastBounds) { return; }
+        // if (scrollWentPastBounds) { return; }
 
         if (this.nextScrollLeft !== scrollLeftFloored) {
             this.nextScrollLeft = scrollLeftFloored;
