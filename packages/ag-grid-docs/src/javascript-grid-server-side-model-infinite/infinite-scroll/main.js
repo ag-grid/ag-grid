@@ -26,10 +26,9 @@ var gridOptions = {
     // only keep 10 blocks of rows
     maxBlocksInCache: 10,
 
-    debug: true,
     enableColResize: true,
     animateRows: true,
-    toolPanelSuppressSideButtons: true
+    debug: true
 };
 
 // setup the grid after the page has finished loading
