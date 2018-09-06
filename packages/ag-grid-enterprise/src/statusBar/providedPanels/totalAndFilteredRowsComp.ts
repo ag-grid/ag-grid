@@ -42,7 +42,7 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
 
     private getTotalRowCountValue(): number {
         let totalRowCount = 0;
-        this.gridApi.forEachLeafNode((node) => totalRowCount += 1);
+        this.gridApi.forEachNode((node) => totalRowCount += 1);
         return totalRowCount;
     }
 
