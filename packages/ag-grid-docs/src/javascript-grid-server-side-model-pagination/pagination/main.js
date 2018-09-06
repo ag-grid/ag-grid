@@ -34,8 +34,7 @@ var gridOptions = {
             suppressPivotMode: true,
             suppressValues: true
           }
-        }],
-        defaultToolPanel: 'columns'
+        }]
     },
     animateRows: true,
     debug: true,
