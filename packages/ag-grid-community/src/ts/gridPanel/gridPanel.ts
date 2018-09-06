@@ -1448,18 +1448,28 @@ export class GridPanel extends Component {
 
     private onBodyHorizontalScroll(): void {
 
-        const viewport = this.eBodyViewport;
-        const {scrollLeft, scrollWidth, clientWidth} = viewport;
-        const preventScroll = scrollLeft < 0 || (scrollLeft + clientWidth > scrollWidth);
+        const supportsOverflowScrolling = this.animationFrameService.isSupportsOverflowScrolling();
+        const {scrollLeft, scrollWidth, clientWidth} = this.eBodyViewport;
+        // in chrome, fractions can be in the scroll left, eg 250.342234 - which messes up our 'scrollWentPastBounds'
+        // formula. so we floor it to allow the formula to work.
+        const scrollLeftFloored = Math.floor(scrollLeft);
 
-        if (preventScroll) return;
+        // touch devices allow elastic scroll - which temporally scrolls the panel outside of the viewport
+        // (eg user uses touch to go to the left of the grid, but drags past the left, the rows will actually
+        // scroll past the left until the user releases the mouse). when this happens, we want ignore the scroll,
+        // as otherwise it was causing the rows and header to flicker.
+        const scrollWentPastBounds = scrollLeftFloored < 0 || (scrollLeftFloored + clientWidth > scrollWidth);
+        if (scrollWentPastBounds) { return; }
 
-        if (this.nextScrollLeft !== scrollLeft) {
-            this.nextScrollLeft = scrollLeft;
-            if (this.useAnimationFrame && !this.animationFrameService.supportsOverflowScrolling) {
-                this.animationFrameService.schedule();
-            } else {
+        if (this.nextScrollLeft !== scrollLeftFloored) {
+            this.nextScrollLeft = scrollLeftFloored;
+            // for touch devices, we found scrolling was jerky when combining overflow scrolling and ag-grid
+            // animation frames. so if overflow scroll is supported (which means user is typically on a tab or phone)
+            // we don't use the animation frame service for horizontal scrolling.
+            if (!this.useAnimationFrame || supportsOverflowScrolling) {
                 this.doHorizontalScroll();
+            } else {
+                this.animationFrameService.schedule();
             }
         }
     }

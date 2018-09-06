@@ -1091,6 +1091,34 @@ export class Utils {
         return widthNoScroll - widthWithScroll;
     }
 
+    static hasOverflowScrolling(): boolean {
+        const prefixes: string[] = ['webkit', 'moz', 'o', 'ms'];
+        const div: HTMLElement = document.createElement('div');
+        const body: HTMLBodyElement = document.getElementsByTagName('body')[0];
+        let found: boolean = false;
+        let p: string;
+
+        body.appendChild(div);
+        div.setAttribute('style', prefixes.map(prefix => `-${prefix}-overflow-scrolling: touch`).concat('overflow-scrolling: touch').join(';'));
+
+        let computedStyle: CSSStyleDeclaration = window.getComputedStyle(div);
+
+        if ((<any>computedStyle)['overflowScrolling'] === 'touch') found = true;
+
+        if (!found) {
+            for (p of prefixes) {
+                if ((<any>computedStyle)[`${p}OverflowScrolling`] === 'touch') {
+                    found = true;
+                    break;
+                }
+            }
+        }
+
+        div.parentNode.removeChild(div);
+
+        return found;
+    }
+
     static isKeyPressed(event: KeyboardEvent, keyToCheck: number) {
         let pressedKey = event.which || event.keyCode;
         return pressedKey === keyToCheck;
