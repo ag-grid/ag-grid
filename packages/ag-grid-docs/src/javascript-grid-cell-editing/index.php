@@ -14,7 +14,11 @@ include '../documentation-main/documentation_header.php';
         need to use cell editors. If you are editing your data like a spreadsheet, then you will
         need Cell Editors to do the editing.
 <br><br>
-<strong>Test ag-Grid's Cell Editing feature with Angular, React and Javascript.</strong></p>
+
+    <p>
+        Remember Cell Editing works with all frameworks eg Angular and React as well as plain JavaScript.
+    </p>
+
     <p>
         You configure cell editors as part of the column definition and can be one of the following:
     </p>

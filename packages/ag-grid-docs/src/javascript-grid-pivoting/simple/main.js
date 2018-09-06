@@ -14,8 +14,7 @@ var gridOptions = {
     enableColResize: true,
     columnDefs: columnDefs,
     floatingFilter:true,
-    enableSorting:true,
-    sideBar: true,
+    enableSorting:true
 };
 
 // setup the grid after the page has finished loading

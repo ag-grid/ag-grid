@@ -168,6 +168,8 @@ gridOptions.api.setServerSideDatasource(datasource);
 
 <?= example('Infinite Scroll', 'infinite-scroll', 'generated', array("enterprise" => 1)) ?>
 
+<h2>Next Up</h2>
+
 <p>
     Continue to the next section to see how to lazy load data with: <a href="../javascript-grid-server-side-model-grouping/">Row Grouping</a>.
 </p>

@@ -11,7 +11,7 @@ include '../documentation-main/documentation_header.php';
 
     <p class="lead">
         This page describes how to get your grid data sorting.
-        <p><strong>Test ag-Grid's Sorting feature with Angular, React and Javascript.</strong></p>
+        Row Sorting works with all frameworks eg Angular and React as well as plain JavaScript.
     </p>
 
     <h2>Enable Sorting</h2>

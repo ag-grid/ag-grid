@@ -125,7 +125,11 @@ columnDefinition = {
             applying a different color background to this style.</li>
         <li>'suppressFilter' is set on Total to hide the filter on this column</li>
     </ul>
-<p><strong>Test ag-Grid's Filtering feature with Angular, React and Javascript</strong></p>
+
+    <p>
+        Remember Filtering works with all frameworks eg Angular and React as well as plain JavaScript.
+    </p>
+
     <?= example('Built-In Filters', 'built-in-filters', 'generated') ?>
 
     <h2>Apply Function</h2>
