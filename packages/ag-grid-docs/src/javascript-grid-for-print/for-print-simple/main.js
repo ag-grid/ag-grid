@@ -36,11 +36,9 @@ var gridOptions = {
 };
 
 function onBtPrinterFriendly() {
-
     var eGridDiv = document.querySelector('.my-grid');
     eGridDiv.style.width  = '';
     eGridDiv.style.height = '';
-    eGridDiv.style.display = 'inline-block';
 
     gridOptions.api.setDomLayout('print');
 }
@@ -50,7 +48,6 @@ function onBtNormal() {
     var eGridDiv = document.querySelector('.my-grid');
     eGridDiv.style.width = '400px';
     eGridDiv.style.height = '200px';
-    eGridDiv.style.display = '';
 
     // the default is 'normal', so setDomLayout(null) has same impact as setDomLayout('normal')
     gridOptions.api.setDomLayout(null);
