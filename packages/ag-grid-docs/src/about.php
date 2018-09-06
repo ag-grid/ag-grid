@@ -194,18 +194,6 @@ gtm_data_layer('about');
                             a number of important financial functions and is a specialist in customer retention.
                         </p>
                     </div>
-                    <div class="col-md-4">
-                        <div>
-                            <img src='images/team/bas.jpg' alt="Bas Rahman, Customer Experience Team"/>
-                        </div>
-                        <h3>Bas Rahman</h3>
-                        <h4>Customer Experience Team</h4>
-                        <p>
-                            Bas joined the team to manage our evergrowing customer base - she has broad experience in dealing with customers 
-                            and internal stakeholders from previous roles in startups and consulting companies. Recently, Bas has been managing
-                            ag-Grid participation in conferences and making sure everything runs smoothly for these events.
-                        </p>
-                    </div>
                 </div>
             </article>
         </section>
