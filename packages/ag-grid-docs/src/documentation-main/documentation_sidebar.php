@@ -17,6 +17,33 @@ Check the <a href="../ag-grid-jobs-board/">jobs board</a>
 <br><hr>
     <p>Latest Release:</p>
 
+    <div class="card card-highlight">
+        <div class="card-body">
+            <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=18.0.0">Version 19.0 Released</a></h5>
+            <h6 class="card-subtitle mb-2 text-muted">Sep 7</h6>
+            <p class="card-text">
+                Major release with the following feature highlights:
+            <ul>
+                <li><a class="learn-more" href="../javascript-grid-status-bar/">Customizable Status Bar</a></li>
+            </ul>
+            <ul>
+                <li><a class="learn-more" href="../javascript-grid-tool-panel-filters/">Filters Tool Panel</a></li>
+            </ul>
+            <ul>
+                <li><a class="learn-more" href="../javascript-grid-tool-panel-component/">Custom Tool Panels</a></li>
+            </ul>
+            <ul>
+                <li><a class="learn-more" href="../javascript-grid-server-side-model-tree-data/">Server-side Tree Data</a></li>
+            </ul>
+            </p>
+
+            <p class="text-right">
+                <a class="learn-more" href="../ag-grid-changelog/?fixVersion=19.0.0">Change Log</a>
+            </p>
+        </div>
+    </div>
+
+    <br>
 
     <div class="card card-highlight">
         <div class="card-body">
@@ -32,7 +59,6 @@ Check the <a href="../ag-grid-jobs-board/">jobs board</a>
         </div>
     </div>
 
-    <br>
 
     <div class="card card-highlight">
         <div class="card-body">

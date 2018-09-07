@@ -43,7 +43,7 @@ gtm_data_layer('about');
                             </h2>
                             October 10th 2018
                             <br>
-                            <a href="https://www.eventbrite.com/e/ag-grid-conf-london-tickets-49732217401" target="_blank"><button type="button" class="btn btn-primary" style="margin-top: 10px">Register for New York</button></a>
+                            <a href="https://www.eventbrite.com/e/ag-grid-conf-new-york-tickets-49731529343" target="_blank"><button type="button" class="btn btn-primary" style="margin-top: 10px">Register for New York</button></a>
                         </div>
                         <div class="col-sm"  style="text-align: center";>
                             <h2>
@@ -285,7 +285,7 @@ gtm_data_layer('about');
                     </h3>
                     October 10th 2018
                     <br>
-                    <a href="https://www.eventbrite.com/e/ag-grid-conf-london-tickets-49732217401" target="_blank"><button type="button" class="btn btn-primary">Register for New York</button></a>
+                    <a href="https://www.eventbrite.com/e/ag-grid-conf-new-york-tickets-49731529343" target="_blank"><button type="button" class="btn btn-primary">Register for New York</button></a>
                 </div>
                 <div class="col-sm">
                     <p class="text-center"  style="text-align: center;""><br>
