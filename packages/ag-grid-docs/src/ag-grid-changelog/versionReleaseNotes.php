@@ -40,7 +40,7 @@
         </li>
 
         <li>
-            AG-1363 - columnApi.resetColumnState() can now optionally raise column based events.
+            AG-1363 columnApi.resetColumnState() can now optionally raise column based events.
         </li>
 
     </ul>
