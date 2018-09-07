@@ -10,7 +10,7 @@ include '../documentation-main/documentation_header.php';
     <p>Both ag-Grid and ag-Grid Enterprise are available as NPM packages, even if you don't intend to use them with a particular JavaScript framework. To install ag-Grid, run</p>
 
 <snippet language="sh">
-npm install --save ag-grid
+npm install --save ag-grid-community
 </snippet>
 
 <p>To install ag-Grid Enterprise, run:</p>
@@ -23,21 +23,21 @@ npm install --save ag-grid-enterprise
 
 <snippet>
 // ECMA 5 - using nodes require() method
-var AgGrid = require('ag-grid');
+var AgGrid = require('ag-grid-community');
 
 // ECMA 6 - using the system import method
-import {Grid} from 'ag-grid';
+import {Grid} from 'ag-grid-community';
 </snippet>
 
 <p>for ag-Grid Enterprise, you need to import ag-Grid first, and add ag-grid enterprise after it:</p>
 
 <snippet>
 // ECMA 5 - using nodes require() method
-var AgGrid = require('ag-grid');
+var AgGrid = require('ag-grid-community');
 require('ag-grid-enterprise');
 
 // ECMA 6 - using the system import method
-import {Grid} from 'ag-grid';
+import {Grid} from 'ag-grid-community';
 import 'ag-grid-enterprise';
 </snippet>
 

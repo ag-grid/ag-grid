@@ -2,7 +2,7 @@ function createImageSpan(imageMultiplier, image) {
     var resultElement = document.createElement("span");
     for (var i = 0; i < imageMultiplier; i++) {
         var imageElement = document.createElement("img");
-        imageElement.src = "https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/" + image;
+        imageElement.src = "https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/" + image;
         resultElement.appendChild(imageElement);
     }
     return resultElement;
@@ -30,9 +30,9 @@ function deltaIndicator(params) {
 
     // visually indicate if this months value is higher or lower than last months value
     if (params.value > 15) {
-        imageElement.src = "https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/fire-plus.png"
+        imageElement.src = "https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/fire-plus.png"
     } else {
-        imageElement.src = "https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/fire-minus.png"
+        imageElement.src = "https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/fire-minus.png"
     }
     element.appendChild(imageElement);
     element.appendChild(document.createTextNode(params.value));
@@ -54,7 +54,7 @@ DaysFrostRenderer.prototype.updateImages = function() {
     var daysFrost = this.value;
     for (var i = 0; i < daysFrost; i++) {
         var imageElement = document.createElement("img");
-        imageElement.src = "https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/" + this.rendererImage;
+        imageElement.src = "https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/" + this.rendererImage;
         this.eGui.appendChild(imageElement);
     }
 };
@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
     var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/weather_se_england.json');
+    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/weather_se_england.json');
     httpRequest.send();
     httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {

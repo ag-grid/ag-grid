@@ -131,19 +131,18 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         In the example below, note the following:
-        <ul>
-            <li>
-                Grid property <code>colResizeDefault='shift'</code> so default column
-                resizing will behave as if <i>shift</i> key is pressed.
-            </li>
-            <li>
-                Holding down <i>shift</i> will then resize the normal default way.
-            </li>
-        </ul>
+    <ul>
+        <li>
+            Grid property <code>colResizeDefault='shift'</code> so default column
+            resizing will behave as if <i>shift</i> key is pressed.
+        </li>
+        <li>
+            Holding down <i>shift</i> will then resize the normal default way.
+        </li>
+    </ul>
     </p>
 
     <?= example('Shift Resizing', 'shift-resizing', 'generated') ?>
-
     <h2>Resizing Groups</h2>
 
     <p>
@@ -151,7 +150,7 @@ include '../documentation-main/documentation_header.php';
         The example below the groups can be resizes as follows:
     </p>
         <ul class="content">
-            <li>The group 'Everything Resizes' will resize all columns.</li>
+            <li>The group 'Everything Resizes' will resize all columns.</li>:-
             <li>The group 'Only Year Resizes' will resize only year, because the other columns
                 have <code>suppressResize=true</code>.</li>
             <li>The group 'Nothing Resizes' cannot be resized at all because all the columns
@@ -160,6 +159,17 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Resizing Groups', 'resizing-groups', 'generated') ?>
 
+<h2 id="resize-after-data">Resizing Columns When Data Is Renderered</h2>
+<p>There are two scenarios main where scenarios where you might want to resize columns based on grid data:</p>
+<ul>
+    <li>Row Data is available at grid initialisation</li>
+<li>Row Data is available after grid initialisation, typically after data has been set asynchronously via a server call</li>
+</ul>
 
+<p>In the first case you can fire <code>autoSizeColumns()</code> in either the <code>gridReady</code> or the
+    <code>firstDataRendered</code> event as the row data will have been rendered by the time the grid is ready.</p>
+
+<p>In the second case however you can only reliably use <code>firstDataRendered</code> as the row data will be made available,
+    and hence rendered, after the grid is ready.</p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

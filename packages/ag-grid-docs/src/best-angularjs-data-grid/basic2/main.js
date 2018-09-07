@@ -192,14 +192,14 @@
             var skills = [];
             IT_SKILLS.forEach(function (skill) {
                 if (data && data.skills[skill]) {
-                    skills.push('<img src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
+                    skills.push('<img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
                 }
             });
             return skills.join(' ');
         }
 
         function countryCellRenderer(params) {
-            var flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='https://raw.githubusercontent.com/ag-grid/packages/ag-grid-docs/master/src/images/flags/" + COUNTRY_CODES[params.value] + ".png'>";
+            var flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/flags/" + COUNTRY_CODES[params.value] + ".png'>";
             return flag + " " + params.value;
         }
 
@@ -246,7 +246,7 @@
             '    <div style="text-align: center;">SKILL_NAME</div>' +
             '    <div>' +
             '      <input type="checkbox"/>' +
-            '      <img src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/skills/SKILL.png" width="30px"/>' +
+            '      <img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/skills/SKILL.png" width="30px"/>' +
             '    </div>' +
             '  </span>' +
             '</label>';

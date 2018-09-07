@@ -73,7 +73,7 @@ var countryColDef = {
         The flow diagram below shows the flow of the value to displaying it on the screen.
     </p>
 
-    <img src="valueGetterFlow.svg" class="img-fluid" >
+    <img src="valueGetterFlow.svg" class="img-fluid" alt="Value Getter Flow">
 
     <h2 id="value-getter">Value Getter</h2>
 

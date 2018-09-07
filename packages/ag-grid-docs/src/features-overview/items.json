@@ -200,7 +200,7 @@
                 "links": [
                     {
                         "title": "State Persistence Example",
-                        "url": "#"
+                        "url": "/javascript-grid-column-definitions/#saving-and-restoring-column-state"
                     }
                 ]
             },

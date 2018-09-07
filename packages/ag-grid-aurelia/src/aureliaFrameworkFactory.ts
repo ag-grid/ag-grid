@@ -1,5 +1,5 @@
 import {autoinject, Container, transient, ViewResources} from "aurelia-framework";
-import {BaseFrameworkFactory, IFrameworkFactory} from "ag-grid/main";
+import {BaseFrameworkFactory, IFrameworkFactory} from "ag-grid-community";
 
 @autoinject()
 @transient()
@@ -14,5 +14,9 @@ export class AureliaFrameworkFactory implements IFrameworkFactory {
 
     public setViewResources(viewResources: ViewResources): void {
         this._viewResources = viewResources;
+    }
+
+    setTimeout(action: any, timeout?: any): void {
+        this._baseFrameworkFactory.setTimeout(action, timeout);
     }
 }

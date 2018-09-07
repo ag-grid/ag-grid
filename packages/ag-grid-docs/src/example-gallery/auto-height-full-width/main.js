@@ -56,12 +56,16 @@ var gridOptions = {
     pagination: true,
     paginationPageSize: 10,
     columnDefs: columnDefs,
-    enableStatusBar: true,
+    statusBar: {
+        items: [
+            { component: 'agAggregationComponent' }
+        ]
+    },
     enableRangeSelection: true,
     enableColResize: true,
     enableSorting: true,
     enableFilter: true,
-    gridAutoHeight: true
+    domLayout: 'autoHeight'
 };
 
 function createRow(index) {

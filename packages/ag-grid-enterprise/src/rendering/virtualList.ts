@@ -1,4 +1,4 @@
-import {Environment, Autowired, Component, PostConstruct, Utils, GridOptionsWrapper} from "ag-grid/main";
+import {Environment, Autowired, Component, PostConstruct, Utils, GridOptionsWrapper} from "ag-grid-community";
 
 export interface VirtualListModel {
     getRowCount(): number;
@@ -8,10 +8,9 @@ export interface VirtualListModel {
 export class VirtualList extends Component {
 
     private static TEMPLATE =
-        '<div class="ag-virtual-list-viewport">'+
-        '<div class="ag-virtual-list-container">'+
-        '</div>'+
-        '</div>';
+        `<div class="ag-virtual-list-viewport">
+            <div class="ag-virtual-list-container"></div>
+        </div>`;
 
     private model: VirtualListModel;
 
@@ -67,7 +66,7 @@ export class VirtualList extends Component {
             this.getGui().scrollTop = newScrollPosition;
         }
     }
-    
+
     public setComponentCreator(componentCreator: (value:any)=>Component): void {
         this.componentCreator = componentCreator;
     }
@@ -75,11 +74,11 @@ export class VirtualList extends Component {
     public getRowHeight(): number {
         return this.rowHeight;
     }
-    
+
     public getScrollTop(): number {
         return this.getGui().scrollTop;
     }
-    
+
     public setRowHeight(rowHeight: number): void {
         this.rowHeight = rowHeight;
         this.refresh();

@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Row Selection: Core Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Row Selection. Row Selection to select rows. Choose between click selection or checkbox selection. Selecting groups will select children. Version 17 is available for download now, take it for a free two month trial.";
+$pageDescription = "Row Selection:  Select rows, Choose between click selection or checkbox selection, Selecting groups will select children. Core feature of ag-Grid supporting Angular, React, Javascript and many more. ";
 $pageKeyboards = "ag-Grid Selection";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -12,6 +12,10 @@ include '../documentation-main/documentation_header.php';
         Select a row by clicking on it. Selecting a row will remove previous selection unless you
         hold down <code>ctrl</code> while clicking. Selecting a row and then holding down <code>shift</code>
         while clicking a second row will select the range.
+    </p>
+
+    <p>
+        Remember Row Selection works with all frameworks eg Angular and React as well as plain JavaScript.
     </p>
 
     <p>

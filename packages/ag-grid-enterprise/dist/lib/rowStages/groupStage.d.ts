@@ -1,5 +1,5 @@
-// ag-grid-enterprise v18.1.1
-import { IRowNodeStage, StageExecuteParams } from "ag-grid/main";
+// ag-grid-enterprise v19.0.0
+import { IRowNodeStage, StageExecuteParams } from "ag-grid-community";
 export declare class GroupStage implements IRowNodeStage {
     private selectionController;
     private gridOptionsWrapper;
@@ -11,29 +11,29 @@ export declare class GroupStage implements IRowNodeStage {
     private usingTreeData;
     private getDataPath;
     private groupIdSequence;
-    private postConstruct();
+    private postConstruct;
     execute(params: StageExecuteParams): void;
-    private createGroupingDetails(params);
-    private handleTransaction(details);
-    private recursiveSortChildren(node, details);
-    private sortGroupsWithComparator(rootNode);
-    private getExistingPathForNode(node, details);
-    private moveNodesInWrongPath(childNodes, details);
-    private moveNode(childNode, details);
-    private removeNodes(leafRowNodes, details);
-    private removeOneNode(childNode, details);
-    private removeFromParent(child);
-    private addToParent(child, parent);
-    private shotgunResetEverything(details);
-    private insertNodes(newRowNodes, details);
-    private insertOneNode(childNode, details);
-    private findParentForNode(childNode, path, details);
-    private swapGroupWithUserNode(fillerGroup, userGroup);
-    private getOrCreateNextNode(parentGroup, groupInfo, level, details);
-    private createGroup(groupInfo, parent, level, details);
-    private getChildrenMappedKey(key, rowGroupColumn);
-    private isExpanded(expandByDefault, level);
-    private getGroupInfo(rowNode, details);
-    private getGroupInfoFromCallback(rowNode);
-    private getGroupInfoFromGroupColumns(rowNode, details);
+    private createGroupingDetails;
+    private handleTransaction;
+    private recursiveSortChildren;
+    private sortGroupsWithComparator;
+    private getExistingPathForNode;
+    private moveNodesInWrongPath;
+    private moveNode;
+    private removeNodes;
+    private removeOneNode;
+    private removeFromParent;
+    private addToParent;
+    private shotgunResetEverything;
+    private insertNodes;
+    private insertOneNode;
+    private findParentForNode;
+    private swapGroupWithUserNode;
+    private getOrCreateNextNode;
+    private createGroup;
+    private getChildrenMappedKey;
+    private isExpanded;
+    private getGroupInfo;
+    private getGroupInfoFromCallback;
+    private getGroupInfoFromGroupColumns;
 }

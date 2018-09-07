@@ -25,8 +25,9 @@ import {
     ColumnApi,
     GridApi,
     CellNavigationService,
-    _
-} from "ag-grid/main";
+    _,
+    Constants
+} from "ag-grid-community";
 
 @Bean('rangeController')
 export class RangeController implements IRangeController {
@@ -369,11 +370,11 @@ export class RangeController implements IRangeController {
         let toIndex = allColumns.indexOf(columnTo);
 
         if (fromIndex < 0) {
-            console.log('ag-Grid: column ' + columnFrom.getId() + ' is not visible');
+            console.warn('ag-Grid: column ' + columnFrom.getId() + ' is not visible');
             return null;
         }
         if (toIndex < 0) {
-            console.log('ag-Grid: column ' + columnTo.getId() + ' is not visible');
+            console.warn('ag-Grid: column ' + columnTo.getId() + ' is not visible');
             return null;
         }
 
@@ -411,7 +412,7 @@ class AutoScrollService {
     public check(mouseEvent: MouseEvent): void {
 
         // we don't do ticking if grid is auto height
-        if (this.gridOptionsWrapper.isGridAutoHeight()) { return; }
+        if (this.gridOptionsWrapper.getDomLayout()!==Constants.DOM_LAYOUT_NORMAL) { return; }
 
         let rect: ClientRect = this.gridPanel.getBodyClientRect();
 

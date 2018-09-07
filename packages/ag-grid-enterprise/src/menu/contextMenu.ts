@@ -20,7 +20,7 @@ import {
     IAfterGuiAttachedParams,
     _,
     BeanStub
-} from "ag-grid";
+} from "ag-grid-community";
 import {ClipboardService} from "../clipboardService";
 import {MenuItemComponent} from "./menuItemComponent";
 import {MenuList} from "./menuList";
@@ -57,19 +57,17 @@ export class ContextMenuFactory implements IContextMenuFactory {
                 defaultMenuOptions = ['copy','copyWithHeaders','paste', 'separator'];
             }
 
-            defaultMenuOptions.push('toolPanel');
-
             // if user clicks a cell
             let suppressExcel = this.gridOptionsWrapper.isSuppressExcelExport();
             let suppressCsv = this.gridOptionsWrapper.isSuppressCsvExport();
             let onIPad = _.isUserAgentIPad();
             let anyExport: boolean = !onIPad && (!suppressExcel || !suppressCsv);
-            if (anyExport){
-                defaultMenuOptions.push('export')
+            if (anyExport) {
+                defaultMenuOptions.push('export');
             }
         } else {
             // if user clicks outside of a cell (eg below the rows, or not rows present)
-            defaultMenuOptions = ['toolPanel'];
+            // nothing to show, perhaps tool panels???
         }
         if (this.gridOptionsWrapper.getContextMenuItemsFunc()) {
             let userFunc: GetContextMenuItems = this.gridOptionsWrapper.getContextMenuItemsFunc();
@@ -131,7 +129,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
 
 }
 
-class ContextMenu extends Component implements IComponent<any>{
+class ContextMenu extends Component implements IComponent<any> {
 
     @Autowired('context') private context: Context;
     @Autowired('clipboardService') private clipboardService: ClipboardService;

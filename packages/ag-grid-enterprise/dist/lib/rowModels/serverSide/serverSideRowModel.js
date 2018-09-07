@@ -1,4 +1,4 @@
-// ag-grid-enterprise v18.1.1
+// ag-grid-enterprise v19.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -23,9 +23,9 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var ag_grid_1 = require("ag-grid");
+var ag_grid_community_1 = require("ag-grid-community");
 var serverSideCache_1 = require("./serverSideCache");
-var ServerSideRowModel = (function (_super) {
+var ServerSideRowModel = /** @class */ (function (_super) {
     __extends(ServerSideRowModel, _super);
     function ServerSideRowModel() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -34,7 +34,7 @@ var ServerSideRowModel = (function (_super) {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         this.addEventListeners();
         var datasource = this.gridOptionsWrapper.getServerSideDatasource();
-        if (ag_grid_1._.exists(datasource)) {
+        if (ag_grid_community_1._.exists(datasource)) {
             this.setDatasource(datasource);
         }
     };
@@ -51,14 +51,14 @@ var ServerSideRowModel = (function (_super) {
         this.logger = loggerFactory.create('ServerSideRowModel');
     };
     ServerSideRowModel.prototype.addEventListeners = function () {
-        this.addDestroyableEventListener(this.eventService, ag_grid_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, ag_grid_1.Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
-        this.addDestroyableEventListener(this.eventService, ag_grid_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, ag_grid_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverything.bind(this));
-        this.addDestroyableEventListener(this.eventService, ag_grid_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, ag_grid_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, ag_grid_1.Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, ag_grid_1.Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
+        this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverything.bind(this));
+        this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
     };
     ServerSideRowModel.prototype.setDatasource = function (datasource) {
         this.destroyDatasource();
@@ -110,27 +110,27 @@ var ServerSideRowModel = (function (_super) {
             return oldIndex !== newIndex;
         };
         return allColsInBothSorts.filter(function (colId) {
-            var oldSortItem = ag_grid_1._.find(oldSortModel, function (sm) { return sm.colId === colId; });
-            var newSortItem = ag_grid_1._.find(newSortModel, function (sm) { return sm.colId === colId; });
+            var oldSortItem = ag_grid_community_1._.find(oldSortModel, function (sm) { return sm.colId === colId; });
+            var newSortItem = ag_grid_community_1._.find(newSortModel, function (sm) { return sm.colId === colId; });
             return differentSorts(oldSortItem, newSortItem) || differentIndexes(oldSortItem, newSortItem);
         });
     };
     ServerSideRowModel.prototype.onSortChanged = function () {
+        if (!this.cacheExists())
+            return;
         var newSortModel = this.extractSortModel();
         var oldSortModel = this.cacheParams.sortModel;
         var changedColumnsInSort = this.findChangedColumnsInSort(newSortModel, oldSortModel);
         this.cacheParams.sortModel = newSortModel;
-        if (this.cacheExists()) {
-            var rowGroupColIds = this.columnController.getRowGroupColumns().map(function (col) { return col.getId(); });
-            var serverSideCache = this.rootNode.childrenCache;
-            var sortingWithValueCol = this.isSortingWithValueColumn(changedColumnsInSort);
-            var sortAlwaysResets = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
-            if (sortAlwaysResets || sortingWithValueCol) {
-                this.reset();
-            }
-            else {
-                serverSideCache.refreshCacheAfterSort(changedColumnsInSort, rowGroupColIds);
-            }
+        var rowGroupColIds = this.columnController.getRowGroupColumns().map(function (col) { return col.getId(); });
+        var serverSideCache = this.rootNode.childrenCache;
+        var sortingWithValueCol = this.isSortingWithValueColumn(changedColumnsInSort);
+        var sortAlwaysResets = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
+        if (sortAlwaysResets || sortingWithValueCol) {
+            this.reset();
+        }
+        else {
+            serverSideCache.refreshCacheAfterSort(changedColumnsInSort, rowGroupColIds);
         }
     };
     ServerSideRowModel.prototype.onValueChanged = function () {
@@ -148,19 +148,19 @@ var ServerSideRowModel = (function (_super) {
     ServerSideRowModel.prototype.onRowGroupOpened = function (event) {
         var rowNode = event.node;
         if (rowNode.expanded) {
-            if (ag_grid_1._.missing(rowNode.childrenCache)) {
+            if (ag_grid_community_1._.missing(rowNode.childrenCache)) {
                 this.createNodeCache(rowNode);
             }
         }
         else {
-            if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && ag_grid_1._.exists(rowNode.childrenCache)) {
+            if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && ag_grid_community_1._.exists(rowNode.childrenCache)) {
                 rowNode.childrenCache.destroy();
                 rowNode.childrenCache = null;
             }
         }
         this.updateRowIndexesAndBounds();
         var modelUpdatedEvent = {
-            type: ag_grid_1.Events.EVENT_MODEL_UPDATED,
+            type: ag_grid_community_1.Events.EVENT_MODEL_UPDATED,
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             newPage: false,
@@ -171,7 +171,7 @@ var ServerSideRowModel = (function (_super) {
         this.eventService.dispatchEvent(modelUpdatedEvent);
     };
     ServerSideRowModel.prototype.reset = function () {
-        this.rootNode = new ag_grid_1.RowNode();
+        this.rootNode = new ag_grid_community_1.RowNode();
         this.rootNode.group = true;
         this.rootNode.level = -1;
         this.context.wireBean(this.rootNode);
@@ -183,7 +183,7 @@ var ServerSideRowModel = (function (_super) {
         }
         // this event: 1) clears selection 2) updates filters 3) shows/hides 'no rows' overlay
         var rowDataChangedEvent = {
-            type: ag_grid_1.Events.EVENT_ROW_DATA_CHANGED,
+            type: ag_grid_community_1.Events.EVENT_ROW_DATA_CHANGED,
             api: this.gridApi,
             columnApi: this.columnApi
         };
@@ -192,7 +192,7 @@ var ServerSideRowModel = (function (_super) {
         // important to NOT pass in an event with keepRenderedRows or animate, as we want the renderer
         // to treat the rows as new rows, as it's all new data
         var modelUpdatedEvent = {
-            type: ag_grid_1.Events.EVENT_MODEL_UPDATED,
+            type: ag_grid_community_1.Events.EVENT_MODEL_UPDATED,
             api: this.gridApi,
             columnApi: this.columnApi,
             animate: false,
@@ -205,7 +205,8 @@ var ServerSideRowModel = (function (_super) {
     ServerSideRowModel.prototype.createNewRowNodeBlockLoader = function () {
         this.destroyRowNodeBlockLoader();
         var maxConcurrentRequests = this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests();
-        this.rowNodeBlockLoader = new ag_grid_1.RowNodeBlockLoader(maxConcurrentRequests);
+        var blockLoadDebounceMillis = this.gridOptionsWrapper.getBlockLoadDebounceMillis();
+        this.rowNodeBlockLoader = new ag_grid_community_1.RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis);
         this.context.wireBean(this.rowNodeBlockLoader);
     };
     ServerSideRowModel.prototype.destroyRowNodeBlockLoader = function () {
@@ -250,7 +251,7 @@ var ServerSideRowModel = (function (_super) {
             sortModel: this.extractSortModel(),
             rowNodeBlockLoader: this.rowNodeBlockLoader,
             datasource: this.datasource,
-            lastAccessedSequence: new ag_grid_1.NumberSequence(),
+            lastAccessedSequence: new ag_grid_community_1.NumberSequence(),
             overflowSize: 1,
             initialRowCount: 1,
             maxConcurrentRequests: this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests(),
@@ -282,13 +283,13 @@ var ServerSideRowModel = (function (_super) {
     ServerSideRowModel.prototype.createNodeCache = function (rowNode) {
         var cache = new serverSideCache_1.ServerSideCache(this.cacheParams, rowNode);
         this.context.wireBean(cache);
-        cache.addEventListener(ag_grid_1.RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
+        cache.addEventListener(ag_grid_community_1.RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
         rowNode.childrenCache = cache;
     };
     ServerSideRowModel.prototype.onCacheUpdated = function () {
         this.updateRowIndexesAndBounds();
         var modelUpdatedEvent = {
-            type: ag_grid_1.Events.EVENT_MODEL_UPDATED,
+            type: ag_grid_community_1.Events.EVENT_MODEL_UPDATED,
             api: this.gridApi,
             columnApi: this.columnApi,
             animate: true,
@@ -307,14 +308,14 @@ var ServerSideRowModel = (function (_super) {
         }
     };
     ServerSideRowModel.prototype.setDisplayIndexes = function (cache) {
-        var numberSequence = new ag_grid_1.NumberSequence();
+        var numberSequence = new ag_grid_community_1.NumberSequence();
         var nextRowTop = { value: 0 };
         cache.setDisplayIndexes(numberSequence, nextRowTop);
     };
     // resetting row tops is needed for animation, as part of the operation is saving the old location,
     // which is needed for rows that are transitioning in
     ServerSideRowModel.prototype.resetRowTops = function (cache) {
-        var numberSequence = new ag_grid_1.NumberSequence();
+        var numberSequence = new ag_grid_community_1.NumberSequence();
         cache.forEachNodeDeep(function (rowNode) { return rowNode.clearRowTop(); }, numberSequence);
     };
     ServerSideRowModel.prototype.getRow = function (index) {
@@ -371,11 +372,11 @@ var ServerSideRowModel = (function (_super) {
         return this.getRowCount() > 0;
     };
     ServerSideRowModel.prototype.getType = function () {
-        return ag_grid_1.Constants.ROW_MODEL_TYPE_SERVER_SIDE;
+        return ag_grid_community_1.Constants.ROW_MODEL_TYPE_SERVER_SIDE;
     };
     ServerSideRowModel.prototype.forEachNode = function (callback) {
         if (this.cacheExists()) {
-            this.rootNode.childrenCache.forEachNodeDeep(callback, new ag_grid_1.NumberSequence());
+            this.rootNode.childrenCache.forEachNodeDeep(callback, new ag_grid_community_1.NumberSequence());
         }
     };
     ServerSideRowModel.prototype.executeOnCache = function (route, callback) {
@@ -399,7 +400,7 @@ var ServerSideRowModel = (function (_super) {
         this.executeOnCache(route, function (cache) { return cache.addToCache(items, index); });
     };
     ServerSideRowModel.prototype.getNodesInRangeForSelection = function (firstInRange, lastInRange) {
-        if (ag_grid_1._.exists(firstInRange) && firstInRange.parent !== lastInRange.parent)
+        if (ag_grid_community_1._.exists(firstInRange) && firstInRange.parent !== lastInRange.parent)
             return [];
         return lastInRange.parent.childrenCache.getRowNodesInRange(firstInRange, lastInRange);
     };
@@ -420,8 +421,10 @@ var ServerSideRowModel = (function (_super) {
             return null;
         }
     };
+    // always returns true - this is used by the
     ServerSideRowModel.prototype.isRowPresent = function (rowNode) {
-        return false;
+        var foundRowNode = this.getRowNode(rowNode.id);
+        return !!foundRowNode;
     };
     ServerSideRowModel.prototype.extractSortModel = function () {
         var sortModel = this.sortController.getSortModel();
@@ -459,7 +462,6 @@ var ServerSideRowModel = (function (_super) {
         }
         return sortModel;
     };
-    ;
     ServerSideRowModel.prototype.isSortingWithValueColumn = function (changedColumnsInSort) {
         var valueColIds = this.columnController.getValueColumns().map(function (col) { return col.getColId(); });
         for (var i = 0; i < changedColumnsInSort.length; i++) {
@@ -471,67 +473,67 @@ var ServerSideRowModel = (function (_super) {
         return false;
     };
     ServerSideRowModel.prototype.cacheExists = function () {
-        return ag_grid_1._.exists(this.rootNode) && ag_grid_1._.exists(this.rootNode.childrenCache);
+        return ag_grid_community_1._.exists(this.rootNode) && ag_grid_community_1._.exists(this.rootNode.childrenCache);
     };
     __decorate([
-        ag_grid_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", ag_grid_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], ServerSideRowModel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        ag_grid_1.Autowired('eventService'),
-        __metadata("design:type", ag_grid_1.EventService)
+        ag_grid_community_1.Autowired('eventService'),
+        __metadata("design:type", ag_grid_community_1.EventService)
     ], ServerSideRowModel.prototype, "eventService", void 0);
     __decorate([
-        ag_grid_1.Autowired('context'),
-        __metadata("design:type", ag_grid_1.Context)
+        ag_grid_community_1.Autowired('context'),
+        __metadata("design:type", ag_grid_community_1.Context)
     ], ServerSideRowModel.prototype, "context", void 0);
     __decorate([
-        ag_grid_1.Autowired('columnController'),
-        __metadata("design:type", ag_grid_1.ColumnController)
+        ag_grid_community_1.Autowired('columnController'),
+        __metadata("design:type", ag_grid_community_1.ColumnController)
     ], ServerSideRowModel.prototype, "columnController", void 0);
     __decorate([
-        ag_grid_1.Autowired('filterManager'),
-        __metadata("design:type", ag_grid_1.FilterManager)
+        ag_grid_community_1.Autowired('filterManager'),
+        __metadata("design:type", ag_grid_community_1.FilterManager)
     ], ServerSideRowModel.prototype, "filterManager", void 0);
     __decorate([
-        ag_grid_1.Autowired('sortController'),
-        __metadata("design:type", ag_grid_1.SortController)
+        ag_grid_community_1.Autowired('sortController'),
+        __metadata("design:type", ag_grid_community_1.SortController)
     ], ServerSideRowModel.prototype, "sortController", void 0);
     __decorate([
-        ag_grid_1.Autowired('gridApi'),
-        __metadata("design:type", ag_grid_1.GridApi)
+        ag_grid_community_1.Autowired('gridApi'),
+        __metadata("design:type", ag_grid_community_1.GridApi)
     ], ServerSideRowModel.prototype, "gridApi", void 0);
     __decorate([
-        ag_grid_1.Autowired('columnApi'),
-        __metadata("design:type", ag_grid_1.ColumnApi)
+        ag_grid_community_1.Autowired('columnApi'),
+        __metadata("design:type", ag_grid_community_1.ColumnApi)
     ], ServerSideRowModel.prototype, "columnApi", void 0);
     __decorate([
-        ag_grid_1.PostConstruct,
+        ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], ServerSideRowModel.prototype, "postConstruct", null);
     __decorate([
-        ag_grid_1.PreDestroy,
+        ag_grid_community_1.PreDestroy,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], ServerSideRowModel.prototype, "destroy", null);
     __decorate([
-        ag_grid_1.PreDestroy,
+        ag_grid_community_1.PreDestroy,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], ServerSideRowModel.prototype, "destroyDatasource", null);
     __decorate([
-        __param(0, ag_grid_1.Qualifier('loggerFactory')),
+        __param(0, ag_grid_community_1.Qualifier('loggerFactory')),
         __metadata("design:type", Function),
-        __metadata("design:paramtypes", [ag_grid_1.LoggerFactory]),
+        __metadata("design:paramtypes", [ag_grid_community_1.LoggerFactory]),
         __metadata("design:returntype", void 0)
     ], ServerSideRowModel.prototype, "setBeans", null);
     ServerSideRowModel = __decorate([
-        ag_grid_1.Bean('rowModel')
+        ag_grid_community_1.Bean('rowModel')
     ], ServerSideRowModel);
     return ServerSideRowModel;
-}(ag_grid_1.BeanStub));
+}(ag_grid_community_1.BeanStub));
 exports.ServerSideRowModel = ServerSideRowModel;

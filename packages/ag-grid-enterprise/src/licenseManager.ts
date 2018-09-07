@@ -1,10 +1,10 @@
-import {Bean, Autowired} from 'ag-grid/main';
-import {Utils} from 'ag-grid/main';
+import {Bean, Autowired} from 'ag-grid-community';
+import {Utils} from 'ag-grid-community';
 import {MD5} from './license/md5';
 
 @Bean('licenseManager')
 export class LicenseManager {
-    private static RELEASE_INFORMATION:string = 'MTUzMjUxMDIzMDA2MA==';
+    private static RELEASE_INFORMATION:string = 'MTUzNjE0OTU5Nzk2OA==';
     private static licenseKey:string;
 
     @Autowired('md5') private md5:MD5;
@@ -24,7 +24,7 @@ export class LicenseManager {
 
                 if(!isNaN(expiry.getTime())) {
                     valid = true;
-                    current = (gridReleaseDate < expiry)
+                    current = (gridReleaseDate < expiry);
                 }
             }
         }
@@ -43,7 +43,7 @@ export class LicenseManager {
 
     private static extractExpiry(license: string) {
         const restrictionHashed = license.substring(license.lastIndexOf('_') + 1, license.length);
-        return new Date(parseInt(LicenseManager.decode(restrictionHashed)));
+        return new Date(parseInt(LicenseManager.decode(restrictionHashed), 10));
     }
 
     private static extractLicenseComponents(licenseKey:string) {
@@ -67,7 +67,7 @@ export class LicenseManager {
             licenseKey,
             valid,
             expiry: valid ? LicenseManager.formatDate(expiry) : null
-        }
+        };
     }
 
     private static outputMessage(header:string, message:string) {
@@ -80,7 +80,7 @@ export class LicenseManager {
     }
 
     private static formatDate(date:any):string {
-        const monthNames: [string] = [
+        const monthNames:string[] = [
             'January', 'February', 'March',
             'April', 'May', 'June', 'July',
             'August', 'September', 'October',
@@ -94,10 +94,9 @@ export class LicenseManager {
         return day + ' ' + monthNames[monthIndex] + ' ' + year;
     }
 
-
     private static getGridReleaseDate() {
-        return new Date(parseInt(LicenseManager.decode(LicenseManager.RELEASE_INFORMATION)));
-    };
+        return new Date(parseInt(LicenseManager.decode(LicenseManager.RELEASE_INFORMATION), 10));
+    }
 
     private static decode(input:string):string {
         const keystr: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
@@ -116,16 +115,15 @@ export class LicenseManager {
             i = (u & 3) << 6 | a;
             t = t + String.fromCharCode(n);
             if (u != 64) {
-                t = t + String.fromCharCode(r)
+                t = t + String.fromCharCode(r);
             }
             if (a != 64) {
-                t = t + String.fromCharCode(i)
+                t = t + String.fromCharCode(i);
             }
         }
         t = LicenseManager.utf8_decode(t);
-        return t
+        return t;
     }
-
 
     private static utf8_decode(input:string):string {
         input = input.replace(/rn/g, 'n');
@@ -133,17 +131,17 @@ export class LicenseManager {
         for (let n = 0; n < input.length; n++) {
             const r = input.charCodeAt(n);
             if (r < 128) {
-                t += String.fromCharCode(r)
+                t += String.fromCharCode(r);
             } else if (r > 127 && r < 2048) {
                 t += String.fromCharCode(r >> 6 | 192);
-                t += String.fromCharCode(r & 63 | 128)
+                t += String.fromCharCode(r & 63 | 128);
             } else {
                 t += String.fromCharCode(r >> 12 | 224);
                 t += String.fromCharCode(r >> 6 & 63 | 128);
-                t += String.fromCharCode(r & 63 | 128)
+                t += String.fromCharCode(r & 63 | 128);
             }
         }
-        return t
+        return t;
     }
 
     static setLicenseKey(licenseKey:string):void {

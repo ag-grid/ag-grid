@@ -21,7 +21,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        <img src="redux-file-view.png" width="90%" style="border: 1px solid grey"/>
+        <img src="redux-file-view.png" width="90%" style="border: 1px solid grey" alt="Redux Integration File View" />
     </p>
 
     <p>
@@ -45,7 +45,7 @@ include '../documentation-main/documentation_header.php';
     <p>Redux has a single store which contains all application state. It has one Root Reducer which is responsible for
        transforming the application state and is typically created by combining several smaller reducers.</p>
 
-    <img style="margin-left: 15%" src="redux-store.png"/>
+    <img style="margin-left: 15%" src="redux-store.png" alt="Redux Store" />
 
     <p>Actions describe the operation the reducer should perform on the state. They may also contain an optional payload
        containing data used by the reducer to transform the state. For example an action to create a new file might
@@ -62,7 +62,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>Actions are dispatched to the store from UI components as illustrated below:</p>
 
-    <img style="margin-left: 2%" src="redux-data-flow.png" width="100%" />
+    <img style="margin-left: 2%" src="redux-data-flow.png" width="100%" alt="Redux Data Flow" />
 
     <p>The reducer that is associated with the action type will then transform the state which is saved in the store.
         Reducers are pure functions which receive the current application state along with the action to be performed on

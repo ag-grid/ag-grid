@@ -1,6 +1,5 @@
 import {ComponentFactoryResolver, ComponentRef, Injectable, ViewContainerRef} from "@angular/core";
-import {Bean} from "ag-grid/main";
-import {BaseComponentWrapper, FrameworkComponentWrapper, WrapableInterface} from 'ag-grid';
+import {BaseComponentWrapper, Bean, FrameworkComponentWrapper, WrapableInterface} from 'ag-grid-community';
 import {AgFrameworkComponent} from "./interfaces";
 
 @Injectable()
@@ -17,7 +16,7 @@ export class Ng2FrameworkComponentWrapper extends BaseComponentWrapper<WrapableI
         this.componentFactoryResolver = componentFactoryResolver;
     }
 
-    createWrapper(OriginalConstructor: { new (): any }): WrapableInterface {
+    createWrapper(OriginalConstructor: { new(): any }): WrapableInterface {
         let that = this;
 
         class DynamicAgNg2Component extends BaseGuiComponent<any, AgFrameworkComponent<any>> implements WrapableInterface {

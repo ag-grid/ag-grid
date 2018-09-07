@@ -17,7 +17,7 @@ import {
     ValueService,
     GridOptionsWrapper,
     RowBounds
-} from "ag-grid";
+} from "ag-grid-community";
 
 import {ServerSideCache, ServerSideCacheParams} from "./serverSideCache";
 
@@ -49,15 +49,38 @@ export class ServerSideBlock extends RowNodeBlock {
     private rowGroupColumn: Column;
     private nodeIdPrefix: string;
 
+    private usingTreeData: boolean;
+
     constructor(pageNumber: number, parentRowNode: RowNode, params: ServerSideCacheParams, parentCache: ServerSideCache) {
         super(pageNumber, params);
         this.params = params;
         this.parentRowNode = parentRowNode;
         this.parentCache = parentCache;
-
         this.level = parentRowNode.level + 1;
-        this.groupLevel = this.level < params.rowGroupCols.length;
-        this.leafGroup = this.level === (params.rowGroupCols.length - 1);
+        this.groupLevel = params.rowGroupCols ? this.level < params.rowGroupCols.length : undefined;
+        this.leafGroup = params.rowGroupCols ? this.level === params.rowGroupCols.length - 1 : false;
+    }
+
+    @PostConstruct
+    protected init(): void {
+        this.usingTreeData = this.gridOptionsWrapper.isTreeData();
+
+        if (!this.usingTreeData && this.groupLevel) {
+            let groupColVo = this.params.rowGroupCols[this.level];
+            this.groupField = groupColVo.field;
+            this.rowGroupColumn = this.columnController.getRowGroupColumns()[this.level];
+        }
+
+        this.createNodeIdPrefix();
+
+        super.init({
+            context: this.context,
+            rowRenderer: this.rowRenderer
+        });
+    }
+
+    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
+        this.logger = loggerFactory.create('ServerSideBlock');
     }
 
     private createNodeIdPrefix(): void {
@@ -128,27 +151,6 @@ export class ServerSideBlock extends RowNodeBlock {
         }
     }
 
-    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('ServerSideBlock');
-    }
-
-    @PostConstruct
-    protected init(): void {
-
-        if (this.groupLevel) {
-            let groupColVo = this.params.rowGroupCols[this.level];
-            this.groupField = groupColVo.field;
-            this.rowGroupColumn = this.columnController.getRowGroupColumns()[this.level];
-        }
-
-        this.createNodeIdPrefix();
-
-        super.init({
-            context: this.context,
-            rowRenderer: this.rowRenderer
-        });
-    }
-
     protected setDataAndId(rowNode: RowNode, data: any, index: number): void {
         rowNode.stub = false;
 
@@ -170,22 +172,34 @@ export class ServerSideBlock extends RowNodeBlock {
             rowNode.setDataAndId(data, idToUse);
             rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode));
 
-            if (rowNode.group) {
+            if (this.usingTreeData) {
+                let getServerSideGroupKey = this.gridOptionsWrapper.getServerSideGroupKeyFunc();
+                if (_.exists(getServerSideGroupKey)) {
+                    rowNode.key = getServerSideGroupKey(rowNode.data);
+                }
+
+                let isServerSideGroup = this.gridOptionsWrapper.getIsServerSideGroupFunc();
+                if (_.exists(isServerSideGroup)) {
+                    rowNode.group = isServerSideGroup(rowNode.data);
+                }
+
+            } else if (rowNode.group) {
                 rowNode.key = this.valueService.getValue(this.rowGroupColumn, rowNode);
                 if (rowNode.key===null || rowNode.key===undefined) {
                     _.doOnce( ()=> {
                         console.warn(`null and undefined values are not allowed for server side row model keys`);
-                        if (this.rowGroupColumn) { console.warn(`column = ${this.rowGroupColumn.getId()}`)}
+                        if (this.rowGroupColumn) { console.warn(`column = ${this.rowGroupColumn.getId()}`);}
                         console.warn(`data is `, rowNode.data);
                     }, 'ServerSideBlock-CannotHaveNullOrUndefinedForKey');
                 }
             }
+
         } else {
             rowNode.setDataAndId(undefined, undefined);
             rowNode.key = null;
         }
 
-        if (this.groupLevel) {
+        if (this.usingTreeData || this.groupLevel) {
             this.setGroupDataIntoRowNode(rowNode);
             this.setChildCountIntoRowNode(rowNode);
         }
@@ -201,8 +215,15 @@ export class ServerSideBlock extends RowNodeBlock {
     private setGroupDataIntoRowNode(rowNode: RowNode): void {
         let groupDisplayCols: Column[] = this.columnController.getGroupDisplayColumns();
 
+        let usingTreeData = this.gridOptionsWrapper.isTreeData();
+
         groupDisplayCols.forEach(col => {
-            if (col.isRowGroupDisplayed(this.rowGroupColumn.getId())) {
+            if (usingTreeData) {
+                if (_.missing(rowNode.groupData)) {
+                    rowNode.groupData = {};
+                }
+                rowNode.groupData[col.getColId()] = rowNode.key;
+            } else if (col.isRowGroupDisplayed(this.rowGroupColumn.getId())) {
                 let groupValue = this.valueService.getValue(this.rowGroupColumn, rowNode);
                 if (_.missing(rowNode.groupData)) {
                     rowNode.groupData = {};
@@ -210,7 +231,6 @@ export class ServerSideBlock extends RowNodeBlock {
                 rowNode.groupData[col.getColId()] = groupValue;
             }
         });
-
     }
 
     protected loadFromDatasource(): void {
@@ -339,7 +359,7 @@ export class ServerSideBlock extends RowNodeBlock {
                              virtualRowCount: number,
                              nextRowTop: {value: number}): void {
         this.displayIndexStart = displayIndexSeq.peek();
-        
+
         this.blockTop = nextRowTop.value;
 
         this.forEachRowNode(virtualRowCount, rowNode => {

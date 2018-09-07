@@ -1,10 +1,10 @@
-// ag-grid-enterprise v18.1.1
-import { Component, CellRendererService, ColDef } from "ag-grid/main";
+// ag-grid-enterprise v19.0.0
+import { Component, CellRendererService, ColDef } from "ag-grid-community";
 export declare class RichSelectRow extends Component {
     cellRendererService: CellRendererService;
     private columnDef;
     constructor(columnDef: ColDef);
     setState(value: any, valueFormatted: string, selected: boolean): void;
-    private populateWithoutRenderer(value, valueFormatted);
-    private populateWithRenderer(value, valueFormatted);
+    private populateWithoutRenderer;
+    private populateWithRenderer;
 }

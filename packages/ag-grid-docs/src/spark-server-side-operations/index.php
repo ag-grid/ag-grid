@@ -200,9 +200,9 @@ public class OlympicMedalDataLoader {
     <p>Our Java service will use the following request:</p>
 
 <snippet>
-// src/main/java/com/ag/grid/enterprise/spark/demo/request/EnterpriseGetRowsRequest.java
+// src/main/java/com/ag/grid/enterprise/spark/demo/request/ServerSideGetRowsRequest.java
 
-public class EnterpriseGetRowsRequest implements Serializable {
+public class ServerSideGetRowsRequest implements Serializable {
 
     private int startRow, endRow;
 
@@ -252,7 +252,7 @@ public class OlympicMedalsController {
     private OlympicMedalDao medalDao;
 
     @RequestMapping(method = RequestMethod.POST, value = "/getRows")
-    public ResponseEntity&lt;String> getRows(@RequestBody EnterpriseGetRowsRequest request) {
+    public ResponseEntity&lt;String> getRows(@RequestBody ServerSideGetRowsRequest request) {
         DataResult data = medalDao.getData(request);
         return new ResponseEntity<>(asJsonResponse(data), HttpStatus.OK);
     }
@@ -344,7 +344,7 @@ public class SetColumnFilter extends ColumnFilter {
 }
 </snippet>
 
-<p>These filters are supplied per column in the <code>EnterpriseGetRowsRequest</code> via the following property:</p>
+<p>These filters are supplied per column in the <code>ServerSideGetRowsRequest</code> via the following property:</p>
 
 <snippet>
     Map&lt;String, ColumnFilter> filterModel;
@@ -556,7 +556,7 @@ private Dataset&lt;Row> agg(RelationalGroupedDataset groupedDf) {
     <h2 id="sorting">Sorting</h2>
 
     <p>
-        The <code>EnterpriseGetRowsRequest</code> contains the following attribute to determine which columns to sort by:
+        The <code>ServerSideGetRowsRequest</code> contains the following attribute to determine which columns to sort by:
     </p>
 
     <snippet>
@@ -607,7 +607,7 @@ private Dataset&lt;Row> orderBy(Dataset&lt;Row> df) {
     <h2 id="infinite-scrolling">Infinite Scrolling</h2>
 
     <p>
-        The <code>EnterpriseGetRowsRequest</code> contains the following attributes to determine the range to return:
+        The <code>ServerSideGetRowsRequest</code> contains the following attributes to determine the range to return:
     </p>
 
 <snippet>

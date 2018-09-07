@@ -1,24 +1,23 @@
 var columnDefs = [
-    {field: 'model'},
-    {field: 'color'},
-    {field: 'color'},
-    {field: 'color'},
-    {field: 'color'},
-    {field: 'price', valueFormatter: '"$" + value.toLocaleString()'},
-    {field: 'year'},
-    {field: 'country'}
+    {field: 'group', rowGroup: true, hide: true},
+    {field: 'id', pinned: 'left', width: 60},
+    {field: 'model', width: 150},
+    {field: 'color', width: 100},
+    {field: 'price', valueFormatter: '"$" + value.toLocaleString()', width: 100},
+    {field: 'year', width: 100},
+    {field: 'country', width: 100}
 ];
 
 var models = ['Mercedes-AMG C63','BMW M2','Audi TT Roadster','Mazda MX-5','BMW M3','Porsche 718 Boxster','Porsche 718 Cayman'];
 var colors = ['Red','Black','Green','White','Blue'];
 var countries = ['UK', 'Spain', 'France', 'Ireland', 'USA'];
 
-var printPending = false;
-
 function createRowData() {
     var rowData = [];
     for (var i = 0; i<200; i++) {
         var item = {
+            id: i + 1,
+            group: 'Group ' + (Math.floor(i / 20) + 1),
             model: models[Math.floor(Math.random()*models.length)],
             color: colors[Math.floor(Math.random()*colors.length)],
             country: countries[Math.floor(Math.random()*countries.length)],
@@ -30,51 +29,45 @@ function createRowData() {
     return rowData;
 }
 
-
 var gridOptions = {
+    defaultColDef: {
+    },
     columnDefs: columnDefs,
     rowData: createRowData(),
-    onAnimationQueueEmpty: onAnimationQueueEmpty
+    enableSorting: true,
+    animateRows: true,
+    toolPanelSuppressSideButtons: true,
+    groupUseEntireRow: true,
+    onGridReady: function(params) {
+        params.api.expandAll();
+    }
 };
 
 function onBtPrint() {
-    setPrinterFriendly(gridOptions.api);
-    printPending = true;
+    var gridApi = gridOptions.api;
 
-    if (gridOptions.api.isAnimationFrameQueueEmpty()) {
-        onAnimationQueueEmpty({api: gridOptions.api});
-    }
-}
+    setPrinterFriendly(gridApi);
 
-function onAnimationQueueEmpty(event) {
-    if (printPending) {
-        printPending = false;
+    setTimeout( function( ) {
         print();
-        setNormal(event.api);
-    }
+        setNormal(gridApi);
+    }, 2000);
 }
 
 function setPrinterFriendly(api) {
     var eGridDiv = document.querySelector('.my-grid');
-
-    var preferredWidth = api.getPreferredWidth();
-
-    // add 2 pixels for the grid border
-    preferredWidth += 2;
-
-    eGridDiv.style.width = preferredWidth + 'px';
+    eGridDiv.style.width = '';
     eGridDiv.style.height = '';
 
-    api.setGridAutoHeight(true);
+    api.setDomLayout('print');
 }
 
 function setNormal(api) {
     var eGridDiv = document.querySelector('.my-grid');
-
-    eGridDiv.style.width = '400px';
+    eGridDiv.style.width = '600px';
     eGridDiv.style.height = '200px';
 
-    api.setGridAutoHeight(false);
+    api.setDomLayout(null);
 }
 
 // setup the grid after the page has finished loading

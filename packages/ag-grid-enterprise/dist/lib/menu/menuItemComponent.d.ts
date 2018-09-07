@@ -1,5 +1,5 @@
-// ag-grid-enterprise v18.1.1
-import { MenuItemDef, Component, AgEvent } from "ag-grid";
+// ag-grid-enterprise v19.0.0
+import { MenuItemDef, Component, AgEvent } from "ag-grid-community";
 export interface MenuItemSelectedEvent extends AgEvent {
     name: string;
     disabled: boolean;
@@ -18,7 +18,7 @@ export declare class MenuItemComponent extends Component {
     static EVENT_ITEM_SELECTED: string;
     private params;
     constructor(params: MenuItemDef);
-    private init();
-    private onOptionSelected(mouseEvent);
+    private init;
+    private onOptionSelected;
     destroy(): void;
 }

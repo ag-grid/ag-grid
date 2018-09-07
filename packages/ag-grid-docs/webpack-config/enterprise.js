@@ -16,8 +16,8 @@ module.exports = merge(common, {
     },
 
     externals: {
-        'ag-grid': 'ag-grid',
-        'ag-grid/main': 'ag-grid'
+        'ag-grid-community': 'ag-grid-community',
+        'ag-grid-community/main': 'ag-grid-community'
     },
 
     plugins: [

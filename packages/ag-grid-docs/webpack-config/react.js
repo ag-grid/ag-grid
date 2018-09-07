@@ -18,8 +18,8 @@ module.exports = merge(common, {
     externals: {
         react: 'react',
         'react-dom': 'react-dom',
-        'ag-grid': 'ag-grid',
-        'ag-grid/main': 'ag-grid'
+        'ag-grid-community': 'ag-grid-community',
+        'ag-grid-community/main': 'ag-grid-community'
     },
     resolve: {
         extensions: ['.ts', '.js']

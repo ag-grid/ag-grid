@@ -11,7 +11,7 @@ import {
     TaskQueue,
     ViewResources
 } from "aurelia-framework";
-import {ColumnApi, ComponentUtil, Grid, GridApi, GridOptions, GridParams} from "ag-grid/main";
+import {ColumnApi, ComponentUtil, Grid, GridApi, GridOptions, GridParams} from "ag-grid-community";
 import {AureliaFrameworkFactory} from "./aureliaFrameworkFactory";
 import {AgGridColumn} from "./agGridColumn";
 import {generateBindables} from "./agUtils";

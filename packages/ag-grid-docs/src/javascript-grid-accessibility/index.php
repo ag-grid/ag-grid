@@ -45,7 +45,7 @@ include '../documentation-main/documentation_header.php';
         Using our demo page as an example, the chrome plugin <a href="https://chrome.google.com/webstore/detail/colorblinding/dgbgleaofjainknadoffbjkclicbbgaa?hl=en">Colorblinding</a>
         shows how cells with colour indicators might appear to someone with total colour blindness (Monochromacy).
     </p>
-        <img class="img-fluid" src="accessibility-colour-contrast.png"/>
+        <img class="img-fluid" src="accessibility-colour-contrast.png" alt="High Contrast Theme" />
     <p>
         To create a high contrast theme please check out the <a href="../javascript-grid-styling/">Themes</a>
         documentation for details.

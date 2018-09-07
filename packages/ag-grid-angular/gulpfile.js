@@ -22,7 +22,7 @@ gulp.task('clean-ngc', (callback) => {
 });
 
 gulp.task('ngc', (callback) => {
-    return runSequence('ngc-src', 'ngc-main', callback)
+    return runSequence('ngc-src', 'ngc-main', callback);
 });
 
 gulp.task('ngc-src', (callback) => {
@@ -31,7 +31,7 @@ gulp.task('ngc-src', (callback) => {
 
 gulp.task('clean-build-main', ['build-main'], (callback) => {
     // post build cleanup
-    return del(['./aot', 'exports.js*', 'exports.d.ts', 'exports.metadata.json'], callback);
+    return del(['./aot', 'exports.js*', 'exports.d.ts', 'exports.metadata.json', './src/*.js*', './src/*.d.ts', './src/*.metadata.*'], callback);
 });
 
 gulp.task('build-main', ['ngc-main'], (callback) => {
@@ -46,7 +46,7 @@ gulp.task('build-main', ['ngc-main'], (callback) => {
         .pipe(gulp.dest("./"));
     return gulp.src("./exports.metadata.json")
         .pipe(rename(('main.metadata.json')))
-        .pipe(gulp.dest("./"))
+        .pipe(gulp.dest("./"));
 });
 
 gulp.task('ngc-main', (callback) => {
@@ -55,13 +55,14 @@ gulp.task('ngc-main', (callback) => {
         .pipe(ngc('./tsconfig-main.json', callback));
 });
 
-gulp.task('watch', ['clean-build-main'], () => {
+gulp.task('watch', ['ngc-src'], () => {
     gulp.watch([
-        './node_modules/ag-grid/dist/**/*', './node_modules/ag-grid/main.js',
-        './node_modules/ag-grid-enterprise/dist/**/*', './node_modules/ag-grid-enterprise/main.js',
-        './src/**/*'
-    ], ['clean-ngc']);
+        './src/*.ts',
+        './node_modules/ag-grid-community/dist/lib/**/*'
+    ],
+    ['ngc-src']);
 });
+
 
 // the main release task - clean, compile and add header template
 gulp.task('release', ['clean-ngc'], function () {

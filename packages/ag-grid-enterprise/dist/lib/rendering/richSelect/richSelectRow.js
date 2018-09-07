@@ -1,4 +1,4 @@
-// ag-grid-enterprise v18.1.1
+// ag-grid-enterprise v19.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -20,8 +20,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = require("ag-grid/main");
-var RichSelectRow = (function (_super) {
+var ag_grid_community_1 = require("ag-grid-community");
+var RichSelectRow = /** @class */ (function (_super) {
     __extends(RichSelectRow, _super);
     function RichSelectRow(columnDef) {
         var _this = _super.call(this, '<div class="ag-rich-select-row"></div>') || this;
@@ -33,12 +33,12 @@ var RichSelectRow = (function (_super) {
         if (!rendererSuccessful) {
             this.populateWithoutRenderer(value, valueFormatted);
         }
-        main_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-rich-select-row-selected', selected);
+        ag_grid_community_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-rich-select-row-selected', selected);
     };
     RichSelectRow.prototype.populateWithoutRenderer = function (value, valueFormatted) {
         var valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
         var valueToRender = valueFormattedExits ? valueFormatted : value;
-        if (main_1.Utils.exists(valueToRender) && valueToRender !== '') {
+        if (ag_grid_community_1.Utils.exists(valueToRender) && valueToRender !== '') {
             // not using innerHTML to prevent injection of HTML
             // https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML#Security_considerations
             this.getGui().textContent = valueToRender.toString();
@@ -51,7 +51,7 @@ var RichSelectRow = (function (_super) {
     RichSelectRow.prototype.populateWithRenderer = function (value, valueFormatted) {
         var _this = this;
         var promise = this.cellRendererService.useRichSelectCellRenderer(this.columnDef, this.getGui(), { value: value, valueFormatted: valueFormatted });
-        var foundRenderer = main_1._.exists(promise);
+        var foundRenderer = ag_grid_community_1._.exists(promise);
         if (foundRenderer) {
             promise.then(function (childComponent) {
                 if (childComponent && childComponent.destroy) {
@@ -65,9 +65,9 @@ var RichSelectRow = (function (_super) {
         }
     };
     __decorate([
-        main_1.Autowired('cellRendererService'),
-        __metadata("design:type", main_1.CellRendererService)
+        ag_grid_community_1.Autowired('cellRendererService'),
+        __metadata("design:type", ag_grid_community_1.CellRendererService)
     ], RichSelectRow.prototype, "cellRendererService", void 0);
     return RichSelectRow;
-}(main_1.Component));
+}(ag_grid_community_1.Component));
 exports.RichSelectRow = RichSelectRow;

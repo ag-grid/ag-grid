@@ -1,106 +1,228 @@
 <?php
-$pageTitle = "Angular Datagrid | Packed with features and performance.";
-$pageDescription = "ag-Grid is a feature rich datagrid designed for Angular 5.2.10. Version 17.1 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that you expect. Our Community version is free and open source or take a 2 month trial of ag-Grid Enterprise";
+$pageTitle = "Angular Data Grid | Packed with features and performance.";
+$pageDescription = "Worlds leading, feature rich Angular Data Grid. Designed to integrate seamlessly with Angular to deliver filtering, grouping, aggregation, pivoting and much more with the performance that you expect. Version 18 is out now.";
 $pageGroup = "basics";
 include '../landing-pages/header.php';
 ?>
 
+<div style="padding-top: 50px;padding-bottom: 50px;padding-right: 50px;padding-left: 50px;margin-top: -45px">
+
 <div>
+    <h1 class="text-center" class="text-white" class="first-h1"><strong>ag-Grid: World's Leading Angular Data grid</strong></h1>
+    <hr>
+    <h7 class="lead">
+ag-Grid is a feature rich data grid <strong>built for Angular</strong>.
+<br>Integrate seamlessly with <strong>Angular 2+</strong> to deliver core and enterprise features with the performance that you expect.
+<br>
+        Discover the versions, key benefits and resources available to quickly add a Angular data grid or datatable to your Angular application.
+    </h7>
 
-    <h1 class="first-h1">ag-Grid: Built for Angular</h1>
-    
-    <p class="lead">
-        ag-Grid began life as an Angular grid. In fact, the first incarnation of the grid was AngularGrid. We have since added support for other frameworks. This means is we integrate seamlessly with Angular 2+. We also have a close working relationship with the Angular team so support the latest versions as they're released. This page outlines our products, the key benefits and features as well as the pathway to get up and running quickly. With these resources, you can quickly add a datgrid or datatable to your Angular application.
-    </p>
+</div>
+<hr><br>
 
-    <h2>Pick the Best Version for You</h2>
-
-    <div>
+<div>
+    <div style="margin-top: -55px">
         <div class="row">
             <div class="col-md-6">
-                <h3>ag-Grid Community Edition (CE)</h3>
-                <p>
-                    Free and Open Source datagrid designed to meet all of your core requirements. Available via Github or NPM. To keep up to date with our releases, you can join our mailing list or follow us on Medium.
+                <h3>Trusted by the Community</h3>
+                <hr>
+                <div style="background-color: aliceblue">
+                                <p><strong>2M Downloads
+                    <br>
+                    150,000 Downloads Per Month</strong>
                 </p>
+            </div>
+                <hr>
+                <p>
+                    Free and Open Source Angular data grid.
+                </p>
+                <a href="https://www.ag-grid.com/angular-getting-started/" target="_blank"><button type="button" class="btn btn-outline-primary btn-lg">Community Edition</button></a>
             </div>
 
             <div class="col-md-6">
-                <h3>ag-Grid Enterprise Edition</h3>
-                <p>
-                    Built on ag-Grid CE, our commercial version contains more features designed for Enterprise Applications. This version also includes Technical Support and Feature Requests. Sign up now for a free two month, fully functional trial.
+                <h3>Built for the Enterprise</h3>
+                <hr>
+                                <div style="background-color: aliceblue">
+                                <p><strong>Over 1,500 Companies use Enterprise
+                    <br>
+                    Over 25% of FT-500 Companies use Enterprise</strong>
                 </p>
+            </div>
+                <hr>
+                <p>
+                    Designed for Enterprise Applications.<br>
+                </p>
+                <a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary btn-lg">Start Free Trial</button></a>
             </div>
         </div>
     </div>
+</div>
 
-    <h2>Key Features and Benefits</h2>
+<div id="ag-grid-angular">
+<h1 class="text-center" class="text-white" class="first-h1" style="background-color: aliceblue;padding-top: 30px;padding-bottom: 30px;margin-top: 30px"><strong>ag-Grid in Angular</strong></h1>
 
-    <div>
+<div class="container">
+  <div class="row">
+    <div class="col" style="max-width: 400px">
+<h3 class="text-center">Test ag-Grid's features and performance level in the Angular Data Grid Example.</h3>
+<br><br>
+<h6 class="text-center">
+    <strong>Extensive Set of Features</strong>
+</h6>
+<p class="text-center">
+    Designed for Core and Enterprise needs.
+</p>
+<br>
+<h6 class="text-center">
+    <strong>Features Are Useless Without Performance</strong>
+</h6>
+<p class="text-center">
+    Built to deal with large data sets.
+</p>
+    </div>
+    <div class="col" style="margin-top: 10px;margin-bottom: -50px">
+    <?= example('ag-Grid in Angular', 'rich-grid-example', 'angular', array( "enterprise" => 1, "exampleHeight" => 300 , "exampleWidth" => 300, "showResult" => true, "extras" => array( "fontawesome" ) )); ?>
+    </div>
+  </div>
+<br> <br>
+</div>
+      <a href="../example.php" target="_blank"><button type="button" class="btn btn-outline-primary btn-sm btn-block">Angular Grid Demo</button></a>
+
+<div id="Features and Performance">
+    <br>
+                    <h1 class="text-center" style="background-color: aliceblue;padding-top: 30px;padding-bottom: 30px;margin-bottom: -20px"><strong>Features You Need   |      Performance You Expect</strong></h1>
+
+                        <h2 class="text-center" style="margin-bottom: -10px"><strong>Core</strong></h2><hr style="width: 80px">
+                   <br>
+                   <p class="text-center" style="margin-top: -30px;"><strong>Everything you'd expect from a Angular data grid.</strong>
+                    <br>Available in ag-Grid Community.
+<br>
+    <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-angular" target="_blank">Github</a> | <a href="https://www.npmjs.com/package/ag-grid" target="_blank">NPM</a>
+                </p>
+
+                <div class="container">
+  <div class="row">
+    <div class="col-sm">
+<h4 class="text-center">Sorting</h4>
+    </div>
+    <div class="col-sm">
+<h4 class="text-center">Filtering</h4>
+    </div>
+    <div class="col-sm">
+<h4 class="text-center">Selection</h4>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col"><img src="sorting.gif" alt="Sorting"></div>
+    <div class="col"><img src="filtering.gif" alt="Filtering"></div>
+    <div class="col"><img src="selection.gif" alt="Selection"></div>
+</div>
+</div>
+<br>
+                                                        <h2 class="text-center"><strong>Enterprise</strong><hr style="width: 80px;margin-top: 10px;"></h2>
+                   <br>
+                   <p class="text-center" style="margin-top: -30px"><strong>A more powerful set of advanced features designed for Enterprise Applications.</strong>
+<br>
+                   Availalbe in ag-Grid Enterprise.
+                   <br>
+<a href="../start-trial.php" target="_blank"><button type="button" style="margin-top: 5px" class="btn btn-primary btn">Start Free Trial</button></a>
+               </p>
+                   <br><br>
+
+                <div class="container" style="margin-top: -50px">
+  <div class="row">
+    <div class="col-sm">
+<h4 class="text-center">Aggregation</h4>
+    </div>
+    <div class="col-sm">
+<h4 class="text-center">Tree Data</h4>
+    </div>
+    <div class="col-sm">
+<h4 class="text-center">Pivoting</h4>
+    </div>
+  </div>
+</div>
+
+                   <div class="container">
+  <div class="row">
+
+    <div class="col"><img src="grouping-aggregation.gif"></div>
+    <div class="col"><img src="tree-data.gif" alt="Tree Data"></div>
+    <div class="col"><img src="pivoting.gif" alt="Pivoting"></div>
+</div>
+</div>
+</div>
+<a href="../features-overview" target="_blank" style="margin-top: 40px"><button style="margin-top: 40px" type="button" class="btn btn-outline-primary btn-sm btn-block" style="padding: auto;">See all our Features</button></a>
+<br>
+<br>
+
+<div>
+<h1 class="text-center" class="text-white" class="first-h1" style=" margin-top: -20px;background-color: #fbfbfb;padding-top: 20px;padding-bottom: 20px"><strong>Pick The Best Version For You</strong></h1>
+<br><br>
+    <div style="margin-top: -55px">
         <div class="row">
-            <div class="col-md-4">
-                <h3>Core and Enterprise Features</h3>
-                    <ul class="content-list">
-                        <li>
-                            Everything you'd expect from a datagrid. Sorting, filtering, row grouping. Available in ag-Grid Community.
-                        </li>
-                        <li>
-                            A more powerful set of advanced features designed for Enterprise Applications. Pivoting, Aggregation, Clipboard, Master/Detail, Tree Data
-                        </li>
-                        <li>
-                            View all of our features in the Features Overview.
-                        </li>
-                    </ul>
+            <div class="col-md-6">
+                <h3>Trusted by the Community</h3>
+                <hr>
+                <div style="background-color: aliceblue">
+                                <p><strong>2M Downloads
+                    <br>
+                    200,000 Downloads Per Month</strong>
+                </p>
+            </div>
+                <hr>
+                <p>
+                    Free and Open Source Angular data grid.
+                    <br>
+                    Designed to meet all of your core requirements.
+<br>
+                    Available via Github or NPM.
+                </p>
+                <a href="https://github.com/ag-grid/ag-grid-angular" target="_blank"><button type="button" class="btn btn-outline-primary btn-lg">Community Edition</button></a>
             </div>
 
-            <div class="col-md-4">
-                <h3>Performance</h3>
-                    <ul class="content-list">
-                        <li>
-                            Features are useless without performance. 
-                        </li>
-                        <li>
-                            We find that the browser runs out of steam before the grid, easily handles 100,000 rows.
-                        </li>
-                        <li>
-                            For larger datasets, use one of our other Row Models designed to handle Big Data.
-                        </li>
-                    </ul>
+            <div class="col-md-6">
+                <h3>Built for the Enterprise</h3>
+                <hr>
+                                <div style="background-color: aliceblue">
+                                <p><strong>Over 1,500 Companies use Enterprise
+                    <br>
+                    Over 25% of FT-500 Companies use Enterprise</strong>
+                </p>
             </div>
-
-            <div class="col-md-4">
-                <h3>Detailed Documentation</h3>
-                    <ul class="content-list">
-                        <li>
-                            We have created in depth guides which you can follow to implement specific features.
-                        </li>
-                        <li>
-                            There are lots of articles covering our Row Models, Themes, Components as well a detailed reference guide.
-                        </li>
-                        <li>
-                            Finally, we have provided a library of Examples which you can use as a basis for your implementation of ag-Grid.
-                        </li>
-                    </ul>
+                <hr>
+                <p>
+                    Designed for Enterprise Applications.<br>
+                    Enterprise includes Technical Support and Feature Requests.<br>
+                    Sign up now for a free two month, fully functional trial.<br>
+                </p>
+                <a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary btn-lg">Start Free Trial</button></a>
             </div>
         </div>
     </div>
+</div>
 
-    <?= example('ag-Grid in Angular', 'rich-grid-example', 'angular', array( "enterprise" => 1, "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome" ) )); ?>
+<hr>
 
-<h2>How Do I Get Started?</h2>
-
-<p>We have put together a detailed guide on <a href="https://www.ag-grid.com/angular-getting-started/">Getting Started with Angular and ag-Grid</a>. This covers getting up and running with ag-Grid Community and then adding ag-Grid Enterprise.</p>
-
-<h2>What About Detailed Guides and Examples?</h2>
-
-<p>We have created a number of more detailed guides as follows:</p>
-
-<ul>
-    <li><a href="https://www.ag-grid.com/angular-more-details/">ag-Grid Angular Overview</a></li>
-    <li><a href="https://www.ag-grid.com/example-angular-rxjs/">Angular Component using RxJs Example</a></li>
-    <li><a href="</a></li>
-</ul>
-
-<p>In addition to the above, you can find a <a href="../example-react-redux/">live example of ag-Grid / Redux integration</a> in our examples section.</p>
+<div class="container">
+  <div class="row">
+    <div class="col">
+<h3>How Do I Get Started?</h3>
+<br>
+<p>We have put together a detailed Angular tutorial on <a href="https://www.ag-grid.com/angular-getting-started/" target="_blank">Getting Started with Angular and ag-Grid</a>. This covers getting up and running with ag-Grid Community and then adding ag-Grid Enterprise.</p>
+    </div>
+    <div class="col">
+<h3>What About Detailed Guides and Examples?</h3>
+<br>
+<div>
+  <a href="../angular-more-details/" class="btn btn-light" target="_blank">View our Angular Grid Overview</a><br>
+  <a href="../example-angular-rxjs/" class="btn btn-light" target="_blank">Angular Grid Component using RXjs example</a>
+</div>
+    </div>
+  </div>
 
 </div>
 

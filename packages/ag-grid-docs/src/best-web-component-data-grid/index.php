@@ -10,7 +10,7 @@ include '../getting-started/header.php';
 
     <h1 id="implementing-the-web-components-datagrid">
         <img src="../images/svg/docs/getting_started.svg" width="50" />
-        <img style="vertical-align: middle" src="../images/webComponents.png" height="25px"/>
+        <img style="vertical-align: middle" src="../images/webComponents.png" height="25px" alt="Web Components"/>
         Web Component Grid
     </h1>
 
@@ -52,7 +52,7 @@ include '../getting-started/header.php';
 
     <table>
         <tr>
-            <td style="padding: 10px;"><img src="../images/bower.png"/></td>
+            <td style="padding: 10px;"><img src="../images/bower.png" alt="Bower install ag-Grid" /></td>
             <td>
                 <b>Bower</b><br/>
                 bower install ag-grid-webcomponent
@@ -60,7 +60,7 @@ include '../getting-started/header.php';
 
             <td style="width: 20px;"/>
 
-            <td style="padding: 10px;"><img src="../images/npm.png"/></td>
+            <td style="padding: 10px;"><img src="../images/npm.png" alt="NPM install ag-Grid" /></td>
             <td>
                 <b>NPM</b><br/>
                 npm install ag-grid-webcomponent
@@ -68,7 +68,7 @@ include '../getting-started/header.php';
 
             <td style="width: 20px;"/>
 
-            <td style="padding: 10px;"><img src="../images/github.png"/></td>
+            <td style="padding: 10px;"><img src="../images/github.png" alt="Github install ag-Grid" /></td>
             <td>
                 <b>Github</b><br/>
                 Download from <a href="https://github.com/ag-grid/ag-grid-webcomponent">Github</a>
@@ -92,7 +92,7 @@ include '../getting-started/header.php';
             <td style="padding: 10px;"><img src="../images/bower.png"/></td>
             <td>
                 <b>Bower</b><br/>
-                bower install ag-grid
+                bower install ag-grid-community
             </td>
 
             <td style="width: 20px;"/>
@@ -100,7 +100,7 @@ include '../getting-started/header.php';
             <td style="padding: 10px;"><img src="../images/npm.png"/></td>
             <td>
                 <b>NPM</b><br/>
-                npm install ag-grid
+                npm install ag-grid-community
             </td>
 
             <td style="width: 20px;"/>
@@ -108,7 +108,7 @@ include '../getting-started/header.php';
             <td style="padding: 10px;"><img src="../images/github.png"/></td>
             <td>
                 <b>Github</b><br/>
-                Download from <a href="https://github.com/ag-grid/ag-grid">Github</a>
+                Download from <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid">Github</a>
             </td>
         </tr>
     </table>
@@ -123,7 +123,7 @@ include '../getting-started/header.php';
     <p>Using the bundled version is the quickest way to get going - reference this version in your HTML file is all you need
         to do.</p>
     <snippet>
-&lt;script src="path-to-ag-grid-/ag-grid.js"&gt;&lt;/script&gt;</snippet>
+&lt;script src="path-to-ag-grid-/ag-grid-community.js"&gt;&lt;/script&gt;</snippet>
 
     <h3>Download ag-Grid-Enterprise</h3>
 
@@ -163,7 +163,7 @@ include '../getting-started/header.php';
         to go:</p>
 
     <snippet>
-&lt;script src="path-to-ag-grid-/ag-grid.js"&gt;&lt;/script&gt;</snippet>
+&lt;script src="path-to-ag-grid/ag-grid-community.js"&gt;&lt;/script&gt;</snippet>
 
     <h3>Using the ag-Grid Web Component</h3>
 

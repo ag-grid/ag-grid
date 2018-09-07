@@ -38,7 +38,7 @@ cd ag-grid-cli</snippet>
 
 <p>Let's update our dependencies - first let's install <code>ag-grid</code> and <code>ag-grid-angular</code>:</p>
 <snippet language="sh">
-npm install --save ag-grid-angular ag-grid 
+npm install --save ag-grid-angular ag-grid-community
 </snippet>
 
 <p>We are also going to assume an Angular CLI version 1.0.0-rc.x and Angular versions  of 2.4.x for this example -
@@ -90,7 +90,7 @@ export class RedComponentComponent {
 <snippet>
 // src/app/my-grid-application/my-grid-application.component.ts
 import {Component} from "@angular/core";
-import {GridOptions} from "ag-grid";
+import {GridOptions} from "ag-grid-community";
 import {RedComponentComponent} from "../red-component/red-component.component";
 
 @Component({
@@ -138,7 +138,7 @@ export class MyGridApplicationComponent {
 // src/app/app.module.ts
 import {BrowserModule} from "@angular/platform-browser";
 import {NgModule} from "@angular/core";
-import {AgGridModule} from "ag-grid-angular/main";
+import {AgGridModule} from "ag-grid-angular";
 import {AppComponent} from "./app.component";
 import {MyGridApplicationComponent} from "./my-grid-application/my-grid-application.component";
 import {RedComponentComponent} from "./red-component/red-component.component";
@@ -165,8 +165,8 @@ export class AppModule {
 <snippet>
 // .angular-cli.json
 "styles": [
-    "../node_modules/ag-grid/dist/styles/ag-grid.css",
-    "../node_modules/ag-grid/dist/styles/ag-theme-balham.css"
+    "../node_modules/ag-grid-community/dist/styles/ag-grid.css",
+    "../node_modules/ag-grid-community/dist/styles/ag-theme-balham.css"
 ],</snippet>
 
 <p>With these changes in place we can now build and run our application with:</p>

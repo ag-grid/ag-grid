@@ -1,4 +1,4 @@
-// ag-grid-enterprise v18.1.1
+// ag-grid-enterprise v19.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,17 +10,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = require("ag-grid/main");
+var ag_grid_community_1 = require("ag-grid-community");
 var pivotStage_1 = require("./pivotStage");
 var aggFuncService_1 = require("../aggregation/aggFuncService");
-var AggregationStage = (function () {
+var AggregationStage = /** @class */ (function () {
     function AggregationStage() {
     }
     // it's possible to recompute the aggregate without doing the other parts
     // + gridApi.recomputeAggregates()
     AggregationStage.prototype.execute = function (params) {
         // we don't do aggregation if doing legacy tree good
-        var doingLegacyTreeData = main_1._.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        var doingLegacyTreeData = ag_grid_community_1._.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         if (doingLegacyTreeData) {
             return null;
         }
@@ -99,7 +99,7 @@ var AggregationStage = (function () {
         var pivotColumnDefs = this.pivotStage.getPivotColumnDefs();
         // Step 1: process value columns
         pivotColumnDefs
-            .filter(function (v) { return !main_1.Utils.exists(v.pivotTotalColumnIds); }) // only process pivot value columns
+            .filter(function (v) { return !ag_grid_community_1.Utils.exists(v.pivotTotalColumnIds); }) // only process pivot value columns
             .forEach(function (valueColDef) {
             var keys = valueColDef.pivotKeys;
             var values;
@@ -116,7 +116,7 @@ var AggregationStage = (function () {
         });
         // Step 2: process total columns
         pivotColumnDefs
-            .filter(function (v) { return main_1.Utils.exists(v.pivotTotalColumnIds); }) // only process pivot total columns
+            .filter(function (v) { return ag_grid_community_1.Utils.exists(v.pivotTotalColumnIds); }) // only process pivot total columns
             .forEach(function (totalColDef) {
             var aggResults = [];
             //retrieve results for colIds associated with this pivot total column
@@ -150,8 +150,8 @@ var AggregationStage = (function () {
     };
     AggregationStage.prototype.getValuesPivotNonLeaf = function (rowNode, colId) {
         var values = [];
-        rowNode.childrenAfterFilter.forEach(function (rowNode) {
-            var value = rowNode.aggData[colId];
+        rowNode.childrenAfterFilter.forEach(function (node) {
+            var value = node.aggData[colId];
             values.push(value);
         });
         return values;
@@ -203,27 +203,27 @@ var AggregationStage = (function () {
         return aggFunction(values);
     };
     __decorate([
-        main_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", main_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], AggregationStage.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_1.Autowired('columnController'),
-        __metadata("design:type", main_1.ColumnController)
+        ag_grid_community_1.Autowired('columnController'),
+        __metadata("design:type", ag_grid_community_1.ColumnController)
     ], AggregationStage.prototype, "columnController", void 0);
     __decorate([
-        main_1.Autowired('valueService'),
-        __metadata("design:type", main_1.ValueService)
+        ag_grid_community_1.Autowired('valueService'),
+        __metadata("design:type", ag_grid_community_1.ValueService)
     ], AggregationStage.prototype, "valueService", void 0);
     __decorate([
-        main_1.Autowired('pivotStage'),
+        ag_grid_community_1.Autowired('pivotStage'),
         __metadata("design:type", pivotStage_1.PivotStage)
     ], AggregationStage.prototype, "pivotStage", void 0);
     __decorate([
-        main_1.Autowired('aggFuncService'),
+        ag_grid_community_1.Autowired('aggFuncService'),
         __metadata("design:type", aggFuncService_1.AggFuncService)
     ], AggregationStage.prototype, "aggFuncService", void 0);
     AggregationStage = __decorate([
-        main_1.Bean('aggregationStage')
+        ag_grid_community_1.Bean('aggregationStage')
     ], AggregationStage);
     return AggregationStage;
 }());

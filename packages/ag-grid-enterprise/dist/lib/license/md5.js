@@ -1,4 +1,4 @@
-// ag-grid-enterprise v18.1.1
+// ag-grid-enterprise v19.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,8 +10,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = require("ag-grid/main");
-var MD5 = (function () {
+var ag_grid_community_1 = require("ag-grid-community");
+var MD5 = /** @class */ (function () {
     function MD5() {
         this.ieCompatibility = false;
     }
@@ -172,13 +172,13 @@ var MD5 = (function () {
         return (msw << 16) | (lsw & 0xFFFF);
     };
     __decorate([
-        main_1.PostConstruct,
+        ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], MD5.prototype, "init", null);
     MD5 = __decorate([
-        main_1.Bean('md5')
+        ag_grid_community_1.Bean('md5')
     ], MD5);
     return MD5;
 }());

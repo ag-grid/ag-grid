@@ -6,9 +6,15 @@ import {
     TextFilter,
     TextFormatter,
     Utils,
-    Column, ValueFormatterService, _
-} from "ag-grid/main";
-import {Constants, ExternalPromise, ClientSideRowModel, IRowModel, Promise} from 'ag-grid';
+    Column,
+    ValueFormatterService,
+    _,
+    Constants,
+    ExternalPromise,
+    ClientSideRowModel,
+    IRowModel,
+    Promise
+} from "ag-grid-community";
 
 // we cannot have 'null' as a key in a JavaScript map,
 // it needs to be a string. so we use this string for
@@ -100,7 +106,6 @@ export class SetFilterModel {
         this.formatter = this.filterParams.textFormatter ? this.filterParams.textFormatter : TextFilter.DEFAULT_FORMATTER;
     }
 
-
     // if keepSelection not set will always select all filters
     // if keepSelection set will keep current state of selected filters
     //    unless selectAll chosen in which case will select all
@@ -168,7 +173,7 @@ export class SetFilterModel {
         return this.valuesType == SetFilterModelValuesType.PROVIDED_LIST || this.valuesType == SetFilterModelValuesType.NOT_PROVIDED;
     }
 
-    public setValuesType(value:SetFilterModelValuesType){
+    public setValuesType(value:SetFilterModelValuesType) {
         this.valuesType = value;
     }
 
@@ -182,13 +187,13 @@ export class SetFilterModel {
     private extractSyncValuesToUse() {
         let valuesToUse: string[];
         if (this.valuesType == SetFilterModelValuesType.PROVIDED_LIST) {
-            if(Array.isArray(this.filterParams.values)){
+            if(Array.isArray(this.filterParams.values)) {
                 valuesToUse = Utils.toStrings(<string[]>this.filterParams.values);
             } else {
                 // In this case the values are async but have already been resolved, so we can reuse them
                 valuesToUse = this.allUniqueValues;
             }
-        } else if (this.valuesType == SetFilterModelValuesType.PROVIDED_CB){
+        } else if (this.valuesType == SetFilterModelValuesType.PROVIDED_CB) {
             throw Error (`ag-grid: Error extracting values to use. We should not extract the values synchronously when using a callback for the filterParams.values`);
         } else {
             let uniqueValuesAsAnyObjects = this.getUniqueValues(false);
@@ -250,10 +255,10 @@ export class SetFilterModel {
 
             if (value != null && Array.isArray(value)) {
                 for (let j = 0; j < value.length; j++) {
-                    addUniqueValueIfMissing(value[j])
+                    addUniqueValueIfMissing(value[j]);
                 }
             } else {
-                addUniqueValueIfMissing(value)
+                addUniqueValueIfMissing(value);
             }
         });
 
@@ -332,7 +337,7 @@ export class SetFilterModel {
     }
 
     public selectEverything() {
-        if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter){
+        if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter) {
             this.selectOn(this.allUniqueValues);
         } else {
             this.selectOn(this.displayedValues);
@@ -370,10 +375,10 @@ export class SetFilterModel {
     }
 
     public selectNothing(): void {
-        if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter){
+        if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter) {
             this.selectedValuesMap = {};
             this.selectedValuesCount = 0;
-        }else {
+        } else {
             this.displayedValues.forEach(it=>this.unselectValue(it));
         }
     }
@@ -408,7 +413,7 @@ export class SetFilterModel {
     }
 
     public isEverythingSelected(): boolean {
-        if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter){
+        if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter) {
             return this.allUniqueValues.length === this.selectedValuesCount;
         } else {
             return this.displayedValues.filter(it=>this.isValueSelected(it)).length === this.displayedValues.length;
@@ -416,9 +421,9 @@ export class SetFilterModel {
     }
 
     public isNothingSelected() {
-        if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter){
+        if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter) {
             return this.selectedValuesCount === 0;
-        }else {
+        } else {
             return this.displayedValues.filter(it=>this.isValueSelected(it)).length === 0;
         }
     }
@@ -436,17 +441,17 @@ export class SetFilterModel {
     }
 
     public setModel(model: string[], isSelectAll = false): void {
-        if (this.areValuesSync()){
+        if (this.areValuesSync()) {
             this.setSyncModel(model, isSelectAll);
         } else {
-            this.filterValuesExternalPromise.promise.then(values=>{
+            this.filterValuesExternalPromise.promise.then(values => {
                 this.setSyncModel(model, isSelectAll);
                 this.modelUpdatedFunc(values, model);
-            })
+            });
         }
     }
 
-    private setSyncModel (model: string[], isSelectAll = false):void {
+    private setSyncModel(model: string[], isSelectAll = false):void {
         if (model && !isSelectAll) {
             this.selectNothing();
             for (let i = 0; i < model.length; i++) {
@@ -461,12 +466,12 @@ export class SetFilterModel {
         }
     }
 
-    public onFilterValuesReady (callback:()=>void):void{
+    public onFilterValuesReady(callback:()=>void):void {
         //This guarantees that if the user is racing to set values async into the set filter, only the first instance
         //will be used
         // ie Values are async and the user manually wants to override them before the retrieval of values is triggered
         // (set filter values in the following example)
         // http://plnkr.co/edit/eFka7ynvPj68tL3VJFWf?p=preview
-        this.filterValuesPromise.firstOneOnly(callback)
+        this.filterValuesPromise.firstOneOnly(callback);
     }
 }

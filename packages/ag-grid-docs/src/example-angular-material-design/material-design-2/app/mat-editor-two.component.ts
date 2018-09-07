@@ -1,6 +1,6 @@
 import { AfterViewInit, Component } from "@angular/core";
 
-import { GridOptions } from "ag-grid/main";
+import { GridOptions } from "ag-grid-community";
 import { MatSliderComponent } from "./mat-slider.component";
 import { MatButtonToggleHeaderComponent } from "./mat-button-toggle.component";
 import { ColumnAlignmentService } from "./columnAlignmentService";

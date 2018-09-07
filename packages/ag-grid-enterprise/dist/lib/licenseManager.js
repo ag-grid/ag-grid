@@ -1,4 +1,4 @@
-// ag-grid-enterprise v18.1.1
+// ag-grid-enterprise v19.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,10 +10,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = require("ag-grid/main");
-var main_2 = require("ag-grid/main");
+var ag_grid_community_1 = require("ag-grid-community");
+var ag_grid_community_2 = require("ag-grid-community");
 var md5_1 = require("./license/md5");
-var LicenseManager = (function () {
+var LicenseManager = /** @class */ (function () {
     function LicenseManager() {
     }
     LicenseManager_1 = LicenseManager;
@@ -22,7 +22,7 @@ var LicenseManager = (function () {
         var valid = false;
         var current = false;
         var expiry = null;
-        if (!main_2.Utils.missingOrEmpty(LicenseManager_1.licenseKey) && LicenseManager_1.licenseKey.length > 32) {
+        if (!ag_grid_community_2.Utils.missingOrEmpty(LicenseManager_1.licenseKey) && LicenseManager_1.licenseKey.length > 32) {
             var _a = LicenseManager_1.extractLicenseComponents(LicenseManager_1.licenseKey), md5 = _a.md5, license = _a.license;
             if (md5 === this.md5.md5(license)) {
                 expiry = LicenseManager_1.extractExpiry(license);
@@ -44,7 +44,7 @@ var LicenseManager = (function () {
     };
     LicenseManager.extractExpiry = function (license) {
         var restrictionHashed = license.substring(license.lastIndexOf('_') + 1, license.length);
-        return new Date(parseInt(LicenseManager_1.decode(restrictionHashed)));
+        return new Date(parseInt(LicenseManager_1.decode(restrictionHashed), 10));
     };
     LicenseManager.extractLicenseComponents = function (licenseKey) {
         var hashStart = licenseKey.length - 32;
@@ -87,9 +87,8 @@ var LicenseManager = (function () {
         return day + ' ' + monthNames[monthIndex] + ' ' + year;
     };
     LicenseManager.getGridReleaseDate = function () {
-        return new Date(parseInt(LicenseManager_1.decode(LicenseManager_1.RELEASE_INFORMATION)));
+        return new Date(parseInt(LicenseManager_1.decode(LicenseManager_1.RELEASE_INFORMATION), 10));
     };
-    ;
     LicenseManager.decode = function (input) {
         var keystr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
         var t = '';
@@ -139,15 +138,15 @@ var LicenseManager = (function () {
     LicenseManager.setLicenseKey = function (licenseKey) {
         LicenseManager_1.licenseKey = licenseKey;
     };
-    LicenseManager.RELEASE_INFORMATION = 'MTUzMDg3ODc3OTgxMA==';
+    var LicenseManager_1;
+    LicenseManager.RELEASE_INFORMATION = 'MTUzNjE0OTU5Nzk2OA==';
     __decorate([
-        main_1.Autowired('md5'),
+        ag_grid_community_1.Autowired('md5'),
         __metadata("design:type", md5_1.MD5)
     ], LicenseManager.prototype, "md5", void 0);
     LicenseManager = LicenseManager_1 = __decorate([
-        main_1.Bean('licenseManager')
+        ag_grid_community_1.Bean('licenseManager')
     ], LicenseManager);
     return LicenseManager;
-    var LicenseManager_1;
 }());
 exports.LicenseManager = LicenseManager;

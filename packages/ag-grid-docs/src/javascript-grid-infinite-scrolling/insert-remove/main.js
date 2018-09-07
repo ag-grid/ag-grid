@@ -178,6 +178,9 @@ var gridOptions = {
         for (var i = 0; i < 1000; i++) {
             allOfTheData.push(createRowData(sequenceId++));
         }
+    },
+
+    onFirstDataRendered(params) {
         params.api.sizeColumnsToFit();
     },
 

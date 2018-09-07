@@ -120,7 +120,7 @@ gridOptions.columnDefs = [
     </p>
 
     <p>
-        <img src="headerResize.jpg" class="img-fluid">
+        <img src="headerResize.jpg" class="img-fluid" alt="Header Resize">
     </p>
 
     <h2 id="colouring-groups">Coloring Groups</h2>

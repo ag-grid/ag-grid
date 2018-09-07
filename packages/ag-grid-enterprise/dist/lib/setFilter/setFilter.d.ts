@@ -1,5 +1,5 @@
-// ag-grid-enterprise v18.1.1
-import { BaseFilter, IDoesFilterPassParams, ISetFilterParams, SerializedSetFilter } from "ag-grid/main";
+// ag-grid-enterprise v19.0.0
+import { BaseFilter, IDoesFilterPassParams, ISetFilterParams, SerializedSetFilter } from "ag-grid-community";
 export declare class SetFilter extends BaseFilter<string, ISetFilterParams, string[] | SerializedSetFilter> {
     private model;
     private eSelectAll;
@@ -15,12 +15,12 @@ export declare class SetFilter extends BaseFilter<string, ISetFilterParams, stri
     private eIndeterminateCheckedIcon;
     constructor();
     customInit(): void;
-    private updateCheckboxIcon();
+    private updateCheckboxIcon;
     setLoading(loading: boolean): void;
     initialiseFilterBodyUi(): void;
     modelFromFloatingFilter(from: string): string[] | SerializedSetFilter;
     refreshFilterBodyUi(): void;
-    private createSetListItem(value);
+    private createSetListItem;
     afterGuiAttached(params: any): void;
     isFilterActive(): boolean;
     doesFilterPass(params: IDoesFilterPassParams): boolean;
@@ -41,11 +41,11 @@ export declare class SetFilter extends BaseFilter<string, ISetFilterParams, stri
     resetFilterValues(): void;
     onAnyFilterChanged(): void;
     bodyTemplate(): string;
-    private updateSelectAll();
-    private onMiniFilterChanged();
-    private onSelectAll(event);
-    private doSelectAll();
-    private onItemSelected(value, selected);
+    private updateSelectAll;
+    private onMiniFilterChanged;
+    private onSelectAll;
+    private doSelectAll;
+    private onItemSelected;
     setMiniFilter(newMiniFilter: any): void;
     getMiniFilter(): string;
     selectEverything(): void;

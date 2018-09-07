@@ -226,7 +226,7 @@ var rowData = [
     <h2 id="only-one-column">Pivot and Row Grouping with Tree Data</h2>
 
     <p>
-            It is not possible to do pivot or row grouping while using tree data. This means all the functions
+        It is not possible to do pivot or row grouping while using tree data. This means all the functions
         related to pivot (eg colDef.pivot, or pivot in the tool panel) and row grouping (eg colDef.rowGroup, or
         row group in the tool panel) will be disabled.
     </p>

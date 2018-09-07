@@ -13,9 +13,8 @@ include '../documentation-main/documentation_header.php';
     <h2>Legacy Themes</h2>
 
     <p>
-    The 14.2.0 release (October 2017) included remakes of the themes with more consistent whitespace and <a href="#customizing-sass-variables">easier customization through Sass variables</a>.
-    The previous ones are still shipped, but deprecated and likely to be removed after several releases.
-    If you are using any of the themes below, give the new counterpart a try.
+    The v19 release retired the old themes that are no longer shipped with ag-Grid.
+    If you are using an old theme, you should change it to it's new version. See table below: 
     </p>
 
     <p>
@@ -40,14 +39,6 @@ include '../documentation-main/documentation_header.php';
             </tr>
         </table>
     </p>
-
-    <p>
-        If you move to a new theme you will notice the spacing is larger.
-        Customising the new theme to have less spacing (so it looks more like
-        an old theme) see the Github example
-        <a href="https://github.com/ag-grid/ag-grid-customise-theme">ag-grid-customise-theme</a>.
-    </p>
-
 </note>
 
     <p>
@@ -202,13 +193,13 @@ include '../documentation-main/documentation_header.php';
             ag-header <br/>
             <div class='inline'>
                 ag-pinned-header <br/>
-                <img src="pinnedHeader.png"/>
+                <img src="pinnedHeader.png" alt="ag-Grid Pinned Header" />
             </div>
             <div class='inline'>
                 ag-header-viewport <br/>
                 <div class='inline'>
                     ag-header-container <br/>
-                    <img src="header.png"/>
+                    <img src="header.png" alt="ag-Grid Header Container" />
                 </div>
             </div>
         </div>
@@ -219,7 +210,7 @@ include '../documentation-main/documentation_header.php';
                 ag-pinned-cols-viewport <br/>
                 <div class='inline'>
                     ag-pinned-cols-container <br/>
-                    <img src="pinnedBody.png"/>
+                    <img src="pinnedBody.png" alt="ag-Grid Pinned Column Container" />
                 </div>
             </div>
             <div class='inline'>
@@ -228,7 +219,7 @@ include '../documentation-main/documentation_header.php';
                     ag-body-viewport <br/>
                     <div class='inline'>
                         ag-body-container <br/>
-                        <img src="body.png"/>
+                        <img src="body.png" alt="ag-Grid Body Container" />
                     </div>
                 </div>
             </div>

@@ -5,7 +5,7 @@
         <td style="padding: 10px;"><img src="../images/bower.png"/></td>
         <td>
             <b>Bower</b><br/>
-            bower install ag-grid
+            bower install ag-grid-community
         </td>
 
         <td style="width: 20px;"/>
@@ -13,7 +13,7 @@
         <td style="padding: 10px;"><img src="../images/npm.png"/></td>
         <td>
             <b>NPM</b><br/>
-            npm install ag-grid
+            npm install ag-grid-community
         </td>
 
         <td style="width: 20px;"/>
@@ -21,7 +21,7 @@
         <td style="padding: 10px;"><img src="../images/github.png"/></td>
         <td>
             <b>Github</b><br/>
-            Download from <a href="https://github.com/ag-grid/ag-grid">Github</a>
+            Download from <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-community">Github</a>
         </td>
     </tr>
 </table>
@@ -42,7 +42,7 @@
 <snippet language="html">
 &lt;html&gt;
 &lt;head&gt;
-    &lt;script src="path-to-ag-grid-/ag-grid.js"&gt;&lt;/script&gt;
+    &lt;script src="path-to-ag-grid/ag-grid-community.js"&gt;&lt;/script&gt;
     &lt;script src="example1.js"&gt;&lt;/script&gt;
 &lt;/head&gt;
 &lt;body&gt;

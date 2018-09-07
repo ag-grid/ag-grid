@@ -1,5 +1,5 @@
-// ag-grid-enterprise v18.1.1
-import { BeanStub, IServerSideDatasource, IServerSideRowModel, RowNode, RowBounds } from "ag-grid";
+// ag-grid-enterprise v19.0.0
+import { BeanStub, IServerSideDatasource, IServerSideRowModel, RowNode, RowBounds } from "ag-grid-community";
 export declare class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
     private gridOptionsWrapper;
     private eventService;
@@ -15,32 +15,32 @@ export declare class ServerSideRowModel extends BeanStub implements IServerSideR
     private cacheParams;
     private logger;
     private rowNodeBlockLoader;
-    private postConstruct();
+    private postConstruct;
     destroy(): void;
-    private destroyDatasource();
-    private setBeans(loggerFactory);
-    private addEventListeners();
+    private destroyDatasource;
+    private setBeans;
+    private addEventListeners;
     setDatasource(datasource: IServerSideDatasource): void;
     isLastRowFound(): boolean;
-    private onColumnEverything();
-    private onFilterChanged();
-    private findChangedColumnsInSort(newSortModel, oldSortModel);
-    private onSortChanged();
-    private onValueChanged();
-    private onColumnRowGroupChanged();
-    private onColumnPivotChanged();
-    private onPivotModeChanged();
-    private onRowGroupOpened(event);
-    private reset();
-    private createNewRowNodeBlockLoader();
-    private destroyRowNodeBlockLoader();
-    private toValueObjects(columns);
-    private createCacheParams();
-    private createNodeCache(rowNode);
-    private onCacheUpdated();
+    private onColumnEverything;
+    private onFilterChanged;
+    private findChangedColumnsInSort;
+    private onSortChanged;
+    private onValueChanged;
+    private onColumnRowGroupChanged;
+    private onColumnPivotChanged;
+    private onPivotModeChanged;
+    private onRowGroupOpened;
+    private reset;
+    private createNewRowNodeBlockLoader;
+    private destroyRowNodeBlockLoader;
+    private toValueObjects;
+    private createCacheParams;
+    private createNodeCache;
+    private onCacheUpdated;
     updateRowIndexesAndBounds(): void;
-    private setDisplayIndexes(cache);
-    private resetRowTops(cache);
+    private setDisplayIndexes;
+    private resetRowTops;
     getRow(index: number): RowNode;
     getPageFirstRow(): number;
     getPageLastRow(): number;
@@ -52,7 +52,7 @@ export declare class ServerSideRowModel extends BeanStub implements IServerSideR
     isRowsToRender(): boolean;
     getType(): string;
     forEachNode(callback: (rowNode: RowNode) => void): void;
-    private executeOnCache(route, callback);
+    private executeOnCache;
     purgeCache(route?: string[]): void;
     removeFromCache(route: string[], items: any[]): void;
     addToCache(route: string[], items: any[], index: number): void;
@@ -60,7 +60,7 @@ export declare class ServerSideRowModel extends BeanStub implements IServerSideR
     getRowNode(id: string): RowNode;
     getBlockState(): any;
     isRowPresent(rowNode: RowNode): boolean;
-    private extractSortModel();
-    private isSortingWithValueColumn(changedColumnsInSort);
-    private cacheExists();
+    private extractSortModel;
+    private isSortingWithValueColumn;
+    private cacheExists;
 }

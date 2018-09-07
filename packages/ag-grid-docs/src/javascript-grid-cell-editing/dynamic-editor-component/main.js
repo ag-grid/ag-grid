@@ -161,7 +161,7 @@ function GenderCellRenderer() {
 GenderCellRenderer.prototype.init = function (params) {
     this.eGui = document.createElement('span');
     if (params.value !== "" || params.value !== undefined || params.value !== null) {
-        var gender = '<img border="0" width="15" height="10" src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/' + params.value.toLowerCase() + '.png">';
+        var gender = '<img border="0" width="15" height="10" src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/' + params.value.toLowerCase() + '.png">';
         this.eGui.innerHTML = gender + ' ' + params.value;
     }
 };
@@ -176,7 +176,7 @@ function MoodCellRenderer() {
 MoodCellRenderer.prototype.init = function (params) {
     this.eGui = document.createElement('span');
     if (params.value !== "" || params.value !== undefined || params.value !== null) {
-        var imgForMood = params.value === 'Happy' ? 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/smiley.png' : 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/smiley-sad.png';
+        var imgForMood = params.value === 'Happy' ? 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/smiley.png' : 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/smiley-sad.png';
         this.eGui.innerHTML = '<img width="20px" src="' + imgForMood + '" />';
     }
 };
@@ -209,11 +209,11 @@ MoodEditor.prototype.init = function (params) {
     this.container.tabIndex = "0";                // to allow the div to capture keypresses
 
     this.happyImg = document.createElement('img');
-    this.happyImg.src = 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/smiley.png';
+    this.happyImg.src = 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/smiley.png';
     this.happyImg.style = this.defaultImgStyle;
 
     this.sadImg = document.createElement('img');
-    this.sadImg.src = 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/smiley-sad.png';
+    this.sadImg.src = 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/smiley-sad.png';
     this.sadImg.style = this.defaultImgStyle;
 
     this.container.appendChild(this.happyImg);

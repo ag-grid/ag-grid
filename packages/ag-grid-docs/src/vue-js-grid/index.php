@@ -75,7 +75,7 @@ npm run dev</snippet>
         <p>Next let's install the ag-Grid dependencies we'll need:</p>
 
 <snippet>
-npm install ag-grid --save
+npm install ag-grid-community --save
 npm install ag-grid-vue --save</snippet>
 
         <p>We'll also use <code>whatwg-fetch</code> to pull in our Munro.json data file:</p>

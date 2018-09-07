@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import * as PropTypes from "prop-types";
 import {connect} from "react-redux";
 import {bindActionCreators} from 'redux';
 import {AgGridReact} from "ag-grid-react";
@@ -43,7 +44,10 @@ class FileBrowser extends Component {
           deltaRowDataMode={true}
           getRowNodeId={data => data.id}
           onRowDragEnd={this.onRowDragEnd}
-          frameworkComponents={this.frameworkComponents}>
+          frameworkComponents={this.frameworkComponents}
+          reactNext={true}
+          reduxStore={this.context.store} // must be supplied when using redux with reactNext
+        >
         </AgGridReact>
       </div>
     )
@@ -75,6 +79,10 @@ class FileBrowser extends Component {
     return params.node.data.file ? [deleteItem] : [newItem, deleteItem];
   };
 }
+
+FileBrowser.contextTypes = {
+    store: PropTypes.object                         // must be supplied when using redux with reactNext
+};
 
 const mapStateToProps = (state) => ({files: state.files});
 const mapDispatchToProps = (dispatch) => ({actions: bindActionCreators(actions, dispatch)});

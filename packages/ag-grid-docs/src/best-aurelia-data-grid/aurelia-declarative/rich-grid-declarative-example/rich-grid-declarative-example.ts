@@ -4,9 +4,9 @@ import RefData from '../../data/refData';
 import SkillFilter from '../../filters/skillFilter';
 import ProficiencyFilter from '../../filters/proficiencyFilter';
 
-import {ColumnApi, GridApi, GridOptions} from 'ag-grid';
+import {ColumnApi, GridApi, GridOptions} from 'ag-grid-community';
 // only import this if you are using the ag-Grid-Enterprise
-import 'ag-grid-enterprise/main';
+import 'ag-grid-enterprise';
 
 @autoinject()
 @customElement('rich-grid-declarative')
@@ -163,7 +163,7 @@ export class RichGridDeclarative {
     }
 
     private countryCellRenderer(params) {
-        const flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='https://raw.githubusercontent.com/ag-grid/packages/ag-grid-docs/master/src/images/flags/" + RefData.COUNTRY_CODES[params.value] + ".png'>";
+        const flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/flags/" + RefData.COUNTRY_CODES[params.value] + ".png'>";
         return flag + " " + params.value;
     }
 
@@ -172,7 +172,7 @@ export class RichGridDeclarative {
         const skills = [];
         RefData.IT_SKILLS.forEach(function (skill) {
             if (data && data.skills && data.skills[skill]) {
-                skills.push('<img src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
+                skills.push('<img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
             }
         });
         return skills.join(' ');

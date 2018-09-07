@@ -239,15 +239,14 @@ Examples of state include column visibility, width, row groups and values.
     <li><code>pinned</code>: The pinned state of the column. Can be either <code>'left'</code> or <code>'right'</code></li>
 </ul>
 
+<note>
+    To suppress events raised when invoking <code>columnApi.setColumnState(state)</code>, and also
+    <code>columnApi.resetColumnState()</code>, use: <code>gridOptions.suppressSetColumnStateEvents = true</code>.
+</note>
 
 <h2 id="column-api-example">Column API Example</h2>
-<p>This section illustrates how to store and restore column state using the <a href="../javascript-grid-column-api/">Column API</a>.
+<p>The example below shows using the grid's <a href="../javascript-grid-column-api/">Column API</a>.
 </p>
-
-<ul class="content">
-    <li>hiding / showing columns as well as saving / restoring the entire state</li>
-    <li><b>registering for column events, the result of which are printed to the console.</b></li>
-</ul>
 
 <?= example('Column State Example', 'column-state', 'generated', array("enterprise" => 1)) ?>
 

@@ -31,7 +31,6 @@ var gridOptions = {
     },
     enableColResize: true,
     rowBuffer: 0,
-    debug: true,
     rowSelection: 'multiple',
     rowDeselection: true,
     columnDefs: columnDefs,
@@ -45,14 +44,14 @@ var gridOptions = {
     cacheOverflowSize: 2,
     // how many server side requests to send at a time. if user is scrolling lots, then the requests
     // are throttled down
-    maxConcurrentDatasourceRequests: 2,
+    maxConcurrentDatasourceRequests: 1,
     // how many rows to initially show in the grid. having 1 shows a blank row, so it looks like
     // the grid is loading from the users perspective (as we have a spinner in the first col)
-    infiniteInitialRowCount: 1,
+    infiniteInitialRowCount: 1000,
     // how many pages to store in cache. default is undefined, which allows an infinite sized cache,
     // pages are never purged. this should be set for large data to stop your browser from getting
     // full of data
-    maxBlocksInCache: 2
+    maxBlocksInCache: 10
 };
 
 // setup the grid after the page has finished loading
@@ -60,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinners.json'}).then(function(data) {
+    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/olympicWinners.json'}).then(function(data) {
         var dataSource = {
             rowCount: null, // behave as infinite scroll
             getRows: function (params) {

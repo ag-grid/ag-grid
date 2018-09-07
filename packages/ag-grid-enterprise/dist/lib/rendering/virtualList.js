@@ -1,4 +1,4 @@
-// ag-grid-enterprise v18.1.1
+// ag-grid-enterprise v19.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -20,8 +20,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = require("ag-grid/main");
-var VirtualList = (function (_super) {
+var ag_grid_community_1 = require("ag-grid-community");
+var VirtualList = /** @class */ (function (_super) {
     __extends(VirtualList, _super);
     function VirtualList() {
         var _this = _super.call(this, null) || this;
@@ -73,7 +73,7 @@ var VirtualList = (function (_super) {
         this.refresh();
     };
     VirtualList.prototype.refresh = function () {
-        if (main_1.Utils.missing(this.model)) {
+        if (ag_grid_community_1.Utils.missing(this.model)) {
             return;
         }
         this.eListContainer.style.height = (this.model.getRowCount() * this.rowHeight) + "px";
@@ -124,7 +124,7 @@ var VirtualList = (function (_super) {
     };
     VirtualList.prototype.insertRow = function (value, rowIndex) {
         var eDiv = document.createElement('div');
-        main_1.Utils.addCssClass(eDiv, 'ag-virtual-list-item');
+        ag_grid_community_1.Utils.addCssClass(eDiv, 'ag-virtual-list-item');
         eDiv.style.top = (this.rowHeight * rowIndex) + "px";
         eDiv.style.lineHeight = this.rowHeight + "px";
         var rowComponent = this.componentCreator(value);
@@ -144,24 +144,21 @@ var VirtualList = (function (_super) {
     VirtualList.prototype.setModel = function (model) {
         this.model = model;
     };
-    VirtualList.TEMPLATE = '<div class="ag-virtual-list-viewport">' +
-        '<div class="ag-virtual-list-container">' +
-        '</div>' +
-        '</div>';
+    VirtualList.TEMPLATE = "<div class=\"ag-virtual-list-viewport\">\n            <div class=\"ag-virtual-list-container\"></div>\n        </div>";
     __decorate([
-        main_1.Autowired('environment'),
-        __metadata("design:type", main_1.Environment)
+        ag_grid_community_1.Autowired('environment'),
+        __metadata("design:type", ag_grid_community_1.Environment)
     ], VirtualList.prototype, "environment", void 0);
     __decorate([
-        main_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", main_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], VirtualList.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_1.PostConstruct,
+        ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], VirtualList.prototype, "init", null);
     return VirtualList;
-}(main_1.Component));
+}(ag_grid_community_1.Component));
 exports.VirtualList = VirtualList;

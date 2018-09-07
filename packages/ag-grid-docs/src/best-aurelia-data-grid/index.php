@@ -23,7 +23,7 @@ include '../getting-started/header.php';
 
     <table>
         <tr>
-            <td style="padding: 10px;"><img src="../images/npm.png"/></td>
+            <td style="padding: 10px;"><img src="../images/npm.png" alt="NPM install ag-Grid" /></td>
             <td>
                 <b>NPM</b><br/>
                 npm install ag-grid-enterprise
@@ -31,7 +31,7 @@ include '../getting-started/header.php';
 
             <td style="width: 20px;"/>
 
-            <td style="padding: 10px;"><img src="../images/github.png"/></td>
+            <td style="padding: 10px;"><img src="../images/github.png" alt="Github install ag-Grid"/></td>
             <td>
                 <b>Github</b><br/>
                 Download from <a href="https://github.com/ag-grid/ag-grid-enterprise">Github</a>
@@ -42,8 +42,8 @@ include '../getting-started/header.php';
     <h3>Referencing ag-Grid-Enterprise</h3>
     <p>In your application, before instantiating the grid, you need to reference the included ag-grid-enterprise dependency:</p>
     <snippet>
-import {GridOptions} from "ag-grid";
-import "ag-grid-enterprise/main";
+import {GridOptions} from "ag-grid-community";
+import "ag-grid-enterprise";
 </snippet>
 
     <p style="margin-top: 5px">
@@ -84,47 +84,13 @@ import "ag-grid-enterprise/main";
 </p>
     <ul class="content">
         <li>A feature rich grid example, demonstrating many of ag-Grid's features using Aurelia as a wrapper
-            <a href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/rich-grid-example/rich-grid-example.ts"
-               target="_blank" class="fa fa-external-link"> TypeScript</a> <a
-                    href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/rich-grid-example/rich-grid-example.html"
-                    target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>An example using markup to create a grid
-            <a href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/rich-grid-declarative-example/rich-grid-declarative-example.ts"
-               target="_blank" class="fa fa-external-link"> TypeScript</a> <a
-                    href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/rich-grid-declarative-example/rich-grid-declarative-example.html"
-                    target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Cell Editor Example - one with a popup editor, and another with a numeric editor. Each demonstrates
             different editor related features
-            <a href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/editor-example/editor-example.ts"
-               target="_blank" class="fa fa-external-link"> TypeScript</a> <a
-                    href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/editor-example/editor-example.html"
-                    target="_blank" class="fa fa-external-link"> html</a>
-        </li>
-        <li>A Pinned Row Renderer Example
-            <a href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/pinned-row-example/pinned-row-example.ts"
-               target="_blank" class="fa fa-external-link"> TypeScript</a> <a
-                    href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/pinned-row-example/pinned-row-example.html"
-                    target="_blank" class="fa fa-external-link"> html</a>
-        </li>
-        <li>A Full Width Renderer Example
-            <a href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/full-width-example/full-width-example.ts"
-               target="_blank" class="fa fa-external-link"> TypeScript</a> <a
-                    href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/full-width-example/full-width-example.html"
-                    target="_blank" class="fa fa-external-link"> html</a>
-        </li>
-        <li>A Group Row Inner Renderer Example
-            <a href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/group-row-example/group-row-example.ts"
-               target="_blank" class="fa fa-external-link"> TypeScript</a> <a
-                    href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/group-row-example/group-row-example.html"
-                    target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Filter Example
-            <a href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/filter-example/filter-example.ts"
-               target="_blank" class="fa fa-external-link"> TypeScript</a> <a
-                    href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/filter-example/filter-example.html"
-                    target="_blank" class="fa fa-external-link"> html</a>
         </li>
     </ul>
 
@@ -132,7 +98,7 @@ import "ag-grid-enterprise/main";
         inside your application:</p>
 
     <snippet>
-import {GridOptions, GridApi, ColumnApi} from "ag-grid";</snippet>
+import {GridOptions, GridApi, ColumnApi} from "ag-grid-community";</snippet>
 
     <p>
         You will need to include the CSS for ag-Grid, either directly inside
@@ -140,8 +106,8 @@ import {GridOptions, GridApi, ColumnApi} from "ag-grid";</snippet>
         shows referencing the css from your web page:
     </p>
     <snippet>
-&lt;link href="node_modules/ag-grid/styles/ag-grid.css" rel="stylesheet" /&gt;
-&lt;link href="node_modules/ag-grid/styles/ag-theme-balham.css" rel="stylesheet" /&gt;</snippet>
+&lt;link href="node_modules/ag-grid-community/styles/ag-grid.css" rel="stylesheet" /&gt;
+&lt;link href="node_modules/ag-grid-community/styles/ag-theme-balham.css" rel="stylesheet" /&gt;</snippet>
 
     <p>
         You will also need to configure Aurelia (aurelia_project/aurelia.json) to use ag-grid and ag-grid-aurelia as
@@ -160,8 +126,8 @@ import {GridOptions, GridApi, ColumnApi} from "ag-grid";</snippet>
       "aurelia-bootstrapper",
       ...other dependencies...
       {
-        "name": "ag-grid",
-        "path": "../node_modules/ag-grid",
+        "name": "ag-grid-community",
+        "path": "../node_modules/ag-grid-community",
         "main": "main"
       },
       {

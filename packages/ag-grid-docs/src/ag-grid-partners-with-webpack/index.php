@@ -12,7 +12,7 @@ include('../includes/mediaHeader.php');
 
 <div class="row">
     <div class="col-md-8">
-        <img src="../images/ag_grid_and_webpack.png" class="large-cover-img">
+        <img src="../images/ag_grid_and_webpack.png" class="large-cover-img" alt="ag-Grid and Webpack">
 
 
         <p>

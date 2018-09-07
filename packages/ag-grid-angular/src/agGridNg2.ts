@@ -12,8 +12,18 @@ import {
     ViewEncapsulation
 } from "@angular/core";
 
-import {GridOptionsWrapper, Events, ColumnApi, ComponentUtil, Grid, GridApi, GridOptions, GridParams, Promise} from "ag-grid";
-import {Utils as _} from 'ag-grid';
+import {
+    Utils as _,
+    ColumnApi,
+    ComponentUtil,
+    Events,
+    Grid,
+    GridApi,
+    GridOptions,
+    GridOptionsWrapper,
+    GridParams,
+    Promise
+} from "ag-grid-community";
 
 import {Ng2FrameworkFactory} from "./ng2FrameworkFactory";
 import {AgGridColumn} from "./agGridColumn";
@@ -112,15 +122,15 @@ export class AgGridNg2 implements AfterViewInit {
             // need to do this before the destroy, so we know not to emit any events
             // while tearing down the grid.
             this._destroyed = true;
-            if(this.api) {
+            if (this.api) {
                 this.api.destroy();
             }
         }
     }
 
     private checkForDeprecatedEvents() {
-        _.iterateObject<any>(Events,  (key, eventName) => {
-            if(this[eventName] && (<EventEmitter<any>>this[eventName]).observers.length > 0) {
+        _.iterateObject<any>(Events, (key, eventName) => {
+            if (this[eventName] && (<EventEmitter<any>>this[eventName]).observers.length > 0) {
                 GridOptionsWrapper.checkEventDeprecation(eventName);
             }
         });
@@ -146,14 +156,13 @@ export class AgGridNg2 implements AfterViewInit {
                 emitter.emit(event);
             }
         } else {
-            console.log('ag-Grid-ng2: could not find EventEmitter: ' + eventType);
+            console.log('ag-Grid-angular: could not find EventEmitter: ' + eventType);
         }
     }
 
     @Input() public gridOptions: GridOptions;
 
     // @START@
-    @Input() public colResizeDefault : any = undefined;
     @Input() public slaveGrids : any = undefined;
     @Input() public alignedGrids : any = undefined;
     @Input() public rowData : any = undefined;
@@ -185,6 +194,10 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public loadingOverlayComponentParams : any = undefined;
     @Input() public noRowsOverlayComponentParams : any = undefined;
     @Input() public popupParent : any = undefined;
+    @Input() public colResizeDefault : any = undefined;
+    @Input() public reduxStore : any = undefined;
+    @Input() public statusBar : any = undefined;
+    @Input() public sideBar : any = undefined;
     @Input() public sortingOrder : any = undefined;
     @Input() public rowClass : any = undefined;
     @Input() public rowSelection : any = undefined;
@@ -197,6 +210,9 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public clipboardDeliminator : any = undefined;
     @Input() public rowGroupPanelShow : any = undefined;
     @Input() public multiSortKey : any = undefined;
+    @Input() public pivotColumnGroupTotals : any = undefined;
+    @Input() public pivotRowTotals : any = undefined;
+    @Input() public pivotPanelShow : any = undefined;
     @Input() public rowHeight : any = undefined;
     @Input() public detailRowHeight : any = undefined;
     @Input() public rowBuffer : any = undefined;
@@ -222,6 +238,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public paginationStartPage : any = undefined;
     @Input() public infiniteBlockSize : any = undefined;
     @Input() public batchUpdateWaitMillis : any = undefined;
+    @Input() public blockLoadDebounceMillis : any = undefined;
     @Input() public localeTextFunc : any = undefined;
     @Input() public groupRowInnerRenderer : any = undefined;
     @Input() public groupRowInnerRendererFramework : any = undefined;
@@ -252,7 +269,6 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public getBusinessKeyForNode : any = undefined;
     @Input() public sendToClipboard : any = undefined;
     @Input() public navigateToNextCell : any = undefined;
-    @Input() public processDataFromClipboard : any = undefined;
     @Input() public tabToNextCell : any = undefined;
     @Input() public getDetailRowData : any = undefined;
     @Input() public processCellFromClipboard : any = undefined;
@@ -273,6 +289,9 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public postSort : any = undefined;
     @Input() public processHeaderForClipboard : any = undefined;
     @Input() public paginationNumberFormatter : any = undefined;
+    @Input() public processDataFromClipboard : any = undefined;
+    @Input() public getServerSideGroupKey : any = undefined;
+    @Input() public isServerSideGroup : any = undefined;
     @Input() public toolPanelSuppressRowGroups : any = undefined;
     @Input() public toolPanelSuppressValues : any = undefined;
     @Input() public toolPanelSuppressPivots : any = undefined;
@@ -317,7 +336,6 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public suppressMovableColumns : any = undefined;
     @Input() public suppressFieldDotNotation : any = undefined;
     @Input() public enableRangeSelection : any = undefined;
-    @Input() public pivotPanelShow : any = undefined;
     @Input() public suppressTouch : any = undefined;
     @Input() public suppressAsyncEvents : any = undefined;
     @Input() public allowContextMenuWithControlKey : any = undefined;
@@ -325,8 +343,6 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public suppressMenuFilterPanel : any = undefined;
     @Input() public suppressMenuMainPanel : any = undefined;
     @Input() public suppressMenuColumnPanel : any = undefined;
-    @Input() public enableStatusBar : any = undefined;
-    @Input() public alwaysShowStatusBar : any = undefined;
     @Input() public rememberGroupStateWhenNewData : any = undefined;
     @Input() public enableCellChangeFlash : any = undefined;
     @Input() public suppressDragLeaveHidesColumns : any = undefined;
@@ -336,7 +352,6 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public suppressCopyRowsToClipboard : any = undefined;
     @Input() public pivotMode : any = undefined;
     @Input() public suppressAggFuncInHeader : any = undefined;
-    @Input() public suppressClipboardPaste : any = undefined;
     @Input() public suppressColumnVirtualisation : any = undefined;
     @Input() public suppressAggAtRootLevel : any = undefined;
     @Input() public suppressFocusAfterRefresh : any = undefined;
@@ -367,10 +382,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public ensureDomOrder : any = undefined;
     @Input() public accentedSort : any = undefined;
     @Input() public pivotTotals : any = undefined;
-    @Input() public pivotColumnGroupTotals : any = undefined;
-    @Input() public pivotRowTotals : any = undefined;
     @Input() public suppressChangeDetection : any = undefined;
-    @Input() public suppressRowTransform : any = undefined;
     @Input() public valueCache : any = undefined;
     @Input() public valueCacheNeverExpires : any = undefined;
     @Input() public aggregateOnlyChangedColumns : any = undefined;
@@ -389,7 +401,11 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public enableOldSetFilterModel : any = undefined;
     @Input() public suppressRowHoverHighlight : any = undefined;
     @Input() public gridAutoHeight : any = undefined;
+    @Input() public suppressRowTransform : any = undefined;
+    @Input() public suppressClipboardPaste : any = undefined;
     @Input() public serverSideSortingAlwaysResets : any = undefined;
+    @Input() public reactNext : any = undefined;
+    @Input() public suppressSetColumnStateEvents : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();
@@ -412,6 +428,8 @@ export class AgGridNg2 implements AfterViewInit {
     @Output() public rangeSelectionChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public toolPanelVisibleChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public modelUpdated: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public pasteStart: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public pasteEnd: EventEmitter<any> = new EventEmitter<any>();
     @Output() public cellClicked: EventEmitter<any> = new EventEmitter<any>();
     @Output() public cellDoubleClicked: EventEmitter<any> = new EventEmitter<any>();
     @Output() public cellMouseDown: EventEmitter<any> = new EventEmitter<any>();
@@ -425,6 +443,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Output() public cellMouseOut: EventEmitter<any> = new EventEmitter<any>();
     @Output() public filterChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public filterModified: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public filterOpened: EventEmitter<any> = new EventEmitter<any>();
     @Output() public sortChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public virtualRowRemoved: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowClicked: EventEmitter<any> = new EventEmitter<any>();
@@ -432,6 +451,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Output() public gridReady: EventEmitter<any> = new EventEmitter<any>();
     @Output() public gridSizeChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public viewportChanged: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public firstDataRendered: EventEmitter<any> = new EventEmitter<any>();
     @Output() public dragStarted: EventEmitter<any> = new EventEmitter<any>();
     @Output() public dragStopped: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowEditingStarted: EventEmitter<any> = new EventEmitter<any>();
@@ -448,14 +468,10 @@ export class AgGridNg2 implements AfterViewInit {
     @Output() public scrollVisibilityChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnHoverChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public flashCells: EventEmitter<any> = new EventEmitter<any>();
-    @Output() public viewportImpacted: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDragEnter: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDragMove: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDragLeave: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDragEnd: EventEmitter<any> = new EventEmitter<any>();
-    @Output() public pasteStart: EventEmitter<any> = new EventEmitter<any>();
-    @Output() public pasteEnd: EventEmitter<any> = new EventEmitter<any>();
-
     @Output() public columnRowGroupChangeRequest: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnPivotChangeRequest: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnValueChangeRequest: EventEmitter<any> = new EventEmitter<any>();

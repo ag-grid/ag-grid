@@ -1,0 +1,26 @@
+// Type definitions for ag-grid-community v19.0.0
+// Project: http://www.ag-grid.com/
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { GridPanel } from "../gridPanel/gridPanel";
+export declare class AnimationFrameService {
+    private gridOptionsWrapper;
+    private eventService;
+    private gridPanel;
+    private p1Tasks;
+    private p2Tasks;
+    private ticking;
+    private supportsOverflowScrolling;
+    private useAnimationFrame;
+    registerGridComp(gridPanel: GridPanel): void;
+    isSupportsOverflowScrolling(): boolean;
+    private init;
+    private verifyAnimationFrameOn;
+    addP1Task(task: () => void): void;
+    addP2Task(task: () => void): void;
+    private executeFrame;
+    private stopTicking;
+    flushAllFrames(): void;
+    schedule(): void;
+    private requestFrame;
+    isQueueEmpty(): boolean;
+}
