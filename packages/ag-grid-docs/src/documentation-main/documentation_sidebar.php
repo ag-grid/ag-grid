@@ -22,9 +22,18 @@ Check the <a href="../ag-grid-jobs-board/">jobs board</a>
             <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=18.0.0">Version 19.0 Released</a></h5>
             <h6 class="card-subtitle mb-2 text-muted">Sep 7</h6>
             <p class="card-text">
-                Major release with many new features like:
+                Major release with the following feature highlights:
             <ul>
                 <li><a class="learn-more" href="../javascript-grid-status-bar/">Customizable Status Bar</a></li>
+            </ul>
+            <ul>
+                <li><a class="learn-more" href="../javascript-grid-tool-panel-filters/">Filters Tool Panel</a></li>
+            </ul>
+            <ul>
+                <li><a class="learn-more" href="../javascript-grid-tool-panel-component/">Custom Tool Panels</a></li>
+            </ul>
+            <ul>
+                <li><a class="learn-more" href="../javascript-grid-server-side-model-tree-data/">Server-side Tree Data</a></li>
             </ul>
             </p>
 
