@@ -6,25 +6,36 @@
       <sourceFolder url="file://$MODULE_DIR$/packages/ag-grid-community/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular-cli-example/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular-cli-example/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular-cli-example/tmp" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-aurelia-example/docs" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-aurelia-example/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-aurelia-example/scripts" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-aurelia/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-aurelia/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-community/.cache-loader" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-community/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-community/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-dev/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/.cache-loader" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/.vscode" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/_dev" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/src/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/src/framework-examples" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-enterprise/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-enterprise/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react-example/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react-example/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react/.vscode" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react/umd" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue-example/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue-example/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue/node_modules" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

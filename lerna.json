@@ -8,5 +8,5 @@
       "npmClientArgs": ["--no-package-lock"]
     }
   },
-  "version": "18.1.2"
+  "version": "19.0.0"
 }

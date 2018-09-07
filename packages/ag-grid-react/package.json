@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-react",
-  "version": "18.1.0",
+  "version": "19.0.0",
   "description": "ag-Grid React Component",
   "main": "main.js",
   "typings": "./main.d.ts",
@@ -31,7 +31,7 @@
   "devDependencies": {
     "@types/react": "^16.4.10",
     "@types/react-dom": "^16.0.7",
-    "ag-grid-community": "^18.1.0",
+    "ag-grid-community": "^19.0.0",
     "gulp": "^3.9.1",
     "gulp-debug": "^3.2.0",
     "gulp-header": "^2.0.5",
@@ -51,7 +51,7 @@
     "vinyl-source-stream": "^2.0.0"
   },
   "peerDependencies": {
-    "ag-grid-community": "^18.1.0",
+    "ag-grid-community": "^19.0.0",
     "react": "^15.5.0 || ^16.0.0",
     "react-dom": "^15.5.0 || ^16.0.0"
   }
