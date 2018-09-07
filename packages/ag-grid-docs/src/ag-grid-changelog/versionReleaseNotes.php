@@ -1,3 +1,14 @@
+<div class="note" style="display: none" fixVersionNote id="fix_version_19_0_0">
+    <p>Release 19.0.0 Overview</p>
+
+    <ul>
+        <li>
+            AG-1201 The Status Bar is now customizable with
+            <a href="https://www.ag-grid.com/javascript-grid-tool-panel-component/">Custom Status Panel Components</a>
+        </li>
+    </ul>
+</div>
+
 <div class="note" style="display: none" fixVersionNote id="fix_version_18_0_0">
     <p>Release 18.0.0 Overview</p>
 
