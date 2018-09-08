@@ -119,10 +119,10 @@ $keyToDeprecations = $moreInformationMap['deprecation'];
             <div class="note">
                 This page covers the full Changelog for all items for 8.x and above. For the Summary
                 Changelog, or the legacy changelog covering versions 7.x and above, please go <a
-                        href="../change-log/changeLogIndex.php">here</a>.<br/><br/>
+                        href="../change-log/changeLogIndex.php">here</a>.
 
                 For a list of up and coming Bug Fixes and Features please refer to our <a
-                        href="../ag-grid-pipeline">Pipeline</a>.<br/></br>
+                        href="../ag-grid-pipeline">Pipeline</a>.
                 Documentation for previous versions can be found
 <a href="https://www.ag-grid.com/archive/">here.</a>
             </div>

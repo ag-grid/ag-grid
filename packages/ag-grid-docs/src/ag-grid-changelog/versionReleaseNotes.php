@@ -5,7 +5,12 @@
 
     <ul>
         <li>
-            ag-Grid receives a major overhaul of the Tool Panels in version 19.0.0. The old property 'showToolPanel' is
+            The NPM package name for the free module of ag-Grid is now <code>ag-grid-community</code>
+            instead of <code>ag-grid</code>. This means you install with <code>npm install ag-grid-community</code>
+            and then you reference like <code>import {Grid, GridOptions} from "ag-grid-community"</code>.
+        </li>
+        <li>
+            ag-Grid received a major overhaul of the Tool Panels in version 19.0.0. The old property 'showToolPanel' is
             no longer used and the Tool Panel is also not included by default. For more details see:
             <a href="https://www.ag-grid.com/javascript-grid-side-bar/#configuring-the-side-bar">Configuring the Side Bar</a>.
         </li>
