@@ -44,8 +44,8 @@ import logo from './logo.svg';
 import './App.css';
 
 import { AgGridReact } from 'ag-grid-react';
-import 'ag-grid/dist/styles/ag-grid.css';
-import 'ag-grid/dist/styles/ag-theme-balham.css';
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 
 class App extends Component {
     constructor(props) {
@@ -93,8 +93,8 @@ export default App;
 <p>Let's go over the <code>App.jsx</code> changes we made:</p>
 
 <pre class="language-jsx" ng-non-bindable><code>import {AgGridReact} from 'ag-grid-react';
-import 'ag-grid/dist/styles/ag-grid.css';
-import 'ag-grid/dist/styles/ag-theme-balham.css';
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 </code></pre>
 
 <p>The three lines above import the <code>AgGridReact</code> component, the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-balham.css</code>). 
@@ -332,17 +332,17 @@ this.state = {
 <p>After you are done with the setup, assuming that you have renamed <code>src/App.css</code> to <code>src/App.scss</code>, you can replace its contents with this:</p>
 
 <snippet language="scss">
-$ag-icons-path: "../node_modules/ag-grid/src/styles/icons/";
-@import "../node_modules/ag-grid/src/styles/ag-grid.scss";
-@import "../node_modules/ag-grid/src/styles/ag-theme-balham.scss";
+$ag-icons-path: "../node_modules/ag-grid-community/src/styles/icons/";
+@import "../node_modules/ag-grid-community/src/styles/ag-grid.scss";
+@import "../node_modules/ag-grid-community/src/styles/ag-theme-balham.scss";
 </snippet>
 
 <p>To avoid importing the stylesheets twice, remove the imports from <code>src/App.js</code>:</p>
 
 <snippet language="diff">
  import { AgGridReact } from 'ag-grid-react';
--import 'ag-grid/dist/styles/ag-grid.css';
--import 'ag-grid/dist/styles/ag-theme-balham.css';
+-import 'ag-grid-community/dist/styles/ag-grid.css';
+-import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 </snippet>
 
 <p>Notice that we had to aid the Sass preprocessor a bit by setting the <code>$ag-icons-path</code> variable. This is a common gotcha with Sass, as external image paths are considered relative to the main file. 
@@ -351,7 +351,7 @@ In fact, by specifying the icons path, we also made our first theme override! We
 <p>Let's do something simpler, though. We can override the alternating row background color to grayish blue. Add the following line:</p>
 
 <snippet language="diff">
- $ag-icons-path: "../node_modules/ag-grid/src/styles/icons/";
+ $ag-icons-path: "../node_modules/ag-grid-community/src/styles/icons/";
 +$odd-row-background-color: #CFD8DC;
 </snippet>
 
