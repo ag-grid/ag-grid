@@ -36,7 +36,7 @@ gulp.task('watch', ['tsc'], tscWatch);
 
 function tscWatch() {
     gulp.watch([
-        './node_modules/ag-grid/dist/lib/**/*',
+        './node_modules/ag-grid-community/dist/lib/**/*',
         './src/**/*'
     ],
     ['tsc']);

@@ -1,6 +1,3 @@
-const merge = require('webpack-merge');
-const common = require('./common');
-
 const webpack = require('webpack');
 const path = require('path');
 
@@ -15,6 +12,7 @@ if (require('minimist')(process.argv.slice(2)).hmr) {
 }
 
 module.exports = {
+    mode: 'development',
     devtool: 'inline-source-map',
 
     entry: {
@@ -39,7 +37,7 @@ module.exports = {
     },
 
     module: {
-        loaders: [
+        rules: [
             {
                 test: /\.ts$/,
                 use: [
@@ -74,7 +72,7 @@ module.exports = {
                             loader: 'postcss-loader',
                             options: {
                                 // sourceMap: true,
-                                plugins: [require('precss'), require('autoprefixer')]
+                                plugins: [require('autoprefixer')]
                             }
                         },
                         {   

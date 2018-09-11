@@ -8,7 +8,6 @@ const glob = require('glob');
 const fs = require('fs');
 const path = require('path');
 const mkdirp = require('mkdirp');
-const copy = require('copy');
 const fsExtra = require('fs-extra');
 
 const prettier = require('prettier');
@@ -47,7 +46,7 @@ function phpArrayToJSON(string) {
         .replace(/array/g, '')
         .replace(/\(/g, '{')
         .replace(/\)/g, '}')
-        .replace(/\=\>/g, ':');
+        .replace(/=>/g, ':');
     try {
         return JSON.parse(replaced);
     } catch (e) {
@@ -65,7 +64,7 @@ function forEachExampleToGenerate(cb, final, scope = '*') {
 
             let matches;
             while ((matches = exampleRegEx.exec(contents))) {
-                const [_, example, type, options] = matches;
+                const [example, type, options] = matches;
 
                 if (type === 'generated') {
                     try {

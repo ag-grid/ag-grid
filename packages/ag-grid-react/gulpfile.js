@@ -24,7 +24,7 @@ function tscTask() {
 gulp.task('watch', ['commonjs'], () => {
     gulp.watch([
         './src/*',
-        './node_modules/ag-grid/dist/lib/**/*'],
+        './node_modules/ag-grid-community/dist/lib/**/*'],
     ['commonjs']);
 });
 
