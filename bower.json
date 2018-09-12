@@ -25,6 +25,11 @@
   "license": "MIT",
   "devDependencies": {
   },
+  "ignore": [
+    "node_modules",
+    "packages",
+    "scripts"
+  ],
   "dependencies": {
   }
 }
