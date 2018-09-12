@@ -30,13 +30,13 @@ gulp.task('watch', ['commonjs'], () => {
 
 const typescript = require('rollup-plugin-typescript');
 const commonjs = require('rollup-plugin-commonjs');
-const uglify = require('rollup-plugin-uglify');
+const uglify = require('rollup-plugin-uglify').uglify;
 const rollup = require('rollup-stream');
 const source = require('vinyl-source-stream');
 
 gulp.task('umd', () => {
     return rollup({
-        entry: './src/main.ts',
+        input: './src/main.ts',
         rollup: require('rollup'),
         output: {
             name: 'AgGridReact',
@@ -46,8 +46,8 @@ gulp.task('umd', () => {
                 react: 'React',
                 'react-dom': 'ReactDOM',
                 'prop-types': 'PropTypes',
-                'ag-grid': 'agGrid'
-            }
+                'ag-grid-community': 'agGrid'
+            },
         },
         plugins: [typescript(), commonjs(),
             uglify()

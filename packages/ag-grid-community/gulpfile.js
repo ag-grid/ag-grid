@@ -8,9 +8,8 @@ const typescript = require('typescript');
 const header = require('gulp-header');
 const merge = require('merge2');
 const pkg = require('./package.json');
-const webpack = require('webpack');
 const webpackStream = require('webpack-stream');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const filter = require('gulp-filter');
 const named = require('vinyl-named');
 const replace = require('gulp-replace');
@@ -113,11 +112,6 @@ function tscMainTask() {
 }
 
 function webpackTask(minify, styles) {
-
-    const plugins = [];
-    if (minify) {
-        plugins.push(new webpack.optimize.UglifyJsPlugin({compress: {warnings: false}}));
-    }
     const mainFile = styles ? './main-with-styles.js' : './main.js';
 
     let fileName = 'ag-grid-community';
@@ -127,6 +121,7 @@ function webpackTask(minify, styles) {
 
     return gulp.src('src/entry.js')
         .pipe(webpackStream({
+            mode: 'development',
             entry: {
                 main: mainFile
             },
@@ -138,11 +133,18 @@ function webpackTask(minify, styles) {
             },
             //devtool: 'inline-source-map',
             module: {
-                loaders: [
-                    {test: /\.css$/, loader: "style-loader!css-loader"}
+                rules: [
+                    {
+                        test: /\.css$/, 
+                        use: ['style-loader', {
+                            loader:'css-loader',
+                            options: {
+                                minimze: !!minify
+                            }
+                        }]
+                    }
                 ]
-            },
-            plugins: plugins
+            }
         }))
         .pipe(header(bundleTemplate, {pkg: pkg}))
         .pipe(gulp.dest('./dist/'));
@@ -169,22 +171,28 @@ function scssTask() {
     return gulp.src(['src/styles/*.scss', '!src/styles/_*.scss'])
         .pipe(named())
         .pipe(webpackStream({
+            mode: 'development',
             module: {
                 rules: [
                     {
                         test: /\.scss$/,
-                        use: ExtractTextPlugin.extract({
-                            fallback: 'style-loader',
-                            //resolve-url-loader may be chained before sass-loader if necessary
-                            use: [
-                                {loader: 'css-loader', options: {minimize: false}},
-                                'sass-loader',
-                                {
-                                    loader: 'postcss-loader',
-                                    options: {syntax: 'postcss-scss', plugins: [autoprefixer()]}
-                                },
-                            ]
-                        })
+                        use: [
+                            MiniCssExtractPlugin.loader,
+                            {
+                                loader: "css-loader",
+                                options: {
+                                    minimize: false
+                                }
+                            },
+                            "sass-loader",
+                            {
+                                loader: 'postcss-loader',
+                                options: {
+                                    syntax: 'postcss-scss', 
+                                    plugins: [autoprefixer()]
+                                }
+                            }
+                        ]
                     },
                     {
                         test: /\.(svg)$/,
@@ -214,7 +222,7 @@ function scssTask() {
                 ]
             },
             plugins: [
-                new ExtractTextPlugin('[name].css')
+                new MiniCssExtractPlugin('[name].css')
             ]
         }))
         .pipe(filter("**/*.css"))
