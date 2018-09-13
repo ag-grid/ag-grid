@@ -5,7 +5,6 @@ const header = require('gulp-header');
 const merge = require('merge2');
 const pkg = require('./package.json');
 const clean = require('gulp-clean');
-const webpack = require('webpack');
 const webpackStream = require('webpack-stream');
 const path = require('path');
 const rename = require("gulp-rename");
@@ -103,7 +102,7 @@ function webpackTask(minify, styles) {
 
     return gulp.src('src/entry.js')
         .pipe(webpackStream({
-            mode: 'development',
+            mode: 'production',
             entry: {
                 main: mainFile
             },

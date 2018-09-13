@@ -121,7 +121,7 @@ function webpackTask(minify, styles) {
 
     return gulp.src('src/entry.js')
         .pipe(webpackStream({
-            mode: 'development',
+            mode: 'production',
             entry: {
                 main: mainFile
             },
@@ -171,7 +171,7 @@ function scssTask() {
     return gulp.src(['src/styles/*.scss', '!src/styles/_*.scss'])
         .pipe(named())
         .pipe(webpackStream({
-            mode: 'development',
+            mode: 'production',
             module: {
                 rules: [
                     {
