@@ -7,7 +7,7 @@ const watchedProperties = {};
 const props = {
     gridOptions: {
         default: function () {
-            return {}
+            return {};
         }
     }
 };
@@ -31,7 +31,7 @@ export default Vue.extend({
         return {
             _initialised: false,
             _destroyed: false,
-        }
+        };
     },
     methods: {
         globalEventListener(eventType, event) {

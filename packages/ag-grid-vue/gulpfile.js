@@ -4,18 +4,21 @@ const rename = require('gulp-rename');
 
 gulp.task('default', ['src', 'exports']);
 
-gulp.task('src', () => {
-    return gulp.src('src/*.js')
+gulp.task('src', () =>
+    gulp.src('src/*.js')
         .pipe(babel({
-            presets: ['env']
+            presets: ['@babel/env']
         }))
-        .pipe(gulp.dest('dist/'));
-});
+        .on('error', function(e) {
+            console.log(e);
+        })
+        .pipe(gulp.dest('dist'))
+);
 
 gulp.task('exports', () => {
     return gulp.src('./exports.js')
         .pipe(babel({
-            presets: ['env']
+            presets: ['@babel/env']
         }))
         .pipe(rename('main.js'))
         .pipe(gulp.dest('./'));
