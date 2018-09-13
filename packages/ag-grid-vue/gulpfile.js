@@ -9,9 +9,6 @@ gulp.task('src', () =>
         .pipe(babel({
             presets: ['@babel/env']
         }))
-        .on('error', function(e) {
-            console.log(e);
-        })
         .pipe(gulp.dest('dist'))
 );
 

@@ -89,6 +89,7 @@ module.exports = (cb, scope) => {
     const {appModuleAngular} = require('./src/example-runner/angular-app-module.ts');
 
     let count = 0;
+
     forEachExampleToGenerate(
         (section, example, options) => {
             count++;
@@ -126,7 +127,7 @@ module.exports = (cb, scope) => {
                 console.error(`Failed at ./src/${section}/${example}`, e);
                 return;
                 // console.error(source);
-                //throw new Error('Failed generating the react version');
+                // throw new Error('Failed generating the react version');
             }
 
             const angularScripts = glob.sync(path.join('./src', section, example, '*_angular*'));
@@ -134,6 +135,7 @@ module.exports = (cb, scope) => {
             let appComponentTS, appModuleTS;
             try {
                 source = vanillaToAngular(sources, options, angularComponentFileNames);
+
                 appComponentTS = prettier.format(source, {printWidth: 120, parser: 'typescript'});
                 appModuleTS = prettier.format(appModuleAngular(angularComponentFileNames), {
                     printWidth: 120,
