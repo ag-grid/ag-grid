@@ -64,7 +64,7 @@ function forEachExampleToGenerate(cb, final, scope = '*') {
 
             let matches;
             while ((matches = exampleRegEx.exec(contents))) {
-                const [example, type, options] = matches;
+                const [example, type, options] = matches.slice(1);
 
                 if (type === 'generated') {
                     try {
@@ -80,7 +80,7 @@ function forEachExampleToGenerate(cb, final, scope = '*') {
     });
 }
 
-module.exports = (cb, scope) =>     {
+module.exports = (cb, scope) => {
     require('ts-node').register();
 
     const {vanillaToVue} = require('./src/example-runner/vanilla-to-vue.ts');

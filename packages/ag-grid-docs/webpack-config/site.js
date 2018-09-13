@@ -1,7 +1,8 @@
 const webpack = require('webpack');
 const path = require('path');
+const autoprefixer = require('autoprefixer');
 
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 let homepage = './src/_assets/homepage/main.ts';
 let docs = './src/_assets/docs/main.ts';
@@ -59,27 +60,22 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: [
-                        { 
-                            loader: 'css-loader', 
-                            options: { 
-                                minimize: true 
-                            } 
-                        },
-                        {
-                            loader: 'postcss-loader',
-                            options: {
-                                // sourceMap: true,
-                                plugins: [require('autoprefixer')]
-                            }
-                        },
-                        {   
-                            loader: 'sass-loader' 
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: "css-loader",
+                        options: {
+                            minimize: true
                         }
-                    ]
-                })
+                    },
+                    {
+                        loader: 'postcss-loader',
+                        options: {
+                            plugins: [autoprefixer()]
+                        }
+                    },
+                    "sass-loader"
+                ]
             },
             {
                 test: /\.(jpg|png|gif)$/,
@@ -106,7 +102,7 @@ module.exports = {
     plugins: [
         new webpack.NamedModulesPlugin(),
         new webpack.HotModuleReplacementPlugin(),
-        new ExtractTextPlugin({filename: '[name].css'}),
+        new MiniCssExtractPlugin({filename: '[name].css'}),
 
         new webpack.ProvidePlugin({
             $: 'jquery',
