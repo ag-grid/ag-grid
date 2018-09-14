@@ -318,9 +318,6 @@ Examples of state include column visibility, width, row groups and values.
             reverses the order of the columns first. This will result in the columns
             appearing in the tool panels in reverse order.
         </li>
-        <li>
-
-        </li>
     </ul>
 </p>
 
