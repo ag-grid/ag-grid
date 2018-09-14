@@ -8,6 +8,10 @@ export class ColumnKeyCreator {
 
     private existingKeys: string[] = [];
 
+    public addExistingKeys(keys: string[]): void {
+        this.existingKeys = this.existingKeys.concat(keys);
+    }
+
     public getUniqueKey(colId: string, colField: string): string {
 
         // in case user passed in number for colId, convert to string

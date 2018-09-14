@@ -63,10 +63,7 @@ for more information.</p>
 gridOptions: {
     statusBar: {
         statusPanels: [
-            { statusPanel: 'agTotalRowCountComponent', align: 'left', key: 'totalRowComponent' },
-            { statusPanel: 'agFilteredRowCountComponent, align: 'left' },
-            { statusPanel: 'agSelectedRowCountComponent', align: 'center' },
-            { statusPanel: 'agAggregationComponent', align: 'right' }
+            { statusPanel: 'agTotalAndFilteredRowCountComponent', align: 'left' }
         ]
     }
     // ...other grid properties

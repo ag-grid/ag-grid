@@ -132,6 +132,9 @@ export class FilterManager {
         return this.advancedFilterPresent;
     }
 
+    // called by:
+    // 1) onFilterChanged()
+    // 2) onNewRowsLoaded()
     private setAdvancedFilterPresent() {
         let atLeastOneActive = false;
 
@@ -516,7 +519,18 @@ export class FilterManager {
     }
 
     private onNewColumnsLoaded(): void {
-        this.destroy();
+        let atLeastOneFilterGone = false;
+        _.iterateObject(this.allFilters, (key: string, filterWrapper: FilterWrapper) => {
+            let oldColumn = !this.columnController.getPrimaryColumn(filterWrapper.column);
+            if (oldColumn) {
+                atLeastOneFilterGone = true;
+                this.disposeFilterWrapper(filterWrapper, "filterDestroyed");
+            }
+        });
+
+        if (atLeastOneFilterGone) {
+            this.onFilterChanged();
+        }
     }
 
     // destroys the filter, so it not longer takes part

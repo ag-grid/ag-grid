@@ -255,4 +255,75 @@ Examples of state include column visibility, width, row groups and values.
     covered in the next section, in order to demonstrate saving and restoring the expanded state.
 </note>
 
+
+<h2>Column Changes</h2>
+
+<p>
+    It is possible to add and remove columns after the grid is created. This is done by
+    either calling <code>api.setColumnDefs()</code> or setting the bound property
+    <code>columnDefs</code>.
+</p>
+
+<p>
+    When new columns are set, the grid will compare with current columns and work
+    out which columns are old (to be removed), new (new columns created) or kept
+    (columns that remain will keep their state including position, filter and sort).
+</p>
+
+<p>
+    Comparison of column definitions is done on 1) object reference comparison and 2)
+    column ID eg <code>colDef.colId</code>. If either the object reference matches, or
+    the column ID matches, then the grid treats the columns as the same column. For example
+    if the grid has a column with ID 'country' and the user sets new columns, one of which
+    also has ID of 'country', then the old country column is kept in place of the new one
+    keeping it's internal state such as width, position, sort and filter.
+</p>
+
+<p>
+    The example below demonstrates changing columns. Select the checkboxes for
+    the columns to display and hit Apply. Note the following:
+    <ul>
+        <li>
+            <b>Column Width:</b> If you change the width of a column (eg Year)
+            and then add or remove other columns (eg remove Age) then the width
+            of Year remains unchanged.
+        </li>
+        <li>
+            <b>Column Sort:</b> If you sort the data by a column (eg Year)
+            and then add or remove other columns (eg remove Age) then the sort
+            remains unchanged. Conversely if you remove a column with a sort
+            (eg remove Year while also sorting by Year) then the sort
+            order is removed.
+        </li>
+        <li>
+            <b>Column Filter:</b> If you filter the data by a column (eg Year)
+            and then add or remove other columns (eg remove Year) then the filter
+            remains unchanged. Conversely if you remove a column with a filter
+            (eg remove Year while also filtering on Year) then the filter
+            is removed.
+        </li>
+        <li>
+            <b>Row Group & Pivot:</b> If you row group or pivot the data by a column
+            (eg Year) and then add or remove other columns (eg remove Age) then the row group
+            or pivot remains unchanged. Conversely if you remove a column with a row group
+            or pivot (eg remove Year while also row grouping or pivoting on Year) then the
+            row group or pivot is removed.
+        </li>
+        <li>
+            The <a href="../javascript-grid-tool-panel-columns/">Columns Tool Panel</a>
+            and <a href="../javascript-grid-tool-panel-filters/">Filters Tool Panel</a>
+            updates with the new columns. The order of columns in both tool panels
+            will always match the order of the columns supplied in the column definitions.
+            To observe this, hit the Reverse button which does same as Apply but
+            reverses the order of the columns first. This will result in the columns
+            appearing in the tool panels in reverse order.
+        </li>
+        <li>
+
+        </li>
+    </ul>
+</p>
+
+<?= example('Changes to Columns', 'column-changes', 'generated', array("enterprise" => 1)) ?>
+
 <?php include '../documentation-main/documentation_footer.php';?>

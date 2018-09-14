@@ -9,7 +9,7 @@ globalObj.Node = typeof Node === 'undefined' ? {} : Node;
 globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 
 // columnController
-export {BalancedColumnTreeBuilder} from "./columnController/balancedColumnTreeBuilder";
+export {ColumnFactory} from "./columnController/columnFactory";
 export {ColumnController} from "./columnController/columnController";
 export {ColumnKeyCreator} from "./columnController/columnKeyCreator";
 export {ColumnUtils} from "./columnController/columnUtils";

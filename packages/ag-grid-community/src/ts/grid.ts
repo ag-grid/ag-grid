@@ -10,7 +10,7 @@ import {ValueService} from "./valueService/valueService";
 import {EventService} from "./eventService";
 import {GridPanel} from "./gridPanel/gridPanel";
 import {GridApi} from "./gridApi";
-import {BalancedColumnTreeBuilder} from "./columnController/balancedColumnTreeBuilder";
+import {ColumnFactory} from "./columnController/columnFactory";
 import {DisplayedGroupCreator} from "./columnController/displayedGroupCreator";
 import {ExpressionService} from "./valueService/expressionService";
 import {TemplateService} from "./templateService";
@@ -190,7 +190,7 @@ export class Grid {
                 CellRendererFactory, HorizontalResizeService, PinnedRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
                 FilterManager, ColumnController, PaginationProxy, RowRenderer, ExpressionService,
-                BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService,
+                ColumnFactory, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService,
                 NavigationService, PopupService, ValueCache, ValueService, AlignedGridsService,
                 LoggerFactory, ColumnUtils, AutoWidthCalculator, PopupService, GridCore, StandardMenuFactory,
                 DragAndDropService, ColumnApi, FocusedCellController, MouseEventService,

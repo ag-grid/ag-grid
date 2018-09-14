@@ -10,9 +10,9 @@ import {Autowired, Bean, Context, Qualifier} from "../context/context";
 import {Utils as _} from "../utils";
 import { DefaultColumnTypes } from "../entities/defaultColumnTypes";
 
-// takes in a list of columns, as specified by the column definitions, and returns column groups
-@Bean('balancedColumnTreeBuilder')
-export class BalancedColumnTreeBuilder {
+// takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
+@Bean('columnFactory')
+export class ColumnFactory {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
@@ -21,7 +21,41 @@ export class BalancedColumnTreeBuilder {
     private logger: Logger;
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('BalancedColumnTreeBuilder');
+        this.logger = loggerFactory.create('ColumnFactory');
+    }
+
+    public createColumnTree(defs: (ColDef|ColGroupDef)[], primaryColumns: boolean, existingColumns?: Column[])
+        : {columnTree: OriginalColumnGroupChild[], treeDept: number} {
+
+        // column key creator dishes out unique column id's in a deterministic way,
+        // so if we have two grids (that could be master/slave) with same column definitions,
+        // then this ensures the two grids use identical id's.
+        let columnKeyCreator = new ColumnKeyCreator();
+        if (existingColumns) {
+            let existingKeys: string[] = existingColumns.map( col => col.getId() );
+            columnKeyCreator.addExistingKeys(existingKeys);
+        }
+
+        // we take a copy of the columns as we are going to be removing from them
+        let existingColsCopy = existingColumns ? existingColumns.slice() : null;
+
+        // create am unbalanced tree that maps the provided definitions
+        let unbalancedTree = this.recursivelyCreateColumns(defs, 0, primaryColumns,
+            existingColsCopy, columnKeyCreator);
+        let treeDept = this.findMaxDept(unbalancedTree, 0);
+        this.logger.log('Number of levels for grouped columns is ' + treeDept);
+        let res = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
+
+        this.columnUtils.depthFirstOriginalTreeSearch(res, (child: OriginalColumnGroupChild)=> {
+            if (child instanceof OriginalColumnGroup) {
+                (<OriginalColumnGroup>child).setupExpandable();
+            }
+        });
+
+        return {
+            columnTree: res,
+            treeDept: treeDept
+        };
     }
 
     public createForAutoGroups(autoGroupCols: Column[], gridBalancedTree: OriginalColumnGroupChild[]): OriginalColumnGroupChild[] {
@@ -67,30 +101,6 @@ export class BalancedColumnTreeBuilder {
         return dept;
     }
 
-    public createBalancedColumnGroups(abstractColDefs: (ColDef|ColGroupDef)[], primaryColumns: boolean): any {
-        // column key creator dishes out unique column id's in a deterministic way,
-        // so if we have two grids (that cold be master/slave) with same column definitions,
-        // then this ensures the two grids use identical id's.
-        let columnKeyCreator = new ColumnKeyCreator();
-
-        // create am unbalanced tree that maps the provided definitions
-        let unbalancedTree = this.recursivelyCreateColumns(abstractColDefs, 0, columnKeyCreator, primaryColumns);
-        let treeDept = this.findMaxDept(unbalancedTree, 0);
-        this.logger.log('Number of levels for grouped columns is ' + treeDept);
-        let balancedTree = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
-
-        this.columnUtils.depthFirstOriginalTreeSearch(balancedTree, (child: OriginalColumnGroupChild)=> {
-            if (child instanceof OriginalColumnGroup) {
-                (<OriginalColumnGroup>child).setupExpandable();
-            }
-        });
-
-        return {
-            balancedTree: balancedTree,
-            treeDept: treeDept
-        };
-    }
-
     private balanceColumnTree(unbalancedTree: OriginalColumnGroupChild[], currentDept: number,
                               columnDept: number, columnKeyCreator: ColumnKeyCreator): OriginalColumnGroupChild[] {
 
@@ -101,8 +111,8 @@ export class BalancedColumnTreeBuilder {
         unbalancedTree.forEach( (child: OriginalColumnGroupChild)=> {
             if (child instanceof OriginalColumnGroup) {
                 let originalGroup = <OriginalColumnGroup> child;
-                let newChildren = this.balanceColumnTree(
-                    originalGroup.getChildren(), currentDept + 1, columnDept, columnKeyCreator);
+                let newChildren = this.balanceColumnTree(originalGroup.getChildren(),
+                    currentDept + 1, columnDept, columnKeyCreator);
                 originalGroup.setChildren(newChildren);
                 result.push(originalGroup);
             } else {
@@ -137,21 +147,22 @@ export class BalancedColumnTreeBuilder {
         return maxDeptThisLevel;
     }
 
-    private recursivelyCreateColumns(abstractColDefs: (ColDef|ColGroupDef)[], level: number,
-                                     columnKeyCreator: ColumnKeyCreator, primaryColumns: boolean): OriginalColumnGroupChild[] {
+    private recursivelyCreateColumns(defs: (ColDef|ColGroupDef)[], level: number,
+                                     primaryColumns: boolean, existingColsCopy: Column[],
+                                     columnKeyCreator: ColumnKeyCreator): OriginalColumnGroupChild[] {
 
         let result: OriginalColumnGroupChild[] = [];
 
-        if (!abstractColDefs) {
+        if (!defs) {
             return result;
         }
 
-        abstractColDefs.forEach( (abstractColDef: ColDef|ColGroupDef)=> {
+        defs.forEach( (def: ColDef|ColGroupDef)=> {
             let newGroupOrColumn: OriginalColumnGroupChild;
-            if (this.isColumnGroup(abstractColDef)) {
-                newGroupOrColumn = this.createColumnGroup(columnKeyCreator, primaryColumns, <ColGroupDef> abstractColDef, level);
+            if (this.isColumnGroup(def)) {
+                newGroupOrColumn = this.createColumnGroup(primaryColumns, <ColGroupDef> def, level, existingColsCopy, columnKeyCreator);
             } else {
-                newGroupOrColumn = this.createColumn(columnKeyCreator, primaryColumns, <ColDef> abstractColDef);
+                newGroupOrColumn = this.createColumn(primaryColumns, <ColDef> def, existingColsCopy, columnKeyCreator);
             }
             result.push(newGroupOrColumn);
         });
@@ -159,13 +170,15 @@ export class BalancedColumnTreeBuilder {
         return result;
     }
 
-    private createColumnGroup(columnKeyCreator: ColumnKeyCreator,  primaryColumns: boolean, colGroupDef: ColGroupDef, level: number): OriginalColumnGroup {
+    private createColumnGroup(primaryColumns: boolean, colGroupDef: ColGroupDef, level: number,
+                              existingColumns: Column[], columnKeyCreator: ColumnKeyCreator): OriginalColumnGroup {
         let colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
 
         let groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId, null);
         let originalGroup = new OriginalColumnGroup(colGroupDefMerged, groupId, false, level);
         this.context.wireBean(originalGroup);
-        let children = this.recursivelyCreateColumns(colGroupDefMerged.children, level + 1, columnKeyCreator, primaryColumns);
+        let children = this.recursivelyCreateColumns(colGroupDefMerged.children,
+            level + 1, primaryColumns, existingColumns, columnKeyCreator);
 
         originalGroup.setChildren(children);
 
@@ -180,13 +193,50 @@ export class BalancedColumnTreeBuilder {
         return colGroupDefMerged;
     }
 
-    private createColumn(columnKeyCreator: ColumnKeyCreator,  primaryColumns: boolean, colDef: ColDef): Column {
+    private createColumn(primaryColumns: boolean, colDef: ColDef,
+                         existingColsCopy: Column[], columnKeyCreator: ColumnKeyCreator): Column {
         let colDefMerged = this.mergeColDefs(colDef);
         this.checkForDeprecatedItems(colDefMerged);
-        let colId = columnKeyCreator.getUniqueKey(colDefMerged.colId, colDefMerged.field);
-        let column = new Column(colDefMerged, colId, primaryColumns);
-        this.context.wireBean(column);
+
+        // see if column already exists
+        let column = this.findExistingColumn(colDef, existingColsCopy);
+
+        // no existing column, need to create one
+        if (!column) {
+            let colId = columnKeyCreator.getUniqueKey(colDefMerged.colId, colDefMerged.field);
+            column = new Column(colDefMerged, colDef, colId, primaryColumns);
+            this.context.wireBean(column);
+        }
+
         return column;
+    }
+
+    private findExistingColumn(colDef: ColDef, existingColsCopy: Column[]): Column {
+
+        let res: Column = _.find(existingColsCopy, col => {
+            let oldColDef = col.getUserProvidedColDef();
+            if (!oldColDef) { return false; }
+
+            // first check object references
+            if (oldColDef===colDef) {
+                return true;
+            }
+            // second check id's
+            let oldColHadId = oldColDef.colId !== null && oldColDef.colId !== undefined;
+            if (oldColHadId) {
+                return oldColDef.colId === colDef.colId;
+            } else {
+                return false;
+            }
+        });
+
+        // make sure we remove, so if user provided duplicate id, then we don't have more than
+        // one column instance for colDef's with common id
+        if (res) {
+            _.removeFromArray(existingColsCopy, res);
+        }
+
+        return res;
     }
 
     public mergeColDefs(colDef: ColDef) {

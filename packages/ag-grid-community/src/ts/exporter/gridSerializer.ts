@@ -16,7 +16,7 @@ import {
     ShouldRowBeSkippedParams
 } from "./exportParams";
 import {DisplayedGroupCreator} from "../columnController/displayedGroupCreator";
-import {BalancedColumnTreeBuilder} from "../columnController/balancedColumnTreeBuilder";
+import {ColumnFactory} from "../columnController/columnFactory";
 import {GroupInstanceIdCreator} from "../columnController/groupInstanceIdCreator";
 import {ColumnGroupChild} from "../entities/columnGroupChild";
 import {ColumnGroup} from "../entities/columnGroup";
@@ -178,7 +178,7 @@ export class GridSerializer {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('selectionController') private selectionController: SelectionController;
-    @Autowired('balancedColumnTreeBuilder') private balancedColumnTreeBuilder: BalancedColumnTreeBuilder;
+    @Autowired('columnFactory') private columnFactory: ColumnFactory;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     public serialize<T>(gridSerializingSession: GridSerializingSession<T>, params?: ExportParams<T>): string {
