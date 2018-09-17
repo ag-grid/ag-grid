@@ -107,6 +107,7 @@
     <auto-save>true</auto-save>
   </component>
   <component name="JsGulpfileManager">
+  <component name="JsGulpfileManager">
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
@@ -124,6 +125,7 @@
     <handled-path value="$PROJECT_DIR$/packages/ag-grid-vue-example/node_modules" />
     <handled-path value="$PROJECT_DIR$/packages/ag-grid-vue/node_modules" />
     <handled-path value="$PROJECT_DIR$/packages/ag-grid-community/node_modules" />
+    <handled-path value="$PROJECT_DIR$/packages/ag-grid-polymer-example/node_modules" />
   </component>
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths>
@@ -146,6 +148,8 @@
       <path value="$PROJECT_DIR$/packages/ag-grid-vue-example/package.json" />
       <path value="$PROJECT_DIR$/packages/ag-grid-vue/package.json" />
       <path value="$PROJECT_DIR$/packages/ag-grid-community/package.json" />
+      <path value="$PROJECT_DIR$/packages/ag-grid-polymer/package.json" />
+      <path value="$PROJECT_DIR$/packages/ag-grid-polymer-example/package.json" />
     </packageJsonPaths>
   </component>
   <component name="ProjectFrameBounds">
