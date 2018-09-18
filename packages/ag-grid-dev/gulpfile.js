@@ -164,6 +164,7 @@ function scssGrid() {
         }))
         .pipe(named())
         .pipe(webpackStream({
+            mode: 'development',
             module: {
                 rules: [
                     {
@@ -210,6 +211,7 @@ function webpackEnterprise() {
 
     return gulp.src('src/entry.js')
         .pipe(webpackStream({
+            mode: 'development',
             entry: {
                 main: mainFile
             },
@@ -235,6 +237,7 @@ function webpackGrid() {
 
     return gulp.src('src/entry.js')
         .pipe(webpackStream({
+            mode: 'development',
             entry: {
                 main: mainFile
             },
@@ -260,6 +263,7 @@ function webpackAngular() {
 
     return gulp.src('src/entry.js')
         .pipe(webpackStream({
+            mode: 'development',
             entry: {
                 main: mainFile
             },
@@ -284,6 +288,7 @@ function webpackReact() {
 
     return gulp.src('src/entry.js')
         .pipe(webpackStream({
+            mode: 'development',
             entry: {
                 main: mainFile
             },

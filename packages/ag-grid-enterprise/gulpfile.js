@@ -5,7 +5,6 @@ const header = require('gulp-header');
 const merge = require('merge2');
 const pkg = require('./package.json');
 const clean = require('gulp-clean');
-const webpack = require('webpack');
 const webpackStream = require('webpack-stream');
 const path = require('path');
 const rename = require("gulp-rename");
@@ -36,7 +35,7 @@ gulp.task('watch', ['tsc'], tscWatch);
 
 function tscWatch() {
     gulp.watch([
-        './node_modules/ag-grid/dist/lib/**/*',
+        './node_modules/ag-grid-community/dist/lib/**/*',
         './src/**/*'
     ],
     ['tsc']);
@@ -94,24 +93,6 @@ function tscMainTask() {
 
 function webpackTask(minify, styles) {
 
-    const plugins = [];
-    if (minify) {
-        plugins.push(
-            new webpack.optimize.UglifyJsPlugin(
-                {
-                    output: {
-                        comments: false
-                    },
-                    compress: {
-                        warnings: false
-                    },
-                    mangle: {
-                        except: ['csvCreator', 'CsvCreator']
-                    }
-                }
-            )
-        );
-    }
     const mainFile = styles ? './webpack-with-styles.js' : './webpack.js';
 
     let fileName = 'ag-grid-enterprise';
@@ -121,6 +102,7 @@ function webpackTask(minify, styles) {
 
     return gulp.src('src/entry.js')
         .pipe(webpackStream({
+            mode: 'production',
             entry: {
                 main: mainFile
             },
@@ -131,11 +113,18 @@ function webpackTask(minify, styles) {
                 libraryTarget: "umd"
             },
             module: {
-                loaders: [
-                    {test: /\.css$/, loader: "style-loader!css-loader"}
+                rules: [
+                    {
+                        test: /\.css$/, 
+                        use: ['style-loader', {
+                            loader:'css-loader',
+                            options: {
+                                minimze: !!minify
+                            }
+                        }]
+                    }
                 ]
-            },
-            plugins: plugins
+            }
         }))
         .pipe(header(bundleTemplate, {pkg: pkg}))
         .pipe(gulp.dest('./dist/'));

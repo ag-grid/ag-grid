@@ -34,7 +34,7 @@ gulp.task('clean-build-main', ['build-main'], (callback) => {
     return del(['./aot', 'exports.js*', 'exports.d.ts', 'exports.metadata.json', './src/*.js*', './src/*.d.ts', './src/*.metadata.*'], callback);
 });
 
-gulp.task('build-main', ['ngc-main'], (callback) => {
+gulp.task('build-main', ['ngc-main'], () => {
     // this is here to facilitate the case where ag-grid-angular is symlinked into another project
     // if we have main.ts and leave it as that the the project that depends on ag-grid-angular (again, only if symlinked)
     // will complain about node_modules/ag-grid-angular/main.ts not being part of the source files

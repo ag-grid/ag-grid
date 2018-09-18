@@ -13,7 +13,6 @@ const generateExamples = require('./example-generator');
 
 const lnk = require('lnk').sync;
 const mkdirp = require('mkdir-p').sync;
-const colors = require('colors');
 
 const EXPRESS_PORT = 8080;
 const PHP_PORT = 8888;
@@ -163,7 +162,7 @@ function watchAndGenerateExamples() {
     chokidar.watch('./src/*/*/*.{html,css,js}').on('change', callback);
 }
 
-module.exports = callback => {
+module.exports = () => {
     const app = express();
 
     // necessary for plunkers

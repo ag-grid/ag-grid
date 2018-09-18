@@ -33,13 +33,13 @@
     "gulp-header": "^2.0.5",
     "gulp-rename": "^1.4.0",
     "gulp-replace": "^1.0.0",
-    "gulp-typescript": "^4.0.2",
+    "gulp-typescript": "^5.0.0-alpha.3",
     "merge2": "^1.2.2",
-    "style-loader": "^0.22.1",
+    "style-loader": "^0.23.0",
     "tslint": "^5.11.0",
     "typescript": "2.9.2",
-    "webpack": "^3.12.0",
-    "webpack-stream": "^4.0.3"
+    "webpack": "^4.18.0",
+    "webpack-stream": "^5.1.1"
   },
   "peerDependencies": {
     "ag-grid-community": "^18.0.0"
