@@ -12,14 +12,25 @@
 
 .test-header {
     padding: 4px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 
 .test-header label {
+    margin-left: 10px;
     margin-right: 10px;
 }
 
-.test-header input {
+.participant-group {
+    background-color: #00E7B1;
+}
+
+.medals-group {
+    background-color: #5b9bd5;
+}
+
+.legend-box {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
     position: relative;
-    top: 2px;
+    top: 3px;
 }
