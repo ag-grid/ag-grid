@@ -338,7 +338,7 @@ beforeMount() {
 npm install --save ag-grid-enterprise
 </snippet>
 
-<p>Then, add the import to <code>src/main.ts</code>:</p>
+<p>Then, add the import to <code>src/main.js</code>:</p>
 
 <snippet language="diff">
 import Vue from 'vue'

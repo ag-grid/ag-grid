@@ -18,6 +18,7 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/_dev" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/src/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/src/framework-examples" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/src/polymer-getting-started/simple-grid/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-enterprise/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-polymer-example/build" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react-example/dist" />
