@@ -216,7 +216,9 @@ class ExampleRunner {
         this.boilerplateFiles = typeConfig.boilerplateFiles || [];
         this.boilerplatePath = typeConfig.boilerplatePath;
 
-        const files = typeConfig.files;
+        const files = typeConfig.files ?
+            typeConfig.files.filter((file) => { return file.indexOf('node_modules') === -1 }) :
+            typeConfig.files;
 
         this.files = files[0] === "index.html" ? files : ["index.html"].concat(files);
 
