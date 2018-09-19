@@ -1,0 +1,12 @@
+.ag-custom-theme {
+    $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked column columns contracted copy cut desc expanded eye-slash eye filter group indeterminate left loading menu minus none not-allowed paste pin pivot plus right small-left small-right small-up small-down tick cross tree-open tree-closed;
+    @each $icon in $icons {
+        .ag-icon-#{$icon} {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: transparent url('./icons/#{$icon}.svg') center no-repeat;
+            background-size: 12px 12px;
+        }
+    }
+}

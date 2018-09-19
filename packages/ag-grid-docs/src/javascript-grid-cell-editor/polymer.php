@@ -33,4 +33,5 @@
     Using Polymer Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
 </p>
 
-<?= example('Polymer Editor Components', 'polymer-editor', 'polymer', array("exampleHeight" => 370, "showResult" => true)); ?>
+<?= example('Polymer Editor Components', 'polymer-editor', 'as-is', array("noPlunker" => 1, "usePath" => "/", "exampleHeight" => 450)) ?>
+

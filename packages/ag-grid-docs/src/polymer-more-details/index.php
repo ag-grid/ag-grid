@@ -1,103 +1,40 @@
 <?php
 $pageTitle = "ag-Grid Reference: Polymer Datagrid - More Details";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page covers setting up the ag-Grid Polymer Component, ag-Grid Polymer dependency and getting through some of the fundamental setup.";
-$pageKeyboards = "polymer Grid";
+$pageKeyboards = "Polymer Grid";
 $pageGroup = "basics";
-include '../documentation-main/documentation_header.php';
+include '../getting-started/header.php';
 ?>
 
-    <h1 class="heading-enterprise heading-polymer">Polymer Grid</h1>
+    <h1 class="heading-enterprise heading-polymer">Polymer 3 Grid</h1>
 
     <h2>More Details</h2>
 
-    <note>Full working examples of ag-Grid and Polymer can be found in <a href="https://github.com/ag-grid/ag-grid-polymer-example">Github</a>, illustrating
-        (amongst others) Rich Grids, Filtering with Polymer Components, Master/Detail Grid and so on.</note>
+<note>A full working example of using ag-Grid with Polymer 3 can be found in our <a
+            href="https://github.com/ag-grid/ag-grid-polymer-example">ag-Grid Polymer 3 Example Repo</a>.
+</note>
 
-    <h3>Downloading the ag-Grid Polymer Component</h3>
-
-    <p>As will any Polymer project, you will need to include the Web Component polyfills as well as the Polymer library itself into your html file.</p>
-
-    <p>Furthermore, using Polymer with ag-Grid introduces an additional dependency, so you need to include ag-grid-polymer, which includes the a-Grid Polymer support.</p>
-
-    <p>The following dependencies are therefore required at a minimum, all to be installed with <a
-                href="https://bower.io">Bower</a>:</p>
-
-    <snippet language="sh">
-bower install -save polymer
-
-# or ag-grid-enterprise - see further below for more details on using the Enterprise Features
-bower install -save ag-grid
-bower install -save ag-grid-polymer</snippet>
-
-    <p>You can then reference the dependency as follows in the top of your application html file:</p>
-
-<snippet language="html">
-&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head&gt;
-    &lt;!-- polymer polyfill - must be before any wc related javascript is executed --&gt;
-    &lt;script src="bower_components/webcomponentsjs/webcomponents-loader.js"&gt;&lt;/script&gt;
-    &lt;link rel="import" href="bower_components/polymer/polymer.html"&gt;&lt;/span&gt;
-
-    &lt;!-- before the ag-grid web component --&gt;
-    &lt;!-- either ag-grid or ag-grid-enterprise, depending on which you're using --&gt;
-    &lt;!-- note: using noStyle version here as the you can't directly style anything in a shadow tree using a CSS rule
-         outside of the shadow tree --&gt;
-    &lt;script src="bower_components/ag-grid/dist/ag-grid.noStyle.js"&gt;&lt;/script&gt;
-
-    &lt;!-- ag-grid-polymer element --&gt;
-    &lt;link rel="import" href="bower_components/ag-grid-polymer/ag-grid-polymer.html"&gt;
-
-    &lt;!-- your application code can now be imported --&gt;
-    &lt;link rel="import" href="application.html"&gt;
-&lt;/head&gt;</snippet>
-
-    <p>
-        You can now include <code>ag-grid-polymer</code> inside your template as follows:
-    </p>
-
-    <snippet language="html">
-&lt;ag-grid-polymer style="width: 500px; height: 120px;"
-         class="ag-theme-balham"
-         rowData="{{rowData}}"
-columnDefs="{{columnDefs}}"&gt;&lt;/ag-grid-polymer&gt;</snippet>
-
-    <h3 class="heading-enterprise">Downloading the ag-Grid Polymer Enterprise Dependency</h3>
+    <h3 class="heading-enterprise">Downloading the ag-Grid Enterprise Dependency</h3>
 
     <p>If you're using the ag-Grid Enterprise features, then in addition to the ag-Grid Polymer dependency above, you also require
     the ag-Grid Polymer Enterprise dependency:</p>
 
-    <h3>Download ag-Grid-Enterprise</h3>
-
     <snippet language="sh">
-bower install ag-grid-enterprise</snippet>
+npm install ag-grid-enterprise --save</snippet>
 
-    <p>Note that this is instead of the <code>ag-grid</code> dependency - you need <span style="font-style: italic">either</span>
-        <code>ag-grid</code>or <code>ag-grid-enterprise</code>, not both.</p>
+    <p>Note that this is in addition to the <code>ag-grid-community</code> dependency. The <code>ag-grid-community</code>
+    dependency will be required for the CSS styles.</p>
 
+    <p>Using our application from the <a href="../polymer-getting-started">Polymer Getting Started</a> section as a
+    starting point, we'll replace the <code>ag-grid-community</code> reference with the <code>ag-grid-enterprise</code> dependency:</p>
 
-    <p>As with the first section above, you need to reference the ag-grid Enterprise dependency:</p>
+<snippet language="diff">
+- &lt;script src="/node_modules/ag-grid-community/dist/ag-grid-community.min.noStyle.js"&gt;&lt;/script&gt;
++ &lt;script src="/node_modules/ag-grid-enterprise/dist/ag-grid-enterprise.min.noStyle.js"&gt;&lt;/script&gt;
+</snippet>
 
-    <snippet language="html">
-&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head&gt;
-    &lt;!-- polymer polyfill - must be before any wc related javascript is executed --&gt;
-    &lt;script src="bower_components/webcomponentsjs/webcomponents-loader.js"&gt;&lt;/script&gt;
-    &lt;link rel="import" href="bower_components/polymer/polymer.html"&gt;&lt;/span&gt;
-
-        &lt;!-- before the ag-grid web component --&gt;
-    &lt;!-- either ag-grid or ag-grid-enterprise, depending on which you're using --&gt;
-    &lt;!-- note: using noStyle version here as the you can't directly style anything in a shadow tree using a CSS rule
-         outside of the shadow tree --&gt;
-    &lt;script src="bower_components/ag-grid-enterprise/dist/ag-grid-enterprise.noStyle.js"&gt;&lt;/script&gt;
-
-    &lt;!-- ag-grid-polymer element --&gt;
-    &lt;link rel="import" href="bower_components/ag-grid-polymer/ag-grid-polymer.html"&gt;
-
-    &lt;!-- your application code can now be imported --&gt;
-    &lt;link rel="import" href="application.html"&gt;
-&lt;/head&gt;</snippet>
+    <p>Although we've removed the reference to <code>ag-grid-community</code> here, we'll still reference the styles within
+    it when defining the ag-Grid element later.</p>
 
     <h2 id="ag-Grid-polymer-features">ag-Grid Polymer Features</h2>
 
@@ -220,14 +157,6 @@ this.$.myGrid.oncolumnresized = (event) =&gt; {
         <li>Provide a <code>gridOptions</code> object to the grid pre-creation time. Post creation the APIs will be available on the
             <code>gridOptions</code> object.</li>
     </ul>
-
-    <h3>Cell Editors, Cell Renderers, Filters etc</h3>
-
-    <p>Please see the relevant sections on <a
-                href="../javascript-grid-cell-rendering-components/#polymerCellRendering">cell renderers</a>,
-        <a href="../javascript-grid-cell-editing/#polymerCellEditing">cell editors</a> and
-        <a href="../javascript-grid-filtering/#polymerFiltering">filters</a> for configuring and using Polymer
-        Components in ag-Grid.</p>
 
     <h3 id="parent_child">Child to Parent Communication</h3>
 

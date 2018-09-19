@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
+    <title>loading</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="5" y="1" width="2" height="3"></rect>
+        <rect id="path-2" x="5" y="8" width="2" height="3"></rect>
+        <rect id="path-3" x="1" y="5" width="3" height="2"></rect>
+        <rect id="path-4" x="8" y="5" width="3" height="2"></rect>
+        <rect id="path-5" x="4" y="0" width="2" height="3"></rect>
+        <rect id="path-6" x="4" y="7" width="2" height="3"></rect>
+        <rect id="path-7" x="0" y="4" width="3" height="2"></rect>
+        <rect id="path-8" x="7" y="4" width="3" height="2"></rect>
+    </defs>
+    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="loading">
+            <g id="Rectangle-18">
+                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-1"></use>
+                <rect stroke="#979797" stroke-width="1" x="5.5" y="1.5" width="1" height="2"></rect>
+            </g>
+            <g id="Rectangle-18-Copy">
+                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-2"></use>
+                <rect stroke="#979797" stroke-width="1" x="5.5" y="8.5" width="1" height="2"></rect>
+            </g>
+            <g id="Rectangle-19">
+                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-3"></use>
+                <rect stroke="#979797" stroke-width="1" x="1.5" y="5.5" width="2" height="1"></rect>
+            </g>
+            <g id="Rectangle-19-Copy">
+                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-4"></use>
+                <rect stroke="#979797" stroke-width="1" x="8.5" y="5.5" width="2" height="1"></rect>
+            </g>
+            <g id="Group" opacity="0.71410779" transform="translate(6.000000, 6.000000) rotate(45.000000) translate(-6.000000, -6.000000) translate(1.000000, 1.000000)">
+                <g id="Rectangle-18-Copy-3">
+                    <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-5"></use>
+                    <rect stroke="#979797" stroke-width="1" x="4.5" y="0.5" width="1" height="2"></rect>
+                </g>
+                <g id="Rectangle-18-Copy-2">
+                    <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-6"></use>
+                    <rect stroke="#979797" stroke-width="1" x="4.5" y="7.5" width="1" height="2"></rect>
+                </g>
+                <g id="Rectangle-19-Copy-3">
+                    <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-7"></use>
+                    <rect stroke="#979797" stroke-width="1" x="0.5" y="4.5" width="2" height="1"></rect>
+                </g>
+                <g id="Rectangle-19-Copy-2">
+                    <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-8"></use>
+                    <rect stroke="#979797" stroke-width="1" x="7.5" y="4.5" width="2" height="1"></rect>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
