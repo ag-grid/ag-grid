@@ -1,0 +1,20 @@
+{
+  "suites": ["tests/runner.html"],
+  "clientOptions": {
+    "environmentImports": []
+  },
+  "plugins": {
+    "local": {
+      "browserOptions": {
+        "chrome": [
+          "headless",
+          "disable-gpu",
+          "no-sandbox"
+        ],
+        "firefox": [
+          "-headless"
+        ]
+      }
+    }
+  }
+}

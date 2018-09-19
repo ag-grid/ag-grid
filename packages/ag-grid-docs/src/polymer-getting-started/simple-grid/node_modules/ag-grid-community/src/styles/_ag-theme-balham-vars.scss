@@ -1,0 +1,89 @@
+// Sizing
+$grid-size: 4px !default;
+$icon-size: 16px !default;
+
+// these three should be changed in envronment.ts, too
+$row-height: $grid-size * 7 !default;
+$header-height: $grid-size * 8 !default;
+$virtual-item-height: $grid-size * 7;
+
+$toolpanel-indent-size: $grid-size + $icon-size !default;
+$row-group-indent-size: $grid-size * 3 + $icon-size !default;
+$cell-horizontal-padding: $grid-size * 3 !default;
+
+$header-icon-size: 14px !default;
+$border-radius: 2px;
+
+// Icons
+$icons-path: "./balham-icons/" !default;
+
+// Fonts
+$font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !default;
+
+$font-size: 12px !default;
+$font-weight: 400 !default;
+
+$secondary-font-family: $font-family !default; //font-secondary
+$secondary-font-size: 12px !default; // font-secondary-size
+$secondary-font-weight: 600 !default; // font-secondary-weight
+
+$transition-speed: 120ms !default;
+
+$params: (
+    default-background: $default-background,
+    grid-size: $grid-size,
+    icon-size: $icon-size,
+    header-background-color: $header-background-color,
+    header-icon-size: $header-icon-size,
+    row-height: $row-height,
+    header-height: $header-height,
+    virtual-item-height: $virtual-item-height,
+    rich-select-item-height: $row-height,
+    cell-horizontal-padding: $cell-horizontal-padding,
+    toolpanel-indent-size: $toolpanel-indent-size,
+    row-group-indent-size: $row-group-indent-size,
+    icons-path: $icons-path,
+    font-family: $font-family,
+    font-size: $font-size,
+    font-weight: $font-weight,
+    secondary-font-family: $secondary-font-family,
+    secondary-font-size: $secondary-font-size,
+    secondary-font-weight: $secondary-font-weight,
+    foreground-color: $foreground-color,
+    foreground-opacity: $foreground-opacity,
+    secondary-foreground-color-opacity: $secondary-foreground-color-opacity,
+    secondary-foreground-color: $secondary-foreground-color,
+    disabled-foreground-color-opacity: $disabled-foreground-color-opacity,
+    disabled-foreground-color: $disabled-foreground-color,
+    background-color: $background-color,
+    border-color: $border-color,
+    icon-color: $icon-color,
+    alt-icon-color: $alt-icon-color,
+    cell-data-changed-color: $cell-data-changed-color,
+    chip-background-color: $chip-background-color,
+    card-background-color: $background-color,
+    editor-background-color-color: $editor-background-color,
+    range-selection-background-color: $range-selection-background-color,
+    range-selection-highlight-color: $range-selection-highlight-color,
+    panel-background-color: $panel-background-color,
+    tool-panel-background-color: $tool-panel-background-color,
+    accent-color: $accent-color,
+    primary-color: $primary-color,
+    hover-color: $hover-color,
+    selected-color: $selected-color,
+    icon-opacity: $foreground-opacity,
+    button-text-transform: uppercase,
+    card-radius: 2px,
+    card-shadow: none,
+    input-height: $grid-size * 4,
+    use-icons-for-pager-buttons: true,
+    value-change-delta-up-color: $value-change-delta-up-color,
+    value-change-delta-down-color: $value-change-delta-down-color,
+    value-change-value-highlight-background-color: $value-change-value-highlight-background-color,
+    odd-row-background-color: $odd-row-background-color,
+
+    ag-range-selected-color-1: opacify($range-selection-background-color, 0.1),
+    ag-range-selected-color-2: opacify($range-selection-background-color, 0.2),
+    ag-range-selected-color-3: opacify($range-selection-background-color, 0.3),
+    ag-range-selected-color-4: opacify($range-selection-background-color, 0.4)
+);

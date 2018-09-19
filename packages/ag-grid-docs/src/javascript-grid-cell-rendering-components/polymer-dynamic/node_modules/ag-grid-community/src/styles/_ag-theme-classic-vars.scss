@@ -1,0 +1,35 @@
+$foreground-opacity: 1 !default;
+$secondary-foreground-color-opacity: 1 !default;
+$disabled-foreground-color-opacity: 0.5 !default;
+
+// Sizing
+$grid-size: 4px !default;
+$icon-size: 12px !default;
+$header-height: $grid-size * 6 + 1 !default;
+$row-height: ($grid-size * 6 + 1) !default;
+$cell-horizontal-padding: $grid-size * 3 !default;
+$virtual-item-height: $grid-size * 5 !default;
+$header-icon-size: 14px !default;
+
+// Icons
+$icons-path: './icons/' !default;
+
+// Fonts
+$font-family: 'Helvetica Neue', sans-serif !default;
+$font-size: 14px !default;
+$font-weight: 400 !default;
+
+$secondary-font-family: $font-family !default;
+$secondary-font-size: 14px !default;
+$secondary-font-weight: 400 !default;
+
+// Misc
+$transition-speed: 120ms !default;
+$card-shadow: none;
+$card-radius: 0;
+
+$toolpanel-indent-size: $grid-size + $icon-size !default;
+$row-group-indent-size: $grid-size * 3 + $icon-size !default;
+
+// same in all themes
+$header-cell-moving-background-color: rgb(190, 190, 190) !default;

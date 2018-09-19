@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
+    <title>cancel</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Material-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="cancel" fill-rule="nonzero" fill="#000000">
+            <path d="M9,1.5 C4.8525,1.5 1.5,4.8525 1.5,9 C1.5,13.1475 4.8525,16.5 9,16.5 C13.1475,16.5 16.5,13.1475 16.5,9 C16.5,4.8525 13.1475,1.5 9,1.5 Z M12.75,11.6925 L11.6925,12.75 L9,10.0575 L6.3075,12.75 L5.25,11.6925 L7.9425,9 L5.25,6.3075 L6.3075,5.25 L9,7.9425 L11.6925,5.25 L12.75,6.3075 L10.0575,9 L12.75,11.6925 Z" id="Shape"></path>
+        </g>
+    </g>
+</svg>
