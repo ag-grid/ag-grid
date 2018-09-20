@@ -147,9 +147,8 @@ var gridOptions = {
 <h2>Next Up</h2>
 
 <p>
-    Continue to the next section to learn about <a href="../javascript-grid-server-side-model-crud/">CRUD Operations</a>
+    Continue to the next section to learn about <a href="../javascript-grid-server-side-model-changing-columns/">Changing Columns</a>
     using the Server-side Row Model.
 </p>
-
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -73,7 +73,7 @@ export class ToolPanelFilterComp extends Component {
         this.eventService.addEventListener(Events.EVENT_FILTER_OPENED, (event: FilterOpenedEvent) => this.onFilterOpened(event))
 
         this.addInIcon('filter', this.eFilterIcon, this.params.column);
-        _.addCssClass(this.eFilterIcon, 'ag-hidden');
+        _.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !this.isFilterActive());
         _.addCssClass(this.eExpandChecked, 'ag-hidden');
         this.addDestroyableEventListener(this.params.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
 
@@ -87,16 +87,13 @@ export class ToolPanelFilterComp extends Component {
         eParent.appendChild(eIcon);
     }
 
+    private isFilterActive(): boolean {
+        let filterInstance = this.gridApi.getFilterInstance(this.params.column);
+        return filterInstance && filterInstance.isFilterActive();
+    }
 
     private onFilterChanged(): void {
-        let filterInstance = this.gridApi.getFilterInstance(this.params.column);
-        if (!filterInstance) {
-            _.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', true);
-            return;
-        }
-
-        let filterPresent = filterInstance.isFilterActive();
-        _.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !filterPresent);
+        _.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !this.isFilterActive());
     }
 
     public addGuiEventListenerInto(into: HTMLElement, event: string, listener: (event: any) => void): void {

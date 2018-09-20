@@ -55,7 +55,9 @@ var gridOptions = {
     enableFilter: true,
     animateRows: true,
     enableSorting: true,
-    sideBar: true,
+    sideBar: {
+        toolPanels: ['columns','filters']
+    },
     suppressAggFuncInHeader: true,
 };
 

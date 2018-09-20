@@ -197,22 +197,6 @@ export class ColumnController {
 
         this.ready = true;
 
-        this.afterChangingColumns(source);
-    }
-
-    private beforeChangingColumns(): void {
-        // always invalidate cache on changing columns, as the column id's for the new columns
-        // could overlap with the old id's, so the cache would return old values for new columns.
-        this.valueCache.expire();
-
-        // NOTE ==================
-        // we should be destroying the existing columns and groups if they exist, for example, the original column
-        // group adds a listener to the columns, it should be also removing the listeners
-        this.autoGroupsNeedBuilding = true;
-    }
-
-    private afterChangingColumns(source: ColumnEventType): void {
-
         this.updateGridColumns();
 
         this.updateDisplayedColumns(source);
@@ -232,6 +216,17 @@ export class ColumnController {
             columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(newColumnsLoadedEvent);
+    }
+
+    private beforeChangingColumns(): void {
+        // always invalidate cache on changing columns, as the column id's for the new columns
+        // could overlap with the old id's, so the cache would return old values for new columns.
+        this.valueCache.expire();
+
+        // NOTE ==================
+        // we should be destroying the existing columns and groups if they exist, for example, the original column
+        // group adds a listener to the columns, it should be also removing the listeners
+        this.autoGroupsNeedBuilding = true;
     }
 
     public isAutoRowHeightActive(): boolean {
@@ -2074,8 +2069,8 @@ export class ColumnController {
 
     private extractColumns(oldPrimaryColumns: Column[], previousCols: Column[],
                            setFlagFunc: (col: Column, flag: boolean)=>void,
-                           getXxxIndexFunc: (colDef: ColDef)=>number,
-                           getXxxFunc: (colDef: ColDef)=>boolean): Column[] {
+                           getIndexFunc: (colDef: ColDef)=>number,
+                           getValueFunc: (colDef: ColDef)=>boolean): Column[] {
 
         if (!previousCols) {
             previousCols = [];
@@ -2099,21 +2094,21 @@ export class ColumnController {
         // we only want to work on new columns, as col columns already got processed first time around
         // pull out items with xxxIndex
         newPrimaryCols.forEach( col => {
-            let index = getXxxIndexFunc(col.getColDef());
+            let index = getIndexFunc(col.getColDef());
             if (typeof index === 'number') {
                 newCols.push(col);
             }
         });
         // then sort them
         newCols.sort(function(colA: Column, colB: Column): number {
-            let indexA = getXxxIndexFunc(colA.getColDef());
-            let indexB = getXxxIndexFunc(colB.getColDef());
+            let indexA = getIndexFunc(colA.getColDef());
+            let indexB = getIndexFunc(colB.getColDef());
             return indexA - indexB;
         });
         // now just pull out items xxx (boolean value), they will be added at the end
         // after the indexed ones, but in the order the columns appear
         newPrimaryCols.forEach( col => {
-            let booleanValue = getXxxFunc(col.getColDef());
+            let booleanValue = getValueFunc(col.getColDef());
             if (booleanValue) {
                 // if user already specified xxxIndex then we skip it as this col already included
                 if (newCols.indexOf(col)>=0) { return; }
