@@ -60,8 +60,7 @@ export class Environment {
     public getSassVariable(theme: string, key: string): number {
         if (theme == 'ag-theme-material') {
             return HARD_CODED_SIZES['ag-theme-material'][key];
-        }
-        else if (theme == 'ag-theme-balham' || theme == 'ag-theme-balham-dark') {
+        } else if (theme == 'ag-theme-balham' || theme == 'ag-theme-balham-dark') {
             return HARD_CODED_SIZES['ag-theme-balham'][key];
         }
         return HARD_CODED_SIZES['ag-theme-classic'][key];

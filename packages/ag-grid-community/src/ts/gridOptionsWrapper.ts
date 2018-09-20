@@ -1338,19 +1338,19 @@ export class GridOptionsWrapper {
         }
 
         let oldToolPanelProperties: {[p:string]: string} = {
-            'toolPanelSuppressRowGroups': 'suppressRowGroups',
-            'toolPanelSuppressValues': 'suppressValues',
-            'toolPanelSuppressPivots': 'suppressPivots',
-            'toolPanelSuppressPivotMode': 'suppressPivotMode',
-            'toolPanelSuppressColumnFilter': 'suppressColumnFilter',
-            'toolPanelSuppressColumnSelectAll': 'suppressColumnSelectAll',
-            'toolPanelSuppressSideButtons': 'suppressSideButtons',
-            'toolPanelSuppressColumnExpandAll': 'suppressColumnExpandAll',
-            'contractColumnSelection': 'contractColumnSelection'
+            toolPanelSuppressRowGroups: 'suppressRowGroups',
+            toolPanelSuppressValues: 'suppressValues',
+            toolPanelSuppressPivots: 'suppressPivots',
+            toolPanelSuppressPivotMode: 'suppressPivotMode',
+            toolPanelSuppressColumnFilter: 'suppressColumnFilter',
+            toolPanelSuppressColumnSelectAll: 'suppressColumnSelectAll',
+            toolPanelSuppressSideButtons: 'suppressSideButtons',
+            toolPanelSuppressColumnExpandAll: 'suppressColumnExpandAll',
+            contractColumnSelection: 'contractColumnSelection'
         };
 
         let toolPanelColumnsCompProps: any = {};
-        Object.keys(oldToolPanelProperties).forEach(key=>{
+        Object.keys(oldToolPanelProperties).forEach(key=> {
             let translation: any = oldToolPanelProperties[key];
             let value: any = (<any>this.gridOptions)[key];
             if (value !== undefined) {
@@ -1370,12 +1370,12 @@ export class GridOptionsWrapper {
         }
 
         if (options.sideBar != null) {
-            options.sideBar = SideBarDefParser.parse(options.sideBar)
+            options.sideBar = SideBarDefParser.parse(options.sideBar);
         }
 
         if (Object.keys(toolPanelColumnsCompProps).length > 0) {
             let columnsDef: ToolPanelDef[] = <ToolPanelDef[]>(<SideBarDef>this.gridOptions.sideBar).toolPanels.filter((it:ToolPanelDef)=>it.id === 'columns');
-            if (columnsDef.length === 1){
+            if (columnsDef.length === 1) {
                 _.mergeDeep(columnsDef[0], {
                     componentParams: toolPanelColumnsCompProps
                 });
@@ -1422,7 +1422,7 @@ export class GridOptionsWrapper {
             return this.gridOptions.localeTextFunc;
         }
         let that = this;
-        return function (key: any, defaultValue: any) {
+        return function(key: any, defaultValue: any) {
             let localeText = that.gridOptions.localeText;
             if (localeText && localeText[key]) {
                 return localeText[key];
