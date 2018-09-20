@@ -501,6 +501,10 @@
                         "url": "javascript-grid-server-side-model-tree-data/"
                     },
                     {
+                        "title": "Changing Columns",
+                        "url": "javascript-grid-server-side-model-changing-columns/"
+                    },
+                    {
 
                         "title": "CRUD",
                         "url": "javascript-grid-server-side-model-crud/"

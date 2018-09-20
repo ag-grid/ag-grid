@@ -96,10 +96,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
             // for filter model, as the filter manager will fire an event when columns change that result
             // in the filter changing.
             if (this.cacheParams) {
-                let oldSortModelJson = this.cacheParams.sortModel ? JSON.stringify(this.cacheParams.sortModel) : null;
-                let newSortModel = this.sortController.getSortModel();
-                let newSortModelJson = newSortModel ? JSON.stringify(newSortModel) : null;
-                resetRequired = oldSortModelJson!==newSortModelJson;
+                resetRequired = this.isSortModelDifferent();
             } else {
                 // if no cacheParams, means first time creating the cache, so always create one
                 resetRequired = true;
@@ -108,6 +105,10 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
                 this.reset();
             }
         }
+    }
+
+    private isSortModelDifferent(): boolean {
+        return !_.jsonEquals(this.cacheParams.sortModel, this.sortController.getSortModel());
     }
 
     @PreDestroy

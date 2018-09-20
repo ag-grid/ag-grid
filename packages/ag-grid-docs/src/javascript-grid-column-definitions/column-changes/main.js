@@ -73,44 +73,6 @@ function onBtApply(reverse) {
     gridOptions.api.setColumnDefs(cols);
 }
 
-/*
-function addSportColumn() {
-    var newColumns = [{headerName: 'Sport', field: 'sport'}];
-    columnDefs = columnDefs.concat(newColumns);
-    gridOptions.api.setColumnDefs(columnDefs);
-}
-
-function addMedalColumns() {
-    var newColumns = [
-        {headerName: 'Gold', field: 'gold'},
-        {headerName: 'Silver', field: 'silver'},
-        {headerName: 'Bronze', field: 'bronze'}
-    ];
-    columnDefs = columnDefs.concat(newColumns);
-    gridOptions.api.setColumnDefs(columnDefs);
-}
-
-function removeMedalColumns() {
-    columnDefs = columnDefs.filter( function(colDef) {
-        var isMedal = ['gold','silver','bronze'].indexOf(colDef.field) >= 0;
-        return !isMedal;
-    } );
-    gridOptions.api.setColumnDefs(columnDefs);
-}
-
-function removeSportColumn() {
-    columnDefs = columnDefs.filter( function(colDef) {
-        return colDef.field !== 'sport';
-    } );
-    gridOptions.api.setColumnDefs(columnDefs);
-}
-*/
-
-function reverseColumns() {
-    columnDefs = columnDefs.reverse();
-    gridOptions.api.setColumnDefs(columnDefs);
-}
-
 function getBooleanValue(cssSelector) {
     return document.querySelector(cssSelector).checked === true;
 }

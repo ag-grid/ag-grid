@@ -75,6 +75,15 @@ export class Utils {
         return Math.max(diffX, diffY) <= pixelCount;
     }
 
+    public static jsonEquals(val1: any, val2: any): boolean {
+
+        let val1Json = val1 ? JSON.stringify(val1) : null;
+        let val2Json = val2 ? JSON.stringify(val2) : null;
+        let res = val1Json===val2Json;
+
+        return res;
+    }
+
     static shallowCompare(arr1: any[], arr2: any[]): boolean {
         // if both are missing, then they are the same
         if (this.missing(arr1) && this.missing(arr2)) {
