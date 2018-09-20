@@ -154,9 +154,6 @@ var HeaderComp = /** @class */ (function (_super) {
                     var multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
                     _this.params.progressSort(multiSort);
                 }
-                else {
-                    console.log("kipping sort cos of moving " + _this.lastMovingChanged);
-                }
             });
         }
         this.addDestroyableEventListener(this.params.column, column_1.Column.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
