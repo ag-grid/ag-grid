@@ -187,10 +187,9 @@ const VueExample = {
         .concat(additional)
         .map(snippet => `${snippet.trim()},`)
         .join('\n')}
-        ${utilsMethods.join(',\n')}            
-    },
-        
-    ${bindings.instance.join('\n')}
+        ${utilsMethods.join(',\n')}
+        ${bindings.instance.join('\\n')}
+    }    
 }
 
 new Vue({
