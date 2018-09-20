@@ -204,8 +204,6 @@ export class HeaderComp extends Component implements IHeaderComp {
                 if (!columnMoving) {
                     let multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
                     this.params.progressSort(multiSort);
-                } else {
-                    console.log(`kipping sort cos of moving ${this.lastMovingChanged}`);
                 }
             });
         }

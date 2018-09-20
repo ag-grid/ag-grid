@@ -176,7 +176,7 @@ export class GridCore extends Component {
         this.sideBarComp.setVisible(show);
     }
 
-    public closeToolPanel () {
+    public closeToolPanel() {
         if (!this.sideBarComp) {
             console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
             return;
@@ -185,18 +185,18 @@ export class GridCore extends Component {
         this.sideBarComp.close();
     }
 
-    public getSideBar (): SideBarDef {
+    public getSideBar(): SideBarDef {
         return <SideBarDef>this.gridOptions.sideBar;
     }
 
-    public setSideBar (def: SideBarDef | string | boolean): void {
+    public setSideBar(def: SideBarDef | string | boolean): void {
         this.eRootWrapperBody.removeChild(this.sideBarComp.getGui());
         this.gridOptions.sideBar = SideBarDefParser.parse(def);
         this.sideBarComp.reset ();
         this.eRootWrapperBody.appendChild(this.sideBarComp.getGui());
     }
 
-    public getOpenedToolPanel (): string {
+    public getOpenedToolPanel(): string {
         if (!this.sideBarComp) {
             return null;
         }
@@ -204,8 +204,7 @@ export class GridCore extends Component {
         return this.sideBarComp.openedItem();
     }
 
-
-    public openToolPanel (key:string) {
+    public openToolPanel(key:string) {
         if (!this.sideBarComp) {
             console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
             return;

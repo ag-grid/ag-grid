@@ -107,7 +107,7 @@ row = {
         Below shows using flower nodes to provide a master / detail experience.
     </p>
 
-    <?= example('Flower Nodes', 'flower-nodes', 'generated') ?>
+    <?= example('Flower Nodes', 'flower-nodes', 'generated', array("processVue" => true)) ?>
 
 
 
