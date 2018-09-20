@@ -3,14 +3,10 @@
   "packages": [
     "packages/*"
   ],
-<<<<<<< HEAD
   "command": {
     "bootstrap": {
       "npmClientArgs": ["--no-package-lock"]
     }
   },
-  "version": "18.1.0"
-=======
-  "version": "18.1.1"
->>>>>>> 18.1.1
+  "version": "19.0.0"
 }

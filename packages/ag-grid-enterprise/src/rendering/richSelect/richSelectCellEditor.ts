@@ -10,20 +10,20 @@ import {
     ICellRendererFunc,
     CellRendererService,
     IRichCellEditorParams,
-    Promise
-} from "ag-grid/main";
+    Promise,
+    _
+} from "ag-grid-community";
 import {RichSelectRow} from "./richSelectRow";
 import {VirtualList} from "../virtualList";
-import {_} from "ag-grid";
 
 export class RichSelectCellEditor extends Component implements ICellEditor {
 
+    // tab index is needed so we can focus, which is needed for keyboard events
     private static TEMPLATE =
-        // tab index is needed so we can focus, which is needed for keyboard events
-        '<div class="ag-rich-select" tabindex="0">' +
-            '<div ref="eValue" class="ag-rich-select-value"></div>' +
-            '<div ref="eList" class="ag-rich-select-list"></div>' +
-        '</div>';
+        `<div class="ag-rich-select" tabindex="0">
+            <div ref="eValue" class="ag-rich-select-value"></div>
+            <div ref="eList" class="ag-rich-select-list"></div>
+        </div>`;
 
     @Autowired('context') context: Context;
     @Autowired('cellRendererService') cellRendererService: CellRendererService;
@@ -69,7 +69,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
         this.renderSelectedValue();
 
         if (Utils.missing(params.values)) {
-            console.log('ag-Grid: richSelectCellEditor requires values for it to work');
+            console.warn('ag-Grid: richSelectCellEditor requires values for it to work');
             return;
         }
         let values = params.values;
@@ -126,11 +126,11 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
         let foundRenderer = _.exists(promise);
 
         if (foundRenderer) {
-            promise.then(renderer=>{
+            promise.then(renderer => {
                 if (renderer && renderer.destroy) {
                     this.addDestroyFunc( ()=> renderer.destroy() );
                 }
-            })
+            });
         } else {
             if (Utils.exists(this.selectedValue)) {
                 eValue.innerHTML = valueFormatted;
@@ -147,7 +147,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
 
         let index = this.params.values.indexOf(value);
 
-        if (index>=0) {
+        if (index >= 0) {
             this.selectedValue = value;
             this.virtualList.ensureIndexVisible(index);
             this.virtualList.refresh();
@@ -158,7 +158,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
         let valueFormatted = this.params.formatValue(value);
         let row = new RichSelectRow(this.params.column.getColDef());
         this.context.wireBean(row);
-        row.setState(value, valueFormatted,value===this.selectedValue);
+        row.setState(value, valueFormatted,value === this.selectedValue);
         return row;
     }
 
@@ -171,7 +171,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
         let value = this.params.values[row];
 
         // not using utils.exist() as want empty string test to pass
-        if (value!==undefined) {
+        if (value !== undefined) {
             this.setSelectedValue(value);
         }
     }

@@ -10,15 +10,22 @@
     "noImplicitAny": true,
     "declaration": true,
     "suppressImplicitAnyIndexErrors": true,
-    "lib": ["dom","es2015"],
-    "rootDir":"src/",
+    "lib": [
+      "dom",
+      "es2015"
+    ],
+    "rootDir": "src/",
     "outDir": "dist/"
   },
-  "exclude":[
+  "exclude": [
+    "dist",
     "node_modules",
     "aot",
     "main.d.ts",
     "exports.ts",
     "exports.d.ts"
-  ]
+  ],
+  "angularCompilerOptions": {
+    "genDir": "dist"
+  }
 }

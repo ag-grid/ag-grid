@@ -23,7 +23,7 @@ var gridOptions = {
             defaultColDef: {
                 editable: true
             },
-            onGridReady: function(params) {
+            onFirstDataRendered(params) {
                 params.api.sizeColumnsToFit();
             }
         },
@@ -36,8 +36,6 @@ var gridOptions = {
         editable: true
     },
     onGridReady: function (params) {
-        params.api.sizeColumnsToFit();
-
         // arbitrarily expand a row for presentational purposes
         setTimeout(function() {
             var rowCount = 0;
@@ -45,6 +43,9 @@ var gridOptions = {
                 node.setExpanded(rowCount++ === 1);
             });
         }, 500);
+    },
+    onFirstDataRendered(params) {
+        params.api.sizeColumnsToFit();
     }
 };
 

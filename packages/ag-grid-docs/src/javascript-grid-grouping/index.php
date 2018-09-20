@@ -9,7 +9,11 @@ include '../documentation-main/documentation_header.php';
 
     <p class="lead">
         This page shows how to group your rows. It starts off with Auto Column Groups, the simplest way to configure row
-        groups and then builds up into more advanced topics for row grouping.
+        groups and then builds up into more advanced topics for row grouping.<br>
+    </p>
+
+    <p>
+        Remember Row Grouping works with all frameworks eg Angular and React as well as plain JavaScript.
     </p>
 
     <h2 id="specifying-group-columns">Specifying Group Columns</h2>
@@ -719,6 +723,7 @@ cellRendererParams: {
         only the filter is reapplied, the grouping is not reapplied.
     </note>
 
+
     <note>
         The properties <code>groupRemoveSingleChildren</code>, <code>groupRemoveLowestSingleChildren</code>
         and <code>groupHideOpenParents</code> are mutually exclusive, you can only pick one.
@@ -726,16 +731,6 @@ cellRendererParams: {
         children clashes with the logic for hiding open parents. Both want to remove parents at different times
         and for different reasons.
     </note>
-
-    <h2 id="suppress-group-row">Suppress Group Row</h2>
-
-    <p>
-        By suppressing the group row you don't give users the ability to close the groups by themselves,
-        but the rows are grouped and the other functionalities take the grouping into account.
-        Sorting, for example, will sort by group.
-    </p>
-
-    <?= example('Suppress Group Row', 'suppress-group-row', 'generated', array("enterprise" => 1)) ?>
 
     <h2 id="showRowGroup">Creating Your Own Group Display Columns</h2>
 

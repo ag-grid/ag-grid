@@ -21,7 +21,7 @@ var gridOptions = {
     // we are defining the group columns, so tell the grid we don't
     // want it to auto-generate group columns for us
     groupSuppressAutoColumn: true,
-    onGridReady: function(params) {
+    onFirstDataRendered(params) {
         params.api.sizeColumnsToFit();
     }
 };
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json'}).then(function(data) {
+    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/olympicWinnersSmall.json'}).then(function(data) {
         gridOptions.api.setRowData(data);
     });
 });

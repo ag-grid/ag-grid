@@ -41,7 +41,7 @@ module.controller("exampleCtrl", function($scope, $http) {
         return '<country name="'+params.value+'"></country>';
     }
 
-    $http.get("https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinners.json")
+    $http.get("https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/olympicWinners.json")
         .then(function(res){
             $scope.gridOptions.api.setRowData(res.data);
         });

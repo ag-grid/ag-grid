@@ -207,6 +207,13 @@ interface IGetRowsParams {
         Each call to your datasource will be for one block.
     </p>
 
+    <h3>Debounce Block Loading</h3>
+
+    <p>
+        It is also possible to debounce the loading to prevent blocks loading until scrolling has stopped. This
+        can be configured using: <code>blockLoadDebounceMillis</code>.
+    </p>
+
     <h3>Aggregation and Grouping</h3>
 
     <p>

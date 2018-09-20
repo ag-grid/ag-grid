@@ -1,5 +1,5 @@
-// ag-grid-enterprise v18.1.1
-import { MenuItemDef, Column } from 'ag-grid';
+// ag-grid-enterprise v19.0.0
+import { MenuItemDef, Column } from 'ag-grid-community';
 export declare class MenuItemMapper {
     private gridOptionsWrapper;
     private columnController;
@@ -7,6 +7,6 @@ export declare class MenuItemMapper {
     private clipboardService;
     private aggFuncService;
     mapWithStockItems(originalList: (MenuItemDef | string)[], column: Column): (MenuItemDef | string)[];
-    private getStockMenuItem(key, column);
-    private createAggregationSubMenu(column);
+    private getStockMenuItem;
+    private createAggregationSubMenu;
 }

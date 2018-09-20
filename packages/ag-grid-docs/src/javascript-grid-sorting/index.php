@@ -1,7 +1,6 @@
 <?php
 $pageTitle = "Row Sorting: Core Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Row Sorting. Row Sorting will sort the data. Sort a column by clicking the header. Sort multiple columns by holding down shift. Version 17 is available for download now, take it for a free two month trial.";
-$pageKeyboards = "ag-Grid Sorting";
+$pageDescription = "Sorting: will sort the data. Sort a column by clicking the header. Sort multiple columns by holding down shift. Core feature of ag-Grid supporting Angular, React, Javascript and many more. ";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
@@ -12,6 +11,7 @@ include '../documentation-main/documentation_header.php';
 
     <p class="lead">
         This page describes how to get your grid data sorting.
+        Row Sorting works with all frameworks eg Angular and React as well as plain JavaScript.
     </p>
 
     <h2>Enable Sorting</h2>

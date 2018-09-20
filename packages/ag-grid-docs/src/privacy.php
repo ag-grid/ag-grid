@@ -136,9 +136,8 @@ We will only use your personal data for a purpose it was collected for or a reas
  <br><br>
 We may process your personal data without your knowledge or consent where this is required or permitted by law.
 <br><br>
-We do not carry out automated decision making or any type of automated profiling. [NOTE DELETE THIS IF YOU DO CARRY OUT AUTOMATED DECISION MAKING AND INSERT DETAILS OF THE AUTOMATED DECISION MAKING AND PROVIDE MEANINGFUL INFORMATION ABOUT THE LOGIC INVOLVED AS WELL AS THE SIGNIFICANCE AND THE ENVISAGED CONSEQUENCES OF SUCH PROCESSING FOR THE DATA SUBJECT – SEE THE VIDEO ON AUTMATED PROCESSING]
+We do not carry out automated decision making or any type of automated profiling.
 
-[INSERT CATEGORY OF DATA] that includes data about [INSERT WHAT THE DATA IS ABOUT]. We process this data to [INSERT YOUR PURPOSE FOR PROCESSING]. Our lawful ground of processing is [INSERT LAWFUL GROUND OF PROCESSING] [which in this case are [INSERT LEGITIMATE INTERESTS] ] [NOTE: DELETE THE LAST SECTION OF THIS BULLET POINT IF YOU ARE RELYING ON A GROUND OTHER THAN LEGITIMATE INTERESTS]
 </p>
 </li>
 	<br><br>

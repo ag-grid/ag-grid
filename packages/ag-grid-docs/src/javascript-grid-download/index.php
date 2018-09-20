@@ -11,13 +11,13 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Download ag-Grid bundle</h2>
 
-    <p>You can download ag-Grid from the <a href="https://github.com/ag-grid/ag-grid/releases">ag-grid/ag-Grid GitHub repository releases page</a>.    There are four bundle files in the distribution:</p>
+    <p>You can download ag-Grid from the <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-community">ag-grid/ag-Grid GitHub repository</a>.    There are four bundle files in the distribution:</p>
 
     <ul class="content">
-        <li><code>dist/ag-grid.js</code> &mdash; standard bundle containing JavaScript and CSS</li>
-        <li><code>dist/ag-grid.min.js</code> &mdash; minified bundle containing JavaScript and CSS</li>
-        <li><code>dist/ag-grid.noStyle.js</code> &mdash; standard bundle containing JavaScript without CSS</li>
-        <li><code>dist/ag-grid.min.noStyle.js</code> &mdash; minified bundle containing JavaScript without CSS</li>
+        <li><code>dist/ag-grid-community.js</code> &mdash; standard bundle containing JavaScript and CSS</li>
+        <li><code>dist/ag-grid-community.min.js</code> &mdash; minified bundle containing JavaScript and CSS</li>
+        <li><code>dist/ag-grid-community.noStyle.js</code> &mdash; standard bundle containing JavaScript without CSS</li>
+        <li><code>dist/ag-grid-community.min.noStyle.js</code> &mdash; minified bundle containing JavaScript without CSS</li>
     </ul>
 
     <p>Should you decide to use the <code>noStyle</code> versions of the bundle (recommended), the stylesheet files are present in the <code>dist/styles</code> directory.</p>

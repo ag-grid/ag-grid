@@ -1,5 +1,5 @@
 import {Component} from "@angular/core";
-import {GridOptions} from "ag-grid";
+import {GridOptions} from "ag-grid-community";
 
 import {RatioParentComponent} from "./ratio.parent.component";
 import {ClickableParentComponent} from "./clickable.parent.component";

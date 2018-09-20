@@ -239,7 +239,7 @@ In other words, <code>new()</code>, <code>init()</code>, <code>getGui()</code> a
     <code>colDef.cellRenderer</code>.
 </p>
 
-<img class="img-fluid" src="../javascript-grid-value-getters/valueGetterFlow.svg"/>
+<img class="img-fluid" src="../javascript-grid-value-getters/valueGetterFlow.svg"/ alt="Value Getter Flow">
 
 <h2>Complementing Cell Renderer Params</h2>
 
@@ -309,6 +309,11 @@ colDef.cellRenderer = function(params) {
 <p>
     Use the function variant of a cell renderer if you have no refresh or cleanup requirements (ie
     you don't need to implement the refresh or destroy functions).
+</p>
+
+<p>
+    If using a framework such as React or Angular for your cell renderers then you must provide a
+    cell renderer component. There is no function equivalent for the frameworks such as React and Angular.
 </p>
 
 <p>

@@ -16,9 +16,6 @@ include '../documentation-main/documentation_header.php';
         information about
         either TypeScript or Webpack please refer to those sites for more in depth information around these tools.</p>
 
-    <note>You can either create the project by hand, or check it out from our QuickStart/Seed Repo in <a
-                href="https://github.com/ag-grid/ag-grid-seed">GitHub.</a></note>
-
     <h3>Initialise Project</h3>
 
     <snippet language="sh">
@@ -30,7 +27,7 @@ npm init --yes
     <h3>Install Dependencies</h3>
 
     <snippet language="sh">
-npm i --save ag-grid
+npm i --save ag-grid-community
 npm i --save-dev typescript ts-loader webpack webpack-dev-server extract-text-webpack-plugin
 npm i --save-dev css-loader style-loader html-loader html-webpack-plugin
 
@@ -43,13 +40,13 @@ npm i --save ag-grid-enterprise</snippet>
 
     <snippet>
 // src/SimpleGrid.ts 
-import {Grid, GridOptions} from "ag-grid/main";
+import {Grid, GridOptions} from "ag-grid-community";
 
 // for ag-grid-enterprise users only
-//import 'ag-grid-enterprise/main';
+//import 'ag-grid-enterprise';
 
-import "ag-grid/dist/styles/ag-grid.css";
-import "ag-grid/dist/styles/ag-theme-balham.css";
+import "ag-grid-community/dist/styles/ag-grid.css";
+import "ag-grid-community/dist/styles/ag-theme-balham.css";
 
 class SimpleGrid {
     private gridOptions: GridOptions = &lt;GridOptions&gt;{};
@@ -275,7 +272,7 @@ module.exports = {
 
     <p>If we now run our application with the above code we will see this:</p>
 
-    <img src="../images/seed.png" style="width: 100%">
+    <img src="../images/seed.png" style="width: 100%" alt="Datagrid">
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

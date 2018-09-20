@@ -1,4 +1,4 @@
-// ag-grid-enterprise v18.1.1
+// ag-grid-enterprise v19.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -20,8 +20,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = require("ag-grid/main");
-var SetFilterListItem = (function (_super) {
+var ag_grid_community_1 = require("ag-grid-community");
+var SetFilterListItem = /** @class */ (function (_super) {
     __extends(SetFilterListItem, _super);
     function SetFilterListItem(value, column) {
         var _this = _super.call(this, SetFilterListItem.TEMPLATE) || this;
@@ -32,14 +32,14 @@ var SetFilterListItem = (function (_super) {
     }
     SetFilterListItem.prototype.init = function () {
         var _this = this;
-        this.eCheckedIcon = main_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column);
-        this.eUncheckedIcon = main_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column);
+        this.eCheckedIcon = ag_grid_community_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column);
+        this.eUncheckedIcon = ag_grid_community_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column);
         this.eCheckbox = this.queryForHtmlElement(".ag-filter-checkbox");
         this.eClickableArea = this.getGui();
         this.updateCheckboxIcon();
         this.render();
         var listener = function (mouseEvent) {
-            main_1._.addAgGridEventPath(mouseEvent);
+            ag_grid_community_1._.addAgGridEventPath(mouseEvent);
             _this.selected = !_this.selected;
             _this.updateCheckboxIcon();
             var event = {
@@ -85,28 +85,25 @@ var SetFilterListItem = (function (_super) {
         });
     };
     SetFilterListItem.EVENT_SELECTED = 'selected';
-    SetFilterListItem.TEMPLATE = '<label class="ag-set-filter-item">' +
-        '<div class="ag-filter-checkbox"></div>' +
-        '<span class="ag-filter-value"></span>' +
-        '</label>';
+    SetFilterListItem.TEMPLATE = "<label class=\"ag-set-filter-item\">\n            <div class=\"ag-filter-checkbox\"></div>\n            <span class=\"ag-filter-value\"></span>\n        </label>";
     __decorate([
-        main_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", main_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], SetFilterListItem.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_1.Autowired('cellRendererService'),
-        __metadata("design:type", main_1.CellRendererService)
+        ag_grid_community_1.Autowired('cellRendererService'),
+        __metadata("design:type", ag_grid_community_1.CellRendererService)
     ], SetFilterListItem.prototype, "cellRendererService", void 0);
     __decorate([
-        main_1.Autowired('valueFormatterService'),
-        __metadata("design:type", main_1.ValueFormatterService)
+        ag_grid_community_1.Autowired('valueFormatterService'),
+        __metadata("design:type", ag_grid_community_1.ValueFormatterService)
     ], SetFilterListItem.prototype, "valueFormatterService", void 0);
     __decorate([
-        main_1.PostConstruct,
+        ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], SetFilterListItem.prototype, "init", null);
     return SetFilterListItem;
-}(main_1.Component));
+}(ag_grid_community_1.Component));
 exports.SetFilterListItem = SetFilterListItem;

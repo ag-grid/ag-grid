@@ -1,0 +1,37 @@
+<div class="parent-div">
+
+    <div class="api-panel">
+        <div class="api-column">
+            Visibility API
+            <br/>
+            <button onclick="setSideBarVisible(true)">setSideBarVisible (true)</button>
+            <br/>
+            <button onclick="setSideBarVisible(false)">setSideBarVisible (false)</button>
+            <br/>
+            <button onclick="isSideBarVisible()">isSideBarVisible ()</button>
+        </div>
+        <div class="api-column">
+            Open & Close API
+            <br/>
+            <button onclick="openToolPanel('columns')">openToolPanel ('columns')</button>
+            <br/>
+            <button onclick="openToolPanel('filters')">openToolPanel ('filters')</button>
+            <br/>
+            <button onclick="closeToolPanel()">closeToolPanel ()</button>
+            <br/>
+            <button onclick="getOpenedToolPanel()">getOpenedToolPanel ()</button>
+        </div>
+        <div class="api-column">
+            Reset API
+            <br/>
+            <button onclick="setSideBar(['filters','columns'])">setSideBar (['filters','columns'])</button>
+            <br/>
+            <button onclick="setSideBar('columns')">setSideBar ('columns')</button>
+            <br/>
+            <button onclick="getSideBar()">getSideBar()</button>
+        </div>
+    </div>
+
+    <div id="myGrid" class="ag-theme-balham grid-div"></div>
+
+</div>

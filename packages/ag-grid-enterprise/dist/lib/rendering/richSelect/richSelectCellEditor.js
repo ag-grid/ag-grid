@@ -1,4 +1,4 @@
-// ag-grid-enterprise v18.1.1
+// ag-grid-enterprise v19.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -20,11 +20,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = require("ag-grid/main");
+var ag_grid_community_1 = require("ag-grid-community");
 var richSelectRow_1 = require("./richSelectRow");
 var virtualList_1 = require("../virtualList");
-var ag_grid_1 = require("ag-grid");
-var RichSelectCellEditor = (function (_super) {
+var RichSelectCellEditor = /** @class */ (function (_super) {
     __extends(RichSelectCellEditor, _super);
     function RichSelectCellEditor() {
         var _this = _super.call(this, RichSelectCellEditor.TEMPLATE) || this;
@@ -40,12 +39,12 @@ var RichSelectCellEditor = (function (_super) {
         this.context.wireBean(this.virtualList);
         this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
         this.getRefElement('eList').appendChild(this.virtualList.getGui());
-        if (main_1.Utils.exists(this.params.cellHeight)) {
+        if (ag_grid_community_1.Utils.exists(this.params.cellHeight)) {
             this.virtualList.setRowHeight(this.params.cellHeight);
         }
         this.renderSelectedValue();
-        if (main_1.Utils.missing(params.values)) {
-            console.log('ag-Grid: richSelectCellEditor requires values for it to work');
+        if (ag_grid_community_1.Utils.missing(params.values)) {
+            console.warn('ag-Grid: richSelectCellEditor requires values for it to work');
             return;
         }
         var values = params.values;
@@ -60,11 +59,11 @@ var RichSelectCellEditor = (function (_super) {
     RichSelectCellEditor.prototype.onKeyDown = function (event) {
         var key = event.which || event.keyCode;
         switch (key) {
-            case main_1.Constants.KEY_ENTER:
+            case ag_grid_community_1.Constants.KEY_ENTER:
                 this.onEnterKeyDown();
                 break;
-            case main_1.Constants.KEY_DOWN:
-            case main_1.Constants.KEY_UP:
+            case ag_grid_community_1.Constants.KEY_DOWN:
+            case ag_grid_community_1.Constants.KEY_UP:
                 this.onNavigationKeyPressed(event, key);
                 break;
         }
@@ -77,7 +76,7 @@ var RichSelectCellEditor = (function (_super) {
         // if we don't stop propagation, then the grids navigation kicks in
         event.stopPropagation();
         var oldIndex = this.params.values.indexOf(this.selectedValue);
-        var newIndex = key === main_1.Constants.KEY_UP ? oldIndex - 1 : oldIndex + 1;
+        var newIndex = key === ag_grid_community_1.Constants.KEY_UP ? oldIndex - 1 : oldIndex + 1;
         if (newIndex >= 0 && newIndex < this.params.values.length) {
             var valueToSelect = this.params.values[newIndex];
             this.setSelectedValue(valueToSelect);
@@ -88,7 +87,7 @@ var RichSelectCellEditor = (function (_super) {
         var valueFormatted = this.params.formatValue(this.selectedValue);
         var eValue = this.getRefElement('eValue');
         var promise = this.cellRendererService.useRichSelectCellRenderer(this.params.column.getColDef(), eValue, { value: this.selectedValue, valueFormatted: valueFormatted });
-        var foundRenderer = ag_grid_1._.exists(promise);
+        var foundRenderer = ag_grid_community_1._.exists(promise);
         if (foundRenderer) {
             promise.then(function (renderer) {
                 if (renderer && renderer.destroy) {
@@ -97,7 +96,7 @@ var RichSelectCellEditor = (function (_super) {
             });
         }
         else {
-            if (main_1.Utils.exists(this.selectedValue)) {
+            if (ag_grid_community_1.Utils.exists(this.selectedValue)) {
                 eValue.innerHTML = valueFormatted;
             }
             else {
@@ -165,20 +164,16 @@ var RichSelectCellEditor = (function (_super) {
     RichSelectCellEditor.prototype.isPopup = function () {
         return true;
     };
-    RichSelectCellEditor.TEMPLATE = 
     // tab index is needed so we can focus, which is needed for keyboard events
-    '<div class="ag-rich-select" tabindex="0">' +
-        '<div ref="eValue" class="ag-rich-select-value"></div>' +
-        '<div ref="eList" class="ag-rich-select-list"></div>' +
-        '</div>';
+    RichSelectCellEditor.TEMPLATE = "<div class=\"ag-rich-select\" tabindex=\"0\">\n            <div ref=\"eValue\" class=\"ag-rich-select-value\"></div>\n            <div ref=\"eList\" class=\"ag-rich-select-list\"></div>\n        </div>";
     __decorate([
-        main_1.Autowired('context'),
-        __metadata("design:type", main_1.Context)
+        ag_grid_community_1.Autowired('context'),
+        __metadata("design:type", ag_grid_community_1.Context)
     ], RichSelectCellEditor.prototype, "context", void 0);
     __decorate([
-        main_1.Autowired('cellRendererService'),
-        __metadata("design:type", main_1.CellRendererService)
+        ag_grid_community_1.Autowired('cellRendererService'),
+        __metadata("design:type", ag_grid_community_1.CellRendererService)
     ], RichSelectCellEditor.prototype, "cellRendererService", void 0);
     return RichSelectCellEditor;
-}(main_1.Component));
+}(ag_grid_community_1.Component));
 exports.RichSelectCellEditor = RichSelectCellEditor;

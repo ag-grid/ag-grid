@@ -1,5 +1,5 @@
 import {Component, ViewEncapsulation} from "@angular/core";
-import {ColumnApi, GridApi, GridOptions} from "ag-grid/main";
+import {ColumnApi, GridApi, GridOptions} from "ag-grid-community";
 // only import this if you are using the ag-Grid-Enterprise
 import "ag-grid-enterprise";
 
@@ -21,6 +21,19 @@ export class RichGridComponent {
 
     private api: GridApi;
     private columnApi: ColumnApi;
+
+    private sideBar = {
+        toolPanels: [{
+            id: 'columns',
+            labelDefault: 'Columns',
+            labelKey: 'columns',
+            iconKey: 'columns',
+            component: 'agColumnsToolPanel',
+            componentParams: {
+                suppressValues: true
+            }
+        }]
+    };
 
     constructor() {
         this.gridOptions = <GridOptions>{};

@@ -59,7 +59,11 @@
             }
         },
         columnDefs: columnDefs,
-        enableStatusBar: true,
+        statusBar: {
+            items: [
+                { component: 'agAggregationComponent' }
+            ]
+        },
         animateRows: true,
         enableColResize: true,
         enableRangeSelection: true,
@@ -75,9 +79,6 @@
         },
         defaultColDef: {
             width: 120
-        },
-        onGridReady: function(params) {
-            // gridOptions.api.sizeColumnsToFit();
         }
     };
 

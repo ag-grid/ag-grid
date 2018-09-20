@@ -1,4 +1,4 @@
-// ag-grid-enterprise v18.1.1
+// ag-grid-enterprise v19.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -23,8 +23,8 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var ag_grid_1 = require("ag-grid");
-var ServerSideBlock = (function (_super) {
+var ag_grid_community_1 = require("ag-grid-community");
+var ServerSideBlock = /** @class */ (function (_super) {
     __extends(ServerSideBlock, _super);
     function ServerSideBlock(pageNumber, parentRowNode, params, parentCache) {
         var _this = _super.call(this, pageNumber, params) || this;
@@ -32,10 +32,26 @@ var ServerSideBlock = (function (_super) {
         _this.parentRowNode = parentRowNode;
         _this.parentCache = parentCache;
         _this.level = parentRowNode.level + 1;
-        _this.groupLevel = _this.level < params.rowGroupCols.length;
-        _this.leafGroup = _this.level === (params.rowGroupCols.length - 1);
+        _this.groupLevel = params.rowGroupCols ? _this.level < params.rowGroupCols.length : undefined;
+        _this.leafGroup = params.rowGroupCols ? _this.level === params.rowGroupCols.length - 1 : false;
         return _this;
     }
+    ServerSideBlock.prototype.init = function () {
+        this.usingTreeData = this.gridOptionsWrapper.isTreeData();
+        if (!this.usingTreeData && this.groupLevel) {
+            var groupColVo = this.params.rowGroupCols[this.level];
+            this.groupField = groupColVo.field;
+            this.rowGroupColumn = this.columnController.getRowGroupColumns()[this.level];
+        }
+        this.createNodeIdPrefix();
+        _super.prototype.init.call(this, {
+            context: this.context,
+            rowRenderer: this.rowRenderer
+        });
+    };
+    ServerSideBlock.prototype.setBeans = function (loggerFactory) {
+        this.logger = loggerFactory.create('ServerSideBlock');
+    };
     ServerSideBlock.prototype.createNodeIdPrefix = function () {
         var parts = [];
         var rowNode = this.parentRowNode;
@@ -49,7 +65,7 @@ var ServerSideBlock = (function (_super) {
         }
     };
     ServerSideBlock.prototype.createIdForIndex = function (index) {
-        if (ag_grid_1._.exists(this.nodeIdPrefix)) {
+        if (ag_grid_community_1._.exists(this.nodeIdPrefix)) {
             return this.nodeIdPrefix + index.toString();
         }
         else {
@@ -69,7 +85,7 @@ var ServerSideBlock = (function (_super) {
         var endRow = this.getEndRow();
         var actualEnd = (virtualRowCount < endRow) ? virtualRowCount : endRow;
         var topPointer = actualEnd - 1;
-        if (ag_grid_1._.missing(topPointer) || ag_grid_1._.missing(bottomPointer)) {
+        if (ag_grid_community_1._.missing(topPointer) || ag_grid_community_1._.missing(bottomPointer)) {
             console.warn("ag-grid: error: topPointer = " + topPointer + ", bottomPointer = " + bottomPointer);
             return null;
         }
@@ -94,25 +110,10 @@ var ServerSideBlock = (function (_super) {
             }
         }
     };
-    ServerSideBlock.prototype.setBeans = function (loggerFactory) {
-        this.logger = loggerFactory.create('ServerSideBlock');
-    };
-    ServerSideBlock.prototype.init = function () {
-        if (this.groupLevel) {
-            var groupColVo = this.params.rowGroupCols[this.level];
-            this.groupField = groupColVo.field;
-            this.rowGroupColumn = this.columnController.getRowGroupColumns()[this.level];
-        }
-        this.createNodeIdPrefix();
-        _super.prototype.init.call(this, {
-            context: this.context,
-            rowRenderer: this.rowRenderer
-        });
-    };
     ServerSideBlock.prototype.setDataAndId = function (rowNode, data, index) {
         var _this = this;
         rowNode.stub = false;
-        if (ag_grid_1._.exists(data)) {
+        if (ag_grid_community_1._.exists(data)) {
             // if the user is not providing id's, then we build an id based on the index.
             // for infinite scrolling, the index is used on it's own. for Server Side Row Model,
             // we combine the index with the level and group key, so that the id is
@@ -128,10 +129,20 @@ var ServerSideBlock = (function (_super) {
             var idToUse = this.createIdForIndex(index);
             rowNode.setDataAndId(data, idToUse);
             rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode));
-            if (rowNode.group) {
+            if (this.usingTreeData) {
+                var getServerSideGroupKey = this.gridOptionsWrapper.getServerSideGroupKeyFunc();
+                if (ag_grid_community_1._.exists(getServerSideGroupKey)) {
+                    rowNode.key = getServerSideGroupKey(rowNode.data);
+                }
+                var isServerSideGroup = this.gridOptionsWrapper.getIsServerSideGroupFunc();
+                if (ag_grid_community_1._.exists(isServerSideGroup)) {
+                    rowNode.group = isServerSideGroup(rowNode.data);
+                }
+            }
+            else if (rowNode.group) {
                 rowNode.key = this.valueService.getValue(this.rowGroupColumn, rowNode);
                 if (rowNode.key === null || rowNode.key === undefined) {
-                    ag_grid_1._.doOnce(function () {
+                    ag_grid_community_1._.doOnce(function () {
                         console.warn("null and undefined values are not allowed for server side row model keys");
                         if (_this.rowGroupColumn) {
                             console.warn("column = " + _this.rowGroupColumn.getId());
@@ -145,7 +156,7 @@ var ServerSideBlock = (function (_super) {
             rowNode.setDataAndId(undefined, undefined);
             rowNode.key = null;
         }
-        if (this.groupLevel) {
+        if (this.usingTreeData || this.groupLevel) {
             this.setGroupDataIntoRowNode(rowNode);
             this.setChildCountIntoRowNode(rowNode);
         }
@@ -159,10 +170,17 @@ var ServerSideBlock = (function (_super) {
     ServerSideBlock.prototype.setGroupDataIntoRowNode = function (rowNode) {
         var _this = this;
         var groupDisplayCols = this.columnController.getGroupDisplayColumns();
+        var usingTreeData = this.gridOptionsWrapper.isTreeData();
         groupDisplayCols.forEach(function (col) {
-            if (col.isRowGroupDisplayed(_this.rowGroupColumn.getId())) {
+            if (usingTreeData) {
+                if (ag_grid_community_1._.missing(rowNode.groupData)) {
+                    rowNode.groupData = {};
+                }
+                rowNode.groupData[col.getColId()] = rowNode.key;
+            }
+            else if (col.isRowGroupDisplayed(_this.rowGroupColumn.getId())) {
                 var groupValue = _this.valueService.getValue(_this.rowGroupColumn, rowNode);
-                if (ag_grid_1._.missing(rowNode.groupData)) {
+                if (ag_grid_community_1._.missing(rowNode.groupData)) {
                     rowNode.groupData = {};
                 }
                 rowNode.groupData[col.getColId()] = groupValue;
@@ -222,7 +240,7 @@ var ServerSideBlock = (function (_super) {
                         rowTop: rowNode.rowTop
                     };
                 }
-                if (rowNode.group && rowNode.expanded && ag_grid_1._.exists(rowNode.childrenCache)) {
+                if (rowNode.group && rowNode.expanded && ag_grid_community_1._.exists(rowNode.childrenCache)) {
                     var serverSideCache = rowNode.childrenCache;
                     if (serverSideCache.isDisplayIndexInCache(index)) {
                         return serverSideCache.getRowBounds(index);
@@ -247,7 +265,7 @@ var ServerSideBlock = (function (_super) {
                 if (rowNode.isPixelInRange(pixel)) {
                     return rowNode.rowIndex;
                 }
-                if (rowNode.group && rowNode.expanded && ag_grid_1._.exists(rowNode.childrenCache)) {
+                if (rowNode.group && rowNode.expanded && ag_grid_community_1._.exists(rowNode.childrenCache)) {
                     var serverSideCache = rowNode.childrenCache;
                     if (serverSideCache.isPixelInRange(pixel)) {
                         return serverSideCache.getRowIndexAtPixel(pixel);
@@ -261,7 +279,7 @@ var ServerSideBlock = (function (_super) {
     ServerSideBlock.prototype.clearRowTops = function (virtualRowCount) {
         this.forEachRowNode(virtualRowCount, function (rowNode) {
             rowNode.clearRowTop();
-            var hasChildCache = rowNode.group && ag_grid_1._.exists(rowNode.childrenCache);
+            var hasChildCache = rowNode.group && ag_grid_community_1._.exists(rowNode.childrenCache);
             if (hasChildCache) {
                 var serverSideCache = rowNode.childrenCache;
                 serverSideCache.clearRowTops();
@@ -276,7 +294,7 @@ var ServerSideBlock = (function (_super) {
             rowNode.setRowIndex(rowIndex);
             rowNode.setRowTop(nextRowTop.value);
             nextRowTop.value += rowNode.rowHeight;
-            var hasChildCache = rowNode.group && ag_grid_1._.exists(rowNode.childrenCache);
+            var hasChildCache = rowNode.group && ag_grid_community_1._.exists(rowNode.childrenCache);
             if (hasChildCache) {
                 var serverSideCache = rowNode.childrenCache;
                 if (rowNode.expanded) {
@@ -353,37 +371,37 @@ var ServerSideBlock = (function (_super) {
         return this.groupField;
     };
     __decorate([
-        ag_grid_1.Autowired('context'),
-        __metadata("design:type", ag_grid_1.Context)
+        ag_grid_community_1.Autowired('context'),
+        __metadata("design:type", ag_grid_community_1.Context)
     ], ServerSideBlock.prototype, "context", void 0);
     __decorate([
-        ag_grid_1.Autowired('rowRenderer'),
-        __metadata("design:type", ag_grid_1.RowRenderer)
+        ag_grid_community_1.Autowired('rowRenderer'),
+        __metadata("design:type", ag_grid_community_1.RowRenderer)
     ], ServerSideBlock.prototype, "rowRenderer", void 0);
     __decorate([
-        ag_grid_1.Autowired('columnController'),
-        __metadata("design:type", ag_grid_1.ColumnController)
+        ag_grid_community_1.Autowired('columnController'),
+        __metadata("design:type", ag_grid_community_1.ColumnController)
     ], ServerSideBlock.prototype, "columnController", void 0);
     __decorate([
-        ag_grid_1.Autowired('valueService'),
-        __metadata("design:type", ag_grid_1.ValueService)
+        ag_grid_community_1.Autowired('valueService'),
+        __metadata("design:type", ag_grid_community_1.ValueService)
     ], ServerSideBlock.prototype, "valueService", void 0);
     __decorate([
-        ag_grid_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", ag_grid_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], ServerSideBlock.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        __param(0, ag_grid_1.Qualifier('loggerFactory')),
-        __metadata("design:type", Function),
-        __metadata("design:paramtypes", [ag_grid_1.LoggerFactory]),
-        __metadata("design:returntype", void 0)
-    ], ServerSideBlock.prototype, "setBeans", null);
-    __decorate([
-        ag_grid_1.PostConstruct,
+        ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], ServerSideBlock.prototype, "init", null);
+    __decorate([
+        __param(0, ag_grid_community_1.Qualifier('loggerFactory')),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [ag_grid_community_1.LoggerFactory]),
+        __metadata("design:returntype", void 0)
+    ], ServerSideBlock.prototype, "setBeans", null);
     return ServerSideBlock;
-}(ag_grid_1.RowNodeBlock));
+}(ag_grid_community_1.RowNodeBlock));
 exports.ServerSideBlock = ServerSideBlock;

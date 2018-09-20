@@ -1,4 +1,4 @@
-// ag-grid-enterprise v18.1.1
+// ag-grid-enterprise v19.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -20,9 +20,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var ag_grid_1 = require("ag-grid");
+var ag_grid_community_1 = require("ag-grid-community");
 var menuItemComponent_1 = require("./menuItemComponent");
-var MenuList = (function (_super) {
+var MenuList = /** @class */ (function (_super) {
     __extends(MenuList, _super);
     function MenuList() {
         var _this = _super.call(this, MenuList.TEMPLATE) || this;
@@ -37,7 +37,7 @@ var MenuList = (function (_super) {
     };
     MenuList.prototype.addMenuItems = function (menuItems) {
         var _this = this;
-        if (ag_grid_1.Utils.missing(menuItems)) {
+        if (ag_grid_community_1.Utils.missing(menuItems)) {
             return;
         }
         menuItems.forEach(function (menuItemOrString) {
@@ -45,7 +45,7 @@ var MenuList = (function (_super) {
                 _this.addSeparator();
             }
             else if (typeof menuItemOrString === 'string') {
-                console.log("ag-Grid: unrecognised menu item " + menuItemOrString);
+                console.warn("ag-Grid: unrecognised menu item " + menuItemOrString);
             }
             else {
                 var menuItem = menuItemOrString;
@@ -80,14 +80,14 @@ var MenuList = (function (_super) {
         this.removeActiveItem();
         this.activeMenuItemParams = menuItemParams;
         this.activeMenuItem = menuItem;
-        ag_grid_1.Utils.addCssClass(this.activeMenuItem.getGui(), 'ag-menu-option-active');
+        ag_grid_community_1.Utils.addCssClass(this.activeMenuItem.getGui(), 'ag-menu-option-active');
         if (menuItemParams.subMenu) {
             this.addHoverForChildPopup(menuItemParams, menuItem);
         }
     };
     MenuList.prototype.removeActiveItem = function () {
         if (this.activeMenuItem) {
-            ag_grid_1.Utils.removeCssClass(this.activeMenuItem.getGui(), 'ag-menu-option-active');
+            ag_grid_community_1.Utils.removeCssClass(this.activeMenuItem.getGui(), 'ag-menu-option-active');
             this.activeMenuItem = null;
             this.activeMenuItemParams = null;
         }
@@ -104,7 +104,7 @@ var MenuList = (function (_super) {
         }, 500);
     };
     MenuList.prototype.addSeparator = function () {
-        this.getGui().appendChild(ag_grid_1.Utils.loadTemplate(MenuList.SEPARATOR_TEMPLATE));
+        this.getGui().appendChild(ag_grid_community_1.Utils.loadTemplate(MenuList.SEPARATOR_TEMPLATE));
     };
     MenuList.prototype.showChildMenu = function (menuItemDef, menuItemComp, mouseEvent) {
         var _this = this;
@@ -112,7 +112,7 @@ var MenuList = (function (_super) {
         var childMenu = new MenuList();
         this.context.wireBean(childMenu);
         childMenu.addMenuItems(menuItemDef.subMenu);
-        var ePopup = ag_grid_1.Utils.loadTemplate('<div class="ag-menu"></div>');
+        var ePopup = ag_grid_community_1.Utils.loadTemplate('<div class="ag-menu"></div>');
         ePopup.appendChild(childMenu.getGui());
         var hidePopupFunc = this.popupService.addAsModalPopup(ePopup, true, null, mouseEvent);
         this.popupService.positionPopupForMenu({
@@ -143,20 +143,15 @@ var MenuList = (function (_super) {
     };
     // private instance = Math.random();
     MenuList.TEMPLATE = '<div class="ag-menu-list"></div>';
-    MenuList.SEPARATOR_TEMPLATE = '<div class="ag-menu-separator">' +
-        '  <span class="ag-menu-separator-cell"></span>' +
-        '  <span class="ag-menu-separator-cell"></span>' +
-        '  <span class="ag-menu-separator-cell"></span>' +
-        '  <span class="ag-menu-separator-cell"></span>' +
-        '</div>';
+    MenuList.SEPARATOR_TEMPLATE = "<div class=\"ag-menu-separator\">\n            <span class=\"ag-menu-separator-cell\"></span>\n            <span class=\"ag-menu-separator-cell\"></span>\n            <span class=\"ag-menu-separator-cell\"></span>\n            <span class=\"ag-menu-separator-cell\"></span>\n        </div>";
     __decorate([
-        ag_grid_1.Autowired('context'),
-        __metadata("design:type", ag_grid_1.Context)
+        ag_grid_community_1.Autowired('context'),
+        __metadata("design:type", ag_grid_community_1.Context)
     ], MenuList.prototype, "context", void 0);
     __decorate([
-        ag_grid_1.Autowired('popupService'),
-        __metadata("design:type", ag_grid_1.PopupService)
+        ag_grid_community_1.Autowired('popupService'),
+        __metadata("design:type", ag_grid_community_1.PopupService)
     ], MenuList.prototype, "popupService", void 0);
     return MenuList;
-}(ag_grid_1.Component));
+}(ag_grid_community_1.Component));
 exports.MenuList = MenuList;

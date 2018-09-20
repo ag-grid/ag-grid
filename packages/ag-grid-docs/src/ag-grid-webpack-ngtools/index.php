@@ -669,10 +669,6 @@ export class AppComponent {
         you scale up to a full application with many components and for example lazy loading, the improvement you would see
         would be even greater.</p>
 
-        <note>For guidance on using @ngtoools/webpack with ag-Grid please see the <a
-                    href="../ag-grid-angular-ngtools-webpack">ag-Grid @ngtools/webpack Documentation</a></note>
-
-
         <div style="background-color: #eee; padding: 5px; display: inline-block;">
 
             <div style="margin-bottom: 5px;">If you liked this article then please share</div>

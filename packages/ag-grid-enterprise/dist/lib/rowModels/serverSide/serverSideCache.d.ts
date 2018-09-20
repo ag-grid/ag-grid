@@ -1,5 +1,5 @@
-// ag-grid-enterprise v18.1.1
-import { ColumnVO, IServerSideCache, IServerSideDatasource, NumberSequence, RowNode, RowNodeCache, RowNodeCacheParams, RowBounds } from "ag-grid";
+// ag-grid-enterprise v19.0.0
+import { ColumnVO, IServerSideCache, IServerSideDatasource, NumberSequence, RowNode, RowNodeCache, RowNodeCacheParams, RowBounds } from "ag-grid-community";
 import { ServerSideBlock } from "./serverSideBlock";
 export interface ServerSideCacheParams extends RowNodeCacheParams {
     rowGroupCols: ColumnVO[];
@@ -20,7 +20,7 @@ export declare class ServerSideCache extends RowNodeCache<ServerSideBlock, Serve
     private cacheHeight;
     private blockHeights;
     constructor(cacheParams: ServerSideCacheParams, parentRowNode: RowNode);
-    private setBeans(loggerFactory);
+    private setBeans;
     protected init(): void;
     getRowBounds(index: number): RowBounds;
     protected destroyBlock(block: ServerSideBlock): void;
@@ -30,14 +30,14 @@ export declare class ServerSideCache extends RowNodeCache<ServerSideBlock, Serve
         value: number;
     }): void;
     getRow(displayRowIndex: number, dontCreateBlock?: boolean): RowNode;
-    private createBlock(blockNumber, displayIndex, nextRowTop);
+    private createBlock;
     getDisplayIndexEnd(): number;
     isDisplayIndexInCache(displayIndex: number): boolean;
     getChildCache(keys: string[]): ServerSideCache;
     isPixelInRange(pixel: number): boolean;
     removeFromCache(items: any[]): void;
     addToCache(items: any[], indexToInsert: number): void;
-    private moveItemsDown(block, moveFromIndex, moveCount);
-    private insertItems(block, indexToInsert, items);
+    private moveItemsDown;
+    private insertItems;
     refreshCacheAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void;
 }

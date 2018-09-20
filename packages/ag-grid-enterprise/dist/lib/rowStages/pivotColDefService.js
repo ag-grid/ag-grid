@@ -1,4 +1,4 @@
-// ag-grid-enterprise v18.1.1
+// ag-grid-enterprise v19.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,8 +10,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = require("ag-grid/main");
-var PivotColDefService = (function () {
+var ag_grid_community_1 = require("ag-grid-community");
+var PivotColDefService = /** @class */ (function () {
     function PivotColDefService() {
     }
     PivotColDefService.prototype.createPivotColumnDefs = function (uniqueValues) {
@@ -22,14 +22,14 @@ var PivotColDefService = (function () {
         var pivotColumns = this.columnController.getPivotColumns();
         var valueColumns = this.columnController.getValueColumns();
         var levelsDeep = pivotColumns.length;
-        var columnIdSequence = new main_1.NumberSequence();
+        var columnIdSequence = new ag_grid_community_1.NumberSequence();
         this.recursivelyAddGroup(pivotColumnGroupDefs, pivotColumnDefs, 1, uniqueValues, [], columnIdSequence, levelsDeep, pivotColumns);
         this.addRowGroupTotals(pivotColumnGroupDefs, pivotColumnDefs, valueColumns, pivotColumns, columnIdSequence);
         this.addPivotTotalsToGroups(pivotColumnGroupDefs, pivotColumnDefs, columnIdSequence);
         // we clone, so the colDefs in pivotColumnsGroupDefs and pivotColumnDefs are not shared. this is so that
         // any changes the user makes (via processSecondaryColumnDefinitions) don't impact the internal aggregations,
         // as these use the col defs also
-        var pivotColumnDefsClone = pivotColumnDefs.map(function (colDef) { return main_1.Utils.cloneObject(colDef); });
+        var pivotColumnDefsClone = pivotColumnDefs.map(function (colDef) { return ag_grid_community_1.Utils.cloneObject(colDef); });
         return {
             pivotColumnGroupDefs: pivotColumnGroupDefs,
             pivotColumnDefs: pivotColumnDefsClone
@@ -41,7 +41,7 @@ var PivotColDefService = (function () {
     // @pivotKeys - the keys for the pivot, eg if pivoting on {Language,Country} then could be {English,Ireland}
     PivotColDefService.prototype.recursivelyAddGroup = function (parentChildren, pivotColumnDefs, index, uniqueValues, pivotKeys, columnIdSequence, levelsDeep, primaryPivotColumns) {
         var _this = this;
-        main_1.Utils.iterateObject(uniqueValues, function (key, value) {
+        ag_grid_community_1.Utils.iterateObject(uniqueValues, function (key, value) {
             var newPivotKeys = pivotKeys.slice(0);
             newPivotKeys.push(key);
             var createGroup = index !== levelsDeep;
@@ -210,7 +210,7 @@ var PivotColDefService = (function () {
         var colDef = {};
         if (valueColumn) {
             var colDefToCopy = valueColumn.getColDef();
-            main_1.Utils.assign(colDef, colDefToCopy);
+            ag_grid_community_1.Utils.assign(colDef, colDefToCopy);
             // even if original column was hidden, we always show the pivot value column, otherwise it would be
             // very confusing for people thinking the pivot is broken
             colDef.hide = false;
@@ -252,15 +252,15 @@ var PivotColDefService = (function () {
         }
     };
     __decorate([
-        main_1.Autowired('columnController'),
-        __metadata("design:type", main_1.ColumnController)
+        ag_grid_community_1.Autowired('columnController'),
+        __metadata("design:type", ag_grid_community_1.ColumnController)
     ], PivotColDefService.prototype, "columnController", void 0);
     __decorate([
-        main_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", main_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], PivotColDefService.prototype, "gridOptionsWrapper", void 0);
     PivotColDefService = __decorate([
-        main_1.Bean('pivotColDefService')
+        ag_grid_community_1.Bean('pivotColDefService')
     ], PivotColDefService);
     return PivotColDefService;
 }());

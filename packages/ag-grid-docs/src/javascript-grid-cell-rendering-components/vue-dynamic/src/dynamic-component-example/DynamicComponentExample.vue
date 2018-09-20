@@ -4,7 +4,8 @@
         <ag-grid-vue style="width: 100%; height: 350px;" class="ag-theme-balham"
                      :gridOptions="gridOptions"
                      :columnDefs="columnDefs"
-                     :rowData="rowData">
+                     :rowData="rowData"
+                     :firstDataRendered="onFirstDataRendered">
         </ag-grid-vue>
     </div>
 </template>
@@ -115,6 +116,9 @@
             },
             methodFromParent(cell) {
                 alert(`"Parent Component Method from ${cell}!`);
+            },
+            onFirstDataRendered(params) {
+                params.api.sizeColumnsToFit();
             }
         },
         beforeMount() {
@@ -125,9 +129,6 @@
             };
             this.createRowData();
             this.createColumnDefs();
-        },
-        mounted() {
-            this.gridOptions.api.sizeColumnsToFit();
         }
     }
 </script>

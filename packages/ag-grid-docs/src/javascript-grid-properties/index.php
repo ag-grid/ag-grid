@@ -5,6 +5,7 @@ $pageKeyboards = "javascript data grid ag-Grid properties";
 $pageGroup = "reference";
 include '../documentation-main/documentation_header.php';
 ?>
+
     <h1>Grid Properties</h1>
 
     <p class="lead">
@@ -35,7 +36,8 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>colResizeDefault</th>
             <td>Set to 'shift' to have shift-resize as the default resize operation (same as user holding
-                down 'shift' while resizing).</td>
+                down 'shift' while resizing).
+            </td>
         </tr>
         <tr>
             <th>suppressAutoSize</th>
@@ -85,6 +87,13 @@ include '../documentation-main/documentation_header.php';
             <th>autoGroupColumnDef</th>
             <td>Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column def is included as the first column definition in the grid. If not grouping,
                 this column is not included.</td>
+        </tr>
+        <tr>
+            <th>suppressSetColumnStateEvents</th>
+            <td>
+                Set to true to suppress column events being raised when <code>columnApi.setColumnState(state)</code> and
+                <code>columnApi.resetColumnState()</code> are invoked.
+            </td>
         </tr>
     </table>
     <h2>Sort & Filter</h2>
@@ -339,45 +348,7 @@ include '../documentation-main/documentation_header.php';
                 See <a href="../javascript-grid-pivoting/#pivotRowTotals">Pivot Row Totals</a>.
             </td>
         </tr>
-
-
         </table>
-<h2>Tool Panel</h2>
-    <table class="table content reference">
-        <tr>
-            <th>toolPanelSuppressRowGroups, toolPanelSuppressValues, toolPanelSuppressPivots, toolPanelSuppressPivotMode</th>
-            <td>Set to true to hide the relevant sections in the <a href="../javascript-grid-tool-panel">Tool Panel</a>.
-            See example <a href="../javascript-grid-tool-panel/#suppressExample">Suppress Panels</a></td>
-        </tr>
-        <tr>
-            <th>showToolPanel</th>
-            <td>Set to true to show the <a href="../javascript-grid-tool-panel">Tool Panel</a> by default.</td>
-        </tr>
-        <tr>
-            <th>toolPanelSuppressSideButtons</th>
-            <td>
-                Set to true to hide the <a href="../javascript-grid-tool-panel">Tool Panel</a> side buttons for
-                opening / closing the tool panel.
-            </td>
-        </tr>
-        <tr>
-            <th>contractColumnSelection</th>
-            <td>Set to true to have column list contracted by default - only used if column groups exist.</td>
-        </tr>
-        <tr>
-            <th>toolPanelSuppressColumnFilter</th>
-            <td>Set to true to not show the 'column filter' component.</td>
-        </tr>
-        <tr>
-            <th>toolPanelSuppressColumnSelectAll</th>
-            <td>Set to true to not sure the column 'select all' component.</td>
-        </tr>
-        <tr>
-            <th>toolPanelSuppressColumnExpandAll</th>
-            <td>Set to true to not show the column 'expand all' component.</td>
-        </tr>
-    </table>
-
 
     <h2>Data & Row Models</h2>
     <table class="table content reference">
@@ -653,9 +624,11 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true to allow <a href="../javascript-grid-cell-expressions/#cell-expressions">cell expressions</a>.</td>
         </tr>
         <tr>
-            <th>gridAutoHeight</th>
+            <th>domLayout</th>
             <td>
-                Set to true to enable <a href="../javascript-grid-width-and-height/#auto-height">Grid Auto Height</a>.
+                Set to 'normal', 'autoHeight' or 'print' to switch between layout options. The default is 'normal'.
+                See <a href="../javascript-grid-for-print/">Printing</a> and
+                <a href="../javascript-grid-width-and-height/#auto-height">Auto Height</a>.
             </td>
         </tr>
 
@@ -758,16 +731,8 @@ include '../documentation-main/documentation_header.php';
             <td>Allows <a href="../javascript-grid-context-menu">context menu</a> to show, even when ctrl key is held down.</td>
         </tr>
         <tr>
-            <th>enableStatusBar</th>
-            <td>
-                When true, the <a href="../javascript-grid-status-bar">status bar</a> appear at the bottom of the
-                grid when cells are selected.
-            </td>
-        </tr>
-        <tr>
-            <th>alwaysShowStatusBar</th>
-            <td>When true, the <a href="../javascript-grid-status-bar">status bar</a> will always be displayed at
-                the bottom of the grid, when 'enableStatusBar' is also enabled</td>
+            <th>statusBar</th>
+            <td>Specifies the <a href="../javascript-grid-status-bar">status bar</a> components to use in the status bar.</td>
         </tr>
         <tr>
             <th>suppressTouch</th>
@@ -819,17 +784,13 @@ include '../documentation-main/documentation_header.php';
                 <a href="../javascript-grid-row-spanning/">row spanning</a>.
             </td>
         </tr>
-
-
         <tr>
             <th>serverSideSortingAlwaysResets</th>
             <td>
                 When true, a full reset will be performed when sorting using the
-                <a href="../javascript-grid-server-side-model/">Server-side Row Model</a>.
+                <a href="../javascriptgridserversidemodel/">Serverside Row Model</a>.
             </td>
         </tr>
-
-
     </table>
 
 

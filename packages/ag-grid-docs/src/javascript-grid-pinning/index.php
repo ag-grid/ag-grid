@@ -64,7 +64,7 @@ colDef = {
             </li>
         </ul>
 
-        <img src="../javascript-grid-pinning/pinningByMoving.gif" style="margin: 10px; border: 1px solid #aaa;"/>
+        <img src="../javascript-grid-pinning/pinningByMoving.gif" style="margin: 10px; border: 1px solid #aaa;" alt="Pinning via Column Dragging" />
 
 
 

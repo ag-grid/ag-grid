@@ -1,5 +1,5 @@
 import Vue from "vue";
-import {ComponentUtil, Grid} from "ag-grid";
+import {ComponentUtil, Grid} from "ag-grid-community";
 import {VueFrameworkFactory} from "./vueFrameworkFactory";
 import {VueFrameworkComponentWrapper} from "./vueFrameworkComponentWrapper";
 

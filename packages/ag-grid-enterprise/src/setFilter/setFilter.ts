@@ -9,13 +9,12 @@ import {
     Utils,
     RefSelector,
     Autowired, ValueFormatterService
-} from "ag-grid/main";
+} from "ag-grid-community";
 import {SetFilterModel, SetFilterModelValuesType} from "./setFilterModel";
 import {SetFilterListItem} from "./setFilterListItem";
 import {VirtualList, VirtualListModel} from "../rendering/virtualList";
 
 enum CheckboxState {CHECKED, UNCHECKED, INTERMEDIATE}
-
 
 export class SetFilter extends BaseFilter <string, ISetFilterParams, string[] | SerializedSetFilter> {
 
@@ -51,7 +50,6 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[] | 
         let debounceMs: number = this.filterParams && this.filterParams.debounceMs != null ? this.filterParams.debounceMs : 0;
         this.debounceFilterChanged = _.debounce(changeFilter, debounceMs);
 
-
         this.eCheckedIcon = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.filterParams.column);
         this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.filterParams.column);
         this.eIndeterminateCheckedIcon = _.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, this.filterParams.column);
@@ -80,7 +78,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[] | 
         this.eSelectAll.appendChild(icon);
     }
 
-    public setLoading(loading:boolean):void{
+    public setLoading(loading:boolean):void {
         _.setVisible(this.eFilterLoading, loading);
     }
 
@@ -140,7 +138,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[] | 
         listItem.setSelected(this.model.isValueSelected(value));
 
         listItem.addEventListener(SetFilterListItem.EVENT_SELECTED, () => {
-            this.onItemSelected(value, listItem.isSelected())
+            this.onItemSelected(value, listItem.isSelected());
         });
 
         return listItem;
@@ -178,10 +176,10 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[] | 
         if (Array.isArray(value)) {
             for (let i = 0; i < value.length; i++) {
                 if (this.model.isValueSelected(value[i])) {
-                    return true
+                    return true;
                 }
             }
-            return false
+            return false;
         } else {
             return this.model.isValueSelected(value);
         }
@@ -207,7 +205,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[] | 
      * @param toSelect The subset of options to subselect
      */
     public setFilterValues(options: string[], selectAll:boolean = false, notify:boolean = true, toSelect ?: string[]): void {
-        this.model.onFilterValuesReady (()=>{
+        this.model.onFilterValuesReady (()=> {
             let keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
             this.model.setValuesType(SetFilterModelValuesType.PROVIDED_LIST);
             this.model.refreshValues(options, keepSelection, selectAll);
@@ -217,7 +215,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[] | 
 
             actualToSelect.forEach(option=>this.model.selectValue(option));
             this.virtualList.refresh();
-            if (notify){
+            if (notify) {
                 this.debounceFilterChanged(true);
             }
         });
@@ -251,7 +249,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[] | 
                             <div id="selectAll" class="ag-filter-checkbox"></div><span class="ag-filter-value">(${translate('selectAll')})</span>
                         </label>
                     </div>
-                    <div id="richList" class="ag-set-filter-list"></div>                    
+                    <div id="richList" class="ag-set-filter-list"></div>
                 </div>`;
     }
 

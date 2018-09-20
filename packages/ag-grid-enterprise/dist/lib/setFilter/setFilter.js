@@ -1,4 +1,4 @@
-// ag-grid-enterprise v18.1.1
+// ag-grid-enterprise v19.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -20,7 +20,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = require("ag-grid/main");
+var ag_grid_community_1 = require("ag-grid-community");
 var setFilterModel_1 = require("./setFilterModel");
 var setFilterListItem_1 = require("./setFilterListItem");
 var virtualList_1 = require("../rendering/virtualList");
@@ -30,7 +30,7 @@ var CheckboxState;
     CheckboxState[CheckboxState["UNCHECKED"] = 1] = "UNCHECKED";
     CheckboxState[CheckboxState["INTERMEDIATE"] = 2] = "INTERMEDIATE";
 })(CheckboxState || (CheckboxState = {}));
-var SetFilter = (function (_super) {
+var SetFilter = /** @class */ (function (_super) {
     __extends(SetFilter, _super);
     function SetFilter() {
         return _super.call(this) || this;
@@ -42,13 +42,13 @@ var SetFilter = (function (_super) {
             _this.onFilterChanged(applyNow);
         };
         var debounceMs = this.filterParams && this.filterParams.debounceMs != null ? this.filterParams.debounceMs : 0;
-        this.debounceFilterChanged = main_1._.debounce(changeFilter, debounceMs);
-        this.eCheckedIcon = main_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.filterParams.column);
-        this.eUncheckedIcon = main_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.filterParams.column);
-        this.eIndeterminateCheckedIcon = main_1._.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, this.filterParams.column);
+        this.debounceFilterChanged = ag_grid_community_1._.debounce(changeFilter, debounceMs);
+        this.eCheckedIcon = ag_grid_community_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.filterParams.column);
+        this.eUncheckedIcon = ag_grid_community_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.filterParams.column);
+        this.eIndeterminateCheckedIcon = ag_grid_community_1._.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, this.filterParams.column);
     };
     SetFilter.prototype.updateCheckboxIcon = function () {
-        main_1._.removeAllChildren(this.eSelectAll);
+        ag_grid_community_1._.removeAllChildren(this.eSelectAll);
         var icon;
         switch (this.selectAllState) {
             case CheckboxState.INTERMEDIATE:
@@ -60,27 +60,27 @@ var SetFilter = (function (_super) {
             case CheckboxState.UNCHECKED:
                 icon = this.eUncheckedIcon;
                 break;
-            default:// default happens when initialising for first time
+            default: // default happens when initialising for first time
                 icon = this.eCheckedIcon;
                 break;
         }
         this.eSelectAll.appendChild(icon);
     };
     SetFilter.prototype.setLoading = function (loading) {
-        main_1._.setVisible(this.eFilterLoading, loading);
+        ag_grid_community_1._.setVisible(this.eFilterLoading, loading);
     };
     SetFilter.prototype.initialiseFilterBodyUi = function () {
         var _this = this;
         this.virtualList = new virtualList_1.VirtualList();
         this.context.wireBean(this.virtualList);
         this.getGui().querySelector('#richList').appendChild(this.virtualList.getGui());
-        if (main_1.Utils.exists(this.filterParams.cellHeight)) {
+        if (ag_grid_community_1.Utils.exists(this.filterParams.cellHeight)) {
             this.virtualList.setRowHeight(this.filterParams.cellHeight);
         }
         this.virtualList.setComponentCreator(this.createSetListItem.bind(this));
         this.model = new setFilterModel_1.SetFilterModel(this.filterParams.colDef, this.filterParams.rowModel, this.filterParams.valueGetter, this.filterParams.doesRowPassOtherFilter, this.filterParams.suppressSorting, function (values, toSelect) { return _this.setFilterValues(values, toSelect ? false : true, toSelect ? true : false, toSelect); }, this.setLoading.bind(this), this.valueFormatterService, this.filterParams.column);
         this.virtualList.setModel(new ModelWrapper(this.model));
-        main_1._.setVisible(this.getGui().querySelector('#ag-mini-filter'), !this.filterParams.suppressMiniFilter);
+        ag_grid_community_1._.setVisible(this.getGui().querySelector('#ag-mini-filter'), !this.filterParams.suppressMiniFilter);
         this.eMiniFilter.value = this.model.getMiniFilter();
         this.addDestroyableEventListener(this.eMiniFilter, 'input', function () { return _this.onMiniFilterChanged(); });
         this.updateCheckboxIcon();
@@ -133,7 +133,7 @@ var SetFilter = (function (_super) {
         if (this.filterParams.colDef.keyCreator) {
             value = this.filterParams.colDef.keyCreator({ value: value });
         }
-        value = main_1.Utils.makeNull(value);
+        value = ag_grid_community_1.Utils.makeNull(value);
         if (Array.isArray(value)) {
             for (var i = 0; i < value.length; i++) {
                 if (this.model.isValueSelected(value[i])) {
@@ -195,7 +195,7 @@ var SetFilter = (function (_super) {
     };
     SetFilter.prototype.bodyTemplate = function () {
         var translate = this.translate.bind(this);
-        return "<div ref=\"ag-filter-loading\" class=\"loading-filter ag-hidden\">" + translate('loadingOoo') + "</div>\n                <div>\n                    <div class=\"ag-filter-header-container\" id=\"ag-mini-filter\">\n                        <input class=\"ag-filter-filter\" type=\"text\" placeholder=\"" + translate('searchOoo') + "\"/>\n                    </div>\n                    <div class=\"ag-filter-header-container\">\n                        <label id=\"selectAllContainer\">\n                            <div id=\"selectAll\" class=\"ag-filter-checkbox\"></div><span class=\"ag-filter-value\">(" + translate('selectAll') + ")</span>\n                        </label>\n                    </div>\n                    <div id=\"richList\" class=\"ag-set-filter-list\"></div>                    \n                </div>";
+        return "<div ref=\"ag-filter-loading\" class=\"loading-filter ag-hidden\">" + translate('loadingOoo') + "</div>\n                <div>\n                    <div class=\"ag-filter-header-container\" id=\"ag-mini-filter\">\n                        <input class=\"ag-filter-filter\" type=\"text\" placeholder=\"" + translate('searchOoo') + "\"/>\n                    </div>\n                    <div class=\"ag-filter-header-container\">\n                        <label id=\"selectAllContainer\">\n                            <div id=\"selectAll\" class=\"ag-filter-checkbox\"></div><span class=\"ag-filter-value\">(" + translate('selectAll') + ")</span>\n                        </label>\n                    </div>\n                    <div id=\"richList\" class=\"ag-set-filter-list\"></div>\n                </div>";
     };
     SetFilter.prototype.updateSelectAll = function () {
         if (this.model.isEverythingSelected()) {
@@ -217,7 +217,7 @@ var SetFilter = (function (_super) {
         this.updateSelectAll();
     };
     SetFilter.prototype.onSelectAll = function (event) {
-        main_1._.addAgGridEventPath(event);
+        ag_grid_community_1._.addAgGridEventPath(event);
         if (this.selectAllState === CheckboxState.CHECKED) {
             this.selectAllState = CheckboxState.UNCHECKED;
         }
@@ -317,29 +317,29 @@ var SetFilter = (function (_super) {
         return false;
     };
     __decorate([
-        main_1.QuerySelector('#selectAll'),
+        ag_grid_community_1.QuerySelector('#selectAll'),
         __metadata("design:type", HTMLInputElement)
     ], SetFilter.prototype, "eSelectAll", void 0);
     __decorate([
-        main_1.QuerySelector('#selectAllContainer'),
+        ag_grid_community_1.QuerySelector('#selectAllContainer'),
         __metadata("design:type", HTMLElement)
     ], SetFilter.prototype, "eSelectAllContainer", void 0);
     __decorate([
-        main_1.QuerySelector('.ag-filter-filter'),
+        ag_grid_community_1.QuerySelector('.ag-filter-filter'),
         __metadata("design:type", HTMLInputElement)
     ], SetFilter.prototype, "eMiniFilter", void 0);
     __decorate([
-        main_1.RefSelector('ag-filter-loading'),
+        ag_grid_community_1.RefSelector('ag-filter-loading'),
         __metadata("design:type", HTMLInputElement)
     ], SetFilter.prototype, "eFilterLoading", void 0);
     __decorate([
-        main_1.Autowired('valueFormatterService'),
-        __metadata("design:type", main_1.ValueFormatterService)
+        ag_grid_community_1.Autowired('valueFormatterService'),
+        __metadata("design:type", ag_grid_community_1.ValueFormatterService)
     ], SetFilter.prototype, "valueFormatterService", void 0);
     return SetFilter;
-}(main_1.BaseFilter));
+}(ag_grid_community_1.BaseFilter));
 exports.SetFilter = SetFilter;
-var ModelWrapper = (function () {
+var ModelWrapper = /** @class */ (function () {
     function ModelWrapper(model) {
         this.model = model;
     }

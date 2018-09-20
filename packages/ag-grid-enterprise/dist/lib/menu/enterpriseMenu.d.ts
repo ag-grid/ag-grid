@@ -1,5 +1,5 @@
-// ag-grid-enterprise v18.1.1
-import { IMenuFactory, Column, AgEvent, BeanStub } from "ag-grid";
+// ag-grid-enterprise v19.0.0
+import { AgEvent, BeanStub, Column, IMenuFactory } from "ag-grid-community";
 export interface TabSelectedEvent extends AgEvent {
     key: string;
 }
@@ -43,21 +43,24 @@ export declare class EnterpriseMenu extends BeanStub {
     private includeChecks;
     private restrictTo?;
     constructor(column: Column, initialSelection: string, restrictTo?: string[]);
-    getMinWidth(): number;
+    getMinDimensions(): {
+        width: number;
+        height: number;
+    };
     init(): void;
-    private isValidMenuTabItem(menuTabName);
-    private isNotSuppressed(menuTabName);
-    private createTab(name);
+    private isValidMenuTabItem;
+    private isNotSuppressed;
+    private createTab;
     showTabBasedOnPreviousSelection(): void;
     showTab(toShow: string): void;
-    private onTabItemClicked(event);
+    private onTabItemClicked;
     destroy(): void;
-    private getMenuItems();
-    private getDefaultMenuOptions();
-    private createMainPanel();
-    private onHidePopup();
-    private createFilterPanel();
-    private createColumnsPanel();
+    private getMenuItems;
+    private getDefaultMenuOptions;
+    private createMainPanel;
+    private onHidePopup;
+    private createFilterPanel;
+    private createColumnsPanel;
     afterGuiAttached(params: any): void;
     getGui(): HTMLElement;
 }

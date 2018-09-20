@@ -1,4 +1,4 @@
-// ag-grid-enterprise v18.1.1
+// ag-grid-enterprise v19.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,22 +10,22 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = require("ag-grid/main");
-var pivotColumnsPanel_1 = require("./toolPanel/columnDrop/pivotColumnsPanel");
-var PivotCompFactory = (function () {
+var ag_grid_community_1 = require("ag-grid-community");
+var pivotDropZonePanel_1 = require("./sideBar/providedPanels/columns/panels/pivotDropZonePanel");
+var PivotCompFactory = /** @class */ (function () {
     function PivotCompFactory() {
     }
     PivotCompFactory.prototype.create = function () {
-        var pivotComp = new pivotColumnsPanel_1.PivotColumnsPanel(true);
+        var pivotComp = new pivotDropZonePanel_1.PivotDropZonePanel(true);
         this.context.wireBean(pivotComp);
         return pivotComp;
     };
     __decorate([
-        main_1.Autowired('context'),
-        __metadata("design:type", main_1.Context)
+        ag_grid_community_1.Autowired('context'),
+        __metadata("design:type", ag_grid_community_1.Context)
     ], PivotCompFactory.prototype, "context", void 0);
     PivotCompFactory = __decorate([
-        main_1.Bean('pivotCompFactory')
+        ag_grid_community_1.Bean('pivotCompFactory')
     ], PivotCompFactory);
     return PivotCompFactory;
 }());

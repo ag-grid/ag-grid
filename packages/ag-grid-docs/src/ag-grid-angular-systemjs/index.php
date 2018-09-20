@@ -26,7 +26,7 @@ npm init --yes
     <h2>Install Dependencies</h2>
 
     <snippet language="sh">
-npm i --save ag-grid ag-grid-angular
+npm i --save ag-grid-community ag-grid-angular
 npm i --save @angular/common @angular/compiler @angular/compiler-cli @angular/core @angular/platform-browser @angular/platform-browser-dynamic @angular/router typescript rxjs core-js zone.js
 npm i --save-dev systemjs@0.19.x systemjs-builder@0.15.33 concurrently@2.2.0 lite-server@2.2.2 gulp@3.9.1 gulp-ngc@0.1.x @types/node@6.0.45
 
@@ -65,7 +65,7 @@ ag-grid-systemjs
 import {NgModule} from "@angular/core";
 import {BrowserModule} from "@angular/platform-browser";
 // ag-grid
-import {AgGridModule} from "ag-grid-angular/main";
+import {AgGridModule} from "ag-grid-angular";
 // application
 import {AppComponent} from "./app.component";
 
@@ -87,7 +87,7 @@ export class AppModule {
 // app/app.component.ts 
 import {Component} from "@angular/core";
 
-import {GridOptions} from "ag-grid/main";
+import {GridOptions} from "ag-grid-community";
 
 @Component({
     moduleId: module.id,
@@ -100,7 +100,6 @@ export class AppComponent {
     public columnDefs:any[];
 
     constructor() {
-        // we pass an empty gridOptions in, so we can grab the api out
         this.gridOptions = &lt;GridOptions&gt;{
             onGridReady: () =&gt; {
                 this.gridOptions.api.sizeColumnsToFit();
@@ -136,7 +135,7 @@ import {platformBrowserDynamic} from "@angular/platform-browser-dynamic";
 import {AppModule} from "./app.module";
 
 // for enterprise customers
-// import {LicenseManager} from "ag-grid-enterprise/main";
+// import {LicenseManager} from "ag-grid-enterprise";
 // LicenseManager.setLicenseKey("your license key");
 
 platformBrowserDynamic().bootstrapModule(AppModule);</snippet>
@@ -188,14 +187,14 @@ platformBrowserDynamic().bootstrapModule(AppModule);</snippet>
                 'angular-in-memory-web-api': 'npm:angular-in-memory-web-api/bundles/in-memory-web-api.umd.js',
                 // ag libraries
                 'ag-grid-angular': 'node_modules/ag-grid-angular',
-                'ag-grid': 'node_modules/ag-grid',
+                'ag-grid-community': 'node_modules/ag-grid-community',
                 'ag-grid-enterprise': 'node_modules/ag-grid-enterprise'
             },
             packages: {
                 app: {
                     main: './boot.js'
                 },
-                'ag-grid': {
+                'ag-grid-community': {
                     main: 'main.js'
                 }
             }
@@ -224,8 +223,8 @@ platformBrowserDynamic().bootstrapModule(AppModule);</snippet>
     &lt;!-- To do this you will use a CSS Loader. How to do this is not an ag-Grid --&gt;
     &lt;!-- problem, so I've not included how to do it here. For simplicity, and --&gt;
     &lt;!-- explicitness, the CSS files are loaded in directly here. --&gt;
-    &lt;link href="node_modules/ag-grid/dist/styles/ag-grid.css" rel="stylesheet"/&gt;
-    &lt;link href="node_modules/ag-grid/dist/styles/ag-theme-balham.css" rel="stylesheet"/&gt;
+    &lt;link href="node_modules/ag-grid-community/dist/styles/ag-grid.css" rel="stylesheet"/&gt;
+    &lt;link href="node_modules/ag-grid-community/dist/styles/ag-theme-balham.css" rel="stylesheet"/&gt;
 
     &lt;!-- Configure SystemJS --&gt;
     &lt;script src="systemjs.config.js"&gt;&lt;/script&gt;
@@ -256,7 +255,7 @@ platformBrowserDynamic().bootstrapModule(AppModule);</snippet>
 
     <p>We can now run <code>npm start</code> to run the development setup.</p>
 
-    <img src="../images/seed.png" style="width: 100%">
+    <img src="../images/seed.png" style="width: 100%" alt="Grid Example">
 
     <h3 id="aotCompilation">For Ahead-of-Time (AOT) Compilation</h3>
 
@@ -268,7 +267,7 @@ import {platformBrowser} from "@angular/platform-browser";
 import {AppModuleNgFactory} from "../aot/app/app.module.ngfactory";
 
 // for enterprise customers
-// import {LicenseManager} from "ag-grid-enterprise/main";
+// import {LicenseManager} from "ag-grid-enterprise";
 // LicenseManager.setLicenseKey("your license key");
 
 platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);</snippet>
@@ -321,7 +320,7 @@ platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);</snippet>
                 // 'angular-in-memory-web-api': 'npm:angular-in-memory-web-api/bundles/in-memory-web-api.umd.js',
                 // ag libraries
                 'ag-grid-angular' : 'node_modules/ag-grid-angular',
-                'ag-grid' : 'node_modules/ag-grid',
+                'ag-grid-community' : 'node_modules/ag-grid-community',
                 'ag-grid-enterprise' : 'node_modules/ag-grid-enterprise'
             },
             packages: {
@@ -343,7 +342,7 @@ platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);</snippet>
                 '@angular/http': {
                     main: 'index.js'
                 },
-                'ag-grid': {
+                'ag-grid-community': {
                     main: 'main.js'
                 }
             }
@@ -419,8 +418,8 @@ gulp.task('aot-bundle', function () {
 <snippet>
 cp ./node_modules/core-js/client/shim.min.js aot/
 cp ./node_modules/zone.js/dist/zone.min.js aot/
-cp ./node_modules/ag-grid/dist/styles/ag-grid.css aot/
-cp ./node_modules/ag-grid/dist/styles/ag-theme-balham.css aot/</snippet>
+cp ./node_modules/ag-grid-community/dist/styles/ag-grid.css aot/
+cp ./node_modules/ag-grid-community/dist/styles/ag-theme-balham.css aot/</snippet>
 
     <p>We make use of lite-server to test the application, so let's create a AOT friendly config file for it:</p>
 
@@ -439,7 +438,7 @@ cp ./node_modules/ag-grid/dist/styles/ag-theme-balham.css aot/</snippet>
 "build:aot": "gulp ngc && gulp aot-bundle",
 "lite:aot": "lite-server -c aot/bs-config.json",</snippet>
 
-    <img src="../images/seed.png" style="width: 100%">
+    <img src="../images/seed.png" style="width: 100%" alt="Grid Example">
 
     <p>
         All the above items are specific to either Angular, SystemJS or SystemJS Builder. The above is intended to point

@@ -40,7 +40,7 @@ npm run server
 npm run simple-grid
 </snippet>
 
-    <img src="../images/seed.png" class="img-fluid" />
+    <img src="../images/seed.png" class="img-fluid" alt="Datagrid Example"/>
 
     <h2>A Richer Grid</h2>
 
@@ -51,7 +51,7 @@ npm run simple-grid
     <snippet language="sh">
 npm run rich-grid</snippet>
 
-    <img src="../images/openfin-rich-grid.png" class="img-fluid"/>
+    <img src="../images/openfin-rich-grid.png" class="img-fluid" alt="Openfin Rich Grid Example"/>
 
     <h2>A Master/Detail Grid - Single Application</h2>
 
@@ -62,7 +62,7 @@ npm run rich-grid</snippet>
     <snippet language="sh">
 npm run masterdetail-master-single</snippet>
 
-    <img src="../images/openfin-masterdetail-single.png" class="img-fluid"/>
+    <img src="../images/openfin-masterdetail-single.png" class="img-fluid" alt="Opefin MasterDetail Grid Example" />
 
     <h2>A Master/Detail Grid - Multiple Applications</h2>
 
@@ -80,7 +80,7 @@ npm run masterdetail-master</snippet>
     <snippet language="sh">
 npm run masterdetail-detail</snippet>
 
-    <img class="img-fluid" src="../images/openfin-masterdetail-multi.png"/>
+    <img class="img-fluid" src="../images/openfin-masterdetail-multi.png" alt="Openfin MasterDetail Multi Application Example" />
 
 
     <h2>A Summary/Graph Grid - Multiple Applications</h2>
@@ -104,31 +104,31 @@ npm run stocks-master</snippet>
     <snippet language="sh">
 npm run stocks-detail</snippet>
 
-    <img class="img-fluid" src="../images/openfin-masterdetail-graph.png"/>
+    <img class="img-fluid" src="../images/openfin-masterdetail-graph.png" alt="OpenFin MasterDetail Graph Example" />
 
     <h2>A Trader Dashboard with Tear Out Windows</h2>
 
     <note>You can try this example live using the following <a href="https://install.openfin.co/download/?fileName=aggrid_openfin_traderdashboard&config=https://ag-grid.github.io/ag-grid-openfin-example/app-trader-remote.json">Link</a>.
     This will download a Zip file with a Windows executable within - if you run this executable the Trader Dashboard will install and run on your computer.</note>
 
-    <p>In this example we host the full <a href="../ag-grid-trader-dashboard/">Trader Dashboard</a> within an OpenFin container,
+    <p>In this example we host the full Trader Dashboard within an OpenFin container,
     but also add the ability to <span style="font-style: italic">tear out</span> the Stock Detail panel from the top left.</p>
 
     <p>The following images show the default state of the application followed by the state of the application with the Detail
     Panel torn out:</p>
 
     <h3>Default State</h3>
-    <img width="100%" src="./trader-default.png" style="padding-bottom: 15px"/>
+    <img width="100%" src="./trader-default.png" style="padding-bottom: 15px" alt="Default State of Trader Dashboard" />
 
     <h3>Torn Out State</h3>
-    <img width="100%" src="./trader-tearout.png" style="padding-bottom: 15px"/>
+    <img width="100%" src="./trader-tearout.png" style="padding-bottom: 15px" alt="Detail Panel torn out of Trader Dashboard" />
 
     <p>A better illustration of the functionality is shown in the movie below - note how the top grid fills out the remaining space
     when the Detail Panel is torn out. Note too that the Detail Panel could become larger once torn out, perhaps showing
         a more detailed view once torn out:</p>
 
     <h3>Application in Action</h3>
-    <img src="openfin-tearout.gif" width="100%"/>
+    <img src="openfin-tearout.gif" width="100%" alt="Openfin Detail Panel torn out Application in Action" />
 
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

@@ -3,7 +3,7 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 
-import {ColDef, ColumnApi, GridApi} from 'ag-grid';
+import {ColDef, ColumnApi, GridApi} from 'ag-grid-community';
 import {AthleteService} from '../services/athlete.service';
 import {Athlete} from '../model/athlete.model';
 import {StaticDataService} from '../services/static-data.service';

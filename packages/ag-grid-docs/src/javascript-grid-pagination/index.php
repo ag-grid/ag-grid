@@ -16,6 +16,10 @@ include '../documentation-main/documentation_header.php';
         examples is the <code>pagination=true</code> property.
     </p>
 
+    <p>
+        Remember Pagination works with all frameworks eg Angular and React as well as plain JavaScript.
+    </p>
+
     <?= example('Client Paging', 'client-paging', 'generated', array("enterprise" => 1)) ?>
 
     <h2 id="clientPagination">Supported Row Models</h2>

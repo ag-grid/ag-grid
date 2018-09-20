@@ -1,5 +1,5 @@
-// ag-grid-enterprise v18.1.1
-import { NumberSequence, RowNodeBlock, RowNode, RowBounds } from "ag-grid";
+// ag-grid-enterprise v19.0.0
+import { NumberSequence, RowNodeBlock, RowNode, RowBounds } from "ag-grid-community";
 import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
 export declare class ServerSideBlock extends RowNodeBlock {
     private context;
@@ -21,19 +21,20 @@ export declare class ServerSideBlock extends RowNodeBlock {
     private groupField;
     private rowGroupColumn;
     private nodeIdPrefix;
+    private usingTreeData;
     constructor(pageNumber: number, parentRowNode: RowNode, params: ServerSideCacheParams, parentCache: ServerSideCache);
-    private createNodeIdPrefix();
+    protected init(): void;
+    private setBeans;
+    private createNodeIdPrefix;
     protected createIdForIndex(index: number): string;
     getNodeIdPrefix(): string;
     getRow(displayRowIndex: number): RowNode;
-    private setBeans(loggerFactory);
-    protected init(): void;
     protected setDataAndId(rowNode: RowNode, data: any, index: number): void;
-    private setChildCountIntoRowNode(rowNode);
-    private setGroupDataIntoRowNode(rowNode);
+    private setChildCountIntoRowNode;
+    private setGroupDataIntoRowNode;
     protected loadFromDatasource(): void;
     protected createBlankRowNode(rowIndex: number): RowNode;
-    private createGroupKeys(groupNode);
+    private createGroupKeys;
     isPixelInRange(pixel: number): boolean;
     getRowBounds(index: number, virtualRowCount: number): RowBounds;
     getRowIndexAtPixel(pixel: number, virtualRowCount: number): number;
@@ -41,8 +42,8 @@ export declare class ServerSideBlock extends RowNodeBlock {
     setDisplayIndexes(displayIndexSeq: NumberSequence, virtualRowCount: number, nextRowTop: {
         value: number;
     }): void;
-    private forEachRowNode(virtualRowCount, callback);
-    private createLoadParams();
+    private forEachRowNode;
+    private createLoadParams;
     isDisplayIndexInBlock(displayIndex: number): boolean;
     isBlockBefore(displayIndex: number): boolean;
     getDisplayIndexStart(): number;

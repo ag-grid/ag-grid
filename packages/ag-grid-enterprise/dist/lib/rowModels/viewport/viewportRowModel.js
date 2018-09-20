@@ -1,4 +1,4 @@
-// ag-grid-enterprise v18.1.1
+// ag-grid-enterprise v19.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,8 +10,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = require("ag-grid/main");
-var ViewportRowModel = (function () {
+var ag_grid_community_1 = require("ag-grid-community");
+var ViewportRowModel = /** @class */ (function () {
     function ViewportRowModel() {
         // rowRenderer tells us these
         this.firstRow = -1;
@@ -22,7 +22,7 @@ var ViewportRowModel = (function () {
     }
     ViewportRowModel.prototype.init = function () {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
-        this.eventService.addEventListener(main_1.Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
+        this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
         var viewportEnabled = this.gridOptionsWrapper.isRowModelViewport();
         if (viewportEnabled && this.gridOptionsWrapper.getViewportDatasource()) {
             this.setViewportDatasource(this.gridOptionsWrapper.getViewportDatasource());
@@ -74,7 +74,7 @@ var ViewportRowModel = (function () {
     ViewportRowModel.prototype.purgeRowsNotInViewport = function () {
         var _this = this;
         Object.keys(this.rowNodesByIndex).forEach(function (indexStr) {
-            var index = parseInt(indexStr);
+            var index = parseInt(indexStr, 10);
             if (index < _this.firstRow || index > _this.lastRow) {
                 delete _this.rowNodesByIndex[index];
             }
@@ -96,7 +96,7 @@ var ViewportRowModel = (function () {
         }
     };
     ViewportRowModel.prototype.getType = function () {
-        return main_1.Constants.ROW_MODEL_TYPE_VIEWPORT;
+        return ag_grid_community_1.Constants.ROW_MODEL_TYPE_VIEWPORT;
     };
     ViewportRowModel.prototype.getRow = function (rowIndex) {
         if (!this.rowNodesByIndex[rowIndex]) {
@@ -123,7 +123,7 @@ var ViewportRowModel = (function () {
         return this.rowCount;
     };
     ViewportRowModel.prototype.getRowIndexAtPixel = function (pixel) {
-        if (this.rowHeight !== 0) {
+        if (this.rowHeight !== 0) { // avoid divide by zero error
             return Math.floor(pixel / this.rowHeight);
         }
         else {
@@ -146,7 +146,7 @@ var ViewportRowModel = (function () {
         return this.rowCount > 0;
     };
     ViewportRowModel.prototype.getNodesInRangeForSelection = function (firstInRange, lastInRange) {
-        var firstIndex = main_1.Utils.missing(firstInRange) ? 0 : firstInRange.rowIndex;
+        var firstIndex = ag_grid_community_1.Utils.missing(firstInRange) ? 0 : firstInRange.rowIndex;
         var lastIndex = lastInRange.rowIndex;
         var firstNodeOutOfRange = firstIndex < this.firstRow || firstIndex > this.lastRow;
         var lastNodeOutOfRange = lastIndex < this.firstRow || lastIndex > this.lastRow;
@@ -165,7 +165,7 @@ var ViewportRowModel = (function () {
         var _this = this;
         var callbackCount = 0;
         Object.keys(this.rowNodesByIndex).forEach(function (indexStr) {
-            var index = parseInt(indexStr);
+            var index = parseInt(indexStr, 10);
             var rowNode = _this.rowNodesByIndex[index];
             callback(rowNode, callbackCount);
             callbackCount++;
@@ -173,8 +173,8 @@ var ViewportRowModel = (function () {
     };
     ViewportRowModel.prototype.setRowData = function (rowData) {
         var _this = this;
-        main_1.Utils.iterateObject(rowData, function (indexStr, dataItem) {
-            var index = parseInt(indexStr);
+        ag_grid_community_1.Utils.iterateObject(rowData, function (indexStr, dataItem) {
+            var index = parseInt(indexStr, 10);
             // we should never keep rows that we didn't specifically ask for, this
             // guarantees the contract we have with the server.
             if (index >= _this.firstRow && index <= _this.lastRow) {
@@ -182,7 +182,7 @@ var ViewportRowModel = (function () {
                 // the abnormal case is we requested a row even though the grid didn't need it
                 // as a result of the paging and buffer (ie the row is off screen), in which
                 // case we need to create a new node now
-                if (main_1.Utils.missing(rowNode)) {
+                if (ag_grid_community_1.Utils.missing(rowNode)) {
                     rowNode = _this.createBlankRowNode(index);
                     _this.rowNodesByIndex[index] = rowNode;
                 }
@@ -194,7 +194,7 @@ var ViewportRowModel = (function () {
         });
     };
     ViewportRowModel.prototype.createBlankRowNode = function (rowIndex) {
-        var rowNode = new main_1.RowNode();
+        var rowNode = new ag_grid_community_1.RowNode();
         this.context.wireBean(rowNode);
         rowNode.setRowHeight(this.rowHeight);
         rowNode.setRowTop(this.rowHeight * rowIndex);
@@ -205,7 +205,7 @@ var ViewportRowModel = (function () {
         if (rowCount !== this.rowCount) {
             this.rowCount = rowCount;
             var event_1 = {
-                type: main_1.Events.EVENT_MODEL_UPDATED,
+                type: ag_grid_community_1.Events.EVENT_MODEL_UPDATED,
                 api: this.gridApi,
                 columnApi: this.columnApi,
                 newData: false,
@@ -220,43 +220,43 @@ var ViewportRowModel = (function () {
         return false;
     };
     __decorate([
-        main_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", main_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], ViewportRowModel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_1.Autowired('eventService'),
-        __metadata("design:type", main_1.EventService)
+        ag_grid_community_1.Autowired('eventService'),
+        __metadata("design:type", ag_grid_community_1.EventService)
     ], ViewportRowModel.prototype, "eventService", void 0);
     __decorate([
-        main_1.Autowired('selectionController'),
-        __metadata("design:type", main_1.SelectionController)
+        ag_grid_community_1.Autowired('selectionController'),
+        __metadata("design:type", ag_grid_community_1.SelectionController)
     ], ViewportRowModel.prototype, "selectionController", void 0);
     __decorate([
-        main_1.Autowired('context'),
-        __metadata("design:type", main_1.Context)
+        ag_grid_community_1.Autowired('context'),
+        __metadata("design:type", ag_grid_community_1.Context)
     ], ViewportRowModel.prototype, "context", void 0);
     __decorate([
-        main_1.Autowired('gridApi'),
-        __metadata("design:type", main_1.GridApi)
+        ag_grid_community_1.Autowired('gridApi'),
+        __metadata("design:type", ag_grid_community_1.GridApi)
     ], ViewportRowModel.prototype, "gridApi", void 0);
     __decorate([
-        main_1.Autowired('columnApi'),
-        __metadata("design:type", main_1.ColumnApi)
+        ag_grid_community_1.Autowired('columnApi'),
+        __metadata("design:type", ag_grid_community_1.ColumnApi)
     ], ViewportRowModel.prototype, "columnApi", void 0);
     __decorate([
-        main_1.PostConstruct,
+        ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], ViewportRowModel.prototype, "init", null);
     __decorate([
-        main_1.PreDestroy,
+        ag_grid_community_1.PreDestroy,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], ViewportRowModel.prototype, "destroyDatasource", null);
     ViewportRowModel = __decorate([
-        main_1.Bean('rowModel')
+        ag_grid_community_1.Bean('rowModel')
     ], ViewportRowModel);
     return ViewportRowModel;
 }());

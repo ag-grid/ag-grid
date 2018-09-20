@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "VueJS Datagrid | Packed with features and performance";
-$pageDescription = "A feature rich data grid designed for Enterprise applications. Easily integrate with Vue to deliver filtering, grouping, aggregation, pivoting and much more. Try our Community version now or take a free 2 month trial of Enterprise Version.";
+$pageDescription = "A feature rich data grid designed for Enterprise applications. Easily integrate with Vue to deliver filtering, grouping, aggregation, pivoting and much more. Version 18 is out now. Try our Community version now or take a free 2 month trial of Enterprise Version.";
 $pageKeyboards = "VueJS Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
@@ -285,14 +285,6 @@ this.params.context.componentParent</snippet>
 <p>Note that although we've used <code>componentParent</code> as the property name here it can be anything - the main
     point is that you can use the <code>context</code> mechanism to share information between the components.</p>
 
-<p>The <span style="font-style: italic">"A Simple Example, using CellRenderers created from VueJS Components"</span>
-    above illustrates this in the Child/Parent column:</p>
-<ul class="content">
-    <li>
-        <a href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/dynamic-component-example/DynamicComponentExample.vue"
-           target="_blank" class="fa fa-external-link"> Parent & Child Component</a></li>
-</ul>
-
 <h3 id="router-link">Router Links in Grid Components</h3>
 <p>You can provide <code>Vue Router</code> links within the Grid, but you need to ensure that you provide a Router to
     the
@@ -343,7 +335,7 @@ components: {
 </p>
 
 <div>
-  <a href="https://github.com/ag-grid/ag-grid-angular"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
+    <a href="../vue-getting-started"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
 </div>
 <br>
 <div>

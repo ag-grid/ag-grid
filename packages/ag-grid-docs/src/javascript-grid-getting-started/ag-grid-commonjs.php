@@ -11,4 +11,4 @@
 var AgGrid = require('ag-grid');
 
 // ECMA 6 - using the system import method
-import {Grid} from 'ag-grid/main';</snippet>
+import {Grid} from 'ag-grid-community';</snippet>

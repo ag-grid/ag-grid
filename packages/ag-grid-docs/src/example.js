@@ -9,26 +9,26 @@ var gridDiv;
 var colNames = ["Station", "Railway", "Street", "Address", "Toy", "Soft Box", "Make and Model", "Longest Day", "Shortest Night"];
 
 var countries = [
-    { country: "Ireland", continent: "Europe", language: "English" },
-    { country: "Spain", continent: "Europe", language: "Spanish" },
-    { country: "United Kingdom", continent: "Europe", language: "English" },
-    { country: "France", continent: "Europe", language: "French" },
-    { country: "Germany", continent: "Europe", language: "German" },
-    { country: "Luxembourg", continent: "Europe", language: "French" },
-    { country: "Sweden", continent: "Europe", language: "Swedish" },
-    { country: "Norway", continent: "Europe", language: "Norwegian" },
-    { country: "Italy", continent: "Europe", language: "Italian" },
-    { country: "Greece", continent: "Europe", language: "Greek" },
-    { country: "Iceland", continent: "Europe", language: "Icelandic" },
-    { country: "Portugal", continent: "Europe", language: "Portuguese" },
-    { country: "Malta", continent: "Europe", language: "Maltese" },
-    { country: "Brazil", continent: "South America", language: "Portuguese" },
-    { country: "Argentina", continent: "South America", language: "Spanish" },
-    { country: "Colombia", continent: "South America", language: "Spanish" },
-    { country: "Peru", continent: "South America", language: "Spanish" },
-    { country: "Venezuela", continent: "South America", language: "Spanish" },
-    { country: "Uruguay", continent: "South America", language: "Spanish" },
-    { country: "Belgium", continent: "Europe", language: "French" }
+    {country: "Ireland", continent: "Europe", language: "English"},
+    {country: "Spain", continent: "Europe", language: "Spanish"},
+    {country: "United Kingdom", continent: "Europe", language: "English"},
+    {country: "France", continent: "Europe", language: "French"},
+    {country: "Germany", continent: "Europe", language: "German"},
+    {country: "Luxembourg", continent: "Europe", language: "French"},
+    {country: "Sweden", continent: "Europe", language: "Swedish"},
+    {country: "Norway", continent: "Europe", language: "Norwegian"},
+    {country: "Italy", continent: "Europe", language: "Italian"},
+    {country: "Greece", continent: "Europe", language: "Greek"},
+    {country: "Iceland", continent: "Europe", language: "Icelandic"},
+    {country: "Portugal", continent: "Europe", language: "Portuguese"},
+    {country: "Malta", continent: "Europe", language: "Maltese"},
+    {country: "Brazil", continent: "South America", language: "Portuguese"},
+    {country: "Argentina", continent: "South America", language: "Spanish"},
+    {country: "Colombia", continent: "South America", language: "Spanish"},
+    {country: "Peru", continent: "South America", language: "Spanish"},
+    {country: "Venezuela", continent: "South America", language: "Spanish"},
+    {country: "Uruguay", continent: "South America", language: "Spanish"},
+    {country: "Belgium", continent: "Europe", language: "French"}
 ];
 
 var games = ["Chess", "Cross and Circle", "Daldos", "Downfall", "DVONN", "Fanorona", "Game of the Generals", "Ghosts",
@@ -96,6 +96,13 @@ function suppressColumnMoveAnimation() {
 }
 
 var gridOptions = {
+    statusBar: {
+        statusPanels: [
+            { statusPanel: 'agTotalAndFilteredRowCountComponent', key: 'totalAndFilter', align: 'left' },
+            { statusPanel: 'agSelectedRowCountComponent', align: 'left' },
+            { statusPanel: 'agAggregationComponent', align: 'right' }
+        ]
+    },
     components: {
         personFilter: PersonFilter,
         personFloatingFilterComponent: PersonFloatingFilterComponent,
@@ -107,7 +114,7 @@ var gridOptions = {
         ratingRenderer: ratingRenderer,
         ratingFilterRenderer: ratingFilterRenderer
     },
-    defaultExportParams:{
+    defaultExportParams: {
         columnGroups: true
     },
     defaultColDef: {
@@ -115,6 +122,7 @@ var gridOptions = {
     },
     enableCellChangeFlash: true,
     rowDragManaged: true,
+    popupParent: document.body,
     // ensureDomOrder: true,
     // postProcessPopup: function(params) {
     //     console.log(params);
@@ -137,7 +145,7 @@ var gridOptions = {
     // suppressRowTransform: true,
     //minColWidth: 50,
     //maxColWidth: 300,
-//    rowBuffer: 10,
+    //    rowBuffer: 10,
     //columnDefs: [],
     //singleClickEdit: true,
     // suppressClickEdit: true,
@@ -165,7 +173,6 @@ var gridOptions = {
     enableColResize: true, //one of [true, false]
     enableSorting: true, //one of [true, false]
     enableFilter: true, //one of [true, false]
-    enableStatusBar: true,
     enableRangeSelection: true,
     rowSelection: "multiple", // one of ['single','multiple'], leave blank for no selection
     rowDeselection: true,
@@ -182,7 +189,8 @@ var gridOptions = {
     //suppressCellSelection: true,
     //suppressMultiSort: true,
     // scrollbarWidth: 20,
-    showToolPanel: true,//window.innerWidth > 1000,
+    sideBar: true,
+    // showToolPanel: true,//window.innerWidth > 1000,
     // toolPanelSuppressColumnFilter: true,
     // toolPanelSuppressColumnSelectAll: true,
     // toolPanelSuppressColumnExpandAll: true,
@@ -205,7 +213,9 @@ var gridOptions = {
     onRowSelected: rowSelected, //callback when row selected
     onSelectionChanged: selectionChanged, //callback when selection changed,
     aggFuncs: {
-        'zero': function () { return 0; }
+        'zero': function () {
+            return 0;
+        }
     },
     getBusinessKeyForNode: function (node) {
         if (node.data) {
@@ -214,7 +224,7 @@ var gridOptions = {
             return '';
         }
     },
-    defaultGroupSortComparator: function(nodeA, nodeB) {
+    defaultGroupSortComparator: function (nodeA, nodeB) {
         if (nodeA.key < nodeB.key) {
             return -1;
         } else if (nodeA.key > nodeB.key) {
@@ -279,10 +289,10 @@ var gridOptions = {
         // console.log('Callback onCellFocused: ' + params.rowIndex + " - " + params.colIndex);
     },
     onPasteStart: function (params) {
-        console.log('Callback onPasteStart:' ,params);
+        console.log('Callback onPasteStart:', params);
     },
     onPasteEnd: function (params) {
-        console.log('Callback onPasteEnd:' ,params);
+        console.log('Callback onPasteEnd:', params);
     },
     onGridReady: function (event) {
         console.log('Callback onGridReady: api = ' + event.api);
@@ -487,7 +497,7 @@ var defaultCols = [
                 enableRowGroup: true,
                 enablePivot: true,
                 enableValue: true,
-                cellRenderer: 'booleanCellRenderer', cellStyle: { "text-align": "center" }, comparator: booleanComparator,
+                cellRenderer: 'booleanCellRenderer', cellStyle: {"text-align": "center"}, comparator: booleanComparator,
                 floatCell: true,
                 filterParams: {
                     cellRenderer: 'booleanFilterCellRenderer',
@@ -518,13 +528,17 @@ var defaultCols = [
             },
             {
                 headerName: "Extra Info 1", columnGroupShow: 'open', width: 150, editable: false,
-                suppressSorting: true, suppressMenu: true, cellStyle: { "text-align": "right" },
-                cellRenderer: function () { return 'Abra...'; }
+                suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "right"},
+                cellRenderer: function () {
+                    return 'Abra...';
+                }
             },
             {
                 headerName: "Extra Info 2", columnGroupShow: 'open', width: 150, editable: false,
-                suppressSorting: true, suppressMenu: true, cellStyle: { "text-align": "left" },
-                cellRenderer: function () { return '...cadabra!'; }
+                suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "left"},
+                cellRenderer: function () {
+                    return '...cadabra!';
+                }
             }
         ]
     },
@@ -534,7 +548,7 @@ var defaultCols = [
         enableRowGroup: true,
         enablePivot: true,
         enableValue: true,
-        filterParams: { cellRenderer: 'ratingFilterRenderer' }
+        filterParams: {cellRenderer: 'ratingFilterRenderer'}
     },
     {
         headerName: "Total Winnings", field: "totalWinnings", filter: 'agNumberColumnFilter', type: 'numericColumn',
@@ -620,7 +634,7 @@ function createCols() {
     // there are 22 cols by default
     for (var col = 22; col < colCount; col++) {
         var colName = colNames[col % colNames.length];
-        var colDef = { headerName: colName, field: "col" + col, width: 200, editable: true };
+        var colDef = {headerName: colName, field: "col" + col, width: 200, editable: true};
         columns.push(colDef);
     }
 
@@ -723,6 +737,7 @@ var seed = 123456789;
 var m = Math.pow(2, 32);
 var a = 1103515245;
 var c = 12345;
+
 function pseudoRandom() {
     seed = (a * seed + c) % m;
     return seed / m;
@@ -752,6 +767,7 @@ function onThemeChanged(newTheme) {
 }
 
 var filterCount = 0;
+
 function onFilterChanged(newFilter) {
     filterCount++;
     var filterCountCopy = filterCount;
@@ -873,7 +889,8 @@ PersonFilter.prototype.destroy = function () {
     this.eFilterText.removeEventListener("input", this.onFilterChanged);
 };
 
-function PersonFloatingFilterComponent() { }
+function PersonFloatingFilterComponent() {
+}
 
 PersonFloatingFilterComponent.prototype.init = function (params) {
     this.params = params;
@@ -978,11 +995,12 @@ WinningsFilter.prototype.getModel = function () {
     }
 };
 // lazy, the example doesn't use setModel()
-WinningsFilter.prototype.setModel = function () { };
+WinningsFilter.prototype.setModel = function () {
+};
 
 function currencyCssFunc(params) {
     if (params.value !== null && params.value !== undefined && params.value < 0) {
-        return { "color": "red", "font-weight": "bold" };
+        return {"color": "red", "font-weight": "bold"};
     } else {
         return {};
     }
@@ -1089,7 +1107,8 @@ function booleanCleaner(value) {
     }
 }
 
-function CountryFloatingFilterComponent() { }
+function CountryFloatingFilterComponent() {
+}
 
 CountryFloatingFilterComponent.prototype.init = function (params) {
     this.params = params;

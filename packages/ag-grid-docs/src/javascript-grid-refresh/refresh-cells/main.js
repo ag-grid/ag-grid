@@ -32,11 +32,10 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowData: [],
     pinnedTopRowData: [],
-    pinnedBottomRowData: [ ],
+    pinnedBottomRowData: [],
     enableCellChangeFlash: true,
     refreshCells: true,
-    onGridReady: function(params) {
-        params.api.sizeColumnsToFit();
+    onGridReady: function (params) {
         // placing in 13 rows, so there are exactly enough rows to fill the grid, makes
         // the row animation look nice when you see all the rows
         data = createData(14);
@@ -45,6 +44,9 @@ var gridOptions = {
         params.api.setRowData(data);
         params.api.setPinnedTopRowData(topRowData);
         params.api.setPinnedBottomRowData(bottomRowData);
+    },
+    onFirstDataRendered(params) {
+        params.api.sizeColumnsToFit();
     }
 };
 
@@ -64,7 +66,7 @@ function scrambleAndRefreshLeftToRight() {
     scramble();
 
     var api = gridOptions.api;
-    ['a', 'b', 'c', 'd', 'e', 'f'].forEach(function(col, index) {
+    ['a', 'b', 'c', 'd', 'e', 'f'].forEach(function (col, index) {
         var millis = index * 100;
         var params = {
             force: isForceRefreshSelected(),
@@ -109,7 +111,7 @@ function scrambleAndRefreshTopToBottom() {
 }
 
 function callRefreshAfterMillis(params, millis, gridApi) {
-    setTimeout(function() {
+    setTimeout(function () {
         gridApi.refreshCells(params);
     }, millis);
 }
@@ -121,7 +123,7 @@ function scramble() {
 }
 
 function scrambleItem(item) {
-    ['a', 'b', 'c', 'd', 'e', 'f'].forEach(function(colId) {
+    ['a', 'b', 'c', 'd', 'e', 'f'].forEach(function (colId) {
         // skip 50% of the cells so updates are random
         if (Math.random() > 0.5) {
             return;
@@ -131,7 +133,7 @@ function scrambleItem(item) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 });

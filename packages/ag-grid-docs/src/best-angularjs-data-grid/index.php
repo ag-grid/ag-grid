@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "AngularJS Datagrid | Packed with features and performance.";
-$pageDescription = "ag-Grid is a feature rich datagrid designed for Angular. Version 17 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that you expect. Our Community version is free and open source or take a 2 month trial of ag-Grid Enterprise.";
+$pageDescription = "ag-Grid is a feature rich datagrid designed for AngularJS. Version 18 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that you expect. Our Community version is free and open source or take a 2 month trial of ag-Grid Enterprise.";
 $pageKeyboards = "Angular Grid";
 $pageGroup = "basics";
 include '../getting-started/header.php';
@@ -32,7 +32,7 @@ include '../getting-started/header.php';
 
 <table class="content">
     <tr>
-        <td style="padding: 10px;"><img src="../images/bower.png"/></td>
+        <td style="padding: 10px;"><img src="../images/bower.png" alt="Bower Install ag-Grid" /></td>
         <td>
             <b>Bower</b><br/>
             <code>bower install ag-grid-enterprise</code>
@@ -40,7 +40,7 @@ include '../getting-started/header.php';
 
         <td style="width: 20px;"/>
 
-        <td style="padding: 10px;"><img src="../images/npm.png"/></td>
+        <td style="padding: 10px;"><img src="../images/npm.png" alt="NPM install ag-Grid" /></td>
         <td>
             <b>NPM</b><br/>
             <code>npm install ag-grid-enterprise</code>
@@ -48,7 +48,7 @@ include '../getting-started/header.php';
 
         <td style="width: 20px;"/>
 
-        <td style="padding: 10px;"><img src="../images/github.png"/></td>
+        <td style="padding: 10px;"><img src="../images/github.png" alt="Github install ag-Grid" /></td>
         <td>
             <b>Github</b><br/>
             Download from <a href="https://github.com/ag-grid/ag-grid-enterprise">Github</a>
@@ -112,9 +112,9 @@ var AgGrid = require('ag-grid');
 require('ag-grid-enterprise');
 
 // ECMA 6 - using the system import method
-import {Grid} from 'ag-grid/main';
+import {Grid} from 'ag-grid-community';
 // only include this line if you want to use ag-grid-enterprise
-import 'ag-grid-enterprise/main';</snippet>
+import 'ag-grid-enterprise';</snippet>
 
 
 <h3 id="creating-the-angularjs-module">Creating the AngularJS 1.x Module</h3>
@@ -336,7 +336,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 </p>
 
 <div>
-  <a href="https://github.com/ag-grid/ag-grid-angular"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
+    <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
 </div>
 <br>
 <div>

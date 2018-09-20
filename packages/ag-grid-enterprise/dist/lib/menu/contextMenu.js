@@ -1,4 +1,4 @@
-// ag-grid-enterprise v18.1.1
+// ag-grid-enterprise v19.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -20,12 +20,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var ag_grid_1 = require("ag-grid");
+var ag_grid_community_1 = require("ag-grid-community");
 var clipboardService_1 = require("../clipboardService");
 var menuItemComponent_1 = require("./menuItemComponent");
 var menuList_1 = require("./menuList");
 var menuItemMapper_1 = require("./menuItemMapper");
-var ContextMenuFactory = (function () {
+var ContextMenuFactory = /** @class */ (function () {
     function ContextMenuFactory() {
     }
     ContextMenuFactory.prototype.init = function () {
@@ -37,17 +37,16 @@ var ContextMenuFactory = (function () {
     };
     ContextMenuFactory.prototype.getMenuItems = function (node, column, value) {
         var defaultMenuOptions;
-        if (ag_grid_1.Utils.exists(node)) {
+        if (ag_grid_community_1.Utils.exists(node)) {
             defaultMenuOptions = [];
             if (column) {
                 // only makes sense if column exists, could have originated from a row
                 defaultMenuOptions = ['copy', 'copyWithHeaders', 'paste', 'separator'];
             }
-            defaultMenuOptions.push('toolPanel');
             // if user clicks a cell
             var suppressExcel = this.gridOptionsWrapper.isSuppressExcelExport();
             var suppressCsv = this.gridOptionsWrapper.isSuppressCsvExport();
-            var onIPad = ag_grid_1._.isUserAgentIPad();
+            var onIPad = ag_grid_community_1._.isUserAgentIPad();
             var anyExport = !onIPad && (!suppressExcel || !suppressCsv);
             if (anyExport) {
                 defaultMenuOptions.push('export');
@@ -55,7 +54,7 @@ var ContextMenuFactory = (function () {
         }
         else {
             // if user clicks outside of a cell (eg below the rows, or not rows present)
-            defaultMenuOptions = ['toolPanel'];
+            // nothing to show, perhaps tool panels???
         }
         if (this.gridOptionsWrapper.getContextMenuItemsFunc()) {
             var userFunc = this.gridOptionsWrapper.getContextMenuItemsFunc();
@@ -78,7 +77,7 @@ var ContextMenuFactory = (function () {
     ContextMenuFactory.prototype.showMenu = function (node, column, value, mouseEvent) {
         var _this = this;
         var menuItems = this.getMenuItems(node, column, value);
-        if (ag_grid_1.Utils.missingOrEmpty(menuItems)) {
+        if (ag_grid_community_1.Utils.missingOrEmpty(menuItems)) {
             return;
         }
         var menu = new ContextMenu(menuItems);
@@ -98,41 +97,41 @@ var ContextMenuFactory = (function () {
             hidePopup: hidePopup
         });
         this.activeMenu = menu;
-        menu.addEventListener(ag_grid_1.BeanStub.EVENT_DESTROYED, function () {
+        menu.addEventListener(ag_grid_community_1.BeanStub.EVENT_DESTROYED, function () {
             if (_this.activeMenu === menu) {
                 _this.activeMenu = null;
             }
         });
     };
     __decorate([
-        ag_grid_1.Autowired('context'),
-        __metadata("design:type", ag_grid_1.Context)
+        ag_grid_community_1.Autowired('context'),
+        __metadata("design:type", ag_grid_community_1.Context)
     ], ContextMenuFactory.prototype, "context", void 0);
     __decorate([
-        ag_grid_1.Autowired('popupService'),
-        __metadata("design:type", ag_grid_1.PopupService)
+        ag_grid_community_1.Autowired('popupService'),
+        __metadata("design:type", ag_grid_community_1.PopupService)
     ], ContextMenuFactory.prototype, "popupService", void 0);
     __decorate([
-        ag_grid_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", ag_grid_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], ContextMenuFactory.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        ag_grid_1.Autowired('rowModel'),
+        ag_grid_community_1.Autowired('rowModel'),
         __metadata("design:type", Object)
     ], ContextMenuFactory.prototype, "rowModel", void 0);
     __decorate([
-        ag_grid_1.PostConstruct,
+        ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], ContextMenuFactory.prototype, "init", null);
     ContextMenuFactory = __decorate([
-        ag_grid_1.Bean('contextMenuFactory')
+        ag_grid_community_1.Bean('contextMenuFactory')
     ], ContextMenuFactory);
     return ContextMenuFactory;
 }());
 exports.ContextMenuFactory = ContextMenuFactory;
-var ContextMenu = (function (_super) {
+var ContextMenu = /** @class */ (function (_super) {
     __extends(ContextMenu, _super);
     function ContextMenu(menuItems) {
         var _this = _super.call(this, '<div class="ag-menu"></div>') || this;
@@ -153,34 +152,34 @@ var ContextMenu = (function (_super) {
         this.addDestroyableEventListener(this.eventService, 'bodyScroll', this.destroy.bind(this));
     };
     __decorate([
-        ag_grid_1.Autowired('context'),
-        __metadata("design:type", ag_grid_1.Context)
+        ag_grid_community_1.Autowired('context'),
+        __metadata("design:type", ag_grid_community_1.Context)
     ], ContextMenu.prototype, "context", void 0);
     __decorate([
-        ag_grid_1.Autowired('clipboardService'),
+        ag_grid_community_1.Autowired('clipboardService'),
         __metadata("design:type", clipboardService_1.ClipboardService)
     ], ContextMenu.prototype, "clipboardService", void 0);
     __decorate([
-        ag_grid_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", ag_grid_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], ContextMenu.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        ag_grid_1.Autowired('gridApi'),
-        __metadata("design:type", ag_grid_1.GridApi)
+        ag_grid_community_1.Autowired('gridApi'),
+        __metadata("design:type", ag_grid_community_1.GridApi)
     ], ContextMenu.prototype, "gridApi", void 0);
     __decorate([
-        ag_grid_1.Autowired('eventService'),
-        __metadata("design:type", ag_grid_1.EventService)
+        ag_grid_community_1.Autowired('eventService'),
+        __metadata("design:type", ag_grid_community_1.EventService)
     ], ContextMenu.prototype, "eventService", void 0);
     __decorate([
-        ag_grid_1.Autowired('menuItemMapper'),
+        ag_grid_community_1.Autowired('menuItemMapper'),
         __metadata("design:type", menuItemMapper_1.MenuItemMapper)
     ], ContextMenu.prototype, "menuItemMapper", void 0);
     __decorate([
-        ag_grid_1.PostConstruct,
+        ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], ContextMenu.prototype, "addMenuItems", null);
     return ContextMenu;
-}(ag_grid_1.Component));
+}(ag_grid_community_1.Component));

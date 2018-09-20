@@ -1,6 +1,6 @@
 import {AfterViewInit, Component} from "@angular/core";
 
-import {IFloatingFilter, IFloatingFilterParams, SerializedNumberFilter} from "ag-grid";
+import {IFloatingFilter, IFloatingFilterParams, SerializedNumberFilter} from "ag-grid-community";
 import {AgFrameworkComponent} from "ag-grid-angular";
 
 export interface SliderFloatingFilterChange {
@@ -14,13 +14,13 @@ export interface SliderFloatingFilterParams extends IFloatingFilterParams<Serial
 
 @Component({
     template: `
-        <input type="range" 
+        <input type="range"
                min="0" [max]="maxValue"
                data-show-value="true" data-popup-enabled="true"
                [(ngModel)]="currentValue"
                (ngModelChange)="valueChanged()"/>`
 })
-export class SliderFloatingFilter implements IFloatingFilter<SerializedNumberFilter, SliderFloatingFilterChange, SliderFloatingFilterParams>, AgFrameworkComponent<SliderFloatingFilterParams>, AfterViewInit {
+export class SliderFloatingFilter implements IFloatingFilter<SerializedNumberFilter, SliderFloatingFilterChange, SliderFloatingFilterParams>, AgFrameworkComponent<SliderFloatingFilterParams> {
     private params: SliderFloatingFilterParams;
     public maxValue: number;
     public currentValue: number;
@@ -33,10 +33,6 @@ export class SliderFloatingFilter implements IFloatingFilter<SerializedNumberFil
 
     valueChanged() {
         this.params.onFloatingFilterChanged({model: this.buildModel()});
-    }
-
-    ngAfterViewInit(): void {
-        this.valueChanged();
     }
 
     onParentModelChanged(parentModel: SerializedNumberFilter): void {

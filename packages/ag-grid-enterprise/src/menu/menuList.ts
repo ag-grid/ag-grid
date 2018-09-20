@@ -1,4 +1,4 @@
-import {Utils as _, PopupService, MenuItemDef, Component, Autowired, Context} from "ag-grid";
+import {Utils as _, PopupService, MenuItemDef, Component, Autowired, Context} from "ag-grid-community";
 import {MenuItemComponent, MenuItemSelectedEvent} from "./menuItemComponent";
 
 export class MenuList extends Component {
@@ -8,16 +8,15 @@ export class MenuList extends Component {
 
     // private instance = Math.random();
 
-    private static TEMPLATE =
-        '<div class="ag-menu-list"></div>';
+    private static TEMPLATE = '<div class="ag-menu-list"></div>';
 
     private static SEPARATOR_TEMPLATE =
-        '<div class="ag-menu-separator">' +
-        '  <span class="ag-menu-separator-cell"></span>' +
-        '  <span class="ag-menu-separator-cell"></span>' +
-        '  <span class="ag-menu-separator-cell"></span>' +
-        '  <span class="ag-menu-separator-cell"></span>' +
-        '</div>';
+        `<div class="ag-menu-separator">
+            <span class="ag-menu-separator-cell"></span>
+            <span class="ag-menu-separator-cell"></span>
+            <span class="ag-menu-separator-cell"></span>
+            <span class="ag-menu-separator-cell"></span>
+        </div>`;
 
     private activeMenuItemParams: MenuItemDef;
     private activeMenuItem: MenuItemComponent;
@@ -42,7 +41,7 @@ export class MenuList extends Component {
             if (menuItemOrString === 'separator') {
                 this.addSeparator();
             } else if (typeof menuItemOrString === 'string') {
-                console.log(`ag-Grid: unrecognised menu item ` + menuItemOrString);
+                console.warn(`ag-Grid: unrecognised menu item ` + menuItemOrString);
             } else {
                 let menuItem = <MenuItemDef> menuItemOrString;
                 this.addItem(menuItem);
@@ -61,7 +60,7 @@ export class MenuList extends Component {
             if (menuItemDef.subMenu) {
                 this.showChildMenu(menuItemDef, cMenuItem, event.mouseEvent);
             } else {
-                this.dispatchEvent(event)
+                this.dispatchEvent(event);
             }
         });
 
@@ -137,7 +136,7 @@ export class MenuList extends Component {
         this.subMenuParentDef = menuItemDef;
 
         let selectedListener = (event: MenuItemSelectedEvent)=> {
-            this.dispatchEvent(event)
+            this.dispatchEvent(event);
         };
         childMenu.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, selectedListener);
 

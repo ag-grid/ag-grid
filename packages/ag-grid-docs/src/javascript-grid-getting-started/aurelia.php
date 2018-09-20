@@ -94,7 +94,7 @@
         inside your application:</p>
 
     <snippet>
-        import {GridOptions, GridApi, ColumnApi} from "ag-grid";
+        import {GridOptions, GridApi, ColumnApi} from "ag-grid-community";
     </snippet>
 
     <p>

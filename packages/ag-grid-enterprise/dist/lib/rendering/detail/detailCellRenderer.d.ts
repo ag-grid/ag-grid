@@ -1,5 +1,5 @@
-// ag-grid-enterprise v18.1.1
-import { RowNode, Component, GridOptions, ICellRendererParams } from "ag-grid/main";
+// ag-grid-enterprise v19.0.0
+import { RowNode, Component, GridOptions, ICellRendererParams } from "ag-grid-community";
 export declare class DetailCellRenderer extends Component {
     private static TEMPLATE;
     private eDetailGrid;
@@ -9,12 +9,12 @@ export declare class DetailCellRenderer extends Component {
     private masterGridApi;
     private rowId;
     init(params: IDetailCellRendererParams): void;
-    private addThemeToDetailGrid();
-    private registerDetailWithMaster(rowNode);
-    private selectAndSetTemplate(params);
-    private createDetailsGrid(params);
-    private loadRowData(params);
-    private setRowData(rowData);
+    private addThemeToDetailGrid;
+    private registerDetailWithMaster;
+    private selectAndSetTemplate;
+    private createDetailsGrid;
+    private loadRowData;
+    private setRowData;
 }
 export interface IDetailCellRendererParams extends ICellRendererParams {
     detailGridOptions: GridOptions;

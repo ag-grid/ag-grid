@@ -217,7 +217,7 @@ exports.Grid = require('./dist/lib/grid').Grid;</snippet>
 var Grid = require('ag-grid').Grid; // if no file specified, it's picked up from package.json entry
 
 // or for ECMA 6 import
-import {Grid} from 'ag-grid/main';</snippet>
+import {Grid} from 'ag-grid-community';</snippet>
         </p>
 
         <p>You can have as many 'main' files as you like, giving you the option of splitting the modules out.

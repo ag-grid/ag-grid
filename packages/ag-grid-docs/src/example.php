@@ -24,7 +24,6 @@ meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance
  ?>
 </header>
 
-
 <div id="example-toolbar">
     <div>
         <div>

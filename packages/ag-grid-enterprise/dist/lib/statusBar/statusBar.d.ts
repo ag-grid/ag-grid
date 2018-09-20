@@ -1,28 +1,18 @@
-// ag-grid-enterprise v18.1.1
-import { Component, GridPanel } from 'ag-grid/main';
+// ag-grid-enterprise v19.0.0
+import { Component } from 'ag-grid-community';
 export declare class StatusBar extends Component {
     private static TEMPLATE;
-    private eventService;
-    private rangeController;
-    private valueService;
-    private cellNavigationService;
-    private pinnedRowModel;
-    private rowModel;
     private context;
     private gridOptionsWrapper;
-    private gridPanel;
-    private statusItemSum;
-    private statusItemCount;
-    private statusItemMin;
-    private statusItemMax;
-    private statusItemAvg;
-    private aggregationsComponent;
-    private infoLabel;
+    private gridOptions;
+    private componentProvider;
+    private componentResolver;
+    private gridApi;
+    private statusBarService;
+    private eStatusBarLeft;
+    private eStatusBarCenter;
+    private eStatusBarRight;
     constructor();
-    registerGridPanel(gridPanel: GridPanel): void;
-    private init();
-    private createStatusItems();
-    private forEachStatusItem(callback);
-    private onRangeSelectionChanged();
-    private getRowNode(gridRow);
+    private postConstruct;
+    private createAndRenderComponents;
 }

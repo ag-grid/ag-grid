@@ -1,5 +1,5 @@
 import {autoinject, child, children, customElement, inlineView} from "aurelia-framework";
-import {ColDef} from "ag-grid/main";
+import {ColDef} from "ag-grid-community";
 import {
     AgCellTemplate,
     AgEditorTemplate,
@@ -14,19 +14,19 @@ import {generateBindables} from "./agUtils";
     "tooltipField", "headerTooltip", "valueGetter", "keyCreator",
     "width", "minWidth", "maxWidth", "cellClass", "cellStyle", "cellRenderer", "cellRendererFramework",
     "cellRendererParams", "cellEditor", "cellEditorFramework", "cellEditorParams", "floatingCellRenderer",
-    "floatingCellRendererFramework", "floatingCellRendererParams", "cellFormatter(", "floatingCellFormatter",
+    "floatingCellRendererFramework", "floatingCellRendererParams", "cellFormatter", "floatingCellFormatter",
     "getQuickFilterText", "aggFunc", "rowGroupIndex", "pivotIndex", "comparator", "checkboxSelection", "suppressMenu",
     "suppressSorting", "suppressMovable", "suppressFilter", "unSortIcon", "suppressSizeToFit", "suppressResize",
-    "suppressAutoSize", "enableRowGroup", "enablePivot", "enableValue", "editable", "suppressNavigable", "newValueHandler",
-    "volatile", "filter", "filterFramework", "filterParams", "cellClassRules", "onCellValueChanged", "onCellClicked",
-    "onCellDoubleClicked", "onCellContextMenu", "icons", "enableCellChangeFlash", "headerName", "columnGroupShow",
-    "headerClass", "children", "groupId", "openByDefault", "marryChildren", "headerCheckboxSelection",
-    "headerCheckboxSelectionFilteredOnly", "type", "tooltipField", "valueSetter", "pinnedRowCellRenderer",
-    "pinnedRowCellRendererFramework", "pinnedRowCellRendererParams", "valueFormatter", "pinnedRowValueFormatter",
-    "valueParser", "allowedAggFuncs", "rowGroup", "showRowGroup", "pivot", "equals", "pivotComparator", "menuTabs",
-    "colSpan", "suppressPaste", "template", "templateUrl", "pivotValueColumn", "pivotTotalColumnIds", "headerComponent",
+    "suppressAutoSize", "suppressToolPanel", "suppressKeyboardEvent", "enableRowGroup", "enablePivot", "enableValue",
+    "editable", "suppressNavigable", "newValueHandler", "volatile", "filter", "filterFramework", "filterParams",
+    "cellClassRules", "onCellValueChanged", "onCellClicked", "onCellDoubleClicked", "onCellContextMenu", "icons",
+    "enableCellChangeFlash", "headerName", "columnGroupShow", "headerClass", "toolPanelClass", "children", "groupId", "openByDefault",
+    "marryChildren", "headerCheckboxSelection", "headerCheckboxSelectionFilteredOnly", "type", "tooltipField", "valueSetter",
+    "pinnedRowCellRenderer", "pinnedRowCellRendererFramework", "pinnedRowCellRendererParams", "valueFormatter",
+    "pinnedRowValueFormatter", "valueParser", "allowedAggFuncs", "rowGroup", "showRowGroup", "pivot", "equals", "pivotComparator",
+    "menuTabs", "colSpan", "suppressPaste", "template", "templateUrl", "pivotValueColumn", "pivotTotalColumnIds", "headerComponent",
     "headerComponentFramework", "headerComponentParams", "floatingFilterComponent", "floatingFilterComponentParams",
-    "floatingFilterComponentFramework"])
+    "floatingFilterComponentFramework", "rowDrag", "lockPinned"])
 // <slot> is required for @children to work.  https://github.com/aurelia/templating/issues/451#issuecomment-254206622
 @inlineView(`<template><slot></slot></template>`)
 @autoinject()

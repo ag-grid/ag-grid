@@ -1,5 +1,5 @@
 import {autoinject, Container, TaskQueue, transient, View, ViewCompiler, ViewResources} from "aurelia-framework";
-import {BaseComponentWrapper, Bean, FrameworkComponentWrapper, WrapableInterface} from 'ag-grid';
+import {BaseComponentWrapper, Bean, FrameworkComponentWrapper, WrapableInterface} from 'ag-grid-community';
 
 @autoinject()
 @transient()
@@ -25,7 +25,7 @@ export class AureliaFrameworkComponentWrapper extends BaseComponentWrapper<Wrapa
             }
 
             hasMethod(name: string): boolean {
-                return wrapper.getFrameworkComponentInstance()[name] != null;
+                return wrapper.getFrameworkComponentInstance() && wrapper.getFrameworkComponentInstance()[name] != null;
             }
 
             callMethod(name: string, args: IArguments): void {

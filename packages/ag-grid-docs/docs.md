@@ -12,7 +12,6 @@
  - [ ] ag-grid-angular-angularcli/
  - [ ] ag-grid-angular-webpack/
  - [ ] ag-grid-angular-webpack-2/
- - [ ] ag-grid-angular-ngtools-webpack/
  - [ ] ag-grid-angular-systemjs/
  - [ ] best-polymer-data-grid/
  - [ ] polymer-getting-started/
@@ -88,7 +87,7 @@
  - [ ] javascript-grid-clipboard/
  - [ ] javascript-grid-column-menu/
  - [ ] javascript-grid-context-menu/
- - [ ] javascript-grid-status-bar/
+ - [ ] javascript-grid-status-panel/
  - [ ] javascript-grid-set-license/
  - [ ] javascript-grid-context/
  - [ ] javascript-grid-row-models/

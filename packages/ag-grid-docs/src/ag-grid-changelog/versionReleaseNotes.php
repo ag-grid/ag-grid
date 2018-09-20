@@ -1,3 +1,52 @@
+<div class="note" style="display: none" fixVersionNote id="fix_version_19_0_0">
+    <p>Release 19.0.0 Overview</p>
+
+    <p>Breaking Changes:</p>
+
+    <ul>
+        <li>
+            ag-Grid receives a major overhaul of the Tool Panels in version 19.0.0. The old property 'showToolPanel' is
+            no longer used and the Tool Panel is also not included by default. For more details see:
+            <a href="https://www.ag-grid.com/javascript-grid-side-bar/#configuring-the-side-bar">Configuring the Side Bar</a>.
+        </li>
+    </ul>
+
+    <p>Feature Highlights:</p>
+
+    <ul>
+        <li>
+            AG-1201 The Status Bar is now customizable with
+            <a href="https://www.ag-grid.com/javascript-grid-status-bar-component/">Custom Status Panel Components</a>.
+        </li>
+
+        <li>
+            AG-1915 The Side Bar is now customizable with
+            <a href="https://www.ag-grid.com/javascript-grid-tool-panel-component/">Custom Tool Panel Components</a>.
+        </li>
+
+        <li>
+            AG-1914 A new <a href="https://www.ag-grid.com/javascript-grid-tool-panel-filters/">Filters Tool Panel</a>
+            has been added to the Side Bar.
+        </li>
+
+        <li>
+            AG-1881 Lazy load hierarchical data with
+            <a href="http://localhost:8080/javascript-grid-server-side-model-tree-data/">Server-side Tree Data</a>.
+        </li>
+
+        <li>
+            AG-1961 Debounce block loading with Infinite and Server-side Row Models using the new grid options
+            property: 'blockLoadDebounceMillis'.
+        </li>
+
+        <li>
+            AG-1363 columnApi.resetColumnState() can now optionally raise column based events.
+        </li>
+
+    </ul>
+
+</div>
+
 <div class="note" style="display: none" fixVersionNote id="fix_version_18_0_0">
     <p>Release 18.0.0 Overview</p>
 

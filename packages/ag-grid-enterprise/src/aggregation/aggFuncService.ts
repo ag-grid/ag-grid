@@ -1,6 +1,6 @@
 import {
     IAggFuncService, IAggFunc, Bean, Utils, PostConstruct, Autowired, GridOptionsWrapper, Column, _
-} from "ag-grid/main";
+} from "ag-grid-community";
 
 @Bean('aggFuncService')
 export class AggFuncService implements IAggFuncService {

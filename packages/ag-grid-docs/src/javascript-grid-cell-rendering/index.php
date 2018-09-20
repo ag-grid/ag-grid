@@ -264,7 +264,7 @@ colDef = {
                 The group cellRenderer will take care of all the expand / collapse, selection etc, but then allow
                 you to customise the display of the value. In this example we add a border when the value is a group,
                 and we add the Ireland
-                <img src="https://flags.fmcdn.net/data/flags/mini/ie.png" style="width: 20px; position: relative; top: -2px;"/>
+                <img src="https://flags.fmcdn.net/data/flags/mini/ie.png" style="width: 20px; position: relative; top: -2px;" alt="Ireland" />
                 flag (because Niall Crosby is from Ireland) to the leaf levels.</li>
             </ul>
         </li>

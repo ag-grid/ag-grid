@@ -148,9 +148,8 @@ export class VueComponentFactory {
 
     static createAndMountComponent(params, componentType) {
         let details = {
-            // parent: that.parent,
             data: {
-                params: params
+                params: Object.freeze(params)
             }
         };
 

@@ -13,7 +13,7 @@ export default class extends Component {
         this.state = this.createState();
     }
 
-    createState() {
+    createState = () => {
         const topOptions = {alignedGrids: []};
         const bottomOptions = {alignedGrids: []};
 
@@ -55,39 +55,45 @@ export default class extends Component {
             ],
             rowData: this.rowData
         };
-    }
+    };
 
-    onGridReady(params) {
+    onGridReady = (params) => {
         this.topGrid = params;
         var httpRequest = new XMLHttpRequest();
-        httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json');
+        httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/olympicWinnersSmall.json');
         httpRequest.send();
-        httpRequest.onreadystatechange = function() {
+        httpRequest.onreadystatechange = () => {
             if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                var httpResult = JSON.parse(httpRequest.responseText);
-                this.rowData = httpResult;
-                this.setState(this.createState.bind(this));
+                this.rowData = JSON.parse(httpRequest.responseText);
+                this.setState(this.createState());
                 setTimeout(() => {
-                    this.topGrid.api.sizeColumnsToFit();
                     // mix up some columns
                     this.topGrid.columnApi.moveColumnByIndex(11, 4);
                     this.topGrid.columnApi.moveColumnByIndex(11, 4);
                 }, 100);
             }
-        }.bind(this);
-    }
+        }
+    };
+
+    onFirstDataRendered = (params) => {
+        this.topGrid.api.sizeColumnsToFit();
+    };
 
     render() {
         return (
             <div>
                 <div style={{width: '100%', height: '45%'}} className="ag-theme-balham">
-                    <AgGridReact rowData={this.state.rowData} gridOptions={this.state.topOptions} columnDefs={this.state.columnDefs} onGridReady={this.onGridReady.bind(this)} />
+                    <AgGridReact rowData={this.state.rowData} gridOptions={this.state.topOptions}
+                                 columnDefs={this.state.columnDefs}
+                                 onGridReady={this.onGridReady.bind(this)}
+                                 onFirstDataRendered={this.onFirstDataRendered.bind(this)}/>
                 </div>
 
-                <div style={{height: '5%'}} />
+                <div style={{height: '5%'}}/>
 
                 <div style={{width: '100%', height: '45%'}} className="ag-theme-balham">
-                    <AgGridReact rowData={this.state.rowData} gridOptions={this.state.bottomOptions} columnDefs={this.state.columnDefs} />
+                    <AgGridReact rowData={this.state.rowData} gridOptions={this.state.bottomOptions}
+                                 columnDefs={this.state.columnDefs}/>
                 </div>
             </div>
         );
