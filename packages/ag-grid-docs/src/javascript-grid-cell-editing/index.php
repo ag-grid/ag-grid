@@ -507,7 +507,7 @@ cellEditorParams: function(params) {
         </ul>
     </p>
 
-    <?= example('Dynamic Parameters', 'dynamic-parameters', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Dynamic Parameters', 'dynamic-parameters', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 
     <h2 id="enter-key-down">Enter Key Navigation</h2>
