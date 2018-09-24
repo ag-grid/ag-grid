@@ -46,7 +46,7 @@ export interface ColGroupDef extends AbstractColDef {
     /** The custom header group component to be used for rendering the component header. If none specified the default ag-Grid is used**/
     headerGroupComponent?: string | {new(): IHeaderGroupComp};
     /** The custom header group component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default ag-Grid is used**/
-    headerGroupComponentFramework?: {new (): any};
+    headerGroupComponentFramework?: any;
     /** The custom header group component to be used for rendering the component header. If none specified the default ag-Grid is used**/
     headerGroupComponentParams?: any;
 }
@@ -317,7 +317,7 @@ export interface ColDef extends AbstractColDef {
     /** The custom header component to be used for rendering the floating filter. If none specified the default ag-Grid is used**/
     floatingFilterComponent?: {new(): IFloatingFilterComp<any, any, any>};
     floatingFilterComponentParams?: any;
-    floatingFilterComponentFramework?: {new (): any};
+    floatingFilterComponentFramework?: any;
 
     refData?: {[key: string]: string};
 }
