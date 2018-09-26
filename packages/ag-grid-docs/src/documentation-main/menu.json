@@ -85,6 +85,10 @@
                 "gtm": { "tech": "server-side-operations" },
                 "items": [
                     {
+                        "title": "Using GraphQL & MySQL",
+                        "url": "graphql-server-side-operations/"
+                    },
+                    {
                         "title": "Using Java & Oracle",
                         "url": "oracle-server-side-operations/"
                     },
