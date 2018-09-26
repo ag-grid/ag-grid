@@ -215,12 +215,13 @@ gtm_data_layer('about');
                     <h3>Our Address</h3>
 
                     <address>
-                        <strong>ag-Grid Ltd.</strong><br>
-                        The Treehouse, 2-10 Balham Station Road<br>
-                        London, SW12 9SG
-                        United Kingdom<br>
+                        <strong>ag-Grid Ltd.</strong><br/>
+                        Bank Chambers,<br/>
+                        6 Borough High Street<br/>
+                        London,<br/>
+                        SE1 9QQ,<br/>
+                        United Kingdom
                     </address>
-
                     <p>Email Enquiries: <a href="mailto:info@ag-grid.com">info@ag-grid.com</a></p>
                 </div>
 

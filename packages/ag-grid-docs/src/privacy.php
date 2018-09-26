@@ -91,7 +91,7 @@ Full name of legal entity: <strong>ag-Grid Ltd.</strong>
  <br>
 Email address: <a href="mailto:info@ag-grid.com" target="_top">info@ag-grid.com</a>
  <br>
-Postal address: <strong>The Treehouse, 2-10 Balham Station Road, London, SW12 9SG</strong>
+Postal address: <strong>Bank Chambers, 6 Borough High Street, London, SE1 9QQ, United Kingdom.</strong>
  <br><br>
   
 It is very important that the information we hold about you is accurate and up to date. Please let us know if at any time your personal information changes by emailing us at 
