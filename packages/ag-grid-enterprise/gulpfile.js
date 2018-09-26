@@ -102,7 +102,7 @@ function webpackTask(minify, styles) {
 
     return gulp.src('src/entry.js')
         .pipe(webpackStream({
-            mode: 'production',
+            mode: minify ? 'production' : 'none',
             entry: {
                 main: mainFile
             },

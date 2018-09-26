@@ -150,10 +150,9 @@ export class AppComponent {
     ${eventHandlers
         .concat(externalEventHandlers)
         .concat(additional)
+        .concat(bindings.instance)
         .map(snippet => snippet.trim())
         .join('\n\n')}
-        
-    ${bindings.instance.join('\\n')}
 }
 
 ${bindings.utils.join('\n')}

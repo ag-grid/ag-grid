@@ -286,7 +286,7 @@ interface IViewportDatasourceParams {
             </li>
         </ul>
 
-    <?= example('Pagination Viewport Example', 'pagination-viewport', 'generated', array( 'enterprise'=> true )) ?>
+    <?= example('Pagination Viewport Example', 'pagination-viewport', 'generated', array('enterprise' => true, "processVue" => true)) ?>
 
 <!--
 This was example put in by niall for trying to figure out how to have unlimited number of rows in grid

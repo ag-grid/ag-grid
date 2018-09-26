@@ -107,7 +107,7 @@ colDef = {
         </li>
     </ul>
 
-    <?= example('Built-In Functions', 'built-in-functions', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Built-In Functions', 'built-in-functions', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <note>
         Remember to mark value columns with <code>enableValue=true</code> when using the <a href="../javascript-grid-tool-panel/">Tool Panel</a>.
@@ -202,6 +202,7 @@ colDef = {
         or make sure that <code>aggFunc</code> is not used in any column until it is configured into the grid.
     </p>
 
+    <!-- SPL vue problematic here -->
     <?= example('Custom Aggregation Functions', 'custom-agg-functions', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Aggregation API</h2>
@@ -265,7 +266,7 @@ colDef = {
         sum and another by multiplying the result by Math.PI.
     </p>
 
-    <?= example('Custom Full Row Aggregation', 'custom-full-row-aggregation', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Custom Full Row Aggregation', 'custom-full-row-aggregation', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Recomputing Aggregates</h2>
 
