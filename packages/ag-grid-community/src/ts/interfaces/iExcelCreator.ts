@@ -1,5 +1,7 @@
-import {CsvExportParams, ExportParams} from "../exporter/exportParams";
+import {ExportParams} from "../exporter/exportParams";
+import {XmlElement} from '../exporter/xmlFactory';
 
+// Common
 export interface ExcelWorksheet {
     name: string;
     table: ExcelTable;
@@ -11,31 +13,50 @@ export interface ExcelTable {
 }
 
 export interface ExcelColumn {
+    min?: number;
+    max?: number;
     width: number;
+    s?: number;
+    hidden?: boolean;
+    bestFit?: boolean;
 }
 
 export interface ExcelRow {
+    index?: number;
+    collapsed?: boolean;
+    hidden?: boolean;
+    height?: number;
+    outlineLevel?: number;
+    s?: number;
     cells: ExcelCell[];
 }
 
 export interface ExcelCell {
+    ref?: string;
     styleId: string;
     data: ExcelData;
     mergeAcross?: number;
 }
 
 export interface ExcelData {
-    type: ExcelDataType;
+    type: ExcelDataType | ExcelOOXMLDataType;
     value: string;
 }
 
-export type ExcelDataType =
-    "String"
-    | "Number"
-    | "Boolean"
-    | "DateTime"
-    | "Error";
+export type ExcelDataType = 'String' | "Number" | "Boolean" | "DateTime" | "Error";
 
+export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
+    sheetName?: string;
+    suppressTextAsCDATA?:boolean;
+    exportMode?: "xlsx" | "xml";
+}
+
+export interface IExcelCreator {
+    exportDataAsExcel(params?: ExcelExportParams): void;
+    getDataAsExcelXml(params?: ExcelExportParams): string;
+}
+
+// XML
 export interface ExcelStyle {
     id?: string;
     name?: string;
@@ -102,13 +123,38 @@ export interface ExcelInterior {
     patternColor: string;
 }
 
-export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
-    sheetName?: string;
-    suppressTextAsCDATA?:boolean;
+export interface ExcelXMLTemplate {
+    getTemplate(styleProperties?: ExcelStyle | ExcelWorksheet | ExcelColumn | ExcelRow | ExcelCell): XmlElement;
 }
 
-export interface IExcelCreator {
-    exportDataAsExcel(params?: ExcelExportParams): void ;
+// XLSX
+export interface ExcelContentType {
+    name: 'Default' | 'Override';
+    ContentType: string;
+    Extension?: string;
+    PartName?: string;
+}
 
-    getDataAsExcelXml(params?: ExcelExportParams): string ;
+/*
+ * OOXML Data Types
+ * (str): String
+ * (s): Shared String
+ * (inlineStr): Inline string
+ * Note: Inline strings are placed in the `is` element instead of `v`
+ * (n) Number
+ * (b) Boolean
+ * (d) Date
+ * (e) Error
+*/
+export type ExcelOOXMLDataType = 'str' | 's' | 'inlineStr' | 'n' | 'b' | 'd' | 'e';
+
+export interface ExcelOOXMLTemplate {
+    getTemplate(config?: any, idx?: number): XmlElement;
+    convertType?(type: string): string;
+}
+
+export interface ExcelRelationship {
+    Id: string;
+    Type: string;
+    Target: string;
 }
