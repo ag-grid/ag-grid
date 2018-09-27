@@ -21,8 +21,6 @@ import {
 } from 'ag-grid-community';
 
 export interface AgReactFrameworkComponent<T> {
-    agInit(params:T) : void;
-
     afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 }
 

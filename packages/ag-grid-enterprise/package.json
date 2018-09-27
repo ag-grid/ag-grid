@@ -42,6 +42,6 @@
     "webpack-stream": "^5.1.1"
   },
   "peerDependencies": {
-    "ag-grid-community": "^18.0.0"
+    "ag-grid-community": "^19.0.0"
   }
 }
