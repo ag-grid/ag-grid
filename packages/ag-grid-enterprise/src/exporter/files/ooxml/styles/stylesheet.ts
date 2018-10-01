@@ -1,4 +1,5 @@
 import {ExcelOOXMLTemplate, ExcelStyle, ExcelInterior} from 'ag-grid-community';
+import numberFormatsFactory from './numberFormats';
 import fontsFactory from './fonts';
 import fillsFactory from './fills';
 import bordersFactory from './borders';
@@ -6,12 +7,14 @@ import cellStylesXfsFactory from './cellStyleXfs';
 import cellXfsFactory from './cellXfs';
 import cellStylesFactory from './cellStyles';
 
+import {NumberFormat, numberFormatMap} from './numberFormat';
 import {Font} from './font';
 import {Fill} from './fill';
 import {Border} from './border';
 import {Xf} from './xf';
 import {CellStyle} from './cellStyle';
 
+const registeredNumberFmts: NumberFormat[] = [];
 const registeredFonts: Font[] = [{ name: 'Calibri', size: '14', colorTheme: '1', family: '2', scheme: 'minor' }];
 const registeredFills: Fill[] = [{ patternType: 'none', },{ patternType: 'gray125' }];
 const registeredBorders: Border[] = [{ left: undefined, right: undefined, top: undefined, bottom: undefined, diagonal: undefined }];
@@ -22,14 +25,48 @@ const registeredCellStyles: CellStyle[] =[{ builtinId: 0, name: 'normal', xfId: 
 interface StylesMap {
     [key: string]: number;
 }
+
+interface ColorMap {
+    [key: string]: string;
+}
 const stylesMap:StylesMap  = {base: 0};
 
 const convertLegacyPattern = (name: string): string => {
-    return name.charAt(0).toLowerCase() + name.substr(1);
+    const colorMap: ColorMap = {
+        None: 'none',
+        Solid: 'solid',
+        Gray50: 'mediumGray',
+        Gray75: 'darkGray',
+        Gray25: 'lightGray',
+        HorzStripe: 'darkHorizontal',
+        VertStripe: 'darkVertical',
+        ReverseDiagStripe: 'darkDown',
+        DiagStripe: 'darkUp',
+        DiagCross: 'darkGrid',
+        ThickDiagCross: 'darkTrellis',
+        ThinHorzStripe: 'lightHorizontal',
+        ThinVertStripe: 'lightVertical',
+        ThinReverseDiagStripe: 'lightDown',
+        ThinDiagStripe: 'lightUp',
+        ThinHorzCross: 'lightGrid',
+        ThinDiagCross: 'lightTrellis',
+        Gray125: 'gray125',
+        Gray0625: 'gray0625'
+    };
+
+    if (!name) return 'none';
+
+    return colorMap[name] || name;
 };
 
 const convertLegacyColor = (color: string): string => {
-    return color ? '00' + color.substr(1) : undefined;
+    if (color == undefined) return color;
+
+    if (color.charAt(0) === '#') {
+        color = color.substr(1);
+    }
+
+    return color.length === 6 ? '00' + color : color;
 };
 
 const registerFill = (fill: ExcelInterior): number => {
@@ -54,6 +91,22 @@ const registerFill = (fill: ExcelInterior): number => {
     return pos;
 };
 
+const registerNumberFmt = (format: string): number => {
+    if (numberFormatMap[format]) return numberFormatMap[format];
+    const reg = registeredNumberFmts.filter((currentFmt) => {
+        if (currentFmt.formatCode !== format) return false;
+    });
+
+    let pos = reg.length ? reg[0].numFmtId : -1;
+
+    if (pos === -1) {
+        pos = registeredNumberFmts.length + 164;
+        registeredNumberFmts.push({formatCode: format, numFmtId: pos});
+    }
+
+    return pos;
+};
+
 const registerStyle = (config: ExcelStyle): void => {
     const {id, alignment, borders, font, interior, numberFormat} = config;
     let currentFill: number;
@@ -62,7 +115,7 @@ const registerStyle = (config: ExcelStyle): void => {
     let currentFont: number;
     let currentNumberFmt: number;
     let currentProtection: number;
-    //const registeredCellXfs: Xf[] = [{ borderId: 0, fillId: 0, fontId: 0, numFmtId: 0, xfId: 0 }];
+
     if (stylesMap[id] != undefined) return;
 
     if (interior) {
@@ -81,9 +134,9 @@ const registerStyle = (config: ExcelStyle): void => {
     //     currentFont = registerFont(font);
     // }
 
-    // if (numberFormat) {
-    //     currentNumberFmt = registerNumberFmt(numberFormat);
-    // }
+    if (numberFormat) {
+        currentNumberFmt = registerNumberFmt(numberFormat.format);
+    }
 
     stylesMap[id] = registeredCellXfs.length;
 
@@ -107,6 +160,7 @@ const stylesheetFactory: ExcelOOXMLTemplate = {
                 }
             },
             children: [
+                numberFormatsFactory.getTemplate(registeredNumberFmts),
                 fontsFactory.getTemplate(registeredFonts),
                 fillsFactory.getTemplate(registeredFills),
                 bordersFactory.getTemplate(registeredBorders),

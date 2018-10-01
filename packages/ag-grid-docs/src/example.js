@@ -311,19 +311,31 @@ var gridOptions = {
         {
             id: 'good-score',
             interior: {
-                color: "#94e494", pattern: 'Solid'
+                color: "#C6EFCE", pattern: 'Solid'
+            },
+            numberFormat: {
+                format: '[$$-409]#,##0'
             }
         },
         {
             id: 'bad-score',
             interior: {
-                color: "#e49494", pattern: 'Solid'
+                color: "#FFC7CE", pattern: 'Solid'
+            },
+            numberFormat: {
+                format: '[$$-409]#,##0'
             }
         },
         {
             id: 'header',
             interior: {
                 color: "#CCCCCC", pattern: 'Solid'
+            }
+        },
+        {
+            id: 'currencyCell',
+            numberFormat: {
+                format: '[$$-409]#,##0'
             }
         }
     ]
@@ -517,6 +529,9 @@ var defaultCols = [
                 headerName: "Bank Balance", field: "bankBalance", width: 180, editable: true,
                 filter: 'winningsFilter', valueFormatter: currencyFormatter,
                 type: 'numericColumn',
+                cellClassRules: {
+                    'currencyCell': 'typeof x == "number"'
+                },
                 enableValue: true,
                 // colId: 'sf',
                 // valueGetter: '55',
@@ -555,6 +570,9 @@ var defaultCols = [
         editable: true, valueParser: numberParser, width: 170,
         // aggFunc: 'sum',
         enableValue: true,
+        cellClassRules: {
+            'currencyCell': 'typeof x == "number"'
+        },
         valueFormatter: currencyFormatter, cellStyle: currencyCssFunc,
         icons: {
             sortAscending: '<i class="fa fa-sort-amount-asc"/>',
@@ -577,13 +595,14 @@ months.forEach(function (month) {
         //hide: true,
         cellClassRules: {
             'good-score': 'typeof x === "number" && x > 50000',
-            'bad-score': 'typeof x === "number" && x < 10000'
+            'bad-score': 'typeof x === "number" && x < 10000',
+            'currencyCell': 'typeof x === "number" && x >= 10000 && x <= 50000'
         },
         valueParser: numberParser, valueFormatter: currencyFormatter,
         filterParams: {
             clearButton: true
         }
-    })
+    });
 });
 
 function filterDoubleClicked(event) {
