@@ -2,7 +2,7 @@ import {ExcelOOXMLTemplate, XmlElement} from 'ag-grid-community';
 
 const fillFactory: ExcelOOXMLTemplate = {
     getTemplate(fill: Fill) {
-        const {patternType, fgTheme, fgTint, fgRgb, bgIndexed} = fill;
+        const {patternType, fgTheme, fgTint, fgRgb, bgRgb, bgIndexed} = fill;
         const pf: XmlElement = {
             name: 'patternFill',
             properties: {
@@ -31,7 +31,8 @@ const fillFactory: ExcelOOXMLTemplate = {
                 name: 'bgColor',
                 properties: {
                     rawMap: {
-                        indexed: bgIndexed
+                        indexed: bgIndexed,
+                        rgb: bgRgb
                     }
                 }
             });
@@ -52,4 +53,5 @@ export interface Fill {
     fgTint?: string;
     fgRgb?: string;
     bgIndexed?: string;
+    bgRgb?: string;
 }

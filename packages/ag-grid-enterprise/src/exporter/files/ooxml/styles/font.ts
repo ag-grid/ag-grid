@@ -8,7 +8,7 @@ const fontFactory: ExcelOOXMLTemplate = {
                 properties: { rawMap: { val: size } }
             },{
                 name: 'color',
-                properties: { rawMap: { theme: colorTheme, color: color } }
+                properties: { rawMap: { theme: colorTheme, rgb: color } }
             },{
                 name: 'name',
                 properties: { rawMap: { val: name } }

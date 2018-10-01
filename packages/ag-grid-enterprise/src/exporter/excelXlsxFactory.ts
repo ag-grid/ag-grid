@@ -4,7 +4,7 @@ import coreFactory from './files/ooxml/core';
 import contentTypesFactory from './files/ooxml/contentTypes';
 import officeThemeFactory from './files/ooxml/themes/office';
 import sharedStringsFactory from './files/ooxml/sharedStrings';
-import stylesheetFactory from './files/ooxml/styles/stylesheet';
+import stylesheetFactory, {registerStyles} from './files/ooxml/styles/stylesheet';
 import workbookFactory from './files/ooxml/workbook';
 import worksheetFactory from './files/ooxml/worksheet';
 import relationshipsFactory from './files/ooxml/relationships';
@@ -20,7 +20,6 @@ export class ExcelXlsxFactory {
     @Autowired('xmlFactory') private xmlFactory: XmlFactory;
 
     private sharedStrings: string[] = [];
-    private excelStyles: ExcelStyle[] = [];
     private sheetNames: string[];
 
     public createSharedStrings(): string {
@@ -39,8 +38,9 @@ export class ExcelXlsxFactory {
 
     public createExcel(styles: ExcelStyle[], worksheets: ExcelWorksheet[], sharedStrings?: string[]): string {
         this.sharedStrings = sharedStrings;
-        this.excelStyles = styles;
         this.sheetNames = worksheets.map(worksheet => worksheet.name);
+
+        registerStyles(styles);
 
         return this.createWorksheet(worksheets);
     }
