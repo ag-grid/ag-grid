@@ -1,10 +1,10 @@
 import {ExcelOOXMLTemplate, _} from 'ag-grid-community';
 import xfFactory, {Xf} from './xf';
 
-const cellStylesXfsFactory: ExcelOOXMLTemplate = {
+const cellXfsFactory: ExcelOOXMLTemplate = {
     getTemplate(xf: Xf[]) {
         return {
-            name: "cellStyleXfs",
+            name: "cellXfs",
             properties: {
                 rawMap: {
                     count: xf.length
@@ -15,4 +15,4 @@ const cellStylesXfsFactory: ExcelOOXMLTemplate = {
     }
 };
 
-export default cellStylesXfsFactory;
+export default cellXfsFactory;
