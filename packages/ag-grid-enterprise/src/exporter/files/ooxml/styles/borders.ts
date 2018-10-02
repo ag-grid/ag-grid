@@ -1,8 +1,8 @@
 import {ExcelOOXMLTemplate, _} from 'ag-grid-community';
-import borderFactory, {Border} from './border';
+import borderFactory, {BorderSet} from './border';
 
 const bordersFactory: ExcelOOXMLTemplate = {
-    getTemplate(borders: Border[]) {
+    getTemplate(borders: BorderSet[]) {
         return {
             name: "borders",
             properties: {
