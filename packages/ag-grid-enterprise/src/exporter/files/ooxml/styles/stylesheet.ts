@@ -222,21 +222,15 @@ const registerFont = (font: ExcelFont): number => {
 const registerStyle = (config: ExcelStyle): void => {
     const {id, alignment, borders, font, interior, numberFormat} = config;
     let currentFill: number;
-    let currentAlignment: number;
     let currentBorder: number;
     let currentFont: number;
     let currentNumberFmt: number;
-    let currentProtection: number;
 
     if (stylesMap[id] != undefined) return;
 
     if (interior) {
         currentFill = registerFill(interior);
     }
-
-    // if (alignment) {
-    //     currentAlignment = registerAlignment(alignment);
-    // }
 
     if (borders) {
         currentBorder = registerBorders(borders);
@@ -253,6 +247,7 @@ const registerStyle = (config: ExcelStyle): void => {
     stylesMap[id] = registeredCellXfs.length;
 
     registeredCellXfs.push({
+        alignment,
         borderId: currentBorder || 0,
         fillId: currentFill || 0,
         fontId: currentFont || 0,
