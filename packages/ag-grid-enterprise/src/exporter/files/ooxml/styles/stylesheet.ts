@@ -1,4 +1,4 @@
-import {ExcelOOXMLTemplate, ExcelStyle, ExcelInterior, ExcelBorders} from 'ag-grid-community';
+import {ExcelOOXMLTemplate, ExcelStyle, ExcelInterior, ExcelBorders, ExcelFont} from 'ag-grid-community';
 import numberFormatsFactory from './numberFormats';
 import fontsFactory from './fonts';
 import fillsFactory from './fills';
@@ -8,14 +8,14 @@ import cellXfsFactory from './cellXfs';
 import cellStylesFactory from './cellStyles';
 
 import {NumberFormat, numberFormatMap} from './numberFormat';
-import {Font} from './font';
+import {getFamilyId, Font} from './font';
 import {Fill} from './fill';
 import {convertLegacyBorder, BorderSet} from './border';
 import {Xf} from './xf';
 import {CellStyle} from './cellStyle';
 
 const registeredNumberFmts: NumberFormat[] = [];
-const registeredFonts: Font[] = [{ name: 'Calibri', size: '14', colorTheme: '1', family: '2', scheme: 'minor' }];
+const registeredFonts: Font[] = [{ name: 'Calibri', size: 14, colorTheme: '1', family: 2, scheme: 'minor' }];
 const registeredFills: Fill[] = [{ patternType: 'none', },{ patternType: 'gray125' }];
 const registeredBorders: BorderSet[] = [{ left: undefined, right: undefined, top: undefined, bottom: undefined, diagonal: undefined }];
 const registeredCellStyleXfs: Xf[] = [{ borderId: 0, fillId: 0, fontId: 0, numFmtId: 0 }];
@@ -178,6 +178,47 @@ const registerBorders = (borders: ExcelBorders): number => {
     return pos;
 };
 
+const registerFont = (font: ExcelFont): number => {
+    const {fontName: name, color, size, bold, italic, outline, shadow, strikeThrough, underline, family} = font;
+    const convertedColor = convertLegacyColor(color);
+    const familyId = getFamilyId(family);
+
+    const reg = registeredFonts.filter(currentFont => {
+        if (currentFont.name != name) return false;
+        if (currentFont.color != convertedColor) return false;
+        if (currentFont.size != size) return false;
+        if (currentFont.bold != bold) return false;
+        if (currentFont.italic != italic) return false;
+        if (currentFont.outline != outline) return false;
+        if (currentFont.shadow != shadow) return false;
+        if (currentFont.strike != strikeThrough) return false;
+        if (currentFont.underline != underline) return false;
+        if (currentFont.family != familyId) return false;
+
+        return true;
+    });
+
+    let pos = reg.length ? registeredFonts.indexOf(reg[0]) : -1;
+
+    if (pos === -1) {
+        pos = registeredFonts.length;
+        registeredFonts.push({
+            name,
+            color: convertedColor,
+            size,
+            bold,
+            italic,
+            outline,
+            shadow,
+            strike: strikeThrough,
+            underline,
+            family: familyId
+        });
+    }
+
+    return pos;
+};
+
 const registerStyle = (config: ExcelStyle): void => {
     const {id, alignment, borders, font, interior, numberFormat} = config;
     let currentFill: number;
@@ -201,9 +242,9 @@ const registerStyle = (config: ExcelStyle): void => {
         currentBorder = registerBorders(borders);
     }
 
-    // if (font) {
-    //     currentFont = registerFont(font);
-    // }
+    if (font) {
+        currentFont = registerFont(font);
+    }
 
     if (numberFormat) {
         currentNumberFmt = registerNumberFmt(numberFormat.format);
