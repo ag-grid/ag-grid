@@ -1,9 +1,8 @@
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const autoprefixer = require('autoprefixer');
-const webpack = require('webpack');
 const path = require('path');
 
 module.exports = {
+    mode: 'development',
     devtool: 'inline-source-map',
     entry: ['webpack-hot-middleware/client'],
     externals: {

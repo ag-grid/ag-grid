@@ -5,11 +5,15 @@ ClickableStatusBarComponent.prototype.init = function (params) {
     this.params = params;
 
     this.eGui = document.createElement('div');
-    this.eGui.setAttribute("style", 'margin-right: 5px;background-color: lightgrey; padding-left: 5px; padding-right: 5px; border-radius: 5px');
+    this.eGui.setAttribute("style",
+        'display: flex; justify-content: center; flex-direction: column;margin: 5px;' +
+        'background-color: lightgrey; padding-left: 5px; padding-right: 5px; border-radius: 5px'
+    );
 
+    var content = document.createElement('div');
     var span = document.createElement('span');
     span.innerText = 'Status Bar Component';
-    this.eGui.appendChild(span);
+    content.appendChild(span);
 
     this.eButton = document.createElement('button');
     this.eButton.setAttribute("style", 'margin-left: 5px; padding-top: 0; padding-bottom: 0');
@@ -17,9 +21,9 @@ ClickableStatusBarComponent.prototype.init = function (params) {
     this.buttonListener = this.onButtonClicked.bind(this);
     this.eButton.addEventListener("click", this.buttonListener);
     this.eButton.innerHTML = 'Click Me';
-
-    this.eGui.appendChild(this.eButton);
-
+    content.appendChild(this.eButton);
+    
+    this.eGui.appendChild(content);
 };
 
 ClickableStatusBarComponent.prototype.getGui = function () {

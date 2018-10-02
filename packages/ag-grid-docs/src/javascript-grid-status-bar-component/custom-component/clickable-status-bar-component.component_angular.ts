@@ -1,21 +1,25 @@
 import {Component, ViewChild, ViewContainerRef} from "@angular/core";
 
-import {IAfterGuiAttachedParams, IDoesFilterPassParams, RowNode, IStatusBar, IStatusBarParams} from "ag-grid";
+import {IAfterGuiAttachedParams, IDoesFilterPassParams, RowNode, IStatusBarItem, IStatusBarItemParams} from "ag-grid-community";
 import {IFilterAngularComp} from "ag-grid-angular";
 
 @Component({
     selector: 'status-component',
     template: `
         <div class="container">
-            <span class="component">Status Bar Component <input type="button" (click)="onClick()" value="Click Me"/></span> 
+            <div>
+                <span class="component">Status Bar Component <input type="button" (click)="onClick()" value="Click Me"/></span>
+            </div>
         </div>
     `, styles: [
         `
             .container {
-                margin-right: 5px;
+                display: flex; 
+                justify-content: center; 
+                flex-direction: column;
+                margin: 5px;
                 background-color: lightgrey; 
-                padding-left: 5px; 
-                padding-right: 5px; 
+                padding: 3px 5px 3px 5px; 
                 border-radius: 5px
             }
             
@@ -27,10 +31,10 @@ import {IFilterAngularComp} from "ag-grid-angular";
         `
     ]
 })
-export class ClickableStatusBarComponent implements IStatusBar {
-    private params: IStatusBarParams;
+export class ClickableStatusBarComponent {
+    private params: IStatusBarItemParams;
 
-    agInit(params: IStatusBarParams): void {
+    agInit(params: IStatusBarItemParams): void {
         this.params = params;
     }
 

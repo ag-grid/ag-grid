@@ -447,7 +447,7 @@ include '../documentation-main/documentation_header.php';
         <li>
             <b>Update Prices</b>: Updates all the prices. Try ordering by price and notice the order
             change as the prices change. Also try highlighting a range on prices and see the aggregations
-            appear in the status panel. As you update the prices, the aggregation values recalculate.
+            appear in the status bar. As you update the prices, the aggregation values recalculate.
         </li>
         <li><b>Turn Grouping On / Off</b>: To turn grouping by symbol on and off.</li>
         <li><b>Group Selected A / B / C</b>: With grouping on, hit the buttons A, B and C to move

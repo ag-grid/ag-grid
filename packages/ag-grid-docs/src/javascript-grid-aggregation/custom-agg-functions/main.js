@@ -33,6 +33,7 @@ var gridOptions = {
         // and again xyz
         'xyz': xyzFunc
     },
+    sideBar: true,
     onGridReady: function(params) {
         // we could also register functions after the grid is created,
         // however because we are providing the columns in the grid options,
@@ -42,8 +43,13 @@ var gridOptions = {
 
         // this has nothing to do with aggregation, just get cols to fit width
         gridOptions.api.sizeColumnsToFit();
-    }
+    },
+    onFirstDataRendered: onFirstDataRendered
 };
+
+function onFirstDataRendered(params) {
+    params.api.sizeColumnsToFit();
+}
 
 function oneTwoThreeFunc(nodes) {
     // this is just an example, rather than working out an aggregation,
@@ -196,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json'})
+    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/olympicWinnersSmall.json'})
         .then( function(data) {
             gridOptions.api.setRowData(data);
         });

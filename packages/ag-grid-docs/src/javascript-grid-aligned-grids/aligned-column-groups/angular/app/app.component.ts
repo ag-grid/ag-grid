@@ -8,6 +8,7 @@ import {HttpClient} from '@angular/common/http';
         style="width: 100%; height: 45%"
         #topGrid
         class="ag-theme-balham"
+        (firstDataRendered)="onFirstDataRendered($event)"
         [rowData]="rowData"
         [gridOptions]="topOptions"
         [columnDefs]="columnDefs">
@@ -19,6 +20,7 @@ import {HttpClient} from '@angular/common/http';
         style="width: 100%; height: 45%"
         #bottomGrid
         class="ag-theme-balham"
+        (firstDataRendered)="onFirstDataRendered($event)"
         [rowData]="rowData"
         [gridOptions]="bottomOptions"
         [columnDefs]="columnDefs">
@@ -71,13 +73,16 @@ export class AppComponent {
     }
 
     ngOnInit() {
-        this.http.get('https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json').subscribe(data => {
+        this.http.get('https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/olympicWinnersSmall.json').subscribe(data => {
             this.rowData = data;
-            this.topGrid.api.sizeColumnsToFit();
 
             // mix up some columns
             this.topGrid.columnApi.moveColumnByIndex(11, 4);
             this.topGrid.columnApi.moveColumnByIndex(11, 4);
         });
+    }
+
+    onFirstDataRendered(params) {
+        this.topGrid.api.sizeColumnsToFit();
     }
 }

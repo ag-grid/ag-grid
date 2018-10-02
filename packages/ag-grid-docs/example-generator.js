@@ -8,7 +8,6 @@ const glob = require('glob');
 const fs = require('fs');
 const path = require('path');
 const mkdirp = require('mkdirp');
-const copy = require('copy');
 const fsExtra = require('fs-extra');
 
 const prettier = require('prettier');
@@ -47,7 +46,7 @@ function phpArrayToJSON(string) {
         .replace(/array/g, '')
         .replace(/\(/g, '{')
         .replace(/\)/g, '}')
-        .replace(/\=\>/g, ':');
+        .replace(/=>/g, ':');
     try {
         return JSON.parse(replaced);
     } catch (e) {
@@ -65,7 +64,7 @@ function forEachExampleToGenerate(cb, final, scope = '*') {
 
             let matches;
             while ((matches = exampleRegEx.exec(contents))) {
-                const [_, example, type, options] = matches;
+                const [example, type, options] = matches.slice(1);
 
                 if (type === 'generated') {
                     try {
@@ -81,7 +80,7 @@ function forEachExampleToGenerate(cb, final, scope = '*') {
     });
 }
 
-module.exports = (cb, scope) =>     {
+module.exports = (cb, scope) => {
     require('ts-node').register();
 
     const {vanillaToVue} = require('./src/example-runner/vanilla-to-vue.ts');
@@ -90,6 +89,7 @@ module.exports = (cb, scope) =>     {
     const {appModuleAngular} = require('./src/example-runner/angular-app-module.ts');
 
     let count = 0;
+
     forEachExampleToGenerate(
         (section, example, options) => {
             count++;
@@ -127,7 +127,7 @@ module.exports = (cb, scope) =>     {
                 console.error(`Failed at ./src/${section}/${example}`, e);
                 return;
                 // console.error(source);
-                //throw new Error('Failed generating the react version');
+                // throw new Error('Failed generating the react version');
             }
 
             const angularScripts = glob.sync(path.join('./src', section, example, '*_angular*'));
@@ -135,6 +135,7 @@ module.exports = (cb, scope) =>     {
             let appComponentTS, appModuleTS;
             try {
                 source = vanillaToAngular(sources, options, angularComponentFileNames);
+
                 appComponentTS = prettier.format(source, {printWidth: 120, parser: 'typescript'});
                 appModuleTS = prettier.format(appModuleAngular(angularComponentFileNames), {
                     printWidth: 120,

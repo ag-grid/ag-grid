@@ -92,7 +92,6 @@ MenuItem {
         <li><code>resetColumns</code>: Reset column details. Always shown.</li>
         <li><code>expandAll</code>: Expand all groups. Only shown if grouping by at least one column.</li>
         <li><code>contractAll</code>: Contract all groups. Only shown if grouping by at least one column.</li>
-        <li><code>toolPanel</code>: Show the tool panel.</li>
     </ul>
 
     <p>

@@ -17,7 +17,7 @@ import {
     ValueService,
     GridOptionsWrapper,
     RowBounds
-} from "ag-grid";
+} from "ag-grid-community";
 
 import {ServerSideCache, ServerSideCacheParams} from "./serverSideCache";
 

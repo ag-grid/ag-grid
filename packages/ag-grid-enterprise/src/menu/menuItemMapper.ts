@@ -1,4 +1,4 @@
-import {ColumnController, MenuItemDef, Autowired, Utils, Bean, GridOptionsWrapper, GridApi, Column} from 'ag-grid';
+import {ColumnController, MenuItemDef, Autowired, Utils, Bean, GridOptionsWrapper, GridApi, Column} from 'ag-grid-community';
 import {ClipboardService} from "../clipboardService";
 import {AggFuncService} from "../aggregation/aggFuncService";
 
@@ -112,11 +112,6 @@ export class MenuItemMapper {
                 disabled: true,
                 icon: Utils.createIconNoSpan('clipboardPaste', this.gridOptionsWrapper, null),
                 action: ()=> this.clipboardService.pasteFromClipboard()
-            };
-            case 'toolPanel': return {
-                name: localeTextFunc('toolPanel', 'Tool Panel'),
-                checked: this.gridApi.isToolPanelShowing(),
-                action: ()=> this.gridApi.showToolPanel(!this.gridApi.isToolPanelShowing())
             };
             case 'export':
                 let exportSubMenuItems:string[] = [];

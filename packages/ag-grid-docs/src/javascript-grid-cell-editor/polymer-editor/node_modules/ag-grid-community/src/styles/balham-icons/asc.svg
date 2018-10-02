@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>desc</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="desc" stroke="#000000">
+            <path d="M7.5,12 L7.5,4" id="Path-8"></path>
+            <polyline id="Path-7" transform="translate(7.500000, 5.000000) rotate(180.000000) translate(-7.500000, -5.000000) " points="4.5 3.5 7.5 6.5 10.5 3.5"></polyline>
+        </g>
+    </g>
+</svg>

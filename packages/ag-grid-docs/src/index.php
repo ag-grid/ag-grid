@@ -36,7 +36,7 @@ meta_and_links($title, $keywords, $description, false);
             <div>
                 <h1 title="ag-Grid">THE BEST
                     <br>
-                    HTML5 GRID
+                    JAVASCRIPT GRID
                     <br>
                     IN THE WORLD
                 </h1>
@@ -67,7 +67,7 @@ meta_and_links($title, $keywords, $description, false);
     <div id="stage-frameworks">
         <section id="news-flash">
             <div>
-                25th July 2018: <a href="./ag-grid-changelog/?fixVersion=18.1.2">Version 18.1.2</a> patch release, focused on bug fixes.
+                7th Sep 2018: <a href="./ag-grid-changelog/?fixVersion=19.0.0">Version 19.0.0</a> released with customizable Side Bar, Status Bar and bug fixes
             </div>
         </section>
 

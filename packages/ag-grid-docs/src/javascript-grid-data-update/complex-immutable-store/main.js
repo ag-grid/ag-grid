@@ -131,7 +131,11 @@ function createTradeId() {
         deltaRowDataMode: true,
         columnDefs: columnDefs,
         rowData: globalRowData,
-        enableStatusBar: true,
+        statusBar: {
+            items: [
+                { component: 'agAggregationComponent' }
+            ]
+        },
         animateRows: true,
         enableColResize: true,
         enableRangeSelection: true,

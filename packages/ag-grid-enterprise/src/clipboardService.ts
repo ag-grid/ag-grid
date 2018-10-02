@@ -37,7 +37,7 @@ import {
     ProcessHeaderForExportParams,
     PasteStartEvent,
     PasteEndEvent
-} from "ag-grid/main";
+} from "ag-grid-community";
 import {RangeController} from "./rangeController";
 
 interface RowCallback {

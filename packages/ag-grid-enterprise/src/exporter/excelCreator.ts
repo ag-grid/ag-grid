@@ -29,7 +29,7 @@ import {
     Utils,
     ValueService,
     _
-} from "ag-grid/main";
+} from "ag-grid-community";
 
 import {ExcelXmlFactory} from "./excelXmlFactory";
 

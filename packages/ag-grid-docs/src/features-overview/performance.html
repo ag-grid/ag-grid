@@ -28,10 +28,7 @@ for (var i = 0; i < 100000; i ++) {
 // let the grid know which columns and what data to use
 var gridOptions = {
   columnDefs: columnDefs,
-  rowData: rowData,
-  onGridReady: function (params) {
-    // params.api.sizeColumnsToFit();
-  }
+  rowData: rowData
 };
 
 // wait for the document to be loaded, otherwise

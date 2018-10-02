@@ -1,31 +1,31 @@
 import {
-    Utils,
-    Bean,
-    IMenuFactory,
+    AgEvent,
     Autowired,
-    Context,
-    PopupService,
-    GridOptionsWrapper,
+    Bean,
+    BeanStub,
     Column,
     ColumnController,
-    FilterManager,
-    MenuItemDef,
-    GridApi,
-    TabbedLayout,
-    EventService,
-    TabbedItem,
-    AgEvent,
-    IRowModel,
     Constants,
-    PostConstruct,
+    Context,
+    EventService,
+    FilterManager,
     FilterWrapper,
+    GridApi,
+    GridOptionsWrapper,
+    IMenuFactory,
+    IRowModel,
+    MenuItemDef,
+    PopupService,
+    PostConstruct,
     Promise,
-    BeanStub
-} from "ag-grid";
-import {ColumnSelectComp} from "../toolPanel/columnsSelect/columnSelectComp";
+    TabbedItem,
+    TabbedLayout,
+    Utils
+} from "ag-grid-community";
 import {MenuList} from "./menuList";
 import {MenuItemComponent} from "./menuItemComponent";
 import {MenuItemMapper} from "./menuItemMapper";
+import {PrimaryColsPanel} from "../sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsPanel";
 
 export interface TabSelectedEvent extends AgEvent {
     key: string;
@@ -67,6 +67,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
     public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, defaultTab?:string, restrictToTabs?:string[]): void {
 
         this.showMenu(column, (menu: EnterpriseMenu)=> {
+            let minDims = menu.getMinDimensions();
             this.popupService.positionPopupUnderComponent({
                 column: column,
                 type: 'columnMenu',
@@ -74,7 +75,8 @@ export class EnterpriseMenuFactory implements IMenuFactory {
                 ePopup: menu.getGui(),
                 nudgeX: -9,
                 nudgeY: -26,
-                minWidth: menu.getMinWidth(),
+                minWidth: minDims.width,
+                minHeight: minDims.height,
                 keepWithinBounds: true
             });
             if (defaultTab) {
@@ -156,7 +158,7 @@ export class EnterpriseMenu extends BeanStub {
     private column: Column;
     private mainMenuList: MenuList;
 
-    private columnSelectPanel: ColumnSelectComp;
+    private columnSelectPanel: PrimaryColsPanel;
 
     private tabItemFilter: TabbedItem;
     private tabItemGeneral: TabbedItem;
@@ -188,8 +190,8 @@ export class EnterpriseMenu extends BeanStub {
         this.restrictTo = restrictTo;
     }
 
-    public getMinWidth(): number {
-        return this.tabbedLayout.getMinWidth();
+    public getMinDimensions(): {width: number, height: number} {
+        return this.tabbedLayout.getMinDimensions();
     }
 
     @PostConstruct
@@ -353,7 +355,6 @@ export class EnterpriseMenu extends BeanStub {
         }
         result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
         result.push('resetColumns');
-        result.push('toolPanel');
 
         // only add grouping expand/collapse if grouping in the InMemoryRowModel
 
@@ -403,7 +404,7 @@ export class EnterpriseMenu extends BeanStub {
 
     private createFilterPanel(): TabbedItem {
 
-        let filterWrapper:FilterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column);
+        let filterWrapper:FilterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'COLUMN_MENU');
 
         let afterFilterAttachedCallback: Function;
         filterWrapper.filterPromise.then(filter => {
@@ -427,7 +428,17 @@ export class EnterpriseMenu extends BeanStub {
         let eWrapperDiv = document.createElement('div');
         Utils.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
 
-        this.columnSelectPanel = new ColumnSelectComp(false);
+        this.columnSelectPanel = new PrimaryColsPanel(false, {
+            suppressValues: false,
+            suppressPivots: false,
+            suppressRowGroups: false,
+            suppressPivotMode: false,
+            contractColumnSelection: false,
+            suppressColumnExpandAll: false,
+            suppressColumnFilter: false,
+            suppressColumnSelectAll: false,
+            suppressSideButtons: false
+        });
         this.context.wireBean(this.columnSelectPanel);
 
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());

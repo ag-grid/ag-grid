@@ -90,7 +90,7 @@ localeText = {
         pinRight: 'laPin &gt;&gt;',
         noPin: 'laDontPin &lt;&gt;',
 
-        // enterprise menu aggregation and status panel
+        // enterprise menu aggregation and status bar
         sum: 'laSum',
         min: 'laMin',
         max: 'laMax',

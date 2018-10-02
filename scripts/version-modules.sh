@@ -24,12 +24,12 @@ do
     # BLOCK 1 FOR DEVDEPS AND PEERDEPS FOR AG-GRID
     # This replaces the references in peerDeps and devDeps of ag-grid anywhere they are
     # first we look up all the appearances that have a comma at the back
-    sed -i .old -e 's/"ag-grid":.*,/"ag-grid": "'$2'",/g' package.json
+    sed -i .old -e 's/"ag-grid-community":.*,/"ag-grid-community": "'$2'",/g' package.json
 
     if [ $? -ne 0 ]
     then
         # Thenwe look up all the appearances that DON'T have a comma at the back
-        sed -i .old -e 's/"ag-grid":.*/"ag-grid": "'$2'"/g' package.json
+        sed -i .old -e 's/"ag-grid-community":.*/"ag-grid-community": "'$2'"/g' package.json
     fi
 
     # BLOCK 2 FOR DEVDEPS AND PEERDEPS FOR AG-GRID-ENTERPRISE

@@ -13,7 +13,6 @@ const generateExamples = require('./example-generator');
 
 const lnk = require('lnk').sync;
 const mkdirp = require('mkdir-p').sync;
-const colors = require('colors');
 
 const EXPRESS_PORT = 8080;
 const PHP_PORT = 8888;
@@ -106,15 +105,15 @@ function serveAndWatchVue(app) {
 function launchTSCCheck() {
     if (!fs.existsSync('_dev')) {
         console.log('_dev not present, creating links...');
-        mkdirp('_dev/ag-grid/dist');
+        mkdirp('_dev/ag-grid-community/dist');
 
         if(WINDOWS) {
             console.log('creating window links...');
             run('create-windows-links.bat').exec();
         } else {
             const linkType = 'symbolic';
-            lnk('../ag-grid/exports.ts', '_dev/ag-grid/', {force: true, type: linkType, rename: 'main.ts'});
-            lnk('../ag-grid/src/ts', '_dev/ag-grid/dist', {force: true, type: linkType, rename: 'lib'});
+            lnk('../ag-grid-community/src/main.ts', '_dev/ag-grid-community/', {force: true, type: linkType, rename: 'main.ts'});
+            lnk('../ag-grid-community/src/ts', '_dev/ag-grid-community/dist', {force: true, type: linkType, rename: 'lib'});
             lnk('../ag-grid-enterprise/', '_dev', {force: true, type: linkType});
             lnk('../ag-grid-react/', '_dev', {force: true, type: linkType});
             lnk('../ag-grid-angular/exports.ts', '_dev/ag-grid-angular/', {
@@ -163,7 +162,7 @@ function watchAndGenerateExamples() {
     chokidar.watch('./src/*/*/*.{html,css,js}').on('change', callback);
 }
 
-module.exports = callback => {
+module.exports = () => {
     const app = express();
 
     // necessary for plunkers
@@ -173,7 +172,7 @@ module.exports = callback => {
     });
 
     // serve ag-grid, enterprise and react
-    addWebpackMiddleware(app, 'standard', '/dev/ag-grid');
+    addWebpackMiddleware(app, 'standard', '/dev/ag-grid-community');
     addWebpackMiddleware(app, 'site', '/dist');
     addWebpackMiddleware(app, 'enterprise', '/dev/ag-grid-enterprise');
     addWebpackMiddleware(app, 'enterprise-bundle', '/dev/ag-grid-enterprise-bundle');
@@ -196,3 +195,12 @@ module.exports = callback => {
         console.log(`ag-Grid dev server available on http://${HOST}:${EXPRESS_PORT}`);
     });
 };
+
+//     node dev-server.js generate-examples [src directory]
+// eg: node dev-server.js generate-examples javascript-grid-accessing-data
+console.log(process.argv);
+if(process.argv.length >= 3 && process.argv[2] === 'generate-examples') {
+    console.log('regenerating examples...');
+    generateExamples(() => console.log('generation done.'), process.argv[3]);
+}
+

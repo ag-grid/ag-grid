@@ -1,27 +1,28 @@
 import {Component, ViewChild} from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 
 @Component({
     selector: 'my-app',
     template: `
-    <div style='height: 100%'>
+        <div style='height: 100%'>
 
-        <div [ngStyle]="style">
-            <ag-grid-angular
-            style="width: 100%; height: 100%"
-            #agGrid
-            class="ag-theme-balham"
-            [rowData]="rowData"
-            [columnDefs]="columnDefs">
-            </ag-grid-angular>
-        </div>
+            <div [ngStyle]="style">
+                <ag-grid-angular
+                        style="width: 100%; height: 100%"
+                        #agGrid
+                        class="ag-theme-balham"
+                        [rowData]="rowData"
+                        [columnDefs]="columnDefs"
+                        (firstDataRendered)="onFirstDataRendered($event)">
+                </ag-grid-angular>
+            </div>
 
-        <div style="position: absolute; top: 0; left: 0">
-            <button (click)="fillLarge()">Fill 100%</button>
-            <button (click)="fillMedium()">Fill 60%</button>
-            <button (click)="fillExact()">Exactly 400 x 400 pixels</button>
+            <div style="position: absolute; top: 0; left: 0">
+                <button (click)="fillLarge()">Fill 100%</button>
+                <button (click)="fillMedium()">Fill 60%</button>
+                <button (click)="fillExact()">Exactly 400 x 400 pixels</button>
+            </div>
         </div>
-    </div>
     `
 })
 export class AppComponent {
@@ -52,12 +53,12 @@ export class AppComponent {
     }
 
     ngOnInit() {
-        this.http.get( 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json').subscribe( data => {
+        this.http.get('https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/olympicWinnersSmall.json').subscribe(data => {
             this.rowData = data;
         });
     }
 
-    onGridReady(params) {
+    onFirstDataRendered(params) {
         params.api.sizeColumnsToFit();
     }
 
@@ -76,7 +77,7 @@ export class AppComponent {
     setWidthAndHeight(width, height) {
         this.style = {
             marginTop: '20px',
-            width: width, 
+            width: width,
             height: height
         };
     }

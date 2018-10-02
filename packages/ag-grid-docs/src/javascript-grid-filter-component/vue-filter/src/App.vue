@@ -8,7 +8,7 @@
     import "../node_modules/ag-grid/dist/styles/ag-grid.css"
     import "../node_modules/ag-grid/dist/styles/ag-theme-balham.css"
     // only needed if you're using enterprise features
-    import "ag-grid-enterprise/main";
+    import "ag-grid-enterprise";
 
     import RichGridExample from './rich-grid-example/RichGridExample.vue'
     import DynamicComponentExample from './dynamic-component-example/DynamicComponentExample.vue'

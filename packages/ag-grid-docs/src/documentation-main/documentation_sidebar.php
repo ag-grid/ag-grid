@@ -17,22 +17,48 @@ Check the <a href="../ag-grid-jobs-board/">jobs board</a>
 <br><hr>
     <p>Latest Release:</p>
 
-
     <div class="card card-highlight">
         <div class="card-body">
-            <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=18.1.0">Version 18.1.1 Released</a></h5>
-            <h6 class="card-subtitle mb-2 text-muted">July 3</h6>
+            <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=18.0.0">Version 19.0 Released</a></h5>
+            <h6 class="card-subtitle mb-2 text-muted">Sep 7</h6>
             <p class="card-text">
-                Patch release focused on bug fixes. For Details check our change log.
+                Major release with the following feature highlights:
+            <ul>
+                <li><a class="learn-more" href="../javascript-grid-status-bar/">Customizable Status Bar</a></li>
+            </ul>
+            <ul>
+                <li><a class="learn-more" href="../javascript-grid-tool-panel-filters/">Filters Tool Panel</a></li>
+            </ul>
+            <ul>
+                <li><a class="learn-more" href="../javascript-grid-tool-panel-component/">Custom Tool Panels</a></li>
+            </ul>
+            <ul>
+                <li><a class="learn-more" href="../javascript-grid-server-side-model-tree-data/">Server-side Tree Data</a></li>
+            </ul>
             </p>
 
             <p class="text-right">
-                <a class="learn-more" href="../ag-grid-changelog/?fixVersion=18.1.1">Change Log</a>
+                <a class="learn-more" href="../ag-grid-changelog/?fixVersion=19.0.0">Change Log</a>
             </p>
         </div>
     </div>
 
     <br>
+
+    <div class="card card-highlight">
+        <div class="card-body">
+            <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=18.1.0">Version 18.1.2 Released</a></h5>
+            <h6 class="card-subtitle mb-2 text-muted">August 3</h6>
+            <p class="card-text">
+                Patch release focused on bug fixes. For Details check our change log.
+            </p>
+
+            <p class="text-right">
+                <a class="learn-more" href="https://www.ag-grid.com/ag-grid-changelog/">Change Log</a>
+            </p>
+        </div>
+    </div>
+
 
     <div class="card card-highlight">
         <div class="card-body">
@@ -94,10 +120,6 @@ Check the <a href="../ag-grid-jobs-board/">jobs board</a>
     <div class="card">
         <div class="card-body">
         <dl id="upcoming-events">
-            <dt><a href="https://www.meetup.com/halfstack/events/251086685/" target="_blank" rel="noopener">Halfstack Meetup | ag-Grid & Dojo 2</a></dt>
-            <dd class="date">August 14<br> London, England</dd>
-            <p class="card-text">Our CEO, Niall Crosby will be talking at the Half Stack London meet up.
-                <br>Having brought ag-Grid to the market, Niall looks back and talks about the design decisions that were made to make ag-Grid the project that it is today.</p>
             <dt><a href="https://angularconnect.com/" target="_blank" rel="noopener">Angular Connect</a></dt>
                 <dd class="date">November 6-7<br> London, England</dd>
                 <dd>Platinum Sponsor</dd>

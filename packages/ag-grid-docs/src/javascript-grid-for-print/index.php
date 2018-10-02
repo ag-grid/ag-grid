@@ -62,27 +62,16 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        For the grid width to fit, you need a CSS 'display' property capable of dynamic width.
-        For example, the default display for a div is <code>block</code> which results in 100%
-        width for the div. This will limit the grids width to the width of the browser.
-        Changing the display to <code>inline-block</code> for example fixes this and will allow
-        the grid to extend past the boundaries of the browser.
-    </p>
-
-    <p>
-        All the examples on this page do the following when in print layout:
-        <ul>
-            <li>CSS width and height settings are removed.</li>
-            <li>CSS display is set to 'inline-block'.</li>
-        </ul>
+        All the examples on this page set width and height initially on the grid and then remove the width and
+        height when print layout is set.
     </p>
 
     <h2>Page Break</h2>
 
     <p>
-        When in print layout all cells will have the CSS property <code>page-break-inside: avoid</code>
-        so cells will not be split across pages (eg the top half of the cell on one printed page with the
-        other half on another printed page).
+        When in print layout all rows will have the CSS property <code>page-break-inside: avoid</code>
+        so rows will not be split across pages (eg the top half of the row on one printed page with the
+        other half on the next printed page).
     </p>
 
     <h2>Detailed Printing Example</h2>

@@ -88,7 +88,11 @@ var gridOptions = {
     },
     rowData: getData(5),
     columnDefs: columnDefs,
-    enableStatusBar: true,
+    statusBar: {
+        items: [
+            { component: 'agAggregationComponent' }
+        ]
+    },
     enableRangeSelection: true,
     enableColResize: true,
     enableSorting: true,

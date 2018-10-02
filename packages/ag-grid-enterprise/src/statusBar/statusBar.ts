@@ -11,12 +11,15 @@ import {
     PostConstruct,
     Promise,
     RefSelector
-} from 'ag-grid';
+} from 'ag-grid-community';
+import {StatusBarService} from "./statusBarService";
 
 export class StatusBar extends Component {
 
     private static TEMPLATE = `<div class="ag-status-bar">
-        <div ref="panelComponents" class="ag-status-bar-comps"></div>
+        <div ref="eStatusBarLeft" class="ag-status-bar-left"></div>
+        <div ref="eStatusBarCenter" class="ag-status-bar-center"></div>
+        <div ref="eStatusBarRight" class="ag-status-bar-right"></div>
     </div>`;
 
     @Autowired('context') private context: Context;
@@ -25,8 +28,11 @@ export class StatusBar extends Component {
     @Autowired('componentProvider') private componentProvider: ComponentProvider;
     @Autowired('componentResolver') private componentResolver: ComponentResolver;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('statusBarService') private statusBarService: StatusBarService;
 
-    @RefSelector('panelComponents') private ePanelComponents: HTMLElement;
+    @RefSelector('eStatusBarLeft') private eStatusBarLeft: HTMLElement;
+    @RefSelector('eStatusBarCenter') private eStatusBarCenter: HTMLElement;
+    @RefSelector('eStatusBarRight') private eStatusBarRight: HTMLElement;
 
     constructor() {
         super(StatusBar.TEMPLATE);
@@ -34,40 +40,52 @@ export class StatusBar extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        const statusPanelComponents: any[] = [];
-        if (this.gridOptions.statusPanel && this.gridOptions.statusPanel.components) {
-            statusPanelComponents.push(...this.gridOptions.statusPanel.components);
+        if (this.gridOptions.statusBar && this.gridOptions.statusBar.statusPanels) {
+            let leftStatusPanelComponents = this.gridOptions.statusBar.statusPanels
+                .filter((componentConfig) => componentConfig.align === 'left');
+            this.createAndRenderComponents(leftStatusPanelComponents, this.eStatusBarLeft);
+
+            let centerStatusPanelComponents = this.gridOptions.statusBar.statusPanels
+                .filter((componentConfig) => componentConfig.align === 'center');
+            this.createAndRenderComponents(centerStatusPanelComponents, this.eStatusBarCenter);
+
+            let rightStatusPanelComponents = this.gridOptions.statusBar.statusPanels
+                .filter((componentConfig) => (!componentConfig.align || componentConfig.align === 'right'));
+            this.createAndRenderComponents(rightStatusPanelComponents, this.eStatusBarRight);
         }
+    }
 
-        const componentPromises: Promise<Component>[] = [];
-        _.forEach(statusPanelComponents, (componentConfig) => {
+    private createAndRenderComponents(statusBarComponents: any[], ePanelComponent: HTMLElement) {
+        let componentDetails: { key: string; promise: Promise<any> }[] = [];
 
+        _.forEach(statusBarComponents, (componentConfig) => {
                 let params = {
                     api: this.gridOptionsWrapper.getApi(),
                     columnApi: this.gridOptionsWrapper.getColumnApi(),
                     context: this.gridOptionsWrapper.getContext()
                 };
 
-                componentPromises.push(
-                    this.componentResolver.createAgGridComponent(null,
-                        params,
-                        'statusBarComponent',
-                        componentConfig.componentParams,
-                        componentConfig.component)
-                );
+                const promise = this.componentResolver.createAgGridComponent(componentConfig,
+                    params,
+                    'statusPanel',
+                    componentConfig.statusPanelParams);
+
+                componentDetails.push({
+                    // default to the component name if no key supplied
+                    key: componentConfig.key || componentConfig.statusPanel,
+                    promise
+                })
             }
         );
 
-        // we only add the child components on completion to retain the order supplied by the user
-        Promise.all(componentPromises)
-            .then((resolvedPromises) => {
-                _.forEach(resolvedPromises, (component: Component) => {
-                    if (_.exists(component)) {
-                        this.ePanelComponents.appendChild(component.getGui());
-                    }
-                })
+        Promise.all(componentDetails.map((details) => details.promise))
+            .then((ignored: any) => {
+                _.forEach(componentDetails, (componentDetail) => {
+                    componentDetail.promise.then((component: Component) => {
+                        this.statusBarService.registerStatusPanel(componentDetail.key, component);
+                        ePanelComponent.appendChild(component.getGui());
+                    })
+                });
             });
-
-        this.setVisible(statusPanelComponents.length > 0);
     }
 }

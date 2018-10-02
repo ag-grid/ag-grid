@@ -22,7 +22,7 @@ var gridOptions = {
 
 function getDisplayedRowAtIndex() {
     var rowNode = gridOptions.api.getDisplayedRowAtIndex(0);
-    console.log('getDisplayedRowAtIndex(0) => ' + nodeToString(rowNode));
+    console.log('getDisplayedRowAtIndex(0) => ' + this.nodeToString(rowNode));
 }
 
 function getDisplayedRowCount() {
@@ -58,6 +58,7 @@ function printPageDisplayedRows() {
     }
 }
 
+// inScope[nodeToString]
 function nodeToString(rowNode) {
     return rowNode.data.athlete + ' ' + rowNode.data.year;
 }
@@ -67,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json'}).then(function(data) {
+    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/olympicWinnersSmall.json'}).then(function(data) {
         gridOptions.api.setRowData(data.slice(0, 100));
     });
 });

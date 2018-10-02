@@ -33,14 +33,14 @@ npm run serve
 <p>As a next step, let's add the ag-Grid NPM packages. run the following command in <code>my-project</code> (you may need a new instance of the terminal):</p>
 
 <snippet language="sh">
-npm install --save ag-grid ag-grid-vue
+npm install --save ag-grid-community ag-grid-vue
 </snippet>
 
 <p>After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first step, let's add the ag-Grid the ag-Grid styles - import them in <code>src/main.js</code>:</p>
 
 <snippet>
-import "../node_modules/ag-grid/dist/styles/ag-grid.css";
-import "../node_modules/ag-grid/dist/styles/ag-theme-balham.css";
+import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
+import "../node_modules/ag-grid-community/dist/styles/ag-theme-balham.css";
 </snippet>
 
 <p>The code above imports the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-balham.css</code>). 
@@ -247,7 +247,7 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 <snippet language="html">
 &lt;template&gt;
     &lt;div&gt;
-        &lt;button @click="getSelectedRows()"&lt;Get Selected Rows&lt;/button&gt;
+        &lt;button @click="getSelectedRows()"&gt;Get Selected Rows&lt;/button&gt;
 
         &lt;ag-grid-vue style="width: 500px; height: 500px;"
                      class="ag-theme-balham"
@@ -338,7 +338,7 @@ beforeMount() {
 npm install --save ag-grid-enterprise
 </snippet>
 
-<p>Then, add the import to <code>src/main.ts</code>:</p>
+<p>Then, add the import to <code>src/main.js</code>:</p>
 
 <snippet language="diff">
 import Vue from 'vue'
@@ -494,7 +494,7 @@ While doing so, we learned how to configure the grid, how to access its API obje
 <a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-styling/#customizing-sass-variables" role="button">Customize Themes with Sass</a>
 <br><br>
 <div>
-  <a href="https://github.com/ag-grid/ag-grid-angular"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
+    <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
 </div>
 <br>
 <div>

@@ -1,21 +1,21 @@
-The MIT License
 
-Copyright (c) 2015-2016 AG GRID LTD
+This project is made up of many packages. There are two license types: MIT and Commercial.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Each package has it's own license file explaining the license for that package.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+The following packages are MIT licensed:
++ ag-grid-community
++ ag-grid-angular
++ ag-grid-angular-cli-example
++ ag-grid-aurelia
++ ag-grid-aurelia-example
++ ag-grid-docs
++ ag-grid-react
++ ag-grid-react-example
++ ag-grid-vue
++ ag-grid-vue-example
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+The following packages are Commercial licensed:
++ ag-grid-enterprise
+
+To view the commercial license for ag-grid-enterprise, see the file packages/ag-grid-enterprise/LICENSE.md

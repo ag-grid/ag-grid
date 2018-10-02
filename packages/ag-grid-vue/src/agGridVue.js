@@ -1,5 +1,5 @@
 import Vue from "vue";
-import {ComponentUtil, Grid} from "ag-grid";
+import {ComponentUtil, Grid} from "ag-grid-community";
 import {VueFrameworkFactory} from "./vueFrameworkFactory";
 import {VueFrameworkComponentWrapper} from "./vueFrameworkComponentWrapper";
 
@@ -7,7 +7,7 @@ const watchedProperties = {};
 const props = {
     gridOptions: {
         default: function () {
-            return {}
+            return {};
         }
     }
 };
@@ -31,7 +31,7 @@ export default Vue.extend({
         return {
             _initialised: false,
             _destroyed: false,
-        }
+        };
     },
     methods: {
         globalEventListener(eventType, event) {

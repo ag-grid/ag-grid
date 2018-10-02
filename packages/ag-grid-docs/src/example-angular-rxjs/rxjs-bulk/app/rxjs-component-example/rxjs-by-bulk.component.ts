@@ -1,6 +1,6 @@
 import {Component} from "@angular/core";
 
-import {GridOptions} from "ag-grid";
+import {GridOptions} from "ag-grid-community";
 import {MockServerService} from "./mockServer.service";
 
 @Component({
@@ -47,7 +47,10 @@ export class RxJsComponentByFullSet {
                         });
                     }
                 );
-                this.gridOptions.api.sizeColumnsToFit();
+            },
+
+            onFirstDataRendered(params) {
+                params.api.sizeColumnsToFit();
             }
         };
     }
@@ -60,24 +63,24 @@ export class RxJsComponentByFullSet {
                 headerName: "Bid", field: "bid", width: 100,
                 cellClass: 'cell-number',
                 valueFormatter: this.numberFormatter,
-                cellRenderer:'agAnimateShowChangeCellRenderer'
+                cellRenderer: 'agAnimateShowChangeCellRenderer'
             },
             {
                 headerName: "Mid", field: "mid", width: 100,
                 cellClass: 'cell-number',
                 valueFormatter: this.numberFormatter,
-                cellRenderer:'agAnimateShowChangeCellRenderer'
+                cellRenderer: 'agAnimateShowChangeCellRenderer'
             },
             {
                 headerName: "Ask", field: "ask", width: 100,
                 cellClass: 'cell-number',
                 valueFormatter: this.numberFormatter,
-                cellRenderer:'agAnimateShowChangeCellRenderer'
+                cellRenderer: 'agAnimateShowChangeCellRenderer'
             },
             {
                 headerName: "Volume", field: "volume", width: 100,
                 cellClass: 'cell-number',
-                cellRenderer: 'animateSlide'
+                cellRenderer: 'agAnimateSlideCellRenderer'
             }
         ]
     }

@@ -6,10 +6,10 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise"> Server-side Row Model </h1>
+<h1 class="heading-enterprise"> Row Height </h1>
 
 <p class="lead">
-    Learn how to set Row Height with the Server-side Row Model.
+    Learn how to set Row Heights when using the Server-side Row Model.
 </p>
 
 <h2>Dynamic Row Height</h2>
@@ -54,5 +54,11 @@ include '../documentation-main/documentation_header.php';
     Purging the cache and auto row heights do not work together for the Server-side Row Model.
     If you are using auto row height, ensure 'maxBlocksInCache' is not set.
 </note>
+
+<h2>Next Up</h2>
+
+<p>
+    Continue to the next section to learn about <a href="../javascript-grid-server-side-model-tree-data/">Server-side Tree Data</a>.
+</p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

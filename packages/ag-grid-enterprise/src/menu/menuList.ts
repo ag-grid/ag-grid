@@ -1,4 +1,4 @@
-import {Utils as _, PopupService, MenuItemDef, Component, Autowired, Context} from "ag-grid";
+import {Utils as _, PopupService, MenuItemDef, Component, Autowired, Context} from "ag-grid-community";
 import {MenuItemComponent, MenuItemSelectedEvent} from "./menuItemComponent";
 
 export class MenuList extends Component {

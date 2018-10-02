@@ -29,7 +29,7 @@ import {
     ColumnApi,
     RowDataChangedEvent,
     PreDestroy
-} from "ag-grid";
+} from "ag-grid-community";
 import {ServerSideCache, ServerSideCacheParams} from "./serverSideCache";
 
 @Bean('rowModel')
@@ -115,9 +115,29 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         // back with data. So this stops the reload from the grid after the data comes back.
         // Once we have "AG-1591 Allow delta changes to columns" fixed, then this hack can be taken out.
         if (this.gridOptionsWrapper.isSuppressEnterpriseResetOnNewColumns()) { return; }
-
         // every other customer can continue as normal and have it working!!!
-        this.reset();
+
+        // check if anything pertaining to fetching data has changed, and if it has, reset, but if
+        // it has not, don't reset
+        let resetRequired: boolean;
+        if (!this.cacheParams) {
+            resetRequired = true;
+        } else {
+
+            let rowGroupColumnVos = this.toValueObjects(this.columnController.getRowGroupColumns());
+            let valueColumnVos = this.toValueObjects(this.columnController.getValueColumns());
+            let pivotColumnVos = this.toValueObjects(this.columnController.getPivotColumns());
+
+            let sortModelDifferent = !_.jsonEquals(this.cacheParams.sortModel, this.sortController.getSortModel());
+            let rowGroupDifferent = !_.jsonEquals(this.cacheParams.rowGroupCols, rowGroupColumnVos);
+            let pivotDifferent = !_.jsonEquals(this.cacheParams.pivotCols, pivotColumnVos);
+            let valuesDifferent = !_.jsonEquals(this.cacheParams.valueCols, valueColumnVos);
+            resetRequired = sortModelDifferent || rowGroupDifferent || pivotDifferent || valuesDifferent;
+        }
+
+        if (resetRequired) {
+            this.reset();
+        }
     }
 
     private onFilterChanged(): void {
@@ -517,8 +537,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         }
     }
 
+    // always returns true - this is used by the
     public isRowPresent(rowNode: RowNode): boolean {
-        return false;
+        let foundRowNode = this.getRowNode(rowNode.id);
+        return !!foundRowNode;
     }
 
     private extractSortModel(): { colId: string; sort: string }[] {

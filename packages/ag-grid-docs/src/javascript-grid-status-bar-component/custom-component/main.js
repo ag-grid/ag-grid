@@ -31,20 +31,19 @@ function createRowData() {
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: createRowData(),
-    enableStatusBar: true,
     enableRangeSelection: true,
     rowSelection: "multiple",
     components: {
         statusBarComponent: ClickableStatusBarComponent
     },
-    statusPanel: {
-        components: [
+    statusBar: {
+        statusPanels: [
             {
-                component: 'statusBarComponent'
+                statusPanel: 'statusBarComponent'
             },
             {
-                component: 'agAggregationComponent',
-                componentParams: {
+                statusPanel: 'agAggregationComponent',
+                statusPanelParams: {
                     aggFuncs: ['count', 'sum']
                 }
             }

@@ -27,7 +27,7 @@ npm init --yes
     <h2>Install Dependencies</h2>
 
     <snippet language="sh">
-npm i --save ag-grid ag-grid-angular
+npm i --save ag-grid-community ag-grid-angular
 npm i --save @angular/common @angular/compiler @angular/compiler-cli @angular/core @angular/platform-browser @angular/platform-browser-dynamic typescript rxjs core-js zone.js
 npm i --save-dev webpack webpack-dev-server angular2-template-loader awesome-typescript-loader extract-text-webpack-plugin file-loader canonical-path @types/node
 npm i --save-dev css-loader style-loader html-loader html-webpack-plugin raw-loader url-loader
@@ -63,7 +63,7 @@ npm i --save ag-grid-enterprise</snippet>
 import {NgModule} from "@angular/core";
 import {BrowserModule} from "@angular/platform-browser";
 // ag-grid
-import {AgGridModule} from "ag-grid-angular/main";
+import {AgGridModule} from "ag-grid-angular";
 // application
 import {AppComponent} from "./app.component";
 
@@ -85,7 +85,7 @@ export class AppModule {
 // app/app.component.ts 
 import {Component} from "@angular/core";
 
-import {GridOptions} from "ag-grid/main";
+import {GridOptions} from "ag-grid-community";
 
 @Component({
     selector: 'my-app',
@@ -97,7 +97,6 @@ export class AppComponent {
     private columnDefs:any[];
 
     constructor() {
-        // we pass an empty gridOptions in, so we can grab the api out
         this.gridOptions = &lt;GridOptions&gt;{
             onGridReady: () =&gt; {
                 this.gridOptions.api.sizeColumnsToFit();
@@ -130,7 +129,7 @@ import {platformBrowserDynamic} from "@angular/platform-browser-dynamic";
 import {AppModule} from "./app.module";
 
 // for enterprise customers
-// import {LicenseManager} from "ag-grid-enterprise/main";
+// import {LicenseManager} from "ag-grid-enterprise";
 // LicenseManager.setLicenseKey("your license key");
 
 platformBrowserDynamic().bootstrapModule(AppModule);</snippet>
@@ -158,14 +157,14 @@ import '@angular/common';
 import 'rxjs';
 
 // ag-grid
-import 'ag-grid/dist/styles/ag-grid.css';
-import 'ag-grid/dist/styles/ag-theme-balham.css';
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 
-import 'ag-grid-angular/main'</snippet>
+import 'ag-grid-angular'</snippet>
 
 <snippet>
 // for ag-grid-enterprise users only 
-import 'ag-grid-enterprise/main';</snippet>
+import 'ag-grid-enterprise';</snippet>
 
     <h2>tsconfig.json</h2>
     <p>We use this to let the TypeScript compiler know what our target is (es5), what libraries we depend on (dom and es2015) and so on:</p>

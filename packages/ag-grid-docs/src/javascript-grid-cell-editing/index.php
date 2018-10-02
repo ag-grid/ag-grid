@@ -13,6 +13,10 @@ include '../documentation-main/documentation_header.php';
         If your application is for showing data only, such as a reporting application, then you will not
         need to use cell editors. If you are editing your data like a spreadsheet, then you will
         need Cell Editors to do the editing.
+<br><br>
+
+    <p>
+        Remember Cell Editing works with all frameworks eg Angular and React as well as plain JavaScript.
     </p>
 
     <p>
@@ -503,7 +507,7 @@ cellEditorParams: function(params) {
         </ul>
     </p>
 
-    <?= example('Dynamic Parameters', 'dynamic-parameters', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Dynamic Parameters', 'dynamic-parameters', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 
     <h2 id="enter-key-down">Enter Key Navigation</h2>

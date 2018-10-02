@@ -6,15 +6,16 @@ var columnDefs = [
     {headerName: "Q3", field: "q3", type: 'quarterFigure'},
     {headerName: "Q4", field: "q4", type: 'quarterFigure'},
     {headerName: "Year", field: "year", rowGroup: true, hide: true},
-    {headerName: "Total", colId: "total", cellClass: 'number-cell total-col', valueFormatter: formatNumber,
+    {
+        headerName: "Total", colId: "total", cellClass: 'number-cell total-col', valueFormatter: formatNumber,
         aggFunc: "sum",
-        valueGetter: function(params) {
+        valueGetter: function (params) {
             var q1 = params.getValue('q1');
             var q2 = params.getValue('q2');
             var q3 = params.getValue('q3');
             var q4 = params.getValue('q4');
             var result = q1 + q2 + q3 + q4;
-            console.log('Total Value Getter ('+callCount+', '+params.column.getId()+'): ' + [q1,q2,q3,q4].join(', ') + ' = ' + result);
+            console.log('Total Value Getter (' + callCount + ', ' + params.column.getId() + '): ' + [q1, q2, q3, q4].join(', ') + ' = ' + result);
             callCount++;
             return result;
         }
@@ -24,14 +25,14 @@ var columnDefs = [
 function createRowData() {
     var rowData = [];
 
-    for (var i = 0; i<100; i++) {
+    for (var i = 0; i < 100; i++) {
         rowData.push({
             id: i,
-            numberGood: Math.floor(((i+2) * 476321) % 10000),
-            q1: Math.floor(((i+2) * 173456) % 10000),
-            q2: Math.floor(((i+200) * 173456) % 10000),
-            q3: Math.floor(((i+20000) * 173456) % 10000),
-            q4: Math.floor(((i+2000000) * 173456) % 10000),
+            numberGood: Math.floor(((i + 2) * 476321) % 10000),
+            q1: Math.floor(((i + 2) * 173456) % 10000),
+            q2: Math.floor(((i + 200) * 173456) % 10000),
+            q3: Math.floor(((i + 20000) * 173456) % 10000),
+            q4: Math.floor(((i + 2000000) * 173456) % 10000),
             year: i % 2 == 0 ? '2015' : '2016'
         });
     }
@@ -58,7 +59,9 @@ var gridOptions = {
             }
         }
     },
-    getRowNodeId: function(data) { return data.id; },
+    getRowNodeId: function (data) {
+        return data.id;
+    },
     suppressAggFuncInHeader: true,
     enableCellChangeFlash: true,
     columnDefs: columnDefs,
@@ -66,7 +69,7 @@ var gridOptions = {
     enableColResize: true,
     enableRangeSelection: true,
     groupDefaultExpanded: 1,
-    onCellValueChanged: function() {
+    onCellValueChanged: function () {
         console.log('onCellValueChanged');
     }
 };
@@ -91,12 +94,12 @@ function createGrid(valueCacheOn) {
     // then similar to all the other examples, create the grid
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-    gridOptions.onGridReady = function() {
-        gridOptions.api.sizeColumnsToFit();
+    gridOptions.onFirstDataRendered = function (params) {
+        params.api.sizeColumnsToFit();
     }
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     onValueCache(false);
 });

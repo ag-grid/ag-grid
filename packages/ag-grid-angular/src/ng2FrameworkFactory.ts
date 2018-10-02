@@ -1,5 +1,5 @@
 import {Injectable, NgZone, ViewContainerRef} from "@angular/core";
-import {IFrameworkFactory} from "ag-grid/main";
+import {IFrameworkFactory} from "ag-grid-community";
 import {BaseComponentFactory} from "./baseComponentFactory";
 
 @Injectable()

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>columns</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="square">
+        <g id="columns" stroke="#000000">
+            <path d="M6.5,3.5 L6.5,11.5" id="Line-12-Copy"></path>
+            <path d="M9.5,3.5 L9.5,11.5" id="Line-12-Copy-2"></path>
+            <path d="M12.5,3.5 L12.5,11.5" id="Line-12-Copy-3"></path>
+            <path d="M3.5,3.5 L3.5,11.5" id="Line-12"></path>
+        </g>
+    </g>
+</svg>

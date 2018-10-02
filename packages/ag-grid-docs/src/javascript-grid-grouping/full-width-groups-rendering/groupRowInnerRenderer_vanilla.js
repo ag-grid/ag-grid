@@ -2,7 +2,7 @@ function GroupRowInnerRenderer () {}
 
 GroupRowInnerRenderer.prototype.init = function(params) {
     this.eGui = document.createElement('div');
-    this.eGui.style = "display: inline-block";
+    this.eGui.style.display = "inline-block";
 
     var flagCode = params.flagCodes[params.node.key];
 

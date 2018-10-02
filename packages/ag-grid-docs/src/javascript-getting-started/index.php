@@ -42,9 +42,9 @@ You can either use your favorite programming text editor, or you can execute the
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
   &lt;head&gt;
-    &lt;script src=&quot;https://unpkg.com/ag-grid/dist/ag-grid.min.noStyle.js&quot;&gt;&lt;/script&gt;
-    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-grid.css&quot;&gt;
-    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-theme-balham.css&quot;&gt;
+    &lt;script src=&quot;https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.noStyle.js&quot;&gt;&lt;/script&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-grid.css&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-theme-balham.css&quot;&gt;
   &lt;/head&gt;
   &lt;body&gt;
     &lt;h1&gt;Hello from ag-grid!&lt;/h1&gt;
@@ -61,9 +61,9 @@ The grid ships several different themes; pick one that matches your project desi
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
-  &lt;script src=&quot;https://unpkg.com/ag-grid/dist/ag-grid.min.noStyle.js&quot;&gt;&lt;/script&gt;
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-grid.css&quot;&gt;
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-theme-balham.css&quot;&gt;
+  &lt;script src=&quot;https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.noStyle.js&quot;&gt;&lt;/script&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-grid.css&quot;&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-theme-balham.css&quot;&gt;
 &lt;/head&gt;
 &lt;body&gt;
   &lt;h1&gt;Hello from ag-grid!&lt;/h1&gt;
@@ -155,9 +155,9 @@ Notice that the actual data fetching is performed outside of the grid component 
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
-  &lt;script src=&quot;https://unpkg.com/ag-grid/dist/ag-grid.min.noStyle.js&quot;&gt;&lt;/script&gt;
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-grid.css&quot;&gt;
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-theme-balham.css&quot;&gt;
+  &lt;script src=&quot;https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.noStyle.js&quot;&gt;&lt;/script&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-grid.css&quot;&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-theme-balham.css&quot;&gt;
 &lt;/head&gt;
 &lt;body&gt;
   &lt;h1&gt;Hello from ag-grid!&lt;/h1&gt;
@@ -312,8 +312,8 @@ var gridOptions = {
 &lt;html&gt;
 &lt;head&gt;
   &lt;script src=&quot;https://unpkg.com/ag-grid-enterprise/dist/ag-grid-enterprise.min.noStyle.js&quot;&gt;&lt;/script&gt;
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-grid.css&quot;&gt;
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid/dist/styles/ag-theme-balham.css&quot;&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-grid.css&quot;&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-theme-balham.css&quot;&gt;
 &lt;/head&gt;
 &lt;body&gt;
   &lt;h1&gt;Hello from ag-grid!&lt;/h1&gt;
@@ -391,7 +391,7 @@ While doing so, we learned how to configure the grid and how how to use its api 
 </div>
 
 <div>
-  <a href="https://github.com/ag-grid/ag-grid-angular"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
+    <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
 </div>
 <br>
 <div>

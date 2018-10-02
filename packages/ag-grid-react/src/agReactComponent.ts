@@ -1,12 +1,11 @@
-import {AgReactFrameworkComponent} from "./interfaces";
 import * as React from 'react';
 import {ReactPortal} from 'react';
 import * as ReactDOM from 'react-dom';
-import * as AgGrid from 'ag-grid';
-import {Promise} from 'ag-grid';
+import * as AgGrid from 'ag-grid-community';
+import {Promise} from 'ag-grid-community';
 import {AgGridReact} from "./agGridReact";
 
-export class AgReactComponent implements AgReactFrameworkComponent<any> {
+export class AgReactComponent {
 
     private eParentElement: HTMLElement;
     private componentInstance: any;
@@ -48,7 +47,7 @@ export class AgReactComponent implements AgReactFrameworkComponent<any> {
         // force use of react next (ie portals) if unstable_renderSubtreeIntoContainer is no longer present
         // or if the user elects to try it
         return (typeof ReactDOM.unstable_renderSubtreeIntoContainer !== "function")
-             || (this.parentComponent && this.parentComponent.gridOptions && !this.parentComponent.gridOptions.reactNext);
+            || (this.parentComponent && this.parentComponent.gridOptions && !this.parentComponent.gridOptions.reactNext);
     }
 
     public getGui(): HTMLElement {

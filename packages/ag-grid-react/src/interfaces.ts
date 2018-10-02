@@ -1,33 +1,55 @@
 import {
-    IHeaderGroup,
-    IHeaderGroupParams,
-    IHeader,
-    IHeaderParams,
-    IFilterParams,
-    IDate,
-    IDateParams,
-    ICellRenderer,
-    ICellRendererParams,
     ICellEditor,
     ICellEditorParams,
+    ICellRenderer,
+    ICellRendererParams,
+    IDate,
+    IDateParams,
     IFilter,
-    ILoadingOverlayComp,
+    IFilterParams,
+    IHeader,
+    IHeaderGroup,
+    IHeaderGroupParams,
+    IHeaderParams,
     ILoadingOverlayParams,
-    INoRowsOverlayComp,
-    INoRowsOverlayParams
-} from 'ag-grid';
+    INoRowsOverlayParams,
+    IStatusPanel,
+    IToolPanel,
+    IToolPanelParams,
+    IAfterGuiAttachedParams,
+    IStatusPanelParams
+} from 'ag-grid-community';
 
 export interface AgReactFrameworkComponent<T> {
-
+    afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 }
 
+export interface IHeaderGroupReactComp extends IHeaderGroup, AgReactFrameworkComponent<IHeaderGroupParams> {
+}
 
-export interface IHeaderGroupReactComp extends IHeaderGroup, AgReactFrameworkComponent<IHeaderGroupParams> {}
-export interface IHeaderReactComp extends IHeader, AgReactFrameworkComponent<IHeaderParams> {}
-export interface IDateReactComp extends IDate, AgReactFrameworkComponent<IDateParams> {}
-export interface IFilterReactComp extends IFilter, AgReactFrameworkComponent<IFilterParams> {}
-export interface ICellRendererReactComp extends ICellRenderer, AgReactFrameworkComponent<ICellRendererParams> {}
-export interface ICellEditorReactComp extends ICellEditor, AgReactFrameworkComponent<ICellEditorParams> {}
+export interface IHeaderReactComp extends IHeader, AgReactFrameworkComponent<IHeaderParams> {
+}
 
-export interface ILoadingOverlayReactComp extends AgReactFrameworkComponent<ILoadingOverlayParams> {}
-export interface INoRowsOverlayReactComp extends AgReactFrameworkComponent<INoRowsOverlayParams>{}
+export interface IDateReactComp extends IDate, AgReactFrameworkComponent<IDateParams> {
+}
+
+export interface IFilterReactComp extends IFilter, AgReactFrameworkComponent<IFilterParams> {
+}
+
+export interface ICellRendererReactComp extends ICellRenderer, AgReactFrameworkComponent<ICellRendererParams> {
+}
+
+export interface ICellEditorReactComp extends ICellEditor, AgReactFrameworkComponent<ICellEditorParams> {
+}
+
+export interface ILoadingOverlayReactComp extends AgReactFrameworkComponent<ILoadingOverlayParams> {
+}
+
+export interface INoRowsOverlayReactComp extends AgReactFrameworkComponent<INoRowsOverlayParams> {
+}
+
+export interface IStatusPanelReactComp extends IStatusPanel, AgReactFrameworkComponent<IStatusPanelParams> {
+}
+
+export interface IToolPanelReactComp extends IToolPanel, AgReactFrameworkComponent<IToolPanelParams> {
+}

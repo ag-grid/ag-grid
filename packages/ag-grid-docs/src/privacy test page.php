@@ -62,9 +62,8 @@ meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-
 
                             <address>
                                 <strong>ag-Grid Ltd.</strong><br>
-                                The Treehouse, 2-10 Balham Station Road<br>
-                                London, SW12 9SG
-                                United Kingdom<br>
+                                Bank Chambers, 6 Borough High Street<br>
+                                London SE1 9QQ, United Kingdom<br>
                             </address>
 
                         <p>Email Enquiries: <a href="mailto:info@ag-grid.com">info@ag-grid.com</a></p>

@@ -10,11 +10,11 @@ import {
     ICellRendererFunc,
     CellRendererService,
     IRichCellEditorParams,
-    Promise
-} from "ag-grid/main";
+    Promise,
+    _
+} from "ag-grid-community";
 import {RichSelectRow} from "./richSelectRow";
 import {VirtualList} from "../virtualList";
-import {_} from "ag-grid";
 
 export class RichSelectCellEditor extends Component implements ICellEditor {
 

@@ -1,5 +1,5 @@
 import {autoinject, Container, TaskQueue, transient, View, ViewCompiler, ViewResources} from "aurelia-framework";
-import {BaseComponentWrapper, Bean, FrameworkComponentWrapper, WrapableInterface} from 'ag-grid';
+import {BaseComponentWrapper, Bean, FrameworkComponentWrapper, WrapableInterface} from 'ag-grid-community';
 
 @autoinject()
 @transient()

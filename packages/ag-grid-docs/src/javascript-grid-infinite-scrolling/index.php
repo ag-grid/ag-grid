@@ -562,7 +562,36 @@ loadingSpinnerColumn = {
 
     <?= example('Insert And Remove Example', 'insert-remove', 'generated') ?>
 
-    <h2 id="pagination">Pagination with Infinite Scrolling</h2>
+    <h2 id="changing-columns">Changing Columns</h2>
+
+    <p>
+        <a href="../javascript-grid-column-definitions/#column-changes/">Changing columns</a>
+        is possible using infinite scroll and it does not require the data getting fetched again
+        from the server. If the change of columns impacts the sort or filter (ie a column with a sort
+        of filter applied is removed), then the grid will fetch data again similar to how data is
+        fetched again after the user changes the sort or filter explicitly.
+    </p>
+
+    <p>
+        The example below demonstrates changing columns on the infinite row model. The following
+        can be noted:
+        <ul>
+            <li>Hit the buttons 'Show Year' and 'Hide Year'. Notice that the data is not re-fetched.</li>
+            <li>
+                Add a sort or filter to Age column. When the sort or filter is applied the data is re-fetched.
+                However once fetched, you can add and remove the Year column without re-fetching the data.
+            </li>
+            <li>
+                Add a sort or filter to the Year column. When the sort or filter is applied the data
+                is re-fetched. Now remove the Year column and the data is re-fetched again as the sort or
+                filter has changed.
+            </li>
+        </ul>
+    </p>
+
+    <?= example('Changing Columns', 'changing-columns', 'generated') ?>
+
+    <h2 id="pagination">Pagination</h2>
 
     <p>
         As with all row models, it is possible to enable pagination with infinite scrolling.

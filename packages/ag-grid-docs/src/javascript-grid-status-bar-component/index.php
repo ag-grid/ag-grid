@@ -6,38 +6,41 @@ $pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1>Status Bar Components</h1>
+<h1>Status Bar Panels (Components)</h1>
 
 <p>
-    Status Bar components allow you to add your own components to the ag-Grid Status Bar. Use this when the provided
+    Status Bar Panels allow you to add your own components to the grid's Status Bar. Use this when the provided
     status bar components do not meet your requirements.
 </p>
 
-<h2>Status Bar Component Interface</h2>
+<h2>Status Bar Panel Interface</h2>
 
 <snippet>
-interface IStatusBar&lt;IStatusBarParams&gt; {
-    /** Return the DOM element of your component, this is what the grid puts into the DOM */
-    getGui(): HTMLElement;
+interface IStatusPanel {
+    /** The init(params) method is called on the status bar component once.
+        See below for details on the parameters. */
+    init?(params: T): void;
 
-    /** Gets called once by grid when destroying the component - do any necessary cleanup here  */
+    /** A hook to perform any necessary operation just after the gui for this component has been
+        renderered in the screen. */
+    afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
+
+    /** Gets called when the grid is destroyed - if your status bar components needs to do any
+        cleanup, do it here */
     destroy?(): void;
-
-    /** The init(params) method is called on the component once. See below for details on the parameters. */
-    init?(params: IStatusBarParams): Promise&lt;void&gt; | void;
 }
 </snippet>
 
-<h2 id="istatus-bar-params">IStatusBarParams</h2>
+ <h2 id="istatus-bar-params">Status Panel Parameters</h2>
 <p>
     The method init(params) takes a params object with the items listed below. If the user provides
-    params via the <code>statusParams</code> attribute (see <a href="#configure-components"></a> Configuring Status Bar
+    params via the <code>componentParams</code> attribute (see <a href="#configure-components"></a> Configuring Status Bar
     Components below), these will be additionally added to the params object, overriding items of the same name if a name
     clash exists.
 </p>
 
 <snippet>
-interface IStatusBarParams {
+interface IStatusPanelParams {
     // The grid API
     api: GridApi,
 
@@ -49,22 +52,22 @@ interface IStatusBarParams {
 }
 </snippet>
 
-<h2 id="configure-components">Configuring Status Bar Components</h2>
+<h2 id="configure-components">Configuring Status Bar Panels</h2>
 
 <p>In order to add new components to the Status Bar (or to configure the provided <code>agAggregationComponent</code>
-    component) you need to provide the components and any associated information to <code>statusPanel</code>:
+    component) you need to provide the components and any associated information to <code>statusBar</code>:
 </p>
 
 <snippet>
 var gridOptions = {
-    statusPanel: {
-        components: [
+    statusBar: {
+        statusPanels: [
             {
-                component: 'statusBarComponent'
+                statusPanel: 'statusBarComponent'
             },
             {
-                component: 'agAggregationComponent',
-                componentParams : {
+                statusPanel: 'agAggregationComponent',
+                statusPanelParams : {
                     // only show count and sum ('min', 'max', 'avg' won't be shown)
                     aggFuncs: ['count', 'sum']
                 }
@@ -80,7 +83,37 @@ var gridOptions = {
 <p>Order is important here - the order of the components provided will determine the order in which they're rendered, from
     left to right.</p>
 
-<?= example('Status Bar Component', 'custom-component', 'generated', array("enterprise" => 1)) ?>
+<?= example('Status Bar Panel', 'custom-component', 'generated', array("enterprise" => 1)) ?>
+
+
+<h2 id="accessing-status-bar-comp-instances">Accessing Status Bar Panel Instances</h2>
+
+<p>
+    After the grid has created an instance of a status bar component it is possible to access that instance.
+    This is useful if you want to call a method that you provide on the status bar component that has nothing to do
+    with the operation of the grid. Accessing a status bar component is done using the grid API
+    <code>getStatusPanel(key)</code>.
+</p>
+
+<p>
+    If your are using a framework component then the returned object
+    is a wrapper and you can get the underlying status bar component using <code>getFrameworkComponentInstance()</code>
+</p>
+
+<snippet>
+// example - get status bar component
+let statusBarComponent = gridOptions.api.getStatusPanel('statusBarCompKey');
+if (statusBarComponent) {
+    componentInstance = statusBarComponent.getFrameworkComponentInstance();
+}
+</snippet>
+
+<p>
+    The example below shows using <code>getStatusPanel</code>:
+</p>
+
+<?= example('Get Status Bar Panel Instance', 'component-instance', 'generated', array("enterprise" => 1)) ?>
+
 
 <?php 
 

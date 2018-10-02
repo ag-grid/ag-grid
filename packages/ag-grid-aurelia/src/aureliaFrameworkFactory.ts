@@ -1,5 +1,5 @@
 import {autoinject, Container, transient, ViewResources} from "aurelia-framework";
-import {BaseFrameworkFactory, IFrameworkFactory} from "ag-grid/main";
+import {BaseFrameworkFactory, IFrameworkFactory} from "ag-grid-community";
 
 @autoinject()
 @transient()

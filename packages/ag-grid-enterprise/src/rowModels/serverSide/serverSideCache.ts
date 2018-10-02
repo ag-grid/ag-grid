@@ -17,7 +17,7 @@ import {
     GridOptionsWrapper,
     RowDataUpdatedEvent,
     Events
-} from "ag-grid";
+} from "ag-grid-community";
 import {ServerSideBlock} from "./serverSideBlock";
 
 export interface ServerSideCacheParams extends RowNodeCacheParams {

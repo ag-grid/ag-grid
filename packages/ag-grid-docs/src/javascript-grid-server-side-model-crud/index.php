@@ -6,10 +6,30 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise"> Server-side Row Model </h1>
+<h1 class="heading-enterprise"> CRUD Operations </h1>
 
 <p class="lead">
     Learn how to perform CRUD operations using the Server-side Row Model.
+</p>
+
+<h2>Server-side Changing Data</h2>
+
+<p>
+    Data is read back from the server side in blocks. This is similar to paging in other data-grids.
+    This comes with one restriction - if the data is changing such that the data in each block changes,
+    then the Server-side row model will get the incorrect rows. For example consider the following
+    scenario:
+<ol>
+    <li>The grid asks for rows 0 to 99 (ie first block of 100 rows) and these get read from a database.</li>
+    <li>Another application inserts a row at index 50.</li>
+    <li>The grid asks for rows 100 to 199 (the second block of 100 rows) and again these get read from the database.</li>
+</ol>
+In this scenario the grid will have the last row in the first block appear again as the first row in the second
+block. This is because the row was at index 99 before the insert and then at index 100 after the insert.
+</p>
+
+<p>
+    For this reason it is best use Server-side row model on data that is not changing, or a snapshot of the data.
 </p>
 
 <h2>Updating Row Data</h2>

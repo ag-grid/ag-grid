@@ -2,11 +2,11 @@ const merge = require('webpack-merge');
 const common = require('./common');
 
 const webpack = require('webpack');
-const path = require('path');
 
 module.exports = merge(common, {
+    mode: 'development',
     entry: {
-        'dist/ag-grid': ['./src/_assets/ts/ag-grid.ts']
+        'dist/ag-grid-community': ['./src/_assets/ts/ag-grid-community.ts']
     },
 
     output: {
@@ -14,8 +14,8 @@ module.exports = merge(common, {
         library: ['agGrid'],
         libraryTarget: 'umd',
         publicPath: '/',
-        hotUpdateChunkFilename: 'dev/ag-grid/[hash].hot-update.js',
-        hotUpdateMainFilename: 'dev/ag-grid/[hash].hot-update.json'
+        hotUpdateChunkFilename: 'dev/ag-grid-community/[hash].hot-update.js',
+        hotUpdateMainFilename: 'dev/ag-grid-community/[hash].hot-update.json'
     },
 
     plugins: [

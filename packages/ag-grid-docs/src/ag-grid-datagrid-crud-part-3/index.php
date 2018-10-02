@@ -290,7 +290,7 @@ ng serve
             <p>If you're not using any of the Enterprise features then you only need to install the <code>ag-grid</code>
                 dependency.</p>
 
-            <snippet>npm install --save ag-grid ag-grid-enterprise ag-grid-angular</snippet>
+            <snippet>npm install --save ag-grid-community ag-grid-enterprise ag-grid-angular</snippet>
 
             <p>The <code>ag-grid-angular</code> is what allows us to talk to the grid and provides the rich Angular
                 functionality

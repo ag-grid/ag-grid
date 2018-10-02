@@ -1,7 +1,7 @@
 {
   "name": "ag-grid-vue",
   "description": "ag-Grid Vue Component",
-  "version": "18.1.0",
+  "version": "19.0.0",
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
   "main": "main.js",
@@ -24,17 +24,19 @@
     "vuejs"
   ],
   "peerDependencies": {
-    "ag-grid": "^18.1.0",
+    "ag-grid-community": "^19.0.0",
     "vue": "^2.5.17"
   },
   "devDependencies": {
-    "ag-grid": "^18.1.0",
-    "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.5",
-    "babel-preset-env": "^1.7.0",
+    "@babel/core": "^7.0.1",
+    "@babel/preset-env": "^7.0.0",
+    "ag-grid-community": "^19.0.0",
+    "babel-loader": "^8.0.2",
     "gulp": "^3.9.1",
-    "gulp-babel": "^7.0.1",
+    "gulp-babel": "^8.0.0",
     "gulp-rename": "^1.4.0",
-    "vue": "^2.5.17"
+    "jshint": "^2.9.6",
+    "vue": "^2.5.17",
+    "webpack": "^4.18.0"
   }
 }

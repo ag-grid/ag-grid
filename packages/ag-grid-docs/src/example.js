@@ -96,12 +96,11 @@ function suppressColumnMoveAnimation() {
 }
 
 var gridOptions = {
-    statusPanel: {
-        components: [
-            { component: 'agTotalRowCountComponent' },
-            { component: 'agFilteredRowCountComponent' },
-            { component: 'agSelectedRowCountComponent' },
-            { component: 'agAggregationComponent' }
+    statusBar: {
+        statusPanels: [
+            { statusPanel: 'agTotalAndFilteredRowCountComponent', key: 'totalAndFilter', align: 'left' },
+            { statusPanel: 'agSelectedRowCountComponent', align: 'left' },
+            { statusPanel: 'agAggregationComponent', align: 'right' }
         ]
     },
     components: {
@@ -123,6 +122,7 @@ var gridOptions = {
     },
     enableCellChangeFlash: true,
     rowDragManaged: true,
+    popupParent: document.body,
     // ensureDomOrder: true,
     // postProcessPopup: function(params) {
     //     console.log(params);
@@ -145,7 +145,7 @@ var gridOptions = {
     // suppressRowTransform: true,
     //minColWidth: 50,
     //maxColWidth: 300,
-//    rowBuffer: 10,
+    //    rowBuffer: 10,
     //columnDefs: [],
     //singleClickEdit: true,
     // suppressClickEdit: true,
@@ -189,7 +189,8 @@ var gridOptions = {
     //suppressCellSelection: true,
     //suppressMultiSort: true,
     // scrollbarWidth: 20,
-    showToolPanel: true,//window.innerWidth > 1000,
+    sideBar: true,
+    // showToolPanel: true,//window.innerWidth > 1000,
     // toolPanelSuppressColumnFilter: true,
     // toolPanelSuppressColumnSelectAll: true,
     // toolPanelSuppressColumnExpandAll: true,
