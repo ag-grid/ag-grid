@@ -220,7 +220,7 @@ const registerFont = (font: ExcelFont): number => {
 };
 
 const registerStyle = (config: ExcelStyle): void => {
-    const {id, alignment, borders, font, interior, numberFormat} = config;
+    const {id, alignment, borders, font, interior, numberFormat, protection} = config;
     let currentFill: number;
     let currentBorder: number;
     let currentFont: number;
@@ -252,6 +252,7 @@ const registerStyle = (config: ExcelStyle): void => {
         fillId: currentFill || 0,
         fontId: currentFont || 0,
         numFmtId: currentNumberFmt || 0,
+        protection,
         xfId: 0
     });
 };

@@ -1,12 +1,17 @@
-import {ExcelOOXMLTemplate, XmlElement, ExcelAlignment} from 'ag-grid-community';
+import {ExcelOOXMLTemplate, XmlElement, ExcelAlignment, ExcelProtection} from 'ag-grid-community';
 import alignmentFactory from './alignment';
+import protectionFactory from './protection';
 
 const xfFactory: ExcelOOXMLTemplate = {
     getTemplate(xf: Xf) {
-        const {alignment, borderId, fillId, fontId, numFmtId, xfId} = xf;
-        let children: XmlElement;
+        const {alignment, borderId, fillId, fontId, numFmtId, protection, xfId} = xf;
+        let children: XmlElement[] = [];
         if (alignment) {
-            children = alignmentFactory.getTemplate(alignment);
+            children.push(alignmentFactory.getTemplate(alignment));
+        }
+
+        if (protection) {
+            children.push(protectionFactory.getTemplate(protection));
         }
 
         return {
@@ -14,6 +19,7 @@ const xfFactory: ExcelOOXMLTemplate = {
             properties: {
                 rawMap: {
                     applyAlignment: alignment ? 1 : undefined,
+                    applyProtection: protection ? 1 : undefined,
                     applyBorder: borderId ? 1 : undefined,
                     borderId,
                     fillId,
@@ -24,7 +30,7 @@ const xfFactory: ExcelOOXMLTemplate = {
                     xfId
                 }
             },
-            children: children ? [children]: undefined
+            children: children.length ? children: undefined
         };
     }
 };
@@ -38,4 +44,5 @@ export interface Xf {
     fontId: number;
     numFmtId: number;
     xfId?: number;
+    protection?: ExcelProtection;
 }
