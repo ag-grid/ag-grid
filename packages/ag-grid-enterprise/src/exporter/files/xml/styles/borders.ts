@@ -17,7 +17,7 @@ const borders: ExcelXMLTemplate = {
                     name: 'Border',
                     properties: {
                         prefixedAttributes: [{
-                            prefix: 'ss',
+                            prefix: 'ss:',
                             map: {
                                 Position: current,
                                 LineStyle: it.lineStyle,

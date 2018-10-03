@@ -8,19 +8,32 @@
         background-color: #00008B;
         color: white;
     }
+    .topContainer {
+        display: flex;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        font-size: 14px;
+        align-items: center;
+    }
+    .topContainer label {
+        margin-right: 15px;
+    }
+    .topContainer button {
+        height: 25px;
+        cursor: pointer;
+    }
 </style>
 
-<div style="padding-bottom: 4px;">
+<div class="topContainer">
     <label>
         File Name:
-        <input type="text" id="fileName"/>
+        <input type="text" id="fileName" placeholder="export"/>
     </label>
     <label>
         Sheet Name:
-        <input type="text" id="sheetName"/>
+        <input type="text" id="sheetName" placeholder="ag-Grid"/>
     </label>
-    <label style="margin-left: 20px;">
+    <label>
         <button onclick="onBtExport()">Export to Excel</button>
     </label>
 </div>
-<div id="myGrid" style="height: 380px;" class="ag-theme-balham"></div>
+<div id="myGrid" style="margin-top: 5px; height: 380px;" class="ag-theme-balham"></div>

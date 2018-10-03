@@ -56,7 +56,8 @@ function onBtExport() {
         allColumns: getBooleanValue('#allColumns'),
         onlySelected: getBooleanValue('#onlySelected'),
         fileName: document.querySelector('#fileName').value,
-        sheetName: document.querySelector('#sheetName').value
+        sheetName: document.querySelector('#sheetName').value,
+        exportMode: document.querySelector('input[name="mode"]:checked').value
     };
 
     if (getBooleanValue('#skipGroupR')) {
