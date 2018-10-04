@@ -497,12 +497,8 @@ export class Utils {
         return this.missing(value) || Object.keys(value).length === 0;
     }
 
-    static exists(value: any): boolean {
-        if (value === null || value === undefined || value === '') {
-            return false;
-        } else {
-            return true;
-        }
+    static exists(value: any, allowEmptyString: boolean = false): boolean {
+        return value != null && (value !== '' || allowEmptyString);
     }
 
     static firstExistingValue<A>(...values: A[]): A {
