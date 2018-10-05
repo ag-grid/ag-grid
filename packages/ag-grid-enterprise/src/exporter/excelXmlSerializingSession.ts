@@ -242,6 +242,10 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
         let typeTransformed: ExcelDataType = getType();
 
         let massageText = (val:string) =>  this.suppressTextAsCDATA ? _.escape(val) : `<![CDATA[${val}]]>`;
+        let convertBoolean = (val: boolean | string): string => {
+            if (!val || val === '0' || val ===  'false') return  '0';
+            return '1';
+        };
 
         return {
             styleId: styleExists ? styleId : null,
@@ -250,6 +254,7 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
                 value:
                     typeTransformed === 'String' ? massageText(value):
                     typeTransformed === 'Number' ? Number(value).valueOf() + '' :
+                    typeTransformed === 'Boolean' ? convertBoolean(value) :
                     value
             }
         };
