@@ -83,15 +83,34 @@ export interface RowSpanningAccumulator {
     onColumn(header: string, index: number, span:number):void;
 }
 
+export interface GridSerializingParams {
+    columnController: ColumnController;
+    valueService: ValueService;
+    gridOptionsWrapper: GridOptionsWrapper;
+    processCellCallback?: (params: ProcessCellForExportParams) => string;
+    processHeaderCallback?: (params: ProcessHeaderForExportParams) => string;
+    cellAndHeaderEscaper?: (rawValue:string) => string;
+}
+
 export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
-    constructor(
-        public columnController:ColumnController,
-        public valueService:ValueService,
-        public gridOptionsWrapper:GridOptionsWrapper,
-        public processCellCallback?:(params: ProcessCellForExportParams)=>string,
-        public processHeaderCallback?:(params: ProcessHeaderForExportParams)=>string,
-        public cellAndHeaderEscaper?:(rawValue:string)=>string
-    ) {}
+    public columnController: ColumnController;
+    public valueService:ValueService;
+    public gridOptionsWrapper:GridOptionsWrapper;
+    public processCellCallback?:(params: ProcessCellForExportParams)=>string;
+    public processHeaderCallback?:(params: ProcessHeaderForExportParams)=>string;
+    public cellAndHeaderEscaper?:(rawValue:string)=>string;
+
+    constructor(config: GridSerializingParams) {
+        const {columnController, valueService, gridOptionsWrapper, processCellCallback,
+            processHeaderCallback, cellAndHeaderEscaper} = config;
+
+        this.columnController = columnController;
+        this.valueService = valueService;
+        this.gridOptionsWrapper = gridOptionsWrapper;
+        this.processCellCallback = processCellCallback;
+        this.processHeaderCallback = processHeaderCallback;
+        this.cellAndHeaderEscaper = cellAndHeaderEscaper;
+    }
 
     abstract prepare(columnsToExport: Column[]) : void;
 
@@ -154,7 +173,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         return keys.reverse().join(' -> ');
     }
 
-    private processCell(rowNode: RowNode, column: Column, value: any, processCellCallback:(params: ProcessCellForExportParams)=>string, type: string): any {
+    private processCell(rowNode: RowNode, column: Column, value: any, processCellCallback:(params: ProcessCellForExportParams) => string, type: string): any {
         if (processCellCallback) {
             return processCellCallback({
                 column: column,

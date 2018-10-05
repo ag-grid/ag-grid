@@ -22,10 +22,10 @@ export class LoggerFactory {
 
 export class Logger {
 
-    private isLoggingFunc: ()=>boolean;
+    private isLoggingFunc: ()=> boolean;
     private name: string;
 
-    constructor(name: string, isLoggingFunc: ()=>boolean) {
+    constructor(name: string, isLoggingFunc: ()=> boolean) {
         this.name = name;
         this.isLoggingFunc = isLoggingFunc;
     }
@@ -36,6 +36,7 @@ export class Logger {
 
     public log(message: string) {
         if (this.isLoggingFunc()) {
+            // tslint:disable-next-line
             console.log('ag-Grid.' + this.name + ': ' + message);
         }
     }
