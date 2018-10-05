@@ -17,7 +17,7 @@ import {ValueCache} from "../../valueService/valueCache";
 import {RowBounds} from "../../interfaces/iRowModel";
 import {GridApi} from "../../gridApi";
 
-enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes};
+enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes}
 
 export interface RefreshModelParams {
     // how much of the pipeline to execute
@@ -41,7 +41,7 @@ export interface RefreshModelParams {
 }
 
 export interface RowDataTransaction {
-    addIndex?: number,
+    addIndex?: number;
     add?: any[];
     remove?: any[];
     update?: any[];
@@ -152,7 +152,7 @@ export class ClientSideRowModel {
             return {
                 rowTop: rowNode.rowTop,
                 rowHeight: rowNode.rowHeight
-            }
+            };
         } else {
             return null;
         }
@@ -277,7 +277,7 @@ export class ClientSideRowModel {
 
         let doingLegacyTreeData = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         if (doingLegacyTreeData) {
-            rowsMissing = _.missing(this.rootNode.childrenAfterGroup) || this.rootNode.childrenAfterGroup.length === 0
+            rowsMissing = _.missing(this.rootNode.childrenAfterGroup) || this.rootNode.childrenAfterGroup.length === 0;
         } else {
             rowsMissing = _.missing(this.rootNode.allLeafChildren) || this.rootNode.allLeafChildren.length === 0;
         }
@@ -290,7 +290,6 @@ export class ClientSideRowModel {
     public isRowsToRender(): boolean {
         return _.exists(this.rowsToDisplay) && this.rowsToDisplay.length > 0;
     }
-
 
     public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
 
@@ -337,7 +336,6 @@ export class ClientSideRowModel {
 
         return result;
     }
-
 
     public setDatasource(datasource: any): void {
         console.error('ag-Grid: should never call setDatasource on clientSideRowController');

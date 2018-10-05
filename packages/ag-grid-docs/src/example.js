@@ -337,6 +337,10 @@ var gridOptions = {
             numberFormat: {
                 format: '[$$-409]#,##0'
             }
+        },
+        {
+            id: 'booleanType',
+            dataType: 'boolean'
         }
     ]
 };
@@ -509,6 +513,7 @@ var defaultCols = [
                 enableRowGroup: true,
                 enablePivot: true,
                 enableValue: true,
+                cellClass: 'booleanType',
                 cellRenderer: 'booleanCellRenderer', cellStyle: {"text-align": "center"}, comparator: booleanComparator,
                 floatCell: true,
                 filterParams: {

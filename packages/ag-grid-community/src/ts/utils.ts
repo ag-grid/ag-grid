@@ -171,6 +171,40 @@ export class Utils {
 
     static compose = (...fns: Function[]) => (arg: any) => fns.reduce((composed, f) => f(composed),arg);
 
+    static decToHex = (number: number, bytes: number): string => {
+        let hex = '';
+
+        for (let i = 0; i < bytes; i++) {
+            hex += String.fromCharCode(number & 0xff);
+            number >>>= 8;
+        }
+
+        return hex;
+    }
+
+    static utf8_encode = (s: string): string => {
+        let utftext = '';
+
+        s = s.replace(/\r\n/g, "\n");
+
+        for (let n = 0, len = s.length; n < len; n++) {
+            const c = s.charCodeAt(n);
+
+            if (c < 128) {
+                utftext += String.fromCharCode(c);
+            } else if ((c > 127) && (c < 2048)) {
+                utftext += String.fromCharCode((c >> 6) | 192);
+                utftext += String.fromCharCode((c & 63) | 128);
+            } else {
+                utftext += String.fromCharCode((c >> 12) | 224);
+                utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+                utftext += String.fromCharCode((c & 63) | 128);
+            }
+        }
+
+        return utftext;
+    }
+
     static setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void {
         if (rtl) {
             // Chrome and Safari when doing RTL have the END position of the scroll as zero, not the start

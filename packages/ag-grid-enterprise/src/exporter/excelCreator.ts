@@ -15,6 +15,7 @@ import {
     RowType,
     StylingService,
     ValueService,
+    ZipContainer,
     _
 } from 'ag-grid-community';
 
@@ -23,7 +24,6 @@ import {ExcelXmlSerializingSession} from './excelXmlSerializingSession';
 import {ExcelXlsxSerializingSession} from './excelXlsxSerializingSession';
 import {ExcelXmlFactory} from './excelXmlFactory';
 import {ExcelXlsxFactory} from './excelXlsxFactory';
-import * as JSZip from 'jszip-sync';
 
 export interface ExcelMixedStyle {
     key: string;
@@ -46,6 +46,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
     @Autowired('downloader') private downloader: Downloader;
     @Autowired('gridSerializer') private gridSerializer: GridSerializer;
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('zipContainer') zipContainer: ZipContainer;
 
     private exportMode: string;
 
@@ -152,34 +153,22 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
             return super.packageFile(data);
         }
 
-        const zip: JSZip = new JSZip();
-        const xlsxFactory = this.xlsxFactory;
+        const {zipContainer, xlsxFactory} = this;
 
-        return zip.sync(() => {
-            zip.file('_rels/.rels', xlsxFactory.createRels());
-            zip.file('docProps/core.xml', xlsxFactory.createCore());
-            zip.file('[Content_Types].xml', xlsxFactory.createContentTypes());
+        zipContainer.addFolders(['_rels/', 'docProps/', 'xl/', 'xl/theme/', 'xl/_rels/', 'xl/worksheets/']);
 
-            const xl = zip.folder('xl');
+        zipContainer.addFile('[Content_Types].xml', xlsxFactory.createContentTypes());
+        zipContainer.addFile('_rels/.rels', xlsxFactory.createRels());
+        zipContainer.addFile('docProps/core.xml', xlsxFactory.createCore());
 
-            xl.file('_rels/workbook.xml.rels', xlsxFactory.createWorkbookRels());
-            xl.file('theme/theme1.xml', xlsxFactory.createTheme());
-            xl.file('styles.xml', xlsxFactory.createStylesheet());
-            xl.file('worksheets/sheet1.xml', data);
-            xl.file('sharedStrings.xml', xlsxFactory.createSharedStrings());
-            xl.file('workbook.xml', xlsxFactory.createWorkbook());
+        zipContainer.addFile('xl/workbook.xml', xlsxFactory.createWorkbook());
+        zipContainer.addFile('xl/styles.xml', xlsxFactory.createStylesheet());
+        zipContainer.addFile('xl/sharedStrings.xml', xlsxFactory.createSharedStrings());
 
-            let zipped;
+        zipContainer.addFile('xl/theme/theme1.xml', xlsxFactory.createTheme());
+        zipContainer.addFile('xl/_rels/workbook.xml.rels', xlsxFactory.createWorkbookRels());
+        zipContainer.addFile('xl/worksheets/sheet1.xml', data);
 
-            zip.generateAsync({
-                type: 'blob',
-                mimeType:
-                  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-              }).then(function(content: any) {
-                zipped = content;
-            });
-
-            return zipped;
-        });
+        return zipContainer.getContent('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     }
 }

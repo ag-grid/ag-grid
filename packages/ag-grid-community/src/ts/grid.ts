@@ -75,6 +75,7 @@ import {SelectableService} from "./rowNodes/selectableService";
 import {AutoHeightCalculator} from "./rendering/autoHeightCalculator";
 import {PaginationComp} from "./rowModels/pagination/paginationComp";
 import {ResizeObserverService} from "./misc/resizeObserverService";
+import {ZipContainer} from "./exporter/files/zip/zipContainer";
 
 export interface GridParams {
     // used by Web Components
@@ -100,6 +101,7 @@ export class Grid {
     private static frameworkBeans: any[];
     private static enterpriseComponents: any[];
     private static enterpriseDefaultComponents: any[];
+    protected logger: Logger;
 
     // the default is ClientSideRowModel, which is also used for pagination.
     // the enterprise adds viewport to this list.
@@ -197,22 +199,19 @@ export class Grid {
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService,
                 CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService,
                 ColumnHoverService, ColumnAnimationService, SortService, SelectableService, AutoGroupColService,
-                ImmutableService, ChangeDetectionService, Environment, AnimationFrameService, SortController],
+                ImmutableService, ChangeDetectionService, Environment, AnimationFrameService, SortController, ZipContainer],
             components: components,
             enterpriseDefaultComponents: Grid.enterpriseDefaultComponents,
             debug: !!gridOptions.debug
         };
 
-        let isLoggingFunc = ()=> contextParams.debug;
-        this.context = new Context(contextParams, new Logger('Context', isLoggingFunc));
+        this.logger = new Logger('ag-Grid', () => gridOptions.debug);
+        const contextLogger = new Logger('Context', () => contextParams.debug);
+        this.context = new Context(contextParams, contextLogger);
 
         this.setColumnsAndData();
-
         this.dispatchGridReadyEvent(gridOptions);
-
-        if (gridOptions.debug) {
-            console.log('ag-Grid -> initialised successfully, enterprise = ' + enterprise);
-        }
+        this.logger.log(`initialised successfully, enterprise = ${enterprise}`);
     }
 
     private setColumnsAndData(): void {

@@ -16,7 +16,7 @@ export interface ContextParams {
     seed: any;
     beans: any[];
     components: ComponentMeta[];
-    enterpriseDefaultComponents: any[],
+    enterpriseDefaultComponents: any[];
     overrideBeans: any[];
     debug: boolean;
 }

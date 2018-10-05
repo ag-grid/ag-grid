@@ -26,12 +26,12 @@ import {ColumnToolPanel} from "./sideBar/providedPanels/columns/columnToolPanel"
 import {SideBarButtonsComp} from "./sideBar/sideBarButtonsComp";
 import {StatusBarService} from "./statusBar/statusBarService";
 import {StatusBar} from "./statusBar/statusBar";
-import {AggregationComp} from "./statusBar/providedPanels/aggregationComp"
+import {AggregationComp} from "./statusBar/providedPanels/aggregationComp";
 import {NameValueComp} from "./statusBar/providedPanels/nameValueComp";
-import {SelectedRowsComp} from "./statusBar/providedPanels/selectedRowsComp"
-import {TotalRowsComp} from "./statusBar/providedPanels/totalRowsComp"
-import {FilteredRowsComp} from "./statusBar/providedPanels/filteredRowsComp"
-import {TotalAndFilteredRowsComp} from "./statusBar/providedPanels/totalAndFilteredRowsComp"
+import {SelectedRowsComp} from "./statusBar/providedPanels/selectedRowsComp";
+import {TotalRowsComp} from "./statusBar/providedPanels/totalRowsComp";
+import {FilteredRowsComp} from "./statusBar/providedPanels/filteredRowsComp";
+import {TotalAndFilteredRowsComp} from "./statusBar/providedPanels/totalAndFilteredRowsComp";
 import {PrimaryColsHeaderPanel} from "./sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsHeaderPanel";
 import {PrimaryColsListPanel} from "./sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsListPanel";
 import {GridHeaderDropZones} from "./sideBar/providedPanels/columns/gridHeaderDropZones";

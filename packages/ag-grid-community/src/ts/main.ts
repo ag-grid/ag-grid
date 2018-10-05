@@ -207,6 +207,7 @@ export {BaseGridSerializingSession, GridSerializer, GridSerializingSession, Grid
 export {RowType, RowAccumulator, RowSpanningAccumulator} from "./exporter/gridSerializer";
 export {CsvExportParams, ExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams} from "./exporter/exportParams";
 export {XmlElement} from "./exporter/xmlFactory";
+export {ZipContainer} from "./exporter/files/zip/zipContainer";
 
 // root
 export {BaseFrameworkFactory} from "./baseFrameworkFactory";

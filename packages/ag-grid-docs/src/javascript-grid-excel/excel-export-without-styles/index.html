@@ -28,7 +28,7 @@
         width: 250px;
         flex-direction: column;
         align-items: stretch;
-        justify-content: space-around;
+        justify-content: flex-start;
     }
     .details label {
         display: flex;
@@ -36,11 +36,21 @@
         justify-content: space-between;
         margin-right: 15px;
     }
+    .details > label {
+        margin-bottom: 10px;
+    }
+    .details > label:first-of-type {
+        margin-top: 10px;
+    }
+    .details > label:last-of-type {
+        margin-bottom: 0;
+    }
     .options {
         display: flex;
         flex: 1;
         flex-direction: row;
-        justify-content: space-between;
+        flex-wrap: wrap;
+        justify-content: flex-start;
     }
     .options label {
         display: flex;
