@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+      "target": "es5",
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "sourceMap": true,
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "removeComments": false,
+      "noImplicitAny": true,
+      "declaration": true,
+      "suppressImplicitAnyIndexErrors": true,
+      "lib": ["dom","es2015"]
+    },
+    "exclude": [
+        "node_modules",
+        "dist"
+    ],
+    "angularCompilerOptions": {
+      /* will delete this dir after build - it's in a diff dir to prevent poluting the dist dir*/
+      "genDir": "aot"
+    }
+  }
+  

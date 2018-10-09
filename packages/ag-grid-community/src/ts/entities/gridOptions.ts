@@ -222,7 +222,7 @@ export interface GridOptions {
 
     statusBar? : {
         statusPanels: StatusPanelDef[]
-    }
+    };
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
@@ -332,7 +332,7 @@ export interface GridOptions {
     doesExternalFilterPass?(node: RowNode): boolean;
     getRowStyle?: Function;
     getRowClass?: (params: any) => (string | string[]);
-    rowClassRules?: { [cssClassName: string]: (Function | string) };
+    rowClassRules?: { [cssClassName: string]: (((params: any) => boolean) | string) };
     getRowHeight?: Function;
     sendToClipboard?: (params: any)=>void;
     processDataFromClipboard?: (params: ProcessDataFromClipboardParams)=>string[][];

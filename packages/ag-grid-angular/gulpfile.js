@@ -52,7 +52,7 @@ gulp.task('build-main', ['ngc-main'], () => {
 gulp.task('ngc-main', (callback) => {
     return gulp
         .src('./exports.ts')
-        .pipe(ngc('./tsconfig-main.json', callback));
+        .pipe(ngc('./tsconfig.json', callback));
 });
 
 gulp.task('watch', ['ngc-src'], () => {

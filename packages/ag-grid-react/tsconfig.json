@@ -9,5 +9,9 @@
       "react",
       "react-dom"
     ]
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "lib"
+  ]
 }
