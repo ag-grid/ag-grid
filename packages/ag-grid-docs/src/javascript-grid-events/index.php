@@ -257,6 +257,10 @@ include '../documentation-main/documentation_header.php';
             <td>A row group was opened or closed.</td>
         </tr>
         <tr>
+            <th>expandOrCollapseAll</th>
+            <td>Fired when calling either of the api methods <code>expandAll()</code> or <code>collapseAll()</code>.</td>
+        </tr>
+        <tr>
             <th>paginationChanged</th>
             <td>
                 The displayed page for pagination has changed. For example the data was filtered or sorted, or the user

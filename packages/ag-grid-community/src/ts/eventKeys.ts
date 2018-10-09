@@ -12,6 +12,9 @@ export class Events {
     /** A row group column was added, removed or order changed. */
     public static EVENT_COLUMN_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
 
+    /** expandAll / collapseAll was called from the api. */
+    public static EVENT_EXPAND_COLLAPSE_ALL = 'expandOrCollapseAll';
+
     /** A pivot column was added, removed or order changed. */
     public static EVENT_COLUMN_PIVOT_CHANGED = 'columnPivotChanged';
 
