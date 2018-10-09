@@ -390,7 +390,7 @@ export class Utils {
         }
     }
 
-    static find<T>(collection: T[] | { [id: string]: T }, predicate: string | boolean | ((item: T) => void), value?: any): T {
+    static find<T>(collection: T[] | { [id: string]: T }, predicate: string | boolean | ((item: T) => boolean), value?: any): T {
         if (collection === null || collection === undefined) {
             return null;
         }
@@ -411,7 +411,7 @@ export class Utils {
                     break;
                 }
             } else {
-                let callback = <(item: T) => void> predicate;
+                let callback = predicate as (item: T) => boolean;
                 if (callback(item)) {
                     firstMatchingItem = item;
                     break;
@@ -1261,10 +1261,10 @@ export class Utils {
         // https://stackoverflow.com/questions/39245488/event-path-undefined-with-firefox-and-vue-js
         // https://developer.mozilla.org/en-US/docs/Web/API/Event
 
-        let eventNoType = <any> event;
-        if (event.deepPath) {
+        let eventNoType = event as any;
+        if (eventNoType.deepPath) {
             // IE supports deep path
-            return event.deepPath();
+            return eventNoType.deepPath();
         } else if (eventNoType.path) {
             // Chrome supports path
             return eventNoType.path;
