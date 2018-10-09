@@ -257,7 +257,8 @@ export {
     ProcessRowParams,
     NavigateToNextCellParams,
     TabToNextCellParams,
-    PostProcessPopupParams
+    PostProcessPopupParams,
+    ProcessDataFromClipboardParams
 } from "./entities/gridOptions";
 export {OriginalColumnGroupChild} from "./entities/originalColumnGroupChild";
 export {IViewportDatasource, IViewportDatasourceParams} from "./interfaces/iViewportDatasource";

@@ -567,4 +567,5 @@ export interface PaginationNumberFormatterParams {
 
 export interface ProcessDataFromClipboardParams {
     data: string[][];
+    originalData: string[][];
 }
