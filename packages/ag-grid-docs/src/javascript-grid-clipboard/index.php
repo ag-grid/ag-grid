@@ -286,10 +286,13 @@ export interface ProcessDataFromClipboardParams {
     </snippet>
 
     <p>
-        In summary the <code>processDataFromClipboard</code> receives an object with two 2d arrays,
-        <code>data</code> and <code>originalData</code>. 
+        In summary the <code>processDataFromClipboard</code> receives an object with two 2d arrays:
+        <ul>
+            <li><code>data</code> - 2d array containing the new cell values (quotes removed).</li>
+            <li><code>originalData</code> - 2d array containing the new cell values as originally pasted.</li>
+        </ul>
         The method then returns a 2d array of data to be used. For the method to have no impact,
-        it should return the 2d <code>data</code> array it was provided, which will have any quotes removed for parsing CSV values.
+        it should return the 2d <code>data</code> array it was provided.
         If you want to keep any quote characters from your paste, you can selectively modify the returned array,
         or simply return <code>originalData</code>, which will mirror the <code>data</code> 2d array, but with all pasted quotes retained.
         The method is free to return back anything it wants,
