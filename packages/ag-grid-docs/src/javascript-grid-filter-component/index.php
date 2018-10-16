@@ -20,20 +20,22 @@ interface IFilterComp {
 
     // mandatory methods
 
-    // The init(params) method is called on the filter once. See below for details on the parameters.
+    // The init(params) method is called on the filter once. See below for details on the
+    // parameters.
     init(params: IFilterParams): void;
 
-    // Returns the GUI for this filter. The GUI can be a) a string of html or b) a DOM element or node.
+    // Returns the GUI for this filter. The GUI can be a) a string of html or b) a DOM element or
+    // node.
     getGui(): any;
 
-    // The grid calls this to know if the filter icon in the header should be shown. Return true to show.
+    // The grid calls this to know if the filter icon in the header should be shown. Return true
+    // to show.
     isFilterActive(): boolean;
 
-    // The grid will ask each active filter, in turn, whether each row in the grid
-    passes. If any
-    // filter fails, then the row will be excluded from the final set. The method is provided a
-    // params object with attributes node (the rodNode the grid creates that wraps the data) and data
-    // (the data object that you provided to the grid for that row).
+    // The grid will ask each active filter, in turn, whether each row in the grid passes. If any
+    // filter fails, then the row will be excluded from the final set. A params object is supplied
+    // with attributes node (the rowNode the grid creates that wraps the data) and data (the data
+    // object that you provided to the grid for that row).
     doesFilterPass(params: IDoesFilterPassParams): boolean;
 
     // Gets the filter state for storing
@@ -46,23 +48,24 @@ interface IFilterComp {
     // optional methods
 
     // Gets called every time the popup is shown, after the gui returned in
-    // getGui is attached to the DOM. If the filter popup is closed and reopened, this method is called
-    // each time the filter is shown. This is useful for any logic that requires attachment before executing,
-    // such as putting focus on a particular DOM element. The params has one callback method 'hidePopup',
-    // which you can call at any later point to hide the popup - good if you have an 'Apply' button and
-    // you want to hide the popup after it is pressed.
+    // getGui is attached to the DOM. If the filter popup is closed and reopened, this method is
+    // called each time the filter is shown. This is useful for any logic that requires attachment
+    // before executing, such as putting focus on a particular DOM element. The params has one
+    // callback method 'hidePopup', which you can call at any later point to hide the popup - good
+    // if you have an 'Apply' button and you want to hide the popup after it is pressed.
     afterGuiAttached?(params?: {hidePopup?: Function}): void;
 
-    // Gets called when new rows are inserted into the grid. If the filter needs to change its state
-    // after rows are loaded, it can do it here. For example the set filters uses this to update the list of
-    // available values to select from (eg 'Ireland', 'UK' etc for Country filter).
+    // Gets called when new rows are inserted into the grid. If the filter needs to change its
+    // state after rows are loaded, it can do it here. For example the set filters uses this
+    // to update the list of available values to select from (eg 'Ireland', 'UK' etc for
+    // Country filter).
     onNewRowsLoaded?(): void;
 
     // Gets called when the Column is destroyed. If your custom filter needs to do
     // any resource cleaning up, do it here. A filter is NOT destroyed when it is
     // made 'not visible', as the gui is kept to be shown again if the user selects
-    // that filter again. The filter is destroyed when the column it is associated with is destroyed,
-    // either new columns are set into the grid, or the grid itself is destroyed.
+    // that filter again. The filter is destroyed when the column it is associated with is
+    // destroyed, either new columns are set into the grid, or the grid itself is destroyed.
     destroy?(): void;
 
     // Only used in conjunction with floating filters.
