@@ -117,15 +117,15 @@
     <handled-path value="$PROJECT_DIR$/packages/ag-grid-angular/node_modules" />
     <handled-path value="$PROJECT_DIR$/packages/ag-grid-aurelia-example/node_modules" />
     <handled-path value="$PROJECT_DIR$/packages/ag-grid-aurelia/node_modules" />
+    <handled-path value="$PROJECT_DIR$/packages/ag-grid-community/node_modules" />
     <handled-path value="$PROJECT_DIR$/packages/ag-grid-dev/node_modules" />
     <handled-path value="$PROJECT_DIR$/packages/ag-grid-docs/node_modules" />
     <handled-path value="$PROJECT_DIR$/packages/ag-grid-enterprise/node_modules" />
+    <handled-path value="$PROJECT_DIR$/packages/ag-grid-polymer-example/node_modules" />
     <handled-path value="$PROJECT_DIR$/packages/ag-grid-react-example/node_modules" />
     <handled-path value="$PROJECT_DIR$/packages/ag-grid-react/node_modules" />
     <handled-path value="$PROJECT_DIR$/packages/ag-grid-vue-example/node_modules" />
     <handled-path value="$PROJECT_DIR$/packages/ag-grid-vue/node_modules" />
-    <handled-path value="$PROJECT_DIR$/packages/ag-grid-community/node_modules" />
-    <handled-path value="$PROJECT_DIR$/packages/ag-grid-polymer-example/node_modules" />
   </component>
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths>
@@ -137,11 +137,7 @@
       <path value="$PROJECT_DIR$/packages/ag-grid-dev/package.json" />
       <path value="$PROJECT_DIR$/packages/ag-grid-docs/package.json" />
       <path value="$PROJECT_DIR$/packages/ag-grid-docs/src/best-web-component-data-grid/ag-grid-webcomponent/package.json" />
-      <path value="$PROJECT_DIR$/packages/ag-grid-docs/src/framework-examples/polymer-examples/bower_components/ag-grid-polymer/package.json" />
-      <path value="$PROJECT_DIR$/packages/ag-grid-docs/src/framework-examples/polymer-examples/bower_components/font-roboto/package.json" />
-      <path value="$PROJECT_DIR$/packages/ag-grid-docs/src/framework-examples/polymer-examples/bower_components/polymer/package.json" />
-      <path value="$PROJECT_DIR$/packages/ag-grid-docs/src/framework-examples/polymer-examples/bower_components/shadycss/package.json" />
-      <path value="$PROJECT_DIR$/packages/ag-grid-docs/src/framework-examples/polymer-examples/bower_components/webcomponentsjs/package.json" />
+      <path value="$PROJECT_DIR$/packages/ag-grid-docs/src/framework-examples/polymer-examples/package.json" />
       <path value="$PROJECT_DIR$/packages/ag-grid-enterprise/package.json" />
       <path value="$PROJECT_DIR$/packages/ag-grid-react-example/package.json" />
       <path value="$PROJECT_DIR$/packages/ag-grid-react/package.json" />
