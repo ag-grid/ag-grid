@@ -36,7 +36,8 @@ import {
     RowValueChangedEvent,
     ProcessHeaderForExportParams,
     PasteStartEvent,
-    PasteEndEvent
+    PasteEndEvent,
+    ProcessDataFromClipboardParams
 } from "ag-grid-community";
 import {RangeController} from "./rangeController";
 
@@ -86,11 +87,15 @@ export class ClipboardService implements IClipboardService {
                 let data = element.value;
                 if (Utils.missingOrEmpty(data)) return;
 
-                let parsedData: string[][] = this.dataToArray(data);
+                let [parsedData, originalData] = this.dataToArray(data);
 
                 let userFunc = this.gridOptionsWrapper.getProcessDataFromClipboardFunc();
                 if (userFunc) {
-                    parsedData = userFunc({data: parsedData});
+                    let params: ProcessDataFromClipboardParams = {
+                        data: parsedData,
+                        originalData: originalData
+                    };
+                    parsedData = userFunc(params);
                 }
 
                 if (Utils.missingOrEmpty(parsedData)) return;
@@ -640,25 +645,27 @@ export class ClipboardService implements IClipboardService {
     // This will parse a delimited string into an array of arrays.
     // Note: this code fixes an issue with the example posted on stack overflow where it doesn't correctly handle
     // empty values in the first cell.
-    private dataToArray(strData: string): string[][] {
+    private dataToArray(strData: string): [string[][], string[][]] {
         let delimiter = this.gridOptionsWrapper.getClipboardDeliminator();
 
         // Create a regular expression to parse the CSV values.
+        // Capture group 2 will get both quoted, and unquoted values,
+        // users are now responsible for replacing any quotes lost using processDataForClipboard,
+        // for that purpose, the method will return both parsed (quote removed) & orignal (quote kept) data.
         let objPattern = new RegExp(
             (
                 // Delimiters.
                 "(\\" + delimiter + "|\\r?\\n|\\r|^)" +
-                // Quoted fields.
-                "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
-                // Standard fields.
-                "([^\"\\" + delimiter + "\\r\\n]*))"
+                // Values
+                "([^\\" + delimiter + "\\r\\n]*)"
             ),
             "gi"
         );
 
-        // Create an array to hold our data. Give the array
-        // a default empty first row.
-        let arrData: string[][] = [[]];
+        // Create two arrays to hold our parsed and original data.
+        // Give the arrays a default empty first row.
+        let parsedData: string[][] = [[]];
+        let originalData: string[][] = [[]];
 
         // Create an array to hold our individual pattern matching groups.
         let arrMatches: string[];
@@ -675,7 +682,8 @@ export class ClipboardService implements IClipboardService {
 
             // Handles case when first row is an empty cell, insert an empty string before delimiter
             if (atFirstRow && strMatchedDelimiter) {
-                arrData[0].push("");
+                parsedData[0].push("");
+                originalData[0].push("");
             }
 
             // Check to see if the given delimiter has a length
@@ -685,32 +693,23 @@ export class ClipboardService implements IClipboardService {
             if (strMatchedDelimiter.length && strMatchedDelimiter !== delimiter) {
                 // Since we have reached a new row of data,
                 // add an empty row to our data array.
-                arrData.push( [] );
+                parsedData.push( [] );
+                originalData.push( [] );
             }
 
-            let strMatchedValue: string;
+            let strMatchedValue: string = arrMatches[2] ? arrMatches[2] : "";
 
             // Now that we have our delimiter out of the way,
-            // let's check to see which kind of value we
-            // captured (quoted or unquoted).
-            if (arrMatches[ 2 ]) {
-                // We found a quoted value. When we capture
-                // this value, unescaped any double quotes.
-                strMatchedValue = arrMatches[ 2 ].replace(new RegExp( "\"\"", "g" ), "\"");
-            } else {
-                // We found a non-quoted value.
-                strMatchedValue = arrMatches[ 3 ];
-            }
-
-            // Now that we have our value string, let's add
-            // it to the data array.
-            arrData[ arrData.length - 1 ].push(strMatchedValue);
+            // We need to remove any quotes from the value,
+            // then add it to the data array.
+            parsedData[ parsedData.length - 1 ].push(strMatchedValue.replace(/["]/g, ""));
+            originalData[ originalData.length - 1 ].push(strMatchedValue);
 
             atFirstRow = false;
         }
 
-        // Return the parsed data.
-        return arrData;
+        // Return a Tuple of the parsedData, and original captured data.
+        return [parsedData, originalData];
     }
 
     private rangeSize() {

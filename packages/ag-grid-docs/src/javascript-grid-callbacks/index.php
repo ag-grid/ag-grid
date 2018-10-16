@@ -127,6 +127,10 @@ include '../documentation-main/documentation_header.php';
                 and want to block non-numbers from getting into the grid.</td>
         </tr>
         <tr>
+            <th>processDataFromClipboard(params)</th>
+            <td>Allows you to process the whole paste operation from the <a href ="../javascript-grid-clipboard#processing-whole-paste-operation">clipboard.</a></td>
+        </tr>
+        <tr>
             <th>sendToClipboard(params)</th>
             <td>Allows you to get the data that would otherwise go to the clipboard. To be used when you want
                 to control the 'copy to clipboard' operation yourself.</td>
