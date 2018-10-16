@@ -26,7 +26,7 @@
   },
   "homepage": "https://react.ag-grid.com",
   "dependencies": {
-    "prop-types": "15.6.2"
+    "prop-types": "^15.6.2"
   },
   "devDependencies": {
     "@types/react": "^16.4.10",
