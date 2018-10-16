@@ -152,6 +152,10 @@ export interface CellFocusedEvent extends AgGridEvent {
     floating: string;
 }
 
+export interface ExpandCollapseAllEvent extends AgGridEvent {
+    source: string;
+}
+
 /**---------------*/
 /** COLUMN EVENTS */
 /**---------------*/

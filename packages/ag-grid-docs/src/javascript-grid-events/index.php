@@ -257,6 +257,10 @@ include '../documentation-main/documentation_header.php';
             <td>A row group was opened or closed.</td>
         </tr>
         <tr>
+            <th>expandOrCollapseAll</th>
+            <td>Fired when calling either of the api methods <code>expandAll()</code> or <code>collapseAll()</code>.</td>
+        </tr>
+        <tr>
             <th>paginationChanged</th>
             <td>
                 The displayed page for pagination has changed. For example the data was filtered or sorted, or the user
@@ -405,6 +409,9 @@ CellValueChangedEvent {
         │     }</span>
         ├── ComponentStateChangedEvent <span class="event-properties">{
         │       // one attribute for each changed property
+        │     }</span>
+        ├── ExpandCollapseAllEvent <span class="event-properties">{
+        │       <span class="event-attribute">source</span>: string
         │     }</span>
         ├── DragEvent <span class="event-properties">{
         │   │    <span class="event-attribute">type</span>: string, // one of {'cell','row','headerCell','toolPanel'}

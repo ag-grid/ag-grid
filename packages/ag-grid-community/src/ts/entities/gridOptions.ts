@@ -65,7 +65,8 @@ import {
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent,
-    FirstDataRenderedEvent
+    FirstDataRenderedEvent,
+    ExpandCollapseAllEvent
 } from "../events";
 import {IComponent} from "../interfaces/iComponent";
 import {AgGridRegisteredComponentInput} from "../components/framework/componentProvider";
@@ -434,6 +435,7 @@ export interface GridOptions {
     onPasteEnd?(event: PasteEndEvent): void;
     onBodyScroll?(event: BodyScrollEvent): void;
     onFirstDataRendered?(event: FirstDataRenderedEvent): void;
+    onExpandOrCollapseAll?(event: ExpandCollapseAllEvent): void;
     // deprecated
     onGridSizeChanged?(event: any): void;
 

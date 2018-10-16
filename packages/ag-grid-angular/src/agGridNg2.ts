@@ -476,6 +476,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Output() public columnPivotChangeRequest: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnValueChangeRequest: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnAggFuncChangeRequest: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public expandOrCollapseAll: EventEmitter<any> = new EventEmitter<any>();
     // @END@
 }
 

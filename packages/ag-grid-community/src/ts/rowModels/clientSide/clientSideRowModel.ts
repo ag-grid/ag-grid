@@ -6,7 +6,7 @@ import {ColumnController} from "../../columnController/columnController";
 import {FilterManager} from "../../filter/filterManager";
 import {RowNode} from "../../entities/rowNode";
 import {EventService} from "../../eventService";
-import {Events, ModelUpdatedEvent, RowDataChangedEvent, RowDataUpdatedEvent} from "../../events";
+import {Events, ModelUpdatedEvent, RowDataChangedEvent, RowDataUpdatedEvent, ExpandCollapseAllEvent } from "../../events";
 import {Autowired, Bean, Context, Optional, PostConstruct} from "../../context/context";
 import {SelectionController} from "../../selectionController";
 import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
@@ -506,6 +506,15 @@ export class ClientSideRowModel {
             });
         }
         this.refreshModel({step: Constants.STEP_MAP});
+
+        let eventSource = expand ? 'expandAll' : 'collapseAll';
+        let event: ExpandCollapseAllEvent = {
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            type: Events.EVENT_EXPAND_COLLAPSE_ALL,
+            source: eventSource
+        };
+        this.eventService.dispatchEvent(event);
     }
 
     private doSort() {
