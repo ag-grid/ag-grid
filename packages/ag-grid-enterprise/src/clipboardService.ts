@@ -647,11 +647,11 @@ export class ClipboardService implements IClipboardService {
         let objPattern = new RegExp(
             (
                 // Delimiters.
-                "(\\" + delimiter + "|\\r?\\n|\\r|^)" +
+                '(\\' + delimiter + '|\\r?\\n|\\r|^)' +
                 // Quoted fields.
-                "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+                '(?:"([^\"]*(?:""[^\"]*)*)"|'+
                 // Standard fields.
-                "([^\"\\" + delimiter + "\\r\\n]*))"
+                '([^\\' + delimiter + '\\r\\n]*))'
             ),
             "gi"
         );
@@ -661,7 +661,7 @@ export class ClipboardService implements IClipboardService {
         let arrData: string[][] = [[]];
 
         // Create an array to hold our individual pattern matching groups.
-        let arrMatches: string[];
+        let arrMatches: RegExpExecArray;
 
         // Required for handling edge case on first row copy
         let atFirstRow = true;
@@ -674,8 +674,8 @@ export class ClipboardService implements IClipboardService {
             let strMatchedDelimiter = arrMatches[ 1 ];
 
             // Handles case when first row is an empty cell, insert an empty string before delimiter
-            if (atFirstRow && strMatchedDelimiter) {
-                arrData[0].push("");
+            if ((atFirstRow && strMatchedDelimiter) || !arrMatches.index && arrMatches[0].charAt(0) === delimiter) {
+                arrData[0].push('');
             }
 
             // Check to see if the given delimiter has a length
@@ -696,7 +696,7 @@ export class ClipboardService implements IClipboardService {
             if (arrMatches[ 2 ]) {
                 // We found a quoted value. When we capture
                 // this value, unescaped any double quotes.
-                strMatchedValue = arrMatches[ 2 ].replace(new RegExp( "\"\"", "g" ), "\"");
+                strMatchedValue = arrMatches[ 2 ].replace(new RegExp('""', 'g'), '"');
             } else {
                 // We found a non-quoted value.
                 strMatchedValue = arrMatches[ 3 ];
