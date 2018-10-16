@@ -410,6 +410,9 @@ CellValueChangedEvent {
         ├── ComponentStateChangedEvent <span class="event-properties">{
         │       // one attribute for each changed property
         │     }</span>
+        ├── ExpandCollapseAllEvent <span class="event-properties">{
+        │       <span class="event-attribute">source</span>: string
+        │     }</span>
         ├── DragEvent <span class="event-properties">{
         │   │    <span class="event-attribute">type</span>: string, // one of {'cell','row','headerCell','toolPanel'}
         │   │  }</span>
