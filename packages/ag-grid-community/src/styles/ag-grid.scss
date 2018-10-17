@@ -472,6 +472,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     // layout-auto-height has x (horizontal) scrolls (but no y)
     &.ag-layout-auto-height {
         overflow-x: auto;
+        overflow-y: hidden;
     }
 
     // layout-normal should have x and y scrolls
