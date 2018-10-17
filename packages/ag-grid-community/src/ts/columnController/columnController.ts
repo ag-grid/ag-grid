@@ -129,7 +129,7 @@ export class ColumnController {
     // true if we are doing column spanning
     private colSpanActive: boolean;
 
-    // primate columns that have colDef.autoHeight set
+    // grid columns that have colDef.autoHeight set
     private autoRowHeightColumns: Column[];
 
     private suppressColumnVirtualisation: boolean;
@@ -189,7 +189,6 @@ export class ColumnController {
         this.primaryHeaderRowCount = balancedTreeResult.treeDept + 1;
 
         this.primaryColumns = this.getColumnsFromTree(this.primaryColumnTree);
-        this.autoRowHeightColumns = this.primaryColumns.filter( col => col.getColDef().autoHeight );
 
         this.extractRowGroupColumns(source, oldPrimaryColumns);
         this.extractPivotColumns(source, oldPrimaryColumns);
@@ -2377,6 +2376,8 @@ export class ColumnController {
         }
 
         this.addAutoGroupToGridColumns();
+
+        this.autoRowHeightColumns = this.gridColumns.filter( col => col.getColDef().autoHeight );
 
         this.putFixedColumnsFirst();
 
