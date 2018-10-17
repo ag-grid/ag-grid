@@ -348,7 +348,7 @@ export class FilterManager {
             valueAfterCallback = value;
         }
 
-        if (valueAfterCallback && valueAfterCallback !== '') {
+        if (_.exists(valueAfterCallback)) {
             return valueAfterCallback.toString().toUpperCase();
         } else {
             return null;
