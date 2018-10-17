@@ -285,32 +285,6 @@ this.params.context.componentParent</snippet>
 <p>Note that although we've used <code>componentParent</code> as the property name here it can be anything - the main
     point is that you can use the <code>context</code> mechanism to share information between the components.</p>
 
-<h3 id="router-link">Router Links in Grid Components</h3>
-<p>You can provide <code>Vue Router</code> links within the Grid, but you need to ensure that you provide a Router to
-    the
-    Grid Component being created.</p>
-
-<snippet>
-// create a new VueRouter, or make the "root" Router available
-import VueRouter from "vue-router";
-const router = new VueRouter();
-
-// pass a valid Router object to the Vue grid components to be used within the grid
-components: {
-    'ag-grid-vue': AgGridVue,
-    'link-component': {
-        router,
-        template: '&lt;router-link to="/master-detail"&gt;Jump to Master/Detail&lt;/router-link&gt;'
-    }
-},
-
-// You can now use Vue Router links within you Vue Components within the Grid
-{
-    headerName: "Link Example",
-    cellRendererFramework: 'link-component',
-    width: 200
-}</snippet>
-
 <h3 id="building-bundling">Building & Bundling</h3>
 <p>There are many ways to build and/or bundle an VueJS Application. We provide fully working examples using a simplified
     Webpack build as part of the <a href="https://github.com/ag-grid/ag-grid-vue-example">ag-grid-vue-example</a> on
