@@ -149,12 +149,13 @@ export class VueComponentFactory {
         }
     }
 
-    static createAndMountComponent(params, componentType, parent_) {
+    static createAndMountComponent(params, componentType, parent) {
         let details = {
             data: {
                 params: Object.freeze(params)
             },
-            parent: parent_
+            parent,
+            router: parent.$router
         };
 
         let component = new componentType(details);
