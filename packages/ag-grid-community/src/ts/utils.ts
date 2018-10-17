@@ -62,6 +62,15 @@ export class Utils {
         this.doOnceFlags[key] = true;
     }
 
+    // got from https://stackoverflow.com/questions/3944122/detect-left-mouse-button-press
+    static isLeftClick(mouseEvent: MouseEvent): boolean {
+        if ("buttons" in mouseEvent) {
+            return mouseEvent.buttons == 1;
+        }
+        let button = (<any>mouseEvent).which || (<any>mouseEvent).button;
+        return button == 1;
+    }
+
     // returns true if the event is close to the original event by X pixels either vertically or horizontally.
     // we only start dragging after X pixels so this allows us to know if we should start dragging yet.
     static areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, pixelCount: number): boolean {

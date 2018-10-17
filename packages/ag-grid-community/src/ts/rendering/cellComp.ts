@@ -1385,16 +1385,14 @@ export class CellComp extends Component {
         // if it's a right click, then if the cell is already in range,
         // don't change the range, however if the cell is not in a range,
         // we set a new range
-        if (this.beans.rangeController) {
+        let leftMouseButtonClick = _.isLeftClick(mouseEvent);
+        if (leftMouseButtonClick && this.beans.rangeController) {
             let thisCell = this.gridCell;
             if (mouseEvent.shiftKey) {
                 this.beans.rangeController.extendRangeToCell(thisCell);
             } else {
-                let cellAlreadyInRange = this.beans.rangeController.isCellInAnyRange(thisCell);
-                if (!cellAlreadyInRange) {
-                    let ctrlKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
-                    this.beans.rangeController.setRangeToCell(thisCell, ctrlKeyPressed);
-                }
+                let ctrlKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
+                this.beans.rangeController.setRangeToCell(thisCell, ctrlKeyPressed);
             }
         }
 

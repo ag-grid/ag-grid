@@ -3,7 +3,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     new agGrid.Grid(gridDiv, gridOptions);
     createData();
+
+    api = gridOptions.api;
+    columnApi = gridOptions.columnApi;
 });
+
+// for easy access in the dev console, we put api and columnApi into global variables
+var api, columnApi;
 
 var gridDiv;
 var colNames = ["Station", "Railway", "Street", "Address", "Toy", "Soft Box", "Make and Model", "Longest Day", "Shortest Night"];
@@ -1181,3 +1187,4 @@ function countryCellRenderer(params) {
         return flag + ' ' + params.value;
     }
 }
+
