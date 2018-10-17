@@ -249,6 +249,10 @@ export class PopupService {
     //so that when the background is clicked, the child is removed again, giving
     //a model look to popups.
     public addAsModalPopup(eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch): (event?: any) => void {
+        return this.addPopup(true, eChild, closeOnEsc, closedCallback, click);
+    }
+
+    public addPopup(modal: boolean, eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch): (event?: any) => void {
 
         let eBody = this.gridOptionsWrapper.getDocument();
         if (!eBody) {
@@ -323,9 +327,11 @@ export class PopupService {
             if (closeOnEsc) {
                 eBody.addEventListener('keydown', hidePopupOnKeyboardEvent);
             }
-            eBody.addEventListener('click', hidePopupOnMouseEvent);
-            eBody.addEventListener('touchstart', hidePopupOnTouchEvent);
-            eBody.addEventListener('contextmenu', hidePopupOnMouseEvent);
+            if (modal) {
+                eBody.addEventListener('click', hidePopupOnMouseEvent);
+                eBody.addEventListener('touchstart', hidePopupOnTouchEvent);
+                eBody.addEventListener('contextmenu', hidePopupOnMouseEvent);
+            }
         }, 0);
 
         return hidePopup;
