@@ -6,14 +6,15 @@ class VueFrameworkComponentWrapper {
     }
 
     wrap(component, methodList, optionalMethods) {
-        let componentType = VueComponentFactory.getComponentType(this._parent, component);
+        let parent = this._parent;
+        let componentType = VueComponentFactory.getComponentType(parent, component);
         if (!componentType) {
             return;
         }
 
         class DynamicComponent {
             init(params) {
-                this.component = VueComponentFactory.createAndMountComponent(params, componentType);
+                this.component = VueComponentFactory.createAndMountComponent(params, componentType, parent);
             }
 
             getGui() {
