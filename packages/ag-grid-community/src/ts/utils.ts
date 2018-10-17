@@ -1193,7 +1193,7 @@ export class Utils {
             // taken from https://github.com/ag-grid/ag-grid/issues/550
             this.isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') > 0
                 || (function(p) {
-                    return p.toString() === "[object SafariRemoteNotification]";
+                    return p ? p.toString() === "[object SafariRemoteNotification]" : false;
                 })
                 (!anyWindow.safari || anyWindow.safari.pushNotification);
         }
