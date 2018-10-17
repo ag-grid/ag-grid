@@ -1,6 +1,7 @@
 import {ColumnController, MenuItemDef, Autowired, Utils, Bean, GridOptionsWrapper, GridApi, Column} from 'ag-grid-community';
 import {ClipboardService} from "../clipboardService";
 import {AggFuncService} from "../aggregation/aggFuncService";
+import {_} from "../../../ag-grid-community/src/ts/utils";
 
 @Bean('menuItemMapper')
 export class MenuItemMapper {
@@ -73,12 +74,12 @@ export class MenuItemMapper {
                 action: ()=> this.columnController.autoSizeAllColumns("contextMenu")
             };
             case 'rowGroup': return {
-                name: localeTextFunc('groupBy', 'Group by') + ' ' + this.columnController.getDisplayNameForColumn(column, 'header'),
+                name: localeTextFunc('groupBy', 'Group by') + ' ' + _.escape(this.columnController.getDisplayNameForColumn(column, 'header')),
                 action: ()=> this.columnController.addRowGroupColumn(column, "contextMenu"),
                 icon: Utils.createIconNoSpan('menuAddRowGroup', this.gridOptionsWrapper, null)
             };
             case 'rowUnGroup': return {
-                name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + this.columnController.getDisplayNameForColumn(column, 'header'),
+                name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + _.escape(this.columnController.getDisplayNameForColumn(column, 'header')),
                 action: ()=> this.columnController.removeRowGroupColumn(column, "contextMenu"),
                 icon: Utils.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null)
             };

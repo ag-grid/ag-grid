@@ -87,8 +87,9 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private setupText(displayName: string): void {
+        let displayNameSanitised = _.escape(displayName);
         if (this.eText) {
-            this.eText.innerHTML = displayName;
+            this.eText.innerHTML = displayNameSanitised;
         }
     }
 

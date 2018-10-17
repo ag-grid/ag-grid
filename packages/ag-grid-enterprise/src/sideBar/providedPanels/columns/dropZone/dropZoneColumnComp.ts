@@ -26,6 +26,7 @@ import {
 } from "ag-grid-community/main";
 import {AggFuncService} from "../../../../aggregation/aggFuncService";
 import {VirtualList} from "../../../../rendering/virtualList";
+import {_} from "../../../../../../ag-grid-community/src/ts/utils";
 
 export interface ColumnRemoveEvent extends AgEvent {}
 
@@ -151,7 +152,8 @@ export class DropZoneColumnComp extends Component {
             displayValue = this.displayName;
         }
 
-        this.eText.innerHTML = displayValue;
+        let displayValueSanitised = _.escape(displayValue);
+        this.eText.innerHTML = displayValueSanitised;
     }
 
     private onShowAggFuncSelection(): void {
