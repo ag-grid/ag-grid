@@ -309,7 +309,7 @@ export class HeaderRowComp extends Component {
                         filter.getNullableModel() :
                         filter.getModel()
                 );
-                return (<CombinedFilter<M>>wholeParentFilter).operator != null ? (<CombinedFilter<M>>wholeParentFilter).condition1 : <M>wholeParentFilter;
+                return (wholeParentFilter && (<CombinedFilter<M>>wholeParentFilter).operator != null) ? (<CombinedFilter<M>>wholeParentFilter).condition1 : <M>wholeParentFilter;
             },
             onFloatingFilterChanged: (change: F | M): boolean => {
                 let captureModelChangedResolveFunc: (modelChanged: boolean) => void;
