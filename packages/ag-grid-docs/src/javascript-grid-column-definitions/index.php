@@ -256,7 +256,7 @@ Examples of state include column visibility, width, row groups and values.
 </note>
 
 
-<h2>Column Changes</h2>
+<h2 id="column-changes">Column Changes</h2>
 
 <p>
     It is possible to add and remove columns after the grid is created. This is done by
@@ -323,7 +323,7 @@ Examples of state include column visibility, width, row groups and values.
 
 <?= example('Column Changes', 'column-changes', 'generated', array("enterprise" => 1)) ?>
 
-<h2>Column Groups</h2>
+<h2 id="group-changes">Group Changes</h2>
 
 <p>
     Similar to adding and removing columns, you can also add and remove column groups.
