@@ -7,14 +7,15 @@ export class VueComponentFactory {
     }
 
     createRendererFromComponent(component) {
-        let componentType = VueComponentFactory.getComponentType(this.parent, component);
+        let parent = this.parent;
+        let componentType = VueComponentFactory.getComponentType(parent, component);
         if (!componentType) {
             return;
         }
 
         class CellRendererComponent {
             init(params) {
-                this.component = VueComponentFactory.createAndMountComponent(params, componentType);
+                this.component = VueComponentFactory.createAndMountComponent(params, componentType, parent);
             }
 
             getGui() {
@@ -30,14 +31,15 @@ export class VueComponentFactory {
     }
 
     createEditorFromComponent(component) {
-        let componentType = VueComponentFactory.getComponentType(this.parent, component);
+        let parent = this.parent;
+        let componentType = VueComponentFactory.getComponentType(parent, component);
         if (!componentType) {
             return;
         }
 
         class CellEditor {
             init(params) {
-                this.component = VueComponentFactory.createAndMountComponent(params, componentType);
+                this.component = VueComponentFactory.createAndMountComponent(params, componentType, parent);
             }
 
             getValue() {
@@ -84,14 +86,15 @@ export class VueComponentFactory {
     }
 
     createFilterFromComponent(component) {
-        let componentType = VueComponentFactory.getComponentType(this.parent, component);
+        let parent = this.parent;
+        let componentType = VueComponentFactory.getComponentType(parent, component);
         if (!componentType) {
             return;
         }
 
         class Filter {
             init(params) {
-                this.component = VueComponentFactory.createAndMountComponent(params, componentType);
+                this.component = VueComponentFactory.createAndMountComponent(params, componentType, parent);
             }
 
             getGui() {
@@ -146,11 +149,12 @@ export class VueComponentFactory {
         }
     }
 
-    static createAndMountComponent(params, componentType) {
+    static createAndMountComponent(params, componentType, parent_) {
         let details = {
             data: {
                 params: Object.freeze(params)
-            }
+            },
+            parent: parent_
         };
 
         let component = new componentType(details);
