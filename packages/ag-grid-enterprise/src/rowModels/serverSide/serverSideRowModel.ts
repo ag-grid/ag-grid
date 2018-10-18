@@ -478,7 +478,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public isRowsToRender(): boolean {
-        return this.getRowCount() > 0;
+        return this.cacheExists() && this.getRowCount() > 0;
     }
 
     public getType(): string {
