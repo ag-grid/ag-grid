@@ -789,9 +789,15 @@ export class RowComp extends Component {
 
         let shiftKeyPressed = mouseEvent.shiftKey;
 
-        // we do not allow selecting groups by clicking (as the click here expands the group)
+        // we do not allow selecting groups by clicking (as the click here expands the group), or if it's a detail row,
         // so return if it's a group row
         if (this.rowNode.group) {
+            return;
+        }
+
+        // this is needed so we don't unselect other rows when we click this row, eg if this row is not selectable,
+        // and we click it, the selection should not change (ie any currently selected row should stay selected)
+        if (!this.rowNode.selectable) {
             return;
         }
 
