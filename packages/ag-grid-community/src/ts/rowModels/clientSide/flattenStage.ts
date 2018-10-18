@@ -175,6 +175,7 @@ export class FlattenStage implements IRowNodeStage {
             let detailNode = new RowNode();
             this.context.wireBean(detailNode);
             detailNode.detail = true;
+            detailNode.selectable = false;
             // flower was renamed to 'detail', but keeping for backwards compatibility
             detailNode.flower = detailNode.detail;
             detailNode.parent = masterNode;
