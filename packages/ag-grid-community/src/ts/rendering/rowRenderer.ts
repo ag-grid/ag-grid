@@ -846,16 +846,36 @@ export class RowRenderer extends BeanStub {
         }
 
         if (this.paginationProxy.isRowsToRender()) {
-            let event: FirstDataRenderedEvent = {
-                type: Events.EVENT_FIRST_DATA_RENDERED,
-                firstRow: newFirst,
-                lastRow: newLast,
-                api: this.gridApi,
-                columnApi: this.columnApi
-            };
+            let fireEvent = true;
 
-            this.eventService.dispatchEventOnce(event);
+            // the server side row model has a stub row when no data is present
+            // this take this stub row into account
+            if(this.gridOptionsWrapper.isRowModelServerSide()) {
+                fireEvent = this.hasValidServerSideRowsToRender();
+            }
+
+            if (fireEvent) {
+                let event: FirstDataRenderedEvent = {
+                    type: Events.EVENT_FIRST_DATA_RENDERED,
+                    firstRow: newFirst,
+                    lastRow: newLast,
+                    api: this.gridApi,
+                    columnApi: this.columnApi
+                };
+
+                this.eventService.dispatchEventOnce(event);
+            }
         }
+    }
+
+    private hasValidServerSideRowsToRender() {
+        // for ssrm rowCount is always at least 1, so here we check if the rowCount == 1 and the first row is either null or a stub
+        // then we don't have valid data to render yet
+        let rowCountEqualToOne = this.paginationProxy.getRowCount() === 1;
+        let firstRowNull = this.paginationProxy.getRow(0) === null;
+        let firstRowStub = !firstRowNull ? this.paginationProxy.getRow(0).stub : false;
+
+        return !(rowCountEqualToOne && (firstRowNull || firstRowStub));
     }
 
     public getFirstVirtualRenderedRow() {
