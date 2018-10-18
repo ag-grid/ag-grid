@@ -1196,7 +1196,7 @@ export class RowRenderer extends BeanStub {
             // a bunch of cells (eg 10 rows) then all the work on ensuring cell visible is useless
             // (except for the last one) which causes grid to stall for a while.
             if (startEditing) {
-                let rowNode = this.paginationProxy.getRow(nextCell.rowIndex);
+                let rowNode = this.lookupRowNodeForCell(nextCell);
                 let cellIsEditable = nextCell.column.isCellEditable(rowNode);
                 if (!cellIsEditable) { continue; }
             }
@@ -1244,6 +1244,18 @@ export class RowRenderer extends BeanStub {
             // we successfully tabbed onto a grid cell, so return true
             return nextCellComp;
         }
+    }
+
+    private lookupRowNodeForCell(cell: GridCell) {
+        if (cell.floating === Constants.PINNED_TOP) {
+            return this.pinnedRowModel.getPinnedTopRow(cell.rowIndex);
+        }
+
+        if (cell.floating === Constants.PINNED_BOTTOM) {
+            return this.pinnedRowModel.getPinnedBottomRow(cell.rowIndex);
+        }
+
+        return this.paginationProxy.getRow(cell.rowIndex);
     }
 }
 
