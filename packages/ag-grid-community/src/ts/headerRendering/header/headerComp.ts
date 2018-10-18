@@ -147,7 +147,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             return;
         }
 
-        this.eMenu.addEventListener('click', ()=> this.showMenu(this.eMenu));
+        this.addDestroyableEventListener(this.eMenu, 'click', () => this.showMenu(this.eMenu));
 
         if (!this.gridOptionsWrapper.isSuppressMenuHide()) {
             this.eMenu.style.opacity = '0';
