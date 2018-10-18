@@ -1211,8 +1211,13 @@ export class Utils {
 
     static isBrowserChrome(): boolean {
         if (this.isChrome === undefined) {
-            let anyWindow = <any> window;
-            this.isChrome = !!anyWindow.chrome && !!anyWindow.chrome.webstore;
+            // this is the old original we we did it, but it didn't work on android
+            // let anyWindow = <any> window;
+            // this.isChrome = !!anyWindow.chrome && !!anyWindow.chrome.webstore;
+
+            // this is the new way
+            // taken from https://stackoverflow.com/questions/4565112/javascript-how-to-find-out-if-the-user-browser-is-chrome
+            this.isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
         }
         return this.isChrome;
     }
@@ -1712,7 +1717,8 @@ export class Utils {
                 document.body.appendChild(eBox);
             }
         }
-        eBox.appendChild(eMessage);
+        eBox.insertBefore(eMessage, eBox.children[0]);
+        // eBox.appendChild(eMessage);
     }
 
     // gets called by: a) ClientSideNodeManager and b) GroupStage to do sorting.
