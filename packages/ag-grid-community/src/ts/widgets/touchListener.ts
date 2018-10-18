@@ -51,9 +51,9 @@ export class TouchListener implements IEventEmitter {
         this.eElement.addEventListener("touchend", endListener, <any>{ passive: false });
 
         this.destroyFuncs.push(() => {
-            this.eElement.addEventListener("touchstart", startListener, <any>{ passive: true });
-            this.eElement.addEventListener("touchmove", moveListener, <any>{ passive: true });
-            this.eElement.addEventListener("touchend", endListener, <any>{ passive: false });
+            this.eElement.removeEventListener("touchstart", startListener, <any>{ passive: true });
+            this.eElement.removeEventListener("touchmove", moveListener, <any>{ passive: true });
+            this.eElement.removeEventListener("touchend", endListener, <any>{ passive: false });
         });
     }
 
