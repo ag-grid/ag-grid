@@ -79,6 +79,9 @@ export class ViewportRowModel implements IRowModel {
     }
 
     private calculateLastRow(lastRenderedRow: number): number {
+        if (lastRenderedRow===-1) {
+            return lastRenderedRow;
+        }
         let bufferSize = this.gridOptionsWrapper.getViewportRowModelBufferSize();
         let pageSize = this.gridOptionsWrapper.getViewportRowModelPageSize();
         let afterBuffer = lastRenderedRow + bufferSize;
