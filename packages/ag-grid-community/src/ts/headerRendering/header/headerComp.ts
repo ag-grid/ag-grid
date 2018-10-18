@@ -75,6 +75,9 @@ export class HeaderComp extends Component implements IHeaderComp {
             HeaderComp.TEMPLATE
         );
 
+        // take account of any newlines & whitespace before/after the actual template
+        template = template && template.trim ? template.trim() : template;
+
         this.setTemplate(template);
         this.params = params;
 
