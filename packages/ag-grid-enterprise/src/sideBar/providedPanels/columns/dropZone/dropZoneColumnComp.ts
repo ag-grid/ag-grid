@@ -22,11 +22,11 @@ import {
     GridApi,
     AgEvent,
     TapEvent,
-    RefSelector
-} from "ag-grid-community/main";
+    RefSelector,
+    _
+} from "ag-grid-community";
 import {AggFuncService} from "../../../../aggregation/aggFuncService";
 import {VirtualList} from "../../../../rendering/virtualList";
-import {_} from "../../../../../../ag-grid-community/src/ts/utils";
 
 export interface ColumnRemoveEvent extends AgEvent {}
 

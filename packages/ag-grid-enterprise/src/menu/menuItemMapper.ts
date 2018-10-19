@@ -1,7 +1,6 @@
-import {ColumnController, MenuItemDef, Autowired, Utils, Bean, GridOptionsWrapper, GridApi, Column} from 'ag-grid-community';
+import {ColumnController, MenuItemDef, Autowired, Utils, Bean, GridOptionsWrapper, GridApi, Column, _} from 'ag-grid-community';
 import {ClipboardService} from "../clipboardService";
 import {AggFuncService} from "../aggregation/aggFuncService";
-import {_} from "../../../ag-grid-community/src/ts/utils";
 
 @Bean('menuItemMapper')
 export class MenuItemMapper {
