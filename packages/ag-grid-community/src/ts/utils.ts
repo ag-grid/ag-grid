@@ -497,8 +497,6 @@ export class Utils {
             return false;
         }
 
-        console.log(event);
-
         if (_.exists(event.key)) {
             // modern browser will implement key, so we return if key is length 1, eg if it is 'a' for the
             // a key, or '2' for the '2' key. non-printable characters have names, eg 'Enter' or 'Backspace'.
