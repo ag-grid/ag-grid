@@ -218,6 +218,8 @@ export class GridSerializer {
         let onlySelectedAllPages = params && params.onlySelectedAllPages;
         let rowSkipper:(params: ShouldRowBeSkippedParams)=> boolean = (params && params.shouldRowBeSkipped) || dontSkipRows;
         let api:GridApi = this.gridOptionsWrapper.getApi();
+        let skipSingleChildrenGroup = this.gridOptionsWrapper.isGroupRemoveSingleChildren();
+        let skipLowestSingleChildrenGroup = this.gridOptionsWrapper.isGroupRemoveLowestSingleChildren();
         let context:any = this.gridOptionsWrapper.getContext();
 
         // when in pivot mode, we always render cols on screen, never 'all columns'
@@ -309,9 +311,12 @@ export class GridSerializer {
         }
 
         function processRow(node: RowNode): void {
-            if (skipGroups && node.group) {
-                return;
-            }
+            if (node.group &&
+                    (skipGroups || (node.allChildrenCount === 1 &&
+                        (skipSingleChildrenGroup ||
+                        (skipLowestSingleChildrenGroup && node.leafGroup)))
+                    )
+                ) return;
 
             if (skipFooters && node.footer) {
                 return;
