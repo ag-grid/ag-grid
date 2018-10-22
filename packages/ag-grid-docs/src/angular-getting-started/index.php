@@ -23,7 +23,7 @@ Let's follow the <a href="https://github.com/angular/angular-cli#installation">A
 
 <snippet language="sh">
 npm install -g @angular/cli
-ng new my-app --style scss
+ng new my-app --style scss --routing false
 cd my-app
 ng serve
 </snippet>
@@ -36,6 +36,7 @@ ng serve
 
 <snippet language="sh">
 npm install --save ag-grid-community ag-grid-angular
+npm install # in certain circumstances npm will perform an "auto prune". This step ensures all expected dependencies are present
 </snippet>
 
 <p>After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first step, let's add the ag-Grid Angular module to our app module (<code>src/app.module.ts</code>):</p>
