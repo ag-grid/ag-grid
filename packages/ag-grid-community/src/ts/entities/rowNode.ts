@@ -292,7 +292,7 @@ export class RowNode implements IEventEmitter {
     private checkRowSelectable() {
         let isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc();
         let shouldInvokeIsRowSelectable = isRowSelectableFunc && _.exists(this);
-        this.setRowSelectable(shouldInvokeIsRowSelectable ? isRowSelectableFunc(this) : true)
+        this.setRowSelectable(shouldInvokeIsRowSelectable ? isRowSelectableFunc(this) : true);
     }
 
     public setRowSelectable(newVal: boolean) {
@@ -601,7 +601,7 @@ export class RowNode implements IEventEmitter {
         }
 
         if (this.rowPinned) {
-            console.log('ag-Grid: cannot select pinned rows');
+            console.warn('ag-Grid: cannot select pinned rows');
             return 0;
         }
 
