@@ -320,7 +320,7 @@ export interface GridOptions {
     // callbacks
     paginationNumberFormatter?: (params: PaginationNumberFormatterParams)=>string;
     postProcessPopup?: (params: PostProcessPopupParams)=>void;
-    frameworkComponents?: {[p: string]: {new(): any}};
+    frameworkComponents?: {[p: string]: {new(): any}} | any;
     components?: {[p: string]: AgGridRegisteredComponentInput<IComponent<any>>};
     dateComponent?: {new(): IDateComp};
     dateComponentFramework?: any;
