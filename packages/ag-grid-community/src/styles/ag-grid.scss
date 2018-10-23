@@ -485,16 +485,15 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 .ag-body-viewport-wrapper {
+
+    overflow: hidden; // needed to clip the scrollbar when pinning
+
     &.ag-layout-auto-height,
     &.ag-layout-normal {
         height: 100%;
         width: 0px; // mind width, flex grows the center to fit
         min-width: 0px; // width didn't do the trick in firefox, so needed min-width also
         flex: 1;
-    }
-
-    &.ag-layout-auto-height {
-        overflow: hidden;
     }
 }
 
