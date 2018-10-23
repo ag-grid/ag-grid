@@ -241,6 +241,16 @@ export {IMenuFactory} from "./interfaces/iMenuFactory";
 export {IAggFunc, ColGroupDef} from "./entities/colDef";
 export {GridCellDef} from "./entities/gridCell";
 export {ColDef} from "./entities/colDef";
+export {ValueSetterParams,
+    ValueParserParams,
+    ValueFormatterParams,
+    ColSpanParams,
+    RowSpanParams,
+    SuppressKeyboardEventParams,
+    ValueGetterParams,
+    NewValueParams,
+    CellClassParams,
+    TooltipParams} from "./entities/colDef";
 export {
     GridOptions,
     GetContextMenuItemsParams,
