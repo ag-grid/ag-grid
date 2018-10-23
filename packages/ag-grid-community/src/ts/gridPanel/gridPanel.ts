@@ -49,45 +49,45 @@ import {ResizeObserverService} from "../misc/resizeObserverService";
 // it won't render correctly in safari, as safari renders white space as a gap
 
 const GRID_PANEL_NORMAL_TEMPLATE =
-    `<div class="ag-root ag-font-style" role="grid">
-        <ag-header-root ref="headerRoot"></ag-header-root>
-        <div class="ag-floating-top" ref="eTop" role="presentation">
-            <div class="ag-pinned-left-floating-top" ref="eLeftTop" role="presentation"></div>
-            <div class="ag-floating-top-viewport" ref="eTopViewport" role="presentation">
-                <div class="ag-floating-top-container" ref="eTopContainer" role="presentation"></div>
+    `<div class="ag-root ag-font-style" role="grid" unselectable="on">
+        <ag-header-root ref="headerRoot" unselectable="on"></ag-header-root>
+        <div class="ag-floating-top" ref="eTop" role="presentation" unselectable="on">
+            <div class="ag-pinned-left-floating-top" ref="eLeftTop" role="presentation" unselectable="on"></div>
+            <div class="ag-floating-top-viewport" ref="eTopViewport" role="presentation" unselectable="on">
+                <div class="ag-floating-top-container" ref="eTopContainer" role="presentation" unselectable="on"></div>
             </div>
-            <div class="ag-pinned-right-floating-top" ref="eRightTop" role="presentation"></div>
-            <div class="ag-floating-top-full-width-container" ref="eTopFullWidthContainer" role="presentation"></div>
+            <div class="ag-pinned-right-floating-top" ref="eRightTop" role="presentation" unselectable="on"></div>
+            <div class="ag-floating-top-full-width-container" ref="eTopFullWidthContainer" role="presentation" unselectable="on"></div>
         </div>
-        <div class="ag-body" ref="eBody" role="presentation">
-            <div class="ag-pinned-left-cols-viewport-wrapper" ref="eLeftViewportWrapper" role="presentation">
-                <div class="ag-pinned-left-cols-viewport" ref="eLeftViewport" role="presentation">
-                    <div class="ag-pinned-left-cols-container" ref="eLeftContainer" role="presentation"></div>
+        <div class="ag-body" ref="eBody" role="presentation" unselectable="on">
+            <div class="ag-pinned-left-cols-viewport-wrapper" ref="eLeftViewportWrapper" role="presentation" unselectable="on">
+                <div class="ag-pinned-left-cols-viewport" ref="eLeftViewport" role="presentation" unselectable="on">
+                    <div class="ag-pinned-left-cols-container" ref="eLeftContainer" role="presentation" unselectable="on"></div>
                 </div>
             </div>
-            <div class="ag-body-viewport-wrapper" ref="eBodyViewportWrapper" role="presentation">
-                <div class="ag-body-viewport" ref="eBodyViewport" role="presentation">
-                    <div class="ag-body-container" ref="eBodyContainer" role="presentation"></div>
+            <div class="ag-body-viewport-wrapper" ref="eBodyViewportWrapper" role="presentation" unselectable="on">
+                <div class="ag-body-viewport" ref="eBodyViewport" role="presentation" unselectable="on">
+                    <div class="ag-body-container" ref="eBodyContainer" role="presentation" unselectable="on"></div>
                 </div>
             </div>
-            <div class="ag-pinned-right-cols-viewport-wrapper" ref="eRightViewportWrapper" role="presentation">
-                <div class="ag-pinned-right-cols-viewport" ref="eRightViewport" role="presentation">
-                    <div class="ag-pinned-right-cols-container" ref="eRightContainer" role="presentation"></div>
+            <div class="ag-pinned-right-cols-viewport-wrapper" ref="eRightViewportWrapper" role="presentation" unselectable="on">
+                <div class="ag-pinned-right-cols-viewport" ref="eRightViewport" role="presentation" unselectable="on">
+                    <div class="ag-pinned-right-cols-container" ref="eRightContainer" role="presentation" unselectable="on"></div>
                 </div>
             </div>
-            <div class="ag-full-width-viewport-wrapper" ref="eFullWidthViewportWrapper" role="presentation">
-                <div class="ag-full-width-viewport" ref="eFullWidthViewport" role="presentation">
-                    <div class="ag-full-width-container" ref="eFullWidthContainer" role="presentation"></div>
+            <div class="ag-full-width-viewport-wrapper" ref="eFullWidthViewportWrapper" role="presentation" unselectable="on">
+                <div class="ag-full-width-viewport" ref="eFullWidthViewport" role="presentation" unselectable="on">
+                    <div class="ag-full-width-container" ref="eFullWidthContainer" role="presentation" unselectable="on"></div>
                 </div>
             </div>
         </div>
-        <div class="ag-floating-bottom" ref="eBottom" role="presentation">
-            <div class="ag-pinned-left-floating-bottom" ref="eLeftBottom" role="presentation"></div>
-            <div class="ag-floating-bottom-viewport" ref="eBottomViewport" role="presentation">
-                <div class="ag-floating-bottom-container" ref="eBottomContainer" role="presentation"></div>
+        <div class="ag-floating-bottom" ref="eBottom" role="presentation" unselectable="on">
+            <div class="ag-pinned-left-floating-bottom" ref="eLeftBottom" role="presentation" unselectable="on"></div>
+            <div class="ag-floating-bottom-viewport" ref="eBottomViewport" role="presentation" unselectable="on">
+                <div class="ag-floating-bottom-container" ref="eBottomContainer" role="presentation" unselectable="on"></div>
             </div>
-            <div class="ag-pinned-right-floating-bottom" ref="eRightBottom" role="presentation"></div>
-            <div class="ag-floating-bottom-full-width-container" ref="eBottomFullWidthContainer" role="presentation"></div>
+            <div class="ag-pinned-right-floating-bottom" ref="eRightBottom" role="presentation" unselectable="on"></div>
+            <div class="ag-floating-bottom-full-width-container" ref="eBottomFullWidthContainer" role="presentation" unselectable="on"></div>
         </div>
         <div class="ag-overlay" ref="eOverlay"></div>
     </div>`;
@@ -1075,7 +1075,7 @@ export class GridPanel extends Component {
                     this.sizeColumnsToFit(-1);
                 }, 500);
             } else {
-                console.log('ag-Grid: tried to call sizeColumnsToFit() but the grid is coming back with ' +
+                console.warn('ag-Grid: tried to call sizeColumnsToFit() but the grid is coming back with ' +
                     'zero width, maybe the grid is not visible yet on the screen?');
             }
         }

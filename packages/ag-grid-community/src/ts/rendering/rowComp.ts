@@ -1069,11 +1069,11 @@ export class RowComp extends Component {
     private processClassesFromGridOptions(): string[] {
         let res: string[] = [];
 
-        let process = (rowClass: string | string[]) => {
-            if (typeof rowClass === 'string') {
-                res.push(rowClass);
-            } else if (Array.isArray(rowClass)) {
-                rowClass.forEach( e => res.push(e) );
+        let process = (rowCls: string | string[]) => {
+            if (typeof rowCls === 'string') {
+                res.push(rowCls);
+            } else if (Array.isArray(rowCls)) {
+                rowCls.forEach( e => res.push(e) );
             }
         };
 
@@ -1120,7 +1120,7 @@ export class RowComp extends Component {
         let rowStyle = this.beans.gridOptionsWrapper.getRowStyle();
 
         if (rowStyle && typeof rowStyle === 'function') {
-            console.log('ag-Grid: rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead');
+            console.warn('ag-Grid: rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead');
             return;
         }
 
