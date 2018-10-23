@@ -1210,92 +1210,80 @@ export class GridPanel extends Component {
 
     private setPinnedLeftWidth(): void {
 
-        if (this.printLayout) {
-            this.setElementWidth(this.eLeftViewportWrapper, 0);
-            this.setElementWidth(this.eLeftViewport, 0);
-            this.setElementWidth(this.eLeftContainer, 0);
-            this.setElementWidth(this.eLeftBottom, 0);
-            this.setElementWidth(this.eLeftTop, 0);
-            return;
-        }
-
         let widthOfCols = this.columnController.getPinnedLeftContainerWidth();
-        let widthOfColsAndScroll = widthOfCols + this.scrollWidth;
-        let widthOfColsAndClippedScroll = widthOfCols + this.scrollClipWidth;
+        let showContainers = !this.printLayout && widthOfCols > 0;
+        let eParentContainers = [this.eLeftViewportWrapper, this.eLeftTop, this.eLeftBottom];
+        eParentContainers.forEach( e => _.setVisible(e, showContainers) );
 
-        let viewportWidth: number;
+        if (!showContainers) { return; }
+
+        let viewportWidth: string;
         let wrapperWidth: number;
 
         if (_.isVerticalScrollShowing(this.eLeftViewport)) {
             if (this.enableRtl) {
                 // show the scroll
-                viewportWidth = widthOfColsAndScroll;
-                wrapperWidth = widthOfColsAndScroll;
+                viewportWidth = '100%';
+                wrapperWidth = widthOfCols + this.scrollWidth;
             } else {
-                // hide the scroll
-                viewportWidth = widthOfColsAndClippedScroll;
+                // hide the scroll, this makes the wrapper clip the scroll
+                viewportWidth = `calc(100% + ${this.scrollClipWidth}px)`;
                 wrapperWidth = widthOfCols;
             }
         } else {
             // no scroll
-            viewportWidth = widthOfCols;
+            viewportWidth = '100%';
             wrapperWidth = widthOfCols;
         }
 
-        this.setElementWidth(this.eLeftViewportWrapper, wrapperWidth);
-        this.setElementWidth(this.eLeftViewport, viewportWidth);
-        this.setElementWidth(this.eLeftContainer, widthOfCols);
+        this.eLeftViewport.style.width = viewportWidth;
+        this.eLeftViewportWrapper.style.maxWidth = wrapperWidth + 'px';
 
-        this.setElementWidth(this.eLeftBottom, wrapperWidth);
-        this.setElementWidth(this.eLeftTop, wrapperWidth);
+        // .width didn't do the trick in firefox, so needed .minWidth also
+        this.eLeftContainer.style.width = widthOfCols + 'px';
+        this.eLeftContainer.style.minWidth = widthOfCols + 'px';
+
+        this.eLeftBottom.style.maxWidth = wrapperWidth + 'px';
+        this.eLeftTop.style.maxWidth = wrapperWidth + 'px';
     }
 
     private setPinnedRightWidth(): void {
 
-        if (this.printLayout) {
-            this.setElementWidth(this.eRightViewportWrapper, 0);
-            this.setElementWidth(this.eRightViewport, 0);
-            this.setElementWidth(this.eRightContainer, 0);
-            this.setElementWidth(this.eRightBottom, 0);
-            this.setElementWidth(this.eRightTop, 0);
-            return;
-        }
-
         let widthOfCols = this.columnController.getPinnedRightContainerWidth();
-        let widthOfColsAndScroll = widthOfCols + this.scrollWidth;
-        let widthOfColsAndClippedScroll = widthOfCols + this.scrollClipWidth;
+        let visible = !this.printLayout && widthOfCols > 0;
+        let eParentContainers = [this.eRightViewportWrapper, this.eRightTop, this.eRightBottom];
+        eParentContainers.forEach( e => _.setVisible(e, visible) );
 
-        let viewportWidth: number;
+        if (!visible) { return; }
+
+        let viewportWidth: string;
         let wrapperWidth: number;
 
         if (_.isVerticalScrollShowing(this.eRightViewport)) {
             if (!this.enableRtl) {
                 // show the scroll
-                viewportWidth = widthOfColsAndScroll;
-                wrapperWidth = widthOfColsAndScroll;
+                viewportWidth = '100%';
+                wrapperWidth = widthOfCols + this.scrollWidth;
             } else {
-                // hide the scroll
-                viewportWidth = widthOfColsAndClippedScroll;
+                // hide the scroll, this makes the wrapper clip the scroll
+                viewportWidth = `calc(100% + ${this.scrollClipWidth}px)`;
                 wrapperWidth = widthOfCols;
             }
         } else {
             // no scroll
-            viewportWidth = widthOfCols;
+            viewportWidth = `100%`;
             wrapperWidth = widthOfCols;
         }
 
-        this.setElementWidth(this.eRightViewportWrapper, wrapperWidth);
-        this.setElementWidth(this.eRightViewport, viewportWidth);
-        this.setElementWidth(this.eRightContainer, widthOfCols);
+        this.eRightViewport.style.width = viewportWidth;
+        this.eRightViewportWrapper.style.maxWidth = wrapperWidth + 'px';
 
-        this.setElementWidth(this.eRightBottom, wrapperWidth);
-        this.setElementWidth(this.eRightTop, wrapperWidth);
-    }
-
-    private setElementWidth(element: HTMLElement, width: number): void {
         // .width didn't do the trick in firefox, so needed .minWidth also
-        element.style.width = width + 'px';
-        element.style.minWidth = width + 'px';
+        this.eRightContainer.style.width = widthOfCols + 'px';
+        this.eRightContainer.style.minWidth = widthOfCols + 'px';
+
+        this.eRightTop.style.maxWidth = wrapperWidth + 'px';
+        this.eRightBottom.style.maxWidth = wrapperWidth + 'px';
     }
 
     private setPinnedContainersVisible() {
