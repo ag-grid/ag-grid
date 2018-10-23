@@ -84,6 +84,7 @@ export class HeaderRootComp extends Component {
 
         // for setting ag-pivot-on / ag-pivot-off CSS classes
         this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
+        this.onPivotModeChanged();
 
         this.addPreventHeaderScroll();
 

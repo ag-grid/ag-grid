@@ -41,7 +41,7 @@ import {
 import {RangeController} from "./rangeController";
 
 interface RowCallback {
-    (gridRow: GridRow, rowNode: RowNode, columns: Column[], rangeIndex: number): void;
+    (gridRow: GridRow, rowNode: RowNode, columns: Column[], rangeIndex: number, isLastRow?: boolean): void;
 }
 
 interface ColumnCallback {
@@ -405,22 +405,16 @@ export class ClipboardService implements IClipboardService {
         }
 
         let rangeIndex = 0;
-        while (true) {
+        let isLastRow = false;
 
-            let rowNode = this.getRowNode(currentRow);
-            rowCallback(currentRow, rowNode, range.columns, rangeIndex++);
+        // the currentRow could be missing if the user sets the active range manually, and sets a range
+        // that is outside of the grid (eg. sets range rows 0 to 100, but grid has only 20 rows).
+        while (!isLastRow && !_.missing(currentRow)) {
+            const rowNode = this.getRowNode(currentRow);
+            isLastRow = currentRow.equals(lastRow);
 
-            if (currentRow.equals(lastRow)) {
-                break;
-            }
-
+            rowCallback(currentRow, rowNode, range.columns, rangeIndex++, isLastRow);
             currentRow = this.cellNavigationService.getRowBelow(currentRow);
-
-            // this can happen if the user sets the active range manually, and sets a range
-            // that is outside of the grid, eg sets range rows 0 to 100, but grid has only 20 rows.
-            if (_.missing(currentRow)) {
-                break;
-            }
         }
     }
 
@@ -452,7 +446,7 @@ export class ClipboardService implements IClipboardService {
         };
 
         // adds cell values to the data
-        let rowCallback = (currentRow: GridRow, rowNode: RowNode, columns: Column[]) => {
+        let rowCallback = (currentRow: GridRow, rowNode: RowNode, columns: Column[], rowIndex: number, isLastRow: boolean) => {
             columns.forEach( (column, index) => {
                 let value = this.valueService.getValue(column, rowNode);
 
@@ -468,7 +462,9 @@ export class ClipboardService implements IClipboardService {
                 let cellId = new GridCell(gridCellDef).createId();
                 cellsToFlash[cellId] = true;
             });
-            data += '\r\n';
+            if (!isLastRow) {
+                data += '\r\n';
+            }
         };
 
         this.iterateActiveRanges(false, rowCallback, columnCallback);

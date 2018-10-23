@@ -654,16 +654,16 @@ export class GridApi {
         this.clientSideRowModel.forEachLeafNode(callback);
     }
 
-    public forEachNode(callback: (rowNode: RowNode)=>void ) {
+    public forEachNode(callback: (rowNode: RowNode, index: number)=>void ) {
         this.rowModel.forEachNode(callback);
     }
 
-    public forEachNodeAfterFilter(callback: (rowNode: RowNode)=>void) {
+    public forEachNodeAfterFilter(callback: (rowNode: RowNode, index: number)=>void) {
         if (_.missing(this.clientSideRowModel)) { console.warn('cannot call forEachNodeAfterFilter unless using normal row model'); }
         this.clientSideRowModel.forEachNodeAfterFilter(callback);
     }
 
-    public forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode)=>void) {
+    public forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode, index: number)=>void) {
         if (_.missing(this.clientSideRowModel)) { console.warn('cannot call forEachNodeAfterFilterAndSort unless using normal row model'); }
         this.clientSideRowModel.forEachNodeAfterFilterAndSort(callback);
     }

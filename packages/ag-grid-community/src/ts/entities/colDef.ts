@@ -72,7 +72,7 @@ export interface ColDef extends AbstractColDef {
     sortedAt?: number;
 
     /** The sort order, provide an array with any of the following in any order ['asc','desc',null] */
-    sortingOrder?: string[];
+    sortingOrder?: string[] | null;
 
     /** The field of the row to get the cells data from */
     field?: string;
