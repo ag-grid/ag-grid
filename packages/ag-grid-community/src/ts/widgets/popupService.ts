@@ -313,7 +313,7 @@ export class PopupService {
             _.removeFromArray(this.activePopupElements, eChild);
 
             eBody.removeEventListener('keydown', hidePopupOnKeyboardEvent);
-            eBody.removeEventListener('click', hidePopupOnMouseEvent);
+            eBody.removeEventListener('mousedown', hidePopupOnMouseEvent);
             eBody.removeEventListener('touchstart', hidePopupOnTouchEvent);
             eBody.removeEventListener('contextmenu', hidePopupOnMouseEvent);
             if (closedCallback) {
@@ -328,7 +328,7 @@ export class PopupService {
                 eBody.addEventListener('keydown', hidePopupOnKeyboardEvent);
             }
             if (modal) {
-                eBody.addEventListener('click', hidePopupOnMouseEvent);
+                eBody.addEventListener('mousedown', hidePopupOnMouseEvent);
                 eBody.addEventListener('touchstart', hidePopupOnTouchEvent);
                 eBody.addEventListener('contextmenu', hidePopupOnMouseEvent);
             }
