@@ -1,4 +1,4 @@
-import {IFilterParams, SerializedFilter} from "../interfaces/iFilter";
+import {SerializedFilter} from "../interfaces/iFilter";
 import {Component} from "../widgets/component";
 import {IDateComp, IDateParams} from "../rendering/dateComponent";
 import {QuerySelector} from "../widgets/componentAnnotations";
@@ -78,7 +78,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         super.initialiseFilterBodyUi(type);
         this.createComponents(type);
 
-        if (type === FilterConditionType.MAIN){
+        if (type === FilterConditionType.MAIN) {
             this.setDateFrom_date(this.dateFrom, FilterConditionType.MAIN);
             this.setDateTo_date(this.dateTo, FilterConditionType.MAIN);
             this.setFilterType(this.filterCondition, FilterConditionType.MAIN);
@@ -89,22 +89,22 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         }
     }
 
-    private createComponents (type:FilterConditionType){
+    private createComponents(type:FilterConditionType) {
         let dateComponentParams: IDateParams = {
-            onDateChanged: ()=>{this.onDateChanged (type)},
+            onDateChanged: () => { this.onDateChanged (type); },
             filterParams: this.filterParams
         };
 
         this.componentRecipes.newDateComponent(dateComponentParams).then (dateToComponent=> {
-            if (type === FilterConditionType.MAIN){
+            if (type === FilterConditionType.MAIN) {
                 this.dateToComponent = dateToComponent;
-            } else{
+            } else {
                 this.dateToConditionComponent = dateToComponent;
             }
 
             let dateToElement = dateToComponent.getGui();
 
-            if (type === FilterConditionType.MAIN){
+            if (type === FilterConditionType.MAIN) {
                 this.eDateToPanel.appendChild(dateToElement);
                 if (this.dateToComponent.afterGuiAttached) {
                     this.dateToComponent.afterGuiAttached();
@@ -140,7 +140,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     }
 
     private onDateChanged(type:FilterConditionType): void {
-        if (type === FilterConditionType.MAIN){
+        if (type === FilterConditionType.MAIN) {
             this.dateFrom = DateFilter.removeTimezone(this.dateFromComponent.getDate());
             this.dateTo = DateFilter.removeTimezone(this.dateToComponent.getDate());
         } else {
@@ -153,7 +153,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     public refreshFilterBodyUi(type:FilterConditionType): void {
         let panel: HTMLElement;
         let filterTypeValue: string;
-        if (type === FilterConditionType.MAIN){
+        if (type === FilterConditionType.MAIN) {
             panel = this.eDateToPanel;
             filterTypeValue = this.filter;
         } else {
@@ -192,7 +192,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     }
 
     public filterValues(type:FilterConditionType): Date|Date[] {
-        if (type === FilterConditionType.MAIN){
+        if (type === FilterConditionType.MAIN) {
             if (!this.dateFromComponent) return null;
 
             return this.filter !== BaseFilter.IN_RANGE ?
@@ -247,7 +247,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     }
 
     private setDateTo_date(parsedDate:Date, type: FilterConditionType) {
-        if (type === FilterConditionType.MAIN){
+        if (type === FilterConditionType.MAIN) {
             this.dateTo = parsedDate;
 
             if (!this.dateToComponent) return;
@@ -299,9 +299,9 @@ export class DefaultDateComponent extends Component implements IDateComp {
         this.eDateInput = <HTMLInputElement> this.getGui();
 
         if (Utils.isBrowserChrome() || params.filterParams.browserDatePicker) {
-            if (Utils.isBrowserIE()){
-                console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11, reverting to plain text date picker')
-            }else{
+            if (Utils.isBrowserIE()) {
+                console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11, reverting to plain text date picker');
+            } else {
                 this.eDateInput.type = 'date';
             }
         }
