@@ -51,6 +51,7 @@ $disabled-foreground-color-opacity: 0.38 !default;
 
     .ag-header {
         background-color: $header-background-color;
+        border-bottom: 1px solid $border-color;
     }
 
     .ag-pinned-right-header {
