@@ -269,6 +269,10 @@ export class Utils {
         return copy;
     }
 
+    static deepCloneObject<T>(object: T): T {
+        return JSON.parse(JSON.stringify(object));
+    }
+
     static map<TItem, TResult>(array: TItem[], callback: (item: TItem, idx?: number) => TResult) {
         let result: TResult[] = [];
         for (let i = 0; i < array.length; i++) {
@@ -319,23 +323,21 @@ export class Utils {
     }
 
     static mergeDeep(dest: any, source: any): void {
+        if (!this.exists(source)) return;
 
-        if (this.exists(source)) {
-            this.iterateObject(source, (key: string, newValue: any) => {
+        this.iterateObject(source, (key: string, newValue: any) => {
+            let oldValue: any = dest[key];
 
-                let oldValue: any = dest[key];
+            if (oldValue === newValue) {
+                return;
+            }
 
-                if (oldValue === newValue) {
-                    return;
-                }
-
-                if (typeof oldValue === 'object' && typeof newValue === 'object') {
-                    Utils.mergeDeep(oldValue, newValue);
-                } else {
-                    dest[key] = newValue;
-                }
-            });
-        }
+            if (typeof oldValue === 'object' && typeof newValue === 'object') {
+                Utils.mergeDeep(oldValue, newValue);
+            } else {
+                dest[key] = newValue;
+            }
+        });
     }
 
     static assign(object: any, ...sources: any[]): any {

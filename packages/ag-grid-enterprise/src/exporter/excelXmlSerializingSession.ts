@@ -64,20 +64,15 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
 
         this.sheetName = sheetName;
         this.excelFactory = excelFactory;
-        this.baseExcelStyles = baseExcelStyles;
+        this.baseExcelStyles = baseExcelStyles || [];
         this.styleLinker = styleLinker;
         this.suppressTextAsCDATA = suppressTextAsCDATA;
-
         this.stylesByIds = {};
 
-        if (!baseExcelStyles) {
-            this.excelStyles = [];
-        } else {
-            baseExcelStyles.forEach((it: ExcelStyle) => {
-                this.stylesByIds[it.id] = it;
-            });
-            this.excelStyles = baseExcelStyles.slice();
-        }
+        baseExcelStyles.forEach((it: ExcelStyle) => {
+            this.stylesByIds[it.id] = it;
+        });
+        this.excelStyles = [...baseExcelStyles];
     }
 
     public addCustomHeader(customHeader: ExcelCell[][]): void {
@@ -190,7 +185,7 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
         styleIds.forEach((styleId: string) => {
             this.excelStyles.forEach((excelStyle: ExcelStyle) => {
                 if (excelStyle.id === styleId) {
-                    Utils.mergeDeep(resultantStyle, excelStyle);
+                    Utils.mergeDeep(resultantStyle, Utils.deepCloneObject(excelStyle));
                 }
             });
         });
