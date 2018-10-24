@@ -491,8 +491,14 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     &.ag-layout-auto-height,
     &.ag-layout-normal {
         height: 100%;
-        width: 0px; // mind width, flex grows the center to fit
-        min-width: 0px; // width didn't do the trick in firefox, so needed min-width also
+        // we have width (and min width) set to 20 so that the body is always at least 20px visible
+        // if this was NOT set (eg if min width of 0px) then user could have many pinned left cols
+        // and a narrow browser such that only the pinned left portion was visible, then the vertical
+        // scrollbar would be missing (as this is on the body, which would be pushed out by the pinned
+        // sections). by having a min width on the body, it ensures we always see it, even if to many pinned
+        // rows, which means user can always get access to the vertical scrollbar.
+        width: 20px; // min width, flex grows the center to fit
+        min-width: 20px; // width didn't do the trick in firefox, so needed min-width also
         flex: 1;
     }
 }
