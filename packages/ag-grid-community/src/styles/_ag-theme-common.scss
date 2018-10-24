@@ -12,8 +12,10 @@
     @return $string;
 }
 
-@mixin bottom-border($color) {
-    border-bottom: 1px solid $color;
+@mixin top-border($color) {
+    border-style: solid;
+    border-color: $color;
+    border-width: 1px 0 0;
     box-sizing: border-box;
 }
 
@@ -267,11 +269,14 @@
     }
 
     .ag-header-row {
-        @include bottom-border($border-color);
+        @include top-border($border-color);
+        &:first-of-type {
+            border-top-width: 0;
+        }
     }
 
     .ag-row {
-        @include bottom-border($border-color);
+        @include top-border($border-color);
     }
 
     @if map-get($params, "odd-row-background-color") {
