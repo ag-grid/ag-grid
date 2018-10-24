@@ -110,6 +110,9 @@ export class SelectAllFeature extends BeanStub {
         let notSelectedCount = 0;
 
         let callback = (node: RowNode) => {
+
+            if (this.gridOptionsWrapper.isGroupSelectsChildren() && node.group) { return; }
+
             if (node.isSelected()) {
                 selectedCount++;
             } else if (!node.selectable) {

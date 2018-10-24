@@ -77,6 +77,7 @@ export class RangeController implements IRangeController {
 
     public setRangeToCell(cell: GridCell, appendRange = false): void {
         if (!this.gridOptionsWrapper.isEnableRangeSelection()) { return; }
+        if (!this.cellRanges.length) appendRange = false;
 
         let columns = this.updateSelectedColumns(cell.column, cell.column);
         if (!columns) { return; }
@@ -92,13 +93,13 @@ export class RangeController implements IRangeController {
         if (!appendRange || _.missing(this.cellRanges)) {
             this.cellRanges = [];
         }
+
         this.cellRanges.push(newRange);
         this.activeRange = null;
         this.dispatchChangedEvent(true, false);
     }
 
     public extendRangeToCell(toCell: GridCell): void {
-
         let lastRange = _.existsAndNotEmpty(this.cellRanges) ? this.cellRanges[this.cellRanges.length - 1] : null;
         let startCell = lastRange ? lastRange.start : toCell;
 
@@ -114,7 +115,6 @@ export class RangeController implements IRangeController {
 
     // returns true if successful, false if not successful
     public extendRangeInDirection(startCell: GridCell, key: number): boolean {
-
         let oneRangeExists = _.exists(this.cellRanges) || this.cellRanges.length === 1;
         let previousSelectionStart = oneRangeExists ? this.cellRanges[0].start : null;
 

@@ -148,6 +148,7 @@ export class CellComp extends Component {
         // hey, this looks like React!!!
         templateParts.push(`<div`);
         templateParts.push(` tabindex="-1"`);
+        templateParts.push(` unselectable="on"`); // THIS IS FOR IE only so the text is not seleragle with mouse drage
         templateParts.push(` role="gridcell"`);
         templateParts.push(` comp-id="${this.getCompId()}" `);
         templateParts.push(` col-id="${colIdSanitised}"`);
