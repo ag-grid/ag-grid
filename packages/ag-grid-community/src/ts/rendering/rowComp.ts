@@ -91,6 +91,9 @@ export class RowComp extends Component {
     private fullWidthRowComponentLeft: ICellRendererComp;
     private fullWidthRowComponentRight: ICellRendererComp;
 
+    private firstRowOnPage: boolean;
+    private lastRowOnPage: boolean;
+
     private active = true;
 
     private fullWidthRow: boolean;
@@ -459,6 +462,7 @@ export class RowComp extends Component {
         this.addDestroyableEventListener(eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocusChanged.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
+        this.addDestroyableEventListener(eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
     }
 
     // when grid columns change, then all cells should be cleaned out,
@@ -965,7 +969,40 @@ export class RowComp extends Component {
         // we use absolute position unless we are doing print layout
         classes.push(this.printLayout ? 'ag-row-position-relative' : 'ag-row-position-absolute');
 
+        this.firstRowOnPage = this.isFirstRowOnPage();
+        this.lastRowOnPage = this.isLastRowOnPage();
+
+        if (this.firstRowOnPage) {
+            classes.push('ag-row-first');
+        }
+
+        if (this.lastRowOnPage) {
+            classes.push('ag-row-last');
+        }
+
         return classes;
+    }
+
+    private isFirstRowOnPage(): boolean {
+        return this.rowNode.rowIndex===this.beans.paginationProxy.getPageFirstRow();
+    }
+
+    private isLastRowOnPage(): boolean {
+        return this.rowNode.rowIndex===this.beans.paginationProxy.getPageLastRow();
+    }
+
+    private onModelUpdated(): void {
+        let newFirst = this.isFirstRowOnPage();
+        let newLast = this.isLastRowOnPage();
+
+        if (this.firstRowOnPage!==newFirst) {
+            this.firstRowOnPage = newFirst;
+            this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-first', newFirst) );
+        }
+        if (this.lastRowOnPage!==newLast) {
+            this.lastRowOnPage = newLast;
+            this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-last', newLast) );
+        }
     }
 
     private preProcessRowClassRules(): string[] {
