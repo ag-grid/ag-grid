@@ -25,8 +25,8 @@ export class PopupService {
             // user provided popup parent, may not have the right theme applied
             return ePopupParent;
         } else {
-            let document = this.gridOptionsWrapper.getDocument();
-            return document.body;
+            let eDocument = this.gridOptionsWrapper.getDocument();
+            return eDocument.body;
         }
     }
 
@@ -255,9 +255,9 @@ export class PopupService {
 
     public addPopup(modal: boolean, eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch): (event?: any) => void {
 
-        let eBody = this.gridOptionsWrapper.getDocument();
-        if (!eBody) {
-            console.warn('ag-grid: could not find the body of the document, document.body is empty');
+        let eDocument = this.gridOptionsWrapper.getDocument();
+        if (!eDocument) {
+            console.warn('ag-grid: could not find the document, document is empty');
             return;
         }
 
@@ -313,10 +313,10 @@ export class PopupService {
             ePopupParent.removeChild(eWrapper);
             _.removeFromArray(this.activePopupElements, eChild);
 
-            eBody.removeEventListener('keydown', hidePopupOnKeyboardEvent);
-            eBody.removeEventListener('mousedown', hidePopupOnMouseEvent);
-            eBody.removeEventListener('touchstart', hidePopupOnTouchEvent);
-            eBody.removeEventListener('contextmenu', hidePopupOnMouseEvent);
+            eDocument.removeEventListener('keydown', hidePopupOnKeyboardEvent);
+            eDocument.removeEventListener('mousedown', hidePopupOnMouseEvent);
+            eDocument.removeEventListener('touchstart', hidePopupOnTouchEvent);
+            eDocument.removeEventListener('contextmenu', hidePopupOnMouseEvent);
             if (closedCallback) {
                 closedCallback();
             }
@@ -326,12 +326,12 @@ export class PopupService {
         // click will be included, which we don't want
         setTimeout(function() {
             if (closeOnEsc) {
-                eBody.addEventListener('keydown', hidePopupOnKeyboardEvent);
+                eDocument.addEventListener('keydown', hidePopupOnKeyboardEvent);
             }
             if (modal) {
-                eBody.addEventListener('mousedown', hidePopupOnMouseEvent);
-                eBody.addEventListener('touchstart', hidePopupOnTouchEvent);
-                eBody.addEventListener('contextmenu', hidePopupOnMouseEvent);
+                eDocument.addEventListener('mousedown', hidePopupOnMouseEvent);
+                eDocument.addEventListener('touchstart', hidePopupOnTouchEvent);
+                eDocument.addEventListener('contextmenu', hidePopupOnMouseEvent);
             }
         }, 0);
 
