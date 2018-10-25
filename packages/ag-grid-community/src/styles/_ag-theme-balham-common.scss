@@ -93,11 +93,11 @@ $disabled-foreground-color-opacity: 0.38 !default;
     }
 
     .ag-row {
-        border-bottom-color: lighten($border-color, 10);
+        border-color: lighten($border-color, 10);
     }
 
     .ag-row-selected {
-        border-bottom-color: $selected-color;
+        border-color: $selected-color;
     }
 
     .ag-row-drag {

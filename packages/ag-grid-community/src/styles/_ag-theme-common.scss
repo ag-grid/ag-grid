@@ -12,10 +12,9 @@
     @return $string;
 }
 
-@mixin top-border($color) {
+@mixin row-border($color) {
     border-style: solid;
     border-color: $color;
-    border-width: 1px 0 0;
     box-sizing: border-box;
 }
 
@@ -269,14 +268,19 @@
     }
 
     .ag-header-row {
-        @include top-border($border-color);
-        &:first-of-type {
-            border-top-width: 0;
-        }
+        @include row-border($border-color);
+        border-width: 0 0 1px;
     }
 
     .ag-row {
-        @include top-border($border-color);
+        @include row-border($border-color);
+        border-width: 0;
+        &:not(.ag-row-first) {
+            border-width: 1px 0 0;
+        }
+        &.ag-row-last {
+            border-bottom-width: 1px;
+        }
     }
 
     @if map-get($params, "odd-row-background-color") {
