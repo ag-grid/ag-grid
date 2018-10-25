@@ -186,6 +186,9 @@ export class RowNode implements IEventEmitter {
     public __cacheData: {[colId: string]: any};
     public __cacheVersion: number;
 
+    /** True when nodes with the same id are being removed and added as part of the same batch transaction */
+    public alreadyRendered = false;
+
     private selected = false;
     private eventService: EventService;
 

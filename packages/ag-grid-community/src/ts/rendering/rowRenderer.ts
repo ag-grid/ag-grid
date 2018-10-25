@@ -729,7 +729,7 @@ export class RowRenderer extends BeanStub {
         // if no row comp, see if we can get it from the previous rowComps
         if (!rowComp) {
             rowNode = this.paginationProxy.getRow(rowIndex);
-            if (_.exists(rowNode) && _.exists(rowsToRecycle) && rowsToRecycle[rowNode.id]) {
+            if (_.exists(rowNode) && _.exists(rowsToRecycle) && rowsToRecycle[rowNode.id] && rowNode.alreadyRendered) {
                 rowComp = rowsToRecycle[rowNode.id];
                 rowsToRecycle[rowNode.id] = null;
             }
@@ -752,6 +752,12 @@ export class RowRenderer extends BeanStub {
         } else {
             // ensure row comp is in right position in DOM
             rowComp.ensureDomOrder();
+        }
+
+        if (rowNode) {
+            // set node as 'alreadyRendered' to ensure we only recycle rowComps that have been rendered, this ensures
+            // we don't reuse rowComps that have been removed and then re-added in the same batch transaction.
+            rowNode.alreadyRendered = true;
         }
 
         this.rowCompsByIndex[rowIndex] = rowComp;
