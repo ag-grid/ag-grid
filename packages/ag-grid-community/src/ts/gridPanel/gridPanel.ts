@@ -955,7 +955,7 @@ export class GridPanel extends Component {
         }
     }
 
-    public ensureColumnVisible(key: any) {
+    public ensureColumnVisible(key: any, callback?: (column: Column, gridApi: GridApi, columnApi: ColumnApi) => void) {
         let column = this.columnController.getGridColumn(key);
 
         if (!column) {
@@ -999,26 +999,32 @@ export class GridPanel extends Component {
 
         let alignColToLeft = viewportScrolledPastCol || colToSmallForViewport;
         let alignColToRight = viewportScrolledBeforeCol;
-
-        if (alignColToLeft) {
-            // if viewport's left side is after col's left side, scroll left to pull col into viewport at left
+        let async = false;
+        let newScrollPosition = this.getBodyViewportScrollLeft();
+        if (alignColToLeft || alignColToRight) {
             if (this.enableRtl) {
-                let newScrollPosition = bodyWidth - viewportWidth - colLeftPixel;
-                this.setBodyViewportScrollLeft(newScrollPosition);
+                newScrollPosition = alignColToLeft ? (bodyWidth - viewportWidth - colLeftPixel) : (bodyWidth - colRightPixel);
             } else {
-                this.setBodyViewportScrollLeft(colLeftPixel);
+                newScrollPosition = alignColToLeft ? colLeftPixel : (colRightPixel - viewportWidth);
             }
-        } else if (alignColToRight) {
-            // if viewport's right side is before col's right side, scroll right to pull col into viewport at right
-            if (this.enableRtl) {
-                let newScrollPosition = bodyWidth - colRightPixel;
-                this.setBodyViewportScrollLeft(newScrollPosition);
-            } else {
-                let newScrollPosition = colRightPixel - viewportWidth;
-                this.setBodyViewportScrollLeft(newScrollPosition);
-            }
-        } else {
+            this.setBodyViewportScrollLeft(newScrollPosition);
+            async = true;
+        }  else {
             // otherwise, col is already in view, so do nothing
+        }
+
+        if (callback) {
+            if (async) {
+                const fn = () => {
+                    if (this.columnController.getAllDisplayedVirtualColumns().indexOf(column) >= 0) {
+                        setTimeout(callback, 100, column, this.gridApi, this.columnApi);
+                        this.eventService.removeEventListener(Events.EVENT_BODY_SCROLL, fn);
+                    }
+                };
+                this.eventService.addEventListener(Events.EVENT_BODY_SCROLL, fn);
+            } else {
+                callback(column, this.gridApi, this.columnApi);
+            }
         }
 
         // this will happen anyway, as the move will cause a 'scroll' event on the body, however
