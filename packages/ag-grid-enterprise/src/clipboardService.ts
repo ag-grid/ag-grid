@@ -117,10 +117,6 @@ export class ClipboardService implements IClipboardService {
     }
 
     private pasteToRange(clipboardData: string[][]) {
-
-        // remove extra empty row which is inserted when clipboard has more than one row
-        if (clipboardData.length > 1) clipboardData.pop();
-
         let cellsToFlash = <any>{};
         let updatedRowNodes: RowNode[] = [];
         let updatedColumnIds: string[] = [];
