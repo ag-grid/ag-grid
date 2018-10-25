@@ -128,7 +128,7 @@ var gridOptions = {
     },
     enableCellChangeFlash: true,
     rowDragManaged: true,
-    popupParent: document.body,
+    // popupParent: document.body,
     // ensureDomOrder: true,
     // postProcessPopup: function(params) {
     //     console.log(params);

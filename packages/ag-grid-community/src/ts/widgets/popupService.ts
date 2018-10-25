@@ -25,7 +25,8 @@ export class PopupService {
             // user provided popup parent, may not have the right theme applied
             return ePopupParent;
         } else {
-            return this.gridCore.getRootGui();
+            let document = this.gridOptionsWrapper.getDocument();
+            return document.body;
         }
     }
 
