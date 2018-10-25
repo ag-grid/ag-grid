@@ -112,7 +112,7 @@ export class FilterManager {
         _.iterateObject(this.allFilters, function(key: any, filterWrapper: FilterWrapper) {
             // because user can provide filters, we provide useful error checking and messages
             let filterPromise: Promise<IFilterComp> = filterWrapper.filterPromise;
-            let filter = filterPromise.resolveNow(null, filter=>filter);
+            let filter = filterPromise.resolveNow(null, filter => filter);
             if (filter == null) { return null; }
 
             if (typeof filter.getModel !== 'function') {
@@ -397,7 +397,7 @@ export class FilterManager {
             filterWrapper = this.createFilterWrapper(column, source);
             this.allFilters[column.getColId()] = filterWrapper;
         } else {
-            if (source !== 'NO_UI'){
+            if (source !== 'NO_UI') {
                 this.putIntoGui(filterWrapper, source);
             }
 
@@ -499,11 +499,10 @@ export class FilterManager {
             if (filterWrapper.scope) {
                 const compiledElement = this.$compile(eFilterGui)(filterWrapper.scope);
                 filterWrapper.compiledElement = compiledElement;
-                setTimeout( () => filterWrapper.scope.$apply(), 0);
+                setTimeout(() => filterWrapper.scope.$apply(), 0);
             }
 
             filterWrapper.guiPromise.resolve(eFilterGui);
-
 
             this.eventService.dispatchEvent(<FilterOpenedEvent>{
                 type: Events.EVENT_FILTER_OPENED,
@@ -512,7 +511,6 @@ export class FilterManager {
                 eGui: eFilterGui,
                 api: this.gridApi,
                 columnApi: this.columnApi
-
             });
 
         });

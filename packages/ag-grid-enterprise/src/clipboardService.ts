@@ -384,13 +384,13 @@ export class ClipboardService implements IClipboardService {
 
         if (onlyFirst) {
             let range = rangeSelections[0];
-            this.iterateActiveRange(range, rowCallback, columnCallback);
+            this.iterateActiveRange(range, rowCallback, columnCallback, true);
         } else {
-            rangeSelections.forEach( range => this.iterateActiveRange(range, rowCallback, columnCallback) );
+            rangeSelections.forEach((range, idx) => this.iterateActiveRange(range, rowCallback, columnCallback, idx === rangeSelections.length - 1) );
         }
     }
 
-    private iterateActiveRange(range: RangeSelection, rowCallback: RowCallback, columnCallback?: ColumnCallback): void {
+    private iterateActiveRange(range: RangeSelection, rowCallback: RowCallback, columnCallback?: ColumnCallback, isLastRange?: boolean): void {
         // get starting and ending row, remember rowEnd could be before rowStart
         let startRow = range.start.getGridRow();
         let endRow = range.end.getGridRow();
@@ -413,7 +413,7 @@ export class ClipboardService implements IClipboardService {
             const rowNode = this.getRowNode(currentRow);
             isLastRow = currentRow.equals(lastRow);
 
-            rowCallback(currentRow, rowNode, range.columns, rangeIndex++, isLastRow);
+            rowCallback(currentRow, rowNode, range.columns, rangeIndex++, isLastRow && isLastRange);
             currentRow = this.cellNavigationService.getRowBelow(currentRow);
         }
     }
@@ -462,6 +462,7 @@ export class ClipboardService implements IClipboardService {
                 let cellId = new GridCell(gridCellDef).createId();
                 cellsToFlash[cellId] = true;
             });
+
             if (!isLastRow) {
                 data += '\r\n';
             }
