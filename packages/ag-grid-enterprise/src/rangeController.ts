@@ -77,20 +77,22 @@ export class RangeController implements IRangeController {
 
     public setRangeToCell(cell: GridCell, appendRange = false): void {
         if (!this.gridOptionsWrapper.isEnableRangeSelection()) { return; }
-        if (!this.cellRanges.length) appendRange = false;
 
-        let columns = this.updateSelectedColumns(cell.column, cell.column);
+        const missingRanges = _.missing(this.cellRanges);
+        if (missingRanges || !this.cellRanges.length) appendRange = false;
+
+        const columns = this.updateSelectedColumns(cell.column, cell.column);
         if (!columns) { return; }
 
-        let gridCellDef = <GridCellDef> {rowIndex: cell.rowIndex, floating: cell.floating, column: cell.column};
-
-        let newRange = {
+        const gridCellDef = <GridCellDef> {rowIndex: cell.rowIndex, floating: cell.floating, column: cell.column};
+        const newRange = {
             start: new GridCell(gridCellDef),
             end: new GridCell(gridCellDef),
             columns: columns
         };
+
         // if not appending, then clear previous range selections
-        if (!appendRange || _.missing(this.cellRanges)) {
+        if (!appendRange || missingRanges) {
             this.cellRanges = [];
         }
 
