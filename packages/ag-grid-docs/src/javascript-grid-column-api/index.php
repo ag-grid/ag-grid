@@ -142,6 +142,14 @@ include '../documentation-main/documentation_header.php';
                 </td>
             </tr>
             <tr>
+                <th>getPrimaryColumns()</th>
+                <td>Returns the grids primary columns.</td>
+            </tr>
+            <tr>
+                <th>getSecondaryColumns()</th>
+                <td>Returns the grids secondary columns.</td>
+            </tr>
+            <tr>
                 <th>getAllDisplayedVirtualColumns()</th>
                 <td>Same as getAllGridColumns(), except only returns rendered columns - ie columns not within the
                     viewport

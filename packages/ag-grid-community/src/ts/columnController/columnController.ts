@@ -1270,7 +1270,11 @@ export class ColumnController {
     // + clientSideRowController -> sorting, building quick filter text
     // + headerRenderer -> sorting (clearing icon)
     public getAllPrimaryColumns(): Column[] {
-        return this.primaryColumns;
+        return this.primaryColumns ? this.primaryColumns.slice() : null;
+    }
+
+    public getSecondaryColumns(): Column[] {
+        return this.secondaryColumns ? this.secondaryColumns.slice() : null;
     }
 
     public getAllColumnsForQuickFilter(): Column[] {
