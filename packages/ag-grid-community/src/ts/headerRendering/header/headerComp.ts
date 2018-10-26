@@ -133,7 +133,7 @@ export class HeaderComp extends Component implements IHeaderComp {
                 const target = event.touchStart.target as HTMLElement;
                 // When suppressMenuHide is true, a tap on the menu icon will bubble up
                 // to the header container, in that case we should not sort
-                if (this.eMenu.contains(target)) return;
+                if (suppressMenuHide && this.eMenu.contains(target)) return;
 
                 this.sortController.progressSort(this.params.column, false, "uiColumnSorted");
             };
