@@ -110,8 +110,12 @@ export class SideBarComp extends Component implements ISideBar {
         super.setVisible(show);
         if (show) {
             let keyOfTabToShow: string = this.getActiveToolPanelItem();
+
+            if (!keyOfTabToShow) return;
+
             keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : _.get(this.gridOptionsWrapper.getSideBar(), 'defaultToolPanel', null);
             keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : this.gridOptionsWrapper.getSideBar().defaultToolPanel;
+
             let tabToShow: Component = this.panelComps[keyOfTabToShow];
             if (!tabToShow) {
                 console.warn(`ag-grid: can't set the visibility of the tool panel item [${keyOfTabToShow}] since it can't be found`);
