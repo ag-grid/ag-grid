@@ -112,18 +112,18 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private setupTap(): void {
-        const {gridOptionsWrapper: ow} = this;
+        const {gridOptionsWrapper: gow} = this;
 
-        if (ow.isSuppressTouch()) { return; }
+        if (gow.isSuppressTouch()) { return; }
 
-        const suppressMenuHide = ow.isSuppressMenuHide();
+        const suppressMenuHide = gow.isSuppressMenuHide();
         const touchListener = new TouchListener(this.getGui(), true);
         const menuTouchListener = suppressMenuHide ? new TouchListener(this.eMenu, true) : touchListener;
 
         if (this.params.enableMenu) {
             const eventType = suppressMenuHide ? 'EVENT_TAP' : 'EVENT_LONG_TAP';
             const showMenuFn = (event: TapEvent | LongTapEvent) => {
-                ow.getApi().showColumnMenuAfterMouseClick(this.params.column, event.touchStart);
+                gow.getApi().showColumnMenuAfterMouseClick(this.params.column, event.touchStart);
             };
             this.addDestroyableEventListener(menuTouchListener, TouchListener[eventType], showMenuFn);
         }
@@ -131,9 +131,10 @@ export class HeaderComp extends Component implements IHeaderComp {
         if (this.params.enableSorting) {
             const tapListener = (event: TapEvent) => {
                 const target = event.touchStart.target as HTMLElement;
-                if (target && target.classList.contains('ag-icon-menu')) {
-                    return;
-                }
+                // When suppressMenuHide is true, a tap on the menu icon will bubble up
+                // to the header container, in that case we should not sort
+                if (this.eMenu.contains(target)) return;
+
                 this.sortController.progressSort(this.params.column, false, "uiColumnSorted");
             };
 
