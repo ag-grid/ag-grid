@@ -204,6 +204,7 @@ export class GridPanel extends Component {
 
     private overlayWrapper: IOverlayWrapperComp;
 
+    private lastVScrollTime: number;
     private lastVScrollElement: HTMLElement;
     private recentScrolls: { [key: number]: number } = {};
 
@@ -1454,23 +1455,31 @@ export class GridPanel extends Component {
 
         let now = new Date().getTime();
 
-        // recentScrolls: when one scrollable area is scrolling (eg center) then the
-        // other scroll areas are also scrolled (eg pinned left, pinned right, full width).
-        // we want to ignore events that are as a result of the other panels scrolling,
-        // eg if body scrolls to 100px, then we want to ignore the events coming from
-        // the other panels for 100px. if we don't do this, then we will end up with events
-        // interfering wih the scroll when there is a stream of events. this was most notable
-        // on IE, but impacted all browsers to some extent.
+        if (this.gridOptionsWrapper.isRowModelDefault()) {
+            // recentScrolls: when one scrollable area is scrolling (eg center) then the
+            // other scroll areas are also scrolled (eg pinned left, pinned right, full width).
+            // we want to ignore events that are as a result of the other panels scrolling,
+            // eg if body scrolls to 100px, then we want to ignore the events coming from
+            // the other panels for 100px. if we don't do this, then we will end up with events
+            // interfering wih the scroll when there is a stream of events. this was most notable
+            // on IE, but impacted all browsers to some extent.
 
-        let lastTimeScrolledToHere = this.recentScrolls[source.scrollTop];
-        let scrolledToHereRecently = lastTimeScrolledToHere && ((now - lastTimeScrolledToHere) < 250);
-        if (scrolledToHereRecently) {
-            return;
+            let lastTimeScrolledToHere = this.recentScrolls[source.scrollTop];
+            let scrolledToHereRecently = lastTimeScrolledToHere && ((now - lastTimeScrolledToHere) < 250);
+            if (scrolledToHereRecently) { return; }
+
+            this.recentScrolls[source.scrollTop] = now;
+
+        } else {
+
+            let diff = now - this.lastVScrollTime;
+            let elementIsNotControllingTheScroll = source!==this.lastVScrollElement && diff < 500;
+            if (elementIsNotControllingTheScroll) { return; }
+
+            this.lastVScrollTime = now;
         }
 
-        this.recentScrolls[source.scrollTop] = now;
         this.lastVScrollElement = source;
-
         let scrollTop: number = source.scrollTop;
 
         if (this.useAnimationFrame) {
@@ -1485,7 +1494,6 @@ export class GridPanel extends Component {
                 this.redrawRowsAfterScroll();
             }
         }
-
     }
 
     private onBodyHorizontalScroll(): void {

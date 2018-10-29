@@ -65,7 +65,7 @@ export class LargeTextCellEditor extends Component implements ICellEditorComp {
     }
 
     public getValue(): any {
-        return this.textarea.value;
+        return this.params.parseValue(this.textarea.value);
     }
 
     public isPopup(): boolean {

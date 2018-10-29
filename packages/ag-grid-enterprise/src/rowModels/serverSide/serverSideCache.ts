@@ -145,9 +145,14 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
             }
 
             let pixelsBetween = pixel - nextRowTop;
-            let rowsBetween = (pixelsBetween / this.cacheParams.rowHeight) | 0;
 
-            result = nextRowIndex + rowsBetween;
+            let useDisplayIndexEnd = this.gridOptionsWrapper.isPagination() && pixel > this.cacheHeight;
+            if (useDisplayIndexEnd) {
+                result = this.getDisplayIndexEnd() - 1;
+            } else {
+                let rowsBetween = (pixelsBetween / this.cacheParams.rowHeight) | 0;
+                result = nextRowIndex + rowsBetween;
+            }
         }
 
         let lastAllowedIndex = this.getDisplayIndexEnd() - 1;
