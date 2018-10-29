@@ -16,7 +16,7 @@ var listOfCountries = ['United States','Russia','Australia','Canada','Norway','C
 }
 
 var colDefAthlete = {field: "athlete", enableRowGroup: true, enablePivot: true, suppressFilter: true};
-var colDefAge = {field: "age", enableRowGroup: true, filter: 'customAgeFilter'};
+var colDefAge = {field: "age", enableRowGroup: true};
 var colDefCountry = {
     field: "country", enableRowGroup: true, enablePivot: true, rowGroup: true,
     filter: 'agSetColumnFilter',
