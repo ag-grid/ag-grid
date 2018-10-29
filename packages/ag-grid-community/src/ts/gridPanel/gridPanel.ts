@@ -855,6 +855,9 @@ export class GridPanel extends Component {
             this.eBodyViewport.scrollTop = newScrollPosition;
             this.rowRenderer.redrawAfterScroll();
         }
+
+        // so when we return back to user, the cells have rendered
+        this.animationFrameService.flushAllFrames();
     }
 
     // + moveColumnController
@@ -955,7 +958,7 @@ export class GridPanel extends Component {
         }
     }
 
-    public ensureColumnVisible(key: any) {
+    public ensureColumnVisible(key: any): void {
         let column = this.columnController.getGridColumn(key);
 
         if (!column) {
@@ -999,25 +1002,15 @@ export class GridPanel extends Component {
 
         let alignColToLeft = viewportScrolledPastCol || colToSmallForViewport;
         let alignColToRight = viewportScrolledBeforeCol;
-
-        if (alignColToLeft) {
-            // if viewport's left side is after col's left side, scroll left to pull col into viewport at left
+        let newScrollPosition = this.getBodyViewportScrollLeft();
+        if (alignColToLeft || alignColToRight) {
             if (this.enableRtl) {
-                let newScrollPosition = bodyWidth - viewportWidth - colLeftPixel;
-                this.setBodyViewportScrollLeft(newScrollPosition);
+                newScrollPosition = alignColToLeft ? (bodyWidth - viewportWidth - colLeftPixel) : (bodyWidth - colRightPixel);
             } else {
-                this.setBodyViewportScrollLeft(colLeftPixel);
+                newScrollPosition = alignColToLeft ? colLeftPixel : (colRightPixel - viewportWidth);
             }
-        } else if (alignColToRight) {
-            // if viewport's right side is before col's right side, scroll right to pull col into viewport at right
-            if (this.enableRtl) {
-                let newScrollPosition = bodyWidth - colRightPixel;
-                this.setBodyViewportScrollLeft(newScrollPosition);
-            } else {
-                let newScrollPosition = colRightPixel - viewportWidth;
-                this.setBodyViewportScrollLeft(newScrollPosition);
-            }
-        } else {
+            this.setBodyViewportScrollLeft(newScrollPosition);
+        }  else {
             // otherwise, col is already in view, so do nothing
         }
 
@@ -1026,6 +1019,9 @@ export class GridPanel extends Component {
         // the caller will need to have the columns rendered to continue, which will be before
         // the event has been worked on (which is the case for cell navigation).
         this.onHorizontalViewportChanged();
+
+        // so when we return back to user, the cells have rendered
+        this.animationFrameService.flushAllFrames();
     }
 
     public showLoadingOverlay() {
