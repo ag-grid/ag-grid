@@ -855,6 +855,9 @@ export class GridPanel extends Component {
             this.eBodyViewport.scrollTop = newScrollPosition;
             this.rowRenderer.redrawAfterScroll();
         }
+
+        // so when we return back to user, the cells have rendered
+        this.animationFrameService.flushAllFrames();
     }
 
     // + moveColumnController
@@ -955,7 +958,7 @@ export class GridPanel extends Component {
         }
     }
 
-    public ensureColumnVisible(key: any, callback?: (column: Column, gridApi: GridApi, columnApi: ColumnApi) => void) {
+    public ensureColumnVisible(key: any): void {
         let column = this.columnController.getGridColumn(key);
 
         if (!column) {
@@ -999,7 +1002,6 @@ export class GridPanel extends Component {
 
         let alignColToLeft = viewportScrolledPastCol || colToSmallForViewport;
         let alignColToRight = viewportScrolledBeforeCol;
-        let async = false;
         let newScrollPosition = this.getBodyViewportScrollLeft();
         if (alignColToLeft || alignColToRight) {
             if (this.enableRtl) {
@@ -1008,23 +1010,8 @@ export class GridPanel extends Component {
                 newScrollPosition = alignColToLeft ? colLeftPixel : (colRightPixel - viewportWidth);
             }
             this.setBodyViewportScrollLeft(newScrollPosition);
-            async = true;
         }  else {
             // otherwise, col is already in view, so do nothing
-        }
-
-        if (callback) {
-            if (async) {
-                const fn = () => {
-                    if (this.columnController.getAllDisplayedVirtualColumns().indexOf(column) >= 0) {
-                        setTimeout(callback, 100, column, this.gridApi, this.columnApi);
-                        this.eventService.removeEventListener(Events.EVENT_BODY_SCROLL, fn);
-                    }
-                };
-                this.eventService.addEventListener(Events.EVENT_BODY_SCROLL, fn);
-            } else {
-                callback(column, this.gridApi, this.columnApi);
-            }
         }
 
         // this will happen anyway, as the move will cause a 'scroll' event on the body, however
@@ -1032,6 +1019,9 @@ export class GridPanel extends Component {
         // the caller will need to have the columns rendered to continue, which will be before
         // the event has been worked on (which is the case for cell navigation).
         this.onHorizontalViewportChanged();
+
+        // so when we return back to user, the cells have rendered
+        this.animationFrameService.flushAllFrames();
     }
 
     public showLoadingOverlay() {

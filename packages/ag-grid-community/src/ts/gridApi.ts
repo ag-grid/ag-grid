@@ -635,8 +635,8 @@ export class GridApi {
         console.warn('ag-Grid: ensureColIndexVisible(index) no longer supported, use ensureColumnVisible(colKey) instead.');
     }
 
-    public ensureColumnVisible(key: string|Column, callback?: (column: Column, gridApi: GridApi, columnApi: ColumnApi) => void) {
-        this.gridPanel.ensureColumnVisible(key, callback);
+    public ensureColumnVisible(key: string|Column) {
+        this.gridPanel.ensureColumnVisible(key);
     }
 
     // Valid values for position are bottom, middle and top
