@@ -126,7 +126,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
             if (block.isPixelInRange(pixel)) {
                 result = block.getRowIndexAtPixel(pixel, this.getVirtualRowCount());
                 blockFound = true;
-            } else if (block.getBlockTop() > pixel) {
+            } else if (block.getBlockTop() < pixel) {
                 lastBlock = block;
             }
         });
@@ -145,14 +145,9 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
             }
 
             let pixelsBetween = pixel - nextRowTop;
+            let rowsBetween = (pixelsBetween / this.cacheParams.rowHeight) | 0;
 
-            let useDisplayIndexEnd = this.gridOptionsWrapper.isPagination() && pixel > this.cacheHeight;
-            if (useDisplayIndexEnd) {
-                result = this.getDisplayIndexEnd() - 1;
-            } else {
-                let rowsBetween = (pixelsBetween / this.cacheParams.rowHeight) | 0;
-                result = nextRowIndex + rowsBetween;
-            }
+            result = nextRowIndex + rowsBetween;
         }
 
         let lastAllowedIndex = this.getDisplayIndexEnd() - 1;
