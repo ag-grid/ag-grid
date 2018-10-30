@@ -33,10 +33,7 @@ var gridOptions = {
     enableColResize: true,
     rowModelType: 'serverSide',
     animateRows: true,
-    serverSideDatasource: new SimpleDatasource(),
-    icons: {
-        groupLoading: '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/javascript-grid-server-side-model/spinner.gif" style="width:22px;height:22px;">'
-    }
+    serverSideDatasource: new SimpleDatasource()
 };
 
 // setup the grid after the page has finished loading
