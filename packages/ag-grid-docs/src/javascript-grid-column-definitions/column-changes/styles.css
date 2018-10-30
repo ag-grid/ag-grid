@@ -12,7 +12,8 @@
 
 .test-header {
     padding: 4px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
 }
 
 .test-header label {

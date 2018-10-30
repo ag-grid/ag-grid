@@ -1,21 +1,8 @@
-<style>
-    .ag-row-level-0 {
-        font-weight: bold;
-        color: burlywood;
-    }
-    .total-col {
-        font-weight: bold;
-        color: burlywood;
-    }
-    .number-cell {
-        text-align: right;
-    }
-</style>
-<div style="height: 100%; box-sizing: border-box; padding-top: 25px;">
-    <div id="myGrid" style="height: 100%;" class="ag-theme-balham-dark"></div>
-</div>
-<div style="position: absolute; top: 0px; left: 0px;">
-    Value Cache:
-    <input type="radio" name="valueCache" onclick="onValueCache(true)">On</input>
-    <input type="radio" name="valueCache" onclick="onValueCache(false)" checked>Off</input>
+<div class="test-container">
+    <div class="test-header">
+        Value Cache:
+        <input type="radio" name="valueCache" onclick="onValueCache(true)">On</input>
+        <input type="radio" name="valueCache" onclick="onValueCache(false)" checked>Off</input>
+    </div>
+    <div id="myGrid" style="height: calc(100% - 30px);" class="ag-theme-balham-dark"></div>
 </div>

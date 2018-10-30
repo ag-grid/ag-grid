@@ -1,15 +1,11 @@
-.controls {
-    height: 12%;
+.test-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
-.controls > div {
-margin-right: 30px; float: left;
-}
-.controls > div > div {
-    float: left;
-}
-
-.controls > div > div:last-child {
-    float: none;
-    clear: both;
+.test-header {
+    padding: 4px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
 }

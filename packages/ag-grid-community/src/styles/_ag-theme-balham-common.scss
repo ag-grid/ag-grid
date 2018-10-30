@@ -16,6 +16,7 @@ $disabled-foreground-color-opacity: 0.38 !default;
     $primary-color: map-get($params, "primary-color");
     $range-selection-highlight-color: map-get($params, "range-selection-highlight-color");
     $row-height: map-get($params, "row-height");
+    $row-border-width: map-get($params, "row-border-width");
     $selected-color: map-get($params, "selected-color");
 
     .ag-header,

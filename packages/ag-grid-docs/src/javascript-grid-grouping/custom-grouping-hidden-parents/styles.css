@@ -1,0 +1,35 @@
+.test-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.test-header {
+    padding: 4px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
+}
+
+.ag-row {
+    border-bottom: 1px solid lightgrey;
+}
+.ag-row-level-0 {
+    background-color: #fff !important;
+}
+.ag-row-level-1 {
+    background-color: #eee !important;
+}
+.ag-row-level-2 {
+    background-color: #ddd !important;
+}
+.legend-item {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 1px solid darkgrey;
+}
+.legend-label {
+    position: relative;
+    top: -5px;
+    margin-right: 20px;
+}

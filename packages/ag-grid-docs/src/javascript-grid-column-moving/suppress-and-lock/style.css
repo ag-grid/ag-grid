@@ -14,6 +14,9 @@
     position: absolute;
     top: 0;
     left: 0;
+    padding: 1px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
 }
 
 .grid-wrapper {

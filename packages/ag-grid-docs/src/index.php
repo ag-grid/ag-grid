@@ -80,7 +80,7 @@ meta_and_links($title, $keywords, $description, false);
                     <small></small>
                 </h2>
                 <p>With Zero Dependencies.</p>
-                <a class="btn btn-outline-primary" href="../javascript-grid-getting-started/" role="button" style="margin-left: 320px">See all Frameworks</a>
+                <a class="btn btn-outline-primary" href="../javascript-grid-getting-started/" role="button" style="margin-left: 320px">Choose Your Framework</a>
             </div>
 
             <div>

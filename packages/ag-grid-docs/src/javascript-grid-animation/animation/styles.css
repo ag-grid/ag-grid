@@ -1,0 +1,17 @@
+.test-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.test-header {
+    padding: 4px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
+}
+
+.code-highlight-blue {color: #a3b9a3}
+.code-highlight-yellow {color: #e8bf6a}
+.code-highlight-green {color: #a5c261}
+.code-highlight-purple {color: #977582}
+.transition-width { -webkit-transition: width 3s; -moz-transition: width 3s; -o-transition: width 3s; -ms-transition: width 3s; transition: width 3s; }

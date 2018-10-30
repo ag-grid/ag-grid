@@ -32,11 +32,15 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-polymer-example/build" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-polymer-example/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react-example/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react-example/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react/.vscode" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react/umd" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue-example/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue-example/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue/node_modules" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
