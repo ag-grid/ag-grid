@@ -1,0 +1,16 @@
+<ag-grid-angular style="height: 525px; width: 100%;" class="ag-theme-balham"
+
+                 [gridOptions]="gridOptions"
+                 [columnDefs]="columnDefs"
+                 [rowData]="rowData"
+
+                 [icons]="icons"
+
+                 enableColResize
+                 enableSorting
+                 enableFilter
+                 [sideBar]="sideBar"
+                 rowSelection="multiple"
+
+                 (gridReady)="onReady($event)">
+</ag-grid-angular>
