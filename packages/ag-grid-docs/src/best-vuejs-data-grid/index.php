@@ -1,29 +1,29 @@
 <?php
 $pageTitle = "VueJS Datagrid | Packed with features and performance";
-$pageDescription = "A feature rich data grid designed for Enterprise applications. Easily integrate with Vue to deliver filtering, grouping, aggregation, pivoting and much more. Version 18 is out now. Try our Community version now or take a free 2 month trial of Enterprise Version.";
-$pageKeyboards = "VueJS Grid";
+$pageDescription = "Worlds leading, feature rich Vue Grid. Designed to integrate seamlessly with Vue to deliver filtering, grouping, aggregation, pivoting and much more with the performance that you expect. Version 19 is out now.";
+$pageKeyboards = "VueJS Grid, Vue Grid, Vue Table";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
     <h1 id="implementing-the-vuejs-datagrid">
-        ag-Grid VueJS Overview
+        Best Vue Grid | ag-Grid Overview
     </h1>
 
     <p class="lead">
-        This page details how to set up ag-Grid inside a VueJS application.
+        This page details how to set up ag-Grid inside a Vue application.
     </p>
 
     <h2 id="ag-grid-vuejs-features">ag-Grid VueJS Features</h2>
 
     <p>
-        <a href="https://www.ag-grid.com/features-overview/">Every feature</a> of ag-Grid is available when using the ag-Grid VueJS Component. The VueJS Component wraps
+        <a href="https://www.ag-grid.com/features-overview/">Every feature</a> of ag-Grid is available when using the ag-Grid Vue table Component. The Vue Table Grid Component wraps
         the functionality of ag-Grid, it doesn't duplicate, so there will be no difference between core ag-Grid and
-        VueJS ag-Grid when it comes to features.
+        Vue ag-Grid when it comes to features.
     </p>
 
-    <h2 id="configuring-ag-grid-in-vuejs">Configuring ag-Grid in VueJS</h2>
+    <h2 id="configuring-ag-grid-in-vuejs">Configuring ag-Grid in Vue</h2>
 
     <p>You can configure the grid in the following ways through VueJS:</p>
     <ul class="content">
@@ -44,7 +44,7 @@ include '../documentation-main/documentation_header.php';
         </li>
         <li><b>Changing Properties:</b> When a property changes value, VueJS
             automatically passes the new value onto the grid. This is used in
-            the following locations in the "feature rich grid example' above:<br/>
+            the following locations in the "feature rich Vue table grid example' above:<br/>
             a) The 'quickFilter' on the top right updates the quick filter of
             the grid.
             b) The 'Show Tool Panel' checkbox has its value bound to the 'showToolPanel'
@@ -55,7 +55,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
 
     <p>
-        Notice that the grid has its properties marked as <b>immutable</b>. Hence for
+        Notice that the Vuejs table grid has its properties marked as <b>immutable</b>. Hence for
         object properties, the object reference must change for the grid to take impact.
         For example, <code>rowData</code> must be a new list of data for the grid to be
         informed to redraw.
@@ -246,7 +246,7 @@ this.columnDefs = [
         and custom filtering.
     </p>
 
-    <h2 id="ag-grid-vuejs-examples">ag-Grid VueJS Example</h2>
+    <h2 id="ag-grid-vuejs-examples">Vue Grid Example inside ag-Grid</h2>
     <h3 id="example-rich-grid-without-components">Example: Rich Grid</h3>
     <p>
         The example below shows a rich configuration of ag-Grid, with a VueJS Header Group Component and custom
