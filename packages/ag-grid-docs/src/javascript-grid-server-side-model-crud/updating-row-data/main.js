@@ -18,10 +18,7 @@ var gridOptions = {
   // use the enterprise row model
   rowModelType: 'serverSide',
   cacheBlockSize: 75,
-  animateRows: true,
-  icons: {
-    groupLoading: '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/javascript-grid-server-side-model/spinner.gif" style="width:22px;height:22px;">'
-  }
+  animateRows: true
 };
 
 function purgeCache() {

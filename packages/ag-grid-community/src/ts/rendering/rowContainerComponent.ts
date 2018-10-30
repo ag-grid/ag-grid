@@ -32,6 +32,10 @@ export class RowContainerComponent {
 
     private scrollTop: number;
 
+    // this is to cater for a 'strange behaviour' where when a panel is made visible, it is firing a scroll
+    // event which we want to ignore. see gridPanel.onAnyBodyScroll()
+    private lastMadeVisibleTime = 0;
+
     // we ensure the rows are in the dom in the order in which they appear on screen when the
     // user requests this via gridOptions.ensureDomOrder. this is typically used for screen readers.
     private domOrder: boolean;
@@ -129,6 +133,8 @@ export class RowContainerComponent {
 
         if (this.visible !== visible) {
             this.visible = visible;
+            this.lastMadeVisibleTime = new Date().getTime();
+
             _.setVisible(eGui, visible);
             // if we are showing the viewport, then the scroll is always zero,
             // so we need to align with the other sections (ie if this is full
@@ -141,5 +147,11 @@ export class RowContainerComponent {
                 this.eViewport.scrollTop = this.scrollTop;
             }
         }
+    }
+
+    public isMadeVisibleRecently(): boolean {
+        let now = new Date().getTime();
+        let millisSinceVisible = now - this.lastMadeVisibleTime;
+        return millisSinceVisible < 500;
     }
 }

@@ -17,10 +17,7 @@ var gridOptions = {
     rowSelection: 'single',
     columnDefs: columnDefs,
     enableColResize: true,
-    rowModelType: 'serverSide',
-    icons: {
-        groupLoading: '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/javascript-grid-server-side-model/spinner.gif" style="width:22px;height:22px;">'
-    }
+    rowModelType: 'serverSide'
 };
 
 // setup the grid after the page has finished loading

@@ -56,9 +56,6 @@ var gridOptions = {
     },
     onFirstDataRendered(params) {
         params.api.sizeColumnsToFit();
-    },
-    icons: {
-        groupLoading: '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/javascript-grid-server-side-model/spinner.gif" style="width:22px;height:22px;">'
     }
 };
 
