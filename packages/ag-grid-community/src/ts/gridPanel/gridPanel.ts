@@ -1466,7 +1466,7 @@ export class GridPanel extends Component {
         // goes, and then left with no full with rows so the full with row container is made not visible.
         // the showing / hiding of the full width container was causing scroll events to zero scroll position
         // to be fired. if we act on these events, it would result in the scroll resetting back to the top.
-        // we avoid this be skipping these events.
+        // we avoid this be skipping these events. this problem only appears to happen with Chrome.
         if (this.eventDueToMakingContainerVisible(source)) {
             return;
         }
