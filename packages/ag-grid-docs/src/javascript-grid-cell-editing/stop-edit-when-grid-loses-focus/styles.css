@@ -1,9 +1,3 @@
-.test-grid {
-    height: 1px;
-    min-height: 1px;
-    flex-grow: 1;
-}
-
 .test-container {
     height: 100%;
     display: flex;
@@ -16,11 +10,13 @@
     font-size: 13px;
 }
 
-.test-header label {
-    margin-right: 10px;
+.ag-cell-inline-editing {
+    border: 1px solid lightgreen !important;
+}
+.yearSelect {
+    padding: 4px; border: 1px groove gray; background: white; text-align: center;
 }
 
-.test-header input {
-    position: relative;
-    top: 2px;
+.yearButton {
+    margin: 4px;
 }

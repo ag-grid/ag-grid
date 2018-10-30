@@ -28,6 +28,7 @@ $grid-size: 8px !default;
 $icon-size: 18px !default;
 $header-height: $grid-size * 7 !default;
 $row-height: $grid-size * 6 !default;
+$row-border-width: 1px !default;
 $toolpanel-indent-size: $grid-size + $icon-size !default;
 $row-group-indent-size: $grid-size * 3 + $icon-size !default;
 $cell-horizontal-padding: $grid-size * 3 !default;
@@ -92,6 +93,7 @@ $params: (
     icon-size: $icon-size,
     header-icon-size: $header-icon-size,
     row-height: $row-height,
+    row-border-width: $row-border-width,
     header-height: $header-height,
     virtual-item-height: $virtual-item-height,
     rich-select-item-height: $row-height,

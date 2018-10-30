@@ -140,6 +140,7 @@
 
     $background-color: map-get($params, "background-color");
     $border-color: map-get($params, "border-color");
+    $row-border-width: map-get($params, "row-border-width");
 
     $button-background-color: map-get($params, "button-background-color");
 
@@ -276,10 +277,10 @@
         @include row-border($border-color);
         border-width: 0;
         &:not(.ag-row-first) {
-            border-width: 1px 0 0;
+            border-width: $row-border-width 0 0;
         }
         &.ag-row-last {
-            border-bottom-width: 1px;
+            border-bottom-width: $row-border-width;
         }
     }
 

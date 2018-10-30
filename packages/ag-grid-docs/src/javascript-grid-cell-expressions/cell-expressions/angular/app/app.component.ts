@@ -5,7 +5,7 @@ import { Component, ViewChild } from "@angular/core";
     template: `
 <div style="height: 100%">
 <div style="float: left; width: 50%;">
-    <div style="height: 10%; box-sizing: border-box; padding: 8px;">
+    <div class="test-header">
         Enter a number to analyse:
         <input type="text" [(ngModel)]="leftContext.theNumber" (input)="refreshView()" />
     </div>
@@ -23,7 +23,7 @@ import { Component, ViewChild } from "@angular/core";
 
 </div>
 <div style="float: left; width: 50%;">
-    <div style="height: 10%; box-sizing: border-box; padding: 8px;">
+    <div class="test-header">
         Edit data on RHS, table updates on LHS
     </div>
             <div style="padding: 10px;">
