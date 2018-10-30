@@ -21,13 +21,17 @@ export default Vue.extend({
             numBronze: 0
         }
     },
-    methods: {},
+    methods: {
+        renderStats() {
+            this.params.api.forEachNode((rowNode) => {
+                const data = rowNode.data;
+                if (data.gold) this.numGold += data.gold;
+                if (data.silver) this.numSilver += data.silver;
+                if (data.bronze) this.numBronze += data.bronze;
+            });
+        }
+    },
     created() {
-        this.params.api.forEachNode((rowNode) => {
-            const data = rowNode.data;
-            if (data.gold) this.numGold += data.gold;
-            if (data.silver) this.numSilver += data.silver;
-            if (data.bronze) this.numBronze += data.bronze;
-        });
+        this.params.api.addEventListener('modelUpdated', this.renderStats.bind(this));
     }
 })
