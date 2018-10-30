@@ -204,7 +204,6 @@ export class GridPanel extends Component {
 
     private overlayWrapper: IOverlayWrapperComp;
 
-    private lastVScrollTime: number;
     private lastVScrollElement: HTMLElement;
     private recentScrolls: { [key: number]: number } = {};
 
@@ -1441,33 +1440,50 @@ export class GridPanel extends Component {
             this.onAnyBodyScroll.bind(this, this.eFullWidthViewport));
     }
 
+    private eventDueToMakingContainerVisible(source: HTMLElement): boolean {
+        if (source.scrollTop!==0) { return false; }
+
+        switch (source) {
+            case this.eBodyViewport:
+                return this.rowContainerComponents.body.isMadeVisibleRecently();
+            case this.eLeftViewport:
+                return this.rowContainerComponents.pinnedLeft.isMadeVisibleRecently();
+            case this.eRightViewport:
+                return this.rowContainerComponents.pinnedRight.isMadeVisibleRecently();
+            case this.eFullWidthViewport:
+                return this.rowContainerComponents.fullWidth.isMadeVisibleRecently();
+            default: return false;
+        }
+    }
+
     private onAnyBodyScroll(source: HTMLElement): void {
 
         let now = new Date().getTime();
 
-        if (this.gridOptionsWrapper.isRowModelDefault()) {
-            // recentScrolls: when one scrollable area is scrolling (eg center) then the
-            // other scroll areas are also scrolled (eg pinned left, pinned right, full width).
-            // we want to ignore events that are as a result of the other panels scrolling,
-            // eg if body scrolls to 100px, then we want to ignore the events coming from
-            // the other panels for 100px. if we don't do this, then we will end up with events
-            // interfering wih the scroll when there is a stream of events. this was most notable
-            // on IE, but impacted all browsers to some extent.
-
-            let lastTimeScrolledToHere = this.recentScrolls[source.scrollTop];
-            let scrolledToHereRecently = lastTimeScrolledToHere && ((now - lastTimeScrolledToHere) < 250);
-            if (scrolledToHereRecently) { return; }
-
-            this.recentScrolls[source.scrollTop] = now;
-
-        } else {
-
-            let diff = now - this.lastVScrollTime;
-            let elementIsNotControllingTheScroll = source!==this.lastVScrollElement && diff < 500;
-            if (elementIsNotControllingTheScroll) { return; }
-
-            this.lastVScrollTime = now;
+        // when a row container becomes visible, it fires and event to say 'scroll at zero' which we don't want.
+        // this caused a problem in particular with SSRM where the loading stub cell was using full width (and
+        // hence the fullWidth row container was visible) and then when loading was done, the full width row
+        // goes, and then left with no full with rows so the full with row container is made not visible.
+        // the showing / hiding of the full width container was causing scroll events to zero scroll position
+        // to be fired. if we act on these events, it would result in the scroll resetting back to the top.
+        // we avoid this be skipping these events.
+        if (this.eventDueToMakingContainerVisible(source)) {
+            return;
         }
+
+        // recentScrolls: when one scrollable area is scrolling (eg center) then the
+        // other scroll areas are also scrolled (eg pinned left, pinned right, full width).
+        // we want to ignore events that are as a result of the other panels scrolling,
+        // eg if body scrolls to 100px, then we want to ignore the events coming from
+        // the other panels for 100px. if we don't do this, then we will end up with events
+        // interfering wih the scroll when there is a stream of events. this was most notable
+        // on IE, but impacted all browsers to some extent.
+
+        let lastTimeScrolledToHere = this.recentScrolls[source.scrollTop];
+        let scrolledToHereRecently = lastTimeScrolledToHere && ((now - lastTimeScrolledToHere) < 250);
+        if (scrolledToHereRecently) { return; }
+
+        this.recentScrolls[source.scrollTop] = now;
 
         this.lastVScrollElement = source;
         let scrollTop: number = source.scrollTop;
