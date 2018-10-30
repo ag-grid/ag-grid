@@ -22,6 +22,7 @@ export declare class RowContainerComponent {
     private rowTemplatesToAdd;
     private afterGuiAttachedCallbacks;
     private scrollTop;
+    private lastMadeVisibleTime;
     private domOrder;
     private lastPlacedElement;
     constructor(params: RowContainerComponentParams);
@@ -35,5 +36,6 @@ export declare class RowContainerComponent {
     ensureDomOrder(eRow: HTMLElement): void;
     removeRowElement(eRow: HTMLElement): void;
     private checkVisibility;
+    isMadeVisibleRecently(): boolean;
 }
 //# sourceMappingURL=rowContainerComponent.d.ts.map

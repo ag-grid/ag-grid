@@ -85,7 +85,6 @@ export declare class GridPanel extends Component {
     private pinningLeft;
     private useAnimationFrame;
     private overlayWrapper;
-    private lastVScrollTime;
     private lastVScrollElement;
     private recentScrolls;
     private printLayout;
@@ -168,6 +167,7 @@ export declare class GridPanel extends Component {
     scrollHorizontally(pixels: number): number;
     scrollVertically(pixels: number): number;
     private addScrollListener;
+    private eventDueToMakingContainerVisible;
     private onAnyBodyScroll;
     private onBodyHorizontalScroll;
     private doHorizontalScroll;

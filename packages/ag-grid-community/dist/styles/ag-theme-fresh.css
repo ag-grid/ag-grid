@@ -454,9 +454,9 @@
     box-sizing: border-box;
     border-width: 0; }
     .ag-theme-fresh .ag-row:not(.ag-row-first) {
-      border-width: 1px 0 0; }
+      border-width: 0 0 0; }
     .ag-theme-fresh .ag-row.ag-row-last {
-      border-bottom-width: 1px; }
+      border-bottom-width: 0; }
   .ag-theme-fresh .ag-row-odd {
     background-color: #f6f6f6; }
   .ag-theme-fresh .ag-row-even {
@@ -1680,8 +1680,6 @@
     border-right: 1px solid darkgrey; }
   .ag-theme-fresh .ag-cell-no-focus {
     border-right: 1px dotted silver; }
-  .ag-theme-fresh .ag-row {
-    border-bottom-width: 0; }
   .ag-theme-fresh .ag-tool-panel-wrapper .ag-column-drop .ag-column-drop-empty-message {
     line-height: 25px; }
   .ag-theme-fresh .ag-floating-filter-button {

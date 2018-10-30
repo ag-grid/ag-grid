@@ -28,6 +28,9 @@ var RowContainerComponent = /** @class */ (function () {
         this.childCount = 0;
         this.rowTemplatesToAdd = [];
         this.afterGuiAttachedCallbacks = [];
+        // this is to cater for a 'strange behaviour' where when a panel is made visible, it is firing a scroll
+        // event which we want to ignore. see gridPanel.onAnyBodyScroll()
+        this.lastMadeVisibleTime = 0;
         this.eContainer = params.eContainer;
         this.eViewport = params.eViewport;
         this.hideWhenNoChildren = params.hideWhenNoChildren;
@@ -103,6 +106,7 @@ var RowContainerComponent = /** @class */ (function () {
         var visible = this.childCount > 0;
         if (this.visible !== visible) {
             this.visible = visible;
+            this.lastMadeVisibleTime = new Date().getTime();
             utils_1.Utils.setVisible(eGui, visible);
             // if we are showing the viewport, then the scroll is always zero,
             // so we need to align with the other sections (ie if this is full
@@ -115,6 +119,11 @@ var RowContainerComponent = /** @class */ (function () {
                 this.eViewport.scrollTop = this.scrollTop;
             }
         }
+    };
+    RowContainerComponent.prototype.isMadeVisibleRecently = function () {
+        var now = new Date().getTime();
+        var millisSinceVisible = now - this.lastMadeVisibleTime;
+        return millisSinceVisible < 500;
     };
     __decorate([
         context_1.Autowired('gridOptionsWrapper'),

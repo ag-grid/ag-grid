@@ -28127,31 +28127,47 @@ var GridPanel = /** @class */ (function (_super) {
         this.addDestroyableEventListener(this.eLeftViewport, 'scroll', this.onAnyBodyScroll.bind(this, this.eLeftViewport));
         this.addDestroyableEventListener(this.eFullWidthViewport, 'scroll', this.onAnyBodyScroll.bind(this, this.eFullWidthViewport));
     };
+    GridPanel.prototype.eventDueToMakingContainerVisible = function (source) {
+        if (source.scrollTop !== 0) {
+            return false;
+        }
+        switch (source) {
+            case this.eBodyViewport:
+                return this.rowContainerComponents.body.isMadeVisibleRecently();
+            case this.eLeftViewport:
+                return this.rowContainerComponents.pinnedLeft.isMadeVisibleRecently();
+            case this.eRightViewport:
+                return this.rowContainerComponents.pinnedRight.isMadeVisibleRecently();
+            case this.eFullWidthViewport:
+                return this.rowContainerComponents.fullWidth.isMadeVisibleRecently();
+            default: return false;
+        }
+    };
     GridPanel.prototype.onAnyBodyScroll = function (source) {
         var now = new Date().getTime();
-        if (this.gridOptionsWrapper.isRowModelDefault()) {
-            // recentScrolls: when one scrollable area is scrolling (eg center) then the
-            // other scroll areas are also scrolled (eg pinned left, pinned right, full width).
-            // we want to ignore events that are as a result of the other panels scrolling,
-            // eg if body scrolls to 100px, then we want to ignore the events coming from
-            // the other panels for 100px. if we don't do this, then we will end up with events
-            // interfering wih the scroll when there is a stream of events. this was most notable
-            // on IE, but impacted all browsers to some extent.
-            var lastTimeScrolledToHere = this.recentScrolls[source.scrollTop];
-            var scrolledToHereRecently = lastTimeScrolledToHere && ((now - lastTimeScrolledToHere) < 250);
-            if (scrolledToHereRecently) {
-                return;
-            }
-            this.recentScrolls[source.scrollTop] = now;
+        // when a row container becomes visible, it fires and event to say 'scroll at zero' which we don't want.
+        // this caused a problem in particular with SSRM where the loading stub cell was using full width (and
+        // hence the fullWidth row container was visible) and then when loading was done, the full width row
+        // goes, and then left with no full with rows so the full with row container is made not visible.
+        // the showing / hiding of the full width container was causing scroll events to zero scroll position
+        // to be fired. if we act on these events, it would result in the scroll resetting back to the top.
+        // we avoid this be skipping these events. this problem only appears to happen with Chrome.
+        if (this.eventDueToMakingContainerVisible(source)) {
+            return;
         }
-        else {
-            var diff = now - this.lastVScrollTime;
-            var elementIsNotControllingTheScroll = source !== this.lastVScrollElement && diff < 500;
-            if (elementIsNotControllingTheScroll) {
-                return;
-            }
-            this.lastVScrollTime = now;
+        // recentScrolls: when one scrollable area is scrolling (eg center) then the
+        // other scroll areas are also scrolled (eg pinned left, pinned right, full width).
+        // we want to ignore events that are as a result of the other panels scrolling,
+        // eg if body scrolls to 100px, then we want to ignore the events coming from
+        // the other panels for 100px. if we don't do this, then we will end up with events
+        // interfering wih the scroll when there is a stream of events. this was most notable
+        // on IE, but impacted all browsers to some extent.
+        var lastTimeScrolledToHere = this.recentScrolls[source.scrollTop];
+        var scrolledToHereRecently = lastTimeScrolledToHere && ((now - lastTimeScrolledToHere) < 250);
+        if (scrolledToHereRecently) {
+            return;
         }
+        this.recentScrolls[source.scrollTop] = now;
         this.lastVScrollElement = source;
         var scrollTop = source.scrollTop;
         if (this.useAnimationFrame) {
@@ -28582,6 +28598,9 @@ var RowContainerComponent = /** @class */ (function () {
         this.childCount = 0;
         this.rowTemplatesToAdd = [];
         this.afterGuiAttachedCallbacks = [];
+        // this is to cater for a 'strange behaviour' where when a panel is made visible, it is firing a scroll
+        // event which we want to ignore. see gridPanel.onAnyBodyScroll()
+        this.lastMadeVisibleTime = 0;
         this.eContainer = params.eContainer;
         this.eViewport = params.eViewport;
         this.hideWhenNoChildren = params.hideWhenNoChildren;
@@ -28657,6 +28676,7 @@ var RowContainerComponent = /** @class */ (function () {
         var visible = this.childCount > 0;
         if (this.visible !== visible) {
             this.visible = visible;
+            this.lastMadeVisibleTime = new Date().getTime();
             utils_1.Utils.setVisible(eGui, visible);
             // if we are showing the viewport, then the scroll is always zero,
             // so we need to align with the other sections (ie if this is full
@@ -28669,6 +28689,11 @@ var RowContainerComponent = /** @class */ (function () {
                 this.eViewport.scrollTop = this.scrollTop;
             }
         }
+    };
+    RowContainerComponent.prototype.isMadeVisibleRecently = function () {
+        var now = new Date().getTime();
+        var millisSinceVisible = now - this.lastMadeVisibleTime;
+        return millisSinceVisible < 500;
     };
     __decorate([
         context_1.Autowired('gridOptionsWrapper'),
@@ -44332,7 +44357,7 @@ var LicenseManager = /** @class */ (function () {
         LicenseManager_1.licenseKey = licenseKey;
     };
     var LicenseManager_1;
-    LicenseManager.RELEASE_INFORMATION = 'MTUzNjE0OTU5Nzk2OA==';
+    LicenseManager.RELEASE_INFORMATION = 'MTU0MDgyNjk5Mjg5OQ==';
     __decorate([
         ag_grid_community_1.Autowired('md5'),
         __metadata("design:type", md5_1.MD5)
