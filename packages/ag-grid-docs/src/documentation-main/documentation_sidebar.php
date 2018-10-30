@@ -1,25 +1,56 @@
 <div id="side-bar-announcements">
-<p>Work at ag-Grid</a>:</p>
+    <p>Work at ag-Grid</a>:</p>
 
     <div class="card">
         <div class="card-body">
             <h5 class="card-title"><a
-                    href="../ag-grid-jobs-board/">JavaScript Developers</a></h5>
+                        href="../ag-grid-jobs-board/">JavaScript Developers</a></h5>
             <h6 class="card-subtitle mb-2 text-muted">London, United Kingdom</h6>
             <p class="card-text">
-Would you like to join the ag-Grid team in London<br>
-<br>
-Check the <a href="../ag-grid-jobs-board/">jobs board</a> 
-</p>
+                Would you like to join the ag-Grid team in London<br>
+                <br>
+                Check the <a href="../ag-grid-jobs-board/">jobs board</a>
+            </p>
 
         </div>
     </div>
-<br><hr>
+    <br>
+    <hr>
     <p>Latest Release:</p>
 
     <div class="card card-highlight">
         <div class="card-body">
-            <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=18.0.0">Version 19.0 Released</a></h5>
+            <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=19.1.0">Version 19.1.0 Released</a></h5>
+            <h6 class="card-subtitle mb-2 text-muted">Oct 30</h6>
+            <p class="card-text">
+                Minor release with the following feature highlights:
+            <ul>
+                <li>
+                    <a class="learn-more" href="https://www.ag-grid.com/best-polymer-data-grid/">Polymer 3 Datagrid</a>.
+                </li>
+                <li>
+                    <a class="learn-more" href="https://www.ag-grid.com/javascript-grid-excel/">Export to XLSX</a>.
+                </li>
+                <li>
+                    <a class="learn-more"
+                       href="https://www.ag-grid.com/javascript-grid-column-definitions/#column-changes/">Allow Delta
+                        Changes to
+                        Column Definitions</a>.
+                </li>
+            </ul>
+            </p>
+
+            <p class="text-right">
+                <a class="learn-more" href="../ag-grid-changelog/?fixVersion=19.1.0">Change Log</a>
+            </p>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="card card-highlight">
+        <div class="card-body">
+            <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=19.0.0">Version 19.0 Released</a></h5>
             <h6 class="card-subtitle mb-2 text-muted">Sep 7</h6>
             <p class="card-text">
                 Major release with the following feature highlights:
@@ -36,54 +67,8 @@ Check the <a href="../ag-grid-jobs-board/">jobs board</a>
                 <li><a class="learn-more" href="../javascript-grid-server-side-model-tree-data/">Server-side Tree Data</a></li>
             </ul>
             </p>
-
             <p class="text-right">
                 <a class="learn-more" href="../ag-grid-changelog/?fixVersion=19.0.0">Change Log</a>
-            </p>
-        </div>
-    </div>
-
-    <br>
-
-    <div class="card card-highlight">
-        <div class="card-body">
-            <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=18.1.0">Version 18.1.2 Released</a></h5>
-            <h6 class="card-subtitle mb-2 text-muted">August 3</h6>
-            <p class="card-text">
-                Patch release focused on bug fixes. For Details check our change log.
-            </p>
-
-            <p class="text-right">
-                <a class="learn-more" href="https://www.ag-grid.com/ag-grid-changelog/">Change Log</a>
-            </p>
-        </div>
-    </div>
-
-
-    <div class="card card-highlight">
-        <div class="card-body">
-            <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=18.0.0">Version 18.0 Released</a></h5>
-            <h6 class="card-subtitle mb-2 text-muted">Jun 12</h6>
-            <p class="card-text">
-                Major release with many new features like:
-            <ul>
-                <li><a class="learn-more" href="../javascript-grid-filtering/">Column filters now support AND/OR
-                    logic</a></li>
-                <li><a class="learn-more" href="../javascript-grid-row-spanning/">Support for row spanning</a>.</li>
-                <li><a class="learn-more" href="../javascript-grid-grouping/#grouping-footers"> Support for 'grand'
-                    total across all groups.</a>.
-                </li>
-                <li><a class="learn-more" href="../javascript-grid-pivoting/#pivotRowTotals/">Pivot supports row
-                    totals</a>.
-                </li>
-                <li><a class="learn-more" href="../javascript-grid-for-print/">New strategy for Printing using
-                    auto-height.</a>.
-                </li>
-            </ul>
-            </p>
-
-            <p class="text-right">
-                <a class="learn-more" href="../ag-grid-changelog/?fixVersion=18.0.0">Change Log</a>
             </p>
         </div>
     </div>
@@ -93,9 +78,11 @@ Check the <a href="../ag-grid-jobs-board/">jobs board</a>
     <div class="card">
         <div class="card-body">
             <h5 class="card-title"><a
-                    href="https://medium.com/ag-grid/version-18-of-ag-grid-is-now-available-cc3f39a12441">Introducing Version 18 of ag-Grid</a></h5>
+                        href="https://medium.com/ag-grid/version-18-of-ag-grid-is-now-available-cc3f39a12441">Introducing
+                    Version 18 of ag-Grid</a></h5>
             <h6 class="card-subtitle mb-2 text-muted">Jun 15</h6>
-            <p class="card-text">Version 18 consists of a major features changes, so besides bug fixes and enhancing performance, we have added a number of interesting changes. Read our blog below.</p>
+            <p class="card-text">Version 18 consists of a major features changes, so besides bug fixes and enhancing
+                performance, we have added a number of interesting changes. Read our blog below.</p>
 
             <p class="text-right">
                 <a class="learn-more"
@@ -103,9 +90,11 @@ Check the <a href="../ag-grid-jobs-board/">jobs board</a>
                     Article</a>
             </p>
             <h5 class="card-title"><a
-                    href="https://medium.com/ag-grid/a-plain-english-introduction-to-json-web-tokens-jwt-what-it-is-and-what-it-isnt-8076ca679843">A plain English introduction to JSON web tokens (JWT)</a></h5>
+                        href="https://medium.com/ag-grid/a-plain-english-introduction-to-json-web-tokens-jwt-what-it-is-and-what-it-isnt-8076ca679843">A
+                    plain English introduction to JSON web tokens (JWT)</a></h5>
             <h6 class="card-subtitle mb-2 text-muted">Jun 26</h6>
-            <p class="card-text">A short yet comprehensive overview of the JWT's structure, usages and security features</p>
+            <p class="card-text">A short yet comprehensive overview of the JWT's structure, usages and security
+                features</p>
 
             <p class="text-right">
                 <a class="learn-more"
@@ -119,8 +108,8 @@ Check the <a href="../ag-grid-jobs-board/">jobs board</a>
 
     <div class="card">
         <div class="card-body">
-        <dl id="upcoming-events">
-            <dt><a href="https://angularconnect.com/" target="_blank" rel="noopener">Angular Connect</a></dt>
+            <dl id="upcoming-events">
+                <dt><a href="https://angularconnect.com/" target="_blank" rel="noopener">Angular Connect</a></dt>
                 <dd class="date">November 6-7<br> London, England</dd>
                 <dd>Platinum Sponsor</dd>
             </dl>
