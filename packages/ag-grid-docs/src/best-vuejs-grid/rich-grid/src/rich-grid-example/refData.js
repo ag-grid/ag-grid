@@ -1,34 +1,19 @@
-export default class RefData {
-
-    static IT_SKILLS = ['android', 'css', 'html5', 'mac', 'windows'];
-    static IT_SKILLS_NAMES = ['Android', 'CSS', 'HTML 5', 'Mac', 'Windows'];
-
-
-    static firstNames = ["Sophie", "Isabelle", "Emily", "Olivia", "Lily", "Chloe", "Isabella",
+export default {
+    FIRST_NAMES: [
+        "Sophie", "Isabelle", "Emily", "Olivia", "Lily", "Chloe", "Isabella",
         "Amelia", "Jessica", "Sophia", "Ava", "Charlotte", "Mia", "Lucy", "Grace", "Ruby",
-        "Ella", "Evie", "Freya", "Isla", "Poppy", "Daisy", "Layla"];
-    static lastNames = ["Beckham", "Black", "Braxton", "Brennan", "Brock", "Bryson", "Cadwell",
+        "Ella", "Evie", "Freya", "Isla", "Poppy", "Daisy", "Layla"
+    ],
+
+    LAST_NAMES: [
+        "Beckham", "Black", "Braxton", "Brennan", "Brock", "Bryson", "Cadwell",
         "Cage", "Carson", "Chandler", "Cohen", "Cole", "Corbin", "Dallas", "Dalton", "Dane",
         "Donovan", "Easton", "Fisher", "Fletcher", "Grady", "Greyson", "Griffin", "Gunner",
         "Hayden", "Hudson", "Hunter", "Jacoby", "Jagger", "Jaxon", "Jett", "Kade", "Kane",
-        "Keating", "Keegan", "Kingston", "Kobe"];
+        "Keating", "Keegan", "Kingston", "Kobe"
+    ],
 
-    static DOBs = [
-        new Date(2000, 0, 1),
-        new Date(2001, 1, 2),
-        new Date(2002, 2, 3),
-        new Date(2003, 3, 4),
-        new Date(2004, 4, 5),
-        new Date(2005, 5, 6),
-        new Date(2006, 6, 7),
-        new Date(2007, 7, 8),
-        new Date(2008, 8, 9),
-        new Date(2009, 9, 10),
-        new Date(2010, 10, 11),
-        new Date(2011, 11, 12)
-    ];
-
-    static COUNTRY_CODES = {
+    COUNTRY_CODES: {
         Ireland: "ie",
         Spain: "es",
         "United Kingdom": "gb",
@@ -47,9 +32,9 @@ export default class RefData {
         Peru: "pe",
         Venezuela: "ve",
         Uruguay: "uy"
-    };
+    },
 
-    static countries = [
+    COUNTRIES: [
         {country: "Ireland", continent: "Europe", language: "English"},
         {country: "Spain", continent: "Europe", language: "Spanish"},
         {country: "United Kingdom", continent: "Europe", language: "English"},
@@ -68,9 +53,24 @@ export default class RefData {
         {country: "Peru", continent: "South America", language: "Spanish"},
         {country: "Venezuela", continent: "South America", language: "Spanish"},
         {country: "Uruguay", continent: "South America", language: "Spanish"}
-    ];
+    ],
 
-    static addresses = [
+    DOBs: [
+        new Date(2000, 0, 1),
+        new Date(2001, 1, 2),
+        new Date(2002, 2, 3),
+        new Date(2003, 3, 4),
+        new Date(2004, 4, 5),
+        new Date(2005, 5, 6),
+        new Date(2006, 6, 7),
+        new Date(2007, 7, 8),
+        new Date(2008, 8, 9),
+        new Date(2009, 9, 10),
+        new Date(2010, 10, 11),
+        new Date(2011, 11, 12)
+    ],
+
+    ADDRESSES: [
         '1197 Thunder Wagon Common, Cataract, RI, 02987-1016, US, (401) 747-0763',
         '3685 Rocky Glade, Showtucket, NU, X1E-9I0, CA, (867) 371-4215',
         '3235 High Forest, Glen Campbell, MS, 39035-6845, US, (601) 638-8186',
@@ -120,5 +120,9 @@ export default class RefData {
         '365 Emerald Grove Line, Level, NC, 28381-1514, US, (919) 976-7958',
         '1207 Iron Extension, Klickitat, SC, 29197-8571, US, (803) 535-7888',
         '6770 Cinder Glen, Caronport, OH, 45053-5002, US, (440) 369-4018',
-        '7619 Tawny Carrefour, Senlac, NV, 89529-9876, US, (775) 901-6433'];
+        '7619 Tawny Carrefour, Senlac, NV, 89529-9876, US, (775) 901-6433'],
+
+    IT_SKILLS: ['android', 'css', 'html5', 'mac', 'windows'],
+
+    IT_SKILLS_NAMES: ['Android', 'CSS', 'HTML 5', 'Mac', 'Windows'],
 }

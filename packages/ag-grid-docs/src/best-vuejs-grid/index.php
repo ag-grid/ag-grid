@@ -104,7 +104,7 @@ include '../landing-pages/header.php';
                         <div class="col">
                             <div>
                                 <br>
-                                <img src="100,000 rows.gif" alt="Performance"">
+                                <img src="/best-angular-2-data-grid/performance.gif" alt="Performance"">
                             </div>
                             <br>
                         </div>
@@ -136,7 +136,7 @@ include '../landing-pages/header.php';
                         </div>
                         <div class="col"><br>
                             <div class="col" style="margin-top: 10px;margin-bottom: -50px">
-                                <?=example('ag-Grid in Vue', 'rich-grid-example', 'angular', array("enterprise" => 1, "exampleHeight" => 300, "exampleWidth" => 300, "showResult" => true, "extras" => array("fontawesome")));?>
+                                <?=example('ag-Grid in Vue', 'rich-grid', 'as-is', array("noPlunker" => 1, "skipDirs" => array("dist"))) ?>
                             </div><br><br>
                             <a href="../example.php" target="_blank"><button type="button" class="btn btn-outline-primary btn-sm btn-block">Vue Grid Demo</button></a>
                         </div>
