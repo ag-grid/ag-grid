@@ -46865,10 +46865,10 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
         _this.styleLinker = styleLinker;
         _this.suppressTextAsCDATA = suppressTextAsCDATA;
         _this.stylesByIds = {};
-        baseExcelStyles.forEach(function (it) {
+        _this.baseExcelStyles.forEach(function (it) {
             _this.stylesByIds[it.id] = it;
         });
-        _this.excelStyles = baseExcelStyles.slice();
+        _this.excelStyles = _this.baseExcelStyles.slice();
         return _this;
     }
     ExcelXmlSerializingSession.prototype.addCustomHeader = function (customHeader) {
