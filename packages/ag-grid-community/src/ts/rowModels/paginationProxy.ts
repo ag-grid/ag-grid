@@ -168,7 +168,7 @@ export class PaginationProxy extends BeanStub implements IRowModel {
         return this.rowModel.getNodesInRangeForSelection(firstInRange, lastInRange);
     }
 
-    public forEachNode(callback: (rowNode: RowNode) => void): void {
+    public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
         return this.rowModel.forEachNode(callback);
     }
 

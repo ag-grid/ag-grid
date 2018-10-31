@@ -341,6 +341,13 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     flex-direction: row;
 }
 
+.ag-rtl .ag-floating-bottom {
+    flex-direction: row-reverse;
+}
+.ag-ltr .ag-floating-bottom {
+    flex-direction: row;
+}
+
 // we don't want right and left pinned flipped when doing RTL
 .ag-ltr .ag-header {
     flex-direction: row;
@@ -363,6 +370,9 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     display: inline-block;
     overflow: hidden;
     position: relative; // otherwise the % width of children is not relative to this element
+    min-width: 0px;
+    width: 0px;
+    flex-grow: 1000;
 }
 
 .ag-pinned-right-floating-top {
@@ -370,6 +380,9 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     display: inline-block;
     overflow: hidden;
     position: relative; // otherwise the % width of children is not relative to this element
+    min-width: 0px;
+    width: 0px;
+    flex-grow: 1000;
 }
 
 .ag-floating-top-viewport {
@@ -404,6 +417,9 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     display: inline-block;
     overflow: hidden;
     position: relative; // otherwise the % width of children is not relative to this element
+    min-width: 0px;
+    width: 0px;
+    flex-grow: 1000;
 }
 
 .ag-pinned-right-floating-bottom {
@@ -411,6 +427,9 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     display: inline-block;
     overflow: hidden;
     position: relative; // otherwise the % width of children is not relative to this element
+    min-width: 0px;
+    width: 0px;
+    flex-grow: 1000;
 }
 
 .ag-floating-bottom-viewport {
@@ -427,18 +446,15 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     white-space: nowrap;
 }
 
-.ag-pinned-left-cols-container {
-    display: block;
-    position: relative;
+.ag-pinned-right-cols-viewport-wrapper {
+    height: 100%;
+    overflow: hidden;
+    flex-grow: 1000;
+    min-width: 0px;
+    width: 0px;
 }
 
 .ag-pinned-right-cols-viewport {
-    height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
-}
-
-.ag-pinned-left-cols-viewport {
     height: 100%;
     overflow-x: hidden;
     overflow-y: auto;
@@ -452,19 +468,38 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-pinned-left-cols-viewport-wrapper {
     height: 100%;
     overflow: hidden;
+    flex-grow: 1000;
+    min-width: 0px;
+    width: 0px;
+}
+
+.ag-pinned-left-cols-viewport {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.ag-pinned-left-cols-container {
+    display: block;
+    position: relative;
 }
 
 .ag-body-viewport-wrapper {
+
+    overflow: hidden; // needed to clip the scrollbar when pinning
+
     &.ag-layout-auto-height,
     &.ag-layout-normal {
         height: 100%;
-        width: 0px; // mind width, flex grows the center to fit
-        min-width: 0px; // width didn't do the trick in firefox, so needed min-width also
+        // we have width (and min width) set to 20 so that the body is always at least 20px visible
+        // if this was NOT set (eg if min width of 0px) then user could have many pinned left cols
+        // and a narrow browser such that only the pinned left portion was visible, then the vertical
+        // scrollbar would be missing (as this is on the body, which would be pushed out by the pinned
+        // sections). by having a min width on the body, it ensures we always see it, even if to many pinned
+        // rows, which means user can always get access to the vertical scrollbar.
+        width: 20px; // min width, flex grows the center to fit
+        min-width: 20px; // width didn't do the trick in firefox, so needed min-width also
         flex: 1;
-    }
-
-    &.ag-layout-auto-height {
-        overflow: hidden;
     }
 }
 
@@ -472,6 +507,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     // layout-auto-height has x (horizontal) scrolls (but no y)
     &.ag-layout-auto-height {
         overflow-x: auto;
+        overflow-y: hidden;
     }
 
     // layout-normal should have x and y scrolls
@@ -538,7 +574,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 .ag-body-container {
-    margin-bottom: -2px;
     position: relative;
 
     // we do NOT use block with layout-print because it does not work with 

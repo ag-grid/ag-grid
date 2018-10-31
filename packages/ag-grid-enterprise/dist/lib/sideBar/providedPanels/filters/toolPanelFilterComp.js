@@ -1,9 +1,12 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -32,11 +35,12 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         var _this = this;
         this.params = params;
         var displayName = this.columnController.getDisplayNameForColumn(this.params.column, 'header', false);
-        this.eFilterName.innerText = displayName;
+        var displayNameSanitised = ag_grid_community_1._.escape(displayName);
+        this.eFilterName.innerText = displayNameSanitised;
         this.addGuiEventListenerInto(this.eFilterToolpanelHeader, 'click', this.doExpandOrCollapse.bind(this));
         this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_FILTER_OPENED, function (event) { return _this.onFilterOpened(event); });
         this.addInIcon('filter', this.eFilterIcon, this.params.column);
-        ag_grid_community_1._.addCssClass(this.eFilterIcon, 'ag-hidden');
+        ag_grid_community_1._.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !this.isFilterActive());
         ag_grid_community_1._.addCssClass(this.eExpandChecked, 'ag-hidden');
         this.addDestroyableEventListener(this.params.column, ag_grid_community_1.Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
     };
@@ -47,14 +51,12 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         eIcon.innerHTML = '&nbsp';
         eParent.appendChild(eIcon);
     };
-    ToolPanelFilterComp.prototype.onFilterChanged = function () {
+    ToolPanelFilterComp.prototype.isFilterActive = function () {
         var filterInstance = this.gridApi.getFilterInstance(this.params.column);
-        if (!filterInstance) {
-            ag_grid_community_1._.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', true);
-            return;
-        }
-        var filterPresent = filterInstance.isFilterActive();
-        ag_grid_community_1._.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !filterPresent);
+        return filterInstance && filterInstance.isFilterActive();
+    };
+    ToolPanelFilterComp.prototype.onFilterChanged = function () {
+        ag_grid_community_1._.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !this.isFilterActive());
     };
     ToolPanelFilterComp.prototype.addGuiEventListenerInto = function (into, event, listener) {
         into.addEventListener(event, listener);

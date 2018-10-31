@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 import { IStatusPanelComp } from 'ag-grid-community';
 import { NameValueComp } from "./nameValueComp";
 export declare class FilteredRowsComp extends NameValueComp implements IStatusPanelComp {
@@ -11,3 +11,4 @@ export declare class FilteredRowsComp extends NameValueComp implements IStatusPa
     private getFilteredRowCountValue;
     init(): void;
 }
+//# sourceMappingURL=filteredRowsComp.d.ts.map

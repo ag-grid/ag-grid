@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 import { Component } from "ag-grid-community/main";
 export declare class HorizontalResizeComp extends Component {
     private horizontalResizeService;
@@ -13,3 +13,4 @@ export declare class HorizontalResizeComp extends Component {
     private onResizeStart;
     private onResizing;
 }
+//# sourceMappingURL=horizontalResizeComp.d.ts.map

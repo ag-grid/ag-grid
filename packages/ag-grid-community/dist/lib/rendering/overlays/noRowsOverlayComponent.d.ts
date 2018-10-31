@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
@@ -14,3 +14,4 @@ export declare class NoRowsOverlayComponent extends Component implements INoRows
     constructor();
     init(params: INoRowsOverlayParams): void;
 }
+//# sourceMappingURL=noRowsOverlayComponent.d.ts.map

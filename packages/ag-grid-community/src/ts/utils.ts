@@ -62,6 +62,15 @@ export class Utils {
         this.doOnceFlags[key] = true;
     }
 
+    // got from https://stackoverflow.com/questions/3944122/detect-left-mouse-button-press
+    static isLeftClick(mouseEvent: MouseEvent): boolean {
+        if ("buttons" in mouseEvent) {
+            return mouseEvent.buttons == 1;
+        }
+        let button = (<any>mouseEvent).which || (<any>mouseEvent).button;
+        return button == 1;
+    }
+
     // returns true if the event is close to the original event by X pixels either vertically or horizontally.
     // we only start dragging after X pixels so this allows us to know if we should start dragging yet.
     static areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, pixelCount: number): boolean {
@@ -73,6 +82,15 @@ export class Utils {
         let diffY = Math.abs(e1.clientY - e2.clientY);
 
         return Math.max(diffX, diffY) <= pixelCount;
+    }
+
+    public static jsonEquals(val1: any, val2: any): boolean {
+
+        let val1Json = val1 ? JSON.stringify(val1) : null;
+        let val2Json = val2 ? JSON.stringify(val2) : null;
+        let res = val1Json===val2Json;
+
+        return res;
     }
 
     static shallowCompare(arr1: any[], arr2: any[]): boolean {
@@ -160,6 +178,42 @@ export class Utils {
         return value;
     }
 
+    static compose = (...fns: Function[]) => (arg: any) => fns.reduce((composed, f) => f(composed),arg);
+
+    static decToHex = (number: number, bytes: number): string => {
+        let hex = '';
+
+        for (let i = 0; i < bytes; i++) {
+            hex += String.fromCharCode(number & 0xff);
+            number >>>= 8;
+        }
+
+        return hex;
+    }
+
+    static utf8_encode = (s: string): string => {
+        let utftext = '';
+
+        s = s.replace(/\r\n/g, "\n");
+
+        for (let n = 0, len = s.length; n < len; n++) {
+            const c = s.charCodeAt(n);
+
+            if (c < 128) {
+                utftext += String.fromCharCode(c);
+            } else if ((c > 127) && (c < 2048)) {
+                utftext += String.fromCharCode((c >> 6) | 192);
+                utftext += String.fromCharCode((c & 63) | 128);
+            } else {
+                utftext += String.fromCharCode((c >> 12) | 224);
+                utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+                utftext += String.fromCharCode((c & 63) | 128);
+            }
+        }
+
+        return utftext;
+    }
+
     static setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void {
         if (rtl) {
             // Chrome and Safari when doing RTL have the END position of the scroll as zero, not the start
@@ -215,11 +269,15 @@ export class Utils {
         return copy;
     }
 
-    static map<TItem, TResult>(array: TItem[], callback: (item: TItem) => TResult) {
+    static deepCloneObject<T>(object: T): T {
+        return JSON.parse(JSON.stringify(object));
+    }
+
+    static map<TItem, TResult>(array: TItem[], callback: (item: TItem, idx?: number) => TResult) {
         let result: TResult[] = [];
         for (let i = 0; i < array.length; i++) {
             let item = array[i];
-            let mappedItem = callback(item);
+            let mappedItem = callback(item, i);
             result.push(mappedItem);
         }
         return result;
@@ -265,23 +323,21 @@ export class Utils {
     }
 
     static mergeDeep(dest: any, source: any): void {
+        if (!this.exists(source)) return;
 
-        if (this.exists(source)) {
-            this.iterateObject(source, (key: string, newValue: any) => {
+        this.iterateObject(source, (key: string, newValue: any) => {
+            let oldValue: any = dest[key];
 
-                let oldValue: any = dest[key];
+            if (oldValue === newValue) {
+                return;
+            }
 
-                if (oldValue === newValue) {
-                    return;
-                }
-
-                if (typeof oldValue === 'object' && typeof newValue === 'object') {
-                    Utils.mergeDeep(oldValue, newValue);
-                } else {
-                    dest[key] = newValue;
-                }
-            });
-        }
+            if (typeof oldValue === 'object' && typeof newValue === 'object') {
+                Utils.mergeDeep(oldValue, newValue);
+            } else {
+                dest[key] = newValue;
+            }
+        });
     }
 
     static assign(object: any, ...sources: any[]): any {
@@ -345,7 +401,7 @@ export class Utils {
         }
     }
 
-    static find<T>(collection: T[] | { [id: string]: T }, predicate: string | boolean | ((item: T) => void), value?: any): T {
+    static find<T>(collection: T[] | { [id: string]: T }, predicate: string | boolean | ((item: T) => boolean), value?: any): T {
         if (collection === null || collection === undefined) {
             return null;
         }
@@ -366,7 +422,7 @@ export class Utils {
                     break;
                 }
             } else {
-                let callback = <(item: T) => void> predicate;
+                let callback = predicate as (item: T) => boolean;
                 if (callback(item)) {
                     firstMatchingItem = item;
                     break;
@@ -438,6 +494,11 @@ export class Utils {
             return false;
         }
 
+        // no allowed printable chars have alt or ctrl key combinations
+        if (event.altKey || event.ctrlKey) {
+            return false;
+        }
+
         if (_.exists(event.key)) {
             // modern browser will implement key, so we return if key is length 1, eg if it is 'a' for the
             // a key, or '2' for the '2' key. non-printable characters have names, eg 'Enter' or 'Backspace'.
@@ -488,12 +549,8 @@ export class Utils {
         return this.missing(value) || Object.keys(value).length === 0;
     }
 
-    static exists(value: any): boolean {
-        if (value === null || value === undefined || value === '') {
-            return false;
-        } else {
-            return true;
-        }
+    static exists(value: any, allowEmptyString: boolean = false): boolean {
+        return value != null && (value !== '' || allowEmptyString);
     }
 
     static firstExistingValue<A>(...values: A[]): A {
@@ -1152,7 +1209,7 @@ export class Utils {
             // taken from https://github.com/ag-grid/ag-grid/issues/550
             this.isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') > 0
                 || (function(p) {
-                    return p.toString() === "[object SafariRemoteNotification]";
+                    return p ? p.toString() === "[object SafariRemoteNotification]" : false;
                 })
                 (!anyWindow.safari || anyWindow.safari.pushNotification);
         }
@@ -1161,8 +1218,13 @@ export class Utils {
 
     static isBrowserChrome(): boolean {
         if (this.isChrome === undefined) {
-            let anyWindow = <any> window;
-            this.isChrome = !!anyWindow.chrome && !!anyWindow.chrome.webstore;
+            // this is the old original we we did it, but it didn't work on android
+            // let anyWindow = <any> window;
+            // this.isChrome = !!anyWindow.chrome && !!anyWindow.chrome.webstore;
+
+            // this is the new way
+            // taken from https://stackoverflow.com/questions/4565112/javascript-how-to-find-out-if-the-user-browser-is-chrome
+            this.isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
         }
         return this.isChrome;
     }
@@ -1220,10 +1282,10 @@ export class Utils {
         // https://stackoverflow.com/questions/39245488/event-path-undefined-with-firefox-and-vue-js
         // https://developer.mozilla.org/en-US/docs/Web/API/Event
 
-        let eventNoType = <any> event;
-        if (event.deepPath) {
+        let eventNoType = event as any;
+        if (eventNoType.deepPath) {
             // IE supports deep path
-            return event.deepPath();
+            return eventNoType.deepPath();
         } else if (eventNoType.path) {
             // Chrome supports path
             return eventNoType.path;
@@ -1662,7 +1724,8 @@ export class Utils {
                 document.body.appendChild(eBox);
             }
         }
-        eBox.appendChild(eMessage);
+        eBox.insertBefore(eMessage, eBox.children[0]);
+        // eBox.appendChild(eMessage);
     }
 
     // gets called by: a) ClientSideNodeManager and b) GroupStage to do sorting.

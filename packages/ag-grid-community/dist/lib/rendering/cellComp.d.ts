@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -157,3 +157,4 @@ export declare class CellComp extends Component {
     stopRowOrCellEdit(cancel?: boolean): void;
     stopEditing(cancel?: boolean): void;
 }
+//# sourceMappingURL=cellComp.d.ts.map

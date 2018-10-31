@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -8,8 +8,9 @@ export declare class AutoGroupColService {
     private gridOptionsWrapper;
     private context;
     private columnController;
-    private balancedColumnTreeBuilder;
+    private columnFactory;
     createAutoGroupColumns(rowGroupColumns: Column[]): Column[];
     private createOneAutoGroupColumn;
     private generateDefaultColDef;
 }
+//# sourceMappingURL=autoGroupColService.d.ts.map

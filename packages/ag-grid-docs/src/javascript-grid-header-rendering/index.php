@@ -131,7 +131,7 @@ interface IHeaderComp {
     // optional method, gets called once with params
     init?(params: IHeaderCompParams): void;
 
-    // gets called once, you should return the HTML element
+    // can get called more than once, you should return the HTML element
     getGui(): HTMLElement;
 
     // optional method, gets called once, when component is destroyed
@@ -162,12 +162,14 @@ export interface IHeaderCompParams {
 
     // callback to progress the sort for this column.
     // the grid will decide the next sort direction eg ascending, descending or 'no sort'.
-    // pass multiSort=true if you want to do a multi sort (eg user has shift held down when they click)
+    // pass multiSort=true if you want to do a multi sort (eg user has shift held down when
+    // they click)
     progressSort(multiSort: boolean): void;
 
     // callback to set the sort for this column.
-    // pass the sort direction to use ignoring the current sort eg one of 'asc', 'desc' or null (for no sort).
-    // pass multiSort=true if you want to do a multi sort (eg user has shift held down when they click)
+    // pass the sort direction to use ignoring the current sort eg one of 'asc', 'desc' or null
+    // (for no sort). pass multiSort=true if you want to do a multi sort (eg user has shift held
+    // down when they click)
     setSort(sort: string, multiSort?: boolean): void;
 
     // callback to request the grid to show the column menu.
@@ -348,7 +350,7 @@ export interface IHeaderGroupComp {
     // optional method, gets called once with params
     init?(params: IHeaderGroupCompParams): void;
 
-    // gets called once, you should return the HTML element
+    // can be called more than once, you should return the HTML element
     getGui(): HTMLElement;
 
     // optional method, gets called once, when component is destroyed

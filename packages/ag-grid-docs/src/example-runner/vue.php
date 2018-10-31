@@ -11,7 +11,7 @@ $example = getExampleInfo('vue');
     <style> html, body { margin: 0; padding: 0; height: 100%; } </style>
 <?php renderExampleExtras($_GET) ?>
 <?php renderStyles($example['styles']); ?>
-<?php //renderNonGeneratedScripts($example['scripts']); ?>
+<?php //renderNonGeneratedScripts($example['scripts'], TRUE); ?>
 </head>
 <body>
     <div id="app" style="height: 100%">

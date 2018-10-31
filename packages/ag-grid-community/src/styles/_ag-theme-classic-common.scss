@@ -17,6 +17,7 @@
     $ag-range-selected-color-4: map-get($params, "ag-range-selected-color-4");
     $cell-highlight-border: map-get($params, "cell-highlight-border");
     $row-height: map-get($params, "row-height");
+    $row-border-width: map-get($params, "row-border-width");
     $icon-size: map-get($params, "icon-size");
 
     .ag-body {
@@ -103,10 +104,6 @@
 
     .ag-cell-no-focus {
         border-right: $cell-horizontal-border;
-    }
-
-    .ag-row {
-        border-bottom-width: 0;
     }
 
     .ag-tool-panel-wrapper .ag-column-drop .ag-column-drop-empty-message {

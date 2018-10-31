@@ -6,7 +6,7 @@ import {ColumnController} from "../../columnController/columnController";
 import {FilterManager} from "../../filter/filterManager";
 import {RowNode} from "../../entities/rowNode";
 import {EventService} from "../../eventService";
-import {Events, ModelUpdatedEvent, RowDataChangedEvent, RowDataUpdatedEvent} from "../../events";
+import {Events, ModelUpdatedEvent, RowDataChangedEvent, RowDataUpdatedEvent, ExpandCollapseAllEvent } from "../../events";
 import {Autowired, Bean, Context, Optional, PostConstruct} from "../../context/context";
 import {SelectionController} from "../../selectionController";
 import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
@@ -17,7 +17,7 @@ import {ValueCache} from "../../valueService/valueCache";
 import {RowBounds} from "../../interfaces/iRowModel";
 import {GridApi} from "../../gridApi";
 
-enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes};
+enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes}
 
 export interface RefreshModelParams {
     // how much of the pipeline to execute
@@ -41,7 +41,7 @@ export interface RefreshModelParams {
 }
 
 export interface RowDataTransaction {
-    addIndex?: number,
+    addIndex?: number;
     add?: any[];
     remove?: any[];
     update?: any[];
@@ -152,7 +152,7 @@ export class ClientSideRowModel {
             return {
                 rowTop: rowNode.rowTop,
                 rowHeight: rowNode.rowHeight
-            }
+            };
         } else {
             return null;
         }
@@ -277,7 +277,7 @@ export class ClientSideRowModel {
 
         let doingLegacyTreeData = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         if (doingLegacyTreeData) {
-            rowsMissing = _.missing(this.rootNode.childrenAfterGroup) || this.rootNode.childrenAfterGroup.length === 0
+            rowsMissing = _.missing(this.rootNode.childrenAfterGroup) || this.rootNode.childrenAfterGroup.length === 0;
         } else {
             rowsMissing = _.missing(this.rootNode.allLeafChildren) || this.rootNode.allLeafChildren.length === 0;
         }
@@ -290,7 +290,6 @@ export class ClientSideRowModel {
     public isRowsToRender(): boolean {
         return _.exists(this.rowsToDisplay) && this.rowsToDisplay.length > 0;
     }
-
 
     public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
 
@@ -337,7 +336,6 @@ export class ClientSideRowModel {
 
         return result;
     }
-
 
     public setDatasource(datasource: any): void {
         console.error('ag-Grid: should never call setDatasource on clientSideRowController');
@@ -508,6 +506,15 @@ export class ClientSideRowModel {
             });
         }
         this.refreshModel({step: Constants.STEP_MAP});
+
+        let eventSource = expand ? 'expandAll' : 'collapseAll';
+        let event: ExpandCollapseAllEvent = {
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            type: Events.EVENT_EXPAND_COLLAPSE_ALL,
+            source: eventSource
+        };
+        this.eventService.dispatchEvent(event);
     }
 
     private doSort() {

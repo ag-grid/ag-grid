@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class PropertyKeys {
@@ -11,3 +11,4 @@ export declare class PropertyKeys {
     static ALL_PROPERTIES: string[];
     static FRAMEWORK_PROPERTIES: string[];
 }
+//# sourceMappingURL=propertyKeys.d.ts.map

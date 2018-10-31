@@ -123,7 +123,7 @@ include '../documentation-main/documentation_header.php';
         <ul>
             <li><b>normal</b>: This is the default if nothing is specified. The grid fits the width and height
             of the div you provide and scrolls in both directions.</li>
-            <li><b>fullHeight</b>: The grid's height is set to fit the number of rows so no vertical scrollbar
+            <li><b>autoHeight</b>: The grid's height is set to fit the number of rows so no vertical scrollbar
                 is provided by the grid. The grid scrolls horizontally as normal.</li>
             <li><b>print</b>: No scroll bars are used and the grid renders all rows and columns. This layout
             is explained in <a href="../javascript-grid-for-print/">Printing</a>.</li>

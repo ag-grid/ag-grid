@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -76,12 +76,12 @@ var MenuItemMapper = /** @class */ (function () {
                 action: function () { return _this.columnController.autoSizeAllColumns("contextMenu"); }
             };
             case 'rowGroup': return {
-                name: localeTextFunc('groupBy', 'Group by') + ' ' + this.columnController.getDisplayNameForColumn(column, 'header'),
+                name: localeTextFunc('groupBy', 'Group by') + ' ' + ag_grid_community_1._.escape(this.columnController.getDisplayNameForColumn(column, 'header')),
                 action: function () { return _this.columnController.addRowGroupColumn(column, "contextMenu"); },
                 icon: ag_grid_community_1.Utils.createIconNoSpan('menuAddRowGroup', this.gridOptionsWrapper, null)
             };
             case 'rowUnGroup': return {
-                name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + this.columnController.getDisplayNameForColumn(column, 'header'),
+                name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + ag_grid_community_1._.escape(this.columnController.getDisplayNameForColumn(column, 'header')),
                 action: function () { return _this.columnController.removeRowGroupColumn(column, "contextMenu"); },
                 icon: ag_grid_community_1.Utils.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null)
             };
@@ -123,6 +123,7 @@ var MenuItemMapper = /** @class */ (function () {
                 }
                 if (!this.gridOptionsWrapper.isSuppressExcelExport()) {
                     exportSubMenuItems.push('excelExport');
+                    exportSubMenuItems.push('excelXMLExport');
                 }
                 return {
                     name: localeTextFunc('export', 'Export'),
@@ -133,8 +134,16 @@ var MenuItemMapper = /** @class */ (function () {
                 action: function () { return _this.gridApi.exportDataAsCsv({}); }
             };
             case 'excelExport': return {
-                name: localeTextFunc('excelExport', 'Excel Export'),
-                action: function () { return _this.gridApi.exportDataAsExcel({}); }
+                name: localeTextFunc('excelExport', 'Excel Export (.xlsx)'),
+                action: function () { return _this.gridApi.exportDataAsExcel({
+                    exportMode: 'xlsx'
+                }); }
+            };
+            case 'excelXMLExport': return {
+                name: localeTextFunc('excelXMLExport', 'Excel Export (.xml)'),
+                action: function () { return _this.gridApi.exportDataAsExcel({
+                    exportMode: 'xml'
+                }); }
             };
             case 'separator': return 'separator';
             default:

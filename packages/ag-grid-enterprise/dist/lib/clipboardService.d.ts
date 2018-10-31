@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 import { IClipboardService, Column } from "ag-grid-community";
 export declare class ClipboardService implements IClipboardService {
     private csvCreator;
@@ -42,3 +42,4 @@ export declare class ClipboardService implements IClipboardService {
     private dataToArray;
     private rangeSize;
 }
+//# sourceMappingURL=clipboardService.d.ts.map

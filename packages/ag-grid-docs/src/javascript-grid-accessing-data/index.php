@@ -122,7 +122,7 @@ api.forEachLeafNode( function(rowNode, index) {
         In the example, try applying some sorts and filters, and see how this impacts the different operations.
     </p>
 
-    <?= example('Using For-Each', 'using-for-each', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Using For-Each', 'using-for-each', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2 id="for-each-node">Accessing Displayed Rows</h2>
 
@@ -138,7 +138,7 @@ api.forEachLeafNode( function(rowNode, index) {
     </p>
 
     <p>
-        You can look up the rows by index. This is dependent on anything that changes the index.
+         You can look up the rows by index. This is dependent on anything that changes the index.
         For example, if you apply a sort or filter, then the rows and corresponding indexes will change.
     </p>
 
@@ -164,7 +164,7 @@ api.forEachLeafNode( function(rowNode, index) {
             one page.</li>
     </ul>
 
-    <?= example('Get Displayed Row', 'get-displayed-row', 'generated') ?>
+    <?= example('Get Displayed Row', 'get-displayed-row', 'generated', array("processVue" => true)) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

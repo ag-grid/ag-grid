@@ -4,14 +4,14 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "module": "commonjs",
-    "target": "es5"
-  },
-  "typeAcquisition": {
-    "enable": true,
-    "include": [
-      "ag-grid",
+    "target": "es5",
+    "types": [
       "react",
       "react-dom"
     ]
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "lib"
+  ]
 }

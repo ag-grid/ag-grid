@@ -12,8 +12,9 @@
     @return $string;
 }
 
-@mixin bottom-border($color) {
-    border-bottom: 1px solid $color;
+@mixin row-border($color) {
+    border-style: solid;
+    border-color: $color;
     box-sizing: border-box;
 }
 
@@ -139,6 +140,7 @@
 
     $background-color: map-get($params, "background-color");
     $border-color: map-get($params, "border-color");
+    $row-border-width: map-get($params, "row-border-width");
 
     $button-background-color: map-get($params, "button-background-color");
 
@@ -267,11 +269,19 @@
     }
 
     .ag-header-row {
-        @include bottom-border($border-color);
+        @include row-border($border-color);
+        border-width: 0 0 1px;
     }
 
     .ag-row {
-        @include bottom-border($border-color);
+        @include row-border($border-color);
+        border-width: 0;
+        &:not(.ag-row-first) {
+            border-width: $row-border-width 0 0;
+        }
+        &.ag-row-last {
+            border-bottom-width: $row-border-width;
+        }
     }
 
     @if map-get($params, "odd-row-background-color") {

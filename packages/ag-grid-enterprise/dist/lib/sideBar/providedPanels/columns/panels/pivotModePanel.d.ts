@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 import { Component } from "ag-grid-community/main";
 export declare class PivotModePanel extends Component {
     private columnController;
@@ -12,3 +12,4 @@ export declare class PivotModePanel extends Component {
     private onBtPivotMode;
     private onPivotModeChanged;
 }
+//# sourceMappingURL=pivotModePanel.d.ts.map

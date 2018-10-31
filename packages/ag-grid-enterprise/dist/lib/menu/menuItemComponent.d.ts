@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 import { MenuItemDef, Component, AgEvent } from "ag-grid-community";
 export interface MenuItemSelectedEvent extends AgEvent {
     name: string;
@@ -22,3 +22,4 @@ export declare class MenuItemComponent extends Component {
     private onOptionSelected;
     destroy(): void;
 }
+//# sourceMappingURL=menuItemComponent.d.ts.map

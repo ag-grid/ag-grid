@@ -1,4 +1,4 @@
-// ag-grid-react v19.0.0
+// ag-grid-react v19.1.1
 import { Promise } from 'ag-grid-community';
 import { AgGridReact } from "./agGridReact";
 export declare class AgReactComponent {
@@ -15,3 +15,4 @@ export declare class AgReactComponent {
     private createReactComponentLegacy;
     private createReactComponent;
 }
+//# sourceMappingURL=agReactComponent.d.ts.map

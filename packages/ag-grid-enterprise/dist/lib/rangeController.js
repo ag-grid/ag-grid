@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -199,16 +199,23 @@ var RangeController = /** @class */ (function () {
         var multiKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
         var allowMulti = !this.gridOptionsWrapper.isSuppressMultiRangeSelection();
         var multiSelectKeyPressed = allowMulti ? multiKeyPressed : false;
-        if (ag_grid_community_1.Utils.missing(this.cellRanges) || !multiSelectKeyPressed) {
-            this.cellRanges = [];
-        }
+        var missingRanges = ag_grid_community_1.Utils.missing(this.cellRanges);
         var cell = this.mouseEventService.getGridCellForEvent(mouseEvent);
         if (ag_grid_community_1.Utils.missing(cell)) {
             // if drag wasn't on cell, then do nothing, including do not set dragging=true,
             // (which them means onDragging and onDragStop do nothing)
             return;
         }
-        this.createNewActiveRange(cell);
+        var len = missingRanges ? 0 : this.cellRanges.length;
+        if (missingRanges || !multiSelectKeyPressed) {
+            this.cellRanges = [];
+        }
+        else if (!this.activeRange && len && this.isCellInSpecificRange(cell, this.cellRanges[len - 1])) {
+            this.activeRange = this.activeRange = this.cellRanges[len - 1];
+        }
+        if (!this.activeRange) {
+            this.createNewActiveRange(cell);
+        }
         this.gridPanel.addScrollEventListener(this.bodyScrollListener);
         this.dragging = true;
         this.lastMouseEvent = mouseEvent;

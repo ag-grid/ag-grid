@@ -1,9 +1,9 @@
 
 ![alt text](./github-banner.png "Logo Title Text 1")
 
-[![CDNJS](https://img.shields.io/cdnjs/v/ag-grid.svg)](https://cdnjs.com/libraries/ag-grid)
-[![npm](https://img.shields.io/npm/dm/ag-grid.svg)](https://www.npmjs.com/package/ag-grid)
-[![npm](https://img.shields.io/npm/dt/ag-grid.svg)](https://www.npmjs.com/package/ag-grid)
+[![CDNJS](https://img.shields.io/cdnjs/v/ag-grid-community.svg)](https://cdnjs.com/libraries/ag-grid-community)
+[![npm](https://img.shields.io/npm/dm/ag-grid-community.svg)](https://www.npmjs.com/package/ag-grid-community)
+[![npm](https://img.shields.io/npm/dt/ag-grid-community.svg)](https://www.npmjs.com/package/ag-grid-community)
 
 ag-Grid
 ------

@@ -53,6 +53,8 @@ export class ValueService {
         let aggDataExists = !ignoreAggData && rowNode.aggData && rowNode.aggData[colId] !== undefined;
         if (forFilter && colDef.filterValueGetter) {
             result = this.executeValueGetter(colDef.filterValueGetter, data, column, rowNode);
+        } else if(this.gridOptionsWrapper.isTreeData() && aggDataExists) {
+            result = rowNode.aggData[colId];
         } else if(this.gridOptionsWrapper.isTreeData() && colDef.valueGetter) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
         } else if(this.gridOptionsWrapper.isTreeData() && (field && data)) {

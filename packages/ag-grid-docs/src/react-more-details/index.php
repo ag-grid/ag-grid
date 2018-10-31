@@ -401,6 +401,40 @@ export default connect(
 )(PriceRenderer);
     </snippet>
 
+    <h3 id="context-api">React Context API</h3>
+
+    <p>If you're using the new React Context API then you can access the context in the components used within the grid.</p>
+    
+    <p>First, let's create a context we can use in our components:</p>
+    
+    <snippet>
+import React from "react";
+
+export default React.createContext('normal');
+    </snippet>
+
+    <p>Next we need to provide the context in a parent component (at the Grid level, or above) - for example:</p>
+
+<snippet>
+&lt;FontContext.Provider value="bold"&gt;
+    &lt;GridComponent/&gt;
+&lt;/FontContext.Provider&gt;
+</snippet>
+    
+    <p>Finally, we need to consume the context within our component:</p>
+    
+<snippet>
+class StyledRenderer extends Component {
+    render() {
+        return (<span ng-non-bindable>
+            &lt;FontContext.Consumer&gt;
+                {fontWeight =&gt; &lt;span style={{fontWeight}}&gt;Stylised Component!&lt;/span&gt; }
+            &lt;/FontContext.Consumer&gt;</span>
+        );
+    }
+}
+</snippet>
+
     <h3>Working Example</h3>
 
     <p>You can find a fully working example at our <a href="https://github.com/ag-grid/ag-grid-react-example/">ag Grid React Example</a>.

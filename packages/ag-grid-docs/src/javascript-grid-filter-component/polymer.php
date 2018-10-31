@@ -15,77 +15,65 @@
         as Polymer components.
     </p>
 
-<pre class="language-html">
-<code ng-non-bindable>
+<snippet >
 // create your filter as a Polymer component
-&lt;dom-module id="partial-match-filter"&gt;
-    &lt;template&gt;
-        Filter: &lt;input 
-        style="height: 20px" id="input" 
-        on-input="onChange" value="{{text::input}}"&gt;
-    &lt;/template&gt;
+export default class PartialMatchFilter extends PolymerElement {
+    static get template() {
+        return html`
+        Filter: &lt;input style="height: 20px" id="input" on-input="onChange"
+        <span ng-non-bindable>value="{{text::input}}"</span>&gt;
+        `;
+    }
 
-    &lt;script&gt;
-        class PartialMatchFilter extends Polymer.Element {
-            static get is() {
-                return 'partial-match-filter'
-            }
+    agInit(params) {
+        this.params = params;
+        this.valueGetter = params.valueGetter;
+    }
 
-            agInit(params) {
-                this.params = params;
-                this.valueGetter = params.valueGetter;
-            }
+    static get properties() {
+        return {
+            text: String
+        };
+    }
 
-            static get properties() {
-                return {
-                    text: String
-                };
-            }
+    isFilterActive() {
+        return this.text !== null && this.text !== undefined && this.text !== '';
+    }
 
-            isFilterActive() {
-                return this.text !== null && 
-            this.text !== undefined && this.text !== '';
-            }
+    doesFilterPass(params) {
+        return this.text.toLowerCase()
+            .split(" ")
+            .every((filterWord) => {
+                return this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) >= 0;
+            });
+    }
 
-            doesFilterPass(params) {
-                return this.text.toLowerCase()
-                    .split(" ")
-                    .every((filterWord) =&gt; {
-                        return this
-                            .valueGetter(params.node)
-                            .toString().toLowerCase()
-                            .indexOf(filterWord) &gt;= 0;
-                    });
-            }
+    getModel() {
+        return {value: this.text};
+    }
 
-            getModel() {
-                return {value: this.text};
-            }
+    setModel(model) {
+        this.text = model ? model.value : '';
+    }
 
-            setModel(model) {
-                this.text = model ? model.value : '';
-            }
+    afterGuiAttached(params) {
+        this.$.input.focus();
+    }
 
-            afterGuiAttached(params) {
-                this.$.input.focus();
-            }
+    componentMethod(message) {
+        alert(`Alert from PartialMatchFilterComponent ${message}`);
+    }
 
-            componentMethod(message) {
-                alert(`Alert from PartialMatchFilterComponent ${message}`);
-            }
-
-            onChange(event) {
-                let newValue = event.target.value;
-                if (this.text !== newValue) {
-                    this.text = newValue;
-                    this.params.filterChangedCallback();
-                }
-            }
+    onChange(event) {
+        let newValue = event.target.value;
+        if (this.text !== newValue) {
+            this.text = newValue;
+            this.params.filterChangedCallback();
         }
+    }
+}
 
-        customElements.define(PartialMatchFilter.is, PartialMatchFilter);
-    &lt;/script&gt;
-&lt;/dom-module&gt;
+customElements.define('partial-match-filter', PartialMatchFilter);
 
 // then reference the Component in your colDef like this
 colDef = {
@@ -98,8 +86,7 @@ colDef = {
     field: 'firstName',
     ...
 }
-</code>
-</pre>
+</snippet>
 
     <p>
         Your Polymer components need to implement <code>IFilter</code>. The ag Framework expects to find the
@@ -143,25 +130,22 @@ agInit(params:IFilterParams):void {
         Component which wraps your Polymer Component. Just like Russian Dolls. To get to the wrapped Polymer instance
         of your component, use the <code>getFrameworkComponentInstance()</code> method as follows:
 </p>
-<pre class="language-html">
-<code ng-non-bindable>
+<snippet language="js">
 // lets assume a Polymer component as follows
-&lt;dom-module id="partial-match-filter"&gt;
-    &lt;template&gt;
-        Filter: &lt;input style="height: 20px" 
-        id="input" on-input="onChange" value="{{text::input}}"&gt;
-    &lt;/template&gt;
-
-    &lt;script&gt;
-        class PartialMatchFilter extends Polymer.Element {
+export default class PartialMatchFilter extends PolymerElement {
+    static get template() {
+        return html`
+            Filter: &lt;input style="height: 20px" id="input" on-input="onChange"
+            <span ng-non-bindable>value="{{text::input}}"</span>&gt;
+        `;
+    }
     ... // standard filter methods hidden
 
-        // put a custom method on the filter
-        componentMethod() {
-            // does something
-        }
+    // put a custom method on the filter
+    componentMethod() {
+        // does something
     }
-    &lt;script&gt;
+}
 
 // then in your app, if you want to execute myMethod()...
 laterOnInYourApplicationSomewhere() {
@@ -177,12 +161,12 @@ laterOnInYourApplicationSomewhere() {
     // now we're sucking diesel!!!
     polymerFilterInstance.componentMethod("Hello World!");
 }
-</code>
-</pre>
+</snippet>
+
     <h3 id="example-filtering-using-polymer-components"> Example: Filtering using Polymer Components</h3>
 
     <p>
         Using Polymer Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.
     </p>
-<?= example('Polymer Filter Component', 'polymer-filter', 'polymer', array("exampleHeight" => 410) ) ?>
+<?= example('Polymer Filter Component', 'polymer-filter', 'as-is', array("noPlunker" => 1, "usePath" => "/", "exampleHeight" => 360)) ?>
 

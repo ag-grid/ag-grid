@@ -1,3 +1,3 @@
-// ag-grid-react v19.0.0
+// ag-grid-react v19.1.1
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });

@@ -186,6 +186,9 @@ export class RowNode implements IEventEmitter {
     public __cacheData: {[colId: string]: any};
     public __cacheVersion: number;
 
+    /** True when nodes with the same id are being removed and added as part of the same batch transaction */
+    public alreadyRendered = false;
+
     private selected = false;
     private eventService: EventService;
 
@@ -292,7 +295,7 @@ export class RowNode implements IEventEmitter {
     private checkRowSelectable() {
         let isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc();
         let shouldInvokeIsRowSelectable = isRowSelectableFunc && _.exists(this);
-        this.setRowSelectable(shouldInvokeIsRowSelectable ? isRowSelectableFunc(this) : true)
+        this.setRowSelectable(shouldInvokeIsRowSelectable ? isRowSelectableFunc(this) : true);
     }
 
     public setRowSelectable(newVal: boolean) {
@@ -601,7 +604,7 @@ export class RowNode implements IEventEmitter {
         }
 
         if (this.rowPinned) {
-            console.log('ag-Grid: cannot select pinned rows');
+            console.warn('ag-Grid: cannot select pinned rows');
             return 0;
         }
 

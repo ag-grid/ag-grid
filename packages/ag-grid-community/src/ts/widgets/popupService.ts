@@ -25,7 +25,8 @@ export class PopupService {
             // user provided popup parent, may not have the right theme applied
             return ePopupParent;
         } else {
-            return this.gridCore.getRootGui();
+            let eDocument = this.gridOptionsWrapper.getDocument();
+            return eDocument.body;
         }
     }
 
@@ -249,10 +250,14 @@ export class PopupService {
     //so that when the background is clicked, the child is removed again, giving
     //a model look to popups.
     public addAsModalPopup(eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch): (event?: any) => void {
+        return this.addPopup(true, eChild, closeOnEsc, closedCallback, click);
+    }
 
-        let eBody = this.gridOptionsWrapper.getDocument();
-        if (!eBody) {
-            console.warn('ag-grid: could not find the body of the document, document.body is empty');
+    public addPopup(modal: boolean, eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch): (event?: any) => void {
+
+        let eDocument = this.gridOptionsWrapper.getDocument();
+        if (!eDocument) {
+            console.warn('ag-grid: could not find the document, document is empty');
             return;
         }
 
@@ -308,10 +313,10 @@ export class PopupService {
             ePopupParent.removeChild(eWrapper);
             _.removeFromArray(this.activePopupElements, eChild);
 
-            eBody.removeEventListener('keydown', hidePopupOnKeyboardEvent);
-            eBody.removeEventListener('click', hidePopupOnMouseEvent);
-            eBody.removeEventListener('touchstart', hidePopupOnTouchEvent);
-            eBody.removeEventListener('contextmenu', hidePopupOnMouseEvent);
+            eDocument.removeEventListener('keydown', hidePopupOnKeyboardEvent);
+            eDocument.removeEventListener('mousedown', hidePopupOnMouseEvent);
+            eDocument.removeEventListener('touchstart', hidePopupOnTouchEvent);
+            eDocument.removeEventListener('contextmenu', hidePopupOnMouseEvent);
             if (closedCallback) {
                 closedCallback();
             }
@@ -321,11 +326,13 @@ export class PopupService {
         // click will be included, which we don't want
         setTimeout(function() {
             if (closeOnEsc) {
-                eBody.addEventListener('keydown', hidePopupOnKeyboardEvent);
+                eDocument.addEventListener('keydown', hidePopupOnKeyboardEvent);
             }
-            eBody.addEventListener('click', hidePopupOnMouseEvent);
-            eBody.addEventListener('touchstart', hidePopupOnTouchEvent);
-            eBody.addEventListener('contextmenu', hidePopupOnMouseEvent);
+            if (modal) {
+                eDocument.addEventListener('mousedown', hidePopupOnMouseEvent);
+                eDocument.addEventListener('touchstart', hidePopupOnTouchEvent);
+                eDocument.addEventListener('contextmenu', hidePopupOnMouseEvent);
+            }
         }, 0);
 
         return hidePopup;

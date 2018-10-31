@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 import { Component } from "ag-grid-community/main";
 import { BaseColumnItem } from "./primaryColsPanel";
 export declare type ColumnItem = BaseColumnItem & Component;
@@ -30,3 +30,4 @@ export declare class PrimaryColsListPanel extends Component {
     private recursivelySetVisibility;
     doSetSelectedAll(checked: boolean): void;
 }
+//# sourceMappingURL=primaryColsListPanel.d.ts.map

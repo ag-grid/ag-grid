@@ -1,3 +1,22 @@
+<div class="note" style="display: none" fixVersionNote id="fix_version_19_1_0">
+    <p>Release 19.1.0 Overview</p>
+
+    <p>Feature Highlights:</p>
+
+    <ul>
+        <li>
+            AG-904 <a href="https://www.ag-grid.com/best-polymer-data-grid/">Polymer 3 Datagrid</a>.
+        </li>
+        <li>
+            AG-726 <a href="https://www.ag-grid.com/javascript-grid-excel/">Export to XLSX</a>.
+        </li>
+        <li>
+            AG-1591 <a href="https://www.ag-grid.com/javascript-grid-column-definitions/#column-changes/">Allow Delta Changes to Column Definitions</a>.
+        </li>
+    </ul>
+
+</div>
+
 <div class="note" style="display: none" fixVersionNote id="fix_version_19_0_0">
     <p>Release 19.0.0 Overview</p>
 
@@ -5,7 +24,12 @@
 
     <ul>
         <li>
-            ag-Grid receives a major overhaul of the Tool Panels in version 19.0.0. The old property 'showToolPanel' is
+            The NPM package name for the free module of ag-Grid is now <code>ag-grid-community</code>
+            instead of <code>ag-grid</code>. This means you install with <code>npm install ag-grid-community</code>
+            and then you reference like <code>import {Grid, GridOptions} from "ag-grid-community"</code>.
+        </li>
+        <li>
+            ag-Grid received a major overhaul of the Tool Panels in version 19.0.0. The old property 'showToolPanel' is
             no longer used and the Tool Panel is also not included by default. For more details see:
             <a href="https://www.ag-grid.com/javascript-grid-side-bar/#configuring-the-side-bar">Configuring the Side Bar</a>.
         </li>

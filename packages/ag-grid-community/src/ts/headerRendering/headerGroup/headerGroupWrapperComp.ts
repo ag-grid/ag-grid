@@ -124,7 +124,7 @@ export class HeaderGroupWrapperComp extends Component {
         let params: IHeaderGroupParams = {
             displayName: displayName,
             columnGroup: this.columnGroup,
-            setExpanded: (expanded:boolean)=>{
+            setExpanded: (expanded:boolean)=> {
                 this.columnController.setColumnGroupOpened(this.columnGroup.getOriginalColumnGroup(), expanded, "gridInitializing");
             },
             api: this.gridApi,
@@ -292,7 +292,7 @@ export class HeaderGroupWrapperComp extends Component {
             this.eHeaderCellResize.addEventListener('dblclick', (event:MouseEvent) => {
                 // get list of all the column keys we are responsible for
                 let keys: string[] = [];
-                this.columnGroup.getDisplayedLeafColumns().forEach( (column: Column)=>{
+                this.columnGroup.getDisplayedLeafColumns().forEach( (column: Column)=> {
                     // not all cols in the group may be participating with auto-resize
                     if (!column.getColDef().suppressAutoSize) {
                         keys.push(column.getColId());

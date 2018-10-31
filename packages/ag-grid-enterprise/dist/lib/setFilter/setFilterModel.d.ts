@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 import { ColDef, Column, ValueFormatterService, IRowModel } from "ag-grid-community";
 export declare enum SetFilterModelValuesType {
     PROVIDED_LIST = 0,
@@ -64,3 +64,4 @@ export declare class SetFilterModel {
     private setSyncModel;
     onFilterValuesReady(callback: () => void): void;
 }
+//# sourceMappingURL=setFilterModel.d.ts.map

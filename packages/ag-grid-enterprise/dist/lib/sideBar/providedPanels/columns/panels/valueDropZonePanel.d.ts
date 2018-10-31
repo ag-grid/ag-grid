@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 import { Column } from "ag-grid-community/main";
 import { BaseDropZonePanel } from "../dropZone/baseDropZonePanel";
 export declare class ValuesDropZonePanel extends BaseDropZonePanel {
@@ -17,3 +17,4 @@ export declare class ValuesDropZonePanel extends BaseDropZonePanel {
     protected updateColumns(columns: Column[]): void;
     protected getExistingColumns(): Column[];
 }
+//# sourceMappingURL=valueDropZonePanel.d.ts.map

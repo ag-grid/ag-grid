@@ -162,7 +162,7 @@ export class AlignedGridsService {
         }
         if (masterColumnGroup && !otherColumnGroup) { return; }
 
-        this.logger.log('onColumnEvent-> processing '+event+' expanded = '+ masterColumnGroup.isExpanded());
+        this.logger.log('onColumnEvent-> processing '+ groupOpenedEvent +' expanded = '+ masterColumnGroup.isExpanded());
         this.columnController.setColumnGroupOpened(otherColumnGroup, masterColumnGroup.isExpanded(), "alignedGridChanged");
     }
 

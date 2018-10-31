@@ -37,6 +37,8 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
 
     private rowHeight: number;
 
+    private cacheParams: InfiniteCacheParams;
+
     public getRowBounds(index: number): RowBounds {
         return {
             rowHeight: this.rowHeight,
@@ -89,8 +91,24 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
     private onColumnEverything(): void {
         // if the columns get reset, then this means the sort order could be impacted
         if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
-            this.reset();
+            let resetRequired;
+            // if cache params, we require reset only if sort model has changed. we don't need to check
+            // for filter model, as the filter manager will fire an event when columns change that result
+            // in the filter changing.
+            if (this.cacheParams) {
+                resetRequired = this.isSortModelDifferent();
+            } else {
+                // if no cacheParams, means first time creating the cache, so always create one
+                resetRequired = true;
+            }
+            if (resetRequired) {
+                this.reset();
+            }
         }
+    }
+
+    private isSortModelDifferent(): boolean {
+        return !_.jsonEquals(this.cacheParams.sortModel, this.sortController.getSortModel());
     }
 
     @PreDestroy
@@ -192,7 +210,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
         this.rowNodeBlockLoader = new RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis);
         this.context.wireBean(this.rowNodeBlockLoader);
 
-        let cacheSettings = <InfiniteCacheParams> {
+        this.cacheParams = <InfiniteCacheParams> {
             // the user provided datasource
             datasource: this.datasource,
 
@@ -218,25 +236,25 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
         };
 
         // set defaults
-        if ( !(cacheSettings.maxConcurrentRequests>=1) ) {
-            cacheSettings.maxConcurrentRequests = 2;
+        if ( !(this.cacheParams.maxConcurrentRequests>=1) ) {
+            this.cacheParams.maxConcurrentRequests = 2;
         }
         // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
         // server for one page at a time. so the default if not specified is 100.
-        if ( !(cacheSettings.blockSize>=1) ) {
-            cacheSettings.blockSize = 100;
+        if ( !(this.cacheParams.blockSize>=1) ) {
+            this.cacheParams.blockSize = 100;
         }
         // if user doesn't give initial rows to display, we assume zero
-        if ( !(cacheSettings.initialRowCount>=1) ) {
-            cacheSettings.initialRowCount = 0;
+        if ( !(this.cacheParams.initialRowCount>=1) ) {
+            this.cacheParams.initialRowCount = 0;
         }
         // if user doesn't provide overflow, we use default overflow of 1, so user can scroll past
         // the current page and request first row of next page
-        if ( !(cacheSettings.overflowSize>=1) ) {
-            cacheSettings.overflowSize = 1;
+        if ( !(this.cacheParams.overflowSize>=1) ) {
+            this.cacheParams.overflowSize = 1;
         }
 
-        this.infiniteCache = new InfiniteCache(cacheSettings);
+        this.infiniteCache = new InfiniteCache(this.cacheParams);
         this.context.wireBean(this.infiniteCache);
 
         this.infiniteCache.addEventListener(RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));

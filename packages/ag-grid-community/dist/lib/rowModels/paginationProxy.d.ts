@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
@@ -45,7 +45,7 @@ export declare class PaginationProxy extends BeanStub implements IRowModel {
     isEmpty(): boolean;
     isRowsToRender(): boolean;
     getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[];
-    forEachNode(callback: (rowNode: RowNode) => void): void;
+    forEachNode(callback: (rowNode: RowNode, index: number) => void): void;
     getType(): string;
     getRowBounds(index: number): {
         rowTop: number;
@@ -67,3 +67,4 @@ export declare class PaginationProxy extends BeanStub implements IRowModel {
     private setPageSize;
     private setIndexesAndBounds;
 }
+//# sourceMappingURL=paginationProxy.d.ts.map

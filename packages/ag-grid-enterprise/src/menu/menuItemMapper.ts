@@ -1,4 +1,4 @@
-import {ColumnController, MenuItemDef, Autowired, Utils, Bean, GridOptionsWrapper, GridApi, Column} from 'ag-grid-community';
+import {ColumnController, MenuItemDef, Autowired, Utils, Bean, GridOptionsWrapper, GridApi, Column, _} from 'ag-grid-community';
 import {ClipboardService} from "../clipboardService";
 import {AggFuncService} from "../aggregation/aggFuncService";
 
@@ -73,12 +73,12 @@ export class MenuItemMapper {
                 action: ()=> this.columnController.autoSizeAllColumns("contextMenu")
             };
             case 'rowGroup': return {
-                name: localeTextFunc('groupBy', 'Group by') + ' ' + this.columnController.getDisplayNameForColumn(column, 'header'),
+                name: localeTextFunc('groupBy', 'Group by') + ' ' + _.escape(this.columnController.getDisplayNameForColumn(column, 'header')),
                 action: ()=> this.columnController.addRowGroupColumn(column, "contextMenu"),
                 icon: Utils.createIconNoSpan('menuAddRowGroup', this.gridOptionsWrapper, null)
             };
             case 'rowUnGroup': return {
-                name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + this.columnController.getDisplayNameForColumn(column, 'header'),
+                name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + _.escape(this.columnController.getDisplayNameForColumn(column, 'header')),
                 action: ()=> this.columnController.removeRowGroupColumn(column, "contextMenu"),
                 icon: Utils.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null)
             };
@@ -120,6 +120,7 @@ export class MenuItemMapper {
                 }
                 if (!this.gridOptionsWrapper.isSuppressExcelExport()) {
                     exportSubMenuItems.push('excelExport');
+                    exportSubMenuItems.push('excelXMLExport');
                 }
                 return {
                     name: localeTextFunc('export', 'Export'),
@@ -130,8 +131,16 @@ export class MenuItemMapper {
                 action: ()=> this.gridApi.exportDataAsCsv({})
             };
             case 'excelExport': return {
-                name: localeTextFunc('excelExport', 'Excel Export'),
-                action: ()=> this.gridApi.exportDataAsExcel({})
+                name: localeTextFunc('excelExport', 'Excel Export (.xlsx)'),
+                action: ()=> this.gridApi.exportDataAsExcel({
+                    exportMode: 'xlsx'
+                })
+            };
+            case 'excelXMLExport': return {
+                name: localeTextFunc('excelXMLExport', 'Excel Export (.xml)'),
+                action: ()=> this.gridApi.exportDataAsExcel({
+                    exportMode: 'xml'
+                })
             };
             case 'separator': return 'separator';
             default:

@@ -126,7 +126,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
             if (block.isPixelInRange(pixel)) {
                 result = block.getRowIndexAtPixel(pixel, this.getVirtualRowCount());
                 blockFound = true;
-            } else if (block.getBlockTop() > pixel) {
+            } else if (block.getBlockTop() < pixel) {
                 lastBlock = block;
             }
         });

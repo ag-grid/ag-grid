@@ -185,12 +185,11 @@ const VueExample = {
         ${eventHandlers
         .concat(externalEventHandlers)
         .concat(additional)
+        .concat(utilsMethods)
+        .concat(bindings.instance)
         .map(snippet => `${snippet.trim()},`)
         .join('\n')}
-        ${utilsMethods.join(',\n')}            
-    },
-        
-    ${bindings.instance.join('\n')}
+    }    
 }
 
 new Vue({

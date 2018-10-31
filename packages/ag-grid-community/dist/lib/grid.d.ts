@@ -1,7 +1,8 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptions } from "./entities/gridOptions";
+import { Logger } from "./logger";
 import { IFrameworkFactory } from "./interfaces/iFrameworkFactory";
 export interface GridParams {
     globalEventListener?: Function;
@@ -19,6 +20,7 @@ export declare class Grid {
     private static frameworkBeans;
     private static enterpriseComponents;
     private static enterpriseDefaultComponents;
+    protected logger: Logger;
     private static RowModelClasses;
     static setEnterpriseBeans(enterpriseBeans: any[], rowModelClasses: any): void;
     static setEnterpriseComponents(components: any[]): void;
@@ -30,3 +32,4 @@ export declare class Grid {
     private getRowModelClass;
     destroy(): void;
 }
+//# sourceMappingURL=grid.d.ts.map

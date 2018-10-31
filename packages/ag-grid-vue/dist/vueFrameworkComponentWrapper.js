@@ -1,91 +1,98 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
-exports.VueFrameworkComponentWrapper = undefined;
+exports.VueFrameworkComponentWrapper = void 0;
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _vueComponentFactory = require('./vueComponentFactory');
+var _vueComponentFactory = require("./vueComponentFactory");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var VueFrameworkComponentWrapper = function () {
-    function VueFrameworkComponentWrapper(parent) {
-        _classCallCheck(this, VueFrameworkComponentWrapper);
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-        this._parent = parent;
-    }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-    _createClass(VueFrameworkComponentWrapper, [{
-        key: 'wrap',
-        value: function wrap(component, methodList, optionalMethods) {
-            var componentType = _vueComponentFactory.VueComponentFactory.getComponentType(this._parent, component);
-            if (!componentType) {
-                return;
-            }
+var VueFrameworkComponentWrapper =
+/*#__PURE__*/
+function () {
+  function VueFrameworkComponentWrapper(parent) {
+    _classCallCheck(this, VueFrameworkComponentWrapper);
 
-            var DynamicComponent = function () {
-                function DynamicComponent() {
-                    _classCallCheck(this, DynamicComponent);
-                }
+    this._parent = parent;
+  }
 
-                _createClass(DynamicComponent, [{
-                    key: 'init',
-                    value: function init(params) {
-                        this.component = _vueComponentFactory.VueComponentFactory.createAndMountComponent(params, componentType);
-                    }
-                }, {
-                    key: 'getGui',
-                    value: function getGui() {
-                        return this.component.$el;
-                    }
-                }, {
-                    key: 'destroy',
-                    value: function destroy() {
-                        this.component.$destroy();
-                    }
-                }, {
-                    key: 'getFrameworkComponentInstance',
-                    value: function getFrameworkComponentInstance() {
-                        return this.component;
-                    }
-                }]);
+  _createClass(VueFrameworkComponentWrapper, [{
+    key: "wrap",
+    value: function wrap(component, methodList, optionalMethods) {
+      var parent = this._parent;
 
-                return DynamicComponent;
-            }();
+      var componentType = _vueComponentFactory.VueComponentFactory.getComponentType(parent, component);
 
-            var wrapper = new DynamicComponent();
-            methodList.forEach(function (methodName) {
-                wrapper[methodName] = function () {
-                    if (wrapper.getFrameworkComponentInstance()[methodName]) {
-                        var componentRef = this.getFrameworkComponentInstance();
-                        return wrapper.getFrameworkComponentInstance()[methodName].apply(componentRef, arguments);
-                    } else {
-                        console.warn('ag-Grid: Vue component is missing the method ' + methodName + '()');
-                        return null;
-                    }
-                };
-            });
-            optionalMethods.forEach(function (methodName) {
-                wrapper[methodName] = function () {
-                    if (wrapper.getFrameworkComponentInstance()[methodName]) {
-                        var componentRef = this.getFrameworkComponentInstance();
-                        return wrapper.getFrameworkComponentInstance()[methodName].apply(componentRef, arguments);
-                    }
-                };
-            });
+      if (!componentType) {
+        return;
+      }
 
-            return wrapper;
+      var DynamicComponent =
+      /*#__PURE__*/
+      function () {
+        function DynamicComponent() {
+          _classCallCheck(this, DynamicComponent);
         }
-    }]);
 
-    return VueFrameworkComponentWrapper;
+        _createClass(DynamicComponent, [{
+          key: "init",
+          value: function init(params) {
+            this.component = _vueComponentFactory.VueComponentFactory.createAndMountComponent(params, componentType, parent);
+          }
+        }, {
+          key: "getGui",
+          value: function getGui() {
+            return this.component.$el;
+          }
+        }, {
+          key: "destroy",
+          value: function destroy() {
+            this.component.$destroy();
+          }
+        }, {
+          key: "getFrameworkComponentInstance",
+          value: function getFrameworkComponentInstance() {
+            return this.component;
+          }
+        }]);
+
+        return DynamicComponent;
+      }();
+
+      var wrapper = new DynamicComponent();
+      methodList.forEach(function (methodName) {
+        wrapper[methodName] = function () {
+          if (wrapper.getFrameworkComponentInstance()[methodName]) {
+            var componentRef = this.getFrameworkComponentInstance();
+            return wrapper.getFrameworkComponentInstance()[methodName].apply(componentRef, arguments);
+          } else {
+            console.warn('ag-Grid: Vue component is missing the method ' + methodName + '()');
+            return null;
+          }
+        };
+      });
+      optionalMethods.forEach(function (methodName) {
+        wrapper[methodName] = function () {
+          if (wrapper.getFrameworkComponentInstance()[methodName]) {
+            var componentRef = this.getFrameworkComponentInstance();
+            return wrapper.getFrameworkComponentInstance()[methodName].apply(componentRef, arguments);
+          }
+        };
+      });
+      return wrapper;
+    }
+  }]);
+
+  return VueFrameworkComponentWrapper;
 }();
 
-VueFrameworkComponentWrapper.prototype.__agBeanMetaData = {
-    beanName: "frameworkComponentWrapper"
-};
-
 exports.VueFrameworkComponentWrapper = VueFrameworkComponentWrapper;
+VueFrameworkComponentWrapper.prototype.__agBeanMetaData = {
+  beanName: "frameworkComponentWrapper"
+};

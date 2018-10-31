@@ -1,0 +1,25 @@
+.test-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.test-header {
+    padding: 4px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
+}
+
+.label {
+    color: #0f0f0f;
+    font-size: smaller;
+}
+.value {
+    margin-right: 20px;
+    border: 1px solid lightgrey;
+    width: 50px;
+    display: inline-block;
+    text-align: right;
+    padding-right: 2px;
+    background: #eee;
+}

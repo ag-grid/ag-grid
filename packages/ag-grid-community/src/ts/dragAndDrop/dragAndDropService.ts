@@ -401,7 +401,7 @@ export class DragAndDropService {
         this.setGhostIcon(null);
 
         let eText = <HTMLElement> this.eGhost.querySelector('.ag-dnd-ghost-label');
-        eText.innerHTML = this.dragSource.dragItemName;
+        eText.innerHTML = _.escape(this.dragSource.dragItemName);
 
         this.eGhost.style.height = '25px';
 

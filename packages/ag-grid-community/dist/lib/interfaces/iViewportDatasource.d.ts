@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../entities/rowNode";
@@ -20,3 +20,4 @@ export interface IViewportDatasourceParams {
     /** datasource calls this when it wants a row node - typically used when it wants to update the row node */
     getRow: (rowIndex: number) => RowNode;
 }
+//# sourceMappingURL=iViewportDatasource.d.ts.map

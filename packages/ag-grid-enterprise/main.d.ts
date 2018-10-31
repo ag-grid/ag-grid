@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 export { AggregationStage } from "./dist/lib/rowStages/aggregationStage";
 export { GroupStage } from "./dist/lib/rowStages/groupStage";
 export { SetFilter } from "./dist/lib/setFilter/setFilter";
@@ -33,3 +33,5 @@ export { PivotCompFactory } from "./dist/lib/pivotCompFactory";
 export { RowGroupCompFactory } from "./dist/lib/rowGroupCompFactory";
 export { ExcelCreator } from "./dist/lib/exporter/excelCreator";
 export { ExcelXmlFactory } from "./dist/lib/exporter/excelXmlFactory";
+export { ExcelXlsxFactory } from "./dist/lib/exporter/excelXlsxFactory";
+//# sourceMappingURL=main.d.ts.map

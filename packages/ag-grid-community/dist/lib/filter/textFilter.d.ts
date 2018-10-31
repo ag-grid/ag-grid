@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IDoesFilterPassParams, SerializedFilter } from "../interfaces/iFilter";
@@ -51,3 +51,4 @@ export declare class TextFilter extends ComparableBaseFilter<string, ITextFilter
     parse(model: SerializedTextFilter, type: FilterConditionType): void;
     setType(filterType: string, type: FilterConditionType): void;
 }
+//# sourceMappingURL=textFilter.d.ts.map

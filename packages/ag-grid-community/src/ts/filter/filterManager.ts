@@ -112,7 +112,7 @@ export class FilterManager {
         _.iterateObject(this.allFilters, function(key: any, filterWrapper: FilterWrapper) {
             // because user can provide filters, we provide useful error checking and messages
             let filterPromise: Promise<IFilterComp> = filterWrapper.filterPromise;
-            let filter = filterPromise.resolveNow(null, filter=>filter);
+            let filter = filterPromise.resolveNow(null, filter => filter);
             if (filter == null) { return null; }
 
             if (typeof filter.getModel !== 'function') {
@@ -132,6 +132,9 @@ export class FilterManager {
         return this.advancedFilterPresent;
     }
 
+    // called by:
+    // 1) onFilterChanged()
+    // 2) onNewRowsLoaded()
     private setAdvancedFilterPresent() {
         let atLeastOneActive = false;
 
@@ -345,7 +348,7 @@ export class FilterManager {
             valueAfterCallback = value;
         }
 
-        if (valueAfterCallback && valueAfterCallback !== '') {
+        if (_.exists(valueAfterCallback)) {
             return valueAfterCallback.toString().toUpperCase();
         } else {
             return null;
@@ -394,7 +397,7 @@ export class FilterManager {
             filterWrapper = this.createFilterWrapper(column, source);
             this.allFilters[column.getColId()] = filterWrapper;
         } else {
-            if (source !== 'NO_UI'){
+            if (source !== 'NO_UI') {
                 this.putIntoGui(filterWrapper, source);
             }
 
@@ -496,11 +499,10 @@ export class FilterManager {
             if (filterWrapper.scope) {
                 const compiledElement = this.$compile(eFilterGui)(filterWrapper.scope);
                 filterWrapper.compiledElement = compiledElement;
-                setTimeout( () => filterWrapper.scope.$apply(), 0);
+                setTimeout(() => filterWrapper.scope.$apply(), 0);
             }
 
             filterWrapper.guiPromise.resolve(eFilterGui);
-
 
             this.eventService.dispatchEvent(<FilterOpenedEvent>{
                 type: Events.EVENT_FILTER_OPENED,
@@ -509,14 +511,24 @@ export class FilterManager {
                 eGui: eFilterGui,
                 api: this.gridApi,
                 columnApi: this.columnApi
-
             });
 
         });
     }
 
     private onNewColumnsLoaded(): void {
-        this.destroy();
+        let atLeastOneFilterGone = false;
+        _.iterateObject(this.allFilters, (key: string, filterWrapper: FilterWrapper) => {
+            let oldColumn = !this.columnController.getPrimaryColumn(filterWrapper.column);
+            if (oldColumn) {
+                atLeastOneFilterGone = true;
+                this.disposeFilterWrapper(filterWrapper, "filterDestroyed");
+            }
+        });
+
+        if (atLeastOneFilterGone) {
+            this.onFilterChanged();
+        }
     }
 
     // destroys the filter, so it not longer takes part

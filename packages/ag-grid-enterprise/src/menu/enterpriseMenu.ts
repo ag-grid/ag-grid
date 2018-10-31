@@ -437,7 +437,8 @@ export class EnterpriseMenu extends BeanStub {
             suppressColumnExpandAll: false,
             suppressColumnFilter: false,
             suppressColumnSelectAll: false,
-            suppressSideButtons: false
+            suppressSideButtons: false,
+            api: this.gridApi
         });
         this.context.wireBean(this.columnSelectPanel);
 

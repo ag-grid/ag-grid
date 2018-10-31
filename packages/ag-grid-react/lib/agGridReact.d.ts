@@ -1,4 +1,4 @@
-// ag-grid-react v19.0.0
+// ag-grid-react v19.1.1
 import * as React from "react";
 import * as AgGrid from "ag-grid-community";
 import { GridOptions } from "ag-grid-community";
@@ -25,3 +25,4 @@ export declare class AgGridReact extends React.Component<AgGridReactProps, {}> {
     areEquivalent(a: any, b: any): boolean;
     static areEquivalent(a: any, b: any): boolean;
 }
+//# sourceMappingURL=agGridReact.d.ts.map

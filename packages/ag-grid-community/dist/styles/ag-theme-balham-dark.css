@@ -447,11 +447,19 @@
     color: rgba(245, 245, 245, 0.64);
     font: 600 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; }
   .ag-theme-balham-dark .ag-header-row {
-    border-bottom: 1px solid #424242;
-    box-sizing: border-box; }
+    border-style: solid;
+    border-color: #424242;
+    box-sizing: border-box;
+    border-width: 0 0 1px; }
   .ag-theme-balham-dark .ag-row {
-    border-bottom: 1px solid #424242;
-    box-sizing: border-box; }
+    border-style: solid;
+    border-color: #424242;
+    box-sizing: border-box;
+    border-width: 0; }
+    .ag-theme-balham-dark .ag-row:not(.ag-row-first) {
+      border-width: 1px 0 0; }
+    .ag-theme-balham-dark .ag-row.ag-row-last {
+      border-bottom-width: 1px; }
   .ag-theme-balham-dark .ag-row-odd {
     background-color: #262c2e; }
   .ag-theme-balham-dark .ag-row-even {
@@ -1770,9 +1778,9 @@
   .ag-theme-balham-dark .ag-column-drop-horizontal.ag-column-drop.ag-width-half:first-child {
     border-right: 0; }
   .ag-theme-balham-dark .ag-row {
-    border-bottom-color: #5c5c5c; }
+    border-color: #5c5c5c; }
   .ag-theme-balham-dark .ag-row-selected {
-    border-bottom-color: #005880; }
+    border-color: #005880; }
   .ag-theme-balham-dark .ag-row-drag {
     background-position-y: center; }
   .ag-theme-balham-dark .ag-column-drag {
@@ -1901,3 +1909,4 @@
     background: rgba(48, 46, 46, 0.3); }
   .ag-theme-balham-dark .ag-filter-toolpanel-body {
     background-color: #2d3436; }
+

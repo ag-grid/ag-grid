@@ -35,6 +35,7 @@
         "typedef-whitespace": false,
         "comment-format": false,
         "no-console": [true, "log"],
+        "no-bitwise": false,
         "max-classes-per-file": false,
         "member-access": false
     },

@@ -1,9 +1,12 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -82,7 +85,25 @@ var ServerSideRowModel = /** @class */ (function (_super) {
             return;
         }
         // every other customer can continue as normal and have it working!!!
-        this.reset();
+        // check if anything pertaining to fetching data has changed, and if it has, reset, but if
+        // it has not, don't reset
+        var resetRequired;
+        if (!this.cacheParams) {
+            resetRequired = true;
+        }
+        else {
+            var rowGroupColumnVos = this.toValueObjects(this.columnController.getRowGroupColumns());
+            var valueColumnVos = this.toValueObjects(this.columnController.getValueColumns());
+            var pivotColumnVos = this.toValueObjects(this.columnController.getPivotColumns());
+            var sortModelDifferent = !ag_grid_community_1._.jsonEquals(this.cacheParams.sortModel, this.sortController.getSortModel());
+            var rowGroupDifferent = !ag_grid_community_1._.jsonEquals(this.cacheParams.rowGroupCols, rowGroupColumnVos);
+            var pivotDifferent = !ag_grid_community_1._.jsonEquals(this.cacheParams.pivotCols, pivotColumnVos);
+            var valuesDifferent = !ag_grid_community_1._.jsonEquals(this.cacheParams.valueCols, valueColumnVos);
+            resetRequired = sortModelDifferent || rowGroupDifferent || pivotDifferent || valuesDifferent;
+        }
+        if (resetRequired) {
+            this.reset();
+        }
     };
     ServerSideRowModel.prototype.onFilterChanged = function () {
         this.reset();
@@ -369,7 +390,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         return false;
     };
     ServerSideRowModel.prototype.isRowsToRender = function () {
-        return this.getRowCount() > 0;
+        return this.cacheExists() && this.getRowCount() > 0;
     };
     ServerSideRowModel.prototype.getType = function () {
         return ag_grid_community_1.Constants.ROW_MODEL_TYPE_SERVER_SIDE;

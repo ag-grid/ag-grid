@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 import { ICellEditor, Component, Context, CellRendererService, IRichCellEditorParams } from "ag-grid-community";
 export declare class RichSelectCellEditor extends Component implements ICellEditor {
     private static TEMPLATE;
@@ -24,3 +24,4 @@ export declare class RichSelectCellEditor extends Component implements ICellEdit
     getValue(): any;
     isPopup(): boolean;
 }
+//# sourceMappingURL=richSelectCellEditor.d.ts.map

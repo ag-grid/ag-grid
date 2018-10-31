@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -48,6 +48,9 @@ var ViewportRowModel = /** @class */ (function () {
         }
     };
     ViewportRowModel.prototype.calculateLastRow = function (lastRenderedRow) {
+        if (lastRenderedRow === -1) {
+            return lastRenderedRow;
+        }
         var bufferSize = this.gridOptionsWrapper.getViewportRowModelBufferSize();
         var pageSize = this.gridOptionsWrapper.getViewportRowModelPageSize();
         var afterBuffer = lastRenderedRow + bufferSize;

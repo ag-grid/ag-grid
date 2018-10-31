@@ -259,7 +259,7 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
                 dateComponent.eDateInput.disabled = true;
             } else {
                 dateComponent.eDateInput.title = '';
-                dateComponent.eDateInput.disabled = true;
+                dateComponent.eDateInput.disabled = false;
             }
         }
     }

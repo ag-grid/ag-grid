@@ -204,7 +204,6 @@
     border-radius: 3px;
     padding: 10px;
     margin-top: 10px;
-/ / transition: all .3 s ease-in-out;
 }
 
 .docsMenu-header h4 {
@@ -515,8 +514,7 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
 
 .cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
     margin-top: 5px !important;
-    padding: 5px 27px 6px 27px;
-!important;
+    padding: 5px 27px 6px 27px !important;
 }
 
 /*

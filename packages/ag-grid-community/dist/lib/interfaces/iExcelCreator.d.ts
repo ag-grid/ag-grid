@@ -1,7 +1,8 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ExportParams } from "../exporter/exportParams";
+import { XmlElement } from '../exporter/xmlFactory';
 export interface ExcelWorksheet {
     name: string;
     table: ExcelTable;
@@ -11,21 +12,42 @@ export interface ExcelTable {
     rows: ExcelRow[];
 }
 export interface ExcelColumn {
+    min?: number;
+    max?: number;
     width: number;
+    s?: number;
+    hidden?: boolean;
+    bestFit?: boolean;
 }
 export interface ExcelRow {
+    index?: number;
+    collapsed?: boolean;
+    hidden?: boolean;
+    height?: number;
+    outlineLevel?: number;
+    s?: number;
     cells: ExcelCell[];
 }
 export interface ExcelCell {
+    ref?: string;
     styleId: string;
     data: ExcelData;
     mergeAcross?: number;
 }
 export interface ExcelData {
-    type: ExcelDataType;
+    type: ExcelDataType | ExcelOOXMLDataType;
     value: string;
 }
-export declare type ExcelDataType = "String" | "Number" | "Boolean" | "DateTime" | "Error";
+export declare type ExcelDataType = 'String' | "Number" | "Boolean" | "DateTime" | "Error";
+export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
+    sheetName?: string;
+    suppressTextAsCDATA?: boolean;
+    exportMode?: "xlsx" | "xml";
+}
+export interface IExcelCreator {
+    exportDataAsExcel(params?: ExcelExportParams): void;
+    getDataAsExcelXml(params?: ExcelExportParams): string;
+}
 export interface ExcelStyle {
     id?: string;
     name?: string;
@@ -84,11 +106,23 @@ export interface ExcelInterior {
     pattern: string;
     patternColor: string;
 }
-export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
-    sheetName?: string;
-    suppressTextAsCDATA?: boolean;
+export interface ExcelXMLTemplate {
+    getTemplate(styleProperties?: ExcelStyle | ExcelWorksheet | ExcelColumn | ExcelRow | ExcelCell): XmlElement;
 }
-export interface IExcelCreator {
-    exportDataAsExcel(params?: ExcelExportParams): void;
-    getDataAsExcelXml(params?: ExcelExportParams): string;
+export interface ExcelContentType {
+    name: 'Default' | 'Override';
+    ContentType: string;
+    Extension?: string;
+    PartName?: string;
 }
+export declare type ExcelOOXMLDataType = 'str' | 's' | 'inlineStr' | 'n' | 'b' | 'd' | 'e';
+export interface ExcelOOXMLTemplate {
+    getTemplate(config?: any, idx?: number): XmlElement;
+    convertType?(type: string): string;
+}
+export interface ExcelRelationship {
+    Id: string;
+    Type: string;
+    Target: string;
+}
+//# sourceMappingURL=iExcelCreator.d.ts.map

@@ -36,21 +36,20 @@ export enum RegisteredComponentSource {
  * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
  */
 export interface RegisteredComponent<A extends IComponent<any> & B, B> {
-    component: RegisteredComponentInput<A, B>,
-    type: ComponentType,
-    source: RegisteredComponentSource
+    component: RegisteredComponentInput<A, B>;
+    type: ComponentType;
+    source: RegisteredComponentSource;
 }
 
 export type RegisteredComponentInput<A extends IComponent<any> & B, B> =
     AgGridRegisteredComponentInput<A>
     | { new(): B };
-export type AgGridRegisteredComponentInput<A extends IComponent<any>> = AgGridComponentFunctionInput | { new(): A }
+export type AgGridRegisteredComponentInput<A extends IComponent<any>> = AgGridComponentFunctionInput | { new(): A };
 export type AgGridComponentFunctionInput = (params: any) => string | HTMLElement ;
 
-
 export interface DeprecatedComponentName {
-    propertyHolder: string,
-    newComponentName: string
+    propertyHolder: string;
+    newComponentName: string;
 }
 
 @Bean('componentProvider')
@@ -118,7 +117,6 @@ export class ComponentProvider {
             newComponentName: 'agDateColumnFilter',
             propertyHolder: 'filter'
         },
-
 
         group: {
             newComponentName: 'agGroupCellRenderer',
@@ -217,7 +215,6 @@ export class ComponentProvider {
         this.frameworkComponents[name] = component;
     }
 
-
     /**
      * B the business interface (ie IHeader)
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
@@ -245,7 +242,7 @@ export class ComponentProvider {
                     component: <{ new(): A }>this.agGridDefaults[name],
                     source: RegisteredComponentSource.DEFAULT
                 } :
-                null
+                null;
         }
 
         if (Object.keys(this.agGridDefaults).indexOf(name) < 0) {

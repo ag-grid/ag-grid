@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroup } from "../entities/columnGroup";
@@ -26,7 +26,7 @@ export interface ColumnState {
 export declare class ColumnController {
     private gridOptionsWrapper;
     private expressionService;
-    private balancedColumnTreeBuilder;
+    private columnFactory;
     private displayedGroupCreator;
     private autoWidthCalculator;
     private eventService;
@@ -38,7 +38,7 @@ export declare class ColumnController {
     private valueCache;
     private columnApi;
     private gridApi;
-    private primaryBalancedTree;
+    private primaryColumnTree;
     private primaryHeaderRowCount;
     private primaryColumns;
     private secondaryBalancedTree;
@@ -84,7 +84,10 @@ export declare class ColumnController {
     private bodyWidthDirty;
     private viewportLeft;
     private viewportRight;
+    private columnDefs;
     init(): void;
+    setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source?: ColumnEventType): void;
+    private beforeChangingColumns;
     isAutoRowHeightActive(): boolean;
     getAllAutoRowHeightCols(): Column[];
     private setVirtualViewportLeftAndRight;
@@ -166,6 +169,7 @@ export declare class ColumnController {
     getDisplayedRightColumns(): Column[];
     getDisplayedColumns(type: string): Column[];
     getAllPrimaryColumns(): Column[];
+    getSecondaryColumns(): Column[];
     getAllColumnsForQuickFilter(): Column[];
     getAllGridColumns(): Column[];
     isEmpty(): boolean;
@@ -208,9 +212,10 @@ export declare class ColumnController {
     private getHeaderName;
     private wrapHeaderNameWithAggFunc;
     getColumnGroup(colId: string | ColumnGroup, instanceId?: number): ColumnGroup;
-    setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source?: ColumnEventType): void;
     isReady(): boolean;
+    private createValueColumns;
     private extractRowGroupColumns;
+    private extractColumns;
     private extractPivotColumns;
     resetColumnGroupState(source?: ColumnEventType): void;
     getColumnGroupState(): {
@@ -255,7 +260,7 @@ export declare class ColumnController {
     private updateOpenClosedVisibilityInColumnGroups;
     getGroupAutoColumns(): Column[];
     private createGroupAutoColumnsIfNeeded;
-    private createValueColumns;
     private getWidthOfColsInList;
     getGridBalancedTree(): OriginalColumnGroupChild[];
 }
+//# sourceMappingURL=columnController.d.ts.map

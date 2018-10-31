@@ -24,7 +24,7 @@ var columnDefs = [
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: function (params) {
             var selectedCountry = params.data.country;
-            var allowedCities = countyToCityMap[selectedCountry];
+            var allowedCities = this.countyToCityMap(selectedCountry);
             return {
                 values: allowedCities,
                 formatValue: function (value) {
@@ -225,10 +225,14 @@ var rowData = [
     },
 ];
 
-var countyToCityMap = {
-    'Ireland': ['Dublin', 'Cork', 'Galway'],
-    'USA': ['New York', 'Los Angeles', 'Chicago', 'Houston']
-};
+function countyToCityMap(match) {
+    var map = {
+        'Ireland': ['Dublin', 'Cork', 'Galway'],
+        'USA': ['New York', 'Los Angeles', 'Chicago', 'Houston']
+    };
+
+    return map[match];
+}
 
 var gridOptions = {
     components: {
@@ -253,7 +257,7 @@ function onCellValueChanged(params) {
         var selectedCountry = params.data.country;
         var selectedCity = params.data.city;
 
-        var allowedCities = countyToCityMap[selectedCountry];
+        var allowedCities = this.countyToCityMap(selectedCountry);
         var cityMismatch = allowedCities.indexOf(selectedCity) < 0;
 
         if (cityMismatch) {

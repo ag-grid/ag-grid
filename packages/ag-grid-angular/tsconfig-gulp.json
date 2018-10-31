@@ -15,8 +15,10 @@
     "noStrictGenericChecks":true
   },
   "include": ["src/**/*"],
-  "exclude":["node_modules/**/*",
-    "typings"],
+  "exclude":[
+    "node_modules",
+    "typings"
+  ],
   "angularCompilerOptions": {
     "genDir": "aot"
   }

@@ -10,7 +10,7 @@ import {ValueService} from "./valueService/valueService";
 import {EventService} from "./eventService";
 import {GridPanel} from "./gridPanel/gridPanel";
 import {GridApi} from "./gridApi";
-import {BalancedColumnTreeBuilder} from "./columnController/balancedColumnTreeBuilder";
+import {ColumnFactory} from "./columnController/columnFactory";
 import {DisplayedGroupCreator} from "./columnController/displayedGroupCreator";
 import {ExpressionService} from "./valueService/expressionService";
 import {TemplateService} from "./templateService";
@@ -44,8 +44,8 @@ import {AgCheckbox} from "./widgets/agCheckbox";
 import {BaseFrameworkFactory} from "./baseFrameworkFactory";
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {ScrollVisibleService} from "./gridPanel/scrollVisibleService";
-import {Downloader} from "./downloader";
-import {XmlFactory} from "./xmlFactory";
+import {Downloader} from "./exporter/downloader";
+import {XmlFactory} from "./exporter/xmlFactory";
 import {GridSerializer} from "./exporter/gridSerializer";
 import {StylingService} from "./styling/stylingService";
 import {ColumnHoverService} from "./rendering/columnHoverService";
@@ -75,6 +75,7 @@ import {SelectableService} from "./rowNodes/selectableService";
 import {AutoHeightCalculator} from "./rendering/autoHeightCalculator";
 import {PaginationComp} from "./rowModels/pagination/paginationComp";
 import {ResizeObserverService} from "./misc/resizeObserverService";
+import {ZipContainer} from "./exporter/files/zip/zipContainer";
 
 export interface GridParams {
     // used by Web Components
@@ -100,6 +101,7 @@ export class Grid {
     private static frameworkBeans: any[];
     private static enterpriseComponents: any[];
     private static enterpriseDefaultComponents: any[];
+    protected logger: Logger;
 
     // the default is ClientSideRowModel, which is also used for pagination.
     // the enterprise adds viewport to this list.
@@ -190,29 +192,26 @@ export class Grid {
                 CellRendererFactory, HorizontalResizeService, PinnedRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
                 FilterManager, ColumnController, PaginationProxy, RowRenderer, ExpressionService,
-                BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService,
+                ColumnFactory, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService,
                 NavigationService, PopupService, ValueCache, ValueService, AlignedGridsService,
                 LoggerFactory, ColumnUtils, AutoWidthCalculator, PopupService, GridCore, StandardMenuFactory,
                 DragAndDropService, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService,
                 CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService,
                 ColumnHoverService, ColumnAnimationService, SortService, SelectableService, AutoGroupColService,
-                ImmutableService, ChangeDetectionService, Environment, AnimationFrameService, SortController],
+                ImmutableService, ChangeDetectionService, Environment, AnimationFrameService, SortController, ZipContainer],
             components: components,
             enterpriseDefaultComponents: Grid.enterpriseDefaultComponents,
             debug: !!gridOptions.debug
         };
 
-        let isLoggingFunc = ()=> contextParams.debug;
-        this.context = new Context(contextParams, new Logger('Context', isLoggingFunc));
+        this.logger = new Logger('ag-Grid', () => gridOptions.debug);
+        const contextLogger = new Logger('Context', () => contextParams.debug);
+        this.context = new Context(contextParams, contextLogger);
 
         this.setColumnsAndData();
-
         this.dispatchGridReadyEvent(gridOptions);
-
-        if (gridOptions.debug) {
-            console.log('ag-Grid -> initialised successfully, enterprise = ' + enterprise);
-        }
+        this.logger.log(`initialised successfully, enterprise = ${enterprise}`);
     }
 
     private setColumnsAndData(): void {

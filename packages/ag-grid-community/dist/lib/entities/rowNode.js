@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33,6 +33,8 @@ var RowNode = /** @class */ (function () {
         this.childrenMapped = {};
         /** True by default - can be overridden via gridOptions.isRowSelectable(rowNode) */
         this.selectable = true;
+        /** True when nodes with the same id are being removed and added as part of the same batch transaction */
+        this.alreadyRendered = false;
         this.selected = false;
     }
     RowNode.prototype.setData = function (data) {
@@ -404,7 +406,7 @@ var RowNode = /** @class */ (function () {
             return 0;
         }
         if (this.rowPinned) {
-            console.log('ag-Grid: cannot select pinned rows');
+            console.warn('ag-Grid: cannot select pinned rows');
             return 0;
         }
         // if we are a footer, we don't do selection, just pass the info

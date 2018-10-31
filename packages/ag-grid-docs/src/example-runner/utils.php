@@ -268,10 +268,13 @@ function renderStyles($styles)
     }
 }
 
-// helpers in the example render, shared between angular and react
-function renderNonGeneratedScripts($scripts)
+// helpers in the example render, shared between angular, react & vue
+function renderNonGeneratedScripts($scripts, $skip_main = FALSE)
 {
     foreach ($scripts as $script) {
+        if($script === 'main.js' && $skip_main === TRUE) {
+            continue;
+        }
         echo '    <script src="' . $script . '"></script>' . "\n";
     }
 }

@@ -148,11 +148,12 @@ export class CellComp extends Component {
         // hey, this looks like React!!!
         templateParts.push(`<div`);
         templateParts.push(` tabindex="-1"`);
+        templateParts.push(` unselectable="on"`); // THIS IS FOR IE only so the text is not seleragle with mouse drage
         templateParts.push(` role="gridcell"`);
         templateParts.push(` comp-id="${this.getCompId()}" `);
         templateParts.push(` col-id="${colIdSanitised}"`);
         templateParts.push(` class="${cssClasses.join(' ')}"`);
-        templateParts.push(tooltipSanitised ? ` title="${tooltipSanitised}"` : ``);
+        templateParts.push(_.exists(tooltipSanitised) ? ` title="${tooltipSanitised}"` : ``);
         templateParts.push(` style="width: ${width}px; left: ${left}px; ${stylesFromColDef} ${stylesForRowSpanning}" >`);
         templateParts.push(wrapperStartTemplate);
         templateParts.push(valueSanitised);
@@ -1385,16 +1386,14 @@ export class CellComp extends Component {
         // if it's a right click, then if the cell is already in range,
         // don't change the range, however if the cell is not in a range,
         // we set a new range
-        if (this.beans.rangeController) {
+        let leftMouseButtonClick = _.isLeftClick(mouseEvent);
+        if (leftMouseButtonClick && this.beans.rangeController) {
             let thisCell = this.gridCell;
             if (mouseEvent.shiftKey) {
                 this.beans.rangeController.extendRangeToCell(thisCell);
             } else {
-                let cellAlreadyInRange = this.beans.rangeController.isCellInAnyRange(thisCell);
-                if (!cellAlreadyInRange) {
-                    let ctrlKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
-                    this.beans.rangeController.setRangeToCell(thisCell, ctrlKeyPressed);
-                }
+                let ctrlKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
+                this.beans.rangeController.setRangeToCell(thisCell, ctrlKeyPressed);
             }
         }
 

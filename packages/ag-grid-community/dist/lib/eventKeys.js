@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,6 +17,8 @@ var Events = /** @class */ (function () {
     Events.EVENT_COLUMN_PIVOT_MODE_CHANGED = 'columnPivotModeChanged';
     /** A row group column was added, removed or order changed. */
     Events.EVENT_COLUMN_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
+    /** expandAll / collapseAll was called from the api. */
+    Events.EVENT_EXPAND_COLLAPSE_ALL = 'expandOrCollapseAll';
     /** A pivot column was added, removed or order changed. */
     Events.EVENT_COLUMN_PIVOT_CHANGED = 'columnPivotChanged';
     /** The list of grid columns has changed. */

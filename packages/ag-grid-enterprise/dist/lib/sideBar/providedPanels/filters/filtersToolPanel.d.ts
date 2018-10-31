@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 import { Component, IToolPanelComp } from "ag-grid-community";
 export declare class FiltersToolPanel extends Component implements IToolPanelComp {
     private static TEMPLATE;
@@ -22,3 +22,4 @@ export declare class FiltersToolPanel extends Component implements IToolPanelCom
     private recursivelyAddComps;
     private recursivelyAddColumnComps;
 }
+//# sourceMappingURL=filtersToolPanel.d.ts.map

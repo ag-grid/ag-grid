@@ -236,7 +236,7 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
     protected getBlockIdsSorted(): number[] {
         // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
         let numberComparator = (a: number, b: number) => a - b; // default comparator for array is string comparison
-        let blockIds = Object.keys(this.blocks).map(idStr => parseInt(idStr)).sort(numberComparator);
+        let blockIds = Object.keys(this.blocks).map(idStr => parseInt(idStr, 10)).sort(numberComparator);
         return blockIds;
     }
 

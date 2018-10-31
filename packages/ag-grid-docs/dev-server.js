@@ -13,7 +13,6 @@ const generateExamples = require('./example-generator');
 
 const lnk = require('lnk').sync;
 const mkdirp = require('mkdir-p').sync;
-const colors = require('colors');
 
 const EXPRESS_PORT = 8080;
 const PHP_PORT = 8888;
@@ -163,7 +162,7 @@ function watchAndGenerateExamples() {
     chokidar.watch('./src/*/*/*.{html,css,js}').on('change', callback);
 }
 
-module.exports = callback => {
+module.exports = () => {
     const app = express();
 
     // necessary for plunkers
@@ -196,3 +195,12 @@ module.exports = callback => {
         console.log(`ag-Grid dev server available on http://${HOST}:${EXPRESS_PORT}`);
     });
 };
+
+//     node dev-server.js generate-examples [src directory]
+// eg: node dev-server.js generate-examples javascript-grid-accessing-data
+console.log(process.argv);
+if(process.argv.length >= 3 && process.argv[2] === 'generate-examples') {
+    console.log('regenerating examples...');
+    generateExamples(() => console.log('generation done.'), process.argv[3]);
+}
+

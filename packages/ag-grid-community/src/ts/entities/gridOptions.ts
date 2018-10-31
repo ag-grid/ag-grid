@@ -64,7 +64,9 @@ import {
     SortChangedEvent,
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
-    VirtualRowRemovedEvent
+    VirtualRowRemovedEvent,
+    FirstDataRenderedEvent,
+    ExpandCollapseAllEvent
 } from "../events";
 import {IComponent} from "../interfaces/iComponent";
 import {AgGridRegisteredComponentInput} from "../components/framework/componentProvider";
@@ -221,7 +223,7 @@ export interface GridOptions {
 
     statusBar? : {
         statusPanels: StatusPanelDef[]
-    }
+    };
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
@@ -318,7 +320,7 @@ export interface GridOptions {
     // callbacks
     paginationNumberFormatter?: (params: PaginationNumberFormatterParams)=>string;
     postProcessPopup?: (params: PostProcessPopupParams)=>void;
-    frameworkComponents?: {[p: string]: {new(): any}};
+    frameworkComponents?: {[p: string]: {new(): any}} | any;
     components?: {[p: string]: AgGridRegisteredComponentInput<IComponent<any>>};
     dateComponent?: {new(): IDateComp};
     dateComponentFramework?: any;
@@ -331,7 +333,7 @@ export interface GridOptions {
     doesExternalFilterPass?(node: RowNode): boolean;
     getRowStyle?: Function;
     getRowClass?: (params: any) => (string | string[]);
-    rowClassRules?: { [cssClassName: string]: (Function | string) };
+    rowClassRules?: { [cssClassName: string]: (((params: any) => boolean) | string) };
     getRowHeight?: Function;
     sendToClipboard?: (params: any)=>void;
     processDataFromClipboard?: (params: ProcessDataFromClipboardParams)=>string[][];
@@ -432,6 +434,8 @@ export interface GridOptions {
     onPasteStart?(event: PasteStartEvent): void;
     onPasteEnd?(event: PasteEndEvent): void;
     onBodyScroll?(event: BodyScrollEvent): void;
+    onFirstDataRendered?(event: FirstDataRenderedEvent): void;
+    onExpandOrCollapseAll?(event: ExpandCollapseAllEvent): void;
     // deprecated
     onGridSizeChanged?(event: any): void;
 

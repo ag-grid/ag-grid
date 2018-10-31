@@ -130,7 +130,7 @@ export class ComponentRecipes {
 
         let defaultFloatingFilterType: string;
 
-        if (!colDef.filter){
+        if (!colDef.filter && !colDef.filterFramework){
             defaultFloatingFilterType = this.gridOptionsWrapper.isEnterprise() ? 'agSetColumnFloatingFilter' : 'agTextColumnFloatingFilter';
         } else if (typeof colDef.filter === 'string' && Object.keys(ComponentRecipes.filterToFloatingFilterNames).indexOf(colDef.filter) > -1){
             defaultFloatingFilterType = ComponentRecipes.filterToFloatingFilterNames[colDef.filter]

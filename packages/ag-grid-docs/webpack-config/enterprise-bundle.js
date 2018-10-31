@@ -5,6 +5,7 @@ const webpack = require('webpack');
 const path = require('path');
 
 module.exports = merge(common, {
+    mode: 'development',
     entry: {
         'ag-grid-enterprise': './src/_assets/ts/ag-grid-enterprise.ts'
     },

@@ -149,12 +149,6 @@
     display: inline-block;
 }
 
-h3 {
-}
-
-h4 {
-}
-
 .horizontal-rule {
     margin-top: 80px;
     margin-bottom: 80px;
@@ -1563,9 +1557,6 @@ snippet pre, snippet code {
 }
 
 /* used for selection */
-.top-level-pane {
-}
-
 .clearable {
     background: #fff url(data:image/gif;base64,R0lGODlhBwAHAIAAAP///5KSkiH5BAAAAAAALAAAAAAHAAcAAAIMTICmsGrIXnLxuDMLADs=) no-repeat right -10px center;
     border: 1px solid #999;

@@ -91,6 +91,9 @@ export class RowComp extends Component {
     private fullWidthRowComponentLeft: ICellRendererComp;
     private fullWidthRowComponentRight: ICellRendererComp;
 
+    private firstRowOnPage: boolean;
+    private lastRowOnPage: boolean;
+
     private active = true;
 
     private fullWidthRow: boolean;
@@ -459,6 +462,7 @@ export class RowComp extends Component {
         this.addDestroyableEventListener(eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocusChanged.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
+        this.addDestroyableEventListener(eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
     }
 
     // when grid columns change, then all cells should be cleaned out,
@@ -789,9 +793,15 @@ export class RowComp extends Component {
 
         let shiftKeyPressed = mouseEvent.shiftKey;
 
-        // we do not allow selecting groups by clicking (as the click here expands the group)
+        // we do not allow selecting groups by clicking (as the click here expands the group), or if it's a detail row,
         // so return if it's a group row
         if (this.rowNode.group) {
+            return;
+        }
+
+        // this is needed so we don't unselect other rows when we click this row, eg if this row is not selectable,
+        // and we click it, the selection should not change (ie any currently selected row should stay selected)
+        if (!this.rowNode.selectable) {
             return;
         }
 
@@ -959,7 +969,40 @@ export class RowComp extends Component {
         // we use absolute position unless we are doing print layout
         classes.push(this.printLayout ? 'ag-row-position-relative' : 'ag-row-position-absolute');
 
+        this.firstRowOnPage = this.isFirstRowOnPage();
+        this.lastRowOnPage = this.isLastRowOnPage();
+
+        if (this.firstRowOnPage) {
+            classes.push('ag-row-first');
+        }
+
+        if (this.lastRowOnPage) {
+            classes.push('ag-row-last');
+        }
+
         return classes;
+    }
+
+    private isFirstRowOnPage(): boolean {
+        return this.rowNode.rowIndex===this.beans.paginationProxy.getPageFirstRow();
+    }
+
+    private isLastRowOnPage(): boolean {
+        return this.rowNode.rowIndex===this.beans.paginationProxy.getPageLastRow();
+    }
+
+    private onModelUpdated(): void {
+        let newFirst = this.isFirstRowOnPage();
+        let newLast = this.isLastRowOnPage();
+
+        if (this.firstRowOnPage!==newFirst) {
+            this.firstRowOnPage = newFirst;
+            this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-first', newFirst) );
+        }
+        if (this.lastRowOnPage!==newLast) {
+            this.lastRowOnPage = newLast;
+            this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-last', newLast) );
+        }
     }
 
     private preProcessRowClassRules(): string[] {
@@ -1063,11 +1106,11 @@ export class RowComp extends Component {
     private processClassesFromGridOptions(): string[] {
         let res: string[] = [];
 
-        let process = (rowClass: string | string[]) => {
-            if (typeof rowClass === 'string') {
-                res.push(rowClass);
-            } else if (Array.isArray(rowClass)) {
-                rowClass.forEach( e => res.push(e) );
+        let process = (rowCls: string | string[]) => {
+            if (typeof rowCls === 'string') {
+                res.push(rowCls);
+            } else if (Array.isArray(rowCls)) {
+                rowCls.forEach( e => res.push(e) );
             }
         };
 
@@ -1114,7 +1157,7 @@ export class RowComp extends Component {
         let rowStyle = this.beans.gridOptionsWrapper.getRowStyle();
 
         if (rowStyle && typeof rowStyle === 'function') {
-            console.log('ag-Grid: rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead');
+            console.warn('ag-Grid: rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead');
             return;
         }
 

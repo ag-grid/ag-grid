@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var filtersToolPanel_1 = require("./dist/lib/sideBar/providedPanels/filters/filtersToolPanel");
@@ -22,6 +22,7 @@ var pivotCompFactory_1 = require("./dist/lib/pivotCompFactory");
 var menuItemMapper_1 = require("./dist/lib/menu/menuItemMapper");
 var excelCreator_1 = require("./dist/lib/exporter/excelCreator");
 var excelXmlFactory_1 = require("./dist/lib/exporter/excelXmlFactory");
+var excelXlsxFactory_1 = require("./dist/lib/exporter/excelXlsxFactory");
 var serverSideRowModel_1 = require("./dist/lib/rowModels/serverSide/serverSideRowModel");
 var horizontalResizeComp_1 = require("./dist/lib/sideBar/horizontalResizeComp");
 var columnToolPanel_1 = require("./dist/lib/sideBar/providedPanels/columns/columnToolPanel");
@@ -105,8 +106,10 @@ var excelCreator_2 = require("./dist/lib/exporter/excelCreator");
 exports.ExcelCreator = excelCreator_2.ExcelCreator;
 var excelXmlFactory_2 = require("./dist/lib/exporter/excelXmlFactory");
 exports.ExcelXmlFactory = excelXmlFactory_2.ExcelXmlFactory;
+var excelXlsxFactory_2 = require("./dist/lib/exporter/excelXlsxFactory");
+exports.ExcelXlsxFactory = excelXlsxFactory_2.ExcelXlsxFactory;
 var rowModelTypes = { viewport: viewportRowModel_1.ViewportRowModel, serverSide: serverSideRowModel_1.ServerSideRowModel };
-ag_grid_community_1.Grid.setEnterpriseBeans([enterpriseMenu_1.EnterpriseMenuFactory, excelCreator_1.ExcelCreator, excelXmlFactory_1.ExcelXmlFactory, rowGroupCompFactory_1.RowGroupCompFactory,
+ag_grid_community_1.Grid.setEnterpriseBeans([enterpriseMenu_1.EnterpriseMenuFactory, excelCreator_1.ExcelCreator, excelXmlFactory_1.ExcelXmlFactory, excelXlsxFactory_1.ExcelXlsxFactory, rowGroupCompFactory_1.RowGroupCompFactory,
     pivotCompFactory_1.PivotCompFactory, rangeController_1.RangeController, clipboardService_1.ClipboardService, pivotStage_1.PivotStage, pivotColDefService_1.PivotColDefService,
     contextMenu_1.ContextMenuFactory, groupStage_1.GroupStage, aggregationStage_1.AggregationStage, enterpriseBoot_1.EnterpriseBoot, aggFuncService_1.AggFuncService, licenseManager_1.LicenseManager, md5_1.MD5,
     menuItemMapper_1.MenuItemMapper, statusBarService_1.StatusBarService], rowModelTypes);

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 import { Component } from "ag-grid-community/main";
 import { ToolPanelColumnCompParams } from "../../columnToolPanel";
 export declare enum SELECTED_STATE {
@@ -35,3 +35,4 @@ export declare class PrimaryColsHeaderPanel extends Component {
     setExpandState(state: SELECTED_STATE): void;
     private setColumnsCheckedState;
 }
+//# sourceMappingURL=primaryColsHeaderPanel.d.ts.map

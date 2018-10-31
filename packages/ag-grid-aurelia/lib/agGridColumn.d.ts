@@ -1,4 +1,4 @@
-// ag-grid-aurelia v19.0.0
+// ag-grid-aurelia v19.1.1
 import { ColDef } from "ag-grid-community";
 import { AgCellTemplate, AgEditorTemplate, AgFilterTemplate, AgHeaderGroupTemplate, AgHeaderTemplate, AgPinnedRowTemplate } from "./agTemplate";
 export declare class AgGridColumn {
@@ -16,3 +16,4 @@ export declare class AgGridColumn {
     private static getChildColDefs;
     private createColDefFromGridColumn;
 }
+//# sourceMappingURL=agGridColumn.d.ts.map

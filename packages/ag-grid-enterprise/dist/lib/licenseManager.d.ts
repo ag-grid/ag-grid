@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 export declare class LicenseManager {
     private static RELEASE_INFORMATION;
     private static licenseKey;
@@ -18,3 +18,4 @@ export declare class LicenseManager {
     private static utf8_decode;
     static setLicenseKey(licenseKey: string): void;
 }
+//# sourceMappingURL=licenseManager.d.ts.map

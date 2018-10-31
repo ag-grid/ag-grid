@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 import { BeanStub, IServerSideDatasource, IServerSideRowModel, RowNode, RowBounds } from "ag-grid-community";
 export declare class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
     private gridOptionsWrapper;
@@ -51,7 +51,7 @@ export declare class ServerSideRowModel extends BeanStub implements IServerSideR
     isEmpty(): boolean;
     isRowsToRender(): boolean;
     getType(): string;
-    forEachNode(callback: (rowNode: RowNode) => void): void;
+    forEachNode(callback: (rowNode: RowNode, index: number) => void): void;
     private executeOnCache;
     purgeCache(route?: string[]): void;
     removeFromCache(route: string[], items: any[]): void;
@@ -64,3 +64,4 @@ export declare class ServerSideRowModel extends BeanStub implements IServerSideR
     private isSortingWithValueColumn;
     private cacheExists;
 }
+//# sourceMappingURL=serverSideRowModel.d.ts.map

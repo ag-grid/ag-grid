@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../entities/rowNode";
@@ -48,6 +48,8 @@ export declare class PopupService {
     private keepYWithinBounds;
     private keepXWithinBounds;
     addAsModalPopup(eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch): (event?: any) => void;
+    addPopup(modal: boolean, eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch): (event?: any) => void;
     private isEventFromCurrentPopup;
     private isEventSameChainAsOriginalEvent;
 }
+//# sourceMappingURL=popupService.d.ts.map

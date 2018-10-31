@@ -1,0 +1,11 @@
+.test-grid {
+    height: 1px;
+    min-height: 1px;
+    flex-grow: 1;
+}
+
+.test-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}

@@ -1,14 +1,13 @@
-.grid-wrapper {
+.test-container {
     height: 100%;
-    box-sizing: border-box;
-    padding-top: 90px;
+    display: flex;
+    flex-direction: column;
 }
-.button-bar {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    margin-left: 10px;
-    margin-top: 0px;
+
+.test-header {
+    padding: 4px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
 }
 
 .hidden {

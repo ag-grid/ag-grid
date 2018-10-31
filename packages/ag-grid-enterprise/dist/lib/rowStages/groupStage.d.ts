@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 import { IRowNodeStage, StageExecuteParams } from "ag-grid-community";
 export declare class GroupStage implements IRowNodeStage {
     private selectionController;
@@ -37,3 +37,4 @@ export declare class GroupStage implements IRowNodeStage {
     private getGroupInfoFromCallback;
     private getGroupInfoFromGroupColumns;
 }
+//# sourceMappingURL=groupStage.d.ts.map

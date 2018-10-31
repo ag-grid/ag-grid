@@ -77,7 +77,7 @@ export default class extends Component {
     render() {
         return (
             <div>
-                <div style={{height: '5%'}}>
+                <div className="test-header" style={{height: '5%'}}>
                     <label>
                         <input type="checkbox" onChange={this.onCbAthlete.bind(this)} checked={!this.state.columnDefs[0].hide} />Athlete
                     </label>

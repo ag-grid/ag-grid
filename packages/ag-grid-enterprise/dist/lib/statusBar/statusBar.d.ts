@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 import { Component } from 'ag-grid-community';
 export declare class StatusBar extends Component {
     private static TEMPLATE;
@@ -16,3 +16,4 @@ export declare class StatusBar extends Component {
     private postConstruct;
     private createAndRenderComponents;
 }
+//# sourceMappingURL=statusBar.d.ts.map

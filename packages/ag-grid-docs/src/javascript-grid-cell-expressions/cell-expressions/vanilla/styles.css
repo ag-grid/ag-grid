@@ -1,0 +1,7 @@
+.test-header {
+    padding: 4px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
+    height: 40px; 
+    box-sizing: border-box;
+}

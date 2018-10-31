@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IEventEmitter } from "../interfaces/iEventEmitter";
@@ -18,3 +18,4 @@ export declare class BeanStub implements IEventEmitter {
     isAlive(): boolean;
     addDestroyFunc(func: () => void): void;
 }
+//# sourceMappingURL=beanStub.d.ts.map

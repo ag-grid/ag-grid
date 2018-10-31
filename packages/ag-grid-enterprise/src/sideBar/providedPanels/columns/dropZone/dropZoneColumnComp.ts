@@ -22,8 +22,9 @@ import {
     GridApi,
     AgEvent,
     TapEvent,
-    RefSelector
-} from "ag-grid-community/main";
+    RefSelector,
+    _
+} from "ag-grid-community";
 import {AggFuncService} from "../../../../aggregation/aggFuncService";
 import {VirtualList} from "../../../../rendering/virtualList";
 
@@ -151,7 +152,8 @@ export class DropZoneColumnComp extends Component {
             displayValue = this.displayName;
         }
 
-        this.eText.innerHTML = displayValue;
+        let displayValueSanitised = _.escape(displayValue);
+        this.eText.innerHTML = displayValueSanitised;
     }
 
     private onShowAggFuncSelection(): void {

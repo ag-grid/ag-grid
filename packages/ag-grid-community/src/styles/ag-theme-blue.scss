@@ -5,7 +5,7 @@
 $icon-color: black !default;
 $alt-icon-color: white !default;
 $foreground-color: #222 !default;
-$secondary-foreground-color: rgba(white, $secondary-foreground-color-opacity) !default;
+$secondary-foreground-color: rgba($foreground-color, $secondary-foreground-color-opacity) !default;
 $disabled-foreground-color: rgba(#222, $disabled-foreground-color-opacity) !default;
 $menu-option-active-color: #c7c7c7 !default;
 
@@ -61,6 +61,7 @@ $params: (
     icon-size: $icon-size,
     header-icon-size: $header-icon-size,
     row-height: $row-height,
+    row-border-width: $row-border-width,
     header-height: $header-height,
     virtual-item-height: $virtual-item-height,
     rich-select-item-height: $row-height,

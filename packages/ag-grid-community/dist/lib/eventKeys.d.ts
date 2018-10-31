@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class Events {
@@ -10,6 +10,8 @@ export declare class Events {
     static EVENT_COLUMN_PIVOT_MODE_CHANGED: string;
     /** A row group column was added, removed or order changed. */
     static EVENT_COLUMN_ROW_GROUP_CHANGED: string;
+    /** expandAll / collapseAll was called from the api. */
+    static EVENT_EXPAND_COLLAPSE_ALL: string;
     /** A pivot column was added, removed or order changed. */
     static EVENT_COLUMN_PIVOT_CHANGED: string;
     /** The list of grid columns has changed. */
@@ -110,3 +112,4 @@ export declare class Events {
     static EVENT_COLUMN_VALUE_CHANGE_REQUEST: string;
     static EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST: string;
 }
+//# sourceMappingURL=eventKeys.d.ts.map

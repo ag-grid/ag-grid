@@ -9,14 +9,13 @@ import {SelectionController} from "../selectionController";
 import {ValueService} from "../valueService/valueService";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {
-    BaseExportParams,
     ExportParams,
     ProcessCellForExportParams,
     ProcessHeaderForExportParams,
     ShouldRowBeSkippedParams
 } from "./exportParams";
 import {DisplayedGroupCreator} from "../columnController/displayedGroupCreator";
-import {BalancedColumnTreeBuilder} from "../columnController/balancedColumnTreeBuilder";
+import {ColumnFactory} from "../columnController/columnFactory";
 import {GroupInstanceIdCreator} from "../columnController/groupInstanceIdCreator";
 import {ColumnGroupChild} from "../entities/columnGroupChild";
 import {ColumnGroup} from "../entities/columnGroup";
@@ -83,15 +82,34 @@ export interface RowSpanningAccumulator {
     onColumn(header: string, index: number, span:number):void;
 }
 
+export interface GridSerializingParams {
+    columnController: ColumnController;
+    valueService: ValueService;
+    gridOptionsWrapper: GridOptionsWrapper;
+    processCellCallback?: (params: ProcessCellForExportParams) => string;
+    processHeaderCallback?: (params: ProcessHeaderForExportParams) => string;
+    cellAndHeaderEscaper?: (rawValue:string) => string;
+}
+
 export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
-    constructor(
-        public columnController:ColumnController,
-        public valueService:ValueService,
-        public gridOptionsWrapper:GridOptionsWrapper,
-        public processCellCallback?:(params: ProcessCellForExportParams)=>string,
-        public processHeaderCallback?:(params: ProcessHeaderForExportParams)=>string,
-        public cellAndHeaderEscaper?:(rawValue:string)=>string
-    ) {}
+    public columnController: ColumnController;
+    public valueService:ValueService;
+    public gridOptionsWrapper:GridOptionsWrapper;
+    public processCellCallback?:(params: ProcessCellForExportParams)=>string;
+    public processHeaderCallback?:(params: ProcessHeaderForExportParams)=>string;
+    public cellAndHeaderEscaper?:(rawValue:string)=>string;
+
+    constructor(config: GridSerializingParams) {
+        const {columnController, valueService, gridOptionsWrapper, processCellCallback,
+            processHeaderCallback, cellAndHeaderEscaper} = config;
+
+        this.columnController = columnController;
+        this.valueService = valueService;
+        this.gridOptionsWrapper = gridOptionsWrapper;
+        this.processCellCallback = processCellCallback;
+        this.processHeaderCallback = processHeaderCallback;
+        this.cellAndHeaderEscaper = cellAndHeaderEscaper;
+    }
 
     abstract prepare(columnsToExport: Column[]) : void;
 
@@ -116,7 +134,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     }
 
     public extractRowCellValue(column: Column, index: number, type: string, node?:RowNode) {
-        let isRowGrouping = this.columnController.getRowGroupColumns().length > 0;
+        const isRowGrouping = this.columnController.getRowGroupColumns().length > 0;
 
         let valueForCell: any;
         if (node.group && isRowGrouping && index === 0) {
@@ -146,7 +164,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     }
 
     private createValueForGroupNode(node: RowNode): string {
-        let keys = [node.key];
+        const keys = [node.key];
         while (node.parent) {
             node = node.parent;
             keys.push(node.key);
@@ -154,7 +172,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         return keys.reverse().join(' -> ');
     }
 
-    private processCell(rowNode: RowNode, column: Column, value: any, processCellCallback:(params: ProcessCellForExportParams)=>string, type: string): any {
+    private processCell(rowNode: RowNode, column: Column, value: any, processCellCallback:(params: ProcessCellForExportParams) => string, type: string): any {
         if (processCellCallback) {
             return processCellCallback({
                 column: column,
@@ -178,34 +196,36 @@ export class GridSerializer {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('selectionController') private selectionController: SelectionController;
-    @Autowired('balancedColumnTreeBuilder') private balancedColumnTreeBuilder: BalancedColumnTreeBuilder;
+    @Autowired('columnFactory') private columnFactory: ColumnFactory;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     public serialize<T>(gridSerializingSession: GridSerializingSession<T>, params?: ExportParams<T>): string {
 
-        let dontSkipRows= (): boolean =>false;
+        const dontSkipRows= (): boolean =>false;
 
-        let skipGroups = params && params.skipGroups;
-        let skipHeader = params && params.skipHeader;
-        let columnGroups = params && params.columnGroups;
-        let skipFooters = params && params.skipFooters;
-        let skipPinnedTop = params && params.skipPinnedTop;
-        let skipPinnedBottom = params && params.skipPinnedBottom;
-        let includeCustomHeader = params && params.customHeader;
-        let includeCustomFooter = params && params.customFooter;
-        let allColumns = params && params.allColumns;
-        let onlySelected = params && params.onlySelected;
-        let columnKeys = params && params.columnKeys;
-        let onlySelectedAllPages = params && params.onlySelectedAllPages;
-        let rowSkipper:(params: ShouldRowBeSkippedParams)=> boolean = (params && params.shouldRowBeSkipped) || dontSkipRows;
-        let api:GridApi = this.gridOptionsWrapper.getApi();
-        let context:any = this.gridOptionsWrapper.getContext();
+        const skipGroups = params && params.skipGroups;
+        const skipHeader = params && params.skipHeader;
+        const columnGroups = params && params.columnGroups;
+        const skipFooters = params && params.skipFooters;
+        const skipPinnedTop = params && params.skipPinnedTop;
+        const skipPinnedBottom = params && params.skipPinnedBottom;
+        const includeCustomHeader = params && params.customHeader;
+        const includeCustomFooter = params && params.customFooter;
+        const allColumns = params && params.allColumns;
+        const onlySelected = params && params.onlySelected;
+        const columnKeys = params && params.columnKeys;
+        const onlySelectedAllPages = params && params.onlySelectedAllPages;
+        const rowSkipper:(params: ShouldRowBeSkippedParams)=> boolean = (params && params.shouldRowBeSkipped) || dontSkipRows;
+        const api:GridApi = this.gridOptionsWrapper.getApi();
+        const skipSingleChildrenGroup = this.gridOptionsWrapper.isGroupRemoveSingleChildren();
+        const skipLowestSingleChildrenGroup = this.gridOptionsWrapper.isGroupRemoveLowestSingleChildren();
+        const context:any = this.gridOptionsWrapper.getContext();
 
         // when in pivot mode, we always render cols on screen, never 'all columns'
-        let isPivotMode = this.columnController.isPivotMode();
-        let rowModelNormal = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
+        const isPivotMode = this.columnController.isPivotMode();
+        const rowModelNormal = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
 
-        let onlySelectedNonStandardModel = !rowModelNormal && onlySelected;
+        const onlySelectedNonStandardModel = !rowModelNormal && onlySelected;
 
         let columnsToExport: Column[];
 
@@ -234,8 +254,8 @@ export class GridSerializer {
 
         // first pass, put in the header names of the cols
         if (columnGroups) {
-            let groupInstanceIdCreator: GroupInstanceIdCreator = new GroupInstanceIdCreator();
-            let displayedGroups: ColumnGroupChild[] = this.displayedGroupCreator.createDisplayedGroups(
+            const groupInstanceIdCreator: GroupInstanceIdCreator = new GroupInstanceIdCreator();
+            const displayedGroups: ColumnGroupChild[] = this.displayedGroupCreator.createDisplayedGroups(
                 columnsToExport,
                 this.columnController.getGridBalancedTree(),
                 groupInstanceIdCreator,
@@ -245,7 +265,7 @@ export class GridSerializer {
         }
 
         if (!skipHeader) {
-            let gridRowIterator = gridSerializingSession.onNewHeaderRow();
+            const gridRowIterator = gridSerializingSession.onNewHeaderRow();
             columnsToExport.forEach((column, index)=> {
                 gridRowIterator.onColumn (column, index, null);
             });
@@ -267,7 +287,7 @@ export class GridSerializer {
             // onlySelectedNonStandardModel: if user wants selected in non standard row model
             // (eg viewport) then again rowmodel cannot be used, so need to use selected instead.
             if (onlySelectedAllPages || onlySelectedNonStandardModel) {
-                let selectedNodes = this.selectionController.getSelectedNodes();
+                const selectedNodes = this.selectionController.getSelectedNodes();
                 selectedNodes.forEach((node:RowNode)=> {
                     processRow(node);
                 });
@@ -290,10 +310,12 @@ export class GridSerializer {
         }
 
         function processRow(node: RowNode): void {
-            if (skipGroups && node.group) {
+            const shouldSkipLowestGroup = skipLowestSingleChildrenGroup && node.leafGroup;
+            const shouldSkipCurrentGroup = node.allChildrenCount === 1 && (skipSingleChildrenGroup || shouldSkipLowestGroup);
+
+            if (node.group && (skipGroups || shouldSkipCurrentGroup)) {
                 return;
             }
-
             if (skipFooters && node.footer) {
                 return;
             }
@@ -312,12 +334,12 @@ export class GridSerializer {
 
             // if we are in pivotMode, then the grid will show the root node only
             // if it's not a leaf group
-            let nodeIsRootNode = node.level === -1;
+            const nodeIsRootNode = node.level === -1;
             if (nodeIsRootNode && !node.leafGroup) {
                 return;
             }
 
-            let shouldRowBeSkipped:boolean = rowSkipper({
+            const shouldRowBeSkipped:boolean = rowSkipper({
                 node: node,
                 api: api,
                 context: context
@@ -325,7 +347,7 @@ export class GridSerializer {
 
             if (shouldRowBeSkipped) return;
 
-            let rowAccumulator: RowAccumulator = gridSerializingSession.onNewBodyRow();
+            const rowAccumulator: RowAccumulator = gridSerializingSession.onNewBodyRow();
             columnsToExport.forEach((column: Column, index: number) => {
                 rowAccumulator.onColumn(column, index, node);
             });
@@ -335,9 +357,9 @@ export class GridSerializer {
     }
 
     recursivelyAddHeaderGroups<T>(displayedGroups:ColumnGroupChild[], gridSerializingSession:GridSerializingSession<T>):void {
-        let directChildrenHeaderGroups:ColumnGroupChild[] = [];
+        const directChildrenHeaderGroups:ColumnGroupChild[] = [];
         displayedGroups.forEach((columnGroupChild: ColumnGroupChild) => {
-            let columnGroup: ColumnGroup = columnGroupChild as ColumnGroup;
+            const columnGroup: ColumnGroup = columnGroupChild as ColumnGroup;
             if (!columnGroup.getChildren) return;
             columnGroup.getChildren().forEach(it=>directChildrenHeaderGroups.push(it));
         });
@@ -352,13 +374,12 @@ export class GridSerializer {
     }
 
     private doAddHeaderHeader<T>(gridSerializingSession: GridSerializingSession<T>, displayedGroups: ColumnGroupChild[]) {
-        let gridRowIterator: RowSpanningAccumulator = gridSerializingSession.onNewHeaderGroupingRow();
+        const gridRowIterator: RowSpanningAccumulator = gridSerializingSession.onNewHeaderGroupingRow();
         let columnIndex: number = 0;
         displayedGroups.forEach((columnGroupChild: ColumnGroupChild) => {
-            let columnGroup: ColumnGroup = columnGroupChild as ColumnGroup;
-            let colDef = columnGroup.getDefinition();
+            const columnGroup: ColumnGroup = columnGroupChild as ColumnGroup;
 
-            let columnName = this.columnController.getDisplayNameForColumnGroup(columnGroup, 'header');
+            const columnName = this.columnController.getDisplayNameForColumnGroup(columnGroup, 'header');
             gridRowIterator.onColumn(columnName, columnIndex++, columnGroup.getLeafColumns().length - 1);
         });
     }

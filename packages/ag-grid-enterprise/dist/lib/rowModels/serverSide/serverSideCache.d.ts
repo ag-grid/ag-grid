@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 import { ColumnVO, IServerSideCache, IServerSideDatasource, NumberSequence, RowNode, RowNodeCache, RowNodeCacheParams, RowBounds } from "ag-grid-community";
 import { ServerSideBlock } from "./serverSideBlock";
 export interface ServerSideCacheParams extends RowNodeCacheParams {
@@ -41,3 +41,4 @@ export declare class ServerSideCache extends RowNodeCache<ServerSideBlock, Serve
     private insertItems;
     refreshCacheAfterSort(changedColumnsInSort: string[], rowGroupColIds: string[]): void;
 }
+//# sourceMappingURL=serverSideCache.d.ts.map

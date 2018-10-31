@@ -5,7 +5,7 @@ import {Autowired} from "../../context/context";
 import {IMenuFactory} from "../../interfaces/iMenuFactory";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {SortController} from "../../sortController";
-import {LongTapEvent, TouchListener} from "../../widgets/touchListener";
+import {TapEvent, LongTapEvent, TouchListener} from "../../widgets/touchListener";
 import {IComponent} from "../../interfaces/iComponent";
 import {EventService} from "../../eventService";
 import {RefSelector} from "../../widgets/componentAnnotations";
@@ -75,6 +75,9 @@ export class HeaderComp extends Component implements IHeaderComp {
             HeaderComp.TEMPLATE
         );
 
+        // take account of any newlines & whitespace before/after the actual template
+        template = template && template.trim ? template.trim() : template;
+
         this.setTemplate(template);
         this.params = params;
 
@@ -87,8 +90,9 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private setupText(displayName: string): void {
+        let displayNameSanitised = _.escape(displayName);
         if (this.eText) {
-            this.eText.innerHTML = displayName;
+            this.eText.innerHTML = displayNameSanitised;
         }
     }
 
@@ -108,26 +112,40 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private setupTap(): void {
-        if (this.gridOptionsWrapper.isSuppressTouch()) { return; }
+        const {gridOptionsWrapper: gow} = this;
 
-        let touchListener = new TouchListener(this.getGui(), true);
+        if (gow.isSuppressTouch()) { return; }
+
+        const suppressMenuHide = gow.isSuppressMenuHide();
+        const touchListener = new TouchListener(this.getGui(), true);
+        const menuTouchListener = suppressMenuHide ? new TouchListener(this.eMenu, true) : touchListener;
 
         if (this.params.enableMenu) {
-            let longTapListener = (event: LongTapEvent)=> {
-                this.gridOptionsWrapper.getApi().showColumnMenuAfterMouseClick(this.params.column, event.touchStart);
+            const eventType = suppressMenuHide ? 'EVENT_TAP' : 'EVENT_LONG_TAP';
+            const showMenuFn = (event: TapEvent | LongTapEvent) => {
+                gow.getApi().showColumnMenuAfterMouseClick(this.params.column, event.touchStart);
             };
-            this.addDestroyableEventListener(touchListener, TouchListener.EVENT_LONG_TAP, longTapListener);
+            this.addDestroyableEventListener(menuTouchListener, TouchListener[eventType], showMenuFn);
         }
 
         if (this.params.enableSorting) {
-            let tapListener = ()=> {
+            const tapListener = (event: TapEvent) => {
+                const target = event.touchStart.target as HTMLElement;
+                // When suppressMenuHide is true, a tap on the menu icon will bubble up
+                // to the header container, in that case we should not sort
+                if (suppressMenuHide && this.eMenu.contains(target)) return;
+
                 this.sortController.progressSort(this.params.column, false, "uiColumnSorted");
             };
 
             this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, tapListener);
         }
 
-        this.addDestroyFunc(()=> touchListener.destroy());
+        this.addDestroyFunc(() => touchListener.destroy());
+
+        if (menuTouchListener !== touchListener) {
+            this.addDestroyFunc(() => menuTouchListener.destroy());
+        }
     }
 
     private setupMenu(): void {
@@ -137,18 +155,20 @@ export class HeaderComp extends Component implements IHeaderComp {
             return;
         }
 
-        // we don't show the menu if on an ipad, as the user cannot have a mouse on the ipad, so
-        // makes no sense. instead the user must long-tap if on an ipad.
-        let dontShowMenu = !this.params.enableMenu || _.isUserAgentIPad();
+        // we don't show the menu if on an ipad/iphone, as the user cannot have a pointer device
+        // Note: If supressMenuHide is set to true the menu will be displayed, and if suppressMenuHide
+        // is false (default) user will need to use longpress to display the menu.
+        const suppressMenuHide = this.gridOptionsWrapper.isSuppressMenuHide();
+        const dontShowMenu = !this.params.enableMenu || (_.isUserAgentIPad() && !suppressMenuHide);
 
         if (dontShowMenu) {
             _.removeFromParent(this.eMenu);
             return;
         }
 
-        this.eMenu.addEventListener('click', ()=> this.showMenu(this.eMenu));
+        this.addDestroyableEventListener(this.eMenu, 'click', () => this.showMenu(this.eMenu));
 
-        if (!this.gridOptionsWrapper.isSuppressMenuHide()) {
+        if (!suppressMenuHide) {
             this.eMenu.style.opacity = '0';
             this.addGuiEventListener('mouseover', ()=> {
                 this.eMenu.style.opacity = '1';
@@ -204,8 +224,6 @@ export class HeaderComp extends Component implements IHeaderComp {
                 if (!columnMoving) {
                     let multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
                     this.params.progressSort(multiSort);
-                } else {
-                    console.log(`kipping sort cos of moving ${this.lastMovingChanged}`);
                 }
             });
         }

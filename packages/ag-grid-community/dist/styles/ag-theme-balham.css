@@ -447,11 +447,19 @@
     color: rgba(0, 0, 0, 0.54);
     font: 600 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; }
   .ag-theme-balham .ag-header-row {
-    border-bottom: 1px solid #BDC3C7;
-    box-sizing: border-box; }
+    border-style: solid;
+    border-color: #BDC3C7;
+    box-sizing: border-box;
+    border-width: 0 0 1px; }
   .ag-theme-balham .ag-row {
-    border-bottom: 1px solid #BDC3C7;
-    box-sizing: border-box; }
+    border-style: solid;
+    border-color: #BDC3C7;
+    box-sizing: border-box;
+    border-width: 0; }
+    .ag-theme-balham .ag-row:not(.ag-row-first) {
+      border-width: 1px 0 0; }
+    .ag-theme-balham .ag-row.ag-row-last {
+      border-bottom-width: 1px; }
   .ag-theme-balham .ag-row-odd {
     background-color: #fcfdfe; }
   .ag-theme-balham .ag-row-even {
@@ -1770,9 +1778,9 @@
   .ag-theme-balham .ag-column-drop-horizontal.ag-column-drop.ag-width-half:first-child {
     border-right: 0; }
   .ag-theme-balham .ag-row {
-    border-bottom-color: #d9dcde; }
+    border-color: #d9dcde; }
   .ag-theme-balham .ag-row-selected {
-    border-bottom-color: #b7e4ff; }
+    border-color: #b7e4ff; }
   .ag-theme-balham .ag-row-drag {
     background-position-y: center; }
   .ag-theme-balham .ag-column-drag {
@@ -1892,3 +1900,4 @@
     background-color: white; }
   .ag-theme-balham .ag-filter-toolpanel-body {
     background-color: white; }
+

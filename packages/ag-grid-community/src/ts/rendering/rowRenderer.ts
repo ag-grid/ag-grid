@@ -729,7 +729,7 @@ export class RowRenderer extends BeanStub {
         // if no row comp, see if we can get it from the previous rowComps
         if (!rowComp) {
             rowNode = this.paginationProxy.getRow(rowIndex);
-            if (_.exists(rowNode) && _.exists(rowsToRecycle) && rowsToRecycle[rowNode.id]) {
+            if (_.exists(rowNode) && _.exists(rowsToRecycle) && rowsToRecycle[rowNode.id] && rowNode.alreadyRendered) {
                 rowComp = rowsToRecycle[rowNode.id];
                 rowsToRecycle[rowNode.id] = null;
             }
@@ -752,6 +752,12 @@ export class RowRenderer extends BeanStub {
         } else {
             // ensure row comp is in right position in DOM
             rowComp.ensureDomOrder();
+        }
+
+        if (rowNode) {
+            // set node as 'alreadyRendered' to ensure we only recycle rowComps that have been rendered, this ensures
+            // we don't reuse rowComps that have been removed and then re-added in the same batch transaction.
+            rowNode.alreadyRendered = true;
         }
 
         this.rowCompsByIndex[rowIndex] = rowComp;
@@ -846,15 +852,27 @@ export class RowRenderer extends BeanStub {
         }
 
         if (this.paginationProxy.isRowsToRender()) {
-            let event: FirstDataRenderedEvent = {
-                type: Events.EVENT_FIRST_DATA_RENDERED,
-                firstRow: newFirst,
-                lastRow: newLast,
-                api: this.gridApi,
-                columnApi: this.columnApi
-            };
+            let fireEvent = true;
 
-            this.eventService.dispatchEventOnce(event);
+            // the server side row model has a stub row when no data is present
+            // this take this stub row into account
+            if (this.gridOptionsWrapper.isRowModelServerSide()) {
+                let firstRowNode = this.paginationProxy.getRow(0);
+                // we don't fire event if first row node is a stub.
+                fireEvent = !firstRowNode || !firstRowNode.stub;
+            }
+
+            if (fireEvent) {
+                let event: FirstDataRenderedEvent = {
+                    type: Events.EVENT_FIRST_DATA_RENDERED,
+                    firstRow: newFirst,
+                    lastRow: newLast,
+                    api: this.gridApi,
+                    columnApi: this.columnApi
+                };
+
+                this.eventService.dispatchEventOnce(event);
+            }
         }
     }
 
@@ -1196,7 +1214,7 @@ export class RowRenderer extends BeanStub {
             // a bunch of cells (eg 10 rows) then all the work on ensuring cell visible is useless
             // (except for the last one) which causes grid to stall for a while.
             if (startEditing) {
-                let rowNode = this.paginationProxy.getRow(nextCell.rowIndex);
+                let rowNode = this.lookupRowNodeForCell(nextCell);
                 let cellIsEditable = nextCell.column.isCellEditable(rowNode);
                 if (!cellIsEditable) { continue; }
             }
@@ -1244,6 +1262,18 @@ export class RowRenderer extends BeanStub {
             // we successfully tabbed onto a grid cell, so return true
             return nextCellComp;
         }
+    }
+
+    private lookupRowNodeForCell(cell: GridCell) {
+        if (cell.floating === Constants.PINNED_TOP) {
+            return this.pinnedRowModel.getPinnedTopRow(cell.rowIndex);
+        }
+
+        if (cell.floating === Constants.PINNED_BOTTOM) {
+            return this.pinnedRowModel.getPinnedBottomRow(cell.rowIndex);
+        }
+
+        return this.paginationProxy.getRow(cell.rowIndex);
     }
 }
 

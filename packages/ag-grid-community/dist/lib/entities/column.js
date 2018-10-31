@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,7 +29,7 @@ var gridApi_1 = require("../gridApi");
 // for each type only implements one, as each group can only appear in it's associated tree (eg OriginalColumnGroup
 // can only appear in OriginalColumn tree).
 var Column = /** @class */ (function () {
-    function Column(colDef, colId, primary) {
+    function Column(colDef, userProvidedColDef, colId, primary) {
         this.moving = false;
         this.menuVisible = false;
         this.filterActive = false;
@@ -38,6 +38,7 @@ var Column = /** @class */ (function () {
         this.pivotActive = false;
         this.aggregationActive = false;
         this.colDef = colDef;
+        this.userProvidedColDef = userProvidedColDef;
         this.visible = !colDef.hide;
         this.sort = colDef.sort;
         this.sortedAt = colDef.sortedAt;
@@ -47,6 +48,9 @@ var Column = /** @class */ (function () {
         this.lockPinned = colDef.lockPinned === true;
         this.lockVisible = colDef.lockVisible === true;
     }
+    Column.prototype.getUserProvidedColDef = function () {
+        return this.userProvidedColDef;
+    };
     Column.prototype.isLockPosition = function () {
         return this.lockPosition;
     };

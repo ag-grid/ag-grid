@@ -39,10 +39,7 @@ var gridOptions = {
         defaultToolPanel: 'columns'
     },
     animateRows: true,
-    debug: true,
-    icons: {
-        groupLoading: '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/javascript-grid-server-side-model/spinner.gif" style="width:22px;height:22px;">'
-    }
+    debug: true
 };
 
 // setup the grid after the page has finished loading

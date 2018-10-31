@@ -19,18 +19,19 @@ import {PivotCompFactory} from "./pivotCompFactory";
 import {MenuItemMapper} from "./menu/menuItemMapper";
 import {ExcelCreator} from "./exporter/excelCreator";
 import {ExcelXmlFactory} from "./exporter/excelXmlFactory";
+import {ExcelXlsxFactory} from "./exporter/excelXlsxFactory";
 import {ServerSideRowModel} from "./rowModels/serverSide/serverSideRowModel";
 import {HorizontalResizeComp} from "./sideBar/horizontalResizeComp";
 import {ColumnToolPanel} from "./sideBar/providedPanels/columns/columnToolPanel";
 import {SideBarButtonsComp} from "./sideBar/sideBarButtonsComp";
 import {StatusBarService} from "./statusBar/statusBarService";
 import {StatusBar} from "./statusBar/statusBar";
-import {AggregationComp} from "./statusBar/providedPanels/aggregationComp"
+import {AggregationComp} from "./statusBar/providedPanels/aggregationComp";
 import {NameValueComp} from "./statusBar/providedPanels/nameValueComp";
-import {SelectedRowsComp} from "./statusBar/providedPanels/selectedRowsComp"
-import {TotalRowsComp} from "./statusBar/providedPanels/totalRowsComp"
-import {FilteredRowsComp} from "./statusBar/providedPanels/filteredRowsComp"
-import {TotalAndFilteredRowsComp} from "./statusBar/providedPanels/totalAndFilteredRowsComp"
+import {SelectedRowsComp} from "./statusBar/providedPanels/selectedRowsComp";
+import {TotalRowsComp} from "./statusBar/providedPanels/totalRowsComp";
+import {FilteredRowsComp} from "./statusBar/providedPanels/filteredRowsComp";
+import {TotalAndFilteredRowsComp} from "./statusBar/providedPanels/totalAndFilteredRowsComp";
 import {PrimaryColsHeaderPanel} from "./sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsHeaderPanel";
 import {PrimaryColsListPanel} from "./sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsListPanel";
 import {GridHeaderDropZones} from "./sideBar/providedPanels/columns/gridHeaderDropZones";
@@ -69,10 +70,11 @@ export {PivotCompFactory} from "./pivotCompFactory";
 export {RowGroupCompFactory} from "./rowGroupCompFactory";
 export {ExcelCreator} from "./exporter/excelCreator";
 export {ExcelXmlFactory} from "./exporter/excelXmlFactory";
+export {ExcelXlsxFactory} from "./exporter/excelXlsxFactory";
 
 let rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
 
-Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, RowGroupCompFactory,
+Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, ExcelXlsxFactory, RowGroupCompFactory,
     PivotCompFactory, RangeController, ClipboardService, PivotStage, PivotColDefService,
     ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService, LicenseManager, MD5,
     MenuItemMapper, StatusBarService], rowModelTypes);

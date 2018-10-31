@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 import { IAggFuncService, IAggFunc, GridOptionsWrapper, Column } from "ag-grid-community";
 export declare class AggFuncService implements IAggFuncService {
     private static AGG_SUM;
@@ -22,3 +22,4 @@ export declare class AggFuncService implements IAggFuncService {
     getFuncNames(column: Column): string[];
     clear(): void;
 }
+//# sourceMappingURL=aggFuncService.d.ts.map

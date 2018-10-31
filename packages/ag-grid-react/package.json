@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-react",
-  "version": "19.0.0",
+  "version": "19.1.1",
   "description": "ag-Grid React Component",
   "main": "main.js",
   "typings": "./main.d.ts",
@@ -26,32 +26,31 @@
   },
   "homepage": "https://react.ag-grid.com",
   "dependencies": {
-    "prop-types": "15.6.0"
+    "prop-types": "^15.6.2"
   },
   "devDependencies": {
     "@types/react": "^16.4.10",
     "@types/react-dom": "^16.0.7",
-    "ag-grid-community": "^19.0.0",
+    "@types/prop-types": "15.5.5",
+    "ag-grid-community": "^19.1.0",
     "gulp": "^3.9.1",
-    "gulp-debug": "^3.2.0",
     "gulp-header": "^2.0.5",
     "gulp-rename": "^1.4.0",
     "gulp-sourcemaps": "^2.6.4",
-    "gulp-typescript": "^4.0.2",
-    "merge2": "^1.2.2",
-    "prop-types": "15.6.0",
+    "gulp-typescript": "^5.0.0-alpha.3",
+    "gulp-merge": "^0.1.1",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
-    "rollup": "^0.55.3",
-    "rollup-plugin-commonjs": "^8.3.0",
-    "rollup-plugin-typescript": "^0.8.1",
-    "rollup-plugin-uglify": "^3.0.0",
+    "rollup": "^0.66.1",
+    "rollup-plugin-commonjs": "^9.1.6",
+    "rollup-plugin-typescript": "^1.0.0",
+    "rollup-plugin-uglify": "^6.0.0",
     "rollup-stream": "^1.24.1",
-    "typescript": "^2.9.2",
+    "typescript": "~3.1.1",
     "vinyl-source-stream": "^2.0.0"
   },
   "peerDependencies": {
-    "ag-grid-community": "^19.0.0",
+    "ag-grid-community": "^19.1.0",
     "react": "^15.5.0 || ^16.0.0",
     "react-dom": "^15.5.0 || ^16.0.0"
   }

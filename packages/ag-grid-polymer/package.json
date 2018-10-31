@@ -1,0 +1,28 @@
+{
+  "name": "ag-grid-polymer",
+  "version": "19.1.1",
+  "description": "ag-Grid Polymer 3 Web Component",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ag-grid/ag-grid-polymer.git"
+  },
+  "keywords": [
+    "ag-grid",
+    "polymer",
+    "web",
+    "component"
+  ],
+  "author": "Sean Landsman <sean@thelandsmans.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ag-grid/ag-grid-polymer/issues"
+  },
+  "homepage": "https://github.com/ag-grid/ag-grid-polymer#readme",
+  "dependencies": {},
+  "peerDependencies": {
+    "ag-grid-community": "^19.1.0",
+    "@polymer/polymer": "^3.0.0-pre.12"
+  },
+  "devDependencies": {}
+}

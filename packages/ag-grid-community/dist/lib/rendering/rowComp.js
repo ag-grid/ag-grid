@@ -1,14 +1,17 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -352,6 +355,7 @@ var RowComp = /** @class */ (function (_super) {
         this.addDestroyableEventListener(eventService, events_1.Events.EVENT_CELL_FOCUSED, this.onCellFocusChanged.bind(this));
         this.addDestroyableEventListener(eventService, events_1.Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
         this.addDestroyableEventListener(eventService, events_1.Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
+        this.addDestroyableEventListener(eventService, events_1.Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
     };
     // when grid columns change, then all cells should be cleaned out,
     // as the new columns could have same id as the previous columns and may conflict
@@ -648,9 +652,14 @@ var RowComp = /** @class */ (function (_super) {
         // ctrlKey for windows, metaKey for Apple
         var multiSelectKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
         var shiftKeyPressed = mouseEvent.shiftKey;
-        // we do not allow selecting groups by clicking (as the click here expands the group)
+        // we do not allow selecting groups by clicking (as the click here expands the group), or if it's a detail row,
         // so return if it's a group row
         if (this.rowNode.group) {
+            return;
+        }
+        // this is needed so we don't unselect other rows when we click this row, eg if this row is not selectable,
+        // and we click it, the selection should not change (ie any currently selected row should stay selected)
+        if (!this.rowNode.selectable) {
             return;
         }
         // we also don't allow selection of pinned rows
@@ -791,7 +800,33 @@ var RowComp = /** @class */ (function (_super) {
         utils_1._.pushAll(classes, this.preProcessRowClassRules());
         // we use absolute position unless we are doing print layout
         classes.push(this.printLayout ? 'ag-row-position-relative' : 'ag-row-position-absolute');
+        this.firstRowOnPage = this.isFirstRowOnPage();
+        this.lastRowOnPage = this.isLastRowOnPage();
+        if (this.firstRowOnPage) {
+            classes.push('ag-row-first');
+        }
+        if (this.lastRowOnPage) {
+            classes.push('ag-row-last');
+        }
         return classes;
+    };
+    RowComp.prototype.isFirstRowOnPage = function () {
+        return this.rowNode.rowIndex === this.beans.paginationProxy.getPageFirstRow();
+    };
+    RowComp.prototype.isLastRowOnPage = function () {
+        return this.rowNode.rowIndex === this.beans.paginationProxy.getPageLastRow();
+    };
+    RowComp.prototype.onModelUpdated = function () {
+        var newFirst = this.isFirstRowOnPage();
+        var newLast = this.isLastRowOnPage();
+        if (this.firstRowOnPage !== newFirst) {
+            this.firstRowOnPage = newFirst;
+            this.eAllRowContainers.forEach(function (row) { return utils_1._.addOrRemoveCssClass(row, 'ag-row-first', newFirst); });
+        }
+        if (this.lastRowOnPage !== newLast) {
+            this.lastRowOnPage = newLast;
+            this.eAllRowContainers.forEach(function (row) { return utils_1._.addOrRemoveCssClass(row, 'ag-row-last', newLast); });
+        }
     };
     RowComp.prototype.preProcessRowClassRules = function () {
         var res = [];
@@ -881,12 +916,12 @@ var RowComp = /** @class */ (function (_super) {
     };
     RowComp.prototype.processClassesFromGridOptions = function () {
         var res = [];
-        var process = function (rowClass) {
-            if (typeof rowClass === 'string') {
-                res.push(rowClass);
+        var process = function (rowCls) {
+            if (typeof rowCls === 'string') {
+                res.push(rowCls);
             }
-            else if (Array.isArray(rowClass)) {
-                rowClass.forEach(function (e) { return res.push(e); });
+            else if (Array.isArray(rowCls)) {
+                rowCls.forEach(function (e) { return res.push(e); });
             }
         };
         // part 1 - rowClass
@@ -925,7 +960,7 @@ var RowComp = /** @class */ (function (_super) {
         // part 1 - rowStyle
         var rowStyle = this.beans.gridOptionsWrapper.getRowStyle();
         if (rowStyle && typeof rowStyle === 'function') {
-            console.log('ag-Grid: rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead');
+            console.warn('ag-Grid: rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead');
             return;
         }
         // part 1 - rowStyleFunc

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20,7 +20,7 @@ var column_1 = require("../entities/column");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var utils_1 = require("../utils");
 var columnController_1 = require("./columnController");
-var balancedColumnTreeBuilder_1 = require("./balancedColumnTreeBuilder");
+var columnFactory_1 = require("./columnFactory");
 var AutoGroupColService = /** @class */ (function () {
     function AutoGroupColService() {
     }
@@ -60,7 +60,7 @@ var AutoGroupColService = /** @class */ (function () {
         }
         var userAutoColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
         utils_1._.mergeDeep(defaultAutoColDef, userAutoColDef);
-        defaultAutoColDef = this.balancedColumnTreeBuilder.mergeColDefs(defaultAutoColDef);
+        defaultAutoColDef = this.columnFactory.mergeColDefs(defaultAutoColDef);
         defaultAutoColDef.colId = colId;
         // For tree data the filter is always allowed
         if (!this.gridOptionsWrapper.isTreeData()) {
@@ -75,7 +75,7 @@ var AutoGroupColService = /** @class */ (function () {
         if (index > 0) {
             defaultAutoColDef.headerCheckboxSelection = false;
         }
-        var newCol = new column_1.Column(defaultAutoColDef, colId, true);
+        var newCol = new column_1.Column(defaultAutoColDef, null, colId, true);
         this.context.wireBean(newCol);
         return newCol;
     };
@@ -130,9 +130,9 @@ var AutoGroupColService = /** @class */ (function () {
         __metadata("design:type", columnController_1.ColumnController)
     ], AutoGroupColService.prototype, "columnController", void 0);
     __decorate([
-        context_1.Autowired('balancedColumnTreeBuilder'),
-        __metadata("design:type", balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder)
-    ], AutoGroupColService.prototype, "balancedColumnTreeBuilder", void 0);
+        context_1.Autowired('columnFactory'),
+        __metadata("design:type", columnFactory_1.ColumnFactory)
+    ], AutoGroupColService.prototype, "columnFactory", void 0);
     AutoGroupColService = AutoGroupColService_1 = __decorate([
         context_1.Bean('autoGroupColService')
     ], AutoGroupColService);

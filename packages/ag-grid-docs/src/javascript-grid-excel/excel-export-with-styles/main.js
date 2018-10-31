@@ -122,13 +122,14 @@ var gridOptions = {
         {
             id: 'greenBackground',
             interior: {
-                color: '#90ee90',
+                color: '#b5e6b5',
                 pattern: 'Solid'
             }
         },
         {
             id: 'redFont',
             font: {
+                fontName: 'Calibri Light',
                 underline: 'Single',
                 italic: true,
                 color: '#ff0000'
@@ -139,6 +140,10 @@ var gridOptions = {
             interior: {
                 color: '#888888',
                 pattern: 'Solid'
+            },
+            font: {
+                fontName: 'Calibri Light',
+                color: '#ffffff'
             }
         },
         {
@@ -207,7 +212,8 @@ function onBtExport() {
         allColumns: getBooleanValue('#allColumns'),
         onlySelected: getBooleanValue('#onlySelected'),
         fileName: document.querySelector('#fileName').value,
-        sheetName: document.querySelector('#sheetName').value
+        sheetName: document.querySelector('#sheetName').value,
+        exportMode: document.querySelector('input[name="mode"]:checked').value
     };
 
     if (getBooleanValue('#skipGroupR')) {

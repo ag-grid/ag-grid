@@ -78,7 +78,7 @@ function onBtStopEditing() {
 }
 
 function onBtStartEditing(key, char, pinned) {
-    gridOptions.api.setFocusedCell(0, 'lastLame', pinned);
+    gridOptions.api.setFocusedCell(0, 'lastName', pinned);
 
     gridOptions.api.startEditingCell({
         rowIndex: 0,

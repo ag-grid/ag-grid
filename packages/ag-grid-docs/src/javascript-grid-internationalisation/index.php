@@ -20,7 +20,6 @@ include '../documentation-main/documentation_header.php';
 
     <snippet>
 localeText = {
-
         // for filter panel
         page: 'daPage',
         more: 'daMore',
@@ -40,14 +39,19 @@ localeText = {
         // for number filter and text filter
         filterOoo: 'daFilter...',
         applyFilter: 'daApplyFilter...',
+        equals: 'daEquals',
+        notEquals: 'daNotEqual',
 
         // for number filter
-        equals: 'daEquals',
         lessThan: 'daLessThan',
         greaterThan: 'daGreaterThan',
+        lessThanOrEqual: 'daLessThanOrEqual',
+        greaterThanOrEqual: 'daGreaterThanOrEqual',
+        inRange: 'daInRange',
 
         // for text filter
         contains: 'daContains',
+        notContains: 'daNotContains',
         startsWith: 'daStarts dawith',
         endsWith: 'daEnds dawith',
 
@@ -56,6 +60,7 @@ localeText = {
 
         // tool panel
         columns: 'laColumns',
+        filters: 'laFilters',
         rowGroupColumns: 'laPivot Cols',
         rowGroupColumnsEmptyMessage: 'la drag cols to group',
         valueColumns: 'laValue Cols',
@@ -94,8 +99,6 @@ localeText = {
         sum: 'laSum',
         min: 'laMin',
         max: 'laMax',
-        first: 'laFirst',
-        last: 'laLast',
         none: 'laNone',
         count: 'laCount',
         average: 'laAverage',
@@ -105,7 +108,7 @@ localeText = {
         copyWithHeaders: 'laCopy Wit hHeaders',
         ctrlC: 'ctrl n C',
         paste: 'laPaste',
-        ctrlV: 'ctrl n C'
+        ctrlV: 'ctrl n V'
 }</snippet>
 
     <?= example('Internationalisation', 'internationalisation', 'generated', array('enterprise' => true)) ?>

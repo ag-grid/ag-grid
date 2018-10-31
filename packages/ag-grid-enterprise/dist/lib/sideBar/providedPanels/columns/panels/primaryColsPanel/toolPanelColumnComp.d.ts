@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 import { Column, Component } from "ag-grid-community/main";
 import { BaseColumnItem } from "./primaryColsPanel";
 export declare class ToolPanelColumnComp extends Component implements BaseColumnItem {
@@ -37,3 +37,4 @@ export declare class ToolPanelColumnComp extends Component implements BaseColumn
     isExpandable(): boolean;
     setExpanded(value: boolean): void;
 }
+//# sourceMappingURL=toolPanelColumnComp.d.ts.map

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
@@ -22,3 +22,4 @@ export declare class BodyDropPivotTarget implements DropListener {
     /** Callback for when drag stops */
     onDragStop(draggingEvent: DraggingEvent): void;
 }
+//# sourceMappingURL=bodyDropPivotTarget.d.ts.map

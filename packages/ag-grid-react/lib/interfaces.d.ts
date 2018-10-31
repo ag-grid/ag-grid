@@ -1,7 +1,6 @@
-// ag-grid-react v19.0.0
+// ag-grid-react v19.1.1
 import { ICellEditor, ICellEditorParams, ICellRenderer, ICellRendererParams, IDate, IDateParams, IFilter, IFilterParams, IHeader, IHeaderGroup, IHeaderGroupParams, IHeaderParams, ILoadingOverlayParams, INoRowsOverlayParams, IStatusPanel, IToolPanel, IToolPanelParams, IAfterGuiAttachedParams, IStatusPanelParams } from 'ag-grid-community';
 export interface AgReactFrameworkComponent<T> {
-    agInit(params: T): void;
     afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 }
 export interface IHeaderGroupReactComp extends IHeaderGroup, AgReactFrameworkComponent<IHeaderGroupParams> {
@@ -24,3 +23,4 @@ export interface IStatusPanelReactComp extends IStatusPanel, AgReactFrameworkCom
 }
 export interface IToolPanelReactComp extends IToolPanel, AgReactFrameworkComponent<IToolPanelParams> {
 }
+//# sourceMappingURL=interfaces.d.ts.map

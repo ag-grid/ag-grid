@@ -95,6 +95,9 @@ export class ColumnApi {
 
     public setSecondaryColumns(colDefs: (ColDef|ColGroupDef)[]): void { this.columnController.setSecondaryColumns(colDefs, 'api'); }
 
+    public getSecondaryColumns(): Column[] { return this.columnController.getSecondaryColumns(); }
+    public getPrimaryColumns(): Column[] { return this.columnController.getAllPrimaryColumns(); }
+
     // below goes through deprecated items, prints message to user, then calls the new version of the same method
 
     public columnGroupOpened(group: OriginalColumnGroup|string, newValue: boolean): void {

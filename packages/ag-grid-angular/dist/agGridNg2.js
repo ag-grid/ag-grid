@@ -330,6 +330,7 @@ var AgGridNg2 = /** @class */ (function () {
         this.columnPivotChangeRequest = new core_1.EventEmitter();
         this.columnValueChangeRequest = new core_1.EventEmitter();
         this.columnAggFuncChangeRequest = new core_1.EventEmitter();
+        this.expandOrCollapseAll = new core_1.EventEmitter();
         this._nativeElement = elementDef.nativeElement;
         this.ng2FrameworkFactory.setViewContainerRef(this.viewContainerRef);
         this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef);
@@ -747,6 +748,7 @@ var AgGridNg2 = /** @class */ (function () {
         'columnPivotChangeRequest': [{ type: core_1.Output },],
         'columnValueChangeRequest': [{ type: core_1.Output },],
         'columnAggFuncChangeRequest': [{ type: core_1.Output },],
+        'expandOrCollapseAll': [{ type: core_1.Output },],
     };
     return AgGridNg2;
 }());

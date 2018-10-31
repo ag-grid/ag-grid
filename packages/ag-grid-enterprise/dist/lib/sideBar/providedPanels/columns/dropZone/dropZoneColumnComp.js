@@ -1,9 +1,12 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -20,7 +23,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = require("ag-grid-community/main");
+var ag_grid_community_1 = require("ag-grid-community");
 var aggFuncService_1 = require("../../../../aggregation/aggFuncService");
 var virtualList_1 = require("../../../../rendering/virtualList");
 var DropZoneColumnComp = /** @class */ (function (_super) {
@@ -45,7 +48,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
     DropZoneColumnComp.prototype.addDragSource = function () {
         var _this = this;
         var dragSource = {
-            type: main_1.DragSourceType.ToolPanel,
+            type: ag_grid_community_1.DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
             dragItemCallback: function () { return _this.createDragItem(); },
             dragItemName: this.displayName,
@@ -66,7 +69,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         this.setTextValue();
         this.setupRemove();
         if (this.ghost) {
-            main_1.Utils.addCssClass(this.getGui(), 'ag-column-drop-cell-ghost');
+            ag_grid_community_1.Utils.addCssClass(this.getGui(), 'ag-column-drop-cell-ghost');
         }
         if (this.valueColumn && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
             this.addGuiEventListener('click', this.onShowAggFuncSelection.bind(this));
@@ -74,14 +77,14 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
     };
     DropZoneColumnComp.prototype.setupRemove = function () {
         var _this = this;
-        main_1.Utils.setVisible(this.btRemove, !this.gridOptionsWrapper.isFunctionsReadOnly());
+        ag_grid_community_1.Utils.setVisible(this.btRemove, !this.gridOptionsWrapper.isFunctionsReadOnly());
         this.addDestroyableEventListener(this.btRemove, 'click', function (mouseEvent) {
             var agEvent = { type: DropZoneColumnComp.EVENT_COLUMN_REMOVE };
             _this.dispatchEvent(agEvent);
             mouseEvent.stopPropagation();
         });
-        var touchListener = new main_1.TouchListener(this.btRemove);
-        this.addDestroyableEventListener(touchListener, main_1.TouchListener.EVENT_TAP, function (event) {
+        var touchListener = new ag_grid_community_1.TouchListener(this.btRemove);
+        this.addDestroyableEventListener(touchListener, ag_grid_community_1.TouchListener.EVENT_TAP, function (event) {
             var agEvent = { type: DropZoneColumnComp.EVENT_COLUMN_REMOVE };
             _this.dispatchEvent(agEvent);
         });
@@ -100,7 +103,8 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         else {
             displayValue = this.displayName;
         }
-        this.eText.innerHTML = displayValue;
+        var displayValueSanitised = ag_grid_community_1._.escape(displayValue);
+        this.eText.innerHTML = displayValueSanitised;
     };
     DropZoneColumnComp.prototype.onShowAggFuncSelection = function () {
         var _this = this;
@@ -115,7 +119,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
             getRowCount: function () { return rows.length; }
         });
         this.context.wireBean(virtualList);
-        var ePopup = main_1.Utils.loadTemplate('<div class="ag-select-agg-func-popup"></div>');
+        var ePopup = ag_grid_community_1.Utils.loadTemplate('<div class="ag-select-agg-func-popup"></div>');
         ePopup.style.top = '0px';
         ePopup.style.left = '0px';
         ePopup.appendChild(virtualList.getGui());
@@ -142,7 +146,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
             hidePopup();
             if (_this.gridOptionsWrapper.isFunctionsPassive()) {
                 var event_1 = {
-                    type: main_1.Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST,
+                    type: ag_grid_community_1.Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST,
                     columns: [_this.column],
                     aggFunc: value,
                     api: _this.gridApi,
@@ -163,61 +167,61 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
     DropZoneColumnComp.EVENT_COLUMN_REMOVE = 'columnRemove';
     DropZoneColumnComp.TEMPLATE = "<span class=\"ag-column-drop-cell\">\n          <span class=\"ag-column-drag\" ref=\"eDragHandle\"></span>\n          <span class=\"ag-column-drop-cell-text\"></span>\n          <span class=\"ag-column-drop-cell-button\">&#10006;</span>\n        </span>";
     __decorate([
-        main_1.Autowired('dragAndDropService'),
-        __metadata("design:type", main_1.DragAndDropService)
+        ag_grid_community_1.Autowired('dragAndDropService'),
+        __metadata("design:type", ag_grid_community_1.DragAndDropService)
     ], DropZoneColumnComp.prototype, "dragAndDropService", void 0);
     __decorate([
-        main_1.Autowired('columnController'),
-        __metadata("design:type", main_1.ColumnController)
+        ag_grid_community_1.Autowired('columnController'),
+        __metadata("design:type", ag_grid_community_1.ColumnController)
     ], DropZoneColumnComp.prototype, "columnController", void 0);
     __decorate([
-        main_1.Autowired('context'),
-        __metadata("design:type", main_1.Context)
+        ag_grid_community_1.Autowired('context'),
+        __metadata("design:type", ag_grid_community_1.Context)
     ], DropZoneColumnComp.prototype, "context", void 0);
     __decorate([
-        main_1.Autowired('popupService'),
-        __metadata("design:type", main_1.PopupService)
+        ag_grid_community_1.Autowired('popupService'),
+        __metadata("design:type", ag_grid_community_1.PopupService)
     ], DropZoneColumnComp.prototype, "popupService", void 0);
     __decorate([
-        main_1.Autowired('aggFuncService'),
+        ag_grid_community_1.Autowired('aggFuncService'),
         __metadata("design:type", aggFuncService_1.AggFuncService)
     ], DropZoneColumnComp.prototype, "aggFuncService", void 0);
     __decorate([
-        main_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", main_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], DropZoneColumnComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_1.Autowired('eventService'),
-        __metadata("design:type", main_1.EventService)
+        ag_grid_community_1.Autowired('eventService'),
+        __metadata("design:type", ag_grid_community_1.EventService)
     ], DropZoneColumnComp.prototype, "eventService", void 0);
     __decorate([
-        main_1.Autowired('columnApi'),
-        __metadata("design:type", main_1.ColumnApi)
+        ag_grid_community_1.Autowired('columnApi'),
+        __metadata("design:type", ag_grid_community_1.ColumnApi)
     ], DropZoneColumnComp.prototype, "columnApi", void 0);
     __decorate([
-        main_1.Autowired('gridApi'),
-        __metadata("design:type", main_1.GridApi)
+        ag_grid_community_1.Autowired('gridApi'),
+        __metadata("design:type", ag_grid_community_1.GridApi)
     ], DropZoneColumnComp.prototype, "gridApi", void 0);
     __decorate([
-        main_1.QuerySelector('.ag-column-drop-cell-text'),
+        ag_grid_community_1.QuerySelector('.ag-column-drop-cell-text'),
         __metadata("design:type", HTMLElement)
     ], DropZoneColumnComp.prototype, "eText", void 0);
     __decorate([
-        main_1.QuerySelector('.ag-column-drop-cell-button'),
+        ag_grid_community_1.QuerySelector('.ag-column-drop-cell-button'),
         __metadata("design:type", HTMLElement)
     ], DropZoneColumnComp.prototype, "btRemove", void 0);
     __decorate([
-        main_1.RefSelector('eDragHandle'),
+        ag_grid_community_1.RefSelector('eDragHandle'),
         __metadata("design:type", HTMLElement)
     ], DropZoneColumnComp.prototype, "eDragHandle", void 0);
     __decorate([
-        main_1.PostConstruct,
+        ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], DropZoneColumnComp.prototype, "init", null);
     return DropZoneColumnComp;
-}(main_1.Component));
+}(ag_grid_community_1.Component));
 exports.DropZoneColumnComp = DropZoneColumnComp;
 var AggItemComp = /** @class */ (function (_super) {
     __extends(AggItemComp, _super);
@@ -229,4 +233,4 @@ var AggItemComp = /** @class */ (function (_super) {
         return _this;
     }
     return AggItemComp;
-}(main_1.Component));
+}(ag_grid_community_1.Component));

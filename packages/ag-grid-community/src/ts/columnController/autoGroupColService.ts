@@ -4,7 +4,7 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {_} from "../utils";
 import {ColDef, ValueGetterParams} from "../entities/colDef";
 import {ColumnController} from "./columnController";
-import {BalancedColumnTreeBuilder} from "./balancedColumnTreeBuilder";
+import {ColumnFactory} from "./columnFactory";
 
 @Bean('autoGroupColService')
 export class AutoGroupColService {
@@ -15,7 +15,7 @@ export class AutoGroupColService {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('balancedColumnTreeBuilder') private balancedColumnTreeBuilder: BalancedColumnTreeBuilder;
+    @Autowired('columnFactory') private columnFactory: ColumnFactory;
 
     public createAutoGroupColumns(rowGroupColumns: Column[]): Column[] {
         let groupAutoColumns: Column[] = [];
@@ -57,7 +57,7 @@ export class AutoGroupColService {
         let userAutoColDef: ColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
         _.mergeDeep(defaultAutoColDef, userAutoColDef);
 
-        defaultAutoColDef = this.balancedColumnTreeBuilder.mergeColDefs(defaultAutoColDef);
+        defaultAutoColDef = this.columnFactory.mergeColDefs(defaultAutoColDef);
 
         defaultAutoColDef.colId = colId;
 
@@ -76,7 +76,7 @@ export class AutoGroupColService {
             defaultAutoColDef.headerCheckboxSelection = false;
         }
 
-        let newCol = new Column(defaultAutoColDef, colId, true);
+        let newCol = new Column(defaultAutoColDef, null, colId, true);
         this.context.wireBean(newCol);
 
         return newCol;

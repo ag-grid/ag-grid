@@ -69,8 +69,14 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    private colDef: ColDef;
-    private colId: any;
+    private readonly colDef: ColDef;
+    private readonly  colId: any;
+
+    // We do NOT use this anywhere, we just keep a reference. this is to check object equivalence
+    // when the user provides an updated list of columns - so we can check if we have a column already
+    // existing for a col def. we cannot use the this.colDef as that is the result of a merge.
+    // This is used in ColumnFactory
+    private readonly userProvidedColDef: ColDef;
 
     private actualWidth: any;
 
@@ -107,12 +113,13 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private pivotActive = false;
     private aggregationActive = false;
 
-    private primary: boolean;
+    private readonly primary: boolean;
 
     private parent: ColumnGroup;
 
-    constructor(colDef: ColDef, colId: String, primary: boolean) {
+    constructor(colDef: ColDef, userProvidedColDef: ColDef, colId: String, primary: boolean) {
         this.colDef = colDef;
+        this.userProvidedColDef = userProvidedColDef;
         this.visible = !colDef.hide;
         this.sort = colDef.sort;
         this.sortedAt = colDef.sortedAt;
@@ -121,6 +128,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.lockPosition = colDef.lockPosition === true;
         this.lockPinned = colDef.lockPinned === true;
         this.lockVisible = colDef.lockVisible === true;
+    }
+
+    public getUserProvidedColDef(): ColDef {
+        return this.userProvidedColDef;
     }
 
     public isLockPosition(): boolean {

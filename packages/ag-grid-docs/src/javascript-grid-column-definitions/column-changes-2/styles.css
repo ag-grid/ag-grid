@@ -1,0 +1,38 @@
+.test-grid {
+    height: 1px;
+    min-height: 1px;
+    flex-grow: 1;
+}
+
+.test-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.test-header {
+    padding: 4px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
+}
+
+.test-header label {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.participant-group {
+    background-color: #00E7B1;
+}
+
+.medals-group {
+    background-color: #5b9bd5;
+}
+
+.legend-box {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    position: relative;
+    top: 3px;
+}

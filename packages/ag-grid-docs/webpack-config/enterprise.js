@@ -2,9 +2,9 @@ const merge = require('webpack-merge');
 const common = require('./common');
 
 const webpack = require('webpack');
-const path = require('path');
 
 module.exports = merge(common, {
+    mode: 'development',
     entry: {
         main: './src/_assets/ts/ag-grid-enterprise-main'
     },

@@ -111,10 +111,10 @@ export class HeaderWrapperComp extends Component {
 
     private onColumnHover(): void {
         let isHovered = this.columnHoverService.isHovered(this.column);
-        _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered)
+        _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
     }
 
-    private setupSortableClass(enableSorting:boolean):void{
+    private setupSortableClass(enableSorting:boolean):void {
         if (enableSorting) {
             let element = this.getGui();
             _.addCssClass(element, 'ag-header-cell-sortable');
@@ -133,7 +133,7 @@ export class HeaderWrapperComp extends Component {
             enableSorting: enableSorting,
             enableMenu: enableMenu,
             showColumnMenu: (source:HTMLElement) => {
-                this.gridApi.showColumnMenuAfterButtonClick(this.column, source)
+                this.gridApi.showColumnMenuAfterButtonClick(this.column, source);
             },
             progressSort: (multiSort?:boolean) => {
                 this.sortController.progressSort(this.column, !!multiSort, "uiColumnSorted");

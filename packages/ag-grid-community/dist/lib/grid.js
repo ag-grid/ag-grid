@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,7 +17,7 @@ var valueService_1 = require("./valueService/valueService");
 var eventService_1 = require("./eventService");
 var gridPanel_1 = require("./gridPanel/gridPanel");
 var gridApi_1 = require("./gridApi");
-var balancedColumnTreeBuilder_1 = require("./columnController/balancedColumnTreeBuilder");
+var columnFactory_1 = require("./columnController/columnFactory");
 var displayedGroupCreator_1 = require("./columnController/displayedGroupCreator");
 var expressionService_1 = require("./valueService/expressionService");
 var templateService_1 = require("./templateService");
@@ -50,8 +50,8 @@ var valueFormatterService_1 = require("./rendering/valueFormatterService");
 var agCheckbox_1 = require("./widgets/agCheckbox");
 var baseFrameworkFactory_1 = require("./baseFrameworkFactory");
 var scrollVisibleService_1 = require("./gridPanel/scrollVisibleService");
-var downloader_1 = require("./downloader");
-var xmlFactory_1 = require("./xmlFactory");
+var downloader_1 = require("./exporter/downloader");
+var xmlFactory_1 = require("./exporter/xmlFactory");
 var gridSerializer_1 = require("./exporter/gridSerializer");
 var stylingService_1 = require("./styling/stylingService");
 var columnHoverService_1 = require("./rendering/columnHoverService");
@@ -80,6 +80,7 @@ var selectableService_1 = require("./rowNodes/selectableService");
 var autoHeightCalculator_1 = require("./rendering/autoHeightCalculator");
 var paginationComp_1 = require("./rowModels/pagination/paginationComp");
 var resizeObserverService_1 = require("./misc/resizeObserverService");
+var zipContainer_1 = require("./exporter/files/zip/zipContainer");
 var Grid = /** @class */ (function () {
     function Grid(eGridDiv, gridOptions, params) {
         if (!eGridDiv) {
@@ -133,25 +134,24 @@ var Grid = /** @class */ (function () {
                 cellRendererFactory_1.CellRendererFactory, horizontalResizeService_1.HorizontalResizeService, pinnedRowModel_1.PinnedRowModel, dragService_1.DragService,
                 displayedGroupCreator_1.DisplayedGroupCreator, eventService_1.EventService, gridOptionsWrapper_1.GridOptionsWrapper, selectionController_1.SelectionController,
                 filterManager_1.FilterManager, columnController_1.ColumnController, paginationProxy_1.PaginationProxy, rowRenderer_1.RowRenderer, expressionService_1.ExpressionService,
-                balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder, csvCreator_1.CsvCreator, downloader_1.Downloader, xmlFactory_1.XmlFactory, gridSerializer_1.GridSerializer, templateService_1.TemplateService,
+                columnFactory_1.ColumnFactory, csvCreator_1.CsvCreator, downloader_1.Downloader, xmlFactory_1.XmlFactory, gridSerializer_1.GridSerializer, templateService_1.TemplateService,
                 navigationService_1.NavigationService, popupService_1.PopupService, valueCache_1.ValueCache, valueService_1.ValueService, alignedGridsService_1.AlignedGridsService,
                 logger_1.LoggerFactory, columnUtils_1.ColumnUtils, autoWidthCalculator_1.AutoWidthCalculator, popupService_1.PopupService, gridCore_1.GridCore, standardMenu_1.StandardMenuFactory,
                 dragAndDropService_1.DragAndDropService, columnApi_1.ColumnApi, focusedCellController_1.FocusedCellController, mouseEventService_1.MouseEventService,
                 cellNavigationService_1.CellNavigationService, filterStage_1.FilterStage, sortStage_1.SortStage, flattenStage_1.FlattenStage, filterService_1.FilterService,
                 cellEditorFactory_1.CellEditorFactory, cellRendererService_1.CellRendererService, valueFormatterService_1.ValueFormatterService, stylingService_1.StylingService, scrollVisibleService_1.ScrollVisibleService,
                 columnHoverService_1.ColumnHoverService, columnAnimationService_1.ColumnAnimationService, sortService_1.SortService, selectableService_1.SelectableService, autoGroupColService_1.AutoGroupColService,
-                immutableService_1.ImmutableService, changeDetectionService_1.ChangeDetectionService, environment_1.Environment, animationFrameService_1.AnimationFrameService, sortController_1.SortController],
+                immutableService_1.ImmutableService, changeDetectionService_1.ChangeDetectionService, environment_1.Environment, animationFrameService_1.AnimationFrameService, sortController_1.SortController, zipContainer_1.ZipContainer],
             components: components,
             enterpriseDefaultComponents: Grid.enterpriseDefaultComponents,
             debug: !!gridOptions.debug
         };
-        var isLoggingFunc = function () { return contextParams.debug; };
-        this.context = new context_1.Context(contextParams, new logger_1.Logger('Context', isLoggingFunc));
+        this.logger = new logger_1.Logger('ag-Grid', function () { return gridOptions.debug; });
+        var contextLogger = new logger_1.Logger('Context', function () { return contextParams.debug; });
+        this.context = new context_1.Context(contextParams, contextLogger);
         this.setColumnsAndData();
         this.dispatchGridReadyEvent(gridOptions);
-        if (gridOptions.debug) {
-            console.log('ag-Grid -> initialised successfully, enterprise = ' + enterprise);
-        }
+        this.logger.log("initialised successfully, enterprise = " + enterprise);
     }
     Grid.setEnterpriseBeans = function (enterpriseBeans, rowModelClasses) {
         this.enterpriseBeans = enterpriseBeans;

@@ -1,14 +1,17 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -82,11 +85,12 @@ var CellComp = /** @class */ (function (_super) {
         // hey, this looks like React!!!
         templateParts.push("<div");
         templateParts.push(" tabindex=\"-1\"");
+        templateParts.push(" unselectable=\"on\""); // THIS IS FOR IE only so the text is not seleragle with mouse drage
         templateParts.push(" role=\"gridcell\"");
         templateParts.push(" comp-id=\"" + this.getCompId() + "\" ");
         templateParts.push(" col-id=\"" + colIdSanitised + "\"");
         templateParts.push(" class=\"" + cssClasses.join(' ') + "\"");
-        templateParts.push(tooltipSanitised ? " title=\"" + tooltipSanitised + "\"" : "");
+        templateParts.push(utils_1._.exists(tooltipSanitised) ? " title=\"" + tooltipSanitised + "\"" : "");
         templateParts.push(" style=\"width: " + width + "px; left: " + left + "px; " + stylesFromColDef + " " + stylesForRowSpanning + "\" >");
         templateParts.push(wrapperStartTemplate);
         templateParts.push(valueSanitised);
@@ -1161,17 +1165,15 @@ var CellComp = /** @class */ (function (_super) {
         // if it's a right click, then if the cell is already in range,
         // don't change the range, however if the cell is not in a range,
         // we set a new range
-        if (this.beans.rangeController) {
+        var leftMouseButtonClick = utils_1._.isLeftClick(mouseEvent);
+        if (leftMouseButtonClick && this.beans.rangeController) {
             var thisCell = this.gridCell;
             if (mouseEvent.shiftKey) {
                 this.beans.rangeController.extendRangeToCell(thisCell);
             }
             else {
-                var cellAlreadyInRange = this.beans.rangeController.isCellInAnyRange(thisCell);
-                if (!cellAlreadyInRange) {
-                    var ctrlKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
-                    this.beans.rangeController.setRangeToCell(thisCell, ctrlKeyPressed);
-                }
+                var ctrlKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
+                this.beans.rangeController.setRangeToCell(thisCell, ctrlKeyPressed);
             }
         }
         var cellMouseDownEvent = this.createEvent(mouseEvent, events_1.Events.EVENT_CELL_MOUSE_DOWN);

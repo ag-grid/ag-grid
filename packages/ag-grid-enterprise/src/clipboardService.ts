@@ -41,7 +41,7 @@ import {
 import {RangeController} from "./rangeController";
 
 interface RowCallback {
-    (gridRow: GridRow, rowNode: RowNode, columns: Column[], rangeIndex: number): void;
+    (gridRow: GridRow, rowNode: RowNode, columns: Column[], rangeIndex: number, isLastRow?: boolean): void;
 }
 
 interface ColumnCallback {
@@ -117,10 +117,6 @@ export class ClipboardService implements IClipboardService {
     }
 
     private pasteToRange(clipboardData: string[][]) {
-
-        // remove extra empty row which is inserted when clipboard has more than one row
-        if (clipboardData.length > 1) clipboardData.pop();
-
         let cellsToFlash = <any>{};
         let updatedRowNodes: RowNode[] = [];
         let updatedColumnIds: string[] = [];
@@ -384,13 +380,13 @@ export class ClipboardService implements IClipboardService {
 
         if (onlyFirst) {
             let range = rangeSelections[0];
-            this.iterateActiveRange(range, rowCallback, columnCallback);
+            this.iterateActiveRange(range, rowCallback, columnCallback, true);
         } else {
-            rangeSelections.forEach( range => this.iterateActiveRange(range, rowCallback, columnCallback) );
+            rangeSelections.forEach((range, idx) => this.iterateActiveRange(range, rowCallback, columnCallback, idx === rangeSelections.length - 1) );
         }
     }
 
-    private iterateActiveRange(range: RangeSelection, rowCallback: RowCallback, columnCallback?: ColumnCallback): void {
+    private iterateActiveRange(range: RangeSelection, rowCallback: RowCallback, columnCallback?: ColumnCallback, isLastRange?: boolean): void {
         // get starting and ending row, remember rowEnd could be before rowStart
         let startRow = range.start.getGridRow();
         let endRow = range.end.getGridRow();
@@ -405,22 +401,16 @@ export class ClipboardService implements IClipboardService {
         }
 
         let rangeIndex = 0;
-        while (true) {
+        let isLastRow = false;
 
-            let rowNode = this.getRowNode(currentRow);
-            rowCallback(currentRow, rowNode, range.columns, rangeIndex++);
+        // the currentRow could be missing if the user sets the active range manually, and sets a range
+        // that is outside of the grid (eg. sets range rows 0 to 100, but grid has only 20 rows).
+        while (!isLastRow && !_.missing(currentRow)) {
+            const rowNode = this.getRowNode(currentRow);
+            isLastRow = currentRow.equals(lastRow);
 
-            if (currentRow.equals(lastRow)) {
-                break;
-            }
-
+            rowCallback(currentRow, rowNode, range.columns, rangeIndex++, isLastRow && isLastRange);
             currentRow = this.cellNavigationService.getRowBelow(currentRow);
-
-            // this can happen if the user sets the active range manually, and sets a range
-            // that is outside of the grid, eg sets range rows 0 to 100, but grid has only 20 rows.
-            if (_.missing(currentRow)) {
-                break;
-            }
         }
     }
 
@@ -452,7 +442,7 @@ export class ClipboardService implements IClipboardService {
         };
 
         // adds cell values to the data
-        let rowCallback = (currentRow: GridRow, rowNode: RowNode, columns: Column[]) => {
+        let rowCallback = (currentRow: GridRow, rowNode: RowNode, columns: Column[], rowIndex: number, isLastRow: boolean) => {
             columns.forEach( (column, index) => {
                 let value = this.valueService.getValue(column, rowNode);
 
@@ -468,7 +458,10 @@ export class ClipboardService implements IClipboardService {
                 let cellId = new GridCell(gridCellDef).createId();
                 cellsToFlash[cellId] = true;
             });
-            data += '\r\n';
+
+            if (!isLastRow) {
+                data += '\r\n';
+            }
         };
 
         this.iterateActiveRanges(false, rowCallback, columnCallback);
@@ -647,11 +640,11 @@ export class ClipboardService implements IClipboardService {
         let objPattern = new RegExp(
             (
                 // Delimiters.
-                "(\\" + delimiter + "|\\r?\\n|\\r|^)" +
+                '(\\' + delimiter + '|\\r?\\n|\\r|^)' +
                 // Quoted fields.
-                "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+                '(?:"([^\"]*(?:""[^\"]*)*)"|'+
                 // Standard fields.
-                "([^\"\\" + delimiter + "\\r\\n]*))"
+                '([^\\' + delimiter + '\\r\\n]*))'
             ),
             "gi"
         );
@@ -661,7 +654,7 @@ export class ClipboardService implements IClipboardService {
         let arrData: string[][] = [[]];
 
         // Create an array to hold our individual pattern matching groups.
-        let arrMatches: string[];
+        let arrMatches: RegExpExecArray;
 
         // Required for handling edge case on first row copy
         let atFirstRow = true;
@@ -674,8 +667,8 @@ export class ClipboardService implements IClipboardService {
             let strMatchedDelimiter = arrMatches[ 1 ];
 
             // Handles case when first row is an empty cell, insert an empty string before delimiter
-            if (atFirstRow && strMatchedDelimiter) {
-                arrData[0].push("");
+            if ((atFirstRow && strMatchedDelimiter) || !arrMatches.index && arrMatches[0].charAt(0) === delimiter) {
+                arrData[0].push('');
             }
 
             // Check to see if the given delimiter has a length
@@ -696,7 +689,7 @@ export class ClipboardService implements IClipboardService {
             if (arrMatches[ 2 ]) {
                 // We found a quoted value. When we capture
                 // this value, unescaped any double quotes.
-                strMatchedValue = arrMatches[ 2 ].replace(new RegExp( "\"\"", "g" ), "\"");
+                strMatchedValue = arrMatches[ 2 ].replace(new RegExp('""', 'g'), '"');
             } else {
                 // We found a non-quoted value.
                 strMatchedValue = arrMatches[ 3 ];

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -53,9 +53,6 @@ var ClipboardService = /** @class */ (function () {
     };
     ClipboardService.prototype.pasteToRange = function (clipboardData) {
         var _this = this;
-        // remove extra empty row which is inserted when clipboard has more than one row
-        if (clipboardData.length > 1)
-            clipboardData.pop();
         var cellsToFlash = {};
         var updatedRowNodes = [];
         var updatedColumnIds = [];
@@ -290,13 +287,13 @@ var ClipboardService = /** @class */ (function () {
         var rangeSelections = this.rangeController.getCellRanges();
         if (onlyFirst) {
             var range = rangeSelections[0];
-            this.iterateActiveRange(range, rowCallback, columnCallback);
+            this.iterateActiveRange(range, rowCallback, columnCallback, true);
         }
         else {
-            rangeSelections.forEach(function (range) { return _this.iterateActiveRange(range, rowCallback, columnCallback); });
+            rangeSelections.forEach(function (range, idx) { return _this.iterateActiveRange(range, rowCallback, columnCallback, idx === rangeSelections.length - 1); });
         }
     };
-    ClipboardService.prototype.iterateActiveRange = function (range, rowCallback, columnCallback) {
+    ClipboardService.prototype.iterateActiveRange = function (range, rowCallback, columnCallback, isLastRange) {
         // get starting and ending row, remember rowEnd could be before rowStart
         var startRow = range.start.getGridRow();
         var endRow = range.end.getGridRow();
@@ -307,18 +304,14 @@ var ClipboardService = /** @class */ (function () {
             columnCallback(range.columns);
         }
         var rangeIndex = 0;
-        while (true) {
+        var isLastRow = false;
+        // the currentRow could be missing if the user sets the active range manually, and sets a range
+        // that is outside of the grid (eg. sets range rows 0 to 100, but grid has only 20 rows).
+        while (!isLastRow && !ag_grid_community_1._.missing(currentRow)) {
             var rowNode = this.getRowNode(currentRow);
-            rowCallback(currentRow, rowNode, range.columns, rangeIndex++);
-            if (currentRow.equals(lastRow)) {
-                break;
-            }
+            isLastRow = currentRow.equals(lastRow);
+            rowCallback(currentRow, rowNode, range.columns, rangeIndex++, isLastRow && isLastRange);
             currentRow = this.cellNavigationService.getRowBelow(currentRow);
-            // this can happen if the user sets the active range manually, and sets a range
-            // that is outside of the grid, eg sets range rows 0 to 100, but grid has only 20 rows.
-            if (ag_grid_community_1._.missing(currentRow)) {
-                break;
-            }
         }
     };
     ClipboardService.prototype.copySelectedRangeToClipboard = function (includeHeaders) {
@@ -348,7 +341,7 @@ var ClipboardService = /** @class */ (function () {
             data += '\r\n';
         };
         // adds cell values to the data
-        var rowCallback = function (currentRow, rowNode, columns) {
+        var rowCallback = function (currentRow, rowNode, columns, rowIndex, isLastRow) {
             columns.forEach(function (column, index) {
                 var value = _this.valueService.getValue(column, rowNode);
                 var processedValue = _this.userProcessCell(rowNode, column, value, _this.gridOptionsWrapper.getProcessCellForClipboardFunc(), ag_grid_community_1.Constants.EXPORT_TYPE_CLIPBOARD);
@@ -362,7 +355,9 @@ var ClipboardService = /** @class */ (function () {
                 var cellId = new ag_grid_community_1.GridCell(gridCellDef).createId();
                 cellsToFlash[cellId] = true;
             });
-            data += '\r\n';
+            if (!isLastRow) {
+                data += '\r\n';
+            }
         };
         this.iterateActiveRanges(false, rowCallback, columnCallback);
         this.copyDataToClipboard(data);
@@ -521,11 +516,11 @@ var ClipboardService = /** @class */ (function () {
         // Create a regular expression to parse the CSV values.
         var objPattern = new RegExp((
         // Delimiters.
-        "(\\" + delimiter + "|\\r?\\n|\\r|^)" +
+        '(\\' + delimiter + '|\\r?\\n|\\r|^)' +
             // Quoted fields.
-            "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+            '(?:"([^\"]*(?:""[^\"]*)*)"|' +
             // Standard fields.
-            "([^\"\\" + delimiter + "\\r\\n]*))"), "gi");
+            '([^\\' + delimiter + '\\r\\n]*))'), "gi");
         // Create an array to hold our data. Give the array
         // a default empty first row.
         var arrData = [[]];
@@ -539,8 +534,8 @@ var ClipboardService = /** @class */ (function () {
             // Get the delimiter that was found.
             var strMatchedDelimiter = arrMatches[1];
             // Handles case when first row is an empty cell, insert an empty string before delimiter
-            if (atFirstRow && strMatchedDelimiter) {
-                arrData[0].push("");
+            if ((atFirstRow && strMatchedDelimiter) || !arrMatches.index && arrMatches[0].charAt(0) === delimiter) {
+                arrData[0].push('');
             }
             // Check to see if the given delimiter has a length
             // (is not the start of string) and if it matches
@@ -558,7 +553,7 @@ var ClipboardService = /** @class */ (function () {
             if (arrMatches[2]) {
                 // We found a quoted value. When we capture
                 // this value, unescaped any double quotes.
-                strMatchedValue = arrMatches[2].replace(new RegExp("\"\"", "g"), "\"");
+                strMatchedValue = arrMatches[2].replace(new RegExp('""', 'g'), '"');
             }
             else {
                 // We found a non-quoted value.

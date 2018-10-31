@@ -1,9 +1,12 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -35,7 +38,8 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
     ToolPanelColumnComp.prototype.init = function () {
         this.setTemplate(ToolPanelColumnComp.TEMPLATE);
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
-        this.eLabel.innerHTML = this.displayName;
+        var displayNameSanitised = main_1._.escape(this.displayName);
+        this.eLabel.innerHTML = displayNameSanitised;
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
         var indent = this.columnDept;
         if (this.groupsExist) {

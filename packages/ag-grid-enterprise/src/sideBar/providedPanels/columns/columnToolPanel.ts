@@ -72,9 +72,10 @@ export class ColumnToolPanel extends Component implements IToolPanelComp {
             suppressPivotMode: false,
             suppressRowGroups: false,
             suppressValues: false,
-            suppressPivots: false
+            suppressPivots: false,
+            api: this.gridApi
         };
-        _.mergeDeep(defaultParams ,params)
+        _.mergeDeep(defaultParams, params);
         this.params = defaultParams;
         this.instantiate(this.context);
 

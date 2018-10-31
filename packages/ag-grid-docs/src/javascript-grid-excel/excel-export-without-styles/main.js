@@ -3,8 +3,8 @@ var columnDefs = [{
     children: [
         {headerName: "Athlete", field: "athlete", width: 150},
         {headerName: "Age", field: "age", width: 90, cellClassRules:{
-            greenBackground: function(params) { return params.value < 23},
-            blueBackground: function(params) { return params.value < 20}
+            greenBackground: function(params) { return params.value < 23; },
+            blueBackground: function(params) { return params.value < 20; }
         }},
         {headerName: "Country", field: "country", width: 120},
         {headerName: "Group", valueGetter: "data.country.charAt(0)", width: 75},
@@ -56,12 +56,13 @@ function onBtExport() {
         allColumns: getBooleanValue('#allColumns'),
         onlySelected: getBooleanValue('#onlySelected'),
         fileName: document.querySelector('#fileName').value,
-        sheetName: document.querySelector('#sheetName').value
+        sheetName: document.querySelector('#sheetName').value,
+        exportMode: document.querySelector('input[name="mode"]:checked').value
     };
 
     if (getBooleanValue('#skipGroupR')) {
         params.shouldRowBeSkipped = function(params) {
-            return params.node.data.country.charAt(0) === 'R'
+            return params.node.data.country.charAt(0) === 'R';
         };
     }
 

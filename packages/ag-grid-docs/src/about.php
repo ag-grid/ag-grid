@@ -160,10 +160,20 @@ gtm_data_layer('about');
 
                     <div class="col-md-4">
                         <div>
+                            <img src='images/team/phil.png' alt="Phillip Merola, VP Business Development"/>
+                        </div>
+                        <h3>Phillip Merola</h3>
+                        <h4>VP of Business Development</h4>
+                        <p>
+                            Phil joined ag-Grid to lead business development and open US operations.  He has 20 plus years’ experience in software sales, marketing and business development for both software start-ups and large software companies. Prior to ag-Grid he led eastern  sales at Sencha, with focus on expanding financial markets.
+                        </p>
+                    </div>
+<div class="col-md-4">
+                        <div>
                             <img src='images/team/alex.jpg' alt="Alex Price, COO"/>
                         </div>
                         <h3>Alex Price</h3>
-                        <h4>COO</h4>
+                        <h4>Operations Manager</h4>
                         <p>
                             Alex moved to the UK in August 2015 to pursue an MBA at the University of oxford. Since completing his degree, Alex has worked in startups in London and Silicon Valley. As operations manager his focus is on improving customer satisfaction and efficiencies with the the sales team. Having previously been head of operations at a manufacturing plant, Alex has a keen appreciation of systems and working with people. Alex heads up the customer team and is always available to deal with customer queries as well as scaling ag-Grid’s infrastructure for growth.
                         </p>
@@ -205,12 +215,13 @@ gtm_data_layer('about');
                     <h3>Our Address</h3>
 
                     <address>
-                        <strong>ag-Grid Ltd.</strong><br>
-                        The Treehouse, 2-10 Balham Station Road<br>
-                        London, SW12 9SG
-                        United Kingdom<br>
+                        <strong>ag-Grid Ltd.</strong><br/>
+                        Bank Chambers,<br/>
+                        6 Borough High Street<br/>
+                        London,<br/>
+                        SE1 9QQ,<br/>
+                        United Kingdom
                     </address>
-
                     <p>Email Enquiries: <a href="mailto:info@ag-grid.com">info@ag-grid.com</a></p>
                 </div>
 

@@ -3,7 +3,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     new agGrid.Grid(gridDiv, gridOptions);
     createData();
+
+    api = gridOptions.api;
+    columnApi = gridOptions.columnApi;
 });
+
+// for easy access in the dev console, we put api and columnApi into global variables
+var api, columnApi;
 
 var gridDiv;
 var colNames = ["Station", "Railway", "Street", "Address", "Toy", "Soft Box", "Make and Model", "Longest Day", "Shortest Night"];
@@ -40,10 +46,10 @@ var games = ["Chess", "Cross and Circle", "Daldos", "Downfall", "DVONN", "Fanoro
 ];
 var booleanValues = [true, "true", false, "false"];
 
-var firstNames = ["Tony", "Andrew", "Kevin", "Bricker", "Dimple", "Bas", "Sophie", "Isabelle", "Emily", "Olivia", "Lily", "Chloe", "Isabella",
+var firstNames = ["Tony", "Andrew", "Kevin", "Bricker", "Dimple", "Gil", "Sophie", "Isabelle", "Emily", "Olivia", "Lily", "Chloe", "Isabella",
     "Amelia", "Jessica", "Sophia", "Ava", "Charlotte", "Mia", "Lucy", "Grace", "Ruby",
     "Ella", "Evie", "Freya", "Isla", "Poppy", "Daisy", "Layla"];
-var lastNames = ["Smith", "Connell", "Flanagan", "McGee", "Unalkat", "Rahman", "Beckham", "Black", "Braxton", "Brennan", "Brock", "Bryson", "Cadwell",
+var lastNames = ["Smith", "Connell", "Flanagan", "McGee", "Unalkat", "Lopes", "Beckham", "Black", "Braxton", "Brennan", "Brock", "Bryson", "Cadwell",
     "Cage", "Carson", "Chandler", "Cohen", "Cole", "Corbin", "Dallas", "Dalton", "Dane",
     "Donovan", "Easton", "Fisher", "Fletcher", "Grady", "Greyson", "Griffin", "Gunner",
     "Hayden", "Hudson", "Hunter", "Jacoby", "Jagger", "Jaxon", "Jett", "Kade", "Kane",
@@ -122,7 +128,7 @@ var gridOptions = {
     },
     enableCellChangeFlash: true,
     rowDragManaged: true,
-    popupParent: document.body,
+    // popupParent: document.body,
     // ensureDomOrder: true,
     // postProcessPopup: function(params) {
     //     console.log(params);
@@ -134,33 +140,33 @@ var gridOptions = {
     // suppressAsyncEvents: true,
     // suppressAggAtRootLevel: true,
     floatingFilter: true,
-    //debug: true,
-    //     editType: 'fullRow',
-    //     debug: true,
-    //     suppressMultiRangeSelection: true,
+    // debug: true,
+    // editType: 'fullRow',
+    // debug: true,
+    // suppressMultiRangeSelection: true,
     rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
     pivotColumnGroupTotals: 'before',
     pivotRowTotals: 'before',
     // suppressRowTransform: true,
-    //minColWidth: 50,
-    //maxColWidth: 300,
-    //    rowBuffer: 10,
-    //columnDefs: [],
-    //singleClickEdit: true,
+    // minColWidth: 50,
+    // maxColWidth: 300,
+    // rowBuffer: 10,
+    // columnDefs: [],
+    // singleClickEdit: true,
     // suppressClickEdit: true,
     enterMovesDownAfterEdit: true,
     enterMovesDown: true,
     // domLayout: 'autoHeight',
     // domLayout: 'forPrint',
     // groupUseEntireRow: true, //one of [true, false]
-    //        groupDefaultExpanded: 9999, //one of [true, false], or an integer if greater than 1
-    //            headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
-    //        groupSuppressAutoColumn: true,
-    //groupSuppressBlankHeader: true,
-    //suppressMovingCss: true,
-    //suppressMovableColumns: true,
-    //groupIncludeFooter: true,
+    // groupDefaultExpanded: 9999, //one of [true, false], or an integer if greater than 1
+    // headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
+    // groupSuppressAutoColumn: true,
+    // groupSuppressBlankHeader: true,
+    // suppressMovingCss: true,
+    // suppressMovableColumns: true,
+    // groupIncludeFooter: true,
     suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
     // suppressRowHoverHighlight: true,
     // suppressTouch: true,
@@ -183,11 +189,11 @@ var gridOptions = {
     // groupSelectsFiltered: true,
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
     // suppressColumnVirtualisation: true,
-    //suppressContextMenu: true,
+    // suppressContextMenu: true,
     //suppressFieldDotNotation: true,
     autoGroupColumnDef: groupColumn,
-    //suppressCellSelection: true,
-    //suppressMultiSort: true,
+    // suppressCellSelection: true,
+    // suppressMultiSort: true,
     // scrollbarWidth: 20,
     sideBar: true,
     // showToolPanel: true,//window.innerWidth > 1000,
@@ -195,21 +201,22 @@ var gridOptions = {
     // toolPanelSuppressColumnSelectAll: true,
     // toolPanelSuppressColumnExpandAll: true,
     //  autoSizePadding: 20,
-    //toolPanelSuppressGroups: true,
-    //toolPanelSuppressValues: true,
-    //groupSuppressAutoColumn: true,
-    //contractColumnSelection: true,
-    //groupAggFields: ['bankBalance','totalWinnings'],
-    //     groupMultiAutoColumn: true,
-    //     groupHideOpenParents: true,
-    //suppressMenuFilterPanel: true,
-    //     clipboardDeliminator: ',',
-    //suppressMenuMainPanel: true,
-    //suppressMenuColumnPanel: true,
-    //forPrint: true,
-    //rowClass: function(params) { return (params.data.country === 'Ireland') ? "theClass" : null; },
-    //headerCellRenderer: headerCellRenderer_text,
-    //headerCellRenderer: headerCellRenderer_dom,
+    // toolPanelSuppressGroups: true,
+    // toolPanelSuppressValues: true,
+    // groupSuppressAutoColumn: true,
+    // contractColumnSelection: true,
+    // groupAggFields: ['bankBalance','totalWinnings'],
+    // groupMultiAutoColumn: true,
+    // groupHideOpenParents: true,
+    // suppressMenuFilterPanel: true,
+    // clipboardDeliminator: ',',
+    // suppressMenuMainPanel: true,
+    // suppressMenuColumnPanel: true,
+    // suppressMenuHide: true,
+    // forPrint: true,
+    // rowClass: function(params) { return (params.data.country === 'Ireland') ? "theClass" : null; },
+    // headerCellRenderer: headerCellRenderer_text,
+    // headerCellRenderer: headerCellRenderer_dom,
     onRowSelected: rowSelected, //callback when row selected
     onSelectionChanged: selectionChanged, //callback when selection changed,
     aggFuncs: {
@@ -311,13 +318,19 @@ var gridOptions = {
         {
             id: 'good-score',
             interior: {
-                color: "#94e494", pattern: 'Solid'
+                color: "#C6EFCE", pattern: 'Solid'
+            },
+            numberFormat: {
+                format: '[$$-409]#,##0'
             }
         },
         {
             id: 'bad-score',
             interior: {
-                color: "#e49494", pattern: 'Solid'
+                color: "#FFC7CE", pattern: 'Solid'
+            },
+            numberFormat: {
+                format: '[$$-409]#,##0'
             }
         },
         {
@@ -325,6 +338,16 @@ var gridOptions = {
             interior: {
                 color: "#CCCCCC", pattern: 'Solid'
             }
+        },
+        {
+            id: 'currencyCell',
+            numberFormat: {
+                format: '[$$-409]#,##0'
+            }
+        },
+        {
+            id: 'booleanType',
+            dataType: 'boolean'
         }
     ]
 };
@@ -497,6 +520,7 @@ var defaultCols = [
                 enableRowGroup: true,
                 enablePivot: true,
                 enableValue: true,
+                cellClass: 'booleanType',
                 cellRenderer: 'booleanCellRenderer', cellStyle: {"text-align": "center"}, comparator: booleanComparator,
                 floatCell: true,
                 filterParams: {
@@ -517,6 +541,9 @@ var defaultCols = [
                 headerName: "Bank Balance", field: "bankBalance", width: 180, editable: true,
                 filter: 'winningsFilter', valueFormatter: currencyFormatter,
                 type: 'numericColumn',
+                cellClassRules: {
+                    'currencyCell': 'typeof x == "number"'
+                },
                 enableValue: true,
                 // colId: 'sf',
                 // valueGetter: '55',
@@ -555,6 +582,9 @@ var defaultCols = [
         editable: true, valueParser: numberParser, width: 170,
         // aggFunc: 'sum',
         enableValue: true,
+        cellClassRules: {
+            'currencyCell': 'typeof x == "number"'
+        },
         valueFormatter: currencyFormatter, cellStyle: currencyCssFunc,
         icons: {
             sortAscending: '<i class="fa fa-sort-amount-asc"/>',
@@ -577,13 +607,14 @@ months.forEach(function (month) {
         //hide: true,
         cellClassRules: {
             'good-score': 'typeof x === "number" && x > 50000',
-            'bad-score': 'typeof x === "number" && x < 10000'
+            'bad-score': 'typeof x === "number" && x < 10000',
+            'currencyCell': 'typeof x === "number" && x >= 10000 && x <= 50000'
         },
         valueParser: numberParser, valueFormatter: currencyFormatter,
         filterParams: {
             clearButton: true
         }
-    })
+    });
 });
 
 function filterDoubleClicked(event) {
@@ -1157,3 +1188,4 @@ function countryCellRenderer(params) {
         return flag + ' ' + params.value;
     }
 }
+

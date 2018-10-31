@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { CellComp } from "./cellComp";
@@ -45,6 +45,8 @@ export declare class RowComp extends Component {
     private fullWidthRowComponentBody;
     private fullWidthRowComponentLeft;
     private fullWidthRowComponentRight;
+    private firstRowOnPage;
+    private lastRowOnPage;
     private active;
     private fullWidthRow;
     private editingRow;
@@ -113,6 +115,9 @@ export declare class RowComp extends Component {
     private angular1Compile;
     private createFullWidthParams;
     private getInitialRowClasses;
+    private isFirstRowOnPage;
+    private isLastRowOnPage;
+    private onModelUpdated;
     private preProcessRowClassRules;
     private processRowClassRules;
     stopEditing(cancel?: boolean): void;
@@ -153,3 +158,4 @@ export declare class RowComp extends Component {
     getBodyRowElement(): HTMLElement;
     getFullWidthRowElement(): HTMLElement;
 }
+//# sourceMappingURL=rowComp.d.ts.map

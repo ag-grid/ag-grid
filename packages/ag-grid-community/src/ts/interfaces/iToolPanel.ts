@@ -1,6 +1,8 @@
 import {IComponent} from "./iComponent";
+import {GridApi} from "../gridApi";
 
 export interface IToolPanelParams {
+    api: GridApi;
 }
 
 export interface IToolPanel {

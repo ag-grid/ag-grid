@@ -5,7 +5,7 @@ import {HttpClient} from '@angular/common/http';
     selector: 'my-app',
     template: `
 
-        <div style="height: 5%">
+        <div class="test-header" style="height: 5%">
             <label><input type="checkbox" checked (change)="onCbAthlete($event.target.checked)"/>Athlete</label>
             <label><input type="checkbox" checked (change)="onCbAge($event.target.checked)"/>Age</label>
             <label><input type="checkbox" checked (change)="onCbCountry($event.target.checked)"/>Country</label>

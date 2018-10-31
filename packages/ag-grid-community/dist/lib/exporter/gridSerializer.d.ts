@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -56,6 +56,14 @@ export interface RowAccumulator {
 export interface RowSpanningAccumulator {
     onColumn(header: string, index: number, span: number): void;
 }
+export interface GridSerializingParams {
+    columnController: ColumnController;
+    valueService: ValueService;
+    gridOptionsWrapper: GridOptionsWrapper;
+    processCellCallback?: (params: ProcessCellForExportParams) => string;
+    processHeaderCallback?: (params: ProcessHeaderForExportParams) => string;
+    cellAndHeaderEscaper?: (rawValue: string) => string;
+}
 export declare abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
     columnController: ColumnController;
     valueService: ValueService;
@@ -63,7 +71,7 @@ export declare abstract class BaseGridSerializingSession<T> implements GridSeria
     processCellCallback?: (params: ProcessCellForExportParams) => string;
     processHeaderCallback?: (params: ProcessHeaderForExportParams) => string;
     cellAndHeaderEscaper?: (rawValue: string) => string;
-    constructor(columnController: ColumnController, valueService: ValueService, gridOptionsWrapper: GridOptionsWrapper, processCellCallback?: (params: ProcessCellForExportParams) => string, processHeaderCallback?: (params: ProcessHeaderForExportParams) => string, cellAndHeaderEscaper?: (rawValue: string) => string);
+    constructor(config: GridSerializingParams);
     abstract prepare(columnsToExport: Column[]): void;
     abstract addCustomHeader(customHeader: T): void;
     abstract addCustomFooter(customFooter: T): void;
@@ -83,7 +91,7 @@ export declare class GridSerializer {
     private rowModel;
     private pinnedRowModel;
     private selectionController;
-    private balancedColumnTreeBuilder;
+    private columnFactory;
     private gridOptionsWrapper;
     serialize<T>(gridSerializingSession: GridSerializingSession<T>, params?: ExportParams<T>): string;
     recursivelyAddHeaderGroups<T>(displayedGroups: ColumnGroupChild[], gridSerializingSession: GridSerializingSession<T>): void;
@@ -94,3 +102,4 @@ export declare enum RowType {
     HEADER = 1,
     BODY = 2
 }
+//# sourceMappingURL=gridSerializer.d.ts.map

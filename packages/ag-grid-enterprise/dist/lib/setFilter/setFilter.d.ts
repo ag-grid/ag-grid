@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 import { BaseFilter, IDoesFilterPassParams, ISetFilterParams, SerializedSetFilter } from "ag-grid-community";
 export declare class SetFilter extends BaseFilter<string, ISetFilterParams, string[] | SerializedSetFilter> {
     private model;
@@ -62,3 +62,4 @@ export declare class SetFilter extends BaseFilter<string, ISetFilterParams, stri
     resetState(): void;
     isFilterConditionActive(): boolean;
 }
+//# sourceMappingURL=setFilter.d.ts.map

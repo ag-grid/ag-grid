@@ -40,6 +40,7 @@ var columnDefs = [
     }
 ];
 
+// inScope[createRowData]
 function createRowData() {
     return [
         {name: "Bob", mood: "Happy", number: 10},
@@ -61,7 +62,7 @@ function createRowData() {
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: createRowData(),
+    rowData: this.createRowData(),
     components: {
         moodRenderer: MoodRenderer,
         moodEditor: MoodEditor,

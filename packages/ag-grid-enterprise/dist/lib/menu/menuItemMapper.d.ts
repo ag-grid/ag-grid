@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 import { MenuItemDef, Column } from 'ag-grid-community';
 export declare class MenuItemMapper {
     private gridOptionsWrapper;
@@ -10,3 +10,4 @@ export declare class MenuItemMapper {
     private getStockMenuItem;
     private createAggregationSubMenu;
 }
+//# sourceMappingURL=menuItemMapper.d.ts.map

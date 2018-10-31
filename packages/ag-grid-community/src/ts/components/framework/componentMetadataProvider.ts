@@ -72,7 +72,7 @@ export class ComponentMetadataProvider {
             },
             pinnedRowCellRenderer:{
                 mandatoryMethodList: [],
-                optionalMethodList: ['afterGuiAttached'],
+                optionalMethodList: ['refresh', 'afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
             groupRowInnerRenderer:{

@@ -1,14 +1,17 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -44,6 +47,8 @@ var HeaderComp = /** @class */ (function (_super) {
     }
     HeaderComp.prototype.init = function (params) {
         var template = utils_1.Utils.firstExistingValue(params.template, HeaderComp.TEMPLATE);
+        // take account of any newlines & whitespace before/after the actual template
+        template = template && template.trim ? template.trim() : template;
         this.setTemplate(template);
         this.params = params;
         this.setupTap();
@@ -54,8 +59,9 @@ var HeaderComp = /** @class */ (function (_super) {
         this.setupText(params.displayName);
     };
     HeaderComp.prototype.setupText = function (displayName) {
+        var displayNameSanitised = utils_1.Utils.escape(displayName);
         if (this.eText) {
-            this.eText.innerHTML = displayName;
+            this.eText.innerHTML = displayNameSanitised;
         }
     };
     HeaderComp.prototype.setupIcons = function (column) {
@@ -73,23 +79,35 @@ var HeaderComp = /** @class */ (function (_super) {
     };
     HeaderComp.prototype.setupTap = function () {
         var _this = this;
-        if (this.gridOptionsWrapper.isSuppressTouch()) {
+        var gow = this.gridOptionsWrapper;
+        if (gow.isSuppressTouch()) {
             return;
         }
+        var suppressMenuHide = gow.isSuppressMenuHide();
         var touchListener = new touchListener_1.TouchListener(this.getGui(), true);
+        var menuTouchListener = suppressMenuHide ? new touchListener_1.TouchListener(this.eMenu, true) : touchListener;
         if (this.params.enableMenu) {
-            var longTapListener = function (event) {
-                _this.gridOptionsWrapper.getApi().showColumnMenuAfterMouseClick(_this.params.column, event.touchStart);
+            var eventType = suppressMenuHide ? 'EVENT_TAP' : 'EVENT_LONG_TAP';
+            var showMenuFn = function (event) {
+                gow.getApi().showColumnMenuAfterMouseClick(_this.params.column, event.touchStart);
             };
-            this.addDestroyableEventListener(touchListener, touchListener_1.TouchListener.EVENT_LONG_TAP, longTapListener);
+            this.addDestroyableEventListener(menuTouchListener, touchListener_1.TouchListener[eventType], showMenuFn);
         }
         if (this.params.enableSorting) {
-            var tapListener = function () {
+            var tapListener = function (event) {
+                var target = event.touchStart.target;
+                // When suppressMenuHide is true, a tap on the menu icon will bubble up
+                // to the header container, in that case we should not sort
+                if (suppressMenuHide && _this.eMenu.contains(target))
+                    return;
                 _this.sortController.progressSort(_this.params.column, false, "uiColumnSorted");
             };
             this.addDestroyableEventListener(touchListener, touchListener_1.TouchListener.EVENT_TAP, tapListener);
         }
         this.addDestroyFunc(function () { return touchListener.destroy(); });
+        if (menuTouchListener !== touchListener) {
+            this.addDestroyFunc(function () { return menuTouchListener.destroy(); });
+        }
     };
     HeaderComp.prototype.setupMenu = function () {
         var _this = this;
@@ -97,15 +115,17 @@ var HeaderComp = /** @class */ (function (_super) {
         if (!this.eMenu) {
             return;
         }
-        // we don't show the menu if on an ipad, as the user cannot have a mouse on the ipad, so
-        // makes no sense. instead the user must long-tap if on an ipad.
-        var dontShowMenu = !this.params.enableMenu || utils_1.Utils.isUserAgentIPad();
+        // we don't show the menu if on an ipad/iphone, as the user cannot have a pointer device
+        // Note: If supressMenuHide is set to true the menu will be displayed, and if suppressMenuHide
+        // is false (default) user will need to use longpress to display the menu.
+        var suppressMenuHide = this.gridOptionsWrapper.isSuppressMenuHide();
+        var dontShowMenu = !this.params.enableMenu || (utils_1.Utils.isUserAgentIPad() && !suppressMenuHide);
         if (dontShowMenu) {
             utils_1.Utils.removeFromParent(this.eMenu);
             return;
         }
-        this.eMenu.addEventListener('click', function () { return _this.showMenu(_this.eMenu); });
-        if (!this.gridOptionsWrapper.isSuppressMenuHide()) {
+        this.addDestroyableEventListener(this.eMenu, 'click', function () { return _this.showMenu(_this.eMenu); });
+        if (!suppressMenuHide) {
             this.eMenu.style.opacity = '0';
             this.addGuiEventListener('mouseover', function () {
                 _this.eMenu.style.opacity = '1';
@@ -153,9 +173,6 @@ var HeaderComp = /** @class */ (function (_super) {
                 if (!columnMoving) {
                     var multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
                     _this.params.progressSort(multiSort);
-                }
-                else {
-                    console.log("kipping sort cos of moving " + _this.lastMovingChanged);
                 }
             });
         }

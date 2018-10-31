@@ -1,19 +1,15 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 import { ExcelStyle, ExcelWorksheet } from 'ag-grid-community';
 /**
  * See https://msdn.microsoft.com/en-us/library/aa140066(v=office.10).aspx
  */
 export declare class ExcelXmlFactory {
     private xmlFactory;
-    createExcelXml(styles: ExcelStyle[], worksheets: ExcelWorksheet[]): string;
+    createExcel(styles: ExcelStyle[], worksheets: ExcelWorksheet[], sharedStrings?: string[]): string;
     private workbook;
     private excelXmlHeader;
     private stylesXmlElement;
     private styleXmlElement;
-    private worksheetXmlElement;
-    private columnXmlElement;
-    private rowXmlElement;
-    private rowCellXmlElement;
-    private excelWorkbook;
-    private documentProperties;
+    private addProperty;
 }
+//# sourceMappingURL=excelXmlFactory.d.ts.map

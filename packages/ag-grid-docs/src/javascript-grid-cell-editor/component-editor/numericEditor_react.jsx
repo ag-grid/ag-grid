@@ -1,42 +1,76 @@
 import React, {Component} from "react";
 
-export default class MoodEditor extends Component {
+const KEY_BACKSPACE = 8;
+const KEY_DELETE = 46;
+const KEY_F2 = 113;
+
+export default class NumericEditor extends Component {
     constructor(props) {
         super(props);
 
         this.cancelBeforeStart = this.props.charPress && ('1234567890'.indexOf(this.props.charPress) < 0);
 
-        let value = this.props.value;
-        if (!this.cancelBeforeStart && this.props.charPress) {
-            value = value + this.props.charPress;
-        }
-        this.state = {
-            value
-        };
+        this.state = this.createInitialState(props);
 
         this.onKeyDown = this.onKeyDown.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
 
-    componentDidMount() {
-        this.refs.input.addEventListener('keydown', this.onKeyDown);
-        this.focus();
+    createInitialState(props) {
+        let startValue;
+        let highlightAllOnFocus = true;
+
+        if (props.keyPress === KEY_BACKSPACE || props.keyPress === KEY_DELETE) {
+            // if backspace or delete pressed, we clear the cell
+            startValue = '';
+        } else if (props.charPress) {
+            // if a letter was pressed, we start with the letter
+            startValue = props.charPress;
+            highlightAllOnFocus = false;
+        } else {
+            // otherwise we start with the current value
+            startValue = props.value;
+            if (props.keyPress === KEY_F2) {
+                highlightAllOnFocus = false;
+            }
+        }
+
+        return {
+            value: startValue,
+            highlightAllOnFocus
+        }
     }
 
-    componentDidUpdate() {
-        this.focus();
+    componentDidMount() {
+        this.refs.input.addEventListener('keydown', this.onKeyDown);
+
     }
 
     componentWillUnmount() {
         this.refs.input.removeEventListener('keydown', this.onKeyDown);
     }
 
-    focus() {
-        setTimeout(() => {
-            this.refs.input.focus();
-            this.refs.input.setSelectionRange(this.state.value.length, this.state.value.length);
+    afterGuiAttached() {
+        console.log('h', this.state.highlightAllOnFocus);
+        // get ref from React component
+        const eInput = this.refs.input;
+        eInput.focus();
+        if (this.state.highlightAllOnFocus) {
+            eInput.select();
 
-        })
+            this.setState({
+                highlightAllOnFocus: false
+            })
+        } else {
+            // when we started editing, we want the carot at the end, not the start.
+            // this comes into play in two scenarios: a) when user hits F2 and b)
+            // when user hits a printable character, then on IE (and only IE) the carot
+            // was placed after the first character, thus 'apply' would end up as 'pplea'
+            const length = eInput.value ? eInput.value.length : 0;
+            if (length > 0) {
+                eInput.setSelectionRange(length, length);
+            }
+        }
     }
 
     getValue() {
@@ -54,7 +88,7 @@ export default class MoodEditor extends Component {
     };
 
     onKeyDown(event) {
-        if (this.isLeftOrRight(event)) {
+        if (this.isLeftOrRight(event) || this.deleteOrBackspace(event)) {
             event.stopPropagation();
             return;
         }
@@ -95,5 +129,9 @@ export default class MoodEditor extends Component {
                    style={{width: "100%"}}
             />
         );
+    }
+
+    deleteOrBackspace(event) {
+        return [KEY_DELETE, KEY_BACKSPACE].indexOf(event.keyCode) > -1;
     }
 }

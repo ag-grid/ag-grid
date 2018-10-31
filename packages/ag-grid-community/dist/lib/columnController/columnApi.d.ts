@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColDef, ColGroupDef } from "../entities/colDef";
@@ -79,6 +79,8 @@ export declare class ColumnApi {
     autoSizeColumns(keys: (string | Column)[]): void;
     autoSizeAllColumns(): void;
     setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[]): void;
+    getSecondaryColumns(): Column[];
+    getPrimaryColumns(): Column[];
     columnGroupOpened(group: OriginalColumnGroup | string, newValue: boolean): void;
     hideColumns(colIds: any, hide: any): void;
     hideColumn(colId: any, hide: any): void;
@@ -93,3 +95,4 @@ export declare class ColumnApi {
     setColumnAggFunction(column: Column, aggFunc: string): void;
     getDisplayNameForCol(column: any): string;
 }
+//# sourceMappingURL=columnApi.d.ts.map

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 import { IStatusPanelComp, IStatusBarService } from 'ag-grid-community';
 export declare class StatusBarService implements IStatusBarService {
     private allComponents;
@@ -6,3 +6,4 @@ export declare class StatusBarService implements IStatusBarService {
     registerStatusPanel(key: string, component: IStatusPanelComp): void;
     getStatusPanel(key: string): IStatusPanelComp;
 }
+//# sourceMappingURL=statusBarService.d.ts.map

@@ -23,7 +23,7 @@ Let's follow the <a href="https://github.com/angular/angular-cli#installation">A
 
 <snippet language="sh">
 npm install -g @angular/cli
-ng new my-app --style scss
+ng new my-app --style scss --routing false
 cd my-app
 ng serve
 </snippet>
@@ -36,6 +36,7 @@ ng serve
 
 <snippet language="sh">
 npm install --save ag-grid-community ag-grid-angular
+npm install # in certain circumstances npm will perform an "auto prune". This step ensures all expected dependencies are present
 </snippet>
 
 <p>After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first step, let's add the ag-Grid Angular module to our app module (<code>src/app.module.ts</code>):</p>
@@ -61,8 +62,8 @@ export class AppModule {}
 <p>The next step is to add the ag-Grid styles - import them in <code>styles.scss</code>:</p>
 
 <snippet language="scss">
-@import "~ag-grid/dist/styles/ag-grid.css";
-@import "~ag-grid/dist/styles/ag-theme-balham.css";
+@import "~ag-grid-community/dist/styles/ag-grid.css";
+@import "~ag-grid-community/dist/styles/ag-theme-balham.css";
 </snippet>
 
 <p>The code above imports the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-balham.css</code>). 
@@ -265,7 +266,8 @@ export class AppComponent implements OnInit {
 }
 </snippet>
 
-<p>Next, let's enable <a href="https://www.ag-grid.com/javascript-grid-selection/#multi-row-selection">multiple row selection</a>, so that the user can pick many rows:</p>
+<p>Next, let's enable <a href="https://www.ag-grid.com/javascript-grid-selection/#multi-row-selection">multiple
+        row selection</a>, so that the user can pick many rows:</p>
 
 <snippet language="html">
 &lt;ag-grid-angular 
@@ -280,9 +282,12 @@ export class AppComponent implements OnInit {
 &lt;/ag-grid-angular&gt;
 </snippet>
 
-<div class="note">We took a bit of a shortcut here, by not binding the property value. Without <code>[]</code>, the assignment will pass the attribute value as a string, which is fine for our purposes.</div>
+<div class="note">We took a bit of a shortcut here, by not binding the property value. Without <code>[]</code>, the
+    assignment will pass the attribute value as a string, which is fine for our purposes.</div>
 
-<p>Great! Now the first column contains a checkbox that, when clicked, selects the row. The only thing we have to add is a button that gets the selected data and sends it to the server. To do this, we are going to use the <a href="https://www.ag-grid.com/javascript-grid-api/">ag-Grid API</a> - we will access it through the component instance. </p> 
+<p>Great! Now the first column contains a checkbox that, when clicked, selects the row. The only thing we have to add
+    is a button that gets the selected data and sends it to the server. To do this, we are going to use the
+    <a href="https://www.ag-grid.com/javascript-grid-api/">ag-Grid API</a> - we will access it through the component instance. </p>
 
 <snippet language="html">
 &lt;ag-grid-angular 
@@ -493,8 +498,8 @@ override the theme variable values, and refer the ag-grid Sass files instead of 
 <snippet language="scss">
 $ag-icons-path: "../node_modules/ag-grid/src/styles/icons/";
 
-@import "~ag-grid/src/styles/ag-grid.scss";
-@import "~ag-grid/src/styles/ag-theme-balham.scss";
+@import "~ag-grid-community/src/styles/ag-grid.scss";
+@import "~ag-grid-community/src/styles/ag-theme-balham.scss";
 </snippet>
 
 <p>Notice that we had to aid the Sass preprocessor a bit by setting the <code>$ag-icons-path</code> variable. This is a common gotcha with Sass, as external image paths are considered relative to the main file. 
@@ -503,7 +508,7 @@ In fact, by specifying the icons path, we also made our first theme override! We
 <p>Let's do something simpler, though. We can override the alternating row background color to grayish blue. Add the following line:</p>
 
 <snippet language="diff">
- $ag-icons-path: "../node_modules/ag-grid/src/styles/icons/";
+ $ag-icons-path: "../node_modules/ag-grid-community/src/styles/icons/";
 +$odd-row-background-color: #CFD8DC;
 </snippet>
 
@@ -529,7 +534,7 @@ While doing so, we learned how to configure the grid, how to access its API obje
 <a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-styling/#customizing-sass-variables" role="button">Customize Themes with Sass</a>
 <br><br>
 <div>
-    <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
+    <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-angular"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
 </div>
 <br>
 <div>

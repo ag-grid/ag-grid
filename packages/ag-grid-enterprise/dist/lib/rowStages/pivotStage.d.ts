@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 import { ColDef, IRowNodeStage, StageExecuteParams } from "ag-grid-community";
 export declare class PivotStage implements IRowNodeStage {
     private rowModel;
@@ -20,3 +20,4 @@ export declare class PivotStage implements IRowNodeStage {
     private bucketChildren;
     getPivotColumnDefs(): ColDef[];
 }
+//# sourceMappingURL=pivotStage.d.ts.map

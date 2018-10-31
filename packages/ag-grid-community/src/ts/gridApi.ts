@@ -654,16 +654,16 @@ export class GridApi {
         this.clientSideRowModel.forEachLeafNode(callback);
     }
 
-    public forEachNode(callback: (rowNode: RowNode)=>void ) {
+    public forEachNode(callback: (rowNode: RowNode, index: number)=>void ) {
         this.rowModel.forEachNode(callback);
     }
 
-    public forEachNodeAfterFilter(callback: (rowNode: RowNode)=>void) {
+    public forEachNodeAfterFilter(callback: (rowNode: RowNode, index: number)=>void) {
         if (_.missing(this.clientSideRowModel)) { console.warn('cannot call forEachNodeAfterFilter unless using normal row model'); }
         this.clientSideRowModel.forEachNodeAfterFilter(callback);
     }
 
-    public forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode)=>void) {
+    public forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode, index: number)=>void) {
         if (_.missing(this.clientSideRowModel)) { console.warn('cannot call forEachNodeAfterFilterAndSort unless using normal row model'); }
         this.clientSideRowModel.forEachNodeAfterFilterAndSort(callback);
     }
@@ -796,29 +796,28 @@ export class GridApi {
 
     public showToolPanel(show:boolean) {
         console.warn(`ag-grid: from v19 api.showToolPanel has been deprecated in favour of api.setSideBarVisible`);
-        this.setSideBarVisible(show)
+        this.setSideBarVisible(show);
     }
 
-    public openToolPanel (key: string) {
+    public openToolPanel(key: string) {
         this.gridCore.openToolPanel(key);
-    };
+    }
 
-    public closeToolPanel () {
+    public closeToolPanel() {
         this.gridCore.closeToolPanel();
-    };
+    }
 
-    public getOpenedToolPanel (): string {
+    public getOpenedToolPanel(): string {
         return this.gridCore.getOpenedToolPanel();
-    };
+    }
 
-
-    public getSideBar (): SideBarDef {
+    public getSideBar(): SideBarDef {
         return this.gridCore.getSideBar();
     }
 
-    public setSideBar (def: SideBarDef): void {
+    public setSideBar(def: SideBarDef): void {
         return this.gridCore.setSideBar(def);
-    };
+    }
 
     public setSuppressClipboardPaste(value: boolean): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_SUPPRESS_CLIPBOARD_PASTE, value);

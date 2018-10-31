@@ -78,27 +78,27 @@ export class RangeController implements IRangeController {
     public setRangeToCell(cell: GridCell, appendRange = false): void {
         if (!this.gridOptionsWrapper.isEnableRangeSelection()) { return; }
 
-        let columns = this.updateSelectedColumns(cell.column, cell.column);
+        const columns = this.updateSelectedColumns(cell.column, cell.column);
         if (!columns) { return; }
 
-        let gridCellDef = <GridCellDef> {rowIndex: cell.rowIndex, floating: cell.floating, column: cell.column};
-
-        let newRange = {
+        const gridCellDef = <GridCellDef> {rowIndex: cell.rowIndex, floating: cell.floating, column: cell.column};
+        const newRange = {
             start: new GridCell(gridCellDef),
             end: new GridCell(gridCellDef),
             columns: columns
         };
+
         // if not appending, then clear previous range selections
         if (!appendRange || _.missing(this.cellRanges)) {
             this.cellRanges = [];
         }
+
         this.cellRanges.push(newRange);
         this.activeRange = null;
         this.dispatchChangedEvent(true, false);
     }
 
     public extendRangeToCell(toCell: GridCell): void {
-
         let lastRange = _.existsAndNotEmpty(this.cellRanges) ? this.cellRanges[this.cellRanges.length - 1] : null;
         let startCell = lastRange ? lastRange.start : toCell;
 
@@ -114,7 +114,6 @@ export class RangeController implements IRangeController {
 
     // returns true if successful, false if not successful
     public extendRangeInDirection(startCell: GridCell, key: number): boolean {
-
         let oneRangeExists = _.exists(this.cellRanges) || this.cellRanges.length === 1;
         let previousSelectionStart = oneRangeExists ? this.cellRanges[0].start : null;
 
@@ -263,23 +262,28 @@ export class RangeController implements IRangeController {
         if (!this.gridOptionsWrapper.isEnableRangeSelection()) { return; }
 
         // ctrlKey for windows, metaKey for Apple
-        let multiKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
-        let allowMulti = !this.gridOptionsWrapper.isSuppressMultiRangeSelection();
-        let multiSelectKeyPressed = allowMulti ? multiKeyPressed : false;
-
-        if (Utils.missing(this.cellRanges) || !multiSelectKeyPressed) {
-            this.cellRanges = [];
-        }
+        const multiKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
+        const allowMulti = !this.gridOptionsWrapper.isSuppressMultiRangeSelection();
+        const multiSelectKeyPressed = allowMulti ? multiKeyPressed : false;
+        const missingRanges = Utils.missing(this.cellRanges);
 
         let cell = this.mouseEventService.getGridCellForEvent(mouseEvent);
-
         if (Utils.missing(cell)) {
             // if drag wasn't on cell, then do nothing, including do not set dragging=true,
             // (which them means onDragging and onDragStop do nothing)
             return;
         }
+        const len = missingRanges ? 0 : this.cellRanges.length;
 
-        this.createNewActiveRange(cell);
+        if (missingRanges || !multiSelectKeyPressed) {
+            this.cellRanges = [];
+        } else if (!this.activeRange && len && this.isCellInSpecificRange(cell, this.cellRanges[len - 1])) {
+            this.activeRange = this.activeRange = this.cellRanges[len - 1];
+        }
+
+        if (!this.activeRange) {
+            this.createNewActiveRange(cell);
+        }
 
         this.gridPanel.addScrollEventListener(this.bodyScrollListener);
         this.dragging = true;

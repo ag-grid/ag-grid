@@ -1,9 +1,9 @@
 import {Bean, Autowired, PostConstruct} from "../context/context";
 import {
     GridSerializer, RowAccumulator, BaseGridSerializingSession, RowSpanningAccumulator,
-    GridSerializingSession
+    GridSerializingSession, GridSerializingParams
 } from "./gridSerializer";
-import {Downloader} from "../downloader";
+import {Downloader} from "./downloader";
 import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
 import {ColumnController} from "../columnController/columnController";
@@ -18,20 +18,30 @@ import {_} from "../utils";
 
 let LINE_SEPARATOR = '\r\n';
 
+export interface CsvSerializingParams extends GridSerializingParams {
+    suppressQuotes: boolean;
+    columnSeparator: string;
+}
+
 export class CsvSerializingSession extends BaseGridSerializingSession<string> {
     private result:string = '';
     private lineOpened:boolean = false;
+    private suppressQuotes: boolean;
+    private columnSeparator: string;
 
-    constructor(
-        columnController: ColumnController,
-        valueService: ValueService,
-        gridOptionsWrapper: GridOptionsWrapper,
-        processCellCallback:(params: ProcessCellForExportParams)=>string,
-        processHeaderCallback:(params: ProcessHeaderForExportParams)=>string,
-        private suppressQuotes: boolean,
-        private columnSeparator: string
-    ) {
-        super(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback);
+    constructor(config: CsvSerializingParams) {
+        super({
+            columnController: config.columnController,
+            valueService: config.valueService,
+            gridOptionsWrapper: config.gridOptionsWrapper,
+            processCellCallback: config.processCellCallback,
+            processHeaderCallback: config.processHeaderCallback
+        });
+
+        const {suppressQuotes, columnSeparator} = config;
+
+        this.suppressQuotes = suppressQuotes;
+        this.columnSeparator = columnSeparator;
     }
 
     public prepare(columnsToExport: Column[]): void {
@@ -145,8 +155,9 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
     public export(userParams?: P): string {
         if (this.isExportSuppressed()) {
             console.warn(`ag-grid: Export canceled. Export is not allowed as per your configuration.`);
-            return "";
+            return '';
         }
+
         let {mergedParams, data} = this.getMergedParamsAndData(userParams);
 
         let fileNamePresent = mergedParams && mergedParams.fileName && mergedParams.fileName.length !== 0;
@@ -156,11 +167,8 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
             fileName = fileName + "." + this.getDefaultFileExtension();
         }
 
-        this.beans.downloader.download(
-            fileName,
-            data,
-            this.getMimeType()
-        );
+        this.beans.downloader.download(fileName, this.packageFile(data));
+
         return data;
     }
 
@@ -171,6 +179,7 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
     private getMergedParamsAndData(userParams: P):{mergedParams: P, data: string} {
         let mergedParams = this.mergeDefaultParams(userParams);
         let data = this.beans.gridSerializer.serialize(this.createSerializingSession(mergedParams), mergedParams);
+
         return {mergedParams, data};
     }
 
@@ -181,6 +190,13 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
         _.assign(params, userParams);
         return params;
     }
+
+    protected packageFile(data: string): Blob {
+        return new Blob(["\ufeff", data], {
+            type: window.navigator.msSaveOrOpenBlob ? this.getMimeType() : 'octet/stream'
+        });
+    }
+
     public abstract createSerializingSession(params?: P): S;
     public abstract getMimeType(): string;
     public abstract getDefaultFileName(): string;
@@ -228,15 +244,18 @@ export class CsvCreator extends BaseCreator<string, CsvSerializingSession, CsvEx
     }
 
     public createSerializingSession(params?: CsvExportParams): CsvSerializingSession {
-        return new CsvSerializingSession(
-                this.columnController,
-                this.valueService,
-                this.gridOptionsWrapper,
-                params ? params.processCellCallback : null,
-                params ? params.processHeaderCallback : null,
-                params && params.suppressQuotes,
-                (params && params.columnSeparator) || ','
-            );
+        const {columnController, valueService, gridOptionsWrapper} = this;
+        const {processCellCallback, processHeaderCallback, suppressQuotes, columnSeparator} = params;
+
+        return new CsvSerializingSession({
+                columnController,
+                valueService,
+                gridOptionsWrapper,
+                processCellCallback: processCellCallback || null,
+                processHeaderCallback: processHeaderCallback || null,
+                suppressQuotes: suppressQuotes,
+                columnSeparator: columnSeparator|| ','
+        });
     }
 
     public isExportSuppressed(): boolean {

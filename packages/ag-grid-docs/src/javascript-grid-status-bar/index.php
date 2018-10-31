@@ -63,10 +63,7 @@ for more information.</p>
 gridOptions: {
     statusBar: {
         statusPanels: [
-            { statusPanel: 'agTotalRowCountComponent', align: 'left', key: 'totalRowComponent' },
-            { statusPanel: 'agFilteredRowCountComponent, align: 'left' },
-            { statusPanel: 'agSelectedRowCountComponent', align: 'center' },
-            { statusPanel: 'agAggregationComponent', align: 'right' }
+            { statusPanel: 'agTotalAndFilteredRowCountComponent', align: 'left' }
         ]
     }
     // ...other grid properties
@@ -138,18 +135,18 @@ gridOptions: {
 }
 </snippet>
 
-<h3 id="accessing-status-bar-comp-instances">Accessing Status Bar Component Instances</h3>
+<h3 id="accessing-status-panels">Accessing Status Panels</h3>
 
-<p>Accessing status bar component instances is possible using <code>api.getStatusBarComponent(key)</code>. The key will be the
+<p>Accessing status panel instances is possible using <code>api.getStatusPanel(key)</code>. The key will be the
 value provided in the component configuration (see above), but will default to the component name if not provided.</p>
 
 <p>See <a href="../javascript-grid-status-bar-component#accessing-status-bar-comp-instances">Accessing Status Bar
-        Component Instances</a> for more information.</p>
+        Panel Instances</a> for more information.</p>
 
 <h2>Configuration with Component Parameters</h2>
 
 <p>
-    Some of the status bar components, or your own custom components,
+    Some of the status panel components, or your own custom components,
     can take further parameters. These are provided using
     <code>componentParams</code>.
 </p>

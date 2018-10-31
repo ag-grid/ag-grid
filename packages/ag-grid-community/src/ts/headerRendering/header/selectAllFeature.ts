@@ -110,6 +110,9 @@ export class SelectAllFeature extends BeanStub {
         let notSelectedCount = 0;
 
         let callback = (node: RowNode) => {
+
+            if (this.gridOptionsWrapper.isGroupSelectsChildren() && node.group) { return; }
+
             if (node.isSelected()) {
                 selectedCount++;
             } else if (!node.selectable) {
@@ -135,7 +138,7 @@ export class SelectAllFeature extends BeanStub {
         let rowModelType = this.rowModel.getType();
         let rowModelMatches = rowModelType===Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
         if (!rowModelMatches) {
-            console.log(`ag-Grid: selectAllCheckbox is only available if using normal row model, you are using ${rowModelType}`);
+            console.warn(`ag-Grid: selectAllCheckbox is only available if using normal row model, you are using ${rowModelType}`);
         }
     }
 

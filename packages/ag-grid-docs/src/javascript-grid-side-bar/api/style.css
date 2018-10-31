@@ -2,6 +2,8 @@
 .api-panel {
     display: flex;
     flex-direction: row;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
 }
 
 .api-column {

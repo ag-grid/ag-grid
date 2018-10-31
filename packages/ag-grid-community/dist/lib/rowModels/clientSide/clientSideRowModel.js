@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38,7 +38,6 @@ var RecursionType;
     RecursionType[RecursionType["AfterFilterAndSort"] = 2] = "AfterFilterAndSort";
     RecursionType[RecursionType["PivotNodes"] = 3] = "PivotNodes";
 })(RecursionType || (RecursionType = {}));
-;
 var ClientSideRowModel = /** @class */ (function () {
     function ClientSideRowModel() {
     }
@@ -405,6 +404,14 @@ var ClientSideRowModel = /** @class */ (function () {
             });
         }
         this.refreshModel({ step: constants_1.Constants.STEP_MAP });
+        var eventSource = expand ? 'expandAll' : 'collapseAll';
+        var event = {
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            type: events_1.Events.EVENT_EXPAND_COLLAPSE_ALL,
+            source: eventSource
+        };
+        this.eventService.dispatchEvent(event);
     };
     ClientSideRowModel.prototype.doSort = function () {
         this.sortStage.execute({ rowNode: this.rootNode });

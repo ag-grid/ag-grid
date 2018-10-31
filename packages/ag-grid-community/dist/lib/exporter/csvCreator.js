@@ -1,14 +1,17 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -27,7 +30,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var gridSerializer_1 = require("./gridSerializer");
-var downloader_1 = require("../downloader");
+var downloader_1 = require("./downloader");
 var columnController_1 = require("../columnController/columnController");
 var valueService_1 = require("../valueService/valueService");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
@@ -36,12 +39,19 @@ var utils_1 = require("../utils");
 var LINE_SEPARATOR = '\r\n';
 var CsvSerializingSession = /** @class */ (function (_super) {
     __extends(CsvSerializingSession, _super);
-    function CsvSerializingSession(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback, suppressQuotes, columnSeparator) {
-        var _this = _super.call(this, columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback) || this;
-        _this.suppressQuotes = suppressQuotes;
-        _this.columnSeparator = columnSeparator;
+    function CsvSerializingSession(config) {
+        var _this = _super.call(this, {
+            columnController: config.columnController,
+            valueService: config.valueService,
+            gridOptionsWrapper: config.gridOptionsWrapper,
+            processCellCallback: config.processCellCallback,
+            processHeaderCallback: config.processHeaderCallback
+        }) || this;
         _this.result = '';
         _this.lineOpened = false;
+        var suppressQuotes = config.suppressQuotes, columnSeparator = config.columnSeparator;
+        _this.suppressQuotes = suppressQuotes;
+        _this.columnSeparator = columnSeparator;
         return _this;
     }
     CsvSerializingSession.prototype.prepare = function (columnsToExport) {
@@ -138,7 +148,7 @@ var BaseCreator = /** @class */ (function () {
     BaseCreator.prototype.export = function (userParams) {
         if (this.isExportSuppressed()) {
             console.warn("ag-grid: Export canceled. Export is not allowed as per your configuration.");
-            return "";
+            return '';
         }
         var _a = this.getMergedParamsAndData(userParams), mergedParams = _a.mergedParams, data = _a.data;
         var fileNamePresent = mergedParams && mergedParams.fileName && mergedParams.fileName.length !== 0;
@@ -146,7 +156,7 @@ var BaseCreator = /** @class */ (function () {
         if (fileName.indexOf(".") === -1) {
             fileName = fileName + "." + this.getDefaultFileExtension();
         }
-        this.beans.downloader.download(fileName, data, this.getMimeType());
+        this.beans.downloader.download(fileName, this.packageFile(data));
         return data;
     };
     BaseCreator.prototype.getData = function (params) {
@@ -163,6 +173,11 @@ var BaseCreator = /** @class */ (function () {
         utils_1._.assign(params, baseParams);
         utils_1._.assign(params, userParams);
         return params;
+    };
+    BaseCreator.prototype.packageFile = function (data) {
+        return new Blob(["\ufeff", data], {
+            type: window.navigator.msSaveOrOpenBlob ? this.getMimeType() : 'octet/stream'
+        });
     };
     return BaseCreator;
 }());
@@ -195,7 +210,17 @@ var CsvCreator = /** @class */ (function (_super) {
         return 'csv';
     };
     CsvCreator.prototype.createSerializingSession = function (params) {
-        return new CsvSerializingSession(this.columnController, this.valueService, this.gridOptionsWrapper, params ? params.processCellCallback : null, params ? params.processHeaderCallback : null, params && params.suppressQuotes, (params && params.columnSeparator) || ',');
+        var _a = this, columnController = _a.columnController, valueService = _a.valueService, gridOptionsWrapper = _a.gridOptionsWrapper;
+        var processCellCallback = params.processCellCallback, processHeaderCallback = params.processHeaderCallback, suppressQuotes = params.suppressQuotes, columnSeparator = params.columnSeparator;
+        return new CsvSerializingSession({
+            columnController: columnController,
+            valueService: valueService,
+            gridOptionsWrapper: gridOptionsWrapper,
+            processCellCallback: processCellCallback || null,
+            processHeaderCallback: processHeaderCallback || null,
+            suppressQuotes: suppressQuotes,
+            columnSeparator: columnSeparator || ','
+        });
     };
     CsvCreator.prototype.isExportSuppressed = function () {
         return this.gridOptionsWrapper.isSuppressCsvExport();

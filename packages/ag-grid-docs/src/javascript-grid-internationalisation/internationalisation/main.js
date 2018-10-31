@@ -24,7 +24,7 @@ var gridOptions = {
     enableFilter: true,
     enableColResize: true,
     columnDefs: columnDefs,
-    showToolPanel: true,
+    sideBar: true,
     pagination:true,
     rowGroupPanelShow: 'always',
     statusBar: {
@@ -45,31 +45,39 @@ var gridOptions = {
         first: 'daFirsten',
         previous: 'daPreviousen',
         loadingOoo: 'daLoading...',
+
         // for set filter
         selectAll: 'daSelect Allen',
         searchOoo: 'daSearch...',
         blanks: 'daBlanc',
+
         // for number filter and text filter
         filterOoo: 'daFilter...',
         applyFilter: 'daApplyFilter...',
-        // for number filter
         equals: 'daEquals',
-        notEqual: 'daNotEquals',
-        lessThanOrEqual: 'daLessThanOrEqual',
-        greaterThanOrEqual: 'daGreaterThanOrEqual',
-        inRange:'daInRange',
+        notEqual: 'daNotEqual',
+
+        // for number filter
         lessThan: 'daLessThan',
         greaterThan: 'daGreaterThan',
+        lessThanOrEqual: 'daLessThanOrEqual',
+        greaterThanOrEqual: 'daGreaterThanOrEqual',
+        inRange: 'daInRange',
+
         // for text filter
         contains: 'daContains',
+        notContains: 'daNotContains',
         startsWith: 'daStarts dawith',
         endsWith: 'daEnds dawith',
+
         // the header of the default group column
         group: 'laGroup',
+
         // tool panel
         columns: 'laColumns',
+        filters: 'laFilters',
         rowGroupColumns: 'laPivot Cols',
-        rowGroupColumnsEmptyMessage: 'la please drag cols to group',
+        rowGroupColumnsEmptyMessage: 'la drag cols to group',
         valueColumns: 'laValue Cols',
         pivotMode: 'laPivot-Mode',
         groups: 'laGroups',
@@ -77,8 +85,11 @@ var gridOptions = {
         pivots: 'laPivots',
         valueColumnsEmptyMessage: 'la drag cols to aggregate',
         pivotColumnsEmptyMessage: 'la drag here to pivot',
+        toolPanelButton: 'la tool panel',
+
         // other
         noRowsToShow: 'la no rows',
+
         // enterprise menu
         pinColumn: 'laPin Column',
         valueAggregation: 'laValue Agg',
@@ -93,24 +104,26 @@ var gridOptions = {
         export: 'laExporto',
         csvExport: 'la CSV Exportp',
         excelExport: 'la Excel Exporto',
+
         // enterprise menu pinning
-        pinLeft: 'laPin <<',
-        pinRight: 'laPin >>',
-        noPin: 'laDontPin <>',
+        pinLeft: 'laPin &lt;&lt;',
+        pinRight: 'laPin &gt;&gt;',
+        noPin: 'laDontPin &lt;&gt;',
+
         // enterprise menu aggregation and status bar
         sum: 'laSum',
         min: 'laMin',
         max: 'laMax',
-        first: 'laFirst',
-        last: 'laLast',
         none: 'laNone',
         count: 'laCount',
         average: 'laAverage',
+
         // standard menu
         copy: 'laCopy',
+        copyWithHeaders: 'laCopy Wit hHeaders',
         ctrlC: 'ctrl n C',
         paste: 'laPaste',
-        ctrlV: 'ctrl n C'
+        ctrlV: 'ctrl n V'
     }
 };
 

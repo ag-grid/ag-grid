@@ -247,7 +247,7 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 <snippet language="html">
 &lt;template&gt;
     &lt;div&gt;
-        &lt;button @click="getSelectedRows()"&lt;Get Selected Rows&lt;/button&gt;
+        &lt;button @click="getSelectedRows()"&gt;Get Selected Rows&lt;/button&gt;
 
         &lt;ag-grid-vue style="width: 500px; height: 500px;"
                      class="ag-theme-balham"
@@ -338,7 +338,7 @@ beforeMount() {
 npm install --save ag-grid-enterprise
 </snippet>
 
-<p>Then, add the import to <code>src/main.ts</code>:</p>
+<p>Then, add the import to <code>src/main.js</code>:</p>
 
 <snippet language="diff">
 import Vue from 'vue'

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 import { Column, Component } from "ag-grid-community";
 export interface ToolPanelFilterCompParams {
     column: Column;
@@ -22,6 +22,7 @@ export declare class ToolPanelFilterComp extends Component {
     constructor();
     init(params: ToolPanelFilterCompParams): void;
     private addInIcon;
+    private isFilterActive;
     private onFilterChanged;
     addGuiEventListenerInto(into: HTMLElement, event: string, listener: (event: any) => void): void;
     private doExpandOrCollapse;
@@ -29,3 +30,4 @@ export declare class ToolPanelFilterComp extends Component {
     private doCollapse;
     private onFilterOpened;
 }
+//# sourceMappingURL=toolPanelFilterComp.d.ts.map

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 import { Component, CellRendererService, ColDef } from "ag-grid-community";
 export declare class RichSelectRow extends Component {
     cellRendererService: CellRendererService;
@@ -8,3 +8,4 @@ export declare class RichSelectRow extends Component {
     private populateWithoutRenderer;
     private populateWithRenderer;
 }
+//# sourceMappingURL=richSelectRow.d.ts.map

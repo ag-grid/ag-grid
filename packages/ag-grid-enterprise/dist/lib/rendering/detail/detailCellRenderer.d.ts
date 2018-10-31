@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 import { RowNode, Component, GridOptions, ICellRendererParams } from "ag-grid-community";
 export declare class DetailCellRenderer extends Component {
     private static TEMPLATE;
@@ -30,3 +30,4 @@ export interface GetDetailRowDataParams {
     data: any;
     successCallback(rowData: any[]): void;
 }
+//# sourceMappingURL=detailCellRenderer.d.ts.map

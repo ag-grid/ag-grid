@@ -213,6 +213,5 @@ interface IFloatingFilterParams {
 
 <?php include './angular.php'; ?>
 <?php include './react.php'; ?>
-<?php include './polymer.php'; ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

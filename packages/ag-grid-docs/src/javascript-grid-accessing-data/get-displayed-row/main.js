@@ -22,7 +22,7 @@ var gridOptions = {
 
 function getDisplayedRowAtIndex() {
     var rowNode = gridOptions.api.getDisplayedRowAtIndex(0);
-    console.log('getDisplayedRowAtIndex(0) => ' + nodeToString(rowNode));
+    console.log('getDisplayedRowAtIndex(0) => ' + this.nodeToString(rowNode));
 }
 
 function getDisplayedRowCount() {
@@ -58,6 +58,7 @@ function printPageDisplayedRows() {
     }
 }
 
+// inScope[nodeToString]
 function nodeToString(rowNode) {
     return rowNode.data.athlete + ' ' + rowNode.data.year;
 }

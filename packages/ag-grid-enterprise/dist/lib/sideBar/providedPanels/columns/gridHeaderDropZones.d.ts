@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.0.0
+// ag-grid-enterprise v19.1.1
 import { Component } from "ag-grid-community/main";
 export declare class GridHeaderDropZones extends Component {
     private gridOptionsWrapper;
@@ -14,3 +14,4 @@ export declare class GridHeaderDropZones extends Component {
     private onDropPanelVisible;
     private onRowGroupChanged;
 }
+//# sourceMappingURL=gridHeaderDropZones.d.ts.map
