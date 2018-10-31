@@ -26,7 +26,7 @@ export { GridRow } from "./dist/lib/entities/gridRow";
 export { OriginalColumnGroup } from "./dist/lib/entities/originalColumnGroup";
 export { RowNode } from "./dist/lib/entities/rowNode";
 export { SideBarDef, ToolPanelDef } from "./dist/lib/entities/sideBar";
-export { BaseFilter } from "./dist/lib/filter/baseFilter";
+export { BaseFilter, CombinedFilter } from "./dist/lib/filter/baseFilter";
 export { DateFilter, SerializedDateFilter } from "./dist/lib/filter/dateFilter";
 export { FilterManager, FilterWrapper, FilterRequestSource } from "./dist/lib/filter/filterManager";
 export { NumberFilter } from "./dist/lib/filter/numberFilter";
