@@ -6,7 +6,7 @@
 
 <div class="card card-highlight">
     <div class="card-body">
-        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=19.1.0">Version 19.1.0 Released</a></h5>
+        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=19.1.1">Version 19.1.1 Released</a></h5>
         <h6 class="card-subtitle mb-2 text-muted">Oct 30</h6>
         <p class="card-text">
             Minor release with the following feature highlights:

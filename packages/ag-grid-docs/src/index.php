@@ -67,7 +67,7 @@ meta_and_links($title, $keywords, $description, false);
     <div id="stage-frameworks">
         <section id="news-flash">
             <div>
-                30th Oct 2018: <a href="./ag-grid-changelog/?fixVersion=19.1.0">Version 19.1.0</a> released with Polymer 3 support, XLSL Export, Delta Columns and bug fixes
+                30th Oct 2018: <a href="./ag-grid-changelog/?fixVersion=19.1.0">Version 19.1.1</a> released with Polymer 3 support, XLSL Export, Delta Columns and bug fixes
             </div>
         </section>
 
