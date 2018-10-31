@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15,6 +15,9 @@ var ColumnKeyCreator = /** @class */ (function () {
     function ColumnKeyCreator() {
         this.existingKeys = [];
     }
+    ColumnKeyCreator.prototype.addExistingKeys = function (keys) {
+        this.existingKeys = this.existingKeys.concat(keys);
+    };
     ColumnKeyCreator.prototype.getUniqueKey = function (colId, colField) {
         // in case user passed in number for colId, convert to string
         colId = utils_1.Utils.toStringOrNull(colId);

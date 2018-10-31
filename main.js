@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14,8 +14,8 @@ globalObj.HTMLInputElement = typeof HTMLInputElement === 'undefined' ? {} : HTML
 globalObj.Node = typeof Node === 'undefined' ? {} : Node;
 globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 // columnController
-var balancedColumnTreeBuilder_1 = require("./dist/lib/columnController/balancedColumnTreeBuilder");
-exports.BalancedColumnTreeBuilder = balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder;
+var columnFactory_1 = require("./dist/lib/columnController/columnFactory");
+exports.ColumnFactory = columnFactory_1.ColumnFactory;
 var columnController_1 = require("./dist/lib/columnController/columnController");
 exports.ColumnController = columnController_1.ColumnController;
 var columnKeyCreator_1 = require("./dist/lib/columnController/columnKeyCreator");
@@ -197,6 +197,21 @@ var popupService_1 = require("./dist/lib/widgets/popupService");
 exports.PopupService = popupService_1.PopupService;
 var touchListener_1 = require("./dist/lib/widgets/touchListener");
 exports.TouchListener = touchListener_1.TouchListener;
+// exporter
+var csvCreator_1 = require("./dist/lib/exporter/csvCreator");
+exports.CsvCreator = csvCreator_1.CsvCreator;
+exports.BaseCreator = csvCreator_1.BaseCreator;
+var downloader_1 = require("./dist/lib/exporter/downloader");
+exports.Downloader = downloader_1.Downloader;
+var xmlFactory_1 = require("./dist/lib/exporter/xmlFactory");
+exports.XmlFactory = xmlFactory_1.XmlFactory;
+var gridSerializer_1 = require("./dist/lib/exporter/gridSerializer");
+exports.BaseGridSerializingSession = gridSerializer_1.BaseGridSerializingSession;
+exports.GridSerializer = gridSerializer_1.GridSerializer;
+var gridSerializer_2 = require("./dist/lib/exporter/gridSerializer");
+exports.RowType = gridSerializer_2.RowType;
+var zipContainer_1 = require("./dist/lib/exporter/files/zip/zipContainer");
+exports.ZipContainer = zipContainer_1.ZipContainer;
 // root
 var baseFrameworkFactory_1 = require("./dist/lib/baseFrameworkFactory");
 exports.BaseFrameworkFactory = baseFrameworkFactory_1.BaseFrameworkFactory;
@@ -206,11 +221,6 @@ var alignedGridsService_1 = require("./dist/lib/alignedGridsService");
 exports.AlignedGridsService = alignedGridsService_1.AlignedGridsService;
 var constants_1 = require("./dist/lib/constants");
 exports.Constants = constants_1.Constants;
-var csvCreator_1 = require("./dist/lib/exporter/csvCreator");
-exports.CsvCreator = csvCreator_1.CsvCreator;
-exports.BaseCreator = csvCreator_1.BaseCreator;
-var downloader_1 = require("./dist/lib/downloader");
-exports.Downloader = downloader_1.Downloader;
 var grid_1 = require("./dist/lib/grid");
 exports.Grid = grid_1.Grid;
 var gridApi_1 = require("./dist/lib/gridApi");
@@ -246,12 +256,6 @@ var valueService_1 = require("./dist/lib/valueService/valueService");
 exports.ValueService = valueService_1.ValueService;
 var expressionService_1 = require("./dist/lib/valueService/expressionService");
 exports.ExpressionService = expressionService_1.ExpressionService;
-var xmlFactory_1 = require("./dist/lib/xmlFactory");
-exports.XmlFactory = xmlFactory_1.XmlFactory;
-var gridSerializer_1 = require("./dist/lib/exporter/gridSerializer");
-exports.GridSerializer = gridSerializer_1.GridSerializer;
-exports.BaseGridSerializingSession = gridSerializer_1.BaseGridSerializingSession;
-exports.RowType = gridSerializer_1.RowType;
 var logger_2 = require("./dist/lib/logger");
 exports.LoggerFactory = logger_2.LoggerFactory;
 var columnApi_1 = require("./dist/lib/columnController/columnApi");

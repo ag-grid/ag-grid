@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroupChild } from "./columnGroupChild";
@@ -31,8 +31,9 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private frameworkFactory;
     private columnApi;
     private gridApi;
-    private colDef;
-    private colId;
+    private readonly colDef;
+    private readonly colId;
+    private readonly userProvidedColDef;
     private actualWidth;
     private visible;
     private pinned;
@@ -57,9 +58,10 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private rowGroupActive;
     private pivotActive;
     private aggregationActive;
-    private primary;
+    private readonly primary;
     private parent;
-    constructor(colDef: ColDef, colId: String, primary: boolean);
+    constructor(colDef: ColDef, userProvidedColDef: ColDef, colId: String, primary: boolean);
+    getUserProvidedColDef(): ColDef;
     isLockPosition(): boolean;
     isLockVisible(): boolean;
     isLockPinned(): boolean;
@@ -143,3 +145,4 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     isAllowRowGroup(): boolean;
     getMenuTabs(defaultValues: string[]): string[];
 }
+//# sourceMappingURL=column.d.ts.map

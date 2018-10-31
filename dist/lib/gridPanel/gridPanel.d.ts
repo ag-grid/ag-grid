@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowContainerComponent } from "../rendering/rowContainerComponent";
@@ -157,7 +157,6 @@ export declare class GridPanel extends Component {
     private setCenterWidth;
     private setPinnedLeftWidth;
     private setPinnedRightWidth;
-    private setElementWidth;
     private setPinnedContainersVisible;
     private hideVerticalScrollOnCenter;
     private checkBodyHeight;
@@ -168,6 +167,7 @@ export declare class GridPanel extends Component {
     scrollHorizontally(pixels: number): number;
     scrollVertically(pixels: number): number;
     private addScrollListener;
+    private eventDueToMakingContainerVisible;
     private onAnyBodyScroll;
     private onBodyHorizontalScroll;
     private doHorizontalScroll;
@@ -181,3 +181,4 @@ export declare class GridPanel extends Component {
     addScrollEventListener(listener: () => void): void;
     removeScrollEventListener(listener: () => void): void;
 }
+//# sourceMappingURL=gridPanel.d.ts.map

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
@@ -48,9 +48,7 @@ export interface ColGroupDef extends AbstractColDef {
         new (): IHeaderGroupComp;
     };
     /** The custom header group component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default ag-Grid is used**/
-    headerGroupComponentFramework?: {
-        new (): any;
-    };
+    headerGroupComponentFramework?: any;
     /** The custom header group component to be used for rendering the component header. If none specified the default ag-Grid is used**/
     headerGroupComponentParams?: any;
 }
@@ -70,7 +68,7 @@ export interface ColDef extends AbstractColDef {
     /** If sorting more than one column by default, the milliseconds when this column was sorted, so we know what order to sort the columns in. */
     sortedAt?: number;
     /** The sort order, provide an array with any of the following in any order ['asc','desc',null] */
-    sortingOrder?: string[];
+    sortingOrder?: string[] | null;
     /** The field of the row to get the cells data from */
     field?: string;
     /**
@@ -257,9 +255,7 @@ export interface ColDef extends AbstractColDef {
         new (): IFloatingFilterComp<any, any, any>;
     };
     floatingFilterComponentParams?: any;
-    floatingFilterComponentFramework?: {
-        new (): any;
-    };
+    floatingFilterComponentFramework?: any;
     refData?: {
         [key: string]: string;
     };
@@ -337,3 +333,4 @@ export interface TooltipParams {
     api: GridApi;
     context: any;
 }
+//# sourceMappingURL=colDef.d.ts.map

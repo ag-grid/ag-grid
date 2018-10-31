@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../entities/rowNode";
@@ -36,7 +36,7 @@ export interface IRowModel {
     getNodesInRangeForSelection(first: RowNode, last: RowNode): RowNode[];
     /** Iterate through each node. What this does depends on the model type. For clientSide, goes through
      * all nodes. For pagination, goes through current page. For virtualPage, goes through what's loaded in memory. */
-    forEachNode(callback: (rowNode: RowNode) => void): void;
+    forEachNode(callback: (rowNode: RowNode, index: number) => void): void;
     /** The base class returns the type. We use this instead of 'instanceof' as the client might provide
      * their own implementation of the models in the future. */
     getType(): string;
@@ -47,3 +47,4 @@ export interface IRowModel {
      */
     isLastRowFound(): boolean;
 }
+//# sourceMappingURL=iRowModel.d.ts.map

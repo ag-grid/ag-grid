@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { NumberSequence } from "../../utils";
@@ -63,3 +63,4 @@ export declare abstract class RowNodeBlock extends BeanStub {
     destroy(): void;
     protected pageLoaded(version: number, rows: any[], lastRow: number): void;
 }
+//# sourceMappingURL=rowNodeBlock.d.ts.map

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { StageExecuteParams } from "../../interfaces/iRowNodeStage";
@@ -7,3 +7,4 @@ export declare class SortStage {
     private sortService;
     execute(params: StageExecuteParams): void;
 }
+//# sourceMappingURL=sortStage.d.ts.map

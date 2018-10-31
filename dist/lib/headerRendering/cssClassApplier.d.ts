@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AbstractColDef } from "../entities/colDef";
@@ -11,3 +11,4 @@ export declare class CssClassApplier {
     static addToolPanelClassesFromColDef(abstractColDef: AbstractColDef, eHeaderCell: HTMLElement, gridOptionsWrapper: GridOptionsWrapper, column: Column, columnGroup: OriginalColumnGroup): void;
     static addColumnClassesFromCollDef(classesOrFunc: string | string[] | ((params: any) => string | string[]), abstractColDef: AbstractColDef, eHeaderCell: HTMLElement, gridOptionsWrapper: GridOptionsWrapper, column: Column, columnGroup: ColumnGroup | OriginalColumnGroup): void;
 }
+//# sourceMappingURL=cssClassApplier.d.ts.map

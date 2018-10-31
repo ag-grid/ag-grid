@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -196,9 +196,10 @@ var ComponentResolver = /** @class */ (function () {
         var finalParams = {};
         utils_1._.mergeDeep(finalParams, agGridParams);
         if (customParamsRaw != null) {
-            var customParams = null;
+            var customParams = utils_1._.cloneObject(finalParams);
             if (typeof customParamsRaw === 'function') {
-                customParams = customParamsRaw(dynamicCustomParams);
+                utils_1._.mergeDeep(customParams, dynamicCustomParams);
+                customParams = customParamsRaw(customParams);
             }
             else {
                 customParams = customParamsRaw;

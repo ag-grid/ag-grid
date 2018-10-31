@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -20,7 +20,9 @@ export declare class Utils {
     private static NUMPAD_DEL_NUMLOCK_ON_CHARCODE;
     private static doOnceFlags;
     static doOnce(func: () => void, key: string): void;
+    static isLeftClick(mouseEvent: MouseEvent): boolean;
     static areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, pixelCount: number): boolean;
+    static jsonEquals(val1: any, val2: any): boolean;
     static shallowCompare(arr1: any[], arr2: any[]): boolean;
     static getNameOfClass(TheClass: any): string;
     static values<T>(object: {
@@ -29,13 +31,17 @@ export declare class Utils {
     static getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any;
     static getScrollLeft(element: HTMLElement, rtl: boolean): number;
     static cleanNumber(value: any): number;
+    static compose: (...fns: Function[]) => (arg: any) => any;
+    static decToHex: (number: number, bytes: number) => string;
+    static utf8_encode: (s: string) => string;
     static setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void;
     static iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void;
     static iterateObject<T>(object: {
         [p: string]: T;
     } | T[], callback: (key: string, value: T) => void): void;
     static cloneObject<T>(object: T): T;
-    static map<TItem, TResult>(array: TItem[], callback: (item: TItem) => TResult): TResult[];
+    static deepCloneObject<T>(object: T): T;
+    static map<TItem, TResult>(array: TItem[], callback: (item: TItem, idx?: number) => TResult): TResult[];
     static mapObject<TResult>(object: any, callback: (item: any) => TResult): TResult[];
     static forEach<T>(array: T[], callback: (item: T, index: number) => void): void;
     static filter<T>(array: T[], callback: (item: T) => boolean): T[];
@@ -50,7 +56,7 @@ export declare class Utils {
     static getFunctionParameters(func: any): any;
     static find<T>(collection: T[] | {
         [id: string]: T;
-    }, predicate: string | boolean | ((item: T) => void), value?: any): T;
+    }, predicate: string | boolean | ((item: T) => boolean), value?: any): T;
     static toStrings<T>(array: T[]): string[];
     static iterateArray<T>(array: T[], callback: (item: T, index: number) => void): void;
     static isNode(o: any): boolean;
@@ -63,7 +69,7 @@ export declare class Utils {
     static missing(value: any): boolean;
     static missingOrEmpty(value: any[] | string): boolean;
     static missingOrEmptyObject(value: any): boolean;
-    static exists(value: any): boolean;
+    static exists(value: any, allowEmptyString?: boolean): boolean;
     static firstExistingValue<A>(...values: A[]): A;
     static anyExists(values: any[]): boolean;
     static existsAndNotEmpty(value: any[]): boolean;
@@ -307,3 +313,4 @@ export declare class Promise<T> {
     private onDone;
     private onReject;
 }
+//# sourceMappingURL=utils.d.ts.map

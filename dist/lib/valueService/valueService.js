@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -51,6 +51,9 @@ var ValueService = /** @class */ (function () {
         var aggDataExists = !ignoreAggData && rowNode.aggData && rowNode.aggData[colId] !== undefined;
         if (forFilter && colDef.filterValueGetter) {
             result = this.executeValueGetter(colDef.filterValueGetter, data, column, rowNode);
+        }
+        else if (this.gridOptionsWrapper.isTreeData() && aggDataExists) {
+            result = rowNode.aggData[colId];
         }
         else if (this.gridOptionsWrapper.isTreeData() && colDef.valueGetter) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);

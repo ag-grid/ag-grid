@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,7 +32,8 @@ var PopupService = /** @class */ (function () {
             return ePopupParent;
         }
         else {
-            return this.gridCore.getRootGui();
+            var eDocument = this.gridOptionsWrapper.getDocument();
+            return eDocument.body;
         }
     };
     PopupService.prototype.positionPopupForMenu = function (params) {
@@ -198,10 +199,13 @@ var PopupService = /** @class */ (function () {
     //so that when the background is clicked, the child is removed again, giving
     //a model look to popups.
     PopupService.prototype.addAsModalPopup = function (eChild, closeOnEsc, closedCallback, click) {
+        return this.addPopup(true, eChild, closeOnEsc, closedCallback, click);
+    };
+    PopupService.prototype.addPopup = function (modal, eChild, closeOnEsc, closedCallback, click) {
         var _this = this;
-        var eBody = this.gridOptionsWrapper.getDocument();
-        if (!eBody) {
-            console.warn('ag-grid: could not find the body of the document, document.body is empty');
+        var eDocument = this.gridOptionsWrapper.getDocument();
+        if (!eDocument) {
+            console.warn('ag-grid: could not find the document, document is empty');
             return;
         }
         eChild.style.top = '0px';
@@ -249,10 +253,10 @@ var PopupService = /** @class */ (function () {
             popupHidden = true;
             ePopupParent.removeChild(eWrapper);
             utils_1.Utils.removeFromArray(_this.activePopupElements, eChild);
-            eBody.removeEventListener('keydown', hidePopupOnKeyboardEvent);
-            eBody.removeEventListener('click', hidePopupOnMouseEvent);
-            eBody.removeEventListener('touchstart', hidePopupOnTouchEvent);
-            eBody.removeEventListener('contextmenu', hidePopupOnMouseEvent);
+            eDocument.removeEventListener('keydown', hidePopupOnKeyboardEvent);
+            eDocument.removeEventListener('mousedown', hidePopupOnMouseEvent);
+            eDocument.removeEventListener('touchstart', hidePopupOnTouchEvent);
+            eDocument.removeEventListener('contextmenu', hidePopupOnMouseEvent);
             if (closedCallback) {
                 closedCallback();
             }
@@ -261,11 +265,13 @@ var PopupService = /** @class */ (function () {
         // click will be included, which we don't want
         setTimeout(function () {
             if (closeOnEsc) {
-                eBody.addEventListener('keydown', hidePopupOnKeyboardEvent);
+                eDocument.addEventListener('keydown', hidePopupOnKeyboardEvent);
             }
-            eBody.addEventListener('click', hidePopupOnMouseEvent);
-            eBody.addEventListener('touchstart', hidePopupOnTouchEvent);
-            eBody.addEventListener('contextmenu', hidePopupOnMouseEvent);
+            if (modal) {
+                eDocument.addEventListener('mousedown', hidePopupOnMouseEvent);
+                eDocument.addEventListener('touchstart', hidePopupOnTouchEvent);
+                eDocument.addEventListener('contextmenu', hidePopupOnMouseEvent);
+            }
         }, 0);
         return hidePopup;
     };

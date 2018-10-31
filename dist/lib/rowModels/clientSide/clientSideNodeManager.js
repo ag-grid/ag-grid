@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -251,6 +251,9 @@ var ClientSideNodeManager = /** @class */ (function () {
         }
         node.level = level;
         node.setDataAndId(dataItem, this.nextId.toString());
+        if (this.allNodesMap[node.id]) {
+            console.warn("ag-grid: duplicate node id '" + node.id + "' detected from getRowNodeId callback, this could cause issues in your grid.");
+        }
         this.allNodesMap[node.id] = node;
         this.nextId++;
         return node;

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -55,6 +55,7 @@ var Logger = /** @class */ (function () {
     };
     Logger.prototype.log = function (message) {
         if (this.isLoggingFunc()) {
+            // tslint:disable-next-line
             console.log('ag-Grid.' + this.name + ': ' + message);
         }
     };

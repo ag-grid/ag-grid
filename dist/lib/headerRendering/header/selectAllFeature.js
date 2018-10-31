@@ -1,14 +1,17 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -105,9 +108,13 @@ var SelectAllFeature = /** @class */ (function (_super) {
         this.processingEventFromCheckbox = false;
     };
     SelectAllFeature.prototype.getSelectionCount = function () {
+        var _this = this;
         var selectedCount = 0;
         var notSelectedCount = 0;
         var callback = function (node) {
+            if (_this.gridOptionsWrapper.isGroupSelectsChildren() && node.group) {
+                return;
+            }
             if (node.isSelected()) {
                 selectedCount++;
             }
@@ -133,7 +140,7 @@ var SelectAllFeature = /** @class */ (function (_super) {
         var rowModelType = this.rowModel.getType();
         var rowModelMatches = rowModelType === constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
         if (!rowModelMatches) {
-            console.log("ag-Grid: selectAllCheckbox is only available if using normal row model, you are using " + rowModelType);
+            console.warn("ag-Grid: selectAllCheckbox is only available if using normal row model, you are using " + rowModelType);
         }
     };
     SelectAllFeature.prototype.onCbSelectAll = function () {

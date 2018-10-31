@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,9 +25,9 @@ var TouchListener = /** @class */ (function () {
         // we set passive=false, as we want to prevent default on this event
         this.eElement.addEventListener("touchend", endListener, { passive: false });
         this.destroyFuncs.push(function () {
-            _this.eElement.addEventListener("touchstart", startListener, { passive: true });
-            _this.eElement.addEventListener("touchmove", moveListener, { passive: true });
-            _this.eElement.addEventListener("touchend", endListener, { passive: false });
+            _this.eElement.removeEventListener("touchstart", startListener, { passive: true });
+            _this.eElement.removeEventListener("touchmove", moveListener, { passive: true });
+            _this.eElement.removeEventListener("touchend", endListener, { passive: false });
         });
     }
     TouchListener.prototype.getActiveTouch = function (touchList) {

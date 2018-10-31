@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -7,3 +7,4 @@ export interface IContextMenuFactory {
     showMenu(node: RowNode, column: Column, value: any, mouseEvent: MouseEvent | Touch): void;
     hideActiveMenu(): void;
 }
+//# sourceMappingURL=iContextMenuFactory.d.ts.map

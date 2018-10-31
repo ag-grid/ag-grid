@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptions } from "../../entities/gridOptions";
@@ -124,3 +124,4 @@ export declare class ComponentResolver {
     private newAgGridComponent;
     private initialiseComponent;
 }
+//# sourceMappingURL=componentResolver.d.ts.map

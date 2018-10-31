@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IComponent } from "../../interfaces/iComponent";
@@ -37,3 +37,4 @@ export interface ICellRendererComp extends ICellRenderer, IComponent<ICellRender
 export interface ICellRendererFunc {
     (params: any): HTMLElement | string;
 }
+//# sourceMappingURL=iCellRenderer.d.ts.map

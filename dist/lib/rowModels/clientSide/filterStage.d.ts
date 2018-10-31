@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IRowNodeStage, StageExecuteParams } from "../../interfaces/iRowNodeStage";
@@ -8,3 +8,4 @@ export declare class FilterStage implements IRowNodeStage {
     private filterService;
     execute(params: StageExecuteParams): void;
 }
+//# sourceMappingURL=filterStage.d.ts.map

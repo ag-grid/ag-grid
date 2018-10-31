@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnApi } from "./columnController/columnApi";
@@ -172,9 +172,9 @@ export declare class GridApi {
     ensureIndexVisible(index: any, position?: string): void;
     ensureNodeVisible(comparator: any, position?: string): void;
     forEachLeafNode(callback: (rowNode: RowNode) => void): void;
-    forEachNode(callback: (rowNode: RowNode) => void): void;
-    forEachNodeAfterFilter(callback: (rowNode: RowNode) => void): void;
-    forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode) => void): void;
+    forEachNode(callback: (rowNode: RowNode, index: number) => void): void;
+    forEachNodeAfterFilter(callback: (rowNode: RowNode, index: number) => void): void;
+    forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode, index: number) => void): void;
     getFilterApiForColDef(colDef: any): any;
     getFilterInstance(key: string | Column): IFilterComp;
     getFilterApi(key: string | Column): IFilterComp;
@@ -288,3 +288,4 @@ export declare class GridApi {
     paginationGoToLastPage(): void;
     paginationGoToPage(page: number): void;
 }
+//# sourceMappingURL=gridApi.d.ts.map

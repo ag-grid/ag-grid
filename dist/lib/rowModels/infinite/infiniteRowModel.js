@@ -1,14 +1,17 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -88,8 +91,24 @@ var InfiniteRowModel = /** @class */ (function (_super) {
     InfiniteRowModel.prototype.onColumnEverything = function () {
         // if the columns get reset, then this means the sort order could be impacted
         if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
-            this.reset();
+            var resetRequired = void 0;
+            // if cache params, we require reset only if sort model has changed. we don't need to check
+            // for filter model, as the filter manager will fire an event when columns change that result
+            // in the filter changing.
+            if (this.cacheParams) {
+                resetRequired = this.isSortModelDifferent();
+            }
+            else {
+                // if no cacheParams, means first time creating the cache, so always create one
+                resetRequired = true;
+            }
+            if (resetRequired) {
+                this.reset();
+            }
         }
+    };
+    InfiniteRowModel.prototype.isSortModelDifferent = function () {
+        return !utils_1.Utils.jsonEquals(this.cacheParams.sortModel, this.sortController.getSortModel());
     };
     InfiniteRowModel.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
@@ -170,7 +189,7 @@ var InfiniteRowModel = /** @class */ (function (_super) {
         // so we create loader here, and then pass dependencies in setDependencies() method later
         this.rowNodeBlockLoader = new rowNodeBlockLoader_1.RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis);
         this.context.wireBean(this.rowNodeBlockLoader);
-        var cacheSettings = {
+        this.cacheParams = {
             // the user provided datasource
             datasource: this.datasource,
             // sort and filter model
@@ -191,24 +210,24 @@ var InfiniteRowModel = /** @class */ (function (_super) {
             lastAccessedSequence: new utils_1.NumberSequence()
         };
         // set defaults
-        if (!(cacheSettings.maxConcurrentRequests >= 1)) {
-            cacheSettings.maxConcurrentRequests = 2;
+        if (!(this.cacheParams.maxConcurrentRequests >= 1)) {
+            this.cacheParams.maxConcurrentRequests = 2;
         }
         // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
         // server for one page at a time. so the default if not specified is 100.
-        if (!(cacheSettings.blockSize >= 1)) {
-            cacheSettings.blockSize = 100;
+        if (!(this.cacheParams.blockSize >= 1)) {
+            this.cacheParams.blockSize = 100;
         }
         // if user doesn't give initial rows to display, we assume zero
-        if (!(cacheSettings.initialRowCount >= 1)) {
-            cacheSettings.initialRowCount = 0;
+        if (!(this.cacheParams.initialRowCount >= 1)) {
+            this.cacheParams.initialRowCount = 0;
         }
         // if user doesn't provide overflow, we use default overflow of 1, so user can scroll past
         // the current page and request first row of next page
-        if (!(cacheSettings.overflowSize >= 1)) {
-            cacheSettings.overflowSize = 1;
+        if (!(this.cacheParams.overflowSize >= 1)) {
+            this.cacheParams.overflowSize = 1;
         }
-        this.infiniteCache = new infiniteCache_1.InfiniteCache(cacheSettings);
+        this.infiniteCache = new infiniteCache_1.InfiniteCache(this.cacheParams);
         this.context.wireBean(this.infiniteCache);
         this.infiniteCache.addEventListener(rowNodeCache_1.RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
     };

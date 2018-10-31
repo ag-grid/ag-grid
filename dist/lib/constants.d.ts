@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class Constants {
@@ -49,3 +49,4 @@ export declare class Constants {
     static DOM_LAYOUT_PRINT: string;
     static DOM_LAYOUT_AUTO_HEIGHT: string;
 }
+//# sourceMappingURL=constants.d.ts.map

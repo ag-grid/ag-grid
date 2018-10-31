@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -43,6 +43,14 @@ var Utils = /** @class */ (function () {
         func();
         this.doOnceFlags[key] = true;
     };
+    // got from https://stackoverflow.com/questions/3944122/detect-left-mouse-button-press
+    Utils.isLeftClick = function (mouseEvent) {
+        if ("buttons" in mouseEvent) {
+            return mouseEvent.buttons == 1;
+        }
+        var button = mouseEvent.which || mouseEvent.button;
+        return button == 1;
+    };
     // returns true if the event is close to the original event by X pixels either vertically or horizontally.
     // we only start dragging after X pixels so this allows us to know if we should start dragging yet.
     Utils.areEventsNear = function (e1, e2, pixelCount) {
@@ -53,6 +61,12 @@ var Utils = /** @class */ (function () {
         var diffX = Math.abs(e1.clientX - e2.clientX);
         var diffY = Math.abs(e1.clientY - e2.clientY);
         return Math.max(diffX, diffY) <= pixelCount;
+    };
+    Utils.jsonEquals = function (val1, val2) {
+        var val1Json = val1 ? JSON.stringify(val1) : null;
+        var val2Json = val2 ? JSON.stringify(val2) : null;
+        var res = val1Json === val2Json;
+        return res;
     };
     Utils.shallowCompare = function (arr1, arr2) {
         // if both are missing, then they are the same
@@ -181,11 +195,14 @@ var Utils = /** @class */ (function () {
         }
         return copy;
     };
+    Utils.deepCloneObject = function (object) {
+        return JSON.parse(JSON.stringify(object));
+    };
     Utils.map = function (array, callback) {
         var result = [];
         for (var i = 0; i < array.length; i++) {
             var item = array[i];
-            var mappedItem = callback(item);
+            var mappedItem = callback(item, i);
             result.push(mappedItem);
         }
         return result;
@@ -225,20 +242,20 @@ var Utils = /** @class */ (function () {
         return Object.keys(allValues);
     };
     Utils.mergeDeep = function (dest, source) {
-        if (this.exists(source)) {
-            this.iterateObject(source, function (key, newValue) {
-                var oldValue = dest[key];
-                if (oldValue === newValue) {
-                    return;
-                }
-                if (typeof oldValue === 'object' && typeof newValue === 'object') {
-                    Utils.mergeDeep(oldValue, newValue);
-                }
-                else {
-                    dest[key] = newValue;
-                }
-            });
-        }
+        if (!this.exists(source))
+            return;
+        this.iterateObject(source, function (key, newValue) {
+            var oldValue = dest[key];
+            if (oldValue === newValue) {
+                return;
+            }
+            if (typeof oldValue === 'object' && typeof newValue === 'object') {
+                Utils.mergeDeep(oldValue, newValue);
+            }
+            else {
+                dest[key] = newValue;
+            }
+        });
     };
     Utils.assign = function (object) {
         var _this = this;
@@ -383,6 +400,10 @@ var Utils = /** @class */ (function () {
         if (this.isKeyPressed(event, constants_1.Constants.KEY_NEW_LINE)) {
             return false;
         }
+        // no allowed printable chars have alt or ctrl key combinations
+        if (event.altKey || event.ctrlKey) {
+            return false;
+        }
         if (exports._.exists(event.key)) {
             // modern browser will implement key, so we return if key is length 1, eg if it is 'a' for the
             // a key, or '2' for the '2' key. non-printable characters have names, eg 'Enter' or 'Backspace'.
@@ -427,13 +448,9 @@ var Utils = /** @class */ (function () {
     Utils.missingOrEmptyObject = function (value) {
         return this.missing(value) || Object.keys(value).length === 0;
     };
-    Utils.exists = function (value) {
-        if (value === null || value === undefined || value === '') {
-            return false;
-        }
-        else {
-            return true;
-        }
+    Utils.exists = function (value, allowEmptyString) {
+        if (allowEmptyString === void 0) { allowEmptyString = false; }
+        return value != null && (value !== '' || allowEmptyString);
     };
     Utils.firstExistingValue = function () {
         var values = [];
@@ -1000,15 +1017,19 @@ var Utils = /** @class */ (function () {
             // taken from https://github.com/ag-grid/ag-grid/issues/550
             this.isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') > 0
                 || (function (p) {
-                    return p.toString() === "[object SafariRemoteNotification]";
+                    return p ? p.toString() === "[object SafariRemoteNotification]" : false;
                 })(!anyWindow.safari || anyWindow.safari.pushNotification);
         }
         return this.isSafari;
     };
     Utils.isBrowserChrome = function () {
         if (this.isChrome === undefined) {
-            var anyWindow = window;
-            this.isChrome = !!anyWindow.chrome && !!anyWindow.chrome.webstore;
+            // this is the old original we we did it, but it didn't work on android
+            // let anyWindow = <any> window;
+            // this.isChrome = !!anyWindow.chrome && !!anyWindow.chrome.webstore;
+            // this is the new way
+            // taken from https://stackoverflow.com/questions/4565112/javascript-how-to-find-out-if-the-user-browser-is-chrome
+            this.isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
         }
         return this.isChrome;
     };
@@ -1059,9 +1080,9 @@ var Utils = /** @class */ (function () {
         // https://stackoverflow.com/questions/39245488/event-path-undefined-with-firefox-and-vue-js
         // https://developer.mozilla.org/en-US/docs/Web/API/Event
         var eventNoType = event;
-        if (event.deepPath) {
+        if (eventNoType.deepPath) {
             // IE supports deep path
-            return event.deepPath();
+            return eventNoType.deepPath();
         }
         else if (eventNoType.path) {
             // Chrome supports path
@@ -1462,7 +1483,8 @@ var Utils = /** @class */ (function () {
                 document.body.appendChild(eBox);
             }
         }
-        eBox.appendChild(eMessage);
+        eBox.insertBefore(eMessage, eBox.children[0]);
+        // eBox.appendChild(eMessage);
     };
     // gets called by: a) ClientSideNodeManager and b) GroupStage to do sorting.
     // when in ClientSideNodeManager we always have indexes (as this sorts the items the
@@ -1549,6 +1571,41 @@ var Utils = /** @class */ (function () {
     Utils.NUMPAD_DEL_NUMLOCK_ON_KEY = 'Del';
     Utils.NUMPAD_DEL_NUMLOCK_ON_CHARCODE = 46;
     Utils.doOnceFlags = {};
+    Utils.compose = function () {
+        var fns = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            fns[_i] = arguments[_i];
+        }
+        return function (arg) { return fns.reduce(function (composed, f) { return f(composed); }, arg); };
+    };
+    Utils.decToHex = function (number, bytes) {
+        var hex = '';
+        for (var i = 0; i < bytes; i++) {
+            hex += String.fromCharCode(number & 0xff);
+            number >>>= 8;
+        }
+        return hex;
+    };
+    Utils.utf8_encode = function (s) {
+        var utftext = '';
+        s = s.replace(/\r\n/g, "\n");
+        for (var n = 0, len = s.length; n < len; n++) {
+            var c = s.charCodeAt(n);
+            if (c < 128) {
+                utftext += String.fromCharCode(c);
+            }
+            else if ((c > 127) && (c < 2048)) {
+                utftext += String.fromCharCode((c >> 6) | 192);
+                utftext += String.fromCharCode((c & 63) | 128);
+            }
+            else {
+                utftext += String.fromCharCode((c >> 12) | 224);
+                utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+                utftext += String.fromCharCode((c & 63) | 128);
+            }
+        }
+        return utftext;
+    };
     // static prepend(parent: HTMLElement, child: HTMLElement): void {
     //     if (this.exists(parent.firstChild)) {
     //         parent.insertBefore(child, parent.firstChild);

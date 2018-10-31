@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgEvent } from "../events";
@@ -152,6 +152,8 @@ export declare class RowNode implements IEventEmitter {
         [colId: string]: any;
     };
     __cacheVersion: number;
+    /** True when nodes with the same id are being removed and added as part of the same batch transaction */
+    alreadyRendered: boolean;
     private selected;
     private eventService;
     setData(data: any): void;
@@ -204,3 +206,4 @@ export declare class RowNode implements IEventEmitter {
     onMouseLeave(): void;
     getFirstChildOfFirstChild(rowGroupColumn: Column): RowNode;
 }
+//# sourceMappingURL=rowNode.d.ts.map

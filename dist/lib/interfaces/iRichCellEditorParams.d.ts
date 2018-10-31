@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ICellRendererComp, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";
@@ -10,3 +10,4 @@ export interface IRichCellEditorParams extends ICellEditorParams {
         new (): ICellRendererComp;
     } | ICellRendererFunc | string;
 }
+//# sourceMappingURL=iRichCellEditorParams.d.ts.map

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -116,6 +116,9 @@ var FilterManager = /** @class */ (function () {
     FilterManager.prototype.isAdvancedFilterPresent = function () {
         return this.advancedFilterPresent;
     };
+    // called by:
+    // 1) onFilterChanged()
+    // 2) onNewRowsLoaded()
     FilterManager.prototype.setAdvancedFilterPresent = function () {
         var atLeastOneActive = false;
         utils_1.Utils.iterateObject(this.allFilters, function (key, filterWrapper) {
@@ -297,7 +300,7 @@ var FilterManager = /** @class */ (function () {
         else {
             valueAfterCallback = value;
         }
-        if (valueAfterCallback && valueAfterCallback !== '') {
+        if (utils_1.Utils.exists(valueAfterCallback)) {
             return valueAfterCallback.toString().toUpperCase();
         }
         else {
@@ -434,7 +437,18 @@ var FilterManager = /** @class */ (function () {
         });
     };
     FilterManager.prototype.onNewColumnsLoaded = function () {
-        this.destroy();
+        var _this = this;
+        var atLeastOneFilterGone = false;
+        utils_1.Utils.iterateObject(this.allFilters, function (key, filterWrapper) {
+            var oldColumn = !_this.columnController.getPrimaryColumn(filterWrapper.column);
+            if (oldColumn) {
+                atLeastOneFilterGone = true;
+                _this.disposeFilterWrapper(filterWrapper, "filterDestroyed");
+            }
+        });
+        if (atLeastOneFilterGone) {
+            this.onFilterChanged();
+        }
     };
     // destroys the filter, so it not longer takes part
     FilterManager.prototype.destroyFilter = function (column, source) {

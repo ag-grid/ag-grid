@@ -1,14 +1,17 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -584,7 +587,7 @@ var RowRenderer = /** @class */ (function (_super) {
         // if no row comp, see if we can get it from the previous rowComps
         if (!rowComp) {
             rowNode = this.paginationProxy.getRow(rowIndex);
-            if (utils_1.Utils.exists(rowNode) && utils_1.Utils.exists(rowsToRecycle) && rowsToRecycle[rowNode.id]) {
+            if (utils_1.Utils.exists(rowNode) && utils_1.Utils.exists(rowsToRecycle) && rowsToRecycle[rowNode.id] && rowNode.alreadyRendered) {
                 rowComp = rowsToRecycle[rowNode.id];
                 rowsToRecycle[rowNode.id] = null;
             }
@@ -607,6 +610,11 @@ var RowRenderer = /** @class */ (function (_super) {
         else {
             // ensure row comp is in right position in DOM
             rowComp.ensureDomOrder();
+        }
+        if (rowNode) {
+            // set node as 'alreadyRendered' to ensure we only recycle rowComps that have been rendered, this ensures
+            // we don't reuse rowComps that have been removed and then re-added in the same batch transaction.
+            rowNode.alreadyRendered = true;
         }
         this.rowCompsByIndex[rowIndex] = rowComp;
         return rowComp;
@@ -685,14 +693,24 @@ var RowRenderer = /** @class */ (function (_super) {
             this.eventService.dispatchEvent(event_1);
         }
         if (this.paginationProxy.isRowsToRender()) {
-            var event_2 = {
-                type: events_1.Events.EVENT_FIRST_DATA_RENDERED,
-                firstRow: newFirst,
-                lastRow: newLast,
-                api: this.gridApi,
-                columnApi: this.columnApi
-            };
-            this.eventService.dispatchEventOnce(event_2);
+            var fireEvent = true;
+            // the server side row model has a stub row when no data is present
+            // this take this stub row into account
+            if (this.gridOptionsWrapper.isRowModelServerSide()) {
+                var firstRowNode = this.paginationProxy.getRow(0);
+                // we don't fire event if first row node is a stub.
+                fireEvent = !firstRowNode || !firstRowNode.stub;
+            }
+            if (fireEvent) {
+                var event_2 = {
+                    type: events_1.Events.EVENT_FIRST_DATA_RENDERED,
+                    firstRow: newFirst,
+                    lastRow: newLast,
+                    api: this.gridApi,
+                    columnApi: this.columnApi
+                };
+                this.eventService.dispatchEventOnce(event_2);
+            }
         }
     };
     RowRenderer.prototype.getFirstVirtualRenderedRow = function () {
@@ -965,7 +983,7 @@ var RowRenderer = /** @class */ (function (_super) {
             // a bunch of cells (eg 10 rows) then all the work on ensuring cell visible is useless
             // (except for the last one) which causes grid to stall for a while.
             if (startEditing) {
-                var rowNode = this.paginationProxy.getRow(nextCell.rowIndex);
+                var rowNode = this.lookupRowNodeForCell(nextCell);
                 var cellIsEditable = nextCell.column.isCellEditable(rowNode);
                 if (!cellIsEditable) {
                     continue;
@@ -1006,6 +1024,15 @@ var RowRenderer = /** @class */ (function (_super) {
             // we successfully tabbed onto a grid cell, so return true
             return nextCellComp;
         }
+    };
+    RowRenderer.prototype.lookupRowNodeForCell = function (cell) {
+        if (cell.floating === constants_1.Constants.PINNED_TOP) {
+            return this.pinnedRowModel.getPinnedTopRow(cell.rowIndex);
+        }
+        if (cell.floating === constants_1.Constants.PINNED_BOTTOM) {
+            return this.pinnedRowModel.getPinnedBottomRow(cell.rowIndex);
+        }
+        return this.paginationProxy.getRow(cell.rowIndex);
     };
     __decorate([
         context_1.Autowired("paginationProxy"),

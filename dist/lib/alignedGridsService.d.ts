@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridPanel } from "./gridPanel/gridPanel";
@@ -25,3 +25,4 @@ export declare class AlignedGridsService {
     private processGroupOpenedEvent;
     private processColumnEvent;
 }
+//# sourceMappingURL=alignedGridsService.d.ts.map

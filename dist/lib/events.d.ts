@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
@@ -147,6 +147,9 @@ export interface CellFocusedEvent extends AgGridEvent {
     forceBrowserFocus: boolean;
     floating: string;
 }
+export interface ExpandCollapseAllEvent extends AgGridEvent {
+    source: string;
+}
 /**---------------*/
 /** COLUMN EVENTS */
 /**---------------*/
@@ -243,3 +246,4 @@ export interface ColumnAggFuncChangeRequestEvent extends ColumnRequestEvent {
 }
 export interface ScrollVisibilityChangedEvent extends AgGridEvent {
 }
+//# sourceMappingURL=events.d.ts.map

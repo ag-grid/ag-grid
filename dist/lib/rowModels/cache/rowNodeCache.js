@@ -1,14 +1,17 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -187,7 +190,7 @@ var RowNodeCache = /** @class */ (function (_super) {
     RowNodeCache.prototype.getBlockIdsSorted = function () {
         // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
         var numberComparator = function (a, b) { return a - b; }; // default comparator for array is string comparison
-        var blockIds = Object.keys(this.blocks).map(function (idStr) { return parseInt(idStr); }).sort(numberComparator);
+        var blockIds = Object.keys(this.blocks).map(function (idStr) { return parseInt(idStr, 10); }).sort(numberComparator);
         return blockIds;
     };
     RowNodeCache.prototype.getBlock = function (blockId) {

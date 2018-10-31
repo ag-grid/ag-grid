@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,7 +23,7 @@ var columnGroup_1 = require("../entities/columnGroup");
 var column_1 = require("../entities/column");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var expressionService_1 = require("../valueService/expressionService");
-var balancedColumnTreeBuilder_1 = require("./balancedColumnTreeBuilder");
+var columnFactory_1 = require("./columnFactory");
 var displayedGroupCreator_1 = require("./displayedGroupCreator");
 var autoWidthCalculator_1 = require("../rendering/autoWidthCalculator");
 var eventService_1 = require("../eventService");
@@ -74,6 +74,45 @@ var ColumnController = /** @class */ (function () {
             this.pivotMode = pivotMode;
         }
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
+    };
+    ColumnController.prototype.setColumnDefs = function (columnDefs, source) {
+        if (source === void 0) { source = "api"; }
+        this.columnDefs = columnDefs;
+        this.beforeChangingColumns();
+        var oldPrimaryColumns = this.primaryColumns;
+        var balancedTreeResult = this.columnFactory.createColumnTree(columnDefs, true, oldPrimaryColumns);
+        this.primaryColumnTree = balancedTreeResult.columnTree;
+        this.primaryHeaderRowCount = balancedTreeResult.treeDept + 1;
+        this.primaryColumns = this.getColumnsFromTree(this.primaryColumnTree);
+        this.extractRowGroupColumns(source, oldPrimaryColumns);
+        this.extractPivotColumns(source, oldPrimaryColumns);
+        this.createValueColumns(source, oldPrimaryColumns);
+        this.ready = true;
+        this.updateGridColumns();
+        this.updateDisplayedColumns(source);
+        this.checkDisplayedVirtualColumns();
+        var eventEverythingChanged = {
+            type: events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            source: source
+        };
+        this.eventService.dispatchEvent(eventEverythingChanged);
+        var newColumnsLoadedEvent = {
+            type: events_1.Events.EVENT_NEW_COLUMNS_LOADED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(newColumnsLoadedEvent);
+    };
+    ColumnController.prototype.beforeChangingColumns = function () {
+        // always invalidate cache on changing columns, as the column id's for the new columns
+        // could overlap with the old id's, so the cache would return old values for new columns.
+        this.valueCache.expire();
+        // NOTE ==================
+        // we should be destroying the existing columns and groups if they exist, for example, the original column
+        // group adds a listener to the columns, it should be also removing the listeners
+        this.autoGroupsNeedBuilding = true;
     };
     ColumnController.prototype.isAutoRowHeightActive = function () {
         return this.autoRowHeightColumns && this.autoRowHeightColumns.length > 0;
@@ -287,7 +326,7 @@ var ColumnController = /** @class */ (function () {
     };
     // + columnSelectPanel
     ColumnController.prototype.getPrimaryColumnTree = function () {
-        return this.primaryBalancedTree;
+        return this.primaryColumnTree;
     };
     // + gridPanel -> for resizing the body and setting top margin
     ColumnController.prototype.getHeaderRowCount = function () {
@@ -985,7 +1024,10 @@ var ColumnController = /** @class */ (function () {
     // + clientSideRowController -> sorting, building quick filter text
     // + headerRenderer -> sorting (clearing icon)
     ColumnController.prototype.getAllPrimaryColumns = function () {
-        return this.primaryColumns;
+        return this.primaryColumns ? this.primaryColumns.slice() : null;
+    };
+    ColumnController.prototype.getSecondaryColumns = function () {
+        return this.secondaryColumns ? this.secondaryColumns.slice() : null;
     };
     ColumnController.prototype.getAllColumnsForQuickFilter = function () {
         return this.columnsForQuickFilter;
@@ -1209,7 +1251,7 @@ var ColumnController = /** @class */ (function () {
     ColumnController.prototype.resetColumnState = function (source) {
         if (source === void 0) { source = "api"; }
         // we can't use 'allColumns' as the order might of messed up, so get the primary ordered list
-        var primaryColumns = this.getColumnsFromTree(this.primaryBalancedTree);
+        var primaryColumns = this.getColumnsFromTree(this.primaryColumnTree);
         var state = [];
         if (primaryColumns) {
             primaryColumns.forEach(function (column) {
@@ -1676,103 +1718,76 @@ var ColumnController = /** @class */ (function () {
         });
         return result;
     };
-    ColumnController.prototype.setColumnDefs = function (columnDefs, source) {
-        if (source === void 0) { source = "api"; }
-        // always invalidate cache on changing columns, as the column id's for the new columns
-        // could overlap with the old id's, so the cache would return old values for new columns.
-        this.valueCache.expire();
-        // NOTE ==================
-        // we should be destroying the existing columns and groups if they exist, for example, the original column
-        // group adds a listener to the columns, it should be also removing the listeners
-        this.autoGroupsNeedBuilding = true;
-        var balancedTreeResult = this.balancedColumnTreeBuilder.createBalancedColumnGroups(columnDefs, true);
-        this.primaryBalancedTree = balancedTreeResult.balancedTree;
-        this.primaryHeaderRowCount = balancedTreeResult.treeDept + 1;
-        this.primaryColumns = this.getColumnsFromTree(this.primaryBalancedTree);
-        this.autoRowHeightColumns = this.primaryColumns.filter(function (col) { return col.getColDef().autoHeight; });
-        this.extractRowGroupColumns(source);
-        this.extractPivotColumns(source);
-        this.createValueColumns(source);
-        this.updateGridColumns();
-        this.updateDisplayedColumns(source);
-        this.checkDisplayedVirtualColumns();
-        this.ready = true;
-        var eventEverythingChanged = {
-            type: events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            source: source
-        };
-        this.eventService.dispatchEvent(eventEverythingChanged);
-        var newColumnsLoadedEvent = {
-            type: events_1.Events.EVENT_NEW_COLUMNS_LOADED,
-            api: this.gridApi,
-            columnApi: this.columnApi
-        };
-        this.eventService.dispatchEvent(newColumnsLoadedEvent);
-    };
     ColumnController.prototype.isReady = function () {
         return this.ready;
     };
-    ColumnController.prototype.extractRowGroupColumns = function (source) {
-        var _this = this;
-        this.rowGroupColumns.forEach(function (column) { return column.setRowGroupActive(false, source); });
-        this.rowGroupColumns = [];
-        // pull out items with rowGroupIndex
-        this.primaryColumns.forEach(function (column) {
-            if (typeof column.getColDef().rowGroupIndex === 'number') {
-                _this.rowGroupColumns.push(column);
-                column.setRowGroupActive(true, source);
-            }
-        });
-        // then sort them
-        this.rowGroupColumns.sort(function (colA, colB) {
-            return colA.getColDef().rowGroupIndex - colB.getColDef().rowGroupIndex;
-        });
-        // now just pull out items rowGroup, they will be added at the end
-        // after the indexed ones, but in the order the columns appear
-        this.primaryColumns.forEach(function (column) {
-            if (column.getColDef().rowGroup) {
-                // if user already specified rowGroupIndex then we skip it as this col already included
-                if (_this.rowGroupColumns.indexOf(column) >= 0) {
-                    return;
-                }
-                _this.rowGroupColumns.push(column);
-                column.setRowGroupActive(true, source);
+    ColumnController.prototype.createValueColumns = function (source, oldPrimaryColumns) {
+        this.valueColumns = this.extractColumns(oldPrimaryColumns, this.valueColumns, function (col, flag) { return col.setValueActive(flag, source); }, 
+        // aggFunc doesn't have index variant, cos order of value cols doesn't matter, so always return null
+        function () { return null; }, 
+        // aggFunc is a string, so return it's existence
+        function (colDef) { return !!colDef.aggFunc; });
+        // all new columns added will have aggFunc missing, so set it to what is in the colDef
+        this.valueColumns.forEach(function (col) {
+            if (!col.getAggFunc()) {
+                col.setAggFunc(col.getColDef().aggFunc);
             }
         });
     };
-    ColumnController.prototype.extractPivotColumns = function (source) {
+    ColumnController.prototype.extractRowGroupColumns = function (source, oldPrimaryColumns) {
+        this.rowGroupColumns = this.extractColumns(oldPrimaryColumns, this.rowGroupColumns, function (col, flag) { return col.setRowGroupActive(flag, source); }, function (colDef) { return colDef.rowGroupIndex; }, function (colDef) { return colDef.rowGroup; });
+    };
+    ColumnController.prototype.extractColumns = function (oldPrimaryColumns, previousCols, setFlagFunc, getIndexFunc, getValueFunc) {
         var _this = this;
-        this.pivotColumns.forEach(function (column) { return column.setPivotActive(false, source); });
-        this.pivotColumns = [];
-        // pull out items with pivotIndex
-        this.primaryColumns.forEach(function (column) {
-            if (typeof column.getColDef().pivotIndex === 'number') {
-                _this.pivotColumns.push(column);
-                column.setPivotActive(true, source);
+        if (!previousCols) {
+            previousCols = [];
+        }
+        // remove cols that no longer exist
+        var colPresentInPrimaryFunc = function (col) { return _this.primaryColumns.indexOf(col) >= 0; };
+        var colMissingFromPrimaryFunc = function (col) { return _this.primaryColumns.indexOf(col) < 0; };
+        var colNewFunc = function (col) { return !oldPrimaryColumns || oldPrimaryColumns.indexOf(col) < 0; };
+        var removedCols = previousCols.filter(colMissingFromPrimaryFunc);
+        var existingCols = previousCols.filter(colPresentInPrimaryFunc);
+        var newPrimaryCols = this.primaryColumns.filter(colNewFunc);
+        removedCols.forEach(function (col) { return setFlagFunc(col, false); });
+        var newCols = [];
+        // we only want to work on new columns, as col columns already got processed first time around
+        // pull out items with xxxIndex
+        newPrimaryCols.forEach(function (col) {
+            var index = getIndexFunc(col.getColDef());
+            if (typeof index === 'number') {
+                newCols.push(col);
             }
         });
         // then sort them
-        this.pivotColumns.sort(function (colA, colB) {
-            return colA.getColDef().pivotIndex - colB.getColDef().pivotIndex;
+        newCols.sort(function (colA, colB) {
+            var indexA = getIndexFunc(colA.getColDef());
+            var indexB = getIndexFunc(colB.getColDef());
+            return indexA - indexB;
         });
-        // now check the boolean equivalent
-        this.primaryColumns.forEach(function (column) {
-            if (column.getColDef().pivot) {
-                // if user already specified pivotIndex then we skip it as this col already included
-                if (_this.pivotColumns.indexOf(column) >= 0) {
+        // now just pull out items xxx (boolean value), they will be added at the end
+        // after the indexed ones, but in the order the columns appear
+        newPrimaryCols.forEach(function (col) {
+            var booleanValue = getValueFunc(col.getColDef());
+            if (booleanValue) {
+                // if user already specified xxxIndex then we skip it as this col already included
+                if (newCols.indexOf(col) >= 0) {
                     return;
                 }
-                _this.pivotColumns.push(column);
-                column.setPivotActive(true, source);
+                newCols.push(col);
             }
         });
+        newCols.forEach(function (col) { return setFlagFunc(col, true); });
+        var res = existingCols.concat(newCols);
+        return res;
+    };
+    ColumnController.prototype.extractPivotColumns = function (source, oldPrimaryColumns) {
+        this.pivotColumns = this.extractColumns(oldPrimaryColumns, this.pivotColumns, function (col, flag) { return col.setPivotActive(flag, source); }, function (colDef) { return colDef.pivotIndex; }, function (colDef) { return colDef.pivot; });
     };
     ColumnController.prototype.resetColumnGroupState = function (source) {
         if (source === void 0) { source = "api"; }
         var stateItems = [];
-        this.columnUtils.depthFirstOriginalTreeSearch(this.primaryBalancedTree, function (child) {
+        this.columnUtils.depthFirstOriginalTreeSearch(this.primaryColumnTree, function (child) {
             if (child instanceof originalColumnGroup_1.OriginalColumnGroup) {
                 var groupState = {
                     groupId: child.getGroupId(),
@@ -1927,8 +1942,8 @@ var ColumnController = /** @class */ (function () {
         }
         if (newColsPresent) {
             this.processSecondaryColumnDefinitions(colDefs);
-            var balancedTreeResult = this.balancedColumnTreeBuilder.createBalancedColumnGroups(colDefs, false);
-            this.secondaryBalancedTree = balancedTreeResult.balancedTree;
+            var balancedTreeResult = this.columnFactory.createColumnTree(colDefs, false);
+            this.secondaryBalancedTree = balancedTreeResult.columnTree;
             this.secondaryHeaderRowCount = balancedTreeResult.treeDept + 1;
             this.secondaryColumns = this.getColumnsFromTree(this.secondaryBalancedTree);
             this.secondaryColumnsPresent = true;
@@ -1980,7 +1995,7 @@ var ColumnController = /** @class */ (function () {
             this.gridColsArePrimary = false;
         }
         else {
-            this.gridBalancedTree = this.primaryBalancedTree.slice();
+            this.gridBalancedTree = this.primaryColumnTree.slice();
             this.gridHeaderRowCount = this.primaryHeaderRowCount;
             this.gridColumns = this.primaryColumns.slice();
             this.gridColsArePrimary = true;
@@ -1990,6 +2005,7 @@ var ColumnController = /** @class */ (function () {
             this.orderGridColsLikeLastPrimary();
         }
         this.addAutoGroupToGridColumns();
+        this.autoRowHeightColumns = this.gridColumns.filter(function (col) { return col.getColDef().autoHeight; });
         this.putFixedColumnsFirst();
         this.setupQuickFilterColumns();
         this.clearDisplayedColumns();
@@ -2006,22 +2022,44 @@ var ColumnController = /** @class */ (function () {
         if (utils_1.Utils.missing(this.lastPrimaryOrder)) {
             return;
         }
-        // only do the sort if all columns are accounted for. columns will be not accounted for
+        // only do the sort if at least one column is accounted for. columns will be not accounted for
         // if changing from secondary to primary columns
-        var oneMissing = false;
+        var noColsFound = true;
         this.gridColumns.forEach(function (col) {
-            if (_this.lastPrimaryOrder.indexOf(col) < 0) {
-                oneMissing = true;
+            if (_this.lastPrimaryOrder.indexOf(col) >= 0) {
+                noColsFound = false;
             }
         });
-        if (oneMissing) {
+        if (noColsFound) {
             return;
         }
-        this.gridColumns.sort(function (colA, colB) {
-            var indexA = _this.lastPrimaryOrder.indexOf(colA);
-            var indexB = _this.lastPrimaryOrder.indexOf(colB);
-            return indexA - indexB;
-        });
+        // order cols in teh same order as before. we need to make sure that all
+        // cols still exists, so filter out any that no longer exist.
+        var oldColsOrdered = this.lastPrimaryOrder.filter(function (col) { return _this.gridColumns.indexOf(col) >= 0; });
+        var newColsOrdered = this.gridColumns.filter(function (col) { return _this.lastPrimaryOrder.indexOf(col) < 0; });
+        this.gridColumns = oldColsOrdered.concat(newColsOrdered);
+        // let gridColsBeforeSort = this.gridColumns.slice();
+        //
+        // this.gridColumns.sort( (colA: Column, colB: Column): number => {
+        //     let indexA = this.lastPrimaryOrder.indexOf(colA);
+        //     let indexB = this.lastPrimaryOrder.indexOf(colB);
+        //
+        //     let bothColsExistedBefore = indexA>=0 && indexB>=0;
+        //     let neitherColsExistedBefore = indexA<0 && indexB<0;
+        //
+        //     if (bothColsExistedBefore) {
+        //         return indexA - indexB;
+        //     } else if (neitherColsExistedBefore) {
+        //         // if both cols are new, keep current order
+        //         let currentIndexA = gridColsBeforeSort.indexOf(colA);
+        //         let currentIndexB = gridColsBeforeSort.indexOf(colB);
+        //         return currentIndexA - currentIndexB;
+        //     } else if (indexA>0) {
+        //         return -1;
+        //     } else {
+        //         return 1;
+        //     }
+        // });
     };
     ColumnController.prototype.isPrimaryColumnGroupsPresent = function () {
         return this.primaryHeaderRowCount > 1;
@@ -2051,7 +2089,7 @@ var ColumnController = /** @class */ (function () {
             return;
         }
         this.gridColumns = this.groupAutoColumns.concat(this.gridColumns);
-        var autoColBalancedTree = this.balancedColumnTreeBuilder.createForAutoGroups(this.groupAutoColumns, this.gridBalancedTree);
+        var autoColBalancedTree = this.columnFactory.createForAutoGroups(this.groupAutoColumns, this.gridBalancedTree);
         this.gridBalancedTree = autoColBalancedTree.concat(this.gridBalancedTree);
     };
     // gets called after we copy down grid columns, to make sure any part of the gui
@@ -2362,19 +2400,6 @@ var ColumnController = /** @class */ (function () {
             this.groupAutoColumns = null;
         }
     };
-    ColumnController.prototype.createValueColumns = function (source) {
-        this.valueColumns.forEach(function (column) { return column.setValueActive(false, source); });
-        this.valueColumns = [];
-        // override with columns that have the aggFunc specified explicitly
-        for (var i = 0; i < this.primaryColumns.length; i++) {
-            var column = this.primaryColumns[i];
-            if (column.getColDef().aggFunc) {
-                column.setAggFunc(column.getColDef().aggFunc);
-                this.valueColumns.push(column);
-                column.setValueActive(true, source);
-            }
-        }
-    };
     ColumnController.prototype.getWidthOfColsInList = function (columnList) {
         var result = 0;
         for (var i = 0; i < columnList.length; i++) {
@@ -2394,9 +2419,9 @@ var ColumnController = /** @class */ (function () {
         __metadata("design:type", expressionService_1.ExpressionService)
     ], ColumnController.prototype, "expressionService", void 0);
     __decorate([
-        context_1.Autowired('balancedColumnTreeBuilder'),
-        __metadata("design:type", balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder)
-    ], ColumnController.prototype, "balancedColumnTreeBuilder", void 0);
+        context_1.Autowired('columnFactory'),
+        __metadata("design:type", columnFactory_1.ColumnFactory)
+    ], ColumnController.prototype, "columnFactory", void 0);
     __decorate([
         context_1.Autowired('displayedGroupCreator'),
         __metadata("design:type", displayedGroupCreator_1.DisplayedGroupCreator)

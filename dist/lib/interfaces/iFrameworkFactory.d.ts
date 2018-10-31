@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.0.0
+// Type definitions for ag-grid-community v19.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export interface IFrameworkFactory {
@@ -6,3 +6,4 @@ export interface IFrameworkFactory {
      * to specify how to execute setTimeout. The default is to just call the browser setTimeout(). */
     setTimeout(action: any, timeout?: any): void;
 }
+//# sourceMappingURL=iFrameworkFactory.d.ts.map

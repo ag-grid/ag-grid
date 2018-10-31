@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -61,7 +61,7 @@ var ComponentRecipes = /** @class */ (function () {
             return this.newEmptyFloatingFilterWrapperComponent(column);
         }
         var defaultFloatingFilterType;
-        if (!colDef.filter) {
+        if (!colDef.filter && !colDef.filterFramework) {
             defaultFloatingFilterType = this.gridOptionsWrapper.isEnterprise() ? 'agSetColumnFloatingFilter' : 'agTextColumnFloatingFilter';
         }
         else if (typeof colDef.filter === 'string' && Object.keys(ComponentRecipes_1.filterToFloatingFilterNames).indexOf(colDef.filter) > -1) {

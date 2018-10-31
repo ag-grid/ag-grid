@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -634,22 +634,18 @@ var GridApi = /** @class */ (function () {
     GridApi.prototype.openToolPanel = function (key) {
         this.gridCore.openToolPanel(key);
     };
-    ;
     GridApi.prototype.closeToolPanel = function () {
         this.gridCore.closeToolPanel();
     };
-    ;
     GridApi.prototype.getOpenedToolPanel = function () {
         return this.gridCore.getOpenedToolPanel();
     };
-    ;
     GridApi.prototype.getSideBar = function () {
         return this.gridCore.getSideBar();
     };
     GridApi.prototype.setSideBar = function (def) {
         return this.gridCore.setSideBar(def);
     };
-    ;
     GridApi.prototype.setSuppressClipboardPaste = function (value) {
         this.gridOptionsWrapper.setProperty(gridOptionsWrapper_1.GridOptionsWrapper.PROP_SUPPRESS_CLIPBOARD_PASTE, value);
     };

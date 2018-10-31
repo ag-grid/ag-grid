@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.0.0
+ * @version v19.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22,13 +22,14 @@ var utils_1 = require("../utils");
 var selectionController_1 = require("../selectionController");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var displayedGroupCreator_1 = require("../columnController/displayedGroupCreator");
-var balancedColumnTreeBuilder_1 = require("../columnController/balancedColumnTreeBuilder");
+var columnFactory_1 = require("../columnController/columnFactory");
 var groupInstanceIdCreator_1 = require("../columnController/groupInstanceIdCreator");
 var columnGroup_1 = require("../entities/columnGroup");
 var pinnedRowModel_1 = require("../rowModels/pinnedRowModel");
 var autoGroupColService_1 = require("../columnController/autoGroupColService");
 var BaseGridSerializingSession = /** @class */ (function () {
-    function BaseGridSerializingSession(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback, cellAndHeaderEscaper) {
+    function BaseGridSerializingSession(config) {
+        var columnController = config.columnController, valueService = config.valueService, gridOptionsWrapper = config.gridOptionsWrapper, processCellCallback = config.processCellCallback, processHeaderCallback = config.processHeaderCallback, cellAndHeaderEscaper = config.cellAndHeaderEscaper;
         this.columnController = columnController;
         this.valueService = valueService;
         this.gridOptionsWrapper = gridOptionsWrapper;
@@ -117,6 +118,8 @@ var GridSerializer = /** @class */ (function () {
         var onlySelectedAllPages = params && params.onlySelectedAllPages;
         var rowSkipper = (params && params.shouldRowBeSkipped) || dontSkipRows;
         var api = this.gridOptionsWrapper.getApi();
+        var skipSingleChildrenGroup = this.gridOptionsWrapper.isGroupRemoveSingleChildren();
+        var skipLowestSingleChildrenGroup = this.gridOptionsWrapper.isGroupRemoveLowestSingleChildren();
         var context = this.gridOptionsWrapper.getContext();
         // when in pivot mode, we always render cols on screen, never 'all columns'
         var isPivotMode = this.columnController.isPivotMode();
@@ -193,7 +196,9 @@ var GridSerializer = /** @class */ (function () {
             gridSerializingSession.addCustomFooter(params.customFooter);
         }
         function processRow(node) {
-            if (skipGroups && node.group) {
+            var shouldSkipLowestGroup = skipLowestSingleChildrenGroup && node.leafGroup;
+            var shouldSkipCurrentGroup = node.allChildrenCount === 1 && (skipSingleChildrenGroup || shouldSkipLowestGroup);
+            if (node.group && (skipGroups || shouldSkipCurrentGroup)) {
                 return;
             }
             if (skipFooters && node.footer) {
@@ -249,7 +254,6 @@ var GridSerializer = /** @class */ (function () {
         var columnIndex = 0;
         displayedGroups.forEach(function (columnGroupChild) {
             var columnGroup = columnGroupChild;
-            var colDef = columnGroup.getDefinition();
             var columnName = _this.columnController.getDisplayNameForColumnGroup(columnGroup, 'header');
             gridRowIterator.onColumn(columnName, columnIndex++, columnGroup.getLeafColumns().length - 1);
         });
@@ -275,9 +279,9 @@ var GridSerializer = /** @class */ (function () {
         __metadata("design:type", selectionController_1.SelectionController)
     ], GridSerializer.prototype, "selectionController", void 0);
     __decorate([
-        context_1.Autowired('balancedColumnTreeBuilder'),
-        __metadata("design:type", balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder)
-    ], GridSerializer.prototype, "balancedColumnTreeBuilder", void 0);
+        context_1.Autowired('columnFactory'),
+        __metadata("design:type", columnFactory_1.ColumnFactory)
+    ], GridSerializer.prototype, "columnFactory", void 0);
     __decorate([
         context_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
