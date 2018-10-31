@@ -27,7 +27,7 @@
         </p>
 
         <p class="text-right">
-            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=19.1.0">Change Log</a>
+            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=19.1.1">Change Log</a>
         </p>
     </div>
 </div>
