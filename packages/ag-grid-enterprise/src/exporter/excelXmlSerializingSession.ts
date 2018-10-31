@@ -69,10 +69,10 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
         this.suppressTextAsCDATA = suppressTextAsCDATA;
         this.stylesByIds = {};
 
-        baseExcelStyles.forEach((it: ExcelStyle) => {
+        this.baseExcelStyles.forEach((it: ExcelStyle) => {
             this.stylesByIds[it.id] = it;
         });
-        this.excelStyles = [...baseExcelStyles];
+        this.excelStyles = [...this.baseExcelStyles];
     }
 
     public addCustomHeader(customHeader: ExcelCell[][]): void {
