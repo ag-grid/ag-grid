@@ -1,34 +1,28 @@
 var columnDefs = [
-        {
-            headerName: 'As provided',
-            field: "rawValue",
-            width: 150
-        },
-        {
-            headerName: 'As boolean',
-            field: "rawValue",
-            width: 150,
-            cellClass: 'booleanType'
-        },
-        {
-            headerName: 'As string',
-            field: "rawValue",
-            width: 150,
-            cellClass: 'stringType'
-        },
-        {
-            headerName: 'Date',
-            field: "dateValue",
-            width: 150,
-            cellClass: 'dateType'
-        }
+    {
+        headerName: 'As provided',
+        field: "rawValue",
+        width: 150
+    },
+    {
+        headerName: 'As boolean',
+        field: "rawValue",
+        width: 150,
+        cellClass: 'booleanType'
+    },
+    {
+        headerName: 'As string',
+        field: "rawValue",
+        width: 150,
+        cellClass: 'stringType'
+    },
+    {
+        headerName: 'Date',
+        field: "dateValue",
+        width: 150,
+        cellClass: 'dateType'
+    }
 ];
-
-var pinnedTopRow = { athlete: 'Floating Top Athlete', age: 999, country: 'Floating Top Country', year: 2020,
-    date: '01-08-2020', sport: 'Floating Top Sport', gold: 22, silver: '003', bronze: 44, total: 55};
-
-var pinnedBottomRow = { athlete: 'Floating Bottom Athlete', age: 888, country: 'Floating Bottom Country', year: 2030,
-    date: '01-08-2030', sport: 'Floating Bottom Sport', gold: 222, silver: '005', bronze: 244, total: 255};
 
 var gridOptions = {
     columnDefs: columnDefs,
@@ -59,7 +53,11 @@ function getBooleanValue(cssSelector) {
 }
 
 function onBtExport() {
-    gridOptions.api.exportDataAsExcel();
+    var params = {
+        fileName: document.querySelector('#fileName').value,
+        sheetName: document.querySelector('#sheetName').value
+    };
+    gridOptions.api.exportDataAsExcel(params);
 }
 
 // setup the grid after the page has finished loading

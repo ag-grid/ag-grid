@@ -457,7 +457,7 @@ var gridOptions = {
             it shows 39923. You need to add the formatting inside Excel</li>
         </ul>
 
-        <?= example('Excel Data Typs', 'excel-data-types', 'generated', array("enterprise" => 1)) ?>
+        <?= example('Excel Data Types', 'excel-data-types', 'generated', array("enterprise" => 1)) ?>
     </article>
     <article>
         <h2>Export to Excel with iPad</h2>

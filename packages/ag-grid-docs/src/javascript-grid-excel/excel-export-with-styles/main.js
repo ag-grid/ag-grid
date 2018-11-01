@@ -85,12 +85,12 @@ var gridOptions = {
     rowSelection: 'multiple',
     pinnedTopRowData: [
         {
-            athlete: 'Floating Top Athlete',
+            athlete: 'Floating <Top> Athlete',
             age: 999,
-            country: 'Floating Top Country',
+            country: 'Floating <Top> Country',
             year: 2020,
             date: '01-08-2020',
-            sport: 'Floating Top Sport',
+            sport: 'Track & Field',
             gold: 22,
             silver: '003',
             bronze: 44,
@@ -99,12 +99,12 @@ var gridOptions = {
     ],
     pinnedBottomRowData: [
         {
-            athlete: 'Floating Bottom Athlete',
+            athlete: 'Floating <Bottom> Athlete',
             age: 888,
-            country: 'Floating Bottom Country',
+            country: 'Floating <Bottom> Country',
             year: 2030,
             date: '01-08-2030',
-            sport: 'Floating Bottom Sport',
+            sport: 'Track & Field',
             gold: 222,
             silver: '005',
             bronze: 244,
