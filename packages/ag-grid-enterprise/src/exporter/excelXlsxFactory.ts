@@ -36,7 +36,7 @@ export class ExcelXlsxFactory {
         return `${header}${xmlBody}`;
     }
 
-    public createExcel(styles: ExcelStyle[], worksheets: ExcelWorksheet[], sharedStrings?: string[]): string {
+    public createExcel(styles: ExcelStyle[], worksheets: ExcelWorksheet[], sharedStrings: string[] = []): string {
         this.sharedStrings = sharedStrings;
         this.sheetNames = worksheets.map(worksheet => worksheet.name);
 
