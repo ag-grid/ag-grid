@@ -48,6 +48,32 @@ import {ResizeObserverService} from "../misc/resizeObserverService";
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
 
+/*
+
+<div class="ag-body" ref="eBody" role="presentation" unselectable="on">
+            <div class="ag-pinned-left-cols-viewport-wrapper" ref="eLeftViewportWrapper" role="presentation" unselectable="on">
+                <div class="ag-pinned-left-cols-viewport" ref="eLeftViewport" role="presentation" unselectable="on">
+                    <div class="ag-pinned-left-cols-container" ref="eLeftContainer" role="presentation" unselectable="on"/>
+                </div>
+            </div>
+            <div class="ag-body-viewport-wrapper" ref="eBodyViewportWrapper" role="presentation" unselectable="on">
+                <div class="ag-body-viewport" ref="eBodyViewport" role="presentation" unselectable="on">
+                    <div class="ag-body-container" ref="eBodyContainer" role="presentation" unselectable="on"/>
+                </div>
+            </div>
+            <div class="ag-pinned-right-cols-viewport-wrapper" ref="eRightViewportWrapper" role="presentation" unselectable="on">
+                <div class="ag-pinned-right-cols-viewport" ref="eRightViewport" role="presentation" unselectable="on">
+                    <div class="ag-pinned-right-cols-container" ref="eRightContainer" role="presentation" unselectable="on"/>
+                </div>
+            </div>
+            <div class="ag-full-width-viewport-wrapper" ref="eFullWidthViewportWrapper" role="presentation" unselectable="on">
+                <div class="ag-full-width-viewport" ref="eFullWidthViewport" role="presentation" unselectable="on">
+                    <div class="ag-full-width-container" ref="eFullWidthContainer" role="presentation" unselectable="on"/>
+                </div>
+            </div>
+        </div>
+
+* */
 const GRID_PANEL_NORMAL_TEMPLATE =
     `<div class="ag-root ag-font-style" role="grid" unselectable="on">
         <ag-header-root ref="headerRoot" unselectable="on"></ag-header-root>
@@ -59,22 +85,12 @@ const GRID_PANEL_NORMAL_TEMPLATE =
             <div class="ag-pinned-right-floating-top" ref="eRightTop" role="presentation" unselectable="on"></div>
             <div class="ag-floating-top-full-width-container" ref="eTopFullWidthContainer" role="presentation" unselectable="on"></div>
         </div>
-        <div class="ag-body" ref="eBody" role="presentation" unselectable="on">
-            <div class="ag-pinned-left-cols-viewport-wrapper" ref="eLeftViewportWrapper" role="presentation" unselectable="on">
-                <div class="ag-pinned-left-cols-viewport" ref="eLeftViewport" role="presentation" unselectable="on">
-                    <div class="ag-pinned-left-cols-container" ref="eLeftContainer" role="presentation" unselectable="on"></div>
-                </div>
+        <div class="ag-body-viewport" ref="eBodyViewport" role="presentation" unselectable="on">
+            <div class="ag-pinned-left-cols-container" ref="eLeftContainer" role="presentation" unselectable="on"></div>
+            <div class="ag-center-cols-viewport" ref="eCenterViewport" role="presentation" unselectable="on">
+                <div class="ag-center-cols-container" ref="eCenterContainer" role="presentation" unselectable="on"></div>
             </div>
-            <div class="ag-body-viewport-wrapper" ref="eBodyViewportWrapper" role="presentation" unselectable="on">
-                <div class="ag-body-viewport" ref="eBodyViewport" role="presentation" unselectable="on">
-                    <div class="ag-body-container" ref="eBodyContainer" role="presentation" unselectable="on"></div>
-                </div>
-            </div>
-            <div class="ag-pinned-right-cols-viewport-wrapper" ref="eRightViewportWrapper" role="presentation" unselectable="on">
-                <div class="ag-pinned-right-cols-viewport" ref="eRightViewport" role="presentation" unselectable="on">
-                    <div class="ag-pinned-right-cols-container" ref="eRightContainer" role="presentation" unselectable="on"></div>
-                </div>
-            </div>
+            <div class="ag-pinned-right-cols-container" ref="eRightContainer" role="presentation" unselectable="on"></div>
             <div class="ag-full-width-viewport-wrapper" ref="eFullWidthViewportWrapper" role="presentation" unselectable="on">
                 <div class="ag-full-width-viewport" ref="eFullWidthViewport" role="presentation" unselectable="on">
                     <div class="ag-full-width-container" ref="eFullWidthContainer" role="presentation" unselectable="on"></div>
@@ -146,21 +162,16 @@ export class GridPanel extends Component {
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
     @Optional('clipboardService') private clipboardService: IClipboardService;
 
-    @RefSelector('eBody') private eBody: HTMLElement;
+    // @RefSelector('eBody') private eBody: HTMLElement;
     @RefSelector('eBodyViewport') private eBodyViewport: HTMLElement;
-    @RefSelector('eBodyContainer') private eBodyContainer: HTMLElement;
-    @RefSelector('eBodyViewportWrapper') private eBodyViewportWrapper: HTMLElement;
+    @RefSelector('eCenterContainer') private eCenterContainer: HTMLElement;
+    @RefSelector('eCenterViewport') private eCenterViewport: HTMLElement;
     @RefSelector('eLeftContainer') private eLeftContainer: HTMLElement;
     @RefSelector('eRightContainer') private eRightContainer: HTMLElement;
 
     @RefSelector('eFullWidthViewportWrapper') private eFullWidthViewportWrapper: HTMLElement;
     @RefSelector('eFullWidthViewport') private eFullWidthViewport: HTMLElement;
     @RefSelector('eFullWidthContainer') private eFullWidthContainer: HTMLElement;
-
-    @RefSelector('eLeftViewport') private eLeftViewport: HTMLElement;
-    @RefSelector('eLeftViewportWrapper') private eLeftViewportWrapper: HTMLElement;
-    @RefSelector('eRightViewport') private eRightViewport: HTMLElement;
-    @RefSelector('eRightViewportWrapper') private eRightViewportWrapper: HTMLElement;
 
     @RefSelector('eTop') private eTop: HTMLElement;
     @RefSelector('eLeftTop') private eLeftTop: HTMLElement;
@@ -222,6 +233,7 @@ export class GridPanel extends Component {
     }
 
     // used by range controller
+    // FIXME
     public getHScrollPosition(): { left: number, right: number } {
         let result = {
             left: this.eBodyViewport.scrollLeft,
@@ -274,12 +286,11 @@ export class GridPanel extends Component {
         this.scrollClipWidth = this.scrollWidth > 0 ? this.scrollWidth : 20;
 
         // all of these element have different CSS when layout changes
+        // fixme - do we need to add any new containers here
         this.gridOptionsWrapper.addLayoutElement(this.getGui());
-        this.gridOptionsWrapper.addLayoutElement(this.eBody);
         this.gridOptionsWrapper.addLayoutElement(this.eBodyViewport);
         this.gridOptionsWrapper.addLayoutElement(this.eTopViewport);
-        this.gridOptionsWrapper.addLayoutElement(this.eBodyContainer);
-        this.gridOptionsWrapper.addLayoutElement(this.eBodyViewportWrapper);
+        this.gridOptionsWrapper.addLayoutElement(this.eCenterContainer);
 
         this.suppressScrollOnFloatingRow();
         this.setupRowAnimationCssClass();
@@ -290,9 +301,10 @@ export class GridPanel extends Component {
 
         this.addScrollListener();
 
-        if (this.gridOptionsWrapper.isSuppressHorizontalScroll()) {
-            this.eBodyViewport.style.overflowX = 'hidden';
-        }
+        // fixme: why is this here?
+        // if (this.gridOptionsWrapper.isSuppressHorizontalScroll()) {
+        //     this.eBodyViewport.style.overflowX = 'hidden';
+        // }
 
         this.setupOverlay();
 
@@ -300,8 +312,8 @@ export class GridPanel extends Component {
             this.showLoadingOverlay();
         }
 
-        this.setPinnedContainersVisible();
-        this.setBodyAndHeaderHeights();
+        this.setPinnedContainerSize();
+        this.setHeaderAndFloatingHeights();
         this.disableBrowserDragging();
         this.addShortcutKeyListeners();
         this.addMouseListeners();
@@ -316,7 +328,6 @@ export class GridPanel extends Component {
         }
 
         this.onDisplayedColumnsWidthChanged();
-        // this.addWindowResizeListener();
 
         this.gridApi.registerGridComp(this);
         this.alignedGridsService.registerGridComp(this);
@@ -335,10 +346,11 @@ export class GridPanel extends Component {
         }
 
         const unsubscribeFromResize = this.resizeObserverService.observeResize(
-            this.eBodyViewport, this.onBodyViewportResized.bind(this));
+            this.eCenterViewport, this.onCenterViewportResized.bind(this));
         this.addDestroyFunc(() => unsubscribeFromResize());
     }
 
+    // todo - what do we do here???
     private onDomLayoutChanged(): void {
         let newPrintLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
 
@@ -346,13 +358,11 @@ export class GridPanel extends Component {
             this.printLayout = newPrintLayout;
             this.setWidthsOfContainers();
             // pinned containers are always hidden for print layout
-            this.setPinnedContainersVisible();
-            // in case we have margins for hiding the scroll on body, this takes them out
-            this.hideVerticalScrollOnCenter();
+            this.setPinnedContainerSize();
         }
     }
 
-    private onBodyViewportResized(): void {
+    private onCenterViewportResized(): void {
         this.checkViewportAndScrolls();
     }
 
@@ -369,12 +379,13 @@ export class GridPanel extends Component {
 
     private addRowDragListener(): void {
 
-        let rowDragFeature = new RowDragFeature(this.eBody, this);
+        let rowDragFeature = new RowDragFeature(this.eBodyViewport, this);
         this.context.wireBean(rowDragFeature);
 
         this.dragAndDropService.addDropTarget(rowDragFeature);
     }
 
+    // todo - test this!
     private addStopEditingWhenGridLosesFocus(): void {
 
         if (!this.gridOptionsWrapper.isStopEditingWhenGridLosesFocus()) {
@@ -393,7 +404,7 @@ export class GridPanel extends Component {
             while (_.exists(pointer) && !clickInsideGrid) {
 
                 let isPopup = !!this.gridOptionsWrapper.getDomData(pointer, PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER);
-                let isBody = this.eBody === pointer || this.eBottom === pointer || this.eTop === pointer;
+                let isBody = this.eBodyViewport === pointer || this.eBottom === pointer || this.eTop === pointer;
 
                 clickInsideGrid = isPopup || isBody;
 
@@ -405,7 +416,7 @@ export class GridPanel extends Component {
             }
         };
 
-        this.addDestroyableEventListener(this.eBody, 'focusout', focusOutListener);
+        this.addDestroyableEventListener(this.eBodyViewport, 'focusout', focusOutListener);
         this.addDestroyableEventListener(this.eTop, 'focusout', focusOutListener);
         this.addDestroyableEventListener(this.eBottom, 'focusout', focusOutListener);
     }
@@ -447,16 +458,16 @@ export class GridPanel extends Component {
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setBodyAndHeaderHeights.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setHeaderAndFloatingHeights.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
 
-        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
-        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
-        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
-        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
-        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
+        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
+        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
+        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
+        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
+        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
     }
 
@@ -466,7 +477,7 @@ export class GridPanel extends Component {
             return;
         }
 
-        let containers = [this.eLeftContainer, this.eRightContainer, this.eBodyContainer,
+        let containers = [this.eLeftContainer, this.eRightContainer, this.eCenterContainer,
             this.eTop, this.eBottom];
 
         containers.forEach(container => {
@@ -511,25 +522,24 @@ export class GridPanel extends Component {
         // the context menu if no rows are displayed, or user simply clicks outside of a cell
         let listener = (mouseEvent: MouseEvent) => {
             let target = _.getTarget(mouseEvent);
-            if (target === this.eBodyViewport || target === this.eLeftViewport || target === this.eRightViewport) {
+            if (target === this.eBodyViewport) {
                 // show it
                 this.onContextMenu(mouseEvent, null, null, null, null);
                 this.preventDefaultOnContextMenu(mouseEvent);
             }
         };
 
-        //For some reason listening only to this.eBody doesnt work... Maybe because the event is consumed somewhere else?
-        //In any case, not expending much time on this, if anyome comes accross this and knows how to make this work with
+        //For some reason listening only to this.eBody doesn't work... Maybe because the event is consumed somewhere else?
+        //In any case, not expending much time on this, if anyone comes across this and knows how to make this work with
         //one listener please go ahead and change it...
         this.addDestroyableEventListener(this.eBodyViewport, 'contextmenu', listener);
-        this.addDestroyableEventListener(this.eRightViewport, 'contextmenu', listener);
-        this.addDestroyableEventListener(this.eLeftViewport, 'contextmenu', listener);
     }
 
     // + rangeController
+    // fixme - wtf does range controller use this for?
     public getBodyClientRect(): ClientRect {
-        if (this.eBody) {
-            return this.eBody.getBoundingClientRect();
+        if (this.eBodyViewport) {
+            return this.eBodyViewport.getBoundingClientRect();
         }
     }
 
@@ -789,6 +799,7 @@ export class GridPanel extends Component {
     // eg if grid needs to scroll up, it scrolls until row is on top,
     //    if grid needs to scroll down, it scrolls until row is on bottom,
     //    if row is already in view, grid does not scroll
+    // fixme - how does this work in the new way
     public ensureIndexVisible(index: any, position?: string) {
         // if for print or auto height, everything is always visible
         if (this.printLayout) {
@@ -861,7 +872,7 @@ export class GridPanel extends Component {
 
     // + moveColumnController
     public getCenterWidth(): number {
-        return this.eBodyViewport.clientWidth;
+        return this.eCenterViewport.clientWidth;
     }
 
     public isHorizontalScrollShowing(): boolean {
@@ -888,12 +899,13 @@ export class GridPanel extends Component {
         this.setPinnedLeftWidth();
         this.setPinnedRightWidth();
         this.setBottomPaddingOnPinned();
-        this.hideVerticalScrollOnCenter();
         this.hideFullWidthViewportScrollbars();
     }
 
+    // fixme
     private updateScrollVisibleService(): void {
 
+/*
         let params: SetScrollsVisibleParams = {
             bodyHorizontalScrollShowing: false,
             leftVerticalScrollShowing: false,
@@ -911,6 +923,7 @@ export class GridPanel extends Component {
         params.bodyHorizontalScrollShowing = this.isHorizontalScrollShowing();
 
         this.scrollVisibleService.setScrollsVisible(params);
+*/
     }
 
     // the pinned container needs extra space at the bottom, some blank space, otherwise when
@@ -957,6 +970,7 @@ export class GridPanel extends Component {
         }
     }
 
+    // fixme - test this!
     public ensureColumnVisible(key: any): void {
         let column = this.columnController.getGridColumn(key);
 
@@ -978,7 +992,7 @@ export class GridPanel extends Component {
         let colRightPixel = colLeftPixel + column.getActualWidth();
 
         let viewportWidth = this.eBodyViewport.clientWidth;
-        let scrollPosition = this.getBodyViewportScrollLeft();
+        let scrollPosition = this.getCenterViewportScrollLeft();
 
         let bodyWidth = this.columnController.getBodyContainerWidth();
 
@@ -1001,14 +1015,14 @@ export class GridPanel extends Component {
 
         let alignColToLeft = viewportScrolledPastCol || colToSmallForViewport;
         let alignColToRight = viewportScrolledBeforeCol;
-        let newScrollPosition = this.getBodyViewportScrollLeft();
+        let newScrollPosition = this.getCenterViewportScrollLeft();
         if (alignColToLeft || alignColToRight) {
             if (this.enableRtl) {
                 newScrollPosition = alignColToLeft ? (bodyWidth - viewportWidth - colLeftPixel) : (bodyWidth - colRightPixel);
             } else {
                 newScrollPosition = alignColToLeft ? colLeftPixel : (colRightPixel - viewportWidth);
             }
-            this.setBodyViewportScrollLeft(newScrollPosition);
+            this.setCenterViewportScrollLeft(newScrollPosition);
         }  else {
             // otherwise, col is already in view, so do nothing
         }
@@ -1040,15 +1054,7 @@ export class GridPanel extends Component {
     }
 
     private getWidthForSizeColsToFit() {
-        let availableWidth = this.eBody.clientWidth;
-        // if pinning right, then the scroll bar can show, however for some reason
-        // it overlays the grid and doesn't take space. so we are only interested
-        // in the body scroll showing.
-        let removeVerticalScrollWidth = this.isVerticalScrollShowing();
-        if (removeVerticalScrollWidth) {
-            availableWidth -= this.scrollWidth;
-        }
-        return availableWidth;
+        return this.eCenterViewport.clientWidth;
     }
 
     // method will call itself if no available width. this covers if the grid
@@ -1078,37 +1084,37 @@ export class GridPanel extends Component {
     }
 
     // used by autoWidthCalculator and autoHeightCalculator
-    public getBodyContainer(): HTMLElement {
-        return this.eBodyContainer;
+    public getCenterContainer(): HTMLElement {
+        return this.eCenterContainer;
     }
 
     public getDropTargetBodyContainers(): HTMLElement[] {
-        return [this.eBodyViewport, this.eTopViewport, this.eBottomViewport];
+        return [this.eCenterViewport, this.eTopViewport, this.eBottomViewport];
     }
 
     public getDropTargetLeftContainers(): HTMLElement[] {
-        return [this.eLeftViewport, this.eLeftBottom, this.eLeftTop];
+        return [this.eLeftContainer, this.eLeftBottom, this.eLeftTop];
     }
 
     public getDropTargetRightContainers(): HTMLElement[] {
-        return [this.eRightViewport, this.eRightBottom, this.eRightTop];
+        return [this.eRightContainer, this.eRightBottom, this.eRightTop];
     }
 
     private buildRowContainerComponents() {
 
         this.eAllCellContainers = [
-            this.eLeftContainer, this.eRightContainer, this.eBodyContainer,
+            this.eLeftContainer, this.eRightContainer, this.eCenterContainer,
             this.eTop, this.eBottom, this.eFullWidthContainer];
 
         this.rowContainerComponents = {
-            body: new RowContainerComponent({eContainer: this.eBodyContainer, eViewport: this.eBodyViewport}),
+            body: new RowContainerComponent({eContainer: this.eCenterContainer, eViewport: this.eBodyViewport}),
             fullWidth: new RowContainerComponent({
                 eContainer: this.eFullWidthContainer,
                 hideWhenNoChildren: true,
                 eViewport: this.eFullWidthViewport
             }),
-            pinnedLeft: new RowContainerComponent({eContainer: this.eLeftContainer, eViewport: this.eLeftViewport}),
-            pinnedRight: new RowContainerComponent({eContainer: this.eRightContainer, eViewport: this.eRightViewport}),
+            pinnedLeft: new RowContainerComponent({eContainer: this.eLeftContainer}),
+            pinnedRight: new RowContainerComponent({eContainer: this.eRightContainer}),
 
             floatingTop: new RowContainerComponent({eContainer: this.eTopContainer}),
             floatingTopPinnedLeft: new RowContainerComponent({eContainer: this.eLeftTop}),
@@ -1140,8 +1146,8 @@ export class GridPanel extends Component {
             // we don't want to use row animation if scaling, as rows jump strangely as you scroll,
             // when scaling and doing row animation.
             let animateRows = this.gridOptionsWrapper.isAnimateRows() && !this.heightScaler.isScaling();
-            _.addOrRemoveCssClass(this.eBody, 'ag-row-animation', animateRows);
-            _.addOrRemoveCssClass(this.eBody, 'ag-row-no-animation', !animateRows);
+            _.addOrRemoveCssClass(this.eBodyViewport, 'ag-row-animation', animateRows);
+            _.addOrRemoveCssClass(this.eBodyViewport, 'ag-row-no-animation', !animateRows);
         };
 
         listener();
@@ -1165,14 +1171,15 @@ export class GridPanel extends Component {
     }
 
     public onDisplayedColumnsChanged(): void {
-        this.setPinnedContainersVisible();
-        this.setBodyAndHeaderHeights();
+        this.setPinnedContainerSize();
+        this.setHeaderAndFloatingHeights();
         this.onHorizontalViewportChanged();
     }
 
     private onDisplayedColumnsWidthChanged(): void {
         this.setWidthsOfContainers();
         this.onHorizontalViewportChanged();
+        // todo - wtf
         if (this.enableRtl) {
             // because RTL is all backwards, a change in the width of the row
             // can cause a change in the scroll position, without a scroll event,
@@ -1199,7 +1206,7 @@ export class GridPanel extends Component {
         }
 
         let widthPx = width + 'px';
-        this.eBodyContainer.style.width = widthPx;
+        this.eCenterContainer.style.width = widthPx;
         this.eBottomContainer.style.width = widthPx;
         this.eTopContainer.style.width = widthPx;
     }
@@ -1207,137 +1214,56 @@ export class GridPanel extends Component {
     private setPinnedLeftWidth(): void {
 
         let widthOfCols = this.columnController.getPinnedLeftContainerWidth();
-        let showContainers = !this.printLayout && widthOfCols > 0;
-        let eParentContainers = [this.eLeftViewportWrapper, this.eLeftTop, this.eLeftBottom];
-        eParentContainers.forEach( e => _.setVisible(e, showContainers) );
+        let oldPinningLeft = this.pinningLeft;
+        this.pinningLeft = !this.printLayout && widthOfCols > 0;
 
-        if (!showContainers) { return; }
-
-        let viewportWidth: string;
-        let wrapperWidth: number;
-
-        if (_.isVerticalScrollShowing(this.eLeftViewport)) {
-            if (this.enableRtl) {
-                // show the scroll
-                viewportWidth = '100%';
-                wrapperWidth = widthOfCols + this.scrollWidth;
-            } else {
-                // hide the scroll, this makes the wrapper clip the scroll
-                viewportWidth = `calc(100% + ${this.scrollClipWidth}px)`;
-                wrapperWidth = widthOfCols;
-            }
-        } else {
-            // no scroll
-            viewportWidth = '100%';
-            wrapperWidth = widthOfCols;
+        if (oldPinningLeft!==this.pinningLeft) {
+            this.headerRootComp.setLeftVisible(this.pinningLeft);
         }
 
-        this.eLeftViewport.style.width = viewportWidth;
-        this.eLeftViewportWrapper.style.maxWidth = wrapperWidth + 'px';
+        let eParentContainers = [this.eLeftContainer, this.eLeftTop, this.eLeftBottom];
+        eParentContainers.forEach( e => _.setVisible(e, this.pinningLeft) );
+
+        if (!this.pinningLeft) { return; }
 
         // .width didn't do the trick in firefox, so needed .minWidth also
         this.eLeftContainer.style.width = widthOfCols + 'px';
         this.eLeftContainer.style.minWidth = widthOfCols + 'px';
 
-        this.eLeftBottom.style.maxWidth = wrapperWidth + 'px';
-        this.eLeftTop.style.maxWidth = wrapperWidth + 'px';
+        this.eLeftBottom.style.maxWidth = widthOfCols + 'px';
+        this.eLeftTop.style.maxWidth = widthOfCols + 'px';
     }
 
     private setPinnedRightWidth(): void {
 
         let widthOfCols = this.columnController.getPinnedRightContainerWidth();
-        let visible = !this.printLayout && widthOfCols > 0;
-        let eParentContainers = [this.eRightViewportWrapper, this.eRightTop, this.eRightBottom];
-        eParentContainers.forEach( e => _.setVisible(e, visible) );
+        let oldPinningRight = this.pinningRight;
+        this.pinningRight = !this.printLayout && widthOfCols > 0;
 
-        if (!visible) { return; }
-
-        let viewportWidth: string;
-        let wrapperWidth: number;
-
-        if (_.isVerticalScrollShowing(this.eRightViewport)) {
-            if (!this.enableRtl) {
-                // show the scroll
-                viewportWidth = '100%';
-                wrapperWidth = widthOfCols + this.scrollWidth;
-            } else {
-                // hide the scroll, this makes the wrapper clip the scroll
-                viewportWidth = `calc(100% + ${this.scrollClipWidth}px)`;
-                wrapperWidth = widthOfCols;
-            }
-        } else {
-            // no scroll
-            viewportWidth = `100%`;
-            wrapperWidth = widthOfCols;
+        if (oldPinningRight!==this.pinningRight) {
+            this.headerRootComp.setRightVisible(this.pinningRight);
         }
 
-        this.eRightViewport.style.width = viewportWidth;
-        this.eRightViewportWrapper.style.maxWidth = wrapperWidth + 'px';
+        let eParentContainers = [this.eRightContainer, this.eRightTop, this.eRightBottom];
+        eParentContainers.forEach( e => _.setVisible(e, this.pinningRight) );
+
+        if (!this.pinningRight) { return; }
 
         // .width didn't do the trick in firefox, so needed .minWidth also
         this.eRightContainer.style.width = widthOfCols + 'px';
         this.eRightContainer.style.minWidth = widthOfCols + 'px';
 
-        this.eRightTop.style.maxWidth = wrapperWidth + 'px';
-        this.eRightBottom.style.maxWidth = wrapperWidth + 'px';
+        this.eRightTop.style.maxWidth = widthOfCols + 'px';
+        this.eRightBottom.style.maxWidth = widthOfCols + 'px';
     }
 
-    private setPinnedContainersVisible() {
-
-        let changeDetected = false;
-
-        let showLeftPinned = this.printLayout ? false : this.columnController.isPinningLeft();
-        if (showLeftPinned !== this.pinningLeft) {
-            this.pinningLeft = showLeftPinned;
-            this.headerRootComp.setLeftVisible(showLeftPinned);
-            _.setVisible(this.eLeftViewportWrapper, showLeftPinned);
-            changeDetected = true;
-            if (showLeftPinned) {
-                // because the viewport was not visible, it was not keeping previous scrollTop values
-                this.eLeftViewport.scrollTop = this.eBodyViewport.scrollTop;
-            }
-        }
-
-        let showRightPinned = this.printLayout ? false : this.columnController.isPinningRight();
-        if (showRightPinned !== this.pinningRight) {
-            this.pinningRight = showRightPinned;
-            this.headerRootComp.setRightVisible(showRightPinned);
-            _.setVisible(this.eRightViewportWrapper, showRightPinned);
-            if (showRightPinned) {
-                // because the viewport was not visible, it was not keeping previous scrollTop values
-                this.eRightViewport.scrollTop = this.eBodyViewport.scrollTop;
-            }
-            changeDetected = true;
-        }
-
-        if (changeDetected) {
-            this.hideVerticalScrollOnCenter();
-            this.setPinnedLeftWidth();
-            this.setPinnedRightWidth();
-        }
-    }
-
-    private hideVerticalScrollOnCenter(): void {
-
-        let neverShowScroll = this.enableRtl ?
-            this.columnController.isPinningLeft()
-            : this.columnController.isPinningRight();
-
-        let scrollActive = !this.printLayout && _.isVerticalScrollShowing(this.eBodyViewport);
-
-        let hideScroll = neverShowScroll && scrollActive;
-
-        let margin = hideScroll ? '-' + this.scrollClipWidth + 'px' : '';
-
-        if (this.enableRtl) {
-            this.eBodyViewport.style.marginLeft = margin;
-        } else {
-            this.eBodyViewport.style.marginRight = margin;
-        }
+    private setPinnedContainerSize() {
+        this.setPinnedLeftWidth();
+        this.setPinnedRightWidth();
     }
 
     private checkBodyHeight(): void {
-        let bodyHeight = this.eBody.clientHeight;
+        let bodyHeight = this.eBodyViewport.clientHeight;
         if (this.bodyHeight !== bodyHeight) {
             this.bodyHeight = bodyHeight;
             let event: BodyHeightChangedEvent = {
@@ -1349,7 +1275,7 @@ export class GridPanel extends Component {
         }
     }
 
-    public setBodyAndHeaderHeights(): void {
+    public setHeaderAndFloatingHeights(): void {
 
         let headerRowCount = this.columnController.getHeaderRowCount();
 
@@ -1393,8 +1319,9 @@ export class GridPanel extends Component {
         return this.bodyHeight;
     }
 
+    // fixme - see who calls this, and if it still works
     public setHorizontalScrollPosition(hScrollPosition: number): void {
-        this.eBodyViewport.scrollLeft = hScrollPosition;
+        this.eCenterViewport.scrollLeft = hScrollPosition;
 
         // we need to manually do the event handling (rather than wait for the event)
         // for the alignedGridsService, as if we don't, the aligned grid service gets
@@ -1411,14 +1338,16 @@ export class GridPanel extends Component {
     }
 
     // tries to scroll by pixels, but returns what the result actually was
+    // fixme - who calls this and why?
     public scrollHorizontally(pixels: number): number {
-        let oldScrollPosition = this.eBodyViewport.scrollLeft;
+        let oldScrollPosition = this.eCenterViewport.scrollLeft;
         this.setHorizontalScrollPosition(oldScrollPosition + pixels);
-        let newScrollPosition = this.eBodyViewport.scrollLeft;
+        let newScrollPosition = this.eCenterViewport.scrollLeft;
         return newScrollPosition - oldScrollPosition;
     }
 
     // tries to scroll by pixels, but returns what the result actually was
+    // fixme - who calls this and why?
     public scrollVertically(pixels: number): number {
         let oldScrollPosition = this.eBodyViewport.scrollTop;
         this.setVerticalScrollPosition(oldScrollPosition + pixels);
@@ -1427,66 +1356,13 @@ export class GridPanel extends Component {
     }
 
     private addScrollListener() {
-        this.addDestroyableEventListener(this.eBodyViewport, 'scroll', (e) => {
-            this.onBodyHorizontalScroll();
-            this.onAnyBodyScroll(this.eBodyViewport);
-        });
-
-        this.addDestroyableEventListener(this.eRightViewport, 'scroll',
-            this.onAnyBodyScroll.bind(this, this.eRightViewport));
-        this.addDestroyableEventListener(this.eLeftViewport, 'scroll',
-            this.onAnyBodyScroll.bind(this, this.eLeftViewport));
-        this.addDestroyableEventListener(this.eFullWidthViewport, 'scroll',
-            this.onAnyBodyScroll.bind(this, this.eFullWidthViewport));
+        this.addDestroyableEventListener(this.eCenterViewport, 'scroll', this.onBodyHorizontalScroll.bind(this));
+        this.addDestroyableEventListener(this.eBodyViewport, 'scroll', this.onVerticalScroll.bind(this));
     }
 
-    private eventDueToMakingContainerVisible(source: HTMLElement): boolean {
-        if (source.scrollTop!==0) { return false; }
+    private onVerticalScroll(): void {
 
-        switch (source) {
-            case this.eBodyViewport:
-                return this.rowContainerComponents.body.isMadeVisibleRecently();
-            case this.eLeftViewport:
-                return this.rowContainerComponents.pinnedLeft.isMadeVisibleRecently();
-            case this.eRightViewport:
-                return this.rowContainerComponents.pinnedRight.isMadeVisibleRecently();
-            case this.eFullWidthViewport:
-                return this.rowContainerComponents.fullWidth.isMadeVisibleRecently();
-            default: return false;
-        }
-    }
-
-    private onAnyBodyScroll(source: HTMLElement): void {
-
-        let now = new Date().getTime();
-
-        // when a row container becomes visible, it fires and event to say 'scroll at zero' which we don't want.
-        // this caused a problem in particular with SSRM where the loading stub cell was using full width (and
-        // hence the fullWidth row container was visible) and then when loading was done, the full width row
-        // goes, and then left with no full with rows so the full with row container is made not visible.
-        // the showing / hiding of the full width container was causing scroll events to zero scroll position
-        // to be fired. if we act on these events, it would result in the scroll resetting back to the top.
-        // we avoid this be skipping these events. this problem only appears to happen with Chrome.
-        if (this.eventDueToMakingContainerVisible(source)) {
-            return;
-        }
-
-        // recentScrolls: when one scrollable area is scrolling (eg center) then the
-        // other scroll areas are also scrolled (eg pinned left, pinned right, full width).
-        // we want to ignore events that are as a result of the other panels scrolling,
-        // eg if body scrolls to 100px, then we want to ignore the events coming from
-        // the other panels for 100px. if we don't do this, then we will end up with events
-        // interfering wih the scroll when there is a stream of events. this was most notable
-        // on IE, but impacted all browsers to some extent.
-
-        let lastTimeScrolledToHere = this.recentScrolls[source.scrollTop];
-        let scrolledToHereRecently = lastTimeScrolledToHere && ((now - lastTimeScrolledToHere) < 250);
-        if (scrolledToHereRecently) { return; }
-
-        this.recentScrolls[source.scrollTop] = now;
-
-        this.lastVScrollElement = source;
-        let scrollTop: number = source.scrollTop;
+        let scrollTop: number = this.eBodyViewport.scrollTop;
 
         if (this.useAnimationFrame) {
             if (this.nextScrollTop !== scrollTop) {
@@ -1496,7 +1372,6 @@ export class GridPanel extends Component {
         } else {
             if (scrollTop !== this.scrollTop) {
                 this.scrollTop = scrollTop;
-                this.synchroniseVerticalScrollPositions(scrollTop);
                 this.redrawRowsAfterScroll();
             }
         }
@@ -1547,22 +1422,22 @@ export class GridPanel extends Component {
         this.onHorizontalViewportChanged();
     }
 
+    // fixme - can remove some of this, fix up verticalRedrawNeeded
     public executeFrame(): boolean {
         if (this.scrollLeft !== this.nextScrollLeft) {
             this.doHorizontalScroll();
             return true;
         } else if (this.scrollTop !== this.nextScrollTop) {
             this.scrollTop = this.nextScrollTop;
-            this.synchroniseVerticalScrollPositions(this.scrollTop);
             this.verticalRedrawNeeded = true;
             return true;
         } else if (this.verticalRedrawNeeded) {
             this.redrawRowsAfterScroll();
             this.verticalRedrawNeeded = false;
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     private redrawRowsAfterScroll(): void {
@@ -1581,23 +1456,23 @@ export class GridPanel extends Component {
     // out the virtual columns again. gets called from following locations:
     // + ensureColVisible, scroll, init, layoutChanged, displayedColumnsChanged, API (doLayout)
     private onHorizontalViewportChanged(): void {
-        let scrollWidth = this.eBodyViewport.clientWidth;
-        let scrollPosition = this.getBodyViewportScrollLeft();
+        let scrollWidth = this.eCenterViewport.clientWidth;
+        let scrollPosition = this.getCenterViewportScrollLeft();
         this.columnController.setVirtualViewportPosition(scrollWidth, scrollPosition);
     }
 
-    public getBodyViewportScrollLeft(): number {
+    public getCenterViewportScrollLeft(): number {
         // we defer to a util, as how you calculated scrollLeft when doing RTL depends on the browser
-        return _.getScrollLeft(this.eBodyViewport, this.enableRtl);
+        return _.getScrollLeft(this.eCenterViewport, this.enableRtl);
     }
 
-    public setBodyViewportScrollLeft(value: number): void {
+    public setCenterViewportScrollLeft(value: number): void {
         // we defer to a util, as how you calculated scrollLeft when doing RTL depends on the browser
-        _.setScrollLeft(this.eBodyViewport, value, this.enableRtl);
+        _.setScrollLeft(this.eCenterViewport, value, this.enableRtl);
     }
 
     public horizontallyScrollHeaderCenterAndFloatingCenter(): void {
-        let scrollLeft = this.getBodyViewportScrollLeft();
+        let scrollLeft = this.getCenterViewportScrollLeft();
         let offset = this.enableRtl ? scrollLeft : -scrollLeft;
 
         this.headerRootComp.setHorizontalScroll(offset);
@@ -1605,38 +1480,12 @@ export class GridPanel extends Component {
         this.eTopContainer.style.left = offset + 'px';
     }
 
-    private synchroniseVerticalScrollPositions(position: number): void {
-
-        if (this.lastVScrollElement !== this.eBodyViewport) {
-            this.eBodyViewport.scrollTop = position;
-        }
-
-        if (this.lastVScrollElement !== this.eLeftViewport && this.pinningLeft) {
-            this.eLeftViewport.scrollTop = position;
-        }
-
-        if (this.lastVScrollElement !== this.eRightViewport && this.pinningRight) {
-            this.eRightViewport.scrollTop = position;
-        }
-
-        if (this.lastVScrollElement !== this.eFullWidthViewport) {
-            this.eFullWidthViewport.scrollTop = position;
-        }
-
-        // the row containers need to remember the scroll position, as if they are made
-        // hidden / shown, the scroll position is lost
-        this.rowContainerComponents.body.setVerticalScrollPosition(position);
-        this.rowContainerComponents.pinnedLeft.setVerticalScrollPosition(position);
-        this.rowContainerComponents.pinnedRight.setVerticalScrollPosition(position);
-        this.rowContainerComponents.fullWidth.setVerticalScrollPosition(position);
-
-        this.redrawRowsAfterScroll();
-    }
-
+    // + rangeController
     public addScrollEventListener(listener: () => void): void {
         this.eBodyViewport.addEventListener('scroll', listener);
     }
 
+    // + rangeController
     public removeScrollEventListener(listener: () => void): void {
         this.eBodyViewport.removeEventListener('scroll', listener);
     }

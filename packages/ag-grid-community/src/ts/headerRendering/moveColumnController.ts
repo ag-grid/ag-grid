@@ -120,7 +120,7 @@ export class MoveColumnController implements DropListener {
         // adjust for scroll only if centre container (the pinned containers dont scroll)
         let adjustForScroll = this.centerContainer;
         if (adjustForScroll) {
-            x += this.gridPanel.getBodyViewportScrollLeft();
+            x += this.gridPanel.getCenterViewportScrollLeft();
         }
 
         return x;
@@ -130,7 +130,7 @@ export class MoveColumnController implements DropListener {
         if (this.centerContainer) {
             // scroll if the mouse has gone outside the grid (or just outside the scrollable part if pinning)
             // putting in 50 buffer, so even if user gets to edge of grid, a scroll will happen
-            let firstVisiblePixel = this.gridPanel.getBodyViewportScrollLeft();
+            let firstVisiblePixel = this.gridPanel.getCenterViewportScrollLeft();
             let lastVisiblePixel = firstVisiblePixel + this.gridPanel.getCenterWidth();
 
             if (this.gridOptionsWrapper.isEnableRtl()) {

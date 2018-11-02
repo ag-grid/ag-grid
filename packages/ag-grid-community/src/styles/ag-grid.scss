@@ -480,42 +480,25 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 .ag-pinned-left-cols-container {
-    display: block;
     position: relative;
 }
 
-.ag-body-viewport-wrapper {
-
-    overflow: hidden; // needed to clip the scrollbar when pinning
-
-    &.ag-layout-auto-height,
-    &.ag-layout-normal {
-        height: 100%;
-        // we have width (and min width) set to 20 so that the body is always at least 20px visible
-        // if this was NOT set (eg if min width of 0px) then user could have many pinned left cols
-        // and a narrow browser such that only the pinned left portion was visible, then the vertical
-        // scrollbar would be missing (as this is on the body, which would be pushed out by the pinned
-        // sections). by having a min width on the body, it ensures we always see it, even if to many pinned
-        // rows, which means user can always get access to the vertical scrollbar.
-        width: 20px; // min width, flex grows the center to fit
-        min-width: 20px; // width didn't do the trick in firefox, so needed min-width also
-        flex: 1;
-    }
-}
-
 .ag-body-viewport {
-    // layout-auto-height has x (horizontal) scrolls (but no y)
-    &.ag-layout-auto-height {
-        overflow-x: auto;
-        overflow-y: hidden;
-    }
+    display: flex;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    position: relative;
 
     // layout-normal should have x and y scrolls
     &.ag-layout-normal {
-        overflow-x: auto;
         overflow-y: auto;
         height: 100%;
     }
+}
+
+.ag-center-cols-viewport {
+    flex: 1;
+    min-width: 0;
 }
 
 .ag-full-width-viewport-wrapper {
