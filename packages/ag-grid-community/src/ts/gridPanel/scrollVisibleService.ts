@@ -8,9 +8,8 @@ import {GridApi} from "../gridApi";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
 export interface SetScrollsVisibleParams {
-    bodyHorizontalScrollShowing: boolean;
-    leftVerticalScrollShowing: boolean;
-    rightVerticalScrollShowing: boolean;
+    horizontalScrollShowing: boolean;
+    verticalScrollShowing: boolean;
 }
 
 @Bean('scrollVisibleService')
@@ -22,22 +21,17 @@ export class ScrollVisibleService {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    private bodyHorizontalScrollShowing: boolean;
-
-    private leftVerticalScrollShowing: boolean;
-    private rightVerticalScrollShowing: boolean;
+    private horizontalScrollShowing: boolean;
+    private verticalScrollShowing: boolean;
 
     public setScrollsVisible(params: SetScrollsVisibleParams): void {
-
         let atLeastOneDifferent =
-            this.bodyHorizontalScrollShowing !== params.bodyHorizontalScrollShowing ||
-            this.leftVerticalScrollShowing !== params.leftVerticalScrollShowing ||
-            this.rightVerticalScrollShowing !== params.rightVerticalScrollShowing;
+            this.horizontalScrollShowing !== params.horizontalScrollShowing ||
+            this.verticalScrollShowing !== params.verticalScrollShowing;
 
         if (atLeastOneDifferent) {
-            this.bodyHorizontalScrollShowing = params.bodyHorizontalScrollShowing;
-            this.leftVerticalScrollShowing = params.leftVerticalScrollShowing;
-            this.rightVerticalScrollShowing = params.rightVerticalScrollShowing;
+            this.horizontalScrollShowing = params.horizontalScrollShowing;
+            this.verticalScrollShowing = params.verticalScrollShowing;
 
             let event: ScrollVisibilityChangedEvent = {
                 type: Events.EVENT_SCROLL_VISIBILITY_CHANGED,
@@ -49,18 +43,12 @@ export class ScrollVisibleService {
     }
 
     // used by pagination service - to know page height
-    public isBodyHorizontalScrollShowing(): boolean {
-        return this.bodyHorizontalScrollShowing;
+    public isHorizontalScrollShowing(): boolean {
+        return this.horizontalScrollShowing;
     }
 
     // used by header container
-    public isLeftVerticalScrollShowing(): boolean {
-        return this.leftVerticalScrollShowing;
+    public isVerticalScrollShowing(): boolean {
+        return this.verticalScrollShowing;
     }
-
-    // used by header container
-    public isRightVerticalScrollShowing(): boolean {
-        return this.rightVerticalScrollShowing;
-    }
-
 }

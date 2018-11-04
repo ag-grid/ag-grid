@@ -215,9 +215,6 @@ export class GridPanel extends Component {
 
     private overlayWrapper: IOverlayWrapperComp;
 
-    private lastVScrollElement: HTMLElement;
-    private recentScrolls: { [key: number]: number } = {};
-
     private printLayout: boolean;
 
     constructor() {
@@ -272,7 +269,6 @@ export class GridPanel extends Component {
 
     @PostConstruct
     private init() {
-
         this.instantiate(this.context);
 
         this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
@@ -875,12 +871,12 @@ export class GridPanel extends Component {
         return this.eCenterViewport.clientWidth;
     }
 
-    public isHorizontalScrollShowing(): boolean {
-        return _.isHorizontalScrollShowing(this.eBodyViewport);
+    public isVerticalScrollShowing(): boolean {
+        return _.isVerticalScrollShowing(this.eBodyViewport);
     }
 
-    private isVerticalScrollShowing(): boolean {
-        return _.isVerticalScrollShowing(this.eBodyViewport);
+    public isHorizontalScrollShowing(): boolean {
+        return _.isHorizontalScrollShowing(this.eCenterViewport);
     }
 
     // gets called every time the viewport size changes. we use this to check visibility of scrollbars
@@ -902,28 +898,16 @@ export class GridPanel extends Component {
         this.hideFullWidthViewportScrollbars();
     }
 
-    // fixme
     private updateScrollVisibleService(): void {
-
-/*
         let params: SetScrollsVisibleParams = {
-            bodyHorizontalScrollShowing: false,
-            leftVerticalScrollShowing: false,
-            rightVerticalScrollShowing: false
+            horizontalScrollShowing: false,
+            verticalScrollShowing: false
         };
 
-        if (this.enableRtl && this.columnController.isPinningLeft()) {
-            params.leftVerticalScrollShowing = _.isVerticalScrollShowing(this.eLeftViewport);
-        }
-
-        if (!this.enableRtl && this.columnController.isPinningRight()) {
-            params.rightVerticalScrollShowing = _.isVerticalScrollShowing(this.eRightViewport);
-        }
-
-        params.bodyHorizontalScrollShowing = this.isHorizontalScrollShowing();
+        params.verticalScrollShowing = this.isVerticalScrollShowing();
+        params.horizontalScrollShowing = this.isHorizontalScrollShowing();
 
         this.scrollVisibleService.setScrollsVisible(params);
-*/
     }
 
     // the pinned container needs extra space at the bottom, some blank space, otherwise when
