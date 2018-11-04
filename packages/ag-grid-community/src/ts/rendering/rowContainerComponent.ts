@@ -72,13 +72,16 @@ export class RowContainerComponent {
     }
 
     public setHeight(height: number): void {
-        if (height===null || height===undefined) {
+        if (height == null) {
             this.eContainer.style.height = '';
-        } else {
-            this.eContainer.style.height = height + 'px';
-            if (this.eWrapper) {
-                this.eWrapper.style.height = height + 'px';
-            }
+            return;
+        }
+
+        const scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
+
+        this.eContainer.style.height = `${height}px`;
+        if (this.eWrapper) {
+            this.eWrapper.style.height = `${height + scrollWidth}px`;
         }
     }
 
