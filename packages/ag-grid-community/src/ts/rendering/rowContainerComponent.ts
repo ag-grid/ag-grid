@@ -6,6 +6,7 @@ import {Constants} from "../constants";
 export interface RowContainerComponentParams {
     eContainer: HTMLElement;
     eViewport?: HTMLElement;
+    eWrapper?: HTMLElement;
     hideWhenNoChildren?: boolean;
 }
 
@@ -20,6 +21,7 @@ export class RowContainerComponent {
 
     private readonly eContainer: HTMLElement;
     private readonly eViewport: HTMLElement;
+    private readonly eWrapper: HTMLElement;
 
     // full width containers only show when no children, because they float above the normal rows,
     // it adds complexity that can be confusing when inspecting the dom when they are not needed.
@@ -44,6 +46,9 @@ export class RowContainerComponent {
     constructor(params: RowContainerComponentParams) {
         this.eContainer = params.eContainer;
         this.eViewport = params.eViewport;
+        if (params.eWrapper) {
+            this.eWrapper = params.eWrapper;
+        }
         this.hideWhenNoChildren = params.hideWhenNoChildren;
     }
 
@@ -70,7 +75,10 @@ export class RowContainerComponent {
         if (height===null || height===undefined) {
             this.eContainer.style.height = '';
         } else {
-            this.eContainer.style.height = height + "px";
+            this.eContainer.style.height = height + 'px';
+            if (this.eWrapper) {
+                this.eWrapper.style.height = height + 'px';
+            }
         }
     }
 

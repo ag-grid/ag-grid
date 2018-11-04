@@ -184,7 +184,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
 .ag-dnd-ghost-icon {
     display: inline-block;
-    float: left;
     padding: 2px;
 }
 
@@ -312,15 +311,16 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     padding-top: 30px;
 }
 
-.ag-body {
+.ag-body-viewport {
     box-sizing: border-box;
     position: relative; // needed so rows translate is relative to this container
     display: flex;
+    overflow: hidden;
 
     &.ag-layout-normal {
-        flex: 1;
-        height: 0px; // that's the min height, 'flex 1' then extends it to take all available space
-        min-height: 0px; // min-height needed for firefox
+        height: 100%;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
 }
 
@@ -446,18 +446,12 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     white-space: nowrap;
 }
 
-.ag-pinned-right-cols-viewport-wrapper {
+.ag-pinned-right-cols-viewport {
     height: 100%;
     overflow: hidden;
     flex-grow: 1000;
     min-width: 0px;
     width: 0px;
-}
-
-.ag-pinned-right-cols-viewport {
-    height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
 }
 
 .ag-pinned-right-cols-container {
@@ -465,40 +459,23 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     position: relative;
 }
 
-.ag-pinned-left-cols-viewport-wrapper {
-    height: 100%;
-    overflow: hidden;
-    flex-grow: 1000;
-    min-width: 0px;
-    width: 0px;
-}
-
 .ag-pinned-left-cols-viewport {
     height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
+    flex-grow: 1000;
+    overflow: hidden;;
+    min-width: 0px;
+    width: 0px;
+    position: relative;
 }
 
 .ag-pinned-left-cols-container {
     position: relative;
 }
 
-.ag-body-viewport {
-    display: flex;
-    overflow-x: hidden;
-    overflow-y: hidden;
-    position: relative;
-
-    // layout-normal should have x and y scrolls
-    &.ag-layout-normal {
-        overflow-y: auto;
-        height: 100%;
-    }
-}
-
 .ag-center-cols-viewport {
     flex: 1;
     min-width: 0;
+    overflow-x: auto;
 }
 
 .ag-full-width-viewport-wrapper {

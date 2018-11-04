@@ -1091,7 +1091,11 @@ export class GridPanel extends Component {
             this.eTop, this.eBottom, this.eFullWidthContainer];
 
         this.rowContainerComponents = {
-            body: new RowContainerComponent({eContainer: this.eCenterContainer, eViewport: this.eBodyViewport}),
+            body: new RowContainerComponent({
+                eContainer: this.eCenterContainer,
+                eWrapper: this.eCenterViewport,
+                eViewport: this.eBodyViewport
+            }),
             fullWidth: new RowContainerComponent({
                 eContainer: this.eFullWidthContainer,
                 hideWhenNoChildren: true,
