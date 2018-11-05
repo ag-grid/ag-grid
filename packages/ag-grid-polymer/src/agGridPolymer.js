@@ -1,8 +1,7 @@
-import {PolymerElement} from '@polymer/polymer/polymer-element.js';
-
-import PolymerComponentFactory from './PolymerComponentFactory';
-import PolymerFrameworkComponentWrapper from './PolymerFrameworkComponentWrapper';
-import PolymerFrameworkFactory from './PolymerFrameworkFactory';
+import { PolymerElement } from "../../@polymer/polymer/polymer-element.js";
+import PolymerComponentFactory from "./PolymerComponentFactory.js";
+import PolymerFrameworkComponentWrapper from "./PolymerFrameworkComponentWrapper.js";
+import PolymerFrameworkFactory from "./PolymerFrameworkFactory.js";
 
 export default class AgGridPolymer extends PolymerElement {
     static get properties() {
@@ -30,6 +29,7 @@ export default class AgGridPolymer extends PolymerElement {
 
         this._gridOptions = {};
         this._attributes = {};
+        this.defaultPopupParentSet = false;
 
         this._propertyMap = this.createPropertyMap();
 
@@ -136,6 +136,10 @@ export default class AgGridPolymer extends PolymerElement {
         let browserEventNoType = browserEvent;
         browserEventNoType.agGridDetails = event;
 
+        if (eventLowerCase === 'gridready') {
+            this.setDefaultPopupParent();
+        }
+
         // for when defining events via myGrid.addEventListener('columnresized', function (event) {...
         this.dispatchEvent(browserEvent);
 
@@ -144,8 +148,17 @@ export default class AgGridPolymer extends PolymerElement {
         if (typeof this[callbackMethod] === 'function') {
             this[callbackMethod](browserEvent);
         }
-
     };
+
+    setDefaultPopupParent() {
+        if (!this.defaultPopupParentSet &&
+            this.api &&
+            !this._gridOptions.popupParent) {
+            this.defaultPopupParentSet = true;
+
+            this.api.setPopupParent(this.querySelector('.ag-root'));
+        }
+    }
 
     hypenateAndLowercase(property) {
         return property.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
