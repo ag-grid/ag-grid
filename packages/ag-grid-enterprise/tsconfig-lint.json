@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "declaration": true,
+    "target": "es5",
+    "outDir": "ts-lint-rules/dist",
+    "skipLibCheck": true,
+    "lib": [
+      "es6",
+      "DOM"
+    ]
+  },
+  "include": [
+    "./ts-lint-rules/src/**/*"
+  ]
+}
