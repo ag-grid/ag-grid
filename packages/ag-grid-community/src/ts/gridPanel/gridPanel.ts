@@ -105,6 +105,9 @@ const GRID_PANEL_NORMAL_TEMPLATE =
             <div class="ag-pinned-right-floating-bottom" ref="eRightBottom" role="presentation" unselectable="on"></div>
             <div class="ag-floating-bottom-full-width-container" ref="eBottomFullWidthContainer" role="presentation" unselectable="on"></div>
         </div>
+        <div class="ag-body-horizontal-scroll-viewport" ref="eBodyHorizontalScrollViewport">
+            <div class="ag-body-horizontal-scroll-container" ref="eBodyHorizontalScrollContainer"></div>
+        </div>
         <div class="ag-overlay" ref="eOverlay"></div>
     </div>`;
 
@@ -164,6 +167,8 @@ export class GridPanel extends Component {
 
     // @RefSelector('eBody') private eBody: HTMLElement;
     @RefSelector('eBodyViewport') private eBodyViewport: HTMLElement;
+    @RefSelector('eBodyHorizontalScrollViewport') private eBodyHorizontalScrollViewport: HTMLElement;
+    @RefSelector('eBodyHorizontalScrollContainer') private eBodyHorizontalScrollContainer: HTMLElement;
     @RefSelector('eCenterContainer') private eCenterContainer: HTMLElement;
     @RefSelector('eCenterViewport') private eCenterViewport: HTMLElement;
     @RefSelector('eLeftContainer') private eLeftContainer: HTMLElement;
@@ -894,7 +899,6 @@ export class GridPanel extends Component {
 
         this.setPinnedLeftWidth();
         this.setPinnedRightWidth();
-        this.setBottomPaddingOnPinned();
         this.hideFullWidthViewportScrollbars();
     }
 
@@ -908,25 +912,6 @@ export class GridPanel extends Component {
         params.horizontalScrollShowing = this.isHorizontalScrollShowing();
 
         this.scrollVisibleService.setScrollsVisible(params);
-    }
-
-    // the pinned container needs extra space at the bottom, some blank space, otherwise when
-    // vertically scrolled all the way down, the last row will be hidden behind the scrolls.
-    // this extra padding allows the last row to be lifted above the bottom scrollbar.
-    private setBottomPaddingOnPinned(): void {
-
-        // no need for padding if the scrollbars are not taking up any space
-        if (this.scrollWidth <= 0) {
-            return;
-        }
-
-        if (this.isHorizontalScrollShowing()) {
-            this.eRightContainer.style.marginBottom = this.scrollWidth + 'px';
-            this.eLeftContainer.style.marginBottom = this.scrollWidth + 'px';
-        } else {
-            this.eRightContainer.style.marginBottom = '';
-            this.eLeftContainer.style.marginBottom = '';
-        }
     }
 
     private hideFullWidthViewportScrollbars(): void {
@@ -1220,6 +1205,8 @@ export class GridPanel extends Component {
 
         this.eLeftBottom.style.maxWidth = widthOfCols + 'px';
         this.eLeftTop.style.maxWidth = widthOfCols + 'px';
+
+        this.eBodyHorizontalScrollViewport.style.marginLeft = `${widthOfCols}px`;
     }
 
     private setPinnedRightWidth(): void {
@@ -1243,6 +1230,8 @@ export class GridPanel extends Component {
 
         this.eRightTop.style.maxWidth = widthOfCols + 'px';
         this.eRightBottom.style.maxWidth = widthOfCols + 'px';
+
+        this.eBodyHorizontalScrollViewport.style.marginRight = `${widthOfCols}px`;
     }
 
     private setPinnedContainerSize() {

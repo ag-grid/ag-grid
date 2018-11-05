@@ -483,6 +483,15 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     position: relative;
 }
 
+.ag-body-horizontal-scroll-viewport {
+  width: 100%;
+  min-height: 0;
+  position: relative;
+}
+
+.ag-body-horizontal-scroll-container {
+}
+
 .ag-full-width-viewport-wrapper {
     height: 100%;
     width: 100%;
