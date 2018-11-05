@@ -226,7 +226,7 @@ function example($title, $dir, $type = 'vanilla', $options = array())
             $entry['files'] = getDirContents($dir, $options['skipDirs']);
         }
 
-        if ($theType != "vanilla" && $theType != "polymer" && $theType != "as-is") {
+        if ($theType != "vanilla" && $theType != "as-is") {
             $entry['boilerplatePath'] = "../example-runner/$theType-boilerplate";
             $entry['boilerplateFiles'] = getDirContents($entry['boilerplatePath']);
         }
