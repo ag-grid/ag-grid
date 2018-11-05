@@ -105,8 +105,12 @@ const GRID_PANEL_NORMAL_TEMPLATE =
             <div class="ag-pinned-right-floating-bottom" ref="eRightBottom" role="presentation" unselectable="on"></div>
             <div class="ag-floating-bottom-full-width-container" ref="eBottomFullWidthContainer" role="presentation" unselectable="on"></div>
         </div>
-        <div class="ag-body-horizontal-scroll-viewport" ref="eBodyHorizontalScrollViewport">
-            <div class="ag-body-horizontal-scroll-container" ref="eBodyHorizontalScrollContainer"></div>
+        <div class="ag-body-horizontal-scroll">
+            <div class="ag-horizontal-left-spacer" ref="eHorizontalLeftSpacer"></div>
+            <div class="ag-body-horizontal-scroll-viewport" ref="eBodyHorizontalScrollViewport">
+                <div class="ag-body-horizontal-scroll-container" ref="eBodyHorizontalScrollContainer"></div>
+            </div>
+            <div class="ag-horizontal-right-spacer" ref="eHorizontalRightSpacer"></div>
         </div>
         <div class="ag-overlay" ref="eOverlay"></div>
     </div>`;
@@ -167,12 +171,16 @@ export class GridPanel extends Component {
 
     // @RefSelector('eBody') private eBody: HTMLElement;
     @RefSelector('eBodyViewport') private eBodyViewport: HTMLElement;
-    @RefSelector('eBodyHorizontalScrollViewport') private eBodyHorizontalScrollViewport: HTMLElement;
-    @RefSelector('eBodyHorizontalScrollContainer') private eBodyHorizontalScrollContainer: HTMLElement;
     @RefSelector('eCenterContainer') private eCenterContainer: HTMLElement;
     @RefSelector('eCenterViewport') private eCenterViewport: HTMLElement;
     @RefSelector('eLeftContainer') private eLeftContainer: HTMLElement;
     @RefSelector('eRightContainer') private eRightContainer: HTMLElement;
+
+    // fake horizontal scroller
+    @RefSelector('eHorizontalLeftSpacer') private eHorizontalLeftSpacer: HTMLElement;
+    @RefSelector('eHorizontalRightSpacer') private eHorizontalRightSpacer: HTMLElement;
+    @RefSelector('eBodyHorizontalScrollViewport') private eBodyHorizontalScrollViewport: HTMLElement;
+    @RefSelector('eBodyHorizontalScrollContainer') private eBodyHorizontalScrollContainer: HTMLElement;
 
     @RefSelector('eFullWidthViewportWrapper') private eFullWidthViewportWrapper: HTMLElement;
     @RefSelector('eFullWidthViewport') private eFullWidthViewport: HTMLElement;
@@ -346,9 +354,11 @@ export class GridPanel extends Component {
             this.rangeController.registerGridComp(this);
         }
 
-        const unsubscribeFromResize = this.resizeObserverService.observeResize(
-            this.eCenterViewport, this.onCenterViewportResized.bind(this));
-        this.addDestroyFunc(() => unsubscribeFromResize());
+        [this.eCenterViewport, this.eBodyViewport].forEach( viewport => {
+            const unsubscribeFromResize = this.resizeObserverService.observeResize(
+                viewport, this.onCenterViewportResized.bind(this));
+            this.addDestroyFunc(() => unsubscribeFromResize());
+        });
     }
 
     // todo - what do we do here???
@@ -1182,6 +1192,8 @@ export class GridPanel extends Component {
         this.eCenterContainer.style.width = widthPx;
         this.eBottomContainer.style.width = widthPx;
         this.eTopContainer.style.width = widthPx;
+
+        this.eBodyHorizontalScrollContainer.style.width = widthPx;
     }
 
     private setPinnedLeftWidth(): void {
@@ -1199,14 +1211,17 @@ export class GridPanel extends Component {
 
         if (!this.pinningLeft) { return; }
 
+        let widthPx = `${widthOfCols}px`;
+
         // .width didn't do the trick in firefox, so needed .minWidth also
-        this.eLeftContainer.style.width = widthOfCols + 'px';
-        this.eLeftContainer.style.minWidth = widthOfCols + 'px';
+        this.eLeftContainer.style.width = widthPx;
+        this.eLeftContainer.style.minWidth = widthPx;
 
-        this.eLeftBottom.style.maxWidth = widthOfCols + 'px';
-        this.eLeftTop.style.maxWidth = widthOfCols + 'px';
+        this.eLeftBottom.style.maxWidth = widthPx;
+        this.eLeftTop.style.maxWidth = widthPx;
 
-        this.eBodyHorizontalScrollViewport.style.marginLeft = `${widthOfCols}px`;
+        this.eHorizontalLeftSpacer.style.width = widthPx;
+        this.eHorizontalLeftSpacer.style.maxWidth = widthPx;
     }
 
     private setPinnedRightWidth(): void {
@@ -1224,14 +1239,17 @@ export class GridPanel extends Component {
 
         if (!this.pinningRight) { return; }
 
+        let widthPx = `${widthOfCols}px`;
+
         // .width didn't do the trick in firefox, so needed .minWidth also
-        this.eRightContainer.style.width = widthOfCols + 'px';
-        this.eRightContainer.style.minWidth = widthOfCols + 'px';
+        this.eRightContainer.style.width = widthPx;
+        this.eRightContainer.style.minWidth = widthPx;
 
-        this.eRightTop.style.maxWidth = widthOfCols + 'px';
-        this.eRightBottom.style.maxWidth = widthOfCols + 'px';
+        this.eRightTop.style.maxWidth = widthPx;
+        this.eRightBottom.style.maxWidth = widthPx;
 
-        this.eBodyHorizontalScrollViewport.style.marginRight = `${widthOfCols}px`;
+        this.eHorizontalRightSpacer.style.width = widthPx;
+        this.eHorizontalRightSpacer.style.maxWidth = widthPx;
     }
 
     private setPinnedContainerSize() {
@@ -1333,7 +1351,8 @@ export class GridPanel extends Component {
     }
 
     private addScrollListener() {
-        this.addDestroyableEventListener(this.eCenterViewport, 'scroll', this.onBodyHorizontalScroll.bind(this));
+        this.addDestroyableEventListener(this.eCenterViewport, 'scroll', this.onCenterViewportScroll.bind(this));
+        this.addDestroyableEventListener(this.eBodyHorizontalScrollViewport, 'scroll', this.onFakeHorizontalScroll.bind(this));
         this.addDestroyableEventListener(this.eBodyViewport, 'scroll', this.onVerticalScroll.bind(this));
     }
 
@@ -1352,6 +1371,16 @@ export class GridPanel extends Component {
                 this.redrawRowsAfterScroll();
             }
         }
+    }
+
+    private onFakeHorizontalScroll(): void {
+        this.eCenterViewport.scrollLeft = this.eBodyHorizontalScrollViewport.scrollLeft;
+        this.onBodyHorizontalScroll();
+    }
+
+    private onCenterViewportScroll(): void {
+        this.eBodyHorizontalScrollViewport.scrollLeft = this.eCenterViewport.scrollLeft;
+        this.onBodyHorizontalScroll();
     }
 
     private onBodyHorizontalScroll(): void {

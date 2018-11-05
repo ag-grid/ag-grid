@@ -476,6 +476,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     flex: 1;
     min-width: 0;
     overflow-x: auto;
+    overflow-y: hidden;
     position: relative;
 }
 
@@ -484,13 +485,36 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 .ag-body-horizontal-scroll-viewport {
-  width: 100%;
-  min-height: 0;
-  position: relative;
+    min-height: 0;
+    position: relative;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex: 1;
 }
 
 .ag-body-horizontal-scroll-container {
+    height: 100%;
 }
+
+.ag-body-horizontal-scroll {
+    min-height: 0;
+    min-width: 0;
+    width: 100%;
+    display: flex;
+    position: relative;
+    height: 50px;
+}
+
+.ag-horizontal-left-spacer, .ag-horizontal-right-spacer {
+    height: 100%;
+    min-width: 0;
+    flex-grow: 1000;
+}
+
+//.ag-horizontal-right-spacer {
+//    height: 100%;
+//
+//}
 
 .ag-full-width-viewport-wrapper {
     height: 100%;
