@@ -195,7 +195,7 @@ var gridOptions = {
     // suppressCellSelection: true,
     // suppressMultiSort: true,
     // scrollbarWidth: 20,
-    sideBar: true,
+    sideBar: false,
     // showToolPanel: true,//window.innerWidth > 1000,
     // toolPanelSuppressColumnFilter: true,
     // toolPanelSuppressColumnSelectAll: true,
@@ -422,7 +422,7 @@ var defaultCols = [
                     values: ['English', 'Spanish', 'French', 'Portuguese', 'German',
                         'Swedish', 'Norwegian', 'Italian', 'Greek', 'Icelandic', 'Portuguese', 'Maltese']
                 },
-                // pinned: 'left',
+                pinned: 'left',
                 headerTooltip: "Example tooltip for Language",
                 filterParams: {
                     selectAllOnMiniFilter: true,
@@ -471,7 +471,7 @@ var defaultCols = [
                         "Italy", "Malta", "Portugal", "Norway", "Peru", "Spain", "Sweden", "United Kingdom",
                         "Uruguay", "Venezuela", "Belgium", "Luxembourg"]
                 },
-                // pinned: 'left',
+                pinned: 'left',
                 floatCell: true,
                 filterParams: {
                     cellRenderer: 'countryCellRenderer',
@@ -505,7 +505,7 @@ var defaultCols = [
                 },
                 enableRowGroup: true,
                 enablePivot: true,
-                // pinned: 'right',
+                pinned: 'right',
                 // rowGroupIndex: 1,
                 icons: {
                     sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
@@ -514,7 +514,7 @@ var defaultCols = [
             },
             {
                 headerName: "Bought", field: "game.bought", filter: 'agSetColumnFilter', editable: true, width: 150,
-                // pinned: 'right',
+                pinned: 'right',
                 // rowGroupIndex: 2,
                 // pivotIndex: 1,
                 enableRowGroup: true,

@@ -1368,10 +1368,10 @@ export class GridPanel extends Component {
     private onBodyHorizontalScroll(): void {
 
         const supportsOverflowScrolling = this.animationFrameService.isSupportsOverflowScrolling();
-        const {scrollWidth, clientWidth} = this.eBodyViewport;
+        const {scrollWidth, clientWidth} = this.eCenterViewport;
         // in chrome, fractions can be in the scroll left, eg 250.342234 - which messes up our 'scrollWentPastBounds'
         // formula. so we floor it to allow the formula to work.
-        const scrollLeft = Math.floor(_.getScrollLeft(this.eBodyViewport, this.enableRtl));
+        const scrollLeft = Math.floor(_.getScrollLeft(this.eCenterViewport, this.enableRtl));
 
         // touch devices allow elastic scroll - which temporally scrolls the panel outside of the viewport
         // (eg user uses touch to go to the left of the grid, but drags past the left, the rows will actually
