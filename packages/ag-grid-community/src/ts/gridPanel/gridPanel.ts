@@ -1177,6 +1177,7 @@ export class GridPanel extends Component {
         this.setCenterWidth();
         this.setPinnedLeftWidth();
         this.setPinnedRightWidth();
+        this.setHorizontalScrollWidth();
     }
 
     private setCenterWidth(): void {
@@ -1196,18 +1197,24 @@ export class GridPanel extends Component {
         this.eBodyHorizontalScrollContainer.style.width = widthPx;
     }
 
-    private setPinnedLeftWidth(): void {
+    private setHorizontalScrollWidth(): void {
+        const width = `${this.gridOptionsWrapper.getScrollbarWidth() || 0}px`;
 
-        let widthOfCols = this.columnController.getPinnedLeftContainerWidth();
-        let oldPinningLeft = this.pinningLeft;
+        this.eBodyHorizontalScrollViewport.style.maxHeight = width;
+        this.eBodyHorizontalScrollContainer.style.height = width;
+    }
+
+    private setPinnedLeftWidth(): void {
+        const widthOfCols = this.columnController.getPinnedLeftContainerWidth();
+        const oldPinningLeft = this.pinningLeft;
         this.pinningLeft = !this.printLayout && widthOfCols > 0;
 
-        if (oldPinningLeft!==this.pinningLeft) {
+        if (oldPinningLeft !== this.pinningLeft) {
             this.headerRootComp.setLeftVisible(this.pinningLeft);
         }
 
-        let eParentContainers = [this.eLeftContainer, this.eLeftTop, this.eLeftBottom];
-        eParentContainers.forEach( e => _.setVisible(e, this.pinningLeft) );
+        [this.eLeftContainer, this.eLeftTop, this.eLeftBottom]
+            .forEach(e => _.setVisible(e, this.pinningLeft));
 
         if (!this.pinningLeft) { return; }
 
@@ -1220,22 +1227,29 @@ export class GridPanel extends Component {
         this.eLeftBottom.style.maxWidth = widthPx;
         this.eLeftTop.style.maxWidth = widthPx;
 
+        const spacerPadding = this.gridOptionsWrapper.isEnableRtl() && this.isVerticalScrollShowing();
+        const scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
+
+        if (spacerPadding) {
+            widthPx = `${widthOfCols + scrollWidth}px`;
+        }
+
         this.eHorizontalLeftSpacer.style.width = widthPx;
         this.eHorizontalLeftSpacer.style.maxWidth = widthPx;
+        this.eHorizontalLeftSpacer.style.minWidth = widthPx;
     }
 
     private setPinnedRightWidth(): void {
-
-        let widthOfCols = this.columnController.getPinnedRightContainerWidth();
-        let oldPinningRight = this.pinningRight;
+        const widthOfCols = this.columnController.getPinnedRightContainerWidth();
+        const oldPinningRight = this.pinningRight;
         this.pinningRight = !this.printLayout && widthOfCols > 0;
 
-        if (oldPinningRight!==this.pinningRight) {
+        if (oldPinningRight !== this.pinningRight) {
             this.headerRootComp.setRightVisible(this.pinningRight);
         }
 
-        let eParentContainers = [this.eRightContainer, this.eRightTop, this.eRightBottom];
-        eParentContainers.forEach( e => _.setVisible(e, this.pinningRight) );
+        [this.eRightContainer, this.eRightTop, this.eRightBottom]
+            .forEach(e => _.setVisible(e, this.pinningRight));
 
         if (!this.pinningRight) { return; }
 
@@ -1248,8 +1262,15 @@ export class GridPanel extends Component {
         this.eRightTop.style.maxWidth = widthPx;
         this.eRightBottom.style.maxWidth = widthPx;
 
+        const spacerPadding = !this.gridOptionsWrapper.isEnableRtl() && this.isVerticalScrollShowing();
+        const scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
+
+        if (spacerPadding) {
+            widthPx = `${widthOfCols + scrollWidth}px`;
+        }
         this.eHorizontalRightSpacer.style.width = widthPx;
         this.eHorizontalRightSpacer.style.maxWidth = widthPx;
+        this.eHorizontalRightSpacer.style.minWidth = widthPx;
     }
 
     private setPinnedContainerSize() {

@@ -77,11 +77,9 @@ export class RowContainerComponent {
             return;
         }
 
-        const scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
-
         this.eContainer.style.height = `${height}px`;
         if (this.eWrapper) {
-            this.eWrapper.style.height = `${height + scrollWidth}px`;
+            this.eWrapper.style.height = `${height}px`;
         }
     }
 

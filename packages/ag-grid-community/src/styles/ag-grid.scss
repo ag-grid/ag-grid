@@ -478,6 +478,9 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     overflow-x: auto;
     overflow-y: hidden;
     position: relative;
+    &::-webkit-scrollbar { 
+        display: none;
+    }
 }
 
 .ag-center-cols-container {
@@ -502,7 +505,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     width: 100%;
     display: flex;
     position: relative;
-    height: 50px;
 }
 
 .ag-horizontal-left-spacer, .ag-horizontal-right-spacer {
@@ -510,11 +512,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     min-width: 0;
     flex-grow: 1000;
 }
-
-//.ag-horizontal-right-spacer {
-//    height: 100%;
-//
-//}
 
 .ag-full-width-viewport-wrapper {
     height: 100%;
