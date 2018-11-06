@@ -25,6 +25,7 @@ gulp.task('webpack-minify', ['tsc'], webpackTask.bind(null, true, true));
 gulp.task('webpack', ['tsc'], webpackTask.bind(null, false, true));
 
 gulp.task('tsc', ['tsc-src'], tscMainTask);
+gulp.task('tsc-no-clean', tscSrcTask);
 gulp.task('tsc-src', ['cleanDist', 'tslint'], tscSrcTask);
 gulp.task('tsc-main', ['cleanMain'], tscMainTask);
 

@@ -1,22 +1,24 @@
 import {
+    _,
     Autowired,
-    Component, ComponentResolver,
+    Component,
+    ComponentResolver,
     Context,
     EventService,
     GridOptionsWrapper,
     GridPanel,
+    IComponent,
     ISideBar,
     PostConstruct,
+    Promise,
     RefSelector,
     SideBarDef,
-    ToolPanelDef,
-    IComponent,
-    Promise, _
+    ToolPanelDef
 } from "ag-grid-community";
 import {SideBarButtonsComp} from "./sideBarButtonsComp";
 import {ToolPanelWrapper, ToolPanelWrapperParams} from "./toolPanelWrapper";
 
-export interface IToolPanelChildComp extends IComponent<any>{
+export interface IToolPanelChildComp extends IComponent<any> {
     refresh(): void
 }
 
@@ -104,19 +106,19 @@ export class SideBarComp extends Component implements ISideBar {
         });
     }
 
-    public setVisible (show:boolean): void{
+    public setVisible(show: boolean): void {
         if (_.get(this.gridOptionsWrapper.getSideBar(), 'toolPanels', []).length === 0) return;
 
         super.setVisible(show);
         if (show) {
-            let keyOfTabToShow: string = this.getActiveToolPanelItem();
+            let keyOfTabToShow: string | undefined | null  = this.getActiveToolPanelItem();
 
             if (!keyOfTabToShow) return;
 
             keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : _.get(this.gridOptionsWrapper.getSideBar(), 'defaultToolPanel', null);
             keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : this.gridOptionsWrapper.getSideBar().defaultToolPanel;
 
-            let tabToShow: Component = this.panelComps[keyOfTabToShow];
+            let tabToShow: Component | null = keyOfTabToShow ? this.panelComps[keyOfTabToShow] : null;
             if (!tabToShow) {
                 console.warn(`ag-grid: can't set the visibility of the tool panel item [${keyOfTabToShow}] since it can't be found`);
                 return;
@@ -125,7 +127,7 @@ export class SideBarComp extends Component implements ISideBar {
         }
     }
 
-    public openToolPanel (key:string) {
+    public openToolPanel(key: string) {
         let currentlyOpenedKey = this.getActiveToolPanelItem();
         if (currentlyOpenedKey === key) return;
 
@@ -135,13 +137,13 @@ export class SideBarComp extends Component implements ISideBar {
             return;
         }
 
-        if (currentlyOpenedKey != null){
+        if (currentlyOpenedKey != null) {
             this.sideBarButtonsComp.setPanelVisibility(currentlyOpenedKey, false);
         }
         this.sideBarButtonsComp.setPanelVisibility(key, true);
     }
 
-    public close (): void {
+    public close(): void {
         let currentlyOpenedKey = this.getActiveToolPanelItem();
         if (!currentlyOpenedKey) return;
 
@@ -152,8 +154,8 @@ export class SideBarComp extends Component implements ISideBar {
         return this.getActiveToolPanelItem() != null;
     }
 
-    public getActiveToolPanelItem (): string {
-        let activeToolPanel: string = null;
+    public getActiveToolPanelItem(): string | null {
+        let activeToolPanel: string | null = null;
         Object.keys(this.panelComps).forEach(key => {
             let currentComp = this.panelComps[key];
             if (currentComp.isVisible()) {
@@ -163,11 +165,11 @@ export class SideBarComp extends Component implements ISideBar {
         return activeToolPanel;
     }
 
-    public openedItem(): string {
+    public openedItem(): string | null {
         return this.getActiveToolPanelItem();
     }
 
-    public reset (): void {
+    public reset(): void {
         this.sideBarButtonsComp.clear();
         this.panelComps = {};
         this.setTemplate(SideBarComp.TEMPLATE);

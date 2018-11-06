@@ -114,7 +114,7 @@ export class ComponentResolver {
     public getComponentToUse<A extends IComponent<any> & B, B>
     (holder: ComponentHolder,
      propertyName: string,
-     dynamicComponentParams: DynamicComponentParams,
+     dynamicComponentParams: DynamicComponentParams | null,
      defaultComponentName?: string): ResolvedComponent<A, B> {
         /**
          * There are five things that can happen when resolving a component.
@@ -330,7 +330,7 @@ export class ComponentResolver {
     public createAgGridComponent<A extends IComponent<any>>(holderOpt: ComponentHolder,
                                                             agGridParams: any,
                                                             propertyName: string,
-                                                            dynamicComponentParams: DynamicComponentParams,
+                                                            dynamicComponentParams: DynamicComponentParams | null,
                                                             defaultComponentName?: string,
                                                             mandatory: boolean = true,
                                                             customInitParamsCb?: (params: any, component: A) => any): Promise<A> {
@@ -385,7 +385,7 @@ export class ComponentResolver {
     private newAgGridComponent<A extends IComponent<any> & B, B>
     (holder: ComponentHolder,
      propertyName: string,
-     dynamicComponentParams: DynamicComponentParams,
+     dynamicComponentParams: DynamicComponentParams | null,
      defaultComponentName?: string,
      mandatory: boolean = true): [A, any] {
         let componentToUse: ResolvedComponent<A, B> = <ResolvedComponent<A, B>>this.getComponentToUse(holder, propertyName, dynamicComponentParams, defaultComponentName);

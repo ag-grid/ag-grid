@@ -155,7 +155,7 @@ export class AlignedGridsService {
     private processGroupOpenedEvent(groupOpenedEvent: ColumnGroupOpenedEvent): void {
         // likewise for column group
         let masterColumnGroup = groupOpenedEvent.columnGroup;
-        let otherColumnGroup: OriginalColumnGroup;
+        let otherColumnGroup: OriginalColumnGroup | undefined = undefined;
         if (masterColumnGroup) {
             let groupId = masterColumnGroup.getGroupId();
             otherColumnGroup = this.columnController.getOriginalColumnGroup(groupId);
@@ -170,7 +170,7 @@ export class AlignedGridsService {
         // the column in the event is from the master grid. need to
         // look up the equivalent from this (other) grid
         let masterColumn = colEvent.column;
-        let otherColumn: Column;
+        let otherColumn: Column | undefined = undefined;
 
         if (masterColumn) {
             otherColumn = this.columnController.getPrimaryColumn(masterColumn.getColId());

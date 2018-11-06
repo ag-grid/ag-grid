@@ -1,4 +1,5 @@
 import {
+    _,
     AgCheckbox,
     Autowired,
     Column,
@@ -17,12 +18,9 @@ import {
     EventService,
     GridApi,
     GridOptionsWrapper,
-    GridPanel,
     PostConstruct,
-    QuerySelector,
-    Utils,
     RefSelector,
-    _
+    Utils
 } from "ag-grid-community/main";
 import {BaseColumnItem} from "./primaryColsPanel";
 
@@ -49,7 +47,7 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
 
     private column: Column;
     private columnDept: number;
-    private selectionCallback: (selected:boolean)=>void;
+    private selectionCallback: (selected: boolean) => void;
 
     private allowDragging: boolean;
     private displayName: string;
@@ -83,10 +81,10 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
 
         this.setupDragging();
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this) );
-        this.addDestroyableEventListener(this.column, Column.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this) );
-        this.addDestroyableEventListener(this.column, Column.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this) );
-        this.addDestroyableEventListener(this.column, Column.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this) );
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addDestroyableEventListener(this.column, Column.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addDestroyableEventListener(this.column, Column.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addDestroyableEventListener(this.column, Column.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this));
         this.addDestroyableEventListener(this.column, Column.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
 
         this.addDestroyableEventListener(this.gridOptionsWrapper, 'functionsReadOnly', this.onColumnStateChanged.bind(this));
@@ -109,11 +107,15 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
 
     private onChangeCommon(nextState: boolean): void {
         // ignore lock visible columns
-        if (this.column.isLockVisible()) { return; }
+        if (this.column.isLockVisible()) {
+            return;
+        }
 
         // only want to action if the user clicked the checkbox, not is we are setting the checkbox because
         // of a change in the model
-        if (this.processingColumnStateChange) { return; }
+        if (this.processingColumnStateChange) {
+            return;
+        }
 
         // action in a timeout, as the action takes some time, we want to update the icons first
         // so the user gets nice feedback when they click. otherwise there would be a lag and the
@@ -192,7 +194,9 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
         let column = this.column;
 
         // function already active, so do nothing
-        if (column.isValueActive() || column.isPivotActive() || column.isRowGroupActive()) { return; }
+        if (column.isValueActive() || column.isPivotActive() || column.isRowGroupActive()) {
+            return;
+        }
 
         let functionPassive = this.gridOptionsWrapper.isFunctionsPassive();
 
@@ -254,7 +258,7 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
             dragItemCallback: () => this.createDragItem()
         };
         this.dragAndDropService.addDragSource(dragSource, true);
-        this.addDestroyFunc( ()=> this.dragAndDropService.removeDragSource(dragSource) );
+        this.addDestroyFunc(() => this.dragAndDropService.removeDragSource(dragSource));
     }
 
     private createDragItem() {

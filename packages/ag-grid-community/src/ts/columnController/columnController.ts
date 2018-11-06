@@ -13,7 +13,9 @@ import {EventService} from "../eventService";
 import {ColumnUtils} from "./columnUtils";
 import {Logger, LoggerFactory} from "../logger";
 import {
-    ColumnEvent, ColumnEventType, ColumnEverythingChangedEvent,
+    ColumnEvent,
+    ColumnEventType,
+    ColumnEverythingChangedEvent,
     ColumnGroupOpenedEvent,
     ColumnMovedEvent,
     ColumnPinnedEvent,
@@ -49,11 +51,11 @@ export interface ColumnResizeSet {
 export interface ColumnState {
     colId: string;
     hide?: boolean;
-    aggFunc?: string | IAggFunc;
+    aggFunc?: string | IAggFunc | null;
     width?: number;
-    pivotIndex?: number;
+    pivotIndex?: number | null;
     pinned?: boolean | string | "left" | "right";
-    rowGroupIndex?: number;
+    rowGroupIndex?: number | null;
 }
 
 @Bean('columnController')
@@ -111,9 +113,9 @@ export class ColumnController {
     private displayedRightColumnTree: ColumnGroupChild[];
     private displayedCentreColumnTree: ColumnGroupChild[];
 
-    private displayedLeftHeaderRows: {[row: number]: ColumnGroupChild[]};
-    private displayedRightHeaderRows: {[row: number]: ColumnGroupChild[]};
-    private displayedCentreHeaderRows: {[row: number]: ColumnGroupChild[]};
+    private displayedLeftHeaderRows: { [row: number]: ColumnGroupChild[] };
+    private displayedRightHeaderRows: { [row: number]: ColumnGroupChild[] };
+    private displayedCentreHeaderRows: { [row: number]: ColumnGroupChild[] };
 
     // these are the lists used by the rowRenderer to render nodes. almost the leaf nodes of the above
     // displayed trees, however it also takes into account if the groups are open or not.
@@ -163,7 +165,7 @@ export class ColumnController {
     private viewportLeft: number;
     private viewportRight: number;
 
-    private columnDefs: (ColDef|ColGroupDef)[];
+    private columnDefs: (ColDef | ColGroupDef)[];
 
     @PostConstruct
     public init(): void {
@@ -176,7 +178,7 @@ export class ColumnController {
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
     }
 
-    public setColumnDefs(columnDefs: (ColDef|ColGroupDef)[], source: ColumnEventType = "api") {
+    public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType = "api") {
 
         this.columnDefs = columnDefs;
 
@@ -263,9 +265,9 @@ export class ColumnController {
     private checkDisplayedVirtualColumns(): void {
         // check displayCenterColumnTree exists first, as it won't exist when grid is initialising
         if (_.exists(this.displayedCenterColumns)) {
-            let hashBefore = this.allDisplayedVirtualColumns.map( column => column.getId() ).join('#');
+            let hashBefore = this.allDisplayedVirtualColumns.map(column => column.getId()).join('#');
             this.updateVirtualSets();
-            let hashAfter = this.allDisplayedVirtualColumns.map( column => column.getId() ).join('#');
+            let hashAfter = this.allDisplayedVirtualColumns.map(column => column.getId()).join('#');
             if (hashBefore !== hashAfter) {
                 let event: VirtualColumnsChangedEvent = {
                     type: Events.EVENT_VIRTUAL_COLUMNS_CHANGED,
@@ -278,7 +280,7 @@ export class ColumnController {
     }
 
     public setVirtualViewportPosition(scrollWidth: number, scrollPosition: number): void {
-        if (scrollWidth!==this.scrollWidth || scrollPosition!==this.scrollPosition || this.bodyWidthDirty) {
+        if (scrollWidth !== this.scrollWidth || scrollPosition !== this.scrollPosition || this.bodyWidthDirty) {
             this.scrollWidth = scrollWidth;
             this.scrollPosition = scrollPosition;
             // we need to call setVirtualViewportLeftAndRight() at least once after the body width changes,
@@ -310,9 +312,13 @@ export class ColumnController {
     }
 
     public setPivotMode(pivotMode: boolean, source: ColumnEventType = "api"): void {
-        if (pivotMode === this.pivotMode) { return; }
+        if (pivotMode === this.pivotMode) {
+            return;
+        }
 
-        if (!this.isPivotSettingAllowed(this.pivotMode)) { return; }
+        if (!this.isPivotSettingAllowed(this.pivotMode)) {
+            return;
+        }
 
         this.pivotMode = pivotMode;
         this.updateDisplayedColumns(source);
@@ -324,7 +330,7 @@ export class ColumnController {
         this.eventService.dispatchEvent(event);
     }
 
-    public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: Column|string): Column {
+    public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: Column | string): Column | null {
 
         if (!this.secondaryColumnsPresent) {
             return null;
@@ -332,8 +338,8 @@ export class ColumnController {
 
         let valueColumnToFind = this.getPrimaryColumn(valueColKey);
 
-        let foundColumn: Column = null;
-        this.secondaryColumns.forEach( column => {
+        let foundColumn: Column | null = null;
+        this.secondaryColumns.forEach(column => {
 
             let thisPivotKeys = column.getColDef().pivotKeys;
             let pivotValueColumn = column.getColDef().pivotValueColumn;
@@ -354,8 +360,8 @@ export class ColumnController {
     }
 
     private setFirstRightAndLastLeftPinned(source: ColumnEventType): void {
-        let lastLeft: Column;
-        let firstRight: Column;
+        let lastLeft: Column | null;
+        let firstRight: Column | null;
 
         if (this.gridOptionsWrapper.isEnableRtl()) {
             lastLeft = this.displayedLeftColumns ? this.displayedLeftColumns[0] : null;
@@ -365,13 +371,13 @@ export class ColumnController {
             firstRight = this.displayedRightColumns ? this.displayedRightColumns[0] : null;
         }
 
-        this.gridColumns.forEach( (column: Column) => {
+        this.gridColumns.forEach((column: Column) => {
             column.setLastLeftPinned(column === lastLeft, source);
             column.setFirstRightPinned(column === firstRight, source);
-        } );
+        });
     }
 
-    public autoSizeColumns(keys: (string|Column)[], source: ColumnEventType = "api"): void {
+    public autoSizeColumns(keys: (string | Column)[], source: ColumnEventType = "api"): void {
         // because of column virtualisation, we can only do this function on columns that are
         // actually rendered, as non-rendered columns (outside the viewport and not rendered
         // due to column virtualisation) are not present. this can result in all rendered columns
@@ -385,15 +391,17 @@ export class ColumnController {
         // initialise with anything except 0 so that while loop executs at least once
         let changesThisTimeAround = -1;
 
-        while (changesThisTimeAround!==0) {
+        while (changesThisTimeAround !== 0) {
             changesThisTimeAround = 0;
             this.actionOnGridColumns(keys, (column: Column): boolean => {
                 // if already autosized, skip it
-                if (columnsAutosized.indexOf(column) >= 0) { return; }
+                if (columnsAutosized.indexOf(column) >= 0) {
+                    return false;
+                }
                 // get how wide this col should be
                 let preferredWidth = this.autoWidthCalculator.getPreferredWidthForColumn(column);
                 // preferredWidth = -1 if this col is not on the screen
-                if (preferredWidth>0) {
+                if (preferredWidth > 0) {
                     let newWidth = this.normaliseColumnWidth(column, preferredWidth);
                     column.setActualWidth(newWidth, source);
                     columnsAutosized.push(column);
@@ -417,7 +425,7 @@ export class ColumnController {
         }
     }
 
-    public autoSizeColumn(key: string|Column, source: ColumnEventType = "api"): void {
+    public autoSizeColumn(key: string | Column, source: ColumnEventType = "api"): void {
         this.autoSizeColumns([key], source);
     }
 
@@ -432,7 +440,7 @@ export class ColumnController {
         return result;
 
         function recursiveFindColumns(childColumns: OriginalColumnGroupChild[]): void {
-            for (let i = 0; i<childColumns.length; i++) {
+            for (let i = 0; i < childColumns.length; i++) {
                 let child = childColumns[i];
                 if (child instanceof Column) {
                     result.push(<Column>child);
@@ -443,7 +451,7 @@ export class ColumnController {
         }
     }
 
-    public getAllDisplayedColumnGroups(): ColumnGroupChild[] {
+    public getAllDisplayedColumnGroups(): ColumnGroupChild[] | null {
         if (this.displayedLeftColumnTree && this.displayedRightColumnTree && this.displayedCentreColumnTree) {
             return this.displayedLeftColumnTree
                 .concat(this.displayedCentreColumnTree)
@@ -467,10 +475,12 @@ export class ColumnController {
     public getLeftDisplayedColumnGroups(): ColumnGroupChild[] {
         return this.displayedLeftColumnTree;
     }
+
     // + headerRenderer -> setting pinned body width
     public getRightDisplayedColumnGroups(): ColumnGroupChild[] {
         return this.displayedRightColumnTree;
     }
+
     // + headerRenderer -> setting pinned body width
     public getCenterDisplayedColumnGroups(): ColumnGroupChild[] {
         return this.displayedCentreColumnTree;
@@ -478,9 +488,12 @@ export class ColumnController {
 
     public getDisplayedColumnGroups(type: string): ColumnGroupChild[] {
         switch (type) {
-            case Column.PINNED_LEFT: return this.getLeftDisplayedColumnGroups();
-            case Column.PINNED_RIGHT: return this.getRightDisplayedColumnGroups();
-            default: return this.getCenterDisplayedColumnGroups();
+            case Column.PINNED_LEFT:
+                return this.getLeftDisplayedColumnGroups();
+            case Column.PINNED_RIGHT:
+                return this.getRightDisplayedColumnGroups();
+            default:
+                return this.getCenterDisplayedColumnGroups();
         }
     }
 
@@ -515,13 +528,13 @@ export class ColumnController {
     }
 
     private getDisplayedColumnsForRow(rowNode: RowNode, displayedColumns: Column[],
-                                      filterCallback?: (column: Column)=>boolean,
-                                      emptySpaceBeforeColumn?: (column: Column)=>boolean): Column[] {
+                                      filterCallback?: (column: Column) => boolean,
+                                      emptySpaceBeforeColumn?: (column: Column) => boolean): Column[] {
 
         let result: Column[] = [];
-        let lastConsideredCol: Column = null;
+        let lastConsideredCol: Column | null = null;
 
-        for (let i = 0; i<displayedColumns.length; i++) {
+        for (let i = 0; i < displayedColumns.length; i++) {
 
             let col = displayedColumns[i];
 
@@ -530,8 +543,8 @@ export class ColumnController {
             if (colSpan > 1) {
                 let colsToRemove = colSpan - 1;
 
-                for (let j = 1; j<=colsToRemove; j++) {
-                    columnsToCheckFilter.push(displayedColumns[i+j]);
+                for (let j = 1; j <= colsToRemove; j++) {
+                    columnsToCheckFilter.push(displayedColumns[i + j]);
                 }
 
                 i += colsToRemove;
@@ -546,7 +559,7 @@ export class ColumnController {
                 // if lots of columns, that means column spanning, and we set filterPasses = true
                 // if one or more of the columns spanned pass the filter.
                 filterPasses = false;
-                columnsToCheckFilter.forEach( colForFilter => {
+                columnsToCheckFilter.forEach(colForFilter => {
                     if (filterCallback(colForFilter)) filterPasses = true;
                 });
             } else {
@@ -555,7 +568,7 @@ export class ColumnController {
 
             if (filterPasses) {
 
-                if (result.length===0 && lastConsideredCol) {
+                if (result.length === 0 && lastConsideredCol) {
                     let gapBeforeColumn = emptySpaceBeforeColumn ? emptySpaceBeforeColumn(col) : false;
                     if (gapBeforeColumn) {
                         result.push(lastConsideredCol);
@@ -605,31 +618,40 @@ export class ColumnController {
     public getPinnedLeftContainerWidth() {
         return this.getWidthOfColsInList(this.displayedLeftColumns);
     }
+
     // note: this should be cached
     public getPinnedRightContainerWidth() {
         return this.getWidthOfColsInList(this.displayedRightColumns);
     }
 
-    public updatePrimaryColumnList( keys: (string|Column)[],
-                                    masterList: Column[],
-                                    actionIsAdd: boolean,
-                                    columnCallback: (column: Column)=>void,
-                                    eventType: string,
-                                    source: ColumnEventType = "api") {
+    public updatePrimaryColumnList(keys: (string | Column)[],
+                                   masterList: Column[],
+                                   actionIsAdd: boolean,
+                                   columnCallback: (column: Column) => void,
+                                   eventType: string,
+                                   source: ColumnEventType = "api") {
 
-        if (_.missingOrEmpty(keys)) { return; }
+        if (_.missingOrEmpty(keys)) {
+            return;
+        }
 
         let atLeastOne = false;
 
-        keys.forEach( key => {
+        keys.forEach(key => {
             let columnToAdd = this.getPrimaryColumn(key);
-            if (!columnToAdd) {return;}
+            if (!columnToAdd) {
+                return;
+            }
 
             if (actionIsAdd) {
-                if (masterList.indexOf(columnToAdd)>=0) {return;}
+                if (masterList.indexOf(columnToAdd) >= 0) {
+                    return;
+                }
                 masterList.push(columnToAdd);
             } else {
-                if (masterList.indexOf(columnToAdd)<0) {return;}
+                if (masterList.indexOf(columnToAdd) < 0) {
+                    return;
+                }
                 _.removeFromArray(masterList, columnToAdd);
             }
 
@@ -637,7 +659,9 @@ export class ColumnController {
             atLeastOne = true;
         });
 
-        if (!atLeastOne) { return; }
+        if (!atLeastOne) {
+            return;
+        }
 
         if (this.autoGroupsNeedBuilding) {
             this.updateGridColumns();
@@ -657,7 +681,7 @@ export class ColumnController {
         this.eventService.dispatchEvent(event);
     }
 
-    public setRowGroupColumns(colKeys: (string|Column)[], source: ColumnEventType = "api"): void {
+    public setRowGroupColumns(colKeys: (string | Column)[], source: ColumnEventType = "api"): void {
         this.autoGroupsNeedBuilding = true;
         this.setPrimaryColumnList(colKeys, this.rowGroupColumns,
             Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
@@ -666,18 +690,20 @@ export class ColumnController {
     }
 
     private setRowGroupActive(active: boolean, column: Column, source: ColumnEventType): void {
-        if (active === column.isRowGroupActive()) {return;}
+        if (active === column.isRowGroupActive()) {
+            return;
+        }
         column.setRowGroupActive(active, source);
         if (!active && !this.gridOptionsWrapper.isSuppressMakeColumnVisibleAfterUnGroup()) {
             column.setVisible(true, source);
         }
     }
 
-    public addRowGroupColumn(key: string|Column, source: ColumnEventType = "api"): void {
+    public addRowGroupColumn(key: string | Column, source: ColumnEventType = "api"): void {
         this.addRowGroupColumns([key], source);
     }
 
-    public addRowGroupColumns(keys: (string|Column)[], source: ColumnEventType = "api"): void {
+    public addRowGroupColumns(keys: (string | Column)[], source: ColumnEventType = "api"): void {
         this.autoGroupsNeedBuilding = true;
         this.updatePrimaryColumnList(keys, this.rowGroupColumns, true,
             this.setRowGroupActive.bind(this, true),
@@ -685,7 +711,7 @@ export class ColumnController {
             source);
     }
 
-    public removeRowGroupColumns(keys: (string|Column)[], source: ColumnEventType = "api"): void {
+    public removeRowGroupColumns(keys: (string | Column)[], source: ColumnEventType = "api"): void {
         this.autoGroupsNeedBuilding = true;
         this.updatePrimaryColumnList(keys, this.rowGroupColumns, false,
             this.setRowGroupActive.bind(this, false),
@@ -693,17 +719,17 @@ export class ColumnController {
             source);
     }
 
-    public removeRowGroupColumn(key: string|Column, source: ColumnEventType = "api"): void {
+    public removeRowGroupColumn(key: string | Column, source: ColumnEventType = "api"): void {
         this.removeRowGroupColumns([key], source);
     }
 
-    public addPivotColumns(keys: (string|Column)[], source: ColumnEventType = "api"): void {
+    public addPivotColumns(keys: (string | Column)[], source: ColumnEventType = "api"): void {
         this.updatePrimaryColumnList(keys, this.pivotColumns, true,
             column => column.setPivotActive(true, source),
             Events.EVENT_COLUMN_PIVOT_CHANGED, source);
     }
 
-    public setPivotColumns(colKeys: (string|Column)[], source: ColumnEventType = "api"): void {
+    public setPivotColumns(colKeys: (string | Column)[], source: ColumnEventType = "api"): void {
         this.setPrimaryColumnList(colKeys, this.pivotColumns, Events.EVENT_COLUMN_PIVOT_CHANGED,
             (added: boolean, column: Column) => {
                 column.setPivotActive(added, source);
@@ -711,36 +737,35 @@ export class ColumnController {
         );
     }
 
-    public addPivotColumn(key: string|Column, source: ColumnEventType = "api"): void {
+    public addPivotColumn(key: string | Column, source: ColumnEventType = "api"): void {
         this.addPivotColumns([key], source);
     }
 
-    public removePivotColumns(keys: (string|Column)[], source: ColumnEventType = "api"): void {
+    public removePivotColumns(keys: (string | Column)[], source: ColumnEventType = "api"): void {
         this.updatePrimaryColumnList(keys, this.pivotColumns, false,
             column => column.setPivotActive(false, source),
             Events.EVENT_COLUMN_PIVOT_CHANGED,
             source);
     }
 
-    public removePivotColumn(key: string|Column, source: ColumnEventType = "api"): void {
+    public removePivotColumn(key: string | Column, source: ColumnEventType = "api"): void {
         this.removePivotColumns([key], source);
     }
 
-    private setPrimaryColumnList(colKeys: (string|Column)[],
-                                    masterList: Column[],
-                                    eventName: string,
-                                    columnCallback: (added: boolean, column: Column)=>void,
-                                    source: ColumnEventType
-                                ): void {
+    private setPrimaryColumnList(colKeys: (string | Column)[],
+                                 masterList: Column[],
+                                 eventName: string,
+                                 columnCallback: (added: boolean, column: Column) => void,
+                                 source: ColumnEventType): void {
         masterList.length = 0;
         if (_.exists(colKeys)) {
-            colKeys.forEach( key => {
+            colKeys.forEach(key => {
                 let column = this.getPrimaryColumn(key);
                 masterList.push(column);
             });
         }
 
-        this.primaryColumns.forEach( column => {
+        this.primaryColumns.forEach(column => {
             let added = masterList.indexOf(column) >= 0;
             columnCallback(added, column);
         });
@@ -762,7 +787,7 @@ export class ColumnController {
         this.eventService.dispatchEvent(event);
     }
 
-    public setValueColumns(colKeys: (string|Column)[], source: ColumnEventType = "api"): void {
+    public setValueColumns(colKeys: (string | Column)[], source: ColumnEventType = "api"): void {
         this.setPrimaryColumnList(colKeys, this.valueColumns,
             Events.EVENT_COLUMN_VALUE_CHANGED,
             this.setValueActive.bind(this),
@@ -770,7 +795,9 @@ export class ColumnController {
     }
 
     private setValueActive(active: boolean, column: Column, source: ColumnEventType): void {
-        if (active === column.isValueActive()) {return;}
+        if (active === column.isValueActive()) {
+            return;
+        }
         column.setValueActive(active, source);
         if (active && !column.getAggFunc()) {
             let defaultAggFunc = this.aggFuncService.getDefaultAggFunc(column);
@@ -778,22 +805,22 @@ export class ColumnController {
         }
     }
 
-    public addValueColumns(keys: (string|Column)[], source: ColumnEventType = "api"): void {
+    public addValueColumns(keys: (string | Column)[], source: ColumnEventType = "api"): void {
         this.updatePrimaryColumnList(keys, this.valueColumns, true,
             this.setValueActive.bind(this, true),
             Events.EVENT_COLUMN_VALUE_CHANGED,
             source);
     }
 
-    public addValueColumn(colKey: (string|Column), source: ColumnEventType = "api"): void {
+    public addValueColumn(colKey: (string | Column), source: ColumnEventType = "api"): void {
         this.addValueColumns([colKey], source);
     }
 
-    public removeValueColumn(colKey: (string|Column), source: ColumnEventType = "api"): void {
+    public removeValueColumn(colKey: (string | Column), source: ColumnEventType = "api"): void {
         this.removeValueColumns([colKey], source);
     }
 
-    public removeValueColumns(keys: (string|Column)[], source: ColumnEventType = "api"): void {
+    public removeValueColumns(keys: (string | Column)[], source: ColumnEventType = "api"): void {
         this.updatePrimaryColumnList(keys, this.valueColumns, false,
             this.setValueActive.bind(this, false),
             Events.EVENT_COLUMN_VALUE_CHANGED,
@@ -813,7 +840,7 @@ export class ColumnController {
         return newWidth;
     }
 
-    private getPrimaryOrGridColumn(key: string|Column): Column {
+    private getPrimaryOrGridColumn(key: string | Column): Column {
         let column = this.getPrimaryColumn(key);
         if (column) {
             return column;
@@ -822,12 +849,11 @@ export class ColumnController {
         }
     }
 
-    public setColumnWidth(
-            key: string|Column, // @key - the column who's size we want to change
-            newWidth: number, // @newWidth - width in pixels
-            shiftKey: boolean, // @takeFromAdjacent - if user has 'shift' pressed, then pixels are taken from adjacent column
-            finished: boolean, // @finished - ends up in the event, tells the user if more events are to come
-            source: ColumnEventType = "api"): void {
+    public setColumnWidth(key: string | Column, // @key - the column who's size we want to change
+                          newWidth: number, // @newWidth - width in pixels
+                          shiftKey: boolean, // @takeFromAdjacent - if user has 'shift' pressed, then pixels are taken from adjacent column
+                          finished: boolean, // @finished - ends up in the event, tells the user if more events are to come
+                          source: ColumnEventType = "api"): void {
 
         let col = this.getPrimaryOrGridColumn(key);
         if (!col) {
@@ -850,7 +876,9 @@ export class ColumnController {
 
         if (shiftKey) {
             let otherCol = this.getDisplayedColAfter(col);
-            if (!otherCol) { return; }
+            if (!otherCol) {
+                return;
+            }
 
             let widthDiff = col.getActualWidth() - newWidth;
             let otherColWidth = otherCol.getActualWidth() + widthDiff;
@@ -874,7 +902,7 @@ export class ColumnController {
         let minWidthAccumulated = 0;
         let maxWidthAccumulated = 0;
         let maxWidthActive = true;
-        columns.forEach( col => {
+        columns.forEach(col => {
             minWidthAccumulated += col.getMinWidth();
             if (col.getMaxWidth() > 0) {
                 maxWidthAccumulated += col.getMaxWidth();
@@ -924,17 +952,17 @@ export class ColumnController {
         let changedCols: Column[] = [];
         let allCols: Column[] = [];
 
-        resizeSets.forEach( set => {
+        resizeSets.forEach(set => {
 
             let {width, columns, ratios} = set;
 
             // keep track of pixels used, and last column gets the remaining,
             // to cater for rounding errors, and min width adjustments
-            let newWidths: {[colId: string]: number} = {};
+            let newWidths: { [colId: string]: number } = {};
 
-            let finishedCols: {[colId: string]: boolean} = {};
+            let finishedCols: { [colId: string]: boolean } = {};
 
-            columns.forEach( col => allCols.push(col) );
+            columns.forEach(col => allCols.push(col));
 
             // the loop below goes through each col. if a col exceeds it's min/max width,
             // it then gets set to its min/max width and the column is removed marked as 'finished'
@@ -952,7 +980,7 @@ export class ColumnController {
             while (finishedColsGrew) {
 
                 loopCount++;
-                if (loopCount>1000) {
+                if (loopCount > 1000) {
                     // this should never happen, but in the future, someone might introduce a bug here,
                     // so we stop the browser from hanging and report bug properly
                     console.error('ag-Grid: infinite loop in resizeColumnSets');
@@ -966,7 +994,7 @@ export class ColumnController {
                 let subsetRatioTotal = 0;
                 let pixelsToDistribute = width;
 
-                columns.forEach( (col: Column, index: number) => {
+                columns.forEach((col: Column, index: number) => {
                     let thisColFinished = finishedCols[col.getId()];
                     if (thisColFinished) {
                         pixelsToDistribute -= newWidths[col.getId()];
@@ -983,7 +1011,7 @@ export class ColumnController {
                 // and so the ratioScale will be 1.
                 let ratioScale = 1 / subsetRatioTotal;
 
-                subsetCols.forEach( (col: Column, index: number) => {
+                subsetCols.forEach((col: Column, index: number) => {
                     let lastCol = index === (subsetCols.length - 1);
                     let colNewWidth: number;
 
@@ -1008,7 +1036,7 @@ export class ColumnController {
                 });
             }
 
-            columns.forEach( col => {
+            columns.forEach(col => {
                 let newWidth = newWidths[col.getId()];
                 if (col.getActualWidth() !== newWidth) {
                     col.setActualWidth(newWidth);
@@ -1073,7 +1101,7 @@ export class ColumnController {
         this.eventService.dispatchEvent(event);
     }
 
-    public moveColumns(columnsToMoveKeys: (string|Column)[], toIndex: number, source: ColumnEventType = "api"): void {
+    public moveColumns(columnsToMoveKeys: (string | Column)[], toIndex: number, source: ColumnEventType = "api"): void {
         this.columnAnimationService.start();
 
         if (toIndex > this.gridColumns.length - columnsToMoveKeys.length) {
@@ -1086,7 +1114,9 @@ export class ColumnController {
         let columnsToMove = this.getGridColumns(columnsToMoveKeys);
 
         let failedRules = !this.doesMovePassRules(columnsToMove, toIndex);
-        if (failedRules) { return; }
+        if (failedRules) {
+            return;
+        }
 
         _.moveInArray(this.gridColumns, columnsToMove, toIndex);
 
@@ -1113,8 +1143,12 @@ export class ColumnController {
         _.moveInArray(proposedColumnOrder, columnsToMove, toIndex);
 
         // then check that the new proposed order of the columns passes all rules
-        if (!this.doesMovePassMarryChildren(proposedColumnOrder)) { return false; }
-        if (!this.doesMovePassLockedPositions(proposedColumnOrder)) { return false; }
+        if (!this.doesMovePassMarryChildren(proposedColumnOrder)) {
+            return false;
+        }
+        if (!this.doesMovePassLockedPositions(proposedColumnOrder)) {
+            return false;
+        }
 
         return true;
     }
@@ -1125,7 +1159,7 @@ export class ColumnController {
         let rulePassed = true;
 
         // go though the cols, see if any non-locked appear before any locked
-        proposedColumnOrder.forEach( col => {
+        proposedColumnOrder.forEach(col => {
             if (col.isLockPosition()) {
                 if (foundNonLocked) {
                     rulePassed = false;
@@ -1142,18 +1176,22 @@ export class ColumnController {
         let rulePassed = true;
 
         this.columnUtils.depthFirstOriginalTreeSearch(this.gridBalancedTree, child => {
-            if (!(child instanceof OriginalColumnGroup)) { return; }
+            if (!(child instanceof OriginalColumnGroup)) {
+                return;
+            }
 
             let columnGroup = <OriginalColumnGroup> child;
 
             let marryChildren = columnGroup.getColGroupDef() && columnGroup.getColGroupDef().marryChildren;
-            if (!marryChildren) { return; }
+            if (!marryChildren) {
+                return;
+            }
 
             let newIndexes: number[] = [];
-            columnGroup.getLeafColumns().forEach( col => {
+            columnGroup.getLeafColumns().forEach(col => {
                 let newColIndex = allColumnsCopy.indexOf(col);
                 newIndexes.push(newColIndex);
-            } );
+            });
 
             let maxIndex = Math.max.apply(Math, newIndexes);
             let minIndex = Math.min.apply(Math, newIndexes);
@@ -1174,7 +1212,7 @@ export class ColumnController {
         return rulePassed;
     }
 
-    public moveColumn(key: string|Column, toIndex: number, source: ColumnEventType = "api") {
+    public moveColumn(key: string | Column, toIndex: number, source: ColumnEventType = "api") {
         this.moveColumns([key], toIndex, source);
     }
 
@@ -1193,9 +1231,12 @@ export class ColumnController {
 
     public getContainerWidth(pinned: string): number {
         switch (pinned) {
-            case Column.PINNED_LEFT: return this.leftWidth;
-            case Column.PINNED_RIGHT: return this.rightWidth;
-            default: return this.bodyWidth;
+            case Column.PINNED_LEFT:
+                return this.leftWidth;
+            case Column.PINNED_RIGHT:
+                return this.rightWidth;
+            default:
+                return this.bodyWidth;
         }
     }
 
@@ -1250,30 +1291,35 @@ export class ColumnController {
     public getDisplayedCenterColumns(): Column[] {
         return this.displayedCenterColumns;
     }
+
     // + rowController -> while inserting rows
     public getDisplayedLeftColumns(): Column[] {
         return this.displayedLeftColumns;
     }
+
     public getDisplayedRightColumns(): Column[] {
         return this.displayedRightColumns;
     }
 
     public getDisplayedColumns(type: string): Column[] {
         switch (type) {
-            case Column.PINNED_LEFT: return this.getDisplayedLeftColumns();
-            case Column.PINNED_RIGHT: return this.getDisplayedRightColumns();
-            default: return this.getDisplayedCenterColumns();
+            case Column.PINNED_LEFT:
+                return this.getDisplayedLeftColumns();
+            case Column.PINNED_RIGHT:
+                return this.getDisplayedRightColumns();
+            default:
+                return this.getDisplayedCenterColumns();
         }
     }
 
     // used by:
     // + clientSideRowController -> sorting, building quick filter text
     // + headerRenderer -> sorting (clearing icon)
-    public getAllPrimaryColumns(): Column[] {
+    public getAllPrimaryColumns(): Column[] | null {
         return this.primaryColumns ? this.primaryColumns.slice() : null;
     }
 
-    public getSecondaryColumns(): Column[] {
+    public getSecondaryColumns(): Column[] | null {
         return this.secondaryColumns ? this.secondaryColumns.slice() : null;
     }
 
@@ -1294,20 +1340,20 @@ export class ColumnController {
         return _.missingOrEmpty(this.rowGroupColumns);
     }
 
-    public setColumnVisible(key: string|Column, visible: boolean, source: ColumnEventType = "api"): void {
+    public setColumnVisible(key: string | Column, visible: boolean, source: ColumnEventType = "api"): void {
         this.setColumnsVisible([key], visible, source);
     }
 
-    public setColumnsVisible(keys: (string|Column)[], visible: boolean, source: ColumnEventType = "api"): void {
+    public setColumnsVisible(keys: (string | Column)[], visible: boolean, source: ColumnEventType = "api"): void {
         this.columnAnimationService.start();
         this.actionOnGridColumns(keys, (column: Column): boolean => {
-            if (column.isVisible()!==visible) {
+            if (column.isVisible() !== visible) {
                 column.setVisible(visible, source);
                 return true;
             } else {
                 return false;
             }
-        }, source,()=> {
+        }, source, () => {
             let event: ColumnVisibleEvent = {
                 type: Events.EVENT_COLUMN_VISIBLE,
                 visible: visible,
@@ -1322,14 +1368,14 @@ export class ColumnController {
         this.columnAnimationService.finish();
     }
 
-    public setColumnPinned(key: string|Column, pinned: string|boolean, source: ColumnEventType = "api"): void {
+    public setColumnPinned(key: string | Column, pinned: string | boolean, source: ColumnEventType = "api"): void {
         this.setColumnsPinned([key], pinned, source);
     }
 
-    public setColumnsPinned(keys: (string|Column)[], pinned: string|boolean, source: ColumnEventType = "api"): void {
+    public setColumnsPinned(keys: (string | Column)[], pinned: string | boolean, source: ColumnEventType = "api"): void {
         this.columnAnimationService.start();
 
-        let actualPinned: string;
+        let actualPinned: string | null;
         if (pinned === true || pinned === Column.PINNED_LEFT) {
             actualPinned = Column.PINNED_LEFT;
         } else if (pinned === Column.PINNED_RIGHT) {
@@ -1345,7 +1391,7 @@ export class ColumnController {
             } else {
                 return false;
             }
-        }, source,()=> {
+        }, source, () => {
             let event: ColumnPinnedEvent = {
                 type: Events.EVENT_COLUMN_PINNED,
                 pinned: actualPinned,
@@ -1366,35 +1412,40 @@ export class ColumnController {
     // with either one column (if it was just one col) or a list of columns
     // used by: autoResize, setVisible, setPinned
     private actionOnGridColumns(// the column keys this action will be on
-                            keys: (string|Column)[],
-                            // the action to do - if this returns false, the column was skipped
-                            // and won't be included in the event
-                            action: (column: Column) => boolean,
-                            // should return back a column event of the right type
-                            source: ColumnEventType,
-                            createEvent?: ()=> ColumnEvent,
-                            ): void {
+        keys: (string | Column)[],
+        // the action to do - if this returns false, the column was skipped
+        // and won't be included in the event
+        action: (column: Column) => boolean,
+        // should return back a column event of the right type
+        source: ColumnEventType,
+        createEvent?: () => ColumnEvent,): void {
 
-        if (_.missingOrEmpty(keys)) { return; }
+        if (_.missingOrEmpty(keys)) {
+            return;
+        }
 
         let updatedColumns: Column[] = [];
 
-        keys.forEach( (key: string|Column)=> {
+        keys.forEach((key: string | Column) => {
             let column = this.getGridColumn(key);
-            if (!column) {return;}
+            if (!column) {
+                return;
+            }
             // need to check for false with type (ie !== instead of !=)
             // as not returning anything (undefined) would also be false
             let resultOfAction = action(column);
-            if (resultOfAction!==false) {
+            if (resultOfAction !== false) {
                 updatedColumns.push(column);
             }
         });
 
-        if (updatedColumns.length===0) { return; }
+        if (updatedColumns.length === 0) {
+            return;
+        }
 
         this.updateDisplayedColumns(source);
 
-        if (_.exists(createEvent)) {
+        if (_.exists(createEvent) && createEvent) {
 
             let event = createEvent();
 
@@ -1405,7 +1456,7 @@ export class ColumnController {
         }
     }
 
-    public getDisplayedColBefore(col: Column): Column {
+    public getDisplayedColBefore(col: Column): Column | null {
         let allDisplayedColumns = this.getAllDisplayedColumns();
         let oldIndex = allDisplayedColumns.indexOf(col);
         if (oldIndex > 0) {
@@ -1417,7 +1468,7 @@ export class ColumnController {
 
     // used by:
     // + rowRenderer -> for navigation
-    public getDisplayedColAfter(col: Column): Column {
+    public getDisplayedColAfter(col: Column): Column | null {
         let allDisplayedColumns = this.getAllDisplayedColumns();
         let oldIndex = allDisplayedColumns.indexOf(col);
         if (oldIndex < (allDisplayedColumns.length - 1)) {
@@ -1427,10 +1478,10 @@ export class ColumnController {
         }
     }
 
-    public getDisplayedGroupAfter(columnGroup: ColumnGroup): ColumnGroup {
+    public getDisplayedGroupAfter(columnGroup: ColumnGroup): ColumnGroup | null {
 
         // pick one col in this group at random
-        let col = columnGroup.getDisplayedLeafColumns()[0];
+        let col: Column | null = columnGroup.getDisplayedLeafColumns()[0];
         let requiredLevel = columnGroup.getOriginalColumnGroup().getLevel();
 
         while (true) {
@@ -1438,7 +1489,9 @@ export class ColumnController {
             col = this.getDisplayedColAfter(col);
 
             // if no col after, means no group after
-            if (!col) { return null; }
+            if (!col) {
+                return null;
+            }
 
             // get group at same level as the one we are looking for
             let groupPointer = col.getParent();
@@ -1446,7 +1499,7 @@ export class ColumnController {
                 groupPointer = groupPointer.getParent();
             }
 
-            if (groupPointer!==columnGroup) {
+            if (groupPointer !== columnGroup) {
                 return groupPointer;
             }
         }
@@ -1463,10 +1516,10 @@ export class ColumnController {
     public getPrimaryAndSecondaryAndAutoColumns(): Column[] {
         let result = this.primaryColumns ? this.primaryColumns.slice(0) : [];
         if (_.exists(this.groupAutoColumns)) {
-            this.groupAutoColumns.forEach( col => result.push(col) );
+            this.groupAutoColumns.forEach(col => result.push(col));
         }
         if (this.secondaryColumnsPresent) {
-            this.secondaryColumns.forEach( column => result.push(column) );
+            this.secondaryColumns.forEach(column => result.push(column));
         }
         return result;
     }
@@ -1511,8 +1564,8 @@ export class ColumnController {
     }
 
     private orderColumnStateList(columnStateList: any[]): void {
-        let gridColumnIds = this.gridColumns.map( column => column.getColId() );
-        columnStateList.sort( (itemA: any, itemB: any) => {
+        let gridColumnIds = this.gridColumns.map(column => column.getColId());
+        columnStateList.sort((itemA: any, itemB: any) => {
             let posA = gridColumnIds.indexOf(itemA.colId);
             let posB = gridColumnIds.indexOf(itemB.colId);
             return posA - posB;
@@ -1525,7 +1578,7 @@ export class ColumnController {
         let state: any[] = [];
 
         if (primaryColumns) {
-            primaryColumns.forEach( (column) => {
+            primaryColumns.forEach((column) => {
                 state.push({
                     colId: column.getColId(),
                     aggFunc: column.getColDef().aggFunc,
@@ -1647,10 +1700,10 @@ export class ColumnController {
         };
 
         // determines which columns have changed according to supplied predicate
-        let getChangedColumns = (changedPredicate: (cs: ColumnState, c: Column) => boolean): Column[] =>  {
+        let getChangedColumns = (changedPredicate: (cs: ColumnState, c: Column) => boolean): Column[] => {
             let changedColumns: Column[] = [];
 
-            let columnStateBeforeMap: {[colId: string]: ColumnState} = {};
+            let columnStateBeforeMap: { [colId: string]: ColumnState } = {};
             columnStateBefore.forEach(col => {
                 columnStateBeforeMap[col.colId] = col;
             });
@@ -1693,7 +1746,7 @@ export class ColumnController {
         if (changedColumns.length > 0) {
             let event: ColumnPinnedEvent = {
                 type: Events.EVENT_COLUMN_PINNED,
-                pinned: undefined,
+                pinned: null,
                 columns: changedColumns,
                 column: null,
                 api: this.gridApi,
@@ -1767,7 +1820,7 @@ export class ColumnController {
         }
     }
 
-    private sortColumnListUsingIndexes(indexes: {[key: string]: number}, colA: Column, colB: Column): number {
+    private sortColumnListUsingIndexes(indexes: { [key: string]: number }, colA: Column, colB: Column): number {
         let indexA = indexes[colA.getId()];
         let indexB = indexes[colB.getId()];
         return indexA - indexB;
@@ -1783,15 +1836,17 @@ export class ColumnController {
     }
 
     private syncColumnWithStateItem(column: Column, stateItem: ColumnState,
-                                    rowGroupIndexes: {[key: string]: number},
-                                    pivotIndexes: {[key: string]: number},
+                                    rowGroupIndexes: { [key: string]: number },
+                                    pivotIndexes: { [key: string]: number },
                                     source: ColumnEventType): void {
         // following ensures we are left with boolean true or false, eg converts (null, undefined, 0) all to true
         column.setVisible(!stateItem.hide, source);
         // sets pinned to 'left' or 'right'
         column.setPinned(stateItem.pinned);
         // if width provided and valid, use it, otherwise stick with the old width
-        if (stateItem.width >= this.gridOptionsWrapper.getMinColWidth()) {
+        let minColWidth = this.gridOptionsWrapper.getMinColWidth();
+        if (stateItem.width && minColWidth &&
+            (stateItem.width >= minColWidth)) {
             column.setActualWidth(stateItem.width, source);
         }
 
@@ -1826,14 +1881,14 @@ export class ColumnController {
         }
     }
 
-    public getGridColumns(keys: (string|Column)[]): Column[] {
+    public getGridColumns(keys: (string | Column)[]): Column[] {
         return this.getColumns(keys, this.getGridColumn.bind(this));
     }
 
-    private getColumns(keys: (string|Column)[], columnLookupCallback: (key: string|Column)=>Column ): Column[] {
+    private getColumns(keys: (string | Column)[], columnLookupCallback: (key: string | Column) => Column): Column[] {
         let foundColumns: Column[] = [];
         if (keys) {
-            keys.forEach( (key: (string|Column)) => {
+            keys.forEach((key: (string | Column)) => {
                 let column = columnLookupCallback(key);
                 if (column) {
                     foundColumns.push(column);
@@ -1844,7 +1899,7 @@ export class ColumnController {
     }
 
     // used by growGroupPanel
-    public getColumnWithValidation(key: string|Column): Column {
+    public getColumnWithValidation(key: string | Column): Column {
         let column = this.getPrimaryColumn(key);
         if (!column) {
             console.warn('ag-Grid: could not find column ' + column);
@@ -1852,16 +1907,18 @@ export class ColumnController {
         return column;
     }
 
-    public getPrimaryColumn(key: string|Column): Column {
+    public getPrimaryColumn(key: string | Column): Column {
         return this.getColumn(key, this.primaryColumns);
     }
 
-    public getGridColumn(key: string|Column): Column {
+    public getGridColumn(key: string | Column): Column {
         return this.getColumn(key, this.gridColumns);
     }
 
-    private getColumn(key: string|Column, columnList: Column[]): Column {
-        if (!key) {return null;}
+    private getColumn(key: string | Column, columnList: Column[]): Column | null {
+        if (!key) {
+            return null;
+        }
 
         for (let i = 0; i < columnList.length; i++) {
             if (this.columnsMatch(columnList[i], key)) {
@@ -1872,21 +1929,23 @@ export class ColumnController {
         return this.getAutoColumn(key);
     }
 
-    private getAutoColumn(key: string|Column): Column {
-        if (!_.exists(this.groupAutoColumns) || _.missing(this.groupAutoColumns)) { return null; }
+    private getAutoColumn(key: string | Column): Column | null {
+        if (!_.exists(this.groupAutoColumns) || _.missing(this.groupAutoColumns)) {
+            return null;
+        }
         return _.find(this.groupAutoColumns, groupCol => {
             return this.columnsMatch(groupCol, key);
         });
     }
 
-    private columnsMatch(column: Column, key: string|Column): boolean {
+    private columnsMatch(column: Column, key: string | Column): boolean {
         let columnMatches = column === key;
         let colDefMatches = column.getColDef() === key;
         let idMatches = column.getColId() == key;
         return columnMatches || colDefMatches || idMatches;
     }
 
-    public getDisplayNameForColumn(column: Column, location: string, includeAggFunc = false): string {
+    public getDisplayNameForColumn(column: Column, location: string | null, includeAggFunc = false): string {
         let headerName = this.getHeaderName(column.getColDef(), column, null, null, location);
         if (includeAggFunc) {
             return this.wrapHeaderNameWithAggFunc(column, headerName);
@@ -1895,7 +1954,7 @@ export class ColumnController {
         }
     }
 
-    public getDisplayNameForOriginalColumnGroup(columnGroup: ColumnGroup, originalColumnGroup: OriginalColumnGroup, location: string): string {
+    public getDisplayNameForOriginalColumnGroup(columnGroup: ColumnGroup | null, originalColumnGroup: OriginalColumnGroup | null, location: string): string {
         let colGroupDef = originalColumnGroup.getColGroupDef();
         if (colGroupDef) {
             return this.getHeaderName(colGroupDef, null, columnGroup, originalColumnGroup, location);
@@ -1910,7 +1969,7 @@ export class ColumnController {
 
     // location is where the column is going to appear, ie who is calling us
     private getHeaderName(colDef: AbstractColDef, column: Column, columnGroup: ColumnGroup,
-                          originalColumnGroup: OriginalColumnGroup, location: string): string {
+                          originalColumnGroup: OriginalColumnGroup, location: string): string | null {
         let headerValueGetter = colDef.headerValueGetter;
 
         if (headerValueGetter) {
@@ -1980,12 +2039,12 @@ export class ColumnController {
         // only columns with aggregation active can have aggregations
         let pivotValueColumn = column.getColDef().pivotValueColumn;
         let pivotActiveOnThisColumn = _.exists(pivotValueColumn);
-        let aggFunc: string | IAggFunc = null;
+        let aggFunc: string | IAggFunc | null = null;
         let aggFuncFound: boolean;
 
         // otherwise we have a measure that is active, and we are doing aggregation on it
         if (pivotActiveOnThisColumn) {
-            aggFunc = pivotValueColumn.getAggFunc();
+            aggFunc = pivotValueColumn ? pivotValueColumn.getAggFunc() : null;
             aggFuncFound = true;
         } else {
             let measureActive = column.isValueActive();
@@ -2002,7 +2061,7 @@ export class ColumnController {
         if (aggFuncFound) {
             let aggFuncString = (typeof aggFunc === 'string') ? <string> aggFunc : 'func';
             let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-            let aggFuncStringTranslated = localeTextFunc (aggFuncString, aggFuncString);
+            let aggFuncStringTranslated = localeTextFunc(aggFuncString, aggFuncString);
             return `${aggFuncStringTranslated}(${headerName})`;
         } else {
             return headerName;
@@ -2011,9 +2070,11 @@ export class ColumnController {
 
     // returns the group with matching colId and instanceId. If instanceId is missing,
     // matches only on the colId.
-    public getColumnGroup(colId: string|ColumnGroup, instanceId?: number): ColumnGroup {
+    public getColumnGroup(colId: string | ColumnGroup, instanceId?: number): ColumnGroup | null {
 
-        if (!colId) {return null;}
+        if (!colId) {
+            return null;
+        }
 
         if (colId instanceof ColumnGroup) {
             return colId;
@@ -2021,9 +2082,9 @@ export class ColumnController {
 
         let allColumnGroups = this.getAllDisplayedColumnGroups();
         let checkInstanceId = typeof instanceId === 'number';
-        let result: ColumnGroup = null;
+        let result: ColumnGroup | null = null;
 
-        this.columnUtils.depthFirstAllColumnTreeSearch(allColumnGroups, (child: ColumnGroupChild)=> {
+        this.columnUtils.depthFirstAllColumnTreeSearch(allColumnGroups, (child: ColumnGroupChild) => {
             if (child instanceof ColumnGroup) {
                 let columnGroup = <ColumnGroup> child;
                 let matched: boolean;
@@ -2055,7 +2116,7 @@ export class ColumnController {
         );
 
         // all new columns added will have aggFunc missing, so set it to what is in the colDef
-        this.valueColumns.forEach( col => {
+        this.valueColumns.forEach(col => {
             if (!col.getAggFunc()) {
                 col.setAggFunc(col.getColDef().aggFunc);
             }
@@ -2067,13 +2128,13 @@ export class ColumnController {
             (col: Column, flag: boolean) => col.setRowGroupActive(flag, source),
             (colDef: ColDef) => colDef.rowGroupIndex,
             (colDef: ColDef) => colDef.rowGroup,
-            );
+        );
     }
 
     private extractColumns(oldPrimaryColumns: Column[], previousCols: Column[],
-                           setFlagFunc: (col: Column, flag: boolean)=>void,
-                           getIndexFunc: (colDef: ColDef)=>number,
-                           getValueFunc: (colDef: ColDef)=>boolean): Column[] {
+                           setFlagFunc: (col: Column, flag: boolean) => void,
+                           getIndexFunc: (colDef: ColDef) => number,
+                           getValueFunc: (colDef: ColDef) => boolean): Column[] {
 
         if (!previousCols) {
             previousCols = [];
@@ -2090,36 +2151,38 @@ export class ColumnController {
 
         let newPrimaryCols = this.primaryColumns.filter(colNewFunc);
 
-        removedCols.forEach( col => setFlagFunc(col, false) );
+        removedCols.forEach(col => setFlagFunc(col, false));
 
         let newCols: Column[] = [];
 
         // we only want to work on new columns, as col columns already got processed first time around
         // pull out items with xxxIndex
-        newPrimaryCols.forEach( col => {
+        newPrimaryCols.forEach(col => {
             let index = getIndexFunc(col.getColDef());
             if (typeof index === 'number') {
                 newCols.push(col);
             }
         });
         // then sort them
-        newCols.sort(function(colA: Column, colB: Column): number {
+        newCols.sort(function (colA: Column, colB: Column): number {
             let indexA = getIndexFunc(colA.getColDef());
             let indexB = getIndexFunc(colB.getColDef());
             return indexA - indexB;
         });
         // now just pull out items xxx (boolean value), they will be added at the end
         // after the indexed ones, but in the order the columns appear
-        newPrimaryCols.forEach( col => {
+        newPrimaryCols.forEach(col => {
             let booleanValue = getValueFunc(col.getColDef());
             if (booleanValue) {
                 // if user already specified xxxIndex then we skip it as this col already included
-                if (newCols.indexOf(col)>=0) { return; }
+                if (newCols.indexOf(col) >= 0) {
+                    return;
+                }
                 newCols.push(col);
             }
         });
 
-        newCols.forEach( col => setFlagFunc(col, true) );
+        newCols.forEach(col => setFlagFunc(col, true));
 
         let res = existingCols.concat(newCols);
         return res;
@@ -2134,7 +2197,7 @@ export class ColumnController {
     }
 
     public resetColumnGroupState(source: ColumnEventType = "api"): void {
-        let stateItems: {groupId: string, open: boolean}[] = [];
+        let stateItems: { groupId: string, open: boolean }[] = [];
 
         this.columnUtils.depthFirstOriginalTreeSearch(this.primaryColumnTree, child => {
             if (child instanceof OriginalColumnGroup) {
@@ -2149,8 +2212,8 @@ export class ColumnController {
         this.setColumnGroupState(stateItems, source);
     }
 
-    public getColumnGroupState(): {groupId: string, open: boolean}[] {
-        let columnGroupState: {groupId: string, open: boolean}[] = [];
+    public getColumnGroupState(): { groupId: string, open: boolean }[] {
+        let columnGroupState: { groupId: string, open: boolean }[] = [];
         this.columnUtils.depthFirstOriginalTreeSearch(this.gridBalancedTree, node => {
             if (node instanceof OriginalColumnGroup) {
                 let originalColumnGroup = <OriginalColumnGroup> node;
@@ -2163,19 +2226,23 @@ export class ColumnController {
         return columnGroupState;
     }
 
-    public setColumnGroupState(stateItems: {groupId: string, open: boolean}[], source: ColumnEventType = "api"): void {
+    public setColumnGroupState(stateItems: { groupId: string, open: boolean }[], source: ColumnEventType = "api"): void {
         this.columnAnimationService.start();
 
         let impactedGroups: OriginalColumnGroup[] = [];
 
-        stateItems.forEach( stateItem => {
+        stateItems.forEach(stateItem => {
             let groupKey = stateItem.groupId;
             let newValue = stateItem.open;
 
             let originalColumnGroup: OriginalColumnGroup = this.getOriginalColumnGroup(groupKey);
-            if (!originalColumnGroup) { return; }
+            if (!originalColumnGroup) {
+                return;
+            }
 
-            if (originalColumnGroup.isExpanded() === newValue) { return; }
+            if (originalColumnGroup.isExpanded() === newValue) {
+                return;
+            }
 
             this.logger.log('columnGroupOpened(' + originalColumnGroup.getGroupId() + ',' + newValue + ')');
             originalColumnGroup.setExpanded(newValue);
@@ -2184,7 +2251,7 @@ export class ColumnController {
 
         this.updateGroupsAndDisplayedColumns(source);
 
-        impactedGroups.forEach( originalColumnGroup => {
+        impactedGroups.forEach(originalColumnGroup => {
             let event: ColumnGroupOpenedEvent = {
                 type: Events.EVENT_COLUMN_GROUP_OPENED,
                 columnGroup: originalColumnGroup,
@@ -2198,7 +2265,7 @@ export class ColumnController {
     }
 
     // called by headerRenderer - when a header is opened or closed
-    public setColumnGroupOpened(key: OriginalColumnGroup|string, newValue: boolean, source: ColumnEventType = "api"): void {
+    public setColumnGroupOpened(key: OriginalColumnGroup | string | undefined, newValue: boolean, source: ColumnEventType = "api"): void {
         let keyAsString: string;
         if (key instanceof OriginalColumnGroup) {
             keyAsString = (<OriginalColumnGroup>key).getId();
@@ -2208,7 +2275,7 @@ export class ColumnController {
         this.setColumnGroupState([{groupId: keyAsString, open: newValue}], source);
     }
 
-    public getOriginalColumnGroup(key: OriginalColumnGroup|string): OriginalColumnGroup {
+    public getOriginalColumnGroup(key: OriginalColumnGroup | string): OriginalColumnGroup {
         if (key instanceof OriginalColumnGroup) {
             return <OriginalColumnGroup> key;
         }
@@ -2251,7 +2318,7 @@ export class ColumnController {
                 // keep col if a) it's auto-group or b) it's visible
                 let isAutoGroupCol = this.groupAutoColumns && this.groupAutoColumns.indexOf(column) >= 0;
                 return isAutoGroupCol || column.isVisible();
-            } );
+            });
         }
 
         return columnsForDisplay;
@@ -2259,7 +2326,7 @@ export class ColumnController {
 
     private checkColSpanActiveInCols(columns: Column[]): boolean {
         let result = false;
-        columns.forEach( col => {
+        columns.forEach(col => {
             if (_.exists(col.getColDef().colSpan)) {
                 result = true;
             }
@@ -2304,11 +2371,13 @@ export class ColumnController {
         return this.secondaryColumnsPresent;
     }
 
-    public setSecondaryColumns(colDefs: (ColDef|ColGroupDef)[], source: ColumnEventType = "api"): void {
-        let newColsPresent = colDefs && colDefs.length>0;
+    public setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[], source: ColumnEventType = "api"): void {
+        let newColsPresent = colDefs && colDefs.length > 0;
 
         // if not cols passed, and we had to cols anyway, then do nothing
-        if (!newColsPresent && !this.secondaryColumnsPresent) { return; }
+        if (!newColsPresent && !this.secondaryColumnsPresent) {
+            return;
+        }
 
         if (newColsPresent) {
             this.processSecondaryColumnDefinitions(colDefs);
@@ -2328,17 +2397,19 @@ export class ColumnController {
         this.updateDisplayedColumns(source);
     }
 
-    private processSecondaryColumnDefinitions(colDefs: (ColDef|ColGroupDef)[]): (ColDef|ColGroupDef)[] {
+    private processSecondaryColumnDefinitions(colDefs: (ColDef | ColGroupDef)[]): (ColDef | ColGroupDef)[] | undefined {
 
         let columnCallback = this.gridOptionsWrapper.getProcessSecondaryColDefFunc();
         let groupCallback = this.gridOptionsWrapper.getProcessSecondaryColGroupDefFunc();
 
-        if (!columnCallback && !groupCallback) { return; }
+        if (!columnCallback && !groupCallback) {
+            return undefined;
+        }
 
         searchForColDefs(colDefs);
 
-        function searchForColDefs(colDefs2: (ColDef|ColGroupDef)[]): void {
-            colDefs2.forEach( function(abstractColDef: AbstractColDef) {
+        function searchForColDefs(colDefs2: (ColDef | ColGroupDef)[]): void {
+            colDefs2.forEach(function (abstractColDef: AbstractColDef) {
                 let isGroup = _.exists((<any>abstractColDef).children);
                 if (isGroup) {
                     let colGroupDef = <ColGroupDef> abstractColDef;
@@ -2381,7 +2452,7 @@ export class ColumnController {
 
         this.addAutoGroupToGridColumns();
 
-        this.autoRowHeightColumns = this.gridColumns.filter( col => col.getColDef().autoHeight );
+        this.autoRowHeightColumns = this.gridColumns.filter(col => col.getColDef().autoHeight);
 
         this.putFixedColumnsFirst();
 
@@ -2400,20 +2471,26 @@ export class ColumnController {
     }
 
     private orderGridColsLikeLastPrimary(): void {
-        if (_.missing(this.lastPrimaryOrder)) { return; }
+        if (_.missing(this.lastPrimaryOrder)) {
+            return;
+        }
 
         // only do the sort if at least one column is accounted for. columns will be not accounted for
         // if changing from secondary to primary columns
         let noColsFound = true;
-        this.gridColumns.forEach( col => {
-            if (this.lastPrimaryOrder.indexOf(col)>=0) { noColsFound = false; }
+        this.gridColumns.forEach(col => {
+            if (this.lastPrimaryOrder.indexOf(col) >= 0) {
+                noColsFound = false;
+            }
         });
-        if (noColsFound) { return; }
+        if (noColsFound) {
+            return;
+        }
 
         // order cols in teh same order as before. we need to make sure that all
         // cols still exists, so filter out any that no longer exist.
-        let oldColsOrdered = this.lastPrimaryOrder.filter( col => this.gridColumns.indexOf(col) >= 0);
-        let newColsOrdered = this.gridColumns.filter( col => this.lastPrimaryOrder.indexOf(col) < 0);
+        let oldColsOrdered = this.lastPrimaryOrder.filter(col => this.gridColumns.indexOf(col) >= 0);
+        let newColsOrdered = this.gridColumns.filter(col => this.lastPrimaryOrder.indexOf(col) < 0);
         this.gridColumns = oldColsOrdered.concat(newColsOrdered);
 
         // let gridColsBeforeSort = this.gridColumns.slice();
@@ -2467,7 +2544,9 @@ export class ColumnController {
         // add in auto-group here
         this.createGroupAutoColumnsIfNeeded();
 
-        if (_.missing(this.groupAutoColumns)) { return; }
+        if (_.missing(this.groupAutoColumns)) {
+            return;
+        }
 
         this.gridColumns = this.groupAutoColumns.concat(this.gridColumns);
 
@@ -2546,18 +2625,18 @@ export class ColumnController {
         // let totalColumnWidth = this.getWidthOfColsInList()
         let doingRtl = this.gridOptionsWrapper.isEnableRtl();
 
-        [this.displayedLeftColumns,this.displayedRightColumns,this.displayedCenterColumns].forEach( columns => {
+        [this.displayedLeftColumns, this.displayedRightColumns, this.displayedCenterColumns].forEach(columns => {
             if (doingRtl) {
                 // when doing RTL, we start at the top most pixel (ie RHS) and work backwards
                 let left = this.getWidthOfColsInList(columns);
-                columns.forEach( column => {
+                columns.forEach(column => {
                     left -= column.getActualWidth();
                     column.setLeft(left, source);
                 });
             } else {
                 // otherwise normal LTR, we start at zero
                 let left = 0;
-                columns.forEach( column => {
+                columns.forEach(column => {
                     column.setLeft(left, source);
                     left += column.getActualWidth();
                 });
@@ -2568,15 +2647,15 @@ export class ColumnController {
         // items left in allColumns are columns not displayed, so remove the left position. this is
         // important for the rows, as if a col is made visible, then taken out, then made visible again,
         // we don't want the animation of the cell floating in from the old position, whatever that was.
-        allColumns.forEach( (column: Column) => {
+        allColumns.forEach((column: Column) => {
             column.setLeft(null, source);
         });
     }
 
     private setLeftValuesOfGroups(): void {
         // a groups left value is the lest left value of it's children
-        [this.displayedLeftColumnTree,this.displayedRightColumnTree,this.displayedCentreColumnTree].forEach( columns => {
-            columns.forEach( column => {
+        [this.displayedLeftColumnTree, this.displayedRightColumnTree, this.displayedCentreColumnTree].forEach(columns => {
+            columns.forEach(column => {
                 if (column instanceof ColumnGroup) {
                     let columnGroup = <ColumnGroup> column;
                     columnGroup.checkLeft();
@@ -2587,14 +2666,14 @@ export class ColumnController {
 
     private addToDisplayedColumns(displayedColumnTree: ColumnGroupChild[], displayedColumns: Column[]): void {
         displayedColumns.length = 0;
-        this.columnUtils.depthFirstDisplayedColumnTreeSearch(displayedColumnTree, (child: ColumnGroupChild)=> {
+        this.columnUtils.depthFirstDisplayedColumnTreeSearch(displayedColumnTree, (child: ColumnGroupChild) => {
             if (child instanceof Column) {
                 displayedColumns.push(child);
             }
         });
     }
 
-    private updateDisplayedCenterVirtualColumns(): {[key: string]: boolean} {
+    private updateDisplayedCenterVirtualColumns(): { [key: string]: boolean } {
 
         if (this.suppressColumnVirtualisation) {
             // no virtualisation, so don't filter
@@ -2611,7 +2690,7 @@ export class ColumnController {
         // return map of virtual col id's, for easy lookup when building the groups.
         // the map will be colId=>true, ie col id's mapping to 'true'.
         let result: any = {};
-        this.allDisplayedVirtualColumns.forEach( (col: Column) => {
+        this.allDisplayedVirtualColumns.forEach((col: Column) => {
             result[col.getId()] = true;
         });
         return result;
@@ -2649,10 +2728,10 @@ export class ColumnController {
         testGroup(this.displayedRightColumnTree, this.displayedRightHeaderRows, 0);
         testGroup(this.displayedCentreColumnTree, this.displayedCentreHeaderRows, 0);
 
-        function testGroup(children: ColumnGroupChild[], result: {[row: number]: ColumnGroupChild[]}, dept: number): boolean {
+        function testGroup(children: ColumnGroupChild[], result: { [row: number]: ColumnGroupChild[] }, dept: number): boolean {
             let returnValue = false;
 
-            for (let i = 0; i<children.length; i++) {
+            for (let i = 0; i < children.length; i++) {
                 // see if this item is within viewport
                 let child = children[i];
                 let addThisItem: boolean;
@@ -2662,7 +2741,7 @@ export class ColumnController {
                 } else {
                     // if group, base decision on children
                     let columnGroup = <ColumnGroup> child;
-                    addThisItem = testGroup(columnGroup.getDisplayedChildren(), result, dept+1);
+                    addThisItem = testGroup(columnGroup.getDisplayedChildren(), result, dept + 1);
                 }
 
                 if (addThisItem) {
@@ -2712,7 +2791,7 @@ export class ColumnController {
             let availablePixels = gridWidth - this.getWidthOfColsInList(colsToNotSpread);
             if (availablePixels <= 0) {
                 // no width, set everything to minimum
-                colsToSpread.forEach( (column: Column) => {
+                colsToSpread.forEach((column: Column) => {
                     column.setMinimum(source);
                 });
             } else {
@@ -2748,7 +2827,7 @@ export class ColumnController {
         this.setLeftValues(source);
         this.updateBodyWidths();
 
-        colsToFireEventFor.forEach( (column: Column) => {
+        colsToFireEventFor.forEach((column: Column) => {
             let event: ColumnResizedEvent = {
                 type: Events.EVENT_COLUMN_RESIZED,
                 column: column,
@@ -2768,15 +2847,15 @@ export class ColumnController {
     }
 
     private buildDisplayedTrees(visibleColumns: Column[]) {
-        let leftVisibleColumns = _.filter(visibleColumns, (column)=> {
+        let leftVisibleColumns = _.filter(visibleColumns, (column) => {
             return column.getPinned() === 'left';
         });
 
-        let rightVisibleColumns = _.filter(visibleColumns, (column)=> {
+        let rightVisibleColumns = _.filter(visibleColumns, (column) => {
             return column.getPinned() === 'right';
         });
 
-        let centerVisibleColumns = _.filter(visibleColumns, (column)=> {
+        let centerVisibleColumns = _.filter(visibleColumns, (column) => {
             return column.getPinned() !== 'left' && column.getPinned() !== 'right';
         });
 
@@ -2806,7 +2885,9 @@ export class ColumnController {
 
     private createGroupAutoColumnsIfNeeded(): void {
 
-        if (!this.autoGroupsNeedBuilding) { return; }
+        if (!this.autoGroupsNeedBuilding) {
+            return;
+        }
         this.autoGroupsNeedBuilding = false;
 
         // see if we need to insert the default grouping column
@@ -2824,7 +2905,7 @@ export class ColumnController {
 
     private getWidthOfColsInList(columnList: Column[]) {
         let result = 0;
-        for (let i = 0; i<columnList.length; i++) {
+        for (let i = 0; i < columnList.length; i++) {
             result += columnList[i].getActualWidth();
         }
         return result;

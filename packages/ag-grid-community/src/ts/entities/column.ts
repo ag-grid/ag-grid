@@ -7,7 +7,8 @@ import {
     ColSpanParams,
     IAggFunc,
     IsColumnFunc,
-    IsColumnFuncParams, RowSpanParams
+    IsColumnFuncParams,
+    RowSpanParams
 } from "./colDef";
 import {EventService} from "../eventService";
 import {Utils as _} from "../utils";
@@ -70,7 +71,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     @Autowired('gridApi') private gridApi: GridApi;
 
     private readonly colDef: ColDef;
-    private readonly  colId: any;
+    private readonly colId: any;
 
     // We do NOT use this anywhere, we just keep a reference. this is to check object equivalence
     // when the user provides an updated list of columns - so we can check if we have a column already
@@ -81,10 +82,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private actualWidth: any;
 
     private visible: any;
-    private pinned: string;
+    private pinned: string | null;
     private left: number;
     private oldLeft: number;
-    private aggFunc: string | IAggFunc;
+    private aggFunc: string | IAggFunc|null;
     private sort: string;
     private sortedAt: number;
     private moving = false;
@@ -117,7 +118,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     private parent: ColumnGroup;
 
-    constructor(colDef: ColDef, userProvidedColDef: ColDef, colId: String, primary: boolean) {
+    constructor(colDef: ColDef, userProvidedColDef: ColDef | null, colId: String, primary: boolean) {
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
         this.visible = !colDef.hide;
@@ -177,8 +178,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.actualWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
 
         let suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
-        this.fieldContainsDots = _.exists(this.colDef.field) && this.colDef.field.indexOf('.')>=0 && !suppressDotNotation;
-        this.tooltipFieldContainsDots = _.exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.')>=0 && !suppressDotNotation;
+        this.fieldContainsDots = _.exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
+        this.tooltipFieldContainsDots = _.exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
 
         this.validate();
     }
@@ -188,7 +189,9 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public isRowGroupDisplayed(colId: string): boolean {
-        if (_.missing(this.colDef) || _.missing(this.colDef.showRowGroup)) { return false; }
+        if (_.missing(this.colDef) || _.missing(this.colDef.showRowGroup)) {
+            return false;
+        }
 
         let showingAllGroups = this.colDef.showRowGroup === true;
         let showingThisGroup = this.colDef.showRowGroup === colId;
@@ -222,8 +225,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
         if (!this.gridOptionsWrapper.isEnterprise()) {
             let itemsNotAllowedWithoutEnterprise =
-                ['enableRowGroup','rowGroup','rowGroupIndex','enablePivot','pivot','pivotIndex','aggFunc'];
-            itemsNotAllowedWithoutEnterprise.forEach( item => {
+                ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'pivot', 'pivotIndex', 'aggFunc'];
+            itemsNotAllowedWithoutEnterprise.forEach(item => {
                 if (_.exists(colDefAny[item])) {
                     console.warn(`ag-Grid: ${item} is only valid in ag-Grid-Enterprise, your column definition should not have ${item}`);
                 }
@@ -232,8 +235,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
         if (this.gridOptionsWrapper.isTreeData()) {
             let itemsNotAllowedWithTreeData =
-                ['enableRowGroup','rowGroup','rowGroupIndex','enablePivot','pivot','pivotIndex'];
-            itemsNotAllowedWithTreeData.forEach( item => {
+                ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'pivot', 'pivotIndex'];
+            itemsNotAllowedWithTreeData.forEach(item => {
                 if (_.exists(colDefAny[item])) {
                     console.warn(`ag-Grid: ${item} is not possible when doing tree data, your column definition should not have ${item}`);
                 }
@@ -438,7 +441,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.sortedAt = sortedAt;
     }
 
-    public setAggFunc(aggFunc: string | IAggFunc): void {
+    public setAggFunc(aggFunc: string | IAggFunc| null): void {
         this.aggFunc = aggFunc;
     }
 
@@ -478,10 +481,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_FILTER_CHANGED, source));
     }
 
-    public setPinned(pinned: string|boolean): void {
-        if (pinned===true || pinned===Column.PINNED_LEFT) {
+    public setPinned(pinned: string | boolean | null | undefined): void {
+        if (pinned === true || pinned === Column.PINNED_LEFT) {
             this.pinned = Column.PINNED_LEFT;
-        } else if (pinned===Column.PINNED_RIGHT) {
+        } else if (pinned === Column.PINNED_RIGHT) {
             this.pinned = Column.PINNED_RIGHT;
         } else {
             this.pinned = null;
@@ -527,7 +530,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public setVisible(visible: boolean, source: ColumnEventType = "api"): void {
-        let newValue = visible===true;
+        let newValue = visible === true;
         if (this.visible !== newValue) {
             this.visible = newValue;
             this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_VISIBLE_CHANGED, source));
