@@ -79,8 +79,8 @@ export class SetFilterListItem extends Component {
 
     private updateCheckboxIcon() {
         if (this.eCheckbox.children) {
-            for (let i=0; i<this.eCheckbox.children.length; i++) {
-                this.eCheckbox.removeChild(this.eCheckbox.children.item(i));
+            while (this.eCheckbox.lastChild) {
+                this.eCheckbox.removeChild(this.eCheckbox.lastChild);
             }
         }
 
