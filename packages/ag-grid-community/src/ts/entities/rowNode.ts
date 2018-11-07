@@ -156,7 +156,7 @@ export class RowNode implements IEventEmitter {
     public allChildrenCount: number;
 
     /** Children mapped by the pivot columns */
-    public childrenMapped: {[key: string]: any} = {};
+    public childrenMapped: {[key: string]: any} | null = {};
 
     /** Server Side Row Model Only - the children are in an infinite cache */
     public childrenCache: RowNodeCache<RowNodeBlock,RowNodeCacheParams>;

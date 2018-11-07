@@ -13,7 +13,7 @@ export class ValueFormatterService {
     @Autowired('expressionService') private expressionService: ExpressionService;
 
     public formatValue(column: Column,
-                       rowNode: RowNode,
+                       rowNode: RowNode | null,
                        $scope: any,
                        value: any): string {
 

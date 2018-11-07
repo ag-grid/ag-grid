@@ -27,8 +27,8 @@ export interface AgEvent {
 }
 
 export interface AgGridEvent extends AgEvent {
-    api: GridApi;
-    columnApi: ColumnApi;
+    api: GridApi | null | undefined;
+    columnApi: ColumnApi | null | undefined;
 }
 
 export interface ToolPanelVisibleChangedEvent extends AgGridEvent {
@@ -247,11 +247,11 @@ export interface ColumnValueChangedEvent extends ColumnEvent {
 }
 
 export interface ColumnMovedEvent extends ColumnEvent {
-    toIndex: number|undefined;
+    toIndex: number | undefined;
 }
 
 export interface ColumnVisibleEvent extends ColumnEvent {
-    visible: boolean|undefined;
+    visible: boolean | undefined;
 }
 
 export interface ColumnPinnedEvent extends ColumnEvent {

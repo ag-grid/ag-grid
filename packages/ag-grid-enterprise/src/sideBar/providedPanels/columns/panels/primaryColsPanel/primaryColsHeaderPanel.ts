@@ -1,6 +1,7 @@
 import {
     _,
     Autowired,
+    Column,
     ColumnController,
     Component,
     Context,
@@ -157,7 +158,11 @@ export class PrimaryColsHeaderPanel extends Component {
 
     private setColumnsCheckedState(): void {
 
-        let columns = this.columnController.getAllPrimaryColumns().filter(col => !col.isLockVisible());
+        const allPrimaryColumns = this.columnController.getAllPrimaryColumns();
+        let columns: Column[] = [];
+        if (allPrimaryColumns !== null) {
+            columns = allPrimaryColumns.filter(col => !col.isLockVisible())
+        }
         let pivotMode = this.columnController.isPivotMode();
 
         let checkedCount = 0;
