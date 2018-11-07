@@ -193,9 +193,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         let serverSideCache = <ServerSideCache> this.rootNode.childrenCache;
 
         let sortingWithValueCol = this.isSortingWithValueColumn(changedColumnsInSort);
+        let sortingWithSecondaryCol = this.isSortingWithSecondaryColumn(changedColumnsInSort);
 
         let sortAlwaysResets = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
-        if (sortAlwaysResets || sortingWithValueCol) {
+        if (sortAlwaysResets || sortingWithValueCol || sortingWithSecondaryCol) {
             this.reset();
         } else {
             serverSideCache.refreshCacheAfterSort(changedColumnsInSort, rowGroupColIds);
@@ -595,14 +596,26 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         let valueColIds = this.columnController.getValueColumns().map(col => col.getColId());
 
         for (let i = 0; i < changedColumnsInSort.length; i++) {
-            let sortColId = changedColumnsInSort[i];
-            if (valueColIds.indexOf(sortColId) > -1) {
+            if (valueColIds.indexOf(changedColumnsInSort[i]) > -1) {
                 return true;
             }
         }
 
         return false;
     }
+
+    private isSortingWithSecondaryColumn(changedColumnsInSort: string[]): boolean {
+        let secondaryColIds = this.columnController.getSecondaryColumns().map(col => col.getColId());
+
+        for (let i = 0; i < changedColumnsInSort.length; i++) {
+            if (secondaryColIds.indexOf(changedColumnsInSort[i]) > -1) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 
     private cacheExists(): boolean {
         return _.exists(this.rootNode) && _.exists(this.rootNode.childrenCache);
