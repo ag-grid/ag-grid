@@ -1447,7 +1447,7 @@ export class GridOptionsWrapper {
 
     // we don't allow dynamic row height for virtual paging
     public getRowHeightAsNumber(): number {
-        if (this.gridOptions.rowHeight && _.missing(this.gridOptions.rowHeight)) {
+        if (!this.gridOptions.rowHeight || _.missing(this.gridOptions.rowHeight)) {
             return this.getDefaultRowHeight();
         } else if (this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight)) {
             return this.gridOptions.rowHeight;
