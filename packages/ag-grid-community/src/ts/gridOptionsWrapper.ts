@@ -1335,6 +1335,12 @@ export class GridOptionsWrapper {
             options.sideBar = options.sideBar || false;
         }
 
+        if (options.maxBlocksInCache && options.maxBlocksInCache < 3) {
+            console.warn(`ag-grid: maxBlocksInCache needs to be configured with a value greater than 2 so has been set to 3`);
+            options.maxBlocksInCache = 3;
+        }
+
+
         let oldToolPanelProperties: { [p: string]: string } = {
             toolPanelSuppressRowGroups: 'suppressRowGroups',
             toolPanelSuppressValues: 'suppressValues',
