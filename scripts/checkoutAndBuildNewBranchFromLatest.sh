@@ -30,6 +30,14 @@ echo "################# Installing Package Dependencies ########################
 ./node_modules/.bin/lerna bootstrap
 
 echo "########################################################################"
+echo "#################### Updating LicenseManager ###########################"
+if [ -f $GEN_KEY_DEFAULT_LOCATION ]; then
+    node scripts/updateLicenseManager.js `node $GEN_KEY_DEFAULT_LOCATION release`
+else
+    echo "$GEN_KEY_DEFAULT_LOCATION does not exist. Please update the License Key manually"
+fi
+
+echo "########################################################################"
 echo "###################### Installing Packages #############################"
 ./node_modules/.bin/lerna run build
 
@@ -41,10 +49,3 @@ echo "########################################################################"
 echo "##################### Updating .gitignore #############################"
 node scripts/updateGitIgnore.js $NEW_VERSION $PEER_VERSION
 
-echo "########################################################################"
-echo "#################### Updating LicenseManager ###########################"
-if [ -f $GEN_KEY_DEFAULT_LOCATION ]; then
-    node scripts/updateLicenseManager.js `node $GEN_KEY_DEFAULT_LOCATION release`
-else
-    echo "$GEN_KEY_DEFAULT_LOCATION does not exist. Please update the License Key manually"
-fi
