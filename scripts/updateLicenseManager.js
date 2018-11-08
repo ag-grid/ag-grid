@@ -8,7 +8,6 @@ if (process.argv.length !== 3) {
     process.exit(1);
 }
 
-console.log(process.argv);
 const [exec, scriptPath, licenseKey] = process.argv;
 
 const licenseManagerSrc = fs.readFileSync(LICENSE_MANAGER_FILE, 'utf8');

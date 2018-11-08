@@ -11,6 +11,8 @@ NEW_BRANCH=$1
 NEW_VERSION=$2
 PEER_VERSION=$3
 
+GEN_KEY_DEFAULT_LOCATION=~/genKey/genKey.js
+
 echo "########################################################################"
 echo "###################### Switching to latest #############################"
 ./scripts/switchToBranch.sh latest
@@ -39,4 +41,10 @@ echo "########################################################################"
 echo "##################### Updating .gitignore #############################"
 node scripts/updateGitIgnore.js $NEW_VERSION $PEER_VERSION
 
-
+echo "########################################################################"
+echo "#################### Updating LicenseManager ###########################"
+if [ -f $GEN_KEY_DEFAULT_LOCATION ]; then
+    node scripts/updateLicenseManager.js `node $GEN_KEY_DEFAULT_LOCATION release`
+else
+    echo "$GEN_KEY_DEFAULT_LOCATION does not exist. Please update the License Key manually"
+fi
