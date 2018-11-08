@@ -4,7 +4,7 @@ const fs = require('fs');
 const pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);
 
 const PACKAGE_DIR = 'packages';
-
+const LERNA_JSON = 'lerna.json';
 
 if (process.argv.length !== 4) {
     console.log("Usage: node scripts/versionModules.js [New Version] [Dependency Version]");
@@ -16,6 +16,11 @@ if (process.argv.length !== 4) {
 const [exec, scriptPath, newVersion, dependencyVersion] = process.argv;
 
 function main() {
+    updatePackageBowserJsonFiles();
+    updateLernaJson();
+}
+
+function updatePackageBowserJsonFiles() {
     const CWD = process.cwd();
 
     fs.readdirSync(PACKAGE_DIR)
@@ -29,6 +34,19 @@ function main() {
                 updateFileWithNewVersions(currentBowerFile, true);
             }
         );
+}
+
+function updateLernaJson() {
+    fs.readFile(LERNA_JSON, 'utf8', (err, contents) => {
+        const lernaFile = JSON.parse(contents);
+
+        const copyOfFile = JSON.parse(JSON.stringify(lernaFile));
+        copyOfFile.version = newVersion;
+
+        fs.writeFileSync(LERNA_JSON,
+            JSON.stringify(copyOfFile, null, 2),
+            "utf8");
+    });
 }
 
 function updateFileWithNewVersions(currentFile, optional = false) {
