@@ -390,6 +390,15 @@ export class FilterManager {
         return filterWrapper.filterPromise;
     }
 
+    public isFilterActive(column: Column): boolean {
+        let filterWrapper: FilterWrapper = this.cachedFilter(column);
+        if (filterWrapper) {
+            return filterWrapper.filterPromise.resolveNow(false, filter=>filter.isFilterActive());
+        } else {
+            return false;
+        }
+    }
+
     public getOrCreateFilterWrapper(column: Column, source: FilterRequestSource): FilterWrapper {
         let filterWrapper: FilterWrapper = this.cachedFilter(column);
 
