@@ -852,27 +852,16 @@ export class RowRenderer extends BeanStub {
         }
 
         if (this.paginationProxy.isRowsToRender()) {
-            let fireEvent = true;
 
-            // the server side row model has a stub row when no data is present
-            // this take this stub row into account
-            if (this.gridOptionsWrapper.isRowModelServerSide()) {
-                let firstRowNode = this.paginationProxy.getRow(0);
-                // we don't fire event if first row node is a stub.
-                fireEvent = !firstRowNode || !firstRowNode.stub;
-            }
+            let event: FirstDataRenderedEvent = {
+                type: Events.EVENT_FIRST_DATA_RENDERED,
+                firstRow: newFirst,
+                lastRow: newLast,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
 
-            if (fireEvent) {
-                let event: FirstDataRenderedEvent = {
-                    type: Events.EVENT_FIRST_DATA_RENDERED,
-                    firstRow: newFirst,
-                    lastRow: newLast,
-                    api: this.gridApi,
-                    columnApi: this.columnApi
-                };
-
-                this.eventService.dispatchEventOnce(event);
-            }
+            this.eventService.dispatchEventOnce(event);
         }
     }
 
