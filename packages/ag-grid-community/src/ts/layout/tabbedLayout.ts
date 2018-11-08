@@ -102,8 +102,8 @@ export class TabbedLayout {
     }
 
     public showItem(tabbedItem: TabbedItem): void {
-        let itemWrapper = _.find(this.items, (itemWrapper)=> {
-            return itemWrapper.tabbedItem === tabbedItem;
+        const itemWrapper = _.find(this.items, wrapper => {
+            return wrapper.tabbedItem === tabbedItem;
         });
         if (itemWrapper) {
             this.showItemWrapper(itemWrapper);
@@ -119,7 +119,7 @@ export class TabbedLayout {
             return;
         }
         _.removeAllChildren(this.eBody);
-        wrapper.tabbedItem.bodyPromise.then(body=> {
+        wrapper.tabbedItem.bodyPromise.then(body => {
             this.eBody.appendChild(body);
         });
 
