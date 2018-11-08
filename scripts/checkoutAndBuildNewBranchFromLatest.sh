@@ -22,14 +22,6 @@ echo "########### Creating and switching to new branch $NEW_BRANCH ###########"
 ./scripts/createAndSwitchToBranch.sh b19.1.2
 
 echo "########################################################################"
-echo "################# Installing Root Dependencies #########################"
-npm install
-
-echo "########################################################################"
-echo "################# Installing Package Dependencies #########################"
-./node_modules/.bin/lerna bootstrap
-
-echo "########################################################################"
 echo "#################### Updating LicenseManager ###########################"
 if [ -f $GEN_KEY_DEFAULT_LOCATION ]; then
     node scripts/updateLicenseManager.js `node $GEN_KEY_DEFAULT_LOCATION release`
@@ -38,12 +30,20 @@ else
 fi
 
 echo "########################################################################"
-echo "###################### Installing Packages #############################"
-./node_modules/.bin/lerna run build
-
-echo "########################################################################"
 echo "####### Updating lerna.json, package.json and bower.json files #########"
 node scripts/versionModules.js $NEW_VERSION $PEER_VERSION
+
+echo "########################################################################"
+echo "################# Installing Root Dependencies #########################"
+npm install
+
+echo "########################################################################"
+echo "################# Installing Package Dependencies #########################"
+./node_modules/.bin/lerna bootstrap
+
+echo "########################################################################"
+echo "###################### Installing Packages #############################"
+./node_modules/.bin/lerna run build
 
 echo "########################################################################"
 echo "##################### Updating .gitignore #############################"
