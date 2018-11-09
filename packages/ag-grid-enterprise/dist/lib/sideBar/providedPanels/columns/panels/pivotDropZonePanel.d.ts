@@ -1,0 +1,22 @@
+// ag-grid-enterprise v19.1.2
+import { Column } from "ag-grid-community/main";
+import { BaseDropZonePanel } from "../dropZone/baseDropZonePanel";
+export declare class PivotDropZonePanel extends BaseDropZonePanel {
+    private columnController;
+    private eventService;
+    private gridOptionsWrapper;
+    private context;
+    private loggerFactory;
+    private dragAndDropService;
+    private columnApi;
+    private gridApi;
+    constructor(horizontal: boolean);
+    private passBeansUp;
+    private refresh;
+    private checkVisibility;
+    protected isColumnDroppable(column: Column): boolean;
+    protected updateColumns(columns: Column[]): void;
+    protected getIconName(): string;
+    protected getExistingColumns(): Column[];
+}
+//# sourceMappingURL=pivotDropZonePanel.d.ts.map
