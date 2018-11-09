@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.1
+// ag-grid-enterprise v19.1.2
 export declare class EnterpriseBoot {
     private filterManager;
     private cellEditorFactory;

@@ -1,4 +1,4 @@
-// ag-grid-aurelia v19.1.1
+// ag-grid-aurelia v19.1.2
 import { ComponentAttached, ComponentDetached, Container, TaskQueue, ViewResources } from "aurelia-framework";
 import { ColumnApi, GridApi, GridOptions } from "ag-grid-community";
 import { AureliaFrameworkFactory } from "./aureliaFrameworkFactory";

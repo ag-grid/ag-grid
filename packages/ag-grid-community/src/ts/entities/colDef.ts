@@ -302,7 +302,7 @@ export interface ColDef extends AbstractColDef {
     enableCellChangeFlash?: boolean;
 
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
-    pivotValueColumn?: Column;
+    pivotValueColumn?: Column | null;
 
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotTotalColumnIds?: string[];

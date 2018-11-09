@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.1
+// ag-grid-enterprise v19.1.2
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -137,7 +137,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
             return;
         }
         this.state = BaseDropZonePanel.STATE_REARRANGE_COLUMNS;
-        this.potentialDndColumns = draggingEvent.dragSource.dragItemCallback().columns;
+        this.potentialDndColumns = draggingEvent.dragSource.dragItemCallback().columns || [];
         this.refreshGui();
         this.checkInsertIndex(draggingEvent);
         this.refreshGui();
@@ -151,7 +151,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
     };
     BaseDropZonePanel.prototype.onDragEnter = function (draggingEvent) {
         // this will contain all columns that are potential drops
-        var dragColumns = draggingEvent.dragSource.dragItemCallback().columns;
+        var dragColumns = draggingEvent.dragSource.dragItemCallback().columns || [];
         this.state = BaseDropZonePanel.STATE_NEW_COLUMNS_IN;
         // take out columns that are not groupable
         var goodDragColumns = main_1.Utils.filter(dragColumns, this.isColumnDroppable.bind(this));
@@ -169,17 +169,17 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         // if the dragging started from us, we remove the group, however if it started
         // someplace else, then we don't, as it was only 'asking'
         if (this.state === BaseDropZonePanel.STATE_REARRANGE_COLUMNS) {
-            var columns = draggingEvent.dragSource.dragItemCallback().columns;
+            var columns = draggingEvent.dragSource.dragItemCallback().columns || [];
             this.removeColumns(columns);
         }
-        if (this.potentialDndColumns) {
-            this.potentialDndColumns = null;
+        if (this.isPotentialDndColumns()) {
+            this.potentialDndColumns = [];
             this.refreshGui();
         }
         this.state = BaseDropZonePanel.STATE_NOT_DRAGGING;
     };
     BaseDropZonePanel.prototype.onDragStop = function () {
-        if (this.potentialDndColumns) {
+        if (this.isPotentialDndColumns()) {
             var success = void 0;
             if (this.state === BaseDropZonePanel.STATE_NEW_COLUMNS_IN) {
                 this.addColumns(this.potentialDndColumns);
@@ -188,7 +188,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
             else {
                 success = this.rearrangeColumns(this.potentialDndColumns);
             }
-            this.potentialDndColumns = null;
+            this.potentialDndColumns = [];
             // if the function is passive, then we don't refresh, as we assume the client application
             // is going to call setRowGroups / setPivots / setValues at a later point which will then
             // cause a refresh. this gives a nice gui where the ghost stays until the app has caught
@@ -249,7 +249,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         var _this = this;
         var existingColumns = this.getExistingColumns();
         var nonGhostColumns;
-        if (main_1.Utils.exists(this.potentialDndColumns)) {
+        if (this.isPotentialDndColumns()) {
             nonGhostColumns = main_1.Utils.filter(existingColumns, function (column) { return _this.potentialDndColumns.indexOf(column) < 0; });
         }
         else {
@@ -261,7 +261,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         var _this = this;
         var nonGhostColumns = this.getNonGhostColumns();
         var itemsToAddToGui = [];
-        var addingGhosts = main_1.Utils.exists(this.potentialDndColumns);
+        var addingGhosts = this.isPotentialDndColumns();
         nonGhostColumns.forEach(function (column, index) {
             if (addingGhosts && index >= _this.insertIndex) {
                 return;
@@ -269,7 +269,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
             var columnComponent = _this.createColumnComponent(column, false);
             itemsToAddToGui.push(columnComponent);
         });
-        if (this.potentialDndColumns) {
+        if (this.isPotentialDndColumns()) {
             this.potentialDndColumns.forEach(function (column) {
                 var columnComponent = _this.createColumnComponent(column, true);
                 itemsToAddToGui.push(columnComponent);

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.1
+// ag-grid-enterprise v19.1.2
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -52,8 +52,7 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         eParent.appendChild(eIcon);
     };
     ToolPanelFilterComp.prototype.isFilterActive = function () {
-        var filterInstance = this.gridApi.getFilterInstance(this.params.column);
-        return filterInstance && filterInstance.isFilterActive();
+        return this.filterManager.isFilterActive(this.params.column);
     };
     ToolPanelFilterComp.prototype.onFilterChanged = function () {
         ag_grid_community_1._.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !this.isFilterActive());

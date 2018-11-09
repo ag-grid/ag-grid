@@ -35,7 +35,7 @@ export class AutoGroupColService {
                 groupAutoColumns.push(this.createOneAutoGroupColumn(rowGroupCol, index));
             });
         } else {
-            groupAutoColumns.push(this.createOneAutoGroupColumn(null));
+            groupAutoColumns.push(this.createOneAutoGroupColumn());
         }
 
         return groupAutoColumns;
@@ -72,7 +72,7 @@ export class AutoGroupColService {
         }
 
         // if showing many cols, we don't want to show more than one with a checkbox for selection
-        if (index > 0) {
+        if (index && index > 0) {
             defaultAutoColDef.headerCheckboxSelection = false;
         }
 

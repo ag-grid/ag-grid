@@ -193,9 +193,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         let serverSideCache = <ServerSideCache> this.rootNode.childrenCache;
 
         let sortingWithValueCol = this.isSortingWithValueColumn(changedColumnsInSort);
+        let sortingWithSecondaryCol = this.isSortingWithSecondaryColumn(changedColumnsInSort);
 
         let sortAlwaysResets = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
-        if (sortAlwaysResets || sortingWithValueCol) {
+        if (sortAlwaysResets || sortingWithValueCol || sortingWithSecondaryCol) {
             this.reset();
         } else {
             serverSideCache.refreshCacheAfterSort(changedColumnsInSort, rowGroupColIds);
@@ -545,6 +546,13 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     private extractSortModel(): { colId: string; sort: string }[] {
         let sortModel = this.sortController.getSortModel();
+
+        // when using tree data we just return the sort model with the 'ag-Grid-AutoColumn' as is, i.e not broken out
+        // into it's constitute group columns as they are not defined up front and can vary per node.
+        if (this.gridOptionsWrapper.isTreeData()) {
+            return sortModel;
+        }
+
         let rowGroupCols = this.toValueObjects(this.columnController.getRowGroupColumns());
 
         // find index of auto group column in sort model
@@ -588,8 +596,21 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         let valueColIds = this.columnController.getValueColumns().map(col => col.getColId());
 
         for (let i = 0; i < changedColumnsInSort.length; i++) {
-            let sortColId = changedColumnsInSort[i];
-            if (valueColIds.indexOf(sortColId) > -1) {
+            if (valueColIds.indexOf(changedColumnsInSort[i]) > -1) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private isSortingWithSecondaryColumn(changedColumnsInSort: string[]): boolean {
+        if (!this.columnController.getSecondaryColumns()) return false;
+
+        let secondaryColIds = this.columnController.getSecondaryColumns().map(col => col.getColId());
+
+        for (let i = 0; i < changedColumnsInSort.length; i++) {
+            if (secondaryColIds.indexOf(changedColumnsInSort[i]) > -1) {
                 return true;
             }
         }

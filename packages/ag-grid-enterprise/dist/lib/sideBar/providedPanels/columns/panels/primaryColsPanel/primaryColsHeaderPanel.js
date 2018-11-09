@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.1
+// ag-grid-enterprise v19.1.2
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -115,7 +115,11 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         main_1._.setVisible(this.eExpandIndeterminate, this.expandState === SELECTED_STATE.INDETERMINIATE);
     };
     PrimaryColsHeaderPanel.prototype.setColumnsCheckedState = function () {
-        var columns = this.columnController.getAllPrimaryColumns().filter(function (col) { return !col.isLockVisible(); });
+        var allPrimaryColumns = this.columnController.getAllPrimaryColumns();
+        var columns = [];
+        if (allPrimaryColumns !== null) {
+            columns = allPrimaryColumns.filter(function (col) { return !col.isLockVisible(); });
+        }
         var pivotMode = this.columnController.isPivotMode();
         var checkedCount = 0;
         var uncheckedCount = 0;

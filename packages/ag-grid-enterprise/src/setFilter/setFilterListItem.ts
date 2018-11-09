@@ -1,15 +1,15 @@
 import {
-    Component,
-    CellRendererService,
-    ValueFormatterService,
-    Autowired,
-    PostConstruct,
-    GridOptionsWrapper,
     _,
-    Column,
     AgEvent,
+    Autowired,
+    CellRendererService,
+    Column,
+    Component,
+    GridOptionsWrapper,
+    ICellRendererComp,
+    PostConstruct,
     Promise,
-    ICellRendererComp
+    ValueFormatterService
 } from "ag-grid-community";
 
 export interface SelectedEvent extends AgEvent {
@@ -79,8 +79,11 @@ export class SetFilterListItem extends Component {
 
     private updateCheckboxIcon() {
         if (this.eCheckbox.children) {
-            for (let i=0; i<this.eCheckbox.children.length; i++) {
-                this.eCheckbox.removeChild(this.eCheckbox.children.item(i));
+            for (let i = 0; i < this.eCheckbox.children.length; i++) {
+                const node = this.eCheckbox.children.item(i);
+                if (node) {
+                    this.eCheckbox.removeChild(node);
+                }
             }
         }
 
@@ -98,7 +101,7 @@ export class SetFilterListItem extends Component {
         let colDef = this.column.getColDef();
         let valueObj = {value: this.value, valueFormatted: valueFormatted};
 
-        let componentPromise:Promise<ICellRendererComp> = this.cellRendererService.useFilterCellRenderer(colDef, valueElement, valueObj);
+        let componentPromise: Promise<ICellRendererComp> = this.cellRendererService.useFilterCellRenderer(colDef, valueElement, valueObj);
 
         if (!componentPromise) return;
 

@@ -9,9 +9,9 @@ const webpackStream = require('webpack-stream');
 const path = require('path');
 const rename = require("gulp-rename");
 const replace = require('gulp-replace');
+const tslint = require("gulp-tslint");
 
 const headerTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
-
 const bundleTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
 
 gulp.task('default', ['webpack-all']);
@@ -25,13 +25,22 @@ gulp.task('webpack-minify', ['tsc'], webpackTask.bind(null, true, true));
 gulp.task('webpack', ['tsc'], webpackTask.bind(null, false, true));
 
 gulp.task('tsc', ['tsc-src'], tscMainTask);
-gulp.task('tsc-src', ['cleanDist'], tscSrcTask);
+gulp.task('tsc-no-clean', tscSrcTask);
+gulp.task('tsc-src', ['cleanDist', 'tslint'], tscSrcTask);
 gulp.task('tsc-main', ['cleanMain'], tscMainTask);
 
 gulp.task('cleanDist', cleanDist);
 gulp.task('cleanMain', cleanMain);
 
 gulp.task('watch', ['tsc'], tscWatch);
+
+gulp.task("tslint", () =>
+    gulp.src("src/**/*.ts")
+        .pipe(tslint({
+            formatter: "verbose"
+        }))
+        .pipe(tslint.report())
+);
 
 function tscWatch() {
     gulp.watch([

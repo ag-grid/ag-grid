@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.1
+ * @version v19.1.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -724,7 +724,8 @@ var Utils = /** @class */ (function () {
         if (this.missing(array1) && this.missing(array2)) {
             return true;
         }
-        if (this.missing(array1) || this.missing(array2)) {
+        if ((this.missing(array1) || this.missing(array2)) ||
+            (!array1 || !array2)) {
             return false;
         }
         if (array1.length !== array2.length) {
@@ -869,10 +870,11 @@ var Utils = /** @class */ (function () {
         }
     };
     Utils.createIconNoSpan = function (iconName, gridOptionsWrapper, column) {
-        var userProvidedIcon;
+        var userProvidedIcon = null;
         // check col for icon first
-        if (column && column.getColDef().icons) {
-            userProvidedIcon = column.getColDef().icons[iconName];
+        var icons = (column && column.getColDef().icons) ? column.getColDef().icons : null;
+        if (icons) {
+            userProvidedIcon = icons[iconName];
         }
         // it not in col, try grid options
         if (!userProvidedIcon && gridOptionsWrapper.getIcons()) {
@@ -1460,7 +1462,7 @@ var Utils = /** @class */ (function () {
         eElement.addEventListener(event, listener, (Utils.passiveEvents.indexOf(event) > -1 ? { passive: true } : undefined));
     };
     Utils.camelCaseToHumanText = function (camelCase) {
-        if (camelCase == null)
+        if (!camelCase || camelCase == null)
             return null;
         // Who needs to learn how to code when you have stack overflow!
         // from: https://stackoverflow.com/questions/15369566/putting-space-in-camel-case-string-using-regular-expression

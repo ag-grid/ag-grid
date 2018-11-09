@@ -91,5 +91,3 @@ getPartialMatchFilter() {
 // then reference the Component in your column definitions like this
 &lt;ag-grid-column header-name="Filter Component" field="name" width.bind="198" filter.bind="getPartialMatchFilter()"&gt;&lt;/ag-grid-column&gt;</snippet>
 
-    <h3 id="aurelia-filter">Filter Component in Aurelia</h3>
-    <?= example('Filter Component in Aurelia', 'aurelia-filter', 'as-is', array("exampleHeight" => 370, "noPlunker" => 1, "usePath" => "#/?route=filter")) ?>

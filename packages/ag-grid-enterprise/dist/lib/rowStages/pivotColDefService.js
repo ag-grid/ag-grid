@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.1
+// ag-grid-enterprise v19.1.2
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -113,14 +113,18 @@ var PivotColDefService = /** @class */ (function () {
     PivotColDefService.prototype.recursivelyAddPivotTotal = function (groupDef, pivotColumnDefs, columnIdSequence, valueColumn, insertAfter) {
         var _this = this;
         var group = groupDef;
-        if (!group.children)
-            return [groupDef.colId];
+        if (!group.children) {
+            var def = groupDef;
+            return def.colId ? [def.colId] : null;
+        }
         var colIds = [];
         // need to recurse children first to obtain colIds used in the aggregation stage
         group.children
             .forEach(function (grp) {
             var childColIds = _this.recursivelyAddPivotTotal(grp, pivotColumnDefs, columnIdSequence, valueColumn, insertAfter);
-            colIds = colIds.concat(childColIds);
+            if (childColIds) {
+                colIds = colIds.concat(childColIds);
+            }
         });
         // only add total colDef if there is more than 1 child node
         if (group.children.length > 1) {
@@ -161,7 +165,7 @@ var PivotColDefService = /** @class */ (function () {
         var group = groupDef;
         if (!group.children) {
             var colDef = group;
-            return colDef.pivotValueColumn === valueColumn ? [colDef.colId] : [];
+            return colDef.pivotValueColumn === valueColumn && colDef.colId ? [colDef.colId] : [];
         }
         var colIds = [];
         group.children
@@ -240,6 +244,19 @@ var PivotColDefService = /** @class */ (function () {
             return userComparator(a.headerName, b.headerName);
         }
         else {
+            if (a.headerName && !b.headerName) {
+                return 1;
+            }
+            else if (!a.headerName && b.headerName) {
+                return -1;
+            }
+            // slightly naff here - just to satify typescript
+            // really should be &&, but if so ts complains
+            // the above if/else checks would deal with either being falsy, so at this stage if either are falsy, both are
+            // ..still naff though
+            if (!a.headerName || !b.headerName) {
+                return 0;
+            }
             if (a.headerName < b.headerName) {
                 return -1;
             }

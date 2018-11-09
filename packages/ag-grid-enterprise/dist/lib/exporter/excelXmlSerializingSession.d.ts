@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.1
+// ag-grid-enterprise v19.1.2
 import { BaseGridSerializingSession, Column, GridSerializingParams, RowAccumulator, RowNode, RowSpanningAccumulator, RowType, ExcelOOXMLDataType } from 'ag-grid-community';
 import { ExcelCell, ExcelColumn, ExcelDataType, ExcelRow, ExcelStyle } from 'ag-grid-community';
 import { ExcelMixedStyle } from './excelCreator';

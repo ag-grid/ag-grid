@@ -19,6 +19,7 @@ export interface ToolPanelFilterCompParams {
 }
 
 export class ToolPanelFilterComp extends Component {
+
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('eventService') private eventService: EventService;
@@ -89,8 +90,7 @@ export class ToolPanelFilterComp extends Component {
     }
 
     private isFilterActive(): boolean {
-        let filterInstance = this.gridApi.getFilterInstance(this.params.column);
-        return filterInstance && filterInstance.isFilterActive();
+        return this.filterManager.isFilterActive(this.params.column);
     }
 
     private onFilterChanged(): void {

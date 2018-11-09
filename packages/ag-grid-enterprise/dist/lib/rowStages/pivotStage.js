@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.1
+// ag-grid-enterprise v19.1.2
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -31,7 +31,9 @@ var PivotStage = /** @class */ (function () {
         this.uniqueValues = {};
         if (this.columnController.isSecondaryColumnsPresent()) {
             this.columnController.setSecondaryColumns(null, "rowModelUpdated");
-            changedPath.setInactive();
+            if (changedPath) {
+                changedPath.setInactive();
+            }
         }
     };
     PivotStage.prototype.executePivotOn = function (rootNode, changedPath) {
@@ -51,7 +53,9 @@ var PivotStage = /** @class */ (function () {
             this.columnController.setSecondaryColumns(this.pivotColumnGroupDefs, "rowModelUpdated");
             // because the secondary columns have changed, then the aggregation needs to visit the whole
             // tree again, so we make the changedPath not active, to force aggregation to visit all paths.
-            changedPath.setInactive();
+            if (changedPath) {
+                changedPath.setInactive();
+            }
         }
     };
     PivotStage.prototype.setUniqueValues = function (newValues) {

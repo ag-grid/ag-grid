@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.1
+// ag-grid-enterprise v19.1.2
 import { Component, CellRendererService, ColDef } from "ag-grid-community";
 export declare class RichSelectRow extends Component {
     cellRendererService: CellRendererService;

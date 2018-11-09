@@ -1,8 +1,8 @@
-// ag-grid-enterprise v19.1.1
+// ag-grid-enterprise v19.1.2
 import { Component, GridPanel } from "ag-grid-community";
 export declare class SideBarButtonsComp extends Component {
     private panels;
-    defaultPanelKey: string;
+    defaultPanelKey: string | null;
     private gridOptionsWrapper;
     private eventService;
     private gridPanel;

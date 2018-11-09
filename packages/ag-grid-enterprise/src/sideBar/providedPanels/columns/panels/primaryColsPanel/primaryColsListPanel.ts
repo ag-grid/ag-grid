@@ -7,11 +7,11 @@ import {
     Context,
     Events,
     EventService,
+    GridOptionsWrapper,
     OriginalColumnGroup,
     OriginalColumnGroupChild,
     PostConstruct,
     Utils,
-    GridOptionsWrapper,
 } from "ag-grid-community/main";
 import {ToolPanelColumnGroupComp} from "./toolPanelColumnGroupComp";
 import {ToolPanelColumnComp} from "./toolPanelColumnComp";
@@ -36,7 +36,7 @@ export class PrimaryColsListPanel extends Component {
     private columnTree: OriginalColumnGroupChild[];
     private columnComps: { [key: string]: ColumnItem };
 
-    private filterText: string;
+    private filterText: string | null;
 
     private expandGroupsByDefault: boolean;
 
@@ -80,7 +80,7 @@ export class PrimaryColsListPanel extends Component {
         }
 
         if (!columnGroup.isPadding()) {
-            let renderedGroup = new ToolPanelColumnGroupComp(columnGroup,  dept, this.onGroupExpanded.bind(this),
+            let renderedGroup = new ToolPanelColumnGroupComp(columnGroup, dept, this.onGroupExpanded.bind(this),
                 this.props.allowDragging, this.expandGroupsByDefault);
             this.context.wireBean(renderedGroup);
             this.getGui().appendChild(renderedGroup.getGui());
@@ -107,7 +107,7 @@ export class PrimaryColsListPanel extends Component {
         let notExpandedCount = 0;
 
         let recursiveFunc = (items: OriginalColumnGroupChild[]) => {
-            items.forEach( item => {
+            items.forEach(item => {
 
                 // only interested in groups
                 if (item instanceof OriginalColumnGroup) {
@@ -132,9 +132,9 @@ export class PrimaryColsListPanel extends Component {
         recursiveFunc(this.columnTree);
 
         let state: SELECTED_STATE;
-        if (expandedCount>0 && notExpandedCount>0) {
+        if (expandedCount > 0 && notExpandedCount > 0) {
             state = SELECTED_STATE.INDETERMINIATE;
-        } else if (notExpandedCount>0) {
+        } else if (notExpandedCount > 0) {
             state = SELECTED_STATE.UNCHECKED;
         } else {
             state = SELECTED_STATE.CHECKED;
@@ -178,7 +178,7 @@ export class PrimaryColsListPanel extends Component {
         });
     }
 
-    public setFilterText(filterText:string) {
+    public setFilterText(filterText: string) {
         this.filterText = _.exists(filterText) ? filterText.toLowerCase() : null;
         this.updateVisibilityOfRows();
     }
@@ -188,12 +188,12 @@ export class PrimaryColsListPanel extends Component {
         // the visibility requires breadth first search. this is because a group passes filter if CHILDREN
         // pass filter, a column passes group open/closed visibility if a PARENT is open. so we need to do
         // two recursions. we pass the result of the first recursion to the second.
-        let filterResults: {[id: string]: boolean} = _.exists(this.filterText) ? this.createFilterResults() : null;
+        let filterResults: { [id: string]: boolean } | null = _.exists(this.filterText) ? this.createFilterResults() : null;
         this.recursivelySetVisibility(this.columnTree, true, filterResults);
     }
 
-    private createFilterResults(): {[id: string]: boolean} {
-        let filterResults: {[id: string]: boolean} = {};
+    private createFilterResults(): { [id: string]: boolean } {
+        let filterResults: { [id: string]: boolean } = {};
 
         // we recurse dept first - as the item should show if any of the children are showing
 
@@ -201,7 +201,7 @@ export class PrimaryColsListPanel extends Component {
 
             let atLeastOneThisLevelPassed = false;
 
-            items.forEach( item => {
+            items.forEach(item => {
 
                 let atLeastOneChildPassed = false;
 
@@ -216,7 +216,7 @@ export class PrimaryColsListPanel extends Component {
                     filterPasses = true;
                 } else {
                     let comp = this.columnComps[item.getId()];
-                    if (comp) {
+                    if (comp && this.filterText) {
                         filterPasses = comp.getDisplayName().toLowerCase().indexOf(this.filterText) >= 0;
                     } else {
                         filterPasses = true;
@@ -238,7 +238,7 @@ export class PrimaryColsListPanel extends Component {
         return filterResults;
     }
 
-    private recursivelySetVisibility(columnTree: any[], parentGroupsOpen: boolean, filterResults: {[id: string]: boolean}): void {
+    private recursivelySetVisibility(columnTree: any[], parentGroupsOpen: boolean, filterResults: { [id: string]: boolean } | null): void {
         columnTree.forEach(child => {
 
             let comp: ColumnItem = this.columnComps[child.getId()];
@@ -265,7 +265,7 @@ export class PrimaryColsListPanel extends Component {
     }
 
     public doSetSelectedAll(checked: boolean): void {
-        _.iterateObject(this.columnComps, (key, column)=> {
+        _.iterateObject(this.columnComps, (key, column) => {
             column.onSelectAllChanged(checked);
         });
     }

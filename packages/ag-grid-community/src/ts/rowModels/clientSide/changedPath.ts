@@ -23,7 +23,7 @@ export class ChangedPath {
         return this.active;
     }
 
-    public addParentNode(rowNode: RowNode, columns?: Column[]): void {
+    public addParentNode(rowNode: RowNode | null, columns?: Column[]): void {
         this.validateActive();
 
         let pointer = rowNode;

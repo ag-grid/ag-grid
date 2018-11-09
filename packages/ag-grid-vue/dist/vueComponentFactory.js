@@ -233,7 +233,8 @@ function () {
           params: Object.freeze(params)
         },
         parent: parent,
-        router: parent.$router
+        router: parent.$router,
+        store: parent.$store
       };
       var component = new componentType(details);
       component.$mount();

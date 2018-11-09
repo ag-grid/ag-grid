@@ -1,5 +1,5 @@
-// ag-grid-enterprise v19.1.1
-import { Component, Column, AgEvent } from "ag-grid-community";
+// ag-grid-enterprise v19.1.2
+import { AgEvent, Column, Component } from "ag-grid-community";
 export interface SelectedEvent extends AgEvent {
 }
 export declare class SetFilterListItem extends Component {

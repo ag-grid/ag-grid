@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.1
+// ag-grid-enterprise v19.1.2
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -175,7 +175,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
                 }
                 else {
                     var comp = _this.columnComps[item.getId()];
-                    if (comp) {
+                    if (comp && _this.filterText) {
                         filterPasses = comp.getDisplayName().toLowerCase().indexOf(_this.filterText) >= 0;
                     }
                     else {

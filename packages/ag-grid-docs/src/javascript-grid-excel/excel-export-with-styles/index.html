@@ -23,9 +23,14 @@
     }
     .topContainer {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         font-family: Verdana, Geneva, Tahoma, sans-serif;
-        font-size: 14px;
+        font-size: 13px;
+        height: 100%;
+        width: 100%;
+    }
+    .topHeader {
+        display: flex;
     }
     .item {
         display: flex;
@@ -35,6 +40,7 @@
         border-radius: 5px;
         border-color: #cecece;
         border-style: solid;
+        height: 80px;
     }
     .details {
         flex: none;
@@ -64,6 +70,8 @@
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: flex-start;
+        height: calc(100% - 10px);
+        overflow-y: auto;
     }
     .options label {
         display: flex;
@@ -71,101 +79,121 @@
         white-space: nowrap;
         margin-right: 10px;
     }
+    .options div {
+        width: 150px;
+    }
+    
+    .grid-wrapper {
+        display: flex;
+        flex: 1;
+    }
+    .grid-wrapper > div {
+        width: 100%;
+        height: 100%;
+    }
+    @media (max-width: 900px) {
+        fieldset.item {
+            height: 120px;
+        }
+    }
 </style>
 <div class="topContainer">
-    <div class="item details">
+    <div class="topHeader">
+        <div class="item details">
+            <label>
+                File Name:
+                <input type="text" id="fileName" placeholder="export"/>
+            </label>
+            <label>
+                Sheet Name:
+                <input type="text" id="sheetName" placeholder="ag-grid" maxlength="31"/>
+            </label>
+            <label>
+                Export Mode:
+                <input type="radio" name="mode" value="xlsx" id="xlsxMode" checked="true" />
+                <label for="xlsx">.xlsx</label>
+                <input type="radio" name="mode" id="xmlMode" value="xml" />
+                <label for="xml">.xml</label>
+            </label>
+        </div>
+        <fieldset class="item">
+            <legend>Export Options</legend>
+            <div class="options">
+                <div>
+                    <label>
+                        <input type="checkbox" id="skipHeader"/>
+                        Skip Header
+                    </label>
+                    <label>
+                        <input type="checkbox" id="columnGroups"/>
+                        Column Groups
+                    </label>
+                    <label>
+                        <input type="checkbox" id="skipFooters"/>
+                        Skip Footers
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        <input type="checkbox" id="onlySelected"/>
+                        Only Selected
+                    </label>
+                    <label>
+                        <input type="checkbox" id="useCellCallback"/>
+                        Use Cell Callback
+                    </label>
+                    <label>
+                        <input type="checkbox" id="processHeaders"/>
+                        Format Headers
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        <input type="checkbox" id="skipPinnedTop"/>
+                        Skip Pinned Top
+                    </label>
+                    <label>
+                        <input type="checkbox" id="skipPinnedBottom"/>
+                        Skip Pinned Bottom
+                    </label>
+                    <label>
+                        <input type="checkbox" id="skipGroups"/>
+                        Skip Groups
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        <input type="checkbox" id="useSpecificColumns"/>
+                        Specify Columns
+                    </label>
+                    <label>
+                        <input type="checkbox" id="allColumns"/>
+                        All Columns
+                    </label>
+                        <label>
+                        <input type="checkbox" id="skipGroupR"/>
+                        Skip Group R
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        <input type="checkbox" id="appendHeader"/>
+                        Append Header
+                    </label>
+                    <label>
+                        <input type="checkbox" id="appendFooter"/>
+                        Append Footer
+                    </label>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    <div style="margin: 5px; text-align: right">
         <label>
-            File Name:
-            <input type="text" id="fileName" placeholder="export"/>
-        </label>
-        <label>
-            Sheet Name:
-            <input type="text" id="sheetName" placeholder="ag-Grid"/>
-        </label>
-        <label>
-            Export Mode:
-            <input type="radio" name="mode" value="xlsx" id="xlsxMode" checked="true" />
-            <label for="xlsx">.xlsx</label>
-            <input type="radio" name="mode" id="xmlMode" value="xml" />
-            <label for="xml">.xml</label>
+            <button onclick="onBtExport()" style="height: 25px; cursor: pointer">Export to Excel</button>
         </label>
     </div>
-    <fieldset class="item">
-        <legend>Export Options</legend>
-        <div class="options">
-            <div>
-                <label>
-                    <input type="checkbox" id="skipHeader"/>
-                    Skip Header
-                </label>
-                <label>
-                    <input type="checkbox" id="columnGroups"/>
-                    Column Groups
-                </label>
-                <label>
-                    <input type="checkbox" id="skipFooters"/>
-                    Skip Footers
-                </label>
-            </div>
-            <div>
-                <label>
-                    <input type="checkbox" id="onlySelected"/>
-                    Only Selected
-                </label>
-                <label>
-                    <input type="checkbox" id="useCellCallback"/>
-                    Use Cell Callback
-                </label>
-                <label>
-                    <input type="checkbox" id="processHeaders"/>
-                    Format Headers
-                </label>
-            </div>
-            <div>
-                <label>
-                    <input type="checkbox" id="skipPinnedTop"/>
-                    Skip Pinned Top
-                </label>
-                <label>
-                    <input type="checkbox" id="skipPinnedBottom"/>
-                    Skip Pinned Bottom
-                </label>
-                <label>
-                    <input type="checkbox" id="skipGroups"/>
-                    Skip Groups
-                </label>
-            </div>
-            <div>
-                <label>
-                    <input type="checkbox" id="useSpecificColumns"/>
-                    Specify Columns
-                </label>
-                <label>
-                    <input type="checkbox" id="allColumns"/>
-                    All Columns
-                </label>
-                    <label>
-                    <input type="checkbox" id="skipGroupR"/>
-                    Skip Group R
-                </label>
-            </div>
-            <div>
-                <label>
-                    <input type="checkbox" id="appendHeader"/>
-                    Append Header
-                </label>
-                <label>
-                    <input type="checkbox" id="appendFooter"/>
-                    Append Footer
-                </label>
-            </div>
-        </div>
-    </fieldset>
+    <div class="grid-wrapper">
+        <div id="myGrid" class="ag-theme-balham" />
+    </div>
 </div>
-<div style="display: block; text-align: right; margin: 5px;">
-    <label>
-        <button onclick="onBtExport()" style="height: 25px; cursor: pointer">Export to Excel</button>
-    </label>
-</div>
-
-<div id="myGrid" style="margin-top: 5px; height: 375px;" class="ag-theme-balham"></div>

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.1
+// ag-grid-enterprise v19.1.2
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -62,7 +62,10 @@ var SetFilterListItem = /** @class */ (function (_super) {
     SetFilterListItem.prototype.updateCheckboxIcon = function () {
         if (this.eCheckbox.children) {
             for (var i = 0; i < this.eCheckbox.children.length; i++) {
-                this.eCheckbox.removeChild(this.eCheckbox.children.item(i));
+                var node = this.eCheckbox.children.item(i);
+                if (node) {
+                    this.eCheckbox.removeChild(node);
+                }
             }
         }
         if (this.isSelected()) {

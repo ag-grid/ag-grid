@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.1
+// ag-grid-enterprise v19.1.2
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = require("ag-grid-community");
@@ -6,7 +6,7 @@ var buildSharedString = function (textNode) { return ({
     name: 'si',
     children: [{
             name: 't',
-            textNode: ag_grid_community_1._.utf8_encode(textNode.toString())
+            textNode: ag_grid_community_1._.utf8_encode(ag_grid_community_1._.escape(textNode.toString()))
         }]
 }); };
 var sharedStrings = {

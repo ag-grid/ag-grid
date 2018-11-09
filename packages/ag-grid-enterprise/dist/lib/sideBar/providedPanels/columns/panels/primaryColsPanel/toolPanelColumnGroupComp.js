@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.1
+// ag-grid-enterprise v19.1.2
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -230,7 +230,7 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         });
         var selectedValue;
         if (visibleChildCount > 0 && hiddenChildCount > 0) {
-            selectedValue = null;
+            selectedValue = false;
         }
         else if (visibleChildCount > 0) {
             selectedValue = true;

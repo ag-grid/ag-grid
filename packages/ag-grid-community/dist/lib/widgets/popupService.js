@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.1
+ * @version v19.1.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -150,7 +150,7 @@ var PopupService = /** @class */ (function () {
     PopupService.prototype.keepYWithinBounds = function (params, y) {
         var parentRect = this.getPopupParent().getBoundingClientRect();
         var minHeight;
-        if (params.minHeight > 0) {
+        if (params.minHeight && params.minHeight > 0) {
             minHeight = params.minHeight;
         }
         else if (params.ePopup.clientHeight > 0) {
@@ -174,7 +174,7 @@ var PopupService = /** @class */ (function () {
     PopupService.prototype.keepXWithinBounds = function (params, x) {
         var parentRect = this.getPopupParent().getBoundingClientRect();
         var minWidth;
-        if (params.minWidth > 0) {
+        if (params.minWidth && params.minWidth > 0) {
             minWidth = params.minWidth;
         }
         else if (params.ePopup.clientWidth > 0) {
@@ -295,7 +295,7 @@ var PopupService = /** @class */ (function () {
         // the event is a different event, however that is an edge case that is not very relevant (the user clicking
         // twice on the same location isn't a normal path).
         // event could be mouse event or touch event.
-        var mouseEventOrTouch;
+        var mouseEventOrTouch = null;
         if (mouseEvent) {
             // mouse event can be used direction, it has coordinates
             mouseEventOrTouch = mouseEvent;
@@ -307,8 +307,10 @@ var PopupService = /** @class */ (function () {
         if (mouseEventOrTouch && originalClick) {
             // for x, allow 4px margin, to cover iPads, where touch (which opens menu) is followed
             // by browser click (when you life finger up, touch is interrupted as click in browser)
-            var xMatch = Math.abs(originalClick.screenX - mouseEvent.screenX) < 5;
-            var yMatch = Math.abs(originalClick.screenY - mouseEvent.screenY) < 5;
+            var screenX_1 = mouseEvent ? mouseEvent.screenX : 0;
+            var screenY_1 = mouseEvent ? mouseEvent.screenY : 0;
+            var xMatch = Math.abs(originalClick.screenX - screenX_1) < 5;
+            var yMatch = Math.abs(originalClick.screenY - screenY_1) < 5;
             if (xMatch && yMatch) {
                 return true;
             }

@@ -155,7 +155,8 @@ export class VueComponentFactory {
                 params: Object.freeze(params)
             },
             parent,
-            router: parent.$router
+            router: parent.$router,
+            store: parent.$store
         };
 
         let component = new componentType(details);

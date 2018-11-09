@@ -75,7 +75,7 @@ export interface XmlElement {
 }
 
 export interface HeaderElement {
-    [key: string]: string;
+    [key: string]: string | undefined;
     version?: string;
     standalone?: string;
     encoding?: string;

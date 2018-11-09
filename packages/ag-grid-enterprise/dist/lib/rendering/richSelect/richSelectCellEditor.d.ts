@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.1
+// ag-grid-enterprise v19.1.2
 import { ICellEditor, Component, Context, CellRendererService, IRichCellEditorParams } from "ag-grid-community";
 export declare class RichSelectCellEditor extends Component implements ICellEditor {
     private static TEMPLATE;

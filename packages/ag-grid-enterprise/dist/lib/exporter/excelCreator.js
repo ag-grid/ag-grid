@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.1
+// ag-grid-enterprise v19.1.2
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -69,7 +69,7 @@ var ExcelCreator = /** @class */ (function (_super) {
             gridOptionsWrapper: gridOptionsWrapper,
             processCellCallback: processCellCallback || null,
             processHeaderCallback: processHeaderCallback || null,
-            sheetName: sheetName != null && sheetName !== '' ? sheetName : 'ag-grid',
+            sheetName: sheetName != null && sheetName !== '' ? (sheetName.toString()).substr(0, 31) : 'ag-grid',
             excelFactory: excelFactory,
             baseExcelStyles: this.gridOptions.excelStyles,
             styleLinker: this.styleLinker.bind(this),

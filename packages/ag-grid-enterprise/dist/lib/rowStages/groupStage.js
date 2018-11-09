@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.1
+// ag-grid-enterprise v19.1.2
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -44,7 +44,7 @@ var GroupStage = /** @class */ (function () {
     GroupStage.prototype.createGroupingDetails = function (params) {
         var rowNode = params.rowNode, changedPath = params.changedPath, rowNodeTransaction = params.rowNodeTransaction, rowNodeOrder = params.rowNodeOrder;
         var groupedCols = this.usingTreeData ? null : this.columnController.getRowGroupColumns();
-        var isGrouping = this.usingTreeData || groupedCols.length > 0;
+        var isGrouping = this.usingTreeData || (groupedCols && groupedCols.length > 0);
         var usingTransaction = isGrouping && ag_grid_community_1._.exists(rowNodeTransaction);
         var details = {
             // someone complained that the parent attribute was causing some change detection
@@ -56,7 +56,7 @@ var GroupStage = /** @class */ (function () {
             groupedCols: groupedCols,
             rootNode: rowNode,
             pivotMode: this.columnController.isPivotMode(),
-            groupedColCount: this.usingTreeData ? 0 : groupedCols.length,
+            groupedColCount: this.usingTreeData || !groupedCols ? 0 : groupedCols.length,
             rowNodeOrder: rowNodeOrder,
             // important not to do transaction if we are not grouping, as otherwise the 'insert index' is ignored.
             // ie, if not grouping, then we just want to shotgun so the rootNode.allLeafChildren gets copied
@@ -116,7 +116,7 @@ var GroupStage = /** @class */ (function () {
         // when doing tree data, the node is part of the path,
         // but when doing grid grouping, the node is not part of the path so we start with the parent.
         var pointer = this.usingTreeData ? node : node.parent;
-        while (pointer !== details.rootNode) {
+        while (pointer && pointer !== details.rootNode) {
             res.push({
                 key: pointer.key,
                 rowGroupColumn: pointer.rowGroupColumn,
@@ -174,7 +174,7 @@ var GroupStage = /** @class */ (function () {
         // utility func to execute once on each parent node
         var forEachParentGroup = function (callback) {
             var pointer = childNode.parent;
-            while (pointer !== details.rootNode) {
+            while (pointer && pointer !== details.rootNode) {
                 callback(pointer);
                 pointer = pointer.parent;
             }
@@ -209,17 +209,25 @@ var GroupStage = /** @class */ (function () {
         });
     };
     GroupStage.prototype.removeFromParent = function (child) {
-        ag_grid_community_1._.removeFromArray(child.parent.childrenAfterGroup, child);
+        if (child.parent) {
+            ag_grid_community_1._.removeFromArray(child.parent.childrenAfterGroup, child);
+        }
         var mapKey = this.getChildrenMappedKey(child.key, child.rowGroupColumn);
-        child.parent.childrenMapped[mapKey] = undefined;
+        if (child.parent && child.parent.childrenMapped) {
+            child.parent.childrenMapped[mapKey] = undefined;
+        }
         // this is important for transition, see rowComp removeFirstPassFuncs. when doing animation and
         // remove, if rowTop is still present, the rowComp thinks it's just moved position.
         child.setRowTop(null);
     };
     GroupStage.prototype.addToParent = function (child, parent) {
         var mapKey = this.getChildrenMappedKey(child.key, child.rowGroupColumn);
-        parent.childrenMapped[mapKey] = child;
-        parent.childrenAfterGroup.push(child);
+        if (parent) {
+            if (parent.childrenMapped) {
+                parent.childrenMapped[mapKey] = child;
+            }
+            parent.childrenAfterGroup.push(child);
+        }
     };
     GroupStage.prototype.shotgunResetEverything = function (details) {
         // because we are not creating the root node each time, we have the logic
@@ -288,7 +296,7 @@ var GroupStage = /** @class */ (function () {
     };
     GroupStage.prototype.getOrCreateNextNode = function (parentGroup, groupInfo, level, details) {
         var mapKey = this.getChildrenMappedKey(groupInfo.key, groupInfo.rowGroupColumn);
-        var nextNode = parentGroup.childrenMapped[mapKey];
+        var nextNode = parentGroup.childrenMapped ? parentGroup.childrenMapped[mapKey] : undefined;
         if (!nextNode) {
             nextNode = this.createGroup(groupInfo, parentGroup, level, details);
             // attach the new group to the parent
@@ -308,7 +316,7 @@ var GroupStage = /** @class */ (function () {
         groupDisplayCols.forEach(function (col) {
             // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
-            var displayGroupForCol = _this.usingTreeData || col.isRowGroupDisplayed(groupNode.rowGroupColumn.getId());
+            var displayGroupForCol = _this.usingTreeData || (groupNode.rowGroupColumn ? col.isRowGroupDisplayed(groupNode.rowGroupColumn.getId()) : false);
             if (displayGroupForCol) {
                 groupNode.groupData[col.getColId()] = groupInfo.key;
             }
@@ -364,7 +372,7 @@ var GroupStage = /** @class */ (function () {
         }
     };
     GroupStage.prototype.getGroupInfoFromCallback = function (rowNode) {
-        var keys = this.getDataPath(rowNode.data);
+        var keys = this.getDataPath ? this.getDataPath(rowNode.data) : null;
         if (keys === null || keys === undefined || keys.length === 0) {
             ag_grid_community_1._.doOnce(function () { return console.warn("getDataPath() should not return an empty path for data", rowNode.data); }, 'groupStage.getGroupInfoFromCallback');
         }

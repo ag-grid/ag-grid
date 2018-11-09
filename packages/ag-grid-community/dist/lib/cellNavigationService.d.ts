@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.1
+// Type definitions for ag-grid-community v19.1.2
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridRow } from "./entities/gridRow";
@@ -8,19 +8,19 @@ export declare class CellNavigationService {
     private rowModel;
     private pinnedRowModel;
     private gridOptionsWrapper;
-    getNextCellToFocus(key: any, lastCellToFocus: GridCell): GridCell;
+    getNextCellToFocus(key: any, lastCellToFocus: GridCell): GridCell | null;
     private isCellGoodToFocusOn;
     private getCellToLeft;
     private getCellToRight;
-    getRowBelow(lastRow: GridRow): GridRow;
+    getRowBelow(lastRow: GridRow): GridRow | null;
     private getCellBelow;
     private isLastRowInContainer;
     private getRowAbove;
     private getCellAbove;
     private getLastBodyCell;
     private getLastFloatingTopRow;
-    getNextTabbedCell(gridCell: GridCell, backwards: boolean): GridCell;
-    getNextTabbedCellForwards(gridCell: GridCell): GridCell;
-    getNextTabbedCellBackwards(gridCell: GridCell): GridCell;
+    getNextTabbedCell(gridCell: GridCell, backwards: boolean): GridCell | null;
+    getNextTabbedCellForwards(gridCell: GridCell): GridCell | null;
+    getNextTabbedCellBackwards(gridCell: GridCell): GridCell | null;
 }
 //# sourceMappingURL=cellNavigationService.d.ts.map

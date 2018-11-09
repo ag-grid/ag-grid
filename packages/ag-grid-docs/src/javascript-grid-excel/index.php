@@ -61,10 +61,12 @@ include '../documentation-main/documentation_header.php';
             <li><code>customHeader</code>: If you want to put some rows at the top of the xls file, stick it here.
                 The format of this rows is specified below in the section custom rows.</li>
             <li><code>customFooter</code>: Same as customHeader, but for the end of the file.</li>
-            <li><code>sheetName</code>: The name of the sheet in excel where the grid will get exported. If not specified defaults to 'ag-grid'.</li>
+            <li><code>sheetName</code>: The name of the sheet in excel where the grid will get exported. If not specified defaults to 'ag-grid'.
+                <br/> <strong  style="font-size: 14px">Note: 31 charecters max</strong>.
+            </li>
             <li><code>suppressTextAsCDATA</code>: Since v17 the default behaviour of exporting text is to include CDATA tags to avoid any text
                 parsing issues, but if this is incompatible to you current approach, you can switch this off by setting this to true.
-                <br/>Note: Only relevant if exportMode is set to "xml".
+                <br/><strong style="font-size: 14px">Note: Only relevant if exportMode is set to "xml"</strong>.
             </li>
         </ul>
 
@@ -457,7 +459,7 @@ var gridOptions = {
             it shows 39923. You need to add the formatting inside Excel</li>
         </ul>
 
-        <?= example('Excel Data Typs', 'excel-data-types', 'generated', array("enterprise" => 1)) ?>
+        <?= example('Excel Data Types', 'excel-data-types', 'generated', array("enterprise" => 1)) ?>
     </article>
     <article>
         <h2>Export to Excel with iPad</h2>

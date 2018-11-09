@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.1
+// ag-grid-enterprise v19.1.2
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -81,10 +81,10 @@ var EnterpriseMenuFactory = /** @class */ (function () {
             menu.destroy();
             column.setMenuVisible(false, "contextMenu");
         });
-        positionCallback(menu);
         menu.afterGuiAttached({
             hidePopup: hidePopup
         });
+        positionCallback(menu);
         if (!defaultTab) {
             menu.showTabBasedOnPreviousSelection();
         }

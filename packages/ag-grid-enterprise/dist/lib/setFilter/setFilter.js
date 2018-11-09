@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.1
+// ag-grid-enterprise v19.1.2
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -76,7 +76,10 @@ var SetFilter = /** @class */ (function (_super) {
         var _this = this;
         this.virtualList = new virtualList_1.VirtualList();
         this.context.wireBean(this.virtualList);
-        this.getGui().querySelector('#richList').appendChild(this.virtualList.getGui());
+        var richList = this.getGui().querySelector('#richList');
+        if (richList) {
+            richList.appendChild(this.virtualList.getGui());
+        }
         if (ag_grid_community_1.Utils.exists(this.filterParams.cellHeight)) {
             this.virtualList.setRowHeight(this.filterParams.cellHeight);
         }

@@ -1,5 +1,5 @@
-// ag-grid-enterprise v19.1.1
-import { Component, GridPanel, ISideBar, IComponent } from "ag-grid-community";
+// ag-grid-enterprise v19.1.2
+import { Component, GridPanel, IComponent, ISideBar } from "ag-grid-community";
 export interface IToolPanelChildComp extends IComponent<any> {
     refresh(): void;
 }
@@ -20,8 +20,8 @@ export declare class SideBarComp extends Component implements ISideBar {
     openToolPanel(key: string): void;
     close(): void;
     isToolPanelShowing(): boolean;
-    getActiveToolPanelItem(): string;
-    openedItem(): string;
+    getActiveToolPanelItem(): string | null;
+    openedItem(): string | null;
     reset(): void;
 }
 //# sourceMappingURL=sideBarComp.d.ts.map

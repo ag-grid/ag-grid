@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.1
+// ag-grid-enterprise v19.1.2
 import { Column, ExcelCell, ExcelDataType, ExcelOOXMLDataType, RowNode, RowSpanningAccumulator } from 'ag-grid-community';
 import { ExcelXmlSerializingSession } from './excelXmlSerializingSession';
 export declare class ExcelXlsxSerializingSession extends ExcelXmlSerializingSession {

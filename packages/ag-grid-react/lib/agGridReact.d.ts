@@ -1,4 +1,4 @@
-// ag-grid-react v19.1.1
+// ag-grid-react v19.1.2
 import * as React from "react";
 import * as AgGrid from "ag-grid-community";
 import { GridOptions } from "ag-grid-community";

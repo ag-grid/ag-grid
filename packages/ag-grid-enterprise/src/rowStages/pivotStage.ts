@@ -1,6 +1,7 @@
 import {
     Autowired,
     Bean,
+    ChangedPath,
     ColDef,
     ColGroupDef,
     Column,
@@ -11,8 +12,7 @@ import {
     RowNode,
     StageExecuteParams,
     Utils,
-    ValueService,
-    ChangedPath
+    ValueService
 } from "ag-grid-community";
 import {PivotColDefService} from "./pivotColDefService";
 
@@ -28,10 +28,10 @@ export class PivotStage implements IRowNodeStage {
 
     private uniqueValues: any = {};
 
-    private pivotColumnGroupDefs: (ColDef|ColGroupDef)[];
+    private pivotColumnGroupDefs: (ColDef | ColGroupDef)[];
     private pivotColumnDefs: ColDef[];
 
-    private aggregationColumnsHashLastTime: string;
+    private aggregationColumnsHashLastTime: string | null;
     private aggregationFuncsHashLastTime: string;
 
     public execute(params: StageExecuteParams): void {
@@ -44,23 +44,25 @@ export class PivotStage implements IRowNodeStage {
         }
     }
 
-    private executePivotOff(changedPath: ChangedPath): void {
+    private executePivotOff(changedPath: ChangedPath | undefined): void {
         this.aggregationColumnsHashLastTime = null;
         this.uniqueValues = {};
         if (this.columnController.isSecondaryColumnsPresent()) {
             this.columnController.setSecondaryColumns(null, "rowModelUpdated");
-            changedPath.setInactive();
+            if (changedPath) {
+                changedPath.setInactive();
+            }
         }
     }
 
-    private executePivotOn(rootNode: RowNode, changedPath: ChangedPath): void {
+    private executePivotOn(rootNode: RowNode, changedPath: ChangedPath | undefined): void {
         let uniqueValues = this.bucketUpRowNodes(rootNode);
 
         let uniqueValuesChanged = this.setUniqueValues(uniqueValues);
 
         let aggregationColumns = this.columnController.getValueColumns();
-        let aggregationColumnsHash = aggregationColumns.map( (column)=> column.getId() ).join('#');
-        let aggregationFuncsHash = aggregationColumns.map( (column)=> column.getAggFunc().toString() ).join('#');
+        let aggregationColumnsHash = aggregationColumns.map((column) => column.getId()).join('#');
+        let aggregationFuncsHash = aggregationColumns.map((column) => column.getAggFunc().toString()).join('#');
 
         let aggregationColumnsChanged = this.aggregationColumnsHashLastTime !== aggregationColumnsHash;
         let aggregationFuncsChanged = this.aggregationFuncsHashLastTime !== aggregationFuncsHash;
@@ -74,7 +76,9 @@ export class PivotStage implements IRowNodeStage {
             this.columnController.setSecondaryColumns(this.pivotColumnGroupDefs, "rowModelUpdated");
             // because the secondary columns have changed, then the aggregation needs to visit the whole
             // tree again, so we make the changedPath not active, to force aggregation to visit all paths.
-            changedPath.setInactive();
+            if (changedPath) {
+                changedPath.setInactive();
+            }
         }
     }
 
@@ -105,7 +109,7 @@ export class PivotStage implements IRowNodeStage {
             if (rowNode.leafGroup) {
                 this.bucketRowNode(rowNode, uniqueValues);
             } else {
-                rowNode.childrenAfterFilter.forEach( child => {
+                rowNode.childrenAfterFilter.forEach(child => {
                     recursivelySearchForLeafNodes(child);
                 });
             }
@@ -120,7 +124,7 @@ export class PivotStage implements IRowNodeStage {
 
         let pivotColumns = this.columnController.getPivotColumns();
 
-        if (pivotColumns.length===0) {
+        if (pivotColumns.length === 0) {
             rowNode.childrenMapped = null;
             return;
         }
@@ -134,7 +138,7 @@ export class PivotStage implements IRowNodeStage {
         let pivotColumn = pivotColumns[pivotIndex];
 
         // map the children out based on the pivot column
-        children.forEach( (child: RowNode) => {
+        children.forEach((child: RowNode) => {
 
             let key: string = this.valueService.getKeyForNode(pivotColumn, child);
 
@@ -153,12 +157,12 @@ export class PivotStage implements IRowNodeStage {
         });
 
         // if it's the last pivot column, return as is, otherwise go one level further in the map
-        if (pivotIndex === pivotColumns.length-1) {
+        if (pivotIndex === pivotColumns.length - 1) {
             return mappedChildren;
         } else {
             let result: any = {};
 
-            Utils.iterateObject(mappedChildren, (key: string, value: RowNode[])=> {
+            Utils.iterateObject(mappedChildren, (key: string, value: RowNode[]) => {
                 result[key] = this.bucketChildren(value, pivotColumns, pivotIndex + 1, uniqueValues[key]);
             });
 

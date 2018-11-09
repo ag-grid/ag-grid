@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.1
+// ag-grid-enterprise v19.1.2
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -146,8 +146,9 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         var rowGroupColIds = this.columnController.getRowGroupColumns().map(function (col) { return col.getId(); });
         var serverSideCache = this.rootNode.childrenCache;
         var sortingWithValueCol = this.isSortingWithValueColumn(changedColumnsInSort);
+        var sortingWithSecondaryCol = this.isSortingWithSecondaryColumn(changedColumnsInSort);
         var sortAlwaysResets = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
-        if (sortAlwaysResets || sortingWithValueCol) {
+        if (sortAlwaysResets || sortingWithValueCol || sortingWithSecondaryCol) {
             this.reset();
         }
         else {
@@ -449,6 +450,11 @@ var ServerSideRowModel = /** @class */ (function (_super) {
     };
     ServerSideRowModel.prototype.extractSortModel = function () {
         var sortModel = this.sortController.getSortModel();
+        // when using tree data we just return the sort model with the 'ag-Grid-AutoColumn' as is, i.e not broken out
+        // into it's constitute group columns as they are not defined up front and can vary per node.
+        if (this.gridOptionsWrapper.isTreeData()) {
+            return sortModel;
+        }
         var rowGroupCols = this.toValueObjects(this.columnController.getRowGroupColumns());
         // find index of auto group column in sort model
         var autoGroupIndex = -1;
@@ -486,8 +492,18 @@ var ServerSideRowModel = /** @class */ (function (_super) {
     ServerSideRowModel.prototype.isSortingWithValueColumn = function (changedColumnsInSort) {
         var valueColIds = this.columnController.getValueColumns().map(function (col) { return col.getColId(); });
         for (var i = 0; i < changedColumnsInSort.length; i++) {
-            var sortColId = changedColumnsInSort[i];
-            if (valueColIds.indexOf(sortColId) > -1) {
+            if (valueColIds.indexOf(changedColumnsInSort[i]) > -1) {
+                return true;
+            }
+        }
+        return false;
+    };
+    ServerSideRowModel.prototype.isSortingWithSecondaryColumn = function (changedColumnsInSort) {
+        if (!this.columnController.getSecondaryColumns())
+            return false;
+        var secondaryColIds = this.columnController.getSecondaryColumns().map(function (col) { return col.getColId(); });
+        for (var i = 0; i < changedColumnsInSort.length; i++) {
+            if (secondaryColIds.indexOf(changedColumnsInSort[i]) > -1) {
                 return true;
             }
         }

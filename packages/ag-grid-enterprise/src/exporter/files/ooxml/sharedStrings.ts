@@ -4,7 +4,7 @@ const buildSharedString = (textNode: string): XmlElement => ({
     name: 'si',
     children: [{
         name: 't',
-        textNode: _.utf8_encode(textNode.toString())
+        textNode: _.utf8_encode(_.escape(textNode.toString()))
     }]
 });
 

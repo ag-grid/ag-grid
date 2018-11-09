@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.1
+// ag-grid-enterprise v19.1.2
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -76,7 +76,7 @@ var SideBarComp = /** @class */ (function (_super) {
                 _this.sideBarButtonsComp.registerPanelComp(key, currentComp);
                 currentComp.setVisible(false);
             });
-            if (ag_grid_community_1._.exists(_this.sideBarButtonsComp.defaultPanelKey)) {
+            if (ag_grid_community_1._.exists(_this.sideBarButtonsComp.defaultPanelKey) && _this.sideBarButtonsComp.defaultPanelKey) {
                 _this.sideBarButtonsComp.setPanelVisibility(_this.sideBarButtonsComp.defaultPanelKey, true);
             }
         });
@@ -98,7 +98,7 @@ var SideBarComp = /** @class */ (function (_super) {
                 return;
             keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : ag_grid_community_1._.get(this.gridOptionsWrapper.getSideBar(), 'defaultToolPanel', null);
             keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : this.gridOptionsWrapper.getSideBar().defaultToolPanel;
-            var tabToShow = this.panelComps[keyOfTabToShow];
+            var tabToShow = keyOfTabToShow ? this.panelComps[keyOfTabToShow] : null;
             if (!tabToShow) {
                 console.warn("ag-grid: can't set the visibility of the tool panel item [" + keyOfTabToShow + "] since it can't be found");
                 return;

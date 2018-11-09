@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.1
+// ag-grid-enterprise v19.1.2
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -38,6 +38,7 @@ var ExcelXlsxFactory = /** @class */ (function () {
         return "" + header + xmlBody;
     };
     ExcelXlsxFactory.prototype.createExcel = function (styles, worksheets, sharedStrings) {
+        if (sharedStrings === void 0) { sharedStrings = []; }
         this.sharedStrings = sharedStrings;
         this.sheetNames = worksheets.map(function (worksheet) { return worksheet.name; });
         stylesheet_1.registerStyles(styles);

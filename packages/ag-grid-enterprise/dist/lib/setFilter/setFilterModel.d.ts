@@ -1,5 +1,5 @@
-// ag-grid-enterprise v19.1.1
-import { ColDef, Column, ValueFormatterService, IRowModel } from "ag-grid-community";
+// ag-grid-enterprise v19.1.2
+import { ColDef, Column, IRowModel, ValueFormatterService } from "ag-grid-community";
 export declare enum SetFilterModelValuesType {
     PROVIDED_LIST = 0,
     PROVIDED_CB = 1,
@@ -59,8 +59,8 @@ export declare class SetFilterModel {
     isValueSelected(value: any): boolean;
     isEverythingSelected(): boolean;
     isNothingSelected(): boolean;
-    getModel(): string[];
-    setModel(model: string[], isSelectAll?: boolean): void;
+    getModel(): string[] | null;
+    setModel(model: string[] | null, isSelectAll?: boolean): void;
     private setSyncModel;
     onFilterValuesReady(callback: () => void): void;
 }

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.1
+// ag-grid-enterprise v19.1.2
 import { Component, GridOptionsWrapper } from "ag-grid-community";
 export interface VirtualListModel {
     getRowCount(): number;
