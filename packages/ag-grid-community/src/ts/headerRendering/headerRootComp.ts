@@ -2,11 +2,10 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnController} from "../columnController/columnController";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {Column} from "../entities/column";
-import {Bean, Autowired, Context, PostConstruct, PreDestroy} from "../context/context";
+import {Autowired, Context, PostConstruct, PreDestroy} from "../context/context";
 import {HeaderContainer} from "./headerContainer";
 import {EventService} from "../eventService";
 import {Events} from "../events";
-import {ScrollVisibleService} from "../gridPanel/scrollVisibleService";
 import {Component} from "../widgets/component";
 import {RefSelector} from "../widgets/componentAnnotations";
 import {Utils as _} from "../utils";
@@ -34,7 +33,6 @@ export class HeaderRootComp extends Component {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('context') private context: Context;
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
 

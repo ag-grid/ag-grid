@@ -894,6 +894,7 @@ export class GridPanel extends Component {
         this.setPinnedLeftWidth();
         this.setPinnedRightWidth();
         this.hideFullWidthViewportScrollbars();
+
     }
 
     private updateScrollVisibleService(): void {
@@ -908,6 +909,18 @@ export class GridPanel extends Component {
         this.scrollVisibleService.setScrollsVisible(params);
 
         this.setHorizontalScrollVisible(params.horizontalScrollShowing);
+        this.setVerticalScrollPaddingVisible(params.verticalScrollShowing);
+    }
+
+    private setVerticalScrollPaddingVisible(show: boolean): void {
+        let margin = show ? `${this.scrollWidth}px` : `0px`;
+        if (this.enableRtl) {
+            this.eTop.style.paddingLeft = margin;
+            this.eBottom.style.paddingLeft = margin;
+        } else {
+            this.eTop.style.paddingRight = margin;
+            this.eBottom.style.paddingRight = margin;
+        }
     }
 
     private hideFullWidthViewportScrollbars(): void {
@@ -1414,8 +1427,6 @@ export class GridPanel extends Component {
         if (scrollWentPastBounds) {
             return;
         }
-
-        console.log(`scrollLeft = ${scrollLeft}`);
 
         this.doHorizontalScroll(scrollLeft);
     }
