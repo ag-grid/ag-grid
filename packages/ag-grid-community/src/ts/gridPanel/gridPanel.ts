@@ -1390,30 +1390,13 @@ export class GridPanel extends Component {
     }
 
     private onFakeHorizontalScroll(): void {
-
-        if (!this.isControllingScroll(this.eBodyHorizontalScrollViewport)) {
-            console.log('skipping fake');
-            return;
-        } else {
-            console.log('doing fake');
-        }
-
-        // this.eCenterViewport.scrollLeft = this.eBodyHorizontalScrollViewport.scrollLeft;
+        if (!this.isControllingScroll(this.eBodyHorizontalScrollViewport)) { return; }
         this.onBodyHorizontalScroll(this.eBodyHorizontalScrollViewport);
     }
 
     private onCenterViewportScroll(): void {
-
-        if (!this.isControllingScroll(this.eCenterViewport)) {
-            console.log('skipping real');
-            return;
-        } else {
-            console.log('doing real');
-        }
-
-        // this.eBodyHorizontalScrollViewport.scrollLeft = this.eCenterViewport.scrollLeft;
+        if (!this.isControllingScroll(this.eCenterViewport)) { return; }
         this.onBodyHorizontalScroll(this.eCenterViewport);
-
     }
 
     private onBodyHorizontalScroll(eSource: HTMLElement): void {
