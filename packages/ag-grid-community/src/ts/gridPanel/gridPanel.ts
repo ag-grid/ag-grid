@@ -1168,8 +1168,7 @@ export class GridPanel extends Component {
             // because the scroll position in RTL is a function that depends on
             // the width. to be convinced of this, take out this line, enable RTL,
             // scroll all the way to the left and then resize a column
-            let scrollLeft = this.getCenterViewportScrollLeft();
-            this.horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft);
+            this.horizontallyScrollHeaderCenterAndFloatingCenter();
         }
     }
 
@@ -1374,10 +1373,9 @@ export class GridPanel extends Component {
     }
 
     private onVerticalScroll(): void {
-
         let scrollTop: number = this.eBodyViewport.scrollTop;
-
         this.scrollTop = scrollTop;
+        this.animationFrameService.setScrollTop(scrollTop);
         this.redrawRowsAfterScroll();
     }
 
@@ -1477,7 +1475,10 @@ export class GridPanel extends Component {
         _.setScrollLeft(this.eCenterViewport, value, this.enableRtl);
     }
 
-    public horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft: number): void {
+    public horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft?: number): void {
+        if (scrollLeft===undefined) {
+            scrollLeft = this.getCenterViewportScrollLeft();
+        }
         let offset = this.enableRtl ? scrollLeft : -scrollLeft;
 
         this.headerRootComp.setHorizontalScroll(offset);
