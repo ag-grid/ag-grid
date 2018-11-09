@@ -103,11 +103,11 @@ export class EnterpriseMenuFactory implements IMenuFactory {
             }
         );
 
-        positionCallback(menu);
-
         menu.afterGuiAttached({
             hidePopup: hidePopup
         });
+
+        positionCallback(menu);
 
         if (!defaultTab) {
             menu.showTabBasedOnPreviousSelection();
@@ -460,7 +460,7 @@ export class EnterpriseMenu extends BeanStub {
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
         let onBodyScroll = (event: any) => {
             // if h scroll, popup is no longer over the column
-            if (event.direction==='horizontal') {
+            if (event.direction === 'horizontal') {
                 params.hidePopup();
             }
         };

@@ -605,6 +605,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     private isSortingWithSecondaryColumn(changedColumnsInSort: string[]): boolean {
+        if (!this.columnController.getSecondaryColumns()) return false;
+
         let secondaryColIds = this.columnController.getSecondaryColumns().map(col => col.getColId());
 
         for (let i = 0; i < changedColumnsInSort.length; i++) {
@@ -615,7 +617,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         return false;
     }
-
 
     private cacheExists(): boolean {
         return _.exists(this.rootNode) && _.exists(this.rootNode.childrenCache);

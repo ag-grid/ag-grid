@@ -2,28 +2,28 @@ import {
     _,
     Autowired,
     Bean,
+    ChangedPath,
     Column,
     ColumnController,
     Context,
     EventService,
-    SelectableService,
+    GetDataPath,
     GridOptionsWrapper,
     IRowNodeStage,
     NumberSequence,
+    PostConstruct,
     RowNode,
     RowNodeTransaction,
+    SelectableService,
     SelectionController,
     StageExecuteParams,
-    ValueService,
-    ChangedPath,
-    GetDataPath,
-    PostConstruct
+    ValueService
 } from "ag-grid-community";
 
 interface GroupInfo {
     key: string; // e.g. 'Ireland'
-    field: string; // e.g. 'country'
-    rowGroupColumn: Column;
+    field: string | null; // e.g. 'country'
+    rowGroupColumn: Column | null;
 }
 
 interface GroupingDetails {
@@ -35,7 +35,7 @@ interface GroupingDetails {
     groupedCols: Column[];
     groupedColCount: number;
     transaction: RowNodeTransaction;
-    rowNodeOrder: {[id: string]: number};
+    rowNodeOrder: { [id: string]: number };
 }
 
 @Bean('groupStage')
@@ -52,7 +52,7 @@ export class GroupStage implements IRowNodeStage {
     // if doing tree data, this is true. we set this at create time - as our code does not
     // cater for the scenario where this is switched on / off dynamically
     private usingTreeData: boolean;
-    private getDataPath: GetDataPath;
+    private getDataPath: GetDataPath | undefined;
 
     // we use a sequence variable so that each time we do a grouping, we don't
     // reuse the ids - otherwise the rowRenderer will confuse rowNodes between redraws
@@ -93,7 +93,7 @@ export class GroupStage implements IRowNodeStage {
         let {rowNode, changedPath, rowNodeTransaction, rowNodeOrder} = params;
 
         let groupedCols = this.usingTreeData ? null : this.columnController.getRowGroupColumns();
-        let isGrouping = this.usingTreeData || groupedCols.length > 0;
+        let isGrouping = this.usingTreeData || (groupedCols && groupedCols.length > 0);
         let usingTransaction = isGrouping && _.exists(rowNodeTransaction);
 
         let details = <GroupingDetails> {
@@ -106,7 +106,7 @@ export class GroupStage implements IRowNodeStage {
             groupedCols: groupedCols,
             rootNode: rowNode,
             pivotMode: this.columnController.isPivotMode(),
-            groupedColCount: this.usingTreeData ? 0 : groupedCols.length,
+            groupedColCount: this.usingTreeData || !groupedCols ? 0 : groupedCols.length,
             rowNodeOrder: rowNodeOrder,
 
             // important not to do transaction if we are not grouping, as otherwise the 'insert index' is ignored.
@@ -140,16 +140,18 @@ export class GroupStage implements IRowNodeStage {
     // this is used when doing delta updates, eg Redux, keeps nodes in right order
     private recursiveSortChildren(node: RowNode, details: GroupingDetails): void {
         _.sortRowNodesByOrder(node.childrenAfterGroup, details.rowNodeOrder);
-        node.childrenAfterGroup.forEach( childNode => {
+        node.childrenAfterGroup.forEach(childNode => {
             if (childNode.childrenAfterGroup) {
                 this.recursiveSortChildren(childNode, details);
             }
-        } );
+        });
     }
 
     private sortGroupsWithComparator(rootNode: RowNode): void {
         // we don't do group sorting for tree data
-        if (this.usingTreeData) { return; }
+        if (this.usingTreeData) {
+            return;
+        }
 
         let comparator = this.gridOptionsWrapper.getDefaultGroupSortComparator();
         if (_.exists(comparator)) {
@@ -163,7 +165,7 @@ export class GroupStage implements IRowNodeStage {
 
             if (doSort) {
                 rowNode.childrenAfterGroup.sort(comparator);
-                rowNode.childrenAfterGroup.forEach( childNode => recursiveSort(childNode));
+                rowNode.childrenAfterGroup.forEach(childNode => recursiveSort(childNode));
             }
         }
     }
@@ -174,7 +176,7 @@ export class GroupStage implements IRowNodeStage {
         // when doing tree data, the node is part of the path,
         // but when doing grid grouping, the node is not part of the path so we start with the parent.
         let pointer = this.usingTreeData ? node : node.parent;
-        while (pointer !== details.rootNode) {
+        while (pointer && pointer !== details.rootNode) {
             res.push({
                 key: pointer.key,
                 rowGroupColumn: pointer.rowGroupColumn,
@@ -188,7 +190,7 @@ export class GroupStage implements IRowNodeStage {
 
     private moveNodesInWrongPath(childNodes: RowNode[], details: GroupingDetails): void {
 
-        childNodes.forEach( childNode => {
+        childNodes.forEach(childNode => {
 
             // we add node, even if parent has not changed, as the data could have
             // changed, hence aggregations will be wrong
@@ -229,7 +231,7 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private removeNodes(leafRowNodes: RowNode[], details: GroupingDetails): void {
-        leafRowNodes.forEach( leafToRemove => {
+        leafRowNodes.forEach(leafToRemove => {
             this.removeOneNode(leafToRemove, details);
             if (details.changedPath.isActive()) {
                 details.changedPath.addParentNode(leafToRemove.parent);
@@ -240,9 +242,9 @@ export class GroupStage implements IRowNodeStage {
     private removeOneNode(childNode: RowNode, details: GroupingDetails): void {
 
         // utility func to execute once on each parent node
-        let forEachParentGroup = ( callback:  (parent: RowNode)=>void ) => {
+        let forEachParentGroup = (callback: (parent: RowNode) => void) => {
             let pointer = childNode.parent;
-            while (pointer !== details.rootNode) {
+            while (pointer && pointer !== details.rootNode) {
                 callback(pointer);
                 pointer = pointer.parent;
             }
@@ -269,11 +271,11 @@ export class GroupStage implements IRowNodeStage {
             newGroupNode.childrenAfterGroup = childNode.childrenAfterGroup;
             newGroupNode.childrenMapped = childNode.childrenMapped;
 
-            newGroupNode.childrenAfterGroup.forEach( rowNode => rowNode.parent = newGroupNode);
+            newGroupNode.childrenAfterGroup.forEach(rowNode => rowNode.parent = newGroupNode);
         }
 
         // remove empty groups
-        forEachParentGroup( node => {
+        forEachParentGroup(node => {
             if (node.isEmptyFillerNode()) {
                 this.removeFromParent(node);
                 // we remove selection on filler nodes here, as the selection would not be removed
@@ -284,18 +286,26 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private removeFromParent(child: RowNode) {
-        _.removeFromArray(child.parent.childrenAfterGroup, child);
+        if (child.parent) {
+            _.removeFromArray(child.parent.childrenAfterGroup, child);
+        }
         let mapKey = this.getChildrenMappedKey(child.key, child.rowGroupColumn);
-        child.parent.childrenMapped[mapKey] = undefined;
+        if (child.parent && child.parent.childrenMapped) {
+            child.parent.childrenMapped[mapKey] = undefined;
+        }
         // this is important for transition, see rowComp removeFirstPassFuncs. when doing animation and
         // remove, if rowTop is still present, the rowComp thinks it's just moved position.
         child.setRowTop(null);
     }
 
-    private addToParent(child: RowNode, parent: RowNode) {
+    private addToParent(child: RowNode, parent: RowNode | null) {
         let mapKey = this.getChildrenMappedKey(child.key, child.rowGroupColumn);
-        parent.childrenMapped[mapKey] = child;
-        parent.childrenAfterGroup.push(child);
+        if (parent) {
+            if (parent.childrenMapped) {
+                parent.childrenMapped[mapKey] = child;
+            }
+            parent.childrenAfterGroup.push(child);
+        }
     }
 
     private shotgunResetEverything(details: GroupingDetails): void {
@@ -313,7 +323,7 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private insertNodes(newRowNodes: RowNode[], details: GroupingDetails): void {
-        newRowNodes.forEach( rowNode => {
+        newRowNodes.forEach(rowNode => {
             this.insertOneNode(rowNode, details);
             if (details.changedPath.isActive()) {
                 details.changedPath.addParentNode(rowNode.parent);
@@ -343,7 +353,7 @@ export class GroupStage implements IRowNodeStage {
     private findParentForNode(childNode: RowNode, path: GroupInfo[], details: GroupingDetails): RowNode {
         let nextNode: RowNode = details.rootNode;
 
-        path.forEach( (groupInfo, level) => {
+        path.forEach((groupInfo, level) => {
             nextNode = this.getOrCreateNextNode(nextNode, groupInfo, level, details);
             // node gets added to all group nodes.
             // note: we do not add to rootNode here, as the rootNode is the master list of rowNodes
@@ -373,7 +383,7 @@ export class GroupStage implements IRowNodeStage {
         userGroup.childrenMapped = fillerGroup.childrenMapped;
 
         this.removeFromParent(fillerGroup);
-        userGroup.childrenAfterGroup.forEach( rowNode => rowNode.parent = userGroup);
+        userGroup.childrenAfterGroup.forEach(rowNode => rowNode.parent = userGroup);
         this.addToParent(userGroup, fillerGroup.parent);
     }
 
@@ -381,7 +391,7 @@ export class GroupStage implements IRowNodeStage {
                                 details: GroupingDetails): RowNode {
 
         let mapKey = this.getChildrenMappedKey(groupInfo.key, groupInfo.rowGroupColumn);
-        let nextNode = <RowNode> parentGroup.childrenMapped[mapKey];
+        let nextNode = parentGroup.childrenMapped ? <RowNode> parentGroup.childrenMapped[mapKey] : undefined;
         if (!nextNode) {
             nextNode = this.createGroup(groupInfo, parentGroup, level, details);
             // attach the new group to the parent
@@ -405,7 +415,7 @@ export class GroupStage implements IRowNodeStage {
         groupDisplayCols.forEach(col => {
             // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
-            let displayGroupForCol = this.usingTreeData || col.isRowGroupDisplayed(groupNode.rowGroupColumn.getId());
+            let displayGroupForCol = this.usingTreeData || (groupNode.rowGroupColumn ? col.isRowGroupDisplayed(groupNode.rowGroupColumn.getId()) : false);
             if (displayGroupForCol) {
                 groupNode.groupData[col.getColId()] = groupInfo.key;
             }
@@ -413,11 +423,11 @@ export class GroupStage implements IRowNodeStage {
 
         // we use negative number for the ids of the groups, this makes sure we don't clash with the
         // id's of the leaf nodes.
-        groupNode.id = (this.groupIdSequence.next()*-1).toString();
+        groupNode.id = (this.groupIdSequence.next() * -1).toString();
         groupNode.key = groupInfo.key;
 
         groupNode.level = level;
-        groupNode.leafGroup = this.usingTreeData ? false : level === (details.groupedColCount-1);
+        groupNode.leafGroup = this.usingTreeData ? false : level === (details.groupedColCount - 1);
 
         // if doing pivoting, then the leaf group is never expanded,
         // as we do not show leaf rows
@@ -443,7 +453,7 @@ export class GroupStage implements IRowNodeStage {
         return groupNode;
     }
 
-    private getChildrenMappedKey(key: string, rowGroupColumn: Column): string {
+    private getChildrenMappedKey(key: string, rowGroupColumn: Column | null): string {
         if (rowGroupColumn) {
             // grouping by columns
             return rowGroupColumn.getId() + '-' + key;
@@ -454,7 +464,7 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private isExpanded(expandByDefault: number, level: number) {
-        if (expandByDefault===-1) {
+        if (expandByDefault === -1) {
             return true;
         } else {
             return level < expandByDefault;
@@ -469,9 +479,9 @@ export class GroupStage implements IRowNodeStage {
         }
     }
 
-    private getGroupInfoFromCallback(rowNode: RowNode) : GroupInfo[] {
-        let keys: string[] = this.getDataPath(rowNode.data);
-        if (keys===null || keys===undefined || keys.length===0) {
+    private getGroupInfoFromCallback(rowNode: RowNode): GroupInfo[] {
+        let keys: string[] | null = this.getDataPath ? this.getDataPath(rowNode.data) : null;
+        if (keys === null || keys === undefined || keys.length === 0) {
             _.doOnce(
                 () => console.warn(`getDataPath() should not return an empty path for data`, rowNode.data),
                 'groupStage.getGroupInfoFromCallback'
@@ -483,9 +493,9 @@ export class GroupStage implements IRowNodeStage {
 
     private getGroupInfoFromGroupColumns(rowNode: RowNode, details: GroupingDetails) {
         let res: GroupInfo[] = [];
-        details.groupedCols.forEach( groupCol => {
+        details.groupedCols.forEach(groupCol => {
             let key: string = this.valueService.getKeyForNode(groupCol, rowNode);
-            let keyExists = key!==null && key!==undefined;
+            let keyExists = key !== null && key !== undefined;
 
             // unbalanced tree and pivot mode don't work together - not because of the grid, it doesn't make
             // mathematical sense as you are building up a cube. so if pivot mode, we put in a blank key where missing.
