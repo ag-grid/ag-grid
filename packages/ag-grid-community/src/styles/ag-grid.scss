@@ -846,6 +846,14 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     width: 100%;
 }
 
+.ag-filter {
+    // for focus reasons, we need this for IE, otherwise for the set filter, the 'selectAll' click doesn't work
+    // when you click on it when the quick filter has focus. this was a fix for AG-2258
+    .ag-filter-checkbox {
+        pointer-events: none;
+    }
+}
+
 .ag-floating-filter-body {
     input {
         height: 19px;
