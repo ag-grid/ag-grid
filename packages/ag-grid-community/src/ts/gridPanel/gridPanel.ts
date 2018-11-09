@@ -47,33 +47,6 @@ import {ResizeObserverService} from "../misc/resizeObserverService";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
-
-/*
-
-<div class="ag-body" ref="eBody" role="presentation" unselectable="on">
-            <div class="ag-pinned-left-cols-viewport-wrapper" ref="eLeftViewportWrapper" role="presentation" unselectable="on">
-                <div class="ag-pinned-left-cols-viewport" ref="eLeftViewport" role="presentation" unselectable="on">
-                    <div class="ag-pinned-left-cols-container" ref="eLeftContainer" role="presentation" unselectable="on"/>
-                </div>
-            </div>
-            <div class="ag-body-viewport-wrapper" ref="eBodyViewportWrapper" role="presentation" unselectable="on">
-                <div class="ag-body-viewport" ref="eBodyViewport" role="presentation" unselectable="on">
-                    <div class="ag-body-container" ref="eBodyContainer" role="presentation" unselectable="on"/>
-                </div>
-            </div>
-            <div class="ag-pinned-right-cols-viewport-wrapper" ref="eRightViewportWrapper" role="presentation" unselectable="on">
-                <div class="ag-pinned-right-cols-viewport" ref="eRightViewport" role="presentation" unselectable="on">
-                    <div class="ag-pinned-right-cols-container" ref="eRightContainer" role="presentation" unselectable="on"/>
-                </div>
-            </div>
-            <div class="ag-full-width-viewport-wrapper" ref="eFullWidthViewportWrapper" role="presentation" unselectable="on">
-                <div class="ag-full-width-viewport" ref="eFullWidthViewport" role="presentation" unselectable="on">
-                    <div class="ag-full-width-container" ref="eFullWidthContainer" role="presentation" unselectable="on"/>
-                </div>
-            </div>
-        </div>
-
-* */
 const GRID_PANEL_NORMAL_TEMPLATE =
     `<div class="ag-root ag-font-style" role="grid" unselectable="on">
         <ag-header-root ref="headerRoot" unselectable="on"></ag-header-root>
@@ -87,8 +60,10 @@ const GRID_PANEL_NORMAL_TEMPLATE =
         </div>
         <div class="ag-body-viewport" ref="eBodyViewport" role="presentation" unselectable="on">
             <div class="ag-pinned-left-cols-container" ref="eLeftContainer" role="presentation" unselectable="on"></div>
-            <div class="ag-center-cols-viewport" ref="eCenterViewport" role="presentation" unselectable="on">
-                <div class="ag-center-cols-container" ref="eCenterContainer" role="presentation" unselectable="on"></div>
+            <div class="ag-center-cols-clipper" ref="eCenterColsClipper">
+                <div class="ag-center-cols-viewport" ref="eCenterViewport" role="presentation" unselectable="on">
+                    <div class="ag-center-cols-container" ref="eCenterContainer" role="presentation" unselectable="on"></div>
+                </div>
             </div>
             <div class="ag-pinned-right-cols-container" ref="eRightContainer" role="presentation" unselectable="on"></div>
             <div class="ag-full-width-viewport-wrapper" ref="eFullWidthViewportWrapper" role="presentation" unselectable="on">
@@ -175,6 +150,7 @@ export class GridPanel extends Component {
     @RefSelector('eCenterViewport') private eCenterViewport: HTMLElement;
     @RefSelector('eLeftContainer') private eLeftContainer: HTMLElement;
     @RefSelector('eRightContainer') private eRightContainer: HTMLElement;
+    @RefSelector('eCenterColsClipper') private eCenterColsClipper: HTMLElement;
 
     // fake horizontal scroller
     @RefSelector('eHorizontalLeftSpacer') private eHorizontalLeftSpacer: HTMLElement;
@@ -922,6 +898,8 @@ export class GridPanel extends Component {
         params.horizontalScrollShowing = this.isHorizontalScrollShowing();
 
         this.scrollVisibleService.setScrollsVisible(params);
+
+        this.setHorizontalScrollVisible(params.horizontalScrollShowing);
     }
 
     private hideFullWidthViewportScrollbars(): void {
@@ -1088,7 +1066,7 @@ export class GridPanel extends Component {
         this.rowContainerComponents = {
             body: new RowContainerComponent({
                 eContainer: this.eCenterContainer,
-                eWrapper: this.eCenterViewport,
+                eWrapper: this.eCenterColsClipper,
                 eViewport: this.eBodyViewport
             }),
             fullWidth: new RowContainerComponent({
@@ -1177,7 +1155,6 @@ export class GridPanel extends Component {
         this.setCenterWidth();
         this.setPinnedLeftWidth();
         this.setPinnedRightWidth();
-        this.setHorizontalScrollWidth();
     }
 
     private setCenterWidth(): void {
@@ -1197,11 +1174,11 @@ export class GridPanel extends Component {
         this.eBodyHorizontalScrollContainer.style.width = widthPx;
     }
 
-    private setHorizontalScrollWidth(): void {
-        const width = `${this.gridOptionsWrapper.getScrollbarWidth() || 0}px`;
+    private setHorizontalScrollVisible(visible: boolean): void {
+        const height = visible ? `${this.gridOptionsWrapper.getScrollbarWidth() || 0}px` : '0px';
 
-        this.eBodyHorizontalScrollViewport.style.maxHeight = width;
-        this.eBodyHorizontalScrollContainer.style.height = width;
+        this.eBodyHorizontalScrollViewport.style.maxHeight = height;
+        this.eBodyHorizontalScrollContainer.style.height = height;
     }
 
     private setPinnedLeftWidth(): void {

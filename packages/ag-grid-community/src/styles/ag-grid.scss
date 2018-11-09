@@ -472,15 +472,18 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     position: relative;
 }
 
-.ag-center-cols-viewport {
+.ag-center-cols-clipper {
     flex: 1;
     min-width: 0;
+    overflow: hidden;
+}
+
+.ag-center-cols-viewport {
+    width: 100%;
+    height: calc(100% + 30px);
     overflow-x: auto;
     overflow-y: hidden;
     position: relative;
-    &::-webkit-scrollbar { 
-        display: none;
-    }
 }
 
 .ag-center-cols-container {
