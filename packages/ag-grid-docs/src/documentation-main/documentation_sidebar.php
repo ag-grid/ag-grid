@@ -6,6 +6,19 @@
 
 <div class="card card-highlight">
     <div class="card-body">
+        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=19.1.2">Version 19.1.2 Released</a></h5>
+        <h6 class="card-subtitle mb-2 text-muted">Nov 9</h6>
+        <p class="card-text">
+            Patch release with the bug fixes:
+        </p>
+
+        <p class="text-right">
+            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=19.1.2">Change Log</a>
+        </p>
+    </div>
+</div>
+<div class="card card-highlight">
+    <div class="card-body">
         <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=19.1.1">Version 19.1.1 Released</a></h5>
         <h6 class="card-subtitle mb-2 text-muted">Oct 30</h6>
         <p class="card-text">
