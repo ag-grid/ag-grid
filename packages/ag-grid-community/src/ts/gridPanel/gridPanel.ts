@@ -314,6 +314,8 @@ export class GridPanel extends Component {
 
         this.onDisplayedColumnsWidthChanged();
 
+        this.setHeightOnCenterColsViewport();
+
         this.gridApi.registerGridComp(this);
         this.alignedGridsService.registerGridComp(this);
         this.headerRootComp.registerGridComp(this);
@@ -335,6 +337,11 @@ export class GridPanel extends Component {
                 viewport, this.onCenterViewportResized.bind(this));
             this.addDestroyFunc(() => unsubscribeFromResize());
         });
+    }
+
+    private setHeightOnCenterColsViewport(): void {
+        let height = this.gridOptionsWrapper.getScrollbarWidth()>0 ? 'calc(100% + 30px)' : '100%';
+        this.eCenterViewport.style.height = height;
     }
 
     // todo - what do we do here???
