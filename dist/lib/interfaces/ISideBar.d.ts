@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.1
+// Type definitions for ag-grid-community v19.1.2
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IComponent } from "./iComponent";
@@ -12,6 +12,6 @@ export interface ISideBar extends IComponent<any> {
     openToolPanel(key: string): void;
     close(): void;
     reset(): void;
-    openedItem(): string;
+    openedItem(): string | null;
 }
 //# sourceMappingURL=ISideBar.d.ts.map

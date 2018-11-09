@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.1
+// Type definitions for ag-grid-community v19.1.2
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColDef, ColGroupDef } from "../entities/colDef";
@@ -13,7 +13,7 @@ export declare class ColumnApi {
     setColumnGroupOpened(group: OriginalColumnGroup | string, newValue: boolean): void;
     getColumnGroup(name: string, instanceId?: number): ColumnGroup;
     getOriginalColumnGroup(name: string): OriginalColumnGroup;
-    getDisplayNameForColumn(column: Column, location: string): string;
+    getDisplayNameForColumn(column: Column, location: string | null): string;
     getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string;
     getColumn(key: any): Column;
     setColumnState(columnState: ColumnState[]): boolean;

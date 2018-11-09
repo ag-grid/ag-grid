@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.1
+ * @version v19.1.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -816,7 +816,7 @@ var GridOptionsWrapper = /** @class */ (function () {
         this.propertyEventService.removeEventListener(key, listener);
     };
     GridOptionsWrapper.prototype.getAutoSizePadding = function () {
-        return this.gridOptions.autoSizePadding > 0 ? this.gridOptions.autoSizePadding : 20;
+        return this.gridOptions.autoSizePadding && this.gridOptions.autoSizePadding > 0 ? this.gridOptions.autoSizePadding : 20;
     };
     // properties
     GridOptionsWrapper.prototype.getHeaderHeight = function () {
@@ -878,11 +878,11 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.getDocument = function () {
         // if user is providing document, we use the users one,
         // otherwise we use the document on the global namespace.
-        var result;
-        if (utils_1.Utils.exists(this.gridOptions.getDocument)) {
+        var result = null;
+        if (this.gridOptions.getDocument && utils_1.Utils.exists(this.gridOptions.getDocument)) {
             result = this.gridOptions.getDocument();
         }
-        if (utils_1.Utils.exists(result)) {
+        if (result && utils_1.Utils.exists(result)) {
             return result;
         }
         else {
@@ -890,7 +890,7 @@ var GridOptionsWrapper = /** @class */ (function () {
         }
     };
     GridOptionsWrapper.prototype.getMinColWidth = function () {
-        if (this.gridOptions.minColWidth > GridOptionsWrapper_1.MIN_COL_WIDTH) {
+        if (this.gridOptions.minColWidth && (this.gridOptions.minColWidth > GridOptionsWrapper_1.MIN_COL_WIDTH)) {
             return this.gridOptions.minColWidth;
         }
         else {
@@ -898,7 +898,7 @@ var GridOptionsWrapper = /** @class */ (function () {
         }
     };
     GridOptionsWrapper.prototype.getMaxColWidth = function () {
-        if (this.gridOptions.maxColWidth > GridOptionsWrapper_1.MIN_COL_WIDTH) {
+        if (this.gridOptions.maxColWidth && (this.gridOptions.maxColWidth > GridOptionsWrapper_1.MIN_COL_WIDTH)) {
             return this.gridOptions.maxColWidth;
         }
         else {
@@ -1090,8 +1090,9 @@ var GridOptionsWrapper = /** @class */ (function () {
         if (options.sideBar != null) {
             options.sideBar = sideBar_1.SideBarDefParser.parse(options.sideBar);
         }
-        if (Object.keys(toolPanelColumnsCompProps).length > 0) {
-            var columnsDef = this.gridOptions.sideBar.toolPanels.filter(function (it) { return it.id === 'columns'; });
+        var sideBarDef = this.gridOptions.sideBar;
+        if (Object.keys(toolPanelColumnsCompProps).length > 0 && sideBarDef && sideBarDef.toolPanels) {
+            var columnsDef = (sideBarDef.toolPanels.filter(function (it) { return it.id === 'columns'; }));
             if (columnsDef.length === 1) {
                 utils_1.Utils.mergeDeep(columnsDef[0], {
                     componentParams: toolPanelColumnsCompProps
@@ -1155,11 +1156,10 @@ var GridOptionsWrapper = /** @class */ (function () {
     };
     // we don't allow dynamic row height for virtual paging
     GridOptionsWrapper.prototype.getRowHeightAsNumber = function () {
-        var rowHeight = this.gridOptions.rowHeight;
-        if (utils_1.Utils.missing(rowHeight)) {
+        if (!this.gridOptions.rowHeight || utils_1.Utils.missing(this.gridOptions.rowHeight)) {
             return this.getDefaultRowHeight();
         }
-        else if (this.isNumeric(this.gridOptions.rowHeight)) {
+        else if (this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight)) {
             return this.gridOptions.rowHeight;
         }
         else {
@@ -1189,7 +1189,7 @@ var GridOptionsWrapper = /** @class */ (function () {
             }
         }
         else {
-            var defaultHeight = this.isNumeric(this.gridOptions.rowHeight) ?
+            var defaultHeight = this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight) ?
                 this.gridOptions.rowHeight : this.getDefaultRowHeight();
             if (this.columnController.isAutoRowHeightActive()) {
                 var autoHeight = this.autoHeightCalculator.getPreferredHeightForRow(rowNode);

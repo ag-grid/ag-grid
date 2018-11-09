@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.1
+ * @version v19.1.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -693,24 +693,14 @@ var RowRenderer = /** @class */ (function (_super) {
             this.eventService.dispatchEvent(event_1);
         }
         if (this.paginationProxy.isRowsToRender()) {
-            var fireEvent = true;
-            // the server side row model has a stub row when no data is present
-            // this take this stub row into account
-            if (this.gridOptionsWrapper.isRowModelServerSide()) {
-                var firstRowNode = this.paginationProxy.getRow(0);
-                // we don't fire event if first row node is a stub.
-                fireEvent = !firstRowNode || !firstRowNode.stub;
-            }
-            if (fireEvent) {
-                var event_2 = {
-                    type: events_1.Events.EVENT_FIRST_DATA_RENDERED,
-                    firstRow: newFirst,
-                    lastRow: newLast,
-                    api: this.gridApi,
-                    columnApi: this.columnApi
-                };
-                this.eventService.dispatchEventOnce(event_2);
-            }
+            var event_2 = {
+                type: events_1.Events.EVENT_FIRST_DATA_RENDERED,
+                firstRow: newFirst,
+                lastRow: newLast,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+            this.eventService.dispatchEventOnce(event_2);
         }
     };
     RowRenderer.prototype.getFirstVirtualRenderedRow = function () {

@@ -659,6 +659,9 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   box-sizing: border-box;
   width: 100%; }
 
+.ag-filter .ag-filter-checkbox {
+  pointer-events: none; }
+
 .ag-floating-filter-body input {
   height: 19px;
   margin: 0;

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.1
+// Type definitions for ag-grid-community v19.1.2
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
@@ -239,7 +239,7 @@ export interface ColDef extends AbstractColDef {
     /** If true, grid will flash cell after cell is refreshed */
     enableCellChangeFlash?: boolean;
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
-    pivotValueColumn?: Column;
+    pivotValueColumn?: Column | null;
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotTotalColumnIds?: string[];
     /** The custom header component to be used for rendering the component header. If none specified the default ag-Grid is used**/
