@@ -184,10 +184,11 @@ export class GridPanel extends Component {
     private eOverlay: HTMLElement;
 
     private scrollLeft = -1;
-    private nextScrollLeft = -1;
     private scrollTop = -1;
-    private nextScrollTop = -1;
     private verticalRedrawNeeded = false;
+
+    private lastHorizontalScrollMillis = 0;
+    private horizontalScroller: HTMLElement;
 
     private bodyHeight: number;
 
@@ -1154,7 +1155,8 @@ export class GridPanel extends Component {
             // because the scroll position in RTL is a function that depends on
             // the width. to be convinced of this, take out this line, enable RTL,
             // scroll all the way to the left and then resize a column
-            this.horizontallyScrollHeaderCenterAndFloatingCenter();
+            let scrollLeft = this.getCenterViewportScrollLeft();
+            this.horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft);
         }
     }
 
@@ -1327,10 +1329,7 @@ export class GridPanel extends Component {
         // for the alignedGridsService, as if we don't, the aligned grid service gets
         // notified async, and then it's 'consuming' flag doesn't get used right, and
         // we can end up with an infinite loop
-        if (this.nextScrollLeft !== hScrollPosition) {
-            this.nextScrollLeft = hScrollPosition;
-            this.doHorizontalScroll();
-        }
+        this.doHorizontalScroll(hScrollPosition);
     }
 
     public setVerticalScrollPosition(vScrollPosition: number): void {
@@ -1365,36 +1364,64 @@ export class GridPanel extends Component {
 
         let scrollTop: number = this.eBodyViewport.scrollTop;
 
-        if (this.useAnimationFrame) {
-            if (this.nextScrollTop !== scrollTop) {
-                this.nextScrollTop = scrollTop;
-                this.animationFrameService.schedule();
-            }
+        this.scrollTop = scrollTop;
+        this.redrawRowsAfterScroll();
+    }
+
+    private isControllingScroll(eDiv: HTMLElement): boolean {
+        let now = new Date().getTime();
+        let diff = now - this.lastHorizontalScrollMillis;
+
+        let controlling: boolean;
+        if (eDiv===this.horizontalScroller) {
+            controlling = true;
         } else {
-            if (scrollTop !== this.scrollTop) {
-                this.scrollTop = scrollTop;
-                this.redrawRowsAfterScroll();
-            }
+            // if we scrolled the other container <200ms ago, we skip this event
+            controlling = diff > 200;
         }
+
+        this.lastHorizontalScrollMillis = now;
+
+        if (controlling) {
+            this.horizontalScroller = eDiv;
+        }
+
+        return controlling;
     }
 
     private onFakeHorizontalScroll(): void {
-        this.eCenterViewport.scrollLeft = this.eBodyHorizontalScrollViewport.scrollLeft;
-        this.onBodyHorizontalScroll();
+
+        if (!this.isControllingScroll(this.eBodyHorizontalScrollViewport)) {
+            console.log('skipping fake');
+            return;
+        } else {
+            console.log('doing fake');
+        }
+
+        // this.eCenterViewport.scrollLeft = this.eBodyHorizontalScrollViewport.scrollLeft;
+        this.onBodyHorizontalScroll(this.eBodyHorizontalScrollViewport);
     }
 
     private onCenterViewportScroll(): void {
-        this.eBodyHorizontalScrollViewport.scrollLeft = this.eCenterViewport.scrollLeft;
-        this.onBodyHorizontalScroll();
+
+        if (!this.isControllingScroll(this.eCenterViewport)) {
+            console.log('skipping real');
+            return;
+        } else {
+            console.log('doing real');
+        }
+
+        // this.eBodyHorizontalScrollViewport.scrollLeft = this.eCenterViewport.scrollLeft;
+        this.onBodyHorizontalScroll(this.eCenterViewport);
+
     }
 
-    private onBodyHorizontalScroll(): void {
+    private onBodyHorizontalScroll(eSource: HTMLElement): void {
 
-        const supportsOverflowScrolling = this.animationFrameService.isSupportsOverflowScrolling();
         const {scrollWidth, clientWidth} = this.eCenterViewport;
         // in chrome, fractions can be in the scroll left, eg 250.342234 - which messes up our 'scrollWentPastBounds'
         // formula. so we floor it to allow the formula to work.
-        const scrollLeft = Math.floor(_.getScrollLeft(this.eCenterViewport, this.enableRtl));
+        const scrollLeft = Math.floor(_.getScrollLeft(eSource, this.enableRtl));
 
         // touch devices allow elastic scroll - which temporally scrolls the panel outside of the viewport
         // (eg user uses touch to go to the left of the grid, but drags past the left, the rows will actually
@@ -1405,21 +1432,13 @@ export class GridPanel extends Component {
             return;
         }
 
-        if (this.nextScrollLeft !== scrollLeft) {
-            this.nextScrollLeft = scrollLeft;
-            // for touch devices, we found scrolling was jerky when combining overflow scrolling and ag-grid
-            // animation frames. so if overflow scroll is supported (which means user is typically on a tab or phone)
-            // we don't use the animation frame service for horizontal scrolling.
-            if (!this.useAnimationFrame || supportsOverflowScrolling) {
-                this.doHorizontalScroll();
-            } else {
-                this.animationFrameService.schedule();
-            }
-        }
+        console.log(`scrollLeft = ${scrollLeft}`);
+
+        this.doHorizontalScroll(scrollLeft);
     }
 
-    private doHorizontalScroll(): void {
-        this.scrollLeft = this.nextScrollLeft;
+    private doHorizontalScroll(scrollLeft: number): void {
+        this.scrollLeft = scrollLeft;
         let event: BodyScrollEvent = {
             type: Events.EVENT_BODY_SCROLL,
             api: this.gridApi,
@@ -1429,26 +1448,8 @@ export class GridPanel extends Component {
             top: this.scrollTop
         };
         this.eventService.dispatchEvent(event);
-        this.horizontallyScrollHeaderCenterAndFloatingCenter();
+        this.horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft);
         this.onHorizontalViewportChanged();
-    }
-
-    // fixme - can remove some of this, fix up verticalRedrawNeeded
-    public executeFrame(): boolean {
-        if (this.scrollLeft !== this.nextScrollLeft) {
-            this.doHorizontalScroll();
-            return true;
-        } else if (this.scrollTop !== this.nextScrollTop) {
-            this.scrollTop = this.nextScrollTop;
-            this.verticalRedrawNeeded = true;
-            return true;
-        } else if (this.verticalRedrawNeeded) {
-            this.redrawRowsAfterScroll();
-            this.verticalRedrawNeeded = false;
-            return true;
-        }
-
-        return false;
     }
 
     private redrawRowsAfterScroll(): void {
@@ -1482,13 +1483,19 @@ export class GridPanel extends Component {
         _.setScrollLeft(this.eCenterViewport, value, this.enableRtl);
     }
 
-    public horizontallyScrollHeaderCenterAndFloatingCenter(): void {
-        let scrollLeft = this.getCenterViewportScrollLeft();
+    public horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft: number): void {
         let offset = this.enableRtl ? scrollLeft : -scrollLeft;
 
         this.headerRootComp.setHorizontalScroll(offset);
         this.eBottomContainer.style.left = offset + 'px';
         this.eTopContainer.style.left = offset + 'px';
+
+        if (this.horizontalScroller!==this.eCenterViewport) {
+            this.eCenterViewport.scrollLeft = scrollLeft;
+        }
+        if (this.horizontalScroller!==this.eBodyHorizontalScrollViewport) {
+            this.eBodyHorizontalScrollViewport.scrollLeft = scrollLeft;
+        }
     }
 
     // + rangeController

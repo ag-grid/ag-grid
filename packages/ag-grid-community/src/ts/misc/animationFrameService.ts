@@ -66,14 +66,10 @@ export class AnimationFrameService {
 
         let duration = (new Date().getTime()) - frameStart;
 
-        let gridPanelNeedsAFrame = true;
-
         // 16ms is 60 fps
         let noMaxMillis = millis <= 0;
         while (noMaxMillis || duration < millis) {
-            if (gridPanelNeedsAFrame) {
-                gridPanelNeedsAFrame = this.gridPanel.executeFrame();
-            } else if (!this.p1Tasks.isEmpty()) {
+            if (!this.p1Tasks.isEmpty()) {
                 let task = this.p1Tasks.remove();
                 task();
             } else if (!this.p2Tasks.isEmpty()) {
@@ -85,7 +81,7 @@ export class AnimationFrameService {
             duration = (new Date().getTime()) - frameStart;
         }
 
-        if (gridPanelNeedsAFrame || !this.p1Tasks.isEmpty() || !this.p2Tasks.isEmpty()) {
+        if (!this.p1Tasks.isEmpty() || !this.p2Tasks.isEmpty()) {
             this.requestFrame();
         } else {
             this.stopTicking();
