@@ -1,6 +1,5 @@
 
 import {Autowired, Bean, PostConstruct} from "../context/context";
-import {GridPanel} from "../gridPanel/gridPanel";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {AnimationQueueEmptyEvent} from "../events";
 import {Events} from "../eventKeys";
@@ -17,29 +16,25 @@ export class AnimationFrameService {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;
 
-    private gridPanel: GridPanel;
-
-    // p1 tasks are to do with row creation. for them we want to execute according to row order, so we use
+    // create tasks are to do with row creation. for them we want to execute according to row order, so we use
     // TaskItem so we know what index the item is for.
-    private p1Tasks: TaskItem[] = [];
-    // p2 tasks are to do with row removal. they are done after row creation as the user will need to see new
+    private createRowTasks: TaskItem[] = [];
+    // destroy tasks are to do with row removal. they are done after row creation as the user will need to see new
     // rows first (as blank is scrolled into view), when we remove the old rows (no longer in view) is not as
     // important.
-    private p2Tasks: (()=>void)[] = [];
+    private destroyRowTasks: (()=>void)[] = [];
     private ticking = false;
 
     private useAnimationFrame: boolean;
 
+    // we need to know direction of scroll, to build up rows in the direction of
+    // the scroll. eg if user scrolls down, we extend the rows by building down.
     private scrollGoingDown = true;
     private lastScrollTop = 0;
 
     public setScrollTop(scrollTop: number): void {
         this.scrollGoingDown = scrollTop > this.lastScrollTop;
         this.lastScrollTop = scrollTop;
-    }
-
-    public registerGridComp(gridPanel: GridPanel): void {
-        this.gridPanel = gridPanel;
     }
 
     @PostConstruct
@@ -60,13 +55,13 @@ export class AnimationFrameService {
     public addP1Task(task: ()=>void, index: number): void {
         this.verifyAnimationFrameOn('addP1Task');
         let taskItem: TaskItem = {task: task, index: index};
-        this.p1Tasks.push(taskItem);
+        this.createRowTasks.push(taskItem);
         this.schedule();
     }
 
     public addP2Task(task: ()=>void): void {
         this.verifyAnimationFrameOn('addP2Task');
-        this.p2Tasks.push(task);
+        this.destroyRowTasks.push(task);
         this.schedule();
     }
 
@@ -74,9 +69,9 @@ export class AnimationFrameService {
         this.verifyAnimationFrameOn('executeFrame');
 
         if (this.scrollGoingDown) {
-            this.p1Tasks.sort( (a: TaskItem, b: TaskItem) => b.index - a.index);
+            this.createRowTasks.sort( (a: TaskItem, b: TaskItem) => b.index - a.index);
         } else {
-            this.p1Tasks.sort( (a: TaskItem, b: TaskItem) => a.index - b.index);
+            this.createRowTasks.sort( (a: TaskItem, b: TaskItem) => a.index - b.index);
         }
 
         let frameStart = new Date().getTime();
@@ -86,11 +81,11 @@ export class AnimationFrameService {
         // 16ms is 60 fps
         let noMaxMillis = millis <= 0;
         while (noMaxMillis || duration < millis) {
-            if (this.p1Tasks.length>0) {
-                let taskItem = this.p1Tasks.pop();
+            if (this.createRowTasks.length>0) {
+                let taskItem = this.createRowTasks.pop();
                 taskItem.task();
-            } else if (this.p2Tasks.length>0) {
-                let task = this.p2Tasks.pop();
+            } else if (this.destroyRowTasks.length>0) {
+                let task = this.destroyRowTasks.pop();
                 task();
             } else {
                 break;
@@ -98,7 +93,7 @@ export class AnimationFrameService {
             duration = (new Date().getTime()) - frameStart;
         }
 
-        if (this.p1Tasks.length>0 || this.p2Tasks.length>0) {
+        if (this.createRowTasks.length>0 || this.destroyRowTasks.length>0) {
             this.requestFrame();
         } else {
             this.stopTicking();

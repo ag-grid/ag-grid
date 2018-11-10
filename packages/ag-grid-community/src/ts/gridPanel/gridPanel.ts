@@ -320,7 +320,6 @@ export class GridPanel extends Component {
         this.gridApi.registerGridComp(this);
         this.alignedGridsService.registerGridComp(this);
         this.headerRootComp.registerGridComp(this);
-        this.animationFrameService.registerGridComp(this);
         this.navigationService.registerGridComp(this);
         this.heightScaler.registerGridComp(this);
         this.autoHeightCalculator.registerGridComp(this);
