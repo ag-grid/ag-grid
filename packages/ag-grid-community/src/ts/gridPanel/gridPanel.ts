@@ -1203,71 +1203,76 @@ export class GridPanel extends Component {
 
     private setPinnedLeftWidth(): void {
         const widthOfCols = this.columnController.getPinnedLeftContainerWidth();
-        const oldPinningLeft = this.pinningLeft;
-        this.pinningLeft = !this.printLayout && widthOfCols > 0;
+        const spacer = this.eHorizontalLeftSpacer;
+        const oldPinning = this.pinningLeft;
+        const newPinning = this.pinningLeft = !this.printLayout && widthOfCols > 0;
+        const containers = [this.eLeftContainer, this.eLeftTop, this.eLeftBottom];
 
-        if (oldPinningLeft !== this.pinningLeft) {
-            this.headerRootComp.setLeftVisible(this.pinningLeft);
+        if (oldPinning !== newPinning) {
+            this.headerRootComp.setLeftVisible(newPinning);
         }
 
-        [this.eLeftContainer, this.eLeftTop, this.eLeftBottom]
-            .forEach(e => _.setVisible(e, this.pinningLeft));
+        containers.forEach(e => _.setVisible(e, this.pinningLeft));
 
-        if (!this.pinningLeft) { return; }
+        if (!this.pinningLeft) {
+            _.setFixedWidth(spacer , 0);
+            return;
+        }
 
         let widthPx = `${widthOfCols}px`;
 
         // .width didn't do the trick in firefox, so needed .minWidth also
-        this.eLeftContainer.style.width = widthPx;
-        this.eLeftContainer.style.minWidth = widthPx;
+        containers[0].style.width = widthPx;
+        containers[0].style.minWidth = widthPx;
 
-        this.eLeftBottom.style.maxWidth = widthPx;
-        this.eLeftTop.style.maxWidth = widthPx;
+        containers[1].style.maxWidth = widthPx;
+        containers[2].style.maxWidth = widthPx;
 
         const spacerPadding = this.gridOptionsWrapper.isEnableRtl() && this.isVerticalScrollShowing();
-        const scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
 
         if (spacerPadding) {
+            const scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
             widthPx = `${widthOfCols + scrollWidth}px`;
         }
 
-        this.eHorizontalLeftSpacer.style.width = widthPx;
-        this.eHorizontalLeftSpacer.style.maxWidth = widthPx;
-        this.eHorizontalLeftSpacer.style.minWidth = widthPx;
+        _.setFixedWidth(spacer, widthPx);
     }
 
     private setPinnedRightWidth(): void {
         const widthOfCols = this.columnController.getPinnedRightContainerWidth();
-        const oldPinningRight = this.pinningRight;
-        this.pinningRight = !this.printLayout && widthOfCols > 0;
+        const spacer = this.eHorizontalRightSpacer;
+        const oldPinning = this.pinningRight;
+        const newPinning = this.pinningRight = !this.printLayout && widthOfCols > 0;
+        const containers = [this.eRightContainer, this.eRightTop, this.eRightBottom];
 
-        if (oldPinningRight !== this.pinningRight) {
-            this.headerRootComp.setRightVisible(this.pinningRight);
+        if (oldPinning !== newPinning) {
+            this.headerRootComp.setRightVisible(newPinning);
         }
 
-        [this.eRightContainer, this.eRightTop, this.eRightBottom]
-            .forEach(e => _.setVisible(e, this.pinningRight));
+        containers.forEach(e => _.setVisible(e, newPinning));
 
-        if (!this.pinningRight) { return; }
+        if (!newPinning) {
+            _.setFixedWidth(spacer, 0);
+            return;
+        }
 
         let widthPx = `${widthOfCols}px`;
 
         // .width didn't do the trick in firefox, so needed .minWidth also
-        this.eRightContainer.style.width = widthPx;
-        this.eRightContainer.style.minWidth = widthPx;
+        containers[0].style.width = widthPx;
+        containers[0].style.minWidth = widthPx;
 
-        this.eRightTop.style.maxWidth = widthPx;
-        this.eRightBottom.style.maxWidth = widthPx;
+        containers[1].style.maxWidth = widthPx;
+        containers[2].style.maxWidth = widthPx;
 
         const spacerPadding = !this.gridOptionsWrapper.isEnableRtl() && this.isVerticalScrollShowing();
-        const scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
 
         if (spacerPadding) {
+            const scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
             widthPx = `${widthOfCols + scrollWidth}px`;
         }
-        this.eHorizontalRightSpacer.style.width = widthPx;
-        this.eHorizontalRightSpacer.style.maxWidth = widthPx;
-        this.eHorizontalRightSpacer.style.minWidth = widthPx;
+
+        _.setFixedWidth(spacer, widthPx);
     }
 
     private setPinnedContainerSize() {

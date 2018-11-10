@@ -304,7 +304,7 @@ export class Utils {
 
     static filter<T>(array: T[], callback: (item: T) => boolean): T[] {
         let result: T[] = [];
-        array.forEach(function (item: T) {
+        array.forEach(function(item: T) {
             if (callback(item)) {
                 result.push(item);
             }
@@ -343,7 +343,7 @@ export class Utils {
     static assign(object: any, ...sources: any[]): any {
         sources.forEach(source => {
             if (this.exists(source)) {
-                this.iterateObject(source, function (key: string, value: any) {
+                this.iterateObject(source, function(key: string, value: any) {
                     object[key] = value;
                 });
             }
@@ -433,7 +433,7 @@ export class Utils {
     }
 
     static toStrings<T>(array: T[]): string[] {
-        return this.map(array, function (item) {
+        return this.map(array, function(item) {
             if (item === undefined || item === null || !item.toString) {
                 return null;
             } else {
@@ -1191,6 +1191,13 @@ export class Utils {
         this.addOrRemoveCssClass(element, 'ag-visibility-hidden', hidden);
     }
 
+    static setFixedWidth(element: HTMLElement, width: string | number) {
+        width = this.formatWidth(width);
+        element.style.width = width;
+        element.style.maxWidth = width;
+        element.style.minWidth = width;
+    }
+
     static isBrowserIE(): boolean {
         if (this.isIE === undefined) {
             this.isIE = /*@cc_on!@*/false || !!(<any>document).documentMode; // At least IE6
@@ -1210,7 +1217,7 @@ export class Utils {
             let anyWindow = <any> window;
             // taken from https://github.com/ag-grid/ag-grid/issues/550
             this.isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') > 0
-                || (function (p) {
+                || (function(p) {
                     return p ? p.toString() === "[object SafariRemoteNotification]" : false;
                 })
                 (!anyWindow.safari || anyWindow.safari.pushNotification);
@@ -1603,7 +1610,7 @@ export class Utils {
         let timeout: any;
 
         // Calling debounce returns a new anonymous function
-        return function () {
+        return function() {
             // reference the context and args for the setTimeout function
             const context = this;
             const args = arguments;
@@ -1619,7 +1626,7 @@ export class Utils {
             clearTimeout(timeout);
 
             // Set the new timeout
-            timeout = setTimeout(function () {
+            timeout = setTimeout(function() {
 
                 // Inside the timeout function, clear the timeout variable
                 // which will let the next execution run when in 'immediate' mode
@@ -1819,7 +1826,7 @@ export class Utils {
         return v;
     }
 
-    static string_similarity = function (str1: string, str2: string) {
+    static string_similarity = function(str1: string, str2: string) {
         if (str1.length > 0 && str2.length > 0) {
             let pairs1 = Utils.get_bigrams(str1);
             let pairs2 = Utils.get_bigrams(str2);
