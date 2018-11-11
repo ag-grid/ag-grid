@@ -1486,11 +1486,10 @@ export class GridPanel extends Component {
         }
 
         const offset = this.enableRtl ? scrollLeft : -scrollLeft;
-        const viewportWidth = this.eCenterViewport.clientWidth;
-        const scrollWidth = this.eCenterContainer.scrollWidth;
-        const largerThanScroll = Math.abs(offset) + viewportWidth > scrollWidth;
+        const {clientWidth, scrollWidth} = this.eCenterViewport;
+        const scrollWentPastBounds = Math.abs(offset) + clientWidth > scrollWidth;
 
-        if (largerThanScroll || (this.enableRtl && offset < 0) || (!this.enableRtl && offset > 0)) {
+        if (scrollWentPastBounds || (this.enableRtl && offset < 0) || (!this.enableRtl && offset > 0)) {
             return;
         }
 
@@ -1499,10 +1498,10 @@ export class GridPanel extends Component {
         this.eTopContainer.style.left = offset + 'px';
 
         if (this.horizontalScroller !== this.eCenterViewport) {
-            this.eCenterViewport.scrollLeft = scrollLeft;
+            _.setScrollLeft(this.eCenterViewport, scrollLeft, this.enableRtl);
         }
         if (this.horizontalScroller !== this.eBodyHorizontalScrollViewport) {
-            this.eBodyHorizontalScrollViewport.scrollLeft = scrollLeft;
+            _.setScrollLeft(this.eBodyHorizontalScrollViewport, scrollLeft, this.enableRtl);
         }
     }
 
