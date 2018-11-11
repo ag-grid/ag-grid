@@ -288,10 +288,10 @@ export class GridPanel extends Component {
 
         this.addScrollListener();
 
-        // fixme: why is this here?
-        // if (this.gridOptionsWrapper.isSuppressHorizontalScroll()) {
-        //     this.eBodyViewport.style.overflowX = 'hidden';
-        // }
+        if (this.gridOptionsWrapper.isSuppressHorizontalScroll()) {
+            this.eCenterViewport.style.overflowX = 'hidden';
+            this.eBodyHorizontalScrollViewport.style.overflowX = 'hidden';
+        }
 
         this.setupOverlay();
 
@@ -904,7 +904,7 @@ export class GridPanel extends Component {
         };
 
         params.verticalScrollShowing = this.isVerticalScrollShowing();
-        params.horizontalScrollShowing = this.isHorizontalScrollShowing();
+        params.horizontalScrollShowing = !this.gridOptionsWrapper.isSuppressHorizontalScroll() && this.isHorizontalScrollShowing();
 
         this.scrollVisibleService.setScrollsVisible(params);
 
@@ -1338,7 +1338,7 @@ export class GridPanel extends Component {
         return this.bodyHeight;
     }
 
-    // fixme - see who calls this, and if it still works
+    // called by scrollHorizontally method and alignedGridsService
     public setHorizontalScrollPosition(hScrollPosition: number): void {
         this.eCenterViewport.scrollLeft = hScrollPosition;
 
@@ -1353,8 +1353,7 @@ export class GridPanel extends Component {
         this.eBodyViewport.scrollTop = vScrollPosition;
     }
 
-    // tries to scroll by pixels, but returns what the result actually was
-    // fixme - who calls this and why?
+    // called by the headerRootComp and moveColumnController
     public scrollHorizontally(pixels: number): number {
         let oldScrollPosition = this.eCenterViewport.scrollLeft;
         this.setHorizontalScrollPosition(oldScrollPosition + pixels);
@@ -1362,8 +1361,7 @@ export class GridPanel extends Component {
         return newScrollPosition - oldScrollPosition;
     }
 
-    // tries to scroll by pixels, but returns what the result actually was
-    // fixme - who calls this and why?
+    // called by rowDragFeature
     public scrollVertically(pixels: number): number {
         let oldScrollPosition = this.eBodyViewport.scrollTop;
         this.setVerticalScrollPosition(oldScrollPosition + pixels);

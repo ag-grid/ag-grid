@@ -1421,7 +1421,7 @@ export class GridOptionsWrapper {
             return this.gridOptions.localeTextFunc;
         }
         let that = this;
-        return function (key: any, defaultValue: any) {
+        return function(key: any, defaultValue: any) {
             let localeText = that.gridOptions.localeText;
             if (localeText && localeText[key]) {
                 return localeText[key];
