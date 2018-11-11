@@ -912,6 +912,14 @@ export class GridPanel extends Component {
         this.setVerticalScrollPaddingVisible(params.verticalScrollShowing);
     }
 
+    private setHorizontalScrollVisible(visible: boolean): void {
+        const height = visible ? (this.gridOptionsWrapper.getScrollbarWidth() || 0) : 0;
+
+        _.setFixedHeight(this.eBodyHorizontalScrollViewport, height);
+        _.setFixedHeight(this.eBodyHorizontalScrollContainer, height);
+        _.setFixedHeight(this.eHorizontalScrollBody, height);
+    }
+
     private setVerticalScrollPaddingVisible(show: boolean): void {
         let margin = show ? `${this.scrollWidth}px` : `0px`;
         if (this.enableRtl) {
@@ -1176,6 +1184,7 @@ export class GridPanel extends Component {
         this.setCenterWidth();
         this.setPinnedLeftWidth();
         this.setPinnedRightWidth();
+        this.setMainWrappersMinWidth();
     }
 
     private setCenterWidth(): void {
@@ -1195,12 +1204,12 @@ export class GridPanel extends Component {
         this.eBodyHorizontalScrollContainer.style.width = widthPx;
     }
 
-    private setHorizontalScrollVisible(visible: boolean): void {
-        const height = visible ? (this.gridOptionsWrapper.getScrollbarWidth() || 0) : 0;
+    private setMainWrappersMinWidth(): void {
+        const scrollWidth = this.isVerticalScrollShowing ? this.scrollWidth : 0;
+        const minWidth = this.eLeftContainer.clientWidth + this.eRightContainer.clientWidth + scrollWidth;
+        const mainWrappers = [this.headerRootComp.getGui(), this.eTop, this.eBodyViewport, this.eBottom];
 
-        _.setFixedHeight(this.eBodyHorizontalScrollViewport, height);
-        _.setFixedHeight(this.eBodyHorizontalScrollContainer, height);
-        _.setFixedHeight(this.eHorizontalScrollBody, height);
+        mainWrappers.forEach(container => container.style.minWidth = `${minWidth}px`);
     }
 
     private setPinnedLeftWidth(): void {
