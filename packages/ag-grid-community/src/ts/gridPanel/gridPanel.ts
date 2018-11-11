@@ -1481,19 +1481,27 @@ export class GridPanel extends Component {
     }
 
     public horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft?: number): void {
-        if (scrollLeft===undefined) {
+        if (scrollLeft === undefined) {
             scrollLeft = this.getCenterViewportScrollLeft();
         }
-        let offset = this.enableRtl ? scrollLeft : -scrollLeft;
+
+        const offset = this.enableRtl ? scrollLeft : -scrollLeft;
+        const viewportWidth = this.eCenterViewport.clientWidth;
+        const scrollWidth = this.eCenterContainer.scrollWidth;
+        const largerThanScroll = Math.abs(offset) + viewportWidth > scrollWidth;
+
+        if (largerThanScroll || (this.enableRtl && offset < 0) || (!this.enableRtl && offset > 0)) {
+            return;
+        }
 
         this.headerRootComp.setHorizontalScroll(offset);
         this.eBottomContainer.style.left = offset + 'px';
         this.eTopContainer.style.left = offset + 'px';
 
-        if (this.horizontalScroller!==this.eCenterViewport) {
+        if (this.horizontalScroller !== this.eCenterViewport) {
             this.eCenterViewport.scrollLeft = scrollLeft;
         }
-        if (this.horizontalScroller!==this.eBodyHorizontalScrollViewport) {
+        if (this.horizontalScroller !== this.eBodyHorizontalScrollViewport) {
             this.eBodyHorizontalScrollViewport.scrollLeft = scrollLeft;
         }
     }
