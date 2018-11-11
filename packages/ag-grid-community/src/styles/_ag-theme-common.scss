@@ -1260,6 +1260,7 @@
 
     .ag-floating-top {
         background-color: $row-floating-background-color;
+        border-bottom: 1px solid $border-color;
 
         .ag-row {
             background-color: $row-floating-background-color;
@@ -1268,6 +1269,7 @@
 
     .ag-floating-bottom {
         background-color: $row-floating-background-color;
+        border-top: 1px solid $border-color;
     }
 
     ////////////////////////////////////////

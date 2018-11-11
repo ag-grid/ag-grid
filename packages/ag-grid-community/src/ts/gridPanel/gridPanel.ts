@@ -80,7 +80,7 @@ const GRID_PANEL_NORMAL_TEMPLATE =
             <div class="ag-pinned-right-floating-bottom" ref="eRightBottom" role="presentation" unselectable="on"></div>
             <div class="ag-floating-bottom-full-width-container" ref="eBottomFullWidthContainer" role="presentation" unselectable="on"></div>
         </div>
-        <div class="ag-body-horizontal-scroll">
+        <div class="ag-body-horizontal-scroll" ref="eHorizontalScrollBody">
             <div class="ag-horizontal-left-spacer" ref="eHorizontalLeftSpacer"></div>
             <div class="ag-body-horizontal-scroll-viewport" ref="eBodyHorizontalScrollViewport">
                 <div class="ag-body-horizontal-scroll-container" ref="eBodyHorizontalScrollContainer"></div>
@@ -153,6 +153,7 @@ export class GridPanel extends Component {
     @RefSelector('eCenterColsClipper') private eCenterColsClipper: HTMLElement;
 
     // fake horizontal scroller
+    @RefSelector('eHorizontalScrollBody') private eHorizontalScrollBody: HTMLElement;
     @RefSelector('eHorizontalLeftSpacer') private eHorizontalLeftSpacer: HTMLElement;
     @RefSelector('eHorizontalRightSpacer') private eHorizontalRightSpacer: HTMLElement;
     @RefSelector('eBodyHorizontalScrollViewport') private eBodyHorizontalScrollViewport: HTMLElement;
@@ -1195,10 +1196,11 @@ export class GridPanel extends Component {
     }
 
     private setHorizontalScrollVisible(visible: boolean): void {
-        const height = visible ? `${this.gridOptionsWrapper.getScrollbarWidth() || 0}px` : '0px';
+        const height = visible ? (this.gridOptionsWrapper.getScrollbarWidth() || 0) : 0;
 
-        this.eBodyHorizontalScrollViewport.style.maxHeight = height;
-        this.eBodyHorizontalScrollContainer.style.height = height;
+        _.setFixedHeight(this.eBodyHorizontalScrollViewport, height);
+        _.setFixedHeight(this.eBodyHorizontalScrollContainer, height);
+        _.setFixedHeight(this.eHorizontalScrollBody, height);
     }
 
     private setPinnedLeftWidth(): void {
@@ -1294,7 +1296,6 @@ export class GridPanel extends Component {
     }
 
     public setHeaderAndFloatingHeights(): void {
-
         let headerRowCount = this.columnController.getHeaderRowCount();
 
         let totalHeaderHeight: number;

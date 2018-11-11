@@ -940,11 +940,11 @@ export class Utils {
         }
     }
 
-    static formatWidth(width: number | string) {
-        if (typeof width === "number") {
-            return width + "px";
+    static formatSize(size: number | string) {
+        if (typeof size === "number") {
+            return size + "px";
         } else {
-            return width;
+            return size;
         }
     }
 
@@ -1192,10 +1192,17 @@ export class Utils {
     }
 
     static setFixedWidth(element: HTMLElement, width: string | number) {
-        width = this.formatWidth(width);
+        width = this.formatSize(width);
         element.style.width = width;
         element.style.maxWidth = width;
         element.style.minWidth = width;
+    }
+
+    static setFixedHeight(element: HTMLElement, height: string | number) {
+        height = this.formatSize(height);
+        element.style.height = height;
+        element.style.maxHeight = height;
+        element.style.minHeight = height;
     }
 
     static isBrowserIE(): boolean {
