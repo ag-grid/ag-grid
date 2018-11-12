@@ -112,10 +112,10 @@ class NonManagedVisibilityStrategy extends BeanStub {
         let suppressRowDrag = this.beans.gridOptionsWrapper.isSuppressRowDrag();
 
         if (suppressRowDrag) {
-            this.parent.setVisible(false);
+            this.parent.setVisible(false, 'visibility');
         } else {
             let visible = this.column.isRowDrag(this.rowNode);
-            this.parent.setVisible(visible);
+            this.parent.setVisible(visible, 'visibility');
         }
     }
 
@@ -203,10 +203,10 @@ class ManagedVisibilityStrategy extends BeanStub {
         let alwaysHide = sortOrFilterOrGroupActive || suppressRowDrag;
 
         if (alwaysHide) {
-            this.parent.setVisible(false);
+            this.parent.setVisible(false, 'visibility');
         } else {
             let visible = this.column.isRowDrag(this.rowNode);
-            this.parent.setVisible(visible);
+            this.parent.setVisible(visible, 'visibility');
         }
     }
 }

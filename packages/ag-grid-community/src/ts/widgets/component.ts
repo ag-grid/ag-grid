@@ -334,10 +334,11 @@ export class Component extends BeanStub implements IComponent<any> {
         return this.visible;
     }
 
-    public setVisible(visible: boolean): void {
+    public setVisible(visible: boolean, visibilityMode?: 'display' | 'visibility'): void {
+        const isDisplay = visibilityMode !== 'visibility';
         if (visible !== this.visible) {
             this.visible = visible;
-            _.addOrRemoveCssClass(this.eGui, 'ag-hidden', !visible);
+            _.addOrRemoveCssClass(this.eGui, isDisplay ? 'ag-hidden' : 'ag-invisible', !visible);
             let event: VisibleChangedEvent = {
                 type: Component.EVENT_VISIBLE_CHANGED,
                 visible: this.visible
