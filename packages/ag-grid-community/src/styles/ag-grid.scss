@@ -327,33 +327,16 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 // we want the pinned left to always be on the left, and the pinned right
 // always to be on the right. hence we do row-reverse for rtl, otherwise having
 // RTL applied will reverse the order of the flex layout (and invert what's left and right)
-.ag-rtl .ag-body {
-    flex-direction: row-reverse;
-}
-.ag-ltr .ag-body {
-    flex-direction: row;
-}
-
-.ag-rtl .ag-floating-top {
-    flex-direction: row-reverse;
-}
-.ag-ltr .ag-floating-top {
-    flex-direction: row;
+.ag-ltr {
+    .ag-body, .ag-floating-top, .ag-floating-bottom, .ag-header, .ag-body-viewport, .ag-body-horizontal-scroll {
+        flex-direction: row;
+    }
 }
 
-.ag-rtl .ag-floating-bottom {
-    flex-direction: row-reverse;
-}
-.ag-ltr .ag-floating-bottom {
-    flex-direction: row;
-}
-
-// we don't want right and left pinned flipped when doing RTL
-.ag-ltr .ag-header {
-    flex-direction: row;
-}
-.ag-rtl .ag-header {
-    flex-direction: row-reverse;
+.ag-rtl  {
+    .ag-body, .ag-floating-top, .ag-floating-bottom, .ag-header, .ag-body-viewport, .ag-body-horizontal-scroll {
+        flex-direction: row-reverse;
+    }
 }
 
 .ag-floating-top {
