@@ -1,13 +1,15 @@
 import Vue from "vue";
 
 export class VueComponentFactory {
-    constructor($el, parent) {
+    constructor($el, parent, whitelist = ['store', 'router']) {
         this.$el = $el;
         this.parent = parent;
+        this.whitelist = whitelist;
     }
 
     createRendererFromComponent(component) {
         let parent = this.parent;
+        let whitelist = this.whitelist;
         let componentType = VueComponentFactory.getComponentType(parent, component);
         if (!componentType) {
             return;
@@ -15,7 +17,7 @@ export class VueComponentFactory {
 
         class CellRendererComponent {
             init(params) {
-                this.component = VueComponentFactory.createAndMountComponent(params, componentType, parent);
+                this.component = VueComponentFactory.createAndMountComponent(params, componentType, parent, whitelist);
             }
 
             getGui() {
@@ -87,6 +89,7 @@ export class VueComponentFactory {
 
     createFilterFromComponent(component) {
         let parent = this.parent;
+        let whitelist = this.whitelist;
         let componentType = VueComponentFactory.getComponentType(parent, component);
         if (!componentType) {
             return;
@@ -94,7 +97,7 @@ export class VueComponentFactory {
 
         class Filter {
             init(params) {
-                this.component = VueComponentFactory.createAndMountComponent(params, componentType, parent);
+                this.component = VueComponentFactory.createAndMountComponent(params, componentType, parent, whitelist);
             }
 
             getGui() {
@@ -149,15 +152,17 @@ export class VueComponentFactory {
         }
     }
 
-    static createAndMountComponent(params, componentType, parent) {
+    static createAndMountComponent(params, componentType, parent, whitelist) {
         let details = {
             data: {
                 params: Object.freeze(params)
             },
-            parent,
-            router: parent.$router,
-            store: parent.$store
+            parent
         };
+
+        for (let key of whitelist) {
+            details[key] = parent['$' + key]
+        }
 
         let component = new componentType(details);
         component.$mount();

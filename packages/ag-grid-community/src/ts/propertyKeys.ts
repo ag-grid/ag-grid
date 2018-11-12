@@ -15,7 +15,8 @@ export class PropertyKeys {
 
     public static ARRAY_PROPERTIES = [
         'slaveGrids', 'alignedGrids', 'rowData',
-        'columnDefs', 'excelStyles', 'pinnedTopRowData', 'pinnedBottomRowData'
+        'columnDefs', 'excelStyles', 'pinnedTopRowData', 'pinnedBottomRowData',
+        'vuePluginProps'
         // deprecated
     ];
 

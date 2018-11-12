@@ -55,7 +55,7 @@ export default Vue.extend({
     },
     mounted() {
         let frameworkComponentWrapper = new VueFrameworkComponentWrapper(this);
-        let vueFrameworkFactory = new VueFrameworkFactory(this.$el, this);
+        let vueFrameworkFactory = new VueFrameworkFactory(this.$el, this, this.vuePluginProps);
         let gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
 
         let gridParams = {

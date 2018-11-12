@@ -2,9 +2,9 @@ import {BaseFrameworkFactory} from "ag-grid-community";
 import {VueComponentFactory} from "./vueComponentFactory";
 
 export class VueFrameworkFactory {
-    constructor($el, parent) {
+    constructor($el, parent, whitelist) {
         this._baseFrameworkFactory = new BaseFrameworkFactory();
-        this._componentFactory = new VueComponentFactory($el, parent);
+        this._componentFactory = new VueComponentFactory($el, parent, whitelist);
     }
 
     colDefFloatingCellRenderer(colDef) {
