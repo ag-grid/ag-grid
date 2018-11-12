@@ -184,7 +184,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
 .ag-dnd-ghost-icon {
     display: inline-block;
-    float: left;
     padding: 2px;
 }
 
@@ -312,48 +311,32 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     padding-top: 30px;
 }
 
-.ag-body {
+.ag-body-viewport {
     box-sizing: border-box;
     position: relative; // needed so rows translate is relative to this container
     display: flex;
+    overflow: hidden;
 
     &.ag-layout-normal {
-        flex: 1;
-        height: 0px; // that's the min height, 'flex 1' then extends it to take all available space
-        min-height: 0px; // min-height needed for firefox
+        height: 100%;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
 }
 
 // we want the pinned left to always be on the left, and the pinned right
 // always to be on the right. hence we do row-reverse for rtl, otherwise having
 // RTL applied will reverse the order of the flex layout (and invert what's left and right)
-.ag-rtl .ag-body {
-    flex-direction: row-reverse;
-}
-.ag-ltr .ag-body {
-    flex-direction: row;
-}
-
-.ag-rtl .ag-floating-top {
-    flex-direction: row-reverse;
-}
-.ag-ltr .ag-floating-top {
-    flex-direction: row;
+.ag-ltr {
+    .ag-body, .ag-floating-top, .ag-floating-bottom, .ag-header, .ag-body-viewport, .ag-body-horizontal-scroll {
+        flex-direction: row;
+    }
 }
 
-.ag-rtl .ag-floating-bottom {
-    flex-direction: row-reverse;
-}
-.ag-ltr .ag-floating-bottom {
-    flex-direction: row;
-}
-
-// we don't want right and left pinned flipped when doing RTL
-.ag-ltr .ag-header {
-    flex-direction: row;
-}
-.ag-rtl .ag-header {
-    flex-direction: row-reverse;
+.ag-rtl  {
+    .ag-body, .ag-floating-top, .ag-floating-bottom, .ag-header, .ag-body-viewport, .ag-body-horizontal-scroll {
+        flex-direction: row-reverse;
+    }
 }
 
 .ag-floating-top {
@@ -446,18 +429,12 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     white-space: nowrap;
 }
 
-.ag-pinned-right-cols-viewport-wrapper {
+.ag-pinned-right-cols-viewport {
     height: 100%;
     overflow: hidden;
     flex-grow: 1000;
     min-width: 0px;
     width: 0px;
-}
-
-.ag-pinned-right-cols-viewport {
-    height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
 }
 
 .ag-pinned-right-cols-container {
@@ -465,57 +442,60 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     position: relative;
 }
 
-.ag-pinned-left-cols-viewport-wrapper {
-    height: 100%;
-    overflow: hidden;
-    flex-grow: 1000;
-    min-width: 0px;
-    width: 0px;
-}
-
 .ag-pinned-left-cols-viewport {
     height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
-}
-
-.ag-pinned-left-cols-container {
-    display: block;
+    flex-grow: 1000;
+    overflow: hidden;;
+    min-width: 0px;
+    width: 0px;
     position: relative;
 }
 
-.ag-body-viewport-wrapper {
-
-    overflow: hidden; // needed to clip the scrollbar when pinning
-
-    &.ag-layout-auto-height,
-    &.ag-layout-normal {
-        height: 100%;
-        // we have width (and min width) set to 20 so that the body is always at least 20px visible
-        // if this was NOT set (eg if min width of 0px) then user could have many pinned left cols
-        // and a narrow browser such that only the pinned left portion was visible, then the vertical
-        // scrollbar would be missing (as this is on the body, which would be pushed out by the pinned
-        // sections). by having a min width on the body, it ensures we always see it, even if to many pinned
-        // rows, which means user can always get access to the vertical scrollbar.
-        width: 20px; // min width, flex grows the center to fit
-        min-width: 20px; // width didn't do the trick in firefox, so needed min-width also
-        flex: 1;
-    }
+.ag-pinned-left-cols-container {
+    position: relative;
 }
 
-.ag-body-viewport {
-    // layout-auto-height has x (horizontal) scrolls (but no y)
-    &.ag-layout-auto-height {
-        overflow-x: auto;
-        overflow-y: hidden;
-    }
+.ag-center-cols-clipper {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
 
-    // layout-normal should have x and y scrolls
-    &.ag-layout-normal {
-        overflow-x: auto;
-        overflow-y: auto;
-        height: 100%;
-    }
+.ag-center-cols-viewport {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    position: relative;
+}
+
+.ag-center-cols-container {
+    position: relative;
+}
+
+.ag-body-horizontal-scroll-viewport {
+    min-height: 0;
+    position: relative;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex: 1;
+}
+
+.ag-body-horizontal-scroll-container {
+    height: 100%;
+}
+
+.ag-body-horizontal-scroll {
+    min-height: 0;
+    min-width: 0;
+    width: 100%;
+    display: flex;
+    position: relative;
+}
+
+.ag-horizontal-left-spacer, .ag-horizontal-right-spacer {
+    height: 100%;
+    min-width: 0;
+    flex-grow: 1000;
 }
 
 .ag-full-width-viewport-wrapper {

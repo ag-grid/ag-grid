@@ -326,7 +326,6 @@ export class RowRenderer extends BeanStub {
     }
 
     private sizeContainerToPageHeight(): void {
-
         let containers: RowContainerComponent[] = [
             this.rowContainers.body,
             this.rowContainers.fullWidth,
@@ -1244,7 +1243,7 @@ export class RowRenderer extends BeanStub {
             // by default, when we click a cell, it gets selected into a range, so to keep keyboard navigation
             // consistent, we set into range here also.
             if (this.rangeController) {
-                let gridCell = new GridCell({ rowIndex: nextCell.rowIndex, floating: nextCell.floating, column: nextCell.column });
+                gridCell = new GridCell({ rowIndex: nextCell.rowIndex, floating: nextCell.floating, column: nextCell.column });
                 this.rangeController.setRangeToCell(gridCell);
             }
 

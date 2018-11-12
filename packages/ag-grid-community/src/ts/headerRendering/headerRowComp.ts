@@ -334,7 +334,7 @@ export class HeaderRowComp extends Component {
                         captureModelChangedResolveFunc(true);
                     }
                 });
-                return modelChanged.resolveNow(true, modelChanged => modelChanged);
+                return modelChanged.resolveNow(true, changed => changed);
             },
             //This one might be overriden from the colDef
             suppressFilterButton: false

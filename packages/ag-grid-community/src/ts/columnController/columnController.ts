@@ -606,8 +606,16 @@ export class ColumnController {
     private isColumnInViewport(col: Column): boolean {
         let columnLeft = col.getLeft();
         let columnRight = col.getLeft() + col.getActualWidth();
-        let columnToMuchLeft = columnLeft < this.viewportLeft && columnRight < this.viewportLeft;
-        let columnToMuchRight = columnLeft > this.viewportRight && columnRight > this.viewportRight;
+
+        // adding 200 for buffer size, so some cols off viewport are rendered.
+        // this helps horizontal scrolling so user rarely sees white space (unless
+        // they scroll horizontally fast). however we are conservative, as the more
+        // buffer the slower the vertical redraw speed
+        let leftBounds = this.viewportLeft - 200;
+        let rightBounds = this.viewportRight + 200;
+
+        let columnToMuchLeft = columnLeft < leftBounds && columnRight < leftBounds;
+        let columnToMuchRight = columnLeft > rightBounds && columnRight > rightBounds;
 
         return !columnToMuchLeft && !columnToMuchRight;
     }
