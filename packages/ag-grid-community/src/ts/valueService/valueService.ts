@@ -30,7 +30,7 @@ export class ValueService {
     }
 
     public getValue(column: Column,
-                    rowNode: RowNode,
+                    rowNode: RowNode | null,
                     forFilter = false,
                     ignoreAggData = false): any {
 

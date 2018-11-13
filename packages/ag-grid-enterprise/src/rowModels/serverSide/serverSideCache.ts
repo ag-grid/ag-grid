@@ -25,7 +25,7 @@ export interface ServerSideCacheParams extends RowNodeCacheParams {
     valueCols: ColumnVO[];
     pivotCols: ColumnVO[];
     pivotMode: boolean;
-    datasource: IServerSideDatasource;
+    datasource: IServerSideDatasource | null;
     lastAccessedSequence: NumberSequence;
 }
 
@@ -67,7 +67,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
         // we return null if row not found
         let result: RowBounds;
         let blockFound = false;
-        let lastBlock: ServerSideBlock;
+        let lastBlock: ServerSideBlock | null = null;
 
         this.forEachBlockInOrder( block => {
             if (blockFound) return;

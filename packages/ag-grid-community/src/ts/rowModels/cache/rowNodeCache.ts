@@ -8,15 +8,15 @@ import {AgEvent} from "../../events";
 
 export interface RowNodeCacheParams {
     initialRowCount: number;
-    blockSize: number;
+    blockSize: number | undefined;
     overflowSize: number;
     sortModel: any;
     filterModel: any;
-    maxBlocksInCache: number;
+    maxBlocksInCache: number | undefined;
     rowHeight: number;
     lastAccessedSequence: NumberSequence;
-    maxConcurrentRequests: number;
-    rowNodeBlockLoader: RowNodeBlockLoader;
+    maxConcurrentRequests: number | undefined;
+    rowNodeBlockLoader: RowNodeBlockLoader | null;
     dynamicRowHeight: boolean;
 }
 

@@ -4,6 +4,7 @@ import {
     Bean,
     BeanStub,
     Column,
+    ColumnApi,
     ColumnController,
     ColumnVO,
     Constants,
@@ -11,6 +12,7 @@ import {
     Events,
     EventService,
     FilterManager,
+    GridApi,
     GridOptionsWrapper,
     IServerSideDatasource,
     IServerSideRowModel,
@@ -19,16 +21,14 @@ import {
     ModelUpdatedEvent,
     NumberSequence,
     PostConstruct,
+    PreDestroy,
     Qualifier,
+    RowBounds,
+    RowDataChangedEvent,
     RowNode,
     RowNodeBlockLoader,
     RowNodeCache,
-    SortController,
-    RowBounds,
-    GridApi,
-    ColumnApi,
-    RowDataChangedEvent,
-    PreDestroy
+    SortController
 } from "ag-grid-community";
 import {ServerSideCache, ServerSideCacheParams} from "./serverSideCache";
 
@@ -45,7 +45,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     @Autowired('columnApi') private columnApi: ColumnApi;
 
     private rootNode: RowNode;
-    private datasource: IServerSideDatasource;
+    private datasource: IServerSideDatasource | null;
 
     private rowHeight: number;
 
@@ -53,7 +53,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     private logger: Logger;
 
-    private rowNodeBlockLoader: RowNodeBlockLoader;
+    private rowNodeBlockLoader: RowNodeBlockLoader | null;
 
     @PostConstruct
     private postConstruct(): void {
@@ -61,7 +61,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.addEventListeners();
 
         let datasource = this.gridOptionsWrapper.getServerSideDatasource();
-        if (_.exists(datasource)) {
+        if (_.exists(datasource) && datasource) {
             this.setDatasource(datasource);
         }
     }
@@ -102,7 +102,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public isLastRowFound(): boolean {
-        if (this.cacheExists()) {
+        if (this.cacheExists() && this.rootNode.childrenCache) {
             return this.rootNode.childrenCache.isMaxRowFound();
         } else {
             return false;
@@ -114,7 +114,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         // The problem the customer had was they were api.setColumnDefs() after the data source came
         // back with data. So this stops the reload from the grid after the data comes back.
         // Once we have "AG-1591 Allow delta changes to columns" fixed, then this hack can be taken out.
-        if (this.gridOptionsWrapper.isSuppressEnterpriseResetOnNewColumns()) { return; }
+        if (this.gridOptionsWrapper.isSuppressEnterpriseResetOnNewColumns()) {
+            return;
+        }
         // every other customer can continue as normal and have it working!!!
 
         // check if anything pertaining to fetching data has changed, and if it has, reset, but if
@@ -148,13 +150,12 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     // and now we are sorting by col B, the list of impacted cols should be A and B. so if a cache
     // is impacted by sorting on A or B then it needs to be refreshed. this includes where the cache
     // was previously sorted by A and then the A sort now needs to be cleared.
-    private findChangedColumnsInSort(
-                            newSortModel: {colId: string, sort: string}[],
-                            oldSortModel: {colId: string, sort: string}[]): string[] {
+    private findChangedColumnsInSort(newSortModel: { colId: string, sort: string }[],
+                                     oldSortModel: { colId: string, sort: string }[]): string[] {
 
         let allColsInBothSorts: string[] = [];
 
-        [newSortModel, oldSortModel].forEach( sortModel => {
+        [newSortModel, oldSortModel].forEach(sortModel => {
             if (sortModel) {
                 let ids = sortModel.map(sm => sm.colId);
                 allColsInBothSorts = allColsInBothSorts.concat(ids);
@@ -173,7 +174,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             return oldIndex !== newIndex;
         };
 
-        return allColsInBothSorts.filter( colId => {
+        return allColsInBothSorts.filter(colId => {
             let oldSortItem = _.find(oldSortModel, sm => sm.colId === colId);
             let newSortItem = _.find(newSortModel, sm => sm.colId === colId);
             return differentSorts(oldSortItem, newSortItem) || differentIndexes(oldSortItem, newSortItem);
@@ -226,7 +227,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
                 this.createNodeCache(rowNode);
             }
         } else {
-            if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && _.exists(rowNode.childrenCache)) {
+            if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && _.exists(rowNode.childrenCache) && rowNode.childrenCache) {
                 rowNode.childrenCache.destroy();
                 rowNode.childrenCache = null;
             }
@@ -300,7 +301,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     private toValueObjects(columns: Column[]): ColumnVO[] {
-        return columns.map( col => <ColumnVO> {
+        return columns.map(col => <ColumnVO> {
             id: col.getId(),
             aggFunc: col.getAggFunc(),
             displayName: this.columnController.getDisplayNameForColumn(col, 'model'),
@@ -317,13 +318,13 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         let dynamicRowHeight = this.gridOptionsWrapper.isDynamicRowHeight();
         let maxBlocksInCache = this.gridOptionsWrapper.getMaxBlocksInCache();
 
-        if (dynamicRowHeight && maxBlocksInCache >= 0 ) {
+        if (dynamicRowHeight && maxBlocksInCache && maxBlocksInCache >= 0) {
             console.warn('ag-Grid: Server Side Row Model does not support Dynamic Row Height and Cache Purging. ' +
                 'Either a) remove getRowHeight() callback or b) remove maxBlocksInCache property. Purging has been disabled.');
             maxBlocksInCache = undefined;
         }
 
-        if (maxBlocksInCache >= 0 && this.columnController.isAutoRowHeightActive()) {
+        if (maxBlocksInCache && maxBlocksInCache >= 0 && this.columnController.isAutoRowHeightActive()) {
             console.warn('ag-Grid: Server Side Row Model does not support Auto Row Height and Cache Purging. ' +
                 'Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.');
             maxBlocksInCache = undefined;
@@ -354,21 +355,21 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         };
 
         // set defaults
-        if ( !(params.maxConcurrentRequests>=1) ) {
+        if (params.maxConcurrentRequests && !(params.maxConcurrentRequests >= 1)) {
             params.maxConcurrentRequests = 2;
         }
         // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
         // server for one page at a time. so the default if not specified is 100.
-        if ( !(params.blockSize>=1) ) {
+        if (params.blockSize && !(params.blockSize >= 1)) {
             params.blockSize = 100;
         }
         // if user doesn't give initial rows to display, we assume zero
-        if ( !(params.initialRowCount>=1) ) {
+        if (!(params.initialRowCount >= 1)) {
             params.initialRowCount = 0;
         }
         // if user doesn't provide overflow, we use default overflow of 1, so user can scroll past
         // the current page and request first row of next page
-        if ( !(params.overflowSize>=1) ) {
+        if (!(params.overflowSize >= 1)) {
             params.overflowSize = 1;
         }
 
@@ -417,11 +418,11 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     // which is needed for rows that are transitioning in
     private resetRowTops(cache: ServerSideCache): void {
         let numberSequence = new NumberSequence();
-        cache.forEachNodeDeep( rowNode => rowNode.clearRowTop(), numberSequence);
+        cache.forEachNodeDeep(rowNode => rowNode.clearRowTop(), numberSequence);
     }
 
-    public getRow(index: number): RowNode {
-        if (this.cacheExists()) {
+    public getRow(index: number): RowNode | null {
+        if (this.cacheExists() && this.rootNode.childrenCache) {
             return this.rootNode.childrenCache.getRow(index);
         } else {
             return null;
@@ -486,13 +487,13 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         return Constants.ROW_MODEL_TYPE_SERVER_SIDE;
     }
 
-    public forEachNode(callback: (rowNode: RowNode, index: number)=>void): void {
-        if (this.cacheExists()) {
+    public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
+        if (this.cacheExists() && this.rootNode.childrenCache) {
             this.rootNode.childrenCache.forEachNodeDeep(callback, new NumberSequence());
         }
     }
 
-    private executeOnCache(route: string[], callback: (cache: ServerSideCache)=>void) {
+    private executeOnCache(route: string[], callback: (cache: ServerSideCache) => void) {
         if (this.cacheExists()) {
             let topLevelCache = <ServerSideCache> this.rootNode.childrenCache;
             let cacheToPurge = topLevelCache.getChildCache(route);
@@ -503,27 +504,29 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public purgeCache(route: string[] = []): void {
-        this.executeOnCache(route, cache => cache.purgeCache() );
+        this.executeOnCache(route, cache => cache.purgeCache());
     }
 
     public removeFromCache(route: string[], items: any[]): void {
-        this.executeOnCache(route, cache => cache.removeFromCache(items) );
-        this.rowNodeBlockLoader.checkBlockToLoad();
+        this.executeOnCache(route, cache => cache.removeFromCache(items));
+        if (this.rowNodeBlockLoader) {
+            this.rowNodeBlockLoader.checkBlockToLoad();
+        }
     }
 
     public addToCache(route: string[], items: any[], index: number): void {
-        this.executeOnCache(route, cache => cache.addToCache(items, index) );
+        this.executeOnCache(route, cache => cache.addToCache(items, index));
     }
 
-    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
+    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] | null {
         if (_.exists(firstInRange) && firstInRange.parent !== lastInRange.parent) return [];
-        return lastInRange.parent.childrenCache.getRowNodesInRange(firstInRange, lastInRange);
+        return lastInRange.parent && lastInRange.parent.childrenCache ? lastInRange.parent.childrenCache.getRowNodesInRange(firstInRange, lastInRange) : null;
     }
 
-    public getRowNode(id: string): RowNode {
-        let result: RowNode = null;
+    public getRowNode(id: string): RowNode | null {
+        let result: RowNode | null = null;
         this.forEachNode(rowNode => {
-            if(rowNode.id === id) {
+            if (rowNode.id === id) {
                 result = rowNode;
             }
         });
@@ -605,9 +608,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     private isSortingWithSecondaryColumn(changedColumnsInSort: string[]): boolean {
-        if (!this.columnController.getSecondaryColumns()) return false;
+        const secondaryColumns = this.columnController.getSecondaryColumns();
+        if (!secondaryColumns) return false;
 
-        let secondaryColIds = this.columnController.getSecondaryColumns().map(col => col.getColId());
+        let secondaryColIds = secondaryColumns.map(col => col.getColId());
 
         for (let i = 0; i < changedColumnsInSort.length; i++) {
             if (secondaryColIds.indexOf(changedColumnsInSort[i]) > -1) {

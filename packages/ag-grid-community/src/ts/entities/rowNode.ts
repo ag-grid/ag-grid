@@ -154,7 +154,7 @@ export class RowNode implements IEventEmitter {
     public childrenMapped: { [key: string]: any } | null = {};
 
     /** Server Side Row Model Only - the children are in an infinite cache */
-    public childrenCache: RowNodeCache<RowNodeBlock, RowNodeCacheParams>;
+    public childrenCache: RowNodeCache<RowNodeBlock, RowNodeCacheParams> | null;
 
     /** Groups only - True if group is expanded, otherwise false */
     public expanded: boolean;

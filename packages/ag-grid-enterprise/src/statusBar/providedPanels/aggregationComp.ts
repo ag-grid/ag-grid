@@ -213,7 +213,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         this.setAggregationComponentValue('avg', (sum / numberCount), gotNumberResult);
     }
 
-    private getRowNode(gridRow: GridRow): RowNode {
+    private getRowNode(gridRow: GridRow): RowNode | null {
         switch (gridRow.floating) {
             case Constants.PINNED_TOP:
                 return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];

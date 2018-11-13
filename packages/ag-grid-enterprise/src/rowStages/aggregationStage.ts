@@ -125,9 +125,9 @@ export class AggregationStage implements IRowNodeStage {
         pivotColumnDefs
             .filter(v => !Utils.exists(v.pivotTotalColumnIds)) // only process pivot value columns
             .forEach(valueColDef => {
-                let keys: string[] = valueColDef.pivotKeys;
+                let keys: string[] | undefined = valueColDef.pivotKeys;
                 let values: any[];
-                let valueColumn: Column = valueColDef.pivotValueColumn;
+                let valueColumn: Column | null | undefined = valueColDef.pivotValueColumn;
 
                 if (rowNode.leafGroup) {
                     // lowest level group, get the values from the mapped set
@@ -137,7 +137,9 @@ export class AggregationStage implements IRowNodeStage {
                     values = this.getValuesPivotNonLeaf(rowNode, valueColDef.colId);
                 }
 
-                result[valueColDef.colId] = this.aggregateValues(values, valueColumn.getAggFunc());
+                if (valueColDef.colId && valueColumn) {
+                    result[valueColDef.colId] = this.aggregateValues(values, valueColumn.getAggFunc());
+                }
             });
 
         // Step 2: process total columns
@@ -147,11 +149,15 @@ export class AggregationStage implements IRowNodeStage {
                 let aggResults: any[] = [];
 
                 //retrieve results for colIds associated with this pivot total column
-                totalColDef.pivotTotalColumnIds.forEach((colId: string) => {
-                    aggResults.push(result[colId]);
-                });
+                if (totalColDef.pivotTotalColumnIds) {
+                    totalColDef.pivotTotalColumnIds.forEach((colId: string) => {
+                        aggResults.push(result[colId]);
+                    });
+                }
 
-                result[totalColDef.colId] = this.aggregateValues(aggResults, totalColDef.pivotValueColumn.getAggFunc());
+                if (totalColDef.colId && totalColDef.pivotValueColumn) {
+                    result[totalColDef.colId] = this.aggregateValues(aggResults, totalColDef.pivotValueColumn.getAggFunc());
+                }
             });
 
         return result;
@@ -184,16 +190,22 @@ export class AggregationStage implements IRowNodeStage {
         return result;
     }
 
-    private getValuesPivotNonLeaf(rowNode: RowNode, colId: string): any[] {
+    private getValuesPivotNonLeaf(rowNode: RowNode, colId: string | undefined): any[] {
         let values: any[] = [];
         rowNode.childrenAfterFilter.forEach( (node: RowNode) => {
-            let value = node.aggData[colId];
-            values.push(value);
+            if (colId) {
+                let value = node.aggData[colId];
+                values.push(value);
+            }
         });
         return values;
     }
 
-    private getValuesFromMappedSet(mappedSet: any, keys: string[], valueColumn: Column): any[] {
+    private getValuesFromMappedSet(mappedSet: any, keys: string[] | undefined, valueColumn: Column | null | undefined): any[] {
+        if(!keys) {
+            return [];
+        }
+
         let mapPointer = mappedSet;
         keys.forEach( key => mapPointer = mapPointer ? mapPointer[key] : null );
 
@@ -203,8 +215,10 @@ export class AggregationStage implements IRowNodeStage {
 
         let values: any = [];
         mapPointer.forEach( (rowNode: RowNode) => {
-            let value = this.valueService.getValue(valueColumn, rowNode);
-            values.push(value);
+            if (valueColumn) {
+                let value = this.valueService.getValue(valueColumn, rowNode);
+                values.push(value);
+            }
         });
 
         return values;

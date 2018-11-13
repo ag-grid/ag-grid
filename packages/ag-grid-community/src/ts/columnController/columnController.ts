@@ -425,7 +425,7 @@ export class ColumnController {
         }
     }
 
-    public autoSizeColumn(key: string | Column, source: ColumnEventType = "api"): void {
+    public autoSizeColumn(key: string | Column | null, source: ColumnEventType = "api"): void {
         this.autoSizeColumns([key], source);
     }
 
@@ -707,7 +707,7 @@ export class ColumnController {
         }
     }
 
-    public addRowGroupColumn(key: string | Column, source: ColumnEventType = "api"): void {
+    public addRowGroupColumn(key: string | Column | null, source: ColumnEventType = "api"): void {
         this.addRowGroupColumns([key], source);
     }
 
@@ -719,7 +719,7 @@ export class ColumnController {
             source);
     }
 
-    public removeRowGroupColumns(keys: (string | Column)[], source: ColumnEventType = "api"): void {
+    public removeRowGroupColumns(keys: (string | Column)[] | null, source: ColumnEventType = "api"): void {
         this.autoGroupsNeedBuilding = true;
         this.updatePrimaryColumnList(keys, this.rowGroupColumns, false,
             this.setRowGroupActive.bind(this, false),
@@ -727,7 +727,7 @@ export class ColumnController {
             source);
     }
 
-    public removeRowGroupColumn(key: string | Column, source: ColumnEventType = "api"): void {
+    public removeRowGroupColumn(key: string | Column | null, source: ColumnEventType = "api"): void {
         this.removeRowGroupColumns([key], source);
     }
 
@@ -820,7 +820,7 @@ export class ColumnController {
             source);
     }
 
-    public addValueColumn(colKey: (string | Column), source: ColumnEventType = "api"): void {
+    public addValueColumn(colKey: (string | Column) | null | undefined, source: ColumnEventType = "api"): void {
         this.addValueColumns([colKey], source);
     }
 
@@ -1081,7 +1081,7 @@ export class ColumnController {
         }
     }
 
-    public setColumnAggFunc(column: Column, aggFunc: string, source: ColumnEventType = "api"): void {
+    public setColumnAggFunc(column: Column | null | undefined, aggFunc: string, source: ColumnEventType = "api"): void {
         column.setAggFunc(aggFunc);
         let event: ColumnValueChangedEvent = {
             type: Events.EVENT_COLUMN_VALUE_CHANGED,
@@ -1376,7 +1376,7 @@ export class ColumnController {
         this.columnAnimationService.finish();
     }
 
-    public setColumnPinned(key: string | Column, pinned: string | boolean, source: ColumnEventType = "api"): void {
+    public setColumnPinned(key: string | Column | null, pinned: string | boolean | null, source: ColumnEventType = "api"): void {
         this.setColumnsPinned([key], pinned, source);
     }
 
@@ -1953,7 +1953,7 @@ export class ColumnController {
         return columnMatches || colDefMatches || idMatches;
     }
 
-    public getDisplayNameForColumn(column: Column, location: string | null, includeAggFunc = false): string {
+    public getDisplayNameForColumn(column: Column | null, location: string | null, includeAggFunc = false): string {
         let headerName = this.getHeaderName(column.getColDef(), column, null, null, location);
         if (includeAggFunc) {
             return this.wrapHeaderNameWithAggFunc(column, headerName);

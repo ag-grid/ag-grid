@@ -1,25 +1,25 @@
 import {
-    GetContextMenuItemsParams,
-    GetContextMenuItems,
-    Bean,
-    EventService,
-    IContextMenuFactory,
+    _,
     Autowired,
+    Bean,
+    BeanStub,
+    Column,
+    Component,
     Context,
+    EventService,
+    GetContextMenuItems,
+    GetContextMenuItemsParams,
+    GridApi,
+    GridOptionsWrapper,
+    IAfterGuiAttachedParams,
+    IComponent,
+    IContextMenuFactory,
+    IRowModel,
+    MenuItemDef,
     PopupService,
     PostConstruct,
-    Component,
-    GridOptionsWrapper,
     RowNode,
-    Utils,
-    Column,
-    MenuItemDef,
-    GridApi,
-    IRowModel,
-    IComponent,
-    IAfterGuiAttachedParams,
-    _,
-    BeanStub
+    Utils
 } from "ag-grid-community";
 import {ClipboardService} from "../clipboardService";
 import {MenuItemComponent} from "./menuItemComponent";
@@ -46,7 +46,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
         }
     }
 
-    private getMenuItems(node: RowNode, column: Column, value: any): (MenuItemDef|string)[] {
+    private getMenuItems(node: RowNode, column: Column, value: any): (MenuItemDef | string)[] {
         let defaultMenuOptions: string[];
         if (Utils.exists(node)) {
 
@@ -54,7 +54,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
 
             if (column) {
                 // only makes sense if column exists, could have originated from a row
-                defaultMenuOptions = ['copy','copyWithHeaders','paste', 'separator'];
+                defaultMenuOptions = ['copy', 'copyWithHeaders', 'paste', 'separator'];
             }
 
             // if user clicks a cell
@@ -91,19 +91,21 @@ export class ContextMenuFactory implements IContextMenuFactory {
 
         let menuItems = this.getMenuItems(node, column, value);
 
-        if (Utils.missingOrEmpty(menuItems)) { return; }
+        if (Utils.missingOrEmpty(menuItems)) {
+            return;
+        }
 
         let menu = new ContextMenu(menuItems);
         this.context.wireBean(menu);
 
-        let eMenuGui =  menu.getGui();
+        let eMenuGui = menu.getGui();
 
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
         let hidePopup = this.popupService.addAsModalPopup(
             eMenuGui,
             true,
-            ()=> menu.destroy(),
+            () => menu.destroy(),
             mouseEvent
         );
 
@@ -120,8 +122,8 @@ export class ContextMenuFactory implements IContextMenuFactory {
         });
 
         this.activeMenu = menu;
-        menu.addEventListener(BeanStub.EVENT_DESTROYED, ()=> {
-            if (this.activeMenu===menu) {
+        menu.addEventListener(BeanStub.EVENT_DESTROYED, () => {
+            if (this.activeMenu === menu) {
                 this.activeMenu = null;
             }
         });
@@ -138,9 +140,9 @@ class ContextMenu extends Component implements IComponent<any> {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('menuItemMapper') private menuItemMapper: MenuItemMapper;
 
-    private menuItems: (MenuItemDef|string)[];
+    private menuItems: (MenuItemDef | string)[];
 
-    constructor(menuItems: (MenuItemDef|string)[]) {
+    constructor(menuItems: (MenuItemDef | string)[]) {
         super('<div class="ag-menu"></div>');
         this.menuItems = menuItems;
     }

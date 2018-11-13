@@ -49,8 +49,9 @@ export class ViewportRowModel implements IRowModel {
 
         let viewportEnabled = this.gridOptionsWrapper.isRowModelViewport();
 
-        if (viewportEnabled && this.gridOptionsWrapper.getViewportDatasource()) {
-            this.setViewportDatasource(this.gridOptionsWrapper.getViewportDatasource());
+        const viewportDatasource = this.gridOptionsWrapper.getViewportDatasource();
+        if (viewportEnabled && viewportDatasource) {
+            this.setViewportDatasource(viewportDatasource);
         }
 
     }
@@ -145,8 +146,8 @@ export class ViewportRowModel implements IRowModel {
         return this.rowNodesByIndex[rowIndex];
     }
 
-    public getRowNode(id: string): RowNode {
-        let result: RowNode = null;
+    public getRowNode(id: string): RowNode | null {
+        let result: RowNode | null = null;
         this.forEachNode(rowNode => {
             if(rowNode.id === id) {
                 result = rowNode;
