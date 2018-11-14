@@ -1,32 +1,32 @@
 import {
-    Utils,
-    Bean,
-    IRangeController,
-    Autowired,
-    GridCellDef,
-    LoggerFactory,
-    GridPanel,
-    IRowModel,
-    EventService,
-    ColumnController,
-    RowRenderer,
-    FocusedCellController,
-    MouseEventService,
-    Logger,
-    RangeSelection,
-    PostConstruct,
-    Events,
-    GridCell,
-    AddRangeSelectionParams,
-    GridRow,
-    Column,
-    GridOptionsWrapper,
-    RangeSelectionChangedEvent,
-    ColumnApi,
-    GridApi,
-    CellNavigationService,
     _,
-    Constants
+    AddRangeSelectionParams,
+    Autowired,
+    Bean,
+    CellNavigationService,
+    Column,
+    ColumnApi,
+    ColumnController,
+    Constants,
+    Events,
+    EventService,
+    FocusedCellController,
+    GridApi,
+    GridCell,
+    GridCellDef,
+    GridOptionsWrapper,
+    GridPanel,
+    GridRow,
+    IRangeController,
+    IRowModel,
+    Logger,
+    LoggerFactory,
+    MouseEventService,
+    PostConstruct,
+    RangeSelection,
+    RangeSelectionChangedEvent,
+    RowRenderer,
+    Utils
 } from "ag-grid-community";
 
 @Bean('rangeController')
@@ -48,9 +48,9 @@ export class RangeController implements IRangeController {
 
     private gridPanel: GridPanel;
 
-    private cellRanges: RangeSelection[];
-    private activeRange: RangeSelection;
-    private lastMouseEvent: MouseEvent;
+    private cellRanges: RangeSelection[] | null;
+    private activeRange: RangeSelection | null;
+    private lastMouseEvent: MouseEvent | null;
 
     private bodyScrollListener = this.onBodyScroll.bind(this);
 
@@ -76,10 +76,14 @@ export class RangeController implements IRangeController {
     }
 
     public setRangeToCell(cell: GridCell, appendRange = false): void {
-        if (!this.gridOptionsWrapper.isEnableRangeSelection()) { return; }
+        if (!this.gridOptionsWrapper.isEnableRangeSelection()) {
+            return;
+        }
 
         const columns = this.updateSelectedColumns(cell.column, cell.column);
-        if (!columns) { return; }
+        if (!columns) {
+            return;
+        }
 
         const gridCellDef = <GridCellDef> {rowIndex: cell.rowIndex, floating: cell.floating, column: cell.column};
         const newRange = {
@@ -93,13 +97,15 @@ export class RangeController implements IRangeController {
             this.cellRanges = [];
         }
 
-        this.cellRanges.push(newRange);
+        if (this.cellRanges) {
+            this.cellRanges.push(newRange);
+        }
         this.activeRange = null;
         this.dispatchChangedEvent(true, false);
     }
 
     public extendRangeToCell(toCell: GridCell): void {
-        let lastRange = _.existsAndNotEmpty(this.cellRanges) ? this.cellRanges[this.cellRanges.length - 1] : null;
+        let lastRange = _.existsAndNotEmpty(this.cellRanges) && this.cellRanges ? this.cellRanges[this.cellRanges.length - 1] : null;
         let startCell = lastRange ? lastRange.start : toCell;
 
         this.setRange({
@@ -114,12 +120,12 @@ export class RangeController implements IRangeController {
 
     // returns true if successful, false if not successful
     public extendRangeInDirection(startCell: GridCell, key: number): boolean {
-        let oneRangeExists = _.exists(this.cellRanges) || this.cellRanges.length === 1;
-        let previousSelectionStart = oneRangeExists ? this.cellRanges[0].start : null;
+        let oneRangeExists = (_.exists(this.cellRanges) && this.cellRanges) || (this.cellRanges && this.cellRanges.length === 1);
+        let previousSelectionStart = oneRangeExists && this.cellRanges ? this.cellRanges[0].start : null;
 
         let takeEndFromPreviousSelection = startCell.equals(previousSelectionStart);
 
-        let previousEndCell = takeEndFromPreviousSelection ? this.cellRanges[0].end : startCell;
+        let previousEndCell = takeEndFromPreviousSelection && this.cellRanges ? this.cellRanges[0].end : startCell;
         let newEndCell = this.cellNavigationService.getNextCellToFocus(key, previousEndCell);
 
         // if user is at end of grid, so no cell to extend to, we return false
@@ -140,24 +146,40 @@ export class RangeController implements IRangeController {
     }
 
     public setRange(rangeSelection: AddRangeSelectionParams): void {
-        if (!this.gridOptionsWrapper.isEnableRangeSelection()) { return; }
+        if (!this.gridOptionsWrapper.isEnableRangeSelection()) {
+            return;
+        }
 
         this.cellRanges = [];
         this.addRange(rangeSelection);
     }
 
     public addRange(rangeSelection: AddRangeSelectionParams): void {
-        if (!this.gridOptionsWrapper.isEnableRangeSelection()) { return; }
+        if (!this.gridOptionsWrapper.isEnableRangeSelection()) {
+            return;
+        }
 
         let columnStart = this.columnController.getColumnWithValidation(rangeSelection.columnStart);
         let columnEnd = this.columnController.getPrimaryColumn(rangeSelection.columnEnd);
-        if (!columnStart || !columnEnd) { return; }
+        if (!columnStart || !columnEnd) {
+            return;
+        }
 
         let columns = this.updateSelectedColumns(columnStart, columnEnd);
-        if (!columns) { return; }
+        if (!columns) {
+            return;
+        }
 
-        let startGridCellDef = <GridCellDef> {column: columnStart, rowIndex: rangeSelection.rowStart, floating: rangeSelection.floatingStart};
-        let endGridCellDef = <GridCellDef> {column: columnEnd, rowIndex: rangeSelection.rowEnd, floating: rangeSelection.floatingEnd};
+        let startGridCellDef = <GridCellDef> {
+            column: columnStart,
+            rowIndex: rangeSelection.rowStart,
+            floating: rangeSelection.floatingStart
+        };
+        let endGridCellDef = <GridCellDef> {
+            column: columnEnd,
+            rowIndex: rangeSelection.rowEnd,
+            floating: rangeSelection.floatingEnd
+        };
 
         let newRange = <RangeSelection> {
             start: new GridCell(startGridCellDef),
@@ -171,19 +193,19 @@ export class RangeController implements IRangeController {
         this.dispatchChangedEvent(true, false);
     }
 
-    public getCellRanges(): RangeSelection[] {
+    public getCellRanges(): RangeSelection[] | null {
         return this.cellRanges;
     }
 
     public isEmpty(): boolean {
-        return Utils.missingOrEmpty(this.cellRanges);
+        return !this.cellRanges || Utils.missingOrEmpty(this.cellRanges);
     }
 
     public isMoreThanOneCell(): boolean {
-        if (Utils.missingOrEmpty(this.cellRanges)) {
+        if (!this.cellRanges || Utils.missingOrEmpty(this.cellRanges)) {
             return false;
         } else {
-            if (this.cellRanges.length>1) {
+            if (this.cellRanges.length > 1) {
                 return true;
             } else {
                 let onlyRange = this.cellRanges[0];
@@ -216,20 +238,20 @@ export class RangeController implements IRangeController {
     }
 
     private isCellInSpecificRange(cell: GridCell, range: RangeSelection): boolean {
-        let columnInRange = range.columns.indexOf(cell.column) >= 0;
+        let columnInRange: boolean = range.columns !== null && range.columns.indexOf(cell.column) >= 0;
         let rowInRange = this.isRowInRange(cell.rowIndex, cell.floating, range);
         return columnInRange && rowInRange;
     }
 
     // returns the number of ranges this cell is in
     public getCellRangeCount(cell: GridCell): number {
-        if (Utils.missingOrEmpty(this.cellRanges)) {
+        if (!this.cellRanges || Utils.missingOrEmpty(this.cellRanges)) {
             return 0;
         }
 
         let matchingCount = 0;
 
-        this.cellRanges.forEach( (cellRange: RangeSelection) => {
+        this.cellRanges.forEach((cellRange: RangeSelection) => {
             if (this.isCellInSpecificRange(cell, cellRange)) {
                 matchingCount++;
             }
@@ -259,7 +281,9 @@ export class RangeController implements IRangeController {
     }
 
     public onDragStart(mouseEvent: MouseEvent): void {
-        if (!this.gridOptionsWrapper.isEnableRangeSelection()) { return; }
+        if (!this.gridOptionsWrapper.isEnableRangeSelection()) {
+            return;
+        }
 
         // ctrlKey for windows, metaKey for Apple
         const multiKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
@@ -273,11 +297,11 @@ export class RangeController implements IRangeController {
             // (which them means onDragging and onDragStop do nothing)
             return;
         }
-        const len = missingRanges ? 0 : this.cellRanges.length;
+        const len = missingRanges || !this.cellRanges ? 0 : this.cellRanges.length;
 
         if (missingRanges || !multiSelectKeyPressed) {
             this.cellRanges = [];
-        } else if (!this.activeRange && len && this.isCellInSpecificRange(cell, this.cellRanges[len - 1])) {
+        } else if (!this.activeRange && len && this.cellRanges && this.isCellInSpecificRange(cell, this.cellRanges[len - 1])) {
             this.activeRange = this.activeRange = this.cellRanges[len - 1];
         }
 
@@ -303,11 +327,15 @@ export class RangeController implements IRangeController {
             columns: [cell.column]
         };
 
-        this.cellRanges.push(this.activeRange);
+        if (this.cellRanges) {
+            this.cellRanges.push(this.activeRange);
+        }
     }
 
     private selectionChanged(finished: boolean, started: boolean): void {
-        this.activeRange.columns = this.updateSelectedColumns(this.activeRange.start.column, this.activeRange.end.column);
+        if (this.activeRange) {
+            this.activeRange.columns = this.updateSelectedColumns(this.activeRange.start.column, this.activeRange.end.column);
+        }
         this.dispatchChangedEvent(finished, started);
     }
 
@@ -335,8 +363,8 @@ export class RangeController implements IRangeController {
         this.dispatchChangedEvent(true, false);
     }
 
-    public onDragging(mouseEvent: MouseEvent): void {
-        if (!this.dragging || !this.activeRange) {
+    public onDragging(mouseEvent: MouseEvent | null): void {
+        if (!this.dragging || !this.activeRange || !mouseEvent) {
             return;
         }
 
@@ -356,7 +384,7 @@ export class RangeController implements IRangeController {
         }
 
         let rowChanged = false;
-        if (cell.rowIndex!==this.activeRange.end.rowIndex || cell.floating!==this.activeRange.end.floating) {
+        if (cell.rowIndex !== this.activeRange.end.rowIndex || cell.floating !== this.activeRange.end.floating) {
             this.activeRange.end.rowIndex = cell.rowIndex;
             this.activeRange.end.floating = cell.floating;
             rowChanged = true;
@@ -367,7 +395,7 @@ export class RangeController implements IRangeController {
         }
     }
 
-    private updateSelectedColumns(columnFrom: Column, columnTo: Column): Column[] {
+    private updateSelectedColumns(columnFrom: Column, columnTo: Column): Column[] | null {
         let allColumns = this.columnController.getAllDisplayedColumns();
 
         let fromIndex = allColumns.indexOf(columnFrom);
@@ -386,7 +414,7 @@ export class RangeController implements IRangeController {
         let lastIndex = Math.max(fromIndex, toIndex);
 
         let columns: Column[] = [];
-        for (let i = firstIndex; i<=lastIndex; i++) {
+        for (let i = firstIndex; i <= lastIndex; i++) {
             columns.push(allColumns[i]);
         }
 
@@ -396,7 +424,7 @@ export class RangeController implements IRangeController {
 
 class AutoScrollService {
 
-    private tickingInterval: number = null;
+    private tickingInterval: number | null = null;
 
     private tickLeft: boolean;
     private tickRight: boolean;
@@ -416,7 +444,9 @@ class AutoScrollService {
     public check(mouseEvent: MouseEvent): void {
 
         // we don't do ticking if grid is auto height
-        if (this.gridOptionsWrapper.getDomLayout()!==Constants.DOM_LAYOUT_NORMAL) { return; }
+        if (this.gridOptionsWrapper.getDomLayout() !== Constants.DOM_LAYOUT_NORMAL) {
+            return;
+        }
 
         let rect: ClientRect = this.gridPanel.getBodyClientRect();
 
@@ -433,7 +463,7 @@ class AutoScrollService {
     }
 
     private ensureTickingStarted(): void {
-        if (this.tickingInterval===null) {
+        if (this.tickingInterval === null) {
             this.tickingInterval = setInterval(this.doTick.bind(this), 100);
             this.tickCount = 0;
         }

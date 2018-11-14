@@ -3,20 +3,20 @@ import {
     Autowired,
     ColumnVO,
     Context,
+    Events,
     EventService,
+    GridOptionsWrapper,
     IServerSideCache,
     IServerSideDatasource,
     LoggerFactory,
     NumberSequence,
     PostConstruct,
     Qualifier,
+    RowBounds,
+    RowDataUpdatedEvent,
     RowNode,
     RowNodeCache,
-    RowNodeCacheParams,
-    RowBounds,
-    GridOptionsWrapper,
-    RowDataUpdatedEvent,
-    Events
+    RowNodeCacheParams
 } from "ag-grid-community";
 import {ServerSideBlock} from "./serverSideBlock";
 
@@ -45,7 +45,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
     private cacheTop = 0;
     private cacheHeight: number;
 
-    private blockHeights: {[blockId: number]: number} = {};
+    private blockHeights: { [blockId: number]: number } = {};
 
     constructor(cacheParams: ServerSideCacheParams, parentRowNode: RowNode) {
         super(cacheParams);
@@ -65,11 +65,17 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
         this.logger.log(`getRowBounds(${index})`);
 
         // we return null if row not found
-        let result: RowBounds;
-        let blockFound = false;
-        let lastBlock: ServerSideBlock | null = null;
 
-        this.forEachBlockInOrder( block => {
+        // note - cast to "any" due to https://github.com/Microsoft/TypeScript/issues/11498
+        // should be RowBounds
+        let result: any;
+        let blockFound = false;
+
+        // note - cast to "any" due to https://github.com/Microsoft/TypeScript/issues/11498
+        // should be ServerSideBlock
+        let lastBlock: any = null;
+
+        this.forEachBlockInOrder(block => {
             if (blockFound) return;
 
             if (block.isDisplayIndexInBlock(index)) {
@@ -83,9 +89,9 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
         if (!blockFound) {
 
             let nextRowTop: number;
-            let nextRowIndex : number;
+            let nextRowIndex: number;
 
-            if (lastBlock) {
+            if (lastBlock !== null) {
                 nextRowTop = lastBlock.getBlockTop() + lastBlock.getBlockHeight();
                 nextRowIndex = lastBlock.getDisplayIndexEnd();
             } else {
@@ -116,11 +122,16 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
         this.logger.log(`getRowIndexAtPixel(${pixel})`);
 
         // we return null if row not found
-        let result: number;
+        // note - cast to "any" due to https://github.com/Microsoft/TypeScript/issues/11498
+        // should be number
+        let result: any;
         let blockFound = false;
-        let lastBlock: ServerSideBlock;
 
-        this.forEachBlockInOrder( block => {
+        // note - cast to "any" due to https://github.com/Microsoft/TypeScript/issues/11498
+        // should be ServerSideBlock
+        let lastBlock: any;
+
+        this.forEachBlockInOrder(block => {
             if (blockFound) return;
 
             if (block.isPixelInRange(pixel)) {
@@ -134,7 +145,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
         if (!blockFound) {
 
             let nextRowTop: number;
-            let nextRowIndex : number;
+            let nextRowIndex: number;
 
             if (lastBlock) {
                 nextRowTop = lastBlock.getBlockTop() + lastBlock.getBlockHeight();
@@ -163,25 +174,25 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
     }
 
     public clearRowTops(): void {
-        this.forEachBlockInOrder( block => block.clearRowTops(this.getVirtualRowCount()));
+        this.forEachBlockInOrder(block => block.clearRowTops(this.getVirtualRowCount()));
     }
 
     public setDisplayIndexes(displayIndexSeq: NumberSequence,
-                             nextRowTop: {value: number}): void {
+                             nextRowTop: { value: number }): void {
         this.displayIndexStart = displayIndexSeq.peek();
 
         this.cacheTop = nextRowTop.value;
 
         let lastBlockId = -1;
 
-        this.forEachBlockInOrder( (currentBlock: ServerSideBlock, blockId: number)=> {
+        this.forEachBlockInOrder((currentBlock: ServerSideBlock, blockId: number) => {
 
             // if we skipped blocks, then we need to skip the row indexes. we assume that all missing
             // blocks are made up of closed RowNodes only (if they were groups), as we never expire from
             // the cache if any row nodes are open.
             let blocksSkippedCount = blockId - lastBlockId - 1;
-            let rowsSkippedCount = blocksSkippedCount * this.cacheParams.blockSize;
-            if (rowsSkippedCount>0) {
+            let rowsSkippedCount = blocksSkippedCount * (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0);
+            if (rowsSkippedCount > 0) {
                 displayIndexSeq.skip(rowsSkippedCount);
             }
 
@@ -190,7 +201,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
                 if (_.exists(this.blockHeights[blockToAddId])) {
                     nextRowTop.value += this.blockHeights[blockToAddId];
                 } else {
-                    nextRowTop.value += this.cacheParams.blockSize * this.cacheParams.rowHeight;
+                    nextRowTop.value += (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0) * this.cacheParams.rowHeight;
                 }
             }
 
@@ -205,7 +216,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
         // eg if block size = 10, we have total rows of 25 (indexes 0 .. 24), but first 2 blocks loaded (because
         // last row was ejected from cache), then:
         // lastVisitedRow = 19, virtualRowCount = 25, rows not accounted for = 5 (24 - 19)
-        let lastVisitedRow = ((lastBlockId + 1) * this.cacheParams.blockSize) -1;
+        let lastVisitedRow = ((lastBlockId + 1) * (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0)) - 1;
         let rowCount = this.getVirtualRowCount();
         let rowsNotAccountedFor = rowCount - lastVisitedRow - 1;
         if (rowsNotAccountedFor > 0) {
@@ -218,19 +229,24 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
     }
 
     // gets called in a) init() above and b) by the grid
-    public getRow(displayRowIndex: number, dontCreateBlock = false): RowNode {
+    public getRow(displayRowIndex: number, dontCreateBlock = false): RowNode | null {
 
         // this can happen if asking for a row that doesn't exist in the model,
         // eg if a cell range is selected, and the user filters so rows no longer
         // exist
-        if (!this.isDisplayIndexInCache(displayRowIndex)) { return null; }
+        if (!this.isDisplayIndexInCache(displayRowIndex)) {
+            return null;
+        }
 
         // if we have the block, then this is the block
-        let block: ServerSideBlock = null;
-        // this is the last block that we have BEFORE the right block
-        let beforeBlock: ServerSideBlock = null;
+        let block: ServerSideBlock | null = null;
 
-        this.forEachBlockInOrder( currentBlock => {
+        // this is the last block that we have BEFORE the right block
+        // note - cast to "any" due to https://github.com/Microsoft/TypeScript/issues/11498
+        // should be ServerSideBlock
+        let beforeBlock: any = null;
+
+        this.forEachBlockInOrder(currentBlock => {
             if (currentBlock.isDisplayIndexInBlock(displayRowIndex)) {
                 block = currentBlock;
             } else if (currentBlock.isBlockBefore(displayRowIndex)) {
@@ -261,26 +277,26 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
                 nextRowTop = beforeBlock.getBlockHeight() + beforeBlock.getBlockTop();
 
                 let isInRange = (): boolean => {
-                    return displayRowIndex >= displayIndexStart && displayRowIndex < (displayIndexStart + this.cacheParams.blockSize);
+                    return displayRowIndex >= displayIndexStart && displayRowIndex < (displayIndexStart + (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0));
                 };
 
                 while (!isInRange()) {
-                    displayIndexStart += this.cacheParams.blockSize;
+                    displayIndexStart += (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0);
 
                     let cachedBlockHeight = this.blockHeights[blockNumber];
                     if (_.exists(cachedBlockHeight)) {
                         nextRowTop += cachedBlockHeight;
                     } else {
-                        nextRowTop += this.cacheParams.rowHeight * this.cacheParams.blockSize;
+                        nextRowTop += this.cacheParams.rowHeight * (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0);
                     }
 
                     blockNumber++;
                 }
             } else {
                 let localIndex = displayRowIndex - this.displayIndexStart;
-                blockNumber = Math.floor(localIndex / this.cacheParams.blockSize);
-                displayIndexStart = this.displayIndexStart + (blockNumber * this.cacheParams.blockSize);
-                nextRowTop = this.cacheTop + (blockNumber * this.cacheParams.blockSize * this.cacheParams.rowHeight);
+                blockNumber = Math.floor(localIndex / (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0));
+                displayIndexStart = this.displayIndexStart + (blockNumber * (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0));
+                nextRowTop = this.cacheTop + (blockNumber * (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0) * this.cacheParams.rowHeight);
             }
 
             block = this.createBlock(blockNumber, displayIndexStart, {value: nextRowTop});
@@ -288,12 +304,12 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
             this.logger.log(`block missing, rowIndex = ${displayRowIndex}, creating #${blockNumber}, displayIndexStart = ${displayIndexStart}`);
         }
 
-        let rowNode = block.getRow(displayRowIndex);
+        let rowNode = block ? block.getRow(displayRowIndex) : null;
 
         return rowNode;
     }
 
-    private createBlock(blockNumber: number, displayIndex: number, nextRowTop: {value: number}): ServerSideBlock {
+    private createBlock(blockNumber: number, displayIndex: number, nextRowTop: { value: number }): ServerSideBlock {
 
         let newBlock = new ServerSideBlock(blockNumber, this.parentRowNode, this.cacheParams, this);
         this.context.wireBean(newBlock);
@@ -312,20 +328,24 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
     }
 
     public isDisplayIndexInCache(displayIndex: number): boolean {
-        if (this.getVirtualRowCount()===0) { return false; }
+        if (this.getVirtualRowCount() === 0) {
+            return false;
+        }
         return displayIndex >= this.displayIndexStart && displayIndex < this.displayIndexEnd;
     }
 
-    public getChildCache(keys: string[]): ServerSideCache {
-        if (_.missingOrEmpty(keys)) { return this; }
+    public getChildCache(keys: string[]): ServerSideCache | null {
+        if (_.missingOrEmpty(keys)) {
+            return this;
+        }
 
         let nextKey = keys[0];
 
-        let nextServerSideCache: ServerSideCache = null;
+        let nextServerSideCache: any = null;
 
         this.forEachBlockInOrder(block => {
             // callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number
-            block.forEachNodeShallow( rowNode => {
+            block.forEachNodeShallow(rowNode => {
                 if (rowNode.key === nextKey) {
                     nextServerSideCache = <ServerSideCache> rowNode.childrenCache;
                 }
@@ -334,38 +354,45 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
 
         if (nextServerSideCache) {
             let keyListForNextLevel = keys.slice(1, keys.length);
-            return nextServerSideCache.getChildCache(keyListForNextLevel);
+            return nextServerSideCache ? nextServerSideCache.getChildCache(keyListForNextLevel) : null;
         } else {
             return null;
         }
     }
 
     public isPixelInRange(pixel: number): boolean {
-        if (this.getVirtualRowCount()===0) { return false; }
-        return pixel >= this.cacheTop  && pixel < (this.cacheTop + this.cacheHeight);
+        if (this.getVirtualRowCount() === 0) {
+            return false;
+        }
+        return pixel >= this.cacheTop && pixel < (this.cacheTop + this.cacheHeight);
     }
 
     public removeFromCache(items: any[]): void {
 
         // create map of id's for quick lookup
-        let itemsToDeleteById: {[id: string]: any} = {};
+        let itemsToDeleteById: { [id: string]: any } = {};
         let idForNodeFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
-        items.forEach( item => {
-            let id = idForNodeFunc(item);
-            itemsToDeleteById[id] = item;
+
+        items.forEach(item => {
+            if (idForNodeFunc !== undefined) {
+                let id = idForNodeFunc(item);
+                itemsToDeleteById[id] = item;
+            }
         });
 
         let deletedCount = 0;
 
-        this.forEachBlockInOrder( block => {
+        this.forEachBlockInOrder(block => {
             let startRow = block.getStartRow();
             let endRow = block.getEndRow();
 
             let deletedCountFromThisBlock = 0;
-            for (let rowIndex = startRow; rowIndex<endRow; rowIndex++) {
+            for (let rowIndex = startRow; rowIndex < endRow; rowIndex++) {
 
                 let rowNode = block.getRowUsingLocalIndex(rowIndex, true);
-                if (!rowNode) { continue; }
+                if (!rowNode) {
+                    continue;
+                }
 
                 let deleteThisRow = !!itemsToDeleteById[rowNode.id];
                 if (deleteThisRow) {
@@ -378,11 +405,11 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
 
                 // if rows were deleted, then we need to move this row node to
                 // it's new location
-                if (deletedCount>0) {
+                if (deletedCount > 0) {
                     block.setDirty();
                     let newIndex = rowIndex - deletedCount;
 
-                    let blockId = Math.floor(newIndex / this.cacheParams.blockSize);
+                    let blockId = Math.floor(newIndex / (this.cacheParams.blockSize ? this.cacheParams.blockSize : 0));
                     let blockToInsert = this.getBlock(blockId);
                     if (blockToInsert) {
                         blockToInsert.setRowNode(newIndex, rowNode);
@@ -390,9 +417,9 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
                 }
             }
 
-            if (deletedCountFromThisBlock>0) {
-                for (let i = deletedCountFromThisBlock; i>0; i--) {
-                    block.setBlankRowNode(endRow-i);
+            if (deletedCountFromThisBlock > 0) {
+                for (let i = deletedCountFromThisBlock; i > 0; i--) {
+                    block.setBlankRowNode(endRow - i);
                 }
             }
         });
@@ -414,7 +441,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
 
     public addToCache(items: any[], indexToInsert: number): void {
         let newNodes: RowNode[] = [];
-        this.forEachBlockInReverseOrder( block => {
+        this.forEachBlockInReverseOrder(block => {
             let pageEndRow = block.getEndRow();
 
             // if the insertion is after this page, then this page is not impacted
@@ -491,7 +518,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
         let level = this.parentRowNode.level + 1;
         let grouping = level < this.cacheParams.rowGroupCols.length;
 
-        let shouldPurgeCache:  boolean;
+        let shouldPurgeCache: boolean;
         if (grouping) {
             let groupColVo = this.cacheParams.rowGroupCols[level];
             let groupField = groupColVo.field;

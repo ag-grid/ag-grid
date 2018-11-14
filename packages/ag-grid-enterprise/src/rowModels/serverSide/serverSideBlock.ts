@@ -1,22 +1,22 @@
 import {
     _,
     Autowired,
+    Column,
+    ColumnController,
     Context,
-    RowRenderer,
+    GridOptionsWrapper,
     IServerSideGetRowsParams,
     IServerSideGetRowsRequest,
     Logger,
+    LoggerFactory,
     NumberSequence,
     PostConstruct,
-    RowNodeBlock,
-    LoggerFactory,
     Qualifier,
+    RowBounds,
     RowNode,
-    Column,
-    ColumnController,
-    ValueService,
-    GridOptionsWrapper,
-    RowBounds
+    RowNodeBlock,
+    RowRenderer,
+    ValueService
 } from "ag-grid-community";
 
 import {ServerSideCache, ServerSideCacheParams} from "./serverSideCache";
@@ -43,7 +43,7 @@ export class ServerSideBlock extends RowNodeBlock {
     private parentRowNode: RowNode;
 
     private level: number;
-    private groupLevel: boolean;
+    private groupLevel: boolean | undefined;
     private leafGroup: boolean;
     private groupField: string;
     private rowGroupColumn: Column;
@@ -85,15 +85,15 @@ export class ServerSideBlock extends RowNodeBlock {
 
     private createNodeIdPrefix(): void {
         let parts: string[] = [];
-        let rowNode = this.parentRowNode;
+        let rowNode : RowNode | null = this.parentRowNode;
 
         // pull keys from all parent nodes, but do not include the root node
-        while (rowNode.level >= 0) {
+        while (rowNode && rowNode.level >= 0) {
             parts.push(rowNode.key);
             rowNode = rowNode.parent;
         }
 
-        if (parts.length>0) {
+        if (parts.length > 0) {
             this.nodeIdPrefix = parts.reverse().join('-') + '-';
         }
     }
@@ -110,7 +110,7 @@ export class ServerSideBlock extends RowNodeBlock {
         return this.nodeIdPrefix;
     }
 
-    public getRow(displayRowIndex: number): RowNode {
+    public getRow(displayRowIndex: number): RowNode | null {
 
         // do binary search of tree
         // http://oli.me.uk/2013/06/08/searching-javascript-arrays-with-a-binary-search/
@@ -174,21 +174,23 @@ export class ServerSideBlock extends RowNodeBlock {
 
             if (this.usingTreeData) {
                 let getServerSideGroupKey = this.gridOptionsWrapper.getServerSideGroupKeyFunc();
-                if (_.exists(getServerSideGroupKey)) {
+                if (_.exists(getServerSideGroupKey) && getServerSideGroupKey) {
                     rowNode.key = getServerSideGroupKey(rowNode.data);
                 }
 
                 let isServerSideGroup = this.gridOptionsWrapper.getIsServerSideGroupFunc();
-                if (_.exists(isServerSideGroup)) {
+                if (_.exists(isServerSideGroup) && isServerSideGroup) {
                     rowNode.group = isServerSideGroup(rowNode.data);
                 }
 
             } else if (rowNode.group) {
                 rowNode.key = this.valueService.getValue(this.rowGroupColumn, rowNode);
-                if (rowNode.key===null || rowNode.key===undefined) {
-                    _.doOnce( ()=> {
+                if (rowNode.key === null || rowNode.key === undefined) {
+                    _.doOnce(() => {
                         console.warn(`null and undefined values are not allowed for server side row model keys`);
-                        if (this.rowGroupColumn) { console.warn(`column = ${this.rowGroupColumn.getId()}`);}
+                        if (this.rowGroupColumn) {
+                            console.warn(`column = ${this.rowGroupColumn.getId()}`);
+                        }
                         console.warn(`data is `, rowNode.data);
                     }, 'ServerSideBlock-CannotHaveNullOrUndefinedForKey');
                 }
@@ -235,8 +237,10 @@ export class ServerSideBlock extends RowNodeBlock {
 
     protected loadFromDatasource(): void {
         let params = this.createLoadParams();
-        setTimeout(()=> {
-            this.params.datasource.getRows(params);
+        setTimeout(() => {
+            if (this.params.datasource) {
+                this.params.datasource.getRows(params);
+            }
         }, 0);
     }
 
@@ -264,8 +268,8 @@ export class ServerSideBlock extends RowNodeBlock {
     private createGroupKeys(groupNode: RowNode): string[] {
         let keys: string[] = [];
 
-        let pointer = groupNode;
-        while (pointer.level >= 0) {
+        let pointer: RowNode | null = groupNode;
+        while (pointer && pointer.level >= 0) {
             keys.push(pointer.key);
             pointer = pointer.parent;
         }
@@ -279,15 +283,17 @@ export class ServerSideBlock extends RowNodeBlock {
         return pixel >= this.blockTop && pixel < (this.blockTop + this.blockHeight);
     }
 
-    public getRowBounds(index: number, virtualRowCount: number): RowBounds {
+    public getRowBounds(index: number, virtualRowCount: number): RowBounds | null {
 
         let start = this.getStartRow();
         let end = this.getEndRow();
 
-        for (let i = start; i<=end; i++) {
+        for (let i = start; i <= end; i++) {
             // the blocks can have extra rows in them, if they are the last block
             // in the cache and the virtual row count doesn't divide evenly by the
-            if (i >= virtualRowCount) { continue; }
+            if (i >= virtualRowCount) {
+                continue;
+            }
 
             let rowNode = this.getRowUsingLocalIndex(i);
             if (rowNode) {
@@ -318,10 +324,12 @@ export class ServerSideBlock extends RowNodeBlock {
         let start = this.getStartRow();
         let end = this.getEndRow();
 
-        for (let i = start; i<=end; i++) {
+        for (let i = start; i <= end; i++) {
             // the blocks can have extra rows in them, if they are the last block
             // in the cache and the virtual row count doesn't divide evenly by the
-            if (i >= virtualRowCount) { continue; }
+            if (i >= virtualRowCount) {
+                continue;
+            }
 
             let rowNode = this.getRowUsingLocalIndex(i);
             if (rowNode) {
@@ -357,7 +365,7 @@ export class ServerSideBlock extends RowNodeBlock {
 
     public setDisplayIndexes(displayIndexSeq: NumberSequence,
                              virtualRowCount: number,
-                             nextRowTop: {value: number}): void {
+                             nextRowTop: { value: number }): void {
         this.displayIndexStart = displayIndexSeq.peek();
 
         this.blockTop = nextRowTop.value;
@@ -387,11 +395,11 @@ export class ServerSideBlock extends RowNodeBlock {
         this.blockHeight = nextRowTop.value - this.blockTop;
     }
 
-    private forEachRowNode(virtualRowCount: number, callback: (rowNode: RowNode)=>void): void {
+    private forEachRowNode(virtualRowCount: number, callback: (rowNode: RowNode) => void): void {
         let start = this.getStartRow();
         let end = this.getEndRow();
 
-        for (let i = start; i<=end; i++) {
+        for (let i = start; i <= end; i++) {
             // the blocks can have extra rows in them, if they are the last block
             // in the cache and the virtual row count doesn't divide evenly by the
             if (i >= virtualRowCount) {
@@ -455,7 +463,7 @@ export class ServerSideBlock extends RowNodeBlock {
         return this.blockTop;
     }
 
-    public isGroupLevel(): boolean {
+    public isGroupLevel(): boolean | undefined {
         return this.groupLevel;
     }
 

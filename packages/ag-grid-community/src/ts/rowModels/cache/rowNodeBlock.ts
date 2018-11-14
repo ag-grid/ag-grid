@@ -54,7 +54,7 @@ export abstract class RowNodeBlock extends BeanStub {
     // local index is the same as the display index, so the override just calls
     // getRowUsingLocalIndex(). however for server side row model, they are different, hence
     // server side row model does logic before calling getRowUsingLocalIndex().
-    public abstract getRow(displayIndex: number): RowNode;
+    public abstract getRow(displayIndex: number): RowNode | null;
 
     // returns the node id prefix, which is essentially the id of the cache
     // that the block belongs to. this is used for debugging purposes, where the

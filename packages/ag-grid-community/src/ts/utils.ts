@@ -573,7 +573,7 @@ export class Utils {
         return false;
     }
 
-    static existsAndNotEmpty(value: any[]): boolean {
+    static existsAndNotEmpty(value: any[] | null): boolean {
         return this.exists(value) && value.length > 0;
     }
 

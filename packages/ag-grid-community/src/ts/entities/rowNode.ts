@@ -93,7 +93,7 @@ export class RowNode implements IEventEmitter {
      * This will always be the same as the level, unless we are collapsing groups ie groupRemoveSingleChildren = true */
     public rowGroupIndex: number | null;
     /** True if this node is a group node (ie has children) */
-    public group: boolean;
+    public group: boolean | undefined;
     /** True if this row is getting dragged */
     public dragging: boolean;
 
@@ -270,7 +270,7 @@ export class RowNode implements IEventEmitter {
         return oldNode;
     }
 
-    public setDataAndId(data: any, id: string): void {
+    public setDataAndId(data: any, id: string | undefined): void {
         let oldNode = _.exists(this.id) ? this.createDaemonNode() : null;
 
         let oldData = this.data;
@@ -390,7 +390,7 @@ export class RowNode implements IEventEmitter {
         }
     }
 
-    public setRowHeight(rowHeight: number): void {
+    public setRowHeight(rowHeight: number | undefined): void {
         this.rowHeight = rowHeight;
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HEIGHT_CHANGED));

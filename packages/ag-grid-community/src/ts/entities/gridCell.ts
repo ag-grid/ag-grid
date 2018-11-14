@@ -41,7 +41,7 @@ export class GridCell {
         return `${this.rowIndex}.${this.floating}.${this.column.getId()}`;
     }
 
-    public equals(other: GridCell): boolean {
+    public equals(other: GridCell | null): boolean {
         let colsMatch = this.column === other.column;
         let floatingMatch = this.floating === other.floating;
         let indexMatch = this.rowIndex === other.rowIndex;

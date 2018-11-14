@@ -34,7 +34,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowModel') private rowModel: IRowModel;
 
-    private activeMenu: ContextMenu;
+    private activeMenu: ContextMenu | null;
 
     @PostConstruct
     private init(): void {
@@ -46,8 +46,8 @@ export class ContextMenuFactory implements IContextMenuFactory {
         }
     }
 
-    private getMenuItems(node: RowNode, column: Column, value: any): (MenuItemDef | string)[] {
-        let defaultMenuOptions: string[];
+    private getMenuItems(node: RowNode, column: Column, value: any): (MenuItemDef | string)[] | undefined {
+        let defaultMenuOptions: string[] | undefined = undefined;
         if (Utils.exists(node)) {
 
             defaultMenuOptions = [];
@@ -70,7 +70,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
             // nothing to show, perhaps tool panels???
         }
         if (this.gridOptionsWrapper.getContextMenuItemsFunc()) {
-            let userFunc: GetContextMenuItems = this.gridOptionsWrapper.getContextMenuItemsFunc();
+            let userFunc: GetContextMenuItems | undefined = this.gridOptionsWrapper.getContextMenuItemsFunc();
             let params: GetContextMenuItemsParams = {
                 node: node,
                 column: column,
@@ -80,8 +80,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
                 context: this.gridOptionsWrapper.getContext()
             };
-            let menuItemsFromUser = userFunc(params);
-            return menuItemsFromUser;
+            return userFunc ? userFunc(params) : undefined;
         } else {
             return defaultMenuOptions;
         }
@@ -91,7 +90,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
 
         let menuItems = this.getMenuItems(node, column, value);
 
-        if (Utils.missingOrEmpty(menuItems)) {
+        if (menuItems === undefined || Utils.missingOrEmpty(menuItems)) {
             return;
         }
 

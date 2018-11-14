@@ -40,7 +40,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 
     private lastSelectedTab: string;
 
-    private activeMenu: EnterpriseMenu;
+    private activeMenu: EnterpriseMenu | null;
 
     public hideActiveMenu(): void {
         if (this.activeMenu) {
@@ -180,7 +180,7 @@ export class EnterpriseMenu extends BeanStub {
         this.includeChecks[EnterpriseMenu.TAB_GENERAL] = ()=> true;
         this.includeChecks[EnterpriseMenu.TAB_FILTER] = () => {
             let isFilterEnabled: boolean = this.gridOptionsWrapper.isEnableFilter();
-            let isFloatingFiltersEnabled: boolean = this.gridOptionsWrapper.isFloatingFilter();
+            let isFloatingFiltersEnabled: boolean = this.gridOptionsWrapper.isFloatingFilter() === true;
             let isAnyFilteringEnabled = isFilterEnabled || isFloatingFiltersEnabled;
 
             let suppressFilterForThisColumn = this.column.getColDef().suppressFilter;
@@ -256,7 +256,7 @@ export class EnterpriseMenu extends BeanStub {
     }
 
     private onTabItemClicked(event: any): void {
-        let key: string;
+        let key: string | null = null;
         switch (event.item) {
             case this.tabItemColumns: key = EnterpriseMenu.TAB_COLUMNS; break;
             case this.tabItemFilter: key = EnterpriseMenu.TAB_FILTER; break;
@@ -406,7 +406,12 @@ export class EnterpriseMenu extends BeanStub {
 
         let filterWrapper:FilterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'COLUMN_MENU');
 
-        let afterFilterAttachedCallback: Function;
+        let afterFilterAttachedCallback: any = null;
+
+        // slightly odd block this - this promise will always have been resolved by the time it gets here, so won't be
+        // async (_unless_ in react or similar, but if so why not encountered before now?).
+        // I'd suggest a future improvement would be to remove/replace this promise as this block just wont work if it is
+        // async and is confusing if you don't have this context
         filterWrapper.filterPromise.then(filter => {
             if (filter.afterGuiAttached) {
                 afterFilterAttachedCallback = filter.afterGuiAttached.bind(filter);

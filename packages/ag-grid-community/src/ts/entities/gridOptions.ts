@@ -555,12 +555,12 @@ export interface NodeChildDetails {
 }
 
 export interface GetContextMenuItemsParams {
-    defaultItems: string[];
+    defaultItems: string[] | undefined;
     column: Column;
     node: RowNode;
     value: any;
-    api: GridApi;
-    columnApi: ColumnApi;
+    api: GridApi | null | undefined;
+    columnApi: ColumnApi | null | undefined;
     context: any;
 }
 
@@ -582,8 +582,8 @@ export interface MenuItemDef {
 
 export interface GetMainMenuItemsParams {
     column: Column;
-    api: GridApi;
-    columnApi: ColumnApi;
+    api: GridApi | null | undefined;
+    columnApi: ColumnApi | null | undefined;
     context: any;
     defaultItems: string[];
 }

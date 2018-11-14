@@ -45,7 +45,7 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
 
     protected logger: Logger;
 
-    public abstract getRow(rowIndex: number): RowNode;
+    public abstract getRow(rowIndex: number): RowNode | null;
 
     protected constructor(cacheParams: P) {
         super();
