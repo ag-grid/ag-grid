@@ -131,7 +131,7 @@ export class ExcelXlsxSerializingSession extends ExcelXmlSerializingSession {
             data: {
                 type: typeTransformed,
                 value:
-                    typeTransformed === 's' ? this.getStringPosition(value).toString():
+                    typeTransformed === 's' ? this.getStringPosition(value == null ? '' : value).toString():
                     typeTransformed === 'n' ? Number(value).toString():
                     value
             }
@@ -143,7 +143,7 @@ export class ExcelXlsxSerializingSession extends ExcelXmlSerializingSession {
             styleId: this.styleExists(styleId) ? styleId : null,
             data: {
                 type: type,
-                value: type === 's' ? this.getStringPosition(value).toString() : value
+                value: type === 's' ? this.getStringPosition(value == null ? '' : value).toString() : value
             },
             mergeAcross: numOfCells
         };
