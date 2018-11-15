@@ -1,16 +1,16 @@
 import {
     _,
+    Autowired,
+    Component,
+    DetailGridInfo,
+    Environment,
     Grid,
     GridApi,
-    RowNode,
-    Component,
-    Autowired,
-    RefSelector,
     GridOptions,
-    DetailGridInfo,
     GridOptionsWrapper,
     ICellRendererParams,
-    Environment
+    RefSelector,
+    RowNode
 } from "ag-grid-community";
 
 export class DetailCellRenderer extends Component {
@@ -48,7 +48,7 @@ export class DetailCellRenderer extends Component {
                 if (this.detailGridOptions.api) {
                     this.detailGridOptions.api.doLayout();
                 }
-            },0);
+            }, 0);
         } else {
             console.warn('ag-Grid: reference to eDetailGrid was missing from the details template. ' +
                 'Please add ref="eDetailGrid" to the template.');
@@ -77,7 +77,7 @@ export class DetailCellRenderer extends Component {
         // register with node
         rowNode.detailGridInfo = gridInfo;
 
-        this.addDestroyFunc( ()=> {
+        this.addDestroyFunc(() => {
             this.masterGridApi.removeDetailGridInfo(this.rowId); // unregister from api
             rowNode.detailGridInfo = null; // unregister from node
         });
@@ -127,7 +127,11 @@ export class DetailCellRenderer extends Component {
             }
         });
 
-        this.addDestroyFunc( () => this.detailGridOptions.api.destroy() );
+        this.addDestroyFunc(() => {
+            if (this.detailGridOptions.api) {
+                this.detailGridOptions.api.destroy()
+            }
+        });
     }
 
     private loadRowData(params: IDetailCellRendererParams): void {
@@ -166,7 +170,7 @@ export interface GetDetailRowData {
 
 export interface GetDetailRowDataParams {
     // details for the request,
-    node:  RowNode;
+    node: RowNode;
     data: any;
 
     // success callback, pass the rows back the grid asked for

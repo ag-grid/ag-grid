@@ -84,8 +84,8 @@ export interface RedrawRowsParams {
 
 export interface DetailGridInfo {
     id: string;
-    api: GridApi;
-    columnApi: ColumnApi;
+    api: GridApi | null | undefined;
+    columnApi: ColumnApi | null | undefined;
 }
 
 @Bean('gridApi')

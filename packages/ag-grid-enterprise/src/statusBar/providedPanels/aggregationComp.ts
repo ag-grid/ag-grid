@@ -125,7 +125,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
         let cellsSoFar: any = {};
 
-        if (!_.missingOrEmpty(cellRanges)) {
+        if (cellRanges && !_.missingOrEmpty(cellRanges)) {
 
             cellRanges.forEach((cellRange) => {
 
@@ -141,7 +141,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                 while (true) {
 
                     let finishedAllRows = _.missing(currentRow) || !currentRow || lastRow.before(currentRow);
-                    if (finishedAllRows || !currentRow) {
+                    if (finishedAllRows || !currentRow || !cellRange.columns) {
                         break;
                     }
 

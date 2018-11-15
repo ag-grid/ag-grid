@@ -1,7 +1,8 @@
-import {Environment, Autowired, Component, PostConstruct, Utils, GridOptionsWrapper} from "ag-grid-community";
+import {Autowired, Component, Environment, GridOptionsWrapper, PostConstruct, Utils} from "ag-grid-community";
 
 export interface VirtualListModel {
     getRowCount(): number;
+
     getRow(index: number): any;
 }
 
@@ -17,15 +18,15 @@ export class VirtualList extends Component {
     private eListContainer: HTMLElement;
     private rowsInBodyContainer: any = {};
 
-    private componentCreator: (value:any)=>Component;
+    private componentCreator: (value: any) => Component;
 
     private rowHeight = 20;
 
-    @Autowired('environment') private environment:  Environment;
+    @Autowired('environment') private environment: Environment;
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 
     constructor() {
-        super(null);
+        super(undefined);
     }
 
     @PostConstruct
@@ -67,7 +68,7 @@ export class VirtualList extends Component {
         }
     }
 
-    public setComponentCreator(componentCreator: (value:any)=>Component): void {
+    public setComponentCreator(componentCreator: (value: any) => Component): void {
         this.componentCreator = componentCreator;
     }
 
@@ -133,7 +134,7 @@ export class VirtualList extends Component {
 
     // takes array of row id's
     private removeVirtualRows(rowsToRemove: any) {
-        rowsToRemove.forEach( (index: number) => {
+        rowsToRemove.forEach((index: number) => {
             let component = this.rowsInBodyContainer[index];
             this.eListContainer.removeChild(component.eDiv);
             if (component.rowComponent.destroy) {

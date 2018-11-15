@@ -1,5 +1,13 @@
 import {
-    IAggFuncService, IAggFunc, Bean, Utils, PostConstruct, Autowired, GridOptionsWrapper, Column, _
+    _,
+    Autowired,
+    Bean,
+    Column,
+    GridOptionsWrapper,
+    IAggFunc,
+    IAggFuncService,
+    PostConstruct,
+    Utils
 } from "ag-grid-community";
 
 @Bean('aggFuncService')
@@ -15,13 +23,15 @@ export class AggFuncService implements IAggFuncService {
 
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 
-    private aggFuncsMap: {[key: string]: IAggFunc} = {};
+    private aggFuncsMap: { [key: string]: IAggFunc } = {};
 
     private initialised = false;
 
     @PostConstruct
     private init() {
-        if (this.initialised) { return; }
+        if (this.initialised) {
+            return;
+        }
         this.initialised = true;
 
         this.initialiseWithDefaultAggregations();
@@ -38,7 +48,7 @@ export class AggFuncService implements IAggFuncService {
         this.aggFuncsMap[AggFuncService.AGG_AVG] = aggAvg;
     }
 
-    public getDefaultAggFunc(column: Column): string {
+    public getDefaultAggFunc(column: Column): string | null {
 
         let allKeys = this.getFuncNames(column);
 
@@ -47,7 +57,7 @@ export class AggFuncService implements IAggFuncService {
         let sumInKeysList = allKeys.indexOf(AggFuncService.AGG_SUM) >= 0;
         let sumInFuncs = _.exists(this.aggFuncsMap[AggFuncService.AGG_SUM]);
 
-        let useSum =  sumInKeysList && sumInFuncs;
+        let useSum = sumInKeysList && sumInFuncs;
 
         if (useSum) {
             return AggFuncService.AGG_SUM;
@@ -60,7 +70,7 @@ export class AggFuncService implements IAggFuncService {
         }
     }
 
-    public addAggFuncs(aggFuncs: {[key: string]: IAggFunc}): void {
+    public addAggFuncs(aggFuncs: { [key: string]: IAggFunc } | undefined): void {
         Utils.iterateObject(aggFuncs, this.addAggFunc.bind(this));
     }
 
@@ -76,7 +86,7 @@ export class AggFuncService implements IAggFuncService {
 
     public getFuncNames(column: Column): string[] {
         let userAllowedFuncs = column.getColDef().allowedAggFuncs;
-        if (_.exists(userAllowedFuncs)) {
+        if (_.exists(userAllowedFuncs) && userAllowedFuncs) {
             return userAllowedFuncs;
         } else {
             return Object.keys(this.aggFuncsMap).sort();
@@ -89,9 +99,9 @@ export class AggFuncService implements IAggFuncService {
 }
 
 function aggSum(input: any[]): any {
-    let result: number = null;
+    let result: number | null = null;
     let length = input.length;
-    for (let i = 0; i<length; i++) {
+    for (let i = 0; i < length; i++) {
         if (typeof input[i] === 'number') {
             if (result === null) {
                 result = input[i];
@@ -104,7 +114,7 @@ function aggSum(input: any[]): any {
 }
 
 function aggFirst(input: any[]): any {
-    if (input.length>=0) {
+    if (input.length >= 0) {
         return input[0];
     } else {
         return null;
@@ -112,17 +122,17 @@ function aggFirst(input: any[]): any {
 }
 
 function aggLast(input: any[]): any {
-    if (input.length>=0) {
-        return input[input.length-1];
+    if (input.length >= 0) {
+        return input[input.length - 1];
     } else {
         return null;
     }
 }
 
 function aggMin(input: any[]): any {
-    let result: number = null;
+    let result: number | null = null;
     let length = input.length;
-    for (let i = 0; i<length; i++) {
+    for (let i = 0; i < length; i++) {
         if (typeof input[i] === 'number') {
             if (result === null) {
                 result = input[i];
@@ -135,9 +145,9 @@ function aggMin(input: any[]): any {
 }
 
 function aggMax(input: any[]): any {
-    let result: number = null;
+    let result: number | null = null;
     let length = input.length;
-    for (let i = 0; i<length; i++) {
+    for (let i = 0; i < length; i++) {
         if (typeof input[i] === 'number') {
             if (result === null) {
                 result = input[i];
@@ -152,16 +162,16 @@ function aggMax(input: any[]): any {
 function aggCount(input: any[]): any {
     let result = {
         value: 0,
-        toString: function() {
+        toString: function () {
             return this.value.toString();
         },
         // used for sorting
-        toNumber: function() {
+        toNumber: function () {
             return this.value;
         }
     };
     let length = input.length;
-    for (let i = 0; i<length; i++) {
+    for (let i = 0; i < length; i++) {
         let isGroupAgg = Utils.exists(input[i]) && typeof input[i].value === 'number';
         if (isGroupAgg) {
             result.value += input[i].value;
@@ -181,7 +191,7 @@ function aggAvg(input: any[]): any {
     let count = 0;
 
     let length = input.length;
-    for (let i = 0; i<length; i++) {
+    for (let i = 0; i < length; i++) {
 
         let currentItem = input[i];
 
@@ -191,7 +201,7 @@ function aggAvg(input: any[]): any {
         if (typeof currentItem === 'number') {
             sum += currentItem;
             count++;
-        // check if it's a group (ie value is a wrapper object)
+            // check if it's a group (ie value is a wrapper object)
         } else if (itemIsGroupResult) {
             // we are aggregating groups, so we take the
             // aggregated values to calculated a weighted average
@@ -201,8 +211,8 @@ function aggAvg(input: any[]): any {
     }
 
     // avoid divide by zero error
-    let value: number = null;
-    if (count!==0) {
+    let value: number | null = null;
+    if (count !== 0) {
         value = sum / count;
     }
 
@@ -214,7 +224,7 @@ function aggAvg(input: any[]): any {
         value: value,
         // the grid by default uses toString to render values for an object, so this
         // is a trick to get the default cellRenderer to display the avg value
-        toString: function() {
+        toString: function () {
             if (typeof this.value === 'number') {
                 return this.value.toString();
             } else {
@@ -222,7 +232,7 @@ function aggAvg(input: any[]): any {
             }
         },
         // used for sorting
-        toNumber: function() {
+        toNumber: function () {
             return this.value;
         }
     };

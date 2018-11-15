@@ -104,7 +104,7 @@ export class RowNode implements IEventEmitter {
     /** If this row is a master row that was expanded, this points to the associated detail row. */
     public detailNode: RowNode;
     /** If master detail, this contains details about the detail grid */
-    public detailGridInfo: DetailGridInfo;
+    public detailGridInfo: DetailGridInfo | null;
 
     /** Same as master, kept for legacy reasons */
     public canFlower: boolean;

@@ -238,7 +238,7 @@ export class Utils {
         }
     }
 
-    static iterateObject<T>(object: { [p: string]: T } | T[], callback: (key: string, value: T) => void) {
+    static iterateObject<T>(object: { [p: string]: T } | T[] | undefined, callback: (key: string, value: T) => void) {
         if (this.missing(object)) {
             return;
         }

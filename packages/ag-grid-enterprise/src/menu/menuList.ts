@@ -1,4 +1,4 @@
-import {Utils as _, PopupService, MenuItemDef, Component, Autowired, Context} from "ag-grid-community";
+import {Autowired, Component, Context, MenuItemDef, PopupService, Utils as _} from "ag-grid-community";
 import {MenuItemComponent, MenuItemSelectedEvent} from "./menuItemComponent";
 
 export class MenuList extends Component {
@@ -18,12 +18,12 @@ export class MenuList extends Component {
             <span class="ag-menu-separator-cell"></span>
         </div>`;
 
-    private activeMenuItemParams: MenuItemDef;
-    private activeMenuItem: MenuItemComponent;
+    private activeMenuItemParams: MenuItemDef | null;
+    private activeMenuItem: MenuItemComponent | null;
     private timerCount = 0;
 
     private removeChildFuncs: Function[] = [];
-    private subMenuParentDef: MenuItemDef;
+    private subMenuParentDef: MenuItemDef | null;
 
     constructor() {
         super(MenuList.TEMPLATE);
@@ -35,9 +35,11 @@ export class MenuList extends Component {
         this.removeChildPopup();
     }
 
-    public addMenuItems(menuItems: (MenuItemDef|string)[]): void {
-        if (_.missing(menuItems)) { return; }
-        menuItems.forEach( (menuItemOrString: MenuItemDef|string)=> {
+    public addMenuItems(menuItems: (MenuItemDef | string)[] | undefined): void {
+        if (!menuItems || _.missing(menuItems)) {
+            return;
+        }
+        menuItems.forEach((menuItemOrString: MenuItemDef | string) => {
             if (menuItemOrString === 'separator') {
                 this.addSeparator();
             } else if (typeof menuItemOrString === 'string') {
@@ -54,7 +56,7 @@ export class MenuList extends Component {
         this.context.wireBean(cMenuItem);
         this.getGui().appendChild(cMenuItem.getGui());
 
-        this.addDestroyFunc( ()=> cMenuItem.destroy() );
+        this.addDestroyFunc(() => cMenuItem.destroy());
 
         cMenuItem.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, (event: MenuItemSelectedEvent) => {
             if (menuItemDef.subMenu) {
@@ -65,7 +67,7 @@ export class MenuList extends Component {
         });
 
         cMenuItem.addGuiEventListener('mouseenter', this.mouseEnterItem.bind(this, menuItemDef, cMenuItem));
-        cMenuItem.addGuiEventListener('mouseleave', ()=> this.timerCount++ );
+        cMenuItem.addGuiEventListener('mouseleave', () => this.timerCount++);
     }
 
     private mouseEnterItem(menuItemParams: MenuItemDef, menuItem: MenuItemComponent): void {
@@ -73,7 +75,7 @@ export class MenuList extends Component {
             return;
         }
 
-        if (this.activeMenuItemParams!==menuItemParams) {
+        if (this.activeMenuItemParams !== menuItemParams) {
             this.removeChildPopup();
         }
 
@@ -98,8 +100,8 @@ export class MenuList extends Component {
 
     private addHoverForChildPopup(menuItemDef: MenuItemDef, menuItemComp: MenuItemComponent): void {
         let timerCountCopy = this.timerCount;
-        setTimeout( ()=> {
-            let shouldShow = timerCountCopy===this.timerCount;
+        setTimeout(() => {
+            let shouldShow = timerCountCopy === this.timerCount;
             let showingThisMenu = this.subMenuParentDef === menuItemDef;
             if (shouldShow && !showingThisMenu) {
                 this.showChildMenu(menuItemDef, menuItemComp, null);
@@ -111,7 +113,7 @@ export class MenuList extends Component {
         this.getGui().appendChild(_.loadTemplate(MenuList.SEPARATOR_TEMPLATE));
     }
 
-    private showChildMenu(menuItemDef: MenuItemDef, menuItemComp: MenuItemComponent, mouseEvent: MouseEvent): void {
+    private showChildMenu(menuItemDef: MenuItemDef, menuItemComp: MenuItemComponent, mouseEvent: MouseEvent | null): void {
         this.removeChildPopup();
 
         let childMenu = new MenuList();
@@ -124,7 +126,7 @@ export class MenuList extends Component {
         let hidePopupFunc = this.popupService.addAsModalPopup(
             ePopup,
             true,
-            null,
+            undefined,
             mouseEvent
         );
 
@@ -135,12 +137,12 @@ export class MenuList extends Component {
 
         this.subMenuParentDef = menuItemDef;
 
-        let selectedListener = (event: MenuItemSelectedEvent)=> {
+        let selectedListener = (event: MenuItemSelectedEvent) => {
             this.dispatchEvent(event);
         };
         childMenu.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, selectedListener);
 
-        this.removeChildFuncs.push( ()=> {
+        this.removeChildFuncs.push(() => {
             childMenu.clearActiveItem();
             childMenu.destroy();
             this.subMenuParentDef = null;
@@ -150,7 +152,7 @@ export class MenuList extends Component {
     }
 
     private removeChildPopup(): void {
-        this.removeChildFuncs.forEach( func => func() );
+        this.removeChildFuncs.forEach(func => func());
         this.removeChildFuncs = [];
     }
 

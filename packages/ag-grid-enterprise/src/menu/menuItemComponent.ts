@@ -1,15 +1,23 @@
-import {GridOptionsWrapper, PostConstruct, MenuItemDef, Utils as _, Component, Autowired, AgEvent} from "ag-grid-community";
+import {
+    AgEvent,
+    Autowired,
+    Component,
+    GridOptionsWrapper,
+    MenuItemDef,
+    PostConstruct,
+    Utils as _
+} from "ag-grid-community";
 
 export interface MenuItemSelectedEvent extends AgEvent {
     name: string;
-    disabled: boolean;
-    shortcut: string;
-    action: () => void;
-    checked: boolean;
-    icon: HTMLElement | string;
-    subMenu: (MenuItemDef | string)[];
-    cssClasses: string[];
-    tooltip: string;
+    disabled?: boolean;
+    shortcut?: string;
+    action?: () => void;
+    checked?: boolean;
+    icon?: HTMLElement | string;
+    subMenu?: (MenuItemDef | string)[];
+    cssClasses?: string[];
+    tooltip?: string;
     mouseEvent: MouseEvent;
 }
 
