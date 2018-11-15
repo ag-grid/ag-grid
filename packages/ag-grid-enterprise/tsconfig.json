@@ -6,7 +6,10 @@
     "declaration": true,
     "target": "es5",
     "noImplicitAny": true,
-    "outDir": "dist/lib"
+    "outDir": "dist/lib",
+    "strictNullChecks": true
   },
-  "include": ["src/**/*"]
+  "include": [
+    "src/**/*"
+  ]
 }
