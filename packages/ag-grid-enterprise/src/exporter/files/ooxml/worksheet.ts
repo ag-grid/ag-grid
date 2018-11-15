@@ -1,4 +1,4 @@
-import {ExcelOOXMLTemplate, ExcelWorksheet, ExcelRow, ExcelCell, _, ExcelColumn} from 'ag-grid-community';
+import {ExcelOOXMLTemplate, ExcelWorksheet, ExcelRow, ExcelCell, _, ExcelColumn, XmlElement} from 'ag-grid-community';
 import columnFactory from './column';
 import rowFactory from './row';
 import mergeCell from './mergeCell';
@@ -69,18 +69,23 @@ const worksheetFactory: ExcelOOXMLTemplate = {
 
         const mergedCells = getMergedCells(rows, columns);
 
-        const children = [].concat(
-            columns.length ? {
+        const children = [];
+        if (columns.length) {
+            children.push({
                 name: 'cols',
                 children: _.map(columns, columnFactory.getTemplate)
-            } : []
-        ).concat(
-            rows.length ? {
+            });
+        }
+
+        if (rows.length) {
+            children.push({
                 name: 'sheetData',
                 children: _.map(rows, rowFactory.getTemplate)
-            } : []
-        ).concat(
-            mergedCells.length ? {
+            });
+        }
+
+        if (mergedCells.length) {
+            children.push({
                 name: 'mergeCells',
                 properties: {
                     rawMap: {
@@ -88,8 +93,8 @@ const worksheetFactory: ExcelOOXMLTemplate = {
                     }
                 },
                 children: _.map(mergedCells, mergeCell.getTemplate)
-            } : []
-        );
+            });
+        }
 
         return {
             name: "worksheet",

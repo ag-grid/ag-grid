@@ -13,8 +13,8 @@ export interface ExcelTable {
 }
 
 export interface ExcelColumn {
-    min?: number;
-    max?: number;
+    min: number;
+    max: number;
     width: number;
     s?: number;
     hidden?: boolean;
@@ -33,7 +33,7 @@ export interface ExcelRow {
 
 export interface ExcelCell {
     ref?: string;
-    styleId: string;
+    styleId?: string;
     data: ExcelData;
     mergeAcross?: number;
 }
@@ -58,14 +58,14 @@ export interface IExcelCreator {
 
 // XML
 export interface ExcelStyle {
-    id?: string;
+    id: string;
     name?: string;
-    alignment?: ExcelAlignment;
-    borders?: ExcelBorders;
-    font?: ExcelFont;
-    interior?: ExcelInterior;
-    numberFormat?: ExcelNumberFormat;
-    protection?: ExcelProtection;
+    alignment: ExcelAlignment;
+    borders: ExcelBorders;
+    font: ExcelFont;
+    interior: ExcelInterior;
+    numberFormat: ExcelNumberFormat;
+    protection: ExcelProtection;
     dataType?: string;
 }
 

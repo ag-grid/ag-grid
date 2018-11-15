@@ -34,7 +34,7 @@ export interface ExcelGridSerializingParams extends GridSerializingParams {
 }
 
 export class ExcelXmlSerializingSession extends BaseGridSerializingSession<ExcelCell[][]> {
-    protected stylesByIds: any;
+    protected stylesByIds: any | undefined;
     protected mixedStyles: { [key: string]: ExcelMixedStyle } = {};
     protected mixedStyleCounter: number = 0;
     protected excelStyles: ExcelStyle[];
@@ -48,7 +48,7 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
 
     protected excelFactory: ExcelXmlFactory | ExcelXlsxFactory;
     baseExcelStyles: ExcelStyle[];
-    protected styleLinker: (rowType: RowType, rowIndex: number, colIndex: number, value: string, column: Column, node: RowNode) => string[];
+    protected styleLinker: (rowType: RowType, rowIndex: number, colIndex: number, value: string, column?: Column, node?: RowNode) => string[];
 
     constructor(config: ExcelGridSerializingParams) {
         super({
@@ -88,7 +88,7 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
             it.getColDef().cellStyle;
             return {
                 width: it.getActualWidth()
-            };
+            } as ExcelColumn;
         });
     }
 
@@ -100,8 +100,8 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
         });
         return {
             onColumn: (header: string, index: number, span: number) => {
-                let styleIds: string[] = that.styleLinker(RowType.HEADER_GROUPING, 1, index, "grouping-" + header, null, null);
-                currentCells.push(that.createMergedCell(styleIds.length > 0 ? styleIds[0] : null, "String", header, span));
+                let styleIds: string[] = that.styleLinker(RowType.HEADER_GROUPING, 1, index, "grouping-" + header, undefined, undefined);
+                currentCells.push(that.createMergedCell((styleIds && styleIds.length > 0) ? styleIds[0] : undefined, "String", header, span));
             }
         };
     }
@@ -128,8 +128,8 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
         let that = this;
         return (column: Column, index: number, node?: RowNode) => {
             let nameForCol = this.extractHeaderValue(column);
-            let styleIds: string[] = that.styleLinker(RowType.HEADER, rowIndex, index, nameForCol, column, null);
-            currentCells.push(this.createCell(styleIds.length > 0 ? styleIds[0] : null, 'String', nameForCol));
+            let styleIds: string[] = that.styleLinker(RowType.HEADER, rowIndex, index, nameForCol, column, undefined);
+            currentCells.push(this.createCell((styleIds && styleIds.length > 0) ? styleIds[0] : undefined, 'String', nameForCol));
         };
     }
 
@@ -162,7 +162,7 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
         return (column: Column, index: number, node?: RowNode) => {
             let valueForCell = this.extractRowCellValue(column, index, Constants.EXPORT_TYPE_EXCEL, node);
             let styleIds: string[] = that.styleLinker(RowType.BODY, rowIndex, index, valueForCell, column, node);
-            let excelStyleId: string = null;
+            let excelStyleId: string | undefined;
             if (styleIds && styleIds.length == 1) {
                 excelStyleId = styleIds [0];
             } else if (styleIds && styleIds.length > 1) {
@@ -180,7 +180,7 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
     addNewMixedStyle(styleIds: string[]): void {
         this.mixedStyleCounter += 1;
         let excelId = 'mixedStyle' + this.mixedStyleCounter;
-        let resultantStyle: ExcelStyle = {};
+        let resultantStyle: ExcelStyle = {} as ExcelStyle;
 
         styleIds.forEach((styleId: string) => {
             this.excelStyles.forEach((excelStyle: ExcelStyle) => {
@@ -190,8 +190,8 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
             });
         });
 
-        resultantStyle['id'] = excelId;
-        resultantStyle['name'] = excelId;
+        resultantStyle.id = excelId;
+        resultantStyle.name = excelId;
         let key: string = styleIds.join("-");
         this.mixedStyles[key] = {
             excelID: excelId,
@@ -202,15 +202,15 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
         this.stylesByIds[excelId] = resultantStyle;
     }
 
-    protected styleExists(styleId: string): boolean {
+    protected styleExists(styleId?: string): boolean {
         if (styleId == null) return false;
 
         return this.stylesByIds[styleId];
     }
 
-    protected createCell(styleId: string, type: ExcelDataType | ExcelOOXMLDataType, value: string): ExcelCell {
-        let actualStyle: ExcelStyle = this.stylesByIds[styleId];
-        let styleExists: boolean = actualStyle != null;
+    protected createCell(styleId: string | undefined, type: ExcelDataType | ExcelOOXMLDataType, value: string): ExcelCell {
+        let actualStyle: ExcelStyle = styleId && this.stylesByIds[styleId];
+        let styleExists: boolean = actualStyle !== undefined;
 
         function getType(): ExcelDataType {
             if (
@@ -243,7 +243,7 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
         };
 
         return {
-            styleId: styleExists ? styleId : null,
+            styleId: styleExists ? styleId : undefined,
             data: {
                 type: typeTransformed,
                 value:
@@ -255,9 +255,9 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
         };
     }
 
-    protected createMergedCell(styleId: string, type: ExcelDataType | ExcelOOXMLDataType, value: string, numOfCells: number): ExcelCell {
+    protected createMergedCell(styleId: string | undefined, type: ExcelDataType | ExcelOOXMLDataType, value: string, numOfCells: number): ExcelCell {
         return {
-            styleId: this.styleExists(styleId) ? styleId : null,
+            styleId: this.styleExists(styleId) ? styleId : undefined,
             data: {
                 type: type,
                 value: value

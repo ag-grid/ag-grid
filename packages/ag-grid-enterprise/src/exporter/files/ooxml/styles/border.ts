@@ -1,7 +1,7 @@
 import {ExcelOOXMLTemplate, XmlElement} from 'ag-grid-community';
 import {convertLegacyColor} from './stylesheet';
 
-const getBorderColor = (color: string): XmlElement => {
+const getBorderColor = (color?: string): XmlElement => {
     return {
         name: 'color',
         properties: {
@@ -49,11 +49,11 @@ const borderFactory: ExcelOOXMLTemplate = {
 
 export default borderFactory;
 
-const getWeightName = (value: number = 0): string => {
-    if (value === 0) return 'hair';
+const getWeightName = (value: number | undefined): string => {
     if (value === 1) return 'thin';
     if (value === 2) return 'medium';
     if (value === 3) return 'thick';
+    return 'hair';
 };
 
 const mappedNames: {[key: string]: string} = {
@@ -83,14 +83,14 @@ export const convertLegacyBorder = (type: string, weight: number): string => {
 };
 
 export interface Border {
-    style: string;
-    color: string;
+    style: string | undefined;
+    color: string | undefined;
 }
 
 export interface BorderSet {
-    left: Border;
-    right: Border;
-    top: Border;
-    bottom: Border;
-    diagonal: Border;
+    left: Border | undefined;
+    right: Border | undefined;
+    top: Border | undefined;
+    bottom: Border | undefined;
+    diagonal: Border | undefined;
 }

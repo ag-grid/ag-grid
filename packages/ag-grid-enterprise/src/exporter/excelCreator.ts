@@ -20,7 +20,7 @@ import {
 } from 'ag-grid-community';
 
 import {ExcelCell, ExcelStyle} from 'ag-grid-community';
-import {ExcelXmlSerializingSession} from './excelXmlSerializingSession';
+import {ExcelGridSerializingParams, ExcelXmlSerializingSession} from './excelXmlSerializingSession';
 import {ExcelXlsxSerializingSession} from './excelXlsxSerializingSession';
 import {ExcelXmlFactory} from './excelXmlFactory';
 import {ExcelXlsxFactory} from './excelXlsxFactory';
@@ -82,7 +82,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         return this.getExportMode();
     }
 
-    public createSerializingSession(params?: ExcelExportParams): SerializingSession {
+    public createSerializingSession(params: ExcelExportParams): SerializingSession {
         const {columnController, valueService, gridOptionsWrapper} = this;
         const {processCellCallback, processHeaderCallback, sheetName, suppressTextAsCDATA} = params;
         const isXlsx = this.getExportMode() === 'xlsx';
@@ -92,23 +92,25 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
             columnController,
             valueService,
             gridOptionsWrapper,
-            processCellCallback: processCellCallback || null,
-            processHeaderCallback: processHeaderCallback || null,
-            sheetName: sheetName != null && sheetName !== '' ? (sheetName.toString()).substr(0, 31) : 'ag-grid',
+            processCellCallback,
+            processHeaderCallback,
+            sheetName: _.exists(sheetName) ? (sheetName as String).toString().substr(0, 31) : 'ag-grid',
             excelFactory,
-            baseExcelStyles: this.gridOptions.excelStyles,
+            baseExcelStyles: this.gridOptions.excelStyles || undefined,
             styleLinker: this.styleLinker.bind(this),
             suppressTextAsCDATA: suppressTextAsCDATA || false
         };
 
-        return new (isXlsx ? ExcelXlsxSerializingSession : ExcelXmlSerializingSession)(config);
+        return new (isXlsx ? ExcelXlsxSerializingSession : ExcelXmlSerializingSession)((config as ExcelGridSerializingParams));
     }
 
-    private styleLinker(rowType: RowType, rowIndex: number, colIndex: number, value: string, column: Column, node: RowNode): string[] {
+    private styleLinker(rowType: RowType, rowIndex: number, colIndex: number, value: string, column: Column, node: RowNode): string[] | null {
         if ((rowType === RowType.HEADER) || (rowType === RowType.HEADER_GROUPING)) return ["header"];
-        if (!this.gridOptions.excelStyles || this.gridOptions.excelStyles.length === 0) return null;
+        const styles = this.gridOptions.excelStyles;
 
-        let styleIds: string[] = this.gridOptions.excelStyles.map((it: ExcelStyle) => {
+        if (!styles || !styles.length) return null;
+
+        let styleIds: string[] = styles.map((it: ExcelStyle) => {
             return it.id;
         });
 

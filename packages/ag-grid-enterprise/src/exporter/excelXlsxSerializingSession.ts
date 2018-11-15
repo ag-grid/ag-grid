@@ -28,8 +28,8 @@ export class ExcelXlsxSerializingSession extends ExcelXmlSerializingSession {
         });
         return {
             onColumn: (header: string, index: number, span: number) => {
-                let styleIds: string[] = that.styleLinker(RowType.HEADER_GROUPING, 1, index, "grouping-" + header, null, null);
-                currentCells.push(that.createMergedCell(styleIds.length > 0 ? styleIds[0] : null, 's', header, span));
+                let styleIds: string[] = that.styleLinker(RowType.HEADER_GROUPING, 1, index, "grouping-" + header, undefined, undefined);
+                currentCells.push(that.createMergedCell((styleIds && styleIds.length > 0) ? styleIds[0] : undefined, 's', header, span));
             }
         };
     }
@@ -38,8 +38,8 @@ export class ExcelXlsxSerializingSession extends ExcelXmlSerializingSession {
         let that = this;
         return (column: Column, index: number, node?: RowNode) => {
             let nameForCol = this.extractHeaderValue(column);
-            let styleIds: string[] = that.styleLinker(RowType.HEADER, rowIndex, index, nameForCol, column, null);
-            currentCells.push(this.createCell(styleIds.length > 0 ? styleIds[0] : null, 's', nameForCol));
+            let styleIds: string[] = that.styleLinker(RowType.HEADER, rowIndex, index, nameForCol, column, undefined);
+            currentCells.push(this.createCell((styleIds && styleIds.length > 0) ? styleIds[0] : undefined, 's', nameForCol));
         };
     }
 
@@ -72,7 +72,7 @@ export class ExcelXlsxSerializingSession extends ExcelXmlSerializingSession {
         return (column: Column, index: number, node?: RowNode) => {
             let valueForCell = this.extractRowCellValue(column, index, Constants.EXPORT_TYPE_EXCEL, node);
             let styleIds: string[] = that.styleLinker(RowType.BODY, rowIndex, index, valueForCell, column, node);
-            let excelStyleId: string = null;
+            let excelStyleId: string | undefined;
             if (styleIds && styleIds.length == 1) {
                 excelStyleId = styleIds [0];
             } else if (styleIds && styleIds.length > 1) {
@@ -98,9 +98,9 @@ export class ExcelXlsxSerializingSession extends ExcelXmlSerializingSession {
         return pos;
     }
 
-    protected createCell(styleId: string, type: ExcelOOXMLDataType, value: string): ExcelCell {
-        let actualStyle: ExcelStyle = this.stylesByIds[styleId];
-        let styleExists: boolean = actualStyle != null;
+    protected createCell(styleId: string | undefined, type: ExcelOOXMLDataType, value: string): ExcelCell {
+        let actualStyle: ExcelStyle = styleId && this.stylesByIds[styleId];
+        let styleExists: boolean = actualStyle !== undefined;
 
         function getType(): ExcelOOXMLDataType {
             if (
@@ -127,7 +127,7 @@ export class ExcelXlsxSerializingSession extends ExcelXmlSerializingSession {
         let typeTransformed: ExcelOOXMLDataType = getType();
 
         return {
-            styleId: styleExists ? styleId : null,
+            styleId: styleExists ? styleId : undefined,
             data: {
                 type: typeTransformed,
                 value:
@@ -138,9 +138,9 @@ export class ExcelXlsxSerializingSession extends ExcelXmlSerializingSession {
         };
     }
 
-    protected createMergedCell(styleId: string, type: ExcelDataType | ExcelOOXMLDataType, value: string, numOfCells: number): ExcelCell {
+    protected createMergedCell(styleId: string | undefined, type: ExcelDataType | ExcelOOXMLDataType, value: string, numOfCells: number): ExcelCell {
         return {
-            styleId: this.styleExists(styleId) ? styleId : null,
+            styleId: this.styleExists(styleId) ? styleId : undefined,
             data: {
                 type: type,
                 value: type === 's' ? this.getStringPosition(value == null ? '' : value).toString() : value

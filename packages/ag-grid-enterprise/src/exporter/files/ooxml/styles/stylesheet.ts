@@ -10,7 +10,7 @@ import cellStylesFactory from './cellStyles';
 import {NumberFormat, numberFormatMap} from './numberFormat';
 import {getFamilyId, Font} from './font';
 import {Fill} from './fill';
-import {convertLegacyBorder, BorderSet} from './border';
+import {convertLegacyBorder, BorderSet, Border} from './border';
 import {Xf} from './xf';
 import {CellStyle} from './cellStyle';
 
@@ -29,6 +29,8 @@ interface StylesMap {
 interface ColorMap {
     [key: string]: string;
 }
+type BorderProperty = string | undefined;
+
 const stylesMap:StylesMap  = {base: 0};
 
 const convertLegacyPattern = (name: string): string => {
@@ -109,8 +111,8 @@ const registerNumberFmt = (format: string): number => {
 
 const registerBorders = (borders: ExcelBorders): number => {
     const {borderBottom, borderTop, borderLeft, borderRight} = borders;
-    let bottomStyle: string, topStyle: string, leftStyle:string, rightStyle: string;
-    let bottomColor: string, topColor: string, leftColor:string, rightColor: string;
+    let bottomStyle: BorderProperty, topStyle: BorderProperty, leftStyle:BorderProperty, rightStyle: BorderProperty;
+    let bottomColor: BorderProperty, topColor: BorderProperty, leftColor:BorderProperty, rightColor: BorderProperty;
 
     if (borderLeft) {
         leftStyle = convertLegacyBorder(borderLeft.lineStyle, borderLeft.weight);
@@ -138,10 +140,10 @@ const registerBorders = (borders: ExcelBorders): number => {
         if (!top && (topStyle || topColor)) return false;
         if (!bottom && (bottomStyle || bottomColor)) return false;
 
-        const {style: clS, color: clC} = left;
-        const {style: crS, color: crC} = right;
-        const {style: ctS, color: ctC} = top;
-        const {style: cbS, color: cbC} = bottom;
+        const {style: clS, color: clC} = left || {} as Border;
+        const {style: crS, color: crC} = right || {} as Border;
+        const {style: ctS, color: ctC} = top || {} as Border;
+        const {style: cbS, color: cbC} = bottom || {} as Border;
 
         if (clS != leftStyle || clC != leftColor) return false;
         if (crS != rightStyle || crC != rightColor) return false;
@@ -221,12 +223,12 @@ const registerFont = (font: ExcelFont): number => {
 
 const registerStyle = (config: ExcelStyle): void => {
     const {id, alignment, borders, font, interior, numberFormat, protection} = config;
-    let currentFill: number;
-    let currentBorder: number;
-    let currentFont: number;
-    let currentNumberFmt: number;
+    let currentFill = 0;
+    let currentBorder = 0;
+    let currentFont = 0;
+    let currentNumberFmt = 0;
 
-    if (stylesMap[id] != undefined) return;
+    if (!id || stylesMap[id] != undefined) return;
 
     if (interior) {
         currentFill = registerFill(interior);
