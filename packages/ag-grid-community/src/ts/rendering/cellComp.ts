@@ -8,7 +8,8 @@ import {
     CellDoubleClickedEvent,
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
-    CellEvent, CellMouseDownEvent,
+    CellEvent,
+    CellMouseDownEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
     Events,
@@ -46,7 +47,7 @@ export class CellComp extends Component {
     private cellFocused: boolean;
     private editingCell = false;
     private cellEditorInPopup: boolean;
-    private hideEditorPopup: Function;
+    private hideEditorPopup: Function | null;
 
     private lastIPadMouseClickEvent: number;
 
@@ -56,10 +57,10 @@ export class CellComp extends Component {
     private cellRendererType: string;
 
     // instance of the cellRenderer class
-    private cellRenderer: ICellRendererComp;
+    private cellRenderer: ICellRendererComp | null;
     // the GUI is initially element or string, however once the UI is created, it becomes UI
-    private cellRendererGui: HTMLElement;
-    private cellEditor: ICellEditorComp;
+    private cellRendererGui: HTMLElement | null;
+    private cellEditor: ICellEditorComp | null;
 
     private autoHeightCell: boolean;
 
@@ -132,8 +133,8 @@ export class CellComp extends Component {
         let tooltipSanitised = _.escape(this.tooltip);
         let colIdSanitised = _.escape(col.getId());
 
-        let wrapperStartTemplate: string;
-        let wrapperEndTemplate: string;
+        let wrapperStartTemplate: string = '';
+        let wrapperEndTemplate: string = '';
 
         let stylesFromColDef = this.preProcessStylesFromColDef();
         let cssClasses = this.getInitialCssClasses();
@@ -164,7 +165,9 @@ export class CellComp extends Component {
     }
 
     private getStylesForRowSpanning(): string {
-        if (this.rowSpan===1) { return ''; }
+        if (this.rowSpan === 1) {
+            return '';
+        }
 
         let singleRowHeight = this.beans.gridOptionsWrapper.getRowHeightAsNumber();
         let totalRowHeight = singleRowHeight * this.rowSpan;
@@ -274,12 +277,12 @@ export class CellComp extends Component {
         if (colSpan === 1) {
             colsSpanning.push(this.column);
         } else {
-            let pointer = this.column;
+            let pointer: Column | null = this.column;
             let pinned = this.column.getPinned();
-            for (let i = 0; i < colSpan; i++) {
+            for (let i = 0; pointer && i < colSpan; i++) {
                 colsSpanning.push(pointer);
                 pointer = this.beans.columnController.getDisplayedColAfter(pointer);
-                if (_.missing(pointer)) {
+                if (!pointer || _.missing(pointer)) {
                     break;
                 }
                 // we do not allow col spanning to span outside of pinned areas
@@ -380,11 +383,11 @@ export class CellComp extends Component {
         return this.column.isSuppressNavigable(this.rowNode);
     }
 
-    public getCellRenderer(): ICellRendererComp {
+    public getCellRenderer(): ICellRendererComp | null {
         return this.cellRenderer;
     }
 
-    public getCellEditor(): ICellEditorComp {
+    public getCellEditor(): ICellEditorComp | null {
         return this.cellEditor;
     }
 
@@ -597,7 +600,7 @@ export class CellComp extends Component {
     }
 
     public attemptCellRendererRefresh(): boolean {
-        if (_.missing(this.cellRenderer) || _.missing(this.cellRenderer.refresh)) {
+        if (_.missing(this.cellRenderer) || !this.cellRenderer || _.missing(this.cellRenderer.refresh)) {
             return false;
         }
 
@@ -630,7 +633,7 @@ export class CellComp extends Component {
 
         // if the user provided an equals method, use that, otherwise do simple comparison
         let colDef = this.column.getColDef();
-        let equalsMethod: (valueA: any, valueB: any) => boolean = colDef ? colDef.equals : null;
+        let equalsMethod: ((valueA: any, valueB: any) => boolean) | null | undefined = colDef ? colDef.equals : null;
 
         if (equalsMethod) {
             return equalsMethod(val1, val2);
@@ -639,7 +642,7 @@ export class CellComp extends Component {
         }
     }
 
-    private getToolTip(): string {
+    private getToolTip(): string | null {
         let colDef = this.column.getColDef();
         let data = this.rowNode.data;
         if (colDef.tooltipField && _.exists(data)) {
@@ -737,8 +740,8 @@ export class CellComp extends Component {
         }
 
         let params = this.createCellRendererParams();
-        let cellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'cellRenderer', params,null);
-        let pinnedRowCellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'pinnedRowCellRenderer', params,null);
+        let cellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'cellRenderer', params);
+        let pinnedRowCellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'pinnedRowCellRenderer', params);
 
         if (pinnedRowCellRenderer && this.rowNode.rowPinned) {
             this.cellRendererType = 'pinnedRowCellRenderer';
@@ -757,7 +760,7 @@ export class CellComp extends Component {
         this.cellRendererVersion++;
         let callback = this.afterCellRendererCreated.bind(this, this.cellRendererVersion);
 
-        this.beans.componentResolver.createAgGridComponent(this.column.getColDef(), params, this.cellRendererType, params, null).then(callback);
+        this.beans.componentResolver.createAgGridComponent(this.column.getColDef(), params, this.cellRendererType, params).then(callback);
     }
 
     private afterCellRendererCreated(cellRendererVersion: number, cellRenderer: ICellRendererComp): void {
@@ -898,11 +901,11 @@ export class CellComp extends Component {
 
         if (colDef.onCellContextMenu) {
             // to make the callback async, do in a timeout
-            setTimeout( ()=> colDef.onCellContextMenu(cellContextMenuEvent), 0);
+            setTimeout(() => (<any>colDef.onCellContextMenu)(cellContextMenuEvent), 0);
         }
     }
 
-    private createEvent(domEvent: Event, eventType: string): CellEvent {
+    private createEvent(domEvent: Event | null, eventType: string): CellEvent {
         let event: CellEvent = {
             node: this.rowNode,
             data: this.rowNode.data,
@@ -947,7 +950,7 @@ export class CellComp extends Component {
         // check if colDef also wants to handle event
         if (typeof colDef.onCellDoubleClicked === 'function') {
             // to make the callback async, do in a timeout
-            setTimeout( ()=> colDef.onCellDoubleClicked(cellDoubleClickedEvent), 0);
+            setTimeout(() => (<any>colDef.onCellDoubleClicked)(cellDoubleClickedEvent), 0);
         }
 
         let editOnDoubleClick = !this.beans.gridOptionsWrapper.isSingleClickEdit()
@@ -958,7 +961,7 @@ export class CellComp extends Component {
     }
 
     // called by rowRenderer when user navigates via tab key
-    public startRowOrCellEdit(keyPress?: number, charPress?: string): void {
+    public startRowOrCellEdit(keyPress?: number | null, charPress?: string): void {
         if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
             this.rowComp.startRowEditing(keyPress, charPress, this);
         } else {
@@ -971,7 +974,7 @@ export class CellComp extends Component {
     }
 
     // either called internally if single cell editing, or called by rowRenderer if row editing
-    public startEditingIfEnabled(keyPress: number = null, charPress: string = null, cellStartedEdit = false): void {
+    public startEditingIfEnabled(keyPress: number | null = null, charPress: string | null = null, cellStartedEdit = false): void {
 
         // don't do it if not editable
         if (!this.isCellEditable()) {
@@ -1039,7 +1042,7 @@ export class CellComp extends Component {
 
         this.cellEditor = cellEditor;
 
-        this.cellEditorInPopup = cellEditor.isPopup && cellEditor.isPopup();
+        this.cellEditorInPopup = cellEditor.isPopup !== undefined && cellEditor.isPopup();
         this.setInlineEditingClass();
 
         if (this.cellEditorInPopup) {
@@ -1058,13 +1061,15 @@ export class CellComp extends Component {
 
     private addInCellEditor(): void {
         _.removeAllChildren(this.getGui());
-        this.getGui().appendChild(this.cellEditor.getGui());
+        if (this.cellEditor) {
+            this.getGui().appendChild(this.cellEditor.getGui());
+        }
 
         this.angular1Compile();
     }
 
     private addPopupCellEditor(): void {
-        let ePopupGui = this.cellEditor.getGui();
+        let ePopupGui = this.cellEditor ? this.cellEditor.getGui() : null;
 
         this.hideEditorPopup = this.beans.popupService.addAsModalPopup(
             ePopupGui,
@@ -1128,7 +1133,7 @@ export class CellComp extends Component {
         _.addOrRemoveCssClass(<HTMLElement>this.getGui().parentNode, "ag-row-not-inline-editing", !editingInline);
     }
 
-    private createCellEditorParams(keyPress: number, charPress: string, cellStartedEdit: boolean): ICellEditorParams {
+    private createCellEditorParams(keyPress: number | null, charPress: string | null, cellStartedEdit: boolean): ICellEditorParams {
         let params: ICellEditorParams = {
             value: this.getValue(),
             keyPress: keyPress,
@@ -1236,7 +1241,7 @@ export class CellComp extends Component {
 
     public doesUserWantToCancelKeyboardEvent(event: KeyboardEvent): boolean {
         let callback = this.column.getColDef().suppressKeyboardEvent;
-        if (_.missing(callback)) {
+        if (!callback || _.missing(callback)) {
             return false;
         } else {
             // if editing is null or undefined, this sets it to false
@@ -1277,12 +1282,16 @@ export class CellComp extends Component {
     private onShiftRangeSelect(key: number): void {
         let success = this.beans.rangeController.extendRangeInDirection(this.gridCell, key);
 
-        if (!success) { return; }
+        if (!success) {
+            return;
+        }
 
         let ranges = this.beans.rangeController.getCellRanges();
 
         // this should never happen, as extendRangeFromCell should always have one range after getting called
-        if (_.missing(ranges) || ranges.length!==1) { return; }
+        if (_.missing(ranges) || !ranges || ranges.length !== 1) {
+            return;
+        }
 
         let endCell = ranges[0].end;
 
@@ -1316,7 +1325,9 @@ export class CellComp extends Component {
 
     private navigateAfterEdit(): void {
         let fullRowEdit = this.beans.gridOptionsWrapper.isFullRowEdit();
-        if (fullRowEdit) { return; }
+        if (fullRowEdit) {
+            return;
+        }
 
         let enterMovesDownAfterEdit = this.beans.gridOptionsWrapper.isEnterMovesDownAfterEdit();
 
@@ -1440,7 +1451,7 @@ export class CellComp extends Component {
 
         if (colDef.onCellClicked) {
             // to make callback async, do in a timeout
-            setTimeout( ()=> colDef.onCellClicked(cellClickedEvent), 0);
+            setTimeout(() => (<any>colDef.onCellClicked)(cellClickedEvent), 0);
         }
 
         let editOnSingleClick = (this.beans.gridOptionsWrapper.isSingleClickEdit() || colDef.singleClickEdit)
@@ -1518,7 +1529,9 @@ export class CellComp extends Component {
     }
 
     private modifyLeftForPrintLayout(leftPosition: number): number {
-        if (!this.printLayout) { return leftPosition; }
+        if (!this.printLayout) {
+            return leftPosition;
+        }
 
         if (this.column.getPinned() === Column.PINNED_LEFT) {
             return leftPosition;
@@ -1748,7 +1761,7 @@ export class CellComp extends Component {
         // this to see if an async cellEditor has yet to be created
         this.cellEditor = null;
 
-        if (this.cellEditorInPopup) {
+        if (this.cellEditorInPopup && this.hideEditorPopup) {
             this.hideEditorPopup();
             this.hideEditorPopup = null;
         } else {

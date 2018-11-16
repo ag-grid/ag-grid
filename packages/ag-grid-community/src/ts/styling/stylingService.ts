@@ -6,12 +6,12 @@ import {ExpressionService} from "../valueService/expressionService";
 export class StylingService {
     @Autowired('expressionService') private expressionService: ExpressionService;
 
-    public processAllCellClasses(colDef: ColDef, params: any, onApplicableClass: (className: string)=>void, onNotApplicableClass?: (className: string)=>void) {
+    public processAllCellClasses(colDef: ColDef, params: any, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void) {
         this.processClassRules(colDef.cellClassRules, params, onApplicableClass, onNotApplicableClass);
         this.processStaticCellClasses(colDef, params, onApplicableClass);
     }
 
-    public processClassRules(classRules: { [cssClassName: string]: (Function | string) }, params: CellClassParams, onApplicableClass: (className: string)=>void, onNotApplicableClass?: (className: string)=>void) {
+    public processClassRules(classRules: { [cssClassName: string]: (Function | string) } | undefined, params: CellClassParams, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void) {
         if (typeof classRules === 'object' && classRules !== null) {
             let classNames = Object.keys(classRules);
             for (let i = 0; i < classNames.length; i++) {
@@ -32,13 +32,13 @@ export class StylingService {
         }
     }
 
-    public processStaticCellClasses(colDef: ColDef, params: CellClassParams, onApplicableClass: (className: string)=>void) {
+    public processStaticCellClasses(colDef: ColDef, params: CellClassParams, onApplicableClass: (className: string) => void) {
         let cellClass = colDef.cellClass;
         if (cellClass) {
             let classOrClasses: any;
 
             if (typeof colDef.cellClass === 'function') {
-                let cellClassFunc = <(cellClassParams: any) => string|string[]> colDef.cellClass;
+                let cellClassFunc = <(cellClassParams: any) => string | string[]> colDef.cellClass;
                 classOrClasses = cellClassFunc(params);
             } else {
                 classOrClasses = colDef.cellClass;
@@ -47,7 +47,7 @@ export class StylingService {
             if (typeof classOrClasses === 'string') {
                 onApplicableClass(classOrClasses);
             } else if (Array.isArray(classOrClasses)) {
-                classOrClasses.forEach( (cssClassItem: string)=> {
+                classOrClasses.forEach((cssClassItem: string) => {
                     onApplicableClass(cssClassItem);
                 });
             }

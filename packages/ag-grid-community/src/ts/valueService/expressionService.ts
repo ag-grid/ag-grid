@@ -12,7 +12,7 @@ export class ExpressionService {
         this.logger = loggerFactory.create('ExpressionService');
     }
 
-    public evaluate(expressionOrFunc: Function | string, params: any): any {
+    public evaluate(expressionOrFunc: Function | string | undefined, params: any): any {
         if (typeof expressionOrFunc === 'function') {
             // valueGetter is a function, so just call it
             let func = <Function> expressionOrFunc;

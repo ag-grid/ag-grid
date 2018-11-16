@@ -40,9 +40,9 @@ export interface ICellEditorParams {
     // current value of the cell
     value: any;
     // key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable characters appear here
-    keyPress: number;
+    keyPress: number | null;
     // the string that started the edit, eg 'a' if letter a was pressed, or 'A' if shift + letter a - only printable characters appear here
-    charPress: string;
+    charPress: string | null;
     // grid column
     column: Column;
     // grid row node
@@ -50,9 +50,9 @@ export interface ICellEditorParams {
     // editing row index
     rowIndex: number,
     // grid API
-    api: GridApi;
+    api: GridApi | null | undefined;
     // column API
-    columnApi: ColumnApi;
+    columnApi: ColumnApi | null | undefined;
     // If doing full row edit, this is true if the cell is the one that started the edit (eg it is the cell the use double clicked on, or pressed a key on etc).
     cellStartedEdit: boolean;
     // the grid's context object

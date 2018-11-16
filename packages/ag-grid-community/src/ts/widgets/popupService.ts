@@ -147,7 +147,7 @@ export class PopupService {
     public positionPopupOverComponent(params: {
         type: string,
         eventSource: HTMLElement,
-        ePopup: HTMLElement,
+        ePopup: HTMLElement | null,
         column: Column,
         rowNode: RowNode,
         minWidth?: number,

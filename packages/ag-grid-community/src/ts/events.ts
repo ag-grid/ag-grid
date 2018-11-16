@@ -268,7 +268,7 @@ export interface RowEvent extends AgGridEvent {
     rowIndex: number;
     rowPinned: string;
     context: any;
-    event?: Event;
+    event?: Event | null;
 }
 
 export interface RowGroupOpenedEvent extends RowEvent {

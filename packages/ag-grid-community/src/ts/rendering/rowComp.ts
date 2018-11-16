@@ -1060,7 +1060,7 @@ export class RowComp extends Component {
         this.beans.eventService.dispatchEvent(event);
     }
 
-    public startRowEditing(keyPress: number = null, charPress: string = null, sourceRenderedCell: CellComp = null): void {
+    public startRowEditing(keyPress: number | null = null, charPress: string | null = null, sourceRenderedCell: CellComp | null = null): void {
         // don't do it if already editing
         if (this.editingRow) { return; }
 

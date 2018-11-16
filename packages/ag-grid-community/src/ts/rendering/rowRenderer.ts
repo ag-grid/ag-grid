@@ -942,7 +942,7 @@ export class RowRenderer extends BeanStub {
 
     // we use index for rows, but column object for columns, as the next column (by index) might not
     // be visible (header grouping) so it's not reliable, so using the column object instead.
-    public navigateToNextCell(event: KeyboardEvent, key: number, previousCell: GridCell, allowUserOverride: boolean) {
+    public navigateToNextCell(event: KeyboardEvent | null, key: number, previousCell: GridCell, allowUserOverride: boolean) {
         let nextCell = previousCell;
 
         // we keep searching for a next cell until we find one. this is how the group rows get skipped
