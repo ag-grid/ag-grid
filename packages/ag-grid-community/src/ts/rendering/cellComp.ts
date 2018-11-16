@@ -148,7 +148,7 @@ export class CellComp extends Component {
         // hey, this looks like React!!!
         templateParts.push(`<div`);
         templateParts.push(` tabindex="-1"`);
-        templateParts.push(` unselectable="on"`); // THIS IS FOR IE only so the text is not seleragle with mouse drage
+        templateParts.push(` unselectable="on"`); // THIS IS FOR IE ONLY so text selection doesn't bubble outside of the grid
         templateParts.push(` role="gridcell"`);
         templateParts.push(` comp-id="${this.getCompId()}" `);
         templateParts.push(` col-id="${colIdSanitised}"`);
@@ -1375,13 +1375,22 @@ export class CellComp extends Component {
     }
 
     private onMouseDown(mouseEvent: MouseEvent): void {
-        // we pass false to focusCell, as we don't want the cell to focus
-        // also get the browser focus. if we did, then the cellRenderer could
-        // have a text field in it, for example, and as the user clicks on the
-        // text field, the text field, the focus doesn't get to the text
-        // field, instead to goes to the div behind, making it impossible to
-        // select the text field.
-        this.focusCell(false);
+        // we only need to pass true to focusCell in when the browser is IE
+        // and we are trying to focus a cell (has ag-cell class), otherwise
+        // we pass false, as we don't want the cell to focus also get the browser
+        // focus. if we did, then the cellRenderer could have a text field in it,
+        // for example, and as the user clicks on the text field, the text field,
+        // the focus doesn't get to the text field, instead to goes to the div
+        // behind, making it impossible to select the text field.
+        let forceBrowserFocus = false;
+
+        if (_.isBrowserIE()) {
+            const target = mouseEvent.target as HTMLElement;
+            if (target.classList.contains('ag-cell')) {
+                forceBrowserFocus = true;
+            }
+        }
+        this.focusCell(forceBrowserFocus);
 
         // if it's a right click, then if the cell is already in range,
         // don't change the range, however if the cell is not in a range,
