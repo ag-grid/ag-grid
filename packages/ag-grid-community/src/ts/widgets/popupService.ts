@@ -230,16 +230,17 @@ export class PopupService {
             y = this.keepYWithinBounds(params, y);
         }
 
-        params.ePopup.style.left = x + "px";
-        params.ePopup.style.top = y + "px";
-
+        params.ePopup.style.left = `${x}px`;
+        params.ePopup.style.top = `${y}px`;
     }
 
     private keepYWithinBounds(params: { ePopup: HTMLElement, minHeight?: number }, y: number): number {
+        const eDocument = this.gridOptionsWrapper.getDocument();
+        const docElement = eDocument.documentElement;
         const popupParent = this.getPopupParent();
         const parentRect = popupParent.getBoundingClientRect();
-        const documentRect = document.documentElement.getBoundingClientRect();
-        const isBody = popupParent === document.body;
+        const documentRect = eDocument.documentElement.getBoundingClientRect();
+        const isBody = popupParent === eDocument.body;
 
         let minHeight: number;
         if (params.minHeight && params.minHeight > 0) {
@@ -250,7 +251,7 @@ export class PopupService {
             minHeight = 200;
         }
 
-        let heightOfParent = isBody ? document.documentElement.scrollHeight : parentRect.bottom - parentRect.top;
+        let heightOfParent = isBody ? (docElement.clientHeight + docElement.scrollTop) : parentRect.bottom - parentRect.top;
         if (isBody) {
             heightOfParent -= Math.abs(documentRect.top - parentRect.top);
         }
@@ -266,10 +267,12 @@ export class PopupService {
     }
 
     private keepXWithinBounds(params: { minWidth?: number, ePopup: HTMLElement }, x: number): number {
+        const eDocument = this.gridOptionsWrapper.getDocument();
+        const docElement = eDocument.documentElement;
         const popupParent = this.getPopupParent();
         const parentRect = popupParent.getBoundingClientRect();
-        const documentRect = document.documentElement.getBoundingClientRect();
-        const isBody = popupParent === document.body;
+        const documentRect = eDocument.documentElement.getBoundingClientRect();
+        const isBody = popupParent === eDocument.body;
 
         let minWidth: number;
         if (params.minWidth && params.minWidth > 0) {
@@ -280,7 +283,7 @@ export class PopupService {
             minWidth = 200;
         }
 
-        let widthOfParent = isBody ? document.documentElement.scrollWidth : parentRect.right - parentRect.left;
+        let widthOfParent = isBody ? (docElement.clientWidth + docElement.scrollLeft) : parentRect.right - parentRect.left;
         if (isBody) {
             widthOfParent -= Math.abs(documentRect.left - parentRect.left);
         }
