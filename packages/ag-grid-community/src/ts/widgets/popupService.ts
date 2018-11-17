@@ -87,12 +87,29 @@ export class PopupService {
         ePopup: HTMLElement
     }): void {
 
-        let parentRect = this.getPopupParent().getBoundingClientRect();
+        const popupParent = this.getPopupParent();
+        const parentRect = popupParent.getBoundingClientRect();
+        const documentRect = document.documentElement.getBoundingClientRect();
+        const {clientX, clientY} = params.mouseEvent;
+        let y;
+        let x;
+
+        if (popupParent === document.body && documentRect.left) {
+            x = clientX - documentRect.left - Math.abs(documentRect.left - parentRect.left);
+        } else {
+            x = clientX - parentRect.left;
+        }
+
+        if (popupParent === document.body && documentRect.top) {
+            y = clientY - documentRect.top - Math.abs(documentRect.top - parentRect.top);
+        } else {
+            y = clientY - (parentRect.top);
+        }
 
         this.positionPopup({
             ePopup: params.ePopup,
-            x: params.mouseEvent.clientX - parentRect.left,
-            y: params.mouseEvent.clientY - parentRect.top,
+            x,
+            y,
             keepWithinBounds: true
         });
 
@@ -205,7 +222,10 @@ export class PopupService {
     }
 
     private keepYWithinBounds(params: { ePopup: HTMLElement, minHeight?: number }, y: number): number {
-        let parentRect = this.getPopupParent().getBoundingClientRect();
+        const popupParent = this.getPopupParent();
+        const parentRect = popupParent.getBoundingClientRect();
+        const documentRect = document.documentElement.getBoundingClientRect();
+        const isBody = popupParent === document.body;
 
         let minHeight: number;
         if (params.minHeight && params.minHeight > 0) {
@@ -216,8 +236,11 @@ export class PopupService {
             minHeight = 200;
         }
 
-        let heightOfParent = parentRect.bottom - parentRect.top;
-        let maxY = heightOfParent - minHeight - 5;
+        let heightOfParent = isBody ? document.documentElement.scrollHeight : parentRect.bottom - parentRect.top;
+        if (isBody) {
+            heightOfParent -= Math.abs(documentRect.top - parentRect.top);
+        }
+        let maxY = heightOfParent - minHeight;
         if (y > maxY) { // move position left, back into view
             return maxY;
         } else if (y < 0) { // in case the popup has a negative value
@@ -229,7 +252,10 @@ export class PopupService {
     }
 
     private keepXWithinBounds(params: { minWidth?: number, ePopup: HTMLElement }, x: number): number {
-        let parentRect = this.getPopupParent().getBoundingClientRect();
+        const popupParent = this.getPopupParent();
+        const parentRect = popupParent.getBoundingClientRect();
+        const documentRect = document.documentElement.getBoundingClientRect();
+        const isBody = popupParent === document.body;
 
         let minWidth: number;
         if (params.minWidth && params.minWidth > 0) {
@@ -240,7 +266,10 @@ export class PopupService {
             minWidth = 200;
         }
 
-        let widthOfParent = parentRect.right - parentRect.left;
+        let widthOfParent = isBody ? document.documentElement.scrollWidth : parentRect.right - parentRect.left;
+        if (isBody) {
+            widthOfParent -= Math.abs(documentRect.left - parentRect.left);
+        }
         let maxX = widthOfParent - minWidth - 5;
         if (x > maxX) { // move position left, back into view
             return maxX;
@@ -335,7 +364,7 @@ export class PopupService {
 
         // if we add these listeners now, then the current mouse
         // click will be included, which we don't want
-        setTimeout(function () {
+        window.setTimeout(function() {
             if (closeOnEsc) {
                 eDocument.addEventListener('keydown', hidePopupOnKeyboardEvent);
             }
