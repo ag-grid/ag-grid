@@ -19,29 +19,31 @@ export class PopupService {
 
     private activePopupElements: HTMLElement[] = [];
 
+    private getDocument(): Document {
+        return this.gridOptionsWrapper.getDocument();
+    }
+
     private getPopupParent(): HTMLElement {
         let ePopupParent = this.gridOptionsWrapper.getPopupParent();
         if (ePopupParent) {
             // user provided popup parent, may not have the right theme applied
             return ePopupParent;
         } else {
-            let eDocument = this.gridOptionsWrapper.getDocument();
-            return eDocument.body;
+            return this.getDocument().body;
         }
     }
 
     public positionPopupForMenu(params: { eventSource: any, ePopup: HTMLElement }) {
-
-        let sourceRect = params.eventSource.getBoundingClientRect();
-        let parentRect = this.getPopupParent().getBoundingClientRect();
+        const sourceRect = params.eventSource.getBoundingClientRect();
+        const parentRect = this.getPopupParent().getBoundingClientRect();
 
         let y = sourceRect.top - parentRect.top;
 
         y = this.keepYWithinBounds(params, y);
 
-        let minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth : 200;
-        let widthOfParent = parentRect.right - parentRect.left;
-        let maxX = widthOfParent - minWidth;
+        const minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth : 200;
+        const widthOfParent = parentRect.right - parentRect.left;
+        const maxX = widthOfParent - minWidth;
 
         // the x position of the popup depends on RTL or LTR. for normal cases, LTR, we put the child popup
         // to the right, unless it doesn't fit and we then put it to the left. for RTL it's the other way around,
@@ -67,8 +69,8 @@ export class PopupService {
             }
         }
 
-        params.ePopup.style.left = x + "px";
-        params.ePopup.style.top = y + "px";
+        params.ePopup.style.left = `${x}px`;
+        params.ePopup.style.top = `${y}px`;
 
         function xRightPosition(): number {
             return sourceRect.right - parentRect.left - 2;
@@ -87,33 +89,45 @@ export class PopupService {
         ePopup: HTMLElement
     }): void {
 
-        const popupParent = this.getPopupParent();
-        const parentRect = popupParent.getBoundingClientRect();
-        const documentRect = document.documentElement.getBoundingClientRect();
-        const {clientX, clientY} = params.mouseEvent;
-        let y;
-        let x;
-
-        if (popupParent === document.body && documentRect.left) {
-            x = clientX - documentRect.left - Math.abs(documentRect.left - parentRect.left);
-        } else {
-            x = clientX - parentRect.left;
-        }
-
-        if (popupParent === document.body && documentRect.top) {
-            y = clientY - documentRect.top - Math.abs(documentRect.top - parentRect.top);
-        } else {
-            y = clientY - (parentRect.top);
-        }
-
         this.positionPopup({
             ePopup: params.ePopup,
-            x,
-            y,
+            x: this.calculateXPosition(params.mouseEvent.clientX),
+            y: this.calculateYPosition(params.mouseEvent.clientY),
             keepWithinBounds: true
         });
 
         this.callPostProcessPopup(params.ePopup, null, params.mouseEvent, params.type, params.column, params.rowNode);
+    }
+    private calculateXPosition(pointerX: number): number {
+        const eDocument = this.getDocument();
+        const popupParent = this.getPopupParent();
+        const parentRect = popupParent.getBoundingClientRect();
+        const documentRect = eDocument.documentElement.getBoundingClientRect();
+
+        let x: number;
+        if (popupParent === eDocument.body && documentRect.left) {
+            x = pointerX - documentRect.left - Math.abs(documentRect.left - parentRect.left);
+        } else {
+            x = pointerX - parentRect.left;
+        }
+
+        return x;
+    }
+
+    private calculateYPosition(pointerY: number): number {
+        const eDocument = this.getDocument();
+        const popupParent = this.getPopupParent();
+        const parentRect = popupParent.getBoundingClientRect();
+        const documentRect = eDocument.documentElement.getBoundingClientRect();
+
+        let y: number;
+        if (popupParent === eDocument.body && documentRect.top) {
+            y = pointerY - documentRect.top - Math.abs(documentRect.top - parentRect.top);
+        } else {
+            y = pointerY - (parentRect.top);
+        }
+
+        return y;
     }
 
     public positionPopupUnderComponent(params: {
