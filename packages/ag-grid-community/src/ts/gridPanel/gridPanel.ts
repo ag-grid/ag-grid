@@ -351,7 +351,6 @@ export class GridPanel extends Component {
         this.dragAndDropService.addDropTarget(rowDragFeature);
     }
 
-    // todo - test this!
     private addStopEditingWhenGridLosesFocus(): void {
 
         if (!this.gridOptionsWrapper.isStopEditingWhenGridLosesFocus()) {
