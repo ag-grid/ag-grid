@@ -484,7 +484,7 @@ export class GridPanel extends Component {
 
     private addBodyViewportListener(): void {
         // we want to listen for clicks directly on the eBodyViewport, so the user has a way of showing
-        // the context menu if no rows are displayed, or user simply clicks outside of a cell
+        // the context menu if no rows or columns are displayed, or user simply clicks outside of a cell
         let listener = (mouseEvent: MouseEvent) => {
             let target = _.getTarget(mouseEvent);
             if (target === this.eBodyViewport) {
@@ -500,8 +500,8 @@ export class GridPanel extends Component {
         this.addDestroyableEventListener(this.eBodyViewport, 'contextmenu', listener);
     }
 
-    // + rangeController
-    // fixme - wtf does range controller use this for?
+    // + rangeController - used to know when to scroll when user is dragging outside the
+    // main viewport while doing a range selection
     public getBodyClientRect(): ClientRect {
         if (this.eBodyViewport) {
             return this.eBodyViewport.getBoundingClientRect();
