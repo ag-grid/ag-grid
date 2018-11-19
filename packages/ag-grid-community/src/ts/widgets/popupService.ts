@@ -250,21 +250,23 @@ export class PopupService {
         const parentRect = popupParent.getBoundingClientRect();
         const documentRect = eDocument.documentElement.getBoundingClientRect();
         const isBody = popupParent === eDocument.body;
+        const defaultPadding = 3;
 
-        let minHeight: number;
+        let minHeight = 200;
+        let diff = 0;
+
         if (params.minHeight && params.minHeight > 0) {
             minHeight = params.minHeight;
         } else if (params.ePopup.offsetHeight > 0) {
-            minHeight = _.getAbsoluteHeight(params.ePopup);
-        } else {
-            minHeight = 200;
+            minHeight = params.ePopup.clientHeight;
+            diff = _.getAbsoluteHeight(params.ePopup) - minHeight;
         }
 
-        let heightOfParent = isBody ? (docElement.clientHeight + docElement.scrollTop) : parentRect.bottom - parentRect.top;
+        let heightOfParent = isBody ? (_.getAbsoluteHeight(docElement) + docElement.scrollTop) : parentRect.bottom - parentRect.top;
         if (isBody) {
             heightOfParent -= Math.abs(documentRect.top - parentRect.top);
         }
-        const maxY = heightOfParent - minHeight - 3;
+        const maxY = heightOfParent - minHeight - diff - defaultPadding;
 
         return Math.min(Math.max(y, 0), maxY);
 
@@ -277,22 +279,24 @@ export class PopupService {
         const parentRect = popupParent.getBoundingClientRect();
         const documentRect = eDocument.documentElement.getBoundingClientRect();
         const isBody = popupParent === eDocument.body;
+        const defaultPadding = 3;
 
-        let minWidth: number;
+        let minWidth = 200;
+        let diff = 0;
+
         if (params.minWidth && params.minWidth > 0) {
             minWidth = params.minWidth;
-        } else if (params.ePopup.offsetWidth > 0) {
-            minWidth = _.getAbsoluteWidth(params.ePopup);
+        } else if (params.ePopup.clientWidth > 0) {
+            minWidth = params.ePopup.clientWidth;
             params.ePopup.style.minWidth = `${minWidth}px`;
-        } else {
-            minWidth = 200;
+            diff = _.getAbsoluteWidth(params.ePopup) - minWidth;
         }
 
-        let widthOfParent = isBody ? (docElement.clientWidth + docElement.scrollLeft) : parentRect.right - parentRect.left;
+        let widthOfParent = isBody ? (_.getAbsoluteWidth(docElement) + docElement.scrollLeft) : parentRect.right - parentRect.left;
         if (isBody) {
             widthOfParent -= Math.abs(documentRect.left - parentRect.left);
         }
-        let maxX = widthOfParent - minWidth - 3;
+        const maxX = widthOfParent - minWidth - diff - defaultPadding;
 
         return Math.min(Math.max(x, 0), maxX);
     }
