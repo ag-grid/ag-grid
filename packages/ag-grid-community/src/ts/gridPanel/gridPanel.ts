@@ -287,7 +287,8 @@ export class GridPanel extends Component {
 
         this.onDisplayedColumnsWidthChanged();
 
-        this.setHeightOnCenterColsViewport();
+        // Gil - I took this out - is it needed? Appears not on my browsers.
+        // this.setHeightOnCenterColsViewport();
 
         this.gridApi.registerGridComp(this);
         this.alignedGridsService.registerGridComp(this);
@@ -311,12 +312,11 @@ export class GridPanel extends Component {
         });
     }
 
-    private setHeightOnCenterColsViewport(): void {
-        let height = this.gridOptionsWrapper.getScrollbarWidth()>0 ? 'calc(100% + 30px)' : '100%';
-        this.eCenterViewport.style.height = height;
-    }
+    // private setHeightOnCenterColsViewport(): void {
+    //     let height = this.gridOptionsWrapper.getScrollbarWidth()>0 ? 'calc(100% + 30px)' : '100%';
+    //     this.eCenterViewport.style.height = height;
+    // }
 
-    // todo - what do we do here???
     private onDomLayoutChanged(): void {
         let newPrintLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
 
