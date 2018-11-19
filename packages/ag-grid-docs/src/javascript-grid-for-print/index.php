@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
     <h1>Printing</h1>
 
     <p class="lead">
-        This section explains how to user the Print Layout feature of the grid.
+        This section explains how to use the Print Layout feature of the grid.
     </p>
 
     <p>
