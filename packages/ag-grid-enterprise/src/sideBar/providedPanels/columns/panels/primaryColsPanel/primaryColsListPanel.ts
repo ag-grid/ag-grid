@@ -217,7 +217,8 @@ export class PrimaryColsListPanel extends Component {
                 } else {
                     let comp = this.columnComps[item.getId()];
                     if (comp && this.filterText) {
-                        filterPasses = comp.getDisplayName().toLowerCase().indexOf(this.filterText) >= 0;
+                        const displayName = comp.getDisplayName();
+                        filterPasses = displayName !== null ? displayName.toLowerCase().indexOf(this.filterText) >= 0 : true;
                     } else {
                         filterPasses = true;
                     }

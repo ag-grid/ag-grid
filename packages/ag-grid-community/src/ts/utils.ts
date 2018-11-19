@@ -1429,7 +1429,7 @@ export class Utils {
         return !isNaN(parseFloat(value)) && isFinite(value);
     }
 
-    static escape(toEscape: string): string {
+    static escape(toEscape: string | null): string {
         if (toEscape === null || toEscape === undefined || !toEscape.replace) {
             return toEscape;
         }

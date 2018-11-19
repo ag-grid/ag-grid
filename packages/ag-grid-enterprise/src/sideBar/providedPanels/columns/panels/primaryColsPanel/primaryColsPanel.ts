@@ -5,7 +5,7 @@ import {ToolPanelColumnCompParams} from "../../columnToolPanel";
 
 export interface BaseColumnItem {
 
-    getDisplayName(): string;
+    getDisplayName(): string | null;
 
     onSelectAllChanged(value: boolean): void;
 

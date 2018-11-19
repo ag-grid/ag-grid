@@ -54,7 +54,7 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
 
     private allowDragging: boolean;
 
-    private displayName: string;
+    private displayName: string | null;
 
     private processingColumnStateChange = false;
     private selectionCallback: (selected: boolean) => void;
@@ -83,7 +83,7 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
             this.displayName = '>>';
         }
 
-        eText.innerHTML = this.displayName;
+        eText.innerHTML = this.displayName ? this.displayName : '';
         this.setupExpandContract();
 
         this.addCssClass('ag-toolpanel-indent-' + this.columnDept);
@@ -340,7 +340,7 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
         return this.expanded;
     }
 
-    public getDisplayName(): string {
+    public getDisplayName(): string | null {
         return this.displayName;
     }
 
