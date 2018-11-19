@@ -258,8 +258,8 @@ export class PopupService {
         let minHeight: number;
         if (params.minHeight && params.minHeight > 0) {
             minHeight = params.minHeight;
-        } else if (params.ePopup.clientHeight > 0) {
-            minHeight = params.ePopup.clientHeight;
+        } else if (params.ePopup.offsetHeight > 0) {
+            minHeight = _.getAbsoluteHeight(params.ePopup);
         } else {
             minHeight = 200;
         }
@@ -290,8 +290,8 @@ export class PopupService {
         let minWidth: number;
         if (params.minWidth && params.minWidth > 0) {
             minWidth = params.minWidth;
-        } else if (params.ePopup.clientWidth > 0) {
-            minWidth = params.ePopup.clientWidth;
+        } else if (params.ePopup.offsetWidth > 0) {
+            minWidth = _.getAbsoluteWidth(params.ePopup);
         } else {
             minWidth = 200;
         }

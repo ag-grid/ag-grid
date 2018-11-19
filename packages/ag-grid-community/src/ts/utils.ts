@@ -152,6 +152,20 @@ export class Utils {
         }
     }
 
+    static getAbsoluteHeight(el: HTMLElement): number {
+        const styles = window.getComputedStyle(el);
+        const margin = parseFloat(styles['marginTop']) + parseFloat(styles['marginBottom']);
+
+        return Math.ceil(el.offsetHeight + margin);
+    }
+
+    static getAbsoluteWidth(el: HTMLElement): number {
+        const styles = window.getComputedStyle(el);
+        const margin = parseFloat(styles['marginLeft']) + parseFloat(styles['marginRight']);
+
+        return Math.ceil(el.offsetWidth + margin);
+    }
+
     static getScrollLeft(element: HTMLElement, rtl: boolean): number {
         let scrollLeft = element.scrollLeft;
         if (rtl) {
