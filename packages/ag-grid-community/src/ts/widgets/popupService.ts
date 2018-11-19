@@ -33,9 +33,18 @@ export class PopupService {
         }
     }
 
-    public positionPopupForMenu(params: { eventSource: any, ePopup: HTMLElement }) {
+    public positionPopupForMenu(params: { eventSource: HTMLElement, ePopup: HTMLElement }) {
         const sourceRect = params.eventSource.getBoundingClientRect();
-        const parentRect = this.getPopupParent().getBoundingClientRect();
+        const eDocument = this.getDocument();
+        const popupParent = this.getPopupParent();
+
+        let parentRect:ClientRect;
+
+        if (popupParent === eDocument.body) {
+            parentRect = eDocument.documentElement.getBoundingClientRect();
+        } else {
+            parentRect = popupParent.getBoundingClientRect();
+        }
 
         let y = sourceRect.top - parentRect.top;
 
@@ -104,14 +113,7 @@ export class PopupService {
         const parentRect = popupParent.getBoundingClientRect();
         const documentRect = eDocument.documentElement.getBoundingClientRect();
 
-        let x: number;
-        if (popupParent === eDocument.body && documentRect.left) {
-            x = pointerX - documentRect.left - Math.abs(documentRect.left - parentRect.left);
-        } else {
-            x = pointerX - parentRect.left;
-        }
-
-        return x;
+        return pointerX - (popupParent === eDocument.body ? documentRect.left : parentRect.left);
     }
 
     private calculateYPosition(pointerY: number): number {
@@ -120,14 +122,7 @@ export class PopupService {
         const parentRect = popupParent.getBoundingClientRect();
         const documentRect = eDocument.documentElement.getBoundingClientRect();
 
-        let y: number;
-        if (popupParent === eDocument.body && documentRect.top) {
-            y = pointerY - documentRect.top - Math.abs(documentRect.top - parentRect.top);
-        } else {
-            y = pointerY - (parentRect.top);
-        }
-
-        return y;
+        return pointerY - (popupParent === eDocument.body ? documentRect.top : parentRect.top);
     }
 
     public positionPopupUnderComponent(params: {
@@ -143,8 +138,17 @@ export class PopupService {
         keepWithinBounds?: boolean
     }) {
 
-        let sourceRect = params.eventSource.getBoundingClientRect();
-        let parentRect = this.getPopupParent().getBoundingClientRect();
+        const sourceRect = params.eventSource.getBoundingClientRect();
+        const eDocument = this.getDocument();
+        const popupParent = this.getPopupParent();
+
+        let parentRect:ClientRect;
+
+        if (popupParent === eDocument.body) {
+            parentRect = eDocument.documentElement.getBoundingClientRect();
+        } else {
+            parentRect = popupParent.getBoundingClientRect();
+        }
 
         this.positionPopup({
             ePopup: params.ePopup,
@@ -187,8 +191,17 @@ export class PopupService {
         keepWithinBounds?: boolean
     }) {
 
-        let sourceRect = params.eventSource.getBoundingClientRect();
-        let parentRect = this.getPopupParent().getBoundingClientRect();
+        const sourceRect = params.eventSource.getBoundingClientRect();
+        const eDocument = this.getDocument();
+        const popupParent = this.getPopupParent();
+
+        let parentRect:ClientRect;
+
+        if (popupParent === eDocument.body) {
+            parentRect = eDocument.documentElement.getBoundingClientRect();
+        } else {
+            parentRect = popupParent.getBoundingClientRect();
+        }
 
         this.positionPopup({
             ePopup: params.ePopup,
