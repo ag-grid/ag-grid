@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 import { Column, Component } from "ag-grid-community";
 export interface ToolPanelFilterCompParams {
     column: Column;

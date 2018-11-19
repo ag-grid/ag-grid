@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 import { ExcelOOXMLTemplate } from 'ag-grid-community';
 declare const rowFactory: ExcelOOXMLTemplate;
 export default rowFactory;

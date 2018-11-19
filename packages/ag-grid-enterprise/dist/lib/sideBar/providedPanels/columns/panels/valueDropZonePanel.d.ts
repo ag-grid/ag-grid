@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 import { Column } from "ag-grid-community/main";
 import { BaseDropZonePanel } from "../dropZone/baseDropZonePanel";
 export declare class ValuesDropZonePanel extends BaseDropZonePanel {

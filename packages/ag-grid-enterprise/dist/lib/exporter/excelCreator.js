@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -47,7 +47,7 @@ var ExcelCreator = /** @class */ (function (_super) {
         return this.export(params);
     };
     ExcelCreator.prototype.getDataAsExcelXml = function (params) {
-        return this.getData(params);
+        return this.getData(ag_grid_community_1._.assign({}, params, { exportMode: 'xml' }));
     };
     ExcelCreator.prototype.getMimeType = function () {
         return this.getExportMode() === 'xml' ? 'application/vnd.ms-excel' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';

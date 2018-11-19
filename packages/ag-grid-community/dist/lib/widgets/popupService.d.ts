@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.2
+// Type definitions for ag-grid-community v19.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../entities/rowNode";
@@ -8,6 +8,7 @@ export declare class PopupService {
     private gridOptionsWrapper;
     private environment;
     private activePopupElements;
+    private getDocument;
     private getPopupParent;
     positionPopupForMenu(params: {
         eventSource: any;
@@ -20,6 +21,8 @@ export declare class PopupService {
         mouseEvent: MouseEvent | Touch;
         ePopup: HTMLElement;
     }): void;
+    private calculateXPosition;
+    private calculateYPosition;
     positionPopupUnderComponent(params: {
         type: string;
         eventSource: HTMLElement;

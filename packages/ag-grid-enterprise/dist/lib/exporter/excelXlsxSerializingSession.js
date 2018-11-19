@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -122,7 +122,7 @@ var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
             styleId: styleExists ? styleId : null,
             data: {
                 type: typeTransformed,
-                value: typeTransformed === 's' ? this.getStringPosition(value).toString() :
+                value: typeTransformed === 's' ? this.getStringPosition(value == null ? '' : value).toString() :
                     typeTransformed === 'n' ? Number(value).toString() :
                         value
             }
@@ -133,7 +133,7 @@ var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
             styleId: this.styleExists(styleId) ? styleId : null,
             data: {
                 type: type,
-                value: type === 's' ? this.getStringPosition(value).toString() : value
+                value: type === 's' ? this.getStringPosition(value == null ? '' : value).toString() : value
             },
             mergeAcross: numOfCells
         };

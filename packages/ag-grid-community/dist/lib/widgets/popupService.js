@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,6 +25,9 @@ var PopupService = /** @class */ (function () {
     function PopupService() {
         this.activePopupElements = [];
     }
+    PopupService.prototype.getDocument = function () {
+        return this.gridOptionsWrapper.getDocument();
+    };
     PopupService.prototype.getPopupParent = function () {
         var ePopupParent = this.gridOptionsWrapper.getPopupParent();
         if (ePopupParent) {
@@ -32,8 +35,7 @@ var PopupService = /** @class */ (function () {
             return ePopupParent;
         }
         else {
-            var eDocument = this.gridOptionsWrapper.getDocument();
-            return eDocument.body;
+            return this.getDocument().body;
         }
     };
     PopupService.prototype.positionPopupForMenu = function (params) {
@@ -78,14 +80,41 @@ var PopupService = /** @class */ (function () {
         }
     };
     PopupService.prototype.positionPopupUnderMouseEvent = function (params) {
-        var parentRect = this.getPopupParent().getBoundingClientRect();
         this.positionPopup({
             ePopup: params.ePopup,
-            x: params.mouseEvent.clientX - parentRect.left,
-            y: params.mouseEvent.clientY - parentRect.top,
+            x: this.calculateXPosition(params.mouseEvent.clientX),
+            y: this.calculateYPosition(params.mouseEvent.clientY),
             keepWithinBounds: true
         });
         this.callPostProcessPopup(params.ePopup, null, params.mouseEvent, params.type, params.column, params.rowNode);
+    };
+    PopupService.prototype.calculateXPosition = function (pointerX) {
+        var eDocument = this.getDocument();
+        var popupParent = this.getPopupParent();
+        var parentRect = popupParent.getBoundingClientRect();
+        var documentRect = eDocument.documentElement.getBoundingClientRect();
+        var x;
+        if (popupParent === eDocument.body && documentRect.left) {
+            x = pointerX - documentRect.left - Math.abs(documentRect.left - parentRect.left);
+        }
+        else {
+            x = pointerX - parentRect.left;
+        }
+        return x;
+    };
+    PopupService.prototype.calculateYPosition = function (pointerY) {
+        var eDocument = this.getDocument();
+        var popupParent = this.getPopupParent();
+        var parentRect = popupParent.getBoundingClientRect();
+        var documentRect = eDocument.documentElement.getBoundingClientRect();
+        var y;
+        if (popupParent === eDocument.body && documentRect.top) {
+            y = pointerY - documentRect.top - Math.abs(documentRect.top - parentRect.top);
+        }
+        else {
+            y = pointerY - (parentRect.top);
+        }
+        return y;
     };
     PopupService.prototype.positionPopupUnderComponent = function (params) {
         var sourceRect = params.eventSource.getBoundingClientRect();
@@ -148,7 +177,12 @@ var PopupService = /** @class */ (function () {
         params.ePopup.style.top = y + "px";
     };
     PopupService.prototype.keepYWithinBounds = function (params, y) {
-        var parentRect = this.getPopupParent().getBoundingClientRect();
+        var eDocument = this.gridOptionsWrapper.getDocument();
+        var docElement = eDocument.documentElement;
+        var popupParent = this.getPopupParent();
+        var parentRect = popupParent.getBoundingClientRect();
+        var documentRect = eDocument.documentElement.getBoundingClientRect();
+        var isBody = popupParent === eDocument.body;
         var minHeight;
         if (params.minHeight && params.minHeight > 0) {
             minHeight = params.minHeight;
@@ -159,8 +193,11 @@ var PopupService = /** @class */ (function () {
         else {
             minHeight = 200;
         }
-        var heightOfParent = parentRect.bottom - parentRect.top;
-        var maxY = heightOfParent - minHeight - 5;
+        var heightOfParent = isBody ? (docElement.clientHeight + docElement.scrollTop) : parentRect.bottom - parentRect.top;
+        if (isBody) {
+            heightOfParent -= Math.abs(documentRect.top - parentRect.top);
+        }
+        var maxY = heightOfParent - minHeight;
         if (y > maxY) { // move position left, back into view
             return maxY;
         }
@@ -172,7 +209,12 @@ var PopupService = /** @class */ (function () {
         }
     };
     PopupService.prototype.keepXWithinBounds = function (params, x) {
-        var parentRect = this.getPopupParent().getBoundingClientRect();
+        var eDocument = this.gridOptionsWrapper.getDocument();
+        var docElement = eDocument.documentElement;
+        var popupParent = this.getPopupParent();
+        var parentRect = popupParent.getBoundingClientRect();
+        var documentRect = eDocument.documentElement.getBoundingClientRect();
+        var isBody = popupParent === eDocument.body;
         var minWidth;
         if (params.minWidth && params.minWidth > 0) {
             minWidth = params.minWidth;
@@ -183,7 +225,10 @@ var PopupService = /** @class */ (function () {
         else {
             minWidth = 200;
         }
-        var widthOfParent = parentRect.right - parentRect.left;
+        var widthOfParent = isBody ? (docElement.clientWidth + docElement.scrollLeft) : parentRect.right - parentRect.left;
+        if (isBody) {
+            widthOfParent -= Math.abs(documentRect.left - parentRect.left);
+        }
         var maxX = widthOfParent - minWidth - 5;
         if (x > maxX) { // move position left, back into view
             return maxX;
@@ -263,7 +308,7 @@ var PopupService = /** @class */ (function () {
         };
         // if we add these listeners now, then the current mouse
         // click will be included, which we don't want
-        setTimeout(function () {
+        window.setTimeout(function () {
             if (closeOnEsc) {
                 eDocument.addEventListener('keydown', hidePopupOnKeyboardEvent);
             }
