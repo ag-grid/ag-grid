@@ -17,7 +17,7 @@ export class RowNodeBlockLoader {
 
     private active = true;
 
-    constructor(maxConcurrentRequests: number | undefined, blockLoadDebounceMillis: number) {
+    constructor(maxConcurrentRequests: number | undefined, blockLoadDebounceMillis: number | undefined) {
         this.maxConcurrentRequests = maxConcurrentRequests;
 
         if (blockLoadDebounceMillis>0) {

@@ -611,7 +611,7 @@ export class ClipboardService implements IClipboardService {
 
     private copyDataToClipboard(data: string): void {
         let userProvidedFunc = this.gridOptionsWrapper.getSendToClipboardFunc();
-        if (Utils.exists(userProvidedFunc)) {
+        if (userProvidedFunc && Utils.exists(userProvidedFunc)) {
             let params = {data: data};
             userProvidedFunc(params);
         } else {

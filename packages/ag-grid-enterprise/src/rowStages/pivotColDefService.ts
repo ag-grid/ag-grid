@@ -100,7 +100,7 @@ export class PivotColDefService {
                     pivotColumnDefs.push(colDef);
                 } else {
                     measureColumns.forEach(measureColumn => {
-                        const columnName: string = this.columnController.getDisplayNameForColumn(measureColumn, 'header');
+                        const columnName: string | null = this.columnController.getDisplayNameForColumn(measureColumn, 'header');
                         const colDef = this.createColDef(measureColumn, columnName, newPivotKeys, columnIdSequence);
                         colDef.columnGroupShow = 'open';
                         valueGroup.children.push(colDef);
@@ -260,7 +260,7 @@ export class PivotColDefService {
                 valueGroup.children.push(colDef);
                 pivotColumnDefs.push(colDef);
             } else {
-                let columnName: string = this.columnController.getDisplayNameForColumn(valueColumn, 'header');
+                let columnName: string | null = this.columnController.getDisplayNameForColumn(valueColumn, 'header');
                 let colDef = this.createColDef(valueColumn, columnName, newPivotKeys, columnIdSequence);
                 colDef.pivotTotalColumnIds = colIds;
                 valueGroup.children.push(colDef);

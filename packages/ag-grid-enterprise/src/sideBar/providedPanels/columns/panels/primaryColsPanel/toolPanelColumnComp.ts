@@ -50,7 +50,7 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
     private selectionCallback: (selected: boolean) => void;
 
     private allowDragging: boolean;
-    private displayName: string;
+    private displayName: string | null;
 
     private processingColumnStateChange = false;
     private groupsExist: boolean;
@@ -309,7 +309,7 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
         this.processingColumnStateChange = false;
     }
 
-    public getDisplayName(): string {
+    public getDisplayName(): string | null {
         return this.displayName;
     }
 

@@ -59,7 +59,7 @@ export class DropZoneColumnComp extends Component {
     private column: Column;
     private dragSourceDropTarget: DropTarget;
     private ghost: boolean;
-    private displayName: string;
+    private displayName: string | null;
     private valueColumn: boolean;
 
     private popupShowing = false;
@@ -138,7 +138,7 @@ export class DropZoneColumnComp extends Component {
     }
 
     private setTextValue(): void {
-        let displayValue: string;
+        let displayValue: string | null;
 
         if (this.valueColumn) {
             let aggFunc = this.column.getAggFunc();

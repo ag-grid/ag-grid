@@ -27,7 +27,7 @@ export interface DragSource {
     /** If eElement is dragged, then the dragItem is the object that gets passed around. */
     dragItemCallback: () => DragItem;
     /** This name appears in the ghost icon when dragging */
-    dragItemName: string;
+    dragItemName: string | null;
     /** The drop target associated with this dragSource. So when dragging starts, this target does not get
      * onDragEnter event. */
     dragSourceDropTarget?: DropTarget;

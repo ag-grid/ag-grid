@@ -2,16 +2,16 @@ import {
     _,
     Autowired,
     Column,
+    ColumnController,
     Component,
-    FilterManager,
-    IFilterComp,
-    RefSelector,
-    EventService,
     Events,
+    EventService,
+    FilterManager,
     FilterOpenedEvent,
     GridApi,
     GridOptionsWrapper,
-    ColumnController
+    IFilterComp,
+    RefSelector
 } from "ag-grid-community";
 
 export interface ToolPanelFilterCompParams {
@@ -72,7 +72,7 @@ export class ToolPanelFilterComp extends Component {
         let displayNameSanitised = _.escape(displayName);
         this.eFilterName.innerText = displayNameSanitised;
         this.addGuiEventListenerInto(this.eFilterToolpanelHeader, 'click', this.doExpandOrCollapse.bind(this));
-        this.eventService.addEventListener(Events.EVENT_FILTER_OPENED, (event: FilterOpenedEvent) => this.onFilterOpened(event))
+        this.eventService.addEventListener(Events.EVENT_FILTER_OPENED, (event: FilterOpenedEvent) => this.onFilterOpened(event));
 
         this.addInIcon('filter', this.eFilterIcon, this.params.column);
         _.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !this.isFilterActive());
@@ -113,7 +113,7 @@ export class ToolPanelFilterComp extends Component {
             this.filter = filter;
             container.appendChild(filter.getGui());
             this.eAgFilterToolpanelBody.appendChild(container);
-            if (filter.afterGuiAttached){
+            if (filter.afterGuiAttached) {
                 filter.afterGuiAttached();
             }
         });
