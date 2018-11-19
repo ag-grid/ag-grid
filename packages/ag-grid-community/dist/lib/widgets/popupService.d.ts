@@ -11,7 +11,7 @@ export declare class PopupService {
     private getDocument;
     private getPopupParent;
     positionPopupForMenu(params: {
-        eventSource: any;
+        eventSource: HTMLElement;
         ePopup: HTMLElement;
     }): void;
     positionPopupUnderMouseEvent(params: {

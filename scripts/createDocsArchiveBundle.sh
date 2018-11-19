@@ -14,9 +14,7 @@ VERSION=""${RAW_VERSION//./}""
 
 cd packages/ag-grid-docs
 gulp release
-cd dist
+cd ../../
 
-zip -r -X ../../../archive_"$ZIP_PREFIX"_v"$VERSION".zip *
-
-cd ../../../
+node scripts/createDocsArchiveBundle.js $RAW_VERSION
 

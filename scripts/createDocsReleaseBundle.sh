@@ -17,7 +17,7 @@ gulp release
 gulp replace-to-cdn
 cd dist
 
-zip -r -X ../../../release_"$ZIP_PREFIX"_v"$VERSION".zip *
+zip -r --exclude="dev*" ../../../release_"$ZIP_PREFIX"_v"$VERSION".zip *
 
 cd ../../../
 
