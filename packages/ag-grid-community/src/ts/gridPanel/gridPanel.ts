@@ -1112,11 +1112,13 @@ export class GridPanel extends Component {
         this.setPinnedContainerSize();
         this.setHeaderAndFloatingHeights();
         this.onHorizontalViewportChanged();
+        this.updateScrollVisibleService();
     }
 
     private onDisplayedColumnsWidthChanged(): void {
         this.setWidthsOfContainers();
         this.onHorizontalViewportChanged();
+        this.updateScrollVisibleService();
         // todo - wtf
         if (this.enableRtl) {
             // because RTL is all backwards, a change in the width of the row
