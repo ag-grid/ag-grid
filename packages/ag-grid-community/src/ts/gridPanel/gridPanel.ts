@@ -207,8 +207,6 @@ export class GridPanel extends Component {
         return result;
     }
 
-    // used by range controller
-    // FIXME
     public getHScrollPosition(): { left: number, right: number } {
         let result = {
             left: this.eCenterViewport.scrollLeft,
@@ -253,12 +251,9 @@ export class GridPanel extends Component {
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
         this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
 
-        // all of these element have different CSS when layout changes
-        // fixme - do we need to add any new containers here
+        // these elements have different CSS when layout changes
         this.gridOptionsWrapper.addLayoutElement(this.getGui());
         this.gridOptionsWrapper.addLayoutElement(this.eBodyViewport);
-        this.gridOptionsWrapper.addLayoutElement(this.eTopViewport);
-        this.gridOptionsWrapper.addLayoutElement(this.eCenterContainer);
 
         this.suppressScrollOnFloatingRow();
         this.setupRowAnimationCssClass();
