@@ -51,6 +51,7 @@ export class PopupService {
         y = this.keepYWithinBounds(params, y);
 
         const minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth : 200;
+        params.ePopup.style.minWidth = `${minWidth}px`;
         const widthOfParent = parentRect.right - parentRect.left;
         const maxX = widthOfParent - minWidth;
 
@@ -98,31 +99,26 @@ export class PopupService {
         ePopup: HTMLElement
     }): void {
 
+        const {x, y} = this.calculatePointerAlign(params.mouseEvent);
         this.positionPopup({
             ePopup: params.ePopup,
-            x: this.calculateXPosition(params.mouseEvent.clientX),
-            y: this.calculateYPosition(params.mouseEvent.clientY),
+            x,
+            y,
             keepWithinBounds: true
         });
 
         this.callPostProcessPopup(params.ePopup, null, params.mouseEvent, params.type, params.column, params.rowNode);
     }
-    private calculateXPosition(pointerX: number): number {
+    private calculatePointerAlign(e: MouseEvent | Touch): {x: number, y: number} {
         const eDocument = this.getDocument();
         const popupParent = this.getPopupParent();
         const parentRect = popupParent.getBoundingClientRect();
         const documentRect = eDocument.documentElement.getBoundingClientRect();
 
-        return pointerX - (popupParent === eDocument.body ? documentRect.left : parentRect.left);
-    }
-
-    private calculateYPosition(pointerY: number): number {
-        const eDocument = this.getDocument();
-        const popupParent = this.getPopupParent();
-        const parentRect = popupParent.getBoundingClientRect();
-        const documentRect = eDocument.documentElement.getBoundingClientRect();
-
-        return pointerY - (popupParent === eDocument.body ? documentRect.top : parentRect.top);
+        return {
+            x: e.clientX - (popupParent === eDocument.body ? documentRect.left : parentRect.left),
+            y: e.clientY - (popupParent === eDocument.body ? documentRect.top : parentRect.top)
+        };
     }
 
     public positionPopupUnderComponent(params: {
@@ -268,14 +264,9 @@ export class PopupService {
         if (isBody) {
             heightOfParent -= Math.abs(documentRect.top - parentRect.top);
         }
-        let maxY = heightOfParent - minHeight;
-        if (y > maxY) { // move position left, back into view
-            return maxY;
-        } else if (y < 0) { // in case the popup has a negative value
-            return 0;
-        } else {
-            return y;
-        }
+        const maxY = heightOfParent - minHeight - 3;
+
+        return Math.min(Math.max(y, 0), maxY);
 
     }
 
@@ -292,6 +283,7 @@ export class PopupService {
             minWidth = params.minWidth;
         } else if (params.ePopup.offsetWidth > 0) {
             minWidth = _.getAbsoluteWidth(params.ePopup);
+            params.ePopup.style.minWidth = `${minWidth}px`;
         } else {
             minWidth = 200;
         }
@@ -300,14 +292,9 @@ export class PopupService {
         if (isBody) {
             widthOfParent -= Math.abs(documentRect.left - parentRect.left);
         }
-        let maxX = widthOfParent - minWidth - 5;
-        if (x > maxX) { // move position left, back into view
-            return maxX;
-        } else if (x < 0) { // in case the popup has a negative value
-            return 0;
-        } else {
-            return x;
-        }
+        let maxX = widthOfParent - minWidth - 3;
+
+        return Math.min(Math.max(x, 0), maxX);
     }
 
     //adds an element to a div, but also listens to background checking for clicks,
