@@ -211,8 +211,8 @@ export class GridPanel extends Component {
     // FIXME
     public getHScrollPosition(): { left: number, right: number } {
         let result = {
-            left: this.eBodyViewport.scrollLeft,
-            right: this.eBodyViewport.scrollTop + this.eBodyViewport.offsetWidth
+            left: this.eCenterViewport.scrollLeft,
+            right: this.eCenterViewport.scrollLeft + this.eCenterViewport.offsetWidth
         };
         return result;
     }
