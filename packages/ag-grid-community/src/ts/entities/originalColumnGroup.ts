@@ -9,7 +9,7 @@ import {ColumnApi} from "../columnController/columnApi";
 import {GridApi} from "../gridApi";
 import {AgEvent} from "../events";
 
-export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmitter  {
+export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmitter {
 
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
     public static EVENT_EXPANDABLE_CHANGED = 'expandableChanged';
@@ -55,8 +55,8 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
         return this.padding;
     }
 
-    public setExpanded(expanded: boolean): void {
-        this.expanded = expanded;
+    public setExpanded(expanded: boolean | undefined): void {
+        this.expanded = expanded === undefined ? false : expanded;
         let event: AgEvent = {
             type: OriginalColumnGroup.EVENT_EXPANDED_CHANGED
         };
@@ -98,8 +98,10 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
     }
 
     private addLeafColumns(leafColumns: Column[]): void {
-        if (!this.children) { return; }
-        this.children.forEach( (child: OriginalColumnGroupChild) => {
+        if (!this.children) {
+            return;
+        }
+        this.children.forEach((child: OriginalColumnGroupChild) => {
             if (child instanceof Column) {
                 leafColumns.push(<Column>child);
             } else if (child instanceof OriginalColumnGroup) {
@@ -108,7 +110,7 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
         });
     }
 
-    public getColumnGroupShow(): string {
+    public getColumnGroupShow(): string | undefined {
         if (!this.padding) {
             return this.colGroupDef.columnGroupShow;
         } else {
@@ -125,7 +127,7 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
     public setupExpandable() {
         this.setExpandable();
         // note - we should be removing this event listener
-        this.getLeafColumns().forEach( col => col.addEventListener(Column.EVENT_VISIBLE_CHANGED, this.onColumnVisibilityChanged.bind(this)));
+        this.getLeafColumns().forEach(col => col.addEventListener(Column.EVENT_VISIBLE_CHANGED, this.onColumnVisibilityChanged.bind(this)));
     }
 
     public setExpandable() {

@@ -24,7 +24,7 @@ export class ColumnFactory {
         this.logger = loggerFactory.create('ColumnFactory');
     }
 
-    public createColumnTree(defs: (ColDef|ColGroupDef)[], primaryColumns: boolean, existingColumns?: Column[])
+    public createColumnTree(defs: (ColDef|ColGroupDef)[] | null, primaryColumns: boolean, existingColumns?: Column[])
         : {columnTree: OriginalColumnGroupChild[], treeDept: number} {
 
         // column key creator dishes out unique column id's in a deterministic way,
@@ -58,7 +58,7 @@ export class ColumnFactory {
         };
     }
 
-    public createForAutoGroups(autoGroupCols: Column[], gridBalancedTree: OriginalColumnGroupChild[]): OriginalColumnGroupChild[] {
+    public createForAutoGroups(autoGroupCols: Column[] | null, gridBalancedTree: OriginalColumnGroupChild[]): OriginalColumnGroupChild[] {
 
         let autoColBalancedTree: OriginalColumnGroupChild[] = [];
         autoGroupCols.forEach( col => {

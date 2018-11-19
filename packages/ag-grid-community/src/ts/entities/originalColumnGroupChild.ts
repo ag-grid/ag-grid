@@ -3,6 +3,6 @@
 // See the note at the top of Column class.
 export interface OriginalColumnGroupChild {
     isVisible(): boolean;
-    getColumnGroupShow(): string;
+    getColumnGroupShow(): string | undefined;
     getId(): string;
 }

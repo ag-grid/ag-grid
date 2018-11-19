@@ -24,7 +24,7 @@ export class DisplayedGroupCreator {
         // create's unique id's for the group
         groupInstanceIdCreator: GroupInstanceIdCreator,
         // whether it's left, right or center col
-        pinned: string,
+        pinned: string | null,
         // we try to reuse old groups if we can, to allow gui to do animation
         oldDisplayedGroups?: ColumnGroupChild[]): ColumnGroupChild[] {
 

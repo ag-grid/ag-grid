@@ -85,7 +85,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private pinned: string | null;
     private left: number;
     private oldLeft: number;
-    private aggFunc: string | IAggFunc|null;
+    private aggFunc: string | IAggFunc | null;
     private sort: string;
     private sortedAt: number;
     private moving = false;
@@ -441,7 +441,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.sortedAt = sortedAt;
     }
 
-    public setAggFunc(aggFunc: string | IAggFunc| null): void {
+    public setAggFunc(aggFunc: string | IAggFunc | null | undefined): void {
         this.aggFunc = aggFunc;
     }
 
@@ -461,7 +461,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.left + this.actualWidth;
     }
 
-    public setLeft(left: number, source: ColumnEventType = "api") {
+    public setLeft(left: number | null, source: ColumnEventType = "api") {
         this.oldLeft = this.left;
         if (this.left !== left) {
             this.left = left;

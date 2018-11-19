@@ -111,7 +111,7 @@ export class ColumnUtils {
 
     }
 
-    public depthFirstAllColumnTreeSearch(tree: ColumnGroupChild[], callback: (treeNode: ColumnGroupChild)=>void ): void {
+    public depthFirstAllColumnTreeSearch(tree: ColumnGroupChild[] | null, callback: (treeNode: ColumnGroupChild)=>void ): void {
 
         if (!tree) { return; }
 
