@@ -19,29 +19,31 @@ export class PopupService {
 
     private activePopupElements: HTMLElement[] = [];
 
+    private getDocument(): Document {
+        return this.gridOptionsWrapper.getDocument();
+    }
+
     private getPopupParent(): HTMLElement {
         let ePopupParent = this.gridOptionsWrapper.getPopupParent();
         if (ePopupParent) {
             // user provided popup parent, may not have the right theme applied
             return ePopupParent;
         } else {
-            let eDocument = this.gridOptionsWrapper.getDocument();
-            return eDocument.body;
+            return this.getDocument().body;
         }
     }
 
     public positionPopupForMenu(params: { eventSource: any, ePopup: HTMLElement }) {
-
-        let sourceRect = params.eventSource.getBoundingClientRect();
-        let parentRect = this.getPopupParent().getBoundingClientRect();
+        const sourceRect = params.eventSource.getBoundingClientRect();
+        const parentRect = this.getPopupParent().getBoundingClientRect();
 
         let y = sourceRect.top - parentRect.top;
 
         y = this.keepYWithinBounds(params, y);
 
-        let minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth : 200;
-        let widthOfParent = parentRect.right - parentRect.left;
-        let maxX = widthOfParent - minWidth;
+        const minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth : 200;
+        const widthOfParent = parentRect.right - parentRect.left;
+        const maxX = widthOfParent - minWidth;
 
         // the x position of the popup depends on RTL or LTR. for normal cases, LTR, we put the child popup
         // to the right, unless it doesn't fit and we then put it to the left. for RTL it's the other way around,
@@ -67,8 +69,8 @@ export class PopupService {
             }
         }
 
-        params.ePopup.style.left = x + "px";
-        params.ePopup.style.top = y + "px";
+        params.ePopup.style.left = `${x}px`;
+        params.ePopup.style.top = `${y}px`;
 
         function xRightPosition(): number {
             return sourceRect.right - parentRect.left - 2;
@@ -87,16 +89,45 @@ export class PopupService {
         ePopup: HTMLElement
     }): void {
 
-        let parentRect = this.getPopupParent().getBoundingClientRect();
-
         this.positionPopup({
             ePopup: params.ePopup,
-            x: params.mouseEvent.clientX - parentRect.left,
-            y: params.mouseEvent.clientY - parentRect.top,
+            x: this.calculateXPosition(params.mouseEvent.clientX),
+            y: this.calculateYPosition(params.mouseEvent.clientY),
             keepWithinBounds: true
         });
 
         this.callPostProcessPopup(params.ePopup, null, params.mouseEvent, params.type, params.column, params.rowNode);
+    }
+    private calculateXPosition(pointerX: number): number {
+        const eDocument = this.getDocument();
+        const popupParent = this.getPopupParent();
+        const parentRect = popupParent.getBoundingClientRect();
+        const documentRect = eDocument.documentElement.getBoundingClientRect();
+
+        let x: number;
+        if (popupParent === eDocument.body && documentRect.left) {
+            x = pointerX - documentRect.left - Math.abs(documentRect.left - parentRect.left);
+        } else {
+            x = pointerX - parentRect.left;
+        }
+
+        return x;
+    }
+
+    private calculateYPosition(pointerY: number): number {
+        const eDocument = this.getDocument();
+        const popupParent = this.getPopupParent();
+        const parentRect = popupParent.getBoundingClientRect();
+        const documentRect = eDocument.documentElement.getBoundingClientRect();
+
+        let y: number;
+        if (popupParent === eDocument.body && documentRect.top) {
+            y = pointerY - documentRect.top - Math.abs(documentRect.top - parentRect.top);
+        } else {
+            y = pointerY - (parentRect.top);
+        }
+
+        return y;
     }
 
     public positionPopupUnderComponent(params: {
@@ -199,13 +230,17 @@ export class PopupService {
             y = this.keepYWithinBounds(params, y);
         }
 
-        params.ePopup.style.left = x + "px";
-        params.ePopup.style.top = y + "px";
-
+        params.ePopup.style.left = `${x}px`;
+        params.ePopup.style.top = `${y}px`;
     }
 
     private keepYWithinBounds(params: { ePopup: HTMLElement, minHeight?: number }, y: number): number {
-        let parentRect = this.getPopupParent().getBoundingClientRect();
+        const eDocument = this.gridOptionsWrapper.getDocument();
+        const docElement = eDocument.documentElement;
+        const popupParent = this.getPopupParent();
+        const parentRect = popupParent.getBoundingClientRect();
+        const documentRect = eDocument.documentElement.getBoundingClientRect();
+        const isBody = popupParent === eDocument.body;
 
         let minHeight: number;
         if (params.minHeight && params.minHeight > 0) {
@@ -216,8 +251,11 @@ export class PopupService {
             minHeight = 200;
         }
 
-        let heightOfParent = parentRect.bottom - parentRect.top;
-        let maxY = heightOfParent - minHeight - 5;
+        let heightOfParent = isBody ? (docElement.clientHeight + docElement.scrollTop) : parentRect.bottom - parentRect.top;
+        if (isBody) {
+            heightOfParent -= Math.abs(documentRect.top - parentRect.top);
+        }
+        let maxY = heightOfParent - minHeight;
         if (y > maxY) { // move position left, back into view
             return maxY;
         } else if (y < 0) { // in case the popup has a negative value
@@ -229,7 +267,12 @@ export class PopupService {
     }
 
     private keepXWithinBounds(params: { minWidth?: number, ePopup: HTMLElement }, x: number): number {
-        let parentRect = this.getPopupParent().getBoundingClientRect();
+        const eDocument = this.gridOptionsWrapper.getDocument();
+        const docElement = eDocument.documentElement;
+        const popupParent = this.getPopupParent();
+        const parentRect = popupParent.getBoundingClientRect();
+        const documentRect = eDocument.documentElement.getBoundingClientRect();
+        const isBody = popupParent === eDocument.body;
 
         let minWidth: number;
         if (params.minWidth && params.minWidth > 0) {
@@ -240,7 +283,10 @@ export class PopupService {
             minWidth = 200;
         }
 
-        let widthOfParent = parentRect.right - parentRect.left;
+        let widthOfParent = isBody ? (docElement.clientWidth + docElement.scrollLeft) : parentRect.right - parentRect.left;
+        if (isBody) {
+            widthOfParent -= Math.abs(documentRect.left - parentRect.left);
+        }
         let maxX = widthOfParent - minWidth - 5;
         if (x > maxX) { // move position left, back into view
             return maxX;
@@ -335,7 +381,7 @@ export class PopupService {
 
         // if we add these listeners now, then the current mouse
         // click will be included, which we don't want
-        setTimeout(function () {
+        window.setTimeout(function() {
             if (closeOnEsc) {
                 eDocument.addEventListener('keydown', hidePopupOnKeyboardEvent);
             }
