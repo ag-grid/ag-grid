@@ -790,10 +790,6 @@ export class GridPanel extends Component {
         let vScrollTop = scrollPosition.top + heightOffset;
         let vScrollBottom = scrollPosition.bottom + heightOffset;
 
-        if (this.isHorizontalScrollShowing()) {
-            vScrollBottom -= this.scrollWidth;
-        }
-
         let viewportHeight = vScrollBottom - vScrollTop;
 
         let newScrollPosition: number = null;
