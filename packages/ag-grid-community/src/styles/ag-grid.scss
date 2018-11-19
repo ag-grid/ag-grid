@@ -498,35 +498,18 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     flex-grow: 1000;
 }
 
-.ag-full-width-viewport-wrapper {
-    height: 100%;
-    width: 100%;
-    display: inline-block;
-    pointer-events: none;
-    overflow: hidden;
+.ag-full-width-container {
     position: absolute;
     top: 0px;
     left: 0px;
-    box-sizing: border-box;
-}
-
-.ag-full-width-viewport {
-    box-sizing: border-box;
-    height: 100%;
-    // because the full width container is an overlay over the rest of the grid, we cannot
-    // have it consume mouse events, otherwise no mouse events would be allowed on the
-    // rest of the grid
-    pointer-events: none;
-    overflow-x: hidden;
-    overflow-y: auto;
-}
-
-.ag-full-width-container {
-    // if we don't put this in, the RHS will overflow into the viewports margin,
-    // no idea why, trial and error
-    overflow: hidden;
-    position: relative;
     width: 100%;
+    // turn off pointer events, because this container overlays the main row containers.
+    // so when user clicks on space between full width rows, we want the mouse clicks to
+    // pass onto the underlying container where the real rows are. eg if using full width
+    // for row grouping, the groups will be in the full width container, but when user
+    // opens a group the children are shown in the other containers - we want to make sure we
+    // don't block mouse clicks to those other containers with the children.
+    pointer-events: none;
 }
 
 .ag-floating-bottom-full-width-container {
