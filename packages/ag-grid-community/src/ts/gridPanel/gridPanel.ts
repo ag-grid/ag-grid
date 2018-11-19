@@ -264,11 +264,6 @@ export class GridPanel extends Component {
 
         this.addScrollListener();
 
-        if (this.gridOptionsWrapper.isSuppressHorizontalScroll()) {
-            this.eCenterViewport.style.overflowX = 'hidden';
-            this.eBodyHorizontalScrollViewport.style.overflowX = 'hidden';
-        }
-
         this.setupOverlay();
 
         if (this.gridOptionsWrapper.isRowModelDefault() && !this.gridOptionsWrapper.getRowData()) {
