@@ -33,15 +33,25 @@ export class PopupService {
         }
     }
 
-    public positionPopupForMenu(params: { eventSource: any, ePopup: HTMLElement }) {
+    public positionPopupForMenu(params: { eventSource: HTMLElement, ePopup: HTMLElement }) {
         const sourceRect = params.eventSource.getBoundingClientRect();
-        const parentRect = this.getPopupParent().getBoundingClientRect();
+        const eDocument = this.getDocument();
+        const popupParent = this.getPopupParent();
+
+        let parentRect:ClientRect;
+
+        if (popupParent === eDocument.body) {
+            parentRect = eDocument.documentElement.getBoundingClientRect();
+        } else {
+            parentRect = popupParent.getBoundingClientRect();
+        }
 
         let y = sourceRect.top - parentRect.top;
 
         y = this.keepYWithinBounds(params, y);
 
         const minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth : 200;
+        params.ePopup.style.minWidth = `${minWidth}px`;
         const widthOfParent = parentRect.right - parentRect.left;
         const maxX = widthOfParent - minWidth;
 
@@ -89,45 +99,26 @@ export class PopupService {
         ePopup: HTMLElement
     }): void {
 
+        const {x, y} = this.calculatePointerAlign(params.mouseEvent);
         this.positionPopup({
             ePopup: params.ePopup,
-            x: this.calculateXPosition(params.mouseEvent.clientX),
-            y: this.calculateYPosition(params.mouseEvent.clientY),
+            x,
+            y,
             keepWithinBounds: true
         });
 
         this.callPostProcessPopup(params.ePopup, null, params.mouseEvent, params.type, params.column, params.rowNode);
     }
-    private calculateXPosition(pointerX: number): number {
+    private calculatePointerAlign(e: MouseEvent | Touch): {x: number, y: number} {
         const eDocument = this.getDocument();
         const popupParent = this.getPopupParent();
         const parentRect = popupParent.getBoundingClientRect();
         const documentRect = eDocument.documentElement.getBoundingClientRect();
 
-        let x: number;
-        if (popupParent === eDocument.body && documentRect.left) {
-            x = pointerX - documentRect.left - Math.abs(documentRect.left - parentRect.left);
-        } else {
-            x = pointerX - parentRect.left;
-        }
-
-        return x;
-    }
-
-    private calculateYPosition(pointerY: number): number {
-        const eDocument = this.getDocument();
-        const popupParent = this.getPopupParent();
-        const parentRect = popupParent.getBoundingClientRect();
-        const documentRect = eDocument.documentElement.getBoundingClientRect();
-
-        let y: number;
-        if (popupParent === eDocument.body && documentRect.top) {
-            y = pointerY - documentRect.top - Math.abs(documentRect.top - parentRect.top);
-        } else {
-            y = pointerY - (parentRect.top);
-        }
-
-        return y;
+        return {
+            x: e.clientX - (popupParent === eDocument.body ? documentRect.left : parentRect.left),
+            y: e.clientY - (popupParent === eDocument.body ? documentRect.top : parentRect.top)
+        };
     }
 
     public positionPopupUnderComponent(params: {
@@ -143,8 +134,17 @@ export class PopupService {
         keepWithinBounds?: boolean
     }) {
 
-        let sourceRect = params.eventSource.getBoundingClientRect();
-        let parentRect = this.getPopupParent().getBoundingClientRect();
+        const sourceRect = params.eventSource.getBoundingClientRect();
+        const eDocument = this.getDocument();
+        const popupParent = this.getPopupParent();
+
+        let parentRect:ClientRect;
+
+        if (popupParent === eDocument.body) {
+            parentRect = eDocument.documentElement.getBoundingClientRect();
+        } else {
+            parentRect = popupParent.getBoundingClientRect();
+        }
 
         this.positionPopup({
             ePopup: params.ePopup,
@@ -187,8 +187,17 @@ export class PopupService {
         keepWithinBounds?: boolean
     }) {
 
-        let sourceRect = params.eventSource.getBoundingClientRect();
-        let parentRect = this.getPopupParent().getBoundingClientRect();
+        const sourceRect = params.eventSource.getBoundingClientRect();
+        const eDocument = this.getDocument();
+        const popupParent = this.getPopupParent();
+
+        let parentRect:ClientRect;
+
+        if (popupParent === eDocument.body) {
+            parentRect = eDocument.documentElement.getBoundingClientRect();
+        } else {
+            parentRect = popupParent.getBoundingClientRect();
+        }
 
         this.positionPopup({
             ePopup: params.ePopup,
@@ -241,28 +250,25 @@ export class PopupService {
         const parentRect = popupParent.getBoundingClientRect();
         const documentRect = eDocument.documentElement.getBoundingClientRect();
         const isBody = popupParent === eDocument.body;
+        const defaultPadding = 3;
 
-        let minHeight: number;
+        let minHeight = 200;
+        let diff = 0;
+
         if (params.minHeight && params.minHeight > 0) {
             minHeight = params.minHeight;
-        } else if (params.ePopup.clientHeight > 0) {
+        } else if (params.ePopup.offsetHeight > 0) {
             minHeight = params.ePopup.clientHeight;
-        } else {
-            minHeight = 200;
+            diff = _.getAbsoluteHeight(params.ePopup) - minHeight;
         }
 
-        let heightOfParent = isBody ? (docElement.clientHeight + docElement.scrollTop) : parentRect.bottom - parentRect.top;
+        let heightOfParent = isBody ? (_.getAbsoluteHeight(docElement) + docElement.scrollTop) : parentRect.bottom - parentRect.top;
         if (isBody) {
             heightOfParent -= Math.abs(documentRect.top - parentRect.top);
         }
-        let maxY = heightOfParent - minHeight;
-        if (y > maxY) { // move position left, back into view
-            return maxY;
-        } else if (y < 0) { // in case the popup has a negative value
-            return 0;
-        } else {
-            return y;
-        }
+        const maxY = heightOfParent - minHeight - diff - defaultPadding;
+
+        return Math.min(Math.max(y, 0), maxY);
 
     }
 
@@ -273,28 +279,26 @@ export class PopupService {
         const parentRect = popupParent.getBoundingClientRect();
         const documentRect = eDocument.documentElement.getBoundingClientRect();
         const isBody = popupParent === eDocument.body;
+        const defaultPadding = 3;
 
-        let minWidth: number;
+        let minWidth = 200;
+        let diff = 0;
+
         if (params.minWidth && params.minWidth > 0) {
             minWidth = params.minWidth;
         } else if (params.ePopup.clientWidth > 0) {
             minWidth = params.ePopup.clientWidth;
-        } else {
-            minWidth = 200;
+            params.ePopup.style.minWidth = `${minWidth}px`;
+            diff = _.getAbsoluteWidth(params.ePopup) - minWidth;
         }
 
-        let widthOfParent = isBody ? (docElement.clientWidth + docElement.scrollLeft) : parentRect.right - parentRect.left;
+        let widthOfParent = isBody ? (_.getAbsoluteWidth(docElement) + docElement.scrollLeft) : parentRect.right - parentRect.left;
         if (isBody) {
             widthOfParent -= Math.abs(documentRect.left - parentRect.left);
         }
-        let maxX = widthOfParent - minWidth - 5;
-        if (x > maxX) { // move position left, back into view
-            return maxX;
-        } else if (x < 0) { // in case the popup has a negative value
-            return 0;
-        } else {
-            return x;
-        }
+        const maxX = widthOfParent - minWidth - diff - defaultPadding;
+
+        return Math.min(Math.max(x, 0), maxX);
     }
 
     //adds an element to a div, but also listens to background checking for clicks,
