@@ -49,8 +49,8 @@ export class DragService {
     }
 
     private removeListener(dragSourceAndListener: DragSourceAndListener): void {
-        let element = dragSourceAndListener.dragSource.eElement;
-        let mouseDownListener = dragSourceAndListener.mouseDownListener;
+        const element = dragSourceAndListener.dragSource.eElement;
+        const mouseDownListener = dragSourceAndListener.mouseDownListener;
         element.removeEventListener('mousedown', mouseDownListener);
 
         // remove touch listener only if it exists
@@ -61,7 +61,7 @@ export class DragService {
     }
 
     public removeDragSource(params: DragListenerParams): void {
-        let dragSourceAndListener = _.find( this.dragSources, item => item.dragSource === params);
+        const dragSourceAndListener = _.find( this.dragSources, item => item.dragSource === params);
 
         if (!dragSourceAndListener) { return; }
 
@@ -70,25 +70,22 @@ export class DragService {
     }
 
     private setNoSelectToBody(noSelect: boolean): void {
-        let usrDocument = this.gridOptionsWrapper.getDocument();
-        let eBody = <HTMLElement> usrDocument.querySelector('body');
+        const eDocument = this.gridOptionsWrapper.getDocument();
+        const eBody = eDocument.querySelector('body') as HTMLElement;
         if (_.exists(eBody)) {
             _.addOrRemoveCssClass(eBody, 'ag-body-no-select', noSelect);
         }
     }
 
     public addDragSource(params: DragListenerParams, includeTouch: boolean = false): void {
-
-        let mouseListener = this.onMouseDown.bind(this, params);
+        const mouseListener = this.onMouseDown.bind(this, params);
         params.eElement.addEventListener('mousedown', mouseListener);
 
-        let touchListener: (touchEvent: TouchEvent)=>void = null;
+        let touchListener: (touchEvent: TouchEvent) => void = null;
 
-        let suppressTouch = this.gridOptionsWrapper.isSuppressTouch();
+        const suppressTouch = this.gridOptionsWrapper.isSuppressTouch();
 
-        let reallyIncludeTouch = includeTouch && !suppressTouch;
-
-        if (reallyIncludeTouch) {
+        if (includeTouch && !suppressTouch) {
             touchListener = this.onTouchStart.bind(this, params);
             params.eElement.addEventListener('touchstart', touchListener, <any>{passive:false});
         }
@@ -103,11 +100,10 @@ export class DragService {
 
     // gets called whenever mouse down on any drag source
     private onTouchStart(params: DragListenerParams, touchEvent: TouchEvent): void {
-
         this.currentDragParams = params;
         this.dragging = false;
 
-        let touch = touchEvent.touches[0];
+        const touch = touchEvent.touches[0];
 
         this.touchLastTime = touch;
         this.touchStart = touch;
@@ -120,21 +116,20 @@ export class DragService {
         params.eElement.addEventListener('touchend', this.onTouchEndListener, <any>{passive:true});
         params.eElement.addEventListener('touchcancel', this.onTouchEndListener, <any>{passive:true});
 
-        this.dragEndFunctions.push( ()=> {
+        this.dragEndFunctions.push(()=> {
             params.eElement.removeEventListener('touchmove', this.onTouchMoveListener, <any>{passive:true});
             params.eElement.removeEventListener('touchend', this.onTouchEndListener, <any>{passive:true});
             params.eElement.removeEventListener('touchcancel', this.onTouchEndListener, <any>{passive:true});
         });
 
         // see if we want to start dragging straight away
-        if (params.dragStartPixels===0) {
+        if (params.dragStartPixels === 0) {
             this.onCommonMove(touch, this.touchStart);
         }
     }
 
     // gets called whenever mouse down on any drag source
     private onMouseDown(params: DragListenerParams, mouseEvent: MouseEvent): void {
-
         // we ignore when shift key is pressed. this is for the range selection, as when
         // user shift-clicks a cell, this should not be interpreted as the start of a drag.
         // if (mouseEvent.shiftKey) { return; }
@@ -145,11 +140,11 @@ export class DragService {
         // if there are two elements with parent / child relationship, and both are draggable,
         // when we drag the child, we should NOT drag the parent. an example of this is row moving
         // and range selection - row moving should get preference when use drags the rowDrag component.
-        if ((<any>mouseEvent)._alreadyProcessedByDragService) { return; }
-        (<any>mouseEvent)._alreadyProcessedByDragService = true;
+        if ((mouseEvent as any)._alreadyProcessedByDragService) { return; }
+        (mouseEvent as any)._alreadyProcessedByDragService = true;
 
         // only interested in left button clicks
-        if (mouseEvent.button!==0) { return; }
+        if (mouseEvent.button !== 0) { return; }
 
         this.currentDragParams = params;
         this.dragging = false;
@@ -157,21 +152,20 @@ export class DragService {
         this.mouseEventLastTime = mouseEvent;
         this.mouseStartEvent = mouseEvent;
 
-        let usrDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsWrapper.getDocument();
 
         // we temporally add these listeners, for the duration of the drag, they
         // are removed in mouseup handling.
-
-        usrDocument.addEventListener('mousemove', this.onMouseMoveListener);
-        usrDocument.addEventListener('mouseup', this.onMouseUpListener);
+        eDocument.addEventListener('mousemove', this.onMouseMoveListener);
+        eDocument.addEventListener('mouseup', this.onMouseUpListener);
 
         this.dragEndFunctions.push( ()=> {
-            usrDocument.removeEventListener('mousemove', this.onMouseMoveListener);
-            usrDocument.removeEventListener('mouseup', this.onMouseUpListener);
+            eDocument.removeEventListener('mousemove', this.onMouseMoveListener);
+            eDocument.removeEventListener('mouseup', this.onMouseUpListener);
         });
 
-        // see if we want to start dragging straight away
-        if (params.dragStartPixels===0) {
+        //see if we want to start dragging straight away
+        if (params.dragStartPixels === 0) {
             this.onMouseMove(mouseEvent);
         }
     }
@@ -180,48 +174,41 @@ export class DragService {
     // we only start dragging after X pixels so this allows us to know if we should start dragging yet.
     private isEventNearStartEvent(currentEvent: MouseEvent|Touch, startEvent: MouseEvent|Touch): boolean {
         // by default, we wait 4 pixels before starting the drag
-        let requiredPixelDiff = _.exists(this.currentDragParams.dragStartPixels) ? this.currentDragParams.dragStartPixels : 4;
+        const {dragStartPixels} = this.currentDragParams;
+        const requiredPixelDiff = _.exists(dragStartPixels) ? dragStartPixels : 4;
         return _.areEventsNear(currentEvent, startEvent, requiredPixelDiff);
     }
 
     private getFirstActiveTouch(touchList: TouchList): Touch {
-        for (let i = 0; i<touchList.length; i++) {
-            let matches = touchList[i].identifier === this.touchStart.identifier;
-            if (matches) {
+        for (let i = 0; i < touchList.length; i++) {
+            if (touchList[i].identifier === this.touchStart.identifier) {
                 return touchList[i];
             }
         }
-
         return null;
     }
 
     private onCommonMove(currentEvent: MouseEvent|Touch, startEvent: MouseEvent|Touch): void {
-
         if (!this.dragging) {
             // if mouse hasn't travelled from the start position enough, do nothing
-            let toEarlyToDrag = !this.dragging && this.isEventNearStartEvent(currentEvent, startEvent);
-            if (toEarlyToDrag) {
-                return;
-            } else {
-                // alert(`started`);
-                this.dragging = true;
-                let event: DragStartedEvent = {
-                    type: Events.EVENT_DRAG_STARTED,
-                    api: this.gridApi,
-                    columnApi: this.columnApi
-                };
-                this.eventService.dispatchEvent(event);
-                this.currentDragParams.onDragStart(startEvent);
-                this.setNoSelectToBody(true);
-            }
+            if (!this.dragging && this.isEventNearStartEvent(currentEvent, startEvent)) { return; }
+
+            this.dragging = true;
+            let event: DragStartedEvent = {
+                type: Events.EVENT_DRAG_STARTED,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+            this.eventService.dispatchEvent(event);
+            this.currentDragParams.onDragStart(startEvent);
+            this.setNoSelectToBody(true);
         }
 
         this.currentDragParams.onDragging(currentEvent);
     }
 
     private onTouchMove(touchEvent: TouchEvent): void {
-
-        let touch = this.getFirstActiveTouch(touchEvent.touches);
+        const touch = this.getFirstActiveTouch(touchEvent.touches);
         if (!touch) { return; }
 
         // this.___statusPanel.setInfoText(Math.random() + ' onTouchMove preventDefault stopPropagation');
@@ -271,7 +258,6 @@ export class DragService {
     }
 
     public onUpCommon(eventOrTouch: MouseEvent|Touch): void {
-
         if (this.dragging) {
             this.dragging = false;
             this.currentDragParams.onDragStop(eventOrTouch);

@@ -17,13 +17,12 @@ export class ToolPanelWrapper extends Component implements IComponent<ToolPanelW
 
     private componentToResize: Component;
 
-    init (params: ToolPanelWrapperParams): void{
+    init (params: ToolPanelWrapperParams): void {
         this.params = params;
         this.componentToResize = params.innerComp;
         this.setTemplate(ToolPanelWrapper.TEMPLATE);
 
-
-        let resizeBar = this.componentResolver.createInternalAgGridComponent(HorizontalResizeComp, {});
+        const resizeBar = this.componentResolver.createInternalAgGridComponent(HorizontalResizeComp, {});
         resizeBar.props = {
             componentToResize: this
         };

@@ -27,6 +27,7 @@ export class HorizontalResizeComp extends Component {
     private postConstruct(): void {
         let finishedWithResizeFunc = this.horizontalResizeService.addResizeBar({
             eResizeBar: this.getGui(),
+            dragStartPixels: 4,
             onResizeStart: this.onResizeStart.bind(this),
             onResizing: this.onResizing.bind(this),
             onResizeEnd: this.onResizing.bind(this)

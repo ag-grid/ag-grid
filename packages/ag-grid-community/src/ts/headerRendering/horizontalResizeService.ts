@@ -4,9 +4,10 @@ import {DragListenerParams, DragService} from "../dragAndDrop/dragService";
 
 export interface HorizontalResizeParams {
     eResizeBar: HTMLElement;
-    onResizeStart: (shiftKey: boolean)=>void;
-    onResizing: (delta: number)=>void;
-    onResizeEnd: (delta: number)=>void;
+    dragStartPixels?: number;
+    onResizeStart: (shiftKey: boolean) => void;
+    onResizing: (delta: number) => void;
+    onResizeEnd: (delta: number) => void;
 }
 
 @Bean('horizontalResizeService')
@@ -17,18 +18,16 @@ export class HorizontalResizeService {
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
     private draggingStarted: boolean;
-
     private dragStartX: number;
-
     private resizeAmount: number;
 
     private oldBodyCursor: string;
     private oldMsUserSelect: string;
     private oldWebkitUserSelect: string;
 
-    public addResizeBar(params: HorizontalResizeParams): ()=>void {
+    public addResizeBar(params: HorizontalResizeParams): () => void {
         let dragSource: DragListenerParams = {
-            dragStartPixels: 0,
+            dragStartPixels: params.dragStartPixels || 0,
             eElement: params.eResizeBar,
             onDragStart: this.onDragStart.bind(this, params),
             onDragStop: this.onDragStop.bind(this, params),
@@ -39,7 +38,7 @@ export class HorizontalResizeService {
 
         // we pass remove func back to the caller, so call can tell us when they
         // are finished, and then we remove the listener from the drag source
-        let finishedWithResizeFunc = ()=> this.dragService.removeDragSource(dragSource);
+        let finishedWithResizeFunc = () => this.dragService.removeDragSource(dragSource);
 
         return finishedWithResizeFunc;
     }

@@ -103,7 +103,7 @@ export class HeaderContainer {
                 width += this.scrollWidth;
             }
 
-            this.eContainer.style.width = width + 'px';
+            _.setFixedWidth(this.eContainer, width);
         }
     }
 
