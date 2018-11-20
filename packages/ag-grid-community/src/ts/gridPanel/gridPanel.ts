@@ -1412,7 +1412,7 @@ export class GridPanel extends Component {
         return _.getScrollLeft(this.eCenterViewport, this.enableRtl);
     }
 
-    public setCenterViewportScrollLeft(value: number): void {
+    private setCenterViewportScrollLeft(value: number): void {
         // we defer to a util, as how you calculated scrollLeft when doing RTL depends on the browser
         _.setScrollLeft(this.eCenterViewport, value, this.enableRtl);
     }
