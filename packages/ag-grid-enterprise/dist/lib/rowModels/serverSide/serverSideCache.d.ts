@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 import { ColumnVO, IServerSideCache, IServerSideDatasource, NumberSequence, RowNode, RowNodeCache, RowNodeCacheParams, RowBounds } from "ag-grid-community";
 import { ServerSideBlock } from "./serverSideBlock";
 export interface ServerSideCacheParams extends RowNodeCacheParams {

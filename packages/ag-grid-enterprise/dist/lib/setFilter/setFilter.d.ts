@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 import { BaseFilter, IDoesFilterPassParams, ISetFilterParams, SerializedSetFilter } from "ag-grid-community";
 export declare class SetFilter extends BaseFilter<string, ISetFilterParams, string[] | SerializedSetFilter | null> {
     private model;

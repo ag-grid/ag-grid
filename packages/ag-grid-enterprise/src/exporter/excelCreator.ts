@@ -67,7 +67,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
     }
 
     public getDataAsExcelXml(params?: ExcelExportParams): string {
-        return this.getData(params);
+        return this.getData(_.assign({}, params, { exportMode: 'xml' }));
     }
 
     public getMimeType(): string {

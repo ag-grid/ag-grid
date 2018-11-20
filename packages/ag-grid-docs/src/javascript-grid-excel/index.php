@@ -35,8 +35,14 @@ include '../documentation-main/documentation_header.php';
         </p>
 
         <ul class="content">
-            <li><code>exportDataAsExcel(params)</code>: Does the full export and triggers the download of the file in the browser automatically so the user can open immediately.</li>
-            <li><code>getDataAsExcel(params)</code>: Returns the Excel XML that represents the export performed by <code>exportDataAsExcel(params)</code>. This can then be used by your web application, e.g. to send the data to the server for storing or sending via email etc.</li>
+            <li>
+                <code>exportDataAsExcel(params)</code>: Does the full export and triggers the download of the file in the browser automatically so the user can open immediately.
+            </li>
+            <li>
+                <code>getDataAsExcel(params)</code>: Returns the Excel XML that represents the export performed by <code>exportDataAsExcel(params)</code>. 
+                <br/>This can then be used by your web application, e.g. to send the data to the server for storing or sending via email etc.
+                <br/><strong>Note: </strong> This forces <code>exportMode</code> to <strong>xml</strong>.
+            </li>
         </ul>
 
         <p>

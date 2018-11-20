@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 import { NumberSequence, RowNodeBlock, RowNode, RowBounds } from "ag-grid-community";
 import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
 export declare class ServerSideBlock extends RowNodeBlock {

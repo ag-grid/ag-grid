@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -130,7 +130,7 @@ __webpack_require__(277);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var filtersToolPanel_1 = __webpack_require__(2);
@@ -271,7 +271,7 @@ ag_grid_community_1.Grid.setEnterpriseDefaultComponents([
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -404,7 +404,7 @@ exports.FiltersToolPanel = FiltersToolPanel;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {/**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -704,7 +704,7 @@ module.exports = g;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -1016,7 +1016,7 @@ exports.ColumnFactory = ColumnFactory;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -2328,7 +2328,7 @@ exports.GridOptionsWrapper = GridOptionsWrapper;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -2530,7 +2530,7 @@ exports.EventService = EventService;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -2601,7 +2601,7 @@ exports.Logger = Logger;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -2954,7 +2954,7 @@ function getOrCreateProps(target) {
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -3074,6 +3074,16 @@ var Utils = /** @class */ (function () {
             }
             return currentObject;
         }
+    };
+    Utils.getAbsoluteHeight = function (el) {
+        var styles = window.getComputedStyle(el);
+        var margin = parseFloat(styles['marginTop']) + parseFloat(styles['marginBottom']);
+        return Math.ceil(el.offsetHeight + margin);
+    };
+    Utils.getAbsoluteWidth = function (el) {
+        var styles = window.getComputedStyle(el);
+        var margin = parseFloat(styles['marginLeft']) + parseFloat(styles['marginRight']);
+        return Math.ceil(el.offsetWidth + margin);
     };
     Utils.getScrollLeft = function (element, rtl) {
         var scrollLeft = element.scrollLeft;
@@ -4756,7 +4766,7 @@ exports.Promise = Promise;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -4823,7 +4833,7 @@ exports.Constants = Constants;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -5042,7 +5052,7 @@ function checkForDeprecated(changes) {
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -5059,7 +5069,7 @@ exports.Events = eventKeys_1.Events;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -5193,7 +5203,7 @@ exports.Events = Events;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -5295,7 +5305,7 @@ exports.PropertyKeys = PropertyKeys;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -6465,7 +6475,7 @@ exports.GridApi = GridApi;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -6731,7 +6741,7 @@ exports.CsvCreator = CsvCreator;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -7038,7 +7048,7 @@ var RowType;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9542,7 +9552,7 @@ exports.ColumnController = ColumnController;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9839,7 +9849,7 @@ exports.ColumnGroup = ColumnGroup;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10429,7 +10439,7 @@ exports.Column = Column;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10588,7 +10598,7 @@ exports.ColumnUtils = ColumnUtils;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10766,7 +10776,7 @@ exports.OriginalColumnGroup = OriginalColumnGroup;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10936,7 +10946,7 @@ exports.ColumnApi = ColumnApi;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11039,7 +11049,7 @@ exports.ExpressionService = ExpressionService;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11251,7 +11261,7 @@ exports.DisplayedGroupCreator = DisplayedGroupCreator;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11376,7 +11386,7 @@ exports.AutoWidthCalculator = AutoWidthCalculator;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12507,7 +12517,7 @@ exports.RowRenderer = RowRenderer;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12600,7 +12610,7 @@ exports.TemplateService = TemplateService;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12879,7 +12889,7 @@ exports.ValueService = ValueService;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12958,7 +12968,7 @@ exports.ValueCache = ValueCache;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14250,7 +14260,7 @@ exports.RowComp = RowComp;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14335,7 +14345,7 @@ var CellComp = /** @class */ (function (_super) {
         // hey, this looks like React!!!
         templateParts.push("<div");
         templateParts.push(" tabindex=\"-1\"");
-        templateParts.push(" unselectable=\"on\""); // THIS IS FOR IE only so the text is not seleragle with mouse drage
+        templateParts.push(" unselectable=\"on\""); // THIS IS FOR IE ONLY so text selection doesn't bubble outside of the grid
         templateParts.push(" role=\"gridcell\"");
         templateParts.push(" comp-id=\"" + this.getCompId() + "\" ");
         templateParts.push(" col-id=\"" + colIdSanitised + "\"");
@@ -15405,13 +15415,21 @@ var CellComp = /** @class */ (function (_super) {
         event.preventDefault();
     };
     CellComp.prototype.onMouseDown = function (mouseEvent) {
-        // we pass false to focusCell, as we don't want the cell to focus
-        // also get the browser focus. if we did, then the cellRenderer could
-        // have a text field in it, for example, and as the user clicks on the
-        // text field, the text field, the focus doesn't get to the text
-        // field, instead to goes to the div behind, making it impossible to
-        // select the text field.
-        this.focusCell(false);
+        // we only need to pass true to focusCell in when the browser is IE
+        // and we are trying to focus a cell (has ag-cell class), otherwise
+        // we pass false, as we don't want the cell to focus also get the browser
+        // focus. if we did, then the cellRenderer could have a text field in it,
+        // for example, and as the user clicks on the text field, the text field,
+        // the focus doesn't get to the text field, instead to goes to the div
+        // behind, making it impossible to select the text field.
+        var forceBrowserFocus = false;
+        if (utils_1._.isBrowserIE()) {
+            var target = mouseEvent.target;
+            if (target.classList.contains('ag-cell')) {
+                forceBrowserFocus = true;
+            }
+        }
+        this.focusCell(forceBrowserFocus);
         // if it's a right click, then if the cell is already in range,
         // don't change the range, however if the cell is not in a range,
         // we set a new range
@@ -15768,7 +15786,7 @@ exports.CellComp = CellComp;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16399,7 +16417,7 @@ exports.RowNode = RowNode;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16738,7 +16756,7 @@ exports.SelectionController = SelectionController;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16786,7 +16804,7 @@ exports.GridCell = GridCell;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16864,7 +16882,7 @@ exports.GridRow = GridRow;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17216,7 +17234,7 @@ exports.Component = Component;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17312,7 +17330,7 @@ exports.BeanStub = BeanStub;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17461,7 +17479,7 @@ exports.CheckboxSelectionComponent = CheckboxSelectionComponent;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17671,7 +17689,7 @@ var ManagedVisibilityStrategy = /** @class */ (function (_super) {
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18073,7 +18091,7 @@ exports.DragAndDropService = DragAndDropService;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18367,7 +18385,7 @@ exports.DragService = DragService;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18489,7 +18507,7 @@ exports.Environment = Environment;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18573,7 +18591,7 @@ function getOrCreateProps(target, instanceName) {
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18891,7 +18909,7 @@ exports.GridCore = GridCore;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19467,7 +19485,7 @@ exports.FilterManager = FilterManager;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19492,6 +19510,9 @@ var PopupService = /** @class */ (function () {
     function PopupService() {
         this.activePopupElements = [];
     }
+    PopupService.prototype.getDocument = function () {
+        return this.gridOptionsWrapper.getDocument();
+    };
     PopupService.prototype.getPopupParent = function () {
         var ePopupParent = this.gridOptionsWrapper.getPopupParent();
         if (ePopupParent) {
@@ -19499,16 +19520,24 @@ var PopupService = /** @class */ (function () {
             return ePopupParent;
         }
         else {
-            var eDocument = this.gridOptionsWrapper.getDocument();
-            return eDocument.body;
+            return this.getDocument().body;
         }
     };
     PopupService.prototype.positionPopupForMenu = function (params) {
         var sourceRect = params.eventSource.getBoundingClientRect();
-        var parentRect = this.getPopupParent().getBoundingClientRect();
+        var eDocument = this.getDocument();
+        var popupParent = this.getPopupParent();
+        var parentRect;
+        if (popupParent === eDocument.body) {
+            parentRect = eDocument.documentElement.getBoundingClientRect();
+        }
+        else {
+            parentRect = popupParent.getBoundingClientRect();
+        }
         var y = sourceRect.top - parentRect.top;
         y = this.keepYWithinBounds(params, y);
         var minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth : 200;
+        params.ePopup.style.minWidth = minWidth + "px";
         var widthOfParent = parentRect.right - parentRect.left;
         var maxX = widthOfParent - minWidth;
         // the x position of the popup depends on RTL or LTR. for normal cases, LTR, we put the child popup
@@ -19545,18 +19574,36 @@ var PopupService = /** @class */ (function () {
         }
     };
     PopupService.prototype.positionPopupUnderMouseEvent = function (params) {
-        var parentRect = this.getPopupParent().getBoundingClientRect();
+        var _a = this.calculatePointerAlign(params.mouseEvent), x = _a.x, y = _a.y;
         this.positionPopup({
             ePopup: params.ePopup,
-            x: params.mouseEvent.clientX - parentRect.left,
-            y: params.mouseEvent.clientY - parentRect.top,
+            x: x,
+            y: y,
             keepWithinBounds: true
         });
         this.callPostProcessPopup(params.ePopup, null, params.mouseEvent, params.type, params.column, params.rowNode);
     };
+    PopupService.prototype.calculatePointerAlign = function (e) {
+        var eDocument = this.getDocument();
+        var popupParent = this.getPopupParent();
+        var parentRect = popupParent.getBoundingClientRect();
+        var documentRect = eDocument.documentElement.getBoundingClientRect();
+        return {
+            x: e.clientX - (popupParent === eDocument.body ? documentRect.left : parentRect.left),
+            y: e.clientY - (popupParent === eDocument.body ? documentRect.top : parentRect.top)
+        };
+    };
     PopupService.prototype.positionPopupUnderComponent = function (params) {
         var sourceRect = params.eventSource.getBoundingClientRect();
-        var parentRect = this.getPopupParent().getBoundingClientRect();
+        var eDocument = this.getDocument();
+        var popupParent = this.getPopupParent();
+        var parentRect;
+        if (popupParent === eDocument.body) {
+            parentRect = eDocument.documentElement.getBoundingClientRect();
+        }
+        else {
+            parentRect = popupParent.getBoundingClientRect();
+        }
         this.positionPopup({
             ePopup: params.ePopup,
             minWidth: params.minWidth,
@@ -19585,7 +19632,15 @@ var PopupService = /** @class */ (function () {
     };
     PopupService.prototype.positionPopupOverComponent = function (params) {
         var sourceRect = params.eventSource.getBoundingClientRect();
-        var parentRect = this.getPopupParent().getBoundingClientRect();
+        var eDocument = this.getDocument();
+        var popupParent = this.getPopupParent();
+        var parentRect;
+        if (popupParent === eDocument.body) {
+            parentRect = eDocument.documentElement.getBoundingClientRect();
+        }
+        else {
+            parentRect = popupParent.getBoundingClientRect();
+        }
         this.positionPopup({
             ePopup: params.ePopup,
             minWidth: params.minWidth,
@@ -19615,52 +19670,53 @@ var PopupService = /** @class */ (function () {
         params.ePopup.style.top = y + "px";
     };
     PopupService.prototype.keepYWithinBounds = function (params, y) {
-        var parentRect = this.getPopupParent().getBoundingClientRect();
-        var minHeight;
+        var eDocument = this.gridOptionsWrapper.getDocument();
+        var docElement = eDocument.documentElement;
+        var popupParent = this.getPopupParent();
+        var parentRect = popupParent.getBoundingClientRect();
+        var documentRect = eDocument.documentElement.getBoundingClientRect();
+        var isBody = popupParent === eDocument.body;
+        var defaultPadding = 3;
+        var minHeight = 200;
+        var diff = 0;
         if (params.minHeight && params.minHeight > 0) {
             minHeight = params.minHeight;
         }
-        else if (params.ePopup.clientHeight > 0) {
+        else if (params.ePopup.offsetHeight > 0) {
             minHeight = params.ePopup.clientHeight;
+            diff = utils_1.Utils.getAbsoluteHeight(params.ePopup) - minHeight;
         }
-        else {
-            minHeight = 200;
+        var heightOfParent = isBody ? (utils_1.Utils.getAbsoluteHeight(docElement) + docElement.scrollTop) : parentRect.bottom - parentRect.top;
+        if (isBody) {
+            heightOfParent -= Math.abs(documentRect.top - parentRect.top);
         }
-        var heightOfParent = parentRect.bottom - parentRect.top;
-        var maxY = heightOfParent - minHeight - 5;
-        if (y > maxY) { // move position left, back into view
-            return maxY;
-        }
-        else if (y < 0) { // in case the popup has a negative value
-            return 0;
-        }
-        else {
-            return y;
-        }
+        var maxY = heightOfParent - minHeight - diff - defaultPadding;
+        return Math.min(Math.max(y, 0), maxY);
     };
     PopupService.prototype.keepXWithinBounds = function (params, x) {
-        var parentRect = this.getPopupParent().getBoundingClientRect();
-        var minWidth;
+        var eDocument = this.gridOptionsWrapper.getDocument();
+        var docElement = eDocument.documentElement;
+        var popupParent = this.getPopupParent();
+        var parentRect = popupParent.getBoundingClientRect();
+        var documentRect = eDocument.documentElement.getBoundingClientRect();
+        var isBody = popupParent === eDocument.body;
+        var defaultPadding = 3;
+        var minWidth = 200;
+        var diff = 0;
         if (params.minWidth && params.minWidth > 0) {
             minWidth = params.minWidth;
         }
         else if (params.ePopup.clientWidth > 0) {
             minWidth = params.ePopup.clientWidth;
+            params.ePopup.style.minWidth = minWidth + "px";
+            diff = utils_1.Utils.getAbsoluteWidth(params.ePopup) - minWidth;
         }
-        else {
-            minWidth = 200;
+        var widthOfParent = isBody ? (utils_1.Utils.getAbsoluteWidth(docElement) + docElement.scrollLeft) : parentRect.right - parentRect.left;
+        if (isBody) {
+            widthOfParent -= Math.abs(documentRect.left - parentRect.left);
         }
-        var widthOfParent = parentRect.right - parentRect.left;
-        var maxX = widthOfParent - minWidth - 5;
-        if (x > maxX) { // move position left, back into view
-            return maxX;
-        }
-        else if (x < 0) { // in case the popup has a negative value
-            return 0;
-        }
-        else {
-            return x;
-        }
+        var maxX = widthOfParent - minWidth - diff - defaultPadding;
+        return Math.min(Math.max(x, 0), maxX);
     };
     //adds an element to a div, but also listens to background checking for clicks,
     //so that when the background is clicked, the child is removed again, giving
@@ -19730,7 +19786,7 @@ var PopupService = /** @class */ (function () {
         };
         // if we add these listeners now, then the current mouse
         // click will be included, which we don't want
-        setTimeout(function () {
+        window.setTimeout(function () {
             if (closeOnEsc) {
                 eDocument.addEventListener('keydown', hidePopupOnKeyboardEvent);
             }
@@ -19811,7 +19867,7 @@ exports.PopupService = PopupService;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20155,7 +20211,7 @@ exports.ComponentResolver = ComponentResolver;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20407,7 +20463,7 @@ exports.ComponentProvider = ComponentProvider;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20531,7 +20587,7 @@ exports.TextCellEditor = TextCellEditor;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20844,7 +20900,7 @@ exports.DefaultDateComponent = DefaultDateComponent;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21379,7 +21435,7 @@ exports.ScalarBaseFilter = ScalarBaseFilter;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21563,7 +21619,7 @@ exports.ComponentRecipes = ComponentRecipes;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21955,7 +22011,7 @@ exports.ReadModelAsStringFloatingFilterComp = ReadModelAsStringFloatingFilterCom
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22138,7 +22194,7 @@ exports.EmptyFloatingFilterWrapperComp = EmptyFloatingFilterWrapperComp;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22261,7 +22317,7 @@ exports.SetLeftFeature = SetLeftFeature;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22457,7 +22513,7 @@ exports.Beans = Beans;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22570,7 +22626,7 @@ exports.ColumnAnimationService = ColumnAnimationService;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22733,7 +22789,7 @@ exports.FocusedCellController = FocusedCellController;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22826,7 +22882,7 @@ exports.CellEditorFactory = CellEditorFactory;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22940,7 +22996,7 @@ exports.PopupEditorWrapper = PopupEditorWrapper;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23028,7 +23084,7 @@ exports.CellRendererFactory = CellRendererFactory;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23128,7 +23184,7 @@ exports.AnimateSlideCellRenderer = AnimateSlideCellRenderer;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23241,7 +23297,7 @@ exports.AnimateShowChangeCellRenderer = AnimateShowChangeCellRenderer;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23700,7 +23756,7 @@ exports.GroupCellRenderer = GroupCellRenderer;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23859,7 +23915,7 @@ exports.CellRendererService = CellRendererService;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23942,7 +23998,7 @@ exports.ValueFormatterService = ValueFormatterService;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24038,7 +24094,7 @@ exports.MouseEventService = MouseEventService;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24124,7 +24180,7 @@ exports.StylingService = StylingService;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24211,7 +24267,7 @@ exports.ColumnHoverService = ColumnHoverService;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24528,7 +24584,7 @@ exports.PaginationProxy = PaginationProxy;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24616,7 +24672,7 @@ exports.ScrollVisibleService = ScrollVisibleService;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24773,7 +24829,7 @@ exports.AnimationFrameService = AnimationFrameService;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24827,7 +24883,7 @@ var LinkedListItem = /** @class */ (function () {
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25043,7 +25099,7 @@ exports.SortController = SortController;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25198,7 +25254,7 @@ exports.HeightScaler = HeightScaler;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25263,7 +25319,7 @@ exports.HoverFeature = HoverFeature;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25376,7 +25432,7 @@ exports.OverlayWrapperComponent = OverlayWrapperComponent;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25674,7 +25730,7 @@ exports.HeaderComp = HeaderComp;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25815,7 +25871,7 @@ exports.TouchListener = TouchListener;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25960,7 +26016,7 @@ exports.HeaderGroupComp = HeaderGroupComp;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26065,7 +26121,7 @@ exports.SelectCellEditor = SelectCellEditor;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26105,7 +26161,7 @@ exports.PopupTextCellEditor = PopupTextCellEditor;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26145,7 +26201,7 @@ exports.PopupSelectCellEditor = PopupSelectCellEditor;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26223,7 +26279,7 @@ exports.LargeTextCellEditor = LargeTextCellEditor;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26458,7 +26514,7 @@ exports.TextFilter = TextFilter;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26698,7 +26754,7 @@ exports.NumberFilter = NumberFilter;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26758,7 +26814,7 @@ exports.LoadingOverlayComponent = LoadingOverlayComponent;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26818,7 +26874,7 @@ exports.NoRowsOverlayComponent = NoRowsOverlayComponent;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26906,7 +26962,7 @@ exports.AgComponentUtils = AgComponentUtils;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27040,7 +27096,7 @@ exports.ComponentMetadataProvider = ComponentMetadataProvider;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28599,7 +28655,7 @@ exports.GridPanel = GridPanel;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28746,7 +28802,7 @@ exports.RowContainerComponent = RowContainerComponent;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28982,7 +29038,7 @@ exports.AlignedGridsService = AlignedGridsService;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29161,7 +29217,7 @@ exports.PinnedRowModel = PinnedRowModel;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29410,7 +29466,7 @@ exports.NavigationService = NavigationService;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29631,7 +29687,7 @@ exports.RowDragFeature = RowDragFeature;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29728,7 +29784,7 @@ exports.AutoHeightCalculator = AutoHeightCalculator;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29923,7 +29979,7 @@ exports.HeaderRootComp = HeaderRootComp;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30106,7 +30162,7 @@ exports.HeaderContainer = HeaderContainer;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30473,7 +30529,7 @@ exports.HeaderRowComp = HeaderRowComp;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30816,7 +30872,7 @@ exports.HeaderWrapperComp = HeaderWrapperComp;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30910,7 +30966,7 @@ exports.HorizontalResizeService = HorizontalResizeService;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30975,7 +31031,7 @@ exports.CssClassApplier = CssClassApplier;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31164,7 +31220,7 @@ exports.AgCheckbox = AgCheckbox;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31395,7 +31451,7 @@ exports.SelectAllFeature = SelectAllFeature;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31774,7 +31830,7 @@ exports.HeaderGroupWrapperComp = HeaderGroupWrapperComp;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31911,7 +31967,7 @@ exports.BodyDropTarget = BodyDropTarget;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32282,7 +32338,7 @@ exports.MoveColumnController = MoveColumnController;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32390,7 +32446,7 @@ exports.BodyDropPivotTarget = BodyDropPivotTarget;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32472,7 +32528,7 @@ exports.ResizeObserverService = ResizeObserverService;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32568,7 +32624,7 @@ exports.SideBarDefParser = SideBarDefParser;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32887,7 +32943,7 @@ exports.CellNavigationService = CellNavigationService;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32933,7 +32989,7 @@ exports.GroupInstanceIdCreator = GroupInstanceIdCreator;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33081,7 +33137,7 @@ exports.AutoGroupColService = AutoGroupColService;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33129,7 +33185,7 @@ exports.Downloader = Downloader;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33235,7 +33291,7 @@ exports.ImmutableService = ImmutableService;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33387,7 +33443,7 @@ exports.ColDefUtil = ColDefUtil;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33445,7 +33501,7 @@ exports.ColumnKeyCreator = ColumnKeyCreator;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33466,7 +33522,7 @@ exports.DefaultColumnTypes = {
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33515,7 +33571,7 @@ function AngularDirectiveController($element, $scope, $compile, $attrs) {
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33755,7 +33811,7 @@ exports.Grid = Grid;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33874,7 +33930,7 @@ exports.StandardMenuFactory = StandardMenuFactory;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33933,7 +33989,7 @@ exports.FilterStage = FilterStage;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34051,7 +34107,7 @@ exports.FilterService = FilterService;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34135,7 +34191,7 @@ exports.SelectableService = SelectableService;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34188,7 +34244,7 @@ exports.SortStage = SortStage;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34363,7 +34419,7 @@ exports.SortService = SortService;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34574,7 +34630,7 @@ exports.FlattenStage = FlattenStage;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34979,7 +35035,7 @@ exports.InfiniteRowModel = InfiniteRowModel;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35165,7 +35221,7 @@ exports.InfiniteCache = InfiniteCache;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35303,7 +35359,7 @@ exports.InfiniteBlock = InfiniteBlock;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35521,7 +35577,7 @@ exports.RowNodeBlock = RowNodeBlock;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35797,7 +35853,7 @@ exports.RowNodeCache = RowNodeCache;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35920,7 +35976,7 @@ exports.RowNodeBlockLoader = RowNodeBlockLoader;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36579,7 +36635,7 @@ exports.ClientSideRowModel = ClientSideRowModel;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36910,7 +36966,7 @@ exports.ClientSideNodeManager = ClientSideNodeManager;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36988,7 +37044,7 @@ exports.ChangedPath = ChangedPath;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37037,7 +37093,7 @@ exports.BaseFrameworkFactory = BaseFrameworkFactory;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37125,7 +37181,7 @@ exports.XmlFactory = XmlFactory;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37226,7 +37282,7 @@ exports.ChangeDetectionService = ChangeDetectionService;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37457,7 +37513,7 @@ exports.PaginationComp = PaginationComp;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37658,7 +37714,7 @@ exports.ZipContainer = ZipContainer;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37781,7 +37837,7 @@ function toCamelCase(myString) {
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37903,7 +37959,7 @@ exports.TabbedLayout = TabbedLayout;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37950,7 +38006,7 @@ exports.VerticalStack = VerticalStack;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37980,7 +38036,7 @@ exports.simpleHttpRequest = simpleHttpRequest;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38017,7 +38073,7 @@ exports.defaultGroupComparator = defaultGroupComparator;
 "use strict";
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38063,7 +38119,7 @@ exports.BaseComponentWrapper = BaseComponentWrapper;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -38214,7 +38270,7 @@ exports.ToolPanelFilterComp = ToolPanelFilterComp;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -38654,7 +38710,7 @@ exports.EnterpriseMenu = EnterpriseMenu;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -38821,7 +38877,7 @@ exports.MenuList = MenuList;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -38952,7 +39008,7 @@ exports.MenuItemComponent = MenuItemComponent;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -39163,7 +39219,7 @@ exports.MenuItemMapper = MenuItemMapper;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -39820,7 +39876,7 @@ exports.ClipboardService = ClipboardService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -40248,7 +40304,7 @@ var AutoScrollService = /** @class */ (function () {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -40492,7 +40548,7 @@ function aggAvg(input) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -40589,7 +40645,7 @@ exports.PrimaryColsPanel = PrimaryColsPanel;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -40844,7 +40900,7 @@ exports.PrimaryColsListPanel = PrimaryColsListPanel;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -41180,7 +41236,7 @@ exports.ToolPanelColumnGroupComp = ToolPanelColumnGroupComp;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -41524,7 +41580,7 @@ exports.ToolPanelColumnComp = ToolPanelColumnComp;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -41768,7 +41824,7 @@ exports.PrimaryColsHeaderPanel = PrimaryColsHeaderPanel;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -42220,7 +42276,7 @@ exports.GroupStage = GroupStage;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -42457,7 +42513,7 @@ exports.AggregationStage = AggregationStage;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -42624,7 +42680,7 @@ exports.PivotStage = PivotStage;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -42915,7 +42971,7 @@ exports.PivotColDefService = PivotColDefService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -42977,7 +43033,7 @@ exports.EnterpriseBoot = EnterpriseBoot;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -43343,7 +43399,7 @@ var ModelWrapper = /** @class */ (function () {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(3);
@@ -43742,7 +43798,7 @@ exports.SetFilterModel = SetFilterModel;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -43864,7 +43920,7 @@ exports.SetFilterListItem = SetFilterListItem;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -44038,7 +44094,7 @@ exports.VirtualList = VirtualList;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -44227,7 +44283,7 @@ exports.RichSelectCellEditor = RichSelectCellEditor;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -44310,7 +44366,7 @@ exports.RichSelectRow = RichSelectRow;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -44451,7 +44507,7 @@ var LicenseManager = /** @class */ (function () {
         LicenseManager_1.licenseKey = licenseKey;
     };
     var LicenseManager_1;
-    LicenseManager.RELEASE_INFORMATION = 'MTU0MTcxNTk5NDE0NQ==';
+    LicenseManager.RELEASE_INFORMATION = 'MTU0MjYzOTcyNzQwOQ==';
     __decorate([
         ag_grid_community_1.Autowired('md5'),
         __metadata("design:type", md5_1.MD5)
@@ -44469,7 +44525,7 @@ exports.LicenseManager = LicenseManager;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -44661,7 +44717,7 @@ exports.MD5 = MD5;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -44826,7 +44882,7 @@ exports.DetailCellRenderer = DetailCellRenderer;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -45021,7 +45077,7 @@ var ContextMenu = /** @class */ (function (_super) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -45294,7 +45350,7 @@ exports.ViewportRowModel = ViewportRowModel;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -45482,7 +45538,7 @@ exports.SideBarComp = SideBarComp;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -45607,7 +45663,7 @@ exports.SideBarButtonsComp = SideBarButtonsComp;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -45669,7 +45725,7 @@ exports.ToolPanelWrapper = ToolPanelWrapper;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -45747,7 +45803,7 @@ exports.HorizontalResizeComp = HorizontalResizeComp;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -45786,7 +45842,7 @@ exports.RowGroupCompFactory = RowGroupCompFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -45917,7 +45973,7 @@ exports.RowGroupDropZonePanel = RowGroupDropZonePanel;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -46278,7 +46334,7 @@ exports.BaseDropZonePanel = BaseDropZonePanel;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -46521,7 +46577,7 @@ var AggItemComp = /** @class */ (function (_super) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -46560,7 +46616,7 @@ exports.PivotCompFactory = PivotCompFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -46722,7 +46778,7 @@ exports.PivotDropZonePanel = PivotDropZonePanel;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -46771,7 +46827,7 @@ var ExcelCreator = /** @class */ (function (_super) {
         return this.export(params);
     };
     ExcelCreator.prototype.getDataAsExcelXml = function (params) {
-        return this.getData(params);
+        return this.getData(ag_grid_community_1._.assign({}, params, { exportMode: 'xml' }));
     };
     ExcelCreator.prototype.getMimeType = function () {
         return this.getExportMode() === 'xml' ? 'application/vnd.ms-excel' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
@@ -46912,7 +46968,7 @@ exports.ExcelCreator = ExcelCreator;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -47138,7 +47194,7 @@ exports.ExcelXmlSerializingSession = ExcelXmlSerializingSession;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -47262,7 +47318,7 @@ var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
             styleId: styleExists ? styleId : null,
             data: {
                 type: typeTransformed,
-                value: typeTransformed === 's' ? this.getStringPosition(value).toString() :
+                value: typeTransformed === 's' ? this.getStringPosition(value == null ? '' : value).toString() :
                     typeTransformed === 'n' ? Number(value).toString() :
                         value
             }
@@ -47273,7 +47329,7 @@ var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
             styleId: this.styleExists(styleId) ? styleId : null,
             data: {
                 type: type,
-                value: type === 's' ? this.getStringPosition(value).toString() : value
+                value: type === 's' ? this.getStringPosition(value == null ? '' : value).toString() : value
             },
             mergeAcross: numOfCells
         };
@@ -47288,7 +47344,7 @@ exports.ExcelXlsxSerializingSession = ExcelXlsxSerializingSession;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -47382,7 +47438,7 @@ exports.ExcelXmlFactory = ExcelXmlFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var workbook = {
@@ -47414,7 +47470,7 @@ exports.default = workbook;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var excelWorkbook = {
@@ -47459,7 +47515,7 @@ exports.default = excelWorkbook;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(3);
@@ -47496,7 +47552,7 @@ exports.default = worksheet;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var column = {
@@ -47523,7 +47579,7 @@ exports.default = column;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(3);
@@ -47547,7 +47603,7 @@ exports.default = row;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var cell = {
@@ -47591,7 +47647,7 @@ exports.default = cell;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var documentProperties = {
@@ -47618,7 +47674,7 @@ exports.default = documentProperties;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var alignment = {
@@ -47652,7 +47708,7 @@ exports.default = alignment;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var borders = {
@@ -47688,7 +47744,7 @@ exports.default = borders;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var font = {
@@ -47730,7 +47786,7 @@ exports.default = font;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var interior = {
@@ -47759,7 +47815,7 @@ exports.default = interior;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var protection = {
@@ -47786,7 +47842,7 @@ exports.default = protection;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var numberFormat = {
@@ -47813,7 +47869,7 @@ exports.default = numberFormat;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var style = {
@@ -47841,7 +47897,7 @@ exports.default = style;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -47954,7 +48010,7 @@ exports.ExcelXlsxFactory = ExcelXlsxFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var coreFactory = {
@@ -48008,7 +48064,7 @@ exports.default = coreFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(3);
@@ -48067,7 +48123,7 @@ exports.default = contentTypesFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var contentTypeFactory = {
@@ -48093,7 +48149,7 @@ exports.default = contentTypeFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var themeElements_1 = __webpack_require__(213);
@@ -48132,7 +48188,7 @@ exports.default = officeTheme;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var colorScheme_1 = __webpack_require__(214);
@@ -48158,7 +48214,7 @@ exports.default = themeElements;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var getColorChildren = function (props) {
@@ -48210,7 +48266,7 @@ exports.default = colorScheme;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(3);
@@ -48357,7 +48413,7 @@ exports.default = fontScheme;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(3);
@@ -48551,7 +48607,7 @@ exports.default = formatScheme;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(3);
@@ -48585,7 +48641,7 @@ exports.default = sharedStrings;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var numberFormats_1 = __webpack_require__(219);
@@ -48863,7 +48919,7 @@ exports.default = stylesheetFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(3);
@@ -48889,7 +48945,7 @@ exports.default = numberFormatsFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var numberFormatFactory = {
@@ -48943,7 +48999,7 @@ exports.numberFormatMap = {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(3);
@@ -48969,7 +49025,7 @@ exports.default = fontsFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var fontFactory = {
@@ -49019,7 +49075,7 @@ exports.getFamilyId = function (name) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(3);
@@ -49045,7 +49101,7 @@ exports.default = fillsFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var fillFactory = {
@@ -49098,7 +49154,7 @@ exports.default = fillFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(3);
@@ -49124,7 +49180,7 @@ exports.default = bordersFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var stylesheet_1 = __webpack_require__(218);
@@ -49214,7 +49270,7 @@ exports.convertLegacyBorder = function (type, weight) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(3);
@@ -49240,7 +49296,7 @@ exports.default = cellStylesXfsFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var alignment_1 = __webpack_require__(229);
@@ -49283,7 +49339,7 @@ exports.default = xfFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var convertLegacyHorizontalAlignment = function (alignment) {
@@ -49344,7 +49400,7 @@ exports.default = alignmentFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var protectionFactory = {
@@ -49370,7 +49426,7 @@ exports.default = protectionFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(3);
@@ -49396,7 +49452,7 @@ exports.default = cellXfsFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(3);
@@ -49422,7 +49478,7 @@ exports.default = cellStylesFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var borderFactory = {
@@ -49448,7 +49504,7 @@ exports.default = borderFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var sheets_1 = __webpack_require__(235);
@@ -49479,7 +49535,7 @@ exports.default = workbookFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(3);
@@ -49500,7 +49556,7 @@ exports.default = sheetsFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var sheetFactory = {
@@ -49526,7 +49582,7 @@ exports.default = sheetFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(3);
@@ -49628,7 +49684,7 @@ exports.default = worksheetFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var getExcelCellWidth = function (width) { return Math.max(Math.ceil((width - 12) / 7 + 1), 10); };
@@ -49660,7 +49716,7 @@ exports.default = columnFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(3);
@@ -49694,7 +49750,7 @@ exports.default = rowFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(3);
@@ -49748,7 +49804,7 @@ exports.default = cellFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var mergeCell = {
@@ -49771,7 +49827,7 @@ exports.default = mergeCell;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(3);
@@ -49798,7 +49854,7 @@ exports.default = relationshipsFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var relationshipFactory = {
@@ -49824,7 +49880,7 @@ exports.default = relationshipFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -50407,7 +50463,7 @@ exports.ServerSideRowModel = ServerSideRowModel;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -50880,7 +50936,7 @@ exports.ServerSideCache = ServerSideCache;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -51297,7 +51353,7 @@ exports.ServerSideBlock = ServerSideBlock;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -51425,7 +51481,7 @@ exports.ColumnToolPanel = ColumnToolPanel;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -51518,7 +51574,7 @@ exports.PivotModePanel = PivotModePanel;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -51649,7 +51705,7 @@ exports.ValuesDropZonePanel = ValuesDropZonePanel;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -51686,7 +51742,7 @@ exports.StatusBarService = StatusBarService;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -51814,7 +51870,7 @@ exports.StatusBar = StatusBar;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -52063,7 +52119,7 @@ exports.AggregationComp = AggregationComp;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -52143,7 +52199,7 @@ exports.NameValueComp = NameValueComp;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -52226,7 +52282,7 @@ exports.SelectedRowsComp = SelectedRowsComp;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -52305,7 +52361,7 @@ exports.TotalRowsComp = TotalRowsComp;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -52391,7 +52447,7 @@ exports.FilteredRowsComp = FilteredRowsComp;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -52484,7 +52540,7 @@ exports.TotalAndFilteredRowsComp = TotalAndFilteredRowsComp;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -52595,7 +52651,7 @@ exports.GridHeaderDropZones = GridHeaderDropZones;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-// ag-grid-enterprise v19.1.2
+// ag-grid-enterprise v19.1.3
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var filtersToolPanel_1 = __webpack_require__(2);
@@ -52765,7 +52821,7 @@ exports = module.exports = __webpack_require__(262)(false);
 
 
 // module
-exports.push([module.i, "ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {\n  display: block; }\n\n.ag-rtl {\n  direction: rtl; }\n\n.ag-ltr {\n  direction: ltr; }\n\n.ag-select-agg-func-popup {\n  position: absolute; }\n\n.ag-body-no-select {\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-root-wrapper {\n  position: relative;\n  display: flex;\n  flex-direction: column; }\n  .ag-root-wrapper.ag-layout-normal {\n    height: 100%; }\n\n.ag-root-wrapper-body {\n  display: flex;\n  flex-direction: row; }\n  .ag-root-wrapper-body.ag-layout-normal {\n    flex-grow: 1;\n    height: 0px;\n    min-height: 0px; }\n\n.ag-root {\n  box-sizing: border-box;\n  position: relative;\n  display: flex;\n  flex-direction: column; }\n  .ag-root.ag-layout-normal, .ag-root.ag-layout-auto-height {\n    overflow: hidden;\n    width: 0px;\n    min-width: 0px;\n    flex: 1; }\n  .ag-root.ag-layout-normal {\n    height: 100%; }\n\n.ag-font-style {\n  cursor: default;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-popup-backdrop {\n  height: 100%;\n  left: 0;\n  position: fixed;\n  top: 0;\n  width: 100%; }\n\n.ag-header {\n  box-sizing: border-box;\n  white-space: nowrap;\n  width: 100%;\n  display: flex; }\n\n.ag-pinned-left-header {\n  box-sizing: border-box;\n  display: inline-block;\n  height: 100%;\n  overflow: hidden; }\n\n.ag-pinned-right-header {\n  box-sizing: border-box;\n  display: inline-block;\n  height: 100%;\n  overflow: hidden; }\n\n.ag-header-viewport {\n  box-sizing: border-box;\n  height: 100%;\n  overflow: hidden;\n  width: 0px;\n  min-width: 0px;\n  flex: 1; }\n\n.ag-header-row {\n  position: absolute; }\n\n.ag-header-container {\n  box-sizing: border-box;\n  height: 100%;\n  position: relative;\n  white-space: nowrap; }\n\n.ag-header-overlay {\n  display: block;\n  position: absolute; }\n\n.ag-header-cell {\n  box-sizing: border-box;\n  display: inline-block;\n  height: 100%;\n  position: absolute;\n  vertical-align: bottom; }\n\n.ag-floating-filter {\n  box-sizing: border-box;\n  display: inline-block;\n  position: absolute; }\n\n.ag-floating-filter-body {\n  height: 20px;\n  margin-right: 25px; }\n\n.ag-floating-filter-full-body {\n  height: 20px;\n  width: 100%; }\n\n.ag-floating-filter-input {\n  width: 100%; }\n\n.ag-floating-filter-input:-moz-read-only {\n  background-color: #eee; }\n\n.ag-floating-filter-input:read-only {\n  background-color: #eee; }\n\n.ag-floating-filter-menu {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-dnd-ghost {\n  background: #e5e5e5;\n  border: 1px solid black;\n  box-sizing: border-box;\n  cursor: move;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  line-height: 1.4;\n  overflow: hidden;\n  padding: 3px;\n  position: absolute;\n  text-overflow: ellipsis;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-dnd-ghost-icon {\n  display: inline-block;\n  float: left;\n  padding: 2px; }\n\n.ag-dnd-ghost-label {\n  display: inline-block; }\n\n.ag-header-group-cell {\n  box-sizing: border-box;\n  display: inline-block;\n  height: 100%;\n  overflow: hidden;\n  position: absolute;\n  text-overflow: ellipsis; }\n\n.ag-header-group-cell-label {\n  overflow: hidden;\n  text-overflow: ellipsis;\n  display: flex; }\n\n.ag-header-cell-label {\n  overflow: hidden;\n  text-overflow: ellipsis; }\n\n.ag-header-cell-resize {\n  position: absolute;\n  z-index: 4;\n  cursor: col-resize;\n  height: 100%;\n  width: 4px; }\n\n.ag-ltr .ag-header-cell-resize {\n  right: -4px; }\n\n.ag-ltr .ag-pinned-right-header .ag-header-cell-resize {\n  left: -4px; }\n\n.ag-rtl .ag-header-cell-resize {\n  left: -4px; }\n\n.ag-rtl .ag-pinned-left-header .ag-header-cell-resize {\n  right: -4px; }\n\n.ag-ltr .ag-header-select-all {\n  float: left; }\n\n.ag-rtl .ag-header-select-all {\n  float: right; }\n\n.ag-header-expand-icon {\n  padding-left: 4px; }\n\n.ag-header-cell-menu-button {\n  float: right; }\n\n.ag-overlay {\n  height: 100%;\n  left: 0;\n  pointer-events: none;\n  position: absolute;\n  top: 0;\n  width: 100%; }\n\n.ag-overlay-panel {\n  display: table;\n  height: 100%;\n  pointer-events: none;\n  width: 100%; }\n\n.ag-overlay-wrapper {\n  display: table-cell;\n  text-align: center;\n  vertical-align: middle; }\n\n.ag-primary-cols-header-panel .ag-column-name-filter {\n  flex-grow: 1;\n  flex-shrink: 1; }\n\n.ag-primary-cols-header-panel .ag-primary-cols-filter-wrapper {\n  width: 100%; }\n\n.ag-tool-panel-wrapper {\n  display: flex;\n  overflow-y: auto; }\n\n.ag-column-panel {\n  display: flex;\n  min-height: 400px;\n  flex-direction: column;\n  flex-grow: 1;\n  overflow-x: hidden;\n  max-height: 100vh; }\n\n.ag-body-container.ag-layout-auto-height {\n  min-height: 50px; }\n\n.ag-overlay-no-rows-wrapper.ag-layout-auto-height {\n  padding-top: 30px; }\n\n.ag-body {\n  box-sizing: border-box;\n  position: relative;\n  display: flex; }\n  .ag-body.ag-layout-normal {\n    flex: 1;\n    height: 0px;\n    min-height: 0px; }\n\n.ag-rtl .ag-body {\n  flex-direction: row-reverse; }\n\n.ag-ltr .ag-body {\n  flex-direction: row; }\n\n.ag-rtl .ag-floating-top {\n  flex-direction: row-reverse; }\n\n.ag-ltr .ag-floating-top {\n  flex-direction: row; }\n\n.ag-rtl .ag-floating-bottom {\n  flex-direction: row-reverse; }\n\n.ag-ltr .ag-floating-bottom {\n  flex-direction: row; }\n\n.ag-ltr .ag-header {\n  flex-direction: row; }\n\n.ag-rtl .ag-header {\n  flex-direction: row-reverse; }\n\n.ag-floating-top {\n  box-sizing: border-box;\n  overflow: hidden;\n  white-space: nowrap;\n  width: 100%;\n  position: relative;\n  display: flex; }\n\n.ag-pinned-left-floating-top {\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: relative;\n  min-width: 0px;\n  width: 0px;\n  flex-grow: 1000; }\n\n.ag-pinned-right-floating-top {\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: relative;\n  min-width: 0px;\n  width: 0px;\n  flex-grow: 1000; }\n\n.ag-floating-top-viewport {\n  box-sizing: border-box;\n  overflow: hidden;\n  width: 0px;\n  min-width: 0px;\n  flex: 1; }\n  .ag-floating-top-viewport.ag-layout-normal {\n    height: 100%; }\n\n.ag-floating-top-container {\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap; }\n\n.ag-floating-bottom {\n  box-sizing: border-box;\n  overflow: hidden;\n  white-space: nowrap;\n  width: 100%;\n  position: relative;\n  display: flex; }\n\n.ag-pinned-left-floating-bottom {\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: relative;\n  min-width: 0px;\n  width: 0px;\n  flex-grow: 1000; }\n\n.ag-pinned-right-floating-bottom {\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: relative;\n  min-width: 0px;\n  width: 0px;\n  flex-grow: 1000; }\n\n.ag-floating-bottom-viewport {\n  box-sizing: border-box;\n  overflow: hidden;\n  flex: 1;\n  width: 0px;\n  min-width: 0px; }\n\n.ag-floating-bottom-container {\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap; }\n\n.ag-pinned-right-cols-viewport-wrapper {\n  height: 100%;\n  overflow: hidden;\n  flex-grow: 1000;\n  min-width: 0px;\n  width: 0px; }\n\n.ag-pinned-right-cols-viewport {\n  height: 100%;\n  overflow-x: hidden;\n  overflow-y: auto; }\n\n.ag-pinned-right-cols-container {\n  display: block;\n  position: relative; }\n\n.ag-pinned-left-cols-viewport-wrapper {\n  height: 100%;\n  overflow: hidden;\n  flex-grow: 1000;\n  min-width: 0px;\n  width: 0px; }\n\n.ag-pinned-left-cols-viewport {\n  height: 100%;\n  overflow-x: hidden;\n  overflow-y: auto; }\n\n.ag-pinned-left-cols-container {\n  display: block;\n  position: relative; }\n\n.ag-body-viewport-wrapper {\n  overflow: hidden; }\n  .ag-body-viewport-wrapper.ag-layout-auto-height, .ag-body-viewport-wrapper.ag-layout-normal {\n    height: 100%;\n    width: 20px;\n    min-width: 20px;\n    flex: 1; }\n\n.ag-body-viewport.ag-layout-auto-height {\n  overflow-x: auto;\n  overflow-y: hidden; }\n\n.ag-body-viewport.ag-layout-normal {\n  overflow-x: auto;\n  overflow-y: auto;\n  height: 100%; }\n\n.ag-full-width-viewport-wrapper {\n  height: 100%;\n  width: 100%;\n  display: inline-block;\n  pointer-events: none;\n  overflow: hidden;\n  position: absolute;\n  top: 0px;\n  left: 0px;\n  box-sizing: border-box; }\n\n.ag-full-width-viewport {\n  box-sizing: border-box;\n  height: 100%;\n  pointer-events: none;\n  overflow-x: hidden;\n  overflow-y: auto; }\n\n.ag-full-width-container {\n  overflow: hidden;\n  position: relative;\n  width: 100%; }\n\n.ag-floating-bottom-full-width-container {\n  display: inline;\n  left: 0;\n  overflow: hidden;\n  pointer-events: none;\n  position: absolute;\n  top: 0; }\n\n.ag-floating-top-full-width-container {\n  display: inline;\n  left: 0;\n  overflow: hidden;\n  pointer-events: none;\n  position: absolute;\n  top: 0; }\n\n.ag-full-width-row {\n  overflow: hidden;\n  pointer-events: all; }\n\n.ag-body-container {\n  position: relative; }\n  .ag-body-container:not(.ag-layout-print) {\n    display: block; }\n\n.ag-row-animation .ag-row {\n  transition: top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s, -webkit-transform 0.4s;\n  transition: transform 0.4s, top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;\n  transition: transform 0.4s, top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s, -webkit-transform 0.4s; }\n\n.ag-row-no-animation .ag-row {\n  transition: background-color 0.1s; }\n\n.ag-row {\n  box-sizing: border-box;\n  white-space: nowrap;\n  width: 100%; }\n\n.ag-row-position-absolute {\n  position: absolute; }\n\n.ag-row-position-relative {\n  position: relative; }\n\n.ag-column-moving .ag-cell {\n  transition: left 0.2s; }\n\n.ag-column-moving .ag-header-cell {\n  transition: left 0.2s; }\n\n.ag-column-moving .ag-header-group-cell {\n  transition: left 0.2s, width 0.2s; }\n\n.ag-column-drop {\n  box-sizing: border-box;\n  width: 100%; }\n\n.ag-column-drop-vertical {\n  display: flex;\n  flex-direction: column;\n  flex-grow: 1;\n  height: 50px;\n  overflow: hidden; }\n  .ag-column-drop-vertical .ag-column-drop-list {\n    flex-grow: 1;\n    height: 20px;\n    overflow-x: auto; }\n  .ag-column-drop-vertical .ag-column-drop-cell {\n    display: flex; }\n    .ag-column-drop-vertical .ag-column-drop-cell .ag-column-drop-cell-text {\n      overflow: hidden;\n      flex: 1;\n      text-overflow: ellipsis;\n      white-space: nowrap; }\n  .ag-column-drop-vertical .ag-column-drop-empty-message {\n    display: block; }\n  .ag-column-drop-vertical .ag-column-drop-cell-button {\n    line-height: 16px; }\n\n.ag-ltr .ag-column-drop-vertical .ag-column-drop-cell-button {\n  float: right; }\n\n.ag-rtl .ag-column-drop-vertical .ag-column-drop-cell-button {\n  float: left; }\n\n.ag-column-drop-horizontal {\n  white-space: nowrap;\n  overflow: hidden; }\n  .ag-column-drop-horizontal .ag-column-drop-cell {\n    display: inline-block; }\n  .ag-column-drop-horizontal .ag-column-drop-empty-message {\n    display: inline-block; }\n  .ag-column-drop-horizontal .ag-column-drop-list {\n    height: 100%; }\n\n.ag-cell {\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: absolute;\n  text-overflow: ellipsis;\n  white-space: nowrap; }\n\n.ag-cell-with-height {\n  height: 100%; }\n\n.ag-value-slide-out {\n  margin-right: 5px;\n  opacity: 1;\n  transition: opacity 3s, margin-right 3s;\n  transition-timing-function: linear; }\n\n.ag-value-slide-out-end {\n  margin-right: 10px;\n  opacity: 0; }\n\n.ag-opacity-zero {\n  opacity: 0; }\n\n.ag-cell-edit-input {\n  height: 100%;\n  width: 100%; }\n\n.ag-group-cell-entire-row {\n  box-sizing: border-box;\n  display: inline-block;\n  height: 100%;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  width: 100%; }\n\n.ag-footer-cell-entire-row {\n  box-sizing: border-box;\n  display: inline-block;\n  height: 100%;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  width: 100%; }\n\n.ag-popup-editor {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-menu {\n  max-height: 100%;\n  overflow-y: auto;\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-menu-column-select-wrapper {\n  height: 265px;\n  overflow: auto;\n  width: 200px; }\n\n.ag-menu-list {\n  border-collapse: collapse;\n  display: table; }\n\n.ag-menu-option {\n  display: table-row; }\n\n.ag-menu-option-text {\n  display: table-cell; }\n\n.ag-menu-option-shortcut {\n  display: table-cell; }\n\n.ag-menu-option-icon {\n  display: table-cell; }\n\n.ag-menu-option-popup-pointer {\n  display: table-cell; }\n\n.ag-menu-separator {\n  display: table-row; }\n\n.ag-menu-separator-cell {\n  display: table-cell; }\n\n.ag-virtual-list-viewport {\n  height: 100%;\n  overflow-x: auto;\n  width: 100%; }\n\n.ag-virtual-list-container {\n  overflow: hidden;\n  position: relative; }\n\n.ag-rich-select {\n  cursor: default;\n  outline: none; }\n\n.ag-rich-select-row {\n  white-space: nowrap; }\n\n.ag-rich-select-list {\n  height: 200px;\n  width: 200px; }\n\n.ag-set-filter-list {\n  height: 200px;\n  width: 200px; }\n\n.ag-set-filter-item {\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap; }\n\n.ag-virtual-list-item {\n  position: absolute;\n  width: 100%; }\n  .ag-virtual-list-item span:empty:not(.ag-icon) {\n    border-left: 1px solid transparent; }\n\n.ag-filter-filter {\n  box-sizing: border-box;\n  width: 100%; }\n\n.ag-filter .ag-filter-checkbox {\n  pointer-events: none; }\n\n.ag-floating-filter-body input {\n  height: 19px;\n  margin: 0;\n  width: 100%; }\n\n.ag-floating-filter-full-body input {\n  height: 19px;\n  margin: 0;\n  width: 100%; }\n\n.ag-filter-select {\n  margin: 4px 4px 0 4px;\n  width: 110px; }\n\n.ag-list-selection {\n  cursor: default;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-tool-panel-wrapper {\n  box-sizing: border-box;\n  cursor: default;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  width: 200px; }\n\n.ag-primary-cols-list-panel {\n  flex-grow: 1;\n  height: 50px;\n  overflow: auto; }\n\n.ag-column-select-indent {\n  display: inline-block; }\n\n.ag-ltr .ag-column-tool-panel-column {\n  margin-left: 16px; }\n\n.ag-rtl .ag-column-tool-panel-column {\n  margin-right: 16px; }\n\n.ag-column-tool-panel-column,\n.ag-column-tool-panel-column-group {\n  align-items: stretch;\n  display: flex;\n  flex-direction: row;\n  flex-wrap: nowrap;\n  text-overflow: ellipsis;\n  white-space: nowrap; }\n  .ag-column-tool-panel-column .ag-column-tool-panel-column,\n  .ag-column-tool-panel-column .ag-column-tool-panel-column-group,\n  .ag-column-tool-panel-column-group .ag-column-tool-panel-column,\n  .ag-column-tool-panel-column-group .ag-column-tool-panel-column-group {\n    flex-grow: 1;\n    flex-shrink: 1;\n    overflow: hidden;\n    text-overflow: ellipsis; }\n  .ag-column-tool-panel-column .ag-column-drag,\n  .ag-column-tool-panel-column-group .ag-column-drag {\n    min-width: 16px;\n    flex-grow: 0;\n    flex-shrink: 0; }\n\n.ag-column-select-panel {\n  display: flex;\n  flex-direction: column;\n  overflow: hidden; }\n\n.ag-side-bar .ag-column-select-panel {\n  flex-grow: 4; }\n\n.ag-tool-panel-horizontal-resize {\n  cursor: col-resize;\n  height: 100%;\n  position: absolute;\n  top: 0;\n  width: 5px;\n  z-index: 1; }\n\n.ag-rtl .ag-tool-panel-horizontal-resize {\n  float: right;\n  -webkit-transform: translateX(3px);\n  transform: translateX(3px); }\n\n.ag-ltr .ag-tool-panel-horizontal-resize {\n  float: left;\n  -webkit-transform: translateX(-3px);\n  transform: translateX(-3px); }\n\n.ag-menu-column-select-wrapper .ag-column-select-panel {\n  height: 100%; }\n\n.ag-hidden {\n  display: none !important; }\n\n.ag-visibility-hidden {\n  visibility: hidden !important; }\n\n.ag-faded {\n  opacity: 0.3; }\n\n.ag-width-half {\n  display: inline-block;\n  width: 50%; }\n\n.ag-shake-left-to-right {\n  -webkit-animation-direction: alternate;\n  animation-direction: alternate;\n  -webkit-animation-duration: 0.2s;\n  animation-duration: 0.2s;\n  -webkit-animation-iteration-count: infinite;\n  animation-iteration-count: infinite;\n  -webkit-animation-name: ag-shake-left-to-right;\n  animation-name: ag-shake-left-to-right; }\n\n@-webkit-keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px; }\n  to {\n    padding-left: 2px;\n    padding-right: 6px; } }\n\n@keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px; }\n  to {\n    padding-left: 2px;\n    padding-right: 6px; } }\n\n/* icons are used outside of the grid root (in the ghost) */\n.ag-icon-aggregation {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTkuNSAyLjVoLTZsMiAzLjUtMiAzLjVoNiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-arrows {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTE2IDZsLTEuNDEgMS40MUwxNi4xNyA5SDR2MmgxMi4xN2wtMS41OCAxLjU5TDE2IDE0bDQtNHoiLz48cGF0aCBkPSJNNCA2bDEuNDEgMS40MUwzLjgzIDlIMTZ2MkgzLjgzbDEuNTggMS41OUw0IDE0bC00LTR6Ii8+PHBhdGggZD0iTTYgMTZsMS40MS0xLjQxTDkgMTYuMTdWNGgydjEyLjE3bDEuNTktMS41OEwxNCAxNmwtNCA0eiIvPjxwYXRoIGQ9Ik0xNCA0bC0xLjQxIDEuNDFMMTEgMy44M1YxNkg5VjMuODNMNy40MSA1LjQxIDYgNGw0LTR6Ii8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-asc {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxwYXRoIGlkPSJhIiBkPSJNNSAzaDJ2OUg1eiIvPjxwYXRoIGQ9Ik04Ljk5MyA1LjJWMy40OTNoLTZ2Nkg0LjdWNS4yaDQuMjkzeiIgaWQ9ImIiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNNS41IDMuNWgxdjhoLTF6Ii8+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNS45OTMgNi40OTMpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNiIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNOC40OTMgNC43di0uNzA3aC01djVINC4yVjQuN2g0LjI5M3oiLz48L2c+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-checkbox-checked-readonly {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxyZWN0IGlkPSJhIiB4PSIwIiB5PSIwIiB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHJ4PSIxIi8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYSIvPjxyZWN0IHN0cm9rZT0iIzAwMCIgeD0iLjUiIHk9Ii41IiB3aWR0aD0iMTEiIGhlaWdodD0iMTEiIHJ4PSIxIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNOSAzTDYgOC41bC0yLjUtMiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-checkbox-checked {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxyZWN0IGlkPSJhIiB4PSIwIiB5PSIwIiB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHJ4PSIxIi8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHVzZSBmaWxsPSIjRkZGIiB4bGluazpocmVmPSIjYSIvPjxyZWN0IHN0cm9rZT0iIzAwMCIgeD0iLjUiIHk9Ii41IiB3aWR0aD0iMTEiIGhlaWdodD0iMTEiIHJ4PSIxIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNOSAzTDYgOC41bC0yLjUtMiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-checkbox-indeterminate-readonly {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxyZWN0IGlkPSJhIiB4PSIwIiB5PSIwIiB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHJ4PSIxIi8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYSIvPjxyZWN0IHN0cm9rZT0iIzAwMCIgeD0iLjUiIHk9Ii41IiB3aWR0aD0iMTEiIGhlaWdodD0iMTEiIHJ4PSIxIi8+PHBhdGggZmlsbD0iIzAwMCIgZD0iTTQgNWg0djJINHoiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-checkbox-indeterminate {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxyZWN0IGlkPSJhIiB4PSIwIiB5PSIwIiB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHJ4PSIxIi8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHVzZSBmaWxsPSIjRkZGIiB4bGluazpocmVmPSIjYSIvPjxyZWN0IHN0cm9rZT0iIzAwMCIgeD0iLjUiIHk9Ii41IiB3aWR0aD0iMTEiIGhlaWdodD0iMTEiIHJ4PSIxIi8+PHBhdGggZmlsbD0iIzAwMCIgZD0iTTQgNWg0djJINHoiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-checkbox-unchecked-readonly {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxyZWN0IGlkPSJhIiB4PSIwIiB5PSIwIiB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHJ4PSIxIi8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYSIvPjxyZWN0IHN0cm9rZT0iIzAwMCIgeD0iLjUiIHk9Ii41IiB3aWR0aD0iMTEiIGhlaWdodD0iMTEiIHJ4PSIxIi8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-checkbox-unchecked {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxyZWN0IGlkPSJhIiB4PSIwIiB5PSIwIiB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHJ4PSIxIi8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHVzZSBmaWxsPSIjRkZGIiB4bGluazpocmVmPSIjYSIvPjxyZWN0IHN0cm9rZT0iIzAwMCIgeD0iLjUiIHk9Ii41IiB3aWR0aD0iMTEiIGhlaWdodD0iMTEiIHJ4PSIxIi8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-column {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEgMWg0djJIMXptMCAzaDR2N0gxeiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-columns {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEgMWg0djJIMXptNiAwaDR2Mkg3ek0xIDVoNHYySDF6bTYgMGg0djJIN3pNMSA5aDR2Mkgxem02IDBoNHYySDd6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-contracted {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cmVjdCBzdHJva2Utb3BhY2l0eT0iLjUiIHN0cm9rZT0iIzAwMCIgeD0iMS41IiB5PSIxLjUiIHdpZHRoPSI5IiBoZWlnaHQ9IjkiIHJ4PSIxIi8+PHBhdGggZmlsbD0iIzAwMCIgZD0iTTkgNXYySDNWNXoiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-copy {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSIjMDAwIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00LjUgNC41aDV2NWgtNXoiLz48cGF0aCBkPSJNNy41IDIuNWgtNXY1aDJ2Mmg1di01aC0ydi0yeiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-cut {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSIjMDAwIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zIDMuMTJjLjY2Ny4wNzggMyAxLjc0NSA3IDUtLjMyNi4yMDQtLjY1OS4yMDQtMSAwLS4zNDEtLjIwNi0xLjY3NC0xLjIwNi00LTMgMCAuNjY2LS42NjcuNjY2LTIgMC0yLTEtMS0yLjEyIDAtMnoiLz48cGF0aCBkPSJNMyA4LjI2NGMuNjY3LS4wOCAzLTEuNzQ2IDctNS0uMzI2LS4yMDUtLjY1OS0uMjA1LTEgMC0uMzQxLjIwNC0xLjY3NCAxLjIwNC00IDMgMC0uNjY3LS42NjctLjY2Ny0yIDAtMiAxLTEgMi4xMTkgMCAyeiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-desc {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxwYXRoIGlkPSJhIiBkPSJNNSAyaDJ2OUg1eiIvPjxwYXRoIGQ9Ik04Ljk5MyA2LjFWNC4zOTNoLTZ2Nkg0LjdWNi4xaDQuMjkzeiIgaWQ9ImIiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNNS41IDIuNWgxdjhoLTF6Ii8+PGcgdHJhbnNmb3JtPSJyb3RhdGUoLTEzNSA1Ljk5MyA3LjM5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA1LjZ2LS43MDdoLTV2NUg0LjJWNS42aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-expanded {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cmVjdCBzdHJva2Utb3BhY2l0eT0iLjUiIHN0cm9rZT0iIzAwMCIgeD0iMS41IiB5PSIxLjUiIHdpZHRoPSI5IiBoZWlnaHQ9IjkiIHJ4PSIxIi8+PHBhdGggZmlsbD0iIzAwMCIgZD0iTTUgM2gydjZINXoiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNOSA1djJIM1Y1eiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-eye-slash {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMy4wMDEgMy45MDhMMyA0YTMgMyAwIDEgMCA1Ljk5OS0uMDkyQTUuMjQ4IDUuMjQ4IDAgMCAwIDYgM2MtMS4xIDAtMi4xLjMwMy0yLjk5OS45MDh6IiBmaWxsPSIjMDAwIi8+PHBhdGggZD0iTTQgNC41Yy42NjctLjMzMyAxLjY2Ny0uNSAzLS41IiBzdHJva2U9IiM5Nzk3OTciLz48cGF0aCBkPSJNMSA2YzEuMzMzLTIgMy0zIDUtM3MzLjY2NyAxIDUgM0M5LjY2NyA4IDggOSA2IDlTMi4zMzMgOCAxIDZ6IiBzdHJva2U9IiMwMDAiLz48cGF0aCBkPSJNNC4wMDQgMi44MzVsNC45OTIgNi4zMyIgc3Ryb2tlPSIjMDAwIiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIi8+PHBhdGggZD0iTTMuMDA0IDIuODM1bDQuOTkyIDYuMzMiIHN0cm9rZT0iI0ZGRiIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-eye {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMy4wMDEgMy45MDhMMyA0YTMgMyAwIDEgMCA1Ljk5OS0uMDkyQTUuMjQ4IDUuMjQ4IDAgMCAwIDYgM2MtMS4xIDAtMi4xLjMwMy0yLjk5OS45MDh6IiBmaWxsPSIjMDAwIi8+PHBhdGggZD0iTTQgNC41Yy42NjctLjMzMyAxLjY2Ny0uNSAzLS41IiBzdHJva2U9IiM5Nzk3OTciLz48cGF0aCBkPSJNMSA2YzEuMzMzLTIgMy0zIDUtM3MzLjY2NyAxIDUgM0M5LjY2NyA4IDggOSA2IDlTMi4zMzMgOCAxIDZ6IiBzdHJva2U9IiMwMDAiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-filter {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEgMmgxMEw3IDZ2NUw1IDlWNkwxIDJ6bTQgNHYxaDJWNkg1eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-group {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik03LjUgMS41aDN2MmgtM3ptMCA0aDN2MmgtM3ptMCA0aDN2MmgtM3oiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNMiAzaDF2OEgyem0xIDNoNHYxSDN6bTItNGgzdjFINXoiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNMiAxMGg1djFIMnoiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik0xLjUgMS41aDN2MmgtM3oiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-indeterminate {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMy4wNTYgNC41ODFhMy4wMDEgMy4wMDEgMCAwIDAgNS44ODggMEM4LjA1OSA0LjE5NCA3LjA3OCA0IDYgNGMtMS4wNzggMC0yLjA2LjE5NC0yLjk0NC41ODF6IiBmaWxsPSIjMDAwIi8+PHBhdGggZD0iTTQgNS41Yy42NjctLjMzMyAxLjY2Ny0uNSAzLS41IiBzdHJva2U9IiM5Nzk3OTciLz48cGF0aCBkPSJNMSA2YzEuMzMzLTEuMzMzIDMtMiA1LTJzMy42NjcuNjY3IDUgMkM5LjY2NyA3LjMzMyA4IDggNiA4cy0zLjY2Ny0uNjY3LTUtMnoiIHN0cm9rZT0iIzAwMCIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-left {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxwYXRoIGlkPSJhIiBkPSJNNS41IDEuNWgydjloLTJ6Ii8+PHBhdGggZD0iTTcuOTkzIDQuN1YyLjk5M2gtNnY2SDMuN1Y0LjdoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIHRyYW5zZm9ybT0icm90YXRlKDkwIDYuNSA2KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYSIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTYgMmgxdjhINnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoLTQ1IDQuOTkzIDUuOTkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNDkzIDQuMnYtLjcwN2gtNXY1SDMuMlY0LjJoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-loading {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxwYXRoIGlkPSJhIiBkPSJNNSAxaDJ2M0g1eiIvPjxwYXRoIGlkPSJiIiBkPSJNNSA4aDJ2M0g1eiIvPjxwYXRoIGlkPSJjIiBkPSJNMSA1aDN2MkgxeiIvPjxwYXRoIGlkPSJkIiBkPSJNOCA1aDN2Mkg4eiIvPjxwYXRoIGlkPSJlIiBkPSJNNCAwaDJ2M0g0eiIvPjxwYXRoIGlkPSJmIiBkPSJNNCA3aDJ2M0g0eiIvPjxwYXRoIGlkPSJnIiBkPSJNMCA0aDN2MkgweiIvPjxwYXRoIGlkPSJoIiBkPSJNNyA0aDN2Mkg3eiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiM5Nzk3OTciIGQ9Ik01LjUgMS41aDF2MmgtMXoiLz48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNiIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNNS41IDguNWgxdjJoLTF6Ii8+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYyIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTEuNSA1LjVoMnYxaC0yeiIvPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2QiLz48cGF0aCBzdHJva2U9IiM5Nzk3OTciIGQ9Ik04LjUgNS41aDJ2MWgtMnoiLz48ZyBvcGFjaXR5PSIuNzE0Ij48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA0LjI5MyA2LjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2UiLz48cGF0aCBzdHJva2U9IiM5Nzk3OTciIGQ9Ik00LjUuNWgxdjJoLTF6Ii8+PC9nPjxnIHRyYW5zZm9ybT0icm90YXRlKDQ1IDQuMjkzIDYuNzA3KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjZiIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTQuNSA3LjVoMXYyaC0xeiIvPjwvZz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA0LjI5MyA2LjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2ciLz48cGF0aCBzdHJva2U9IiM5Nzk3OTciIGQ9Ik0uNSA0LjVoMnYxaC0yeiIvPjwvZz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA0LjI5MyA2LjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2giLz48cGF0aCBzdHJva2U9IiM5Nzk3OTciIGQ9Ik03LjUgNC41aDJ2MWgtMnoiLz48L2c+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-menu {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEgMWgxMHYySDF6bTAgNGgxMHYySDF6bTAgNGgxMHYySDF6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-minus {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgNWg4djJIMnoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-none {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxwYXRoIGlkPSJhIiBkPSJNNSAzaDJ2Nkg1eiIvPjxwYXRoIGQ9Ik04LjE0NiA4LjE4MlY2LjQ3NWgtNXY1aDEuNzA4VjguMTgyaDMuMjkyeiIgaWQ9ImIiLz48cGF0aCBkPSJNOC41IDIuOTE0VjEuMjA3aC01djVoMS43MDdWMi45MTRIOC41eiIgaWQ9ImMiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNNS41IDMuNWgxdjVoLTF6Ii8+PGcgdHJhbnNmb3JtPSJyb3RhdGUoLTEzNSA1LjY0NiA4LjQ3NSkiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik03LjY0NiA3LjY4MnYtLjcwN2gtNHY0aC43MDhWNy42ODJoMy4yOTJ6Ii8+PC9nPjxnIHRyYW5zZm9ybT0icm90YXRlKDQ1IDYgMy43MDcpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNjIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNOCAyLjQxNHYtLjcwN0g0djRoLjcwN1YyLjQxNEg4eiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-not-allowed {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSIjMDAwIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxjaXJjbGUgY3g9IjYiIGN5PSI2IiByPSI0Ii8+PHBhdGggZD0iTTguNSAzLjVMMy40MDEgOC41OTkiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-paste {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSIjMDAwIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yLjUgMi41aDd2N2gtN3oiLz48cGF0aCBkPSJNNi41IDEuNWgtMXYyaC0xdjFoM3YtMWgtMXYtMnoiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-pin {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBmaWxsPSIjMDAwIiBkPSJNMyAyaDZ2MUg4djRsMiAxSDdsLTEgMy0xLTNIMmwyLTFWM0gzeiIvPjxwYXRoIGZpbGwtb3BhY2l0eT0iLjUiIGZpbGw9IiNGRkYiIGQ9Ik01IDNoMXY0SDV6Ii8+PHBhdGggZmlsbC1vcGFjaXR5PSIuMjgiIGZpbGw9IiNGRkYiIGQ9Ik00IDNoMXYzSDR6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-pivot {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSIjMDAwIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxyZWN0IHg9IjEuNSIgeT0iMS41IiB3aWR0aD0iOSIgaGVpZ2h0PSI5IiByeD0iMSIvPjxwYXRoIGQ9Ik0xMC41IDMuNWgtOW0yLTJ2OSIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIvPjxwYXRoIGQ9Ik03LjUgNi41bDEtMSAxIDFtLTMgMWwtMSAxIDEgMSIvPjxwYXRoIGQ9Ik04LjUgNS41djNoLTMiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-plus {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNNSAyaDJ2OEg1eiIvPjxwYXRoIGQ9Ik0yIDVoOHYySDJ6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-right {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxwYXRoIGlkPSJhIiBkPSJNNC41IDEuNWgydjloLTJ6Ii8+PHBhdGggZD0iTTkuOTkzIDQuN1YyLjk5M2gtNnY2SDUuN1Y0LjdoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIHRyYW5zZm9ybT0icm90YXRlKDkwIDUuNSA2KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYSIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTUgMmgxdjhINXoiLz48L2c+PGcgdHJhbnNmb3JtPSJzY2FsZSgtMSAxKSByb3RhdGUoLTQ1IDAgMjIuODc0KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTkuNDkzIDQuMnYtLjcwN2gtNXY1SDUuMlY0LjJoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-small-left {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTMgNmw0LTR2OHoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-small-right {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTUgMmw0IDQtNCA0eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-small-up {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgN2w0LTQgNCA0eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-small-down {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgNWg4TDYgOXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-tick {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEuNSA1LjVsMyAzIDYtNiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-cross {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgMTBsOC04bTAgOEwyIDIiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSJub25lIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-tree-open {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgNWg4TDYgOXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-tree-closed {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTUgMmw0IDQtNCA0eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-tree-indeterminate {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgNWg4djJIMnoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.loading-filter {\n  background-color: #e6e6e6;\n  height: 100%;\n  padding: 5px;\n  position: absolute;\n  top: 34px;\n  width: 100%;\n  z-index: 1; }\n\n.ag-details-row {\n  height: 100%;\n  width: 100%; }\n\n.ag-details-grid {\n  height: 100%;\n  width: 100%; }\n\n.ag-primary-cols-header-panel {\n  display: flex;\n  flex-direction: row; }\n\n.ag-ltr .ag-toolpanel-indent-1 {\n  padding-left: 10px; }\n\n.ag-rtl .ag-toolpanel-indent-1 {\n  padding-right: 10px; }\n\n.ag-ltr .ag-row-group-indent-1 {\n  padding-left: 10px; }\n\n.ag-rtl .ag-row-group-indent-1 {\n  padding-right: 10px; }\n\n.ag-ltr .ag-toolpanel-indent-2 {\n  padding-left: 20px; }\n\n.ag-rtl .ag-toolpanel-indent-2 {\n  padding-right: 20px; }\n\n.ag-ltr .ag-row-group-indent-2 {\n  padding-left: 20px; }\n\n.ag-rtl .ag-row-group-indent-2 {\n  padding-right: 20px; }\n\n.ag-ltr .ag-toolpanel-indent-3 {\n  padding-left: 30px; }\n\n.ag-rtl .ag-toolpanel-indent-3 {\n  padding-right: 30px; }\n\n.ag-ltr .ag-row-group-indent-3 {\n  padding-left: 30px; }\n\n.ag-rtl .ag-row-group-indent-3 {\n  padding-right: 30px; }\n\n.ag-ltr .ag-toolpanel-indent-4 {\n  padding-left: 40px; }\n\n.ag-rtl .ag-toolpanel-indent-4 {\n  padding-right: 40px; }\n\n.ag-ltr .ag-row-group-indent-4 {\n  padding-left: 40px; }\n\n.ag-rtl .ag-row-group-indent-4 {\n  padding-right: 40px; }\n\n.ag-ltr .ag-toolpanel-indent-5 {\n  padding-left: 50px; }\n\n.ag-rtl .ag-toolpanel-indent-5 {\n  padding-right: 50px; }\n\n.ag-ltr .ag-row-group-indent-5 {\n  padding-left: 50px; }\n\n.ag-rtl .ag-row-group-indent-5 {\n  padding-right: 50px; }\n\n.ag-ltr .ag-toolpanel-indent-6 {\n  padding-left: 60px; }\n\n.ag-rtl .ag-toolpanel-indent-6 {\n  padding-right: 60px; }\n\n.ag-ltr .ag-row-group-indent-6 {\n  padding-left: 60px; }\n\n.ag-rtl .ag-row-group-indent-6 {\n  padding-right: 60px; }\n\n.ag-ltr .ag-toolpanel-indent-7 {\n  padding-left: 70px; }\n\n.ag-rtl .ag-toolpanel-indent-7 {\n  padding-right: 70px; }\n\n.ag-ltr .ag-row-group-indent-7 {\n  padding-left: 70px; }\n\n.ag-rtl .ag-row-group-indent-7 {\n  padding-right: 70px; }\n\n.ag-ltr .ag-toolpanel-indent-8 {\n  padding-left: 80px; }\n\n.ag-rtl .ag-toolpanel-indent-8 {\n  padding-right: 80px; }\n\n.ag-ltr .ag-row-group-indent-8 {\n  padding-left: 80px; }\n\n.ag-rtl .ag-row-group-indent-8 {\n  padding-right: 80px; }\n\n.ag-ltr .ag-toolpanel-indent-9 {\n  padding-left: 90px; }\n\n.ag-rtl .ag-toolpanel-indent-9 {\n  padding-right: 90px; }\n\n.ag-ltr .ag-row-group-indent-9 {\n  padding-left: 90px; }\n\n.ag-rtl .ag-row-group-indent-9 {\n  padding-right: 90px; }\n\n.ag-ltr .ag-toolpanel-indent-10 {\n  padding-left: 100px; }\n\n.ag-rtl .ag-toolpanel-indent-10 {\n  padding-right: 100px; }\n\n.ag-ltr .ag-row-group-indent-10 {\n  padding-left: 100px; }\n\n.ag-rtl .ag-row-group-indent-10 {\n  padding-right: 100px; }\n\n.ag-ltr .ag-toolpanel-indent-11 {\n  padding-left: 110px; }\n\n.ag-rtl .ag-toolpanel-indent-11 {\n  padding-right: 110px; }\n\n.ag-ltr .ag-row-group-indent-11 {\n  padding-left: 110px; }\n\n.ag-rtl .ag-row-group-indent-11 {\n  padding-right: 110px; }\n\n.ag-ltr .ag-toolpanel-indent-12 {\n  padding-left: 120px; }\n\n.ag-rtl .ag-toolpanel-indent-12 {\n  padding-right: 120px; }\n\n.ag-ltr .ag-row-group-indent-12 {\n  padding-left: 120px; }\n\n.ag-rtl .ag-row-group-indent-12 {\n  padding-right: 120px; }\n\n.ag-ltr .ag-toolpanel-indent-13 {\n  padding-left: 130px; }\n\n.ag-rtl .ag-toolpanel-indent-13 {\n  padding-right: 130px; }\n\n.ag-ltr .ag-row-group-indent-13 {\n  padding-left: 130px; }\n\n.ag-rtl .ag-row-group-indent-13 {\n  padding-right: 130px; }\n\n.ag-ltr .ag-toolpanel-indent-14 {\n  padding-left: 140px; }\n\n.ag-rtl .ag-toolpanel-indent-14 {\n  padding-right: 140px; }\n\n.ag-ltr .ag-row-group-indent-14 {\n  padding-left: 140px; }\n\n.ag-rtl .ag-row-group-indent-14 {\n  padding-right: 140px; }\n\n.ag-ltr .ag-toolpanel-indent-15 {\n  padding-left: 150px; }\n\n.ag-rtl .ag-toolpanel-indent-15 {\n  padding-right: 150px; }\n\n.ag-ltr .ag-row-group-indent-15 {\n  padding-left: 150px; }\n\n.ag-rtl .ag-row-group-indent-15 {\n  padding-right: 150px; }\n\n.ag-ltr .ag-toolpanel-indent-16 {\n  padding-left: 160px; }\n\n.ag-rtl .ag-toolpanel-indent-16 {\n  padding-right: 160px; }\n\n.ag-ltr .ag-row-group-indent-16 {\n  padding-left: 160px; }\n\n.ag-rtl .ag-row-group-indent-16 {\n  padding-right: 160px; }\n\n.ag-ltr .ag-toolpanel-indent-17 {\n  padding-left: 170px; }\n\n.ag-rtl .ag-toolpanel-indent-17 {\n  padding-right: 170px; }\n\n.ag-ltr .ag-row-group-indent-17 {\n  padding-left: 170px; }\n\n.ag-rtl .ag-row-group-indent-17 {\n  padding-right: 170px; }\n\n.ag-ltr .ag-toolpanel-indent-18 {\n  padding-left: 180px; }\n\n.ag-rtl .ag-toolpanel-indent-18 {\n  padding-right: 180px; }\n\n.ag-ltr .ag-row-group-indent-18 {\n  padding-left: 180px; }\n\n.ag-rtl .ag-row-group-indent-18 {\n  padding-right: 180px; }\n\n.ag-ltr .ag-toolpanel-indent-19 {\n  padding-left: 190px; }\n\n.ag-rtl .ag-toolpanel-indent-19 {\n  padding-right: 190px; }\n\n.ag-ltr .ag-row-group-indent-19 {\n  padding-left: 190px; }\n\n.ag-rtl .ag-row-group-indent-19 {\n  padding-right: 190px; }\n\n.ag-ltr .ag-toolpanel-indent-20 {\n  padding-left: 200px; }\n\n.ag-rtl .ag-toolpanel-indent-20 {\n  padding-right: 200px; }\n\n.ag-ltr .ag-row-group-indent-20 {\n  padding-left: 200px; }\n\n.ag-rtl .ag-row-group-indent-20 {\n  padding-right: 200px; }\n\n.ag-ltr .ag-toolpanel-indent-21 {\n  padding-left: 210px; }\n\n.ag-rtl .ag-toolpanel-indent-21 {\n  padding-right: 210px; }\n\n.ag-ltr .ag-row-group-indent-21 {\n  padding-left: 210px; }\n\n.ag-rtl .ag-row-group-indent-21 {\n  padding-right: 210px; }\n\n.ag-ltr .ag-toolpanel-indent-22 {\n  padding-left: 220px; }\n\n.ag-rtl .ag-toolpanel-indent-22 {\n  padding-right: 220px; }\n\n.ag-ltr .ag-row-group-indent-22 {\n  padding-left: 220px; }\n\n.ag-rtl .ag-row-group-indent-22 {\n  padding-right: 220px; }\n\n.ag-ltr .ag-toolpanel-indent-23 {\n  padding-left: 230px; }\n\n.ag-rtl .ag-toolpanel-indent-23 {\n  padding-right: 230px; }\n\n.ag-ltr .ag-row-group-indent-23 {\n  padding-left: 230px; }\n\n.ag-rtl .ag-row-group-indent-23 {\n  padding-right: 230px; }\n\n.ag-ltr .ag-toolpanel-indent-24 {\n  padding-left: 240px; }\n\n.ag-rtl .ag-toolpanel-indent-24 {\n  padding-right: 240px; }\n\n.ag-ltr .ag-row-group-indent-24 {\n  padding-left: 240px; }\n\n.ag-rtl .ag-row-group-indent-24 {\n  padding-right: 240px; }\n\n.ag-ltr .ag-toolpanel-indent-25 {\n  padding-left: 250px; }\n\n.ag-rtl .ag-toolpanel-indent-25 {\n  padding-right: 250px; }\n\n.ag-ltr .ag-row-group-indent-25 {\n  padding-left: 250px; }\n\n.ag-rtl .ag-row-group-indent-25 {\n  padding-right: 250px; }\n\n.ag-ltr .ag-toolpanel-indent-26 {\n  padding-left: 260px; }\n\n.ag-rtl .ag-toolpanel-indent-26 {\n  padding-right: 260px; }\n\n.ag-ltr .ag-row-group-indent-26 {\n  padding-left: 260px; }\n\n.ag-rtl .ag-row-group-indent-26 {\n  padding-right: 260px; }\n\n.ag-ltr .ag-toolpanel-indent-27 {\n  padding-left: 270px; }\n\n.ag-rtl .ag-toolpanel-indent-27 {\n  padding-right: 270px; }\n\n.ag-ltr .ag-row-group-indent-27 {\n  padding-left: 270px; }\n\n.ag-rtl .ag-row-group-indent-27 {\n  padding-right: 270px; }\n\n.ag-ltr .ag-toolpanel-indent-28 {\n  padding-left: 280px; }\n\n.ag-rtl .ag-toolpanel-indent-28 {\n  padding-right: 280px; }\n\n.ag-ltr .ag-row-group-indent-28 {\n  padding-left: 280px; }\n\n.ag-rtl .ag-row-group-indent-28 {\n  padding-right: 280px; }\n\n.ag-ltr .ag-toolpanel-indent-29 {\n  padding-left: 290px; }\n\n.ag-rtl .ag-toolpanel-indent-29 {\n  padding-right: 290px; }\n\n.ag-ltr .ag-row-group-indent-29 {\n  padding-left: 290px; }\n\n.ag-rtl .ag-row-group-indent-29 {\n  padding-right: 290px; }\n\n.ag-ltr .ag-toolpanel-indent-30 {\n  padding-left: 300px; }\n\n.ag-rtl .ag-toolpanel-indent-30 {\n  padding-right: 300px; }\n\n.ag-ltr .ag-row-group-indent-30 {\n  padding-left: 300px; }\n\n.ag-rtl .ag-row-group-indent-30 {\n  padding-right: 300px; }\n\n.ag-ltr .ag-toolpanel-indent-31 {\n  padding-left: 310px; }\n\n.ag-rtl .ag-toolpanel-indent-31 {\n  padding-right: 310px; }\n\n.ag-ltr .ag-row-group-indent-31 {\n  padding-left: 310px; }\n\n.ag-rtl .ag-row-group-indent-31 {\n  padding-right: 310px; }\n\n.ag-ltr .ag-toolpanel-indent-32 {\n  padding-left: 320px; }\n\n.ag-rtl .ag-toolpanel-indent-32 {\n  padding-right: 320px; }\n\n.ag-ltr .ag-row-group-indent-32 {\n  padding-left: 320px; }\n\n.ag-rtl .ag-row-group-indent-32 {\n  padding-right: 320px; }\n\n.ag-ltr .ag-toolpanel-indent-33 {\n  padding-left: 330px; }\n\n.ag-rtl .ag-toolpanel-indent-33 {\n  padding-right: 330px; }\n\n.ag-ltr .ag-row-group-indent-33 {\n  padding-left: 330px; }\n\n.ag-rtl .ag-row-group-indent-33 {\n  padding-right: 330px; }\n\n.ag-ltr .ag-toolpanel-indent-34 {\n  padding-left: 340px; }\n\n.ag-rtl .ag-toolpanel-indent-34 {\n  padding-right: 340px; }\n\n.ag-ltr .ag-row-group-indent-34 {\n  padding-left: 340px; }\n\n.ag-rtl .ag-row-group-indent-34 {\n  padding-right: 340px; }\n\n.ag-ltr .ag-toolpanel-indent-35 {\n  padding-left: 350px; }\n\n.ag-rtl .ag-toolpanel-indent-35 {\n  padding-right: 350px; }\n\n.ag-ltr .ag-row-group-indent-35 {\n  padding-left: 350px; }\n\n.ag-rtl .ag-row-group-indent-35 {\n  padding-right: 350px; }\n\n.ag-ltr .ag-toolpanel-indent-36 {\n  padding-left: 360px; }\n\n.ag-rtl .ag-toolpanel-indent-36 {\n  padding-right: 360px; }\n\n.ag-ltr .ag-row-group-indent-36 {\n  padding-left: 360px; }\n\n.ag-rtl .ag-row-group-indent-36 {\n  padding-right: 360px; }\n\n.ag-ltr .ag-toolpanel-indent-37 {\n  padding-left: 370px; }\n\n.ag-rtl .ag-toolpanel-indent-37 {\n  padding-right: 370px; }\n\n.ag-ltr .ag-row-group-indent-37 {\n  padding-left: 370px; }\n\n.ag-rtl .ag-row-group-indent-37 {\n  padding-right: 370px; }\n\n.ag-ltr .ag-toolpanel-indent-38 {\n  padding-left: 380px; }\n\n.ag-rtl .ag-toolpanel-indent-38 {\n  padding-right: 380px; }\n\n.ag-ltr .ag-row-group-indent-38 {\n  padding-left: 380px; }\n\n.ag-rtl .ag-row-group-indent-38 {\n  padding-right: 380px; }\n\n.ag-ltr .ag-toolpanel-indent-39 {\n  padding-left: 390px; }\n\n.ag-rtl .ag-toolpanel-indent-39 {\n  padding-right: 390px; }\n\n.ag-ltr .ag-row-group-indent-39 {\n  padding-left: 390px; }\n\n.ag-rtl .ag-row-group-indent-39 {\n  padding-right: 390px; }\n\n.ag-ltr .ag-toolpanel-indent-40 {\n  padding-left: 400px; }\n\n.ag-rtl .ag-toolpanel-indent-40 {\n  padding-right: 400px; }\n\n.ag-ltr .ag-row-group-indent-40 {\n  padding-left: 400px; }\n\n.ag-rtl .ag-row-group-indent-40 {\n  padding-right: 400px; }\n\n.ag-ltr .ag-toolpanel-indent-41 {\n  padding-left: 410px; }\n\n.ag-rtl .ag-toolpanel-indent-41 {\n  padding-right: 410px; }\n\n.ag-ltr .ag-row-group-indent-41 {\n  padding-left: 410px; }\n\n.ag-rtl .ag-row-group-indent-41 {\n  padding-right: 410px; }\n\n.ag-ltr .ag-toolpanel-indent-42 {\n  padding-left: 420px; }\n\n.ag-rtl .ag-toolpanel-indent-42 {\n  padding-right: 420px; }\n\n.ag-ltr .ag-row-group-indent-42 {\n  padding-left: 420px; }\n\n.ag-rtl .ag-row-group-indent-42 {\n  padding-right: 420px; }\n\n.ag-ltr .ag-toolpanel-indent-43 {\n  padding-left: 430px; }\n\n.ag-rtl .ag-toolpanel-indent-43 {\n  padding-right: 430px; }\n\n.ag-ltr .ag-row-group-indent-43 {\n  padding-left: 430px; }\n\n.ag-rtl .ag-row-group-indent-43 {\n  padding-right: 430px; }\n\n.ag-ltr .ag-toolpanel-indent-44 {\n  padding-left: 440px; }\n\n.ag-rtl .ag-toolpanel-indent-44 {\n  padding-right: 440px; }\n\n.ag-ltr .ag-row-group-indent-44 {\n  padding-left: 440px; }\n\n.ag-rtl .ag-row-group-indent-44 {\n  padding-right: 440px; }\n\n.ag-ltr .ag-toolpanel-indent-45 {\n  padding-left: 450px; }\n\n.ag-rtl .ag-toolpanel-indent-45 {\n  padding-right: 450px; }\n\n.ag-ltr .ag-row-group-indent-45 {\n  padding-left: 450px; }\n\n.ag-rtl .ag-row-group-indent-45 {\n  padding-right: 450px; }\n\n.ag-ltr .ag-toolpanel-indent-46 {\n  padding-left: 460px; }\n\n.ag-rtl .ag-toolpanel-indent-46 {\n  padding-right: 460px; }\n\n.ag-ltr .ag-row-group-indent-46 {\n  padding-left: 460px; }\n\n.ag-rtl .ag-row-group-indent-46 {\n  padding-right: 460px; }\n\n.ag-ltr .ag-toolpanel-indent-47 {\n  padding-left: 470px; }\n\n.ag-rtl .ag-toolpanel-indent-47 {\n  padding-right: 470px; }\n\n.ag-ltr .ag-row-group-indent-47 {\n  padding-left: 470px; }\n\n.ag-rtl .ag-row-group-indent-47 {\n  padding-right: 470px; }\n\n.ag-ltr .ag-toolpanel-indent-48 {\n  padding-left: 480px; }\n\n.ag-rtl .ag-toolpanel-indent-48 {\n  padding-right: 480px; }\n\n.ag-ltr .ag-row-group-indent-48 {\n  padding-left: 480px; }\n\n.ag-rtl .ag-row-group-indent-48 {\n  padding-right: 480px; }\n\n.ag-ltr .ag-toolpanel-indent-49 {\n  padding-left: 490px; }\n\n.ag-rtl .ag-toolpanel-indent-49 {\n  padding-right: 490px; }\n\n.ag-ltr .ag-row-group-indent-49 {\n  padding-left: 490px; }\n\n.ag-rtl .ag-row-group-indent-49 {\n  padding-right: 490px; }\n\n.ag-side-bar {\n  display: flex;\n  flex-direction: row-reverse;\n  box-sizing: border-box; }\n  .ag-side-bar .ag-side-buttons {\n    width: 20px; }\n    .ag-side-bar .ag-side-buttons div button {\n      display: block;\n      white-space: nowrap;\n      outline: none; }\n      .ag-side-bar .ag-side-buttons div button span {\n        -webkit-writing-mode: tb;\n        -ms-writing-mode: tb;\n        writing-mode: tb;\n        -webkit-writing-mode: vertical-lr;\n        -ms-writing-mode: tb-lr;\n        writing-mode: vertical-lr; }\n  .ag-side-bar .panel-container {\n    width: 180px; }\n  .ag-side-bar.full-width .panel-container {\n    width: 200px; }\n\n.ag-rtl .ag-side-bar .ag-side-buttons button span {\n  -webkit-writing-mode: tb-rl;\n  -ms-writing-mode: tb-rl;\n  writing-mode: tb-rl;\n  -webkit-writing-mode: vertical-rl;\n  writing-mode: vertical-rl; }\n\n.ag-row-inline-editing {\n  z-index: 1; }\n\n.ag-status-bar {\n  display: flex;\n  justify-content: space-between; }\n  .ag-status-bar .ag-status-panel {\n    display: inline-flex; }\n\n.ag-status-bar-left {\n  display: inline-flex; }\n\n.ag-status-bar-center {\n  display: inline-flex; }\n\n.ag-status-bar-right {\n  display: inline-flex; }\n\n@media print {\n  .ag-body-viewport {\n    display: block; }\n  .ag-row {\n    page-break-inside: avoid; } }\n\n.ag-body .ag-pinned-left-cols-viewport, .ag-body .ag-body-viewport, .ag-body .ag-pinned-right-cols-viewport {\n  -webkit-overflow-scrolling: touch; }\n\n", ""]);
+exports.push([module.i, "ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {\n  display: block; }\n\n.ag-rtl {\n  direction: rtl; }\n\n.ag-ltr {\n  direction: ltr; }\n\n.ag-select-agg-func-popup {\n  position: absolute; }\n\n.ag-body-no-select {\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-root-wrapper {\n  position: relative;\n  display: flex;\n  flex-direction: column; }\n  .ag-root-wrapper.ag-layout-normal {\n    height: 100%; }\n\n.ag-root-wrapper-body {\n  display: flex;\n  flex-direction: row; }\n  .ag-root-wrapper-body.ag-layout-normal {\n    flex-grow: 1;\n    height: 0px;\n    min-height: 0px; }\n\n.ag-root {\n  box-sizing: border-box;\n  position: relative;\n  display: flex;\n  flex-direction: column; }\n  .ag-root.ag-layout-normal, .ag-root.ag-layout-auto-height {\n    overflow: hidden;\n    width: 0px;\n    min-width: 0px;\n    flex: 1; }\n  .ag-root.ag-layout-normal {\n    height: 100%; }\n\n.ag-font-style {\n  cursor: default;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-popup-backdrop {\n  height: 100%;\n  left: 0;\n  position: fixed;\n  top: 0;\n  width: 100%; }\n\n.ag-header {\n  box-sizing: border-box;\n  white-space: nowrap;\n  width: 100%;\n  display: flex; }\n\n.ag-pinned-left-header {\n  box-sizing: border-box;\n  display: inline-block;\n  height: 100%;\n  overflow: hidden; }\n\n.ag-pinned-right-header {\n  box-sizing: border-box;\n  display: inline-block;\n  height: 100%;\n  overflow: hidden; }\n\n.ag-header-viewport {\n  box-sizing: border-box;\n  height: 100%;\n  overflow: hidden;\n  width: 0px;\n  min-width: 0px;\n  flex: 1; }\n\n.ag-header-row {\n  position: absolute; }\n\n.ag-header-container {\n  box-sizing: border-box;\n  height: 100%;\n  position: relative;\n  white-space: nowrap; }\n\n.ag-header-overlay {\n  display: block;\n  position: absolute; }\n\n.ag-header-cell {\n  box-sizing: border-box;\n  display: inline-block;\n  height: 100%;\n  position: absolute;\n  vertical-align: bottom; }\n\n.ag-floating-filter {\n  box-sizing: border-box;\n  display: inline-block;\n  position: absolute; }\n\n.ag-floating-filter-body {\n  height: 20px;\n  margin-right: 25px; }\n\n.ag-floating-filter-full-body {\n  height: 20px;\n  width: 100%; }\n\n.ag-floating-filter-input {\n  width: 100%; }\n\n.ag-floating-filter-input:-moz-read-only {\n  background-color: #eee; }\n\n.ag-floating-filter-input:read-only {\n  background-color: #eee; }\n\n.ag-floating-filter-menu {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-dnd-ghost {\n  background: #e5e5e5;\n  border: 1px solid black;\n  box-sizing: border-box;\n  cursor: move;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  line-height: 1.4;\n  overflow: hidden;\n  padding: 3px;\n  position: absolute;\n  text-overflow: ellipsis;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-dnd-ghost-icon {\n  display: inline-block;\n  float: left;\n  padding: 2px; }\n\n.ag-dnd-ghost-label {\n  display: inline-block; }\n\n.ag-header-group-cell {\n  box-sizing: border-box;\n  display: inline-block;\n  height: 100%;\n  overflow: hidden;\n  position: absolute;\n  text-overflow: ellipsis; }\n\n.ag-header-group-cell-label {\n  overflow: hidden;\n  text-overflow: ellipsis;\n  display: flex; }\n\n.ag-header-cell-label {\n  overflow: hidden;\n  text-overflow: ellipsis; }\n\n.ag-header-cell-resize {\n  position: absolute;\n  z-index: 4;\n  cursor: col-resize;\n  height: 100%;\n  width: 4px; }\n\n.ag-ltr .ag-header-cell-resize {\n  right: -4px; }\n\n.ag-ltr .ag-pinned-right-header .ag-header-cell-resize {\n  left: -4px; }\n\n.ag-rtl .ag-header-cell-resize {\n  left: -4px; }\n\n.ag-rtl .ag-pinned-left-header .ag-header-cell-resize {\n  right: -4px; }\n\n.ag-ltr .ag-header-select-all {\n  float: left; }\n\n.ag-rtl .ag-header-select-all {\n  float: right; }\n\n.ag-header-expand-icon {\n  padding-left: 4px; }\n\n.ag-header-cell-menu-button {\n  float: right; }\n\n.ag-overlay {\n  height: 100%;\n  left: 0;\n  pointer-events: none;\n  position: absolute;\n  top: 0;\n  width: 100%; }\n\n.ag-overlay-panel {\n  display: table;\n  height: 100%;\n  pointer-events: none;\n  width: 100%; }\n\n.ag-overlay-wrapper {\n  display: table-cell;\n  text-align: center;\n  vertical-align: middle; }\n\n.ag-primary-cols-header-panel .ag-column-name-filter {\n  flex-grow: 1;\n  flex-shrink: 1; }\n\n.ag-primary-cols-header-panel .ag-primary-cols-filter-wrapper {\n  width: 100%; }\n\n.ag-tool-panel-wrapper {\n  display: flex;\n  overflow-y: auto; }\n\n.ag-column-panel {\n  display: flex;\n  min-height: 400px;\n  flex-direction: column;\n  flex-grow: 1;\n  overflow-x: hidden;\n  max-height: 100vh; }\n\n.ag-body-container.ag-layout-auto-height {\n  min-height: 50px; }\n\n.ag-overlay-no-rows-wrapper.ag-layout-auto-height {\n  padding-top: 30px; }\n\n.ag-body {\n  box-sizing: border-box;\n  position: relative;\n  display: flex; }\n  .ag-body.ag-layout-normal {\n    flex: 1;\n    height: 0px;\n    min-height: 0px; }\n\n.ag-rtl .ag-body {\n  flex-direction: row-reverse; }\n\n.ag-ltr .ag-body {\n  flex-direction: row; }\n\n.ag-rtl .ag-floating-top {\n  flex-direction: row-reverse; }\n\n.ag-ltr .ag-floating-top {\n  flex-direction: row; }\n\n.ag-rtl .ag-floating-bottom {\n  flex-direction: row-reverse; }\n\n.ag-ltr .ag-floating-bottom {\n  flex-direction: row; }\n\n.ag-ltr .ag-header {\n  flex-direction: row; }\n\n.ag-rtl .ag-header {\n  flex-direction: row-reverse; }\n\n.ag-floating-top {\n  box-sizing: border-box;\n  overflow: hidden;\n  white-space: nowrap;\n  width: 100%;\n  position: relative;\n  display: flex; }\n\n.ag-pinned-left-floating-top {\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: relative;\n  min-width: 0px;\n  width: 0px;\n  flex-grow: 1000; }\n\n.ag-pinned-right-floating-top {\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: relative;\n  min-width: 0px;\n  width: 0px;\n  flex-grow: 1000; }\n\n.ag-floating-top-viewport {\n  box-sizing: border-box;\n  overflow: hidden;\n  width: 0px;\n  min-width: 0px;\n  flex: 1; }\n  .ag-floating-top-viewport.ag-layout-normal {\n    height: 100%; }\n\n.ag-floating-top-container {\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap; }\n\n.ag-floating-bottom {\n  box-sizing: border-box;\n  overflow: hidden;\n  white-space: nowrap;\n  width: 100%;\n  position: relative;\n  display: flex; }\n\n.ag-pinned-left-floating-bottom {\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: relative;\n  min-width: 0px;\n  width: 0px;\n  flex-grow: 1000; }\n\n.ag-pinned-right-floating-bottom {\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: relative;\n  min-width: 0px;\n  width: 0px;\n  flex-grow: 1000; }\n\n.ag-floating-bottom-viewport {\n  box-sizing: border-box;\n  overflow: hidden;\n  flex: 1;\n  width: 0px;\n  min-width: 0px; }\n\n.ag-floating-bottom-container {\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap; }\n\n.ag-pinned-right-cols-viewport-wrapper {\n  height: 100%;\n  overflow: hidden;\n  flex-grow: 1000;\n  min-width: 0px;\n  width: 0px; }\n\n.ag-pinned-right-cols-viewport {\n  height: 100%;\n  overflow-x: hidden;\n  overflow-y: auto; }\n\n.ag-pinned-right-cols-container {\n  display: block;\n  position: relative; }\n\n.ag-pinned-left-cols-viewport-wrapper {\n  height: 100%;\n  overflow: hidden;\n  flex-grow: 1000;\n  min-width: 0px;\n  width: 0px; }\n\n.ag-pinned-left-cols-viewport {\n  height: 100%;\n  overflow-x: hidden;\n  overflow-y: auto; }\n\n.ag-pinned-left-cols-container {\n  display: block;\n  position: relative; }\n\n.ag-body-viewport-wrapper {\n  overflow: hidden; }\n  .ag-body-viewport-wrapper.ag-layout-auto-height, .ag-body-viewport-wrapper.ag-layout-normal {\n    height: 100%;\n    width: 20px;\n    min-width: 20px;\n    flex: 1; }\n\n.ag-body-viewport.ag-layout-auto-height {\n  overflow-x: auto;\n  overflow-y: hidden; }\n\n.ag-body-viewport.ag-layout-normal {\n  overflow-x: auto;\n  overflow-y: auto;\n  height: 100%; }\n\n.ag-full-width-viewport-wrapper {\n  height: 100%;\n  width: 100%;\n  display: inline-block;\n  pointer-events: none;\n  overflow: hidden;\n  position: absolute;\n  top: 0px;\n  left: 0px;\n  box-sizing: border-box; }\n\n.ag-full-width-viewport {\n  box-sizing: border-box;\n  height: 100%;\n  pointer-events: none;\n  overflow-x: hidden;\n  overflow-y: auto; }\n\n.ag-full-width-container {\n  overflow: hidden;\n  position: relative;\n  width: 100%; }\n\n.ag-floating-bottom-full-width-container {\n  display: inline;\n  left: 0;\n  overflow: hidden;\n  pointer-events: none;\n  position: absolute;\n  top: 0; }\n\n.ag-floating-top-full-width-container {\n  display: inline;\n  left: 0;\n  overflow: hidden;\n  pointer-events: none;\n  position: absolute;\n  top: 0; }\n\n.ag-full-width-row {\n  overflow: hidden;\n  pointer-events: all; }\n\n.ag-body-container {\n  position: relative; }\n  .ag-body-container:not(.ag-layout-print) {\n    display: block; }\n\n.ag-row-animation .ag-row {\n  transition: top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s, -webkit-transform 0.4s;\n  transition: transform 0.4s, top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;\n  transition: transform 0.4s, top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s, -webkit-transform 0.4s; }\n\n.ag-row-no-animation .ag-row {\n  transition: background-color 0.1s; }\n\n.ag-row {\n  box-sizing: border-box;\n  white-space: nowrap;\n  width: 100%; }\n\n.ag-row-position-absolute {\n  position: absolute; }\n\n.ag-row-position-relative {\n  position: relative; }\n\n.ag-column-moving .ag-cell {\n  transition: left 0.2s; }\n\n.ag-column-moving .ag-header-cell {\n  transition: left 0.2s; }\n\n.ag-column-moving .ag-header-group-cell {\n  transition: left 0.2s, width 0.2s; }\n\n.ag-column-drop {\n  box-sizing: border-box;\n  width: 100%; }\n\n.ag-column-drop-vertical {\n  display: flex;\n  flex-direction: column;\n  flex-grow: 1;\n  height: 50px;\n  overflow: hidden; }\n  .ag-column-drop-vertical .ag-column-drop-list {\n    flex-grow: 1;\n    height: 20px;\n    overflow-x: auto; }\n  .ag-column-drop-vertical .ag-column-drop-cell {\n    display: flex; }\n    .ag-column-drop-vertical .ag-column-drop-cell .ag-column-drop-cell-text {\n      overflow: hidden;\n      flex: 1;\n      text-overflow: ellipsis;\n      white-space: nowrap; }\n  .ag-column-drop-vertical .ag-column-drop-empty-message {\n    display: block; }\n  .ag-column-drop-vertical .ag-column-drop-cell-button {\n    line-height: 16px; }\n\n.ag-ltr .ag-column-drop-vertical .ag-column-drop-cell-button {\n  float: right; }\n\n.ag-rtl .ag-column-drop-vertical .ag-column-drop-cell-button {\n  float: left; }\n\n.ag-column-drop-horizontal {\n  white-space: nowrap;\n  overflow: hidden; }\n  .ag-column-drop-horizontal .ag-column-drop-cell {\n    display: inline-block; }\n  .ag-column-drop-horizontal .ag-column-drop-empty-message {\n    display: inline-block; }\n  .ag-column-drop-horizontal .ag-column-drop-list {\n    height: 100%; }\n\n.ag-cell {\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: absolute;\n  text-overflow: ellipsis;\n  white-space: nowrap; }\n\n.ag-cell-with-height {\n  height: 100%; }\n\n.ag-value-slide-out {\n  margin-right: 5px;\n  opacity: 1;\n  transition: opacity 3s, margin-right 3s;\n  transition-timing-function: linear; }\n\n.ag-value-slide-out-end {\n  margin-right: 10px;\n  opacity: 0; }\n\n.ag-opacity-zero {\n  opacity: 0; }\n\n.ag-cell-edit-input {\n  height: 100%;\n  width: 100%; }\n\n.ag-group-cell-entire-row {\n  box-sizing: border-box;\n  display: inline-block;\n  height: 100%;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  width: 100%; }\n\n.ag-footer-cell-entire-row {\n  box-sizing: border-box;\n  display: inline-block;\n  height: 100%;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  width: 100%; }\n\n.ag-popup-editor {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-menu {\n  max-height: 100%;\n  overflow-y: auto;\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-menu-column-select-wrapper {\n  height: 265px;\n  overflow: auto;\n  width: 200px; }\n\n.ag-menu-list {\n  border-collapse: collapse;\n  display: table; }\n\n.ag-menu-option {\n  display: table-row; }\n\n.ag-menu-option-text {\n  display: table-cell;\n  white-space: nowrap; }\n\n.ag-menu-option-shortcut {\n  display: table-cell; }\n\n.ag-menu-option-icon {\n  display: table-cell; }\n\n.ag-menu-option-popup-pointer {\n  display: table-cell; }\n\n.ag-menu-separator {\n  display: table-row; }\n\n.ag-menu-separator-cell {\n  display: table-cell; }\n\n.ag-virtual-list-viewport {\n  height: 100%;\n  overflow-x: auto;\n  width: 100%; }\n\n.ag-virtual-list-container {\n  overflow: hidden;\n  position: relative; }\n\n.ag-rich-select {\n  cursor: default;\n  outline: none; }\n\n.ag-rich-select-row {\n  white-space: nowrap; }\n\n.ag-rich-select-list {\n  height: 200px;\n  width: 200px; }\n\n.ag-set-filter-list {\n  height: 200px;\n  width: 200px; }\n\n.ag-set-filter-item {\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap; }\n\n.ag-virtual-list-item {\n  position: absolute;\n  width: 100%; }\n  .ag-virtual-list-item span:empty:not(.ag-icon) {\n    border-left: 1px solid transparent; }\n\n.ag-filter-filter {\n  box-sizing: border-box;\n  width: 100%; }\n\n.ag-filter .ag-filter-checkbox {\n  pointer-events: none; }\n\n.ag-floating-filter-body input {\n  height: 19px;\n  margin: 0;\n  width: 100%; }\n\n.ag-floating-filter-full-body input {\n  height: 19px;\n  margin: 0;\n  width: 100%; }\n\n.ag-filter-select {\n  margin: 4px 4px 0 4px;\n  width: 110px; }\n\n.ag-list-selection {\n  cursor: default;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-tool-panel-wrapper {\n  box-sizing: border-box;\n  cursor: default;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  width: 200px; }\n\n.ag-primary-cols-list-panel {\n  flex-grow: 1;\n  height: 50px;\n  overflow: auto; }\n\n.ag-column-select-indent {\n  display: inline-block; }\n\n.ag-ltr .ag-column-tool-panel-column {\n  margin-left: 16px; }\n\n.ag-rtl .ag-column-tool-panel-column {\n  margin-right: 16px; }\n\n.ag-column-tool-panel-column,\n.ag-column-tool-panel-column-group {\n  align-items: stretch;\n  display: flex;\n  flex-direction: row;\n  flex-wrap: nowrap;\n  text-overflow: ellipsis;\n  white-space: nowrap; }\n  .ag-column-tool-panel-column .ag-column-tool-panel-column,\n  .ag-column-tool-panel-column .ag-column-tool-panel-column-group,\n  .ag-column-tool-panel-column-group .ag-column-tool-panel-column,\n  .ag-column-tool-panel-column-group .ag-column-tool-panel-column-group {\n    flex-grow: 1;\n    flex-shrink: 1;\n    overflow: hidden;\n    text-overflow: ellipsis; }\n  .ag-column-tool-panel-column .ag-column-drag,\n  .ag-column-tool-panel-column-group .ag-column-drag {\n    min-width: 16px;\n    flex-grow: 0;\n    flex-shrink: 0; }\n\n.ag-column-select-panel {\n  display: flex;\n  flex-direction: column;\n  overflow: hidden; }\n\n.ag-side-bar .ag-column-select-panel {\n  flex-grow: 4; }\n\n.ag-tool-panel-horizontal-resize {\n  cursor: col-resize;\n  height: 100%;\n  position: absolute;\n  top: 0;\n  width: 5px;\n  z-index: 1; }\n\n.ag-rtl .ag-tool-panel-horizontal-resize {\n  float: right;\n  -webkit-transform: translateX(3px);\n  transform: translateX(3px); }\n\n.ag-ltr .ag-tool-panel-horizontal-resize {\n  float: left;\n  -webkit-transform: translateX(-3px);\n  transform: translateX(-3px); }\n\n.ag-menu-column-select-wrapper .ag-column-select-panel {\n  height: 100%; }\n\n.ag-hidden {\n  display: none !important; }\n\n.ag-visibility-hidden {\n  visibility: hidden !important; }\n\n.ag-faded {\n  opacity: 0.3; }\n\n.ag-width-half {\n  display: inline-block;\n  width: 50%; }\n\n.ag-shake-left-to-right {\n  -webkit-animation-direction: alternate;\n  animation-direction: alternate;\n  -webkit-animation-duration: 0.2s;\n  animation-duration: 0.2s;\n  -webkit-animation-iteration-count: infinite;\n  animation-iteration-count: infinite;\n  -webkit-animation-name: ag-shake-left-to-right;\n  animation-name: ag-shake-left-to-right; }\n\n@-webkit-keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px; }\n  to {\n    padding-left: 2px;\n    padding-right: 6px; } }\n\n@keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px; }\n  to {\n    padding-left: 2px;\n    padding-right: 6px; } }\n\n/* icons are used outside of the grid root (in the ghost) */\n.ag-icon-aggregation {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTkuNSAyLjVoLTZsMiAzLjUtMiAzLjVoNiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-arrows {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTE2IDZsLTEuNDEgMS40MUwxNi4xNyA5SDR2MmgxMi4xN2wtMS41OCAxLjU5TDE2IDE0bDQtNHoiLz48cGF0aCBkPSJNNCA2bDEuNDEgMS40MUwzLjgzIDlIMTZ2MkgzLjgzbDEuNTggMS41OUw0IDE0bC00LTR6Ii8+PHBhdGggZD0iTTYgMTZsMS40MS0xLjQxTDkgMTYuMTdWNGgydjEyLjE3bDEuNTktMS41OEwxNCAxNmwtNCA0eiIvPjxwYXRoIGQ9Ik0xNCA0bC0xLjQxIDEuNDFMMTEgMy44M1YxNkg5VjMuODNMNy40MSA1LjQxIDYgNGw0LTR6Ii8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-asc {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxwYXRoIGlkPSJhIiBkPSJNNSAzaDJ2OUg1eiIvPjxwYXRoIGQ9Ik04Ljk5MyA1LjJWMy40OTNoLTZ2Nkg0LjdWNS4yaDQuMjkzeiIgaWQ9ImIiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNNS41IDMuNWgxdjhoLTF6Ii8+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNS45OTMgNi40OTMpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNiIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNOC40OTMgNC43di0uNzA3aC01djVINC4yVjQuN2g0LjI5M3oiLz48L2c+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-checkbox-checked-readonly {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxyZWN0IGlkPSJhIiB4PSIwIiB5PSIwIiB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHJ4PSIxIi8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYSIvPjxyZWN0IHN0cm9rZT0iIzAwMCIgeD0iLjUiIHk9Ii41IiB3aWR0aD0iMTEiIGhlaWdodD0iMTEiIHJ4PSIxIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNOSAzTDYgOC41bC0yLjUtMiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-checkbox-checked {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxyZWN0IGlkPSJhIiB4PSIwIiB5PSIwIiB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHJ4PSIxIi8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHVzZSBmaWxsPSIjRkZGIiB4bGluazpocmVmPSIjYSIvPjxyZWN0IHN0cm9rZT0iIzAwMCIgeD0iLjUiIHk9Ii41IiB3aWR0aD0iMTEiIGhlaWdodD0iMTEiIHJ4PSIxIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNOSAzTDYgOC41bC0yLjUtMiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-checkbox-indeterminate-readonly {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxyZWN0IGlkPSJhIiB4PSIwIiB5PSIwIiB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHJ4PSIxIi8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYSIvPjxyZWN0IHN0cm9rZT0iIzAwMCIgeD0iLjUiIHk9Ii41IiB3aWR0aD0iMTEiIGhlaWdodD0iMTEiIHJ4PSIxIi8+PHBhdGggZmlsbD0iIzAwMCIgZD0iTTQgNWg0djJINHoiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-checkbox-indeterminate {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxyZWN0IGlkPSJhIiB4PSIwIiB5PSIwIiB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHJ4PSIxIi8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHVzZSBmaWxsPSIjRkZGIiB4bGluazpocmVmPSIjYSIvPjxyZWN0IHN0cm9rZT0iIzAwMCIgeD0iLjUiIHk9Ii41IiB3aWR0aD0iMTEiIGhlaWdodD0iMTEiIHJ4PSIxIi8+PHBhdGggZmlsbD0iIzAwMCIgZD0iTTQgNWg0djJINHoiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-checkbox-unchecked-readonly {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxyZWN0IGlkPSJhIiB4PSIwIiB5PSIwIiB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHJ4PSIxIi8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYSIvPjxyZWN0IHN0cm9rZT0iIzAwMCIgeD0iLjUiIHk9Ii41IiB3aWR0aD0iMTEiIGhlaWdodD0iMTEiIHJ4PSIxIi8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-checkbox-unchecked {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxyZWN0IGlkPSJhIiB4PSIwIiB5PSIwIiB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHJ4PSIxIi8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHVzZSBmaWxsPSIjRkZGIiB4bGluazpocmVmPSIjYSIvPjxyZWN0IHN0cm9rZT0iIzAwMCIgeD0iLjUiIHk9Ii41IiB3aWR0aD0iMTEiIGhlaWdodD0iMTEiIHJ4PSIxIi8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-column {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEgMWg0djJIMXptMCAzaDR2N0gxeiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-columns {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEgMWg0djJIMXptNiAwaDR2Mkg3ek0xIDVoNHYySDF6bTYgMGg0djJIN3pNMSA5aDR2Mkgxem02IDBoNHYySDd6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-contracted {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cmVjdCBzdHJva2Utb3BhY2l0eT0iLjUiIHN0cm9rZT0iIzAwMCIgeD0iMS41IiB5PSIxLjUiIHdpZHRoPSI5IiBoZWlnaHQ9IjkiIHJ4PSIxIi8+PHBhdGggZmlsbD0iIzAwMCIgZD0iTTkgNXYySDNWNXoiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-copy {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSIjMDAwIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00LjUgNC41aDV2NWgtNXoiLz48cGF0aCBkPSJNNy41IDIuNWgtNXY1aDJ2Mmg1di01aC0ydi0yeiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-cut {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSIjMDAwIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zIDMuMTJjLjY2Ny4wNzggMyAxLjc0NSA3IDUtLjMyNi4yMDQtLjY1OS4yMDQtMSAwLS4zNDEtLjIwNi0xLjY3NC0xLjIwNi00LTMgMCAuNjY2LS42NjcuNjY2LTIgMC0yLTEtMS0yLjEyIDAtMnoiLz48cGF0aCBkPSJNMyA4LjI2NGMuNjY3LS4wOCAzLTEuNzQ2IDctNS0uMzI2LS4yMDUtLjY1OS0uMjA1LTEgMC0uMzQxLjIwNC0xLjY3NCAxLjIwNC00IDMgMC0uNjY3LS42NjctLjY2Ny0yIDAtMiAxLTEgMi4xMTkgMCAyeiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-desc {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxwYXRoIGlkPSJhIiBkPSJNNSAyaDJ2OUg1eiIvPjxwYXRoIGQ9Ik04Ljk5MyA2LjFWNC4zOTNoLTZ2Nkg0LjdWNi4xaDQuMjkzeiIgaWQ9ImIiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNNS41IDIuNWgxdjhoLTF6Ii8+PGcgdHJhbnNmb3JtPSJyb3RhdGUoLTEzNSA1Ljk5MyA3LjM5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA1LjZ2LS43MDdoLTV2NUg0LjJWNS42aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-expanded {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cmVjdCBzdHJva2Utb3BhY2l0eT0iLjUiIHN0cm9rZT0iIzAwMCIgeD0iMS41IiB5PSIxLjUiIHdpZHRoPSI5IiBoZWlnaHQ9IjkiIHJ4PSIxIi8+PHBhdGggZmlsbD0iIzAwMCIgZD0iTTUgM2gydjZINXoiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNOSA1djJIM1Y1eiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-eye-slash {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMy4wMDEgMy45MDhMMyA0YTMgMyAwIDEgMCA1Ljk5OS0uMDkyQTUuMjQ4IDUuMjQ4IDAgMCAwIDYgM2MtMS4xIDAtMi4xLjMwMy0yLjk5OS45MDh6IiBmaWxsPSIjMDAwIi8+PHBhdGggZD0iTTQgNC41Yy42NjctLjMzMyAxLjY2Ny0uNSAzLS41IiBzdHJva2U9IiM5Nzk3OTciLz48cGF0aCBkPSJNMSA2YzEuMzMzLTIgMy0zIDUtM3MzLjY2NyAxIDUgM0M5LjY2NyA4IDggOSA2IDlTMi4zMzMgOCAxIDZ6IiBzdHJva2U9IiMwMDAiLz48cGF0aCBkPSJNNC4wMDQgMi44MzVsNC45OTIgNi4zMyIgc3Ryb2tlPSIjMDAwIiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIi8+PHBhdGggZD0iTTMuMDA0IDIuODM1bDQuOTkyIDYuMzMiIHN0cm9rZT0iI0ZGRiIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-eye {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMy4wMDEgMy45MDhMMyA0YTMgMyAwIDEgMCA1Ljk5OS0uMDkyQTUuMjQ4IDUuMjQ4IDAgMCAwIDYgM2MtMS4xIDAtMi4xLjMwMy0yLjk5OS45MDh6IiBmaWxsPSIjMDAwIi8+PHBhdGggZD0iTTQgNC41Yy42NjctLjMzMyAxLjY2Ny0uNSAzLS41IiBzdHJva2U9IiM5Nzk3OTciLz48cGF0aCBkPSJNMSA2YzEuMzMzLTIgMy0zIDUtM3MzLjY2NyAxIDUgM0M5LjY2NyA4IDggOSA2IDlTMi4zMzMgOCAxIDZ6IiBzdHJva2U9IiMwMDAiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-filter {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEgMmgxMEw3IDZ2NUw1IDlWNkwxIDJ6bTQgNHYxaDJWNkg1eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-group {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik03LjUgMS41aDN2MmgtM3ptMCA0aDN2MmgtM3ptMCA0aDN2MmgtM3oiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNMiAzaDF2OEgyem0xIDNoNHYxSDN6bTItNGgzdjFINXoiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNMiAxMGg1djFIMnoiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik0xLjUgMS41aDN2MmgtM3oiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-indeterminate {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMy4wNTYgNC41ODFhMy4wMDEgMy4wMDEgMCAwIDAgNS44ODggMEM4LjA1OSA0LjE5NCA3LjA3OCA0IDYgNGMtMS4wNzggMC0yLjA2LjE5NC0yLjk0NC41ODF6IiBmaWxsPSIjMDAwIi8+PHBhdGggZD0iTTQgNS41Yy42NjctLjMzMyAxLjY2Ny0uNSAzLS41IiBzdHJva2U9IiM5Nzk3OTciLz48cGF0aCBkPSJNMSA2YzEuMzMzLTEuMzMzIDMtMiA1LTJzMy42NjcuNjY3IDUgMkM5LjY2NyA3LjMzMyA4IDggNiA4cy0zLjY2Ny0uNjY3LTUtMnoiIHN0cm9rZT0iIzAwMCIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-left {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxwYXRoIGlkPSJhIiBkPSJNNS41IDEuNWgydjloLTJ6Ii8+PHBhdGggZD0iTTcuOTkzIDQuN1YyLjk5M2gtNnY2SDMuN1Y0LjdoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIHRyYW5zZm9ybT0icm90YXRlKDkwIDYuNSA2KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYSIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTYgMmgxdjhINnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoLTQ1IDQuOTkzIDUuOTkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNDkzIDQuMnYtLjcwN2gtNXY1SDMuMlY0LjJoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-loading {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxwYXRoIGlkPSJhIiBkPSJNNSAxaDJ2M0g1eiIvPjxwYXRoIGlkPSJiIiBkPSJNNSA4aDJ2M0g1eiIvPjxwYXRoIGlkPSJjIiBkPSJNMSA1aDN2MkgxeiIvPjxwYXRoIGlkPSJkIiBkPSJNOCA1aDN2Mkg4eiIvPjxwYXRoIGlkPSJlIiBkPSJNNCAwaDJ2M0g0eiIvPjxwYXRoIGlkPSJmIiBkPSJNNCA3aDJ2M0g0eiIvPjxwYXRoIGlkPSJnIiBkPSJNMCA0aDN2MkgweiIvPjxwYXRoIGlkPSJoIiBkPSJNNyA0aDN2Mkg3eiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiM5Nzk3OTciIGQ9Ik01LjUgMS41aDF2MmgtMXoiLz48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNiIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNNS41IDguNWgxdjJoLTF6Ii8+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYyIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTEuNSA1LjVoMnYxaC0yeiIvPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2QiLz48cGF0aCBzdHJva2U9IiM5Nzk3OTciIGQ9Ik04LjUgNS41aDJ2MWgtMnoiLz48ZyBvcGFjaXR5PSIuNzE0Ij48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA0LjI5MyA2LjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2UiLz48cGF0aCBzdHJva2U9IiM5Nzk3OTciIGQ9Ik00LjUuNWgxdjJoLTF6Ii8+PC9nPjxnIHRyYW5zZm9ybT0icm90YXRlKDQ1IDQuMjkzIDYuNzA3KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjZiIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTQuNSA3LjVoMXYyaC0xeiIvPjwvZz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA0LjI5MyA2LjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2ciLz48cGF0aCBzdHJva2U9IiM5Nzk3OTciIGQ9Ik0uNSA0LjVoMnYxaC0yeiIvPjwvZz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA0LjI5MyA2LjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2giLz48cGF0aCBzdHJva2U9IiM5Nzk3OTciIGQ9Ik03LjUgNC41aDJ2MWgtMnoiLz48L2c+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-menu {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEgMWgxMHYySDF6bTAgNGgxMHYySDF6bTAgNGgxMHYySDF6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-minus {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgNWg4djJIMnoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-none {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxwYXRoIGlkPSJhIiBkPSJNNSAzaDJ2Nkg1eiIvPjxwYXRoIGQ9Ik04LjE0NiA4LjE4MlY2LjQ3NWgtNXY1aDEuNzA4VjguMTgyaDMuMjkyeiIgaWQ9ImIiLz48cGF0aCBkPSJNOC41IDIuOTE0VjEuMjA3aC01djVoMS43MDdWMi45MTRIOC41eiIgaWQ9ImMiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNNS41IDMuNWgxdjVoLTF6Ii8+PGcgdHJhbnNmb3JtPSJyb3RhdGUoLTEzNSA1LjY0NiA4LjQ3NSkiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik03LjY0NiA3LjY4MnYtLjcwN2gtNHY0aC43MDhWNy42ODJoMy4yOTJ6Ii8+PC9nPjxnIHRyYW5zZm9ybT0icm90YXRlKDQ1IDYgMy43MDcpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNjIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNOCAyLjQxNHYtLjcwN0g0djRoLjcwN1YyLjQxNEg4eiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-not-allowed {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSIjMDAwIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxjaXJjbGUgY3g9IjYiIGN5PSI2IiByPSI0Ii8+PHBhdGggZD0iTTguNSAzLjVMMy40MDEgOC41OTkiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-paste {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSIjMDAwIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yLjUgMi41aDd2N2gtN3oiLz48cGF0aCBkPSJNNi41IDEuNWgtMXYyaC0xdjFoM3YtMWgtMXYtMnoiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-pin {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBmaWxsPSIjMDAwIiBkPSJNMyAyaDZ2MUg4djRsMiAxSDdsLTEgMy0xLTNIMmwyLTFWM0gzeiIvPjxwYXRoIGZpbGwtb3BhY2l0eT0iLjUiIGZpbGw9IiNGRkYiIGQ9Ik01IDNoMXY0SDV6Ii8+PHBhdGggZmlsbC1vcGFjaXR5PSIuMjgiIGZpbGw9IiNGRkYiIGQ9Ik00IDNoMXYzSDR6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-pivot {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSIjMDAwIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxyZWN0IHg9IjEuNSIgeT0iMS41IiB3aWR0aD0iOSIgaGVpZ2h0PSI5IiByeD0iMSIvPjxwYXRoIGQ9Ik0xMC41IDMuNWgtOW0yLTJ2OSIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIvPjxwYXRoIGQ9Ik03LjUgNi41bDEtMSAxIDFtLTMgMWwtMSAxIDEgMSIvPjxwYXRoIGQ9Ik04LjUgNS41djNoLTMiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-plus {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNNSAyaDJ2OEg1eiIvPjxwYXRoIGQ9Ik0yIDVoOHYySDJ6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-right {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxwYXRoIGlkPSJhIiBkPSJNNC41IDEuNWgydjloLTJ6Ii8+PHBhdGggZD0iTTkuOTkzIDQuN1YyLjk5M2gtNnY2SDUuN1Y0LjdoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIHRyYW5zZm9ybT0icm90YXRlKDkwIDUuNSA2KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYSIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTUgMmgxdjhINXoiLz48L2c+PGcgdHJhbnNmb3JtPSJzY2FsZSgtMSAxKSByb3RhdGUoLTQ1IDAgMjIuODc0KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTkuNDkzIDQuMnYtLjcwN2gtNXY1SDUuMlY0LjJoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-small-left {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTMgNmw0LTR2OHoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-small-right {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTUgMmw0IDQtNCA0eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-small-up {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgN2w0LTQgNCA0eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-small-down {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgNWg4TDYgOXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-tick {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEuNSA1LjVsMyAzIDYtNiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-cross {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgMTBsOC04bTAgOEwyIDIiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSJub25lIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-tree-open {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgNWg4TDYgOXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-tree-closed {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTUgMmw0IDQtNCA0eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.ag-icon-tree-indeterminate {\n  display: inline-block;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIgNWg4djJIMnoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\";\n  height: 12px;\n  width: 12px; }\n\n.loading-filter {\n  background-color: #e6e6e6;\n  height: 100%;\n  padding: 5px;\n  position: absolute;\n  top: 34px;\n  width: 100%;\n  z-index: 1; }\n\n.ag-details-row {\n  height: 100%;\n  width: 100%; }\n\n.ag-details-grid {\n  height: 100%;\n  width: 100%; }\n\n.ag-primary-cols-header-panel {\n  display: flex;\n  flex-direction: row; }\n\n.ag-ltr .ag-toolpanel-indent-1 {\n  padding-left: 10px; }\n\n.ag-rtl .ag-toolpanel-indent-1 {\n  padding-right: 10px; }\n\n.ag-ltr .ag-row-group-indent-1 {\n  padding-left: 10px; }\n\n.ag-rtl .ag-row-group-indent-1 {\n  padding-right: 10px; }\n\n.ag-ltr .ag-toolpanel-indent-2 {\n  padding-left: 20px; }\n\n.ag-rtl .ag-toolpanel-indent-2 {\n  padding-right: 20px; }\n\n.ag-ltr .ag-row-group-indent-2 {\n  padding-left: 20px; }\n\n.ag-rtl .ag-row-group-indent-2 {\n  padding-right: 20px; }\n\n.ag-ltr .ag-toolpanel-indent-3 {\n  padding-left: 30px; }\n\n.ag-rtl .ag-toolpanel-indent-3 {\n  padding-right: 30px; }\n\n.ag-ltr .ag-row-group-indent-3 {\n  padding-left: 30px; }\n\n.ag-rtl .ag-row-group-indent-3 {\n  padding-right: 30px; }\n\n.ag-ltr .ag-toolpanel-indent-4 {\n  padding-left: 40px; }\n\n.ag-rtl .ag-toolpanel-indent-4 {\n  padding-right: 40px; }\n\n.ag-ltr .ag-row-group-indent-4 {\n  padding-left: 40px; }\n\n.ag-rtl .ag-row-group-indent-4 {\n  padding-right: 40px; }\n\n.ag-ltr .ag-toolpanel-indent-5 {\n  padding-left: 50px; }\n\n.ag-rtl .ag-toolpanel-indent-5 {\n  padding-right: 50px; }\n\n.ag-ltr .ag-row-group-indent-5 {\n  padding-left: 50px; }\n\n.ag-rtl .ag-row-group-indent-5 {\n  padding-right: 50px; }\n\n.ag-ltr .ag-toolpanel-indent-6 {\n  padding-left: 60px; }\n\n.ag-rtl .ag-toolpanel-indent-6 {\n  padding-right: 60px; }\n\n.ag-ltr .ag-row-group-indent-6 {\n  padding-left: 60px; }\n\n.ag-rtl .ag-row-group-indent-6 {\n  padding-right: 60px; }\n\n.ag-ltr .ag-toolpanel-indent-7 {\n  padding-left: 70px; }\n\n.ag-rtl .ag-toolpanel-indent-7 {\n  padding-right: 70px; }\n\n.ag-ltr .ag-row-group-indent-7 {\n  padding-left: 70px; }\n\n.ag-rtl .ag-row-group-indent-7 {\n  padding-right: 70px; }\n\n.ag-ltr .ag-toolpanel-indent-8 {\n  padding-left: 80px; }\n\n.ag-rtl .ag-toolpanel-indent-8 {\n  padding-right: 80px; }\n\n.ag-ltr .ag-row-group-indent-8 {\n  padding-left: 80px; }\n\n.ag-rtl .ag-row-group-indent-8 {\n  padding-right: 80px; }\n\n.ag-ltr .ag-toolpanel-indent-9 {\n  padding-left: 90px; }\n\n.ag-rtl .ag-toolpanel-indent-9 {\n  padding-right: 90px; }\n\n.ag-ltr .ag-row-group-indent-9 {\n  padding-left: 90px; }\n\n.ag-rtl .ag-row-group-indent-9 {\n  padding-right: 90px; }\n\n.ag-ltr .ag-toolpanel-indent-10 {\n  padding-left: 100px; }\n\n.ag-rtl .ag-toolpanel-indent-10 {\n  padding-right: 100px; }\n\n.ag-ltr .ag-row-group-indent-10 {\n  padding-left: 100px; }\n\n.ag-rtl .ag-row-group-indent-10 {\n  padding-right: 100px; }\n\n.ag-ltr .ag-toolpanel-indent-11 {\n  padding-left: 110px; }\n\n.ag-rtl .ag-toolpanel-indent-11 {\n  padding-right: 110px; }\n\n.ag-ltr .ag-row-group-indent-11 {\n  padding-left: 110px; }\n\n.ag-rtl .ag-row-group-indent-11 {\n  padding-right: 110px; }\n\n.ag-ltr .ag-toolpanel-indent-12 {\n  padding-left: 120px; }\n\n.ag-rtl .ag-toolpanel-indent-12 {\n  padding-right: 120px; }\n\n.ag-ltr .ag-row-group-indent-12 {\n  padding-left: 120px; }\n\n.ag-rtl .ag-row-group-indent-12 {\n  padding-right: 120px; }\n\n.ag-ltr .ag-toolpanel-indent-13 {\n  padding-left: 130px; }\n\n.ag-rtl .ag-toolpanel-indent-13 {\n  padding-right: 130px; }\n\n.ag-ltr .ag-row-group-indent-13 {\n  padding-left: 130px; }\n\n.ag-rtl .ag-row-group-indent-13 {\n  padding-right: 130px; }\n\n.ag-ltr .ag-toolpanel-indent-14 {\n  padding-left: 140px; }\n\n.ag-rtl .ag-toolpanel-indent-14 {\n  padding-right: 140px; }\n\n.ag-ltr .ag-row-group-indent-14 {\n  padding-left: 140px; }\n\n.ag-rtl .ag-row-group-indent-14 {\n  padding-right: 140px; }\n\n.ag-ltr .ag-toolpanel-indent-15 {\n  padding-left: 150px; }\n\n.ag-rtl .ag-toolpanel-indent-15 {\n  padding-right: 150px; }\n\n.ag-ltr .ag-row-group-indent-15 {\n  padding-left: 150px; }\n\n.ag-rtl .ag-row-group-indent-15 {\n  padding-right: 150px; }\n\n.ag-ltr .ag-toolpanel-indent-16 {\n  padding-left: 160px; }\n\n.ag-rtl .ag-toolpanel-indent-16 {\n  padding-right: 160px; }\n\n.ag-ltr .ag-row-group-indent-16 {\n  padding-left: 160px; }\n\n.ag-rtl .ag-row-group-indent-16 {\n  padding-right: 160px; }\n\n.ag-ltr .ag-toolpanel-indent-17 {\n  padding-left: 170px; }\n\n.ag-rtl .ag-toolpanel-indent-17 {\n  padding-right: 170px; }\n\n.ag-ltr .ag-row-group-indent-17 {\n  padding-left: 170px; }\n\n.ag-rtl .ag-row-group-indent-17 {\n  padding-right: 170px; }\n\n.ag-ltr .ag-toolpanel-indent-18 {\n  padding-left: 180px; }\n\n.ag-rtl .ag-toolpanel-indent-18 {\n  padding-right: 180px; }\n\n.ag-ltr .ag-row-group-indent-18 {\n  padding-left: 180px; }\n\n.ag-rtl .ag-row-group-indent-18 {\n  padding-right: 180px; }\n\n.ag-ltr .ag-toolpanel-indent-19 {\n  padding-left: 190px; }\n\n.ag-rtl .ag-toolpanel-indent-19 {\n  padding-right: 190px; }\n\n.ag-ltr .ag-row-group-indent-19 {\n  padding-left: 190px; }\n\n.ag-rtl .ag-row-group-indent-19 {\n  padding-right: 190px; }\n\n.ag-ltr .ag-toolpanel-indent-20 {\n  padding-left: 200px; }\n\n.ag-rtl .ag-toolpanel-indent-20 {\n  padding-right: 200px; }\n\n.ag-ltr .ag-row-group-indent-20 {\n  padding-left: 200px; }\n\n.ag-rtl .ag-row-group-indent-20 {\n  padding-right: 200px; }\n\n.ag-ltr .ag-toolpanel-indent-21 {\n  padding-left: 210px; }\n\n.ag-rtl .ag-toolpanel-indent-21 {\n  padding-right: 210px; }\n\n.ag-ltr .ag-row-group-indent-21 {\n  padding-left: 210px; }\n\n.ag-rtl .ag-row-group-indent-21 {\n  padding-right: 210px; }\n\n.ag-ltr .ag-toolpanel-indent-22 {\n  padding-left: 220px; }\n\n.ag-rtl .ag-toolpanel-indent-22 {\n  padding-right: 220px; }\n\n.ag-ltr .ag-row-group-indent-22 {\n  padding-left: 220px; }\n\n.ag-rtl .ag-row-group-indent-22 {\n  padding-right: 220px; }\n\n.ag-ltr .ag-toolpanel-indent-23 {\n  padding-left: 230px; }\n\n.ag-rtl .ag-toolpanel-indent-23 {\n  padding-right: 230px; }\n\n.ag-ltr .ag-row-group-indent-23 {\n  padding-left: 230px; }\n\n.ag-rtl .ag-row-group-indent-23 {\n  padding-right: 230px; }\n\n.ag-ltr .ag-toolpanel-indent-24 {\n  padding-left: 240px; }\n\n.ag-rtl .ag-toolpanel-indent-24 {\n  padding-right: 240px; }\n\n.ag-ltr .ag-row-group-indent-24 {\n  padding-left: 240px; }\n\n.ag-rtl .ag-row-group-indent-24 {\n  padding-right: 240px; }\n\n.ag-ltr .ag-toolpanel-indent-25 {\n  padding-left: 250px; }\n\n.ag-rtl .ag-toolpanel-indent-25 {\n  padding-right: 250px; }\n\n.ag-ltr .ag-row-group-indent-25 {\n  padding-left: 250px; }\n\n.ag-rtl .ag-row-group-indent-25 {\n  padding-right: 250px; }\n\n.ag-ltr .ag-toolpanel-indent-26 {\n  padding-left: 260px; }\n\n.ag-rtl .ag-toolpanel-indent-26 {\n  padding-right: 260px; }\n\n.ag-ltr .ag-row-group-indent-26 {\n  padding-left: 260px; }\n\n.ag-rtl .ag-row-group-indent-26 {\n  padding-right: 260px; }\n\n.ag-ltr .ag-toolpanel-indent-27 {\n  padding-left: 270px; }\n\n.ag-rtl .ag-toolpanel-indent-27 {\n  padding-right: 270px; }\n\n.ag-ltr .ag-row-group-indent-27 {\n  padding-left: 270px; }\n\n.ag-rtl .ag-row-group-indent-27 {\n  padding-right: 270px; }\n\n.ag-ltr .ag-toolpanel-indent-28 {\n  padding-left: 280px; }\n\n.ag-rtl .ag-toolpanel-indent-28 {\n  padding-right: 280px; }\n\n.ag-ltr .ag-row-group-indent-28 {\n  padding-left: 280px; }\n\n.ag-rtl .ag-row-group-indent-28 {\n  padding-right: 280px; }\n\n.ag-ltr .ag-toolpanel-indent-29 {\n  padding-left: 290px; }\n\n.ag-rtl .ag-toolpanel-indent-29 {\n  padding-right: 290px; }\n\n.ag-ltr .ag-row-group-indent-29 {\n  padding-left: 290px; }\n\n.ag-rtl .ag-row-group-indent-29 {\n  padding-right: 290px; }\n\n.ag-ltr .ag-toolpanel-indent-30 {\n  padding-left: 300px; }\n\n.ag-rtl .ag-toolpanel-indent-30 {\n  padding-right: 300px; }\n\n.ag-ltr .ag-row-group-indent-30 {\n  padding-left: 300px; }\n\n.ag-rtl .ag-row-group-indent-30 {\n  padding-right: 300px; }\n\n.ag-ltr .ag-toolpanel-indent-31 {\n  padding-left: 310px; }\n\n.ag-rtl .ag-toolpanel-indent-31 {\n  padding-right: 310px; }\n\n.ag-ltr .ag-row-group-indent-31 {\n  padding-left: 310px; }\n\n.ag-rtl .ag-row-group-indent-31 {\n  padding-right: 310px; }\n\n.ag-ltr .ag-toolpanel-indent-32 {\n  padding-left: 320px; }\n\n.ag-rtl .ag-toolpanel-indent-32 {\n  padding-right: 320px; }\n\n.ag-ltr .ag-row-group-indent-32 {\n  padding-left: 320px; }\n\n.ag-rtl .ag-row-group-indent-32 {\n  padding-right: 320px; }\n\n.ag-ltr .ag-toolpanel-indent-33 {\n  padding-left: 330px; }\n\n.ag-rtl .ag-toolpanel-indent-33 {\n  padding-right: 330px; }\n\n.ag-ltr .ag-row-group-indent-33 {\n  padding-left: 330px; }\n\n.ag-rtl .ag-row-group-indent-33 {\n  padding-right: 330px; }\n\n.ag-ltr .ag-toolpanel-indent-34 {\n  padding-left: 340px; }\n\n.ag-rtl .ag-toolpanel-indent-34 {\n  padding-right: 340px; }\n\n.ag-ltr .ag-row-group-indent-34 {\n  padding-left: 340px; }\n\n.ag-rtl .ag-row-group-indent-34 {\n  padding-right: 340px; }\n\n.ag-ltr .ag-toolpanel-indent-35 {\n  padding-left: 350px; }\n\n.ag-rtl .ag-toolpanel-indent-35 {\n  padding-right: 350px; }\n\n.ag-ltr .ag-row-group-indent-35 {\n  padding-left: 350px; }\n\n.ag-rtl .ag-row-group-indent-35 {\n  padding-right: 350px; }\n\n.ag-ltr .ag-toolpanel-indent-36 {\n  padding-left: 360px; }\n\n.ag-rtl .ag-toolpanel-indent-36 {\n  padding-right: 360px; }\n\n.ag-ltr .ag-row-group-indent-36 {\n  padding-left: 360px; }\n\n.ag-rtl .ag-row-group-indent-36 {\n  padding-right: 360px; }\n\n.ag-ltr .ag-toolpanel-indent-37 {\n  padding-left: 370px; }\n\n.ag-rtl .ag-toolpanel-indent-37 {\n  padding-right: 370px; }\n\n.ag-ltr .ag-row-group-indent-37 {\n  padding-left: 370px; }\n\n.ag-rtl .ag-row-group-indent-37 {\n  padding-right: 370px; }\n\n.ag-ltr .ag-toolpanel-indent-38 {\n  padding-left: 380px; }\n\n.ag-rtl .ag-toolpanel-indent-38 {\n  padding-right: 380px; }\n\n.ag-ltr .ag-row-group-indent-38 {\n  padding-left: 380px; }\n\n.ag-rtl .ag-row-group-indent-38 {\n  padding-right: 380px; }\n\n.ag-ltr .ag-toolpanel-indent-39 {\n  padding-left: 390px; }\n\n.ag-rtl .ag-toolpanel-indent-39 {\n  padding-right: 390px; }\n\n.ag-ltr .ag-row-group-indent-39 {\n  padding-left: 390px; }\n\n.ag-rtl .ag-row-group-indent-39 {\n  padding-right: 390px; }\n\n.ag-ltr .ag-toolpanel-indent-40 {\n  padding-left: 400px; }\n\n.ag-rtl .ag-toolpanel-indent-40 {\n  padding-right: 400px; }\n\n.ag-ltr .ag-row-group-indent-40 {\n  padding-left: 400px; }\n\n.ag-rtl .ag-row-group-indent-40 {\n  padding-right: 400px; }\n\n.ag-ltr .ag-toolpanel-indent-41 {\n  padding-left: 410px; }\n\n.ag-rtl .ag-toolpanel-indent-41 {\n  padding-right: 410px; }\n\n.ag-ltr .ag-row-group-indent-41 {\n  padding-left: 410px; }\n\n.ag-rtl .ag-row-group-indent-41 {\n  padding-right: 410px; }\n\n.ag-ltr .ag-toolpanel-indent-42 {\n  padding-left: 420px; }\n\n.ag-rtl .ag-toolpanel-indent-42 {\n  padding-right: 420px; }\n\n.ag-ltr .ag-row-group-indent-42 {\n  padding-left: 420px; }\n\n.ag-rtl .ag-row-group-indent-42 {\n  padding-right: 420px; }\n\n.ag-ltr .ag-toolpanel-indent-43 {\n  padding-left: 430px; }\n\n.ag-rtl .ag-toolpanel-indent-43 {\n  padding-right: 430px; }\n\n.ag-ltr .ag-row-group-indent-43 {\n  padding-left: 430px; }\n\n.ag-rtl .ag-row-group-indent-43 {\n  padding-right: 430px; }\n\n.ag-ltr .ag-toolpanel-indent-44 {\n  padding-left: 440px; }\n\n.ag-rtl .ag-toolpanel-indent-44 {\n  padding-right: 440px; }\n\n.ag-ltr .ag-row-group-indent-44 {\n  padding-left: 440px; }\n\n.ag-rtl .ag-row-group-indent-44 {\n  padding-right: 440px; }\n\n.ag-ltr .ag-toolpanel-indent-45 {\n  padding-left: 450px; }\n\n.ag-rtl .ag-toolpanel-indent-45 {\n  padding-right: 450px; }\n\n.ag-ltr .ag-row-group-indent-45 {\n  padding-left: 450px; }\n\n.ag-rtl .ag-row-group-indent-45 {\n  padding-right: 450px; }\n\n.ag-ltr .ag-toolpanel-indent-46 {\n  padding-left: 460px; }\n\n.ag-rtl .ag-toolpanel-indent-46 {\n  padding-right: 460px; }\n\n.ag-ltr .ag-row-group-indent-46 {\n  padding-left: 460px; }\n\n.ag-rtl .ag-row-group-indent-46 {\n  padding-right: 460px; }\n\n.ag-ltr .ag-toolpanel-indent-47 {\n  padding-left: 470px; }\n\n.ag-rtl .ag-toolpanel-indent-47 {\n  padding-right: 470px; }\n\n.ag-ltr .ag-row-group-indent-47 {\n  padding-left: 470px; }\n\n.ag-rtl .ag-row-group-indent-47 {\n  padding-right: 470px; }\n\n.ag-ltr .ag-toolpanel-indent-48 {\n  padding-left: 480px; }\n\n.ag-rtl .ag-toolpanel-indent-48 {\n  padding-right: 480px; }\n\n.ag-ltr .ag-row-group-indent-48 {\n  padding-left: 480px; }\n\n.ag-rtl .ag-row-group-indent-48 {\n  padding-right: 480px; }\n\n.ag-ltr .ag-toolpanel-indent-49 {\n  padding-left: 490px; }\n\n.ag-rtl .ag-toolpanel-indent-49 {\n  padding-right: 490px; }\n\n.ag-ltr .ag-row-group-indent-49 {\n  padding-left: 490px; }\n\n.ag-rtl .ag-row-group-indent-49 {\n  padding-right: 490px; }\n\n.ag-side-bar {\n  display: flex;\n  flex-direction: row-reverse;\n  box-sizing: border-box; }\n  .ag-side-bar .ag-side-buttons {\n    width: 20px; }\n    .ag-side-bar .ag-side-buttons div button {\n      display: block;\n      white-space: nowrap;\n      outline: none; }\n      .ag-side-bar .ag-side-buttons div button span {\n        -webkit-writing-mode: tb;\n        -ms-writing-mode: tb;\n        writing-mode: tb;\n        -webkit-writing-mode: vertical-lr;\n        -ms-writing-mode: tb-lr;\n        writing-mode: vertical-lr; }\n  .ag-side-bar .panel-container {\n    width: 180px; }\n  .ag-side-bar.full-width .panel-container {\n    width: 200px; }\n\n.ag-rtl .ag-side-bar .ag-side-buttons button span {\n  -webkit-writing-mode: tb-rl;\n  -ms-writing-mode: tb-rl;\n  writing-mode: tb-rl;\n  -webkit-writing-mode: vertical-rl;\n  writing-mode: vertical-rl; }\n\n.ag-row-inline-editing {\n  z-index: 1; }\n\n.ag-status-bar {\n  display: flex;\n  justify-content: space-between; }\n  .ag-status-bar .ag-status-panel {\n    display: inline-flex; }\n\n.ag-status-bar-left {\n  display: inline-flex; }\n\n.ag-status-bar-center {\n  display: inline-flex; }\n\n.ag-status-bar-right {\n  display: inline-flex; }\n\n@media print {\n  .ag-body-viewport {\n    display: block; }\n  .ag-row {\n    page-break-inside: avoid; } }\n\n.ag-body .ag-pinned-left-cols-viewport, .ag-body .ag-body-viewport, .ag-body .ag-pinned-right-cols-viewport {\n  -webkit-overflow-scrolling: touch; }\n\n", ""]);
 
 // exports
 
