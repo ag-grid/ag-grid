@@ -980,14 +980,11 @@ export class GridPanel extends Component {
         this.overlayWrapper.hideOverlay(this.eOverlay);
     }
 
-    private getWidthForSizeColsToFit() {
-        return this.eCenterViewport.clientWidth;
-    }
-
     // method will call itself if no available width. this covers if the grid
     // isn't visible, but is just about to be visible.
     public sizeColumnsToFit(nextTimeout?: number) {
-        let availableWidth = this.getWidthForSizeColsToFit();
+        let availableWidth = this.eBodyViewport.clientWidth;
+
         if (availableWidth > 0) {
             this.columnController.sizeColumnsToFit(availableWidth, "sizeColumnsToFit");
         } else {
