@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.2
+// Type definitions for ag-grid-community v19.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -29,6 +29,8 @@ export declare class Utils {
         [key: string]: T;
     }): T[];
     static getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any;
+    static getAbsoluteHeight(el: HTMLElement): number;
+    static getAbsoluteWidth(el: HTMLElement): number;
     static getScrollLeft(element: HTMLElement, rtl: boolean): number;
     static cleanNumber(value: any): number;
     static compose: (...fns: Function[]) => (arg: any) => any;

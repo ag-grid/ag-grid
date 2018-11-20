@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.2
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -120,6 +120,16 @@ var Utils = /** @class */ (function () {
             }
             return currentObject;
         }
+    };
+    Utils.getAbsoluteHeight = function (el) {
+        var styles = window.getComputedStyle(el);
+        var margin = parseFloat(styles['marginTop']) + parseFloat(styles['marginBottom']);
+        return Math.ceil(el.offsetHeight + margin);
+    };
+    Utils.getAbsoluteWidth = function (el) {
+        var styles = window.getComputedStyle(el);
+        var margin = parseFloat(styles['marginLeft']) + parseFloat(styles['marginRight']);
+        return Math.ceil(el.offsetWidth + margin);
     };
     Utils.getScrollLeft = function (element, rtl) {
         var scrollLeft = element.scrollLeft;
