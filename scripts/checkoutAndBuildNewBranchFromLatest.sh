@@ -11,7 +11,7 @@ NEW_BRANCH=$1
 NEW_VERSION=$2
 PEER_VERSION=$3
 
-GEN_KEY_DEFAULT_LOCATION=~/genKey/genKey.js
+GEN_KEY_DEFAULT_LOCATION=~/aggrid/genKey/genKey.js
 
 echo "########################################################################"
 echo "###################### Switching to latest #############################"
