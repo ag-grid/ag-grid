@@ -1108,7 +1108,7 @@ export class GridPanel extends Component {
         this.setWidthsOfContainers();
         this.onHorizontalViewportChanged();
         this.updateScrollVisibleService();
-        // todo - wtf
+
         if (this.enableRtl) {
             // because RTL is all backwards, a change in the width of the row
             // can cause a change in the scroll position, without a scroll event,
