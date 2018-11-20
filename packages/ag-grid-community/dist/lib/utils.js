@@ -121,6 +121,16 @@ var Utils = /** @class */ (function () {
             return currentObject;
         }
     };
+    Utils.getAbsoluteHeight = function (el) {
+        var styles = window.getComputedStyle(el);
+        var margin = parseFloat(styles['marginTop']) + parseFloat(styles['marginBottom']);
+        return Math.ceil(el.offsetHeight + margin);
+    };
+    Utils.getAbsoluteWidth = function (el) {
+        var styles = window.getComputedStyle(el);
+        var margin = parseFloat(styles['marginLeft']) + parseFloat(styles['marginRight']);
+        return Math.ceil(el.offsetWidth + margin);
+    };
     Utils.getScrollLeft = function (element, rtl) {
         var scrollLeft = element.scrollLeft;
         if (rtl) {

@@ -2773,6 +2773,16 @@ var Utils = /** @class */ (function () {
             return currentObject;
         }
     };
+    Utils.getAbsoluteHeight = function (el) {
+        var styles = window.getComputedStyle(el);
+        var margin = parseFloat(styles['marginTop']) + parseFloat(styles['marginBottom']);
+        return Math.ceil(el.offsetHeight + margin);
+    };
+    Utils.getAbsoluteWidth = function (el) {
+        var styles = window.getComputedStyle(el);
+        var margin = parseFloat(styles['marginLeft']) + parseFloat(styles['marginRight']);
+        return Math.ceil(el.offsetWidth + margin);
+    };
     Utils.getScrollLeft = function (element, rtl) {
         var scrollLeft = element.scrollLeft;
         if (rtl) {
@@ -19225,6 +19235,7 @@ var PopupService = /** @class */ (function () {
         var y = sourceRect.top - parentRect.top;
         y = this.keepYWithinBounds(params, y);
         var minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth : 200;
+        params.ePopup.style.minWidth = minWidth + "px";
         var widthOfParent = parentRect.right - parentRect.left;
         var maxX = widthOfParent - minWidth;
         // the x position of the popup depends on RTL or LTR. for normal cases, LTR, we put the child popup
@@ -19261,27 +19272,24 @@ var PopupService = /** @class */ (function () {
         }
     };
     PopupService.prototype.positionPopupUnderMouseEvent = function (params) {
+        var _a = this.calculatePointerAlign(params.mouseEvent), x = _a.x, y = _a.y;
         this.positionPopup({
             ePopup: params.ePopup,
-            x: this.calculateXPosition(params.mouseEvent.clientX),
-            y: this.calculateYPosition(params.mouseEvent.clientY),
+            x: x,
+            y: y,
             keepWithinBounds: true
         });
         this.callPostProcessPopup(params.ePopup, null, params.mouseEvent, params.type, params.column, params.rowNode);
     };
-    PopupService.prototype.calculateXPosition = function (pointerX) {
+    PopupService.prototype.calculatePointerAlign = function (e) {
         var eDocument = this.getDocument();
         var popupParent = this.getPopupParent();
         var parentRect = popupParent.getBoundingClientRect();
         var documentRect = eDocument.documentElement.getBoundingClientRect();
-        return pointerX - (popupParent === eDocument.body ? documentRect.left : parentRect.left);
-    };
-    PopupService.prototype.calculateYPosition = function (pointerY) {
-        var eDocument = this.getDocument();
-        var popupParent = this.getPopupParent();
-        var parentRect = popupParent.getBoundingClientRect();
-        var documentRect = eDocument.documentElement.getBoundingClientRect();
-        return pointerY - (popupParent === eDocument.body ? documentRect.top : parentRect.top);
+        return {
+            x: e.clientX - (popupParent === eDocument.body ? documentRect.left : parentRect.left),
+            y: e.clientY - (popupParent === eDocument.body ? documentRect.top : parentRect.top)
+        };
     };
     PopupService.prototype.positionPopupUnderComponent = function (params) {
         var sourceRect = params.eventSource.getBoundingClientRect();
@@ -19366,30 +19374,22 @@ var PopupService = /** @class */ (function () {
         var parentRect = popupParent.getBoundingClientRect();
         var documentRect = eDocument.documentElement.getBoundingClientRect();
         var isBody = popupParent === eDocument.body;
-        var minHeight;
+        var defaultPadding = 3;
+        var minHeight = 200;
+        var diff = 0;
         if (params.minHeight && params.minHeight > 0) {
             minHeight = params.minHeight;
         }
-        else if (params.ePopup.clientHeight > 0) {
+        else if (params.ePopup.offsetHeight > 0) {
             minHeight = params.ePopup.clientHeight;
+            diff = utils_1.Utils.getAbsoluteHeight(params.ePopup) - minHeight;
         }
-        else {
-            minHeight = 200;
-        }
-        var heightOfParent = isBody ? (docElement.clientHeight + docElement.scrollTop) : parentRect.bottom - parentRect.top;
+        var heightOfParent = isBody ? (utils_1.Utils.getAbsoluteHeight(docElement) + docElement.scrollTop) : parentRect.bottom - parentRect.top;
         if (isBody) {
             heightOfParent -= Math.abs(documentRect.top - parentRect.top);
         }
-        var maxY = heightOfParent - minHeight;
-        if (y > maxY) { // move position left, back into view
-            return maxY;
-        }
-        else if (y < 0) { // in case the popup has a negative value
-            return 0;
-        }
-        else {
-            return y;
-        }
+        var maxY = heightOfParent - minHeight - diff - defaultPadding;
+        return Math.min(Math.max(y, 0), maxY);
     };
     PopupService.prototype.keepXWithinBounds = function (params, x) {
         var eDocument = this.gridOptionsWrapper.getDocument();
@@ -19398,30 +19398,23 @@ var PopupService = /** @class */ (function () {
         var parentRect = popupParent.getBoundingClientRect();
         var documentRect = eDocument.documentElement.getBoundingClientRect();
         var isBody = popupParent === eDocument.body;
-        var minWidth;
+        var defaultPadding = 3;
+        var minWidth = 200;
+        var diff = 0;
         if (params.minWidth && params.minWidth > 0) {
             minWidth = params.minWidth;
         }
         else if (params.ePopup.clientWidth > 0) {
             minWidth = params.ePopup.clientWidth;
+            params.ePopup.style.minWidth = minWidth + "px";
+            diff = utils_1.Utils.getAbsoluteWidth(params.ePopup) - minWidth;
         }
-        else {
-            minWidth = 200;
-        }
-        var widthOfParent = isBody ? (docElement.clientWidth + docElement.scrollLeft) : parentRect.right - parentRect.left;
+        var widthOfParent = isBody ? (utils_1.Utils.getAbsoluteWidth(docElement) + docElement.scrollLeft) : parentRect.right - parentRect.left;
         if (isBody) {
             widthOfParent -= Math.abs(documentRect.left - parentRect.left);
         }
-        var maxX = widthOfParent - minWidth - 5;
-        if (x > maxX) { // move position left, back into view
-            return maxX;
-        }
-        else if (x < 0) { // in case the popup has a negative value
-            return 0;
-        }
-        else {
-            return x;
-        }
+        var maxX = widthOfParent - minWidth - diff - defaultPadding;
+        return Math.min(Math.max(x, 0), maxX);
     };
     //adds an element to a div, but also listens to background checking for clicks,
     //so that when the background is clicked, the child is removed again, giving

@@ -21,8 +21,7 @@ export declare class PopupService {
         mouseEvent: MouseEvent | Touch;
         ePopup: HTMLElement;
     }): void;
-    private calculateXPosition;
-    private calculateYPosition;
+    private calculatePointerAlign;
     positionPopupUnderComponent(params: {
         type: string;
         eventSource: HTMLElement;
