@@ -61,6 +61,9 @@ function createArchive(filename) {
     const archive = archiver('zip', {
         zlib: {level: 9} // Sets the compression level.
     });
+    output.on('close', () => {
+       console.log(`Archive Complete: ${filename}`);
+    });
     archive.pipe(output);
     return archive;
 }
