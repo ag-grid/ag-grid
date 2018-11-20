@@ -1,4 +1,4 @@
-import {Bean, Autowired} from "./context/context";
+import {Autowired, Bean} from "./context/context";
 import {Constants} from "./constants";
 import {ColumnController} from "./columnController/columnController";
 import {IRowModel} from "./interfaces/iRowModel";
@@ -19,11 +19,11 @@ export class CellNavigationService {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     // returns null if no cell to focus on, ie at the end of the grid
-    public getNextCellToFocus(key: any, lastCellToFocus: GridCell): GridCell {
+    public getNextCellToFocus(key: any, lastCellToFocus: GridCell): GridCell | null {
 
         // starting with the provided cell, we keep moving until we find a cell we can
         // focus on.
-        let pointer = lastCellToFocus;
+        let pointer: GridCell | null = lastCellToFocus;
         let finished = false;
 
         // finished will be true when either:
@@ -52,8 +52,9 @@ export class CellNavigationService {
                         pointer = this.getCellToLeft(pointer);
                     }
                     break;
-                default : console.log('ag-Grid: unknown key for navigation ' + key);
+                default :
                     pointer = null;
+                    console.log('ag-Grid: unknown key for navigation ' + key);
                     break;
             }
 
@@ -87,28 +88,44 @@ export class CellNavigationService {
         return !suppressNavigable;
     }
 
-    private getCellToLeft(lastCell: GridCell): GridCell {
+    private getCellToLeft(lastCell: GridCell | null): GridCell | null {
+        if (!lastCell) {
+            return null;
+        }
+
         let colToLeft = this.columnController.getDisplayedColBefore(lastCell.column);
         if (!colToLeft) {
             return null;
         } else {
-            let gridCellDef = <GridCellDef> {rowIndex: lastCell.rowIndex, column: colToLeft, floating: lastCell.floating};
+            let gridCellDef = <GridCellDef> {
+                rowIndex: lastCell.rowIndex,
+                column: colToLeft,
+                floating: lastCell.floating
+            };
             return new GridCell(gridCellDef);
         }
     }
 
-    private getCellToRight(lastCell: GridCell): GridCell {
+    private getCellToRight(lastCell: GridCell | null): GridCell | null {
+        if (!lastCell) {
+            return null;
+        }
+
         let colToRight = this.columnController.getDisplayedColAfter(lastCell.column);
         // if already on right, do nothing
         if (!colToRight) {
             return null;
         } else {
-            let gridCellDef = <GridCellDef> {rowIndex: lastCell.rowIndex, column: colToRight, floating: lastCell.floating};
+            let gridCellDef = <GridCellDef> {
+                rowIndex: lastCell.rowIndex,
+                column: colToRight,
+                floating: lastCell.floating
+            };
             return new GridCell(gridCellDef);
         }
     }
 
-    public getRowBelow(lastRow: GridRow): GridRow {
+    public getRowBelow(lastRow: GridRow): GridRow | null {
         // if already on top row, do nothing
         if (this.isLastRowInContainer(lastRow)) {
 
@@ -136,10 +153,18 @@ export class CellNavigationService {
 
     }
 
-    private getCellBelow(lastCell: GridCell): GridCell {
+    private getCellBelow(lastCell: GridCell | null): GridCell | null {
+        if (!lastCell) {
+            return null;
+        }
+
         let rowBelow = this.getRowBelow(lastCell.getGridRow());
         if (rowBelow) {
-            let gridCellDef = <GridCellDef> {rowIndex: rowBelow.rowIndex, column: lastCell.column, floating: rowBelow.floating};
+            let gridCellDef = <GridCellDef> {
+                rowIndex: rowBelow.rowIndex,
+                column: lastCell.column,
+                floating: rowBelow.floating
+            };
             return new GridCell(gridCellDef);
         } else {
             return null;
@@ -159,7 +184,7 @@ export class CellNavigationService {
         }
     }
 
-    private getRowAbove(lastRow: GridRow): GridRow {
+    private getRowAbove(lastRow: GridRow): GridRow | null {
         // if already on top row, do nothing
         if (lastRow.rowIndex === 0) {
             if (lastRow.isFloatingTop()) {
@@ -187,10 +212,18 @@ export class CellNavigationService {
 
     }
 
-    private getCellAbove(lastCell: GridCell): GridCell {
+    private getCellAbove(lastCell: GridCell | null): GridCell | null {
+        if (!lastCell) {
+            return null;
+        }
+
         let rowAbove = this.getRowAbove(lastCell.getGridRow());
         if (rowAbove) {
-            let gridCellDef = <GridCellDef> {rowIndex: rowAbove.rowIndex, column: lastCell.column, floating: rowAbove.floating};
+            let gridCellDef = <GridCellDef> {
+                rowIndex: rowAbove.rowIndex,
+                column: lastCell.column,
+                floating: rowAbove.floating
+            };
             return new GridCell(gridCellDef);
         } else {
             return null;
@@ -207,7 +240,7 @@ export class CellNavigationService {
         return new GridRow(lastFloatingRow, Constants.PINNED_TOP);
     }
 
-    public getNextTabbedCell(gridCell: GridCell, backwards: boolean): GridCell {
+    public getNextTabbedCell(gridCell: GridCell, backwards: boolean): GridCell | null {
         if (backwards) {
             return this.getNextTabbedCellBackwards(gridCell);
         } else {
@@ -215,12 +248,12 @@ export class CellNavigationService {
         }
     }
 
-    public getNextTabbedCellForwards(gridCell: GridCell): GridCell {
+    public getNextTabbedCellForwards(gridCell: GridCell): GridCell | null {
 
         let displayedColumns = this.columnController.getAllDisplayedColumns();
 
-        let newRowIndex = gridCell.rowIndex;
-        let newFloating = gridCell.floating;
+        let newRowIndex: number | null = gridCell.rowIndex;
+        let newFloating: string | null = gridCell.floating;
 
         // move along to the next cell
         let newColumn = this.columnController.getDisplayedColAfter(gridCell.column);
@@ -231,22 +264,22 @@ export class CellNavigationService {
 
             let rowBelow = this.getRowBelow(gridCell.getGridRow());
             if (_.missing(rowBelow)) {
-                return;
+                return null;
             }
-            newRowIndex = rowBelow.rowIndex;
-            newFloating = rowBelow.floating;
+            newRowIndex = rowBelow ? rowBelow.rowIndex : null;
+            newFloating = rowBelow ? rowBelow.floating : null;
         }
 
         let gridCellDef = <GridCellDef> {rowIndex: newRowIndex, column: newColumn, floating: newFloating};
         return new GridCell(gridCellDef);
     }
 
-    public getNextTabbedCellBackwards(gridCell: GridCell): GridCell {
+    public getNextTabbedCellBackwards(gridCell: GridCell): GridCell | null {
 
         let displayedColumns = this.columnController.getAllDisplayedColumns();
 
-        let newRowIndex = gridCell.rowIndex;
-        let newFloating = gridCell.floating;
+        let newRowIndex: number | null = gridCell.rowIndex;
+        let newFloating: string | null = gridCell.floating;
 
         // move along to the next cell
         let newColumn = this.columnController.getDisplayedColBefore(gridCell.column);
@@ -257,10 +290,10 @@ export class CellNavigationService {
 
             let rowAbove = this.getRowAbove(gridCell.getGridRow());
             if (_.missing(rowAbove)) {
-                return;
+                return null;
             }
-            newRowIndex = rowAbove.rowIndex;
-            newFloating = rowAbove.floating;
+            newRowIndex = rowAbove ? rowAbove.rowIndex : null;
+            newFloating = rowAbove ? rowAbove.floating : null;
         }
 
         let gridCellDef = <GridCellDef> {rowIndex: newRowIndex, column: newColumn, floating: newFloating};

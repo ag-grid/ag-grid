@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.1
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -42,7 +42,7 @@ var AutoGroupColService = /** @class */ (function () {
             });
         }
         else {
-            groupAutoColumns.push(this.createOneAutoGroupColumn(null));
+            groupAutoColumns.push(this.createOneAutoGroupColumn());
         }
         return groupAutoColumns;
     };
@@ -72,7 +72,7 @@ var AutoGroupColService = /** @class */ (function () {
             }
         }
         // if showing many cols, we don't want to show more than one with a checkbox for selection
-        if (index > 0) {
+        if (index && index > 0) {
             defaultAutoColDef.headerCheckboxSelection = false;
         }
         var newCol = new column_1.Column(defaultAutoColDef, null, colId, true);

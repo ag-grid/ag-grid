@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.1
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,6 +25,9 @@ var PopupService = /** @class */ (function () {
     function PopupService() {
         this.activePopupElements = [];
     }
+    PopupService.prototype.getDocument = function () {
+        return this.gridOptionsWrapper.getDocument();
+    };
     PopupService.prototype.getPopupParent = function () {
         var ePopupParent = this.gridOptionsWrapper.getPopupParent();
         if (ePopupParent) {
@@ -32,16 +35,24 @@ var PopupService = /** @class */ (function () {
             return ePopupParent;
         }
         else {
-            var eDocument = this.gridOptionsWrapper.getDocument();
-            return eDocument.body;
+            return this.getDocument().body;
         }
     };
     PopupService.prototype.positionPopupForMenu = function (params) {
         var sourceRect = params.eventSource.getBoundingClientRect();
-        var parentRect = this.getPopupParent().getBoundingClientRect();
+        var eDocument = this.getDocument();
+        var popupParent = this.getPopupParent();
+        var parentRect;
+        if (popupParent === eDocument.body) {
+            parentRect = eDocument.documentElement.getBoundingClientRect();
+        }
+        else {
+            parentRect = popupParent.getBoundingClientRect();
+        }
         var y = sourceRect.top - parentRect.top;
         y = this.keepYWithinBounds(params, y);
         var minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth : 200;
+        params.ePopup.style.minWidth = minWidth + "px";
         var widthOfParent = parentRect.right - parentRect.left;
         var maxX = widthOfParent - minWidth;
         // the x position of the popup depends on RTL or LTR. for normal cases, LTR, we put the child popup
@@ -78,18 +89,36 @@ var PopupService = /** @class */ (function () {
         }
     };
     PopupService.prototype.positionPopupUnderMouseEvent = function (params) {
-        var parentRect = this.getPopupParent().getBoundingClientRect();
+        var _a = this.calculatePointerAlign(params.mouseEvent), x = _a.x, y = _a.y;
         this.positionPopup({
             ePopup: params.ePopup,
-            x: params.mouseEvent.clientX - parentRect.left,
-            y: params.mouseEvent.clientY - parentRect.top,
+            x: x,
+            y: y,
             keepWithinBounds: true
         });
         this.callPostProcessPopup(params.ePopup, null, params.mouseEvent, params.type, params.column, params.rowNode);
     };
+    PopupService.prototype.calculatePointerAlign = function (e) {
+        var eDocument = this.getDocument();
+        var popupParent = this.getPopupParent();
+        var parentRect = popupParent.getBoundingClientRect();
+        var documentRect = eDocument.documentElement.getBoundingClientRect();
+        return {
+            x: e.clientX - (popupParent === eDocument.body ? documentRect.left : parentRect.left),
+            y: e.clientY - (popupParent === eDocument.body ? documentRect.top : parentRect.top)
+        };
+    };
     PopupService.prototype.positionPopupUnderComponent = function (params) {
         var sourceRect = params.eventSource.getBoundingClientRect();
-        var parentRect = this.getPopupParent().getBoundingClientRect();
+        var eDocument = this.getDocument();
+        var popupParent = this.getPopupParent();
+        var parentRect;
+        if (popupParent === eDocument.body) {
+            parentRect = eDocument.documentElement.getBoundingClientRect();
+        }
+        else {
+            parentRect = popupParent.getBoundingClientRect();
+        }
         this.positionPopup({
             ePopup: params.ePopup,
             minWidth: params.minWidth,
@@ -118,7 +147,15 @@ var PopupService = /** @class */ (function () {
     };
     PopupService.prototype.positionPopupOverComponent = function (params) {
         var sourceRect = params.eventSource.getBoundingClientRect();
-        var parentRect = this.getPopupParent().getBoundingClientRect();
+        var eDocument = this.getDocument();
+        var popupParent = this.getPopupParent();
+        var parentRect;
+        if (popupParent === eDocument.body) {
+            parentRect = eDocument.documentElement.getBoundingClientRect();
+        }
+        else {
+            parentRect = popupParent.getBoundingClientRect();
+        }
         this.positionPopup({
             ePopup: params.ePopup,
             minWidth: params.minWidth,
@@ -148,52 +185,53 @@ var PopupService = /** @class */ (function () {
         params.ePopup.style.top = y + "px";
     };
     PopupService.prototype.keepYWithinBounds = function (params, y) {
-        var parentRect = this.getPopupParent().getBoundingClientRect();
-        var minHeight;
-        if (params.minHeight > 0) {
+        var eDocument = this.gridOptionsWrapper.getDocument();
+        var docElement = eDocument.documentElement;
+        var popupParent = this.getPopupParent();
+        var parentRect = popupParent.getBoundingClientRect();
+        var documentRect = eDocument.documentElement.getBoundingClientRect();
+        var isBody = popupParent === eDocument.body;
+        var defaultPadding = 3;
+        var minHeight = 200;
+        var diff = 0;
+        if (params.minHeight && params.minHeight > 0) {
             minHeight = params.minHeight;
         }
-        else if (params.ePopup.clientHeight > 0) {
+        else if (params.ePopup.offsetHeight > 0) {
             minHeight = params.ePopup.clientHeight;
+            diff = utils_1.Utils.getAbsoluteHeight(params.ePopup) - minHeight;
         }
-        else {
-            minHeight = 200;
+        var heightOfParent = isBody ? (utils_1.Utils.getAbsoluteHeight(docElement) + docElement.scrollTop) : parentRect.bottom - parentRect.top;
+        if (isBody) {
+            heightOfParent -= Math.abs(documentRect.top - parentRect.top);
         }
-        var heightOfParent = parentRect.bottom - parentRect.top;
-        var maxY = heightOfParent - minHeight - 5;
-        if (y > maxY) { // move position left, back into view
-            return maxY;
-        }
-        else if (y < 0) { // in case the popup has a negative value
-            return 0;
-        }
-        else {
-            return y;
-        }
+        var maxY = heightOfParent - minHeight - diff - defaultPadding;
+        return Math.min(Math.max(y, 0), maxY);
     };
     PopupService.prototype.keepXWithinBounds = function (params, x) {
-        var parentRect = this.getPopupParent().getBoundingClientRect();
-        var minWidth;
-        if (params.minWidth > 0) {
+        var eDocument = this.gridOptionsWrapper.getDocument();
+        var docElement = eDocument.documentElement;
+        var popupParent = this.getPopupParent();
+        var parentRect = popupParent.getBoundingClientRect();
+        var documentRect = eDocument.documentElement.getBoundingClientRect();
+        var isBody = popupParent === eDocument.body;
+        var defaultPadding = 3;
+        var minWidth = 200;
+        var diff = 0;
+        if (params.minWidth && params.minWidth > 0) {
             minWidth = params.minWidth;
         }
         else if (params.ePopup.clientWidth > 0) {
             minWidth = params.ePopup.clientWidth;
+            params.ePopup.style.minWidth = minWidth + "px";
+            diff = utils_1.Utils.getAbsoluteWidth(params.ePopup) - minWidth;
         }
-        else {
-            minWidth = 200;
+        var widthOfParent = isBody ? (utils_1.Utils.getAbsoluteWidth(docElement) + docElement.scrollLeft) : parentRect.right - parentRect.left;
+        if (isBody) {
+            widthOfParent -= Math.abs(documentRect.left - parentRect.left);
         }
-        var widthOfParent = parentRect.right - parentRect.left;
-        var maxX = widthOfParent - minWidth - 5;
-        if (x > maxX) { // move position left, back into view
-            return maxX;
-        }
-        else if (x < 0) { // in case the popup has a negative value
-            return 0;
-        }
-        else {
-            return x;
-        }
+        var maxX = widthOfParent - minWidth - diff - defaultPadding;
+        return Math.min(Math.max(x, 0), maxX);
     };
     //adds an element to a div, but also listens to background checking for clicks,
     //so that when the background is clicked, the child is removed again, giving
@@ -263,7 +301,7 @@ var PopupService = /** @class */ (function () {
         };
         // if we add these listeners now, then the current mouse
         // click will be included, which we don't want
-        setTimeout(function () {
+        window.setTimeout(function () {
             if (closeOnEsc) {
                 eDocument.addEventListener('keydown', hidePopupOnKeyboardEvent);
             }
@@ -295,7 +333,7 @@ var PopupService = /** @class */ (function () {
         // the event is a different event, however that is an edge case that is not very relevant (the user clicking
         // twice on the same location isn't a normal path).
         // event could be mouse event or touch event.
-        var mouseEventOrTouch;
+        var mouseEventOrTouch = null;
         if (mouseEvent) {
             // mouse event can be used direction, it has coordinates
             mouseEventOrTouch = mouseEvent;
@@ -307,8 +345,10 @@ var PopupService = /** @class */ (function () {
         if (mouseEventOrTouch && originalClick) {
             // for x, allow 4px margin, to cover iPads, where touch (which opens menu) is followed
             // by browser click (when you life finger up, touch is interrupted as click in browser)
-            var xMatch = Math.abs(originalClick.screenX - mouseEvent.screenX) < 5;
-            var yMatch = Math.abs(originalClick.screenY - mouseEvent.screenY) < 5;
+            var screenX_1 = mouseEvent ? mouseEvent.screenX : 0;
+            var screenY_1 = mouseEvent ? mouseEvent.screenY : 0;
+            var xMatch = Math.abs(originalClick.screenX - screenX_1) < 5;
+            var yMatch = Math.abs(originalClick.screenY - screenY_1) < 5;
             if (xMatch && yMatch) {
                 return true;
             }

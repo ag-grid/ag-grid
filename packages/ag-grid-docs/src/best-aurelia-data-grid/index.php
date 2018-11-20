@@ -76,10 +76,7 @@ import "ag-grid-enterprise";
         on Github.
     </p>
 
-    <h3 id="rich-example">Rich Grid with Aurelia</h3>
-    <?= example('ag-Grid in Aurelia', 'rich-grid', 'as-is', array("noPlunker" => 1, "usePath" => "#/?route=rich-grid")) ?>
-
-    <p>The example project includes a number of separate grids on a page, with each section demonstrating a different
+    <p>The example project includes a number of separate grids with each section demonstrating a different
         feature set:
 </p>
     <ul class="content">
@@ -336,9 +333,6 @@ private getCountryFilterParams():any {
     the ag-grid-aurelia component, consider using plain ag-Grid Components (as explained on the pages for
     rendering etc) inside ag-Grid instead of creating Aurelia counterparts.
 </p>
-
-<h3 id="declarative-example">Rich Declarative Aurelia Example</h3>
-<?= example('Declarative Aurelia with ag-Grid', 'aurelia-declarative', 'as-is', array("noPlunker" => 1, "usePath" => "#/?route=richgrid-declarative")) ?>
 
 <h2 id="next-steps">Next Steps...</h2>
 

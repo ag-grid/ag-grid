@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.1
+// Type definitions for ag-grid-community v19.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
@@ -26,8 +26,8 @@ export interface AgEvent {
     type: string;
 }
 export interface AgGridEvent extends AgEvent {
-    api: GridApi;
-    columnApi: ColumnApi;
+    api: GridApi | null | undefined;
+    columnApi: ColumnApi | null | undefined;
 }
 export interface ToolPanelVisibleChangedEvent extends AgGridEvent {
 }
@@ -155,8 +155,8 @@ export interface ExpandCollapseAllEvent extends AgGridEvent {
 /**---------------*/
 export declare type ColumnEventType = "sizeColumnsToFit" | "autosizeColumns" | "alignedGridChanged" | "filterChanged" | "filterDestroyed" | "gridOptionsChanged" | "gridInitializing" | "toolPanelDragAndDrop" | "toolPanelUi" | "uiColumnMoved" | "uiColumnResized" | "uiColumnDragged" | "uiColumnExpanded" | "uiColumnSorted" | "contextMenu" | "columnMenu" | "rowModelUpdated" | "api";
 export interface ColumnEvent extends AgGridEvent {
-    column: Column;
-    columns: Column[];
+    column: Column | null;
+    columns: Column[] | null;
     source: ColumnEventType;
 }
 export interface ColumnResizedEvent extends ColumnEvent {
@@ -169,13 +169,13 @@ export interface ColumnRowGroupChangedEvent extends ColumnEvent {
 export interface ColumnValueChangedEvent extends ColumnEvent {
 }
 export interface ColumnMovedEvent extends ColumnEvent {
-    toIndex: number;
+    toIndex: number | undefined;
 }
 export interface ColumnVisibleEvent extends ColumnEvent {
-    visible: boolean;
+    visible: boolean | undefined;
 }
 export interface ColumnPinnedEvent extends ColumnEvent {
-    pinned: string;
+    pinned: string | null;
 }
 /**------------*/
 /** ROW EVENTS */

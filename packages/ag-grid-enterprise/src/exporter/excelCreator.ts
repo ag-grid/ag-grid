@@ -67,7 +67,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
     }
 
     public getDataAsExcelXml(params?: ExcelExportParams): string {
-        return this.getData(params);
+        return this.getData(_.assign({}, params, { exportMode: 'xml' }));
     }
 
     public getMimeType(): string {
@@ -94,7 +94,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
             gridOptionsWrapper,
             processCellCallback: processCellCallback || null,
             processHeaderCallback: processHeaderCallback || null,
-            sheetName: sheetName != null && sheetName !== '' ? sheetName : 'ag-grid',
+            sheetName: sheetName != null && sheetName !== '' ? (sheetName.toString()).substr(0, 31) : 'ag-grid',
             excelFactory,
             baseExcelStyles: this.gridOptions.excelStyles,
             styleLinker: this.styleLinker.bind(this),

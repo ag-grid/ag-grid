@@ -12,13 +12,13 @@ import {
     GridOptionsWrapper,
     GridRow,
     IRowModel,
+    IStatusPanelComp,
     PinnedRowModel,
-    PreConstruct,
     PostConstruct,
+    PreConstruct,
     RefSelector,
     RowNode,
-    ValueService,
-    IStatusPanelComp
+    ValueService
 } from 'ag-grid-community';
 import {RangeController} from "../../rangeController";
 import {NameValueComp} from "./nameValueComp";
@@ -58,6 +58,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     private preConstruct(): void {
         this.instantiate(this.context);
     }
+
     @PostConstruct
     private postConstruct(): void {
         if (!this.isValidRowModel()) {
@@ -80,21 +81,21 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
     private setAggregationComponentValue(aggFuncName: string, value: number, visible: boolean) {
         let statusBarValueComponent = this.getAggregationValueComponent(aggFuncName);
-        if (_.exists(statusBarValueComponent)) {
+        if (_.exists(statusBarValueComponent) && statusBarValueComponent) {
             statusBarValueComponent.setValue(_.formatNumberTwoDecimalPlacesAndCommas(value));
             statusBarValueComponent.setVisible(visible);
         }
     }
 
-    private getAggregationValueComponent(aggFuncName: string): NameValueComp {
+    private getAggregationValueComponent(aggFuncName: string): NameValueComp | null {
         // converts user supplied agg name to our reference - eg: sum => sumAggregationComp
         let refComponentName = `${aggFuncName}AggregationComp`;
 
         // if the user has specified the agAggregationPanelComp but no aggFuncs we show the all
         // if the user has specified the agAggregationPanelComp and aggFuncs, then we only show the aggFuncs listed
-        let statusBarValueComponent: NameValueComp = null;
-        const aggregationPanelConfig = _.exists(this.gridOptions.statusBar) ? _.find(this.gridOptions.statusBar.statusPanels, aggFuncName) : null;
-        if (_.exists(aggregationPanelConfig)) {
+        let statusBarValueComponent: NameValueComp | null = null;
+        const aggregationPanelConfig = _.exists(this.gridOptions.statusBar) && this.gridOptions.statusBar ? _.find(this.gridOptions.statusBar.statusPanels, aggFuncName) : null;
+        if (_.exists(aggregationPanelConfig) && aggregationPanelConfig) {
             // a little defensive here - if no statusPanelParams show it, if componentParams we also expect aggFuncs
             if (!_.exists(aggregationPanelConfig.statusPanelParams) ||
                 (_.exists(aggregationPanelConfig.statusPanelParams) &&
@@ -119,8 +120,8 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         let sum = 0;
         let count = 0;
         let numberCount = 0;
-        let min: number = null;
-        let max: number = null;
+        let min: number = 0;
+        let max: number = 0;
 
         let cellsSoFar: any = {};
 
@@ -134,17 +135,20 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
                 let startRowIsFirst = startRow.before(endRow);
 
-                let currentRow = startRowIsFirst ? startRow : endRow;
+                let currentRow: GridRow | null = startRowIsFirst ? startRow : endRow;
                 let lastRow = startRowIsFirst ? endRow : startRow;
 
                 while (true) {
 
-                    let finishedAllRows = _.missing(currentRow) || lastRow.before(currentRow);
-                    if (finishedAllRows) {
+                    let finishedAllRows = _.missing(currentRow) || !currentRow || lastRow.before(currentRow);
+                    if (finishedAllRows || !currentRow) {
                         break;
                     }
 
                     cellRange.columns.forEach((column) => {
+                        if (currentRow === null) {
+                            return;
+                        }
 
                         // we only want to include each cell once, in case a cell is in multiple ranges
                         let cellId = currentRow.getGridCell(column).createId();

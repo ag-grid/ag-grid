@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.1
+// Type definitions for ag-grid-community v19.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ExternalPromise, Promise } from "../utils";
@@ -52,6 +52,7 @@ export declare class FilterManager {
     private onNewRowsLoaded;
     private createValueGetter;
     getFilterComponent(column: Column, source: FilterRequestSource): Promise<IFilterComp>;
+    isFilterActive(column: Column): boolean;
     getOrCreateFilterWrapper(column: Column, source: FilterRequestSource): FilterWrapper;
     cachedFilter(column: Column): FilterWrapper;
     private createFilterInstance;

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.1
+// Type definitions for ag-grid-community v19.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgEvent } from "../events";
@@ -63,14 +63,14 @@ export declare class RowNode implements IEventEmitter {
     /** The user provided data */
     data: any;
     /** The parent node to this node, or empty if top level */
-    parent: RowNode;
+    parent: RowNode | null;
     /** How many levels this node is from the top */
     level: number;
     /** How many levels this node is from the top in the UI (different to the level when removing parents)*/
     uiLevel: number;
     /** If doing in memory grouping, this is the index of the group column this cell is for.
      * This will always be the same as the level, unless we are collapsing groups ie groupRemoveSingleChildren = true */
-    rowGroupIndex: number;
+    rowGroupIndex: number | null;
     /** True if this node is a group node (ie has children) */
     group: boolean;
     /** True if this row is getting dragged */
@@ -106,9 +106,9 @@ export declare class RowNode implements IEventEmitter {
     /** Groups only - True if row is a footer. Footers  have group = true and footer = true */
     footer: boolean;
     /** Groups only - The field we are grouping on eg Country*/
-    field: string;
+    field: string | null;
     /** Groups only - the row group column for this group */
-    rowGroupColumn: Column;
+    rowGroupColumn: Column | null;
     /** Groups only - The key for the group eg Ireland, UK, USA */
     key: any;
     /** Used by server side row model, true if this row node is a stub */
@@ -126,7 +126,7 @@ export declare class RowNode implements IEventEmitter {
     /** Children mapped by the pivot columns */
     childrenMapped: {
         [key: string]: any;
-    };
+    } | null;
     /** Server Side Row Model Only - the children are in an infinite cache */
     childrenCache: RowNodeCache<RowNodeBlock, RowNodeCacheParams>;
     /** Groups only - True if group is expanded, otherwise false */
@@ -172,7 +172,7 @@ export declare class RowNode implements IEventEmitter {
     setFirstChild(firstChild: boolean): void;
     setLastChild(lastChild: boolean): void;
     setChildIndex(childIndex: number): void;
-    setRowTop(rowTop: number): void;
+    setRowTop(rowTop: number | null): void;
     setDragging(dragging: boolean): void;
     setAllChildrenCount(allChildrenCount: number): void;
     setRowHeight(rowHeight: number): void;

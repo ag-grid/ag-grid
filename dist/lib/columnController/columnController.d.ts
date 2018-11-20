@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.1
+// Type definitions for ag-grid-community v19.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroup } from "../entities/columnGroup";
@@ -17,11 +17,11 @@ export interface ColumnResizeSet {
 export interface ColumnState {
     colId: string;
     hide?: boolean;
-    aggFunc?: string | IAggFunc;
+    aggFunc?: string | IAggFunc | null;
     width?: number;
-    pivotIndex?: number;
+    pivotIndex?: number | null;
     pinned?: boolean | string | "left" | "right";
-    rowGroupIndex?: number;
+    rowGroupIndex?: number | null;
 }
 export declare class ColumnController {
     private gridOptionsWrapper;
@@ -97,14 +97,14 @@ export declare class ColumnController {
     isPivotMode(): boolean;
     private isPivotSettingAllowed;
     setPivotMode(pivotMode: boolean, source?: ColumnEventType): void;
-    getSecondaryPivotColumn(pivotKeys: string[], valueColKey: Column | string): Column;
+    getSecondaryPivotColumn(pivotKeys: string[], valueColKey: Column | string): Column | null;
     private setBeans;
     private setFirstRightAndLastLeftPinned;
     autoSizeColumns(keys: (string | Column)[], source?: ColumnEventType): void;
     autoSizeColumn(key: string | Column, source?: ColumnEventType): void;
     autoSizeAllColumns(source?: ColumnEventType): void;
     private getColumnsFromTree;
-    getAllDisplayedColumnGroups(): ColumnGroupChild[];
+    getAllDisplayedColumnGroups(): ColumnGroupChild[] | null;
     getPrimaryColumnTree(): OriginalColumnGroupChild[];
     getHeaderRowCount(): number;
     getLeftDisplayedColumnGroups(): ColumnGroupChild[];
@@ -168,8 +168,8 @@ export declare class ColumnController {
     getDisplayedLeftColumns(): Column[];
     getDisplayedRightColumns(): Column[];
     getDisplayedColumns(type: string): Column[];
-    getAllPrimaryColumns(): Column[];
-    getSecondaryColumns(): Column[];
+    getAllPrimaryColumns(): Column[] | null;
+    getSecondaryColumns(): Column[] | null;
     getAllColumnsForQuickFilter(): Column[];
     getAllGridColumns(): Column[];
     isEmpty(): boolean;
@@ -179,9 +179,9 @@ export declare class ColumnController {
     setColumnPinned(key: string | Column, pinned: string | boolean, source?: ColumnEventType): void;
     setColumnsPinned(keys: (string | Column)[], pinned: string | boolean, source?: ColumnEventType): void;
     private actionOnGridColumns;
-    getDisplayedColBefore(col: Column): Column;
-    getDisplayedColAfter(col: Column): Column;
-    getDisplayedGroupAfter(columnGroup: ColumnGroup): ColumnGroup;
+    getDisplayedColBefore(col: Column): Column | null;
+    getDisplayedColAfter(col: Column): Column | null;
+    getDisplayedGroupAfter(columnGroup: ColumnGroup): ColumnGroup | null;
     isPinningLeft(): boolean;
     isPinningRight(): boolean;
     getPrimaryAndSecondaryAndAutoColumns(): Column[];
@@ -206,12 +206,12 @@ export declare class ColumnController {
     private getColumn;
     private getAutoColumn;
     private columnsMatch;
-    getDisplayNameForColumn(column: Column, location: string, includeAggFunc?: boolean): string;
-    getDisplayNameForOriginalColumnGroup(columnGroup: ColumnGroup, originalColumnGroup: OriginalColumnGroup, location: string): string;
+    getDisplayNameForColumn(column: Column, location: string | null, includeAggFunc?: boolean): string;
+    getDisplayNameForOriginalColumnGroup(columnGroup: ColumnGroup | null, originalColumnGroup: OriginalColumnGroup | null, location: string): string;
     getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string;
     private getHeaderName;
     private wrapHeaderNameWithAggFunc;
-    getColumnGroup(colId: string | ColumnGroup, instanceId?: number): ColumnGroup;
+    getColumnGroup(colId: string | ColumnGroup, instanceId?: number): ColumnGroup | null;
     isReady(): boolean;
     private createValueColumns;
     private extractRowGroupColumns;
@@ -226,7 +226,7 @@ export declare class ColumnController {
         groupId: string;
         open: boolean;
     }[], source?: ColumnEventType): void;
-    setColumnGroupOpened(key: OriginalColumnGroup | string, newValue: boolean, source?: ColumnEventType): void;
+    setColumnGroupOpened(key: OriginalColumnGroup | string | undefined, newValue: boolean, source?: ColumnEventType): void;
     getOriginalColumnGroup(key: OriginalColumnGroup | string): OriginalColumnGroup;
     private calculateColumnsForDisplay;
     private checkColSpanActiveInCols;
@@ -234,7 +234,7 @@ export declare class ColumnController {
     getGroupDisplayColumns(): Column[];
     private updateDisplayedColumns;
     isSecondaryColumnsPresent(): boolean;
-    setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[], source?: ColumnEventType): void;
+    setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[] | null, source?: ColumnEventType): void;
     private processSecondaryColumnDefinitions;
     private updateGridColumns;
     private orderGridColsLikeLastPrimary;

@@ -8,23 +8,28 @@ import {OriginalColumnGroup} from "../entities/originalColumnGroup";
 export class CssClassApplier {
 
     public static addHeaderClassesFromColDef(abstractColDef: AbstractColDef, eHeaderCell: HTMLElement, gridOptionsWrapper: GridOptionsWrapper, column: Column, columnGroup: ColumnGroup) {
-        if (_.missing(abstractColDef)) { return; }
+        if (_.missing(abstractColDef)) {
+            return;
+        }
         this.addColumnClassesFromCollDef(abstractColDef.headerClass, abstractColDef, eHeaderCell, gridOptionsWrapper, column, columnGroup);
     }
 
-    public static addToolPanelClassesFromColDef(abstractColDef: AbstractColDef, eHeaderCell: HTMLElement, gridOptionsWrapper: GridOptionsWrapper, column: Column, columnGroup: OriginalColumnGroup) {
-        if (_.missing(abstractColDef)) { return; }
+    public static addToolPanelClassesFromColDef(abstractColDef: AbstractColDef, eHeaderCell: HTMLElement, gridOptionsWrapper: GridOptionsWrapper, column: Column | null, columnGroup: OriginalColumnGroup | null) {
+        if (_.missing(abstractColDef)) {
+            return;
+        }
         this.addColumnClassesFromCollDef(abstractColDef.toolPanelClass, abstractColDef, eHeaderCell, gridOptionsWrapper, column, columnGroup);
     }
 
-    public static addColumnClassesFromCollDef(
-                            classesOrFunc: string | string[] | ((params: any) => string | string[]),
-                            abstractColDef: AbstractColDef,
-                            eHeaderCell: HTMLElement,
-                            gridOptionsWrapper: GridOptionsWrapper,
-                            column: Column,
-                            columnGroup: ColumnGroup|OriginalColumnGroup) {
-        if (_.missing(classesOrFunc)) { return; }
+    public static addColumnClassesFromCollDef(classesOrFunc: string | string[] | ((params: any) => string | string[]),
+                                              abstractColDef: AbstractColDef,
+                                              eHeaderCell: HTMLElement,
+                                              gridOptionsWrapper: GridOptionsWrapper,
+                                              column: Column,
+                                              columnGroup: ColumnGroup | OriginalColumnGroup) {
+        if (_.missing(classesOrFunc)) {
+            return;
+        }
         let classToUse: string | string[];
         if (typeof classesOrFunc === 'function') {
             let params = {

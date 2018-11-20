@@ -88,7 +88,7 @@ export class Utils {
 
         let val1Json = val1 ? JSON.stringify(val1) : null;
         let val2Json = val2 ? JSON.stringify(val2) : null;
-        let res = val1Json===val2Json;
+        let res = val1Json === val2Json;
 
         return res;
     }
@@ -152,6 +152,20 @@ export class Utils {
         }
     }
 
+    static getAbsoluteHeight(el: HTMLElement): number {
+        const styles = window.getComputedStyle(el);
+        const margin = parseFloat(styles['marginTop']) + parseFloat(styles['marginBottom']);
+
+        return Math.ceil(el.offsetHeight + margin);
+    }
+
+    static getAbsoluteWidth(el: HTMLElement): number {
+        const styles = window.getComputedStyle(el);
+        const margin = parseFloat(styles['marginLeft']) + parseFloat(styles['marginRight']);
+
+        return Math.ceil(el.offsetWidth + margin);
+    }
+
     static getScrollLeft(element: HTMLElement, rtl: boolean): number {
         let scrollLeft = element.scrollLeft;
         if (rtl) {
@@ -178,7 +192,7 @@ export class Utils {
         return value;
     }
 
-    static compose = (...fns: Function[]) => (arg: any) => fns.reduce((composed, f) => f(composed),arg);
+    static compose = (...fns: Function[]) => (arg: any) => fns.reduce((composed, f) => f(composed), arg);
 
     static decToHex = (number: number, bytes: number): string => {
         let hex = '';
@@ -304,7 +318,7 @@ export class Utils {
 
     static filter<T>(array: T[], callback: (item: T) => boolean): T[] {
         let result: T[] = [];
-        array.forEach(function(item: T) {
+        array.forEach(function (item: T) {
             if (callback(item)) {
                 result.push(item);
             }
@@ -343,7 +357,7 @@ export class Utils {
     static assign(object: any, ...sources: any[]): any {
         sources.forEach(source => {
             if (this.exists(source)) {
-                this.iterateObject(source, function(key: string, value: any) {
+                this.iterateObject(source, function (key: string, value: any) {
                     object[key] = value;
                 });
             }
@@ -433,7 +447,7 @@ export class Utils {
     }
 
     static toStrings<T>(array: T[]): string[] {
-        return this.map(array, function(item) {
+        return this.map(array, function (item) {
             if (item === undefined || item === null || !item.toString) {
                 return null;
             } else {
@@ -834,11 +848,12 @@ export class Utils {
         }
     }
 
-    static compareArrays(array1: any[], array2: any[]): boolean {
+    static compareArrays(array1: any[] | undefined, array2: any[]): boolean {
         if (this.missing(array1) && this.missing(array2)) {
             return true;
         }
-        if (this.missing(array1) || this.missing(array2)) {
+        if ((this.missing(array1) || this.missing(array2)) ||
+            (!array1 || !array2)) {
             return false;
         }
         if (array1.length !== array2.length) {
@@ -1030,7 +1045,7 @@ export class Utils {
      * If icon provided, use this (either a string, or a function callback).
      * if not, then use the default icon from the theme
      */
-    static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column): HTMLElement {
+    static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column | null): HTMLElement {
         const iconContents = this.createIconNoSpan(iconName, gridOptionsWrapper, column);
         if (iconContents.className.indexOf('ag-icon') > -1) {
             return iconContents;
@@ -1041,11 +1056,12 @@ export class Utils {
         }
     }
 
-    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column): HTMLElement {
-        let userProvidedIcon: Function | string;
+    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column | null): HTMLElement {
+        let userProvidedIcon: Function | string | null = null;
         // check col for icon first
-        if (column && column.getColDef().icons) {
-            userProvidedIcon = column.getColDef().icons[iconName];
+        const icons: any = (column && column.getColDef().icons) ? column.getColDef().icons : null;
+        if (icons) {
+            userProvidedIcon = icons[iconName];
         }
         // it not in col, try grid options
         if (!userProvidedIcon && gridOptionsWrapper.getIcons()) {
@@ -1208,7 +1224,7 @@ export class Utils {
             let anyWindow = <any> window;
             // taken from https://github.com/ag-grid/ag-grid/issues/550
             this.isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') > 0
-                || (function(p) {
+                || (function (p) {
                     return p ? p.toString() === "[object SafariRemoteNotification]" : false;
                 })
                 (!anyWindow.safari || anyWindow.safari.pushNotification);
@@ -1601,7 +1617,7 @@ export class Utils {
         let timeout: any;
 
         // Calling debounce returns a new anonymous function
-        return function() {
+        return function () {
             // reference the context and args for the setTimeout function
             const context = this;
             const args = arguments;
@@ -1617,7 +1633,7 @@ export class Utils {
             clearTimeout(timeout);
 
             // Set the new timeout
-            timeout = setTimeout(function() {
+            timeout = setTimeout(function () {
 
                 // Inside the timeout function, clear the timeout variable
                 // which will let the next execution run when in 'immediate' mode
@@ -1698,8 +1714,8 @@ export class Utils {
         eElement.addEventListener(event, listener, <any>(Utils.passiveEvents.indexOf(event) > -1 ? {passive: true} : undefined));
     }
 
-    static camelCaseToHumanText(camelCase: string): string {
-        if (camelCase == null) return null;
+    static camelCaseToHumanText(camelCase: string | undefined): string | null {
+        if (!camelCase || camelCase == null) return null;
 
         // Who needs to learn how to code when you have stack overflow!
         // from: https://stackoverflow.com/questions/15369566/putting-space-in-camel-case-string-using-regular-expression
@@ -1766,11 +1782,9 @@ export class Utils {
         });
     }
 
-    public static fuzzyCheckStrings(
-        inputValues: string[],
-        validValues: string[],
-        allSuggestions: string[]
-    ): { [p: string]: string[] } {
+    public static fuzzyCheckStrings(inputValues: string[],
+                                    validValues: string[],
+                                    allSuggestions: string[]): { [p: string]: string[] } {
         let fuzzyMatches: { [p: string]: string[] } = {};
         let invalidInputs: string [] = inputValues.filter(inputValue =>
             !validValues.some(
@@ -1787,11 +1801,9 @@ export class Utils {
         return fuzzyMatches;
     }
 
-    public static fuzzySuggestions(
-        inputValue: string,
-        validValues: string[],
-        allSuggestions: string[]
-    ): string[] {
+    public static fuzzySuggestions(inputValue: string,
+                                   validValues: string[],
+                                   allSuggestions: string[]): string[] {
         let thisSuggestions: string [] = allSuggestions.slice(0);
         thisSuggestions.sort((suggestedValueLeft, suggestedValueRight) => {
                 let leftDifference = _.string_similarity(suggestedValueLeft.toLowerCase(), inputValue.toLowerCase());
@@ -1821,7 +1833,7 @@ export class Utils {
         return v;
     }
 
-    static string_similarity = function(str1: string, str2: string) {
+    static string_similarity = function (str1: string, str2: string) {
         if (str1.length > 0 && str2.length > 0) {
             let pairs1 = Utils.get_bigrams(str1);
             let pairs2 = Utils.get_bigrams(str2);
@@ -1934,9 +1946,7 @@ export class Promise<T> {
         };
     }
 
-    constructor(
-        callback: ResolveAndRejectCallback<T>
-    ) {
+    constructor(callback: ResolveAndRejectCallback<T>) {
         callback(this.onDone.bind(this), this.onReject.bind(this));
     }
 

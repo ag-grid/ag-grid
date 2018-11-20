@@ -10,5 +10,5 @@ export interface ISideBar extends IComponent<any> {
     openToolPanel (key:string): void;
     close (): void;
     reset (): void;
-    openedItem(): string;
+    openedItem(): string | null;
 }

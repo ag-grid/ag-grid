@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.1
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -143,7 +143,7 @@ var AlignedGridsService = /** @class */ (function () {
     AlignedGridsService.prototype.processGroupOpenedEvent = function (groupOpenedEvent) {
         // likewise for column group
         var masterColumnGroup = groupOpenedEvent.columnGroup;
-        var otherColumnGroup;
+        var otherColumnGroup = undefined;
         if (masterColumnGroup) {
             var groupId = masterColumnGroup.getGroupId();
             otherColumnGroup = this.columnController.getOriginalColumnGroup(groupId);
@@ -159,7 +159,7 @@ var AlignedGridsService = /** @class */ (function () {
         // the column in the event is from the master grid. need to
         // look up the equivalent from this (other) grid
         var masterColumn = colEvent.column;
-        var otherColumn;
+        var otherColumn = undefined;
         if (masterColumn) {
             otherColumn = this.columnController.getPrimaryColumn(masterColumn.getColId());
         }

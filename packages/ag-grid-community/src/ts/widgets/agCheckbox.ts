@@ -1,8 +1,7 @@
-
 import {Component} from "./component";
-import {QuerySelector, Listener} from "./componentAnnotations";
+import {Listener, QuerySelector} from "./componentAnnotations";
 import {Utils as _} from "../utils";
-import {PostConstruct, Autowired, PreConstruct} from "../context/context";
+import {Autowired, PostConstruct, PreConstruct} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {AgEvent} from "../events";
 
@@ -33,7 +32,7 @@ export class AgCheckbox extends Component {
     private readOnly = false;
     private passive = false;
 
-    private props: {label: string};
+    private props: { label: string };
 
     constructor() {
         super();
@@ -122,14 +121,14 @@ export class AgCheckbox extends Component {
     }
 
     public setSelected(selected: boolean): void {
-        if (this.selected === selected) { return; }
+        if (this.selected === selected) {
+            return;
+        }
 
-        if (selected===true) {
+        if (selected === true) {
             this.selected = true;
-        } else if (selected===false) {
+        } else if (selected === false) {
             this.selected = false;
-        } else {
-            this.selected = undefined;
         }
 
         this.updateIcons();

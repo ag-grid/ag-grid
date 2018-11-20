@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.1
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -85,7 +85,7 @@ var CellComp = /** @class */ (function (_super) {
         // hey, this looks like React!!!
         templateParts.push("<div");
         templateParts.push(" tabindex=\"-1\"");
-        templateParts.push(" unselectable=\"on\""); // THIS IS FOR IE only so the text is not seleragle with mouse drage
+        templateParts.push(" unselectable=\"on\""); // THIS IS FOR IE ONLY so text selection doesn't bubble outside of the grid
         templateParts.push(" role=\"gridcell\"");
         templateParts.push(" comp-id=\"" + this.getCompId() + "\" ");
         templateParts.push(" col-id=\"" + colIdSanitised + "\"");
@@ -1155,13 +1155,21 @@ var CellComp = /** @class */ (function (_super) {
         event.preventDefault();
     };
     CellComp.prototype.onMouseDown = function (mouseEvent) {
-        // we pass false to focusCell, as we don't want the cell to focus
-        // also get the browser focus. if we did, then the cellRenderer could
-        // have a text field in it, for example, and as the user clicks on the
-        // text field, the text field, the focus doesn't get to the text
-        // field, instead to goes to the div behind, making it impossible to
-        // select the text field.
-        this.focusCell(false);
+        // we only need to pass true to focusCell in when the browser is IE
+        // and we are trying to focus a cell (has ag-cell class), otherwise
+        // we pass false, as we don't want the cell to focus also get the browser
+        // focus. if we did, then the cellRenderer could have a text field in it,
+        // for example, and as the user clicks on the text field, the text field,
+        // the focus doesn't get to the text field, instead to goes to the div
+        // behind, making it impossible to select the text field.
+        var forceBrowserFocus = false;
+        if (utils_1._.isBrowserIE()) {
+            var target = mouseEvent.target;
+            if (target.classList.contains('ag-cell')) {
+                forceBrowserFocus = true;
+            }
+        }
+        this.focusCell(forceBrowserFocus);
         // if it's a right click, then if the cell is already in range,
         // don't change the range, however if the cell is not in a range,
         // we set a new range

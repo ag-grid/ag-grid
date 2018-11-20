@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.1
+// Type definitions for ag-grid-community v19.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -29,6 +29,8 @@ export declare class Utils {
         [key: string]: T;
     }): T[];
     static getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any;
+    static getAbsoluteHeight(el: HTMLElement): number;
+    static getAbsoluteWidth(el: HTMLElement): number;
     static getScrollLeft(element: HTMLElement, rtl: boolean): number;
     static cleanNumber(value: any): number;
     static compose: (...fns: Function[]) => (arg: any) => any;
@@ -99,7 +101,7 @@ export declare class Utils {
     static insertArrayIntoArray<T>(dest: T[], src: T[], toIndex: number): void;
     static moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number): void;
     static defaultComparator(valueA: any, valueB: any, accentedCompare?: boolean): number;
-    static compareArrays(array1: any[], array2: any[]): boolean;
+    static compareArrays(array1: any[] | undefined, array2: any[]): boolean;
     static ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore: HTMLElement): void;
     static insertWithDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore: HTMLElement): void;
     static insertTemplateWithDomOrder(eContainer: HTMLElement, htmlTemplate: string, eChildBefore: HTMLElement): HTMLElement;
@@ -116,8 +118,8 @@ export declare class Utils {
      * If icon provided, use this (either a string, or a function callback).
      * if not, then use the default icon from the theme
      */
-    static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column): HTMLElement;
-    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column): HTMLElement;
+    static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column | null): HTMLElement;
+    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column | null): HTMLElement;
     static addStylesToElement(eElement: any, styles: any): void;
     static isHorizontalScrollShowing(element: HTMLElement): boolean;
     static isVerticalScrollShowing(element: HTMLElement): boolean;
@@ -267,7 +269,7 @@ export declare class Utils {
     }, expression: string, defaultValue: any): any;
     static passiveEvents: string[];
     static addSafePassiveEventListener(eElement: HTMLElement, event: string, listener: (event?: any) => void): void;
-    static camelCaseToHumanText(camelCase: string): string;
+    static camelCaseToHumanText(camelCase: string | undefined): string | null;
     static message(msg: string): void;
     static sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: {
         [id: string]: number;

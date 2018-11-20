@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.1
+// ag-grid-enterprise v19.1.3
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -47,7 +47,7 @@ var ExcelCreator = /** @class */ (function (_super) {
         return this.export(params);
     };
     ExcelCreator.prototype.getDataAsExcelXml = function (params) {
-        return this.getData(params);
+        return this.getData(ag_grid_community_1._.assign({}, params, { exportMode: 'xml' }));
     };
     ExcelCreator.prototype.getMimeType = function () {
         return this.getExportMode() === 'xml' ? 'application/vnd.ms-excel' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
@@ -69,7 +69,7 @@ var ExcelCreator = /** @class */ (function (_super) {
             gridOptionsWrapper: gridOptionsWrapper,
             processCellCallback: processCellCallback || null,
             processHeaderCallback: processHeaderCallback || null,
-            sheetName: sheetName != null && sheetName !== '' ? sheetName : 'ag-grid',
+            sheetName: sheetName != null && sheetName !== '' ? (sheetName.toString()).substr(0, 31) : 'ag-grid',
             excelFactory: excelFactory,
             baseExcelStyles: this.gridOptions.excelStyles,
             styleLinker: this.styleLinker.bind(this),

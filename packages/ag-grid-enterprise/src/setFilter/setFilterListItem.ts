@@ -1,15 +1,15 @@
 import {
-    Component,
-    CellRendererService,
-    ValueFormatterService,
-    Autowired,
-    PostConstruct,
-    GridOptionsWrapper,
     _,
-    Column,
     AgEvent,
+    Autowired,
+    CellRendererService,
+    Column,
+    Component,
+    GridOptionsWrapper,
+    ICellRendererComp,
+    PostConstruct,
     Promise,
-    ICellRendererComp
+    ValueFormatterService
 } from "ag-grid-community";
 
 export interface SelectedEvent extends AgEvent {
@@ -98,7 +98,7 @@ export class SetFilterListItem extends Component {
         let colDef = this.column.getColDef();
         let valueObj = {value: this.value, valueFormatted: valueFormatted};
 
-        let componentPromise:Promise<ICellRendererComp> = this.cellRendererService.useFilterCellRenderer(colDef, valueElement, valueObj);
+        let componentPromise: Promise<ICellRendererComp> = this.cellRendererService.useFilterCellRenderer(colDef, valueElement, valueObj);
 
         if (!componentPromise) return;
 

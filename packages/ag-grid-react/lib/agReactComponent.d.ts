@@ -1,4 +1,4 @@
-// ag-grid-react v19.1.1
+// ag-grid-react v19.1.2
 import { Promise } from 'ag-grid-community';
 import { AgGridReact } from "./agGridReact";
 export declare class AgReactComponent {

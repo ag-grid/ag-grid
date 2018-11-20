@@ -8,7 +8,7 @@ export class GridRow {
     floating: string;
     rowIndex: number;
 
-    constructor(rowIndex: number, floating: string) {
+    constructor(rowIndex: number, floating: string | null) {
         this.rowIndex = rowIndex;
         this.floating = _.makeNull(floating);
     }

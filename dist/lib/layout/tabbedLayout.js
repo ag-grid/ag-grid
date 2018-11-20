@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.1
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -74,8 +74,8 @@ var TabbedLayout = /** @class */ (function () {
         eHeaderButton.addEventListener('click', this.showItemWrapper.bind(this, wrapper));
     };
     TabbedLayout.prototype.showItem = function (tabbedItem) {
-        var itemWrapper = utils_1.Utils.find(this.items, function (itemWrapper) {
-            return itemWrapper.tabbedItem === tabbedItem;
+        var itemWrapper = utils_1.Utils.find(this.items, function (wrapper) {
+            return wrapper.tabbedItem === tabbedItem;
         });
         if (itemWrapper) {
             this.showItemWrapper(itemWrapper);

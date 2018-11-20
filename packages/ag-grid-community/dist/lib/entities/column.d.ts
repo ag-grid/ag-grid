@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.1
+// Type definitions for ag-grid-community v19.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroupChild } from "./columnGroupChild";
@@ -60,7 +60,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private aggregationActive;
     private readonly primary;
     private parent;
-    constructor(colDef: ColDef, userProvidedColDef: ColDef, colId: String, primary: boolean);
+    constructor(colDef: ColDef, userProvidedColDef: ColDef | null, colId: String, primary: boolean);
     getUserProvidedColDef(): ColDef;
     isLockPosition(): boolean;
     isLockVisible(): boolean;
@@ -99,7 +99,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     isSorting(): boolean;
     getSortedAt(): number;
     setSortedAt(sortedAt: number): void;
-    setAggFunc(aggFunc: string | IAggFunc): void;
+    setAggFunc(aggFunc: string | IAggFunc | null): void;
     getAggFunc(): string | IAggFunc;
     getLeft(): number;
     getOldLeft(): number;
@@ -107,7 +107,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     setLeft(left: number, source?: ColumnEventType): void;
     isFilterActive(): boolean;
     setFilterActive(active: boolean, source?: ColumnEventType): void;
-    setPinned(pinned: string | boolean): void;
+    setPinned(pinned: string | boolean | null | undefined): void;
     setFirstRightPinned(firstRightPinned: boolean, source?: ColumnEventType): void;
     setLastLeftPinned(lastLeftPinned: boolean, source?: ColumnEventType): void;
     isFirstRightPinned(): boolean;

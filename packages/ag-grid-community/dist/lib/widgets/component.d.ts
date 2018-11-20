@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.1
+// Type definitions for ag-grid-community v19.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Context } from "../context/context";
@@ -46,7 +46,7 @@ export declare class Component extends BeanStub implements IComponent<any> {
     addGuiEventListener(event: string, listener: (event: any) => void): void;
     addCssClass(className: string): void;
     removeCssClass(className: string): void;
-    getAttribute(key: string): string;
+    getAttribute(key: string): string | null;
     getRefElement(refName: string): HTMLElement;
 }
 //# sourceMappingURL=component.d.ts.map

@@ -292,7 +292,7 @@ export class Component extends BeanStub implements IComponent<any> {
         this.annotatedEventListeners.forEach((eventListener: any) => {
             this.eGui.removeEventListener(eventListener.eventName, eventListener.listener);
         });
-        this.annotatedEventListeners = null;
+        this.annotatedEventListeners = [];
     }
 
     public getGui(): HTMLElement {
@@ -352,7 +352,11 @@ export class Component extends BeanStub implements IComponent<any> {
 
     public destroy(): void {
         super.destroy();
-        this.childComponents.forEach(childComponent => childComponent.destroy());
+        this.childComponents.forEach(childComponent => {
+            if (childComponent) {
+                childComponent.destroy()
+            }
+        });
         this.childComponents.length = 0;
 
         this.removeAnnotatedEventListeners();
@@ -371,7 +375,7 @@ export class Component extends BeanStub implements IComponent<any> {
         _.removeCssClass(this.getGui(), className);
     }
 
-    public getAttribute(key: string): string {
+    public getAttribute(key: string): string | null {
         let eGui = this.getGui();
         if (eGui) {
             return eGui.getAttribute(key);

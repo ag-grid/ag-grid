@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.1
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -43,8 +43,10 @@ var StandardMenuFactory = /** @class */ (function () {
     StandardMenuFactory.prototype.showMenuAfterButtonClick = function (column, eventSource) {
         var _this = this;
         this.showPopup(column, function (eMenu) {
-            _this.popupService.positionPopupUnderComponent({ type: 'columnMenu', eventSource: eventSource,
-                ePopup: eMenu, keepWithinBounds: true, column: column });
+            _this.popupService.positionPopupUnderComponent({
+                type: 'columnMenu', eventSource: eventSource,
+                ePopup: eMenu, keepWithinBounds: true, column: column
+            });
         });
     };
     StandardMenuFactory.prototype.showPopup = function (column, positionCallback) {

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.1
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -262,7 +262,7 @@ var ColumnController = /** @class */ (function () {
             this.actionOnGridColumns(keys, function (column) {
                 // if already autosized, skip it
                 if (columnsAutosized.indexOf(column) >= 0) {
-                    return;
+                    return false;
                 }
                 // get how wide this col should be
                 var preferredWidth = _this.autoWidthCalculator.getPreferredWidthForColumn(column);
@@ -346,9 +346,12 @@ var ColumnController = /** @class */ (function () {
     };
     ColumnController.prototype.getDisplayedColumnGroups = function (type) {
         switch (type) {
-            case column_1.Column.PINNED_LEFT: return this.getLeftDisplayedColumnGroups();
-            case column_1.Column.PINNED_RIGHT: return this.getRightDisplayedColumnGroups();
-            default: return this.getCenterDisplayedColumnGroups();
+            case column_1.Column.PINNED_LEFT:
+                return this.getLeftDisplayedColumnGroups();
+            case column_1.Column.PINNED_RIGHT:
+                return this.getRightDisplayedColumnGroups();
+            default:
+                return this.getCenterDisplayedColumnGroups();
         }
     };
     // gridPanel -> ensureColumnVisible
@@ -958,9 +961,12 @@ var ColumnController = /** @class */ (function () {
     };
     ColumnController.prototype.getContainerWidth = function (pinned) {
         switch (pinned) {
-            case column_1.Column.PINNED_LEFT: return this.leftWidth;
-            case column_1.Column.PINNED_RIGHT: return this.rightWidth;
-            default: return this.bodyWidth;
+            case column_1.Column.PINNED_LEFT:
+                return this.leftWidth;
+            case column_1.Column.PINNED_RIGHT:
+                return this.rightWidth;
+            default:
+                return this.bodyWidth;
         }
     };
     // after setColumnWidth or updateGroupsAndDisplayedColumns
@@ -1015,9 +1021,12 @@ var ColumnController = /** @class */ (function () {
     };
     ColumnController.prototype.getDisplayedColumns = function (type) {
         switch (type) {
-            case column_1.Column.PINNED_LEFT: return this.getDisplayedLeftColumns();
-            case column_1.Column.PINNED_RIGHT: return this.getDisplayedRightColumns();
-            default: return this.getDisplayedCenterColumns();
+            case column_1.Column.PINNED_LEFT:
+                return this.getDisplayedLeftColumns();
+            case column_1.Column.PINNED_RIGHT:
+                return this.getDisplayedRightColumns();
+            default:
+                return this.getDisplayedCenterColumns();
         }
     };
     // used by:
@@ -1144,7 +1153,7 @@ var ColumnController = /** @class */ (function () {
             return;
         }
         this.updateDisplayedColumns(source);
-        if (utils_1.Utils.exists(createEvent)) {
+        if (utils_1.Utils.exists(createEvent) && createEvent) {
             var event_6 = createEvent();
             event_6.columns = updatedColumns;
             event_6.column = updatedColumns.length === 1 ? updatedColumns[0] : null;
@@ -1390,7 +1399,7 @@ var ColumnController = /** @class */ (function () {
         if (changedColumns.length > 0) {
             var event_7 = {
                 type: events_1.Events.EVENT_COLUMN_PINNED,
-                pinned: undefined,
+                pinned: null,
                 columns: changedColumns,
                 column: null,
                 api: this.gridApi,
@@ -1479,7 +1488,9 @@ var ColumnController = /** @class */ (function () {
         // sets pinned to 'left' or 'right'
         column.setPinned(stateItem.pinned);
         // if width provided and valid, use it, otherwise stick with the old width
-        if (stateItem.width >= this.gridOptionsWrapper.getMinColWidth()) {
+        var minColWidth = this.gridOptionsWrapper.getMinColWidth();
+        if (stateItem.width && minColWidth &&
+            (stateItem.width >= minColWidth)) {
             column.setActualWidth(stateItem.width, source);
         }
         if (typeof stateItem.aggFunc === 'string') {
@@ -1665,7 +1676,7 @@ var ColumnController = /** @class */ (function () {
         var aggFuncFound;
         // otherwise we have a measure that is active, and we are doing aggregation on it
         if (pivotActiveOnThisColumn) {
-            aggFunc = pivotValueColumn.getAggFunc();
+            aggFunc = pivotValueColumn ? pivotValueColumn.getAggFunc() : null;
             aggFuncFound = true;
         }
         else {
@@ -1961,7 +1972,7 @@ var ColumnController = /** @class */ (function () {
         var columnCallback = this.gridOptionsWrapper.getProcessSecondaryColDefFunc();
         var groupCallback = this.gridOptionsWrapper.getProcessSecondaryColGroupDefFunc();
         if (!columnCallback && !groupCallback) {
-            return;
+            return undefined;
         }
         searchForColDefs(colDefs);
         function searchForColDefs(colDefs2) {

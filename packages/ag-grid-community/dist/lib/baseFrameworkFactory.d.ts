@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v19.1.1
+// Type definitions for ag-grid-community v19.1.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ICellRendererFunc, ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
@@ -12,28 +12,28 @@ import { IDateComp } from "./rendering/dateComponent";
 export declare class BaseFrameworkFactory implements IFrameworkFactory {
     dateComponent(gridOptions: GridOptions): {
         new (): IDateComp;
-    };
+    } | undefined;
     colDefFloatingCellRenderer(colDef: ColDef): {
         new (): ICellRendererComp;
-    } | ICellRendererFunc | string;
+    } | ICellRendererFunc | string | undefined;
     colDefCellRenderer(colDef: ColDef): {
         new (): ICellRendererComp;
-    } | ICellRendererFunc | string;
+    } | ICellRendererFunc | string | undefined;
     colDefCellEditor(colDef: ColDef): {
         new (): ICellEditorComp;
-    } | string;
+    } | string | undefined;
     colDefFilter(colDef: ColDef): {
         new (): IFilterComp;
-    } | string;
+    } | string | undefined;
     gridOptionsFullWidthCellRenderer(gridOptions: GridOptions): {
         new (): ICellRendererComp;
-    } | ICellRendererFunc | string;
+    } | ICellRendererFunc | string | undefined;
     gridOptionsGroupRowRenderer(gridOptions: GridOptions): {
         new (): ICellRendererComp;
-    } | ICellRendererFunc | string;
+    } | ICellRendererFunc | string | undefined;
     gridOptionsGroupRowInnerRenderer(gridOptions: GridOptions): {
         new (): ICellRendererComp;
-    } | ICellRendererFunc | string;
+    } | ICellRendererFunc | string | undefined;
     setTimeout(action: any, timeout?: any): void;
 }
 //# sourceMappingURL=baseFrameworkFactory.d.ts.map

@@ -603,7 +603,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   display: table-row; }
 
 .ag-menu-option-text {
-  display: table-cell; }
+  display: table-cell;
+  white-space: nowrap; }
 
 .ag-menu-option-shortcut {
   display: table-cell; }
@@ -658,6 +659,9 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
 .ag-filter-filter {
   box-sizing: border-box;
   width: 100%; }
+
+.ag-filter .ag-filter-checkbox {
+  pointer-events: none; }
 
 .ag-floating-filter-body input {
   height: 19px;

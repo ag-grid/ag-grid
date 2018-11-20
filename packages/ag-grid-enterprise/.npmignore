@@ -1,1 +1,13 @@
 !dist/
+
+gulpfile.js
+
+ts-lint-rules
+
+tsconfig.json
+tsconfig-lint.json
+tsconfig-main.json
+tslint.json
+webpack.config.js
+webpack.js
+webpack-with-styles.js

@@ -8,35 +8,35 @@ import {IDateComp} from "./rendering/dateComponent";
 
 /** The base frameworks, eg React & Angular 2, override this bean with implementations specific to their requirement. */
 export class BaseFrameworkFactory implements IFrameworkFactory {
-    public dateComponent(gridOptions: GridOptions): {new():IDateComp} {
+    public dateComponent(gridOptions: GridOptions): {new():IDateComp} | undefined {
         return gridOptions.dateComponent;
     }
 
-    public colDefFloatingCellRenderer(colDef: ColDef): {new(): ICellRendererComp} | ICellRendererFunc | string {
+    public colDefFloatingCellRenderer(colDef: ColDef): {new(): ICellRendererComp} | ICellRendererFunc | string | undefined{
         return colDef.pinnedRowCellRenderer;
     }
 
-    public colDefCellRenderer(colDef: ColDef): {new(): ICellRendererComp} | ICellRendererFunc | string {
+    public colDefCellRenderer(colDef: ColDef): {new(): ICellRendererComp} | ICellRendererFunc | string | undefined{
         return colDef.cellRenderer;
     }
 
-    public colDefCellEditor(colDef: ColDef): {new(): ICellEditorComp} | string {
+    public colDefCellEditor(colDef: ColDef): {new(): ICellEditorComp} | string | undefined{
         return colDef.cellEditor;
     }
 
-    public colDefFilter(colDef: ColDef): {new(): IFilterComp} | string {
+    public colDefFilter(colDef: ColDef): {new(): IFilterComp} | string | undefined{
         return colDef.filter;
     }
 
-    public gridOptionsFullWidthCellRenderer(gridOptions: GridOptions): {new(): ICellRendererComp} | ICellRendererFunc | string {
+    public gridOptionsFullWidthCellRenderer(gridOptions: GridOptions): {new(): ICellRendererComp} | ICellRendererFunc | string | undefined{
         return gridOptions.fullWidthCellRenderer;
     }
 
-    public gridOptionsGroupRowRenderer(gridOptions: GridOptions): {new(): ICellRendererComp} | ICellRendererFunc | string {
+    public gridOptionsGroupRowRenderer(gridOptions: GridOptions): {new(): ICellRendererComp} | ICellRendererFunc | string | undefined{
         return gridOptions.groupRowRenderer;
     }
 
-    public gridOptionsGroupRowInnerRenderer(gridOptions: GridOptions): {new(): ICellRendererComp} | ICellRendererFunc | string {
+    public gridOptionsGroupRowInnerRenderer(gridOptions: GridOptions): {new(): ICellRendererComp} | ICellRendererFunc | string | undefined{
         return gridOptions.groupRowInnerRenderer;
     }
 

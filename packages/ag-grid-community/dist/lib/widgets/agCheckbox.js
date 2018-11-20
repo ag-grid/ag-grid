@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.1
+ * @version v19.1.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -119,9 +119,6 @@ var AgCheckbox = /** @class */ (function (_super) {
         }
         else if (selected === false) {
             this.selected = false;
-        }
-        else {
-            this.selected = undefined;
         }
         this.updateIcons();
         var event = {
