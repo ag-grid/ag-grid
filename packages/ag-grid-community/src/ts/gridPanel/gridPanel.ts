@@ -865,7 +865,9 @@ export class GridPanel extends Component {
         // because of column animation (which takes 200ms), we have to do this twice.
         // eg if user removes cols anywhere except at the RHS, then the cols on the RHS
         // will animate to the left to fill the gap. this animation means just after
-        // the cols are removed, the
+        // the cols are removed, the remaining cols are still in the original location
+        // at the start of the animation, so pre animation the H scrollbar is still needed,
+        // but post animation it is not.
         this.updateScrollVisibleServiceImpl();
         setTimeout(this.updateScrollVisibleServiceImpl.bind(this), 500);
     }
