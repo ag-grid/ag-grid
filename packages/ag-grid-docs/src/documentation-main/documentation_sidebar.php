@@ -6,14 +6,14 @@
 
 <div class="card card-highlight">
     <div class="card-body">
-        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=19.1.2">Version 19.1.2 Released</a></h5>
+        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=19.1.3">Version 19.1.3 Released</a></h5>
         <h6 class="card-subtitle mb-2 text-muted">Nov 9</h6>
         <p class="card-text">
             Patch release with the bug fixes:
         </p>
 
         <p class="text-right">
-            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=19.1.2">Change Log</a>
+            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=19.1.3">Change Log</a>
         </p>
     </div>
 </div>
