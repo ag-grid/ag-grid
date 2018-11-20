@@ -898,7 +898,6 @@ export class GridPanel extends Component {
         }
     }
 
-    // fixme - test this!
     public ensureColumnVisible(key: any): void {
         let column = this.columnController.getGridColumn(key);
 
@@ -919,7 +918,7 @@ export class GridPanel extends Component {
         let colLeftPixel = column.getLeft();
         let colRightPixel = colLeftPixel + column.getActualWidth();
 
-        let viewportWidth = this.eBodyViewport.clientWidth;
+        let viewportWidth = this.eCenterViewport.clientWidth;
         let scrollPosition = this.getCenterViewportScrollLeft();
 
         let bodyWidth = this.columnController.getBodyContainerWidth();
