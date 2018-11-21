@@ -19,7 +19,7 @@ echo "###################### Switching to latest #############################"
 
 echo "########################################################################"
 echo "########### Creating and switching to new branch $NEW_BRANCH ###########"
-./scripts/createAndSwitchToBranch.sh b19.1.2
+./scripts/createAndSwitchToBranch.sh $NEW_BRANCH
 
 echo "########################################################################"
 echo "#################### Updating LicenseManager ###########################"
