@@ -62,7 +62,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     @PostConstruct
     private postConstruct(): void {
         if (!this.isValidRowModel()) {
-            console.warn(`ag-Grid: agSelectedRowCountComponent should only be used with the client and server side row model.`);
+            console.warn(`ag-Grid: agAggregationComponent should only be used with the client and server side row model.`);
             return;
         }
 
@@ -73,7 +73,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     private isValidRowModel() {
         // this component is only really useful with client or server side rowmodels
         const rowModelType = this.gridApi.getModel().getType();
-        return rowModelType === 'clientSide' || rowModelType !== 'serverSide';
+        return rowModelType === 'clientSide' || rowModelType === 'serverSide';
     }
 
     public init() {
