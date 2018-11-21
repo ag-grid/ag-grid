@@ -41,7 +41,9 @@ export class HorizontalResizeComp extends Component {
     }
 
     private onResizing(delta: number): void {
-        const newWidth = Math.max(100, Math.floor(this.startingWidth - delta));
+        const direction = this.gridOptionsWrapper.isEnableRtl() ? -1 : 1;
+        const newWidth = Math.max(100, Math.floor(this.startingWidth - (delta * direction)));
+        this.gridOptionsWrapper.isEnableRtl
         this.props.componentToResize.getGui().style.width = newWidth + 'px';
     }
 }

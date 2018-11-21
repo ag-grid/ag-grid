@@ -146,7 +146,7 @@ export interface ExcelContentType {
  * (d) Date
  * (e) Error
 */
-export type ExcelOOXMLDataType = 'str' | 's' | 'inlineStr' | 'n' | 'b' | 'd' | 'e';
+export type ExcelOOXMLDataType = 'str' | 's' | 'inlineStr' | 'n' | 'b' | 'd' | 'e' | 'empty';
 
 export interface ExcelOOXMLTemplate {
     getTemplate(config?: any, idx?: number): XmlElement;

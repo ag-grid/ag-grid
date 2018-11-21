@@ -22,7 +22,7 @@ const cellFactory: ExcelOOXMLTemplate = {
             properties: {
                 rawMap: {
                     r: ref,
-                    t: convertedType,
+                    t: convertedType === 'empty' ? undefined : convertedType,
                     s: styleId ? getStyleId(styleId) : undefined
                 }
             }

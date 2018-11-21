@@ -561,7 +561,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         // find index of auto group column in sort model
         let autoGroupIndex = -1;
         for (let i = 0; i < sortModel.length; ++i) {
-            if (sortModel[i].colId === 'ag-Grid-AutoColumn') {
+            if (sortModel[i].colId === Constants.GROUP_AUTO_COLUMN_ID) {
                 autoGroupIndex = i;
                 break;
             }
@@ -589,6 +589,17 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
                 if (sameNonGroupColumnExists) continue;
 
                 sortModel.splice(autoGroupIndex++, 0, individualGroupCol);
+            }
+        }
+
+        // strip out multi-column prefix on colId's
+        if (this.gridOptionsWrapper.isGroupMultiAutoColumn()) {
+            let multiColumnPrefix = Constants.GROUP_AUTO_COLUMN_ID + "-";
+
+            for (let i = 0; i < sortModel.length; ++i) {
+                if (sortModel[i].colId.indexOf(multiColumnPrefix) > -1) {
+                    sortModel[i].colId = sortModel[i].colId.substr(multiColumnPrefix.length)
+                }
             }
         }
 
