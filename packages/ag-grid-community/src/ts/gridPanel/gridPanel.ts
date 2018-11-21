@@ -1159,8 +1159,10 @@ export class GridPanel extends Component {
 
         containers.forEach(e => _.setVisible(e, this.pinningLeft));
 
-        if (!this.pinningLeft) {
-            _.setFixedWidth(spacer , 0);
+        if (!newPinning) {
+            if (!this.enableRtl) {
+                _.setFixedWidth(spacer , 0);
+            }
             return;
         }
 
@@ -1192,7 +1194,9 @@ export class GridPanel extends Component {
         containers.forEach(ct => _.setVisible(ct, newPinning));
 
         if (!newPinning) {
-            _.setFixedWidth(spacer, 0);
+            if (this.enableRtl) {
+                _.setFixedWidth(spacer , 0);
+            }
             return;
         }
 
