@@ -56,7 +56,7 @@ var columnDefs = [
             {
                 headerName: 'Group B',
                 children: [
-                    {headerName: 'Date', field: 'date', width: 110},
+                    {headerName: 'Date', field: 'date', width: 110, cellClass: 'dateFormat'},
                     {headerName: 'Sport', field: 'sport', width: 110},
                     {
                         headerName: 'Gold',
@@ -89,7 +89,7 @@ var gridOptions = {
             age: 999,
             country: 'Floating <Top> Country',
             year: 2020,
-            date: '01-08-2020',
+            date: '2020-08-01',
             sport: 'Track & Field',
             gold: 22,
             silver: '003',
@@ -103,7 +103,7 @@ var gridOptions = {
             age: 888,
             country: 'Floating <Bottom> Country',
             year: 2030,
-            date: '01-08-2030',
+            date: '2030-08-01',
             sport: 'Track & Field',
             gold: 222,
             silver: '005',
@@ -176,6 +176,35 @@ var gridOptions = {
             interior: {
                 color: '#CCCCCC',
                 pattern: 'Solid'
+            },
+            borders: {
+                borderBottom: {
+                    color: '#5687f5',
+                    lineStyle: 'Continuous',
+                    weight: 1
+                },
+                borderLeft: {
+                    color: '#5687f5',
+                    lineStyle: 'Continuous',
+                    weight: 1
+                },
+                borderRight: {
+                    color: '#5687f5',
+                    lineStyle: 'Continuous',
+                    weight: 1
+                },
+                borderTop: {
+                    color: '#5687f5',
+                    lineStyle: 'Continuous',
+                    weight: 1
+                }
+            }
+        },
+        {
+            id: 'dateFormat',
+            dataType: 'dateTime',
+            numberFormat: {
+                format: 'mm/dd/yyyy;@'
             }
         },
         {
@@ -281,7 +310,17 @@ document.addEventListener('DOMContentLoaded', function() {
     httpRequest.send();
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
+
+            var httpResult = JSON.parse(httpRequest.responseText).map(function(rec) {
+                var splitDate = rec.date.split('/');
+                return [rec, { date: splitDate[2] + '-' + splitDate[1] + '-' + splitDate[0] }].reduce(function (r, o) {
+                    Object.keys(o).forEach(function (k) {
+                        r[k] = o[k];
+                    });
+                    return r;
+                }, {});
+            });
+
             gridOptions.api.setRowData(httpResult);
         }
     };

@@ -47,7 +47,7 @@ const getMergedCells = (rows: ExcelRow[], cols: ExcelColumn[]): string[] => {
     return mergedCells;
 };
 
-const getExcelColumnName = (colIdx: number): string => {
+export const getExcelColumnName = (colIdx: number): string => {
     const startCode = 65;
     const tableWidth = 26;
     const fromCharCode = String.fromCharCode;
