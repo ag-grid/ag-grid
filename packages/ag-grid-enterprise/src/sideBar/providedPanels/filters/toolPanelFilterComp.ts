@@ -69,7 +69,7 @@ export class ToolPanelFilterComp extends Component {
     init(params: ToolPanelFilterCompParams) {
         this.params = params;
         let displayName = this.columnController.getDisplayNameForColumn(this.params.column, 'header', false);
-        let displayNameSanitised = _.escape(displayName);
+        let displayNameSanitised: any = _.escape(displayName);
         this.eFilterName.innerText = displayNameSanitised;
         this.addGuiEventListenerInto(this.eFilterToolpanelHeader, 'click', this.doExpandOrCollapse.bind(this));
         this.eventService.addEventListener(Events.EVENT_FILTER_OPENED, (event: FilterOpenedEvent) => this.onFilterOpened(event));

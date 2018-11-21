@@ -69,7 +69,7 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
         this.setTemplate(ToolPanelColumnComp.TEMPLATE);
 
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
-        let displayNameSanitised = _.escape(this.displayName);
+        let displayNameSanitised: any = _.escape(this.displayName);
         this.eLabel.innerHTML = displayNameSanitised;
 
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for

@@ -71,7 +71,7 @@ export interface XmlElement {
     name: string;
     properties?: XmlAttributes;
     children?: XmlElement[];
-    textNode?: string;
+    textNode?: string | null;
 }
 
 export interface HeaderElement {

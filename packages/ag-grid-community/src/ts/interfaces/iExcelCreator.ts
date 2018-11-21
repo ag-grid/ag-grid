@@ -40,7 +40,7 @@ export interface ExcelCell {
 
 export interface ExcelData {
     type: ExcelDataType | ExcelOOXMLDataType;
-    value: string;
+    value: string | null;
 }
 
 export type ExcelDataType = 'String' | "Number" | "Boolean" | "DateTime" | "Error";

@@ -10,11 +10,10 @@ import {
     RowNode,
     RowSpanningAccumulator,
     RowType,
-    Utils,
-    _
+    Utils
 } from 'ag-grid-community';
 
-import { ExcelXmlSerializingSession} from './excelXmlSerializingSession';
+import {ExcelXmlSerializingSession} from './excelXmlSerializingSession';
 
 export class ExcelXlsxSerializingSession extends ExcelXmlSerializingSession {
 
@@ -131,9 +130,9 @@ export class ExcelXlsxSerializingSession extends ExcelXmlSerializingSession {
             data: {
                 type: typeTransformed,
                 value:
-                    typeTransformed === 's' ? this.getStringPosition(value == null ? '' : value).toString():
-                    typeTransformed === 'n' ? Number(value).toString():
-                    value
+                    typeTransformed === 's' ? this.getStringPosition(value == null ? '' : value).toString() :
+                        typeTransformed === 'n' ? Number(value).toString() :
+                            value
             }
         };
     }

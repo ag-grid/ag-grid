@@ -1,24 +1,21 @@
 import {
+    _,
     BaseGridSerializingSession,
     Column,
     Constants,
+    ExcelCell,
+    ExcelColumn,
+    ExcelDataType,
+    ExcelOOXMLDataType,
+    ExcelRow,
+    ExcelStyle,
+    ExcelWorksheet,
     GridSerializingParams,
     RowAccumulator,
     RowNode,
     RowSpanningAccumulator,
     RowType,
-    Utils,
-    _,
-    ExcelOOXMLDataType
-} from 'ag-grid-community';
-
-import {
-    ExcelCell,
-    ExcelColumn,
-    ExcelDataType,
-    ExcelRow,
-    ExcelStyle,
-    ExcelWorksheet,
+    Utils
 } from 'ag-grid-community';
 
 import {ExcelMixedStyle} from './excelCreator';
@@ -26,7 +23,7 @@ import {ExcelXmlFactory} from './excelXmlFactory';
 import {ExcelXlsxFactory} from './excelXlsxFactory';
 
 export interface ExcelGridSerializingParams extends GridSerializingParams {
-    sheetName:string;
+    sheetName: string;
     excelFactory: ExcelXmlFactory | ExcelXlsxFactory;
     baseExcelStyles: ExcelStyle[];
     styleLinker: (rowType: RowType, rowIndex: number, colIndex: number, value: string, column: Column, node: RowNode) => string[];
@@ -40,8 +37,8 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
     protected excelStyles: ExcelStyle[];
     protected customHeader: ExcelCell[][];
     protected customFooter: ExcelCell[][];
-    protected sheetName:string;
-    protected suppressTextAsCDATA:boolean;
+    protected sheetName: string;
+    protected suppressTextAsCDATA: boolean;
 
     protected rows: ExcelRow[] = [];
     protected cols: ExcelColumn[];
@@ -236,9 +233,9 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
 
         let typeTransformed: ExcelDataType = getType();
 
-        let massageText = (val:string) =>  this.suppressTextAsCDATA ? _.escape(val) : `<![CDATA[${val}]]>`;
+        let massageText = (val: string) => this.suppressTextAsCDATA ? _.escape(val) : `<![CDATA[${val}]]>`;
         let convertBoolean = (val: boolean | string): string => {
-            if (!val || val === '0' || val ===  'false') return  '0';
+            if (!val || val === '0' || val === 'false') return '0';
             return '1';
         };
 
@@ -247,10 +244,10 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
             data: {
                 type: typeTransformed,
                 value:
-                    typeTransformed === 'String' ? massageText(value):
-                    typeTransformed === 'Number' ? Number(value).valueOf() + '' :
-                    typeTransformed === 'Boolean' ? convertBoolean(value) :
-                    value
+                    typeTransformed === 'String' ? massageText(value) :
+                        typeTransformed === 'Number' ? Number(value).valueOf() + '' :
+                            typeTransformed === 'Boolean' ? convertBoolean(value) :
+                                value
             }
         };
     }

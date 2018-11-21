@@ -38,7 +38,14 @@ export class ValueService {
 
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
         // really should have a way so they get initialised in the right order???
-        if (!this.initialised) { this.init(); }
+        if (!this.initialised) {
+            this.init();
+        }
+
+
+        if (!rowNode) {
+            return undefined;
+        }
 
         // pull these out to make code below easier to read
         let colDef = column.getColDef();
@@ -53,11 +60,11 @@ export class ValueService {
         let aggDataExists = !ignoreAggData && rowNode.aggData && rowNode.aggData[colId] !== undefined;
         if (forFilter && colDef.filterValueGetter) {
             result = this.executeValueGetter(colDef.filterValueGetter, data, column, rowNode);
-        } else if(this.gridOptionsWrapper.isTreeData() && aggDataExists) {
+        } else if (this.gridOptionsWrapper.isTreeData() && aggDataExists) {
             result = rowNode.aggData[colId];
-        } else if(this.gridOptionsWrapper.isTreeData() && colDef.valueGetter) {
+        } else if (this.gridOptionsWrapper.isTreeData() && colDef.valueGetter) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
-        } else if(this.gridOptionsWrapper.isTreeData() && (field && data)) {
+        } else if (this.gridOptionsWrapper.isTreeData() && (field && data)) {
             result = _.getValueUsingField(data, field, column.isFieldContainsDots());
         } else if (groupDataExists) {
             result = rowNode.groupData[colId];
@@ -80,7 +87,7 @@ export class ValueService {
         return result;
     }
 
-    public setValue(rowNode: RowNode, colKey: string|Column, newValue: any): void {
+    public setValue(rowNode: RowNode, colKey: string | Column, newValue: any): void {
         let column = this.columnController.getPrimaryColumn(colKey);
 
         if (!rowNode || !column) {
@@ -118,7 +125,7 @@ export class ValueService {
         params.newValue = newValue;
 
         let valueWasDifferent: boolean;
-        if (_.exists(newValueHandler)) {
+        if (newValueHandler && _.exists(newValueHandler)) {
             valueWasDifferent = newValueHandler(params);
         } else if (_.exists(valueSetter)) {
             valueWasDifferent = this.expressionService.evaluate(valueSetter, params);
@@ -136,7 +143,9 @@ export class ValueService {
         // if no change to the value, then no need to do the updating, or notifying via events.
         // otherwise the user could be tabbing around the grid, and cellValueChange would get called
         // all the time.
-        if (!valueWasDifferent) { return; }
+        if (!valueWasDifferent) {
+            return;
+        }
 
         // reset quick filter on this row
         rowNode.resetQuickFilterAggregateText();
@@ -145,9 +154,10 @@ export class ValueService {
 
         params.newValue = this.getValue(column, rowNode);
 
-        if (typeof column.getColDef().onCellValueChanged === 'function') {
+        const onCellValueChanged = column.getColDef().onCellValueChanged;
+        if (typeof onCellValueChanged === 'function') {
             // to make callback async, do in a timeout
-            setTimeout( ()=> column.getColDef().onCellValueChanged(params), 0);
+            setTimeout(() => onCellValueChanged(params), 0);
         }
 
         let event: CellValueChangedEvent = {
@@ -170,9 +180,13 @@ export class ValueService {
         this.eventService.dispatchEvent(event);
     }
 
-    private setValueUsingField(data: any, field: string, newValue: any, isFieldContainsDots: boolean): boolean {
+    private setValueUsingField(data: any, field: string | undefined, newValue: any, isFieldContainsDots: boolean): boolean {
+        if (!field) {
+            return false;
+        }
+
         // if no '.', then it's not a deep value
-        let valuesAreSame: boolean;
+        let valuesAreSame: boolean = false;
         if (!isFieldContainsDots) {
             data[field] = newValue;
         } else {
@@ -180,7 +194,7 @@ export class ValueService {
             let fieldPieces = field.split('.');
             let currentObject = data;
             while (fieldPieces.length > 0 && currentObject) {
-                let fieldPiece = fieldPieces.shift();
+                let fieldPiece: any = fieldPieces.shift();
                 if (fieldPieces.length === 0) {
                     currentObject[fieldPiece] = newValue;
                 } else {
@@ -198,7 +212,7 @@ export class ValueService {
         // if inside the same turn, just return back the value we got last time
         let valueFromCache = this.valueCache.getValue(rowNode, colId);
 
-        if (valueFromCache!==undefined) {
+        if (valueFromCache !== undefined) {
             return valueFromCache;
         }
 
@@ -243,12 +257,14 @@ export class ValueService {
         }
 
         // if already a string, or missing, just return it
-        if (typeof result === 'string' || result===null || result===undefined) { return result; }
+        if (typeof result === 'string' || result === null || result === undefined) {
+            return result;
+        }
 
         result = String(result);
 
-        if (result==='[object Object]') {
-            _.doOnce( ()=> {
+        if (result === '[object Object]') {
+            _.doOnce(() => {
                 console.warn('ag-Grid: a column you are grouping or pivoting by has objects as values. If you want to group by complex objects then either a) use a colDef.keyCreator (se ag-Grid docs) or b) to toString() on the object to return a key');
             }, 'getKeyForNode - warn about [object,object]');
         }

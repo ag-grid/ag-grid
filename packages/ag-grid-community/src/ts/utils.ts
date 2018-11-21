@@ -153,14 +153,14 @@ export class Utils {
     }
 
     static getAbsoluteHeight(el: HTMLElement): number {
-        const styles = window.getComputedStyle(el);
+        const styles: any = window.getComputedStyle(el);
         const margin = parseFloat(styles['marginTop']) + parseFloat(styles['marginBottom']);
 
         return Math.ceil(el.offsetHeight + margin);
     }
 
     static getAbsoluteWidth(el: HTMLElement): number {
-        const styles = window.getComputedStyle(el);
+        const styles: any = window.getComputedStyle(el);
         const margin = parseFloat(styles['marginLeft']) + parseFloat(styles['marginRight']);
 
         return Math.ceil(el.offsetWidth + margin);
@@ -253,7 +253,7 @@ export class Utils {
     }
 
     static iterateObject<T>(object: { [p: string]: T } | T[] | undefined, callback: (key: string, value: T) => void) {
-        if (this.missing(object)) {
+        if (!object || this.missing(object)) {
             return;
         }
 
@@ -318,7 +318,7 @@ export class Utils {
 
     static filter<T>(array: T[], callback: (item: T) => boolean): T[] {
         let result: T[] = [];
-        array.forEach(function(item: T) {
+        array.forEach(function (item: T) {
             if (callback(item)) {
                 result.push(item);
             }
@@ -357,7 +357,7 @@ export class Utils {
     static assign(object: any, ...sources: any[]): any {
         sources.forEach(source => {
             if (this.exists(source)) {
-                this.iterateObject(source, function(key: string, value: any) {
+                this.iterateObject(source, function (key: string, value: any) {
                     object[key] = value;
                 });
             }
@@ -366,7 +366,7 @@ export class Utils {
         return object;
     }
 
-    static parseYyyyMmDdToDate(yyyyMmDd: string, separator: string): Date {
+    static parseYyyyMmDdToDate(yyyyMmDd: string, separator: string): Date | null {
         try {
             if (!yyyyMmDd) return null;
             if (yyyyMmDd.indexOf(separator) === -1) return null;
@@ -379,7 +379,7 @@ export class Utils {
         }
     }
 
-    static serializeDateToYyyyMmDd(date: Date, separator: string): string {
+    static serializeDateToYyyyMmDd(date: Date, separator: string): string | null {
         if (!date) return null;
         return date.getFullYear() + separator + Utils.pad(date.getMonth() + 1, 2) + separator + Utils.pad(date.getDate(), 2);
     }
@@ -415,7 +415,7 @@ export class Utils {
         }
     }
 
-    static find<T>(collection: T[] | { [id: string]: T }, predicate: string | boolean | ((item: T) => boolean), value?: any): T {
+    static find<T>(collection: T[] | { [id: string]: T }, predicate: string | boolean | ((item: T) => boolean), value?: any): T | null {
         if (collection === null || collection === undefined) {
             return null;
         }
@@ -427,7 +427,7 @@ export class Utils {
 
         let collectionAsArray = <T[]> collection;
 
-        let firstMatchingItem: T;
+        let firstMatchingItem: T | null = null;
         for (let i = 0; i < collectionAsArray.length; i++) {
             let item: T = collectionAsArray[i];
             if (typeof predicate === 'string') {
@@ -446,8 +446,8 @@ export class Utils {
         return firstMatchingItem;
     }
 
-    static toStrings<T>(array: T[]): string[] {
-        return this.map(array, function(item) {
+    static toStrings<T>(array: T[]): (string | null)[] {
+        return this.map(array, function (item) {
             if (item === undefined || item === null || !item.toString) {
                 return null;
             } else {
@@ -542,7 +542,7 @@ export class Utils {
     }
 
     //if value is undefined, null or blank, returns null, otherwise returns the value
-    static makeNull<T>(value: T): T {
+    static makeNull<T>(value: T): T | null {
         let valueNoType = <any> value;
         if (value === null || value === undefined || valueNoType === "") {
             return null;
@@ -567,7 +567,7 @@ export class Utils {
         return value != null && (value !== '' || allowEmptyString);
     }
 
-    static firstExistingValue<A>(...values: A[]): A {
+    static firstExistingValue<A>(...values: A[]): A | null {
         for (let i = 0; i < values.length; i++) {
             let value: A = values[i];
             if (_.exists(value)) return value;
@@ -588,12 +588,12 @@ export class Utils {
     }
 
     static existsAndNotEmpty(value: any[] | null): boolean {
-        return this.exists(value) && value.length > 0;
+        return value !== null && this.exists(value) && value.length > 0;
     }
 
     static removeAllChildren(node: HTMLElement) {
         if (node) {
-            while (node.hasChildNodes()) {
+            while (node.hasChildNodes() && node.lastChild) {
                 node.removeChild(node.lastChild);
             }
         }
@@ -603,7 +603,7 @@ export class Utils {
         this.removeFromParent(parent.querySelector(cssSelector));
     }
 
-    static removeFromParent(node: Element) {
+    static removeFromParent(node: Element | null) {
         if (node && node.parentNode) {
             node.parentNode.removeChild(node);
         }
@@ -695,7 +695,7 @@ export class Utils {
         }
     }
 
-    static getElementAttribute(element: any, attributeName: string): string {
+    static getElementAttribute(element: any, attributeName: string): string | null {
         if (element.attributes) {
             if (element.attributes[attributeName]) {
                 let attribute = element.attributes[attributeName];
@@ -946,7 +946,7 @@ export class Utils {
         return true;
     }
 
-    static toStringOrNull(value: any): string {
+    static toStringOrNull(value: any): string | null {
         if (this.exists(value) && value.toString) {
             return value.toString();
         } else {
@@ -1101,7 +1101,9 @@ export class Utils {
         }
         Object.keys(styles).forEach((key) => {
             let keyCamelCase = this.hyphenToCamelCase(key);
-            eElement.style[keyCamelCase] = styles[key];
+            if (keyCamelCase) {
+                eElement.style[keyCamelCase] = styles[key];
+            }
         });
     }
 
@@ -1159,7 +1161,9 @@ export class Utils {
         let widthWithScroll = inner.offsetWidth;
 
         // remove divs
-        outer.parentNode.removeChild(outer);
+        if (outer.parentNode) {
+            outer.parentNode.removeChild(outer);
+        }
 
         return widthNoScroll - widthWithScroll;
     }
@@ -1187,7 +1191,9 @@ export class Utils {
             }
         }
 
-        div.parentNode.removeChild(div);
+        if (div.parentNode) {
+            div.parentNode.removeChild(div);
+        }
 
         return found;
     }
@@ -1238,7 +1244,7 @@ export class Utils {
             let anyWindow = <any> window;
             // taken from https://github.com/ag-grid/ag-grid/issues/550
             this.isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') > 0
-                || (function(p) {
+                || (function (p) {
                     return p ? p.toString() === "[object SafariRemoteNotification]" : false;
                 })
                 (!anyWindow.safari || anyWindow.safari.pushNotification);
@@ -1292,7 +1298,7 @@ export class Utils {
 
     static createEventPath(event: Event): EventTarget[] {
         let res: EventTarget[] = [];
-        let pointer = _.getTarget(event);
+        let pointer: any = _.getTarget(event);
         while (pointer) {
             res.push(pointer);
             pointer = pointer.parentElement;
@@ -1405,7 +1411,7 @@ export class Utils {
     }
 
     // from https://gist.github.com/youssman/745578062609e8acac9f
-    static camelCaseToHyphen(str: string): string {
+    static camelCaseToHyphen(str: string): string | null {
         if (str === null || str === undefined) {
             return null;
         }
@@ -1413,7 +1419,7 @@ export class Utils {
     }
 
     // from https://stackoverflow.com/questions/6660977/convert-hyphens-to-camel-case-camelcase
-    static hyphenToCamelCase(str: string): string {
+    static hyphenToCamelCase(str: string): string | null {
         if (str === null || str === undefined) {
             return null;
         }
@@ -1443,7 +1449,7 @@ export class Utils {
         return !isNaN(parseFloat(value)) && isFinite(value);
     }
 
-    static escape(toEscape: string | null): string {
+    static escape(toEscape: string | null): string | null {
         if (toEscape === null || toEscape === undefined || !toEscape.replace) {
             return toEscape;
         }
@@ -1631,7 +1637,7 @@ export class Utils {
         let timeout: any;
 
         // Calling debounce returns a new anonymous function
-        return function() {
+        return function () {
             // reference the context and args for the setTimeout function
             const context = this;
             const args = arguments;
@@ -1647,7 +1653,7 @@ export class Utils {
             clearTimeout(timeout);
 
             // Set the new timeout
-            timeout = setTimeout(function() {
+            timeout = setTimeout(function () {
 
                 // Inside the timeout function, clear the timeout variable
                 // which will let the next execution run when in 'immediate' mode
@@ -1847,7 +1853,7 @@ export class Utils {
         return v;
     }
 
-    static string_similarity = function(str1: string, str2: string) {
+    static string_similarity = function (str1: string, str2: string) {
         if (str1.length > 0 && str2.length > 0) {
             let pairs1 = Utils.get_bigrams(str1);
             let pairs2 = Utils.get_bigrams(str2);
@@ -1923,19 +1929,19 @@ export interface ExternalPromise<T> {
 
 export class Promise<T> {
     private status: PromiseStatus = PromiseStatus.IN_PROGRESS;
-    private resolution: T = null;
+    private resolution: T | null = null;
     private listOfWaiters: ((value: T) => void)[] = [];
 
     static all<T>(toCombine: Promise<T>[]): Promise<T[]> {
         return new Promise(resolve => {
-            let combinedValues: T[] = [];
+            let combinedValues: (T | null)[] = [];
             let remainingToResolve: number = toCombine.length;
             toCombine.forEach((source, index) => {
                 source.then(sourceResolved => {
                     remainingToResolve--;
                     combinedValues[index] = sourceResolved;
                     if (remainingToResolve == 0) {
-                        resolve(combinedValues);
+                        resolve(<any>combinedValues);
                     }
                 });
                 combinedValues.push(null);  // spl todo: review with Alberto - why?
@@ -1990,7 +1996,7 @@ export class Promise<T> {
         });
     }
 
-    public resolveNow<Z>(ifNotResolvedValue: Z, ifResolved: (current: T) => Z): Z {
+    public resolveNow<Z>(ifNotResolvedValue: Z, ifResolved: (current: T | null) => Z): Z {
         if (this.status == PromiseStatus.IN_PROGRESS) return ifNotResolvedValue;
 
         return ifResolved(this.resolution);

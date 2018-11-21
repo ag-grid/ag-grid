@@ -31,8 +31,8 @@ export class SetFilterModel {
 
     private clientSideRowModel: ClientSideRowModel;
     private valueGetter: any;
-    private allUniqueValues: string[]; // all values in the table
-    private availableUniqueValues: string[]; // all values not filtered by other rows
+    private allUniqueValues: (string | null)[]; // all values in the table
+    private availableUniqueValues: (string | null)[]; // all values not filtered by other rows
     private displayedValues: any[]; // all values we are rendering on screen (ie after mini filter)
     private miniFilter: string | null;
     private selectedValuesCount: number;
@@ -143,7 +143,7 @@ export class SetFilterModel {
 
     private createAllUniqueValues() {
         if (this.areValuesSync()) {
-            let valuesToUse: string[] = this.extractSyncValuesToUse();
+            let valuesToUse: (string | null)[] = this.extractSyncValuesToUse();
             this.setValues(valuesToUse);
             this.filterValuesPromise = Promise.resolve([]);
         } else {
@@ -174,7 +174,7 @@ export class SetFilterModel {
         this.valuesType = value;
     }
 
-    private setValues(valuesToUse: string[]) {
+    private setValues(valuesToUse: (string | null)[]) {
         this.allUniqueValues = valuesToUse;
         if (!this.suppressSorting) {
             this.sortValues(this.allUniqueValues);
@@ -182,7 +182,7 @@ export class SetFilterModel {
     }
 
     private extractSyncValuesToUse() {
-        let valuesToUse: string[];
+        let valuesToUse: (string | null)[];
         if (this.valuesType == SetFilterModelValuesType.PROVIDED_LIST) {
             if (Array.isArray(this.filterParams.values)) {
                 valuesToUse = Utils.toStrings(<string[]>this.filterParams.values);
@@ -272,7 +272,7 @@ export class SetFilterModel {
     }
 
     //sets mini filter. returns true if it changed from last value, otherwise false
-    public setMiniFilter(newMiniFilter: string): boolean {
+    public setMiniFilter(newMiniFilter: string | null): boolean {
         newMiniFilter = Utils.makeNull(newMiniFilter);
         if (this.miniFilter === newMiniFilter) {
             //do nothing if filter has not changed
@@ -386,7 +386,7 @@ export class SetFilterModel {
         return this.allUniqueValues.length;
     }
 
-    public getUniqueValue(index: any): string {
+    public getUniqueValue(index: any): string | null {
         return this.allUniqueValues[index];
     }
 
