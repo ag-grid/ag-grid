@@ -2,15 +2,15 @@ import {Autowired, Bean, Context} from "../context/context";
 import {Column} from "../entities/column";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {_} from "../utils";
-import {ColDef, ValueGetterParams} from "../entities/colDef";
+import {ColDef} from "../entities/colDef";
 import {ColumnController} from "./columnController";
 import {ColumnFactory} from "./columnFactory";
+import {Constants} from "../constants";
 
 @Bean('autoGroupColService')
 export class AutoGroupColService {
 
-    public static GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
-    public static GROUP_AUTO_COLUMN_BUNDLE_ID = AutoGroupColService.GROUP_AUTO_COLUMN_ID;
+    public static GROUP_AUTO_COLUMN_BUNDLE_ID = Constants.GROUP_AUTO_COLUMN_ID;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
@@ -48,8 +48,7 @@ export class AutoGroupColService {
         // if doing multi, set the field
         let colId: string;
         if (rowGroupCol) {
-
-            colId = `${AutoGroupColService.GROUP_AUTO_COLUMN_ID}-${rowGroupCol.getId()}`;
+            colId = `${Constants.GROUP_AUTO_COLUMN_ID}-${rowGroupCol.getId()}`;
         } else {
             colId = AutoGroupColService.GROUP_AUTO_COLUMN_BUNDLE_ID;
         }

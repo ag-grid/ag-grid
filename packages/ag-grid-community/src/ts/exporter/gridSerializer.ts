@@ -234,7 +234,7 @@ export class GridSerializer {
         } else if (allColumns && !isPivotMode) {
             // add auto group column for tree data
             columnsToExport = this.gridOptionsWrapper.isTreeData() ?
-                this.columnController.getGridColumns([AutoGroupColService.GROUP_AUTO_COLUMN_ID]) : [];
+                this.columnController.getGridColumns([Constants.GROUP_AUTO_COLUMN_ID]) : [];
 
             columnsToExport = columnsToExport.concat(this.columnController.getAllPrimaryColumns());
 
