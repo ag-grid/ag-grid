@@ -163,7 +163,7 @@ include '../documentation-main/documentation_header.php';
         <code>suppressCopyRowsToClipboard:true</code>
     </p>
 
-    <?= example('Clipboard example', 'simple', 'generated', array("enterprise" => true)) ?>
+    <?= example('Clipboard example', 'simple', 'generated', array("enterprise" => true, "processVue" => true)) ?>
 
     <h2>Controlling Clipboard Copy</h2>
 
@@ -179,7 +179,7 @@ include '../documentation-main/documentation_header.php';
         demonstrates the callback by just printing the data to the console.
     </p>
 
-    <?= example('Controlling Clipboard Copy', 'custom', 'generated', array("enterprise" => true)) ?>
+    <?= example('Controlling Clipboard Copy', 'custom', 'generated', array("enterprise" => true, "processVue" => true)) ?>
 
     <h2>Processing Clipboard Data</h2>
 
@@ -268,7 +268,7 @@ export interface ProcessHeaderForExportParams {
         </ul>
     </p>
 
-    <?= example('Example Process', 'process', 'generated', array("enterprise" => true)) ?>
+    <?= example('Example Process', 'process', 'generated', array("enterprise" => true, "processVue" => true)) ?>
 
     <h3>Processing Whole Paste Operation</h3>
 
@@ -314,7 +314,7 @@ export interface ProcessDataFromClipboardParams {
         </li>
     </ul>
 
-    <?= example('Example Process All', 'process-all', 'generated', array("enterprise" => true)) ?>
+    <?= example('Example Process All', 'process-all', 'generated', array("enterprise" => true, "processVue" => true)) ?>
 
     <h2>Changing the Deliminator</h2>
 
@@ -349,6 +349,6 @@ export interface ProcessDataFromClipboardParams {
         </li>
     </ul>
 
-    <?= example('Complex Example', 'complex', 'generated', array("enterprise" => true)) ?>
+    <?= example('Complex Example', 'complex', 'generated', array("enterprise" => true, "processVue" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

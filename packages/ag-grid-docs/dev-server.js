@@ -198,7 +198,6 @@ module.exports = () => {
 
 //     node dev-server.js generate-examples [src directory]
 // eg: node dev-server.js generate-examples javascript-grid-accessing-data
-console.log(process.argv);
 if(process.argv.length >= 3 && process.argv[2] === 'generate-examples') {
     console.log('regenerating examples...');
     generateExamples(() => console.log('generation done.'), process.argv[3]);

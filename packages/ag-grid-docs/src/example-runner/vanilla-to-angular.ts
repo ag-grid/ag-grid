@@ -16,7 +16,7 @@ function onGridReadyTemplate(readyCode: string, resizeToFit: boolean, data: { ur
     }
 
     if (data) {
-        if(data.callback.indexOf('api.setRowData') !== -1) {
+        if (data.callback.indexOf('api.setRowData') !== -1) {
             const setRowDataBlock = data.callback.replace("params.api.setRowData(data);", "this.rowData = data");
             getData = `this.http.get(${data.url}).subscribe( data => ${setRowDataBlock} );`;
         } else {
@@ -93,8 +93,8 @@ function appComponentTemplate(bindings, componentFileNames) {
     });
 
     const eventAttributes = bindings.eventHandlers.filter(event => event.name != 'onGridReady').map(toOutput);
-
     const eventHandlers = bindings.eventHandlers.map(event => event.handler).map(removeFunction);
+    const instance = bindings.instance.map(removeFunction);
 
     eventAttributes.push('(gridReady)="onGridReady($event)"');
 
@@ -150,7 +150,7 @@ export class AppComponent {
     ${eventHandlers
         .concat(externalEventHandlers)
         .concat(additional)
-        .concat(bindings.instance)
+        .concat(instance)
         .map(snippet => snippet.trim())
         .join('\n\n')}
 }
@@ -159,8 +159,8 @@ ${bindings.utils.join('\n')}
 `;
 }
 
-export function vanillaToAngular(src, gridSettings, componentFileNames) {
-    const bindings = parser(src, gridSettings);
+export function vanillaToAngular(js, html, exampleSettings, componentFileNames) {
+    const bindings = parser(js, html, exampleSettings);
     return appComponentTemplate(bindings, componentFileNames);
 }
 

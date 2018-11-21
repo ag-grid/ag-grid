@@ -5,11 +5,11 @@ export default class CubeRenderer extends Component {
         super(props);
 
         this.state = {
-            value: this.valueSquared()
+            value: this.valueCubed()
         };
     }
 
-    valueSquared() {
+    valueCubed() {
         return this.props.value * this.props.value * this.props.value;
     }
 

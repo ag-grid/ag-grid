@@ -240,7 +240,7 @@ pivotGroupHeaderHeight:100,
         </li>
     </ul>
 
-    <?= example('Header Height and Text Orientation', 'text-orientation', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Header Height and Text Orientation', 'text-orientation', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2 id="headerHeight">Dynamic Header Heights</h2>
 
@@ -250,7 +250,7 @@ pivotGroupHeaderHeight:100,
         descriptions at the top of the page
     </p>
 
-    <?= example('Dynamic Header Height', 'dynamic-height', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Dynamic Header Height', 'dynamic-height', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2 id="customHeader">Custom Header</h2>
     <p>

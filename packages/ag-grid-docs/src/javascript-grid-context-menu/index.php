@@ -135,7 +135,7 @@ MenuItemDef {
         <li>The second menu item ('Always Disabled') has a tooltip.</li>
     </ul>
 
-    <?= example('Context Menu Example', 'context-menu', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Context Menu Example', 'context-menu', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Popup Parent</h2>
 

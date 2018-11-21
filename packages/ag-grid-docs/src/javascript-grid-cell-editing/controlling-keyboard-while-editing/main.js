@@ -6,7 +6,7 @@ var columnDefs = [
 
 var gridOptions = {
     components:{
-        arrowsEditor: ArrowEditor
+        arrowsEditor: createActionEditor()
     },
     columnDefs: columnDefs,
     enableFilter: true,
@@ -35,47 +35,51 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 
-function ArrowEditor(){
+function createActionEditor() {
+    function ArrowEditor(){
+    }
+
+    ArrowEditor.prototype.init = function (params){
+        console.log("Arrow editor params:");
+        console.log(params);
+        var inputWrapper = document.createElement('span');
+        inputWrapper.innerHTML = '<input type="text"/>'
+        this.gui = inputWrapper.children[0];
+        this.setValue(params.value);
+
+        var self = this;
+
+        this.gui.addEventListener('keydown', function(event){
+            switch (event.keyCode){
+                case 38:
+                case 39:
+                    self.setValue(self.value + 1);
+                    break;
+                case 40:
+                case 37:
+                    self.setValue(self.value - 1)
+            }
+        });
+
+        this.params = params;
+    };
+
+    ArrowEditor.prototype.getGui = function (){
+        return this.gui;
+    };
+
+    ArrowEditor.prototype.setValue = function (value){
+        this.value = value;
+        this.gui.value = this.value + '';
+    };
+
+    ArrowEditor.prototype.getValue = function (){
+        return this.value;
+    };
+
+    ArrowEditor.prototype.afterGuiAttached = function (){
+        return this.gui.focus();
+    };
+
+    return ArrowEditor;
 }
-
-ArrowEditor.prototype.init = function (params){
-    console.log("Arrow editor params:");
-    console.log(params);
-    var inputWrapper = document.createElement('span');
-    inputWrapper.innerHTML = '<input type="text"/>'
-    this.gui = inputWrapper.children[0];
-    this.setValue(params.value);
-
-    var self = this;
-
-    this.gui.addEventListener('keydown', function(event){
-        switch (event.keyCode){
-            case 38:
-            case 39:
-                self.setValue(self.value + 1);
-                break;
-            case 40:
-            case 37:
-                self.setValue(self.value - 1)
-        }
-    });
-
-    this.params = params;
-};
-
-ArrowEditor.prototype.getGui = function (){
-    return this.gui;
-};
-
-ArrowEditor.prototype.setValue = function (value){
-    this.value = value;
-    this.gui.value = this.value + '';
-};
-
-ArrowEditor.prototype.getValue = function (){
-    return this.value;
-};
-
-ArrowEditor.prototype.afterGuiAttached = function (){
-    return this.gui.focus();
-};

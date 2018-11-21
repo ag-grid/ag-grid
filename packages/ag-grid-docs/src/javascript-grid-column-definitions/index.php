@@ -146,7 +146,7 @@ var gridOptions = {
         The following examples demonstrates this configuration.
     </p>
 
-<?= example('Column Definition Example', 'column-definition', 'generated', array('enterprise' => 1, 'grid' => array('height' => '100%'))) ?>
+<?= example('Column Definition Example', 'column-definition', 'generated', array('enterprise' => 1, "processVue" => true, 'grid' => array('height' => '100%'))) ?>
 
 <h2>Provided Column Types</h2>
 
@@ -248,7 +248,7 @@ Examples of state include column visibility, width, row groups and values.
 <p>The example below shows using the grid's <a href="../javascript-grid-column-api/">Column API</a>.
 </p>
 
-<?= example('Column State Example', 'column-state', 'generated', array("enterprise" => 1)) ?>
+<?= example('Column State Example', 'column-state', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 <note>
     This example also includes <a href="../javascript-grid-grouping-headers/">Column Groups</a> which are
@@ -321,7 +321,7 @@ Examples of state include column visibility, width, row groups and values.
     </ul>
 </p>
 
-<?= example('Column Changes', 'column-changes', 'generated', array("enterprise" => 1)) ?>
+<?= example('Column Changes', 'column-changes', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 <h2 id="group-changes">Group Changes</h2>
 
@@ -346,6 +346,6 @@ Examples of state include column visibility, width, row groups and values.
     </ul>
 </p>
 
-<?= example('Column Changes 2', 'column-changes-2', 'generated') ?>
+<?= example('Column Changes 2', 'column-changes-2', 'generated', array("processVue" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

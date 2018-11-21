@@ -202,8 +202,7 @@ colDef = {
         or make sure that <code>aggFunc</code> is not used in any column until it is configured into the grid.
     </p>
 
-    <!-- SPL vue problematic here -->
-    <?= example('Custom Aggregation Functions', 'custom-agg-functions', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Custom Aggregation Functions', 'custom-agg-functions', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Aggregation API</h2>
 

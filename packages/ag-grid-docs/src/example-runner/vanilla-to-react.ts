@@ -105,6 +105,7 @@ function indexTemplate(bindings, componentFilenames) {
 
     const eventHandlers = bindings.eventHandlers.map(event => event.handler.replace(/^function /, ''));
     const externalEventHandlers = bindings.externalEventHandlers.map(handler => handler.body.replace(/^function /, ''));
+    const instance = bindings.instance.map(body => body.replace(/^function /, ''));
 
     const style = bindings.gridSettings.noStyle ? '' : `style={{width: '100%', height: '100%' }}`;
 
@@ -140,7 +141,7 @@ ${additional.concat(eventHandlers, externalEventHandlers).join('\n    ')}
         );
     }
     
-    ${bindings.instance.join('\\\\n')}
+    ${instance.join('\\\\n')}
 }
 
 ${bindings.utils.join('\n')}
@@ -152,8 +153,8 @@ render(
 `;
 }
 
-export function vanillaToReact(src, gridSettings, componentFilenames) {
-    const bindings = parser(src, gridSettings);
+export function vanillaToReact(js, html, exampleSettings, componentFilenames) {
+    const bindings = parser(js, html, exampleSettings);
     return indexTemplate(bindings, componentFilenames);
 }
 
