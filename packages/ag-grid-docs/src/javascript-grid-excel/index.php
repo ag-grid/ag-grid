@@ -211,7 +211,7 @@ include '../documentation-main/documentation_header.php';
             <li>For groups, the first exported value (column) will always have the group key.</li>
         </ul>
 
-        <?= example('Excel Export Without Styles', 'excel-export-without-styles', 'generated', array("enterprise" => 1)) ?>
+        <?= example('Excel Export Without Styles', 'excel-export-without-styles', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
     </article>
     <article>
         <h2>Export with Styles</h2>
@@ -448,7 +448,7 @@ var gridOptions = {
             </li>
         </ul>
 
-        <?= example('Excel Export With Styles', 'excel-export-with-styles', 'generated', array("enterprise" => 1)) ?>
+        <?= example('Excel Export With Styles', 'excel-export-with-styles', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
     </article>
     <article>
         <h2> Example 3 - Data types </h2> 
@@ -465,7 +465,7 @@ var gridOptions = {
             it shows 39923. You need to add the formatting inside Excel</li>
         </ul>
 
-        <?= example('Excel Data Types', 'excel-data-types', 'generated', array("enterprise" => 1)) ?>
+        <?= example('Excel Data Types', 'excel-data-types', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
     </article>
     <article>
         <h2>Export to Excel with iPad</h2>

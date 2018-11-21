@@ -15,10 +15,10 @@ export default Vue.extend({
 
         doesFilterPass(params){
             return !this.text || this.text.toLowerCase()
-                    .split(" ")
-                    .every((filterWord) => {
-                        return this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) >= 0;
-                    });
+                .split(" ")
+                .every((filterWord) => {
+                    return this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) >= 0;
+                });
         },
 
         getModel() {

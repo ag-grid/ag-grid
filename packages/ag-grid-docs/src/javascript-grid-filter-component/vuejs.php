@@ -81,4 +81,4 @@ laterOnInYourApplicationSomewhere() {
     vueFilterInstance.componentMethod();
 }</snippet>
 
-<?= example('Filter Components with VueJS', 'vue-filter', 'as-is', array("exampleHeight" => 390, "noPlunker" => 1)) ?>
+<?= example('Vue Filter Component', 'filter-component', 'generated', array('enterprise' => false, "exampleHeight" => 445, 'onlyShow' => 'vue', "processVue" => true, 'extras' => array("bootstrap"))) ?>
