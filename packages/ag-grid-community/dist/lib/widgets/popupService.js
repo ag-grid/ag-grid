@@ -35,7 +35,7 @@ var PopupService = /** @class */ (function () {
             return ePopupParent;
         }
         else {
-            return this.getDocument().body;
+            return this.gridCore.getRootGui();
         }
     };
     PopupService.prototype.positionPopupForMenu = function (params) {
