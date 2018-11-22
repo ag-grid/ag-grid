@@ -20,10 +20,12 @@ export class ExcelXlsxSerializingSession extends ExcelXmlSerializingSession {
     private stringList: string[] = [];
 
     public onNewHeaderGroupingRow(): RowSpanningAccumulator {
-        let currentCells: ExcelCell[] = [];
-        let that = this;
+        const currentCells: ExcelCell[] = [];
+        const that = this;
+
         this.rows.push({
-            cells: currentCells
+            cells: currentCells,
+            height: this.headerRowHeight
         });
         return {
             onColumn: (header: string, index: number, span: number) => {

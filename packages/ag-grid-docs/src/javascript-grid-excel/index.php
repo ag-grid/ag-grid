@@ -74,6 +74,8 @@ include '../documentation-main/documentation_header.php';
                 parsing issues, but if this is incompatible to you current approach, you can switch this off by setting this to true.
                 <br/><strong style="font-size: 14px">Note: Only relevant if exportMode is set to "xml"</strong>.
             </li>
+            <li><code>rowHeight</code>: The height (in px) of all rows. If not specified it will take the Excel default value.</li>
+            <li><code>headerRowHeight</code>: The height (in px) of header rows. If not specified it will take the <code>rowHeight</code> value.
         </ul>
 
 

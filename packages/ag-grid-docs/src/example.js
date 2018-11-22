@@ -121,7 +121,9 @@ var gridOptions = {
         ratingFilterRenderer: ratingFilterRenderer
     },
     defaultExportParams: {
-        columnGroups: true
+        columnGroups: true,
+        headerRowHeight: 30,
+        rowHeight: 22
     },
     defaultColDef: {
         minWidth: 50
@@ -317,7 +319,23 @@ var gridOptions = {
     getContextMenuItems: getContextMenuItems,
     excelStyles: [
         {
+            id: 'vAlign',
+            alignment: {
+                vertical: 'Center'
+            }
+        },
+        {
+            id: 'alphabet',
+            alignment: {
+                vertical:'Center'
+            }
+        },
+        {
             id: 'good-score',
+            alignment: {
+                horizontal: 'Center',
+                vertical: 'Center'
+            },
             interior: {
                 color: "#C6EFCE", pattern: 'Solid'
             },
@@ -327,6 +345,10 @@ var gridOptions = {
         },
         {
             id: 'bad-score',
+            alignment: {
+                horizontal: 'Center',
+                vertical: 'Center'
+            },
             interior: {
                 color: "#FFC7CE", pattern: 'Solid'
             },
@@ -336,19 +358,53 @@ var gridOptions = {
         },
         {
             id: 'header',
-            interior: {
-                color: "#CCCCCC", pattern: 'Solid'
+            font: {
+                color: "#44546A",
+                size: 16
+            },
+            alignment: {
+                horizontal: 'Center',
+                vertical: 'Center'
+            },
+            borders: {
+                borderTop: {
+                    lineStyle: 'Continuous',
+                    weight: 0,
+                    color: '#4472C4'
+                },
+                borderRight: {
+                    lineStyle: 'Continuous',
+                    weight: 0,
+                    color: '#4472C4'
+                },
+                borderBottom: {
+                    lineStyle: 'Continuous',
+                    weight: 0,
+                    color: '#4472C4'
+                },
+                borderLeft: {
+                    lineStyle: 'Continuous',
+                    weight: 0,
+                    color: '#4472C4'
+                }
             }
         },
         {
             id: 'currencyCell',
+            alignment: {
+                horizontal: 'Center',
+                vertical: 'Center'
+            },
             numberFormat: {
                 format: '[$$-409]#,##0'
             }
         },
         {
             id: 'booleanType',
-            dataType: 'boolean'
+            dataType: 'boolean',
+            alignment: {
+                vertical: 'Center'
+            }
         }
     ]
 };
@@ -401,6 +457,7 @@ var defaultCols = [
                 enableRowGroup: true,
                 // enablePivot: true,
                 filter: 'personFilter',
+                cellClass: 'vAlign',
                 floatingFilterComponent: 'personFloatingFilterComponent',
                 checkboxSelection: function (params) {
                     // we put checkbox on the name if we are not doing grouping
@@ -415,6 +472,7 @@ var defaultCols = [
             {
                 headerName: "Language", field: "language", width: 150, editable: true, filter: 'agSetColumnFilter',
                 cellEditor: 'agSelectCellEditor',
+                cellClass: 'vAlign',
                 enableRowGroup: true,
                 enablePivot: true,
                 // rowGroupIndex: 0,
@@ -437,6 +495,7 @@ var defaultCols = [
                 // pivotIndex: 1,
                 // rowGroupIndex: 1,
                 enableRowGroup: true,
+                cellClass: 'vAlign',
                 // colSpan: function(params) {
                 //     if (params.data && params.data.country==='Ireland') {
                 //         return 2;
@@ -572,6 +631,7 @@ var defaultCols = [
     },
     {
         headerName: "Rating", field: "rating", width: 120, editable: true, cellRenderer: 'ratingRenderer',
+        cellClass: 'vAlign',
         floatCell: true,
         enableRowGroup: true,
         enablePivot: true,

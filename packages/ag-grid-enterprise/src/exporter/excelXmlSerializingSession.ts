@@ -28,6 +28,8 @@ export interface ExcelGridSerializingParams extends GridSerializingParams {
     baseExcelStyles: ExcelStyle[];
     styleLinker: (rowType: RowType, rowIndex: number, colIndex: number, value: string, column: Column, node: RowNode) => string[];
     suppressTextAsCDATA: boolean;
+    rowHeight?: number;
+    headerRowHeight?: number;
 }
 
 export class ExcelXmlSerializingSession extends BaseGridSerializingSession<ExcelCell[][]> {
@@ -39,6 +41,8 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
     protected customFooter: ExcelCell[][];
     protected sheetName: string;
     protected suppressTextAsCDATA: boolean;
+    protected rowHeight: number | undefined;
+    protected headerRowHeight: number | undefined;
 
     protected rows: ExcelRow[] = [];
     protected cols: ExcelColumn[];
@@ -57,7 +61,7 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
             cellAndHeaderEscaper: (raw: string) => raw
         });
 
-        const {sheetName, excelFactory, baseExcelStyles, styleLinker, suppressTextAsCDATA} = config;
+        const {sheetName, excelFactory, baseExcelStyles, styleLinker, suppressTextAsCDATA, rowHeight, headerRowHeight} = config;
 
         this.sheetName = sheetName;
         this.excelFactory = excelFactory;
@@ -65,6 +69,8 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
         this.styleLinker = styleLinker;
         this.suppressTextAsCDATA = suppressTextAsCDATA;
         this.stylesByIds = {};
+        this.rowHeight = rowHeight;
+        this.headerRowHeight = headerRowHeight;
 
         this.baseExcelStyles.forEach((it: ExcelStyle) => {
             this.stylesByIds[it.id] = it;
@@ -93,7 +99,8 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
         let currentCells: ExcelCell[] = [];
         let that = this;
         this.rows.push({
-            cells: currentCells
+            cells: currentCells,
+            height: this.headerRowHeight
         });
         return {
             onColumn: (header: string, index: number, span: number) => {
@@ -104,17 +111,18 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
     }
 
     public onNewHeaderRow(): RowAccumulator {
-        return this.onNewRow(this.onNewHeaderColumn);
+        return this.onNewRow(this.onNewHeaderColumn, this.headerRowHeight);
     }
 
     public onNewBodyRow(): RowAccumulator {
-        return this.onNewRow(this.onNewBodyColumn);
+        return this.onNewRow(this.onNewBodyColumn, this.rowHeight);
     }
 
-    onNewRow(onNewColumnAccumulator: (rowIndex: number, currentCells: ExcelCell[]) => (column: Column, index: number, node?: RowNode) => void): RowAccumulator {
+    onNewRow(onNewColumnAccumulator: (rowIndex: number, currentCells: ExcelCell[]) => (column: Column, index: number, node?: RowNode) => void, height?: number): RowAccumulator {
         let currentCells: ExcelCell[] = [];
         this.rows.push({
-            cells: currentCells
+            cells: currentCells,
+            height
         });
         return {
             onColumn: onNewColumnAccumulator.bind(this, this.rows.length, currentCells)()

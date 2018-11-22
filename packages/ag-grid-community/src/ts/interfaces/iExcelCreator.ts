@@ -49,6 +49,8 @@ export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
     sheetName?: string;
     suppressTextAsCDATA?:boolean;
     exportMode?: "xlsx" | "xml";
+    rowHeight?: number;
+    headerRowHeight?: number;
 }
 
 export interface IExcelCreator {
