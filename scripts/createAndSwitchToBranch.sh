@@ -20,11 +20,8 @@ git submodule foreach git pull origin
 
 git checkout -B $NEW_BRANCH
 
-#git push --set-upstream origin $1
-git branch --set-upstream $NEW_BRANCH origin/$NEW_BRANCH
-
+git branch --set-upstream-to=origin/$NEW_BRANCH origin/$NEW_BRANCH
 
 # submodules (i.e. examples)
 git submodule foreach git checkout -B $NEW_BRANCH
-#git submodule foreach git push --set-upstream origin $1
-git submodule foreach git branch --set-upstream $NEW_BRANCH origin/$NEW_BRANCH
+git submodule foreach git branch --set-upstream-to=origin/$NEW_BRANCH origin/$NEW_BRANCH
