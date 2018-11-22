@@ -141,13 +141,15 @@ MenuItemDef {
 
     <p>
         Under most scenarios, the menu will fit inside the grid. However if the grid is small and / or the menu
-        is very large, then the menu will not fit inside the grid and it will be clipped. This will lead to
-        a bad user experience.
+        is very large, then the menu will not fit inside the grid and it will be clipped.
     </p>
 
     <p>
-        The following demonstrates the bad user experience - try to open the context menu or the column
-        menu in the grid. The menu will not be fully visible.
+        This will lead to a bad user experience which is demonstrated in the following example:
+        <ul>
+            <li>Open the context menu or the column menu in the grid</li>
+            <li>Notice the menu will not be fully visible (i.e. clipped)</li>
+        </ul>
     </p>
 
     <?= example('Small Grid Problem', 'popup-parent-problem', 'generated', array("enterprise" => 1)) ?>
@@ -162,11 +164,11 @@ MenuItemDef {
         <ol>
             <li>Exist in the dom.</li>
             <li>
-                Cover the same area as the grid (or simple be a parent of the grid), so that when the
+                Cover the same area as the grid (or simply be a parent of the grid), so that when the
                 popup is positioned, it can be positioned over the grid.
             </li>
         </ol>
-        Most of the time, you will simple set the popup parent to the document body.
+        Most of the time, you will simply set the popup parent to the document body.
     </p>
 
     <p>
