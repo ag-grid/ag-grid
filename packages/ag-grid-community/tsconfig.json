@@ -6,8 +6,7 @@
     "declaration": true,
     "target": "es5",
     "noImplicitAny": true,
-    "outDir": "dist/lib",
-    "strictNullChecks": true
+    "outDir": "dist/lib"
   },
   "include": [
     "src/ts/**/*"
