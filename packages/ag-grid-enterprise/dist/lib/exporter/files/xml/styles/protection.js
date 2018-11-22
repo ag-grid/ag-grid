@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.3
+// ag-grid-enterprise v19.1.4
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var protection = {

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.3
+// ag-grid-enterprise v19.1.4
 import { ExcelOOXMLTemplate } from 'ag-grid-community';
 declare const numberFormatFactory: ExcelOOXMLTemplate;
 export default numberFormatFactory;
