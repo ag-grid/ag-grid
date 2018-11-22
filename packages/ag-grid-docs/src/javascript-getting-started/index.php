@@ -186,7 +186,7 @@ Notice that the actual data fetching is performed outside of the grid component 
   // create the grid passing in the div to use together with the columns &amp; data we want to use
   new agGrid.Grid(eGridDiv, gridOptions);
   
-  fetch('https://api.myjson.com/bins/15psn9').then(function(response) {
+  fetch('https://api.myjson.com/bins/ly7d1').then(function(response) {
     return response.json();
   }).then(function(data) {
     gridOptions.api.setRowData(data);
@@ -259,8 +259,8 @@ Hopefully you will forgive us this shortcut for the sake of keeping the article 
 <p>In addition to filtering and sorting, <a href="../javascript-grid-grouping">grouping</a> is another  effective way for the user to make sense out of large amounts of data. In our case, the data is not that much. Let's switch to a slightly larger data set:</p>
 
 <snippet language="diff">
--        fetch('https://api.myjson.com/bins/15psn9')
-+        fetch('https://api.myjson.com/bins/ly7d1')
+-        fetch('https://api.myjson.com/bins/ly7d1')
++        fetch('https://api.myjson.com/bins/15psn9')
 </snippet>
 
 <p>Now, let's use ag-grid-enterprise! Replace the ag-grid script reference in the <code>head</code> with this one:</p>
@@ -352,7 +352,7 @@ var gridOptions = {
   // create the grid passing in the div to use together with the columns &amp; data we want to use
   new agGrid.Grid(eGridDiv, gridOptions);
   
-  fetch('https://api.myjson.com/bins/ly7d1').then(function(response) {
+  fetch('https://api.myjson.com/bins/15psn9').then(function(response) {
     return response.json();
   }).then(function(data) {
     gridOptions.api.setRowData(data);
