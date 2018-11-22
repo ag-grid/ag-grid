@@ -18,6 +18,7 @@ import {ExcelXmlSerializingSession} from './excelXmlSerializingSession';
 export class ExcelXlsxSerializingSession extends ExcelXmlSerializingSession {
 
     private stringList: string[] = [];
+    private stringMap: {[key: string]: number} = {};
 
     public onNewHeaderGroupingRow(): RowSpanningAccumulator {
         const currentCells: ExcelCell[] = [];
@@ -88,12 +89,12 @@ export class ExcelXlsxSerializingSession extends ExcelXmlSerializingSession {
         };
     }
 
-    private getStringPosition(val: string) {
-        const pos = this.stringList.indexOf(val);
+    private getStringPosition(val: string): number {
+        let pos: number | undefined = this.stringMap[val];
 
-        if (pos < 0) {
+        if (pos === undefined) {
+            pos = this.stringMap[val] = this.stringList.length;
             this.stringList.push(val);
-            return this.stringList.length - 1;
         }
 
         return pos;
