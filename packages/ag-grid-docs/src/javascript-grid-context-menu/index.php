@@ -137,13 +137,45 @@ MenuItemDef {
 
     <?= example('Context Menu Example', 'context-menu', 'generated', array("enterprise" => 1)) ?>
 
-    <h2>Popup Parent</h2>
+    <h2 id="popup-parent">Popup Parent</h2>
 
     <p>
-        The popup menu will attach itself directly to <code>document.body</code> and not the main grid. This
-        will allow the menu to overflow outside the grid if the menu is physically larger than the grid.
-        If you want the popup menu to attache to a different parent then set property <code>popupParent</code>
-        to the container (usually a div or span) you want to use as the parent.
+        Under most scenarios, the menu will fit inside the grid. However if the grid is small and / or the menu
+        is very large, then the menu will not fit inside the grid and it will be clipped. This will lead to
+        a bad user experience.
     </p>
+
+    <p>
+        The following demonstrates the bad user experience - try to open the context menu or the column
+        menu in the grid. The menu will not be fully visible.
+    </p>
+
+    <?= example('Small Grid Problem', 'popup-parent-problem', 'generated', array("enterprise" => 1)) ?>
+
+    <p>
+        The solution is to set the <code>popupParent</code> element which can be set in the following ways:
+        <ul>
+            <li>Property <code>popupParent</code>: Set as a grid property.</li>
+            <li>API <code>setPopupParent(element)</code>: Set via the grid API.</li>
+        </ul>
+        Each mechanism allows you to set the popup parent to any HTML DOM element. The element must:
+        <ol>
+            <li>Exist in the dom.</li>
+            <li>
+                Cover the same area as the grid (or simple be a parent of the grid), so that when the
+                popup is positioned, it can be positioned over the grid.
+            </li>
+        </ol>
+        Most of the time, you will simple set the popup parent to the document body.
+    </p>
+
+    <p>
+        The example below is identical to the previous example except it sets the popup parent
+        to the document body.
+    </p>
+
+    <?= example('Small Grid Solution', 'popup-parent-solution', 'generated', array("enterprise" => 1)) ?>
+
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

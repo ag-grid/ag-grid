@@ -29,7 +29,7 @@ export class PopupService {
             // user provided popup parent, may not have the right theme applied
             return ePopupParent;
         } else {
-            return this.getDocument().body;
+            return this.gridCore.getRootGui();
         }
     }
 
