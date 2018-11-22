@@ -82,7 +82,7 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
         return newRowNodes;
     }
 
-    public insertItemsAtIndex(indexToInsert: number, items: any[]): void {
+    public insertItemsAtIndex(indexToInsert: number| undefined, items: any[] | undefined): void {
         // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
 
         let newNodes: RowNode[] = [];

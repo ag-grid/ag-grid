@@ -4,7 +4,7 @@ import {ChangedPath} from "../rowModels/clientSide/changedPath";
 
 export interface StageExecuteParams {
     rowNode: RowNode;
-    rowNodeTransaction?: RowNodeTransaction;
+    rowNodeTransaction?: RowNodeTransaction | null;
     rowNodeOrder?: {[id: string]: number};
     changedPath?: ChangedPath;
 }

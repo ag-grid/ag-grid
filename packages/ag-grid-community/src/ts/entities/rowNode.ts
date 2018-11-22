@@ -390,7 +390,7 @@ export class RowNode implements IEventEmitter {
         }
     }
 
-    public setRowHeight(rowHeight: number | undefined): void {
+    public setRowHeight(rowHeight: number | undefined | null): void {
         this.rowHeight = rowHeight;
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HEIGHT_CHANGED));

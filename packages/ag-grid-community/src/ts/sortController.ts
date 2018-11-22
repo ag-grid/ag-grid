@@ -1,11 +1,10 @@
 import {Column} from "./entities/column";
-import {Autowired} from "./context/context";
+import {Autowired, Bean} from "./context/context";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {ColumnApi} from "./columnController/columnApi";
 import {ColumnController} from "./columnController/columnController";
 import {EventService} from "./eventService";
 import {ColumnEventType, Events, SortChangedEvent} from "./events";
-import {Bean} from "./context/context";
 import {Utils as _} from './utils';
 import {GridApi} from "./gridApi";
 
@@ -25,10 +24,12 @@ export class SortController {
         this.setSortForColumn(column, nextDirection, multiSort, source);
     }
 
-    public setSortForColumn(column: Column, sort: string, multiSort: boolean, source: ColumnEventType = "api"): void {
+    public setSortForColumn(column: Column, sort: string | null, multiSort: boolean, source: ColumnEventType = "api"): void {
 
         // auto correct - if sort not legal value, then set it to 'no sort' (which is null)
-        if (sort!==Column.SORT_ASC && sort!==Column.SORT_DESC) { sort = null; }
+        if (sort !== Column.SORT_ASC && sort !== Column.SORT_DESC) {
+            sort = null;
+        }
 
         // update sort on current col
         column.setSort(sort, source);
@@ -67,7 +68,7 @@ export class SortController {
     }
 
     private clearSortBarThisColumn(columnToSkip: Column, source: ColumnEventType): void {
-        this.columnController.getPrimaryAndSecondaryAndAutoColumns().forEach( (columnToClear: Column)=> {
+        this.columnController.getPrimaryAndSecondaryAndAutoColumns().forEach((columnToClear: Column) => {
             // Do not clear if either holding shift, or if column in question was clicked
             if (!(columnToClear === columnToSkip)) {
                 // setting to 'undefined' as null means 'none' rather than cleared, otherwise issue will arise
@@ -77,9 +78,9 @@ export class SortController {
         });
     }
 
-    private getNextSortDirection(column: Column): string {
+    private getNextSortDirection(column: Column): string | null {
 
-        let sortingOrder: string[];
+        let sortingOrder: (string|null)[] | null | undefined;
         if (column.getColDef().sortingOrder) {
             sortingOrder = column.getColDef().sortingOrder;
         } else if (this.gridOptionsWrapper.getSortingOrder()) {
@@ -88,15 +89,15 @@ export class SortController {
             sortingOrder = SortController.DEFAULT_SORTING_ORDER;
         }
 
-        if ( !Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
+        if (!Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
             console.warn(`ag-grid: sortingOrder must be an array with at least one element, currently it\'s ${sortingOrder}`);
-            return;
+            return null;
         }
 
         let currentIndex = sortingOrder.indexOf(column.getSort());
         let notInArray = currentIndex < 0;
         let lastItemInArray = currentIndex == sortingOrder.length - 1;
-        let result: string;
+        let result: string | null;
         if (notInArray || lastItemInArray) {
             result = sortingOrder[0];
         } else {
@@ -133,7 +134,7 @@ export class SortController {
         let sortModelProvided = sortModel && sortModel.length > 0;
 
         let allColumnsIncludingAuto = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
-        allColumnsIncludingAuto.forEach( (column: Column)=> {
+        allColumnsIncludingAuto.forEach((column: Column) => {
             let sortForCol: any = null;
             let sortedAt = -1;
             if (sortModelProvided && !column.getColDef().suppressSorting) {
@@ -167,10 +168,10 @@ export class SortController {
     public getColumnsWithSortingOrdered(): Column[] {
         // pull out all the columns that have sorting set
         let allColumnsIncludingAuto = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
-        let columnsWithSorting = <Column[]> _.filter(allColumnsIncludingAuto, (column:Column) => !!column.getSort());
+        let columnsWithSorting = <Column[]> _.filter(allColumnsIncludingAuto, (column: Column) => !!column.getSort());
 
         // put the columns in order of which one got sorted first
-        columnsWithSorting.sort( (a: any, b: any) => a.sortedAt - b.sortedAt);
+        columnsWithSorting.sort((a: any, b: any) => a.sortedAt - b.sortedAt);
 
         return columnsWithSorting;
     }

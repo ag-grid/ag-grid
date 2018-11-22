@@ -555,8 +555,8 @@ export class Utils {
         return !this.exists(value);
     }
 
-    static missingOrEmpty(value: any[] | string): boolean {
-        return this.missing(value) || value.length === 0;
+    static missingOrEmpty(value: any[] | string | undefined): boolean {
+        return !value || this.missing(value) || value.length === 0;
     }
 
     static missingOrEmptyObject(value: any): boolean {

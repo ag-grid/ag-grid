@@ -30,10 +30,10 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
 
-    private infiniteCache: InfiniteCache;
-    private rowNodeBlockLoader: RowNodeBlockLoader;
+    private infiniteCache: InfiniteCache | null;
+    private rowNodeBlockLoader: RowNodeBlockLoader | null;
 
-    private datasource: IDatasource;
+    private datasource: IDatasource | null | undefined;
 
     private rowHeight: number;
 
@@ -48,14 +48,16 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
 
     @PostConstruct
     public init(): void {
-        if (!this.gridOptionsWrapper.isRowModelInfinite()) { return; }
+        if (!this.gridOptionsWrapper.isRowModelInfinite()) {
+            return;
+        }
 
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
 
         this.addEventListeners();
         this.setDatasource(this.gridOptionsWrapper.getDatasource());
 
-        this.addDestroyFunc( () => this.destroyCache() );
+        this.addDestroyFunc(() => this.destroyCache());
     }
 
     @PreDestroy
@@ -120,7 +122,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
         return Constants.ROW_MODEL_TYPE_INFINITE;
     }
 
-    public setDatasource(datasource: IDatasource): void {
+    public setDatasource(datasource: IDatasource | undefined): void {
         this.destroyDatasource();
         this.datasource = datasource;
 
@@ -160,7 +162,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
     }
 
     public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
-        return this.infiniteCache.getRowNodesInRange(firstInRange, lastInRange);
+        return this.infiniteCache ? this.infiniteCache.getRowNodesInRange(firstInRange, lastInRange) : [];
     }
 
     private reset() {
@@ -236,21 +238,21 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
         };
 
         // set defaults
-        if ( !(this.cacheParams.maxConcurrentRequests>=1) ) {
+        if (!this.cacheParams.maxConcurrentRequests || !(this.cacheParams.maxConcurrentRequests >= 1)) {
             this.cacheParams.maxConcurrentRequests = 2;
         }
         // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
         // server for one page at a time. so the default if not specified is 100.
-        if ( !(this.cacheParams.blockSize>=1) ) {
+        if (!this.cacheParams.blockSize || !(this.cacheParams.blockSize >= 1)) {
             this.cacheParams.blockSize = 100;
         }
         // if user doesn't give initial rows to display, we assume zero
-        if ( !(this.cacheParams.initialRowCount>=1) ) {
+        if (!(this.cacheParams.initialRowCount >= 1)) {
             this.cacheParams.initialRowCount = 0;
         }
         // if user doesn't provide overflow, we use default overflow of 1, so user can scroll past
         // the current page and request first row of next page
-        if ( !(this.cacheParams.overflowSize>=1) ) {
+        if (!(this.cacheParams.overflowSize >= 1)) {
             this.cacheParams.overflowSize = 1;
         }
 
@@ -276,21 +278,21 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
         this.eventService.dispatchEvent(event);
     }
 
-    public getRow(rowIndex: number): RowNode {
+    public getRow(rowIndex: number): RowNode | null {
         return this.infiniteCache ? this.infiniteCache.getRow(rowIndex) : null;
     }
 
-    public getRowNode(id: string): RowNode {
-        let result: RowNode = null;
+    public getRowNode(id: string): RowNode | null {
+        let result: RowNode | null = null;
         this.forEachNode(rowNode => {
-            if(rowNode.id === id) {
+            if (rowNode.id === id) {
                 result = rowNode;
             }
         });
         return result;
     }
 
-    public forEachNode(callback: (rowNode: RowNode, index: number)=> void): void {
+    public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
         if (this.infiniteCache) {
             this.infiniteCache.forEachNodeDeep(callback, new NumberSequence());
         }
@@ -318,7 +320,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
     }
 
     public getPageLastRow(): number {
-        return this.infiniteCache ? this.infiniteCache.getVirtualRowCount() -1 : 0;
+        return this.infiniteCache ? this.infiniteCache.getVirtualRowCount() - 1 : 0;
     }
 
     public getRowCount(): number {
@@ -326,7 +328,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
     }
 
     public updateRowData(transaction: RowDataTransaction): void {
-        if (_.exists(transaction.remove) || _.exists(transaction.update) ) {
+        if (_.exists(transaction.remove) || _.exists(transaction.update)) {
             console.warn('ag-Grid: updateRowData for InfiniteRowModel does not support remove or update, only add');
             return;
         }
@@ -355,7 +357,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
         }
     }
 
-    public getVirtualRowCount(): number {
+    public getVirtualRowCount(): number | null {
         if (this.infiniteCache) {
             return this.infiniteCache.getVirtualRowCount();
         } else {
@@ -363,7 +365,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
         }
     }
 
-    public isMaxRowFound(): boolean {
+    public isMaxRowFound(): boolean | undefined {
         if (this.infiniteCache) {
             return this.infiniteCache.isMaxRowFound();
         }

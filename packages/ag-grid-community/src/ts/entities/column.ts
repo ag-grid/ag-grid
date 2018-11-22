@@ -399,7 +399,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.sort;
     }
 
-    public setSort(sort: string, source: ColumnEventType = "api"): void {
+    public setSort(sort: string | null | undefined, source: ColumnEventType = "api"): void {
         if (this.sort !== sort) {
             this.sort = sort;
             this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_SORT_CHANGED, source));
@@ -437,7 +437,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.sortedAt;
     }
 
-    public setSortedAt(sortedAt: number): void {
+    public setSortedAt(sortedAt: number | null): void {
         this.sortedAt = sortedAt;
     }
 

@@ -112,7 +112,7 @@ export class ClientSideNodeManager {
         }
     }
 
-    public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: {[id:string]: number}): RowNodeTransaction {
+    public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: {[id:string]: number} | null | undefined): RowNodeTransaction | null{
         if (this.isLegacyTreeData()) { return null; }
 
         let {add, addIndex, remove, update} = rowDataTran;
