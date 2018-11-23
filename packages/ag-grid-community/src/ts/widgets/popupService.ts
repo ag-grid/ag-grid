@@ -29,7 +29,7 @@ export class PopupService {
             // user provided popup parent, may not have the right theme applied
             return ePopupParent;
         } else {
-            return this.getDocument().body;
+            return this.gridCore.getRootGui();
         }
     }
 
@@ -252,24 +252,23 @@ export class PopupService {
         const isBody = popupParent === eDocument.body;
         const defaultPadding = 3;
 
-        let minHeight = 200;
+        let minHeight = Math.min(200, parentRect.height);
         let diff = 0;
 
-        if (params.minHeight && params.minHeight > 0) {
+        if (params.minHeight && params.minHeight < minHeight) {
             minHeight = params.minHeight;
         } else if (params.ePopup.offsetHeight > 0) {
             minHeight = params.ePopup.clientHeight;
             diff = _.getAbsoluteHeight(params.ePopup) - minHeight;
         }
 
-        let heightOfParent = isBody ? (_.getAbsoluteHeight(docElement) + docElement.scrollTop) : parentRect.bottom - parentRect.top;
+        let heightOfParent = isBody ? (_.getAbsoluteHeight(docElement) + docElement.scrollTop) : parentRect.height;
         if (isBody) {
             heightOfParent -= Math.abs(documentRect.top - parentRect.top);
         }
         const maxY = heightOfParent - minHeight - diff - defaultPadding;
 
-        return Math.min(Math.max(y, 0), maxY);
-
+        return Math.min(Math.max(y, 0), Math.abs(maxY));
     }
 
     private keepXWithinBounds(params: { minWidth?: number, ePopup: HTMLElement }, x: number): number {
@@ -281,10 +280,10 @@ export class PopupService {
         const isBody = popupParent === eDocument.body;
         const defaultPadding = 3;
 
-        let minWidth = 200;
+        let minWidth = Math.min(200, parentRect.width);
         let diff = 0;
 
-        if (params.minWidth && params.minWidth > 0) {
+        if (params.minWidth && params.minWidth < minWidth) {
             minWidth = params.minWidth;
         } else if (params.ePopup.clientWidth > 0) {
             minWidth = params.ePopup.clientWidth;
@@ -292,13 +291,14 @@ export class PopupService {
             diff = _.getAbsoluteWidth(params.ePopup) - minWidth;
         }
 
-        let widthOfParent = isBody ? (_.getAbsoluteWidth(docElement) + docElement.scrollLeft) : parentRect.right - parentRect.left;
+        let widthOfParent = isBody ? (_.getAbsoluteWidth(docElement) + docElement.scrollLeft) : parentRect.width;
         if (isBody) {
             widthOfParent -= Math.abs(documentRect.left - parentRect.left);
         }
+
         const maxX = widthOfParent - minWidth - diff - defaultPadding;
 
-        return Math.min(Math.max(x, 0), maxX);
+        return Math.min(Math.max(x, 0), Math.abs(maxX));
     }
 
     //adds an element to a div, but also listens to background checking for clicks,

@@ -67,7 +67,7 @@ meta_and_links($title, $keywords, $description, false);
     <div id="stage-frameworks">
         <section id="news-flash">
             <div>
-                20th Nov 2018: <a href="./ag-grid-changelog/?fixVersion=19.1.3">Version 19.1.3</a> released with bug fixes
+                22th Nov 2018: <a href="./ag-grid-changelog/?fixVersion=19.1.4">Version 19.1.4</a> released with bug fixes
             </div>
         </section>
 

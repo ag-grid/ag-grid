@@ -2,24 +2,21 @@
 
 if [ "$#" -lt 3 ]
   then
-    echo "You must supply a new branch name, release version and dependency version"
-    echo "For example: ./scripts/checkoutAndBuildNewBranchFromLatest.sh b19.1.2 19.1.2 ^19.1.0"
+    echo "You must supply a source branch, new branch name, release version and dependency version"
+    echo "For example: ./scripts/checkoutAndBuildNewBranchFromLatest.sh latest b19.1.2 19.1.2 ^19.1.0"
     exit 1
 fi
 
-NEW_BRANCH=$1
-NEW_VERSION=$2
-PEER_VERSION=$3
+SOURCE_BRANCH=$1
+NEW_BRANCH=$2
+NEW_VERSION=$3
+PEER_VERSION=$4
 
 GEN_KEY_DEFAULT_LOCATION=~/aggrid/genKey/genKey.js
 
 echo "########################################################################"
-echo "###################### Switching to latest #############################"
-./scripts/switchToBranch.sh latest
-
-echo "########################################################################"
 echo "########### Creating and switching to new branch $NEW_BRANCH ###########"
-./scripts/createAndSwitchToBranch.sh b19.1.2
+./scripts/createAndSwitchToBranch.sh $SOURCE_BRANCH $NEW_BRANCH
 
 echo "########################################################################"
 echo "#################### Updating LicenseManager ###########################"
