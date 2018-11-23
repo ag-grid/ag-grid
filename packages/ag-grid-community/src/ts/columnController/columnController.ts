@@ -2201,16 +2201,14 @@ export class ColumnController {
             }
         });
         // then sort them
-        newCols.sort(function (colA: Column, colB: Column): number {
+        newCols.sort(function(colA: Column, colB: Column): number {
             let indexA = getIndexFunc(colA.getColDef());
             let indexB = getIndexFunc(colB.getColDef());
             if (!indexA) {
                 return 1;
-            }
-            else if (!indexB) {
+            } else if (!indexB) {
                 return -1;
-            }
-            else if (indexA === indexB) {
+            } else if (indexA === indexB) {
                 return 0;
             }
             return indexA < indexB ? -1 : 1;
@@ -2457,7 +2455,7 @@ export class ColumnController {
         }
 
         function searchForColDefs(colDefs2: (ColDef | ColGroupDef)[]): void {
-            colDefs2.forEach(function (abstractColDef: AbstractColDef) {
+            colDefs2.forEach(function(abstractColDef: AbstractColDef) {
                 let isGroup = _.exists((<any>abstractColDef).children);
                 if (isGroup) {
                     let colGroupDef = <ColGroupDef> abstractColDef;
