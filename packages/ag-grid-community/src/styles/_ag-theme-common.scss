@@ -179,12 +179,11 @@
     // Chinese wall of inline vars over
     ////////////////////////////////////////
 
-    $font: $font-weight $font-size $font-family;
-    $secondary-font: $secondary-font-weight $secondary-font-size $secondary-font-family;
-
     background-color: $background-color;
     color: $foreground-color;
-    font: $font;
+    font-family: $font-family;
+    font-weight: $font-weight;
+    font-size: $font-size;
 
     // indentation loop
     @for $i from 1 to 50 {
@@ -265,7 +264,9 @@
         }
 
         color: $secondary-foreground-color;
-        font: $secondary-font;
+        font-weight: $secondary-font-weight;
+        font-size: $secondary-font-size;
+        font-family: $secondary-font-family;
     }
 
     .ag-header-row {
@@ -518,7 +519,9 @@
 
         border: 1px solid $border-color;
         color: $secondary-foreground-color;
-        font: $secondary-font;
+        font-weight: $secondary-font-weight;
+        font-size: $secondary-font-size;
+        font-family: $secondary-font-family;
         height: $header-height !important;
         line-height: $header-height;
         margin: 0;
@@ -832,7 +835,9 @@
             .ag-column-drop-empty-message {
                 clear: both;
                 color: $disabled-foreground-color;
-                font: $secondary-font;
+                font-weight: $secondary-font-weight;
+                font-size: $secondary-font-size;
+                font-family: $secondary-font-family;
                 line-height: $grid-size * 2;
                 padding-left: $grid-size * 4;
                 padding-right: $grid-size;
@@ -1453,7 +1458,9 @@
         border: 1px solid $border-color;
         border-top: 0;
         color: $disabled-foreground-color;
-        font: $secondary-font;
+        font-weight: $secondary-font-weight;
+        font-size: $secondary-font-size;
+        font-family: $secondary-font-family;
         padding-right: $grid-size * 4;
         padding-left: $grid-size * 4;
     }
