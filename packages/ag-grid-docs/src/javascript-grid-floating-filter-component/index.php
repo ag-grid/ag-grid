@@ -213,5 +213,6 @@ interface IFloatingFilterParams {
 
 <?php include './angular.php'; ?>
 <?php include './react.php'; ?>
+<?php include './vue.php'; ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-<?= example('Simple Full Width', 'simple-full-width', 'generated') ?>
+<?= example('Simple Full Width', 'simple-full-width', 'generated', array("processVue" => true)) ?>
 
 <note>
     You may be wondering, what is full width rows useful for? It's usage is very
@@ -118,7 +118,7 @@ include '../documentation-main/documentation_header.php';
         the full width and normal rows.</li>
 </ul>
 
-<?= example('Basic Full Width', 'basic-full-width', 'generated') ?>
+<?= example('Basic Full Width', 'basic-full-width', 'generated', array("processVue" => true)) ?>
 
 <h2>Embedded Full Width vs Normal Full Width</h2>
 
@@ -140,6 +140,6 @@ include '../documentation-main/documentation_header.php';
     <li>Each full width row horizontally scrolls with the main grid.</li>
 </ul>
 
-<?= example('Full Width Embedded', 'full-width-embedded', 'generated') ?>
+<?= example('Full Width Embedded', 'full-width-embedded', 'generated', array("processVue" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

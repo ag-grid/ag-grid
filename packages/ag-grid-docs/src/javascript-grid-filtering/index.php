@@ -130,7 +130,7 @@ columnDefinition = {
         Remember Filtering works with all frameworks eg Angular and React as well as plain JavaScript.
     </p>
 
-    <?= example('Built-In Filters', 'built-in-filters', 'generated') ?>
+    <?= example('Built-In Filters', 'built-in-filters', 'generated', array("processVue" => true)) ?>
 
     <h2>Apply Function</h2>
 
@@ -178,7 +178,7 @@ columnDefinition = {
             <li>onFilterChanged gets called after a new filter is applied.</li>
         </ul>
 
-    <?= example('Apply Button and Filter Events', 'apply-and-filter-events', 'generated') ?>
+    <?= example('Apply Button and Filter Events', 'apply-and-filter-events', 'generated', array("processVue" => true)) ?>
 
     <h2>Filtering Animation</h2>
 
@@ -220,7 +220,7 @@ var nameFilterInstance = api.getFilterInstance('name');</snippet>
         (Note: the example uses the <a href="../javascript-grid-filter-set/">enterprise set filter</a>).
     </p>
 
-    <?= example('Filter API', 'filter-api', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Filter API', 'filter-api', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Reset Individual Filters</h2>
 
@@ -286,7 +286,7 @@ gridOptions.api.setFilterModel(null);</snippet>
         (Note: the example uses the <a href="../javascript-grid-filter-set/">enterprise set filter</a>).
     </p>
 
-    <?= example('Filter Model', 'filter-model', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Filter Model', 'filter-model', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 <h2>Floating filters</h2>
 
@@ -346,7 +346,7 @@ gridOptions = {
         this example suppressMenu = true for all the columns except Silver and Bronze</li>
     </ul>
 
-<?= example('Floating Filter', 'floating-filter', 'generated', array("enterprise" => 1)) ?>
+<?= example('Floating Filter', 'floating-filter', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 <h2>Server Side Filtering</h2>
 
