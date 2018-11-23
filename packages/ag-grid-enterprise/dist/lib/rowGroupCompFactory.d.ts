@@ -1,4 +1,4 @@
-// ag-grid-enterprise v19.1.3
+// ag-grid-enterprise v19.1.4
 import { ICompFactory, Component } from "ag-grid-community";
 export declare class RowGroupCompFactory implements ICompFactory {
     private context;

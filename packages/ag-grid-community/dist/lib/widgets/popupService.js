@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v19.1.3
+ * @version v19.1.4
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35,7 +35,7 @@ var PopupService = /** @class */ (function () {
             return ePopupParent;
         }
         else {
-            return this.getDocument().body;
+            return this.gridCore.getRootGui();
         }
     };
     PopupService.prototype.positionPopupForMenu = function (params) {
@@ -192,21 +192,21 @@ var PopupService = /** @class */ (function () {
         var documentRect = eDocument.documentElement.getBoundingClientRect();
         var isBody = popupParent === eDocument.body;
         var defaultPadding = 3;
-        var minHeight = 200;
+        var minHeight = Math.min(200, parentRect.height);
         var diff = 0;
-        if (params.minHeight && params.minHeight > 0) {
+        if (params.minHeight && params.minHeight < minHeight) {
             minHeight = params.minHeight;
         }
         else if (params.ePopup.offsetHeight > 0) {
             minHeight = params.ePopup.clientHeight;
             diff = utils_1.Utils.getAbsoluteHeight(params.ePopup) - minHeight;
         }
-        var heightOfParent = isBody ? (utils_1.Utils.getAbsoluteHeight(docElement) + docElement.scrollTop) : parentRect.bottom - parentRect.top;
+        var heightOfParent = isBody ? (utils_1.Utils.getAbsoluteHeight(docElement) + docElement.scrollTop) : parentRect.height;
         if (isBody) {
             heightOfParent -= Math.abs(documentRect.top - parentRect.top);
         }
         var maxY = heightOfParent - minHeight - diff - defaultPadding;
-        return Math.min(Math.max(y, 0), maxY);
+        return Math.min(Math.max(y, 0), Math.abs(maxY));
     };
     PopupService.prototype.keepXWithinBounds = function (params, x) {
         var eDocument = this.gridOptionsWrapper.getDocument();
@@ -216,9 +216,9 @@ var PopupService = /** @class */ (function () {
         var documentRect = eDocument.documentElement.getBoundingClientRect();
         var isBody = popupParent === eDocument.body;
         var defaultPadding = 3;
-        var minWidth = 200;
+        var minWidth = Math.min(200, parentRect.width);
         var diff = 0;
-        if (params.minWidth && params.minWidth > 0) {
+        if (params.minWidth && params.minWidth < minWidth) {
             minWidth = params.minWidth;
         }
         else if (params.ePopup.clientWidth > 0) {
@@ -226,12 +226,12 @@ var PopupService = /** @class */ (function () {
             params.ePopup.style.minWidth = minWidth + "px";
             diff = utils_1.Utils.getAbsoluteWidth(params.ePopup) - minWidth;
         }
-        var widthOfParent = isBody ? (utils_1.Utils.getAbsoluteWidth(docElement) + docElement.scrollLeft) : parentRect.right - parentRect.left;
+        var widthOfParent = isBody ? (utils_1.Utils.getAbsoluteWidth(docElement) + docElement.scrollLeft) : parentRect.width;
         if (isBody) {
             widthOfParent -= Math.abs(documentRect.left - parentRect.left);
         }
         var maxX = widthOfParent - minWidth - diff - defaultPadding;
-        return Math.min(Math.max(x, 0), maxX);
+        return Math.min(Math.max(x, 0), Math.abs(maxX));
     };
     //adds an element to a div, but also listens to background checking for clicks,
     //so that when the background is clicked, the child is removed again, giving

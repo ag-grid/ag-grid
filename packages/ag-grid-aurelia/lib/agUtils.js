@@ -1,4 +1,4 @@
-// ag-grid-aurelia v19.1.2
+// ag-grid-aurelia v19.1.4
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var aurelia_framework_1 = require("aurelia-framework");
