@@ -14,36 +14,24 @@ import {ILoadingOverlayComponentAngularComp} from "ag-grid-angular";
     `,
     styles: [
         `
-        .customHeaderMenuButton {
-            margin-top: 5px;
-            margin-left: 4px;
+        .customHeaderMenuButton, 
+        .customHeaderLabel, 
+        .customSortDownLabel, 
+        .customSortUpLabel, 
+        .customSortRemoveLabel 
+        {
             float: left;
-        }
-    
-        .customHeaderLabel {
-            margin-left: 5px;
-            margin-top: 3px;
-        }
-    
-        .customSortDownLabel {
-            float: left;
-            margin-left: 10px;
-            margin-top: 5px;
+            margin: 0 0 0 3px;
         }
     
         .customSortUpLabel {
-            float: left;
-            margin-left: 3px;
-            margin-top: 4px;
+            margin: 0;
         }
-    
+
         .customSortRemoveLabel {
-            float: left;
             font-size: 11px;
-            margin-left: 3px;
-            margin-top: 6px;
         }
-    
+
         .active {
             color: cornflowerblue;
         }

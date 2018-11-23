@@ -24,10 +24,10 @@ export default class CustomHeader extends Component {
         if (this.props.enableMenu) {
             menu =
                 <div ref={(menuButton) => { this.menuButton = menuButton; }}
-                     className="customHeaderMenuButton"
-                     onClick={this.onMenuClicked.bind(this)}>
+                    className="customHeaderMenuButton"
+                    onClick={this.onMenuClicked.bind(this)}>
                     <i className={`fa ${this.props.menuIcon}`}></i>
-                </div>
+                </div>;
         }
 
         let sort = null;
@@ -43,7 +43,7 @@ export default class CustomHeader extends Component {
                     <div onClick={this.onSortRequested.bind(this, '')} className={`customSortRemoveLabel ${this.state.noSort}`}>
                         <i class="fa fa-times"></i>
                     </div>
-                </div>
+                </div>;
         }
 
         return (
