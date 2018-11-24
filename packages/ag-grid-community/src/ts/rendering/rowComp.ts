@@ -276,7 +276,7 @@ export class RowComp extends Component {
     private createRowContainer(rowContainerComp: RowContainerComponent, cols: Column[],
                                callback: (eRow: HTMLElement) => void): void {
 
-        const useAnimationsFrameForCreate = this.useAnimationFrameForCreate;
+        const useAnimationsFrameForCreate = false;//this.useAnimationFrameForCreate;
         const cellTemplatesAndComps: CellTemplate = useAnimationsFrameForCreate ? {cellComps: [], template: ''} : this.createCells(cols);
         const rowTemplate = this.createTemplate(cellTemplatesAndComps.template);
 
@@ -291,11 +291,11 @@ export class RowComp extends Component {
 
             // console.log(`createRowContainer ${this.getCompId()}`);
 
-            // if (useAnimationsFrameForCreate) {
-            //     this.beans.taskQueue.addP1Task(this.lazyCreateCells.bind(this, cols, eRow), this.rowNode.rowIndex);
-            // } else {
+            if (useAnimationsFrameForCreate) {
+                this.beans.taskQueue.addP1Task(this.lazyCreateCells.bind(this, cols, eRow), this.rowNode.rowIndex);
+            } else {
                 this.callAfterRowAttachedOnCells(cellTemplatesAndComps.cellComps, eRow);
-            // }
+            }
         });
     }
 
