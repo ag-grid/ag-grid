@@ -110,6 +110,11 @@ autoGroupColumnDef: {
     </p>
 
     <p>
+        One significant difference is that the entire <code>dataPath</code> array will be supplied as a value, rather
+        than just the current node value.
+    </p>
+
+    <p>
         For details on how you can provide your own Custom Group Column see: <a href="../javascript-grid-grouping/#example-custom-grouping-many-group-columns">Specifying Group Columns</a>.
     </p>
 
