@@ -92,7 +92,6 @@ MenuItemDef {
         <li><code>copyWithHeaders</code>Copy selected value to clipboard with headers.</li>
         <li><code>paste</code>: Always disabled (see note in clipboard section).</li>
         <li><code>resetColumns</code>: Reset all columns.</li>
-        <li><code>toolPanel</code>: Show / hide the toolpanel.</li>
         <li><code>export</code>: Export sub menu (containing csvExport and excelExport).</li>
         <li><code>csvExport</code>: Export to CSV using all default export values.</li>
         <li><code>excelExport</code>: Export to Excel using all default export values.</li>
