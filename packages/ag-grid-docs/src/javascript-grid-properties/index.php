@@ -678,6 +678,13 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
+            <th>copyHeadersToClipboard</th>
+            <td>
+                Set to true to also include headers when copying to clipboard using Ctrl+C
+                <a href="../javascript-grid-clipboard/">clipboard</a>.
+            </td>
+        </tr>
+        <tr>
             <th>clipboardDeliminator</th>
             <td>To specify deliminator to use while copying to <a href="../javascript-grid-clipboard/">clipboard</a>.</td>
         </tr>

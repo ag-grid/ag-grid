@@ -764,6 +764,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressCopyRowsToClipboard);
     }
 
+    public isCopyHeadersToClipboard() {
+        return isTrue(this.gridOptions.copyHeadersToClipboard);
+    }
+
     public isSuppressClipboardPaste() {
         return isTrue(this.gridOptions.suppressClipboardPaste);
     }

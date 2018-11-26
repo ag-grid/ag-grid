@@ -145,6 +145,7 @@ export interface GridOptions {
     suppressParentsInRowNodes?: boolean;
     suppressFieldDotNotation?: boolean;
     suppressCopyRowsToClipboard?: boolean;
+    copyHeadersToClipboard?: boolean;
     clipboardDeliminator?: string;
     suppressClipboardPaste?: boolean;
     suppressAggFuncInHeader?: boolean;

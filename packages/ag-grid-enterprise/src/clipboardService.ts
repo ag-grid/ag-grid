@@ -370,8 +370,13 @@ export class ClipboardService implements IClipboardService {
         }
     }
 
-    public copyToClipboard(includeHeaders = false): void {
+    public copyToClipboard(includeHeaders: boolean): void {
         this.logger.log(`copyToClipboard: includeHeaders = ${includeHeaders}`);
+
+        // don't override 'includeHeaders' if it has been explicitly set to 'false'
+        if (typeof includeHeaders === 'undefined') {
+            includeHeaders = this.gridOptionsWrapper.isCopyHeadersToClipboard();
+        }
 
         let selectedRowsToCopy = !this.selectionController.isEmpty()
             && !this.gridOptionsWrapper.isSuppressCopyRowsToClipboard();
