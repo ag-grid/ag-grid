@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Bean,
     BeanStub,
@@ -19,7 +18,7 @@ import {
     PopupService,
     PostConstruct,
     RowNode,
-    Utils
+    _
 } from "ag-grid-community";
 import {ClipboardService} from "../clipboardService";
 import {MenuItemComponent} from "./menuItemComponent";
@@ -41,27 +40,25 @@ export class ContextMenuFactory implements IContextMenuFactory {
     }
 
     public hideActiveMenu(): void {
-        if (this.activeMenu) {
-            this.activeMenu.destroy();
-        }
+        if (!this.activeMenu) { return; }
+        
+        this.activeMenu.destroy();
     }
 
     private getMenuItems(node: RowNode, column: Column, value: any): (MenuItemDef | string)[] | undefined {
-        let defaultMenuOptions: string[] | undefined = undefined;
-        if (Utils.exists(node)) {
+        const defaultMenuOptions: string[] = [];
 
-            defaultMenuOptions = [];
-
+        if (_.exists(node)) {
             if (column) {
                 // only makes sense if column exists, could have originated from a row
-                defaultMenuOptions = ['copy', 'copyWithHeaders', 'paste', 'separator'];
+                defaultMenuOptions.push('copy', 'copyWithHeaders', 'paste', 'separator');
             }
 
             // if user clicks a cell
-            let suppressExcel = this.gridOptionsWrapper.isSuppressExcelExport();
-            let suppressCsv = this.gridOptionsWrapper.isSuppressCsvExport();
-            let onIPad = _.isUserAgentIPad();
-            let anyExport: boolean = !onIPad && (!suppressExcel || !suppressCsv);
+            const suppressExcel = this.gridOptionsWrapper.isSuppressExcelExport();
+            const suppressCsv = this.gridOptionsWrapper.isSuppressCsvExport();
+            const onIPad = _.isUserAgentIPad();
+            const anyExport: boolean = !onIPad && (!suppressExcel || !suppressCsv);
             if (anyExport) {
                 defaultMenuOptions.push('export');
             }
@@ -69,39 +66,38 @@ export class ContextMenuFactory implements IContextMenuFactory {
             // if user clicks outside of a cell (eg below the rows, or not rows present)
             // nothing to show, perhaps tool panels???
         }
+
         if (this.gridOptionsWrapper.getContextMenuItemsFunc()) {
-            let userFunc: GetContextMenuItems | undefined = this.gridOptionsWrapper.getContextMenuItemsFunc();
-            let params: GetContextMenuItemsParams = {
+            const userFunc: GetContextMenuItems | undefined = this.gridOptionsWrapper.getContextMenuItemsFunc();
+            const params: GetContextMenuItemsParams = {
                 node: node,
                 column: column,
                 value: value,
-                defaultItems: defaultMenuOptions,
+                defaultItems: defaultMenuOptions.length ? defaultMenuOptions : undefined,
                 api: this.gridOptionsWrapper.getApi(),
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
                 context: this.gridOptionsWrapper.getContext()
             };
+
             return userFunc ? userFunc(params) : undefined;
-        } else {
-            return defaultMenuOptions;
         }
+        
+        return defaultMenuOptions;
     }
 
     public showMenu(node: RowNode, column: Column, value: any, mouseEvent: MouseEvent | Touch): void {
+        const menuItems = this.getMenuItems(node, column, value);
 
-        let menuItems = this.getMenuItems(node, column, value);
+        if (menuItems === undefined || _.missingOrEmpty(menuItems)) { return; }
 
-        if (menuItems === undefined || Utils.missingOrEmpty(menuItems)) {
-            return;
-        }
-
-        let menu = new ContextMenu(menuItems);
+        const menu = new ContextMenu(menuItems);
         this.context.wireBean(menu);
 
-        let eMenuGui = menu.getGui();
+        const eMenuGui = menu.getGui();
 
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
-        let hidePopup = this.popupService.addAsModalPopup(
+        const hidePopup = this.popupService.addAsModalPopup(
             eMenuGui,
             true,
             () => menu.destroy(),
@@ -148,21 +144,18 @@ class ContextMenu extends Component implements IComponent<any> {
 
     @PostConstruct
     private addMenuItems(): void {
-
-        let menuList = new MenuList();
+        const menuList = new MenuList();
         this.context.wireBean(menuList);
 
-        let menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null);
+        const menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null);
 
         menuList.addMenuItems(menuItemsMapped);
 
         this.appendChild(menuList);
-
         menuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.destroy.bind(this));
     }
 
     public afterGuiAttached(params: IAfterGuiAttachedParams): void {
-
         this.addDestroyFunc(params.hidePopup);
 
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
