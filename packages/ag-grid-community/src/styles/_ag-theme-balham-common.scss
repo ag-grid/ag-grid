@@ -10,6 +10,7 @@ $disabled-foreground-color-opacity: 0.38 !default;
     $foreground-color: map-get($params, "foreground-color");
     $grid-size: map-get($params, "grid-size");
     $header-background-color: map-get($params, "header-background-color");
+    $header-foreground-color: map-get($params, "header-foreground-color");
     $header-height: map-get($params, "header-height");
     $icon-size: map-get($params, "icon-size");
     $panel-background-color: map-get($params, "panel-background-color");
@@ -53,6 +54,7 @@ $disabled-foreground-color-opacity: 0.38 !default;
     .ag-header {
         background-color: $header-background-color;
         border-bottom: 1px solid $border-color;
+        color: $header-foreground-color;
     }
 
     .ag-pinned-right-header {

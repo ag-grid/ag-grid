@@ -60,6 +60,8 @@
     $focused-border: map-get($params, "focused-textbox-border");
     $input-border-width: map-get($params, "input-border-width");
     $input-bottom-border: map-get($params, "input-bottom-border");
+    $input-disabled-background-color: map-get($params, "input-disabled-background-color");
+    $input-bottom-border-disabled: map-get($params, "input-bottom-border-disabled");
 
     @if map-get($params, "customize-inputs") {
         background: transparent;
@@ -88,6 +90,19 @@
 
         &::placeholder {
             color: $placeholder-color;
+        }
+
+        &:disabled {
+            
+            @if $input-bottom-border-disabled {
+                border-bottom: $input-bottom-border-disabled;
+            }
+        }
+    }
+    &:disabled {
+        color: $placeholder-color;
+        @if $input-disabled-background-color {
+            background-color: $input-disabled-background-color;
         }
     }
 }
@@ -137,6 +152,7 @@
 
     $disabled-foreground-color-opacity: map-get($params, "disabled-foreground-color-opacity");
     $disabled-foreground-color: map-get($params, "disabled-foreground-color");
+    $input-disabled-background-color: map-get($params, "input-disabled-background-color");
 
     $background-color: map-get($params, "background-color");
     $border-color: map-get($params, "border-color");
@@ -154,6 +170,7 @@
     $range-selection-highlight-color: map-get($params, "range-selection-highlight-color");
 
     $header-background-color: map-get($params, "header-background-color");
+    $header-foreground-color: map-get($params, "header-foreground-color");
     $panel-background-color: map-get($params, "panel-background-color");
     $tool-panel-background-color: map-get($params, "tool-panel-background-color");
 
@@ -263,7 +280,7 @@
             background-color: $header-background-color;
         }
 
-        color: $secondary-foreground-color;
+        color: $header-foreground-color;
         font-weight: $secondary-font-weight;
         font-size: $secondary-font-size;
         font-family: $secondary-font-family;

@@ -855,11 +855,14 @@ function rowSelected(event) {
 
 function onThemeChanged(newTheme) {
     gridDiv.className = newTheme;
-
     gridOptions.api.resetRowHeights();
     gridOptions.api.redrawRows();
     gridOptions.api.refreshHeader();
     gridOptions.api.refreshToolPanel();
+
+    var isDark = newTheme && newTheme.indexOf('dark') >= 0;
+
+    document.body.classList.toggle('dark', isDark);
 }
 
 var filterCount = 0;

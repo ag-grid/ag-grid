@@ -18,6 +18,7 @@ $odd-row-background-color: #f6f6f6 !default;
 
 $editor-background-color: #f6f6f6 !default;
 
+$header-foreground-color: $secondary-foreground-color !default;
 $header-background-color: transparent !default;
 $header-background-image: none !default;
 $panel-background-color: #f6f6f6 !default;
@@ -80,6 +81,7 @@ $params: (
     secondary-foreground-color: $secondary-foreground-color,
     disabled-foreground-color-opacity: $disabled-foreground-color-opacity,
     disabled-foreground-color: $disabled-foreground-color,
+    input-disabled-background-color: $input-disabled-background-color,
     background-color: $background-color,
     tab-background-color: $tab-background-color,
     odd-row-background-color: $odd-row-background-color,
@@ -92,6 +94,7 @@ $params: (
     editor-background-color: $editor-background-color,
     range-selection-background-color: $range-selection-background-color,
     range-selection-highlight-color: $range-selection-highlight-color,
+    header-foreground-color: $header-foreground-color,
     header-background-color: $header-background-color,
     header-background-image: $header-background-image,
     panel-background-color: $panel-background-color,

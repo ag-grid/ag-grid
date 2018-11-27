@@ -18,6 +18,7 @@ $odd-row-background-color: $alt-background;
 $foreground-color: rgba($foreground-color, $foreground-opacity) !default; // foreground
 $secondary-foreground-color: rgba($foreground-color, $secondary-foreground-color-opacity) !default; // foreground-secondary
 $disabled-foreground-color: rgba($foreground-color, $disabled-foreground-color-opacity) !default; // foreground-disabled
+$input-disabled-background-color: rgba(48, 46, 46, 0.3);
 
 $primary-color: $active !default;
 $accent-color: $active !default;
@@ -32,6 +33,7 @@ $editor-background-color: $chrome-background !default;
 $panel-background-color: $chrome-background !default;
 $tool-panel-background-color: $chrome-background !default;
 $header-background-color: $chrome-background !default;
+$header-foreground-color: $secondary-foreground-color !default;
 
 $hover-color: lighten($alt-background, 10) !default;
 $chip-background-color: lighten($alt-background, 5) !default;
@@ -56,10 +58,6 @@ $value-change-value-highlight-background-color: transparentize(#16A085, 0.5) !de
     .ag-floating-filter-body input {
         border-width: 1px;
         border-style: solid;
-    }
-
-    .ag-floating-filter-body input[readonly] {
-        background: rgba(48, 46, 46, 0.3);
     }
 
     .ag-filter-toolpanel-body{

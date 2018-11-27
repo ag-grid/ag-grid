@@ -6,7 +6,7 @@ $mat-grey-0: #fff;
 $mat-grey-50: #fafafa;
 $mat-grey-100: #f5f5f5;
 $mat-grey-200: #eee;
-$mat-grey-300: #e0e0e0;
+$mat-grey-300: #e2e2e2;
 
 // Taking primary and accent from the indigo / pink theme: https://github.com/angular/material2/blob/master/src/lib/core/theming/prebuilt/indigo-pink.scss
 $mat-indigo-500: #3f51b5;
@@ -51,6 +51,7 @@ $secondary-font-weight: 700 !default; // font-secondary-weight
 $foreground-color: rgba(#000, $foreground-opacity) !default; // foreground
 $secondary-foreground-color: rgba(#000, $secondary-foreground-color-opacity) !default; // foreground-secondary
 $disabled-foreground-color: rgba(#000, $disabled-foreground-color-opacity) !default; // foreground-disabled
+$header-foreground-color: $secondary-foreground-color !default;
 
 $border-color: $mat-grey-300 !default;
 
@@ -121,6 +122,7 @@ $params: (
     chip-background-color: $chip-background-color,
     card-background-color: $background-color,
     editor-background-color-color: $editor-background-color,
+    header-foreground-color: $header-foreground-color,
     range-selection-background-color: $range-selection-background-color,
     range-selection-highlight-color: $range-selection-highlight-color,
     panel-background-color: $panel-background-color,
@@ -133,9 +135,10 @@ $params: (
     button-text-transform: uppercase,
     card-radius: $card-radius,
     card-shadow: $card-shadow,
-    focused-textbox-border: 2px solid $primary-color,
+    focused-textbox-border: 3px solid $primary-color,
     input-border-width: 0,
-    input-bottom-border: 1px solid $border-color,
+    input-bottom-border: 3px solid $border-color,
+    input-bottom-border-disabled: 1px solid $border-color,
     input-height: $grid-size * 3,
     use-icons-for-pager-buttons: true,
     customize-inputs: true,

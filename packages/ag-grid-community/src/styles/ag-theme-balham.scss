@@ -15,6 +15,7 @@ $odd-row-background-color: rgb(252, 253, 254) !default;
 $foreground-color: rgba($foreground-color, $foreground-opacity) !default; // foreground
 $secondary-foreground-color: rgba($foreground-color, $secondary-foreground-color-opacity) !default; // foreground-secondary
 $disabled-foreground-color: rgba($foreground-color, $disabled-foreground-color-opacity) !default; // foreground-disabled
+$input-disabled-background-color: #ebebeb !default;
 
 $primary-color: $active !default;
 $accent-color: $active !default;
@@ -29,6 +30,7 @@ $editor-background-color: $chrome-background !default;
 $panel-background-color: $chrome-background !default;
 $tool-panel-background-color: $chrome-background !default;
 $header-background-color: $chrome-background !default;
+$header-foreground-color: $secondary-foreground-color !default;
 
 $hover-color: $alt-background !default;
 $chip-background-color: darken($alt-background, 5) !default;
