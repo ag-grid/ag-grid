@@ -50,7 +50,7 @@
             height: 100%;
             li {
                 @extend .nav-item, .ml-3;
-                height: 100%;
+                height: calc(100% - 1px);
                 line-height: 65px;
                 a {
                     color: lighten($blue-3, 10);
