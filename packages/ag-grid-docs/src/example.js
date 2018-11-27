@@ -699,27 +699,13 @@ function toggleToolPanel() {
 }
 
 function getColCount() {
-    switch (dataSize) {
-        case '10x100':
-            return 100;
-        default:
-            return 22;
-    }
+    return parseInt(dataSize.split('x')[1], 10);
 }
 
 function getRowCount() {
-    switch (dataSize) {
-        case '.1x22':
-            return 100;
-        case '1x22':
-            return 1000;
-        case '10x100':
-            return 10000;
-        case '100x22':
-            return 100000;
-        default:
-            return -1;
-    }
+    var rows = parseFloat(dataSize.split('x')[0]);
+
+    return rows * 1000;
 }
 
 function createCols() {
@@ -740,7 +726,6 @@ function createCols() {
 var loadInstance = 0;
 
 function createData() {
-
     var eMessage = document.querySelector('#message');
     var eMessageText = document.querySelector('#messageText');
     loadInstance++;

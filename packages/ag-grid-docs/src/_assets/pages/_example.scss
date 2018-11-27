@@ -24,7 +24,7 @@
 }
 
 .dark {
-    background-color: dimgray;
+    background-color:#222;
     color: white;
      .good-score {
         background-color: lightgreen;
@@ -54,8 +54,8 @@ button[disabled] {
         outline: none;
     }
     .dark & {
-        background-color: midnightblue;
-        border-bottom-color: $blue-4;
+        background-color: #34343c;
+        border-bottom-color: #666;
         a {
             color: lightblue;
             &:hover{
@@ -136,9 +136,14 @@ button[disabled] {
 
 .stretch-html {
     height: 100%;
-
+    width: 100%;
+    position: fixed;
+    border: 0;
+    margin: 0;
+    padding: 0;
     body {
         height: 100%;
+        width: 100%;
     }
 }
 

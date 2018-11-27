@@ -34,6 +34,7 @@ meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance
                     <option value=".1x22">100 Rows, 22 Cols</option>
                     <option value="1x22">1,000 Rows, 22 Cols</option>
                     <option value="10x100">10,000 Rows, 100 Cols</option>
+                    <option value="50x22">50,000 Rows, 22 Cols</option>
                     <option value="100x22">100,000 Rows, 22 Cols</option>
                 </select>
 
@@ -51,10 +52,6 @@ meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance
                     <option value="ag-theme-balham" selected>Balham</option>
                     <option value="ag-theme-balham-dark">Balham (dark)</option>
                     <option value="ag-theme-material">Material</option>
-                    <option value="ag-theme-fresh">Fresh</option>
-                    <option value="ag-theme-blue">Blue</option>
-                    <option value="ag-theme-dark">Dark</option>
-                    <option value="ag-theme-bootstrap">Bootstrap</option>
                 </select>
             </div>
         </div>
