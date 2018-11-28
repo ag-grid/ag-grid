@@ -1,4 +1,3 @@
-import { NumberSequence, Utils as _ } from "../../utils";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { RowNode } from "../../entities/rowNode";
 import { Autowired, Bean, Context, PostConstruct, PreDestroy } from "../../context/context";
@@ -17,6 +16,7 @@ import { RowNodeBlockLoader } from "../cache/rowNodeBlockLoader";
 import { RowDataTransaction } from "../clientSide/clientSideRowModel";
 import { GridApi } from "../../gridApi";
 import { ColumnApi } from "../../columnController/columnApi";
+import { NumberSequence, _ } from "../../utils";
 
 @Bean('rowModel')
 export class InfiniteRowModel extends BeanStub implements IRowModel {

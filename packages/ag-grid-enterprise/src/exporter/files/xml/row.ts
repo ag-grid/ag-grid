@@ -1,5 +1,5 @@
-import {XmlElement, Utils} from 'ag-grid-community';
-import {ExcelCell, ExcelRow, ExcelXMLTemplate} from 'ag-grid-community';
+import { XmlElement, _ } from 'ag-grid-community';
+import { ExcelCell, ExcelRow, ExcelXMLTemplate } from 'ag-grid-community';
 import cell from './cell';
 
 const row: ExcelXMLTemplate = {
@@ -8,7 +8,7 @@ const row: ExcelXMLTemplate = {
 
         return {
             name: "Row",
-            children: Utils.map(cells, (it:ExcelCell):XmlElement => {
+            children: _.map(cells, (it:ExcelCell):XmlElement => {
                 return cell.getTemplate(it);
             })
         };

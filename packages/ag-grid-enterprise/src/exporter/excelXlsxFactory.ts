@@ -1,15 +1,15 @@
-import {Autowired, Bean, XmlFactory, XmlElement} from 'ag-grid-community';
+import { Autowired, Bean, XmlFactory, XmlElement } from 'ag-grid-community';
 
 import coreFactory from './files/ooxml/core';
 import contentTypesFactory from './files/ooxml/contentTypes';
 import officeThemeFactory from './files/ooxml/themes/office';
 import sharedStringsFactory from './files/ooxml/sharedStrings';
-import stylesheetFactory, {registerStyles} from './files/ooxml/styles/stylesheet';
+import stylesheetFactory, { registerStyles } from './files/ooxml/styles/stylesheet';
 import workbookFactory from './files/ooxml/workbook';
 import worksheetFactory from './files/ooxml/worksheet';
 import relationshipsFactory from './files/ooxml/relationships';
 
-import {ExcelStyle, ExcelWorksheet} from 'ag-grid-community';
+import { ExcelStyle, ExcelWorksheet } from 'ag-grid-community';
 
 /**
  * See https://www.ecma-international.org/news/TC45_current_work/OpenXML%20White%20Paper.pdf
@@ -58,7 +58,7 @@ export class ExcelXlsxFactory {
             Id: 'rId1',
             Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument',
             Target: 'xl/workbook.xml'
-        },{
+        }, {
             Id: 'rId2',
             Type: 'http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties',
             Target: 'docProps/core.xml'
@@ -92,7 +92,7 @@ export class ExcelXlsxFactory {
             Id: 'rId3',
             Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles',
             Target: 'styles.xml'
-        },{
+        }, {
             Id: 'rId4',
             Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings',
             Target: 'sharedStrings.xml'

@@ -7,14 +7,13 @@ import {
     ValueService,
     RowNode,
     Column,
-    Utils,
     StageExecuteParams,
     IAggFunc,
     ChangedPath,
     _
 } from "ag-grid-community";
-import {PivotStage} from "./pivotStage";
-import {AggFuncService} from "../aggregation/aggFuncService";
+import { PivotStage } from "./pivotStage";
+import { AggFuncService } from "../aggregation/aggFuncService";
 
 interface AggregationDetails {
     changedPath: ChangedPath;
@@ -51,11 +50,11 @@ export class AggregationStage implements IRowNodeStage {
         const measureColumns = this.columnController.getValueColumns();
         const pivotColumns = pivotActive ? this.columnController.getPivotColumns() : [];
 
-        const aggDetails = <AggregationDetails> {
+        const aggDetails = {
             changedPath: params.changedPath,
             valueColumns: measureColumns,
             pivotColumns: pivotColumns
-        };
+        } as AggregationDetails;
 
         return aggDetails;
     }
@@ -63,7 +62,7 @@ export class AggregationStage implements IRowNodeStage {
     private recursivelyCreateAggData(rowNode: RowNode, aggDetails: AggregationDetails) {
 
         // aggregate all children first, as we use the result in this nodes calculations
-        rowNode.childrenAfterFilter.forEach( (child: RowNode) => {
+        rowNode.childrenAfterFilter.forEach((child: RowNode) => {
             const nodeHasChildren = child.hasChildren();
             if (nodeHasChildren) {
                 this.recursivelyCreateAggData(child, aggDetails);
@@ -123,7 +122,7 @@ export class AggregationStage implements IRowNodeStage {
 
         // Step 1: process value columns
         pivotColumnDefs
-            .filter(v => !Utils.exists(v.pivotTotalColumnIds)) // only process pivot value columns
+            .filter(v => !_.exists(v.pivotTotalColumnIds)) // only process pivot value columns
             .forEach(valueColDef => {
                 const keys: string[] = valueColDef.pivotKeys || [];
                 let values: any[];
@@ -143,7 +142,7 @@ export class AggregationStage implements IRowNodeStage {
 
         // Step 2: process total columns
         pivotColumnDefs
-            .filter(v => Utils.exists(v.pivotTotalColumnIds)) // only process pivot total columns
+            .filter(v => _.exists(v.pivotTotalColumnIds)) // only process pivot total columns
             .forEach(totalColDef => {
                 const aggResults: any[] = [];
                 const {pivotValueColumn, pivotTotalColumnIds, colId} = totalColDef;
@@ -177,12 +176,12 @@ export class AggregationStage implements IRowNodeStage {
         const values2d = this.getValuesNormal(rowNode, changedValueColumns);
         const oldValues = rowNode.aggData;
 
-        changedValueColumns.forEach( (valueColumn: Column, index: number) => {
+        changedValueColumns.forEach((valueColumn: Column, index: number) => {
             result[valueColumn.getId()] = this.aggregateValues(values2d[index], valueColumn.getAggFunc());
         });
 
         if (notChangedValueColumns && oldValues) {
-            notChangedValueColumns.forEach( (valueColumn: Column) => {
+            notChangedValueColumns.forEach((valueColumn: Column) => {
                 result[valueColumn.getId()] = oldValues[valueColumn.getId()];
             });
         }
@@ -192,7 +191,7 @@ export class AggregationStage implements IRowNodeStage {
 
     private getValuesPivotNonLeaf(rowNode: RowNode, colId: string): any[] {
         const values: any[] = [];
-        rowNode.childrenAfterFilter.forEach( (node: RowNode) => {
+        rowNode.childrenAfterFilter.forEach((node: RowNode) => {
             const value = node.aggData[colId];
             values.push(value);
         });
@@ -208,7 +207,7 @@ export class AggregationStage implements IRowNodeStage {
         }
 
         const values: any = [];
-        mapPointer.forEach( (rowNode: RowNode) => {
+        mapPointer.forEach((rowNode: RowNode) => {
             const value = this.valueService.getValue(valueColumn, rowNode);
             values.push(value);
         });
@@ -219,7 +218,7 @@ export class AggregationStage implements IRowNodeStage {
     private getValuesNormal(rowNode: RowNode, valueColumns: Column[]): any[][] {
         // create 2d array, of all values for all valueColumns
         const values: any[][] = [];
-        valueColumns.forEach( ()=> values.push([]) );
+        valueColumns.forEach(() => values.push([]));
 
         const valueColumnCount = valueColumns.length;
         const rowCount = rowNode.childrenAfterFilter.length;
@@ -242,9 +241,9 @@ export class AggregationStage implements IRowNodeStage {
         let aggFunction: IAggFunc;
 
         if (typeof aggFuncOrString === 'string') {
-            aggFunction = this.aggFuncService.getAggFunc(<string>aggFuncOrString);
+            aggFunction = this.aggFuncService.getAggFunc(aggFuncOrString as string);
         } else {
-            aggFunction = <IAggFunc> aggFuncOrString;
+            aggFunction = aggFuncOrString as IAggFunc;
         }
 
         if (typeof aggFunction !== 'function') {

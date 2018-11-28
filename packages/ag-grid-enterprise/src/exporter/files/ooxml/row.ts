@@ -1,12 +1,12 @@
-import {ExcelOOXMLTemplate, ExcelRow, ExcelCell, _, PostConstruct} from 'ag-grid-community';
-import {getExcelColumnName} from './worksheet';
+import { ExcelOOXMLTemplate, ExcelRow, ExcelCell, _ } from 'ag-grid-community';
+import { getExcelColumnName } from './worksheet';
 import cellFactory from './cell';
 
 const addEmptyCells = (cells: ExcelCell[], rowIdx: number): void => {
-    const mergeMap: {pos: number, excelPos: number}[]= [];
+    const mergeMap: {pos: number, excelPos: number}[] = [];
     let posCounter = 0;
     for (let i = 0; i < cells.length; i++) {
-        let cell = cells[i];
+        const cell = cells[i];
         if (cell.mergeAcross) {
             mergeMap.push({
                 pos: i,
@@ -18,9 +18,9 @@ const addEmptyCells = (cells: ExcelCell[], rowIdx: number): void => {
     }
 
     if (mergeMap.length) {
-        for (let i = mergeMap.length - 1; i >=0; i--) {
+        for (let i = mergeMap.length - 1; i >= 0; i--) {
             const mergedCells: ExcelCell[] = [];
-            let cell = cells[mergeMap[i].pos];
+            const cell = cells[mergeMap[i].pos];
             for (let j = 1; j <= (cell.mergeAcross as number); j++) {
                 mergedCells.push({
                     ref: `${getExcelColumnName(mergeMap[i].excelPos + 1 + j)}${rowIdx + 1}`,

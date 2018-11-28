@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Component,
     ComponentResolver,
@@ -13,10 +12,11 @@ import {
     Promise,
     RefSelector,
     SideBarDef,
-    ToolPanelDef
+    ToolPanelDef,
+    _
 } from "ag-grid-community";
-import {SideBarButtonsComp} from "./sideBarButtonsComp";
-import {ToolPanelWrapper, ToolPanelWrapperParams} from "./toolPanelWrapper";
+import { SideBarButtonsComp } from "./sideBarButtonsComp";
+import { ToolPanelWrapper, ToolPanelWrapperParams } from "./toolPanelWrapper";
 
 export interface IToolPanelChildComp extends IComponent<any> {
     refresh(): void
@@ -52,21 +52,21 @@ export class SideBarComp extends Component implements ISideBar {
     @PostConstruct
     private postConstruct(): void {
         this.instantiate(this.context);
-        let sideBar: SideBarDef = this.gridOptionsWrapper.getSideBar();
+        const sideBar: SideBarDef = this.gridOptionsWrapper.getSideBar();
 
         if (sideBar == null) {
             this.getGui().removeChild(this.sideBarButtonsComp.getGui());
             return;
         }
 
-        let allPromises: Promise<IComponent<any>>[] = [];
+        const allPromises: Promise<IComponent<any>>[] = [];
         if (sideBar.toolPanels) {
             sideBar.toolPanels.forEach((toolPanel: ToolPanelDef) => {
                 if (toolPanel.id == null) {
                     console.warn(`ag-grid: please review all your toolPanel components, it seems like at least one of them doesn't have an id`);
                     return;
                 }
-                let componentPromise: Promise<IComponent<any>> = this.componentResolver.createAgGridComponent(
+                const componentPromise: Promise<IComponent<any>> = this.componentResolver.createAgGridComponent(
                     toolPanel,
                     toolPanel.toolPanelParams,
                     'toolPanel',
@@ -78,7 +78,7 @@ export class SideBarComp extends Component implements ISideBar {
                 }
                 allPromises.push(componentPromise);
                 componentPromise.then(component => {
-                    let wrapper: ToolPanelWrapper = this.componentResolver.createInternalAgGridComponent<ToolPanelWrapperParams, ToolPanelWrapper>(ToolPanelWrapper, {
+                    const wrapper: ToolPanelWrapper = this.componentResolver.createInternalAgGridComponent<ToolPanelWrapperParams, ToolPanelWrapper>(ToolPanelWrapper, {
                         innerComp: component
                     });
                     this.panelComps [toolPanel.id] = wrapper;
@@ -87,7 +87,7 @@ export class SideBarComp extends Component implements ISideBar {
         }
         Promise.all(allPromises).then(done => {
             Object.keys(this.panelComps).forEach(key => {
-                let currentComp = this.panelComps[key];
+                const currentComp = this.panelComps[key];
                 this.getGui().appendChild(currentComp.getGui());
                 this.sideBarButtonsComp.registerPanelComp(key, currentComp);
                 currentComp.setVisible(false);
@@ -101,24 +101,24 @@ export class SideBarComp extends Component implements ISideBar {
 
     public refresh(): void {
         Object.keys(this.panelComps).forEach(key => {
-            let currentComp = this.panelComps[key];
+            const currentComp = this.panelComps[key];
             currentComp.refresh();
         });
     }
 
     public setVisible(show: boolean): void {
-        if (_.get(this.gridOptionsWrapper.getSideBar(), 'toolPanels', []).length === 0) return;
+        if (_.get(this.gridOptionsWrapper.getSideBar(), 'toolPanels', []).length === 0) { return; }
 
         super.setVisible(show);
         if (show) {
             let keyOfTabToShow: string | undefined | null  = this.getActiveToolPanelItem();
 
-            if (!keyOfTabToShow) return;
+            if (!keyOfTabToShow) { return; }
 
             keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : _.get(this.gridOptionsWrapper.getSideBar(), 'defaultToolPanel', null);
             keyOfTabToShow = keyOfTabToShow ? keyOfTabToShow : this.gridOptionsWrapper.getSideBar().defaultToolPanel;
 
-            let tabToShow: Component | null = keyOfTabToShow ? this.panelComps[keyOfTabToShow] : null;
+            const tabToShow: Component | null = keyOfTabToShow ? this.panelComps[keyOfTabToShow] : null;
             if (!tabToShow) {
                 console.warn(`ag-grid: can't set the visibility of the tool panel item [${keyOfTabToShow}] since it can't be found`);
                 return;
@@ -128,10 +128,10 @@ export class SideBarComp extends Component implements ISideBar {
     }
 
     public openToolPanel(key: string) {
-        let currentlyOpenedKey = this.getActiveToolPanelItem();
-        if (currentlyOpenedKey === key) return;
+        const currentlyOpenedKey = this.getActiveToolPanelItem();
+        if (currentlyOpenedKey === key) { return; }
 
-        let tabToShow: Component = this.panelComps[key];
+        const tabToShow: Component = this.panelComps[key];
         if (!tabToShow) {
             console.warn(`ag-grid: invalid tab key [${key}] to open for the tool panel`);
             return;
@@ -144,8 +144,8 @@ export class SideBarComp extends Component implements ISideBar {
     }
 
     public close(): void {
-        let currentlyOpenedKey = this.getActiveToolPanelItem();
-        if (!currentlyOpenedKey) return;
+        const currentlyOpenedKey = this.getActiveToolPanelItem();
+        if (!currentlyOpenedKey) { return; }
 
         this.sideBarButtonsComp.setPanelVisibility(currentlyOpenedKey, false);
     }
@@ -157,7 +157,7 @@ export class SideBarComp extends Component implements ISideBar {
     public getActiveToolPanelItem(): string | null {
         let activeToolPanel: string | null = null;
         Object.keys(this.panelComps).forEach(key => {
-            let currentComp = this.panelComps[key];
+            const currentComp = this.panelComps[key];
             if (currentComp.isVisible()) {
                 activeToolPanel = key;
             }

@@ -1,6 +1,5 @@
 import { Component } from "../../widgets/component";
 import { IComponent } from "../../interfaces/iComponent";
-import { Utils as _ } from "../../utils";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { ColumnApi } from "../../columnController/columnApi";
 import { ColumnController } from "../../columnController/columnController";
@@ -10,6 +9,7 @@ import { TouchListener } from "../../widgets/touchListener";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { OriginalColumnGroup } from "../../entities/originalColumnGroup";
 import { GridApi } from "../../gridApi";
+import { _ } from "../../utils";
 
 export interface IHeaderGroupParams {
     columnGroup: ColumnGroup;

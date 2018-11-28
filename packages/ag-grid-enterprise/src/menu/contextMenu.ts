@@ -20,10 +20,10 @@ import {
     RowNode,
     _
 } from "ag-grid-community";
-import {ClipboardService} from "../clipboardService";
-import {MenuItemComponent} from "./menuItemComponent";
-import {MenuList} from "./menuList";
-import {MenuItemMapper} from "./menuItemMapper";
+import { ClipboardService } from "../clipboardService";
+import { MenuItemComponent } from "./menuItemComponent";
+import { MenuList } from "./menuList";
+import { MenuItemMapper } from "./menuItemMapper";
 
 @Bean('contextMenuFactory')
 export class ContextMenuFactory implements IContextMenuFactory {

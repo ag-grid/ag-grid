@@ -1,4 +1,4 @@
-import { ExternalPromise, Promise, Utils as _ } from "../utils";
+import { ExternalPromise, Promise, _ } from "../utils";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { PopupService } from "../widgets/popupService";
 import { ValueService } from "../valueService/valueService";

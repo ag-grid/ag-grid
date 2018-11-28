@@ -1,4 +1,4 @@
-import {ExcelOOXMLTemplate, XmlElement} from 'ag-grid-community';
+import { ExcelOOXMLTemplate, XmlElement } from 'ag-grid-community';
 
 const fillFactory: ExcelOOXMLTemplate = {
     getTemplate(fill: Fill) {
@@ -26,7 +26,7 @@ const fillFactory: ExcelOOXMLTemplate = {
         }
 
         if (bgIndexed) {
-            if (!pf.children) pf.children = [];
+            if (!pf.children) { pf.children = []; }
             pf.children.push({
                 name: 'bgColor',
                 properties: {

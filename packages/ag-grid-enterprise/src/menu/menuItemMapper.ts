@@ -1,6 +1,6 @@
-import {ColumnController, MenuItemDef, Autowired, Utils, Bean, GridOptionsWrapper, GridApi, Column, _} from 'ag-grid-community';
-import {ClipboardService} from "../clipboardService";
-import {AggFuncService} from "../aggregation/aggFuncService";
+import { ColumnController, MenuItemDef, Autowired, Utils, Bean, GridOptionsWrapper, GridApi, Column, _ } from 'ag-grid-community';
+import { ClipboardService } from "../clipboardService";
+import { AggFuncService } from "../aggregation/aggFuncService";
 
 @Bean('menuItemMapper')
 export class MenuItemMapper {
@@ -11,21 +11,21 @@ export class MenuItemMapper {
     @Autowired('clipboardService') private clipboardService: ClipboardService;
     @Autowired('aggFuncService') private aggFuncService: AggFuncService;
 
-    public mapWithStockItems(originalList: (MenuItemDef|string)[], column: Column | null): (MenuItemDef|string)[] {
+    public mapWithStockItems(originalList: (MenuItemDef | string)[], column: Column | null): (MenuItemDef | string)[] {
         if (!originalList) { return []; }
 
-        let resultList: (MenuItemDef | string)[] = [];
+        const resultList: (MenuItemDef | string)[] = [];
 
-        originalList.forEach( menuItemOrString => {
+        originalList.forEach(menuItemOrString => {
             let result: MenuItemDef | string | null;
 
             if (typeof menuItemOrString === 'string') {
-                result = this.getStockMenuItem(<string>menuItemOrString, column);
+                result = this.getStockMenuItem(menuItemOrString as string, column);
             } else {
                 result = menuItemOrString;
             }
             if ((result as MenuItemDef).subMenu) {
-                let resultDef = <MenuItemDef> result;
+                const resultDef = result as MenuItemDef;
                 resultDef.subMenu = this.mapWithStockItems(resultDef.subMenu!, column);
             }
             if (result != null) {
@@ -38,13 +38,13 @@ export class MenuItemMapper {
 
     private getStockMenuItem(key: string, column: Column | null): MenuItemDef | string | null {
 
-        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
         switch (key) {
             case 'pinSubMenu': return {
                 name: localeTextFunc('pinColumn', 'Pin Column'),
                 icon: Utils.createIconNoSpan('menuPin', this.gridOptionsWrapper, null),
-                subMenu: ['pinLeft','pinRight','clearPinned']
+                subMenu: ['pinLeft', 'pinRight', 'clearPinned']
             };
             case 'pinLeft': return {
                 name: localeTextFunc('pinLeft', 'Pin Left'),
@@ -97,26 +97,26 @@ export class MenuItemMapper {
                 action: () => this.gridApi.collapseAll()
             };
             case 'copy': return {
-                name: localeTextFunc('copy','Copy'),
-                shortcut: localeTextFunc('ctrlC','Ctrl+C'),
+                name: localeTextFunc('copy', 'Copy'),
+                shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
                 icon: Utils.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
-                action: ()=> this.clipboardService.copyToClipboard(false)
+                action: () => this.clipboardService.copyToClipboard(false)
             };
             case 'copyWithHeaders': return {
-                name: localeTextFunc('copyWithHeaders','Copy with Headers'),
+                name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
                 // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
                 icon: Utils.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
-                action: ()=> this.clipboardService.copyToClipboard(true)
+                action: () => this.clipboardService.copyToClipboard(true)
             };
             case 'paste': return {
-                name: localeTextFunc('paste','Paste'),
-                shortcut: localeTextFunc('ctrlV','Ctrl+V'),
+                name: localeTextFunc('paste', 'Paste'),
+                shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
                 disabled: true,
                 icon: Utils.createIconNoSpan('clipboardPaste', this.gridOptionsWrapper, null),
-                action: ()=> this.clipboardService.pasteFromClipboard()
+                action: () => this.clipboardService.pasteFromClipboard()
             };
             case 'export':
-                let exportSubMenuItems:string[] = [];
+                const exportSubMenuItems:string[] = [];
                 if (!this.gridOptionsWrapper.isSuppressCsvExport()) {
                     exportSubMenuItems.push('csvExport');
                 }
@@ -130,17 +130,17 @@ export class MenuItemMapper {
                 };
             case 'csvExport': return {
                 name: localeTextFunc('csvExport', 'CSV Export'),
-                action: ()=> this.gridApi.exportDataAsCsv({})
+                action: () => this.gridApi.exportDataAsCsv({})
             };
             case 'excelExport': return {
                 name: localeTextFunc('excelExport', 'Excel Export (.xlsx)'),
-                action: ()=> this.gridApi.exportDataAsExcel({
+                action: () => this.gridApi.exportDataAsExcel({
                     exportMode: 'xlsx'
                 })
             };
             case 'excelXMLExport': return {
                 name: localeTextFunc('excelXMLExport', 'Excel Export (.xml)'),
-                action: ()=> this.gridApi.exportDataAsExcel({
+                action: () => this.gridApi.exportDataAsExcel({
                     exportMode: 'xml'
                 })
             };
@@ -152,9 +152,9 @@ export class MenuItemMapper {
     }
 
     private createAggregationSubMenu(column: Column): MenuItemDef[] {
-        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        let columnIsAlreadyAggValue = column.isValueActive();
-        let funcNames = this.aggFuncService.getFuncNames(column);
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const columnIsAlreadyAggValue = column.isValueActive();
+        const funcNames = this.aggFuncService.getFuncNames(column);
 
         let columnToUse: Column | undefined;
         if (column.isPrimary()) {
@@ -164,7 +164,7 @@ export class MenuItemMapper {
             columnToUse = _.exists(pivotValueColumn) ? pivotValueColumn! : undefined;
         }
 
-        let result: MenuItemDef[] = [];
+        const result: MenuItemDef[] = [];
 
         funcNames.forEach(funcName => {
             result.push({

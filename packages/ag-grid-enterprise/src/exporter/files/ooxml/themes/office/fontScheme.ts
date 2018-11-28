@@ -1,4 +1,4 @@
-import {ExcelOOXMLTemplate, XmlElement, _} from 'ag-grid-community';
+import { ExcelOOXMLTemplate, XmlElement, _ } from 'ag-grid-community';
 
 const getFont = (props: [string, string, string?, string?]): XmlElement => {
     const [type, typeface, script, panose] = props;
@@ -78,7 +78,7 @@ const fontScheme: ExcelOOXMLTemplate = {
                     getFont(['font', 'Microsoft New Tai Lue', 'Talu']),
                     getFont(['font', 'Ebrima', 'Tfng'])
                 ]
-            },{
+            }, {
                 name: 'a:minorFont',
                 children: [
                     getFont(['latin', 'Calibri', undefined, '020F0502020204030204']),

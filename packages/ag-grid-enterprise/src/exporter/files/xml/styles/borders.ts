@@ -1,5 +1,5 @@
-import {XmlElement} from 'ag-grid-community';
-import {ExcelBorder, ExcelStyle, ExcelXMLTemplate} from 'ag-grid-community';
+import { XmlElement } from 'ag-grid-community';
+import { ExcelBorder, ExcelStyle, ExcelXMLTemplate } from 'ag-grid-community';
 
 const borders: ExcelXMLTemplate = {
     getTemplate(styleProperties: ExcelStyle): XmlElement {
@@ -12,7 +12,7 @@ const borders: ExcelXMLTemplate = {
         return {
             name: 'Borders',
             children: [borderBottom, borderLeft, borderRight, borderTop].map((it: ExcelBorder, index: number) => {
-                let current = index == 0 ? "Bottom" : index == 1 ? "Left" : index == 2 ? "Right" : "Top";
+                const current = index == 0 ? "Bottom" : index == 1 ? "Left" : index == 2 ? "Right" : "Top";
                 return {
                     name: 'Border',
                     properties: {

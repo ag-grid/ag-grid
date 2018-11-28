@@ -25,7 +25,7 @@ export class HorizontalResizeComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        let finishedWithResizeFunc = this.horizontalResizeService.addResizeBar({
+        const finishedWithResizeFunc = this.horizontalResizeService.addResizeBar({
             eResizeBar: this.getGui(),
             dragStartPixels: 1,
             onResizeStart: this.onResizeStart.bind(this),
@@ -43,7 +43,8 @@ export class HorizontalResizeComp extends Component {
     private onResizing(delta: number): void {
         const direction = this.gridOptionsWrapper.isEnableRtl() ? -1 : 1;
         const newWidth = Math.max(100, Math.floor(this.startingWidth - (delta * direction)));
+        // tslint:disable-next-line
         this.gridOptionsWrapper.isEnableRtl
-        this.props.componentToResize.getGui().style.width = newWidth + 'px';
+        this.props.componentToResize.getGui().style.width = `$newWidth}px`;
     }
 }

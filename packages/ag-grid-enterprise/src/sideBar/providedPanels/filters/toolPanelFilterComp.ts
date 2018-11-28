@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Column,
     ColumnController,
@@ -11,7 +10,8 @@ import {
     GridApi,
     GridOptionsWrapper,
     IFilterComp,
-    RefSelector
+    RefSelector,
+    _
 } from "ag-grid-community";
 
 export interface ToolPanelFilterCompParams {
@@ -29,7 +29,6 @@ export class ToolPanelFilterComp extends Component {
     private params: ToolPanelFilterCompParams;
     private expanded: boolean = false;
     private filter: IFilterComp;
-
 
     @RefSelector('eFilterToolpanelHeader')
     private eFilterToolpanelHeader: HTMLElement;
@@ -68,8 +67,8 @@ export class ToolPanelFilterComp extends Component {
 
     init(params: ToolPanelFilterCompParams) {
         this.params = params;
-        let displayName = this.columnController.getDisplayNameForColumn(this.params.column, 'header', false);
-        let displayNameSanitised: any = _.escape(displayName);
+        const displayName = this.columnController.getDisplayNameForColumn(this.params.column, 'header', false);
+        const displayNameSanitised: any = _.escape(displayName);
         this.eFilterName.innerText = displayNameSanitised;
         this.addGuiEventListenerInto(this.eFilterToolpanelHeader, 'click', this.doExpandOrCollapse.bind(this));
         this.eventService.addEventListener(Events.EVENT_FILTER_OPENED, (event: FilterOpenedEvent) => this.onFilterOpened(event));
@@ -82,9 +81,9 @@ export class ToolPanelFilterComp extends Component {
     }
 
     private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
-        if (eParent == null) return;
+        if (eParent == null) { return; }
 
-        let eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column);
+        const eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column);
         eIcon.innerHTML = '&nbsp';
         eParent.appendChild(eIcon);
     }
@@ -108,7 +107,7 @@ export class ToolPanelFilterComp extends Component {
 
     private doExpand(): void {
         this.expanded = true;
-        let container: HTMLElement = _.loadTemplate(`<div class="ag-filter-air" />`)
+        const container: HTMLElement = _.loadTemplate(`<div class="ag-filter-air" />`)
         this.filterManager.getOrCreateFilterWrapper(this.params.column, 'TOOLBAR').filterPromise.then((filter: IFilterComp): void => {
             this.filter = filter;
             container.appendChild(filter.getGui());
@@ -117,7 +116,6 @@ export class ToolPanelFilterComp extends Component {
                 filter.afterGuiAttached();
             }
         });
-
 
         _.setVisible(this.eExpandChecked, true);
         _.setVisible(this.eExpandUnchecked, false);
@@ -132,9 +130,9 @@ export class ToolPanelFilterComp extends Component {
     }
 
     private onFilterOpened(event: FilterOpenedEvent): void {
-        if (event.source !== 'COLUMN_MENU') return;
-        if (event.column !== this.params.column) return;
-        if (!this.expanded) return;
+        if (event.source !== 'COLUMN_MENU') { return; }
+        if (event.column !== this.params.column) { return; }
+        if (!this.expanded) { return; }
 
         this.doCollapse();
     }

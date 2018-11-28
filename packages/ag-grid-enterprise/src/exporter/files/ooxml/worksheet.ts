@@ -1,4 +1,4 @@
-import {ExcelOOXMLTemplate, ExcelWorksheet, ExcelRow, ExcelColumn, _} from 'ag-grid-community';
+import { ExcelOOXMLTemplate, ExcelWorksheet, ExcelRow, ExcelColumn, _ } from 'ag-grid-community';
 import columnFactory from './column';
 import rowFactory from './row';
 import mergeCell from './mergeCell';
@@ -55,9 +55,9 @@ export const getExcelColumnName = (colIdx: number): string => {
     const pos = Math.floor(colIdx / tableWidth);
     const tableIdx = colIdx % tableWidth;
 
-    if (!pos || colIdx === tableWidth) return fromCharCode(startCode + colIdx - 1);
-    if (!tableIdx) return getExcelColumnName(pos - 1) + 'Z';
-    if (pos < tableWidth) return fromCharCode(startCode + pos - 1) + fromCharCode(startCode + tableIdx - 1);
+    if (!pos || colIdx === tableWidth) { return fromCharCode(startCode + colIdx - 1); }
+    if (!tableIdx) { return getExcelColumnName(pos - 1) + 'Z'; }
+    if (pos < tableWidth) { return fromCharCode(startCode + pos - 1) + fromCharCode(startCode + tableIdx - 1); }
 
     return getExcelColumnName(pos) + fromCharCode(startCode + tableIdx - 1);
 };

@@ -1,5 +1,5 @@
-import {Autowired, Events, EventService, GridApi, PostConstruct, IStatusPanelComp} from 'ag-grid-community';
-import {NameValueComp} from "./nameValueComp";
+import { Autowired, Events, EventService, GridApi, PostConstruct, IStatusPanelComp } from 'ag-grid-community';
+import { NameValueComp } from "./nameValueComp";
 
 export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPanelComp {
 
@@ -30,10 +30,10 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
     }
 
     private onDataChanged() {
-        let filteredRowCount = this.getFilteredRowCountValue();
+        const filteredRowCount = this.getFilteredRowCountValue();
         let displayValue:any = this.getTotalRowCountValue();
 
-        if(filteredRowCount !== displayValue) {
+        if (filteredRowCount !== displayValue) {
             displayValue = `${filteredRowCount} of ` + displayValue;
         }
 
@@ -49,7 +49,7 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
     private getFilteredRowCountValue(): number {
         let filteredRowCount = 0;
         this.gridApi.forEachNodeAfterFilter((node) => {
-            if(!node.group) {
+            if (!node.group) {
                 filteredRowCount += 1
             }});
         return filteredRowCount;

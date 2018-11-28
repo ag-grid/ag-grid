@@ -6,7 +6,7 @@ import {
     PostConstruct,
     IStatusPanelComp
 } from 'ag-grid-community';
-import {NameValueComp} from "./nameValueComp";
+import { NameValueComp } from "./nameValueComp";
 
 export class FilteredRowsComp extends NameValueComp implements IStatusPanelComp {
 

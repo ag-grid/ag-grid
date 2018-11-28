@@ -1,5 +1,5 @@
-import {XmlElement} from 'ag-grid-community';
-import {ExcelStyle, ExcelXMLTemplate} from 'ag-grid-community';
+import { XmlElement } from 'ag-grid-community';
+import { ExcelStyle, ExcelXMLTemplate } from 'ag-grid-community';
 
 const font: ExcelXMLTemplate = {
     getTemplate(styleProperties: ExcelStyle): XmlElement {
@@ -34,7 +34,7 @@ const font: ExcelXMLTemplate = {
                         Underline: underline,
                         VerticalAlign: verticalAlign
                     }
-                },{
+                }, {
                     prefix: "x:",
                     map: {
                         CharSet: charSet,

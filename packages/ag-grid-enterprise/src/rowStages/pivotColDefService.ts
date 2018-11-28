@@ -7,7 +7,7 @@ import {
     ColumnController,
     GridOptionsWrapper,
     NumberSequence,
-    Utils
+    _
 } from "ag-grid-community";
 
 export interface PivotColDefServiceResult {
@@ -24,14 +24,14 @@ export class PivotColDefService {
     public createPivotColumnDefs(uniqueValues: any): PivotColDefServiceResult {
 
         // this is passed to the columnController, to configure the columns and groups we show
-        let pivotColumnGroupDefs: (ColDef | ColGroupDef)[] = [];
+        const pivotColumnGroupDefs: (ColDef | ColGroupDef)[] = [];
         // this is used by the aggregation stage, to do the aggregation based on the pivot columns
-        let pivotColumnDefs: ColDef[] = [];
+        const pivotColumnDefs: ColDef[] = [];
 
-        let pivotColumns = this.columnController.getPivotColumns();
-        let valueColumns = this.columnController.getValueColumns();
-        let levelsDeep = pivotColumns.length;
-        let columnIdSequence = new NumberSequence();
+        const pivotColumns = this.columnController.getPivotColumns();
+        const valueColumns = this.columnController.getValueColumns();
+        const levelsDeep = pivotColumns.length;
+        const columnIdSequence = new NumberSequence();
 
         this.recursivelyAddGroup(pivotColumnGroupDefs, pivotColumnDefs, 1, uniqueValues, [], columnIdSequence, levelsDeep, pivotColumns);
 
@@ -42,7 +42,7 @@ export class PivotColDefService {
         // we clone, so the colDefs in pivotColumnsGroupDefs and pivotColumnDefs are not shared. this is so that
         // any changes the user makes (via processSecondaryColumnDefinitions) don't impact the internal aggregations,
         // as these use the col defs also
-        let pivotColumnDefsClone: ColDef[] = pivotColumnDefs.map(colDef => Utils.cloneObject(colDef));
+        const pivotColumnDefsClone: ColDef[] = pivotColumnDefs.map(colDef => _.cloneObject(colDef));
 
         return {
             pivotColumnGroupDefs: pivotColumnGroupDefs,
@@ -63,12 +63,12 @@ export class PivotColDefService {
                                 levelsDeep: number,
                                 primaryPivotColumns: Column[]): void {
 
-        Utils.iterateObject(uniqueValues, (key: string, value: any) => {
+        _.iterateObject(uniqueValues, (key: string, value: any) => {
 
-            let newPivotKeys = pivotKeys.slice(0);
+            const newPivotKeys = pivotKeys.slice(0);
             newPivotKeys.push(key);
 
-            let createGroup = index !== levelsDeep;
+            const createGroup = index !== levelsDeep;
             if (createGroup) {
                 const groupDef: ColGroupDef = {
                     children: [],
@@ -122,12 +122,12 @@ export class PivotColDefService {
                                    pivotColumnDefs: ColDef[],
                                    columnIdSequence: NumberSequence) {
 
-        if (!this.gridOptionsWrapper.getPivotColumnGroupTotals()) return;
+        if (!this.gridOptionsWrapper.getPivotColumnGroupTotals()) { return; }
 
-        let insertAfter = this.gridOptionsWrapper.getPivotColumnGroupTotals() === 'after';
+        const insertAfter = this.gridOptionsWrapper.getPivotColumnGroupTotals() === 'after';
 
-        let valueCols = this.columnController.getValueColumns();
-        let aggFuncs = valueCols.map(valueCol => valueCol.getAggFunc());
+        const valueCols = this.columnController.getValueColumns();
+        const aggFuncs = valueCols.map(valueCol => valueCol.getAggFunc());
 
         // don't add pivot totals if there is less than 1 aggFunc or they are not all the same
         if (!aggFuncs || aggFuncs.length < 1 || !this.sameAggFuncs(aggFuncs)) {
@@ -136,7 +136,7 @@ export class PivotColDefService {
         }
 
         // arbitrarily select a value column to use as a template for pivot columns
-        let valueColumn = valueCols[0];
+        const valueColumn = valueCols[0];
 
         pivotColumnGroupDefs.forEach((groupDef: (ColGroupDef | ColDef)) => {
             this.recursivelyAddPivotTotal(groupDef, pivotColumnDefs, columnIdSequence, valueColumn, insertAfter);
@@ -148,9 +148,9 @@ export class PivotColDefService {
                                      columnIdSequence: NumberSequence,
                                      valueColumn: Column,
                                      insertAfter: boolean): string[] | null {
-        let group = <ColGroupDef>groupDef;
+        const group = groupDef as ColGroupDef;
         if (!group.children) {
-            const def: ColDef = <ColDef>groupDef;
+            const def: ColDef = groupDef as ColDef;
             return def.colId ? [def.colId] : null;
         }
 
@@ -159,7 +159,7 @@ export class PivotColDefService {
         // need to recurse children first to obtain colIds used in the aggregation stage
         group.children
             .forEach((grp: ColGroupDef) => {
-                let childColIds = this.recursivelyAddPivotTotal(grp, pivotColumnDefs, columnIdSequence, valueColumn, insertAfter);
+                const childColIds = this.recursivelyAddPivotTotal(grp, pivotColumnDefs, columnIdSequence, valueColumn, insertAfter);
                 if (childColIds) {
                     colIds = colIds.concat(childColIds);
                 }
@@ -168,12 +168,12 @@ export class PivotColDefService {
         // only add total colDef if there is more than 1 child node
         if (group.children.length > 1) {
             //create total colDef using an arbitrary value column as a template
-            let totalColDef = this.createColDef(valueColumn, 'Total', groupDef.pivotKeys, columnIdSequence);
+            const totalColDef = this.createColDef(valueColumn, 'Total', groupDef.pivotKeys, columnIdSequence);
             totalColDef.pivotTotalColumnIds = colIds;
             totalColDef.aggFunc = valueColumn.getAggFunc();
 
             // add total colDef to group and pivot colDefs array
-            let children = (<ColGroupDef>groupDef).children;
+            const children = (groupDef as ColGroupDef).children;
             insertAfter ? children.push(totalColDef) : children.unshift(totalColDef);
             pivotColumnDefs.push(totalColDef);
         }
@@ -187,30 +187,30 @@ export class PivotColDefService {
                               pivotColumns: Column[],
                               columnIdSequence: NumberSequence) {
 
-        if (!this.gridOptionsWrapper.getPivotRowTotals()) return;
+        if (!this.gridOptionsWrapper.getPivotRowTotals()) { return; }
 
-        let insertAfter = this.gridOptionsWrapper.getPivotRowTotals() === 'after';
+        const insertAfter = this.gridOptionsWrapper.getPivotRowTotals() === 'after';
 
         // order of row group totals depends on position
-        let valueCols = insertAfter ? valueColumns.slice() : valueColumns.slice().reverse();
+        const valueCols = insertAfter ? valueColumns.slice() : valueColumns.slice().reverse();
 
         for (let i = 0; i < valueCols.length; i++) {
-            let valueCol = valueCols[i];
+            const valueCol = valueCols[i];
 
             let colIds: any[] = [];
             pivotColumnGroupDefs.forEach((groupDef: (ColGroupDef | ColDef)) => {
                 colIds = colIds.concat(this.extractColIdsForValueColumn(groupDef, valueCol));
             });
 
-            let levelsDeep = pivotColumns.length;
+            const levelsDeep = pivotColumns.length;
             this.createRowGroupTotal(pivotColumnGroupDefs, pivotColumnDefs, 1, [], columnIdSequence, levelsDeep, pivotColumns, valueCol, colIds, insertAfter);
         }
     }
 
     private extractColIdsForValueColumn(groupDef: (ColGroupDef | ColDef), valueColumn: Column): string[] {
-        let group = <ColGroupDef>groupDef;
+        const group = groupDef as ColGroupDef;
         if (!group.children) {
-            let colDef = (<ColDef>group);
+            const colDef = (group as ColDef);
             return colDef.pivotValueColumn === valueColumn && colDef.colId ? [colDef.colId] : [];
         }
 
@@ -218,7 +218,7 @@ export class PivotColDefService {
         group.children
             .forEach((grp: ColGroupDef) => {
                 this.extractColIdsForValueColumn(grp, valueColumn);
-                let childColIds = this.extractColIdsForValueColumn(grp, valueColumn);
+                const childColIds = this.extractColIdsForValueColumn(grp, valueColumn);
                 colIds = colIds.concat(childColIds);
             });
 
@@ -236,10 +236,10 @@ export class PivotColDefService {
                                 colIds: string[],
                                 insertAfter: boolean): void {
 
-        let newPivotKeys = pivotKeys.slice(0);
-        let createGroup = index !== levelsDeep;
+        const newPivotKeys = pivotKeys.slice(0);
+        const createGroup = index !== levelsDeep;
         if (createGroup) {
-            let groupDef: ColGroupDef = {
+            const groupDef: ColGroupDef = {
                 children: [],
                 pivotKeys: newPivotKeys,
                 groupId: 'pivot' + columnIdSequence.next()
@@ -249,19 +249,19 @@ export class PivotColDefService {
 
             this.createRowGroupTotal(groupDef.children, pivotColumnDefs, index + 1, newPivotKeys, columnIdSequence, levelsDeep, primaryPivotColumns, valueColumn, colIds, insertAfter);
         } else {
-            let measureColumns = this.columnController.getValueColumns();
-            let valueGroup: ColGroupDef = {
+            const measureColumns = this.columnController.getValueColumns();
+            const valueGroup: ColGroupDef = {
                 children: [],
                 pivotKeys: newPivotKeys,
                 groupId: 'pivot' + columnIdSequence.next()
             };
             if (measureColumns.length === 0) {
-                let colDef = this.createColDef(null, '-', newPivotKeys, columnIdSequence);
+                const colDef = this.createColDef(null, '-', newPivotKeys, columnIdSequence);
                 valueGroup.children.push(colDef);
                 pivotColumnDefs.push(colDef);
             } else {
-                let columnName: string | null = this.columnController.getDisplayNameForColumn(valueColumn, 'header');
-                let colDef = this.createColDef(valueColumn, columnName, newPivotKeys, columnIdSequence);
+                const columnName: string | null = this.columnController.getDisplayNameForColumn(valueColumn, 'header');
+                const colDef = this.createColDef(valueColumn, columnName, newPivotKeys, columnIdSequence);
                 colDef.pivotTotalColumnIds = colIds;
                 valueGroup.children.push(colDef);
                 pivotColumnDefs.push(colDef);
@@ -273,11 +273,11 @@ export class PivotColDefService {
 
     private createColDef(valueColumn: Column | null, headerName: any, pivotKeys: string[] | undefined, columnIdSequence: NumberSequence): ColDef {
 
-        let colDef: ColDef = {};
+        const colDef: ColDef = {};
 
         if (valueColumn) {
-            let colDefToCopy = valueColumn.getColDef();
-            Utils.assign(colDef, colDefToCopy);
+            const colDefToCopy = valueColumn.getColDef();
+            _.assign(colDef, colDefToCopy);
             // even if original column was hidden, we always show the pivot value column, otherwise it would be
             // very confusing for people thinking the pivot is broken
             colDef.hide = false;
@@ -298,10 +298,10 @@ export class PivotColDefService {
     }
 
     private sameAggFuncs(aggFuncs: any[]) {
-        if (aggFuncs.length == 1) return true;
+        if (aggFuncs.length == 1) { return true; }
         //check if all aggFunc's match
         for (let i = 1; i < aggFuncs.length; i++) {
-            if (aggFuncs[i] !== aggFuncs[0]) return false;
+            if (aggFuncs[i] !== aggFuncs[0]) { return false; }
         }
         return true;
     }

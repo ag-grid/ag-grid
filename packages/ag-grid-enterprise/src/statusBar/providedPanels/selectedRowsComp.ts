@@ -1,5 +1,5 @@
-import {Autowired, Events, EventService, GridApi, PostConstruct, IStatusPanelComp} from 'ag-grid-community';
-import {NameValueComp} from "./nameValueComp";
+import { Autowired, Events, EventService, GridApi, PostConstruct, IStatusPanelComp } from 'ag-grid-community';
+import { NameValueComp } from "./nameValueComp";
 
 export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp {
 
@@ -26,7 +26,7 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
         this.setValue(selectedRowCount);
         this.setVisible(selectedRowCount > 0);
 
-        let eventListener = this.onRowSelectionChanged.bind(this);
+        const eventListener = this.onRowSelectionChanged.bind(this);
         this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, eventListener);
         this.eventService.addEventListener(Events.EVENT_SELECTION_CHANGED, eventListener);
     }

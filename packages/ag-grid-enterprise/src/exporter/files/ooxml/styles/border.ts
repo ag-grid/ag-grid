@@ -1,5 +1,5 @@
-import {ExcelOOXMLTemplate, XmlElement} from 'ag-grid-community';
-import {convertLegacyColor} from './stylesheet';
+import { ExcelOOXMLTemplate, XmlElement } from 'ag-grid-community';
+import { convertLegacyColor } from './stylesheet';
 
 const getBorderColor = (color?: string): XmlElement => {
     return {
@@ -26,19 +26,19 @@ const borderFactory: ExcelOOXMLTemplate = {
                 name: 'left',
                 properties: { rawMap: { style: left && left.style } },
                 children: leftChildren
-            },{
+            }, {
                 name: 'right',
                 properties: { rawMap: { style: right && right.style } },
                 children: rightChildren
-            },{
+            }, {
                 name: 'top',
                 properties: { rawMap: { style: top && top.style } },
                 children: topChildren
-            },{
+            }, {
                 name: 'bottom',
                 properties: { rawMap: { style: bottom && bottom.style } },
                 children: bottomChildren
-            },{
+            }, {
                 name: 'diagonal',
                 properties: { rawMap: { style: diagonal && diagonal.style } },
                 children: diagonalChildren
@@ -50,9 +50,9 @@ const borderFactory: ExcelOOXMLTemplate = {
 export default borderFactory;
 
 const getWeightName = (value: number | undefined): string => {
-    if (value === 1) return 'thin';
-    if (value === 2) return 'medium';
-    if (value === 3) return 'thick';
+    if (value === 1) { return 'thin'; }
+    if (value === 2) { return 'medium'; }
+    if (value === 3) { return 'thick'; }
     return 'hair';
 };
 
@@ -76,8 +76,8 @@ export const convertLegacyBorder = (type: string, weight: number): string => {
     // dashDotDot, mediumDashDotDot, slantDashDot
     const namedWeight = getWeightName(weight);
     const mappedName = mappedNames[type];
-    if (type === 'Continuous') return namedWeight;
-    if (namedWeight === 'medium' && mediumBorders.indexOf(mappedName) > 0) return `medium${mappedName}`;
+    if (type === 'Continuous') { return namedWeight; }
+    if (namedWeight === 'medium' && mediumBorders.indexOf(mappedName) > 0) { return `medium${mappedName}`; }
 
     return mappedName.charAt(0).toLowerCase() + mappedName.substr(1);
 };

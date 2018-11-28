@@ -1,5 +1,5 @@
-import {ExcelOOXMLTemplate, _} from 'ag-grid-community';
-import numberFormatFactory, {NumberFormat} from './numberFormat';
+import { ExcelOOXMLTemplate, _ } from 'ag-grid-community';
+import numberFormatFactory, { NumberFormat } from './numberFormat';
 
 const numberFormatsFactory: ExcelOOXMLTemplate = {
     getTemplate(numberFormats: NumberFormat[]) {

@@ -1,4 +1,4 @@
-import {Bean, Autowired, PostConstruct} from "ag-grid-community";
+import { Bean, PostConstruct } from "ag-grid-community";
 
 @Bean('md5')
 export class MD5 {
@@ -108,19 +108,21 @@ export class MD5 {
     }
 
     private md51(s:any) {
-        let n:any = s.length,
-            state:any = [1732584193, -271733879, -1732584194, 271733878], i:any;
+        const n:any = s.length;
+        const state:any = [1732584193, -271733879, -1732584194, 271733878]
+        let i:any;
         for (i = 64; i <= s.length; i += 64) {
             this.md5cycle(state, this.md5blk(s.substring(i - 64, i)));
         }
         s = s.substring(i - 64);
-        let tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        for (i = 0; i < s.length; i++)
+        const tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        for (i = 0; i < s.length; i++) {
             tail[i >> 2] |= s.charCodeAt(i) << ((i % 4) << 3);
+        }
         tail[i >> 2] |= 0x80 << ((i % 4) << 3);
         if (i > 55) {
             this.md5cycle(state, tail);
-            for (i = 0; i < 16; i++) tail[i] = 0;
+            for (i = 0; i < 16; i++) { tail[i] = 0; }
         }
         tail[14] = n * 8;
         this.md5cycle(state, tail);
@@ -136,9 +138,10 @@ export class MD5 {
      * providing access to strings as preformed UTF-8 8-bit unsigned value arrays.
      */
     private md5blk(s:any) { /* I figured global was faster.   */
-        let md5blks:any = [], i:any;
+        const md5blks:any = [];
+
         /* Andy King said do it this way. */
-        for (i = 0; i < 64; i += 4) {
+        for (let i = 0; i < 64; i += 4) {
             md5blks[i >> 2] = s.charCodeAt(i)
                 + (s.charCodeAt(i + 1) << 8)
                 + (s.charCodeAt(i + 2) << 16)
@@ -148,17 +151,19 @@ export class MD5 {
     }
 
     private rhex(n:any) {
-        let hex_chr:any = '0123456789abcdef'.split('');
+        const hex_chr:any = '0123456789abcdef'.split('');
         let s:string = '', j:any = 0;
-        for (; j < 4; j++)
+        for (; j < 4; j++) {
             s += hex_chr[(n >> (j * 8 + 4)) & 0x0F]
                 + hex_chr[(n >> (j * 8)) & 0x0F];
+        }
         return s;
     }
 
     private hex(x:any) {
-        for (let i:any = 0; i < x.length; i++)
+        for (let i:any = 0; i < x.length; i++) {
             x[i] = this.rhex(x[i]);
+        }
         return x.join('');
     }
 
@@ -177,7 +182,7 @@ export class MD5 {
     }
 
     private add32Compat(x:any, y:any) {
-        let lsw = (x & 0xFFFF) + (y & 0xFFFF),
+        const lsw = (x & 0xFFFF) + (y & 0xFFFF),
             msw = (x >> 16) + (y >> 16) + (lsw >> 16);
         return (msw << 16) | (lsw & 0xFFFF);
     }

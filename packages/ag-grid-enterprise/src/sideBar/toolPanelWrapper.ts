@@ -1,6 +1,6 @@
-import {Autowired, Component, ComponentResolver, IComponent} from "ag-grid-community";
-import {IToolPanelChildComp} from "./sideBarComp";
-import {HorizontalResizeComp} from "./horizontalResizeComp";
+import { Autowired, Component, ComponentResolver, IComponent } from "ag-grid-community";
+import { IToolPanelChildComp } from "./sideBarComp";
+import { HorizontalResizeComp } from "./horizontalResizeComp";
 
 export interface ToolPanelWrapperParams {
     innerComp: IToolPanelChildComp & Component;
@@ -11,13 +11,12 @@ export class ToolPanelWrapper extends Component implements IComponent<ToolPanelW
 
     @Autowired("componentResolver") private componentResolver: ComponentResolver;
 
-
     private static TEMPLATE =
         `<div class="ag-tool-panel-wrapper"/>`;
 
     private componentToResize: Component;
 
-    init (params: ToolPanelWrapperParams): void {
+    init(params: ToolPanelWrapperParams): void {
         this.params = params;
         this.componentToResize = params.innerComp;
         this.setTemplate(ToolPanelWrapper.TEMPLATE);

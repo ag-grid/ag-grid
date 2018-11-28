@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Column,
     ColumnController,
@@ -16,10 +15,11 @@ import {
     RowNode,
     RowNodeBlock,
     RowRenderer,
-    ValueService
+    ValueService,
+    _
 } from "ag-grid-community";
 
-import {ServerSideCache, ServerSideCacheParams} from "./serverSideCache";
+import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
 
 export class ServerSideBlock extends RowNodeBlock {
 
@@ -66,7 +66,7 @@ export class ServerSideBlock extends RowNodeBlock {
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
 
         if (!this.usingTreeData && this.groupLevel) {
-            let groupColVo = this.params.rowGroupCols[this.level];
+            const groupColVo = this.params.rowGroupCols[this.level];
             this.groupField = groupColVo.field;
             this.rowGroupColumn = this.columnController.getRowGroupColumns()[this.level];
         }
@@ -84,7 +84,7 @@ export class ServerSideBlock extends RowNodeBlock {
     }
 
     private createNodeIdPrefix(): void {
-        let parts: string[] = [];
+        const parts: string[] = [];
         let rowNode : RowNode | null = this.parentRowNode;
 
         // pull keys from all parent nodes, but do not include the root node
@@ -118,9 +118,9 @@ export class ServerSideBlock extends RowNodeBlock {
 
         // the end row depends on whether all this block is used or not. if the virtual row count
         // is before the end, then not all the row is used
-        let virtualRowCount = this.parentCache.getVirtualRowCount();
-        let endRow = this.getEndRow();
-        let actualEnd = (virtualRowCount < endRow) ? virtualRowCount : endRow;
+        const virtualRowCount = this.parentCache.getVirtualRowCount();
+        const endRow = this.getEndRow();
+        const actualEnd = (virtualRowCount < endRow) ? virtualRowCount : endRow;
 
         let topPointer = actualEnd - 1;
 
@@ -131,14 +131,14 @@ export class ServerSideBlock extends RowNodeBlock {
 
         while (true) {
 
-            let midPointer = Math.floor((bottomPointer + topPointer) / 2);
-            let currentRowNode = super.getRowUsingLocalIndex(midPointer);
+            const midPointer = Math.floor((bottomPointer + topPointer) / 2);
+            const currentRowNode = super.getRowUsingLocalIndex(midPointer);
 
             if (currentRowNode.rowIndex === displayRowIndex) {
                 return currentRowNode;
             }
 
-            let childrenCache = <ServerSideCache> currentRowNode.childrenCache;
+            const childrenCache = currentRowNode.childrenCache as ServerSideCache;
             if (currentRowNode.rowIndex === displayRowIndex) {
                 return currentRowNode;
             } else if (currentRowNode.expanded && childrenCache && childrenCache.isDisplayIndexInCache(displayRowIndex)) {
@@ -167,18 +167,18 @@ export class ServerSideBlock extends RowNodeBlock {
             //
             // id's are also used by the row renderer for updating the dom as it identifies
             // rowNodes by id
-            let idToUse = this.createIdForIndex(index);
+            const idToUse = this.createIdForIndex(index);
 
             rowNode.setDataAndId(data, idToUse);
             rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode));
 
             if (this.usingTreeData) {
-                let getServerSideGroupKey = this.gridOptionsWrapper.getServerSideGroupKeyFunc();
+                const getServerSideGroupKey = this.gridOptionsWrapper.getServerSideGroupKeyFunc();
                 if (_.exists(getServerSideGroupKey) && getServerSideGroupKey) {
                     rowNode.key = getServerSideGroupKey(rowNode.data);
                 }
 
-                let isServerSideGroup = this.gridOptionsWrapper.getIsServerSideGroupFunc();
+                const isServerSideGroup = this.gridOptionsWrapper.getIsServerSideGroupFunc();
                 if (_.exists(isServerSideGroup) && isServerSideGroup) {
                     rowNode.group = isServerSideGroup(rowNode.data);
                 }
@@ -208,16 +208,16 @@ export class ServerSideBlock extends RowNodeBlock {
     }
 
     private setChildCountIntoRowNode(rowNode: RowNode): void {
-        let getChildCount = this.gridOptionsWrapper.getChildCountFunc();
+        const getChildCount = this.gridOptionsWrapper.getChildCountFunc();
         if (getChildCount) {
             rowNode.allChildrenCount = getChildCount(rowNode.data);
         }
     }
 
     private setGroupDataIntoRowNode(rowNode: RowNode): void {
-        let groupDisplayCols: Column[] = this.columnController.getGroupDisplayColumns();
+        const groupDisplayCols: Column[] = this.columnController.getGroupDisplayColumns();
 
-        let usingTreeData = this.gridOptionsWrapper.isTreeData();
+        const usingTreeData = this.gridOptionsWrapper.isTreeData();
 
         groupDisplayCols.forEach(col => {
             if (usingTreeData) {
@@ -226,7 +226,7 @@ export class ServerSideBlock extends RowNodeBlock {
                 }
                 rowNode.groupData[col.getColId()] = rowNode.key;
             } else if (col.isRowGroupDisplayed(this.rowGroupColumn.getId())) {
-                let groupValue = this.valueService.getValue(this.rowGroupColumn, rowNode);
+                const groupValue = this.valueService.getValue(this.rowGroupColumn, rowNode);
                 if (_.missing(rowNode.groupData)) {
                     rowNode.groupData = {};
                 }
@@ -236,7 +236,7 @@ export class ServerSideBlock extends RowNodeBlock {
     }
 
     protected loadFromDatasource(): void {
-        let params = this.createLoadParams();
+        const params = this.createLoadParams();
         setTimeout(() => {
             if (this.params.datasource) {
                 this.params.datasource.getRows(params);
@@ -245,7 +245,7 @@ export class ServerSideBlock extends RowNodeBlock {
     }
 
     protected createBlankRowNode(rowIndex: number): RowNode {
-        let rowNode = super.createBlankRowNode(rowIndex);
+        const rowNode = super.createBlankRowNode(rowIndex);
 
         rowNode.group = this.groupLevel;
         rowNode.leafGroup = this.leafGroup;
@@ -266,7 +266,7 @@ export class ServerSideBlock extends RowNodeBlock {
     }
 
     private createGroupKeys(groupNode: RowNode): string[] {
-        let keys: string[] = [];
+        const keys: string[] = [];
 
         let pointer: RowNode | null = groupNode;
         while (pointer && pointer.level >= 0) {
@@ -285,8 +285,8 @@ export class ServerSideBlock extends RowNodeBlock {
 
     public getRowBounds(index: number, virtualRowCount: number): RowBounds | null {
 
-        let start = this.getStartRow();
-        let end = this.getEndRow();
+        const start = this.getStartRow();
+        const end = this.getEndRow();
 
         for (let i = start; i <= end; i++) {
             // the blocks can have extra rows in them, if they are the last block
@@ -295,7 +295,7 @@ export class ServerSideBlock extends RowNodeBlock {
                 continue;
             }
 
-            let rowNode = this.getRowUsingLocalIndex(i);
+            const rowNode = this.getRowUsingLocalIndex(i);
             if (rowNode) {
 
                 if (rowNode.rowIndex === index) {
@@ -306,7 +306,7 @@ export class ServerSideBlock extends RowNodeBlock {
                 }
 
                 if (rowNode.group && rowNode.expanded && _.exists(rowNode.childrenCache)) {
-                    let serverSideCache = <ServerSideCache> rowNode.childrenCache;
+                    const serverSideCache = rowNode.childrenCache as ServerSideCache;
                     if (serverSideCache.isDisplayIndexInCache(index)) {
                         return serverSideCache.getRowBounds(index);
                     }
@@ -321,8 +321,8 @@ export class ServerSideBlock extends RowNodeBlock {
 
     public getRowIndexAtPixel(pixel: number, virtualRowCount: number): number {
 
-        let start = this.getStartRow();
-        let end = this.getEndRow();
+        const start = this.getStartRow();
+        const end = this.getEndRow();
 
         for (let i = start; i <= end; i++) {
             // the blocks can have extra rows in them, if they are the last block
@@ -331,7 +331,7 @@ export class ServerSideBlock extends RowNodeBlock {
                 continue;
             }
 
-            let rowNode = this.getRowUsingLocalIndex(i);
+            const rowNode = this.getRowUsingLocalIndex(i);
             if (rowNode) {
 
                 if (rowNode.isPixelInRange(pixel)) {
@@ -339,7 +339,7 @@ export class ServerSideBlock extends RowNodeBlock {
                 }
 
                 if (rowNode.group && rowNode.expanded && _.exists(rowNode.childrenCache)) {
-                    let serverSideCache = <ServerSideCache> rowNode.childrenCache;
+                    const serverSideCache = rowNode.childrenCache as ServerSideCache;
                     if (serverSideCache.isPixelInRange(pixel)) {
                         return serverSideCache.getRowIndexAtPixel(pixel);
                     }
@@ -355,9 +355,9 @@ export class ServerSideBlock extends RowNodeBlock {
         this.forEachRowNode(virtualRowCount, rowNode => {
             rowNode.clearRowTop();
 
-            let hasChildCache = rowNode.group && _.exists(rowNode.childrenCache);
+            const hasChildCache = rowNode.group && _.exists(rowNode.childrenCache);
             if (hasChildCache) {
-                let serverSideCache = <ServerSideCache> rowNode.childrenCache;
+                const serverSideCache = rowNode.childrenCache as ServerSideCache;
                 serverSideCache.clearRowTops();
             }
         });
@@ -371,16 +371,16 @@ export class ServerSideBlock extends RowNodeBlock {
         this.blockTop = nextRowTop.value;
 
         this.forEachRowNode(virtualRowCount, rowNode => {
-            let rowIndex = displayIndexSeq.next();
+            const rowIndex = displayIndexSeq.next();
 
             rowNode.setRowIndex(rowIndex);
             rowNode.setRowTop(nextRowTop.value);
 
             nextRowTop.value += rowNode.rowHeight;
 
-            let hasChildCache = rowNode.group && _.exists(rowNode.childrenCache);
+            const hasChildCache = rowNode.group && _.exists(rowNode.childrenCache);
             if (hasChildCache) {
-                let serverSideCache = <ServerSideCache> rowNode.childrenCache;
+                const serverSideCache = rowNode.childrenCache as ServerSideCache;
                 if (rowNode.expanded) {
                     serverSideCache.setDisplayIndexes(displayIndexSeq, nextRowTop);
                 } else {
@@ -396,8 +396,8 @@ export class ServerSideBlock extends RowNodeBlock {
     }
 
     private forEachRowNode(virtualRowCount: number, callback: (rowNode: RowNode) => void): void {
-        let start = this.getStartRow();
-        let end = this.getEndRow();
+        const start = this.getStartRow();
+        const end = this.getEndRow();
 
         for (let i = start; i <= end; i++) {
             // the blocks can have extra rows in them, if they are the last block
@@ -406,7 +406,7 @@ export class ServerSideBlock extends RowNodeBlock {
                 continue;
             }
 
-            let rowNode = this.getRowUsingLocalIndex(i);
+            const rowNode = this.getRowUsingLocalIndex(i);
 
             if (rowNode) {
                 callback(rowNode);
@@ -415,9 +415,9 @@ export class ServerSideBlock extends RowNodeBlock {
     }
 
     private createLoadParams(): IServerSideGetRowsParams {
-        let groupKeys = this.createGroupKeys(this.parentRowNode);
+        const groupKeys = this.createGroupKeys(this.parentRowNode);
 
-        let request: IServerSideGetRowsRequest = {
+        const request: IServerSideGetRowsRequest = {
             startRow: this.getStartRow(),
             endRow: this.getEndRow(),
             rowGroupCols: this.params.rowGroupCols,
@@ -429,12 +429,12 @@ export class ServerSideBlock extends RowNodeBlock {
             sortModel: this.params.sortModel
         };
 
-        let params = <IServerSideGetRowsParams> {
+        const params = {
             successCallback: this.pageLoaded.bind(this, this.getVersion()),
             failCallback: this.pageLoadFailed.bind(this),
             request: request,
             parentNode: this.parentRowNode
-        };
+        } as IServerSideGetRowsParams;
 
         return params;
     }

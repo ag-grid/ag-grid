@@ -1,5 +1,5 @@
-import {Autowired, Bean, Utils} from 'ag-grid-community';
-import {MD5} from './license/md5';
+import { Autowired, Bean, _ } from 'ag-grid-community';
+import { MD5 } from './license/md5';
 
 @Bean('licenseManager')
 export class LicenseManager {
@@ -14,7 +14,7 @@ export class LicenseManager {
         let current: boolean = false;
         let expiry: Date | null = null;
 
-        if (!Utils.missingOrEmpty(LicenseManager.licenseKey) && LicenseManager.licenseKey.length > 32) {
+        if (!_.missingOrEmpty(LicenseManager.licenseKey) && LicenseManager.licenseKey.length > 32) {
             const {md5, license} = LicenseManager.extractLicenseComponents(LicenseManager.licenseKey);
 
             if (md5 === this.md5.md5(license)) {
@@ -103,7 +103,7 @@ export class LicenseManager {
         let n: any, r: any, i: any;
         let s: any, o: any, u: any, a: any;
         let f: number = 0;
-        let e: string = input.replace(/[^A-Za-z0-9+/=]/g, '');
+        const e: string = input.replace(/[^A-Za-z0-9+/=]/g, '');
         while (f < e.length) {
             s = keystr.indexOf(e.charAt(f++));
             o = keystr.indexOf(e.charAt(f++));

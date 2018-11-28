@@ -1,5 +1,5 @@
-import {Autowired, Component, Context, MenuItemDef, PopupService, Utils as _} from "ag-grid-community";
-import {MenuItemComponent, MenuItemSelectedEvent} from "./menuItemComponent";
+import { Autowired, Component, Context, MenuItemDef, PopupService, _ } from "ag-grid-community";
+import { MenuItemComponent, MenuItemSelectedEvent } from "./menuItemComponent";
 
 export class MenuList extends Component {
 
@@ -45,14 +45,14 @@ export class MenuList extends Component {
             } else if (typeof menuItemOrString === 'string') {
                 console.warn(`ag-Grid: unrecognised menu item ` + menuItemOrString);
             } else {
-                let menuItem = <MenuItemDef> menuItemOrString;
+                const menuItem = menuItemOrString as MenuItemDef;
                 this.addItem(menuItem);
             }
         });
     }
 
     public addItem(menuItemDef: MenuItemDef): void {
-        let cMenuItem = new MenuItemComponent(menuItemDef);
+        const cMenuItem = new MenuItemComponent(menuItemDef);
         this.context.wireBean(cMenuItem);
         this.getGui().appendChild(cMenuItem.getGui());
 
@@ -99,10 +99,10 @@ export class MenuList extends Component {
     }
 
     private addHoverForChildPopup(menuItemDef: MenuItemDef, menuItemComp: MenuItemComponent): void {
-        let timerCountCopy = this.timerCount;
+        const timerCountCopy = this.timerCount;
         setTimeout(() => {
-            let shouldShow = timerCountCopy === this.timerCount;
-            let showingThisMenu = this.subMenuParentDef === menuItemDef;
+            const shouldShow = timerCountCopy === this.timerCount;
+            const showingThisMenu = this.subMenuParentDef === menuItemDef;
             if (shouldShow && !showingThisMenu) {
                 this.showChildMenu(menuItemDef, menuItemComp, null);
             }
@@ -116,14 +116,14 @@ export class MenuList extends Component {
     private showChildMenu(menuItemDef: MenuItemDef, menuItemComp: MenuItemComponent, mouseEvent: MouseEvent | null): void {
         this.removeChildPopup();
 
-        let childMenu = new MenuList();
+        const childMenu = new MenuList();
         this.context.wireBean(childMenu);
         childMenu.addMenuItems(menuItemDef.subMenu);
 
-        let ePopup = _.loadTemplate('<div class="ag-menu"></div>');
+        const ePopup = _.loadTemplate('<div class="ag-menu"></div>');
         ePopup.appendChild(childMenu.getGui());
 
-        let hidePopupFunc = this.popupService.addAsModalPopup(
+        const hidePopupFunc = this.popupService.addAsModalPopup(
             ePopup,
             true,
             undefined,
@@ -137,7 +137,7 @@ export class MenuList extends Component {
 
         this.subMenuParentDef = menuItemDef;
 
-        let selectedListener = (event: MenuItemSelectedEvent) => {
+        const selectedListener = (event: MenuItemSelectedEvent) => {
             this.dispatchEvent(event);
         };
         childMenu.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, selectedListener);

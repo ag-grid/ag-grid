@@ -2,10 +2,10 @@ import { SerializedFilter } from "../interfaces/iFilter";
 import { Component } from "../widgets/component";
 import { IDateComp, IDateParams } from "../rendering/dateComponent";
 import { QuerySelector } from "../widgets/componentAnnotations";
-import { Utils } from "../utils";
 import { BaseFilter, Comparator, FilterConditionType, IComparableFilterParams, ScalarBaseFilter } from "./baseFilter";
 import { Autowired } from "../context/context";
 import { ComponentRecipes } from "../components/framework/componentRecipes";
+import { _ } from "../utils";
 
 export interface IDateFilterParams extends IComparableFilterParams {
     comparator?: IDateComparatorFunc;
@@ -164,7 +164,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         if (!panel) { return; }
 
         const visible = filterTypeValue === BaseFilter.IN_RANGE;
-        Utils.setVisible(panel, visible);
+        _.setVisible(panel, visible);
     }
 
     public comparator(): Comparator<Date> {
@@ -184,8 +184,8 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         const dateFromComponent = type === FilterConditionType.MAIN ? this.dateFromComponent : this.dateFromConditionComponent;
         const filterType = type === FilterConditionType.MAIN ? this.filter : this.filterCondition;
         return {
-            dateTo: Utils.serializeDateToYyyyMmDd(dateToComponent.getDate(), "-"),
-            dateFrom: Utils.serializeDateToYyyyMmDd(dateFromComponent.getDate(), "-"),
+            dateTo: _.serializeDateToYyyyMmDd(dateToComponent.getDate(), "-"),
+            dateFrom: _.serializeDateToYyyyMmDd(dateFromComponent.getDate(), "-"),
             type: filterType ? filterType : this.defaultFilter,
             filterType: 'date'
         };
@@ -209,12 +209,12 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
 
     // not used by ag-Grid, but exposed as part of the filter API for the client if they want it
     public getDateFrom(): string {
-        return Utils.serializeDateToYyyyMmDd(this.dateFromComponent.getDate(), "-");
+        return _.serializeDateToYyyyMmDd(this.dateFromComponent.getDate(), "-");
     }
 
     // not used by ag-Grid, but exposed as part of the filter API for the client if they want it
     public getDateTo(): string {
-        return Utils.serializeDateToYyyyMmDd(this.dateToComponent.getDate(), "-");
+        return _.serializeDateToYyyyMmDd(this.dateToComponent.getDate(), "-");
     }
 
     // not used by ag-Grid, but exposed as part of the filter API for the client if they want it
@@ -223,7 +223,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     }
 
     public setDateFrom(date: string, type:FilterConditionType): void {
-        const parsedDate = Utils.parseYyyyMmDdToDate(date, "-");
+        const parsedDate = _.parseYyyyMmDdToDate(date, "-");
         this.setDateFrom_date(parsedDate, type);
     }
 
@@ -242,7 +242,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     }
 
     public setDateTo(date: string, type:FilterConditionType): void {
-        const parsedDate = Utils.parseYyyyMmDdToDate(date, "-");
+        const parsedDate = _.parseYyyyMmDdToDate(date, "-");
         this.setDateTo_date(parsedDate, type);
     }
 
@@ -298,8 +298,8 @@ export class DefaultDateComponent extends Component implements IDateComp {
     public init(params: IDateParams): void {
         this.eDateInput = this.getGui() as HTMLInputElement;
 
-        if (Utils.isBrowserChrome() || params.filterParams.browserDatePicker) {
-            if (Utils.isBrowserIE()) {
+        if (_.isBrowserChrome() || params.filterParams.browserDatePicker) {
+            if (_.isBrowserIE()) {
                 console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11, reverting to plain text date picker');
             } else {
                 this.eDateInput.type = 'date';
@@ -312,11 +312,11 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 
     public getDate(): Date {
-        return Utils.parseYyyyMmDdToDate(this.eDateInput.value, "-");
+        return _.parseYyyyMmDdToDate(this.eDateInput.value, "-");
     }
 
     public setDate(date: Date): void {
-        this.eDateInput.value = Utils.serializeDateToYyyyMmDd(date, "-");
+        this.eDateInput.value = _.serializeDateToYyyyMmDd(date, "-");
     }
 
 }

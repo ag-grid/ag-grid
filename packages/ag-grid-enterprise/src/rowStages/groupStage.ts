@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Bean,
     ChangedPath,
@@ -17,7 +16,8 @@ import {
     SelectableService,
     SelectionController,
     StageExecuteParams,
-    ValueService
+    ValueService,
+    _
 } from "ag-grid-community";
 
 interface GroupInfo {
@@ -76,7 +76,7 @@ export class GroupStage implements IRowNodeStage {
 
     public execute(params: StageExecuteParams): void {
 
-        let details = this.createGroupingDetails(params);
+        const details = this.createGroupingDetails(params);
 
         if (details.transaction) {
             this.handleTransaction(details);
@@ -90,13 +90,13 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
-        let {rowNode, changedPath, rowNodeTransaction, rowNodeOrder} = params;
+        const {rowNode, changedPath, rowNodeTransaction, rowNodeOrder} = params;
 
-        let groupedCols = this.usingTreeData ? null : this.columnController.getRowGroupColumns();
-        let isGrouping = this.usingTreeData || (groupedCols && groupedCols.length > 0);
-        let usingTransaction = isGrouping && _.exists(rowNodeTransaction);
+        const groupedCols = this.usingTreeData ? null : this.columnController.getRowGroupColumns();
+        const isGrouping = this.usingTreeData || (groupedCols && groupedCols.length > 0);
+        const usingTransaction = isGrouping && _.exists(rowNodeTransaction);
 
-        let details = <GroupingDetails> {
+        const details = {
             // someone complained that the parent attribute was causing some change detection
             // to break is some angular add-on - which i never used. taking the parent out breaks
             // a cyclic dependency, hence this flag got introduced.
@@ -116,13 +116,13 @@ export class GroupStage implements IRowNodeStage {
 
             // if no transaction, then it's shotgun, changed path would be 'not active' at this point anyway
             changedPath: changedPath
-        };
+        } as GroupingDetails;
 
         return details;
     }
 
     private handleTransaction(details: GroupingDetails): void {
-        let tran = details.transaction;
+        const tran = details.transaction;
         if (tran.add) {
             this.insertNodes(tran.add, details);
         }
@@ -153,13 +153,13 @@ export class GroupStage implements IRowNodeStage {
             return;
         }
 
-        let comparator = this.gridOptionsWrapper.getDefaultGroupSortComparator();
+        const comparator = this.gridOptionsWrapper.getDefaultGroupSortComparator();
         if (_.exists(comparator)) {
             recursiveSort(rootNode);
         }
 
         function recursiveSort(rowNode: RowNode): void {
-            let doSort = _.exists(rowNode.childrenAfterGroup) &&
+            const doSort = _.exists(rowNode.childrenAfterGroup) &&
                 // we only want to sort groups, so we do not sort leafs (a leaf group has leafs as children)
                 !rowNode.leafGroup;
 
@@ -171,7 +171,7 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private getExistingPathForNode(node: RowNode, details: GroupingDetails): GroupInfo[] {
-        let res: GroupInfo[] = [];
+        const res: GroupInfo[] = [];
 
         // when doing tree data, the node is part of the path,
         // but when doing grid grouping, the node is not part of the path so we start with the parent.
@@ -198,11 +198,11 @@ export class GroupStage implements IRowNodeStage {
                 details.changedPath.addParentNode(childNode.parent);
             }
 
-            let infoToKeyMapper = (item: GroupInfo) => item.key;
-            let oldPath: string[] = this.getExistingPathForNode(childNode, details).map(infoToKeyMapper);
-            let newPath: string[] = this.getGroupInfo(childNode, details).map(infoToKeyMapper);
+            const infoToKeyMapper = (item: GroupInfo) => item.key;
+            const oldPath: string[] = this.getExistingPathForNode(childNode, details).map(infoToKeyMapper);
+            const newPath: string[] = this.getGroupInfo(childNode, details).map(infoToKeyMapper);
 
-            let nodeInCorrectPath = _.compareArrays(oldPath, newPath);
+            const nodeInCorrectPath = _.compareArrays(oldPath, newPath);
 
             if (!nodeInCorrectPath) {
                 this.moveNode(childNode, details);
@@ -225,7 +225,7 @@ export class GroupStage implements IRowNodeStage {
         // we add both old and new parents to changed path, as both will need to be refreshed.
         // we already added the old parent (in calling method), so just add the new parent here
         if (details.changedPath.isActive()) {
-            let newParent = childNode.parent;
+            const newParent = childNode.parent;
             details.changedPath.addParentNode(newParent);
         }
     }
@@ -242,7 +242,7 @@ export class GroupStage implements IRowNodeStage {
     private removeOneNode(childNode: RowNode, details: GroupingDetails): void {
 
         // utility func to execute once on each parent node
-        let forEachParentGroup = (callback: (parent: RowNode) => void) => {
+        const forEachParentGroup = (callback: (parent: RowNode) => void) => {
             let pointer = childNode.parent;
             while (pointer && pointer !== details.rootNode) {
                 callback(pointer);
@@ -258,11 +258,11 @@ export class GroupStage implements IRowNodeStage {
 
         // if not group, and children are present, need to move children to a group.
         // otherwise if no children, we can just remove without replacing.
-        let replaceWithGroup = childNode.hasChildren();
+        const replaceWithGroup = childNode.hasChildren();
         if (replaceWithGroup) {
-            let oldPath = this.getExistingPathForNode(childNode, details);
+            const oldPath = this.getExistingPathForNode(childNode, details);
             // because we just removed the userGroup, this will always return new support group
-            let newGroupNode = this.findParentForNode(childNode, oldPath, details);
+            const newGroupNode = this.findParentForNode(childNode, oldPath, details);
 
             // these properties are the ones that will be incorrect in the newly created group,
             // so copy them form the old childNode
@@ -289,7 +289,7 @@ export class GroupStage implements IRowNodeStage {
         if (child.parent) {
             _.removeFromArray(child.parent.childrenAfterGroup, child);
         }
-        let mapKey = this.getChildrenMappedKey(child.key, child.rowGroupColumn);
+        const mapKey = this.getChildrenMappedKey(child.key, child.rowGroupColumn);
         if (child.parent && child.parent.childrenMapped) {
             child.parent.childrenMapped[mapKey] = undefined;
         }
@@ -299,7 +299,7 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private addToParent(child: RowNode, parent: RowNode | null) {
-        let mapKey = this.getChildrenMappedKey(child.key, child.rowGroupColumn);
+        const mapKey = this.getChildrenMappedKey(child.key, child.rowGroupColumn);
         if (parent) {
             if (parent.childrenMapped) {
                 parent.childrenMapped[mapKey] = child;
@@ -333,9 +333,9 @@ export class GroupStage implements IRowNodeStage {
 
     private insertOneNode(childNode: RowNode, details: GroupingDetails): void {
 
-        let path: GroupInfo[] = this.getGroupInfo(childNode, details);
+        const path: GroupInfo[] = this.getGroupInfo(childNode, details);
 
-        let parentGroup = this.findParentForNode(childNode, path, details);
+        const parentGroup = this.findParentForNode(childNode, path, details);
         if (!parentGroup.group) {
             console.warn(`ag-Grid: duplicate group keys for row data, keys should be unique`,
                 [parentGroup.data, childNode.data]);
@@ -390,8 +390,8 @@ export class GroupStage implements IRowNodeStage {
     private getOrCreateNextNode(parentGroup: RowNode, groupInfo: GroupInfo, level: number,
                                 details: GroupingDetails): RowNode {
 
-        let mapKey = this.getChildrenMappedKey(groupInfo.key, groupInfo.rowGroupColumn);
-        let nextNode = parentGroup.childrenMapped ? <RowNode> parentGroup.childrenMapped[mapKey] : undefined;
+        const mapKey = this.getChildrenMappedKey(groupInfo.key, groupInfo.rowGroupColumn);
+        let nextNode = parentGroup.childrenMapped ? parentGroup.childrenMapped[mapKey] as RowNode : undefined;
         if (!nextNode) {
             nextNode = this.createGroup(groupInfo, parentGroup, level, details);
             // attach the new group to the parent
@@ -402,7 +402,7 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private createGroup(groupInfo: GroupInfo, parent: RowNode, level: number, details: GroupingDetails): RowNode {
-        let groupNode = new RowNode();
+        const groupNode = new RowNode();
         this.context.wireBean(groupNode);
 
         groupNode.group = true;
@@ -410,12 +410,12 @@ export class GroupStage implements IRowNodeStage {
         groupNode.rowGroupColumn = groupInfo.rowGroupColumn;
         groupNode.groupData = {};
 
-        let groupDisplayCols: Column[] = this.columnController.getGroupDisplayColumns();
+        const groupDisplayCols: Column[] = this.columnController.getGroupDisplayColumns();
 
         groupDisplayCols.forEach(col => {
             // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
-            let displayGroupForCol = this.usingTreeData || (groupNode.rowGroupColumn ? col.isRowGroupDisplayed(groupNode.rowGroupColumn.getId()) : false);
+            const displayGroupForCol = this.usingTreeData || (groupNode.rowGroupColumn ? col.isRowGroupDisplayed(groupNode.rowGroupColumn.getId()) : false);
             if (displayGroupForCol) {
                 groupNode.groupData[col.getColId()] = groupInfo.key;
             }
@@ -480,19 +480,19 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private getGroupInfoFromCallback(rowNode: RowNode): GroupInfo[] {
-        let keys: string[] | null = this.getDataPath ? this.getDataPath(rowNode.data) : null;
+        const keys: string[] | null = this.getDataPath ? this.getDataPath(rowNode.data) : null;
         if (keys === null || keys === undefined || keys.length === 0) {
             _.doOnce(
                 () => console.warn(`getDataPath() should not return an empty path for data`, rowNode.data),
                 'groupStage.getGroupInfoFromCallback'
             );
         }
-        let groupInfoMapper = (key: string) => <GroupInfo> {key: key, field: null, rowGroupColumn: null};
+        const groupInfoMapper = (key: string) => ({key: key, field: null, rowGroupColumn: null}) as GroupInfo;
         return keys ? keys.map(groupInfoMapper) : [];
     }
 
     private getGroupInfoFromGroupColumns(rowNode: RowNode, details: GroupingDetails) {
-        let res: GroupInfo[] = [];
+        const res: GroupInfo[] = [];
         details.groupedCols.forEach(groupCol => {
             let key: string = this.valueService.getKeyForNode(groupCol, rowNode);
             let keyExists = key !== null && key !== undefined;
@@ -506,11 +506,11 @@ export class GroupStage implements IRowNodeStage {
             }
 
             if (keyExists) {
-                let item = <GroupInfo> {
+                const item = {
                     key: key,
                     field: groupCol.getColDef().field,
                     rowGroupColumn: groupCol
-                };
+                } as GroupInfo;
                 res.push(item);
             }
         });

@@ -1,9 +1,9 @@
 import { Bean, PostConstruct } from "../context/context";
 import { Autowired } from "../context/context";
-import { NumberSequence, Utils as _ } from '../utils';
 import { GridCell } from "../entities/gridCell";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { CellComp } from "../rendering/cellComp";
+import { NumberSequence, _ } from '../utils';
 
 @Bean('mouseEventService')
 export class MouseEventService {

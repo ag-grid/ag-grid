@@ -20,12 +20,12 @@ import {
     Promise,
     TabbedItem,
     TabbedLayout,
-    Utils
+    _
 } from "ag-grid-community";
-import {MenuList} from "./menuList";
-import {MenuItemComponent} from "./menuItemComponent";
-import {MenuItemMapper} from "./menuItemMapper";
-import {PrimaryColsPanel} from "../sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsPanel";
+import { MenuList } from "./menuList";
+import { MenuItemComponent } from "./menuItemComponent";
+import { MenuItemMapper } from "./menuItemMapper";
+import { PrimaryColsPanel } from "../sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsPanel";
 
 export interface TabSelectedEvent extends AgEvent {
     key: string;
@@ -50,7 +50,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 
     public showMenuAfterMouseEvent(column:Column, mouseEvent:MouseEvent, defaultTab?:string): void {
 
-        this.showMenu(column, (menu: EnterpriseMenu)=> {
+        this.showMenu(column, (menu: EnterpriseMenu) => {
             this.popupService.positionPopupUnderMouseEvent({
                 column: column,
                 type: 'columnMenu',
@@ -66,8 +66,8 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 
     public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, defaultTab?:string, restrictToTabs?:string[]): void {
 
-        this.showMenu(column, (menu: EnterpriseMenu)=> {
-            let minDims = menu.getMinDimensions();
+        this.showMenu(column, (menu: EnterpriseMenu) => {
+            const minDims = menu.getMinDimensions();
             this.popupService.positionPopupUnderComponent({
                 column: column,
                 type: 'columnMenu',
@@ -86,15 +86,15 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 
     }
 
-    public showMenu(column: Column, positionCallback: (menu: EnterpriseMenu)=>void, defaultTab?:string, restrictToTabs?:string[]): void {
-        let menu = new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs);
+    public showMenu(column: Column, positionCallback: (menu: EnterpriseMenu) => void, defaultTab?:string, restrictToTabs?:string[]): void {
+        const menu = new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs);
         this.context.wireBean(menu);
 
-        let eMenuGui =  menu.getGui();
+        const eMenuGui =  menu.getGui();
 
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
-        let hidePopup = this.popupService.addAsModalPopup(
+        const hidePopup = this.popupService.addAsModalPopup(
             eMenuGui,
             true,
             () => { // menu closed callback
@@ -115,12 +115,12 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 
         menu.addEventListener(EnterpriseMenu.EVENT_TAB_SELECTED, (event: any) => {
             this.lastSelectedTab = event.key;
-        } );
+        });
 
         column.setMenuVisible(true, "contextMenu");
 
         this.activeMenu = menu;
-        menu.addEventListener(BeanStub.EVENT_DESTROYED, ()=> {
+        menu.addEventListener(BeanStub.EVENT_DESTROYED, () => {
             if (this.activeMenu === menu) {
                 this.activeMenu = null;
             }
@@ -165,8 +165,8 @@ export class EnterpriseMenu extends BeanStub {
     private tabItemColumns: TabbedItem;
 
     private initialSelection: string;
-    private tabFactories:{[p:string]:()=>TabbedItem} = {};
-    private includeChecks:{[p:string]:()=>boolean} = {};
+    private tabFactories:{[p:string]:() => TabbedItem} = {};
+    private includeChecks:{[p:string]:() => boolean} = {};
     private restrictTo ?: string[];
 
     constructor(column: Column, initialSelection: string, restrictTo ?: string[]) {
@@ -177,16 +177,16 @@ export class EnterpriseMenu extends BeanStub {
         this.tabFactories[EnterpriseMenu.TAB_FILTER] = this.createFilterPanel.bind(this);
         this.tabFactories[EnterpriseMenu.TAB_COLUMNS] = this.createColumnsPanel.bind(this);
 
-        this.includeChecks[EnterpriseMenu.TAB_GENERAL] = ()=> true;
+        this.includeChecks[EnterpriseMenu.TAB_GENERAL] = () => true;
         this.includeChecks[EnterpriseMenu.TAB_FILTER] = () => {
-            let isFilterEnabled: boolean = this.gridOptionsWrapper.isEnableFilter();
-            let isFloatingFiltersEnabled: boolean = this.gridOptionsWrapper.isFloatingFilter() === true;
-            let isAnyFilteringEnabled = isFilterEnabled || isFloatingFiltersEnabled;
+            const isFilterEnabled: boolean = this.gridOptionsWrapper.isEnableFilter();
+            const isFloatingFiltersEnabled: boolean = this.gridOptionsWrapper.isFloatingFilter() === true;
+            const isAnyFilteringEnabled = isFilterEnabled || isFloatingFiltersEnabled;
 
-            let suppressFilterForThisColumn = this.column.getColDef().suppressFilter;
+            const suppressFilterForThisColumn = this.column.getColDef().suppressFilter;
             return isAnyFilteringEnabled && !suppressFilterForThisColumn;
         };
-        this.includeChecks[EnterpriseMenu.TAB_COLUMNS] = ()=> true;
+        this.includeChecks[EnterpriseMenu.TAB_COLUMNS] = () => true;
         this.restrictTo = restrictTo;
     }
 
@@ -196,14 +196,14 @@ export class EnterpriseMenu extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        let items:TabbedItem[] = this.column.getMenuTabs (this.restrictTo ? this.restrictTo : EnterpriseMenu.TABS_DEFAULT)
-            .filter(menuTabName=>
+        const items:TabbedItem[] = this.column.getMenuTabs (this.restrictTo ? this.restrictTo : EnterpriseMenu.TABS_DEFAULT)
+            .filter(menuTabName =>
                 this.isValidMenuTabItem(menuTabName)
             )
-            .filter(menuTabName=>
+            .filter(menuTabName =>
                 this.isNotSuppressed(menuTabName)
             )
-            .map(menuTabName=>
+            .map(menuTabName =>
                 this.createTab(menuTabName)
             );
         this.tabbedLayout = new TabbedLayout({
@@ -225,7 +225,7 @@ export class EnterpriseMenu extends BeanStub {
 
         isValid = isValid && EnterpriseMenu.TABS_DEFAULT.indexOf(menuTabName) > -1 ;
 
-        if (!isValid) console.warn(`Trying to render an invalid menu item '${menuTabName}'. Check that your 'menuTabs' contains one of [${itemsToConsider}]`);
+        if (!isValid) { console.warn(`Trying to render an invalid menu item '${menuTabName}'. Check that your 'menuTabs' contains one of [${itemsToConsider}]`); }
 
         return isValid;
     }
@@ -263,7 +263,7 @@ export class EnterpriseMenu extends BeanStub {
             case this.tabItemGeneral: key = EnterpriseMenu.TAB_GENERAL; break;
         }
         if (key) {
-            let ev: TabSelectedEvent = {
+            const ev: TabSelectedEvent = {
                 type: EnterpriseMenu.EVENT_TAB_SELECTED,
                 key: key
             };
@@ -281,13 +281,13 @@ export class EnterpriseMenu extends BeanStub {
         super.destroy();
     }
 
-    private getMenuItems(): (string|MenuItemDef)[] {
-        let defaultMenuOptions = this.getDefaultMenuOptions();
-        let result: (string|MenuItemDef)[];
+    private getMenuItems(): (string | MenuItemDef)[] {
+        const defaultMenuOptions = this.getDefaultMenuOptions();
+        let result: (string | MenuItemDef)[];
 
-        let userFunc = this.gridOptionsWrapper.getMainMenuItemsFunc();
+        const userFunc = this.gridOptionsWrapper.getMainMenuItemsFunc();
         if (userFunc) {
-            let userOptions = userFunc({
+            const userOptions = userFunc({
                 column: this.column,
                 api: this.gridOptionsWrapper.getApi(),
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
@@ -301,30 +301,30 @@ export class EnterpriseMenu extends BeanStub {
 
         // GUI looks weird when two separators are side by side. this can happen accidentally
         // if we remove items from the menu then two separators can edit up adjacent.
-        Utils.removeRepeatsFromArray(result, EnterpriseMenu.MENU_ITEM_SEPARATOR);
+        _.removeRepeatsFromArray(result, EnterpriseMenu.MENU_ITEM_SEPARATOR);
 
         return result;
     }
 
     private getDefaultMenuOptions(): string[] {
-        let result: string[] = [];
+        const result: string[] = [];
 
-        let allowPinning = !this.column.isLockPinned();
+        const allowPinning = !this.column.isLockPinned();
 
-        let rowGroupCount = this.columnController.getRowGroupColumns().length;
-        let doingGrouping = rowGroupCount > 0;
+        const rowGroupCount = this.columnController.getRowGroupColumns().length;
+        const doingGrouping = rowGroupCount > 0;
 
-        let groupedByThisColumn = this.columnController.getRowGroupColumns().indexOf(this.column) >= 0;
-        let allowValue = this.column.isAllowValue();
-        let allowRowGroup = this.column.isAllowRowGroup();
-        let isPrimary = this.column.isPrimary();
-        let pivotModeOn = this.columnController.isPivotMode();
+        const groupedByThisColumn = this.columnController.getRowGroupColumns().indexOf(this.column) >= 0;
+        const allowValue = this.column.isAllowValue();
+        const allowRowGroup = this.column.isAllowRowGroup();
+        const isPrimary = this.column.isPrimary();
+        const pivotModeOn = this.columnController.isPivotMode();
 
-        let isInMemoryRowModel = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
+        const isInMemoryRowModel = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
 
-        let usingTreeData = this.gridOptionsWrapper.isTreeData();
+        const usingTreeData = this.gridOptionsWrapper.isTreeData();
 
-        let allowValueAgg =
+        const allowValueAgg =
             // if primary, then only allow aggValue if grouping and it's a value columns
             (isPrimary && doingGrouping && allowValue)
             // secondary columns can always have aggValue, as it means it's a pivot value column
@@ -383,14 +383,14 @@ export class EnterpriseMenu extends BeanStub {
         this.mainMenuList = new MenuList();
         this.context.wireBean(this.mainMenuList);
 
-        let menuItems = this.getMenuItems();
-        let menuItemsMapped = this.menuItemMapper.mapWithStockItems(menuItems, this.column);
+        const menuItems = this.getMenuItems();
+        const menuItemsMapped = this.menuItemMapper.mapWithStockItems(menuItems, this.column);
 
         this.mainMenuList.addMenuItems(menuItemsMapped);
         this.mainMenuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
 
         this.tabItemGeneral = {
-            title: Utils.createIconNoSpan('menu', this.gridOptionsWrapper, this.column),
+            title: _.createIconNoSpan('menu', this.gridOptionsWrapper, this.column),
             bodyPromise: Promise.resolve(this.mainMenuList.getGui()),
             name: EnterpriseMenu.TAB_GENERAL
         };
@@ -403,8 +403,7 @@ export class EnterpriseMenu extends BeanStub {
     }
 
     private createFilterPanel(): TabbedItem {
-
-        let filterWrapper:FilterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'COLUMN_MENU');
+        const filterWrapper:FilterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'COLUMN_MENU');
 
         let afterFilterAttachedCallback: any = null;
 
@@ -419,7 +418,7 @@ export class EnterpriseMenu extends BeanStub {
         });
 
         this.tabItemFilter = {
-            title: Utils.createIconNoSpan('filter', this.gridOptionsWrapper, this.column),
+            title: _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column),
             bodyPromise: filterWrapper.guiPromise.promise,
             afterAttachedCallback: afterFilterAttachedCallback,
             name: EnterpriseMenu.TAB_FILTER
@@ -430,8 +429,8 @@ export class EnterpriseMenu extends BeanStub {
 
     private createColumnsPanel(): TabbedItem {
 
-        let eWrapperDiv = document.createElement('div');
-        Utils.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
+        const eWrapperDiv = document.createElement('div');
+        _.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
 
         this.columnSelectPanel = new PrimaryColsPanel(false, {
             suppressValues: false,
@@ -450,7 +449,7 @@ export class EnterpriseMenu extends BeanStub {
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
 
         this.tabItemColumns = {
-            title: Utils.createIconNoSpan('columns', this.gridOptionsWrapper, this.column),//createColumnsIcon(),
+            title: _.createIconNoSpan('columns', this.gridOptionsWrapper, this.column), //createColumnsIcon(),
             bodyPromise: Promise.resolve(eWrapperDiv),
             name: EnterpriseMenu.TAB_COLUMNS
         };
@@ -463,7 +462,7 @@ export class EnterpriseMenu extends BeanStub {
         this.hidePopupFunc = params.hidePopup;
 
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
-        let onBodyScroll = (event: any) => {
+        const onBodyScroll = (event: any) => {
             // if h scroll, popup is no longer over the column
             if (event.direction === 'horizontal') {
                 params.hidePopup();
@@ -478,5 +477,4 @@ export class EnterpriseMenu extends BeanStub {
     public getGui(): HTMLElement {
         return this.tabbedLayout.getGui();
     }
-
 }

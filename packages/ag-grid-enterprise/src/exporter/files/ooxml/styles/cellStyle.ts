@@ -1,4 +1,4 @@
-import {ExcelOOXMLTemplate} from 'ag-grid-community';
+import { ExcelOOXMLTemplate } from 'ag-grid-community';
 
 const borderFactory: ExcelOOXMLTemplate = {
     getTemplate(cellStyle: CellStyle) {

@@ -5,7 +5,7 @@ import {
     GridOptionsWrapper,
     MenuItemDef,
     PostConstruct,
-    Utils as _
+    _
 } from "ag-grid-community";
 
 export interface MenuItemSelectedEvent extends AgEvent {
@@ -51,9 +51,9 @@ export class MenuItemComponent extends Component {
             this.queryForHtmlElement('#eIcon').innerHTML = '<span class="ag-icon ag-icon-tick"></span>';
         } else if (this.params.icon) {
             if (_.isNodeOrElement(this.params.icon)) {
-                this.queryForHtmlElement('#eIcon').appendChild(<HTMLElement> this.params.icon);
+                this.queryForHtmlElement('#eIcon').appendChild(this.params.icon as HTMLElement);
             } else if (typeof this.params.icon === 'string') {
-                this.queryForHtmlElement('#eIcon').innerHTML = <string> this.params.icon;
+                this.queryForHtmlElement('#eIcon').innerHTML = this.params.icon as string;
             } else {
                 console.warn('ag-Grid: menu item icon must be DOM node or string');
             }
@@ -96,7 +96,7 @@ export class MenuItemComponent extends Component {
     }
 
     private onOptionSelected(mouseEvent: MouseEvent): void {
-        let event: MenuItemSelectedEvent = {
+        const event: MenuItemSelectedEvent = {
             type: MenuItemComponent.EVENT_ITEM_SELECTED,
             action: this.params.action,
             checked: this.params.checked,

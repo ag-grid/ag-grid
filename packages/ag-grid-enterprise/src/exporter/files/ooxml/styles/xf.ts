@@ -1,11 +1,11 @@
-import {ExcelOOXMLTemplate, XmlElement, ExcelAlignment, ExcelProtection} from 'ag-grid-community';
+import { ExcelOOXMLTemplate, XmlElement, ExcelAlignment, ExcelProtection } from 'ag-grid-community';
 import alignmentFactory from './alignment';
 import protectionFactory from './protection';
 
 const xfFactory: ExcelOOXMLTemplate = {
     getTemplate(xf: Xf) {
         const {alignment, borderId, fillId, fontId, numFmtId, protection, xfId} = xf;
-        let children: XmlElement[] = [];
+        const children: XmlElement[] = [];
         if (alignment) {
             children.push(alignmentFactory.getTemplate(alignment));
         }
@@ -30,7 +30,7 @@ const xfFactory: ExcelOOXMLTemplate = {
                     xfId
                 }
             },
-            children: children.length ? children: undefined
+            children: children.length ? children : undefined
         };
     }
 };

@@ -19,11 +19,11 @@ import {
     _
 } from 'ag-grid-community';
 
-import {ExcelCell, ExcelStyle} from 'ag-grid-community';
-import {ExcelGridSerializingParams, ExcelXmlSerializingSession} from './excelXmlSerializingSession';
-import {ExcelXlsxSerializingSession} from './excelXlsxSerializingSession';
-import {ExcelXmlFactory} from './excelXmlFactory';
-import {ExcelXlsxFactory} from './excelXlsxFactory';
+import { ExcelCell, ExcelStyle } from 'ag-grid-community';
+import { ExcelGridSerializingParams, ExcelXmlSerializingSession } from './excelXmlSerializingSession';
+import { ExcelXlsxSerializingSession } from './excelXlsxSerializingSession';
+import { ExcelXmlFactory } from './excelXmlFactory';
+import { ExcelXlsxFactory } from './excelXlsxFactory';
 
 export interface ExcelMixedStyle {
     key: string;
@@ -107,16 +107,16 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
     }
 
     private styleLinker(rowType: RowType, rowIndex: number, colIndex: number, value: string, column: Column, node: RowNode): string[] | null {
-        if ((rowType === RowType.HEADER) || (rowType === RowType.HEADER_GROUPING)) return ["header"];
+        if ((rowType === RowType.HEADER) || (rowType === RowType.HEADER_GROUPING)) { return ["header"]; }
         const styles = this.gridOptions.excelStyles;
 
-        if (!styles || !styles.length) return null;
+        if (!styles || !styles.length) { return null; }
 
-        let styleIds: string[] = styles.map((it: ExcelStyle) => {
+        const styleIds: string[] = styles.map((it: ExcelStyle) => {
             return it.id;
         });
 
-        let applicableStyles: string [] = [];
+        const applicableStyles: string [] = [];
         this.stylingService.processAllCellClasses(
             column.getColDef(),
             {

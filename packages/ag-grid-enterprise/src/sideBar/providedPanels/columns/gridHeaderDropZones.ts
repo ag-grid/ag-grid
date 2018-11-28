@@ -1,4 +1,15 @@
-import {Events, GridOptionsWrapper, Constants, ColumnController, ICompFactory, Component, EventService, Autowired, Optional, PostConstruct} from "ag-grid-community/main";
+import {
+    Events,
+    GridOptionsWrapper,
+    Constants,
+    ColumnController,
+    ICompFactory,
+    Component,
+    EventService,
+    Autowired,
+    Optional, 
+    PostConstruct
+} from "ag-grid-community/main";
 
 export class GridHeaderDropZones extends Component {
 
@@ -27,9 +38,9 @@ export class GridHeaderDropZones extends Component {
 
     private createNorthPanel(): HTMLElement {
 
-        let topPanelGui = document.createElement('div');
+        const topPanelGui = document.createElement('div');
 
-        let dropPanelVisibleListener = this.onDropPanelVisible.bind(this);
+        const dropPanelVisibleListener = this.onDropPanelVisible.bind(this);
 
         this.rowGroupComp = this.rowGroupCompFactory.create();
         this.pivotComp = this.pivotCompFactory.create();
@@ -51,7 +62,7 @@ export class GridHeaderDropZones extends Component {
     }
 
     private onDropPanelVisible(): void {
-        let bothVisible = this.rowGroupComp.isVisible() && this.pivotComp.isVisible();
+        const bothVisible = this.rowGroupComp.isVisible() && this.pivotComp.isVisible();
         this.rowGroupComp.addOrRemoveCssClass('ag-width-half', bothVisible);
         this.pivotComp.addOrRemoveCssClass('ag-width-half', bothVisible);
     }
@@ -61,12 +72,12 @@ export class GridHeaderDropZones extends Component {
             return;
         }
 
-        let rowGroupPanelShow = this.gridOptionsWrapper.getRowGroupPanelShow();
+        const rowGroupPanelShow = this.gridOptionsWrapper.getRowGroupPanelShow();
 
         if (rowGroupPanelShow === Constants.ALWAYS) {
             this.rowGroupComp.setVisible(true);
         } else if (rowGroupPanelShow === Constants.ONLY_WHEN_GROUPING) {
-            let grouping = !this.columnController.isRowGroupEmpty();
+            const grouping = !this.columnController.isRowGroupEmpty();
             this.rowGroupComp.setVisible(grouping);
         } else {
             this.rowGroupComp.setVisible(false);

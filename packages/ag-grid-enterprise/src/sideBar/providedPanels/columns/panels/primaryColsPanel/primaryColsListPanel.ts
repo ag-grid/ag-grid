@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Column,
     ColumnController,
@@ -11,13 +10,13 @@ import {
     OriginalColumnGroup,
     OriginalColumnGroupChild,
     PostConstruct,
-    Utils,
+    _
 } from "ag-grid-community/main";
-import {ToolPanelColumnGroupComp} from "./toolPanelColumnGroupComp";
-import {ToolPanelColumnComp} from "./toolPanelColumnComp";
-import {BaseColumnItem} from "./primaryColsPanel";
-import {SELECTED_STATE} from "./primaryColsHeaderPanel";
-import {ToolPanelColumnCompParams} from "../../columnToolPanel";
+import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
+import { ToolPanelColumnComp } from "./toolPanelColumnComp";
+import { BaseColumnItem } from "./primaryColsPanel";
+import { SELECTED_STATE } from "./primaryColsHeaderPanel";
+import { ToolPanelColumnCompParams } from "../../columnToolPanel";
 
 export type ColumnItem = BaseColumnItem & Component;
 
@@ -58,15 +57,15 @@ export class PrimaryColsListPanel extends Component {
     public onColumnsChanged(): void {
         this.destroyColumnComps();
         this.columnTree = this.columnController.getPrimaryColumnTree();
-        let groupsExist = this.columnController.isPrimaryColumnGroupsPresent();
+        const groupsExist = this.columnController.isPrimaryColumnGroupsPresent();
         this.recursivelyAddComps(this.columnTree, 0, groupsExist);
         this.updateVisibilityOfRows();
     }
 
     private destroyColumnComps(): void {
-        Utils.removeAllChildren(this.getGui());
+        _.removeAllChildren(this.getGui());
         if (this.columnComps) {
-            Utils.iterateObject(this.columnComps, (key: string, renderedItem: Component) => renderedItem.destroy());
+            _.iterateObject(this.columnComps, (key: string, renderedItem: Component) => renderedItem.destroy());
         }
         this.columnComps = {};
     }
@@ -80,7 +79,7 @@ export class PrimaryColsListPanel extends Component {
         }
 
         if (!columnGroup.isPadding()) {
-            let renderedGroup = new ToolPanelColumnGroupComp(columnGroup, dept, this.onGroupExpanded.bind(this),
+            const renderedGroup = new ToolPanelColumnGroupComp(columnGroup, dept, this.onGroupExpanded.bind(this),
                 this.props.allowDragging, this.expandGroupsByDefault);
             this.context.wireBean(renderedGroup);
             this.getGui().appendChild(renderedGroup.getGui());
@@ -106,12 +105,12 @@ export class PrimaryColsListPanel extends Component {
         let expandedCount = 0;
         let notExpandedCount = 0;
 
-        let recursiveFunc = (items: OriginalColumnGroupChild[]) => {
+        const recursiveFunc = (items: OriginalColumnGroupChild[]) => {
             items.forEach(item => {
 
                 // only interested in groups
                 if (item instanceof OriginalColumnGroup) {
-                    let comp = <ToolPanelColumnGroupComp> this.columnComps[item.getId()];
+                    const comp = this.columnComps[item.getId()] as ToolPanelColumnGroupComp;
 
                     if (comp) {
                         if (comp.isExpanded()) {
@@ -121,8 +120,8 @@ export class PrimaryColsListPanel extends Component {
                         }
                     }
 
-                    let columnGroup = <OriginalColumnGroup> item;
-                    let groupChildren = columnGroup.getChildren();
+                    const columnGroup = item as OriginalColumnGroup;
+                    const groupChildren = columnGroup.getChildren();
 
                     recursiveFunc(groupChildren);
                 }
@@ -148,7 +147,7 @@ export class PrimaryColsListPanel extends Component {
             return;
         }
 
-        let renderedColumn = new ToolPanelColumnComp(column, dept, this.props.allowDragging, groupsExist);
+        const renderedColumn = new ToolPanelColumnComp(column, dept, this.props.allowDragging, groupsExist);
         this.context.wireBean(renderedColumn);
         this.getGui().appendChild(renderedColumn.getGui());
 
@@ -158,9 +157,9 @@ export class PrimaryColsListPanel extends Component {
     private recursivelyAddComps(tree: OriginalColumnGroupChild[], dept: number, groupsExist: boolean): void {
         tree.forEach(child => {
             if (child instanceof OriginalColumnGroup) {
-                this.recursivelyAddGroupComps(<OriginalColumnGroup> child, dept, groupsExist);
+                this.recursivelyAddGroupComps(child as OriginalColumnGroup, dept, groupsExist);
             } else {
-                this.recursivelyAddColumnComps(<Column> child, dept, groupsExist);
+                this.recursivelyAddColumnComps(child as Column, dept, groupsExist);
             }
         });
     }
@@ -188,17 +187,16 @@ export class PrimaryColsListPanel extends Component {
         // the visibility requires breadth first search. this is because a group passes filter if CHILDREN
         // pass filter, a column passes group open/closed visibility if a PARENT is open. so we need to do
         // two recursions. we pass the result of the first recursion to the second.
-        let filterResults: { [id: string]: boolean } | null = _.exists(this.filterText) ? this.createFilterResults() : null;
+        const filterResults: { [id: string]: boolean } | null = _.exists(this.filterText) ? this.createFilterResults() : null;
         this.recursivelySetVisibility(this.columnTree, true, filterResults);
     }
 
     private createFilterResults(): { [id: string]: boolean } {
-        let filterResults: { [id: string]: boolean } = {};
+        const filterResults: { [id: string]: boolean } = {};
 
         // we recurse dept first - as the item should show if any of the children are showing
 
-        let recursivelyCheckFilter = (items: OriginalColumnGroupChild[]): boolean => {
-
+        const recursivelyCheckFilter = (items: OriginalColumnGroupChild[]): boolean => {
             let atLeastOneThisLevelPassed = false;
 
             items.forEach(item => {
@@ -206,8 +204,8 @@ export class PrimaryColsListPanel extends Component {
                 let atLeastOneChildPassed = false;
 
                 if (item instanceof OriginalColumnGroup) {
-                    let columnGroup = <OriginalColumnGroup> item;
-                    let groupChildren = columnGroup.getChildren();
+                    const columnGroup = item;
+                    const groupChildren = columnGroup.getChildren();
                     atLeastOneChildPassed = recursivelyCheckFilter(groupChildren);
                 }
 
@@ -215,7 +213,7 @@ export class PrimaryColsListPanel extends Component {
                 if (atLeastOneChildPassed) {
                     filterPasses = true;
                 } else {
-                    let comp = this.columnComps[item.getId()];
+                    const comp = this.columnComps[item.getId()];
                     if (comp && this.filterText) {
                         const displayName = comp.getDisplayName();
                         filterPasses = displayName !== null ? displayName.toLowerCase().indexOf(this.filterText) >= 0 : true;
@@ -242,24 +240,24 @@ export class PrimaryColsListPanel extends Component {
     private recursivelySetVisibility(columnTree: any[], parentGroupsOpen: boolean, filterResults: { [id: string]: boolean } | null): void {
         columnTree.forEach(child => {
 
-            let comp: ColumnItem = this.columnComps[child.getId()];
+            const comp: ColumnItem = this.columnComps[child.getId()];
             if (comp) {
-                let passesFilter = filterResults ? filterResults[child.getId()] : true;
+                const passesFilter = filterResults ? filterResults[child.getId()] : true;
                 comp.setVisible(parentGroupsOpen && passesFilter);
             }
 
             if (child instanceof OriginalColumnGroup) {
-                let columnGroup = <OriginalColumnGroup> child;
+                const columnGroup = child;
 
                 let childrenOpen: boolean;
                 if (comp) {
-                    let expanded = (<ToolPanelColumnGroupComp>comp).isExpanded();
+                    const expanded = (comp as ToolPanelColumnGroupComp).isExpanded();
                     childrenOpen = parentGroupsOpen ? expanded : false;
                 } else {
                     childrenOpen = parentGroupsOpen;
                 }
 
-                let children = columnGroup.getChildren();
+                const children = columnGroup.getChildren();
                 this.recursivelySetVisibility(children, childrenOpen, filterResults);
             }
         });

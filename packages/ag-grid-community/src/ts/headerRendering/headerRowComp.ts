@@ -8,7 +8,6 @@ import { Column } from "../entities/column";
 import { DropTarget } from "../dragAndDrop/dragAndDropService";
 import { EventService } from "../eventService";
 import { Events } from "../events";
-import { Promise, Utils as _ } from "../utils";
 import { HeaderWrapperComp } from "./header/headerWrapperComp";
 import { HeaderGroupWrapperComp } from "./headerGroup/headerGroupWrapperComp";
 import { FilterManager } from "../filter/filterManager";
@@ -20,6 +19,7 @@ import { IFilterComp } from "../interfaces/iFilter";
 import { GridApi } from "../gridApi";
 import { CombinedFilter } from "../filter/baseFilter";
 import { Constants } from "../constants";
+import { Promise, _ } from "../utils";
 
 export enum HeaderRowType {
     COLUMN_GROUP, COLUMN, FLOATING_FILTER

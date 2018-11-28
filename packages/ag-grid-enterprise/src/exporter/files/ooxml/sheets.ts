@@ -1,4 +1,4 @@
-import {ExcelOOXMLTemplate, _} from 'ag-grid-community';
+import { ExcelOOXMLTemplate, _ } from 'ag-grid-community';
 import sheetFactory from './sheet';
 
 const sheetsFactory: ExcelOOXMLTemplate = {

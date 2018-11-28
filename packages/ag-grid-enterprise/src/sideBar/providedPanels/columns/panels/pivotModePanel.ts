@@ -11,7 +11,6 @@ import {
     QuerySelector
 } from "ag-grid-community/main";
 
-
 export class PivotModePanel extends Component {
 
     @Autowired('columnController') private columnController: ColumnController;
@@ -26,7 +25,7 @@ export class PivotModePanel extends Component {
     }
 
     private createTemplate(): string {
-        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         return `<div class="ag-pivot-mode-panel">
                 <ag-checkbox class="ag-pivot-mode-select" label="${localeTextFunc('pivotMode', 'Pivot Mode')}"></ag-checkbox>
             </div>`;
@@ -45,18 +44,18 @@ export class PivotModePanel extends Component {
     }
 
     private onBtPivotMode(): void {
-        let newValue = this.cbPivotMode.isSelected();
+        const newValue = this.cbPivotMode.isSelected();
         if (newValue !== this.columnController.isPivotMode()) {
             this.columnController.setPivotMode(newValue, "toolPanelUi");
             const api = this.gridOptionsWrapper.getApi();
-            if(api) {
+            if (api) {
                 api.refreshHeader();
             }
         }
     }
 
     private onPivotModeChanged(): void {
-        let pivotModeActive = this.columnController.isPivotMode();
+        const pivotModeActive = this.columnController.isPivotMode();
         this.cbPivotMode.setSelected(pivotModeActive);
     }
 }
