@@ -1,4 +1,3 @@
-import {Constants as constants } from '../constants';
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColumnGroupChild } from "../entities/columnGroupChild";
 import { ColumnGroup } from "../entities/columnGroup";
@@ -6,7 +5,6 @@ import { OriginalColumnGroupChild } from "../entities/originalColumnGroupChild";
 import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 import { Column } from "../entities/column";
 import { Bean } from "../context/context";
-import { Qualifier } from "../context/context";
 import { Autowired } from "../context/context";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups

@@ -1,5 +1,4 @@
 import { IComponent } from "../../interfaces/iComponent";
-import { Promise } from "../../utils";
 
 /**
  * B the business interface (ie IHeader)

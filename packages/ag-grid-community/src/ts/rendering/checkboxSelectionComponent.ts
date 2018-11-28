@@ -1,6 +1,5 @@
 import { Component } from "../widgets/component";
 import { RowNode } from "../entities/rowNode";
-import { _ } from '../utils';
 import { Autowired } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { Column } from "../entities/column";
@@ -9,6 +8,7 @@ import { EventService } from "../eventService";
 import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnApi";
 import { IsRowSelectable } from "../entities/gridOptions";
+import { _ } from '../utils';
 
 export class CheckboxSelectionComponent extends Component {
 

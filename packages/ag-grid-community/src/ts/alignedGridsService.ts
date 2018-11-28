@@ -11,7 +11,6 @@ import {
 } from "./events";
 import { GridOptions } from "./entities/gridOptions";
 import { Column } from "./entities/column";
-import { ColumnGroup } from "./entities/columnGroup";
 import { Bean } from "./context/context";
 import { Qualifier } from "./context/context";
 import { Autowired } from "./context/context";

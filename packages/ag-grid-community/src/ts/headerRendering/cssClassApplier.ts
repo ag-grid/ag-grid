@@ -1,9 +1,9 @@
 import { AbstractColDef } from "../entities/colDef";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { _ } from '../utils';
 import { ColumnGroup } from "../entities/columnGroup";
 import { Column } from "../entities/column";
 import { OriginalColumnGroup } from "../entities/originalColumnGroup";
+import { _ } from '../utils';
 
 export class CssClassApplier {
 

@@ -1,12 +1,11 @@
-
 import { Logger } from "./logger";
 import { LoggerFactory } from "./logger";
-import { _ } from './utils';
 import { Bean } from "./context/context";
 import { Qualifier } from "./context/context";
 import { IEventEmitter } from "./interfaces/iEventEmitter";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { AgEvent } from "./events";
+import { _ } from './utils';
 
 @Bean('eventService')
 export class EventService implements IEventEmitter {

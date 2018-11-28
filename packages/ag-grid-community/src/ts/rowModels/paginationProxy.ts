@@ -3,7 +3,6 @@ import { IRowModel, RowBounds } from "../interfaces/iRowModel";
 import { EventService } from "../eventService";
 import { Events, ModelUpdatedEvent, PaginationChangedEvent } from "../events";
 import { RowNode } from "../entities/rowNode";
-import { _ } from "../utils";
 import { Bean, Autowired, PostConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { GridPanel } from "../gridPanel/gridPanel";
@@ -11,6 +10,7 @@ import { ScrollVisibleService } from "../gridPanel/scrollVisibleService";
 import { SelectionController } from "../selectionController";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
+import { _ } from "../utils";
 
 @Bean('paginationAutoPageSizeService')
 export class PaginationAutoPageSizeService extends BeanStub {

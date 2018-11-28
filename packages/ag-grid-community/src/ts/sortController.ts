@@ -5,8 +5,8 @@ import { ColumnApi } from "./columnController/columnApi";
 import { ColumnController } from "./columnController/columnController";
 import { EventService } from "./eventService";
 import { ColumnEventType, Events, SortChangedEvent } from "./events";
-import { _ } from './utils';
 import { GridApi } from "./gridApi";
+import { _ } from './utils';
 
 @Bean('sortController')
 export class SortController {

@@ -1,6 +1,5 @@
 import { Component } from "../../widgets/component";
 import { Column } from "../../entities/column";
-import { _ } from "../../utils";
 import { Autowired } from "../../context/context";
 import { IMenuFactory } from "../../interfaces/iMenuFactory";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
@@ -12,6 +11,7 @@ import { RefSelector } from "../../widgets/componentAnnotations";
 import { Events } from "../../events";
 import { ColumnApi } from "../../columnController/columnApi";
 import { GridApi } from "../../gridApi";
+import { _ } from "../../utils";
 
 export interface IHeaderParams {
     column: Column;

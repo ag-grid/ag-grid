@@ -1,4 +1,3 @@
-import { _ } from "../utils";
 import { ColumnGroup } from "../entities/columnGroup";
 import { Column } from "../entities/column";
 import { AbstractColDef, ColDef, ColGroupDef, IAggFunc } from "../entities/colDef";
@@ -41,6 +40,7 @@ import { RowNode } from "../entities/rowNode";
 import { ValueCache } from "../valueService/valueCache";
 import { GridApi } from "../gridApi";
 import { ColumnApi } from "./columnApi";
+import { _ } from "../utils";
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -1442,7 +1442,7 @@ export class ColumnController {
         action: (column: Column) => boolean,
         // should return back a column event of the right type
         source: ColumnEventType,
-        createEvent?: () => ColumnEvent, ): void {
+        createEvent?: () => ColumnEvent): void {
 
         if (_.missingOrEmpty(keys)) {
             return;

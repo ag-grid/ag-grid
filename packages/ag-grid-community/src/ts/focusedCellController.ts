@@ -5,11 +5,11 @@ import { CellFocusedEvent, Events } from "./events";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { ColumnApi } from "./columnController/columnApi";
 import { ColumnController } from "./columnController/columnController";
-import { _ } from "./utils";
 import { GridCell } from "./entities/gridCell";
 import { RowNode } from "./entities/rowNode";
 import { GridApi } from "./gridApi";
 import { CellComp } from "./rendering/cellComp";
+import { _ } from "./utils";
 
 @Bean('focusedCellController')
 export class FocusedCellController {

@@ -2,10 +2,10 @@ import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { SortController } from "../sortController";
-import { _ } from "../utils";
 import { ValueService } from "../valueService/valueService";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColumnController } from "../columnController/columnController";
+import { _ } from "../utils";
 
 export interface SortOption {
     inverter: number;

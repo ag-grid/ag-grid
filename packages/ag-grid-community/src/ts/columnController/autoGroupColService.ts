@@ -1,11 +1,11 @@
 import { Autowired, Bean, Context } from "../context/context";
 import { Column } from "../entities/column";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { _ } from "../utils";
 import { ColDef } from "../entities/colDef";
 import { ColumnController } from "./columnController";
 import { ColumnFactory } from "./columnFactory";
 import { Constants } from "../constants";
+import { _ } from "../utils";
 
 @Bean('autoGroupColService')
 export class AutoGroupColService {

@@ -1,6 +1,6 @@
 import { ICellRenderer } from "./iCellRenderer";
-import { _ } from "../../utils";
 import { Component } from "../../widgets/component";
+import { _ } from "../../utils";
 
 const ARROW_UP = '&#65514;';
 const ARROW_DOWN = '&#65516;';

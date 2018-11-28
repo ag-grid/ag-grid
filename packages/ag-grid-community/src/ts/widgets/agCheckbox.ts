@@ -1,9 +1,9 @@
 import { Component } from "./component";
 import { Listener, QuerySelector } from "./componentAnnotations";
-import { _ } from "../utils";
 import { Autowired, PostConstruct, PreConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgEvent } from "../events";
+import { _ } from "../utils";
 
 export interface ChangeEvent extends AgEvent {
     selected: boolean;

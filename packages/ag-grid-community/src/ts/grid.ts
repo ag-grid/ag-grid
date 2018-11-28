@@ -29,7 +29,6 @@ import { SortController } from "./sortController";
 import { FocusedCellController } from "./focusedCellController";
 import { MouseEventService } from "./gridPanel/mouseEventService";
 import { CellNavigationService } from "./cellNavigationService";
-import { _ } from "./utils";
 import { FilterStage } from "./rowModels/clientSide/filterStage";
 import { SortStage } from "./rowModels/clientSide/sortStage";
 import { FlattenStage } from "./rowModels/clientSide/flattenStage";
@@ -76,6 +75,7 @@ import { AutoHeightCalculator } from "./rendering/autoHeightCalculator";
 import { PaginationComp } from "./rowModels/pagination/paginationComp";
 import { ResizeObserverService } from "./misc/resizeObserverService";
 import { ZipContainer } from "./exporter/files/zip/zipContainer";
+import { _ } from "./utils";
 
 export interface GridParams {
     // used by Web Components

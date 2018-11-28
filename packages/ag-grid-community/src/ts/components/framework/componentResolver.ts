@@ -4,8 +4,6 @@ import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { FrameworkComponentWrapper } from "./frameworkComponentWrapper";
 import { IComponent } from "../../interfaces/iComponent";
 import { ColDef, ColGroupDef } from "../../entities/colDef";
-import { _, Promise } from "../../utils";
-
 import {
     AgGridComponentFunctionInput,
     AgGridRegisteredComponentInput,
@@ -22,6 +20,7 @@ import { Column } from "../../entities/column";
 import { GridApi } from "../../gridApi";
 import { ColumnApi } from "../../columnController/columnApi";
 import { ToolPanelDef } from "../../entities/sideBar";
+import { _, Promise } from "../../utils";
 
 export type ComponentHolder =
     GridOptions

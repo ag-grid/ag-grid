@@ -1,4 +1,3 @@
-import { _ } from "../utils";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { GridPanel, RowContainerComponents } from "../gridPanel/gridPanel";
 import { ExpressionService } from "../valueService/expressionService";
@@ -31,6 +30,7 @@ import { AnimationFrameService } from "../misc/animationFrameService";
 import { HeightScaler } from "./heightScaler";
 import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
 import { ICellEditorComp } from "./cellEditors/iCellEditor";
+import { _ } from "../utils";
 
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {

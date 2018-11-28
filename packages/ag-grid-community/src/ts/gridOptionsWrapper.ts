@@ -21,7 +21,6 @@ import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from "./context/context";
 import { ColumnApi } from "./columnController/columnApi";
 import { ColumnController } from "./columnController/columnController";
-import { _ } from "./utils";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { IFrameworkFactory } from "./interfaces/iFrameworkFactory";
 import { IDatasource } from "./rowModels/iDatasource";
@@ -35,6 +34,7 @@ import { ColDefUtil } from "./components/colDefUtil";
 import { Events } from "./eventKeys";
 import { AutoHeightCalculator } from "./rendering/autoHeightCalculator";
 import { SideBarDef, SideBarDefParser, ToolPanelDef } from "./entities/sideBar";
+import { _ } from "./utils";
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;

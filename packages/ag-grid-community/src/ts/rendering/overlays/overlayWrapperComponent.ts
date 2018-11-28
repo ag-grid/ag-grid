@@ -1,10 +1,10 @@
-import { _ } from '../../utils';
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { Autowired } from "../../context/context";
 import { Component } from "../../widgets/component";
 import { IComponent } from "../../interfaces/iComponent";
 import { ComponentRecipes } from "../../components/framework/componentRecipes";
 import { Constants } from "../../constants";
+import { _ } from '../../utils';
 
 export interface IOverlayWrapperParams {}
 

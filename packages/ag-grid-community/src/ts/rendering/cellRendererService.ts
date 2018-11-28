@@ -4,10 +4,10 @@ import { ComponentRecipes } from "../components/framework/componentRecipes";
 import { ColDef } from "../entities/colDef";
 import { GroupCellRendererParams } from "./cellRenderers/groupCellRenderer";
 import { ComponentResolver, ComponentSource, ResolvedComponent } from "../components/framework/componentResolver";
-import { _, Promise } from "../utils";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { IRichCellEditorParams } from "../interfaces/iRichCellEditorParams";
 import { ISetFilterParams } from "../interfaces/iSetFilterParams";
+import { _, Promise } from "../utils";
 
 /** Class to use a cellRenderer. */
 @Bean('cellRendererService')

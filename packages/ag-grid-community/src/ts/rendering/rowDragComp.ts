@@ -3,10 +3,10 @@ import { PostConstruct } from "../context/context";
 import { RowNode } from "../entities/rowNode";
 import { DragItem, DragSource, DragSourceType } from "../dragAndDrop/dragAndDropService";
 import { Events } from "../eventKeys";
-import { _ } from "../utils";
 import { Beans } from "./beans";
 import { BeanStub } from "../context/beanStub";
 import { Column } from "../entities/column";
+import { _ } from "../utils";
 
 export class RowDragComp extends Component {
 

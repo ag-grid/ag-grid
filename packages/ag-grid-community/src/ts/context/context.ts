@@ -1,6 +1,6 @@
-import { Utils as _ } from "../utils";
 import { ILogger } from "../iLogger";
 import { Component } from "../widgets/component";
+import { _ } from "../utils";
 
 // steps in booting up:
 // 1. create all beans
@@ -248,8 +248,11 @@ export class Context {
     private postConstruct(beans: any): void {
         beans.forEach((bean: any) => {
             // try calling init methods
-            if (bean.constructor.__agBeanMetaData && bean.constructor.__agBeanMetaData.postConstructMethods) {
-                bean.constructor.__agBeanMetaData && bean.constructor.__agBeanMetaData.postConstructMethods.forEach((methodName: string) => bean[methodName]());
+            const agBeanMetaData = bean.constructor.__agBeanMetaData;
+            const postConstructMethods = agBeanMetaData &&  agBeanMetaData.postConstructMethods;
+
+            if (postConstructMethods) {
+                postConstructMethods.forEach((methodName: string) => bean[methodName]());
             }
         });
     }

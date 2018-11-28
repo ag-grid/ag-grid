@@ -1,7 +1,7 @@
-import { _ } from "../utils";
 import { Autowired, Bean } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { IFrameworkFactory } from "../interfaces/iFrameworkFactory";
+import { _ } from "../utils";
 
 @Bean('resizeObserverService')
 export class ResizeObserverService {

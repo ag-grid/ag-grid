@@ -20,7 +20,6 @@ import { FocusedCellController } from "./focusedCellController";
 import { AddRangeSelectionParams, IRangeController, RangeSelection } from "./interfaces/iRangeController";
 import { GridCell, GridCellDef } from "./entities/gridCell";
 import { IClipboardService } from "./interfaces/iClipboardService";
-import { _ } from "./utils";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { IMenuFactory } from "./interfaces/iMenuFactory";
 import { InfiniteRowModel } from "./rowModels/infinite/infiniteRowModel";
@@ -54,6 +53,7 @@ import { IServerSideRowModel } from "./interfaces/iServerSideRowModel";
 import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanelComp } from "./interfaces/iStatusPanel";
 import { SideBarDef } from "./entities/sideBar";
+import { _ } from "./utils";
 
 export interface StartEditingCellParams {
     rowIndex: number;

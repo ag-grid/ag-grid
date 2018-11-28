@@ -1,6 +1,6 @@
-import { _ } from "../utils";
 import { Autowired, PostConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { _ } from "../utils";
 
 export interface RowContainerComponentParams {
     eContainer: HTMLElement;

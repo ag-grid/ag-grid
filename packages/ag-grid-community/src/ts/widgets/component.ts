@@ -1,8 +1,8 @@
-import { NumberSequence, Utils as _ } from "../utils";
 import { Context } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { IComponent } from "../interfaces/iComponent";
 import { AgEvent } from "../events";
+import { NumberSequence, _ } from "../utils";
 
 const compIdSequence = new NumberSequence();
 

@@ -1,4 +1,4 @@
-import { PreDestroy, Bean, Qualifier, Autowired, PostConstruct, Optional, Context } from './context/context';
+import { Bean, Autowired } from './context/context';
 import { _ } from "./utils";
 
 const themeNames = ['fresh', 'dark', 'blue', 'bootstrap', 'material', 'balham-dark', 'balham'];

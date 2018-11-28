@@ -1,9 +1,9 @@
 import { ColumnGroupChild } from "../../entities/columnGroupChild";
-import { _ } from "../../utils";
 import { Column } from "../../entities/column";
 import { BeanStub } from "../../context/beanStub";
 import { Beans } from "../beans";
 import { Constants } from "../../constants";
+import { _ } from "../../utils";
 
 export class SetLeftFeature extends BeanStub {
 

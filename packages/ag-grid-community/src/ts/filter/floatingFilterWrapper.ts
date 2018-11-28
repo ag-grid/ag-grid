@@ -1,7 +1,6 @@
 import { Autowired, Context } from "../context/context";
 import { IMenuFactory } from "../interfaces/iMenuFactory";
 import { Column } from "../entities/column";
-import { _, Promise } from "../utils";
 import { SetLeftFeature } from "../rendering/features/setLeftFeature";
 import { IFloatingFilterParams, IFloatingFilterComp, FloatingFilterChange } from "./floatingFilter";
 import { Component } from "../widgets/component";
@@ -14,6 +13,7 @@ import { Events } from "../events";
 import { EventService } from "../eventService";
 import { ColumnHoverService } from "../rendering/columnHoverService";
 import { CombinedFilter } from "./baseFilter";
+import { _, Promise } from "../utils";
 
 export interface IFloatingFilterWrapperParams<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> {
     column: Column;

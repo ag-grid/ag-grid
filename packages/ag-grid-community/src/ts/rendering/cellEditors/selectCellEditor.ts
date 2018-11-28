@@ -1,10 +1,10 @@
 import { Component } from "../../widgets/component";
 import { ICellEditorComp, ICellEditorParams } from "./iCellEditor";
-import { _ } from '../../utils';
 import { Constants } from "../../constants";
 import { Autowired } from "../../context/context";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { ValueFormatterService } from "../valueFormatterService";
+import { _ } from '../../utils';
 
 export interface ISelectCellEditorParams extends ICellEditorParams {
     values: any[];

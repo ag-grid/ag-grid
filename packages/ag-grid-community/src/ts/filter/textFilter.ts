@@ -1,4 +1,3 @@
-import { _ } from "../utils";
 import { IDoesFilterPassParams, SerializedFilter } from "../interfaces/iFilter";
 import {
     ComparableBaseFilter,
@@ -8,6 +7,7 @@ import {
     IComparableFilterParams
 } from "./baseFilter";
 import { QuerySelector } from "../widgets/componentAnnotations";
+import { _ } from "../utils";
 
 export interface SerializedTextFilter extends SerializedFilter {
     filter: string;

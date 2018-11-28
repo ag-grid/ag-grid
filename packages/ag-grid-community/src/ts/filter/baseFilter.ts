@@ -3,9 +3,9 @@ import { IDoesFilterPassParams, IFilterComp, IFilterParams } from "../interfaces
 import { QuerySelector } from "../widgets/componentAnnotations";
 import { Autowired, Context } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { _ } from "../utils";
 import { BaseFloatingFilterChange, FloatingFilterChange } from "./floatingFilter";
 import { INumberFilterParams, ITextFilterParams } from "./textFilter";
+import { _ } from "../utils";
 
 export interface Comparator<T> {
     (left: T, right: T): number;

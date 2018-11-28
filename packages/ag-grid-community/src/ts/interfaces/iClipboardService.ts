@@ -1,5 +1,4 @@
 import { Column } from "../entities/column";
-import { ColDef } from "../entities/colDef";
 
 export interface IClipboardService {
     pasteFromClipboard(): void;

@@ -1,4 +1,3 @@
-import { _ } from "../../utils";
 import { Constants as constants, Constants } from "../../constants";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { ColumnApi } from "../../columnController/columnApi";
@@ -22,6 +21,7 @@ import { ValueService } from "../../valueService/valueService";
 import { ValueCache } from "../../valueService/valueCache";
 import { RowBounds } from "../../interfaces/iRowModel";
 import { GridApi } from "../../gridApi";
+import { _ } from "../../utils";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes}
 

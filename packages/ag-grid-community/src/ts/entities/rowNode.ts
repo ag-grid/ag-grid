@@ -9,12 +9,12 @@ import { ColumnApi } from "../columnController/columnApi";
 import { Autowired, Context } from "../context/context";
 import { IRowModel } from "../interfaces/iRowModel";
 import { Constants } from "../constants";
-import { _ } from "../utils";
 import { RowNodeCache, RowNodeCacheParams } from "../rowModels/cache/rowNodeCache";
 import { RowNodeBlock } from "../rowModels/cache/rowNodeBlock";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { ValueCache } from "../valueService/valueCache";
 import { DetailGridInfo, GridApi } from "../gridApi";
+import { _ } from "../utils";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to

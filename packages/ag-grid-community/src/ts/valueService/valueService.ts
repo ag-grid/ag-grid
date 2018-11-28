@@ -5,10 +5,10 @@ import { NewValueParams, ValueGetterParams } from "../entities/colDef";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
-import { _ } from "../utils";
 import { CellValueChangedEvent, Events } from "../events";
 import { EventService } from "../eventService";
 import { ValueCache } from "./valueCache";
+import { _ } from "../utils";
 
 @Bean('valueService')
 export class ValueService {

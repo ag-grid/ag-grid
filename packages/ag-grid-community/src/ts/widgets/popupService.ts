@@ -1,4 +1,3 @@
-import { _ } from "../utils";
 import { Constants } from "../constants";
 import { Autowired, Bean } from "../context/context";
 import { GridCore } from "../gridCore";
@@ -7,6 +6,7 @@ import { PostProcessPopupParams } from "../entities/gridOptions";
 import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
 import { Environment } from "../environment";
+import { _ } from "../utils";
 
 @Bean('popupService')
 export class PopupService {

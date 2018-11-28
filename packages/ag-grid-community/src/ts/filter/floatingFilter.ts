@@ -4,7 +4,6 @@ import { DateFilter, SerializedDateFilter } from "./dateFilter";
 import { SerializedNumberFilter } from "./numberFilter";
 import { IComponent } from "../interfaces/iComponent";
 import { RefSelector } from "../widgets/componentAnnotations";
-import { _, Promise } from "../utils";
 import { IDateComp, IDateParams } from "../rendering/dateComponent";
 import { ComponentRecipes } from "../components/framework/componentRecipes";
 import { Component } from "../widgets/component";
@@ -13,6 +12,7 @@ import { Column } from "../entities/column";
 import { GridApi } from "../gridApi";
 import { SerializedSetFilter } from "../interfaces/iSerializedSetFilter";
 import { CombinedFilter } from "./baseFilter";
+import { _, Promise } from "../utils";
 
 export interface FloatingFilterChange {
 }

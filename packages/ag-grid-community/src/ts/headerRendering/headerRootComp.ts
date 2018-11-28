@@ -8,10 +8,10 @@ import { EventService } from "../eventService";
 import { Events } from "../events";
 import { Component } from "../widgets/component";
 import { RefSelector } from "../widgets/componentAnnotations";
-import { _ } from "../utils";
 import { GridApi } from "../gridApi";
 import { AutoWidthCalculator } from "../rendering/autoWidthCalculator";
 import { Constants } from "../constants";
+import { _ } from "../utils";
 
 export class HeaderRootComp extends Component {
 

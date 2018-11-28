@@ -1,4 +1,3 @@
-import { _ } from "../utils";
 import { Column } from "../entities/column";
 import { CellChangedEvent, RowNode } from "../entities/rowNode";
 import { Constants } from "../constants";
@@ -24,6 +23,7 @@ import { NewValueParams, SuppressKeyboardEventParams } from "../entities/colDef"
 import { Beans } from "./beans";
 import { RowComp } from "./rowComp";
 import { RowDragComp } from "./rowDragComp";
+import { _ } from "../utils";
 
 export class CellComp extends Component {
 

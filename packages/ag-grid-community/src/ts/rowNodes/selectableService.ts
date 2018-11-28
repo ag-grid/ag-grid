@@ -1,8 +1,8 @@
 import { RowNode } from "../entities/rowNode";
 import { Autowired, Bean, PostConstruct } from "../context/context";
-import { _ } from "../utils";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { IsRowSelectable } from "../entities/gridOptions";
+import { _ } from "../utils";
 
 @Bean('selectableService')
 export class SelectableService {

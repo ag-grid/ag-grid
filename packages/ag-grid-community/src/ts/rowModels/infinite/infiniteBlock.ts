@@ -1,4 +1,3 @@
-import { _ } from "../../utils";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { RowNode } from "../../entities/rowNode";
 import { Autowired, Context, PostConstruct } from "../../context/context";
@@ -7,6 +6,7 @@ import { IEventEmitter } from "../../interfaces/iEventEmitter";
 import { InfiniteCacheParams } from "./infiniteCache";
 import { RowNodeBlock } from "../cache/rowNodeBlock";
 import { RowRenderer } from "../../rendering/rowRenderer";
+import { _ } from "../../utils";
 
 export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
 

@@ -1,6 +1,5 @@
 import { Component } from "../../widgets/component";
 import { Column } from "../../entities/column";
-import { _ } from "../../utils";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { ColumnApi } from "../../columnController/columnApi";
 import { ColumnController, ColumnResizeSet } from "../../columnController/columnController";
@@ -21,6 +20,7 @@ import { GridApi } from "../../gridApi";
 import { ComponentRecipes } from "../../components/framework/componentRecipes";
 import { Beans } from "../../rendering/beans";
 import { HoverFeature } from "../hoverFeature";
+import { _ } from "../../utils";
 
 export class HeaderGroupWrapperComp extends Component {
 

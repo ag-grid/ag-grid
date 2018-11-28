@@ -7,8 +7,8 @@ import { OriginalColumnGroupChild } from "../entities/originalColumnGroupChild";
 import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 import { Column } from "../entities/column";
 import { Autowired, Bean, Context, Qualifier } from "../context/context";
-import { _ } from "../utils";
 import { DefaultColumnTypes } from "../entities/defaultColumnTypes";
+import { _ } from "../utils";
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 @Bean('columnFactory')

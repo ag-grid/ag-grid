@@ -2,9 +2,9 @@ import { GridOptions } from '../entities/gridOptions';
 import { GridApi } from '../gridApi';
 import { ComponentStateChangedEvent, Events } from '../events';
 import { PropertyKeys } from '../propertyKeys';
-import { _ } from '../utils';
 import { ColumnApi } from '../columnController/columnApi';
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { _ } from '../utils';
 
 export class ComponentUtil {
     // all the events are populated in here AFTER this class (at the bottom of the file).

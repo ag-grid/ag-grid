@@ -1,3 +1,4 @@
+import { Autowired } from "../context/context";
 import { ColumnUtils } from "./columnUtils";
 import { Column } from "../entities/column";
 import { OriginalColumnGroupChild } from "../entities/originalColumnGroupChild";
@@ -7,7 +8,6 @@ import { ColumnGroup } from "../entities/columnGroup";
 import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 import { Bean, Context } from "../context/context";
 import { _ } from "../utils";
-import { Autowired } from "../context/context";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 @Bean('displayedGroupCreator')
@@ -179,7 +179,7 @@ export class DisplayedGroupCreator {
         if (found) {
             return result;
         } else {
-            console.log('could not get path');
+            console.warn('could not get path');
             return null;
             // return this.createFakePath(balancedColumnTree, column);
         }

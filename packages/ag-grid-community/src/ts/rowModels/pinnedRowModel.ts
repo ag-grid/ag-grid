@@ -6,9 +6,9 @@ import { Autowired } from "../context/context";
 import { Events, PinnedRowDataChangedEvent } from "../events";
 import { PostConstruct } from "../context/context";
 import { Constants } from "../constants";
-import { _ } from '../utils';
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
+import { _ } from '../utils';
 
 @Bean('pinnedRowModel')
 export class PinnedRowModel {

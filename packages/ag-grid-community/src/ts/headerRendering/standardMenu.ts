@@ -2,11 +2,11 @@ import { Autowired, Bean } from "../context/context";
 import { IMenuFactory } from "../interfaces/iMenuFactory";
 import { FilterManager, FilterWrapper } from "../filter/filterManager";
 import { Column } from "../entities/column";
-import { _ } from "../utils";
 import { PopupService } from "../widgets/popupService";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { EventService } from "../eventService";
 import { IAfterGuiAttachedParams } from "../interfaces/iComponent";
+import { _ } from "../utils";
 
 @Bean('menuFactory')
 export class StandardMenuFactory implements IMenuFactory {

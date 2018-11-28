@@ -1,7 +1,7 @@
 import { Constants } from "../constants";
-import { _ } from '../utils';
 import { GridCell, GridCellDef } from "./gridCell";
 import { Column } from "./column";
+import { _ } from '../utils';
 
 export class GridRow {
 

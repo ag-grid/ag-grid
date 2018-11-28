@@ -1,4 +1,3 @@
-
 import { Autowired, Bean, Optional, PostConstruct } from "../context/context";
 import { GridCell, GridCellDef } from "../entities/gridCell";
 import { Constants } from "../constants";
@@ -6,12 +5,12 @@ import { MouseEventService } from "./mouseEventService";
 import { PaginationProxy } from "../rowModels/paginationProxy";
 import { Column } from "../entities/column";
 import { FocusedCellController } from "../focusedCellController";
-import { _ } from "../utils";
 import { GridPanel } from "./gridPanel";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { IRangeController } from "../interfaces/iRangeController";
 import { ColumnController } from "../columnController/columnController";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { _ } from "../utils";
 
 @Bean('navigationService')
 export class NavigationService {

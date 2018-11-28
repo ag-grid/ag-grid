@@ -1,5 +1,4 @@
 import { Bean, PostConstruct, Autowired } from "../context/context";
-import { _ } from '../utils';
 import { ICellRenderer, ICellRendererFunc } from "./cellRenderers/iCellRenderer";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { EventService } from "../eventService";
@@ -7,6 +6,7 @@ import { ExpressionService } from "../valueService/expressionService";
 import { AnimateSlideCellRenderer } from "./cellRenderers/animateSlideCellRenderer";
 import { AnimateShowChangeCellRenderer } from "./cellRenderers/animateShowChangeCellRenderer";
 import { GroupCellRenderer } from "./cellRenderers/groupCellRenderer";
+import { _ } from '../utils';
 
 @Bean('cellRendererFactory')
 export class CellRendererFactory {

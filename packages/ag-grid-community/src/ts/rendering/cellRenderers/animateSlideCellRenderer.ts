@@ -1,7 +1,7 @@
 
 import { ICellRenderer } from "./iCellRenderer";
-import { _ } from "../../utils";
 import { Component } from "../../widgets/component";
+import { _ } from "../../utils";
 
 export class AnimateSlideCellRenderer extends Component implements ICellRenderer {
 

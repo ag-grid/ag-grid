@@ -1,6 +1,4 @@
-
 import { RowNode } from "../../entities/rowNode";
-import { _ } from "../../utils";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { Context } from "../../context/context";
 import { GetNodeChildDetails, IsRowMaster } from "../../entities/gridOptions";
@@ -11,6 +9,7 @@ import { Events, SelectionChangedEvent } from "../../events";
 import { GridApi } from "../../gridApi";
 import { ColumnApi } from "../../columnController/columnApi";
 import { SelectionController } from "../../selectionController";
+import { _ } from "../../utils";
 
 export class ClientSideNodeManager {
 

@@ -2,7 +2,6 @@ import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { ExpressionService } from "../../valueService/expressionService";
 import { EventService } from "../../eventService";
 import { Constants } from "../../constants";
-import { _, Promise } from "../../utils";
 import { Autowired, Context } from "../../context/context";
 import { Component } from "../../widgets/component";
 import { ICellRenderer, ICellRendererComp, ICellRendererParams } from "./iCellRenderer";
@@ -14,6 +13,7 @@ import { ColumnController } from "../../columnController/columnController";
 import { Column } from "../../entities/column";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { MouseEventService } from "../../gridPanel/mouseEventService";
+import { _, Promise } from "../../utils";
 
 export interface GroupCellRendererParams extends ICellRendererParams {
     pinned:string;

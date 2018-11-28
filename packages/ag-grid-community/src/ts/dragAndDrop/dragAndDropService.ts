@@ -1,12 +1,12 @@
 import { Logger, LoggerFactory } from "../logger";
 import { Qualifier, PostConstruct, Bean, Autowired, PreDestroy } from "../context/context";
 import { Column } from "../entities/column";
-import { _ } from "../utils";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { DragService, DragListenerParams } from "./dragService";
 import { ColumnController } from "../columnController/columnController";
 import { Environment } from "../environment";
 import { RowNode } from "../entities/rowNode";
+import { _ } from "../utils";
 
 export enum DragSourceType { ToolPanel, HeaderCell, RowDrag }
 

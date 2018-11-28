@@ -1,11 +1,11 @@
 import { Bean, Context, Autowired } from "../../context/context";
 import { RowNode } from "../../entities/rowNode";
-import { _ } from "../../utils";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { SelectionController } from "../../selectionController";
 import { EventService } from "../../eventService";
 import { IRowNodeStage, StageExecuteParams } from "../../interfaces/iRowNodeStage";
 import { ColumnController } from "../../columnController/columnController";
+import { _ } from "../../utils";
 
 @Bean('flattenStage')
 export class FlattenStage implements IRowNodeStage {

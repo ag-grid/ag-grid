@@ -3,7 +3,6 @@ import { Autowired, Bean } from "../context/context";
 import { ColumnController } from "../columnController/columnController";
 import { Constants } from "../constants";
 import { IRowModel } from "../interfaces/iRowModel";
-import { _ } from "../utils";
 import { RowNode } from "../entities/rowNode";
 import { SelectionController } from "../selectionController";
 import { ValueService } from "../valueService/valueService";
@@ -22,7 +21,7 @@ import { ColumnGroup } from "../entities/columnGroup";
 import { GridApi } from "../gridApi";
 import { ClientSideRowModel } from "../rowModels/clientSide/clientSideRowModel";
 import { PinnedRowModel } from "../rowModels/pinnedRowModel";
-import { AutoGroupColService } from "../columnController/autoGroupColService";
+import { _ } from "../utils";
 
 /**
  * This interface works in conjuction with the GridSerializer. When serializing a grid, an instance that implements this interface

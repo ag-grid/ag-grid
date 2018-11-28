@@ -1,7 +1,6 @@
 import { Component } from "../../widgets/component";
 import { Autowired, Context, PostConstruct } from "../../context/context";
 import { Column } from "../../entities/column";
-import { _ } from "../../utils";
 import {
     DragAndDropService, DragItem, DragSource, DragSourceType,
     DropTarget
@@ -26,6 +25,7 @@ import { ColumnHoverService } from "../../rendering/columnHoverService";
 import { Beans } from "../../rendering/beans";
 import { HoverFeature } from "../hoverFeature";
 import { TouchListener } from "../../widgets/touchListener";
+import { _ } from "../../utils";
 
 export class HeaderWrapperComp extends Component {
 

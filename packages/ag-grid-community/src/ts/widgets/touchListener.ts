@@ -1,6 +1,6 @@
 import { EventService } from "../eventService";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
-import { Utils as _ } from "../utils";
+import { _ } from "../utils";
 import { AgEvent } from "../events";
 
 export interface TapEvent extends AgEvent {

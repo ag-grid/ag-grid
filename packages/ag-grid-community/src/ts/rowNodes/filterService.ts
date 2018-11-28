@@ -2,6 +2,7 @@ import { Bean, Autowired, PostConstruct } from "../context/context";
 import { RowNode } from "../entities/rowNode";
 import { FilterManager } from "../filter/filterManager";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
+
 @Bean("filterService")
 export class FilterService {
 

@@ -1,4 +1,3 @@
-import { _ } from "../utils";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { Autowired, Context, PostConstruct } from "../context/context";
 import { DragAndDropService, DropTarget } from "../dragAndDrop/dragAndDropService";
@@ -11,6 +10,7 @@ import { BodyDropTarget } from "./bodyDropTarget";
 import { Column } from "../entities/column";
 import { ScrollVisibleService } from "../gridPanel/scrollVisibleService";
 import { Component } from "../widgets/component";
+import { _ } from "../utils";
 
 export class HeaderContainer {
 

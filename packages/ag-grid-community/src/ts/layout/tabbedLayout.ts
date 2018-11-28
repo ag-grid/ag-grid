@@ -1,4 +1,4 @@
-import { Promise, Utils as _ } from '../utils';
+import { Promise, _ } from '../utils';
 
 export class TabbedLayout {
 

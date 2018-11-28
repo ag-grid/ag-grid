@@ -1,4 +1,3 @@
-import { _ } from './utils';
 import { RowNode } from "./entities/rowNode";
 import { Bean } from "./context/context";
 import { Qualifier } from "./context/context";
@@ -14,6 +13,7 @@ import { Constants } from "./constants";
 import { ClientSideRowModel } from "./rowModels/clientSide/clientSideRowModel";
 import { ColumnApi } from "./columnController/columnApi";
 import { GridApi } from "./gridApi";
+import { _ } from './utils';
 
 @Bean('selectionController')
 export class SelectionController {
