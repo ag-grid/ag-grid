@@ -1,6 +1,6 @@
-import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {Bean} from "./context/context";
-import {Qualifier} from "./context/context";
+import { GridOptionsWrapper } from "./gridOptionsWrapper";
+import { Bean } from "./context/context";
+import { Qualifier } from "./context/context";
 
 @Bean('loggerFactory')
 export class LoggerFactory {
@@ -22,10 +22,10 @@ export class LoggerFactory {
 
 export class Logger {
 
-    private isLoggingFunc: ()=> boolean;
+    private isLoggingFunc: () => boolean;
     private name: string;
 
-    constructor(name: string, isLoggingFunc: ()=> boolean) {
+    constructor(name: string, isLoggingFunc: () => boolean) {
         this.name = name;
         this.isLoggingFunc = isLoggingFunc;
     }

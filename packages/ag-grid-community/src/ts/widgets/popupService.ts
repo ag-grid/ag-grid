@@ -1,12 +1,12 @@
-import {Utils as _} from "../utils";
-import {Constants} from "../constants";
-import {Autowired, Bean} from "../context/context";
-import {GridCore} from "../gridCore";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {PostProcessPopupParams} from "../entities/gridOptions";
-import {RowNode} from "../entities/rowNode";
-import {Column} from "../entities/column";
-import {Environment} from "../environment";
+import { _ } from "../utils";
+import { Constants } from "../constants";
+import { Autowired, Bean } from "../context/context";
+import { GridCore } from "../gridCore";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { PostProcessPopupParams } from "../entities/gridOptions";
+import { RowNode } from "../entities/rowNode";
+import { Column } from "../entities/column";
+import { Environment } from "../environment";
 
 @Bean('popupService')
 export class PopupService {
@@ -24,7 +24,7 @@ export class PopupService {
     }
 
     private getPopupParent(): HTMLElement {
-        let ePopupParent = this.gridOptionsWrapper.getPopupParent();
+        const ePopupParent = this.gridOptionsWrapper.getPopupParent();
         if (ePopupParent) {
             // user provided popup parent, may not have the right theme applied
             return ePopupParent;
@@ -161,9 +161,9 @@ export class PopupService {
     }
 
     private callPostProcessPopup(ePopup: HTMLElement, eventSource: HTMLElement | null, mouseEvent: MouseEvent | Touch | null, type: string, column: Column | null | undefined, rowNode: RowNode | undefined): void {
-        let callback = this.gridOptionsWrapper.getPostProcessPopupFunc();
+        const callback = this.gridOptionsWrapper.getPostProcessPopupFunc();
         if (callback) {
-            let params: PostProcessPopupParams = {
+            const params: PostProcessPopupParams = {
                 column: column,
                 rowNode: rowNode,
                 ePopup: ePopup,
@@ -310,7 +310,7 @@ export class PopupService {
 
     public addPopup(modal: boolean, eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch): (event?: any) => void {
 
-        let eDocument = this.gridOptionsWrapper.getDocument();
+        const eDocument = this.gridOptionsWrapper.getDocument();
         if (!eDocument) {
             console.warn('ag-grid: could not find the document, document is empty');
             return;
@@ -319,16 +319,16 @@ export class PopupService {
         eChild.style.top = '0px';
         eChild.style.left = '0px';
 
-        let popupAlreadyShown = _.isVisible(eChild);
+        const popupAlreadyShown = _.isVisible(eChild);
         if (popupAlreadyShown) {
             return;
         }
 
-        let ePopupParent = this.getPopupParent();
+        const ePopupParent = this.getPopupParent();
 
         // add env CSS class to child, in case user provided a popup parent, which means
         // theme class may be missing
-        let eWrapper = document.createElement('div');
+        const eWrapper = document.createElement('div');
         _.addCssClass(eWrapper, this.environment.getTheme());
         eWrapper.appendChild(eChild);
 
@@ -337,22 +337,22 @@ export class PopupService {
 
         let popupHidden = false;
 
-        let hidePopupOnKeyboardEvent = (event: KeyboardEvent) => {
-            let key = event.which || event.keyCode;
+        const hidePopupOnKeyboardEvent = (event: KeyboardEvent) => {
+            const key = event.which || event.keyCode;
             if (key === Constants.KEY_ESCAPE) {
                 hidePopup(null);
             }
         };
 
-        let hidePopupOnMouseEvent = (event: MouseEvent) => {
+        const hidePopupOnMouseEvent = (event: MouseEvent) => {
             hidePopup(event);
         };
 
-        let hidePopupOnTouchEvent = (event: TouchEvent) => {
+        const hidePopupOnTouchEvent = (event: TouchEvent) => {
             hidePopup(null, event);
         };
 
-        let hidePopup = (mouseEvent?: MouseEvent | null, touchEvent?: TouchEvent) => {
+        const hidePopup = (mouseEvent?: MouseEvent | null, touchEvent?: TouchEvent) => {
             // we don't hide popup if the event was on the child, or any
             // children of this child
             if (this.isEventFromCurrentPopup(mouseEvent, touchEvent, eChild)) {
@@ -400,11 +400,11 @@ export class PopupService {
     }
 
     private isEventFromCurrentPopup(mouseEvent: MouseEvent | null | undefined, touchEvent: TouchEvent | undefined, eChild: HTMLElement): boolean {
-        let event = mouseEvent ? mouseEvent : touchEvent;
+        const event = mouseEvent ? mouseEvent : touchEvent;
         if (event) {
-            let indexOfThisChild = this.activePopupElements.indexOf(eChild);
+            const indexOfThisChild = this.activePopupElements.indexOf(eChild);
             for (let i = indexOfThisChild; i < this.activePopupElements.length; i++) {
-                let element = this.activePopupElements[i];
+                const element = this.activePopupElements[i];
                 if (_.isElementInEventPath(element, event)) {
                     return true;
                 }
@@ -436,8 +436,8 @@ export class PopupService {
             const screenX = mouseEvent ? mouseEvent.screenX : 0;
             const screenY = mouseEvent ? mouseEvent.screenY : 0;
 
-            let xMatch = Math.abs(originalClick.screenX - screenX) < 5;
-            let yMatch = Math.abs(originalClick.screenY - screenY) < 5;
+            const xMatch = Math.abs(originalClick.screenX - screenX) < 5;
+            const yMatch = Math.abs(originalClick.screenY - screenY) < 5;
             if (xMatch && yMatch) {
                 return true;
             }

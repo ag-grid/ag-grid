@@ -1,7 +1,7 @@
-import {_} from "../utils";
-import {Column} from "../entities/column";
-import {CellChangedEvent, RowNode} from "../entities/rowNode";
-import {Constants} from "../constants";
+import { _ } from "../utils";
+import { Column } from "../entities/column";
+import { CellChangedEvent, RowNode } from "../entities/rowNode";
+import { Constants } from "../constants";
 import {
     CellClickedEvent,
     CellContextMenuEvent,
@@ -15,15 +15,15 @@ import {
     Events,
     FlashCellsEvent
 } from "../events";
-import {GridCell, GridCellDef} from "../entities/gridCell";
-import {ICellEditorComp, ICellEditorParams} from "./cellEditors/iCellEditor";
-import {Component} from "../widgets/component";
-import {ICellRendererComp, ICellRendererParams} from "./cellRenderers/iCellRenderer";
-import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
-import {NewValueParams, SuppressKeyboardEventParams} from "../entities/colDef";
-import {Beans} from "./beans";
-import {RowComp} from "./rowComp";
-import {RowDragComp} from "./rowDragComp";
+import { GridCell, GridCellDef } from "../entities/gridCell";
+import { ICellEditorComp, ICellEditorParams } from "./cellEditors/iCellEditor";
+import { Component } from "../widgets/component";
+import { ICellRendererComp, ICellRendererParams } from "./cellRenderers/iCellRenderer";
+import { CheckboxSelectionComponent } from "./checkboxSelectionComponent";
+import { NewValueParams, SuppressKeyboardEventParams } from "../entities/colDef";
+import { Beans } from "./beans";
+import { RowComp } from "./rowComp";
+import { RowDragComp } from "./rowDragComp";
 
 export class CellComp extends Component {
 
@@ -177,7 +177,7 @@ export class CellComp extends Component {
 
     public afterAttached(): void {
         const querySelector = `[comp-id="${this.getCompId()}"]`;
-        const eGui = <HTMLElement> this.eParentRow.querySelector(querySelector);
+        const eGui = this.eParentRow.querySelector(querySelector) as HTMLElement;
         this.setGui(eGui);
 
         // all of these have dependencies on the eGui, so only do them after eGui is set
@@ -350,7 +350,7 @@ export class CellComp extends Component {
         // if using a cellRenderer, then render the html from the cell renderer if it exists
         if (this.usingCellRenderer) {
             if (typeof this.cellRendererGui === 'string') {
-                return <string> this.cellRendererGui;
+                return this.cellRendererGui as string;
             } else {
                 return '';
             }
@@ -528,7 +528,7 @@ export class CellComp extends Component {
                     context: this.beans.gridOptionsWrapper.getContext(),
                     api: this.beans.gridOptionsWrapper.getApi()
                 };
-                const cellStyleFunc = <Function>colDef.cellStyle;
+                const cellStyleFunc = colDef.cellStyle as Function;
                 cssToUse = cellStyleFunc(cellStyleParams);
             } else {
                 cssToUse = colDef.cellStyle;
@@ -791,7 +791,7 @@ export class CellComp extends Component {
 
     private createCellRendererParams(): ICellRendererParams {
 
-        const params = <ICellRendererParams> {
+        const params = {
             value: this.value,
             valueFormatted: this.valueFormatted,
             getValue: this.getValue.bind(this),
@@ -825,7 +825,7 @@ export class CellComp extends Component {
                     this.rowComp.addEventListener(eventType, listener);
                 }
             }
-        };
+        } as ICellRendererParams;
 
         return params;
     }
@@ -895,7 +895,7 @@ export class CellComp extends Component {
 
         if (colDef.onCellContextMenu) {
             // to make the callback async, do in a timeout
-            setTimeout(() => (<any>colDef.onCellContextMenu)(cellContextMenuEvent), 0);
+            setTimeout(() => (colDef.onCellContextMenu as any)(cellContextMenuEvent), 0);
         }
     }
 
@@ -917,7 +917,7 @@ export class CellComp extends Component {
 
         // because we are hacking in $scope for angular 1, we have to de-reference
         if (this.scope) {
-            (<any>event).$scope = this.scope;
+            (event as any).$scope = this.scope;
         }
 
         return event;
@@ -944,7 +944,7 @@ export class CellComp extends Component {
         // check if colDef also wants to handle event
         if (typeof colDef.onCellDoubleClicked === 'function') {
             // to make the callback async, do in a timeout
-            setTimeout(() => (<any>colDef.onCellDoubleClicked)(cellDoubleClickedEvent), 0);
+            setTimeout(() => (colDef.onCellDoubleClicked as any)(cellDoubleClickedEvent), 0);
         }
 
         const editOnDoubleClick = !this.beans.gridOptionsWrapper.isSingleClickEdit()
@@ -1022,7 +1022,7 @@ export class CellComp extends Component {
             console.warn(`ag-Grid: cellEditor for column ${this.column.getId()} is missing getGui() method`);
 
             // no getGui, for React guys, see if they attached a react component directly
-            if ((<any>cellEditor).render) {
+            if ((cellEditor as any).render) {
                 console.warn(`ag-Grid: we found 'render' on the component, are you trying to set a React renderer but added it as colDef.cellEditor instead of colDef.cellEditorFmk?`);
             }
 
@@ -1123,8 +1123,8 @@ export class CellComp extends Component {
         _.addOrRemoveCssClass(this.getGui(), "ag-cell-inline-editing", editingInline);
         _.addOrRemoveCssClass(this.getGui(), "ag-cell-not-inline-editing", !editingInline);
         _.addOrRemoveCssClass(this.getGui(), "ag-cell-popup-editing", popupEditorShowing);
-        _.addOrRemoveCssClass(<HTMLElement>this.getGui().parentNode, "ag-row-inline-editing", editingInline);
-        _.addOrRemoveCssClass(<HTMLElement>this.getGui().parentNode, "ag-row-not-inline-editing", !editingInline);
+        _.addOrRemoveCssClass(this.getGui().parentNode as HTMLElement, "ag-row-inline-editing", editingInline);
+        _.addOrRemoveCssClass(this.getGui().parentNode as HTMLElement, "ag-row-not-inline-editing", !editingInline);
     }
 
     private createCellEditorParams(keyPress: number | null, charPress: string | null, cellStartedEdit: boolean): ICellEditorParams {
@@ -1445,7 +1445,7 @@ export class CellComp extends Component {
 
         if (colDef.onCellClicked) {
             // to make callback async, do in a timeout
-            setTimeout(() => (<any>colDef.onCellClicked)(cellClickedEvent), 0);
+            setTimeout(() => (colDef.onCellClicked as any)(cellClickedEvent), 0);
         }
 
         const editOnSingleClick = (this.beans.gridOptionsWrapper.isSingleClickEdit() || colDef.singleClickEdit)
@@ -1471,11 +1471,11 @@ export class CellComp extends Component {
     }
 
     private createGridCellVo(): void {
-        const gridCellDef = <GridCellDef> {
+        const gridCellDef = {
             rowIndex: this.rowNode.rowIndex,
             floating: this.rowNode.rowPinned,
             column: this.column
-        };
+        } as GridCellDef;
         this.gridCell = new GridCell(gridCellDef);
     }
 
@@ -1771,7 +1771,7 @@ export class CellComp extends Component {
                 if (this.cellRenderer) {
                     // we know it's a dom element (not a string) because we converted
                     // it after the gui was attached if it was a string.
-                    const eCell = <HTMLElement>this.cellRendererGui;
+                    const eCell = this.cellRendererGui as HTMLElement;
 
                     // can be null if cell was previously null / contained empty string,
                     // this will result in new value not being rendered.

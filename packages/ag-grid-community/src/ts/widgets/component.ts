@@ -1,10 +1,10 @@
-import {NumberSequence, Utils as _} from "../utils";
-import {Context} from "../context/context";
-import {BeanStub} from "../context/beanStub";
-import {IComponent} from "../interfaces/iComponent";
-import {AgEvent} from "../events";
+import { NumberSequence, Utils as _ } from "../utils";
+import { Context } from "../context/context";
+import { BeanStub } from "../context/beanStub";
+import { IComponent } from "../interfaces/iComponent";
+import { AgEvent } from "../events";
 
-let compIdSequence = new NumberSequence();
+const compIdSequence = new NumberSequence();
 
 export interface VisibleChangedEvent extends AgEvent {
     visible: boolean;
@@ -57,11 +57,11 @@ export class Component extends BeanStub implements IComponent<any> {
 
         // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
         // which messes up the traversal order of the children.
-        let childNodeList: Node[] = _.copyNodeList(parentNode.childNodes);
+        const childNodeList: Node[] = _.copyNodeList(parentNode.childNodes);
 
         childNodeList.forEach(childNode => {
-            let childComp = context.createComponent(<Element>childNode, (childComp)=> {
-                let attrList = this.getAttrLists(<Element>childNode);
+            const childComp = context.createComponent(childNode as Element, (childComp) => {
+                const attrList = this.getAttrLists(childNode as Element);
                 this.copyAttributesFromNode(attrList, childComp.getGui());
                 this.createChildAttributes(attrList, childComp);
                 this.addEventListenersToComponent(attrList, childComp);
@@ -70,33 +70,33 @@ export class Component extends BeanStub implements IComponent<any> {
                 this.swapComponentForNode(childComp, parentNode, childNode);
             } else {
                 if (childNode.childNodes) {
-                    this.instantiateRecurse(<Element>childNode, context);
+                    this.instantiateRecurse(childNode as Element, context);
                 }
                 if (childNode instanceof HTMLElement) {
-                    let attrList = this.getAttrLists(<Element>childNode);
-                    this.addEventListenersToElement(attrList, <HTMLElement>childNode);
+                    const attrList = this.getAttrLists(childNode as Element);
+                    this.addEventListenersToElement(attrList, childNode as HTMLElement);
                 }
             }
         });
     }
 
     private getAttrLists(child: Element): AttrLists {
-        let res: AttrLists = {
+        const res: AttrLists = {
             bindings: [],
             events: [],
             normal: []
         };
         _.iterateNamedNodeMap(child.attributes,
             (name: string, value: string) => {
-                let firstCharacter = name.substr(0,1);
-                if (firstCharacter==='(') {
-                    let eventName = name.replace('(', '').replace(')', '');
+                const firstCharacter = name.substr(0, 1);
+                if (firstCharacter === '(') {
+                    const eventName = name.replace('(', '').replace(')', '');
                     res.events.push({
                         name: eventName,
                         value: value
                     });
-                } else if (firstCharacter==='[') {
-                    let bindingName = name.replace('[', '').replace(']', '');
+                } else if (firstCharacter === '[') {
+                    const bindingName = name.replace('[', '').replace(']', '');
                     res.bindings.push({
                         name: bindingName,
                         value: value
@@ -113,34 +113,34 @@ export class Component extends BeanStub implements IComponent<any> {
     }
 
     private addEventListenersToElement(attrLists: AttrLists, element: HTMLElement): void {
-        this.addEventListenerCommon(attrLists, (eventName: string, listener: (event?: any)=>void )=> {
+        this.addEventListenerCommon(attrLists, (eventName: string, listener: (event?: any) => void) => {
             this.addDestroyableEventListener(element, eventName, listener);
         });
     }
 
     private addEventListenersToComponent(attrLists: AttrLists, component: Component): void {
-        this.addEventListenerCommon(attrLists, (eventName: string, listener: (event?: any)=>void )=> {
+        this.addEventListenerCommon(attrLists, (eventName: string, listener: (event?: any) => void) => {
             this.addDestroyableEventListener(component, eventName, listener);
         });
     }
 
     private addEventListenerCommon(attrLists: AttrLists,
-                                   callback: (eventName: string, listener: (event?: any)=>void)=>void): void {
-        let methodAliases = this.getAgComponentMetaData('methods');
+                                   callback: (eventName: string, listener: (event?: any) => void) => void): void {
+        const methodAliases = this.getAgComponentMetaData('methods');
 
-        attrLists.events.forEach( nameValue => {
-            let methodName = nameValue.value;
-            let methodAlias = _.find(methodAliases, 'alias', methodName);
+        attrLists.events.forEach(nameValue => {
+            const methodName = nameValue.value;
+            const methodAlias = _.find(methodAliases, 'alias', methodName);
 
-            let methodNameToUse = _.exists(methodAlias) ? methodAlias.methodName : methodName;
+            const methodNameToUse = _.exists(methodAlias) ? methodAlias.methodName : methodName;
 
-            let listener = (<any>this)[methodNameToUse];
+            const listener = (this as any)[methodNameToUse];
             if (typeof listener !== 'function') {
                 console.warn('ag-Grid: count not find callback ' + methodName);
                 return;
             }
 
-            let eventCamelCase = _.hyphenToCamelCase(nameValue.name);
+            const eventCamelCase = _.hyphenToCamelCase(nameValue.name);
 
             callback(eventCamelCase, listener.bind(this));
         });
@@ -148,29 +148,29 @@ export class Component extends BeanStub implements IComponent<any> {
 
     private createChildAttributes(attrLists: AttrLists, child: any): void {
 
-        let childAttributes: any = {};
+        const childAttributes: any = {};
 
-        attrLists.normal.forEach( nameValue => {
-            let nameCamelCase = _.hyphenToCamelCase(nameValue.name);
+        attrLists.normal.forEach(nameValue => {
+            const nameCamelCase = _.hyphenToCamelCase(nameValue.name);
             childAttributes[nameCamelCase] = nameValue.value;
         });
 
-        attrLists.bindings.forEach( nameValue => {
-            let nameCamelCase = _.hyphenToCamelCase(nameValue.name);
-            childAttributes[nameCamelCase] = (<any>this)[nameValue.value];
+        attrLists.bindings.forEach(nameValue => {
+            const nameCamelCase = _.hyphenToCamelCase(nameValue.name);
+            childAttributes[nameCamelCase] = (this as any)[nameValue.value];
         });
 
         child.props = childAttributes;
     }
 
     private copyAttributesFromNode(attrLists: AttrLists, childNode: Element): void {
-        attrLists.normal.forEach( nameValue => {
+        attrLists.normal.forEach(nameValue => {
             childNode.setAttribute(nameValue.name, nameValue.value);
         });
     }
 
     private swapComponentForNode(newComponent: Component, parentNode: Element, childNode: Node): void {
-        let eComponent = newComponent.getGui();
+        const eComponent = newComponent.getGui();
         parentNode.replaceChild(eComponent, childNode);
         parentNode.insertBefore(document.createComment(childNode.nodeName), eComponent);
         this.childComponents.push(newComponent);
@@ -181,10 +181,10 @@ export class Component extends BeanStub implements IComponent<any> {
 
         let thisProto: any = Object.getPrototypeOf(this);
 
-        let thisNoType = <any> this;
+        const thisNoType = this as any;
         while (thisProto != null) {
-            let metaData = thisProto.__agComponentMetaData;
-            let currentProtoName = (thisProto.constructor).name;
+            const metaData = thisProto.__agComponentMetaData;
+            const currentProtoName = (thisProto.constructor).name;
 
             if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
                 metaData[currentProtoName].querySelectors.forEach((querySelector: any) => {
@@ -199,13 +199,13 @@ export class Component extends BeanStub implements IComponent<any> {
     }
 
     public setTemplate(template: string): void {
-        let eGui = _.loadTemplate(<string>template);
+        const eGui = _.loadTemplate(template as string);
         this.setTemplateFromElement(eGui);
     }
 
     public setTemplateFromElement(element: HTMLElement): void {
         this.eGui = element;
-        (<any>this.eGui).__agComponent = this;
+        (this.eGui as any).__agComponent = this;
         this.addAnnotatedEventListeners();
         this.wireQuerySelectors();
     }
@@ -218,15 +218,15 @@ export class Component extends BeanStub implements IComponent<any> {
         let thisProto: any = Object.getPrototypeOf(this);
 
         while (thisProto != null) {
-            let metaData = thisProto.__agComponentMetaData;
-            let currentProtoName = (thisProto.constructor).name;
+            const metaData = thisProto.__agComponentMetaData;
+            const currentProtoName = (thisProto.constructor).name;
 
             if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
-                let thisNoType = <any> this;
+                const thisNoType = this as any;
                 metaData[currentProtoName].querySelectors.forEach((querySelector: any) => {
-                    let resultOfQuery = this.eGui.querySelector(querySelector.querySelector);
+                    const resultOfQuery = this.eGui.querySelector(querySelector.querySelector);
                     if (resultOfQuery) {
-                        let backingComponent = (<any>resultOfQuery).__agComponent;
+                        const backingComponent = (resultOfQuery as any).__agComponent;
                         if (backingComponent) {
                             thisNoType[querySelector.attributeName] = backingComponent;
                         } else {
@@ -248,7 +248,7 @@ export class Component extends BeanStub implements IComponent<any> {
             return;
         }
 
-        let listenerMethods = this.getAgComponentMetaData('listenerMethods');
+        const listenerMethods = this.getAgComponentMetaData('listenerMethods');
 
         if (_.missingOrEmpty(listenerMethods)) { return; }
 
@@ -257,7 +257,7 @@ export class Component extends BeanStub implements IComponent<any> {
         }
 
         listenerMethods.forEach((eventListener: any) => {
-            let listener = (<any>this)[eventListener.methodName].bind(this);
+            const listener = (this as any)[eventListener.methodName].bind(this);
             this.eGui.addEventListener(eventListener.eventName, listener);
             this.annotatedEventListeners.push({eventName: eventListener.eventName, listener: listener});
         });
@@ -269,8 +269,8 @@ export class Component extends BeanStub implements IComponent<any> {
         let thisProto: any = Object.getPrototypeOf(this);
 
         while (thisProto != null) {
-            let metaData = thisProto.__agComponentMetaData;
-            let currentProtoName = (thisProto.constructor).name;
+            const metaData = thisProto.__agComponentMetaData;
+            const currentProtoName = (thisProto.constructor).name;
 
             if (metaData && metaData[currentProtoName] && metaData[currentProtoName][key]) {
                 res = res.concat(metaData[currentProtoName][key]);
@@ -306,18 +306,18 @@ export class Component extends BeanStub implements IComponent<any> {
     }
 
     protected queryForHtmlElement(cssSelector: string): HTMLElement {
-        return <HTMLElement> this.eGui.querySelector(cssSelector);
+        return this.eGui.querySelector(cssSelector) as HTMLElement;
     }
 
     protected queryForHtmlInputElement(cssSelector: string): HTMLInputElement {
-        return <HTMLInputElement> this.eGui.querySelector(cssSelector);
+        return this.eGui.querySelector(cssSelector) as HTMLInputElement;
     }
 
     public appendChild(newChild: Node | IComponent<any>): void {
         if (_.isNodeOrElement(newChild)) {
-            this.eGui.appendChild(<Node>newChild);
+            this.eGui.appendChild(newChild as Node);
         } else {
-            let childComponent = <IComponent<any>>newChild;
+            const childComponent = newChild as IComponent<any>;
             this.eGui.appendChild(childComponent.getGui());
             this.childComponents.push(childComponent);
         }
@@ -339,7 +339,7 @@ export class Component extends BeanStub implements IComponent<any> {
         if (visible !== this.visible) {
             this.visible = visible;
             _.addOrRemoveCssClass(this.eGui, isDisplay ? 'ag-hidden' : 'ag-invisible', !visible);
-            let event: VisibleChangedEvent = {
+            const event: VisibleChangedEvent = {
                 type: Component.EVENT_VISIBLE_CHANGED,
                 visible: this.visible
             };
@@ -355,7 +355,7 @@ export class Component extends BeanStub implements IComponent<any> {
         super.destroy();
         this.childComponents.forEach(childComponent => {
             if (childComponent) {
-                childComponent.destroy()
+                childComponent.destroy();
             }
         });
         this.childComponents.length = 0;
@@ -377,7 +377,7 @@ export class Component extends BeanStub implements IComponent<any> {
     }
 
     public getAttribute(key: string): string | null {
-        let eGui = this.getGui();
+        const eGui = this.getGui();
         if (eGui) {
             return eGui.getAttribute(key);
         } else {

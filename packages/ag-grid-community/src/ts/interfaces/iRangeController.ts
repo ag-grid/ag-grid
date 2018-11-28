@@ -1,6 +1,6 @@
-import {Column} from "../entities/column";
-import {GridCell} from "../entities/gridCell";
-import {GridPanel} from "../gridPanel/gridPanel";
+import { Column } from "../entities/column";
+import { GridCell } from "../entities/gridCell";
+import { GridPanel } from "../gridPanel/gridPanel";
 
 export interface IRangeController {
     clearSelection(): void;
@@ -29,6 +29,6 @@ export interface AddRangeSelectionParams {
     floatingStart: string;
     rowEnd: number;
     floatingEnd: string;
-    columnStart: string|Column;
-    columnEnd: string|Column;
+    columnStart: string | Column;
+    columnEnd: string | Column;
 }

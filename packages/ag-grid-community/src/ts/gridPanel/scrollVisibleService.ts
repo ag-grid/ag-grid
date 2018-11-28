@@ -1,11 +1,11 @@
-import {Bean, Autowired, PostConstruct} from "../context/context";
-import {Utils as _} from "../utils";
-import {EventService} from "../eventService";
-import {Events, ScrollVisibilityChangedEvent} from "../events";
-import {ColumnController} from "../columnController/columnController";
-import {ColumnApi} from "../columnController/columnApi";
-import {GridApi} from "../gridApi";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import { Bean, Autowired } from "../context/context";
+import { _ } from "../utils";
+import { EventService } from "../eventService";
+import { Events, ScrollVisibilityChangedEvent } from "../events";
+import { ColumnController } from "../columnController/columnController";
+import { ColumnApi } from "../columnController/columnApi";
+import { GridApi } from "../gridApi";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
 
 export interface SetScrollsVisibleParams {
     horizontalScrollShowing: boolean;
@@ -25,7 +25,7 @@ export class ScrollVisibleService {
     private verticalScrollShowing: boolean;
 
     public setScrollsVisible(params: SetScrollsVisibleParams): void {
-        let atLeastOneDifferent =
+        const atLeastOneDifferent =
             this.horizontalScrollShowing !== params.horizontalScrollShowing ||
             this.verticalScrollShowing !== params.verticalScrollShowing;
 
@@ -33,7 +33,7 @@ export class ScrollVisibleService {
             this.horizontalScrollShowing = params.horizontalScrollShowing;
             this.verticalScrollShowing = params.verticalScrollShowing;
 
-            let event: ScrollVisibilityChangedEvent = {
+            const event: ScrollVisibilityChangedEvent = {
                 type: Events.EVENT_SCROLL_VISIBILITY_CHANGED,
                 api: this.gridApi,
                 columnApi: this.columnApi

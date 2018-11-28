@@ -1,13 +1,13 @@
-import {OriginalColumnGroupChild} from "./originalColumnGroupChild";
-import {ColGroupDef} from "./colDef";
-import {ColumnGroup} from "./columnGroup";
-import {Column} from "./column";
-import {EventService} from "../eventService";
-import {IEventEmitter} from "../interfaces/iEventEmitter";
-import {Autowired} from "../context/context";
-import {ColumnApi} from "../columnController/columnApi";
-import {GridApi} from "../gridApi";
-import {AgEvent} from "../events";
+import { OriginalColumnGroupChild } from "./originalColumnGroupChild";
+import { ColGroupDef } from "./colDef";
+import { ColumnGroup } from "./columnGroup";
+import { Column } from "./column";
+import { EventService } from "../eventService";
+import { IEventEmitter } from "../interfaces/iEventEmitter";
+import { Autowired } from "../context/context";
+import { ColumnApi } from "../columnController/columnApi";
+import { GridApi } from "../gridApi";
+import { AgEvent } from "../events";
 
 export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmitter {
 
@@ -57,7 +57,7 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
 
     public setExpanded(expanded: boolean | undefined): void {
         this.expanded = expanded === undefined ? false : expanded;
-        let event: AgEvent = {
+        const event: AgEvent = {
             type: OriginalColumnGroup.EVENT_EXPANDED_CHANGED
         };
         this.localEventService.dispatchEvent(event);
@@ -92,7 +92,7 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
     }
 
     public getLeafColumns(): Column[] {
-        let result: Column[] = [];
+        const result: Column[] = [];
         this.addLeafColumns(result);
         return result;
     }
@@ -103,9 +103,9 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
         }
         this.children.forEach((child: OriginalColumnGroupChild) => {
             if (child instanceof Column) {
-                leafColumns.push(<Column>child);
+                leafColumns.push(child as Column);
             } else if (child instanceof OriginalColumnGroup) {
-                (<OriginalColumnGroup>child).addLeafColumns(leafColumns);
+                (child as OriginalColumnGroup).addLeafColumns(leafColumns);
             }
         });
     }
@@ -139,12 +139,12 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
         let atLeastOneChangeable = false;
 
         for (let i = 0, j = this.children.length; i < j; i++) {
-            let abstractColumn = this.children[i];
+            const abstractColumn = this.children[i];
             if (!abstractColumn.isVisible()) {
                 continue;
             }
             // if the abstractColumn is a grid generated group, there will be no colDef
-            let headerGroupShow = abstractColumn.getColumnGroupShow();
+            const headerGroupShow = abstractColumn.getColumnGroupShow();
             if (headerGroupShow === ColumnGroup.HEADER_GROUP_SHOW_OPEN) {
                 atLeastOneShowingWhenOpen = true;
                 atLeastOneChangeable = true;
@@ -157,11 +157,11 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
             }
         }
 
-        let expandable = atLeastOneShowingWhenOpen && atLeastOneShowingWhenClosed && atLeastOneChangeable;
+        const expandable = atLeastOneShowingWhenOpen && atLeastOneShowingWhenClosed && atLeastOneChangeable;
 
         if (this.expandable !== expandable) {
             this.expandable = expandable;
-            let event: AgEvent = {
+            const event: AgEvent = {
                 type: OriginalColumnGroup.EVENT_EXPANDABLE_CHANGED
             };
             this.localEventService.dispatchEvent(event);

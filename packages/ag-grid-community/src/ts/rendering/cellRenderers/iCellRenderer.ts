@@ -1,29 +1,29 @@
-import {IComponent} from "../../interfaces/iComponent";
-import {RowNode} from "../../entities/rowNode";
-import {ColDef} from "../../entities/colDef";
-import {Column} from "../../entities/column";
-import {GridApi} from "../../gridApi";
-import {ColumnApi} from "../../columnController/columnApi";
+import { IComponent } from "../../interfaces/iComponent";
+import { RowNode } from "../../entities/rowNode";
+import { ColDef } from "../../entities/colDef";
+import { Column } from "../../entities/column";
+import { GridApi } from "../../gridApi";
+import { ColumnApi } from "../../columnController/columnApi";
 
 export interface ICellRendererParams {
-    value: any,
-    valueFormatted: any,
-    getValue: ()=> any,
-    setValue: (value: any) => void,
-    formatValue: (value: any) => any,
-    data: any,
-    node: RowNode,
-    colDef: ColDef,
-    column: Column,
-    $scope: any,
-    rowIndex: number,
-    api: GridApi,
-    columnApi: ColumnApi,
-    context: any,
-    refreshCell: ()=>void,
-    eGridCell: HTMLElement,
-    eParentOfValue: HTMLElement,
-    addRenderedRowListener: (eventType: string, listener: Function)=>void
+    value: any;
+    valueFormatted: any;
+    getValue: () => any;
+    setValue: (value: any) => void;
+    formatValue: (value: any) => any;
+    data: any;
+    node: RowNode;
+    colDef: ColDef;
+    column: Column;
+    $scope: any;
+    rowIndex: number;
+    api: GridApi;
+    columnApi: ColumnApi;
+    context: any;
+    refreshCell: () => void;
+    eGridCell: HTMLElement;
+    eParentOfValue: HTMLElement;
+    addRenderedRowListener: (eventType: string, listener: Function) => void;
 }
 
 export interface ICellRenderer {
@@ -37,5 +37,5 @@ export interface ICellRendererComp extends ICellRenderer, IComponent<ICellRender
 }
 
 export interface ICellRendererFunc {
-    (params: any): HTMLElement | string
+    (params: any): HTMLElement | string;
 }

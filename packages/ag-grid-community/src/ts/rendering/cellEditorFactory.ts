@@ -1,10 +1,10 @@
-import {Autowired, Bean, Context, PostConstruct} from "../context/context";
-import {ICellEditorComp, ICellEditorParams} from "./cellEditors/iCellEditor";
-import {PopupEditorWrapper} from "./cellEditors/popupEditorWrapper";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {ColDef} from "../entities/colDef";
-import {ComponentResolver} from "../components/framework/componentResolver";
-import {_, Promise} from "../utils";
+import { Autowired, Bean, Context, PostConstruct } from "../context/context";
+import { ICellEditorComp, ICellEditorParams } from "./cellEditors/iCellEditor";
+import { PopupEditorWrapper } from "./cellEditors/popupEditorWrapper";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { ColDef } from "../entities/colDef";
+import { ComponentResolver } from "../components/framework/componentResolver";
+import { _, Promise } from "../utils";
 
 @Bean('cellEditorFactory')
 export class CellEditorFactory {
@@ -30,7 +30,7 @@ export class CellEditorFactory {
 
     public createCellEditor(column: ColDef, params: ICellEditorParams): Promise<ICellEditorComp> {
 
-        let cellEditorPromise: Promise<ICellEditorComp> = this.componentResolver.createAgGridComponent (
+        const cellEditorPromise: Promise<ICellEditorComp> = this.componentResolver.createAgGridComponent (
             column,
             params,
             'cellEditor',
@@ -47,7 +47,7 @@ export class CellEditorFactory {
         );
         return cellEditorPromise.map(cellEditor => {
 
-            let isPopup = cellEditor.isPopup && cellEditor.isPopup();
+            const isPopup = cellEditor.isPopup && cellEditor.isPopup();
 
             if (!isPopup) { return cellEditor; }
 
@@ -57,7 +57,7 @@ export class CellEditorFactory {
             }
 
             // if a popup, then we wrap in a popup editor and return the popup
-            let popupEditorWrapper = new PopupEditorWrapper(cellEditor);
+            const popupEditorWrapper = new PopupEditorWrapper(cellEditor);
             this.context.wireBean(popupEditorWrapper);
             popupEditorWrapper.init(params);
             return popupEditorWrapper;

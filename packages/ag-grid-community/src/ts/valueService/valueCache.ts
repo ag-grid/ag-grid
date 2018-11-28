@@ -1,6 +1,6 @@
-import {Autowired, Bean, PostConstruct} from "../context/context";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {RowNode} from "../entities/rowNode";
+import { Autowired, Bean, PostConstruct } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { RowNode } from "../entities/rowNode";
 
 @Bean('valueCache')
 export class ValueCache {
@@ -38,9 +38,9 @@ export class ValueCache {
     }
 
     public getValue(rowNode: RowNode, colId: string): any {
-        let valueInCache = this.active
-            && rowNode.__cacheVersion===this.cacheVersion
-            && rowNode.__cacheData[colId]!==undefined;
+        const valueInCache = this.active
+            && rowNode.__cacheVersion === this.cacheVersion
+            && rowNode.__cacheData[colId] !== undefined;
         if (valueInCache) {
             return rowNode.__cacheData[colId];
         } else {

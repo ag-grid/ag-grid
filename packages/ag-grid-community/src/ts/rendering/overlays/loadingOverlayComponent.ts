@@ -1,7 +1,7 @@
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {Autowired} from "../../context/context";
-import {Component} from "../../widgets/component";
-import {IComponent} from "../../interfaces/iComponent";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { Autowired } from "../../context/context";
+import { Component } from "../../widgets/component";
+import { IComponent } from "../../interfaces/iComponent";
 
 export interface ILoadingOverlayParams {}
 
@@ -18,12 +18,12 @@ export class LoadingOverlayComponent extends Component implements ILoadingOverla
     }
 
     public init(params: ILoadingOverlayParams): void {
-        let template =
+        const template =
             this.gridOptionsWrapper.getOverlayLoadingTemplate() ?
                 this.gridOptionsWrapper.getOverlayLoadingTemplate() : LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE;
 
-        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        let localisedTemplate = template.replace('[LOADING...]', localeTextFunc('loadingOoo', 'Loading...'));
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const localisedTemplate = template.replace('[LOADING...]', localeTextFunc('loadingOoo', 'Loading...'));
 
         this.setTemplate(localisedTemplate);
     }

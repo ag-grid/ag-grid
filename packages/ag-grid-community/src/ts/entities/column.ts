@@ -1,5 +1,5 @@
-import {ColumnGroupChild} from "./columnGroupChild";
-import {OriginalColumnGroupChild} from "./originalColumnGroupChild";
+import { ColumnGroupChild } from "./columnGroupChild";
+import { OriginalColumnGroupChild } from "./originalColumnGroupChild";
 import {
     AbstractColDef,
     BaseColDefParams,
@@ -10,18 +10,18 @@ import {
     IsColumnFuncParams,
     RowSpanParams
 } from "./colDef";
-import {EventService} from "../eventService";
-import {Utils as _} from "../utils";
-import {Autowired, PostConstruct} from "../context/context";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {ColumnUtils} from "../columnController/columnUtils";
-import {RowNode} from "./rowNode";
-import {IFrameworkFactory} from "../interfaces/iFrameworkFactory";
-import {IEventEmitter} from "../interfaces/iEventEmitter";
-import {ColumnEvent, ColumnEventType} from "../events";
-import {ColumnApi} from "../columnController/columnApi";
-import {GridApi} from "../gridApi";
-import {ColumnGroup} from "./columnGroup";
+import { EventService } from "../eventService";
+import { _ } from "../utils";
+import { Autowired, PostConstruct } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { ColumnUtils } from "../columnController/columnUtils";
+import { RowNode } from "./rowNode";
+import { IFrameworkFactory } from "../interfaces/iFrameworkFactory";
+import { IEventEmitter } from "../interfaces/iEventEmitter";
+import { ColumnEvent, ColumnEventType } from "../events";
+import { ColumnApi } from "../columnController/columnApi";
+import { GridApi } from "../gridApi";
+import { ColumnGroup } from "./columnGroup";
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
@@ -160,8 +160,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     public initialise(): void {
         this.setPinned(this.colDef.pinned);
 
-        let minColWidth = this.gridOptionsWrapper.getMinColWidth();
-        let maxColWidth = this.gridOptionsWrapper.getMaxColWidth();
+        const minColWidth = this.gridOptionsWrapper.getMinColWidth();
+        const maxColWidth = this.gridOptionsWrapper.getMaxColWidth();
 
         if (this.colDef.minWidth) {
             this.minWidth = this.colDef.minWidth;
@@ -177,7 +177,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
         this.actualWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
 
-        let suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
+        const suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
         this.fieldContainsDots = _.exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
         this.tooltipFieldContainsDots = _.exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
 
@@ -193,8 +193,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             return false;
         }
 
-        let showingAllGroups = this.colDef.showRowGroup === true;
-        let showingThisGroup = this.colDef.showRowGroup === colId;
+        const showingAllGroups = this.colDef.showRowGroup === true;
+        const showingThisGroup = this.colDef.showRowGroup === colId;
 
         return showingAllGroups || showingThisGroup;
     }
@@ -221,10 +221,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     private validate(): void {
 
-        let colDefAny = <any> this.colDef;
+        const colDefAny = this.colDef as any;
 
         if (!this.gridOptionsWrapper.isEnterprise()) {
-            let itemsNotAllowedWithoutEnterprise =
+            const itemsNotAllowedWithoutEnterprise =
                 ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'pivot', 'pivotIndex', 'aggFunc'];
             itemsNotAllowedWithoutEnterprise.forEach(item => {
                 if (_.exists(colDefAny[item])) {
@@ -234,7 +234,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         }
 
         if (this.gridOptionsWrapper.isTreeData()) {
-            let itemsNotAllowedWithTreeData =
+            const itemsNotAllowedWithTreeData =
                 ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'pivot', 'pivotIndex'];
             itemsNotAllowedWithTreeData.forEach(item => {
                 if (_.exists(colDefAny[item])) {
@@ -318,13 +318,13 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     public isSuppressNavigable(rowNode: RowNode): boolean {
         // if boolean set, then just use it
         if (typeof this.colDef.suppressNavigable === 'boolean') {
-            return <boolean> this.colDef.suppressNavigable;
+            return this.colDef.suppressNavigable as boolean;
         }
 
         // if function, then call the function to find out
         if (typeof this.colDef.suppressNavigable === 'function') {
-            let params = this.createIsColumnFuncParams(rowNode);
-            let userFunc = <IsColumnFunc> this.colDef.suppressNavigable;
+            const params = this.createIsColumnFuncParams(rowNode);
+            const userFunc = this.colDef.suppressNavigable as IsColumnFunc;
             return userFunc(params);
         }
 
@@ -354,21 +354,21 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public isResizable(): boolean {
-        let enableColResize = this.gridOptionsWrapper.isEnableColResize();
-        let suppressResize = this.colDef && this.colDef.suppressResize;
+        const enableColResize = this.gridOptionsWrapper.isEnableColResize();
+        const suppressResize = this.colDef && this.colDef.suppressResize;
         return enableColResize && !suppressResize;
     }
 
     private isColumnFunc(rowNode: RowNode, value: boolean | IsColumnFunc): boolean {
         // if boolean set, then just use it
         if (typeof value === 'boolean') {
-            return <boolean> value;
+            return value as boolean;
         }
 
         // if function, then call the function to find out
         if (typeof value === 'function') {
-            let params = this.createIsColumnFuncParams(rowNode);
-            let editableFunc = <IsColumnFunc> value;
+            const params = this.createIsColumnFuncParams(rowNode);
+            const editableFunc = value as IsColumnFunc;
             return editableFunc(params);
         }
 
@@ -530,7 +530,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public setVisible(visible: boolean, source: ColumnEventType = "api"): void {
-        let newValue = visible === true;
+        const newValue = visible === true;
         if (this.visible !== newValue) {
             this.visible = newValue;
             this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_VISIBLE_CHANGED, source));
@@ -566,7 +566,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     private createBaseColDefParams(rowNode: RowNode): BaseColDefParams {
-        let params: BaseColDefParams = {
+        const params: BaseColDefParams = {
             node: rowNode,
             data: rowNode.data,
             colDef: this.colDef,
@@ -582,8 +582,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         if (_.missing(this.colDef.colSpan)) {
             return 1;
         } else {
-            let params: ColSpanParams = this.createBaseColDefParams(rowNode);
-            let colSpan = this.colDef.colSpan(params);
+            const params: ColSpanParams = this.createBaseColDefParams(rowNode);
+            const colSpan = this.colDef.colSpan(params);
             // colSpan must be number equal to or greater than 1
             if (colSpan > 1) {
                 return colSpan;
@@ -597,8 +597,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         if (_.missing(this.colDef.rowSpan)) {
             return 1;
         } else {
-            let params: RowSpanParams = this.createBaseColDefParams(rowNode);
-            let rowSpan = this.colDef.rowSpan(params);
+            const params: RowSpanParams = this.createBaseColDefParams(rowNode);
+            const rowSpan = this.colDef.rowSpan(params);
             // rowSpan must be number equal to or greater than 1
             if (rowSpan > 1) {
                 return rowSpan;

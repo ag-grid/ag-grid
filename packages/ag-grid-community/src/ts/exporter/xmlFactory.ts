@@ -1,5 +1,5 @@
-import {Bean} from "../context/context";
-let LINE_SEPARATOR = '\r\n';
+import { Bean } from "../context/context";
+const LINE_SEPARATOR = '\r\n';
 
 @Bean('xmlFactory')
 export class XmlFactory {
@@ -8,19 +8,19 @@ export class XmlFactory {
         const headerEnd = '?>';
         const keys = ['version'];
 
-        if (!headerElement.version) headerElement.version = "1.0";
-        if (headerElement.encoding) keys.push('encoding');
-        if (headerElement.standalone) keys.push('standalone');
+        if (!headerElement.version) { headerElement.version = "1.0"; }
+        if (headerElement.encoding) { keys.push('encoding'); }
+        if (headerElement.standalone) { keys.push('standalone'); }
 
         const att = keys.map((key: string): string => `${key}="${headerElement[key]}"`).join(' ');
         return `${headerStart}xml ${att} ${headerEnd}`;
     }
 
-    createXml(xmlElement: XmlElement, booleanTransformer?:(currentValue:boolean)=>string) :string {
+    createXml(xmlElement: XmlElement, booleanTransformer?:(currentValue:boolean) => string) :string {
         let props: string = '';
         if (xmlElement.properties) {
             if (xmlElement.properties.prefixedAttributes) {
-                xmlElement.properties.prefixedAttributes.forEach((prefixedSet:PrefixedXmlAttributes)=> {
+                xmlElement.properties.prefixedAttributes.forEach((prefixedSet:PrefixedXmlAttributes) => {
                     Object.keys(prefixedSet.map).forEach((key) => {
                         props += this.returnAttributeIfPopulated(prefixedSet.prefix + key, prefixedSet.map[key], booleanTransformer);
                     });
@@ -50,7 +50,7 @@ export class XmlFactory {
         return result + '</' + xmlElement.name + '>' + LINE_SEPARATOR;
     }
 
-    private returnAttributeIfPopulated(key: string, value: any, booleanTransformer?:(currentValue:boolean)=>string) {
+    private returnAttributeIfPopulated(key: string, value: any, booleanTransformer?:(currentValue:boolean) => string) {
         if (!value && value !== '' && value !== 0) {
             return '';
         }

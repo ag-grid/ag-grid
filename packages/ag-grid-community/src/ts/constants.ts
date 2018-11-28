@@ -45,7 +45,7 @@ export class Constants {
     static ROW_MODEL_TYPE_CLIENT_SIDE = 'clientSide';
     static ROW_MODEL_TYPE_SERVER_SIDE = 'serverSide';
 
-    static DEPRECATED_ROW_MODEL_TYPE_NORMAL= 'normal';
+    static DEPRECATED_ROW_MODEL_TYPE_NORMAL = 'normal';
 
     static ALWAYS = 'always';
     static ONLY_WHEN_GROUPING = 'onlyWhenGrouping';

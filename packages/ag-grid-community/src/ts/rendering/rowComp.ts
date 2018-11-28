@@ -1,7 +1,7 @@
-import {CellComp} from "./cellComp";
-import {CellChangedEvent, DataChangedEvent, RowNode} from "../entities/rowNode";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {Column} from "../entities/column";
+import { CellComp } from "./cellComp";
+import { CellChangedEvent, DataChangedEvent, RowNode } from "../entities/rowNode";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { Column } from "../entities/column";
 import {
     Events,
     RowClickedEvent,
@@ -12,14 +12,14 @@ import {
     RowValueChangedEvent,
     VirtualRowRemovedEvent
 } from "../events";
-import {Autowired} from "../context/context";
-import {ICellRendererComp, ICellRendererParams} from "./cellRenderers/iCellRenderer";
-import {RowContainerComponent} from "./rowContainerComponent";
-import {Component} from "../widgets/component";
-import {RefSelector} from "../widgets/componentAnnotations";
-import {Beans} from "./beans";
-import {ProcessRowParams} from "../entities/gridOptions";
-import {_} from "../utils";
+import { Autowired } from "../context/context";
+import { ICellRendererComp, ICellRendererParams } from "./cellRenderers/iCellRenderer";
+import { RowContainerComponent } from "./rowContainerComponent";
+import { Component } from "../widgets/component";
+import { RefSelector } from "../widgets/componentAnnotations";
+import { Beans } from "./beans";
+import { ProcessRowParams } from "../entities/gridOptions";
+import { _ } from "../utils";
 
 interface CellTemplate {
     template: string;
@@ -179,12 +179,12 @@ export class RowComp extends Component {
         this.addListeners();
 
         if (this.slideRowIn) {
-            this.createSecondPassFuncs.push( () => {
+            this.createSecondPassFuncs.push(() => {
                 this.onTopChanged();
             });
         }
         if (this.fadeRowIn) {
-            this.createSecondPassFuncs.push( () => {
+            this.createSecondPassFuncs.push(() => {
                 this.eAllRowContainers.forEach(eRow => _.removeCssClass(eRow, 'ag-opacity-zero'));
             });
         }
@@ -288,7 +288,7 @@ export class RowComp extends Component {
     private createRowContainer(rowContainerComp: RowContainerComponent, cols: Column[],
                                callback: (eRow: HTMLElement) => void): void {
 
-        const useAnimationsFrameForCreate = false;//this.useAnimationFrameForCreate;
+        const useAnimationsFrameForCreate = false; //this.useAnimationFrameForCreate;
         const cellTemplatesAndComps: CellTemplate = useAnimationsFrameForCreate ? {cellComps: [], template: ''} : this.createCells(cols);
         const rowTemplate = this.createTemplate(cellTemplatesAndComps.template);
 
@@ -512,7 +512,7 @@ export class RowComp extends Component {
 
     private postProcessRowDragging(): void {
         const dragging = this.rowNode.dragging;
-        this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-dragging', dragging) );
+        this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-dragging', dragging));
     }
 
     private onExpandedChanged(): void {
@@ -629,7 +629,7 @@ export class RowComp extends Component {
     }
 
     private removeRenderedCells(colIds: string[]): void {
-        colIds.forEach((key: string)=> {
+        colIds.forEach((key: string) => {
             const cellComp = this.cellComps[key];
             // could be old reference, ie removed cell
             if (_.missing(cellComp)) { return; }
@@ -706,7 +706,7 @@ export class RowComp extends Component {
         const cellTemplates: string[] = [];
         const newCellComps: CellComp[] = [];
 
-        cols.forEach( col => {
+        cols.forEach(col => {
             const colId = col.getId();
             const existingCell = this.cellComps[colId];
 
@@ -718,7 +718,7 @@ export class RowComp extends Component {
 
         });
 
-        if (cellTemplates.length>0) {
+        if (cellTemplates.length > 0) {
             _.appendHtml(eRow, cellTemplates.join(''));
             this.callAfterRowAttachedOnCells(newCellComps, eRow);
         }
@@ -727,7 +727,7 @@ export class RowComp extends Component {
     private addDomData(eRowContainer: Element): void {
         const gow = this.beans.gridOptionsWrapper;
         gow.setDomData(eRowContainer, RowComp.DOM_DATA_KEY_RENDERED_ROW, this);
-        this.addDestroyFunc( ()=> {
+        this.addDestroyFunc(() => {
             gow.setDomData(eRowContainer, RowComp.DOM_DATA_KEY_RENDERED_ROW, null); }
         );
     }
@@ -763,14 +763,14 @@ export class RowComp extends Component {
     }
 
     private createRowEventWithSource(type: string, domEvent: Event): RowEvent {
-        let event = this.createRowEvent(type, domEvent);
+        const event = this.createRowEvent(type, domEvent);
         // when first developing this, we included the rowComp in the event.
         // this seems very weird. so when introducing the event types, i left the 'source'
         // out of the type, and just include the source in the two places where this event
         // was fired (rowClicked and rowDoubleClicked). it doesn't make sense for any
         // users to be using this, as the rowComp isn't an object we expose, so would be
         // very surprising if a user was using it.
-        (<any>event).source = this;
+        (event as any).source = this;
         return event;
     }
 
@@ -837,14 +837,14 @@ export class RowComp extends Component {
                                         cellRendererCallback: (comp: ICellRendererComp) => void): void {
 
         const rowTemplate = this.createTemplate('', extraCssClass);
-        rowContainerComp.appendRowTemplate(rowTemplate, ()=> {
+        rowContainerComp.appendRowTemplate(rowTemplate, () => {
 
             const eRow: HTMLElement = rowContainerComp.getRowElement(this.getCompId());
             const params = this.createFullWidthParams(eRow, pinned);
 
-            const callback = (cellRenderer: ICellRendererComp)=> {
+            const callback = (cellRenderer: ICellRendererComp) => {
                 if (this.isAlive()) {
-                    let gui = cellRenderer.getGui();
+                    const gui = cellRenderer.getGui();
                     eRow.appendChild(gui);
                     cellRendererCallback(cellRenderer);
                 } else {
@@ -976,13 +976,13 @@ export class RowComp extends Component {
         const newFirst = this.isFirstRowOnPage();
         const newLast = this.isLastRowOnPage();
 
-        if (this.firstRowOnPage!==newFirst) {
+        if (this.firstRowOnPage !== newFirst) {
             this.firstRowOnPage = newFirst;
-            this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-first', newFirst) );
+            this.eAllRowContainers.forEach((row) => _.addOrRemoveCssClass(row, 'ag-row-first', newFirst));
         }
-        if (this.lastRowOnPage!==newLast) {
+        if (this.lastRowOnPage !== newLast) {
             this.lastRowOnPage = newLast;
-            this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-last', newLast) );
+            this.eAllRowContainers.forEach((row) => _.addOrRemoveCssClass(row, 'ag-row-last', newLast));
         }
     }
 
@@ -1002,7 +1002,7 @@ export class RowComp extends Component {
         return res;
     }
 
-    private processRowClassRules(onApplicableClass: (className: string)=>void, onNotApplicableClass?: (className: string)=>void): void {
+    private processRowClassRules(onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void {
         this.beans.stylingService.processClassRules(
             this.beans.gridOptionsWrapper.rowClassRules(),
             {
@@ -1036,8 +1036,8 @@ export class RowComp extends Component {
         this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-editing', value));
 
         const event: RowEvent = value ?
-            <RowEditingStartedEvent> this.createRowEvent(Events.EVENT_ROW_EDITING_STARTED)
-            : <RowEditingStoppedEvent> this.createRowEvent(Events.EVENT_ROW_EDITING_STOPPED);
+            this.createRowEvent(Events.EVENT_ROW_EDITING_STARTED) as RowEditingStartedEvent
+            : this.createRowEvent(Events.EVENT_ROW_EDITING_STOPPED) as RowEditingStoppedEvent;
 
         this.beans.eventService.dispatchEvent(event);
     }
@@ -1076,11 +1076,11 @@ export class RowComp extends Component {
 
     private postProcessRowClassRules(): void {
         this.processRowClassRules(
-            (className: string)=> {
-                this.eAllRowContainers.forEach( row => _.addCssClass(row, className));
+            (className: string) => {
+                this.eAllRowContainers.forEach(row => _.addCssClass(row, className));
             },
-            (className: string)=> {
-                this.eAllRowContainers.forEach( row => _.removeCssClass(row, className));
+            (className: string) => {
+                this.eAllRowContainers.forEach(row => _.removeCssClass(row, className));
             }
         );
     }
@@ -1092,7 +1092,7 @@ export class RowComp extends Component {
             if (typeof rowCls === 'string') {
                 res.push(rowCls);
             } else if (Array.isArray(rowCls)) {
-                rowCls.forEach( e => res.push(e) );
+                rowCls.forEach(e => res.push(e));
             }
         };
 
@@ -1130,7 +1130,7 @@ export class RowComp extends Component {
 
     private postProcessStylesFromGridOptions(): void {
         const rowStyles = this.processStylesFromGridOptions();
-        this.eAllRowContainers.forEach( row => _.addStylesToElement(row, rowStyles));
+        this.eAllRowContainers.forEach(row => _.addStylesToElement(row, rowStyles));
     }
 
     private processStylesFromGridOptions(): any {
@@ -1147,7 +1147,7 @@ export class RowComp extends Component {
         let rowStyleFuncResult: any;
 
         if (rowStyleFunc) {
-            let params = {
+            const params = {
                 data: this.rowNode.data,
                 node: this.rowNode,
                 api: this.beans.gridOptionsWrapper.getApi(),
@@ -1182,14 +1182,14 @@ export class RowComp extends Component {
 
     private onRowSelected(): void {
         const selected = this.rowNode.isSelected();
-        this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-selected', selected) );
+        this.eAllRowContainers.forEach((row) => _.addOrRemoveCssClass(row, 'ag-row-selected', selected));
     }
 
     // called:
     // + after row created for first time
     // + after horizontal scroll, so new cells due to column virtualisation
     private callAfterRowAttachedOnCells(newCellComps: CellComp[], eRow: HTMLElement): void {
-        newCellComps.forEach( cellComp => {
+        newCellComps.forEach(cellComp => {
             cellComp.setParentRow(eRow);
             cellComp.afterAttached();
 
@@ -1209,7 +1209,7 @@ export class RowComp extends Component {
             rowContainerComp.removeRowElement(eRow);
         });
 
-        this.removeFirstPassFuncs.push( ()=> {
+        this.removeFirstPassFuncs.push(() => {
             if (_.exists(this.rowNode.rowTop)) {
                 // the row top is updated anyway, however we set it here again
                 // to something more reasonable for the animation - ie if the
@@ -1247,11 +1247,11 @@ export class RowComp extends Component {
         // all are listening for event on the row node.
 
         // step 1 - add listener, to set flag on row node
-        this.addDestroyableEventListener(eRow, 'mouseenter', () => this.rowNode.onMouseEnter() );
-        this.addDestroyableEventListener(eRow, 'mouseleave', () => this.rowNode.onMouseLeave() );
+        this.addDestroyableEventListener(eRow, 'mouseenter', () => this.rowNode.onMouseEnter());
+        this.addDestroyableEventListener(eRow, 'mouseleave', () => this.rowNode.onMouseLeave());
 
         // step 2 - listen for changes on row node (which any eRow can trigger)
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_MOUSE_ENTER, ()=> {
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_MOUSE_ENTER, () => {
             // if hover turned off, we don't add the class. we do this here so that if the application
             // toggles this property mid way, we remove the hover form the last row, but we stop
             // adding hovers from that point onwards.
@@ -1260,7 +1260,7 @@ export class RowComp extends Component {
             }
         });
 
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_MOUSE_LEAVE, ()=> {
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_MOUSE_LEAVE, () => {
             _.removeCssClass(eRow, 'ag-row-hover');
         });
     }
@@ -1289,7 +1289,7 @@ export class RowComp extends Component {
     }
 
     public addEventListener(eventType: string, listener: Function): void {
-        if (eventType==='renderedRowRemoved' || eventType==='rowRemoved') {
+        if (eventType === 'renderedRowRemoved' || eventType === 'rowRemoved') {
             eventType = Events.EVENT_VIRTUAL_ROW_REMOVED;
             console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + Events.EVENT_VIRTUAL_ROW_REMOVED);
         }
@@ -1315,7 +1315,7 @@ export class RowComp extends Component {
         this.destroyFullWidthComponents();
 
         if (animate) {
-            this.removeFirstPassFuncs.forEach( func => func() );
+            this.removeFirstPassFuncs.forEach(func => func());
             this.removeSecondPassFuncs.push(this.destroyContainingCells.bind(this));
         } else {
             this.destroyContainingCells();
@@ -1323,7 +1323,7 @@ export class RowComp extends Component {
             // we are not animating, so execute the second stage of removal now.
             // we call getAndClear, so that they are only called once
             const delayedDestroyFunctions = this.getAndClearDelayedDestroyFunctions();
-            delayedDestroyFunctions.forEach( func => func() );
+            delayedDestroyFunctions.forEach(func => func());
         }
 
         const event: VirtualRowRemovedEvent = this.createRowEvent(Events.EVENT_VIRTUAL_ROW_REMOVED);
@@ -1333,7 +1333,7 @@ export class RowComp extends Component {
     }
 
     private destroyContainingCells(): void {
-        this.forEachCellComp(renderedCell => renderedCell.destroy() );
+        this.forEachCellComp(renderedCell => renderedCell.destroy());
         this.destroyFullWidthComponents();
     }
 
@@ -1348,8 +1348,8 @@ export class RowComp extends Component {
         const rowFocused = this.beans.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
 
         if (rowFocused !== this.rowFocused) {
-            this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-focus', rowFocused) );
-            this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused) );
+            this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-focus', rowFocused));
+            this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused));
             this.rowFocused = rowFocused;
         }
 
@@ -1399,9 +1399,9 @@ export class RowComp extends Component {
             const topPx = `${afterScalingPixels}px`;
 
             if (this.beans.gridOptionsWrapper.isSuppressRowTransform()) {
-                this.eAllRowContainers.forEach( row => row.style.top = topPx );
+                this.eAllRowContainers.forEach(row => row.style.top = topPx);
             } else {
-                this.eAllRowContainers.forEach( row => row.style.transform = `translateY(${topPx})` );
+                this.eAllRowContainers.forEach(row => row.style.transform = `translateY(${topPx})`);
             }
         }
     }

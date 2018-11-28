@@ -1,16 +1,15 @@
-
-import {Column} from "../entities/column";
-import {RowNode} from "../entities/rowNode";
-import {Autowired, Bean, PostConstruct} from "../context/context";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {ChangedPath} from "../rowModels/clientSide/changedPath";
-import {IRowModel} from "../interfaces/iRowModel";
-import {ClientSideRowModel} from "../rowModels/clientSide/clientSideRowModel";
-import {RowRenderer} from "../rendering/rowRenderer";
-import {EventService} from "../eventService";
-import {Constants} from "../constants";
-import {BeanStub} from "../context/beanStub";
-import {Events} from "../events";
+import { Column } from "../entities/column";
+import { RowNode } from "../entities/rowNode";
+import { Autowired, Bean, PostConstruct } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { ChangedPath } from "../rowModels/clientSide/changedPath";
+import { IRowModel } from "../interfaces/iRowModel";
+import { ClientSideRowModel } from "../rowModels/clientSide/clientSideRowModel";
+import { RowRenderer } from "../rendering/rowRenderer";
+import { EventService } from "../eventService";
+import { Constants } from "../constants";
+import { BeanStub } from "../context/beanStub";
+import { Events } from "../events";
 
 @Bean('changeDetectionService')
 export class ChangeDetectionService extends BeanStub {
@@ -24,8 +23,8 @@ export class ChangeDetectionService extends BeanStub {
 
     @PostConstruct
     private init(): void {
-        if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            this.clientSideRowModel = <ClientSideRowModel> this.rowModel;
+        if (this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            this.clientSideRowModel = this.rowModel as ClientSideRowModel;
         }
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged.bind(this));
@@ -40,8 +39,8 @@ export class ChangeDetectionService extends BeanStub {
 
         // step 1 of change detection is to update the aggregated values
         if (this.clientSideRowModel && !rowNode.isRowPinned()) {
-            let onlyChangedColumns = this.gridOptionsWrapper.isAggregateOnlyChangedColumns();
-            let changedPath = new ChangedPath(onlyChangedColumns);
+            const onlyChangedColumns = this.gridOptionsWrapper.isAggregateOnlyChangedColumns();
+            const changedPath = new ChangedPath(onlyChangedColumns);
             changedPath.addParentNode(rowNode.parent, [column]);
             this.clientSideRowModel.doAggregate(changedPath);
         }

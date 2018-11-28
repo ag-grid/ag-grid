@@ -1,12 +1,12 @@
-import {IFilterParams} from "./iFilter";
-import {ICellRendererComp, ICellRendererFunc} from "../rendering/cellRenderers/iCellRenderer";
-import {ColDef} from "../entities/colDef";
+import { IFilterParams } from "./iFilter";
+import { ICellRendererComp, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";
+import { ColDef } from "../entities/colDef";
 
 export interface SetFilterValuesFuncParams {
-    success: (values: string[])=>void;
-    colDef: ColDef,
+    success: (values: string[]) => void;
+    colDef: ColDef;
 }
-export type SetFilterValuesFunc = (params: SetFilterValuesFuncParams)=>void;
+export type SetFilterValuesFunc = (params: SetFilterValuesFuncParams) => void;
 export type SetFilterValues = SetFilterValuesFunc | any[];
 
 export interface ISetFilterParams extends IFilterParams {

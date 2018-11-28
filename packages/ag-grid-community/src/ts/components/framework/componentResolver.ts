@@ -1,10 +1,10 @@
-import {Autowired, Bean, Context, Optional} from "../../context/context";
-import {GridOptions} from "../../entities/gridOptions";
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {FrameworkComponentWrapper} from "./frameworkComponentWrapper";
-import {IComponent} from "../../interfaces/iComponent";
-import {ColDef, ColGroupDef} from "../../entities/colDef";
-import {_, Promise} from "../../utils";
+import { Autowired, Bean, Context, Optional } from "../../context/context";
+import { GridOptions } from "../../entities/gridOptions";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { FrameworkComponentWrapper } from "./frameworkComponentWrapper";
+import { IComponent } from "../../interfaces/iComponent";
+import { ColDef, ColGroupDef } from "../../entities/colDef";
+import { _, Promise } from "../../utils";
 
 import {
     AgGridComponentFunctionInput,
@@ -13,15 +13,15 @@ import {
     RegisteredComponent,
     RegisteredComponentSource
 } from "./componentProvider";
-import {AgComponentUtils} from "./agComponentUtils";
-import {ComponentMetadata, ComponentMetadataProvider} from "./componentMetadataProvider";
-import {ISetFilterParams} from "../../interfaces/iSetFilterParams";
-import {IRichCellEditorParams} from "../../interfaces/iRichCellEditorParams";
-import {RowNode} from "../../entities/rowNode";
-import {Column} from "../../entities/column";
-import {GridApi} from "../../gridApi";
-import {ColumnApi} from "../../columnController/columnApi";
-import {ToolPanelDef} from "../../entities/sideBar";
+import { AgComponentUtils } from "./agComponentUtils";
+import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadataProvider";
+import { ISetFilterParams } from "../../interfaces/iSetFilterParams";
+import { IRichCellEditorParams } from "../../interfaces/iRichCellEditorParams";
+import { RowNode } from "../../entities/rowNode";
+import { Column } from "../../entities/column";
+import { GridApi } from "../../gridApi";
+import { ColumnApi } from "../../columnController/columnApi";
+import { ToolPanelDef } from "../../entities/sideBar";
 
 export type ComponentHolder =
     GridOptions
@@ -42,31 +42,30 @@ export enum ComponentSource {
 }
 
 export interface DynamicComponentParams {
-    data?: any,
-    node?: RowNode,
-    colDef?: ColDef,
-    column?: Column,
-    $scope?: any,
-    rowIndex?: number,
-    api: GridApi,
-    columnApi: ColumnApi
+    data?: any;
+    node?: RowNode;
+    colDef?: ColDef;
+    column?: Column;
+    $scope?: any;
+    rowIndex?: number;
+    api: GridApi;
+    columnApi: ColumnApi;
 }
 
 export interface DynamicComponentDef {
-    component?: string,
-    params?: any
+    component?: string;
+    params?: any;
 }
-
 
 /**
  * B the business interface (ie IHeader)
  * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
  */
 export interface ResolvedComponent<A extends IComponent<any> & B, B> {
-    component: { new(): A } | { new(): B },
-    type: ComponentType,
-    source: ComponentSource,
-    dynamicParams: any
+    component: { new(): A } | { new(): B };
+    type: ComponentType;
+    source: ComponentSource;
+    dynamicParams: any;
 }
 
 @Bean('componentResolver')
@@ -89,10 +88,8 @@ export class ComponentResolver {
     @Autowired("componentProvider")
     private componentProvider: ComponentProvider;
 
-
     @Optional("frameworkComponentWrapper")
     private frameworkComponentWrapper: FrameworkComponentWrapper;
-
 
     /**
      * This method returns the underlying representation of the component to be created. ie for Javascript the
@@ -111,11 +108,12 @@ export class ComponentResolver {
      *      invoked
      *  @param defaultComponentName: The name of the component to load if there is no component specified
      */
-    public getComponentToUse<A extends IComponent<any> & B, B>
-    (holder: ComponentHolder,
-     propertyName: string,
-     dynamicComponentParams: DynamicComponentParams | null,
-     defaultComponentName?: string): ResolvedComponent<A, B> {
+    public getComponentToUse<A extends IComponent<any> & B, B>(
+        holder: ComponentHolder,
+        propertyName: string,
+        dynamicComponentParams: DynamicComponentParams | null,
+        defaultComponentName?: string
+    ): ResolvedComponent<A, B> {
         /**
          * There are five things that can happen when resolving a component.
          *  a) HardcodedFwComponent: That holder[propertyName]Framework has associated a Framework native component
@@ -131,18 +129,18 @@ export class ComponentResolver {
         let dynamicComponentFn: (params: DynamicComponentParams) => DynamicComponentDef;
 
         if (holder != null) {
-            let componentPropertyValue: AgComponentPropertyInput<IComponent<any>> = (<any>holder)[propertyName];
+            const componentPropertyValue: AgComponentPropertyInput<IComponent<any>> = (holder as any)[propertyName];
             if (componentPropertyValue != null) {
                 if (typeof componentPropertyValue === 'string') {
                     hardcodedNameComponent = componentPropertyValue;
                 } else if (this.agComponentUtils.doesImplementIComponent(componentPropertyValue)) {
-                    HardcodedJsComponent = <{ new(): A }>componentPropertyValue;
+                    HardcodedJsComponent = componentPropertyValue as { new(): A };
                 } else {
-                    hardcodedJsFunction = <AgGridComponentFunctionInput>componentPropertyValue;
+                    hardcodedJsFunction = componentPropertyValue as AgGridComponentFunctionInput;
                 }
             }
-            HardcodedFwComponent = (<any>holder)[propertyName + "Framework"];
-            dynamicComponentFn = (<any>holder)[propertyName + "Selector"];
+            HardcodedFwComponent = (holder as any)[propertyName + "Framework"];
+            dynamicComponentFn = (holder as any)[propertyName + "Selector"];
         }
 
         /**
@@ -155,17 +153,16 @@ export class ComponentResolver {
             (hardcodedNameComponent && HardcodedFwComponent) ||
             (hardcodedJsFunction && HardcodedFwComponent)
         ) {
-            throw Error("ag-grid: you are trying to specify: " + propertyName + " twice as a component.")
+            throw Error("ag-grid: you are trying to specify: " + propertyName + " twice as a component.");
         }
 
         if (HardcodedFwComponent && !this.frameworkComponentWrapper) {
-            throw Error("ag-grid: you are specifying a framework component but you are not using a framework version of ag-grid for : " + propertyName)
+            throw Error("ag-grid: you are specifying a framework component but you are not using a framework version of ag-grid for : " + propertyName);
         }
 
         if (dynamicComponentFn && (hardcodedNameComponent || HardcodedJsComponent || hardcodedJsFunction || HardcodedFwComponent)) {
-            throw Error("ag-grid: you can't specify both, the selector and the component of ag-grid for : " + propertyName)
+            throw Error("ag-grid: you can't specify both, the selector and the component of ag-grid for : " + propertyName);
         }
-
 
         /**
          * At this stage we are guaranteed to either have,
@@ -185,7 +182,7 @@ export class ComponentResolver {
                 component: HardcodedFwComponent,
                 source: ComponentSource.HARDCODED,
                 dynamicParams: null
-            }
+            };
         }
 
         if (HardcodedJsComponent) {
@@ -196,22 +193,22 @@ export class ComponentResolver {
                 component: HardcodedJsComponent,
                 source: ComponentSource.HARDCODED,
                 dynamicParams: null
-            }
+            };
         }
 
         if (hardcodedJsFunction) {
             // console.warn(`ag-grid: Since version 12.1.0 specifying a function directly is deprecated, you should register the component by name`);
             // console.warn(`${hardcodedJsFunction}`);
-            return <ResolvedComponent<A, B>>this.agComponentUtils.adaptFunction(propertyName, hardcodedJsFunction, ComponentType.AG_GRID, ComponentSource.HARDCODED);
+            return this.agComponentUtils.adaptFunction(propertyName, hardcodedJsFunction, ComponentType.AG_GRID, ComponentSource.HARDCODED) as ResolvedComponent<A, B>;
         }
 
         if (dynamicComponentFn) {
-            let dynamicComponentDef = dynamicComponentFn(dynamicComponentParams);
+            const dynamicComponentDef = dynamicComponentFn(dynamicComponentParams);
             if (dynamicComponentDef != null) {
                 if (dynamicComponentDef.component == null) {
                     dynamicComponentDef.component = defaultComponentName;
                 }
-                let dynamicComponent: ResolvedComponent<A, B> = <ResolvedComponent<A, B>>this.resolveByName(propertyName, dynamicComponentDef.component);
+                const dynamicComponent: ResolvedComponent<A, B> = this.resolveByName(propertyName, dynamicComponentDef.component) as ResolvedComponent<A, B>;
                 return _.assign(
                     dynamicComponent, {
                         dynamicParams: dynamicComponentDef.params
@@ -219,7 +216,6 @@ export class ComponentResolver {
                 );
             }
         }
-
 
         //^^^^^ABOVE DEPRECATED - AT THIS POINT WE ARE RESOLVING BY NAME
         let componentNameToUse: string;
@@ -229,46 +225,44 @@ export class ComponentResolver {
             componentNameToUse = defaultComponentName;
         }
 
-        return componentNameToUse == null ? null : <ResolvedComponent<A, B>>this.resolveByName(propertyName, componentNameToUse);
+        return componentNameToUse == null ? null : this.resolveByName(propertyName, componentNameToUse) as ResolvedComponent<A, B>;
     }
 
     private resolveByName<A extends IComponent<any> & B, B>(propertyName: string,
                                                             componentNameOpt?: string): ResolvedComponent<A, B> {
-        let componentName: string = componentNameOpt != null ? componentNameOpt : propertyName;
+        const componentName: string = componentNameOpt != null ? componentNameOpt : propertyName;
 
-        let registeredComponent: RegisteredComponent<A, B> = this.componentProvider.retrieve(componentName);
-        if (registeredComponent == null) return null;
+        const registeredComponent: RegisteredComponent<A, B> = this.componentProvider.retrieve(componentName);
+        if (registeredComponent == null) { return null; }
 
         //If it is a FW it has to be registered as a component
         if (registeredComponent.type == ComponentType.FRAMEWORK) {
             return {
-                component: <{ new(): B }>registeredComponent.component,
+                component: registeredComponent.component as { new(): B },
                 type: ComponentType.FRAMEWORK,
                 source: ComponentSource.REGISTERED_BY_NAME,
                 dynamicParams: null
-            }
+            };
         }
 
-
         //If it is JS it may be a function or a component
-        if (this.agComponentUtils.doesImplementIComponent(<AgGridRegisteredComponentInput<A>>registeredComponent.component)) {
+        if (this.agComponentUtils.doesImplementIComponent(registeredComponent.component as AgGridRegisteredComponentInput<A>)) {
             return {
-                component: <{ new(): A }>registeredComponent.component,
+                component: registeredComponent.component as { new(): A },
                 type: ComponentType.AG_GRID,
                 source: (registeredComponent.source == RegisteredComponentSource.REGISTERED) ? ComponentSource.REGISTERED_BY_NAME : ComponentSource.DEFAULT,
                 dynamicParams: null
-            }
+            };
         }
 
         // This is a function
         return this.agComponentUtils.adaptFunction(
             propertyName,
-            <AgGridComponentFunctionInput>registeredComponent.component,
+            registeredComponent.component as AgGridComponentFunctionInput,
             registeredComponent.type,
             (registeredComponent.source == RegisteredComponentSource.REGISTERED) ? ComponentSource.REGISTERED_BY_NAME : ComponentSource.DEFAULT
         );
     }
-
 
     /**
      * Useful to check what would be the resultant params for a given object
@@ -285,8 +279,8 @@ export class ComponentResolver {
                        agGridParams: any,
                        dynamicCustomParams: any,
                        dynamicParams: any = null): any {
-        let customParamsRaw: any = holder ? (<any>holder)[propertyName + "Params"] : null;
-        let finalParams: any = {};
+        const customParamsRaw: any = holder ? (holder as any)[propertyName + "Params"] : null;
+        const finalParams: any = {};
 
         _.mergeDeep(finalParams, agGridParams);
         if (customParamsRaw != null) {
@@ -294,8 +288,7 @@ export class ComponentResolver {
             if (typeof customParamsRaw === 'function') {
                 _.mergeDeep(customParams, dynamicCustomParams);
                 customParams = customParamsRaw(customParams);
-            }
-            else {
+            } else {
                 customParams = customParamsRaw;
             }
             _.mergeDeep(finalParams, customParams);
@@ -334,14 +327,14 @@ export class ComponentResolver {
                                                             defaultComponentName?: string,
                                                             mandatory: boolean = true,
                                                             customInitParamsCb?: (params: any, component: A) => any): Promise<A> {
-        let holder: ComponentHolder = holderOpt == null ? this.gridOptions : holderOpt;
+        const holder: ComponentHolder = holderOpt == null ? this.gridOptions : holderOpt;
 
         //Create the component instance
-        let componentAndParams: [A, any] = <[A, any]>this.newAgGridComponent(holder, propertyName, dynamicComponentParams, defaultComponentName, mandatory);
-        if (!componentAndParams) return null;
+        const componentAndParams: [A, any] = this.newAgGridComponent(holder, propertyName, dynamicComponentParams, defaultComponentName, mandatory) as [A, any];
+        if (!componentAndParams) { return null; }
 
         // Wire the component and call the init method with the correct params
-        let finalParams = this.mergeParams(holder, propertyName, agGridParams, dynamicComponentParams, componentAndParams[1]);
+        const finalParams = this.mergeParams(holder, propertyName, agGridParams, dynamicComponentParams, componentAndParams[1]);
 
         // a temporary fix for AG-1574
         // AG-1715 raised to do a wider ranging refactor to improve this
@@ -349,15 +342,14 @@ export class ComponentResolver {
         // AG-1716 - directly related to AG-1574 and AG-1715
         finalParams.frameworkComponentWrapper = this.context.getBean('frameworkComponentWrapper') ? this.context.getBean('frameworkComponentWrapper') : {};
 
-        let deferredInit: void | Promise<void> = this.initialiseComponent(componentAndParams[0], finalParams, customInitParamsCb);
+        const deferredInit: void | Promise<void> = this.initialiseComponent(componentAndParams[0], finalParams, customInitParamsCb);
         if (deferredInit == null) {
             return Promise.resolve(componentAndParams[0]);
         } else {
-            let asPromise: Promise<void> = <Promise<void>> deferredInit;
+            const asPromise: Promise<void> = deferredInit as Promise<void>;
             return asPromise.map(notRelevant => componentAndParams[0]);
         }
     }
-
 
     /**
      * This method creates a component given everything needed to guess what sort of component needs to be instantiated
@@ -371,7 +363,7 @@ export class ComponentResolver {
     public createInternalAgGridComponent<P, A extends IComponent<P>>(clazz: { new(): A },
                                                                      agGridParams: P,
                                                                      customInitParamsCb?: (params: any, component: A) => any): A {
-        let internalComponent: A = <A>new clazz();
+        const internalComponent: A = new clazz() as A;
 
         this.initialiseComponent(
             internalComponent,
@@ -382,14 +374,13 @@ export class ComponentResolver {
         return internalComponent;
     }
 
-    private newAgGridComponent<A extends IComponent<any> & B, B>
-    (holder: ComponentHolder,
-     propertyName: string,
-     dynamicComponentParams: DynamicComponentParams | null,
-     defaultComponentName?: string,
-     mandatory: boolean = true): [A, any] {
-        let componentToUse: ResolvedComponent<A, B> = <ResolvedComponent<A, B>>this.getComponentToUse(holder, propertyName, dynamicComponentParams, defaultComponentName);
-
+    private newAgGridComponent<A extends IComponent<any> & B, B>(holder: ComponentHolder,
+        propertyName: string,
+        dynamicComponentParams: DynamicComponentParams | null,
+        defaultComponentName?: string,
+        mandatory: boolean = true
+    ): [A, any] {
+        const componentToUse: ResolvedComponent<A, B> = this.getComponentToUse(holder, propertyName, dynamicComponentParams, defaultComponentName) as ResolvedComponent<A, B>;
 
         if (!componentToUse || !componentToUse.component) {
             if (mandatory) {
@@ -400,17 +391,17 @@ export class ComponentResolver {
 
         if (componentToUse.type === ComponentType.AG_GRID) {
             return [
-                <A>new componentToUse.component(),
+                new componentToUse.component() as A,
                 componentToUse.dynamicParams
             ];
         }
 
         //Using framework component
-        let FrameworkComponentRaw: { new(): B } = componentToUse.component;
+        const FrameworkComponentRaw: { new(): B } = componentToUse.component;
 
-        let thisComponentConfig: ComponentMetadata = this.componentMetadataProvider.retrieve(propertyName);
+        const thisComponentConfig: ComponentMetadata = this.componentMetadataProvider.retrieve(propertyName);
         return [
-            <A>this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList, thisComponentConfig.optionalMethodList, defaultComponentName),
+            this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList, thisComponentConfig.optionalMethodList, defaultComponentName) as A,
             componentToUse.dynamicParams
         ];
     }
@@ -419,7 +410,7 @@ export class ComponentResolver {
                                                            agGridParams: any,
                                                            customInitParamsCb?: (params: any, component: A) => any): Promise<void> | void {
         this.context.wireBean(component);
-        if (component.init == null) return;
+        if (component.init == null) { return; }
 
         if (customInitParamsCb == null) {
             return component.init(agGridParams);

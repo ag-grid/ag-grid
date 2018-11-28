@@ -1,22 +1,20 @@
-import {Bean, Autowired, PostConstruct} from "../context/context";
+import { Bean, Autowired, PostConstruct } from "../context/context";
 import {
     GridSerializer, RowAccumulator, BaseGridSerializingSession, RowSpanningAccumulator,
     GridSerializingSession, GridSerializingParams
 } from "./gridSerializer";
-import {Downloader} from "./downloader";
-import {Column} from "../entities/column";
-import {RowNode} from "../entities/rowNode";
-import {ColumnController} from "../columnController/columnController";
-import {ValueService} from "../valueService/valueService";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import { Downloader } from "./downloader";
+import { Column } from "../entities/column";
+import { RowNode } from "../entities/rowNode";
+import { ColumnController } from "../columnController/columnController";
+import { ValueService } from "../valueService/valueService";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import {
-    BaseExportParams, CsvExportParams, ExportParams, ProcessCellForExportParams,
-    ProcessHeaderForExportParams
-} from "./exportParams";
-import {Constants} from "../constants";
-import {_} from "../utils";
+    BaseExportParams, CsvExportParams, ExportParams } from "./exportParams";
+import { Constants } from "../constants";
+import { _ } from "../utils";
 
-let LINE_SEPARATOR = '\r\n';
+const LINE_SEPARATOR = '\r\n';
 
 export interface CsvSerializingParams extends GridSerializingParams {
     suppressQuotes: boolean;
@@ -48,17 +46,17 @@ export class CsvSerializingSession extends BaseGridSerializingSession<string> {
     }
 
     public addCustomHeader(customHeader: string): void {
-        if (!customHeader) return;
+        if (!customHeader) { return; }
         this.result += customHeader + LINE_SEPARATOR;
     }
 
     public addCustomFooter(customFooter: string): void {
-        if (!customFooter) return;
+        if (!customFooter) { return; }
         this.result += customFooter + LINE_SEPARATOR;
     }
 
     public onNewHeaderGroupingRow(): RowSpanningAccumulator {
-        if (this.lineOpened) this.result += LINE_SEPARATOR;
+        if (this.lineOpened) { this.result += LINE_SEPARATOR; }
 
         return {
             onColumn: this.onNewHeaderGroupingRowColumn.bind(this)
@@ -72,14 +70,14 @@ export class CsvSerializingSession extends BaseGridSerializingSession<string> {
 
         this.result += this.putInQuotes(header, this.suppressQuotes);
 
-        for (let i = 1; i<= span; i++) {
+        for (let i = 1; i <= span; i++) {
             this.result += this.columnSeparator + this.putInQuotes("", this.suppressQuotes);
         }
         this.lineOpened = true;
     }
 
     public onNewHeaderRow(): RowAccumulator {
-        if (this.lineOpened) this.result += LINE_SEPARATOR;
+        if (this.lineOpened) { this.result += LINE_SEPARATOR; }
 
         return {
             onColumn:this.onNewHeaderRowColumn.bind(this)
@@ -95,7 +93,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<string> {
     }
 
     public onNewBodyRow(): RowAccumulator {
-        if (this.lineOpened) this.result += LINE_SEPARATOR;
+        if (this.lineOpened) { this.result += LINE_SEPARATOR; }
 
         return {
             onColumn: this.onNewBodyRowColumn.bind(this)
@@ -128,7 +126,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<string> {
         }
 
         // replace each " with "" (ie two sets of double quotes is how to do double quotes in csv)
-        let valueEscaped = stringValue.replace(/"/g, "\"\"");
+        const valueEscaped = stringValue.replace(/"/g, "\"\"");
 
         return '"' + valueEscaped + '"';
     }
@@ -158,9 +156,9 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
             return '';
         }
 
-        let {mergedParams, data} = this.getMergedParamsAndData(userParams);
+        const {mergedParams, data} = this.getMergedParamsAndData(userParams);
 
-        let fileNamePresent = mergedParams && mergedParams.fileName && mergedParams.fileName.length !== 0;
+        const fileNamePresent = mergedParams && mergedParams.fileName && mergedParams.fileName.length !== 0;
         let fileName = fileNamePresent ? mergedParams.fileName : this.getDefaultFileName();
 
         if (fileName.indexOf(".") === -1) {
@@ -177,15 +175,15 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
     }
 
     private getMergedParamsAndData(userParams: P):{mergedParams: P, data: string} {
-        let mergedParams = this.mergeDefaultParams(userParams);
-        let data = this.beans.gridSerializer.serialize(this.createSerializingSession(mergedParams), mergedParams);
+        const mergedParams = this.mergeDefaultParams(userParams);
+        const data = this.beans.gridSerializer.serialize(this.createSerializingSession(mergedParams), mergedParams);
 
         return {mergedParams, data};
     }
 
     private mergeDefaultParams(userParams: P):P {
-        let baseParams: BaseExportParams = this.beans.gridOptionsWrapper.getDefaultExportParams();
-        let params: P = <any>{};
+        const baseParams: BaseExportParams = this.beans.gridOptionsWrapper.getDefaultExportParams();
+        const params: P = {} as any;
         _.assign(params, baseParams);
         _.assign(params, userParams);
         return params;
@@ -254,7 +252,7 @@ export class CsvCreator extends BaseCreator<string, CsvSerializingSession, CsvEx
                 processCellCallback: processCellCallback || null,
                 processHeaderCallback: processHeaderCallback || null,
                 suppressQuotes: suppressQuotes,
-                columnSeparator: columnSeparator|| ','
+                columnSeparator: columnSeparator || ','
         });
     }
 

@@ -1,10 +1,9 @@
-
-import {Bean, Autowired} from "../context/context";
-import {Column} from "../entities/column";
-import {RowNode} from "../entities/rowNode";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {ExpressionService} from "../valueService/expressionService";
-import {ValueFormatterParams} from "../entities/colDef";
+import { Bean, Autowired } from "../context/context";
+import { Column } from "../entities/column";
+import { RowNode } from "../entities/rowNode";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { ExpressionService } from "../valueService/expressionService";
+import { ValueFormatterParams } from "../entities/colDef";
 
 @Bean('valueFormatterService')
 export class ValueFormatterService {
@@ -17,8 +16,8 @@ export class ValueFormatterService {
                        $scope: any,
                        value: any): string {
 
-        let formatter: (value: any)=>string;
-        let colDef = column.getColDef();
+        let formatter: (value: any) => string;
+        const colDef = column.getColDef();
         // if floating, give preference to the floating formatter
         if (rowNode && rowNode.rowPinned) {
             formatter = colDef.pinnedRowValueFormatter ? colDef.pinnedRowValueFormatter : colDef.valueFormatter;
@@ -27,7 +26,7 @@ export class ValueFormatterService {
         }
         let result: string = null;
         if (formatter) {
-            let params: ValueFormatterParams = {
+            const params: ValueFormatterParams = {
                 value: value,
                 node: rowNode,
                 data: rowNode ? rowNode.data : null,
@@ -43,15 +42,15 @@ export class ValueFormatterService {
             // angular 1 is not cool any more. so we hack the scope in here (we cannot
             // include it above, as it's not in the interface, so would cause a compile error).
             // in the future, when we stop supporting angular 1, we can take this out.
-            (<any>params).$scope = $scope;
+            (params as any).$scope = $scope;
 
             result = this.expressionService.evaluate(formatter, params);
-        } else if(colDef.refData) {
+        } else if (colDef.refData) {
             return colDef.refData[value];
         }
 
         // if we don't do this, then arrays get displayed as 1,2,3, but we want 1, 2, 3 (ie with spaces)
-        if ( (result===null || result===undefined) && Array.isArray(value)) {
+        if ((result === null || result === undefined) && Array.isArray(value)) {
             result = value.join(', ');
         }
 

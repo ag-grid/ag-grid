@@ -1,13 +1,13 @@
-import {RowNodeBlock} from "./rowNodeBlock";
-import {Logger, LoggerFactory} from "../../logger";
-import {Qualifier} from "../../context/context";
-import {_} from "../../utils";
+import { RowNodeBlock } from "./rowNodeBlock";
+import { Logger, LoggerFactory } from "../../logger";
+import { Qualifier } from "../../context/context";
+import { _ } from "../../utils";
 
 export class RowNodeBlockLoader {
 
     private readonly maxConcurrentRequests: number;
 
-    private readonly checkBlockToLoadDebounce: ()=>void;
+    private readonly checkBlockToLoadDebounce: () => void;
 
     private activeBlockLoadsCount = 0;
 
@@ -21,7 +21,7 @@ export class RowNodeBlockLoader {
         this.maxConcurrentRequests = maxConcurrentRequests;
 
         if (blockLoadDebounceMillis > 0) {
-            this.checkBlockToLoadDebounce = _.debounce( this.performCheckBlocksToLoad.bind(this), blockLoadDebounceMillis);
+            this.checkBlockToLoadDebounce = _.debounce(this.performCheckBlocksToLoad.bind(this), blockLoadDebounceMillis);
         }
     }
 
@@ -81,10 +81,10 @@ export class RowNodeBlockLoader {
     }
 
     public getBlockState(): any {
-        let result: any = {};
-        this.blocks.forEach( (block: RowNodeBlock) => {
-            let nodeIdPrefix = block.getNodeIdPrefix();
-            let stateItem = {
+        const result: any = {};
+        this.blocks.forEach((block: RowNodeBlock) => {
+            const nodeIdPrefix = block.getNodeIdPrefix();
+            const stateItem = {
                 blockNumber: block.getBlockNumber(),
                 startRow: block.getStartRow(),
                 endRow: block.getEndRow(),

@@ -1,8 +1,7 @@
-import {Bean, Autowired, PostConstruct} from "../../context/context";
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {StageExecuteParams} from "../../interfaces/iRowNodeStage";
-import {SortService} from "../../rowNodes/sortService";
-import {RowNode} from "../../entities/rowNode";
+import { Bean, Autowired } from "../../context/context";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { StageExecuteParams } from "../../interfaces/iRowNodeStage";
+import { SortService } from "../../rowNodes/sortService";
 
 @Bean('sortStage')
 export class SortStage {

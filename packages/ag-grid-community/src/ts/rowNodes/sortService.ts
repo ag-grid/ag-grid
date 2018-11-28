@@ -1,11 +1,11 @@
-import {RowNode} from "../entities/rowNode";
-import {Column} from "../entities/column";
-import {Autowired, Bean, PostConstruct} from "../context/context";
-import {SortController} from "../sortController";
-import {_} from "../utils";
-import {ValueService} from "../valueService/valueService";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {ColumnController} from "../columnController/columnController";
+import { RowNode } from "../entities/rowNode";
+import { Column } from "../entities/column";
+import { Autowired, Bean, PostConstruct } from "../context/context";
+import { SortController } from "../sortController";
+import { _ } from "../utils";
+import { ValueService } from "../valueService/valueService";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { ColumnController } from "../columnController/columnController";
 
 export interface SortOption {
     inverter: number;
@@ -33,7 +33,7 @@ export class SortService {
     }
 
     public sortAccordingToColumnsState(rowNode: RowNode) {
-        let sortOptions: SortOption[] = this.sortController.getSortForRowController();
+        const sortOptions: SortOption[] = this.sortController.getSortForRowController();
         this.sort(rowNode, sortOptions);
     }
 
@@ -43,14 +43,14 @@ export class SortService {
         // we clear out the 'pull down open parents' first, as the values mix up the sorting
         this.pullDownDataForHideOpenParents(rowNode, true);
 
-        let sortActive = _.exists(sortOptions) && sortOptions.length > 0;
+        const sortActive = _.exists(sortOptions) && sortOptions.length > 0;
         if (sortActive) {
             // RE https://ag-grid.atlassian.net/browse/AG-444
             //Javascript sort is non deterministic when all the array items are equals
             //ie Comparator always returns 0, so if you want to ensure the array keeps its
             //order, then you need to add an additional sorting condition manually, in this
             //case we are going to inspect the original array position
-            let sortedRowNodes: SortedRowNode[] = rowNode.childrenAfterSort.map((it, pos) => {
+            const sortedRowNodes: SortedRowNode[] = rowNode.childrenAfterSort.map((it, pos) => {
                 return {currentPos: pos, rowNode: it};
             });
             sortedRowNodes.sort(this.compareRowNodes.bind(this, sortOptions));
@@ -73,17 +73,17 @@ export class SortService {
     }
 
     private compareRowNodes(sortOptions: any, sortedNodeA: SortedRowNode, sortedNodeB: SortedRowNode) {
-        let nodeA: RowNode = sortedNodeA.rowNode;
-        let nodeB: RowNode = sortedNodeB.rowNode;
+        const nodeA: RowNode = sortedNodeA.rowNode;
+        const nodeB: RowNode = sortedNodeB.rowNode;
 
         // Iterate columns, return the first that doesn't match
         for (let i = 0, len = sortOptions.length; i < len; i++) {
-            let sortOption = sortOptions[i];
+            const sortOption = sortOptions[i];
             // let compared = compare(nodeA, nodeB, sortOption.column, sortOption.inverter === -1);
 
-            let isInverted = sortOption.inverter === -1;
-            let valueA: any = this.getValue(nodeA, sortOption.column);
-            let valueB: any = this.getValue(nodeB, sortOption.column);
+            const isInverted = sortOption.inverter === -1;
+            const valueA: any = this.getValue(nodeA, sortOption.column);
+            const valueB: any = this.getValue(nodeB, sortOption.column);
             let comparatorResult: number;
             if (sortOption.column.getColDef().comparator) {
                 //if comparator provided, use it
@@ -111,8 +111,8 @@ export class SortService {
         }
 
         rowNode.childrenAfterSort.forEach((child: RowNode, index: number) => {
-            let firstChild = index === 0;
-            let lastChild = index === rowNode.childrenAfterSort.length - 1;
+            const firstChild = index === 0;
+            const lastChild = index === rowNode.childrenAfterSort.length - 1;
             child.setFirstChild(firstChild);
             child.setLastChild(lastChild);
             child.setChildIndex(index);
@@ -128,21 +128,21 @@ export class SortService {
             return;
         }
 
-        rowNode.childrenAfterSort.forEach( childRowNode => {
+        rowNode.childrenAfterSort.forEach(childRowNode => {
 
-            let groupDisplayCols = this.columnController.getGroupDisplayColumns();
-            groupDisplayCols.forEach( groupDisplayCol => {
+            const groupDisplayCols = this.columnController.getGroupDisplayColumns();
+            groupDisplayCols.forEach(groupDisplayCol => {
 
-                let showRowGroup = groupDisplayCol.getColDef().showRowGroup;
+                const showRowGroup = groupDisplayCol.getColDef().showRowGroup;
                 if (typeof showRowGroup !== 'string') {
                     console.error('ag-Grid: groupHideOpenParents only works when specifying specific columns for colDef.showRowGroup');
                     return;
                 }
-                let displayingGroupKey: string = <string> showRowGroup;
+                const displayingGroupKey: string = showRowGroup as string;
 
-                let rowGroupColumn = this.columnController.getPrimaryColumn(displayingGroupKey);
+                const rowGroupColumn = this.columnController.getPrimaryColumn(displayingGroupKey);
 
-                let thisRowNodeMatches = rowGroupColumn === childRowNode.rowGroupColumn;
+                const thisRowNodeMatches = rowGroupColumn === childRowNode.rowGroupColumn;
                 if (thisRowNodeMatches) { return; }
 
                 if (clearOperation) {
@@ -150,7 +150,7 @@ export class SortService {
                     childRowNode.setGroupValue(groupDisplayCol.getId(), null);
                 } else {
                     // if doing a set operation, we set only where the pull down is to occur
-                    let parentToStealFrom = childRowNode.getFirstChildOfFirstChild(rowGroupColumn);
+                    const parentToStealFrom = childRowNode.getFirstChildOfFirstChild(rowGroupColumn);
                     if (parentToStealFrom) {
                         childRowNode.setGroupValue(groupDisplayCol.getId(), parentToStealFrom.key);
                     }

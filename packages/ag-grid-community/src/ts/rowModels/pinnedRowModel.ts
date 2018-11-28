@@ -1,15 +1,14 @@
-
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {RowNode} from "../entities/rowNode";
-import {Bean, Context} from "../context/context";
-import {EventService} from "../eventService";
-import {Autowired} from "../context/context";
-import {Events, PinnedRowDataChangedEvent} from "../events";
-import {PostConstruct} from "../context/context";
-import {Constants} from "../constants";
-import {Utils as _} from '../utils';
-import {ColumnApi} from "../columnController/columnApi";
-import {GridApi} from "../gridApi";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { RowNode } from "../entities/rowNode";
+import { Bean, Context } from "../context/context";
+import { EventService } from "../eventService";
+import { Autowired } from "../context/context";
+import { Events, PinnedRowDataChangedEvent } from "../events";
+import { PostConstruct } from "../context/context";
+import { Constants } from "../constants";
+import { _ } from '../utils';
+import { ColumnApi } from "../columnController/columnApi";
+import { GridApi } from "../gridApi";
 
 @Bean('pinnedRowModel')
 export class PinnedRowModel {
@@ -30,7 +29,7 @@ export class PinnedRowModel {
     }
 
     public isEmpty(floating: string): boolean {
-        let rows = floating===Constants.PINNED_TOP ? this.pinnedTopRows : this.pinnedBottomRows;
+        const rows = floating === Constants.PINNED_TOP ? this.pinnedTopRows : this.pinnedBottomRows;
         return _.missingOrEmpty(rows);
     }
 
@@ -39,13 +38,13 @@ export class PinnedRowModel {
     }
 
     public getRowAtPixel(pixel: number, floating: string): number {
-        let rows = floating===Constants.PINNED_TOP ? this.pinnedTopRows : this.pinnedBottomRows;
+        const rows = floating === Constants.PINNED_TOP ? this.pinnedTopRows : this.pinnedBottomRows;
         if (_.missingOrEmpty(rows)) {
             return 0; // this should never happen, just in case, 0 is graceful failure
         }
-        for (let i = 0; i<rows.length; i++) {
-            let rowNode = rows[i];
-            let rowTopPixel = rowNode.rowTop + rowNode.rowHeight - 1;
+        for (let i = 0; i < rows.length; i++) {
+            const rowNode = rows[i];
+            const rowTopPixel = rowNode.rowTop + rowNode.rowHeight - 1;
             // only need to range check against the top pixel, as we are going through the list
             // in order, first row to hit the pixel wins
             if (rowTopPixel >= pixel) {
@@ -57,7 +56,7 @@ export class PinnedRowModel {
 
     public setPinnedTopRowData(rowData: any[]): void {
         this.pinnedTopRows = this.createNodesFromData(rowData, true);
-        let event: PinnedRowDataChangedEvent = {
+        const event: PinnedRowDataChangedEvent = {
             type: Events.EVENT_PINNED_ROW_DATA_CHANGED,
             api: this.gridApi,
             columnApi: this.columnApi
@@ -67,7 +66,7 @@ export class PinnedRowModel {
 
     public setPinnedBottomRowData(rowData: any[]): void {
         this.pinnedBottomRows = this.createNodesFromData(rowData, false);
-        let event: PinnedRowDataChangedEvent = {
+        const event: PinnedRowDataChangedEvent = {
             type: Events.EVENT_PINNED_ROW_DATA_CHANGED,
             api: this.gridApi,
             columnApi: this.columnApi
@@ -76,11 +75,11 @@ export class PinnedRowModel {
     }
 
     private createNodesFromData(allData: any[], isTop: boolean): RowNode[] {
-        let rowNodes: RowNode[] = [];
+        const rowNodes: RowNode[] = [];
         if (allData) {
             let nextRowTop = 0;
-            allData.forEach( (dataItem: any, index: number) => {
-                let rowNode = new RowNode();
+            allData.forEach((dataItem: any, index: number) => {
+                const rowNode = new RowNode();
                 this.context.wireBean(rowNode);
                 rowNode.data = dataItem;
                 rowNode.rowPinned = isTop ? Constants.PINNED_TOP : Constants.PINNED_BOTTOM;
@@ -122,12 +121,12 @@ export class PinnedRowModel {
         return this.pinnedBottomRows[index];
     }
 
-    public forEachPinnedTopRow(callback: (rowNode: RowNode, index: number)=>void): void {
+    public forEachPinnedTopRow(callback: (rowNode: RowNode, index: number) => void): void {
         if (_.missingOrEmpty(this.pinnedTopRows)) { return; }
         this.pinnedTopRows.forEach(callback);
     }
 
-    public forEachPinnedBottomRow(callback: (rowNode: RowNode, index: number)=>void): void {
+    public forEachPinnedBottomRow(callback: (rowNode: RowNode, index: number) => void): void {
         if (_.missingOrEmpty(this.pinnedBottomRows)) { return; }
         this.pinnedBottomRows.forEach(callback);
     }
@@ -140,7 +139,7 @@ export class PinnedRowModel {
         if (!rowNodes || rowNodes.length === 0) {
             return 0;
         } else {
-            let lastNode = rowNodes[rowNodes.length - 1];
+            const lastNode = rowNodes[rowNodes.length - 1];
             return lastNode.rowTop + lastNode.rowHeight;
         }
     }

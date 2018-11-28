@@ -1,4 +1,4 @@
-import {SelectCellEditor} from "./selectCellEditor";
+import { SelectCellEditor } from "./selectCellEditor";
 
 export class PopupSelectCellEditor extends SelectCellEditor {
 

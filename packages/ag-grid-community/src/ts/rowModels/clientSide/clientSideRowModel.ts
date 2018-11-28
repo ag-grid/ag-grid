@@ -1,11 +1,11 @@
-import {Utils as _} from "../../utils";
-import {Constants as constants, Constants} from "../../constants";
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {ColumnApi} from "../../columnController/columnApi";
-import {ColumnController} from "../../columnController/columnController";
-import {FilterManager} from "../../filter/filterManager";
-import {RowNode} from "../../entities/rowNode";
-import {EventService} from "../../eventService";
+import { _ } from "../../utils";
+import { Constants as constants, Constants } from "../../constants";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { ColumnApi } from "../../columnController/columnApi";
+import { ColumnController } from "../../columnController/columnController";
+import { FilterManager } from "../../filter/filterManager";
+import { RowNode } from "../../entities/rowNode";
+import { EventService } from "../../eventService";
 import {
     Events,
     ExpandCollapseAllEvent,
@@ -13,15 +13,15 @@ import {
     RowDataChangedEvent,
     RowDataUpdatedEvent
 } from "../../events";
-import {Autowired, Bean, Context, Optional, PostConstruct} from "../../context/context";
-import {SelectionController} from "../../selectionController";
-import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
-import {ClientSideNodeManager} from "./clientSideNodeManager";
-import {ChangedPath} from "./changedPath";
-import {ValueService} from "../../valueService/valueService";
-import {ValueCache} from "../../valueService/valueCache";
-import {RowBounds} from "../../interfaces/iRowModel";
-import {GridApi} from "../../gridApi";
+import { Autowired, Bean, Context, Optional, PostConstruct } from "../../context/context";
+import { SelectionController } from "../../selectionController";
+import { IRowNodeStage } from "../../interfaces/iRowNodeStage";
+import { ClientSideNodeManager } from "./clientSideNodeManager";
+import { ChangedPath } from "./changedPath";
+import { ValueService } from "../../valueService/valueService";
+import { ValueCache } from "../../valueService/valueCache";
+import { RowBounds } from "../../interfaces/iRowModel";
+import { GridApi } from "../../gridApi";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes}
 
@@ -101,7 +101,7 @@ export class ClientSideRowModel {
     @PostConstruct
     public init(): void {
 
-        let refreshEverythingFunc = this.refreshModel.bind(this, {step: Constants.STEP_EVERYTHING});
+        const refreshEverythingFunc = this.refreshModel.bind(this, {step: Constants.STEP_EVERYTHING});
         this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, refreshEverythingFunc);
         this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, refreshEverythingFunc);
         this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
@@ -112,7 +112,7 @@ export class ClientSideRowModel {
         this.eventService.addModalPriorityEventListener(Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, refreshEverythingFunc);
 
-        let refreshMapFunc = this.refreshModel.bind(this, {
+        const refreshMapFunc = this.refreshModel.bind(this, {
             step: Constants.STEP_MAP,
             keepRenderedRows: true,
             animate: true
@@ -130,8 +130,8 @@ export class ClientSideRowModel {
 
     // returns false if row was moved, otherwise true
     public ensureRowAtPixel(rowNode: RowNode, pixel: number): boolean {
-        let indexAtPixelNow = this.getRowIndexAtPixel(pixel);
-        let rowNodeAtPixelNow = this.getRow(indexAtPixelNow);
+        const indexAtPixelNow = this.getRowIndexAtPixel(pixel);
+        const rowNodeAtPixelNow = this.getRow(indexAtPixelNow);
 
         if (rowNodeAtPixelNow === rowNode) {
             return false;
@@ -166,7 +166,7 @@ export class ClientSideRowModel {
         if (_.missing(this.rowsToDisplay)) {
             return null;
         }
-        let rowNode = this.rowsToDisplay[index];
+        const rowNode = this.rowsToDisplay[index];
         if (rowNode) {
             return {
                 rowTop: rowNode.rowTop,
@@ -178,12 +178,12 @@ export class ClientSideRowModel {
     }
 
     private onRowGroupOpened(): void {
-        let animate = this.gridOptionsWrapper.isAnimateRows();
+        const animate = this.gridOptionsWrapper.isAnimateRows();
         this.refreshModel({step: Constants.STEP_MAP, keepRenderedRows: true, animate: animate});
     }
 
     private onFilterChanged(): void {
-        let animate = this.gridOptionsWrapper.isAnimateRows();
+        const animate = this.gridOptionsWrapper.isAnimateRows();
         this.refreshModel({step: Constants.STEP_FILTER, keepRenderedRows: true, animate: animate});
     }
 
@@ -194,7 +194,7 @@ export class ClientSideRowModel {
             return;
         }
 
-        let animate = this.gridOptionsWrapper.isAnimateRows();
+        const animate = this.gridOptionsWrapper.isAnimateRows();
         this.refreshModel({step: Constants.STEP_SORT, keepRenderedRows: true, animate: animate, keepEditingRows: true});
     }
 
@@ -220,12 +220,12 @@ export class ClientSideRowModel {
         // the impacted parent rows are recalculated, parents who's children have
         // not changed are not impacted.
 
-        let valueColumns = this.columnController.getValueColumns();
+        const valueColumns = this.columnController.getValueColumns();
 
-        let noValueColumns = _.missingOrEmpty(valueColumns);
-        let noTransactions = _.missingOrEmpty(rowNodeTransactions);
+        const noValueColumns = _.missingOrEmpty(valueColumns);
+        const noTransactions = _.missingOrEmpty(rowNodeTransactions);
 
-        let changedPath = new ChangedPath(false);
+        const changedPath = new ChangedPath(false);
 
         if (noValueColumns || noTransactions) {
             changedPath.setInactive();
@@ -248,7 +248,7 @@ export class ClientSideRowModel {
         // let start: number;
         // console.log('======= start =======');
 
-        let changedPath: ChangedPath = this.createChangePath(params.rowNodeTransactions);
+        const changedPath: ChangedPath = this.createChangePath(params.rowNodeTransactions);
 
         switch (params.step) {
             case constants.STEP_EVERYTHING:
@@ -275,7 +275,7 @@ export class ClientSideRowModel {
             // console.log('rowsToDisplay = ' + (new Date().getTime() - start));
         }
 
-        let event: ModelUpdatedEvent = {
+        const event: ModelUpdatedEvent = {
             type: Events.EVENT_MODEL_UPDATED,
             api: this.gridApi,
             columnApi: this.columnApi,
@@ -296,14 +296,14 @@ export class ClientSideRowModel {
     public isEmpty(): boolean {
         let rowsMissing: boolean;
 
-        let doingLegacyTreeData = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        const doingLegacyTreeData = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         if (doingLegacyTreeData) {
             rowsMissing = _.missing(this.rootNode.childrenAfterGroup) || this.rootNode.childrenAfterGroup.length === 0;
         } else {
             rowsMissing = _.missing(this.rootNode.allLeafChildren) || this.rootNode.allLeafChildren.length === 0;
         }
 
-        let empty = _.missing(this.rootNode) || rowsMissing || !this.columnController.isReady();
+        const empty = _.missing(this.rootNode) || rowsMissing || !this.columnController.isReady();
 
         return empty;
     }
@@ -319,13 +319,13 @@ export class ClientSideRowModel {
         let lastRowHit = false;
         let lastRow: RowNode;
 
-        let result: RowNode[] = [];
+        const result: RowNode[] = [];
 
-        let groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
+        const groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
 
         this.forEachNodeAfterFilterAndSort((rowNode: RowNode) => {
 
-            let lookingForLastRow = firstRowHit && !lastRowHit;
+            const lookingForLastRow = firstRowHit && !lastRowHit;
 
             // check if we need to flip the select switch
             if (!firstRowHit) {
@@ -334,10 +334,10 @@ export class ClientSideRowModel {
                 }
             }
 
-            let skipThisGroupNode = rowNode.group && groupsSelectChildren;
+            const skipThisGroupNode = rowNode.group && groupsSelectChildren;
             if (!skipThisGroupNode) {
-                let inRange = firstRowHit && !lastRowHit;
-                let childOfLastRow = rowNode.isParentOfNode(lastRow);
+                const inRange = firstRowHit && !lastRowHit;
+                const childOfLastRow = rowNode.isParentOfNode(lastRow);
                 if (inRange || childOfLastRow) {
                     result.push(rowNode);
                 }
@@ -410,15 +410,15 @@ export class ClientSideRowModel {
             // if pixel is less than or equal zero, it's always the first row
             return 0;
         }
-        let lastNode = this.rowsToDisplay[this.rowsToDisplay.length - 1];
+        const lastNode = this.rowsToDisplay[this.rowsToDisplay.length - 1];
         if (lastNode.rowTop <= pixelToMatch) {
             return this.rowsToDisplay.length - 1;
         }
 
         while (true) {
 
-            let midPointer = Math.floor((bottomPointer + topPointer) / 2);
-            let currentRowNode = this.rowsToDisplay[midPointer];
+            const midPointer = Math.floor((bottomPointer + topPointer) / 2);
+            const currentRowNode = this.rowsToDisplay[midPointer];
 
             if (this.isRowInPixel(currentRowNode, pixelToMatch)) {
                 return midPointer;
@@ -432,16 +432,16 @@ export class ClientSideRowModel {
     }
 
     private isRowInPixel(rowNode: RowNode, pixelToMatch: number): boolean {
-        let topPixel = rowNode.rowTop;
-        let bottomPixel = rowNode.rowTop + rowNode.rowHeight;
-        let pixelInRow = topPixel <= pixelToMatch && bottomPixel > pixelToMatch;
+        const topPixel = rowNode.rowTop;
+        const bottomPixel = rowNode.rowTop + rowNode.rowHeight;
+        const pixelInRow = topPixel <= pixelToMatch && bottomPixel > pixelToMatch;
         return pixelInRow;
     }
 
     public getCurrentPageHeight(): number {
         if (this.rowsToDisplay && this.rowsToDisplay.length > 0) {
-            let lastRow = this.rowsToDisplay[this.rowsToDisplay.length - 1];
-            let lastPixel = lastRow.rowTop + lastRow.rowHeight;
+            const lastRow = this.rowsToDisplay[this.rowsToDisplay.length - 1];
+            const lastPixel = lastRow.rowTop + lastRow.rowHeight;
             return lastPixel;
         } else {
             return 0;
@@ -478,7 +478,7 @@ export class ClientSideRowModel {
     private recursivelyWalkNodesAndCallback(nodes: RowNode[], callback: Function, recursionType: RecursionType, index: number) {
         if (nodes) {
             for (let i = 0; i < nodes.length; i++) {
-                let node = nodes[i];
+                const node = nodes[i];
                 callback(node, index++);
                 // go to the next level if it is a group
                 if (node.hasChildren()) {
@@ -519,7 +519,7 @@ export class ClientSideRowModel {
     // + gridApi.expandAll()
     // + gridApi.collapseAll()
     public expandOrCollapseAll(expand: boolean): void {
-        let usingTreeData = this.gridOptionsWrapper.isTreeData();
+        const usingTreeData = this.gridOptionsWrapper.isTreeData();
         if (this.rootNode) {
             recursiveExpandOrCollapse(this.rootNode.childrenAfterGroup);
         }
@@ -529,7 +529,7 @@ export class ClientSideRowModel {
                 return;
             }
             rowNodes.forEach((rowNode: RowNode) => {
-                let shouldExpandOrCollapse = usingTreeData ? _.exists(rowNode.childrenAfterGroup) : rowNode.group;
+                const shouldExpandOrCollapse = usingTreeData ? _.exists(rowNode.childrenAfterGroup) : rowNode.group;
                 if (shouldExpandOrCollapse) {
                     rowNode.expanded = expand;
                     recursiveExpandOrCollapse(rowNode.childrenAfterGroup);
@@ -539,8 +539,8 @@ export class ClientSideRowModel {
 
         this.refreshModel({step: Constants.STEP_MAP});
 
-        let eventSource = expand ? 'expandAll' : 'collapseAll';
-        let event: ExpandCollapseAllEvent = {
+        const eventSource = expand ? 'expandAll' : 'collapseAll';
+        const event: ExpandCollapseAllEvent = {
             api: this.gridApi,
             columnApi: this.columnApi,
             type: Events.EVENT_EXPAND_COLLAPSE_ALL,
@@ -559,7 +559,7 @@ export class ClientSideRowModel {
                           changedPath: ChangedPath) {
 
         // grouping is enterprise only, so if service missing, skip the step
-        let doingLegacyTreeData = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        const doingLegacyTreeData = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         if (doingLegacyTreeData) {
             return;
         }
@@ -621,7 +621,7 @@ export class ClientSideRowModel {
         if (!this.rootNode.childrenAfterGroup || !this.gridOptionsWrapper.isRememberGroupStateWhenNewData()) {
             return null;
         }
-        let result: any = {};
+        const result: any = {};
         _.traverseNodesWithKey(this.rootNode.childrenAfterGroup, (node: RowNode, key: string) => result[key] = node.expanded);
         return result;
     }
@@ -641,7 +641,7 @@ export class ClientSideRowModel {
         // so new rowNodes means the cache is wiped anyway.
 
         // remember group state, so we can expand groups that should be expanded
-        let groupState = this.getGroupState();
+        const groupState = this.getGroupState();
 
         this.nodeManager.setRowData(rowData);
 
@@ -649,7 +649,7 @@ export class ClientSideRowModel {
         // - clears selection
         // - updates filters
         // - shows 'no rows' overlay if needed
-        let rowDataChangedEvent: RowDataChangedEvent = {
+        const rowDataChangedEvent: RowDataChangedEvent = {
             type: Events.EVENT_ROW_DATA_CHANGED,
             api: this.gridApi,
             columnApi: this.columnApi
@@ -666,7 +666,7 @@ export class ClientSideRowModel {
     public batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void {
         if (!this.rowDataTransactionBatch) {
             this.rowDataTransactionBatch = [];
-            let waitMillis = this.gridOptionsWrapper.getBatchUpdateWaitMillis();
+            const waitMillis = this.gridOptionsWrapper.getBatchUpdateWaitMillis();
             setTimeout(() => {
                 this.executeBatchUpdateRowData();
                 this.rowDataTransactionBatch = null;
@@ -678,12 +678,12 @@ export class ClientSideRowModel {
     private executeBatchUpdateRowData(): void {
         this.valueCache.onDataChanged();
 
-        let callbackFuncsBound: Function[] = [];
-        let rowNodeTrans: (RowNodeTransaction | null)[] = [];
+        const callbackFuncsBound: Function[] = [];
+        const rowNodeTrans: (RowNodeTransaction | null)[] = [];
 
         if (this.rowDataTransactionBatch) {
             this.rowDataTransactionBatch.forEach(tranItem => {
-                let rowNodeTran = this.nodeManager.updateRowData(tranItem.rowDataTransaction, null);
+                const rowNodeTran = this.nodeManager.updateRowData(tranItem.rowDataTransaction, null);
                 rowNodeTrans.push(rowNodeTran);
                 if (tranItem.callback) {
                     callbackFuncsBound.push(tranItem.callback.bind(rowNodeTran));
@@ -705,7 +705,7 @@ export class ClientSideRowModel {
 
         this.valueCache.onDataChanged();
 
-        let rowNodeTran = this.nodeManager.updateRowData(rowDataTran, rowNodeOrder);
+        const rowNodeTran = this.nodeManager.updateRowData(rowDataTran, rowNodeOrder);
 
         this.commonUpdateRowData([rowNodeTran], rowNodeOrder);
 
@@ -723,7 +723,7 @@ export class ClientSideRowModel {
             keepEditingRows: true
         });
 
-        let event: RowDataUpdatedEvent = {
+        const event: RowDataUpdatedEvent = {
             type: Events.EVENT_ROW_DATA_UPDATED,
             api: this.gridApi,
             columnApi: this.columnApi
@@ -732,7 +732,7 @@ export class ClientSideRowModel {
     }
 
     private doRowsToDisplay() {
-        this.rowsToDisplay = <RowNode[]> this.flattenStage.execute({rowNode: this.rootNode});
+        this.rowsToDisplay = this.flattenStage.execute({rowNode: this.rootNode}) as RowNode[];
     }
 
     public onRowHeightChanged(): void {

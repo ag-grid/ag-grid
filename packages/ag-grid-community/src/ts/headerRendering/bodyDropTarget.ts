@@ -1,10 +1,10 @@
-import {DragAndDropService, DraggingEvent, DragSourceType, DropTarget} from "../dragAndDrop/dragAndDropService";
-import {Autowired, Context, PostConstruct} from "../context/context";
-import {MoveColumnController} from "./moveColumnController";
-import {Column} from "../entities/column";
-import {GridPanel} from "../gridPanel/gridPanel";
-import {BodyDropPivotTarget} from "./bodyDropPivotTarget";
-import {ColumnController} from "../columnController/columnController";
+import { DragAndDropService, DraggingEvent, DragSourceType, DropTarget } from "../dragAndDrop/dragAndDropService";
+import { Autowired, Context, PostConstruct } from "../context/context";
+import { MoveColumnController } from "./moveColumnController";
+import { Column } from "../entities/column";
+import { GridPanel } from "../gridPanel/gridPanel";
+import { BodyDropPivotTarget } from "./bodyDropPivotTarget";
+import { ColumnController } from "../columnController/columnController";
 
 export interface DropListener {
     getIconName(): string;
@@ -74,7 +74,7 @@ export class BodyDropTarget implements DropTarget {
         this.moveColumnController = new MoveColumnController(this.pinned, this.eContainer);
         this.context.wireBean(this.moveColumnController);
 
-        let bodyDropPivotTarget = new BodyDropPivotTarget(this.pinned);
+        const bodyDropPivotTarget = new BodyDropPivotTarget(this.pinned);
         this.context.wireBean(bodyDropPivotTarget);
 
         this.dropListeners[DropType.ColumnMove] = this.moveColumnController;
@@ -113,7 +113,7 @@ export class BodyDropTarget implements DropTarget {
         // we change visibility state and position.
 
         // if (this.columnController.isPivotMode()) {
-        let dropType: DropType = this.getDropType(draggingEvent);
+        const dropType: DropType = this.getDropType(draggingEvent);
         this.currentDropListener = this.dropListeners[dropType];
 
         this.currentDropListener.onDragEnter(draggingEvent);

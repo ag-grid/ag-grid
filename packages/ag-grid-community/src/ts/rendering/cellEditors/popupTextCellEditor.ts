@@ -1,4 +1,4 @@
-import {TextCellEditor} from "./textCellEditor";
+import { TextCellEditor } from "./textCellEditor";
 
 export class PopupTextCellEditor extends TextCellEditor {
 

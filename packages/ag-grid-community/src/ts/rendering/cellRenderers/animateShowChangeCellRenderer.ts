@@ -1,9 +1,9 @@
-import {ICellRenderer} from "./iCellRenderer";
-import {Utils as _} from "../../utils";
-import {Component} from "../../widgets/component";
+import { ICellRenderer } from "./iCellRenderer";
+import { _ } from "../../utils";
+import { Component } from "../../widgets/component";
 
-let ARROW_UP = '&#65514;';
-let ARROW_DOWN = '&#65516;';
+const ARROW_UP = '&#65514;';
+const ARROW_DOWN = '&#65516;';
 
 export class AnimateShowChangeCellRenderer extends Component implements ICellRenderer {
 
@@ -36,12 +36,12 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
 
     private showDelta(params: any, delta: number): void {
 
-        let absDelta = Math.abs(delta);
-        let valueFormatted = params.formatValue(absDelta);
+        const absDelta = Math.abs(delta);
+        const valueFormatted = params.formatValue(absDelta);
 
-        let valueToUse = _.exists(valueFormatted) ? valueFormatted : absDelta;
+        const valueToUse = _.exists(valueFormatted) ? valueFormatted : absDelta;
 
-        let deltaUp = (delta >= 0);
+        const deltaUp = (delta >= 0);
 
         if (deltaUp) {
             this.eDelta.innerHTML = ARROW_UP + valueToUse;
@@ -61,8 +61,8 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         // the below timer is waiting, then the below timer will realise it
         // is not the most recent and will not try to remove the delta value.
         this.refreshCount++;
-        let refreshCountCopy = this.refreshCount;
-        setTimeout( ()=> {
+        const refreshCountCopy = this.refreshCount;
+        setTimeout(() => {
             if (refreshCountCopy === this.refreshCount) {
                 this.hideDeltaValue();
             }
@@ -75,7 +75,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
     }
 
     public refresh(params: any): boolean {
-        let value = params.value;
+        const value = params.value;
 
         if (value === this.lastValue) {
             return;
@@ -90,7 +90,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         }
 
         if (typeof value === 'number' && typeof this.lastValue === 'number') {
-            let delta = value - this.lastValue;
+            const delta = value - this.lastValue;
             this.showDelta(params, delta);
         }
 
@@ -99,7 +99,6 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         if (this.lastValue) {
             _.addCssClass(this.eValue, 'ag-value-change-value-highlight');
         }
-
 
         this.setTimerToRemoveDelta();
 

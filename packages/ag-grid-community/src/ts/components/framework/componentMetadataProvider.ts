@@ -1,12 +1,12 @@
-import {Autowired, Bean, PostConstruct} from "../../context/context";
-import {IAfterGuiAttachedParams, IComponent} from "../../interfaces/iComponent";
-import {AgGridComponentFunctionInput} from "./componentProvider";
-import {AgComponentUtils} from "./agComponentUtils";
+import { Autowired, Bean, PostConstruct } from "../../context/context";
+import { IComponent } from "../../interfaces/iComponent";
+import { AgGridComponentFunctionInput } from "./componentProvider";
+import { AgComponentUtils } from "./agComponentUtils";
 
 export interface ComponentMetadata {
-    mandatoryMethodList:string[],
-    optionalMethodList:string[],
-    functionAdapter?:(callback:AgGridComponentFunctionInput)=>{new(): IComponent<any>}
+    mandatoryMethodList:string[];
+    optionalMethodList:string[];
+    functionAdapter?:(callback:AgGridComponentFunctionInput) => {new(): IComponent<any>};
 }
 
 @Bean("componentMetadataProvider")
@@ -17,7 +17,7 @@ export class ComponentMetadataProvider {
     private agComponentUtils: AgComponentUtils;
 
     @PostConstruct
-    public postConstruct (){
+    public postConstruct() {
         this.componentMetaData = {
             dateComponent: {
                 mandatoryMethodList: ['getDate', 'setDate'],
@@ -58,7 +58,7 @@ export class ComponentMetadataProvider {
             },
             cellEditor:{
                 mandatoryMethodList: ['getValue'],
-                optionalMethodList: ['isPopup','isCancelBeforeStart','isCancelAfterEnd','focusIn','focusOut','afterGuiAttached']
+                optionalMethodList: ['isPopup', 'isCancelBeforeStart', 'isCancelAfterEnd', 'focusIn', 'focusOut', 'afterGuiAttached']
             },
             innerRenderer:{
                 mandatoryMethodList: [],
@@ -86,12 +86,12 @@ export class ComponentMetadataProvider {
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
             filter:{
-                mandatoryMethodList: ['isFilterActive','doesFilterPass','getModel','setModel'],
-                optionalMethodList: ['afterGuiAttached','onNewRowsLoaded','getModelAsString','onFloatingFilterChanged']
+                mandatoryMethodList: ['isFilterActive', 'doesFilterPass', 'getModel', 'setModel'],
+                optionalMethodList: ['afterGuiAttached', 'onNewRowsLoaded', 'getModelAsString', 'onFloatingFilterChanged']
             },
             filterComponent:{
-                mandatoryMethodList: ['isFilterActive','doesFilterPass','getModel','setModel'],
-                optionalMethodList: ['afterGuiAttached','onNewRowsLoaded','getModelAsString','onFloatingFilterChanged']
+                mandatoryMethodList: ['isFilterActive', 'doesFilterPass', 'getModel', 'setModel'],
+                optionalMethodList: ['afterGuiAttached', 'onNewRowsLoaded', 'getModelAsString', 'onFloatingFilterChanged']
             },
             statusPanel:{
                 mandatoryMethodList: [],
@@ -101,10 +101,10 @@ export class ComponentMetadataProvider {
                 mandatoryMethodList: [],
                 optionalMethodList: ['refresh', 'afterGuiAttached']
             }
-        }
+        };
     }
 
-    public retrieve (name:string):ComponentMetadata{
+    public retrieve(name:string):ComponentMetadata {
         return this.componentMetaData[name];
     }
 }

@@ -1,4 +1,4 @@
-import { ColDef, ColGroupDef, IAggFunc } from "./colDef";
+import { ColDef } from "./colDef";
 
 export const DefaultColumnTypes: { [key: string]: ColDef } = {
     numericColumn: {

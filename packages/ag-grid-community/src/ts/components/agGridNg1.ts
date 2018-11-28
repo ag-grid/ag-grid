@@ -1,7 +1,7 @@
-import {Grid, GridParams} from "../grid";
+import { Grid, GridParams } from "../grid";
 
 export function initialiseAgGridWithAngular1(angular: any) {
-    let angularModule = angular.module("agGrid", []);
+    const angularModule = angular.module("agGrid", []);
     angularModule.directive("agGrid", function() {
         return {
             restrict: "A",
@@ -15,7 +15,7 @@ function AngularDirectiveController($element: any, $scope: any, $compile: any, $
     let gridOptions: any;
     let quickFilterOnScope: any;
 
-    let keyOfGridInScope = $attrs.agGrid;
+    const keyOfGridInScope = $attrs.agGrid;
     quickFilterOnScope = keyOfGridInScope + '.quickFilterText';
     gridOptions = $scope.$eval(keyOfGridInScope);
     if (!gridOptions) {
@@ -23,8 +23,8 @@ function AngularDirectiveController($element: any, $scope: any, $compile: any, $
         return;
     }
 
-    let eGridDiv = $element[0];
-    let gridParams: GridParams = {
+    const eGridDiv = $element[0];
+    const gridParams: GridParams = {
         $scope: $scope,
         $compile: $compile,
         quickFilterOnScope: quickFilterOnScope

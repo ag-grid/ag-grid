@@ -1,11 +1,11 @@
-import {Autowired, Bean, Context} from "../context/context";
-import {Column} from "../entities/column";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {_} from "../utils";
-import {ColDef} from "../entities/colDef";
-import {ColumnController} from "./columnController";
-import {ColumnFactory} from "./columnFactory";
-import {Constants} from "../constants";
+import { Autowired, Bean, Context } from "../context/context";
+import { Column } from "../entities/column";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { _ } from "../utils";
+import { ColDef } from "../entities/colDef";
+import { ColumnController } from "./columnController";
+import { ColumnFactory } from "./columnFactory";
+import { Constants } from "../constants";
 
 @Bean('autoGroupColService')
 export class AutoGroupColService {
@@ -18,9 +18,9 @@ export class AutoGroupColService {
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
 
     public createAutoGroupColumns(rowGroupColumns: Column[]): Column[] {
-        let groupAutoColumns: Column[] = [];
+        const groupAutoColumns: Column[] = [];
 
-        let doingTreeData = this.gridOptionsWrapper.isTreeData();
+        const doingTreeData = this.gridOptionsWrapper.isTreeData();
         let doingMultiAutoColumn = this.gridOptionsWrapper.isGroupMultiAutoColumn();
 
         if (doingTreeData && doingMultiAutoColumn) {
@@ -53,7 +53,7 @@ export class AutoGroupColService {
             colId = AutoGroupColService.GROUP_AUTO_COLUMN_BUNDLE_ID;
         }
 
-        let userAutoColDef: ColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
+        const userAutoColDef: ColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
         _.mergeDeep(defaultAutoColDef, userAutoColDef);
 
         defaultAutoColDef = this.columnFactory.mergeColDefs(defaultAutoColDef);
@@ -64,7 +64,7 @@ export class AutoGroupColService {
         if (!this.gridOptionsWrapper.isTreeData()) {
             // we would only allow filter if the user has provided field or value getter. otherwise the filter
             // would not be able to work.
-            let noFieldOrValueGetter = _.missing(defaultAutoColDef.field) && _.missing(defaultAutoColDef.valueGetter) && _.missing(defaultAutoColDef.filterValueGetter);
+            const noFieldOrValueGetter = _.missing(defaultAutoColDef.field) && _.missing(defaultAutoColDef.valueGetter) && _.missing(defaultAutoColDef.filterValueGetter);
             if (noFieldOrValueGetter) {
                 defaultAutoColDef.suppressFilter = true;
             }
@@ -75,21 +75,21 @@ export class AutoGroupColService {
             defaultAutoColDef.headerCheckboxSelection = false;
         }
 
-        let newCol = new Column(defaultAutoColDef, null, colId, true);
+        const newCol = new Column(defaultAutoColDef, null, colId, true);
         this.context.wireBean(newCol);
 
         return newCol;
     }
 
     private generateDefaultColDef(rowGroupCol?: Column): ColDef {
-        let userAutoColDef: ColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
-        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const userAutoColDef: ColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
-        let defaultAutoColDef: ColDef = {
+        const defaultAutoColDef: ColDef = {
             headerName: localeTextFunc('group', 'Group')
         };
 
-        let userHasProvidedGroupCellRenderer =
+        const userHasProvidedGroupCellRenderer =
             userAutoColDef && (userAutoColDef.cellRenderer || userAutoColDef.cellRendererFramework);
 
         // only add the default group cell renderer if user hasn't provided one
@@ -101,7 +101,7 @@ export class AutoGroupColService {
         // defaultAutoColDef.suppressMovable = true;
 
         if (rowGroupCol) {
-            let rowGroupColDef = rowGroupCol.getColDef();
+            const rowGroupColDef = rowGroupCol.getColDef();
             _.assign(defaultAutoColDef, {
                 // cellRendererParams.groupKey: colDefToCopy.field;
                 headerName: this.columnController.getDisplayNameForColumn(rowGroupCol, 'header'),

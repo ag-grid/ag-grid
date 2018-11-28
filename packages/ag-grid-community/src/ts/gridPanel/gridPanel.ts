@@ -1,46 +1,46 @@
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {ColumnController} from "../columnController/columnController";
-import {ColumnApi} from "../columnController/columnApi";
-import {RowRenderer} from "../rendering/rowRenderer";
-import {Autowired, Context, Optional, PostConstruct, PreDestroy} from "../context/context";
-import {EventService} from "../eventService";
-import {BodyHeightChangedEvent, BodyScrollEvent, Events} from "../events";
-import {DragListenerParams, DragService} from "../dragAndDrop/dragService";
-import {IRangeController} from "../interfaces/iRangeController";
-import {Constants} from "../constants";
-import {MouseEventService} from "./mouseEventService";
-import {IClipboardService} from "../interfaces/iClipboardService";
-import {FocusedCellController} from "../focusedCellController";
-import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
-import {ScrollVisibleService, SetScrollsVisibleParams} from "./scrollVisibleService";
-import {Column} from "../entities/column";
-import {RowContainerComponent} from "../rendering/rowContainerComponent";
-import {RowNode} from "../entities/rowNode";
-import {PaginationAutoPageSizeService, PaginationProxy} from "../rowModels/paginationProxy";
-import {PopupEditorWrapper} from "../rendering/cellEditors/popupEditorWrapper";
-import {AlignedGridsService} from "../alignedGridsService";
-import {PinnedRowModel} from "../rowModels/pinnedRowModel";
-import {GridApi} from "../gridApi";
-import {AnimationFrameService} from "../misc/animationFrameService";
-import {RowComp} from "../rendering/rowComp";
-import {NavigationService} from "./navigationService";
-import {CellComp} from "../rendering/cellComp";
-import {ValueService} from "../valueService/valueService";
-import {LongTapEvent, TouchListener} from "../widgets/touchListener";
-import {ComponentRecipes} from "../components/framework/componentRecipes";
-import {DragAndDropService} from "../dragAndDrop/dragAndDropService";
-import {RowDragFeature} from "./rowDragFeature";
-import {HeightScaler} from "../rendering/heightScaler";
-import {IOverlayWrapperComp} from "../rendering/overlays/overlayWrapperComponent";
-import {Component} from "../widgets/component";
-import {AutoHeightCalculator} from "../rendering/autoHeightCalculator";
-import {ColumnAnimationService} from "../rendering/columnAnimationService";
-import {AutoWidthCalculator} from "../rendering/autoWidthCalculator";
-import {Beans} from "../rendering/beans";
-import {RefSelector} from "../widgets/componentAnnotations";
-import {HeaderRootComp} from "../headerRendering/headerRootComp";
-import {ResizeObserverService} from "../misc/resizeObserverService";
-import {Utils as _} from "../utils";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { ColumnController } from "../columnController/columnController";
+import { ColumnApi } from "../columnController/columnApi";
+import { RowRenderer } from "../rendering/rowRenderer";
+import { Autowired, Context, Optional, PostConstruct, PreDestroy } from "../context/context";
+import { EventService } from "../eventService";
+import { BodyHeightChangedEvent, BodyScrollEvent, Events } from "../events";
+import { DragListenerParams, DragService } from "../dragAndDrop/dragService";
+import { IRangeController } from "../interfaces/iRangeController";
+import { Constants } from "../constants";
+import { MouseEventService } from "./mouseEventService";
+import { IClipboardService } from "../interfaces/iClipboardService";
+import { FocusedCellController } from "../focusedCellController";
+import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
+import { ScrollVisibleService, SetScrollsVisibleParams } from "./scrollVisibleService";
+import { Column } from "../entities/column";
+import { RowContainerComponent } from "../rendering/rowContainerComponent";
+import { RowNode } from "../entities/rowNode";
+import { PaginationAutoPageSizeService, PaginationProxy } from "../rowModels/paginationProxy";
+import { PopupEditorWrapper } from "../rendering/cellEditors/popupEditorWrapper";
+import { AlignedGridsService } from "../alignedGridsService";
+import { PinnedRowModel } from "../rowModels/pinnedRowModel";
+import { GridApi } from "../gridApi";
+import { AnimationFrameService } from "../misc/animationFrameService";
+import { RowComp } from "../rendering/rowComp";
+import { NavigationService } from "./navigationService";
+import { CellComp } from "../rendering/cellComp";
+import { ValueService } from "../valueService/valueService";
+import { LongTapEvent, TouchListener } from "../widgets/touchListener";
+import { ComponentRecipes } from "../components/framework/componentRecipes";
+import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
+import { RowDragFeature } from "./rowDragFeature";
+import { HeightScaler } from "../rendering/heightScaler";
+import { IOverlayWrapperComp } from "../rendering/overlays/overlayWrapperComponent";
+import { Component } from "../widgets/component";
+import { AutoHeightCalculator } from "../rendering/autoHeightCalculator";
+import { ColumnAnimationService } from "../rendering/columnAnimationService";
+import { AutoWidthCalculator } from "../rendering/autoWidthCalculator";
+import { Beans } from "../rendering/beans";
+import { RefSelector } from "../widgets/componentAnnotations";
+import { HeaderRootComp } from "../headerRendering/headerRootComp";
+import { ResizeObserverService } from "../misc/resizeObserverService";
+import { _ } from "../utils";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -299,7 +299,7 @@ export class GridPanel extends Component {
             this.rangeController.registerGridComp(this);
         }
 
-        [this.eCenterViewport, this.eBodyViewport].forEach( viewport => {
+        [this.eCenterViewport, this.eBodyViewport].forEach(viewport => {
             const unsubscribeFromResize = this.resizeObserverService.observeResize(
                 viewport, this.onCenterViewportResized.bind(this));
             this.addDestroyFunc(() => unsubscribeFromResize());

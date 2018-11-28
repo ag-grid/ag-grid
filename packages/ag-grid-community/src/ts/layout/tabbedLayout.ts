@@ -1,4 +1,4 @@
-import {Promise, Utils as _} from '../utils';
+import { Promise, Utils as _ } from '../utils';
 
 export class TabbedLayout {
 
@@ -10,9 +10,9 @@ export class TabbedLayout {
     private afterAttachedParams: any;
 
     private static TEMPLATE =
-        '<div>'+
-            '<div ref="tabHeader" class="ag-tab-header"></div>'+
-            '<div ref="tabBody" class="ag-tab-body"></div>'+
+        '<div>' +
+            '<div ref="tabHeader" class="ag-tab-header"></div>' +
+            '<div ref="tabBody" class="ag-tab-body"></div>' +
         '</div>';
 
     private items: TabbedItemWrapper[] = [];
@@ -23,13 +23,13 @@ export class TabbedLayout {
         this.eGui = document.createElement('div');
         this.eGui.innerHTML = TabbedLayout.TEMPLATE;
 
-        this.eHeader = <HTMLElement> this.eGui.querySelector('[ref="tabHeader"]');
-        this.eBody = <HTMLElement> this.eGui.querySelector('[ref="tabBody"]');
+        this.eHeader = this.eGui.querySelector('[ref="tabHeader"]') as HTMLElement;
+        this.eBody = this.eGui.querySelector('[ref="tabBody"]') as HTMLElement;
 
         _.addCssClass(this.eGui, params.cssClass);
 
         if (params.items) {
-            params.items.forEach( item => this.addItem(item) );
+            params.items.forEach(item => this.addItem(item));
         }
     }
 
@@ -39,8 +39,8 @@ export class TabbedLayout {
 
     public getMinDimensions(): {width: number, height: number} {
 
-        let eDummyContainer = <HTMLElement> this.eGui.cloneNode(true);
-        let eDummyBody = <HTMLElement> eDummyContainer.querySelector('[ref="tabBody"]');
+        const eDummyContainer = this.eGui.cloneNode(true) as HTMLElement;
+        const eDummyBody = eDummyContainer.querySelector('[ref="tabBody"]') as HTMLElement;
 
         // position fixed, so it isn't restricted to the boundaries of the parent
         eDummyContainer.style.position = 'fixed';
@@ -52,18 +52,18 @@ export class TabbedLayout {
         let minWidth = 0;
         let minHeight = 0;
 
-        this.items.forEach( (itemWrapper: TabbedItemWrapper) => {
+        this.items.forEach((itemWrapper: TabbedItemWrapper) => {
             _.removeAllChildren(eDummyBody);
 
-            let eClone: HTMLElement = <HTMLElement> itemWrapper.tabbedItem.bodyPromise.resolveNow(null, body=>body.cloneNode(true));
+            const eClone: HTMLElement = itemWrapper.tabbedItem.bodyPromise.resolveNow(null, body => body.cloneNode(true)) as HTMLElement;
             if (eClone == null) { return; }
 
             eDummyBody.appendChild(eClone);
 
-            if (minWidth<eDummyContainer.offsetWidth) {
+            if (minWidth < eDummyContainer.offsetWidth) {
                 minWidth = eDummyContainer.offsetWidth;
             }
-            if (minHeight<eDummyContainer.offsetHeight) {
+            if (minHeight < eDummyContainer.offsetHeight) {
                 minHeight = eDummyContainer.offsetHeight;
             }
         });
@@ -80,19 +80,19 @@ export class TabbedLayout {
     }
 
     public showFirstItem(): void {
-        if (this.items.length>0) {
+        if (this.items.length > 0) {
             this.showItemWrapper(this.items[0]);
         }
     }
 
     private addItem(item: TabbedItem): void {
 
-        let eHeaderButton = document.createElement('span');
+        const eHeaderButton = document.createElement('span');
         eHeaderButton.appendChild(item.title);
         _.addCssClass(eHeaderButton, 'ag-tab');
         this.eHeader.appendChild(eHeaderButton);
 
-        let wrapper: TabbedItemWrapper = {
+        const wrapper: TabbedItemWrapper = {
             tabbedItem: item,
             eHeaderButton: eHeaderButton
         };
