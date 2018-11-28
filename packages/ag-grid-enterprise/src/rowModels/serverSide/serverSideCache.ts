@@ -25,7 +25,7 @@ export interface ServerSideCacheParams extends RowNodeCacheParams {
     valueCols: ColumnVO[];
     pivotCols: ColumnVO[];
     pivotMode: boolean;
-    datasource: IServerSideDatasource | null;
+    datasource?: IServerSideDatasource;
     lastAccessedSequence: NumberSequence;
 }
 

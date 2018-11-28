@@ -24,7 +24,7 @@ export class AutoGroupColService {
         let doingMultiAutoColumn = this.gridOptionsWrapper.isGroupMultiAutoColumn();
 
         if (doingTreeData && doingMultiAutoColumn) {
-            console.log('ag-Grid: you cannot mix groupMultiAutoColumn with treeData, only one column can be used to display groups when doing tree data');
+            console.warn('ag-Grid: you cannot mix groupMultiAutoColumn with treeData, only one column can be used to display groups when doing tree data');
             doingMultiAutoColumn = false;
         }
 
@@ -65,7 +65,7 @@ export class AutoGroupColService {
             // we would only allow filter if the user has provided field or value getter. otherwise the filter
             // would not be able to work.
             let noFieldOrValueGetter = _.missing(defaultAutoColDef.field) && _.missing(defaultAutoColDef.valueGetter) && _.missing(defaultAutoColDef.filterValueGetter);
-            if (noFieldOrValueGetter){
+            if (noFieldOrValueGetter) {
                 defaultAutoColDef.suppressFilter = true;
             }
         }
@@ -94,7 +94,7 @@ export class AutoGroupColService {
 
         // only add the default group cell renderer if user hasn't provided one
         if (!userHasProvidedGroupCellRenderer) {
-            defaultAutoColDef.cellRenderer = 'agGroupCellRenderer'
+            defaultAutoColDef.cellRenderer = 'agGroupCellRenderer';
         }
 
         // we never allow moving the group column

@@ -628,7 +628,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.groupDefaultExpanded;
     }
 
-    public getMaxConcurrentDatasourceRequests(): number | undefined {
+    public getMaxConcurrentDatasourceRequests(): number  {
         return this.gridOptions.maxConcurrentDatasourceRequests;
     }
 
@@ -716,7 +716,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.datasource;
     }
 
-    public getViewportDatasource(): IViewportDatasource | undefined {
+    public getViewportDatasource(): IViewportDatasource {
         return this.gridOptions.viewportDatasource;
     }
 

@@ -1,5 +1,4 @@
 import {
-    _,
     Bean,
     IRowNodeStage,
     Autowired,
@@ -11,7 +10,8 @@ import {
     Utils,
     StageExecuteParams,
     IAggFunc,
-    ChangedPath
+    ChangedPath,
+    _
 } from "ag-grid-community";
 import {PivotStage} from "./pivotStage";
 import {AggFuncService} from "../aggregation/aggFuncService";
@@ -36,22 +36,22 @@ export class AggregationStage implements IRowNodeStage {
     public execute(params: StageExecuteParams): any {
 
         // we don't do aggregation if doing legacy tree good
-        let doingLegacyTreeData = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        const doingLegacyTreeData = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         if (doingLegacyTreeData) { return null; }
 
-        let aggDetails = this.createAggDetails(params);
+        const aggDetails = this.createAggDetails(params);
 
         this.recursivelyCreateAggData(params.rowNode, aggDetails);
     }
 
     private createAggDetails(params: StageExecuteParams): AggregationDetails {
 
-        let pivotActive = this.columnController.isPivotActive();
+        const pivotActive = this.columnController.isPivotActive();
 
-        let measureColumns = this.columnController.getValueColumns();
-        let pivotColumns = pivotActive ? this.columnController.getPivotColumns() : [];
+        const measureColumns = this.columnController.getValueColumns();
+        const pivotColumns = pivotActive ? this.columnController.getPivotColumns() : [];
 
-        let aggDetails = <AggregationDetails> {
+        const aggDetails = <AggregationDetails> {
             changedPath: params.changedPath,
             valueColumns: measureColumns,
             pivotColumns: pivotColumns
@@ -64,7 +64,7 @@ export class AggregationStage implements IRowNodeStage {
 
         // aggregate all children first, as we use the result in this nodes calculations
         rowNode.childrenAfterFilter.forEach( (child: RowNode) => {
-            let nodeHasChildren = child.hasChildren();
+            const nodeHasChildren = child.hasChildren();
             if (nodeHasChildren) {
                 this.recursivelyCreateAggData(child, aggDetails);
             } else {
@@ -76,14 +76,14 @@ export class AggregationStage implements IRowNodeStage {
 
         //Optionally prevent the aggregation at the root Node
         //https://ag-grid.atlassian.net/browse/AG-388
-        let isRootNode = rowNode.level === -1;
+        const isRootNode = rowNode.level === -1;
         if (isRootNode) {
-            let notPivoting = !this.columnController.isPivotMode();
-            let suppressAggAtRootLevel = this.gridOptionsWrapper.isSuppressAggAtRootLevel();
+            const notPivoting = !this.columnController.isPivotMode();
+            const suppressAggAtRootLevel = this.gridOptionsWrapper.isSuppressAggAtRootLevel();
             if (suppressAggAtRootLevel && notPivoting) { return; }
         }
 
-        let skipBecauseNoChangedPath = aggDetails.changedPath.isActive()
+        const skipBecauseNoChangedPath = aggDetails.changedPath.isActive()
             && !aggDetails.changedPath.isInPath(rowNode);
 
         if (skipBecauseNoChangedPath) { return; }
@@ -93,9 +93,9 @@ export class AggregationStage implements IRowNodeStage {
 
     private aggregateRowNode(rowNode: RowNode, aggDetails: AggregationDetails): void {
 
-        let measureColumnsMissing = aggDetails.valueColumns.length === 0;
-        let pivotColumnsMissing = aggDetails.pivotColumns.length === 0;
-        let userFunc = this.gridOptionsWrapper.getGroupRowAggNodesFunc();
+        const measureColumnsMissing = aggDetails.valueColumns.length === 0;
+        const pivotColumnsMissing = aggDetails.pivotColumns.length === 0;
+        const userFunc = this.gridOptionsWrapper.getGroupRowAggNodesFunc();
 
         let aggResult: any;
         if (userFunc) {
@@ -118,64 +118,64 @@ export class AggregationStage implements IRowNodeStage {
     }
 
     private aggregateRowNodeUsingValuesAndPivot(rowNode: RowNode): any {
-        let result: any = {};
-        let pivotColumnDefs = this.pivotStage.getPivotColumnDefs();
+        const result: any = {};
+        const pivotColumnDefs = this.pivotStage.getPivotColumnDefs();
 
         // Step 1: process value columns
         pivotColumnDefs
             .filter(v => !Utils.exists(v.pivotTotalColumnIds)) // only process pivot value columns
             .forEach(valueColDef => {
-                let keys: string[] | undefined = valueColDef.pivotKeys;
+                const keys: string[] = valueColDef.pivotKeys || [];
                 let values: any[];
-                let valueColumn: Column | null | undefined = valueColDef.pivotValueColumn;
+                const valueColumn: Column = valueColDef.pivotValueColumn as Column;
+                const colId = valueColDef.colId as string;
 
                 if (rowNode.leafGroup) {
                     // lowest level group, get the values from the mapped set
                     values = this.getValuesFromMappedSet(rowNode.childrenMapped, keys, valueColumn);
                 } else {
                     // value columns and pivot columns, non-leaf group
-                    values = this.getValuesPivotNonLeaf(rowNode, valueColDef.colId);
+                    values = this.getValuesPivotNonLeaf(rowNode, colId);
                 }
 
-                if (valueColDef.colId && valueColumn) {
-                    result[valueColDef.colId] = this.aggregateValues(values, valueColumn.getAggFunc());
-                }
+                result[colId] = this.aggregateValues(values, valueColumn.getAggFunc());
             });
 
         // Step 2: process total columns
         pivotColumnDefs
             .filter(v => Utils.exists(v.pivotTotalColumnIds)) // only process pivot total columns
             .forEach(totalColDef => {
-                let aggResults: any[] = [];
+                const aggResults: any[] = [];
+                const {pivotValueColumn, pivotTotalColumnIds, colId} = totalColDef;
 
                 //retrieve results for colIds associated with this pivot total column
-                if (totalColDef.pivotTotalColumnIds) {
-                    totalColDef.pivotTotalColumnIds.forEach((colId: string) => {
-                        aggResults.push(result[colId]);
-                    });
+                if (!pivotTotalColumnIds || !pivotTotalColumnIds.length) {
+                    return;
                 }
 
-                if (totalColDef.colId && totalColDef.pivotValueColumn) {
-                    result[totalColDef.colId] = this.aggregateValues(aggResults, totalColDef.pivotValueColumn.getAggFunc());
-                }
+                pivotTotalColumnIds.forEach((colId: string) => {
+                    aggResults.push(result[colId]);
+                });
+
+                result[colId as string] = this.aggregateValues(aggResults, (pivotValueColumn as Column).getAggFunc());
             });
 
         return result;
     }
 
     private aggregateRowNodeUsingValuesOnly(rowNode: RowNode, aggDetails: AggregationDetails): any {
-        let result: any = {};
+        const result: any = {};
 
-        let changedValueColumns = aggDetails.changedPath.isActive() ?
+        const changedValueColumns = aggDetails.changedPath.isActive() ?
             aggDetails.changedPath.getValueColumnsForNode(rowNode, aggDetails.valueColumns)
             : aggDetails.valueColumns;
 
-        let notChangedValueColumns = aggDetails.changedPath.isActive() ?
+        const notChangedValueColumns = aggDetails.changedPath.isActive() ?
             aggDetails.changedPath.getNotValueColumnsForNode(rowNode, aggDetails.valueColumns)
             : null;
 
-        let values2d = this.getValuesNormal(rowNode, changedValueColumns);
-        let oldValues = rowNode.aggData;
+        const values2d = this.getValuesNormal(rowNode, changedValueColumns);
+        const oldValues = rowNode.aggData;
 
         changedValueColumns.forEach( (valueColumn: Column, index: number) => {
             result[valueColumn.getId()] = this.aggregateValues(values2d[index], valueColumn.getAggFunc());
@@ -190,35 +190,27 @@ export class AggregationStage implements IRowNodeStage {
         return result;
     }
 
-    private getValuesPivotNonLeaf(rowNode: RowNode, colId: string | undefined): any[] {
-        let values: any[] = [];
+    private getValuesPivotNonLeaf(rowNode: RowNode, colId: string): any[] {
+        const values: any[] = [];
         rowNode.childrenAfterFilter.forEach( (node: RowNode) => {
-            if (colId) {
-                let value = node.aggData[colId];
-                values.push(value);
-            }
+            const value = node.aggData[colId];
+            values.push(value);
         });
         return values;
     }
 
-    private getValuesFromMappedSet(mappedSet: any, keys: string[] | undefined, valueColumn: Column | null | undefined): any[] {
-        if(!keys) {
-            return [];
-        }
-
+    private getValuesFromMappedSet(mappedSet: any, keys: string[], valueColumn: Column): any[] {
         let mapPointer = mappedSet;
-        keys.forEach( key => mapPointer = mapPointer ? mapPointer[key] : null );
+        keys.forEach(key => (mapPointer = mapPointer ? mapPointer[key] : null));
 
         if (!mapPointer) {
             return [];
         }
 
-        let values: any = [];
+        const values: any = [];
         mapPointer.forEach( (rowNode: RowNode) => {
-            if (valueColumn) {
-                let value = this.valueService.getValue(valueColumn, rowNode);
-                values.push(value);
-            }
+            const value = this.valueService.getValue(valueColumn, rowNode);
+            values.push(value);
         });
 
         return values;
@@ -226,19 +218,19 @@ export class AggregationStage implements IRowNodeStage {
 
     private getValuesNormal(rowNode: RowNode, valueColumns: Column[]): any[][] {
         // create 2d array, of all values for all valueColumns
-        let values: any[][] = [];
+        const values: any[][] = [];
         valueColumns.forEach( ()=> values.push([]) );
 
-        let valueColumnCount = valueColumns.length;
-        let rowCount = rowNode.childrenAfterFilter.length;
+        const valueColumnCount = valueColumns.length;
+        const rowCount = rowNode.childrenAfterFilter.length;
 
-        for (let i = 0; i<rowCount; i++) {
-            let childNode = rowNode.childrenAfterFilter[i];
-            for (let j = 0; j<valueColumnCount; j++) {
-                let valueColumn = valueColumns[j];
+        for (let i = 0; i < rowCount; i++) {
+            const childNode = rowNode.childrenAfterFilter[i];
+            for (let j = 0; j < valueColumnCount; j++) {
+                const valueColumn = valueColumns[j];
                 // if the row is a group, then it will only have an agg result value,
                 // which means valueGetter is never used.
-                let value = this.valueService.getValue(valueColumn, childNode);
+                const value = this.valueService.getValue(valueColumn, childNode);
                 values[j].push(value);
             }
         }

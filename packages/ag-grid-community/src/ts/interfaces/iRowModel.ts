@@ -39,7 +39,7 @@ export interface IRowModel {
 
     /** Returns all rows in range that should be selected. If there is a gap in range (non ClientSideRowModel) then
      *  then no rows should be returned  */
-    getNodesInRangeForSelection(first: RowNode, last: RowNode): RowNode[] | null;
+    getNodesInRangeForSelection(first: RowNode, last: RowNode): RowNode[];
 
     /** Iterate through each node. What this does depends on the model type. For clientSide, goes through
      * all nodes. For pagination, goes through current page. For virtualPage, goes through what's loaded in memory. */

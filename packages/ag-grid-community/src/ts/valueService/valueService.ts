@@ -42,7 +42,6 @@ export class ValueService {
             this.init();
         }
 
-
         if (!rowNode) {
             return undefined;
         }

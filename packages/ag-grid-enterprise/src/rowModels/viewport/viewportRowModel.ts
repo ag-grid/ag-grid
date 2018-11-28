@@ -49,9 +49,8 @@ export class ViewportRowModel implements IRowModel {
 
         let viewportEnabled = this.gridOptionsWrapper.isRowModelViewport();
 
-        const viewportDatasource = this.gridOptionsWrapper.getViewportDatasource();
-        if (viewportEnabled && viewportDatasource) {
-            this.setViewportDatasource(viewportDatasource);
+        if (viewportEnabled && this.gridOptionsWrapper.getViewportDatasource()) {
+            this.setViewportDatasource(this.gridOptionsWrapper.getViewportDatasource());
         }
 
     }
