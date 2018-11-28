@@ -46,6 +46,9 @@ var gridOptions = {
             cellRenderer:'agAnimateShowChangeCellRenderer'
         }
     },
+    autoGroupColumnDef: {
+        width: 200
+    },
     columnDefs: columnDefs,
     statusBar: {
         items: [
