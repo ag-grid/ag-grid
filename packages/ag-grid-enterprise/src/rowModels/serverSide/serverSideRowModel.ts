@@ -30,7 +30,7 @@ import {
     RowNodeCache,
     SortController
 } from "ag-grid-community";
-import {ServerSideCache, ServerSideCacheParams} from "./serverSideCache";
+import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
 
 @Bean('rowModel')
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
