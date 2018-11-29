@@ -24,11 +24,11 @@ export class SelectionController {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    private selectedNodes: {[key: string]: RowNode};
+    private selectedNodes: { [key: string]: RowNode | undefined };
     private logger: Logger;
 
     // used for shift selection, so we know where to start the range selection from
-    private lastSelectedNode: RowNode;
+    private lastSelectedNode: RowNode | null;
 
     private groupSelectsChildren: boolean;
 
@@ -53,7 +53,7 @@ export class SelectionController {
         this.lastSelectedNode = rowNode;
     }
 
-    public getLastSelectedNode(): RowNode {
+    public getLastSelectedNode(): RowNode | null {
         return this.lastSelectedNode;
     }
 
@@ -88,12 +88,16 @@ export class SelectionController {
     // should only be called if groupSelectsChildren=true
     public updateGroupsFromChildrenSelections(): void {
         // we only do this when group selection state depends on selected children
-        if (!this.gridOptionsWrapper.isGroupSelectsChildren()) { return; }
+        if (!this.gridOptionsWrapper.isGroupSelectsChildren()) {
+            return;
+        }
         // also only do it if CSRM (code should never allow this anyway)
-        if (this.rowModel.getType() !== Constants.ROW_MODEL_TYPE_CLIENT_SIDE) { return; }
+        if (this.rowModel.getType() !== Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            return;
+        }
 
         const clientSideRowModel = this.rowModel as ClientSideRowModel;
-        clientSideRowModel.getTopLevelNodes().forEach((rowNode: RowNode) => {
+        clientSideRowModel.getTopLevelNodes()!.forEach((rowNode: RowNode) => {
             rowNode.depthFirstSearch((node) => {
                 if (node.group) {
                     node.calculateSelectedFromChildren();
@@ -102,7 +106,7 @@ export class SelectionController {
         });
     }
 
-    public getNodeForIdIfSelected(id: number): RowNode {
+    public getNodeForIdIfSelected(id: number): RowNode | undefined {
         return this.selectedNodes[id];
     }
 
@@ -112,7 +116,11 @@ export class SelectionController {
         _.iterateObject(this.selectedNodes, (key: string, otherRowNode: RowNode) => {
             if (otherRowNode && otherRowNode.id !== rowNodeToKeepSelected.id) {
                 const rowNode = this.selectedNodes[otherRowNode.id];
-                updatedCount += rowNode.setSelectedParams({newValue: false, clearSelection: false, suppressFinishActions: true});
+                updatedCount += rowNode!.setSelectedParams({
+                    newValue: false,
+                    clearSelection: false,
+                    suppressFinishActions: true
+                });
                 if (this.groupSelectsChildren && otherRowNode.parent) {
                     groupsToRefresh[otherRowNode.parent.id] = otherRowNode.parent;
                 }
@@ -128,7 +136,9 @@ export class SelectionController {
         const rowNode = event.node;
 
         // we do not store the group rows when the groups select children
-        if (this.groupSelectsChildren && rowNode.group) { return; }
+        if (this.groupSelectsChildren && rowNode.group) {
+            return;
+        }
 
         if (rowNode.isSelected()) {
             this.selectedNodes[rowNode.id] = rowNode;
@@ -300,8 +310,10 @@ export class SelectionController {
     }
 
     // Deprecated method
-    public selectNode(rowNode: RowNode, tryMulti: boolean) {
-        rowNode.setSelectedParams({newValue: true, clearSelection: !tryMulti});
+    public selectNode(rowNode: RowNode | null, tryMulti: boolean) {
+        if (rowNode) {
+            rowNode.setSelectedParams({newValue: true, clearSelection: !tryMulti});
+        }
     }
 
     // Deprecated method
@@ -311,8 +323,10 @@ export class SelectionController {
     }
 
     // Deprecated method
-    public deselectNode(rowNode: RowNode) {
-        rowNode.setSelectedParams({newValue: false, clearSelection: false});
+    public deselectNode(rowNode: RowNode | null) {
+        if (rowNode) {
+            rowNode.setSelectedParams({newValue: false, clearSelection: false});
+        }
     }
 
     // Deprecated method

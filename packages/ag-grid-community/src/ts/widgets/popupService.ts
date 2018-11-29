@@ -38,10 +38,10 @@ export class PopupService {
         const eDocument = this.getDocument();
         const popupParent = this.getPopupParent();
 
-        let parentRect:ClientRect;
+        let parentRect: ClientRect;
 
         if (popupParent === eDocument.body) {
-            parentRect = eDocument.documentElement.getBoundingClientRect();
+            parentRect = eDocument.documentElement!.getBoundingClientRect();
         } else {
             parentRect = popupParent.getBoundingClientRect();
         }
@@ -109,11 +109,12 @@ export class PopupService {
 
         this.callPostProcessPopup(params.ePopup, null, params.mouseEvent, params.type, params.column, params.rowNode);
     }
-    private calculatePointerAlign(e: MouseEvent | Touch): {x: number, y: number} {
+
+    private calculatePointerAlign(e: MouseEvent | Touch): { x: number, y: number } {
         const eDocument = this.getDocument();
         const popupParent = this.getPopupParent();
         const parentRect = popupParent.getBoundingClientRect();
-        const documentRect = eDocument.documentElement.getBoundingClientRect();
+        const documentRect = eDocument.documentElement!.getBoundingClientRect();
 
         return {
             x: e.clientX - (popupParent === eDocument.body ? documentRect.left : parentRect.left),
@@ -138,10 +139,10 @@ export class PopupService {
         const eDocument = this.getDocument();
         const popupParent = this.getPopupParent();
 
-        let parentRect:ClientRect;
+        let parentRect: ClientRect;
 
         if (popupParent === eDocument.body) {
-            parentRect = eDocument.documentElement.getBoundingClientRect();
+            parentRect = eDocument.documentElement!.getBoundingClientRect();
         } else {
             parentRect = popupParent.getBoundingClientRect();
         }
@@ -160,7 +161,7 @@ export class PopupService {
         this.callPostProcessPopup(params.ePopup, params.eventSource, null, params.type, params.column, params.rowNode);
     }
 
-    private callPostProcessPopup(ePopup: HTMLElement, eventSource: HTMLElement | null, mouseEvent: MouseEvent | Touch | null, type: string, column: Column | null | undefined, rowNode: RowNode | undefined): void {
+    private callPostProcessPopup(ePopup: HTMLElement | null, eventSource: HTMLElement | null, mouseEvent: MouseEvent | Touch | null, type: string, column: Column | null | undefined, rowNode: RowNode | undefined): void {
         const callback = this.gridOptionsWrapper.getPostProcessPopupFunc();
         if (callback) {
             const params: PostProcessPopupParams = {
@@ -191,10 +192,10 @@ export class PopupService {
         const eDocument = this.getDocument();
         const popupParent = this.getPopupParent();
 
-        let parentRect:ClientRect;
+        let parentRect: ClientRect;
 
         if (popupParent === eDocument.body) {
-            parentRect = eDocument.documentElement.getBoundingClientRect();
+            parentRect = eDocument.documentElement!.getBoundingClientRect();
         } else {
             parentRect = popupParent.getBoundingClientRect();
         }
@@ -213,7 +214,7 @@ export class PopupService {
     }
 
     private positionPopup(params: {
-        ePopup: HTMLElement,
+        ePopup: HTMLElement | null,
         minWidth?: number,
         minHeight?: number,
         nudgeX?: number,
@@ -239,16 +240,16 @@ export class PopupService {
             y = this.keepYWithinBounds(params, y);
         }
 
-        params.ePopup.style.left = `${x}px`;
-        params.ePopup.style.top = `${y}px`;
+        params.ePopup!.style.left = `${x}px`;
+        params.ePopup!.style.top = `${y}px`;
     }
 
-    private keepYWithinBounds(params: { ePopup: HTMLElement, minHeight?: number }, y: number): number {
+    private keepYWithinBounds(params: { ePopup: HTMLElement | null, minHeight?: number }, y: number): number {
         const eDocument = this.gridOptionsWrapper.getDocument();
         const docElement = eDocument.documentElement;
         const popupParent = this.getPopupParent();
         const parentRect = popupParent.getBoundingClientRect();
-        const documentRect = eDocument.documentElement.getBoundingClientRect();
+        const documentRect = eDocument.documentElement!.getBoundingClientRect();
         const isBody = popupParent === eDocument.body;
         const defaultPadding = 3;
 
@@ -257,12 +258,12 @@ export class PopupService {
 
         if (params.minHeight && params.minHeight < minHeight) {
             minHeight = params.minHeight;
-        } else if (params.ePopup.offsetHeight > 0) {
-            minHeight = params.ePopup.clientHeight;
+        } else if (params.ePopup!.offsetHeight > 0) {
+            minHeight = params.ePopup!.clientHeight;
             diff = _.getAbsoluteHeight(params.ePopup) - minHeight;
         }
 
-        let heightOfParent = isBody ? (_.getAbsoluteHeight(docElement) + docElement.scrollTop) : parentRect.height;
+        let heightOfParent = isBody ? (_.getAbsoluteHeight(docElement) + docElement!.scrollTop) : parentRect.height;
         if (isBody) {
             heightOfParent -= Math.abs(documentRect.top - parentRect.top);
         }
@@ -271,12 +272,12 @@ export class PopupService {
         return Math.min(Math.max(y, 0), Math.abs(maxY));
     }
 
-    private keepXWithinBounds(params: { minWidth?: number, ePopup: HTMLElement }, x: number): number {
+    private keepXWithinBounds(params: { minWidth?: number, ePopup: HTMLElement | null }, x: number): number {
         const eDocument = this.gridOptionsWrapper.getDocument();
         const docElement = eDocument.documentElement;
         const popupParent = this.getPopupParent();
         const parentRect = popupParent.getBoundingClientRect();
-        const documentRect = eDocument.documentElement.getBoundingClientRect();
+        const documentRect = eDocument.documentElement!.getBoundingClientRect();
         const isBody = popupParent === eDocument.body;
         const defaultPadding = 3;
 
@@ -285,13 +286,13 @@ export class PopupService {
 
         if (params.minWidth && params.minWidth < minWidth) {
             minWidth = params.minWidth;
-        } else if (params.ePopup.clientWidth > 0) {
-            minWidth = params.ePopup.clientWidth;
-            params.ePopup.style.minWidth = `${minWidth}px`;
-            diff = _.getAbsoluteWidth(params.ePopup) - minWidth;
+        } else if (params.ePopup!.clientWidth > 0) {
+            minWidth = params.ePopup!.clientWidth;
+            params.ePopup!.style.minWidth = `${minWidth}px`;
+            diff = _.getAbsoluteWidth(params.ePopup!) - minWidth;
         }
 
-        let widthOfParent = isBody ? (_.getAbsoluteWidth(docElement) + docElement.scrollLeft) : parentRect.width;
+        let widthOfParent = isBody ? (_.getAbsoluteWidth(docElement!) + docElement!.scrollLeft) : parentRect.width;
         if (isBody) {
             widthOfParent -= Math.abs(documentRect.left - parentRect.left);
         }
@@ -308,12 +309,12 @@ export class PopupService {
         return this.addPopup(true, eChild, closeOnEsc, closedCallback, click);
     }
 
-    public addPopup(modal: boolean, eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch): (event?: any) => void {
+    public addPopup(modal: boolean, eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch | null): (event?: any) => void {
 
         const eDocument = this.gridOptionsWrapper.getDocument();
         if (!eDocument) {
             console.warn('ag-grid: could not find the document, document is empty');
-            return;
+            return () => {};
         }
 
         eChild.style.top = '0px';
@@ -321,7 +322,7 @@ export class PopupService {
 
         const popupAlreadyShown = _.isVisible(eChild);
         if (popupAlreadyShown) {
-            return;
+            return () => {};
         }
 
         const ePopupParent = this.getPopupParent();
@@ -385,7 +386,7 @@ export class PopupService {
 
         // if we add these listeners now, then the current mouse
         // click will be included, which we don't want
-        window.setTimeout(function() {
+        window.setTimeout(function () {
             if (closeOnEsc) {
                 eDocument.addEventListener('keydown', hidePopupOnKeyboardEvent);
             }
@@ -416,7 +417,7 @@ export class PopupService {
 
     // in some browsers, the context menu event can be fired before the click event, which means
     // the context menu event could open the popup, but then the click event closes it straight away.
-    private isEventSameChainAsOriginalEvent(originalClick: MouseEvent | Touch | undefined, mouseEvent: MouseEvent | undefined | null, touchEvent: TouchEvent | undefined): boolean {
+    private isEventSameChainAsOriginalEvent(originalClick: MouseEvent | Touch | undefined | null, mouseEvent: MouseEvent | undefined | null, touchEvent: TouchEvent | undefined): boolean {
         // we check the coordinates of the event, to see if it's the same event. there is a 1 / 1000 chance that
         // the event is a different event, however that is an edge case that is not very relevant (the user clicking
         // twice on the same location isn't a normal path).

@@ -629,7 +629,7 @@ export interface PostProcessPopupParams {
     // if popup is for a row, this gives the RowNode
     rowNode?: RowNode;
     // the popup we are showing
-    ePopup: HTMLElement;
+    ePopup: HTMLElement | null;
     // The different types are: 'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor'
     type: string;
     // if the popup is as a result of a button click (eg menu button), this is the component that the user clicked

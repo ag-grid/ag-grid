@@ -1,8 +1,10 @@
 import {
+    _,
     Autowired,
     Bean,
     BeanStub,
     Column,
+    ColumnApi,
     ColumnController,
     ColumnVO,
     Constants,
@@ -10,6 +12,7 @@ import {
     Events,
     EventService,
     FilterManager,
+    GridApi,
     GridOptionsWrapper,
     IServerSideDatasource,
     IServerSideRowModel,
@@ -18,19 +21,16 @@ import {
     ModelUpdatedEvent,
     NumberSequence,
     PostConstruct,
+    PreDestroy,
     Qualifier,
+    RowBounds,
+    RowDataChangedEvent,
     RowNode,
     RowNodeBlockLoader,
     RowNodeCache,
-    SortController,
-    RowBounds,
-    GridApi,
-    ColumnApi,
-    RowDataChangedEvent,
-    PreDestroy,
-    _
+    SortController
 } from "ag-grid-community";
-import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
+import {ServerSideCache, ServerSideCacheParams} from "./serverSideCache";
 
 @Bean('rowModel')
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
@@ -114,7 +114,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         // The problem the customer had was they were api.setColumnDefs() after the data source came
         // back with data. So this stops the reload from the grid after the data comes back.
         // Once we have "AG-1591 Allow delta changes to columns" fixed, then this hack can be taken out.
-        if (this.gridOptionsWrapper.isSuppressEnterpriseResetOnNewColumns()) { return; }
+        if (this.gridOptionsWrapper.isSuppressEnterpriseResetOnNewColumns()) {
+            return;
+        }
         // every other customer can continue as normal and have it working!!!
 
         // check if anything pertaining to fetching data has changed, and if it has, reset, but if
@@ -149,8 +151,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     // is impacted by sorting on A or B then it needs to be refreshed. this includes where the cache
     // was previously sorted by A and then the A sort now needs to be cleared.
     private findChangedColumnsInSort(
-                            newSortModel: {colId: string, sort: string}[],
-                            oldSortModel: {colId: string, sort: string}[]): string[] {
+        newSortModel: { colId: string, sort: string }[],
+        oldSortModel: { colId: string, sort: string }[]): string[] {
 
         let allColsInBothSorts: string[] = [];
 
@@ -181,7 +183,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     private onSortChanged(): void {
-        if (!this.cacheExists()) { return; }
+        if (!this.cacheExists()) {
+            return;
+        }
 
         const newSortModel = this.extractSortModel();
         const oldSortModel = this.cacheParams.sortModel;
@@ -220,7 +224,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     private onRowGroupOpened(event: any): void {
-        const rowNode: RowNode  = event.node;
+        const rowNode: RowNode = event.node;
         if (rowNode.expanded) {
             if (_.missing(rowNode.childrenCache)) {
                 this.createNodeCache(rowNode);
@@ -424,7 +428,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         if (this.cacheExists()) {
             return this.rootNode.childrenCache!.getRow(index);
         }
-        
+
         return null;
     }
 
@@ -462,9 +466,13 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public getRowIndexAtPixel(pixel: number): number {
-        if (pixel === 0) { return 0; }
+        if (pixel === 0) {
+            return 0;
+        }
 
-        if (!this.cacheExists()) { return 0; }
+        if (!this.cacheExists()) {
+            return 0;
+        }
 
         const serverSideCache = this.rootNode.childrenCache as ServerSideCache;
         return serverSideCache.getRowIndexAtPixel(pixel);
@@ -516,7 +524,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
-        if (_.exists(firstInRange) && firstInRange.parent !== lastInRange.parent) { return []; }
+        if (_.exists(firstInRange) && firstInRange.parent !== lastInRange.parent) {
+            return [];
+        }
         return lastInRange.parent!.childrenCache!.getRowNodesInRange(firstInRange, lastInRange);
     }
 
@@ -583,7 +593,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
                 // don't add individual group column if non group column already exists as it gets precedence
                 const sameNonGroupColumnExists = sortModel.some(sm => sm.colId === individualGroupCol.colId);
-                if (sameNonGroupColumnExists) { continue; }
+                if (sameNonGroupColumnExists) {
+                    continue;
+                }
 
                 sortModel.splice(autoGroupIndex++, 0, individualGroupCol);
             }
@@ -616,7 +628,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     private isSortingWithSecondaryColumn(changedColumnsInSort: string[]): boolean {
-        if (!this.columnController.getSecondaryColumns()) { return false; }
+        if (!this.columnController.getSecondaryColumns()) {
+            return false;
+        }
 
         const secondaryColIds = this.columnController.getSecondaryColumns()!.map(col => col.getColId());
 

@@ -17,10 +17,10 @@ export class RowNodeBlockLoader {
 
     private active = true;
 
-    constructor(maxConcurrentRequests: number, blockLoadDebounceMillis: number) {
+    constructor(maxConcurrentRequests: number, blockLoadDebounceMillis: number | undefined) {
         this.maxConcurrentRequests = maxConcurrentRequests;
 
-        if (blockLoadDebounceMillis > 0) {
+        if (blockLoadDebounceMillis && blockLoadDebounceMillis > 0) {
             this.checkBlockToLoadDebounce = _.debounce(this.performCheckBlocksToLoad.bind(this), blockLoadDebounceMillis);
         }
     }
@@ -63,7 +63,7 @@ export class RowNodeBlockLoader {
             return;
         }
 
-        let blockToLoad: RowNodeBlock = null;
+        let blockToLoad: RowNodeBlock | null = null;
         this.blocks.forEach(block => {
             if (block.getState() === RowNodeBlock.STATE_DIRTY) {
                 blockToLoad = block;
@@ -71,9 +71,9 @@ export class RowNodeBlockLoader {
         });
 
         if (blockToLoad) {
-            blockToLoad.load();
+            blockToLoad!.load();
             this.activeBlockLoadsCount++;
-            this.logger.log(`checkBlockToLoad: loading page ${blockToLoad.getBlockNumber()}`);
+            this.logger.log(`checkBlockToLoad: loading page ${blockToLoad!.getBlockNumber()}`);
             this.printCacheStatus();
         } else {
             this.logger.log(`checkBlockToLoad: no pages to load`);

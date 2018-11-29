@@ -27,7 +27,6 @@ export class MenuList extends Component {
 
     constructor() {
         super(MenuList.TEMPLATE);
-        // console.log('MenuList->constructor() ' + this.instance);
     }
 
     public clearActiveItem(): void {
@@ -157,7 +156,6 @@ export class MenuList extends Component {
     }
 
     public destroy(): void {
-        // console.log('MenuList->destroy() ' + this.instance);
         this.removeChildPopup();
         super.destroy();
     }

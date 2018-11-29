@@ -1,8 +1,8 @@
-import { Context } from "../context/context";
-import { BeanStub } from "../context/beanStub";
-import { IComponent } from "../interfaces/iComponent";
-import { AgEvent } from "../events";
-import { NumberSequence, _ } from "../utils";
+import {Context} from "../context/context";
+import {BeanStub} from "../context/beanStub";
+import {IComponent} from "../interfaces/iComponent";
+import {AgEvent} from "../events";
+import {_, NumberSequence} from "../utils";
 
 const compIdSequence = new NumberSequence();
 
@@ -142,7 +142,7 @@ export class Component extends BeanStub implements IComponent<any> {
 
             const eventCamelCase = _.hyphenToCamelCase(nameValue.name);
 
-            callback(eventCamelCase, listener.bind(this));
+            callback(eventCamelCase!, listener.bind(this));
         });
     }
 
@@ -152,12 +152,12 @@ export class Component extends BeanStub implements IComponent<any> {
 
         attrLists.normal.forEach(nameValue => {
             const nameCamelCase = _.hyphenToCamelCase(nameValue.name);
-            childAttributes[nameCamelCase] = nameValue.value;
+            childAttributes[nameCamelCase!] = nameValue.value;
         });
 
         attrLists.bindings.forEach(nameValue => {
             const nameCamelCase = _.hyphenToCamelCase(nameValue.name);
-            childAttributes[nameCamelCase] = (this as any)[nameValue.value];
+            childAttributes[nameCamelCase!] = (this as any)[nameValue.value];
         });
 
         child.props = childAttributes;
@@ -250,7 +250,9 @@ export class Component extends BeanStub implements IComponent<any> {
 
         const listenerMethods = this.getAgComponentMetaData('listenerMethods');
 
-        if (_.missingOrEmpty(listenerMethods)) { return; }
+        if (_.missingOrEmpty(listenerMethods)) {
+            return;
+        }
 
         if (!this.annotatedEventListeners) {
             this.annotatedEventListeners = [];
@@ -355,7 +357,7 @@ export class Component extends BeanStub implements IComponent<any> {
         super.destroy();
         this.childComponents.forEach(childComponent => {
             if (childComponent) {
-                childComponent.destroy();
+                (<any>childComponent).destroy();
             }
         });
         this.childComponents.length = 0;

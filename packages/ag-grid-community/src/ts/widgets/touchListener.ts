@@ -29,7 +29,7 @@ export class TouchListener implements IEventEmitter {
     private touching = false;
     private touchStart: Touch;
 
-    private lastTapTime: number;
+    private lastTapTime: number | null;
 
     private eventService: EventService = new EventService();
 
@@ -45,19 +45,19 @@ export class TouchListener implements IEventEmitter {
         const moveListener = this.onTouchMove.bind(this);
         const endListener = this.onTouchEnd.bind(this);
 
-        this.eElement.addEventListener("touchstart", startListener, { passive: true } as any);
-        this.eElement.addEventListener("touchmove", moveListener, { passive: true } as any);
+        this.eElement.addEventListener("touchstart", startListener, {passive: true} as any);
+        this.eElement.addEventListener("touchmove", moveListener, {passive: true} as any);
         // we set passive=false, as we want to prevent default on this event
-        this.eElement.addEventListener("touchend", endListener, { passive: false } as any);
+        this.eElement.addEventListener("touchend", endListener, {passive: false} as any);
 
         this.destroyFuncs.push(() => {
-            this.eElement.removeEventListener("touchstart", startListener, { passive: true } as any);
-            this.eElement.removeEventListener("touchmove", moveListener, { passive: true } as any);
-            this.eElement.removeEventListener("touchend", endListener, { passive: false } as any);
+            this.eElement.removeEventListener("touchstart", startListener, {passive: true} as any);
+            this.eElement.removeEventListener("touchmove", moveListener, {passive: true} as any);
+            this.eElement.removeEventListener("touchend", endListener, {passive: false} as any);
         });
     }
 
-    private getActiveTouch(touchList: TouchList): Touch {
+    private getActiveTouch(touchList: TouchList): Touch | null {
         for (let i = 0; i < touchList.length; i++) {
             const matches = touchList[i].identifier === this.touchStart.identifier;
             if (matches) {
@@ -145,7 +145,7 @@ export class TouchListener implements IEventEmitter {
     private checkForDoubleTap(): void {
         const now = new Date().getTime();
 
-        if (this.lastTapTime > 0) {
+        if (this.lastTapTime && this.lastTapTime > 0) {
             // if previous tap, see if duration is short enough to be considered double tap
             const interval = now - this.lastTapTime;
             if (interval > TouchListener.DOUBLE_TAP_MILLIS) {

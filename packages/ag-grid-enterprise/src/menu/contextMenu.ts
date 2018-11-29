@@ -1,4 +1,5 @@
 import {
+    _,
     Autowired,
     Bean,
     BeanStub,
@@ -17,8 +18,7 @@ import {
     MenuItemDef,
     PopupService,
     PostConstruct,
-    RowNode,
-    _
+    RowNode
 } from "ag-grid-community";
 import { ClipboardService } from "../clipboardService";
 import { MenuItemComponent } from "./menuItemComponent";
@@ -40,8 +40,10 @@ export class ContextMenuFactory implements IContextMenuFactory {
     }
 
     public hideActiveMenu(): void {
-        if (!this.activeMenu) { return; }
-        
+        if (!this.activeMenu) {
+            return;
+        }
+
         this.activeMenu.destroy();
     }
 
@@ -81,14 +83,16 @@ export class ContextMenuFactory implements IContextMenuFactory {
 
             return userFunc ? userFunc(params) : undefined;
         }
-        
+
         return defaultMenuOptions;
     }
 
     public showMenu(node: RowNode, column: Column, value: any, mouseEvent: MouseEvent | Touch): void {
         const menuItems = this.getMenuItems(node, column, value);
 
-        if (menuItems === undefined || _.missingOrEmpty(menuItems)) { return; }
+        if (menuItems === undefined || _.missingOrEmpty(menuItems)) {
+            return;
+        }
 
         const menu = new ContextMenu(menuItems);
         this.context.wireBean(menu);
@@ -123,7 +127,6 @@ export class ContextMenuFactory implements IContextMenuFactory {
             }
         });
     }
-
 }
 
 class ContextMenu extends Component implements IComponent<any> {

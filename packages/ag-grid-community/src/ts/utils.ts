@@ -1,7 +1,7 @@
-import { GridOptionsWrapper } from "./gridOptionsWrapper";
-import { Column } from "./entities/column";
-import { RowNode } from "./entities/rowNode";
-import { Constants } from "./constants";
+import {GridOptionsWrapper} from "./gridOptionsWrapper";
+import {Column} from "./entities/column";
+import {RowNode} from "./entities/rowNode";
+import {Constants} from "./constants";
 
 const FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 const FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
@@ -152,11 +152,11 @@ export class Utils {
         }
     }
 
-    static getAbsoluteHeight(el: HTMLElement): number {
-        const styles: any = window.getComputedStyle(el);
+    static getAbsoluteHeight(el: HTMLElement | null): number {
+        const styles: any = window.getComputedStyle(el!);
         const margin = parseFloat(styles.marginTop) + parseFloat(styles.marginBottom);
 
-        return Math.ceil(el.offsetHeight + margin);
+        return Math.ceil(el!.offsetHeight + margin);
     }
 
     static getAbsoluteWidth(el: HTMLElement): number {
@@ -318,7 +318,7 @@ export class Utils {
 
     static filter<T>(array: T[], callback: (item: T) => boolean): T[] {
         const result: T[] = [];
-        array.forEach(function(item: T) {
+        array.forEach(function (item: T) {
             if (callback(item)) {
                 result.push(item);
             }
@@ -337,7 +337,9 @@ export class Utils {
     }
 
     static mergeDeep(dest: any, source: any): void {
-        if (!this.exists(source)) { return; }
+        if (!this.exists(source)) {
+            return;
+        }
 
         this.iterateObject(source, (key: string, newValue: any) => {
             const oldValue: any = dest[key];
@@ -357,7 +359,7 @@ export class Utils {
     static assign(object: any, ...sources: any[]): any {
         sources.forEach(source => {
             if (this.exists(source)) {
-                this.iterateObject(source, function(key: string, value: any) {
+                this.iterateObject(source, function (key: string, value: any) {
                     object[key] = value;
                 });
             }
@@ -368,11 +370,17 @@ export class Utils {
 
     static parseYyyyMmDdToDate(yyyyMmDd: string, separator: string): Date | null {
         try {
-            if (!yyyyMmDd) { return null; }
-            if (yyyyMmDd.indexOf(separator) === -1) { return null; }
+            if (!yyyyMmDd) {
+                return null;
+            }
+            if (yyyyMmDd.indexOf(separator) === -1) {
+                return null;
+            }
 
             const fields: string[] = yyyyMmDd.split(separator);
-            if (fields.length != 3) { return null; }
+            if (fields.length != 3) {
+                return null;
+            }
             return new Date(Number(fields[0]), Number(fields[1]) - 1, Number(fields[2]));
         } catch (e) {
             return null;
@@ -380,13 +388,17 @@ export class Utils {
     }
 
     static serializeDateToYyyyMmDd(date: Date, separator: string): string | null {
-        if (!date) { return null; }
+        if (!date) {
+            return null;
+        }
         return date.getFullYear() + separator + Utils.pad(date.getMonth() + 1, 2) + separator + Utils.pad(date.getDate(), 2);
     }
 
     static pad(num: number, totalStringSize: number): string {
         let asString: string = num + "";
-        while (asString.length < totalStringSize) { asString = "0" + asString; }
+        while (asString.length < totalStringSize) {
+            asString = "0" + asString;
+        }
         return asString;
     }
 
@@ -447,7 +459,7 @@ export class Utils {
     }
 
     static toStrings<T>(array: T[]): (string | null)[] {
-        return this.map(array, function(item) {
+        return this.map(array, function (item) {
             if (item === undefined || item === null || !item.toString) {
                 return null;
             } else {
@@ -570,7 +582,9 @@ export class Utils {
     static firstExistingValue<A>(...values: A[]): A | null {
         for (let i = 0; i < values.length; i++) {
             const value: A = values[i];
-            if (_.exists(value)) { return value; }
+            if (_.exists(value)) {
+                return value;
+            }
         }
 
         return null;
@@ -1180,7 +1194,9 @@ export class Utils {
 
         const computedStyle: CSSStyleDeclaration = window.getComputedStyle(div);
 
-        if ((computedStyle as any).overflowScrolling === 'touch') { found = true; }
+        if ((computedStyle as any).overflowScrolling === 'touch') {
+            found = true;
+        }
 
         if (!found) {
             for (p of prefixes) {
@@ -1244,7 +1260,7 @@ export class Utils {
             const anyWindow = window as any;
             // taken from https://github.com/ag-grid/ag-grid/issues/550
             this.isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') > 0
-                || (function(p) {
+                || (function (p) {
                     return p ? p.toString() === "[object SafariRemoteNotification]" : false;
                 })
                 (!anyWindow.safari || anyWindow.safari.pushNotification);
@@ -1445,7 +1461,9 @@ export class Utils {
      * From http://stackoverflow.com/questions/9716468/is-there-any-function-like-isnumeric-in-javascript-to-validate-numbers
      */
     static isNumeric(value: any): boolean {
-        if (value === '') { return false; }
+        if (value === '') {
+            return false;
+        }
         return !isNaN(parseFloat(value)) && isFinite(value);
     }
 
@@ -1637,7 +1655,7 @@ export class Utils {
         let timeout: any;
 
         // Calling debounce returns a new anonymous function
-        return function() {
+        return function () {
             // reference the context and args for the setTimeout function
             const context = this;
             const args = arguments;
@@ -1653,7 +1671,7 @@ export class Utils {
             clearTimeout(timeout);
 
             // Set the new timeout
-            timeout = setTimeout(function() {
+            timeout = setTimeout(function () {
 
                 // Inside the timeout function, clear the timeout variable
                 // which will let the next execution run when in 'immediate' mode
@@ -1669,7 +1687,9 @@ export class Utils {
             }, wait);
 
             // Immediate mode and no wait timer? Execute the function..
-            if (callNow) { func.apply(context, args); }
+            if (callNow) {
+                func.apply(context, args);
+            }
         };
     }
 
@@ -1704,14 +1724,22 @@ export class Utils {
     }
 
     static referenceCompare(left: any, right: any): boolean {
-        if (left == null && right == null) { return true; }
-        if (left == null && right) { return false; }
-        if (left && right == null) { return false; }
+        if (left == null && right == null) {
+            return true;
+        }
+        if (left == null && right) {
+            return false;
+        }
+        if (left && right == null) {
+            return false;
+        }
         return left === right;
     }
 
     static get(source: { [p: string]: any }, expression: string, defaultValue: any): any {
-        if (source == null) { return defaultValue; }
+        if (source == null) {
+            return defaultValue;
+        }
 
         if (expression.indexOf('.') > -1) {
             const fields: string[] = expression.split('.');
@@ -1735,7 +1763,9 @@ export class Utils {
     }
 
     static camelCaseToHumanText(camelCase: string | undefined): string | null {
-        if (!camelCase || camelCase == null) { return null; }
+        if (!camelCase || camelCase == null) {
+            return null;
+        }
 
         // Who needs to learn how to code when you have stack overflow!
         // from: https://stackoverflow.com/questions/15369566/putting-space-in-camel-case-string-using-regular-expression
@@ -1853,7 +1883,7 @@ export class Utils {
         return v;
     }
 
-    static string_similarity = function(str1: string, str2: string) {
+    static string_similarity = function (str1: string, str2: string) {
         if (str1.length > 0 && str2.length > 0) {
             const pairs1 = Utils.get_bigrams(str1);
             const pairs2 = Utils.get_bigrams(str2);
@@ -1997,7 +2027,9 @@ export class Promise<T> {
     }
 
     public resolveNow<Z>(ifNotResolvedValue: Z, ifResolved: (current: T | null) => Z): Z {
-        if (this.status == PromiseStatus.IN_PROGRESS) { return ifNotResolvedValue; }
+        if (this.status == PromiseStatus.IN_PROGRESS) {
+            return ifNotResolvedValue;
+        }
 
         return ifResolved(this.resolution);
     }
