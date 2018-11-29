@@ -97,7 +97,7 @@ include '../documentation-main/documentation_header.php';
         after you press the button.
     </p>
 
-    <?= example('Column Resizing', 'column-resizing', 'generated') ?>
+    <?= example('Column Resizing', 'column-resizing', 'generated', array("processVue" => true)) ?>
 
     <h2>Sizing Columns By Default</h2>
 
@@ -114,7 +114,7 @@ include '../documentation-main/documentation_header.php';
         for some frameworks (eg Angular) as DOM objects are used before getting attached.
     </p>
 
-    <?= example('Default Resizing', 'default-resizing', 'generated') ?>
+    <?= example('Default Resizing', 'default-resizing', 'generated', array("processVue" => true)) ?>
 
     <h2 id="shift-resizing">Shift Resizing</h2>
 
@@ -142,7 +142,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </p>
 
-    <?= example('Shift Resizing', 'shift-resizing', 'generated') ?>
+    <?= example('Shift Resizing', 'shift-resizing', 'generated', array("processVue" => true)) ?>
     <h2>Resizing Groups</h2>
 
     <p>
@@ -157,7 +157,7 @@ include '../documentation-main/documentation_header.php';
                 in the groups have <code>suppressResize=true</code>.</li>
         </ul>
 
-    <?= example('Resizing Groups', 'resizing-groups', 'generated') ?>
+    <?= example('Resizing Groups', 'resizing-groups', 'generated', array("processVue" => true)) ?>
 
 <h2 id="resize-after-data">Resizing Columns When Data Is Renderered</h2>
 <p>There are two scenarios main where scenarios where you might want to resize columns based on grid data:</p>

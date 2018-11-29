@@ -22,14 +22,14 @@ to help point you in the right direction.</note>
 
 <p>Open the example below in a new tab and resize the window to see how the grid instance gets resized accordingly.</p>
 
-<?= example('Grid Inside a Flexbox Container', 'flexbox', 'generated') ?>
+<?= example('Grid Inside a Flexbox Container', 'flexbox', 'generated', array("processVue" => true)) ?>
 
 <h2>ag-Grid Inside CSS Grid Container</h2>
 <p>By default, ag-Grid runs a timer that watches its container size and resizes the UI accordingly. This might interfere with the default behavior of elements with <code>display: grid</code> set. The simple workaround is to add <code>overflow: hidden</code> to the grid element parent.</p>
 
 <p>Open the example below in a new tab and resize the window to see how the grid instance gets resized accordingly.</p>
 
-<?= example('Grid Inside a CSS Grid Container', 'css-grid', 'generated') ?>
+<?= example('Grid Inside a CSS Grid Container', 'css-grid', 'generated', array("processVue" => true)) ?>
 
 <h2>Dynamic Resizing with Horizontal Scroll</h2>
 
@@ -39,7 +39,7 @@ to help point you in the right direction.</note>
     will simply be hidden and available to the right via the scrollbar.
 </p>
 
-<?= example('Dynamic horizontal resizing with scroll', 'example', 'generated') ?>
+<?= example('Dynamic horizontal resizing with scroll', 'example', 'generated', array("processVue" => true)) ?>
 
 <h2>Dynamic Resizing without Horizontal Scroll</h2>
 
@@ -52,13 +52,13 @@ don't fit, constantly updating based on the <code>gridSizeChanged</code> event f
 <p>This example is best seen when opened in a new tab - then change the horizontal size of the browser and watch as
 columns hide/show based on the current grid size.</p>
 
-<?= example('Dynamic horizontal resizing without scroll', 'example1', 'generated') ?>
+<?= example('Dynamic horizontal resizing without scroll', 'example1', 'generated', array("processVue" => true)) ?>
 
 <h2>Dynamic Vertical Resizing</h2>
 
 <p>Sometimes the vertical height of the grid is greater than the number of rows you have it in.  You can dynamically
 set the row heights to fill the available height as the following example shows:</p>
 
-<?= example('Dynamic vertical resizing', 'example2', 'generated') ?>
+<?= example('Dynamic vertical resizing', 'example2', 'generated', array("processVue" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

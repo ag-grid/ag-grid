@@ -27,8 +27,12 @@ function onGridReadyTemplate(readyCode: string,
     if (data) {
         let setRowDataBlock = data.callback;
         if (data.callback.indexOf('api.setRowData') !== -1) {
-            propertyAttributes.push(':rowData="rowData"');
-            propertyVars.push('rowData: []');
+            if (propertyAttributes.filter(item => item.indexOf(':rowData') !== -1).length === 0) {
+                propertyAttributes.push(':rowData="rowData"');
+            }
+            if (propertyVars.filter(item => item.indexOf('rowData') !== -1).length === 0) {
+                propertyVars.push('rowData: []');
+            }
 
             setRowDataBlock = data.callback.replace("params.api.setRowData(data);", "this.rowData = data;");
         }
@@ -92,6 +96,11 @@ function createComponentImports(bindings, componentFileNames: any) {
     return imports;
 }
 
+function isInstanceMethod(instance: any, property: any) {
+    const instanceMethods = instance.map(getFunctionName);
+    return instanceMethods.filter(methodName => methodName === property.name).length > 0;
+}
+
 function getPropertyBindings(bindings, componentFileNames) {
     const propertyAssignments = [];
     const propertyVars = [];
@@ -100,19 +109,22 @@ function getPropertyBindings(bindings, componentFileNames) {
     bindings.properties
         .filter(property => property.name !== "onGridReady")
         .forEach(property => {
-            if (property.value === 'null') {
-                return;
-            }
-
             if (componentFileNames.length > 0 && property.name === "components") {
                 property.name = "frameworkComponents";
             }
 
             if (property.value === 'true' || property.value === 'false') {
                 propertyAttributes.push(toConst(property));
-            } else {
+            } else if (property.value === null || property.value === 'null') {
                 propertyAttributes.push(toInput(property));
-                propertyVars.push(toMember(property));
+            } else {
+                // for when binding a method
+                // see javascript-grid-keyboard-navigation for an example
+                // tabToNextCell needs to be bound to the react component
+                if(!isInstanceMethod(bindings.instance, property)) {
+                    propertyAttributes.push(toInput(property));
+                    propertyVars.push(toMember(property));
+                }
                 propertyAssignments.push(toAssignment(property));
             }
         });
@@ -140,7 +152,7 @@ function parseAllMethods(bindings) {
     const instanceFunctions = bindings.instance.map(removeFunction);
     const utilFunctions = bindings.utils.map(body => {
         const funcName = getFunctionName(body);
-        if(funcName) {
+        if (funcName) {
             `window.${funcName} = ${body}`;
         }
 
@@ -202,7 +214,6 @@ const VueExample = {
         ${eventHandlers
         .concat(externalEventHandlers)
         .concat(gridReadyTemplate)
-        .concat(eventHandlers)
         .concat(instanceFunctions)
         .map(snippet => `${snippet.trim()},`)
         .join('\n')}

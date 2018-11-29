@@ -340,7 +340,7 @@ export interface GridOptions {
     rowClassRules?: { [cssClassName: string]: (((params: any) => boolean) | string) };
     getRowHeight?: Function;
     sendToClipboard?: (params: any) => void;
-    processDataFromClipboard?: (params: ProcessDataFromClipboardParams) => string[][];
+    processDataFromClipboard?: (params: ProcessDataFromClipboardParams) => string[][] | null;
     navigateToNextCell?: (params: NavigateToNextCellParams) => GridCellDef;
     tabToNextCell?: (params: TabToNextCellParams) => GridCellDef;
     getDocument?: () => Document;

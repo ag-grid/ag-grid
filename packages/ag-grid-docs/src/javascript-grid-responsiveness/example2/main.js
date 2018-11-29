@@ -43,7 +43,7 @@ var gridOptions = {
 
 function onGridSizeChanged(params) {
     // get the height of the grid body - this excludes the height of the headers
-    var gridHeight = document.getElementsByClassName('ag-body')[0].offsetHeight;
+    var gridHeight = document.getElementsByClassName('ag-body-viewport')[0].offsetHeight;
 
     // get the rendered rows
     var renderedRows = params.api.getRenderedNodes();

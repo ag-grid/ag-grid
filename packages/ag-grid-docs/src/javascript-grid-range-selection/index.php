@@ -48,7 +48,7 @@ include '../documentation-main/documentation_header.php';
         described above.
     </p>
 
-    <?= example('Range Selection', 'range-selection', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Range Selection', 'range-selection', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Ranges with Pinning and Floating</h2>
 
@@ -189,7 +189,7 @@ AddRangeSelectionParams{
         copying it from the clipboard.
     </p>
 
-    <?= example('Advanced Range Selection', 'range-selection-advanced', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Advanced Range Selection', 'range-selection-advanced', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Range Selection Example - Suppress Multi</h2>
 
@@ -198,7 +198,7 @@ AddRangeSelectionParams{
         one range selection even if ctrl key is held down.
     </p>
 
-    <?= example('Range Selection Suppress Multi', 'range-selection-suppress-multi', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Range Selection Suppress Multi', 'range-selection-suppress-multi', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 </div>
 

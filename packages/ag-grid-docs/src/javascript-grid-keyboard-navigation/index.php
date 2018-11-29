@@ -165,7 +165,7 @@ interface GridCellDef {
         to go up and down rather than right and left.
     </p>
 
-    <?= example('Custom Keyboard Navigation', 'custom-keyboard-navigation', 'generated') ?>
+    <?= example('Custom Keyboard Navigation', 'custom-keyboard-navigation', 'generated', array('processVue' => true)) ?>
 
 
     <h2>Tabbing into the Grid</h2>

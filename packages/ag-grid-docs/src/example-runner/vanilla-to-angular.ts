@@ -4,6 +4,11 @@ function removeFunction(code) {
     return code.replace(/^function /, '');
 }
 
+function getFunctionName(code) {
+    let matches = /function ([^\(]*)/.exec(code);
+    return matches && matches.length === 2 ? matches[1] : null;
+}
+
 function onGridReadyTemplate(readyCode: string, resizeToFit: boolean, data: { url: string, callback: string }) {
     let resize = '', getData = '';
 
@@ -44,6 +49,11 @@ const toMember = property => `private ${property.name};`;
 
 const toAssignment = property => `this.${property.name} = ${property.value}`;
 
+function isInstanceMethod(instance: any, property: any) {
+    const instanceMethods = instance.map(getFunctionName);
+    return instanceMethods.filter(methodName => methodName === property.name).length > 0;
+}
+
 function appComponentTemplate(bindings, componentFileNames) {
     const diParams = [];
     const imports = [];
@@ -75,26 +85,35 @@ function appComponentTemplate(bindings, componentFileNames) {
     const propertyAssignments = [];
 
     bindings.properties.filter(property => property.name != 'onGridReady').forEach(property => {
-        if (property.value === 'null') {
-            return;
-        }
-
         if (componentFileNames.length > 0 && property.name === "components") {
             property.name = "frameworkComponents";
         }
 
         if (property.value === 'true' || property.value === 'false') {
             propertyAttributes.push(toConst(property));
-        } else {
+        } else if (property.value === null || property.value === 'null') {
             propertyAttributes.push(toInput(property));
-            propertyVars.push(toMember(property));
+        } else {
+            // for when binding a method
+            // see javascript-grid-keyboard-navigation for an example
+            // tabToNextCell needs to be bound to the angular component
+            if(!isInstanceMethod(bindings.instance, property)) {
+                propertyAttributes.push(toInput(property));
+                propertyVars.push(toMember(property));
+            }
             propertyAssignments.push(toAssignment(property));
         }
     });
+    if (propertyAttributes.filter(item => item.indexOf('[rowData]') !== -1).length === 0) {
+        propertyAttributes.push('[rowData]="rowData"');
+    }
+    if (propertyVars.filter(item => item.indexOf('rowData') !== -1).length === 0) {
+        propertyVars.push('private rowData: []');
+    }
 
+    const instance = bindings.instance.map(removeFunction);
     const eventAttributes = bindings.eventHandlers.filter(event => event.name != 'onGridReady').map(toOutput);
     const eventHandlers = bindings.eventHandlers.map(event => event.handler).map(removeFunction);
-    const instance = bindings.instance.map(removeFunction);
 
     eventAttributes.push('(gridReady)="onGridReady($event)"');
 
@@ -106,7 +125,6 @@ function appComponentTemplate(bindings, componentFileNames) {
     #agGrid
     ${style}
     id="myGrid"
-    [rowData]="rowData"
     class="${bindings.gridSettings.theme}"
     ${propertyAttributes.concat(eventAttributes).join('\n    ')}
     ></ag-grid-angular>`;
@@ -139,7 +157,6 @@ ${imports.join('\n')}
 export class AppComponent {
     private gridApi;
     private gridColumnApi;
-    private rowData: any[];
 
     ${propertyVars.join('\n')}
 

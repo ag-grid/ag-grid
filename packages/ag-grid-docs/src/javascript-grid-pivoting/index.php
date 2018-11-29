@@ -66,7 +66,7 @@ gridOptions.columnDefs = [
         pivot or value associated with them.
     </p>
 
-    <?= example('Simple Example', 'simple', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Simple Example', 'simple', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Pivot Mode vs Pivot Active</h2>
 
@@ -100,7 +100,7 @@ gridOptions.columnDefs = [
         </li>
     </ul>
 
-    <?= example('Pivot Mode Vs Pivot Active', 'pivot-mode', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Pivot Mode Vs Pivot Active', 'pivot-mode', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <p>
         Note that a pivot can only be active if pivot mode is on. If pivot mode is off, all pivot
@@ -215,7 +215,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         tool panel.
     </p>
 
-    <?= example('Filtering With Pivot', 'filter', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Filtering With Pivot', 'filter', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Sorting with Pivot</h2>
 
@@ -230,7 +230,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         underneath the hood.
     </p>
 
-    <?= example('Sorting With Pivot', 'sorting', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Sorting With Pivot', 'sorting', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 
     <h2 id="pivotColumnGroupTotals">Pivot Column Group Totals</h2>
@@ -267,7 +267,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
            <li>Expanding pivot groups reveals columns that make up totals.</li>
        </ul>
 
-    <?= example('Pivot Column Group Totals', 'totals', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Pivot Column Group Totals', 'totals', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2 id="pivotRowTotals">Pivot Row Totals</h2>
 
@@ -293,7 +293,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         <li>Expanding pivot column groups reveals the in the last position as 'after' is used.</li>
     </ul>
 
-    <?= example('Pivot Row Totals', 'row-totals', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Pivot Row Totals', 'row-totals', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Saving & Restoring Column State with Pivot</h2>
 
@@ -309,7 +309,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         needs to be stored separately.
     </p>
 
-    <?= example('Saving & Restoring Column State', 'state', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Saving & Restoring Column State', 'state', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Pivot API</h2>
     
@@ -322,7 +322,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         is what will be exported.
     </p>
 
-    <?= example('Pivot API', 'api', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Pivot API', 'api', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2 id="orderingPivotColumns">Ordering Pivot Columns</h2>
 
@@ -358,7 +358,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         as the field attribute is needed by the grid to pull out the value.
     </p>
 
-    <?= example('Secondary Columns', 'secondary-columns', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Secondary Columns', 'secondary-columns', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2 id="hideOpenParents">Hide Open Parents</h2>
 
@@ -374,7 +374,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         <li><code>groupDefaultExpanded=2: </code> So that all the groups are opened by default</li>
         </ul>
 
-    <?= example('Hide Open Parents', 'hide-open-parents', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Hide Open Parents', 'hide-open-parents', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2 id="change-detection">Change Detection and Pivot</h2>
 

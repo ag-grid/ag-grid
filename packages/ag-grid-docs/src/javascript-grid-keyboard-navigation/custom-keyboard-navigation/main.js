@@ -23,12 +23,12 @@ var gridOptions = {
     defaultColDef: {
         editable: true
     },
-    navigateToNextCell: navigateToNextCell,
-    tabToNextCell: tabToNextCell,
+    navigateToNextCell: this.navigateToNextCell.bind(this),
+    tabToNextCell: this.tabToNextCell.bind(this),
     columnDefs: columnDefs,
     enableSorting: true,
     onGridReady: function (params) {
-        // note that the columms can be added/removed as the viewport changes
+        // note that the columns can be added/removed as the viewport changes
         // be sure to remove old listeners when they're removed, and add new listeners when columns
         // are added (using virtualColumnsChanged for example)
 

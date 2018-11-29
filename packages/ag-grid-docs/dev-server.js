@@ -198,8 +198,21 @@ module.exports = () => {
 
 //     node dev-server.js generate-examples [src directory]
 // eg: node dev-server.js generate-examples javascript-grid-accessing-data
-if(process.argv.length >= 3 && process.argv[2] === 'generate-examples') {
-    console.log('regenerating examples...');
-    generateExamples(() => console.log('generation done.'), process.argv[3]);
+genExamples = (exampleDir) => {
+    return () => {
+        console.log('regenerating examples...');
+        generateExamples(() => console.log('generation done.'), exampleDir);
+    }
+};
+
+const [ cmd, script, execFunc, exampleDir, watch] = process.argv;
+if(process.argv.length >= 3 && execFunc === 'generate-examples') {
+    if(exampleDir && watch) {
+        const examplePath = path.resolve('./src/', exampleDir);
+        chokidar.watch(`${examplePath}/**/*`, { ignored: ['**/_gen/**/*'] }).on('change', genExamples(exampleDir));
+    } else {
+        console.log('regenerating examples...');
+        generateExamples(() => console.log('generation done.'), exampleDir);
+    }
 }
 

@@ -21,22 +21,24 @@ function collect(iterable, initialBindings, collectors) {
 }
 
 function nodeIsVarNamed(node, name) {
+    // eg: var currentRowHeight = 10;
     return node.type === 'VariableDeclaration' && (<any>node.declarations[0].id).name === name;
 }
 
 function nodeIsFunctionNamed(node, name) {
+    // eg: function someFunction() { }
     return node.type === 'FunctionDeclaration' && (<any>node.id).name === name;
 }
 
 function nodeIsInScope(node, name, unboundInstanceMethods) {
-    if(!unboundInstanceMethods) {
+    if (!unboundInstanceMethods) {
         return false;
     }
     return node.type === 'FunctionDeclaration' && unboundInstanceMethods.indexOf((<any>node.id).name) >= 0;
 }
 
 function nodeIsUnusedFunction(node, used, unboundInstanceMethods) {
-    if(nodeIsInScope(node, used, unboundInstanceMethods)) {
+    if (nodeIsInScope(node, used, unboundInstanceMethods)) {
         return;
     }
     return node.type === 'FunctionDeclaration' && used.indexOf((<any>node.id).name) === -1;
@@ -47,7 +49,7 @@ function nodeIsUnusedVar(node, used) {
 }
 
 function nodeIsPropertyNamed(node, name) {
-    // we skip { property: variable }
+    // we skip { property: variable } - SPL why??
     // and get only inline property assignments
     return node.key.name == name && node.value.type != 'Identifier';
 }
@@ -106,16 +108,10 @@ function extractEventHandlers(tree, eventNames: string[]) {
     });
 }
 
-const localGridOptions = esprima.parseScript('const gridInstance = this.agGrid').body[0];
-
-function generateWithReplacedGridOptions(node) {
-    const code = generate(node)
+function generateWithReplacedGridOptions(node, options?) {
+    const code = generate(node, options)
         .replace(/gridOptions.api/g, 'this.gridApi')
         .replace(/gridOptions.columnApi/g, 'this.gridColumnApi');
-
-    if (code.indexOf('gridOptions') > -1) {
-        throw new Error("An event handlers contain a gridOptions reference that does not access api or columnApi");
-    }
 
     return code;
 }
@@ -180,8 +176,7 @@ export default function parser(js, html, exampleSettings) {
     collectors.push({
         matches: node => nodeIsInScope(node, registered, unboundInstanceMethods),
         apply: (bindings, node) => {
-            bindings.instance.push(generate(node))
-            // bindings.instance.push(generate(node, indentOne).replace("function ", ""))
+            bindings.instance.push(generate(node, indentOne))
         }
     });
 
@@ -239,13 +234,18 @@ export default function parser(js, html, exampleSettings) {
         }
     });
 
+    // all onXXX will be handled here
+    // note: gridOptions = { onGridSizeChanged = function() {}  WILL NOT WORK
+    // needs to be a separate function  gridOptions = { onGridSizeChanged = myGridSizeChangedFunc
     EVENTS.forEach(eventName => {
         var onEventName = 'on' + eventName.replace(/^\w/, w => w.toUpperCase());
 
         registered.push(onEventName);
 
         collectors.push({
-            matches: node => nodeIsFunctionNamed(node, onEventName),
+            matches: node => {
+                return nodeIsFunctionNamed(node, onEventName)
+            },
             apply: (bindings, node) => {
                 bindings.eventHandlers.push({
                     name: eventName,
@@ -259,9 +259,13 @@ export default function parser(js, html, exampleSettings) {
     FUNCTION_PROPERTIES.forEach(functionName => {
         registered.push(functionName);
         collectors.push({
-            matches: node => nodeIsFunctionNamed(node, functionName),
+            matches: node => {
+                return nodeIsFunctionNamed(node, functionName)
+            },
             apply: (bindings, node) => {
-                bindings.properties.push({name: functionName, value: generate(node, indentOne)});
+                bindings.instance.push(generateWithReplacedGridOptions(node, indentOne));
+
+                bindings.properties.push({name: functionName, value: null });
             }
         });
     });
@@ -283,8 +287,13 @@ export default function parser(js, html, exampleSettings) {
         });
 
         gridOptionsCollectors.push({
-            matches: node => nodeIsPropertyNamed(node, propertyName),
-            apply: (bindings, node) => bindings.properties.push({name: propertyName, value: generate(node.value, indentOne)})
+            matches: node => {
+                return nodeIsPropertyNamed(node, propertyName)
+            },
+            apply: (bindings, node) => bindings.properties.push({
+                name: propertyName,
+                value: generate(node.value, indentOne)
+            })
         });
     });
 
@@ -297,7 +306,9 @@ export default function parser(js, html, exampleSettings) {
 
     // gridOptionsCollectors captures all events, properties etc that are related to gridOptions
     collectors.push({
-        matches: node => nodeIsVarNamed(node, 'gridOptions'),
+        matches: node => {
+            return nodeIsVarNamed(node, 'gridOptions')
+        },
         apply: (bindings, node) => {
             return collect(node.declarations[0].init.properties, bindings, gridOptionsCollectors)
         }
