@@ -6,6 +6,8 @@ import { PostProcessPopupParams } from "../entities/gridOptions";
 import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
 import { Environment } from "../environment";
+import { EventService } from "../eventService";
+import { Events } from '../events';
 import { _ } from "../utils";
 
 @Bean('popupService')
@@ -16,6 +18,7 @@ export class PopupService {
     @Autowired('gridCore') private gridCore: GridCore;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('environment') private environment: Environment;
+    @Autowired('eventService') private eventService: EventService;
 
     private activePopupElements: HTMLElement[] = [];
 
@@ -310,7 +313,6 @@ export class PopupService {
     }
 
     public addPopup(modal: boolean, eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch | null): (event?: any) => void {
-
         const eDocument = this.gridOptionsWrapper.getDocument();
         if (!eDocument) {
             console.warn('ag-grid: could not find the document, document is empty');
@@ -376,9 +378,10 @@ export class PopupService {
             _.removeFromArray(this.activePopupElements, eChild);
 
             eDocument.removeEventListener('keydown', hidePopupOnKeyboardEvent);
-            eDocument.removeEventListener('mousedown', hidePopupOnMouseEvent);
+            eDocument.removeEventListener('click', hidePopupOnMouseEvent);
             eDocument.removeEventListener('touchstart', hidePopupOnTouchEvent);
             eDocument.removeEventListener('contextmenu', hidePopupOnMouseEvent);
+            this.eventService.removeEventListener(Events.EVENT_DRAG_STARTED, hidePopupOnMouseEvent);
             if (closedCallback) {
                 closedCallback();
             }
@@ -386,12 +389,13 @@ export class PopupService {
 
         // if we add these listeners now, then the current mouse
         // click will be included, which we don't want
-        window.setTimeout(function() {
+        window.setTimeout(() => {
             if (closeOnEsc) {
                 eDocument.addEventListener('keydown', hidePopupOnKeyboardEvent);
             }
             if (modal) {
-                eDocument.addEventListener('mousedown', hidePopupOnMouseEvent);
+                eDocument.addEventListener('click', hidePopupOnMouseEvent);
+                this.eventService.addEventListener(Events.EVENT_DRAG_STARTED, hidePopupOnMouseEvent);
                 eDocument.addEventListener('touchstart', hidePopupOnTouchEvent);
                 eDocument.addEventListener('contextmenu', hidePopupOnMouseEvent);
             }
