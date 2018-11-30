@@ -115,7 +115,7 @@ export class AlignedGridsService {
             event.columns.forEach(column => {
                 result.push(column.getColId());
             });
-        } else if (event.columns) {
+        } else if (event.column) {
             result.push(event.column.getColId());
         }
         return result;

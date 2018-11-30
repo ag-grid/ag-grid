@@ -1,7 +1,7 @@
-import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {Column} from "./entities/column";
-import {RowNode} from "./entities/rowNode";
-import {Constants} from "./constants";
+import { GridOptionsWrapper } from "./gridOptionsWrapper";
+import { Column } from "./entities/column";
+import { RowNode } from "./entities/rowNode";
+import { Constants } from "./constants";
 
 const FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 const FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
@@ -18,7 +18,6 @@ export class Timer {
         console.info(`${msg} = ${duration}`);
         this.timestamp = new Date().getTime();
     }
-
 }
 
 /** HTML Escapes. */
@@ -318,7 +317,7 @@ export class Utils {
 
     static filter<T>(array: T[], callback: (item: T) => boolean): T[] {
         const result: T[] = [];
-        array.forEach(function (item: T) {
+        array.forEach(function(item: T) {
             if (callback(item)) {
                 result.push(item);
             }
@@ -359,7 +358,7 @@ export class Utils {
     static assign(object: any, ...sources: any[]): any {
         sources.forEach(source => {
             if (this.exists(source)) {
-                this.iterateObject(source, function (key: string, value: any) {
+                this.iterateObject(source, function(key: string, value: any) {
                     object[key] = value;
                 });
             }
@@ -459,7 +458,7 @@ export class Utils {
     }
 
     static toStrings<T>(array: T[]): (string | null)[] {
-        return this.map(array, function (item) {
+        return this.map(array, function(item) {
             if (item === undefined || item === null || !item.toString) {
                 return null;
             } else {
@@ -1260,7 +1259,7 @@ export class Utils {
             const anyWindow = window as any;
             // taken from https://github.com/ag-grid/ag-grid/issues/550
             this.isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') > 0
-                || (function (p) {
+                || (function(p) {
                     return p ? p.toString() === "[object SafariRemoteNotification]" : false;
                 })
                 (!anyWindow.safari || anyWindow.safari.pushNotification);
@@ -1655,7 +1654,7 @@ export class Utils {
         let timeout: any;
 
         // Calling debounce returns a new anonymous function
-        return function () {
+        return function() {
             // reference the context and args for the setTimeout function
             const context = this;
             const args = arguments;
@@ -1671,7 +1670,7 @@ export class Utils {
             clearTimeout(timeout);
 
             // Set the new timeout
-            timeout = setTimeout(function () {
+            timeout = setTimeout(function() {
 
                 // Inside the timeout function, clear the timeout variable
                 // which will let the next execution run when in 'immediate' mode
@@ -1883,7 +1882,7 @@ export class Utils {
         return v;
     }
 
-    static string_similarity = function (str1: string, str2: string) {
+    static string_similarity = function(str1: string, str2: string) {
         if (str1.length > 0 && str2.length > 0) {
             const pairs1 = Utils.get_bigrams(str1);
             const pairs2 = Utils.get_bigrams(str2);
