@@ -1,5 +1,6 @@
-const {JSDOM} = require('jsdom');
+const { JSDOM } = require('jsdom');
 const {window, document} = new JSDOM('<html></html>');
+window.Date = Date;
 global.window = window;
 global.document = document;
 const jQuery = require('jquery');
@@ -140,7 +141,7 @@ module.exports = (cb, scope) => {
             const reactScripts = glob.sync(path.join('./src', section, example, '*_react*'));
             try {
                 source = vanillaToReact(mainJs, indexHtml, options, extractComponentFileNames(reactScripts, '_react'));
-                indexJSX = prettier.format(source, {printWidth: 120});
+                indexJSX = prettier.format(source, {parser: 'babylon', printWidth: 120});
             } catch (e) {
                 console.error(`Failed at ./src/${section}/${example}`, e);
                 return;
@@ -168,7 +169,7 @@ module.exports = (cb, scope) => {
                 // when all examples have been tested this check can be removed
                 if(options.processVue) {
                     source = vanillaToVue(mainJs, indexHtml, options, extractComponentFileNames(vueScripts, '_vue'));
-                    mainApp = prettier.format(source, {printWidth: 120});
+                    mainApp = prettier.format(source, {parser: 'babylon', printWidth: 120});
                 }
             } catch (e) {
                 console.error(`Failed at ./src/${section}/${example}`, e);
