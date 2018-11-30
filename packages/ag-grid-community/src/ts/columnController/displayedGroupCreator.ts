@@ -116,7 +116,7 @@ export class DisplayedGroupCreator {
         const recursive = (columnsOrGroups: ColumnGroupChild[]) => {
             columnsOrGroups.forEach(columnOrGroup => {
                 if (columnOrGroup instanceof ColumnGroup) {
-                    const columnGroup = columnOrGroup as ColumnGroup;
+                    const columnGroup = columnOrGroup;
                     result[columnOrGroup.getUniqueId()] = columnGroup;
                     recursive(columnGroup.getChildren());
                 }
@@ -134,7 +134,7 @@ export class DisplayedGroupCreator {
         columnsOrGroups.forEach(columnsOrGroup => {
             columnsOrGroup.setParent(parent);
             if (columnsOrGroup instanceof ColumnGroup) {
-                const columnGroup = columnsOrGroup as ColumnGroup;
+                const columnGroup = columnsOrGroup;
                 this.setupParentsIntoColumns(columnGroup.getChildren(), columnGroup);
             }
         });
@@ -193,7 +193,7 @@ export class DisplayedGroupCreator {
                 }
                 const node = balancedColumnTree[i];
                 if (node instanceof OriginalColumnGroup) {
-                    const nextNode = node as OriginalColumnGroup;
+                    const nextNode = node;
                     recursePath(nextNode.getChildren(), dept + 1);
                     result[dept] = node;
                 } else {

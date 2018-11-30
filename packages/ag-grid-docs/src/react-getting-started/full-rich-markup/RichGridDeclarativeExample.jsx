@@ -80,7 +80,7 @@ export default class RichGridDeclarativeExample extends Component {
         // as the date filter is a React component, and its using setState internally, we need
         // to allow time for the state to be set (as setState is an async operation)
         // simply wait for the next tick
-        setTimeout(() => {
+        window.setTimeout(() => {
             this.api.onFilterChanged();
         }, 0)
     };

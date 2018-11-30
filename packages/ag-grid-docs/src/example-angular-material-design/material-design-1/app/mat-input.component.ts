@@ -49,7 +49,7 @@ export class MatInputComponent implements ICellEditorAngularComp {
     }
 
     private focusOnInputNextTick(input: ViewContainerRef) {
-        setTimeout(() => {
+        window.setTimeout(() => {
             input.element.nativeElement.focus();
         }, 0);
     }

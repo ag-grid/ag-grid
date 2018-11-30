@@ -376,7 +376,7 @@ export class GridPanel extends Component {
             // only need to do one apply at a time
             if (applyTriggered) { return; }
             applyTriggered = true; // mark 'need apply' to true
-            setTimeout(() => {
+            window.setTimeout(() => {
                 applyTriggered = false;
                 this.$scope.$apply();
             }, 0);
@@ -958,15 +958,15 @@ export class GridPanel extends Component {
         }
 
         if (nextTimeout === undefined) {
-            setTimeout(() => {
+            window.setTimeout(() => {
                 this.sizeColumnsToFit(100);
             }, 0);
         } else if (nextTimeout === 100) {
-            setTimeout(() => {
+            window.setTimeout(() => {
                 this.sizeColumnsToFit(500);
             }, 100);
         } else if (nextTimeout === 500) {
-            setTimeout(() => {
+            window.setTimeout(() => {
                 this.sizeColumnsToFit(-1);
             }, 500);
         } else {

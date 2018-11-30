@@ -49,7 +49,7 @@ export class ColumnUtils {
                 }
                 const node = balancedColumnTree[i];
                 if (node instanceof OriginalColumnGroup) {
-                    const nextNode = node as OriginalColumnGroup;
+                    const nextNode = node;
                     recursePath(nextNode.getChildren(), dept + 1);
                     result[dept] = node;
                 } else {
@@ -102,7 +102,7 @@ export class ColumnUtils {
 
         tree.forEach((child: OriginalColumnGroupChild) => {
             if (child instanceof OriginalColumnGroup) {
-                this.depthFirstOriginalTreeSearch((child as OriginalColumnGroup).getChildren(), callback);
+                this.depthFirstOriginalTreeSearch(child.getChildren(), callback);
             }
             callback(child);
         });
@@ -115,7 +115,7 @@ export class ColumnUtils {
 
         tree.forEach((child: ColumnGroupChild) => {
             if (child instanceof ColumnGroup) {
-                this.depthFirstAllColumnTreeSearch((child as ColumnGroup).getChildren(), callback);
+                this.depthFirstAllColumnTreeSearch(child.getChildren(), callback);
             }
             callback(child);
         });
@@ -128,7 +128,7 @@ export class ColumnUtils {
 
         tree.forEach((child: ColumnGroupChild) => {
             if (child instanceof ColumnGroup) {
-                this.depthFirstDisplayedColumnTreeSearch((child as ColumnGroup).getDisplayedChildren(), callback);
+                this.depthFirstDisplayedColumnTreeSearch(child.getDisplayedChildren(), callback);
             }
             callback(child);
         });

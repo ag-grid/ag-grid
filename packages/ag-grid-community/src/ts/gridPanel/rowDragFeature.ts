@@ -135,13 +135,13 @@ export class RowDragFeature implements DropTarget {
     private ensureIntervalStarted(): void {
         if (!this.movingIntervalId) {
             this.intervalCount = 0;
-            this.movingIntervalId = setInterval(this.moveInterval.bind(this), 100);
+            this.movingIntervalId = window.setInterval(this.moveInterval.bind(this), 100);
         }
     }
 
     private ensureIntervalCleared(): void {
         if (this.moveInterval) {
-            clearInterval(this.movingIntervalId);
+            window.clearInterval(this.movingIntervalId);
             this.movingIntervalId = null;
         }
     }

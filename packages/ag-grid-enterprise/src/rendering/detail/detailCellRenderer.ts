@@ -43,7 +43,7 @@ export class DetailCellRenderer extends Component {
             this.registerDetailWithMaster(params.node);
             this.loadRowData(params);
 
-            setTimeout(() => {
+            window.setTimeout(() => {
                 // ensure detail grid api still exists (grid may be destroyed when async call tries to set data)
                 if (this.detailGridOptions.api) {
                     this.detailGridOptions.api.doLayout();

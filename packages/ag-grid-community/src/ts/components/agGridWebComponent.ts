@@ -35,7 +35,7 @@ export function initialiseAgGridWithWebComponents() {
        });
     });
 
-    const agGridProtoNoType = AgileGridProto as any;
+    const agGridProtoNoType = AgileGridProto;
 
     agGridProtoNoType.__agGridSetProperty = function(key: string, value: any) {
         if (!this.__attributes) {

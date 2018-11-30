@@ -287,7 +287,7 @@ export class ClientSideRowModel {
         this.eventService.dispatchEvent(event);
 
         if (this.$scope) {
-            setTimeout(() => {
+            window.setTimeout(() => {
                 this.$scope.$apply();
             }, 0);
         }
@@ -667,7 +667,7 @@ export class ClientSideRowModel {
         if (!this.rowDataTransactionBatch) {
             this.rowDataTransactionBatch = [];
             const waitMillis = this.gridOptionsWrapper.getBatchUpdateWaitMillis();
-            setTimeout(() => {
+            window.setTimeout(() => {
                 this.executeBatchUpdateRowData();
                 this.rowDataTransactionBatch = null;
             }, waitMillis);
@@ -695,7 +695,7 @@ export class ClientSideRowModel {
 
         // do callbacks in next VM turn so it's async
         if (callbackFuncsBound.length > 0) {
-            setTimeout(() => {
+            window.setTimeout(() => {
                 callbackFuncsBound.forEach(func => func());
             }, 0);
         }

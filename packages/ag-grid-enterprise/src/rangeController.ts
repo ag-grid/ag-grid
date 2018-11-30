@@ -463,7 +463,7 @@ class AutoScrollService {
 
     private ensureTickingStarted(): void {
         if (this.tickingInterval === null) {
-            this.tickingInterval = setInterval(this.doTick.bind(this), 100);
+            this.tickingInterval = window.setInterval(this.doTick.bind(this), 100);
             this.tickCount = 0;
         }
     }
@@ -504,7 +504,7 @@ class AutoScrollService {
 
     public ensureCleared(): void {
         if (this.tickingInterval) {
-            clearInterval(this.tickingInterval);
+            window.clearInterval(this.tickingInterval);
             this.tickingInterval = null;
         }
     }

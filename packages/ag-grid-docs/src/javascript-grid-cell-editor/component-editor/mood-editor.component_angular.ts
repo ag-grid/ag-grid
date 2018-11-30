@@ -45,7 +45,7 @@ export class MoodEditor implements ICellEditorAngularComp, AfterViewInit {
 
     // dont use afterGuiAttached for post gui events - hook into ngAfterViewInit instead for this
     ngAfterViewInit() {
-        setTimeout(() => {
+        window.setTimeout(() => {
             this.container.element.nativeElement.focus();
         })
     }

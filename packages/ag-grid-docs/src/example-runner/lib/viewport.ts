@@ -31,7 +31,7 @@ export function whenInViewPort(element, callback) {
         if (viewPort.bottom >= box.top) {
             window.removeEventListener('scroll', comparePosition);
             callback();
-            // setTimeout(callback, 2000);
+            // window.setTimeout(callback, 2000);
         }
     }
 

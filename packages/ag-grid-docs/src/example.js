@@ -761,7 +761,7 @@ function createData() {
 
         if (row >= rowCount) {
             clearInterval(intervalId);
-            setTimeout(function () {
+            window.setTimeout(function () {
                 gridOptions.api.setColumnDefs(colDefs);
                 gridOptions.api.setRowData(data);
                 eMessage.style.display = 'none';
@@ -855,7 +855,7 @@ var filterCount = 0;
 function onFilterChanged(newFilter) {
     filterCount++;
     var filterCountCopy = filterCount;
-    setTimeout(function () {
+    window.setTimeout(function () {
         if (filterCount === filterCountCopy) {
             gridOptions.api.setQuickFilter(newFilter);
         }

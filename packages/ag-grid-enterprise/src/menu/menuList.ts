@@ -99,7 +99,7 @@ export class MenuList extends Component {
 
     private addHoverForChildPopup(menuItemDef: MenuItemDef, menuItemComp: MenuItemComponent): void {
         const timerCountCopy = this.timerCount;
-        setTimeout(() => {
+        window.setTimeout(() => {
             const shouldShow = timerCountCopy === this.timerCount;
             const showingThisMenu = this.subMenuParentDef === menuItemDef;
             if (shouldShow && !showingThisMenu) {

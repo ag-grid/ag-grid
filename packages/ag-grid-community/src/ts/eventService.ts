@@ -156,7 +156,7 @@ export class EventService implements IEventEmitter {
         // set to 'true' so it will know it's already scheduled for subsequent calls.
         if (!this.scheduled) {
             // if not scheduled, schedule one
-            setTimeout(this.flushAsyncQueue.bind(this), 0);
+            window.setTimeout(this.flushAsyncQueue.bind(this), 0);
             // mark that it is scheduled
             this.scheduled = true;
         }

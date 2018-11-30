@@ -781,7 +781,7 @@ export class RowRenderer extends BeanStub {
         // if we are doing angular compiling, then do digest the scope here
         if (this.gridOptionsWrapper.isAngularCompileRows()) {
             // we do it in a timeout, in case we are already in an apply
-            setTimeout(() => {
+            window.setTimeout(() => {
                 this.$scope.$apply();
             }, 0);
         }

@@ -342,7 +342,7 @@ export class MoveColumnController implements DropListener {
         if (!this.movingIntervalId) {
             this.intervalCount = 0;
             this.failedMoveAttempts = 0;
-            this.movingIntervalId = setInterval(this.moveInterval.bind(this), 100);
+            this.movingIntervalId = window.setInterval(this.moveInterval.bind(this), 100);
             if (this.needToMoveLeft) {
                 this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_LEFT, true);
             } else {
@@ -353,7 +353,7 @@ export class MoveColumnController implements DropListener {
 
     private ensureIntervalCleared(): void {
         if (this.moveInterval) {
-            clearInterval(this.movingIntervalId);
+            window.clearInterval(this.movingIntervalId);
             this.movingIntervalId = null;
             this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_MOVE);
         }

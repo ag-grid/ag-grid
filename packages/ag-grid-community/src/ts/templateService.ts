@@ -65,7 +65,7 @@ export class TemplateService {
 
         if (this.$scope) {
             const that = this;
-            setTimeout(function() {
+            window.setTimeout(function() {
                 that.$scope.$apply();
             }, 0);
         }

@@ -447,9 +447,9 @@ export class ColumnController {
             for (let i = 0; i < childColumns.length; i++) {
                 const child = childColumns[i];
                 if (child instanceof Column) {
-                    result.push(child as Column);
+                    result.push(child);
                 } else if (child instanceof OriginalColumnGroup) {
-                    recursiveFindColumns((child as OriginalColumnGroup).getChildren());
+                    recursiveFindColumns(child.getChildren());
                 }
             }
         }
@@ -1569,12 +1569,12 @@ export class ColumnController {
         }
 
         const primaryColumnState: ColumnState[]
-            = this.primaryColumns.map(this.createStateItemFromColumn.bind(this)) as ColumnState[];
+            = this.primaryColumns.map(this.createStateItemFromColumn.bind(this));
 
         const groupAutoColumnState: ColumnState[]
             = this.groupAutoColumns
             // if groupAutoCols, then include them
-            ? this.groupAutoColumns.map(this.createStateItemFromColumn.bind(this)) as ColumnState[]
+            ? this.groupAutoColumns.map(this.createStateItemFromColumn.bind(this))
             // otherwise no
             : [];
 
@@ -2096,7 +2096,7 @@ export class ColumnController {
         }
 
         if (aggFuncFound) {
-            const aggFuncString = (typeof aggFunc === 'string') ? aggFunc as string : 'func';
+            const aggFuncString = (typeof aggFunc === 'string') ? aggFunc : 'func';
             const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
             const aggFuncStringTranslated = localeTextFunc(aggFuncString, aggFuncString);
             return `${aggFuncStringTranslated}(${headerName})`;
@@ -2123,7 +2123,7 @@ export class ColumnController {
 
         this.columnUtils.depthFirstAllColumnTreeSearch(allColumnGroups, (child: ColumnGroupChild) => {
             if (child instanceof ColumnGroup) {
-                const columnGroup = child as ColumnGroup;
+                const columnGroup = child;
                 let matched: boolean;
                 if (checkInstanceId) {
                     matched = colId === columnGroup.getGroupId() && instanceId === columnGroup.getInstanceId();
@@ -2260,7 +2260,7 @@ export class ColumnController {
         const columnGroupState: { groupId: string, open: boolean }[] = [];
         this.columnUtils.depthFirstOriginalTreeSearch(this.gridBalancedTree, node => {
             if (node instanceof OriginalColumnGroup) {
-                const originalColumnGroup = node as OriginalColumnGroup;
+                const originalColumnGroup = node;
                 columnGroupState.push({
                     groupId: originalColumnGroup.getGroupId(),
                     open: originalColumnGroup.isExpanded()
@@ -2312,16 +2312,16 @@ export class ColumnController {
     public setColumnGroupOpened(key: OriginalColumnGroup | string | undefined, newValue: boolean, source: ColumnEventType = "api"): void {
         let keyAsString: string;
         if (key instanceof OriginalColumnGroup) {
-            keyAsString = (key as OriginalColumnGroup).getId();
+            keyAsString = key.getId();
         } else {
-            keyAsString = key as string;
+            keyAsString = key;
         }
         this.setColumnGroupState([{groupId: keyAsString, open: newValue}], source);
     }
 
     public getOriginalColumnGroup(key: OriginalColumnGroup | string): OriginalColumnGroup | null {
         if (key instanceof OriginalColumnGroup) {
-            return key as OriginalColumnGroup;
+            return key;
         }
 
         if (typeof key !== 'string') {
@@ -2332,7 +2332,7 @@ export class ColumnController {
         let res: OriginalColumnGroup | null = null;
         this.columnUtils.depthFirstOriginalTreeSearch(this.gridBalancedTree, node => {
             if (node instanceof OriginalColumnGroup) {
-                const originalColumnGroup = node as OriginalColumnGroup;
+                const originalColumnGroup = node;
                 if (originalColumnGroup.getId() === key) {
                     res = originalColumnGroup;
                 }
@@ -2703,7 +2703,7 @@ export class ColumnController {
         [this.displayedLeftColumnTree, this.displayedRightColumnTree, this.displayedCentreColumnTree].forEach(columns => {
             columns.forEach(column => {
                 if (column instanceof ColumnGroup) {
-                    const columnGroup = column as ColumnGroup;
+                    const columnGroup = column;
                     columnGroup.checkLeft();
                 }
             });
@@ -2919,7 +2919,7 @@ export class ColumnController {
         const allColumnGroups = this.getAllDisplayedColumnGroups();
         this.columnUtils.depthFirstAllColumnTreeSearch(allColumnGroups, child => {
             if (child instanceof ColumnGroup) {
-                const columnGroup = child as ColumnGroup;
+                const columnGroup = child;
                 columnGroup.calculateDisplayedColumns();
             }
         });

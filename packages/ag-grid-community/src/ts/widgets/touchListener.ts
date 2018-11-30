@@ -89,7 +89,7 @@ export class TouchListener implements IEventEmitter {
 
         const touchStartCopy = this.touchStart;
 
-        setTimeout(() => {
+        window.setTimeout(() => {
             const touchesMatch = this.touchStart === touchStartCopy;
 
             if (this.touching && touchesMatch && !this.moved) {

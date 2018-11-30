@@ -1667,10 +1667,10 @@ export class Utils {
             //   function several times, but it will only execute once
             //   [before or after imposing a delay].
             //   Each time the returned function is called, the timer starts over.
-            clearTimeout(timeout);
+            window.clearTimeout(timeout);
 
             // Set the new timeout
-            timeout = setTimeout(function() {
+            timeout = window.setTimeout(function() {
 
                 // Inside the timeout function, clear the timeout variable
                 // which will let the next execution run when in 'immediate' mode
@@ -1716,7 +1716,7 @@ export class Utils {
 
     static executeAfter(funcs: Function[], millis: number): void {
         if (funcs.length > 0) {
-            setTimeout(() => {
+            window.setTimeout(() => {
                 funcs.forEach(func => func());
             }, millis);
         }

@@ -74,7 +74,7 @@ export class AutoWidthCalculator {
         // find the rendered header cell
         this.headerRootComp.forEachHeaderElement(headerElement => {
             if (headerElement instanceof HeaderWrapperComp) {
-                const headerWrapperComp = headerElement as HeaderWrapperComp;
+                const headerWrapperComp = headerElement;
                 if (headerWrapperComp.getColumn() === column) {
                     comp = headerWrapperComp;
                 }

@@ -5,6 +5,7 @@
     ],
     "jsRules": {},
     "rules": {
+        "no-eval": true,
         "no-string-literal": true,
         "no-unused-expression": true,
         "variable-name": false,

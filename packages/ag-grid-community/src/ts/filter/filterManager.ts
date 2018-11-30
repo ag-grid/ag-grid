@@ -508,7 +508,7 @@ export class FilterManager {
             if (filterWrapper.scope) {
                 const compiledElement = this.$compile(eFilterGui)(filterWrapper.scope);
                 filterWrapper.compiledElement = compiledElement;
-                setTimeout(() => filterWrapper.scope.$apply(), 0);
+                window.setTimeout(() => filterWrapper.scope.$apply(), 0);
             }
 
             filterWrapper.guiPromise.resolve(eFilterGui);

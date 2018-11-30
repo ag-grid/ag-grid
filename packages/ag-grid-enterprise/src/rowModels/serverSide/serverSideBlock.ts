@@ -237,7 +237,7 @@ export class ServerSideBlock extends RowNodeBlock {
 
     protected loadFromDatasource(): void {
         const params = this.createLoadParams();
-        setTimeout(() => {
+        window.setTimeout(() => {
             if (this.params.datasource) {
                 this.params.datasource.getRows(params);
             }

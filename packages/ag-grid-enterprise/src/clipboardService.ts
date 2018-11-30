@@ -539,7 +539,7 @@ export class ClipboardService implements IClipboardService {
     }
 
     private dispatchFlashCells(cellsToFlash: {}): void {
-        setTimeout(() => {
+        window.setTimeout(() => {
             const event: FlashCellsEvent = {
                 type: Events.EVENT_FLASH_CELLS,
                 cells: cellsToFlash,
@@ -657,7 +657,7 @@ export class ClipboardService implements IClipboardService {
 
         //It needs 100 otherwise OS X seemed to not always be able to paste... Go figure...
         if (callbackAfter) {
-            setTimeout(() => {
+            window.setTimeout(() => {
                 callbackAfter(eTempInput);
                 guiRoot.removeChild(eTempInput);
             }, 100);

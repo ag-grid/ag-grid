@@ -463,10 +463,10 @@ export class CellComp extends Component {
         _.addCssClass(element, fullName);
         _.removeCssClass(element, animationFullName);
         // then once that is applied, we remove the highlight with animation
-        setTimeout(() => {
+        window.setTimeout(() => {
             _.removeCssClass(element, fullName);
             _.addCssClass(element, animationFullName);
-            setTimeout(() => {
+            window.setTimeout(() => {
                 // and then to leave things as we got them, we remove the animation
                 _.removeCssClass(element, animationFullName);
             }, 1000);
@@ -895,7 +895,7 @@ export class CellComp extends Component {
 
         if (colDef.onCellContextMenu) {
             // to make the callback async, do in a timeout
-            setTimeout(() => (colDef.onCellContextMenu as any)(cellContextMenuEvent), 0);
+            window.setTimeout(() => (colDef.onCellContextMenu as any)(cellContextMenuEvent), 0);
         }
     }
 
@@ -944,7 +944,7 @@ export class CellComp extends Component {
         // check if colDef also wants to handle event
         if (typeof colDef.onCellDoubleClicked === 'function') {
             // to make the callback async, do in a timeout
-            setTimeout(() => (colDef.onCellDoubleClicked as any)(cellDoubleClickedEvent), 0);
+            window.setTimeout(() => (colDef.onCellDoubleClicked as any)(cellDoubleClickedEvent), 0);
         }
 
         const editOnDoubleClick = !this.beans.gridOptionsWrapper.isSingleClickEdit()
@@ -1445,7 +1445,7 @@ export class CellComp extends Component {
 
         if (colDef.onCellClicked) {
             // to make callback async, do in a timeout
-            setTimeout(() => (colDef.onCellClicked as any)(cellClickedEvent), 0);
+            window.setTimeout(() => (colDef.onCellClicked as any)(cellClickedEvent), 0);
         }
 
         const editOnSingleClick = (this.beans.gridOptionsWrapper.isSingleClickEdit() || colDef.singleClickEdit)

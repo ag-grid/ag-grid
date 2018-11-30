@@ -363,7 +363,7 @@ export class GridApi {
             const start = (new Date()).getTime();
             that.rowRenderer.redrawAfterModelUpdate();
             const endProcessing = (new Date()).getTime();
-            setTimeout(() => {
+            window.setTimeout(() => {
                 const endReflow = (new Date()).getTime();
                 const durationProcessing = endProcessing - start;
                 const durationReflow = endReflow - endProcessing;
@@ -376,7 +376,7 @@ export class GridApi {
 
                 if (iterationCount < count) {
                     // wait for 1s between tests
-                    setTimeout(doOneIteration, 1000);
+                    window.setTimeout(doOneIteration, 1000);
                 } else {
                     finish();
                 }

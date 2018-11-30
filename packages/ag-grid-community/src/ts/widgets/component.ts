@@ -1,8 +1,8 @@
-import {Context} from "../context/context";
-import {BeanStub} from "../context/beanStub";
-import {IComponent} from "../interfaces/iComponent";
-import {AgEvent} from "../events";
-import {_, NumberSequence} from "../utils";
+import { Context } from "../context/context";
+import { BeanStub } from "../context/beanStub";
+import { IComponent } from "../interfaces/iComponent";
+import { AgEvent } from "../events";
+import { _, NumberSequence } from "../utils";
 
 const compIdSequence = new NumberSequence();
 
@@ -74,7 +74,7 @@ export class Component extends BeanStub implements IComponent<any> {
                 }
                 if (childNode instanceof HTMLElement) {
                     const attrList = this.getAttrLists(childNode as Element);
-                    this.addEventListenersToElement(attrList, childNode as HTMLElement);
+                    this.addEventListenersToElement(attrList, childNode);
                 }
             }
         });
@@ -357,7 +357,7 @@ export class Component extends BeanStub implements IComponent<any> {
         super.destroy();
         this.childComponents.forEach(childComponent => {
             if (childComponent) {
-                (<any>childComponent).destroy();
+                (childComponent as any).destroy();
             }
         });
         this.childComponents.length = 0;

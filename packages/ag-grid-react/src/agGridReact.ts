@@ -272,7 +272,7 @@ class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterf
                 let frameworkComponentInstance = this.getFrameworkComponentInstance();
 
                 if (frameworkComponentInstance == null) {
-                    setTimeout(() => this.callMethod(name, args), 100);
+                    window.setTimeout(() => this.callMethod(name, args), 100);
                 } else {
                     let method = wrapper.getFrameworkComponentInstance()[name];
                     if (method == null) return null;

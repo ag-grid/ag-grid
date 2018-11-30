@@ -87,7 +87,7 @@ export class ColumnAnimationService {
 
         if (nowFuncs.length === 0 && waitFuncs.length === 0) { return; }
 
-        setTimeout(() => nowFuncs.forEach(func => func()), 0);
-        setTimeout(() => waitFuncs.forEach(func => func()), 300);
+        window.setTimeout(() => nowFuncs.forEach(func => func()), 0);
+        window.setTimeout(() => waitFuncs.forEach(func => func()), 300);
     }
 }

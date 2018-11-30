@@ -97,7 +97,7 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
         }
 
         // put in timeout, to force result to be async
-        setTimeout(() => {
+        window.setTimeout(() => {
             this.cacheParams.datasource.getRows(params);
         }, 0);
 

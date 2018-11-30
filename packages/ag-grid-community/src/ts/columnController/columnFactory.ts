@@ -48,7 +48,7 @@ export class ColumnFactory {
 
         this.columnUtils.depthFirstOriginalTreeSearch(res, (child: OriginalColumnGroupChild) => {
             if (child instanceof OriginalColumnGroup) {
-                (child as OriginalColumnGroup).setupExpandable();
+                child.setupExpandable();
             }
         });
 
@@ -110,7 +110,7 @@ export class ColumnFactory {
         // for columns we need to pad
         unbalancedTree.forEach((child: OriginalColumnGroupChild) => {
             if (child instanceof OriginalColumnGroup) {
-                const originalGroup = child as OriginalColumnGroup;
+                const originalGroup = child;
                 const newChildren = this.balanceColumnTree(originalGroup.getChildren(),
                     currentDept + 1, columnDept, columnKeyCreator);
                 originalGroup.setChildren(newChildren);
@@ -137,7 +137,7 @@ export class ColumnFactory {
         for (let i = 0; i < treeChildren.length; i++) {
             const abstractColumn = treeChildren[i];
             if (abstractColumn instanceof OriginalColumnGroup) {
-                const originalGroup = abstractColumn as OriginalColumnGroup;
+                const originalGroup = abstractColumn;
                 const newDept = this.findMaxDept(originalGroup.getChildren(), dept + 1);
                 if (maxDeptThisLevel < newDept) {
                     maxDeptThisLevel = newDept;

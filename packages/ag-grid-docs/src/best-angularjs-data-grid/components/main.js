@@ -75,7 +75,7 @@ module.controller("exampleCtrl", function ($scope, $compile) {
         this.$scope.params = params;
         // in case we are running outside of angular (ie in an ag-grid started VM turn)
         // we call $apply. we put in timeout in case we are inside apply already.
-        setTimeout(this.$scope.$apply.bind(this.$scope), 0);
+        window.setTimeout(this.$scope.$apply.bind(this.$scope), 0);
     };
 
     MakeHeaderComp.prototype.getGui = function () {
@@ -100,7 +100,7 @@ module.controller("exampleCtrl", function ($scope, $compile) {
         this.$scope.params = params;
         // in case we are running outside of angular (ie in an ag-grid started VM turn)
         // we call $apply. we put in timeout in case we are inside apply already.
-        setTimeout(this.$scope.$apply.bind(this.$scope), 0);
+        window.setTimeout(this.$scope.$apply.bind(this.$scope), 0);
     };
 
     PriceCellRenderer.prototype.getGui = function () {
@@ -153,7 +153,7 @@ module.controller("exampleCtrl", function ($scope, $compile) {
         this.$scope.model = this;
         // in case we are running outside of angular (ie in an ag-grid started VM turn)
         // we call $apply. we put in timeout in case we are inside apply already.
-        setTimeout(this.$scope.$apply.bind(this.$scope), 0);
+        window.setTimeout(this.$scope.$apply.bind(this.$scope), 0);
     };
 
     ModelFilterComp.prototype.onSelectionChanged = function () {
@@ -238,13 +238,13 @@ module.controller("exampleCtrl", function ($scope, $compile) {
 
         this.$scope.$watch('popup.opened', function (newVal, oldVal) {
             if (!newVal && oldVal) {
-                setTimeout(() => that.$scope.params.stopEditing(), 0)
+                window.setTimeout(() => that.$scope.params.stopEditing(), 0)
             }
         });
 
         // in case we are running outside of angular (ie in an ag-grid started VM turn)
         // we call $apply. we put in timeout in case we are inside apply already.
-        setTimeout(this.$scope.$apply.bind(this.$scope), 0);
+        window.setTimeout(this.$scope.$apply.bind(this.$scope), 0);
     };
 
     DateEditor.prototype.getGui = function () {
@@ -293,13 +293,13 @@ module.controller("exampleCtrl", function ($scope, $compile) {
         var that = this;
         this.$scope.$watch('dt', function (newVal, oldVal) {
             if (newVal !== oldVal) {
-                setTimeout(() => that.$scope.params.onDateChanged(), 0)
+                window.setTimeout(() => that.$scope.params.onDateChanged(), 0)
             }
         });
 
         // in case we are running outside of angular (ie in an ag-grid started VM turn)
         // we call $apply. we put in timeout in case we are inside apply already.
-        setTimeout(this.$scope.$apply.bind(this.$scope), 0);
+        window.setTimeout(this.$scope.$apply.bind(this.$scope), 0);
     };
 
     DateInputComponent.prototype.getGui = function () {

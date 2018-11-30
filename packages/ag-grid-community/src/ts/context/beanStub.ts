@@ -36,7 +36,7 @@ export class BeanStub implements IEventEmitter {
     }
 
     public dispatchEventAsync(event: AgEvent): void {
-        setTimeout(() => this.dispatchEvent(event), 0);
+        window.setTimeout(() => this.dispatchEvent(event), 0);
     }
 
     public dispatchEvent<T extends AgEvent>(event: T): void {

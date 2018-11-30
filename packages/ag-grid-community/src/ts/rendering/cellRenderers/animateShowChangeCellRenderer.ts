@@ -62,7 +62,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         // is not the most recent and will not try to remove the delta value.
         this.refreshCount++;
         const refreshCountCopy = this.refreshCount;
-        setTimeout(() => {
+        window.setTimeout(() => {
             if (refreshCountCopy === this.refreshCount) {
                 this.hideDeltaValue();
             }

@@ -45,6 +45,6 @@ export class HorizontalResizeComp extends Component {
         const newWidth = Math.max(100, Math.floor(this.startingWidth - (delta * direction)));
         // tslint:disable-next-line
         this.gridOptionsWrapper.isEnableRtl
-        this.props.componentToResize.getGui().style.width = `$newWidth}px`;
+        this.props.componentToResize.getGui().style.width = `${newWidth}px`;
     }
 }

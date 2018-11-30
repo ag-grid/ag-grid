@@ -132,7 +132,7 @@ export class AnimationFrameService {
         } else if (window.webkitRequestAnimationFrame) {
             window.webkitRequestAnimationFrame(callback);
         } else {
-            setTimeout(callback, 0);
+            window.setTimeout(callback, 0);
         }
     }
 
