@@ -172,7 +172,7 @@ function componentTemplate(bindings, componentFileNames) {
 
     const style = bindings.gridSettings.noStyle ? '' : `style="width: ${bindings.gridSettings.width}; height: ${bindings.gridSettings.height};"`;
 
-    const agGridTag = `      <ag-grid-vue ${style} class="${bindings.gridSettings.theme}"
+    const agGridTag = `      <ag-grid-vue ${style} class="${bindings.gridSettings.theme}" id="myGrid"
                :gridOptions="gridOptions"
                :gridReady="onGridReady"
                ${propertyAttributes.concat(eventAttributes).map((line) => `${line}`).join('\n              ')}></ag-grid-vue>`;

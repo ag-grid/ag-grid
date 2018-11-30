@@ -119,7 +119,7 @@ gridOptions.getRowHeight = function(params) {
         </ul>
     </p>
 
-    <?= example('Auto Row Height', 'auto-row-height', 'generated') ?>
+    <?= example('Auto Row Height', 'auto-row-height', 'generated', array('processVue' => true)) ?>
 
     <p>
         Auto height works by the grid creating an off-screen temporary row with all the

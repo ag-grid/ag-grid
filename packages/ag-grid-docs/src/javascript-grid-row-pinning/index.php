@@ -50,9 +50,9 @@ include '../documentation-main/documentation_header.php';
     <p>In this example we're using Components to render custom pinned row values for Athlete and Age (color blue and italics
     respectively).</p>
 
-    <?= example('Row Pinning', 'row-pinning', 'generated') ?>
+    <?= example('Row Pinning', 'row-pinning', 'generated', array('processVue' => true)) ?>
 
-    <h2>None Supported Items</h2>
+    <h2>Non Supported Items</h2>
 
     <p>
         Pinned rows are not part of the main row model. For this reason, the following is not possible:

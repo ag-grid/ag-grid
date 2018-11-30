@@ -180,7 +180,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <?= example('Expiring Cache through Editing', 'expiring-through-editing', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Expiring Cache through Editing', 'expiring-through-editing', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
 
     <note>
         It is not possible to partially invalidate the cache, eg it is not possible to invalidate only a
@@ -231,6 +231,6 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <?= example('Never expire Value change', 'never-expire', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Never expire Value change', 'never-expire', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

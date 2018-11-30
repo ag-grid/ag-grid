@@ -46,7 +46,7 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
             it sorts it as dates, not as strings.</li>
         </ul>
 
-    <?= example('Custom Sorting', 'custom-sorting', 'generated') ?>
+    <?= example('Custom Sorting', 'custom-sorting', 'generated', array('processVue' => true)) ?>
 
     <h2 id="multi-column-sorting">Multi Column Sorting</h2>
 
@@ -67,7 +67,7 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
         </ul>
     </p>
 
-    <?= example('Multi Column Sort', 'multi-column', 'generated') ?>
+    <?= example('Multi Column Sort', 'multi-column', 'generated', array('processVue' => true)) ?>
 
     <h2>Sorting Animation</h2>
 
@@ -106,7 +106,7 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
         <li><b>Column Year:</b> ascending only</li>
     </ul>
 
-    <?= example('Sorting Order and Animation', 'sorting-order-and-animation', 'generated') ?>
+    <?= example('Sorting Order and Animation', 'sorting-order-and-animation', 'generated', array('processVue' => true)) ?>
 
     <h2>Sorting API</h2>
 
@@ -137,7 +137,7 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
         The example below shows the API in action.
     </p>
 
-    <?= example('Sorting API', 'sorting-api', 'generated') ?>
+    <?= example('Sorting API', 'sorting-api', 'generated', array('processVue' => true)) ?>
 
     <h2>Sorting Groups</h2>
 
@@ -172,7 +172,7 @@ var groupColumn = {
         The following example is configured to use this feature.
     </p>
 
-    <?= example('Accented Sort', 'accented-sort', 'generated') ?>
+    <?= example('Accented Sort', 'accented-sort', 'generated', array('processVue' => true)) ?>
 
     <h2 id="post-sort">Post Sort</h2>
 
@@ -208,6 +208,6 @@ gridOptions.postSort(rowNodes) {
         The following example uses this configuration to perform a post sort on the rows.
     </p>
 
-    <?= example('Post Sort', 'post-sort', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Post Sort', 'post-sort', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

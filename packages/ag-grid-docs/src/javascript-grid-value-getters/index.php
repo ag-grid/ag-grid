@@ -65,7 +65,7 @@ var countryColDef = {
         <li>Column 'Const' uses a value getter to always return back the same string value.</li>
     </ul>
 
-    <?= example('Getters and Formatters', 'getters-and-formatters', 'generated') ?>
+    <?= example('Getters and Formatters', 'getters-and-formatters', 'generated', array('processVue' => true)) ?>
 
     <h2>Rendering Value Flow</h2>
 

@@ -113,7 +113,7 @@ include '../documentation-main/documentation_header.php';
         Note that if you use the example inlined the scroll bars shown are for the containing iframe, not the grid.
     </note>
 
-    <?= example('Auto Height', 'auto-height', 'generated', array("enterprise" => 1, "noStyle" => 1)) ?>
+    <?= example('Auto Height', 'auto-height', 'generated', array("enterprise" => 1, "noStyle" => 1, 'processVue' => true)) ?>
 
     <h2>DOM Layout</h2>
 
