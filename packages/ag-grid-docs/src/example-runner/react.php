@@ -2,7 +2,7 @@
 include 'utils.php';
 $example = getExampleInfo('react');
 $generated = isset($_GET['generated']);
-$includeBlueprint = isset($_GET['includeBlueprint']);
+$includeBlueprint = isset($_GET['blueprint']);
 if ($generated) { 
     echo "<!DOCTYPE html>\n";
 };
@@ -13,12 +13,8 @@ if ($generated) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style> html, body, #root { margin: 0; padding: 0; height: 100%; } </style>
-<?php renderExampleExtras($_GET) ?>
-<?php renderStyles($includeBlueprint ? array_merge($example['styles'], array(
-    "https://unpkg.com/@blueprintjs/core@^3.0.0/lib/css/blueprint.css",
-    "https://unpkg.com/@blueprintjs/icons@^3.0.0/lib/css/blueprint-icons.css",
-    "https://unpkg.com/react-day-picker@7.2.4/lib/style.css"
-)) : $example['styles']); ?>
+<?php renderExampleExtras($_GET); ?>
+<?php renderStyles($example['styles']); ?>
 <?php renderNonGeneratedScripts($example['scripts']); ?>
 </head>
 <body>

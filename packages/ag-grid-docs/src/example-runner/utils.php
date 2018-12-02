@@ -402,6 +402,13 @@ function renderExampleExtras($config)
                 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap-theme.min.css'
             )
         ),
+        'blueprint' => array(
+            'styles'=> array(
+                'https://unpkg.com/@blueprintjs/core@^3.0.0/lib/css/blueprint.css',
+                'https://unpkg.com/@blueprintjs/icons@^3.0.0/lib/css/blueprint-icons.css',
+                'https://unpkg.com/react-day-picker@7.2.4/lib/style.css'
+            )
+        ),
         'roboto' => array(
             'styles' => array(
                 'https://fonts.googleapis.com/css?family=Roboto'

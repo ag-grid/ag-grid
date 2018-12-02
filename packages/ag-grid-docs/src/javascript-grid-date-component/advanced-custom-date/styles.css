@@ -4,12 +4,15 @@ html {
     width: 100%;
   }
   
-  body {
-    height: 100%;
-    width: 100%;
-  }
-  
-  .bp3-input-group {
-    line-height: 25px;
-  }
-  
+body {
+  height: 100%;
+  width: 100%;
+}
+
+.bp3-input-group {
+  line-height: 25px;
+}
+
+:focus {
+  outline: none;
+} 
