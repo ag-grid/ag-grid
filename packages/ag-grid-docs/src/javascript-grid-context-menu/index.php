@@ -151,7 +151,7 @@ MenuItemDef {
         </ul>
     </p>
 
-    <?= example('Small Grid Problem', 'popup-parent-problem', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Small Grid Problem', 'popup-parent-problem', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <p>
         The solution is to set the <code>popupParent</code> element which can be set in the following ways:
@@ -175,7 +175,7 @@ MenuItemDef {
         to the document body.
     </p>
 
-    <?= example('Small Grid Solution', 'popup-parent-solution', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Small Grid Solution', 'popup-parent-solution', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 
 

@@ -53,7 +53,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= example('Tool Panel Simple', 'simple', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Tool Panel Simple', 'simple', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 
     <note>
@@ -177,7 +177,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= example('Suppress Panels', 'suppress', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Suppress Panels', 'suppress', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 
     <h2>Styling Columns</h2>
@@ -238,7 +238,7 @@ colDefs = {
         name when dependent on where it appears using the <code>location</code> parameter.</li>
     </ul>
 
-    <?= example('Tool Panel Styling', 'styling', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Tool Panel Styling', 'styling', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Read Only Functions</h2>
 
@@ -248,7 +248,7 @@ colDefs = {
         so they can see what columns are used, but prevent them from making changes to the selection.
     </p>
 
-    <?= example('Read Only Example', 'read-only', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Read Only Example', 'read-only', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Next Up</h2>
 
