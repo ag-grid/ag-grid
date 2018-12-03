@@ -27,7 +27,7 @@
                 'css': 'npm:systemjs-plugin-css/css.js',
 
                 // vuejs
-                'vue': 'npm:vue/dist/vue.js',
+                'vue': 'npm:vue/dist/vue.min.js',
 
                 app: appLocation + 'app'
             },

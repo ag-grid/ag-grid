@@ -17,7 +17,7 @@ var columnDefs = [
 
 function getNextId() {
     if (!window.nextId) {
-        window.nextId = 13;
+        window.nextId = 15;
     } else {
         window.nextId++;
     }

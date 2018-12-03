@@ -31,7 +31,7 @@ function onGridReadyTemplate(readyCode: string,
                 propertyAttributes.push(':rowData="rowData"');
             }
             if (propertyVars.filter(item => item.indexOf('rowData') !== -1).length === 0) {
-                propertyVars.push('rowData: []');
+                propertyVars.push('rowData: null');
             }
 
             setRowDataBlock = data.callback.replace("params.api.setRowData(data);", "this.rowData = data;");
