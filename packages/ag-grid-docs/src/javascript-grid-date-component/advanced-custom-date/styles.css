@@ -13,6 +13,10 @@ body {
   line-height: 25px;
 }
 
+.ag-floating-filter-body input {
+  line-height: 19px;
+}
+
 
 .bp3-input-group .bp3-button {
   min-width: 16px;

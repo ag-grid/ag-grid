@@ -406,7 +406,7 @@ function renderExampleExtras($config)
             'styles'=> array(
                 'https://unpkg.com/@blueprintjs/core@^3.0.0/lib/css/blueprint.css',
                 'https://unpkg.com/@blueprintjs/icons@^3.0.0/lib/css/blueprint-icons.css',
-                'https://unpkg.com/react-day-picker@7.2.4/lib/style.css'
+                'https://unpkg.com/@blueprintjs/datetime@^3.0.0/lib/css/blueprint-datetime.css'
             )
         ),
         'roboto' => array(
