@@ -417,7 +417,7 @@ export class PopupService {
 
             let el = mouseEvent.target as HTMLElement;
             while (el && el != document.body) {
-                if (el.classList.contains('ag-grid-floating-picker')) { return true; }
+                if (el.classList.contains('ag-floating-filter-picker')) { return true; }
                 el = el.parentElement;
             }
         }

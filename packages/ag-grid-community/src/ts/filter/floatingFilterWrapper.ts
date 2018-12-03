@@ -121,7 +121,7 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
                 </div>`));
 
                 const eIcon = _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column);
-                body.querySelector('button').appendChild(eIcon);
+                body.querySelector('button[ref="eButtonShowMainFilter"]').appendChild(eIcon);
             }
             if (floatingFilterComp.afterGuiAttached) {
                 floatingFilterComp.afterGuiAttached();

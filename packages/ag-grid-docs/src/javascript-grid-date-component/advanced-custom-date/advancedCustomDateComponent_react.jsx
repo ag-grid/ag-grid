@@ -49,7 +49,7 @@ export default class CustomDateComponent extends Component {
                 value={this.state.date}
                 popoverProps={{
                     isOpen: this.state.openPicker,
-                    popoverClassName: 'ag-grid-floating-picker',
+                    popoverClassName: 'ag-floating-filter-picker',
                     boundary: document.body,
                     onInteraction: (nextOpenState) => {
                         console.log(nextOpenState);
