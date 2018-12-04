@@ -608,6 +608,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.enableColResize);
     }
 
+    public isEnableCharts() {
+        return isTrue(this.gridOptions.enableCharts);
+    }
+
     public getColResizeDefault() {
         return this.gridOptions.colResizeDefault;
     }

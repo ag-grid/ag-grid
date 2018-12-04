@@ -263,6 +263,7 @@ export interface GridOptions {
     autoGroupColumnDef?: ColDef;
     forPrint?: boolean;
     enableOldSetFilterModel?: boolean;
+    enableCharts?: boolean;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *

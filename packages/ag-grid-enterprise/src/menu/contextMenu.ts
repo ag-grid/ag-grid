@@ -69,6 +69,10 @@ export class ContextMenuFactory implements IContextMenuFactory {
             // nothing to show, perhaps tool panels???
         }
 
+        if (this.gridOptionsWrapper.isEnableCharts()) {
+            defaultMenuOptions.push('createChart');
+        }
+
         if (this.gridOptionsWrapper.getContextMenuItemsFunc()) {
             const userFunc: GetContextMenuItems | undefined = this.gridOptionsWrapper.getContextMenuItemsFunc();
             const params: GetContextMenuItemsParams = {

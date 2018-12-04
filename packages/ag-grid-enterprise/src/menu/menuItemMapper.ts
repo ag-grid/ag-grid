@@ -1,6 +1,7 @@
 import { ColumnController, MenuItemDef, Autowired, Utils, Bean, GridOptionsWrapper, GridApi, Column, _ } from 'ag-grid-community';
 import { ClipboardService } from "../clipboardService";
 import { AggFuncService } from "../aggregation/aggFuncService";
+import {ChartingService} from "../charts/chartingService";
 
 @Bean('menuItemMapper')
 export class MenuItemMapper {
@@ -10,6 +11,7 @@ export class MenuItemMapper {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('clipboardService') private clipboardService: ClipboardService;
     @Autowired('aggFuncService') private aggFuncService: AggFuncService;
+    @Autowired('chartingService') private chartingService: ChartingService;
 
     public mapWithStockItems(originalList: (MenuItemDef | string)[], column: Column | null): (MenuItemDef | string)[] {
         if (!originalList) { return []; }
@@ -145,6 +147,12 @@ export class MenuItemMapper {
                 })
             };
             case 'separator': return 'separator';
+            case 'createChart': return {
+                name: 'Create Chart',
+                action: () => {
+                    this.chartingService.createChart();
+                }
+            };
             default:
                 console.warn(`ag-Grid: unknown menu item type ${key}`);
                 return null;
