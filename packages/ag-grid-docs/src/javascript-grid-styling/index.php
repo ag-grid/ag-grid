@@ -158,7 +158,7 @@ include '../documentation-main/documentation_header.php';
         (using your browsers developer tools) to dig deeper.
     </p>
 
-<?= example('ag-Grid styling', 'styling', 'generated') ?>
+<?= example('ag-Grid styling', 'styling', 'generated', array('processVue' => true)) ?>
 
     <h2 id="high-level-overview">High Level Overview</h2>
 
@@ -387,7 +387,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
 </p>
 
-<?= example('Highlight Rows And Columns', 'highlight-rows-and-columns', 'generated') ?>
+<?= example('Highlight Rows And Columns', 'highlight-rows-and-columns', 'generated', array('processVue' => true)) ?>
 
 <h2 id="customizing-sass-variables">Customizing the themes with Sass variables</h2>
 
