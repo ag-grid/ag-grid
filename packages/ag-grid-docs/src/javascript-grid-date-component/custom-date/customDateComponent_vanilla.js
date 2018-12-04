@@ -21,7 +21,7 @@ CustomDateComponent.prototype.init = function (params) {
         wrap: true
     });
 
-    this.picker.calendarContainer.classList.add('ag-floating-filter-picker');
+    this.picker.calendarContainer.classList.add('ag-custom-component-popup');
 
     this.date = null;
 };

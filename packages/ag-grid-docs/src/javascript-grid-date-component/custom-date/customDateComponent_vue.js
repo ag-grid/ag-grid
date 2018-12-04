@@ -23,7 +23,7 @@ export default Vue.extend({
             wrap: true
         });
 
-        this.picker.calendarContainer.classList.add('ag-floating-filter-picker');
+        this.picker.calendarContainer.classList.add('ag-custom-component-popup');
     },
     methods: {
         onDateChanged(selectedDates) {

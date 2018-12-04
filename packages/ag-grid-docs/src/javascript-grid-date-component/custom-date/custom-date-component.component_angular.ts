@@ -48,7 +48,7 @@ export class CustomDateComponent {
             wrap: true
         });
 
-        this.picker.calendarContainer.classList.add('ag-floating-filter-picker');
+        this.picker.calendarContainer.classList.add('ag-custom-component-popup');
     }
 
     ngOnDestroy() {

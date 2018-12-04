@@ -416,9 +416,12 @@ export class PopupService {
                 }
             }
 
+            // if the user did not write their own Custom Element to be rendered as popup
+            // and this component has additional popup element, they should have the
+            // `ag-custom-component-popup` class to be detected as part of the Custom Component
             let el = mouseEvent.target as HTMLElement;
             while (el && el != document.body) {
-                if (el.classList.contains('ag-floating-filter-picker')) { return true; }
+                if (el.classList.contains('ag-custom-component-popup')) { return true; }
                 el = el.parentElement;
             }
         }
