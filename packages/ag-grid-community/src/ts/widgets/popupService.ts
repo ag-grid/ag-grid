@@ -406,6 +406,7 @@ export class PopupService {
 
     private isEventFromCurrentPopup(mouseEvent: MouseEvent | null | undefined, touchEvent: TouchEvent | undefined, eChild: HTMLElement): boolean {
         const event = mouseEvent ? mouseEvent : touchEvent;
+
         if (event) {
             const indexOfThisChild = this.activePopupElements.indexOf(eChild);
             for (let i = indexOfThisChild; i < this.activePopupElements.length; i++) {
