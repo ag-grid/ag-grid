@@ -22,7 +22,7 @@ export class ImmutableService {
     }
 
     // converts the setRowData() command to a transaction
-    public createTransactionForRowData(data: any[]): ([RowDataTransaction, { [id: string]: number }]) | void {
+    public createTransactionForRowData(data: any[]): ([RowDataTransaction, { [id: string]: number }]) | undefined {
 
         if (_.missing(this.clientSideRowModel)) {
             console.error('ag-Grid: ImmutableService only works with ClientSideRowModel');
