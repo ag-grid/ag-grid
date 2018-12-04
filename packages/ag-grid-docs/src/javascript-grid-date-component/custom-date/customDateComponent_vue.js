@@ -19,6 +19,7 @@ export default Vue.extend({
     mounted() {
         this.picker = flatpickr(this.$refs['flatpickr'], {
             onChange: this.onDateChanged.bind(this),
+            dateFormat: 'd/m/Y',
             wrap: true
         });
 

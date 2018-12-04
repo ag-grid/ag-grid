@@ -17,6 +17,7 @@ CustomDateComponent.prototype.init = function (params) {
 
     this.picker = flatpickr(this.eGui, {
         onChange: this.onDateChanged.bind(this),
+        dateFormat: 'd/m/Y',
         wrap: true
     });
 

@@ -25,6 +25,7 @@ export default class CustomDateComponent extends Component {
     componentDidMount() {
         this.picker = flatpickr(this.refs.flatpickr, {
             onChange: this.onDateChanged.bind(this),
+            dateFormat: 'd/m/Y',
             wrap: true
         });
 
