@@ -35,6 +35,7 @@ import { TotalAndFilteredRowsComp } from "./statusBar/providedPanels/totalAndFil
 import { PrimaryColsHeaderPanel } from "./sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsHeaderPanel";
 import { PrimaryColsListPanel } from "./sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsListPanel";
 import { GridHeaderDropZones } from "./sideBar/providedPanels/columns/gridHeaderDropZones";
+import {ChartingService} from "./charts/chartingService";
 
 export { AggregationStage } from "./rowStages/aggregationStage";
 export { GroupStage } from "./rowStages/groupStage";
@@ -71,13 +72,14 @@ export { RowGroupCompFactory } from "./rowGroupCompFactory";
 export { ExcelCreator } from "./exporter/excelCreator";
 export { ExcelXmlFactory } from "./exporter/excelXmlFactory";
 export { ExcelXlsxFactory } from "./exporter/excelXlsxFactory";
+export { ChartingService } from "./charts/chartingService";
 
 const rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
 
 Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, ExcelXlsxFactory, RowGroupCompFactory,
     PivotCompFactory, RangeController, ClipboardService, PivotStage, PivotColDefService,
     ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService, LicenseManager, MD5,
-    MenuItemMapper, StatusBarService], rowModelTypes);
+    MenuItemMapper, StatusBarService, ChartingService], rowModelTypes);
 
 Grid.setEnterpriseComponents([
     {componentName: 'AgPrimaryColsHeader', theClass: PrimaryColsHeaderPanel},
