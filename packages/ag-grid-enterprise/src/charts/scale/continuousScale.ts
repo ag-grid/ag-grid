@@ -1,4 +1,4 @@
-import {Comparator} from "../util/compare";
+import { Comparator } from "../util/compare";
 import Scale, {
     Deinterpolator,
     DeinterpolatorFactory,
@@ -6,7 +6,7 @@ import Scale, {
     PiecewiseReinterpolatorFactory,
     Reinterpolator,
     ReinterpolatorFactory,
-} from './Scale';
+} from './scale';
 
 export default abstract class ContinuousScale<R> implements Scale<number, R> {
     constructor(reinterpolatorFactory: ReinterpolatorFactory<R>,

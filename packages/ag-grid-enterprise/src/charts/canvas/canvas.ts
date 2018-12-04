@@ -9,7 +9,7 @@ export function getDevicePixelRatio(canvas?: HTMLCanvasElement) {
 
 function getOverrides(dpr: number) {
     let depth = 0;
-    return <any>{
+    return {
         save() {
             this.$save();
             depth++;
@@ -33,21 +33,21 @@ function getOverrides(dpr: number) {
 }
 
 export function setDevicePixelRatio(canvas: HTMLCanvasElement): number {
-    const canvasObj = <any>canvas;
+    const canvasObj = canvas;
     const ctx = canvas.getContext('2d');
     const dpr = getDevicePixelRatio();
     const overrides = getOverrides(dpr);
 
-    if (!canvasObj[DevicePixelRatioFlag]) {
+    if (!((canvasObj as any)[DevicePixelRatioFlag])) {
         if (ctx) {
-            const ctxObj = <any>ctx;
+            const ctxObj = ctx;
             for (const name in overrides) {
                 // Save native methods under prefixed names.
-                ctxObj['$' + name] = ctxObj[name];
+                (ctxObj as any)['$' + name] = (ctxObj as any)[name];
                 // Pretend our overrides are native methods.
-                ctxObj[name] = overrides[name];
+                (ctxObj as any)[name] = (overrides as any)[name];
             }
-            canvasObj[DevicePixelRatioFlag] = dpr;
+            (canvasObj as any)[DevicePixelRatioFlag] = dpr;
 
             const logicalWidth = canvas.width;
             const logicalHeight = canvas.height;

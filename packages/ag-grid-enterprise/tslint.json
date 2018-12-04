@@ -5,7 +5,6 @@
     "rules": {
         "no-eval": true,
         "incorrect-ag-community-import": true,
-        "no-string-literal": true,
         "no-unused-expression": true,
         "variable-name": false,
         "callable-types": false,
