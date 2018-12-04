@@ -19,7 +19,7 @@ include '../documentation-main/documentation_header.php';
     <code>pagination=true</code>. Find an example below:
 </p>
 
-<?= example('Pagination Example', 'pagination', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
+<?= example('Pagination Example', 'pagination', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('lodash'))) ?>
 
 <h2>Next Up</h2>
 
