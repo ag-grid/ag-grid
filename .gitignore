@@ -14,6 +14,7 @@ package-lock.json
 
 # latest only
 dist
+coverage
 packages/ag-grid-community/dist/**
 packages/ag-grid-community/main.d.ts
 packages/ag-grid-community/main.js

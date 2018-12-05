@@ -27,11 +27,17 @@
     "docs": "cd packages/ag-grid-docs && gulp serve",
     "updateAndRebuild": "npm run updateDependencies && npm run build",
     "initIntelliJ": "cp .idea/workspace.xml.default .idea/workspace.xml",
-    "init": "npm run initLatest && npm run updateAndRebuild"
+    "init": "npm run initLatest && npm run updateAndRebuild",
+    "test": "jest",
+    "testWithCoverage": "jest --coverage"
   },
   "devDependencies": {
+    "@types/jest": "^23.3.10",
     "archiver": "^3.0.0",
+    "jest": "^23.6.0",
     "lerna": "^2.11.0",
+    "ts-jest": "^23.10.5",
+    "typescript": "^3.2.1",
     "walk": "^2.3.14"
   }
 }
