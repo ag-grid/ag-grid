@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "watchWebpack": "webpack --watch",
-    "build": "gulp release",
+    "build": "npm run lint && gulp release",
     "lint": "tsc -p tsconfig-lint.json && tslint --project tsconfig.json"
   },
   "repository": {

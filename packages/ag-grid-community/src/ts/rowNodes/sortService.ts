@@ -25,7 +25,7 @@ export class SortService {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    private postSortFunc: (rowNodes: RowNode[]) => void;
+    private postSortFunc: ((rowNodes: RowNode[]) => void) | undefined;
 
     @PostConstruct
     public init(): void {
@@ -143,7 +143,9 @@ export class SortService {
                 const rowGroupColumn = this.columnController.getPrimaryColumn(displayingGroupKey);
 
                 const thisRowNodeMatches = rowGroupColumn === childRowNode.rowGroupColumn;
-                if (thisRowNodeMatches) { return; }
+                if (thisRowNodeMatches) {
+                    return;
+                }
 
                 if (clearOperation) {
                     // if doing a clear operation, we clear down the value for every possible group column

@@ -316,7 +316,8 @@ export class PopupService {
         const eDocument = this.gridOptionsWrapper.getDocument();
         if (!eDocument) {
             console.warn('ag-grid: could not find the document, document is empty');
-            return () => {};
+            return () => {
+            };
         }
 
         eChild.style.top = '0px';
@@ -324,7 +325,8 @@ export class PopupService {
 
         const popupAlreadyShown = _.isVisible(eChild);
         if (popupAlreadyShown) {
-            return () => {};
+            return () => {
+            };
         }
 
         const ePopupParent = this.getPopupParent();

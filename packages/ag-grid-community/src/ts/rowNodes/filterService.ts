@@ -1,4 +1,4 @@
-import { Bean, Autowired, PostConstruct } from "../context/context";
+import { Autowired, Bean, PostConstruct } from "../context/context";
 import { RowNode } from "../entities/rowNode";
 import { FilterManager } from "../filter/filterManager";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
@@ -18,7 +18,7 @@ export class FilterService {
 
     public filterAccordingToColumnState(rowNode: RowNode): void {
         const filterActive: boolean = this.filterManager.isAnyFilterPresent();
-        this.filter (rowNode, filterActive);
+        this.filter(rowNode, filterActive);
     }
 
     public filter(rowNode: RowNode, filterActive: boolean): void {
@@ -63,7 +63,7 @@ export class FilterService {
             // include child itself
             allChildrenCount++;
             // include children of children
-            allChildrenCount += child.allChildrenCount;
+            allChildrenCount += <any>child.allChildrenCount;
         });
         rowNode.setAllChildrenCount(allChildrenCount);
     }
@@ -73,7 +73,7 @@ export class FilterService {
         let allChildrenCount = 0;
         rowNode.childrenAfterFilter.forEach((child: RowNode) => {
             if (child.group) {
-                allChildrenCount += child.allChildrenCount;
+                allChildrenCount += <any>child.allChildrenCount;
             } else {
                 allChildrenCount++;
             }
