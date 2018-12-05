@@ -165,8 +165,8 @@ $(() => {
             link: link
         });
     });
-
-    new lazyload(document.querySelectorAll("#stage-feature-highlights img"), {});
+    var imgs = document.querySelectorAll("#stage-feature-highlights img"); 
+    new lazyload((imgs && imgs.length) ? imgs : [], {});
 
     if (breakpoints.length) {
         window.addEventListener("scroll", function(e) {
