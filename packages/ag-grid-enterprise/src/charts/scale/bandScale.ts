@@ -31,10 +31,10 @@ export class BandScale<D> implements Scale<D, number> {
 
     convert(d: D): number {
         const i = this.index[d];
-        if (i === undefined) { return NaN }
+        if (i === undefined) { return NaN; }
 
         const r = this.ordinalRange[i];
-        if (r === undefined) { return NaN }
+        if (r === undefined) { return NaN; }
 
         return r;
     }
@@ -109,7 +109,7 @@ export class BandScale<D> implements Scale<D, number> {
 
     protected rescale() {
         const n = this._domain.length;
-        if (!n) { return }
+        if (!n) { return; }
         let [a, b] =  this._range;
         const isReverse = b < a;
 
