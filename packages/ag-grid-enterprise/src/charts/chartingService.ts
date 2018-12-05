@@ -44,14 +44,14 @@ function showBasicBarChart(data: number[]) {
     const xScale = new BandScale();
     xScale.domain = xData;
     xScale.range = [0, width];
-    xScale.paddingInner = 0.4;
-    xScale.paddingOuter = 0.25;
+    xScale.paddingInner = 0.1;
+    xScale.paddingOuter = 0.5;
     let bandwidth = xScale.bandwidth;
 
     const canvas = document.createElement('canvas');
     canvas.width = width;
     canvas.height = height;
-    canvas.style.border = '1px solid black';
+    // canvas.style.border = '1px solid black';
     canvas.style.zIndex = '100';
     document.body.appendChild(canvas);
     setDevicePixelRatio(canvas);
@@ -59,7 +59,7 @@ function showBasicBarChart(data: number[]) {
     const ctx = canvas.getContext('2d')!;
     ctx.font = '14px Verdana';
 
-    function renderLabel(x: number, text: string) {
+    function renderBarLabel(x: number, text: string) {
         const w = ctx.measureText(text).width;
         ctx.fillText(text, x + bandwidth / 2 - w / 2, height - 20);
     }
@@ -74,6 +74,30 @@ function showBasicBarChart(data: number[]) {
         ctx.fillStyle = 'black';
         // const w = ctx.measureText(category).width;
         // ctx.fillText(category, x + bandwidth / 2 - w / 2, height - 20);
-        renderLabel(x, value.toString());
+        renderBarLabel(x, value.toString());
     }
+
+    const ticks = yScale.ticks();
+    const tickCount = ticks.length;
+
+    const tickSize = 5;
+    const halfLineWidth = 0.5;
+    const labelWidth = 20;
+    const labelGap = 5;
+    ctx.strokeStyle = 'black';
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'right';
+    ctx.lineWidth = halfLineWidth * 2;
+    ctx.beginPath();
+    for (let i = 0; i < tickCount; i++) {
+        const y = yScale.convert(ticks[i]) - halfLineWidth; // align to the pixel grid
+        ctx.moveTo(labelWidth + labelGap, y);
+        ctx.lineTo(labelWidth + labelGap + tickSize, y);
+
+        ctx.fillText(ticks[i].toString(), labelWidth, y);
+    }
+    ctx.moveTo(labelWidth + labelGap + tickSize, 0);
+    ctx.lineTo(labelWidth + labelGap + tickSize, height);
+
+    ctx.stroke();
 }
