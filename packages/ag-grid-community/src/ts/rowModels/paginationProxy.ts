@@ -136,11 +136,11 @@ export class PaginationProxy extends BeanStub implements IRowModel {
         return this.pixelOffset;
     }
 
-    public getRow(index: number): RowNode | null{
+    public getRow(index: number): RowNode | null {
         return this.rowModel.getRow(index);
     }
 
-    public getRowNode(id: string): RowNode | null{
+    public getRowNode(id: string): RowNode | null {
         return this.rowModel.getRowNode(id);
     }
 
