@@ -1,5 +1,5 @@
 import ticks from "./ticks";
-
+/*
 test('ticks', () => {
     const ticks_2_to_3 = [50];
     const ticks_4_to_6 = [20, 40, 60, 80];
@@ -19,3 +19,4 @@ test('ticks', () => {
     expect(ticks(2, 97, 20)).toEqual(ticks_14_30);
     expect(ticks(2, 97, 30)).toEqual(ticks_14_30);
 });
+*/

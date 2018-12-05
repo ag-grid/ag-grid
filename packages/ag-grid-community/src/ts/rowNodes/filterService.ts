@@ -63,7 +63,7 @@ export class FilterService {
             // include child itself
             allChildrenCount++;
             // include children of children
-            allChildrenCount += <any>child.allChildrenCount;
+            allChildrenCount += child.allChildrenCount as any;
         });
         rowNode.setAllChildrenCount(allChildrenCount);
     }
@@ -73,7 +73,7 @@ export class FilterService {
         let allChildrenCount = 0;
         rowNode.childrenAfterFilter.forEach((child: RowNode) => {
             if (child.group) {
-                allChildrenCount += <any>child.allChildrenCount;
+                allChildrenCount += child.allChildrenCount as any;
             } else {
                 allChildrenCount++;
             }
