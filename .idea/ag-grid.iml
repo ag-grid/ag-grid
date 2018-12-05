@@ -29,6 +29,7 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react/umd" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue-example/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue/lib" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
