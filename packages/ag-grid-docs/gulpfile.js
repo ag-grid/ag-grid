@@ -77,9 +77,10 @@ gulp.task('populate-dev', () => {
 
     const angular = gulp.src('../ag-grid-angular/**/*.*', {base: '../ag-grid-angular/'}).pipe(gulp.dest(`dist/${PACKAGES_DIR}/ag-grid-angular`));
 
-    const vue = gulp.src('../ag-grid-vue/**/*.*', {base: '../ag-grid-vue/'}).pipe(gulp.dest(`dist/${PACKAGES_DIR}/ag-grid-vue`));
+    // const vue = gulp.src('../ag-grid-vue/**/*.*', {base: '../ag-grid-vue/'}).pipe(gulp.dest(`dist/${PACKAGES_DIR}/ag-grid-vue`));
 
-    return merge(standard, enterprise, enterpriseBundle, react, angular, vue);
+    return merge(standard, enterprise, enterpriseBundle, react, angular);
+    // return merge(standard, enterprise, enterpriseBundle, react, angular, vue);
 });
 
 gulp.task('replace-to-cdn', () => {

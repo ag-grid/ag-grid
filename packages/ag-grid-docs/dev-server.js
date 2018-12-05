@@ -87,20 +87,20 @@ function serveAndWatchAngular(app) {
     });
 }
 
-function serveAndWatchVue(app) {
-    const gulpPath = WINDOWS ? 'node_modules\\.bin\\gulp.cmd' : 'node_modules/.bin/gulp';
-
-    const vueWatch = cp.spawn(gulpPath, ['watch'], {
-        stdio: 'inherit',
-        cwd: '../ag-grid-vue'
-    });
-
-    app.use('/dev/ag-grid-vue', express.static('../ag-grid-vue'));
-
-    process.on('exit', () => {
-        vueWatch.kill();
-    });
-}
+// function serveAndWatchVue(app) {
+//     const gulpPath = WINDOWS ? 'node_modules\\.bin\\gulp.cmd' : 'node_modules/.bin/gulp';
+//
+//     const vueWatch = cp.spawn(gulpPath, ['watch'], {
+//         stdio: 'inherit',
+//         cwd: '../ag-grid-vue'
+//     });
+//
+//     app.use('/dev/ag-grid-vue', express.static('../ag-grid-vue'));
+//
+//     process.on('exit', () => {
+//         vueWatch.kill();
+//     });
+// }
 
 function launchTSCCheck() {
     if (!fs.existsSync('_dev')) {
@@ -180,7 +180,7 @@ module.exports = () => {
 
     // angular & vue are separate processes
     serveAndWatchAngular(app);
-    serveAndWatchVue(app);
+    // serveAndWatchVue(app);
 
     // regenerate examples
     watchAndGenerateExamples();
