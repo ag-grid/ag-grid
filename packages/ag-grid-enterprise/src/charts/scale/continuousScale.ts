@@ -120,6 +120,8 @@ export default abstract class ContinuousScale<R> implements Scale<number, R> {
     }
 
     protected rescale() {
+        // TODO: uncomment the polylinear functionality here and the corresponding
+        //       methods below when we have a use case fot it.
         // const isPoly = Math.min(this._domain.length, this._range.length) > 2;
         // this.piecewiseReinterpolatorFactory = isPoly ? this.polymap : this.bimap;
         // this.piecewiseDeinterpolatorFactory = isPoly ? this.polymapInvert : this.bimapInvert;

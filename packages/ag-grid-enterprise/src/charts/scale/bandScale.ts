@@ -31,17 +31,17 @@ export class BandScale<D> implements Scale<D, number> {
 
     convert(d: D): number {
         const i = this.index[d];
-        if (i === undefined) { return NaN };
+        if (i === undefined) { return NaN }
 
         const r = this.ordinalRange[i];
-        if (r === undefined) { return NaN };
+        if (r === undefined) { return NaN }
 
         return r;
     }
 
     private ordinalRange: number[] = [];
 
-    private index = {} as any;
+    private index = {} as any; // TODO: new Map<D, number>();
 
     _bandwidth: number = 1;
     get bandwidth(): number {
@@ -109,13 +109,13 @@ export class BandScale<D> implements Scale<D, number> {
 
     protected rescale() {
         const n = this._domain.length;
-        if (!n) { return };
+        if (!n) { return }
         let [a, b] =  this._range;
         const isReverse = b < a;
 
-        if (isReverse) { [a, b] = [b, a] };
+        if (isReverse) { [a, b] = [b, a] }
         let step = (b - a) / Math.max(1, n - this._paddingInner + this._paddingOuter * 2);
-        if (this._round) { step = Math.floor(step) };
+        if (this._round) { step = Math.floor(step) }
         a += (b - a - step * (n - this._paddingInner)) * this._align;
         this._bandwidth = step * (1 - this._paddingInner);
         if (this._round) {

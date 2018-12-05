@@ -1,8 +1,11 @@
-const DevicePixelRatioFlag = '__DevicePixelRatio';
+// This is the property we set on an HTMLCanvasElement to let us know we've applied
+// the resolution independent overrides to it, and what its current DPR is.
+const DevicePixelRatioKey = '__DevicePixelRatio';
+// TODO: use Symbol() here in the future to truly hide this property.
 
 export function getDevicePixelRatio(canvas?: HTMLCanvasElement) {
     if (canvas) {
-        return (canvas as any)[DevicePixelRatioFlag] || 1;
+        return (canvas as any)[DevicePixelRatioKey] || 1;
     }
     return window.devicePixelRatio;
 }
@@ -25,29 +28,26 @@ function getOverrides(dpr: number) {
             this.scale(dpr, dpr);
             this.save();
             depth = 0;
-            // The scale above will be impossible to restore,
-            // because we override the `ctx.restore` above and
-            // check `depth` there.
+            // The idea is to set the `dpr` scale here
+            // that will be impossible to `ctx.restore`.
         }
     };
 }
 
 export function setDevicePixelRatio(canvas: HTMLCanvasElement): number {
-    const canvasObj = canvas;
     const ctx = canvas.getContext('2d');
     const dpr = getDevicePixelRatio();
     const overrides = getOverrides(dpr);
 
-    if (!((canvasObj as any)[DevicePixelRatioFlag])) {
+    if (!((canvas as any)[DevicePixelRatioKey])) {
         if (ctx) {
-            const ctxObj = ctx;
             for (const name in overrides) {
                 // Save native methods under prefixed names.
-                (ctxObj as any)['$' + name] = (ctxObj as any)[name];
+                (ctx as any)['$' + name] = (ctx as any)[name];
                 // Pretend our overrides are native methods.
-                (ctxObj as any)[name] = (overrides as any)[name];
+                (ctx as any)[name] = (overrides as any)[name];
             }
-            (canvasObj as any)[DevicePixelRatioFlag] = dpr;
+            (canvas as any)[DevicePixelRatioKey] = dpr;
 
             const logicalWidth = canvas.width;
             const logicalHeight = canvas.height;
