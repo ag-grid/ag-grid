@@ -107,6 +107,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     width: 0px;
     min-width: 0px;
     flex: 1;
+    transform: translate3d(0px, 0px, 0px);
 }
 
 .ag-header-row {
@@ -320,6 +321,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     &.ag-layout-normal {
         height: 100%;
         overflow-y: auto;
+        transform: translate3d(0px, 0px, 0px);
+        backface-visibility: hidden;
         -webkit-overflow-scrolling: touch;
     }
 }
@@ -462,6 +465,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     overflow-x: auto;
     overflow-y: hidden;
     position: relative;
+    transform: translate3d(0px, 0px, 0px);
+    backface-visibility: hidden;
 }
 
 .ag-center-cols-container {
