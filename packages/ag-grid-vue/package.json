@@ -41,6 +41,8 @@
     "@vue/cli-service": "^3.2.0",
     "ag-grid-community": "^19.1.0",
     "typescript": "^3.0.0",
-    "vue-template-compiler": "^2.5.17"
+    "vue-template-compiler": "^2.5.17",
+    "gulp-typescript": "^5.0.0",
+    "gulp": "^3.9.1"
   }
 }
