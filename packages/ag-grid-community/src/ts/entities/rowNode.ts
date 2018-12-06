@@ -148,7 +148,7 @@ export class RowNode implements IEventEmitter {
     /** Groups only - Sorted children of this group */
     public childrenAfterSort: RowNode[];
     /** Groups only - Number of children and grand children */
-    public allChildrenCount: number;
+    public allChildrenCount: number | null;
 
     /** Children mapped by the pivot columns */
     public childrenMapped: { [key: string]: any } | null = {};
@@ -380,7 +380,7 @@ export class RowNode implements IEventEmitter {
         }
     }
 
-    public setAllChildrenCount(allChildrenCount: number): void {
+    public setAllChildrenCount(allChildrenCount: number | null): void {
         if (this.allChildrenCount === allChildrenCount) {
             return;
         }
@@ -781,7 +781,7 @@ export class RowNode implements IEventEmitter {
         this.dispatchLocalEvent(this.createLocalRowEvent(RowNode.EVENT_MOUSE_LEAVE));
     }
 
-    public getFirstChildOfFirstChild(rowGroupColumn: Column): RowNode {
+    public getFirstChildOfFirstChild(rowGroupColumn: Column | null): RowNode {
         let currentRowNode: RowNode = this;
 
         // if we are hiding groups, then if we are the first child, of the first child,

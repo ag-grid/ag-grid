@@ -1,10 +1,8 @@
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { RowNode } from "../entities/rowNode";
-import { Bean, Context } from "../context/context";
+import { Autowired, Bean, Context, PostConstruct } from "../context/context";
 import { EventService } from "../eventService";
-import { Autowired } from "../context/context";
 import { Events, PinnedRowDataChangedEvent } from "../events";
-import { PostConstruct } from "../context/context";
 import { Constants } from "../constants";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
@@ -54,7 +52,7 @@ export class PinnedRowModel {
         return rows.length - 1;
     }
 
-    public setPinnedTopRowData(rowData: any[]): void {
+    public setPinnedTopRowData(rowData: any[] | undefined): void {
         this.pinnedTopRows = this.createNodesFromData(rowData, true);
         const event: PinnedRowDataChangedEvent = {
             type: Events.EVENT_PINNED_ROW_DATA_CHANGED,
@@ -64,7 +62,7 @@ export class PinnedRowModel {
         this.eventService.dispatchEvent(event);
     }
 
-    public setPinnedBottomRowData(rowData: any[]): void {
+    public setPinnedBottomRowData(rowData: any[] | undefined): void {
         this.pinnedBottomRows = this.createNodesFromData(rowData, false);
         const event: PinnedRowDataChangedEvent = {
             type: Events.EVENT_PINNED_ROW_DATA_CHANGED,
@@ -74,7 +72,7 @@ export class PinnedRowModel {
         this.eventService.dispatchEvent(event);
     }
 
-    private createNodesFromData(allData: any[], isTop: boolean): RowNode[] {
+    private createNodesFromData(allData: any[] | undefined, isTop: boolean): RowNode[] {
         const rowNodes: RowNode[] = [];
         if (allData) {
             let nextRowTop = 0;
@@ -122,12 +120,16 @@ export class PinnedRowModel {
     }
 
     public forEachPinnedTopRow(callback: (rowNode: RowNode, index: number) => void): void {
-        if (_.missingOrEmpty(this.pinnedTopRows)) { return; }
+        if (_.missingOrEmpty(this.pinnedTopRows)) {
+            return;
+        }
         this.pinnedTopRows.forEach(callback);
     }
 
     public forEachPinnedBottomRow(callback: (rowNode: RowNode, index: number) => void): void {
-        if (_.missingOrEmpty(this.pinnedBottomRows)) { return; }
+        if (_.missingOrEmpty(this.pinnedBottomRows)) {
+            return;
+        }
         this.pinnedBottomRows.forEach(callback);
     }
 

@@ -3,14 +3,14 @@ var columnDefs = [
     {headerName: "Age", field: "age", width: 90, filter: 'agNumberColumnFilter'},
     {headerName: "Country", field: "country", width: 120},
     {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 160, filter:'agDateColumnFilter', filterParams:{
+    {headerName: "Date", field: "date", width: 190, filter:'agDateColumnFilter', filterParams:{
         comparator:function (filterLocalDateAtMidnight, cellValue){
             var dateAsString = cellValue;
             var dateParts  = dateAsString.split("/");
             var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
 
             if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
-                return 0
+                return 0;
             }
 
             if (cellDate < filterLocalDateAtMidnight) {

@@ -3,7 +3,7 @@ import { IRowModel, RowBounds } from "../interfaces/iRowModel";
 import { EventService } from "../eventService";
 import { Events, ModelUpdatedEvent, PaginationChangedEvent } from "../events";
 import { RowNode } from "../entities/rowNode";
-import { Bean, Autowired, PostConstruct } from "../context/context";
+import { Autowired, Bean, PostConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { GridPanel } from "../gridPanel/gridPanel";
 import { ScrollVisibleService } from "../gridPanel/scrollVisibleService";
@@ -42,7 +42,9 @@ export class PaginationAutoPageSizeService extends BeanStub {
     }
 
     private checkPageSize(): void {
-        if (this.notActive()) { return; }
+        if (this.notActive()) {
+            return;
+        }
 
         const rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         let bodyHeight = this.gridPanel.getBodyHeight();
@@ -111,8 +113,12 @@ export class PaginationProxy extends BeanStub implements IRowModel {
     }
 
     public goToPage(page: number): void {
-        if (!this.active) { return; }
-        if (this.currentPage === page) { return; }
+        if (!this.active) {
+            return;
+        }
+        if (this.currentPage === page) {
+            return;
+        }
         this.currentPage = page;
         const event: ModelUpdatedEvent = {
             type: Events.EVENT_MODEL_UPDATED,
@@ -130,11 +136,11 @@ export class PaginationProxy extends BeanStub implements IRowModel {
         return this.pixelOffset;
     }
 
-    public getRow(index: number): RowNode {
+    public getRow(index: number): RowNode | null {
         return this.rowModel.getRow(index);
     }
 
-    public getRowNode(id: string): RowNode {
+    public getRowNode(id: string): RowNode | null {
         return this.rowModel.getRowNode(id);
     }
 
@@ -143,7 +149,9 @@ export class PaginationProxy extends BeanStub implements IRowModel {
     }
 
     public getCurrentPageHeight(): number {
-        if (_.missing(this.topRowBounds) || _.missing(this.bottomRowBounds)) { return 0; }
+        if (_.missing(this.topRowBounds) || _.missing(this.bottomRowBounds)) {
+            return 0;
+        }
         return this.bottomRowBounds.rowTop + this.bottomRowBounds.rowHeight - this.topRowBounds.rowTop;
     }
 
@@ -175,7 +183,7 @@ export class PaginationProxy extends BeanStub implements IRowModel {
         return this.rowModel.getType();
     }
 
-    public getRowBounds(index: number): {rowTop: number, rowHeight: number} {
+    public getRowBounds(index: number): { rowTop: number, rowHeight: number } {
         return this.rowModel.getRowBounds(index);
     }
 
@@ -199,7 +207,9 @@ export class PaginationProxy extends BeanStub implements IRowModel {
     }
 
     public goToPageWithIndex(index: any): void {
-        if (!this.active) { return; }
+        if (!this.active) {
+            return;
+        }
 
         const pageNumber = Math.floor(index / this.pageSize);
         this.goToPage(pageNumber);

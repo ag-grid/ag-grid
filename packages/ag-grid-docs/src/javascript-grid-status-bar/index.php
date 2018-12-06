@@ -98,7 +98,7 @@ gridOptions: {
 </ul>
 </p>
 
-<?= example('Status Bar Simple', 'status-bar-simple', 'generated', array("enterprise" => 1)) ?>
+<?= example('Status Bar Simple', 'status-bar-simple', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 <h3>Configuring The Aggregation Panel</h3>
 
@@ -111,7 +111,7 @@ gridOptions: {
 <p>In the grid below, select a range by dragging the mouse over cells and notice the status bar
     showing the aggregation values as you drag.</p>
 
-<?= example('Status Bar', 'status-bar', 'generated', array("enterprise" => 1)) ?>
+<?= example('Status Bar', 'status-bar', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 <p>By default all of the aggregations available will be displayed but you can configure the aggregation component to only
     show a subset of the aggregations.</p>
@@ -191,7 +191,7 @@ gridOptions: {
     </ul>
 </p>
 
-<?= example('Status Bar Params', 'status-bar-params', 'generated', array("enterprise" => 1)) ?>
+<?= example('Status Bar Params', 'status-bar-params', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 <h2>Status Bar Height</h2>
 

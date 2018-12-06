@@ -179,9 +179,9 @@ export interface FlashCellsEvent extends AgGridEvent {
 }
 
 export interface PaginationChangedEvent extends AgGridEvent {
-    animate: boolean;
-    keepRenderedRows: boolean;
-    newData: boolean;
+    animate?: boolean;
+    keepRenderedRows?: boolean;
+    newData?: boolean;
     newPage: boolean;
 }
 

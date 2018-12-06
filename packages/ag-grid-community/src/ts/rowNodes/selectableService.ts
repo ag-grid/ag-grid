@@ -10,7 +10,7 @@ export class SelectableService {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private groupSelectsChildren: boolean;
-    private isRowSelectableFunc: IsRowSelectable;
+    private isRowSelectableFunc?: IsRowSelectable;
 
     @PostConstruct
     public init(): void {
@@ -49,7 +49,7 @@ export class SelectableService {
                 rowSelectable = _.exists(firstSelectable);
             } else {
                 // directly retrieve selectable value from user callback
-                rowSelectable = this.isRowSelectableFunc(child);
+                rowSelectable = this.isRowSelectableFunc ? this.isRowSelectableFunc(child) : false;
             }
 
             child.setRowSelectable(rowSelectable);

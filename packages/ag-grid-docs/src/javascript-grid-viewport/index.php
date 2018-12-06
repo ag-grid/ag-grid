@@ -259,7 +259,7 @@ interface IViewportDatasourceParams {
         position and pushes data to the client based on the viewport position.
     </p>
 
-<?= example('Viewport Example', 'viewport', 'generated', array( 'enterprise'=> true )) ?>
+<?= example('Viewport Example', 'viewport', 'generated', array( 'enterprise'=> true, "processVue" => true )) ?>
 
     <h2>Example Viewport with Pagination</h2>
 

@@ -1,0 +1,26 @@
+html {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+  }
+  
+body {
+  height: 100%;
+  width: 100%;
+}
+
+.custom-date-filter a {
+  position: relative;
+  right: 30px;
+  color: rgba(0, 0, 0, 0.54);
+  cursor: pointer;
+}
+.custom-date-filter:after {
+  content: '\f073';
+  font-weight: 400;
+  font-family: 'Font Awesome 5 Free';
+  position: relative;
+  right: 25px;
+  pointer-events: none;
+  color: rgba(0, 0, 0, 0.54);
+}

@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= example('Filter Tool Panel', 'simple', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Filter Tool Panel', 'simple', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Filter Instances</h2>
 

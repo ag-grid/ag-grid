@@ -100,7 +100,7 @@ export class HeaderRootComp extends Component {
     }
 
     public setHorizontalScroll(offset: number): void {
-        this.eHeaderContainer.style.left = offset + 'px';
+        this.eHeaderContainer.style.transform = `translateX(${offset}px)`;
     }
 
     public forEachHeaderElement(callback: (renderedHeaderElement: Component) => void): void {

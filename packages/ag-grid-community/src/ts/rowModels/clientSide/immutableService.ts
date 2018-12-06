@@ -22,7 +22,7 @@ export class ImmutableService {
     }
 
     // converts the setRowData() command to a transaction
-    public createTransactionForRowData(data: any[]): [RowDataTransaction, {[id:string]: number}] {
+    public createTransactionForRowData(data: any[]): ([RowDataTransaction, { [id: string]: number }]) | undefined {
 
         if (_.missing(this.clientSideRowModel)) {
             console.error('ag-Grid: ImmutableService only works with ClientSideRowModel');
@@ -30,7 +30,7 @@ export class ImmutableService {
         }
 
         const getRowNodeIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
-        if (_.missing(getRowNodeIdFunc)) {
+        if (!getRowNodeIdFunc || _.missing(getRowNodeIdFunc)) {
             console.error('ag-Grid: ImmutableService requires getRowNodeId() callback to be implemented, your row data need IDs!');
             return;
         }
@@ -42,9 +42,9 @@ export class ImmutableService {
             add: []
         };
 
-        const existingNodesMap: {[id:string]: RowNode} = this.clientSideRowModel.getCopyOfNodesMap();
+        const existingNodesMap: { [id: string]: RowNode | undefined } = this.clientSideRowModel.getCopyOfNodesMap();
 
-        const orderMap: {[id:string]: number} = {};
+        const orderMap: { [id: string]: number } = {};
 
         if (_.exists(data)) {
             // split all the new data in the following:
@@ -53,21 +53,21 @@ export class ImmutableService {
             // if not changed, do not include in the transaction
             data.forEach((dataItem: any, index: number) => {
                 const id: string = getRowNodeIdFunc(dataItem);
-                const existingNode: RowNode = existingNodesMap[id];
+                const existingNode: RowNode | undefined = existingNodesMap[id];
 
                 orderMap[id] = index;
 
                 if (existingNode) {
                     const dataHasChanged = existingNode.data !== dataItem;
                     if (dataHasChanged) {
-                        transaction.update.push(dataItem);
+                        transaction.update!.push(dataItem);
                     }
                     // otherwise, if data not changed, we just don't include it anywhere, as it's not a delta
 
                     // remove from list, so we know the item is not to be removed
                     existingNodesMap[id] = undefined;
                 } else {
-                    transaction.add.push(dataItem);
+                    transaction.add!.push(dataItem);
                 }
             });
         }
@@ -75,7 +75,7 @@ export class ImmutableService {
         // at this point, all rows that are left, should be removed
         _.iterateObject(existingNodesMap, (id: string, rowNode: RowNode) => {
             if (rowNode) {
-                transaction.remove.push(rowNode.data);
+                transaction.remove!.push(rowNode.data);
             }
         });
 

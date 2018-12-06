@@ -15,8 +15,8 @@ include '../documentation-main/documentation_header.php';
 
     <p> The example below shows the grid with a rich set of features enabled.</p>
 
-    <?= example('Balham Theme', 'theme-balham', 'generated', array( 'enterprise' => true )) ?>
-    <?= example('Balham Theme (dark)', 'theme-balham-dark', 'generated', array( 'enterprise' => true )) ?>
+    <?= example('Balham Theme', 'theme-balham', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
+    <?= example('Balham Theme (dark)', 'theme-balham-dark', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
 
     <p>
         To use the theme, add <code>ag-theme-balham</code> or <code>ag-theme-balham-dark</code> CSS class to the DIV element on which the ag-Grid instance is instantiated.

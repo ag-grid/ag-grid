@@ -316,7 +316,8 @@ export class PopupService {
         const eDocument = this.gridOptionsWrapper.getDocument();
         if (!eDocument) {
             console.warn('ag-grid: could not find the document, document is empty');
-            return () => {};
+            return () => {
+            };
         }
 
         eChild.style.top = '0px';
@@ -324,7 +325,8 @@ export class PopupService {
 
         const popupAlreadyShown = _.isVisible(eChild);
         if (popupAlreadyShown) {
-            return () => {};
+            return () => {
+            };
         }
 
         const ePopupParent = this.getPopupParent();
@@ -406,6 +408,7 @@ export class PopupService {
 
     private isEventFromCurrentPopup(mouseEvent: MouseEvent | null | undefined, touchEvent: TouchEvent | undefined, eChild: HTMLElement): boolean {
         const event = mouseEvent ? mouseEvent : touchEvent;
+
         if (event) {
             const indexOfThisChild = this.activePopupElements.indexOf(eChild);
             for (let i = indexOfThisChild; i < this.activePopupElements.length; i++) {
@@ -415,9 +418,12 @@ export class PopupService {
                 }
             }
 
-            let el = mouseEvent.target as HTMLElement;
+            // if the user did not write their own Custom Element to be rendered as popup
+            // and this component has additional popup element, they should have the
+            // `ag-custom-component-popup` class to be detected as part of the Custom Component
+            let el = event.target as HTMLElement;
             while (el && el != document.body) {
-                if (el.classList.contains('ag-floating-filter-picker')) { return true; }
+                if (el.classList.contains('ag-custom-component-popup')) { return true; }
                 el = el.parentElement;
             }
         }

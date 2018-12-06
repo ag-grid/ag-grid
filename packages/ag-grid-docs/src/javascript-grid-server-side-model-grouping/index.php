@@ -100,7 +100,7 @@ IServerSideGetRowsRequest {
             see Athlete is sorted. </li>
     </ul>
 
-<?= example('Row Grouping', 'row-grouping', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
+<?= example('Row Grouping', 'row-grouping', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('lodash'))) ?>
 
 <note>
     When the grid sort changes, only impacted rows will get reloaded. For example if grouping by Country
@@ -182,7 +182,7 @@ gridOptions.getChildCount = function(data) {
     </li>
 </ul>
 
-<?= example('Purging Caches', 'purge', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
+<?= example('Purging Caches', 'purge', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('lodash'))) ?>
 
 <h2>Preserving Group State</h2>
 
@@ -234,7 +234,7 @@ function getRows(params) {
 </ul>
 </p>
 
-<?= example('Preserve Group State', 'preserve-group-state', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
+<?= example('Preserve Group State', 'preserve-group-state', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('lodash'))) ?>
 
 
 <h2>Next Up</h2>

@@ -67,7 +67,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= example('Boolean Configuration', 'booleanConfiguration', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Boolean Configuration', 'booleanConfiguration', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
 
     <h3>String Configuration</h3>
 
@@ -84,7 +84,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= example('Side Bar - Only filters', 'onlyFilters', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Side Bar - Only filters', 'onlyFilters', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
 
     <h3>SideBarDef Configuration</h3>
 
@@ -140,7 +140,7 @@ sideBar = {
         The snippet above is demonstrated in the following example:
     </p>
 
-<?= example('SideBarDef', 'sideBarDef', 'generated', array("enterprise" => 1)) ?>
+<?= example('SideBarDef', 'sideBarDef', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
 
 <h2 id="shortcuts">Configuration Shortcuts</h2>
 
@@ -245,7 +245,7 @@ sideBar = {
     The example below shows changing the label and icon for the columns and filters tab.
 </p>
 
-<?= example('Side Bar Fine tuning', 'fineTuning', 'generated', array("enterprise" => 1)) ?>
+<?= example('Side Bar Fine tuning', 'fineTuning', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
 
 <h2>Providing Parameters to Tool Panels</h2>
 
@@ -309,7 +309,7 @@ sideBar = {
     </li>
 </ul>
 
-<?= example('Side Bar API', 'api', 'generated', array("enterprise" => 1)) ?>
+<?= example('Side Bar API', 'api', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
 
 <h2>Next Up</h2>
 
