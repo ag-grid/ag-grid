@@ -5,6 +5,7 @@ export class VueComponentFactory {
 
     public static getComponentType(parent: AgGridVue, component: VueConstructor) {
         console.log('spl test string variation!!!!');
+        // spl by name? - test
         if (typeof component === 'string') {
             // spl test this!!!
             const componentInstance: VueConstructor = parent.$parent.$options.components![component] as VueConstructor;

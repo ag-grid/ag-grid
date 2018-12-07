@@ -1,10 +1,11 @@
 import {Component, Vue, Prop} from 'vue-property-decorator';
-import {ComponentUtil, Grid, GridOptions} from 'ag-grid-community';
+import { Bean, ComponentUtil, Grid, GridOptions } from 'ag-grid-community';
 import {VueFrameworkComponentWrapper} from './VueFrameworkComponentWrapper';
 import {getAgGridProperties, Properties} from './Utils';
 
 const [props, watch] = getAgGridProperties();
 
+@Bean('agGridVue')
 @Component({
     props,
     watch,
