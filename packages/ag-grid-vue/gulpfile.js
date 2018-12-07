@@ -9,7 +9,7 @@ gulp.task('src', () => {
     const tsProject = gulpTypescript.createProject('./tsconfig-lib.json');
 
     const tsResult = gulp
-        .src('./src/AgGridVue.ts', {typescript: typescript})
+        .src('./src/**/*.ts', {typescript: typescript})
         .pipe(tsProject());
 
     return merge([

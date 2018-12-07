@@ -1,7 +1,6 @@
-import {Component, Vue} from 'vue-property-decorator';
+import {Component, Vue, Prop} from 'vue-property-decorator';
 import {ComponentUtil, Grid, GridOptions} from 'ag-grid-community';
 import {VueFrameworkComponentWrapper} from './VueFrameworkComponentWrapper';
-import {VueFrameworkFactory} from './VueFrameworkFactory';
 import {getAgGridProperties, Properties} from './Utils';
 
 const [props, watch] = getAgGridProperties();
@@ -15,6 +14,9 @@ export class AgGridVue extends Vue {
     private isDestroyed = false;
 
     private gridOptions!: GridOptions;
+
+    @Prop({default: () => []})
+    public componentDependencies!: string[];
 
     // noinspection JSUnusedGlobalSymbols, JSMethodCanBeStatic
     public render(h: any) {
@@ -50,12 +52,10 @@ export class AgGridVue extends Vue {
     // noinspection JSUnusedGlobalSymbols
     public mounted() {
         const frameworkComponentWrapper = new VueFrameworkComponentWrapper(this);
-        const frameworkFactory = new VueFrameworkFactory(this.$el, this);
         const gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
 
         const gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
-            frameworkFactory,
             seedBeanInstances: {
                 frameworkComponentWrapper,
             },
