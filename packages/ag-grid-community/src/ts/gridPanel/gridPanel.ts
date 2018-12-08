@@ -1384,8 +1384,8 @@ export class GridPanel extends Component {
         }
 
         this.headerRootComp.setHorizontalScroll(offset);
-        this.eBottomContainer.style.transform = `translate3d(${offset}px, 0px, 0px)`;
-        this.eTopContainer.style.transform = `translate3d(${offset}px, 0px, 0px)`;
+        this.eBottomContainer.style.transform = `translateX(${offset}px)`;
+        this.eTopContainer.style.transform = `translateX(${offset}px)`;
 
         const partner = this.lastHorizontalScrollElement === this.eCenterViewport ? this.eBodyHorizontalScrollViewport : this.eCenterViewport;
 
