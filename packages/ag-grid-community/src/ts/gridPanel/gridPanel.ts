@@ -1100,6 +1100,8 @@ export class GridPanel extends Component {
             width += pinnedContainerWidths;
         }
 
+        this.headerRootComp.setHeaderContainerWidth(width);
+
         const widthPx = `${width}px`;
 
         this.eCenterContainer.style.width = widthPx;
@@ -1186,7 +1188,7 @@ export class GridPanel extends Component {
     }
 
     public setHeaderAndFloatingHeights(): void {
-        const {columnController, gridOptionsWrapper, pinnedRowModel, eTop, eBottom} = this;
+        const { columnController, gridOptionsWrapper, pinnedRowModel, eTop, eBottom } = this;
 
         let numberOfFloating = 0;
         let headerRowCount = columnController.getHeaderRowCount();
@@ -1383,8 +1385,8 @@ export class GridPanel extends Component {
         }
 
         this.headerRootComp.setHorizontalScroll(offset);
-        this.eBottomContainer.style.transform = `translateX(${offset}px)`;
-        this.eTopContainer.style.transform = `translateX(${offset}px)`;
+        this.eBottomContainer.style.transform = `translate3d(${offset}px, 0px, 0px)`;
+        this.eTopContainer.style.transform = `translate3d(${offset}px, 0px, 0px)`;
 
         const partner = this.lastHorizontalScrollElement === this.eCenterViewport ? this.eBodyHorizontalScrollViewport : this.eCenterViewport;
 

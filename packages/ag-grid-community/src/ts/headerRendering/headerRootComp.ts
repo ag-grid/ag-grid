@@ -82,8 +82,8 @@ export class HeaderRootComp extends Component {
 
         // for setting ag-pivot-on / ag-pivot-off CSS classes
         this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
-        this.onPivotModeChanged();
 
+        this.onPivotModeChanged();
         this.addPreventHeaderScroll();
 
         if (this.columnController.isReady()) {
@@ -100,7 +100,7 @@ export class HeaderRootComp extends Component {
     }
 
     public setHorizontalScroll(offset: number): void {
-        this.eHeaderContainer.style.transform = `translateX(${offset}px)`;
+        this.eHeaderContainer.style.transform = `translate3d(${offset}px, 0px, 0px)`;
     }
 
     public forEachHeaderElement(callback: (renderedHeaderElement: Component) => void): void {
@@ -123,8 +123,9 @@ export class HeaderRootComp extends Component {
     }
 
     public setHeight(height: number): void {
-        this.getGui().style.height = height + 'px';
-        this.getGui().style.minHeight = height + 'px';
+        const px = `${height}px`;
+        this.getGui().style.height = px;
+        this.getGui().style.minHeight = px;
     }
 
     // if the user is in floating filter and hits tab a few times, the header can
@@ -141,6 +142,10 @@ export class HeaderRootComp extends Component {
                 this.eHeaderViewport.scrollLeft = 0;
             }
         });
+    }
+
+    public setHeaderContainerWidth(width: number) {
+        this.eHeaderContainer.style.width = `${width}px`;
     }
 
     public setLeftVisible(visible: boolean): void {
