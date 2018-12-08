@@ -1005,8 +1005,7 @@ export class GridPanel extends Component {
                 eViewport: this.eBodyViewport
             }),
             fullWidth: new RowContainerComponent({
-                eContainer: this.eFullWidthContainer,
-                hideWhenNoChildren: true
+                eContainer: this.eFullWidthContainer
             }),
             pinnedLeft: new RowContainerComponent({eContainer: this.eLeftContainer}),
             pinnedRight: new RowContainerComponent({eContainer: this.eRightContainer}),
