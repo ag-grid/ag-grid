@@ -14,6 +14,7 @@ export class SelectCellEditor extends Component implements ICellEditorComp {
 
     private focusAfterAttached: boolean;
     private eSelect: HTMLSelectElement;
+    private params: ICellEditorParams;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
@@ -24,6 +25,8 @@ export class SelectCellEditor extends Component implements ICellEditorComp {
     }
 
     public init(params: ISelectCellEditorParams) {
+
+        this.params = params;
         this.focusAfterAttached = params.cellStartedEdit;
 
         if (_.missing(params.values)) {
@@ -74,6 +77,6 @@ export class SelectCellEditor extends Component implements ICellEditorComp {
     }
 
     public getValue(): any {
-        return this.eSelect.value;
+        return this.params.parseValue(this.eSelect.value);
     }
 }
