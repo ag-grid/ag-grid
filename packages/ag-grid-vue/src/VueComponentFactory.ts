@@ -1,5 +1,5 @@
 import Vue, { VueConstructor } from 'vue';
-import { AgGridVue } from "./AgGridVue";
+import { AgGridVue } from './AgGridVue';
 
 export class VueComponentFactory {
 

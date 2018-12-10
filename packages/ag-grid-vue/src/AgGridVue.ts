@@ -62,7 +62,7 @@ export class AgGridVue extends Vue {
             },
         };
 
-        new Grid(this.$el, gridOptions, gridParams);
+        new Grid(this.$el as HTMLElement, gridOptions, gridParams);
 
         this.isInitialised = true;
     }

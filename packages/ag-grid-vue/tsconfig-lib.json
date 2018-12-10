@@ -8,6 +8,7 @@
     "declaration": true,
     "rootDir": "src",
     "outDir": "lib",
+    "strictFunctionTypes": false,
     "lib": [
       "esnext",
       "dom",

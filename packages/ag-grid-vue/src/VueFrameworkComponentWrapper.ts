@@ -1,6 +1,6 @@
 import { BaseComponentWrapper, Bean, WrapableInterface } from 'ag-grid-community';
-import { AgGridVue } from "./AgGridVue";
-import { VueComponentFactory } from "./VueComponentFactory";
+import { AgGridVue } from './AgGridVue';
+import { VueComponentFactory } from './VueComponentFactory';
 
 @Bean('frameworkComponentWrapper')
 export class VueFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterface> {
@@ -12,8 +12,8 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<WrapableI
         this.parent = parent;
     }
 
-    createWrapper(component: any): WrapableInterface {
-        let that = this;
+    public createWrapper(component: any): WrapableInterface {
+        const that = this;
 
         class DynamicComponent extends VueComponent<any, any> implements WrapableInterface {
             public init(params: any): void {
@@ -24,18 +24,18 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<WrapableI
                 return that.createComponent(component, params);
             }
 
-            hasMethod(name: string): boolean {
+            public hasMethod(name: string): boolean {
                 return wrapper.getFrameworkComponentInstance()[name] != null;
             }
 
-            callMethod(name: string, args: IArguments): void {
+            public callMethod(name: string, args: IArguments): void {
                 const componentInstance = this.getFrameworkComponentInstance();
-                return wrapper.getFrameworkComponentInstance()[name].apply(componentInstance, args)
+                return wrapper.getFrameworkComponentInstance()[name].apply(componentInstance, args);
 
             }
 
-            addMethod(name: string, callback: Function): void {
-                (wrapper as any)[name] = callback
+            public addMethod(name: string, callback: () => void): void {
+                (wrapper as any)[name] = callback;
             }
         }
 

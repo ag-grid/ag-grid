@@ -11,6 +11,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
+    "strictFunctionTypes": false,
     "types": [
       "webpack-env"
     ],
