@@ -1,6 +1,5 @@
 .row {
     height: 25px;
-    box-sizing: border-box;
     position: absolute;
     width: 100%;
     transition: top 0.5s;
@@ -13,7 +12,6 @@
     padding: 2px;
     border-bottom: 1px solid lightgrey;
     border-right: 1px solid lightgrey;
-    box-sizing: border-box;
 }
 
 body {

@@ -25,10 +25,6 @@
         background-color: map-get($params, "panel-background-color");
     }
 
-    .ag-cell {
-        box-sizing: border-box;
-    }
-
     %card {
         background-color: $editor-background-color;
         border: 1px solid $border-color;
@@ -80,7 +76,6 @@
 
     .ag-header-cell {
         border-right: 1px solid $border-color;
-        box-sizing: border-box;
     }
 
     .ag-header-group-cell {
@@ -140,7 +135,6 @@
         height: $grid-size * 4.5 !important;
 
         .ag-column-drop-cell-button {
-            box-sizing: border-box;
             height: calc(100% - #{$grid-size});
             margin-bottom: $grid-size / 2;
             margin-top: $grid-size / 2;
@@ -190,10 +184,6 @@
     .ag-cell-inline-editing {
         height: $row-height;
         padding: 0;
-
-        input {
-            box-sizing: border-box;
-        }
     }
 
     .ag-tool-panel-wrapper .ag-column-drop .ag-column-drop-title {

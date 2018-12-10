@@ -1,6 +1,15 @@
 #example-wrapper {
+    display: flex;
+    flex-direction: column;
+
     max-width: 100%;
     width: 100%;
+    height: 100%;
+
+    #grid-wrapper {
+        flex: 1;
+        overflow: hidden;
+    }
 }
 .good-score {
     background-color: rgba(0, 200, 0, 0.4);
@@ -47,6 +56,7 @@ button[disabled] {
 #example-toolbar {
     display: flex;
     justify-content: center;
+
     background: $blue-4;
     border-bottom: 1px solid $blue-3;
     select {
@@ -71,8 +81,10 @@ button[disabled] {
         display: flex;
         flex-wrap: wrap;
         flex: 1 0 auto;
+        
         max-width: 1400px;
         width: 100%;
+
         justify-content: space-between;
 
         > div {
@@ -87,6 +99,7 @@ button[disabled] {
         }
         .link-container {
             display: flex;
+
             line-height: 35px;
             > div {
                 width: 35px;
@@ -120,17 +133,6 @@ button[disabled] {
         max-width: $max-width;
         margin-left: auto;
         margin-right: auto;
-    }
-}
-
-#example-wrapper {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-
-    #grid-wrapper {
-        flex: 1;
-        overflow: hidden;
     }
 }
 

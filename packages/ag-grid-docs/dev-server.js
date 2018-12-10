@@ -207,14 +207,14 @@ module.exports = () => {
 
 //     node dev-server.js generate-examples [src directory]
 // eg: node dev-server.js generate-examples javascript-grid-accessing-data
-genExamples = (exampleDir) => {
+const genExamples = (exampleDir) => {
     return () => {
         console.log('regenerating examples...');
         generateExamples(() => console.log('generation done.'), exampleDir);
-    }
+    };
 };
 
-const [cmd, script, execFunc, exampleDir, watch] = process.argv;
+const [execFunc, exampleDir, watch] = process.argv;
 if (process.argv.length >= 3 && execFunc === 'generate-examples') {
     if (exampleDir && watch) {
         const examplePath = path.resolve('./src/', exampleDir);

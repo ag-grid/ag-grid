@@ -37,7 +37,6 @@ import {IFilterAngularComp} from "ag-grid-angular";
                 width: 100%;
                 border: 2px solid grey;
                 border-style: ridge;
-                box-sizing: border-box;
                 padding: 5px;
                 background-color: darkgray;
             }
@@ -60,7 +59,6 @@ import {IFilterAngularComp} from "ag-grid-angular";
                 border: 1px solid grey;
                 padding: 2px;
                 height: 100%;
-                box-sizing: border-box;
                 font-family: cursive;
                 background-color: #fafafa;
             }

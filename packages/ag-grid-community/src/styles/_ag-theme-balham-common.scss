@@ -20,15 +20,6 @@ $disabled-foreground-color-opacity: 0.38 !default;
     $row-border-width: map-get($params, "row-border-width");
     $selected-color: map-get($params, "selected-color");
 
-    .ag-header,
-    .ag-row,
-    .ag-header-cell,
-    .ag-header-group-cell,
-    .ag-rich-select-value,
-    .ag-root {
-        box-sizing: border-box;
-    }
-
     %card {
         border: 1px solid $border-color;
     }
@@ -115,7 +106,6 @@ $disabled-foreground-color-opacity: 0.38 !default;
         height: $grid-size * 6 !important;
 
         .ag-column-drop-cell-button {
-            box-sizing: border-box;
             height: calc(100% - #{$grid-size});
             margin-bottom: $grid-size / 2;
             margin-top: $grid-size / 2;
@@ -264,10 +254,6 @@ $disabled-foreground-color-opacity: 0.38 !default;
     .ag-cell-inline-editing {
         height: $row-height;
         padding: 0;
-
-        input {
-            box-sizing: border-box;
-        }
     }
 
     .ag-details-row {

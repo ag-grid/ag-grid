@@ -37,9 +37,6 @@
         .fx-null {
             border-top: 20px solid #3ACFD5;
             border-right: 20px solid #3a4ed5;
-            -webkit-box-sizing: border-box;
-            -moz-box-sizing: border-box;
-            box-sizing: border-box;
             background-position: 0 0, 0 100%;
             background-repeat: no-repeat;
             -webkit-background-size: 100% 20px;
@@ -55,9 +52,6 @@
         .fx-positive {
             border-top: 20px solid #3ACFD5;
             border-right: 20px solid #3a4ed5;
-            -webkit-box-sizing: border-box;
-            -moz-box-sizing: border-box;
-            box-sizing: border-box;
             background-position: 0 0, 0 100%;
             background-repeat: no-repeat;
             -webkit-background-size: 100% 20px;
@@ -73,9 +67,6 @@
         .fx-negative {
             border-top: 20px solid #3ACFD5;
             border-right: 20px solid #3a4ed5;
-            -webkit-box-sizing: border-box;
-            -moz-box-sizing: border-box;
-            box-sizing: border-box;
             background-position: 0 0, 0 100%;
             background-repeat: no-repeat;
             -webkit-background-size: 100% 20px;

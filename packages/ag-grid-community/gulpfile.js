@@ -189,7 +189,10 @@ function scssTask() {
                                 loader: 'postcss-loader',
                                 options: {
                                     syntax: 'postcss-scss', 
-                                    plugins: [autoprefixer()]
+                                    plugins: [autoprefixer({
+                                        browsers: ["last 2 version"],
+                                        flexbox: true
+                                    })]
                                 }
                             }
                         ]

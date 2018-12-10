@@ -1223,7 +1223,7 @@ export class Utils {
     }
 
     static setHidden(element: HTMLElement, hidden: boolean) {
-        this.addOrRemoveCssClass(element, 'ag-visibility-hidden', hidden);
+        this.addOrRemoveCssClass(element, 'ag-invisible', hidden);
     }
 
     static setFixedWidth(element: HTMLElement, width: string | number) {

@@ -43,15 +43,18 @@ module.exports = {
                 use: [
                     'style-loader',
                     {loader: 'css-loader', options: {sourceMap: true}},
-                    {loader: 'sass-loader', options: {sourceMap: true}},
                     {
                         loader: 'postcss-loader',
                         options: {
                             sourceMap: true,
                             syntax: 'postcss-scss',
-                            plugins: [autoprefixer()]
+                            plugins: [autoprefixer({
+                                browsers: ["last 2 version"],
+                                flexbox: true
+                            })]
                         }
-                    }
+                    },
+                    {loader: 'sass-loader', options: {sourceMap: true}}
                 ]
             },
             {

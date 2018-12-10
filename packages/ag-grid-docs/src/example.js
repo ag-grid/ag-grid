@@ -979,6 +979,7 @@ function PersonFloatingFilterComponent() {
 PersonFloatingFilterComponent.prototype.init = function (params) {
     this.params = params;
     this.eGui = document.createElement('input');
+    this.eGui.className = 'ag-floating-filter-input';
     var eGui = this.eGui;
     this.changeEventListener = function () {
         params.onFloatingFilterChanged(eGui.value);

@@ -3,7 +3,6 @@
  * Generic Styles
  ****************************
 */
-
 // if we don't do this, then the width and height of the grid would be ignored,
 // as there is no default display for the element ag-grid-a2 (as it's not a natural dom element)
 ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
@@ -62,9 +61,12 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 
 .ag-root-wrapper {
     position: relative; // set to relative, so absolute popups appear relative to this
-
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
+    *, *:before, *:after {
+        box-sizing: border-box;
+    }
 
     &.ag-layout-normal {
         height: 100%;
@@ -75,10 +77,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     }
     
     .ag-invisible {
-        visibility: hidden !important;
-    }
-    
-    .ag-visibility-hidden {
         visibility: hidden !important;
     }
     
@@ -112,14 +110,12 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     flex-direction: row;
 
     &.ag-layout-normal {
-        flex-grow: 1;
-        height: 0px;
-        min-height: 0px;
+        flex: 1;
+        overflow: hidden;
     }
 }
 
 .ag-root {
-    box-sizing: border-box;
     position: relative; // set to relative, so absolute popups appear relative to this
     display: flex;
     flex-direction: column;
@@ -127,7 +123,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     &.ag-layout-normal,
     &.ag-layout-auto-height {
         overflow: hidden; // was getting some 'shouldn't be there' scrolls, this sorts it out
-        width: 0px;
         min-width: 0px;
         flex: 1;
     }
@@ -151,7 +146,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 .ag-floating-bottom-viewport,
 .ag-body-horizontal-scroll-viewport,
 .ag-virtual-list-viewport {
-    box-sizing: border-box;
     position: relative;
     height: 100%;
     min-width: 0px;
@@ -203,9 +197,7 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 .ag-full-width-container,
 .ag-floating-bottom-full-width-container,
 .ag-virtual-list-container {
-    box-sizing: border-box;
     position: relative;
-    contain: paint style layout;
 }
 
 // for when auto height is used but there is no row data
@@ -291,7 +283,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
  ****************************
 */
 .ag-header, .ag-pinned-left-header, .ag-pinned-right-header {
-    box-sizing: border-box;
     display: inline-block;
     overflow: hidden;
     cursor: pointer;
@@ -320,7 +311,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 }
 
 .ag-header-cell {
-    box-sizing: border-box;
     display: inline-block;
     height: 100%;
     position: absolute;
@@ -391,7 +381,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 }
 
 .ag-column-drop {
-    box-sizing: border-box;
     width: 100%;
 }
 
@@ -471,7 +460,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
  * Rows
  ****************************
 */
-
 // for animations, allows rows to slide up and down,
 .ag-row-animation .ag-row {
     transition: transform 0.4s, top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;
@@ -482,7 +470,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 }
 
 .ag-row {
-    box-sizing: border-box;
     white-space: nowrap;
     width: 100%;
 }
@@ -514,9 +501,7 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
  * Cells
  ****************************
 */
-
 .ag-cell {
-    box-sizing: border-box;
     display: inline-block;
     overflow: hidden;
     // this float was needed for layout in safari, without it, when images were used (eg country flags),
@@ -537,7 +522,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 }
 
 .ag-group-cell-entire-row {
-    box-sizing: border-box;
     display: inline-block;
     height: 100%;
     overflow: hidden;
@@ -548,7 +532,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 }
 
 .ag-footer-cell-entire-row {
-    box-sizing: border-box;
     display: inline-block;
     height: 100%;
     overflow: hidden;
@@ -563,7 +546,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
  * Filters
  ****************************
 */
-
 .ag-set-filter-item {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -571,7 +553,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 }
 
 .ag-filter-filter {
-    box-sizing: border-box;
     width: 100%;
 }
 
@@ -610,7 +591,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 }
 
 .ag-floating-filter {
-    box-sizing: border-box;
     display: inline-block;
     position: absolute;
 }
@@ -649,7 +629,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 .ag-dnd-ghost {
     background: #e5e5e5;
     border: 1px solid black;
-    box-sizing: border-box;
     cursor: move;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px;
@@ -707,7 +686,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
  * Popup
  ****************************
 */
-
 .ag-popup-backdrop {
     height: 100%;
     left: 0;
@@ -726,7 +704,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
  * Virtual Lists
  ****************************
 */
-
 .ag-virtual-list-item {
     position: absolute;
     width: 100%;
@@ -741,9 +718,7 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
  * Floating Top and Bottom
  ****************************
 */
-
 .ag-floating-top {
-    box-sizing: border-box;
     overflow: hidden;
     white-space: nowrap;
     width: 100%;
@@ -752,27 +727,22 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 }
 
 .ag-pinned-left-floating-top {
-    box-sizing: border-box;
     display: inline-block;
     overflow: hidden;
     position: relative; // otherwise the % width of children is not relative to this element
     min-width: 0px;
-    width: 0px;
     flex-grow: 1000;
 }
 
 .ag-pinned-right-floating-top {
-    box-sizing: border-box;
     display: inline-block;
     overflow: hidden;
     position: relative; // otherwise the % width of children is not relative to this element
     min-width: 0px;
-    width: 0px;
     flex-grow: 1000;
 }
 
 .ag-floating-bottom {
-    box-sizing: border-box;
     overflow: hidden;
     white-space: nowrap;
     width: 100%;
@@ -781,22 +751,18 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 }
 
 .ag-pinned-left-floating-bottom {
-    box-sizing: border-box;
     display: inline-block;
     overflow: hidden;
     position: relative; // otherwise the % width of children is not relative to this element
     min-width: 0px;
-    width: 0px;
     flex-grow: 1000;
 }
 
 .ag-pinned-right-floating-bottom {
-    box-sizing: border-box;
     display: inline-block;
     overflow: hidden;
     position: relative; // otherwise the % width of children is not relative to this element
     min-width: 0px;
-    width: 0px;
     flex-grow: 1000;
 }
 
@@ -831,7 +797,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
  * Menu
  ****************************
 */
-
 .ag-menu {
     max-height: 100%;
     overflow-y: auto;
@@ -889,7 +854,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
  * Rich Select
  ****************************
 */
-
 .ag-rich-select {
     cursor: default;
     outline: none;
@@ -915,7 +879,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
  ****************************
 */
 .ag-tool-panel-wrapper {
-    box-sizing: border-box;
     display: flex;
     overflow-y: auto;
     cursor: default;
@@ -1012,7 +975,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 }
 
 .ag-header-group-cell {
-    box-sizing: border-box;
     display: inline-block;
     height: 100%;
     overflow: hidden;
@@ -1026,11 +988,9 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
  * Side Bar
  ****************************
 */
-
 .ag-side-bar {
     display: flex;
     flex-direction: row-reverse;
-    box-sizing: border-box;
 
     .ag-side-buttons {
         width: 20px;
@@ -1074,7 +1034,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
  * Status Bar
  ****************************
 */
-
 .ag-status-bar {
     display: flex;
     justify-content: space-between;

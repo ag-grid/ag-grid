@@ -100,7 +100,6 @@ function indexTemplate(bindings, componentFilenames) {
     const agGridTag = `<div 
                 id="myGrid"
                 style={{
-                    boxSizing: 'border-box', 
                     height: '${bindings.gridSettings.height}', 
                     width: '${bindings.gridSettings.width}'}} 
                     className="${bindings.gridSettings.theme}">
