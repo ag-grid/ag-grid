@@ -5,10 +5,10 @@ import { IComponent } from "../../interfaces/iComponent";
  * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
  */
 export interface FrameworkComponentWrapper {
-    wrap <A extends IComponent<any>>(frameworkComponent: { new(): any },
-        methodList: string[],
-        optionalMethodList?: string[],
-        componentName?: string
+    wrap<A extends IComponent<any>>(frameworkComponent: { new(): any },
+                                    methodList: string[],
+                                    optionalMethodList: string[],
+                                    componentName?: string
     ): A;
 }
 
@@ -21,9 +21,9 @@ export interface WrapableInterface {
 }
 
 export abstract class BaseComponentWrapper<F extends WrapableInterface> implements FrameworkComponentWrapper {
-    wrap<A extends IComponent<any>>(OriginalConstructor: { new (): any },
+    wrap<A extends IComponent<any>>(OriginalConstructor: { new(): any },
                                     mandatoryMethodList: string[],
-                                    optionalMethodList?: string[],
+                                    optionalMethodList: string[] = [],
                                     componentName?: string): A {
         const wrapper: F = this.createWrapper(OriginalConstructor, componentName);
 
@@ -31,23 +31,21 @@ export abstract class BaseComponentWrapper<F extends WrapableInterface> implemen
             this.createMethod(wrapper, methodName, true);
         }));
 
-        if (optionalMethodList) {
-            optionalMethodList.forEach((methodName => {
-                this.createMethod(wrapper, methodName, false);
-            }));
-        }
+        optionalMethodList.forEach((methodName => {
+            this.createMethod(wrapper, methodName, false);
+        }));
 
         return wrapper as any as A;
 
     }
 
-    abstract createWrapper(OriginalConstructor: { new (): any }, componentName?: string): F;
+    abstract createWrapper(OriginalConstructor: { new(): any }, componentName?: string): F;
 
     private createMethod(wrapper: F, methodName: string, mandatory: boolean): void {
         wrapper.addMethod(methodName, this.createMethodProxy(wrapper, methodName, mandatory));
     }
 
-    private createMethodProxy(wrapper: F, methodName: string, mandatory: boolean): Function {
+    protected createMethodProxy(wrapper: F, methodName: string, mandatory: boolean): Function {
         return function() {
             if (wrapper.hasMethod(methodName)) {
                 return wrapper.callMethod(methodName, arguments);

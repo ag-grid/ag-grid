@@ -1,5 +1,5 @@
 import Vue, { VueConstructor } from 'vue';
-import { AgGridVue } from "./AgGridVue";
+import { AgGridVue } from './AgGridVue';
 
 export class VueComponentFactory {
 
@@ -25,12 +25,12 @@ export class VueComponentFactory {
             data: {
                 params: Object.freeze(params),
             },
-            parent
+            parent,
         };
 
         if (parent.componentDependencies) {
-            parent.componentDependencies.forEach(dependency =>
-                (details as any)[dependency] = (parent as any)[dependency]
+            parent.componentDependencies.forEach((dependency) =>
+                (details as any)[dependency] = (parent as any)[dependency],
             );
         }
 

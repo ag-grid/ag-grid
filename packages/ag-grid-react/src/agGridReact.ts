@@ -12,8 +12,8 @@ import {
     WrapableInterface
 } from "ag-grid-community";
 
-import {AgGridColumn} from "./agGridColumn";
-import {AgReactComponent} from "./agReactComponent";
+import { AgGridColumn } from "./agGridColumn";
+import { AgReactComponent } from "./agReactComponent";
 
 export interface AgGridReactProps extends GridOptions {
     gridOptions?: GridOptions;
@@ -149,7 +149,7 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
         }
 
         return [{}, value].reduce((r, o) => {
-            Object.keys(o).forEach(function (k) {
+            Object.keys(o).forEach(function(k) {
                 r[k] = o[k];
             });
             return r;
@@ -190,7 +190,7 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
             if (newA) {
                 a.areEquivPropertyTracking = [];
             } else if (
-                a.areEquivPropertyTracking.some(function (other) {
+                a.areEquivPropertyTracking.some(function(other) {
                     return other === b;
                 })
             )

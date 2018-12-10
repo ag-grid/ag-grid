@@ -1,9 +1,9 @@
 import * as React from 'react';
-import {ReactPortal} from 'react';
+import { ReactPortal } from 'react';
 import * as ReactDOM from 'react-dom';
 import * as AgGrid from 'ag-grid-community';
-import {Promise} from 'ag-grid-community';
-import {AgGridReact} from "./agGridReact";
+import { Promise } from 'ag-grid-community';
+import { AgGridReact } from "./agGridReact";
 
 export class AgReactComponent {
 
@@ -64,14 +64,14 @@ export class AgReactComponent {
         if (!this.parentComponent) {
 
             // MUST be a function, not an arrow function
-            ReactDOM.render(ReactComponent, this.eParentElement, function () {
+            ReactDOM.render(ReactComponent, this.eParentElement, function() {
                 self.componentInstance = this;
                 resolve(null);
             });
         } else {
 
             // MUST be a function, not an arrow function
-            ReactDOM.unstable_renderSubtreeIntoContainer(this.parentComponent, ReactComponent, this.eParentElement, function () {
+            ReactDOM.unstable_renderSubtreeIntoContainer(this.parentComponent, ReactComponent, this.eParentElement, function() {
                 self.componentInstance = this;
                 resolve(null);
             });
@@ -99,7 +99,7 @@ export class AgReactComponent {
         );
 
         // MUST be a function, not an arrow function
-        ReactDOM.render(<any>portal, this.eParentElement, function () {
+        ReactDOM.render(<any>portal, this.eParentElement, function() {
             resolve(null);
         });
     }

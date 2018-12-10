@@ -400,7 +400,10 @@ export class ComponentResolver {
 
         const thisComponentConfig: ComponentMetadata = this.componentMetadataProvider.retrieve(propertyName);
         return [
-            this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList, thisComponentConfig.optionalMethodList, defaultComponentName) as A,
+            this.frameworkComponentWrapper.wrap(FrameworkComponentRaw,
+                thisComponentConfig.mandatoryMethodList,
+                thisComponentConfig.optionalMethodList,
+                defaultComponentName) as A,
             componentToUse.dynamicParams
         ];
     }

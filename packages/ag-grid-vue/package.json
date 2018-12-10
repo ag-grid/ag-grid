@@ -30,18 +30,18 @@
   "peerDependencies": {
     "ag-grid-community": "^19.1.0",
     "vue": "<= 2.5.17 || >= 2.5.20",
-    "vue-property-decorator": "^7.0.0"
+    "vue-property-decorator": "^7.2.0"
   },
   "devDependencies": {
     "vue": "<= 2.5.17 || >= 2.5.20",
-    "vue-class-component": "^6.0.0",
-    "vue-property-decorator": "^7.0.0",
+    "vue-class-component": "^6.3.0",
+    "vue-property-decorator": "^7.2.0",
     "@vue/cli-plugin-typescript": "^3.2.0",
     "@vue/cli-plugin-unit-jest": "^3.2.0",
     "@vue/cli-service": "^3.2.0",
     "ag-grid-community": "^19.1.0",
-    "typescript": "^3.0.0",
-    "vue-template-compiler": "^2.5.17",
+    "typescript": "^3.2.0",
+    "vue-template-compiler": "<= 2.5.17 || >= 2.5.20",
     "gulp-typescript": "^5.0.0",
     "gulp": "^3.9.1"
   }

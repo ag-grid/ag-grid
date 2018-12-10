@@ -1,5 +1,5 @@
-import {autoinject, Container, TaskQueue, transient, View, ViewCompiler, ViewResources} from "aurelia-framework";
-import {BaseComponentWrapper, Bean, FrameworkComponentWrapper, WrapableInterface} from 'ag-grid-community';
+import { autoinject, Container, TaskQueue, transient, View, ViewCompiler, ViewResources } from "aurelia-framework";
+import { BaseComponentWrapper, Bean, FrameworkComponentWrapper, WrapableInterface } from 'ag-grid-community';
 
 @autoinject()
 @transient()
@@ -71,7 +71,7 @@ abstract class BaseGuiComponent {
 
         let viewFactory = this._viewCompiler.compile(template, viewResources);
         this._view = viewFactory.create(container);
-        let controllers: any[] = (<any> this._view).controllers;
+        let controllers: any[] = (<any>this._view).controllers;
         //initialize each controller
         if (controllers && controllers.length) {
             controllers.forEach((c) => {
@@ -81,8 +81,7 @@ abstract class BaseGuiComponent {
             //ICellRenderer doesn't have a guiAttached method so
             //we call attach on the queue;
             this._taskQueue.queueMicroTask(() => this._view.attached());
-        }
-        else {
+        } else {
             this._view.bind(bindingContext);
         }
     }
@@ -101,7 +100,7 @@ abstract class BaseGuiComponent {
     }
 
     public getFrameworkComponentInstance(): any {
-        let controllers: any[] = (<any> this._view).controllers;
+        let controllers: any[] = (<any>this._view).controllers;
 
         //only one controller is allowed in editor template
         if (controllers &&

@@ -11,13 +11,16 @@ const [props, watch] = getAgGridProperties();
     watch,
 })
 export class AgGridVue extends Vue {
+
+    @Prop(Boolean)
+    public autoParamsRefresh!: boolean;
+
+    @Prop({default: () => []})
+    public componentDependencies!: string[];
     private isInitialised = false;
     private isDestroyed = false;
 
     private gridOptions!: GridOptions;
-
-    @Prop({default: () => []})
-    public componentDependencies!: string[];
 
     // noinspection JSUnusedGlobalSymbols, JSMethodCanBeStatic
     public render(h: any) {
