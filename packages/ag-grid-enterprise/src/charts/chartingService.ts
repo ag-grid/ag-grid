@@ -87,7 +87,6 @@ function showBasicBarChart(data: number[]) {
 
     // x-axis
     const xAxis = new Axis<string>(xScale);
-    console.log(xScale.domain, xScale.range);
     xAxis.rotation = -Math.PI / 2;
     xAxis.translation = [padding.left, padding.top + seriesHeight];
     xAxis.flippedLabels = true;
