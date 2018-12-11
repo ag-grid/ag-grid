@@ -3,7 +3,7 @@ import {RangeController} from "../rangeController";
 import scaleLinear from "./scale/linearScale";
 import {BandScale} from "./scale/bandScale";
 import { createHdpiCanvas } from "./canvas/canvas";
-import {Axis} from "./Axis";
+import {Axis} from "./axis";
 
 @Bean('chartingService')
 export class ChartingService {

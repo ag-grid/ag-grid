@@ -1,4 +1,4 @@
-import Scale from "./scale/Scale";
+import Scale from "./scale/scale";
 import { pixelSnap } from "./canvas/canvas";
 import { normalizeAngle } from "./util/angle";
 
