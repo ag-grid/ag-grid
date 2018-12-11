@@ -603,14 +603,12 @@ export class RowRenderer extends BeanStub {
     private calculateIndexesToDraw(): number[] {
         // all in all indexes in the viewport
         const indexesToDraw = _.createArrayOfNumbers(this.firstRenderedRow, this.lastRenderedRow);
-        const visibleColumns = this.columnApi.getAllDisplayedVirtualColumns();
 
         // add in indexes of rows we want to keep, because they are currently editing
         _.iterateObject(this.rowCompsByIndex, (indexStr: string, rowComp: RowComp) => {
             const index = Number(indexStr);
             if (index < this.firstRenderedRow || index > this.lastRenderedRow) {
-                if (this.keepRowBecauseSpanning(rowComp, index, visibleColumns) ||
-                    this.keepRowBecauseEditing(rowComp)) {
+                if (this.keepRowBecauseEditing(rowComp)) {
                     indexesToDraw.push(index);
                 }
             }
@@ -872,22 +870,6 @@ export class RowRenderer extends BeanStub {
 
     public getLastVirtualRenderedRow() {
         return this.lastRenderedRow;
-    }
-
-    private keepRowBecauseSpanning(rowComp: RowComp, idx: number, visibleColumns: Column[]): boolean {
-        let span = 0;
-
-        for (const col of visibleColumns) {
-            span = col.getRowSpan(rowComp.getRowNode());
-            if (span > 1) { break; }
-        }
-
-        if (
-            (span < 2 || idx > this.lastRenderedRow) ||
-            (idx + span <= this.firstRenderedRow)
-        ) { return false; }
-
-        return true;
     }
 
     // check that none of the rows to remove are editing or focused as:

@@ -26,9 +26,12 @@
 @mixin icon-background($params, $icon) {
     $size: map-get($params, "icon-size");
     $color: map-get($params, "foreground-color");
+    $iconpath: map-get($params, "icons-path");
+    $color1: #{encodecolor(map-get($params, "icon-color"))};
+    $color2: #{encodecolor(map-get($params, "alt-icon-color"))};
 
     background-color: transparent;
-    background-image: url("#{map-get($params, "icons-path")}#{$icon}.svg?color1=#{encodecolor(map-get($params, "icon-color"))}&color2=#{encodecolor(map-get($params, "alt-icon-color"))}");
+    background: url("#{$iconpath}#{$icon}.svg?color1=#{$color1}&color2=#{$color2}");
     background-position: center;
     background-repeat: no-repeat;
     background-size: $size $size;
@@ -38,7 +41,11 @@
 }
 
 @mixin colorful-icon($path, $icon, $color, $altColor) {
-    background-image: url("#{map-get($params, "icons-path")}#{$icon}.svg?color1=#{encodecolor($color)}&color2=#{encodecolor($altColor)}");
+    $iconpath: map-get($params, "icons-path");
+    $color1: encodecolor($color);
+    $color2: encodecolor($altColor);
+
+    background-image: url("#{$iconpath}#{$icon}.svg?color1=#{$color1}&color2=#{$color2}");
 }
 
 @mixin card($params) {
@@ -125,6 +132,7 @@
 @mixin ag-grid-theme($params) {
     $grid-size: map-get($params, "grid-size");
     $icon-size: map-get($params, "icon-size");
+    $icon-color: map-get($params, "icon-color");
     $header-icon-size: map-get($params, "header-icon-size");
     $row-height: map-get($params, "row-height");
     $header-height: map-get($params, "header-height");
@@ -516,7 +524,7 @@
             margin-left: -$grid-size;
 
             & > span {
-                background-image: url("data:image/svg+xml;utf8,<svg width='1' height='#{$grid-size * 2}' viewBox='0 0 1 #{$grid-size * 2}' xmlns='http://www.w3.org/2000/svg'> <line x1='0' y1='#{$grid-size}' x2='1' y2='#{$grid-size}' stroke-width='1' stroke='#{$border-color}'/> </svg>");
+                background-image: url("data:image/svg+xml;utf8,<svg width='1' height='#{$grid-size * 2}' viewBox='0 0 1 #{$grid-size * 2}' xmlns='http://www.w3.org/2000/svg'> <line x1='0' y1='#{$grid-size}' x2='1' y2='#{$grid-size}' stroke-width='1' stroke='#{encodecolor($border-color)}'/> </svg>");
                 height: $grid-size * 2;
             }
         }
@@ -994,7 +1002,7 @@
     ////////////////////////////////////////
     .ag-rich-select {
         background-color: $editor-background-color-color;
-        background-image: url("#{$icons-path}tree-open.svg?color1=#{encodecolor(map-get($params, "icon-color"))}");
+        background-image: url("#{$icons-path}tree-open.svg?color1=#{encodecolor(#{$icon-color})}");
         background-position-x: calc(100% - #{$grid-size});
         background-position-y: $grid-size * 2;
         background-repeat: no-repeat;
@@ -1480,26 +1488,11 @@
         text-align: center;
     }
 
-    .ag-status-panel-aggregations {
-    }
-
     .ag-name-value {
         margin-left: $grid-size;
         margin-right: $grid-size;
         padding-top: $grid-size * 2;
         padding-bottom: $grid-size * 2;
-    }
-
-    .ag-status-panel-total-row-count {
-    }
-
-    .ag-status-panel-filtered-row-count {
-    }
-
-    .ag-status-panel-selected-row-count {
-    }
-
-    .ag-status-panel-total-and-filtered-row-count {
     }
 
     .ag-details-row {
