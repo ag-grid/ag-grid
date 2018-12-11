@@ -1,7 +1,10 @@
 export default interface Scale<D, R> {
-    _domain: D[];
-    _range: R[];
+    domain: D[];
+    range: R[];
     convert(value: D): R;
+    invert?(value: R): D;
+    ticks?(count: number): D[];
+    bandwidth?: number;
 }
 
 export type Reinterpolator<T> = (t: number) => T;

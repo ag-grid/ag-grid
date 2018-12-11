@@ -29,6 +29,10 @@ export class BandScale<D> implements Scale<D, number> {
         return this._range;
     }
 
+    ticks(): D[] {
+        return this._domain;
+    }
+
     convert(d: D): number {
         const i = this.index[d];
         if (i === undefined) { return NaN; }

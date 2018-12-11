@@ -3,14 +3,7 @@
 const DevicePixelRatioKey = '__DevicePixelRatio';
 // TODO: use Symbol() here in the future to truly hide this property.
 
-export function getDevicePixelRatio(canvas?: HTMLCanvasElement) {
-    if (canvas) {
-        return (canvas as any)[DevicePixelRatioKey] || 1;
-    }
-    return window.devicePixelRatio;
-}
-
-function getOverrides(dpr: number) {
+function makeHdpiOverrides(dpr: number): any {
     let depth = 0;
     return {
         save() {
@@ -28,49 +21,83 @@ function getOverrides(dpr: number) {
             this.scale(dpr, dpr);
             this.save();
             depth = 0;
-            // The idea is to set the `dpr` scale here
-            // that will be impossible to `ctx.restore`.
+            // The scale above will be impossible to restore,
+            // because we override the `ctx.restore` above and
+            // check `depth` there.
         }
     };
 }
 
-export function setDevicePixelRatio(canvas: HTMLCanvasElement): number {
-    const ctx = canvas.getContext('2d');
-    const dpr = getDevicePixelRatio();
-    const overrides = getOverrides(dpr);
+/**
+ * Creates an HTMLCanvasElement element with HDPI overrides applied.
+ * The `width` and `height` parameters are optional and default to
+ * the values defined in the W3C Recommendation:
+ * https://www.w3.org/TR/html52/semantics-scripting.html#the-canvas-element
+ * @param width
+ * @param height
+ */
+export function createHdpiCanvas(width = 300, height = 150): HTMLCanvasElement {
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    applyHdpiOverrides(canvas);
+    return canvas;
+}
 
-    if (!((canvas as any)[DevicePixelRatioKey])) {
-        if (ctx) {
-            for (const name in overrides) {
-                // Save native methods under prefixed names.
-                (ctx as any)['$' + name] = (ctx as any)[name];
-                // Pretend our overrides are native methods.
-                (ctx as any)[name] = (overrides as any)[name];
-            }
-            (canvas as any)[DevicePixelRatioKey] = dpr;
+export function applyHdpiOverrides(canvas: HTMLCanvasElement): number {
+    const canvasDpr = (canvas as any)[DevicePixelRatioKey];
+    const dpr = window.devicePixelRatio;
 
-            const logicalWidth = canvas.width;
-            const logicalHeight = canvas.height;
-            canvas.width = Math.round(logicalWidth * dpr);
-            canvas.height = Math.round(logicalHeight * dpr);
-            canvas.style.width = Math.round(logicalWidth) + 'px';
-            canvas.style.height = Math.round(logicalHeight) + 'px';
-
-            ctx.resetTransform(); // should be called every time size changes
-
-            return dpr;
+    // if overrides haven't been applied and actually needed
+    if (!canvasDpr && dpr !== 1) {
+        const overrides = makeHdpiOverrides(dpr);
+        const ctx = canvas.getContext('2d')!;
+        const ctxObj = ctx as any;
+        for (const name in overrides) {
+            // Save native methods under prefixed names.
+            ctxObj['$' + name] = ctxObj[name];
+            // Pretend our overrides are native methods.
+            ctxObj[name] = overrides[name];
         }
+        (canvas as any)[DevicePixelRatioKey] = dpr;
+
+        const logicalWidth = canvas.width;
+        const logicalHeight = canvas.height;
+        canvas.width = Math.round(logicalWidth * dpr);
+        canvas.height = Math.round(logicalHeight * dpr);
+        canvas.style.width = Math.round(logicalWidth) + 'px';
+        canvas.style.height = Math.round(logicalHeight) + 'px';
+
+        ctx.resetTransform(); // should be called every time the size changes
+
+        return dpr;
     }
     return 0;
 }
 
-export function resize(canvas: HTMLCanvasElement, width: number, height: number) {
-    const dpr = getDevicePixelRatio(canvas);
+/**
+ * Resizes the given Canvas element, taking HDPI overrides (if any) into account.
+ * @param canvas
+ * @param width
+ * @param height
+ */
+export function resizeCanvas(canvas: HTMLCanvasElement, width: number, height: number) {
+    const canvasDpr = (canvas as any)[DevicePixelRatioKey] || 1;
 
-    canvas.width = Math.round(width * dpr);
-    canvas.height = Math.round(height * dpr);
+    canvas.width = Math.round(width * canvasDpr);
+    canvas.height = Math.round(height * canvasDpr);
     canvas.style.width = Math.round(width) + 'px';
     canvas.style.height = Math.round(height) + 'px';
 
     canvas.getContext('2d')!.resetTransform();
+}
+
+/**
+ * Returns the position offset to apply to align vertical and horizontal
+ * lines to the pixel grid for crisp look.
+ * @param value Typically line width is assumed. Fractional values won't be aligned.
+ * @param bias If alignment is necessary, which side to prefer.
+ */
+export function pixelSnap(value: number, bias: 1 | -1 = 1): number {
+    return value % 1 === 0 ? bias * value % 2 / 2 : value;
 }
