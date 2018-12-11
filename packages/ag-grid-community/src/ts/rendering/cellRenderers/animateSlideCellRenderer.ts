@@ -83,7 +83,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         } else if (_.exists(params.value)) {
             this.eCurrent.innerHTML = value;
         } else {
-            this.eCurrent.innerHTML = '';
+            _.clearElement(this.eCurrent);
         }
 
         return true;

@@ -13,7 +13,8 @@ import {
     OriginalColumnGroup,
     OriginalColumnGroupChild,
     IToolPanelComp,
-    ValueService
+    ValueService,
+    _
 } from "ag-grid-community";
 
 import { ToolPanelFilterComp } from "./toolPanelFilterComp";
@@ -53,11 +54,12 @@ export class FiltersToolPanel extends Component implements IToolPanelComp {
     }
 
     public onColumnsChanged(): void {
-        this.getGui().innerHTML = '';
+        const eGui = this.getGui();
+        _.clearElement(eGui);
         this.columnTree = this.columnController.getPrimaryColumnTree();
         const groupsExist = this.columnController.isPrimaryColumnGroupsPresent();
         this.recursivelyAddComps(this.columnTree, 0, groupsExist);
-        this.setTemplateFromElement(this.getGui());
+        this.setTemplateFromElement(eGui);
     }
 
     public refresh(): void {

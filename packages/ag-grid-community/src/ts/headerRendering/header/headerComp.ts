@@ -275,7 +275,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         if (indexThisCol >= 0) {
             this.eSortOrder.innerHTML = (indexThisCol + 1).toString();
         } else {
-            this.eSortOrder.innerHTML = '';
+            _.clearElement(this.eSortOrder);
         }
     }
 
