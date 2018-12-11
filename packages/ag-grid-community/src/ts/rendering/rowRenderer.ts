@@ -603,12 +603,14 @@ export class RowRenderer extends BeanStub {
     private calculateIndexesToDraw(): number[] {
         // all in all indexes in the viewport
         const indexesToDraw = _.createArrayOfNumbers(this.firstRenderedRow, this.lastRenderedRow);
+        const visibleColumns = this.columnApi.getAllDisplayedVirtualColumns();
 
         // add in indexes of rows we want to keep, because they are currently editing
         _.iterateObject(this.rowCompsByIndex, (indexStr: string, rowComp: RowComp) => {
             const index = Number(indexStr);
             if (index < this.firstRenderedRow || index > this.lastRenderedRow) {
-                if (this.keepRowBecauseEditing(rowComp)) {
+                if (this.keepRowBecauseSpanning(rowComp, index, visibleColumns) ||
+                    this.keepRowBecauseEditing(rowComp)) {
                     indexesToDraw.push(index);
                 }
             }
@@ -872,6 +874,22 @@ export class RowRenderer extends BeanStub {
         return this.lastRenderedRow;
     }
 
+    private keepRowBecauseSpanning(rowComp: RowComp, idx: number, visibleColumns: Column[]): boolean {
+        let span = 0;
+
+        for (const col of visibleColumns) {
+            span = col.getRowSpan(rowComp.getRowNode());
+            if (span > 1) { break; }
+        }
+
+        if (
+            (span < 2 || idx > this.lastRenderedRow) ||
+            (idx + span <= this.firstRenderedRow)
+        ) { return false; }
+
+        return true;
+    }
+
     // check that none of the rows to remove are editing or focused as:
     // a) if editing, we want to keep them, otherwise the user will loose the context of the edit,
     //    eg user starts editing, enters some text, then scrolls down and then up, next time row rendered
@@ -949,19 +967,13 @@ export class RowRenderer extends BeanStub {
         while (true) {
             nextCell = this.cellNavigationService.getNextCellToFocus(key, nextCell);
 
-            if (_.missing(nextCell)) {
-                break;
-            }
+            if (_.missing(nextCell)) { break; }
 
             const skipGroupRows = this.gridOptionsWrapper.isGroupUseEntireRow();
-            if (skipGroupRows) {
-                const rowNode = this.paginationProxy.getRow(nextCell.rowIndex);
-                if (!rowNode.group) {
-                    break;
-                }
-            } else {
-                break;
-            }
+            if (!skipGroupRows) { break; }
+
+            const rowNode = this.paginationProxy.getRow(nextCell.rowIndex);
+            if (!rowNode.group) { break; }
         }
 
         // allow user to override what cell to go to next. when doing normal cell navigation (with keys)

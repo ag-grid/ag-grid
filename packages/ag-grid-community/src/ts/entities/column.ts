@@ -579,33 +579,21 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public getColSpan(rowNode: RowNode): number {
-        if (_.missing(this.colDef.colSpan)) {
-            return 1;
-        } else {
-            const params: ColSpanParams = this.createBaseColDefParams(rowNode);
-            const colSpan = this.colDef.colSpan(params);
-            // colSpan must be number equal to or greater than 1
-            if (colSpan > 1) {
-                return colSpan;
-            } else {
-                return 1;
-            }
-        }
+        if (_.missing(this.colDef.colSpan)) { return 1; }
+        const params: ColSpanParams = this.createBaseColDefParams(rowNode);
+        const colSpan = this.colDef.colSpan(params);
+        // colSpan must be number equal to or greater than 1
+
+        return Math.max(colSpan, 1);
     }
 
     public getRowSpan(rowNode: RowNode): number {
-        if (_.missing(this.colDef.rowSpan)) {
-            return 1;
-        } else {
-            const params: RowSpanParams = this.createBaseColDefParams(rowNode);
-            const rowSpan = this.colDef.rowSpan(params);
-            // rowSpan must be number equal to or greater than 1
-            if (rowSpan > 1) {
-                return rowSpan;
-            } else {
-                return 1;
-            }
-        }
+        if (_.missing(this.colDef.rowSpan)) { return 1; }
+        const params: RowSpanParams = this.createBaseColDefParams(rowNode);
+        const rowSpan = this.colDef.rowSpan(params);
+        // rowSpan must be number equal to or greater than 1
+
+        return Math.max(rowSpan, 1);
     }
 
     public setActualWidth(actualWidth: number, source: ColumnEventType = "api"): void {
@@ -618,9 +606,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     public isGreaterThanMax(width: number): boolean {
         if (this.maxWidth) {
             return width > this.maxWidth;
-        } else {
-            return false;
         }
+        return false;
     }
 
     public getMinWidth(): number {
