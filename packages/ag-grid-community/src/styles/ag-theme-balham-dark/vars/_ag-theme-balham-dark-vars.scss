@@ -1,27 +1,29 @@
-@import "./ag-theme-balham-common";
-@import "./flat-colors";
+@import './ag-theme-balham-vars';
+
+$secondary-foreground-color-opacity: 0.64;
 
 // theme shortcuts
-$default-background: white !default;
-$chrome-background: lighten($flat-clouds, 3) !default;
-$active: #0091EA !default;
-$foreground-color: #000 !default;
-$border-color: $flat-silver !default;
-$icon-color: $flat-gray-4 !default;
-$alt-background: $flat-clouds !default;
-$odd-row-background-color: rgb(252, 253, 254) !default;
+$default-background: #2d3436 !default;
+$foreground-color: #F5F5F5 !default;
+
+$chrome-background: darken(#636e72, 30) !default;
+$active: #00B0FF !default;
+$border-color: #424242 !default;
+$icon-color: #ecf0f1 !default;
+$alt-background: darken(#2d3436, 3) !default;
+$odd-row-background-color: $alt-background;
 
 // Derived from above
 $foreground-color: rgba($foreground-color, $foreground-opacity) !default; // foreground
 $secondary-foreground-color: rgba($foreground-color, $secondary-foreground-color-opacity) !default; // foreground-secondary
 $disabled-foreground-color: rgba($foreground-color, $disabled-foreground-color-opacity) !default; // foreground-disabled
-$input-disabled-background-color: #ebebeb !default;
+$input-disabled-background-color: rgba(48, 46, 46, 0.3);
 
 $primary-color: $active !default;
 $accent-color: $active !default;
 $range-selection-background-color: transparentize($active, 0.8) !default;
 $range-selection-highlight-color: $active !default;
-$selected-color: lighten($active, 40) !default;
+$selected-color: darken($active, 25) !default;
 
 $alt-icon-color: $default-background !default;
 $background-color: $default-background !default;
@@ -32,23 +34,11 @@ $tool-panel-background-color: $chrome-background !default;
 $header-background-color: $chrome-background !default;
 $header-foreground-color: $secondary-foreground-color !default;
 
-$hover-color: $alt-background !default;
-$chip-background-color: darken($alt-background, 5) !default;
+$hover-color: lighten($alt-background, 10) !default;
+$chip-background-color: lighten($alt-background, 5) !default;
 
 // delta changes
 $cell-data-changed-color: #fce4ec !default;
 $value-change-delta-up-color: #43a047 !default;
 $value-change-delta-down-color: #e53935 !default;
 $value-change-value-highlight-background-color: transparentize(#16A085, 0.5) !default;
-
-@import './ag-theme-balham-vars';
-
-.ag-theme-balham {
-    @include ag-theme-balham($params);
-
-    .ag-filter-toolpanel-body{
-        background-color: $background-color;
-    }
-}
-
-
