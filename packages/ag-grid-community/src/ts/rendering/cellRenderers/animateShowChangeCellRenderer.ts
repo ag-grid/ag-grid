@@ -71,7 +71,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
 
     private hideDeltaValue(): void {
         _.removeCssClass(this.eValue, 'ag-value-change-value-highlight');
-        this.eDelta.innerHTML = '';
+        _.clearElement(this.eDelta);
     }
 
     public refresh(params: any): boolean {
@@ -86,7 +86,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         } else if (_.exists(params.value)) {
             this.eValue.innerHTML = value;
         } else {
-            this.eValue.innerHTML = '';
+            _.clearElement(this.eValue);
         }
 
         if (typeof value === 'number' && typeof this.lastValue === 'number') {

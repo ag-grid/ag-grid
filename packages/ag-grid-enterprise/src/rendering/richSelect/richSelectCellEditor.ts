@@ -134,7 +134,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
             if (Utils.exists(this.selectedValue)) {
                 eValue.innerHTML = valueFormatted;
             } else {
-                eValue.innerHTML = '';
+                _.clearElement(eValue);
             }
         }
     }

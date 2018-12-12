@@ -241,6 +241,10 @@ export class Utils {
         element.scrollLeft = value;
     }
 
+    static clearElement(el: HTMLElement): void {
+        while (el.firstChild) { el.removeChild(el.firstChild); }
+    }
+
     static iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void {
         if (!map) {
             return;
