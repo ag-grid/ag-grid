@@ -1,5 +1,5 @@
 import scaleLinear, {LinearScale} from "./linearScale";
-/*
+
 test('domain', () => {
    const scale = scaleLinear();
 
@@ -68,7 +68,6 @@ test('invert linear clamp', () => {
     expect(scale.invert(-50)).toBe(-100);
     expect(scale.invert(150)).toBe(100);
 });
-*/
 // TODO: re-enable when we start using polylinear scales in the wild
 // test('convert polylinear', () => {
 //     const scale = scaleLinear();
