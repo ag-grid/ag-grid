@@ -1599,23 +1599,46 @@ export class ColumnController {
     public resetColumnState(source: ColumnEventType = "api"): void {
         // we can't use 'allColumns' as the order might of messed up, so get the primary ordered list
         const primaryColumns = this.getColumnsFromTree(this.primaryColumnTree);
-        const state: any[] = [];
+        const columnStates: ColumnState[] = [];
+
+        // we start at 1000, so if user has mix of rowGroup and group specified, it will work with both.
+        // eg IF user has ColA.rowGroupIndex=0, ColB.rowGroupIndex=1, ColC.rowGroup=true,
+        // THEN result will be ColA.rowGroupIndex=0, ColB.rowGroupIndex=1, ColC.rowGroup=-1000
+        let letRowGroupIndex = 1000;
+        let letPivotIndex = 1000;
 
         if (primaryColumns) {
             primaryColumns.forEach((column) => {
-                state.push({
+
+                let rowGroupIndex: number = column.getColDef().rowGroupIndex;
+                let rowGroup: boolean = column.getColDef().rowGroup;
+
+                let pivotIndex: number = column.getColDef().pivotIndex;
+                let pivot: boolean = column.getColDef().pivot;
+
+                let stateItem = {
                     colId: column.getColId(),
                     aggFunc: column.getColDef().aggFunc,
                     hide: column.getColDef().hide,
                     pinned: column.getColDef().pinned,
-                    rowGroupIndex: column.getColDef().rowGroupIndex,
+                    rowGroupIndex: rowGroupIndex,
                     pivotIndex: column.getColDef().pivotIndex,
                     width: column.getColDef().width
-                });
+                };
+
+                if (_.missing(rowGroupIndex) && rowGroup) {
+                    stateItem.rowGroupIndex = letRowGroupIndex++;
+                }
+
+                if (_.missing(pivotIndex) && pivot) {
+                    stateItem.pivotIndex = letPivotIndex++;
+                }
+
+                columnStates.push(stateItem);
             });
         }
 
-        this.setColumnState(state, source);
+        this.setColumnState(columnStates, source);
     }
 
     public setColumnState(columnState: ColumnState[], source: ColumnEventType = "api"): boolean {
@@ -2192,7 +2215,7 @@ export class ColumnController {
 
         const newCols: Column[] = [];
 
-        // we only want to work on new columns, as col columns already got processed first time around
+        // we only want to work on new columns, as old columns already got processed first time around
         // pull out items with xxxIndex
         newPrimaryCols.forEach(col => {
             const index = getIndexFunc(col.getColDef());
@@ -2204,14 +2227,13 @@ export class ColumnController {
         newCols.sort(function(colA: Column, colB: Column): number {
             const indexA = getIndexFunc(colA.getColDef());
             const indexB = getIndexFunc(colB.getColDef());
-            if (!indexA) {
-                return 1;
-            } else if (!indexB) {
-                return -1;
-            } else if (indexA === indexB) {
+            if (indexA === indexB) {
                 return 0;
+            } else if (indexA < indexB) {
+                return -1;
+            } else {
+                return 1;
             }
-            return indexA < indexB ? -1 : 1;
         });
         // now just pull out items xxx (boolean value), they will be added at the end
         // after the indexed ones, but in the order the columns appear
