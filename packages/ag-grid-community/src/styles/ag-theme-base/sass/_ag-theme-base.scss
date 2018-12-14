@@ -1,5 +1,4 @@
 @import "../../mixins/ag-theme-mixins";
-@import "./ag-grid.scss";
 
 @mixin ag-theme-classic($params) {
     $border-color: map-get($params, "border-color");

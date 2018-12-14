@@ -2,7 +2,12 @@
 @import "../../ag-theme-base/sass/ag-theme-base";
 
 $params: (
-    grid-size: $grid-size,
+    font-family: $font-family,
+    font-size: $font-size,
+    font-weight: $font-weight,
+    secondary-font-family: $secondary-font-family,
+    secondary-font-size: $secondary-font-size,
+    secondary-font-weight: $secondary-font-weight,
 
     accent-color: $accent-color,
     primary-color: $primary-color,
@@ -11,14 +16,6 @@ $params: (
 
     background-color: $background-color,
 
-    border-color: $border-color,
-
-    font-family: $font-family,
-    font-size: $font-size,
-    font-weight: $font-weight,
-    secondary-font-family: $secondary-font-family,
-    secondary-font-size: $secondary-font-size,
-    secondary-font-weight: $secondary-font-weight,
     foreground-color: $foreground-color,
     foreground-opacity: $foreground-opacity,
     secondary-foreground-color-opacity: $secondary-foreground-color-opacity,
@@ -26,64 +23,70 @@ $params: (
     disabled-foreground-color-opacity: $disabled-foreground-color-opacity,
     disabled-foreground-color: $disabled-foreground-color,
 
-    icon-size: $icon-size,
-    icons-path: $icons-path,
-    icon-color: $icon-color,
-    icon-opacity: $foreground-opacity,
-    alt-icon-color: $alt-icon-color,
+    border-color: $border-color,
 
     panel-background-color: $panel-background-color,
     tool-panel-background-color: $tool-panel-background-color,
-    toolpanel-indent-size: $toolpanel-indent-size,
-    tab-background-color: $tab-background-color,
-    menu-option-active-color: $menu-option-active-color,
-
-    editor-background-color: $editor-background-color,
-    input-disabled-background-color: $input-disabled-background-color,
-    input-height: $grid-size * 4,
-    
-    button-background-color: transparent,
-    button-text-transform: uppercase,
-
-    header-icon-size: $header-icon-size,
     header-foreground-color: $header-foreground-color,
     header-background-color: $header-background-color,
     header-background-image: $header-background-image,
-    header-height: $header-height,
     header-cell-moving-background-color: $header-cell-moving-background-color,
-
+    tab-background-color: $tab-background-color,
+    menu-option-active-color: $menu-option-active-color,
 
     chip-background-color: $chip-background-color,
     card-background-color: $card-background-color,
-    card-radius: $card-radius,
-    card-shadow: $card-shadow,
 
-    row-height: $row-height,
-    row-border-width: $row-border-width,
     row-floating-background-color: $row-floating-background-color,
     row-stub-background-color: $row-stub-background-color,
     odd-row-background-color: $odd-row-background-color,
-    row-group-indent-size: $row-group-indent-size,
 
-    cell-horizontal-padding: $cell-horizontal-padding,
     cell-data-changed-color: $cell-data-changed-color,
-    cell-highlight-border: $cell-highlight-border,
-    cell-horizontal-border: $cell-horizontal-border,
     focused-cell-border-color: $focused-cell-border-color,
-
-    virtual-item-height: $virtual-item-height,
-    rich-select-item-height: $row-height,
 
     value-change-delta-up-color: $value-change-delta-up-color,
     value-change-delta-down-color: $value-change-delta-down-color,
     value-change-value-highlight-background-color: $value-change-value-highlight-background-color,
+
+    editor-background-color: $editor-background-color,
+    input-disabled-background-color: $input-disabled-background-color,
+
+    button-background-color: transparent,
+
+    icon-color: $icon-color,
+    alt-icon-color: $alt-icon-color,
+    icon-opacity: $foreground-opacity,
 
     range-selection-background-color: $range-selection-background-color,
     range-selection-highlight-color: $range-selection-highlight-color,
     ag-range-selected-color-1: $ag-range-selected-color-1,
     ag-range-selected-color-2: $ag-range-selected-color-2,
     ag-range-selected-color-3: $ag-range-selected-color-3,
-    ag-range-selected-color-4: $ag-range-selected-color-4
+    ag-range-selected-color-4: $ag-range-selected-color-4,
+    
+    grid-size: $grid-size,
+    input-height: $grid-size * 4,
+
+    icon-size: $icon-size,
+    header-icon-size: $header-icon-size,
+
+    header-height: $header-height,
+
+    row-height: $row-height,
+    row-border-width: $row-border-width,
+    row-group-indent-size: $row-group-indent-size,
+    cell-horizontal-padding: $cell-horizontal-padding,
+    cell-highlight-border: $cell-highlight-border,
+    cell-horizontal-border: $cell-horizontal-border,
+
+    toolpanel-indent-size: $toolpanel-indent-size,
+    virtual-item-height: $virtual-item-height,
+    rich-select-item-height: $row-height,
+    
+    button-text-transform: uppercase,
+    icons-path: $icons-path,
+    card-radius: $card-radius,
+    card-shadow: $card-shadow
 );
 
 .ag-theme-blue {

@@ -1,4 +1,5 @@
-@import "../../ag-theme-base/vars/ag-theme-base-vars";
+$secondary-foreground-color-opacity: 1 !default;
+$disabled-foreground-color-opacity: 0.5 !default;
 
 // Colors
 $icon-color: black !default;
@@ -56,3 +57,5 @@ $value-change-value-highlight-background-color: #cec !default;
 
 $row-floating-background-color: #f0f0f0 !default;
 $row-stub-background-color: #f0f0f0 !default;
+
+@import "../../ag-theme-base/vars/ag-theme-base-vars";

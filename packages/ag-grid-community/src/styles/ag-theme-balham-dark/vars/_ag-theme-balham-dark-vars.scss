@@ -1,6 +1,6 @@
-@import './ag-theme-balham-vars';
-
-$secondary-foreground-color-opacity: 0.64;
+$foreground-opacity: 0.87 !default;
+$secondary-foreground-color-opacity: 0.64 !default;
+$disabled-foreground-color-opacity: 0.38 !default;
 
 // theme shortcuts
 $default-background: #2d3436 !default;
@@ -11,7 +11,7 @@ $active: #00B0FF !default;
 $border-color: #424242 !default;
 $icon-color: #ecf0f1 !default;
 $alt-background: darken(#2d3436, 3) !default;
-$odd-row-background-color: $alt-background;
+$odd-row-background-color: $alt-background !default;
 
 // Derived from above
 $foreground-color: rgba($foreground-color, $foreground-opacity) !default; // foreground
@@ -42,3 +42,5 @@ $cell-data-changed-color: #fce4ec !default;
 $value-change-delta-up-color: #43a047 !default;
 $value-change-delta-down-color: #e53935 !default;
 $value-change-value-highlight-background-color: transparentize(#16A085, 0.5) !default;
+
+@import '../../ag-theme-balham/vars/ag-theme-balham-vars';

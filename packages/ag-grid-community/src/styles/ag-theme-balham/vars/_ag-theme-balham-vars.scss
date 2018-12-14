@@ -1,4 +1,3 @@
-@import "../../ag-theme-base/vars/ag-theme-base-vars";
 @import "../../ag-theme-base/vars/flat-colors";
 
 $foreground-opacity: 0.87 !default;
@@ -63,7 +62,7 @@ $header-icon-size: 14px !default;
 $border-radius: 2px;
 
 // Icons
-$icons-path: "./balham-icons/" !default;
+$icons-path: "../../ag-theme-balham/icons/" !default;
 
 // Fonts
 $font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !default;
@@ -76,3 +75,5 @@ $secondary-font-size: 12px !default; // font-secondary-size
 $secondary-font-weight: 600 !default; // font-secondary-weight
 
 $transition-speed: 120ms !default;
+
+@import "../../ag-theme-base/vars/ag-theme-base-vars";

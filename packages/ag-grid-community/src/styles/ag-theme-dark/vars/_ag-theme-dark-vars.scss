@@ -1,4 +1,6 @@
-@import "../../ag-theme-base/vars/ag-theme-base-vars";
+$foreground-opacity: 1 !default;
+$secondary-foreground-color-opacity: 1 !default;
+$disabled-foreground-color-opacity: 0.5 !default;
 
 // Colors
 $icon-color: #d6d5d5 !default;
@@ -58,3 +60,5 @@ $row-stub-background-color: #333 !default;
 $value-change-delta-up-color: greenyellow !default;
 $value-change-delta-down-color: red !default;
 $value-change-value-highlight-background-color: chocolate !default;
+
+@import "../../ag-theme-base/vars/ag-theme-base-vars";
