@@ -175,6 +175,32 @@ function drawRect(ctx: CanvasRenderingContext2D,
     ctx.strokeRect(x1, y1, width, height);
 }
 
+const colorTheme1 = [
+    '#5BC0EB',
+    '#FDE74C',
+    '#9BC53D',
+    '#E55934',
+    '#FA7921',
+];
+
+const colorTheme2 = [
+    '#94ae0a',
+    '#115fa6',
+    '#a61120',
+    '#ff8809',
+    '#ffd13e',
+    '#a61187',
+    '#24ad9a',
+];
+
+const colorTheme3 = [
+    ['#69C5EC', '#53AFD6'],
+    ['#FDED7C', '#FDE95C'],
+    ['#B6D471', '#A4CA4E'],
+    ['#EC866B', '#E76846'],
+    ['#FB9D5D', '#FA8535'],
+];
+
 function showStackedBarChart() {
     const data = [
         {
@@ -220,15 +246,7 @@ function showStackedBarChart() {
 
     const yFields = ['q1Actual', 'q2Actual', 'q3Actual', 'q4Actual'];
     const yFieldNames = ['Q1', 'Q2', 'Q3', 'Q4'];
-    const colors = [
-        '#94ae0a',
-        '#115fa6',
-        '#a61120',
-        '#ff8809',
-        '#ffd13e',
-        '#a61187',
-        '#24ad9a',
-    ];
+    const colors = colorTheme3;
 
     const padding = {
         top: 20,
@@ -271,6 +289,8 @@ function showStackedBarChart() {
 
     // bars
     ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.2)';
+    ctx.shadowBlur = 15;
     ctx.translate(padding.left, padding.top);
     for (let i = 0; i < n; i++) {
         const category = xData[i];
@@ -283,7 +303,16 @@ function showStackedBarChart() {
             const yBottom = yScale.convert(bottom);
             const yTop = yScale.convert(top);
 
-            ctx.fillStyle = colors[j % colors.length];
+            const color = colors[j % colors.length];
+            if (Array.isArray(color)) {
+                const gradient = ctx.createLinearGradient(x, yTop, x + barWidth, yBottom);
+                gradient.addColorStop(0, color[0]);
+                gradient.addColorStop(1, color[1]);
+                ctx.fillStyle = gradient;
+            }
+            else {
+                ctx.fillStyle = color;
+            }
             ctx.fillRect(x, yTop, barWidth, yBottom - yTop);
             ctx.strokeRect(x, yTop, barWidth, yBottom - yTop);
 
@@ -356,15 +385,7 @@ function showGroupedBarChart() {
 
     const yFields = ['q1Actual', 'q2Actual', 'q3Actual', 'q4Actual'];
     const yFieldNames = ['Q1', 'Q2', 'Q3', 'Q4'];
-    const colors = [
-        '#94ae0a',
-        '#115fa6',
-        '#a61120',
-        '#ff8809',
-        '#ffd13e',
-        '#a61187',
-        '#24ad9a',
-    ];
+    const colors = colorTheme3;
 
     const padding = {
         top: 20,
@@ -423,7 +444,16 @@ function showGroupedBarChart() {
             const x = groupX + barX;
             const y = yScale.convert(value);
 
-            ctx.fillStyle = colors[j % colors.length];
+            const color = colors[j % colors.length];
+            if (Array.isArray(color)) {
+                const gradient = ctx.createLinearGradient(x, y, x + barWidth, seriesHeight);
+                gradient.addColorStop(0, color[0]);
+                gradient.addColorStop(1, color[1]);
+                ctx.fillStyle = gradient;
+            }
+            else {
+                ctx.fillStyle = color;
+            }
             ctx.fillRect(x, y, barWidth, seriesHeight - y);
             ctx.strokeRect(x, y, barWidth, seriesHeight - y);
 
