@@ -38,7 +38,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The Client-side Row Model is responsible for working out how to display the rows inside the grid.
-        It has a complex data structure, representing the data in difference states. The states are as follows:
+        It has a complex data structure, representing the data in different states. The states are as follows:
     </p>
 
     <p>
