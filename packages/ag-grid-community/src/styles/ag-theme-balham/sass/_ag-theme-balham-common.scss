@@ -29,8 +29,11 @@ $params: (
     tool-panel-background-color: $tool-panel-background-color,
     header-foreground-color: $header-foreground-color,
     header-background-color: $header-background-color,
+    header-cell-moving-background-color: $header-cell-moving-background-color,
     
     odd-row-background-color: $odd-row-background-color,
+    row-stub-background-color: $row-stub-background-color,
+    row-floating-background-color: $row-floating-background-color,
     cell-data-changed-color: $cell-data-changed-color,
     chip-background-color: $chip-background-color,
     card-background-color: $background-color,
@@ -48,10 +51,10 @@ $params: (
 
     range-selection-background-color: $range-selection-background-color,
     range-selection-highlight-color: $range-selection-highlight-color,
-    ag-range-selected-color-1: opacify($range-selection-background-color, 0.1),
-    ag-range-selected-color-2: opacify($range-selection-background-color, 0.2),
-    ag-range-selected-color-3: opacify($range-selection-background-color, 0.3),
-    ag-range-selected-color-4: opacify($range-selection-background-color, 0.4),
+    ag-range-selected-color-1: $ag-range-selected-color-1,
+    ag-range-selected-color-2: $ag-range-selected-color-2,
+    ag-range-selected-color-3: $ag-range-selected-color-3,
+    ag-range-selected-color-4: $ag-range-selected-color-4,
 
     grid-size: $grid-size,
     input-height: $grid-size * 4,
@@ -82,6 +85,7 @@ $params: (
     $grid-size: map-get($params, "grid-size");
     $header-background-color: map-get($params, "header-background-color");
     $header-foreground-color: map-get($params, "header-foreground-color");
+    $header-cell-moving-background-color: map-get($params, "header-cell-moving-background-color");
     $header-height: map-get($params, "header-height");
     $icon-size: map-get($params, "icon-size");
     $panel-background-color: map-get($params, "panel-background-color");
@@ -373,6 +377,6 @@ $params: (
     }
 
     .ag-header-cell-moving {
-        background-color: $default-background;
+        background-color: $header-cell-moving-background-color;
     }
 }
