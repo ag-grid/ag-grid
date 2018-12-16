@@ -12,6 +12,7 @@ export class AgReactComponent {
 
     private reactComponent: any;
     private parentComponent: AgGridReact;
+    private portal: ReactPortal;
 
     constructor(reactComponent: any, parentComponent?: AgGridReact) {
         this.reactComponent = reactComponent;
@@ -55,6 +56,9 @@ export class AgReactComponent {
     }
 
     public destroy(): void {
+        if (!this.useLegacyReact()) {
+            return this.parentComponent.destroyPortal(this.portal);
+        }
         ReactDOM.unmountComponentAtNode(this.eParentElement);
     }
 
@@ -97,10 +101,7 @@ export class AgReactComponent {
             ReactComponent,
             this.eParentElement
         );
-
-        // MUST be a function, not an arrow function
-        ReactDOM.render(<any>portal, this.eParentElement, function() {
-            resolve(null);
-        });
+        this.portal = portal;
+        this.parentComponent.mountReactPortal(portal, resolve);
     }
 }
