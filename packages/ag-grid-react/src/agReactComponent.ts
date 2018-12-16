@@ -83,13 +83,6 @@ export class AgReactComponent {
     }
 
     private createReactComponent(params: any, resolve: (value: any) => void) {
-        // when using portals & redux with HOCs you need to manually add the store to the props
-        // wrapping the component with connect isn't sufficient
-        const {reduxStore} = params.agGridReact.props;
-        if (reduxStore) {
-            params.store = reduxStore;
-        }
-
         // grab hold of the actual instance created - we use a react ref for this as there is no other mechanism to
         // retrieve the created instance from either createPortal or render
         params.ref = element => {
