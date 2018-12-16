@@ -1397,6 +1397,10 @@ export class ColumnController {
     }
 
     public setColumnsPinned(keys: (string | Column)[], pinned: string | boolean | null, source: ColumnEventType = "api"): void {
+        if (this.gridOptionsWrapper.getDomLayout() === 'print') {
+            console.warn(`Changing the column pinning status is not allowed with domLayout='print'`);
+            return;
+        }
         this.columnAnimationService.start();
 
         let actualPinned: string | null;
@@ -1610,13 +1614,13 @@ export class ColumnController {
         if (primaryColumns) {
             primaryColumns.forEach((column) => {
 
-                let rowGroupIndex: number = column.getColDef().rowGroupIndex;
-                let rowGroup: boolean = column.getColDef().rowGroup;
+                const rowGroupIndex: number = column.getColDef().rowGroupIndex;
+                const rowGroup: boolean = column.getColDef().rowGroup;
 
-                let pivotIndex: number = column.getColDef().pivotIndex;
-                let pivot: boolean = column.getColDef().pivot;
+                const pivotIndex: number = column.getColDef().pivotIndex;
+                const pivot: boolean = column.getColDef().pivot;
 
-                let stateItem = {
+                const stateItem = {
                     colId: column.getColId(),
                     aggFunc: column.getColDef().aggFunc,
                     hide: column.getColDef().hide,

@@ -1106,7 +1106,10 @@ export class GridPanel extends Component {
         this.eCenterContainer.style.width = widthPx;
         this.eBottomContainer.style.width = widthPx;
         this.eTopContainer.style.width = widthPx;
-        this.eBodyHorizontalScrollContainer.style.width = widthPx;
+
+        if (!this.printLayout) {
+            this.eBodyHorizontalScrollContainer.style.width = widthPx;
+        }
     }
 
     private setPinnedLeftWidth(): void {
