@@ -1,0 +1,157 @@
+@import "../vars/ag-theme-material-vars";
+@import "../../ag-theme-base/sass/ag-theme-base";
+
+$params: (
+    font-family: $font-family,
+    font-size: $font-size,
+    font-weight: $font-weight,
+    secondary-font-family: $secondary-font-family,
+    secondary-font-size: $secondary-font-size,
+    secondary-font-weight: $secondary-font-weight,
+
+    accent-color: $accent-color,
+    primary-color: $primary-color,
+    hover-color: $hover-color,
+    selected-color: $selected-color,
+
+    background-color: $background-color,
+
+    foreground-color: $foreground-color,
+    foreground-opacity: $foreground-opacity,
+    secondary-foreground-color-opacity: $secondary-foreground-color-opacity,
+    secondary-foreground-color: $secondary-foreground-color,
+    disabled-foreground-color-opacity: $disabled-foreground-color-opacity,
+    disabled-foreground-color: $disabled-foreground-color,
+
+    border-color: $border-color,
+
+    panel-background-color: $panel-background-color,
+    tool-panel-background-color: $tool-panel-background-color,
+    header-foreground-color: $header-foreground-color,
+
+    focused-textbox-border: 3px solid $primary-color,
+    input-bottom-border: 3px solid $border-color,
+    input-bottom-border-disabled: 1px solid $border-color,
+    value-change-delta-up-color: $value-change-delta-up-color,
+    value-change-delta-down-color: $value-change-delta-down-color,
+    value-change-value-highlight-background-color: $value-change-value-highlight-background-color,
+
+    button-background-color: transparent,
+    icon-color: $icon-color,
+    cell-data-changed-color: $cell-data-changed-color,
+    chip-background-color: $chip-background-color,
+    card-background-color: $background-color,
+    editor-background-color-color: $editor-background-color,
+    
+    range-selection-background-color: $range-selection-background-color,
+    range-selection-highlight-color: $range-selection-highlight-color,
+    icon-opacity: $foreground-opacity,
+
+    grid-size: $grid-size,
+    input-height: $grid-size * 3,
+    input-border-width: 0,
+
+    icon-size: $icon-size,
+    header-icon-size: $header-icon-size,
+    row-height: $row-height,
+    row-border-width: $row-border-width,
+    header-height: $header-height,
+    virtual-item-height: $virtual-item-height,
+    rich-select-item-height: $row-height,
+    cell-horizontal-padding: $cell-horizontal-padding,
+    toolpanel-indent-size: $toolpanel-indent-size,
+    row-group-indent-size: $row-group-indent-size,
+    icons-path: $icons-path,
+
+    button-text-transform: uppercase,
+    card-radius: $card-radius,
+    card-shadow: $card-shadow,
+    use-icons-for-pager-buttons: true,
+    customize-inputs: true,
+    customize-buttons: true,
+    full-width-tabs: true
+);
+
+.ag-theme-material {
+    %selected-tab {
+        border-bottom: 2px solid $primary-color;
+    }
+
+    @include ag-grid-theme($params);
+
+    .ag-cell-highlight {
+        background-color: $range-selection-highlight-color !important;
+    }
+
+    .ag-cell-highlight-animation {
+        transition: background-color 1s;
+    }
+
+    .ag-row-drag {
+        background-position-y: center;
+    }
+
+    .ag-column-drag {
+        background-position-y: center;
+    }
+
+    // we do not want to color the range color when the cell is also focused
+    .ag-cell-range-selected-1:not(.ag-cell-focus) {
+        background-color: $range-selection-background-color;
+    }
+
+    .ag-cell-range-selected-2:not(.ag-cell-focus) {
+        background-color: darken($range-selection-background-color, 4);
+    }
+
+    .ag-cell-range-selected-3:not(.ag-cell-focus) {
+        background-color: darken($range-selection-background-color, 8);
+    }
+
+    .ag-cell-range-selected-4:not(.ag-cell-focus) {
+        background-color: darken($range-selection-background-color, 12);
+    }
+
+    .ag-side-bar {
+        border-bottom: 0;
+        border-right: 0;
+        border-top: 0;
+
+        .ag-side-buttons button {
+            border: 0;
+            color: $secondary-foreground-color;
+            font-family: $secondary-font-family;
+            font-size: $secondary-font-size;
+            font-weight: $secondary-font-weight;
+            background: transparent;
+        }
+
+        .ag-side-buttons .ag-side-button button {
+          background-color: transparent;
+          border-width: 0;
+        }
+
+        .ag-side-buttons .ag-selected button {
+          border-left: 2px solid $primary-color;
+          background-color: $tool-panel-background-color;
+          margin-left: -2px;
+          padding-left: 1px;
+        }
+
+        .ag-filter-toolpanel-body {
+            background-color: $background-color;
+        }
+    }
+
+    .ag-rtl .ag-side-bar {
+        .ag-side-buttons .ag-selected button {
+          border-left: 0;
+          margin-left: 0;
+          padding-left:0;
+
+          border-right: 2px solid $primary-color;
+          margin-right: -2px;
+          padding-right: 1px;
+        }
+    }
+}

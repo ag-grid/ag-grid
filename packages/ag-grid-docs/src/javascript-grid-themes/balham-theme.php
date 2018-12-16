@@ -39,7 +39,7 @@ include '../documentation-main/documentation_header.php';
 // Set the colors to blue and amber
 $active: #E91E63; // pink-500 from https://www.materialui.co/colors
 // Import the ag-Grid balham theme
-@import '~ag-grid/src/styles/ag-theme-balham';</snippet>
+@import '~ag-grid/src/styles/ag-theme-balham/sass/ag-theme-balham';</snippet>
 
 <p>You can examine the full list of the variables that can be changed in the <a href="https://github.com/ag-grid/ag-grid/blob/latest/src/styles/ag-theme-balham.scss">theme source file</a>.</p>
 

@@ -30,7 +30,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     }
 }
 
-$icons-path: "./icons/" !default;
+$icons-path: "./ag-theme-base/icons/" !default;
 
 @if variable-exists(ag-icons-path) {
     $icons-path: $ag-icons-path;
