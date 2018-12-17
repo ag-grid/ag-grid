@@ -25,6 +25,8 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
     gridOptions: AgGrid.GridOptions;
     api: AgGrid.GridApi;
     columnApi: AgGrid.ColumnApi;
+    portals = [];
+    hasPendingPortalUpdate = false;
 
     protected eGridDiv: HTMLElement;
 
@@ -38,7 +40,7 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
             ref: e => {
                 this.eGridDiv = e;
             }
-        });
+        }, this.portals);
     }
 
     createStyleForDiv() {
@@ -79,6 +81,35 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
         // so for performance reasons we tell React we don't need render called after
         // property changes.
         return false;
+    }
+
+    /**
+     * Mounts a react portal for components registered under the componentFramework.
+     * We do this because we want all portals to be in the same tree - in order to get
+     * Context to work properly.
+     */
+    mountReactPortal(portal, resolve) {
+        this.portals = [...this.portals, portal];
+        this.batchUpdate(() => resolve(null));
+    }
+
+    batchUpdate(callback?) {
+        if (this.hasPendingPortalUpdate) {
+            return callback && callback();
+        }
+        setTimeout(() => {
+            this.forceUpdate(() => {
+                callback && callback();
+                this.hasPendingPortalUpdate = false;
+            });
+        });
+        this.hasPendingPortalUpdate = true;
+    }
+
+
+    destroyPortal(portal) {
+        this.portals = this.portals.filter(curPortal => curPortal !== portal);
+        this.batchUpdate();
     }
 
     componentWillReceiveProps(nextProps: any) {
