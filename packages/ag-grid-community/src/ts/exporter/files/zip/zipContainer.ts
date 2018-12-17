@@ -91,8 +91,7 @@ export class ZipContainer {
         let lL = 0;
         let cL = 0;
 
-        for (let i = 0; i < len; i++) {
-            const currentFile = totalFiles[i];
+        for (const currentFile of totalFiles) {
             const {fileHeader, folderHeader, content} = this.getHeader(currentFile, lL);
             lL += fileHeader.length + content.length;
             cL += folderHeader.length;
@@ -121,7 +120,7 @@ export class ZipContainer {
         }
 
         const header = '\x0A\x00' +
-        (isUTF8 ? '\x00\x08' : '\x00\x00') + // general purpose bit flag
+        (isUTF8 ? '\x00\x08' : '\x00\x00') +
         '\x00\x00' +
         decToHex(time, 2) + // last modified time
         decToHex(dt, 2) + // last modified date
@@ -162,14 +161,14 @@ export class ZipContainer {
     private buildUint8Array(content: string): Uint8Array {
         const uint8 = new Uint8Array(content.length);
 
-        for (let i = 0; i < content.length; i++) {
+        for (let i = 0; i < uint8.length; i++) {
             uint8[i] = content.charCodeAt(i);
         }
         return uint8;
     }
 
     private getFromCrc32Table(content: string, crc: number = 0): number {
-        if (content.length) { return 0; }
+        if (!content.length) { return 0; }
 
         crc ^= (-1);
 
@@ -177,7 +176,7 @@ export class ZipContainer {
         let k = 0;
         let l = 0;
 
-        for (let i = 0, iTop = content.length; i < iTop; i++) {
+        for (let i = 0; i < content.length; i++) {
             j = content.charCodeAt(i);
             k = (crc ^ j) & 0xFF;
             l = crcTable[k];

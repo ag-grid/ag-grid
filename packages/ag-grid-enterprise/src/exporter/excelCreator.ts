@@ -159,19 +159,24 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
 
         const {zipContainer, xlsxFactory} = this;
 
-        zipContainer.addFolders(['_rels/', 'docProps/', 'xl/', 'xl/theme/', 'xl/_rels/', 'xl/worksheets/']);
+        zipContainer.addFolders([
+            'xl/worksheets/', 
+            'xl/',
+            'xl/theme/',
+            'xl/_rels/',
+            'docProps/',
+            '_rels/'
+        ]);
 
-        zipContainer.addFile('[Content_Types].xml', xlsxFactory.createContentTypes());
-        zipContainer.addFile('_rels/.rels', xlsxFactory.createRels());
-        zipContainer.addFile('docProps/core.xml', xlsxFactory.createCore());
-
+        zipContainer.addFile('xl/worksheets/sheet1.xml', data);
         zipContainer.addFile('xl/workbook.xml', xlsxFactory.createWorkbook());
         zipContainer.addFile('xl/styles.xml', xlsxFactory.createStylesheet());
         zipContainer.addFile('xl/sharedStrings.xml', xlsxFactory.createSharedStrings());
-
         zipContainer.addFile('xl/theme/theme1.xml', xlsxFactory.createTheme());
         zipContainer.addFile('xl/_rels/workbook.xml.rels', xlsxFactory.createWorkbookRels());
-        zipContainer.addFile('xl/worksheets/sheet1.xml', data);
+        zipContainer.addFile('docProps/core.xml', xlsxFactory.createCore());
+        zipContainer.addFile('[Content_Types].xml', xlsxFactory.createContentTypes());
+        zipContainer.addFile('_rels/.rels', xlsxFactory.createRels());
 
         return zipContainer.getContent('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     }

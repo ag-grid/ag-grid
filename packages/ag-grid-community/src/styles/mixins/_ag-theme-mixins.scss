@@ -179,6 +179,7 @@
     $header-foreground-color: map-get($params, "header-foreground-color");
     $panel-background-color: map-get($params, "panel-background-color");
     $tool-panel-background-color: map-get($params, "tool-panel-background-color");
+    $row-stub-background-color: map-get($params, "row-stub-background-color");
 
     $accent-color: map-get($params, "accent-color");
     $primary-color: map-get($params, "primary-color");
@@ -964,7 +965,7 @@
     .ag-cell-inline-editing {
         @include card($params);
 
-        background: $editor-background-color-color;
+        background-color: $editor-background-color-color;
         height: $row-height + $grid-size * 3;
         line-height: normal;
         padding: $cell-horizontal-padding;
@@ -985,7 +986,7 @@
     .ag-popup-editor {
         @include card($params);
 
-        background: $editor-background-color-color;
+        background-color: $editor-background-color-color;
         padding: 0;
         z-index: 1;
 
@@ -1258,7 +1259,7 @@
     }
 
     .ag-row-stub {
-        background-color: map-get($params, "row-stub-background-color");
+        background-color: $row-stub-background-color;
     }
 
     .ag-stub-cell {

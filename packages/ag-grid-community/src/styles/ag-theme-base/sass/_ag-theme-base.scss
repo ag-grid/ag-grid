@@ -1,4 +1,4 @@
-@import "./ag-theme-common";
+@import "../../mixins/ag-theme-mixins";
 
 @mixin ag-theme-classic($params) {
     $border-color: map-get($params, "border-color");

@@ -168,7 +168,7 @@ function scssTask() {
     };
 
     // Uncompressed
-    return gulp.src(['src/styles/*.scss', '!src/styles/_*.scss'])
+    return gulp.src(['src/styles/**/*.scss', '!src/styles/**/_*.scss'])
         .pipe(named())
         .pipe(webpackStream({
             mode: 'none',

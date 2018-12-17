@@ -17,3 +17,6 @@
 [submodule "packages/ag-grid-polymer-example"]
 	path = packages/ag-grid-polymer-example
 	url = https://github.com/ag-grid/ag-grid-polymer-example.git
+[submodule "packages/ag-grid-charts-example"]
+	path = packages/ag-grid-charts-example
+	url = https://github.com/ag-grid/ag-grid-charts-example.git

@@ -80,7 +80,7 @@ interface RowSpanParams {
 
     <ul class="content">
         <li>
-            The athlete column is configured to span 2 rows for 'Aleksey Nemov' and 3 rows
+            The athlete column is configured to span 2 rows for 'Aleksey Nemov' and 4 rows
             for 'Ryan Lochte'.
         </li>
         <li>
