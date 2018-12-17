@@ -1312,7 +1312,7 @@ export class GridPanel extends Component {
         // as otherwise it was causing the rows and header to flicker.
         const scrollWentPastBounds = scrollLeft < 0 || (scrollLeft + clientWidth > scrollWidth);
 
-        if (scrollWentPastBounds || scrollLeft === this.scrollLeft) { return; }
+        if (scrollWentPastBounds) { return; }
 
         this.doHorizontalScroll(scrollLeft);
         this.resetLastHorizontalScrollElementDebounce();
