@@ -136,15 +136,11 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     }
 
     private setIndent(): void {
-
-        if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
-            return;
-        }
+        if (this.gridOptionsWrapper.isGroupHideOpenParents()) { return; }
 
         const params = this.params;
         const rowNode: RowNode = params.node;
 
-        // let paddingPx: number;
         const paddingCount = rowNode.uiLevel;
 
         const userProvidedPaddingPixelsTheDeprecatedWay = params.padding >= 0;
