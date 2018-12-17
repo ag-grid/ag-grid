@@ -46,7 +46,6 @@ class FileBrowser extends Component {
           onRowDragEnd={this.onRowDragEnd}
           frameworkComponents={this.frameworkComponents}
           reactNext={true}
-          reduxStore={this.context.store} // must be supplied when using redux with reactNext
         >
         </AgGridReact>
       </div>

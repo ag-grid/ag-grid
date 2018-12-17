@@ -359,32 +359,10 @@ class TopMoversGrid extends Component {
     <p>One of the downsides of using the React Portal functionality is that there are a few more steps required for the newly
     created React components to be Redux aware.</p>
 
-    <h3>Make the Store Available to ag-Grid</h3>
-
-    <p>When using React Portals we need to explicity suplly the store to the dynamically created component. In order to
-        be able to do this you in turn need to supply the store to ag-Grid React via the React <code>context</code>:</p>
-
-    <snippet>
-// Grid Definition
-&lt;AgGridReact
-    reactNext={true}
-    reduxStore={this.context.store} // must be supplied when using redux with reactNext
-
-    ...other bindings
-    </snippet>
-
-    <p>To ensure the store is available on the context you need to add it to the parent component <code>contextTypes</code>:</p>
-
-    <snippet>
-GridComponent.contextTypes = {
-    store: PropTypes.object
-};
-</snippet>
-
     <h3 id="higher-order-components">Higher Order Components</h3>
 
     <p>If you use <code>connect</code> to use Redux, or if you're using a Higher Order Component to wrap the React component at all,
-        you'll also need to ensure the grid can get access to the newly created component. To do this you need to ensure <code>withRef</code>
+        you'll also need to ensure the grid can get access to the newly created component. To do this you need to ensure the <code>forwardRef</code>
     is set:</p>
 
     <snippet>
@@ -397,7 +375,7 @@ export default connect(
     },
     null,
     null,
-    { withRef: true } // must be supplied for react/redux when using GridOptions.reactNext
+    { forwardRef: true } // must be supplied for react/redux when using GridOptions.reactNext
 )(PriceRenderer);
     </snippet>
 
