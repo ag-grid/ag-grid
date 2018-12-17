@@ -804,7 +804,9 @@ export class GridPanel extends Component {
     }
 
     public isVerticalScrollShowing(): boolean {
-        return _.isVerticalScrollShowing(this.eBodyViewport);
+        const isAlwaysShowVerticalScroll = this.gridOptionsWrapper.isAlwaysShowVerticalScroll();
+        _.addOrRemoveCssClass(this.eBodyViewport, 'ag-force-vertical-scroll', isAlwaysShowVerticalScroll);
+        return isAlwaysShowVerticalScroll || _.isVerticalScrollShowing(this.eBodyViewport);
     }
 
     public isHorizontalScrollShowing(): boolean {

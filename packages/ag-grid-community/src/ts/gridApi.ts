@@ -322,6 +322,10 @@ export class GridApi {
         return this.gridPanel.getVScrollPosition();
     }
 
+    public setAlwaysShowVerticalScroll(show: boolean) {
+        this.gridOptionsWrapper.setProperty('alwaysShowVerticalScroll', show);
+    }
+
     public refreshToolPanel(): void {
         if (this.sideBarComp) {
             this.sideBarComp.refresh();

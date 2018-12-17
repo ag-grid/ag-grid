@@ -377,7 +377,12 @@ include '../documentation-main/documentation_header.php';
     </table>
 <h2>Scrolling</h2>
     <table class="table reference">
-
+        <tr>
+            <th>setAlwaysShowVerticalScroll(show)</th>
+            <td>If true, the vertical scrollbar will always be present even if not required, otherwise, it will only be 
+                displayed when necessary.
+            </td>
+        </tr>
         <tr>
             <th>ensureIndexVisible(index, position)</th>
             <td>Ensures the row index is visible by vertically scrolling the grid. The valid values for positions are
