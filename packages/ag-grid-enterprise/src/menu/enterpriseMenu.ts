@@ -460,12 +460,16 @@ export class EnterpriseMenu extends BeanStub {
     public afterGuiAttached(params: any): void {
         this.tabbedLayout.setAfterAttachedParams({hidePopup: params.hidePopup});
         this.hidePopupFunc = params.hidePopup;
-
+        const initialScroll = this.gridApi.getHorizontalPixelRange().left;
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
         const onBodyScroll = (event: any) => {
             // if h scroll, popup is no longer over the column
             if (event.direction === 'horizontal') {
-                params.hidePopup();
+                const newScroll = this.gridApi.getHorizontalPixelRange().left;
+
+                if (Math.abs(newScroll - initialScroll) > this.gridOptionsWrapper.getScrollbarWidth()) {
+                    params.hidePopup();
+                }
             }
         };
 
