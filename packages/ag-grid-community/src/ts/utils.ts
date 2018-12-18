@@ -686,7 +686,9 @@ export class Utils {
                     element.className = cssClasses.join(' ');
                 }
             } else {
-                element.className = className;
+                // do not use element.classList = className here, it will cause
+                // a read-only assignment error on some browsers (IE/Edge).
+                element.setAttribute('class', className);
             }
         }
     }
