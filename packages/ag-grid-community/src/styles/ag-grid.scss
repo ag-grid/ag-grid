@@ -496,10 +496,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     z-index: 1;
 }
 
-.ag-row-drag {
-    cursor: pointer;
-}
-
 /**
  ****************************
  * Cells
@@ -925,7 +921,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
         min-width: 16px;
         flex-grow: 0;
         flex-shrink: 0;
-        cursor: pointer;
     }
 }
 

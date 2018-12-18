@@ -404,6 +404,11 @@
         float: left;
         height: 100%;
         width: $icon-size + $grid-size * 3;
+        cursor: grab;
+    }
+
+    .ag-rtl .ag-row-drag {
+        float: right;
     }
 
     .ag-column-drag {
@@ -413,6 +418,7 @@
         background-position-y: $grid-size !important;
         height: 100%;
         min-width: $icon-size + $grid-size;
+        cursor: grab;
     }
 
     .ag-row-dragging {
@@ -1119,11 +1125,10 @@
     .ag-selection-checkbox,
     .ag-group-expanded,
     .ag-group-contracted {
-        span {
-            margin-right: $cell-horizontal-padding;
+        + .ag-cell-value:not(:empty) {
+            margin-left: $cell-horizontal-padding;
         }
     }
-
     .ag-selection-checkbox span {
         position: relative;
         top: $grid-size / 2;
@@ -1418,9 +1423,8 @@
         .ag-selection-checkbox,
         .ag-group-expanded,
         .ag-group-contracted {
-            span {
-                margin-left: $cell-horizontal-padding;
-                margin-right: 0;
+            + .ag-cell-value:not(:empty) {
+                margin-right: $cell-horizontal-padding;
             }
         }
 
