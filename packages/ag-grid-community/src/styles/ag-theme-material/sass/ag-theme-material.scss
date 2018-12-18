@@ -79,6 +79,14 @@ $params: (
 
     @include ag-grid-theme($params);
 
+    .ag-header-cell-resize:after {
+        display: block;
+        content: '';
+        height: 100%;
+        width: 1px;
+        background-color: $border-color;
+    }
+
     .ag-cell-highlight {
         background-color: $range-selection-highlight-color !important;
     }
