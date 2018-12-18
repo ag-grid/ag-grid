@@ -115,19 +115,23 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
     componentWillReceiveProps(nextProps: any) {
         let debugLogging = !!nextProps.debug;
 
-        // keeping consistent with web components, put changing
-        // values in currentValue and previousValue pairs and
-        // not include items that have not changed.
         const changes = <any>{};
-        AgGrid.ComponentUtil.ALL_PROPERTIES.forEach((propKey: string) => {
-            if (!this.areEquivalent(this.props[propKey], nextProps[propKey])) {
-                if (debugLogging) {
-                    console.log(`agGridReact: [${propKey}] property changed`);
+        const changedKeys = Object.keys(nextProps);
+        changedKeys.forEach((propKey) => {
+            if (AgGrid.ComponentUtil.ALL_PROPERTIES.indexOf(propKey) !== -1) {
+                console.log(propKey);
+                if (this.skipPropertyCheck(propKey) ||
+                    !this.areEquivalent(this.props[propKey], nextProps[propKey])) {
+
+                    if (debugLogging) {
+                        console.log(`agGridReact: [${propKey}] property changed`);
+                    }
+
+                    changes[propKey] = {
+                        previousValue: this.props[propKey],
+                        currentValue: nextProps[propKey]
+                    };
                 }
-                changes[propKey] = {
-                    previousValue: this.props[propKey],
-                    currentValue: nextProps[propKey]
-                };
             }
         });
         AgGrid.ComponentUtil.getEventCallbacks().forEach((funcName: string) => {
@@ -142,7 +146,12 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
             }
         });
 
+
         AgGrid.ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
+    }
+
+    private skipPropertyCheck(propKey) {
+        return this.props['deltaRowDataMode'] && propKey === 'rowData';
     }
 
     componentWillUnmount() {
