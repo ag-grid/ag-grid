@@ -400,7 +400,7 @@ export class ServerSideBlock extends RowNodeBlock {
             rowNode.setRowTop(nextRowTop.value);
             nextRowTop.value += rowNode.rowHeight;
 
-            const hasDetailRow = rowNode.master && rowNode.expanded && rowNode.detailNode;
+            const hasDetailRow = rowNode.master && rowNode.expanded;
             if (hasDetailRow) {
                 rowNode.detailNode.setRowIndex(displayIndexSeq.next());
                 rowNode.detailNode.setRowTop(nextRowTop.value);

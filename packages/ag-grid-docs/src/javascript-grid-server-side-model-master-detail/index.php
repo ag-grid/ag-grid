@@ -135,14 +135,8 @@ columnDefs = [
 </p>
 
 <p>
-    For Master / Detail, expand and collapse icons are also needed at the master level.
-    When doing Master / Detail expand and collapse icons are also needed to expand the child rows where those rows are also
-    master rows.
-</p>
-
-<p>
-    When doing Master / Detail it is also possible to display the expand and collapse icons on the master row column that doesn't belong to the
-    the group hierarchy.
+    For Master / Detail, expand and collapse icons are also needed at the master level. When doing Master / Detail expand
+    and collapse icons are also needed to expand the child rows where those rows are also master rows.
 </p>
 
 <p>
