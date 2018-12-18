@@ -119,7 +119,6 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
         const changedKeys = Object.keys(nextProps);
         changedKeys.forEach((propKey) => {
             if (AgGrid.ComponentUtil.ALL_PROPERTIES.indexOf(propKey) !== -1) {
-                console.log(propKey);
                 if (this.skipPropertyCheck(propKey) ||
                     !this.areEquivalent(this.props[propKey], nextProps[propKey])) {
 
