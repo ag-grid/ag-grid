@@ -226,15 +226,16 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     private onRowGroupOpened(event: any): void {
         const rowNode: RowNode = event.node;
         if (rowNode.expanded) {
-            if (_.missing(rowNode.childrenCache)) {
+            if (rowNode.master) {
+                this.createDetailNode(rowNode);
+            } else if (_.missing(rowNode.childrenCache)) {
                 this.createNodeCache(rowNode);
             }
-        } else {
-            if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && _.exists(rowNode.childrenCache)) {
-                rowNode.childrenCache!.destroy();
-                rowNode.childrenCache = null;
-            }
+        } else if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && _.exists(rowNode.childrenCache)) {
+            rowNode.childrenCache!.destroy();
+            rowNode.childrenCache = null;
         }
+
         this.updateRowIndexesAndBounds();
 
         const modelUpdatedEvent: ModelUpdatedEvent = {
@@ -645,5 +646,31 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     private cacheExists(): boolean {
         return _.exists(this.rootNode) && _.exists(this.rootNode.childrenCache);
+    }
+
+    private createDetailNode(masterNode: RowNode): RowNode {
+
+        if (_.exists(masterNode.detailNode)) {
+            return masterNode.detailNode;
+        } else {
+            const detailNode = new RowNode();
+            this.context.wireBean(detailNode);
+            detailNode.detail = true;
+            detailNode.selectable = false;
+
+            detailNode.parent = masterNode;
+            if (_.exists(masterNode.id)) {
+                detailNode.id = 'detail_' + masterNode.id;
+            }
+            detailNode.data = masterNode.data;
+            detailNode.level = masterNode.level + 1;
+
+            const defaultDetailRowHeight = 200;
+            const rowHeight = this.gridOptionsWrapper.getRowHeightForNode(detailNode);
+            detailNode.rowHeight = rowHeight ? rowHeight : defaultDetailRowHeight;
+
+            masterNode.detailNode = detailNode;
+            return detailNode;
+        }
     }
 }

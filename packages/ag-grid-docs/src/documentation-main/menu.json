@@ -501,6 +501,10 @@
                         "url": "javascript-grid-server-side-model-row-height/"
                     },
                     {
+                        "title": "Master Detail",
+                        "url": "javascript-grid-server-side-model-master-detail/"
+                    },
+                    {
                         "title": "Tree Data",
                         "url": "javascript-grid-server-side-model-tree-data/"
                     },

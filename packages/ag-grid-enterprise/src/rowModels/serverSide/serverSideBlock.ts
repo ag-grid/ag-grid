@@ -50,6 +50,7 @@ export class ServerSideBlock extends RowNodeBlock {
     private nodeIdPrefix: string;
 
     private usingTreeData: boolean;
+    private usingMasterDetail: boolean;
 
     constructor(pageNumber: number, parentRowNode: RowNode, params: ServerSideCacheParams, parentCache: ServerSideCache) {
         super(pageNumber, params);
@@ -64,6 +65,7 @@ export class ServerSideBlock extends RowNodeBlock {
     @PostConstruct
     protected init(): void {
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
+        this.usingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
 
         if (!this.usingTreeData && this.groupLevel) {
             const groupColVo = this.params.rowGroupCols[this.level];
@@ -111,9 +113,6 @@ export class ServerSideBlock extends RowNodeBlock {
     }
 
     public getRow(displayRowIndex: number): RowNode | null {
-
-        // do binary search of tree
-        // http://oli.me.uk/2013/06/08/searching-javascript-arrays-with-a-binary-search/
         let bottomPointer = this.getStartRow();
 
         // the end row depends on whether all this block is used or not. if the virtual row count
@@ -130,23 +129,34 @@ export class ServerSideBlock extends RowNodeBlock {
         }
 
         while (true) {
-
             const midPointer = Math.floor((bottomPointer + topPointer) / 2);
             const currentRowNode = super.getRowUsingLocalIndex(midPointer);
 
+            // first check current row for index
             if (currentRowNode.rowIndex === displayRowIndex) {
                 return currentRowNode;
             }
 
+            // then check if current row contains a detail row with the index
+            const expandedMasterRow = currentRowNode.master && currentRowNode.expanded;
+            if (expandedMasterRow && currentRowNode.detailNode.rowIndex === displayRowIndex) {
+                return currentRowNode.detailNode;
+            }
+
+            // then check if child cache contains index
             const childrenCache = currentRowNode.childrenCache as ServerSideCache;
-            if (currentRowNode.rowIndex === displayRowIndex) {
-                return currentRowNode;
-            } else if (currentRowNode.expanded && childrenCache && childrenCache.isDisplayIndexInCache(displayRowIndex)) {
+            if (currentRowNode.expanded && childrenCache && childrenCache.isDisplayIndexInCache(displayRowIndex)) {
                 return childrenCache.getRow(displayRowIndex);
-            } else if (currentRowNode.rowIndex < displayRowIndex) {
+            }
+
+            // otherwise adjust pointers to continue searching for index
+            if (currentRowNode.rowIndex < displayRowIndex) {
                 bottomPointer = midPointer + 1;
             } else if (currentRowNode.rowIndex > displayRowIndex) {
                 topPointer = midPointer - 1;
+            } else {
+                console.warn(`ag-Grid: error: unable to locate rowIndex = ${displayRowIndex} in cache`);
+                return null;
             }
         }
     }
@@ -193,6 +203,13 @@ export class ServerSideBlock extends RowNodeBlock {
                         }
                         console.warn(`data is `, rowNode.data);
                     }, 'ServerSideBlock-CannotHaveNullOrUndefinedForKey');
+                }
+            } else if (this.usingMasterDetail) {
+                const isRowMasterFunc = this.gridOptionsWrapper.getIsRowMasterFunc();
+                if (_.exists(isRowMasterFunc) && isRowMasterFunc) {
+                    rowNode.master = isRowMasterFunc(rowNode.data);
+                } else {
+                    rowNode.master = true;
                 }
             }
 
@@ -314,7 +331,7 @@ export class ServerSideBlock extends RowNodeBlock {
             }
         }
 
-        console.error(`ag-Grid: looking for invalid row index in Server Side Row Model, index=${index}`);
+        console.error(` ag-Grid: looking for invalid row index in Server Side Row Model, index=${index}`);
 
         return null;
     }
@@ -334,10 +351,18 @@ export class ServerSideBlock extends RowNodeBlock {
             const rowNode = this.getRowUsingLocalIndex(i);
             if (rowNode) {
 
+                // first check if pixel is in range of current row
                 if (rowNode.isPixelInRange(pixel)) {
                     return rowNode.rowIndex;
                 }
 
+                // then check if current row contains a detail row with pixel in range
+                const expandedMasterRow = rowNode.master && rowNode.expanded;
+                if (expandedMasterRow && rowNode.detailNode.isPixelInRange(pixel)) {
+                    return rowNode.rowIndex;
+                }
+
+                // then check if it's a group row with a child cache with pixel in range
                 if (rowNode.group && rowNode.expanded && _.exists(rowNode.childrenCache)) {
                     const serverSideCache = rowNode.childrenCache as ServerSideCache;
                     if (serverSideCache.isPixelInRange(pixel)) {
@@ -371,12 +396,16 @@ export class ServerSideBlock extends RowNodeBlock {
         this.blockTop = nextRowTop.value;
 
         this.forEachRowNode(virtualRowCount, rowNode => {
-            const rowIndex = displayIndexSeq.next();
-
-            rowNode.setRowIndex(rowIndex);
+            rowNode.setRowIndex(displayIndexSeq.next());
             rowNode.setRowTop(nextRowTop.value);
-
             nextRowTop.value += rowNode.rowHeight;
+
+            const hasDetailRow = rowNode.master && rowNode.expanded && rowNode.detailNode;
+            if (hasDetailRow) {
+                rowNode.detailNode.setRowIndex(displayIndexSeq.next());
+                rowNode.detailNode.setRowTop(nextRowTop.value);
+                nextRowTop.value += rowNode.detailNode.rowHeight;
+            }
 
             const hasChildCache = rowNode.group && _.exists(rowNode.childrenCache);
             if (hasChildCache) {

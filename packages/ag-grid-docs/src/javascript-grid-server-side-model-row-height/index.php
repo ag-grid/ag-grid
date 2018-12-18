@@ -58,7 +58,8 @@ include '../documentation-main/documentation_header.php';
 <h2>Next Up</h2>
 
 <p>
-    Continue to the next section to learn about <a href="../javascript-grid-server-side-model-tree-data/">Server-side Tree Data</a>.
+    Continue to the next section to learn how to combine
+    <a href="../javascript-grid-server-side-model-master-detail/">Master Detail</a> with the Server-side Row Model.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>
