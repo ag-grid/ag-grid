@@ -14,8 +14,7 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     enableRangeSelection: true,
-    rowData: null,
-    enableCharts: true
+    rowData: null
 };
 
 // setup the grid after the page has finished loading
