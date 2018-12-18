@@ -136,7 +136,10 @@ export class FlattenStage implements IRowNodeStage {
             const rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
             rowNode.setRowHeight(rowHeight);
         }
-        rowNode.setUiLevel(uiLevel);
+
+        const isGroupMultiAutoColumn = this.gridOptionsWrapper.isGroupMultiAutoColumn();
+
+        rowNode.setUiLevel(isGroupMultiAutoColumn ? 0 : uiLevel);
         rowNode.setRowTop(nextRowTop.value);
         rowNode.setRowIndex(result.length - 1);
         nextRowTop.value += rowNode.rowHeight;

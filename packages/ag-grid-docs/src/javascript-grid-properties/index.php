@@ -379,12 +379,17 @@ include '../documentation-main/documentation_header.php';
     <h2>Scrolling</h2>
     <table class="table content reference">
         <tr>
+            <th>alwaysShowVerticalScroll</th>
+            <td>
+                Set to true to always show the vertical scrollbar.
+            </td>
+        </tr>
+        <tr>
             <th>suppressHorizontalScroll</th>
             <td>
                 Set to true to never show the horizontal scroll. This is useful if the grid is aligned with
                 another grid and will scroll when the other grid scrolls. See example
                 <a href="../javascript-grid-aligned-grids/#aligned-grid-as-footer">Aligned Grid as Footer</a>.
-                This property does not work in Edge.
             </td>
         </tr>
         <tr>

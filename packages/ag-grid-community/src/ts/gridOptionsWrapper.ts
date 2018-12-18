@@ -464,6 +464,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressHorizontalScroll);
     }
 
+    public isAlwaysShowVerticalScroll() {
+        return isTrue(this.gridOptions.alwaysShowVerticalScroll);
+    }
+
     public isSuppressLoadingOverlay() {
         return isTrue(this.gridOptions.suppressLoadingOverlay);
     }

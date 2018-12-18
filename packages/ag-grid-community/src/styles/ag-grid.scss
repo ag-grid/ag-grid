@@ -160,6 +160,10 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
     }
+
+    &:not(.ag-layout-print).ag-force-vertical-scroll {
+        overflow-y: scroll;
+    }
 }
 
 .ag-pinned-left-cols-viewport, .ag-pinned-right-cols-viewport {

@@ -207,5 +207,11 @@ export class AlignedGridsService {
                 });
                 break;
         }
+        const isVerticalScrollShowing = this.gridPanel.isVerticalScrollShowing();
+        const alignedGrids = this.gridOptionsWrapper.getAlignedGrids();
+
+        alignedGrids.forEach((grid) => {
+            grid.api.setAlwaysShowVerticalScroll(isVerticalScrollShowing);
+        });
     }
 }
