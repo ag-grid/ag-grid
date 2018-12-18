@@ -209,6 +209,10 @@
     font-weight: $font-weight;
     font-size: $font-size;
 
+    *:focus {
+        outline: none;
+    }
+
     // indentation loop
     @for $i from 1 to 50 {
         .ag-ltr .ag-toolpanel-indent-#{$i} {
