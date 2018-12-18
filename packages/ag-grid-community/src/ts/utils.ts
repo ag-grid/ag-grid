@@ -683,7 +683,7 @@ export class Utils {
                 const cssClasses = element.className.split(' ');
                 if (cssClasses.indexOf(className) < 0) {
                     cssClasses.push(className);
-                    element.className = cssClasses.join(' ');
+                    element.setAttribute('class', cssClasses.join(' '));
                 }
             } else {
                 // do not use element.classList = className here, it will cause
@@ -752,7 +752,7 @@ export class Utils {
                     while (cssClasses.indexOf(className) >= 0) {
                         cssClasses.splice(cssClasses.indexOf(className), 1);
                     }
-                    element.className = cssClasses.join(' ');
+                    element.setAttribute('class', cssClasses.join(' '));
                 }
             }
         }
