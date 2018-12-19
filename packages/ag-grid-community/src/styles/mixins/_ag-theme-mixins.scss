@@ -397,10 +397,9 @@
 
     .ag-row-drag {
         @include icon-background($params, "grip");
-
+        float: left;
         background-position-x: left;
         background-position-y: $grid-size / 2 + 2px;
-        float: left;
         height: 100%;
         width: $icon-size + $grid-size * 3;
         cursor: grab;
@@ -408,6 +407,7 @@
 
     .ag-rtl .ag-row-drag {
         float: right;
+        background-position-x: right;
     }
 
     .ag-column-drag {
@@ -1125,6 +1125,9 @@
                 margin-left: $cell-horizontal-padding;
             }
         }
+        + .ag-group-checkbox {
+            margin-left: $cell-horizontal-padding;
+        }
     }
 
     .ag-selection-checkbox span {
@@ -1304,6 +1307,8 @@
     // Right-To-Left
     ////////////////////////////////////////
     .ag-rtl {
+        text-align: right;
+
         .ag-numeric-cell {
             text-align: left;
         }
@@ -1419,10 +1424,18 @@
         }
 
         .ag-selection-checkbox,
+        .ag-group-checkbox,
         .ag-group-expanded,
         .ag-group-contracted {
-            + .ag-cell-value:not(:empty) {
+            + .ag-cell-value, + .ag-group-value {
+                &:not(:empty) {
+                    margin-right: $cell-horizontal-padding;
+                    margin-left: initial;
+                }
+            }
+            + .ag-group-checkbox {
                 margin-right: $cell-horizontal-padding;
+                margin-left: initial;
             }
         }
 
