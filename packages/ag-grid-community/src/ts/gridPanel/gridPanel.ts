@@ -857,6 +857,7 @@ export class GridPanel extends Component {
     private setHorizontalScrollVisible(visible: boolean): void {
         const height = visible ? (this.gridOptionsWrapper.getScrollbarWidth() || 0) : 0;
 
+        this.eCenterViewport.style.height = `calc(100% + ${height}px)`;
         _.setFixedHeight(this.eHorizontalScrollBody, height);
         _.setFixedHeight(this.eBodyHorizontalScrollViewport, height);
         _.setFixedHeight(this.eBodyHorizontalScrollContainer, height);
