@@ -90,7 +90,7 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<WrapableI
         };
     }
 
-    destroy() {
+    protected destroy() {
         this.parent = null;
     }
 }
