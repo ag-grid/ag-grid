@@ -81,5 +81,7 @@ $font-weight: 400 !default;
 $secondary-font-family: $font-family !default; //font-secondary
 $secondary-font-size: 12px !default; // font-secondary-size
 $secondary-font-weight: 600 !default; // font-secondary-weight
+$card-radius: 2px !default;
+$card-shadow: none !default;
 
 @import "../../ag-theme-base/vars/ag-theme-base-vars";

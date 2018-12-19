@@ -73,8 +73,8 @@ $params: (
 
     button-text-transform: uppercase,
     icons-path: $icons-path,
-    card-radius: 2px,
-    card-shadow: none,
+    card-radius: $card-radius,
+    card-shadow: $card-shadow,
     use-icons-for-pager-buttons: true
 );
 

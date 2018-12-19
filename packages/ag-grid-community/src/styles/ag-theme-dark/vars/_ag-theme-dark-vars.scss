@@ -4,7 +4,7 @@ $disabled-foreground-color-opacity: 0.5 !default;
 
 // Colors
 $icon-color: #d6d5d5 !default;
-$alt-icon-color: black !default;
+$alt-icon-color: #000 !default;
 $foreground-color: #ccc !default;
 $secondary-foreground-color: rgba(#ccc, $secondary-foreground-color-opacity) !default;
 $disabled-foreground-color: rgba(#e4e4e4, $disabled-foreground-color-opacity) !default;
@@ -61,4 +61,4 @@ $value-change-delta-up-color: greenyellow !default;
 $value-change-delta-down-color: red !default;
 $value-change-value-highlight-background-color: chocolate !default;
 
-@import "../../ag-theme-base/vars/ag-theme-base-vars";
+@import "../../ag-theme-classic/vars/ag-theme-classic-vars";
