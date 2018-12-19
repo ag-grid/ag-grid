@@ -292,7 +292,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
     private listener: () => void;
 
     constructor() {
-        super(`<input class="ag-filter-filter" type="text" placeholder="yyyy-mm-dd">`);
+        super(`<div class="ag-input-text-wrapper"><input class="ag-filter-filter" type="text" placeholder="yyyy-mm-dd"></div>`);
     }
 
     public init(params: IDateParams): void {

@@ -103,6 +103,14 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     .ag-select-agg-func-popup {
         position: absolute;
     }
+
+    .ag-input-text-wrapper {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        line-height: normal;
+        position: relative;
+    }
 }
 
 .ag-root-wrapper-body {
@@ -181,7 +189,7 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 }
 
 .ag-virtual-list-viewport {
-    overflow-x: auto;
+    overflow: auto;
     width: 100%;
 }
 
@@ -519,6 +527,7 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 .ag-cell-edit-input {
     height: 100%;
     width: 100%;
+    line-height: normal;
 }
 
 .ag-group-cell-entire-row {
@@ -884,6 +893,9 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     cursor: default;
     user-select: none;
     width: 200px;
+    .ag-filter-toolpanel-header {
+        cursor: pointer;
+    }
 }
 
 .ag-primary-cols-list-panel {
@@ -999,6 +1011,7 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
                 display: block;
                 white-space: nowrap;
                 outline: none;
+                cursor: pointer;
 
                 span {
                   writing-mode: tb;

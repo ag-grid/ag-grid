@@ -48,7 +48,7 @@ $params: (
     icon-opacity: $foreground-opacity,
 
     grid-size: $grid-size,
-    input-height: $grid-size * 3,
+    input-height: $grid-size * 5,
     input-border-width: 0,
 
     icon-size: $icon-size,
@@ -85,6 +85,12 @@ $params: (
         height: 100%;
         width: 1px;
         background-color: $border-color;
+        opacity: 0.3;
+        transform: opacity 200ms;
+    }
+
+    .ag-header-cell-resize:hover:after {
+        opacity: 1;
     }
 
     .ag-cell-highlight {

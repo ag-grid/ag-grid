@@ -64,7 +64,7 @@ export class PrimaryColsHeaderPanel extends Component {
                 <span class="ag-icon ag-icon-checkbox-unchecked" ref="eSelectUnchecked"></span>
                 <span class="ag-icon ag-icon-checkbox-indeterminate" ref="eSelectIndeterminate"></span>
             </a>
-            <div class="ag-primary-cols-filter-wrapper" ref="eFilterWrapper">
+            <div class="ag-input-text-wrapper ag-primary-cols-filter-wrapper" ref="eFilterWrapper">
                 <input class="ag-primary-cols-filter" ref="eFilterTextField" type="text" placeholder="${translate('filterOoo', 'Filter...')}" (input)="onFilterTextChanged">        
             </div>
         </div>`);

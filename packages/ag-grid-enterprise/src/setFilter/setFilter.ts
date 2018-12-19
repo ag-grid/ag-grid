@@ -244,7 +244,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[] | 
 
         return `<div ref="ag-filter-loading" class="loading-filter ag-hidden">${translate('loadingOoo')}</div>
                 <div>
-                    <div class="ag-filter-header-container" id="ag-mini-filter">
+                    <div class="ag-input-text-wrapper ag-filter-header-container" id="ag-mini-filter">
                         <input class="ag-filter-filter" type="text" placeholder="${translate('searchOoo')}"/>
                     </div>
                     <div class="ag-filter-header-container">
