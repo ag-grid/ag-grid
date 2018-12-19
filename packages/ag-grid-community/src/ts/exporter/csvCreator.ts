@@ -100,7 +100,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<string> {
         };
     }
 
-    private onNewBodyRowColumn(column: Column, index: number, node?:RowNode):void {
+    private onNewBodyRowColumn(column: Column, index: number, node: RowNode):void {
         if (index != 0) {
             this.result += this.columnSeparator;
         }
@@ -161,28 +161,28 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
         const fileNamePresent = mergedParams && mergedParams.fileName && mergedParams.fileName.length !== 0;
         let fileName = fileNamePresent ? mergedParams.fileName : this.getDefaultFileName();
 
-        if (fileName.indexOf(".") === -1) {
+        if (fileName!.indexOf(".") === -1) {
             fileName = fileName + "." + this.getDefaultFileExtension();
         }
 
-        this.beans.downloader.download(fileName, this.packageFile(data));
+        this.beans.downloader.download(fileName!, this.packageFile(data));
 
         return data;
     }
 
-    public getData(params:P): string {
+    public getData(params?:P): string {
         return this.getMergedParamsAndData(params).data;
     }
 
-    private getMergedParamsAndData(userParams: P):{mergedParams: P, data: string} {
+    private getMergedParamsAndData(userParams?: P):{mergedParams: P, data: string} {
         const mergedParams = this.mergeDefaultParams(userParams);
         const data = this.beans.gridSerializer.serialize(this.createSerializingSession(mergedParams), mergedParams);
 
         return {mergedParams, data};
     }
 
-    private mergeDefaultParams(userParams: P):P {
-        const baseParams: BaseExportParams = this.beans.gridOptionsWrapper.getDefaultExportParams();
+    private mergeDefaultParams(userParams?: P):P {
+        const baseParams: BaseExportParams | undefined = this.beans.gridOptionsWrapper.getDefaultExportParams();
         const params: P = {} as any;
         _.assign(params, baseParams);
         _.assign(params, userParams);
@@ -243,15 +243,15 @@ export class CsvCreator extends BaseCreator<string, CsvSerializingSession, CsvEx
 
     public createSerializingSession(params?: CsvExportParams): CsvSerializingSession {
         const {columnController, valueService, gridOptionsWrapper} = this;
-        const {processCellCallback, processHeaderCallback, suppressQuotes, columnSeparator} = params;
+        const {processCellCallback, processHeaderCallback, suppressQuotes, columnSeparator} = params as CsvExportParams;
 
         return new CsvSerializingSession({
                 columnController,
                 valueService,
                 gridOptionsWrapper,
-                processCellCallback: processCellCallback || null,
-                processHeaderCallback: processHeaderCallback || null,
-                suppressQuotes: suppressQuotes,
+                processCellCallback: processCellCallback || undefined,
+                processHeaderCallback: processHeaderCallback || undefined,
+                suppressQuotes: suppressQuotes || false,
                 columnSeparator: columnSeparator || ','
         });
     }

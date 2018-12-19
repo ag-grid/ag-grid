@@ -604,8 +604,8 @@ export class Utils {
         return false;
     }
 
-    static existsAndNotEmpty(value: any[] | null): boolean {
-        return value !== null && this.exists(value) && value.length > 0;
+    static existsAndNotEmpty(value?: any[] | null): boolean {
+        return value != null && this.exists(value) && value.length > 0;
     }
 
     static removeAllChildren(node: HTMLElement) {
