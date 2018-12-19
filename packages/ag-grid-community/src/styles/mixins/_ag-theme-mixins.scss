@@ -1117,12 +1117,16 @@
     // Selection checkbox
     ////////////////////////////////////////
     .ag-selection-checkbox,
+    .ag-group-checkbox,
     .ag-group-expanded,
     .ag-group-contracted {
-        + .ag-cell-value:not(:empty) {
-            margin-left: $cell-horizontal-padding;
+        + .ag-cell-value, + .ag-group-value {
+            &:not(:empty) {
+                margin-left: $cell-horizontal-padding;
+            }
         }
     }
+
     .ag-selection-checkbox span {
         position: relative;
         top: $grid-size / 2;
