@@ -132,7 +132,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         return this.cellAndHeaderEscaper ? this.cellAndHeaderEscaper(nameForCol) : nameForCol;
     }
 
-    public extractRowCellValue(column: Column, index: number, type: string, node?: RowNode) {
+    public extractRowCellValue(column: Column, index: number, type: string, node: RowNode) {
         const isRowGrouping = this.columnController.getRowGroupColumns().length > 0;
 
         let valueForCell: any;

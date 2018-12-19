@@ -162,9 +162,9 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
         return this.excelFactory.createExcel(this.excelStyles, data, []);
     }
 
-    onNewBodyColumn(rowIndex: number, currentCells: ExcelCell[]): (column: Column, index: number, node?: RowNode) => void {
+    onNewBodyColumn(rowIndex: number, currentCells: ExcelCell[]): (column: Column, index: number, node: RowNode) => void {
         const that = this;
-        return (column: Column, index: number, node?: RowNode) => {
+        return (column: Column, index: number, node: RowNode) => {
             const valueForCell = this.extractRowCellValue(column, index, Constants.EXPORT_TYPE_EXCEL, node);
             const styleIds: string[] = that.styleLinker(RowType.BODY, rowIndex, index, valueForCell, column, node);
             let excelStyleId: string | undefined;
