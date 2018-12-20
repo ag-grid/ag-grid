@@ -438,7 +438,8 @@ export abstract class BaseDropZonePanel extends Component {
     }
 
     private addEmptyMessageToGui(): void {
-        const showEmptyMessage = this.isExistingColumnsEmpty() && !this.potentialDndColumns;
+        const showEmptyMessage = this.isExistingColumnsEmpty() && !this.isPotentialDndColumns();
+
         if (!showEmptyMessage) {
             return;
         }

@@ -29,7 +29,7 @@ export class XmlFactory {
 
             if (xmlElement.properties.rawMap) {
                 Object.keys(xmlElement.properties.rawMap).forEach((key) => {
-                    props += this.returnAttributeIfPopulated(key, xmlElement.properties.rawMap[key], booleanTransformer);
+                    props += this.returnAttributeIfPopulated(key, xmlElement.properties!.rawMap[key], booleanTransformer);
                 });
             }
         }
@@ -44,9 +44,12 @@ export class XmlFactory {
         }
 
         result += '>' + LINE_SEPARATOR;
-        xmlElement.children.forEach((it) => {
-            result += this.createXml(it, booleanTransformer);
-        });
+        if (xmlElement.children) {
+            xmlElement.children.forEach((it) => {
+                result += this.createXml(it, booleanTransformer);
+            });
+        }
+
         return result + '</' + xmlElement.name + '>' + LINE_SEPARATOR;
     }
 

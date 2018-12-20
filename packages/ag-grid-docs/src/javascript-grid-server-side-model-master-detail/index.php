@@ -76,6 +76,8 @@ var detailGridOptions = {
     columnDefs: detailColumnDefs
 }</snippet>
 
+<note>Note that the nested detail grid can be configured to use any Row Model.</note>
+
 
 <h2>Example - Infinite Scrolling with Master / Detail</h2>
 
@@ -135,14 +137,8 @@ columnDefs = [
 </p>
 
 <p>
-    For Master / Detail, expand and collapse icons are also needed at the master level.
-    When doing Master / Detail expand and collapse icons are also needed to expand the child rows where those rows are also
-    master rows.
-</p>
-
-<p>
-    When doing Master / Detail it is also possible to display the expand and collapse icons on the master row column that doesn't belong to the
-    the group hierarchy.
+    For Master / Detail, expand and collapse icons are also needed at the master level. When doing Master / Detail expand
+    and collapse icons are also needed to expand the child rows where those rows are also master rows.
 </p>
 
 <p>
@@ -217,6 +213,19 @@ masterGridOptions.getRowHeight = function (params) {
 </ul>
 
 <?= example('Dynamic Detail Row Height', 'dynamic-detail-row-height', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+
+<h2>Lazy Loading Detail Rows</h2>
+
+<p>
+    In the examples above, the data for the detail grid was returned with the master row. However it is also possible
+    to lazy data for the detail row, see:
+    <a href="../javascript-grid-master-detail/#lazy-load-detail-rows">Lazy Loading Detail Rows</a>.
+</p>
+
+<p>
+    However note that detail rows will be purged once the master row is closed, or if the detail row leaves the viewport
+    through scrolling. In both cases data will need to be fetched again.
+</p>
 
 <h2>Next Up</h2>
 

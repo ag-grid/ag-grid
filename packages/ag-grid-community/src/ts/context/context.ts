@@ -289,6 +289,8 @@ export class Context {
             }
         });
 
+        this.contextParams.seed = null;
+
         this.destroyed = true;
         this.logger.log(">> ag-Application Context shut down - component is dead");
     }

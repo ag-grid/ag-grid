@@ -132,11 +132,11 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         return this.cellAndHeaderEscaper ? this.cellAndHeaderEscaper(nameForCol) : nameForCol;
     }
 
-    public extractRowCellValue(column: Column, index: number, type: string, node?:RowNode) {
+    public extractRowCellValue(column: Column, index: number, type: string, node: RowNode) {
         const isRowGrouping = this.columnController.getRowGroupColumns().length > 0;
 
         let valueForCell: any;
-        if (node.group && isRowGrouping && index === 0) {
+        if (node && node.group && isRowGrouping && index === 0) {
             valueForCell =  this.createValueForGroupNode(node);
         } else {
             valueForCell =  this.valueService.getValue(column, node);
@@ -149,7 +149,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         return this.cellAndHeaderEscaper ? this.cellAndHeaderEscaper(valueForCell) : valueForCell;
     }
 
-    private getHeaderName(callback: (params: ProcessHeaderForExportParams) => string, column: Column): string {
+    private getHeaderName(callback: ((params: ProcessHeaderForExportParams) => string) | undefined, column: Column): string | null {
         if (callback) {
             return callback({
                 column: column,
@@ -171,7 +171,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         return keys.reverse().join(' -> ');
     }
 
-    private processCell(rowNode: RowNode, column: Column, value: any, processCellCallback:(params: ProcessCellForExportParams) => string, type: string): any {
+    private processCell(rowNode: RowNode, column: Column, value: any, processCellCallback: ((params: ProcessCellForExportParams) => string) | undefined, type: string): any {
         if (processCellCallback) {
             return processCellCallback({
                 column: column,
@@ -215,7 +215,7 @@ export class GridSerializer {
         const columnKeys = params && params.columnKeys;
         const onlySelectedAllPages = params && params.onlySelectedAllPages;
         const rowSkipper:(params: ShouldRowBeSkippedParams) => boolean = (params && params.shouldRowBeSkipped) || dontSkipRows;
-        const api:GridApi = this.gridOptionsWrapper.getApi();
+        const api:GridApi = this.gridOptionsWrapper.getApi() as GridApi;
         const skipSingleChildrenGroup = this.gridOptionsWrapper.isGroupRemoveSingleChildren();
         const skipLowestSingleChildrenGroup = this.gridOptionsWrapper.isGroupRemoveLowestSingleChildren();
         const context:any = this.gridOptionsWrapper.getContext();
@@ -229,13 +229,13 @@ export class GridSerializer {
         let columnsToExport: Column[];
 
         if (_.existsAndNotEmpty(columnKeys)) {
-            columnsToExport = this.columnController.getGridColumns(columnKeys);
+            columnsToExport = this.columnController.getGridColumns(columnKeys!);
         } else if (allColumns && !isPivotMode) {
             // add auto group column for tree data
             columnsToExport = this.gridOptionsWrapper.isTreeData() ?
                 this.columnController.getGridColumns([Constants.GROUP_AUTO_COLUMN_ID]) : [];
 
-            columnsToExport = columnsToExport.concat(this.columnController.getAllPrimaryColumns());
+            columnsToExport = columnsToExport.concat(this.columnController.getAllPrimaryColumns() || []);
 
         } else {
             columnsToExport = this.columnController.getAllDisplayedColumns();
@@ -248,7 +248,7 @@ export class GridSerializer {
         gridSerializingSession.prepare(columnsToExport);
 
         if (includeCustomHeader) {
-            gridSerializingSession.addCustomHeader (params.customHeader);
+            gridSerializingSession.addCustomHeader (includeCustomHeader);
         }
 
         // first pass, put in the header names of the cols
@@ -266,7 +266,7 @@ export class GridSerializer {
         if (!skipHeader) {
             const gridRowIterator = gridSerializingSession.onNewHeaderRow();
             columnsToExport.forEach((column, index) => {
-                gridRowIterator.onColumn (column, index, null);
+                gridRowIterator.onColumn(column, index, undefined);
             });
         }
 
@@ -305,7 +305,7 @@ export class GridSerializer {
         this.pinnedRowModel.forEachPinnedBottomRow(processRow);
 
         if (includeCustomFooter) {
-            gridSerializingSession.addCustomFooter (params.customFooter);
+            gridSerializingSession.addCustomFooter(includeCustomFooter);
         }
 
         function processRow(node: RowNode): void {
@@ -379,7 +379,7 @@ export class GridSerializer {
             const columnGroup: ColumnGroup = columnGroupChild as ColumnGroup;
 
             const columnName = this.columnController.getDisplayNameForColumnGroup(columnGroup, 'header');
-            gridRowIterator.onColumn(columnName, columnIndex++, columnGroup.getLeafColumns().length - 1);
+            gridRowIterator.onColumn(columnName || '', columnIndex++, columnGroup.getLeafColumns().length - 1);
         });
     }
 }

@@ -604,8 +604,8 @@ export class Utils {
         return false;
     }
 
-    static existsAndNotEmpty(value: any[] | null): boolean {
-        return value !== null && this.exists(value) && value.length > 0;
+    static existsAndNotEmpty(value?: any[] | null): boolean {
+        return value != null && this.exists(value) && value.length > 0;
     }
 
     static removeAllChildren(node: HTMLElement) {
@@ -683,10 +683,12 @@ export class Utils {
                 const cssClasses = element.className.split(' ');
                 if (cssClasses.indexOf(className) < 0) {
                     cssClasses.push(className);
-                    element.className = cssClasses.join(' ');
+                    element.setAttribute('class', cssClasses.join(' '));
                 }
             } else {
-                element.className = className;
+                // do not use element.classList = className here, it will cause
+                // a read-only assignment error on some browsers (IE/Edge).
+                element.setAttribute('class', className);
             }
         }
     }
@@ -750,7 +752,7 @@ export class Utils {
                     while (cssClasses.indexOf(className) >= 0) {
                         cssClasses.splice(cssClasses.indexOf(className), 1);
                     }
-                    element.className = cssClasses.join(' ');
+                    element.setAttribute('class', cssClasses.join(' '));
                 }
             }
         }
@@ -979,7 +981,7 @@ export class Utils {
         }
     }
 
-    static formatNumberTwoDecimalPlacesAndCommas(value: number): string {
+    static formatNumberTwoDecimalPlacesAndCommas(value: number | null): string {
         if (typeof value !== 'number') {
             return '';
         }

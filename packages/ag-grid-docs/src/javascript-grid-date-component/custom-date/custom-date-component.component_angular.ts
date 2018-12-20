@@ -3,7 +3,7 @@ import {Component, ElementRef, ViewChild} from '@angular/core';
 @Component({
     selector: 'app-loading-overlay',
     template: `
-        <div #flatpickrEl class="custom-date-filter fa">
+        <div #flatpickrEl class="ag-input-text-wrapper custom-date-filter fa">
             <input type='text' data-input />
             <a class='input-button' title='clear' data-clear>
                 <i class='fa fa-times'></i>

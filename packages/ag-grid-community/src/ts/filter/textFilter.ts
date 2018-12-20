@@ -104,7 +104,9 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         const translate = this.translate.bind(this);
         const fieldId = type == FilterConditionType.MAIN ? "filterText" : "filterConditionText";
         return `<div class="ag-filter-body">
-            <input class="ag-filter-filter" id=${fieldId} type="text" placeholder="${translate('filterOoo', 'Filter...')}"/>
+            <div class="ag-input-text-wrapper">
+                <input class="ag-filter-filter" id=${fieldId} type="text" placeholder="${translate('filterOoo', 'Filter...')}"/>
+            </div>
         </div>`;
     }
 

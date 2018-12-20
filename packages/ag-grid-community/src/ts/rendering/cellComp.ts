@@ -157,7 +157,9 @@ export class CellComp extends Component {
         templateParts.push(_.exists(tooltipSanitised) ? ` title="${tooltipSanitised}"` : ``);
         templateParts.push(` style="width: ${width}px; left: ${left}px; ${stylesFromColDef} ${stylesForRowSpanning}" >`);
         templateParts.push(wrapperStartTemplate);
-        templateParts.push(valueSanitised);
+        if (valueSanitised) {
+            templateParts.push(valueSanitised);
+        }
         templateParts.push(wrapperEndTemplate);
         templateParts.push(`</div>`);
 
@@ -616,7 +618,7 @@ export class CellComp extends Component {
             this.tooltip = newTooltip;
             if (_.exists(newTooltip)) {
                 const tooltipSanitised = _.escape(this.tooltip);
-                this.eParentOfValue.setAttribute('title', tooltipSanitised);
+                this.eParentOfValue.setAttribute('title', tooltipSanitised!);
             } else {
                 this.eParentOfValue.removeAttribute('title');
             }
@@ -639,9 +641,11 @@ export class CellComp extends Component {
     private getToolTip(): string | null {
         const colDef = this.column.getColDef();
         const data = this.rowNode.data;
+
         if (colDef.tooltipField && _.exists(data)) {
             return _.getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
-        } else if (colDef.tooltip) {
+        }
+        if (colDef.tooltip) {
             return colDef.tooltip({
                 value: this.value,
                 valueFormatted: this.valueFormatted,
@@ -653,9 +657,9 @@ export class CellComp extends Component {
                 context: this.beans.gridOptionsWrapper.getContext(),
                 rowIndex: this.gridCell.rowIndex
             });
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     private processCellClassRules(onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void {
@@ -685,7 +689,6 @@ export class CellComp extends Component {
     }
 
     private preProcessCellClassRules(): string[] {
-
         const res: string[] = [];
 
         this.processCellClassRules(
@@ -758,7 +761,6 @@ export class CellComp extends Component {
     }
 
     private afterCellRendererCreated(cellRendererVersion: number, cellRenderer: ICellRendererComp): void {
-
         // see if daemon
         if (!this.isAlive() || (cellRendererVersion !== this.cellRendererVersion)) {
             if (cellRenderer.destroy) {
@@ -847,7 +849,6 @@ export class CellComp extends Component {
     }
 
     private getValue(): any {
-
         // if we don't check this, then the grid will render leaf groups as open even if we are not
         // allowing the user to open leaf groups. confused? remember for pivot mode we don't allow
         // opening leaf groups, so we have to force leafGroups to be closed in case the user expanded
@@ -870,9 +871,7 @@ export class CellComp extends Component {
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        if (_.isStopPropagationForAgGrid(mouseEvent)) {
-            return;
-        }
+        if (_.isStopPropagationForAgGrid(mouseEvent)) { return; }
 
         switch (eventName) {
             case 'click':
@@ -976,14 +975,10 @@ export class CellComp extends Component {
     public startEditingIfEnabled(keyPress: number | null = null, charPress: string | null = null, cellStartedEdit = false): void {
 
         // don't do it if not editable
-        if (!this.isCellEditable()) {
-            return;
-        }
+        if (!this.isCellEditable()) { return; }
 
         // don't do it if already editing
-        if (this.editingCell) {
-            return;
-        }
+        if (this.editingCell) { return; }
 
         this.editingCell = true;
 
@@ -1281,16 +1276,12 @@ export class CellComp extends Component {
     private onShiftRangeSelect(key: number): void {
         const success = this.beans.rangeController.extendRangeInDirection(this.gridCell, key);
 
-        if (!success) {
-            return;
-        }
+        if (!success) { return; }
 
         const ranges = this.beans.rangeController.getCellRanges();
 
         // this should never happen, as extendRangeFromCell should always have one range after getting called
-        if (_.missing(ranges) || !ranges || ranges.length !== 1) {
-            return;
-        }
+        if (_.missing(ranges) || !ranges || ranges.length !== 1) { return; }
 
         const endCell = ranges[0].end;
 
@@ -1298,9 +1289,7 @@ export class CellComp extends Component {
     }
 
     private onTabKeyDown(event: KeyboardEvent): void {
-        if (this.beans.gridOptionsWrapper.isSuppressTabbing()) {
-            return;
-        }
+        if (this.beans.gridOptionsWrapper.isSuppressTabbing()) { return; }
         this.beans.rowRenderer.onTabKeyDown(this, event);
     }
 
@@ -1324,9 +1313,7 @@ export class CellComp extends Component {
 
     private navigateAfterEdit(): void {
         const fullRowEdit = this.beans.gridOptionsWrapper.isFullRowEdit();
-        if (fullRowEdit) {
-            return;
-        }
+        if (fullRowEdit) { return; }
 
         const enterMovesDownAfterEdit = this.beans.gridOptionsWrapper.isEnterMovesDownAfterEdit();
 
@@ -1422,9 +1409,7 @@ export class CellComp extends Component {
 
     // returns true if on iPad and this is second 'click' event in 200ms
     private isDoubleClickOnIPad(): boolean {
-        if (!_.isUserAgentIPad()) {
-            return false;
-        }
+        if (!_.isUserAgentIPad()) { return false; }
 
         const nowMillis = new Date().getTime();
         const res = nowMillis - this.lastIPadMouseClickEvent < 200;
@@ -1528,21 +1513,21 @@ export class CellComp extends Component {
     }
 
     private modifyLeftForPrintLayout(leftPosition: number): number {
-        if (!this.printLayout) {
-            return leftPosition;
-        }
+        if (!this.printLayout) { return leftPosition; }
 
         if (this.column.getPinned() === Column.PINNED_LEFT) {
             return leftPosition;
-        } else if (this.column.getPinned() === Column.PINNED_RIGHT) {
+        }
+
+        if (this.column.getPinned() === Column.PINNED_RIGHT) {
             const leftWidth = this.beans.columnController.getPinnedLeftContainerWidth();
             const bodyWidth = this.beans.columnController.getBodyContainerWidth();
             return leftWidth + bodyWidth + leftPosition;
-        } else {
-            // is in body
-            const leftWidth = this.beans.columnController.getPinnedLeftContainerWidth();
-            return leftWidth + leftPosition;
         }
+
+        // is in body
+        const leftWidth = this.beans.columnController.getPinnedLeftContainerWidth();
+        return leftWidth + leftPosition;
     }
 
     private onWidthChanged(): void {

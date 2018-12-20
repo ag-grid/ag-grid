@@ -318,8 +318,12 @@ export class GridApi {
         this.valueCache.expire();
     }
 
-    public getVerticalPixelRange(): any {
+    public getVerticalPixelRange(): {top: number, bottom: number} {
         return this.gridPanel.getVScrollPosition();
+    }
+
+    public getHorizontalPixelRange(): { left: number, right: number } {
+        return this.gridPanel.getHScrollPosition();
     }
 
     public setAlwaysShowVerticalScroll(show: boolean) {

@@ -51,10 +51,10 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         const filterNumberToPanelId = type == FilterConditionType.MAIN ? "filterNumberToPanel" : "filterNumberToPanelCondition";
         const fieldToId = type == FilterConditionType.MAIN ? "filterToText" : "filterToConditionText";
         return `<div class="ag-filter-body">
-            <div>
+            <div class="ag-input-text-wrapper">
                 <input class="ag-filter-filter" id="${fieldId}" type="text" placeholder="${translate('filterOoo')}"/>
             </div>
-             <div class="ag-filter-number-to" id="${filterNumberToPanelId}">
+             <div class="ag-input-text-wrapper ag-filter-number-to" id="${filterNumberToPanelId}">
                 <input class="ag-filter-filter" id="${fieldToId}" type="text" placeholder="${translate('filterOoo')}"/>
             </div>
         </div>`;

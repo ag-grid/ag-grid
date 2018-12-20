@@ -47,7 +47,7 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
     lastKnownModel: M = null;
 
     constructor() {
-        super(`<div><input ref="eColumnFloatingFilter" class="ag-floating-filter-input"></div>`);
+        super(`<div class="ag-input-text-wrapper"><input ref="eColumnFloatingFilter" class="ag-floating-filter-input"></div>`);
     }
 
     init(params: P): void {

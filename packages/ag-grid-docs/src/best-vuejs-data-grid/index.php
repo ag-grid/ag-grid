@@ -300,6 +300,27 @@ this.params.context.componentParent</snippet>
     is explained in the section on each.
 </p>
 
+<h2>“$attrs is readonly”,“$listeners is readonly”,“Avoid mutating a prop directly”</h2>
+
+<p>Despite the wording of this warning, the issue is almost always due to multiple versions of <code>Vue</code> being instantiated at runtime.</p>
+<p>This can occur in any number of ways, but the solution is simple - update (or create) <code>webpack.config.js</code>:</p>
+
+<snippet lang="js">
+resolve: {
+        alias: {
+                'vue$': path.resolve(__dirname, 'node_modules/vue/dist/vue.js')
+        }
+}
+</snippet>
+
+<p>Here we're telling Webpack to use the full build. You may need to change the value according to the build you need.</p>
+
+<p>Please refer to the <a href="https://vuejs.org/v2/guide/installation.html#Explanation-of-Different-Builds">Vue Documentation</a>
+for more information on the different builds available.</p>
+
+<p>The longer term fix is something the Vue team are contemplating - please refer to this
+    <a href="https://github.com/vuejs/vue/issues/8278">GitHub Issue</a> for more information.</p>
+
 <h2 id="next-steps">Next Steps</h2>
 
 <p>

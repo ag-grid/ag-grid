@@ -1,5 +1,5 @@
 import { BaseComponentWrapper, Bean, WrapableInterface } from 'ag-grid-community';
-import { AgGridVue } from './AgGridVue';
+import { AgGridVue} from './AgGridVue';
 import { VueComponentFactory } from './VueComponentFactory';
 
 interface VueWrapableInterface extends WrapableInterface {
@@ -9,7 +9,7 @@ interface VueWrapableInterface extends WrapableInterface {
 
 @Bean('frameworkComponentWrapper')
 export class VueFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterface> {
-    private parent: AgGridVue;
+    private parent: AgGridVue | null;
 
     constructor(parent: AgGridVue) {
         super();
@@ -40,7 +40,7 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<WrapableI
             }
 
             public overrideProcessing(methodName: string): boolean {
-                return that.parent.autoParamsRefresh && methodName === 'refresh';
+                return that.parent!.autoParamsRefresh && methodName === 'refresh';
             }
 
             public processMethod(methodName: string, args: IArguments): any {
@@ -66,11 +66,11 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<WrapableI
 
 
     public createComponent<T>(component: any, params: any): any {
-        const componentType = VueComponentFactory.getComponentType(this.parent, component);
+        const componentType = VueComponentFactory.getComponentType(this.parent!, component);
         if (!componentType) {
             return;
         }
-        return VueComponentFactory.createAndMountComponent(params, componentType, this.parent);
+        return VueComponentFactory.createAndMountComponent(params, componentType, this.parent!);
     }
 
     protected createMethodProxy(wrapper: VueWrapableInterface, methodName: string, mandatory: boolean): () => any {
@@ -88,6 +88,10 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<WrapableI
             }
             return null;
         };
+    }
+
+    protected destroy() {
+        this.parent = null;
     }
 }
 

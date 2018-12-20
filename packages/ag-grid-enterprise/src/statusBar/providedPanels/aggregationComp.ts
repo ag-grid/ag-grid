@@ -79,7 +79,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     public init() {
     }
 
-    private setAggregationComponentValue(aggFuncName: string, value: number, visible: boolean) {
+    private setAggregationComponentValue(aggFuncName: string, value: number | null, visible: boolean) {
         const statusBarValueComponent = this.getAggregationValueComponent(aggFuncName);
         if (_.exists(statusBarValueComponent) && statusBarValueComponent) {
             statusBarValueComponent.setValue(_.formatNumberTwoDecimalPlacesAndCommas(value));
@@ -120,7 +120,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         let sum = 0;
         let count = 0;
         let numberCount = 0;
-        let min: number = 0;
+        let min: number | null = null;
         let max: number = 0;
 
         const cellsSoFar: any = {};

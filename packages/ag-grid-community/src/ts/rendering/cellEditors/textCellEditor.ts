@@ -13,26 +13,27 @@ export interface ITextCellEditorParams extends ICellEditorParams {
 
 export class TextCellEditor extends Component implements ICellEditorComp {
 
-    private static TEMPLATE = '<input class="ag-cell-edit-input" type="text"/>';
+    private static TEMPLATE = '<div class="ag-input-text-wrapper"><input class="ag-cell-edit-input" type="text"/></div>';
 
     private highlightAllOnFocus: boolean;
     private focusAfterAttached: boolean;
     private params: ICellEditorParams;
+    private eInput: HTMLInputElement;
 
     constructor() {
         super(TextCellEditor.TEMPLATE);
+        this.eInput = this.getGui().querySelector('input') as HTMLInputElement;
     }
 
     public init(params: ITextCellEditorParams): void {
 
         this.params = params;
 
-        const eInput = this.getGui() as HTMLInputElement;
+        const eInput = this.eInput;
         let startValue: string;
 
         // cellStartedEdit is only false if we are doing fullRow editing
         if (params.cellStartedEdit) {
-
             this.focusAfterAttached = true;
 
             const keyPressBackspaceOrDelete =
@@ -85,7 +86,7 @@ export class TextCellEditor extends Component implements ICellEditorComp {
     public afterGuiAttached(): void {
         if (!this.focusAfterAttached) { return; }
 
-        const eInput = this.getGui() as HTMLInputElement;
+        const eInput = this.eInput;
         eInput.focus();
         if (this.highlightAllOnFocus) {
             eInput.select();
@@ -103,13 +104,13 @@ export class TextCellEditor extends Component implements ICellEditorComp {
 
     // gets called when tabbing trough cells and in full row edit mode
     public focusIn(): void {
-        const eInput = this.getGui() as HTMLInputElement;
+        const eInput = this.eInput;
         eInput.focus();
         eInput.select();
     }
 
     public getValue(): any {
-        const eInput = this.getGui() as HTMLInputElement;
+        const eInput = this.eInput;
         return this.params.parseValue(eInput.value);
     }
 

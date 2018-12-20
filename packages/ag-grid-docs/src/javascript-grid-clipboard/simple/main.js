@@ -18,16 +18,22 @@ var gridOptions = {
     columnDefs: columnDefs,
     enableRangeSelection: true,
     rowSelection: 'multiple',
-    onCellValueChanged: function (params) {
-        console.log("Callback onCellValueChanged:", params);
-    },
-    onPasteStart: function (params) {
-        console.log('Callback onPasteStart:' ,params);
-    },
-    onPasteEnd: function (params) {
-        console.log('Callback onPasteEnd:' ,params);
-    }
+    onCellValueChanged: onCellValueChanged,
+    onPasteStart: onPasteStart,
+    onPasteEnd: onPasteEnd
 };
+
+function onCellValueChanged(params) {
+    console.log("Callback onCellValueChanged:", params);
+}
+
+function onPasteStart(params) {
+    console.log('Callback onPasteStart:' ,params);
+}
+
+function onPasteEnd(params) {
+    console.log('Callback onPasteEnd:' ,params);
+}
 
 function onBtCopyRows() {
     gridOptions.api.copySelectedRowsToClipboard();
