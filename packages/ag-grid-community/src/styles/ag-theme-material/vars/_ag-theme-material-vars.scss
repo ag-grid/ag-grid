@@ -86,3 +86,74 @@ $card-radius: 2px;
 $value-change-delta-up-color: #43a047 !default;
 $value-change-delta-down-color: #e53935 !default;
 $value-change-value-highlight-background-color: #00acc1 !default;
+
+$params: (
+    font-family: $font-family,
+    font-size: $font-size,
+    font-weight: $font-weight,
+    secondary-font-family: $secondary-font-family,
+    secondary-font-size: $secondary-font-size,
+    secondary-font-weight: $secondary-font-weight,
+
+    accent-color: $accent-color,
+    primary-color: $primary-color,
+    hover-color: $hover-color,
+    selected-color: $selected-color,
+
+    background-color: $background-color,
+
+    foreground-color: $foreground-color,
+    foreground-opacity: $foreground-opacity,
+    secondary-foreground-color-opacity: $secondary-foreground-color-opacity,
+    secondary-foreground-color: $secondary-foreground-color,
+    disabled-foreground-color-opacity: $disabled-foreground-color-opacity,
+    disabled-foreground-color: $disabled-foreground-color,
+
+    border-color: $border-color,
+
+    panel-background-color: $panel-background-color,
+    tool-panel-background-color: $tool-panel-background-color,
+    header-foreground-color: $header-foreground-color,
+
+    focused-textbox-border: 3px solid $primary-color,
+    input-bottom-border: 3px solid $border-color,
+    input-bottom-border-disabled: 1px solid $border-color,
+    value-change-delta-up-color: $value-change-delta-up-color,
+    value-change-delta-down-color: $value-change-delta-down-color,
+    value-change-value-highlight-background-color: $value-change-value-highlight-background-color,
+
+    button-background-color: transparent,
+    icon-color: $icon-color,
+    cell-data-changed-color: $cell-data-changed-color,
+    chip-background-color: $chip-background-color,
+    card-background-color: $background-color,
+    editor-background-color-color: $editor-background-color,
+    
+    range-selection-background-color: $range-selection-background-color,
+    range-selection-highlight-color: $range-selection-highlight-color,
+    icon-opacity: $foreground-opacity,
+
+    grid-size: $grid-size,
+    input-height: $grid-size * 5,
+    input-border-width: 0,
+
+    icon-size: $icon-size,
+    header-icon-size: $header-icon-size,
+    row-height: $row-height,
+    row-border-width: $row-border-width,
+    header-height: $header-height,
+    virtual-item-height: $virtual-item-height,
+    rich-select-item-height: $row-height,
+    cell-horizontal-padding: $cell-horizontal-padding,
+    toolpanel-indent-size: $toolpanel-indent-size,
+    row-group-indent-size: $row-group-indent-size,
+    icons-path: $icons-path,
+
+    button-text-transform: uppercase,
+    card-radius: $card-radius,
+    card-shadow: $card-shadow,
+    use-icons-for-pager-buttons: true,
+    customize-inputs: true,
+    customize-buttons: true,
+    full-width-tabs: true
+);
