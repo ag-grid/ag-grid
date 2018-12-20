@@ -196,6 +196,10 @@ export class ComponentUtil {
             api.setSideBar(changes.sideBar.currentValue);
         }
 
+        if (changes.datasource) {
+            api.setDatasource(changes.datasource.currentValue);
+        }
+
         // copy changes into an event for dispatch
         const event: ComponentStateChangedEvent = {
             type: Events.EVENT_COMPONENT_STATE_CHANGED,

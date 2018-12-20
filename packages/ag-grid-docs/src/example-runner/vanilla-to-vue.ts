@@ -59,7 +59,6 @@ function onGridReadyTemplate(readyCode: string,
 
 
 function kebabProperty(property: string) {
-    console.log(property.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase());
     return property.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 }
 
