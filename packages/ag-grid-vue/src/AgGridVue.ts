@@ -1,7 +1,7 @@
-import {Component, Vue, Prop} from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Bean, ComponentUtil, Grid, GridOptions } from 'ag-grid-community';
-import {VueFrameworkComponentWrapper} from './VueFrameworkComponentWrapper';
-import {getAgGridProperties, Properties} from './Utils';
+import { VueFrameworkComponentWrapper } from './VueFrameworkComponentWrapper';
+import { getAgGridProperties, Properties } from './Utils';
 
 const [props, watch] = getAgGridProperties();
 
@@ -32,10 +32,13 @@ export class AgGridVue extends Vue {
             return;
         }
 
-        // generically look up the eventType
-        const emitter = (this as any)[eventType];
-        if (emitter) {
-            emitter(event);
+        // only emit if someone is listening
+        // we allow both kebab and camelCase event listeners, so check for both
+        const kebabName = this.kebabProperty(eventType);
+        if (this.$listeners[kebabName]) {
+            this.$emit(kebabName, event);
+        } else if (this.$listeners[eventType]) {
+            this.$emit(eventType, event);
         }
     }
 
@@ -78,5 +81,9 @@ export class AgGridVue extends Vue {
             }
             this.isDestroyed = true;
         }
+    }
+
+    private kebabProperty(property: string) {
+        return property.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
     }
 }
