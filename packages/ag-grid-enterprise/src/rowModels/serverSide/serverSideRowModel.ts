@@ -225,7 +225,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     private onRowGroupOpened(event: any): void {
         const rowNode: RowNode = event.node;
-        let animate = this.gridOptionsWrapper.isAnimateRows();
 
         if (rowNode.expanded) {
             if (rowNode.master) {
@@ -234,14 +233,17 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
                 this.createNodeCache(rowNode);
             }
         } else {
-            if (rowNode.detailNode) {
-                animate = false;
-            }
             if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && _.exists(rowNode.childrenCache)) {
                 rowNode.childrenCache!.destroy();
                 rowNode.childrenCache = null;
             }
         }
+
+        const shouldAnimate = () => {
+            let rowAnimationEnabled = this.gridOptionsWrapper.isAnimateRows();
+            if (rowNode.master) return rowAnimationEnabled && rowNode.expanded;
+            return rowAnimationEnabled;
+        };
 
         this.updateRowIndexesAndBounds();
 
@@ -251,12 +253,14 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             newPage: false,
             newData: false,
-            animate,
+            animate: shouldAnimate(),
             keepRenderedRows: true
         };
 
         this.eventService.dispatchEvent(modelUpdatedEvent);
     }
+
+
 
     private reset(): void {
 

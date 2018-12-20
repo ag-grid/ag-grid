@@ -12,6 +12,7 @@ const gridOptions = {
         suppressFilter: true
     },
     columnDefs: columnDefs,
+    animateRows: true,
 
     // use the server-side row model
     rowModelType: 'serverSide',
@@ -28,6 +29,7 @@ const gridOptions = {
                 {field: 'switchCode'},
                 {field: 'number'},
             ],
+            domLayout: 'autoHeight',
             onFirstDataRendered(params) {
                 // fit the detail grid columns
                 params.api.sizeColumnsToFit();

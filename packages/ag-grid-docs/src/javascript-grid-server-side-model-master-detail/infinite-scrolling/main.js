@@ -12,6 +12,7 @@ const gridOptions = {
         suppressFilter: true
     },
     columnDefs: columnDefs,
+    animateRows: true,
 
     // use the server-side row model
     rowModelType: 'serverSide',
