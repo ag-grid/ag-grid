@@ -119,6 +119,8 @@ export class DetailCellRenderer extends Component {
         this.detailGridOptions = _.cloneObject(gridOptions);
         // tslint:disable-next-line
         new Grid(this.eDetailGrid, this.detailGridOptions, {
+            $scope: params.$scope,
+            $compile: params.$compile,
             seedBeanInstances: {
                 // a temporary fix for AG-1574
                 // AG-1715 raised to do a wider ranging refactor to improve this
@@ -163,6 +165,7 @@ export interface IDetailCellRendererParams extends ICellRendererParams {
     getDetailRowData: GetDetailRowData;
     agGridReact: any;
     frameworkComponentWrapper: any;
+    $compile: any;
 }
 
 export interface GetDetailRowData {
