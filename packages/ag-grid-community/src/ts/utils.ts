@@ -981,7 +981,7 @@ export class Utils {
         }
     }
 
-    static formatNumberTwoDecimalPlacesAndCommas(value: number): string {
+    static formatNumberTwoDecimalPlacesAndCommas(value: number | null): string {
         if (typeof value !== 'number') {
             return '';
         }
