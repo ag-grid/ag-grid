@@ -855,13 +855,18 @@ export class CellComp extends Component {
         const lockedClosedGroup = this.rowNode.leafGroup && this.beans.columnController.isPivotMode();
 
         const isOpenGroup = this.rowNode.group && this.rowNode.expanded && !this.rowNode.footer && !lockedClosedGroup;
-        if (isOpenGroup && this.beans.gridOptionsWrapper.isGroupIncludeFooter()) {
-            // if doing grouping and footers, we don't want to include the agg value
-            // in the header when the group is open
-            return this.beans.valueService.getValue(this.column, this.rowNode, false, true);
-        } else {
-            return this.beans.valueService.getValue(this.column, this.rowNode);
-        }
+
+        // are we showing group footers
+        const groupFootersEnabled = this.beans.gridOptionsWrapper.isGroupIncludeFooter();
+
+        // if doing footers, we noramlly don't show agg data at group level when group is open
+        const groupAlwaysShowAggData = this.beans.gridOptionsWrapper.isGroupSuppressBlankHeader();
+
+        // if doing grouping and footers, we don't want to include the agg value
+        // in the header when the group is open
+        const ignoreAggData = (isOpenGroup && groupFootersEnabled) && !groupAlwaysShowAggData;
+
+        return this.beans.valueService.getValue(this.column, this.rowNode, false, ignoreAggData);
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
