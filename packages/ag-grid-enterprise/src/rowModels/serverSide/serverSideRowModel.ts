@@ -225,15 +225,22 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     private onRowGroupOpened(event: any): void {
         const rowNode: RowNode = event.node;
+        let animate = this.gridOptionsWrapper.isAnimateRows();
+
         if (rowNode.expanded) {
             if (rowNode.master) {
                 this.createDetailNode(rowNode);
             } else if (_.missing(rowNode.childrenCache)) {
                 this.createNodeCache(rowNode);
             }
-        } else if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && _.exists(rowNode.childrenCache)) {
-            rowNode.childrenCache!.destroy();
-            rowNode.childrenCache = null;
+        } else {
+            if (rowNode.detailNode) {
+                animate = false;
+            }
+            if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && _.exists(rowNode.childrenCache)) {
+                rowNode.childrenCache!.destroy();
+                rowNode.childrenCache = null;
+            }
         }
 
         this.updateRowIndexesAndBounds();
@@ -244,7 +251,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             newPage: false,
             newData: false,
-            animate: true,
+            animate,
             keepRenderedRows: true
         };
 
@@ -395,7 +402,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             type: Events.EVENT_MODEL_UPDATED,
             api: this.gridApi,
             columnApi: this.columnApi,
-            animate: true,
+            animate: this.gridOptionsWrapper.isAnimateRows(),
             keepRenderedRows: true,
             newPage: false,
             newData: false
