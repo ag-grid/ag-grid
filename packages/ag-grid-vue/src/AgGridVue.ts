@@ -55,6 +55,11 @@ export class AgGridVue extends Vue {
 
     public processChanges(propertyName: string, currentValue: any, previousValue: any) {
         if (this.gridCreated) {
+
+            if(this.skipChange(propertyName, currentValue, previousValue)) {
+                return;
+            }
+
             const changes: Properties = {};
             changes[propertyName] = {
                 currentValue,
@@ -66,7 +71,6 @@ export class AgGridVue extends Vue {
                 this.gridOptions.columnApi!);
         }
     }
-
 
     // noinspection JSUnusedGlobalSymbols
     public mounted() {
@@ -123,7 +127,7 @@ export class AgGridVue extends Vue {
         if (this.gridReadyFired &&
             this.$listeners['data-model-changed'] &&
             AgGridVue.ROW_DATA_EVENTS.indexOf(eventType) !== -1) {
-            this.$emit('data-model-changed', this.getRowData());
+            this.$emit('data-model-changed', Object.freeze(this.getRowData()));
         }
     }
 
@@ -133,5 +137,33 @@ export class AgGridVue extends Vue {
         const rowDataModel = thisAsAny.rowDataModel;
         return rowDataModel ? rowDataModel :
             thisAsAny.rowData ? thisAsAny.rowData : thisAsAny.gridOptions.rowData;
+    }
+
+    /*
+     * Prevents an infinite loop when using v-model for the rowData
+     */
+    private skipChange(propertyName: string, currentValue: any, previousValue: any) {
+        if(this.gridReadyFired &&
+            propertyName === 'rowData' &&
+            this.$listeners['data-model-changed']) {
+            if(currentValue === previousValue) {
+                return true;
+            }
+
+            if(currentValue && previousValue) {
+                const currentRowData = currentValue as any[];
+                const previousRowData = previousValue as any[];
+                if(currentRowData.length === previousRowData.length) {
+                    for (let i = 0; i < currentRowData.length; i++) {
+                        if(currentRowData[i] !== previousRowData[i]) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
