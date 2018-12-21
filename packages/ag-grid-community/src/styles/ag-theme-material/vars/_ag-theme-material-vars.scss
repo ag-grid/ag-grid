@@ -87,6 +87,8 @@ $value-change-delta-up-color: #43a047 !default;
 $value-change-delta-down-color: #e53935 !default;
 $value-change-value-highlight-background-color: #00acc1 !default;
 
+@import "../../ag-theme-base/vars/ag-theme-base-vars";
+
 $params: (
     font-family: $font-family,
     font-size: $font-size,
@@ -152,6 +154,7 @@ $params: (
     virtual-item-height: $virtual-item-height,
     rich-select-item-height: $row-height,
     cell-horizontal-padding: $cell-horizontal-padding,
+    cell-horizontal-border: $cell-horizontal-border,
     toolpanel-indent-size: $toolpanel-indent-size,
     row-group-indent-size: $row-group-indent-size,
     icons-path: $icons-path,

@@ -118,6 +118,14 @@
         margin-right: $icon-size + $grid-size * 3;
     }
 
+    .ag-ltr .ag-cell-no-focus {
+        border-right: $cell-horizontal-border;
+    }
+
+    .ag-rtl .ag-cell-no-focus {
+        border-left: $cell-horizontal-border;
+    }
+
     // we use rtl and ltr below, even though it's the same style, so it propertly
     .ag-rtl .ag-cell-first-right-pinned {
         border-left: 1px solid $border-color;
