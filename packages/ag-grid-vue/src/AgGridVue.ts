@@ -3,12 +3,13 @@ import { Bean, ComponentUtil, Grid, GridOptions } from 'ag-grid-community';
 import { VueFrameworkComponentWrapper } from './VueFrameworkComponentWrapper';
 import { getAgGridProperties, Properties } from './Utils';
 
-const [props, watch] = getAgGridProperties();
+const [props, watch, model] = getAgGridProperties();
 
 @Bean('agGridVue')
 @Component({
     props,
     watch,
+    model
 })
 export class AgGridVue extends Vue {
 
@@ -17,10 +18,14 @@ export class AgGridVue extends Vue {
 
     @Prop({default: () => []})
     public componentDependencies!: string[];
-    private isInitialised = false;
+
+    private gridCreated = false;
     private isDestroyed = false;
+    private gridReadyFired = false;
 
     private gridOptions!: GridOptions;
+
+    private static ROW_DATA_EVENTS = ['rowDataChanged', 'rowDataUpdated', 'cellValueChanged', 'rowValueChanged'];
 
     // noinspection JSUnusedGlobalSymbols, JSMethodCanBeStatic
     public render(h: any) {
@@ -32,9 +37,15 @@ export class AgGridVue extends Vue {
             return;
         }
 
+        if (eventType === 'gridReady') {
+            this.gridReadyFired = true;
+        }
+
+        this.updateModelIfUsed(eventType);
+
         // only emit if someone is listening
         // we allow both kebab and camelCase event listeners, so check for both
-        const kebabName = this.kebabProperty(eventType);
+        const kebabName = AgGridVue.kebabProperty(eventType);
         if (this.$listeners[kebabName]) {
             this.$emit(kebabName, event);
         } else if (this.$listeners[eventType]) {
@@ -43,7 +54,7 @@ export class AgGridVue extends Vue {
     }
 
     public processChanges(propertyName: string, currentValue: any, previousValue: any) {
-        if (this.isInitialised) {
+        if (this.gridCreated) {
             const changes: Properties = {};
             changes[propertyName] = {
                 currentValue,
@@ -56,10 +67,15 @@ export class AgGridVue extends Vue {
         }
     }
 
+
     // noinspection JSUnusedGlobalSymbols
     public mounted() {
         const frameworkComponentWrapper = new VueFrameworkComponentWrapper(this);
         const gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
+
+        this.checkForBindingConflicts();
+
+        gridOptions.rowData = this.getRowDataBasedOnBindings();
 
         const gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
@@ -70,12 +86,20 @@ export class AgGridVue extends Vue {
 
         new Grid(this.$el as HTMLElement, gridOptions, gridParams);
 
-        this.isInitialised = true;
+        this.gridCreated = true;
+    }
+
+    private checkForBindingConflicts() {
+        const thisAsAny = (this as any);
+        if ((thisAsAny.rowData || this.gridOptions.rowData) &&
+            thisAsAny.rowDataModel) {
+            console.warn("ag-grid: Using both rowData and rowDataModel. rowData will be ignored.");
+        }
     }
 
     // noinspection JSUnusedGlobalSymbols
     public destroyed() {
-        if (this.isInitialised) {
+        if (this.gridCreated) {
             if (this.gridOptions.api) {
                 this.gridOptions.api.destroy();
             }
@@ -83,7 +107,31 @@ export class AgGridVue extends Vue {
         }
     }
 
-    private kebabProperty(property: string) {
+    private static kebabProperty(property: string) {
         return property.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+    }
+
+    private getRowData(): any[] {
+        const rowData: any[] = [];
+        this.gridOptions!.api!.forEachNode((rowNode) => {
+            rowData.push(rowNode.data)
+        });
+        return rowData;
+    }
+
+    private updateModelIfUsed(eventType: string) {
+        if (this.gridReadyFired &&
+            this.$listeners['data-model-changed'] &&
+            AgGridVue.ROW_DATA_EVENTS.indexOf(eventType) !== -1) {
+            this.$emit('data-model-changed', this.getRowData());
+        }
+    }
+
+    private getRowDataBasedOnBindings() {
+        const thisAsAny = (this as any);
+
+        const rowDataModel = thisAsAny.rowDataModel;
+        return rowDataModel ? rowDataModel :
+            thisAsAny.rowData ? thisAsAny.rowData : thisAsAny.gridOptions.rowData;
     }
 }

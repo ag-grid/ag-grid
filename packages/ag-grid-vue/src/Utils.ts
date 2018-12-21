@@ -4,15 +4,21 @@ export interface Properties {
     [propertyName: string]: any;
 }
 
-export const getAgGridProperties = (): [Properties, Properties] => {
-    const watch: Properties = {};
+export const getAgGridProperties = (): [Properties, Properties, {}] => {
     const props: Properties = {
         gridOptions: {
             default() {
                 return {};
             },
         },
+        rowDataModel: undefined
     };
+    const watch: Properties = {
+        rowDataModel: function(currentValue: any, previousValue: any) {
+            this.processChanges('rowData', currentValue, previousValue);
+        }
+    };
+
     ComponentUtil.ALL_PROPERTIES.forEach((propertyName) => {
         props[propertyName] = {};
 
@@ -21,6 +27,11 @@ export const getAgGridProperties = (): [Properties, Properties] => {
         };
     });
 
-    return [props, watch];
+    const model: { prop: string, event: string } = {
+        prop: 'rowDataModel',
+        event: 'data-model-changed'
+    };
+
+    return [props, watch, model];
 };
 
