@@ -268,11 +268,6 @@
         padding: $grid-size * 4;
     }
 
-    $ag-range-selected-color-1: map-get($params, "ag-range-selected-color-1");
-    $ag-range-selected-color-2: map-get($params, "ag-range-selected-color-2");
-    $ag-range-selected-color-3: map-get($params, "ag-range-selected-color-3");
-    $ag-range-selected-color-4: map-get($params, "ag-range-selected-color-4");
-
     // we do not want to color the range color when the cell is also focused
     .ag-cell-range-selected-1:not(.ag-cell-focus) {
         background-color: $ag-range-selected-color-1;

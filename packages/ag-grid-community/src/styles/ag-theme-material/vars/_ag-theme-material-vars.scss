@@ -69,8 +69,12 @@ $tool-panel-background-color: $mat-grey-50 !default;
 
 $chip-background-color: $mat-grey-300 !default;
 
-$range-selection-background-color: $mat-indigo-50 !default;
+$range-selection-background-color: transparentize(darken($mat-indigo-50, 30%), 0.9) !default;
 $range-selection-highlight-color: $mat-pink-50 !default;
+$ag-range-selected-color-1: opacify($range-selection-background-color, 0.1) !default;
+$ag-range-selected-color-2: opacify($range-selection-background-color, 0.2) !default;
+$ag-range-selected-color-3: opacify($range-selection-background-color, 0.3) !default;
+$ag-range-selected-color-4: opacify($range-selection-background-color, 0.4) !default;
 
 $hover-color: $mat-grey-50 !default;
 
@@ -131,6 +135,10 @@ $params: (
     
     range-selection-background-color: $range-selection-background-color,
     range-selection-highlight-color: $range-selection-highlight-color,
+    ag-range-selected-color-1: $ag-range-selected-color-1,
+    ag-range-selected-color-2: $ag-range-selected-color-2,
+    ag-range-selected-color-3: $ag-range-selected-color-3,
+    ag-range-selected-color-4: $ag-range-selected-color-4,
     icon-opacity: $foreground-opacity,
 
     grid-size: $grid-size,

@@ -145,23 +145,6 @@
         }
     }
 
-    // we do not want to color the range color when the cell is also focused
-    .ag-cell-range-selected-1:not(.ag-cell-focus) {
-        background-color: $ag-range-selected-color-1;
-    }
-
-    .ag-cell-range-selected-2:not(.ag-cell-focus) {
-        background-color: $ag-range-selected-color-2;
-    }
-
-    .ag-cell-range-selected-3:not(.ag-cell-focus) {
-        background-color: $ag-range-selected-color-3;
-    }
-
-    .ag-cell-range-selected-4:not(.ag-cell-focus) {
-        background-color: $ag-range-selected-color-4;
-    }
-
     .ag-cell-highlight {
         background-color: $ag-range-selected-color-1;
         border-bottom: $cell-highlight-border;

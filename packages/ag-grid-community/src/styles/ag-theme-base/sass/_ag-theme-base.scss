@@ -45,6 +45,10 @@
 
     $range-selection-background-color: map-get($params, "range-selection-background-color");
     $range-selection-highlight-color: map-get($params, "range-selection-highlight-color");
+    $ag-range-selected-color-1: map-get($params, "ag-range-selected-color-1");
+    $ag-range-selected-color-2: map-get($params, "ag-range-selected-color-2");
+    $ag-range-selected-color-3: map-get($params, "ag-range-selected-color-3");
+    $ag-range-selected-color-4: map-get($params, "ag-range-selected-color-4");
 
     $header-background-color: map-get($params, "header-background-color");
     $header-foreground-color: map-get($params, "header-foreground-color");
@@ -836,8 +840,25 @@
         background-color: $selected-color;
     }
 
+    // we do not want to color the range color when the cell is also focused
     .ag-cell-range-selected:not(.ag-cell-focus) {
         background-color: $range-selection-background-color;
+    }
+
+    .ag-cell-range-selected-1:not(.ag-cell-focus) {
+        background-color: $ag-range-selected-color-1;
+    }
+
+    .ag-cell-range-selected-2:not(.ag-cell-focus) {
+        background-color: $ag-range-selected-color-2;
+    }
+
+    .ag-cell-range-selected-3:not(.ag-cell-focus) {
+        background-color: $ag-range-selected-color-3;
+    }
+
+    .ag-cell-range-selected-4:not(.ag-cell-focus) {
+        background-color: $ag-range-selected-color-4;
     }
 
     ////////////////////////////////////////
