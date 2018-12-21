@@ -21,7 +21,7 @@
     $row-border-width: map-get($params, "row-border-width");
     $icon-size: map-get($params, "icon-size");
 
-    .ag-body {
+    .ag-body-viewport {
         background-color: map-get($params, "panel-background-color");
     }
 
@@ -62,11 +62,6 @@
 
     .ag-column-drop-horizontal.ag-column-drop:last-child {
         border-left: 0;
-    }
-
-    .ag-header {
-        background-image: $header-background-image;
-        border-bottom: 1px solid $border-color;
     }
 
     .ag-header-cell-resize::after {
@@ -129,7 +124,9 @@
 
     .ag-column-drop-cell {
         background: $chip-background-color;
-        background-image: $header-background-image;
+        @if $header-background-image {
+            background-image: $header-background-image;
+        }
         border: 1px solid $border-color;
         border-radius: 0;
         height: $grid-size * 4.5 !important;
@@ -209,14 +206,6 @@
 
     .ag-header-cell-moving {
         background-color: map-get($params, "header-cell-moving-background-color");
-    }
-
-    .ag-ltr .ag-pinned-right-header {
-        border-left: 1px solid $border-color;
-    }
-
-    .ag-rtl .ag-pinned-left-header {
-        border-right: 1px solid $border-color;
     }
 
     .ag-overlay-loading-wrapper {

@@ -44,6 +44,7 @@ $editor-background-color: $chrome-background !default;
 $panel-background-color: $chrome-background !default;
 $tool-panel-background-color: $chrome-background !default;
 $header-background-color: $chrome-background !default;
+$header-cell-hover-background-color: $header-background-color !default;
 $header-foreground-color: $secondary-foreground-color !default;
 
 $hover-color: $alt-background !default;
@@ -115,6 +116,7 @@ $params: (
     tool-panel-background-color: $tool-panel-background-color,
     header-foreground-color: $header-foreground-color,
     header-background-color: $header-background-color,
+    header-cell-hover-background-color: $header-cell-hover-background-color,
     header-cell-moving-background-color: $header-cell-moving-background-color,
     
     odd-row-background-color: $odd-row-background-color,

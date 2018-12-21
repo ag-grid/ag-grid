@@ -51,6 +51,9 @@
     $ag-range-selected-color-4: map-get($params, "ag-range-selected-color-4");
 
     $header-background-color: map-get($params, "header-background-color");
+    $header-background-image: map-get($params, "header-background-image");
+    $header-cell-hover-background-color: map-get($params, "header-cell-hover-background-color");
+    $header-cell-moving-background-color: map-get($params, "header-cell-moving-background-color");
     $header-foreground-color: map-get($params, "header-foreground-color");
     $panel-background-color: map-get($params, "panel-background-color");
     $tool-panel-background-color: map-get($params, "tool-panel-background-color");
@@ -165,16 +168,31 @@
         @if $header-background-color {
             background-color: $header-background-color;
         }
+        @if $header-background-image {
+            background-image: $header-background-image;
+        }
 
         color: $header-foreground-color;
         font-weight: $secondary-font-weight;
         font-size: $secondary-font-size;
         font-family: $secondary-font-family;
+        border-bottom: 1px solid $border-color;
+    }
+
+    .ag-pinned-right-header {
+        border-left: 1px solid $border-color;
+    }
+
+    .ag-pinned-left-header {
+        border-right: 1px solid $border-color;
     }
 
     .ag-header-row {
         @include row-border($border-color);
         border-width: 0 0 1px;
+        &:last-of-type {
+            border-bottom-width: 0;
+        }
     }
 
     .ag-row {
@@ -260,6 +278,22 @@
     .ag-header-cell,
     .ag-header-group-cell {
         @include grid-cell($header-height, $cell-horizontal-padding);
+        @if $header-cell-moving-background-color {
+            &.ag-header-cell-moving {
+                background-color: $header-cell-moving-background-color;
+            }
+        }
+    }
+
+    .ag-header-group-cell:not(.ag-column-resizing) + .ag-header-group-cell,
+    .ag-header-cell:not(.ag-column-resizing) + .ag-header-cell,
+    .ag-header-group-cell:first-of-type,
+    .ag-header-cell:first-of-type {
+        @if ($header-background-color != $header-cell-hover-background-color) {
+            &:hover, &.ag-column-resizing {
+                background-color: $header-cell-hover-background-color;
+            }
+        }
     }
 
     .ag-cell {
@@ -904,7 +938,7 @@
     ////////////////////////////////////////
     .ag-rich-select {
         background-color: $editor-background-color-color;
-        background-image: url("#{$icons-path}tree-open.svg?color1=#{encodecolor(#{$icon-color})}");
+        background-image: url("#{$icons-path}tree-open.svg?color1=#{encodecolor($icon-color)}");
         background-position-x: calc(100% - #{$grid-size});
         background-position-y: $grid-size * 2;
         background-repeat: no-repeat;

@@ -46,27 +46,29 @@ $secondary-font-family: "Roboto", sans-serif !default; //font-secondary
 $secondary-font-size: 12px !default; // font-secondary-size
 $secondary-font-weight: 700 !default; // font-secondary-weight
 
+// Misc
+$card-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+$card-radius: 2px;
+
 // Colors
+$background-color: $mat-grey-0 !default;
 $foreground-color: rgba(#000, $foreground-opacity) !default; // foreground
 $secondary-foreground-color: rgba(#000, $secondary-foreground-color-opacity) !default; // foreground-secondary
 $disabled-foreground-color: rgba(#000, $disabled-foreground-color-opacity) !default; // foreground-disabled
+$header-background-color: $background-color !default;
+$header-cell-hover-background-color: darken($header-background-color, 5%) !default;
+$header-cell-moving-background-color: $header-cell-hover-background-color !default;
 $header-foreground-color: $secondary-foreground-color !default;
 
 $border-color: $mat-grey-300 !default;
-
 $primary-color: $mat-indigo-500 !default;
-
 $accent-color: $mat-pink-A200 !default;
 $icon-color: #333 !default;
 
-$background-color: $mat-grey-0 !default;
 
 $editor-background-color: $mat-grey-50 !default;
-
 $panel-background-color: $mat-grey-200 !default;
-
 $tool-panel-background-color: $mat-grey-50 !default;
-
 $chip-background-color: $mat-grey-300 !default;
 
 $range-selection-background-color: transparentize(darken($mat-indigo-50, 30%), 0.9) !default;
@@ -77,14 +79,8 @@ $ag-range-selected-color-3: opacify($range-selection-background-color, 0.3) !def
 $ag-range-selected-color-4: opacify($range-selection-background-color, 0.4) !default;
 
 $hover-color: $mat-grey-50 !default;
-
 $selected-color: $mat-grey-200 !default;
-
 $cell-data-changed-color: $mat-pink-50 !default;
-
-// Misc
-$card-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-$card-radius: 2px;
 
 // delta changes
 $value-change-delta-up-color: #43a047 !default;
@@ -117,10 +113,13 @@ $params: (
 
     panel-background-color: $panel-background-color,
     tool-panel-background-color: $tool-panel-background-color,
+    header-background-color: $header-background-color,
+    header-cell-hover-background-color: $header-cell-hover-background-color,
+    header-cell-moving-background-color: $header-cell-moving-background-color,
     header-foreground-color: $header-foreground-color,
 
-    focused-textbox-border: 3px solid $primary-color,
-    input-bottom-border: 3px solid $border-color,
+    focused-textbox-border: 2px solid $primary-color,
+    input-bottom-border: 2px solid $border-color,
     input-bottom-border-disabled: 1px solid $border-color,
     value-change-delta-up-color: $value-change-delta-up-color,
     value-change-delta-down-color: $value-change-delta-down-color,

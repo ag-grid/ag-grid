@@ -8,18 +8,8 @@
 
     @include ag-grid-theme($params);
 
-    .ag-header-cell-resize:after {
-        display: block;
-        content: '';
-        height: 100%;
-        width: 1px;
-        background-color: $border-color;
-        opacity: 0.3;
-        transform: opacity 200ms;
-    }
-
-    .ag-header-cell-resize:hover:after {
-        opacity: 1;
+    .ag-header-cell, .ag-header-group-cell {
+        transition: background-color 0.5s;
     }
 
     .ag-cell-highlight {

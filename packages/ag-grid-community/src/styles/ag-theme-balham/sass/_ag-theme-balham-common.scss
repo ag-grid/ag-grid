@@ -7,7 +7,6 @@
     $grid-size: map-get($params, "grid-size");
     $header-background-color: map-get($params, "header-background-color");
     $header-foreground-color: map-get($params, "header-foreground-color");
-    $header-cell-moving-background-color: map-get($params, "header-cell-moving-background-color");
     $header-height: map-get($params, "header-height");
     $icon-size: map-get($params, "icon-size");
     $panel-background-color: map-get($params, "panel-background-color");
@@ -38,20 +37,6 @@
     }
 
     @include ag-grid-theme($params);
-
-    .ag-header {
-        background-color: $header-background-color;
-        border-bottom: 1px solid $border-color;
-        color: $header-foreground-color;
-    }
-
-    .ag-pinned-right-header {
-        border-left: 1px solid $border-color;
-    }
-
-    .ag-pinned-left-header {
-        border-right: 1px solid $border-color;
-    }
 
     .ag-cell-highlight {
         background-color: $range-selection-highlight-color !important;
@@ -291,9 +276,5 @@
 
     .ag-filter-apply-panel {
         border-top: 1px solid $border-color;
-    }
-
-    .ag-header-cell-moving {
-        background-color: $header-cell-moving-background-color;
     }
 }

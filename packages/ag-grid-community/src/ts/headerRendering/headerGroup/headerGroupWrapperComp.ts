@@ -333,6 +333,8 @@ export class HeaderGroupWrapperComp extends Component {
             this.resizeTakeFromRatios = null;
         }
 
+        _.addCssClass(this.getGui(), 'ag-column-resizing');
+
     }
 
     public onResizing(finished: boolean, resizeAmount: any): void {
@@ -356,6 +358,10 @@ export class HeaderGroupWrapperComp extends Component {
         }
 
         this.columnController.resizeColumnSets(resizeSets, finished, 'uiColumnDragged');
+
+        if (finished) {
+            _.removeCssClass(this.getGui(), 'ag-column-resizing');
+        }
     }
 
     // optionally inverts the drag, depending on pinned and RTL
