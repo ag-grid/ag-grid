@@ -2,6 +2,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Bean, ComponentUtil, Grid, GridOptions } from 'ag-grid-community';
 import { VueFrameworkComponentWrapper } from './VueFrameworkComponentWrapper';
 import { getAgGridProperties, Properties } from './Utils';
+import { AgGridColumn } from "./AgGridColumn";
 
 const [props, watch, model] = getAgGridProperties();
 
@@ -56,7 +57,7 @@ export class AgGridVue extends Vue {
     public processChanges(propertyName: string, currentValue: any, previousValue: any) {
         if (this.gridCreated) {
 
-            if(this.skipChange(propertyName, currentValue, previousValue)) {
+            if (this.skipChange(propertyName, currentValue, previousValue)) {
                 return;
             }
 
@@ -78,8 +79,11 @@ export class AgGridVue extends Vue {
         const gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
 
         this.checkForBindingConflicts();
-
         gridOptions.rowData = this.getRowDataBasedOnBindings();
+
+        if (AgGridColumn.hasChildColumns(this.$slots)) {
+            gridOptions.columnDefs = AgGridColumn.mapChildColumnDefs(this.$slots);
+        }
 
         const gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
@@ -143,19 +147,19 @@ export class AgGridVue extends Vue {
      * Prevents an infinite loop when using v-model for the rowData
      */
     private skipChange(propertyName: string, currentValue: any, previousValue: any) {
-        if(this.gridReadyFired &&
+        if (this.gridReadyFired &&
             propertyName === 'rowData' &&
             this.$listeners['data-model-changed']) {
-            if(currentValue === previousValue) {
+            if (currentValue === previousValue) {
                 return true;
             }
 
-            if(currentValue && previousValue) {
+            if (currentValue && previousValue) {
                 const currentRowData = currentValue as any[];
                 const previousRowData = previousValue as any[];
-                if(currentRowData.length === previousRowData.length) {
+                if (currentRowData.length === previousRowData.length) {
                     for (let i = 0; i < currentRowData.length; i++) {
-                        if(currentRowData[i] !== previousRowData[i]) {
+                        if (currentRowData[i] !== previousRowData[i]) {
                             return false;
                         }
                     }
