@@ -1,5 +1,8 @@
 import Scale from './scale';
 
+/**
+ * Maps a discrete domain to a continuous numeric range.
+ */
 export class BandScale<D> implements Scale<D, number> {
     _domain: D[] = [];
     set domain(values: D[]) {
@@ -45,7 +48,7 @@ export class BandScale<D> implements Scale<D, number> {
 
     private ordinalRange: number[] = [];
 
-    private index = {} as any; // TODO: new Map<D, number>();
+    private index = {} as any; // new Map<D, number>();
 
     _bandwidth: number = 1;
     get bandwidth(): number {

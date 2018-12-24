@@ -29,7 +29,7 @@ export function reinterpolateNumber(a: number, b: number): Reinterpolator<number
     return t => a + d * t;
 }
 
-function deinterpolateNumber(a: number, b: number): Deinterpolator<number> {
+export function deinterpolateNumber(a: number, b: number): Deinterpolator<number> {
     const d = b - a;
     if (d === 0 || isNaN(d)) {
         return () => d;
@@ -38,6 +38,9 @@ function deinterpolateNumber(a: number, b: number): Deinterpolator<number> {
     }
 }
 
+/**
+ * Creates a continuous scale with the default interpolator and no clamping.
+ */
 export default function scaleLinear() {
     const scale = new LinearScale<number>(reinterpolateNumber, deinterpolateNumber, naturalOrder);
     scale.range = [0, 1];
