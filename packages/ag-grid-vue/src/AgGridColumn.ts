@@ -1,4 +1,4 @@
-import { ColDef } from "ag-grid-community";
+import { ColDef, ColDefUtil } from "ag-grid-community";
 
 export class AgGridColumn {
     static hasChildColumns(slots: any) {
@@ -26,9 +26,19 @@ export class AgGridColumn {
     };
 
     private static createColDefFromGridColumn(column: any): ColDef {
-        let colDef = {};
+        let colDef: ColDef = {};
         AgGridColumn.assign(colDef, column.data.attrs);
         delete (<any>colDef).children;
+
+        // booleans passed down just as is are here as property=""
+        // convert boolean props to a boolean here
+        ColDefUtil.BOOLEAN_PROPERTIES.forEach(property => {
+            const colDefAsAny = colDef as any;
+            if(colDefAsAny[property] === "") {
+                colDefAsAny[property] = true;
+            }
+        });
+
         return colDef;
     };
 
