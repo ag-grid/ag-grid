@@ -1,11 +1,12 @@
 import { RowNode } from "../../entities/rowNode";
 import { Column } from "../../entities/column";
+import {_} from "../../utils";
 
 export class ChangedPath {
 
-    private active = true;
+    private readonly keepingColumns: boolean;
 
-    private keepingColumns: boolean;
+    private active = true;
 
     private nodeIdsToBoolean: {[nodeId:string]: boolean} = {};
 
@@ -75,5 +76,4 @@ export class ChangedPath {
             throw new Error("ag-Grid: tried to work on an invalid changed path");
         }
     }
-
 }

@@ -106,6 +106,7 @@ export interface GridOptions {
     suppressMultiSort?: boolean;
     multiSortKey?: string;
     accentedSort?: boolean;
+    deltaSort?: boolean;
     suppressHorizontalScroll?: boolean;
     alwaysShowVerticalScroll?: boolean;
     suppressTabbing?: boolean;

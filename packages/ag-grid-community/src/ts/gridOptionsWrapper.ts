@@ -995,6 +995,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.valueCacheNeverExpires);
     }
 
+    public isDeltaSort(): boolean {
+        return isTrue(this.gridOptions.deltaSort);
+    }
+
     public isAggregateOnlyChangedColumns(): boolean {
         return isTrue(this.gridOptions.aggregateOnlyChangedColumns);
     }

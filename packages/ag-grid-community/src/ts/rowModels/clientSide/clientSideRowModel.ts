@@ -64,6 +64,8 @@ export interface BatchTransactionItem {
     callback: ((res: RowNodeTransaction) => void) | undefined;
 }
 
+export interface RowNodeMap { [id: string]: RowNode };
+
 @Bean('rowModel')
 export class ClientSideRowModel {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -267,7 +269,7 @@ export class ClientSideRowModel {
             // console.log('aggregation = ' + (new Date().getTime() - start));
             case constants.STEP_SORT:
                 // start = new Date().getTime();
-                this.doSort();
+                this.doSort(params.rowNodeTransactions, changedPath);
             // console.log('sort = ' + (new Date().getTime() - start));
             case constants.STEP_MAP:
                 // start = new Date().getTime();
@@ -549,8 +551,12 @@ export class ClientSideRowModel {
         this.eventService.dispatchEvent(event);
     }
 
-    private doSort() {
-        this.sortStage.execute({rowNode: this.rootNode});
+    private doSort(rowNodeTransactions: RowNodeTransaction[], changedPath: ChangedPath) {
+        this.sortStage.execute({
+            rowNode: this.rootNode,
+            rowNodeTransactions: rowNodeTransactions,
+            changedPath: changedPath
+        });
     }
 
     private doRowGrouping(groupState: any,
