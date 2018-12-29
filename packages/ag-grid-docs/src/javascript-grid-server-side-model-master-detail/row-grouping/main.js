@@ -14,6 +14,7 @@ const gridOptions = {
         field: 'accountId'
     },
     columnDefs: columnDefs,
+    animateRows: true,
 
     // use the server-side row model
     rowModelType: 'serverSide',

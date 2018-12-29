@@ -1228,8 +1228,10 @@ export class GridPanel extends Component {
 
         eTop.style.minHeight = floatingTopHeight;
         eTop.style.height = floatingTopHeight;
+        eTop.style.display = parseInt(floatingTopHeight, 10) ? 'inherit' : 'none';
         eBottom.style.minHeight = floatingBottomHeight;
         eBottom.style.height = floatingBottomHeight;
+        eBottom.style.display = parseInt(floatingBottomHeight, 10) ? 'inherit' : 'none';
 
         this.checkBodyHeight();
     }

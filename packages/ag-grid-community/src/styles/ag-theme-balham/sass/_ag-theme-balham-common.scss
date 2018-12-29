@@ -1,83 +1,5 @@
 @import "../../ag-theme-base/sass/ag-theme-base";
 
-$params: (
-    font-family: $font-family,
-    font-size: $font-size,
-    font-weight: $font-weight,
-    secondary-font-family: $secondary-font-family,
-    secondary-font-size: $secondary-font-size,
-    secondary-font-weight: $secondary-font-weight,
-
-    accent-color: $accent-color,
-    primary-color: $primary-color,
-    hover-color: $hover-color,
-    selected-color: $selected-color,
-
-    default-background: $default-background,
-    background-color: $background-color,
-
-    foreground-color: $foreground-color,
-    foreground-opacity: $foreground-opacity,
-    secondary-foreground-color-opacity: $secondary-foreground-color-opacity,
-    secondary-foreground-color: $secondary-foreground-color,
-    disabled-foreground-color-opacity: $disabled-foreground-color-opacity,
-    disabled-foreground-color: $disabled-foreground-color,
-
-    border-color: $border-color,
-
-    panel-background-color: $panel-background-color,
-    tool-panel-background-color: $tool-panel-background-color,
-    header-foreground-color: $header-foreground-color,
-    header-background-color: $header-background-color,
-    header-cell-moving-background-color: $header-cell-moving-background-color,
-    
-    odd-row-background-color: $odd-row-background-color,
-    row-stub-background-color: $row-stub-background-color,
-    row-floating-background-color: $row-floating-background-color,
-    cell-data-changed-color: $cell-data-changed-color,
-    chip-background-color: $chip-background-color,
-    card-background-color: $background-color,
-
-    value-change-delta-up-color: $value-change-delta-up-color,
-    value-change-delta-down-color: $value-change-delta-down-color,
-    value-change-value-highlight-background-color: $value-change-value-highlight-background-color,
-    
-    editor-background-color-color: $editor-background-color,
-    input-disabled-background-color: $input-disabled-background-color,
-
-    icon-color: $icon-color,
-    alt-icon-color: $alt-icon-color,
-    icon-opacity: $foreground-opacity,
-
-    range-selection-background-color: $range-selection-background-color,
-    range-selection-highlight-color: $range-selection-highlight-color,
-    ag-range-selected-color-1: $ag-range-selected-color-1,
-    ag-range-selected-color-2: $ag-range-selected-color-2,
-    ag-range-selected-color-3: $ag-range-selected-color-3,
-    ag-range-selected-color-4: $ag-range-selected-color-4,
-
-    grid-size: $grid-size,
-    input-height: $grid-size * 4,
-    
-    icon-size: $icon-size,
-    header-icon-size: $header-icon-size,
-    
-    header-height: $header-height,
-    row-height: $row-height,
-    row-border-width: $row-border-width,
-    virtual-item-height: $virtual-item-height,
-    rich-select-item-height: $row-height,
-    cell-horizontal-padding: $cell-horizontal-padding,
-    toolpanel-indent-size: $toolpanel-indent-size,
-    row-group-indent-size: $row-group-indent-size,
-
-    button-text-transform: uppercase,
-    icons-path: $icons-path,
-    card-radius: $card-radius,
-    card-shadow: $card-shadow,
-    use-icons-for-pager-buttons: true
-);
-
 @mixin ag-theme-balham($params) {
     $border-color: map-get($params, "border-color");
     $default-background: map-get($params, "default-background");
@@ -85,7 +7,6 @@ $params: (
     $grid-size: map-get($params, "grid-size");
     $header-background-color: map-get($params, "header-background-color");
     $header-foreground-color: map-get($params, "header-foreground-color");
-    $header-cell-moving-background-color: map-get($params, "header-cell-moving-background-color");
     $header-height: map-get($params, "header-height");
     $icon-size: map-get($params, "icon-size");
     $panel-background-color: map-get($params, "panel-background-color");
@@ -116,20 +37,6 @@ $params: (
     }
 
     @include ag-grid-theme($params);
-
-    .ag-header {
-        background-color: $header-background-color;
-        border-bottom: 1px solid $border-color;
-        color: $header-foreground-color;
-    }
-
-    .ag-pinned-right-header {
-        border-left: 1px solid $border-color;
-    }
-
-    .ag-pinned-left-header {
-        border-right: 1px solid $border-color;
-    }
 
     .ag-cell-highlight {
         background-color: $range-selection-highlight-color !important;
@@ -346,11 +253,6 @@ $params: (
         padding: $grid-size * 4;
     }
 
-    $ag-range-selected-color-1: map-get($params, "ag-range-selected-color-1");
-    $ag-range-selected-color-2: map-get($params, "ag-range-selected-color-2");
-    $ag-range-selected-color-3: map-get($params, "ag-range-selected-color-3");
-    $ag-range-selected-color-4: map-get($params, "ag-range-selected-color-4");
-
     // we do not want to color the range color when the cell is also focused
     .ag-cell-range-selected-1:not(.ag-cell-focus) {
         background-color: $ag-range-selected-color-1;
@@ -374,9 +276,5 @@ $params: (
 
     .ag-filter-apply-panel {
         border-top: 1px solid $border-color;
-    }
-
-    .ag-header-cell-moving {
-        background-color: $header-cell-moving-background-color;
     }
 }

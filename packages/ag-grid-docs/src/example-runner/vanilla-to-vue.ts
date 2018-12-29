@@ -57,10 +57,15 @@ function onGridReadyTemplate(readyCode: string,
     }`;
 }
 
+
+function kebabProperty(property: string) {
+    return property.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+}
+
 const toInput = property => `:${property.name}="${property.name}"`;
 const toConst = property => `:${property.name}="${property.value}"`;
 
-const toOutput = event => `:${event.name}="${event.handlerName}"`;
+const toOutput = event => `@${kebabProperty(event.name)}="${event.handlerName}"`;
 
 const toMember = property => `${property.name}: null`;
 
@@ -174,7 +179,7 @@ function componentTemplate(bindings, componentFileNames) {
 
     const agGridTag = `      <ag-grid-vue ${style} class="${bindings.gridSettings.theme}" id="myGrid"
                :gridOptions="gridOptions"
-               :gridReady="onGridReady"
+               @grid-ready="onGridReady"
                ${propertyAttributes.concat(eventAttributes).map((line) => `${line}`).join('\n              ')}></ag-grid-vue>`;
 
 

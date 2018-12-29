@@ -158,7 +158,8 @@ export class ComponentRecipes {
         if (!floatingFilter) {
             const filterComponent:ComponentToUse<any, any> = this.getFilterComponentPrototype(colDef);
 
-            if (filterComponent && !filterComponent.component.prototype.getModelAsString) {
+            if (filterComponent &&
+                !(filterComponent.component && filterComponent.component.prototype && filterComponent.component.prototype.getModelAsString)) {
                 return this.newEmptyFloatingFilterWrapperComponent(column);
             }
 

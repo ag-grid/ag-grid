@@ -45,8 +45,15 @@
 
     $range-selection-background-color: map-get($params, "range-selection-background-color");
     $range-selection-highlight-color: map-get($params, "range-selection-highlight-color");
+    $ag-range-selected-color-1: map-get($params, "ag-range-selected-color-1");
+    $ag-range-selected-color-2: map-get($params, "ag-range-selected-color-2");
+    $ag-range-selected-color-3: map-get($params, "ag-range-selected-color-3");
+    $ag-range-selected-color-4: map-get($params, "ag-range-selected-color-4");
 
     $header-background-color: map-get($params, "header-background-color");
+    $header-background-image: map-get($params, "header-background-image");
+    $header-cell-hover-background-color: map-get($params, "header-cell-hover-background-color");
+    $header-cell-moving-background-color: map-get($params, "header-cell-moving-background-color");
     $header-foreground-color: map-get($params, "header-foreground-color");
     $panel-background-color: map-get($params, "panel-background-color");
     $tool-panel-background-color: map-get($params, "tool-panel-background-color");
@@ -111,6 +118,14 @@
         margin-right: $icon-size + $grid-size * 3;
     }
 
+    .ag-ltr .ag-cell-no-focus {
+        border-right: $cell-horizontal-border;
+    }
+
+    .ag-rtl .ag-cell-no-focus {
+        border-left: $cell-horizontal-border;
+    }
+
     // we use rtl and ltr below, even though it's the same style, so it propertly
     .ag-rtl .ag-cell-first-right-pinned {
         border-left: 1px solid $border-color;
@@ -161,16 +176,31 @@
         @if $header-background-color {
             background-color: $header-background-color;
         }
+        @if $header-background-image {
+            background-image: $header-background-image;
+        }
 
         color: $header-foreground-color;
         font-weight: $secondary-font-weight;
         font-size: $secondary-font-size;
         font-family: $secondary-font-family;
+        border-bottom: 1px solid $border-color;
+    }
+
+    .ag-pinned-right-header {
+        border-left: 1px solid $border-color;
+    }
+
+    .ag-pinned-left-header {
+        border-right: 1px solid $border-color;
     }
 
     .ag-header-row {
         @include row-border($border-color);
         border-width: 0 0 1px;
+        &:last-of-type {
+            border-bottom-width: 0;
+        }
     }
 
     .ag-row {
@@ -256,6 +286,22 @@
     .ag-header-cell,
     .ag-header-group-cell {
         @include grid-cell($header-height, $cell-horizontal-padding);
+        @if $header-cell-moving-background-color {
+            &.ag-header-cell-moving {
+                background-color: $header-cell-moving-background-color;
+            }
+        }
+    }
+
+    .ag-header-group-cell:not(.ag-column-resizing) + .ag-header-group-cell,
+    .ag-header-cell:not(.ag-column-resizing) + .ag-header-cell,
+    .ag-header-group-cell:first-of-type,
+    .ag-header-cell:first-of-type {
+        @if ($header-background-color != $header-cell-hover-background-color) {
+            &:hover, &.ag-column-resizing {
+                background-color: $header-cell-hover-background-color;
+            }
+        }
     }
 
     .ag-cell {
@@ -836,8 +882,25 @@
         background-color: $selected-color;
     }
 
+    // we do not want to color the range color when the cell is also focused
     .ag-cell-range-selected:not(.ag-cell-focus) {
         background-color: $range-selection-background-color;
+    }
+
+    .ag-cell-range-selected-1:not(.ag-cell-focus) {
+        background-color: $ag-range-selected-color-1;
+    }
+
+    .ag-cell-range-selected-2:not(.ag-cell-focus) {
+        background-color: $ag-range-selected-color-2;
+    }
+
+    .ag-cell-range-selected-3:not(.ag-cell-focus) {
+        background-color: $ag-range-selected-color-3;
+    }
+
+    .ag-cell-range-selected-4:not(.ag-cell-focus) {
+        background-color: $ag-range-selected-color-4;
     }
 
     ////////////////////////////////////////
@@ -883,7 +946,7 @@
     ////////////////////////////////////////
     .ag-rich-select {
         background-color: $editor-background-color-color;
-        background-image: url("#{$icons-path}tree-open.svg?color1=#{encodecolor(#{$icon-color})}");
+        background-image: url("#{$icons-path}tree-open.svg?color1=#{encodecolor($icon-color)}");
         background-position-x: calc(100% - #{$grid-size});
         background-position-y: $grid-size * 2;
         background-repeat: no-repeat;

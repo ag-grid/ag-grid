@@ -21,7 +21,7 @@
     $row-border-width: map-get($params, "row-border-width");
     $icon-size: map-get($params, "icon-size");
 
-    .ag-body {
+    .ag-body-viewport {
         background-color: map-get($params, "panel-background-color");
     }
 
@@ -64,11 +64,6 @@
         border-left: 0;
     }
 
-    .ag-header {
-        background-image: $header-background-image;
-        border-bottom: 1px solid $border-color;
-    }
-
     .ag-header-cell-resize::after {
         height: $header-height;
         margin-top: 0;
@@ -98,10 +93,6 @@
         border-right: 1px solid $border-color;
     }
 
-    .ag-cell-no-focus {
-        border-right: $cell-horizontal-border;
-    }
-
     .ag-tool-panel-wrapper .ag-column-drop .ag-column-drop-empty-message {
         line-height: $header-height;
     }
@@ -129,7 +120,9 @@
 
     .ag-column-drop-cell {
         background: $chip-background-color;
-        background-image: $header-background-image;
+        @if $header-background-image {
+            background-image: $header-background-image;
+        }
         border: 1px solid $border-color;
         border-radius: 0;
         height: $grid-size * 4.5 !important;
@@ -143,23 +136,6 @@
         .ag-column-drop-cell-button:hover {
             border: 1px solid $border-color;
         }
-    }
-
-    // we do not want to color the range color when the cell is also focused
-    .ag-cell-range-selected-1:not(.ag-cell-focus) {
-        background-color: $ag-range-selected-color-1;
-    }
-
-    .ag-cell-range-selected-2:not(.ag-cell-focus) {
-        background-color: $ag-range-selected-color-2;
-    }
-
-    .ag-cell-range-selected-3:not(.ag-cell-focus) {
-        background-color: $ag-range-selected-color-3;
-    }
-
-    .ag-cell-range-selected-4:not(.ag-cell-focus) {
-        background-color: $ag-range-selected-color-4;
     }
 
     .ag-cell-highlight {
@@ -226,14 +202,6 @@
 
     .ag-header-cell-moving {
         background-color: map-get($params, "header-cell-moving-background-color");
-    }
-
-    .ag-ltr .ag-pinned-right-header {
-        border-left: 1px solid $border-color;
-    }
-
-    .ag-rtl .ag-pinned-left-header {
-        border-right: 1px solid $border-color;
     }
 
     .ag-overlay-loading-wrapper {

@@ -242,11 +242,15 @@ export class HeaderWrapperComp extends Component {
         const resizeAmountNormalised = this.normaliseResizeAmount(resizeAmount);
         const newWidth = this.resizeStartWidth + resizeAmountNormalised;
         this.columnController.setColumnWidth(this.column, newWidth, this.resizeWithShiftKey, finished, "uiColumnDragged");
+        if (finished) {
+            _.removeCssClass(this.getGui(), 'ag-column-resizing');
+        }
     }
 
     public onResizeStart(shiftKey: boolean): void {
         this.resizeStartWidth = this.column.getActualWidth();
         this.resizeWithShiftKey = shiftKey;
+        _.addCssClass(this.getGui(), 'ag-column-resizing');
     }
 
     private setupTooltip(): void {

@@ -1,4 +1,4 @@
-import scaleLinear, {LinearScale} from "./linearScale";
+import scaleLinear from "./linearScale";
 
 test('domain', () => {
    const scale = scaleLinear();

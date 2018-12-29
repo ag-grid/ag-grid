@@ -621,6 +621,16 @@ window.addEventListener("load", function() {
                     <td>The header background color.</td>
                 </tr>
                 <tr>
+                    <td>header-cell-hover-background-color</td>
+                    <td>$header-background-color</td>
+                    <td>The header background color while hovering</td>
+                </tr>
+                <tr>
+                    <td>header-cell-moving-background-color</td>
+                    <td>#bebebe</td>
+                    <td>The header background color while being moved.</td>
+                </tr>
+                <tr>
                     <td>header-foreground-color</td>
                     <td><code>&lt;no default&gt;</code></td>
                     <td>The header text color.</td>
@@ -629,11 +639,6 @@ window.addEventListener("load", function() {
                     <td>header-background-image</td>
                     <td><code>&lt;no default&gt;</code></td>
                     <td>The header background gradient - you can also refer to an an image with `url(...)`.</td>
-                </tr>
-                <tr>
-                    <td>header-cell-moving-background-color</td>
-                    <td>#bebebe</td>
-                    <td>The header background color while being moved.</td>
                 </tr>
                 <tr>
                     <td>panel-background-color</td>
@@ -1213,6 +1218,18 @@ window.addEventListener("load", function() {
                     <tr>
                         <td>disabled-foreground-color</td>
                         <td><code>rgba(#000, $disabled-foreground-color-opacity)</code></td>
+                    </tr>
+                    <tr>
+                        <td>header-background-color</td>
+                        <td>$background-color</td>
+                    </tr>
+                    <tr>
+                        <td>header-cell-hover-background-color</td>
+                        <td>darken(<code>$header-background-color</code>, 5%)</td>
+                    </tr>
+                    <tr>
+                        <td>header-cell-moving-background-color</td>
+                        <td><code>$header-cell-hover-background-color</code></td>
                     </tr>
                     <tr>
                         <td>header-foreground-color</td>
