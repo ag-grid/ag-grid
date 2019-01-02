@@ -27,6 +27,7 @@ export class AgGridVue extends Vue {
     private gridOptions!: GridOptions;
 
     private static ROW_DATA_EVENTS = ['rowDataChanged', 'rowDataUpdated', 'cellValueChanged', 'rowValueChanged'];
+    private emitRowModel: (() => void) | null = null;
 
     // noinspection JSUnusedGlobalSymbols, JSMethodCanBeStatic
     public render(h: any) {
@@ -75,6 +76,12 @@ export class AgGridVue extends Vue {
 
     // noinspection JSUnusedGlobalSymbols
     public mounted() {
+        // we debounce the model update to prevent a flood of updates in the event there are many individual
+        // cell/row updates
+        this.emitRowModel = this.debounce(() => {
+            this.$emit('data-model-changed', Object.freeze(this.getRowData()));
+        }, 20);
+
         const frameworkComponentWrapper = new VueFrameworkComponentWrapper(this);
         const gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
 
@@ -131,7 +138,10 @@ export class AgGridVue extends Vue {
         if (this.gridReadyFired &&
             this.$listeners['data-model-changed'] &&
             AgGridVue.ROW_DATA_EVENTS.indexOf(eventType) !== -1) {
-            this.$emit('data-model-changed', Object.freeze(this.getRowData()));
+
+            if (this.emitRowModel) {
+                this.emitRowModel();
+            }
         }
     }
 
@@ -169,5 +179,16 @@ export class AgGridVue extends Vue {
         }
 
         return false;
+    }
+
+    private debounce(func: () => void, delay: number) {
+        let timeout: number;
+        return () => {
+            const later = function() {
+                func();
+            };
+            window.clearTimeout(timeout);
+            timeout = window.setTimeout(later, delay);
+        };
     }
 }
