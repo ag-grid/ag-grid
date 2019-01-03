@@ -36,6 +36,7 @@ interface GroupingDetails {
     groupedColCount: number;
     transaction: RowNodeTransaction;
     rowNodeOrder: { [id: string]: number };
+    afterColumnsChanged: boolean;
 }
 
 @Bean('groupStage')
@@ -81,7 +82,8 @@ export class GroupStage implements IRowNodeStage {
         if (details.transaction) {
             this.handleTransaction(details);
         } else {
-            this.shotgunResetEverything(details);
+            const afterColsChanged = params.afterColumnsChanged === true;
+            this.shotgunResetEverything(details, afterColsChanged);
         }
 
         this.sortGroupsWithComparator(details.rootNode);
@@ -140,7 +142,7 @@ export class GroupStage implements IRowNodeStage {
     // this is used when doing delta updates, eg Redux, keeps nodes in right order
     private recursiveSortChildren(node: RowNode, details: GroupingDetails): void {
         _.sortRowNodesByOrder(node.childrenAfterGroup, details.rowNodeOrder);
-        node.childrenAfterGroup.forEach(childNode => {
+        node.childrenAfterGroup.forEach((childNode: RowNode) => {
             if (childNode.childrenAfterGroup) {
                 this.recursiveSortChildren(childNode, details);
             }
@@ -165,7 +167,7 @@ export class GroupStage implements IRowNodeStage {
 
             if (doSort) {
                 rowNode.childrenAfterGroup.sort(comparator);
-                rowNode.childrenAfterGroup.forEach(childNode => recursiveSort(childNode));
+                rowNode.childrenAfterGroup.forEach((childNode: RowNode) => recursiveSort(childNode));
             }
         }
     }
@@ -271,7 +273,7 @@ export class GroupStage implements IRowNodeStage {
             newGroupNode.childrenAfterGroup = childNode.childrenAfterGroup;
             newGroupNode.childrenMapped = childNode.childrenMapped;
 
-            newGroupNode.childrenAfterGroup.forEach(rowNode => rowNode.parent = newGroupNode);
+            newGroupNode.childrenAfterGroup.forEach((rowNode: RowNode) => rowNode.parent = newGroupNode);
         }
 
         // remove empty groups
@@ -308,14 +310,32 @@ export class GroupStage implements IRowNodeStage {
         }
     }
 
-    private shotgunResetEverything(details: GroupingDetails): void {
+    private oldGroupingDetails: GroupingDetails;
+
+    private areGroupColsEqual(d1: GroupingDetails, d2: GroupingDetails): boolean {
+
+        if (d1 == null || d2 == null) { return false; }
+
+        if (d1.pivotMode!==d2.pivotMode) { return false; }
+
+        if (!_.compareArrays(d1.groupedCols, d2.groupedCols)) { return false; }
+
+        return true;
+    }
+
+    private shotgunResetEverything(details: GroupingDetails, afterColumnsChanged: boolean): void {
+
+        const skipStage = afterColumnsChanged ? this.areGroupColsEqual(details, this.oldGroupingDetails) : false;
+        this.oldGroupingDetails = details;
+        if (skipStage) { return; }
+
         // because we are not creating the root node each time, we have the logic
         // here to change leafGroup once.
         // we set .leafGroup to false for tree data, as .leafGroup is only used when pivoting, and pivoting
         // isn't allowed with treeData, so the grid never actually use .leafGroup when doing treeData.
         details.rootNode.leafGroup = this.usingTreeData ? false : details.groupedCols.length === 0;
 
-        // we are going everything from scratch, so reset childrenAfterGroup and childrenMapped from the rootNode
+        // we are doing everything from scratch, so reset childrenAfterGroup and childrenMapped from the rootNode
         details.rootNode.childrenAfterGroup = [];
         details.rootNode.childrenMapped = {};
 
@@ -383,7 +403,7 @@ export class GroupStage implements IRowNodeStage {
         userGroup.childrenMapped = fillerGroup.childrenMapped;
 
         this.removeFromParent(fillerGroup);
-        userGroup.childrenAfterGroup.forEach(rowNode => rowNode.parent = userGroup);
+        userGroup.childrenAfterGroup.forEach((rowNode: RowNode) => rowNode.parent = userGroup);
         this.addToParent(userGroup, fillerGroup.parent);
     }
 

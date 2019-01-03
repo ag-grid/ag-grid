@@ -10,6 +10,7 @@ export interface StageExecuteParams {
     rowNodeTransactions?: RowNodeTransaction[] | null;
     rowNodeOrder?: {[id: string]: number};
     changedPath?: ChangedPath;
+    afterColumnsChanged?: boolean;
 }
 
 export interface IRowNodeStage {

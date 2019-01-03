@@ -182,7 +182,14 @@ export class ColumnController {
 
         this.columnDefs = columnDefs;
 
-        this.beforeChangingColumns();
+        // always invalidate cache on changing columns, as the column id's for the new columns
+        // could overlap with the old id's, so the cache would return old values for new columns.
+        this.valueCache.expire();
+
+        // NOTE ==================
+        // we should be destroying the existing columns and groups if they exist, for example, the original column
+        // group adds a listener to the columns, it should be also removing the listeners
+        this.autoGroupsNeedBuilding = true;
 
         const oldPrimaryColumns = this.primaryColumns;
 
@@ -217,17 +224,6 @@ export class ColumnController {
             columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(newColumnsLoadedEvent);
-    }
-
-    private beforeChangingColumns(): void {
-        // always invalidate cache on changing columns, as the column id's for the new columns
-        // could overlap with the old id's, so the cache would return old values for new columns.
-        this.valueCache.expire();
-
-        // NOTE ==================
-        // we should be destroying the existing columns and groups if they exist, for example, the original column
-        // group adds a listener to the columns, it should be also removing the listeners
-        this.autoGroupsNeedBuilding = true;
     }
 
     public isAutoRowHeightActive(): boolean {

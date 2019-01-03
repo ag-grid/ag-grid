@@ -44,6 +44,8 @@ export interface RefreshModelParams {
     // true user called setRowData() (or a new page in pagination). the grid scrolls
     // back to the top when this is true.
     newData?: boolean;
+    // true if this update is due to columns changing, ie no rows were changed
+    afterColumnsChanged?: boolean;
 }
 
 export interface RowDataTransaction {
@@ -104,7 +106,10 @@ export class ClientSideRowModel {
     public init(): void {
 
         const refreshEverythingFunc = this.refreshModel.bind(this, {step: Constants.STEP_EVERYTHING});
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, refreshEverythingFunc);
+        const refreshEverythingAfterColsChangedFunc
+            = this.refreshModel.bind(this, {step: Constants.STEP_EVERYTHING, afterColumnsChanged: true});
+
+        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, refreshEverythingAfterColsChangedFunc);
         this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, refreshEverythingFunc);
         this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
         this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, {step: Constants.STEP_PIVOT}));
@@ -255,7 +260,8 @@ export class ClientSideRowModel {
         switch (params.step) {
             case constants.STEP_EVERYTHING:
                 // start = new Date().getTime();
-                this.doRowGrouping(params.groupState, params.rowNodeTransactions, params.rowNodeOrder, changedPath);
+                this.doRowGrouping(params.groupState, params.rowNodeTransactions, params.rowNodeOrder,
+                    changedPath, params.afterColumnsChanged);
             // console.log('rowGrouping = ' + (new Date().getTime() - start));
             case constants.STEP_FILTER:
                 // start = new Date().getTime();
@@ -562,7 +568,8 @@ export class ClientSideRowModel {
     private doRowGrouping(groupState: any,
                           rowNodeTransactions: (RowNodeTransaction | null)[] | undefined,
                           rowNodeOrder: { [id: string]: number } | undefined,
-                          changedPath: ChangedPath) {
+                          changedPath: ChangedPath,
+                          afterColumnsChanged: boolean) {
 
         // grouping is enterprise only, so if service missing, skip the step
         const doingLegacyTreeData = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
@@ -584,7 +591,11 @@ export class ClientSideRowModel {
             } else {
                 // groups are about to get disposed, so need to deselect any that are selected
                 this.selectionController.removeGroupsFromSelection();
-                this.groupStage.execute({rowNode: this.rootNode, changedPath: changedPath});
+                this.groupStage.execute({
+                    rowNode: this.rootNode,
+                    changedPath: changedPath,
+                    afterColumnsChanged: afterColumnsChanged
+                });
                 // set open/closed state on groups
                 this.restoreGroupState(groupState);
             }
