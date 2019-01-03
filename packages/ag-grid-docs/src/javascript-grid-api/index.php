@@ -176,9 +176,9 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>isAdvancedFilterPresent()</th>
+            <th>isColumnFilterPresent()</th>
             <td>
-                Returns true if the advanced filter is set, otherwise false.
+                Returns true if any column filter is set, otherwise false.
             </td>
         </tr>
         <tr>

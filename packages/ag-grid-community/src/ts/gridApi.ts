@@ -447,6 +447,11 @@ export class GridApi {
     }
 
     public isAdvancedFilterPresent(): boolean {
+        console.log('ag-Grid: isAdvancedFilterPresent() is deprecated, please use isColumnFilterPresent()');
+        return this.isColumnFilterPresent();
+    }
+
+    public isColumnFilterPresent(): boolean {
         return this.filterManager.isAdvancedFilterPresent();
     }
 
