@@ -325,7 +325,9 @@ export class GroupStage implements IRowNodeStage {
 
     private shotgunResetEverything(details: GroupingDetails, afterColumnsChanged: boolean): void {
 
-        const skipStage = afterColumnsChanged ? this.areGroupColsEqual(details, this.oldGroupingDetails) : false;
+        const skipStage = afterColumnsChanged ?
+            this.usingTreeData || this.areGroupColsEqual(details, this.oldGroupingDetails)
+            : false;
         this.oldGroupingDetails = details;
         if (skipStage) { return; }
 
