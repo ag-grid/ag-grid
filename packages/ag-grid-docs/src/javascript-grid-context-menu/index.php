@@ -94,7 +94,8 @@ MenuItemDef {
         <li><code>resetColumns</code>: Reset all columns.</li>
         <li><code>export</code>: Export sub menu (containing csvExport and excelExport).</li>
         <li><code>csvExport</code>: Export to CSV using all default export values.</li>
-        <li><code>excelExport</code>: Export to Excel using all default export values.</li>
+        <li><code>excelExport</code>: Export to Excel (.xlsx) using all default export values.</li>
+        <li><code>excelXMLExport</code>: Export to Excel (.xml) using all default export values.</li>
     </ul>
 
     <h2>Default Context Menu</h2>
