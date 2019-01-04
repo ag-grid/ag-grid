@@ -2,7 +2,6 @@ var columnDefs = [
     {headerName: 'Athlete', field: 'athlete', width: 150},
     {headerName: 'Age', field: 'age', width: 90},
     {headerName: 'Country', field: 'country', width: 120, rowGroupIndex: 0},
-    {headerName: 'Group', valueGetter: 'data.country.charAt(0)', width: 120},
     {headerName: 'Year', field: 'year', width: 90},
     {headerName: 'Date', field: 'date', width: 110},
     {headerName: 'Sport', field: 'sport', width: 110},
