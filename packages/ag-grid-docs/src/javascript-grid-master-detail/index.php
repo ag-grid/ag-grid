@@ -207,6 +207,10 @@ detailCellRendererParams: {
     This element is used to host the detail grid instance.
 </p>
 
+<note>
+    The element containing <code>ref="eDetailGrid"</code> must be wrapped inside a div with the height set appropriately.
+</note>
+
 <p>
     The following examples demonstrate both approaches.
 </p>
