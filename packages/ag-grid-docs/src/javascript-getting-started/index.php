@@ -391,7 +391,7 @@ While doing so, we learned how to configure the grid and how how to use its api 
 </div>
 
 <div>
-    <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
+    <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-community"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
 </div>
 <br>
 <div>
