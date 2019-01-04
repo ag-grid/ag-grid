@@ -315,7 +315,7 @@ export interface ColDef extends AbstractColDef {
     headerComponentParams?: any;
 
     /** The custom header component to be used for rendering the floating filter. If none specified the default ag-Grid is used**/
-    floatingFilterComponent?: { new(): IFloatingFilterComp<any, any, any> };
+    floatingFilterComponent?: string | { new(): IFloatingFilterComp<any, any, any> };
     floatingFilterComponentParams?: any;
     floatingFilterComponentFramework?: any;
 
