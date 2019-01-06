@@ -1,8 +1,7 @@
 import {HdpiCanvas} from "../canvas/hdpiCanvas";
 import {Node} from "./node";
 import {Path} from "./path";
-// import {PathRect} from "./PathRect";
-import {Shape} from "./shape";
+import {Shape} from "./shape/shape";
 
 export class Scene {
     constructor(parent: HTMLElement, width = 800, height = 600) {
@@ -37,14 +36,14 @@ export class Scene {
                         child.fillStyle = 'yellow';
                     }
                     else {
-                        child.fillStyle = 'green';
+                        child.fillStyle = 'red';
                     }
 
                     if (child.isPointInStroke(this.ctx, x, y)) {
-                        child.strokeStyle = 'red';
+                        child.strokeStyle = 'lime';
                     }
                     else {
-                        child.strokeStyle = 'blue';
+                        child.strokeStyle = 'black';
                     }
                 }
             }
@@ -126,16 +125,4 @@ export class Scene {
         }
         this.dirty = false;
     };
-
-    // // Walk the tree depth first and hit test the leafs?
-    // hitTest(x: number, y: number): Node | null {
-    //     if (this.root) {
-    //         const children = this.root.children;
-    //         const n = children.length;
-    //         for (let i = 0; i < n; i++) {
-    //             const child = children[i];
-    //             child.hitTest(x, y);
-    //         }
-    //     }
-    // }
 }

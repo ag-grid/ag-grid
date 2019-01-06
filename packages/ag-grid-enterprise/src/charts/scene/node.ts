@@ -1,12 +1,17 @@
 import {Scene} from "./scene";
 
+/**
+ * Abstract scene graph node.
+ * Each node can have zero or more children, zero or one parent
+ * and belong to zero or one scene.
+ */
 export abstract class Node { // Don't confuse with `window.Node`.
 
+    // Uniquely identify nodes (to check for duplicates, for example).
     private static id = 1;
     private createId(): string {
         return (this.constructor as any).name + '-' + (Node.id++);
     };
-
     readonly id: string = this.createId();
 
     private _scene?: Scene;
@@ -52,8 +57,24 @@ export abstract class Node { // Don't confuse with `window.Node`.
 
     abstract render(ctx: CanvasRenderingContext2D): void
 
+    /**
+     * Determines the order of rendering of this node within the parent node.
+     * By default the child nodes are rendered in the order in which they were added.
+     */
     zIndex: number = 0;
 
+    /**
+     * Each time a property of the node that effects how it renders changes
+     * the `dirty` property of the node should be set to `true`. The
+     * change to the `dirty` property of the node will propagate up to its
+     * parents and eventually to the scene, at which point an animation frame
+     * callback will be scheduled to rerender the scene and its nodes and reset
+     * the `dirty` flags of all nodes and the scene back to `false`.
+     * Since we don't render changes to node properties immediately, we can
+     * set as many as we like and the rendering will still only happen once
+     * on the next animation frame callback.
+     * The animation frame callback is only scheduled, if it hasn't been already.
+     */
     private _dirty = false;
     set dirty(dirty: boolean) {
         this._dirty = dirty;

@@ -1,11 +1,18 @@
-import { Node } from "./node";
-import {chainObjects} from "../util/object";
+import {Node} from "../node";
+import {chainObjects} from "../../util/object";
 
 export abstract class Shape extends Node {
-    protected static defaults = chainObjects(null, {
+    /**
+     * Defaults for certain properties.
+     * Can be used to reset to the original styling after some custom styling
+     * has been applied (using the `restoreOwnDefaults` and `restoreAllDefaults` methods).
+     * These static defaults are meant to be inherited by subclasses.
+     */
+    protected static defaults = chainObjects({}, {
         fillStyle: 'none',
         strokeStyle: 'none',
-        lineWidth: 1
+        lineWidth: 1,
+        opacity: 1
     });
 
     restoreOwnDefaults() {
@@ -53,10 +60,20 @@ export abstract class Shape extends Node {
         return this._lineWidth;
     }
 
+    private _opacity: number = Shape.defaults.opacity;
+    set opacity(value: number) {
+        this._opacity = value;
+        this.dirty = true;
+    }
+    get opacity(): number {
+        return this._opacity;
+    }
+
     applyContextAttributes(ctx: CanvasRenderingContext2D) {
         ctx.fillStyle = this.fillStyle;
         ctx.strokeStyle = this.strokeStyle;
         ctx.lineWidth = this.lineWidth;
+        ctx.globalAlpha = this.opacity;
     }
 
     abstract isPointInPath(ctx: CanvasRenderingContext2D, x: number, y: number): boolean

@@ -1,5 +1,5 @@
-import { Node } from "./node";
-import { Path } from "./path";
+import { Node } from "../node";
+import { Path } from "../path";
 
 export class Rect extends Node {
 
@@ -50,10 +50,8 @@ export class Rect extends Node {
     }
 
     updatePath() {
-        // if (!this.path) {
-        //     this.path = new Path();
-        // }
         const path = this.path;
+
         path.clear();
         // path.cubicArc(this.x, this.y, 5, 5, 0, 0, Math.PI * 2, 0);
         path.moveTo(this.x, this.y);
