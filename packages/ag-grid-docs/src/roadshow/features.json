@@ -48,7 +48,7 @@
             "<span class=\"feature-highlight\">Column Filters</span> appear in the column menu.\n        The grid comes with filters out of the box: text, number, date and set filters. You can also create your\n        own customer filter.",
         "src": "javascript-grid-features/images/columnFilter.gif",
         "snippet":
-            "gridOptions = {\n    // turn on filtering\n    enableFilter: true,\n    ...\n    columnDefs: [\n    {field: \"athlete\", filter: \"text\"},\n    {field: \"age\",     filter: \"number\"},\n    {field: \"sport\",   filter: MyCustomerFilter}\n]}",
+            "colDef.filter = true",
         "level": 0,
         "url": "javascript-grid-filtering/"
     },
@@ -133,7 +133,7 @@
         "description":
             "<span class=\"feature-highlight\">Row Sorting</span> will sort the data. Sort a column by clicking the header. \nSort multiple columns by holding down shift.",
         "src": "javascript-grid-features/images/rowSorting.gif",
-        "snippet": "// enable filtering with grid option\ngridOptions = {\n    enableSorting: true,\n    ...\n}",
+        "snippet": "// enable sorting with column option\ncolDef.sortable=true\n    ...\n}",
         "level": 0,
         "url": "javascript-grid-sorting/"
     },

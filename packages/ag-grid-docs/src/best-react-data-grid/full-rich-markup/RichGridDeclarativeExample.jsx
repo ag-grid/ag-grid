@@ -60,7 +60,7 @@ export default class RichGridDeclarativeExample extends Component {
                     // binding to array properties
                     rowData={this.state.rowData}
                     // no binding, just providing hard coded strings for the properties
-                    // boolean properties will default to true if provided (ie enableColResize => enableColResize="true")
+                    // boolean properties will default to true if provided (ie pagination => pagination="true")
                     suppressRowClickSelection
                     rowSelection="multiple"
                     groupHeaders

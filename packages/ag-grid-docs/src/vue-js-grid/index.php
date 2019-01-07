@@ -717,9 +717,7 @@ onRowClicked(params) {
             }
         },
         created() {
-            this.gridOptions = {
-                enableFilter:true
-            };
+            this.gridOptions = {};
             this.gridOptions.columnDefs = this.createColDefs();
             this.loadRowData();
         }

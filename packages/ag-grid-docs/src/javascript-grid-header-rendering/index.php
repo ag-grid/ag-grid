@@ -300,7 +300,7 @@ colDef = {
     <ul class="content">
         <li>Column moving and resizing is working without requiring any logic in the header component.</li>
         <li>Some columns have suppressMenu=true, so the header component doesn't show the menu.</li>
-        <li>Some columns have suppressSorting=true, so the header component doesn't add sorting logic.</li>
+        <li>Some columns have sortable=false, so the header component doesn't add sorting logic.</li>
         <li>The header component uses additional parameters to allowing configuring the menu icon.</li>
     </ul>
 

@@ -39,7 +39,7 @@ include '../documentation-main/documentation_header.php';
     // no binding, just providing hard coded strings for the properties
     // boolean properties will default to true if provided (ie enableColResize =&gt; enableColResize="true")
     rowSelection="multiple"
-    enableColResize
+    animateRows
 
     // setting grid wide date component
     dateComponentFramework=<span ng-non-bindable>{</span>DateComponent}
@@ -121,20 +121,22 @@ this.state = {
     // no binding, just providing hard coded strings for the properties
     // boolean properties will default to true if provided (ie enableColResize =&gt; enableColResize="true")
     rowSelection="multiple"
-    enableColResize
+    rowAnimation
 
     // setting grid wide date component
     dateComponentFramework=<span ng-non-bindable>{</span>DateComponent}
 
     // setting default column properties
     defaultColDef=<span ng-non-bindable>{{</span>
+        sortable: true,
+        filter: true,
         headerComponentFramework: SortableHeaderComponent,
         headerComponentParams: <span ng-non-bindable>{</span>
             menuIcon: 'fa-bars'
         }
     }}&gt;
 
-    &lt;AgGridColumn headerName="#" width=<span ng-non-bindable>{</span>30} checkboxSelection suppressSorting suppressMenu suppressFilter pinned&gt;&lt;/AgGridColumn&gt;
+    &lt;AgGridColumn headerName="#" width=<span ng-non-bindable>{</span>30} checkboxSelection suppressMenu pinned&gt;&lt;/AgGridColumn&gt;
     &lt;AgGridColumn headerName="Employee" headerGroupComponentFramework=<span ng-non-bindable>{</span>HeaderGroupComponent}&gt;
         &lt;AgGridColumn field="name" width=<span ng-non-bindable>{</span>150} pinned editable cellEditorFramework=<span ng-non-bindable>{</span>NameCellEditor}&gt;&lt;/AgGridColumn&gt;
         &lt;AgGridColumn field="country"

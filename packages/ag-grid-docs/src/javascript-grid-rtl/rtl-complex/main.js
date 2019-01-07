@@ -313,12 +313,12 @@ var defaultCols = [
             },
             {
                 headerName: "Extra Info 1", columnGroupShow: 'open', width: 150, editable: false,
-                suppressSorting: true, suppressMenu: true, cellStyle: { "text-align": "right" },
+                sortable: false, suppressMenu: true, cellStyle: { "text-align": "right" },
                 cellRenderer: function () { return 'Abra...'; }
             },
             {
                 headerName: "Extra Info 2", columnGroupShow: 'open', width: 150, editable: false,
-                suppressSorting: true, suppressMenu: true, cellStyle: { "text-align": "left" },
+                sortable: false, suppressMenu: true, cellStyle: { "text-align": "left" },
                 cellRenderer: function () { return '...cadabra!'; }
             }
         ],

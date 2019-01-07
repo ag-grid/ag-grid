@@ -112,7 +112,7 @@
         var IT_SKILLS_NAMES = ['Android', 'CSS', 'HTML 5', 'Mac', 'Windows'];
 
         var columnDefs = [
-            {headerName: '', width: 30, checkboxSelection: true, suppressSorting: true,
+            {headerName: '', width: 30, checkboxSelection: true, sortable: false,
                 suppressMenu: true, pinned: true},
             {
                 headerName: 'Employee',
@@ -127,7 +127,7 @@
             {
                 headerName: 'IT Skills',
                 children: [
-                    {headerName: "Skills", width: 125, suppressSorting: true, cellRenderer: skillsCellRenderer, filter: SkillFilter},
+                    {headerName: "Skills", width: 125, sortable: false, cellRenderer: skillsCellRenderer, filter: SkillFilter},
                     {headerName: "Proficiency", field: "proficiency", filter: 'agNumberColumnFilter', width: 120, cellRenderer: percentCellRenderer, filter: ProficiencyFilter},
                 ]
             },

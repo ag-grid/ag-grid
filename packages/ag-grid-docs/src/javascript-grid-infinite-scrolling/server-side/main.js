@@ -122,7 +122,7 @@ var columnDefs = [
         cellRenderer: 'loadingCellRenderer',
         // we don't want to sort by the row index, this doesn't make sense as the point
         // of the row index is to know the row index in what came back from the server
-        suppressSorting: true,
+        sortable: false,
         suppressMenu: true
     },
     {headerName: 'Athlete', field: 'athlete', width: 150, suppressMenu: true},

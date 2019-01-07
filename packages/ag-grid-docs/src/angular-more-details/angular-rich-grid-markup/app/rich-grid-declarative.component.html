@@ -58,8 +58,8 @@
                          toolPanelSuppressValues
                          rowSelection="multiple">
             <ag-grid-column headerName="Employee" [headerGroupComponentFramework]="components.headerGroupComponent">
-                <ag-grid-column headerName="#" [width]="30" [checkboxSelection]="true" [suppressSorting]="true"
-                                [suppressMenu]="true" [pinned]="true" [sortable]="true" [resizable]="true" [filter]="true"></ag-grid-column>
+                <ag-grid-column headerName="#" [width]="30" [checkboxSelection]="true"
+                                [suppressMenu]="true" [pinned]="true" [resizable]="true" [filter]="true"></ag-grid-column>
                 <ag-grid-column headerName="Name" field="name" [width]="150" [pinned]="true"  [sortable]="true" [resizable]="true" [filter]="true"></ag-grid-column>
                 <ag-grid-column headerName="Country" field="country" [width]="150" [cellRenderer]="countryCellRenderer"
                                 [pinned]="true" [filterParams]="getCountryFilterParams()" [sortable]="true" [resizable]="true" [filter]="true"></ag-grid-column>
@@ -67,8 +67,8 @@
                                 [cellRenderer]="parseDate" [filter]="'agDateColumnFilter'"  [sortable]="true" [resizable]="true"></ag-grid-column>
             </ag-grid-column>
             <ag-grid-column headerName="IT Skills">
-                <ag-grid-column headerName="Skills" [width]="125" [suppressSorting]="true"
-                                [cellRenderer]="skillsCellRenderer" [filter]="getSkillFilter()" [sortable]="true" [resizable]="true"></ag-grid-column>
+                <ag-grid-column headerName="Skills" [width]="125"
+                                [cellRenderer]="skillsCellRenderer" [filter]="getSkillFilter()" [resizable]="true"></ag-grid-column>
                 <ag-grid-column headerName="Proficiency" field="proficiency" [width]="120"
                                 [cellRenderer]="percentCellRenderer" [filter]="getProficiencyFilter()" [sortable]="true" [resizable]="true"></ag-grid-column>
             </ag-grid-column>

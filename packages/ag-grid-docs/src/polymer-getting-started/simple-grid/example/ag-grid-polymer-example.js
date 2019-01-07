@@ -11,8 +11,6 @@ class AgGridPolymerExample extends PolymerElement {
                              class="ag-theme-balham"
                              rowData="{{rowData}}"
                              columnDefs="{{columnDefs}}"
-                             enableSorting
-                             enableFilter
                              on-first-data-rendered="{{firstDataRendered}}"
                              ></ag-grid-polymer>
     `;
@@ -22,13 +20,16 @@ class AgGridPolymerExample extends PolymerElement {
     super();
     this.columnDefs = [{
       headerName: "Make",
-      field: "make"
+      field: "make",
+        sortable: true, filter: true
     }, {
       headerName: "Model",
-      field: "model"
+      field: "model",
+        sortable: true, filter: true
     }, {
       headerName: "Price",
-      field: "price"
+      field: "price",
+        sortable: true, filter: true
     }];
     this.rowData = [{
       make: "Toyota",

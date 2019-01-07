@@ -28,7 +28,7 @@
             headerName: "",
             width: 70,
             checkboxSelection: true,
-            suppressSorting: true,
+            sortable: false,
             suppressMenu: true
         },
         {
@@ -54,7 +54,7 @@
                 {
                     headerName: "Skills",
                     width: 125,
-                    suppressSorting: true,
+                    sortable: false,
                     cellRenderer: skillsCellRenderer,
                     filter: SkillFilter
                 },

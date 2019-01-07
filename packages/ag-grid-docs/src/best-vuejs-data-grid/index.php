@@ -224,8 +224,8 @@ this.columnDefs = [
 
     // these are boolean values
     // (leaving them out will default them to false)
-    :enableColResize="true"
-    :enableSorting="true"
+    :animateRows="true"
+    :pagination="true"
 
     // these are bound properties
     :gridOptions="gridOptions"

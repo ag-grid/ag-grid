@@ -57,7 +57,7 @@ columnDefinition = {
             longer available (like what Excel does).</li>
         <li><code>comparator(a,b):</code> Comparator for sorting. If not provided, the colDef comparator is used. If colDef
             also not provided, the default (agGrid provided) comparator is used.</li>
-        <li><code>suppressSorting:</code> If true, sorting will not be done on the set filter values. Use this is providing
+        <li><code>suppressSorting:</code> If true, sorting will not be done on the set filter values. Use this if providing
             your own values and don't want them sorted as you are providing in the order you want.</li>
         <li><code>suppressMiniFilter:</code> Set to false(default)/true to show/hide the input text box to filter the set
             entries displayed in the filter .</li>

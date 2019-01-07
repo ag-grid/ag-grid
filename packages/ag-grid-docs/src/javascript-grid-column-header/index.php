@@ -116,9 +116,9 @@ include '../documentation-main/documentation_header.php';
         Note that specifying your own templates is compatible with other configurations: 
     </p>
 <ul class="content">
-        <li>suppressMenu is especified in: Athlete, Country, Date and Bronze columns</li>
-        <li>suppressSorting is especified in: Age, Year, Sport Silver and Total columns</li>
-        <li>Gold is the only column that doesn't have suppressSorting or suppressSort</li>
+        <li>suppressMenu is specified in: Athlete, Country, Date and Bronze columns</li>
+        <li>sortable=false is specified in: Age, Year, Sport, Silver and Total columns</li>
+        <li>Gold is the only column that doesn't have sortable=false or suppressSort</li>
     </ul>
 
     <?= example('Header template', 'header-template', 'vanilla', array("extras" => array("fontawesome"))) ?>

@@ -106,7 +106,7 @@ const IT_SKILLS_NAMES = ['Android', 'CSS', 'HTML 5', 'Mac', 'Windows'];
 
 const columnDefs = [
     {
-        headerName: '', width: 30, checkboxSelection: true, suppressSorting: true,
+        headerName: '', width: 30, checkboxSelection: true,
         suppressMenu: true, pinned: true
     },
     {
@@ -114,11 +114,11 @@ const columnDefs = [
         children: [
             {
                 headerName: "Name", field: "name",
-                width: 150, pinned: true
+                width: 150, pinned: true, sortable: true
             },
             {
                 headerName: "Country", field: "country", width: 150,
-                cellRenderer: countryCellRenderer, pinned: true,
+                cellRenderer: countryCellRenderer, pinned: true, sortable: true,
                 filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}
             },
         ]
@@ -129,14 +129,13 @@ const columnDefs = [
             {
                 headerName: "Skills",
                 width: 125,
-                suppressSorting: true,
                 cellRenderer: skillsCellRenderer,
                 filter: SkillFilter
             },
             {
                 headerName: "Proficiency",
                 field: "proficiency",
-                width: 120,
+                width: 120, sortable: true,
                 cellRenderer: percentCellRenderer,
                 filter: ProficiencyFilter
             },
@@ -145,9 +144,9 @@ const columnDefs = [
     {
         headerName: 'Contact',
         children: [
-            {headerName: "Mobile", field: "mobile", width: 150, filter: 'agTextColumnFilter'},
-            {headerName: "Land-line", field: "landline", width: 150, filter: 'agTextColumnFilter'},
-            {headerName: "Address", field: "address", width: 500, filter: 'agTextColumnFilter'}
+            {headerName: "Mobile", field: "mobile", width: 150, filter: 'agTextColumnFilter', sortable: true},
+            {headerName: "Land-line", field: "landline", width: 150, filter: 'agTextColumnFilter', sortable: true},
+            {headerName: "Address", field: "address", width: 500, filter: 'agTextColumnFilter', sortable: true}
         ]
     }
 ];

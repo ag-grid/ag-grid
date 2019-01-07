@@ -12,7 +12,6 @@ class AgGridPolymerExample extends PolymerElement {
             <button style="margin-bottom: 10px" on-click="onClicked">Filter Instance Method</button>
             <ag-grid-polymer style="width: 100%; height: 300px; "
                              class="ag-theme-balham"
-                             enableFilter
                              gridOptions="{{gridOptions}}"
                              on-first-data-rendered="{{firstDataRendered}}"></ag-grid-polymer>
     `;
@@ -39,13 +38,14 @@ class AgGridPolymerExample extends PolymerElement {
 
     createColumnDefs() {
         return [
-            {headerName: "Row", field: "row", width: 450},
+            {headerName: "Row", field: "row", width: 450, filter: true},
             {
                 headerName: "Filter Component",
                 field: "name",
                 filterFramework: 'partial-match-filter',
                 width: 430,
-                menuTabs: ['filterMenuTab']
+                menuTabs: ['filterMenuTab'],
+                filter: true
             }
         ];
     }

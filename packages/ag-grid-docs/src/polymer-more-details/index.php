@@ -51,9 +51,9 @@ npm install ag-grid-enterprise --save</snippet>
     <p>Properties on <code>ag-grid-polymer</code> can be provided in the following three ways:</p>
 
     <ul class="content">
-        <li>LowerCase: ie: <code>enablesorting</code></li>
-        <li>CamelCase: ie: <code>enableSorting</code></li>
-        <li>Hyphenated Lowercase: ie: <code>enable-sorting</code></li>
+        <li>LowerCase: ie: <code>rowanimation</code></li>
+        <li>CamelCase: ie: <code>rowAnimation</code></li>
+        <li>Hyphenated Lowercase: ie: <code>row-animation</code></li>
     </ul>
 
     <p>You can specify the properties in the following ways:</p>
@@ -68,12 +68,12 @@ npm install ag-grid-enterprise --save</snippet>
     <snippet language="html">
 &lt;!-- Grid Definition -->
 &lt;ag-grid-polymer rowData="{{rowData}}"
-                 enableSorting
-                 enable-filtering
+                 rowAnimation
+                 pivot-mode
                  &gt;&lt;/ag-grid-polymer&gt;</snippet>
 
-    <p>Here we've specified 3 properties: <code>rowData</code> is provided with two-way binding. <code>enableSorting</code>
-    and <code>enable-filtering</code> illustrate how you can specify properties in different cases.</p>
+    <p>Here we've specified 3 properties: <code>rowData</code> is provided with two-way binding. <code>rowAnimation</code>
+    and <code>pivot-mode</code> illustrate how you can specify properties in different cases.</p>
 
     <h3>Events</h3>
 

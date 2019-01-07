@@ -87,7 +87,7 @@ export class RichGridComponent {
                 headerName: '#',
                 width: 30,
                 checkboxSelection: true,
-                suppressSorting: true,
+                sortable: false,
                 suppressMenu: true,
                 pinned: true
             },

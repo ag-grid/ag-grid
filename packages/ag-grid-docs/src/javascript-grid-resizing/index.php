@@ -150,11 +150,11 @@ include '../documentation-main/documentation_header.php';
         The example below the groups can be resizes as follows:
     </p>
         <ul class="content">
-            <li>The group 'Everything Resizes' will resize all columns.</li>:-
+            <li>The group 'Everything Resizes' will resize all columns.</li>
             <li>The group 'Only Year Resizes' will resize only year, because the other columns
-                have <code>suppressResize=true</code>.</li>
+                have <code>resizable=false</code>.</li>
             <li>The group 'Nothing Resizes' cannot be resized at all because all the columns
-                in the groups have <code>suppressResize=true</code>.</li>
+                in the groups have <code>resizable=false</code>.</li>
         </ul>
 
     <?= example('Resizing Groups', 'resizing-groups', 'generated', array("processVue" => true)) ?>

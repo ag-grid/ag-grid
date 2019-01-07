@@ -25,7 +25,7 @@
 
     var columnDefs = [
         {
-            headerName: '', width: 70, checkboxSelection: true, suppressSorting: true,
+            headerName: '', width: 70, checkboxSelection: true, sortable: false,
             suppressMenu: true
         },
         {
@@ -46,7 +46,7 @@
             headerName: 'IT Skills',
             children: [
                 {
-                    headerName: "Skills", width: 125, suppressSorting: true,
+                    headerName: "Skills", width: 125, sortable: false,
                     cellRenderer: skillsCellRenderer, filter: SkillFilter
                 },
                 {
