@@ -37,7 +37,7 @@ include '../documentation-main/documentation_header.php';
     rowData=<span ng-non-bindable>{</span>this.state.rowData}
 
     // no binding, just providing hard coded strings for the properties
-    // boolean properties will default to true if provided (ie enableColResize =&gt; enableColResize="true")
+    // boolean properties will default to true if provided (ie animateRows =&gt; animateRows="true")
     rowSelection="multiple"
     animateRows
 
@@ -119,9 +119,9 @@ this.state = {
     rowData=<span ng-non-bindable>{</span>this.state.rowData}
 
     // no binding, just providing hard coded strings for the properties
-    // boolean properties will default to true if provided (ie enableColResize =&gt; enableColResize="true")
+    // boolean properties will default to true if provided (ie animateRows =&gt; animateRows="true")
     rowSelection="multiple"
-    rowAnimation
+    animateRows
 
     // setting grid wide date component
     dateComponentFramework=<span ng-non-bindable>{</span>DateComponent}

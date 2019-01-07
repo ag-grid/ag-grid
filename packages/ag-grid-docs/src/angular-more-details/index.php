@@ -276,7 +276,7 @@ private getCountryFilterParams():any {
     <p>To specify a Grouped Column, you can nest a column defintion:</p>
     <snippet>
 &lt;ag-grid-column headerName="IT Skills"&gt;
-    &lt;ag-grid-column headerName="Skills" [width]="125" [suppressSorting]="true" [cellRenderer]="skillsCellRenderer" [filter]="getSkillFilter()"&gt;&lt;/ag-grid-column&gt;
+    &lt;ag-grid-column headerName="Skills" [width]="125" [sortable]="false" [cellRenderer]="skillsCellRenderer" [filter]="getSkillFilter()"&gt;&lt;/ag-grid-column&gt;
     &lt;ag-grid-column headerName="Proficiency" field="proficiency" [width]="120" [cellRenderer]="percentCellRenderer" [filter]="getProficiencyFilter()"&gt;&lt;/ag-grid-column&gt;
 &lt;/ag-grid-column&gt;</snippet>
     <p>In this example we have a parent Column of "IT Skills", with two child columns.</p>
