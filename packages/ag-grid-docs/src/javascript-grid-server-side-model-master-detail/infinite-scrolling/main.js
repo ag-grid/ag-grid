@@ -32,7 +32,7 @@ const gridOptions = {
             }
         },
         getDetailRowData: function (params) {
-            // supply
+            // supply details records to detail cell renderer (i.e. detail grid)
             params.successCallback(params.data.callRecords);
         }
     },
@@ -41,8 +41,9 @@ const gridOptions = {
             // fit the master grid columns
             params.api.sizeColumnsToFit();
 
-            // arbitrarily expanding a master row
-            params.api.getRowNode("1").setExpanded(true);
+            // arbitrarily expand some master row
+            const someRow = params.api.getRowNode("1");
+            if (someRow) someRow.setExpanded(true);
 
         }, 1500);
     }
