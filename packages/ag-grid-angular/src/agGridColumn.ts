@@ -154,6 +154,8 @@ export class AgGridColumn {
     @Input() public enableCellChangeFlash: any;
     @Input() public rowDrag: any;
     @Input() public autoHeight: any;
+    @Input() public sortable: any;
+    @Input() public resizable: any;
     // @END@
 
 }
