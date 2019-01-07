@@ -86,7 +86,7 @@
         "enterprise": true,
         "description": "<span class=\"feature-highlight\">Set Filter</span> works like Excel, providing checkboxes to select values from a set.",
         "src": "javascript-grid-features/images/setFilter.gif",
-        "snippet": "colDef = {\n    field: 'country',\n    filter: 'set'\n}",
+        "snippet": "colDef = {\n    field: 'country',\n    filter: 'agSetColumnFilter'\n}",
         "level": 1,
         "url": "javascript-grid-filter-set/"
     },
@@ -133,7 +133,7 @@
         "description":
             "<span class=\"feature-highlight\">Row Sorting</span> will sort the data. Sort a column by clicking the header. \nSort multiple columns by holding down shift.",
         "src": "javascript-grid-features/images/rowSorting.gif",
-        "snippet": "// enable sorting with column option\ncolDef.sortable=true\n    ...\n}",
+        "snippet": "// enable sorting with column option\ncolDef.sortable=true\n",
         "level": 0,
         "url": "javascript-grid-sorting/"
     },
@@ -153,7 +153,7 @@
         "description":
             "Drag the mouse over cells to create a <span class=\"feature-highlight\">Range Selection</span>. \nThis is handy for highlighting data or for copying to the clipboard.",
         "src": "javascript-grid-features/images/rangeSelection.gif",
-        "snippet": "// enable sorting with grid option\ngridOptions = {\n    enableRangeSelection: true,\n    ...\n}",
+        "snippet": "// enable range selection with grid option\ngridOptions = {\n    enableRangeSelection: true,\n    ...\n}",
         "level": 0,
         "url": "javascript-grid-range-selection/"
     },

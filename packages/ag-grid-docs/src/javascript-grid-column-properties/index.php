@@ -108,6 +108,13 @@ include '../documentation-main/documentation_header.php';
             <td>If doing multi sort by default, this column should say when the sort for each column was done
                 in milliseconds, so the grid knows which order to execute the sort.</td>
         </tr>
+        <tr>
+            <th>sortingOrder</th>
+            <td>
+                Array defining the order in which sorting occurs (if sorting is enabled). Values can be <code>asc</code>,
+                <code>desc</code> or <code>null</code>.
+            </td>
+        </tr>
 
         <tr>
             <th>resizable</th>

@@ -369,8 +369,11 @@ gridOptions = {
         getModelAsString. (Athlete column)</li>
         <li>The user can configure when to show/hide the button that shows the rich filter (Silver and Bronze columns)</li>
         <li>Columns with <code>filter=false</code> don't have floating filters (Total column)</li>
-        <li>Combining suppressMenu and suppressFilter lets you control where the user access to the rich filter. In
-        this example <code>suppressMenu=true</code> for all the columns except Silver and Bronze</li>
+        <li>
+            Combining <code>suppressMenu=true</code> and <code>filter=false</code> lets you control where the user
+            access to the rich filter. In this example <code>suppressMenu=true</code> for all the columns except
+            Silver and Bronze
+        </li>
     </ul>
 
 <?= example('Floating Filter', 'floating-filter', 'generated', array("enterprise" => 1, "processVue" => true)) ?>

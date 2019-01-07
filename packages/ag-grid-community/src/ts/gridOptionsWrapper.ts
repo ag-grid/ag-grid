@@ -608,12 +608,6 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.ensureDomOrder);
     }
 
-/*
-    public isEnableColResize() {
-        return isTrue(this.gridOptions.enableColResize);
-    }
-*/
-
     public isEnableCharts() {
         return isTrue(this.gridOptions.enableCharts);
     }
@@ -734,10 +728,6 @@ export class GridOptionsWrapper {
         return this.gridOptions.serverSideDatasource;
     }
 
-    // public isEnableSorting() {
-    //     return isTrue(this.gridOptions.enableSorting) || isTrue(this.gridOptions.enableServerSideSorting);
-    // }
-
     public isAccentedSort() {
         return isTrue(this.gridOptions.accentedSort);
     }
@@ -782,12 +772,6 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressClipboardPaste);
     }
 
-/*
-    public isEnableFilter() {
-        return isTrue(this.gridOptions.enableFilter) || isTrue(this.gridOptions.enableServerSideFilter);
-    }
-*/
-
     public isPagination() {
         return isTrue(this.gridOptions.pagination);
     }
@@ -803,17 +787,6 @@ export class GridOptionsWrapper {
     public getBatchUpdateWaitMillis(): number | undefined {
         return _.exists(this.gridOptions.batchUpdateWaitMillis) ? this.gridOptions.batchUpdateWaitMillis : Constants.BATCH_WAIT_MILLIS;
     }
-
-    // these are deprecated, should remove them when we take out server side pagination
-/*
-    public isEnableServerSideFilter() {
-        return this.gridOptions.enableServerSideFilter;
-    }
-*/
-
-    // public isEnableServerSideSorting() {
-    //     return isTrue(this.gridOptions.enableServerSideSorting);
-    // }
 
     public isSuppressMovableColumns() {
         return isTrue(this.gridOptions.suppressMovableColumns);
@@ -922,8 +895,6 @@ export class GridOptionsWrapper {
     public isEnableOldSetFilterModel(): boolean {
         return isTrue(this.gridOptions.enableOldSetFilterModel);
     }
-
-    // public isFloatingFilter(): boolean { return true; }
 
     public getDefaultColDef(): ColDef | undefined {
         return this.gridOptions.defaultColDef;
