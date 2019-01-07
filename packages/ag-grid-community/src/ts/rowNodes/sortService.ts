@@ -105,7 +105,10 @@ export class SortService {
                 const passesDirtyNodesCheck = !dirtyLeafNodes[rowNode.id];
                 // also remove group nodes in the changed path, as they can have different aggregate
                 // values which could impact the sort order.
-                const passesChangedPathCheck = !changedPath.isInPath(rowNode);
+                // note: changed path is not active if a) no value columns or b) no transactions. it is never
+                // (b) in deltaSort as we only do deltaSort for transactions. for (a) if no value columns, then
+                // there is no value in the group that could of changed (ie no aggregate values)
+                const passesChangedPathCheck = changedPath.isActive() ? !changedPath.isInPath(rowNode) : true;
                 return passesDirtyNodesCheck && passesChangedPathCheck;
             } )
             .map(this.mapNodeToSortedNode.bind(this));
