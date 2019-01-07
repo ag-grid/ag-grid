@@ -11,18 +11,44 @@ include '../documentation-main/documentation_header.php';
 
     <p class="lead">
         This page describes how to get your grid data sorting.
-        Row Sorting works with all frameworks eg Angular and React as well as plain JavaScript.
+        Row sorting works with all frameworks eg Angular and React as well as plain JavaScript.
     </p>
 
     <h2>Enable Sorting</h2>
 
     <p>
-        Turn sorting on for the grid by enabling sorting in the grid options.
+        Enable sorting for columns by setting the <code>sortable</code> column definition attribute.
+        Then sort a column by clicking on the column header.
     </p>
 
+<snippet>
+gridOptions: {
+    // enable sorting on name and age columns only
+    columnDefs: [
+        {field: 'name', sortable: true},
+        {field: 'age', sortable: true},
+        {field: 'address'},
+    ]
+}</snippet>
+
     <p>
-        Sort a column by clicking on the column header.
+        To enable sorting for all columns, set sorting in the
+        <a href="/javascript-grid-column-definitions/#default-column-definitions">default column definition</a>.
     </p>
+
+<snippet>
+gridOptions: {
+    // enable sorting on all columns by default
+    defaultColDef: {
+        sortable: true
+    },
+    columnDefs: [
+        {field: 'name'},
+        {field: 'age'},
+        // suppress sorting on address column
+        {field: 'address', sortable: false},
+    ]
+}</snippet>
 
     <h2>Custom Sorting</h2>
 

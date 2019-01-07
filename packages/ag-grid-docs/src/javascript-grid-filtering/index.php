@@ -31,23 +31,50 @@ include '../documentation-main/documentation_header.php';
     <h2>Enable Filtering</h2>
 
     <p>
-        Enable filtering by setting grid property <code>enableFilter=true</code>. This turns on filtering on all columns.
-        To turn off filtering for particular columns, set <code>suppressFilter=true</code> on the individual column definition.
+        Enable filtering on a column by setting the column property <code>filter</code>. The property can have
+        one of the following values:
+        <ul>
+            <li>boolean: Set to 'true' to enable the default filter.</li>
+            <li>string / component: Provide a specific filter to use over the default filter.</li>
+        </ul>
     </p>
 
     <p>
         When a filter is active on a column, the filter icon appears before the column name in the header.
     </p>
 
+    <p>
+        Below shows enabling filters on some columns:
+    </p>
+
 <snippet>
 gridOptions = {
-    // turn on filtering
-    enableFilter: true,
     ...
     columnDefs: [
-        {headerName: "Athlete", field: "athlete", filter: "agTextColumnFilter"}, // text filter
-        {headerName: "Age",     field: "age",     filter: "agNumberColumnFilter"}, // number filter
-        {headerName: "Sport",   field: "sport",   suppressFilter: true} // NO filter
+        {field: "athlete", filter: "agTextColumnFilter"}, // text filter
+        {field: "age",     filter: "agNumberColumnFilter"}, // number filter
+        {field: "gold",    filter: true}, // use the default filter
+        {field: "sport"} // use no filter - the default
+    ]
+}</snippet>
+
+    <h2>Default Filter and No Filter</h2>
+
+    <p>
+        If you want to enable filters on all columns then set a filter on the <a href="">default column</a>.
+    </p>
+
+<snippet>
+gridOptions = {
+    ...
+    // anything specified in defaultColDef gets applied on all columns
+    defaultColDef: {
+        filter: true // set filtering on for all cols
+    },
+    columnDefs: [
+        {field: "athlete"}, // default filter will be used
+        {field: "age"},     // default filter will be used
+        {field: "sport", filter: false} // use no filter
     ]
 }</snippet>
 
@@ -88,8 +115,8 @@ gridOptions = {
     </table>
 
     <p>
-        If no filter type is specified, the default is 'text' for ag-Grid (free versions) and 'set'
-        for ag-Grid Enterprise.
+        If no filter type is specified, the default is 'agTextColumnFilter' for ag-Grid (free versions) and
+        'agSetColumnFilter' for ag-Grid Enterprise.
     </p>
 
     <h2>Filter Parameters</h2>
@@ -123,7 +150,7 @@ columnDefinition = {
         <li>Using the <code>ag-header-cell-filtered</code> class, which is applied to the header
             cell when the header is filtered. By default, no style is applied to this class, the example shows
             applying a different color background to this style.</li>
-        <li>'suppressFilter' is set on Total to hide the filter on this column</li>
+        <li><code>filter=false</code> is set on Total to hide the filter on this column</li>
     </ul>
 
     <p>
@@ -347,18 +374,6 @@ gridOptions = {
     </ul>
 
 <?= example('Floating Filter', 'floating-filter', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
-
-<h2>Server Side Filtering</h2>
-
-<p>
-    Some of the row models
-    (<a href="../javascript-grid-pagination/">pagination</a> and
-    <a href="../javascript-grid-virtual-paging/">infinite scrolling</a>)
-    have further information on how to implement server side filtering.
-    For details on this, see the the sections
-    <a href="../javascript-grid-pagination/">pagination</a> and
-    <a href="../javascript-grid-virtual-paging/">infinite scrolling</a>.
-</p>
 
 <h2>Filtering null values in Date and Number filters</h2>
 <p>

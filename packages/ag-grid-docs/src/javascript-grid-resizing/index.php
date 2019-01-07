@@ -17,14 +17,41 @@ include '../documentation-main/documentation_header.php';
     <h2>Enable Resizing</h2>
 
     <p>
-        Turn column resizing on for the grid by enabling resizing in the grid options.
+        Turn column resizing on for the grid by setting <code>resizable=true</code> for each column.
+        To set resizing for each column, set <code>resizable=true</code> on the
+        <a href="/javascript-grid-column-definitions/#default-column-definitions">default column definition</a>.
     </p>
 
     <p>
-        If you wish only some columns to be resizable, enable resizing for the grid,
-        then suppress resizing for the particular column by setting <code>suppressResize=true</code>
-        on the column definition.
+        The snippet below allows all columns except Address to be resized by explicitly setting each column.
     </p>
+<snippet>
+gridOptions: {
+    columnDefs: [
+        {field: 'name', resizable: true},
+        {field: 'age', resizable: true},
+        {field: 'address'},
+    ]
+}
+</snippet>
+
+    <p>
+        The snippet below allows all columns except Address to be resized by setting <code>resizable=true</code>
+        on the default column definition and then <code>resizable=false</code> on the Address column.
+    </p>
+
+<snippet>
+gridOptions: {
+    defaultColDef: {
+        resizable: true
+    },
+    columnDefs: [
+        {field: 'name'},
+        {field: 'age'},
+        {field: 'address', resizable: false},
+    ]
+}
+</snippet>
 
     <h2>Size Columns to Fit</h2>
 
@@ -109,7 +136,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         Note that <code>api.sizeColumnsToFit()</code> needs to know the grid width in order to do its
         maths. If the grid is not attached to the DOM, then this will be unknown. In the example
-        below, the grid is not attached to the DOM when it is created (and hence <code>api.sizeColumnsToFix()</code>
+        below, the grid is not attached to the DOM when it is created (and hence <code>api.sizeColumnsToFit()</code>
         should fail). The grid checks again after 100ms, and tries to resize again. This is needed
         for some frameworks (eg Angular) as DOM objects are used before getting attached.
     </p>
