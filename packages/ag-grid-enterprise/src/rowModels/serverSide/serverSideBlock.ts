@@ -305,6 +305,13 @@ export class ServerSideBlock extends RowNodeBlock {
         const start = this.getStartRow();
         const end = this.getEndRow();
 
+        const extractRowBounds = (rowNode: RowNode) => {
+            return {
+                rowHeight: rowNode.rowHeight,
+                rowTop: rowNode.rowTop
+            };
+        };
+
         for (let i = start; i <= end; i++) {
             // the blocks can have extra rows in them, if they are the last block
             // in the cache and the virtual row count doesn't divide evenly by the
@@ -316,16 +323,17 @@ export class ServerSideBlock extends RowNodeBlock {
             if (rowNode) {
 
                 if (rowNode.rowIndex === index) {
-                    return {
-                        rowHeight: rowNode.rowHeight,
-                        rowTop: rowNode.rowTop
-                    };
+                    return extractRowBounds(rowNode);
                 }
 
                 if (rowNode.group && rowNode.expanded && _.exists(rowNode.childrenCache)) {
                     const serverSideCache = rowNode.childrenCache as ServerSideCache;
                     if (serverSideCache.isDisplayIndexInCache(index)) {
                         return serverSideCache.getRowBounds(index);
+                    }
+                } else if (rowNode.master && rowNode.expanded && _.exists(rowNode.detailNode)) {
+                    if (rowNode.detailNode.rowIndex === index) {
+                        return extractRowBounds(rowNode.detailNode);
                     }
                 }
             }

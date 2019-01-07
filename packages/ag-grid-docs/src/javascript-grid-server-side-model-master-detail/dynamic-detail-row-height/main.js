@@ -33,14 +33,14 @@ const gridOptions = {
             }
         },
         getDetailRowData: function (params) {
-            // supply
+            // supply details records to detail cell renderer (i.e. detail grid)
             params.successCallback(params.data.callRecords);
         }
     },
     getRowHeight: function (params) {
         if (params.node && params.node.detail) {
-            var offset = 80;
-            var allDetailRowHeight = params.data.callRecords.length * 28;
+            const offset = 80;
+            const allDetailRowHeight = params.data.callRecords.length * 28;
             return allDetailRowHeight + offset;
         } else {
             // otherwise return fixed master row height
@@ -52,8 +52,9 @@ const gridOptions = {
             // fit the master grid columns
             params.api.sizeColumnsToFit();
 
-            // arbitrarily expanding a master row
-            params.api.getRowNode("1").setExpanded(true);
+            // arbitrarily expand some master row
+            const someRow = params.api.getRowNode("1");
+            if (someRow) someRow.setExpanded(true);
 
         }, 1500);
     }
